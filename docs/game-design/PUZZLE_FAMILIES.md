@@ -519,7 +519,7 @@ Design doc: [puzzles/crocodile.md](puzzles/crocodile.md)
 
 The classic water-jug problem, and the water theme's **curriculum** answer rather than its pool answer (§11.1 flagged it as one of two): two canisters of known size, the river to fill from, and an exact volume to measure out. The only family here whose arithmetic is CONSTRUCTIVE — every other numeric family asks what a fixed value is, this one asks the player to make a quantity that is not in front of them out of two that are.
 
-Cut to fit the bar rather than shipped as the classic: **a move budget**, because without one any sequence of pours eventually works and nothing can be got wrong. With it the player must know which canister to fill first before pouring, and the two directions are far apart — measured over 68 reachable targets, 76% differ by four moves or more, the widest being two moves against thirty-eight. After that opening every step is forced by two local rules, which is what lets a hint name the move without handing over the answer.
+Cut to fit the bar rather than shipped as the classic: **an exact move budget**, because without one any sequence of pours eventually works and nothing can be got wrong. Opening the wrong way costs only two moves — measured over every reachable target of every pair up to 16, and it is never more, because a player who opens wrong recovers rather than walking a ruined line. So the budget is what turns that small penalty into a failed board, and the difficulty is the LENGTH of the line: how much arithmetic it takes to see which opening is shorter. A line holds at most two choice points and 77% of its steps are forced by two local rules, which is what lets a hint name a move and say why.
 
 Design doc: [puzzles/canisters.md](puzzles/canisters.md)
 

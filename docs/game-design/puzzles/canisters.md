@@ -28,8 +28,9 @@ substitutes for the other, and the pair covers arithmetic from both ends.
 
 **The budget is what makes it a puzzle rather than a procedure.** Without it the player can flail: any
 sequence of legal pours eventually reaches any reachable volume, so there is nothing to get wrong, only
-something to take a long time. With it, the player must know _before pouring_ which canister to fill
-first — and that is real arithmetic, because the two directions are not close (§3).
+something to take a long time. With it the player has to know _before pouring_ which
+way to open — and the budget has to be EXACT, because opening wrong costs only two moves (§3). The
+penalty is small; the budget is what turns a small penalty into a failed board.
 
 ## 3. Generation — pick the pair, then the target the wrong way ruins
 
@@ -40,20 +41,23 @@ a budget.
 `gcd(a, b)` and no greater than `b`. So the generator never gambles on solvability: it enumerates the
 reachable targets for a pair and picks among them.
 
-**Both directions are walked, and the gap is the difficulty.** There are only two strategies — repeatedly
-fill `a` and pour it into `b`, or the mirror — so the generator walks both and takes the shorter as the
-budget. Measured over eight pairs and their 68 reachable targets:
+**The wrong opening costs two moves, and never more.** Measured over every reachable target of every
+capacity pair up to 16:
 
-|                                                 |                                                     |
-| ----------------------------------------------- | --------------------------------------------------- |
-| shortest line                                   | 1 to 20 moves, average 7.6                          |
-| targets where the direction matters by ≥4 moves | 52 of 68 (**76%**)                                  |
-| targets where it makes no difference            | 1 of 68                                             |
-| widest measured                                 | `[9,13] → 4`: **2** moves one way, **38** the other |
+| opening gap | share |
+| ----------- | ----- |
+| 2 moves     | 79%   |
+| 1 move      | 20%   |
+| nothing     | 1%    |
 
-So the generator's real gate is **the gap**: reject a target whose two directions cost about the same,
-because there the opening choice is a coin flip and the board teaches nothing. Everything else follows
-from the pair.
+A player who opens the wrong way _recovers_ — they do not walk a ruined line — so the penalty is two moves
+whatever the capacities. **The difficulty is therefore the length of the line, not the size of the
+penalty**: what makes a board hard is how much arithmetic it takes to SEE which opening is shorter, and
+that is what the generator's `minLine` gate buys. `minGap` only drops the 1% of targets where the two
+openings tie, since those are a coin flip that teaches nothing.
+
+The budget is the optimal line's length, exact above starter — which is what makes a two-move penalty the
+difference between finishing and not.
 
 ## 4. The technique ladder
 
@@ -62,18 +66,22 @@ Three rungs, and the third is what makes the board forced.
 1. **Reach** — is the target a multiple of `gcd(a, b)`? At the tiers that ask it, some boards are
    unreachable and the answer is to say so rather than to pour. This is the rung that teaches why
    `[4, 8]` can never measure 3.
-2. **Direction** — which canister to fill first. The only branch in the puzzle, and the one the budget
-   punishes. A hint here names the reason (_"filling the small one first can only ever leave you
-   multiples of 3 in the big one"_), never the direction.
+2. **Direction** — which canister to fill first, and the one further choice a line reaches later. These
+   are the branches, and the budget is what punishes them. A hint here names the reason (_"filling the
+   small one first can only ever leave you multiples of 3 in the big one"_), never the direction.
 3. **The forced move** — after the opening, exactly one move is worth making, and two local rules are
    enough to see it, with no lookahead:
    - never pour back into a state already seen (which includes undoing the last move),
    - never empty a canister that is not full, and never top up one that is not empty — a partial measure
      is the thing you are carrying, and both moves throw it away.
 
-   **Measured: under those two rules alone, every step after the opening has exactly one legal move**, on
-   every pair tested and from mid-sequence states as well as from empty. That is what lets a hint name the
-   move without handing over the answer: the reason is local and the player can check it.
+   **Measured over 783 lines: a line has at most TWO choice points and never more** — 80% have two, 20%
+   have one — and **77% of all steps are forced**, with exactly one move worth making. So a leg reads:
+   choose, pour a while, choose again, pour to the end.
+
+   That is what lets a hint name a move without handing over the answer. On a forced step the reason is
+   local and the player can check it; on a choice step there is nothing to hint, because the choice is the
+   puzzle.
 
 ## 5. Tiers
 
@@ -84,13 +92,16 @@ Two knobs, and neither is board size — there is no board to grow.
   survives a non-empty start, which is what makes this safe.
 - **How hard the opening is to see**, which is the direction gap and the size of the capacities.
 
-| Tier    | Legs | Capacities | Notes                                                     |
-| ------- | ---- | ---------- | --------------------------------------------------------- |
-| starter | 1    | ≤ 8        | budget generous by a move; the point is learning the pour |
-| junior  | 1    | ≤ 10       | budget exact                                              |
-| expert  | 2    | ≤ 12       | second leg starts from the first's leftovers              |
-| master  | 2–3  | ≤ 13       | one unreachable target offered per board, to be refused   |
-| wizard  | 3    | ≤ 15       | tightest gaps                                             |
+| Tier    | Legs | Capacities | Shortest leg | Notes                                                     |
+| ------- | ---- | ---------- | ------------ | --------------------------------------------------------- |
+| starter | 1    | ≤ 8        | 3            | budget generous by a move; the point is learning the pour |
+| junior  | 1    | ≤ 10       | 5            | budget exact, so the opening starts to cost               |
+| expert  | 2    | ≤ 12       | 5            | second leg starts from the first's leftovers              |
+| master  | 2    | ≤ 13       | 7            | longer lines to read the opening off                      |
+| wizard  | 3    | ≤ 15       | 7            | three legs, so up to six decisions                        |
+
+The unreachable-target rung (§4.1) is designed and **not built**: refusing a board is a screen affordance
+no other family has.
 
 **Three canisters is not the wizard tier, and this is measured.** Adding a third takes the branching
 factor from 3.6 legal moves per state to 8.4, the state space from ~20 to ~400, and the shortest solution
@@ -129,6 +140,13 @@ measured out is oil for the rites.
   playtesting against a version that shows the budget only after the first pour.
 - **Is refusing an unreachable board satisfying or annoying?** Rung 1 is real arithmetic, but a puzzle
   whose answer is "this cannot be done" has to be signalled well or it reads as a bug.
-- **Duration is unmeasured.** The optimal lines are short (average 7.6 moves) but a player who picks the
-  wrong direction walks a 20-to-38-move line before the budget stops them. §7's rule that duration is
-  measured rather than assumed applies here more than anywhere.
+- **Duration is measured, and it is the problem.** Generated boards run 7 moves at starter and average 34
+  at wizard, longest 51. Difficulty and execution are the same axis here — a longer line is both harder to
+  read and longer to tap — so a wizard board is about six decisions buried in thirty forced pours. That
+  ratio is what held `circuit` (§4.23) back, and this family has to answer it before it is authored into
+  the world.
+
+  **The candidate answer is to play the forced moves out.** Every step between two choices is forced, so
+  the game can pour them itself: the player picks, the water runs on to the next real choice, and a leg
+  becomes two decisions with animated consequence rather than a dozen taps. It is the design the
+  measurement actively suggests, and it takes nothing away from the player that they were deciding.
