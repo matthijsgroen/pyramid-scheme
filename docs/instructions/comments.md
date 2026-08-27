@@ -20,7 +20,7 @@ const getFamilyPlugin = (id: string) => { ... }
 
 ## Short and to the point
 
-One line beats three. If a comment needs a paragraph, the code is probably the wrong place for that explanation — trim to the one sentence that matters, or move the rest to the PR description.
+One line beats three. If a comment needs a paragraph, the code is probably the wrong place for that explanation — trim to the one sentence that matters, and move the rest to the design doc.
 
 ## Inline: only for non-obvious WHY
 
@@ -28,7 +28,7 @@ Beyond the function-level role comment, only add an inline comment when the WHY 
 
 ## Never
 
-- What the code used to do, what it replaced, or why a change was made — belongs in the commit message and PR description.
+- What the code used to do, what it replaced, or why a change was made — belongs in the design doc if it is durable, and nowhere if it is not. Not a commit-message body; see [`commit-messages.md`](commit-messages.md).
 - A restatement of what the next line does in English.
 - Narration of the current task, fix, or caller ("used by X", "added for the Y flow").
 - Multi-sentence comments where one clause would do.
