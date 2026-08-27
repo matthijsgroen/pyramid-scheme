@@ -4,6 +4,7 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
+import { CANISTERS_LEVELS } from "@/mods/puzzle/game/canisters/canistersConfig"
 import type { CanistersPuzzle as CanistersPuzzleData } from "@/mods/puzzle/game/canisters/canisters"
 import {
   claimCanister,
@@ -34,6 +35,7 @@ type Props = {
 export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const skin = skinFor(role, theme)
+  const levels = CANISTERS_LEVELS[difficulty ?? "starter"]
   const [state, setState] = useState(createCanistersState)
 
   const solved = isCanistersSolved(puzzle, state)
@@ -78,7 +80,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
       goal={t(`canisters.goal.${skin.name}`, {
         target: puzzle.targets[Math.min(state.measured, puzzle.targets.length - 1)],
       })}
-      rules={<CanistersRules skin={skin.name} legs={puzzle.targets.length} />}
+      rules={<CanistersRules skin={skin.name} legs={puzzle.targets.length} levels={levels} />}
     >
       {({ reportInput, hintVisible }) => (
         <div className="flex flex-col items-center gap-3">
@@ -88,6 +90,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
             held={state.held}
             claimed={state.claimed}
             celebrating={celebration.progress > 0}
+            levels={levels}
             lit={hintVisible ? hint.move : undefined}
             skin={skin}
             onHold={canister => {

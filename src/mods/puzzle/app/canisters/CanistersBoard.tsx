@@ -14,6 +14,8 @@ type Props = {
   lit?: Move
   /** The completion run is under way, so what is in the vessels catches the light. */
   celebrating?: boolean
+  /** Whether the level is drawn to scale, or only as empty / part-full / full (`canistersConfig.ts`). */
+  levels: "shown" | "sensed"
   skin: CanistersSkin
   onHold: (canister: 0 | 1) => void
   onPour: (to: 0 | 1) => void
@@ -31,10 +33,14 @@ const litFor = (move: Move | undefined, canister: 0 | 1): boolean => {
 /**
  * One vessel: its wall, what is in it, and the number that says how much it holds.
  *
- * **The capacity is written on it. What is in it is NOT** (design doc §7). The level is drawn, because
- * which vessel ran out is what a pour tells you — but the amount is never a number, so the player carries
- * it themselves. That is the arithmetic this family is for, and a board that printed the answer on the
- * glass would be asking nobody to do it.
+ * **The capacity is written on it. What is in it is NOT** (design doc §7). The amount is never a number, so
+ * the player carries it themselves — that is the arithmetic this family is for, and a board that printed
+ * the answer on the glass would be asking nobody to do it.
+ *
+ * How much of the level is drawn is a tier's choice (`canistersConfig.ts`). `shown` draws it to scale, so a
+ * careful player can eyeball two fifths of a 5. `sensed` draws only empty, part-full or full — which is
+ * the one reading a pour must give, since which vessel ran out is what tells you whether it was limited by
+ * what you had or by what fits, and nothing more than that.
  */
 const Vessel: FC<{
   capacity: number
@@ -42,9 +48,10 @@ const Vessel: FC<{
   held: boolean
   lit: boolean
   celebrating: boolean
+  levels: "shown" | "sensed"
   skin: CanistersSkin
   onTap: () => void
-}> = ({ capacity, volume, held, lit, celebrating, skin, onTap }) => (
+}> = ({ capacity, volume, held, lit, celebrating, levels, skin, onTap }) => (
   <button
     onClick={onTap}
     className={clsx(
@@ -57,8 +64,23 @@ const Vessel: FC<{
     aria-label={`canister of ${capacity}`}
   >
     <div
-      className={clsx("w-full transition-[height] duration-300", celebrating ? skin.measured : skin.liquid)}
-      style={{ height: `${(volume / capacity) * 100}%` }}
+      className={clsx(
+        "w-full transition-[height] duration-300",
+        celebrating ? skin.measured : skin.liquid,
+        // A part-full vessel whose amount is withheld says so: the surface is hatched rather than flat, so
+        // it reads as "some, and not saying" instead of as a level that happens to sit halfway.
+        levels === "sensed" && volume > 0 && volume < capacity && skin.uncertain
+      )}
+      style={{
+        height:
+          levels === "shown"
+            ? `${(volume / capacity) * 100}%`
+            : volume === 0
+              ? "0%"
+              : volume === capacity
+                ? "100%"
+                : "45%",
+      }}
     />
     <span className="absolute inset-x-0 top-1 text-center text-lg font-semibold opacity-80">{capacity}</span>
   </button>
@@ -71,6 +93,7 @@ export const CanistersBoard: FC<Props> = ({
   claimed,
   lit,
   celebrating,
+  levels,
   skin,
   onHold,
   onPour,
@@ -88,6 +111,7 @@ export const CanistersBoard: FC<Props> = ({
             held={held === canister}
             lit={litFor(lit, canister)}
             celebrating={celebrating === true}
+            levels={levels}
             skin={skin}
             // A held canister poured into the other one; an unheld one is picked up. One gesture, two
             // meanings, and which it is is always visible from the ring.

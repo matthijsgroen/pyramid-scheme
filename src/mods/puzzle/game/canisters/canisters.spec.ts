@@ -202,3 +202,21 @@ describe("the two mechanical strategies", () => {
     expect(checked).toBeGreaterThan(500)
   })
 })
+
+describe("how much of the level a tier draws", () => {
+  it("is display only, so it never reaches what a board generates", async () => {
+    // CanistersOptions is hashed into the seed bucket key, so a visual dial living in there would split
+    // every bucket in two for nothing. This holds the two apart.
+    const { CANISTERS_CONFIG, CANISTERS_LEVELS } = await import("./canistersConfig")
+    for (const tier of Object.keys(CANISTERS_LEVELS) as Array<keyof typeof CANISTERS_LEVELS>)
+      expect(Object.keys(CANISTERS_CONFIG[tier])).not.toContain("levels")
+  })
+
+  it("shows the level up to expert and withholds it above, which is the last thing left to ask", async () => {
+    const { CANISTERS_LEVELS } = await import("./canistersConfig")
+    expect(CANISTERS_LEVELS.starter).toBe("shown")
+    expect(CANISTERS_LEVELS.expert).toBe("shown")
+    expect(CANISTERS_LEVELS.master).toBe("sensed")
+    expect(CANISTERS_LEVELS.wizard).toBe("sensed")
+  })
+})

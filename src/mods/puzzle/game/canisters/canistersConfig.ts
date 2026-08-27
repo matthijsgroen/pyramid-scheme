@@ -14,6 +14,28 @@ import type { CanistersOptions } from "./generateCanisters"
 // so three legs is three decisions rather than one long line. A third canister would be the obvious
 // alternative and is the wrong one: it takes the branching factor from 3.6 legal moves per state to 8.4
 // and the shortest line stops being unique, which is a search, and a search cannot be hinted.
+/**
+ * Whether the vessels show how full they are.
+ *
+ * **Display only, which is why it is not one of `CanistersOptions`.** Those options are hashed into the
+ * seed bucket key, and a board generates identically whichever way it is drawn — putting this in there
+ * would split every bucket in two for a purely visual reason.
+ *
+ * `shown` draws the level to scale. The amount is still never a number (design doc §7), but a careful
+ * player can eyeball a 5-vessel at two fifths. `sensed` takes that away and draws only empty, part-full or
+ * full — which keeps the one reading a pour has to give (which vessel ran out) while making the quantity
+ * something only arithmetic can reach.
+ */
+export const CANISTERS_LEVELS: Record<Difficulty, "shown" | "sensed"> = {
+  starter: "shown",
+  junior: "shown",
+  expert: "shown",
+  // The two tiers that carry it: by here a player knows what a pour does, and tracking the amount from the
+  // capacities alone is the last thing the family has left to ask.
+  master: "sensed",
+  wizard: "sensed",
+}
+
 export const CANISTERS_CONFIG: Record<Difficulty, CanistersOptions> = {
   // One volume, small vessels, and a move in hand — the point here is learning what a pour does, and a
   // player still learning that should not fail on the opening.

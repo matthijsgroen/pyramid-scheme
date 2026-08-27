@@ -18,6 +18,8 @@ export type CanistersSkin = {
   /** What is in it, and what is in it once it is the volume that was asked for. */
   liquid: string
   measured: string
+  /** Laid over a part-full vessel whose amount is withheld, so it reads as "some, and not saying". */
+  uncertain: string
   /** The source the vessels are filled from, and the ground they are emptied onto. */
   source: string
   drain: string
@@ -34,6 +36,7 @@ const river: CanistersSkin = {
   liquid: "bg-gradient-to-t from-sky-800 to-sky-600",
   // The volume that was asked for, standing in the vessel: the one thing on this board worth a glow.
   measured: "bg-gradient-to-t from-emerald-700 to-emerald-400 shadow-[0_0_16px_2px_rgb(52_211_153_/_0.5)]",
+  uncertain: "[background-image:repeating-linear-gradient(45deg,transparent_0_4px,rgb(255_255_255_/_0.18)_4px_8px)]",
   source: "text-sky-300",
   drain: "text-stone-400",
   lit: "ring-2 ring-rose-300",

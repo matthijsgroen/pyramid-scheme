@@ -9,8 +9,9 @@ after the first is forced, so the puzzle is a deduction rather than a search.
 - Two canisters, each with its capacity written on it. Both start empty.
 - Four moves: **fill** a canister from the river, **empty** one onto the ground, or **pour** one into the
   other until the source is empty or the destination is full.
-- **The vessel's size is written on it. What is in it is not** — the level is drawn but never numbered, so
-  the player carries the amount themselves. That is the arithmetic this family is for.
+- **The vessel's size is written on it. What is in it is never a number** — the player carries the amount
+  themselves, which is the arithmetic this family is for. How much of the level is _drawn_ is a tier's
+  choice (§5): shown to scale up to expert, and above that only empty, part-full or full.
 - Reaching the volume is not enough: the player **claims** a vessel, saying it holds what was asked. A
   wrong claim costs a move like any other, so guessing is not free.
 - **A move budget**, and it is the whole puzzle — see §2.
@@ -105,7 +106,7 @@ Two knobs, and neither is board size — there is no board to grow.
 | starter | 1    | ≤ 8        | 3            | budget generous by a move; the point is learning the pour |
 | junior  | 1    | ≤ 10       | 5            | budget exact, so the opening starts to cost               |
 | expert  | 2    | ≤ 12       | 5            | second leg starts from the first's leftovers              |
-| master  | 2    | ≤ 13       | 7            | longer lines to read the opening off                      |
+| master  | 2    | ≤ 13       | 7            | the level stops being drawn to scale (§7)                 |
 | wizard  | 3    | ≤ 15       | 7            | three legs, so up to six decisions                        |
 
 The unreachable-target rung (§4.1) is designed and **not built**: refusing a board is a screen affordance
@@ -133,9 +134,20 @@ capacity written on it. The number matters as much as the level — a player com
 the puzzle, and comparing two heights is not the same act.
 
 **A pour animates**, because which canister ran out is the information: the source emptying before the
-destination fills is what tells the player the pour was limited by what they had, not by what fits. It is
-also the only reading the player gets, since the level carries no number — the shape of what happened, not
-the size of it.
+destination fills is what tells the player the pour was limited by what they had, not by what fits.
+
+**Two ways of drawing what is in a vessel, and the harder one is not an opaque vessel.**
+
+- `shown` (to expert) draws the level to scale. There is still no number, but a careful player can eyeball
+  two fifths of a 5 — so the arithmetic is checkable against the glass.
+- `sensed` (master, wizard) draws only empty, part-full or full, with the part-full surface hatched so it
+  reads as _some, and not saying_. **Hiding it altogether was the wrong answer**: which vessel ran out is
+  the one reading a pour has to give, and a blank vessel takes that away — leaving not a harder puzzle but
+  an unreadable one.
+
+It is display only and deliberately not one of the generation options, which are hashed into the seed
+bucket key: a board comes out identical whichever way it is drawn, and putting the dial in there would
+split every bucket in two for nothing. A spec holds the two apart.
 
 ## 8. Theming
 
