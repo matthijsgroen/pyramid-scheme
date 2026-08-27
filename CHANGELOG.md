@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- The six tomb journeys now dress their puzzles as the tomb they are set in.
+
 ### Fixed
 
 - Star puzzle boards are drawn straight: the walls between areas sit on the grid lines, and every dot and
@@ -17,9 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added the sudoku puzzle to the world.
-- The six tomb journeys now dress their puzzles as the tomb they are set in: the balance scale weighs a
-  heart against the feather of truth, the bridges board becomes a painted ceiling, and the hidato comb
-  becomes sealed chambers opened as the run reaches them.
 
 ### Changed
 
