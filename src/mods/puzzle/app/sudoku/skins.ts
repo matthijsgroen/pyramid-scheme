@@ -247,6 +247,11 @@ const SKINS: Record<string, SudokuSkin> = { default: carved, papyrus: register }
  */
 const ROLE_SKINS: Record<string, string> = {
   scribe: "papyrus",
+  // A tomb wall is what the DEFAULT face already draws — signs cut into a dark chamber wall — so this
+  // entry claims the place rather than pointing at a second one. Worth stating outright: a role absent
+  // from this table and a role drawing `default` look identical on screen and mean different things,
+  // and only one of them is a family saying it belongs in that pool.
+  funerary: "default",
 }
 
 /**

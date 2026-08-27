@@ -8,6 +8,12 @@ describe("which place a sudoku room is", () => {
     expect(skinFor("scribe", undefined).name).toBe("papyrus")
   })
 
+  it("draws the carved wall for the tomb, which is the wall it was already drawing", () => {
+    // Not a dress: the default face IS signs cut into a chamber wall, so the claim this family makes
+    // about `funerary` is that it reads as the place already (docs/game-design/journeys.md §9).
+    expect(skinFor("funerary", undefined).name).toBe("default")
+  })
+
   it("keeps the carved chamber where nothing was said about the place", () => {
     // `puzzle` is the tag every family carries, so it says nothing about which place a room is.
     expect(skinFor("puzzle", undefined).name).toBe("default")
