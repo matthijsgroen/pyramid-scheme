@@ -150,3 +150,28 @@ measured out is oil for the rites.
   the game can pour them itself: the player picks, the water runs on to the next real choice, and a leg
   becomes two decisions with animated consequence rather than a dozen taps. It is the design the
   measurement actively suggests, and it takes nothing away from the player that they were deciding.
+
+## 10. Prior art, and where this deliberately parts from it
+
+The puzzle has two classical forms, and this family is the second of them.
+
+- **Decanting** (Tartaglia, Poisson) is the famous one: a fixed total, pours between vessels only, no tap
+  and no drain. Three vessels of 8, 5 and 3 with the 8 full, split into two 4s. It has exactly **two**
+  solutions of **seven** steps each, and the state space is a triangular lattice of barycentric
+  coordinates on which a solution is a **billiard path** reflecting off the capacity walls — Tweedie's
+  trilinear coordinates, read as billiards by Perelman.
+- **Tap and sink**, which is what this family is: an unlimited river to fill from and ground to pour onto.
+
+**Decanting is shorter and is not hintable, which is why it was not chosen.** Measured against this
+family's own engine, decanting lines run 7 to 15 pours against a wizard board's 34 — but only **19% of
+their steps are forced**, against **77%** here, because two or three pours are live at nearly every state.
+The billiard trajectory is determined once a direction is committed to, but that direction is a global
+property of the path rather than something readable from the vessels in front of you, and no local rule
+tried here reproduces it. A board whose next move can only be justified by a search is a board whose hint
+has to read out the answer, which is the one thing `puzzle-screens.md` §5 does not allow.
+
+**The shipping mobile versions of this puzzle take the other road, and can afford to.** They use the same
+three moves and the same live move counter against a BFS-computed best, which is this family's budget by
+another name — and then they find depth by adding a third jug. That is exactly the change measured here to
+take branching from 3.6 legal moves per state to 8.4 and to cost the shortest line its uniqueness. They can
+carry it because they never explain a move. This catalogue has to, so depth comes from legs instead.
