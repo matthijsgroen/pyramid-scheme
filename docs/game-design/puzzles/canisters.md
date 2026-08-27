@@ -140,16 +140,22 @@ measured out is oil for the rites.
   playtesting against a version that shows the budget only after the first pour.
 - **Is refusing an unreachable board satisfying or annoying?** Rung 1 is real arithmetic, but a puzzle
   whose answer is "this cannot be done" has to be signalled well or it reads as a bug.
-- **Duration is measured, and it is the problem.** Generated boards run 7 moves at starter and average 34
-  at wizard, longest 51. Difficulty and execution are the same axis here — a longer line is both harder to
-  read and longer to tap — so a wizard board is about six decisions buried in thirty forced pours. That
-  ratio is what held `circuit` (§4.23) back, and this family has to answer it before it is authored into
-  the world.
+- **Duration is measured and is not the problem, which took a wrong turn to establish.** Boards run 7
+  moves at starter and average 34 at wizard, longest 51 — and an earlier reading of this called that
+  "six decisions buried in thirty forced pours". That conflated what the SOLVER can prove with what the
+  player sees. Measured on the same boards, a player faces **3.5 to 3.9 legal moves at every step** and has
+  to work out which one keeps the measure; that only one is useful is the answer, not the question. At
+  roughly three seconds a move a wizard board is under two minutes, well inside §7's soft six-minute
+  target, so there is nothing here to act on.
 
-  **The candidate answer is to play the forced moves out.** Every step between two choices is forced, so
-  the game can pour them itself: the player picks, the water runs on to the next real choice, and a leg
-  becomes two decisions with animated consequence rather than a dozen taps. It is the design the
-  measurement actively suggests, and it takes nothing away from the player that they were deciding.
+  Playing the forced runs out automatically was considered and **rejected** for the same reason: it would
+  hand the player the very step they are there to find.
+
+- **Freshness is measured and holds.** Over 150 boards a tier draws 12 distinct capacity pairs at starter
+  and 30 at wizard, against 7 and 14 distinct targets. Two boards in a row are unlikely to rhyme. What is
+  NOT guaranteed is that two rooms near each other on the same floor draw different pairs — that is the
+  allocator's business rather than this family's, and worth a look once the family is authored into the
+  world.
 
 ## 10. Prior art, and where this deliberately parts from it
 
