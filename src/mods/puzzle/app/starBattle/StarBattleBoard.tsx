@@ -75,6 +75,59 @@ const boundary = (puzzle: StarBattlePuzzle, cell: number, dRow: number, dCol: nu
   return puzzle.regions[row * puzzle.size + col] !== puzzle.regions[cell]
 }
 
+/**
+ * How wide a wall is drawn, in CSS pixels.
+ *
+ * Held against the seam rather than chosen on its own: the two are told apart by weight, so what matters is
+ * that this stays several times the 1px the squares draw on the edges they share.
+ */
+const WALL_WIDTH = 5
+
+/**
+ * The walls, drawn once along the line they mark.
+ *
+ * A square cannot draw this. A border belongs to one square and is painted inside it, so a wall between two
+ * of them came out as two half-walls — twice as thick inside the grid as around its rim, where there is only
+ * one square to draw it. Worse, the grid does not land on whole device pixels (an 8×8 board on a phone is
+ * 46.75px a square), so the two halves were rounded independently and the wall drifted off the line it was
+ * marking, by up to half a pixel in either direction.
+ *
+ * One stroke on the boundary itself has neither problem: `non-scaling-stroke` keeps it the same width
+ * wherever the board is scaled to, and a stroke is centred on its path, so the rim is drawn exactly like
+ * every wall inside. The seams stay on the squares — they are symmetric, so they were never crooked.
+ */
+const Walls: FC<{ puzzle: StarBattlePuzzle; colour: string }> = ({ puzzle, colour }) => {
+  const { size } = puzzle
+  const segments: string[] = []
+  for (let row = 0; row < size; row++)
+    for (let col = 0; col < size; col++) {
+      const cell = row * size + col
+      // Only the top and left of each square, so a wall between two of them is emitted once. That leaves the
+      // far two sides of the grid, which no square is above or to the right of, added after.
+      if (boundary(puzzle, cell, -1, 0)) segments.push(`M${col} ${row}h1`)
+      if (boundary(puzzle, cell, 0, -1)) segments.push(`M${col} ${row}v1`)
+    }
+  for (let i = 0; i < size; i++) segments.push(`M${i} ${size}h1`, `M${size} ${i}v1`)
+  return (
+    <svg
+      viewBox={`0 0 ${size} ${size}`}
+      preserveAspectRatio="none"
+      className="pointer-events-none absolute inset-0 size-full overflow-visible"
+      aria-hidden
+      focusable="false"
+    >
+      <path
+        d={segments.join("")}
+        stroke={colour}
+        strokeWidth={WALL_WIDTH}
+        vectorEffect="non-scaling-stroke"
+        strokeLinecap="square"
+        fill="none"
+      />
+    </svg>
+  )
+}
+
 export const StarBattleBoard: FC<Props> = ({
   puzzle,
   state,
@@ -158,10 +211,16 @@ export const StarBattleBoard: FC<Props> = ({
     // The board claims its own gestures: a drag across it rules squares out, so it cannot also scroll the
     // page. The page is scrolled to the rules from the chrome around the board — the trade constellation
     // made first, for the same reason.
-    <div className="aspect-square w-full max-w-[min(56vh,26rem)] touch-none select-none">
+    <div
+      className="aspect-square w-full max-w-[min(56vh,26rem)] touch-none select-none"
+      // The rim is a wall like any other, so it is drawn centred on the board's edge and half of it falls
+      // outside the grid. The room for that half is reserved here, rather than left to bleed over whatever
+      // the board is sitting in — the tomb screen scrolls, and a scroll container clips.
+      style={{ padding: WALL_WIDTH / 2 }}
+    >
       <div
         ref={grid}
-        className="grid size-full"
+        className="relative grid size-full"
         style={{
           gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`,
           gridTemplateRows: `repeat(${size}, minmax(0, 1fr))`,
@@ -175,11 +234,8 @@ export const StarBattleBoard: FC<Props> = ({
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
             style={{
-              // Per side, because one class cannot colour one edge — see `StarBattleSkin.wall`.
-              borderTopColor: boundary(puzzle, cell, -1, 0) ? skin.wall : skin.seam,
-              borderBottomColor: boundary(puzzle, cell, 1, 0) ? skin.wall : skin.seam,
-              borderLeftColor: boundary(puzzle, cell, 0, -1) ? skin.wall : skin.seam,
-              borderRightColor: boundary(puzzle, cell, 0, 1) ? skin.wall : skin.seam,
+              // Every edge alike: the walls are drawn over the top of these, by `Walls`.
+              borderColor: skin.seam,
               ...(decided?.has(cell) ? hatch : {}),
             }}
             onClick={() => {
@@ -190,16 +246,10 @@ export const StarBattleBoard: FC<Props> = ({
               onTapCell(cell)
             }}
             className={clsx(
-              "flex aspect-square items-center justify-center p-[14%] transition-colors",
+              "flex aspect-square items-center justify-center border p-[14%] transition-colors",
               // A square a star already rules out RECEDES: it is not a mark and must not read as one, so it
               // loses contrast rather than gaining anything of its own.
               spent.has(cell) && !decided?.has(cell) ? skin.spent : skin.cell,
-              // Thick where two regions meet, hairline inside one. Static classes, so the widths survive
-              // whatever the grid size turns out to be.
-              boundary(puzzle, cell, -1, 0) ? "border-t-3" : "border-t",
-              boundary(puzzle, cell, 1, 0) ? "border-b-3" : "border-b",
-              boundary(puzzle, cell, 0, -1) ? "border-l-3" : "border-l",
-              boundary(puzzle, cell, 0, 1) ? "border-r-3" : "border-r",
               // Inset, because the squares touch: a ring drawn outside one would sit on top of its
               // neighbour. A broken rule first, then the one square a hint is ABOUT, then the squares it
               // argues FROM — evidence and conclusion cannot look the same, or "this square" is a guess
@@ -222,6 +272,7 @@ export const StarBattleBoard: FC<Props> = ({
             ) : null}
           </button>
         ))}
+        <Walls puzzle={puzzle} colour={skin.wall} />
       </div>
     </div>
   )

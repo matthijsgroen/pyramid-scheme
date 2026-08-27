@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- Star puzzle boards are drawn straight: the walls between areas sit on the grid lines, and every dot and
+  star is the same size, centred in its square.
+
 ## 0.40.0 - 2026-08-26
 
 ### Added

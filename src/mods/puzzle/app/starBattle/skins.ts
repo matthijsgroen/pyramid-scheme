@@ -33,12 +33,11 @@ export type StarBattleSkin = {
   cell: string
   spent: string
   /**
-   * Where two regions meet, and where they do not — **as CSS colours rather than classes, and that is
-   * load-bearing.**
+   * Where two regions meet, and where they do not — **as CSS colours rather than classes.**
    *
-   * A Tailwind `border-*` colour class sets all four sides at once, so a square with one wall edge and three
-   * seams paints the seams in the wall's colour as well. The widths stay classes (they are per-side already);
-   * the colours are applied per side, which is the only way a boundary can be told from a grid line.
+   * The wall is the stroke `Walls` paints along a boundary and the seam is the border every square draws on
+   * all four of its edges, so neither can be a Tailwind class: one is an SVG `stroke`, the other is set on an
+   * element that is not always the one a Tailwind class would reach.
    *
    * **The seam is not decoration and must not be drawn as if it were.** Half this family's reasoning is
    * counting squares along a line — "this row is down to two squares" — and a player who cannot see where one
