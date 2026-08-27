@@ -299,6 +299,31 @@ fourth face lands — the same position `water` was in before hidato and twin st
 means `wizard_3` belongs to this cluster rather than to cosmos: Ma'at is judgement, and its brief names the
 scales outright. Cosmos is left with `wizard_4` alone.
 
+**And it wants two tags, not one, because a tag can be wide or narrow.** A necropolis, a curse and the duat
+are funerary without being a judgement; the weighing is the narrow place inside the wide one. So
+`judgement` sits inside `funerary` exactly as `light` sits inside `sky`:
+
+| Family        | `funerary`             | `judgement`           |
+| ------------- | ---------------------- | --------------------- |
+| balance scale | ✓                      | ✓ — heart and feather |
+| constellation | ✓ — painted ceiling    | —                     |
+| sudoku        | ✓ — signs cut in stone | —                     |
+| hidato        | ✓ — sealed chambers    | —                     |
+
+The narrow pool has one member, and that is fine because **it is never authored alone**:
+
+```ts
+journey("master_2").pyramid("1-5", { encounter: ["judgement", "funerary"] })
+journey("expert_1").pyramid("1-4", { encounter: "funerary" })
+```
+
+The list is a union, so the Book of the Dead still draws from all four families and clears the floor; the
+narrow word only decides the dressing, and the resolver takes the first role a family has a face for. The
+scale turns up wearing the scales; every other family wears its funerary face. That is the lighthouse
+pattern (§5) with the pools one size larger, and the reason `rolePools.spec.ts` had to start measuring an
+authored role whole rather than tag by tag — a one-family narrow tag is only ever legible as half of a
+list.
+
 ## 10. What a clean authoring system needs
 
 The contract in §2 is right; three things stop it holding by construction.
