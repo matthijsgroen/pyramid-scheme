@@ -74,9 +74,10 @@ Four readings of that table before authoring anything:
 - **`logistics` is an empty pool.** Constellation maps it to its causeway, but no family carries the tag,
   so a site authoring it would find nobody. `trade` is the word that works — and balance scale owes that
   pool an answer, since a scale weighing goods either reads as a market or the tag should go (§12).
-- **A tomb has no faces at all.** A tomb's rooms are tableau and the fez shop, and neither has a skin
-  system, so no role or ambience reaches one. Two tombs hold a single stray puzzle room apiece — a balance
-  scale in the noble's vault, a twin stars in the high priest's — and one room is not a dress.
+- **A tomb has no faces, and is exempt from all of this.** A tomb's rooms are tableau and the fez shop,
+  so no role or ambience reaches one — but that is not a gap to fill. Tableau's own screen is mid-redesign
+  (`puzzles/tableau.md` §10.5), so a face drawn for it now would be drawn on something about to move.
+  Tombs are out of scope until that settles; the rows below carry them for their shape only.
 
 ### The ambience axis is thinner than it looks
 
@@ -259,7 +260,6 @@ one built for a single pyramid does not.
 | **A `funerary` role** — **BUILT**        | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1`, `wizard_3` | 781   | Done (§13): four faces, six journeys authored, no new generator. What is left is the SHARE — see §11's prefer mode.                  |
 | **A cosmos role**                        | `wizard_4`                                                             | 207   | The one story with no Egyptian hook at all: the void beyond the sky. A new family, or the largest new face in the game.              |
 | **A warm-light ambience**                | `starter_3`, `junior_3`, `expert_1`, `master_4`                        | 264   | Overlays per face rather than a new skin per family. Four briefs — lamplight twice, torchlight, moonlight — asking for one thing.    |
-| **A face for tableau**                   | all nine tombs                                                         | 218   | No role work at all: tombs have no skin system, so this is a first face rather than a second.                                        |
 | **A `trade` face for balance scale**     | `starter_2`, `expert_4`                                                | 120   | Both journeys are already authorable — a scale reads as a market. One face is what makes authoring it show.                          |
 | **`light` faces for eclipse, lightbeam** | `junior_4`                                                             | 47    | Same shape: both families read as light sources already, neither has a face. Lightbeam has no skin system at all, so it is two jobs. |
 
