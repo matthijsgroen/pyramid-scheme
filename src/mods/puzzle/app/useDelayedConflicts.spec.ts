@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest"
-import { renderHook, waitFor } from "@testing-library/react"
+import { afterEach, describe, expect, it } from "vitest"
+import { cleanup, renderHook, waitFor } from "@testing-library/react"
 import { cellAt, eclipseConflicts, type EclipsePuzzle, type Mark } from "@/mods/puzzle/game/eclipse/eclipse"
 import { useDelayedConflicts } from "./useDelayedConflicts"
 
@@ -24,6 +24,10 @@ const tap = (marks: (Mark | undefined)[], quietMs: number) =>
       initialProps: { marks },
     }
   )
+
+// This project doesn't enable RTL's automatic cleanup, and this hook leaves a timer running: without an
+// unmount it fires once Vitest has torn jsdom down, failing the run from outside any test.
+afterEach(cleanup)
 
 describe("useDelayedConflicts", () => {
   it("says nothing about a square the player is still tapping through", () => {
