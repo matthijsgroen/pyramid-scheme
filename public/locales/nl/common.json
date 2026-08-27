@@ -249,8 +249,14 @@
       "pick": "Tik op een opgelichte rij om deze {{glyph}} te ruilen voor wat die rij zegt dat hij waard is.",
       "none": "Niets hier zegt wat één {{glyph}} in zijn eentje waard is, en er ligt niets gelijks tegenover."
     },
-    "goal": "Elk teken heeft een gewicht, en elke weegschaal is in balans.",
-    "name": "Weegschaal"
+    "goal": {
+      "default": "Elk teken heeft een gewicht, en elke weegschaal is in balans.",
+      "weighing": "Elk teken vindt zijn gewicht, en elke weegschaal komt in evenwicht."
+    },
+    "name": {
+      "default": "Weegschaal",
+      "weighing": "Het Wegen van het Hart"
+    }
   },
   "sumplete": {
     "rules": {

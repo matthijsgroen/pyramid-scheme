@@ -73,6 +73,7 @@ describe("the goal above the rules", () => {
       hidato: ["default", "channel", "scribe", "chambers"],
       starBattle: ["default", "fields", "twinDefault", "twinFields"],
       sudoku: ["default", "papyrus"],
+      balance: ["default", "weighing"],
     }
     for (const locale of [en, nl])
       for (const [family, skins] of Object.entries(faces)) {

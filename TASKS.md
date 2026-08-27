@@ -17,7 +17,7 @@ Background, only if you want it: `docs/game-design/journeys.md` §2 (role = the 
 | 1   | sudoku — `funerary` tag, no new face             | tiny          | DONE  |
 | 2   | hidato — `funerary` face, sealed chambers        | one face      | DONE  |
 | 3   | constellation — `funerary` face, painted ceiling | one face      | DONE  |
-| 4   | balance scale — skin system + the weighing face  | system + face | todo  |
+| 4   | balance scale — skin system + the weighing face  | system + face | DONE  |
 | 5   | author the six journeys, regenerate the world    | authoring     | todo  |
 
 Order matters only at the end: task 5 needs all four families carrying the tag, because
@@ -51,7 +51,7 @@ Acceptance, every task:
 
 ```
 yarn vitest run src/mods/puzzle/app/<family>
-yarn tsc --noEmit
+yarn tsc -b --noEmit    # tsconfig.json has files:[] — plain `tsc --noEmit` checks NOTHING
 yarn lint                 # must be 0 errors; 19 pre-existing warnings are fine
 yarn prettier --check <files you touched>
 git diff --stat -- src/data/generatedWorld.ts    # must be EMPTY in tasks 1-4

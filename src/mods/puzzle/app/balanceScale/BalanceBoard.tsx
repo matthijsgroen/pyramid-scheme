@@ -36,6 +36,8 @@ type Props = {
   moves: { cancelling: boolean; swapping: boolean }
   /** What to do next with the tapped glyph, or why nothing can be done with it. */
   swapPrompt?: string
+  /** What this room draws an unknown as (`skins.ts`) — the glyph stays the identity, this is the face. */
+  symbol: (glyph: Glyph) => string
   onSelectGlyph: (glyph: Glyph) => void
   onPickWeight: (value: number) => void
   onTapPiece: (ref: EquationRef, pan: Pan, index: number) => void
@@ -62,6 +64,8 @@ type ChipProps = {
   twins: (item: PanItem) => boolean
   /** Whether tapping this piece can do anything at all on this board. */
   movable: (item: PanItem) => boolean
+  /** What this room draws an unknown as (`skins.ts`). The glyph stays the identity; this is the face. */
+  symbol: (glyph: Glyph) => string
   onTapPiece: (pan: Pan, index: number) => void
 }
 
@@ -73,6 +77,7 @@ const PanItems: FC<ChipProps & { items: PanItem[]; pan: Pan }> = ({
   pendingGlyph,
   twins,
   movable,
+  symbol,
   onTapPiece,
 }) => (
   <>
@@ -97,7 +102,7 @@ const PanItems: FC<ChipProps & { items: PanItem[]; pan: Pan }> = ({
           item.value
         ) : (
           <>
-            <span className="text-base">{item.glyph}</span>
+            <span className="text-base">{symbol(item.glyph)}</span>
             {values[item.glyph] !== undefined && (
               <span className="text-[0.6rem] text-amber-200">{values[item.glyph]}</span>
             )}
@@ -219,6 +224,7 @@ export const BalanceBoard: FC<Props> = ({
   celebrated,
   swapPrompt,
   moves,
+  symbol,
   onSelectGlyph,
   onPickWeight,
   onTapPiece,
@@ -228,6 +234,7 @@ export const BalanceBoard: FC<Props> = ({
   const rowProps = (ref: EquationRef, scale: Scale) => ({
     values,
     highlighted,
+    symbol,
     lit: refIn(litRefs, ref),
     offering: refIn(swapSources, ref),
     pendingGlyph: pending && refEquals(pending.ref, ref) ? pending.glyph : undefined,
@@ -282,7 +289,7 @@ export const BalanceBoard: FC<Props> = ({
               "ring-2 ring-sky-300": glyph === highlighted,
             })}
           >
-            <span className="text-xl">{glyph}</span>
+            <span className="text-xl">{symbol(glyph)}</span>
             <span className="text-lg font-semibold text-stone-200">{values[glyph] ?? "?"}</span>
           </button>
         ))}

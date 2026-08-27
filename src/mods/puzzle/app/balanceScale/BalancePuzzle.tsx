@@ -19,16 +19,26 @@ import { hasTwinnedPiece } from "@/mods/puzzle/game/balanceScale/techniques"
 import { BalanceBoard } from "./BalanceBoard"
 import { BalanceRules } from "./BalanceRules"
 import { buildBalanceHint } from "./balanceHint"
+import { skinFor } from "./skins"
 
 type Props = {
   puzzle: BalancePuzzleData
   difficulty?: Difficulty
+  /** The pool this room was allocated for — which place it is (`puzzle-screens.md` §2). */
+  role?: string | string[]
+  /** The hour its site authored. */
+  theme?: string
   onSolved: () => void
   onCancel: () => void
 }
 
-export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
+/** The hint's only slot is the piece it is about, so this is the whole of dressing a hint. */
+const symbolise = (params: { glyph?: string }, symbol: (glyph: string) => string) =>
+  params.glyph === undefined ? params : { ...params, glyph: symbol(params.glyph) }
+
+export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
+  const skin = skinFor(role, theme)
   const { glyphs, scales, maxValue, solution, techniqueCap } = puzzle
   const [state, setState] = useState(() => createBalanceState(glyphs))
 
@@ -71,10 +81,13 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCance
       onCancel={onCancel}
       solved={celebration.done}
       onReset={() => setState(createBalanceState(glyphs))}
-      hint={hint && t(`balance.hint.${hint.key}`, hint.params)}
+      // **The hint names a piece by the symbol the board is drawing**, so it goes through the face too. A
+      // sentence that typed the generator's own glyph while the board drew this room's would be pointing at
+      // something not on screen — the trap sudoku's signs already paid for.
+      hint={hint && t(`balance.hint.${hint.key}`, symbolise(hint.params, skin.symbol))}
       idleMs={hintIdleDelay(difficulty)}
-      title={t("balance.name")}
-      goal={t("balance.goal")}
+      title={t(`balance.name.${skin.name}`)}
+      goal={t(`balance.goal.${skin.name}`)}
       rules={
         <BalanceRules
           manyRows={scales.length > 1}
@@ -96,6 +109,7 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCance
           litRefs={hintVisible ? hint?.refs : undefined}
           pending={state.pending}
           moves={moves}
+          symbol={skin.symbol}
           swapSources={sources.map(source => source.ref)}
           celebrated={celebrated}
           swapPrompt={

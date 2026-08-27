@@ -256,8 +256,14 @@
       "pick": "Tap a lit row to trade this {{glyph}} for what that row says it is worth.",
       "none": "Nothing here says what one {{glyph}} on its own is worth, and nothing opposite it matches."
     },
-    "goal": "Every glyph has a weight, and every scale balances.",
-    "name": "Balance Scale"
+    "goal": {
+      "default": "Every glyph has a weight, and every scale balances.",
+      "weighing": "Every sign finds its weight, and every scale settles level."
+    },
+    "name": {
+      "default": "Balance Scale",
+      "weighing": "Weighing of the Heart"
+    }
   },
   "sumplete": {
     "rules": {
