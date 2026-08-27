@@ -132,6 +132,18 @@ export const expertRules: Rule[] = [
   // dress without asking for the puzzles that wear it is how a trade pyramid ends up looking like a
   // waterworks.
 
+  // **The tomb journeys ask for the place their story is already set in** (docs/game-design/journeys.md §9).
+  // Four families have a funerary face — balance scale weighs a heart against the feather, constellation
+  // paints a ceiling, hidato opens sealed chambers, and sudoku's default already IS a wall of cut signs.
+  //
+  // **`puzzle` rides along on purpose, and it is what makes this safe.** A role list is a union, so the pool
+  // stays every family and the draw does not change at all — what changes is that the four which can dress
+  // now do. Restricting to the four instead would be 9.3 turns each across its 37 sections, far past the 6.3 repeats-per-family the
+  // least varied journey in the game already ships (§11), so a tomb would be the same four boards over and
+  // over. The share that comes out dressed is therefore the pool's natural rate rather than a chosen one;
+  // weighting a preferred role is designed and unbuilt (§11).
+  journey("expert_1").pyramid("1-4", { encounter: ["funerary", "puzzle"] }),
+
   // expert_4 (the last journey) — some open main-path floors gain a floor-key lock (find a
   // colored key on the floor to open a gated side room) plus an explicitly broad `packing`
   // layout (more sprawl to hide the key in). First tier to bring floor keys onto the open main

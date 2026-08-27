@@ -72,7 +72,15 @@ export const juniorRules: Rule[] = [
   // `theme` decides which skin that family wears. A family with no skin registered under "night" draws its
   // default one, so naming a skin here can never leave a room unrenderable. It reaches this pyramid’s floors
   // and its side paths, including the trapped ones — half a themed pyramid reads as an accident.
-  journey("junior_4").pyramid("1-5", { encounter: "sky", theme: "night" }),
+  //
+  // **A lighthouse is a light in the sky, so it asks for both.** A role list is a union for eligibility, and
+  // `light` (eclipse, lightbeam) sits inside `sky`, so the pool is the same four families either way — what
+  // the second word buys is the dressing. `light` is FIRST because the skin resolver takes the first role a
+  // family has a face for, and every family here answers `sky` with its default: sky-first would win that
+  // search and cancel the narrower place. Neither has a `light` face yet
+  // (docs/game-design/journeys.md §9), so today this is intent rather than pixels — and the day a beacon
+  // ships, this pyramid wears it without being re-authored.
+  journey("junior_4").pyramid("1-5", { encounter: ["light", "sky"], theme: "night" }),
 
   // Ward wings on back-half pyramids, difficulty cycling expert→master→wizard.
   journey("junior_1").pyramid(3, { wardWings: [WING.expert()] }),

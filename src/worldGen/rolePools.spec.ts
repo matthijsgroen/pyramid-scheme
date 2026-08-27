@@ -15,6 +15,11 @@ import type { SiteConfig, SubSection } from "@/game/siteTypes"
  * The floor is on the POOL rather than on the realised draw, deliberately. What a given seed happened
  * to pick varies; how many faces a role has to offer does not, and it is the fact an author can check
  * before authoring rather than after regenerating.
+ *
+ * **A role LIST is one pool, and the pool is the union.** `["light", "sky"]` draws from every family
+ * carrying either tag, so measuring its members separately reports a pool that is never used — the same
+ * mistake reading a list as "all of these" makes in the allocator. The floor applies to what a journey
+ * actually draws from, which is why a list is tallied whole.
  */
 const MIN_POOL = 4
 
@@ -32,20 +37,38 @@ const allSections = (world: Record<string, SiteConfig[]>) =>
     .flatMap(site => site)
     .flatMap(floor => [floor, ...floor.sideSections.flatMap(sectionsOf)])
 
-const poolFor = (tag: string) => ALL_FAMILY_META.filter(family => family.tags.includes(tag)).map(family => family.id)
+const poolForTag = (tag: string) => ALL_FAMILY_META.filter(family => family.tags.includes(tag)).map(family => family.id)
 
-/** Every themed role the baked world actually asks for, with the rooms authored to it. */
+/** The pool a whole authored role draws from: the union of its tags' pools. */
+const poolFor = (roles: string[]) => [...new Set(roles.flatMap(poolForTag))].sort()
+
+const rolesOf = (role: string | string[] | undefined) => (role === undefined ? [] : Array.isArray(role) ? role : [role])
+
+/**
+ * Every themed role the baked world asks for, keyed by the whole authored role, with the rooms authored
+ * to it. A role carrying a structural tag is skipped: `["cosmos", "puzzle"]` re-admits every family on
+ * purpose (a preferred role rather than a restricting one), so it is not a thin-pool risk.
+ */
 const authoredRoles = () => {
-  const rooms = new Map<string, number>()
+  const rooms = new Map<string, { roles: string[]; rooms: number }>()
   for (const section of allSections(generatedWorldConfigs)) {
-    const roles = section.role === undefined ? [] : Array.isArray(section.role) ? section.role : [section.role]
-    for (const role of roles) {
-      if (STRUCTURAL_ROLES.has(role)) continue
-      rooms.set(role, (rooms.get(role) ?? 0) + section.pathPuzzles)
-    }
+    const roles = rolesOf(section.role)
+    if (roles.length === 0 || roles.some(role => STRUCTURAL_ROLES.has(role))) continue
+    const key = [...roles].sort().join("+")
+    const entry = rooms.get(key) ?? { roles, rooms: 0 }
+    entry.rooms += section.pathPuzzles
+    rooms.set(key, entry)
   }
   return rooms
 }
+
+/** Individual tags, for the check that each one is carried by somebody — a typo is per tag, not per pool. */
+const authoredTags = () =>
+  new Set(
+    allSections(generatedWorldConfigs)
+      .flatMap(section => rolesOf(section.role))
+      .filter(role => !STRUCTURAL_ROLES.has(role))
+  )
 
 describe("a themed role is only worth authoring if its pool can dress it", () => {
   it("has roles to check at all (a silent empty sweep would prove nothing)", () => {
@@ -53,11 +76,11 @@ describe("a themed role is only worth authoring if its pool can dress it", () =>
   })
 
   it(`draws every authored role from at least ${MIN_POOL} families`, () => {
-    const thin = [...authoredRoles().entries()]
-      .filter(([role]) => poolFor(role).length < MIN_POOL)
+    const thin = [...authoredRoles().values()]
+      .filter(({ roles }) => poolFor(roles).length < MIN_POOL)
       .map(
-        ([role, rooms]) =>
-          `${role}: ${poolFor(role).length} families (${poolFor(role).join(", ") || "none"}) for ${rooms} authored rooms`
+        ({ roles, rooms }) =>
+          `${roles.join("+")}: ${poolFor(roles).length} families (${poolFor(roles).join(", ") || "none"}) for ${rooms} authored rooms`
       )
 
     expect(
@@ -66,8 +89,8 @@ describe("a themed role is only worth authoring if its pool can dress it", () =>
     ).toEqual([])
   })
 
-  it("never authors a role no family carries at all", () => {
-    const empty = [...authoredRoles().keys()].filter(role => poolFor(role).length === 0)
+  it("never authors a tag no family carries at all", () => {
+    const empty = [...authoredTags()].filter(tag => poolForTag(tag).length === 0)
     expect(empty).toEqual([])
   })
 })

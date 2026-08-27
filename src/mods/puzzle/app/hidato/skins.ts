@@ -151,7 +151,53 @@ const sheet: HidatoSkin = {
   finish: { Mark: Sign, arrival: "animate-flower-in", ink: "text-stone-700" },
 }
 
-const SKINS: Record<string, HidatoSkin> = { default: hive, channel, scribe: sheet }
+/**
+ * **A comb of sealed chambers.** The same board read as a tomb: a cell is a chamber cut out of the rock, and
+ * the run is the passage broken through from one to the next (`PUZZLE_FAMILIES.md` §11.1, Tomb / Burial
+ * Logic — the reading this family already had there, drawn at last).
+ *
+ * **The run OPENS a chamber**, which is why this skin asks about `reached` where the hive does not. On a comb
+ * the line is a record of what the player decided; in a tomb it is a way in. A number standing in a chamber
+ * the passage has not got to is a chamber surveyed and still sealed — the honest picture, since a stretch not
+ * joined to the 1 opens nothing.
+ *
+ * **It moves along temperature rather than into a second hue**, which is the one thing that keeps it apart
+ * from the channel. Green says a field was watered; here the ground goes from cold sealed rock to the warm
+ * ochre of a chamber somebody has carried a light into. Two skins saying "the run got here" must not say it
+ * the same way, or the board stops telling you which place it is.
+ */
+const chambers: HidatoSkin = {
+  name: "chambers",
+  // A given is a number the builders cut, so it keeps a pale rim the breaking-through does not touch — the
+  // same trick the channel plays with its amber rim, and for the same reason: once the ground carries the
+  // whole message, the fixed numbers have nothing left to be told apart by.
+  cell: ({ given, filled, reached, lit }) =>
+    lit
+      ? given
+        ? "fill-amber-400 stroke-stone-100"
+        : "fill-amber-400 stroke-amber-100"
+      : reached
+        ? given
+          ? "fill-amber-800 stroke-stone-300"
+          : "fill-amber-900 stroke-amber-600"
+        : given
+          ? "fill-stone-700 stroke-stone-400"
+          : filled
+            ? "fill-stone-800 stroke-stone-600"
+            : "fill-stone-900 stroke-stone-700",
+  ink: ({ given, reached, lit }) =>
+    lit ? "fill-amber-950" : given ? "fill-stone-100" : reached ? "fill-amber-100" : "fill-stone-300",
+  // Lamplight carried along the passage: the one warm stroke on a board of cold rock.
+  run: "stroke-amber-500",
+  litRun: "stroke-amber-200",
+  // A hint speaks outside the board's own palette, and stone and lamplight have taken the neutrals and the
+  // warms between them.
+  hatch: "stroke-sky-300",
+  evidence: "stroke-rose-300",
+  pen: "stroke-sky-200",
+}
+
+const SKINS: Record<string, HidatoSkin> = { default: hive, channel, scribe: sheet, chambers }
 
 /**
  * Which place a room is, out of the two things it is told: the **role** it was allocated for and the
@@ -160,13 +206,14 @@ const SKINS: Record<string, HidatoSkin> = { default: hive, channel, scribe: shee
  * The same resolution star battle and constellation use, for the same reason: core hands over both and
  * decides nothing, because any precedence rule core picked would be wrong for some family.
  *
- * Three roles, three places, and each brings its own reasoning about what the board IS: a hive is kept, a
- * plain is watered, a sheet is written on.
+ * Four roles, four places, and each brings its own reasoning about what the board IS: a hive is kept, a
+ * plain is watered, a sheet is written on, a tomb is opened.
  */
 const ROLE_SKINS: Record<string, string> = {
   water: "channel",
   agriculture: "channel",
   scribe: "scribe",
+  funerary: "chambers",
 }
 
 /**

@@ -34,6 +34,7 @@ const PLACES = [
   { role: "sky", skin: "default" },
   { role: "trade", skin: "causeway" },
   { role: "water", skin: "irrigation" },
+  { role: "funerary", skin: "ceiling" },
 ]
 
 describe("the goal above the rules", () => {
@@ -68,10 +69,11 @@ describe("the goal above the rules", () => {
     // A name is worded per identity like everything else over the board: a haul-road network called a
     // star map is the drift this file exists to catch, one line higher up the screen.
     const faces: Record<string, string[]> = {
-      constellation: ["default", "causeway", "irrigation"],
-      hidato: ["default", "channel", "scribe"],
+      constellation: ["default", "causeway", "irrigation", "ceiling"],
+      hidato: ["default", "channel", "scribe", "chambers"],
       starBattle: ["default", "fields", "twinDefault", "twinFields"],
       sudoku: ["default", "papyrus"],
+      balance: ["default", "weighing"],
     }
     for (const locale of [en, nl])
       for (const [family, skins] of Object.entries(faces)) {

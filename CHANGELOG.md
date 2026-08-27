@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- The six tomb journeys now dress their puzzles as the tomb they are set in.
+
 ### Fixed
 
 - Star puzzle boards are drawn straight: the walls between areas sit on the grid lines, and every dot and

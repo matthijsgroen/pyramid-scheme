@@ -41,7 +41,11 @@ export type BalanceOptions = {
 
 // Weights whose value is not written on them. Any distinguishable set works — the solver never reads
 // a glyph, it only cares that the same one weighs the same everywhere.
-const GLYPH_POOL: Glyph[] = ["🪲", "🏺", "🐍", "🦅", "🐈", "🪶"]
+//
+// Exported because a SKIN may draw these as something else (`app/balanceScale/skins.ts` — a tomb weighs a
+// heart against a feather), and the face has to be a bijection over exactly this set: a spec holding it to
+// a copy of the list would pass on the day the list changed and the face stopped covering it.
+export const GLYPH_POOL: Glyph[] = ["🪲", "🏺", "🐍", "🦅", "🐈", "🪶"]
 
 const MAX_ATTEMPTS = 2500
 const MAX_SCALE_DRAWS = 60

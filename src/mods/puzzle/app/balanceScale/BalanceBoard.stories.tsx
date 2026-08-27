@@ -13,6 +13,7 @@ import {
   tapPiece,
 } from "@/mods/puzzle/game/balanceScale/balanceState"
 import { buildBalanceHint } from "./balanceHint"
+import { skinFor } from "./skins"
 import { BalanceBoard } from "./BalanceBoard"
 
 const meta = {
@@ -35,7 +36,8 @@ const wizard = board("wizard", 3)
 
 const noop = () => {}
 
-const staticArgs = (puzzle: ReturnType<typeof board>) => ({
+const staticArgs = (puzzle: ReturnType<typeof board>, place?: string) => ({
+  symbol: skinFor(place, undefined).symbol,
   scales: puzzle.scales,
   lines: computeBalanceLines(puzzle.scales, {}),
   notes: [],
@@ -55,6 +57,13 @@ export const Starter: Story = { args: staticArgs(starter) }
 
 export const Wizard: Story = { args: staticArgs(wizard) }
 
+/**
+ * The same board drawn for a tomb: the unknowns become the heart, the feather of truth and what stands
+ * around that scene (`skins.ts`). Nothing about the puzzle changes — this is the whole of the face, which
+ * is why it is worth seeing beside the default rather than described.
+ */
+export const Weighing: Story = { args: staticArgs(wizard, "judgement") }
+
 /** The whole board as played: weights, swaps that write notes, and the hint lighting what it names. */
 export const Played: Story = {
   args: staticArgs(wizard),
@@ -68,6 +77,7 @@ export const Played: Story = {
       <div className="flex flex-col items-center gap-3">
         <BalanceBoard
           scales={wizard.scales}
+          symbol={skinFor(undefined, undefined).symbol}
           lines={lines}
           notes={state.notes}
           glyphs={wizard.glyphs}

@@ -12,6 +12,23 @@ import { skinFor } from "./skins"
 describe("which place a room is", () => {
   const boardOf = (role?: string | string[], theme?: string) => skinFor(role, theme).board
 
+  it("draws a painted ceiling for the tomb", () => {
+    expect(skinFor("funerary", undefined).name).toBe("ceiling")
+  })
+
+  it("draws the ceiling as a surface and the sky as depth, or the two are one room", () => {
+    // The nearest pair of faces this family has, so what separates them is material rather than colour: the
+    // sky falls away (a gradient), the ceiling is plaster an arm's length overhead (flat).
+    expect(skinFor(undefined, undefined).board).toContain("gradient")
+    expect(skinFor("funerary", undefined).board).not.toContain("gradient")
+  })
+
+  it("leaves the ceiling alone after dark, because a burial chamber has no hour", () => {
+    // The same reasoning the default sky carries: this ceiling is only ever seen by the lamp somebody
+    // brought in, so the ambience has nothing to change.
+    expect(skinFor("funerary", "night")).toEqual(skinFor("funerary", undefined))
+  })
+
   it("dresses by the role it was allocated for", () => {
     expect(boardOf("sky")).toBe(skinFor(undefined, "default").board)
     expect(boardOf("trade")).toBe(skinFor(undefined, "causeway").board)

@@ -144,6 +144,39 @@ const SKINS: Record<string, Skin> = {
       glyphLit: "text-stone-100",
     },
   },
+  // **A painted ceiling** (PUZZLE_FAMILIES.md §11.1, Tomb / Burial Logic). The same board read as the
+  // starred sky over a burial chamber: the stars are pigment, and the lines are cords of gold leaf tying
+  // them into one figure. Nefertari's is the ceiling this is drawn from, which is also what journeys.md §7
+  // records master_4 asking for — a fresco in queen's blue.
+  //
+  // **The nearest face to the default, and that is the risk.** Both are a sky full of stars, so what has to
+  // separate them is MATERIAL: the default is depth, a gradient falling away into black with stars burning
+  // in it, and this is a surface — flat plaster, a wall an arm's length overhead, with pigment sitting on
+  // it. Drawn as another gradient the two became the same room, so this one is flat.
+  ceiling: {
+    name: "ceiling",
+    // Egyptian blue laid on plaster, and flat on purpose: see above. The frame is the chamber's own edge.
+    board: "bg-[#1b2a6b] ring-1 ring-amber-200/25",
+    // Not stars behind the board — there is no behind. The specks are the plaster's own grain.
+    backdrop: "fill-amber-100/15",
+    // A cord of gold leaf: warmer and more solid than a line of light, because it is a thing laid on a
+    // wall rather than something shining through.
+    line: "stroke-amber-300",
+    pending: "stroke-amber-300/40",
+    // Leaf catches lamplight, it does not glow — so a tight highlight rather than the default's halo.
+    lineGlow: "drop-shadow-[0_1px_1px_rgb(69_26_3_/_0.55)]",
+    // An unpainted star is scored into the plaster; a painted one is gilded.
+    unlit: "border-amber-200/40 bg-[#16225a] text-amber-100",
+    lit: "border-amber-200 bg-radial from-amber-200/90 to-amber-400/60 text-amber-950 shadow-[0_0_12px_3px_rgb(253_230_138_/_0.35)]",
+    over: "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-200 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]",
+    // **Flare, not bloom**, and the existing rule decides it rather than taste: a star swells because a
+    // point of light can, and a thing rooted in the ground only brightens. Pigment on plaster is the second
+    // kind — a painted star that swelled would read as the wall moving.
+    celebrate: "animate-flare",
+    // No `night` overlay, for the same reason the default sky has none: a burial chamber has no hour. This
+    // ceiling is only ever seen by the lamp somebody carried in, so there is nothing for the ambience to
+    // change.
+  },
 }
 
 /**
@@ -166,6 +199,7 @@ const ROLE_SKINS: Record<string, string> = {
   logistics: "causeway",
   water: "irrigation",
   agriculture: "irrigation",
+  funerary: "ceiling",
 }
 
 const AMBIENCE = ["night"]
