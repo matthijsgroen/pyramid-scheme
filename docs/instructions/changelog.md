@@ -120,9 +120,9 @@ exists; they will find out how it works by using it.
 - A light puzzle: bend the sunlight from the disc to the shrine.
 ```
 
-Everything cut there is real and worth writing down — it belongs in the commit message, the PR and the
-family's design doc, which is where someone looking for it will go. The changelog is not the place it
-lives.
+Everything cut there is real and worth writing down — it belongs in the family's design doc, which is
+where someone looking for it will go. The changelog is not the place it lives, and neither is a
+commit-message body; see [`commit-messages.md`](commit-messages.md).
 
 The test: **would the player have called these separate changes?** They met one new puzzle, not eight
 features. Controls, feedback, hints, difficulty range and generation are how a feature is built, not
@@ -141,7 +141,7 @@ a second sentence, it is usually two bullets.
   place them yourself" is three entries — three separate things the player gained. Not to be confused with
   one feature restated from several angles, which is one entry (see above).
 - **State the change, not the reasoning.** Why it was done, how it works, and what it is like under the
-  hood belong in the commit message and the PR — never here.
+  hood belong in the design doc — never here, and not in a commit-message body either.
 - **Only contrast with the old behaviour when the change is otherwise unreadable**, and then in a clause,
   not a sentence: "…instead of dropping you into the first one."
 - **Cut the flourish.** No "so that it reads as", no "which means", no scene-setting.
