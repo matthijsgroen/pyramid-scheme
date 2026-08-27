@@ -660,13 +660,19 @@
         "given": "The figures inked in red are the puzzle's own — they stay put.",
         "enter": "Tap a figure to take up the reed there, then tap an empty space beside it to write on — or drag straight along the line.",
         "back": "Tap a figure you wrote and tap it again to scrape it off, along with any line left cut off from it. Writing a different way out of a figure does the same. Undo takes back your last move."
+      },
+      "chambers": {
+        "given": "The chambers already numbered were cut by the builders — they stay put.",
+        "enter": "Tap a numbered chamber to take up the passage there, then tap a sealed chamber beside it to break through — or drag straight along the chambers the passage runs.",
+        "back": "Tap a chamber you opened and tap it again to seal it up, along with any passage left cut off from it. Breaking through a different way out of a chamber does the same. Undo takes back your last move."
       }
     },
     "undo": "Undo",
     "goal": {
       "default": "Every cell of the comb holds a number, 1 to {{last}}, each one in a cell touching the number before it.",
       "channel": "One channel waters the whole plain: every field takes its turn, 1 to {{last}}, each one dug beside the field before it.",
-      "scribe": "One unbroken line of figures crosses the sheet: every space carries a figure, 1 to {{last}}, each one beside the figure before it."
+      "scribe": "One unbroken line of figures crosses the sheet: every space carries a figure, 1 to {{last}}, each one beside the figure before it.",
+      "chambers": "One passage runs the whole tomb: every chamber is opened in turn, 1 to {{last}}, each one broken through from the chamber before it."
     },
     "hint": {
       "default": {
@@ -704,12 +710,25 @@
         "action": {
           "place": "Write {{value}} in the hatched space."
         }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "One of these numbers cannot be right.",
+          "sandwich": "The {{before}} and the {{after}} touch only one sealed chamber between them.",
+          "neighbourForced": "Only one sealed chamber is left beside the {{from}}.",
+          "onlyCell": "Nowhere else in the tomb can take the {{value}}.",
+          "onlyValue": "No other number can reach this chamber."
+        },
+        "action": {
+          "place": "Open {{value}} in the hatched chamber."
+        }
       }
     },
     "name": {
       "default": "Beehive",
       "channel": "The Channel",
-      "scribe": "Scribe's Sheet"
+      "scribe": "Scribe's Sheet",
+      "chambers": "Sealed Chambers"
     }
   },
   "sudoku": {

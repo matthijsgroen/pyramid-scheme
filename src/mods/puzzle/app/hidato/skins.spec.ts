@@ -10,6 +10,10 @@ describe("which place a hidato room is", () => {
     expect(skinFor("scribe", undefined).name).toBe("scribe")
   })
 
+  it("draws sealed chambers for the tomb", () => {
+    expect(skinFor("funerary", undefined).name).toBe("chambers")
+  })
+
   it("keeps the hive where nothing was said about the place", () => {
     // `puzzle` is the tag every family carries, so it says nothing about which place a room is.
     expect(skinFor("puzzle", undefined).name).toBe("default")
@@ -50,6 +54,23 @@ describe("which place a hidato room is", () => {
     // Ink, not honey and not water.
     expect(sheet.run).toContain("stone")
     expect(sheet.finish?.arrival).toBe("animate-flower-in")
+  })
+
+  it("opens a chamber where the passage has reached it, and leaves the rest sealed", () => {
+    const tomb = skinFor("funerary", undefined)
+    // The whole of this face: the run is a way IN, so a chamber the passage reached is not the chamber it
+    // was. The hive deliberately cannot say this — what the player wrote is all it shows.
+    const look = { given: false, filled: true, lit: false }
+    expect(tomb.cell({ ...look, reached: true })).not.toBe(tomb.cell({ ...look, reached: false }))
+    // Warm where it is open, cold where it is not — and no green, or it would be saying what the channel
+    // says (a field watered) with the same word.
+    expect(tomb.cell({ ...look, reached: true })).toContain("amber")
+    expect(tomb.cell({ ...look, reached: false })).toContain("stone")
+    expect(tomb.cell({ ...look, reached: true })).not.toContain("emerald")
+    // A number the builders cut keeps a rim of its own once the chamber is open, the way a given field
+    // keeps one once the water arrives.
+    const opened = { filled: true, reached: true, lit: false }
+    expect(tomb.cell({ ...opened, given: true })).not.toBe(tomb.cell({ ...opened, given: false }))
   })
 
   it("gives the channel the things that make it one, and the hive none of them", () => {

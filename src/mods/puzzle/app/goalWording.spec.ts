@@ -69,7 +69,7 @@ describe("the goal above the rules", () => {
     // star map is the drift this file exists to catch, one line higher up the screen.
     const faces: Record<string, string[]> = {
       constellation: ["default", "causeway", "irrigation"],
-      hidato: ["default", "channel", "scribe"],
+      hidato: ["default", "channel", "scribe", "chambers"],
       starBattle: ["default", "fields", "twinDefault", "twinFields"],
       sudoku: ["default", "papyrus"],
     }

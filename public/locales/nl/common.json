@@ -653,13 +653,19 @@
         "given": "De tekens die in rood staan horen bij de puzzel — die blijven staan.",
         "enter": "Tik op een teken om daar de rietpen op te pakken en tik dan op een lege plek ernaast om verder te schrijven — of sleep in één keer langs de regel.",
         "back": "Tik op een teken dat je zelf schreef en tik nogmaals om het weg te schrapen, samen met de regel die er los van komt te liggen. Een andere kant op schrijven doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
+      },
+      "chambers": {
+        "given": "De kamers die al een getal hebben zijn door de bouwers uitgehouwen — die blijven staan.",
+        "enter": "Tik op een kamer met een getal om de gang daar op te pakken en tik dan op een gesloten kamer ernaast om door te breken — of sleep in één keer langs de kamers waar de gang langs loopt.",
+        "back": "Tik op een kamer die je opende en tik nogmaals om hem weer dicht te zetten, samen met de gang die er los van komt te liggen. Een andere kant op doorbreken doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
       }
     },
     "undo": "Ongedaan",
     "goal": {
       "default": "Elk vakje van de raat krijgt een getal, 1 tot {{last}}, en elk getal ligt tegen het vorige aan.",
       "channel": "Eén kanaal bewatert de hele vlakte: elke akker komt aan de beurt, 1 tot {{last}}, elk gegraven naast de akker ervoor.",
-      "scribe": "Eén doorlopende regel tekens loopt over het vel: elke plek krijgt een teken, 1 tot {{last}}, telkens naast het teken ervoor."
+      "scribe": "Eén doorlopende regel tekens loopt over het vel: elke plek krijgt een teken, 1 tot {{last}}, telkens naast het teken ervoor.",
+      "chambers": "Eén gang loopt door het hele graf: elke kamer komt aan de beurt, 1 tot {{last}}, telkens doorgebroken vanuit de kamer ervoor."
     },
     "hint": {
       "default": {
@@ -697,12 +703,25 @@
         "action": {
           "place": "Schrijf {{value}} op de gearceerde plek."
         }
+      },
+      "chambers": {
+        "reason": {
+          "mistake": "Een van deze getallen kan niet goed staan.",
+          "sandwich": "De {{before}} en de {{after}} raken samen nog maar één gesloten kamer.",
+          "neighbourForced": "Naast de {{from}} is nog maar één kamer gesloten.",
+          "onlyCell": "Nergens anders in het graf past de {{value}} nog.",
+          "onlyValue": "Geen enkel ander getal kan bij deze kamer komen."
+        },
+        "action": {
+          "place": "Open {{value}} in de gearceerde kamer."
+        }
       }
     },
     "name": {
       "default": "Honingraat",
       "channel": "Het Kanaal",
-      "scribe": "Schrijversvel"
+      "scribe": "Schrijversvel",
+      "chambers": "Gesloten Kamers"
     }
   },
   "sudoku": {

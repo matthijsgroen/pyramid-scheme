@@ -6,14 +6,15 @@ export const HIDATO_META: FamilyMeta = {
   id: "hidato",
   ownerMod: "puzzle",
   // A honeycomb is kept, not grown wild, so the hive sits in the same pools the flood plain does —
-  // and counting a run of numbered cells is the scribe's act (PUZZLE_FAMILIES.md §11.1). A tag is
-  // eligibility and nothing more, so carrying four costs the family nothing.
-  tags: ["puzzle", "agriculture", "water", "scribe"],
+  // and counting a run of numbered cells is the scribe's act (PUZZLE_FAMILIES.md §11.1). The same
+  // section reads the comb a fourth way, as sealed chambers, which is a tomb. A tag is eligibility and
+  // nothing more, so carrying five costs the family nothing.
+  tags: ["puzzle", "agriculture", "water", "scribe", "funerary"],
   minTier: "starter",
-  // A kept hive, a channel across the flood plain and a scribe's sheet — the same board read three ways,
-  // so the lab can play all of them. A site never names a skin, it names a role
-  // (docs/instructions/puzzle-screens.md §2).
-  themes: ["default", "channel", "scribe"],
+  // A kept hive, a channel across the flood plain, a scribe's sheet and a tomb of sealed chambers — the
+  // same board read four ways, so the lab can play all of them. A site never names a skin, it names a
+  // role (docs/instructions/puzzle-screens.md §2).
+  themes: ["default", "channel", "scribe", "chambers"],
   icon: "🍯",
   color: "amber",
   rewardPriority: 60, // fills only once treasure's guaranteed slots are spoken for
