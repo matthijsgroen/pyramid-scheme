@@ -287,7 +287,11 @@ Logic**:
 - **Balance scale** — the catalogue titles it _"§4.2 Balance scale (weighing of the heart)"_, which is what
   the family was before `trade` was attached to it. A heart in one pan against a feather in the other is
   exactly what the mechanic does, and it is the same room `master_2` asks for as "judgement" and `wizard_3`
-  as "scales · feather of truth". No family in the game has a closer fit between its rules and a myth.
+  as "scales · feather of truth". No family in the game has a closer fit between its rules and a myth —
+  and the fit goes all the way down, because **the unknowns are already symbols a face may choose**. The
+  generator's own note says any distinguishable set works, since the solver never reads a glyph; its pool
+  is Egyptian already and the feather is in it. So the funerary face is not a dress over the board, it is
+  the thing the player is solving for: what does the heart weigh.
 - **Sudoku** — §11.1's "Glyph Latin-square" is this family (§4.8, shipped as §4.26), and it already draws
   hieroglyphs rather than figures. Its funerary face is signs cut into a wall instead of inked on papyrus.
 - **Hidato** — §11.1 already reads its comb as "a honeycomb of sealed chambers".

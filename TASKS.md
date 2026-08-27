@@ -194,6 +194,7 @@ myth in the catalogue, and it is the fourth member the pool needs.
 - `src/mods/puzzle/app/balanceScale/skins.ts` (new)
 - `src/mods/puzzle/app/balanceScale/skins.spec.ts` (new)
 - `src/mods/puzzle/app/balanceScale/BalanceBoard.tsx`, and `BalancePuzzle.tsx` to pass role/theme through
+  and to route the hint's symbol (step 4)
 - `src/mods/puzzle/game/balanceScale/meta.ts`
 
 **Do**
@@ -206,17 +207,38 @@ myth in the catalogue, and it is the fourth member the pool needs.
 2. **Lift the current look into the `default` face unchanged.** This half must be a pure refactor: the
    board renders identically before and after, and the existing `BalanceBoard` and celebration specs prove
    it. Do that as its own commit if it helps.
-3. **Then the weighing face.** The one hard constraint, and the board's own comment states it: _"the pans
-   hold numbers the player is reading, and a dramatic tilt costs more legibility than it buys drama."_ So
-   the face dresses the **pans and the ground** — one engraved with a heart, one with a feather, on a
-   judgement-hall ground — and the chips stay legible numbers. **Do not replace the chips with a heart and
-   a feather**: the numbers are the mechanic, and the same rule killed an earlier hint that described a
-   reduction the player could not see.
-4. `ROLE_SKINS` maps **both** `judgement` and `funerary` to this face: the narrow place and the wide one are
+3. **Then the weighing face, and its best half is the symbols.** The unknowns on this board are glyphs
+   whose weight the player solves for, and `generateBalance.ts` says the thing worth knowing about them:
+   _"Weights whose value is not written on them. Any distinguishable set works — the solver never reads a
+   glyph, it only cares that the same one weighs the same everywhere."_ The symbol is already pure
+   presentation, so a face may choose it — and **that is the face**: the unknown the player solves for
+   becomes the heart, weighed against the feather. Nothing else in the catalogue makes the myth the
+   mechanic that literally.
+
+   - Give the `Skin` a `symbol: (glyph: Glyph) => string`, defaulting to a pass-through (`glyph => glyph`)
+     so the current board is unchanged. This is sudoku's `token` field in another family — read it first.
+   - The generator's pool is `["🪲", "🏺", "🐍", "🦅", "🐈", "🪶"]`, already Egyptian and already holding the
+     feather. The funerary face maps those to a judgement set with the heart among them, and the mapping
+     **must be total**: a glyph it has not heard of returns the glyph itself.
+   - **Do NOT edit `GLYPH_POOL` in `src/mods/puzzle/game/balanceScale/generateBalance.ts`.** This family is
+     seedable, so changing what the generator emits changes generated boards for a purely visual reason.
+     The remap belongs in the skin.
+
+4. **The symbol must reach all three places it is shown, or a hint points at something not on the board.**
+   The raw glyph appears on the pan chip, on the palette key that sets its value, and interpolated into the
+   hint sentence — `BalancePuzzle.tsx` renders `t(\`balance.hint.\${hint.key}\`, hint.params)`and`hint.params.glyph` is that symbol. Route all three through the face. Sudoku hit this exact trap, and
+   its spec records the rule: a board drawing its own signs while its sentences typed them is a hint
+   pointing at something not quite there.
+5. Dress the pans and the ground too, keeping the constraint the board's own comment states: _"the pans
+   hold numbers the player is reading, and a dramatic tilt costs more legibility than it buys drama."_
+   Stones stay legible numbers. It is the unknowns that become funerary, not the arithmetic.
+6. `ROLE_SKINS` maps **both** `judgement` and `funerary` to this face: the narrow place and the wide one are
    the same room for this family. `tags` gains `"funerary"` and `"judgement"`. `themes` gains the face name.
-5. Spec the system in `skins.spec.ts`: the default is drawn when nothing was said, both roles draw the
-   weighing face, `night` and `default` read as nothing-said, and an unknown name falls back silently. The
-   existing board specs must pass untouched.
+7. Spec the system in `skins.spec.ts`: the default is drawn when nothing was said, both roles draw the
+   weighing face, `night` and `default` read as nothing-said, and an unknown name falls back silently. Two
+   more matter here — the default face's `symbol` is the identity, and the weighing face maps every member
+   of the generator's pool to a **distinct** symbol, since a face collapsing two unknowns onto one symbol
+   would make the board unsolvable. The existing board and hint specs must pass untouched.
 
 **Watch for:** `judgement` will be a one-family pool. That is intended and safe, because task 5 never
 authors it alone — see there.
