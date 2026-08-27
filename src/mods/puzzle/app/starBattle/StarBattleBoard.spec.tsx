@@ -50,6 +50,29 @@ describe("StarBattleBoard walls", () => {
     expect(wallPath()).not.toContain("M1 0v1")
   })
 
+  it("draws every square the same, so a mark is the same size and place in all of them", () => {
+    // The regression this guards, and the one a player sees first: a mark is laid out inside its square's
+    // content box, so while the squares carried the walls as borders of their own, a square walled on both
+    // sides had 4px less room than an open one and one walled on a single side had its middle shifted off
+    // centre. The dots and stars came out at different sizes and wandered as the eye went down a column.
+    const { container } = render(
+      <StarBattleBoard
+        puzzle={puzzle}
+        state={{ marks: ["star", "dark", "dark", "star"] }}
+        skin={skinFor(undefined, undefined)}
+        onTapCell={() => undefined}
+        onSweepCells={() => undefined}
+      />
+    )
+    const borderClasses = [...container.querySelectorAll("button")].map(button =>
+      [...button.classList]
+        .filter(name => name.startsWith("border"))
+        .sort()
+        .join(" ")
+    )
+    expect(new Set(borderClasses).size).toBe(1)
+  })
+
   it("keeps the stroke one width wherever the board is scaled to", () => {
     const { container } = render(
       <StarBattleBoard
