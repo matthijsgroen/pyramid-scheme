@@ -215,7 +215,8 @@ because the tier puts a coloured key on the open main path, and a broad floor is
 | `master_treasure_tomb_b` Hall of Osiris | 5      | 30    | 5/5    | —     | underworld green · rebirth |
 
 The Book of the Dead is the strongest `scribe` case above starter: a funerary scroll is a written surface
-and both families in the pool can draw one. A curse is the tier's ambience case rather than a role one —
+and both families in the pool can draw one. Its other word is **judgement**, and that is the balance scale
+without a single rule changed — a heart in one pan, a feather in the other (§9). A curse is the tier's ambience case rather than a role one —
 `night` over it would land on its eclipse rooms and leave its constellation rooms exactly as they are
 (§2), which is why the ambience axis needs overlays before it needs more names. Nefertari's tomb is the
 most decorated in Egypt and asks for the one thing no board here does: colour laid on plaster, blues and
@@ -238,8 +239,10 @@ ochres rather than ink on a ground.
 
 Ra's journey is the one narrative in the catalogue that is literally about night, and it wants more than a
 dark board: a boat crossing a river of it, with a serpent in the way. The two 6-pyramid journeys are the
-largest things in the game at 207 rooms each, and both ask for somewhere that is not Egypt at all — the
-void beyond the sky, and a chamber where the mathematics is the cosmos.
+largest things in the game at 207 rooms each, and they part company on what they ask for. Ma'at is
+judgement, and the Chamber names the scales and the feather outright — the balance scale's own mechanic,
+which puts `wizard_3` in the funerary cluster (§9) as the largest single journey any of it would reach.
+Only the Eternal Pyramid asks for somewhere that is not Egypt at all: the void beyond the sky.
 
 ## 9. The gaps, and what filling each one buys
 
@@ -249,14 +252,14 @@ different** — the journey is carryable today and authoring it changes nothing 
 face. Ranked by the rooms it would reach, since one built for a cluster pays for itself across a tier and
 one built for a single pyramid does not.
 
-| Gap                                      | Reaches                                                    | Rooms | What it takes                                                                                                                        |
-| ---------------------------------------- | ---------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| **A funerary role**                      | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1` | 574   | A new tag on three or four families plus a face each. The biggest story cluster in the game, and nothing serves it.                  |
-| **A cosmos role**                        | `wizard_3`, `wizard_4`                                     | 414   | Same shape, on the two largest journeys. Furthest from Egypt, so the most new art.                                                   |
-| **A warm-light ambience**                | `starter_3`, `junior_3`, `expert_1`, `master_4`            | 264   | Overlays per face rather than a new skin per family. Four briefs — lamplight twice, torchlight, moonlight — asking for one thing.    |
-| **A face for tableau**                   | all nine tombs                                             | 218   | No role work at all: tombs have no skin system, so this is a first face rather than a second.                                        |
-| **A `trade` face for balance scale**     | `starter_2`, `expert_4`                                    | 120   | Both journeys are already authorable — a scale reads as a market. One face is what makes authoring it show.                          |
-| **`light` faces for eclipse, lightbeam** | `junior_4`                                                 | 47    | Same shape: both families read as light sources already, neither has a face. Lightbeam has no skin system at all, so it is two jobs. |
+| Gap                                      | Reaches                                                                | Rooms | What it takes                                                                                                                                       |
+| ---------------------------------------- | ---------------------------------------------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **A `funerary` role**                    | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1`, `wizard_3` | 781   | Four built families already fit it — a tag and a face each, no new generator. The biggest cluster in the game and the cheapest to reach. See below. |
+| **A cosmos role**                        | `wizard_4`                                                             | 207   | The one story with no Egyptian hook at all: the void beyond the sky. A new family, or the largest new face in the game.                             |
+| **A warm-light ambience**                | `starter_3`, `junior_3`, `expert_1`, `master_4`                        | 264   | Overlays per face rather than a new skin per family. Four briefs — lamplight twice, torchlight, moonlight — asking for one thing.                   |
+| **A face for tableau**                   | all nine tombs                                                         | 218   | No role work at all: tombs have no skin system, so this is a first face rather than a second.                                                       |
+| **A `trade` face for balance scale**     | `starter_2`, `expert_4`                                                | 120   | Both journeys are already authorable — a scale reads as a market. One face is what makes authoring it show.                                         |
+| **`light` faces for eclipse, lightbeam** | `junior_4`                                                             | 47    | Same shape: both families read as light sources already, neither has a face. Lightbeam has no skin system at all, so it is two jobs.                |
 
 Read together:
 
@@ -265,14 +268,36 @@ Read together:
   `master_2`. Two of those are one authored line each and nothing is stopping them.
 - **The gaps are in the pools and in the roles, never in the names.** A second word for a place that
   already has one buys nothing; a face for a family that has none is what makes authoring the role show.
-- **Only funerary and cosmos are blocked on a role that cannot be carried.** Every other story has a pool
-  that already reads as its place; what those pools lack is a face that differs from the default.
+- **Only `wizard_4` is blocked on a place nothing can carry.** Every other story either has a pool that
+  already reads as its place, or — the funerary cluster — has built families whose mechanics fit and are
+  simply not tagged for it yet.
 - **Half the catalogue asks for something funerary or cosmic**, and those are the two things no role
   serves. That is where new families should be pointed — and a mechanic still has to hold up on its own
   first (`PUZZLE_FAMILIES.md`): a dress is not a reason to build a puzzle, but a puzzle looking for a home
   may find one here.
 - **Sprawl is a tier property, not a journey one** — the only journey authored broad is `expert_4`, and it
   is authored for a mechanic rather than for a look.
+
+### The funerary pool is already in the catalogue
+
+It is the cheapest big thing here because nothing needs inventing — four built families fit the place on
+their own mechanics, and `PUZZLE_FAMILIES.md` §11.1 already names three of them under **Tomb / Burial
+Logic**:
+
+- **Balance scale** — the catalogue titles it _"§4.2 Balance scale (weighing of the heart)"_, which is what
+  the family was before `trade` was attached to it. A heart in one pan against a feather in the other is
+  exactly what the mechanic does, and it is the same room `master_2` asks for as "judgement" and `wizard_3`
+  as "scales · feather of truth". No family in the game has a closer fit between its rules and a myth.
+- **Sudoku** — §11.1's "Glyph Latin-square" is this family (§4.8, shipped as §4.26), and it already draws
+  hieroglyphs rather than figures. Its funerary face is signs cut into a wall instead of inked on papyrus.
+- **Hidato** — §11.1 already reads its comb as "a honeycomb of sealed chambers".
+- **Constellation** — an Egyptian tomb ceiling is a painted starred sky, and Nefertari's is the famous one.
+  That face is also `master_4`'s own brief, which asks for a fresco in queen's blue.
+
+**Four is exactly the floor `rolePools.spec.ts` enforces**, so the role becomes authorable the moment the
+fourth face lands — the same position `water` was in before hidato and twin stars joined it. Which also
+means `wizard_3` belongs to this cluster rather than to cosmos: Ma'at is judgement, and its brief names the
+scales outright. Cosmos is left with `wizard_4` alone.
 
 ## 10. What a clean authoring system needs
 
@@ -384,7 +409,7 @@ What every family declares, read off its existing `ROLE_SKINS` and its skin tabl
 | sudoku                  | `{ scribe: "papyrus" }`                                                                 |
 | eclipse                 | `{ sky: "default", light: "default" }`                                                  |
 | lightbeam               | `{ sky: "default", light: "default" }` — or drop the tags, see below                    |
-| balance scale           | `{ trade: "default" }` — or drop the tag, see below                                     |
+| balance scale           | `{ trade: "default" }` — and a `funerary` face is the stronger claim (§9)               |
 | everything else         | unset — their only tag is `puzzle`                                                      |
 
 Eclipse's `night` pair is deliberately absent: it is an ambience, not a role face, and the two axes do not
@@ -408,8 +433,9 @@ The first half of invariant 1 fails on three existing entries, which is the argu
 The second half is the more valuable one, because it turns a silent assumption into a question someone has
 to answer. Three tags have no entry at all today and each is a real decision: does **lightbeam** read as
 `sky`, or is that tag borrowed from its `light` one? Does **balance scale** read as `trade` — a scale
-weighing goods is a market instrument, so probably yes — or should the tag go? A tag with no face declared
-is a family sitting in a pool it has never been asked to justify.
+weighing goods is a market instrument, so probably yes, though the catalogue titled that family "weighing
+of the heart" and its funerary claim is the stronger one (§9). A tag with no face declared is a family
+sitting in a pool it has never been asked to justify.
 
 ### `"default"` must not win a role list
 
