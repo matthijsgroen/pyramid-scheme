@@ -8,6 +8,7 @@ import {
   type SudokuCellRef,
   type SudokuPuzzleData,
 } from "@/mods/puzzle/game/sudoku/techniques"
+import { GridWalls, WALL_WIDTH } from "../GridWalls"
 import { SudokuScrolls } from "./SudokuScrolls"
 import type { SudokuSkin } from "./skins"
 
@@ -143,9 +144,14 @@ export const SudokuBoard: FC<Props> = ({
   return (
     // `relative`, because the completion run lays whole sheets over the grid rather than moving squares
     // about inside it — see `SudokuScrolls`.
-    <div className={clsx("relative aspect-square w-full max-w-[min(56vh,26rem)] select-none", skin.board)}>
+    <div
+      className={clsx("relative aspect-square w-full max-w-[min(56vh,26rem)] select-none", skin.board)}
+      // The rim is a chamber wall like any other, so it is drawn centred on the board's edge and half of it
+      // falls outside the grid. The room for that half is reserved here rather than left to bleed.
+      style={{ padding: WALL_WIDTH / 2 }}
+    >
       <div
-        className="grid size-full"
+        className="relative grid size-full"
         style={{
           gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`,
           gridTemplateRows: `repeat(${size}, minmax(0, 1fr))`,
@@ -161,11 +167,8 @@ export const SudokuBoard: FC<Props> = ({
                 key={key}
                 onClick={() => onSelect(rowIndex, colIndex)}
                 style={{
-                  // Per side, because one class cannot colour one edge — see `SudokuSkin.wall`.
-                  borderTopColor: chamberEdge(puzzle, rowIndex, colIndex, -1, 0) ? skin.wall : skin.seam,
-                  borderBottomColor: chamberEdge(puzzle, rowIndex, colIndex, 1, 0) ? skin.wall : skin.seam,
-                  borderLeftColor: chamberEdge(puzzle, rowIndex, colIndex, 0, -1) ? skin.wall : skin.seam,
-                  borderRightColor: chamberEdge(puzzle, rowIndex, colIndex, 0, 1) ? skin.wall : skin.seam,
+                  // Every edge alike: the chamber walls are drawn over the top of these, by `GridWalls`.
+                  borderColor: skin.seam,
                   // Layered rather than swapped, top down: the hint's hatching over the twin wash over
                   // the ground's own grain. A hatched square is still a square of the same sheet, and a
                   // twin the hint happens to be about must not stop looking like either.
@@ -177,14 +180,8 @@ export const SudokuBoard: FC<Props> = ({
                 className={clsx(
                   // The square is its own sizing context, so the token and the pencilled notes inside it
                   // scale with the square rather than with the screen.
-                  "@container flex aspect-square items-center justify-center transition-colors",
+                  "@container flex aspect-square items-center justify-center border transition-colors",
                   conflicted ? skin.conflict : cell.given ? skin.given : skin.cell,
-                  // Thick where two chambers meet, hairline inside one. Static classes, so the widths
-                  // survive whatever the grid measures.
-                  chamberEdge(puzzle, rowIndex, colIndex, -1, 0) ? "border-t-3" : "border-t",
-                  chamberEdge(puzzle, rowIndex, colIndex, 1, 0) ? "border-b-3" : "border-b",
-                  chamberEdge(puzzle, rowIndex, colIndex, 0, -1) ? "border-l-3" : "border-l",
-                  chamberEdge(puzzle, rowIndex, colIndex, 0, 1) ? "border-r-3" : "border-r",
                   // Inset, because the squares touch: a ring drawn outside one would sit on top of its
                   // neighbour. The square the player has picked first — it is the one they are acting on —
                   // then what a hint argues FROM. Evidence and conclusion never look the same, which is why
@@ -220,6 +217,11 @@ export const SudokuBoard: FC<Props> = ({
             )
           })
         )}
+        <GridWalls
+          size={size}
+          isWall={(row, col, dRow, dCol) => chamberEdge(puzzle, row, col, dRow, dCol)}
+          colour={skin.wall}
+        />
       </div>
       {skin.scroll && rolled !== undefined && (
         <SudokuScrolls puzzle={puzzle} scroll={skin.scroll} board={skin.board} rolled={rolled} />

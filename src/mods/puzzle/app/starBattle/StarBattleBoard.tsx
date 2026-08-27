@@ -8,6 +8,7 @@ import {
   type StarBattleMarks,
   type StarBattlePuzzle,
 } from "@/mods/puzzle/game/starBattle/starBattle"
+import { GridWalls, WALL_WIDTH } from "../GridWalls"
 import { useDelayedConflicts } from "../useDelayedConflicts"
 import type { StarBattleSkin } from "./skins"
 
@@ -73,59 +74,6 @@ const boundary = (puzzle: StarBattlePuzzle, cell: number, dRow: number, dCol: nu
   const [row, col] = [rowOf(puzzle.size, cell) + dRow, colOf(puzzle.size, cell) + dCol]
   if (row < 0 || row >= puzzle.size || col < 0 || col >= puzzle.size) return true
   return puzzle.regions[row * puzzle.size + col] !== puzzle.regions[cell]
-}
-
-/**
- * How wide a wall is drawn, in CSS pixels.
- *
- * Held against the seam rather than chosen on its own: the two are told apart by weight, so what matters is
- * that this stays several times the 1px the squares draw on the edges they share.
- */
-const WALL_WIDTH = 5
-
-/**
- * The walls, drawn once along the line they mark.
- *
- * A square cannot draw this. A border belongs to one square and is painted inside it, so a wall between two
- * of them came out as two half-walls — twice as thick inside the grid as around its rim, where there is only
- * one square to draw it. Worse, the grid does not land on whole device pixels (an 8×8 board on a phone is
- * 46.75px a square), so the two halves were rounded independently and the wall drifted off the line it was
- * marking, by up to half a pixel in either direction.
- *
- * One stroke on the boundary itself has neither problem: `non-scaling-stroke` keeps it the same width
- * wherever the board is scaled to, and a stroke is centred on its path, so the rim is drawn exactly like
- * every wall inside. The seams stay on the squares — they are symmetric, so they were never crooked.
- */
-const Walls: FC<{ puzzle: StarBattlePuzzle; colour: string }> = ({ puzzle, colour }) => {
-  const { size } = puzzle
-  const segments: string[] = []
-  for (let row = 0; row < size; row++)
-    for (let col = 0; col < size; col++) {
-      const cell = row * size + col
-      // Only the top and left of each square, so a wall between two of them is emitted once. That leaves the
-      // far two sides of the grid, which no square is above or to the right of, added after.
-      if (boundary(puzzle, cell, -1, 0)) segments.push(`M${col} ${row}h1`)
-      if (boundary(puzzle, cell, 0, -1)) segments.push(`M${col} ${row}v1`)
-    }
-  for (let i = 0; i < size; i++) segments.push(`M${i} ${size}h1`, `M${size} ${i}v1`)
-  return (
-    <svg
-      viewBox={`0 0 ${size} ${size}`}
-      preserveAspectRatio="none"
-      className="pointer-events-none absolute inset-0 size-full overflow-visible"
-      aria-hidden
-      focusable="false"
-    >
-      <path
-        d={segments.join("")}
-        stroke={colour}
-        strokeWidth={WALL_WIDTH}
-        vectorEffect="non-scaling-stroke"
-        strokeLinecap="square"
-        fill="none"
-      />
-    </svg>
-  )
 }
 
 export const StarBattleBoard: FC<Props> = ({
@@ -272,7 +220,11 @@ export const StarBattleBoard: FC<Props> = ({
             ) : null}
           </button>
         ))}
-        <Walls puzzle={puzzle} colour={skin.wall} />
+        <GridWalls
+          size={size}
+          isWall={(row, col, dRow, dCol) => boundary(puzzle, row * size + col, dRow, dCol)}
+          colour={skin.wall}
+        />
       </div>
     </div>
   )

@@ -13,8 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Star puzzle boards are drawn straight: the walls between areas sit on the grid lines, and every dot and
-  star is the same size, centred in its square.
+- Star and sudoku boards are drawn straight: the dividing walls sit on the grid lines, and every figure and
+  mark is the same size, centred in its square.
 
 ## 0.40.0 - 2026-08-26
 
