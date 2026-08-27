@@ -16,14 +16,14 @@ export const CONSTELLATION_META: FamilyMeta = {
   // puzzles; what would cost something is AUTHORING that role today, since this is the only family serving
   // it and every room of that pyramid would be the same board in the same dress. So the tags go on now and
   // the authoring waits — see expert.ts, on the Nile Delta.
-  tags: ["puzzle", "sky", "trade", "water", "agriculture"],
+  tags: ["puzzle", "sky", "trade", "water", "agriculture", "funerary"],
   // Configured for every tier (docs/game-design/puzzles/constellation.md §5), so the allocator may draw it
   // anywhere and a node may author it anywhere.
   minTier: "starter",
   // Every skin this family has, listed for the puzzle lab: the lab picks a THEME, so naming a skin here is
   // what makes it playable without a site to author its role. `night` is the ambience, not a skin — it
   // layers over whichever place the room already is (a causeway after dark is still a causeway).
-  themes: ["default", "irrigation", "causeway", "night"],
+  themes: ["default", "irrigation", "causeway", "ceiling", "night"],
   icon: "✨",
   color: "indigo",
   seedable: seedable({

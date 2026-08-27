@@ -460,6 +460,12 @@
         "pair": "Tussen twee bekkens passen maximaal twee kanalen.",
         "cross": "Kanalen kruisen elkaar nooit, en lopen nooit door een bekken heen.",
         "enter": "Sleep van een bekken naar zijn buur om een kanaal te graven, nog eens om het te verbreden, en nog eens om het te dempen."
+      },
+      "ceiling": {
+        "straight": "Snoeren lopen recht, horizontaal of verticaal, van de ene ster naar de volgende.",
+        "pair": "Tussen twee sterren passen maximaal twee snoeren.",
+        "cross": "Snoeren kruisen elkaar nooit, en lopen nooit door een ster heen.",
+        "enter": "Sleep van een ster naar zijn buur om een snoer te leggen, nog eens om het te verdubbelen, en nog eens om het weg te halen."
       }
     },
     "undo": "Ongedaan",
@@ -517,17 +523,37 @@
           "refuse_other": "De gemarkeerde kanalen blijven ongegraven.",
           "refuseDouble": "Eén kanaal daar, en geen tweede."
         }
+      },
+      "ceiling": {
+        "mistake": "Een van deze snoeren kan niet goed zijn.",
+        "capacity": "{{count}} snoeren, en net genoeg uitwegen.",
+        "settled": "Deze {{count}} heeft zijn snoeren.",
+        "soleWayOut": "Nog maar één uitweg over, en nog {{count}} te leggen.",
+        "crossed": "Een snoer daar zou dit snoer kruisen.",
+        "atLeastOne": "{{count}} snoeren, en de andere uitwegen kunnen ze niet samen dragen.",
+        "twinBlock.single": "Die twee verbinden maakt een beschilderde hemel van twee.",
+        "twinBlock.double": "Een tweede snoer daar maakt een beschilderde hemel van twee.",
+        "isolation": "Dat snoer sluit deze {{count}} sterren af van de rest.",
+        "action": {
+          "draw_one": "Leg het gemarkeerde snoer.",
+          "draw_other": "Leg de gemarkeerde snoeren.",
+          "refuse_one": "Het gemarkeerde snoer blijft ongelegd.",
+          "refuse_other": "De gemarkeerde snoeren blijven ongelegd.",
+          "refuseDouble": "Eén snoer daar, en geen tweede."
+        }
       }
     },
     "goal": {
       "default": "Elke ster hangt in één sterrenbeeld, verbonden met zoveel lichtlijnen als zijn getal zegt.",
       "causeway": "Elke plaats ligt in één wegennet, ontsloten door zoveel sleepwegen als zijn getal zegt.",
-      "irrigation": "Elk bekken hoort bij één waterwerk, gevoed door zoveel kanalen als zijn getal zegt."
+      "irrigation": "Elk bekken hoort bij één waterwerk, gevoed door zoveel kanalen als zijn getal zegt.",
+      "ceiling": "Elke ster hoort bij één beschilderde hemel, verbonden door zoveel gouden snoeren als zijn getal zegt."
     },
     "name": {
       "default": "Sterrenkaart",
       "causeway": "Sleepweg",
-      "irrigation": "Waterwerk"
+      "irrigation": "Waterwerk",
+      "ceiling": "Beschilderd Plafond"
     }
   },
   "starBattle": {

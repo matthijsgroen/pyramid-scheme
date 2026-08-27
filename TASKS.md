@@ -16,7 +16,7 @@ Background, only if you want it: `docs/game-design/journeys.md` §2 (role = the 
 | --- | ------------------------------------------------ | ------------- | ----- |
 | 1   | sudoku — `funerary` tag, no new face             | tiny          | DONE  |
 | 2   | hidato — `funerary` face, sealed chambers        | one face      | DONE  |
-| 3   | constellation — `funerary` face, painted ceiling | one face      | todo  |
+| 3   | constellation — `funerary` face, painted ceiling | one face      | DONE  |
 | 4   | balance scale — skin system + the weighing face  | system + face | todo  |
 | 5   | author the six journeys, regenerate the world    | authoring     | todo  |
 

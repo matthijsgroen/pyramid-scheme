@@ -467,6 +467,12 @@
         "pair": "Two basins can share at most two channels.",
         "cross": "Channels never cross, and never run through a basin.",
         "enter": "Drag from a basin toward its neighbour to dig a channel, again to widen it, once more to fill it in."
+      },
+      "ceiling": {
+        "straight": "Cords run straight across or down, from one star to the next.",
+        "pair": "Two stars can share at most two cords.",
+        "cross": "Cords never cross, and never run through a star.",
+        "enter": "Drag from a star toward its neighbour to lay a cord, again to double it, once more to lift it off."
       }
     },
     "undo": "Undo",
@@ -524,17 +530,37 @@
           "refuse_other": "The marked channels stay undug.",
           "refuseDouble": "One channel there, and no second."
         }
+      },
+      "ceiling": {
+        "mistake": "One of these cords cannot be right.",
+        "capacity": "{{count}} cords, and only just enough ways out.",
+        "settled": "This {{count}} has its cords.",
+        "soleWayOut": "Only one way out left, and {{count}} still to lay.",
+        "crossed": "A cord there would cross this one.",
+        "atLeastOne": "{{count}} cords, and the other ways out cannot carry them all.",
+        "twinBlock.single": "Joining those two would make a painted sky of two.",
+        "twinBlock.double": "A second cord there would make a painted sky of two.",
+        "isolation": "That cord would cut these {{count}} stars off from the rest.",
+        "action": {
+          "draw_one": "Lay the marked cord.",
+          "draw_other": "Lay the marked cords.",
+          "refuse_one": "The marked cord stays unlaid.",
+          "refuse_other": "The marked cords stay unlaid.",
+          "refuseDouble": "One cord there, and no second."
+        }
       }
     },
     "goal": {
       "default": "Every star hangs in one constellation, joined by as many lines of light as its number says.",
       "causeway": "Every site stands in one road network, served by as many haul roads as its number says.",
-      "irrigation": "Every basin feeds one waterworks, fed by as many channels as its number says."
+      "irrigation": "Every basin feeds one waterworks, fed by as many channels as its number says.",
+      "ceiling": "Every star belongs to one painted sky, tied by as many cords of gold as its number says."
     },
     "name": {
       "default": "Star Map",
       "causeway": "Causeway",
-      "irrigation": "Waterworks"
+      "irrigation": "Waterworks",
+      "ceiling": "Painted Ceiling"
     }
   },
   "starBattle": {
