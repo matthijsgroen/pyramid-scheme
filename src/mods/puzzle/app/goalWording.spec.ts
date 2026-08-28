@@ -18,6 +18,7 @@ import { skinFor as sudokuSkinFor } from "./sudoku/skins"
 // so it is held to the same wording bar as the rest.
 const FAMILIES = [
   "balance",
+  "canisters",
   "constellation",
   "crocodile",
   "eclipse",

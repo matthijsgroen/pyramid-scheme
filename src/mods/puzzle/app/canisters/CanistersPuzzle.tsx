@@ -1,5 +1,5 @@
 import { useMemo, useState, type FC } from "react"
-import { Trans, useTranslation } from "react-i18next"
+import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
@@ -43,6 +43,8 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
 
   const solved = isCanistersSolved(puzzle, state)
   const left = movesLeft(puzzle, state)
+  /** The amount this leg is asking for; the last one stays up once the board is done. */
+  const wanted = puzzle.targets[Math.min(state.measured, puzzle.targets.length - 1)]
 
   /**
    * The states this line has already stood in, which is what makes a pour not worth making (§4). Kept here
@@ -74,20 +76,23 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
       hint={t(`canisters.hint.${hint.key}`)}
       idleMs={hintIdleDelay(difficulty)}
       title={t(`canisters.name.${skin.name}`)}
-      // The amount asked for is the one number on this screen the player must not misread, so it is set
-      // apart rather than left in the run of the sentence. `Trans` keeps where it falls the translator's
-      // call: Dutch puts it before the verb and English after it.
-      goal={
-        <Trans
-          i18nKey={`canisters.goal.${skin.name}`}
-          values={{ target: puzzle.targets[Math.min(state.measured, puzzle.targets.length - 1)] }}
-          components={{ amount: <strong className="text-amber-200" /> }}
-        />
-      }
+      // **The goal says what the board is for; the amount lives above the board.** Naming the number here
+      // read as a fixed instruction, and on a board that asks for several in turn the sentence quietly
+      // changed under the player. Up there it is a figure that visibly ticks over as each leg is claimed.
+      goal={t(`canisters.goal.${skin.name}`, { count: puzzle.targets.length })}
       rules={<CanistersRules skin={skin.name} legs={puzzle.targets.length} levels={levels} />}
     >
       {({ reportInput, hintVisible }) => (
         <div className="flex flex-col items-center gap-3">
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm text-stone-300">{t("canisters.wanted")}</span>
+            <span className="text-3xl leading-none font-semibold text-amber-200">{wanted}</span>
+            {puzzle.targets.length > 1 && (
+              <span className="text-xs text-stone-400">
+                {t("canisters.legs", { done: state.measured, total: puzzle.targets.length })}
+              </span>
+            )}
+          </div>
           <CanistersBoard
             capacities={puzzle.capacities}
             volumes={state.volumes}
@@ -96,6 +101,11 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
             lit={hintVisible ? hint.move : undefined}
             celebrating={celebration.progress > 0}
             levels={levels}
+            lastPour={
+              state.poured.length > 0
+                ? { ...state.poured[state.poured.length - 1], count: state.poured.length }
+                : undefined
+            }
             skin={skin}
             onHold={canister => {
               reportInput()
@@ -117,11 +127,6 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
             <span className={left <= 0 ? "text-rose-400" : "text-stone-200"}>
               {t("canisters.movesLeft", { count: Math.max(left, 0) })}
             </span>
-            {puzzle.targets.length > 1 && (
-              <span className="text-stone-400">
-                {t("canisters.legs", { done: state.measured, total: puzzle.targets.length })}
-              </span>
-            )}
             <button onClick={() => setState(undoPour)} className="text-stone-300 underline underline-offset-2">
               {t("canisters.undo")}
             </button>

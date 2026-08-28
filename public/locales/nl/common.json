@@ -857,7 +857,8 @@
       "default": "De Kruiken"
     },
     "goal": {
-      "default": "Meet precies <amount>{{target}}</amount> af en zeg welke kruik het heeft."
+      "default_one": "Meet het gevraagde volume af en zeg welke kruik het heeft.",
+      "default_other": "Meet de gevraagde volumes één voor één af en zeg telkens welke kruik het heeft."
     },
     "rules": {
       "default": {
@@ -877,6 +878,7 @@
     "movesLeft_one": "nog {{count}} zet",
     "movesLeft_other": "nog {{count}} zetten",
     "legs": "{{done}} van {{total}} afgemeten",
-    "undo": "Ongedaan"
+    "undo": "Ongedaan",
+    "wanted": "Meet af"
   }
 }

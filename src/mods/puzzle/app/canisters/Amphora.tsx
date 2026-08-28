@@ -32,9 +32,11 @@ type Props = {
   outline: string
   /** Laid over the water where the amount is being withheld. */
   uncertain?: string
+  /** Whether this vessel is mid-pour, so its water can hold itself level against the tip. */
+  tipping?: boolean
 }
 
-export const Amphora: FC<Props> = ({ fill, liquid, outline, uncertain }) => {
+export const Amphora: FC<Props> = ({ fill, liquid, outline, uncertain, tipping }) => {
   // The clip is per-instance: two amphorae on one screen would otherwise share one id and one fill level.
   const id = `amphora-${Math.round(fill * 1000)}-${liquid.length}-${outline.length}`
   return (
@@ -44,19 +46,33 @@ export const Amphora: FC<Props> = ({ fill, liquid, outline, uncertain }) => {
           <path d={BODY} />
         </clipPath>
       </defs>
-      {/* The water, clipped to the belly, standing at its level. */}
+      {/* The water, clipped to the belly.
+
+          **Two groups, and they cannot be one.** A clip travels with the element's own transform, so
+          counter-rotating the same group that carries the clip turns the belly as well and buys nothing.
+          The clip stays out here, in the vessel's space; the water turns inside it, about the pivot the
+          vessel turns about — 50% across and 88% down, in view-box units — so the surface holds level with
+          the world while the pot goes over.
+
+          The rect reaches well past the view box on every side, because a rectangle rotated inside a clip
+          shows its corners otherwise. */}
       <g clipPath={`url(#${id})`}>
-        <rect
-          x="0"
-          width="100"
-          y={150 - fill * 150}
-          height={fill * 150}
-          className={liquid}
-          style={{ transition: "y 300ms, height 300ms" }}
-        />
-        {uncertain !== undefined && fill > 0 && (
-          <rect x="0" width="100" y={150 - fill * 150} height={fill * 150} className={uncertain} />
-        )}
+        <g
+          className={tipping === true ? "animate-pour-level" : undefined}
+          style={{ transformBox: "view-box", transformOrigin: "50px 132px" }}
+        >
+          <rect
+            x="-100"
+            width="300"
+            y={150 - fill * 150}
+            height={fill * 150 + 220}
+            className={liquid}
+            style={{ transition: "y 300ms, height 300ms" }}
+          />
+          {uncertain !== undefined && fill > 0 && (
+            <rect x="-100" width="300" y={150 - fill * 150} height={fill * 150 + 220} className={uncertain} />
+          )}
+        </g>
       </g>
       <path d={BODY} fill="none" strokeWidth="4" className={outline} />
       <path d={HANDLE_LEFT} fill="none" strokeWidth="4" strokeLinecap="round" className={outline} />
