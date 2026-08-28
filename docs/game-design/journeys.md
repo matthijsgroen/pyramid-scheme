@@ -42,16 +42,21 @@ So the question for a journey is **which role its story wants, and whether every
 face for it.** That second half is a property of the pool rather than of the journey, and it is the whole
 map of what is missing:
 
-| Role                    | Families in the pool                                       | Read as the place | Look different from default |
-| ----------------------- | ---------------------------------------------------------- | ----------------- | --------------------------- |
-| `water` / `agriculture` | constellation, hidato, star battle, twin stars             | 4 of 4            | 4 of 4                      |
-| `scribe`                | hidato, sudoku                                             | 2 of 2            | 2 of 2                      |
-| `sky`                   | constellation, eclipse, lightbeam, star battle, twin stars | 5 of 5            | 0 of 5                      |
-| `light`                 | eclipse, lightbeam                                         | 2 of 2            | 0 of 2                      |
-| `funerary`              | balance scale, constellation, hidato, sudoku               | 4 of 4            | 3 of 4                      |
-| `judgement`             | balance scale                                              | 1 of 1            | 1 of 1                      |
-| `trade`                 | balance scale, constellation                               | 2 of 2            | 1 of 2                      |
-| `logistics`             | —                                                          | —                 | —                           |
+| Role                    | Families in the pool                                       | Read as the place | Look different |
+| ----------------------- | ---------------------------------------------------------- | ----------------- | -------------- |
+| `water` / `agriculture` | canisters, constellation, hidato, star battle, twin stars  | 5 of 5            | **5 of 5**     |
+| `funerary`              | balance scale, canisters, constellation, hidato, sudoku    | 5 of 5            | 4 of 5         |
+| `sky`                   | constellation, eclipse, lightbeam, star battle, twin stars | 5 of 5            | 0 of 5         |
+| `scribe`                | canisters, hidato, sudoku                                  | 3 of 3            | **3 of 3**     |
+| `trade`                 | balance scale, canisters, constellation                    | 3 of 3            | 2 of 3         |
+| `light`                 | canisters, eclipse, lightbeam                              | 3 of 3            | **1 of 3**     |
+| `judgement`             | balance scale                                              | 1 of 1            | 1 of 1         |
+| `logistics`             | —                                                          | —                 | —              |
+
+**Canisters (§4.28) is in six of those pools**, which no other family comes near — measuring an exact
+amount out of vessels that do not divide evenly is the river's act, and the granary's, the lamp room's, the
+cellar's, the embalming table's and the scriptorium's alike. It is also the family that gave `light` its
+first face at all, and the only one that tells `water` from `agriculture`.
 
 **The two columns are different questions and they must not be collapsed.** _Read as the place_ is whether
 a journey can be carried at all — a star battle board is stars on a dark ground whether or not anyone
@@ -62,15 +67,20 @@ and that a family named lightbeam can serve `light`.
 
 Four readings of that table before authoring anything:
 
-- **`water` and `scribe` are ready today.** Every family in both pools has a face waiting, so one authored
-  word dresses every room. They are the only two roles in that state.
+- **`water`, `agriculture` and `scribe` are fully dressed.** Every family in those pools has a face of its
+  own, so one authored word changes every room it reaches.
+- **But a pool has to clear four members before a journey may restrict to it** (`rolePools.spec.ts`), and
+  three sit one short: `scribe`, `trade` and `light` are all at three. They can still be PREFERRED — the
+  `["<role>", "puzzle"]` form of §11 skips the floor by design — they just cannot be the whole pool a
+  pyramid draws from.
 - **`sky` is already dressed, which is why it changes nothing.** Five families read as a night sky before
   anyone asks — it is constellation's default face, star battle's and twin stars' too, and eclipse's pair
   hangs in one. So a `sky` room draws what an unauthored room draws: asking for it narrows the pool without
   changing the look. That is a full pool to carry a star journey and an empty one to make it look new, and
   `junior_4` is the proof of both — authored `sky`, and its look comes from `night`.
-- **`light` is the same shape.** Eclipse's sun and moon and lightbeam's beams both read as light sources,
-  so a lighthouse tier is carryable today; neither has a face that would make it look like one.
+- **`light` has a face now, and it is canisters'.** Oil measured out for the lamps is what a light this
+  deep underground runs on. Eclipse and lightbeam still read as light sources without dressing as one, so
+  the pool is 1 of 3 — the first face it has ever had, and the gap §9 ranked is half closed.
 - **`logistics` is an empty pool.** Constellation maps it to its causeway, but no family carries the tag,
   so a site authoring it would find nobody. `trade` is the word that works — and balance scale owes that
   pool an answer, since a scale weighing goods either reads as a market or the tag should go (§12).
@@ -259,13 +269,13 @@ different** — the journey is carryable today and authoring it changes nothing 
 face. Ranked by the rooms it would reach, since one built for a cluster pays for itself across a tier and
 one built for a single pyramid does not.
 
-| Gap                                      | Reaches                                                                | Rooms | What it takes                                                                                                                        |
-| ---------------------------------------- | ---------------------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| **A `funerary` role** — **BUILT**        | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1`, `wizard_3` | 781   | Done (§13): four faces, six journeys authored, no new generator. What is left is the SHARE — see §11's prefer mode.                  |
-| **A cosmos role**                        | `wizard_4`                                                             | 207   | The one story with no Egyptian hook at all: the void beyond the sky. A new family, or the largest new face in the game.              |
-| **A warm-light ambience**                | `starter_3`, `junior_3`, `expert_1`, `master_4`                        | 264   | Overlays per face rather than a new skin per family. Four briefs — lamplight twice, torchlight, moonlight — asking for one thing.    |
-| **A `trade` face for balance scale**     | `starter_2`, `expert_4`                                                | 120   | Both journeys are already authorable — a scale reads as a market. One face is what makes authoring it show.                          |
-| **`light` faces for eclipse, lightbeam** | `junior_4`                                                             | 47    | Same shape: both families read as light sources already, neither has a face. Lightbeam has no skin system at all, so it is two jobs. |
+| Gap                                                  | Reaches                                                                | Rooms | What it takes                                                                                                                                                  |
+| ---------------------------------------------------- | ---------------------------------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **A `funerary` role** — **BUILT**                    | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1`, `wizard_3` | 781   | Done (§13): four faces, six journeys authored, no new generator. What is left is the SHARE — see §11's prefer mode.                                            |
+| **A cosmos role**                                    | `wizard_4`                                                             | 207   | The one story with no Egyptian hook at all: the void beyond the sky. A new family, or the largest new face in the game.                                        |
+| **A warm-light ambience**                            | `starter_3`, `junior_3`, `expert_1`, `master_4`                        | 264   | Overlays per face rather than a new skin per family. Four briefs — lamplight twice, torchlight, moonlight — asking for one thing.                              |
+| **A fourth family for `scribe`, `trade` or `light`** | `starter_2`, `starter_4`, `junior_3`, `expert_4`                       | 187   | All three pools sit at three, one short of the floor a journey must clear to restrict to a role (§2). A tag on an existing family is the whole of it.          |
+| **`light` faces for eclipse and lightbeam**          | `junior_4`                                                             | 47    | Canisters gave the pool its first face; these two still read as light sources without dressing as one. Lightbeam has no skin system at all, so it is two jobs. |
 
 Read together:
 
@@ -275,8 +285,10 @@ Read together:
 - **The gaps are in the pools and in the roles, never in the names.** A second word for a place that
   already has one buys nothing; a face for a family that has none is what makes authoring the role show.
 - **Only `wizard_4` is blocked on a place nothing can carry.** Every other story either has a pool that
-  already reads as its place, or — the funerary cluster — has built families whose mechanics fit and are
-  simply not tagged for it yet.
+  already reads as its place, or — the funerary cluster — has built families whose mechanics fit.
+- **The binding constraint has moved from faces to POOL SIZE.** `scribe`, `trade` and `light` are all
+  dressed as far as they go and all stuck at three members, so no journey may restrict to them. One tag on
+  one existing family unblocks each.
 - **Half the catalogue asks for something funerary or cosmic**, and those are the two things no role
   serves. That is where new families should be pointed — and a mechanic still has to hold up on its own
   first (`PUZZLE_FAMILIES.md`): a dress is not a reason to build a puzzle, but a puzzle looking for a home
@@ -552,3 +564,40 @@ One wrinkle, noted because it looks alarming in a diff and is not: authoring an 
 stamps one onto its chainless sections, the `pathPuzzles: 0` treasure ends. Those fields are inert — the
 assembler builds puzzle rooms in a loop over `pathPuzzles`, so a chainless section makes none and its end
 stays a treasure chest. `junior_4` has carried 13 of them since it was authored.
+
+## 14. What canisters opened, and what is now authorable
+
+`canisters` (§4.28) carries six roles, so four pools changed at once (§2). This is what that makes possible,
+measured the way §11 measures it: a pool clears the four-member floor `rolePools.spec.ts` enforces, and the
+journey's own `sections ÷ pool` sits under the bar — which is now **5.7**, since the widest journey draws 63
+sections from eleven families.
+
+| Journey                          | Sections | Role it wants      | Pool | Turns each | Verdict                        |
+| -------------------------------- | -------- | ------------------ | ---- | ---------- | ------------------------------ |
+| `junior_1` Sacred Ibis Migration | 17       | `water`            | 5    | 3.4        | **restrict** — marsh and flood |
+| `junior_4` Lighthouse            | 28       | `["light", "sky"]` | 6    | 4.7        | restrict — already authored    |
+| `starter_3` Temple of Bastet     | 16       | `light`            | 3    | 5.3        | prefer — pool short of four    |
+| `starter_2` Papyrus Route        | 13       | `scribe` / `trade` | 3    | 4.3        | prefer — pool short of four    |
+| `starter_4` Scribe's Academy     | 19       | `scribe`           | 3    | 6.3        | prefer — pool short, over bar  |
+| `junior_3` Temple of Thoth       | 25       | `scribe`           | 3    | 8.3        | prefer                         |
+| `expert_3` Nile Delta            | 42       | `water`            | 5    | 8.4        | prefer                         |
+| `expert_4` Pyramid of Djoser     | 41       | `trade`            | 3    | 13.7       | prefer                         |
+
+**`junior_1` is the find.** Seventeen sections over five fully-dressed families is 3.4 turns each — the
+tightest restrict in the game after the lighthouse, and every room of it would be a river or a flood plain:
+
+```ts
+journey("junior_1").pyramid("1-3", { encounter: "water" })
+```
+
+**Everything else wants the prefer form**, `["<role>", "puzzle"]`, and for two different reasons that are
+worth keeping apart. `expert_3` and `junior_3` are simply too long for their pools. `starter_2`,
+`starter_3`, `starter_4` and `expert_4` are not: their ratios are fine, and what stops them is the
+four-member floor. **One tag on one existing family turns four of those from prefer into restrict** — which
+is why the §9 table now ranks pool size above faces.
+
+**The funerary six get denser for free.** Canisters is in that pool with a face of its own, so the next
+`yarn generate-world` raises the dressed share of all 781 rooms without a line of authoring changing (§13).
+
+**Nothing here is authored yet**, and none of it takes effect until the world is re-cut — the tags are
+eligibility, and the baked world still predates this family entirely.
