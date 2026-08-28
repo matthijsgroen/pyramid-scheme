@@ -1,7 +1,7 @@
 import { useState, type FC } from "react"
 import clsx from "clsx"
 import type { Capacities, Move, Volumes } from "@/mods/puzzle/game/canisters/canisters"
-import { Amphora } from "./Amphora"
+import { Vessel } from "./Vessel"
 import type { CanistersSkin } from "./skins"
 
 type Props = {
@@ -135,7 +135,9 @@ const Canister: FC<{
         )}
         onAnimationEnd={tilt !== 0 ? onSettled : answered !== undefined ? onAnswered : undefined}
       >
-        <Amphora
+        <Vessel
+          shape={skin.shape}
+          settles={skin.settles}
           fill={volume === 0 ? 0 : Math.max(volume / capacity, MIN_VISIBLE)}
           // An accepted claim turns the water the colour a measured volume wears, for as long as the
           // answer lasts — the same green the completion run uses, because it means the same thing.

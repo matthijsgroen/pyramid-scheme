@@ -155,13 +155,51 @@ limited by what the player had or by what fits.
 foot, which made a canister holding something look exactly like one that had run dry — the one reading the
 level exists to give, lost. Anything above empty is drawn at least a small sliver.
 
-## 8. Theming
+## 8. Theming — six places, because measuring happens in all of them
 
-The role is `water` — the pool this family joins, and the one journeys.md §6 records the Nile Delta
-waiting on. Its default face is the river: reed-green vessels, silt-brown ground.
+Measuring an exact amount out of vessels that do not divide evenly is not one place's act, and this family
+wears more faces than any other in the catalogue. None of them is a repaint: the vessel changes shape, the
+ground changes, and what is in it behaves differently.
 
-Faces it could take later, once a role asks: `funerary`, where the vessels are canopic jars and what is
-measured out is oil for the rites.
+| Role          | Place               | Vessel      | Contents | Settles |
+| ------------- | ------------------- | ----------- | -------- | ------- |
+| `water`       | the river           | amphora     | water    | yes     |
+| `agriculture` | the granary         | korenmaat   | grain    | **no**  |
+| `light`       | the lamp room       | amphora     | oil      | yes     |
+| `trade`       | the merchant cellar | amphora     | wine     | yes     |
+| `funerary`    | the embalming table | canopic jar | natron   | **no**  |
+| `scribe`      | the scriptorium     | inkpot      | ink      | yes     |
+
+**`water` and `agriculture` mean different things here, and nowhere else.** Every other family in that pool
+— constellation, hidato, star battle — answers both with one face. A river is poured and a granary is
+scooped, and this is the family that can say so.
+
+### What does not settle behaves differently, and it is one flag
+
+Grain and natron heap rather than levelling, and they ride round with the vessel when it is tipped instead
+of holding flat. Both fall out of `settles: false` on the face: the surface is drawn as a shallow cone, and
+the counter-rotation that keeps a liquid level during a pour is simply not applied. A material that behaves
+like water while being called grain is the thing this avoids.
+
+### The ink face turns the board over
+
+Ink is black, and black on the dark ground every other place uses is not a colour, it is an absence. The
+scriptorium is the one face drawn on light — papyrus — with its outline and its numbers dark to match. A
+face is allowed to change the ground it stands on; that is what makes it a place rather than a palette.
+
+### A role maps to a set, and the room picks
+
+Some places are wider than others. A market moves oil, wine and grain, so `trade` names all three and a
+trade room is one of them; `funerary` is natron for the drying or oil for the anointing. The narrow roles
+name exactly one.
+
+**Which one a room wears comes from the board's own shape** — its capacities, its starting amounts and the
+volumes it asks for, hashed. That is already seeded per room at world-gen, so the face is steady every time
+the room is opened and differs from the room next door, with nothing stored in the world file to say so. A
+face is pixels (§2), so nothing about the puzzle moves with it.
+
+**Still open: the hour.** `night` is the only ambience that exists and no face here answers to it. Six
+grounds is six overlays, which is why it is written down rather than built.
 
 ## 9. Open questions
 

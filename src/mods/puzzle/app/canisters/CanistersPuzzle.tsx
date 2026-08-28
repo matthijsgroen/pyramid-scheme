@@ -32,7 +32,13 @@ type Props = {
 
 export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
-  const skin = skinFor(role, theme)
+  // The board's own shape, so a role with several places picks the same one for this room every time and a
+  // different one for the room next door (`skins.ts`).
+  const shape = [...puzzle.capacities, ...puzzle.start, ...puzzle.targets].reduce(
+    (hash, value) => (hash * 31 + value) | 0,
+    7
+  )
+  const skin = skinFor(role, theme, shape)
   const [state, setState] = useState(() => createCanistersState(puzzle))
 
   const solved = isCanistersSolved(puzzle, state)

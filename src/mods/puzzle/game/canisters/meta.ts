@@ -5,13 +5,21 @@ import { CANISTERS_CONFIG } from "./canistersConfig"
 export const CANISTERS_META: FamilyMeta = {
   id: "canisters",
   ownerMod: "puzzle",
-  // Measuring a volume out of the river is the flood plain's own arithmetic, and the vessels are what
-  // an irrigated field is worked with (PUZZLE_FAMILIES.md §11.1, Water & Agriculture). A tag is
-  // eligibility and nothing more, so carrying three costs the family nothing.
-  tags: ["puzzle", "water", "agriculture"],
+  // **Measuring is what six different places all do**, and this family has a face for each: the river, a
+  // granary, a lamp room, a merchant's cellar, an embalming table and a scriptorium. A tag is eligibility
+  // and nothing more, so carrying seven costs the family nothing — what it buys is that a journey asking
+  // for any of them gets a board that looks like the place it is set in.
+  //
+  // `water` and `agriculture` are listed separately and MEAN separately here, which is true nowhere else
+  // in the catalogue: every other family in that pool answers both with one face (app/canisters/skins.ts).
+  tags: ["puzzle", "water", "agriculture", "light", "trade", "funerary", "scribe"],
   // The opening decision is modular arithmetic on two capacities; below junior a player is still being
   // taught what a pour does, and the design doc's starter tier hands them a move in hand to do it with.
   minTier: "starter",
+  // Two faces on one board would be an understatement: six places, each with its own vessel, ground and
+  // way of behaving. A site never names a skin, it names a role (docs/instructions/puzzle-screens.md §2);
+  // the lab's picker is what reads this list.
+  themes: ["default", "grain", "oil", "wine", "natron", "ink"],
   icon: "🏺",
   color: "sky",
   rewardPriority: 60, // fills only once treasure's guaranteed slots are spoken for
