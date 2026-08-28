@@ -381,22 +381,32 @@ Two things this shape decides, both worth knowing before adding a cluster:
   revisiting once more families exist, to see if other natural theme clusters
   emerge (e.g. a "sun god" cluster around mirror/lightbeam).
 
-### 4.17 Rush Hour (sliding vehicle blockade) — _(proposed, not yet designed)_
+### 4.17 Rush Hour (the blockade) — **BUILT** (`docs/game-design/puzzles/rush-hour.md`)
 
-- **Skill:** spatial planning, move-order reasoning — same muscle as Sokoban,
-  different constraint shape.
-- **Operates:** vehicles occupy a row or column and slide freely along it until
-  blocked by a wall, the grid edge, or another vehicle — never off-axis, unlike
-  Sokoban's crates. Goal: clear a path so a target vehicle reaches the exit.
-  Not yet designed beyond this — no knobs, scaling, or generation approach
-  locked yet.
+- **Skill:** spatial planning, move-order reasoning — the same muscle as Sokoban,
+  a different constraint shape, and **the only family here that is planning
+  rather than deduction**. Nothing on the board is unknown; the whole question
+  is the order of a dozen obvious moves.
+- **Operates:** a piece occupies whole cells along one lane and slides along it
+  until something stops it — never across, never off. The player's own piece
+  leaves by the east end of its row. No illegal position, no move budget, so
+  there is nothing for a mistake hint to catch and no fail state.
+- **Tiers:** 6×6 at every tier; the tier is the length of the shortest solution,
+  proved by search and never shown to the player (starter 3–5 moves to wizard
+  17–22). Piece count and how many pieces cross the player's lane are the two
+  knobs that produce it.
 - **Note:** distinct from the mirror/lightbeam slide-tile (§4.15), which moves
   between discrete authored stops rather than freely until blocked — this
   family is the free-slide-until-blocked version that was considered and set
-  aside for that tile, now standing on its own as a full family instead.
-- **Theme pairing:** pairs naturally with **Sokoban** under a broader
-  "logistics/caravan route" grouping — both are grid-block movement puzzles
-  about clearing or arranging paths, just with different piece-movement rules.
+  aside for that tile, now standing on its own.
+- **Theming:** one face today, deliberately nowhere — coloured blocks in a stone
+  frame. It carries `puzzle` and no role tag: the fiction it is for is `trade`
+  (sledges in a market street, barges at a quay), and that tag lands with the
+  painted art rather than before it. It is also the one family where painted
+  sprites are a better bargain than paths, since its pieces are 2–3 cells of
+  real canvas — see the family doc §5.
+- **Theme pairing:** still pairs with **Sokoban** under a broader
+  "logistics/caravan route" grouping, if Sokoban is ever built.
 
 ### 4.18 Hidato (the beehive)
 
@@ -774,7 +784,7 @@ Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redes
 | **Sun & Sky**                      | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam + constellation (all three tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)                                                                                                                                                                                                        |
 | **Water & Agriculture**            | flooding, irrigation, the river, growing    | Constellation in its `irrigation` skin (basins joined by channels, one network watering every field), twin stars as farmsteads on a flood plain, hidato (§4.18 — different reasoning again, and the pool's third member; drawn for water it is a channel dug across dry fields, which green as it reaches them), water clock                                                            |
 | **Trade** — a pool below the floor | trade, weighing goods, hauling, bartering   | Balance scale (weighing goods IS the merchant act) + constellation in its `causeway` skin (haul roads). **Two members, so nothing is authored to it** (§11.0) — the Great Pyramid of Giza wants it and `master.ts` holds the one-line change. Sokoban (moving cargo) and target-number (haggling to a price) join by carrying the tag, as would any existing family taking a trade face |
-| **Logistics / Caravan**            | moving things through constrained space     | Overlaps Trade above, and from an author's seat reads as the same pool. Kept separate only until Sokoban and Rush Hour exist to say whether _moving through_ and _hauling to_ want different rooms                                                                                                                                                                                      |
+| **Logistics / Caravan**            | moving things through constrained space     | Overlaps Trade above, and from an author's seat reads as the same pool. Rush Hour (§4.17) is the first member; kept separate from Trade only until Sokoban exists too, to say whether _moving through_ and _hauling to_ want different rooms                                                                                                                                            |
 | **Scribe / Inscription**           | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions), hidato (counting a run of numbered cells — drawn for `scribe` it is a line of figures inked across papyrus, its givens in a scribe's red)                                                                                          |
 | **Tomb / Burial Logic**            | funerary glyphs, wall art, sealed chambers  | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro, hidato (a honeycomb of sealed chambers)                                                                                                                                                                                                                                                                                       |
 | **Night & Stars**                  | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                                                                                                                                                                                                                      |
@@ -840,7 +850,7 @@ so it can be used when authoring density knobs).
 | Constellation          | not yet measured (unbuilt)        | **TBD — estimate Med**, the numbers are local bookkeeping but the connectivity rule couples the whole board                    |
 | Canal                  | not yet measured (unbuilt)        | **TBD — estimate Med**, each line is its own sum, and a wrong stretch is visible as soon as a count goes red                   |
 | Sokoban                | not yet measured (unbuilt)        | **TBD — estimate High**, Sokoban solve time is notoriously unbounded even at small grid sizes                                  |
-| Rush Hour              | not yet measured (unbuilt)        | **TBD — estimate Med**, classic Rush Hour puzzles are usually a few minutes at most                                            |
+| Rush Hour              | built, not yet measured           | **TBD — estimate Med**, the tier IS the move count so the ceiling is authored: 3–5 moves at starter, 17–22 at wizard           |
 
 Once Sokoban and Rush Hour are built, and lightbeam and hidato have been played
 enough to measure, replace the TBD rows with real telemetry (§8) rather than trusting

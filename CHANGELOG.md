@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - A new puzzle: measure out an exact amount by pouring between canisters that do not divide evenly.
+- A new puzzle: shove blocks out of the way along their own lanes until your own block can leave.
 - The six tomb journeys now dress their puzzles as the tomb they are set in, and the ibis migration draws
   only water puzzles.
 

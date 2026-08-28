@@ -669,6 +669,35 @@
       "twinFields": "Dubbele Boerderijen"
     }
   },
+  "rushHour": {
+    "name": {
+      "default": "De Blokkade"
+    },
+    "goal": {
+      "default": "Krijg je eigen blok naar de opening rechts."
+    },
+    "rules": {
+      "default": {
+        "lanes": "Een blok schuift alleen over zijn eigen baan — nooit zijwaarts, nooit van het bord af.",
+        "shove": "Sleep een blok om het te duwen. Het stopt waar iets in de weg staat."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "Zo ver is de weg vrij.",
+        "back": "Vooruit gaat het niet. Trek die van jou eerst terug.",
+        "clear": "Dat blok staat in jouw baan.",
+        "room": "Er kan niets bewegen totdat dat blok wijkt.",
+        "push": {
+          "left": "Duw het naar links, tot aan de ring.",
+          "right": "Duw het naar rechts, tot aan de ring.",
+          "up": "Duw het naar boven, tot aan de ring.",
+          "down": "Duw het naar beneden, tot aan de ring."
+        }
+      }
+    },
+    "undo": "Ongedaan maken"
+  },
   "hidato": {
     "rules": {
       "default": {
