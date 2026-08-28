@@ -206,8 +206,8 @@ export const CanistersBoard: FC<Props> = ({
                   answer.right &&
                   "border-emerald-400 bg-emerald-900/40 text-emerald-200",
                 answer?.canister === canister && !answer.right && "border-rose-400 bg-rose-950/40 text-rose-200",
-                answer?.canister !== canister &&
-                  "border-stone-600 text-stone-300 hover:border-stone-400 hover:bg-stone-700/40 hover:text-stone-100"
+                // The board's own ink, so the claim reads on a light ground as well as on a dark one.
+                answer?.canister !== canister && [skin.label, "border-current/50 opacity-80 hover:opacity-100"]
               )}
               aria-label={`claim the ${capacity} holds it`}
             >
