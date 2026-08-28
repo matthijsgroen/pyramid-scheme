@@ -861,17 +861,18 @@
     },
     "rules": {
       "default": {
-        "moves": "Vul een kruik uit de rivier, giet hem leeg op de grond, of tik eerst op de ene en dan op de andere om over te gieten.",
+        "moves": "Tik op een kruik om hem op te pakken en tik dan op een andere om over te gieten. Het gieten stopt zodra de eerste leeg is of de tweede vol.",
+        "water": "Dit is al het water dat er is — één kruik begint vol, en er kan niets weg en niets bij.",
         "hidden": "Op elke kruik staat hoeveel er vol in gaat. Er staat nooit op hoeveel erin zit — dat reken je zelf uit.",
+        "sensed": "De kruiken laten niet zien hoeveel erin zit, alleen of ze leeg, halfvol of vol zijn. Houd de hoeveelheden zelf bij.",
         "claim": "Heb je de hoeveelheid? Tik dan op “deze”. De verkeerde kruik aanwijzen kost een zet.",
-        "legs": "Daarna de volgende hoeveelheid, gemeten vanuit wat er nog in de kruiken staat.",
-        "sensed": "De kruiken laten helemaal niet zien hoeveel erin zit — alleen of ze leeg, halfvol of vol zijn. Houd de hoeveelheden zelf bij."
+        "legs": "Daarna de volgende hoeveelheid, gemeten vanuit wat er nog in de kruiken staat."
       }
     },
     "hint": {
-      "forced": "Maar één zet houdt hier vast wat je hebt afgemeten: de andere gooien het weg of brengen je terug waar je was.",
-      "choice": "Twee manieren om te beginnen, en maar één past binnen je zetten. Reken uit welke voor je giet.",
-      "overBudget": "Je zetten zijn op. Begin opnieuw en open andersom."
+      "forced": "Er is nog maar één gieting over die je niet al ongedaan hebt gemaakt. De rest zet het water terug waar het vandaan kwam.",
+      "choice": "Er kan hier meer dan één kant op gegoten worden. Reken uit waar elke je brengt voor je kantelt.",
+      "overBudget": "Je zetten zijn op. Begin opnieuw en zoek de kortere weg."
     },
     "movesLeft_one": "nog {{count}} zet",
     "movesLeft_other": "nog {{count}} zetten",

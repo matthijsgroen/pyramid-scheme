@@ -4,8 +4,12 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
+import {
+  applyMove,
+  volumeKey,
+  type CanistersPuzzle as CanistersPuzzleData,
+} from "@/mods/puzzle/game/canisters/canisters"
 import { CANISTERS_LEVELS } from "@/mods/puzzle/game/canisters/canistersConfig"
-import type { CanistersPuzzle as CanistersPuzzleData } from "@/mods/puzzle/game/canisters/canisters"
 import {
   claimCanister,
   createCanistersState,
@@ -13,7 +17,6 @@ import {
   isCanistersSolved,
   movesLeft,
   pourInto,
-  tapCanister,
   undoPour,
 } from "@/mods/puzzle/game/canisters/canistersState"
 import { CanistersBoard } from "./CanistersBoard"
@@ -36,36 +39,30 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
   const { t } = useTranslation("common")
   const skin = skinFor(role, theme)
   const levels = CANISTERS_LEVELS[difficulty ?? "starter"]
-  const [state, setState] = useState(createCanistersState)
+  const [state, setState] = useState(() => createCanistersState(puzzle))
 
   const solved = isCanistersSolved(puzzle, state)
   const left = movesLeft(puzzle, state)
 
   /**
-   * The states this line has already stood in, which is half of what makes a move useless (§4.3). Kept
-   * here rather than in the board state because it is a fact about the hint, not about the puzzle.
+   * The states this line has already stood in, which is what makes a pour not worth making (§4). Kept here
+   * rather than in the board state because it is a fact about the hint, not about the puzzle.
    */
   const seen = useMemo(() => {
     const keys = new Set<string>()
-    const volumes: [number, number] = [0, 0]
-    keys.add("0,0")
+    let volumes = [...puzzle.start]
+    keys.add(volumeKey(volumes))
     for (const move of state.poured) {
-      if (move.kind === "fill") volumes[move.canister] = puzzle.capacities[move.canister]
-      else if (move.kind === "empty") volumes[move.canister] = 0
-      else {
-        const amount = Math.min(volumes[move.from], puzzle.capacities[move.to] - volumes[move.to])
-        volumes[move.from] -= amount
-        volumes[move.to] += amount
-      }
-      keys.add(`${volumes[0]},${volumes[1]}`)
+      volumes = [...applyMove(puzzle.capacities, volumes, move)]
+      keys.add(volumeKey(volumes))
     }
     return keys
-  }, [state.poured, puzzle.capacities])
+  }, [state.poured, puzzle.capacities, puzzle.start])
 
   const hint = useMemo(() => buildCanistersHint(puzzle, state.volumes, seen, left), [puzzle, state.volumes, seen, left])
 
-  // One tick a leg: the volumes the player measured light in the order they were claimed, which is the
-  // board saying back what was done rather than a generic flourish (puzzle-screens.md §3).
+  // One tick a leg: what the player measured lights in the order it was claimed, which is the board saying
+  // back what was done rather than a generic flourish (puzzle-screens.md §3).
   const celebration = useCelebration(solved, puzzle.targets.length)
 
   return (
@@ -73,7 +70,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
       onSolved={onSolved}
       onCancel={onCancel}
       solved={celebration.done}
-      onReset={() => setState(createCanistersState())}
+      onReset={() => setState(createCanistersState(puzzle))}
       hint={t(`canisters.hint.${hint.key}`)}
       idleMs={hintIdleDelay(difficulty)}
       title={t(`canisters.name.${skin.name}`)}
@@ -89,9 +86,9 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
             volumes={state.volumes}
             held={state.held}
             claimed={state.claimed}
+            lit={hintVisible ? hint.move : undefined}
             celebrating={celebration.progress > 0}
             levels={levels}
-            lit={hintVisible ? hint.move : undefined}
             skin={skin}
             onHold={canister => {
               reportInput()
@@ -100,14 +97,6 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
             onPour={to => {
               reportInput()
               setState(pourInto(state, puzzle, to))
-            }}
-            onFill={canister => {
-              reportInput()
-              setState(tapCanister(state, puzzle, canister, "fill"))
-            }}
-            onEmpty={canister => {
-              reportInput()
-              setState(tapCanister(state, puzzle, canister, "empty"))
             }}
             onClaim={canister => {
               reportInput()

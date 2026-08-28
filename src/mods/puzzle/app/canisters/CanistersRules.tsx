@@ -11,6 +11,7 @@ export const CanistersRules: FC<{ skin: string; legs: number; levels: "shown" | 
   return (
     <ul className="list-disc space-y-1 pl-4">
       <li>{t(`canisters.rules.${skin}.moves`)}</li>
+      <li>{t(`canisters.rules.${skin}.water`)}</li>
       <li>{t(`canisters.rules.${skin}.${levels === "sensed" ? "sensed" : "hidden"}`)}</li>
       <li>{t(`canisters.rules.${skin}.claim`)}</li>
       {legs > 1 && <li>{t(`canisters.rules.${skin}.legs`)}</li>}

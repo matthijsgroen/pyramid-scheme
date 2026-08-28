@@ -1,121 +1,118 @@
 import { mulberry32 } from "@/game/random"
 import type { Grade } from "@/game/families/familyMeta"
 import {
-  gcd,
-  isReachable,
-  openingGap,
+  forkCount,
   playLine,
   shortestLine,
+  totalOf,
   type Capacities,
   type CanistersPuzzle,
   type Volumes,
 } from "./canisters"
 
 export type CanistersOptions = {
-  /** How many volumes are asked for in turn. Depth comes from legs, never from a third canister (§5). */
+  /** How many volumes are asked for in turn. */
   legs: number
-  /** The larger canister's ceiling. */
+  /** How many canisters stand on the bench. Three at least — two can only be poured back and forth. */
+  canisters: number
+  /** The full canister's size, which is also all the water there is. */
   maxCapacity: number
-  /**
-   * How much worse the wrong opening has to be, in moves.
-   *
-   * The generator's real gate (§3): a target whose two directions cost about the same is a coin flip, so
-   * the budget punishes nothing and the board teaches nothing. Measured over 68 reachable targets, 76%
-   * clear a gap of 4.
-   */
-  minGap: number
+  /** The shortest a leg's own line may be, and the difficulty dial (§3). */
+  minLine: number
+  /** How many of a leg's pours must fork, so a board is decided rather than walked. */
+  minForks: number
   /** Slack on top of the optimal line, in moves. Starter is forgiving; everything above is exact. */
   slack?: number
-  /**
-   * The shortest a leg's own line may be.
-   *
-   * Without it the generator happily returns a two-move board with a wide gap, which clears every gate
-   * and is not a puzzle: the player pours twice and it is over before the opening cost them anything.
-   */
-  minLine: number
 }
 
-const MAX_ATTEMPTS = 400
-const EMPTY: Volumes = [0, 0]
+const MAX_ATTEMPTS = 600
 
-/** Capacity pairs worth drawing from: coprime-ish, both above 2, and the smaller genuinely smaller. */
-const pairsUpTo = (maxCapacity: number): Capacities[] => {
+/**
+ * Sets of canisters worth pouring between: the big one full, and the rest able to take it between them.
+ *
+ * **The others must hold the big one between them** or the water has nowhere to go and the board is over
+ * in a pour. That single condition is what makes a set playable.
+ */
+const setsFor = (canisters: number, maxCapacity: number): Capacities[] => {
   const out: Capacities[] = []
-  for (let small = 3; small < maxCapacity; small++)
-    for (let large = small + 1; large <= maxCapacity; large++) {
-      // A pair whose gcd is the small canister measures nothing the small one does not already hold:
-      // every reachable volume is a multiple of it, so the pouring is bookkeeping.
-      if (gcd(small, large) === small) continue
-      out.push([small, large])
+  const build = (rest: number, below: number, chosen: number[]) => {
+    if (rest === 0) {
+      const big = chosen[0]
+      const others = chosen.slice(1).reduce((sum, each) => sum + each, 0)
+      if (others >= big) out.push([...chosen])
+      return
     }
+    for (let size = below - 1; size >= 2; size--) build(rest - 1, size, [...chosen, size])
+  }
+  for (let big = 6; big <= maxCapacity; big++) build(canisters - 1, big, [big])
   return out
 }
 
 /**
- * Draw-and-measure (§3). A board is a capacity pair, a run of targets, and a budget; nothing is carved
- * and nothing is hidden, so generation cannot fail on solvability — only on being too easy.
+ * Draw-and-measure (§3). A board is a set of canisters, the big one full, a run of targets and a budget.
+ * Nothing is carved and nothing hidden, so generation can only fail on being too easy.
  */
 export const generateCanisters = (seed: number, options: CanistersOptions): CanistersPuzzle => {
   const random = mulberry32(seed)
-  const { legs, maxCapacity, minGap, minLine, slack = 0 } = options
-  const pairs = pairsUpTo(maxCapacity)
+  const { legs, canisters, maxCapacity, minLine, minForks, slack = 0 } = options
+  const sets = setsFor(canisters, maxCapacity)
 
   let nearest: CanistersPuzzle | undefined
   let nearestScore = -Infinity
+
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const capacities = pairs[Math.floor(random() * pairs.length)]
+    const capacities = sets[Math.floor(random() * sets.length)]
+    const start: Volumes = capacities.map((each, index) => (index === 0 ? each : 0))
+    const total = totalOf(start)
+
     const targets: number[] = []
-    let at: Volumes = EMPTY
+    let at = start
     let budget = 0
-    let worstGap = Infinity
     let shortestLeg = Infinity
+    let forks = Infinity
 
     for (let leg = 0; leg < legs; leg++) {
-      const reachable = Array.from({ length: Math.max(...capacities) }, (_unused, index) => index + 1).filter(
-        volume => isReachable(capacities, volume) && !at.includes(volume)
+      // Only amounts the water could actually stand at: never more than the total, never more than a
+      // canister holds, and not one that is already standing there.
+      const wanted = Array.from({ length: Math.min(total, Math.max(...capacities)) }, (_u, i) => i + 1).filter(
+        volume => !at.includes(volume)
       )
-      if (reachable.length === 0) break
-      const target = reachable[Math.floor(random() * reachable.length)]
+      if (wanted.length === 0) break
+      const target = wanted[Math.floor(random() * wanted.length)]
       const line = shortestLine(capacities, at, target)
       if (line === null || line.length === 0) break
-      worstGap = Math.min(worstGap, openingGap(capacities, at, target))
       shortestLeg = Math.min(shortestLeg, line.length)
+      forks = Math.min(forks, forkCount(capacities, at, line))
       targets.push(target)
       budget += line.length
       at = playLine(capacities, at, line)
     }
 
     if (targets.length < legs) continue
-    const puzzle: CanistersPuzzle = { capacities, targets, budget: budget + slack }
-    if (worstGap >= minGap && shortestLeg >= minLine) return puzzle
-    // Keep the BEST miss rather than the first, so a tier whose gates are hard to hit still comes out
-    // as close to them as the seed allowed instead of returning whatever was drawn first.
-    const score = Math.min(worstGap, shortestLeg)
+    const puzzle: CanistersPuzzle = { capacities, start, targets, budget: budget + slack }
+    if (shortestLeg >= minLine && forks >= minForks) return puzzle
+    const score = Math.min(shortestLeg, forks * 2)
     if (score > nearestScore) {
       nearestScore = score
       nearest = puzzle
     }
   }
-  return nearest ?? { capacities: [3, 5], targets: [4], budget: 6 + slack }
+  return nearest ?? { capacities: [8, 5, 3], start: [8, 0, 0], targets: [4], budget: 7 + slack }
 }
 
-/**
- * The generator's own acceptance gate, read back off a finished board: it has to be solvable in the
- * budget it carries, and every leg has to have demanded the opening decision the family is about.
- */
+/** The generator's own acceptance gate, read back off a finished board. */
 export const gradeCanisters = (puzzle: CanistersPuzzle, options: CanistersOptions): Grade | null => {
-  const { capacities, targets } = puzzle
-  let at: Volumes = EMPTY
+  const { capacities, start, targets } = puzzle
+  let at: Volumes = start
   let steps = 0
-  let worstGap = Infinity
+  let forks = Infinity
   for (const target of targets) {
-    if (!isReachable(capacities, target)) return null
     const line = shortestLine(capacities, at, target)
     if (line === null || line.length === 0) return null
-    worstGap = Math.min(worstGap, openingGap(capacities, at, target))
+    forks = Math.min(forks, forkCount(capacities, at, line))
     steps += line.length
     at = playLine(capacities, at, line)
   }
   if (steps > puzzle.budget) return null
-  return { steps, deepest: worstGap >= options.minGap ? "direction" : "pour" }
+  return { steps, deepest: forks >= options.minForks ? "fork" : "pour" }
 }

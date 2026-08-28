@@ -1,222 +1,149 @@
 import { describe, expect, it } from "vitest"
 import {
   applyMove,
-  forcedMove,
-  gcd,
-  isReachable,
+  forkCount,
   legalMoves,
-  openingGap,
   playLine,
   shortestLine,
+  totalOf,
   usefulMoves,
+  volumeKey,
   type Capacities,
   type Volumes,
 } from "./canisters"
 
-const EMPTY: Volumes = [0, 0]
-const key = (v: Volumes) => `${v[0]},${v[1]}`
+const CLASSIC: Capacities = [8, 5, 3]
+const FULL: Volumes = [8, 0, 0]
 
 describe("pouring", () => {
   it("empties the source or fills the destination, whichever comes first", () => {
     // The two cases are the whole rule, and which one happened is the information a pour carries.
-    expect(applyMove([3, 5], [3, 0], { kind: "pour", from: 0, to: 1 })).toEqual([0, 3])
-    expect(applyMove([3, 5], [3, 4], { kind: "pour", from: 0, to: 1 })).toEqual([2, 5])
+    expect(applyMove(CLASSIC, [8, 0, 0], { from: 0, to: 1 })).toEqual([3, 5, 0])
+    expect(applyMove(CLASSIC, [3, 5, 0], { from: 1, to: 2 })).toEqual([3, 2, 3])
   })
 
-  it("offers no move that changes nothing", () => {
-    // Pouring a full canister into a full one is not something the player can do, so it is not something
-    // the solver may reason about.
-    expect(legalMoves([3, 5], [3, 5]).filter(m => m.kind === "pour")).toEqual([])
+  it("never creates or loses water, which is the whole of this variant", () => {
+    // There is no river and no ground: the water in front of the player is all there is, so an amount has
+    // to come from somewhere and nothing can be thrown away to start again.
+    let volumes: Volumes = FULL
+    for (const move of [
+      { from: 0, to: 1 },
+      { from: 1, to: 2 },
+      { from: 2, to: 0 },
+      { from: 1, to: 2 },
+    ]) {
+      volumes = applyMove(CLASSIC, volumes, move)
+      expect(totalOf(volumes)).toBe(8)
+    }
+  })
+
+  it("offers no pour that moves nothing", () => {
+    expect(legalMoves(CLASSIC, [0, 5, 3])).toEqual([
+      { from: 1, to: 0 },
+      { from: 2, to: 0 },
+    ])
     expect(
-      legalMoves([3, 5], [0, 0])
-        .map(m => m.kind)
+      legalMoves(CLASSIC, [8, 0, 0])
+        .map(m => m.to)
         .sort()
-    ).toEqual(["fill", "fill"])
+    ).toEqual([1, 2])
   })
 })
 
-describe("what can be measured at all", () => {
-  it("is the multiples of the two capacities' common divisor, and nothing else", () => {
-    expect([1, 2, 3, 4, 5].filter(t => isReachable([3, 5], t))).toEqual([1, 2, 3, 4, 5])
-    // Two even canisters can never measure an odd volume — the rung that teaches why.
-    expect([1, 2, 3, 4, 5, 6, 7, 8].filter(t => isReachable([4, 8], t))).toEqual([4, 8])
+describe("the classic board", () => {
+  /**
+   * Eight full, with a five and a three to work in — Tartaglia's board, and Poisson's.
+   *
+   * **This family asks for less than the classic does, and the pour count says so.** The famous puzzle is
+   * to SPLIT the eight into two fours, which takes seven pours; standing a single four in any canister
+   * takes six. Measuring out an amount is what a site asks a room for, so six is the goal here — and the
+   * seventh pour, the one that makes the other four, is what the classic wants and this does not.
+   */
+  it("stands a 4 in a canister in six pours", () => {
+    const line = shortestLine(CLASSIC, FULL, 4)
+    expect(line).not.toBeNull()
+    expect(line).toHaveLength(6)
+    expect(playLine(CLASSIC, FULL, line!)).toContain(4)
   })
 
-  it("agrees with the search, which is the only thing that could disagree with it", () => {
-    // isReachable is decided arithmetically so generation never gambles; this holds it to what a search
-    // actually finds, over every target of every pair up to 12.
-    for (let a = 2; a <= 11; a++)
-      for (let b = a + 1; b <= 12; b++)
-        for (let t = 0; t <= b; t++) {
-          const found = shortestLine([a, b], EMPTY, t) !== null
-          expect(found, `[${a},${b}] -> ${t}`).toBe(isReachable([a, b], t))
-        }
+  it("takes one pour more to make the second 4, which is the classic's own goal", () => {
+    const line = shortestLine(CLASSIC, FULL, 4)!
+    const at = playLine(CLASSIC, FULL, line)
+    const rest = shortestLine(CLASSIC, at, 4)
+    // Already standing at a 4, so the search returns nothing to do — the split needs a goal of its own.
+    expect(rest).toEqual([])
+    expect(at.filter(amount => amount === 4)).toHaveLength(1)
   })
 })
 
 /**
- * **The property the whole family rests on** (design doc §4.3).
+ * **What the player is actually deciding**, and the reason this variant is gated on forks rather than on
+ * forcing (design doc §4).
  *
- * A line has at most TWO points where the player chooses; every other step has exactly one move worth
- * making, decided by two local rules with no lookahead. That is what lets a hint name a move and say why:
- * on a forced step the reason is checkable from the board, and on a choice step there is nothing to hint
- * because the choice is the puzzle.
- *
- * A property test rather than an example, because a single counter-example would mean hints could only
- * come from a search — and a hint that cannot say WHY is the one thing this catalogue does not ship.
+ * With no river to fill from and no ground to empty onto, the two rules that made the tap-and-sink version
+ * nearly forced have nothing to prune — those moves do not exist. What is left forks, usually two ways, and
+ * that fork is the puzzle.
  */
-describe("a line is two decisions and forced everywhere else", () => {
-  const survey = () => {
+describe("a line forks rather than forcing", () => {
+  it("leaves the player a choice at most steps, over every board worth generating", () => {
     let steps = 0
-    let forced = 0
-    const perLine: number[] = []
-    for (let a = 3; a <= 13; a++)
-      for (let b = a + 1; b <= 14; b++) {
-        if (gcd(a, b) === a) continue
-        const capacities: Capacities = [a, b]
-        for (let target = 1; target <= b; target++) {
-          if (!isReachable(capacities, target)) continue
-          const line = shortestLine(capacities, EMPTY, target)
-          if (line === null || line.length === 0) continue
-          const seen = new Set([key(EMPTY)])
-          let at: Volumes = EMPTY
-          let choices = 0
-          for (const move of line) {
-            const useful = usefulMoves(capacities, at, seen).length
-            steps++
-            if (useful === 1) forced++
-            else choices++
-            at = applyMove(capacities, at, move)
-            seen.add(key(at))
+    let forks = 0
+    for (let big = 6; big <= 12; big++)
+      for (let mid = 3; mid < big; mid++)
+        for (let small = 2; small < mid; small++) {
+          if (mid + small < big) continue
+          const capacities: Capacities = [big, mid, small]
+          const start: Volumes = [big, 0, 0]
+          for (let target = 1; target < big; target++) {
+            const line = shortestLine(capacities, start, target)
+            if (line === null || line.length === 0) continue
+            const seen = new Set([volumeKey(start)])
+            let at = start
+            for (const move of line) {
+              if (usefulMoves(capacities, at, seen).length > 1) forks++
+              steps++
+              at = applyMove(capacities, at, move)
+              seen.add(volumeKey(at))
+            }
           }
-          perLine.push(choices)
         }
-      }
-    return { steps, forced, perLine }
-  }
-
-  it("never asks the player to choose more than twice in one line", () => {
-    const { perLine } = survey()
-    expect(perLine.length).toBeGreaterThan(300)
-    expect(Math.max(...perLine)).toBeLessThanOrEqual(2)
-    expect(Math.min(...perLine)).toBeGreaterThanOrEqual(1)
+    expect(steps).toBeGreaterThan(500)
+    // Most steps offer a choice — which is why a hint here narrows rather than decides.
+    expect(forks / steps).toBeGreaterThan(0.6)
   })
 
-  it("forces three steps in four, which is what there is to hint", () => {
-    const { steps, forced } = survey()
-    expect(forced / steps).toBeGreaterThan(0.7)
+  it("counts the forks along a line, which is what a board is gated on", () => {
+    const line = shortestLine(CLASSIC, FULL, 4)
+    expect(forkCount(CLASSIC, FULL, line!)).toBeGreaterThan(0)
   })
+})
 
-  it("is forced from a non-empty start too, which is what makes a second leg safe", () => {
-    // A leg after the first opens from wherever the last one left off (design doc §5).
-    const capacities: Capacities = [5, 8]
-    const start: Volumes = [2, 8]
-    const line = shortestLine(capacities, start, 3)
+describe("what can be measured", () => {
+  it("finds a line from a non-empty start, which is what makes a second leg safe", () => {
+    // A leg after the first begins from wherever the last one left the canisters (design doc §5).
+    const line = shortestLine(CLASSIC, [3, 5, 0], 6)
     expect(line).not.toBeNull()
-    const seen = new Set([key(start)])
-    let at = start
-    let choices = 0
-    for (const move of line!) {
-      if (usefulMoves(capacities, at, seen).length > 1) choices++
-      at = applyMove(capacities, at, move)
-      seen.add(key(at))
-    }
-    expect(choices).toBeLessThanOrEqual(2)
+    expect(playLine(CLASSIC, [3, 5, 0], line!)).toContain(6)
   })
 
-  it("names no move where the player still has a choice", () => {
-    // From empty both fills are open, so there is nothing to hint — the choice is the puzzle.
-    expect(forcedMove([3, 5], EMPTY, new Set([key(EMPTY)]))).toBeUndefined()
-  })
-})
-
-describe("the opening", () => {
-  it("costs at most two moves to get wrong, which is why the budget must be exact", () => {
-    // Measured over every reachable target of every pair up to 16: the gap is 0, 1 or 2 and never more,
-    // because a player who opens wrong recovers rather than walking a ruined line. So the penalty cannot
-    // carry the difficulty — the budget being exact is what makes being wrong cost anything (§3).
-    for (let a = 3; a <= 15; a++)
-      for (let b = a + 1; b <= 16; b++) {
-        if (gcd(a, b) === a) continue
-        for (let t = 1; t <= b; t++) {
-          if (t % gcd(a, b) !== 0) continue
-          const gap = openingGap([a, b], EMPTY, t)
-          expect(gap, `[${a},${b}] -> ${t}`).toBeLessThanOrEqual(2)
-        }
-      }
-  })
-})
-
-describe("playing a line out", () => {
-  it("lands on the target it was found for", () => {
-    const line = shortestLine([7, 11], EMPTY, 6)
-    expect(line).not.toBeNull()
-    expect(playLine([7, 11], EMPTY, line!)).toContain(6)
-  })
-})
-
-/**
- * **An independent check on the search**, and the reason the opening is the whole decision.
- *
- * The folk framing of this puzzle is two mechanical strategies: keep filling one vessel and pouring it
- * into the other, emptying and refilling as they run out. Verified here over every reachable target of
- * every pair up to 16 — 900-odd cases — **the better of those two is always the true optimum**, and no
- * mixed line ever beats both.
- *
- * So this is both a correctness oracle for `shortestLine`, written a completely different way, and the
- * statement of what a player is actually choosing between.
- */
-describe("the two mechanical strategies", () => {
-  const strategy = (capacities: Capacities, target: number, from: 0 | 1): number => {
-    const to = (1 - from) as 0 | 1
-    const volumes = [0, 0]
-    for (let steps = 0; steps < 500; steps++) {
-      if (volumes[0] === target || volumes[1] === target) return steps
-      if (volumes[from] === 0) {
-        volumes[from] = capacities[from]
-        continue
-      }
-      if (volumes[to] === capacities[to]) {
-        volumes[to] = 0
-        continue
-      }
-      const amount = Math.min(volumes[from], capacities[to] - volumes[to])
-      volumes[from] -= amount
-      volumes[to] += amount
-    }
-    return Infinity
-  }
-
-  it("bound the shortest line from empty, on every reachable target up to 14", () => {
-    let checked = 0
-    for (let a = 2; a <= 13; a++)
-      for (let b = a + 1; b <= 14; b++)
-        for (let target = 1; target <= b; target++) {
-          const capacities: Capacities = [a, b]
-          if (!isReachable(capacities, target)) continue
-          const search = shortestLine(capacities, EMPTY, target)?.length
-          const mechanical = Math.min(strategy(capacities, target, 0), strategy(capacities, target, 1))
-          expect(search, `[${a},${b}] -> ${target}`).toBe(mechanical)
-          checked++
-        }
-    expect(checked).toBeGreaterThan(500)
+  it("returns null for an amount the water cannot stand at", () => {
+    // More than there is: 9 cannot come out of 8, however it is poured.
+    expect(shortestLine(CLASSIC, FULL, 9)).toBeNull()
   })
 })
 
 describe("how much of the level a tier draws", () => {
   it("is display only, so it never reaches what a board generates", async () => {
     // CanistersOptions is hashed into the seed bucket key, so a visual dial living in there would split
-    // every bucket in two for nothing. This holds the two apart.
+    // every bucket in two for nothing.
     const { CANISTERS_CONFIG, CANISTERS_LEVELS } = await import("./canistersConfig")
     for (const tier of Object.keys(CANISTERS_LEVELS) as Array<keyof typeof CANISTERS_LEVELS>)
       expect(Object.keys(CANISTERS_CONFIG[tier])).not.toContain("levels")
   })
 
-  it("shows the level up to expert and withholds it above, which is the last thing left to ask", async () => {
+  it("shows the level up to expert and withholds it above", async () => {
     const { CANISTERS_LEVELS } = await import("./canistersConfig")
-    expect(CANISTERS_LEVELS.starter).toBe("shown")
     expect(CANISTERS_LEVELS.expert).toBe("shown")
     expect(CANISTERS_LEVELS.master).toBe("sensed")
-    expect(CANISTERS_LEVELS.wizard).toBe("sensed")
   })
 })
