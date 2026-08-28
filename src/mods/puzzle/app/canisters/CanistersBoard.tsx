@@ -1,4 +1,4 @@
-import { useEffect, useState, type FC } from "react"
+import { useState, type FC } from "react"
 import clsx from "clsx"
 import type { Capacities, Move, Volumes } from "@/mods/puzzle/game/canisters/canisters"
 import { Amphora } from "./Amphora"
@@ -32,22 +32,22 @@ type Props = {
 }
 
 /**
- * Holds a pour's tip for as long as it takes to play, then lets it go.
+ * Which canister is tipping, and which way.
  *
- * A CSS animation only runs when the class arrives, so the class has to be taken off again or the next
- * pour in the same direction would not restart it.
+ * **Set while rendering rather than from an effect**, which is what React asks for when state is derived
+ * from a prop: an effect would run a second render for every pour. It is cleared by the animation saying
+ * it finished rather than by a timer counting the same milliseconds the stylesheet already counts.
+ *
+ * **The pour's number is kept after it settles**, and that is not tidiness: cleared outright, the next
+ * render sees a pour it has no record of and starts the tip again, forever.
  */
-const POUR_MS = 460
-
 const useTipping = (lastPour: { from: number; to: number; count: number } | undefined) => {
-  const [tipping, setTipping] = useState<{ from: number; to: number } | undefined>()
-  useEffect(() => {
-    if (lastPour === undefined) return
-    setTipping({ from: lastPour.from, to: lastPour.to })
-    const timer = setTimeout(() => setTipping(undefined), POUR_MS)
-    return () => clearTimeout(timer)
-  }, [lastPour?.from, lastPour?.to, lastPour?.count])
-  return tipping
+  const [tip, setTip] = useState<{ from: number; to: number; count: number; running: boolean } | undefined>()
+  if (lastPour !== undefined && lastPour.count !== tip?.count) setTip({ ...lastPour, running: true })
+  return {
+    tipping: tip?.running === true ? tip : undefined,
+    settle: () => setTip(current => (current === undefined ? current : { ...current, running: false })),
+  }
 }
 
 /** The largest canister fills the bench; the rest stand in proportion to it. */
@@ -74,9 +74,11 @@ const Canister: FC<{
   levels: "shown" | "sensed"
   /** -1, 0 or 1: which way this canister is tipping, if it is pouring right now. */
   tilt: number
+  /** The tip has played out and the vessel is back on the bench. */
+  onSettled: () => void
   skin: CanistersSkin
   onTap: () => void
-}> = ({ capacity, volume, tallest, held, lit, celebrating, levels, tilt, skin, onTap }) => {
+}> = ({ capacity, volume, tallest, held, lit, celebrating, levels, tilt, onSettled, skin, onTap }) => {
   const rem = HEIGHT.min + (capacity / tallest) * (HEIGHT.max - HEIGHT.min)
   const fill = levels === "shown" ? volume / capacity : volume === 0 ? 0 : volume === capacity ? 1 : 0.45
   return (
@@ -96,6 +98,7 @@ const Canister: FC<{
           ...(tilt !== 0 ? ({ "--tilt": tilt } as Record<string, number>) : {}),
         }}
         className={clsx(lit && skin.lit, "rounded", tilt !== 0 && "animate-pour")}
+        onAnimationEnd={tilt !== 0 ? onSettled : undefined}
       >
         <Amphora
           fill={fill}
@@ -125,7 +128,7 @@ export const CanistersBoard: FC<Props> = ({
   onClaim,
 }) => {
   const tallest = Math.max(...capacities)
-  const tipping = useTipping(lastPour)
+  const { tipping, settle } = useTipping(lastPour)
   return (
     <div className={clsx("flex w-full max-w-[min(52vh,26rem)] flex-col gap-3 rounded-xl p-4 select-none", skin.board)}>
       <div className="flex items-end justify-center gap-3">
@@ -141,6 +144,7 @@ export const CanistersBoard: FC<Props> = ({
               levels={levels}
               // Which way to tip: toward the canister being filled, so a pour to the right rolls right.
               tilt={tipping !== undefined && tipping.from === canister ? Math.sign(tipping.to - canister) : 0}
+              onSettled={settle}
               skin={skin}
               // A held canister pours into the one tapped next; an unheld one is picked up. One gesture,
               // two meanings, and which it is is always visible from the outline.
