@@ -864,7 +864,7 @@
       "default": "The Canisters"
     },
     "goal": {
-      "default": "Measure out exactly {{target}}, and say which canister holds it."
+      "default": "Measure out exactly <amount>{{target}}</amount>, and say which canister holds it."
     },
     "rules": {
       "default": {

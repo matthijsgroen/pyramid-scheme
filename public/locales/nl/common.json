@@ -857,7 +857,7 @@
       "default": "De Kruiken"
     },
     "goal": {
-      "default": "Meet precies {{target}} af en zeg welke kruik het heeft."
+      "default": "Meet precies <amount>{{target}}</amount> af en zeg welke kruik het heeft."
     },
     "rules": {
       "default": {

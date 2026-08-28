@@ -1,7 +1,7 @@
 /**
  * What each of this mechanic's places looks like, and how a room works out which place it is.
  *
- * The family emits logical state only — how full each vessel is, which one is held, which move the hint
+ * The family emits logical state only — how full each canister is, which one is held, which pour the hint
  * names — and a skin decides the pixels (`docs/instructions/puzzle-screens.md` §2).
  */
 export type CanistersSkin = {
@@ -10,19 +10,26 @@ export type CanistersSkin = {
    * the skin: the title over the board and the goal above the rules.
    */
   name: string
-  /** The ground the vessels stand on. */
+  /** The ground the canisters stand on. */
   board: string
-  /** A vessel's wall, and the wall of the one the player has picked up. */
-  vessel: string
+  /** The vessel's own outline, and the outline of the one the player has picked up. */
+  outline: string
   held: string
-  /** What is in it, and what is in it once it is the volume that was asked for. */
+  /** What is in it, and what is in it during the completion run. */
   liquid: string
   measured: string
-  /** Laid over a part-full vessel whose amount is withheld, so it reads as "some, and not saying". */
+  /**
+   * Laid over the water where the amount is withheld, so it reads as "some, and not saying" rather than as
+   * a level that happens to sit halfway.
+   */
   uncertain: string
-  /** The source the vessels are filled from, and the ground they are emptied onto. */
-  source: string
-  drain: string
+  /**
+   * The number written under each canister.
+   *
+   * **Its own colour, because it is the one thing on this board that must never be hard to read.** Drawn
+   * inside the vessel it disappeared against an empty one; it belongs under the shape, in ink of its own.
+   */
+  label: string
   /** The hint's own mark, which is never one of the board's own colours. */
   lit: string
 }
@@ -31,14 +38,12 @@ export type CanistersSkin = {
 const river: CanistersSkin = {
   name: "default",
   board: "bg-gradient-to-b from-stone-800 to-stone-900 ring-1 ring-emerald-900/40",
-  vessel: "border-emerald-800/70 bg-stone-950/60",
-  held: "border-amber-300 ring-2 ring-amber-300",
-  liquid: "bg-gradient-to-t from-sky-800 to-sky-600",
-  // The volume that was asked for, standing in the vessel: the one thing on this board worth a glow.
-  measured: "bg-gradient-to-t from-emerald-700 to-emerald-400 shadow-[0_0_16px_2px_rgb(52_211_153_/_0.5)]",
-  uncertain: "[background-image:repeating-linear-gradient(45deg,transparent_0_4px,rgb(255_255_255_/_0.18)_4px_8px)]",
-  source: "text-sky-300",
-  drain: "text-stone-400",
+  outline: "stroke-amber-200/70",
+  held: "stroke-amber-300",
+  liquid: "fill-sky-600",
+  measured: "fill-emerald-400",
+  uncertain: "[fill:repeating-linear-gradient(45deg,transparent_0_4px,rgb(255_255_255_/_0.18)_4px_8px)] opacity-60",
+  label: "text-amber-100",
   lit: "ring-2 ring-rose-300",
 }
 

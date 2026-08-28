@@ -1,5 +1,5 @@
 import { useMemo, useState, type FC } from "react"
-import { useTranslation } from "react-i18next"
+import { Trans, useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
@@ -74,9 +74,16 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
       hint={t(`canisters.hint.${hint.key}`)}
       idleMs={hintIdleDelay(difficulty)}
       title={t(`canisters.name.${skin.name}`)}
-      goal={t(`canisters.goal.${skin.name}`, {
-        target: puzzle.targets[Math.min(state.measured, puzzle.targets.length - 1)],
-      })}
+      // The amount asked for is the one number on this screen the player must not misread, so it is set
+      // apart rather than left in the run of the sentence. `Trans` keeps where it falls the translator's
+      // call: Dutch puts it before the verb and English after it.
+      goal={
+        <Trans
+          i18nKey={`canisters.goal.${skin.name}`}
+          values={{ target: puzzle.targets[Math.min(state.measured, puzzle.targets.length - 1)] }}
+          components={{ amount: <strong className="text-amber-200" /> }}
+        />
+      }
       rules={<CanistersRules skin={skin.name} legs={puzzle.targets.length} levels={levels} />}
     >
       {({ reportInput, hintVisible }) => (
@@ -92,28 +99,30 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
             skin={skin}
             onHold={canister => {
               reportInput()
-              setState(holdCanister(state, canister))
+              setState(current => holdCanister(current, canister))
             }}
             onPour={to => {
               reportInput()
-              setState(pourInto(state, puzzle, to))
+              setState(current => pourInto(current, puzzle, to))
             }}
             onClaim={canister => {
               reportInput()
-              setState(claimCanister(state, puzzle, canister))
+              setState(current => claimCanister(current, puzzle, canister))
             }}
           />
-          {/* The budget IS the puzzle (§2), so it is on screen rather than in a menu. */}
-          <div className="flex items-center gap-4 text-sm">
-            <span className={left <= 0 ? "text-rose-400" : undefined}>
+          {/* The budget IS the puzzle (§2), so it is on screen rather than in a menu. Every part of this row
+              carries its own colour: the shell's ground is dark, and text with no colour of its own comes
+              out black on it. */}
+          <div className="flex items-center gap-4 text-sm text-stone-300">
+            <span className={left <= 0 ? "text-rose-400" : "text-stone-200"}>
               {t("canisters.movesLeft", { count: Math.max(left, 0) })}
             </span>
             {puzzle.targets.length > 1 && (
-              <span className="opacity-70">
+              <span className="text-stone-400">
                 {t("canisters.legs", { done: state.measured, total: puzzle.targets.length })}
               </span>
             )}
-            <button onClick={() => setState(undoPour(state))} className="underline underline-offset-2">
+            <button onClick={() => setState(undoPour)} className="text-stone-300 underline underline-offset-2">
               {t("canisters.undo")}
             </button>
           </div>
