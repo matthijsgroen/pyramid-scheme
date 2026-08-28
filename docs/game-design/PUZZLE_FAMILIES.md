@@ -515,6 +515,14 @@ Design doc: [puzzles/crocodile.md](puzzles/crocodile.md)
 
 ---
 
+### 4.28 Canisters (measuring by pouring)
+
+The classic water-jug problem, and the water theme's **curriculum** answer rather than its pool answer (§11.1 flagged it as one of two): two canisters of known size, the river to fill from, and an exact volume to measure out. The only family here whose arithmetic is CONSTRUCTIVE — every other numeric family asks what a fixed value is, this one asks the player to make a quantity that is not in front of them out of two that are.
+
+Cut to fit the bar rather than shipped as the classic: **an exact move budget**, because without one any sequence of pours eventually works and nothing can be got wrong. Opening the wrong way costs only two moves — measured over every reachable target of every pair up to 16, and it is never more, because a player who opens wrong recovers rather than walking a ruined line. So the budget is what turns that small penalty into a failed board, and the difficulty is the LENGTH of the line: how much arithmetic it takes to see which opening is shorter. A line holds at most two choice points and 77% of its steps are forced by two local rules, which is what lets a hint name a move and say why.
+
+Design doc: [puzzles/canisters.md](puzzles/canisters.md)
+
 ## 5. The shared grid engine
 
 Four families are all **"grid + tap-to-set-cell-state"**: Sudoku, nonogram,
@@ -797,8 +805,8 @@ to the curriculum, since the reasoning in an irrigation room is the reasoning in
 room. So the gap is closed as a "what can this journey serve today" question and still open
 as a curriculum one, and the two directions once flagged for it are still the answers to
 that: a water-pouring/vessel-transfer puzzle (the classic "water jug problem" — measure out
-a target volume), or a Nile-flood timing puzzle riffing on water clock's duration mechanic
-with a different UI. Neither is designed.
+a target volume), now designed as §4.28, or a Nile-flood timing puzzle riffing on water
+clock's duration mechanic with a different UI.
 
 **The general lesson, which applies to every thin theme here:** a theme short of members can
 be dressed from families that already fit it long before a new family is designed for it,

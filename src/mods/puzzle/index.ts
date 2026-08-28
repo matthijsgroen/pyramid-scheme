@@ -8,6 +8,7 @@ import { CONSTELLATION_META } from "./game/constellation/meta"
 import { STAR_BATTLE_META } from "./game/starBattle/meta"
 import { TWIN_STARS_META } from "./game/starBattle/twinStars"
 import { HIDATO_META } from "./game/hidato/meta"
+import { CANISTERS_META } from "./game/canisters/meta"
 import { SUDOKU_META } from "./game/sudoku/meta"
 
 // The puzzle mod descriptor. Owns the general math-puzzle families (sumplete, balance-scale, futoshiki,
@@ -36,6 +37,7 @@ export const puzzleMod: ModDescriptor = {
     STAR_BATTLE_META,
     TWIN_STARS_META,
     HIDATO_META,
+    CANISTERS_META,
     SUDOKU_META,
   ],
 }

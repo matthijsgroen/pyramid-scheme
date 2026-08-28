@@ -178,6 +178,73 @@ body {
     }
   }
 
+  /* A canister tipping into the one beside it: lifted off the bench, rolled over far enough to pour, held
+     there while the water goes across, and set back down. `--tilt` is which way and how far (negative
+     rolls left), so one keyframe serves a pour in either direction.
+
+     `rotate` and `translate` rather than one `transform`, the same reason `bob` does it: they compose
+     with whatever else the element is carrying instead of overwriting it. The element sets its own
+     `transform-origin` near the foot — spun about the middle a vessel reads as a wheel rather than
+     something being tipped. */
+  --animate-pour: pour 460ms ease-in-out;
+  @keyframes pour {
+    0% {
+      translate: 0 0;
+      rotate: 0deg;
+    }
+    30% {
+      translate: 0 -9%;
+      rotate: calc(var(--tilt, 1) * 20deg);
+    }
+    62% {
+      translate: 0 -9%;
+      rotate: calc(var(--tilt, 1) * 20deg);
+    }
+    100% {
+      translate: 0 0;
+      rotate: 0deg;
+    }
+  }
+
+  /* The water inside a canister being tipped. Exactly `pour` negated, about the same pivot, so what the
+     vessel does to the water the water undoes to itself and the surface stays level with the world.
+     Without it the water rolls with the vessel and reads as jelly. */
+  --animate-pour-level: pour-level 460ms ease-in-out;
+  @keyframes pour-level {
+    0% {
+      rotate: 0deg;
+    }
+    30% {
+      rotate: calc(var(--tilt, 1) * -20deg);
+    }
+    62% {
+      rotate: calc(var(--tilt, 1) * -20deg);
+    }
+    100% {
+      rotate: 0deg;
+    }
+  }
+
+  /* A claim the board refuses: the canister shakes its head. Short and small — the move is already spent
+     and the counter already says so, and this only has to say WHICH canister was wrong and that the answer
+     was no. Anything longer reads as a penalty rather than as an answer. */
+  --animate-refuse: refuse 320ms ease-in-out;
+  @keyframes refuse {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    20% {
+      translate: -4px 0;
+    }
+    45% {
+      translate: 4px 0;
+    }
+    70% {
+      translate: -2px 0;
+    }
+  }
+
   /* A blossom arriving on a plant that has its water. Opacity alone: the flower appears, it does not
      inflate. */
   --animate-flower-in: flower-in 320ms ease-out;
@@ -376,5 +443,20 @@ body {
 @custom-variant mdh {
   @media (height >= 48rem /* 768px */) {
     @slot;
+  }
+}
+
+/* Motion the player did not ask for. `prefers-reduced-motion` is honoured in JS where a run has to be
+   skipped as well as stilled (`useCelebration`); these only need to stop moving.
+
+   **Cut to an instant rather than removed.** `animation: none` never fires `animationend`, and the board
+   listens for it to know a tip or an answer has played out — so switching them off outright would leave a
+   canister tipped over on its side for the rest of the game. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pour,
+  .animate-pour-level,
+  .animate-refuse,
+  .animate-flare {
+    animation-duration: 1ms;
   }
 }

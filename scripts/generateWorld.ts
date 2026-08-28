@@ -88,12 +88,17 @@ assignFragmentPieceIndices(configs)
 // Chests are authored, so the generator does not quietly work around one that holds nothing — it
 // stops, and leaves the call to the author: add loot, or take the chest out. Assembles each floor at
 // the seed a player actually gets, because a spec cannot tell an empty chest from a floor-key host.
+// A floor that will not carve at its runtime seed renders "Site layout unavailable." for every
+// player, permanently — so the sweep that already visits each one at that exact seed reports it here
+// rather than reading a failure as a floor with no chests on it.
+const unassembled: string[] = []
 const emptyChests = findEmptyChests(configs, (journeyId, floor, levelNr, floorIndex) => {
   const seed = floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
   const result = assembleFloor(journeyId, floor, seed, resolveEncounterMeta, {
     resolveKeyRequirements,
     floorRef: { journeyId, floorIndex },
   })
+  if (!result.success) unassembled.push(`${journeyId} level ${levelNr} floor ${floorIndex}`)
   return result.success ? result.grid : null
 })
 
@@ -104,6 +109,13 @@ console.log(`  Hieroglyph fragments: ${cov.assigned}/${cov.target} placed (${cov
 // Reported after the stats, so a run that stops here still shows what it built. Nothing is written:
 // an empty chest is a question for the author, and shipping a world that asks a player to open one
 // for nothing is not the answer.
+if (unassembled.length > 0) {
+  console.error(`✗ ${unassembled.length} floor(s) cannot be carved at the seed the runtime hands them:`)
+  for (const floor of unassembled.slice(0, 20)) console.error(`    ${floor}`)
+  if (unassembled.length > 20) console.error(`    … and ${unassembled.length - 20} more`)
+  process.exit(1)
+}
+
 if (emptyChests.length > 0) {
   console.error(`✗ ${emptyChests.length} chest(s) hold nothing — give them loot or take them out:`)
   for (const c of emptyChests.slice(0, 20))

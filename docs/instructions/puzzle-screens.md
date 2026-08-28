@@ -386,6 +386,13 @@ buckets — which ordinary authoring does constantly — does not immediately pu
 `src/mods/puzzleSeeds.spec.ts` fails the build when a bucket is missing, orphaned, thinner than its
 target, or no longer grades.
 
+**A generator's own spec draws at its shipped seed, one attempt, one board per tier.** That is the board
+a room is dealt, so it is the one worth asserting about — and it is the cheap one, because a listed seed
+was admitted for building clean on the first try. A sweep over arbitrary seeds costs the full attempt
+loop per board to prove nothing about what ships; `generateStarBattle.spec.ts` was 110s of the suite
+before it drew this way and is under three. Ask `grade` where the claim is "this board earns its tier":
+it is the same gate the offline pass used, so it answers exactly rather than tolerating a nearest miss.
+
 ### Building a new generator: keep the gate separable from the construction
 
 The list removes a family's **retries**. It does not remove its **gates** — and how much a family gains

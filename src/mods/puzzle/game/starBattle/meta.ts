@@ -10,6 +10,14 @@ export const STAR_BATTLE_META: FamilyMeta = {
   // itself, and this one is about where things sit.
   tags: ["puzzle", "sky", "water", "agriculture"],
   // Configured for every tier (docs/game-design/puzzles/star-battle.md §5).
+  // Stars on a dark ground IS the sky face, so `sky` declares the default rather than nothing — the claim
+  // that this family can carry a night journey has to be in the data. `light` used to be here and is gone:
+  // this family does not carry that tag.
+  faces: {
+    sky: ["default"],
+    water: ["fields"],
+    agriculture: ["fields"],
+  },
   minTier: "starter",
   // A sky and a farm, the same two twin stars lists, so the lab can show both. A site never names a skin, it
   // names a role; `theme: "night"` is an ambience the default skin already is.

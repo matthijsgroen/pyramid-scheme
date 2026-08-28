@@ -1,3 +1,5 @@
+import { SUDOKU_META } from "@/mods/puzzle/game/sudoku/meta"
+import { faceFor, withAmbience } from "../faceFor"
 import type { FC } from "react"
 import { Figure, Sign } from "./glyphs"
 import { SIGN_CHARACTERS } from "./signs"
@@ -239,35 +241,10 @@ const register: SudokuSkin = {
 const SKINS: Record<string, SudokuSkin> = { default: carved, papyrus: register }
 
 /**
- * Which place a room is, out of the two things it is told: the **role** it was allocated for and the
- * **ambience** its site authored (`puzzle-screens.md` §2).
+ * Which place this room is, resolved the same way every family resolves it (`app/faceFor.ts`).
  *
- * The same resolution star battle, constellation and hidato use, for the same reason: core hands over
- * both and decides nothing, because any precedence rule core picked would be wrong for some family.
+ * The map itself lives on this family's `FamilyMeta`, where world-gen can read it too
+ * (`docs/instructions/puzzle-screens.md` §2).
  */
-const ROLE_SKINS: Record<string, string> = {
-  scribe: "papyrus",
-  // A tomb wall is what the DEFAULT face already draws — signs cut into a dark chamber wall — so this
-  // entry claims the place rather than pointing at a second one. Worth stating outright: a role absent
-  // from this table and a role drawing `default` look identical on screen and mean different things,
-  // and only one of them is a family saying it belongs in that pool.
-  funerary: "default",
-}
-
-/**
- * Names that mean "nothing was said" rather than naming a skin. `default` is in the skin table AND is
- * what a picker shows when no theme is chosen, so it has to be read as silence — otherwise it wins
- * the override below and quietly cancels the role.
- */
-const UNSPOKEN = ["default", "night"]
-
-export const skinFor = (role: string | string[] | undefined, theme: string | undefined): SudokuSkin => {
-  // A theme naming one of this family's own skins is an explicit override — the lab, and any site that
-  // wants a particular dress.
-  const named = theme && !UNSPOKEN.includes(theme) ? SKINS[theme] : undefined
-  const roles = role === undefined ? [] : Array.isArray(role) ? role : [role]
-  // A list of roles is a union the allocator drew from, so the first one this family has an identity
-  // for is the one this room is.
-  const byRole = roles.map(each => ROLE_SKINS[each]).find(skin => skin && SKINS[skin])
-  return named ?? (byRole ? SKINS[byRole] : SKINS.default)
-}
+export const skinFor = (role: string | string[] | undefined, theme: string | undefined, board = 0): SudokuSkin =>
+  withAmbience(SKINS[faceFor(SUDOKU_META.faces, role, theme, Object.keys(SKINS), board)] ?? SKINS.default, theme)

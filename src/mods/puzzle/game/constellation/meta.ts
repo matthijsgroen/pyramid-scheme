@@ -19,6 +19,16 @@ export const CONSTELLATION_META: FamilyMeta = {
   tags: ["puzzle", "sky", "trade", "water", "agriculture", "funerary"],
   // Configured for every tier (docs/game-design/puzzles/constellation.md §5), so the allocator may draw it
   // anywhere and a node may author it anywhere.
+  // A star map for the sky, a haul road for trade, a waterworks for water, a painted ceiling for a tomb.
+  // `light` and `logistics` used to be in here and are gone: this family carries neither tag, so both were
+  // faces nothing could ever reach.
+  faces: {
+    sky: ["default"],
+    trade: ["causeway"],
+    water: ["irrigation"],
+    agriculture: ["irrigation"],
+    funerary: ["ceiling"],
+  },
   minTier: "starter",
   // Every skin this family has, listed for the puzzle lab: the lab picks a THEME, so naming a skin here is
   // what makes it playable without a site to author its role. `night` is the ambience, not a skin — it

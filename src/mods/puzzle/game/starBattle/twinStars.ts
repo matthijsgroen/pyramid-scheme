@@ -32,6 +32,12 @@ export const TWIN_STARS_META: FamilyMeta = {
   // a row and two to a column that never touch does not fit). The debut is a junior one anyway, because the
   // tier is set by what a board ASKS rather than by how wide it is: the junior draw hands over a third of
   // its regions and never needs a region reading (§11.2).
+  // The same board and the same faces as star battle, which it shares a screen with.
+  faces: {
+    sky: ["default"],
+    water: ["fields"],
+    agriculture: ["fields"],
+  },
   minTier: "junior",
   icon: "✨",
   color: "violet",

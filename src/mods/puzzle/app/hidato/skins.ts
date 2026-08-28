@@ -1,3 +1,5 @@
+import { HIDATO_META } from "@/mods/puzzle/game/hidato/meta"
+import { faceFor, withAmbience } from "../faceFor"
 import type { FC } from "react"
 import { Sign, Sprout } from "./glyphs"
 
@@ -200,36 +202,10 @@ const chambers: HidatoSkin = {
 const SKINS: Record<string, HidatoSkin> = { default: hive, channel, scribe: sheet, chambers }
 
 /**
- * Which place a room is, out of the two things it is told: the **role** it was allocated for and the
- * **ambience** its site authored (`puzzle-screens.md` §2).
+ * Which place this room is, resolved the same way every family resolves it (`app/faceFor.ts`).
  *
- * The same resolution star battle and constellation use, for the same reason: core hands over both and
- * decides nothing, because any precedence rule core picked would be wrong for some family.
- *
- * Four roles, four places, and each brings its own reasoning about what the board IS: a hive is kept, a
- * plain is watered, a sheet is written on, a tomb is opened.
+ * The map itself lives on this family's `FamilyMeta`, where world-gen can read it too
+ * (`docs/instructions/puzzle-screens.md` §2).
  */
-const ROLE_SKINS: Record<string, string> = {
-  water: "channel",
-  agriculture: "channel",
-  scribe: "scribe",
-  funerary: "chambers",
-}
-
-/**
- * Names that mean "nothing was said" rather than naming a skin. `default` is in the skin table AND is what a
- * picker shows when no theme is chosen, so it has to be read as silence — otherwise it wins the override
- * below and quietly cancels the role.
- */
-const UNSPOKEN = ["default", "night"]
-
-export const skinFor = (role: string | string[] | undefined, theme: string | undefined): HidatoSkin => {
-  // A theme naming one of this family's own skins is an explicit override — the lab, and any site that
-  // wants a particular dress.
-  const named = theme && !UNSPOKEN.includes(theme) ? SKINS[theme] : undefined
-  const roles = role === undefined ? [] : Array.isArray(role) ? role : [role]
-  // A list of roles is a union the allocator drew from, so the first one this family has an identity for is
-  // the one this room is.
-  const byRole = roles.map(each => ROLE_SKINS[each]).find(skin => skin && SKINS[skin])
-  return named ?? (byRole ? SKINS[byRole] : SKINS.default)
-}
+export const skinFor = (role: string | string[] | undefined, theme: string | undefined, board = 0): HidatoSkin =>
+  withAmbience(SKINS[faceFor(HIDATO_META.faces, role, theme, Object.keys(SKINS), board)] ?? SKINS.default, theme)

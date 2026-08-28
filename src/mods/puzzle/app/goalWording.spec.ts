@@ -18,6 +18,7 @@ import { skinFor as sudokuSkinFor } from "./sudoku/skins"
 // so it is held to the same wording bar as the rest.
 const FAMILIES = [
   "balance",
+  "canisters",
   "constellation",
   "crocodile",
   "eclipse",
@@ -73,6 +74,7 @@ describe("the goal above the rules", () => {
       hidato: ["default", "channel", "scribe", "chambers"],
       starBattle: ["default", "fields", "twinDefault", "twinFields"],
       sudoku: ["default", "papyrus"],
+      canisters: ["default", "grain", "oil", "wine", "natron", "ink"],
       balance: ["default", "weighing"],
     }
     for (const locale of [en, nl])

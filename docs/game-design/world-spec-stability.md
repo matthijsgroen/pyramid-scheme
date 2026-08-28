@@ -76,6 +76,17 @@ Add loot, or take the chest out; the stats above the failure still print, so a s
 
 Today the count is zero, and it stays zero even with `EMPTY_FRACTION` dialled up to 0.6 — every treasure room in the world ends up holding either a reward or a key. The warning is there for when that stops being true.
 
+### A floor that will not carve stops the build
+
+The same sweep assembles every floor at the exact seed the runtime hands it, so it is also where a floor that cannot be carved at all is caught:
+
+```
+✗ 2 floor(s) cannot be carved at the seed the runtime hands them:
+    wizard_3 level 1 floor 2
+```
+
+Such a floor renders "Site layout unavailable." for every player and never recovers, so nothing is written. Re-author it, or change a setting from the structural list above — a different `packing` or `corridorStraightness` re-carves it. `worldFloorAssembly.spec.ts` holds the same line against the artifact already in the repo.
+
 ---
 
 `packing` and `corridorStraightness` are the two worth naming twice. They re-shape a floor end to end, and until both were added to the section hashes they did it **silently** — 206 of 206 floors re-carved with not one hash moving. Both hashes now carry them.

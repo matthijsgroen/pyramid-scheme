@@ -9,6 +9,12 @@ export const ECLIPSE_META: FamilyMeta = {
   // star-map journey draws from. Authoring asks for a tag and the allocator draws from whatever carries
   // it — no journey ever names a family.
   tags: ["puzzle", "light", "sky"],
+  // Sun and moon read as both places without dressing as either, so both answer with the default. Its
+  // `night` pair is an AMBIENCE and deliberately not in here: the two axes do not share a field.
+  faces: {
+    sky: ["default"],
+    light: ["default"],
+  },
   minTier: "starter",
   // The skins this family has (docs/instructions/puzzle-screens.md §2): the default sun-and-moon pair, and
   // star-and-dark-sky for a site authored `theme: "night"`. Listed so the puzzle lab can offer both.

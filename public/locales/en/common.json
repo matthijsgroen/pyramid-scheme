@@ -858,5 +858,75 @@
       "biggest": "This crocodile wants the biggest answer. That is {{value}}.",
       "smallest": "This crocodile wants the smallest answer. That is {{value}}."
     }
+  },
+  "canisters": {
+    "name": {
+      "default": "The Canisters",
+      "grain": "The Grain Measures",
+      "oil": "Oil for the Lamps",
+      "wine": "The Merchant's Cellar",
+      "natron": "The Canopic Jars",
+      "ink": "The Scriptorium"
+    },
+    "goal": {
+      "default_one": "Measure out the volume asked for, and say which canister holds it.",
+      "default_other": "Measure out each volume asked for in turn, saying which canister holds it before the next.",
+      "grain_one": "Measure out the amount of grain asked for, and say which measure holds it.",
+      "grain_other": "Measure out each amount of grain in turn, saying which measure holds it before the next.",
+      "oil_one": "Measure out the oil asked for, and say which jar holds it.",
+      "oil_other": "Measure out each measure of oil in turn, saying which jar holds it before the next.",
+      "wine_one": "Measure out the wine asked for, and say which amphora holds it.",
+      "wine_other": "Measure out each measure of wine in turn, saying which amphora holds it before the next.",
+      "natron_one": "Measure out the natron asked for, and say which jar holds it.",
+      "natron_other": "Measure out each measure of natron in turn, saying which jar holds it before the next.",
+      "ink_one": "Measure out the ink asked for, and say which pot holds it.",
+      "ink_other": "Measure out each measure of ink in turn, saying which pot holds it before the next."
+    },
+    "rules": {
+      "claim": "When you have the amount, tap “this one”. Naming the wrong vessel costs a move.",
+      "legs": "Then the next amount, measured from whatever the vessels are left holding.",
+      "default": {
+        "moves": "Tap a canister to pick it up, then tap another to pour into it. A pour stops when the first runs dry or the second is full.",
+        "contents": "This is all the water there is — one canister starts full, and none can be thrown away or fetched.",
+        "hidden": "Each canister says how much it holds when full. It never says how much is in it — that part is yours to work out."
+      },
+      "grain": {
+        "moves": "Tap a measure to lift it, then tap another to tip the grain in. Tipping stops when the first is empty or the second is level with its rim.",
+        "contents": "This is all the grain there is — one measure starts full, and none can be swept away or fetched from the granary.",
+        "hidden": "Each measure says how much it holds when full. It never says how much is in it — that part is yours to work out."
+      },
+      "oil": {
+        "moves": "Tap a jar to lift it, then tap another to pour into it. A pour stops when the first runs dry or the second is full.",
+        "contents": "This is all the oil there is — one jar starts full, and none can be poured away or drawn.",
+        "hidden": "Each jar says how much it holds when full. It never says how much is in it — that part is yours to work out."
+      },
+      "wine": {
+        "moves": "Tap an amphora to lift it, then tap another to decant into it. Decanting stops when the first runs dry or the second is full.",
+        "contents": "This is all the wine there is — one amphora starts full, and none can be spilled or fetched from the cellar.",
+        "hidden": "Each amphora says how much it holds when full. It never says how much is in it — that part is yours to work out."
+      },
+      "natron": {
+        "moves": "Tap a jar to lift it, then tap another to tip the natron in. Tipping stops when the first is empty or the second is filled to its lid.",
+        "contents": "This is all the natron there is — one jar starts full, and none can be swept away or fetched.",
+        "hidden": "Each jar says how much it holds when full. It never says how much is in it — that part is yours to work out."
+      },
+      "ink": {
+        "moves": "Tap a pot to lift it, then tap another to pour into it. A pour stops when the first runs dry or the second is full.",
+        "contents": "This is all the ink there is — one pot starts full, and none can be tipped out or ground fresh.",
+        "hidden": "Each pot says how much it holds when full. It never says how much is in it — that part is yours to work out."
+      }
+    },
+    "hint": {
+      "fills": "Pour the {{from}} into the {{to}} — it takes all the {{to}} can hold, and what stays behind in the {{from}} is what you want to be working with.",
+      "empties": "Pour the {{from}} into the {{to}} — the {{from}} runs dry, and an empty canister is what you need next.",
+      "last": "One more: pour the {{from}} into the {{to}}, and {{target}} will be standing on the bench. Then work out which canister has it.",
+      "stuck": "From here {{target}} can no longer be measured in the moves you have left. Take a pour back, or start the board again.",
+      "overBudget": "There are no moves left. Reset and find the shorter way."
+    },
+    "movesLeft_one": "{{count}} move left",
+    "movesLeft_other": "{{count}} moves left",
+    "legs": "measured {{done}} of {{total}}",
+    "undo": "Undo",
+    "wanted": "Measure out"
   }
 }

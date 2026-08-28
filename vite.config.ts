@@ -28,6 +28,18 @@ export default defineConfig({
     }),
     htmlPlugin(),
     tailwindcss(),
+    // **A locale edit is invisible until the page is reloaded**, which costs more than it sounds: i18next
+    // fetches the files once at startup, and `public/` is outside the module graph, so HMR has nothing to
+    // swap. The screen keeps showing yesterday's sentence — or a raw key for a phrase that was added
+    // minutes ago — and it reads exactly like a bug in the code.
+    {
+      name: "reload-on-locale-change",
+      handleHotUpdate({ file, server }) {
+        if (!file.includes("/public/locales/")) return
+        server.ws.send({ type: "full-reload" })
+        return []
+      },
+    },
     // Storybook reuses this config, and the app's service worker has no business in the component
     // explorer — it also chokes on Storybook's own 3.2 MB manager bundle. Storybook sets STORYBOOK=true.
     !process.env.STORYBOOK &&

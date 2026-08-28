@@ -1,3 +1,5 @@
+import { BALANCE_META } from "@/mods/puzzle/game/balanceScale/meta"
+import { faceFor, withAmbience } from "../faceFor"
 import type { Glyph } from "@/mods/puzzle/game/balanceScale/techniques"
 
 /**
@@ -71,36 +73,10 @@ const weighing: BalanceSkin = {
 const SKINS: Record<string, BalanceSkin> = { default: scale, weighing }
 
 /**
- * Which place a room is, out of the two things it is told: the **role** it was allocated for and the
- * **ambience** its site authored (`puzzle-screens.md` §2).
+ * Which place this room is, resolved the same way every family resolves it (`app/faceFor.ts`).
  *
- * The same resolution constellation, hidato, star battle and sudoku use, for the same reason: core hands
- * over both and decides nothing, because any precedence rule core picked would be wrong for some family.
- *
- * **Both funerary roles land on one face.** `judgement` is the narrow place inside the wide `funerary` one
- * (`docs/game-design/journeys.md` §9), and for this family they are the same room — the weighing IS what it
- * does in a tomb. A journey authoring `["judgement", "funerary"]` therefore gets the same board here and a
- * different one from every other family in that pool, which is the point of authoring the pair.
+ * The map itself lives on this family's `FamilyMeta`, where world-gen can read it too
+ * (`docs/instructions/puzzle-screens.md` §2).
  */
-const ROLE_SKINS: Record<string, string> = {
-  funerary: "weighing",
-  judgement: "weighing",
-}
-
-/**
- * Names that mean "nothing was said" rather than naming a face. `default` is in the skin table AND is what a
- * picker shows when no theme is chosen, so it has to be read as silence — otherwise it wins the override
- * below and quietly cancels the role.
- */
-const UNSPOKEN = ["default", "night"]
-
-export const skinFor = (role: string | string[] | undefined, theme: string | undefined): BalanceSkin => {
-  // A theme naming one of this family's own faces is an explicit override — the lab, and any site that
-  // wants a particular dress.
-  const named = theme && !UNSPOKEN.includes(theme) ? SKINS[theme] : undefined
-  const roles = role === undefined ? [] : Array.isArray(role) ? role : [role]
-  // A list of roles is a union the allocator drew from, so the first one this family has a face for is the
-  // one this room is.
-  const byRole = roles.map(each => ROLE_SKINS[each]).find(face => face && SKINS[face])
-  return named ?? (byRole ? SKINS[byRole] : SKINS.default)
-}
+export const skinFor = (role: string | string[] | undefined, theme: string | undefined, board = 0): BalanceSkin =>
+  withAmbience(SKINS[faceFor(BALANCE_META.faces, role, theme, Object.keys(SKINS), board)] ?? SKINS.default, theme)

@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- The six tomb journeys now dress their puzzles as the tomb they are set in.
+- A new puzzle: measure out an exact amount by pouring between canisters that do not divide evenly.
+- The six tomb journeys now dress their puzzles as the tomb they are set in, and the ibis migration draws
+  only water puzzles.
 
 ### Fixed
 
