@@ -14,7 +14,7 @@ export const CanistersRules: FC<{ skin: string; legs: number }> = ({ skin, legs 
     <ul className="list-disc space-y-1 pl-4">
       <li>{t(`canisters.rules.${skin}.moves`)}</li>
       <li>{t(`canisters.rules.${skin}.contents`)}</li>
-      <li>{t(`canisters.rules.${skin}.hidden`)}</li>
+      <li>{t(`canisters.rules.${skin}.levels`)}</li>
       <li>{t("canisters.rules.claim")}</li>
       {legs > 1 && <li>{t("canisters.rules.legs")}</li>}
     </ul>

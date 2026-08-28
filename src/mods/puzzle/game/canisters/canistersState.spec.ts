@@ -67,9 +67,9 @@ describe("pouring a board", () => {
 
 describe("claiming a volume", () => {
   /**
-   * The amount is never a number on this board (design doc §7), so the game must not confirm it either: a
-   * canister that lit up the moment it held the right amount would let a player pour at random and watch
-   * for it. The player works it out and says so.
+   * The board says what each vessel holds, so what stops a player pouring at random and watching for the
+   * number is the budget rather than the reading (§2): the line is the optimal one exactly, and a claim
+   * costs a move like any other. Solving is still an act — the player says which vessel it is.
    */
   it("is not solved by the right amount appearing — it has to be claimed", () => {
     let state = split(board)

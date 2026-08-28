@@ -9,9 +9,9 @@ after the first is forced, so the puzzle is a deduction rather than a search.
 - Two canisters, each with its capacity written on it. Both start empty.
 - Four moves: **fill** a canister from the river, **empty** one onto the ground, or **pour** one into the
   other until the source is empty or the destination is full.
-- **The vessel's size is written on it. What is in it is never a number** — the player carries the amount
-  themselves, which is the arithmetic this family is for. How much of the level is _drawn_ is a tier's
-  choice (§5): shown to scale up to expert, and above that only empty, part-full or full.
+- **Each vessel says what is in it against what it takes** — `3/8` under the shape, at every tier, with the
+  level drawn to scale above it. The arithmetic this family is for is choosing the pours, not remembering
+  the totals; see §7 for why the amount stopped being hidden.
 - Reaching the volume is not enough: the player **claims** a vessel, saying it holds what was asked. A
   wrong claim costs a move like any other, so guessing is not free.
 - **A move budget**, and it is the whole puzzle — see §2.
@@ -83,8 +83,9 @@ hint names the move, never the answer. Three things it may say, and one it may n
 3. **The last pour** says the volume will be standing afterwards — and stops there. **Which canister holds
    it is not part of the hint**, because that is the claim, and the claim is the puzzle's last question.
 
-**What a hint never contains is an amount.** No board writes how much is in a canister, so a hint that did
-would hand over the tracking that IS the puzzle. Only the canisters' own sizes and the volume asked for
+**What a hint never contains is the vessel to claim.** The board writes how much is in each canister, so a
+hint naming an amount gives away nothing; naming where the volume ends up would give away the leg. Only
+the canisters’ own sizes and the volume asked for
 ever appear in a sentence, and a spec holds it to that.
 
 ### Where the move comes from, and the cost of it
@@ -139,17 +140,23 @@ from vessels.
 
 ## 7. Drawing
 
-The water level is the whole readout, so a canister is drawn as a vessel with its level filled and its
-capacity written on it. The number matters as much as the level — a player comparing 5 against 8 is doing
-the puzzle, and comparing two heights is not the same act.
+A canister is drawn as a vessel with its level filled, and under it what it holds against what it takes —
+`3/8`. The numbers matter as much as the level: a player comparing 5 against 8 is doing the puzzle, and
+comparing two heights is not the same act.
+
+**The amount is written because bookkeeping is not the puzzle.** It was hidden at first, on the argument
+that tracking the running totals was the difficulty; playtesting said otherwise. Holding four or five
+amounts in your head across a fifteen-pour line does not make the choice of pour harder, it makes losing
+the board cheaper — and the board is already unforgiving, since the move budget is the optimal line exactly
+(§2). What is still the player's is the whole of the reasoning: which pour to make, and which vessel to
+claim.
 
 **A pour animates**, because which canister ran out is the information: the source emptying before the
 destination fills is what tells the player the pour was limited by what they had, not by what fits.
 
-**The level is drawn to scale, and that is not a shortcut past the arithmetic.** No board says how many
-measures a height is worth, so reading a canister still means knowing what went into it. What the level
-does give is the one thing a pour has to leave behind: which canister ran out, and so whether the pour was
-limited by what the player had or by what fits.
+**The level is drawn to scale**, and it carries the one thing a pour has to leave behind at a glance:
+which canister ran out, and so whether the pour was limited by what the player had or by what fits. The
+figure under the vessel says the same thing exactly; the level says it without being read.
 
 **With one floor under it.** A single measure in a 14 is a twentieth of the vessel and vanishes into the
 foot, which made a canister holding something look exactly like one that had run dry — the one reading the

@@ -888,32 +888,32 @@
       "default": {
         "moves": "Tap a canister to pick it up, then tap another to pour into it. A pour stops when the first runs dry or the second is full.",
         "contents": "This is all the water there is — one canister starts full, and none can be thrown away or fetched.",
-        "hidden": "Each canister says how much it holds when full. It never says how much is in it — that part is yours to work out."
+        "levels": "Each canister says how much is in it, against how much it holds when full."
       },
       "grain": {
         "moves": "Tap a measure to lift it, then tap another to tip the grain in. Tipping stops when the first is empty or the second is level with its rim.",
         "contents": "This is all the grain there is — one measure starts full, and none can be swept away or fetched from the granary.",
-        "hidden": "Each measure says how much it holds when full. It never says how much is in it — that part is yours to work out."
+        "levels": "Each measure says how much is in it, against how much it holds when level with its rim."
       },
       "oil": {
         "moves": "Tap a jar to lift it, then tap another to pour into it. A pour stops when the first runs dry or the second is full.",
         "contents": "This is all the oil there is — one jar starts full, and none can be poured away or drawn.",
-        "hidden": "Each jar says how much it holds when full. It never says how much is in it — that part is yours to work out."
+        "levels": "Each jar says how much is in it, against how much it holds when full."
       },
       "wine": {
         "moves": "Tap an amphora to lift it, then tap another to decant into it. Decanting stops when the first runs dry or the second is full.",
         "contents": "This is all the wine there is — one amphora starts full, and none can be spilled or fetched from the cellar.",
-        "hidden": "Each amphora says how much it holds when full. It never says how much is in it — that part is yours to work out."
+        "levels": "Each amphora says how much is in it, against how much it holds when full."
       },
       "natron": {
         "moves": "Tap a jar to lift it, then tap another to tip the natron in. Tipping stops when the first is empty or the second is filled to its lid.",
         "contents": "This is all the natron there is — one jar starts full, and none can be swept away or fetched.",
-        "hidden": "Each jar says how much it holds when full. It never says how much is in it — that part is yours to work out."
+        "levels": "Each jar says how much is in it, against how much it holds when filled to its lid."
       },
       "ink": {
         "moves": "Tap a pot to lift it, then tap another to pour into it. A pour stops when the first runs dry or the second is full.",
         "contents": "This is all the ink there is — one pot starts full, and none can be tipped out or ground fresh.",
-        "hidden": "Each pot says how much it holds when full. It never says how much is in it — that part is yours to work out."
+        "levels": "Each pot says how much is in it, against how much it holds when full."
       }
     },
     "hint": {
