@@ -144,12 +144,15 @@ A canister is drawn as a vessel with its level filled, and under it what it hold
 `3/8`. The numbers matter as much as the level: a player comparing 5 against 8 is doing the puzzle, and
 comparing two heights is not the same act.
 
-**The amount is written because bookkeeping is not the puzzle.** It was hidden at first, on the argument
-that tracking the running totals was the difficulty; playtesting said otherwise. Holding four or five
-amounts in your head across a fifteen-pour line does not make the choice of pour harder, it makes losing
-the board cheaper — and the board is already unforgiving, since the move budget is the optimal line exactly
-(§2). What is still the player's is the whole of the reasoning: which pour to make, and which vessel to
-claim.
+**The amount is written because this board is hard enough at the two things it is about.** The arithmetic
+is one: which volumes these vessels can reach at all, and by what pours. The logistics are the other:
+getting there inside a budget that is the optimal line exactly, where a wasted pour and a wrong claim cost
+the same (§2). Both are the puzzle and both stay.
+
+Remembering the running totals was a third demand on top, and it was hidden at first on the argument that
+it WAS the difficulty. It is not: carrying four or five amounts across a fifteen-pour line makes no board
+harder to solve, only cheaper to lose. So the vessels say what they hold, and the reasoning above is left
+entirely to the player.
 
 **A pour animates**, because which canister ran out is the information: the source emptying before the
 destination fills is what tells the player the pour was limited by what they had, not by what fits.
