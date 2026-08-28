@@ -76,7 +76,7 @@ Four readings of that table before authoring anything:
   own, so one authored word changes every room it reaches.
 - **But a pool has to clear four members before a journey may restrict to it** (`rolePools.spec.ts`), and
   three sit one short: `scribe`, `trade` and `light` are all at three. They can still be PREFERRED — the
-  `["<role>", "puzzle"]` form of §11 skips the floor by design — they just cannot be the whole pool a
+  `["<role>", "puzzle"]` form of §10 skips the floor by design — they just cannot be the whole pool a
   pyramid draws from.
 - **`sky` is already dressed, which is why it changes nothing.** Five families read as a night sky before
   anyone asks — it is constellation's default face, star battle's and twin stars' too, and eclipse's pair
@@ -155,7 +155,7 @@ journey("starter_4").pyramid("1-4", { encounter: ["scribe", "puzzle"] })
 `scribe` draws hidato and sudoku and both have a face — a reed-pen register and a papyrus sheet — so a room
 drawn for it comes out written on. Restricting to the pair would be too much of them: the academy has 19
 sections and the pool has two families, which is 9.5 turns each against the 6.3 the game's least varied
-journey already ships (§11). So `puzzle` rides along to re-admit everyone, and the two that can dress do.
+journey already ships (§10). So `puzzle` rides along to re-admit everyone, and the two that can dress do.
 
 The papyrus route wants `scribe` for the first half of its name and `trade` for the second, and both are
 now dressed enough to mean something: canisters measures ink for one and wine for the other. What stops
@@ -185,7 +185,7 @@ themed pyramid reads as an accident. A lighthouse is a light in the sky, so it a
 
 **The list widens the pool, and that is the point of the second word.** `light` is not a subset of `sky`:
 canisters carries `light` and not `sky`, so `["light", "sky"]` draws from six families where `sky` alone
-draws from five. Twenty-eight sections over six is 4.7 turns each, comfortably inside the bar (§11), so the
+draws from five. Twenty-eight sections over six is 4.7 turns each, comfortably inside the bar (§10), so the
 widening costs no variety.
 
 `light` is written FIRST because the resolver takes the first role that offers a face of its own, and every
@@ -212,12 +212,14 @@ would be a second ambience, colder than night and lit from one side rather than 
 | `expert_treasure_tomb_b` Inner Sanctum        | 4      | 20    | 4/4    | —     | sealed holy of holies   |
 
 **The Nile Delta expedition is the one journey whose change is already written down.** The spec carries the
-line that would author it — `journey("expert_3").pyramid("1-5", { encounter: "water" })` — and the reason
-it has not been pulled: the `water` pool draws all four of its families across the journey and every one of
-them has a face, so the paper half is settled. What the spec's own line does not settle is the mode: 42
-sections over four families is 10.5 turns each, well past the 6.3 bar (§11), so the delta wants
-`["water", "puzzle"]` and a thumb on the scale rather than the four-family restriction as written. The crocodile is already a trap family; a crocodile _face_ would be
-the delta's water dressed as something that bites.
+line that would author it — `journey("expert_3").pyramid("1-5", { encounter: "water" })` — and the reason it
+has not been pulled: the `water` pool draws all five of its families across the journey and every one of
+them has a face, so the paper half is settled. What the spec's own line does not settle is the mode. Forty-
+two sections over five families is 8.4 turns each, past the 5.7 bar (§10), so the delta wants
+`["water", "puzzle"]` and a thumb on the scale rather than the restriction as written.
+
+The crocodile is already a trap family; a crocodile _face_ would be the delta's water dressed as something
+that bites.
 
 Djoser is a building site, which is exactly constellation's causeway — and canisters has since joined the
 `trade` pool with a merchant's cellar, so two of its three families dress now. Balance scale is the one
