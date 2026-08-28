@@ -437,6 +437,20 @@ Beyond the shared screen bar:
 - **A touching pair reds the pair, not the neighbourhood.** The broken rule is about two
   squares; lighting nine says something else.
 
+### 8.1 The quota stands above the board
+
+**Two families share this screen, and the count is the whole difference between them** (§11). The goal
+sentence states it, but the goal sits BELOW the board with the rules — a player scrolled to the grid is left
+recalling whether this room takes one or two, and an 8×8 of one star and an 8×8 of two are pixel-identical
+otherwise.
+
+So the quota is stated above the board, the way canisters puts the amount it wants there: the place's own
+answer glyph, repeated as many times as a group holds, on the place's own ground. **Glyphs and not a digit** —
+the thing standing in a square is what the player is counting, and two of them says "two of these" without a
+sentence to read. The ground under them is the skin's `cell`, because an answer is coloured for that ground
+and not for the shell's: a farmstead is dark earth-green and would disappear on the dark screen behind the
+board.
+
 ## 9. Theming
 
 The family emits logical state only — `cell(star | dark | empty) | region(id) | quota(n)` —
@@ -513,6 +527,10 @@ tier is allowed to demand harder reasoning; it is not allowed to change what the
 being asked to do, and "two" changes the goal line, every counting sentence and the shape of
 every deduction. A player who met one star at master and two at wizard would reasonably read
 the second board as the first and get nowhere.
+
+**Which is why the count is on screen above the board** (§8.1). A name and a goal sentence separate the
+two families in the copy; the boards themselves are identical, and the goal is below the grid. The quota
+glyphs are the count where the player is looking.
 
 ### 11.1 What the second star buys
 

@@ -71,3 +71,61 @@ Proposed shape when this is picked up: one more pure, unit-testable function alo
 decoration }`, called once per cell and consumed by the sprite renderer instead of the
 current inline rect/wall drawing. Rendering-layer only — no changes to `siteAssembler.ts`
 or the `FloorGrid` data model.
+
+---
+
+## The art itself — how it is authored and found
+
+Decided before any of it is drawn, because these choices are what make the second theme cheap
+and the first prop lookable-at on its own.
+
+**Painted rather than pixel art**, at **112px square** — 2× the 56-unit cell (`mapScale.ts`),
+which covers the zoom range (`useMapZoom`). Transparent background, the subject centred and
+drawn to fill the square; it is scaled to the cell with `xMidYMid meet`, so a tall prop stays
+tall next to a wide one.
+
+**One file per sprite, the filename as the key** — `src/assets/tiles/<theme>/<name>.png`, with
+the names being the `DecorationKind` values in `siteTypes.ts` exactly. No coordinate manifest to
+keep by hand: repacking into an atlas is a build step (`free-tex-packer-cli`, `spritesmith`,
+TexturePacker CLI all emit a sheet AND its manifest), so it is worth adding only if the request
+count ever measurably hurts, and when it is added the only thing that changes is the resolver.
+
+**A theme is a set of OVERRIDES over `default`, not a second whole set.** A floor themed `desert`
+that has its own sand but no statue of its own draws the default statue. Otherwise the second
+theme costs as much to draw as the first, and the game ends up with six half-finished themes.
+
+**Every sprite is optional, and a missing one falls back to the placeholder glyph** it has today
+(`SiteMapView.tsx`'s `DecorationGlyph`). That is what lets the art land one piece at a time
+rather than as a branch that has to be finished before anything can be seen.
+
+**Fog stays an overlay, never a second set of art.** Four cell states tint every cell
+(`roomFloorFill` / `corridorFloorFill`); a painted tile takes the state as a wash over it, or the
+sheet count multiplies by four for no reading the player gains.
+
+### Props first, floors second
+
+Props (`RoomCell.decoration`, already placed by `siteAssembler` from the DSL's `decorations` pool)
+need none of the plumbing above item 1: no theme, no autotile, no area lookup. Floors and walls
+need the authored `theme` to reach the renderer first, and want one decision made before the art
+is drawn: whether a floor material reads off `theme` alone, or off `theme` + `RoomCell.difficulty`
+— the second is what "difficulty shown, not labelled" asks for, and it means a sand floor may need
+a gentle and a wizard variant rather than one.
+
+### Sprites on a puzzle board are a different bargain
+
+Worth writing down because the answer differs per family and the reason is not obvious.
+
+**On this map the art is decoration.** Walls, nodes and fog carry the rules and are drawn as
+geometry on top, so a tile that reads slightly wrong costs nothing but looks.
+
+**On a puzzle board the art is often the state.** A glyph is `currentColor` at 30–45px, recoloured
+by its skin AND by hint state (evidence, focus, conflict, hatch, the completion animation), and
+held to reading as a silhouette with no hue at all (`puzzles/star-battle.md` §8). One path serves
+all of that; a sprite needs a file per skin per state. So the built families keep their paths.
+
+**The exception is a family whose pieces are big and few** — rush hour's vehicles (§4.17 of
+`PUZZLE_FAMILIES.md`) span 2–3 cells, which is 90–130px of real canvas, there are under a dozen on
+a board, and only the target piece carries a state, which an overlay ring can say. Two costs to
+weigh there rather than here: art that carries GEOMETRY has to be pixel-exact, since a hull ending
+short of a cell boundary makes a 3-long piece read as 2 and the player deduces wrongly; and the
+file count multiplies by skins × lengths × orientations where a path takes length as a prop.

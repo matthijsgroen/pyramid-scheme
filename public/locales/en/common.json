@@ -663,6 +663,10 @@
         }
       }
     },
+    "quota": {
+      "default": "Per row, column and region",
+      "fields": "Per row, column and holding"
+    },
     "goal": {
       "default_one": "Every row, every column and every region holds exactly one star.",
       "default_other": "Every row, every column and every region holds exactly {{count}} stars.",

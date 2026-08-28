@@ -656,6 +656,10 @@
         }
       }
     },
+    "quota": {
+      "default": "Per rij, kolom en gebied",
+      "fields": "Per rij, kolom en stuk land"
+    },
     "goal": {
       "default_one": "Elke rij, elke kolom en elk gebied heeft precies één ster.",
       "default_other": "Elke rij, elke kolom en elk gebied heeft precies {{count}} sterren.",

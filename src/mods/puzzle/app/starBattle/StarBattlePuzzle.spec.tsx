@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it, vi } from "vitest"
 import { fireEvent, render, waitFor, within } from "@testing-library/react"
 import { act } from "react"
 import { STAR_BATTLE_CONFIG } from "@/mods/puzzle/game/starBattle/starBattleConfig"
+import { TWIN_STARS_CONFIG } from "@/mods/puzzle/game/starBattle/twinStars"
 import { generateStarBattle } from "@/mods/puzzle/game/starBattle/generateStarBattle"
 import { buildStarBattleHint } from "./starBattleHint"
 import { StarBattlePuzzle } from "./StarBattlePuzzle"
@@ -127,5 +128,20 @@ describe("StarBattlePuzzle", () => {
     expect(marks()).toBe(2)
     act(() => undo.click())
     expect(marks()).toBe(1)
+  })
+  /**
+   * **The two families off this screen have to be told apart while playing.** Same board, same glyph, same
+   * skin — the count is the whole difference, and the goal sentence that states it sits below the board with
+   * the rules. So the quota stands above the board as its own glyphs, and there are as many of them as the
+   * board wants a group to hold.
+   */
+  it.each([
+    ["star battle", STAR_BATTLE_CONFIG.starter, 1],
+    ["twin stars", TWIN_STARS_CONFIG.junior, 2],
+  ])("states above the board how many a group holds (%s)", (_family, options, quota) => {
+    const puzzle = generateStarBattle(options.size, options)
+    const { container } = render(<StarBattlePuzzle puzzle={puzzle} onSolved={() => {}} onCancel={() => {}} />)
+    expect(puzzle.quota).toBe(quota)
+    expect(container.querySelectorAll(".size-6 > svg").length).toBe(quota)
   })
 })
