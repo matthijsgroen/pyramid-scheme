@@ -161,18 +161,21 @@ Measuring an exact amount out of vessels that do not divide evenly is not one pl
 wears more faces than any other in the catalogue. None of them is a repaint: the vessel changes shape, the
 ground changes, and what is in it behaves differently.
 
-| Role          | Place               | Vessel      | Contents | Settles |
-| ------------- | ------------------- | ----------- | -------- | ------- |
-| `water`       | the river           | amphora     | water    | yes     |
-| `agriculture` | the granary         | korenmaat   | grain    | **no**  |
-| `light`       | the lamp room       | amphora     | oil      | yes     |
-| `trade`       | the merchant cellar | amphora     | wine     | yes     |
-| `funerary`    | the embalming table | canopic jar | natron   | **no**  |
-| `scribe`      | the scriptorium     | inkpot      | ink      | yes     |
+| Role          | Place                      | Vessel               | Contents       | Settles      |
+| ------------- | -------------------------- | -------------------- | -------------- | ------------ |
+| `water`       | the river                  | amphora              | water          | yes          |
+| `agriculture` | the granary, or the fields | korenmaat or amphora | grain or water | **no** / yes |
+| `light`       | the lamp room              | amphora              | oil            | yes          |
+| `trade`       | the merchant cellar        | amphora              | wine           | yes          |
+| `funerary`    | the embalming table        | canopic jar          | natron         | **no**       |
+| `scribe`      | the scriptorium            | inkpot               | ink            | yes          |
 
-**`water` and `agriculture` mean different things here, and nowhere else.** Every other family in that pool
-— constellation, hidato, star battle — answers both with one face. A river is poured and a granary is
-scooped, and this is the family that can say so.
+**`water` and `agriculture` stop being the same word here, and they are nowhere else.** Every other family
+in that pool — constellation, hidato, star battle — answers both with one face.
+
+They are not opposites, though: **`agriculture` is the wider of the two.** A farm measures grain out of the
+granary and water onto the fields, so it names both and a room is one of them; `water` on its own is only
+ever the river. That is the honest shape — irrigation is farming, but a granary is not a river.
 
 ### What does not settle behaves differently, and it is one flag
 
@@ -190,8 +193,8 @@ face is allowed to change the ground it stands on; that is what makes it a place
 ### A role maps to a set, and the room picks
 
 Some places are wider than others. A market moves oil, wine and grain, so `trade` names all three and a
-trade room is one of them; `funerary` is natron for the drying or oil for the anointing. The narrow roles
-name exactly one.
+trade room is one of them; `funerary` is natron for the drying or oil for the anointing; `agriculture` is
+the granary or the water that goes on the fields. The narrow roles name exactly one.
 
 **Which one a room wears comes from the board's own shape** — its capacities, its starting amounts and the
 volumes it asks for, hashed. That is already seeded per room at world-gen, so the face is steady every time

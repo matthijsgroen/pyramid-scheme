@@ -163,13 +163,15 @@ const SKINS: Record<string, CanistersSkin> = {
  * oil, wine and grain, and a trade room that was always a wine cellar would be narrower than the word it
  * was authored with. Others are exactly one thing: a scriptorium measures ink and nothing else.
  *
- * **`water` and `agriculture` part company here**, and nowhere else in the catalogue do they: constellation,
- * hidato and star battle all answer both with one face. A river and a granary are not the same place, and
- * this is the family that can say so — measuring is what both of them do.
+ * **`water` and `agriculture` stop being the same word here**, which they are nowhere else in the
+ * catalogue: constellation, hidato and star battle all answer both with one face. They are not opposites
+ * though — `agriculture` is the WIDER of the two. A farm measures grain out of the granary and water onto
+ * the fields, so it names both; `water` alone is only ever the river.
  */
 const ROLE_SKINS: Record<string, string[]> = {
   water: ["default"],
-  agriculture: ["grain"],
+  // Grain out of the granary, or water onto the fields — irrigation is farming too.
+  agriculture: ["grain", "default"],
   light: ["oil"],
   scribe: ["ink"],
   // A market moves what a market moves.

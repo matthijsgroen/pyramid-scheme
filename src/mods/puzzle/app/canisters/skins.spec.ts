@@ -4,7 +4,7 @@ import { skinFor } from "./skins"
 /** The one place each narrow role is, and every place each wide one may be. */
 const ROLES = [
   ["water", ["default"]],
-  ["agriculture", ["grain"]],
+  ["agriculture", ["grain", "default"]],
   ["light", ["oil"]],
   ["scribe", ["ink"]],
   ["trade", ["wine", "oil", "grain"]],
@@ -29,10 +29,13 @@ describe("which place a canisters room is", () => {
     expect(skinFor("funerary", undefined, 8).name).toBe(skinFor("funerary", undefined, 8).name)
   })
 
-  it("tells a river from a granary, which nothing else in the catalogue does", () => {
-    // Constellation, hidato and star battle all answer `water` and `agriculture` with one face. Here they
-    // are different places: one is poured, the other is scooped.
-    expect(skinFor("water", undefined).name).not.toBe(skinFor("agriculture", undefined).name)
+  it("makes agriculture the wider word rather than the opposite one", () => {
+    // Constellation, hidato and star battle answer both with one face. Here a farm is a granary AND the
+    // water that goes on the fields, while `water` on its own is only ever the river.
+    const farm = new Set(Array.from({ length: 24 }, (_u, board) => skinFor("agriculture", undefined, board).name))
+    expect([...farm].sort()).toEqual(["default", "grain"])
+    const river = new Set(Array.from({ length: 24 }, (_u, board) => skinFor("water", undefined, board).name))
+    expect([...river]).toEqual(["default"])
   })
 
   it("gives every face its own vessel or its own behaviour, never just a repaint", () => {
