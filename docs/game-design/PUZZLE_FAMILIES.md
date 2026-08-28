@@ -850,7 +850,7 @@ so it can be used when authoring density knobs).
 | Constellation          | not yet measured (unbuilt)        | **TBD — estimate Med**, the numbers are local bookkeeping but the connectivity rule couples the whole board                    |
 | Canal                  | not yet measured (unbuilt)        | **TBD — estimate Med**, each line is its own sum, and a wrong stretch is visible as soon as a count goes red                   |
 | Sokoban                | not yet measured (unbuilt)        | **TBD — estimate High**, Sokoban solve time is notoriously unbounded even at small grid sizes                                  |
-| Rush Hour              | built, not yet measured           | **TBD — estimate Med**, the tier IS the move count so the ceiling is authored: 3–5 moves at starter, 17–22 at wizard           |
+| Rush Hour              | **under 3 min at wizard**         | **Low–Med**, the tier IS the move count, so the ceiling is authored: 3–5 moves at starter, 24–35 at wizard; timed in play      |
 
 Once Sokoban and Rush Hour are built, and lightbeam and hidato have been played
 enough to measure, replace the TBD rows with real telemetry (§8) rather than trusting

@@ -98,10 +98,11 @@ made a wizard room think for three seconds before it drew anything. Eight keeps 
 and pushes the cost offline: the pass scans more seeds to find the ones that climb fast. It also means the
 bands hug their floors, since a climb stops as soon as it reaches one.
 
-**Wizard is 24 to 35, and it stops there deliberately.** The hardest board this mechanic has is 51 moves (§7), and the human data
-puts the hardest instances of the classic set at around eleven minutes; `PUZZLE_FAMILIES.md` §3.2 budgets a
-room at a few minutes. Twenty-four to thirty-odd moves is the top half of the mechanic without being an
-evening.
+**Wizard is 24 to 35, and it stops there deliberately.** The hardest board this mechanic has is 51 moves
+(§7), and the human data puts the hardest instances of the classic set at around eleven minutes;
+`PUZZLE_FAMILIES.md` §3.2 budgets a room at a few minutes. Twenty-four to thirty-odd moves is the top half
+of the mechanic without being an evening — **played and timed at under three minutes a board** (§6), so the
+band sits at half its budget with the rest as headroom.
 
 ## 4. The hint is the next move
 
@@ -159,8 +160,16 @@ which a ring can say. So painted sprites per face are a good bargain here, with 
 
 ## 6. Open questions
 
-1. **Does wizard now play as a wizard?** 24–35 moves is argued from the enumeration and from published human
-   times, not from a stopwatch on a real player of THIS build. First thing to measure.
+1. ~~**Does wizard now play as a wizard?**~~ **Answered by play, 2026-08-28: yes, and it is fun.** Boards
+   in the 24–31 the generator delivers came in **under three minutes** each — half of `PUZZLE_FAMILIES.md`
+   §3.2's six-minute budget, and enjoyable rather than a grind, which is the half of the question a
+   stopwatch cannot answer.
+
+   **So the band stays where it is, and the headroom is deliberate.** There is room to push toward 35 and
+   beyond (the mechanic's own ceiling is 51 — §7), and no reason to spend it: a tier that fits the budget
+   twice over and plays well is not a tier with a problem. If wizard is ever wanted harder, raise the
+   floor rather than the ceiling, and expect the cost per seed to rise with it (§3.2).
+
 2. **Does a starter board teach the rule without words?** Three moves and seven pieces was chosen so the only
    pieces that CAN move are the ones that need to. Whether a first-time player reads "this one is mine" off
    the nose alone is a playtest question.
