@@ -201,8 +201,11 @@ volumes it asks for, hashed. That is already seeded per room at world-gen, so th
 the room is opened and differs from the room next door, with nothing stored in the world file to say so. A
 face is pixels (§2), so nothing about the puzzle moves with it.
 
-**Still open: the hour.** `night` is the only ambience that exists and no face here answers to it. Six
-grounds is six overlays, which is why it is written down rather than built.
+**The hour is a separate axis, and it comes later.** `night` is the only ambience that exists and no face
+here answers to it — which is a decision rather than a hole. An ambience layers on a place (§2), and not
+every place has anything to say about the time of day: a granary at night is a granary, and a scriptorium
+lit by the lamp it is measuring oil for was never lit by anything else. If sand or dusk arrive and one of
+these six wants to answer, the overlay goes on that face alone.
 
 ## 9. Open questions
 

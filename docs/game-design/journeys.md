@@ -87,10 +87,14 @@ picked — but its default face is already a night sky, so it carries no night v
 that asked for no role of its own draws, in constellation, exactly what an unthemed room draws. Night
 therefore shows on constellation over `causeway` and `irrigation`, and nowhere else.
 
-The other five families read `night` as nothing-said, each with its own `UNSPOKEN` list filtering the word
-out of a skin lookup it should never have entered. A second ambience — dusk, lamplight, a sandstorm — is
-five files of editing today, where **an overlay per face**, the way constellation already does it, would be
+The other families read `night` as nothing-said, each with its own `UNSPOKEN` list filtering the word out of
+a skin lookup it should never have entered. A second ambience — dusk, lamplight, a sandstorm — is that many
+files of editing today, where **an overlay per face**, the way constellation already does it, would be
 additive.
+
+**An ambience reaching only some families is the expected outcome, not a shortfall.** It layers on a place,
+and plenty of places have nothing to say about the hour — a granary at night is a granary. So the count to
+watch is not how many families answer, but whether the ones a journey actually draws do.
 
 ### Face names are not authoring vocabulary
 

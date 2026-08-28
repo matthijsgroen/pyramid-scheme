@@ -31,17 +31,17 @@ This is **Path Puzzles** (Roderick Kimball's genre), which is where the counted-
 unbuilt arithmetic family (the water clock) plus constellation wearing its irrigation skin, so
 `encounter: "water"` cannot be authored without serving the same board in every room. This is the second
 family that role needs — and it earns the theme honestly rather than by dressing: digging a canal from the
-river to a field is what the mechanic *is*, not a coat of paint on it.
+river to a field is what the mechanic _is_, not a coat of paint on it.
 
 **It is counting, and the answer happens to be a path.** That is the distinction that makes it a family
 rather than a reskin, and it is worth being exact about, because two families here are close enough to check
 against:
 
-- **Not lightbeam.** There, the player sets pieces and the *beam* decides where it goes; the deduction is
+- **Not lightbeam.** There, the player sets pieces and the _beam_ decides where it goes; the deduction is
   about what the physics does with an arrangement. Here the player draws the route themselves, and the
   deduction is arithmetic on lines — this row has four cells of channel, two are already dug, so two remain
   among these squares. Closer to a nonogram than to a beam.
-- **Not constellation.** That one counts a *node's* lines and joins given points; this one counts a *line's*
+- **Not constellation.** That one counts a _node's_ lines and joins given points; this one counts a _line's_
   cells and has no nodes at all. Same family of ideas (a network, a connectivity rule), different object,
   different gesture, different arithmetic.
 
@@ -55,16 +55,16 @@ different colours. The counted-path version shares no gesture with it and no ded
 Ordered by how well each reason **explains itself**, the same rule the other families' ladders follow: a hint
 that says "consider the whole grid" teaches nothing.
 
-| #      | Technique      | Fires when                                                                 | The sentence                                              |
-| ------ | -------------- | -------------------------------------------------------------------------- | --------------------------------------------------------- |
-| **T0** | `lineFull`     | A line's remaining count equals its remaining undug cells                  | "This row needs 3 more, and 3 squares are left"           |
-| **T1** | `lineDone`     | A line already holds its count                                             | "This row has its 4 — the rest is dry"                    |
-| **T2** | `continue`     | A dug end has exactly one square it can continue into                      | "The channel can only go this way"                        |
-| **T3** | `deadEnd`      | An undug square has fewer than two ways to be entered and left             | "Nothing could get out of there"                          |
-| **T4** | `noLoop`       | A continuation would close a ring, or make a third connection to one cell  | "That would close a loop / three ways into one square"    |
-| **T5** | `lineParity`   | A line's count and its crossings cannot both be satisfied                  | "A channel entering here twice would owe 5, not 4"        |
-| **T6** | `mustReach`    | Every route from a dug end to the outlet passes through one square         | "Whatever it does, it comes through here"                 |
-| **T7** | `overspend`    | Taking a square forces a line past its count                              | "Dig there and this column owes 5 with 4 to give"         |
+| #      | Technique    | Fires when                                                                | The sentence                                           |
+| ------ | ------------ | ------------------------------------------------------------------------- | ------------------------------------------------------ |
+| **T0** | `lineFull`   | A line's remaining count equals its remaining undug cells                 | "This row needs 3 more, and 3 squares are left"        |
+| **T1** | `lineDone`   | A line already holds its count                                            | "This row has its 4 — the rest is dry"                 |
+| **T2** | `continue`   | A dug end has exactly one square it can continue into                     | "The channel can only go this way"                     |
+| **T3** | `deadEnd`    | An undug square has fewer than two ways to be entered and left            | "Nothing could get out of there"                       |
+| **T4** | `noLoop`     | A continuation would close a ring, or make a third connection to one cell | "That would close a loop / three ways into one square" |
+| **T5** | `lineParity` | A line's count and its crossings cannot both be satisfied                 | "A channel entering here twice would owe 5, not 4"     |
+| **T6** | `mustReach`  | Every route from a dug end to the outlet passes through one square        | "Whatever it does, it comes through here"              |
+| **T7** | `overspend`  | Taking a square forces a line past its count                              | "Dig there and this column owes 5 with 4 to give"      |
 
 **Every rung is one step and its sentence is one line** — the constraint the other ladders are built to, and
 the reason `mustReach` (T6) sits where it does rather than higher: it reads a fan of routes, which is the most
@@ -76,7 +76,7 @@ square" is what a solver does. If a tier needs that to finish, the tier is wrong
 ## 4. Generation
 
 **Draw, derive, then thin** — the eclipse shape rather than the constellation one, because this family has a
-clue it *can* take away:
+clue it _can_ take away:
 
 1. **Draw a channel.** A self-avoiding walk from a randomly chosen inlet to an outlet, biased for turns (a
    straight run across the grid is a board with nothing in it).
@@ -106,13 +106,13 @@ clues survive.
 - **Technique cap, required rung and its quota** — the same three the other families carry. One firing is not
   a tier.
 
-| Tier    | Grid | Cap          | Requires          |
-| ------- | ---- | ------------ | ----------------- |
-| starter | 5×5  | `continue`   | —                 |
-| junior  | 6×6  | `noLoop`     | `noLoop` ×1       |
-| expert  | 7×7  | `lineParity` | `lineParity` ×2   |
-| master  | 8×8  | `mustReach`  | `mustReach` ×2    |
-| wizard  | 8×8  | `overspend`  | `overspend` ×3    |
+| Tier    | Grid | Cap          | Requires        |
+| ------- | ---- | ------------ | --------------- |
+| starter | 5×5  | `continue`   | —               |
+| junior  | 6×6  | `noLoop`     | `noLoop` ×1     |
+| expert  | 7×7  | `lineParity` | `lineParity` ×2 |
+| master  | 8×8  | `mustReach`  | `mustReach` ×2  |
+| wizard  | 8×8  | `overspend`  | `overspend` ×3  |
 
 The top two tiers share a grid, for the reason §3.2's budget always gives: the wizard board is a leaner clue
 set and a harder rung, not more squares to count.
@@ -167,10 +167,10 @@ The family emits logical state only — `cell(dug|dry|given) | count(value, met|
 skin decides the pixels. **It has more than one identity, and the role decides which** (`puzzle-screens.md`
 §2), the same way constellation's does:
 
-| Role                   | What the channel is | Inlet → outlet     |
-| ---------------------- | ------------------- | ------------------ |
-| `water`, `agriculture` | an irrigation canal | the river → a field |
-| `trade`                | a haul road         | the quarry → a site |
+| Role                   | What the channel is | Inlet → outlet           |
+| ---------------------- | ------------------- | ------------------------ |
+| `water`, `agriculture` | an irrigation canal | the river → a field      |
+| `trade`                | a haul road         | the quarry → a site      |
 | `tomb`                 | a corridor          | the entrance → a chamber |
 
 **Which is the point of building it for the water role**: with this family carrying `water`, the pool has two

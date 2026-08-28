@@ -78,11 +78,11 @@ costs no build step.
 ## 4. Tiers
 
 | Tier   | Rows × stones | Numbers a sum | Crocodiles       | Operators | Range | `maxMultiplyOperandResult` |
-| ------ | ------------- | ------------- | ---------------- | --------- | ----- | --------------------------- |
-| Junior | 3 × 2         | 3             | all biggest      | `+ -`     | 1–10  | —                           |
-| Expert | 4 × 3         | 3             | biggest/smallest | `+ - *`   | 1–10  | 5                           |
-| Master | 4 × 3         | 3             | biggest/smallest | `+ - *`   | 1–12  | 8                           |
-| Wizard | 5 × 3         | 3             | biggest/smallest | `+ - *`   | 1–15  | 10                          |
+| ------ | ------------- | ------------- | ---------------- | --------- | ----- | -------------------------- |
+| Junior | 3 × 2         | 3             | all biggest      | `+ -`     | 1–10  | —                          |
+| Expert | 4 × 3         | 3             | biggest/smallest | `+ - *`   | 1–10  | 5                          |
+| Master | 4 × 3         | 3             | biggest/smallest | `+ - *`   | 1–12  | 8                          |
+| Wizard | 5 × 3         | 3             | biggest/smallest | `+ - *`   | 1–15  | 10                         |
 
 One row is one decision, and one decision is `stonesPerColumn` sums to work out — so a junior pit asks for
 six sums across three choices and a wizard pit for fifteen across five. Division is excluded at every tier.

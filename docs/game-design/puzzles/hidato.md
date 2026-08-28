@@ -97,7 +97,7 @@ direction control (§6) and what makes the gap rung well-defined (§4.3).
 **Warnsdorff hugs the boundary**, because a boundary cell is the one with the fewest ways out. Left to
 it the answer laps the rim — on a full 19-cell hive the longest unbroken stretch of run sitting on the
 outer ring runs to around **11 cells**. Nothing about that is unsolvable; it is worse than that, it is
-*guessable*. A player who has met two such boards knows where the run goes before reading a single
+_guessable_. A player who has met two such boards knows where the run goes before reading a single
 number.
 
 Two dials, and they work as a pair:
@@ -105,16 +105,16 @@ Two dials, and they work as a pair:
 - **`wander`** — how often the walk ignores its own heuristic and steps into any open cell. This is
   what lets a run leave the rim and come back.
 - **`rimStreak`** — the longest stretch of run allowed to stay on the outer ring. The gate that
-  checks the wandering worked, and the only thing about a run's *shape* the generator judges.
+  checks the wandering worked, and the only thing about a run's _shape_ the generator judges.
 
 What the shipped dials produce, measured over ten boards a tier:
 
-| Tier | rim stretch | turns |
-| --- | --- | --- |
-| junior | 4.1 | 0.84 |
-| expert | 3.6 | 0.81 |
-| master | 3.7 | 0.85 |
-| wizard | 3.0 | 0.91 |
+| Tier   | rim stretch | turns |
+| ------ | ----------- | ----- |
+| junior | 4.1         | 0.84  |
+| expert | 3.6         | 0.81  |
+| master | 3.7         | 0.85  |
+| wizard | 3.0         | 0.91  |
 
 ("turns" is the share of steps that change direction — 1.0 would be a run that never goes twice the
 same way.)
@@ -134,21 +134,21 @@ Two vocabularies, answering different questions.
 **Pruning** is what the board is allowed to notice — which cells a number could still sit in —
 and it is the tier dial, because each level is a different thing to see.
 
-| Rung | What it notices |
-| --- | --- |
+| Rung        | What it notices                                                                                            |
+| ----------- | ---------------------------------------------------------------------------------------------------------- |
 | `adjacency` | A number can only sit where its predecessor and its successor could sit beside it. Iterated to a fixpoint. |
-| `gapPath` | A run BETWEEN two written numbers has to thread from one to the other, so cells no route uses are out. |
+| `gapPath`   | A run BETWEEN two written numbers has to thread from one to the other, so cells no route uses are out.     |
 
 **Techniques** are the reasons a number gets written down. All four are "only one cell is left",
 said in the way that shows why, and they are ordered by how well the reason teaches rather than
 by strength.
 
-| Technique | The sentence |
-| --- | --- |
-| `sandwich` | The 14 and the 16 touch only one open cell between them. |
-| `neighbourForced` | The 14 has only one open cell left beside it. |
-| `onlyCell` | There is nowhere else left in the comb for the 15. |
-| `onlyValue` | No other number can reach this cell. |
+| Technique         | The sentence                                             |
+| ----------------- | -------------------------------------------------------- |
+| `sandwich`        | The 14 and the 16 touch only one open cell between them. |
+| `neighbourForced` | The 14 has only one open cell left beside it.            |
+| `onlyCell`        | There is nowhere else left in the comb for the 15.       |
+| `onlyValue`       | No other number can reach this cell.                     |
 
 Every one of them fires on boards the generator ships, at the rates measured over 300 boards across
 the five tiers: `neighbourForced` 2148, `sandwich` 2010, `onlyValue` 722, `onlyCell` 3.
@@ -160,8 +160,8 @@ alternative is a hint that says nothing at all.
 
 ### 4.1 There is no distance rung, and there cannot usefully be one
 
-A distance bound is the obvious middle rung — *this cell is 4 steps from the 7, so it cannot hold the
-9* — and **iterated adjacency already gives exactly it**. A chain of neighbour-supports from a written
+A distance bound is the obvious middle rung — _this cell is 4 steps from the 7, so it cannot hold the
+9_ — and **iterated adjacency already gives exactly it**. A chain of neighbour-supports from a written
 number to a cell IS a walk of the right length, and on a hex lattice a walk of any length at or above
 the distance exists, because the lattice's triangles absorb the slack and there is no parity to dodge.
 No board needs the distance rung to settle: every tier's `deepest` comes back `adjacency` or `gapPath`.
@@ -199,13 +199,13 @@ every tier: seven cells across is what a 360px screen fits at a thumb's width
 (`puzzle-screens.md` §1), and a wider hive would be a board that has to be pinched to be played
 rather than a harder one.
 
-| Tier | Cells | Radius | Reading | Givens (floor) | Requires | wander | rimStreak |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| starter | 14 | 2 | `adjacency` | 7 | — | — | — |
-| junior | 19 (full hexagon) | 2 | `adjacency` | 8 | — | 0.30 | 5 |
-| expert | 26 | 3 | `adjacency` | 9 | — | 0.35 | 4 |
-| master | 37 (full hexagon) | 3 | `gapPath` | 9 | `gapPath` | 0.40 | 3 |
-| wizard | 61 (full hexagon) | 4 | `gapPath` | 12 | `gapPath` | 0.45 | 4 |
+| Tier    | Cells             | Radius | Reading     | Givens (floor) | Requires  | wander | rimStreak |
+| ------- | ----------------- | ------ | ----------- | -------------- | --------- | ------ | --------- |
+| starter | 14                | 2      | `adjacency` | 7              | —         | —      | —         |
+| junior  | 19 (full hexagon) | 2      | `adjacency` | 8              | —         | 0.30   | 5         |
+| expert  | 26                | 3      | `adjacency` | 9              | —         | 0.35   | 4         |
+| master  | 37 (full hexagon) | 3      | `gapPath`   | 9              | `gapPath` | 0.40   | 3         |
+| wizard  | 61 (full hexagon) | 4      | `gapPath`   | 12             | `gapPath` | 0.45   | 4         |
 
 Measured on the shipped generator, seeds 1–6 per tier: starter through master build five boards in
 under 200ms and wizard in about 700ms, and the thinning lands on 7/14 numbers written in at starter,
@@ -273,15 +273,15 @@ carried instead.
 A drag only ever moves **along** the run, and a number it crosses that is none of these three things is
 a number the finger went past on its way somewhere, which meant nothing:
 
-| The cell dragged into | What happens |
-| --- | --- |
-| open | the run carries on into it |
-| a number **further along** the run | the run is drawn over its own tail: the next number is laid here and whatever held it loses it (§6.3) |
-| a number **behind** it, other than the one it came from | nothing — that is the line the finger just came along |
-| a number the puzzle wrote in | nothing, unless it is the next one (above) |
-| open, where the run cannot go on at all | the number the run is standing on moves there (§6.4) |
-| holds the number **after** the one being carried | the run passes **through** it — which is what lets a drag cross the board's givens instead of stopping dead at the first one |
-| holds the number **before** it | that is the way the finger came, so the last number was a wrong turn and comes back off (a given cannot, so there the run picks up instead) |
+| The cell dragged into                                   | What happens                                                                                                                                |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| open                                                    | the run carries on into it                                                                                                                  |
+| a number **further along** the run                      | the run is drawn over its own tail: the next number is laid here and whatever held it loses it (§6.3)                                       |
+| a number **behind** it, other than the one it came from | nothing — that is the line the finger just came along                                                                                       |
+| a number the puzzle wrote in                            | nothing, unless it is the next one (above)                                                                                                  |
+| open, where the run cannot go on at all                 | the number the run is standing on moves there (§6.4)                                                                                        |
+| holds the number **after** the one being carried        | the run passes **through** it — which is what lets a drag cross the board's givens instead of stopping dead at the first one                |
+| holds the number **before** it                          | that is the way the finger came, so the last number was a wrong turn and comes back off (a given cannot, so there the run picks up instead) |
 
 Passing through is the case that matters most: without it, a drag along the answer stops at the first
 written number it meets, which on a board that is a quarter givens is almost immediately.
@@ -301,11 +301,11 @@ keeps **what is still anchored** — every number that can be counted back to a 
 
 That single rule covers the cases that would otherwise each need one:
 
-| Erasing | What goes |
-| --- | --- |
-| the number at the end of a run | just it — nothing was hanging off it |
-| a number six cells back | it and the six after it, because none of them can be counted back any more |
-| a number inside a stretch that runs between two written-in numbers | just it: each half is still counted from one of the two ends |
+| Erasing                                                               | What goes                                                                              |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| the number at the end of a run                                        | just it — nothing was hanging off it                                                   |
+| a number six cells back                                               | it and the six after it, because none of them can be counted back any more             |
+| a number inside a stretch that runs between two written-in numbers    | just it: each half is still counted from one of the two ends                           |
 | carrying the run a different way out of the number it is picked up at | the stretch drawn forward from there, up to the next number the puzzle wrote in (§6.3) |
 
 A number the puzzle wrote in is never swept up and never moved: where the run's next number is a given,
@@ -318,7 +318,7 @@ over a number further along the run**, which is the run's own tail and how a lin
 held that number loses it, and anything left counting back to nothing goes with it (§6.2).
 
 It refuses only two things, and both are about what the finger did not mean: a number the puzzle wrote
-in is never overwritten or moved, and a number *behind* the one being carried is never overwritten
+in is never overwritten or moved, and a number _behind_ the one being carried is never overwritten
 either — that is the line the finger has just come along.
 
 **Deciding what a redraw sweeps away is §6.2's job, not this rule's.** Working the whole doomed stretch
@@ -331,7 +331,7 @@ tidy up says the same thing about the easy case and the right thing about that o
 **Adjacency is part of that tidying up, not just value.** Counting back by value alone, a 4 stays
 "anchored" after the 3 it was laid beside has moved to the far side of the comb — the numbers still
 read 1, 2, 3, 4 and nothing notices the chain no longer touches. Since moving a number is exactly what
-re-drawing does, the check asks for both: the number before or after it, *next door*.
+re-drawing does, the check asks for both: the number before or after it, _next door_.
 
 ### 6.4 When the run has stopped, the number itself moves
 
@@ -357,11 +357,11 @@ the finger.
 
 So the three touches are separated:
 
-| | when | what it does |
-| --- | --- | --- |
-| **press** | finger lands | picks the run up at that cell, and nothing else |
-| **drag** | finger enters another cell | carries the run (§6.1) |
-| **tap** | finger lifts without having left | the cell's own action — step, rub out, put the run down |
+|           | when                             | what it does                                            |
+| --------- | -------------------------------- | ------------------------------------------------------- |
+| **press** | finger lands                     | picks the run up at that cell, and nothing else         |
+| **drag**  | finger enters another cell       | carries the run (§6.1)                                  |
+| **tap**   | finger lifts without having left | the cell's own action — step, rub out, put the run down |
 
 Because the press has already picked the run up, "is the run standing here" answers yes by the time the
 tap is known to be one — so the board reports whether it was standing there **when the finger landed**.
@@ -383,11 +383,11 @@ so a comb with gaps in it still sits centred and still fills the width it is giv
 ### 7.1 The run is drawn, in one line
 
 **One unbroken stroke from the 1 to wherever the run has got**, over the ground and under the numbers —
-a digit sits *on* the line rather than cutting it, which is what makes it read as a channel dug through
+a digit sits _on_ the line rather than cutting it, which is what makes it read as a channel dug through
 the comb instead of a row of separate joins. It is the same picture in every skin the family might
 wear, and the reason the canal reading works at all.
 
-Three rules, and each of them is about it being a *line* rather than a set of pairs:
+Three rules, and each of them is about it being a _line_ rather than a set of pairs:
 
 - **It starts at the 1 and stops at the first break.** Numbers further along that nothing connects to
   yet — the ones the puzzle wrote in across the comb — carry no stroke at all, because a stroke there
@@ -421,17 +421,17 @@ Two skins, and the board component names no colour at all: it emits logical stat
 holds a number the puzzle wrote in, holds one the player wrote, is or is not on the run drawn from the 1,
 and has or has not been passed by the completion light — and the skin turns that into pixels.
 
-| | **default — a kept hive** | **channel — a flood plain** | **scribe — a sheet** |
-| --- | --- | --- | --- |
-| ground | cold stone comb | dry sand | papyrus, the one pale board |
-| a number the run has reached | unchanged | **green**: the water got there | unchanged |
-| a number the puzzle wrote in | its own ground colour | keeps its bright rim, watered or dry | written in **red** |
-| the run | a thread of honey | **blue**: it is water, not a route | **ink** |
-| finishing | the light travels the run | a plant on every field it passes | a sign written over every figure |
+|                              | **default — a kept hive** | **channel — a flood plain**          | **scribe — a sheet**             |
+| ---------------------------- | ------------------------- | ------------------------------------ | -------------------------------- |
+| ground                       | cold stone comb           | dry sand                             | papyrus, the one pale board      |
+| a number the run has reached | unchanged                 | **green**: the water got there       | unchanged                        |
+| a number the puzzle wrote in | its own ground colour     | keeps its bright rim, watered or dry | written in **red**               |
+| the run                      | a thread of honey         | **blue**: it is water, not a route   | **ink**                          |
+| finishing                    | the light travels the run | a plant on every field it passes     | a sign written over every figure |
 
 **Only the plain asks whether the line has arrived**, and that difference is why a skin takes a function
 rather than a colour table. On a comb the run is a record of what the player decided; on a plain it is a
-thing that *does* something, so a number written in a field the channel has not got to yet is a ditch dug
+thing that _does_ something, so a number written in a field the channel has not got to yet is a ditch dug
 and dry — the honest picture, since a stretch not joined to the 1 waters nothing.
 
 **The sheet is the one that changes nothing at all.** A plain becomes green because the water did
