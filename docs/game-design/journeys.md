@@ -360,27 +360,39 @@ pattern (§5) with the pools one size larger, and the reason `rolePools.spec.ts`
 authored role whole rather than tag by tag — a one-family narrow tag is only ever legible as half of a
 list.
 
-## 10. What a clean authoring system needs
+## 10. The authoring system, and what it took
 
-**None of this is built.** The contract in §2 is right and three things stop it holding by construction;
-all three are still exactly as open as the day they were written down, while five families' worth of faces
-have been added around them. That is the honest state, and the gap widens with every face.
+**Built 2026-08-28.** The contract in §2 was right, and three things stopped it holding by construction.
+All three are done; what follows is what each turned out to be.
 
-1. **One vocabulary, and it is the role words.** A family should declare which faces serve which roles and
-   nothing else — specified as `FamilyMeta.faces` in §12. Six families now keep that map privately in
-   `app/<family>/skins.ts`, where `src/worldGen` cannot read it. The private names (`irrigation`, `channel`, `papyrus`) become internal ids the lab shows,
-   never words a site can author. Today a place name typed into `theme` is accepted, and each family's
-   `SKINS[theme]` lookup makes it half work — dressing whoever happens to use that word and leaving its
-   neighbours on their defaults. That silent half-success is the defect; aliasing names between families
-   papers over it and grows as families × places.
-2. **Guard it at generation, not at render.** `Theme` is a bare `string`, so nothing catches a place in the
-   ambience field or a role no family dresses. Two asserts at world-gen — an authored theme is an ambience
-   word, an authored role has a face in every family of its pool — turn both into an error instead of a
-   look nobody notices. `rolePools.spec.ts` is already this shape, and the §9 table wants generating rather
-   than hand-keeping.
-3. **Ambience layers, it does not swap.** Constellation is the only family that models it; the other five
-   filter `night` out of a lookup with an `UNSPOKEN` list. An overlay per face makes a second ambience
-   additive instead of five edits.
+1. **One vocabulary, and it is the role words.** Every family declares which of its faces serve which roles
+   on its `FamilyMeta.faces` (§12), where world-gen can read it — nine families, moved out of the private
+   `ROLE_SKINS` maps that used to sit in `app/<family>/skins.ts`. Their private face names
+   (`irrigation`, `channel`, `papyrus`) stay internal ids the lab can show, never words a site authors.
+
+   **The move is what found the drift.** Three entries were dead — constellation's `light` and
+   `logistics` and star battle's `light`, all faces nothing could ever reach — and balance scale carried
+   `trade` while answering for it nowhere. It also collapsed **six near-identical resolvers into one**
+   (`app/faceFor.ts`), which had quietly diverged: one filtered `night` where another did not, and a role
+   answering `default` could cancel the roles behind it in some and not others.
+
+2. **Guard it, rather than let it fail at render.** `src/worldGen/faces.spec.ts` holds four things nothing
+   else notices: a family answers for every role it claims and claims every role it answers for, an
+   ambience never appears where a place belongs, the world authors a theme only where it names an hour,
+   and it authors no role that every family would meet with its default. A place name typed into `theme`
+   used to be accepted and half-work — dressing whoever happened to use that word — which is the silent
+   defect this turns into a failing build.
+
+3. **Ambience layers, it does not swap.** A face declares an `ambience` map of what each hour changes about
+   it, and `withAmbience` applies it once the role has decided which place the room is. The six
+   `UNSPOKEN` lists that filtered `night` out of a face lookup are gone — the ambience never belonged in
+   that lookup, it belongs after it. A second hour is now a key on the faces with something to say about
+   it, and silence from the ones without.
+
+**One rule came out of building it that the sketch had wrong.** "A face of its own beats the default" is a
+choice BETWEEN roles, never within one: `["sky", "water"]` must draw the waterworks rather than let sky's
+default cancel it, but `agriculture: ["grain", "default"]` names two real places and dropping the second
+would narrow the word. Written the first way it silently made `agriculture` mean only the granary.
 
 One wrinkle worth naming rather than hiding: **a tomb's place is per-site, not per-role.** Every tomb room
 carries `role: "tomb-puzzle"`, so a weighing hall and a merchant's cellar cannot be told apart by role.
