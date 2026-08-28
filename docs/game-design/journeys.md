@@ -130,12 +130,12 @@ pyramid picks up a floor or two.
 
 ## 4. Starter
 
-| Journey                              | Pyramids | Floors | Rooms | Sprawl | Wears | What its story asks for                      |
-| ------------------------------------ | -------- | ------ | ----- | ------ | ----- | -------------------------------------------- |
-| `starter_1` Dawn at the Sphinx       | 2        | 3      | 13    | —      | —     | dawn · weathered sandstone                   |
-| `starter_2` Papyrus Merchant's Route | 2        | 4      | 21    | —      | —     | `scribe` · `trade` (1 of 2) · market · reeds |
-| `starter_3` Temple of Bastet         | 4        | 4      | 26    | —      | —     | lamplight · offering table · cat             |
-| `starter_4` Scribe's Academy         | 4        | 4      | 29    | —      | —     | `scribe` · schoolroom ostraca                |
+| Journey                              | Pyramids | Floors | Rooms | Sprawl | Wears | What its story asks for                       |
+| ------------------------------------ | -------- | ------ | ----- | ------ | ----- | --------------------------------------------- |
+| `starter_1` Dawn at the Sphinx       | 2        | 3      | 13    | —      | —     | dawn · weathered sandstone                    |
+| `starter_2` Papyrus Merchant's Route | 2        | 4      | 21    | —      | —     | `scribe` · `trade` · market stall · reed bank |
+| `starter_3` Temple of Bastet         | 4        | 4      | 26    | —      | —     | `light` · offering table · cat                |
+| `starter_4` Scribe's Academy         | 4        | 4      | 29    | —      | —     | `scribe` · schoolroom ostraca                 |
 
 | Tomb                                               | Floors | Rooms | Sprawl | Wears | What its story asks for  |
 | -------------------------------------------------- | ------ | ----- | ------ | ----- | ------------------------ |
@@ -152,17 +152,23 @@ drawn for it comes out written on. Restricting to the pair would be too much of 
 sections and the pool has two families, which is 9.5 turns each against the 6.3 the game's least varied
 journey already ships (§11). So `puzzle` rides along to re-admit everyone, and the two that can dress do.
 
-The papyrus route wants `scribe` for the first half of its name and `trade` for the second, and `trade` is
-where the pool runs out — balance scale has no face, so half those rooms stay on their default.
+The papyrus route wants `scribe` for the first half of its name and `trade` for the second, and both are
+now dressed enough to mean something: canisters measures ink for one and wine for the other. What stops
+either being restricted to is the pool — three members each, one short of the floor (§2) — so the route
+prefers rather than restricts.
+
+**And the Temple of Bastet stopped being a brief.** Lamplight was plain text in this table for as long as
+`light` had no face at all; canisters measuring oil for the lamps is that face, so the cat's temple can now
+ask for the role by name.
 
 ## 5. Junior
 
-| Journey                             | Pyramids | Floors | Rooms | Sprawl | Wears                   | What its story asks for         |
-| ----------------------------------- | -------- | ------ | ----- | ------ | ----------------------- | ------------------------------- |
-| `junior_1` Sacred Ibis Migration    | 3        | 4      | 24    | —      | —                       | `water` · marsh · flock · flood |
-| `junior_2` Valley of the Artisans   | 4        | 6      | 38    | —      | —                       | workshop · pigment · quarry     |
-| `junior_3` Temple of Thoth          | 4        | 6      | 45    | —      | —                       | `scribe` · moonlight · archive  |
-| `junior_4` Lighthouse of Alexandria | 5        | 7      | 47    | —      | `light`+`sky` + `night` | beacon · quay                   |
+| Journey                             | Pyramids | Floors | Rooms | Sprawl | Wears                   | What its story asks for                        |
+| ----------------------------------- | -------- | ------ | ----- | ------ | ----------------------- | ---------------------------------------------- |
+| `junior_1` Sacred Ibis Migration    | 3        | 4      | 24    | —      | —                       | **`water`, ready to restrict** · marsh · flood |
+| `junior_2` Valley of the Artisans   | 4        | 6      | 38    | —      | —                       | workshop · pigment · quarry                    |
+| `junior_3` Temple of Thoth          | 4        | 6      | 45    | —      | —                       | `scribe` · moonlight · archive                 |
+| `junior_4` Lighthouse of Alexandria | 5        | 7      | 47    | —      | `light`+`sky` + `night` | beacon · quay                                  |
 
 | Tomb                                        | Floors | Rooms | Sprawl | Wears | What its story asks for |
 | ------------------------------------------- | ------ | ----- | ------ | ----- | ----------------------- |
@@ -172,21 +178,28 @@ where the pool runs out — balance scale has no face, so half those rooms stay 
 "sky"]` with `theme: "night"`, covering the whole pyramid, side paths and trapped ones included — half a
 themed pyramid reads as an accident. A lighthouse is a light in the sky, so it asks for both places.
 
-**The list costs no variety.** A role list is a union for eligibility and `light` (eclipse, lightbeam) sits
-inside `sky`, so the pool is the same four families either way — the second word buys the dressing, not the
-draw. Regenerating moved nothing but the `role` field on 40 sections. `light` is written FIRST because the
-resolver takes the first role a family has a face for, and every family here answers `sky` with its
-default: sky-first would win that search and cancel the narrower place (§12).
+**The list widens the pool now, which it did not when it was written.** `light` used to sit wholly inside
+`sky` — eclipse and lightbeam carry both — so the union was the same five families either way and the
+second word bought only the dressing. Canisters changed that: it carries `light` and NOT `sky`, so
+`["light", "sky"]` now draws from six families where `sky` alone draws from five. Twenty-eight sections over
+six is 4.7 turns each, comfortably inside the bar (§11), so the widening costs nothing.
 
-It is also the clearest reading of where the two axes stand. Neither role changes the look, because the star
-map is already every one of those families' default. The ambience is what shows, and it shows on eclipse's
-13 rooms of 47; constellation's 10 are drawing a night sky either way (§2). So the authoring is intent
-today, and the day a beacon face ships this pyramid wears it without being re-authored — a beacon is the
-strongest brief in the tier for a face that does not exist.
+`light` is written FIRST because the resolver takes the first role a family has a face for, and every
+family here answers `sky` with its default: sky-first would win that search and cancel the narrower place
+(§12). **That ordering has stopped being merely tidy.** When this was authored no family in either pool had
+a `light` face, so the whole thing was intent — the ambience did the visible work, on eclipse's 13 rooms of
+47, while constellation's 10 drew a night sky either way. Canisters brought the pool its first `light` face,
+oil measured out for the lamps, and `light`-first is what makes the lighthouse reach for it. The beacon this
+paragraph used to be waiting for is half here: eclipse and lightbeam still read as light sources without
+dressing as one.
 
-Thoth is the god of writing and the moon, and the two asks split the same way: `scribe` is ready to author
-today, while a moonlit board would be a second ambience — colder than night, and lit from one side rather
-than unlit.
+**The ibis migration is the tier's other change, and it is ready.** A marsh and a flood are `water`, the
+pool has five members and every one of them dresses, and seventeen sections over five is 3.4 turns each —
+the tightest restrict in the game after the lighthouse (§14). One line, and every room of it is a river.
+
+Thoth is the god of writing and the moon, and the two asks split the same way: `scribe` dresses all three
+of its families now, though the pool is one member short of being restrictable — while a moonlit board
+would be a second ambience, colder than night and lit from one side rather than unlit.
 
 ## 6. Expert
 
@@ -195,7 +208,7 @@ than unlit.
 | `expert_1` Valley of the Kings   | 4        | 7      | 84    | 2/7                | —     | necropolis · torchlight · painted wall      |
 | `expert_2` Karnak Temple Complex | 4        | 6      | 83    | 1/6                | —     | hypostyle columns · solar gold · festival   |
 | `expert_3` Nile Delta Expedition | 5        | 7      | 107   | 1/7                | —     | `water` · delta marsh · crocodile           |
-| `expert_4` Pyramid of Djoser     | 5        | 7      | 99    | 2/7 (`packing: 2`) | —     | `trade` (1 of 2) · terraces · building site |
+| `expert_4` Pyramid of Djoser     | 5        | 7      | 99    | 2/7 (`packing: 2`) | —     | `trade` (2 of 3) · terraces · building site |
 
 | Tomb                                          | Floors | Rooms | Sprawl | Wears | What its story asks for |
 | --------------------------------------------- | ------ | ----- | ------ | ----- | ----------------------- |
@@ -210,9 +223,10 @@ sections over four families is 10.5 turns each, well past the 6.3 bar (§11), so
 `["water", "puzzle"]` and a thumb on the scale rather than the four-family restriction as written. The crocodile is already a trap family; a crocodile _face_ would be
 the delta's water dressed as something that bites.
 
-Djoser is a building site, which is exactly constellation's causeway — but balance scale is the other half
-of the `trade` pool and has no face, so a `trade` pyramid comes out half-dressed. It is the clearest
-argument in the tier for giving balance scale a second face rather than for authoring the role first.
+Djoser is a building site, which is exactly constellation's causeway — and canisters has since joined the
+`trade` pool with a merchant's cellar, so two of its three families dress now. Balance scale is the one
+left, and a scale is a market instrument: it is the clearest argument in the tier for giving it a second
+face. The pool being three also means Djoser prefers rather than restricts (§14).
 
 `expert_4` is also where sprawl stops being a coin toss: two of its five pyramids are authored broad
 because the tier puts a coloured key on the open main path, and a broad floor is somewhere to hide one.
@@ -221,7 +235,7 @@ because the tier puts a coloured key on the open main path, and a broad floor is
 
 | Journey                          | Pyramids | Floors | Rooms | Sprawl | Wears | What its story asks for                    |
 | -------------------------------- | -------- | ------ | ----- | ------ | ----- | ------------------------------------------ |
-| `master_1` Great Pyramid of Giza | 4        | 8      | 83    | 1/8    | —     | `sky` (look unchanged) · gallery · granite |
+| `master_1` Great Pyramid of Giza | 4        | 8      | 83    | 1/8    | —     | `sky` (0 of 5 dressed) · gallery · granite |
 | `master_2` Book of the Dead      | 5        | 10     | 121   | 1/10   | —     | `scribe` · funerary scroll · judgement     |
 | `master_3` Curse of the Pharaohs | 5        | 10     | 125   | 1/10   | —     | `night` · omen · dust and decay            |
 | `master_4` Tomb of Nefertari     | 5        | 10     | 109   | —      | —     | fresco · queen's blue · lamplight          |
