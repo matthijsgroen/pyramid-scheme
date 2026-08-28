@@ -54,11 +54,11 @@ const allFloors = (): Floor[] => {
   return floors
 }
 
-// The guard that was missing when 17 authored floors (expert_1, expert_4, master_1/2/4, and ten
-// wizard floors) shipped unenterable: their layout could not be carved at the one seed the
-// runtime ever hands them, so the interior rendered "Site layout unavailable." for every player,
-// permanently. Nothing else covers this — worldGen/reachability.ts assembles with its own seeds,
-// and no other spec walks the whole baked world. Run standalone via `yarn verify-floors`.
+// A floor whose layout cannot be carved at the one seed the runtime ever hands it renders
+// "Site layout unavailable." for every player, permanently — 17 authored floors once shipped that way
+// (expert_1, expert_4, master_1/2/4, and ten wizard floors). `yarn generate-world` fails on the same
+// thing, so a world that was built is a world that carves; this covers the artifact as it stands in the
+// repo, which is what the app reads. Run standalone via `yarn verify-floors`.
 describe("every authored floor assembles at its runtime seed", () => {
   it("has floors to check at all (a silent empty sweep would prove nothing)", () => {
     expect(allFloors().length).toBeGreaterThan(100)
