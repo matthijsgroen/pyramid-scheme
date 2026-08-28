@@ -76,7 +76,7 @@ describe("claiming a volume", () => {
     expect(state.volumes).toContain(4)
     expect(isCanistersSolved(board, state)).toBe(false)
     state = claimCanister(state, board, 0)
-    expect(state.claimed).toEqual({ canister: 0, right: true })
+    expect(state.claimed).toEqual({ canister: 0, right: true, count: 1 })
     expect(isCanistersSolved(board, state)).toBe(true)
   })
 
@@ -85,7 +85,7 @@ describe("claiming a volume", () => {
     state = pourInto(state, board, 1)
     const before = movesLeft(board, state)
     state = claimCanister(state, board, 1)
-    expect(state.claimed).toEqual({ canister: 1, right: false })
+    expect(state.claimed).toEqual({ canister: 1, right: false, count: 1 })
     expect(state.measured).toBe(0)
     expect(movesLeft(board, state)).toBe(before - 1)
   })
@@ -119,6 +119,16 @@ describe("undo", () => {
     state = undoPour(state)
     expect(state.measured).toBe(0)
     expect(state.claimed).toBeUndefined()
+  })
+
+  it("numbers each claim, so the same wrong answer twice is answered twice", () => {
+    // The board answers a claim with an animation, and two identical claims are told apart only by this.
+    let state = holdCanister(createCanistersState(board), 0)
+    state = pourInto(state, board, 1)
+    state = claimCanister(state, board, 1)
+    expect(state.claimed?.count).toBe(1)
+    state = claimCanister(state, board, 1)
+    expect(state.claimed?.count).toBe(2)
   })
 
   it("does nothing on an untouched board", () => {

@@ -9,8 +9,8 @@ type Props = {
   volumes: Volumes
   /** The canister the player has picked up, waiting for somewhere to pour it. */
   held?: number
-  /** What the player has claimed, and whether it was right — the board says so, the canister never does. */
-  claimed?: { canister: number; right: boolean }
+  /** What the player has claimed, and whether it was right — the board answers, the canister never does. */
+  claimed?: { canister: number; right: boolean; count: number }
   /** The pour the hint names, lit where it stands. */
   lit?: Move
   /** The completion run is under way, so what is in the canisters catches the light. */
@@ -50,6 +50,23 @@ const useTipping = (lastPour: { from: number; to: number; count: number } | unde
   }
 }
 
+/**
+ * The board's answer to a claim, played once and then let go.
+ *
+ * The same shape as `useTipping` and for the same reason — a claim's number is kept after its answer
+ * finishes, or the next render re-arms it and the canister shakes forever.
+ */
+const useAnswer = (claimed: { canister: number; right: boolean; count: number } | undefined) => {
+  const [answer, setAnswer] = useState<
+    { canister: number; right: boolean; count: number; running: boolean } | undefined
+  >()
+  if (claimed !== undefined && claimed.count !== answer?.count) setAnswer({ ...claimed, running: true })
+  return {
+    answer: answer?.running === true ? answer : undefined,
+    settle: () => setAnswer(current => (current === undefined ? current : { ...current, running: false })),
+  }
+}
+
 /** The largest canister fills the bench; the rest stand in proportion to it. */
 const HEIGHT = { max: 10, min: 4 }
 
@@ -76,9 +93,26 @@ const Canister: FC<{
   tilt: number
   /** The tip has played out and the vessel is back on the bench. */
   onSettled: () => void
+  /** The board's answer to a claim on THIS canister, while it is being given. */
+  answered?: "yes" | "no"
+  onAnswered: () => void
   skin: CanistersSkin
   onTap: () => void
-}> = ({ capacity, volume, tallest, held, lit, celebrating, levels, tilt, onSettled, skin, onTap }) => {
+}> = ({
+  capacity,
+  volume,
+  tallest,
+  held,
+  lit,
+  celebrating,
+  levels,
+  tilt,
+  onSettled,
+  answered,
+  onAnswered,
+  skin,
+  onTap,
+}) => {
   const rem = HEIGHT.min + (capacity / tallest) * (HEIGHT.max - HEIGHT.min)
   const fill = levels === "shown" ? volume / capacity : volume === 0 ? 0 : volume === capacity ? 1 : 0.45
   return (
@@ -97,12 +131,23 @@ const Canister: FC<{
           transformOrigin: "50% 88%",
           ...(tilt !== 0 ? ({ "--tilt": tilt } as Record<string, number>) : {}),
         }}
-        className={clsx(lit && skin.lit, "rounded", tilt !== 0 && "animate-pour")}
-        onAnimationEnd={tilt !== 0 ? onSettled : undefined}
+        className={clsx(
+          lit && skin.lit,
+          "rounded",
+          tilt !== 0 && "animate-pour",
+          // A refused claim shakes the canister; an accepted one catches the light. Both animate, and not
+          // only for the look: the board learns the answer is over from `animationend`, so an answer that
+          // played nothing would never be cleared and its colour would stay for the rest of the board.
+          answered === "no" && "animate-refuse",
+          answered === "yes" && "animate-flare"
+        )}
+        onAnimationEnd={tilt !== 0 ? onSettled : answered !== undefined ? onAnswered : undefined}
       >
         <Amphora
           fill={fill}
-          liquid={celebrating ? skin.measured : skin.liquid}
+          // An accepted claim turns the water the colour a measured volume wears, for as long as the
+          // answer lasts — the same green the completion run uses, because it means the same thing.
+          liquid={celebrating === true || answered === "yes" ? skin.measured : skin.liquid}
           outline={held ? skin.held : skin.outline}
           uncertain={levels === "sensed" && volume > 0 && volume < capacity ? skin.uncertain : undefined}
           tipping={tilt !== 0}
@@ -129,6 +174,7 @@ export const CanistersBoard: FC<Props> = ({
 }) => {
   const tallest = Math.max(...capacities)
   const { tipping, settle } = useTipping(lastPour)
+  const { answer, settle: settleAnswer } = useAnswer(claimed)
   return (
     <div className={clsx("flex w-full max-w-[min(52vh,26rem)] flex-col gap-3 rounded-xl p-4 select-none", skin.board)}>
       <div className="flex items-end justify-center gap-3">
@@ -145,6 +191,8 @@ export const CanistersBoard: FC<Props> = ({
               // Which way to tip: toward the canister being filled, so a pour to the right rolls right.
               tilt={tipping !== undefined && tipping.from === canister ? Math.sign(tipping.to - canister) : 0}
               onSettled={settle}
+              answered={answer?.canister === canister ? (answer.right ? "yes" : "no") : undefined}
+              onAnswered={settleAnswer}
               skin={skin}
               // A held canister pours into the one tapped next; an unheld one is picked up. One gesture,
               // two meanings, and which it is is always visible from the outline.
@@ -157,9 +205,12 @@ export const CanistersBoard: FC<Props> = ({
               onClick={() => onClaim(canister)}
               className={clsx(
                 "cursor-pointer rounded border px-2 py-1 text-xs transition active:scale-95",
-                claimed?.canister === canister && !claimed.right
-                  ? "border-rose-400 text-rose-300 hover:border-rose-300 hover:text-rose-200"
-                  : "border-stone-600 text-stone-300 hover:border-stone-400 hover:bg-stone-700/40 hover:text-stone-100"
+                answer?.canister === canister &&
+                  answer.right &&
+                  "border-emerald-400 bg-emerald-900/40 text-emerald-200",
+                answer?.canister === canister && !answer.right && "border-rose-400 bg-rose-950/40 text-rose-200",
+                answer?.canister !== canister &&
+                  "border-stone-600 text-stone-300 hover:border-stone-400 hover:bg-stone-700/40 hover:text-stone-100"
               )}
               aria-label={`claim the ${capacity} holds it`}
             >

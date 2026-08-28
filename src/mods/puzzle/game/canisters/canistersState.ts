@@ -15,8 +15,16 @@ export type CanistersState = {
    * Pouring is the only move there is, and it needs two taps; this is the first of them.
    */
   held?: number
-  /** The last claim the player made, so the board can say whether it was right. */
-  claimed?: { canister: number; right: boolean }
+  /**
+   * The last claim the player made, so the board can answer it.
+   *
+   * Numbered, because the answer is an ANIMATION: two wrong claims on the same canister have to shake it
+   * twice, and without something that changes between them the second one is indistinguishable from the
+   * first and plays nothing.
+   */
+  claimed?: { canister: number; right: boolean; count: number }
+  /** How many claims have been made — the number above, and nothing else reads it. */
+  claims: number
   /** What each earlier state held, oldest first — the undo stack. */
   past: { volumes: Volumes; measured: number }[]
 }
@@ -28,6 +36,7 @@ export const createCanistersState = (puzzle: CanistersPuzzle): CanistersState =>
   volumes: [...puzzle.start],
   poured: [],
   measured: 0,
+  claims: 0,
   past: [],
 })
 
@@ -74,13 +83,14 @@ export const pourInto = produce((state: CanistersState, puzzle: CanistersPuzzle,
  */
 export const claimCanister = produce((state: CanistersState, puzzle: CanistersPuzzle, canister: number) => {
   record(state)
+  state.claims++
   if (holdsWanted(puzzle, state.volumes, state.measured, canister)) {
     state.measured++
-    state.claimed = { canister, right: true }
+    state.claimed = { canister, right: true, count: state.claims }
     return
   }
   state.poured.push({ from: canister, to: canister })
-  state.claimed = { canister, right: false }
+  state.claimed = { canister, right: false, count: state.claims }
 })
 
 /**
