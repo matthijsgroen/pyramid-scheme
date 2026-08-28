@@ -50,10 +50,15 @@ export const Vessel: FC<Props> = ({ shape, fill, liquid, outline, settles, tippi
             style={{ transition: "y 300ms, height 300ms" }}
           />
           {/* What does not settle heaps instead: a shallow cone standing on the surface, clipped to the
-              vessel like everything else, so it only shows where there is room for it. */}
+              vessel like everything else, so it only shows where there is room for it.
+
+              **Its base sinks a unit into the fill rather than sitting on it.** Two opaque shapes that meet
+              exactly on a line are antialiased independently, and neither covers the line fully — which
+              draws a pale hairline across the heap where the grain should be continuous. The overlap is
+              half a device pixel at the size a vessel renders and hides nothing. */}
           {!settles && fill > 0 && fill < 1 && (
             <path
-              d={`M 8 ${surface} L 50 ${surface - 11} L 92 ${surface} Z`}
+              d={`M 8 ${surface + 1} L 50 ${surface - 11} L 92 ${surface + 1} Z`}
               className={liquid}
               style={{ transition: "d 300ms" }}
             />
