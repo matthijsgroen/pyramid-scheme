@@ -36,7 +36,9 @@ describe("shipped puzzle seeds", () => {
     expect(thin).toEqual([])
   })
 
-  it("builds a room's board from the list rather than from the room's own seed", () => {
+  // Two boards built for every bucket the world has, so the budget is the sweep's size rather than the
+  // default 5s a single-board test is written against.
+  it("builds a room's board from the list rather than from the room's own seed", { timeout: 60_000 }, () => {
     const roomSeed = 123456
     for (const demand of demands) {
       const meta = ALL_FAMILY_META.find(family => family.id === demand.familyId)!
