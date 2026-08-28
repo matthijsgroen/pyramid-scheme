@@ -19,8 +19,13 @@ live, so the numbers here are a snapshot to read, not a thing to keep true by ha
   room with an encounter in it, whether that encounter is a puzzle or a trap.
 - **Sprawl** — floors built broad rather than tight, out of the journey's total (§3).
 - **Wears** — the role and the ambience the spec authors for this journey.
-- **What its story asks for** — read off the journey's own name and description. **A `role` or an ambience
-  in `code` exists today**; anything in plain text is a brief with nothing behind it yet.
+- **Its story asks for** — read off the journey's own name and description. **A `role` in `code` exists
+  today**; anything in plain text is a brief with nothing behind it yet, and "no role fits" means the whole
+  story is one.
+- **If restricted to it** — how often one family would come back if the journey drew only from that role's
+  pool: `sections ÷ pool size`, against the 5.7× bar (§10). It is the cost of dressing the journey outright,
+  and the reason most of them prefer instead. "pool of 3" means the pool is under the four-family floor
+  `rolePools.spec.ts` enforces, so restricting is refused whatever the ratio.
 
 ## 2. The role is the place, the theme is the hour
 
@@ -130,12 +135,12 @@ pyramid picks up a floor or two.
 
 ## 4. Starter
 
-| Journey                              | Pyramids | Floors | Rooms | Sprawl | Wears | What its story asks for                       |
-| ------------------------------------ | -------- | ------ | ----- | ------ | ----- | --------------------------------------------- |
-| `starter_1` Dawn at the Sphinx       | 2        | 3      | 13    | —      | —     | dawn · weathered sandstone                    |
-| `starter_2` Papyrus Merchant's Route | 2        | 4      | 21    | —      | —     | `scribe` · `trade` · market stall · reed bank |
-| `starter_3` Temple of Bastet         | 4        | 4      | 26    | —      | —     | `light` · offering table · cat                |
-| `starter_4` Scribe's Academy         | 4        | 4      | 29    | —      | —     | `scribe` · schoolroom ostraca                 |
+| Journey                              | Pyr | Rooms | Sects | Sprawl | Wears | Its story asks for                  | If restricted to it |
+| ------------------------------------ | --- | ----- | ----- | ------ | ----- | ----------------------------------- | ------------------- |
+| `starter_1` Dawn at the Sphinx       | 2   | 13    | 8     | —      | —     | dawn · weathered sandstone          | no role fits        |
+| `starter_2` Papyrus Merchant's Route | 2   | 21    | 13    | —      | —     | `scribe` / `trade` · market · reeds | 4.3× — pool of 3    |
+| `starter_3` Temple of Bastet         | 4   | 26    | 16    | —      | —     | `light` · offering table · cat      | 5.3× — pool of 3    |
+| `starter_4` Scribe's Academy         | 4   | 29    | 19    | —      | —     | `scribe` · schoolroom ostraca       | 6.3× — pool of 3    |
 
 | Tomb                                               | Floors | Rooms | Sprawl | Wears | What its story asks for  |
 | -------------------------------------------------- | ------ | ----- | ------ | ----- | ------------------------ |
@@ -163,12 +168,12 @@ ask for the role by name.
 
 ## 5. Junior
 
-| Journey                             | Pyramids | Floors | Rooms | Sprawl | Wears                   | What its story asks for                        |
-| ----------------------------------- | -------- | ------ | ----- | ------ | ----------------------- | ---------------------------------------------- |
-| `junior_1` Sacred Ibis Migration    | 3        | 4      | 24    | —      | —                       | **`water`, ready to restrict** · marsh · flood |
-| `junior_2` Valley of the Artisans   | 4        | 6      | 38    | —      | —                       | workshop · pigment · quarry                    |
-| `junior_3` Temple of Thoth          | 4        | 6      | 45    | —      | —                       | `scribe` · moonlight · archive                 |
-| `junior_4` Lighthouse of Alexandria | 5        | 7      | 47    | —      | `light`+`sky` + `night` | beacon · quay                                  |
+| Journey                             | Pyr | Rooms | Sects | Sprawl | Wears                   | Its story asks for             | If restricted to it |
+| ----------------------------------- | --- | ----- | ----- | ------ | ----------------------- | ------------------------------ | ------------------- |
+| `junior_1` Sacred Ibis Migration    | 3   | 24    | 17    | —      | —                       | `water` · marsh · flood        | **3.4× — ready**    |
+| `junior_2` Valley of the Artisans   | 4   | 38    | 22    | —      | —                       | `trade` · workshop · pigment   | 7.3× — pool of 3    |
+| `junior_3` Temple of Thoth          | 4   | 45    | 25    | —      | —                       | `scribe` · moonlight · archive | 8.3× — pool of 3    |
+| `junior_4` Lighthouse of Alexandria | 5   | 47    | 28    | —      | `light`+`sky` + `night` | beacon · quay                  | **4.7× — authored** |
 
 | Tomb                                        | Floors | Rooms | Sprawl | Wears | What its story asks for |
 | ------------------------------------------- | ------ | ----- | ------ | ----- | ----------------------- |
@@ -194,12 +199,12 @@ would be a second ambience, colder than night and lit from one side rather than 
 
 ## 6. Expert
 
-| Journey                          | Pyramids | Floors | Rooms | Sprawl             | Wears | What its story asks for                     |
-| -------------------------------- | -------- | ------ | ----- | ------------------ | ----- | ------------------------------------------- |
-| `expert_1` Valley of the Kings   | 4        | 7      | 84    | 2/7                | —     | necropolis · torchlight · painted wall      |
-| `expert_2` Karnak Temple Complex | 4        | 6      | 83    | 1/6                | —     | hypostyle columns · solar gold · festival   |
-| `expert_3` Nile Delta Expedition | 5        | 7      | 107   | 1/7                | —     | `water` · delta marsh · crocodile           |
-| `expert_4` Pyramid of Djoser     | 5        | 7      | 99    | 2/7 (`packing: 2`) | —     | `trade` (2 of 3) · terraces · building site |
+| Journey                          | Pyr | Rooms | Sects | Sprawl             | Wears | Its story asks for                   | If restricted to it |
+| -------------------------------- | --- | ----- | ----- | ------------------ | ----- | ------------------------------------ | ------------------- |
+| `expert_1` Valley of the Kings   | 4   | 84    | 37    | 2/7                | —     | `funerary` · necropolis · torchlight | 7.4× — over the bar |
+| `expert_2` Karnak Temple Complex | 4   | 83    | 35    | 1/6                | —     | hypostyle columns · solar · festival | no role fits        |
+| `expert_3` Nile Delta Expedition | 5   | 107   | 42    | 1/7                | —     | `water` · delta marsh · crocodile    | 8.4× — over the bar |
+| `expert_4` Pyramid of Djoser     | 5   | 99    | 41    | 2/7 (`packing: 2`) | —     | `trade` · terraces · building site   | 13.7× — pool of 3   |
 
 | Tomb                                          | Floors | Rooms | Sprawl | Wears | What its story asks for |
 | --------------------------------------------- | ------ | ----- | ------ | ----- | ----------------------- |
@@ -224,12 +229,12 @@ because the tier puts a coloured key on the open main path, and a broad floor is
 
 ## 7. Master
 
-| Journey                          | Pyramids | Floors | Rooms | Sprawl | Wears | What its story asks for                    |
-| -------------------------------- | -------- | ------ | ----- | ------ | ----- | ------------------------------------------ |
-| `master_1` Great Pyramid of Giza | 4        | 8      | 83    | 1/8    | —     | `sky` (0 of 5 dressed) · gallery · granite |
-| `master_2` Book of the Dead      | 5        | 10     | 121   | 1/10   | —     | `scribe` · funerary scroll · judgement     |
-| `master_3` Curse of the Pharaohs | 5        | 10     | 125   | 1/10   | —     | `night` · omen · dust and decay            |
-| `master_4` Tomb of Nefertari     | 5        | 10     | 109   | —      | —     | fresco · queen's blue · lamplight          |
+| Journey                          | Pyr | Rooms | Sects | Sprawl | Wears | Its story asks for                 | If restricted to it  |
+| -------------------------------- | --- | ----- | ----- | ------ | ----- | ---------------------------------- | -------------------- |
+| `master_1` Great Pyramid of Giza | 4   | 83    | 43    | 1/8    | —     | `sky` · grand gallery · star shaft | 8.6× — and 0 dressed |
+| `master_2` Book of the Dead      | 5   | 121   | 50    | 1/10   | —     | `judgement` · scroll · judgement   | 10.0× — authored     |
+| `master_3` Curse of the Pharaohs | 5   | 125   | 53    | 1/10   | —     | `funerary` · omen · dust and decay | 10.6× — authored     |
+| `master_4` Tomb of Nefertari     | 5   | 109   | 47    | —      | —     | `funerary` · fresco · queen's blue | 9.4× — authored      |
 
 | Tomb                                    | Floors | Rooms | Sprawl | Wears | What its story asks for    |
 | --------------------------------------- | ------ | ----- | ------ | ----- | -------------------------- |
@@ -246,12 +251,12 @@ ochres rather than ink on a ground.
 
 ## 8. Wizard
 
-| Journey                          | Pyramids | Floors | Rooms | Sprawl | Wears | What its story asks for                 |
-| -------------------------------- | -------- | ------ | ----- | ------ | ----- | --------------------------------------- |
-| `wizard_1` Ra's Solar Journey    | 4        | 12     | 135   | 1/12   | —     | `night` · duat · solar barque · serpent |
-| `wizard_2` Secrets of the Sphinx | 5        | 15     | 177   | 2/15   | —     | buried sand · riddle · excavation       |
-| `wizard_3` Chamber of Ma'at      | 6        | 18     | 207   | 2/18   | —     | scales · feather of truth · cosmic      |
-| `wizard_4` Eternal Pyramid       | 6        | 18     | 207   | 1/18   | —     | void · gold · mirrored infinity         |
+| Journey                          | Pyr | Rooms | Sects | Sprawl | Wears | Its story asks for                   | If restricted to it |
+| -------------------------------- | --- | ----- | ----- | ------ | ----- | ------------------------------------ | ------------------- |
+| `wizard_1` Ra's Solar Journey    | 4   | 135   | 41    | 1/12   | —     | `funerary` · duat · barque · serpent | 8.2× — authored     |
+| `wizard_2` Secrets of the Sphinx | 5   | 177   | 53    | 2/15   | —     | buried sand · riddle · excavation    | no role fits        |
+| `wizard_3` Chamber of Ma'at      | 6   | 207   | 63    | 2/18   | —     | `judgement` · scales · feather       | 12.6× — authored    |
+| `wizard_4` Eternal Pyramid       | 6   | 207   | 63    | 1/18   | —     | void · gold · mirrored infinity      | no role fits        |
 
 | Tomb                                            | Floors | Rooms | Sprawl | Wears | What its story asks for                              |
 | ----------------------------------------------- | ------ | ----- | ------ | ----- | ---------------------------------------------------- |
@@ -376,32 +381,20 @@ restricts to nothing at all.
 sections from all eleven families. Anything at or under it is not a new problem. The bar moves as families
 are added, so read it as a measurement rather than a constant.
 
-### What each journey may ask for today
+### Reading the tier tables' last column
 
-Two things decide it: the pool has to clear four members (`rolePools.spec.ts`), and `sections ÷ pool` has
-to sit under the bar.
+Every journey carries its own cost in §4–§8. Two things decide whether it may restrict at all: the pool has
+to clear four members (`rolePools.spec.ts`), and `sections ÷ pool` has to land under the bar.
 
-| Journey                          | Sections | Role its story wants | Pool | Turns    | Verdict                        |
-| -------------------------------- | -------- | -------------------- | ---- | -------- | ------------------------------ |
-| `junior_1` Sacred Ibis Migration | 17       | `water`              | 5    | **3.4×** | **restrict** — marsh and flood |
-| `junior_4` Lighthouse            | 28       | `["light", "sky"]`   | 6    | 4.7×     | restrict — authored            |
-| `starter_3` Temple of Bastet     | 16       | `light`              | 3    | 5.3×     | prefer — pool under four       |
-| `starter_2` Papyrus Route        | 13       | `scribe` / `trade`   | 3    | 4.3×     | prefer — pool under four       |
-| `starter_4` Scribe's Academy     | 19       | `scribe`             | 3    | 6.3×     | prefer — pool under four       |
-| `junior_3` Temple of Thoth       | 25       | `scribe`             | 3    | 8.3×     | prefer                         |
-| `expert_3` Nile Delta            | 42       | `water`              | 5    | 8.4×     | prefer                         |
-| `expert_4` Pyramid of Djoser     | 41       | `trade`              | 3    | 13.7×    | prefer                         |
-| `master_2` Book of the Dead      | 50       | `["judgement", …]`   | 5    | 10.0×    | prefer — authored              |
-
-**`junior_1` is the one ready to restrict outright**, and nothing is stopping it:
-
-```ts
-journey("junior_1").pyramid("1-3", { encounter: "water" })
-```
-
-**Four of the prefers are held back by pool size alone**, not by their ratios: `starter_2`, `starter_3`,
-`starter_4` and `expert_4` all sit comfortably under the bar and all draw on a pool of three. One tag on
-one existing family turns each of them into a restrict — which is why §9 ranks pool size above faces.
+- **`junior_1` is the only one ready to restrict outright** — `water`, a pool of five, 3.4 turns each. One
+  line, and every room of it is a river or a flood plain.
+- **Four are held back by pool size alone**: `starter_2`, `starter_3`, `starter_4` and `junior_2` all sit
+  under the bar and all draw on a pool of three. One tag on one existing family turns each into a restrict,
+  which is why §9 ranks pool size above faces.
+- **The rest are simply long.** `expert_1` at 7.4× and `expert_3` at 8.4× have full five-family pools and
+  still exceed the bar, so they prefer.
+- **Three journeys fit no role at all**: `starter_1`'s dawn, `wizard_2`'s buried sand and `wizard_4`'s void.
+  Those are the ones a new role would have to be invented for, and §9 ranks them.
 
 ### The two modes
 
