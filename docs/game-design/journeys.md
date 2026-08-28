@@ -170,7 +170,7 @@ ask for the role by name.
 
 | Journey                             | Pyr | Rooms | Sects | Sprawl | Wears                   | Its story asks for             | If restricted to it |
 | ----------------------------------- | --- | ----- | ----- | ------ | ----------------------- | ------------------------------ | ------------------- |
-| `junior_1` Sacred Ibis Migration    | 3   | 24    | 17    | —      | —                       | `water` · marsh · flood        | **3.4× — ready**    |
+| `junior_1` Sacred Ibis Migration    | 3   | 24    | 17    | —      | `water`                 | marsh · flood                  | **3.4× — authored** |
 | `junior_2` Valley of the Artisans   | 4   | 38    | 22    | —      | —                       | `trade` · workshop · pigment   | 7.3× — pool of 3    |
 | `junior_3` Temple of Thoth          | 4   | 45    | 25    | —      | —                       | `scribe` · moonlight · archive | 8.3× — pool of 3    |
 | `junior_4` Lighthouse of Alexandria | 5   | 47    | 28    | —      | `light`+`sky` + `night` | beacon · quay                  | **4.7× — authored** |
@@ -388,8 +388,9 @@ are added, so read it as a measurement rather than a constant.
 Every journey carries its own cost in §4–§8. Two things decide whether it may restrict at all: the pool has
 to clear four members (`rolePools.spec.ts`), and `sections ÷ pool` has to land under the bar.
 
-- **`junior_1` is the only one ready to restrict outright** — `water`, a pool of five, 3.4 turns each. One
-  line, and every room of it is a river or a flood plain.
+- **`junior_1` is authored and restricted** — `water`, a pool of five, 3.4 turns each. All 22 of its puzzle
+  rooms are drawn from that pool and all five families turn up in it; its two trap rooms sit outside, as a
+  trap carries its own role.
 - **Four are held back by pool size alone**: `starter_2`, `starter_3`, `starter_4` and `junior_2` all sit
   under the bar and all draw on a pool of three. One tag on one existing family turns each into a restrict,
   which is why §9 ranks pool size above faces.
