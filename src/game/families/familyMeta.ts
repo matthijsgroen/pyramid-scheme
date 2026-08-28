@@ -54,7 +54,7 @@ export type FamilyMeta = {
   themes?: string[]
   /**
    * Which of this family's own faces serve which ROLE — the shared role vocabulary on the left, this
-   * family's own face ids on the right (docs/game-design/journeys.md §12).
+   * family's own face ids on the right (docs/instructions/puzzle-screens.md §2).
    *
    * **Out here rather than in the family's own skin file, which is where these maps used to live.** A
    * private map cannot be read by world-gen, and world-gen is what has to weigh a preferred role, warn

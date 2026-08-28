@@ -21,7 +21,7 @@ export const CONSTELLATION_META: FamilyMeta = {
   // anywhere and a node may author it anywhere.
   // A star map for the sky, a haul road for trade, a waterworks for water, a painted ceiling for a tomb.
   // `light` and `logistics` used to be in here and are gone: this family carries neither tag, so both were
-  // faces nothing could ever reach (journeys.md §12).
+  // faces nothing could ever reach.
   faces: {
     sky: ["default"],
     trade: ["causeway"],

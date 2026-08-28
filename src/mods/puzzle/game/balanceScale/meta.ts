@@ -23,7 +23,7 @@ export const BALANCE_META: FamilyMeta = {
   // it (P4).
   // The weighing of the heart under both the wide role and the narrow one — for this family they are the
   // same room. `trade` answers with the default: a scale weighing goods is a market instrument without
-  // being dressed as one, which is a claim worth stating rather than leaving out (journeys.md §12).
+  // being dressed as one, which is a claim worth stating rather than leaving out.
   faces: {
     trade: ["default"],
     funerary: ["weighing"],

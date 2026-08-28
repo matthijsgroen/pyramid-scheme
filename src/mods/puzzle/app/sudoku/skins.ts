@@ -243,7 +243,8 @@ const SKINS: Record<string, SudokuSkin> = { default: carved, papyrus: register }
 /**
  * Which place this room is, resolved the same way every family resolves it (`app/faceFor.ts`).
  *
- * The map itself lives on this family's `FamilyMeta` so world-gen can read it too (journeys.md §10).
+ * The map itself lives on this family's `FamilyMeta`, where world-gen can read it too
+ * (`docs/instructions/puzzle-screens.md` §2).
  */
 export const skinFor = (role: string | string[] | undefined, theme: string | undefined, board = 0): SudokuSkin =>
   withAmbience(SKINS[faceFor(SUDOKU_META.faces, role, theme, Object.keys(SKINS), board)] ?? SKINS.default, theme)

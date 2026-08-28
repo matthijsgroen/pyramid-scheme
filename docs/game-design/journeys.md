@@ -83,7 +83,7 @@ Four readings of that table before authoring anything:
   the pool is 1 of 3 — the first face it has ever had, and the gap §9 ranked is half closed.
 - **`logistics` is an empty pool.** Constellation maps it to its causeway, but no family carries the tag,
   so a site authoring it would find nobody. `trade` is the word that works — and balance scale owes that
-  pool an answer, since a scale weighing goods either reads as a market or the tag should go (§12).
+  pool an answer, since a scale weighing goods either reads as a market or the tag should go.
 - **A tomb has no faces, and is exempt from all of this.** A tomb's rooms are tableau and the fez shop,
   so no role or ambience reaches one — but that is not a gap to fill. Tableau's own screen is mid-redesign
   (`puzzles/tableau.md` §10.5), so a face drawn for it now would be drawn on something about to move.
@@ -217,7 +217,7 @@ the delta's water dressed as something that bites.
 Djoser is a building site, which is exactly constellation's causeway — and canisters has since joined the
 `trade` pool with a merchant's cellar, so two of its three families dress now. Balance scale is the one
 left, and a scale is a market instrument: it is the clearest argument in the tier for giving it a second
-face. The pool being three also means Djoser prefers rather than restricts (§14).
+face. The pool being three also means Djoser prefers rather than restricts (§10).
 
 `expert_4` is also where sprawl stops being a coin toss: two of its five pyramids are authored broad
 because the tier puts a coloured key on the open main path, and a broad floor is somewhere to hide one.
@@ -276,7 +276,7 @@ one built for a single pyramid does not.
 
 | Gap                                                  | Reaches                                                                | Rooms | What it takes                                                                                                                                                  |
 | ---------------------------------------------------- | ---------------------------------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **A `funerary` role** — **BUILT**                    | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1`, `wizard_3` | 781   | Done (§13): four faces, six journeys authored, no new generator. What is left is the SHARE — see §11's prefer mode.                                            |
+| **A `funerary` role** — **BUILT**                    | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1`, `wizard_3` | 781   | Done: four faces, six journeys authored, no new generator. What is left is the SHARE — see §11's prefer mode.                                                  |
 | **A cosmos role**                                    | `wizard_4`                                                             | 207   | The one story with no Egyptian hook at all: the void beyond the sky. A new family, or the largest new face in the game.                                        |
 | **A warm-light ambience**                            | `starter_3`, `junior_3`, `expert_1`, `master_4`                        | 264   | Overlays per face rather than a new skin per family. Four briefs — lamplight twice, torchlight, moonlight — asking for one thing.                              |
 | **A fourth family for `scribe`, `trade` or `light`** | `starter_2`, `starter_4`, `junior_3`, `expert_4`                       | 187   | All three pools sit at three, one short of the floor a journey must clear to restrict to a role (§2). A tag on an existing family is the whole of it.          |
@@ -351,45 +351,10 @@ pattern (§5) with the pools one size larger, and the reason `rolePools.spec.ts`
 authored role whole rather than tag by tag — a one-family narrow tag is only ever legible as half of a
 list.
 
-## 10. The authoring system
+## 10. Restrict or prefer, and the variety either costs
 
-Three pieces make §2's contract hold by construction rather than by care.
-
-1. **One vocabulary, and it is the role words.** A family declares which of its faces serve which roles on
-   its `FamilyMeta.faces` (§12) — out where `src/worldGen` can read it, because world-gen is what has to
-   weigh a preferred role (§11), refuse one nothing dresses, and say which face a room will wear before it
-   is opened. A face's own name (`irrigation`, `channel`, `papyrus`) stays an internal id the lab can pick;
-   it is never a word a site authors.
-
-2. **One resolver, in `app/faceFor.ts`.** Six families asking the same question six times answered it six
-   slightly different ways, so the question is asked once. It decides the place from the role, and nothing
-   else does.
-
-3. **The ambience layers.** A face declares an `ambience` map of what each hour changes about it, and
-   `withAmbience` merges it once the role has settled which place the room is. A face with nothing to say
-   about the hour says nothing — a granary at night is a granary — and a second hour is a key rather than
-   a rewrite.
-
-**The rule that is easy to get backwards:** a face of its own beats a bare `default` **between** roles, and
-never within one. `["sky", "water"]` has to draw the waterworks rather than let sky's default cancel it —
-but `agriculture: ["grain", "default"]` names two real places, and dropping the second would quietly
-narrow the word to the granary.
-
-**And what the guards hold** (`worldGen/faces.spec.ts`), because none of it fails loudly on its own: a
-family answers for exactly the roles it claims, an ambience never appears where a place belongs, the world
-authors a theme only where it names an hour, and no authored role is one that every family would meet with
-its default. A place name typed into `theme` is otherwise accepted and half-works — dressing whichever
-family happens to use that word and leaving its neighbours plain.
-
-One wrinkle worth naming rather than hiding: **a tomb's place is per-site, not per-role.** Every tomb room
-carries `role: "tomb-puzzle"`, so a weighing hall and a merchant's cellar cannot be told apart by role.
-Tombs are the one legitimate case for a site-authored face, and worth designing as such rather than
-treated as a counter-example to the rule.
-
-## 11. Restrict or prefer — which mode a journey wants
-
-A role narrows the pool, and on a long journey that is the problem: a family is assigned **per section**,
-not per room, so what a player feels is `sections ÷ pool size`.
+A role narrows the pool a journey draws from, and on a long journey that is the problem: a family is
+assigned **per section**, not per room, so what a player feels is `sections ÷ pool size`.
 
 **The columns below are pool SIZES, not roles a journey wants.** Read a row across: this is how often one
 family comes back if that journey were restricted to a pool of that size, whichever role it happened to be.
@@ -407,228 +372,53 @@ restricts to nothing at all.
 | `master_2`  | 50       | 121   | 4.5×     | 8.3×      | 10.0×     | 16.7×     |
 | `wizard_3`  | 63       | 207   | **5.7×** | 10.5×     | 12.6×     | 21.0×     |
 
-**5.7× is the bar**, because that is the worst variety the game already ships: wizard_3 and wizard_4 draw 63
+**5.7× is the bar**, because it is the worst variety the game already ships: wizard_3 and wizard_4 draw 63
 sections from all eleven families. Anything at or under it is not a new problem. The bar moves as families
-are added — it was 6.3× when there were ten of them.
+are added, so read it as a measurement rather than a constant.
 
-- **Restrict when `sections ÷ pool` lands inside the bar.** `junior_1` on `water` is 3.4× and `junior_4` on
-  `["light", "sky"]` is 4.7×, so both can be what they are all the way through — no worse than what the
-  endgame already does undressed. These are the journeys where the pool _is_ the dress.
-- **Prefer once it does not.** `expert_3` on `water` is 8.4× and `master_2` restricted to a three-family
-  pool would be 16.7× — well past the bar. A three-family pool is unusable above starter, which is the
-  second reason `scribe`, `trade` and `light` cannot be restricted to today; the first is that
-  `rolePools.spec.ts` refuses a pool under four at all (§2).
+### What each journey may ask for today
 
-### Both modes, and only one of them needs building
+Two things decide it: the pool has to clear four members (`rolePools.spec.ts`), and `sections ÷ pool` has
+to sit under the bar.
 
-```ts
-// Restrict — the pool is the dress. Exists today, and this is the authored line.
-journey("junior_4").pyramid("1-5", { encounter: ["light", "sky"], theme: "night" })
+| Journey                          | Sections | Role its story wants | Pool | Turns    | Verdict                        |
+| -------------------------------- | -------- | -------------------- | ---- | -------- | ------------------------------ |
+| `junior_1` Sacred Ibis Migration | 17       | `water`              | 5    | **3.4×** | **restrict** — marsh and flood |
+| `junior_4` Lighthouse            | 28       | `["light", "sky"]`   | 6    | 4.7×     | restrict — authored            |
+| `starter_3` Temple of Bastet     | 16       | `light`              | 3    | 5.3×     | prefer — pool under four       |
+| `starter_2` Papyrus Route        | 13       | `scribe` / `trade`   | 3    | 4.3×     | prefer — pool under four       |
+| `starter_4` Scribe's Academy     | 19       | `scribe`             | 3    | 6.3×     | prefer — pool under four       |
+| `junior_3` Temple of Thoth       | 25       | `scribe`             | 3    | 8.3×     | prefer                         |
+| `expert_3` Nile Delta            | 42       | `water`              | 5    | 8.4×     | prefer                         |
+| `expert_4` Pyramid of Djoser     | 41       | `trade`              | 3    | 13.7×    | prefer                         |
+| `master_2` Book of the Dead      | 50       | `["judgement", …]`   | 5    | 10.0×    | prefer — authored              |
 
-// Every family, dressed wherever one can. Also exists today, unweighted.
-journey("wizard_3").pyramid("1-6", { encounter: ["cosmos", "puzzle"] })
-```
-
-The second line already works and nothing had to be added for it. **A role list means "any of these"**, so
-adding `puzzle` re-admits every family; the list is written to the room verbatim, and `skinFor` takes the
-first role it has a face for — so a cosmos family wears cosmos and every other family draws its default.
-The contract that makes this safe is the one in §2: an unknown role never breaks a room.
-
-What is missing is the **bias**. Unweighted, a three-family cosmos pool dresses 3 sections in 10 — 19 of
-`wizard_3`'s 63, against 44 plain, which likely reads as a handful of odd rooms rather than a cosmos
-journey. Weighting needs the allocator to know which families _dress_ a role, and it cannot: that mapping
-lives in each family's private `app/*/skins.ts` `ROLE_SKINS`, invisible to `src/worldGen`.
-
-Which is §10 point 1 with a second reason to do it. Declaring the faces a family serves in `FamilyMeta`
-pays for itself three times: the §9 gap table generates instead of being hand-kept, the generation guard
-can fail on a role no family dresses, and the allocator can weight a preferred role — a bag holding every
-eligible family plus the dressing ones a second and third time is enough of a thumb on the scale, and the
-number to check afterwards is what share of a journey's sections came out dressed.
-
-Note that preferring `sky` is inherently a no-op: every family in that pool serves it with its default face
-(§2), so there is nothing to weight toward. A star journey has to restrict — which is what the lighthouse
-wanted anyway, and why the pool being full matters more there than any face would.
-
-## 12. Spec — the `faces` declaration
-
-One field on `FamilyMeta`, and it is a **move** rather than a new thing to keep: the `ROLE_SKINS` table each
-family already keeps privately in `app/<family>/skins.ts` relocates to its `game/<family>/meta.ts`, where
-`src/worldGen` can read it.
-
-```ts
-// src/game/families/familyMeta.ts
-export type FamilyMeta = {
-  // …
-  /** Which of this family's own faces serve which role — the shared role vocabulary on the left, this
-   *  family's own face ids on the right. **A SET, because some places are wider than others**: a market
-   *  moves oil, wine and grain, so canisters names three under `trade` and a room wears one of them.
-   *  **Every tag except `puzzle` needs an entry**, and
-   *  `"default"` is a real answer: it says this family already reads as that place without being asked.
-   *  Star battle's default is stars on a dark ground, so it declares `sky: "default"` rather than
-   *  nothing — the claim that it can carry a night journey has to be in the data, or a report reading
-   *  the data will deny it. Read by the skin resolver at play time and by the encounter allocator at
-   *  generation, which is the point of it living out here. */
-  faces?: Record<string, string[]>
-}
-```
-
-What every family declares, read off its existing `ROLE_SKINS` and its skin table's own descriptions:
-
-| Family                  | `faces`                                                                                                                                                    |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| canisters               | `{ water: ["default"], agriculture: ["grain", "default"], light: ["oil"], scribe: ["ink"], trade: ["wine", "oil", "grain"], funerary: ["natron", "oil"] }` |
-| constellation           | `{ sky: ["default"], trade: ["causeway"], water: ["irrigation"], agriculture: ["irrigation"] }`                                                            |
-| hidato                  | `{ water: ["channel"], agriculture: ["channel"], scribe: ["scribe"], funerary: ["chambers"] }`                                                             |
-| star battle, twin stars | `{ sky: ["default"], water: ["fields"], agriculture: ["fields"] }`                                                                                         |
-| sudoku                  | `{ scribe: ["papyrus"], funerary: ["default"] }`                                                                                                           |
-| eclipse                 | `{ sky: ["default"], light: ["default"] }`                                                                                                                 |
-| lightbeam               | `{ sky: ["default"], light: ["default"] }` — or drop the tags, see below                                                                                   |
-| balance scale           | `{ trade: ["default"], funerary: ["weighing"], judgement: ["weighing"] }`                                                                                  |
-| everything else         | unset — their only tag is `puzzle`                                                                                                                         |
-
-**Canisters is the row that shows why this has to be set-valued**, and it is already written this way: its
-role map lives in `app/canisters/skins.ts` in exactly this shape, with the face picked per room by hashing
-the board. Moving it here is a move rather than a design.
-
-Eclipse's `night` pair is deliberately absent: it is an ambience, not a role face, and the two axes do not
-share a field (§2).
-
-### Two invariants, and what they catch
-
-1. **Every key is one of the family's own `tags`, and every tag but `puzzle` is a key.** A family cannot
-   dress a place it is not eligible for, and cannot claim eligibility for a place it will not answer for.
-2. **Every value is `"default"` or names a face in that family's own skin table.** Impossible to drift once
-   that table is the one the resolver reads.
-
-The first half of invariant 1 fails on three existing entries, which is the argument for having it:
-
-| Entry                                | Why it is dead                                                                                                                       |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| constellation `logistics` → causeway | No family carries the `logistics` tag, so the pool is empty and this real face is unreachable — the §2 finding, caught mechanically. |
-| constellation `light` → default      | Constellation is not in the `light` pool.                                                                                            |
-| star battle `light` → default        | Nor is star battle.                                                                                                                  |
-
-The second half is the more valuable one, because it turns a silent assumption into a question someone has
-to answer. Three tags have no entry at all today and each is a real decision: does **lightbeam** read as
-`sky`, or is that tag borrowed from its `light` one? Does **balance scale** read as `trade` — a scale
-weighing goods is a market instrument, so probably yes, though the catalogue titled that family "weighing
-of the heart" and its funerary claim is the stronger one (§9). A tag with no face declared is a family
-sitting in a pool it has never been asked to justify.
-
-### `"default"` must not win a role list
-
-The resolver takes the first role it has a face for out of a list, so an entry pointing at `"default"` wins
-that search and cancels the roles behind it: `["sky", "water"]` would draw constellation's star map rather
-than its waterworks. Nothing is harmed today, because every room in the baked world carries a
-single-string role — but §11's prefer mode makes `["<role>", "puzzle"]` the normal authoring, and lists
-stop being hypothetical.
-
-So the resolver prefers a **non-default** entry and falls back to the default one:
-
-```ts
-const byRole = roles.map(r => faces[r]).find(face => face && face !== "default" && SKINS[face])
-const base = named ?? (byRole ? SKINS[byRole] : SKINS.default)
-```
-
-A `"default"` entry then costs nothing at render time and carries its whole weight as data: it is the
-family saying _I am this place already_, which is what the report needs and what the resolver has no use
-for.
-
-### What it generates
-
-`yarn dressing` (or a `--dressing` block on `yarn world-info`, which already walks every journey) prints
-what §2, §9 and §11 currently hand-keep:
-
-1. **Role pools** — per role: its pool from `tags`, how many members read as the place, and how many have a
-   face that differs from their default. §2's table, computed, with the two columns kept apart.
-2. **Per journey** — sections, rooms, and `sections ÷ pool` for every role its pool could serve, against
-   the 6.3 bar, with the restrict-or-prefer verdict. §11's table, computed.
-3. **The gaps, by severity** — roles no family serves at all, then roles every member serves with nothing
-   but its default. §9's ranking and Rooms column, computed; only the story briefs stay prose, because what
-   a journey's name asks for is not a thing a script can read.
-
-One spec asserts both invariants, so a family added with a tag it has not answered for fails the build
-rather than quietly widening a pool.
-
-### Order to do it in
-
-1. Add `faces`, populate it from the four `ROLE_SKINS` tables plus the `"default"` entries the skin files
-   already describe in prose, and drop the three dead keys. Each family's `skinFor` reads `meta.faces`
-   instead of its local constant, with the non-default preference above.
-2. Answer the unclaimed tags — lightbeam's `sky` and `light`, balance scale's `trade` — by declaring a face
-   or dropping the tag.
-3. Add the two invariants as one spec.
-4. Add the report, and cut the hand-kept numbers out of §2, §9 and §11 in favour of running it.
-5. Only then the two things this unblocks: the generation guard (§10 point 2) and weighting a preferred
-   role (§11).
-
-`themes` stays as it is. It is the puzzle lab's picker list and it holds ambience names as well as face
-ids, so it is not derivable from `faces` alone — worth collapsing later, not on the way to this.
-
-## 13. What the funerary cluster came out as
-
-Built 2026-08-27. Four faces and six authored journeys, and no new puzzle: `PUZZLE_FAMILIES.md` §11.1 had
-read three of these families as tomb material already, and the fourth is titled "weighing of the heart".
-
-| Family        | Its funerary face                                                     |
-| ------------- | --------------------------------------------------------------------- |
-| balance scale | the weighing itself — the unknowns become the heart and the feather   |
-| constellation | a painted ceiling, stars in pigment on flat plaster rather than depth |
-| hidato        | a comb of sealed chambers, opened as the passage reaches them         |
-| sudoku        | its default, which was always signs cut into a chamber wall           |
-
-**Every one of the six is authored in prefer mode**, because every one of them is past the bar: four
-families over 37 to 63 sections is 9 to 16 turns each, against the 6.3 the least varied journey already
-ships (§11). So they author `["funerary", "puzzle"]` — a union, so the pool stays every family and **the
-draw does not change at all**. Regenerating moved `role` fields and nothing else; every journey's room
-count is what it was.
-
-`master_2` and `wizard_3` lead with the narrow word, `["judgement", "funerary", "puzzle"]`. Their stories
-name the judgement and only the balance scale draws that scene, so the scale turns up wearing the scales
-while its neighbours wear the wider tomb — `junior_4`'s `["light", "sky"]` one pool size up.
-
-**What is left is the share, not the faces.** Unweighted, four families in ten means roughly two rooms in
-five come out dressed and the rest draw their defaults. Weighting a preferred role is designed and unbuilt
-(§11), and `FamilyMeta.faces` (§12) is what it waits on — the allocator cannot prefer what it cannot see.
-
-One wrinkle, noted because it looks alarming in a diff and is not: authoring an encounter on a pyramid also
-stamps one onto its chainless sections, the `pathPuzzles: 0` treasure ends. Those fields are inert — the
-assembler builds puzzle rooms in a loop over `pathPuzzles`, so a chainless section makes none and its end
-stays a treasure chest. `junior_4` has carried 13 of them since it was authored.
-
-## 14. What canisters opened, and what is now authorable
-
-`canisters` (§4.28) carries six roles, so four pools changed at once (§2). This is what that makes possible,
-measured the way §11 measures it: a pool clears the four-member floor `rolePools.spec.ts` enforces, and the
-journey's own `sections ÷ pool` sits under the bar — which is now **5.7**, since the widest journey draws 63
-sections from eleven families.
-
-| Journey                          | Sections | Role it wants      | Pool | Turns each | Verdict                        |
-| -------------------------------- | -------- | ------------------ | ---- | ---------- | ------------------------------ |
-| `junior_1` Sacred Ibis Migration | 17       | `water`            | 5    | 3.4        | **restrict** — marsh and flood |
-| `junior_4` Lighthouse            | 28       | `["light", "sky"]` | 6    | 4.7        | restrict — already authored    |
-| `starter_3` Temple of Bastet     | 16       | `light`            | 3    | 5.3        | prefer — pool short of four    |
-| `starter_2` Papyrus Route        | 13       | `scribe` / `trade` | 3    | 4.3        | prefer — pool short of four    |
-| `starter_4` Scribe's Academy     | 19       | `scribe`           | 3    | 6.3        | prefer — pool short, over bar  |
-| `junior_3` Temple of Thoth       | 25       | `scribe`           | 3    | 8.3        | prefer                         |
-| `expert_3` Nile Delta            | 42       | `water`            | 5    | 8.4        | prefer                         |
-| `expert_4` Pyramid of Djoser     | 41       | `trade`            | 3    | 13.7       | prefer                         |
-
-**`junior_1` is the find.** Seventeen sections over five fully-dressed families is 3.4 turns each — the
-tightest restrict in the game after the lighthouse, and every room of it would be a river or a flood plain:
+**`junior_1` is the one ready to restrict outright**, and nothing is stopping it:
 
 ```ts
 journey("junior_1").pyramid("1-3", { encounter: "water" })
 ```
 
-**Everything else wants the prefer form**, `["<role>", "puzzle"]`, and for two different reasons that are
-worth keeping apart. `expert_3` and `junior_3` are simply too long for their pools. `starter_2`,
-`starter_3`, `starter_4` and `expert_4` are not: their ratios are fine, and what stops them is the
-four-member floor. **One tag on one existing family turns four of those from prefer into restrict** — which
-is why the §9 table now ranks pool size above faces.
+**Four of the prefers are held back by pool size alone**, not by their ratios: `starter_2`, `starter_3`,
+`starter_4` and `expert_4` all sit comfortably under the bar and all draw on a pool of three. One tag on
+one existing family turns each of them into a restrict — which is why §9 ranks pool size above faces.
 
-**The funerary six get denser for free.** Canisters is in that pool with a face of its own, so the next
-`yarn generate-world` raises the dressed share of all 781 rooms without a line of authoring changing (§13).
+### The two modes
 
-**Nothing here is authored yet**, and none of it takes effect until the world is re-cut — the tags are
-eligibility, and the baked world still predates this family entirely.
+```ts
+// Restrict — the pool is the dress.
+journey("junior_1").pyramid("1-3", { encounter: "water" })
+
+// Every family, dressed wherever one can — a role list means "any of these", so `puzzle` re-admits
+// everyone while the families that dress the role still wear it.
+journey("expert_3").pyramid("1-5", { encounter: ["water", "puzzle"] })
+```
+
+**What prefer still lacks is the bias.** Unweighted, a five-family pool inside eleven dresses roughly two
+rooms in five, which reads as scattered rather than as a place. The allocator can weight it now that
+`FamilyMeta.faces` says which families dress which role — a bag holding every eligible family plus the
+dressing ones twice over is enough of a thumb on the scale, and the number to check afterwards is the share
+of a journey's sections that came out dressed.
+
+Preferring `sky` is inherently a no-op: every family in that pool serves it with its default face (§2), so
+there is nothing to weight toward. A star journey has to restrict.
