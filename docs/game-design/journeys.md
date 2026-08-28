@@ -362,10 +362,13 @@ list.
 
 ## 10. What a clean authoring system needs
 
-The contract in §2 is right; three things stop it holding by construction.
+**None of this is built.** The contract in §2 is right and three things stop it holding by construction;
+all three are still exactly as open as the day they were written down, while five families' worth of faces
+have been added around them. That is the honest state, and the gap widens with every face.
 
 1. **One vocabulary, and it is the role words.** A family should declare which faces serve which roles and
-   nothing else — specified as `FamilyMeta.faces` in §12. The private names (`irrigation`, `channel`, `papyrus`) become internal ids the lab shows,
+   nothing else — specified as `FamilyMeta.faces` in §12. Six families now keep that map privately in
+   `app/<family>/skins.ts`, where `src/worldGen` cannot read it. The private names (`irrigation`, `channel`, `papyrus`) become internal ids the lab shows,
    never words a site can author. Today a place name typed into `theme` is accepted, and each family's
    `SKINS[theme]` lookup makes it half work — dressing whoever happens to use that word and leaving its
    neighbours on their defaults. That silent half-success is the defect; aliasing names between families
@@ -383,6 +386,21 @@ One wrinkle worth naming rather than hiding: **a tomb's place is per-site, not p
 carries `role: "tomb-puzzle"`, so a weighing hall and a merchant's cellar cannot be told apart by role.
 Tombs are the one legitimate case for a site-authored face, and worth designing as such rather than
 treated as a counter-example to the rule.
+
+### Two things canisters taught this section
+
+Building a family with six faces (§4.28) put weight on §10.1 that the original sketch did not carry.
+
+- **A role maps to a SET of faces, not to one.** §12 specced `Record<string, string>`, one face per role.
+  That is too narrow: a market moves oil, wine and grain, so `trade` names three places and a room is one
+  of them. The declaration has to be `Record<string, string[]>`, and §12 now says so.
+- **Which of a set a room wears is decided in the app, out of sight of the allocator.** Canisters hashes
+  the board's own shape to pick, which is stable and costs nothing — but it means gen cannot see, weight or
+  report the choice. That is the same wall §11's prefer-weighting hits, and the same fix opens both: put
+  the map where world-gen can read it.
+
+So the case for §10.1 is no longer only tidiness. **Two features are now waiting behind it** — weighting a
+preferred role, and knowing which face a room will wear before it is opened.
 
 ## 11. Restrict or prefer — which mode a journey wants
 
@@ -449,14 +467,16 @@ family already keeps privately in `app/<family>/skins.ts` relocates to its `game
 // src/game/families/familyMeta.ts
 export type FamilyMeta = {
   // …
-  /** Which of this family's own faces serves which role — the shared role vocabulary on the left, this
-   *  family's private face ids on the right. **Every tag except `puzzle` needs an entry**, and
+  /** Which of this family's own faces serve which role — the shared role vocabulary on the left, this
+   *  family's own face ids on the right. **A SET, because some places are wider than others**: a market
+   *  moves oil, wine and grain, so canisters names three under `trade` and a room wears one of them.
+   *  **Every tag except `puzzle` needs an entry**, and
    *  `"default"` is a real answer: it says this family already reads as that place without being asked.
    *  Star battle's default is stars on a dark ground, so it declares `sky: "default"` rather than
    *  nothing — the claim that it can carry a night journey has to be in the data, or a report reading
    *  the data will deny it. Read by the skin resolver at play time and by the encounter allocator at
    *  generation, which is the point of it living out here. */
-  faces?: Record<string, string>
+  faces?: Record<string, string[]>
 }
 ```
 
