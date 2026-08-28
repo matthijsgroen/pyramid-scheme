@@ -26,11 +26,12 @@ describe("EncounterModal", () => {
   ])("keeps its content out of the %s safe area", (side, prefix) => {
     // The frame is `fixed inset-0` on a `viewport-fit=cover` page, so it reaches under the status bar and
     // the home indicator; the row of controls at the top of a puzzle ended up beneath the clock.
-    expect(frame().className).toContain(`${prefix}[calc(env(safe-area-inset-${side},_0)`)
+    expect(frame().className).toContain(`${prefix}[calc(var(--spacing-safe-${side})`)
   })
 
   it("adds the safe area to its own gap rather than replacing it", () => {
-    // The insets are zero on most devices, and the frame still wants its gap there.
+    // `p-safe-*` on its own SETS the padding to the inset, which is zero on a phone without a notch and on
+    // every desktop — the frame would lose its margin and sit against the screen edge.
     expect(frame().className).toContain("_+_var(--spacing)_*_2)]")
   })
 })
