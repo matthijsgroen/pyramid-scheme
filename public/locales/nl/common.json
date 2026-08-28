@@ -914,32 +914,32 @@
       "default": {
         "moves": "Tik op een kruik om hem op te pakken en tik dan op een andere om over te gieten. Het gieten stopt zodra de eerste leeg is of de tweede vol.",
         "contents": "Dit is al het water dat er is — één kruik begint vol, en er kan niets weg en niets bij.",
-        "hidden": "Op elke kruik staat hoeveel er vol in gaat. Er staat nooit op hoeveel erin zit — dat reken je zelf uit."
+        "levels": "Op elke kruik staat hoeveel erin zit, en hoeveel er vol in gaat."
       },
       "grain": {
         "moves": "Tik op een maat om hem op te tillen en tik dan op een andere om het graan erin te storten. Het storten stopt zodra de eerste leeg is of de tweede tot de rand staat.",
         "contents": "Dit is al het graan dat er is — één maat begint vol, en er kan niets weg en niets bij uit de schuur.",
-        "hidden": "Op elke maat staat hoeveel er vol in gaat. Er staat nooit op hoeveel erin zit — dat reken je zelf uit."
+        "levels": "Op elke maat staat hoeveel erin zit, en hoeveel er tot de rand in gaat."
       },
       "oil": {
         "moves": "Tik op een kruik om hem op te tillen en tik dan op een andere om over te gieten. Het gieten stopt zodra de eerste leeg is of de tweede vol.",
         "contents": "Dit is alle olie die er is — één kruik begint vol, en er kan niets weg en niets bij.",
-        "hidden": "Op elke kruik staat hoeveel er vol in gaat. Er staat nooit op hoeveel erin zit — dat reken je zelf uit."
+        "levels": "Op elke kruik staat hoeveel erin zit, en hoeveel er vol in gaat."
       },
       "wine": {
         "moves": "Tik op een amfoor om hem op te tillen en tik dan op een andere om over te schenken. Het schenken stopt zodra de eerste leeg is of de tweede vol.",
         "contents": "Dit is alle wijn die er is — één amfoor begint vol, en er kan niets weg en niets bij uit de kelder.",
-        "hidden": "Op elke amfoor staat hoeveel er vol in gaat. Er staat nooit op hoeveel erin zit — dat reken je zelf uit."
+        "levels": "Op elke amfoor staat hoeveel erin zit, en hoeveel er vol in gaat."
       },
       "natron": {
         "moves": "Tik op een canope om hem op te tillen en tik dan op een andere om het natron erin te storten. Het storten stopt zodra de eerste leeg is of de tweede tot het deksel staat.",
         "contents": "Dit is al het natron dat er is — één canope begint vol, en er kan niets weg en niets bij.",
-        "hidden": "Op elke canope staat hoeveel er vol in gaat. Er staat nooit op hoeveel erin zit — dat reken je zelf uit."
+        "levels": "Op elke canope staat hoeveel erin zit, en hoeveel er tot de deksel in gaat."
       },
       "ink": {
         "moves": "Tik op een pot om hem op te tillen en tik dan op een andere om over te gieten. Het gieten stopt zodra de eerste leeg is of de tweede vol.",
         "contents": "Dit is alle inkt die er is — één pot begint vol, en er kan niets weg en niets bij gewreven.",
-        "hidden": "Op elke pot staat hoeveel er vol in gaat. Er staat nooit op hoeveel erin zit — dat reken je zelf uit."
+        "levels": "Op elke pot staat hoeveel erin zit, en hoeveel er vol in gaat."
       }
     },
     "hint": {

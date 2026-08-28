@@ -82,13 +82,14 @@ const MIN_VISIBLE = 0.08
  * One canister: how big it is, and how much is in it.
  *
  * **The size is drawn to scale and written underneath.** A 5 beside an 8 has to LOOK like a 5 beside an
- * 8 — that proportion is what the player reasons with. The number sits under the shape rather than on it,
- * because inside an empty vessel there is nothing for it to be read against.
+ * 8 — that proportion is what the player reasons with. The numbers sit under the shape rather than on it,
+ * because inside an empty vessel there is nothing for them to be read against.
  *
- * **What is in it is never a number** (design doc §7). The level itself IS drawn, and it is not a shortcut
- * past the arithmetic: no board says how many measures a height is worth. What it does give is the one
- * reading a pour has to leave behind — which canister ran out, and so whether the pour was limited by what
- * you had or by what fits.
+ * **What is in it is written too, against what it holds** (design doc §7). The level is still drawn, and it
+ * still carries the reading a pour has to leave behind — which canister ran out, and so whether the pour
+ * was limited by what you had or by what fits. What the figure adds is that holding the running amounts in
+ * your head is no longer the price of reading the board: the puzzle is choosing the pours, and a player who
+ * loses track of a total is not being asked a better question, only a harder one to bookkeep.
  */
 const Canister: FC<{
   capacity: number
@@ -112,9 +113,9 @@ const Canister: FC<{
     <button
       onClick={onTap}
       className="flex cursor-pointer flex-col items-center gap-1 rounded p-1 transition active:scale-95"
-      // The number under the shape names this button for anyone reading it, but "8" on its own says
+      // The figures under the shape name this button for anyone reading it, but "3/8" on its own says
       // nothing about what it is.
-      aria-label={`canister of ${capacity}`}
+      aria-label={`canister of ${capacity}, holding ${volume}`}
     >
       <div
         style={{
@@ -147,7 +148,12 @@ const Canister: FC<{
           tipping={tilt !== 0}
         />
       </div>
-      <span className={clsx("text-lg leading-none font-semibold", skin.label)}>{capacity}</span>
+      <span className={clsx("text-lg leading-none font-semibold", skin.label)}>
+        {/* What is in it, against what it holds. The amount is the louder of the two because it is the one
+            that moves; the size behind it stays legible as the thing the player picks vessels by. */}
+        {volume}
+        <span className="opacity-60">/{capacity}</span>
+      </span>
     </button>
   )
 }
@@ -202,8 +208,8 @@ export const CanistersBoard: FC<Props> = ({
                   answer.right &&
                   "border-emerald-400 bg-emerald-900/40 text-emerald-200",
                 answer?.canister === canister && !answer.right && "border-rose-400 bg-rose-950/40 text-rose-200",
-                answer?.canister !== canister &&
-                  "border-stone-600 text-stone-300 hover:border-stone-400 hover:bg-stone-700/40 hover:text-stone-100"
+                // The board's own ink, so the claim reads on a light ground as well as on a dark one.
+                answer?.canister !== canister && [skin.label, "border-current/50 opacity-80 hover:opacity-100"]
               )}
               aria-label={t("canisters.claimAria", { capacity })}
             >

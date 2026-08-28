@@ -60,7 +60,12 @@ describe("shipped puzzle seeds", () => {
   describe.each(demands.map(demand => [`${demand.familyId}/${demand.difficulty}`, demand] as const))(
     "%s",
     (_name, demand) => {
-      it("still builds a board its own generator would keep, on the first attempt", () => {
+      // **Budgeted for the dearest family rather than the average one.** Rebuilding one board costs what
+      // that family's generator costs: microseconds for sumplete, about a second for rush hour, whose
+      // generator searches and then climbs (docs/game-design/puzzles/rush-hour.md §3.1). Three boards a
+      // bucket at a second each blows the default 5s, and the answer is the budget rather than fewer
+      // boards — the middle and last entries are exactly where a half-filled list goes wrong.
+      it("still builds a board its own generator would keep, on the first attempt", { timeout: 30_000 }, () => {
         const seedable = ALL_FAMILY_META.find(family => family.id === demand.familyId)?.seedable
         const options = seedable!.resolveOptions({ difficulty: demand.difficulty })
         const seeds = puzzleSeeds[demand.hash] ?? []

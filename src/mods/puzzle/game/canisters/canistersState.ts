@@ -59,10 +59,21 @@ export const holdCanister = produce((state: CanistersState, canister: number) =>
   state.held = state.held === canister ? undefined : canister
 })
 
-/** Pours what is held into another canister. */
+/**
+ * Pours what is held into another canister.
+ *
+ * **A pour that cannot be paid for does not happen.** The budget IS the puzzle (design doc §2), so once it
+ * is spent the water stops moving and the board stands as it is — undo gives a move back, reset gives them
+ * all. Claiming is deliberately still allowed: the budget counts pours, so the last one of a line leaves
+ * nothing in hand, and a board whose final claim were refused could never be finished at all.
+ */
 export const pourInto = produce((state: CanistersState, puzzle: CanistersPuzzle, to: number) => {
   const from = state.held
   if (from === undefined || from === to) return
+  if (movesLeft(puzzle, state) <= 0) {
+    state.held = undefined
+    return
+  }
   const move: Move = { from, to }
   const next = applyMove(puzzle.capacities, state.volumes, move)
   if (next.every((amount, index) => amount === state.volumes[index])) {

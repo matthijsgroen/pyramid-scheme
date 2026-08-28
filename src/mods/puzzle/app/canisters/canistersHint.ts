@@ -13,9 +13,10 @@ import {
  * hint names the move, never the answer. The reason is always something the player can check against the
  * canisters in front of them: this pour fills that one to the brim, or empties this one out.
  *
- * **What it never says is an amount.** No board writes how much is in a canister, and a hint that did
- * would hand over the tracking that IS the puzzle. Even the last pour of a leg says only that the volume
- * will be standing afterwards — finding which canister holds it stays the player's.
+ * **What it never says is which canister ends up holding the volume.** The board writes what is in each
+ * vessel, so a hint naming an amount would tell the player nothing they cannot already read; what it must
+ * not do is name the vessel to claim. Even the last pour of a leg says only that the volume will be
+ * standing afterwards — finding where stays the player's.
  */
 export type CanistersHint = {
   /** Translation key under `canisters.hint`. */

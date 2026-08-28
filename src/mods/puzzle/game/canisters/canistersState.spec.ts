@@ -67,9 +67,9 @@ describe("pouring a board", () => {
 
 describe("claiming a volume", () => {
   /**
-   * The amount is never a number on this board (design doc §7), so the game must not confirm it either: a
-   * canister that lit up the moment it held the right amount would let a player pour at random and watch
-   * for it. The player works it out and says so.
+   * The board says what each vessel holds, so what stops a player pouring at random and watching for the
+   * number is the budget rather than the reading (§2): the line is the optimal one exactly, and a claim
+   * costs a move like any other. Solving is still an act — the player says which vessel it is.
    */
   it("is not solved by the right amount appearing — it has to be claimed", () => {
     let state = split(board)
@@ -135,5 +135,43 @@ describe("undo", () => {
     const state = undoPour(createCanistersState(board))
     expect(state.volumes).toEqual([8, 0, 0])
     expect(state.poured).toHaveLength(0)
+  })
+})
+
+describe("running out of moves", () => {
+  /** A board with one pour paid for, so the second has nothing to spend. */
+  const tight: CanistersPuzzle = { capacities: [8, 5, 3], start: [8, 0, 0], targets: [4], budget: 1 }
+
+  it("stops the pouring, rather than letting the water keep moving on credit", () => {
+    // The budget IS the puzzle (§2): a counter that reads nought while the board plays on is not a budget.
+    let state = holdCanister(createCanistersState(tight), 0)
+    state = pourInto(state, tight, 1)
+    expect(movesLeft(tight, state)).toBe(0)
+    const spent = state.volumes
+
+    state = holdCanister(state, 1)
+    state = pourInto(state, tight, 2)
+    expect(state.volumes).toEqual(spent)
+    expect(movesLeft(tight, state)).toBe(0)
+  })
+
+  it("still lets the volume be claimed once the last pour is paid for", () => {
+    // The budget counts pours, so a solved line ends with nothing in hand — a board that refused the claim
+    // there could never be finished at all.
+    let state = split(board)
+    expect(movesLeft(board, state)).toBe(0)
+    state = claimCanister(state, board, 0)
+    expect(isCanistersSolved(board, state)).toBe(true)
+  })
+
+  it("gives the move back on undo, so a spent budget is not a dead end", () => {
+    let state = holdCanister(createCanistersState(tight), 0)
+    state = pourInto(state, tight, 1)
+    state = undoPour(state)
+    expect(movesLeft(tight, state)).toBe(1)
+
+    state = holdCanister(state, 0)
+    state = pourInto(state, tight, 2)
+    expect(state.volumes).toEqual([5, 0, 3])
   })
 })
