@@ -482,16 +482,21 @@ export type FamilyMeta = {
 
 What every family declares, read off its existing `ROLE_SKINS` and its skin table's own descriptions:
 
-| Family                  | `faces`                                                                                 |
-| ----------------------- | --------------------------------------------------------------------------------------- |
-| constellation           | `{ sky: "default", trade: "causeway", water: "irrigation", agriculture: "irrigation" }` |
-| hidato                  | `{ water: "channel", agriculture: "channel", scribe: "scribe" }`                        |
-| star battle, twin stars | `{ sky: "default", water: "fields", agriculture: "fields" }`                            |
-| sudoku                  | `{ scribe: "papyrus" }`                                                                 |
-| eclipse                 | `{ sky: "default", light: "default" }`                                                  |
-| lightbeam               | `{ sky: "default", light: "default" }` — or drop the tags, see below                    |
-| balance scale           | `{ trade: "default" }` — and a `funerary` face is the stronger claim (§9)               |
-| everything else         | unset — their only tag is `puzzle`                                                      |
+| Family                  | `faces`                                                                                                                                                    |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| canisters               | `{ water: ["default"], agriculture: ["grain", "default"], light: ["oil"], scribe: ["ink"], trade: ["wine", "oil", "grain"], funerary: ["natron", "oil"] }` |
+| constellation           | `{ sky: ["default"], trade: ["causeway"], water: ["irrigation"], agriculture: ["irrigation"] }`                                                            |
+| hidato                  | `{ water: ["channel"], agriculture: ["channel"], scribe: ["scribe"], funerary: ["chambers"] }`                                                             |
+| star battle, twin stars | `{ sky: ["default"], water: ["fields"], agriculture: ["fields"] }`                                                                                         |
+| sudoku                  | `{ scribe: ["papyrus"], funerary: ["default"] }`                                                                                                           |
+| eclipse                 | `{ sky: ["default"], light: ["default"] }`                                                                                                                 |
+| lightbeam               | `{ sky: ["default"], light: ["default"] }` — or drop the tags, see below                                                                                   |
+| balance scale           | `{ trade: ["default"], funerary: ["weighing"], judgement: ["weighing"] }`                                                                                  |
+| everything else         | unset — their only tag is `puzzle`                                                                                                                         |
+
+**Canisters is the row that shows why this has to be set-valued**, and it is already written this way: its
+role map lives in `app/canisters/skins.ts` in exactly this shape, with the face picked per room by hashing
+the board. Moving it here is a move rather than a design.
 
 Eclipse's `night` pair is deliberately absent: it is an ambience, not a role face, and the two axes do not
 share a field (§2).
