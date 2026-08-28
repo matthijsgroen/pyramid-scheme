@@ -19,11 +19,6 @@ export type CanistersSkin = {
   liquid: string
   measured: string
   /**
-   * Laid over the water where the amount is withheld, so it reads as "some, and not saying" rather than as
-   * a level that happens to sit halfway.
-   */
-  uncertain: string
-  /**
    * The number written under each canister.
    *
    * **Its own colour, because it is the one thing on this board that must never be hard to read.** Drawn
@@ -38,11 +33,12 @@ export type CanistersSkin = {
 const river: CanistersSkin = {
   name: "default",
   board: "bg-gradient-to-b from-stone-800 to-stone-900 ring-1 ring-emerald-900/40",
-  outline: "stroke-amber-200/70",
+  // Solid, not washed out. A half-transparent rim over this ground read as a smudge, and the outline is
+  // the whole drawing here — it is what tells one vessel's size from another's.
+  outline: "stroke-amber-200",
   held: "stroke-amber-300",
   liquid: "fill-sky-600",
   measured: "fill-emerald-400",
-  uncertain: "[fill:repeating-linear-gradient(45deg,transparent_0_4px,rgb(255_255_255_/_0.18)_4px_8px)] opacity-60",
   label: "text-amber-100",
   lit: "ring-2 ring-rose-300",
 }

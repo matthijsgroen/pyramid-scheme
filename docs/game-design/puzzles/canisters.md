@@ -136,18 +136,14 @@ the puzzle, and comparing two heights is not the same act.
 **A pour animates**, because which canister ran out is the information: the source emptying before the
 destination fills is what tells the player the pour was limited by what they had, not by what fits.
 
-**Two ways of drawing what is in a vessel, and the harder one is not an opaque vessel.**
+**The level is drawn to scale, and that is not a shortcut past the arithmetic.** No board says how many
+measures a height is worth, so reading a canister still means knowing what went into it. What the level
+does give is the one thing a pour has to leave behind: which canister ran out, and so whether the pour was
+limited by what the player had or by what fits.
 
-- `shown` (to expert) draws the level to scale. There is still no number, but a careful player can eyeball
-  two fifths of a 5 — so the arithmetic is checkable against the glass.
-- `sensed` (master, wizard) draws only empty, part-full or full, with the part-full surface hatched so it
-  reads as _some, and not saying_. **Hiding it altogether was the wrong answer**: which vessel ran out is
-  the one reading a pour has to give, and a blank vessel takes that away — leaving not a harder puzzle but
-  an unreadable one.
-
-It is display only and deliberately not one of the generation options, which are hashed into the seed
-bucket key: a board comes out identical whichever way it is drawn, and putting the dial in there would
-split every bucket in two for nothing. A spec holds the two apart.
+**With one floor under it.** A single measure in a 14 is a twentieth of the vessel and vanishes into the
+foot, which made a canister holding something look exactly like one that had run dry — the one reading the
+level exists to give, lost. Anything above empty is drawn at least a small sliver.
 
 ## 8. Theming
 

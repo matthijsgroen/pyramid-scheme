@@ -9,7 +9,6 @@ import {
   volumeKey,
   type CanistersPuzzle as CanistersPuzzleData,
 } from "@/mods/puzzle/game/canisters/canisters"
-import { CANISTERS_LEVELS } from "@/mods/puzzle/game/canisters/canistersConfig"
 import {
   claimCanister,
   createCanistersState,
@@ -38,7 +37,6 @@ type Props = {
 export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const skin = skinFor(role, theme)
-  const levels = CANISTERS_LEVELS[difficulty ?? "starter"]
   const [state, setState] = useState(() => createCanistersState(puzzle))
 
   const solved = isCanistersSolved(puzzle, state)
@@ -80,7 +78,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
       // read as a fixed instruction, and on a board that asks for several in turn the sentence quietly
       // changed under the player. Up there it is a figure that visibly ticks over as each leg is claimed.
       goal={t(`canisters.goal.${skin.name}`, { count: puzzle.targets.length })}
-      rules={<CanistersRules skin={skin.name} legs={puzzle.targets.length} levels={levels} />}
+      rules={<CanistersRules skin={skin.name} legs={puzzle.targets.length} />}
     >
       {({ reportInput, hintVisible }) => (
         <div className="flex flex-col items-center gap-3">
@@ -100,7 +98,6 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
             claimed={state.claimed}
             lit={hintVisible ? hint.move : undefined}
             celebrating={celebration.progress > 0}
-            levels={levels}
             lastPour={
               state.poured.length > 0
                 ? { ...state.poured[state.poured.length - 1], count: state.poured.length }

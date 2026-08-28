@@ -19,6 +19,16 @@ import type { FC } from "react"
 // you cannot see is just an urn.
 const BODY = "M 33 4 L 67 4 L 61 26 C 84 46 82 98 55 134 L 45 134 C 18 98 16 46 39 26 Z"
 const FOOT = "M 39 134 L 61 134"
+/**
+ * How far the vessel itself reaches, top and bottom.
+ *
+ * **The water is measured against THIS, not against the view box.** The body stops at 134 and the rim
+ * starts at 4, so a level worked out as a fraction of the full 150 put anything under a tenth below the
+ * foot, where there is no vessel to clip it to — and a canister holding one measure of fourteen drew as
+ * empty, which is the one thing the level exists to rule out.
+ */
+const BODY_TOP = 6
+const BODY_BOTTOM = 134
 // A short high ear: out of the neck, round, and back down onto the shoulder. Swept lower and longer they
 // ran most of the height of the vessel and read as a second outline rather than as handles.
 const HANDLE_LEFT = "M 40 25 C 20 23 7 40 22 57"
@@ -30,13 +40,11 @@ type Props = {
   /** Class for the water, and for the vessel's own outline. */
   liquid: string
   outline: string
-  /** Laid over the water where the amount is being withheld. */
-  uncertain?: string
   /** Whether this vessel is mid-pour, so its water can hold itself level against the tip. */
   tipping?: boolean
 }
 
-export const Amphora: FC<Props> = ({ fill, liquid, outline, uncertain, tipping }) => {
+export const Amphora: FC<Props> = ({ fill, liquid, outline, tipping }) => {
   // The clip is per-instance: two amphorae on one screen would otherwise share one id and one fill level.
   const id = `amphora-${Math.round(fill * 1000)}-${liquid.length}-${outline.length}`
   return (
@@ -64,14 +72,11 @@ export const Amphora: FC<Props> = ({ fill, liquid, outline, uncertain, tipping }
           <rect
             x="-100"
             width="300"
-            y={150 - fill * 150}
-            height={fill * 150 + 220}
+            y={BODY_BOTTOM - fill * (BODY_BOTTOM - BODY_TOP)}
+            height={fill * (BODY_BOTTOM - BODY_TOP) + 220}
             className={liquid}
             style={{ transition: "y 300ms, height 300ms" }}
           />
-          {uncertain !== undefined && fill > 0 && (
-            <rect x="-100" width="300" y={150 - fill * 150} height={fill * 150 + 220} className={uncertain} />
-          )}
         </g>
       </g>
       <path d={BODY} fill="none" strokeWidth="4" className={outline} />

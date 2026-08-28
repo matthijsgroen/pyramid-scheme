@@ -15,8 +15,6 @@ type Props = {
   lit?: Move
   /** The completion run is under way, so what is in the canisters catches the light. */
   celebrating?: boolean
-  /** Whether the level is drawn to scale, or only as empty / part-full / full (`canistersConfig.ts`). */
-  levels: "shown" | "sensed"
   /**
    * The pour just made, and how many have been made — so the same pour twice in a row still animates.
    *
@@ -71,15 +69,25 @@ const useAnswer = (claimed: { canister: number; right: boolean; count: number } 
 const HEIGHT = { max: 10, min: 4 }
 
 /**
+ * The least water a canister may be drawn with while holding any at all.
+ *
+ * One measure in a 14 is a twentieth of the vessel, and drawn honestly it disappears into the foot — so a
+ * canister with something in it looked exactly like one that had run dry. That is the single reading a
+ * pour has to leave behind (§7), so it gets a floor: still clearly less than anything else, never nothing.
+ */
+const MIN_VISIBLE = 0.08
+
+/**
  * One canister: how big it is, and how much is in it.
  *
  * **The size is drawn to scale and written underneath.** A 5 beside an 8 has to LOOK like a 5 beside an
  * 8 — that proportion is what the player reasons with. The number sits under the shape rather than on it,
  * because inside an empty vessel there is nothing for it to be read against.
  *
- * **What is in it is never a number** (design doc §7). How much of the level is drawn is the tier's call:
- * `shown` draws it to scale, `sensed` only says empty, part-full or full — which keeps the one reading a
- * pour has to give, since which canister ran out is what tells you what limited it.
+ * **What is in it is never a number** (design doc §7). The level itself IS drawn, and it is not a shortcut
+ * past the arithmetic: no board says how many measures a height is worth. What it does give is the one
+ * reading a pour has to leave behind — which canister ran out, and so whether the pour was limited by what
+ * you had or by what fits.
  */
 const Canister: FC<{
   capacity: number
@@ -88,7 +96,6 @@ const Canister: FC<{
   held: boolean
   lit: boolean
   celebrating: boolean
-  levels: "shown" | "sensed"
   /** -1, 0 or 1: which way this canister is tipping, if it is pouring right now. */
   tilt: number
   /** The tip has played out and the vessel is back on the bench. */
@@ -98,23 +105,8 @@ const Canister: FC<{
   onAnswered: () => void
   skin: CanistersSkin
   onTap: () => void
-}> = ({
-  capacity,
-  volume,
-  tallest,
-  held,
-  lit,
-  celebrating,
-  levels,
-  tilt,
-  onSettled,
-  answered,
-  onAnswered,
-  skin,
-  onTap,
-}) => {
+}> = ({ capacity, volume, tallest, held, lit, celebrating, tilt, onSettled, answered, onAnswered, skin, onTap }) => {
   const rem = HEIGHT.min + (capacity / tallest) * (HEIGHT.max - HEIGHT.min)
-  const fill = levels === "shown" ? volume / capacity : volume === 0 ? 0 : volume === capacity ? 1 : 0.45
   return (
     <button
       onClick={onTap}
@@ -144,12 +136,11 @@ const Canister: FC<{
         onAnimationEnd={tilt !== 0 ? onSettled : answered !== undefined ? onAnswered : undefined}
       >
         <Amphora
-          fill={fill}
+          fill={volume === 0 ? 0 : Math.max(volume / capacity, MIN_VISIBLE)}
           // An accepted claim turns the water the colour a measured volume wears, for as long as the
           // answer lasts — the same green the completion run uses, because it means the same thing.
           liquid={celebrating === true || answered === "yes" ? skin.measured : skin.liquid}
           outline={held ? skin.held : skin.outline}
-          uncertain={levels === "sensed" && volume > 0 && volume < capacity ? skin.uncertain : undefined}
           tipping={tilt !== 0}
         />
       </div>
@@ -165,7 +156,6 @@ export const CanistersBoard: FC<Props> = ({
   claimed,
   lit,
   celebrating,
-  levels,
   lastPour,
   skin,
   onHold,
@@ -187,7 +177,6 @@ export const CanistersBoard: FC<Props> = ({
               held={held === canister}
               lit={lit !== undefined && lit.from === canister}
               celebrating={celebrating === true}
-              levels={levels}
               // Which way to tip: toward the canister being filled, so a pour to the right rolls right.
               tilt={tipping !== undefined && tipping.from === canister ? Math.sign(tipping.to - canister) : 0}
               onSettled={settle}

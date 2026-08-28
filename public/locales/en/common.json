@@ -872,7 +872,6 @@
         "moves": "Tap a canister to pick it up, then tap another to pour into it. A pour stops when the first runs dry or the second is full.",
         "water": "This is all the water there is — one canister starts full, and none can be thrown away or fetched.",
         "hidden": "Each canister says how much it holds when full. It never says how much is in it — that part is yours to work out.",
-        "sensed": "The canisters do not show how much is in them, only whether they are empty, part-full or full. Track the amounts yourself.",
         "claim": "When you have the amount, tap “this one”. Claiming the wrong canister costs a move.",
         "legs": "Then the next amount, measured from whatever the canisters are left holding."
       }
