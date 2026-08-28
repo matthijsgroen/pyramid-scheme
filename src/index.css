@@ -360,6 +360,19 @@ body {
   --spacing-safe-left: env(safe-area-inset-left);
   --spacing-safe-right: env(safe-area-inset-right);
 }
+
+/*
+ * What a frame drawn against the screen edge keeps clear: the safe area, plus the gutter it wants anyway.
+ *
+ * `p-safe-*` on its own SETS the padding to the inset, which is what a full-bleed page wants — but the
+ * inset is zero on a phone without a notch and on every desktop, so a framed thing using it would end up
+ * flush against the screen edge everywhere the notch is not.
+ */
+@utility p-safe-edge {
+  padding: calc(var(--spacing-safe-top) + var(--spacing) * 2) calc(var(--spacing-safe-right) + var(--spacing) * 2)
+    calc(var(--spacing-safe-bottom) + var(--spacing) * 2) calc(var(--spacing-safe-left) + var(--spacing) * 2);
+}
+
 @custom-variant mdh {
   @media (height >= 48rem /* 768px */) {
     @slot;

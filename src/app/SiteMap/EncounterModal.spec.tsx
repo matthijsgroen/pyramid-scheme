@@ -4,34 +4,17 @@ import { EncounterModal } from "./EncounterModal"
 
 afterEach(cleanup)
 
-const frame = () => {
-  const { container } = render(
-    <EncounterModal>
-      <p>an encounter</p>
-    </EncounterModal>
-  )
-  return container.firstElementChild as HTMLElement
-}
-
 describe("EncounterModal", () => {
-  // Asserted on the padding the frame asks for rather than on where it lands, because neither jsdom nor a
-  // desktop browser has a safe area to land in: the insets are zero everywhere this test can run, so a
-  // frame that had dropped them would measure exactly the same. Storybook cannot see it for the same
-  // reason, which is what earns this a test at all.
-  it.each([
-    ["top", "pt-"],
-    ["right", "pr-"],
-    ["bottom", "pb-"],
-    ["left", "pl-"],
-  ])("keeps its content out of the %s safe area", (side, prefix) => {
-    // The frame is `fixed inset-0` on a `viewport-fit=cover` page, so it reaches under the status bar and
-    // the home indicator; the row of controls at the top of a puzzle ended up beneath the clock.
-    expect(frame().className).toContain(`${prefix}[calc(var(--spacing-safe-${side})`)
-  })
-
-  it("adds the safe area to its own gap rather than replacing it", () => {
-    // `p-safe-*` on its own SETS the padding to the inset, which is zero on a phone without a notch and on
-    // every desktop — the frame would lose its margin and sit against the screen edge.
-    expect(frame().className).toContain("_+_var(--spacing)_*_2)]")
+  it("keeps its content clear of the screen edge, safe area and all", () => {
+    // Asserted as the class rather than as a measurement, because neither jsdom nor a desktop browser has a
+    // safe area to land in: the insets are zero everywhere this test can run, so a frame that had dropped
+    // them would measure exactly the same. Storybook cannot see it for the same reason, which is what earns
+    // this a test at all. What `p-safe-edge` resolves to is stated once, in index.css.
+    const { container } = render(
+      <EncounterModal>
+        <p>an encounter</p>
+      </EncounterModal>
+    )
+    expect((container.firstElementChild as HTMLElement).className).toContain("p-safe-edge")
   })
 })
