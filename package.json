@@ -19,6 +19,7 @@
     "validate-world": "tsx scripts/generateWorld.ts --validate-only",
     "generate-seeds": "tsx scripts/puzzleSeeds.ts generate && yarn prettier --write src/data/puzzleSeeds.ts",
     "seeds-info": "tsx scripts/puzzleSeeds.ts info",
+    "verify-seeds": "tsx scripts/puzzleSeeds.ts verify && yarn prettier --write src/data/puzzleSeeds.ts",
     "verify-floors": "vitest run src/app/SiteMap/worldFloorAssembly.spec.ts",
     "world-info": "tsx scripts/worldInfo.ts",
     "release": "tsx scripts/release.ts",
