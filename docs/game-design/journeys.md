@@ -178,24 +178,15 @@ ask for the role by name.
 "sky"]` with `theme: "night"`, covering the whole pyramid, side paths and trapped ones included — half a
 themed pyramid reads as an accident. A lighthouse is a light in the sky, so it asks for both places.
 
-**The list widens the pool now, which it did not when it was written.** `light` used to sit wholly inside
-`sky` — eclipse and lightbeam carry both — so the union was the same five families either way and the
-second word bought only the dressing. Canisters changed that: it carries `light` and NOT `sky`, so
-`["light", "sky"]` now draws from six families where `sky` alone draws from five. Twenty-eight sections over
-six is 4.7 turns each, comfortably inside the bar (§11), so the widening costs nothing.
+**The list widens the pool, and that is the point of the second word.** `light` is not a subset of `sky`:
+canisters carries `light` and not `sky`, so `["light", "sky"]` draws from six families where `sky` alone
+draws from five. Twenty-eight sections over six is 4.7 turns each, comfortably inside the bar (§11), so the
+widening costs no variety.
 
-`light` is written FIRST because the resolver takes the first role a family has a face for, and every
-family here answers `sky` with its default: sky-first would win that search and cancel the narrower place
-(§12). **That ordering has stopped being merely tidy.** When this was authored no family in either pool had
-a `light` face, so the whole thing was intent — the ambience did the visible work, on eclipse's 13 rooms of
-47, while constellation's 10 drew a night sky either way. Canisters brought the pool its first `light` face,
-oil measured out for the lamps, and `light`-first is what makes the lighthouse reach for it. The beacon this
-paragraph used to be waiting for is half here: eclipse and lightbeam still read as light sources without
-dressing as one.
-
-**The ibis migration is the tier's other change, and it is ready.** A marsh and a flood are `water`, the
-pool has five members and every one of them dresses, and seventeen sections over five is 3.4 turns each —
-the tightest restrict in the game after the lighthouse (§14). One line, and every room of it is a river.
+`light` is written FIRST because the resolver takes the first role that offers a face of its own, and every
+family here answers `sky` with its default (§10). Canisters is the one with a `light` face — oil measured
+out for the lamps — and `light`-first is what makes the lighthouse reach for it. Eclipse and lightbeam
+still read as light sources without dressing as one, which is the remaining half of the beacon.
 
 Thoth is the god of writing and the moon, and the two asks split the same way: `scribe` dresses all three
 of its families now, though the pool is one member short of being restrictable — while a moonlit board
