@@ -877,8 +877,10 @@
       }
     },
     "hint": {
-      "forced": "Only one pour is left that you have not already undone. Everything else puts the water back where it came from.",
-      "choice": "More than one pour is open here. Work out where each leaves you before you tip anything.",
+      "fills": "Pour the {{from}} into the {{to}} — it takes all the {{to}} can hold, and what stays behind in the {{from}} is what you want to be working with.",
+      "empties": "Pour the {{from}} into the {{to}} — the {{from}} runs dry, and an empty canister is what you need next.",
+      "last": "One more: pour the {{from}} into the {{to}}, and {{target}} will be standing on the bench. Then work out which canister has it.",
+      "stuck": "From here {{target}} can no longer be measured in the moves you have left. Take a pour back, or start the board again.",
       "overBudget": "There are no moves left. Reset and find the shorter way."
     },
     "movesLeft_one": "{{count}} move left",

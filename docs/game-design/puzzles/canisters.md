@@ -68,29 +68,39 @@ openings tie, since those are a coin flip that teaches nothing.
 The budget is the optimal line's length, exact above starter — which is what makes a two-move penalty the
 difference between finishing and not.
 
-## 4. The technique ladder
+## 4. The hint, and what it is allowed to say
 
-Three rungs, and the third is what makes the board forced.
+**A hint names the pour and says why** — the bar every family here is held to (`puzzle-screens.md` §5): a
+hint names the move, never the answer. Three things it may say, and one it may not.
 
-1. **Reach** — is the target a multiple of `gcd(a, b)`? At the tiers that ask it, some boards are
-   unreachable and the answer is to say so rather than to pour. This is the rung that teaches why
-   `[4, 8]` can never measure 3.
-2. **Direction** — which canister to fill first, and the one further choice a line reaches later. These
-   are the branches, and the budget is what punishes them. A hint here names the reason (_"filling the
-   small one first can only ever leave you multiples of 3 in the big one"_), never the direction.
-3. **The forced move** — after the opening, exactly one move is worth making, and two local rules are
-   enough to see it, with no lookahead:
-   - never pour back into a state already seen (which includes undoing the last move),
-   - never empty a canister that is not full, and never top up one that is not empty — a partial measure
-     is the thing you are carrying, and both moves throw it away.
+1. **Reach** — whether the volume can be measured at all from where the canisters stand, within the moves
+   that are left. A position that cannot be finished is the one thing a player cannot work out for
+   themselves without playing it twice, so the hint says it outright and suggests taking a pour back.
+2. **The pour, with the reason it does something** — and the reason is always visible on the board, because
+   a pour can only end two ways: _"pour the 14 into the 10 — it takes all the 10 can hold, and what stays
+   in the 14 is what you want to be working with"_, or _"the 14 runs dry, and an empty canister is what you
+   need next"_. Which of the two happened is exactly the reading a pour leaves behind (§7).
+3. **The last pour** says the volume will be standing afterwards — and stops there. **Which canister holds
+   it is not part of the hint**, because that is the claim, and the claim is the puzzle's last question.
 
-   **Measured over 783 lines: a line has at most TWO choice points and never more** — 80% have two, 20%
-   have one — and **77% of all steps are forced**, with exactly one move worth making. So a leg reads:
-   choose, pour a while, choose again, pour to the end.
+**What a hint never contains is an amount.** No board writes how much is in a canister, so a hint that did
+would hand over the tracking that IS the puzzle. Only the canisters' own sizes and the volume asked for
+ever appear in a sentence, and a spec holds it to that.
 
-   That is what lets a hint name a move without handing over the answer. On a forced step the reason is
-   local and the player can check it; on a choice step there is nothing to hint, because the choice is the
-   puzzle.
+### Where the move comes from, and the cost of it
+
+**The pour a hint names is the first step of a search, not the output of a technique ladder** — and that is
+a departure from how every other family here sources a hint, written down rather than hidden.
+
+It is the price of the decanting rules (§11). With no river to fill from and no ground to empty onto, the
+two local rules that made the tap-and-sink version nearly forced have nothing left to prune: measured over
+every board this family generates, a line forks two ways at most steps. There is no ladder of named
+deductions that reaches the next move, because from most positions two moves are equally defensible until
+you look further ahead than a rule can see.
+
+So the hint's REASON is honest and local — the player can check it against the canisters — while the CHOICE
+behind it is not reproducible from the board alone. Worth revisiting if a real technique for this shape
+turns up; until then, this is the seam.
 
 ## 5. Tiers
 

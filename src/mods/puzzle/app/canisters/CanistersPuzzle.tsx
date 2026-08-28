@@ -4,11 +4,7 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
-import {
-  applyMove,
-  volumeKey,
-  type CanistersPuzzle as CanistersPuzzleData,
-} from "@/mods/puzzle/game/canisters/canisters"
+import type { CanistersPuzzle as CanistersPuzzleData } from "@/mods/puzzle/game/canisters/canisters"
 import {
   claimCanister,
   createCanistersState,
@@ -44,22 +40,10 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
   /** The amount this leg is asking for; the last one stays up once the board is done. */
   const wanted = puzzle.targets[Math.min(state.measured, puzzle.targets.length - 1)]
 
-  /**
-   * The states this line has already stood in, which is what makes a pour not worth making (§4). Kept here
-   * rather than in the board state because it is a fact about the hint, not about the puzzle.
-   */
-  const seen = useMemo(() => {
-    const keys = new Set<string>()
-    let volumes = [...puzzle.start]
-    keys.add(volumeKey(volumes))
-    for (const move of state.poured) {
-      volumes = [...applyMove(puzzle.capacities, volumes, move)]
-      keys.add(volumeKey(volumes))
-    }
-    return keys
-  }, [state.poured, puzzle.capacities, puzzle.start])
-
-  const hint = useMemo(() => buildCanistersHint(puzzle, state.volumes, seen, left), [puzzle, state.volumes, seen, left])
+  const hint = useMemo(
+    () => buildCanistersHint(puzzle, state.volumes, left, wanted),
+    [puzzle, state.volumes, left, wanted]
+  )
 
   // One tick a leg: what the player measured lights in the order it was claimed, which is the board saying
   // back what was done rather than a generic flourish (puzzle-screens.md §3).
@@ -71,7 +55,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
       onCancel={onCancel}
       solved={celebration.done}
       onReset={() => setState(createCanistersState(puzzle))}
-      hint={t(`canisters.hint.${hint.key}`)}
+      hint={t(`canisters.hint.${hint.key}`, hint.params)}
       idleMs={hintIdleDelay(difficulty)}
       title={t(`canisters.name.${skin.name}`)}
       // **The goal says what the board is for; the amount lives above the board.** Naming the number here

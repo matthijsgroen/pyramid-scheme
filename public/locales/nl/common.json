@@ -870,8 +870,10 @@
       }
     },
     "hint": {
-      "forced": "Er is nog maar één gieting over die je niet al ongedaan hebt gemaakt. De rest zet het water terug waar het vandaan kwam.",
-      "choice": "Er kan hier meer dan één kant op gegoten worden. Reken uit waar elke je brengt voor je kantelt.",
+      "fills": "Giet de {{from}} in de {{to}} — die neemt precies zoveel als erin kan, en wat er in de {{from}} achterblijft is waar je mee verder wilt.",
+      "empties": "Giet de {{from}} in de {{to}} — de {{from}} loopt helemaal leeg, en een lege kruik is wat je nu nodig hebt.",
+      "last": "Nog één: giet de {{from}} in de {{to}}, dan staat {{target}} op de bank. Zoek daarna uit welke kruik het heeft.",
+      "stuck": "Vanaf hier krijg je {{target}} niet meer afgemeten met de zetten die je nog hebt. Neem een gieting terug, of begin opnieuw.",
       "overBudget": "Je zetten zijn op. Begin opnieuw en zoek de kortere weg."
     },
     "movesLeft_one": "nog {{count}} zet",
