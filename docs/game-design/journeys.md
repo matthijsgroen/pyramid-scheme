@@ -360,84 +360,73 @@ pattern (§5) with the pools one size larger, and the reason `rolePools.spec.ts`
 authored role whole rather than tag by tag — a one-family narrow tag is only ever legible as half of a
 list.
 
-## 10. The authoring system, and what it took
+## 10. The authoring system
 
-**Built 2026-08-28.** The contract in §2 was right, and three things stopped it holding by construction.
-All three are done; what follows is what each turned out to be.
+Three pieces make §2's contract hold by construction rather than by care.
 
-1. **One vocabulary, and it is the role words.** Every family declares which of its faces serve which roles
-   on its `FamilyMeta.faces` (§12), where world-gen can read it — nine families, moved out of the private
-   `ROLE_SKINS` maps that used to sit in `app/<family>/skins.ts`. Their private face names
-   (`irrigation`, `channel`, `papyrus`) stay internal ids the lab can show, never words a site authors.
+1. **One vocabulary, and it is the role words.** A family declares which of its faces serve which roles on
+   its `FamilyMeta.faces` (§12) — out where `src/worldGen` can read it, because world-gen is what has to
+   weigh a preferred role (§11), refuse one nothing dresses, and say which face a room will wear before it
+   is opened. A face's own name (`irrigation`, `channel`, `papyrus`) stays an internal id the lab can pick;
+   it is never a word a site authors.
 
-   **The move is what found the drift.** Three entries were dead — constellation's `light` and
-   `logistics` and star battle's `light`, all faces nothing could ever reach — and balance scale carried
-   `trade` while answering for it nowhere. It also collapsed **six near-identical resolvers into one**
-   (`app/faceFor.ts`), which had quietly diverged: one filtered `night` where another did not, and a role
-   answering `default` could cancel the roles behind it in some and not others.
+2. **One resolver, in `app/faceFor.ts`.** Six families asking the same question six times answered it six
+   slightly different ways, so the question is asked once. It decides the place from the role, and nothing
+   else does.
 
-2. **Guard it, rather than let it fail at render.** `src/worldGen/faces.spec.ts` holds four things nothing
-   else notices: a family answers for every role it claims and claims every role it answers for, an
-   ambience never appears where a place belongs, the world authors a theme only where it names an hour,
-   and it authors no role that every family would meet with its default. A place name typed into `theme`
-   used to be accepted and half-work — dressing whoever happened to use that word — which is the silent
-   defect this turns into a failing build.
+3. **The ambience layers.** A face declares an `ambience` map of what each hour changes about it, and
+   `withAmbience` merges it once the role has settled which place the room is. A face with nothing to say
+   about the hour says nothing — a granary at night is a granary — and a second hour is a key rather than
+   a rewrite.
 
-3. **Ambience layers, it does not swap.** A face declares an `ambience` map of what each hour changes about
-   it, and `withAmbience` applies it once the role has decided which place the room is. The six
-   `UNSPOKEN` lists that filtered `night` out of a face lookup are gone — the ambience never belonged in
-   that lookup, it belongs after it. A second hour is now a key on the faces with something to say about
-   it, and silence from the ones without.
+**The rule that is easy to get backwards:** a face of its own beats a bare `default` **between** roles, and
+never within one. `["sky", "water"]` has to draw the waterworks rather than let sky's default cancel it —
+but `agriculture: ["grain", "default"]` names two real places, and dropping the second would quietly
+narrow the word to the granary.
 
-**One rule came out of building it that the sketch had wrong.** "A face of its own beats the default" is a
-choice BETWEEN roles, never within one: `["sky", "water"]` must draw the waterworks rather than let sky's
-default cancel it, but `agriculture: ["grain", "default"]` names two real places and dropping the second
-would narrow the word. Written the first way it silently made `agriculture` mean only the granary.
+**And what the guards hold** (`worldGen/faces.spec.ts`), because none of it fails loudly on its own: a
+family answers for exactly the roles it claims, an ambience never appears where a place belongs, the world
+authors a theme only where it names an hour, and no authored role is one that every family would meet with
+its default. A place name typed into `theme` is otherwise accepted and half-works — dressing whichever
+family happens to use that word and leaving its neighbours plain.
 
 One wrinkle worth naming rather than hiding: **a tomb's place is per-site, not per-role.** Every tomb room
 carries `role: "tomb-puzzle"`, so a weighing hall and a merchant's cellar cannot be told apart by role.
 Tombs are the one legitimate case for a site-authored face, and worth designing as such rather than
 treated as a counter-example to the rule.
 
-### Two things canisters taught this section
-
-Building a family with six faces (§4.28) put weight on §10.1 that the original sketch did not carry.
-
-- **A role maps to a SET of faces, not to one.** §12 specced `Record<string, string>`, one face per role.
-  That is too narrow: a market moves oil, wine and grain, so `trade` names three places and a room is one
-  of them. The declaration has to be `Record<string, string[]>`, and §12 now says so.
-- **Which of a set a room wears is decided in the app, out of sight of the allocator.** Canisters hashes
-  the board's own shape to pick, which is stable and costs nothing — but it means gen cannot see, weight or
-  report the choice. That is the same wall §11's prefer-weighting hits, and the same fix opens both: put
-  the map where world-gen can read it.
-
-So the case for §10.1 is no longer only tidiness. **Two features are now waiting behind it** — weighting a
-preferred role, and knowing which face a room will wear before it is opened.
-
 ## 11. Restrict or prefer — which mode a journey wants
 
 A role narrows the pool, and on a long journey that is the problem: a family is assigned **per section**,
-not per room, so what a player feels is `sections ÷ pool size`. Measured on this cut of the world:
+not per room, so what a player feels is `sections ÷ pool size`.
 
-| Journey     | Sections | Rooms | Unrestricted (10) | `sky` (5) | `water` (4) | `scribe` (2) |
-| ----------- | -------- | ----- | ----------------- | --------- | ----------- | ------------ |
-| `starter_1` | 8        | 13    | 0.8×              | 1.6×      | 2.0×        | 4.0×         |
-| `starter_4` | 19       | 29    | 1.9×              | 3.8×      | 4.8×        | 9.5×         |
-| `junior_1`  | 17       | 24    | 1.7×              | 3.4×      | 4.3×        | 8.5×         |
-| `junior_4`  | 28       | 47    | 2.8×              | **5.6×**  | 7.0×        | 14.0×        |
-| `expert_3`  | 42       | 107   | 4.2×              | 8.4×      | **10.5×**   | 21.0×        |
-| `master_2`  | 50       | 121   | 5.0×              | 10.0×     | 12.5×       | **25.0×**    |
-| `wizard_3`  | 63       | 207   | **6.3×**          | 12.6×     | 15.8×       | 31.5×        |
+**The columns below are pool SIZES, not roles a journey wants.** Read a row across: this is how often one
+family comes back if that journey were restricted to a pool of that size, whichever role it happened to be.
+The sizes are the ones that exist — three families (`scribe`, `trade`, `light`), five (`water`,
+`agriculture`, `funerary`, `sky`), six (`["light", "sky"]` as a union), and eleven for a journey that
+restricts to nothing at all.
 
-**6.3× is the bar**, because that is the worst variety the game already ships — wizard_3 and wizard_4
-undressed. Anything at or under it is not a new problem.
+| Journey     | Sections | Rooms | all 11   | pool of 6 | pool of 5 | pool of 3 |
+| ----------- | -------- | ----- | -------- | --------- | --------- | --------- |
+| `starter_1` | 8        | 13    | 0.7×     | 1.3×      | 1.6×      | 2.7×      |
+| `junior_1`  | 17       | 24    | 1.5×     | 2.8×      | **3.4×**  | 5.7×      |
+| `starter_4` | 19       | 29    | 1.7×     | 3.2×      | 3.8×      | 6.3×      |
+| `junior_4`  | 28       | 47    | 2.5×     | **4.7×**  | 5.6×      | 9.3×      |
+| `expert_3`  | 42       | 107   | 3.8×     | 7.0×      | 8.4×      | 14.0×     |
+| `master_2`  | 50       | 121   | 4.5×     | 8.3×      | 10.0×     | 16.7×     |
+| `wizard_3`  | 63       | 207   | **5.7×** | 10.5×     | 12.6×     | 21.0×     |
 
-- **Restrict when `sections ÷ pool` lands inside the bar.** `junior_4` on `sky` is 5.6×, so the lighthouse
-  can be a lighthouse all the way through: five families across five pyramids, no worse than what the
-  endgame already does. `junior_1` on `water` is 4.3×. These are the journeys where the pool _is_ the dress.
-- **Prefer once it does not.** `expert_3` on `water` is 10.5× and `master_2` on `scribe` is 25× — twice and
-  four times the bar. A two-family pool is unusable above starter, which also puts `starter_4` (9.5×) on
-  this side of the line despite §4 reading the other way.
+**5.7× is the bar**, because that is the worst variety the game already ships: wizard_3 and wizard_4 draw 63
+sections from all eleven families. Anything at or under it is not a new problem. The bar moves as families
+are added — it was 6.3× when there were ten of them.
+
+- **Restrict when `sections ÷ pool` lands inside the bar.** `junior_1` on `water` is 3.4× and `junior_4` on
+  `["light", "sky"]` is 4.7×, so both can be what they are all the way through — no worse than what the
+  endgame already does undressed. These are the journeys where the pool _is_ the dress.
+- **Prefer once it does not.** `expert_3` on `water` is 8.4× and `master_2` restricted to a three-family
+  pool would be 16.7× — well past the bar. A three-family pool is unusable above starter, which is the
+  second reason `scribe`, `trade` and `light` cannot be restricted to today; the first is that
+  `rolePools.spec.ts` refuses a pool under four at all (§2).
 
 ### Both modes, and only one of them needs building
 
