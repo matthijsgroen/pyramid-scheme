@@ -37,9 +37,14 @@ substitutes for the other, and the pair covers arithmetic from both ends.
 
 **The budget is what makes it a puzzle rather than a procedure.** Without it the player can flail: any
 sequence of legal pours eventually reaches any reachable volume, so there is nothing to get wrong, only
-something to take a long time. With it the player has to know _before pouring_ which
-way to open — and the budget has to be EXACT, because opening wrong costs only two moves (§3). The
-penalty is small; the budget is what turns a small penalty into a failed board.
+something to take a long time. With it the player has to know _before pouring_ which way to open.
+
+**It is the optimal line plus one, and the one is a ceiling rather than a taste.** Opening wrong costs
+exactly two moves and never more (§3), so a spare of two would make the decision this family is built on
+survivable and the budget would stop meaning anything. A spare of one leaves that penalty fatal while
+forgiving what is not a decision at all: a mis-tap, a pour that turns out to move nothing, one slip on a
+fifteen-pour line. **And the budget is enforced** — pours stop when it is spent (§6), which for a while
+they did not, so the counter could read nought while the water kept moving.
 
 ## 3. Generation — pick the pair, then the target the wrong way ruins
 
@@ -141,8 +146,9 @@ from vessels.
 ## 7. Drawing
 
 A canister is drawn as a vessel with its level filled, and under it what it holds against what it takes —
-`3/8`. The numbers matter as much as the level: a player comparing 5 against 8 is doing the puzzle, and
-comparing two heights is not the same act.
+`3/8`. The numbers are what is exact — a vessel's drawn height is indicative, compressed so a small one
+stays big enough to tap, so heights are for seeing at a glance rather than for measuring against each
+other. A player comparing 5 against 8 is doing the puzzle, and comparing two heights is not the same act.
 
 **The amount is written because this board is hard enough at the two things it is about.** The arithmetic
 is one: which volumes these vessels can reach at all, and by what pours. The logistics are the other:
@@ -157,7 +163,7 @@ entirely to the player.
 **A pour animates**, because which canister ran out is the information: the source emptying before the
 destination fills is what tells the player the pour was limited by what they had, not by what fits.
 
-**The level is drawn to scale**, and it carries the one thing a pour has to leave behind at a glance:
+**The level is drawn indicatively**, near enough to scale to carry the one reading a pour has to leave behind at a glance:
 which canister ran out, and so whether the pour was limited by what the player had or by what fits. The
 figure under the vessel says the same thing exactly; the level says it without being read.
 
