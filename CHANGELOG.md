@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Star puzzle boards are drawn straight: the walls between areas sit on the grid lines, and every dot and
   star is the same size, centred in its square.
+- Puzzles and other encounters no longer open under the phone's status bar, so the hint button is reachable
+  again.
 
 ## 0.40.0 - 2026-08-26
 
