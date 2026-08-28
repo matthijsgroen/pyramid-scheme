@@ -10,6 +10,12 @@ export const LIGHTBEAM_META: FamilyMeta = {
   tags: ["puzzle", "light", "sky"],
   // Configured for every tier (docs/game-design/puzzles/lightbeam.md §6), so the allocator may draw it
   // anywhere and a node may author it anywhere.
+  // Beams of light read as both places already; this family has no skin system at all, so both answer with
+  // the default until it gets one (journeys.md §9).
+  faces: {
+    sky: ["default"],
+    light: ["default"],
+  },
   minTier: "starter",
   // Modes a developer can force on top of a tier's own dials, to look at one shape at a time
   // (docs/instructions/puzzle-screens.md §6). "tier default" is what real play uses.

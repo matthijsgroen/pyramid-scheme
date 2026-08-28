@@ -10,6 +10,13 @@ export const HIDATO_META: FamilyMeta = {
   // section reads the comb a fourth way, as sealed chambers, which is a tomb. A tag is eligibility and
   // nothing more, so carrying five costs the family nothing.
   tags: ["puzzle", "agriculture", "water", "scribe", "funerary"],
+  // A kept hive by default, a channel across the flood plain, a scribe's sheet, a comb of sealed chambers.
+  faces: {
+    water: ["channel"],
+    agriculture: ["channel"],
+    scribe: ["scribe"],
+    funerary: ["chambers"],
+  },
   minTier: "starter",
   // A kept hive, a channel across the flood plain, a scribe's sheet and a tomb of sealed chambers — the
   // same board read four ways, so the lab can play all of them. A site never names a skin, it names a

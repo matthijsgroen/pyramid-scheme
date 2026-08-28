@@ -1,3 +1,5 @@
+import { CANISTERS_META } from "@/mods/puzzle/game/canisters/meta"
+import { faceFor, withAmbience } from "../faceFor"
 import { AMPHORA, CANOPIC, INKPOT, MEASURE, type VesselShape } from "./vesselShapes"
 
 /**
@@ -156,51 +158,9 @@ const SKINS: Record<string, CanistersSkin> = {
 }
 
 /**
- * Which places a room may be, out of the two things it is told: the **role** it was allocated for and the
- * **ambience** its site authored (`puzzle-screens.md` §2).
+ * Which place this room is, resolved the same way every family resolves it (`app/faceFor.ts`).
  *
- * **A role maps to a SET, not to a single face**, because some places are wider than others. A market moves
- * oil, wine and grain, and a trade room that was always a wine cellar would be narrower than the word it
- * was authored with. Others are exactly one thing: a scriptorium measures ink and nothing else.
- *
- * **`water` and `agriculture` stop being the same word here**, which they are nowhere else in the
- * catalogue: constellation, hidato and star battle all answer both with one face. They are not opposites
- * though — `agriculture` is the WIDER of the two. A farm measures grain out of the granary and water onto
- * the fields, so it names both; `water` alone is only ever the river.
+ * The map itself lives on this family's `FamilyMeta` so world-gen can read it too (journeys.md §10).
  */
-const ROLE_SKINS: Record<string, string[]> = {
-  water: ["default"],
-  // Grain out of the granary, or water onto the fields — irrigation is farming too.
-  agriculture: ["grain", "default"],
-  light: ["oil"],
-  scribe: ["ink"],
-  // A market moves what a market moves.
-  trade: ["wine", "oil", "grain"],
-  // Natron for the drying, oil for the anointing — both are measured out for the rites.
-  funerary: ["natron", "oil"],
-}
-
-/** Names that mean "nothing was said" rather than naming a face. */
-const UNSPOKEN = ["default", "night"]
-
-/**
- * Which of a role's places THIS room is.
- *
- * **Decided by the board itself, so it is stable without anything having to be stored.** A room's capacities
- * and its starting amounts are already seeded per room at world-gen; hashing them picks the same face for
- * the same room every time it is opened, and different faces for the rooms either side of it. Nothing is
- * written into the world file, and nothing about the puzzle changes — a face is pixels (§2).
- */
-const faceFor = (faces: string[], board: number): string => faces[Math.abs(board) % faces.length]
-
-export const skinFor = (
-  role: string | string[] | undefined,
-  theme: string | undefined,
-  /** Any number that is stable for this room — the board's own shape is what the screen passes. */
-  board = 0
-): CanistersSkin => {
-  const named = theme !== undefined && !UNSPOKEN.includes(theme) ? SKINS[theme] : undefined
-  const roles = role === undefined ? [] : Array.isArray(role) ? role : [role]
-  const byRole = roles.map(each => ROLE_SKINS[each]).find(faces => faces !== undefined && faces.length > 0)
-  return named ?? (byRole !== undefined ? SKINS[faceFor(byRole, board)] : SKINS.default)
-}
+export const skinFor = (role: string | string[] | undefined, theme: string | undefined, board = 0): CanistersSkin =>
+  withAmbience(SKINS[faceFor(CANISTERS_META.faces, role, theme, Object.keys(SKINS), board)] ?? SKINS.default, theme)

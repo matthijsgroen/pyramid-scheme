@@ -21,6 +21,14 @@ export const BALANCE_META: FamilyMeta = {
   // Debuts at T1 (PUZZLE_FAMILIES.md §4.2), and its own starter board is two glyphs on two scales with
   // a number to share out, so it enters at the bottom of its own scale wherever the allocator drops
   // it (P4).
+  // The weighing of the heart under both the wide role and the narrow one — for this family they are the
+  // same room. `trade` answers with the default: a scale weighing goods is a market instrument without
+  // being dressed as one, which is a claim worth stating rather than leaving out (journeys.md §12).
+  faces: {
+    trade: ["default"],
+    funerary: ["weighing"],
+    judgement: ["weighing"],
+  },
   minTier: "starter",
   icon: "⚖️",
   color: "purple",

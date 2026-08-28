@@ -1,3 +1,5 @@
+import { CONSTELLATION_META } from "@/mods/puzzle/game/constellation/meta"
+import { faceFor, withAmbience } from "../faceFor"
 import type { FC } from "react"
 import { Plant, Pyramid } from "./glyphs"
 
@@ -47,7 +49,14 @@ export type Skin = {
   glyphLit?: string
   /** What this place looks like after dark, as an overlay on itself. Only what changes: the ground and its
    *  frame, mostly. A causeway at night is still a causeway. */
-  night?: Partial<Skin>
+  /**
+   * What each hour changes about this place, and nothing more.
+   *
+   * Keyed by the ambience so a second one — dusk, a sandstorm — is a key rather than a rewrite, and read
+   * by `withAmbience` after the role has decided which place this is (`app/faceFor.ts`). A face with
+   * nothing to say about the hour leaves it out: the default sky IS night, so it has no entry.
+   */
+  ambience?: Record<string, Partial<Skin>>
   /** What a node wears for its turn in the completion run, and it is a per-skin choice rather than one
    *  house style: a STAR swelling as it brightens reads as catching the light, and the same swell on a basin
    *  — a thing rooted in the ground, with a plant growing out of it — reads as the board twitching. So the
@@ -98,11 +107,14 @@ const SKINS: Record<string, Skin> = {
     glyphLit: "text-lime-500",
     // The delta after dark: the sand goes cold and the water goes deep, and the plants keep their green
     // because a field at night is still a field.
-    night: {
-      board: "bg-[radial-gradient(ellipse_at_50%_20%,#4a4433_0%,#2b291f_45%,#171613_100%)] ring-1 ring-emerald-200/15",
-      backdrop: "fill-emerald-100/30",
-      unlit: "border-stone-400/50 bg-radial from-stone-700/70 to-stone-950/80 text-stone-100",
-      lit: "border-sky-300 bg-radial from-sky-500/60 to-sky-800/70 text-sky-50 shadow-[0_0_14px_3px_rgb(56_189_248_/_0.3)]",
+    ambience: {
+      night: {
+        board:
+          "bg-[radial-gradient(ellipse_at_50%_20%,#4a4433_0%,#2b291f_45%,#171613_100%)] ring-1 ring-emerald-200/15",
+        backdrop: "fill-emerald-100/30",
+        unlit: "border-stone-400/50 bg-radial from-stone-700/70 to-stone-950/80 text-stone-100",
+        lit: "border-sky-300 bg-radial from-sky-500/60 to-sky-800/70 text-sky-50 shadow-[0_0_14px_3px_rgb(56_189_248_/_0.3)]",
+      },
     },
   },
   // **Junctions and haul roads** (§11.1, Logistics / Caravan). A number is how many roads meet a site, and
@@ -131,17 +143,19 @@ const SKINS: Record<string, Skin> = {
     glyphUnlit: "text-stone-700",
     glyphLit: "text-stone-800",
     // A causeway at night: the ground goes blue-grey and the finished stone catches moonlight instead of sun.
-    night: {
-      // Warm, not neutral: the sand is still under there. Drawn cold, the same board stopped reading as the
-      // same place after dark, which is the one thing an ambience overlay must not do.
-      board: "bg-[radial-gradient(ellipse_at_50%_20%,#3a3226_0%,#241f17_45%,#14110c_100%)] ring-1 ring-amber-100/15",
-      backdrop: "fill-stone-200/25",
-      line: "stroke-stone-400",
-      pending: "stroke-stone-400/40",
-      unlit: "border-stone-400/50 bg-radial from-stone-700/70 to-stone-950/80 text-stone-100",
-      lit: "border-stone-200 bg-radial from-stone-300/80 to-stone-500/50 text-stone-950 shadow-[0_0_12px_3px_rgb(214_211_209_/_0.3)]",
-      glyphUnlit: "text-stone-200",
-      glyphLit: "text-stone-100",
+    ambience: {
+      night: {
+        // Warm, not neutral: the sand is still under there. Drawn cold, the same board stopped reading as
+        // the same place after dark, which is the one thing an ambience overlay must not do.
+        board: "bg-[radial-gradient(ellipse_at_50%_20%,#3a3226_0%,#241f17_45%,#14110c_100%)] ring-1 ring-amber-100/15",
+        backdrop: "fill-stone-200/25",
+        line: "stroke-stone-400",
+        pending: "stroke-stone-400/40",
+        unlit: "border-stone-400/50 bg-radial from-stone-700/70 to-stone-950/80 text-stone-100",
+        lit: "border-stone-200 bg-radial from-stone-300/80 to-stone-500/50 text-stone-950 shadow-[0_0_12px_3px_rgb(214_211_209_/_0.3)]",
+        glyphUnlit: "text-stone-200",
+        glyphLit: "text-stone-100",
+      },
     },
   },
   // **A painted ceiling** (PUZZLE_FAMILIES.md §11.1, Tomb / Burial Logic). The same board read as the
@@ -180,47 +194,9 @@ const SKINS: Record<string, Skin> = {
 }
 
 /**
- * Which skin this room wears, out of the two things it is told: the **role** it was allocated for, and the
- * **ambience** its site authored.
+ * Which place this room is, resolved the same way every family resolves it (`app/faceFor.ts`).
  *
- * They answer different questions, and the family is what puts them together (a core that decided this for
- * every family would have to pick one, and either choice is wrong somewhere):
- *
- * - **The role is the identity.** Bridges drawn for `trade` is a haul-road network; drawn for `sky` it is a
- *   star map; drawn for `water` it is a waterworks. Same rules, same board, three different places.
- * - **The ambience is the weather and the hour.** `night` over a causeway is a causeway after dark, not a
- *   star map — so it layers ON the identity rather than replacing it.
- * - **A theme naming a skin outright wins**, which is what makes the puzzle lab able to show any of them.
+ * The map itself lives on this family's `FamilyMeta` so world-gen can read it too (journeys.md §10).
  */
-const ROLE_SKINS: Record<string, string> = {
-  sky: "default",
-  light: "default",
-  trade: "causeway",
-  logistics: "causeway",
-  water: "irrigation",
-  agriculture: "irrigation",
-  funerary: "ceiling",
-}
-
-const AMBIENCE = ["night"]
-
-/**
- * Names that mean "nothing was said" rather than naming a skin.
- *
- * `default` is in the skin table AND is what a picker shows when no theme is chosen, so it has to be read as
- * silence — otherwise it wins the override below and quietly cancels the role, which is exactly what it did:
- * picking a trade role next to a default theme still drew a star map.
- */
-const UNSPOKEN = ["default"]
-
-export const skinFor = (role: string | string[] | undefined, theme: string | undefined): Skin => {
-  // A theme that names one of this family's own skins is an explicit override (the lab, and any site that
-  // wants a specific dress). Ambience names are not skins and never resolve here.
-  const named = theme && !AMBIENCE.includes(theme) && !UNSPOKEN.includes(theme) ? SKINS[theme] : undefined
-  const roles = role === undefined ? [] : Array.isArray(role) ? role : [role]
-  // A list of roles is a union the allocator drew from, so the first one this family has an identity for is
-  // the one this room is.
-  const byRole = roles.map(each => ROLE_SKINS[each]).find(skin => skin && SKINS[skin])
-  const base = named ?? (byRole ? SKINS[byRole] : SKINS.default)
-  return theme && AMBIENCE.includes(theme) && base.night ? { ...base, ...base.night } : base
-}
+export const skinFor = (role: string | string[] | undefined, theme: string | undefined, board = 0): Skin =>
+  withAmbience(SKINS[faceFor(CONSTELLATION_META.faces, role, theme, Object.keys(SKINS), board)] ?? SKINS.default, theme)

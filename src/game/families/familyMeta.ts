@@ -52,6 +52,23 @@ export type FamilyMeta = {
   // recognises on FamilyContext. Unset = only its default skin. Playtesting reads this to offer
   // the themes a family actually has; an unlisted theme still falls back to the default skin.
   themes?: string[]
+  /**
+   * Which of this family's own faces serve which ROLE — the shared role vocabulary on the left, this
+   * family's own face ids on the right (docs/game-design/journeys.md §12).
+   *
+   * **Out here rather than in the family's own skin file, which is where these maps used to live.** A
+   * private map cannot be read by world-gen, and world-gen is what has to weigh a preferred role, warn
+   * about a role no family dresses, and say which face a room will wear before it is opened.
+   *
+   * **A SET, because some places are wider than others**: a market moves oil, wine and grain, so canisters
+   * names three under `trade` and a room wears one of them, picked from its own board's shape.
+   *
+   * **Every tag except `puzzle` needs an entry**, and `"default"` is a real answer — it says this family
+   * already reads as that place without being asked. Star battle's default is stars on a dark ground, so
+   * it declares `sky: ["default"]` rather than nothing: the claim that it can carry a night journey has to
+   * be in the data, or a report reading the data will deny it.
+   */
+  faces?: Record<string, string[]>
   // This family's own completion precondition (e.g. a tableau's hieroglyph requirement) —
   // most families provide none. The one place a family declares "I gate on holding
   // something," right alongside its other facts, not a separate registry to remember.
