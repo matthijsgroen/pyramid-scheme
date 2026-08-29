@@ -663,6 +663,10 @@
         }
       }
     },
+    "quota": {
+      "default": "Per row, column and region",
+      "fields": "Per row, column and holding"
+    },
     "goal": {
       "default_one": "Every row, every column and every region holds exactly one star.",
       "default_other": "Every row, every column and every region holds exactly {{count}} stars.",
@@ -675,6 +679,35 @@
       "twinDefault": "Twin Stars",
       "twinFields": "Twin Farmsteads"
     }
+  },
+  "rushHour": {
+    "name": {
+      "default": "The Blockade"
+    },
+    "goal": {
+      "default": "Get your own block out through the gap on the right."
+    },
+    "rules": {
+      "default": {
+        "lanes": "A block only slides along its own lane — never sideways, never off the board.",
+        "shove": "Drag a block to shove it. It stops where something is in the way."
+      }
+    },
+    "hint": {
+      "default": {
+        "drive": "The way ahead is clear that far.",
+        "back": "Nothing ahead will give. Back yours out of the way first.",
+        "clear": "That block stands across your own lane.",
+        "room": "Nothing can move until that one does.",
+        "push": {
+          "left": "Shove it left, as far as the ring.",
+          "right": "Shove it right, as far as the ring.",
+          "up": "Shove it up, as far as the ring.",
+          "down": "Shove it down, as far as the ring."
+        }
+      }
+    },
+    "undo": "Undo"
   },
   "hidato": {
     "rules": {

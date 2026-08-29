@@ -10,6 +10,7 @@ import { TWIN_STARS_META } from "./game/starBattle/twinStars"
 import { HIDATO_META } from "./game/hidato/meta"
 import { CANISTERS_META } from "./game/canisters/meta"
 import { SUDOKU_META } from "./game/sudoku/meta"
+import { RUSH_HOUR_META } from "./game/rushHour/meta"
 
 // The puzzle mod descriptor. Owns the general math-puzzle families (sumplete, balance-scale, futoshiki,
 // lightbeam, eclipse, constellation, star battle, twin stars, hidato, sudoku). A root mod: it stays on in
@@ -39,5 +40,6 @@ export const puzzleMod: ModDescriptor = {
     HIDATO_META,
     CANISTERS_META,
     SUDOKU_META,
+    RUSH_HOUR_META,
   ],
 }

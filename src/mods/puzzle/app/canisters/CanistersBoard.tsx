@@ -1,4 +1,5 @@
 import { useState, type FC } from "react"
+import { useTranslation } from "react-i18next"
 import clsx from "clsx"
 import type { Capacities, Move, Volumes } from "@/mods/puzzle/game/canisters/canisters"
 import { Vessel } from "./Vessel"
@@ -170,6 +171,7 @@ export const CanistersBoard: FC<Props> = ({
   onPour,
   onClaim,
 }) => {
+  const { t } = useTranslation("common")
   const tallest = Math.max(...capacities)
   const { tipping, settle } = useTipping(lastPour)
   const { answer, settle: settleAnswer } = useAnswer(claimed)
@@ -209,9 +211,9 @@ export const CanistersBoard: FC<Props> = ({
                 // The board's own ink, so the claim reads on a light ground as well as on a dark one.
                 answer?.canister !== canister && [skin.label, "border-current/50 opacity-80 hover:opacity-100"]
               )}
-              aria-label={`claim the ${capacity} holds it`}
+              aria-label={t("canisters.claimAria", { capacity })}
             >
-              this one
+              {t("canisters.claim")}
             </button>
           </div>
         ))}

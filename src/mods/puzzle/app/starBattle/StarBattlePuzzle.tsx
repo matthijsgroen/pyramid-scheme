@@ -96,6 +96,24 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, o
     >
       {({ reportInput, hintVisible }) => (
         <>
+          {/* **The quota is stated above the board, the way canisters states the amount it wants.** Two
+              families share this screen and this board, and what separates them is one number: the goal
+              sentence says it, but the goal lives BELOW the board with the rules, so a player who has
+              scrolled to the grid is left recalling whether this room takes one or two. Drawn as the
+              place's own answer glyph repeated, not as a digit — the thing standing in the square is what
+              the player is counting, and a row of two says "two of these" without a sentence. Drawn on the
+              place's own ground, because an answer is coloured for that ground and not for the shell's —
+              a farmstead is dark earth-green and disappears on the dark screen behind the board. */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-stone-300">{t(`starBattle.quota.${skin.name}`)}</span>
+            <span className={clsx("flex gap-1 rounded p-1", skin.cell, skin.answer)} aria-hidden>
+              {Array.from({ length: puzzle.quota }, (_, index) => (
+                <span key={index} className="size-6">
+                  <skin.Glyph />
+                </span>
+              ))}
+            </span>
+          </div>
           <StarBattleBoard
             puzzle={puzzle}
             state={state}
