@@ -9,16 +9,17 @@ import { join } from "node:path"
 // Namespace-blind on purpose — a key counts as translated if ANY shipped namespace has it. Tracking which
 // `useTranslation(ns)` a `t` belongs to would cost a scope analysis to catch a mistake nobody makes; the
 // one that does get made is a key written in no file at all.
-const LOCALES = "public/locales/en"
+const LOCALES = "public/locales"
 
 const flatten = (value: unknown, prefix: string, into: Set<string>): void => {
   if (typeof value !== "object" || value === null) return void into.add(prefix)
   for (const [key, nested] of Object.entries(value)) flatten(nested, prefix ? `${prefix}.${key}` : key, into)
 }
 
-const shippedKeys = (): Set<string> => {
+const shippedKeys = (locale = "en"): Set<string> => {
+  const dir = join(LOCALES, locale)
   const keys = new Set<string>()
-  for (const file of readdirSync(LOCALES)) flatten(JSON.parse(readFileSync(join(LOCALES, file), "utf8")), "", keys)
+  for (const file of readdirSync(dir)) flatten(JSON.parse(readFileSync(join(dir, file), "utf8")), "", keys)
   // i18next resolves `x` from `x_one`/`x_other`, so a plural pair covers its own base key.
   for (const key of [...keys]) if (/_(one|other|zero|few|many)$/.test(key)) keys.add(key.replace(/_\w+$/, ""))
   return keys
@@ -39,5 +40,18 @@ describe("every translation key a screen asks for", () => {
       for (const [, key] of readFileSync(file, "utf8").matchAll(/\bt\(\s*"([a-zA-Z][\w.]*)"/g))
         if (!shipped.has(key)) missing.push(`${key} (${file})`)
     expect(missing).toEqual([])
+  })
+
+  /**
+   * **And is written in both languages.** A key nobody translated does not fail either: `fallbackLng` is
+   * English, so a Dutch player is quietly served the English string and the screen looks fine to anybody
+   * testing it in English. Five detector strings sat like that. AGENTS.md asks for the two locales to move
+   * together; this is what holds them to it.
+   */
+  it("is written in both languages", () => {
+    const en = shippedKeys("en")
+    const nl = shippedKeys("nl")
+    expect([...en].filter(key => !nl.has(key))).toEqual([])
+    expect([...nl].filter(key => !en.has(key))).toEqual([])
   })
 })
