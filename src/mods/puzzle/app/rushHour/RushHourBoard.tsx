@@ -30,6 +30,15 @@ type Props = {
  * **So the frame keeps a gutter to its east and the way out is drawn in it**, outside the board where no
  * piece can cover it. The frame takes 92% of the width it is given and the marker has the rest.
  */
+/**
+ * How much wider than its own deck a painted sprite's canvas is (`art-pipeline.md` §A.2).
+ *
+ * **The sprites are authored with this much transparent margin either side**, so the deck can land exactly
+ * on the cell lines while the runners that stick out past it are still drawn. A sledge whose handles are
+ * cropped to its deck looks sawn off at both ends, and a sledge drawn to its handles lies about its length.
+ */
+const OVERHANG = 1.3
+
 export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintCells, leaving, onSlide }) => {
   const frame = useRef<HTMLDivElement>(null)
   /** The piece being dragged: which one, where the finger went down, and the offset it started at. */
@@ -150,25 +159,25 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
                   src={mine ? skin.art.player : piece.len === 3 ? skin.art.piece3 : skin.art.piece2}
                   alt=""
                   draggable={false}
-                  // `max-w-none` because preflight caps an image at the width of its box, and a turned piece is
-                  // deliberately WIDER than the box it sits in — without it the sprite is squashed, not turned.
-                  className="pointer-events-none absolute inset-0 size-full max-w-none object-fill"
-                  // **A piece across the board is the piece along it, turned.** The art carries no lighting
-                  // direction, so one image serves both axes (`rush-hour.md` §5). A turned image swaps the
-                  // box it fills: as long as the parent, as tall as the parent is wide, spun about its middle.
-                  style={
-                    piece.horizontal
-                      ? undefined
-                      : {
-                          inset: "auto",
-                          top: "50%",
-                          left: "50%",
-                          width: `${100 * piece.len}%`,
-                          height: `${100 / piece.len}%`,
-                          translate: "-50% -50%",
-                          rotate: "90deg",
-                        }
-                  }
+                  // `max-w-none` because preflight caps an image at the width of its box, and every sprite
+                  // here is deliberately WIDER than its box — without it the art is squashed, not overhung.
+                  className="pointer-events-none absolute max-w-none object-fill"
+                  // **The sprite is wider than the cells it owns, and that is the point.** A sledge's runners
+                  // stick out past its deck, so the art carries `OVERHANG` of empty canvas either side and is
+                  // drawn that much wider than the box: the DECK lands on the cell lines, which is what makes
+                  // a 3 read as a 3, and the handles hang over the neighbours the way real ones would.
+                  //
+                  // **A piece across the board is the piece along it, turned** — one image serves both axes,
+                  // which only works because the art has no lighting direction (`rush-hour.md` §5). Both cases
+                  // hang the image off the box's middle, so the overhang splits evenly whichever way it faces.
+                  style={{
+                    top: "50%",
+                    left: "50%",
+                    translate: "-50% -50%",
+                    width: `${(piece.horizontal ? OVERHANG : OVERHANG * piece.len) * 100}%`,
+                    height: `${(piece.horizontal ? 1 : 1 / piece.len) * 100}%`,
+                    rotate: piece.horizontal ? undefined : "90deg",
+                  }}
                 />
               )}
             </div>
