@@ -61,9 +61,10 @@ deliberately (equal scores are accepted), because the sets here sit on wide ones
 
 ### 3.2 Three knobs, and none of them is the grid
 
-**The grid is 6×6 at every tier.** At 390px wide that is 58px a cell; 7×7 is 49px and 8×8 is 43px, on a
-board whose only gesture is shoving a piece along a lane with a finger. Bigger boards are a tablet
-question, if they are ever a question.
+**The grid is 6×6 at every tier.** At 390px wide the board takes 92% of it — the rest is the gutter the way
+out is drawn in (§5.1) — so that is 54px a cell; 7×7 would be 46px and 8×8 40px, on a board whose only
+gesture is shoving a piece along a lane with a finger. Bigger boards are a tablet question, if they are ever
+a question.
 
 **Piece count alone does not make a board hard.** Measured: a set drawn at random tops out around nine
 moves however full it is, because most of its pieces are nowhere near the way out and the player simply
@@ -157,6 +158,21 @@ which a ring can say. So painted sprites per face are a good bargain here, with 
   are authored against the grid, ends on the lines.
 - **The count multiplies**: face × length (2, 3) × axis (along, across). One rotated sprite per length
   serves both axes only if the art has no directional lighting.
+
+### 5.1 The way out is drawn outside the board
+
+**The board gives up 8% of its width so the way out can stand beside it rather than inside it.** A marker
+on the east edge is covered by whatever piece occupies the last column, which is most of the time — and the
+one thing on this board that every move is aimed at is then the one thing a player cannot see. The gutter
+belongs to no lane, so nothing can ever stand in front of it.
+
+It is a chevron rather than a bar, because a marker that says WHICH WAY as well as where is the same signal
+the player's own nose gives (§5), and the two point the same direction.
+
+**The frame still clips**, which is what the gutter does not change: the completion run drives the player's
+piece past the east edge and it has to disappear behind the wall it went through rather than paint over the
+screen around it. So the marker is drawn in an unclipped twin of the frame's box — same width, same
+percentages, no `overflow-hidden` — which is what lets it speak in cells without knowing any pixels.
 
 ## 6. Open questions
 
