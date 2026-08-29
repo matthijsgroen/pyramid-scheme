@@ -967,7 +967,7 @@
     "rules": {
       "default": {
         "lengths": "Elke rij is één ding dat gebeurt, en het duurt zo lang als zijn balk breed is. Wanneer het gebeurt zoek jij uit.",
-        "marks": "Een teken onder de dag kleurt rood zolang het niet klopt. Tik erop om te zien welke rijen het verbindt.",
+        "marks": "Een regel onder de dag kleurt rood zolang hij niet klopt. Tik erop om de rijen te omringen waar hij over gaat.",
         "drag": "Sleep een balk over zijn eigen rij. Hij gaat de dag nooit uit."
       }
     },
@@ -978,6 +978,29 @@
         "apart": "Andersom past het niet in de dag.",
         "split": "Probeer het andersom en er breekt iets anders.",
         "move": "Sleep de omringde balk op de gearceerde streepjes."
+      }
+    },
+    "events": {
+      "default": [
+        "het vuur",
+        "het water halen",
+        "het malen",
+        "de boottocht",
+        "het ossen drijven",
+        "de lampwacht"
+      ]
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}} begint op uur {{tick}}.",
+        "handoff": "{{a}} begint zodra {{b}} klaar is.",
+        "link_one": "{{a}} begint {{count}} uur nadat {{b}} klaar is.",
+        "link_other": "{{a}} begint {{count}} uur nadat {{b}} klaar is.",
+        "before": "{{a}} is klaar voordat {{b}} begint.",
+        "apart": "{{a}} en {{b}} lopen nooit tegelijk.",
+        "together": "{{a}} en {{b}} lopen een tijd tegelijk.",
+        "span_one": "Van de eerste start tot het laatste einde is {{count}} uur.",
+        "span_other": "Van de eerste start tot het laatste einde is {{count}} uur."
       }
     }
   }

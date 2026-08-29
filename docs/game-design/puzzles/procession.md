@@ -52,11 +52,23 @@ top half of the ladder is made of it.
 
 `link (0)` is a handoff — the same mark with a zero on it rather than a seventh kind.
 
-**Every mark except the pin is a chip under the board**, and a chip is a miniature of the relation it
-states: the two rows' own glyphs on their own colours, a numeral where there is one, and a red border while
-it is broken. **The glyphs are what make a chip a sentence** — the water before the fire, the grain three
-hours after the lamp — where swatches made it "teal before rose", which is the thing the first playtest
-could not hold in its head. **The pin is drawn on the track instead**, because it is about one row and one tick — a chip would
+**Every mark is a line under the board: the chip, then the sentence.** The chip is the relation in
+miniature — the two rows' glyphs on their own colours, a numeral where there is one — and the sentence says
+the same thing in words: _the grinding starts 1 hour after the fire is done_. The line turns red while the
+mark is broken, and tapping it rings the rows it is about.
+
+**Both halves, and the division of labour between them is the point.** The chip is load-bearing: a player
+who reads nothing solves the board from chips, glyphs and the numbered track alone, which is what P2 of the
+catalogue asks for — **that rule is about the player never PRODUCING language, not about the board staying
+mute**. The sentence is what makes a row a doing rather than a rectangle, which is what the first playtest
+asked for after solving a board of anonymous bars and feeling it had shuffled furniture.
+
+The names live in the locale files and the glyphs in the skin, aligned by row index: a name is language and
+a glyph is not, so they cannot share a home. What they share is the face. A sentence opens with its own
+name, so the capital is applied in CSS and each name is written once, with its article.
+
+**A pin has no chip** — it is drawn as a notch on the track under the row it pins, because it is about one
+row and one tick and a chip would make the player go and find the tick again. It still gets its sentence. **The pin is drawn on the track instead**, because it is about one row and one tick — a chip would
 make the player go and find the tick again.
 
 ## 3. The ladder — four rungs, and the tier is the weakest one that settles the board
@@ -137,7 +149,7 @@ sumplete, so the size is held down deliberately — six bars, not ten.
 
 - **Drag a bar along its row**, snapping to the nearest tick, committed as the drag goes rather than on
   release. A drag past the edge leaves the bar against it rather than being refused.
-- **Tap a chip** to ring the rows it joins, so a board with nine marks is readable without reading.
+- **Tap a mark's line** to ring the rows it is about, so a board with nine marks stays navigable.
 - **Reset, and no undo.** Rush hour needs an undo because a shove there is a commitment three moves deep;
   here a bar is dragged straight back, and a second way to do that is furniture.
 
@@ -158,10 +170,11 @@ worked, oxen driven, a lamp kept. The tag list is `puzzle` and nothing else, for
 (`rush-hour.md` §5) — a face is a claim that the board can dress as somewhere, and that claim lands with
 the painted art rather than before it.
 
-**The doings are a day and not a story, deliberately.** The generator decides what happens when, so a set
-that implied an order — dressing, then the crowning, then the parade — would be telling a lie on every
-board whose answer put them the other way round. A glyph says WHAT a row is, and the marks say when; a
-narrative would have to constrain the generator, and that is a different family.
+**The doings are a day and not a plot, deliberately.** The board says everything it knows in words — each
+mark is a sentence — but the SET of doings implies no order of its own. The generator decides what happens
+when, so a set that carried its own narrative (dressing, then the crowning, then the parade) would be
+telling a lie on every board whose answer ran the other way. The names identify; the sentences state only
+what the marks state. A fixed story would have to constrain the generator, and that is a different family.
 
 What the art would be, in the order it is worth painting:
 

@@ -71,7 +71,7 @@ const SKINS: Record<string, ProcessionSkin> = {
     glyphs: ["🔥", "🏺", "🌾", "🛶", "🐂", "🕯"],
     scale: "text-stone-500",
     markHeld: "border-stone-600 bg-stone-900 text-stone-400",
-    markBroken: "border-red-700 bg-red-950/70 text-red-300",
+    markBroken: "border-red-800/80 bg-red-950/30 text-red-200",
     pin: "bg-stone-300",
     hatch: "rgb(250 204 21 / 0.55)",
     focus: "ring-amber-400",

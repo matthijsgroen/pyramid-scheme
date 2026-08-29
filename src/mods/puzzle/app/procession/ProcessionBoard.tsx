@@ -1,5 +1,6 @@
 import clsx from "clsx"
 import { useRef, useState, type FC, type PointerEvent } from "react"
+import { useTranslation } from "react-i18next"
 import type { Mark, ProcessionPuzzle, ProcessionState } from "@/mods/puzzle/game/procession/procession"
 import { lastStart } from "@/mods/puzzle/game/procession/procession"
 import type { ProcessionSkin } from "./skins"
@@ -40,8 +41,36 @@ export const ProcessionBoard: FC<Props> = ({
   solved,
   onSlide,
 }) => {
+  const { t } = useTranslation("common")
   const frame = useRef<HTMLDivElement>(null)
   const [drag, setDrag] = useState<{ index: number; from: number; origin: number } | undefined>()
+
+  /**
+   * A mark as a sentence about two doings.
+   *
+   * **The names live in the locale files and the glyphs live in the skin, aligned by row index.** A name
+   * is language and a glyph is not, so they cannot share a home — what they share is the face, and a face
+   * that adds a doing adds it in both places.
+   *
+   * The first letter is capitalised in CSS rather than in the strings, so a name can be written once with
+   * its article ("the fire", "het vuur") and still open a sentence.
+   */
+  const sentence = (mark: Mark): string => {
+    const name = (row: number) => t(`procession.events.${skin.name}.${row % skin.glyphs.length}`)
+    const key = (id: string) => `procession.marks.${skin.name}.${id}`
+    switch (mark.kind) {
+      case "pin":
+        return t(key("pin"), { a: name(mark.a), tick: mark.tick })
+      case "link":
+        return mark.gap === 0
+          ? t(key("handoff"), { a: name(mark.b), b: name(mark.a) })
+          : t(key("link"), { a: name(mark.b), b: name(mark.a), count: mark.gap })
+      case "span":
+        return t(key("span"), { count: mark.ticks })
+      default:
+        return t(key(mark.kind), { a: name(mark.a), b: name(mark.b) })
+    }
+  }
   const share = 100 / puzzle.ticks
   const focused = focus === undefined ? undefined : puzzle.marks[focus]
   const about = (index: number) =>
@@ -155,24 +184,31 @@ export const ProcessionBoard: FC<Props> = ({
         )}
       </div>
 
-      <div className="mt-2 flex flex-wrap gap-1.5">
-        {puzzle.marks.map((mark, index) =>
-          mark.kind === "pin" ? null : (
+      {/* **What the day is known to be, said twice over.** The chip is the wordless half — it is what a
+          player who ignores every sentence solves the board from, and it is what goes red — and the
+          sentence beside it is the flavour that makes a row a doing rather than a bar. Neither is
+          load-bearing on its own: the chips are complete without the words (PUZZLE_FAMILIES.md P2), and
+          the words are what the first playtest asked for. */}
+      <ul className="mt-2 flex flex-col gap-1">
+        {puzzle.marks.map((mark, index) => (
+          <li key={index}>
             <button
-              key={index}
               aria-label={`mark ${index + 1}`}
               onClick={() => onFocus(focus === index ? undefined : index)}
               className={clsx(
-                "flex h-11 min-w-11 items-center gap-1 rounded border px-1.5 transition-colors",
+                "flex w-full items-center gap-2 rounded border px-1.5 py-1 text-left text-sm transition-colors",
                 broken.includes(index) ? skin.markBroken : skin.markHeld,
                 focus === index && `ring-2 ${skin.focus}`
               )}
             >
-              <MarkGlyph mark={mark} skin={skin} bars={puzzle.bars.length} />
+              <span className="flex min-h-9 shrink-0 items-center gap-1">
+                <MarkGlyph mark={mark} skin={skin} bars={puzzle.bars.length} />
+              </span>
+              <span className="first-letter:uppercase">{sentence(mark)}</span>
             </button>
-          )
-        )}
-      </div>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
