@@ -1,14 +1,13 @@
 import type { Difficulty } from "../src/data/difficultyLevels"
 import type { FoundSeed } from "../src/game/seeds/findSeeds"
 
-/** One window of seeds to scan for one bucket. Windows are disjoint and indexed in order. */
+/** One range of seeds to scan for one bucket. Ranges are disjoint, and what they find counts in whatever
+ * order it lands. */
 export type SeedTask = {
   taskId: number
   hash: string
   familyId: string
   difficulty: Difficulty
-  /** Which window of this bucket's space, counted from zero — the order results are retired in. */
-  chunk: number
   from: number
   count: number
 }

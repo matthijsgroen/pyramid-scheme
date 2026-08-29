@@ -8,6 +8,9 @@
  * journey costs the buckets it moved rooms into — never the whole artifact, and never a diff that
  * silently deals every other family's rooms a different board.
  *
+ * The artifact is written already formatted, so these commands are a single process — yarn appends a
+ * command's arguments to the END of its script, and a `&& prettier` tail would eat every flag below.
+ *
  * Run: yarn generate-seeds [--rebuild] [--family=<id>] [--cap=<n>] [--tries=<n>] [--parallel=<n>]
  *      yarn verify-seeds [--family=<id>]
  *      yarn seeds-info
@@ -23,9 +26,10 @@
  *               A run is then a bounded job you can repeat, which is what makes an expensive family
  *               fillable in sittings instead of in one long one.
  *
- * A run is RESUMABLE and it checkpoints: the artifact is written whenever a bucket fills and on ctrl-c, and
- * the next run scans above the seeds each bucket already holds. So a family with an expensive generator can
- * be filled in batches, and an interrupted pass never re-earns what it had.
+ * A run is RESUMABLE and it checkpoints: **every seed counts the moment it lands**, the artifact is written
+ * whenever a bucket fills and on ctrl-c, and the next run scans above the seeds each bucket already holds.
+ * So a family with an expensive generator can be filled in batches, and an interrupted pass never re-earns
+ * what it had — nor throws away a find because some other thread had not come back yet.
  *
  * `verify` is the other half of that: it rebuilds listed seeds (a sample of 5 per bucket, or every one with
  * --all) and drops the ones that no longer grade,
@@ -66,11 +70,10 @@ const CAP = number("cap", SEED_CAP)
 const TRIES = number("tries", 200_000)
 // Two cores left alone, so the machine running this stays usable.
 const THREADS = Math.max(1, Math.min(number("parallel", cpus().length - 2), cpus().length - 1))
-// **A window is the unit of progress, so it has to be small enough to retire often.** Windows are retired
-// in order and a bucket is only satisfied by its retired prefix, so a window is also the granularity a
-// checkpoint and an interrupt can save at. At 500 seeds that is a second for most families and SIX MINUTES
-// for rush hour, whose generator climbs — long enough that a killed run had nothing to keep. 128 keeps the
-// messaging in the noise and the progress in sight.
+// How many seeds one task scans before reporting. Nothing waits on a window any more, so this is only the
+// granularity a checkpoint and an interrupt save at. At 500 seeds that is a second for most families and SIX
+// MINUTES for rush hour, whose generator climbs — long enough that a killed run lost real work. 128 keeps
+// the messaging in the noise and the progress in sight.
 const CHUNK = 128
 const only = flag("family")?.split(",")
 const rebuild = argv.includes("--rebuild")
@@ -87,49 +90,48 @@ const summarise = (grades: Grade[]) => {
   return `steps ${steps[0]}-${steps[steps.length - 1]} (median ${steps[steps.length >> 1]}), demands ${deepest.join("/") || "nothing"}`
 }
 
-/** What one bucket has collected so far, kept per window so the order threads finish in cannot matter. */
+/**
+ * What one bucket has collected so far.
+ *
+ * **Every seed stands on its own.** A seed earns its place by building its own board, so nothing about it
+ * depends on which other seeds were tested first — which is why a find is banked the moment it arrives,
+ * whatever else is still in flight. Holding finds back until every lower window had reported would make the
+ * artifact byte-identical whatever the thread count, and would cost a killed run everything it had earned
+ * above the first window still out. Reproducibility is bought more cheaply below, by trimming a full bucket
+ * to its lowest seeds instead of to the ones that landed first.
+ */
 type Bucket = {
   demand: ConfigDemand
   target: number
-  byChunk: Map<number, FoundSeed[]>
+  found: FoundSeed[]
   done: boolean
   /**
    * Seeds this bucket already shipped with, and the seed its scan resumes above.
    *
-   * **This is what makes a run resumable.** Windows are ascending and disjoint, so every seed below the
-   * highest one a bucket holds has already been tested — kept or rejected. Starting the scan above it
-   * therefore loses nothing and repeats nothing, and a bucket that was killed half full carries on where it
-   * stopped instead of re-earning the seeds it already has.
+   * **This is what makes a run resumable.** A bucket killed half full carries on above the seeds it kept
+   * instead of re-earning them. A window below that seed may never have been scanned when the run stopped,
+   * and skipping it costs nothing: a bucket needs SOME seeds that build, not every one there is.
    */
   inherited: number[]
   resumeFrom: number
 }
 
-/**
- * The windows a bucket has retired, concatenated in order — everything up to the first window still
- * outstanding. A bucket is satisfied once that prefix holds its target, which makes the result a
- * function of the seed space alone rather than of which thread got there first.
- */
-const retired = (bucket: Bucket): FoundSeed[] => {
-  const found: FoundSeed[] = []
-  for (let chunk = 0; bucket.byChunk.has(chunk); chunk++) found.push(...bucket.byChunk.get(chunk)!)
-  return found
-}
+/** What a bucket would ship right now: the seeds it inherited plus the ones this run has earned. */
+const heldBy = (bucket: Bucket) => bucket.inherited.length + bucket.found.length
 
 const runPool = async (buckets: Bucket[]) => {
   const tasks: SeedTask[] = []
   // **Round-robin across buckets, not bucket by bucket.** Queued in bucket order, ten threads all take the
-  // first bucket's first ten windows — so a cheap bucket waits behind an expensive one for no reason, and
-  // nothing retires until the expensive one does. Interleaved, every bucket makes progress from the start.
-  for (let chunk = 0; chunk * CHUNK < TRIES; chunk++)
+  // first bucket's first ten windows — so a cheap bucket waits behind an expensive one for no reason.
+  // Interleaved, every bucket makes progress from the start.
+  for (let window = 0; window * CHUNK < TRIES; window++)
     for (const bucket of buckets)
       tasks.push({
         taskId: tasks.length,
         hash: bucket.demand.hash,
         familyId: bucket.demand.familyId,
         difficulty: bucket.demand.difficulty,
-        chunk,
-        from: bucket.resumeFrom + chunk * CHUNK,
+        from: bucket.resumeFrom + window * CHUNK,
         count: CHUNK,
       })
 
@@ -151,6 +153,8 @@ const runPool = async (buckets: Bucket[]) => {
   // shim that registers the tsx loader first is what replaces a bundling step and a build artifact.
   const entry = JSON.stringify(new URL("./seedWorker.ts", import.meta.url).href)
   const boot = `import("tsx/esm/api").then(tsx => { tsx.register(); return import(${entry}) })`
+
+  if (!tasks.length) return { failures: 0, collected: 0 }
 
   await new Promise<void>((resolve, reject) => {
     const workers = Array.from({ length: Math.min(THREADS, tasks.length) }, () => new Worker(boot, { eval: true }))
@@ -176,10 +180,10 @@ const runPool = async (buckets: Bucket[]) => {
         pending.delete(message.taskId)
         if (message.error) errors.push(`${task.familyId}/${task.difficulty}: ${message.error}`)
         const bucket = byHash.get(task.hash)!
-        bucket.byChunk.set(task.chunk, message.found)
+        bucket.found.push(...message.found)
         sinceWrite += message.found.length
         collected += message.found.length
-        const filled = retired(bucket).length >= bucket.target && !bucket.done
+        const filled = heldBy(bucket) >= bucket.target && !bucket.done
         if (filled) bucket.done = true
         // Written as it goes rather than at the end: a pass over a family with a slow generator is an hour
         // of work, and an hour of work that only lands if nobody presses ctrl-c is an hour nobody spends.
@@ -191,10 +195,15 @@ const runPool = async (buckets: Bucket[]) => {
           lastWrite = performance.now()
         }
         completed++
-        if (completed % 40 === 0)
-          process.stderr.write(
-            `\r${buckets.filter(b => b.done).length}/${buckets.length} buckets, ${completed} windows scanned`
-          )
+        // The bucket furthest from its target is named, because on a long run it is the one everything else
+        // is waiting on — and a slow bucket that reports its count looks slow rather than hung.
+        if (completed % 40 === 0) {
+          const slowest = buckets
+            .filter(bucket => !bucket.done)
+            .sort((left, right) => heldBy(left) / left.target - heldBy(right) / right.target)[0]
+          const behind = slowest ? `, ${describe(slowest.demand)} at ${heldBy(slowest)}/${slowest.target}` : ""
+          process.stderr.write(`\r${buckets.filter(b => b.done).length}/${buckets.length} buckets${behind}`)
+        }
       })
       worker.on("error", reject)
       worker.on("exit", () => {
@@ -203,13 +212,13 @@ const runPool = async (buckets: Bucket[]) => {
     }
   })
 
-  process.stderr.write("\r".padEnd(70) + "\r")
+  process.stderr.write("\r".padEnd(110) + "\r")
   for (const error of errors) console.error(error)
   return { failures: errors.length, collected }
 }
 
 /**
- * The artifact as it stands right now — every bucket's retired prefix, partial ones included.
+ * The artifact as it stands right now — every seed every bucket holds, partial ones included.
  *
  * Called at the end of a run, whenever a bucket fills, and on an interrupt. A partial list is not a lie:
  * `seeds-info` reports it as SHORT and `puzzleSeeds.spec.ts` fails on it, so a half-filled bucket is
@@ -220,9 +229,9 @@ const writeArtifact = (buckets: Bucket[], allHashes: Set<string>) => {
     Object.entries(puzzleSeeds).filter(([hash]) => allHashes.has(hash))
   )
   for (const bucket of buckets) {
-    const found = retired(bucket)
-      .slice(0, bucket.target)
-      .map(entry => entry.seed)
+    // Sorted before the trim, not just for a tidy file: an overfull bucket then keeps its LOWEST seeds
+    // whichever window landed first, so two runs that scanned the same space agree on what they shipped.
+    const found = bucket.found.map(entry => entry.seed).sort((left, right) => left - right)
     // Inherited seeds come first and are never dropped: they were proven under these same options, and a
     // resumed run has scanned only the space ABOVE them.
     const merged = [...new Set([...bucket.inherited, ...found])].slice(0, bucket.target)
@@ -282,7 +291,7 @@ if (command === "generate") {
     return {
       demand,
       target: targetFor(demand),
-      byChunk: new Map(),
+      found: [],
       done: false,
       inherited,
       // Above the highest seed already held — see Bucket.resumeFrom. A rebuild starts over from 1.
@@ -299,8 +308,8 @@ if (command === "generate") {
 
   const allHashes = new Set(allDemands.map(demand => demand.hash))
   checkpoint = current => writeArtifact(current, allHashes)
-  // **An interrupt is a pause, not a loss.** Everything retired so far is written, and the next run picks
-  // up above it — which is what makes a long pass something you can run in batches.
+  // **An interrupt is a pause, not a loss.** Every seed found so far is written, and the next run picks up
+  // above it — which is what makes a long pass something you can run in batches.
   for (const signal of ["SIGINT", "SIGTERM"] as const)
     process.on(signal, () => {
       const written = writeArtifact(buckets, allHashes)
@@ -317,13 +326,13 @@ if (command === "generate") {
   const sorted = writeArtifact(buckets, allHashes)
   let short = 0
   for (const bucket of buckets) {
-    const found = retired(bucket).slice(0, bucket.target)
-    const held = sorted[bucket.demand.hash]?.length ?? 0
+    const shipped = sorted[bucket.demand.hash]?.length ?? 0
     // Never let a bucket come up short quietly: a half-filled list reads as covered until a player
     // meets the room that repeats.
-    if (held < bucket.target) short++
-    const verdict = held < bucket.target ? `SHORT ${held}/${bucket.target}` : `${held} seeds`
-    console.log(`${describe(bucket.demand).padEnd(42)} ${verdict.padEnd(18)} ${summarise(found.map(f => f.grade))}`)
+    if (shipped < bucket.target) short++
+    const verdict = shipped < bucket.target ? `SHORT ${shipped}/${bucket.target}` : `${shipped} seeds`
+    const grades = bucket.found.map(entry => entry.grade)
+    console.log(`${describe(bucket.demand).padEnd(42)} ${verdict.padEnd(18)} ${summarise(grades)}`)
   }
   console.log(
     `\n${Object.keys(sorted).length} buckets written in ${((performance.now() - started) / 1000).toFixed(1)}s on ${THREADS} threads`

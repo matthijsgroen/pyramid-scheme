@@ -11,9 +11,8 @@ export type FoundSeed = { seed: number; grade: Grade }
  * a listed seed produces is the board that was verified, with no search in between deciding which draft
  * wins.
  *
- * Windows are disjoint and scanned in order, so splitting the space across threads cannot change the
- * result — which is what keeps the shipped artifact a function of the code rather than of how many
- * cores ran it.
+ * A window is a plain range and every seed in it is judged alone, so which thread scans which window, and
+ * in what order the results land, cannot change whether a seed is admitted.
  */
 export const findSeeds = (
   seedable: SeedableFamily,
