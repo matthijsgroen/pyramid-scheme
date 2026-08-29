@@ -180,7 +180,12 @@ export const SudokuBoard: FC<Props> = ({
                 className={clsx(
                   // The square is its own sizing context, so the token and the pencilled notes inside it
                   // scale with the square rather than with the screen.
-                  "@container flex aspect-square items-center justify-center border transition-colors",
+                  // `min-h-0` for the reason star battle's board spells out, and here the child WebKit
+                  // measures is `NoteGrid` — which only an EMPTY square carries. So empty squares stood
+                  // taller than written ones and the seams between them moved as the player filled the
+                  // board in, out from under the chamber walls, which are drawn off the grid rather than
+                  // off the squares and so stayed put.
+                  "@container flex aspect-square min-h-0 items-center justify-center border transition-colors",
                   conflicted ? skin.conflict : cell.given ? skin.given : skin.cell,
                   // Inset, because the squares touch: a ring drawn outside one would sit on top of its
                   // neighbour. The square the player has picked first — it is the one they are acting on —

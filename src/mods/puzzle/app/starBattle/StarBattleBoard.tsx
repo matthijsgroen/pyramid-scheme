@@ -194,7 +194,15 @@ export const StarBattleBoard: FC<Props> = ({
               onTapCell(cell)
             }}
             className={clsx(
-              "flex aspect-square items-center justify-center border p-[14%] transition-colors",
+              // `min-h-0` is load-bearing. A grid item's automatic minimum size comes from its CONTENT, and
+              // WebKit works this square's out by resolving the glyph's `size-full` against the square's full
+              // width — percentage padding counts as zero while it does — and then adding the real 14% back
+              // on each side. A square with a mark in it therefore demands width + 28% and grows past its
+              // track, while an empty one sits at the track's height. On iOS that showed as the ground
+              // spilling below the board under exactly the squares the player had darkened, and only along
+              // the bottom row: everywhere else the row beneath paints over the overflow. The track decides
+              // how big a square is; nothing standing in one gets a say.
+              "flex aspect-square min-h-0 items-center justify-center border p-[14%] transition-colors",
               // A square a star already rules out RECEDES: it is not a mark and must not read as one, so it
               // loses contrast rather than gaining anything of its own.
               spent.has(cell) && !decided?.has(cell) ? skin.spent : skin.cell,
