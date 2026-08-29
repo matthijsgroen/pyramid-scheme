@@ -24,8 +24,9 @@ That is what this one does. Every bar's length is given; **no bar's start is**.
 
 - The board is a **track of ticks** — dawn at the left edge, dusk at the right, **numbered every other
   tick** so a gap of two is counted rather than eyeballed — and a stack of **rows**.
-- **One row is one thing that happens**, drawn as a glyph beside its own row: a fire lit, water carried,
-  grain ground. A bar's **length is fixed and visible**: a three-tick bar takes three hours and keeps
+- **One row is one thing that happens**, drawn beside its own row as a sign on the row's own colour — the
+  same badge the marks use, so finding the row a sentence names is a colour match rather than a hunt for a
+  small white shape. A bar's **length is fixed and visible**: a three-tick bar takes three hours and keeps
   taking three hours.
 - The player **slides a bar along its row**, and it may sit anywhere the day has room for it.
 - Between the bars sit **marks** (§2.1). The board is done when every mark holds.
