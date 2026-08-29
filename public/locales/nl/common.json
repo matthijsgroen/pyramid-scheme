@@ -963,5 +963,92 @@
     "wanted": "Meet af",
     "claim": "deze",
     "claimAria": "Zeg dat de {{capacity}} de hoeveelheid bevat"
+  },
+  "procession": {
+    "name": {
+      "default": "De Geordende Uren",
+      "funerary": "De Dag van de Begrafenis",
+      "cosmos": "De Tocht van de Nacht",
+      "water": "De Dag van de Overstroming",
+      "trade": "De Dag aan de Kade"
+    },
+    "goal": {
+      "default": "Schuif elk ding dat gebeurt naar zijn uur, tot alle tekens onder de dag kloppen.",
+      "funerary": "Schuif elke rite naar zijn uur, tot alle tekens onder de dag kloppen.",
+      "cosmos": "Schuif elk licht naar zijn uur, tot alle tekens onder de nacht kloppen.",
+      "water": "Schuif elke taak naar zijn uur, tot alle tekens onder de dag kloppen.",
+      "trade": "Schuif elke taak naar zijn uur, tot alle tekens onder de dag kloppen."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Elke rij is één ding dat gebeurt, en het duurt zo lang als zijn balk breed is. Wanneer het gebeurt zoek jij uit.",
+        "marks": "Een regel onder de dag kleurt rood zolang hij niet klopt. Tik erop om de rijen te omringen waar hij over gaat.",
+        "drag": "Sleep een balk over zijn eigen rij. Hij gaat de dag nooit uit."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "Die rij ligt al vast, en deze hangt eraan.",
+        "squeeze": "Er is nog maar zoveel dag over, en dit is alles wat er past.",
+        "apart": "Andersom past het niet in de dag.",
+        "split": "Probeer het andersom en er breekt iets anders.",
+        "move": "Sleep de omringde balk op de gearceerde streepjes."
+      }
+    },
+    "events": {
+      "default": [
+        "het vuur",
+        "het water halen",
+        "het bakken",
+        "de boottocht",
+        "het ossen drijven",
+        "de nachtwake"
+      ],
+      "funerary": [
+        "het openen van de mond",
+        "het wikkelen",
+        "het zalven",
+        "de tocht naar het graf",
+        "het offer",
+        "het verzegelen"
+      ],
+      "cosmos": [
+        "de tocht van de zon",
+        "het opkomen van de ster",
+        "de maanwake",
+        "de open hemel",
+        "de dageraad",
+        "het kerende jaar"
+      ],
+      "water": [
+        "de overstroming",
+        "het graven van de geul",
+        "het vullen van het bekken",
+        "het besproeien van de akker",
+        "het overzetten",
+        "het oogsten"
+      ],
+      "trade": [
+        "het sorteren van de waren",
+        "de broodverkoop",
+        "de bierverkoop",
+        "het overzetten",
+        "het sjouwen",
+        "de telling"
+      ]
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}} begint op uur {{tick}}.",
+        "handoff": "{{a}} begint zodra {{b}} klaar is.",
+        "link_one": "{{a}} begint {{count}} uur nadat {{b}} klaar is.",
+        "link_other": "{{a}} begint {{count}} uur nadat {{b}} klaar is.",
+        "before": "{{a}} is klaar voordat {{b}} begint.",
+        "apart": "{{a}} en {{b}} lopen nooit tegelijk.",
+        "together": "{{a}} en {{b}} lopen een tijd tegelijk.",
+        "span_one": "Van de eerste start tot het laatste einde is {{count}} uur.",
+        "span_other": "Van de eerste start tot het laatste einde is {{count}} uur."
+      }
+    }
   }
 }

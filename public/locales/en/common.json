@@ -963,5 +963,92 @@
     "wanted": "Measure out",
     "claim": "this one",
     "claimAria": "Say the {{capacity}} holds the amount"
+  },
+  "procession": {
+    "name": {
+      "default": "The Ordered Hours",
+      "funerary": "The Day of the Burial",
+      "cosmos": "The Night's Crossing",
+      "water": "The Day of the Flood",
+      "trade": "The Day at the Quay"
+    },
+    "goal": {
+      "default": "Slide every thing that happens into its hour, until all the marks under the day hold.",
+      "funerary": "Slide every rite into its hour, until all the marks under the day hold.",
+      "cosmos": "Slide every light into its hour, until all the marks under the night hold.",
+      "water": "Slide every task into its hour, until all the marks under the day hold.",
+      "trade": "Slide every task into its hour, until all the marks under the day hold."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Each row is one thing that happens, and it takes as long as its bar is wide. When it happens is what you work out.",
+        "marks": "A line under the day turns red while it does not hold. Tap one to ring the rows it is about.",
+        "drag": "Drag a bar along its own row. It never leaves the day."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "That row's place is already fixed, and this one hangs off it.",
+        "squeeze": "There is only so much day left, and this is all of it that fits.",
+        "apart": "The other way round does not fit in the day.",
+        "split": "Try it the other way round and something else breaks.",
+        "move": "Drag the ringed bar onto the hatched ticks."
+      }
+    },
+    "events": {
+      "default": [
+        "the fire",
+        "the water carrying",
+        "the baking",
+        "the boat trip",
+        "the ox driving",
+        "the night watch"
+      ],
+      "funerary": [
+        "the opening of the mouth",
+        "the wrapping",
+        "the anointing",
+        "the walk to the tomb",
+        "the offering",
+        "the sealing"
+      ],
+      "cosmos": [
+        "the sun's crossing",
+        "the star's rising",
+        "the moon's watch",
+        "the open sky",
+        "the dawn",
+        "the turning year"
+      ],
+      "water": [
+        "the flood",
+        "the channel digging",
+        "the basin filling",
+        "the field watering",
+        "the ferrying",
+        "the reaping"
+      ],
+      "trade": [
+        "the goods sorting",
+        "the bread selling",
+        "the beer selling",
+        "the ferrying",
+        "the hauling",
+        "the tally"
+      ]
+    },
+    "marks": {
+      "default": {
+        "pin": "{{a}} starts at hour {{tick}}.",
+        "handoff": "{{a}} starts the moment {{b}} is done.",
+        "link_one": "{{a}} starts {{count}} hour after {{b}} is done.",
+        "link_other": "{{a}} starts {{count}} hours after {{b}} is done.",
+        "before": "{{a}} is done before {{b}} starts.",
+        "apart": "{{a}} and {{b}} never run at the same time.",
+        "together": "{{a}} and {{b}} run at the same time for a while.",
+        "span_one": "First start to last finish is {{count}} hour.",
+        "span_other": "First start to last finish is {{count}} hours."
+      }
+    }
   }
 }

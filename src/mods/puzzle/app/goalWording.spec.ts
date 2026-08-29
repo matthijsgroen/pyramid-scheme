@@ -25,6 +25,7 @@ const FAMILIES = [
   "futoshiki",
   "hidato",
   "lightbeam",
+  "procession",
   "rushHour",
   "starBattle",
   "sudoku",

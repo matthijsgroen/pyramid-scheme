@@ -49,12 +49,13 @@ map of what is missing:
 
 | Role                    | Families in the pool                                       | Read as the place | Look different |
 | ----------------------- | ---------------------------------------------------------- | ----------------- | -------------- |
-| `water` / `agriculture` | canisters, constellation, hidato, star battle, twin stars  | 5 of 5            | **5 of 5**     |
-| `funerary`              | balance scale, canisters, constellation, hidato, sudoku    | 5 of 5            | 4 of 5         |
+| `water` / `agriculture` | canisters, constellation, hidato, procession, star battle, twin stars | 6 of 6 | **6 of 6** |
+| `funerary`              | balance scale, canisters, constellation, hidato, procession, sudoku | 6 of 6 | 5 of 6 |
 | `sky`                   | constellation, eclipse, lightbeam, star battle, twin stars | 5 of 5            | 0 of 5         |
+| `trade`                 | balance scale, canisters, constellation, procession        | 4 of 4            | 3 of 4         |
 | `scribe`                | canisters, hidato, sudoku                                  | 3 of 3            | **3 of 3**     |
-| `trade`                 | balance scale, canisters, constellation                    | 3 of 3            | 2 of 3         |
 | `light`                 | canisters, eclipse, lightbeam                              | 3 of 3            | **1 of 3**     |
+| `cosmos`                | procession                                                 | 1 of 1            | 1 of 1         |
 | `judgement`             | balance scale                                              | 1 of 1            | 1 of 1         |
 | `logistics`             | —                                                          | —                 | —              |
 
@@ -75,9 +76,12 @@ Four readings of that table before authoring anything:
 - **`water`, `agriculture` and `scribe` are fully dressed.** Every family in those pools has a face of its
   own, so one authored word changes every room it reaches.
 - **But a pool has to clear four members before a journey may restrict to it** (`rolePools.spec.ts`), and
-  three sit one short: `scribe`, `trade` and `light` are all at three. They can still be PREFERRED — the
-  `["<role>", "puzzle"]` form of §10 skips the floor by design — they just cannot be the whole pool a
-  pyramid draws from.
+  two sit one short: `scribe` and `light` are at three. `trade` was the third and procession closed it at
+  four. The short pools can still be PREFERRED — the `["<role>", "puzzle"]` form of §10 skips the floor by
+  design — they just cannot be the whole pool a pyramid draws from.
+- **`cosmos` exists now and holds one family.** It is the role `wizard_4` wants and nothing served; a face
+  is cheap for procession (six signs and six names) and expensive for everyone else, so the other three
+  members are the open question rather than the first one.
 - **`sky` is already dressed, which is why it changes nothing.** Five families read as a night sky before
   anyone asks — it is constellation's default face, star battle's and twin stars' too, and eclipse's pair
   hangs in one. So a `sky` room draws what an unauthored room draws: asking for it narrows the pool without
@@ -286,7 +290,7 @@ one built for a single pyramid does not.
 | **A `funerary` role** — **BUILT**                    | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1`, `wizard_3` | 781   | Done: four faces, six journeys authored, no new generator. What is left is the SHARE — see §10's prefer mode.                                                  |
 | **A cosmos role**                                    | `wizard_4`                                                             | 207   | The one story with no Egyptian hook at all: the void beyond the sky. A new family, or the largest new face in the game.                                        |
 | **A warm-light ambience**                            | `starter_3`, `junior_3`, `expert_1`, `master_4`                        | 264   | Overlays per face rather than a new skin per family. Four briefs — lamplight twice, torchlight, moonlight — asking for one thing.                              |
-| **A fourth family for `scribe`, `trade` or `light`** | `starter_2`, `starter_4`, `junior_3`, `expert_4`                       | 187   | All three pools sit at three, one short of the floor a journey must clear to restrict to a role (§2). A tag on an existing family is the whole of it.          |
+| **A fourth family for `scribe` or `light`**          | `starter_2`, `starter_4`, `junior_3`, `expert_4`                       | 187   | Both pools sit at three, one short of the floor a journey must clear to restrict to a role (§2). A tag on an existing family is the whole of it. `trade` is closed — procession (PUZZLE_FAMILIES §4.29) is its fourth member. |
 | **`light` faces for eclipse and lightbeam**          | `junior_4`                                                             | 47    | Canisters gave the pool its first face; these two still read as light sources without dressing as one. Lightbeam has no skin system at all, so it is two jobs. |
 
 Read together:

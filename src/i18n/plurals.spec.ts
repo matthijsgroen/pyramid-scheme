@@ -163,4 +163,27 @@ describe("plural forms in the shipped locales", () => {
   ])("renders %s in %s for %i as %s", (key, lng, count, expected) => {
     expect(t(lng, key, { count, token: "𓁹" })).toBe(expected)
   })
+  /**
+   * A procession mark says its gap in hours, and the sentence under the board is the flavour half of a
+   * mark whose chip carries the same fact wordlessly. A missing form reads as a raw key on the one board
+   * in ten whose gap happens to be a single hour, which is exactly the miss the identity-`t` suite cannot
+   * see.
+   *
+   * The sentences open lower case on purpose: a name is written once with its article and the board
+   * capitalises the first letter in CSS, so nothing needs a second copy of "the fire" for mid-sentence use.
+   */
+  it.each([
+    ["en", 1, "the baking starts 1 hour after the fire is done."],
+    ["en", 3, "the baking starts 3 hours after the fire is done."],
+    ["nl", 1, "het bakken begint 1 uur nadat het vuur klaar is."],
+    ["nl", 3, "het bakken begint 3 uur nadat het vuur klaar is."],
+  ])("renders the %s procession gap for %i as %s", (lng, count, expected) => {
+    expect(
+      t(lng, "procession.marks.default.link", {
+        count,
+        a: t(lng, "procession.events.default.2", {}),
+        b: t(lng, "procession.events.default.0", {}),
+      })
+    ).toBe(expected)
+  })
 })
