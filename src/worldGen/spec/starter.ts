@@ -86,6 +86,23 @@ export const starterRules: Rule[] = [
       sideSections: [teaseChest("master"), holdChest(0)],
     }),
 
+  // **The papyrus route is a market, so it draws only from trade.** The second journey in the game that
+  // can be restricted outright rather than merely preferred, and it became one the day `trade` reached
+  // four families (`rolePools.spec.ts`'s floor): balance scale weighs the goods, constellation lays the
+  // haul road, canisters measures the wine and the oil, procession walks the day at the quay. Thirteen
+  // sections over that pool is 3.3 turns each, well inside the 4.8 the least varied journey already ships
+  // (docs/game-design/journeys.md §10).
+  //
+  // **Its starter sections draw from three of the four**, because canisters debuts at junior (its own
+  // meta says why: three starter rooms cannot teach an arithmetic). That is 4.3 turns each on those
+  // sections and still under the bar, and the fourth family joins on the ward paths, which step into
+  // expert and master.
+  //
+  // Restricting rather than preferring, for the reason the ibis migration restricts: `["trade", "puzzle"]`
+  // would re-admit every family and leave most rooms undressed, and a market should not have a room in it
+  // that is not selling something.
+  journey("starter_2").pyramid("1-2", { encounter: "trade" }),
+
   // starter_2 — two curated follow-up pyramids. One main-path puzzle each; existing ward-path
   // steps into expert then master, plus the new ward-chest teaser.
   journey("starter_2")

@@ -77,17 +77,54 @@ export const familyIsTrap = (encounter: string | string[] | undefined, defaultTa
 // role unchanged, so the runtime family-absence pass-through owns the dead room. Adding a new
 // puzzle family = its meta joins ALL_FAMILY_META via the mod aggregator and enters the pool
 // automatically — no core edit, no spec edit. This is the seam that makes puzzle types pluggable.
+// Roles every board can serve. A role list mixing one of these with a themed role is the PREFER mode
+// (`docs/game-design/journeys.md` §10): the structural tag re-admits every family, and the themed one says
+// what the journey would like the room to look like. Kept in step with `rolePools.spec.ts`'s copy, which
+// skips the same tags when it checks pool sizes — a themed pool is a variety risk and a structural one is not.
+const STRUCTURAL_ROLES = new Set(["puzzle", "trap", "treasure", "gate", "shop", "capstone", "tomb-puzzle"])
+
+/**
+ * Whether this family has a face DRAWN for one of these roles, rather than merely being allowed in the pool.
+ *
+ * **`["default"]` is not dressing.** Declaring it says "I already read as that place" (`FamilyMeta.faces`),
+ * which is the weaker claim and the reason preferring `sky` changes nothing: every family in that pool
+ * serves it with the face it was going to draw anyway. What the thumb below is for is the room that comes
+ * out LOOKING like the place, so only a face with a name of its own counts.
+ */
+const dressesAnyOf = (meta: FamilyMeta, roles: readonly string[]): boolean =>
+  roles.some(role => (meta.faces?.[role] ?? []).some(face => face !== "default"))
+
+// Gen-time encounter allocation: given an authored ROLE (a family tag, or an AND-array of tags)
+// and the slot's tier, pick one concrete family id from the pool of enabled families that carry
+// the tag(s) and debut at or below this tier. Deterministic in `seed` so regen is stable and the
+// choice is tunable. Pool sorted for a stable order, so adding a family inserts predictably.
+// Empty pool (only matching mod toggled off, or an id authored that no family tags) → return the
+// role unchanged, so the runtime family-absence pass-through owns the dead room. Adding a new
+// puzzle family = its meta joins ALL_FAMILY_META via the mod aggregator and enters the pool
+// automatically — no core edit, no spec edit. This is the seam that makes puzzle types pluggable.
+//
+// **In prefer mode the bag is weighted, and that is the whole difference between the two modes' looks.**
+// Unweighted, a six-family pool inside thirteen dressed roughly a third of the rooms it was asked for
+// (measured over the baked world), which reads as scattered rather than as a place — the journey was
+// authored and nothing much looked authored. A family that has a face drawn for the role goes into the bag
+// twice, so it comes up about twice as often, and the rest of the catalogue still turns up. Restricting is
+// untouched: there the pool IS the dress, so every entry already dresses and doubling them all would change
+// nothing but the arithmetic.
 export const allocateEncounterFamily = (role: string | string[], tier: Difficulty, seed: number): string | string[] => {
   const roles = Array.isArray(role) ? role : [role]
-  const pool = ALL_FAMILY_META.filter(
+  const themed = roles.filter(r => !STRUCTURAL_ROLES.has(r))
+  const prefers = themed.length > 0 && themed.length < roles.length
+  const bag = ALL_FAMILY_META.filter(
     // **A list of roles is "any of these".** Narrowing is what a narrower tag is for: `sky` is the wide
     // cluster, `light` the narrow one inside it, and a journey asks for whichever pool it means. Reading a
     // list as "all of these" made every list a smaller pool than either of its entries, which is the
     // opposite of what authoring one is for.
     m => roles.some(r => m.tags.includes(r)) && difficultyCompare(tier, m.minTier ?? "starter") >= 0
   )
-    .map(m => m.id)
-    .sort()
-  if (pool.length === 0) return role
-  return pool[Math.floor(mulberry32(seed)() * pool.length)]
+    // Sorted BEFORE the weighting and duplicated in place, so a family's entries stay adjacent and adding
+    // one still inserts predictably — the same stability the single-entry pool had.
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .flatMap(m => (prefers && dressesAnyOf(m, themed) ? [m.id, m.id] : [m.id]))
+  if (bag.length === 0) return role
+  return bag[Math.floor(mulberry32(seed)() * bag.length)]
 }
