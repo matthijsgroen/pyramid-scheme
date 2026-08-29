@@ -953,6 +953,8 @@
     "movesLeft_other": "nog {{count}} zetten",
     "legs": "{{done}} van {{total}} afgemeten",
     "undo": "Ongedaan",
-    "wanted": "Meet af"
+    "wanted": "Meet af",
+    "claim": "deze",
+    "claimAria": "Zeg dat de {{capacity}} de hoeveelheid bevat"
   }
 }

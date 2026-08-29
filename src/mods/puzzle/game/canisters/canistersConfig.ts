@@ -3,27 +3,35 @@ import type { CanistersOptions } from "./generateCanisters"
 
 // Tier settings, from docs/game-design/puzzles/canisters.md §5.
 //
-// **Line length is the difficulty and forks are the guarantee.** A long line that never forks is a line
-// the player walks; a board has to make them choose, and `minForks` is what says so out loud.
+// **One volume a board, at every tier.** Measuring a second one from the first's leftovers doubles the
+// board and asks the same question twice, and playtesting says the first one is already the hard part — a
+// player who can measure one can measure two, and is only being kept at it longer. `legs` stays a knob
+// because the generator supports it; nothing turns it up.
 //
-// **Every tier carries one spare move, and one is the ceiling.** A wrong opening costs exactly two moves
-// and never more (§3), so the budget has to stay under that or the decision this family is built on stops
-// being binding — a player who opens the wrong way must still lose the board. What a single spare buys is
-// everything below that line: a mis-tap, a pour that turns out to do nothing, one slip on a fifteen-pour
-// line. That was the difference between a puzzle and a test of not fumbling.
+// **A tier is a line length between two bounds, and the ceiling is what teaches.** `minLine` alone is a
+// floor over a lottery: a two-pour measure and a nine-pour chain would be the same tier, and a player who
+// draws the second one first meets the whole family at once. With `maxLine` each tier says one thing —
+// junior is what a pour leaves behind, expert is parking a leftover and picking it up again, master is a
+// line long enough that the two compound, wizard is a fourth canister to lose the measure in.
+//
+// **The family debuts at junior** (`meta.ts`), because starter holds three canister rooms against junior's
+// seventeen and three rooms cannot teach an arithmetic. Nothing asks for the starter row; it is the floor
+// the tier list needs, kept below junior so it stays honest if a starter room is ever authored.
+//
+// **Every tier carries one spare move.** What it buys is a mis-tap, a pour that turns out to do nothing,
+// one slip on a long line — not a second opinion about the line itself.
+//
+// Measured over 200 boards a tier, counting the choices that must go right (log2 of the useful moves at
+// each step, summed along the line): junior 2.7, expert 4.7, master 6.6, wizard 11.7.
 export const CANISTERS_CONFIG: Record<Difficulty, CanistersOptions> = {
-  // Three canisters, one short measure, and a move in hand — the point is learning what a pour does.
-  starter: { legs: 1, canisters: 3, maxCapacity: 9, minLine: 2, minForks: 1, slack: 1 },
-  junior: { legs: 1, canisters: 3, maxCapacity: 11, minLine: 4, minForks: 2, slack: 1 },
-  expert: { legs: 2, canisters: 3, maxCapacity: 13, minLine: 4, minForks: 3, slack: 1 },
-  master: { legs: 2, canisters: 3, maxCapacity: 15, minLine: 6, minForks: 4, slack: 1 },
-  // A fourth canister: more ways to go wrong at every step.
-  //
-  // Its line is allowed to be SHORTER than master’s, which looks wrong and is not: a fourth canister opens
-  // more routes, so the shortest one gets shorter while every step of it forks wider. Measured over 200
-  // boards a tier, master walks 14.9 pours forking 2.5 ways; wizard walks 9.2 forking 5.2 ways, and every
-  // one of its steps forks. Counting the choices that must go right — log2 of the useful moves, summed
-  // along the line — the tiers still climb: 3.4, 5.3, 13.7, 17.9, 21.3. The forks are the difficulty here,
-  // not the length.
-  wizard: { legs: 2, canisters: 4, maxCapacity: 16, minLine: 4, minForks: 4, slack: 1 },
+  starter: { legs: 1, canisters: 3, maxCapacity: 8, minLine: 2, maxLine: 2, minForks: 1, slack: 1 },
+  // Two or three pours, and the whole board is one idea: what stays behind when you fill another canister.
+  junior: { legs: 1, canisters: 3, maxCapacity: 9, minLine: 2, maxLine: 3, minForks: 1, slack: 1 },
+  // Long enough that a leftover has to be parked in the third canister and picked up again.
+  expert: { legs: 1, canisters: 3, maxCapacity: 12, minLine: 4, maxLine: 6, minForks: 2, slack: 1 },
+  // The longest line on the ladder, on the widest capacities three canisters get.
+  master: { legs: 1, canisters: 3, maxCapacity: 15, minLine: 6, maxLine: 9, minForks: 3, slack: 1 },
+  // A fourth canister: more ways to go wrong at every step. The branching is what changed, at 5.6 legal
+  // moves a step against master's 3.6 — so its line is SHORTER than master's to pay for it.
+  wizard: { legs: 1, canisters: 4, maxCapacity: 16, minLine: 5, maxLine: 7, minForks: 4, slack: 1 },
 }

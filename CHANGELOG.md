@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- The canister puzzle teaches one idea a tier now: two pours to start, then a leftover to park and pick up
+  again, then a line long enough that the two compound, then a fourth canister. One amount to measure a
+  board rather than two, and it no longer turns up in the very first rooms.
+
+### Fixed
+
+- Tapping a full canister while holding another picks that one up, instead of quietly putting down the one
+  you were holding.
+
 ### Fixed
 
 - On iPhone, a square no longer stands taller than the rest of its row: no patch of the board hangs below

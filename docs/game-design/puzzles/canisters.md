@@ -1,22 +1,21 @@
 # Canisters — measuring a volume by pouring
 
-Two canisters of known size, the Nile to fill from and the ground to pour onto. Measure out an exact
-volume. The classic "water jug" problem, cut to the shape this catalogue asks of a family: every move
-after the first is forced, so the puzzle is a deduction rather than a search.
+Three or four canisters of known size stand on a bench, one of them full. Measure out an exact volume by
+pouring between them, and nothing else — the water in front of the player is all the water there is. The
+classical decanting problem (Tartaglia, Poisson), cut to the shape this catalogue asks of a family.
 
 ## 1. Rules
 
-- Two canisters, each with its capacity written on it. Both start empty.
-- Four moves: **fill** a canister from the river, **empty** one onto the ground, or **pour** one into the
-  other until the source is empty or the destination is full.
+- Three or four canisters, each with its capacity written on it. One starts full; the rest are empty.
+- **One move: pour** one canister into another, until the source is empty or the destination is full.
+  There is nowhere to fill from and nowhere to throw water away, so every amount has to come from
+  somewhere and nothing can be discarded to start over. That conservation is the puzzle.
 - **Each vessel says what is in it against what it takes** — `3/8` under the shape, at every tier, with the
   level drawn to scale above it. The arithmetic this family is for is choosing the pours, not remembering
   the totals; see §7 for why the amount stopped being hidden.
 - Reaching the volume is not enough: the player **claims** a vessel, saying it holds what was asked. A
   wrong claim costs a move like any other, so guessing is not free.
 - **A move budget**, and it is the whole puzzle — see §2.
-- Higher tiers ask for several volumes in turn, each measured from wherever the last one left the
-  canisters (§5).
 
 ## 2. Why this family
 
@@ -27,7 +26,7 @@ and it is the one Egyptian arithmetic is actually about — a hekat measured by 
 vessels that do not divide evenly.
 
 **And it is the first board here that is not a grid.** Sudoku, futoshiki, sumplete and star battle are
-squares; hidato is a comb and constellation a lattice; balance scale is rows. Two vessels and a river is a
+squares; hidato is a comb and constellation a lattice; balance scale is rows. A bench of vessels is a
 different shape of screen and a different shape of thought — nothing is scanned along a line, and there is
 no cell whose neighbours are the argument. That is worth a slot on its own.
 
@@ -39,39 +38,40 @@ substitutes for the other, and the pair covers arithmetic from both ends.
 sequence of legal pours eventually reaches any reachable volume, so there is nothing to get wrong, only
 something to take a long time. With it the player has to know _before pouring_ which way to open.
 
-**It is the optimal line plus one, and the one is a ceiling rather than a taste.** Opening wrong costs
-exactly two moves and never more (§3), so a spare of two would make the decision this family is built on
-survivable and the budget would stop meaning anything. A spare of one leaves that penalty fatal while
-forgiving what is not a decision at all: a mis-tap, a pour that turns out to move nothing, one slip on a
-fifteen-pour line. **And the budget is enforced** — pours stop when it is spent (§6), which for a while
-they did not, so the counter could read nought while the water kept moving.
+**It is the optimal line plus one, and the one buys a slip rather than a second opinion.** A wrong pour
+costs two moves or more nearly two thirds of the time (§3), so a single spare leaves the reasoning binding
+while forgiving what is not reasoning at all: a mis-tap, a pour that turns out to move nothing, one wrong
+tap on a fourteen-pour line. **And the budget is enforced** — pours stop when it is spent (§6).
 
-## 3. Generation — pick the pair, then the target the wrong way ruins
+## 3. Generation — draw a set, then a volume it can reach
 
-Draw-and-measure, not carve-and-hide. A board is a capacity pair `(a, b)` with `a < b`, a target `t`, and
-a budget.
+Draw-and-measure, not carve-and-hide. A board is a set of capacities with the largest full, a run of
+targets, and a budget.
 
-**Reachability is decided, not searched.** A volume is reachable exactly when it is a multiple of
-`gcd(a, b)` and no greater than `b`. So the generator never gambles on solvability: it enumerates the
-reachable targets for a pair and picks among them.
+**A set has to be worth pouring between.** The others must hold the biggest one between them, or the water
+has nowhere to go and the board is over in a pour. That single condition is what makes a set playable, and
+the generator enumerates only sets that meet it.
 
-**The wrong opening costs two moves, and never more.** Measured over every reachable target of every
-capacity pair up to 16:
+**Reachability is searched, not decided.** With a fixed total and no way to add or discard water, the
+two-vessel Bézout rule does not answer this shape: what is reachable depends on where the water is
+standing, and a leg starts from wherever the last one left it. So the generator runs the same breadth-first
+search the hint does, and picks among the targets it actually finds. It never gambles on solvability, and
+the line it finds is the budget.
 
-| opening gap | share |
-| ----------- | ----- |
-| 2 moves     | 79%   |
-| 1 move      | 20%   |
-| nothing     | 1%    |
+**A wrong pour is usually recoverable, and never free.** Measured over 600 boards across the four tiers,
+pricing every alternative pour at every step of the line against the optimum from there:
 
-A player who opens the wrong way _recovers_ — they do not walk a ruined line — so the penalty is two moves
-whatever the capacities. **The difficulty is therefore the length of the line, not the size of the
-penalty**: what makes a board hard is how much arithmetic it takes to SEE which opening is shorter, and
-that is what the generator's `minLine` gate buys. `minGap` only drops the 1% of targets where the two
-openings tie, since those are a coin flip that teaches nothing.
+| a wrong pour costs | share |
+| ------------------ | ----- |
+| one move           | 36%   |
+| two moves          | 31%   |
+| three or more      | 33%   |
+| cannot be undone   | 0%    |
 
-The budget is the optimal line's length, exact above starter — which is what makes a two-move penalty the
-difference between finishing and not.
+Nothing strands a player — conservation cuts both ways, and any position can still be worked back — but
+two thirds of wrong pours cost more than the single spare move. **So the difficulty is how many steps fork
+and how wide**, not how long the line is: 87% of steps offer more than one pour worth making, at 4.1 legal
+pours a step. That is what `minForks` gates, and what `minLine` and `maxLine` bound (§5).
 
 ## 4. The hint, and what it is allowed to say
 
@@ -98,11 +98,11 @@ ever appear in a sentence, and a spec holds it to that.
 **The pour a hint names is the first step of a search, not the output of a technique ladder** — and that is
 a departure from how every other family here sources a hint, written down rather than hidden.
 
-It is the price of the decanting rules (§11). With no river to fill from and no ground to empty onto, the
-two local rules that made the tap-and-sink version nearly forced have nothing left to prune: measured over
-every board this family generates, a line forks two ways at most steps. There is no ladder of named
-deductions that reaches the next move, because from most positions two moves are equally defensible until
-you look further ahead than a rule can see.
+It is the price of pouring being the only move. The one local rule available — never put the water back
+where it just came from — prunes almost nothing, because with nowhere to fill from and nowhere to empty
+onto there are no wasteful moves for it to catch: 87% of steps still offer more than one pour worth making.
+There is no ladder of named deductions that reaches the next move, because from most positions two or three
+pours are equally defensible until you look further ahead than a rule can see.
 
 So the hint's REASON is honest and local — the player can check it against the canisters — while the CHOICE
 behind it is not reproducible from the board alone. Worth revisiting if a real technique for this shape
@@ -112,36 +112,51 @@ turns up; until then, this is the seam.
 
 Two knobs, and neither is board size — there is no board to grow.
 
-- **Legs.** How many volumes are asked for in turn. Each leg is a fresh opening decision measured from
-  wherever the last left the canisters, so `n` legs is `n` decisions rather than a longer one. Forcing
-  survives a non-empty start, which is what makes this safe.
-- **How hard the opening is to see**, which is the direction gap and the size of the capacities.
+- **How long the line is, between a floor and a ceiling.** The ceiling is what makes a tier teach one
+  thing: with a floor alone a two-pour measure and a nine-pour chain are the same tier, and a player who
+  draws the second one first has met the whole family at once.
+- **How many canisters stand on the bench**, which is the branching factor and nothing else.
 
-| Tier    | Legs | Capacities | Shortest leg | Notes                                                     |
-| ------- | ---- | ---------- | ------------ | --------------------------------------------------------- |
-| starter | 1    | ≤ 8        | 3            | budget generous by a move; the point is learning the pour |
-| junior  | 1    | ≤ 10       | 5            | budget exact, so the opening starts to cost               |
-| expert  | 2    | ≤ 12       | 5            | second leg starts from the first's leftovers              |
-| master  | 2    | ≤ 13       | 7            | the level stops being drawn to scale (§7)                 |
-| wizard  | 3    | ≤ 15       | 7            | three legs, so up to six decisions                        |
+**The family debuts at junior, not starter.** The world holds three starter canister rooms against
+seventeen junior ones, and three rooms cannot teach an arithmetic — a player needs the same idea several
+times over before it is theirs. Every role this family carries has two or more other starter families to
+dress a starter room with, so nothing goes undressed for it.
+
+| Tier   | Canisters | Capacities | Line | What it teaches                            |
+| ------ | --------- | ---------- | ---- | ------------------------------------------ |
+| junior | 3         | ≤ 9        | 2–3  | what a pour leaves behind                  |
+| expert | 3         | ≤ 12       | 4–6  | parking a leftover and picking it up again |
+| master | 3         | ≤ 15       | 6–9  | a line long enough that the two compound   |
+| wizard | 4         | ≤ 16       | 5–7  | a fourth canister to lose the measure in   |
+
+Counting the choices that must go right — log2 of the useful moves at each step, summed along the line —
+the tiers climb 2.7, 4.7, 6.6, 11.7 over 200 boards a tier. One new idea a tier, and the starter row the
+tier list still needs is kept below junior in case a starter room is ever authored.
+
+**One volume a board, at every tier.** Legs are a knob the generator has and nothing turns up: a second
+volume measured from the first's leftovers doubles the board and asks the same question twice, and
+playtesting says the first one is already the hard part. A player who can measure one can measure two, and
+is only being kept at it longer.
 
 The unreachable-target rung (§4.1) is designed and **not built**: refusing a board is a screen affordance
 no other family has.
 
-**Three canisters is not the wizard tier, and this is measured.** Adding a third takes the branching
-factor from 3.6 legal moves per state to 8.4, the state space from ~20 to ~400, and the shortest solution
-stops being unique. That is a search, and a search cannot be hinted — so depth comes from legs, never
-from vessels.
+**A fifth canister is not a wizard tier.** The fourth already takes branching from 3.6 legal moves a state
+to 5.6; a fifth makes the shortest line stop being unique, and a line that is not unique cannot be hinted.
 
 ## 6. Interaction
 
-- **Fill and empty are a button each under the vessel; pouring is tapping one vessel then the other.**
-  The held vessel wears a ring, so which of the two meanings a tap has is always visible.
-- **A third button claims it**, and claiming is the only way to finish a leg. The board never confirms an
-  amount on its own — it cannot, or the puzzle would be to pour at random and watch for the confirmation.
+- **Pouring is tapping one vessel then another**, and it is the only move, so a tap needs no mode. The held
+  vessel wears a ring, so which of the two meanings a tap has is always visible.
+- **A button under each vessel claims it**, and claiming is the only way to finish the board. It never
+  confirms an amount on its own — it cannot, or the puzzle would be to pour at random and watch for the
+  confirmation.
+- **A tap that cannot pour picks that canister up instead.** Tapping a full vessel while holding another
+  has no second meaning, so answering it by putting down what was held is a dead end: nothing moves,
+  nothing says why, and the player is two taps from where they were.
 - The budget is shown as remaining moves. **Undo takes back a pour** and gives the move back — the
   arithmetic is the puzzle, and making the player re-tap a line they already reasoned out is not.
-- Reset empties both.
+- Reset puts the water back in the canister it started in.
 
 ## 7. Drawing
 
@@ -156,7 +171,7 @@ getting there inside a budget that is the optimal line exactly, where a wasted p
 the same (§2). Both are the puzzle and both stay.
 
 Remembering the running totals was a third demand on top, and it was hidden at first on the argument that
-it WAS the difficulty. It is not: carrying four or five amounts across a fifteen-pour line makes no board
+it WAS the difficulty. It is not: carrying three or four amounts across a fourteen-pour line makes no board
 harder to solve, only cheaper to lose. So the vessels say what they hold, and the reasoning above is left
 entirely to the player.
 
@@ -230,60 +245,59 @@ these six wants to answer, the overlay goes on that face alone.
   playtesting against a version that shows the budget only after the first pour.
 - **Is refusing an unreachable board satisfying or annoying?** Rung 1 is real arithmetic, but a puzzle
   whose answer is "this cannot be done" has to be signalled well or it reads as a bug.
-- **Duration is measured and is not the problem, which took a wrong turn to establish.** Boards run 7
-  moves at starter and average 34 at wizard, longest 51 — and an earlier reading of this called that
-  "six decisions buried in thirty forced pours". That conflated what the SOLVER can prove with what the
-  player sees. Measured on the same boards, a player faces **3.5 to 3.9 legal moves at every step** and has
-  to work out which one keeps the measure; that only one is useful is the answer, not the question. At
-  roughly three seconds a move a wizard board is under two minutes, well inside §7's soft six-minute
-  target, so there is nothing here to act on.
+- **Duration is not the problem; the reasoning is.** Boards run 2.6 pours at junior and 7.1 at master,
+  longest 9 — at roughly three seconds a pour, every tier is under a minute of moving water, well inside
+  `puzzle-screens.md`'s soft six-minute target. What the player spends the time on is the 87% of steps that
+  fork, at 4.1 legal pours apiece.
 
-  Playing the forced runs out automatically was considered and **rejected** for the same reason: it would
-  hand the player the very step they are there to find.
+  Playing the forced runs out automatically was considered and **rejected**: it would hand the player the
+  very step they are there to find.
 
-- **Freshness is measured and holds.** Over 150 boards a tier draws 12 distinct capacity pairs at starter
-  and 30 at wizard, against 7 and 14 distinct targets. Two boards in a row are unlikely to rhyme. What is
-  NOT guaranteed is that two rooms near each other on the same floor draw different pairs — that is the
-  allocator's business rather than this family's, and worth a look once the family is authored into the
+- **Freshness is measured and holds.** Over 150 boards a tier draws 28 distinct capacity sets at junior
+  and 138 at wizard, against 8 and 16 distinct targets. Two boards in a row are unlikely to rhyme. What is
+  NOT guaranteed is that two rooms near each other on the same floor draw different sets — that is the
+  allocator's business rather than this family's, and worth a look now the family is authored into the
   world.
 
-## 10. What is known about the two-jug case
+## 10. What is known about decanting
 
-Two results from the literature, both checked against this family's own engine rather than taken on trust.
+Results from the literature, checked against this family's own engine rather than taken on trust.
 
-- **Solvability is exactly Bézout**: a volume is reachable when the vessels' `gcd` divides it and it fits
-  the larger vessel. Verified against the search over every target of every pair up to 12.
-- **The two mechanical strategies are always optimal.** Keep filling one vessel and pouring it into the
-  other, emptying and refilling as they run out; do the same the other way round. Over every reachable
-  target of every pair up to 16 — 915 cases — **the better of those two is the true optimum, and no mixed
-  line ever beats both**. That is why the opening is the whole decision, and it is now a spec: the search
-  is checked against a completely differently written oracle.
+- **The classic board behaves as the literature says.** Three vessels of 8, 5 and 3 with the 8 full, split
+  into two 4s: a 4 stands after six pours and the second one pour later, seven in all, which is the known
+  optimum. It is a spec.
+- **The state space is a triangular lattice**, barycentric coordinates on which a solution is a **billiard
+  path** reflecting off the capacity walls — Tweedie's trilinear coordinates, read as billiards by
+  Perelman. That is a picture of why a line here cannot be reasoned out one step at a time: the trajectory
+  is determined once a direction is committed to, but the direction is a property of the whole path rather
+  than something readable off the vessels in front of you. §4 pays for that.
+- **Reachability is not Bézout.** The two-vessel rule — the `gcd` divides the volume and it fits the larger
+  vessel — needs an unlimited supply to fill from, and there is none here. With a fixed total, what can be
+  reached depends on where the water is standing, so this family searches for it (§3).
 
 And a negative result worth having: **there is no closed form for the minimum number of steps.** It has to
 be simulated. Which is the best news in this document — a player cannot memorise a formula in place of
 working the board out, so the reasoning is the only way through.
 
-## 11. Prior art, and where this deliberately parts from it
+## 11. Prior art, and the family this one is not
 
-The puzzle has two classical forms, and this family is the second of them.
+The puzzle has two classical forms. **This family is decanting** (Tartaglia, Poisson): a fixed total,
+pours between vessels only, nothing to fill from and nothing to drain into.
 
-- **Decanting** (Tartaglia, Poisson) is the famous one: a fixed total, pours between vessels only, no tap
-  and no drain. Three vessels of 8, 5 and 3 with the 8 full, split into two 4s. It has exactly **two**
-  solutions of **seven** steps each, and the state space is a triangular lattice of barycentric
-  coordinates on which a solution is a **billiard path** reflecting off the capacity walls — Tweedie's
-  trilinear coordinates, read as billiards by Perelman.
-- **Tap and sink**, which is what this family is: an unlimited river to fill from and ground to pour onto.
+**Tap and sink is the other one, and it is a different puzzle rather than a variant of this.** Two vessels,
+an unlimited river to fill from and ground to empty onto, three moves instead of one. Everything that
+follows from that is different: two vessels are enough for it where this needs three, its wrong openings
+cost a bounded two moves where a wrong pour here costs whatever the position says, and — the part that
+matters for this catalogue — **it has local rules that prune.** Never fill what is already full, never
+empty what you just filled, and most of its states have one move left worth making. A hint for it could
+name a technique and be checked, which is exactly what §4 records this family cannot do.
 
-**Decanting is shorter and is not hintable, which is why it was not chosen.** Measured against this
-family's own engine, decanting lines run 7 to 15 pours against a wizard board's 34 — but only **19% of
-their steps are forced**, against **77%** here, because two or three pours are live at nearly every state.
-The billiard trajectory is determined once a direction is committed to, but that direction is a global
-property of the path rather than something readable from the vessels in front of you, and no local rule
-tried here reproduces it. A board whose next move can only be justified by a search is a board whose hint
-has to read out the answer, which is the one thing `puzzle-screens.md` §5 does not allow.
+**So it is a viable family and a genuinely different one**, worth its own slot rather than a knob on this
+one. What it would need is its own screen (a river and a ground are two affordances this board does not
+have), its own hint sourced from those rules rather than from a search, and its own tiers — length and
+capacity size, since it has no legs to lean on and no third vessel. It is not designed and not built.
 
-**The shipping mobile versions of this puzzle take the other road, and can afford to.** They use the same
-three moves and the same live move counter against a BFS-computed best, which is this family's budget by
-another name — and then they find depth by adding a third jug. That is exactly the change measured here to
-take branching from 3.6 legal moves per state to 8.4 and to cost the shortest line its uniqueness. They can
-carry it because they never explain a move. This catalogue has to, so depth comes from legs instead.
+**The shipping mobile versions are tap-and-sink**, with the same live move counter against a
+breadth-first best, and they find depth by adding a third jug. They can carry that because they never
+explain a move; a hint that has to say _why_ cannot follow a line whose direction is only visible from
+above.

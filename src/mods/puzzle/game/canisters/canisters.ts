@@ -1,10 +1,9 @@
 // The move engine and the deduction system behind both generation and hints, per
 // docs/game-design/puzzles/canisters.md §4.
 //
-// **There is no river and no ground.** The water in front of the player is all the water there is: one
-// canister starts full, and the only move is pouring one into another until the source is empty or the
-// destination is full. That conservation is the puzzle — every amount has to come from somewhere, and
-// nothing can be thrown away to start again.
+// **The water in front of the player is all the water there is.** One canister starts full, and the only
+// move is pouring one into another until the source is empty or the destination is full. That conservation
+// is the puzzle — every amount has to come from somewhere, and nothing can be thrown away to start again.
 
 /** What each canister holds when full. Three or more; two alone can only be poured back and forth. */
 export type Capacities = readonly number[]
@@ -59,9 +58,9 @@ export const applyMove = (capacities: Capacities, volumes: Volumes, move: Move):
 /**
  * The pours worth considering: the ones that do not put the water back where it just came from.
  *
- * Weaker than the rule the tap-and-sink version of this puzzle could use, and deliberately so — with no
- * river to fill from and no ground to empty onto, the moves that rule pruned do not exist. What is left
- * forks two ways at most steps (§4), so this narrows the board rather than deciding it.
+ * It prunes almost nothing, and there is nothing stronger to reach for: pouring is the only move, so there
+ * are no wasteful ones to catch. 87% of steps still fork (§4) — this narrows the board rather than
+ * deciding it.
  */
 export const usefulMoves = (capacities: Capacities, volumes: Volumes, seen: ReadonlySet<string>): Move[] =>
   legalMoves(capacities, volumes).filter(move => !seen.has(volumeKey(applyMove(capacities, volumes, move))))
@@ -116,8 +115,8 @@ export const playLine = (capacities: Capacities, start: Volumes, line: readonly 
 /**
  * How many pours fork at more than one useful choice along a line — what a player is actually deciding.
  *
- * With no fill and no empty there is rarely one move to find, so this rather than "is it forced" is the
- * difficulty signal a board is gated on (§3).
+ * A step is rarely down to one move, so this rather than "is it forced" is the difficulty signal a board
+ * is gated on (§3).
  */
 export const forkCount = (capacities: Capacities, start: Volumes, line: readonly Move[]): number => {
   const seen = new Set([volumeKey(start)])

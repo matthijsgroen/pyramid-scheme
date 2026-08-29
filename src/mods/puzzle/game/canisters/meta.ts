@@ -13,8 +13,10 @@ export const CANISTERS_META: FamilyMeta = {
   // `water` and `agriculture` are listed separately and MEAN separately here, which is true nowhere else
   // in the catalogue: every other family in that pool answers both with one face (app/canisters/skins.ts).
   tags: ["puzzle", "water", "agriculture", "light", "trade", "funerary", "scribe"],
-  // The opening decision is modular arithmetic on two capacities; below junior a player is still being
-  // taught what a pour does, and the design doc's starter tier hands them a move in hand to do it with.
+  // **Junior is where this family debuts, and that is a teaching decision.** The world holds three starter
+  // canister rooms against seventeen junior ones, and three rooms cannot teach an arithmetic — a player
+  // needs the same idea several times over before it is theirs. Every role this family carries has two or
+  // more other starter families to dress a starter room with (worldGen/faces.spec.ts holds that).
   // Six places measure things out, and a wide role names more than one: a market moves oil, wine and
   // grain, and the rites take natron for the drying or oil for the anointing. Which of a set a room wears
   // is picked from its own board's shape (app/canisters/skins.ts).
@@ -26,7 +28,7 @@ export const CANISTERS_META: FamilyMeta = {
     trade: ["wine", "oil", "grain"],
     funerary: ["natron", "oil"],
   },
-  minTier: "starter",
+  minTier: "junior",
   // Two faces on one board would be an understatement: six places, each with its own vessel, ground and
   // way of behaving. A site never names a skin, it names a role (docs/instructions/puzzle-screens.md §2);
   // the lab's picker is what reads this list.

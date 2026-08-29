@@ -63,6 +63,19 @@ describe("pouring a board", () => {
     state = pourInto(state, board, 2)
     expect(state.poured).toHaveLength(0)
   })
+
+  it("picks up the canister tapped instead, when pouring into it is impossible", () => {
+    // Tapping a full vessel while holding another has no other meaning, so answering it by putting down
+    // what was held leaves the player two taps from where they were with nothing said about why.
+    let state = holdCanister(createCanistersState(board), 0)
+    state = pourInto(state, board, 2)
+    expect(state.volumes).toEqual([5, 0, 3])
+
+    state = holdCanister(state, 0)
+    state = pourInto(state, board, 2)
+    expect(state.held).toBe(2)
+    expect(state.poured).toHaveLength(1)
+  })
 })
 
 describe("claiming a volume", () => {

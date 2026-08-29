@@ -19,6 +19,15 @@ export type CanistersOptions = {
   maxCapacity: number
   /** The shortest a leg's own line may be, and the difficulty dial (§3). */
   minLine: number
+  /**
+   * The longest a leg's own line may be — the ceiling that makes a tier teach one thing.
+   *
+   * Without it `minLine` is a floor over a lottery: a starter room asking for a two-pour measure and a
+   * starter room asking for a seven-pour leftover chain are the same tier, and a player who meets the
+   * second one first has met the whole family at once. The ceiling is what lets starter be the pour and
+   * junior be the leftover.
+   */
+  maxLine: number
   /** How many of a leg's pours must fork, so a board is decided rather than walked. */
   minForks: number
   /** Slack on top of the optimal line, in moves. Starter is forgiving; everything above is exact. */
@@ -54,7 +63,7 @@ const setsFor = (canisters: number, maxCapacity: number): Capacities[] => {
  */
 export const generateCanisters = (seed: number, options: CanistersOptions): CanistersPuzzle => {
   const random = mulberry32(seed)
-  const { legs, canisters, maxCapacity, minLine, minForks, slack = 0 } = options
+  const { legs, canisters, maxCapacity, minLine, maxLine, minForks, slack = 0 } = options
   const sets = setsFor(canisters, maxCapacity)
 
   let nearest: CanistersPuzzle | undefined
@@ -80,7 +89,7 @@ export const generateCanisters = (seed: number, options: CanistersOptions): Cani
       if (wanted.length === 0) break
       const target = wanted[Math.floor(random() * wanted.length)]
       const line = shortestLine(capacities, at, target)
-      if (line === null || line.length === 0) break
+      if (line === null || line.length === 0 || line.length > maxLine) break
       shortestLeg = Math.min(shortestLeg, line.length)
       forks = Math.min(forks, forkCount(capacities, at, line))
       targets.push(target)
