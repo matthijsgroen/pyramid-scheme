@@ -253,6 +253,17 @@ const Swatch: FC<{
  */
 const MarkGlyph: FC<{ mark: Mark; skin: ProcessionSkin; bars: number }> = ({ mark, skin, bars }) => {
   switch (mark.kind) {
+    // **A pin gets a chip like everything else, even though the track already shows its notch.** The
+    // notch says WHICH TICK; the chip says which row, and without it the pin is the one line under the
+    // board that opens with a sentence while its neighbours open with the rows they are about — so the
+    // eye has to read it to find out who it concerns.
+    case "pin":
+      return (
+        <>
+          <Swatch skin={skin} index={mark.a} />
+          <span className="px-0.5 text-xs tabular-nums">{mark.tick}</span>
+        </>
+      )
     case "link":
       return (
         <>
