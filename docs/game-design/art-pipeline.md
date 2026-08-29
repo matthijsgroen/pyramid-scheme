@@ -50,31 +50,50 @@ art?: { ground: string; piece2: string; piece3: string; player: string; wall: st
     src={mine ? skin.art.player : piece.len === 3 ? skin.art.piece3 : skin.art.piece2}
     alt=""
     draggable={false}
-    className="pointer-events-none absolute inset-0 size-full object-fill"
+    className="pointer-events-none absolute max-w-none object-fill"
+    style={{
+      top: "50%",
+      left: "50%",
+      translate: "-50% -50%",
+      width: `${(piece.horizontal ? 1 : piece.len) * 100}%`,
+      height: `${(piece.horizontal ? 1 : 1 / piece.len) * 100}%`,
+      rotate: piece.horizontal ? undefined : "90deg",
+    }}
   />
 )}
 ```
 
 **A vertical piece is the same image rotated 90°**, which is §5's second condition and halves the asset
 count. It only holds if the art has **zero directional lighting** — no cast shadow, no top-lit highlight.
-That is why every prompt below insists on flat omnidirectional light.
+That is why every prompt below insists on flat omnidirectional light. A turned image swaps the box it
+fills, so it hangs off the box's middle and spins there rather than filling `inset-0`.
+
+**`max-w-none` is not optional, and nothing catches its absence.** Tailwind preflight sets
+`img { max-width: 100% }`, and a turned sprite is deliberately wider than the box it sits in — without it
+the art comes out squashed rather than turned, silently. This only showed up in a browser: a mock
+composited outside the DOM cannot see a preflight rule, and no unit test lays anything out.
 
 Five images a face: `ground`, `piece2`, `piece3`, `player`, `wall`.
 
 ### A.2 Export targets
 
-A cell tops out around 116px (`max-w-[min(92vw,60vh)]` over 6 cells). Author at 2x, cell = 128px.
+A cell tops out around 116px (`max-w-[min(92vw,60vh)]` over 6 cells), which is 232 device px at 2×. Author
+at cell = 256.
 
 | Asset  | Final px  | Ratio |
 | ------ | --------- | ----- |
-| piece2 | 256 × 128 | 2:1   |
-| piece3 | 384 × 128 | 3:1   |
-| player | 256 × 128 | 2:1   |
-| wall   | 128 × 128 | 1:1   |
+| piece2 | 512 × 256 | 2:1   |
+| piece3 | 768 × 256 | 3:1   |
+| player | 512 × 256 | 2:1   |
+| wall   | 256 × 256 | 1:1   |
 | ground | 1024²     | 1:1   |
 
-Gemini offers no 2:1 or 3:1 aspect ratio. Generate 1:1, tell it to fill a centered strip of the right
-proportion against magenta, crop in post.
+**Do not ask the model for the ratio — crop to it.** Gemini offers no 2:1 or 3:1 aspect ratio, and telling
+it "exactly twice as wide as it is tall" in the prompt does not work either. Measured on the market lane,
+every single asset came back off: piece2 at 1.82 (wanted 2), piece3 at 2.44 (wanted 3), the player at 2.99
+and then 2.67 on a redraw (wanted 2), the wall at 1.04. So generate 1:1 against magenta, ask only that the
+whole object sit in the middle with room around it, and take the ratio in post — a non-uniform squash of
+10–30% is invisible on sacks and rope, and the alternative is regenerating until a coin lands right.
 
 **The ground does not tile, and asking it to is wasted effort.** The frame is one square that the ground
 covers whole — `background-size: 100% 100%` over an `aspect-square` box distorts nothing — so there is no
@@ -166,18 +185,38 @@ Same five prompts, same preamble, swapped nouns:
 
 ### A.6 Post-touchup checklist
 
-1. **Crop to the strip, ends flush to the crop, no transparent margin.** The one step that must be exact —
-   §5: a hull stopping short of the cell boundary makes a 3 read as a 2 and the player deduces wrongly.
-2. Key out `#FF00FF`, despill the fringe.
-3. **Rotate 90° and look at it.** Any visible lighting direction means the art fails the shared-rotation
+1. Key out `#FF00FF`, and **despill** — pull `r` and `b` toward `g` on what is left, or the object keeps a
+   pink rim. A JPEG needs more of this than a PNG, so ask for PNG on anything that will be keyed.
+2. **Crop to the whole silhouette, ends flush, no transparent margin.** Handles, runners and all.
+3. Squash to the §A.2 ratio.
+4. **Rotate 90° and look at it.** Any visible lighting direction means the art fails the shared-rotation
    trick and that face needs separate vertical art.
-4. Export PNG at the §A.2 sizes into `src/assets/rushHour/<face>/`.
+5. Export WebP at the §A.2 sizes into `src/assets/rushHour/<face>/`.
+
+**Step 2 is the one with a real decision in it, and two other answers were tried first.** The object is
+wider than its cells: a sledge's runners stick out past the deck that carries the cargo.
+
+- **Crop to the deck** so the load-bearing body lands exactly on the cell lines. Geometrically perfect, and
+  it saws the handles off every sledge — they look sawn off, because they are.
+- **Let the handles overhang** — deck on the lines, sprite drawn wider than its box, runners hanging into
+  the neighbour. Truest to the object, and it reads as clutter: a dozen pieces overlapping each other makes
+  a board look jumbled rather than gridded, and the grid is what the player plans against.
+- **Whole object inside its box**, which is what shipped. The deck stops a little short of the cell lines,
+  and it does not matter: the player reads length off the sledge, not off the lines, because the handles
+  are visibly part of the thing. Nobody looks at a cart and counts only the deck.
+
+The §5 rule the first option was protecting still stands — art must not LIE about length — but a whole
+object honestly drawn does not lie, it just uses its own outline as the ruler.
 
 ### A.7 The tag lands with the art
 
 `puzzles/rush-hour.md` §5: the family withholds its `trade` role tag until it has a face that is somewhere
-rather than nowhere. That tag is worth four journeys and 187 rooms (`journeys.md` §9). **Add the art and the
-tag in the same PR** — art alone leaves the rooms on the table.
+rather than nowhere. **Add the art and the tag in the same PR** — art alone leaves the tag unclaimed.
+
+**And the tag alone does not put the face in front of a player.** A tag makes the family eligible for a
+pool; a room only draws from that pool if a journey AUTHORS the role. So a face ships lab-only until
+somebody writes `journey(...).pyramid(..., { encounter: "trade" })`, and `generatedWorld.ts` does not change
+until they do. Worth knowing before promising rooms: the art PR is the cheap half.
 
 ---
 
