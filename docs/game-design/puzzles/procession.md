@@ -68,8 +68,10 @@ The names live in the locale files and the glyphs in the skin, aligned by row in
 a glyph is not, so they cannot share a home. What they share is the face. A sentence opens with its own
 name, so the capital is applied in CSS and each name is written once, with its article.
 
-**A pin has no chip** — it is drawn as a notch on the track under the row it pins, because it is about one
-row and one tick and a chip would make the player go and find the tick again. It still gets its sentence. **The pin is drawn on the track instead**, because it is about one row and one tick — a chip would
+**A pin is drawn twice over**: a notch on the track under the row it pins, and a chip like every other
+mark. The notch says WHICH TICK, which is why it is on the track rather than in a list; the chip says which
+ROW, and without it the pin was the one line under the board that opened with a sentence while its
+neighbours opened with the rows they were about — so the eye had to read it to find out who it concerned. **The pin is drawn on the track instead**, because it is about one row and one tick — a chip would
 make the player go and find the tick again.
 
 ## 3. The ladder — four rungs, and the tier is the weakest one that settles the board
