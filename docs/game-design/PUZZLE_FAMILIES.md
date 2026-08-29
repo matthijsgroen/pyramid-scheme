@@ -552,6 +552,10 @@ here every start is unknown and there is no move order at all.
   rung was designed and does not occur — no board this size needs a supposition inside a supposition — so
   the top three tiers are told apart by how much of the board only yields to one.
 - **Solve time is not measured.** The generation numbers are (family doc §5); the clock is not.
+- **Five casts, four of them roles.** Dressing this board as a place is six hieroglyphs and six names —
+  the track, the chips and the rules never change — so `funerary`, `cosmos`, `water` and `trade` are
+  carried outright rather than promised. That takes `trade` to the four-member floor and gives `cosmos`
+  its first member (family doc §8).
 
 Design doc: [puzzles/procession.md](puzzles/procession.md)
 
@@ -787,7 +791,9 @@ Measured over the baked world, the realised spread at each size:
 
 **Which to populate first**, and the order is not "smallest pool":
 
-1. **`trade` (2).** The only thin pool with real demand behind it. Populate before authoring.
+1. **`trade` — closed.** It was the only thin pool with real demand behind it; procession (§4.29) is its
+   fourth member, so it now clears the floor and the Great Pyramid's one-line change in `master.ts` is
+   unblocked.
 2. **`water` / `agriculture` (4 each).** Do **not** populate — they are ready. What they need is
    the authoring, and `expert.ts` already holds the one-line change.
 3. **`light` (2).** Same shape as `trade` and nothing authored to it yet, so it is cheap to fix now
@@ -814,10 +820,11 @@ Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redes
 | **Night & Stars**                  | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                                                                                                                                                                                                                      |
 | **Sacred Geometry / Ritual**       | temple art, sanctuary lighting              | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                                                                                                                                                                                                                   |
 
-**Procession (§4.29) fits four of these rows and is drawn for none of them.** It ships as bars on a ruled
-track, wearing `puzzle` alone: a funeral procession, decans crossing a night sky, sluice gates on a flood
-channel and the legs of a caravan are the same board reskinned, so it joins Tomb, Night & Stars, Water and
-Trade the day someone paints one — see its doc §8.
+**Procession (§4.29) fits four of these rows and is drawn for all four.** A face here is a CAST — six
+hieroglyphs and six names, no change to the board — so the rites, the decans, the flood channel and the
+quay all ship, and the family carries `funerary`, `cosmos`, `water` and `trade`. It is the cheapest kind
+of member a pool can gain, and the reason is structural rather than lucky: this mechanic's content IS a
+list of things that happen, and every place has one.
 
 **Gap, closed on paper by §4.22.** The canal is a water family by mechanic rather than by dress — digging a
 channel from the river to a field is what it does — so once it is built the role has two members and the Nile

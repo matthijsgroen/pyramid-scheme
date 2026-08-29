@@ -174,28 +174,48 @@ board hatches the ticks that bar belongs on and rings it; the sentence names the
 the chain it hangs off, the arithmetic that leaves it nowhere else, the order that does not fit, the
 supposition that breaks — and the second line says to drag the ringed bar onto the hatching.
 
-## 8. Theming
+## 8. Theming — a face is a cast, not a coat of paint
 
 Duration is the most themable thing in the catalogue, because every place in this game keeps a schedule.
-**One face ships, and it is a day's work rather than a place**: a fire, water carried, grain ground, a boat
-worked, oxen driven, a lamp kept. The tag list is `puzzle` and nothing else, for the reason rush hour's is
-(`rush-hour.md` §5) — a face is a claim that the board can dress as somewhere, and that claim lands with
-the painted art rather than before it.
+**And dressing this board as somewhere costs six signs and six names**: the ruled track, the chips, the
+colours and every rule stay exactly as they are, because what makes a room a burial rather than a night sky
+is which doings fill the rows. The visual half is written once (`GROUND` in `skins.ts`) and a face adds a
+row of hieroglyphs; the names sit beside them in the locale files, aligned by index, because a name is
+language and a sign is not.
+
+Five casts ship, and four of them carry a role tag outright:
+
+| Face       | Role       | The doings                                                                     |
+| ---------- | ---------- | ------------------------------------------------------------------------------ |
+| default    | —          | the fire, the water carrying, the baking, the boat trip, the ox driving, the night watch |
+| `funerary` | `funerary` | the opening of the mouth, the wrapping, the anointing, the walk to the tomb, the offering, the sealing |
+| `cosmos`   | `cosmos`   | the sun's crossing, the star's rising, the moon's watch, the open sky, the dawn, the turning year |
+| `water`    | `water`    | the flood, the channel digging, the basin filling, the field watering, the ferrying, the reaping |
+| `trade`    | `trade`    | the goods sorting, the bread selling, the beer selling, the ferrying, the hauling, the tally |
+
+**What that buys, measured over the registered families**: `trade` goes from three members to **four**, which
+is the floor a journey must clear before it may restrict to a role (§11.0) — the pool §11.0 names first is
+closed by this family. `funerary` reaches six and `water` six. **`cosmos` gets its first member ever**: the
+role `wizard_4` wants and nothing served, now at one of the four it needs.
+
+**The signs are hieroglyphs rather than emoji.** They take the row's own colour (an emoji is painted and
+cannot), they come from the subset this game already ships so no device is trusted to own a face, and the
+vocabulary reaches things emoji has never heard of — a coffin, an offering table, an irrigation basin.
+Anything used has to be a literal in a `.ts` file, because that is what `yarn generate-font` scans.
+
+**A sign identifies; it does not explain.** Some of these are legible to anyone (the eye, the star, water)
+and some are a shape you learn on your second board (the offering table, the folded cloth). That is
+acceptable here and would not be in a family where the glyph carries the rule: identity is triple-coded —
+sign, colour, row position — and the doing's NAME is written out in every sentence the mark makes. A player
+who cannot read the sign reads the sentence; a player who reads neither still solves the board from the
+chips. **Worth reviewing with fresh eyes anyway**, since a sign that reads as nothing is a missed chance
+rather than a bug.
 
 **The doings are a day and not a plot, deliberately.** The board says everything it knows in words — each
 mark is a sentence — but the SET of doings implies no order of its own. The generator decides what happens
 when, so a set that carried its own narrative (dressing, then the crowning, then the parade) would be
 telling a lie on every board whose answer ran the other way. The names identify; the sentences state only
 what the marks state. A fixed story would have to constrain the generator, and that is a different family.
-
-What the art would be, in the order it is worth painting:
-
-- **`funerary`** — a funeral procession: bearers, the opening of the mouth, the mourners' walk, the
-  sealing. The role exists, is authored across six journeys, and is the largest pool in the game.
-- **`cosmos`** — decans crossing the night sky, each visible for its own stretch. The journey with no pool
-  at all is `wizard_4` (`journeys.md` §9); **carrying the tag is not the same as the role existing**.
-- **`water`** — sluice gates on a flood channel, each open for its own count of hours.
-- **`trade`** — legs of a caravan, or a quay's loading slots. That pool sits one member below the floor.
 
 ## 9. What this is not
 
@@ -215,10 +235,9 @@ What the art would be, in the order it is worth painting:
 
 - **Does `apart` read wordlessly?** It is the only chip that means "one of two things", and the whole upper
   ladder is built on it. If the badge does not teach itself in one board, the family tops out at R3.
-- **Do the glyphs earn a face of their own?** They answered the first playtest's complaint — a board of
-  coloured bars is bars being shuffled — and the obvious next step is one set per place: rites for
-  `funerary`, decans for `cosmos`. That is a skin and a wording pass each, and it is where the role tags
-  become honest.
+- **Do the signs read?** Some are a shape rather than a picture on a first board, and the names carry the
+  meaning until they are learned. Worth watching in play: a face whose signs never resolve into doings is a
+  face that should swap them.
 - **Thirteen chips is the worst case at wizard**, and nothing caps it today. If play says a board that wide
   reads as clutter, the cap is one line in the gate — and it costs seeds, not design.
 - **Is `span` legible?** Stacked swatches with a total is the most abstract chip here.

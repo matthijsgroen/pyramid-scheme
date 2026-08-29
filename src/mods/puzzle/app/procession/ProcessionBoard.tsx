@@ -57,7 +57,12 @@ export const ProcessionBoard: FC<Props> = ({
    */
   const sentence = (mark: Mark): string => {
     const name = (row: number) => t(`procession.events.${skin.name}.${row % skin.glyphs.length}`)
-    const key = (id: string) => `procession.marks.${skin.name}.${id}`
+    // **The frames are place-neutral, so one set serves every face.** `puzzle-screens.md` §4.3 warns off a
+    // shared template with a noun in its slot, and the case it warns about is a verb that changes with the
+    // noun — a line is drawn, a road is laid, a channel is dug. Nothing changes here but the subject:
+    // everything starts, runs and is done, whether it is a rite or a star. A face that ever needs its own
+    // verb overrides the key and this falls back to the plain day's.
+    const key = (id: string) => [`procession.marks.${skin.name}.${id}`, `procession.marks.default.${id}`]
     switch (mark.kind) {
       case "pin":
         return t(key("pin"), { a: name(mark.a), tick: mark.tick })
@@ -96,7 +101,7 @@ export const ProcessionBoard: FC<Props> = ({
             <div
               key={index}
               className={clsx(
-                "flex h-12 w-7 items-center justify-center rounded-l text-lg",
+                "flex h-12 w-8 items-center justify-center rounded-l text-2xl leading-none",
                 about(index) && `ring-2 ${skin.focus}`
               )}
             >
@@ -174,7 +179,7 @@ export const ProcessionBoard: FC<Props> = ({
 
       {/* The hours, numbered every other tick. **This is what makes a gap of two countable** rather than
           eyeballed, which is the whole arithmetic this family is for. */}
-      <div className={clsx("relative mt-0.5 ml-8 h-4 text-[10px] tabular-nums", skin.scale)}>
+      <div className={clsx("relative mt-0.5 ml-9 h-4 text-[10px] tabular-nums", skin.scale)}>
         {Array.from({ length: puzzle.ticks + 1 }, (_, tick) =>
           tick % 2 === 0 ? (
             <span key={tick} className="absolute -translate-x-1/2" style={{ left: `${tick * share}%` }}>
@@ -222,8 +227,8 @@ export const ProcessionBoard: FC<Props> = ({
 const Swatch: FC<{ skin: ProcessionSkin; index: number; wide?: boolean }> = ({ skin, index, wide }) => (
   <span
     className={clsx(
-      "inline-flex h-5 items-center justify-center rounded-sm border text-[11px]",
-      wide ? "w-7" : "w-5",
+      "inline-flex h-6 items-center justify-center rounded-sm border text-base leading-none",
+      wide ? "w-8" : "w-6",
       skin.bars[index % skin.bars.length]
     )}
   >

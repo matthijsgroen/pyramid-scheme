@@ -966,10 +966,18 @@
   },
   "procession": {
     "name": {
-      "default": "The Ordered Hours"
+      "default": "The Ordered Hours",
+      "funerary": "The Day of the Burial",
+      "cosmos": "The Night's Crossing",
+      "water": "The Day of the Flood",
+      "trade": "The Day at the Quay"
     },
     "goal": {
-      "default": "Slide every thing that happens into its hour, until all the marks under the day hold."
+      "default": "Slide every thing that happens into its hour, until all the marks under the day hold.",
+      "funerary": "Slide every rite into its hour, until all the marks under the day hold.",
+      "cosmos": "Slide every light into its hour, until all the marks under the night hold.",
+      "water": "Slide every task into its hour, until all the marks under the day hold.",
+      "trade": "Slide every task into its hour, until all the marks under the day hold."
     },
     "rules": {
       "default": {
@@ -991,10 +999,42 @@
       "default": [
         "the fire",
         "the water carrying",
-        "the grinding",
+        "the baking",
         "the boat trip",
         "the ox driving",
-        "the lamp watch"
+        "the night watch"
+      ],
+      "funerary": [
+        "the opening of the mouth",
+        "the wrapping",
+        "the anointing",
+        "the walk to the tomb",
+        "the offering",
+        "the sealing"
+      ],
+      "cosmos": [
+        "the sun's crossing",
+        "the star's rising",
+        "the moon's watch",
+        "the open sky",
+        "the dawn",
+        "the turning year"
+      ],
+      "water": [
+        "the flood",
+        "the channel digging",
+        "the basin filling",
+        "the field watering",
+        "the ferrying",
+        "the reaping"
+      ],
+      "trade": [
+        "the goods sorting",
+        "the bread selling",
+        "the beer selling",
+        "the ferrying",
+        "the hauling",
+        "the tally"
       ]
     },
     "marks": {

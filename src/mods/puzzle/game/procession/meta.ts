@@ -13,12 +13,22 @@ import { PROCESSION_CONFIG } from "./processionConfig"
 export const PROCESSION_META: FamilyMeta = {
   id: "procession",
   ownerMod: "puzzle",
-  // **`puzzle` alone, and the same reasoning rush hour's tag list carries.** A face is a claim that this
-  // board can DRESS as a place, and today it is bars on a track: no place at all. The fiction it is for is
-  // `funerary` — bearers, rites and the sealing, walked through the day of a burial — and `cosmos`, decans
-  // crossing the night. Both land with the painted art, not before it (family doc §8).
-  tags: ["puzzle"],
-  themes: ["default"],
+  // **Four places besides the plain one, and each is a CAST rather than a coat of paint** (family doc §8).
+  // Every doing this board holds is a sign and a name, so dressing it as somewhere is six of each — the
+  // ruled track, the chips and the colours never change. That is what makes the claim behind these tags
+  // real: a funerary room gets the rites, a cosmos room gets the lights crossing the sky, and neither is
+  // waiting on art that has not been drawn.
+  //
+  // `cosmos` is the one journey nothing serves today (`journeys.md` §9), and this family is its first
+  // member rather than the whole answer — a role needs four before a journey may restrict to it (§11.0).
+  tags: ["puzzle", "funerary", "cosmos", "water", "trade"],
+  faces: {
+    funerary: ["funerary"],
+    cosmos: ["cosmos"],
+    water: ["water"],
+    trade: ["trade"],
+  },
+  themes: ["default", "funerary", "cosmos", "water", "trade"],
   minTier: "starter",
   icon: "⏳",
   color: "teal",

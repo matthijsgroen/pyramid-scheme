@@ -173,10 +173,10 @@ describe("plural forms in the shipped locales", () => {
    * capitalises the first letter in CSS, so nothing needs a second copy of "the fire" for mid-sentence use.
    */
   it.each([
-    ["en", 1, "the grinding starts 1 hour after the fire is done."],
-    ["en", 3, "the grinding starts 3 hours after the fire is done."],
-    ["nl", 1, "het malen begint 1 uur nadat het vuur klaar is."],
-    ["nl", 3, "het malen begint 3 uur nadat het vuur klaar is."],
+    ["en", 1, "the baking starts 1 hour after the fire is done."],
+    ["en", 3, "the baking starts 3 hours after the fire is done."],
+    ["nl", 1, "het bakken begint 1 uur nadat het vuur klaar is."],
+    ["nl", 3, "het bakken begint 3 uur nadat het vuur klaar is."],
   ])("renders the %s procession gap for %i as %s", (lng, count, expected) => {
     expect(
       t(lng, "procession.marks.default.link", {

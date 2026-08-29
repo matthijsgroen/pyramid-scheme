@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 553265603
+export const worldContentHash = 1974018037
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -908,7 +908,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "junior_a_2" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art12", pieceIndex: 2 },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "hidato",
+            encounter: "procession",
             role: "water",
           },
           {
@@ -935,7 +935,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "star-battle",
+            encounter: "procession",
             role: "water",
           },
           {
@@ -956,7 +956,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             role: "water",
           },
         ],
-        encounter: "constellation",
+        encounter: "hidato",
         role: "water",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d2", pieceIndex: 0 },
         rewards: [
@@ -979,7 +979,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_a_4" },
             endReward: { type: "mosaicPiece", tier: "junior" },
-            encounter: "canisters",
+            encounter: "constellation",
             role: "water",
           },
           {
@@ -988,7 +988,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "hidato",
+            encounter: "procession",
             role: "water",
           },
           {
@@ -1006,7 +1006,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "hidato",
+            encounter: "procession",
             role: "water",
           },
           {
@@ -1053,7 +1053,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "junior_1:p2:wing0" },
-        encounter: "twin-stars",
+        encounter: "star-battle",
         role: "water",
         mainEndReward: { type: "mosaicPiece", tier: "junior" },
         rewards: [{ type: "money", amount: 1 }],

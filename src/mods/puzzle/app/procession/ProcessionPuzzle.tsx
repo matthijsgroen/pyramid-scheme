@@ -46,9 +46,12 @@ export const ProcessionPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, o
   const finished = processionSolved(puzzle, state)
   const celebration = useCelebration(finished, 1)
 
+  // Per face where a face has its own words, and the plain day's where it has not — the rungs argue about
+  // hours and lengths, which read the same over a burial as over a night sky.
   const hintText = useCallback(() => {
     if (!hint) return undefined
-    return `${t(`procession.hint.${skin.name}.${hint.rung}`)}\n${t(`procession.hint.${skin.name}.move`)}`
+    const line = (id: string) => t([`procession.hint.${skin.name}.${id}`, `procession.hint.default.${id}`])
+    return `${line(hint.rung)}\n${line("move")}`
   }, [hint, skin, t])
 
   return (
