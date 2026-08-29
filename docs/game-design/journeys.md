@@ -23,7 +23,7 @@ live, so the numbers here are a snapshot to read, not a thing to keep true by ha
   today**; anything in plain text is a brief with nothing behind it yet, and "no role fits" means the whole
   story is one.
 - **If restricted to it** — how often one family would come back if the journey drew only from that role's
-  pool: `sections ÷ pool size`, against the 5.7× bar (§10). It is the cost of dressing the journey outright,
+  pool: `sections ÷ pool size`, against the 4.8× bar (§10). It is the cost of dressing the journey outright,
   and the reason most of them prefer instead. "pool of 3" means the pool is under the four-family floor
   `rolePools.spec.ts` enforces, so restricting is refused whatever the ratio.
 
@@ -142,7 +142,7 @@ pyramid picks up a floor or two.
 | Journey                              | Pyr | Rooms | Sects | Sprawl | Wears | Its story asks for                  | If restricted to it |
 | ------------------------------------ | --- | ----- | ----- | ------ | ----- | ----------------------------------- | ------------------- |
 | `starter_1` Dawn at the Sphinx       | 2   | 13    | 8     | —      | —     | dawn · weathered sandstone          | no role fits        |
-| `starter_2` Papyrus Merchant's Route | 2   | 21    | 13    | —      | —     | `scribe` / `trade` · market · reeds | 4.3× — pool of 3    |
+| `starter_2` Papyrus Merchant's Route | 2   | 21    | 13    | —      | —     | `scribe` / `trade` · market · reeds | **3.3× — could restrict** |
 | `starter_3` Temple of Bastet         | 4   | 26    | 16    | —      | —     | `light` · offering table · cat      | 5.3× — pool of 3    |
 | `starter_4` Scribe's Academy         | 4   | 29    | 19    | —      | —     | `scribe` · schoolroom ostraca       | 6.3× — pool of 3    |
 
@@ -174,8 +174,8 @@ ask for the role by name.
 
 | Journey                             | Pyr | Rooms | Sects | Sprawl | Wears                   | Its story asks for             | If restricted to it |
 | ----------------------------------- | --- | ----- | ----- | ------ | ----------------------- | ------------------------------ | ------------------- |
-| `junior_1` Sacred Ibis Migration    | 3   | 24    | 17    | —      | `water`                 | marsh · flood                  | **3.4× — authored** |
-| `junior_2` Valley of the Artisans   | 4   | 38    | 22    | —      | —                       | `trade` · workshop · pigment   | 7.3× — pool of 3    |
+| `junior_1` Sacred Ibis Migration    | 3   | 24    | 17    | —      | `water`                 | marsh · flood                  | **2.8× — authored** |
+| `junior_2` Valley of the Artisans   | 4   | 38    | 22    | —      | —                       | `trade` · workshop · pigment   | 5.5× — over the bar |
 | `junior_3` Temple of Thoth          | 4   | 45    | 25    | —      | —                       | `scribe` · moonlight · archive | 8.3× — pool of 3    |
 | `junior_4` Lighthouse of Alexandria | 5   | 47    | 28    | —      | `light`+`sky` + `night` | beacon · quay                  | **4.7× — authored** |
 
@@ -205,10 +205,10 @@ would be a second ambience, colder than night and lit from one side rather than 
 
 | Journey                          | Pyr | Rooms | Sects | Sprawl             | Wears | Its story asks for                   | If restricted to it |
 | -------------------------------- | --- | ----- | ----- | ------------------ | ----- | ------------------------------------ | ------------------- |
-| `expert_1` Valley of the Kings   | 4   | 84    | 37    | 2/7                | —     | `funerary` · necropolis · torchlight | 7.4× — over the bar |
+| `expert_1` Valley of the Kings   | 4   | 84    | 37    | 2/7                | —     | `funerary` · necropolis · torchlight | 6.2× — over the bar |
 | `expert_2` Karnak Temple Complex | 4   | 83    | 35    | 1/6                | —     | hypostyle columns · solar · festival | no role fits        |
-| `expert_3` Nile Delta Expedition | 5   | 107   | 42    | 1/7                | —     | `water` · delta marsh · crocodile    | 8.4× — over the bar |
-| `expert_4` Pyramid of Djoser     | 5   | 99    | 41    | 2/7 (`packing: 2`) | —     | `trade` · terraces · building site   | 13.7× — pool of 3   |
+| `expert_3` Nile Delta Expedition | 5   | 107   | 42    | 1/7                | —     | `water` · delta marsh · crocodile    | 7.0× — over the bar |
+| `expert_4` Pyramid of Djoser     | 5   | 99    | 41    | 2/7 (`packing: 2`) | —     | `trade` · terraces · building site   | 10.3× — over the bar |
 
 | Tomb                                          | Floors | Rooms | Sprawl | Wears | What its story asks for |
 | --------------------------------------------- | ------ | ----- | ------ | ----- | ----------------------- |
@@ -217,9 +217,9 @@ would be a second ambience, colder than night and lit from one side rather than 
 
 **The Nile Delta expedition is the one journey whose change is already written down.** The spec carries the
 line that would author it — `journey("expert_3").pyramid("1-5", { encounter: "water" })` — and the reason it
-has not been pulled: the `water` pool draws all five of its families across the journey and every one of
-them has a face, so the paper half is settled. What the spec's own line does not settle is the mode. Forty-
-two sections over five families is 8.4 turns each, past the 5.7 bar (§10), so the delta wants
+has not been pulled: the `water` pool draws its families across the journey and every one of them has a
+face, so the paper half is settled. What the spec's own line does not settle is the mode. Forty-two
+sections over six families is 7.0 turns each, past the 4.8 bar (§10), so the delta wants
 `["water", "puzzle"]` and a thumb on the scale rather than the restriction as written.
 
 The crocodile is already a trap family; a crocodile _face_ would be the delta's water dressed as something
@@ -238,9 +238,9 @@ because the tier puts a coloured key on the open main path, and a broad floor is
 | Journey                          | Pyr | Rooms | Sects | Sprawl | Wears | Its story asks for                 | If restricted to it  |
 | -------------------------------- | --- | ----- | ----- | ------ | ----- | ---------------------------------- | -------------------- |
 | `master_1` Great Pyramid of Giza | 4   | 83    | 43    | 1/8    | —     | `sky` · grand gallery · star shaft | 8.6× — and 0 dressed |
-| `master_2` Book of the Dead      | 5   | 121   | 50    | 1/10   | —     | `judgement` · scroll · judgement   | 10.0× — authored     |
-| `master_3` Curse of the Pharaohs | 5   | 125   | 53    | 1/10   | —     | `funerary` · omen · dust and decay | 10.6× — authored     |
-| `master_4` Tomb of Nefertari     | 5   | 109   | 47    | —      | —     | `funerary` · fresco · queen's blue | 9.4× — authored      |
+| `master_2` Book of the Dead      | 5   | 121   | 50    | 1/10   | —     | `judgement` · scroll · judgement   | 8.3× — authored      |
+| `master_3` Curse of the Pharaohs | 5   | 125   | 53    | 1/10   | —     | `funerary` · omen · dust and decay | 8.8× — authored      |
+| `master_4` Tomb of Nefertari     | 5   | 109   | 47    | —      | —     | `funerary` · fresco · queen's blue | 7.8× — authored      |
 
 | Tomb                                    | Floors | Rooms | Sprawl | Wears | What its story asks for    |
 | --------------------------------------- | ------ | ----- | ------ | ----- | -------------------------- |
@@ -259,10 +259,10 @@ ochres rather than ink on a ground.
 
 | Journey                          | Pyr | Rooms | Sects | Sprawl | Wears | Its story asks for                   | If restricted to it |
 | -------------------------------- | --- | ----- | ----- | ------ | ----- | ------------------------------------ | ------------------- |
-| `wizard_1` Ra's Solar Journey    | 4   | 135   | 41    | 1/12   | —     | `funerary` · duat · barque · serpent | 8.2× — authored     |
+| `wizard_1` Ra's Solar Journey    | 4   | 135   | 41    | 1/12   | —     | `funerary` · duat · barque · serpent | 6.8× — authored     |
 | `wizard_2` Secrets of the Sphinx | 5   | 177   | 53    | 2/15   | —     | buried sand · riddle · excavation    | no role fits        |
-| `wizard_3` Chamber of Ma'at      | 6   | 207   | 63    | 2/18   | —     | `judgement` · scales · feather       | 12.6× — authored    |
-| `wizard_4` Eternal Pyramid       | 6   | 207   | 63    | 1/18   | —     | void · gold · mirrored infinity      | no role fits        |
+| `wizard_3` Chamber of Ma'at      | 6   | 207   | 63    | 2/18   | —     | `judgement` · scales · feather       | 10.5× — authored    |
+| `wizard_4` Eternal Pyramid       | 6   | 207   | 63    | 1/18   | —     | `cosmos` · void · gold · infinity    | 63× — pool of 1     |
 
 | Tomb                                            | Floors | Rooms | Sprawl | Wears | What its story asks for                              |
 | ----------------------------------------------- | ------ | ----- | ------ | ----- | ---------------------------------------------------- |
@@ -288,7 +288,7 @@ one built for a single pyramid does not.
 | Gap                                                  | Reaches                                                                | Rooms | What it takes                                                                                                                                                  |
 | ---------------------------------------------------- | ---------------------------------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **A `funerary` role** — **BUILT**                    | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1`, `wizard_3` | 781   | Done: four faces, six journeys authored, no new generator. What is left is the SHARE — see §10's prefer mode.                                                  |
-| **A cosmos role**                                    | `wizard_4`                                                             | 207   | The one story with no Egyptian hook at all: the void beyond the sky. A new family, or the largest new face in the game.                                        |
+| **Three more families for `cosmos`**                 | `wizard_4`                                                             | 207   | The role EXISTS now and holds one member: procession's night face, decans crossing the sky. Three more carriers and `wizard_4` can restrict to the story it is named after. |
 | **A warm-light ambience**                            | `starter_3`, `junior_3`, `expert_1`, `master_4`                        | 264   | Overlays per face rather than a new skin per family. Four briefs — lamplight twice, torchlight, moonlight — asking for one thing.                              |
 | **A fourth family for `scribe` or `light`**          | `starter_2`, `starter_4`, `junior_3`, `expert_4`                       | 187   | Both pools sit at three, one short of the floor a journey must clear to restrict to a role (§2). A tag on an existing family is the whole of it. `trade` is closed — procession (PUZZLE_FAMILIES §4.29) is its fourth member. |
 | **`light` faces for eclipse and lightbeam**          | `junior_4`                                                             | 47    | Canisters gave the pool its first face; these two still read as light sources without dressing as one. Lightbeam has no skin system at all, so it is two jobs. |
@@ -369,39 +369,46 @@ assigned **per section**, not per room, so what a player feels is `sections ÷ p
 
 **The columns below are pool SIZES, not roles a journey wants.** Read a row across: this is how often one
 family comes back if that journey were restricted to a pool of that size, whichever role it happened to be.
-The sizes are the ones that exist — three families (`scribe`, `trade`, `light`), five (`water`,
-`agriculture`, `funerary`, `sky`), six (`["light", "sky"]` as a union), and eleven for a journey that
-restricts to nothing at all.
+The sizes are the ones that exist — one (`cosmos`, `judgement`), three (`scribe`, `light`), four
+(`trade`), five (`sky`), six (`water`, `agriculture`, `funerary`, and `["light", "sky"]` as a union), and
+thirteen for a journey that restricts to nothing at all.
 
-| Journey     | Sections | Rooms | all 11   | pool of 6 | pool of 5 | pool of 3 |
-| ----------- | -------- | ----- | -------- | --------- | --------- | --------- |
-| `starter_1` | 8        | 13    | 0.7×     | 1.3×      | 1.6×      | 2.7×      |
-| `junior_1`  | 17       | 24    | 1.5×     | 2.8×      | **3.4×**  | 5.7×      |
-| `starter_4` | 19       | 29    | 1.7×     | 3.2×      | 3.8×      | 6.3×      |
-| `junior_4`  | 28       | 47    | 2.5×     | **4.7×**  | 5.6×      | 9.3×      |
-| `expert_3`  | 42       | 107   | 3.8×     | 7.0×      | 8.4×      | 14.0×     |
-| `master_2`  | 50       | 121   | 4.5×     | 8.3×      | 10.0×     | 16.7×     |
-| `wizard_3`  | 63       | 207   | **5.7×** | 10.5×     | 12.6×     | 21.0×     |
+| Journey     | Sections | Rooms | all 13   | pool of 6 | pool of 5 | pool of 4 | pool of 3 |
+| ----------- | -------- | ----- | -------- | --------- | --------- | --------- | --------- |
+| `starter_1` | 8        | 13    | 0.6×     | 1.3×      | 1.6×      | 2.0×      | 2.7×      |
+| `junior_1`  | 17       | 24    | 1.3×     | **2.8×**  | 3.4×      | 4.3×      | 5.7×      |
+| `starter_4` | 19       | 29    | 1.5×     | 3.2×      | 3.8×      | 4.8×      | 6.3×      |
+| `junior_4`  | 28       | 47    | 2.2×     | **4.7×**  | 5.6×      | 7.0×      | 9.3×      |
+| `expert_3`  | 42       | 107   | 3.2×     | 7.0×      | 8.4×      | 10.5×     | 14.0×     |
+| `master_2`  | 50       | 121   | 3.8×     | 8.3×      | 10.0×     | 12.5×     | 16.7×     |
+| `wizard_3`  | 63       | 207   | **4.8×** | 10.5×     | 12.6×     | 15.8×     | 21.0×     |
 
-**5.7× is the bar**, because it is the worst variety the game already ships: wizard_3 and wizard_4 draw 63
-sections from all eleven families. Anything at or under it is not a new problem. The bar moves as families
-are added, so read it as a measurement rather than a constant.
+**4.8× is the bar**, because it is the worst variety the game already ships: wizard_3 and wizard_4 draw 63
+sections from all thirteen families. Anything at or under it is not a new problem.
+
+**It was 5.7× and it moved because the catalogue grew** — this is the measurement doing exactly what the
+line under it always said it would. Two families landing (rush hour, procession) tightened the worst case
+the game ships, and every "over the bar" verdict in §4–§8 is read against the new number. Nothing about a
+journey changed; the thing they are compared to did.
 
 ### Reading the tier tables' last column
 
 Every journey carries its own cost in §4–§8. Two things decide whether it may restrict at all: the pool has
 to clear four members (`rolePools.spec.ts`), and `sections ÷ pool` has to land under the bar.
 
-- **`junior_1` is authored and restricted** — `water`, a pool of five, 3.4 turns each. All 22 of its puzzle
-  rooms are drawn from that pool and all five families turn up in it; its two trap rooms sit outside, as a
+- **`junior_1` is authored and restricted** — `water`, a pool of six, 2.8 turns each. All 22 of its puzzle
+  rooms are drawn from that pool and its families turn up across them; its two trap rooms sit outside, as a
   trap carries its own role.
-- **Four are held back by pool size alone**: `starter_2`, `starter_3`, `starter_4` and `junior_2` all sit
-  under the bar and all draw on a pool of three. One tag on one existing family turns each into a restrict,
-  which is why §9 ranks pool size above faces.
-- **The rest are simply long.** `expert_1` at 7.4× and `expert_3` at 8.4× have full five-family pools and
-  still exceed the bar, so they prefer.
-- **Three journeys fit no role at all**: `starter_1`'s dawn, `wizard_2`'s buried sand and `wizard_4`'s void.
-  Those are the ones a new role would have to be invented for, and §9 ranks them.
+- **`starter_2` is the one waiting to be authored.** `trade` cleared the four-family floor when procession
+  joined it, and the papyrus route's 13 sections over that pool is 3.3× — under the bar and legal to
+  restrict, which no unauthored journey was before.
+- **Three are still held back by pool size alone**: `starter_3`, `starter_4` and `junior_3` draw on pools of
+  three (`light`, `scribe`). One tag on one existing family turns each into a candidate, which is why §9
+  ranks pool size above faces.
+- **The rest are simply long.** `expert_1` at 6.2× and `expert_3` at 7.0× draw on full six-family pools and
+  still exceed the bar, so they prefer. `junior_2` at 5.5× is the closest of them.
+- **Two journeys fit no role at all**: `starter_1`'s dawn and `wizard_2`'s buried sand. `wizard_4`'s void
+  has `cosmos` now — one family in it, so the role can be preferred and not yet restricted to.
 
 ### The two modes
 
@@ -414,8 +421,8 @@ journey("junior_1").pyramid("1-3", { encounter: "water" })
 journey("expert_3").pyramid("1-5", { encounter: ["water", "puzzle"] })
 ```
 
-**What prefer still lacks is the bias.** Unweighted, a five-family pool inside eleven dresses roughly two
-rooms in five, which reads as scattered rather than as a place. The allocator can weight it now that
+**What prefer still lacks is the bias.** Unweighted, a six-family pool inside thirteen dresses fewer than
+half the rooms, which reads as scattered rather than as a place. The allocator can weight it now that
 `FamilyMeta.faces` says which families dress which role — a bag holding every eligible family plus the
 dressing ones twice over is enough of a thumb on the scale, and the number to check afterwards is the share
 of a journey's sections that came out dressed.
