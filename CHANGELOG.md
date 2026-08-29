@@ -10,8 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - The blockade puzzle can be drawn as a market street now: painted sledges loaded with grain and stone,
-  shoved along a street too narrow for them, with your own sledge the one that carries a prow. Pick it in
-  the puzzle lab.
+  shoved along a street too narrow for them, with your own sledge the one that carries a prow.
+- The Great Pyramid of Giza leans on trading puzzles — scales to balance, goods to measure, haul roads to
+  lay and a market street to clear — without giving up the rest of what a master pyramid can hold.
 
 ### Changed
 
