@@ -4,10 +4,15 @@ import { faceFor, withAmbience } from "../faceFor"
 /**
  * What this day looks like, and how a room works out which day it is.
  *
- * **One face today, and it is deliberately no place at all**: bars on a ruled track, told apart by their
- * row and their colour. The places this mechanic is for — a funeral procession walked hour by hour, decans
- * crossing a night sky, sluice gates on a flood channel — arrive as painted art per face
- * (`docs/game-design/puzzles/procession.md` §8), and a face is where that art will hang.
+ * **One face today, and it is a day's work rather than a place**: the things that happen are drawn as what
+ * they are — a fire lit, water carried, grain ground — and the track under them is the hours. The places
+ * this mechanic is for, each with its own set of doings and its own art, arrive as further faces
+ * (`docs/game-design/puzzles/procession.md` §8).
+ *
+ * **The glyphs are why a row is a THING and not a colour.** Playtesting said it plainly: a board of
+ * coloured rectangles is bars being shuffled, and a board where the fire and the grinding are visibly the
+ * fire and the grinding is a day being worked out. Nothing about the rules changed with them, and nothing
+ * has to be read: a glyph identifies its row, and the marks below the board are sentences about glyphs.
  */
 export type ProcessionSkin = {
   /** Which place this is, as its own name — the goal, the rules and every hint sentence are keyed on it. */
@@ -18,6 +23,16 @@ export type ProcessionSkin = {
   /** A row's own strip, and the bar standing in it. One colour a row, so a mark can name a row by colour. */
   row: string
   bars: readonly string[]
+  /**
+   * What each row IS, one glyph a row, in the order the rows are drawn.
+   *
+   * **A row is identified three ways over** — its glyph, its colour and its position — because the marks
+   * below the board have to name one without a word, and one channel is never enough: colour alone fails a
+   * player who reads no hue, and position alone fails the moment two chips sit side by side.
+   */
+  glyphs: readonly string[]
+  /** The hour numbers under the track, which is what makes a gap of two countable rather than eyeballed. */
+  scale: string
   /** A mark that holds, and one that does not. Shape carries it too — see the board. */
   markHeld: string
   markBroken: string
@@ -32,13 +47,13 @@ export type ProcessionSkin = {
 
 const SKINS: Record<string, ProcessionSkin> = {
   /**
-   * **Bars on a ruled track** — the plainest reading of the mechanic, and the one it has before it is
-   * dressed as anywhere. Everything that carries meaning is geometry: a bar's WIDTH is how long the thing
-   * lasts, its row is which thing it is, and the ticks under it are the hours of the day.
+   * **A day's work on a ruled track.** Everything that carries meaning is geometry or glyph: a bar's WIDTH
+   * is how long that doing takes, its glyph is which doing it is, and the numbers under the track are the
+   * hours it is measured in.
    *
-   * **A row is a colour and a position, never a colour alone.** The marks below the board name rows by
-   * their swatch, so a player who reads no hue has the row order to fall back on — the swatches are listed
-   * top to bottom in the same order the rows are drawn.
+   * The six doings are chosen to be a day rather than a story — a fire, water carried, grain ground, a
+   * boat worked, oxen driven, a lamp kept — because the generator decides what happens when, and a set
+   * that implied an order would be telling a lie about half the boards it draws.
    */
   default: {
     name: "default",
@@ -53,6 +68,8 @@ const SKINS: Record<string, ProcessionSkin> = {
       "bg-lime-700 border-lime-500",
       "bg-fuchsia-800 border-fuchsia-600",
     ],
+    glyphs: ["🔥", "🏺", "🌾", "🛶", "🐂", "🕯"],
+    scale: "text-stone-500",
     markHeld: "border-stone-600 bg-stone-900 text-stone-400",
     markBroken: "border-red-700 bg-red-950/70 text-red-300",
     pin: "bg-stone-300",

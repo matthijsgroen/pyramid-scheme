@@ -58,71 +58,101 @@ export const ProcessionBoard: FC<Props> = ({
 
   return (
     <div className="w-full max-w-[min(96vw,60vh)] select-none">
-      <div
-        ref={frame}
-        className={clsx("relative w-full touch-none overflow-hidden rounded", skin.ground)}
-        onPointerMove={onPointerMove}
-        onPointerUp={() => setDrag(undefined)}
-        onPointerCancel={() => setDrag(undefined)}
-      >
-        {puzzle.bars.map((bar, index) => {
-          const start = state.starts[index]
-          return (
+      {/* The glyphs sit BESIDE the track rather than on the bars, and the track keeps its whole width:
+          every measurement on this board is in ticks, and a gutter cut out of the track would make a tick
+          a different width on every board. */}
+      <div className="flex items-stretch gap-1">
+        <div className="flex shrink-0 flex-col">
+          {puzzle.bars.map((_, index) => (
             <div
               key={index}
-              className={clsx("relative h-12 border-b border-stone-800 last:border-b-0", skin.row)}
-              style={{
-                backgroundImage: `linear-gradient(to right, ${skin.seam} 1px, transparent 1px)`,
-                backgroundSize: `${share}% 100%`,
-              }}
+              className={clsx(
+                "flex h-12 w-7 items-center justify-center rounded-l text-lg",
+                about(index) && `ring-2 ${skin.focus}`
+              )}
             >
-              {/* The tick a pin names, drawn where it belongs rather than in the strip below: a pin is
-                  about one row and one tick, and a chip would make the player find the tick again. */}
-              {puzzle.marks.map((mark, at) =>
-                mark.kind === "pin" && mark.a === index ? (
-                  <div
-                    key={at}
-                    className={clsx("pointer-events-none absolute bottom-0 h-1.5 rounded-t", skin.pin)}
-                    style={{ left: `${mark.tick * share}%`, width: `${share}%` }}
-                  />
-                ) : null
-              )}
-
-              {hintBar === index && hintTick !== undefined && (
-                <div
-                  className="pointer-events-none absolute inset-y-0"
-                  style={{
-                    left: `${hintTick * share}%`,
-                    width: `${bar.len * share}%`,
-                    backgroundImage: `repeating-linear-gradient(45deg, transparent 0 4px, ${skin.hatch} 4px 7px)`,
-                  }}
-                />
-              )}
-
-              <div
-                role="button"
-                aria-label={`bar ${index + 1}`}
-                onPointerDown={event => {
-                  event.currentTarget.setPointerCapture(event.pointerId)
-                  onFocus(undefined)
-                  setDrag({ index, from: event.clientX, origin: start })
-                }}
-                className={clsx(
-                  "absolute inset-y-0.5 cursor-grab rounded border-2 transition-[left] duration-100",
-                  skin.bars[index % skin.bars.length],
-                  about(index) && `ring-2 ${skin.focus}`,
-                  hintBar === index && `ring-2 ${skin.focus}`,
-                  solved && skin.celebrate
-                )}
-                style={{ left: `${start * share}%`, width: `${bar.len * share}%` }}
-              />
-              {/* Where the row runs out, so a bar dragged to the edge reads as stopped rather than stuck. */}
-              <span className="sr-only">
-                {start + 1}–{start + bar.len} of {lastStart(puzzle, index) + bar.len}
-              </span>
+              {skin.glyphs[index % skin.glyphs.length]}
             </div>
-          )
-        })}
+          ))}
+        </div>
+        <div
+          ref={frame}
+          className={clsx("relative min-w-0 flex-1 touch-none overflow-hidden rounded", skin.ground)}
+          onPointerMove={onPointerMove}
+          onPointerUp={() => setDrag(undefined)}
+          onPointerCancel={() => setDrag(undefined)}
+        >
+          {puzzle.bars.map((bar, index) => {
+            const start = state.starts[index]
+            return (
+              <div
+                key={index}
+                className={clsx("relative h-12 border-b border-stone-800 last:border-b-0", skin.row)}
+                style={{
+                  backgroundImage: `linear-gradient(to right, ${skin.seam} 1px, transparent 1px)`,
+                  backgroundSize: `${share}% 100%`,
+                }}
+              >
+                {/* The tick a pin names, drawn where it belongs rather than in the strip below: a pin is
+                  about one row and one tick, and a chip would make the player find the tick again. */}
+                {puzzle.marks.map((mark, at) =>
+                  mark.kind === "pin" && mark.a === index ? (
+                    <div
+                      key={at}
+                      className={clsx("pointer-events-none absolute bottom-0 h-1.5 rounded-t", skin.pin)}
+                      style={{ left: `${mark.tick * share}%`, width: `${share}%` }}
+                    />
+                  ) : null
+                )}
+
+                {hintBar === index && hintTick !== undefined && (
+                  <div
+                    className="pointer-events-none absolute inset-y-0"
+                    style={{
+                      left: `${hintTick * share}%`,
+                      width: `${bar.len * share}%`,
+                      backgroundImage: `repeating-linear-gradient(45deg, transparent 0 4px, ${skin.hatch} 4px 7px)`,
+                    }}
+                  />
+                )}
+
+                <div
+                  role="button"
+                  aria-label={`bar ${index + 1}`}
+                  onPointerDown={event => {
+                    event.currentTarget.setPointerCapture(event.pointerId)
+                    onFocus(undefined)
+                    setDrag({ index, from: event.clientX, origin: start })
+                  }}
+                  className={clsx(
+                    "absolute inset-y-0.5 cursor-grab rounded border-2 transition-[left] duration-100",
+                    skin.bars[index % skin.bars.length],
+                    about(index) && `ring-2 ${skin.focus}`,
+                    hintBar === index && `ring-2 ${skin.focus}`,
+                    solved && skin.celebrate
+                  )}
+                  style={{ left: `${start * share}%`, width: `${bar.len * share}%` }}
+                />
+                {/* Where the row runs out, so a bar dragged to the edge reads as stopped rather than stuck. */}
+                <span className="sr-only">
+                  {start + 1}–{start + bar.len} of {lastStart(puzzle, index) + bar.len}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* The hours, numbered every other tick. **This is what makes a gap of two countable** rather than
+          eyeballed, which is the whole arithmetic this family is for. */}
+      <div className={clsx("relative mt-0.5 ml-8 h-4 text-[10px] tabular-nums", skin.scale)}>
+        {Array.from({ length: puzzle.ticks + 1 }, (_, tick) =>
+          tick % 2 === 0 ? (
+            <span key={tick} className="absolute -translate-x-1/2" style={{ left: `${tick * share}%` }}>
+              {tick}
+            </span>
+          ) : null
+        )}
       </div>
 
       <div className="mt-2 flex flex-wrap gap-1.5">
@@ -147,11 +177,22 @@ export const ProcessionBoard: FC<Props> = ({
   )
 }
 
-/** A bar as it appears inside a mark: the row's own colour, so a mark names its rows without a word. */
+/**
+ * A row as it appears inside a mark: its glyph on its own colour.
+ *
+ * **The glyph is what makes a chip a sentence** — "the fire two hours before the grinding" rather than
+ * "teal two before rose", which is what a board of swatches was asking a player to hold in their head.
+ */
 const Swatch: FC<{ skin: ProcessionSkin; index: number; wide?: boolean }> = ({ skin, index, wide }) => (
   <span
-    className={clsx("inline-block h-3 rounded-sm border", wide ? "w-6" : "w-4", skin.bars[index % skin.bars.length])}
-  />
+    className={clsx(
+      "inline-flex h-5 items-center justify-center rounded-sm border text-[11px]",
+      wide ? "w-7" : "w-5",
+      skin.bars[index % skin.bars.length]
+    )}
+  >
+    {skin.glyphs[index % skin.glyphs.length]}
+  </span>
 )
 
 /**

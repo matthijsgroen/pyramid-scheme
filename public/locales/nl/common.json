@@ -962,11 +962,11 @@
       "default": "De Geordende Uren"
     },
     "goal": {
-      "default": "Schuif elke balk tot alle tekens onder de dag kloppen."
+      "default": "Schuif elk ding dat gebeurt naar zijn uur, tot alle tekens onder de dag kloppen."
     },
     "rules": {
       "default": {
-        "lengths": "Een balk houdt zijn lengte. Alleen wanneer het gebeurt ligt niet vast.",
+        "lengths": "Elke rij is één ding dat gebeurt, en het duurt zo lang als zijn balk breed is. Wanneer het gebeurt zoek jij uit.",
         "marks": "Een teken onder de dag kleurt rood zolang het niet klopt. Tik erop om te zien welke rijen het verbindt.",
         "drag": "Sleep een balk over zijn eigen rij. Hij gaat de dag nooit uit."
       }

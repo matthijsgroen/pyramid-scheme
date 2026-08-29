@@ -969,11 +969,11 @@
       "default": "The Ordered Hours"
     },
     "goal": {
-      "default": "Slide every bar until all the marks under the day hold."
+      "default": "Slide every thing that happens into its hour, until all the marks under the day hold."
     },
     "rules": {
       "default": {
-        "lengths": "A bar keeps its length. Only when it happens is unknown.",
+        "lengths": "Each row is one thing that happens, and it takes as long as its bar is wide. When it happens is what you work out.",
         "marks": "A mark under the day glows red while it is broken. Tap one to see which rows it joins.",
         "drag": "Drag a bar along its own row. It never leaves the day."
       }

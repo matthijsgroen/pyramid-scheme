@@ -22,9 +22,11 @@ That is what this one does. Every bar's length is given; **no bar's start is**.
 
 ## 2. The rules
 
-- The board is a **track of ticks** — dawn at the left edge, dusk at the right — and a stack of **rows**.
-- **One bar to a row.** A bar's **length is fixed and visible**: a three-tick bar is three hours long and
-  stays three hours long.
+- The board is a **track of ticks** — dawn at the left edge, dusk at the right, **numbered every other
+  tick** so a gap of two is counted rather than eyeballed — and a stack of **rows**.
+- **One row is one thing that happens**, drawn as a glyph beside its own row: a fire lit, water carried,
+  grain ground. A bar's **length is fixed and visible**: a three-tick bar takes three hours and keeps
+  taking three hours.
 - The player **slides a bar along its row**, and it may sit anywhere the day has room for it.
 - Between the bars sit **marks** (§2.1). The board is done when every mark holds.
 - A board has **exactly one arrangement** that satisfies every mark, verified at generation.
@@ -51,8 +53,10 @@ top half of the ladder is made of it.
 `link (0)` is a handoff — the same mark with a zero on it rather than a seventh kind.
 
 **Every mark except the pin is a chip under the board**, and a chip is a miniature of the relation it
-states: swatches in the rows' own colours, a numeral where there is one, and a red border while it is
-broken. **The pin is drawn on the track instead**, because it is about one row and one tick — a chip would
+states: the two rows' own glyphs on their own colours, a numeral where there is one, and a red border while
+it is broken. **The glyphs are what make a chip a sentence** — the water before the fire, the grain three
+hours after the lamp — where swatches made it "teal before rose", which is the thing the first playtest
+could not hold in its head. **The pin is drawn on the track instead**, because it is about one row and one tick — a chip would
 make the player go and find the tick again.
 
 ## 3. The ladder — four rungs, and the tier is the weakest one that settles the board
@@ -149,10 +153,15 @@ supposition that breaks — and the second line says to drag the ringed bar onto
 ## 8. Theming
 
 Duration is the most themable thing in the catalogue, because every place in this game keeps a schedule.
-**One face ships, and it is deliberately no place at all**: bars on a ruled track, told apart by their row
-and their colour. The tag list is `puzzle` and nothing else, for the reason rush hour's is
+**One face ships, and it is a day's work rather than a place**: a fire, water carried, grain ground, a boat
+worked, oxen driven, a lamp kept. The tag list is `puzzle` and nothing else, for the reason rush hour's is
 (`rush-hour.md` §5) — a face is a claim that the board can dress as somewhere, and that claim lands with
 the painted art rather than before it.
+
+**The doings are a day and not a story, deliberately.** The generator decides what happens when, so a set
+that implied an order — dressing, then the crowning, then the parade — would be telling a lie on every
+board whose answer put them the other way round. A glyph says WHAT a row is, and the marks say when; a
+narrative would have to constrain the generator, and that is a different family.
 
 What the art would be, in the order it is worth painting:
 
@@ -181,6 +190,10 @@ What the art would be, in the order it is worth painting:
 
 - **Does `apart` read wordlessly?** It is the only chip that means "one of two things", and the whole upper
   ladder is built on it. If the badge does not teach itself in one board, the family tops out at R3.
+- **Do the glyphs earn a face of their own?** They answered the first playtest's complaint — a board of
+  coloured bars is bars being shuffled — and the obvious next step is one set per place: rites for
+  `funerary`, decans for `cosmos`. That is a skin and a wording pass each, and it is where the role tags
+  become honest.
 - **Thirteen chips is the worst case at wizard**, and nothing caps it today. If play says a board that wide
   reads as clutter, the cap is one line in the gate — and it costs seeds, not design.
 - **Is `span` legible?** Stacked swatches with a total is the most abstract chip here.
