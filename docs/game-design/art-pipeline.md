@@ -18,6 +18,7 @@ The choice is not about which model is prettier. It is about which of three jobs
 | ------------------------------------------------------ | ------------------------ | ------------------------------------------------------------------------------------- |
 | **Cutout objects** — a sledge, a pot, a brazier        | **Gemini** (Nano Banana) | Follows framing constraints, edits an existing image ("same sledge, now three cells") |
 | **Seamless tiling materials** — a floor, a wall        | **Midjourney** `--tile`  | Only tool with a real seamless mode. Everything else leaves seams to heal by hand     |
+| **A whole board's ground** — one fixed square          | **Either**               | It covers the frame whole and never repeats, so nothing about it has to tile (§A.2)   |
 | **Autotile combinations, wall corners, tile variants** | **Code**                 | Not an art problem. See §B.2                                                          |
 | **Animated player sprite**                             | Neither yet              | Frame-to-frame consistency is where both models fall apart. A separate fight          |
 
@@ -64,16 +65,25 @@ Five images a face: `ground`, `piece2`, `piece3`, `player`, `wall`.
 
 A cell tops out around 116px (`max-w-[min(92vw,60vh)]` over 6 cells). Author at 2x, cell = 128px.
 
-| Asset  | Final px           | Ratio |
-| ------ | ------------------ | ----- |
-| piece2 | 256 × 128          | 2:1   |
-| piece3 | 384 × 128          | 3:1   |
-| player | 256 × 128          | 2:1   |
-| wall   | 128 × 128          | 1:1   |
-| ground | 512 × 512 seamless | 1:1   |
+| Asset  | Final px  | Ratio |
+| ------ | --------- | ----- |
+| piece2 | 256 × 128 | 2:1   |
+| piece3 | 384 × 128 | 3:1   |
+| player | 256 × 128 | 2:1   |
+| wall   | 128 × 128 | 1:1   |
+| ground | 1024²     | 1:1   |
 
 Gemini offers no 2:1 or 3:1 aspect ratio. Generate 1:1, tell it to fill a centered strip of the right
 proportion against magenta, crop in post.
+
+**The ground does not tile, and asking it to is wasted effort.** The frame is one square that the ground
+covers whole — `background-size: 100% 100%` over an `aspect-square` box distorts nothing — so there is no
+seam to close and no repeat to disguise. The largest the frame ever gets is about 795 CSS px (60vh on a tall
+desktop, so ~1590 device px at 2×) and the phone case is ~360; 1024² covers both. **Tiling is a site-map
+problem** (§B.2), because that surface scrolls and multiplies across themes; a board is one fixed square.
+
+**WebP, not PNG, for anything without alpha.** Measured on the first ground: 1024² WebP q80 is 19 KB where
+512² PNG is 256 KB. The cutout props keep PNG because they need the alpha.
 
 ### A.3 Shared preamble — paste on top of every Pile A prompt
 
@@ -92,12 +102,12 @@ plane under the object. Object silhouette only against the magenta.
 **ground**
 
 ```
-[preamble] Seamless tileable texture, square, edges must wrap on all four
-sides. Packed sun-baked earth street of an Egyptian market lane: dry ochre
-dust over flat worn limestone slabs, faint sledge-runner scuffs, scattered
-grit and chaff. Muted, low contrast, dark enough that objects laid on top read
-clearly — value around a dark warm brown, #1c1917 to #292524. No objects, no
-shadows, no focal point, uniform across the whole square.
+[preamble] A square of ground, filling the whole canvas. Packed sun-baked
+earth street of an Egyptian market lane: dry ochre dust over flat worn
+limestone slabs, faint sledge-runner scuffs, scattered grit and chaff. Muted,
+low contrast, dark enough that objects laid on top read clearly — value around
+a dark warm brown, #1c1917 to #292524. No objects, no shadows, no focal point,
+even across the whole square.
 ```
 
 **piece2**
@@ -149,7 +159,7 @@ fills the whole square edge to edge.
 
 Same five prompts, same preamble, swapped nouns:
 
-- **ground** — `Seamless tileable texture ... slow muddy Nile water at a wharf: dark green-brown, faint current ripples, scattered reed debris. Low contrast, dark, no reflections of anything, no sky, no highlights.`
+- **ground** — `A square of ground filling the whole canvas ... slow muddy Nile water at a wharf: dark green-brown, faint current ripples, scattered reed debris. Low contrast, dark, no reflections of anything, no sky, no highlights.`
 - **piece2 / piece3** — `A reed-bundle cargo barge seen from directly above, filling a horizontal strip exactly [twice / three times] as wide as it is tall, touching both ends. Bound papyrus reed hull, deck of stacked amphorae under a linen cover. Both ends identically blunt — no bow, no stern, no steering oar.`
 - **player** — `... the right end rises into a curved pointed papyrus prow, unmistakably pointing right. Painted hull with gilded trim and amber-gold cordage #f59e0b, brighter than the plain working barges.`
 - **wall** — `One square cell of a stone mooring bollard block set in the quay, cut granite, flush, immovable. Must not resemble a boat or cargo.`
