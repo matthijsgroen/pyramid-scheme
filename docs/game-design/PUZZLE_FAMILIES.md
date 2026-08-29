@@ -547,9 +547,10 @@ gesture on a board with the opposite epistemics: there nothing is unknown and th
 here every start is unknown and there is no move order at all.
 
 - **Tiers:** three bars in an eight-tick day up to six in sixteen, and the tier is the weakest rung that
-  settles the board — chain, squeeze, apart, then one supposition. A FIFTH rung was designed and does not
-  occur: no board of this size needs a supposition inside a supposition, so the top two tiers are told
-  apart by how much of the board only yields to one.
+  settles the board. The ladder has four rungs and SHIPS three: a board settled by pins and links alone is
+  one the player is told rather than one they work out, so the family enters at the arithmetic rung. A FIFTH
+  rung was designed and does not occur — no board this size needs a supposition inside a supposition — so
+  the top three tiers are told apart by how much of the board only yields to one.
 - **Solve time is not measured.** The generation numbers are (family doc §5); the clock is not.
 
 Design doc: [puzzles/procession.md](puzzles/procession.md)

@@ -181,8 +181,8 @@ describe("plural forms in the shipped locales", () => {
     expect(
       t(lng, "procession.marks.default.link", {
         count,
-        a: t(lng, "procession.events.default.2"),
-        b: t(lng, "procession.events.default.0"),
+        a: t(lng, "procession.events.default.2", {}),
+        b: t(lng, "procession.events.default.0", {}),
       })
     ).toBe(expected)
   })

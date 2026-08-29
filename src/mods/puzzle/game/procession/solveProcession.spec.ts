@@ -17,15 +17,37 @@ const shipped = (tier: Difficulty): ProcessionPuzzle => {
 
 describe("the ladder", () => {
   /**
-   * **Every rung the solver claims is a rung some tier's boards actually need** (`puzzle-screens.md` §7).
-   * A rung nothing reaches is a rung nobody has debugged, and the family doc would be describing a
-   * technique the player never meets.
+   * **Every rung the solver claims is a rung something actually needs** (`puzzle-screens.md` §7). A rung
+   * nothing reaches is a rung nobody has debugged.
+   *
+   * Three of the four are what the shipped tiers ask for. **`chain` is deliberately not one of them**: a
+   * board whose every bar is fixed by a pin or a link off one is a board the player is told rather than one
+   * they work out, which stopped being acceptable the moment each mark said itself in words
+   * (`procession.md` §3). It stays a rung because the ladder has to start somewhere and the hint wording
+   * keys on it — the board below is what keeps it honest.
    */
-  it("has a tier whose shipped board needs each rung", () => {
+  it("has a tier whose shipped board needs each rung above the floor", () => {
     const reached = new Set<Rung>()
     for (const tier of ["starter", "junior", "expert", "master", "wizard"] as const)
       reached.add(requiredRung(shipped(tier))!.rung)
-    expect([...RUNGS].every(rung => reached.has(rung))).toBe(true)
+    expect([...reached].sort()).toEqual(["apart", "split", "squeeze"])
+    expect(reached.has("chain")).toBe(false)
+  })
+
+  it("still settles a told board at the chain rung, which no tier ships", () => {
+    const told: ProcessionPuzzle = {
+      ticks: 8,
+      bars: [
+        { len: 3, start: 2 },
+        { len: 2, start: 0 },
+      ],
+      marks: [
+        { kind: "pin", a: 0, tick: 0 },
+        { kind: "link", a: 0, b: 1, gap: 1 },
+      ],
+    }
+    expect(requiredRung(told)?.rung).toBe("chain")
+    expect(deduce(told, "chain").starts).toEqual([0, 4])
   })
 
   it("settles each shipped board, and its answer satisfies every mark", () => {

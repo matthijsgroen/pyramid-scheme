@@ -91,6 +91,14 @@ disjunction collapses without a guess.
 rather than a guess that sticks**: the value is struck off and the board is never left standing on an
 assumption, which is what makes it a technique a player can follow.
 
+**Nothing ships at the bottom rung, which is the second thing playtesting changed.** A board settled by
+`chain` alone is a board where every bar is fixed by a pin or by a link off one — the player is told it, one
+sentence at a time, and told is not solved. That was survivable while the marks were wordless chips and
+became dictation the moment each mark said itself in words (§2.1). So the family enters at **squeeze**: even
+a three-bar starter board asks what is left of the day once the pinned bar and the gaps are spoken for.
+`chain` stays in the ladder because propagation has to start somewhere and the hint wording keys on it; a
+spec holds it to a hand-built board so the rung cannot rot.
+
 **There is no fifth rung, and that is a finding rather than a decision.** A supposition *inside* a
 supposition was designed as the top rung and does not occur: across 900 boards rolled at the widest days and
 bar counts this family ships, not one needed a second level. What separates the top two tiers instead is
@@ -122,16 +130,20 @@ the judging happens after a whole candidate exists.
 
 ## 5. Tiers, as measured
 
-Rolled over 4000 seeds a tier, one attempt each — the search the offline pass runs. `steps` is what the
+Rolled over 2000 seeds a tier, one attempt each — the search the offline pass runs. `steps` is what the
 ladder reported, and it is the closest thing to a bookkeeping measure this family has.
 
-| Tier    | Bars | Ticks | Marks in play              | Rung    | Splits | Seeds clean | Marks on the board | steps |
-| ------- | ---- | ----- | -------------------------- | ------- | ------ | ----------- | ------------------ | ----- |
-| starter | 3    | 8     | pin, link                  | chain   | —      | 41%         | 2–3                | 15–18 |
-| junior  | 4    | 10    | + before                   | squeeze | —      | 13%         | 3–6                | 29–32 |
-| expert  | 5    | 12    | + apart, together          | apart   | —      | 19%         | 4–9                | 41–48 |
-| master  | 5    | 14    | + span                     | split   | 1–4    | 3.5%        | 5–10               | 51–58 |
-| wizard  | 6    | 16    | all                        | split   | 5–20   | 3.4%        | 6–13               | 73–83 |
+| Tier    | Bars | Ticks | Marks in play             | Rung    | Splits | Seeds clean | Marks on the board | steps |
+| ------- | ---- | ----- | ------------------------- | ------- | ------ | ----------- | ------------------ | ----- |
+| starter | 3    | 8     | pin, link, before, span   | squeeze | —      | 7.1%        | 2–3                | 15–18 |
+| junior  | 4    | 10    | + apart, together         | apart   | —      | 13.3%       | 4–5                | 28–32 |
+| expert  | 5    | 12    | all                       | split   | 1–3    | 3.4%        | ~7                 | 43–49 |
+| master  | 5    | 14    | all                       | split   | 4–8    | 1.4%        | ~7                 | 52–58 |
+| wizard  | 6    | 16    | all                       | split   | 9–20   | 2.4%        | ~8                 | 73–83 |
+
+**The top three tiers are the same rung, and the splits column is what tells them apart** — how many
+candidates only fall to a supposition. The ceiling matters as much as the floor: past twenty, a board stops
+being hard and starts being long, which is the shape §3.2 of the catalogue rules out.
 
 **A seed costs one to two milliseconds**, so the deep tiers being rare costs the build machine seconds
 rather than minutes, and a room with no listed seed can still search live without the player waiting.
