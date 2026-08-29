@@ -58,6 +58,7 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
       <div
         ref={frame}
         className={clsx("relative aspect-square w-[92%] touch-none overflow-hidden select-none", skin.ground)}
+        style={skin.art && { backgroundImage: `url(${skin.art.ground})`, backgroundSize: "100% 100%" }}
         onPointerMove={onPointerMove}
         onPointerUp={() => setDrag(undefined)}
         onPointerCancel={() => setDrag(undefined)}
@@ -83,7 +84,13 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
               top: `${Math.floor(cell / puzzle.size) * share}%`,
               width: `${share}%`,
               height: `${share}%`,
-              backgroundImage: `repeating-linear-gradient(45deg, transparent 0 4px, ${skin.wallHatch} 4px 7px)`,
+              backgroundImage: [
+                `repeating-linear-gradient(45deg, transparent 0 4px, ${skin.wallHatch} 4px 7px)`,
+                skin.art && `url(${skin.art.wall})`,
+              ]
+                .filter(Boolean)
+                .join(", "),
+              backgroundSize: "auto, 100% 100%",
             }}
           />
         ))}
@@ -134,10 +141,37 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
                 height: `${(piece.horizontal ? 1 : piece.len) * share}%`,
                 // **The player's piece has a nose**, which is the signal a player who reads no colour gets:
                 // it is the only piece on the board that is not a plain rectangle, and it points at the way
-                // out (`puzzle-screens.md` §2).
-                clipPath: mine ? "polygon(0 0, 82% 0, 100% 50%, 82% 100%, 0 100%)" : undefined,
+                // out (`puzzle-screens.md` §2). A painted face draws its own prow, so the clip stands down.
+                clipPath: mine && !skin.art ? "polygon(0 0, 82% 0, 100% 50%, 82% 100%, 0 100%)" : undefined,
               }}
-            />
+            >
+              {skin.art && (
+                <img
+                  src={mine ? skin.art.player : piece.len === 3 ? skin.art.piece3 : skin.art.piece2}
+                  alt=""
+                  draggable={false}
+                  // `max-w-none` because preflight caps an image at the width of its box, and a turned piece is
+                  // deliberately WIDER than the box it sits in — without it the sprite is squashed, not turned.
+                  className="pointer-events-none absolute inset-0 size-full max-w-none object-fill"
+                  // **A piece across the board is the piece along it, turned.** The art carries no lighting
+                  // direction, so one image serves both axes (`rush-hour.md` §5). A turned image swaps the
+                  // box it fills: as long as the parent, as tall as the parent is wide, spun about its middle.
+                  style={
+                    piece.horizontal
+                      ? undefined
+                      : {
+                          inset: "auto",
+                          top: "50%",
+                          left: "50%",
+                          width: `${100 * piece.len}%`,
+                          height: `${100 / piece.len}%`,
+                          translate: "-50% -50%",
+                          rotate: "90deg",
+                        }
+                  }
+                />
+              )}
+            </div>
           )
         })}
       </div>

@@ -1,14 +1,22 @@
 import { RUSH_HOUR_META } from "@/mods/puzzle/game/rushHour/meta"
+import marketGround from "@/assets/rushHour/market/ground.webp"
+import marketPiece2 from "@/assets/rushHour/market/piece2.webp"
+import marketPiece3 from "@/assets/rushHour/market/piece3.webp"
+import marketPlayer from "@/assets/rushHour/market/player.webp"
+import marketWall from "@/assets/rushHour/market/wall.webp"
 import { faceFor, withAmbience } from "../faceFor"
 
 /**
  * What this mechanic's place looks like, and how a room works out which place it is.
  *
- * **One face today, and it is deliberately no place at all**: blocks in lanes, told apart by their shape
- * and their size. The fiction this board is for — sledges shoved along a market lane, barges warped along
- * a quay — arrives as painted art per face (`docs/game-design/puzzles/rush-hour.md` §5), and a face is
- * where that art will hang. Everything a face decides is already routed through this table, so adding one
- * is a table entry and a block of sentences, not a change to the board.
+ * **Two faces: nowhere, and a market lane.** `default` is deliberately no place at all — blocks in lanes,
+ * told apart by their shape and their size. `market` is the same board painted as sledges jammed in an
+ * Egyptian market street, which is what lets the family carry the `trade` tag (`meta.ts`).
+ *
+ * **A face either paints itself or it does not.** A painted face fills `art`, and the board stretches each
+ * image over the box it had already sized; a face that leaves `art` undefined keeps the plain fills below
+ * and nothing else changes. So a third face is a table entry and a block of sentences, not a change to the
+ * board (`docs/game-design/art-pipeline.md` §A).
  */
 export type RushHourSkin = {
   /** Which place this is, as its own name — the goal, the rules and every hint sentence are keyed on it. */
@@ -38,6 +46,15 @@ export type RushHourSkin = {
   focus: string
   /** What the player's piece wears as it leaves (`puzzle-screens.md` §3). */
   celebrate: string
+  /**
+   * The painted face, if this one has been drawn.
+   *
+   * **Each image is stretched over the box the board already computed**, which is what keeps the art
+   * honest: a piece's length is decided by the grid and the picture obeys it, so a hull can never claim a
+   * cell it does not own (`rush-hour.md` §5). A vertical piece is the horizontal image turned 90°, which
+   * only works because the art carries no lighting direction.
+   */
+  art?: { ground: string; piece2: string; piece3: string; player: string; wall: string }
 }
 
 const SKINS: Record<string, RushHourSkin> = {
@@ -66,6 +83,41 @@ const SKINS: Record<string, RushHourSkin> = {
     evidence: "ring-sky-300/60",
     focus: "ring-amber-300",
     celebrate: "animate-flare",
+  },
+
+  /**
+   * **The market lane** — the same blockade as a street of loaded sledges, and the face that lets this
+   * family claim `trade`.
+   *
+   * **The painted pieces say the same things the plain ones did, and say them the same way.** Length is
+   * still the rule and still comes from the grid; the player's own is still the one piece with a pointed
+   * end, now a prow rather than a clipped corner. What the art adds is the second signal on top of the
+   * first — warm cedar against the grey working sledges — never a signal of its own.
+   *
+   * The walled cell keeps its hatch over the painted slab, because a stone block that reads as cargo is
+   * the exact failure the hatch exists to prevent (see `wall` above).
+   */
+  market: {
+    name: "market",
+    ground: "bg-stone-900",
+    seam: "rgb(120 113 108 / 0.25)",
+    piece: "bg-transparent",
+    pieceEdge: "border-stone-500/70",
+    player: "bg-transparent",
+    playerEdge: "border-amber-300",
+    exit: "bg-amber-400/70",
+    wall: "bg-stone-950 ring-1 ring-stone-500/60 ring-inset",
+    wallHatch: "rgba(214,211,209,0.22)",
+    evidence: "ring-sky-300/60",
+    focus: "ring-amber-300",
+    celebrate: "animate-flare",
+    art: {
+      ground: marketGround,
+      piece2: marketPiece2,
+      piece3: marketPiece3,
+      player: marketPlayer,
+      wall: marketWall,
+    },
   },
 }
 

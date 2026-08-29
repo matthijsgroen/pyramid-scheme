@@ -13,13 +13,17 @@ import { RUSH_HOUR_CONFIG } from "./rushHourConfig"
 export const RUSH_HOUR_META: FamilyMeta = {
   id: "rush-hour",
   ownerMod: "puzzle",
-  // **`puzzle` alone, deliberately.** The board reads as coloured blocks in lanes, which is no place at
-  // all, and a tag is a claim that this family can DRESS as somewhere (`familyMeta.ts`'s `faces`). The
-  // fiction this mechanic is for — sledges jammed in a market lane, barges at a quay — is `trade`, whose
-  // pool sits one member short of the floor a journey needs (`journeys.md` §9), so the tag is worth real
-  // rooms the day the face exists. It lands with the art, not before it.
-  tags: ["puzzle"],
-  themes: ["default"],
+  // **`trade` is claimed now that the face exists.** A tag says this family can DRESS as somewhere
+  // (`familyMeta.ts`'s `faces`), and until the market lane was painted the board was coloured blocks in
+  // lanes, which is no place at all. It is painted (`art-pipeline.md` §A), so the claim is honest, and
+  // `trade` was the pool one member short of the floor a journey needs to restrict to it (`journeys.md` §9).
+  tags: ["puzzle", "trade"],
+  faces: {
+    trade: ["market"],
+  },
+  // A site never names a skin, it names a role (`puzzle-screens.md` §2) — this list is what the puzzle
+  // lab's picker reads, which is the only place a face is chosen by name.
+  themes: ["default", "market"],
   minTier: "starter",
   icon: "🚧",
   color: "orange",

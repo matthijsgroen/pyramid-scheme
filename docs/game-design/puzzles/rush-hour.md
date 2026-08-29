@@ -133,31 +133,40 @@ Under it, a second line names the direction ("shove it left, as far as the ring"
 followable by somebody who cannot see which cell is ringed. The board rings the cells the piece would end
 up on, which is what the words point at.
 
-## 5. Theming — one face, and it is deliberately nowhere
+## 5. Theming — nowhere, and a market lane
 
-**Blocks in a stone frame** (`app/rushHour/skins.ts`). Everything that carries meaning is geometry: a
-piece's length is how many cells it owns, its long axis is the lane it may slide along, and the player's
-own piece is the only one with a pointed nose — which is the signal a player who reads no hue gets, with
-the amber as the second signal rather than the first.
+**`default` is blocks in a stone frame** (`app/rushHour/skins.ts`), and it is deliberately no place at all.
+Everything that carries meaning is geometry: a piece's length is how many cells it owns, its long axis is
+the lane it may slide along, and the player's own piece is the only one with a pointed nose — which is the
+signal a player who reads no hue gets, with the amber as the second signal rather than the first.
 
-**The family carries `puzzle` and no role tag, and that is a claim being withheld rather than an oversight.**
-A tag says this family can DRESS as somewhere (`familyMeta.ts`'s `faces`), and coloured blocks in lanes are
-nowhere at all. The fiction this mechanic is for is `trade` — sledges jammed in a market street, barges
-warped along a quay — whose pool sits one member short of the floor a journey needs to restrict to it
-(`journeys.md` §9), so the tag is worth four journeys and 187 rooms the day it is honest. It lands with the
-art, not before it.
+**`market` is the same board painted as an Egyptian market street**: sledges loaded with grain sacks and
+netted stone, jammed in a lane, and the player's own the one with a prow. It says exactly what the plain
+face says and says it the same way — length is still the grid's to decide, the pointed end is still the
+first signal, the warm cedar is still only the second.
+
+**That face is what lets the family carry `trade`.** A tag says this family can DRESS as somewhere
+(`familyMeta.ts`'s `faces`), and coloured blocks in lanes are nowhere at all, so the claim waited for the
+art rather than being made on a promise. With rush hour in it, `trade` holds five families — above the four
+`rolePools.spec.ts` asks of any authored role — so a journey may now restrict to it. **None does yet**:
+`master.ts` still holds the one-line change for the Great Pyramid of Giza next to the note explaining that
+what remains is a content decision about what that pyramid serves, not a gap in the pool.
 
 **The art is where this family differs from the rest, and the reason is the sprite plan**
 (`docs/game-design/spritesheet-renderer-prep.md`). A glyph in the other families is `currentColor` at 30–45px,
 recoloured by its skin and by hint state, which is why they are hand-drawn paths. A piece here is 2–3 cells
 — 90–130px of real canvas — there are under a dozen on a board, and only the player's own carries a state,
-which a ring can say. So painted sprites per face are a good bargain here, with two conditions:
+which a ring can say. So painted sprites per face are a good bargain here, with two conditions, both of
+which the market lane met:
 
 - **Art that carries geometry has to be pixel-exact.** A piece's length IS the rule. A painted hull whose
-  ends stop short of the cell boundary makes a 3 read as a 2, and the player then deduces wrongly. Sprites
-  are authored against the grid, ends on the lines.
+  ends stop short of the cell boundary makes a 3 read as a 2, and the player then deduces wrongly. So the
+  image is stretched over the box the board already sized, and cropped to the sledge's DECK rather than to
+  its outermost pixel — the runner tips that poke past the frame would otherwise eat an eighth of a cell at
+  each end. How that crop is found is in `art-pipeline.md` §A.6.
 - **The count multiplies**: face × length (2, 3) × axis (along, across). One rotated sprite per length
-  serves both axes only if the art has no directional lighting.
+  serves both axes only if the art has no directional lighting, which is why the prompts insist on flat
+  omnidirectional light — and it held: a vertical sledge is the horizontal image turned 90°.
 
 ### 5.1 The way out is drawn outside the board
 

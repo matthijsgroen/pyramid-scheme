@@ -5,6 +5,7 @@ import { skinFor } from "./constellation/skins"
 import { skinFor as starBattleSkinFor } from "./starBattle/skins"
 import { skinFor as hidatoSkinFor } from "./hidato/skins"
 import { skinFor as sudokuSkinFor } from "./sudoku/skins"
+import { skinFor as rushHourSkinFor } from "./rushHour/skins"
 
 /**
  * Every family says what a finished board looks like, in both languages.
@@ -77,6 +78,7 @@ describe("the goal above the rules", () => {
       starBattle: ["default", "fields", "twinDefault", "twinFields"],
       sudoku: ["default", "papyrus"],
       canisters: ["default", "grain", "oil", "wine", "natron", "ink"],
+      rushHour: ["default", "market"],
       balance: ["default", "weighing"],
     }
     for (const locale of [en, nl])
@@ -342,6 +344,65 @@ describe("the goal above the rules", () => {
     ] as const)
       for (const place of ["default", "papyrus"] as const) {
         const other = place === "default" ? "papyrus" : "default"
+        for (const [where, wording] of said(locale, place))
+          expect(WORDS[tongue][other].test(wording), `${place}.${where} says ${other}: ${wording}`).toBe(false)
+      }
+  })
+
+  /**
+   * **And over rush hour's two faces.** The mechanic is blocks in lanes when it is nowhere, and sledges
+   * jammed in a market street when it is drawn for `trade` — the face that lets the family carry the tag
+   * at all (`meta.ts`). Nothing in the street is a block, and the market's own vocabulary would be a lie
+   * over the plain board, so both directions are checked.
+   */
+  const RUSH_HOUR_PLACES = [
+    { role: "puzzle", skin: "default" },
+    { role: "trade", skin: "market" },
+  ]
+
+  it.each(RUSH_HOUR_PLACES)("rush hour drawn for $role wears its own face", ({ role, skin }) => {
+    expect(rushHourSkinFor(role, undefined).name).toBe(skin)
+    for (const locale of [en, nl]) {
+      expect(typeof (locale.rushHour.goal as Record<string, string>)[skin]).toBe("string")
+      for (const rule of ["lanes", "shove"])
+        expect(typeof (locale.rushHour.rules as Record<string, Record<string, string>>)[skin][rule]).toBe("string")
+      const hint = (locale.rushHour.hint as unknown as Record<string, Record<string, unknown>>)[skin]
+      for (const rung of ["drive", "back", "clear", "room"]) expect(typeof hint[rung], `${skin}.${rung}`).toBe("string")
+      const push = hint.push as Record<string, string>
+      for (const way of ["left", "right", "up", "down"]) expect(typeof push[way], `${skin}.push.${way}`).toBe("string")
+    }
+  })
+
+  it("keeps rush hour's two places out of each other's vocabulary", () => {
+    const said = (locale: unknown, skin: string): [string, string][] => {
+      const block = (locale as Record<string, Record<string, Record<string, unknown>>>).rushHour
+      const hint = (block.hint as Record<string, Record<string, unknown>>)[skin]
+      return [
+        ["name", (block.name as unknown as Record<string, string>)[skin]],
+        ["goal", (block.goal as unknown as Record<string, string>)[skin]],
+        ...Object.entries((block.rules as Record<string, Record<string, string>>)[skin]).map(
+          ([key, text]): [string, string] => [`rules.${key}`, text]
+        ),
+        ...Object.entries(hint).flatMap(([key, text]): [string, string][] =>
+          typeof text === "string"
+            ? [[`hint.${key}`, text]]
+            : Object.entries(text as Record<string, string>).map(([inner, deep]): [string, string] => [
+                `hint.${key}.${inner}`,
+                deep,
+              ])
+        ),
+      ]
+    }
+    const WORDS = {
+      en: { default: /\bblocks?\b/i, market: /\b(sledges?|street|load)\b/i },
+      nl: { default: /\bblok(ken)?\b/i, market: /\b(slee|sleeën|straat|lading|steeg)\b/i },
+    }
+    for (const [tongue, locale] of [
+      ["en", en],
+      ["nl", nl],
+    ] as const)
+      for (const place of ["default", "market"] as const) {
+        const other = place === "default" ? "market" : "default"
         for (const [where, wording] of said(locale, place))
           expect(WORDS[tongue][other].test(wording), `${place}.${where} says ${other}: ${wording}`).toBe(false)
       }

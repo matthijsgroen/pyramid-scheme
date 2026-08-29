@@ -113,12 +113,14 @@ export const masterRules: Rule[] = [
   // the room — the same board is a star map on the lighthouse and a causeway network here, and neither
   // site had to name a skin to get it.
   //
-  // Not authored, because `trade` has only those two members and this journey is 75 puzzle rooms: the
-  // balance scale alone came to 62% of them, one family every other room for a whole tier. `sky` reads
-  // as varied at five families and 33%; two is not the same breadth. rolePools.spec.ts holds the floor.
-  // A third and fourth join by carrying the tag — the catalogue names Sokoban and target-number
-  // (PUZZLE_FAMILIES.md §11.1), both unbuilt, so the cheaper route is an existing multi-identity family
-  // taking a trade face. Then this is the whole change:
+  // **The pool now clears the floor: five families carry `trade`** — balance scale, constellation's
+  // causeway, canisters, procession, and rush hour, which claimed the tag the day its market lane was
+  // painted (`rushHour/meta.ts`). rolePools.spec.ts asks for four, and the reason it asks is this
+  // journey's 75 puzzle rooms: at two members the balance scale alone came to 62% of them, one family
+  // every other room for a whole tier, where `sky` reads as varied at five families and 33%.
+  //
+  // So what is left is the authoring itself, still not done here because it is a content decision about
+  // what this pyramid serves rather than a gap in the pool. This is the whole change:
   //
   //   journey("master_1").pyramid("1-5", { encounter: "trade" })
   //

@@ -682,15 +682,21 @@
   },
   "rushHour": {
     "name": {
-      "default": "De Blokkade"
+      "default": "De Blokkade",
+      "market": "De Versperde Steeg"
     },
     "goal": {
-      "default": "Krijg je eigen blok naar de opening rechts."
+      "default": "Krijg je eigen blok naar de opening rechts.",
+      "market": "Werk je eigen slee door de opening aan het eind van de straat naar buiten."
     },
     "rules": {
       "default": {
         "lanes": "Een blok schuift alleen over zijn eigen baan — nooit zijwaarts, nooit van het bord af.",
         "shove": "Sleep een blok om het te duwen. Het stopt waar iets in de weg staat."
+      },
+      "market": {
+        "lanes": "Een slee schuift alleen over de baan waarin hij staat — nooit zijwaarts, nooit de straat uit.",
+        "shove": "Sleep een slee om hem te duwen. Hij stopt waar iets in de weg staat."
       }
     },
     "hint": {
@@ -704,6 +710,18 @@
           "right": "Duw het naar rechts, tot aan de ring.",
           "up": "Duw het naar boven, tot aan de ring.",
           "down": "Duw het naar beneden, tot aan de ring."
+        }
+      },
+      "market": {
+        "drive": "Zo ver is de baan voor je vrij.",
+        "back": "Vooruit gaat het niet. Trek je eigen slee eerst terug.",
+        "clear": "Die lading staat in de baan waardoor jij weg moet.",
+        "room": "Er kan niets wijken zolang die daar staat.",
+        "push": {
+          "left": "Duw hem naar links, tot aan de ring.",
+          "right": "Duw hem naar rechts, tot aan de ring.",
+          "up": "Duw hem de straat op, tot aan de ring.",
+          "down": "Duw hem de straat af, tot aan de ring."
         }
       }
     },
