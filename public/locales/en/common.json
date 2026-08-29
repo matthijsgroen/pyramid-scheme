@@ -682,15 +682,21 @@
   },
   "rushHour": {
     "name": {
-      "default": "The Blockade"
+      "default": "The Blockade",
+      "market": "The Blocked Lane"
     },
     "goal": {
-      "default": "Get your own block out through the gap on the right."
+      "default": "Get your own block out through the gap on the right.",
+      "market": "Work your own sledge out through the gap at the end of the street."
     },
     "rules": {
       "default": {
         "lanes": "A block only slides along its own lane — never sideways, never off the board.",
         "shove": "Drag a block to shove it. It stops where something is in the way."
+      },
+      "market": {
+        "lanes": "A sledge only slides along the lane it stands in — never sideways, never out of the street.",
+        "shove": "Drag a sledge to shove it. It stops where something is in the way."
       }
     },
     "hint": {
@@ -704,6 +710,18 @@
           "right": "Shove it right, as far as the ring.",
           "up": "Shove it up, as far as the ring.",
           "down": "Shove it down, as far as the ring."
+        }
+      },
+      "market": {
+        "drive": "The lane ahead of yours is clear that far.",
+        "back": "Nothing ahead will give. Back your own sledge up first.",
+        "clear": "That load stands across the lane you leave by.",
+        "room": "Nothing can shift until that one is moved.",
+        "push": {
+          "left": "Shove it left, as far as the ring.",
+          "right": "Shove it right, as far as the ring.",
+          "up": "Shove it up the street, as far as the ring.",
+          "down": "Shove it down the street, as far as the ring."
         }
       }
     },

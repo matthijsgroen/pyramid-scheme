@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- The blockade puzzle can be drawn as a market street now: painted sledges loaded with grain and stone,
+  shoved along a street too narrow for them, with your own sledge the one that carries a prow.
+- The Great Pyramid of Giza leans on trading puzzles — scales to balance, goods to measure, haul roads to
+  lay and a market street to clear — without giving up the rest of what a master pyramid can hold.
+
 ### Changed
 
 - The canister puzzle teaches one idea a tier now: two pours to start, then a leftover to park and pick up
@@ -23,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   why a piece cannot be reached yet.
 - On iPhone, a square no longer stands taller than the rest of its row: no patch of the board hangs below
   the bottom edge of a puzzle grid, and the lines of a number grid stay where they are as you fill it in.
+
 ### Added
 
 - A new puzzle about the hours of a day: every bar lasts as long as it lasts, but when each one happens is

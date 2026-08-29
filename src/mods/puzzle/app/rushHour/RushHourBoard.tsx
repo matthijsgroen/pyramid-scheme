@@ -58,6 +58,7 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
       <div
         ref={frame}
         className={clsx("relative aspect-square w-[92%] touch-none overflow-hidden select-none", skin.ground)}
+        style={skin.art && { backgroundImage: `url(${skin.art.ground})`, backgroundSize: "100% 100%" }}
         onPointerMove={onPointerMove}
         onPointerUp={() => setDrag(undefined)}
         onPointerCancel={() => setDrag(undefined)}
@@ -83,7 +84,13 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
               top: `${Math.floor(cell / puzzle.size) * share}%`,
               width: `${share}%`,
               height: `${share}%`,
-              backgroundImage: `repeating-linear-gradient(45deg, transparent 0 4px, ${skin.wallHatch} 4px 7px)`,
+              backgroundImage: [
+                `repeating-linear-gradient(45deg, transparent 0 4px, ${skin.wallHatch} 4px 7px)`,
+                skin.art && `url(${skin.art.wall})`,
+              ]
+                .filter(Boolean)
+                .join(", "),
+              backgroundSize: "auto, 100% 100%",
             }}
           />
         ))}
@@ -134,10 +141,38 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
                 height: `${(piece.horizontal ? 1 : piece.len) * share}%`,
                 // **The player's piece has a nose**, which is the signal a player who reads no colour gets:
                 // it is the only piece on the board that is not a plain rectangle, and it points at the way
-                // out (`puzzle-screens.md` §2).
-                clipPath: mine ? "polygon(0 0, 82% 0, 100% 50%, 82% 100%, 0 100%)" : undefined,
+                // out (`puzzle-screens.md` §2). A painted face draws its own prow, so the clip stands down.
+                clipPath: mine && !skin.art ? "polygon(0 0, 82% 0, 100% 50%, 82% 100%, 0 100%)" : undefined,
               }}
-            />
+            >
+              {skin.art && (
+                <img
+                  src={mine ? skin.art.player : piece.len === 3 ? skin.art.piece3 : skin.art.piece2}
+                  alt=""
+                  draggable={false}
+                  // `max-w-none` because preflight caps an image at the width of its box, and a turned sprite
+                  // is deliberately wider than its box — without it the art is squashed rather than turned.
+                  className="pointer-events-none absolute max-w-none object-fill"
+                  // **The whole sledge is inside the cells it owns, runners and all.** Drawing the deck to the
+                  // cell lines and letting the handles hang over the neighbours was truer to the object and
+                  // read as clutter — a dozen pieces overlapping each other is a board that looks jumbled
+                  // rather than gridded. Whole-object-in-box asks the player to read length off the sledge
+                  // rather than off the cell lines, which they can: the handles are visibly part of the thing.
+                  //
+                  // **A piece across the board is the piece along it, turned** — one image serves both axes,
+                  // which only works because the art has no lighting direction (`rush-hour.md` §5). A turned
+                  // image swaps the box it fills, so it is hung off the middle and spun there.
+                  style={{
+                    top: "50%",
+                    left: "50%",
+                    translate: "-50% -50%",
+                    width: `${(piece.horizontal ? 1 : piece.len) * 100}%`,
+                    height: `${(piece.horizontal ? 1 : 1 / piece.len) * 100}%`,
+                    rotate: piece.horizontal ? undefined : "90deg",
+                  }}
+                />
+              )}
+            </div>
           )
         })}
       </div>

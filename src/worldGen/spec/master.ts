@@ -113,15 +113,19 @@ export const masterRules: Rule[] = [
   // the room — the same board is a star map on the lighthouse and a causeway network here, and neither
   // site had to name a skin to get it.
   //
-  // Not authored, because `trade` has only those two members and this journey is 75 puzzle rooms: the
-  // balance scale alone came to 62% of them, one family every other room for a whole tier. `sky` reads
-  // as varied at five families and 33%; two is not the same breadth. rolePools.spec.ts holds the floor.
-  // A third and fourth join by carrying the tag — the catalogue names Sokoban and target-number
-  // (PUZZLE_FAMILIES.md §11.1), both unbuilt, so the cheaper route is an existing multi-identity family
-  // taking a trade face. Then this is the whole change:
+  // **Preferred rather than restricted, which is what makes it authorable at all here.** Five families
+  // carry `trade` — balance scale, constellation's causeway, canisters, procession, and rush hour's market
+  // lane — and restricting 75 puzzle rooms to five would still be one family every fifteenth room, the
+  // thinness that kept this unauthored while the pool was two. `["trade", "puzzle"]` is prefer mode
+  // (`allFamilyMeta.ts`): the whole catalogue stays admitted, and a family with a face DRAWN for `trade`
+  // goes into the bag twice, so it comes up about twice as often. The pyramid reads as a trading house
+  // without becoming a five-note one.
   //
-  //   journey("master_1").pyramid("1-5", { encounter: "trade" })
-  //
+  // The papyrus route (`starter.ts`) restricts to `trade` outright, and the two are not in tension: a
+  // market of thirteen sections should have nothing in it that is not selling something, where a 75-room
+  // tier needs the breadth more than it needs every room on theme.
+  journey("master_1").pyramid("1-5", { encounter: ["trade", "puzzle"] }),
+
   // Deliberately not authored as a skin instead, for the reason expert.ts gives about `water`: asking
   // for a dress without asking for the puzzles that wear it is how a trade pyramid ends up looking
   // like a waterworks.
