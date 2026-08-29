@@ -17,9 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Tapping a full canister while holding another picks that one up, instead of quietly putting down the one
   you were holding.
-
-### Fixed
-
+- The button that claims a canister reads “this one” again, in both languages. It has been showing the name
+  of a translation that was never written.
+- The detector panel speaks Dutch again where it had fallen back to English: what it is looking for, and
+  why a piece cannot be reached yet.
 - On iPhone, a square no longer stands taller than the rest of its row: no patch of the board hangs below
   the bottom edge of a puzzle grid, and the lines of a number grid stay where they are as you fill it in.
 

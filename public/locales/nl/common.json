@@ -206,6 +206,13 @@
     "huntStop": "Stop",
     "huntHint": "Selecteer een niet-verzamelde hiëroglief en jaag erop met het kompas",
     "huntAction": "Jaag op {{symbol}}",
+    "lookingFor": "Op zoek naar {{symbol}}",
+    "access": {
+      "open": "Niets bekends houdt deze tegen",
+      "locked": "Op slot — je hebt de sleutel hiervoor nog niet",
+      "hidden": "In een verborgen gang — hiervoor is de gangendetector nodig",
+      "unknown": "Misschien nog niet te bereiken — het ligt in een tombe of staat te koop"
+    },
     "corridorNoneNearby": "Geen verborgen gang in de buurt",
     "corridorNoneOnFloor": "Geen verborgen gang op deze verdieping",
     "corridorOtherFloor": "Een verborgen gang wacht op een andere verdieping",
