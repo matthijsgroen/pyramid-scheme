@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- On iPhone, a square you have marked no longer stands taller than the rest of its row, so no patch of the
-  board hangs below the bottom edge of a puzzle grid.
+- On iPhone, a square no longer stands taller than the rest of its row: no patch of the board hangs below
+  the bottom edge of a puzzle grid, and the lines of a number grid stay where they are as you fill it in.
 
 ## 0.41.0 - 2026-08-29
 
