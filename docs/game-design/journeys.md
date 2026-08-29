@@ -142,7 +142,7 @@ pyramid picks up a floor or two.
 | Journey                              | Pyr | Rooms | Sects | Sprawl | Wears | Its story asks for                  | If restricted to it |
 | ------------------------------------ | --- | ----- | ----- | ------ | ----- | ----------------------------------- | ------------------- |
 | `starter_1` Dawn at the Sphinx       | 2   | 13    | 8     | —      | —     | dawn · weathered sandstone          | no role fits        |
-| `starter_2` Papyrus Merchant's Route | 2   | 21    | 13    | —      | —     | `scribe` / `trade` · market · reeds | **3.3× — could restrict** |
+| `starter_2` Papyrus Merchant's Route | 2   | 21    | 13    | —      | `trade` | `scribe` / `trade` · market · reeds | **3.3× — authored** |
 | `starter_3` Temple of Bastet         | 4   | 26    | 16    | —      | —     | `light` · offering table · cat      | 5.3× — pool of 3    |
 | `starter_4` Scribe's Academy         | 4   | 29    | 19    | —      | —     | `scribe` · schoolroom ostraca       | 6.3× — pool of 3    |
 
@@ -399,9 +399,12 @@ to clear four members (`rolePools.spec.ts`), and `sections ÷ pool` has to land 
 - **`junior_1` is authored and restricted** — `water`, a pool of six, 2.8 turns each. All 22 of its puzzle
   rooms are drawn from that pool and its families turn up across them; its two trap rooms sit outside, as a
   trap carries its own role.
-- **`starter_2` is the one waiting to be authored.** `trade` cleared the four-family floor when procession
-  joined it, and the papyrus route's 13 sections over that pool is 3.3× — under the bar and legal to
-  restrict, which no unauthored journey was before.
+- **`starter_2` is authored and restricted** — `trade`, 3.3 turns each. It became legal the day procession
+  took that pool to four, and `starter.ts` carries the line. **Two things to know about what it drew**: its
+  starter sections see three of the four families, since canisters debuts at junior, and this world seed
+  dealt constellation eight of the fourteen sections against balance scale's four and procession's none.
+  The pool is even (the allocator draws uniformly — 999/986/1015 over 3000 starter draws), so that share is
+  this cut's luck rather than a bias, but it is the share a player meets until the world is re-authored.
 - **Three are still held back by pool size alone**: `starter_3`, `starter_4` and `junior_3` draw on pools of
   three (`light`, `scribe`). One tag on one existing family turns each into a candidate, which is why §9
   ranks pool size above faces.

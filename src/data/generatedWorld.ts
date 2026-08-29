@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1974018037
+export const worldContentHash = 1402390593
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -136,14 +136,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: { stairId: "starter_2:0:floor0:side0" },
             gate: { type: "tomb-key", wardKeyId: "junior_a_2" },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "constellation",
-            role: "puzzle",
+            encounter: "balance-scale",
+            role: "trade",
           },
           {
             pathPuzzles: 0,
             difficulty: "starter",
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "starter" },
+            encounter: "constellation",
+            role: "trade",
           },
           {
             pathPuzzles: 2,
@@ -155,8 +157,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "consumable", consumable: "trapTool" },
               { type: "consumable", consumable: "bandage" },
             ],
-            encounter: "lightbeam",
-            role: "puzzle",
+            encounter: "constellation",
+            role: "trade",
           },
           {
             pathPuzzles: 1,
@@ -165,18 +167,20 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a6", pieceIndex: 0 },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "eclipse",
-            role: "puzzle",
+            encounter: "balance-scale",
+            role: "trade",
           },
           {
             pathPuzzles: 0,
             difficulty: "starter",
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "starter" },
+            encounter: "constellation",
+            role: "trade",
           },
         ],
         encounter: "balance-scale",
-        role: "puzzle",
+        role: "trade",
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [{ type: "money", amount: 3 }],
       },
@@ -192,8 +196,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "lightbeam",
-            role: "puzzle",
+            encounter: "constellation",
+            role: "trade",
           },
           {
             pathPuzzles: 4,
@@ -207,8 +211,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "starter_2:0:floor0:side0" },
-        encounter: "procession",
-        role: "puzzle",
+        encounter: "constellation",
+        role: "trade",
         mainEndReward: { type: "mosaicPiece", tier: "junior" },
         rewards: [
           { type: "money", amount: 1 },
@@ -229,14 +233,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: { stairId: "starter_2:1:floor0:side0" },
             gate: { type: "tomb-key", wardKeyId: "expert_a_3" },
             rewards: [{ type: "consumable", consumable: "oil" }],
-            encounter: "lightbeam",
-            role: "puzzle",
+            encounter: "canisters",
+            role: "trade",
           },
           {
             pathPuzzles: 0,
             difficulty: "starter",
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "starter" },
+            encounter: "balance-scale",
+            role: "trade",
           },
           {
             pathPuzzles: 1,
@@ -245,12 +251,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
             endReward: { type: "mosaicPiece", tier: "starter" },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "lightbeam",
-            role: "puzzle",
+            encounter: "constellation",
+            role: "trade",
           },
         ],
-        encounter: "procession",
-        role: "puzzle",
+        encounter: "constellation",
+        role: "trade",
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [{ type: "money", amount: 2 }],
       },
@@ -266,8 +272,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p7", pieceIndex: 0 },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "hidato",
-            role: "puzzle",
+            encounter: "canisters",
+            role: "trade",
           },
           {
             pathPuzzles: 2,
@@ -281,8 +287,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "starter_2:1:floor0:side0" },
-        encounter: "rush-hour",
-        role: "puzzle",
+        encounter: "constellation",
+        role: "trade",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p3", pieceIndex: 0 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
