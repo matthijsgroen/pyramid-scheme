@@ -197,7 +197,9 @@ export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, decided, f
               disabled={given}
               style={decided?.has(cell) ? HATCH : undefined}
               className={clsx(
-                "flex aspect-square items-center justify-center rounded p-[12%] transition-colors",
+                // `min-h-0` for the reason star battle's board spells out: a square holding a glyph sized off
+                // it would otherwise claim more height than its track and spill below the board on WebKit.
+                "flex aspect-square min-h-0 items-center justify-center rounded p-[12%] transition-colors",
                 // A given is part of the board rather than part of the answer, so it sits on stone rather than in a socket.
                 given ? "bg-stone-500/70" : "bg-stone-800",
                 conflicts.has(cell) && "ring-2 ring-red-500/80",
