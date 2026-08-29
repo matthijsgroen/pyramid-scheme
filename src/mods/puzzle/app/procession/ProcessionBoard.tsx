@@ -98,14 +98,12 @@ export const ProcessionBoard: FC<Props> = ({
       <div className="flex items-stretch gap-1">
         <div className="flex shrink-0 flex-col">
           {puzzle.bars.map((_, index) => (
-            <div
-              key={index}
-              className={clsx(
-                "flex h-12 w-8 items-center justify-center rounded-l text-2xl leading-none",
-                about(index) && `ring-2 ${skin.focus}`
-              )}
-            >
-              {skin.glyphs[index % skin.glyphs.length]}
+            <div key={index} className="flex h-12 items-center">
+              {/* **The same badge the sentences use**, one size up. A sign alone on the ground was the
+                  hardest thing on the board to see — small, unlit, and carrying none of the colour its own
+                  row is known by — and a player scanning for the row a sentence names was matching a white
+                  shape against a white shape. On its colour it is found by hue first and read second. */}
+              <Swatch skin={skin} index={index} size="row" ringed={about(index)} />
             </div>
           ))}
         </div>
@@ -179,7 +177,7 @@ export const ProcessionBoard: FC<Props> = ({
 
       {/* The hours, numbered every other tick. **This is what makes a gap of two countable** rather than
           eyeballed, which is the whole arithmetic this family is for. */}
-      <div className={clsx("relative mt-0.5 ml-9 h-4 text-[10px] tabular-nums", skin.scale)}>
+      <div className={clsx("relative mt-0.5 ml-11 h-4 text-[10px] tabular-nums", skin.scale)}>
         {Array.from({ length: puzzle.ticks + 1 }, (_, tick) =>
           tick % 2 === 0 ? (
             <span key={tick} className="absolute -translate-x-1/2" style={{ left: `${tick * share}%` }}>
@@ -224,12 +222,21 @@ export const ProcessionBoard: FC<Props> = ({
  * **The glyph is what makes a chip a sentence** — "the fire two hours before the grinding" rather than
  * "teal two before rose", which is what a board of swatches was asking a player to hold in their head.
  */
-const Swatch: FC<{ skin: ProcessionSkin; index: number; wide?: boolean }> = ({ skin, index, wide }) => (
+const Swatch: FC<{
+  skin: ProcessionSkin
+  index: number
+  /** A span mark draws every row at once, so its swatches are stubbier. */
+  wide?: boolean
+  /** `row` is the badge beside the track; `mark` is the one inside a sentence. */
+  size?: "row" | "mark"
+  ringed?: boolean
+}> = ({ skin, index, wide, size = "mark", ringed }) => (
   <span
     className={clsx(
-      "inline-flex h-6 items-center justify-center rounded-sm border text-base leading-none",
-      wide ? "w-8" : "w-6",
-      skin.bars[index % skin.bars.length]
+      "inline-flex items-center justify-center rounded border leading-none",
+      size === "row" ? "size-10 text-3xl" : wide ? "h-6 w-8 text-base" : "size-6 text-base",
+      skin.bars[index % skin.bars.length],
+      ringed && `ring-2 ${skin.focus}`
     )}
   >
     {skin.glyphs[index % skin.glyphs.length]}
