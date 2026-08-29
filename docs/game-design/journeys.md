@@ -424,11 +424,31 @@ journey("junior_1").pyramid("1-3", { encounter: "water" })
 journey("expert_3").pyramid("1-5", { encounter: ["water", "puzzle"] })
 ```
 
-**What prefer still lacks is the bias.** Unweighted, a six-family pool inside thirteen dresses fewer than
-half the rooms, which reads as scattered rather than as a place. The allocator can weight it now that
-`FamilyMeta.faces` says which families dress which role — a bag holding every eligible family plus the
-dressing ones twice over is enough of a thumb on the scale, and the number to check afterwards is the share
-of a journey's sections that came out dressed.
+**Prefer is weighted now, and this is what it bought.** Unweighted, a themed pool inside the whole
+catalogue dressed **34%** of the sections it was asked for (91 of 266 across the six journeys that prefer) —
+the journey was authored and two rooms in three did not look it. The allocator puts a family with a face
+drawn for the role into the bag twice, and the same six journeys now come out **53%** dressed (140 of 266):
+
+| Journey    | Was         | Now             |
+| ---------- | ----------- | --------------- |
+| `expert_1` | 13/34 (38%) | **18/34 (53%)** |
+| `master_2` | 19/48 (40%) | **27/48 (56%)** |
+| `master_3` | 19/51 (37%) | **26/51 (51%)** |
+| `master_4` | 10/45 (22%) | **20/45 (44%)** |
+| `wizard_1` | 16/35 (46%) | **22/35 (63%)** |
+| `wizard_3` | 14/53 (26%) | **27/53 (51%)** |
+
+**Twice, not more.** The point of preferring rather than restricting is that the rest of the catalogue still
+turns up; a heavier thumb converges on the restriction the author declined to write. Half the rooms dressed
+is a journey that reads as its place while still surprising you.
+
+**`["default"]` is not dressing.** Declaring a face as `default` says "I already read as that place", which
+is the weaker claim of §2's two columns — so it earns no second entry. That is also why preferring `sky`
+stays a no-op: every family in that pool answers with the face it was going to draw anyway.
+
+**Restricting is untouched.** There the pool IS the dress, so every entry already dresses and doubling them
+all changes nothing but the arithmetic. `allFamilyMeta.spec.ts` holds both halves, and holds that a list of
+two THEMED tags (`["light", "sky"]`) stays a flat union rather than becoming a preference.
 
 Preferring `sky` is inherently a no-op: every family in that pool serves it with its default face (§2), so
 there is nothing to weight toward. A star journey has to restrict.
