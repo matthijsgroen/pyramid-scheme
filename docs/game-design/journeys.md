@@ -47,17 +47,17 @@ So the question for a journey is **which role its story wants, and whether every
 face for it.** That second half is a property of the pool rather than of the journey, and it is the whole
 map of what is missing:
 
-| Role                    | Families in the pool                                       | Read as the place | Look different |
-| ----------------------- | ---------------------------------------------------------- | ----------------- | -------------- |
-| `water` / `agriculture` | canisters, constellation, hidato, procession, star battle, twin stars | 6 of 6 | **6 of 6** |
-| `funerary`              | balance scale, canisters, constellation, hidato, procession, sudoku | 6 of 6 | 5 of 6 |
-| `sky`                   | constellation, eclipse, lightbeam, star battle, twin stars | 5 of 5            | 0 of 5         |
-| `trade`                 | balance scale, canisters, constellation, procession        | 4 of 4            | 3 of 4         |
-| `scribe`                | canisters, hidato, sudoku                                  | 3 of 3            | **3 of 3**     |
-| `light`                 | canisters, eclipse, lightbeam                              | 3 of 3            | **1 of 3**     |
-| `cosmos`                | procession                                                 | 1 of 1            | 1 of 1         |
-| `judgement`             | balance scale                                              | 1 of 1            | 1 of 1         |
-| `logistics`             | —                                                          | —                 | —              |
+| Role                    | Families in the pool                                                  | Read as the place | Look different |
+| ----------------------- | --------------------------------------------------------------------- | ----------------- | -------------- |
+| `water` / `agriculture` | canisters, constellation, hidato, procession, star battle, twin stars | 6 of 6            | **6 of 6**     |
+| `funerary`              | balance scale, canisters, constellation, hidato, procession, sudoku   | 6 of 6            | 5 of 6         |
+| `sky`                   | constellation, eclipse, lightbeam, star battle, twin stars            | 5 of 5            | 0 of 5         |
+| `trade`                 | balance scale, canisters, constellation, procession, rush hour        | 5 of 5            | 4 of 5         |
+| `scribe`                | canisters, hidato, sudoku                                             | 3 of 3            | **3 of 3**     |
+| `light`                 | canisters, eclipse, lightbeam                                         | 3 of 3            | **1 of 3**     |
+| `cosmos`                | procession                                                            | 1 of 1            | 1 of 1         |
+| `judgement`             | balance scale                                                         | 1 of 1            | 1 of 1         |
+| `logistics`             | —                                                                     | —                 | —              |
 
 **Canisters (§4.28) is in six of those pools**, which no other family comes near — measuring an exact
 amount out of vessels that do not divide evenly is the river's act, and the granary's, the lamp room's, the
@@ -139,12 +139,12 @@ pyramid picks up a floor or two.
 
 ## 4. Starter
 
-| Journey                              | Pyr | Rooms | Sects | Sprawl | Wears | Its story asks for                  | If restricted to it |
-| ------------------------------------ | --- | ----- | ----- | ------ | ----- | ----------------------------------- | ------------------- |
-| `starter_1` Dawn at the Sphinx       | 2   | 13    | 8     | —      | —     | dawn · weathered sandstone          | no role fits        |
+| Journey                              | Pyr | Rooms | Sects | Sprawl | Wears   | Its story asks for                  | If restricted to it |
+| ------------------------------------ | --- | ----- | ----- | ------ | ------- | ----------------------------------- | ------------------- |
+| `starter_1` Dawn at the Sphinx       | 2   | 13    | 8     | —      | —       | dawn · weathered sandstone          | no role fits        |
 | `starter_2` Papyrus Merchant's Route | 2   | 21    | 13    | —      | `trade` | `scribe` / `trade` · market · reeds | **3.3× — authored** |
-| `starter_3` Temple of Bastet         | 4   | 26    | 16    | —      | —     | `light` · offering table · cat      | 5.3× — pool of 3    |
-| `starter_4` Scribe's Academy         | 4   | 29    | 19    | —      | —     | `scribe` · schoolroom ostraca       | 6.3× — pool of 3    |
+| `starter_3` Temple of Bastet         | 4   | 26    | 16    | —      | —       | `light` · offering table · cat      | 5.3× — pool of 3    |
+| `starter_4` Scribe's Academy         | 4   | 29    | 19    | —      | —       | `scribe` · schoolroom ostraca       | 6.3× — pool of 3    |
 
 | Tomb                                               | Floors | Rooms | Sprawl | Wears | What its story asks for  |
 | -------------------------------------------------- | ------ | ----- | ------ | ----- | ------------------------ |
@@ -203,11 +203,11 @@ would be a second ambience, colder than night and lit from one side rather than 
 
 ## 6. Expert
 
-| Journey                          | Pyr | Rooms | Sects | Sprawl             | Wears | Its story asks for                   | If restricted to it |
-| -------------------------------- | --- | ----- | ----- | ------------------ | ----- | ------------------------------------ | ------------------- |
-| `expert_1` Valley of the Kings   | 4   | 84    | 37    | 2/7                | —     | `funerary` · necropolis · torchlight | 6.2× — over the bar |
-| `expert_2` Karnak Temple Complex | 4   | 83    | 35    | 1/6                | —     | hypostyle columns · solar · festival | no role fits        |
-| `expert_3` Nile Delta Expedition | 5   | 107   | 42    | 1/7                | —     | `water` · delta marsh · crocodile    | 7.0× — over the bar |
+| Journey                          | Pyr | Rooms | Sects | Sprawl             | Wears | Its story asks for                   | If restricted to it  |
+| -------------------------------- | --- | ----- | ----- | ------------------ | ----- | ------------------------------------ | -------------------- |
+| `expert_1` Valley of the Kings   | 4   | 84    | 37    | 2/7                | —     | `funerary` · necropolis · torchlight | 6.2× — over the bar  |
+| `expert_2` Karnak Temple Complex | 4   | 83    | 35    | 1/6                | —     | hypostyle columns · solar · festival | no role fits         |
+| `expert_3` Nile Delta Expedition | 5   | 107   | 42    | 1/7                | —     | `water` · delta marsh · crocodile    | 7.0× — over the bar  |
 | `expert_4` Pyramid of Djoser     | 5   | 99    | 41    | 2/7 (`packing: 2`) | —     | `trade` · terraces · building site   | 10.3× — over the bar |
 
 | Tomb                                          | Floors | Rooms | Sprawl | Wears | What its story asks for |
@@ -235,17 +235,24 @@ because the tier puts a coloured key on the open main path, and a broad floor is
 
 ## 7. Master
 
-| Journey                          | Pyr | Rooms | Sects | Sprawl | Wears | Its story asks for                 | If restricted to it  |
-| -------------------------------- | --- | ----- | ----- | ------ | ----- | ---------------------------------- | -------------------- |
-| `master_1` Great Pyramid of Giza | 4   | 83    | 43    | 1/8    | —     | `sky` · grand gallery · star shaft | 8.6× — and 0 dressed |
-| `master_2` Book of the Dead      | 5   | 121   | 50    | 1/10   | —     | `judgement` · scroll · judgement   | 8.3× — authored      |
-| `master_3` Curse of the Pharaohs | 5   | 125   | 53    | 1/10   | —     | `funerary` · omen · dust and decay | 8.8× — authored      |
-| `master_4` Tomb of Nefertari     | 5   | 109   | 47    | —      | —     | `funerary` · fresco · queen's blue | 7.8× — authored      |
+| Journey                          | Pyr | Rooms | Sects | Sprawl | Wears                 | Its story asks for                 | If restricted to it |
+| -------------------------------- | --- | ----- | ----- | ------ | --------------------- | ---------------------------------- | ------------------- |
+| `master_1` Great Pyramid of Giza | 4   | 83    | 43    | 1/8    | `["trade", "puzzle"]` | `sky` · grand gallery · star shaft | **8.6× — prefers**  |
+| `master_2` Book of the Dead      | 5   | 121   | 50    | 1/10   | —                     | `judgement` · scroll · judgement   | 8.3× — authored     |
+| `master_3` Curse of the Pharaohs | 5   | 125   | 53    | 1/10   | —                     | `funerary` · omen · dust and decay | 8.8× — authored     |
+| `master_4` Tomb of Nefertari     | 5   | 109   | 47    | —      | —                     | `funerary` · fresco · queen's blue | 7.8× — authored     |
 
 | Tomb                                    | Floors | Rooms | Sprawl | Wears | What its story asks for    |
 | --------------------------------------- | ------ | ----- | ------ | ----- | -------------------------- |
 | `master_treasure_tomb` Hall of Ma'at    | 5      | 30    | —      | —     | weighing hall · feather    |
 | `master_treasure_tomb_b` Hall of Osiris | 5      | 30    | 5/5    | —     | underworld green · rebirth |
+
+**Giza wears `["trade", "puzzle"]` even though its brief above says `sky`, and the brief is not wrong.**
+Star shafts and a grand gallery are exactly what the pyramid is famous for — but every family in the `sky`
+pool declares `["default"]` for it (§2), so preferring `sky` weights nothing and dresses nothing: the column
+above reads 0 dressed for a reason. `trade` is the pool that can actually put a face in the room, and the
+Great Pyramid was a building site supplied by haul roads and sledges before it was an observatory. When a
+`sky` family draws a sky face of its own, this is the journey to revisit.
 
 The Book of the Dead is the strongest `scribe` case above starter: a funerary scroll is a written surface
 and both families in the pool can draw one. Its other word is **judgement**, and that is the balance scale
@@ -285,13 +292,13 @@ different** — the journey is carryable today and authoring it changes nothing 
 face. Ranked by the rooms it would reach, since one built for a cluster pays for itself across a tier and
 one built for a single pyramid does not.
 
-| Gap                                                  | Reaches                                                                | Rooms | What it takes                                                                                                                                                  |
-| ---------------------------------------------------- | ---------------------------------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **A `funerary` role** — **BUILT**                    | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1`, `wizard_3` | 781   | Done: four faces, six journeys authored, no new generator. What is left is the SHARE — see §10's prefer mode.                                                  |
-| **Three more families for `cosmos`**                 | `wizard_4`                                                             | 207   | The role EXISTS now and holds one member: procession's night face, decans crossing the sky. Three more carriers and `wizard_4` can restrict to the story it is named after. |
-| **A warm-light ambience**                            | `starter_3`, `junior_3`, `expert_1`, `master_4`                        | 264   | Overlays per face rather than a new skin per family. Four briefs — lamplight twice, torchlight, moonlight — asking for one thing.                              |
-| **A fourth family for `scribe` or `light`**          | `starter_2`, `starter_4`, `junior_3`, `expert_4`                       | 187   | Both pools sit at three, one short of the floor a journey must clear to restrict to a role (§2). A tag on an existing family is the whole of it. `trade` is closed — procession (PUZZLE_FAMILIES §4.29) is its fourth member. |
-| **`light` faces for eclipse and lightbeam**          | `junior_4`                                                             | 47    | Canisters gave the pool its first face; these two still read as light sources without dressing as one. Lightbeam has no skin system at all, so it is two jobs. |
+| Gap                                         | Reaches                                                                | Rooms | What it takes                                                                                                                                                                                                                 |
+| ------------------------------------------- | ---------------------------------------------------------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **A `funerary` role** — **BUILT**           | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1`, `wizard_3` | 781   | Done: four faces, six journeys authored, no new generator. What is left is the SHARE — see §10's prefer mode.                                                                                                                 |
+| **Three more families for `cosmos`**        | `wizard_4`                                                             | 207   | The role EXISTS now and holds one member: procession's night face, decans crossing the sky. Three more carriers and `wizard_4` can restrict to the story it is named after.                                                   |
+| **A warm-light ambience**                   | `starter_3`, `junior_3`, `expert_1`, `master_4`                        | 264   | Overlays per face rather than a new skin per family. Four briefs — lamplight twice, torchlight, moonlight — asking for one thing.                                                                                             |
+| **A fourth family for `scribe` or `light`** | `starter_2`, `starter_4`, `junior_3`, `expert_4`                       | 187   | Both pools sit at three, one short of the floor a journey must clear to restrict to a role (§2). A tag on an existing family is the whole of it. `trade` is closed — procession (PUZZLE_FAMILIES §4.29) is its fourth member. |
+| **`light` faces for eclipse and lightbeam** | `junior_4`                                                             | 47    | Canisters gave the pool its first face; these two still read as light sources without dressing as one. Lightbeam has no skin system at all, so it is two jobs.                                                                |
 
 Read together:
 
@@ -369,9 +376,9 @@ assigned **per section**, not per room, so what a player feels is `sections ÷ p
 
 **The columns below are pool SIZES, not roles a journey wants.** Read a row across: this is how often one
 family comes back if that journey were restricted to a pool of that size, whichever role it happened to be.
-The sizes are the ones that exist — one (`cosmos`, `judgement`), three (`scribe`, `light`), four
-(`trade`), five (`sky`), six (`water`, `agriculture`, `funerary`, and `["light", "sky"]` as a union), and
-thirteen for a journey that restricts to nothing at all.
+The sizes are the ones that exist — one (`cosmos`, `judgement`), three (`scribe`, `light`), five (`trade`,
+`sky`), six (`water`, `agriculture`, `funerary`, and `["light", "sky"]` as a union), and thirteen for a
+journey that restricts to nothing at all.
 
 | Journey     | Sections | Rooms | all 13   | pool of 6 | pool of 5 | pool of 4 | pool of 3 |
 | ----------- | -------- | ----- | -------- | --------- | --------- | --------- | --------- |
@@ -401,10 +408,16 @@ to clear four members (`rolePools.spec.ts`), and `sections ÷ pool` has to land 
   trap carries its own role.
 - **`starter_2` is authored and restricted** — `trade`, 3.3 turns each. It became legal the day procession
   took that pool to four, and `starter.ts` carries the line. **Two things to know about what it drew**: its
-  starter sections see three of the four families, since canisters debuts at junior, and this world seed
-  dealt constellation eight of the fourteen sections against balance scale's four and procession's none.
-  The pool is even (the allocator draws uniformly — 999/986/1015 over 3000 starter draws), so that share is
-  this cut's luck rather than a bias, but it is the share a player meets until the world is re-authored.
+  starter sections see four of the five families, since canisters debuts at junior, and this world seed
+  dealt constellation eight of the fourteen sections against balance scale's four, procession's two and
+  rush hour's none. The pool is even (the allocator draws uniformly), so that share is this cut's luck
+  rather than a bias, but it is the share a player meets until the world is re-authored. Ten of the
+  fourteen come out dressed, because balance scale is the one member that answers `trade` with `default`.
+- **`master_1` is authored and prefers** — `["trade", "puzzle"]`, and it is the first journey authored
+  under the weighting rather than measured after it. 42 of its 43 sections carry the role and **17 come out
+  dressed (40%)**, under the 53% the six older ones average: `trade`'s fifth member is balance scale, which
+  answers the role with `default`, so a fifth of the doubled bag adds no dress. Restricting instead would
+  have been 8.6 turns each, so preferring is not a compromise here — it is the only mode the length allows.
 - **Three are still held back by pool size alone**: `starter_3`, `starter_4` and `junior_3` draw on pools of
   three (`light`, `scribe`). One tag on one existing family turns each into a candidate, which is why §9
   ranks pool size above faces.
