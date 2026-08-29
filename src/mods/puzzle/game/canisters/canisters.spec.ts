@@ -23,7 +23,7 @@ describe("pouring", () => {
   })
 
   it("never creates or loses water, which is the whole of this variant", () => {
-    // There is no river and no ground: the water in front of the player is all there is, so an amount has
+    // The water in front of the player is all there is, so an amount has
     // to come from somewhere and nothing can be thrown away to start again.
     let volumes: Volumes = FULL
     for (const move of [
@@ -80,9 +80,8 @@ describe("the classic board", () => {
  * **What the player is actually deciding**, and the reason this variant is gated on forks rather than on
  * forcing (design doc §4).
  *
- * With no river to fill from and no ground to empty onto, the two rules that made the tap-and-sink version
- * nearly forced have nothing to prune — those moves do not exist. What is left forks, usually two ways, and
- * that fork is the puzzle.
+ * Pouring is the only move, so there are no wasteful ones for a local rule to prune. What is left forks,
+ * usually two ways, and that fork is the puzzle.
  */
 describe("a line forks rather than forcing", () => {
   it("leaves the player a choice at most steps, over every board worth generating", () => {

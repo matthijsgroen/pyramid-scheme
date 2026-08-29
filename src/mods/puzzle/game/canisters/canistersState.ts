@@ -66,18 +66,20 @@ export const holdCanister = produce((state: CanistersState, canister: number) =>
  * is spent the water stops moving and the board stands as it is — undo gives a move back, reset gives them
  * all. Claiming is deliberately still allowed: the budget counts pours, so the last one of a line leaves
  * nothing in hand, and a board whose final claim were refused could never be finished at all.
+ *
+ * **A tap that cannot pour picks that canister up instead.** Tapping a full vessel while holding another
+ * has no other meaning on this board, and answering it by quietly putting down what was held is a dead
+ * end: nothing moves, nothing says why, and the player is two taps from where they were. Reading it as
+ * "I meant this one" is the only thing the gesture can have meant.
  */
 export const pourInto = produce((state: CanistersState, puzzle: CanistersPuzzle, to: number) => {
   const from = state.held
   if (from === undefined || from === to) return
-  if (movesLeft(puzzle, state) <= 0) {
-    state.held = undefined
-    return
-  }
   const move: Move = { from, to }
   const next = applyMove(puzzle.capacities, state.volumes, move)
-  if (next.every((amount, index) => amount === state.volumes[index])) {
-    state.held = undefined
+  const moves = next.some((amount, index) => amount !== state.volumes[index])
+  if (!moves || movesLeft(puzzle, state) <= 0) {
+    state.held = state.volumes[to] === 0 ? undefined : to
     return
   }
   record(state)

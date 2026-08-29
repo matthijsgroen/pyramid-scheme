@@ -960,6 +960,8 @@
     "movesLeft_other": "{{count}} moves left",
     "legs": "measured {{done}} of {{total}}",
     "undo": "Undo",
-    "wanted": "Measure out"
+    "wanted": "Measure out",
+    "claim": "this one",
+    "claimAria": "Say the {{capacity}} holds the amount"
   }
 }
