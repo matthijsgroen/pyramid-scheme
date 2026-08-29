@@ -963,5 +963,29 @@
     "wanted": "Measure out",
     "claim": "this one",
     "claimAria": "Say the {{capacity}} holds the amount"
+  },
+  "procession": {
+    "name": {
+      "default": "The Ordered Hours"
+    },
+    "goal": {
+      "default": "Slide every bar until all the marks under the day hold."
+    },
+    "rules": {
+      "default": {
+        "lengths": "A bar keeps its length. Only when it happens is unknown.",
+        "marks": "A mark under the day glows red while it is broken. Tap one to see which rows it joins.",
+        "drag": "Drag a bar along its own row. It never leaves the day."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "That row's place is already fixed, and this one hangs off it.",
+        "squeeze": "There is only so much day left, and this is all of it that fits.",
+        "apart": "The other way round does not fit in the day.",
+        "split": "Try it the other way round and something else breaks.",
+        "move": "Drag the ringed bar onto the hatched ticks."
+      }
+    }
   }
 }

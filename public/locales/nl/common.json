@@ -956,5 +956,29 @@
     "wanted": "Meet af",
     "claim": "deze",
     "claimAria": "Zeg dat de {{capacity}} de hoeveelheid bevat"
+  },
+  "procession": {
+    "name": {
+      "default": "De Geordende Uren"
+    },
+    "goal": {
+      "default": "Schuif elke balk tot alle tekens onder de dag kloppen."
+    },
+    "rules": {
+      "default": {
+        "lengths": "Een balk houdt zijn lengte. Alleen wanneer het gebeurt ligt niet vast.",
+        "marks": "Een teken onder de dag kleurt rood zolang het niet klopt. Tik erop om te zien welke rijen het verbindt.",
+        "drag": "Sleep een balk over zijn eigen rij. Hij gaat de dag nooit uit."
+      }
+    },
+    "hint": {
+      "default": {
+        "chain": "Die rij ligt al vast, en deze hangt eraan.",
+        "squeeze": "Er is nog maar zoveel dag over, en dit is alles wat er past.",
+        "apart": "Andersom past het niet in de dag.",
+        "split": "Probeer het andersom en er breekt iets anders.",
+        "move": "Sleep de omringde balk op de gearceerde streepjes."
+      }
+    }
   }
 }

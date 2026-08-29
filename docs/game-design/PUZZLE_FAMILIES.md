@@ -206,6 +206,8 @@ Two things killed the puzzle-room version, and either is fatal on its own:
 - **Operates:** water drains between graduated marks; the gap between start and
   end levels is the elapsed time. "Lit at X, burned to Y — how long?"
 - **Knobs:** magnitude · whether it crosses a 12/24 boundary · minute precision.
+- **Superseded:** the duration skill this entry was for is claimed by procession (§4.29), which keeps the
+  boundary-crossing arithmetic and drops the clock face that killed this one.
 - **Scaling:** good; the boundary-crossing knob is where real difficulty lives.
 - **Generation:** trivial, unique-by-construction.
 - **UI:** medium (level slider against marks).
@@ -533,6 +535,25 @@ Cut to fit the bar rather than shipped as the classic: **an exact move budget**,
 
 Design doc: [puzzles/canisters.md](puzzles/canisters.md)
 
+### 4.29 Procession (the ordered hours) — **BUILT** (`docs/game-design/puzzles/procession.md`)
+
+The duration family, and the one the water clock (§4.3/§4.4) failed to be: a day drawn as a track of ticks,
+rows of bars whose LENGTHS are given and whose STARTS are not, and marks between them the arrangement has to
+satisfy. Two marks carry a numeral — the gap between one bar's end and the next one's start, and the total
+span of the day — and those are the arithmetic; the rest are relations, one of which ("these two never
+overlap") deliberately does not say which way round, which is where the ladder stops being propagation and
+becomes a case split. The player's only gesture is sliding a bar along its own row, which is rush hour's
+gesture on a board with the opposite epistemics: there nothing is unknown and the question is move order,
+here every start is unknown and there is no move order at all.
+
+- **Tiers:** three bars in an eight-tick day up to six in sixteen, and the tier is the weakest rung that
+  settles the board — chain, squeeze, apart, then one supposition. A FIFTH rung was designed and does not
+  occur: no board of this size needs a supposition inside a supposition, so the top two tiers are told
+  apart by how much of the board only yields to one.
+- **Solve time is not measured.** The generation numbers are (family doc §5); the clock is not.
+
+Design doc: [puzzles/procession.md](puzzles/procession.md)
+
 ## 5. The shared grid engine
 
 Four families are all **"grid + tap-to-set-cell-state"**: Sudoku, nonogram,
@@ -593,6 +614,7 @@ the thing to look at first when judging an unbuilt family's duration.
 | Eclipse                | Easy            | Good (signs, not size)   | **Solved** (thin-to-unique)  | 30–90s / med              |
 | Constellation          | Medium          | Good (numbers, not size) | Draw-and-test (solver gate)  | 1–4 min / med — _target_  |
 | Canal                  | Medium          | Good (size and shape)    | Draw-derive-thin (gate)      | 1–5 min / med — _target_  |
+| Procession             | Easy–Med        | Good (bars, not ticks)   | Roll-derive-thin (rung gate) | 1–3 min / med — _target_  |
 | Nonogram               | Med–Hard        | Good (floor+ceiling)     | Med (**verifier**)           | 3–15+ min / **very high** |
 | Kakuro                 | **Hard**        | Good                     | Med–Hard (**verifier**)      | 2–8 min / high            |
 | Sumplete               | **Easy**        | Good                     | Easy + **verifier**          | med–high                  |
@@ -618,6 +640,7 @@ Legend: **◐** introduce (gentle, at the bottom of the family's _own_ scale) ·
 | Eclipse                | binary deduction       |   ◐ 4×4    |  ● 4×4   | ● 6×6 |  ● 6×6   |    ★ 8×8    |
 | Constellation          | degree + connectivity  |   ◐ 5×5    |  ● 6×6   | ● 7×7 |  ● 8×8   |    ★ 8×8    |
 | Canal                  | line counts + path     |   ◐ 5×5    |  ● 6×6   | ● 7×7 |  ● 8×8   |    ★ 8×8    |
+| Procession             | duration / intervals   |  ◐ 3 bars  | ● 4 bars | ● 5 bars | ● 5 bars |  ★ 6 bars   |
 | Target-number          | flexible ops           |     —      |    ◐     |   ●   |    ●     |      ★      |
 | Sequence               | pattern                |     —      |    ◐     |   ●   |    ●     |      —      |
 | Water clock            | duration / subtraction |     —      |    —     |   ◐   |    ●     |      ★      |
@@ -790,6 +813,11 @@ Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redes
 | **Night & Stars**                  | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                                                                                                                                                                                                                      |
 | **Sacred Geometry / Ritual**       | temple art, sanctuary lighting              | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                                                                                                                                                                                                                   |
 
+**Procession (§4.29) fits four of these rows and is drawn for none of them.** It ships as bars on a ruled
+track, wearing `puzzle` alone: a funeral procession, decans crossing a night sky, sluice gates on a flood
+channel and the legs of a caravan are the same board reskinned, so it joins Tomb, Night & Stars, Water and
+Trade the day someone paints one — see its doc §8.
+
 **Gap, closed on paper by §4.22.** The canal is a water family by mechanic rather than by dress — digging a
 channel from the river to a field is what it does — so once it is built the role has two members and the Nile
 Delta can ask for water puzzles outright. Until then the note below still describes the position.
@@ -849,6 +877,7 @@ so it can be used when authoring density knobs).
 | Mirror/lightbeam       | built, not yet measured           | **TBD — estimate Low–Med**, the beam redraws on every tap so a wrong route is visible at once, which should stall less         |
 | Constellation          | not yet measured (unbuilt)        | **TBD — estimate Med**, the numbers are local bookkeeping but the connectivity rule couples the whole board                    |
 | Canal                  | not yet measured (unbuilt)        | **TBD — estimate Med**, each line is its own sum, and a wrong stretch is visible as soon as a count goes red                   |
+| Procession             | built, not yet measured           | **TBD — estimate Med**, a broken mark draws broken the moment a bar lands, but the intervals couple across the whole day |
 | Sokoban                | not yet measured (unbuilt)        | **TBD — estimate High**, Sokoban solve time is notoriously unbounded even at small grid sizes                                  |
 | Rush Hour              | **under 3 min at wizard**         | **Low–Med**, the tier IS the move count, so the ceiling is authored: 3–5 moves at starter, 24–35 at wizard; timed in play      |
 
