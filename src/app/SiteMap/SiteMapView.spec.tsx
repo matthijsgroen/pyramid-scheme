@@ -485,9 +485,16 @@ describe("SiteMapView — zoom reset", () => {
 })
 
 describe("SiteMapView — a wall only opens onto something drawn", () => {
-  // A room's own graph edge is not enough: the cell it leads to may still be fogged (nothing is
-  // drawn for it), and an opening onto nothing reads as a doorway the player can walk through.
-  it("keeps the wall toward a neighbour that is still fogged", () => {
+  // Void a lit room does not claim is bare stone — nothing is ever drawn there, so an opening onto
+  // it reads as a doorway the player can walk through and cannot.
+  it("keeps the wall toward void no lit room claims", () => {
+    const { container } = render(<SiteMapView grid={makeGrid([[fork("fogged"), empty, fork("reachable")]])} />)
+    expect(hasWallRect(container, cellCenter(0, 2).cx, cellCenter(0, 2).cy, "w")).toBe(true)
+  })
+
+  // Fog is not void: the corridor east is a real passage still in the dark, and the missing wall is
+  // exactly how the map says the way carries on past what has been explored.
+  it("leaves the far end of an unexplored passage open", () => {
     const eastward: GridCell = {
       type: "room",
       roomType: "encounter",
@@ -498,7 +505,7 @@ describe("SiteMapView — a wall only opens onto something drawn", () => {
     const { container } = render(
       <SiteMapView grid={makeGrid([[eastward, straightCorridor("fogged", ["w", "e"]), empty]])} />
     )
-    expect(hasWallRect(container, cellCenter(0, 0).cx, cellCenter(0, 0).cy, "e")).toBe(true)
+    expect(hasWallRect(container, cellCenter(0, 0).cx, cellCenter(0, 0).cy, "e")).toBe(false)
   })
 
   // Same hole, other cause, opposite cure: the corridor east is real and lit, and only invisible

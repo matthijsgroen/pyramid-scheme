@@ -757,14 +757,10 @@ const litClaimOwner = (grid: FloorGrid, claims: RoomClaims, r: number, c: number
   return owner?.type === "room" && owner.state !== "fogged" ? owner : undefined
 }
 
-// Whether the map draws anything at all for this cell — the same question the render loop below
-// answers, asked one cell early. A cell is drawn as part of a lit room's claim, or on its own state,
-// and never while fogged.
-const isDrawn = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): boolean => {
-  if (litClaimOwner(grid, claims, r, c)) return true
-  const cell = cellAt(grid, r, c)
-  return cell.type !== "empty" && cell.state !== "fogged"
-}
+// Void the map will never draw anything for: a cell with no passage of its own, and no lit room
+// claiming it as part of its footprint. Bare stone, not somewhere the player could ever walk.
+const isUndrawnVoid = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): boolean =>
+  cellAt(grid, r, c).type === "empty" && !litClaimOwner(grid, claims, r, c)
 
 const isOpenSide = (grid: FloorGrid, claims: RoomClaims, r: number, c: number, dir: Direction): boolean => {
   const cell = cellAt(grid, r, c)
@@ -772,10 +768,11 @@ const isOpenSide = (grid: FloorGrid, claims: RoomClaims, r: number, c: number, d
   const nr = r + dr,
     nc = c + dc
   const neighbor = cellAt(grid, nr, nc)
-  // **A side opens onto a place, not onto nothing.** A graph edge into fog, or into a corridor whose
-  // claiming room is still fogged, leaves the wall out while the map draws nothing on the far side —
-  // a doorway onto bare stone that a player reads as a way through and cannot walk.
-  if (!isDrawn(grid, claims, nr, nc)) return false
+  // **A side opens onto a place, not onto nothing.** An edge onto void the map draws nothing for
+  // reads as a doorway through bare stone the player cannot walk. Fog is not nothing, though: a real
+  // corridor or room still in the dark is what an open end is *for* — it is how the map says the
+  // passage carries on past what has been explored.
+  if (isUndrawnVoid(grid, claims, nr, nc)) return false
   // a real graph edge is always open
   if ((cell.type === "room" || cell.type === "corridor") && cell.dirs.has(dir)) return true
   if (claims.openEdges.has(edgeKey(r, c, nr, nc))) return true

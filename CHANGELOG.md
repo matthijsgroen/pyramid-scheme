@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Two rooms of one corridor no longer hold the same puzzle.
-- A gap in a wall now leads somewhere, and a passage lit from its far end is drawn.
+- A gap in a wall now leads somewhere, and a passage lit from its far end is drawn. A passage that
+  runs on into the unexplored dark still ends open, as it always did.
 - The signs beside a day's rows are drawn to the size of their badge.
 - A honeycomb run drawn from its highest number now counts down along the finger, across the numbers already on the comb, instead of unpicking itself.
 - A pyramid emptied of its finds stops pulsing on the map the moment you leave it, instead of waiting for a second visit.
