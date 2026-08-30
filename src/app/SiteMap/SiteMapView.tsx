@@ -8,6 +8,7 @@ import type {
   GateVariant,
   GridCell,
   KeyColor,
+  RoomCell,
   RoomType,
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
@@ -744,12 +745,37 @@ const claimedByFork = (grid: FloorGrid, claims: RoomClaims, key: string): boolea
   return owner?.type === "room" && owner.roomType === "fork"
 }
 
+// The room a claimed cell renders as part of, if that room is lit — the claim borrows the owner's
+// state, so a fogged owner takes its whole blob (void cells included) with it.
+const litClaimOwner = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): RoomCell | undefined => {
+  const cell = cellAt(grid, r, c)
+  if (cell.type !== "empty" && cell.type !== "corridor") return undefined
+  const ownerKey = claims.claimedBy.get(`${r},${c}`)
+  if (!ownerKey) return undefined
+  const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
+  const owner = grid.cells[ownerRow]?.[ownerCol]
+  return owner?.type === "room" && owner.state !== "fogged" ? owner : undefined
+}
+
+// Whether the map draws anything at all for this cell — the same question the render loop below
+// answers, asked one cell early. A cell is drawn as part of a lit room's claim, or on its own state,
+// and never while fogged.
+const isDrawn = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): boolean => {
+  if (litClaimOwner(grid, claims, r, c)) return true
+  const cell = cellAt(grid, r, c)
+  return cell.type !== "empty" && cell.state !== "fogged"
+}
+
 const isOpenSide = (grid: FloorGrid, claims: RoomClaims, r: number, c: number, dir: Direction): boolean => {
   const cell = cellAt(grid, r, c)
   const [dr, dc] = DIR_MOVES[dir]
   const nr = r + dr,
     nc = c + dc
   const neighbor = cellAt(grid, nr, nc)
+  // **A side opens onto a place, not onto nothing.** A graph edge into fog, or into a corridor whose
+  // claiming room is still fogged, leaves the wall out while the map draws nothing on the far side —
+  // a doorway onto bare stone that a player reads as a way through and cannot walk.
+  if (!isDrawn(grid, claims, nr, nc)) return false
   // a real graph edge is always open
   if ((cell.type === "room" || cell.type === "corridor") && cell.dirs.has(dir)) return true
   if (claims.openEdges.has(edgeKey(r, c, nr, nc))) return true
@@ -1032,7 +1058,7 @@ export const SiteMapView = ({
               const cx = PAD + c * CELL + CELL / 2
               const cy = PAD + r * CELL + CELL / 2
               const cellKey = `${r},${c}`
-              const claimOwnerKey = claims.claimedBy.get(cellKey)
+              const claimOwner = litClaimOwner(grid, claims, r, c)
 
               // A cell claimed by a neighboring room — genuine void (including one step
               // outside the grid), or a corridor absorbed as a gate's approach or a
@@ -1044,11 +1070,13 @@ export const SiteMapView = ({
               // punched the "spotty" holes in an otherwise-explored room. Click/interaction
               // still uses the corridor's own state, since it's a real, independently
               // progressed passage for gameplay purposes even though it looks unified.
-              if (claimOwnerKey && (cell.type === "empty" || cell.type === "corridor")) {
-                const [ownerRow, ownerCol] = claimOwnerKey.split(",").map(Number)
-                const owner = grid.cells[ownerRow]?.[ownerCol]
-                if (!owner || owner.type !== "room" || owner.state === "fogged") return null
-                const state = owner.state
+              //
+              // **A fogged owner takes only what is its own.** Its void cells go dark with it, but a
+              // claimed CORRIDOR is a real passage the player may already have lit from the far end —
+              // it falls through to the corridor rendering below and stands on its own state, rather
+              // than leaving the rooms around it opening onto a gap that draws nothing.
+              if (claimOwner) {
+                const state = claimOwner.state
                 const open = Object.fromEntries(ALL_DIRS.map(d => [d, isOpenSide(grid, claims, r, c, d)])) as Record<
                   Direction,
                   boolean

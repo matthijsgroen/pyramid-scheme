@@ -483,3 +483,42 @@ describe("SiteMapView — zoom reset", () => {
     expect(mapScale(container)).toBe(1)
   })
 })
+
+describe("SiteMapView — a wall only opens onto something drawn", () => {
+  // A room's own graph edge is not enough: the cell it leads to may still be fogged (nothing is
+  // drawn for it), and an opening onto nothing reads as a doorway the player can walk through.
+  it("keeps the wall toward a neighbour that is still fogged", () => {
+    const eastward: GridCell = {
+      type: "room",
+      roomType: "encounter",
+      family: "sumplete",
+      dirs: new Set<Direction>(["e"]),
+      state: "reachable",
+    }
+    const { container } = render(
+      <SiteMapView grid={makeGrid([[eastward, straightCorridor("fogged", ["w", "e"]), empty]])} />
+    )
+    expect(hasWallRect(container, cellCenter(0, 0).cx, cellCenter(0, 0).cy, "e")).toBe(true)
+  })
+
+  // Same hole, other cause, opposite cure: the corridor east is real and lit, and only invisible
+  // because a fork further on had absorbed it into a footprint that is itself still fogged. The
+  // passage is genuinely there — it draws on its own state, and the doorway onto it stays open.
+  it("draws a lit corridor claimed by a room that is still fogged, and keeps the way in open", () => {
+    const eastward: GridCell = {
+      type: "room",
+      roomType: "encounter",
+      family: "sumplete",
+      dirs: new Set<Direction>(["e"]),
+      state: "reachable",
+    }
+    const { container } = render(
+      <SiteMapView grid={makeGrid([[eastward, straightCorridor("visible", ["w"]), fork("fogged", ["w"])]])} />
+    )
+    const { cx, cy } = cellCenter(0, 1)
+    expect(
+      Array.from(container.querySelectorAll("g")).some(el => el.getAttribute("transform") === `translate(${cx}, ${cy})`)
+    ).toBe(true)
+    expect(hasWallRect(container, cellCenter(0, 0).cx, cellCenter(0, 0).cy, "e")).toBe(false)
+  })
+})
