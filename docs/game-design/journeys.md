@@ -371,8 +371,18 @@ list.
 
 ## 10. Restrict or prefer, and the variety either costs
 
-A role narrows the pool a journey draws from, and on a long journey that is the problem: a family is
-assigned **per section**, not per room, so what a player feels is `sections ÷ pool size`.
+A role narrows the pool a journey draws from, and on a long journey that is the problem: a role is
+authored **per section**, so what a player feels is `sections ÷ pool size`.
+
+**The section picks the role; the rooms are DEALT their families out of it** (`placeEncounters.ts`'s
+`dealChain`, `allFamilyMeta.ts`'s `allocateEncounterSpread`). A section is one place, dressed one way, but
+its rooms hold different puzzles: the chain is dealt from a shuffled bag, so every family in the pool turns
+up before any of them comes back, and no two rooms in a row are ever the same puzzle. Before this, a
+section resolved to ONE family and gave it to every room it had — a corridor of five rooms in `junior_2`
+served hidato five times.
+
+So the ratios below measure how often a **place** repeats its dressing, which is what a role costs. What a
+player meets room to room is `pool size` rooms of variety before anything returns, whatever the ratio says.
 
 **The columns below are pool SIZES, not roles a journey wants.** Read a row across: this is how often one
 family comes back if that journey were restricted to a pool of that size, whichever role it happened to be.

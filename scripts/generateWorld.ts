@@ -27,7 +27,7 @@ import {
   familyPriorityFor,
   familyCapacityFor,
   familyIsTrap,
-  allocateEncounterFamily,
+  allocateEncounterSpread,
   resolveEncounterMeta,
 } from "../src/mods/allFamilyMeta"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../src/mods/allCurrencyDistributions"
@@ -71,7 +71,7 @@ const configs = buildConfigs(
   MOD_WORLD_VALIDATORS,
   familyPriorityFor,
   EMPTY_FRACTION,
-  allocateEncounterFamily,
+  allocateEncounterSpread,
   MOD_REACHABILITY_SUPPORT,
   MOD_TOMB_TREASURE_RESOLVER,
   familyCapacityFor,

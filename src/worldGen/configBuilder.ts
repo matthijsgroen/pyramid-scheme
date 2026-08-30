@@ -294,7 +294,7 @@ export const buildConfigs = (
 
   // Phase 3.5: Resolve authored encounter ROLES (family tags) → concrete families, baked in.
   // Runs before slot collection (rewardPriority derives from the chosen family) and serialization.
-  // Injected from src/mods (allFamilyMeta.allocateEncounterFamily) — src/worldGen can't read the
+  // Injected from src/mods (allFamilyMeta.allocateEncounterSpread) — src/worldGen can't read the
   // family registry. When absent (a direct buildConfigs call in a test), roles stay as authored.
   if (allocateEncounter) assignEncounters(allConfigs, allocateEncounter, familyCapacityFor, isTrapFamily)
 
