@@ -122,6 +122,9 @@ export const undoPour = produce((state: CanistersState) => {
   state.claimed = undefined
 })
 
+/** Whether a pour is on the stack to give back. */
+export const canUndoPour = (state: CanistersState): boolean => state.past.length > 0
+
 export const isCanistersSolved = (puzzle: CanistersPuzzle, state: CanistersState): boolean =>
   state.measured >= puzzle.targets.length
 

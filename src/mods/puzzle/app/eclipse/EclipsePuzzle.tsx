@@ -1,4 +1,3 @@
-import clsx from "clsx"
 import { useCallback, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
@@ -79,6 +78,9 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
       onCancel={onCancel}
       solved={celebration.done}
       onReset={() => setState(createEclipseState(puzzle))}
+      // A tap is its own eraser here, so undo is for stepping back off a run of squares filled on a
+      // wrong reading — which is the mistake a board read the wrong way round produces.
+      undo={{ onPress: () => setState(undoEclipse(state)), enabled: canUndoEclipse(state) && !finished }}
       hint={hintText}
       onHintRevealed={() => setAsked(true)}
       idleMs={hintIdleDelay(difficulty)}
@@ -87,40 +89,20 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
       rules={<EclipseRules />}
     >
       {({ reportInput, hintVisible }) => (
-        <>
-          <EclipseBoard
-            puzzle={puzzle}
-            state={state}
-            theme={theme}
-            highlighted={hintVisible ? hint?.cells : undefined}
-            decided={hintVisible ? hint?.decided : undefined}
-            focus={hintVisible ? hint?.focus : undefined}
-            wave={wave}
-            onTapCell={cell => {
-              if (finished) return // the board is finishing; nothing may change under the celebration
-              reportInput()
-              setState(cycleEclipseCell(puzzle, state, cell))
-            }}
-          />
-          {/* The same control futoshiki puts under its board, in the same place and the same shape: a family
-              that moves its undo teaches its controls twice. A tap is its own eraser here, so this is for
-              stepping back off a run of squares filled on a wrong reading. */}
-          <button
-            onClick={() => {
-              reportInput()
-              setState(undoEclipse(state))
-            }}
-            disabled={!canUndoEclipse(state) || finished}
-            className={clsx(
-              "flex h-11 min-w-11 items-center justify-center gap-1 rounded border px-2 text-sm transition-colors",
-              canUndoEclipse(state) && !finished
-                ? "border-amber-700 bg-amber-950/60 text-amber-200"
-                : "border-stone-700 bg-stone-900 text-stone-600"
-            )}
-          >
-            ↩ {t("eclipse.undo")}
-          </button>
-        </>
+        <EclipseBoard
+          puzzle={puzzle}
+          state={state}
+          theme={theme}
+          highlighted={hintVisible ? hint?.cells : undefined}
+          decided={hintVisible ? hint?.decided : undefined}
+          focus={hintVisible ? hint?.focus : undefined}
+          wave={wave}
+          onTapCell={cell => {
+            if (finished) return // the board is finishing; nothing may change under the celebration
+            reportInput()
+            setState(cycleEclipseCell(puzzle, state, cell))
+          }}
+        />
       )}
     </PuzzleFamilyShell>
   )

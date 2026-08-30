@@ -115,6 +115,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
         setState(createSudokuState(puzzle))
         clearSelection()
       }}
+      undo={{ onPress: () => setState(undoSudokuMove), enabled: canUndoSudoku(state) && !finished }}
       hint={
         hint &&
         [
@@ -165,7 +166,6 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
             size={size}
             skin={skin}
             pencil={pencil}
-            canUndo={canUndoSudoku(state) && !finished}
             exhausted={exhaustedValues(values, size)}
             disabled={!selected || finished}
             onValue={value => {
@@ -180,11 +180,6 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
             onTogglePencil={() => {
               reportInput()
               togglePencil()
-            }}
-            onUndo={() => {
-              if (finished) return
-              reportInput()
-              setState(undoSudokuMove)
             }}
           />
         </>

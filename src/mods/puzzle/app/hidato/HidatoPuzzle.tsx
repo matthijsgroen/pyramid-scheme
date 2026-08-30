@@ -1,5 +1,4 @@
 import { useMemo, useState, type FC } from "react"
-import clsx from "clsx"
 import { useTranslation } from "react-i18next"
 import { HidatoBoard } from "@/mods/puzzle/app/hidato/HidatoBoard"
 import { HidatoRules } from "@/mods/puzzle/app/hidato/HidatoRules"
@@ -64,6 +63,7 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
       onCancel={onCancel}
       solved={celebration.done}
       onReset={() => setState(createHidatoState(puzzle))}
+      undo={{ onPress: () => setState(undoHidato), enabled: canUndoHidato(state) && !finished }}
       hint={
         hint &&
         [
@@ -79,65 +79,48 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
       rules={<HidatoRules skin={skin.name} />}
     >
       {({ reportInput, hintVisible }) => (
-        <>
-          <HidatoBoard
-            puzzle={puzzle}
-            skin={skin}
-            values={state.values}
-            pen={state.pen}
-            hatched={hintVisible ? hint?.cell : undefined}
-            marked={hintVisible ? hint?.evidence : undefined}
-            lit={lit}
-            onPickUp={key => {
-              if (finished) return
-              reportInput()
-              // A press picks the run up and decides nothing else: what the touch meant is known only
-              // once it lifts, and reading it as a tap here rubbed out the very number a drag was
-              // starting from (design doc §6.5).
-              setState(prev => pickUpHidato(prev, key))
-            }}
-            onTap={(key, wasPen) => {
-              if (finished) return // the run is flying; nothing may change under it
-              reportInput()
-              // Which of the three a tap is follows from what the cell holds and whether the run was
-              // ALREADY standing there. Tapping the number the run is on takes it back off — backing out
-              // of a wrong turn is the same gesture as walking into it — but a given can only be put
-              // down, never taken off, and a cell the press has just picked the run up at is done.
-              setState(prev =>
-                prev.values[key] === undefined
-                  ? stepHidato(prev, key, puzzle)
-                  : !wasPen
-                    ? prev
-                    : puzzle.givens[key] === undefined
-                      ? eraseHidato(prev, key, puzzle)
-                      : armHidato(prev, key)
-              )
-            }}
-            onDrag={key => {
-              if (finished) return
-              reportInput()
-              // Every reading a drag has is the board's own: carrying the run on, passing through what
-              // is already written, and backing out of the last turn are all one step along the run
-              // (stepHidato), which is the only thing that knows which way it is being counted.
-              setState(prev => stepHidato(prev, key, puzzle))
-            }}
-          />
-          <button
-            onClick={() => {
-              reportInput()
-              setState(undoHidato)
-            }}
-            disabled={!canUndoHidato(state) || finished}
-            className={clsx(
-              "flex h-11 min-w-11 items-center justify-center gap-1 rounded border px-3 text-sm transition-colors",
-              canUndoHidato(state) && !finished
-                ? "border-amber-700 bg-amber-950/60 text-amber-200"
-                : "border-stone-700 bg-stone-900 text-stone-600"
-            )}
-          >
-            ↩ {t("hidato.undo")}
-          </button>
-        </>
+        <HidatoBoard
+          puzzle={puzzle}
+          skin={skin}
+          values={state.values}
+          pen={state.pen}
+          hatched={hintVisible ? hint?.cell : undefined}
+          marked={hintVisible ? hint?.evidence : undefined}
+          lit={lit}
+          onPickUp={key => {
+            if (finished) return
+            reportInput()
+            // A press picks the run up and decides nothing else: what the touch meant is known only
+            // once it lifts, and reading it as a tap here rubbed out the very number a drag was
+            // starting from (design doc §6.5).
+            setState(prev => pickUpHidato(prev, key))
+          }}
+          onTap={(key, wasPen) => {
+            if (finished) return // the run is flying; nothing may change under it
+            reportInput()
+            // Which of the three a tap is follows from what the cell holds and whether the run was
+            // ALREADY standing there. Tapping the number the run is on takes it back off — backing out
+            // of a wrong turn is the same gesture as walking into it — but a given can only be put
+            // down, never taken off, and a cell the press has just picked the run up at is done.
+            setState(prev =>
+              prev.values[key] === undefined
+                ? stepHidato(prev, key, puzzle)
+                : !wasPen
+                  ? prev
+                  : puzzle.givens[key] === undefined
+                    ? eraseHidato(prev, key, puzzle)
+                    : armHidato(prev, key)
+            )
+          }}
+          onDrag={key => {
+            if (finished) return
+            reportInput()
+            // Every reading a drag has is the board's own: carrying the run on, passing through what
+            // is already written, and backing out of the last turn are all one step along the run
+            // (stepHidato), which is the only thing that knows which way it is being counted.
+            setState(prev => stepHidato(prev, key, puzzle))
+          }}
+        />
       )}
     </PuzzleFamilyShell>
   )

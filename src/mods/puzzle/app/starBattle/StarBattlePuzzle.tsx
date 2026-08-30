@@ -87,6 +87,9 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, o
       onCancel={onCancel}
       solved={celebration.done}
       onReset={() => setState(createStarBattleState(puzzle))}
+      // A tap is its own eraser, so undo is for stepping back off a run of squares darkened on a wrong
+      // reading — which is the mistake a board of mostly-elimination produces.
+      undo={{ onPress: () => setState(undoStarBattle(state)), enabled: canUndoStarBattle(state) && !finished }}
       hint={hintText}
       onHintRevealed={() => setAsked(true)}
       idleMs={hintIdleDelay(difficulty)}
@@ -133,24 +136,6 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, o
               setState(sweepStarBattleCells(state, cells))
             }}
           />
-          {/* The same control eclipse and futoshiki put under their boards, in the same place and the same
-              shape. A tap is its own eraser, so this is for stepping back off a run of squares darkened on a
-              wrong reading — which is the mistake a board of mostly-elimination produces. */}
-          <button
-            onClick={() => {
-              reportInput()
-              setState(undoStarBattle(state))
-            }}
-            disabled={!canUndoStarBattle(state) || finished}
-            className={clsx(
-              "flex h-11 min-w-11 items-center justify-center gap-1 rounded border px-2 text-sm transition-colors",
-              canUndoStarBattle(state) && !finished
-                ? "border-amber-700 bg-amber-950/60 text-amber-200"
-                : "border-stone-700 bg-stone-900 text-stone-600"
-            )}
-          >
-            ↩ {t("starBattle.undo")}
-          </button>
         </>
       )}
     </PuzzleFamilyShell>
