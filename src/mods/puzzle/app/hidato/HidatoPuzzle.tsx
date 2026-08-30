@@ -115,26 +115,10 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
           onDrag={key => {
             if (finished) return
             reportInput()
-            // A drag only ever moves ALONG the run, and the two numbers either side of the one being
-            // carried are what it reads first:
-            //
-            // - the number AFTER it is the run passing THROUGH what is already written, which is what
-            //   lets a drag cross the board's givens instead of stopping dead at the first one;
-            // - the number BEFORE it is the way the finger came, so the last one was a wrong turn —
-            //   the same reading as tapping it, and what makes a drag correctable without lifting a
-            //   finger. A given cannot be rubbed out, so there the run picks up instead.
-            //
-            // Everything else is a step: into open ground, or over the run's own old path, which
-            // stepHidato takes as carrying the run a different way (its reading 3).
-            setState(prev => {
-              const carried = prev.pen === undefined ? undefined : prev.values[prev.pen]
-              if (carried !== undefined && prev.values[key] === carried + 1) return armHidato(prev, key)
-              if (carried !== undefined && prev.values[key] === carried - 1)
-                return puzzle.givens[prev.pen!] === undefined
-                  ? eraseHidato(prev, prev.pen!, puzzle)
-                  : armHidato(prev, key)
-              return stepHidato(prev, key, puzzle)
-            })
+            // Every reading a drag has is the board's own: carrying the run on, passing through what
+            // is already written, and backing out of the last turn are all one step along the run
+            // (stepHidato), which is the only thing that knows which way it is being counted.
+            setState(prev => stepHidato(prev, key, puzzle))
           }}
         />
       )}

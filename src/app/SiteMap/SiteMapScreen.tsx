@@ -116,7 +116,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   // player has already seen here and can't open yet (fogged ones stay secret — see floorKeys.ts).
   const keyRing = useMemo(() => (grid ? floorKeyRing(grid, ownedKeys) : { held: [], needed: [] }), [grid, ownedKeys])
 
-  useFloorExplorationRecorder({ journeys, journeyId, currentFloor, grid })
+  useFloorExplorationRecorder({ journeys, journeyId, levelNr: levelIndex + 1, currentFloor, grid })
 
   const pendingConsumableCells = useMemo(() => {
     const prefix = `${currentFloor}:`

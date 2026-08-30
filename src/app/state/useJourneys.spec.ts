@@ -55,6 +55,24 @@ describe("markCellExplored", () => {
     expect(state[0].exploredSections["1:abc123"]).toContain("0:3,4")
   })
 
+  it("keys by the level the caller was standing in, not the one the write lands on", () => {
+    // The updater runs a microtask after the call (useOfflineStorage awaits its load promise), so a
+    // completeLevel landing first moves levelNr on. Reading the level in there filed the cell under a
+    // pyramid the player never opened; the key belongs to the render that called.
+    let state = [makeStoredJourney({ levelNr: 1 })]
+    const api = createJourneysV3Api({
+      journeys: state,
+      setJourneys: updater => {
+        const moved = state.map(j => ({ ...j, levelNr: 2 }))
+        state = typeof updater === "function" ? updater(moved) : updater
+      },
+      journeyData: [makeJourneyData(REAL_ID)],
+    })
+    api.markCellExplored("abc123", "0:3,4")
+    expect(state[0].exploredSections["1:abc123"]).toContain("0:3,4")
+    expect(state[0].exploredSections["2:abc123"]).toBeUndefined()
+  })
+
   it("deduplicates: calling twice does not double-store", () => {
     const stored = makeStoredJourney()
     let state = [stored]
@@ -319,18 +337,18 @@ describe("floor exploration tracking", () => {
   const NO_KEYS: ReadonlySet<string> = new Set()
 
   it("open (ungated) content marks its levelNr regardless of held keys", () => {
-    const { api } = run(a => a.registerFloorExploration(REAL_ID, 0, true, []))
+    const { api } = run(a => a.registerFloorExploration(REAL_ID, 1, 0, true, []))
     expect([...api.getUnexploredLevels(REAL_ID, NO_KEYS)]).toEqual([1])
   })
 
   it("a gated key bundle lights up only once every key in it is held (the earned-later case)", () => {
-    const { api } = run(a => a.registerFloorExploration(REAL_ID, 2, false, [["junior_a_1"]]))
+    const { api } = run(a => a.registerFloorExploration(REAL_ID, 1, 2, false, [["junior_a_1"]]))
     expect(api.getUnexploredLevels(REAL_ID, NO_KEYS).size).toBe(0) // no key yet → nothing to go back for
     expect([...api.getUnexploredLevels(REAL_ID, new Set(["junior_a_1"]))]).toEqual([1]) // key earned → lit
   })
 
   it("a multi-key bundle (ward + hieroglyphs) needs ALL its keys, not just one", () => {
-    const { api } = run(a => a.registerFloorExploration(REAL_ID, 0, false, [["ward_a_1", "hieroglyph:p10"]]))
+    const { api } = run(a => a.registerFloorExploration(REAL_ID, 1, 0, false, [["ward_a_1", "hieroglyph:p10"]]))
     expect(api.getUnexploredLevels(REAL_ID, new Set(["ward_a_1"])).size).toBe(0) // only one held → not lit
     expect([...api.getUnexploredLevels(REAL_ID, new Set(["ward_a_1", "hieroglyph:p10"]))]).toEqual([1]) // both → lit
   })
@@ -339,8 +357,29 @@ describe("floor exploration tracking", () => {
     // Recording runs from the interior's unmount cleanup — which can happen right after
     // completeJourney flips `active` to false. Passing journeyId explicitly (not relying on the
     // active journey) is what lets the completed journey still get its summary.
-    const { api } = run(a => a.registerFloorExploration(REAL_ID, 0, true, []), { active: false, completionCount: 1 })
+    const { api } = run(a => a.registerFloorExploration(REAL_ID, 1, 0, true, []), { active: false, completionCount: 1 })
     expect([...api.getUnexploredLevels(REAL_ID, NO_KEYS)]).toEqual([1])
+  })
+
+  it("files the summary under the level it is given, not the journey's current one", () => {
+    // The recorder fires as the interior unmounts, which can be after the journey has moved on to the
+    // next pyramid. It names the level it was showing; nothing here may look one up.
+    const { state } = run(a => a.registerFloorExploration(REAL_ID, 2, 0, true, []), { levelNr: 4 })
+    expect(state[0].floorExploration).toEqual({ "2:0": { open: true, keySets: [] } })
+  })
+
+  it("ignores floors filed under a level the journey has no node for", () => {
+    // A tomb re-enters level 1 from every node (exteriorLevelCount), so entries its earlier runs left
+    // under higher levels can never be revisited or re-recorded — counting them kept the journey card
+    // pulsing at a tomb with nothing left in it.
+    const tomb = { ...makeJourneyData(REAL_ID), type: "treasure_tomb", levelCount: 3 } as TranslatedJourney
+    const state = [
+      makeStoredJourney({
+        floorExploration: { "1:0": { open: false, keySets: [] }, "3:0": { open: true, keySets: [] } },
+      }),
+    ]
+    const api = createJourneysV3Api({ journeys: state, setJourneys: () => {}, journeyData: [tomb] })
+    expect(api.getUnexploredLevels(REAL_ID, NO_KEYS).size).toBe(0)
   })
 
   it("tolerates a floorExploration entry from an older build shape (no crash)", () => {
@@ -354,7 +393,7 @@ describe("floor exploration tracking", () => {
   })
 
   it("re-registering a floor overwrites its summary (content cleared → cleared)", () => {
-    const { api } = run(a => a.registerFloorExploration(REAL_ID, 0, false, []), {
+    const { api } = run(a => a.registerFloorExploration(REAL_ID, 1, 0, false, []), {
       floorExploration: { "1:0": { open: true, keySets: [] } },
     })
     expect(api.getUnexploredLevels(REAL_ID, NO_KEYS).size).toBe(0)
@@ -371,7 +410,7 @@ describe("floor exploration tracking", () => {
       setJourneysCalls += 1
     }
     const api = createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] })
-    api.registerFloorExploration(REAL_ID, 0, true, [])
+    api.registerFloorExploration(REAL_ID, 1, 0, true, [])
     expect(setJourneysCalls).toBe(0)
   })
 })

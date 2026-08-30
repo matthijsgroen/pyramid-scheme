@@ -6,6 +6,7 @@ import { JourneyCard } from "@/ui/organisms/JourneyCard"
 import { MapPiecePlaceholder } from "@/ui/organisms/MapPiecePlaceholder"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { useJourneys } from "@/app/state/useJourneys"
+import { exteriorLevelCount } from "@/data/journeys"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
@@ -69,7 +70,7 @@ export const TravelPage: FC<{
   // (2–5). Re-entry must resume a tomb at level 1: resuming at its raw levelCount (where a completed
   // tomb's stored levelNr sits) makes the expedition read `levelNr > 1` as "already complete" and
   // immediately end the journey, blocking re-entry (PyramidExpedition's expeditionCompleted guard).
-  const effectiveLevelCount = journey?.type === "treasure_tomb" ? 1 : (journey?.levelCount ?? 1)
+  const effectiveLevelCount = exteriorLevelCount(journey)
   // Revisit/explore: a completed journey (completionCount > 0). Every pyramid stays a pickable node
   // even while one is open, so drive the path view past the last level regardless of stored levelNr.
   const revisiting = !!journey && (activeJourneyInfo?.completionCount ?? 0) > 0
