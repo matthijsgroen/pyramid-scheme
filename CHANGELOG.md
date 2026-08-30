@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.42.3 - 2026-08-30
+
 ### Changed
 
 - A sudoku hint that says a number fits nowhere else now rings the squares that shut the others out.
