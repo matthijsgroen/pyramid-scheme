@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- The market street is lit: it runs from sun at the head of the lane into shade at its foot, every sledge
+  throws a shadow onto it, and your own sledge is the warm one among the grey working ones.
+
 ## 0.42.0 - 2026-08-29
 
 ### Added

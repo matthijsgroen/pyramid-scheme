@@ -24,6 +24,15 @@ export type RushHourSkin = {
   /** The ground the lanes are cut into, and the line between two cells. */
   ground: string
   seam: string
+  /**
+   * A wash laid over a painted ground, as CSS gradients.
+   *
+   * **The street and the cargo standing on it are made of the same brown**, and a board where everything
+   * shares one hue reads as a single flat slab however good the sprites are. The wash relights the ground —
+   * sun on the sand at the head of the lane falling to shade at its foot — so the sledges have something to
+   * stand on rather than something to blend into. Painted faces only: a plain face has no ground to wash.
+   */
+  groundWash?: string
   /** A piece that is in the way, and the player's own. Shapes, not just fills — see the board. */
   piece: string
   pieceEdge: string
@@ -101,9 +110,18 @@ const SKINS: Record<string, RushHourSkin> = {
     name: "market",
     ground: "bg-stone-900",
     seam: "rgb(120 113 108 / 0.25)",
-    piece: "bg-transparent",
+    // Sun on the sand at the head of the lane, cooling to a violet shade at its foot: the shade is the half
+    // that does the work, because a cool ground is what the warm cargo has to be warm AGAINST.
+    groundWash:
+      "linear-gradient(170deg, rgb(238 214 168 / 0.62) 0%, rgb(198 165 118 / 0.42) 40%, rgb(64 58 84 / 0.46) 100%)",
+    // **The shadow is what puts a sledge ON the street rather than printed on it**, and it is cast from the
+    // sprite's own alpha, so it follows the hull and the runners rather than the cell box.
+    piece: "bg-transparent brightness-95 saturate-75 drop-shadow-[0_3px_3px_rgb(24_16_8_/_0.6)]",
     pieceEdge: "border-stone-500/70",
-    player: "bg-transparent",
+    // **The player's own is the warm one.** The working sledges are cooled and dulled a shade and its cedar
+    // is pushed the other way, so the piece that matters is the only warm thing in the lane — still the
+    // second signal, behind the prow (see `default` above).
+    player: "bg-transparent saturate-125 brightness-110 drop-shadow-[0_4px_5px_rgb(24_16_8_/_0.65)]",
     playerEdge: "border-amber-300",
     exit: "bg-amber-400/70",
     wall: "bg-stone-950 ring-1 ring-stone-500/60 ring-inset",
