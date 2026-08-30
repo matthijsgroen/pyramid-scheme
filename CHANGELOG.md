@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.42.2 - 2026-08-30
+
 ### Fixed
 
 - Shoving a sledge along the market street no longer smears a copy of it across the street behind.
