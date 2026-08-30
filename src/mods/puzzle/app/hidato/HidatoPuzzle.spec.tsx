@@ -145,6 +145,26 @@ describe("the hidato screen", () => {
     expect(numbersIn(container)).not.toContain("4")
   })
 
+  it("drags the whole run in from either end, straight across the numbers the puzzle wrote in", () => {
+    reducedMotion(true)
+    const last = puzzle.cells.length
+    for (const from of [1, last]) {
+      const { container, unmount } = render(
+        <HidatoPuzzle puzzle={puzzle} difficulty="starter" onSolved={() => {}} onCancel={() => {}} />
+      )
+      // Picked up at one end and dragged along the answer without lifting. Every given on the way is a
+      // cell the run passes THROUGH, and picking the run up at the far end counts it down instead —
+      // which the drag has to read as going forwards, not as backing out of the number just laid.
+      press(container, puzzle, cellOf(puzzle, from))
+      const order =
+        from === 1 ? [...Array(last).keys()].map(step => step + 1) : [...Array(last).keys()].map(step => last - step)
+      for (const value of order.slice(1)) dragTo(container, hexFromKey(cellOf(puzzle, value)))
+      release(container)
+      expect(numbersIn(container)).toHaveLength(last)
+      unmount()
+    }
+  })
+
   it("lays nothing when a drag crosses a number on its way past", () => {
     reducedMotion(true)
     const { container } = render(

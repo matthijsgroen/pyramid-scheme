@@ -286,6 +286,15 @@ a number the finger went past on its way somewhere, which meant nothing:
 Passing through is the case that matters most: without it, a drag along the answer stops at the first
 written number it meets, which on a board that is a quarter givens is almost immediately.
 
+**"After" and "before" are read along the way the run is being counted, not along the numbers.** A run
+picked up at the last number counts DOWN, and every reading above mirrors: the number below the one
+being carried is what lies ahead of the finger and the one above is the way it came. A drag that reads
+them the other way round unpicks a descending run number by number as it is drawn — the finger lays the
+13, crosses into the given 12, and the board takes the 13 straight back off. So the board remembers
+which way the run is being counted: unset until something says (the first number laid, or a given the
+run passes through), and read as counting up until then, which is what it becomes the moment a number
+goes down.
+
 **A tap is a `pointerdown` on a cell; a drag is resolved from coordinates.** A tap knows its cell from
 the shape it landed on, while a finger halfway between two cells has to be told which one it is
 nearer — so the board runs its layout backwards and rounds in cube coordinates (§7). The board claims

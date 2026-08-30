@@ -14,6 +14,15 @@ export type HidatoState = {
    * tapping a touching cell carries it on.
    */
   pen?: string
+  /**
+   * Which way the run is being counted — up from the number it was picked up at, or down.
+   *
+   * A drag reads the same two cells whichever way it goes, and only this tells them apart: the number
+   * below the one being carried is the cell the finger came from when counting up, and the cell it is
+   * heading for when counting down. Unset until something says which — the first number laid, or a
+   * given the run passes through.
+   */
+  way?: 1 | -1
   /** Board states this one replaced, oldest first — the undo stack. */
   past: Record<string, number>[]
 }
@@ -42,6 +51,7 @@ const cellOf = (key: string): Hex => {
 export const armHidato = produce((state: HidatoState, key: string) => {
   if (state.values[key] === undefined) return
   state.pen = state.pen === key ? undefined : key
+  state.way = undefined
 })
 
 /**
@@ -53,7 +63,9 @@ export const armHidato = produce((state: HidatoState, key: string) => {
  * run up, and the tap is decided on release.
  */
 export const pickUpHidato = produce((state: HidatoState, key: string) => {
-  if (state.values[key] !== undefined) state.pen = key
+  if (state.values[key] === undefined) return
+  state.pen = key
+  state.way = undefined
 })
 
 /**
@@ -99,20 +111,25 @@ const dropUnanchored = (state: HidatoState, givens: Record<string, number>) => {
  * over it is how a line gets redrawn. Whatever held that number loses it, and anything left counting
  * back to nothing goes with it (stillAnchored).
  *
+ * **Which number is "next" depends on the way the run is being counted** (`way`), because a run counted
+ * down is the same gesture with every reading mirrored: the number below is what lies ahead of the
+ * finger, and the number above is the way it came. A run that has laid nothing yet has no way, and is
+ * read as counting up — which is what it becomes the moment a number goes down.
+ *
  * What it will not do:
  *
  * - **write over a number the puzzle wrote in**, or move one that is standing somewhere else. Those are
  *   the board's fixed points.
- * - **write over a number BEHIND the one being carried.** That is the line the finger has just come
- *   along, and cutting it was never the intention.
+ * - **write over a number the run has already come along.** That is the line the finger has just drawn,
+ *   and cutting it was never the intention.
  *
- * Two more readings, for when that one cannot happen at all:
+ * Two more readings, for when laying cannot happen at all:
  *
- * 2. **the number below**, where the next one is out of reach and the one below is not on the board.
- *    *Counting down needs no gesture of its own*: the first and last numbers always ship written in
- *    (generateHidato), so every stretch of empty cells lies between two known numbers and can be filled
- *    forwards from the lower of them, and counting down is what happens when a player picks the run up
- *    at the far end instead.
+ * 2. **the number the other way**, where the one ahead is out of reach and the one behind is not on the
+ *    board. *Counting down needs no gesture of its own*: the first and last numbers always ship written
+ *    in (generateHidato), so every stretch of empty cells lies between two known numbers and can be
+ *    filled forwards from the lower of them, and counting down is what happens when a player picks the
+ *    run up at the far end instead.
  * 3. **moving the number the run is standing on**, where the run has simply stopped — its next number is
  *    one the puzzle wrote in, standing somewhere this cell does not touch. There is nothing to lay and
  *    nothing to redraw, so what the player means is "this one goes here instead", which it may as long as
@@ -124,15 +141,35 @@ const dropUnanchored = (state: HidatoState, givens: Record<string, number>) => {
  * out of reach, on a board where those were the only cells worth dragging to.
  */
 export const stepHidato = produce((state: HidatoState, key: string, puzzle: HidatoPuzzleData) => {
-  const { pen } = state
+  const { pen, way } = state
   if (pen === undefined || !touching(pen, key)) return
   const from = state.values[pen]
   const standing = state.values[key]
   const last = puzzle.cells.length
   const homeOf = (value: number) => Object.entries(state.values).find(([, other]) => other === value)?.[0]
 
-  // The cells either side of it in the run are the app's own gestures: passing through, and backing out.
-  if (standing === from + 1 || standing === from - 1) return
+  // The number one step BACK along the way the run is being counted is the cell the finger came from, so
+  // the last one was a wrong turn: it comes off, along with everything that was only on the board
+  // because of it, and the run picks up where it came from. A given cannot be taken off, so there the
+  // run only picks up.
+  if (way !== undefined && standing === from - way) {
+    if (puzzle.givens[pen] === undefined) {
+      recordMove(state)
+      delete state.values[pen]
+      dropUnanchored(state, puzzle.givens)
+    }
+    state.pen = state.values[key] !== undefined ? key : undefined
+    return
+  }
+
+  // Either number beside it in the run is the run passing THROUGH what is already written — which is
+  // what lets a drag cross the board's givens instead of stopping dead at the first one — and which of
+  // the two it is says which way the run is being counted.
+  if (standing === from + 1 || standing === from - 1) {
+    state.pen = key
+    state.way = standing === from + 1 ? 1 : -1
+    return
+  }
 
   const lay = (value: number) => {
     recordMove(state)
@@ -141,20 +178,36 @@ export const stepHidato = produce((state: HidatoState, key: string, puzzle: Hida
     state.values[key] = value
     dropUnanchored(state, puzzle.givens)
     state.pen = key
+    state.way = value > from ? 1 : -1
   }
 
-  const nextIsFixed = () => {
-    const home = homeOf(from + 1)
-    return home !== undefined && puzzle.givens[home] !== undefined
-  }
-  const ours = standing === undefined || (standing > from && puzzle.givens[key] === undefined)
-  if (from < last && ours && !nextIsFixed()) {
-    lay(from + 1)
-    return
+  /**
+   * Drawing over what is already on the board — the run's own tail, or a number standing where it is
+   * wanted — belongs to the way the run is being counted. Counting up is the default reading, so a run
+   * that has not said otherwise redraws upwards only: a lower number is behind an ascending run, and
+   * dragging onto it means nothing.
+   */
+  const redrawing = (step: 1 | -1) => step === 1 || way === -1
+
+  const canGo = (step: 1 | -1) => {
+    const value = from + step
+    if (value < 1 || value > last) return false
+    // Onto open ground, or over the run's own tail, which is every cell FURTHER ALONG than the one being
+    // carried — never over a number the puzzle wrote in.
+    if (
+      standing !== undefined &&
+      !(redrawing(step) && puzzle.givens[key] === undefined && (standing - from) * step > 0)
+    )
+      return false
+    const home = homeOf(value)
+    // That number standing somewhere already: the run stops if the puzzle wrote it there, and otherwise
+    // it comes with the finger.
+    return home === undefined || (redrawing(step) && puzzle.givens[home] === undefined)
   }
 
-  if (standing === undefined && from > 1 && homeOf(from - 1) === undefined) {
-    lay(from - 1)
+  const step = (way === -1 ? ([-1, 1] as const) : ([1, -1] as const)).find(canGo)
+  if (step !== undefined) {
+    lay(from + step)
     return
   }
 
@@ -186,6 +239,8 @@ export const eraseHidato = produce((state: HidatoState, key: string, puzzle: Hid
   dropUnanchored(state, puzzle.givens)
   const previous = Object.entries(state.values).find(([, other]) => other === value - 1)
   state.pen = previous?.[0]
+  // A tap is a gesture of its own, so the run it leaves has no way yet — the next number laid says which.
+  state.way = undefined
 })
 
 export const undoHidato = produce((state: HidatoState) => {
@@ -193,6 +248,7 @@ export const undoHidato = produce((state: HidatoState) => {
   if (previous) {
     state.values = previous
     state.pen = undefined
+    state.way = undefined
   }
 })
 
