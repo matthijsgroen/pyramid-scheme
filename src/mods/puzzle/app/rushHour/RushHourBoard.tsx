@@ -58,7 +58,14 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
       <div
         ref={frame}
         className={clsx("relative aspect-square w-[92%] touch-none overflow-hidden select-none", skin.ground)}
-        style={skin.art && { backgroundImage: `url(${skin.art.ground})`, backgroundSize: "100% 100%" }}
+        style={
+          skin.art && {
+            // The wash goes FIRST so it lies over the ground, and it is a background of the frame rather
+            // than a layer of its own, so nothing standing on the street is washed with it (`skins.ts`).
+            backgroundImage: [skin.groundWash, `url(${skin.art.ground})`].filter(Boolean).join(", "),
+            backgroundSize: "100% 100%",
+          }
+        }
         onPointerMove={onPointerMove}
         onPointerUp={() => setDrag(undefined)}
         onPointerCancel={() => setDrag(undefined)}
