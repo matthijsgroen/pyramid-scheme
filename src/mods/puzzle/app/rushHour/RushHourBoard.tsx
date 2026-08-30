@@ -134,7 +134,11 @@ export const RushHourBoard: FC<Props> = ({ puzzle, state, skin, hintPiece, hintC
                 })
               }}
               className={clsx(
-                "absolute rounded-lg border-2 transition-[left,top] duration-150",
+                // **A piece gets a layer of its own.** It carries a shadow that paints OUTSIDE its own box,
+                // and a box that moves by `left`/`top` leaves that shadow smeared across the street behind
+                // it on iOS. On its own layer the move is a composite rather than a repaint, so nothing of
+                // the piece is left where it has been.
+                "absolute transform-gpu rounded-lg border-2 transition-[left,top] duration-150",
                 mine ? skin.player : skin.piece,
                 mine ? skin.playerEdge : skin.pieceEdge,
                 pinned ? "cursor-default" : "cursor-grab",
