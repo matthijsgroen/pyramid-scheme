@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.42.1 - 2026-08-30
+
 ### Changed
 
 - The market street is lit: it runs from sun at the head of the lane into shade at its foot, every sledge
