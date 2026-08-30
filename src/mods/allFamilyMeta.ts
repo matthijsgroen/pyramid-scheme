@@ -110,21 +110,71 @@ const dressesAnyOf = (meta: FamilyMeta, roles: readonly string[]): boolean =>
 // twice, so it comes up about twice as often, and the rest of the catalogue still turns up. Restricting is
 // untouched: there the pool IS the dress, so every entry already dresses and doubling them all would change
 // nothing but the arithmetic.
-export const allocateEncounterFamily = (role: string | string[], tier: Difficulty, seed: number): string | string[] => {
+const familyBag = (role: string | string[], tier: Difficulty): string[] => {
   const roles = Array.isArray(role) ? role : [role]
   const themed = roles.filter(r => !STRUCTURAL_ROLES.has(r))
   const prefers = themed.length > 0 && themed.length < roles.length
-  const bag = ALL_FAMILY_META.filter(
-    // **A list of roles is "any of these".** Narrowing is what a narrower tag is for: `sky` is the wide
-    // cluster, `light` the narrow one inside it, and a journey asks for whichever pool it means. Reading a
-    // list as "all of these" made every list a smaller pool than either of its entries, which is the
-    // opposite of what authoring one is for.
-    m => roles.some(r => m.tags.includes(r)) && difficultyCompare(tier, m.minTier ?? "starter") >= 0
+  return (
+    ALL_FAMILY_META.filter(
+      // **A list of roles is "any of these".** Narrowing is what a narrower tag is for: `sky` is the wide
+      // cluster, `light` the narrow one inside it, and a journey asks for whichever pool it means. Reading a
+      // list as "all of these" made every list a smaller pool than either of its entries, which is the
+      // opposite of what authoring one is for.
+      m => roles.some(r => m.tags.includes(r)) && difficultyCompare(tier, m.minTier ?? "starter") >= 0
+    )
+      // Sorted BEFORE the weighting and duplicated in place, so a family's entries stay adjacent and adding
+      // one still inserts predictably — the same stability the single-entry pool had.
+      .sort((a, b) => a.id.localeCompare(b.id))
+      .flatMap(m => (prefers && dressesAnyOf(m, themed) ? [m.id, m.id] : [m.id]))
   )
-    // Sorted BEFORE the weighting and duplicated in place, so a family's entries stay adjacent and adding
-    // one still inserts predictably — the same stability the single-entry pool had.
-    .sort((a, b) => a.id.localeCompare(b.id))
-    .flatMap(m => (prefers && dressesAnyOf(m, themed) ? [m.id, m.id] : [m.id]))
+}
+
+export const allocateEncounterFamily = (role: string | string[], tier: Difficulty, seed: number): string | string[] => {
+  const bag = familyBag(role, tier)
   if (bag.length === 0) return role
   return bag[Math.floor(mulberry32(seed)() * bag.length)]
+}
+
+const shuffled = (bag: readonly string[], rng: () => number): string[] => {
+  const deck = [...bag]
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1))
+    ;[deck[i], deck[j]] = [deck[j], deck[i]]
+  }
+  return deck
+}
+
+/**
+ * The families for a whole chain of rooms at once — **dealt from the bag rather than drawn from it.**
+ *
+ * A per-room draw is a fresh roll every time, and fresh rolls cluster: one floor of `junior_2` served
+ * hidato in five rooms running, which is a corridor that reads as one puzzle repeated rather than as a
+ * place with things in it. Dealing hands out the whole bag before any family comes back, so a chain of
+ * five in a pool of thirteen is five different puzzles, every time, at every seed.
+ *
+ * The role is untouched by any of this — it still dresses the whole section (`journeys.md` §5). What
+ * varies down a corridor is which puzzle stands in the room, not what the room looks like.
+ *
+ * A pool of one deals that one family repeatedly: there is nothing else to hand out.
+ */
+export const allocateEncounterSpread = (
+  role: string | string[],
+  tier: Difficulty,
+  seed: number,
+  count: number
+): (string | string[])[] => {
+  const bag = familyBag(role, tier)
+  if (bag.length === 0) return Array.from({ length: count }, () => role)
+  const rng = mulberry32(seed)
+  const dealt: string[] = []
+  let deck: string[] = []
+  while (dealt.length < count) {
+    if (deck.length === 0) deck = shuffled(bag, rng)
+    // Two things put the same family back to back: the seam where one deck runs out and the next
+    // begins, and prefer mode, which holds a dressed family twice in the same deck. Both are answered
+    // by taking the first entry that is not what just played, wherever in the deck it sits.
+    const at = deck.findIndex(id => id !== dealt[dealt.length - 1])
+    dealt.push(deck.splice(at === -1 ? 0 : at, 1)[0])
+  }
+  return dealt
 }

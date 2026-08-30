@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { allocateEncounterFamily, ALL_FAMILY_META } from "./allFamilyMeta"
+import { allocateEncounterFamily, allocateEncounterSpread, ALL_FAMILY_META } from "./allFamilyMeta"
 
 /** How often each family comes back over a long run of slots, which is what a player actually feels. */
 const draw = (role: string | string[], count = 3000) => {
@@ -70,5 +70,36 @@ describe("allocating a family for a role", () => {
       tally[id] = (tally[id] ?? 0) + 1
     }
     expect(Object.keys(tally)).not.toContain("canisters")
+  })
+})
+
+describe("dealing a chain of rooms", () => {
+  /**
+   * **The whole point of dealing.** A corridor of five rooms drawn one at a time hands the same family
+   * out twice often enough for players to meet it — junior_2 once served hidato five rooms running.
+   */
+  it("gives every room of a chain a different family, at every seed", () => {
+    for (let seed = 1; seed <= 500; seed++) {
+      const hand = allocateEncounterSpread("puzzle", "wizard", seed, 5) as string[]
+      expect(new Set(hand).size, `seed ${seed} dealt ${hand.join(", ")}`).toBe(5)
+    }
+  })
+
+  /** Past the size of the pool the bag is refilled, and the seam must not repeat what just played. */
+  it("never repeats back to back, even across a refill", () => {
+    const pool = new Set(Object.keys(draw("water")))
+    for (let seed = 1; seed <= 500; seed++) {
+      const hand = allocateEncounterSpread("water", "wizard", seed, pool.size * 3) as string[]
+      const seam = hand.findIndex((id, i) => i > 0 && id === hand[i - 1])
+      expect(seam, `seed ${seed} repeated at ${seam}: ${hand.join(", ")}`).toBe(-1)
+    }
+  })
+
+  it("hands the role back for every room when the pool is empty", () => {
+    expect(allocateEncounterSpread("no-such-role", "starter", 1, 3)).toEqual([
+      "no-such-role",
+      "no-such-role",
+      "no-such-role",
+    ])
   })
 })
