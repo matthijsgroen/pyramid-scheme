@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
-import { journeys as journeyData, type Journey } from "@/data/journeys"
+import { exteriorLevelCount, journeys as journeyData, type Journey } from "@/data/journeys"
 import { generateNewSeed } from "@/game/random"
 import { persistentInteriorSeed } from "@/game/siteSeed"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
@@ -72,7 +72,13 @@ export type JourneyAPI = {
   markCorridorFound: (sectionHash: string) => void
   getFoundHiddenCorridors: (journeyId: string) => ReadonlySet<string>
   getOutstandingHiddenCorridorCount: (journeyId: string) => number
-  registerFloorExploration: (journeyId: string, floorIndex: number, open: boolean, keySets: string[][]) => void
+  registerFloorExploration: (
+    journeyId: string,
+    levelNr: number,
+    floorIndex: number,
+    open: boolean,
+    keySets: string[][]
+  ) => void
   // 1-based levelNrs of this journey's pyramids that still hold unvisited content given the passed
   // held keys — ungated content, or gated content whose full key bundle the player now holds (a ward
   // door's key, a tableau's hieroglyphs, …). Empty set = nothing to go back for. Read cheaply on the
@@ -123,6 +129,18 @@ export const createJourneysV3Api = ({
   ) => Promise<unknown> | void
 }): JourneyAPI => {
   const activeJourneyId = journeys.find(j => j.active && knownJourneyIds.includes(j.journeyId))?.journeyId
+
+  /**
+   * The level a write belongs to, read HERE — on the render that called — and never inside a
+   * `setJourneys` updater.
+   *
+   * An updater runs a microtask after the call (`useOfflineStorage`'s setValue awaits its load promise
+   * before applying), by which point `completeLevel`/`visitLevel` may have moved `levelNr` on. A key
+   * built in there files the write under a level the player never opened. Everything below that keys by
+   * level takes it from here instead; the one writer that outlives the level it describes — the floor
+   * exploration recorder, which fires as the interior unmounts — is handed its level outright.
+   */
+  const levelOf = (journeyId: string | undefined) => journeys.find(j => j.journeyId === journeyId)?.levelNr ?? 1
 
   // Sites with an interior are persistent, revisitable places: the random seed must stay stable
   // across replays so a previously explored layout still matches on return. Tombs are one such
@@ -233,10 +251,10 @@ export const createJourneysV3Api = ({
 
   const markCellExplored = (sectionHash: string, cellId: string) => {
     if (!activeJourneyId) return
+    const key = `${levelOf(activeJourneyId)}:${sectionHash}`
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
-        const key = `${j.levelNr}:${sectionHash}`
         const current = j.exploredSections[key] ?? []
         if (current.includes(cellId)) return j
         return { ...j, exploredSections: { ...j.exploredSections, [key]: [...current, cellId] } }
@@ -271,12 +289,12 @@ export const createJourneysV3Api = ({
 
   const markTrapDisabled = (sectionHash: string, edgeId: string) => {
     if (!activeJourneyId) return
+    const key = `${levelOf(activeJourneyId)}:${sectionHash}`
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
         const traps = j.disabledTraps ?? []
         if (traps.includes(edgeId)) return j
-        const key = `${j.levelNr}:${sectionHash}`
         const current = j.exploredSections[key] ?? []
         return {
           ...j,
@@ -339,11 +357,12 @@ export const createJourneysV3Api = ({
   // holding them; keyed by levelNr like exploredSections so a multi-level pyramid keeps them apart.
   const registerHiddenCorridors = (sectionHashes: string[]) => {
     if (!activeJourneyId || sectionHashes.length === 0) return
+    const levelNr = levelOf(activeJourneyId)
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
         const known = j.knownHiddenCorridors ?? []
-        const additions = sectionHashes.map(h => `${j.levelNr}:${h}`).filter(key => !known.includes(key))
+        const additions = sectionHashes.map(h => `${levelNr}:${h}`).filter(key => !known.includes(key))
         if (additions.length === 0) return j // no churn: unchanged reference lets React bail
         return { ...j, knownHiddenCorridors: [...known, ...additions] }
       })
@@ -352,11 +371,11 @@ export const createJourneysV3Api = ({
 
   const markCorridorFound = (sectionHash: string) => {
     if (!activeJourneyId) return
+    const key = `${levelOf(activeJourneyId)}:${sectionHash}`
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
         const found = j.foundHiddenCorridors ?? []
-        const key = `${j.levelNr}:${sectionHash}`
         if (found.includes(key)) return j
         return { ...j, foundHiddenCorridors: [...found, key] }
       })
@@ -384,7 +403,13 @@ export const createJourneysV3Api = ({
   const sig = (o: boolean | undefined, ks: string[][] | undefined) =>
     `${o ?? false}|${(ks ?? []).map(k => k.join(",")).join(";")}`
 
-  const registerFloorExploration = (journeyId: string, floorIndex: number, open: boolean, keySets: string[][]) => {
+  const registerFloorExploration = (
+    journeyId: string,
+    levelNr: number,
+    floorIndex: number,
+    open: boolean,
+    keySets: string[][]
+  ) => {
     // Bail if the journey isn't in `journeys` yet, same as every other mutator here — most
     // commonly because this instance's storage load hasn't landed yet (`journeys` still `[]`
     // on mount). Without this check, a `.map` over that placeholder state silently no-ops the
@@ -393,7 +418,7 @@ export const createJourneysV3Api = ({
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== journeyId) return j
-        const key = `${j.levelNr}:${floorIndex}`
+        const key = `${levelNr}:${floorIndex}`
         const prevEntry = j.floorExploration?.[key]
         // No churn: identical summary lets React bail (the effect that calls this fires every render).
         if (prevEntry && sig(prevEntry.open, prevEntry.keySets) === sig(open, keySets)) return j
@@ -406,9 +431,15 @@ export const createJourneysV3Api = ({
     const j = journeys.find(j => j.journeyId === journeyId)
     const levels = new Set<number>()
     if (!j?.floorExploration) return levels
+    // Only levels this journey still has a node for. A tomb's earliest runs filed floors under the
+    // levels its exterior used to count, and it now re-enters level 1 from every node: those entries
+    // are unreachable, and counting them left the journey card pulsing at a tomb with nothing left.
+    const nodes = exteriorLevelCount(journeyData.find(info => info.id === journeyId))
     for (const [key, entry] of Object.entries(j.floorExploration)) {
+      const level = Number(key.split(":")[0])
+      if (level > nodes) continue
       const lit = (entry.open ?? false) || (entry.keySets ?? []).some(ks => ks.every(k => heldKeys.has(k)))
-      if (lit) levels.add(Number(key.split(":")[0]))
+      if (lit) levels.add(level)
     }
     return levels
   }

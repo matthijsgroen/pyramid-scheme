@@ -74,6 +74,18 @@ export type TreasureTombJourney = {
   }
 }
 
+/**
+ * How many exterior levels a journey has NODES for — what the map draws, and the only level numbers a
+ * journey ever addresses.
+ *
+ * A tomb is ONE persistent multi-floor site (pyramid-interior-design.md §8), played as a single
+ * exterior level however many floors its `levelCount` counts: every node on a tomb's map re-enters
+ * level 1. Anything filed under a higher level for a tomb is from a visit the journey can no longer
+ * return to, and reading it back would light a node that is not there.
+ */
+export const exteriorLevelCount = (journey: Pick<Journey, "type" | "levelCount"> | null | undefined): number =>
+  !journey || journey.type === "treasure_tomb" ? 1 : journey.levelCount
+
 export const journeys: Journey[] = [
   // Starter Difficulty Journeys
   {
