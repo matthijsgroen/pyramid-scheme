@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import { useRef, useState, type FC, type PointerEvent } from "react"
+import { useEffect, useRef, useState, type FC, type PointerEvent } from "react"
 import { useTranslation } from "react-i18next"
 import type { Mark, ProcessionPuzzle, ProcessionState } from "@/mods/puzzle/game/procession/procession"
 import { lastStart } from "@/mods/puzzle/game/procession/procession"
@@ -234,14 +234,53 @@ const Swatch: FC<{
   <span
     className={clsx(
       "inline-flex items-center justify-center rounded border leading-none",
-      size === "row" ? "size-10 text-3xl" : wide ? "h-6 w-8 text-base" : "size-6 text-base",
+      size === "row" ? "size-10 p-1" : wide ? "h-6 w-8 p-0.5" : "size-6 p-0.5",
       skin.bars[index % skin.bars.length],
       ringed && `ring-2 ${skin.focus}`
     )}
   >
-    {skin.glyphs[index % skin.glyphs.length]}
+    <Glyph sign={skin.glyphs[index % skin.glyphs.length]} />
   </span>
 )
+
+/**
+ * One sign, scaled to fill the badge it is given.
+ *
+ * **Hieroglyphs do not share a size.** Set at one font size, a water sign fills its badge edge to edge
+ * while a loaf sits small in the middle of the next one, and the wide ones spill past the border — and a
+ * face may cast any sign the subset carries, so there is no font size that fits them all. So the sign is
+ * drawn once, its own ink measured, and the box set to that ink: whatever a face casts, it fills its badge
+ * and stays inside it.
+ */
+const Glyph: FC<{ sign: string }> = ({ sign }) => {
+  const ink = useRef<SVGTextElement>(null)
+  const [box, setBox] = useState<string>()
+
+  useEffect(() => {
+    // **Measured once the hieroglyph face is in.** Until it lands the browser draws a fallback shape, and
+    // the box would be fitted to that shape rather than to the sign.
+    let live = true
+    const fit = () => {
+      const bounds = ink.current?.getBBox?.()
+      if (live && bounds?.width) setBox(`${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`)
+    }
+    if (document.fonts) void document.fonts.ready.then(fit)
+    else fit()
+    return () => {
+      live = false
+    }
+  }, [sign])
+
+  return (
+    <svg className="size-full" viewBox={box ?? "0 0 100 100"} preserveAspectRatio="xMidYMid meet">
+      {/* Before it is measured the sign is drawn at a size the box knows nothing about, so it is held
+          invisible rather than shown oversized for a frame. */}
+      <text ref={ink} fontSize="100" fill="currentColor" opacity={box ? 1 : 0}>
+        {sign}
+      </text>
+    </svg>
+  )
+}
 
 /**
  * What a mark says, drawn rather than written (`PUZZLE_FAMILIES.md` P2).
