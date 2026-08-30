@@ -9,6 +9,7 @@ import {
   claimCanister,
   createCanistersState,
   holdCanister,
+  canUndoPour,
   isCanistersSolved,
   movesLeft,
   pourInto,
@@ -61,6 +62,9 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
       onCancel={onCancel}
       solved={celebration.done}
       onReset={() => setState(createCanistersState(puzzle))}
+      // Undo gives the MOVE back as well as the pour (`undoPour`), so on this board it is the way out of a
+      // budget spent on a wrong reading — not merely a convenience.
+      undo={{ onPress: () => setState(undoPour), enabled: canUndoPour(state) && !solved }}
       hint={t(`canisters.hint.${hint.key}`, hint.params)}
       idleMs={hintIdleDelay(difficulty)}
       title={t(`canisters.name.${skin.name}`)}
@@ -107,16 +111,22 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
               setState(current => claimCanister(current, puzzle, canister))
             }}
           />
-          {/* The budget IS the puzzle (§2), so it is on screen rather than in a menu. Every part of this row
-              carries its own colour: the shell's ground is dark, and text with no colour of its own comes
-              out black on it. */}
-          <div className="flex items-center gap-4 text-sm text-stone-300">
-            <span className={left <= 0 ? "text-rose-400" : "text-stone-200"}>
+          {/* The budget IS the puzzle (§2), so it is on screen rather than in a menu — and it is board
+              state, not a control, which is why it reads as a line under the board and not as part of the
+              shell's control row.
+
+              **The warning arrives while it can still be acted on.** It used to turn red at zero, which is
+              a board already dead: the pours are spent, and the only moves left are undo and reset. Amber
+              from two out says the same thing early enough to change the plan. */}
+          <div className="flex flex-col items-center gap-1 text-sm">
+            <span className={left <= 0 ? "text-rose-400" : left <= 2 ? "text-amber-300" : "text-stone-200"}>
               {t("canisters.movesLeft", { count: Math.max(left, 0) })}
             </span>
-            <button onClick={() => setState(undoPour)} className="text-stone-300 underline underline-offset-2">
-              {t("canisters.undo")}
-            </button>
+            {/* A spent budget refuses pours in silence (`pourInto`) — a tap that does nothing and says
+                nothing. The same sentence the hint gives, said without having to ask for it. */}
+            {left <= 0 && !solved && (
+              <span className="text-center text-rose-300">{t("canisters.hint.overBudget")}</span>
+            )}
           </div>
         </div>
       )}

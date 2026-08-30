@@ -13,13 +13,11 @@ const meta = {
     size: 6,
     skin: skinFor(undefined, undefined),
     pencil: false,
-    canUndo: true,
     exhausted: new Set<number>(),
     disabled: false,
     onValue: () => {},
     onErase: () => {},
     onTogglePencil: () => {},
-    onUndo: () => {},
   },
 } satisfies Meta<typeof SudokuPad>
 
@@ -28,7 +26,7 @@ type Story = StoryObj<typeof meta>
 
 export const Values: Story = {}
 
-/** Pencil on: the same keys, written in as options rather than as answers. */
+/** Pencil on: the keys turn sky, which is the mode showing itself where it acts. */
 export const Pencil: Story = { args: { pencil: true } }
 
 /** Values with every square of their own already spoken for are dimmed, never removed — the pad must
@@ -36,7 +34,7 @@ export const Pencil: Story = { args: { pencil: true } }
 export const SomeSpent: Story = { args: { exhausted: new Set([2, 5]) } }
 
 /** Nothing is picked on the board, so a value has nowhere to go yet. */
-export const NothingPicked: Story = { args: { disabled: true, canUndo: false } }
+export const NothingPicked: Story = { args: { disabled: true } }
 
 /** The scribe's register types in signs: the pad wears the same face the board does. */
 export const Papyrus: Story = { args: { skin: skinFor("scribe", undefined) } }

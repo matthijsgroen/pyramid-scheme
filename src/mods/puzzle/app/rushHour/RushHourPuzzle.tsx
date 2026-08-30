@@ -1,4 +1,3 @@
-import clsx from "clsx"
 import { useCallback, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
@@ -68,6 +67,10 @@ export const RushHourPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onS
       onCancel={onCancel}
       solved={celebration.done}
       onReset={() => setPast([createRushHourState(puzzle)])}
+      undo={{
+        onPress: () => setPast(stack => (stack.length > 1 ? stack.slice(0, -1) : stack)),
+        enabled: past.length > 1 && !finished,
+      }}
       hint={hintText}
       onHintRevealed={() => setAsked(true)}
       idleMs={hintIdleDelay(difficulty)}
@@ -76,40 +79,21 @@ export const RushHourPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onS
       rules={<RushHourRules skin={skin.name} />}
     >
       {({ reportInput, hintVisible }) => (
-        <>
-          <RushHourBoard
-            puzzle={puzzle}
-            state={state}
-            skin={skin}
-            hintPiece={hintVisible ? hint?.move.index : undefined}
-            hintCells={hintVisible ? hint?.cells : undefined}
-            leaving={finished}
-            onSlide={(index, offset) => {
-              if (finished) return // the piece is leaving; nothing may change under the run
-              const moved = slidePiece(puzzle, state, index, offset)
-              if (moved === state) return
-              reportInput()
-              setPast(stack => [...stack, moved])
-            }}
-          />
-          {/* The same control eclipse, futoshiki and star battle put under their boards, in the same place
-              and the same shape. */}
-          <button
-            onClick={() => {
-              reportInput()
-              setPast(stack => (stack.length > 1 ? stack.slice(0, -1) : stack))
-            }}
-            disabled={past.length === 1 || finished}
-            className={clsx(
-              "flex h-11 min-w-11 items-center justify-center gap-1 rounded border px-2 text-sm transition-colors",
-              past.length > 1 && !finished
-                ? "border-amber-700 bg-amber-950/60 text-amber-200"
-                : "border-stone-700 bg-stone-900 text-stone-600"
-            )}
-          >
-            ↩ {t("rushHour.undo")}
-          </button>
-        </>
+        <RushHourBoard
+          puzzle={puzzle}
+          state={state}
+          skin={skin}
+          hintPiece={hintVisible ? hint?.move.index : undefined}
+          hintCells={hintVisible ? hint?.cells : undefined}
+          leaving={finished}
+          onSlide={(index, offset) => {
+            if (finished) return // the piece is leaving; nothing may change under the run
+            const moved = slidePiece(puzzle, state, index, offset)
+            if (moved === state) return
+            reportInput()
+            setPast(stack => [...stack, moved])
+          }}
+        />
       )}
     </PuzzleFamilyShell>
   )

@@ -84,6 +84,9 @@
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
     "resetPuzzle": "Reset",
     "hint": "Hint",
+    "undo": "Undo",
+    "erase": "Erase",
+    "notes": "Notes",
     "solvedUnaided": "Solved without a single hint",
     "solvedWithHints_one": "Solved with {{count}} hint",
     "solvedWithHints_other": "Solved with {{count}} hints",
@@ -336,9 +339,6 @@
       "enter": "Tap a square, then tap a number. The same number again takes it back out.",
       "notes": "Switch to the pencil to jot down the numbers a square could still hold. Undo takes back your last move."
     },
-    "notes": "Notes",
-    "erase": "Erase",
-    "undo": "Undo",
     "hint": {
       "mistake": {
         "value": "One of the numbers here cannot be right. Take it back out and look again.",
@@ -429,7 +429,6 @@
       "signs": "A sign between two squares says how they compare: = for the same, × for different.",
       "enter": "Tap a square to put a sun there, tap again for a moon, tap once more to empty it."
     },
-    "undo": "Undo",
     "hint": {
       "mistake": "One of these marks cannot be right.",
       "sign.same": "= means the same.",
@@ -481,7 +480,6 @@
         "enter": "Drag from a star toward its neighbour to lay a cord, again to double it, once more to lift it off."
       }
     },
-    "undo": "Undo",
     "hint": {
       "default": {
         "mistake": "One of these lines cannot be right.",
@@ -580,7 +578,6 @@
         "enter": "Tap a plot to rule it out, tap again to raise a farmstead, once more to clear it."
       }
     },
-    "undo": "Undo",
     "hint": {
       "default": {
         "mistake": "This mark cannot be right.",
@@ -724,8 +721,7 @@
           "down": "Shove it down the street, as far as the ring."
         }
       }
-    },
-    "undo": "Undo"
+    }
   },
   "hidato": {
     "rules": {
@@ -750,7 +746,6 @@
         "back": "Tap a chamber you opened and tap it again to seal it up, along with any passage left cut off from it. Breaking through a different way out of a chamber does the same. Undo takes back your last move."
       }
     },
-    "undo": "Undo",
     "goal": {
       "default": "Every cell of the comb holds a number, 1 to {{last}}, each one in a cell touching the number before it.",
       "channel": "One channel waters the whole plain: every field takes its turn, 1 to {{last}}, each one dug beside the field before it.",
@@ -829,9 +824,6 @@
         "notes": "Take up the reed pen to pencil in the signs a space could still carry. Undo takes back your last move."
       }
     },
-    "notes": "Notes",
-    "erase": "Erase",
-    "undo": "Undo",
     "hint": {
       "default": {
         "reason": {
@@ -972,12 +964,11 @@
       "empties": "Pour the {{from}} into the {{to}} — the {{from}} runs dry, and an empty canister is what you need next.",
       "last": "One more: pour the {{from}} into the {{to}}, and {{target}} will be standing on the bench. Then work out which canister has it.",
       "stuck": "From here {{target}} can no longer be measured in the moves you have left. Take a pour back, or start the board again.",
-      "overBudget": "There are no moves left. Reset and find the shorter way."
+      "overBudget": "There are no moves left. Take one back, or reset and find the shorter way."
     },
     "movesLeft_one": "{{count}} move left",
     "movesLeft_other": "{{count}} moves left",
     "legs": "measured {{done}} of {{total}}",
-    "undo": "Undo",
     "wanted": "Measure out",
     "claim": "this one",
     "claimAria": "Say the {{capacity}} holds the amount"

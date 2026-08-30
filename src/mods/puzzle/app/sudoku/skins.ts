@@ -96,9 +96,6 @@ export type SudokuSkin = {
     key: string
     pencilKey: string
     disabledKey: string
-    control: string
-    controlOn: string
-    controlOff: string
   }
   /** What a value wears for its turn in the completion run (`puzzle-screens.md` §3). */
   celebrate: string
@@ -159,9 +156,6 @@ const carved: SudokuSkin = {
     key: "border-stone-500 bg-stone-700 text-stone-100",
     pencilKey: "border-sky-600 bg-sky-950/60 text-sky-200",
     disabledKey: "border-stone-700 bg-stone-900 text-stone-600",
-    control: "border-stone-600 bg-stone-800 text-stone-300",
-    controlOn: "border-sky-500 bg-sky-900 text-sky-100",
-    controlOff: "border-stone-700 bg-stone-900 text-stone-600",
   },
   celebrate: "animate-bloom",
 }
@@ -222,9 +216,6 @@ const register: SudokuSkin = {
     key: "border-[#8a6a3f] bg-[#e8d5a6] text-stone-900",
     pencilKey: "border-sky-800 bg-[#dfe3e8] text-sky-900",
     disabledKey: "border-[#a89772] bg-[#cbb78d] text-stone-600",
-    control: "border-[#8a6a3f] bg-[#e2ca93] text-stone-800",
-    controlOn: "border-sky-800 bg-[#dfe3e8] text-sky-900",
-    controlOff: "border-[#a89772] bg-[#cbb78d] text-stone-600",
   },
   // Ink does not swell as it dries; a sign that grew would read as the sheet moving under it. So the
   // register only brightens, where the carved board blooms.

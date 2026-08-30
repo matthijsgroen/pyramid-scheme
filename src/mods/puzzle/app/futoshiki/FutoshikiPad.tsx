@@ -6,7 +6,6 @@ type Props = {
   size: number
   /** True while numbers go in as pencilled notes rather than as answers. */
   pencil: boolean
-  canUndo: boolean
   /** Numbers already written into every row — nothing left to place. */
   exhausted: ReadonlySet<number>
   /** No cell is picked, so a number has nowhere to go yet. */
@@ -14,31 +13,28 @@ type Props = {
   onNumber: (value: number) => void
   onErase: () => void
   onTogglePencil: () => void
-  onUndo: () => void
 }
 
 // Every control is at least a thumb wide (docs/instructions/puzzle-screens.md §1), and the pad wraps
 // rather than shrinking, so a 7-number pad still fits a 360px screen.
-const buttonCls = "flex h-11 min-w-11 items-center justify-center rounded border px-2 text-lg transition-colors"
+const keyCls = "flex h-11 min-w-11 items-center justify-center rounded border text-lg transition-colors"
 
 // Six numbers is what a 360px screen fits in one row, so a seventh wraps — split evenly rather than
 // stranding it alone, which reads as a layout fault instead of a row that ran out of room.
 const padColumns = (size: number) => Math.ceil(size / Math.ceil(size / 6))
 
-export const FutoshikiPad: FC<Props> = ({
-  size,
-  pencil,
-  canUndo,
-  exhausted,
-  disabled,
-  onNumber,
-  onErase,
-  onTogglePencil,
-  onUndo,
-}) => {
+/**
+ * The numbers, and the two keys that change what pressing one MEANS.
+ *
+ * **Notes and the eraser are pad furniture, not chrome** (`puzzle-screens.md` §3). They were briefly up in
+ * the shell's control row with undo and hint, wearing words, and that read as a toolbar: three labelled
+ * buttons of equal weight, one of which silently re-aimed every key above it. Down here, cut to the same
+ * square as a number and standing in the same grid, the pencil says what it is — the mode the keys are in.
+ */
+export const FutoshikiPad: FC<Props> = ({ size, pencil, exhausted, disabled, onNumber, onErase, onTogglePencil }) => {
   const { t } = useTranslation("common")
   return (
-    <div className="flex w-full max-w-[min(56vh,26rem)] flex-col items-center gap-2">
+    <div className="flex w-full max-w-[min(56vh,26rem)] flex-col items-center gap-1.5">
       <div
         className="grid justify-center gap-1.5"
         style={{ gridTemplateColumns: `repeat(${padColumns(size)}, minmax(2.75rem, 3.25rem))` }}
@@ -48,7 +44,7 @@ export const FutoshikiPad: FC<Props> = ({
             key={value}
             onClick={() => onNumber(value)}
             disabled={disabled}
-            className={clsx(buttonCls, {
+            className={clsx(keyCls, {
               "border-sky-600 bg-sky-950/60 text-sky-200": pencil && !disabled,
               "border-stone-500 bg-stone-700 text-stone-100": !pencil && !disabled,
               "border-stone-700 bg-stone-900 text-stone-600": disabled,
@@ -61,36 +57,33 @@ export const FutoshikiPad: FC<Props> = ({
           </button>
         ))}
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-1.5">
+      <div className="flex items-center gap-1.5">
+        {/* Wordless, because it is a key and keys carry marks. The word is in the label a screen reader
+            hears, and `aria-pressed` is what says the mode is on — the sky the keys above turn says it
+            to everyone else, which is the mode showing itself where it acts. */}
         <button
           onClick={onTogglePencil}
           aria-pressed={pencil}
-          className={clsx(buttonCls, "gap-1 text-sm", {
-            "border-sky-500 bg-sky-900 text-sky-100": pencil,
-            "border-stone-600 bg-stone-800 text-stone-300": !pencil,
-          })}
+          aria-label={t("ui.notes")}
+          className={clsx(
+            keyCls,
+            "w-11",
+            pencil ? "border-sky-500 bg-sky-900" : "border-stone-600 bg-stone-800 hover:bg-stone-700"
+          )}
         >
-          ✏️ {t("futoshiki.notes")}
+          ✏️
         </button>
         <button
           onClick={onErase}
           disabled={disabled}
-          className={clsx(buttonCls, "gap-1 text-sm", {
-            "border-stone-600 bg-stone-800 text-stone-300": !disabled,
-            "border-stone-700 bg-stone-900 text-stone-600": disabled,
-          })}
+          aria-label={t("ui.erase")}
+          className={clsx(
+            keyCls,
+            "w-11",
+            disabled ? "border-stone-700 bg-stone-900 opacity-40" : "border-stone-600 bg-stone-800 hover:bg-stone-700"
+          )}
         >
-          🧽 {t("futoshiki.erase")}
-        </button>
-        <button
-          onClick={onUndo}
-          disabled={!canUndo}
-          className={clsx(buttonCls, "gap-1 text-sm", {
-            "border-amber-700 bg-amber-950/60 text-amber-200": canUndo,
-            "border-stone-700 bg-stone-900 text-stone-600": !canUndo,
-          })}
-        >
-          ↩ {t("futoshiki.undo")}
+          🧽
         </button>
       </div>
     </div>

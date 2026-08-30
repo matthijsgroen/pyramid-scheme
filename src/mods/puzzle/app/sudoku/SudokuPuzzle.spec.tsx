@@ -187,7 +187,7 @@ describe("SudokuPuzzle", () => {
       const other = [...createSudokuBoard(puzzle, puzzle.givens).candidates[row][col]].find(one => one !== value)!
 
       act(() => cellsIn(container)[row * 6 + col].click())
-      act(() => padIn(container, "✏️ sudoku.notes").click())
+      act(() => padIn(container, "ui.notes").click())
       act(() => padIn(container, String(value)).click())
       act(() => padIn(container, String(other)).click())
       act(() => cellsIn(container)[holder.row * 6 + holder.col].click())
@@ -217,7 +217,7 @@ describe("SudokuPuzzle", () => {
       const empty = puzzle.givens[holder.row].findIndex(held => held === undefined)
 
       act(() => cellsIn(container)[holder.row * 6 + empty].click())
-      act(() => padIn(container, "✏️ sudoku.notes").click())
+      act(() => padIn(container, "ui.notes").click())
       act(() => padIn(container, String(holder.value)).click())
       act(() => cellsIn(container)[holder.row * 6 + holder.col].click())
 
@@ -261,7 +261,7 @@ describe("SudokuPuzzle", () => {
     const { row, col } = firstEmpty(puzzle)
     const cell = () => cellsIn(container)[row * 6 + col]
     act(() => cell().click())
-    act(() => padIn(container, "✏️ sudoku.notes").click())
+    act(() => padIn(container, "ui.notes").click())
     act(() => padIn(container, "3").click())
 
     // Every value keeps a place in the square whether pencilled or not, so a note does not move when
@@ -275,7 +275,7 @@ describe("SudokuPuzzle", () => {
     expect(pencilled(cell())).toEqual([])
 
     // And with the pencil off, the same key writes the value in for real.
-    act(() => padIn(container, "✏️ sudoku.notes").click())
+    act(() => padIn(container, "ui.notes").click())
     act(() => padIn(container, "3").click())
     expect(pencilled(cell())).toEqual([])
     expect(cell().querySelector("span.inline-block")?.textContent).toBe("3")

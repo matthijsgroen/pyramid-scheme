@@ -95,6 +95,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
         setState(createFutoshikiState(puzzle))
         clearSelection()
       }}
+      undo={{ onPress: () => setState(undoFutoshikiMove), enabled: canUndoFutoshiki(state) && !finished }}
       hint={hint && t(`futoshiki.hint.${hint.key}`, hint.params)}
       idleMs={hintIdleDelay(difficulty)}
       // Reading a hint and then hunting for the square it means is the whole gap between advice and
@@ -124,7 +125,6 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
           <FutoshikiPad
             size={size}
             pencil={pencil}
-            canUndo={canUndoFutoshiki(state) && !finished}
             exhausted={exhaustedNumbers(values, size)}
             disabled={!selected || finished}
             onNumber={value => {
@@ -139,11 +139,6 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
             onTogglePencil={() => {
               reportInput()
               togglePencil()
-            }}
-            onUndo={() => {
-              if (finished) return
-              reportInput()
-              setState(undoFutoshikiMove)
             }}
           />
         </>

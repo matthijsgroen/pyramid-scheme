@@ -1,4 +1,3 @@
-import clsx from "clsx"
 import { useCallback, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
@@ -82,6 +81,8 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
       onCancel={onCancel}
       solved={celebration.done}
       onReset={() => setState(createConstellationState(puzzle))}
+      // A drag gives one pair back, so undo is for stepping back off a run of lines drawn on a wrong reading.
+      undo={{ onPress: () => setState(undoConstellation), enabled: canUndoConstellation(state) && !finished }}
       hint={hintText}
       onHintRevealed={() => setAsked(true)}
       idleMs={hintIdleDelay(difficulty)}
@@ -90,44 +91,24 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
       rules={<ConstellationRules skin={skin} />}
     >
       {({ reportInput, hintVisible }) => (
-        <>
-          <ConstellationBoard
-            puzzle={puzzle}
-            state={state}
-            highlighted={hintVisible ? hint?.pairs : undefined}
-            focus={hintVisible ? hint?.focus : undefined}
-            litStars={hintVisible ? hint?.stars : undefined}
-            theme={theme}
-            role={role}
-            celebrated={celebrated}
-            onDrawLine={pair => {
-              if (finished) return // the board is finishing; nothing may change under the celebration
-              reportInput()
-              // From the board it replaces rather than from the render's own copy: two fingers releasing
-              // inside one batch would otherwise both read the same board, and one of the two lines would be
-              // dropped. Undo has the same reason to care — its stack is part of that board.
-              setState(previous => cycleConstellationLine(puzzle, previous, pair))
-            }}
-          />
-          {/* The same control futoshiki and eclipse put under their boards, in the same place and the same
-              shape. A drag gives one pair back, so this is for stepping back off a run of lines drawn on a
-              wrong reading. */}
-          <button
-            onClick={() => {
-              reportInput()
-              setState(undoConstellation)
-            }}
-            disabled={!canUndoConstellation(state) || finished}
-            className={clsx(
-              "flex h-11 min-w-11 items-center justify-center gap-1 rounded border px-2 text-sm transition-colors",
-              canUndoConstellation(state)
-                ? "border-amber-700 bg-amber-950/60 text-amber-200"
-                : "border-stone-700 bg-stone-900 text-stone-600"
-            )}
-          >
-            ↩ {t("constellation.undo")}
-          </button>
-        </>
+        <ConstellationBoard
+          puzzle={puzzle}
+          state={state}
+          highlighted={hintVisible ? hint?.pairs : undefined}
+          focus={hintVisible ? hint?.focus : undefined}
+          litStars={hintVisible ? hint?.stars : undefined}
+          theme={theme}
+          role={role}
+          celebrated={celebrated}
+          onDrawLine={pair => {
+            if (finished) return // the board is finishing; nothing may change under the celebration
+            reportInput()
+            // From the board it replaces rather than from the render's own copy: two fingers releasing
+            // inside one batch would otherwise both read the same board, and one of the two lines would be
+            // dropped. Undo has the same reason to care — its stack is part of that board.
+            setState(previous => cycleConstellationLine(puzzle, previous, pair))
+          }}
+        />
       )}
     </PuzzleFamilyShell>
   )
