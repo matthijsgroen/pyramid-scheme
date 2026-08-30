@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - A sudoku hint that says a number fits nowhere else in its row, column or chamber now rings the squares
   that shut the others out, so you can check the claim instead of taking it on trust.
+### Fixed
+
+- Two rooms of one corridor no longer hold the same puzzle. A stretch of rooms is dealt its puzzles from a
+  shuffled bag now, so every kind in the pool turns up before any of them comes back — a valley floor that
+  served the same number-threading board five rooms running now serves five different ones.
+- A gap in a wall now leads somewhere. A passage lit from its far end is drawn even while the chamber
+  that shapes it is still dark, and a doorway onto ground the map is not showing at all is walled.
+- The signs beside a day's rows are drawn to the size of their badge, so a wide sign no longer spills over
+  its edge and a small one no longer sits lost in the middle of it.
 
 ## 0.42.2 - 2026-08-30
 

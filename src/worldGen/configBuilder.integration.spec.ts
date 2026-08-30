@@ -21,7 +21,7 @@ import {
   resolveKeyRequirements,
   familyPriorityFor,
   familyCapacityFor,
-  allocateEncounterFamily,
+  allocateEncounterSpread,
 } from "../mods/allFamilyMeta"
 
 // This is a structural golden guard (reward counts, determinism, tomb linking) — NOT an economy
@@ -44,7 +44,7 @@ const buildRealConfigs = () =>
     MOD_WORLD_VALIDATORS,
     familyPriorityFor,
     0,
-    allocateEncounterFamily,
+    allocateEncounterSpread,
     MOD_REACHABILITY_SUPPORT,
     MOD_TOMB_TREASURE_RESOLVER,
     familyCapacityFor,
