@@ -130,6 +130,28 @@ describe("nextSudokuStep", () => {
     })
   })
 
+  it("argues a hidden single from the squares that shut the rest of the group out", () => {
+    // Three 1s off row 0 between them close five of its six squares: one down column 1, and two that
+    // each close a chamber's worth of the row. They are the whole reason, and none of them stands on
+    // the row it decides — so the hint has to be able to point at them.
+    const givens = blankGrid(6)
+    givens[1][2] = 1
+    givens[2][4] = 1
+    givens[3][1] = 1
+    const step = nextSudokuStep(createSudokuBoard(puzzleOf(givens), givens), ["hiddenSingle"])
+    expect(step).toMatchObject({
+      technique: "hiddenSingle",
+      variant: "row",
+      cells: [{ row: 0, col: 0 }],
+      params: { value: 1 },
+    })
+    expect(step?.evidence).toEqual([
+      { row: 3, col: 1 },
+      { row: 1, col: 2 },
+      { row: 2, col: 4 },
+    ])
+  })
+
   it("clears a line of a value its chamber has pinned to one row of it", () => {
     // In the top-left chamber the 1 can only stand on row 2 — so it IS somewhere on row 2, and the
     // rest of that row cannot have it.

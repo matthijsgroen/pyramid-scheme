@@ -216,6 +216,27 @@ const eliminate = (board: SudokuBoard, cell: SudokuCellRef, values: number[]): S
 const hostsOf = (board: SudokuBoard, unit: Unit, value: number): SudokuCellRef[] =>
   unit.cells.filter(cell => board.candidates[cell.row][cell.col].has(value))
 
+/**
+ * The squares that SHUT THE OTHERS OUT: every square already showing this value that shares a row, a
+ * column or a chamber with an empty square of this unit.
+ *
+ * **A hidden single argues from squares that are not in the unit at all**, which is what makes it the
+ * one rung a player can read and still not see. "Nowhere else in this row" is a claim about six
+ * squares, and the reason each of the other five is out stands somewhere off the row. So the hint
+ * rings them, and the sentence stops being something to take on trust.
+ *
+ * Squares of the unit that already hold a value are left out: they show their own reason.
+ */
+const blockersOf = (board: SudokuBoard, unit: Unit, value: number, host: SudokuCellRef): SudokuCellRef[] => {
+  const found = new Map<string, SudokuCellRef>()
+  for (const cell of unit.cells) {
+    if (sameCell(cell, host) || board.values[cell.row][cell.col] !== undefined) continue
+    for (const peer of peersOf(board.puzzle, cell.row, cell.col))
+      if (board.values[peer.row][peer.col] === value) found.set(sudokuCellKey(peer.row, peer.col), peer)
+  }
+  return [...found.values()]
+}
+
 /** The values a unit is still missing — the only ones any technique over it has anything to say about. */
 const openValues = (board: SudokuBoard, unit: Unit): number[] => {
   const placed = new Set(unit.cells.map(cell => board.values[cell.row][cell.col]))
@@ -254,6 +275,7 @@ const IMPLEMENTATIONS: Record<TechniqueId, Technique> = {
             technique: "hiddenSingle" as const,
             variant: unit.kind,
             cells: [hosts[0]],
+            evidence: blockersOf(board, unit, value, hosts[0]),
             params: { value },
             decisions: [{ kind: "place" as const, row: hosts[0].row, col: hosts[0].col, value }],
           },
