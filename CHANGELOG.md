@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- A sudoku hint that says a number fits nowhere else in its row, column or chamber now rings the squares
+  that shut the others out, so you can check the claim instead of taking it on trust.
+
 ### Fixed
 
 - Two rooms of one corridor no longer hold the same puzzle. A stretch of rooms is dealt its puzzles from a
