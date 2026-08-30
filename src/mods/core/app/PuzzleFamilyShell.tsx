@@ -14,6 +14,16 @@ export type PuzzleShellApi = {
   hintVisible: boolean
 }
 
+/**
+ * A control the shell draws for a family that has one.
+ *
+ * **Presence decides whether the button is on screen; `enabled` decides whether it can be pressed.**
+ * The two are separate because a family that has undo has it for the whole board — dropping the button
+ * out of the row on an empty history would reshuffle the row under a thumb, which is the same reason
+ * the pads dim a spent value instead of removing it.
+ */
+type Control = { onPress: () => void; enabled: boolean }
+
 type Props = {
   onSolved: () => void
   onCancel: () => void
@@ -21,6 +31,14 @@ type Props = {
   solved?: boolean
   /** Restores the board's start state. Omit for families with nothing to reset. */
   onReset?: () => void
+  /**
+   * Takes back the last move. Omit for families where the board is its own undo (a tap that cycles).
+   *
+   * **The only control the shell takes from a family**, because a step back is the only one that means the
+   * same thing on every board. Notes and erase change what the NEXT tap does, which makes them part of the
+   * keypad rather than part of the chrome — they live in the pads (`puzzle-screens.md` §3).
+   */
+  undo?: Control
   /**
    * The next step, already phrased — or a function that phrases it.
    *
@@ -75,14 +93,23 @@ const formatDuration = (ms: number): string => {
   return seconds < 60 ? `${seconds}s` : `${Math.floor(seconds / 60)}:${`${seconds % 60}`.padStart(2, "0")}`
 }
 
-// The chrome every puzzle family wears: back, reset, hint (with its cooldown and idle nudge), the
-// completed banner, and the rules below the board. Families supply the board and their own hint text;
-// none of them reimplement the controls (docs/instructions/puzzle-screens.md §3).
+// Every control is a thumb wide and a thumb tall (docs/instructions/puzzle-screens.md §1) — the pads have
+// always been, and the chrome around them used to be half that. The two under the board share the width
+// evenly, so they land in the same place on every family and are reachable without looking.
+const pillCls =
+  "flex h-11 flex-1 items-center justify-center gap-1 rounded-full px-3 text-sm font-medium transition-colors"
+const spent = "bg-stone-800/50 text-stone-600"
+
+// The chrome every puzzle family wears: back and reset at the top, undo and hint as two pills under the
+// board (the hint with its cooldown and idle nudge), then the completed banner and the rules. Families
+// supply the board and their own hint text, and whatever their input surface needs — a pad's notes and
+// eraser are the pad's (docs/instructions/puzzle-screens.md §3).
 export const PuzzleFamilyShell = ({
   onSolved,
   onCancel,
   solved,
   onReset,
+  undo,
   hint,
   idleMs,
   onHintRevealed,
@@ -132,59 +159,48 @@ export const PuzzleFamilyShell = ({
     if (revealed) hintRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" })
   }, [revealed])
 
+  // Nothing a family hands over gets to skip the idle timer: a board being undone is a board being played,
+  // and canisters' undo used to leave the nudge counting down through a run of them.
+  const press = (control: Control) => () => {
+    reportInput()
+    control.onPress()
+  }
+
   return (
     <>
       {/* Kept in the layout once the board is finishing, not unmounted: dropping the chrome out of the flow
           collapsed the page under the banner, so the whole screen jumped as it landed. Dimmed and inert
           rather than hidden — the controls read as out of use, which is what they are. */}
-      <div inert={finishing} className={clsx("flex w-full items-center gap-2", finishing && "opacity-40")}>
+      <div inert={finishing} className={clsx("flex w-full items-center", finishing && "opacity-40")}>
+        {/* Leaving is not a move on the board, so it sits away from the ones that are: alone at the top,
+            where every other screen in the game keeps its way out. */}
         <button
           onClick={() => {
             cancelSolve()
             onCancel()
           }}
-          className="rounded px-2 py-1 text-sm text-stone-300 hover:bg-stone-800"
+          className="flex h-11 items-center rounded px-2 text-sm text-stone-300 hover:bg-stone-800"
         >
           ← {t("ui.backToMap")}
         </button>
         <div className="flex-1" />
+        {/* Reset is not a move on the board — it throws the whole board away — so it keeps company with the
+            way out rather than with the controls a player uses to PLAY. Up here it is also out of reach of
+            the thumb that is working the pad, which is exactly where the one irreversible button belongs. */}
         {onReset && (
           <button
             onClick={() => {
               reportInput()
               onReset()
             }}
-            className="rounded px-2 py-1 text-sm text-stone-300 hover:bg-stone-800"
+            className="flex h-11 items-center rounded px-2 text-sm text-stone-400 hover:bg-stone-800 hover:text-rose-300"
           >
             {t("ui.resetPuzzle")}
           </button>
         )}
-        {hint && (
-          <button
-            onClick={() => {
-              reveal()
-              onHintRevealed?.()
-            }}
-            disabled={cooling}
-            className={clsx("relative overflow-hidden rounded px-2 py-1 text-sm", {
-              "bg-amber-700 text-amber-100 hover:bg-amber-600": !cooling && !nudging,
-              "bg-amber-700 text-amber-100 ring-2 ring-amber-300 motion-safe:animate-pulse": nudging && !cooling,
-              "bg-stone-800 text-stone-500": cooling,
-            })}
-          >
-            {/* The wait made visible: the bar reaches the far edge as the button unlocks. */}
-            {cooling && (
-              <span
-                className="absolute inset-0 origin-left animate-hint-recharge bg-amber-900"
-                style={{ animationDuration: `${HINT_COOLDOWN_MS}ms` }}
-              />
-            )}
-            <span className="relative">💡 {t("ui.hint")}</span>
-          </button>
-        )}
       </div>
-      {/* On its own line rather than between the buttons: back, reset and hint already fill a 360px row,
-          and a name squeezed between them is the first thing to be truncated. */}
+      {/* On its own line rather than beside the back button: a name squeezed into that row is the first
+          thing to be truncated on a 360px screen. */}
       {title && (
         <p className={clsx("w-full text-center text-sm font-semibold text-stone-200", finishing && "opacity-40")}>
           {title}
@@ -192,6 +208,55 @@ export const PuzzleFamilyShell = ({
       )}
       <div inert={finishing} className={clsx("flex w-full flex-col items-center gap-4", finishing && "opacity-90")}>
         {children({ solved: handleSolved, reportInput, hintVisible: revealed && hint !== undefined })}
+      </div>
+      {/* **Two slots, and only ever two.** A step back and a hint are the only controls that mean the same
+          thing on every board, so they are the only ones that earn a fixed place — landed on by thumb,
+          without looking, whichever room the player has walked into.
+
+          Notes and erase were briefly up here too, and that was one abstraction too far: they change what
+          the NEXT tap does, which makes them part of the keypad and not part of the chrome. They went back
+          to the pads. Reset went up top with the way out, because it is not a move either. */}
+      <div inert={finishing} className={clsx("flex w-full items-center gap-2", finishing && "opacity-40")}>
+        {/* The slot is held open on a family with no undo, rather than letting the hint slide across to
+            fill it. A fixed place is the entire point of these two — the thumb has to find the hint
+            without the eyes, and a hint that is half-width on one board and full-width on the next is
+            not in a fixed place, it is merely in the same ROW. */}
+        {undo ? (
+          <button
+            onClick={press(undo)}
+            disabled={!undo.enabled}
+            className={clsx(pillCls, undo.enabled ? "bg-stone-800 text-stone-200 hover:bg-stone-700" : spent)}
+          >
+            ↩ {t("ui.undo")}
+          </button>
+        ) : (
+          <div className="flex-1" />
+        )}
+        {/* The only amber on the screen. Undo wore it too, which left one colour meaning both "help" and
+            "history" — and help is the thing worth being able to find without reading. */}
+        {hint && (
+          <button
+            onClick={() => {
+              reveal()
+              onHintRevealed?.()
+            }}
+            disabled={cooling}
+            className={clsx(pillCls, "relative overflow-hidden", {
+              "bg-amber-700 text-amber-100 hover:bg-amber-600": !cooling && !nudging,
+              "bg-amber-700 text-amber-100 ring-2 ring-amber-300 motion-safe:animate-pulse": nudging && !cooling,
+              "bg-stone-800/50 text-stone-600": cooling,
+            })}
+          >
+            {/* The wait made visible: the bar reaches the far edge as the button unlocks. */}
+            {cooling && (
+              <span
+                className="absolute inset-0 origin-left animate-hint-recharge bg-amber-950"
+                style={{ animationDuration: `${HINT_COOLDOWN_MS}ms` }}
+              />
+            )}
+            <span className="relative">💡 {t("ui.hint")}</span>
+          </button>
+        )}
       </div>
       {hintText && (
         <p

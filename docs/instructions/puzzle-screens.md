@@ -120,15 +120,51 @@ and the lab's picker reads that list.
 **Naming either can never break a room.** Both are opaque to core and to every other family, so a site
 may ask for anything and a family that has never heard of it draws its default.
 
-## 3. Controls — all four, all from the shell
+## 3. Controls — two slots from the shell, the rest from the input surface
 
-| Control | Behavior                                                                                             |
-| ------- | ---------------------------------------------------------------------------------------------------- |
-| Back    | Returns to the site map (`onCancel`). Always visible, always safe.                                   |
-| Reset   | Restores the generated start state. No confirm dialog for a puzzle board.                            |
-| Hint    | Shows the next step and why. Disabled 10s after use.                                                 |
-| Idle    | A still board highlights the hint button — 30s at starter, up to 90s at wizard. Any input clears it. |
-| Done    | The board freezes on solve; the banner lands 0.8s later and waits for a tap to leave.                |
+| Control | Where                                                                                                        |
+| ------- | ------------------------------------------------------------------------------------------------------------ |
+| Back    | Top row, left. Returns to the site map (`onCancel`).                                                          |
+| Reset   | Top row, right. Restores the generated start state. No confirm dialog for a puzzle board.                    |
+| Undo    | Under the board, left pill (`undo`). Omitted by families whose board is its own undo — a tap that cycles.      |
+| Hint    | Under the board, right pill. Shows the next step and why. Disabled 10s after use.                            |
+| Notes   | In the pad, as a key. The family's, not the shell's.                                                         |
+| Erase   | In the pad, as a key. The family's, not the shell's.                                                         |
+| Idle    | A still board highlights the hint button — 30s at starter, up to 90s at wizard. Any input clears it.         |
+| Done    | The board freezes on solve; the banner lands 0.8s later and waits for a tap to leave.                        |
+
+**Two slots under the board, and only ever two.** A step back and a hint are the only controls that mean
+the same thing on every board, so they are the only ones that earn a fixed place — landed on by thumb,
+without looking, whichever room the player walked into. They are equal-width pills, so they sit in the
+same two places on a lightbeam board and a sudoku one.
+
+**Notes and erase are NOT chrome.** They change what the next tap *does* — the eraser aims it at nothing,
+the pencil re-aims every key above it — so they belong in the pad, cut to the same square as a value key
+and standing in the same grid. Put in the shell's row alongside undo and hint, wearing words, they read as
+a toolbar: four labelled buttons of equal weight, two of which silently re-aim the keypad. The reference
+shape here is the daily-puzzle app: a keypad whose pencil and eraser are keys, and a bar under the board
+holding a step-back and a hint.
+
+**Reset is not a move on the board either.** It throws the whole board away, so it keeps company with the
+way out, at the top — and deliberately out of reach of the thumb working the pad.
+
+**A control is declared, not drawn:**
+
+```tsx
+undo={{ onPress: () => setState(undoSumplete), enabled: canUndoSumplete(state) && !finished }}
+```
+
+**Presence puts the button on screen; `enabled` decides whether it can be pressed.** The two are separate
+on purpose: a family that has undo has it for the whole board, so an empty history dims the button rather
+than dropping it out of a row that would then reshuffle under a thumb — the same reason a pad dims a spent
+value instead of removing it. The shell calls `reportInput` for it, so no family can forget to.
+
+**Colour carries one meaning each.** Amber is the hint and nothing else — undo wore it too, which left one
+colour meaning both "help" and "history". Sky is a mode that is on: the pencil key, and the value keys it
+has re-aimed, which is the mode showing itself where it acts rather than only where it is switched.
+
+**A number the board is played against is not a control.** Canisters' move budget is its win condition, so
+it reads as board state under the board and stays out of the row.
 
 **A family may finish its board before it says "solved".** The shell freezes the board and
 starts the banner the moment `solved` goes true, so a completion animation belongs _before_

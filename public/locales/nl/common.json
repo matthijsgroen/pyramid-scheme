@@ -84,6 +84,9 @@
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
     "resetPuzzle": "Opnieuw",
     "hint": "Hint",
+    "undo": "Ongedaan",
+    "erase": "Wissen",
+    "notes": "Notities",
     "solvedUnaided": "Opgelost zonder ook maar één hint",
     "solvedWithHints_one": "Opgelost met {{count}} hint",
     "solvedWithHints_other": "Opgelost met {{count}} hints",
@@ -336,9 +339,6 @@
       "enter": "Tik op een vakje en dan op een getal. Hetzelfde getal nog een keer haalt het er weer uit.",
       "notes": "Zet het potlood aan om op te schrijven welke getallen nog in een vakje kunnen. Met ongedaan maken neem je je laatste zet terug."
     },
-    "notes": "Notities",
-    "erase": "Wissen",
-    "undo": "Ongedaan",
     "hint": {
       "mistake": {
         "value": "Een van de getallen hier klopt niet. Haal het eruit en kijk opnieuw.",
@@ -429,7 +429,6 @@
       "signs": "Een teken tussen twee vakjes zegt hoe ze zich verhouden: = voor gelijk, × voor verschillend.",
       "enter": "Tik op een vakje voor een zon, tik nog eens voor een maan, en nog eens om het leeg te maken."
     },
-    "undo": "Ongedaan",
     "hint": {
       "mistake": "Een van deze tekens kan niet goed zijn.",
       "sign.same": "= betekent gelijk.",
@@ -481,7 +480,6 @@
         "enter": "Sleep van een ster naar zijn buur om een snoer te leggen, nog eens om het te verdubbelen, en nog eens om het weg te halen."
       }
     },
-    "undo": "Ongedaan",
     "hint": {
       "default": {
         "mistake": "Een van deze lijnen kan niet goed zijn.",
@@ -580,7 +578,6 @@
         "enter": "Tik een akker om die af te strepen, tik weer voor een boerderij, en nog eens om het te wissen."
       }
     },
-    "undo": "Ongedaan maken",
     "hint": {
       "default": {
         "mistake": "Dit teken kan niet kloppen.",
@@ -724,8 +721,7 @@
           "down": "Duw hem de straat af, tot aan de ring."
         }
       }
-    },
-    "undo": "Ongedaan maken"
+    }
   },
   "hidato": {
     "rules": {
@@ -750,7 +746,6 @@
         "back": "Tik op een kamer die je opende en tik nogmaals om hem weer dicht te zetten, samen met de gang die er los van komt te liggen. Een andere kant op doorbreken doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
       }
     },
-    "undo": "Ongedaan",
     "goal": {
       "default": "Elk vakje van de raat krijgt een getal, 1 tot {{last}}, en elk getal ligt tegen het vorige aan.",
       "channel": "Eén kanaal bewatert de hele vlakte: elke akker komt aan de beurt, 1 tot {{last}}, elk gegraven naast de akker ervoor.",
@@ -829,9 +824,6 @@
         "notes": "Neem de rietpen op om de tekens te noteren die een plek nog kan dragen. Ongedaan maken neemt je laatste zet terug."
       }
     },
-    "notes": "Notities",
-    "erase": "Wissen",
-    "undo": "Ongedaan",
     "hint": {
       "default": {
         "reason": {
@@ -972,12 +964,11 @@
       "empties": "Giet de {{from}} in de {{to}} — de {{from}} loopt helemaal leeg, en een lege kruik is wat je nu nodig hebt.",
       "last": "Nog één: giet de {{from}} in de {{to}}, dan staat {{target}} op de bank. Zoek daarna uit welke kruik het heeft.",
       "stuck": "Vanaf hier krijg je {{target}} niet meer afgemeten met de zetten die je nog hebt. Neem een gieting terug, of begin opnieuw.",
-      "overBudget": "Je zetten zijn op. Begin opnieuw en zoek de kortere weg."
+      "overBudget": "Je zetten zijn op. Neem er een terug, of begin opnieuw en zoek de kortere weg."
     },
     "movesLeft_one": "nog {{count}} zet",
     "movesLeft_other": "nog {{count}} zetten",
     "legs": "{{done}} van {{total}} afgemeten",
-    "undo": "Ongedaan",
     "wanted": "Meet af",
     "claim": "deze",
     "claimAria": "Zeg dat de {{capacity}} de hoeveelheid bevat"

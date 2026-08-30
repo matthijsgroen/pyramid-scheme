@@ -10,12 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - A sudoku hint that says a number fits nowhere else now rings the squares that shut the others out.
+- Every puzzle keeps its step-back and its hint in the same two places, in a pair of buttons under the board.
+- Reset has moved up beside the way out — it is the one control that throws a board away.
+- The pencil and the eraser are keys on the pad now, beside the numbers they change the meaning of.
 
 ### Fixed
 
 - Two rooms of one corridor no longer hold the same puzzle.
 - A gap in a wall now leads somewhere, and a passage lit from its far end is drawn.
 - The signs beside a day's rows are drawn to the size of their badge.
+- A canisters board says when its budget is spent instead of silently refusing every pour, and warns two moves out.
+- Undoing a pour counts as playing again, so the hint stops nudging while you work back out of a wrong reading.
 
 ## 0.42.2 - 2026-08-30
 
