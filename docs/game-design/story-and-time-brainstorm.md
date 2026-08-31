@@ -34,8 +34,10 @@ Translation effort is a production cost to manage, not a design principle to des
 
 ## 1.1 Which "time"? Five senses, four usable
 
-`PUZZLE_FAMILIES.md` already owns _time as subject_ — sundial (§4.3), water clock (§4.4),
-clock-arithmetic (§4.5). The unused senses are where fusion lives:
+`PUZZLE_FAMILIES.md` owns _time as subject_ — but all three families this section was written around
+were dropped and now sit in its §4.99: sundial (§4.3), water clock (§4.4) and clock-arithmetic (§4.5).
+Time as a subject is served by **procession** (§4.29, built) for duration and by the **`clock-reflex`
+trap** (`TRAP_FAMILIES.md` §5.2, built) for reading a dial. The unused senses are where fusion lives:
 
 1. **Time as subject** — read a dial, compute a duration. _Built/specced._
 2. **Time as ordering** — before/after, precedence. Pure logic; becomes arithmetic once durations attach.
