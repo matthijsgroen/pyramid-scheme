@@ -23,6 +23,17 @@ export type HidatoState = {
    * given the run passes through.
    */
   way?: 1 | -1
+  /**
+   * The joins the run has been carried along, by the lower of the two numbers they hold.
+   *
+   * **The line is drawn along these and no further** (design doc §7.1). A number the puzzle wrote in
+   * standing next door to the run's head is joined to it by the numbers alone, and stroking that join in
+   * is the board digging a length of channel the player did not — the last step into a written-in number
+   * is theirs to make.
+   *
+   * A join is never given back up: a stretch drawn again is one the run has already been along.
+   */
+  walked: Record<number, true>
   /** Board states this one replaced, oldest first — the undo stack. */
   past: Record<string, number>[]
 }
@@ -32,8 +43,35 @@ const UNDO_LIMIT = 200
 
 export const createHidatoState = (puzzle: HidatoPuzzleData): HidatoState => ({
   values: { ...puzzle.givens },
+  walked: {},
   past: [],
 })
+
+/**
+ * The run crossing into the cell next door: the join it has just been carried along, if it is one.
+ *
+ * Both halves have to hold: two numbers one apart in cells that touch. Picking the run up at a number
+ * somewhere else on the comb reaches it without going along anything.
+ */
+const walk = (state: HidatoState, fromKey: string | undefined, toKey: string) => {
+  if (fromKey === undefined) return
+  const from = state.values[fromKey]
+  const to = state.values[toKey]
+  if (from === undefined || to === undefined || Math.abs(from - to) !== 1 || !touching(fromKey, toKey)) return
+  state.walked[Math.min(from, to)] = true
+}
+
+/**
+ * How far the drawn line has got: the run counted up from the 1 for as long as its joins were walked.
+ *
+ * Counted from the 1 rather than kept as a high-water mark, because a run drawn downwards from the far
+ * end walks its joins in the other order and is no less drawn for it.
+ */
+export const carriedTo = (state: HidatoState): number => {
+  let head = 1
+  while (state.walked[head]) head++
+  return head
+}
 
 const recordMove = (state: HidatoState) => {
   state.past.push(current(state.values))
@@ -50,8 +88,10 @@ const cellOf = (key: string): Hex => {
 /** Picks the run up at a numbered cell, or puts it back down if that cell already held it. */
 export const armHidato = produce((state: HidatoState, key: string) => {
   if (state.values[key] === undefined) return
+  const came = state.pen
   state.pen = state.pen === key ? undefined : key
   state.way = undefined
+  if (state.pen === key) walk(state, came, key)
 })
 
 /**
@@ -64,8 +104,10 @@ export const armHidato = produce((state: HidatoState, key: string) => {
  */
 export const pickUpHidato = produce((state: HidatoState, key: string) => {
   if (state.values[key] === undefined) return
+  const came = state.pen
   state.pen = key
   state.way = undefined
+  walk(state, came, key)
 })
 
 /**
@@ -168,6 +210,7 @@ export const stepHidato = produce((state: HidatoState, key: string, puzzle: Hida
   if (standing === from + 1 || standing === from - 1) {
     state.pen = key
     state.way = standing === from + 1 ? 1 : -1
+    walk(state, pen, key)
     return
   }
 
@@ -179,6 +222,7 @@ export const stepHidato = produce((state: HidatoState, key: string, puzzle: Hida
     dropUnanchored(state, puzzle.givens)
     state.pen = key
     state.way = value > from ? 1 : -1
+    walk(state, pen, key)
   }
 
   /**
@@ -255,14 +299,21 @@ export const undoHidato = produce((state: HidatoState) => {
 export const canUndoHidato = (state: HidatoState): boolean => state.past.length > 0
 
 /**
- * Whether the comb holds one unbroken run.
+ * Whether the comb holds one unbroken run, drawn to its end.
  *
  * The full check rather than a cell count, and it has to be: every tap places a number beside the one
  * it counts from, but nothing stops a player filling 4–5 in one corner and 6–7 in another, and those
  * two stretches meeting nowhere is exactly the board that looks finished and is not.
+ *
+ * **The closing move is the player's** — the run has to have been carried into the last number, not
+ * merely laid beside it (`walked`). A comb whose remaining numbers were written in finishes itself
+ * otherwise: fill in as far as the 10 with 11 to 14 already standing in a row, and the board calls
+ * itself done with three joins the player never went along.
  */
-export const isHidatoSolved = (puzzle: HidatoPuzzleData, values: Record<string, number>): boolean => {
+export const isHidatoSolved = (puzzle: HidatoPuzzleData, state: HidatoState): boolean => {
+  const { values } = state
   if (Object.keys(values).length !== puzzle.cells.length) return false
+  if (carriedTo(state) !== puzzle.cells.length) return false
   const cellFor = new Map(Object.entries(values).map(([key, value]) => [value, key]))
   for (let value = 1; value < puzzle.cells.length; value++) {
     const from = cellFor.get(value)

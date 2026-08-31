@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import {
   armHidato,
+  carriedTo,
   pickUpHidato,
   canUndoHidato,
   createHidatoState,
@@ -40,7 +41,7 @@ const hive: HidatoPuzzleData = {
 }
 
 /** The board part-way through, as a state the actions can be handed. */
-const laid = (values: Record<string, number>, pen: string): HidatoState => ({ values, pen, past: [] })
+const laid = (values: Record<string, number>, pen: string): HidatoState => ({ values, pen, walked: {}, past: [] })
 
 const carry = (keys: string[], board: HidatoPuzzleData = puzzle): HidatoState =>
   keys.reduce<HidatoState>(
@@ -55,6 +56,32 @@ describe("the hidato board the player leaves", () => {
     expect(armHidato(armed, "0,0").pen).toBeUndefined()
     // An empty cell is nothing to carry a run on from.
     expect(armHidato(createHidatoState(puzzle), "2,0").pen).toBeUndefined()
+  })
+
+  it("counts the line only as far as the joins the run was carried along", () => {
+    // Nothing walked yet: the line has not left the 1, whatever else stands on the board.
+    expect(carriedTo(createHidatoState(puzzle))).toBe(1)
+    // Laying the 2 walks the join from the 1 to it.
+    const two = stepHidato(armHidato(createHidatoState(puzzle), "0,0"), "1,0", puzzle)
+    expect(carriedTo(two)).toBe(2)
+    // Picking the run up at the 5 across the board is not going along anything.
+    expect(carriedTo(pickUpHidato(two, "4,0"))).toBe(2)
+    // Carrying it on to the 4, and then INTO the 5 the puzzle wrote in, is: that last step is the
+    // player's, and only once it is taken does the line reach the end.
+    const four = stepHidato(stepHidato(two, "2,0", puzzle), "3,0", puzzle)
+    expect(carriedTo(four)).toBe(4)
+    expect(carriedTo(pickUpHidato(four, "4,0"))).toBe(5)
+  })
+
+  it("counts a run drawn downwards from the far end just the same", () => {
+    // Counting down from the 5: the joins are walked in the other order, and the line is drawn all the
+    // same once the run reaches the 1.
+    const down = ["3,0", "2,0", "1,0", "0,0"].reduce(
+      (state, key) => stepHidato(state, key, puzzle),
+      armHidato(createHidatoState(puzzle), "4,0")
+    )
+    expect(down.values).toEqual({ "0,0": 1, "1,0": 2, "2,0": 3, "3,0": 4, "4,0": 5 })
+    expect(carriedTo(down)).toBe(5)
   })
 
   it("picks the run up on a press without ever putting it down again", () => {
@@ -237,15 +264,17 @@ describe("the hidato board the player leaves", () => {
     expect(canUndoHidato(armHidato(createHidatoState(puzzle), "0,0"))).toBe(false)
   })
 
-  it("calls the comb solved only once the run reaches the last number", () => {
-    expect(isHidatoSolved(puzzle, { "0,0": 1, "1,0": 2, "2,0": 3, "3,0": 4, "4,0": 5 })).toBe(true)
-    // Full, and every number used once — but the run breaks in the middle, so it never gets to the 5.
-    // A filled comb is not a finished one: what finishes it is the line arriving at the last number,
-    // which is the same thing the board draws (HidatoBoard's runPath).
-    expect(isHidatoSolved(puzzle, { "0,0": 1, "1,0": 2, "2,0": 4, "3,0": 3, "4,0": 5 })).toBe(false)
-    expect(isHidatoSolved(puzzle, { "0,0": 1, "4,0": 5 })).toBe(false)
-    // Every number but the last one in place and joined up: still not finished, because the run has to
-    // be carried into the 5 rather than stopping beside it.
-    expect(isHidatoSolved(puzzle, { "0,0": 1, "1,0": 2, "2,0": 3, "3,0": 4 })).toBe(false)
+  it("calls the comb solved only once the run has been carried into the last number", () => {
+    // Full, joined up, every number used once — and the 5 was written in, so the player has not gone
+    // along the last join. A filled comb is not a finished one.
+    const beside = carry(["0,0", "1,0", "2,0", "3,0"])
+    expect(Object.keys(beside.values)).toHaveLength(5)
+    expect(isHidatoSolved(puzzle, beside)).toBe(false)
+    // Carrying the run into the 5 is the closing move.
+    expect(isHidatoSolved(puzzle, armHidato(beside, "4,0"))).toBe(true)
+    // Every join walked, but the numbers themselves break in the middle: the run never gets to the 5.
+    const values = { "0,0": 1, "1,0": 2, "2,0": 4, "3,0": 3, "4,0": 5 }
+    expect(isHidatoSolved(puzzle, { values, walked: { 1: true, 2: true, 3: true, 4: true }, past: [] })).toBe(false)
+    expect(isHidatoSolved(puzzle, createHidatoState(puzzle))).toBe(false)
   })
 })

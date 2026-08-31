@@ -402,15 +402,24 @@ Three rules, and each of them is about it being a _line_ rather than a set of pa
   yet — the ones the puzzle wrote in across the comb — carry no stroke at all, because a stroke there
   would claim a channel that has not been dug. Joining up every consecutive pair wherever it happens
   to sit would draw a board as further on than it is.
+- **It stops where the player carried the run to.** A number the puzzle wrote in standing next door to
+  the head is joined to it by the numbers alone, and stroking that join in is the board digging a length
+  of channel the player did not — the last cell is theirs to carry the run into. So the head advances one
+  join at a time, and only along a join the run was carried over: laying the next number, passing through
+  one, or picking the run up next door to where it stood (`walked`, in the board state, counted back to
+  a head by `carriedTo`). Counted from the 1 rather than kept as a high-water mark, so a run drawn
+  downwards from the far end is drawn no less. The cap comes off the moment the board is done, so the
+  completion light runs the whole channel.
 - **The head is where the player reads from.** Obscuring the numbers already passed costs nothing;
   they are behind you. What matters is where the line ends and what it could reach next.
 - **It is deaf to the pointer.** The cells under it are the board's hit targets, and a stroke
   swallowing a tap would make the gap between two numbers a dead spot.
 
 **The line reaching the last number IS the completion test**, not a picture of it: `isHidatoSolved`
-asks for exactly the run this draws, so a board can never say "solved" with the line stopping short —
-and the closing move is the player carrying the run into the last number, rather than a board that
-counts itself finished while the line is still one cell away.
+asks for exactly the run this draws — the joins walked as well as the numbers — so a board can never say
+"solved" with the line stopping short. The closing move is the player carrying the run into the last
+number: a comb whose remaining numbers were written in would otherwise finish itself, the way filling in
+as far as the 10 does with 11 to 14 already standing in a row.
 
 The completion light travels the channel itself rather than only the cells it passes, so what flies the
 comb is one run.

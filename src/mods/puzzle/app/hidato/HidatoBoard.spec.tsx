@@ -37,6 +37,23 @@ describe("the run drawn across the comb", () => {
     expect(drawn(board({ "0,0": 1, "1,0": 2, "2,0": 3, "3,0": 4 }))).toEqual([4])
   })
 
+  it("stops at the head the run was carried to, not at the number standing beyond it", () => {
+    // The 2 was laid beside a 3 the puzzle wrote in. The numbers join up, but the player has not been
+    // along that length of channel yet, so the stroke ends on the 2.
+    const { container } = render(
+      <HidatoBoard
+        puzzle={puzzle}
+        skin={hive}
+        values={{ "0,0": 1, "1,0": 2, "2,0": 3 }}
+        carried={2}
+        onPickUp={() => {}}
+        onTap={() => {}}
+        onDrag={() => {}}
+      />
+    )
+    expect(drawn(container)).toEqual([2])
+  })
+
   it("stops where two numbers in a row do not touch", () => {
     // Consecutive and two cells apart: the numbers are on the board, the run between them is not.
     expect(drawn(board({ "0,0": 1, "2,0": 2, "3,0": 3 }))).toEqual([])

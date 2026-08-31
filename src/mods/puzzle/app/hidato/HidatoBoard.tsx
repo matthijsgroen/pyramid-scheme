@@ -12,6 +12,14 @@ type Props = {
   values: Record<string, number>
   /** The cell the run is picked up at, if any. */
   pen?: string
+  /**
+   * How far the run has been carried by hand — the stroke is drawn no further, and unset draws it all.
+   *
+   * The numbers alone join the run's head to a written-in number standing next door to it, and stroking
+   * that join in is the board digging a length of channel the player did not: the last cell is theirs to
+   * carry the run into (design doc §7.1).
+   */
+  carried?: number
   /** The cell the current hint settles — drawn hatched, the marking its words name. */
   hatched?: string
   /** Cells the current hint argues from — ringed, never hatched (puzzle-screens.md §4.2). */
@@ -132,6 +140,7 @@ export const HidatoBoard: FC<Props> = ({
   skin,
   values,
   pen,
+  carried,
   hatched,
   marked,
   lit,
@@ -147,7 +156,8 @@ export const HidatoBoard: FC<Props> = ({
   const drag = useRef<{ at: string; moved: boolean; wasPen: boolean } | undefined>(undefined)
   const cells = new Set(puzzle.cells.map(hexKey))
   const path = runPath(values, puzzle.cells.length)
-  const reached = new Set(path.map(hexKey))
+  const line = carried === undefined ? path : path.slice(0, carried)
+  const reached = new Set(line.map(hexKey))
   // Bound to a capitalised local so it can be used as a tag: a component read straight off an optional
   // property is not a JSX element type as far as the compiler is concerned.
   const finish = skin.finish
@@ -261,9 +271,9 @@ export const HidatoBoard: FC<Props> = ({
           than as a row of separate joins. Deaf to the pointer, because the cells under it are the
           board's hit targets and a stroke swallowing a tap would make the gap between two numbers a
           dead spot. */}
-      {path.length > 1 && (
+      {line.length > 1 && (
         <polyline
-          points={polyline(path)}
+          points={polyline(line)}
           fill="none"
           strokeWidth={CELL * 0.24}
           strokeLinecap="round"

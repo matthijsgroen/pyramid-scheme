@@ -7,6 +7,7 @@ import type { HidatoPuzzle as HidatoPuzzleData } from "@/mods/puzzle/game/hidato
 import {
   armHidato,
   canUndoHidato,
+  carriedTo,
   createHidatoState,
   eraseHidato,
   isHidatoSolved,
@@ -53,7 +54,7 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
    * `lit` reads off `progress` rather than `done`, which is what keeps reduced motion honest: a skipped
    * run reports done with progress still at 0, so nothing lights and the board is simply the answer.
    */
-  const finished = isHidatoSolved(puzzle, state.values)
+  const finished = isHidatoSolved(puzzle, state)
   const celebration = useCelebration(finished, last)
   const lit = celebration.progress > 0 ? Math.round(celebration.progress * last) : undefined
 
@@ -84,6 +85,8 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
           skin={skin}
           values={state.values}
           pen={state.pen}
+          // The whole channel once the board is done: the light runs the length of it (design doc §7.1).
+          carried={finished ? undefined : carriedTo(state)}
           hatched={hintVisible ? hint?.cell : undefined}
           marked={hintVisible ? hint?.evidence : undefined}
           lit={lit}
