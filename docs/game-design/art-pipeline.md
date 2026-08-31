@@ -174,14 +174,51 @@ rope, no sacks, no crates, nothing that looks liftable. Cold pale grey stone,
 fills the whole square edge to edge.
 ```
 
-### A.5 Face — "quay" (barges warped along a wharf)
+### A.5 The other four faces — same five prompts, swapped nouns
 
-Same five prompts, same preamble, swapped nouns:
+**One face is one role, and the role is what makes it worth painting.** `journeys.md` §9 ranks the gaps by
+the rooms they reach, and these four are what this mechanic can honestly dress as. Twenty images, one
+sitting a face; nothing about the geometry changes between them, because the geometry is the rule (§5's
+first condition), so each entry below is the §A.3 preamble plus §A.4's five prompts with its own nouns.
+
+| Face      | Claims     | Why this one                                                                                                |
+| --------- | ---------- | ----------------------------------------------------------------------------------------------------------- |
+| `archive` | `scribe`   | The pool sits at three, one short of the floor a journey needs — this face alone unblocks restricting to it |
+| `passage` | `funerary` | The widest role in the catalogue (781 rooms) and already authorable, so this buys variety inside it         |
+| `barques` | `cosmos`   | `wizard_4`'s own place; one of the three carriers that story still needs                                    |
+| `quay`    | `water`    | Cheapest to draw and buys the least — `water` already dresses every family in its pool                      |
+
+**"quay" — barges warped along a wharf**
 
 - **ground** — `A square of ground filling the whole canvas ... slow muddy Nile water at a wharf: dark green-brown, faint current ripples, scattered reed debris. Low contrast, dark, no reflections of anything, no sky, no highlights.`
 - **piece2 / piece3** — `A reed-bundle cargo barge seen from directly above, filling a horizontal strip exactly [twice / three times] as wide as it is tall, touching both ends. Bound papyrus reed hull, deck of stacked amphorae under a linen cover. Both ends identically blunt — no bow, no stern, no steering oar.`
 - **player** — `... the right end rises into a curved pointed papyrus prow, unmistakably pointing right. Painted hull with gilded trim and amber-gold cordage #f59e0b, brighter than the plain working barges.`
 - **wall** — `One square cell of a stone mooring bollard block set in the quay, cut granite, flush, immovable. Must not resemble a boat or cargo.`
+
+**"archive" — scroll cases racked in a records room**
+
+- **ground** — `A square of ground filling the whole canvas ... the trodden plaster floor of a temple records room: dull ochre-grey plaster, papyrus chaff, dried ink spatter ground flat underfoot. Low contrast, dark, value #1c1917 to #292524, even across the square, no objects.`
+- **piece2 / piece3** — `A bundle of papyrus scrolls lashed into a shallow reed carrying-tray, seen from directly above, filling a horizontal strip exactly [twice / three times] as wide as it is tall and touching both ends. The rolled ends of the papyri show as pale spirals; linen cord, reed tray, dust. Dull straw and grey-brown, value around #57534e. Both ends identical — no label, no seal, no pointed end.`
+- **player** — `... the player's own is one sealed dispatch scroll in its case, filling the strip and touching both ends. The right end tapers to a gilded conical case cap like an arrowhead, unmistakably pointing right; red clay seal, polished case, amber-gold cord #f59e0b, clearly warmer and brighter than the dull working trays. Left end square and flat.`
+- **wall** — `One square cell of a squat limestone plinth footing the shelving, set into the floor and flush with it, worn and pitted. It must read as PART OF THE BUILDING — no wood, no reed, no papyrus, nothing that looks liftable or carryable. Cold pale grey stone, fills the whole square edge to edge.`
+
+**"passage" — a burial's freight jammed in a tomb corridor**
+
+- **ground** — `A square of ground filling the whole canvas ... the cut limestone floor of a tomb corridor: pale grey blocks gone dusty, drifted sand in the joints, faint sledge-runner drag scars. Low contrast, dark, value #1c1917 to #292524, no objects, no shadows, even across the square.`
+- **piece2 / piece3** — `[piece2: A linen-wrapped chest of canopic jars / piece3: A long carved stone lid under rope netting] lashed to a plain wooden drag-sledge, seen from directly above, filling a horizontal strip exactly [twice / three times] as wide as it is tall and touching both ends. Weathered acacia, rope, grey limestone, dusty linen. Cold greys and dull browns, value around #57534e. Symmetrical end to end — no head end, no foot end, no pointed end.`
+- **player** — `... the player's own is a gilded anthropoid coffin on its sledge, filling the strip and touching both ends. The right end narrows into the pointed foot-case, unmistakably pointing right; gold leaf, inlaid blue collar, amber-gold bindings #f59e0b, the one warm bright thing among the grey stone freight. Left end square and flat.`
+- **wall** — `One square cell of a portcullis blocking-stone set flush in the corridor floor, rough granite, worn, immovable. It must read as PART OF THE TOMB, not as freight — no wood, no rope, no linen, no lid, nothing that looks liftable. Cold pale grey stone, fills the whole square edge to edge.`
+
+**"barques" — the night sky's boats, and the sun's own among them**
+
+- **ground** — `A square of night sky filling the whole canvas: deep indigo going to near-black, dense fine stars, a faint dust of the milky way. Low contrast, dark, value #0f0d24 to #1e1b4b, no moon, no constellation lines, no horizon, no cloud, no focal point, even across the whole square.`
+- **piece2 / piece3** — `A reed barque of the night sky seen from directly above, filling a horizontal strip exactly [twice / three times] as wide as it is tall and touching both ends. Bound papyrus hull painted deep blue-grey, deck carrying [piece2: a linen-wrapped shrine / piece3: three dull silver star-discs under netting]. Cold blue-greys, dull and unlit, value around #57534e. Both ends identically blunt — no bow, no stern, no steering oar, no pointed end.`
+- **player** — `... the player's own is the sun barque, filling the strip and touching both ends. The right end rises into a pointed gilded prow crowned with a sun disc, unmistakably pointing right; gold hull, amber-gold cordage #f59e0b, blazing warm against the cold boats. Left end square and flat.`
+- **wall** — `One square cell of a sealed stone gate-pylon of the duat standing in the sky, cut granite with a barred door, flush with the square, immovable. It must not resemble a boat, a star or a shrine. Cold pale grey stone, fills the whole square edge to edge.`
+
+**The sky is a ground like any other**, which is worth saying because it is the one face whose ground is not
+earth: §A.2's rule still governs it — one fixed square, no tiling, dark enough that the boats laid on top
+read clearly.
 
 ### A.6 Post-touchup checklist
 
@@ -210,13 +247,36 @@ object honestly drawn does not lie, it just uses its own outline as the ruler.
 
 ### A.7 The tag lands with the art
 
-`puzzles/rush-hour.md` §5: the family withholds its `trade` role tag until it has a face that is somewhere
-rather than nowhere. **Add the art and the tag in the same PR** — art alone leaves the tag unclaimed.
+`puzzles/rush-hour.md` §5: a family withholds a role tag until it has a face that is somewhere rather than
+nowhere — which is how `trade` waited for the market lane. **Add the art and the tag in the same PR** — art
+alone leaves the tag unclaimed.
 
 **And the tag alone does not put the face in front of a player.** A tag makes the family eligible for a
 pool; a room only draws from that pool if a journey AUTHORS the role. So a face ships lab-only until
 somebody writes `journey(...).pyramid(..., { encounter: "trade" })`, and `generatedWorld.ts` does not change
 until they do. Worth knowing before promising rooms: the art PR is the cheap half.
+
+### A.8 When the plain face goes
+
+**Once the faces cover every role this mechanic can dress as, `default` stops being the mechanic undressed
+and becomes the one face that looks unfinished beside the others.** Retiring it is three small things, and
+the order is the point — none of them is worth doing before the art exists.
+
+1. **Every face lands with its tag** (§A.7): `market` → `trade`, `archive` → `scribe`, `passage` →
+   `funerary`, `barques` → `cosmos`, `quay` → `water`. A face and its tag in one PR, or the art buys no
+   rooms.
+2. **A room with no role hashes across the painted faces.** `skinFor`'s `?? SKINS.default` becomes a pick
+   from the table by the board's own shape — the same number `faceFor` already uses to choose within a role
+   — so plain puzzle rooms vary rather than all wearing the market lane. It stays in `skinFor`: `faceFor`
+   goes on answering `"default"` and every other family is untouched, because a shared resolver is the wrong
+   place to put one family's coverage.
+3. **`default` deletes last** — its skin entry, its `themes` entry, and its locale block (a face is about
+   fourteen strings in each language). Nothing outside `skins.ts` and `common.json` names it.
+
+**What is lost with it is the CSS-shape board, and that is a real cost**: it is the only face that needs no
+asset, so it is the one a new length, a bigger grid or a colour-blindness check can be tried against. Keep
+the geometry it proved — length from the grid, a pointed nose on the player's own, a hatch on a wall — in
+every painted face, which is what §A.4 and §A.5 already ask for.
 
 ---
 
