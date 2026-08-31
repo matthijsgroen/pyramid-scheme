@@ -532,6 +532,95 @@ Design doc: [puzzles/procession.md](puzzles/procession.md)
 - **Risk:** **eclipse is the nearest neighbour** and also a binary grid settled by counting. The probe has to
   say whether "count my neighbours" and eclipse's row/column balance are two deductions or one dressed twice.
 
+### 4.34 Attribute matching (the scribe's register) — _(proposed; the transitive rung is why)_
+
+Who stood where in a line of people, worked out from relations rather than told. The classic zebra grid,
+with the categories a register would hold.
+
+- **Skill:** matching across categories, and **transitivity between sub-grids** — the technique nothing
+  built has. Knowing a figure's place and that place's position gives the figure's position, without
+  either being stated.
+- **Operates:** three categories of equal size — who, where, and an ORDERED position. Every cell of every
+  sub-grid is ✓ or ✕, the same toggle sumplete uses, and the clues are rows of three glyphs.
+- **The position axis is ordinal, not clock time**, and that is deliberate: ordered is what makes half the
+  clue vocabulary work, and drawing it as first/second/third rather than as hours is what keeps this board
+  from looking like §4.35's. No dial appears anywhere in this family.
+
+| Clue row     | Reads as                             | Rung it feeds |
+| ------------ | ------------------------------------ | ------------- |
+| `[𓀀] = [⛰]`  | the scribe was at the quarry         | pin           |
+| `[𓀀] ✕ [⛰]`  | the scribe was not at the quarry     | exclude       |
+| `[𓀀] +2 [𓁐]` | the scribe two positions after Neith | offset        |
+| `[𓀀] < [𓁐]`  | the scribe somewhere before Neith    | endpoint      |
+| `[𓀀] ⇄ [𓁐]`  | adjacent, **order not stated**       | case split    |
+| `[𓀀] ⟷2 [𓁐]` | two apart, either direction          | case split    |
+
+**P2 holds because every clue is glyph–operator–glyph**, never a sentence. The two ambiguous rows are the
+ones that would normally be a language risk, and procession already ships one — its "these two never
+overlap" clue "deliberately does not say which way round", which is where its ladder stops being
+propagation and becomes a case split.
+
+- **Ladder:** pin → exclude → endpoint → last-one → **transitive** → parity → case split. Seven rungs.
+- **Knobs:** entity count (3 or 4) · clue mix · how many pins are given · required rung and its quota.
+- **Scaling: by the clue mix, not the board.** Three categories at N entities is 3N² cells — 27 at N=3,
+  48 at N=4, **75 at N=5** — and a zebra grid is maximally coupled, every mark bearing on every sub-grid.
+  §6 names that as the thing that runs the clock out, and futoshiki is the family it already happened to.
+  So the board is capped at 4 and the tiers are told apart by clues: starter 3×3×3 with pins given, junior
+  4×4×4 with pins, expert the same board with none, master one disjunction, wizard two.
+- **Generation:** pick the assignment, derive every clue true of it, then thin while the technique solver
+  still finishes unaided — the eclipse shape.
+- **UI:** easy. A grid of three-state cells and a column of clue rows; no new atom.
+- **Hint affordance (P6):** strong, and the transitive rung explains itself best of all: "you know where
+  Ptah was, and you know which position that place held."
+- **Risk:** **§4.35 is the nearest neighbour** and both are about people, places and when. The deductions
+  differ — this one matches and never does arithmetic, that one computes and never matches — and the
+  ordinal axis keeps them apart on screen. The probe still has to confirm a player reads them as two rooms.
+
+### 4.35 Coupled durations (the meeting hour) — _(proposed; the family §4.4 wanted to be)_
+
+Two travellers, legs of known length, and one moment they share. Work out every clock time on both roads.
+
+- **Skill:** elapsed-time arithmetic across the hour boundary — the thing §4.4 called "the hard, valuable
+  part" before that entry was dropped. **A single chain is not this family**: `08:00 + 20 + 10 + 40` is four
+  additions with one answer, which is clock arithmetic (§4.5, dropped) and already covered as a trap. The
+  deduction only exists because a second chain shares a moment with the first.
+- **Operates:** each traveller is a row of legs with their durations written on them; a few clock times are
+  given and the rest are blank. Where two rows meet at the same place, they meet at the same time, and that
+  is the move that carries a known time from one row to the other.
+
+```
+ Lisa    🏠 08:45 ──30──▶ 🏡 ┐
+                             ├─ ⏸15 ─▶ 💬45 ─▶ 🍦 ??
+ Ahmed   🏪  ??   ──45──▶ 🏡 ┘
+```
+
+Forward on Lisa gives 09:15; the meeting hands 09:15 to Ahmed; backward gives his 08:30; forward along the
+shared tail gives 10:15. Three hour-crossings out of four clues, and every step is forced.
+
+- **Ladder:** forward → backward → gap (two known times bracket an unknown leg) → **meet** (a shared node
+  moves a time between chains) → total (the span is given, the missing leg is the remainder) → boundary →
+  case split (a leg is one of two durations, carry both until one dies). Seven rungs, `meet` the new one.
+- **Knobs:** `minuteStep` · chain count · legs per chain · how many times are given · required rung.
+- **Scaling: by precision, which costs no board.** Whole hours at starter, half hours, quarters, then five
+  minutes at master. **It stops there.** `08:37 + 46` is not harder reasoning than `08:30 + 45`, only worse
+  numbers, which is §3.2's bookkeeping-versus-difficulty trap. `clock-reflex` goes to single minutes because
+  READING a face is instant; computing at that grain is grind. Wizard is carried by the rung instead — a
+  third chain, a leg known only through its total, or a two-valued leg.
+- **The clock runs one daylight day, on a twelve-hour face.** No wrap, no midnight, no day/night mark: the
+  only boundary is the hour, which is where the arithmetic lives anyway. A wrapping face would put 1:15 and
+  13:15 on the same reading, which is the ambiguity that killed the sundial's rim (§4.99).
+- **Generation:** draw the full schedule, read every time off it, then blank times out while the technique
+  solver still finishes unaided.
+- **UI:** medium, and **most of it exists**. `src/ui/atoms/ClockFace.tsx` is a shared atom already used by
+  `clock-reflex`, and the answer is given by setting hands that snap to the tier's `minuteStep` — so an
+  invalid time cannot be entered and the board needs no text. Setting a dial is not the sundial's sin:
+  there the dial was the clue and reading it was the puzzle, here it is the answer and the player states a
+  time they worked out.
+- **Hint affordance (P6):** strong. "You know when Lisa arrived, and Ahmed arrived at the same moment"
+  names a move and its reason and leaves every subtraction to the player.
+- **Risk:** the family collapses to §4.5 the moment a board has one chain, or two chains that never meet.
+  Generation has to refuse those, not merely avoid them. Overlap with §4.34 is the other probe (see there).
+
 ## 4.99 Considered and dropped
 
 **These are not a backlog.** Each was in §4 and was taken out, and the reason is recorded so the idea is
@@ -561,6 +650,9 @@ Two things killed the puzzle-room version, and either is fatal on its own:
 - **Was for:** elapsed time and duration, its valuable part the boundary crossing (night hours into day).
 - **Superseded by procession (§4.29)**, which keeps the boundary-crossing arithmetic and drops the clock
   face that killed §4.3. The skill this entry existed for is now shipped.
+- **Its clock-time half came back as §4.35.** What could not work here was one chain of durations read off a
+  drained vessel — the answer is computed, not deduced. Coupling two chains at a shared moment is what makes
+  the same arithmetic a deduction, and that is the family to build. This entry stays dropped; the skill did not.
 
 ### 4.5 Clock arithmetic (modular)
 
@@ -569,6 +661,9 @@ Two things killed the puzzle-room version, and either is fatal on its own:
   state the result. Both of its halves are already built and shipped as traps — `clock-reflex`
   (`TRAP_FAMILIES.md` §5.2, T1–T5) owns the clock face this entry's UI note proposed to borrow, and
   `arithmetic-reflex` (§5.1) covers arithmetic to T5 with "mixed operations with larger ranges".
+- **A chain of these is still this.** `08:00 + 20 + 10 + 40` is four steps and one answer, so it belongs
+  here rather than in §4.35 — that family exists only because a second chain gives the arithmetic something
+  to be deduced from.
 
 ### 4.9 Nonogram (hieroglyph reveal)
 
@@ -685,6 +780,8 @@ the thing to look at first when judging an unbuilt family's duration.
 | Loop and enclosure     | Medium          | Good (published ladder)  | Draw-derive-thin (gate)      | **unmeasured**           |
 | Cryptarithm            | Easy            | **Unproven**             | Trivial + **thinning**       | **unmeasured**           |
 | Deduction from absence | Easy            | Good (expected)          | Place-derive-thin (gate)     | **unmeasured**           |
+| Attribute matching     | Easy            | By clue mix (capped 4)   | Derive-then-thin (gate)      | **unmeasured**           |
+| Coupled durations      | Medium          | By precision, then rung  | Draw-then-blank (gate)       | **unmeasured**           |
 
 ---
 
@@ -801,14 +898,16 @@ family costs a generator and a ladder.
 | #   | Family                             | Why here                                                                                                |
 | --- | ---------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | 1   | **Canal** (§4.22)                  | The only one with a finished design doc and a solved generation plan. Nothing to decide, only to build  |
-| 2   | **Region partition** (§4.30)       | Deepest untrained reasoning — nothing built makes regions — and the cheapest UI of the four new entries |
-| 3   | **Sokoban** (§4.16)                | Irreversibility: rush hour plans with every move undoable, this one has dead states                     |
-| 4   | **Cryptarithm** (§4.32)            | Carrying, which no family trains. Cheap UI; the open question is whether it has five tiers of rungs     |
-| 5   | **Loop and enclosure** (§4.31)     | Deep published ladder, but probe the overlap with canal (§4.31 risk) before writing its doc             |
-| 6   | **Deduction from absence** (§4.33) | Strong self-explaining rungs, but probe the overlap with eclipse (§4.33 risk) first                     |
-| 7   | **Circuit** (§4.23)                | Blocked on duration, not on overlap — long rather than hard. Test the mitigations before believing it   |
-| 8   | **Eye of Horus** (§4.6)            | Modest ceiling unless generalised past the six eye-parts, which is §10.1                                |
-| 9   | **Target number** (§4.7)           | A pace family — short and light by intent, with no ladder. Buildable at any point; it blocks nothing    |
+| 2   | **Region partition** (§4.30)       | Deepest untrained reasoning — nothing built makes regions — and the cheapest UI of the new entries      |
+| 3   | **Coupled durations** (§4.35)      | Most of its UI already exists (`ClockFace`, `minuteStep`); it scales by precision at no cost in board   |
+| 4   | **Sokoban** (§4.16)                | Irreversibility: rush hour plans with every move undoable, this one has dead states                     |
+| 5   | **Attribute matching** (§4.34)     | The transitive rung, which nothing built has. Cheap UI; probe the 4×4×4 cap before believing five tiers |
+| 6   | **Cryptarithm** (§4.32)            | Carrying, which no family trains. Cheap UI; the open question is whether it has five tiers of rungs     |
+| 7   | **Loop and enclosure** (§4.31)     | Deep published ladder, but probe the overlap with canal (§4.31 risk) before writing its doc             |
+| 8   | **Deduction from absence** (§4.33) | Strong self-explaining rungs, but probe the overlap with eclipse (§4.33 risk) first                     |
+| 9   | **Circuit** (§4.23)                | Blocked on duration, not on overlap — long rather than hard. Test the mitigations before believing it   |
+| 10  | **Eye of Horus** (§4.6)            | Modest ceiling unless generalised past the six eye-parts, which is §10.1                                |
+| 11  | **Target number** (§4.7)           | A pace family — short and light by intent, with no ladder. Buildable at any point; it blocks nothing    |
 
 **Probe generation before writing any design doc.** Two catalogue assumptions were wrong when star battle
 was built, and one wrong conclusion survived a correct measurement — the region-map idea was killed by a
