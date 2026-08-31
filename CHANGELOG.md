@@ -9,16 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Lightbeam rooms stop dealing the same puzzle. A board now draws one shape of its own: stone that slides out
-  of the beam's way, a mirror that slides instead of turning, a mirror already set that is not yours to move,
-  a door and the socket that opens it, or a mirror with a third angle — one of them a board, so a mechanic
-  arrives on a board built around it.
+- Light puzzles stop repeating themselves: every board draws a shape of its own, at every difficulty.
 
 ### Fixed
 
 - A passage that runs on into the unexplored dark still ends open — only bare stone is walled off.
-- A honeycomb run no longer draws itself on into a number written in beside it, and a comb counts as
-  finished only once you have carried the run into its last number — those last steps are yours to make.
+- A honeycomb run stops where you carried it, instead of drawing itself on into numbers already on the comb.
 
 ## 0.42.3 - 2026-08-30
 
