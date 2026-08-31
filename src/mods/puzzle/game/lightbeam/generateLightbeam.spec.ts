@@ -714,6 +714,115 @@ describe("slider-heavy", () => {
  * The three modes have to produce measurably different boards rather than three names for the same board,
  * which is what phase 3 exists to prove.
  */
+describe("sliding walls", () => {
+  const BASE: LightbeamOptions & { size: number } = {
+    size: 9,
+    turns: 6,
+    branchDepth: 1,
+    interactive: 1,
+    fiddleProof: true,
+    techniqueCap: "onlySurvivor",
+  }
+  const { size, ...options } = BASE
+  const boards = Array.from({ length: 8 }, (_, seed) =>
+    generateLightbeam(size, seed + 1, { ...options, modes: ["wallHeavy"], slidingWalls: 1 })
+  )
+  const walls = (board: Board) => board.movable.filter(piece => piece.kind === "slidingWall")
+
+  it("delivers the wall it was asked for, and it is the player's", () => {
+    for (const board of boards) {
+      expect(walls(board)).toHaveLength(1)
+      const index = board.movable.findIndex(piece => piece.kind === "slidingWall")
+      // Nothing drives it: the whole difference from a door is that a thumb moves this one.
+      expect(restingState(board, index)).toBeUndefined()
+      expect(pieceOptions(board, index)).toHaveLength(2)
+    }
+  })
+
+  it("rests in the beam's way, and its answer is the cell beside it", () => {
+    for (const board of boards) {
+      const onRoute = new Set(traceBeam(board, board.solution).path.map(segment => cellKey(segment.at)))
+      const index = board.movable.findIndex(piece => piece.kind === "slidingWall")
+      const stops = pieceCells(board.movable[index])
+      // One stop on the winning beam's own line, one off it — and the answer is the one off it.
+      expect(stops.filter(at => onRoute.has(cellKey(at)))).toHaveLength(1)
+      expect(onRoute.has(cellKey(stops[board.solution[index]]))).toBe(false)
+    }
+  })
+
+  it("kills the beam where it stands, so its wrong stop needs no corridor", () => {
+    for (const board of boards) {
+      const index = board.movable.findIndex(piece => piece.kind === "slidingWall")
+      const wrong = [...board.solution]
+      wrong[index] = board.solution[index] === 0 ? 1 : 0
+      expect(traceBeam(board, wrong).end).toBe("absorbed")
+      expect(isLit(board, wrong)).toBe(false)
+    }
+  })
+
+  it("leaves the board unique and deducible", () => {
+    for (const board of boards) {
+      expect(reachableDeviations(board, board.solution)?.winning.size).toBe(1)
+      expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
+    }
+  })
+})
+
+/**
+ * Flavours: the dial set is drawn per board, so a tier is a range rather than one recipe (§7.4).
+ *
+ * The failure this guards is what playtesting reported — every board on a tier the same shape, because a tier
+ * had exactly one set of dials and dials do not vary. A pool only fixes that if the draw actually lands on
+ * different flavours, which is what the counts below are for.
+ */
+describe("flavours", () => {
+  const BASE: LightbeamOptions & { size: number } = {
+    size: 9,
+    turns: 5,
+    branchDepth: 1,
+    interactive: 1,
+    fiddleProof: true,
+    techniqueCap: "onlySurvivor",
+  }
+  const { size, ...options } = BASE
+  const flavours: NonNullable<LightbeamOptions["flavours"]> = [
+    { modes: ["wallHeavy"] },
+    { modes: ["sliderHeavy"], sliders: 1, slidingStops: 2 },
+    { modes: ["wallHeavy"], slidingWalls: 1 },
+  ]
+  const drawn = Array.from({ length: 12 }, (_, seed) => generateLightbeam(size, seed + 1, { ...options, flavours }))
+
+  it("draws more than one shape across a tier", () => {
+    const shapes = new Set(
+      drawn.map(board =>
+        [...board.modes, ...board.movable.map(piece => piece.kind)]
+          .sort((left, right) => (left < right ? -1 : 1))
+          .join("/")
+      )
+    )
+    expect(shapes.size).toBeGreaterThan(2)
+  })
+
+  it("draws a flavour rather than blending them: every board is one of the pool", () => {
+    for (const board of drawn) {
+      expect(board.modes).toHaveLength(1)
+      const slid = board.movable.filter(piece => piece.kind === "slidingMirror").length
+      const stone = board.movable.filter(piece => piece.kind === "slidingWall").length
+      // Slider-heavy is the only flavour with a sliding mirror, and only one flavour asks for stone to slide.
+      if (board.modes.includes("sliderHeavy")) expect(slid).toBe(1)
+      else expect(slid).toBe(0)
+      expect(stone).toBeLessThanOrEqual(1)
+    }
+  })
+
+  it("builds the same board every attempt: the draw is off the seed", () => {
+    for (let seed = 1; seed <= 4; seed++) {
+      const again = generateLightbeam(size, seed, { ...options, flavours })
+      expect(again.modes).toEqual(generateLightbeam(size, seed, { ...options, flavours }).modes)
+    }
+  })
+})
+
 describe("mode variance", () => {
   const BASE: LightbeamOptions & { size: number } = {
     size: 9,

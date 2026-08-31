@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Lightbeam rooms stop dealing the same puzzle. A board now draws one shape of its own: stone that slides out
+  of the beam's way, a mirror that slides instead of turning, a mirror already set that is not yours to move,
+  a door and the socket that opens it, or a mirror with a third angle — one of them a board, so a mechanic
+  arrives on a board built around it.
+
 ### Fixed
 
 - A passage that runs on into the unexplored dark still ends open — only bare stone is walled off.
