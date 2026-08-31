@@ -152,7 +152,7 @@ Trap insight upgrades from tomb treasures add `TRAP_TIME_EXTENSION_PER_UPGRADE_S
 - **Knobs:** `instrument` (balance / water clock / eye of Horus / obelisk shadow) · `precision` · `distractorProximity`.
 - **Scaling:** moderate ceiling — complexity comes from precision and proximity of distractors, not from fundamentally harder reasoning. Best used sparingly at T5 for thematic variety.
 - **Generation:** trivial, unique-by-construction (reuses generation logic from the corresponding puzzle families where they exist).
-- **UI:** high cost — each instrument variant requires its own renderer; can share assets with the puzzle family implementations (§4.3, §4.4, §4.6 of `PUZZLE_FAMILIES.md`).
+- **UI:** high cost — each instrument variant requires its own renderer. **The renderers it hoped to share are not coming:** §4.3 (sundial) and §4.4 (water clock) were dropped, and live in `PUZZLE_FAMILIES.md` §4.99. Only §4.6 (Eye of Horus) is still proposed, and unbuilt.
 - **Tiers:** T5.
 - **Status:** planned; UI cost means implement last. Reuse puzzle family renderers where possible.
 

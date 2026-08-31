@@ -1,10 +1,3 @@
-# PUZZLE_FAMILIES.md
-
-Status: design draft · base document for Claude Code
-Companion to: `docs/game-design/game-loop.md` and
-`docs/game-design/pyramid-interior-design.md` (progression / map layer) and
-`TABLEAU_REDESIGN.md` (the existing cross-sum presentation).
-
 This document defines the **puzzle families** the game can serve inside puzzle
 nodes, how each **scales in difficulty**, and **which difficulty tier each
 should first appear at**. Tiers are referenced as **T1–T5**, where **T1 = the
@@ -66,12 +59,26 @@ off a gate is how long it takes, which is a pacing question and lives in §8.
 
 **P4 — A family debuts at the bottom of its OWN scale.** A family entering at a
 high tier still enters as its _simplest_ instance, so "fresh" never means "wall."
-A nonogram debuting at T4 enters as a small 10×10, not a 15×15.
+A futoshiki debuting at T4 enters as a small grid, not a 7×7.
 
 **P5 — Every family ships a wordless first encounter.** Each family definition
 carries a `firstEncounter`: a minimal, self-teaching instance (plus optional
 demonstration animation). With P2 in force, the rule blurb is translatable, but
 the _first instance_ should teach by doing, not by reading.
+
+**P6 — Most families should afford a hint that names a move, never the answer.** This is what a
+technique solver is for, and it is the shape every family since sumplete has taken: the solver gates
+generation, sources each hint with its reason, and sets difficulty by a per-tier technique cap. A
+family whose only available hint is the answer has nothing for that machinery to hold — which is what
+a board where the reasoning is a lookup rather than a deduction feels like to play (§4.99 has several).
+
+Deduction families satisfy this through techniques; a planning family does it through forced ordering
+(rush hour is "the only family here that is planning rather than deduction", §4.17; canisters earns it
+because "77% of its steps are forced by two local rules", §4.28).
+
+**This is a heuristic, not a gate.** Where a family cannot afford such a hint, the entry says what it
+offers instead — target number (§4.7) is kept deliberately as a short, light board among long ones.
+Nothing in §4.99 was dropped for failing this alone; each has its own reason.
 
 ---
 
@@ -141,11 +148,11 @@ tier that passes.
 Families split into two generation classes:
 
 - **Unique-by-construction** — build the answer first, derive the clues; the
-  puzzle has exactly one solution by how it was made (cross-sum, balance, time,
-  fractions, target-number, doubling, symmetry).
+  puzzle has exactly one solution by how it was made (cross-sum, balance,
+  fractions, target-number).
 - **Needs a uniqueness verifier** — generation can produce puzzles with multiple
   valid solutions, so a solver must confirm uniqueness and discard the rest
-  (Sumplete, nonogram, kakuro, Latin-square, sequence).
+  (Sumplete, Latin-square, canal, region partition).
 
 For an **educational** game, uniqueness matters more than for a casual one: "you
 solved it correctly" must be unambiguous, and the game must never reject a
@@ -181,45 +188,6 @@ Design doc: [puzzles/tableau.md](puzzles/tableau.md)
 Equality and equation-balancing: load two pans and find the unknown weight that levels the beam.
 
 Design doc: [puzzles/balance-scale.md](puzzles/balance-scale.md)
-
-### 4.3 Sundial / shadow clock (telling time) — _(dropped as a puzzle family)_
-
-**Telling the time is a trap, not a puzzle room** — see `TRAP_FAMILIES.md` §5.2.
-Reading a clock is a single-answer skill under time pressure, which is what a trap
-is for, and the trap's distractors (hands swapped, hour hand read forward) are
-where the teaching lives. There is no sundial mod in `src/mods/`, and the same goes
-for §4.4's water clock: both are survivors of the pre-redesign game. Do not plan
-around either existing.
-
-Two things killed the puzzle-room version, and either is fatal on its own:
-
-- **A drawn shadow is a reading, not a deduction (P1).** Direction and length both
-  drawn means the hour is looked up rather than reasoned to.
-- **The rim cannot express the answer.** A 12-mark dial puts a morning hour and its
-  afternoon twin on the same mark, so the marker says the same thing for both and
-  there is nothing for the second piece of evidence to settle.
-
-### 4.4 Water clock / clepsydra (duration) — _(not built; see §4.3)_
-
-- **Skill:** elapsed-time / duration; subtraction across hours; **boundary-
-  crossing** (the hard, valuable part — e.g. from night hours into day hours).
-- **Operates:** water drains between graduated marks; the gap between start and
-  end levels is the elapsed time. "Lit at X, burned to Y — how long?"
-- **Knobs:** magnitude · whether it crosses a 12/24 boundary · minute precision.
-- **Superseded:** the duration skill this entry was for is claimed by procession (§4.29), which keeps the
-  boundary-crossing arithmetic and drops the clock face that killed this one.
-- **Scaling:** good; the boundary-crossing knob is where real difficulty lives.
-- **Generation:** trivial, unique-by-construction.
-- **UI:** medium (level slider against marks).
-
-### 4.5 Clock arithmetic (modular)
-
-- **Skill:** modular arithmetic (mod 12/24) — wrap-around; a distinct muscle.
-- **Operates:** "It's the 9th hour; the ritual lasts 6 — when does it end?"
-- **Knobs:** modulus (12/24) · number of wraps · forward vs backward.
-- **Scaling:** good; inherently a higher-tier idea.
-- **Generation:** trivial, unique-by-construction.
-- **UI:** medium (reuses the clock face from §4.3).
 
 ### 4.6 Eye of Horus fractions
 
@@ -265,78 +233,11 @@ the technique cap and the given count instead. The consequence is a lower ceilin
 than the 9×9 row below promises, and the family doc states it rather than
 implying a scale that is not there.
 
-### 4.9 Nonogram (hieroglyph reveal)
-
-- **Skill:** logic from numeric run-clues.
-- **Operates:** row/column run-clues say which cells to fill; the completed grid
-  **reveals a hieroglyph**. Two-mode interaction: fill vs mark-empty.
-- **Knobs:** grid size · picture density · whether border cells are pre-anchored.
-- **Scaling:** good, but with **a hard floor and a mobile ceiling**:
-  - _Floor:_ below ~10×10 the revealed picture is too crude to be rewarding (a
-    3×3 is a bare triangle). **Picture complexity is coupled to puzzle
-    difficulty** — a more satisfying reveal is necessarily a harder puzzle. So
-    nonogram **cannot be an on-ramp; it must enter mid-game.**
-  - _Ceiling:_ above ~15×15 cells get painful under a thumb — cap size or
-    pan/zoom.
-- **Generation:** medium — picture→clues is trivial, but **must verify the puzzle
-  is line-solvable without guessing** (uniqueness verifier). Curate a fixed set
-  of hieroglyphs hand-checked solvable at each size; pre-fill border cells to
-  anchor orientation.
-- **UI:** medium–hard (mode toggle; shrinking targets at scale).
-- **Bonus:** its reveal _is_ the "uncover a hidden picture" thesis at the puzzle
-  scale; it doubles as a reward object.
-
-### 4.10 Kakuro (the literal "cross sum")
-
-- **Skill:** addition + logic; no-repeat run sums.
-- **Operates:** fill each run so it sums to the clue in the triangle, no digit
-  repeated in a run.
-- **Knobs:** grid size · run lengths · clue tightness.
-- **Scaling:** good.
-- **Generation:** medium–hard — uniquely-solvable generation is fiddly (NP-hard
-  in general); needs the verifier.
-- **UI:** **hard on mobile** — dense split clue-triangles are cramped on a phone.
-  The worst UI fit in the catalogue; needs generous cell sizing and a capped grid.
-
 ### 4.11 Sumplete / Number Sum
 
 Addition and elimination: keep or strike each number so every row and column hits its clue.
 
 Design doc: [puzzles/sumplete.md](puzzles/sumplete.md)
-
-### 4.12 Symmetry completion — _(early-only)_
-
-- **Skill:** spatial reasoning.
-- **Operates:** mirror or rotate to complete a pattern (Egyptian art is
-  relentlessly symmetric). Self-evident — minimal blurb.
-- **Knobs:** grid size · number of symmetry axes · rotation vs reflection.
-- **Scaling:** moderate ceiling — deliberately an **early family that graduates
-  out** (frees its slot for richer families later).
-- **Generation:** easy, unique-by-construction.
-- **UI:** medium (place/tap mirrored cells).
-- **Note:** a strong **first** family because it needs almost no text.
-
-### 4.13 Sequence continuation — _(use with caution)_
-
-- **Skill:** pattern recognition.
-- **Operates:** continue a number/shape progression.
-- **Knobs:** rule type (arithmetic → geometric → mixed) · sequence length.
-- **Scaling:** easy to author, **but uniqueness is a real hazard** — short
-  sequences admit multiple valid rules, which can force disambiguating text
-  (violates P2). Keep sequences long enough to be unambiguous, verify uniqueness,
-  and keep them number/shape-based.
-- **Generation:** easy but **must verify a unique continuation.**
-- **UI:** easy.
-
-### 4.14 Egyptian doubling — _(optional, modest)_
-
-- **Skill:** repeated doubling → binary-ish decomposition.
-- **Operates:** build a target by choosing from a doubling sequence.
-- **Knobs:** target size.
-- **Scaling:** modest ceiling.
-- **Generation:** trivial, unique-by-construction.
-- **UI:** easy.
-- **Note:** low ceiling — a flavour family.
 
 ### 4.15 Mirror / lightbeam
 
@@ -445,8 +346,9 @@ Design doc: [puzzles/constellation.md](puzzles/constellation.md)
 
 Family doc: `docs/game-design/puzzles/canal.md`.
 
-- **Skill:** counting along a line, plus connectivity — nonogram arithmetic whose answer happens to be a
-  path.
+- **Skill:** counting along a line, plus connectivity — run-clue arithmetic whose answer happens to be a
+  path. **This is the deduction nonogram was dropped for sharing** (§4.99): canal holds the slot because it
+  is designed, its generation is solved, and its counts cannot be thinned.
 - **Operates:** water enters at one edge and leaves at another, and the player digs the single channel
   between them. Every row and column number is how many of that line's cells the channel runs through;
   a few stretches open already dug. Roderick Kimball's **Path Puzzles**.
@@ -559,6 +461,260 @@ here every start is unknown and there is no move order at all.
 
 Design doc: [puzzles/procession.md](puzzles/procession.md)
 
+### 4.30 Region partition (the sealed chambers) — _(proposed; the deepest gap in §7)_
+
+- **Skill:** carving a grid into regions of a stated size — the Shikaku / Nurikabe / Fillomino family.
+  **Nothing built makes regions.** Star battle and twin stars _read_ boundaries that are given to them;
+  here the boundaries are the answer.
+- **Operates:** every number is a chamber's area. Partition the whole grid so each region holds exactly one
+  number and exactly that many cells. Shikaku's rectangles-only rule is the version to probe first — it is
+  the tightest and the easiest to draw with a finger.
+- **Knobs:** grid size · the spread of region sizes · rectangles-only vs free shapes · how many numbers open
+  already placed.
+- **Scaling:** expected good on two axes (more regions, wider size spread), but unmeasured.
+- **Generation:** partition first, then read the numbers off it — the eclipse shape. **Probe before
+  designing:** a flat size distribution is exactly the parameterisation that killed the region-map idea once
+  before, and it was the one case that cannot work (see §4.21's note). Spread the sizes.
+- **UI:** expected cheap — drag a rectangle, or tap cells into a region. Reuses constellation's pointer
+  machinery.
+- **Hint affordance (P6):** strong. "This 6 can only be 2×3 here", "no region can reach that corner but this
+  one", "these four cells are owed to somebody and only the 4 can pay".
+- **Risk:** none identified beyond the size-distribution trap above. This is why it sits second in §9.
+
+### 4.31 Loop and enclosure (inside or outside) — _(proposed; overlap with §4.22 unresolved)_
+
+- **Skill:** drawing one closed loop from edge counts, and reasoning about what the loop **encloses**.
+  Slitherlink. Inside/outside parity appears in no built family.
+- **Operates:** each number says how many of its cell's four edges the loop uses. Draw a single closed loop;
+  cells are then inside it or outside it, and that is the second half of the deduction.
+- **Knobs:** grid size · clue density · which clue values are used (0s and 3s carry the most force).
+- **Scaling:** good; the published ladder is deep.
+- **Generation:** draw a loop, read the edge counts off it, thin the clues while the technique solver still
+  finishes unaided — the same draw-derive-thin canal uses.
+- **UI:** medium. Edges rather than cells are the tap targets, which is a smaller target than anything the
+  game draws today.
+- **Hint affordance (P6):** strong. Corner rules, 3-adjacent-to-3, and parity all name a move with a reason.
+- **Risk, and it is the reason this is proposed rather than designed:** **it shares canal's verb.** Both draw
+  a line on a grid from counts. §4.23's rule is that a shared verb is tolerated and a shared _deduction_ is
+  not, so the probe has to answer whether "how many edges of this cell" and "how many cells of this line" are
+  two deductions or one. Do not write the design doc before answering it.
+
+### 4.32 Cryptarithm (the scribe's sum) — _(proposed; risk is that it reads as drill)_
+
+- **Skill:** digit substitution **with carrying**. Balance scale substitutes unknowns; nothing in the game
+  carries, and carrying is where a column's answer depends on the column beside it.
+- **Operates:** a written sum where each glyph stands for a digit. Recover the assignment. Tap a glyph, tap a
+  digit — no typing, so P2 holds.
+- **Knobs:** number of distinct glyphs · number of addends · column count · whether a leading zero is
+  excluded · how many glyphs open already assigned.
+- **Scaling:** unmeasured. The published form (SEND+MORE=MONEY) is one hard board rather than a ladder, so
+  the knobs above are doing the work and none of them is proven.
+- **Generation:** trivial to produce (pick an assignment, write the sum), and the whole difficulty is
+  **thinning to a unique assignment that a technique solver can reach without search.**
+- **UI:** easy — a written sum and a digit palette.
+- **Hint affordance (P6):** real but narrow. "This leading glyph cannot be zero", "this column carries, so
+  that glyph is odd". Whether there are enough distinct rungs for five tiers is the open question.
+- **Risk:** the failure mode is arithmetic drill with a costume — the thing `arithmetic-reflex` already does
+  as a trap. The carries have to be the deduction, not decoration on a sum.
+
+### 4.33 Deduction from absence — _(proposed; overlap with §4.20 unresolved)_
+
+- **Skill:** proving what is **not** there. A number counts marked neighbours; the reasoning is subset
+  difference — two clues whose neighbourhoods overlap settle the cells they do not share.
+- **Operates:** Minesweeper's logic without Minesweeper's guessing: the board opens with its numbers already
+  shown, and every cell is settled by reasoning. No first click, no luck.
+- **Knobs:** grid size · mark density · how many cells open already settled.
+- **Scaling:** expected good.
+- **Generation:** place the marks, read the counts, then thin — and the gate matters more here than anywhere,
+  because an unthinned Minesweeper board is exactly the guessing game this must not be.
+- **UI:** easy — two cell states, the same toggle sumplete uses.
+- **Hint affordance (P6):** strong, and subset-difference is the rung that explains itself best.
+- **Risk:** **eclipse is the nearest neighbour** and also a binary grid settled by counting. The probe has to
+  say whether "count my neighbours" and eclipse's row/column balance are two deductions or one dressed twice.
+
+### 4.34 Attribute matching (the scribe's register) — _(proposed; the transitive rung is why)_
+
+Who stood where in a line of people, worked out from relations rather than told. The classic zebra grid,
+with the categories a register would hold.
+
+- **Skill:** matching across categories, and **transitivity between sub-grids** — the technique nothing
+  built has. Knowing a figure's place and that place's position gives the figure's position, without
+  either being stated.
+- **Operates:** three categories of equal size — who, where, and an ORDERED position. Every cell of every
+  sub-grid is ✓ or ✕, the same toggle sumplete uses, and the clues are rows of three glyphs.
+- **The position axis is ordinal, not clock time**, and that is deliberate: ordered is what makes half the
+  clue vocabulary work, and drawing it as first/second/third rather than as hours is what keeps this board
+  from looking like §4.35's. No dial appears anywhere in this family.
+
+| Clue row     | Reads as                             | Rung it feeds |
+| ------------ | ------------------------------------ | ------------- |
+| `[𓀀] = [⛰]`  | the scribe was at the quarry         | pin           |
+| `[𓀀] ✕ [⛰]`  | the scribe was not at the quarry     | exclude       |
+| `[𓀀] +2 [𓁐]` | the scribe two positions after Neith | offset        |
+| `[𓀀] < [𓁐]`  | the scribe somewhere before Neith    | endpoint      |
+| `[𓀀] ⇄ [𓁐]`  | adjacent, **order not stated**       | case split    |
+| `[𓀀] ⟷2 [𓁐]` | two apart, either direction          | case split    |
+
+**P2 holds because every clue is glyph–operator–glyph**, never a sentence. The two ambiguous rows are the
+ones that would normally be a language risk, and procession already ships one — its "these two never
+overlap" clue "deliberately does not say which way round", which is where its ladder stops being
+propagation and becomes a case split.
+
+- **Ladder:** pin → exclude → endpoint → last-one → **transitive** → parity → case split. Seven rungs.
+- **Knobs:** entity count (3 or 4) · clue mix · how many pins are given · required rung and its quota.
+- **Scaling: by the clue mix, not the board.** Three categories at N entities is 3N² cells — 27 at N=3,
+  48 at N=4, **75 at N=5** — and a zebra grid is maximally coupled, every mark bearing on every sub-grid.
+  §6 names that as the thing that runs the clock out, and futoshiki is the family it already happened to.
+  So the board is capped at 4 and the tiers are told apart by clues: starter 3×3×3 with pins given, junior
+  4×4×4 with pins, expert the same board with none, master one disjunction, wizard two.
+- **Generation:** pick the assignment, derive every clue true of it, then thin while the technique solver
+  still finishes unaided — the eclipse shape.
+- **UI:** easy. A grid of three-state cells and a column of clue rows; no new atom.
+- **Hint affordance (P6):** strong, and the transitive rung explains itself best of all: "you know where
+  Ptah was, and you know which position that place held."
+- **Risk:** **§4.35 is the nearest neighbour** and both are about people, places and when. The deductions
+  differ — this one matches and never does arithmetic, that one computes and never matches — and the
+  ordinal axis keeps them apart on screen. The probe still has to confirm a player reads them as two rooms.
+
+### 4.35 Coupled durations (the meeting hour) — _(proposed; the family §4.4 wanted to be)_
+
+Two travellers, legs of known length, and one moment they share. Work out every clock time on both roads.
+
+- **Skill:** elapsed-time arithmetic across the hour boundary — the thing §4.4 called "the hard, valuable
+  part" before that entry was dropped. **A single chain is not this family**: `08:00 + 20 + 10 + 40` is four
+  additions with one answer, which is clock arithmetic (§4.5, dropped) and already covered as a trap. The
+  deduction only exists because a second chain shares a moment with the first.
+- **Operates:** each traveller is a row of legs with their durations written on them; a few clock times are
+  given and the rest are blank. Where two rows meet at the same place, they meet at the same time, and that
+  is the move that carries a known time from one row to the other.
+
+```
+ Lisa    🏠 08:45 ──30──▶ 🏡 ┐
+                             ├─ ⏸15 ─▶ 💬45 ─▶ 🍦 ??
+ Ahmed   🏪  ??   ──45──▶ 🏡 ┘
+```
+
+Forward on Lisa gives 09:15; the meeting hands 09:15 to Ahmed; backward gives his 08:30; forward along the
+shared tail gives 10:15. Three hour-crossings out of four clues, and every step is forced.
+
+- **Ladder:** forward → backward → gap (two known times bracket an unknown leg) → **meet** (a shared node
+  moves a time between chains) → total (the span is given, the missing leg is the remainder) → boundary →
+  case split (a leg is one of two durations, carry both until one dies). Seven rungs, `meet` the new one.
+- **Knobs:** `minuteStep` · chain count · legs per chain · how many times are given · required rung.
+- **Scaling: by precision, which costs no board.** Whole hours at starter, half hours, quarters, then five
+  minutes at master. **It stops there.** `08:37 + 46` is not harder reasoning than `08:30 + 45`, only worse
+  numbers, which is §3.2's bookkeeping-versus-difficulty trap. `clock-reflex` goes to single minutes because
+  READING a face is instant; computing at that grain is grind. Wizard is carried by the rung instead — a
+  third chain, a leg known only through its total, or a two-valued leg.
+- **The clock runs one daylight day, on a twelve-hour face.** No wrap, no midnight, no day/night mark: the
+  only boundary is the hour, which is where the arithmetic lives anyway. A wrapping face would put 1:15 and
+  13:15 on the same reading, which is the ambiguity that killed the sundial's rim (§4.99).
+- **Generation:** draw the full schedule, read every time off it, then blank times out while the technique
+  solver still finishes unaided.
+- **UI:** medium, and **most of it exists**. `src/ui/atoms/ClockFace.tsx` is a shared atom already used by
+  `clock-reflex`, and the answer is given by setting hands that snap to the tier's `minuteStep` — so an
+  invalid time cannot be entered and the board needs no text. Setting a dial is not the sundial's sin:
+  there the dial was the clue and reading it was the puzzle, here it is the answer and the player states a
+  time they worked out.
+- **Hint affordance (P6):** strong. "You know when Lisa arrived, and Ahmed arrived at the same moment"
+  names a move and its reason and leaves every subtraction to the player.
+- **Risk:** the family collapses to §4.5 the moment a board has one chain, or two chains that never meet.
+  Generation has to refuse those, not merely avoid them. Overlap with §4.34 is the other probe (see there).
+
+## 4.99 Considered and dropped
+
+**These are not a backlog.** Each was in §4 and was taken out, and the reason is recorded so the idea is
+not proposed again from scratch — every one of them is a thing somebody will suggest. **Numbers are kept as
+they were** so older references still resolve; nothing in §4 is renumbered when an entry moves here.
+
+Each entry stands on its own reason. P6 (§2) is a heuristic and several of these fail it, but none was
+dropped for that alone.
+
+### 4.3 Sundial / shadow clock (telling time)
+
+**Telling the time is a trap, not a puzzle room** — see `TRAP_FAMILIES.md` §5.2, which ships it. Reading a
+clock is a single-answer skill under time pressure, which is what a trap is for, and the trap's distractors
+(hands swapped, hour hand read forward) are where the teaching lives. There is no sundial mod in
+`src/mods/`; this and §4.4 are survivors of the pre-redesign game. Do not plan around either existing.
+
+Two things killed the puzzle-room version, and either is fatal on its own:
+
+- **A drawn shadow is a reading, not a deduction (P1).** Direction and length both drawn means the hour is
+  looked up rather than reasoned to.
+- **The rim cannot express the answer.** A 12-mark dial puts a morning hour and its afternoon twin on the
+  same mark, so the marker says the same thing for both and there is nothing for the second piece of
+  evidence to settle.
+
+### 4.4 Water clock / clepsydra (duration)
+
+- **Was for:** elapsed time and duration, its valuable part the boundary crossing (night hours into day).
+- **Superseded by procession (§4.29)**, which keeps the boundary-crossing arithmetic and drops the clock
+  face that killed §4.3. The skill this entry existed for is now shipped.
+- **Its clock-time half came back as §4.35.** What could not work here was one chain of durations read off a
+  drained vessel — the answer is computed, not deduced. Coupling two chains at a shared moment is what makes
+  the same arithmetic a deduction, and that is the family to build. This entry stays dropped; the skill did not.
+
+### 4.5 Clock arithmetic (modular)
+
+- **Was for:** modular arithmetic (mod 12/24) — wrap-around, forward and backward.
+- **It is one arithmetic step with one answer**, which is the shape §4.3 was dropped for: a hint can only
+  state the result. Both of its halves are already built and shipped as traps — `clock-reflex`
+  (`TRAP_FAMILIES.md` §5.2, T1–T5) owns the clock face this entry's UI note proposed to borrow, and
+  `arithmetic-reflex` (§5.1) covers arithmetic to T5 with "mixed operations with larger ranges".
+- **A chain of these is still this.** `08:00 + 20 + 10 + 40` is four steps and one answer, so it belongs
+  here rather than in §4.35 — that family exists only because a second chain gives the arithmetic something
+  to be deduced from.
+
+### 4.9 Nonogram (hieroglyph reveal)
+
+- **Was for:** logic from numeric run-clues; the completed grid reveals a hieroglyph.
+- **Its deduction is canal's (§4.22).** Canal's own entry describes itself as "nonogram arithmetic whose
+  answer happens to be a path", and §4.23's rule is that a shared verb is tolerated where a shared
+  _deduction_ is not — the rule that ruled out Akari. Canal is designed, has a doc and a solved generation
+  plan, so it holds the slot.
+- **Three costs of its own, independent of the above:** a hard floor (below ~10×10 the revealed picture is
+  too crude to be worth revealing, so it can never be an on-ramp), a mobile ceiling (above ~15×15 cells are
+  painful under a thumb), and a curated set of hieroglyphs hand-checked solvable at every size.
+- **What is lost:** the reveal doubling as a reward object. That is theme and reward rather than reasoning,
+  and it is not enough on its own.
+
+### 4.10 Kakuro (the literal "cross sum")
+
+- **Was for:** addition plus logic; no-repeat run sums.
+- **It is a recombination of two built families.** The sums are sumplete's; the no-repeat-in-a-line is
+  sudoku's and futoshiki's. What it genuinely owns is combination enumeration ("a run of two summing to 3
+  must be 1+2").
+- **That does not pay for its UI**, which its own entry called the worst fit in the catalogue: dense split
+  clue-triangles are cramped on a phone, and the fix is a capped grid plus generous cells, which caps the
+  family too.
+
+### 4.12 Symmetry completion
+
+- **Was for:** spatial reasoning — mirror or rotate to complete a pattern.
+- **The hint is the answer.** A mirror partner is a lookup, so naming it finishes the square; there is
+  nothing for a technique solver to source a reason from and no rungs to order.
+- **It was already a family designed to stop being used** — "an early family that graduates out".
+- **What is lost:** a strong wordless on-ramp, since it needs almost no text. Starter boards in the built
+  families are small enough to carry that job.
+
+### 4.13 Sequence continuation
+
+- **Was for:** pattern recognition — continue a number or shape progression.
+- **It breaks P2.** Short sequences admit multiple valid rules, and disambiguating them needs text, which is
+  the one thing the board may not need. Keeping sequences long enough to be unambiguous makes them tedious
+  rather than hard.
+- Naming the rule is also naming the answer, so there is no hint between silence and the solution.
+
+### 4.14 Egyptian doubling
+
+- **Was for:** repeated doubling into a binary-ish decomposition; a real historical scribe technique.
+- **Its own entry called it what it is:** "low ceiling — a flavour family", with `target size` its only knob.
+  Building a target from a doubling sequence is one decomposition with one answer, so there is no ladder to
+  climb and no move to name short of the answer.
+- **What is lost:** the historical flavour. That is available as dressing on a family that has reasoning.
+
+---
+
 ## 5. The shared grid engine
 
 Four families are all **"grid + tap-to-set-cell-state"**: Sudoku, nonogram,
@@ -573,7 +729,7 @@ are mostly clue-rendering + a rules overlay on top.
 - Cheapest to stand the engine up: **Sumplete** (one 3-state tap, no palette, no
   clue-triangles) or **Sudoku** (generation is a solved problem).
 - The verifier (solve-counter that confirms exactly one solution) is shared by
-  all four **and** by sequence continuation.
+  all four.
 - **Hidato (§4.18) was the fifth candidate, and it went the other way.** On a square grid it would
   have been another cell-value family on this component with adjacency as its rules overlay; built as a
   beehive it draws from none of this — hex neighbours, coordinates and hit-testing are a separate
@@ -607,26 +763,25 @@ constraint web where a candidate held in the corner matters in the middle. **Boo
 that stays local is cheap; bookkeeping that couples is what runs the clock out.** That is
 the thing to look at first when judging an unbuilt family's duration.
 
-| Family                 | UI (web/mobile) | Scaling                  | Generation                   | Solve time / variance     |
-| ---------------------- | --------------- | ------------------------ | ---------------------------- | ------------------------- |
-| Cross-sum              | Easy            | Excellent                | Trivial (unique by constr.)  | 15–60s / low              |
-| Balance scale          | Medium          | Excellent                | Easy–Med (unique int eqn)    | 20–90s / low–med          |
-| Water clock            | Medium          | Good                     | Trivial                      | 30–90s / med              |
-| Clock-arith            | Medium          | Good                     | Trivial                      | 30–90s / med              |
-| Eye of Horus fractions | Easy–Med        | Limited (unless general) | Trivial                      | 15–60s / low              |
-| Target-number          | Medium          | Good                     | Easy (verify exists)         | 30–90s / med              |
-| Glyph Latin-square     | Easy–Med        | Excellent (6×6 shipped)  | **Solved**                   | 1–6 min / **high**        |
-| Eclipse                | Easy            | Good (signs, not size)   | **Solved** (thin-to-unique)  | 30–90s / med              |
-| Constellation          | Medium          | Good (numbers, not size) | Draw-and-test (solver gate)  | 1–4 min / med — _target_  |
-| Canal                  | Medium          | Good (size and shape)    | Draw-derive-thin (gate)      | 1–5 min / med — _target_  |
-| Procession             | Easy–Med        | Good (bars, not ticks)   | Roll-derive-thin (rung gate) | 1–3 min / med — _target_  |
-| Nonogram               | Med–Hard        | Good (floor+ceiling)     | Med (**verifier**)           | 3–15+ min / **very high** |
-| Kakuro                 | **Hard**        | Good                     | Med–Hard (**verifier**)      | 2–8 min / high            |
-| Sumplete               | **Easy**        | Good                     | Easy + **verifier**          | med–high                  |
-| Hidato / beehive       | Easy–Med        | Good (smooth)            | **Solved** (carve-then-thin) | 1–4 min / med — _target_  |
-| Symmetry               | Medium          | Moderate (early-only)    | Easy                         | 15–45s / low              |
-| Sequence               | Easy            | Easy (uniqueness risk)   | Easy + **verifier**          | 15–45s / low              |
-| Egyptian doubling      | Easy            | Modest                   | Trivial                      | 20–60s / low              |
+| Family                 | UI (web/mobile) | Scaling                  | Generation                   | Solve time / variance    |
+| ---------------------- | --------------- | ------------------------ | ---------------------------- | ------------------------ |
+| Cross-sum              | Easy            | Excellent                | Trivial (unique by constr.)  | 15–60s / low             |
+| Balance scale          | Medium          | Excellent                | Easy–Med (unique int eqn)    | 20–90s / low–med         |
+| Eye of Horus fractions | Easy–Med        | Limited (unless general) | Trivial                      | 15–60s / low             |
+| Target-number          | Medium          | Good                     | Easy (verify exists)         | 30–90s / med             |
+| Glyph Latin-square     | Easy–Med        | Excellent (6×6 shipped)  | **Solved**                   | 1–6 min / **high**       |
+| Eclipse                | Easy            | Good (signs, not size)   | **Solved** (thin-to-unique)  | 30–90s / med             |
+| Constellation          | Medium          | Good (numbers, not size) | Draw-and-test (solver gate)  | 1–4 min / med — _target_ |
+| Canal                  | Medium          | Good (size and shape)    | Draw-derive-thin (gate)      | 1–5 min / med — _target_ |
+| Procession             | Easy–Med        | Good (bars, not ticks)   | Roll-derive-thin (rung gate) | 1–3 min / med — _target_ |
+| Sumplete               | **Easy**        | Good                     | Easy + **verifier**          | med–high                 |
+| Hidato / beehive       | Easy–Med        | Good (smooth)            | **Solved** (carve-then-thin) | 1–4 min / med — _target_ |
+| Region partition       | Easy–Med        | Good (expected)          | Partition-derive (gate)      | **unmeasured**           |
+| Loop and enclosure     | Medium          | Good (published ladder)  | Draw-derive-thin (gate)      | **unmeasured**           |
+| Cryptarithm            | Easy            | **Unproven**             | Trivial + **thinning**       | **unmeasured**           |
+| Deduction from absence | Easy            | Good (expected)          | Place-derive-thin (gate)     | **unmeasured**           |
+| Attribute matching     | Easy            | By clue mix (capped 4)   | Derive-then-thin (gate)      | **unmeasured**           |
+| Coupled durations      | Medium          | By precision, then rung  | Draw-then-blank (gate)       | **unmeasured**           |
 
 ---
 
@@ -635,40 +790,38 @@ the thing to look at first when judging an unbuilt family's duration.
 Legend: **◐** introduce (gentle, at the bottom of the family's _own_ scale) ·
 **●** develop · **★** ceiling · **—** absent.
 
-| Family                 | Skill                  | T1 (Stone) |    T2    |  T3   |    T4    |     T5      |
-| ---------------------- | ---------------------- | :--------: | :------: | :---: | :------: | :---------: |
-| Cross-sum              | add → × → neg          |     ◐      |    ●     |   ●   |    ●     |      ★      |
-| Balance scale          | equality → algebra     |     ◐      |    ●     |   ●   |    ●     |      ★      |
-| Symmetry               | spatial                |     ◐      |    ●     |   ●   |    —     |      —      |
-| Egyptian doubling      | binary decomp          |     —      |    ◐     |   ●   |    ●     |      —      |
-| Glyph Latin-square     | deduction              |   ◐ 6×6    |  ● 6×6   | ● 6×6 |  ● 6×6   |    ★ 6×6    |
-| Eclipse                | binary deduction       |   ◐ 4×4    |  ● 4×4   | ● 6×6 |  ● 6×6   |    ★ 8×8    |
-| Constellation          | degree + connectivity  |   ◐ 5×5    |  ● 6×6   | ● 7×7 |  ● 8×8   |    ★ 8×8    |
-| Canal                  | line counts + path     |   ◐ 5×5    |  ● 6×6   | ● 7×7 |  ● 8×8   |    ★ 8×8    |
-| Procession             | duration / intervals   |  ◐ 3 bars  | ● 4 bars | ● 5 bars | ● 5 bars |  ★ 6 bars   |
-| Target-number          | flexible ops           |     —      |    ◐     |   ●   |    ●     |      ★      |
-| Sequence               | pattern                |     —      |    ◐     |   ●   |    ●     |      —      |
-| Water clock            | duration / subtraction |     —      |    —     |   ◐   |    ●     |      ★      |
-| Eye of Horus fractions | unit fractions         |     —      |    —     |   ◐   |    ●     | ★ (general) |
-| Sumplete               | add + elimination      |     —      |    —     | ◐ 5×5 |  ● 7×7   |    ★ 9×9    |
-| Hidato / beehive       | number line + path     |  ◐ 14 hex  | ● 19 hex | ● 26  | ● 37 hex |  ★ 61 hex   |
-| Nonogram               | logic + reveal         |     —      |    —     |   —   | ◐ 10×10  |   ★ 15×15   |
-| Kakuro                 | number + logic         |     —      |    —     |   —   |    ◐     |      ★      |
-| Clock-arith            | modular                |     —      |    —     |   —   | ● decoy  |      ★      |
+| Family                 | Skill                 | T1 (Stone) |    T2    |    T3    |    T4    |     T5      |
+| ---------------------- | --------------------- | :--------: | :------: | :------: | :------: | :---------: |
+| Cross-sum              | add → × → neg         |     ◐      |    ●     |    ●     |    ●     |      ★      |
+| Balance scale          | equality → algebra    |     ◐      |    ●     |    ●     |    ●     |      ★      |
+| Glyph Latin-square     | deduction             |   ◐ 6×6    |  ● 6×6   |  ● 6×6   |  ● 6×6   |    ★ 6×6    |
+| Eclipse                | binary deduction      |   ◐ 4×4    |  ● 4×4   |  ● 6×6   |  ● 6×6   |    ★ 8×8    |
+| Constellation          | degree + connectivity |   ◐ 5×5    |  ● 6×6   |  ● 7×7   |  ● 8×8   |    ★ 8×8    |
+| Canal                  | line counts + path    |   ◐ 5×5    |  ● 6×6   |  ● 7×7   |  ● 8×8   |    ★ 8×8    |
+| Procession             | duration / intervals  |  ◐ 3 bars  | ● 4 bars | ● 5 bars | ● 5 bars |  ★ 6 bars   |
+| Target-number          | flexible ops          |     —      |    ◐     |    ●     |    ●     |      ★      |
+| Eye of Horus fractions | unit fractions        |     —      |    —     |    ◐     |    ●     | ★ (general) |
+| Sumplete               | add + elimination     |     —      |    —     |  ◐ 5×5   |  ● 7×7   |    ★ 9×9    |
+| Hidato / beehive       | number line + path    |  ◐ 14 hex  | ● 19 hex |   ● 26   | ● 37 hex |  ★ 61 hex   |
 
 Three placement rules make the table behave:
 
-1. **A family debuts at the bottom of its own scale** (P4). Nonogram enters T4 as
-   a 10×10, never a 15×15; balance scale enters T1 at two unknowns and a number
-   to share out.
+1. **A family debuts at the bottom of its own scale** (P4). Eclipse enters T1 as a
+   4×4 and only reaches 8×8 at T5; balance scale enters T1 at two unknowns and a
+   number to share out.
 2. **The long families enter late because they are long, not because of where
-   they sit.** Latin-square, nonogram, kakuro, Sumplete and sequence all carry
-   high solve time or high variance (§6), and a T1 room is the worst place to
-   spend fifteen minutes — a player still learning what a puzzle _is_ reads a long
-   one as a wall. So they debut at T2+, and §8's pacing rule governs whether a
-   given long-pole instance is allowed to gate anything.
-3. **Low-ceiling families are deliberately early-only and graduate out.** Symmetry
-   does its job T1–T3, then its `—` at T4/T5 frees the slot for richer families.
+   they sit.** Latin-square, Sumplete and futoshiki all carry high solve time or
+   high variance (§6 — futoshiki is the one family measured over the budget), and
+   a T1 room is the worst place to spend fifteen minutes: a player still learning
+   what a puzzle _is_ reads a long one as a wall. So they debut at T2+, and §8's
+   pacing rule governs whether a given long-pole instance is allowed to gate anything.
+
+**This table holds built and designed families only.** A proposed family (§4.30–§4.33, §4.16, §4.23) has no
+row until a probe says what its tiers are — guessing a debut is how a ladder gets written before anyone
+knows the mechanic has one. §6 carries them with their solve time marked unmeasured; here they are absent.
+
+**And it is short several built families** — futoshiki, star battle, twin stars, lightbeam, rush hour,
+canisters and tableau all ship without a row. The table predates them.
 
 **How a family actually reaches a room, for now: the tag allocator, and nothing
 else.** A family whose meta carries the `puzzle` tag is drawn for any puzzle node
@@ -686,13 +839,13 @@ The felt arc this produces:
 
 - **T1** — read the tableau and the map (arithmetic + visual); single puzzle per
   pyramid, so freshness comes from **rotating which intro family appears** across
-  the stone pyramids (cross-sum, balance, symmetry — one per pyramid, no
+  the stone pyramids (cross-sum, balance, eclipse — one per pyramid, no
   difficulty increase).
-- **T2** — first "choose your puzzle" tier: forks, first logic side-room,
-  time-telling.
+- **T2** — first "choose your puzzle" tier: forks, first logic side-room.
 - **T3** — curriculum broadens hard (×, fractions, duration, Sumplete).
-- **T4** — big-structure tier: the reward-reveal nonogram and kakuro arrive.
-- **T5** — ceilings and systems: modular time, multi-unknown algebra, 9×9 logic.
+- **T4** — big-structure tier: the wide-board families arrive (canal, region
+  partition, big Sudoku).
+- **T5** — ceilings and systems: multi-unknown algebra, 9×9 logic.
 
 Each tier introduces 1–2 genuinely new things while deepening the rest — the
 freshness cadence.
@@ -712,10 +865,10 @@ tune the curriculum:
   time hides it.
 - **Abandons and resumes** are the loudest signal — a puzzle opened, left, and
   not returned to says "too hard / too long / not fun."
-- **Bucket per family AND per difficulty config**, never globally. "T4 nonograms
-  at 12×12 are abandoned 30% of the time" is actionable; a global average is not.
+- **Bucket per family AND per difficulty config**, never globally. "T4 futoshiki
+  at 7×7 are abandoned 30% of the time" is actionable; a global average is not.
 
-Pacing rule that follows: a long-pole family (nonogram, kakuro, big Sudoku/
+Pacing rule that follows: a long-pole family (futoshiki at 7×7, big Sudoku/
 Sumplete) must sit on **optional branches**, never gating the critical path or an
 exit, and a fork silhouette leading to one should **read as "big"** so committing
 is informed (same principle as warding).
@@ -733,31 +886,40 @@ conversation.
 
 ## 9. Recommended build order (families)
 
-1. **The uniqueness verifier + grid engine** (§5) — shared infrastructure; build
-   it once. Stand it up with **Sumplete** (cheapest UI) or **Sudoku**
-   (solved generation), whichever you prefer to debug first.
-2. **Balance scale** — the highest-value _new_ family: a different skill
-   (equality→algebra), near-zero language, and it stress-tests the "scales in
-   difficulty" claim hardest. It's also the one bespoke (non-grid) UI, so it
-   exercises the engine's range early.
-3. **Glyph Latin-square** — cheap bottomless logic off the grid engine.
-4. **Sumplete** (if not already used to bootstrap the engine) and **nonogram** —
-   nonogram as the mid-game reward-and-puzzle fusion once the grid muscle exists.
-5. **Eye of Horus fractions** and the **time families** (water clock →
-   clock-arith) — round out the arithmetic curriculum.
-6. **Target-number**, **symmetry**, **sequence**, **kakuro**, **doubling** — as
-   appetite allows; kakuro last given its mobile-UI cost.
+**Thirteen families are built** (§4), so this is the order for what is left. It is **readiness first, then
+the depth of the reasoning nothing else trains**, with the cheaper UI breaking ties. The families whose
+entries record an unresolved risk sit late deliberately: each is unblocked by a probe, not by arriving at
+the front of the queue.
 
----
+**A family is built for the reasoning it adds, not to fill anything.** A theme short of members is answered
+by a face or a tag on a family that already exists (§11.1), which costs a skin and a wording pass where a
+family costs a generator and a ladder.
+
+| #   | Family                             | Why here                                                                                                |
+| --- | ---------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 1   | **Canal** (§4.22)                  | The only one with a finished design doc and a solved generation plan. Nothing to decide, only to build  |
+| 2   | **Region partition** (§4.30)       | Deepest untrained reasoning — nothing built makes regions — and the cheapest UI of the new entries      |
+| 3   | **Coupled durations** (§4.35)      | Most of its UI already exists (`ClockFace`, `minuteStep`); it scales by precision at no cost in board   |
+| 4   | **Sokoban** (§4.16)                | Irreversibility: rush hour plans with every move undoable, this one has dead states                     |
+| 5   | **Attribute matching** (§4.34)     | The transitive rung, which nothing built has. Cheap UI; probe the 4×4×4 cap before believing five tiers |
+| 6   | **Cryptarithm** (§4.32)            | Carrying, which no family trains. Cheap UI; the open question is whether it has five tiers of rungs     |
+| 7   | **Loop and enclosure** (§4.31)     | Deep published ladder, but probe the overlap with canal (§4.31 risk) before writing its doc             |
+| 8   | **Deduction from absence** (§4.33) | Strong self-explaining rungs, but probe the overlap with eclipse (§4.33 risk) first                     |
+| 9   | **Circuit** (§4.23)                | Blocked on duration, not on overlap — long rather than hard. Test the mitigations before believing it   |
+| 10  | **Eye of Horus** (§4.6)            | Modest ceiling unless generalised past the six eye-parts, which is §10.1                                |
+| 11  | **Target number** (§4.7)           | A pace family — short and light by intent, with no ladder. Buildable at any point; it blocks nothing    |
+
+**Probe generation before writing any design doc.** Two catalogue assumptions were wrong when star battle
+was built, and one wrong conclusion survived a correct measurement — the region-map idea was killed by a
+test of a single size distribution, the one case that could not work. When a measurement kills an idea,
+check whether it tested the idea or one parameterisation of it.
 
 ## 10. Open questions
 
 1. **Eye of Horus generalisation** — keep it to the six canonical eye-parts
    (limited ceiling, maximally on-theme) or generalise to arbitrary unit
    fractions (real scaling, less iconic)?
-2. **Nonogram size cap** — hard-cap at 15×15, or allow pan/zoom for larger
-   reveals at T5?
-3. **Telemetry vs adaptation** (§8) — local designer telemetry only, or eventual
+2. **Telemetry vs adaptation** (§8) — local designer telemetry only, or eventual
    in-game adaptation with guardrails?
 
 ---
@@ -811,14 +973,14 @@ Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redes
 
 | Theme                              | Flavor                                      | Families that fit                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------------------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Sun & Sky**                      | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam + constellation (all three tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)                                                                                                                                                                                                        |
-| **Water & Agriculture**            | flooding, irrigation, the river, growing    | Constellation in its `irrigation` skin (basins joined by channels, one network watering every field), twin stars as farmsteads on a flood plain, hidato (§4.18 — different reasoning again, and the pool's third member; drawn for water it is a channel dug across dry fields, which green as it reaches them), water clock                                                            |
+| **Sun & Sky**                      | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam + constellation (all three tagged `sky`; eclipse and lightbeam also share the narrower `light`), Eye of Horus (Horus = sky/sun god)                                                                                                                                                                                                                          |
+| **Water & Agriculture**            | flooding, irrigation, the river, growing    | Constellation in its `irrigation` skin (basins joined by channels, one network watering every field), twin stars as farmsteads on a flood plain, hidato (§4.18 — different reasoning again, and the pool's third member; drawn for water it is a channel dug across dry fields, which green as it reaches them), canal (§4.22 — digging the channel IS the mechanic, not a dress on it) |
 | **Trade** — a pool below the floor | trade, weighing goods, hauling, bartering   | Balance scale (weighing goods IS the merchant act) + constellation in its `causeway` skin (haul roads). **Two members, so nothing is authored to it** (§11.0) — the Great Pyramid of Giza wants it and `master.ts` holds the one-line change. Sokoban (moving cargo) and target-number (haggling to a price) join by carrying the tag, as would any existing family taking a trade face |
 | **Logistics / Caravan**            | moving things through constrained space     | Overlaps Trade above, and from an author's seat reads as the same pool. Rush Hour (§4.17) is the first member; kept separate from Trade only until Sokoban exists too, to say whether _moving through_ and _hauling to_ want different rooms                                                                                                                                            |
-| **Scribe / Inscription**           | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions), hidato (counting a run of numbered cells — drawn for `scribe` it is a line of figures inked across papyrus, its givens in a scribe's red)                                                                                          |
-| **Tomb / Burial Logic**            | funerary glyphs, wall art, sealed chambers  | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro, hidato (a honeycomb of sealed chambers)                                                                                                                                                                                                                                                                                       |
-| **Night & Stars**                  | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                                                                                                                                                                                                                      |
-| **Sacred Geometry / Ritual**       | temple art, sanctuary lighting              | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                                                                                                                                                                                                                   |
+| **Scribe / Inscription**           | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), cryptarithm (§4.32 — a scribe's own arithmetic method, and the carries are the deduction), hidato (counting a run of numbered cells — drawn for `scribe` it is a line of figures inked across papyrus, its givens in a scribe's red)                                                                                                   |
+| **Tomb / Burial Logic**            | funerary glyphs, wall art, sealed chambers  | Glyph Latin-square, region partition (§4.30 — the chambers ARE the answer here, not the backdrop), hidato (a honeycomb of sealed chambers)                                                                                                                                                                                                                                              |
+| **Night & Stars**                  | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), procession (§4.29 — the decans crossing the sky is one of its four casts)                                                                                                                                                                                                                                                          |
+| **Sacred Geometry / Ritual**       | temple art, sanctuary lighting              | Loop and enclosure (§4.31 — a closed circuit drawn round a sanctuary), mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                                                                                                                                                                 |
 
 **Procession (§4.29) fits four of these rows and is drawn for all four.** A face here is a CAST — six
 hieroglyphs and six names, no change to the board — so the rites, the decans, the flood channel and the
@@ -866,28 +1028,21 @@ never gate the critical path (§8's pacing rule already says this for the
 long-pole families; this table just makes the number explicit for every family
 so it can be used when authoring density knobs).
 
-| Family                 | Solve time (§6)                   | Weight                                                                                                                         |
-| ---------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Cross-sum              | 15–60s                            | **Low**                                                                                                                        |
-| Eye of Horus fractions | 15–60s                            | **Low**                                                                                                                        |
-| Symmetry               | 15–45s                            | **Low**                                                                                                                        |
-| Sequence               | 15–45s                            | **Low**                                                                                                                        |
-| Egyptian doubling      | 20–60s                            | **Low**                                                                                                                        |
-| Balance scale          | 20–90s                            | **Low–Med**                                                                                                                    |
-| Water clock            | 30–90s                            | **Med**                                                                                                                        |
-| Clock-arithmetic       | 30–90s                            | **Med**                                                                                                                        |
-| Target-number          | 30–90s                            | **Med**                                                                                                                        |
-| Sumplete               | med–high, no fixed ceiling        | **Med–High**                                                                                                                   |
-| Hidato / beehive       | built, not yet measured           | **TBD — estimate Med**, a broken run is visible immediately, so it should stall less than the constraint-satisfaction families |
-| Glyph Latin-square     | 1–6 min, **high variance**        | **High**                                                                                                                       |
-| Kakuro                 | 2–8 min                           | **High**                                                                                                                       |
-| Nonogram               | 3–15+ min, **very high variance** | **Very High**                                                                                                                  |
-| Mirror/lightbeam       | built, not yet measured           | **TBD — estimate Low–Med**, the beam redraws on every tap so a wrong route is visible at once, which should stall less         |
-| Constellation          | not yet measured (unbuilt)        | **TBD — estimate Med**, the numbers are local bookkeeping but the connectivity rule couples the whole board                    |
-| Canal                  | not yet measured (unbuilt)        | **TBD — estimate Med**, each line is its own sum, and a wrong stretch is visible as soon as a count goes red                   |
-| Procession             | built, not yet measured           | **TBD — estimate Med**, a broken mark draws broken the moment a bar lands, but the intervals couple across the whole day |
-| Sokoban                | not yet measured (unbuilt)        | **TBD — estimate High**, Sokoban solve time is notoriously unbounded even at small grid sizes                                  |
-| Rush Hour              | **under 3 min at wizard**         | **Low–Med**, the tier IS the move count, so the ceiling is authored: 3–5 moves at starter, 24–35 at wizard; timed in play      |
+| Family                 | Solve time (§6)            | Weight                                                                                                                         |
+| ---------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Cross-sum              | 15–60s                     | **Low**                                                                                                                        |
+| Eye of Horus fractions | 15–60s                     | **Low**                                                                                                                        |
+| Balance scale          | 20–90s                     | **Low–Med**                                                                                                                    |
+| Target-number          | 30–90s                     | **Med**                                                                                                                        |
+| Sumplete               | med–high, no fixed ceiling | **Med–High**                                                                                                                   |
+| Hidato / beehive       | built, not yet measured    | **TBD — estimate Med**, a broken run is visible immediately, so it should stall less than the constraint-satisfaction families |
+| Glyph Latin-square     | 1–6 min, **high variance** | **High**                                                                                                                       |
+| Mirror/lightbeam       | built, not yet measured    | **TBD — estimate Low–Med**, the beam redraws on every tap so a wrong route is visible at once, which should stall less         |
+| Constellation          | not yet measured (unbuilt) | **TBD — estimate Med**, the numbers are local bookkeeping but the connectivity rule couples the whole board                    |
+| Canal                  | not yet measured (unbuilt) | **TBD — estimate Med**, each line is its own sum, and a wrong stretch is visible as soon as a count goes red                   |
+| Procession             | built, not yet measured    | **TBD — estimate Med**, a broken mark draws broken the moment a bar lands, but the intervals couple across the whole day       |
+| Sokoban                | not yet measured (unbuilt) | **TBD — estimate High**, Sokoban solve time is notoriously unbounded even at small grid sizes                                  |
+| Rush Hour              | **under 3 min at wizard**  | **Low–Med**, the tier IS the move count, so the ceiling is authored: 3–5 moves at starter, 24–35 at wizard; timed in play      |
 
 Once Sokoban and Rush Hour are built, and lightbeam and hidato have been played
 enough to measure, replace the TBD rows with real telemetry (§8) rather than trusting
@@ -904,13 +1059,13 @@ rather than any tier of ours.
 ## 12. Sandstorm — a cross-family difficulty modifier
 
 Not a family of its own — a **modifier** layered onto an existing grid-toggle
-family (Sumplete, Latin-square, nonogram, kakuro, eclipse if built). Explicitly
+family (Sumplete, Latin-square, eclipse, canal). Explicitly
 **not** the Memory trap family (`TRAP_FAMILIES.md` §5.3, flash-then-hide-then-
 answer-in-time) — sandstorm has **no timer**. Distinguishing test: if it
 involves a countdown, it's a trap, not this.
 
-- **Effect:** some of the family's clues (row/column targets, nonogram
-  run-clues, kakuro clue-triangles, Latin-square given cells) start buried
+- **Effect:** some of the family's clues (row/column targets, canal line
+  counts, Latin-square given cells) start buried
   under sand instead of visible from the start. A buried clue reveals once a
   cell adjacent to it (or in its row/column, family-dependent) is correctly
   resolved — solving nearby cells blows the sand off the next clue, cascading
