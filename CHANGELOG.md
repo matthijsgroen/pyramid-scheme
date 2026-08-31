@@ -27,6 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A tomb with nothing left to find no longer keeps a marker on its card from visits it can never make again.
 - A canisters board says when its budget is spent instead of silently refusing every pour, and warns two moves out.
 - Undoing a pour counts as playing again, so the hint stops nudging while you work back out of a wrong reading.
+- A honeycomb run no longer draws itself on into a number written in beside it, and a comb counts as
+  finished only once you have carried the run into its last number — those last steps are yours to make.
 
 ## 0.42.2 - 2026-08-30
 
