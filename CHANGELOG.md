@@ -14,8 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - A passage that runs on into the unexplored dark still ends open — only bare stone is walled off.
-- A honeycomb run no longer draws itself on into a number written in beside it, and a comb counts as
-  finished only once you have carried the run into its last number — those last steps are yours to make.
+- A honeycomb run stops where you carried it, instead of drawing itself on into numbers already on the comb.
 
 ## 0.42.3 - 2026-08-30
 
