@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.42.4 - 2026-08-31
+
 ### Changed
 
 - Light puzzles stop repeating themselves: every board draws a shape of its own, at every difficulty.
