@@ -343,6 +343,27 @@ const wallShapes: Record<WallKind, (p: Palette) => string> = {
     <rect x="30" y="${H / 2 - 2}" width="4" height="2" fill="${p.outline}"/>`,
 }
 
+// ── Archway ───────────────────────────────────────────────────────────────────
+// Drawn into the band above a doorway — the gap where a passage meets a chamber — so it frames a way
+// through rather than a wall. The middle stays TRANSPARENT: the floor of the passage shows through it,
+// and the arch reads as something the player walks under. The renderer paints it over everything,
+// explorer included, and fades it while the player is in the doorway.
+const archSvg = (tier: string): Buffer => {
+  const p = PALETTES[tier]
+  const jamb = 10
+  return svg(
+    TILE,
+    BAND,
+    `<g stroke="${p.outline}" stroke-width="2" stroke-linejoin="round">
+       <rect x="0" y="0" width="${TILE}" height="8" fill="${p.wallTop}"/>
+       <rect x="0" y="8" width="${jamb}" height="${BAND - 8}" fill="${p.wall}"/>
+       <rect x="${TILE - jamb}" y="8" width="${jamb}" height="${BAND - 8}" fill="${p.wall}"/>
+       <rect x="0" y="0" width="${TILE}" height="2" fill="${p.accent}" opacity="0.5"/>
+       <rect x="${jamb}" y="8" width="${TILE - jamb * 2}" height="4" fill="${p.wallBase}"/>
+     </g>`
+  )
+}
+
 const wallItemSvg = (tier: string, kind: WallKind): Buffer => {
   const p = PALETTES[tier]
   return svg(TILE, BAND, `<g stroke="${p.outline}" stroke-width="2" stroke-linejoin="round">${wallShapes[kind](p)}</g>`)
@@ -503,7 +524,8 @@ const main = async (): Promise<void> => {
     await write(tier, "threshold", thresholdSvg(tier), TILE, SILL)
     for (const kind of ALL_KINDS) await write(tier, kind, propSvg(tier, kind), TILE, PROP_H)
     for (const kind of WALL_KINDS) await write(tier, kind, wallItemSvg(tier, kind), TILE, BAND)
-    count += 3 + ALL_KINDS.length + WALL_KINDS.length
+    await write(tier, "arch", archSvg(tier), TILE, BAND)
+    count += 4 + ALL_KINDS.length + WALL_KINDS.length
   }
   console.log(`${count} dummy tiles written to src/assets/tiles/ (${tiers.length} tiers)`)
   if (process.argv.includes("--preview")) console.log(`preview: ${await preview(tiers)}`)

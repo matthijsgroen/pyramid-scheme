@@ -638,17 +638,18 @@ type RoomClaims = {
 export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
   const claimedBy = new Map<string, string>()
   const openEdges = new Set<string>()
-  const ownerPropCell = new Map<string, string>()
+  // Every claim of an owner's that a prop could stand on, in claim order: genuinely EMPTY cells only. A
+  // claimed corridor (a gate's approach, absorbed into the junction's footprint) is a real passage the
+  // player walks down, and a sarcophagus standing in it is something they walk straight through. A room
+  // with no empty cell to spare simply holds no prop.
+  const ownerPropCandidates = new Map<string, string[]>()
   const noteClaim = (cellKey: string, ownerKey: string) => {
     claimedBy.set(cellKey, ownerKey)
-    // Where this owner's prop stands: its first claim on a genuinely EMPTY cell. A claimed corridor
-    // (a gate's approach, absorbed into the junction's footprint) is a real passage the player walks
-    // down, and a sarcophagus standing in it is something they walk straight through. A room with no
-    // empty cell to spare simply holds no prop.
-    if (ownerPropCell.has(ownerKey)) return
     const [r, c] = cellKey.split(",").map(Number)
     if (cellAt(grid, r, c).type !== "empty") return
-    ownerPropCell.set(ownerKey, cellKey)
+    const candidates = ownerPropCandidates.get(ownerKey)
+    if (candidates) candidates.push(cellKey)
+    else ownerPropCandidates.set(ownerKey, [cellKey])
   }
 
   // Ortho claims commit immediately, row-major first-come — two owners contending for the
@@ -748,11 +749,22 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
 
   // Decoration only ever lands on an empty claimed cell — the room's own space, never a passage
   // through it (see noteClaim).
+  //
+  // **A prop stands against a wall where it can.** Its sprite is a cell plus a face band tall, so it
+  // leans a band's worth into the cell to its north; on a cell with void above, that headroom lands on
+  // wall, which is where a statue belongs and where nothing can be behind it. On a cell with floor above
+  // it, the statue leans over ground the player walks, and the explorer dot — drawn last — passes in
+  // FRONT of its head. Half the props in the world stood that way before this preference.
+  const wallBehind = (cellKey: string): boolean => {
+    const [r, c] = cellKey.split(",").map(Number)
+    return cellAt(grid, r - 1, c).type === "empty"
+  }
   const decorationAt = new Map<string, DecorationKind>()
-  for (const [ownerKey, cellKey] of ownerPropCell) {
+  for (const [ownerKey, candidates] of ownerPropCandidates) {
     const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
     const owner = grid.cells[ownerRow]?.[ownerCol]
-    if (owner?.type === "room" && owner.decoration) decorationAt.set(cellKey, owner.decoration)
+    if (owner?.type !== "room" || !owner.decoration) continue
+    decorationAt.set(candidates.find(wallBehind) ?? candidates[0], owner.decoration)
   }
 
   return { claimedBy, decorationAt, openEdges }
@@ -1176,6 +1188,73 @@ const WallItems = ({ items }: { items: readonly WallItem[] }) => (
   </g>
 )
 
+// ─── Archways ──────────────────────────────────────────────────────────────────
+// A doorway is where a passage meets a chamber, and in this idiom that is a gap the player walks
+// through with a band above it. An arch is drawn INTO that band, over the floor of the way through: the
+// lintel and jambs a chamber's entrance really had.
+//
+// Unlike everything else on the map an arch is painted LAST, over the explorer as well, because that is
+// what makes it a thing in the world rather than a decal: the player walks under it and it passes in
+// front of them. Which is also why it fades while they stand in it — an arch that hid the player would
+// be a wall, and a doorway is not.
+
+type Doorway = { row: number; col: number; tier: Difficulty }
+
+const ARCH_FADE = 0.35
+
+/** Every doorway on the floor: an open north gap where a chamber meets a passage. Both sides have to be
+ * drawn floor, so an unexplored way through carries no arch — an arch is a thing you can see, and the
+ * fog is what you cannot. Exported for tests. */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on cells
+export const doorwaysFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: ReadonlySet<string>): Doorway[] => {
+  const doorways: Doorway[] = []
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      const here = cellFloorAt(grid, claims, ownedKeys, r, c)
+      const north = cellFloorAt(grid, claims, ownedKeys, r - 1, c)
+      if (typeof here === "string" || typeof north === "string") continue
+      if (!isPassable(grid, claims, r - 1, c, "s")) continue
+      // A chamber meeting a passage. Two corridor cells are a corridor, not a doorway, and two room
+      // cells are the middle of one room — arching every cell of a 3x3 footprint would draw a colonnade
+      // where the chamber is meant to read as one space.
+      if (here.kind === north.kind) continue
+      // The chamber's own stone, so an arch belongs to the room it lets into rather than to the corridor.
+      doorways.push({ row: r, col: c, tier: here.kind === "room" ? here.tier : north.tier })
+    }
+  }
+  return doorways
+}
+
+const Archways = ({
+  doorways,
+  explorerPos,
+}: {
+  doorways: readonly Doorway[]
+  explorerPos?: readonly [number, number]
+}) => (
+  <g>
+    {doorways.map(({ row, col, tier }) => {
+      const url = tileUrl(tier, "arch")
+      if (!url) return null
+      // Faded while the player is IN the doorway — standing on either of the two cells it spans. Only
+      // those two are ever behind it, so nothing else on the map dims.
+      const under = !!explorerPos && explorerPos[1] === col && (explorerPos[0] === row || explorerPos[0] === row - 1)
+      return (
+        <image
+          key={`${row},${col}`}
+          href={url}
+          x={cellLeft(col)}
+          y={cellTop(row) - WALL_H}
+          width={CELL}
+          height={WALL_H}
+          opacity={under ? ARCH_FADE : 1}
+          preserveAspectRatio="none"
+        />
+      )
+    })}
+  </g>
+)
+
 // ─── Click-target markers ───────────────────────────────────────────────────────
 
 // A plain corner's reachable marker has no single direction to point in — a corner or
@@ -1234,6 +1313,7 @@ export const SiteMapView = ({
   const canWalkTo = (row: number, col: number) => !walkable || walkable.has(`${row},${col}`)
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
+  const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Corridor-run markers track the explorer dot's visual position, not the logical one:
   // hide them the instant a run target is clicked (the player has committed to a
   // destination, so the old markers no longer apply), and don't show the new ones at the
@@ -1440,6 +1520,9 @@ export const SiteMapView = ({
               onArrive={() => setSettledExplorerPos(explorerPos)}
             />
           )}
+
+          {/* Last, so a doorway passes in FRONT of the player walking under it — see Archways. */}
+          <Archways doorways={doorways} explorerPos={explorerPos} />
         </svg>
       </div>
     </div>

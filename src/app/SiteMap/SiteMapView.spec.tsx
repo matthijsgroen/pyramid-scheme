@@ -2,7 +2,7 @@ import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
 import type { Rect, StateGroups } from "./tileRegions"
-import { CELL, SIDE_W, cellCenter, cellLeft, cellTop } from "./mapScale"
+import { CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 
@@ -521,5 +521,53 @@ describe("SiteMapView — a wall only opens onto something drawn", () => {
     const grid = makeGrid([[eastward, straightCorridor("visible", ["w"]), fork("fogged", ["w"])]])
     expect(floorStateOf(grid, 0, 1)).toBe("visible")
     expect(isWall(grid, 0, 1)).toBe(false)
+  })
+})
+
+// ── Archways ──────────────────────────────────────────────────────────────────
+// A doorway is where a passage meets a chamber; the arch drawn into that gap is the one thing on the
+// map painted OVER the explorer, which is what makes the player walk under it rather than over it.
+
+const archesIn = (container: HTMLElement) =>
+  Array.from(container.querySelectorAll<SVGImageElement>("image")).filter(el =>
+    (el.getAttribute("href") ?? "").includes("arch")
+  )
+
+// A corridor running into a room below it: one gap, open from both sides.
+const doorwayGrid = () => makeGrid([[corridor("completed", false)], [room("completed")]])
+
+describe("archways", () => {
+  it("stands an arch where a passage meets a chamber", () => {
+    const { container } = render(<SiteMapView grid={doorwayGrid()} />)
+    const arches = archesIn(container)
+    expect(arches).toHaveLength(1)
+    // The band above the room's own cell — the gap the player walks through.
+    expect(arches[0].getAttribute("y")).toBe(String(cellTop(1) - WALL_H))
+    expect(arches[0].getAttribute("opacity")).toBe("1")
+  })
+
+  it("paints arches last, so a doorway passes in front of the player", () => {
+    const { container } = render(<SiteMapView grid={doorwayGrid()} explorerPos={[0, 0]} />)
+    const svg = container.querySelector("svg")!
+    expect(archesIn(container)[0].parentElement).toBe(svg.lastElementChild)
+  })
+
+  it("fades the arch the player is standing in, either side of it", () => {
+    for (const pos of [
+      [0, 0],
+      [1, 0],
+    ] as const) {
+      const { container } = render(<SiteMapView grid={doorwayGrid()} explorerPos={pos} />)
+      const opacity = Number(archesIn(container)[0].getAttribute("opacity"))
+      expect(opacity, `explorer at ${pos}`).toBeLessThan(1)
+    }
+  })
+
+  it("draws no arch across a wall, or into the fog", () => {
+    // Two cells with no way between them: adjacency is not passage.
+    const walled = makeGrid([[corridor("completed", true)], [room("completed")]])
+    expect(archesIn(render(<SiteMapView grid={walled} />).container)).toHaveLength(0)
+    const fogged = makeGrid([[corridor("fogged", false)], [room("completed")]])
+    expect(archesIn(render(<SiteMapView grid={fogged} />).container)).toHaveLength(0)
   })
 })

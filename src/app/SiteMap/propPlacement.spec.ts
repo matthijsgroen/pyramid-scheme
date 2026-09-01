@@ -130,3 +130,32 @@ describe("authored wall-item pools reach real walls", () => {
     expect(strays).toEqual([])
   })
 })
+
+// A prop sprite is a cell plus a face band tall, so it leans a band into the cell to its north. That
+// headroom is what gives a statue height, and it belongs on WALL: over floor it hangs above ground the
+// player walks, and the explorer dot — drawn later — passes in front of the statue's head instead of
+// behind it. So the prop cell is chosen for having void above it (buildRoomClaims). Half the props in
+// the world stood the other way before that preference existed.
+describe("a prop stands against a wall", () => {
+  it("puts the prop on a cell with void above it, all but never", () => {
+    let props = 0
+    let openBehind = 0
+    for (const [siteId, levels] of Object.entries(generatedWorldConfigs).slice(0, 12)) {
+      levels.flat().forEach((floor, i) => {
+        const result = assembleFloor(`${siteId}:${i}`, floor, 7)
+        if (!result.success) return
+        const grid = revealAll(result.grid)
+        for (const [key] of buildRoomClaims(grid).decorationAt) {
+          props++
+          const [r, c] = key.split(",").map(Number)
+          const north = grid.cells[r - 1]?.[c]
+          if (north && north.type !== "empty") openBehind++
+        }
+      })
+    }
+    expect(props).toBeGreaterThan(0)
+    // Not zero: a room whose only spare cell has floor above it still gets its prop — a prop is better
+    // than a bare chamber, and one leaning statue is cheaper than a second claim rule.
+    expect(openBehind / props).toBeLessThan(0.05)
+  })
+})

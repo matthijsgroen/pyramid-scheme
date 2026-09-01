@@ -86,8 +86,14 @@ the art is 1:1. Transparent background. See "Perspective" below for the zoom cos
 line.** Props are painted after every wall, so a statue stands IN FRONT of the wall behind it and may be
 taller than the cell it stands on; that band of headroom is the only thing that makes a statue, a pillar
 or a shrine read as having height rather than as a decal on the floor. Short props leave the top band
-transparent. A room's prop cell is the first claim in row-major order — normally the cell NORTH of the
-room — so the headroom reaches into wall rather than over the room's own node icon.
+transparent.
+
+**A prop stands against a wall, and the player never walks on it.** Props only ever land on a genuinely
+EMPTY claimed cell, so the cell a statue occupies is not walkable — there is no walking through it and
+none behind it either. The claim it lands on is chosen for having VOID above it, so the headroom falls on
+wall: over floor a statue would lean across ground the player walks, and the explorer dot — drawn later —
+would pass in FRONT of its head. Half the props in the world stood that way until the preference existed;
+what is left is the room whose only spare cell has floor above it, which keeps its prop anyway.
 
 **One file per sprite, the filename as the key** — `src/assets/tiles/<theme>/<name>.png`, with
 the names being the `DecorationKind` values in `siteTypes.ts` exactly. No coordinate manifest to
@@ -349,6 +355,25 @@ one stairhead).
    nobleman's wing into a priest's is a door between two parts of one necropolis; a gate from a
    merchant's cellar straight into the gods' vault would not be, and the ladder is what stops the
    art from being asked for that.
+
+## Archways — the one thing painted over the player
+
+A doorway is where a passage meets a chamber, and in this layout that is a gap the player walks through
+with a band above it (`doorwaysFor` in `SiteMapView`: an open north gap whose two sides differ in kind,
+one chamber and one passage — two corridor cells are a corridor, and two room cells are the middle of one
+room, so arching every cell of a 3x3 footprint would draw a colonnade where a chamber should read as one
+space). The arch sprite is `tiles/<tier>/arch.png` at `CELL` × `WALL_H`, the band's own shape, with its
+middle transparent so the floor of the way through shows beneath it. It takes the CHAMBER's stone, so an
+arch belongs to the room it lets into rather than to the corridor. Around 20 to a floor.
+
+**It is painted last, over the explorer.** Everything else on the map is under the player; an arch is the
+one thing in front, because that is what makes it a thing in the world rather than a decal — the player
+walks under it. Which is also why it FADES (0.35) while they stand in the doorway, on either of the two
+cells it spans: an arch that hid the player would be a wall, and a doorway is not. Nothing else on the
+map dims, so the fade reads as this doorway rather than as a lighting change.
+
+Both sides have to be drawn floor, so an unexplored way through carries no arch — an arch is a thing you
+can see, and the fog is what you cannot.
 
 ## Whose tomb it is — the tier ladder
 
