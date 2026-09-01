@@ -2,7 +2,7 @@ import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
 import type { Rect, StateGroups } from "./tileRegions"
-import { ARCH_H, CELL, SIDE_W, cellCenter, cellLeft, cellTop } from "./mapScale"
+import { ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 
@@ -543,7 +543,7 @@ describe("archways", () => {
     const arches = archesIn(container)
     expect(arches).toHaveLength(1)
     // The band above the room's own cell — the gap the player walks through.
-    expect(arches[0].getAttribute("y")).toBe(String(cellTop(1) - ARCH_H))
+    expect(arches[0].getAttribute("y")).toBe(String(cellTop(1) - WALL_H - ARCH_RISE))
     expect(arches[0].getAttribute("opacity")).toBe("1")
   })
 

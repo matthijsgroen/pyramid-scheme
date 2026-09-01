@@ -381,9 +381,22 @@ A doorway is where a passage meets a chamber, and in this layout that is a gap t
 with a band above it (`doorwaysFor` in `SiteMapView`: an open north gap whose two sides differ in kind,
 one chamber and one passage — two corridor cells are a corridor, and two room cells are the middle of one
 room, so arching every cell of a 3x3 footprint would draw a colonnade where a chamber should read as one
-space). The arch sprite is `tiles/<tier>/arch.png` at `CELL` × `WALL_H`, the band's own shape, with its
-middle transparent so the floor of the way through shows beneath it. It takes the CHAMBER's stone, so an
-arch belongs to the room it lets into rather than to the corridor. Around 20 to a floor.
+space). The arch sprite is `tiles/<tier>/arch.png` at `CELL` × `ARCH_H`, with its middle transparent so
+the floor of the way through shows beneath it. It takes the CHAMBER's stone, so an arch belongs to the room
+it lets into rather than to the corridor. Around 20 to a floor.
+
+**It grows out of the band in both directions, and that is a scale decision rather than a drawing one.**
+Confined to the band, the clear opening under the lintel came out 22 against a 48-tall explorer — nothing
+ever overlapped, since the band sits between two rows and the figure inside its own cell, but a doorway
+half the height of the person standing in it cannot be believed whatever the projection says. So the crown
+stands `ARCH_RISE` proud of the wall and the jambs come `ARCH_DROP` down onto the floor of the way
+through, which is where a real jamb stands: opening 46, clearance 40 above the head.
+
+Growing it upward alone would have bought the same opening and cost the cell BEYOND the doorway — an arch
+paints over everything, so height above the wall eats the ground behind it (half a cell, and half of any
+node icon there), while height below eats only the doorway's own floor edges, which nothing else uses. The
+figure walks between the jambs: it is 40 wide against a 28-wide opening, so its shoulders pass behind them,
+which is what walking through a doorway looks like from above.
 
 **It is painted last, over the explorer.** Everything else on the map is under the player; an arch is the
 one thing in front, because that is what makes it a thing in the world rather than a decal — the player

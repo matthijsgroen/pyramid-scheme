@@ -24,6 +24,7 @@ import {
   NODE_RADIUS_LARGE,
   NODE_RADIUS_PUZZLE,
   ARCH_H,
+  ARCH_RISE,
   WALL_H,
   cellCenter,
   cellLeft,
@@ -1245,8 +1246,9 @@ const Archways = ({
           key={`${row},${col}`}
           href={url}
           x={cellLeft(col)}
-          // Foot on the floor line of the way through, so the height it gains stands PROUD of the wall.
-          y={cellTop(row) - ARCH_H}
+          // The band, plus the crown standing proud of the wall above it and the jambs reaching down onto
+          // the floor of the way through below it.
+          y={cellTop(row) - WALL_H - ARCH_RISE}
           width={CELL}
           height={ARCH_H}
           opacity={under ? ARCH_FADE : 1}

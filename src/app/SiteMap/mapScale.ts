@@ -31,11 +31,19 @@ export const SIDE_W = CELL / 4 // 14 — the thickness of a side wall, seen edge
 export const ROW_PITCH = CELL + WALL_H // 84 = 3 faces
 export const COL_PITCH = CELL + SIDE_W // 70
 
-/** How tall an archway is: half a band PROUD of the wall it stands in, like the pylon gate of a real
- * temple, with its foot on the floor line of the way through. An arch confined to the band read as a low
- * hatch rather than as something to walk under. Painted over everything (see Archways in SiteMapView), so
- * the part standing proud covers the ground beyond the doorway — which is what being in front means. */
-export const ARCH_H = WALL_H + WALL_H / 2 // 42
+/** An archway grows out of the band in BOTH directions, because a doorway has to look walked-through:
+ * the crown stands `ARCH_RISE` proud of the wall it pierces, the way a pylon gate rises above it, and the
+ * jambs come `ARCH_DROP` down onto the floor of the way through, where a real jamb stands. Growing it
+ * upward alone would have bought the same opening at the cost of covering half the cell beyond — an arch
+ * is painted over everything (see Archways in SiteMapView), so height above the wall eats the ground
+ * behind it while height below eats only the doorway's own floor edges, which nothing else uses.
+ *
+ * The clear opening under the lintel comes out at 46 against a 48-tall explorer. Confined to the band it
+ * was 22, and a doorway half the height of the person in it reads as a hatch however correct the
+ * projection is: nothing ever overlapped, the two just could not both be believed. */
+export const ARCH_RISE = WALL_H / 2 // 14 — above the wall line
+export const ARCH_DROP = WALL_H / 2 // 14 — into the cell being entered
+export const ARCH_H = ARCH_RISE + WALL_H + ARCH_DROP // 56
 
 /** Padding around the map: room for the one-cell ring of wall outside the grid. */
 export const PAD = CELL

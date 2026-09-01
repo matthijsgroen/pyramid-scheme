@@ -351,18 +351,23 @@ const wallShapes: Record<WallKind, (p: Palette) => string> = {
 const archSvg = (tier: string): Buffer => {
   const p = PALETTES[tier]
   const jamb = 10
-  const crown = ARCH_H - BAND // the part standing above the wall line
+  const inset = 4
+  const cornice = 6 // the flared crown, full width — thin, because every pixel of it is opening lost
+  const lintel = 4
+  const shoulder = cornice + lintel // where the clear opening starts
   return svg(
     TILE,
     ARCH_H,
     `<g stroke="${p.outline}" stroke-width="2" stroke-linejoin="round">
-       <!-- cavetto cornice: the flared crown of an Egyptian gateway, wider than the jambs below it -->
-       <rect x="0" y="0" width="${TILE}" height="${crown}" fill="${p.wallTop}"/>
+       <!-- cavetto cornice: the flared crown of an Egyptian gateway, wider than the jambs it sits on -->
+       <rect x="0" y="0" width="${TILE}" height="${cornice}" fill="${p.wallTop}"/>
        <rect x="0" y="0" width="${TILE}" height="2" fill="${p.accent}" opacity="0.6"/>
-       <rect x="2" y="${crown}" width="${TILE - 4}" height="6" fill="${p.wall}"/>
-       <rect x="4" y="${crown + 6}" width="${jamb}" height="${ARCH_H - crown - 6}" fill="${p.wall}"/>
-       <rect x="${TILE - jamb - 4}" y="${crown + 6}" width="${jamb}" height="${ARCH_H - crown - 6}" fill="${p.wall}"/>
-       <rect x="${jamb + 4}" y="${crown + 6}" width="${TILE - jamb * 2 - 8}" height="4" fill="${p.wallBase}"/>
+       <rect x="2" y="${cornice}" width="${TILE - 4}" height="${lintel}" fill="${p.wall}"/>
+       <!-- jambs, standing all the way down onto the floor of the way through -->
+       <rect x="${inset}" y="${shoulder}" width="${jamb}" height="${ARCH_H - shoulder}" fill="${p.wall}"/>
+       <rect x="${TILE - jamb - inset}" y="${shoulder}" width="${jamb}" height="${ARCH_H - shoulder}" fill="${p.wall}"/>
+       <!-- the soffit: the underside of the lintel, darker, which is what makes the opening read as deep -->
+       <rect x="${inset + jamb}" y="${shoulder}" width="${TILE - (inset + jamb) * 2}" height="3" fill="${p.wallBase}"/>
      </g>`
   )
 }
