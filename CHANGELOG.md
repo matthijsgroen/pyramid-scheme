@@ -15,9 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   veil before the shrine, the gods a shaft looking out on the night.
 - A statue stands against the wall behind it and has height now, rather than being cut off at the edge
   of its own floor tile. Nothing stands where you walk, so there is never a statue in your way.
-- Chamber doorways are framed by archways tall enough to walk through — crown above the wall, jambs down
-  on the floor — and you pass underneath them. An arch dims while you stand in the doorway so it never
-  hides you.
+- The way into a chamber is framed by an archway tall enough to walk through — crown above the wall,
+  jambs standing in the corners of the wall either side — and you pass underneath it. An arch dims while
+  you stand in the doorway so it never hides you. Rooms get them; puzzle rooms along a corridor do not.
 - You are a person on the map now instead of a dot, facing the way you walk.
 - Rooms are furnished for the PLACE they are: a trading wing stacks amphorae on shelves and hangs its
   tally board, a funerary one holds a coffin and a false-door stela, a waterworks its basins.

@@ -526,37 +526,56 @@ describe("SiteMapView — a wall only opens onto something drawn", () => {
 })
 
 // ── Archways ──────────────────────────────────────────────────────────────────
-// A doorway is where a passage meets a chamber; the arch drawn into that gap is the one thing on the
-// map painted OVER the explorer, which is what makes the player walk under it rather than over it.
+// An arch stands at the way into a CHAMBER — a room with a footprint — and only where the bands either
+// side of the opening are wall, so its jambs have corners to stand on. It is the one thing on the map
+// painted OVER the explorer, which is what makes the player walk under it rather than over it.
 
 const archesIn = (container: HTMLElement) =>
   Array.from(container.querySelectorAll<SVGImageElement>("image")).filter(el =>
     (el.getAttribute("href") ?? "").includes("arch")
   )
 
-// A corridor running into a room below it: one gap, open from both sides.
-const doorwayGrid = () => makeGrid([[corridor("completed", false)], [room("completed")]])
+// A dead-end treasure chamber. Its `treasure` tag is what makes it claim the cells around it — a footprint
+// is what separates a place from a station on the way (see canClaimVoid).
+const chamber = (state: CellState): GridCell => ({
+  type: "room",
+  roomType: "encounter",
+  family: "treasure-chest",
+  tags: ["treasure"],
+  dirs: new Set<Direction>(["n"]),
+  state,
+})
+
+// A corridor running down into that chamber: the chamber claims the cells around it, the mouth of the
+// corridor included, so the way in is the gap at (1,1) — with stone either side to stand jambs on.
+const doorwayGrid = () =>
+  makeGrid([
+    [empty, corridor("completed", false), empty],
+    [empty, corridor("completed", false), empty],
+    [empty, chamber("completed"), empty],
+  ])
 
 describe("archways", () => {
-  it("stands an arch where a passage meets a chamber", () => {
+  it("stands an arch at the way into a chamber", () => {
     const { container } = render(<SiteMapView grid={doorwayGrid()} />)
     const arches = archesIn(container)
     expect(arches).toHaveLength(1)
-    // The band above the room's own cell — the gap the player walks through.
     expect(arches[0].getAttribute("y")).toBe(String(cellTop(1) - WALL_H - ARCH_RISE))
+    // A corner wide on each side of the doorway: the jambs stand in the wall's own thickness.
+    expect(arches[0].getAttribute("x")).toBe(String(cellLeft(1) - SIDE_W))
     expect(arches[0].getAttribute("opacity")).toBe("1")
   })
 
   it("paints arches last, so a doorway passes in front of the player", () => {
-    const { container } = render(<SiteMapView grid={doorwayGrid()} explorerPos={[0, 0]} />)
+    const { container } = render(<SiteMapView grid={doorwayGrid()} explorerPos={[2, 1]} />)
     const svg = container.querySelector("svg")!
     expect(archesIn(container)[0].parentElement).toBe(svg.lastElementChild)
   })
 
   it("fades the arch the player is standing in, either side of it", () => {
     for (const pos of [
-      [0, 0],
-      [1, 0],
+      [0, 1],
+      [1, 1],
     ] as const) {
       const { container } = render(<SiteMapView grid={doorwayGrid()} explorerPos={pos} />)
       const opacity = Number(archesIn(container)[0].getAttribute("opacity"))
@@ -564,11 +583,23 @@ describe("archways", () => {
     }
   })
 
-  it("draws no arch across a wall, or into the fog", () => {
-    // Two cells with no way between them: adjacency is not passage.
-    const walled = makeGrid([[corridor("completed", true)], [room("completed")]])
-    expect(archesIn(render(<SiteMapView grid={walled} />).container)).toHaveLength(0)
-    const fogged = makeGrid([[corridor("fogged", false)], [room("completed")]])
+  it("draws no arch around an encounter node, which is a station and not a place", () => {
+    // A puzzle room on the way through claims nothing, so it is not a chamber. Arching it put a gateway
+    // either side of every puzzle in the world — a corridor with doors across it every second step.
+    const station = makeGrid([
+      [empty, corridor("completed", false), empty],
+      [empty, room("completed"), empty],
+      [empty, corridor("completed", false), empty],
+    ])
+    expect(archesIn(render(<SiteMapView grid={station} />).container)).toHaveLength(0)
+  })
+
+  it("draws no arch into the fog", () => {
+    const fogged = makeGrid([
+      [empty, corridor("fogged", false), empty],
+      [empty, corridor("fogged", false), empty],
+      [empty, chamber("completed"), empty],
+    ])
     expect(archesIn(render(<SiteMapView grid={fogged} />).container)).toHaveLength(0)
   })
 })

@@ -45,6 +45,14 @@ export const ARCH_RISE = WALL_H / 2 // 14 — above the wall line
 export const ARCH_DROP = WALL_H / 2 // 14 — into the cell being entered
 export const ARCH_H = ARCH_RISE + WALL_H + ARCH_DROP // 56
 
+/** An arch is wider than the doorway it frames by one CORNER on each side (the `SIDE_W` slot where four
+ * cells meet), because that corner is the wall's own thickness and is where a jamb belongs. Hanging the
+ * jambs there instead of inside the opening keeps the way through a full cell wide — a figure walks
+ * between them rather than behind them — and makes the arch read as part of the wall run rather than as
+ * something set into the hole. Which is also the placement rule: a doorway only gets an arch when the
+ * bands either side of it are wall, so both corners are masonry (see doorwaysFor). */
+export const ARCH_W = CELL + SIDE_W * 2 // 84
+
 /** Padding around the map: room for the one-cell ring of wall outside the grid. */
 export const PAD = CELL
 

@@ -25,6 +25,8 @@ import {
   NODE_RADIUS_PUZZLE,
   ARCH_H,
   ARCH_RISE,
+  ARCH_W,
+  SIDE_W,
   WALL_H,
   cellCenter,
   cellLeft,
@@ -1204,24 +1206,44 @@ type Doorway = { row: number; col: number; tier: Difficulty }
 
 const ARCH_FADE = 0.35
 
-/** Every doorway on the floor: an open north gap where a chamber meets a passage. Both sides have to be
- * drawn floor, so an unexplored way through carries no arch — an arch is a thing you can see, and the
- * fog is what you cannot. Exported for tests. */
+/** Every doorway on the floor: the way into a CHAMBER, held in a wall run that gives its jambs corners to
+ * stand on. Both sides have to be drawn floor, so an unexplored way through carries no arch — an arch is a
+ * thing you can see, and the fog is what you cannot. Exported for tests. */
 // eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on cells
 export const doorwaysFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: ReadonlySet<string>): Doorway[] => {
+  // A chamber is a room with a FOOTPRINT: it claims the cells around it, so it is a space you enter
+  // rather than a station on a corridor. Every claimed cell and every claim owner counts as part of one.
+  //
+  // An encounter node on the path is a single cell with no footprint, and arching it put a gateway on
+  // either side of every puzzle in the world — a corridor with doors across it every second step. A
+  // doorway is somewhere a place BEGINS, which is what a footprint marks.
+  const chamberCells = new Set<string>([...claims.claimedBy.keys(), ...claims.claimedBy.values()])
+  const isChamber = (r: number, c: number) => chamberCells.has(`${r},${c}`)
+
+  const floorOf = (r: number, c: number) => {
+    const at = cellFloorAt(grid, claims, ownedKeys, r, c)
+    return typeof at === "string" ? null : at
+  }
+  // Is the band above this cell a way through rather than wall?
+  const openGap = (r: number, c: number) =>
+    !!floorOf(r, c) && !!floorOf(r - 1, c) && isPassable(grid, claims, r - 1, c, "s")
+
   const doorways: Doorway[] = []
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
-      const here = cellFloorAt(grid, claims, ownedKeys, r, c)
-      const north = cellFloorAt(grid, claims, ownedKeys, r - 1, c)
-      if (typeof here === "string" || typeof north === "string") continue
-      if (!isPassable(grid, claims, r - 1, c, "s")) continue
-      // A chamber meeting a passage. Two corridor cells are a corridor, not a doorway, and two room
-      // cells are the middle of one room — arching every cell of a 3x3 footprint would draw a colonnade
-      // where the chamber is meant to read as one space.
-      if (here.kind === north.kind) continue
+      const here = floorOf(r, c)
+      const north = floorOf(r - 1, c)
+      if (!here || !north || !openGap(r, c)) continue
+      // Exactly one side is the chamber: the other is what you come in FROM. Two footprint cells are the
+      // middle of one room, and neither being a chamber is a corridor with no door in it.
+      const chamberSide = isChamber(r, c) ? here : isChamber(r - 1, c) ? north : null
+      if (!chamberSide || (isChamber(r, c) && isChamber(r - 1, c))) continue
+      // **A doorway is a hole in a wall RUN.** The arch hangs its jambs on the corners either side of the
+      // opening (see ARCH_W), so those corners have to be masonry: if the band beside this one is itself a
+      // way through, the opening is not one door but an open side, and an arch there stands on nothing.
+      if (openGap(r, c - 1) || openGap(r, c + 1)) continue
       // The chamber's own stone, so an arch belongs to the room it lets into rather than to the corridor.
-      doorways.push({ row: r, col: c, tier: here.kind === "room" ? here.tier : north.tier })
+      doorways.push({ row: r, col: c, tier: chamberSide.tier })
     }
   }
   return doorways
@@ -1245,11 +1267,14 @@ const Archways = ({
         <image
           key={`${row},${col}`}
           href={url}
-          x={cellLeft(col)}
+          // Wider than the cell by a corner on each side: the jambs stand IN those corners — the wall's
+          // own thickness — rather than inside the opening, so the way through stays a full cell wide and
+          // the arch reads as built into the wall run instead of set into the hole.
+          x={cellLeft(col) - SIDE_W}
           // The band, plus the crown standing proud of the wall above it and the jambs reaching down onto
           // the floor of the way through below it.
           y={cellTop(row) - WALL_H - ARCH_RISE}
-          width={CELL}
+          width={ARCH_W}
           height={ARCH_H}
           opacity={under ? ARCH_FADE : 1}
           preserveAspectRatio="none"

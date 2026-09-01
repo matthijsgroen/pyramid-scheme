@@ -16,7 +16,7 @@ import { dirname, join } from "path"
 import { fileURLToPath } from "url"
 import sharp from "sharp"
 import { tierPalette } from "../src/app/SiteMap/tileMaterials"
-import { ARCH_H, WALL_H } from "../src/app/SiteMap/mapScale"
+import { ARCH_H, ARCH_W, SIDE_W, WALL_H } from "../src/app/SiteMap/mapScale"
 import type { TierPalette } from "../src/app/SiteMap/tileMaterials"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -350,24 +350,25 @@ const wallShapes: Record<WallKind, (p: Palette) => string> = {
 // paints it over everything, explorer included, and fades it while the player is in the doorway.
 const archSvg = (tier: string): Buffer => {
   const p = PALETTES[tier]
-  const jamb = 10
-  const inset = 4
+  // The jambs occupy the CORNER slots either side of the doorway — the wall's own thickness — so the way
+  // through stays a full cell wide and a figure walks between them rather than behind them.
+  const jamb = SIDE_W
   const cornice = 6 // the flared crown, full width — thin, because every pixel of it is opening lost
   const lintel = 4
   const shoulder = cornice + lintel // where the clear opening starts
   return svg(
-    TILE,
+    ARCH_W,
     ARCH_H,
     `<g stroke="${p.outline}" stroke-width="2" stroke-linejoin="round">
-       <!-- cavetto cornice: the flared crown of an Egyptian gateway, wider than the jambs it sits on -->
-       <rect x="0" y="0" width="${TILE}" height="${cornice}" fill="${p.wallTop}"/>
-       <rect x="0" y="0" width="${TILE}" height="2" fill="${p.accent}" opacity="0.6"/>
-       <rect x="2" y="${cornice}" width="${TILE - 4}" height="${lintel}" fill="${p.wall}"/>
-       <!-- jambs, standing all the way down onto the floor of the way through -->
-       <rect x="${inset}" y="${shoulder}" width="${jamb}" height="${ARCH_H - shoulder}" fill="${p.wall}"/>
-       <rect x="${TILE - jamb - inset}" y="${shoulder}" width="${jamb}" height="${ARCH_H - shoulder}" fill="${p.wall}"/>
+       <!-- cavetto cornice: the flared crown of an Egyptian gateway, oversailing the jambs it sits on -->
+       <rect x="0" y="0" width="${ARCH_W}" height="${cornice}" fill="${p.wallTop}"/>
+       <rect x="0" y="0" width="${ARCH_W}" height="2" fill="${p.accent}" opacity="0.6"/>
+       <rect x="2" y="${cornice}" width="${ARCH_W - 4}" height="${lintel}" fill="${p.wall}"/>
+       <!-- jambs, in the corners and standing all the way down onto the floor of the way through -->
+       <rect x="0" y="${shoulder}" width="${jamb}" height="${ARCH_H - shoulder}" fill="${p.wall}"/>
+       <rect x="${ARCH_W - jamb}" y="${shoulder}" width="${jamb}" height="${ARCH_H - shoulder}" fill="${p.wall}"/>
        <!-- the soffit: the underside of the lintel, darker, which is what makes the opening read as deep -->
-       <rect x="${inset + jamb}" y="${shoulder}" width="${TILE - (inset + jamb) * 2}" height="3" fill="${p.wallBase}"/>
+       <rect x="${jamb}" y="${shoulder}" width="${ARCH_W - jamb * 2}" height="3" fill="${p.wallBase}"/>
      </g>`
   )
 }
@@ -581,7 +582,7 @@ const main = async (): Promise<void> => {
     await write(tier, "threshold", thresholdSvg(tier), TILE, SILL)
     for (const kind of ALL_KINDS) await write(tier, kind, propSvg(tier, kind), TILE, PROP_H)
     for (const kind of WALL_KINDS) await write(tier, kind, wallItemSvg(tier, kind), TILE, BAND)
-    await write(tier, "arch", archSvg(tier), TILE, ARCH_H)
+    await write(tier, "arch", archSvg(tier), ARCH_W, ARCH_H)
     count += 4 + ALL_KINDS.length + WALL_KINDS.length
   }
   // Shared art, written once: the explorer is not a rank.

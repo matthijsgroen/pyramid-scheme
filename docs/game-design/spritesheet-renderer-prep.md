@@ -377,13 +377,27 @@ under an arch, which is the one thing in front of it.
 
 ## Archways — the one thing painted over the player
 
-A doorway is where a passage meets a chamber, and in this layout that is a gap the player walks through
-with a band above it (`doorwaysFor` in `SiteMapView`: an open north gap whose two sides differ in kind,
-one chamber and one passage — two corridor cells are a corridor, and two room cells are the middle of one
-room, so arching every cell of a 3x3 footprint would draw a colonnade where a chamber should read as one
-space). The arch sprite is `tiles/<tier>/arch.png` at `CELL` × `ARCH_H`, with its middle transparent so
-the floor of the way through shows beneath it. It takes the CHAMBER's stone, so an arch belongs to the room
-it lets into rather than to the corridor. Around 20 to a floor.
+**An arch marks a PLACE, so placement is the whole of it** (`doorwaysFor` in `SiteMapView`). Three rules,
+each one there because breaking it looked wrong:
+
+- **A chamber, not a station.** One side of the gap has to be part of a room's FOOTPRINT — a claimed cell
+  or the room that claims it. An encounter node on the path is a single cell that claims nothing, and
+  arching those put a gateway either side of every puzzle in the world: a corridor with doors across it
+  every second step. A doorway is where a place begins, and a footprint is what marks one.
+- **Exactly one side.** Two footprint cells are the middle of one room, and neither being a chamber is a
+  corridor with no door in it.
+- **A hole in a wall RUN.** The bands either side of the opening must be wall, so the jambs have corners
+  of masonry to stand on. Where a chamber's own floor wraps around the mouth of its corridor there is no
+  wall beside the opening, and an arch there would stand on nothing.
+
+That comes out at 3 to 11 arches a floor, ~8 on average, at forks, treasure chambers, stairheads, exits
+and gates. Ignoring the footprint gave 20 a floor, most of them around puzzle nodes.
+
+The sprite is `tiles/<tier>/arch.png` at `ARCH_W` × `ARCH_H` (84 × 56) with its middle transparent, so the
+floor of the way through shows beneath it. It is a corner WIDER than the doorway on each side, because the
+jambs stand in those `SIDE_W` corner slots — the wall's own thickness, where a jamb belongs — leaving the
+way through a full cell wide for the 40-wide figure to walk between them rather than behind them. It takes
+the CHAMBER's stone, so an arch belongs to the room it lets into rather than to the corridor.
 
 **It grows out of the band in both directions, and that is a scale decision rather than a drawing one.**
 Confined to the band, the clear opening under the lintel came out 22 against a 48-tall explorer — nothing
@@ -394,9 +408,7 @@ through, which is where a real jamb stands: opening 46, clearance 40 above the h
 
 Growing it upward alone would have bought the same opening and cost the cell BEYOND the doorway — an arch
 paints over everything, so height above the wall eats the ground behind it (half a cell, and half of any
-node icon there), while height below eats only the doorway's own floor edges, which nothing else uses. The
-figure walks between the jambs: it is 40 wide against a 28-wide opening, so its shoulders pass behind them,
-which is what walking through a doorway looks like from above.
+node icon there), while height below eats only the doorway's own floor edges, which nothing else uses.
 
 **It is painted last, over the explorer.** Everything else on the map is under the player; an arch is the
 one thing in front, because that is what makes it a thing in the world rather than a decal — the player
