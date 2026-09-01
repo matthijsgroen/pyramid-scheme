@@ -15,6 +15,7 @@ import { wardPath, wardChest } from "./dsl"
 import { specToReward } from "./rewards"
 import { buildSite } from "./buildSite"
 import { assignEncounters, type EncounterAllocator, type FamilyCapacityFor, type IsTrapFamily } from "./placeEncounters"
+import { dressByRole } from "./dressingRoles"
 import { placeShopStock, type ShopStockAssignment } from "./shopStock"
 import { placeFragments } from "./placeFragments"
 import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
@@ -301,6 +302,11 @@ export const buildConfigs = (
   // Injected from src/mods (allFamilyMeta.allocateEncounterSpread) — src/worldGen can't read the
   // family registry. When absent (a direct buildConfigs call in a test), roles stay as authored.
   if (allocateEncounter) assignEncounters(allConfigs, allocateEncounter, familyCapacityFor, isTrapFamily)
+
+  // Phase 3.55: dress each node for the PLACE it turned out to be. The roles above are what a wing is
+  // (journeys.md §2), so they also decide its furniture: a trade wing shows amphorae and a tally board,
+  // a funerary one a coffin and a stela. Runs after roles are written and before serialization.
+  dressByRole(allConfigs)
 
   // Phase 3.6: mods place their shop-stock sentinels into resolved shops (after encounters resolve
   // + stock arrays seed, before slot collection fills them). Core names no currency here.

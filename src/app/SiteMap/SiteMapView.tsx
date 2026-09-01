@@ -1038,12 +1038,18 @@ const TileLayers = ({ regions, tier }: { regions: TileRegions; tier: Difficulty 
 // see buildRoomClaims above): the tier's sprite when it has one, and the placeholder glyph when it
 // does not, so art can land one piece at a time.
 
+// A prop sprite is a cell PLUS a face band tall, anchored by its BOTTOM edge on the cell's floor line.
+// Bottom-anchored is what makes it stand on the floor instead of floating over it; the band of headroom
+// is what lets it have height. Props are painted after every wall (see the render order below), so a
+// statue occludes the wall behind it rather than being cut off at its own cell — and a room's prop cell
+// is the first claim in row-major order, normally the cell NORTH of the room, so the headroom reaches
+// into wall rather than over the room's own icon.
+const PROP_H = CELL + WALL_H
+
 const Decoration = ({ kind, tier }: { kind: DecorationKind; tier: Difficulty }) => {
   const url = tileUrl(tier, kind)
-  // Bottom-anchored on the cell's floor line rather than centred: it is what makes a prop stand on
-  // the floor instead of floating over it.
   return url ? (
-    <image href={url} x={-CELL / 2} y={-CELL / 2} width={CELL} height={CELL} />
+    <image href={url} x={-CELL / 2} y={CELL / 2 - PROP_H} width={CELL} height={PROP_H} />
   ) : (
     <DecorationGlyph kind={kind} />
   )

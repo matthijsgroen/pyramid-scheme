@@ -80,9 +80,14 @@ Decided before any of it is drawn, because these choices are what make the secon
 and the first prop lookable-at on its own.
 
 **Pixel art at 56px square** — one tile is exactly the 56-unit cell (`mapScale.ts`), so at zoom 1
-the art is 1:1. Transparent background; a prop is bottom-anchored on the cell's floor line rather
-than centred, and never reaches full cell height. See "Perspective" below for the zoom cost this
-carries.
+the art is 1:1. Transparent background. See "Perspective" below for the zoom cost this carries.
+
+**A prop sprite is 56 × 84 — a cell plus a face band — anchored by its BOTTOM edge on the cell's floor
+line.** Props are painted after every wall, so a statue stands IN FRONT of the wall behind it and may be
+taller than the cell it stands on; that band of headroom is the only thing that makes a statue, a pillar
+or a shrine read as having height rather than as a decal on the floor. Short props leave the top band
+transparent. A room's prop cell is the first claim in row-major order — normally the cell NORTH of the
+room — so the headroom reaches into wall rather than over the room's own node icon.
 
 **One file per sprite, the filename as the key** — `src/assets/tiles/<theme>/<name>.png`, with
 the names being the `DecorationKind` values in `siteTypes.ts` exactly. No coordinate manifest to
@@ -296,6 +301,7 @@ silhouette.
 | Wall dressing, prop pool, light colour | per-room `RoomCell.difficulty`                                       |
 | Mood overlay (the hour)                | `theme` — one wash and one light colour, never a second art set      |
 | Freestanding props                     | `RoomCell.decoration`, resolved as `tiles/<tier>/<kind>.png`         |
+| WHICH prop or wall item, out of that pool | the room's `role` — the place it is (journeys.md §2)            |
 
 Floor material follows the floor tier, not the room's, so a mixed-difficulty floor can never
 produce a material seam mid-corridor. Section difficulty is read off the wall dressing, prop
@@ -305,7 +311,23 @@ Tier hues follow `ui/atoms/tombImageMap.ts` (stone → sandstone → slate → g
 tomb backdrop and the floor art agree.
 
 Props anchor **bottom-centre at the cell's floor line** so they stand, rather than being centred
-like today's `DecorationGlyph`.
+like today's `DecorationGlyph`, and their sprite carries a face band of headroom above the cell so a
+tall one has somewhere to be.
+
+**The rank says what a tomb is furnished WITH; the role says which of it this wing shows.** A role is the
+place a stretch of floor is (journeys.md §2), so a trade wing stacks amphorae on shelves and a funerary
+one holds a coffin and a false-door stela — out of the same rank pool. The tag lives on the KIND
+(`worldGen/dressingRoles.ts`), never in a pool per rank × role: a rank stays one authored line, and the
+narrowing is a gen-time pass so `generatedWorld.ts` records the pool a wing actually draws from. Three
+rules keep it from making the world duller than it was:
+
+- **An untagged kind fits anywhere** — rubble, a pillar, a chest, a mat, a pit. They survive every
+  narrowing, and they are what stops a pool from collapsing.
+- **A role that names no place narrows nothing.** `puzzle` is the default a room with no authored place
+  gets, and `trap` says what is IN a room rather than where it is. Narrowing on `puzzle` took the
+  statues, jars and shelves out of most of the world.
+- **A pool that would keep fewer than two kinds stays whole.** A wing where every fork holds the
+  identical thing reads worse than one that is not dressed for its place at all.
 
 ## Ward-gate seams
 
@@ -578,8 +600,8 @@ into `src/assets/tiles/<tier>/`: generated SVG rasterised by `sharp`, which is a
 dependency. Nothing hand-drawn, nothing precious.
 
 Per tier: `floor.png` (448², = 8 cells at 1:1), `wall-face.png` (448×56), `threshold.png` (56×12),
-one 56² PNG per decoration kind and one 56×28 PNG per wall-item kind — the band's shape. A wall top is
-a palette token, not a file.
+one 56×84 PNG per decoration kind — a cell plus its headroom — and one 56×28 PNG per wall-item kind, the
+band's own shape. A wall top is a palette token, not a file.
 
 The dummies deliberately carry the things that are hard to judge from a mockup:
 
@@ -588,8 +610,9 @@ The dummies deliberately carry the things that are hard to judge from a mockup:
 - masonry laid at 64×32 against a 56 cell, so the bond is visibly _not_ on the cell grid
 - face courses offset half a block per row, running unbroken across cell boundaries — the thing a
   per-cell wall sprite cannot do
-- a contact shadow and a near-black outline on every prop, none of them reaching full cell height,
-  so it can be judged against a real wall face rather than against a swatch
+- a contact shadow and a near-black outline on every prop, and a few kinds (statue, pillar, shrine,
+  sarcophagus) deliberately reaching up into the band's headroom, so height can be judged against a real
+  wall face rather than against a swatch
 
 `yarn generate-dummy-tiles --preview` also writes `src/assets/tiles/preview.png`: a **dry run of the
 renderer**, not a swatch sheet — a hand-written plan (a ring corridor around a sealed chamber) drawn

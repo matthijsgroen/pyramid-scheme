@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   every tomb is built of its own owner's material, and its chambers hold their furnishings.
 - Chamber walls carry things now: a merchant hangs his tally board and his niche of goods, a priest a
   veil before the shrine, the gods a shaft looking out on the night.
+- A statue stands in front of the wall behind it and has height now, rather than being cut off at the
+  edge of its own floor tile.
+- Rooms are furnished for the PLACE they are: a trading wing stacks amphorae on shelves and hangs its
+  tally board, a funerary one holds a coffin and a false-door stela, a waterworks its basins.
 
 ### Fixed
 

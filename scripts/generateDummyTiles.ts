@@ -209,10 +209,15 @@ const thresholdSvg = (tier: string): Buffer => {
 }
 
 // ── Props ─────────────────────────────────────────────────────────────────────
-// Small, bottom-anchored on the cell's floor line, dark-outlined, with a contact shadow: the read
-// that makes an object sit ON the floor rather than float over it. Nothing reaches full cell
-// height — a prop as tall as the cell fouls the wall face behind it.
-const BASE = TILE - 6
+// Bottom-anchored on the cell's floor line, dark-outlined, with a contact shadow: the read that makes
+// an object sit ON the floor rather than float over it.
+//
+// A prop sprite is a cell PLUS a face band tall (56x84), because the renderer draws props after the
+// walls: a statue stands IN FRONT of the wall behind it, so it may be taller than the cell it stands
+// on. Short props leave the top band transparent; tall ones (a statue, a pillar, a shrine) use it, and
+// that headroom is the only thing that makes them read as having height rather than as floor decals.
+const PROP_H = TILE + BAND
+const BASE = PROP_H - 6
 
 const shapes: Record<Kind, (p: Palette) => string> = {
   rubble: p => `
@@ -220,25 +225,26 @@ const shapes: Record<Kind, (p: Palette) => string> = {
     <rect x="26" y="${BASE - 16}" width="16" height="16" fill="${p.prop}"/>
     <rect x="20" y="${BASE - 6}" width="10" height="6" fill="${p.prop}"/>`,
   pillar: p => `
-    <rect x="20" y="${BASE - 36}" width="16" height="36" fill="${p.prop}"/>
-    <rect x="16" y="${BASE - 40}" width="24" height="6" fill="${p.propDark}"/>
+    <rect x="20" y="${BASE - 66}" width="16" height="66" fill="${p.prop}"/>
+    <rect x="16" y="${BASE - 72}" width="24" height="8" fill="${p.propDark}"/>
     <rect x="16" y="${BASE - 4}" width="24" height="4" fill="${p.propDark}"/>`,
   pit: p => `
     <rect x="10" y="${BASE - 24}" width="36" height="24" fill="${p.outline}"/>
     <rect x="10" y="${BASE - 24}" width="36" height="4" fill="${p.propDark}"/>`,
   statue: p => `
-    <rect x="16" y="${BASE - 6}" width="24" height="6" fill="${p.propDark}"/>
-    <rect x="22" y="${BASE - 28}" width="12" height="22" fill="${p.prop}"/>
-    <rect x="24" y="${BASE - 38}" width="8" height="10" fill="${p.prop}"/>
-    <rect x="22" y="${BASE - 30}" width="12" height="3" fill="${p.accent}"/>`,
+    <rect x="14" y="${BASE - 8}" width="28" height="8" fill="${p.propDark}"/>
+    <rect x="20" y="${BASE - 48}" width="16" height="40" fill="${p.prop}"/>
+    <rect x="22" y="${BASE - 62}" width="12" height="14" fill="${p.prop}"/>
+    <rect x="19" y="${BASE - 64}" width="18" height="4" fill="${p.propDark}"/>
+    <rect x="20" y="${BASE - 50}" width="16" height="3" fill="${p.accent}"/>`,
   basin: p => `
     <rect x="12" y="${BASE - 16}" width="32" height="16" fill="${p.propDark}"/>
     <rect x="16" y="${BASE - 12}" width="24" height="8" fill="${p.accent}" opacity="0.75"/>
     <rect x="24" y="${BASE - 30}" width="8" height="14" fill="${p.prop}"/>`,
   sarcophagus: p => `
-    <rect x="18" y="${BASE - 40}" width="20" height="40" fill="${p.prop}"/>
-    <rect x="21" y="${BASE - 36}" width="14" height="32" fill="${p.propDark}"/>
-    <rect x="24" y="${BASE - 32}" width="8" height="8" fill="${p.accent}"/>`,
+    <rect x="18" y="${BASE - 52}" width="20" height="52" fill="${p.prop}"/>
+    <rect x="21" y="${BASE - 48}" width="14" height="44" fill="${p.propDark}"/>
+    <rect x="24" y="${BASE - 44}" width="8" height="8" fill="${p.accent}"/>`,
   chestProp: p => `
     <rect x="14" y="${BASE - 18}" width="28" height="18" fill="${p.propDark}"/>
     <rect x="14" y="${BASE - 26}" width="28" height="8" fill="${p.prop}"/>
@@ -259,9 +265,9 @@ const shapes: Record<Kind, (p: Palette) => string> = {
     <rect x="16" y="${BASE - 22}" width="24" height="8" fill="${p.prop}"/>
     <rect x="22" y="${BASE - 32}" width="12" height="10" fill="${p.accent}"/>`,
   shrine: p => `
-    <rect x="14" y="${BASE - 34}" width="28" height="34" fill="${p.propDark}"/>
-    <path d="M 10 ${BASE - 34} L 28 ${BASE - 44} L 46 ${BASE - 34} Z" fill="${p.prop}"/>
-    <rect x="20" y="${BASE - 28}" width="16" height="24" fill="${p.accent}" opacity="0.5"/>`,
+    <rect x="14" y="${BASE - 50}" width="28" height="50" fill="${p.propDark}"/>
+    <path d="M 10 ${BASE - 50} L 28 ${BASE - 62} L 46 ${BASE - 50} Z" fill="${p.prop}"/>
+    <rect x="20" y="${BASE - 42}" width="16" height="34" fill="${p.accent}" opacity="0.5"/>`,
   lamp: p => `
     <rect x="26" y="${BASE - 8}" width="4" height="8" fill="${p.propDark}"/>
     <rect x="20" y="${BASE - 12}" width="16" height="4" fill="${p.propDark}"/>
@@ -354,7 +360,7 @@ const propSvg = (tier: string, kind: Kind): Buffer => {
       : ""
   return svg(
     TILE,
-    TILE,
+    PROP_H,
     `${glow}
      <rect x="12" y="${BASE - 2}" width="32" height="4" fill="${p.outline}" opacity="0.4"/>
      <g stroke="${p.outline}" stroke-width="2" stroke-linejoin="round">${shapes[kind](p)}</g>`
@@ -450,7 +456,8 @@ const preview = async (tiers: string[]): Promise<string> => {
           const prop = PROP_AT[`${r},${c}`]
           if (prop && ALL_KINDS.includes(prop)) {
             props.push(
-              `<image href="${uri(join(dir, `${prop}.png`))}" x="${x}" y="${y}" width="${TILE}" height="${TILE}"/>`
+              // Drawn on the cell's floor line with the band's headroom above it, exactly as the renderer does.
+              `<image href="${uri(join(dir, `${prop}.png`))}" x="${x}" y="${y - BAND}" width="${TILE}" height="${PROP_H}"/>`
             )
           }
           continue
@@ -494,7 +501,7 @@ const main = async (): Promise<void> => {
     await write(tier, "floor", floorSvg(tier), MEGA, MEGA)
     await write(tier, "wall-face", wallFaceSvg(tier), MEGA, FACE)
     await write(tier, "threshold", thresholdSvg(tier), TILE, SILL)
-    for (const kind of ALL_KINDS) await write(tier, kind, propSvg(tier, kind), TILE, TILE)
+    for (const kind of ALL_KINDS) await write(tier, kind, propSvg(tier, kind), TILE, PROP_H)
     for (const kind of WALL_KINDS) await write(tier, kind, wallItemSvg(tier, kind), TILE, BAND)
     count += 3 + ALL_KINDS.length + WALL_KINDS.length
   }
