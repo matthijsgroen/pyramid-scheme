@@ -396,8 +396,17 @@ and gates. Ignoring the footprint gave 20 a floor, most of them around puzzle no
 The sprite is `tiles/<tier>/arch.png` at `ARCH_W` × `ARCH_H` (84 × 56) with its middle transparent, so the
 floor of the way through shows beneath it. It is a corner WIDER than the doorway on each side, because the
 jambs stand in those `SIDE_W` corner slots — the wall's own thickness, where a jamb belongs — leaving the
-way through a full cell wide for the 40-wide figure to walk between them rather than behind them. It takes
-the CHAMBER's stone, so an arch belongs to the room it lets into rather than to the corridor.
+way through a full cell wide for the 40-wide figure to walk between them rather than behind them. It is cut from the
+stone of the BAND it interrupts (the south cell's tier, the same rule `tileRegions` colours that band by),
+so a gateway belongs to the wall it pierces rather than being imported into it — a grey starter arch in a
+junior wall reads as a doorway from the wrong tomb.
+
+**A gap gets one piece of masonry.** At a ward gate the rank changes across the doorway, and that gap was
+already carrying a sill (§ Ward-gate seams) — so the map laid a sandstone threshold inside a grey gateway,
+with the gate's own icon under both. The arch wins: it says everything the sill says and says it standing
+up, in the same stone the sill would have used, so the renderer skips a sill in any gap an arch stands in
+(`archedGaps`). The seam itself is untouched in `tileRegions` — the geometry still knows where the material
+changes, and a seam with no arch still lays its sill.
 
 **It grows out of the band in both directions, and that is a scale decision rather than a drawing one.**
 Confined to the band, the clear opening under the lintel came out 22 against a 48-tall explorer — nothing

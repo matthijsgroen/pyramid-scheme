@@ -953,7 +953,19 @@ const FACE_SHADOW = CELL / 8
 // built of a pharaoh's granite. Per-room difficulty still dresses the room (props, light).
 const floorTier = (grid: FloorGrid): Difficulty => grid.difficulty ?? "starter"
 
-const TileLayers = ({ regions, tier }: { regions: TileRegions; tier: Difficulty }) => {
+const TileLayers = ({
+  regions,
+  tier,
+  archedGaps,
+}: {
+  regions: TileRegions
+  tier: Difficulty
+  /** "x,y" of every gap an archway stands in. A gap gets ONE piece of masonry: where an arch marks the
+   * way through, the sill would be a second threshold inside its opening — and at a ward gate, where the
+   * rank changes, the two even disagree about the stone, since a sill is the tier being ENTERED and an
+   * arch is the chamber it belongs to. The arch says everything the sill says and says it standing up. */
+  archedGaps?: ReadonlySet<string>
+}) => {
   const mega = CELL * 8
   const allFloor = rectsToPath(
     [...regions.values()].flatMap(groups => [
@@ -1020,8 +1032,9 @@ const TileLayers = ({ regions, tier }: { regions: TileRegions; tier: Difficulty 
                 const mass = rectsToPath(groups.wallMass[state])
                 const faces = rectsToPath(groups.wallFace[state])
                 const shadows = faceShadowsToPath(groups.wallFace[state], FACE_SHADOW)
-                // One sill per boundary, not one per cell state: it is masonry, not lighting.
-                const thresholds = rectsToPath(groups.threshold)
+                // One sill per boundary, not one per cell state: it is masonry, not lighting. And none
+                // where an arch already stands in that gap.
+                const thresholds = rectsToPath(groups.threshold.filter(([x, y]) => !archedGaps?.has(`${x},${y}`)))
                 return (
                   <g key={state}>
                     {mass && <path d={mass} fill={palette.wallBase} />}
@@ -1242,8 +1255,13 @@ export const doorwaysFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: Rea
       // opening (see ARCH_W), so those corners have to be masonry: if the band beside this one is itself a
       // way through, the opening is not one door but an open side, and an arch there stands on nothing.
       if (openGap(r, c - 1) || openGap(r, c + 1)) continue
-      // The chamber's own stone, so an arch belongs to the room it lets into rather than to the corridor.
-      doorways.push({ row: r, col: c, tier: chamberSide.tier })
+      // **The stone of the band it interrupts**, which is the SOUTH cell's — the same rule tileRegions
+      // colours that band by (tierAt), so an arch is cut from the wall it stands in rather than imported
+      // into it. At a ward gate, where the rank changes across the gap, this is also the tier being
+      // ENTERED, which is what the sill it replaces was keyed to: you pass through a sandstone gateway
+      // into the sandstone ward. Taking the chamber's tier instead put a grey starter arch in a junior
+      // wall, a doorway visibly imported from the wrong tomb.
+      doorways.push({ row: r, col: c, tier: here.tier })
     }
   }
   return doorways
@@ -1343,6 +1361,12 @@ export const SiteMapView = ({
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
+  // Where the arches are, in the same terms the wall bands are built in, so a gap that has one can skip
+  // its sill (see TileLayers.archedGaps).
+  const archedGaps = useMemo(
+    () => new Set(doorways.map(({ row, col }) => `${cellLeft(col)},${cellTop(row) - WALL_H}`)),
+    [doorways]
+  )
   // Corridor-run markers track the explorer dot's visual position, not the logical one:
   // hide them the instant a run target is clicked (the player has committed to a
   // destination, so the old markers no longer apply), and don't show the new ones at the
@@ -1407,7 +1431,7 @@ export const SiteMapView = ({
           // scales. Crisp at every zoom needs useMapZoom to snap to whole steps — not done yet.
           style={{ background: tierPalette[tier].wallBase, imageRendering: "pixelated" }}
         >
-          <TileLayers regions={regions} tier={tier} />
+          <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
           <WallItems items={wallItems} />
 
           {Array.from({ length: grid.rows + 2 }, (_, ri) => {

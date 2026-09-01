@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The way into a chamber is framed by an archway tall enough to walk through — crown above the wall,
   jambs standing in the corners of the wall either side — and you pass underneath it. An arch dims while
   you stand in the doorway so it never hides you. Rooms get them; puzzle rooms along a corridor do not.
+  A ward gate now reads as one gateway cut from the ward's own stone, rather than a threshold laid inside
+  a doorway of a different colour.
 - You are a person on the map now instead of a dot, facing the way you walk.
 - Rooms are furnished for the PLACE they are: a trading wing stacks amphorae on shelves and hangs its
   tally board, a funerary one holds a coffin and a false-door stela, a waterworks its basins.
