@@ -412,6 +412,22 @@ const HAIR = "#1b1712"
 const SASH = "#c8a33c"
 const INK = "#120f0b"
 
+// A scarab, for the moods that have something living in the air. Shared like the explorer: a beetle is a
+// beetle in every rank of tomb.
+const scarabSvg = (): Buffer =>
+  svg(
+    14,
+    10,
+    `<g stroke="${INK}" stroke-width="1">
+       <ellipse cx="7" cy="5" rx="4" ry="3" fill="#2b2118"/>
+       <rect x="6" y="2" width="2" height="6" fill="#120d09"/>
+       <rect x="1" y="3" width="3" height="1" fill="#2b2118"/>
+       <rect x="10" y="3" width="3" height="1" fill="#2b2118"/>
+       <rect x="1" y="6" width="3" height="1" fill="#2b2118"/>
+       <rect x="10" y="6" width="3" height="1" fill="#2b2118"/>
+     </g>`
+  )
+
 const explorerSvg = (facing: "s" | "n" | "e"): Buffer => {
   const feet = CHAR_H - 2
   const body = `
@@ -585,7 +601,9 @@ const main = async (): Promise<void> => {
     await write(tier, "arch", archSvg(tier), ARCH_W, ARCH_H)
     count += 4 + ALL_KINDS.length + WALL_KINDS.length
   }
-  // Shared art, written once: the explorer is not a rank.
+  // Shared art, written once: neither the explorer nor a beetle is a rank.
+  await write("default", "scarab", scarabSvg(), 14, 10)
+  count++
   for (const facing of ["s", "n", "e"] as const) {
     await write("default", `explorer-${facing}`, explorerSvg(facing), CHAR_W, CHAR_H)
     count++

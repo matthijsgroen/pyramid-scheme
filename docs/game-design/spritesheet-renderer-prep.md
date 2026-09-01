@@ -641,7 +641,35 @@ Still open, and both want an answer before a rank is drawn:
 
 ## Mood settings
 
-One row of data per tier, all of it overlay — never extra art.
+One row of data per tier, all of it overlay — never extra art. **Built** (`moodSettings.ts`, `MapMood.tsx`),
+and three mechanisms carry every mood there is a name for:
+
+| the mood            | the mechanism                                                      |
+| ------------------- | ------------------------------------------------------------------ |
+| night               | `tint` — one colour over the whole map                             |
+| sand                | `drift` — many small motes, quick, blown across                    |
+| fog                 | `drift` — a few huge soft ones, slow. Same mechanism, other numbers |
+| dust, soot, sparks  | `drift` again, per rank                                            |
+| scarabs scurrying   | `life` — sprites on lit floor                                      |
+
+Sand and fog being the same mechanism is the point: one drift field with a size and a pace covers chaff,
+soot, incense haze, glinting dust, sparks, a sandstorm and a fog bank, where one idea per name would have
+been six.
+
+**Keyed by the floor's `theme` over its rank's own ambience.** The rank rows below are what a floor wears
+unthemed — no floor is airless — and a theme replaces only the keys it names, so a night merchant's cellar
+keeps its dust and its scarabs and only the light changes. A theme the map has no weather for (most of
+them: `theme` is a puzzle skin first) leaves the rank's air alone. `FloorGrid.theme` carries it, the way
+`FloorGrid.difficulty` already carries the rank.
+
+**All of it is CSS animation, and all of it stops under `prefers-reduced-motion`.** A mote driven from
+React would cost more per frame than everything else the map draws; the compositor moves a hundred for
+nothing. Positions are hashed off the site id so the air is the same every time a floor is drawn — but
+mix the hash before reducing it (`hashString` is `h * 31 + char`, so consecutive indices hash one apart,
+which put all three scarabs on the same tile).
+
+Scarabs sit UNDER the props and icons, because they are on the floor; drift and tint sit over everything,
+arches included, because weather is between the player and the world.
 
 | Rank         | Ambient tint    | Ambient  | Light                          | Flicker    | Contrast  | Particles       |
 | ------------ | --------------- | -------- | ------------------------------ | ---------- | --------- | --------------- |

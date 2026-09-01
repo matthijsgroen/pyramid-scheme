@@ -35,6 +35,8 @@ import {
   mapWidth,
 } from "./mapScale"
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
+import { moodFor } from "./moodSettings"
+import { MapLife, MapWeather } from "./MapMood"
 import { tileUrl } from "./tileAssets"
 import { ALL_STATES, buildTileRegions, faceShadowsToPath, hasWallFace, rectsToPath } from "./tileRegions"
 import type { FloorAt, TileRegions } from "./tileRegions"
@@ -1363,6 +1365,19 @@ export const SiteMapView = ({
   const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Where the arches are, in the same terms the wall bands are built in, so a gap that has one can skip
   // its sill (see TileLayers.archedGaps).
+  // The air on this floor: its rank's, with whatever hour it authors (moodSettings.ts).
+  const mood = useMemo(() => moodFor(tier, grid.theme), [tier, grid.theme])
+  // Where something living may be: lit floor the player could walk, never stone and never fog.
+  const floorCells = useMemo(() => {
+    const cells: Array<readonly [number, number]> = []
+    for (let r = 0; r < grid.rows; r++) {
+      for (let c = 0; c < grid.cols; c++) {
+        const cell = grid.cells[r][c]
+        if (cell.type !== "empty" && cell.state !== "fogged") cells.push([r, c])
+      }
+    }
+    return cells
+  }, [grid])
   const archedGaps = useMemo(
     () => new Set(doorways.map(({ row, col }) => `${cellLeft(col)},${cellTop(row) - WALL_H}`)),
     [doorways]
@@ -1432,6 +1447,7 @@ export const SiteMapView = ({
           style={{ background: tierPalette[tier].wallBase, imageRendering: "pixelated" }}
         >
           <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
+          <MapLife mood={mood} siteId={grid.siteId} floorCells={floorCells} />
           <WallItems items={wallItems} />
 
           {Array.from({ length: grid.rows + 2 }, (_, ri) => {
@@ -1576,6 +1592,9 @@ export const SiteMapView = ({
 
           {/* Last, so a doorway passes in FRONT of the player walking under it — see Archways. */}
           <Archways doorways={doorways} explorerPos={explorerPos} />
+
+          {/* The air, over the stone and over the player: what is carried on it, and what hour it is. */}
+          <MapWeather mood={mood} siteId={grid.siteId} width={svgWidth} height={svgHeight} />
         </svg>
       </div>
     </div>

@@ -139,6 +139,11 @@ export type FloorGrid = {
    * `RoomCell.difficulty` can differ (a ward-chest teaser is authored at a later tier), so it must not
    * be used to infer this. Optional only because test fixtures build grids by hand. */
   readonly difficulty?: Difficulty
+  /** The hour this floor is at — its authored `theme` (docs/game-design/journeys.md §2: the role is the
+   * place, the theme is the hour). The map reads it for its mood overlay and nothing else; a family reads
+   * the same name off its own room to pick a skin. Optional: most floors author none and wear their
+   * rank's own ambience. */
+  readonly theme?: string
   readonly rows: number
   readonly cols: number
   readonly entrancePos: readonly [number, number]

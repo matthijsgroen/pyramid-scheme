@@ -1542,6 +1542,7 @@ export const assembleFloor = (
     const grid: FloorGrid = {
       cells: cells2D,
       difficulty: config.difficulty,
+      ...(config.theme !== undefined ? { theme: config.theme } : {}),
       rows: N,
       cols: N,
       entrancePos: [entR, entC],

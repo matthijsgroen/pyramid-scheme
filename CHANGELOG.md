@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   A ward gate now reads as one gateway cut from the ward's own stone, rather than a threshold laid inside
   a doorway of a different colour.
 - You are a person on the map now instead of a dot, facing the way you walk.
+- The air in a tomb has something in it: dust in a merchant's cellar with scarabs scurrying across the
+  floor, soot in a nobleman's wing, incense haze where the priests were, gold dust in the pharaoh's dark,
+  drifting sparks in the vault of the gods — and a night floor is lit like one. It all stops if your
+  system asks for reduced motion.
 - Rooms are furnished for the PLACE they are: a trading wing stacks amphorae on shelves and hangs its
   tally board, a funerary one holds a coffin and a false-door stela, a waterworks its basins.
 

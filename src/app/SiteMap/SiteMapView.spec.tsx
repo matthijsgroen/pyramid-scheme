@@ -566,10 +566,13 @@ describe("archways", () => {
     expect(arches[0].getAttribute("opacity")).toBe("1")
   })
 
-  it("paints arches last, so a doorway passes in front of the player", () => {
+  it("paints an arch after the explorer, so a doorway passes in front of the player", () => {
+    // Only the air is above it (see the mood layer): weather is between the player and the world, an arch
+    // is part of the world and stands in front of them in it.
     const { container } = render(<SiteMapView grid={doorwayGrid()} explorerPos={[2, 1]} />)
-    const svg = container.querySelector("svg")!
-    expect(archesIn(container)[0].parentElement).toBe(svg.lastElementChild)
+    const arch = archesIn(container)[0].parentElement!
+    const explorer = container.querySelector("[data-explorer]")!
+    expect(explorer.compareDocumentPosition(arch) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it("fades the arch the player is standing in, either side of it", () => {
@@ -621,5 +624,31 @@ describe("archways", () => {
       [empty, chamber("completed"), empty],
     ])
     expect(archesIn(render(<SiteMapView grid={fogged} />).container)).toHaveLength(0)
+  })
+})
+
+// ── Mood ──────────────────────────────────────────────────────────────────────
+// The air is overlay only: a wash, drifting motes, and scarabs on the floor (moodSettings.ts). It must
+// never be a second set of art, and never stand where there is no floor.
+
+describe("the air on a floor", () => {
+  const litGrid = () => makeGrid([[corridor("completed", false)], [chamber("completed")]])
+
+  it("carries the rank's own air, and the hour it authors", () => {
+    const { container } = render(<SiteMapView grid={litGrid()} />)
+    expect(container.querySelectorAll(".map-mote").length).toBeGreaterThan(0)
+    // Starter is the rank with vermin in it.
+    expect(container.querySelectorAll(".map-scarab").length).toBeGreaterThan(0)
+
+    const night = render(<SiteMapView grid={{ ...litGrid(), theme: "night" }} />)
+    const washOf = (c: HTMLElement) =>
+      Array.from(c.querySelectorAll<SVGRectElement>("svg > g > rect")).pop()?.getAttribute("fill")
+    expect(washOf(night.container)).not.toBe(washOf(container))
+  })
+
+  it("puts nothing living where there is no lit floor", () => {
+    // Fog is not a place a beetle can be: it is what the player has not seen.
+    const dark = makeGrid([[corridor("fogged", false)], [chamber("fogged")]])
+    expect(render(<SiteMapView grid={dark} />).container.querySelectorAll(".map-scarab")).toHaveLength(0)
   })
 })
