@@ -326,8 +326,13 @@ rules keep it from making the world duller than it was:
 - **A role that names no place narrows nothing.** `puzzle` is the default a room with no authored place
   gets, and `trap` says what is IN a room rather than where it is. Narrowing on `puzzle` took the
   statues, jars and shelves out of most of the world.
-- **A pool that would keep fewer than two kinds stays whole.** A wing where every fork holds the
-  identical thing reads worse than one that is not dressed for its place at all.
+- **A pool of one is fine when that one thing IS the place**, and a pool left with only the kinds that
+  belong nowhere stays whole. A necropolis where every dead end holds the same coffin, or a scriptorium
+  where every statue is the same Osiris, is a place asserting itself — real tombs repeat. A wing where
+  every fork holds rubble says the furniture went missing. So the test is not how MANY kinds survive but
+  whether any of them speaks to this place. The repetition is exact, since a kind is one sprite per rank;
+  if that ever reads as copy-paste rather than as a place, the fix is sprite variants behind the same
+  kind, not padding the pool with furniture the place would not have.
 
 ## Ward-gate seams
 

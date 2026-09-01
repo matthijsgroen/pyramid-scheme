@@ -66,9 +66,17 @@ describe("a role furnishes the place it is", () => {
     expect(trade.wallDecorations).toEqual(["niche", "tallyBoard", "sconce"])
   })
 
-  it("leaves a pool whole when its role furnishes too little to vary", () => {
-    // `water` names no wall item of its own, so an expert wing's three funerary/anywhere items would
-    // narrow to just the sconce — one item in every room, which reads worse than not dressing at all.
+  it("narrows to a single kind when that kind IS the place", () => {
+    // Every dead end of a funerary wing holding the same coffin is a necropolis, not a bug: the
+    // repetition is the place asserting itself. Only the kinds that belong nowhere are padding.
+    const funerary = dress(floor({ role: "funerary", decorations: ["sarcophagus", "jarRack", "basin"] }))
+    expect(funerary.decorations).toEqual(["sarcophagus"])
+  })
+
+  it("leaves a pool whole when nothing in it belongs to the place", () => {
+    // `water` names no wall item of its own, so this pool would narrow to just the sconce — a bracket
+    // that hangs anywhere. A wing left with only the kinds that belong nowhere reads as furniture gone
+    // missing rather than as a place, so the rank's own pool stands.
     const water = dress(floor({ role: "water", wallDecorations: ["veil", "wallShrine", "sconce"] }))
     expect(water.wallDecorations).toEqual(["veil", "wallShrine", "sconce"])
   })

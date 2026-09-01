@@ -39,11 +39,6 @@ const WALL_ITEM_ROLES: Partial<Record<WallDecorationKind, readonly string[]>> = 
   // a rank whose other wall items are all funerary from hanging nothing at all in a trade wing.
 }
 
-/** How few kinds a narrowed pool may keep. Below it the whole pool comes back: a wing where every fork
- * holds the identical thing reads worse than one that is not dressed for its place at all — which is the
- * same reason the pick is positional rather than a counter. */
-const MIN_POOL = 2
-
 const rolesOf = (role: string | string[] | undefined): readonly string[] =>
   role === undefined ? [] : Array.isArray(role) ? role : [role]
 
@@ -65,11 +60,21 @@ const narrow = <K extends string>(
 ): K[] | undefined => {
   const roles = rolesOf(role).filter(r => places.has(r))
   if (!pool?.length || roles.length === 0) return undefined
-  const keep = pool.filter(kind => {
-    const kindRoles = tags[kind]
-    return !kindRoles || kindRoles.some(r => roles.includes(r))
-  })
-  return keep.length >= MIN_POOL && keep.length < pool.length ? keep : undefined
+  const belongsHere = (kind: K): boolean => !!tags[kind]?.some(r => roles.includes(r))
+  const keep = pool.filter(kind => !tags[kind] || belongsHere(kind))
+  // **A pool of one is fine when that one thing IS the place.** A scriptorium where every statue is the
+  // same Osiris, or a necropolis where every dead end holds a coffin, is a place asserting itself — real
+  // tombs repeat, and the repetition is what makes the wing read as one room rather than a sampler. What
+  // does read as a bug is a wing left with only the kinds that belong nowhere: every fork holding rubble
+  // says the furniture went missing, not that this is the rubble district. So the test is not how MANY
+  // kinds survive but whether any of them speaks to this place — and if none does, the narrowing had
+  // nothing to say and the rank's own pool stands.
+  //
+  // The repetition is exact, since a kind resolves to one sprite per rank. If that ever reads as
+  // copy-paste rather than as a place, the fix is sprite variants behind the same kind, not padding the
+  // pool with furniture the place would not have.
+  if (keep.length === pool.length || !keep.some(belongsHere)) return undefined
+  return keep
 }
 
 const dressNode = (node: {
