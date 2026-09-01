@@ -1,6 +1,7 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
+import type { Rect, StateGroups } from "./tileRegions"
 import { CELL, SIDE_W, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
@@ -148,34 +149,38 @@ describe("SiteMapView — room clickability", () => {
 // which region a CELL landed in — asserted on the region data rather than sniffed out of rendered SVG.
 const regionsOf = (grid: FloorGrid) => tileRegionsFor(grid, buildRoomClaims(grid))
 
-const coversSquare = (rects: readonly (readonly number[])[], row: number, col: number) =>
+const coversSquare = (rects: readonly Rect[], row: number, col: number) =>
   rects.some(([x, y, w, h]) => x === cellLeft(col) && y === cellTop(row) && w === CELL && h === CELL)
 
 // What the map draws in the thin gap on a cell's west side — floor where the way is open, wall where
 // it is not, and nothing at all where it is the mouth of a passage still in the dark.
 const westGapOf = (grid: FloorGrid, row: number, col: number): "floor" | "wall" | "nothing" => {
-  const regions = regionsOf(grid)
-  const isGap = ([x, y, w, h]: readonly number[]) =>
-    x === cellLeft(col) - SIDE_W && y === cellTop(row) && w === SIDE_W && h === CELL
-  const floor = [...Object.values(regions.floorRoom).flat(), ...Object.values(regions.floorCorridor).flat()]
-  const wall = [...Object.values(regions.wallMass).flat(), ...Object.values(regions.wallFace).flat()]
-  if (floor.some(isGap)) return "floor"
-  if (wall.some(isGap)) return "wall"
+  const isGap = ([x, y, w, h]: Rect) => x === cellLeft(col) - SIDE_W && y === cellTop(row) && w === SIDE_W && h === CELL
+  if (allRects(grid, g => [g.floorRoom, g.floorCorridor]).some(isGap)) return "floor"
+  if (allRects(grid, g => [g.wallMass, g.wallFace]).some(isGap)) return "wall"
   return "nothing"
 }
 
-const isWall = (grid: FloorGrid, row: number, col: number) => {
-  const regions = regionsOf(grid)
-  return coversSquare([...Object.values(regions.wallMass).flat(), ...Object.values(regions.wallFace).flat()], row, col)
-}
+// Regions are grouped per tier now (a gated pocket is built of its own stone), and these assertions
+// are about geometry rather than material, so they look across every tier the floor holds.
+const allRects = (grid: FloorGrid, pick: (g: StateGroups) => Record<string, Rect[]>[]): Rect[] =>
+  [...regionsOf(grid).values()].flatMap(groups => pick(groups).flatMap(part => Object.values(part).flat()))
+
+const isWall = (grid: FloorGrid, row: number, col: number) =>
+  coversSquare(
+    allRects(grid, g => [g.wallMass, g.wallFace]),
+    row,
+    col
+  )
 
 // The state group a drawn cell landed in. A claimed cell borrows its owner's state, so this is how
 // the map says which room owns a contested void cell.
 const floorStateOf = (grid: FloorGrid, row: number, col: number) => {
-  const regions = regionsOf(grid)
-  for (const groups of [regions.floorRoom, regions.floorCorridor]) {
-    for (const [state, rects] of Object.entries(groups)) {
-      if (coversSquare(rects, row, col)) return state
+  for (const tierGroups of regionsOf(grid).values()) {
+    for (const part of [tierGroups.floorRoom, tierGroups.floorCorridor]) {
+      for (const [state, rects] of Object.entries(part)) {
+        if (coversSquare(rects, row, col)) return state
+      }
     }
   }
   return null

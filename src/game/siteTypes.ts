@@ -24,6 +24,10 @@ export type CorridorCell = {
   type: "corridor"
   dirs: ReadonlySet<Direction>
   state: CellState
+  /** The tier this corridor's own section was authored at — what it is BUILT of, which is not always
+   * the floor's tier: a ward pocket gated behind a junior key is junior stone inside a starter
+   * pyramid. Mirrors RoomCell.difficulty, which has always carried this for rooms. */
+  difficulty?: Difficulty
   sectionHash?: string
   /** The hash this cell had before the section hash stopped covering the encounter, so a save
    *  written under the old scheme still recognises its own cells. Read-only compatibility — nothing

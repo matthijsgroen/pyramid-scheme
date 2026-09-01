@@ -1,4 +1,4 @@
-import type { CellState } from "@/game/siteTypes"
+import type { CellState, Difficulty } from "@/game/siteTypes"
 import { CELL, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
 
 // Which rectangles the sprite renderer paints, grouped so each group becomes ONE filled path
@@ -24,14 +24,19 @@ import { CELL, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
 export type CellKind = "room" | "corridor"
 
 /**
- * - `{ state, kind }` — the map draws floor here.
+ * - `{ state, kind, tier }` — the map draws floor here, built of `tier`'s stone. A floor is not all
+ *   one tier: a pocket gated behind a junior key is junior stone inside a starter pyramid, and the
+ *   gate is the seam where the material changes.
  * - `"unlit"` — a real passage the player has not seen yet. Walled like stone, so its route stays
  *   hidden, EXCEPT at its mouth: the one gap where lit floor meets it stays open, and that opening is
  *   how the map says the way carries on past what has been explored. Leaving its whole length undrawn
  *   traced the corridor instead — direction and length legible without walking it.
  * - `"stone"` — no passage at all. Wall, if anything drawn is next to it.
  */
-export type FloorAt = (row: number, col: number) => { state: CellState; kind: CellKind } | "unlit" | "stone"
+export type FloorAt = (
+  row: number,
+  col: number
+) => { state: CellState; kind: CellKind; tier: Difficulty } | "unlit" | "stone"
 
 /** Whether the player can pass from (row, col) toward `dir`. Adjacency is not passage: a room claims
  * the cells around it, so its floor can sit flush against a corridor it has no way through to. */
@@ -40,7 +45,7 @@ export type OpenBetween = (row: number, col: number, dir: "s" | "e") => boolean
 /** An SVG rect, ready to become part of a path. */
 export type Rect = readonly [x: number, y: number, w: number, h: number]
 
-export type TileRegions = {
+export type StateGroups = {
   floorRoom: Record<CellState, Rect[]>
   floorCorridor: Record<CellState, Rect[]>
   /** solid stone: whole cells of it, the corners between them, and side walls seen edge-on */
@@ -49,10 +54,21 @@ export type TileRegions = {
   wallFace: Record<CellState, Rect[]>
 }
 
+/** One set of groups per tier the floor actually holds — the renderer draws each with that tier's own
+ * patterns, so a gated pocket of another difficulty is built of its own stone. */
+export type TileRegions = Map<Difficulty, StateGroups>
+
 export const ALL_STATES: CellState[] = ["fogged", "visible", "reachable", "completed"]
 
 const emptyGroups = (): Record<CellState, Rect[]> =>
   Object.fromEntries(ALL_STATES.map(s => [s, [] as Rect[]])) as Record<CellState, Rect[]>
+
+const emptyStateGroups = (): StateGroups => ({
+  floorRoom: emptyGroups(),
+  floorCorridor: emptyGroups(),
+  wallMass: emptyGroups(),
+  wallFace: emptyGroups(),
+})
 
 // A wall borrows the brightest state around it: a wall between an explored room and an unlit passage
 // belongs to the room, or the map would darken the near side of a wall the player stands next to.
@@ -65,13 +81,26 @@ export const buildTileRegions = (
   rows: number,
   cols: number,
   floorAt: FloorAt,
-  openBetween: OpenBetween
+  openBetween: OpenBetween,
+  /** What stone to use where no floor is in reach to say — the floor's own tier. */
+  fallbackTier: Difficulty
 ): TileRegions => {
-  const regions: TileRegions = {
-    floorRoom: emptyGroups(),
-    floorCorridor: emptyGroups(),
-    wallMass: emptyGroups(),
-    wallFace: emptyGroups(),
+  const regions: TileRegions = new Map()
+  // A rect belongs to the tier of the cell it is part of — the same cell its STATE comes from, so
+  // material and light never disagree about which room a rect belongs to.
+  const groupsFor = (tier: Difficulty): StateGroups => {
+    const existing = regions.get(tier)
+    if (existing) return existing
+    const fresh = emptyStateGroups()
+    regions.set(tier, fresh)
+    return fresh
+  }
+  const tierAt = (...cells: readonly (readonly [number, number])[]): Difficulty => {
+    for (const [r, c] of cells) {
+      const cell = floorOf(r, c)
+      if (cell) return cell.tier
+    }
+    return fallbackTier
   }
   const floorOf = (r: number, c: number) => {
     const at = floorAt(r, c)
@@ -98,8 +127,8 @@ export const buildTileRegions = (
     const above = floorOf(r - 1, c)
     return !(above && openBetween(r - 1, c, "s"))
   }
-  const floorGroup = (...cells: ({ kind: CellKind } | null)[]) =>
-    cells.every(cell => cell?.kind === "room") ? regions.floorRoom : regions.floorCorridor
+  const floorGroup = (groups: StateGroups, ...cells: ({ kind: CellKind } | null)[]) =>
+    cells.every(cell => cell?.kind === "room") ? groups.floorRoom : groups.floorCorridor
 
   // One ring beyond the grid, so a passage on the map's edge still gets a wall to look at rather
   // than ending in open background.
@@ -113,12 +142,12 @@ export const buildTileRegions = (
 
       // ── the cell's own floor square ──
       if (here) {
-        floorGroup(here)[here.state].push([x, y, CELL, CELL])
+        floorGroup(groupsFor(here.tier), here)[here.state].push([x, y, CELL, CELL])
       } else {
         // Mass wherever stone touches something drawn, and nothing at all otherwise — bare rock the
         // map has never had a reason to show. An unlit passage is stone here too, so its route stays
         // hidden; only its mouth shows, below.
-        const lit = litTouching(
+        const around = [
           [r - 1, c],
           [r + 1, c],
           [r, c - 1],
@@ -126,34 +155,53 @@ export const buildTileRegions = (
           [r - 1, c - 1],
           [r - 1, c + 1],
           [r + 1, c - 1],
-          [r + 1, c + 1]
-        )
-        if (lit) regions.wallMass[lit].push([x, y, CELL, CELL])
+          [r + 1, c + 1],
+        ] as const
+        const lit = litTouching(...around)
+        if (lit) groupsFor(tierAt(...around)).wallMass[lit].push([x, y, CELL, CELL])
       }
 
       // ── the north gap: floor when the way is open, otherwise the face you look at ──
       const northGap: Rect = [x, y - WALL_H, CELL, WALL_H]
       if (here && north && openBetween(r - 1, c, "s")) {
-        floorGroup(here, north)[brightest(here.state, north.state)!].push(northGap)
+        const groups = groupsFor(tierAt([r, c], [r - 1, c]))
+        floorGroup(groups, here, north)[brightest(here.state, north.state)!].push(northGap)
       } else if (isMouth([r - 1, c], [r, c])) {
         // The mouth of an unexplored passage. Left black on purpose: that opening is how the map says
         // the way carries on past what has been explored.
       } else if (isFaceGap(r, c)) {
-        regions.wallFace[brightest(here!.state, north?.state)!].push(northGap)
+        groupsFor(tierAt([r, c], [r - 1, c])).wallFace[brightest(here!.state, north?.state)!].push(northGap)
       } else {
-        const lit = litTouching([r - 1, c], [r, c], [r - 1, c - 1], [r - 1, c + 1], [r, c - 1], [r, c + 1])
-        if (lit) regions.wallMass[lit].push(northGap)
+        const around = [
+          [r - 1, c],
+          [r, c],
+          [r - 1, c - 1],
+          [r - 1, c + 1],
+          [r, c - 1],
+          [r, c + 1],
+        ] as const
+        const lit = litTouching(...around)
+        if (lit) groupsFor(tierAt(...around)).wallMass[lit].push(northGap)
       }
 
       // ── the west gap: floor when the way is open, otherwise a side wall seen edge-on ──
       const westGap: Rect = [x - SIDE_W, y, SIDE_W, CELL]
       if (here && west && openBetween(r, c - 1, "e")) {
-        floorGroup(here, west)[brightest(here.state, west.state)!].push(westGap)
+        const groups = groupsFor(tierAt([r, c], [r, c - 1]))
+        floorGroup(groups, here, west)[brightest(here.state, west.state)!].push(westGap)
       } else if (isMouth([r, c - 1], [r, c])) {
         // Same mouth, sideways.
       } else {
-        const lit = litTouching([r, c], [r, c - 1], [r - 1, c], [r - 1, c - 1], [r + 1, c], [r + 1, c - 1])
-        if (lit) regions.wallMass[lit].push(westGap)
+        const around = [
+          [r, c],
+          [r, c - 1],
+          [r - 1, c],
+          [r - 1, c - 1],
+          [r + 1, c],
+          [r + 1, c - 1],
+        ] as const
+        const lit = litTouching(...around)
+        if (lit) groupsFor(tierAt(...around)).wallMass[lit].push(westGap)
       }
 
       // ── the corner where four cells meet ──
@@ -183,13 +231,20 @@ export const buildTileRegions = (
         openBetween(r, c - 1, "e") &&
         openBetween(r - 1, c - 1, "s") &&
         openBetween(r - 1, c - 1, "e")
-      const cornerLit = litTouching([r, c], [r - 1, c], [r, c - 1], [r - 1, c - 1])
+      const cornerCells = [
+        [r, c],
+        [r - 1, c],
+        [r, c - 1],
+        [r - 1, c - 1],
+      ] as const
+      const cornerLit = litTouching(...cornerCells)
+      const cornerGroups = groupsFor(tierAt(...cornerCells))
       if (insideOneSpace) {
-        floorGroup(here, north, west, northWest)[brightest(here.state, north.state, west.state, northWest.state)!].push(
-          corner
-        )
+        floorGroup(cornerGroups, here, north, west, northWest)[
+          brightest(here.state, north.state, west.state, northWest.state)!
+        ].push(corner)
       } else if (cornerLit) {
-        const group = continuesFaceRun ? regions.wallFace : regions.wallMass
+        const group = continuesFaceRun ? cornerGroups.wallFace : cornerGroups.wallMass
         group[cornerLit].push(corner)
       }
     }

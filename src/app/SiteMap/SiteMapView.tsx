@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { Fragment, useEffect, useMemo, useState } from "react"
 import type {
   CellState,
   DecorationKind,
@@ -818,19 +818,23 @@ const cellFloorAt = (
   r: number,
   c: number
 ): ReturnType<FloorAt> => {
+  // The stone a cell is built of is its own SECTION's tier, not its floor's: a pocket gated behind a
+  // junior key is junior stone inside a starter pyramid, and walking through the gate should say so.
+  const floorTierOf = grid.difficulty ?? "starter"
   const owner = litClaimOwner(grid, claims, r, c)
   // A claimed cell renders as part of its owner: same material, same state, one continuous chamber.
-  if (owner) return { state: owner.state, kind: "room" }
+  if (owner) return { state: owner.state, kind: "room", tier: owner.difficulty ?? floorTierOf }
   const cell = cellAt(grid, r, c)
   if (cell.type === "empty") return "stone"
   // A real passage still in the dark is not stone — see FloorAt.
   if (cell.state === "fogged") return "unlit"
   const kind = cell.type === "room" ? "room" : "corridor"
+  const tier = cell.difficulty ?? floorTierOf
   // A locked gate reads as not-yet-yours: cosmetic only, exactly as its icon does below.
   if (cell.type === "room" && cell.state === "reachable" && isLockedGate(cell, ownedKeys)) {
-    return { state: "visible", kind }
+    return { state: "visible", kind, tier }
   }
-  return { state: cell.state, kind }
+  return { state: cell.state, kind, tier }
 }
 
 /** Which cells the map paints as floor and which as wall. Exported for tests: it is where the claim
@@ -841,7 +845,8 @@ export const tileRegionsFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: 
     grid.rows,
     grid.cols,
     (r, c) => cellFloorAt(grid, claims, ownedKeys, r, c),
-    (r, c, dir) => isPassable(grid, claims, r, c, dir)
+    (r, c, dir) => isPassable(grid, claims, r, c, dir),
+    grid.difficulty ?? "starter"
   )
 
 // A corridor is a "corner" (and thus a valid click target for corner-reveal/hidden-
@@ -930,32 +935,40 @@ const FACE_SHADOW = CELL / 8
 const floorTier = (grid: FloorGrid): Difficulty => grid.difficulty ?? "starter"
 
 const TileLayers = ({ regions, tier }: { regions: TileRegions; tier: Difficulty }) => {
-  const palette = tierPalette[tier]
-  const floor = tileUrl(tier, "floor")
-  const face = tileUrl(tier, "wall-face")
   const mega = CELL * 8
-  const allFloor = rectsToPath([
-    ...Object.values(regions.floorRoom).flat(),
-    ...Object.values(regions.floorCorridor).flat(),
-  ])
+  const allFloor = rectsToPath(
+    [...regions.values()].flatMap(groups => [
+      ...Object.values(groups.floorRoom).flat(),
+      ...Object.values(groups.floorCorridor).flat(),
+    ])
+  )
+  const tiers = [...regions.keys()]
 
   return (
     <>
       <defs>
-        {floor && (
-          <pattern id={`floor-${tier}`} width={mega} height={mega} patternUnits="userSpaceOnUse">
-            {/* preserveAspectRatio="none": an <image> letterboxes itself by default, which leaves the
-                rest of the pattern tile transparent — black slots in the middle of a wall. */}
-            <image href={floor} width={mega} height={mega} preserveAspectRatio="none" />
-          </pattern>
-        )}
-        {face && (
-          // The face art is a cell tall; a face is WALL_H tall, so the pattern is scaled to that
-          // and repeats on it. Every face in the map then shows the same courses at the same height.
-          <pattern id={`face-${tier}`} width={mega} height={WALL_H} patternUnits="userSpaceOnUse">
-            <image href={face} width={mega} height={WALL_H} preserveAspectRatio="none" />
-          </pattern>
-        )}
+        {tiers.map(t => {
+          const floor = tileUrl(t, "floor")
+          const face = tileUrl(t, "wall-face")
+          return (
+            <Fragment key={t}>
+              {floor && (
+                <pattern id={`floor-${t}`} width={mega} height={mega} patternUnits="userSpaceOnUse">
+                  {/* preserveAspectRatio="none": an <image> letterboxes itself by default, which leaves the
+                      rest of the pattern tile transparent — black slots in the middle of a wall. */}
+                  <image href={floor} width={mega} height={mega} preserveAspectRatio="none" />
+                </pattern>
+              )}
+              {face && (
+                // The face art is a cell tall; a face is WALL_H tall, so the pattern is scaled to that
+                // and repeats on it. Every face in the map then shows the same courses at the same height.
+                <pattern id={`face-${t}`} width={mega} height={WALL_H} patternUnits="userSpaceOnUse">
+                  <image href={face} width={mega} height={WALL_H} preserveAspectRatio="none" />
+                </pattern>
+              )}
+            </Fragment>
+          )
+        })}
       </defs>
 
       <g>
@@ -963,29 +976,38 @@ const TileLayers = ({ regions, tier }: { regions: TileRegions; tier: Difficulty 
             blurring into each other. Stroked UNDER the fills, on the whole floor at once: a stroke
             drawn on top would trace every cell's border and put a grid over the floor, while
             underneath only the outward half of the outline survives, which is the silhouette. */}
-        <path d={allFloor} fill="none" stroke={palette.outline} strokeWidth={4} />
+        <path d={allFloor} fill="none" stroke={tierPalette[tier].outline} strokeWidth={4} />
 
-        {ALL_STATES.map(state => {
-          const wash = stateWash[state]
-          const room = rectsToPath(regions.floorRoom[state])
-          const corridor = rectsToPath(regions.floorCorridor[state])
-          const mass = rectsToPath(regions.wallMass[state])
-          const faces = rectsToPath(regions.wallFace[state])
-          const shadows = faceShadowsToPath(regions.wallFace[state], FACE_SHADOW)
-          const floorFill = floor ? `url(#floor-${tier})` : palette.slab
+        {tiers.map(t => {
+          const palette = tierPalette[t]
+          const groups = regions.get(t)!
+          const floorFill = tileUrl(t, "floor") ? `url(#floor-${t})` : palette.slab
+          const faceFill = tileUrl(t, "wall-face") ? `url(#face-${t})` : palette.wall
           return (
-            <g key={state}>
-              {mass && <path d={mass} fill={palette.wallBase} />}
-              {room && <path d={room} fill={floorFill} />}
-              {corridor && (
-                <>
-                  <path d={corridor} fill={floorFill} />
-                  <path d={corridor} fill={corridorShade.fill} opacity={corridorShade.opacity} />
-                </>
-              )}
-              {faces && <path d={faces} fill={face ? `url(#face-${tier})` : palette.wall} />}
-              {shadows && <path d={shadows} fill={palette.outline} opacity={0.45} />}
-              {wash && <path d={room + corridor + faces + mass} fill={wash.fill} opacity={wash.opacity} />}
+            <g key={t}>
+              {ALL_STATES.map(state => {
+                const wash = stateWash[state]
+                const room = rectsToPath(groups.floorRoom[state])
+                const corridor = rectsToPath(groups.floorCorridor[state])
+                const mass = rectsToPath(groups.wallMass[state])
+                const faces = rectsToPath(groups.wallFace[state])
+                const shadows = faceShadowsToPath(groups.wallFace[state], FACE_SHADOW)
+                return (
+                  <g key={state}>
+                    {mass && <path d={mass} fill={palette.wallBase} />}
+                    {room && <path d={room} fill={floorFill} />}
+                    {corridor && (
+                      <>
+                        <path d={corridor} fill={floorFill} />
+                        <path d={corridor} fill={corridorShade.fill} opacity={corridorShade.opacity} />
+                      </>
+                    )}
+                    {faces && <path d={faces} fill={faceFill} />}
+                    {shadows && <path d={shadows} fill={palette.outline} opacity={0.45} />}
+                    {wash && <path d={room + corridor + faces + mass} fill={wash.fill} opacity={wash.opacity} />}
+                  </g>
+                )
+              })}
             </g>
           )
         })}
@@ -1210,7 +1232,7 @@ export const SiteMapView = ({
                       ) : (
                         cell.state === "reachable" && isCorner && <ReachableDot />
                       ))}
-                    {decoration && <Decoration kind={decoration} tier={tier} />}
+                    {decoration && <Decoration kind={decoration} tier={claimOwner.difficulty ?? tier} />}
                   </g>
                 )
               }

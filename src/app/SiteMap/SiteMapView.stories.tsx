@@ -89,15 +89,17 @@ const getWorldGrid = (siteId: string): FloorGrid => {
   return result.grid
 }
 
+// starter_1 rather than any starter floor, because its ward-chest teasers are authored at junior: the
+// floor is built of two tiers, which is the case a single-material renderer got wrong.
 export const WorldFloorStarter: Story = {
-  args: { grid: getWorldGrid("starter_2"), revealAllCells: true },
+  args: { grid: getWorldGrid("starter_1"), revealAllCells: true },
 }
 
 // The same floor part-explored, which is the only way to judge what the fog gives away: a wall is
 // drawn where lit floor touches stone, so the shape of the drawn stone must not trace passages the
 // player has not walked.
 export const WorldFloorUnexplored: Story = {
-  args: { grid: getWorldGrid("starter_2") },
+  args: { grid: getWorldGrid("starter_1") },
 }
 
 export const WorldFloorMaster: Story = {

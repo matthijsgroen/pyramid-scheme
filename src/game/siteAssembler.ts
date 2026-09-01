@@ -12,6 +12,7 @@ import type {
   SubSection,
   SideSection,
   DecorationKind,
+  Difficulty,
 } from "./siteTypes"
 import type { ResolveBoardIndex } from "./seeds/boardIndex"
 import { validateSite } from "./siteValidator"
@@ -1055,12 +1056,17 @@ export const assembleFloor = (
       return !gatedCellKeys.has(posKey(r, c)) && !gatedCellKeys.has(posKey(nr, nc))
     }
 
+    // Which tier each cell's own section was authored at, so a passage into a pocket of another
+    // difficulty is BUILT of that difficulty (docs/game-design/spritesheet-renderer-prep.md — the
+    // material is the rank whose tomb this is). Rooms carry it already; corridors did not.
+    const cellDifficulty = new Map<string, Difficulty>()
     const mainSectionHash = computeMainSectionHash(config, mainIsolated)
     const legacyMainSectionHash = computeLegacyMainSectionHash(config)
     for (const [r, c] of mainPath) {
       cellSectionHash.set(posKey(r, c), mainSectionHash)
       cellLegacySectionHash.set(posKey(r, c), legacyMainSectionHash)
       cellDecorationPool.set(posKey(r, c), config.decorations)
+      cellDifficulty.set(posKey(r, c), config.difficulty)
     }
     for (const group of sectionGroups) {
       const sHash = computeSideSectionHash(
@@ -1072,10 +1078,12 @@ export const assembleFloor = (
       const legacyHash = computeLegacySideSectionHash(sideSections[group.sectionIdx], group.sectionIdx)
       const isHidden = hiddenSectionIdxs.has(group.sectionIdx)
       const pool = sideSections[group.sectionIdx].decorations
+      const sectionTier = sideSections[group.sectionIdx].difficulty
       for (const [r, c] of group.cells) {
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
         cellDecorationPool.set(posKey(r, c), pool)
+        cellDifficulty.set(posKey(r, c), sectionTier)
         if (isHidden) hiddenCellPositions.add(posKey(r, c))
       }
     }
@@ -1092,6 +1100,7 @@ export const assembleFloor = (
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
         cellDecorationPool.set(posKey(r, c), subSection.decorations)
+        cellDifficulty.set(posKey(r, c), subSection.difficulty)
       }
     }
 
@@ -1408,6 +1417,10 @@ export const assembleFloor = (
           type: "room",
           dirs,
           state: "fogged",
+          // The tier of the section this room stands in, so the map is BUILT of it — a treasure room
+          // in a junior pocket is junior stone even though only encounter rooms carry a difficulty of
+          // their own. The spread below still wins, so a room authored at its own tier keeps it.
+          ...(cellDifficulty.get(cellKey) ? { difficulty: cellDifficulty.get(cellKey) } : {}),
           sectionHash,
           legacySectionHash,
           ...(hidden ? { hidden } : {}),
@@ -1415,12 +1428,14 @@ export const assembleFloor = (
         }
         cells2D[r][c] = roomCell
       } else {
+        const cellTier = cellDifficulty.get(posKey(r, c))
         const corridorCell: CorridorCell = {
           type: "corridor",
           dirs,
           state: "fogged",
           sectionHash,
           legacySectionHash,
+          ...(cellTier ? { difficulty: cellTier } : {}),
           ...(hidden ? { hidden } : {}),
         }
         cells2D[r][c] = corridorCell
@@ -1447,12 +1462,14 @@ export const assembleFloor = (
           mc = (c + nc) / 2
         const hidden = hiddenCellPositions.has(cellKey) && hiddenCellPositions.has(neighborKey) ? true : undefined
         const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
+        const connectorTier = cellDifficulty.get(cellKey)
         cells2D[mr][mc] = {
           type: "corridor",
           dirs: new Set([d, OPPOSITE[d]]),
           state: "fogged",
           sectionHash,
           legacySectionHash: cellLegacySectionHash.get(cellKey) ?? legacyMainSectionHash,
+          ...(connectorTier ? { difficulty: connectorTier } : {}),
           ...(hidden ? { hidden } : {}),
         }
       }
