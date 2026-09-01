@@ -31,6 +31,12 @@ export const SIDE_W = CELL / 4 // 14 — the thickness of a side wall, seen edge
 export const ROW_PITCH = CELL + WALL_H // 84 = 3 faces
 export const COL_PITCH = CELL + SIDE_W // 70
 
+/** How tall an archway is: half a band PROUD of the wall it stands in, like the pylon gate of a real
+ * temple, with its foot on the floor line of the way through. An arch confined to the band read as a low
+ * hatch rather than as something to walk under. Painted over everything (see Archways in SiteMapView), so
+ * the part standing proud covers the ground beyond the doorway — which is what being in front means. */
+export const ARCH_H = WALL_H + WALL_H / 2 // 42
+
 /** Padding around the map: room for the one-cell ring of wall outside the grid. */
 export const PAD = CELL
 

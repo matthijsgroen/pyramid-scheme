@@ -19,3 +19,7 @@ for (const [path, url] of Object.entries(urls)) {
  * `default`, and then to the placeholder glyph. */
 export const tileUrl = (tier: Difficulty, name: string): string | undefined =>
   byTier.get(`${tier}/${name}`) ?? byTier.get(`default/${name}`)
+
+/** Art that is the same in every tomb, from `tiles/default/`. The explorer is one person walking down
+ * five ranks of tomb, not a fifth of a set — a rank dresses the place, never the player. */
+export const sharedTileUrl = (name: string): string | undefined => byTier.get(`default/${name}`)

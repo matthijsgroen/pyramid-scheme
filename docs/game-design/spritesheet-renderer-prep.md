@@ -33,8 +33,9 @@ a sprite index. No data changes needed.
 **Tile variants for visual variety** — derive from `hash(row, col, siteId) % variantCount`
 in the renderer. Deterministic, pure view concern, no grid data changes.
 
-**Player animation direction** — derive facing from the movement vector between frames.
-No stored state needed. `ExplorerDot` already has access to `from` and `to` positions.
+**Player animation direction** — facing comes off the movement vector of the step being walked, so there
+is no stored direction to keep in sync with the route (`facingOf` in `ExplorerDot`). See "The explorer"
+below.
 
 **SVG → Canvas** — the switch is localised to `SiteMapView` and `ExplorerDot`. Nothing
 outside those two files cares about the rendering primitive.
@@ -355,6 +356,24 @@ one stairhead).
    nobleman's wing into a priest's is a door between two parts of one necropolis; a gate from a
    merchant's cellar straight into the gods' vault would not be, and the ladder is what stops the
    art from being asked for that.
+
+## The explorer — a person, not a rank
+
+The art is **shared, in `tiles/default/`** (`sharedTileUrl`), never per tier: one person walks down all
+five ranks, and a rank dresses the place rather than the player.
+
+**Three files, not four** — `explorer-s`, `explorer-n`, `explorer-e` at 40 × 48, bottom-anchored on the
+cell's floor line so the figure stands in its own square. Facing west is facing east mirrored with
+`scale(-1, 1)`, which is the whole reason for three. Facing itself is derived from the step being walked
+(per segment, so a route that turns turns the figure), and rest faces south — met face on.
+
+**With no art present it falls back to the dot the map had before**, so no look is locked in by the
+plumbing: dropping three PNGs in swaps the character, deleting them takes it back. `ExplorerFigure` is
+split out from the walking for exactly that reason, and the **Facings story** draws all four facings at 1:1
+and 3x over pale limestone and black granite — the two grounds a figure has to read against.
+
+It draws over a room's node icon (a character standing on a cell hides some of what the cell says) and
+under an arch, which is the one thing in front of it.
 
 ## Archways — the one thing painted over the player
 

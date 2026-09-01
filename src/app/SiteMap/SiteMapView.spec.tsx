@@ -2,7 +2,7 @@ import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
 import type { Rect, StateGroups } from "./tileRegions"
-import { CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
+import { ARCH_H, CELL, SIDE_W, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 
@@ -271,12 +271,14 @@ describe("SiteMapView — portals never render as completed", () => {
   })
 })
 
-describe("SiteMapView — explorer dot snaps on floor switch", () => {
+describe("SiteMapView — explorer snaps on floor switch", () => {
   Element.prototype.scrollTo = vi.fn()
 
-  const dotAt = (container: HTMLElement) => container.querySelector('circle[fill="#ffd060"]')
+  // The explorer group carries the position, whether it drew as a character sprite or as the fallback
+  // dot — so this asserts where the explorer IS without caring which of the two it got.
+  const explorerAt = (container: HTMLElement) => container.querySelector("[data-explorer]")
 
-  it("places the dot at the new floor's entrance immediately instead of animating a walk", () => {
+  it("places the explorer at the new floor's entrance immediately instead of animating a walk", () => {
     const floor0 = makeGrid([[room("completed"), room("reachable")]])
     const { container, rerender } = render(<SiteMapView grid={floor0} explorerPos={[0, 1]} currentFloor={0} />)
 
@@ -286,8 +288,7 @@ describe("SiteMapView — explorer dot snaps on floor switch", () => {
     rerender(<SiteMapView grid={floor1} explorerPos={[0, 0]} currentFloor={1} />)
 
     const { cx, cy } = cellCenter(0, 0)
-    expect(dotAt(container)?.getAttribute("cx")).toBe(String(cx))
-    expect(dotAt(container)?.getAttribute("cy")).toBe(String(cy))
+    expect(explorerAt(container)?.getAttribute("transform")).toBe(`translate(${cx}, ${cy})`)
   })
 })
 
@@ -542,7 +543,7 @@ describe("archways", () => {
     const arches = archesIn(container)
     expect(arches).toHaveLength(1)
     // The band above the room's own cell — the gap the player walks through.
-    expect(arches[0].getAttribute("y")).toBe(String(cellTop(1) - WALL_H))
+    expect(arches[0].getAttribute("y")).toBe(String(cellTop(1) - ARCH_H))
     expect(arches[0].getAttribute("opacity")).toBe("1")
   })
 

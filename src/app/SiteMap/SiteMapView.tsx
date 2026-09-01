@@ -23,6 +23,7 @@ import {
   NODE_RADIUS_FORK,
   NODE_RADIUS_LARGE,
   NODE_RADIUS_PUZZLE,
+  ARCH_H,
   WALL_H,
   cellCenter,
   cellLeft,
@@ -1244,9 +1245,10 @@ const Archways = ({
           key={`${row},${col}`}
           href={url}
           x={cellLeft(col)}
-          y={cellTop(row) - WALL_H}
+          // Foot on the floor line of the way through, so the height it gains stands PROUD of the wall.
+          y={cellTop(row) - ARCH_H}
           width={CELL}
-          height={WALL_H}
+          height={ARCH_H}
           opacity={under ? ARCH_FADE : 1}
           preserveAspectRatio="none"
         />

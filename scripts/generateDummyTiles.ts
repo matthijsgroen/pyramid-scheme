@@ -16,7 +16,7 @@ import { dirname, join } from "path"
 import { fileURLToPath } from "url"
 import sharp from "sharp"
 import { tierPalette } from "../src/app/SiteMap/tileMaterials"
-import { WALL_H } from "../src/app/SiteMap/mapScale"
+import { ARCH_H, WALL_H } from "../src/app/SiteMap/mapScale"
 import type { TierPalette } from "../src/app/SiteMap/tileMaterials"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -344,22 +344,25 @@ const wallShapes: Record<WallKind, (p: Palette) => string> = {
 }
 
 // ── Archway ───────────────────────────────────────────────────────────────────
-// Drawn into the band above a doorway — the gap where a passage meets a chamber — so it frames a way
-// through rather than a wall. The middle stays TRANSPARENT: the floor of the passage shows through it,
-// and the arch reads as something the player walks under. The renderer paints it over everything,
-// explorer included, and fades it while the player is in the doorway.
+// Stands in the band above a doorway — the gap where a passage meets a chamber — and half a band PROUD
+// of it, the way a pylon gate rises above the wall it pierces. The middle stays TRANSPARENT: the floor of
+// the way through shows beneath it, so the arch reads as something the player walks under. The renderer
+// paints it over everything, explorer included, and fades it while the player is in the doorway.
 const archSvg = (tier: string): Buffer => {
   const p = PALETTES[tier]
   const jamb = 10
+  const crown = ARCH_H - BAND // the part standing above the wall line
   return svg(
     TILE,
-    BAND,
+    ARCH_H,
     `<g stroke="${p.outline}" stroke-width="2" stroke-linejoin="round">
-       <rect x="0" y="0" width="${TILE}" height="8" fill="${p.wallTop}"/>
-       <rect x="0" y="8" width="${jamb}" height="${BAND - 8}" fill="${p.wall}"/>
-       <rect x="${TILE - jamb}" y="8" width="${jamb}" height="${BAND - 8}" fill="${p.wall}"/>
-       <rect x="0" y="0" width="${TILE}" height="2" fill="${p.accent}" opacity="0.5"/>
-       <rect x="${jamb}" y="8" width="${TILE - jamb * 2}" height="4" fill="${p.wallBase}"/>
+       <!-- cavetto cornice: the flared crown of an Egyptian gateway, wider than the jambs below it -->
+       <rect x="0" y="0" width="${TILE}" height="${crown}" fill="${p.wallTop}"/>
+       <rect x="0" y="0" width="${TILE}" height="2" fill="${p.accent}" opacity="0.6"/>
+       <rect x="2" y="${crown}" width="${TILE - 4}" height="6" fill="${p.wall}"/>
+       <rect x="4" y="${crown + 6}" width="${jamb}" height="${ARCH_H - crown - 6}" fill="${p.wall}"/>
+       <rect x="${TILE - jamb - 4}" y="${crown + 6}" width="${jamb}" height="${ARCH_H - crown - 6}" fill="${p.wall}"/>
+       <rect x="${jamb + 4}" y="${crown + 6}" width="${TILE - jamb * 2 - 8}" height="4" fill="${p.wallBase}"/>
      </g>`
   )
 }
@@ -385,6 +388,55 @@ const propSvg = (tier: string, kind: Kind): Buffer => {
     `${glow}
      <rect x="12" y="${BASE - 2}" width="32" height="4" fill="${p.outline}" opacity="0.4"/>
      <g stroke="${p.outline}" stroke-width="2" stroke-linejoin="round">${shapes[kind](p)}</g>`
+  )
+}
+
+// ── The explorer ──────────────────────────────────────────────────────────────
+// One person walking down five ranks of tomb, so this art lives in tiles/default/ and is NOT per tier:
+// a rank dresses the place, never the player. Three facings — south (met face on), north (walking away),
+// east (profile); west is east mirrored by the renderer, which is why there is no fourth file.
+//
+// Bottom-anchored like a prop, with its own palette rather than a tier's: the explorer has to read
+// against limestone and against black granite alike, so it is light linen and dark hair either way.
+const CHAR_W = 40
+const CHAR_H = 48
+const SKIN = "#c98a52"
+const LINEN = "#e8e2d0"
+const HAIR = "#1b1712"
+const SASH = "#c8a33c"
+const INK = "#120f0b"
+
+const explorerSvg = (facing: "s" | "n" | "e"): Buffer => {
+  const feet = CHAR_H - 2
+  const body = `
+    <rect x="12" y="${feet - 26}" width="16" height="20" fill="${LINEN}"/>
+    <rect x="12" y="${feet - 14}" width="16" height="3" fill="${SASH}"/>
+    <rect x="14" y="${feet - 6}" width="4" height="6" fill="${SKIN}"/>
+    <rect x="22" y="${feet - 6}" width="4" height="6" fill="${SKIN}"/>`
+  const head = `<rect x="14" y="${feet - 40}" width="12" height="14" fill="${SKIN}"/>`
+  const hairCap = `<rect x="13" y="${feet - 42}" width="14" height="7" fill="${HAIR}"/>`
+  const face =
+    facing === "s"
+      ? `<rect x="16" y="${feet - 33}" width="2" height="2" fill="${INK}"/>
+         <rect x="22" y="${feet - 33}" width="2" height="2" fill="${INK}"/>`
+      : facing === "e"
+        ? `<rect x="26" y="${feet - 33}" width="3" height="3" fill="${SKIN}"/>
+           <rect x="23" y="${feet - 33}" width="2" height="2" fill="${INK}"/>`
+        : "" // walking away: the back of a head has no face on it
+  const arms =
+    facing === "e"
+      ? `<rect x="26" y="${feet - 24}" width="4" height="12" fill="${SKIN}"/>`
+      : `<rect x="8" y="${feet - 24}" width="4" height="12" fill="${SKIN}"/>
+         <rect x="28" y="${feet - 24}" width="4" height="12" fill="${SKIN}"/>`
+  return svg(
+    CHAR_W,
+    CHAR_H,
+    `<ellipse cx="20" cy="${feet}" rx="12" ry="3" fill="${INK}" opacity="0.35"/>
+     <g stroke="${INK}" stroke-width="2" stroke-linejoin="round">
+       ${arms}${body}${head}${hairCap}
+     </g>
+     ${facing === "n" ? `<rect x="13" y="${feet - 36}" width="14" height="4" fill="${HAIR}"/>` : ""}
+     ${face}`
   )
 }
 
@@ -524,10 +576,15 @@ const main = async (): Promise<void> => {
     await write(tier, "threshold", thresholdSvg(tier), TILE, SILL)
     for (const kind of ALL_KINDS) await write(tier, kind, propSvg(tier, kind), TILE, PROP_H)
     for (const kind of WALL_KINDS) await write(tier, kind, wallItemSvg(tier, kind), TILE, BAND)
-    await write(tier, "arch", archSvg(tier), TILE, BAND)
+    await write(tier, "arch", archSvg(tier), TILE, ARCH_H)
     count += 4 + ALL_KINDS.length + WALL_KINDS.length
   }
-  console.log(`${count} dummy tiles written to src/assets/tiles/ (${tiers.length} tiers)`)
+  // Shared art, written once: the explorer is not a rank.
+  for (const facing of ["s", "n", "e"] as const) {
+    await write("default", `explorer-${facing}`, explorerSvg(facing), CHAR_W, CHAR_H)
+    count++
+  }
+  console.log(`${count} dummy tiles written to src/assets/tiles/ (${tiers.length} tiers + shared)`)
   if (process.argv.includes("--preview")) console.log(`preview: ${await preview(tiers)}`)
 }
 
