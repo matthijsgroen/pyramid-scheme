@@ -126,6 +126,11 @@ export const findPath = (
     }
   }
 
+  // No route: an EMPTY path. It used to return `[from, to]`, a two-point straight line, and every
+  // caller believed it — the explorer glided across solid stone to a cell it had no way of reaching,
+  // which is what a tap on a cell with no walkable route looked like.
+  if (!parent.has(key(tr, tc))) return []
+
   const path: Array<readonly [number, number]> = []
   let cur: string | null = key(tr, tc)
   while (cur !== null) {
@@ -133,7 +138,36 @@ export const findPath = (
     path.unshift([r, c])
     cur = parent.get(cur) ?? null
   }
-  return path.length > 1 ? path : [from, to]
+  return path
+}
+
+/** Every cell the player can WALK to from `from`: real edges only, never through ground still in
+ * the dark — the same rule findPath walks, which is the point. A marker offered on a cell outside this
+ * set is an affordance the map cannot honour, and the corridor holding it should read as the dead end
+ * it is. */
+export const walkableFrom = (grid: FloorGrid, from: readonly [number, number]): ReadonlySet<string> => {
+  const [fr, fc] = from
+  const seen = new Set<string>([`${fr},${fc}`])
+  const queue: Array<readonly [number, number]> = [[fr, fc]]
+
+  while (queue.length > 0) {
+    const [r, c] = queue.shift()!
+    const cell = grid.cells[r]?.[c]
+    if (!cell || cell.type === "empty") continue
+    for (const d of cell.dirs) {
+      const [dr, dc] = MOVES[d]
+      const nr = r + dr,
+        nc = c + dc
+      const key = `${nr},${nc}`
+      if (seen.has(key)) continue
+      const neighbor = grid.cells[nr]?.[nc]
+      if (!neighbor || neighbor.type === "empty" || neighbor.state === "fogged") continue
+      seen.add(key)
+      queue.push([nr, nc])
+    }
+  }
+
+  return seen
 }
 
 export const revealAll = (grid: FloorGrid): FloorGrid => {

@@ -238,6 +238,48 @@ describe(findPath, () => {
       [0, 2],
     ])
   })
+
+  // It used to answer `[from, to]` here — a two-point straight line — and every caller took it for a
+  // route: the explorer glided across solid stone to a cell it had no way of reaching.
+  it("returns no path at all when there is no walkable route", () => {
+    const grid: FloorGrid = {
+      siteId: "test",
+      rows: 1,
+      cols: 3,
+      entrancePos: [0, 0],
+      exitPos: [0, 2],
+      staircases: {},
+      cells: [
+        [
+          { type: "room", roomType: "encounter", dirs: new Set<Direction>([]), state: "reachable" },
+          { type: "empty" },
+          { type: "room", roomType: "portal", dirs: new Set<Direction>([]), state: "reachable" },
+        ],
+      ],
+    }
+
+    expect(findPath(grid, [0, 0], [0, 2])).toEqual([])
+  })
+
+  it("returns no path when the only route runs through unexplored ground", () => {
+    const grid: FloorGrid = {
+      siteId: "test",
+      rows: 1,
+      cols: 3,
+      entrancePos: [0, 0],
+      exitPos: [0, 2],
+      staircases: {},
+      cells: [
+        [
+          { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e"]), state: "reachable" },
+          { type: "corridor", dirs: new Set<Direction>(["w", "e"]), state: "fogged" },
+          { type: "room", roomType: "portal", dirs: new Set<Direction>(["w"]), state: "reachable" },
+        ],
+      ],
+    }
+
+    expect(findPath(grid, [0, 0], [0, 2])).toEqual([])
+  })
 })
 
 describe(revealAll, () => {

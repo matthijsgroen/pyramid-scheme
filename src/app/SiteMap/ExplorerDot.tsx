@@ -50,7 +50,14 @@ export const ExplorerDot = ({ grid, pos, segmentDuration = 120, color = "#ffd060
       return
     }
 
-    const waypoints = findPath(grid, from, pos).map(toPixel)
+    const route = findPath(grid, from, pos)
+    // Nothing to walk along: appear there instead of sliding through the stone in between.
+    if (route.length === 0) {
+      setSvgPos(toPixel(pos))
+      onArriveRef.current?.()
+      return
+    }
+    const waypoints = route.map(toPixel)
     const dest = waypoints[waypoints.length - 1]
 
     // Snap if mid-glide

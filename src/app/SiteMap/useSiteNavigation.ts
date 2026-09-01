@@ -54,6 +54,9 @@ export const useSiteNavigation = ({
       const cell = getCell(grid, row, col)
       if (!cell || cell.type === "empty") return
       if (cell.state !== "reachable" && cell.state !== "completed") return
+      // A tap means "walk there", so somewhere with no walkable route is not somewhere a tap can send
+      // the player: moving anyway is a teleport, and can shut them inside a pocket they cannot leave.
+      if (findPath(grid, explorerPos, [row, col]).length === 0) return
 
       const edgeId = encodeEdge(currentFloor, row, col)
       const sectionHash = cell.sectionHash ?? ""

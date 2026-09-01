@@ -12,7 +12,7 @@ import type {
   RoomType,
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
-import { revealAll } from "../../game/gridNavigation"
+import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 import { ExplorerDot } from "./ExplorerDot"
 import { useMapZoom } from "./useMapZoom"
@@ -1119,6 +1119,16 @@ export const SiteMapView = ({
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
   const claims = useMemo(() => buildRoomClaims(grid), [grid])
   const tier = useMemo(() => floorTier(grid), [grid])
+  // Where the player can actually walk to. A corner is marked "reachable" when it is revealed, from
+  // wherever the player stood THEN; whether a route still exists from where they stand NOW is a
+  // different question, and it is the one a marker has to answer — an unreachable marker is a tap
+  // that does nothing, where a plain dead end would have told the truth.
+  const walkable = useMemo(
+    () => (explorerPos ? walkableFrom(grid, explorerPos) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [grid, explorerPos?.[0], explorerPos?.[1]]
+  )
+  const canWalkTo = (row: number, col: number) => !walkable || walkable.has(`${row},${col}`)
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Corridor-run markers track the explorer dot's visual position, not the logical one:
   // hide them the instant a run target is clicked (the player has committed to a
@@ -1214,11 +1224,12 @@ export const SiteMapView = ({
                 const decoration = claims.decorationAt.get(cellKey)
                 const isCorner = cell.type === "corridor" && isCorridorCorner(cell.dirs)
                 const runTarget = cell.type === "corridor" ? corridorRunTargets.get(cellKey) : undefined
+                const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
                 const corridorClickable =
                   cell.type === "corridor" &&
                   onCellClick &&
+                  canWalkTo(clickTarget[0], clickTarget[1]) &&
                   ((cell.state === "reachable" || cell.state === "completed") && isCorner ? true : !!runTarget)
-                const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
                 return (
                   <g
                     key={cellKey}
@@ -1227,6 +1238,7 @@ export const SiteMapView = ({
                     style={{ cursor: corridorClickable ? "pointer" : "default" }}
                   >
                     {cell.type === "corridor" &&
+                      canWalkTo(clickTarget[0], clickTarget[1]) &&
                       (runTarget ? (
                         <RunTargetArrow dir={runTarget.dir} />
                       ) : (
@@ -1246,10 +1258,11 @@ export const SiteMapView = ({
                 // A visible run's near end has no corner of its own to click — it borrows the
                 // far corner's click target (see findCorridorRunTarget) so a long corridor
                 // that scrolls off screen still has something to tap right next to the player.
+                const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
                 const corridorClickable =
                   onCellClick &&
+                  canWalkTo(clickTarget[0], clickTarget[1]) &&
                   (((cell.state === "reachable" || cell.state === "completed") && isCorner) || !!runTarget)
-                const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
                 return (
                   <g
                     key={`${r},${c}`}
@@ -1257,11 +1270,12 @@ export const SiteMapView = ({
                     onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
                     style={{ cursor: corridorClickable ? "pointer" : "default" }}
                   >
-                    {runTarget ? (
-                      <RunTargetArrow dir={runTarget.dir} />
-                    ) : (
-                      cell.state === "reachable" && isCorner && <ReachableDot />
-                    )}
+                    {canWalkTo(clickTarget[0], clickTarget[1]) &&
+                      (runTarget ? (
+                        <RunTargetArrow dir={runTarget.dir} />
+                      ) : (
+                        cell.state === "reachable" && isCorner && <ReachableDot />
+                      ))}
                   </g>
                 )
               }
@@ -1282,7 +1296,7 @@ export const SiteMapView = ({
                 shapeKind === "treasure" &&
                 cell.reward?.type === "consumable" &&
                 (pendingCells?.has(`${r},${c}`) ?? false)
-              const clickable = onCellClick && (state === "reachable" || state === "completed")
+              const clickable = onCellClick && (state === "reachable" || state === "completed") && canWalkTo(r, c)
               const roomR = nodeRadius[shapeKind]
               const locked = isLockedGate(cell, ownedKeys)
               const displayState: CellState = locked && state === "reachable" ? "visible" : state
