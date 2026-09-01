@@ -92,6 +92,8 @@ export const masterRules: Rule[] = [
       "pillar",
       "brazier",
     ],
+    // a pharaoh's: a bronze mirror sconce, a gilded mask, an offering niche.
+    wallDecorations: ["sconce", "mask", "niche"],
   }),
 
   tier("master").set({

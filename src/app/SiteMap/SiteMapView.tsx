@@ -10,6 +10,7 @@ import type {
   KeyColor,
   RoomCell,
   RoomType,
+  WallDecorationKind,
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
@@ -24,12 +25,14 @@ import {
   NODE_RADIUS_PUZZLE,
   WALL_H,
   cellCenter,
+  cellLeft,
+  cellTop,
   mapHeight,
   mapWidth,
 } from "./mapScale"
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
 import { tileUrl } from "./tileAssets"
-import { ALL_STATES, buildTileRegions, faceShadowsToPath, rectsToPath } from "./tileRegions"
+import { ALL_STATES, buildTileRegions, faceShadowsToPath, hasWallFace, rectsToPath } from "./tileRegions"
 import type { FloorAt, TileRegions } from "./tileRegions"
 
 // Cells one step outside the grid are still real void for claiming purposes — a fork or
@@ -1091,6 +1094,82 @@ const DecorationGlyph = ({ kind }: { kind: DecorationKind }) => {
   }
 }
 
+// ─── Wall items ────────────────────────────────────────────────────────────────
+// A wall item hangs ON a wall, so unlike a prop it needs a wall to hang on: it is drawn into the face
+// band above a cell of the room's footprint that HAS a face — the room's own cell first, then the cells
+// it claims, in claim order. A room with no face anywhere in its footprint carries no wall item, which
+// is also what keeps one off a fogged room: fog reads as unlit passage, and an unlit gap has no band.
+
+type WallItem = {
+  row: number
+  col: number
+  kind: WallDecorationKind
+  tier: Difficulty
+  /** the band's own light, so an item is not brighter than the wall it hangs on */
+  state: CellState
+}
+
+/** Where each room's authored wall item lands. Exported for tests, same as the claim rules: cells
+ * beat sniffing rendered SVG. */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on cells
+export const wallItemsFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: ReadonlySet<string>): WallItem[] => {
+  const floorAt: FloorAt = (r, c) => cellFloorAt(grid, claims, ownedKeys, r, c)
+  const openBetween = (r: number, c: number, dir: "s" | "e") => isPassable(grid, claims, r, c, dir)
+  const claimedByOwner = new Map<string, string[]>()
+  for (const [cellKey, ownerKey] of claims.claimedBy) {
+    const list = claimedByOwner.get(ownerKey)
+    if (list) list.push(cellKey)
+    else claimedByOwner.set(ownerKey, [cellKey])
+  }
+  const items: WallItem[] = []
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room" || !cell.wallDecoration) continue
+      const ownerKey = `${r},${c}`
+      for (const key of [ownerKey, ...(claimedByOwner.get(ownerKey) ?? [])]) {
+        const [br, bc] = key.split(",").map(Number)
+        if (!hasWallFace(floorAt, openBetween, br, bc)) continue
+        const at = floorAt(br, bc)
+        if (typeof at === "string") continue
+        items.push({ row: br, col: bc, kind: cell.wallDecoration, tier: at.tier, state: at.state })
+        break
+      }
+    }
+  }
+  return items
+}
+
+const WallItems = ({ items }: { items: readonly WallItem[] }) => (
+  <g>
+    {items.map(({ row, col, kind, tier, state }) => {
+      const url = tileUrl(tier, kind)
+      const x = cellLeft(col)
+      const y = cellTop(row) - WALL_H
+      const wash = stateWash[state]
+      return (
+        <Fragment key={`${row},${col}`}>
+          {url ? (
+            // The band's shape, not a square: a wall item is painted on the face.
+            <image href={url} x={x} y={y} width={CELL} height={WALL_H} preserveAspectRatio="none" />
+          ) : (
+            <rect
+              x={x + CELL / 2 - 6}
+              y={y + WALL_H / 2 - 5}
+              width={12}
+              height={10}
+              fill="none"
+              stroke={DECORATION_COLOR}
+              strokeWidth={1.5}
+            />
+          )}
+          {wash && <rect x={x} y={y} width={CELL} height={WALL_H} fill={wash.fill} opacity={wash.opacity} />}
+        </Fragment>
+      )
+    })}
+  </g>
+)
+
 // ─── Click-target markers ───────────────────────────────────────────────────────
 
 // A plain corner's reachable marker has no single direction to point in — a corner or
@@ -1148,6 +1227,7 @@ export const SiteMapView = ({
   )
   const canWalkTo = (row: number, col: number) => !walkable || walkable.has(`${row},${col}`)
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
+  const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Corridor-run markers track the explorer dot's visual position, not the logical one:
   // hide them the instant a run target is clicked (the player has committed to a
   // destination, so the old markers no longer apply), and don't show the new ones at the
@@ -1213,6 +1293,7 @@ export const SiteMapView = ({
           style={{ background: tierPalette[tier].wallBase, imageRendering: "pixelated" }}
         >
           <TileLayers regions={regions} tier={tier} />
+          <WallItems items={wallItems} />
 
           {Array.from({ length: grid.rows + 2 }, (_, ri) => {
             const r = ri - 1

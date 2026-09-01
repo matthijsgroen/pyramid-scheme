@@ -259,6 +259,7 @@ describe("what a world-spec setting may and may not move", () => {
       c =>
         edited(c, n => {
           if (n.decorations) n.decorations = ["rubble"]
+          if (n.wallDecorations) n.wallDecorations = ["niche"]
         }),
     ],
     [

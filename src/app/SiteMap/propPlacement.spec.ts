@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
-import { buildRoomClaims } from "./SiteMapView"
+import { revealAll } from "@/game/gridNavigation"
+import type { FloorGrid } from "@/game/siteTypes"
+import { buildRoomClaims, wallItemsFor } from "./SiteMapView"
 
 // The pools authored per rank (spec/*.ts) only mean something if props actually land on rooms. This
 // is the one check that the whole chain — tier constraint → floor config → assembler → cell — holds.
@@ -81,5 +83,50 @@ describe("props stay out of the way", () => {
 
     expect(props).toBeGreaterThan(0)
     expect(walkedOn).toEqual([])
+  })
+})
+
+// Wall items are placed like props and drawn nowhere near them, so they need their own check: the
+// chain tier constraint → floor config → assembler → cell, and then the render-time anchor that puts
+// one in a face band of the room's own footprint.
+describe("authored wall-item pools reach real walls", () => {
+  const wallItems = (limit: number) => {
+    const items: Array<{ item: ReturnType<typeof wallItemsFor>[number]; grid: FloorGrid; owner: string }> = []
+    for (const [siteId, levels] of Object.entries(generatedWorldConfigs).slice(0, limit)) {
+      levels.flat().forEach((floor, i) => {
+        const result = assembleFloor(`${siteId}:${i}`, floor, 7)
+        if (!result.success) return
+        // Fully explored: a wall item hangs in a face band, and an unexplored cell has no band —
+        // fog reads as unlit passage. What is being checked here is the placement, not the fog.
+        const grid = revealAll(result.grid)
+        const claims = buildRoomClaims(grid)
+        for (const item of wallItemsFor(grid, claims)) {
+          items.push({ item, grid, owner: claims.claimedBy.get(`${item.row},${item.col}`) ?? "" })
+        }
+      })
+    }
+    return items
+  }
+
+  it("hangs items on the generated world's floors, across the pool", () => {
+    const counts = new Map<string, number>()
+    for (const { item } of wallItems(12)) counts.set(item.kind, (counts.get(item.kind) ?? 0) + 1)
+
+    const total = [...counts.values()].reduce((a, b) => a + b, 0)
+    expect(total).toBeGreaterThan(0)
+    // Which item a room hangs is picked by WHERE the room is, the same as its prop — so a rank's
+    // whole pool shows up rather than every room in the world carrying its first entry.
+    expect(counts.size).toBeGreaterThan(1)
+    expect(Math.max(...counts.values()) / total).toBeLessThan(0.85)
+  })
+
+  it("hangs each item inside its own room's footprint", () => {
+    const strays: string[] = []
+    for (const { item, grid, owner } of wallItems(8)) {
+      const own = grid.cells[item.row]?.[item.col]
+      const isOwnCell = own?.type === "room" && own.wallDecoration === item.kind
+      if (!isOwnCell && !owner) strays.push(`${grid.siteId} ${item.row},${item.col} ${item.kind}`)
+    }
+    expect(strays).toEqual([])
   })
 })

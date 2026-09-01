@@ -141,6 +141,7 @@ const buildSiteConfigs = (
         // may recognise, so handing one to a section rendering a different family costs nothing.
         sideTheme: constraint.theme,
         sideDecorations: constraint.decorations,
+        sideWallDecorations: constraint.wallDecorations,
       })
       pyramidConfigs.push(floors)
     }
@@ -249,6 +250,7 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
       // reason to carry; a skin demands nothing).
       sideTheme: constraint.theme,
       sideDecorations: constraint.decorations,
+      sideWallDecorations: constraint.wallDecorations,
     })
     configs[tomb.id] = [floorConfigs]
   }

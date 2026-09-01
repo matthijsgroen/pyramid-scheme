@@ -16,6 +16,7 @@ import { dirname, join } from "path"
 import { fileURLToPath } from "url"
 import sharp from "sharp"
 import { tierPalette } from "../src/app/SiteMap/tileMaterials"
+import { WALL_H } from "../src/app/SiteMap/mapScale"
 import type { TierPalette } from "../src/app/SiteMap/tileMaterials"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -28,6 +29,8 @@ const MEGA_CELLS = 8 // repetition period of the floor and wall-face megatiles, 
 const MEGA = TILE * MEGA_CELLS // 448
 const FACE = TILE // a wall face is a full cell tall — a one-cell-thick wall is all face, no top
 const SILL = 12 // threshold sill: a band on the floor, not a wall
+// A wall item is painted on a cell's face band, so it is the band's shape rather than a square.
+const BAND = WALL_H
 
 // The tier materials live in src so the renderer and this generator cannot drift apart.
 const PALETTES = tierPalette
@@ -285,6 +288,60 @@ const shapes: Record<Kind, (p: Palette) => string> = {
     <rect x="6" y="${BASE - 16}" width="44" height="2" fill="${p.accent}" opacity="0.7"/>`,
 }
 
+// ── Wall items ────────────────────────────────────────────────────────────────
+// Hung ON the wall, so these are drawn on the face band: TILE wide, BAND tall, and nothing touches
+// the band's bottom edge — that edge is the floor line, and an item resting on it reads as standing
+// in the room rather than hanging above it.
+type WallKind = "niche" | "stela" | "sconce" | "veil" | "starShaft" | "wallShrine" | "tallyBoard" | "mask"
+
+const WALL_KINDS: WallKind[] = ["niche", "stela", "sconce", "veil", "starShaft", "wallShrine", "tallyBoard", "mask"]
+
+const H = BAND // the band, top to floor line
+const wallShapes: Record<WallKind, (p: Palette) => string> = {
+  niche: p => `
+    <rect x="14" y="4" width="28" height="${H - 8}" fill="${p.outline}"/>
+    <rect x="17" y="7" width="22" height="${H - 13}" fill="${p.propDark}"/>
+    <rect x="20" y="${H - 14}" width="7" height="8" fill="${p.prop}"/>
+    <rect x="29" y="${H - 12}" width="8" height="6" fill="${p.accent}"/>`,
+  stela: p => `
+    <rect x="18" y="6" width="20" height="${H - 10}" fill="${p.prop}"/>
+    <rect x="21" y="9" width="14" height="${H - 15}" fill="${p.propDark}"/>
+    <rect x="24" y="12" width="8" height="2" fill="${p.accent}"/>
+    <rect x="24" y="16" width="8" height="2" fill="${p.accent}"/>`,
+  sconce: p => `
+    <rect x="26" y="8" width="4" height="${H - 14}" fill="${p.propDark}"/>
+    <rect x="20" y="4" width="16" height="6" fill="${p.prop}"/>
+    <ellipse cx="28" cy="6" rx="8" ry="4" fill="${p.accent}"/>`,
+  veil: p => `
+    <rect x="8" y="4" width="40" height="3" fill="${p.propDark}"/>
+    <path d="M 12 7 L 12 ${H - 4} Q 28 ${H - 1} 44 ${H - 4} L 44 7 Z" fill="${p.prop}"/>
+    <rect x="26" y="7" width="4" height="${H - 11}" fill="${p.accent}" opacity="0.5"/>`,
+  starShaft: p => `
+    <rect x="16" y="4" width="24" height="${H - 9}" fill="${p.outline}"/>
+    <rect x="19" y="7" width="18" height="${H - 15}" fill="#0b0d1c"/>
+    <rect x="23" y="10" width="2" height="2" fill="#ffffff"/>
+    <rect x="31" y="13" width="2" height="2" fill="#ffffff"/>
+    <rect x="27" y="${H - 12}" width="2" height="2" fill="${p.accent}"/>`,
+  wallShrine: p => `
+    <path d="M 12 10 L 28 3 L 44 10 Z" fill="${p.prop}"/>
+    <rect x="16" y="10" width="24" height="${H - 15}" fill="${p.propDark}"/>
+    <rect x="22" y="13" width="12" height="${H - 21}" fill="${p.accent}" opacity="0.6"/>`,
+  tallyBoard: p => `
+    <rect x="10" y="5" width="36" height="${H - 12}" fill="${p.prop}"/>
+    ${[15, 20, 25, 33, 38].map(x => `<rect x="${x}" y="8" width="2" height="${H - 18}" fill="${p.propDark}"/>`).join("")}
+    <rect x="10" y="5" width="36" height="2" fill="${p.accent}" opacity="0.6"/>`,
+  mask: p => `
+    <rect x="20" y="4" width="16" height="4" fill="${p.accent}"/>
+    <ellipse cx="28" cy="${H / 2 + 1}" rx="10" ry="${H / 2 - 5}" fill="${p.prop}"/>
+    <rect x="23" y="${H / 2 - 2}" width="4" height="2" fill="${p.outline}"/>
+    <rect x="30" y="${H / 2 - 2}" width="4" height="2" fill="${p.outline}"/>`,
+}
+
+const wallItemSvg = (tier: string, kind: WallKind): Buffer => {
+  const p = PALETTES[tier]
+  return svg(TILE, BAND, `<g stroke="${p.outline}" stroke-width="2" stroke-linejoin="round">${wallShapes[kind](p)}</g>`)
+}
+
 const propSvg = (tier: string, kind: Kind): Buffer => {
   const p = PALETTES[tier]
   // A brazier is the tier's light source, so it carries its own glow — in this idiom the lighting
@@ -391,7 +448,7 @@ const preview = async (tiers: string[]): Promise<string> => {
             )
           }
           const prop = PROP_AT[`${r},${c}`]
-          if (prop && PROPS[tier].includes(prop)) {
+          if (prop && ALL_KINDS.includes(prop)) {
             props.push(
               `<image href="${uri(join(dir, `${prop}.png`))}" x="${x}" y="${y}" width="${TILE}" height="${TILE}"/>`
             )
@@ -438,7 +495,8 @@ const main = async (): Promise<void> => {
     await write(tier, "wall-face", wallFaceSvg(tier), MEGA, FACE)
     await write(tier, "threshold", thresholdSvg(tier), TILE, SILL)
     for (const kind of ALL_KINDS) await write(tier, kind, propSvg(tier, kind), TILE, TILE)
-    count += 3 + ALL_KINDS.length
+    for (const kind of WALL_KINDS) await write(tier, kind, wallItemSvg(tier, kind), TILE, BAND)
+    count += 3 + ALL_KINDS.length + WALL_KINDS.length
   }
   console.log(`${count} dummy tiles written to src/assets/tiles/ (${tiers.length} tiers)`)
   if (process.argv.includes("--preview")) console.log(`preview: ${await preview(tiers)}`)

@@ -49,6 +49,8 @@ export const starterRules: Rule[] = [
       "pit",
       "mat",
     ],
+    // a merchant hangs inventory: a niche of goods and the tally board beside it.
+    wallDecorations: ["niche", "tallyBoard"],
   }),
 
   tier("starter")

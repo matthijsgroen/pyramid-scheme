@@ -469,12 +469,16 @@ section its own pool literal, so each counter restarted at zero and every fork i
 crate. `propPlacement.spec.ts` guards both halves — that props land at all, and that no single kind
 takes more than 60% of them.
 
-Still unauthored: the six new kinds and `wallDecoration`.
+`wallDecoration` is authored the same way, from its own `wallDecorations` pool: a second optional
+kind beside `decoration` on `RoomCell`, picked by the same positional hash under its own salt, and
+drawn into a face band instead of on the floor. It earned its keep here rather than being deferred,
+because the stela, the goods niche and the star shaft are the signature items of three of the five
+ranks, and none of them can be painted into art.
 
-`wallDecoration` does not exist yet at all — it is a second optional kind beside `decoration` on
-`RoomCell`, placed the same way and drawn into that cell's face band instead of on its floor. It earns
-its keep here rather than being deferred, because the stela, the goods niche and the star shaft are
-the signature items of three of the five ranks, and none of them can be painted into art.
+Every rank authors a wall pool of two or three items, from the Walls table's own Items column — a
+merchant hangs a niche of goods and a tally board, the gods hang a star shaft. `propPlacement.spec.ts`
+guards the wall items the same way it guards the props, plus that each one lands inside its own room's
+footprint.
 
 Build order, each step visible on its own:
 
@@ -482,18 +486,15 @@ Build order, each step visible on its own:
 2. ~~the new `DecorationKind` values and the `fountain` → `basin` rename~~ — **done.** Sixteen kinds.
 3. ~~a sill where the rank changes~~ — **done.** `StateGroups.threshold`, drawn from the entered tier's
    `threshold.png`.
-4. **`wallDecoration` — next, and the only step left that needs new plumbing.** Sketch:
-   - a `WallDecorationKind` of its own rather than reusing `DecorationKind`: these hang ON a wall and
-     the two must not be confusable. From the Walls table: `niche`, `stela`, `sconce`, `veil`,
-     `starShaft`, `wallShrine`, `tallyBoard`, `mask`.
-   - `RoomCell.wallDecoration`, filled by `siteAssembler` from a `wallDecorations` pool exactly as
-     `decoration` is filled from `decorations` — including the positional pick, so a rank's wall items
-     vary by where the room is rather than by how many rooms drew before it.
-   - the anchor is a render-time question, as `decorationAt` already is: draw it in the face band of a
-     cell that HAS a face (its north gap is `wallFace`), trying the room's own cell first and then its
-     claimed cells. A room with no face anywhere in its footprint carries no wall item.
-   - the sprite is `tiles/<tier>/<kind>.png` at `CELL` × `WALL_H`, not `CELL` square: it is painted on
-     the band, so it is the band's shape.
+4. ~~`wallDecoration`~~ — **done.** Eight kinds of their own (`niche`, `stela`, `sconce`, `veil`,
+   `starShaft`, `wallShrine`, `tallyBoard`, `mask`), a `wallDecorations` pool per rank cascading exactly
+   as `decorations` does, and `wallItemsFor` in `SiteMapView` as the anchor: the face band of the first
+   cell of the room's footprint that HAS a face — its own cell, then its claims. It asks
+   `tileRegions.hasWallFace`, the same predicate the band itself is built from, so anchor and band
+   cannot disagree. A room with no face anywhere in its footprint carries no wall item, which is also
+   what keeps one off a fogged room: fog reads as unlit passage, and an unlit gap has no band. The
+   sprite is `tiles/<tier>/<kind>.png` at `CELL` × `WALL_H` — the band's shape, not a square — and the
+   band's own state wash is laid back over it, so an item is never brighter than the wall it hangs on.
 5. the art, one rank at a time, starting with whichever rank the player meets first. `make-seamless`
    handles the two megatiles; props and wall items need no treatment.
 
@@ -577,8 +578,8 @@ into `src/assets/tiles/<tier>/`: generated SVG rasterised by `sharp`, which is a
 dependency. Nothing hand-drawn, nothing precious.
 
 Per tier: `floor.png` (448², = 8 cells at 1:1), `wall-face.png` (448×56), `threshold.png` (56×12),
-and one 56² PNG per decoration kind that tier's table above lists. A wall top is a palette token,
-not a file.
+one 56² PNG per decoration kind and one 56×28 PNG per wall-item kind — the band's shape. A wall top is
+a palette token, not a file.
 
 The dummies deliberately carry the things that are hard to judge from a mockup:
 

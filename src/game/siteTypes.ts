@@ -62,6 +62,13 @@ export type DecorationKind =
   | "shrine"
   | "crystal"
   | "mat"
+// What hangs ON a wall, drawn into a cell's face band rather than standing on its floor. Its own
+// vocabulary rather than a slice of DecorationKind: a stela is not a prop that could stand in the
+// middle of a chamber, and the two must not be confusable
+// (docs/game-design/spritesheet-renderer-prep.md, "Three things a tier dresses"). Resolved as
+// tiles/<tier>/<kind>.png at CELL x WALL_H — the band's own shape, not a square.
+export type WallDecorationKind =
+  "niche" | "stela" | "sconce" | "veil" | "starShaft" | "wallShrine" | "tallyBoard" | "mask"
 export type RoomCell = {
   type: "room"
   roomType: RoomType
@@ -122,6 +129,7 @@ export type RoomCell = {
   tags?: string[]
   stairId?: string
   decoration?: DecorationKind
+  wallDecoration?: WallDecorationKind
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 
@@ -163,6 +171,8 @@ export type SubSection = {
   encountersByIndex?: Record<number, string | string[]>
   /** Pool of decoration kinds available to this section's fork/endpoint rooms. */
   decorations?: DecorationKind[]
+  /** Pool of wall-item kinds for the same rooms, hung on a wall instead of standing on the floor. */
+  wallDecorations?: WallDecorationKind[]
   /** Opaque payload for whichever family renders this section's rooms (e.g. a tableau's
    * `{runNr}`) — validated by that family's own ResolveKeyRequirements resolver, never
    * interpreted here. See ResolveKeyRequirements in siteAssembler.ts. */
@@ -186,6 +196,8 @@ export type FloorConfig = {
   sideSections: SideSection[]
   /** Pool of decoration kinds available to the main path's fork/endpoint rooms. */
   decorations?: DecorationKind[]
+  /** Pool of wall-item kinds for the same rooms, hung on a wall instead of standing on the floor. */
+  wallDecorations?: WallDecorationKind[]
   mainEndReward?: TreasureReward
   rewards?: (TreasureReward | undefined)[]
   /** Default family/tag(s) for this floor's main-path encounter rooms. An array means "any of these". */

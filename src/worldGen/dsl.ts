@@ -1,5 +1,5 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
-import type { DecorationKind } from "../game/siteTypes"
+import type { DecorationKind, WallDecorationKind } from "../game/siteTypes"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { wardKeyDifficulty } from "../data/difficultyLevels"
 
@@ -112,6 +112,8 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   sideSections?: SideSectionConstraint<TExtra>[]
   /** Pool of decoration kinds this section's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
+  /** Pool of wall-item kinds those rooms may hang on a wall. */
+  wallDecorations?: WallDecorationKind[]
   /** "staircase" ends the path at a stairhead into the next floor instead of a treasure room. */
   end?: "treasure" | "staircase"
   /** Invisible without the Detection perk. */
@@ -147,6 +149,8 @@ export type FloorConstraint<TExtra extends string = never> = {
   theme?: Theme
   /** Pool of decoration kinds the main path's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
+  /** Pool of wall-item kinds those rooms may hang on a wall. */
+  wallDecorations?: WallDecorationKind[]
   /**
    * Side paths for this pyramid.
    * - SideIntensity | number: that many auto mosaic-piece paths, no explicit sections.
@@ -208,6 +212,10 @@ export type PyramidConstraint = {
    * one names its own. Authored at tier level this dresses a whole rank in one line. Purely drawn —
    * a free field (docs/game-design/world-spec-stability.md). */
   decorations?: DecorationKind[]
+  /** Pool of wall items every floor and side section of this site hangs on its walls, unless one names
+   * its own. Its own vocabulary, because a wall item is not a prop (see WallDecorationKind). Purely
+   * drawn — a free field (docs/game-design/world-spec-stability.md). */
+  wallDecorations?: WallDecorationKind[]
   /** Default family/tag for this pyramid/tomb's main-path encounter rooms — e.g. a tomb sets
    * "tableau" (or the "tomb-puzzle" tag) here so every floor's main-path rooms use it. An array is
    * "any of these". */

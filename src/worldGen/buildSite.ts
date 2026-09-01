@@ -1,4 +1,4 @@
-import type { DecorationKind } from "../game/siteTypes"
+import type { DecorationKind, WallDecorationKind } from "../game/siteTypes"
 import type { Difficulty, FloorConfig, SideSection, Tier, TreasureReward } from "./types"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { GLOBAL_DEFAULTS } from "./spec/global"
@@ -98,6 +98,7 @@ export type BuildFloorOptions = {
   encounterArgs?: unknown
   theme?: string
   decorations?: DecorationKind[]
+  wallDecorations?: WallDecorationKind[]
 }
 
 // The common FloorConfig skeleton shared by every pyramid and tomb floor — defaults to a
@@ -112,6 +113,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.mainEndReward ? { mainEndReward: opts.mainEndReward } : {}),
   ...(opts.encounter ? { encounter: opts.encounter } : {}),
   ...(opts.decorations?.length ? { decorations: opts.decorations } : {}),
+  ...(opts.wallDecorations?.length ? { wallDecorations: opts.wallDecorations } : {}),
   ...(opts.encountersByIndex && Object.keys(opts.encountersByIndex).length
     ? { encountersByIndex: opts.encountersByIndex }
     : {}),
@@ -172,6 +174,7 @@ export type BuildSiteContext<TExtra extends string = never> = {
   /** Skin for side sections that author none. Safe for any site to hand down (see sideSections.ts). */
   sideTheme?: string
   sideDecorations?: DecorationKind[]
+  sideWallDecorations?: WallDecorationKind[]
 }
 
 // Builds one site's floors (the 3 floor-shape branches: authored floors[], auto multi-floor
@@ -192,6 +195,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sideEncounterArgs,
     sideTheme,
     sideDecorations,
+    sideWallDecorations,
   } = ctx
 
   const mainEndReward: TreasureReward = constraint.mainEndReward
@@ -231,6 +235,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         sideEncounterArgs,
         sideTheme,
         sideDecorations,
+        sideWallDecorations,
       })
       const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
@@ -265,6 +270,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           // A floor may wear its own skin inside a plainer pyramid; unset, it wears the site’s.
           theme: fc.theme ?? constraint.theme,
           decorations: fc.decorations ?? constraint.decorations,
+          wallDecorations: fc.wallDecorations ?? constraint.wallDecorations,
         })
       )
     }
@@ -322,6 +328,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         sideEncounterArgs,
         sideTheme,
         sideDecorations,
+        sideWallDecorations,
         declaredSidePaths: constraint.sidePaths,
         declaredHiddenPaths: constraint.hiddenPaths,
       })
@@ -449,6 +456,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sideEncounter,
     sideEncounterArgs,
     sideTheme,
+    sideDecorations,
+    sideWallDecorations,
     declaredSidePaths: constraint.sidePaths,
     declaredHiddenPaths: constraint.hiddenPaths,
   })

@@ -32,6 +32,7 @@ Change these as often as you like. The walls stay put, the hashes stay put, and 
 | `endReward` / `mainEndReward` _contents_ | Which reward a chain's end chest holds. Swapping one reward for another is free; **removing it entirely is not** — see below. |
 | `gate.wardKeyId`, `gate.color`           | Which key opens a door, and what colour it wears. Gate _presence_ is structural; which key is not.                            |
 | `decorations`                            | The pool a fork or dead end draws its sarcophagus or rubble from. Purely drawn.                                               |
+| `wallDecorations`                        | The same, for what it hangs on a wall — a stela, a niche, a star shaft. Purely drawn.                                        |
 | `theme`                                  | The skin a room's puzzle wears.                                                                                               |
 | `encounterArgs`                          | A family's own payload (a tableau's `runNr`). Read by that family alone, never by the carve.                                  |
 

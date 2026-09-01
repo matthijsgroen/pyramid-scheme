@@ -12,6 +12,7 @@ import type {
   SubSection,
   SideSection,
   DecorationKind,
+  WallDecorationKind,
   Difficulty,
 } from "./siteTypes"
 import type { ResolveBoardIndex } from "./seeds/boardIndex"
@@ -983,8 +984,11 @@ export const assembleFloor = (
     const cellSectionHash = new Map<string, string>()
     const cellLegacySectionHash = new Map<string, string>()
     const hiddenCellPositions = new Set<string>()
-    // Which section's authored decoration pool a footprint room should draw from.
-    const cellDecorationPool = new Map<string, DecorationKind[] | undefined>()
+    // Which section's authored dressing pools a footprint room should draw from — what stands on its
+    // floor and what hangs on its wall, both keyed on the cell so a claimed footprint keeps its own
+    // section's pools.
+    type DressingPools = { props?: DecorationKind[]; wall?: WallDecorationKind[] }
+    const cellDressing = new Map<string, DressingPools>()
 
     const posKey = (r: number, c: number) => `${r},${c}`
 
@@ -1065,7 +1069,7 @@ export const assembleFloor = (
     for (const [r, c] of mainPath) {
       cellSectionHash.set(posKey(r, c), mainSectionHash)
       cellLegacySectionHash.set(posKey(r, c), legacyMainSectionHash)
-      cellDecorationPool.set(posKey(r, c), config.decorations)
+      cellDressing.set(posKey(r, c), { props: config.decorations, wall: config.wallDecorations })
       cellDifficulty.set(posKey(r, c), config.difficulty)
     }
     for (const group of sectionGroups) {
@@ -1077,12 +1081,15 @@ export const assembleFloor = (
       )
       const legacyHash = computeLegacySideSectionHash(sideSections[group.sectionIdx], group.sectionIdx)
       const isHidden = hiddenSectionIdxs.has(group.sectionIdx)
-      const pool = sideSections[group.sectionIdx].decorations
+      const pools: DressingPools = {
+        props: sideSections[group.sectionIdx].decorations,
+        wall: sideSections[group.sectionIdx].wallDecorations,
+      }
       const sectionTier = sideSections[group.sectionIdx].difficulty
       for (const [r, c] of group.cells) {
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
-        cellDecorationPool.set(posKey(r, c), pool)
+        cellDressing.set(posKey(r, c), pools)
         cellDifficulty.set(posKey(r, c), sectionTier)
         if (isHidden) hiddenCellPositions.add(posKey(r, c))
       }
@@ -1099,7 +1106,7 @@ export const assembleFloor = (
       for (const [r, c] of cells) {
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
-        cellDecorationPool.set(posKey(r, c), subSection.decorations)
+        cellDressing.set(posKey(r, c), { props: subSection.decorations, wall: subSection.wallDecorations })
         cellDifficulty.set(posKey(r, c), subSection.difficulty)
       }
     }
@@ -1502,14 +1509,24 @@ export const assembleFloor = (
     // per-pool counter looks equivalent but is not: the generated world gives every section its own
     // pool literal, so each counter started at zero again and all but the first kind went unused —
     // every fork in the world held a crate.
-    const pickDecoration = (pool: DecorationKind[] | undefined, pk: string): DecorationKind | undefined =>
-      pool?.length ? pool[hashString(`${siteId}:decoration:${pk}`) % pool.length] : undefined
+    const pickDressing = <T>(pool: T[] | undefined, pk: string, salt: string): T | undefined =>
+      pool?.length ? pool[hashString(`${siteId}:${salt}:${pk}`) % pool.length] : undefined
     for (const pk of new Set([...forkPositions, ...endpointPositions])) {
-      const decoration = pickDecoration(cellDecorationPool.get(pk), pk)
-      if (!decoration) continue
+      const pools = cellDressing.get(pk)
+      const decoration = pickDressing(pools?.props, pk, "decoration")
+      // Its own salt, so a rank whose two pools are the same length does not pair the same stela with
+      // the same jar rack in every room that draws them.
+      const wallDecoration = pickDressing(pools?.wall, pk, "wallDecoration")
+      if (!decoration && !wallDecoration) continue
       const [r, c] = pk.split(",").map(Number)
       const owner = cells2D[r][c]
-      if (owner.type === "room") cells2D[r][c] = { ...owner, decoration }
+      if (owner.type === "room") {
+        cells2D[r][c] = {
+          ...owner,
+          ...(decoration ? { decoration } : {}),
+          ...(wallDecoration ? { wallDecoration } : {}),
+        }
+      }
     }
 
     const staircases: Record<string, readonly [number, number]> = {}

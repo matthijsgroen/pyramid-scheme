@@ -70,6 +70,8 @@ export const wizardRules: Rule[] = [
       "pit",
       "crystal",
     ],
+    // the gods': a shaft looking out on the night, a crystal bracket, a shrine of light.
+    wallDecorations: ["starShaft", "sconce", "wallShrine"],
   }),
 
   // Wizard's character is DEPTH, where master's is BREADTH — the two tiers are meant to feel

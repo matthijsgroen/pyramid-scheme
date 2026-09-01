@@ -1,5 +1,5 @@
 import type { Difficulty, SideSection, TreasureReward } from "./types"
-import type { DecorationKind } from "../game/siteTypes"
+import type { DecorationKind, WallDecorationKind } from "../game/siteTypes"
 import { mulberry32 } from "../game/random"
 import { TIER_UNLOCK_PERK_IDS } from "../data/treasurePerks"
 import { hashStr, pathEndToReward, specToGate } from "./rewards"
@@ -68,6 +68,7 @@ const buildDslSection = <TExtra extends string>(
     ...(endReward ? { endReward } : {}),
     ...(subSections.length > 0 ? { sideSections: subSections } : {}),
     ...(cs.decorations?.length ? { decorations: cs.decorations } : {}),
+    ...(cs.wallDecorations?.length ? { wallDecorations: cs.wallDecorations } : {}),
     ...(cs.hidden ? { hidden: true } : {}),
     ...(cs.sealed ? { sealed: true } : {}),
     ...(cs.encounter !== undefined ? { encounter: cs.encounter } : {}),
@@ -111,6 +112,7 @@ export type BuildSideSectionsOptions<TExtra extends string = never> = {
    */
   sideTheme?: string
   sideDecorations?: DecorationKind[]
+  sideWallDecorations?: WallDecorationKind[]
   /** Pyramid-only: prepends a hardcoded mapPiece branch pointing at this tier's tomb. */
   hasMapPieceBranch?: boolean
   /** Pyramid-only: prepends a hardcoded tier-unlock ward-key gate. */
@@ -135,7 +137,8 @@ const wearSiteRole = (
   sideEncounter: string | string[] | undefined,
   sideEncounterArgs: unknown,
   sideTheme: string | undefined,
-  sideDecorations: DecorationKind[] | undefined
+  sideDecorations: DecorationKind[] | undefined,
+  sideWallDecorations: WallDecorationKind[] | undefined
 ): SideSection[] =>
   sections.map(section => ({
     ...section,
@@ -145,6 +148,9 @@ const wearSiteRole = (
       : {}),
     ...(sideTheme !== undefined && section.theme === undefined ? { theme: sideTheme } : {}),
     ...(sideDecorations?.length && section.decorations === undefined ? { decorations: sideDecorations } : {}),
+    ...(sideWallDecorations?.length && section.wallDecorations === undefined
+      ? { wallDecorations: sideWallDecorations }
+      : {}),
   }))
 
 export const buildSideSections = <TExtra extends string = never>(
@@ -167,6 +173,7 @@ export const buildSideSections = <TExtra extends string = never>(
     sideEncounterArgs,
     sideTheme,
     sideDecorations,
+    sideWallDecorations,
   } = opts
 
   const sections: SideSection[] = []
@@ -240,5 +247,5 @@ export const buildSideSections = <TExtra extends string = never>(
     }
   })
 
-  return wearSiteRole(sections, sideEncounter, sideEncounterArgs, sideTheme, sideDecorations)
+  return wearSiteRole(sections, sideEncounter, sideEncounterArgs, sideTheme, sideDecorations, sideWallDecorations)
 }

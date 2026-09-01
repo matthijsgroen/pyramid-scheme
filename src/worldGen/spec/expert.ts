@@ -122,6 +122,8 @@ export const expertRules: Rule[] = [
       "pit",
       "mat",
     ],
+    // a priest's wing: the veil before the shrine, a wall shrine, a hanging lamp.
+    wallDecorations: ["veil", "wallShrine", "sconce"],
   }),
 
   tier("expert").set({

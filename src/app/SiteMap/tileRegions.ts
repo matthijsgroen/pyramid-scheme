@@ -82,6 +82,21 @@ const BRIGHTNESS: Record<CellState, number> = { fogged: 0, visible: 1, completed
 const brightest = (...states: (CellState | null | undefined)[]): CellState | null =>
   states.reduce<CellState | null>((best, s) => (s && (!best || BRIGHTNESS[s] > BRIGHTNESS[best]) ? s : best), null)
 
+/** Is the gap north of this cell a wall FACE — the side you look at? Floor below to look at it from,
+ * no doorway through it, and no unlit passage on either side (a mouth stays open). Exported because a
+ * wall item hangs in that band, so the renderer has to ask the same question the band does. */
+export const hasWallFace = (floorAt: FloorAt, openBetween: OpenBetween, row: number, col: number): boolean => {
+  const floorOf = (r: number, c: number) => {
+    const at = floorAt(r, c)
+    return typeof at === "string" ? null : at
+  }
+  const isMouth = (a: readonly [number, number], b: readonly [number, number]): boolean =>
+    (!!floorOf(...a) && floorAt(...b) === "unlit") || (!!floorOf(...b) && floorAt(...a) === "unlit")
+  if (!floorOf(row, col) || isMouth([row - 1, col], [row, col])) return false
+  const above = floorOf(row - 1, col)
+  return !(above && openBetween(row - 1, col, "s"))
+}
+
 export const buildTileRegions = (
   rows: number,
   cols: number,
@@ -124,14 +139,9 @@ export const buildTileRegions = (
   // which is exactly what the fog is for. "The way carries on" is a doorway, not a map.
   const isMouth = (a: readonly [number, number], b: readonly [number, number]): boolean =>
     (!!floorOf(...a) && isUnlit(...b)) || (!!floorOf(...b) && isUnlit(...a))
-  // Is the gap north of this cell a wall face? Floor below to look at it from, no doorway through it,
-  // and no unlit passage on either side. Asked by the gap itself AND by the corners beside it, so the
-  // two can never disagree about where a wall band runs.
-  const isFaceGap = (r: number, c: number): boolean => {
-    if (!floorOf(r, c) || isMouth([r - 1, c], [r, c])) return false
-    const above = floorOf(r - 1, c)
-    return !(above && openBetween(r - 1, c, "s"))
-  }
+  // Asked by the gap itself AND by the corners beside it, so the two can never disagree about where a
+  // wall band runs — and by the renderer, to find a cell with a band to hang a wall item on.
+  const isFaceGap = (r: number, c: number): boolean => hasWallFace(floorAt, openBetween, r, c)
   const floorGroup = (groups: StateGroups, ...cells: ({ kind: CellKind } | null)[]) =>
     cells.every(cell => cell?.kind === "room") ? groups.floorRoom : groups.floorCorridor
 

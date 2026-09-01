@@ -60,6 +60,8 @@ export const juniorRules: Rule[] = [
       "rubble",
       "mat",
     ],
+    // a nobleman's wing: a false-door stela, a lamp niche, a bracket for the lamp.
+    wallDecorations: ["stela", "niche", "sconce"],
   }),
 
   tier("junior")
