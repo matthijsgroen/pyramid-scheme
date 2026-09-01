@@ -497,6 +497,23 @@ Build order, each step visible on its own:
 5. the art, one rank at a time, starting with whichever rank the player meets first. `make-seamless`
    handles the two megatiles; props and wall items need no treatment.
 
+## Tools and fixtures
+
+- `yarn generate-dummy-tiles [--preview]` — rewrites every placeholder tile, deterministically: the
+  same tier always rasterises to the same bytes. `--preview` also writes `tiles/preview.png`, a dry
+  run of the renderer over a hand-written plan, five ranks side by side.
+- `yarn make-seamless [--axis=both|x|y] <file>` — makes art tile that was not drawn to. See above.
+- Three stories render REAL generated floors, which is the only way to see authored content: the
+  hand-built story configs carry no pools. `WorldFloorStarter` is starter_1, deliberately, because its
+  ward-chest teasers are junior — a floor built of two ranks. `WorldFloorUnexplored` is the same floor
+  part-explored, for judging what the fog gives away. `WorldFloorMaster` is the dark end of the ladder.
+- The specs that hold the invariants, rather than the details: `tileRegions.spec.ts` (which rectangle
+  is floor and which is wall), `floorMaterial.spec.ts` (a floor is built of its sections' ranks),
+  `propPlacement.spec.ts` (props land, spread across the pool, never in a walkway) and
+  `clickTargets.spec.tsx` (every target the map offers is standable AND walkable, over eight seeds and
+  a forty-step walk). The last one is the harness that found the tap bug; reach for it first when the
+  map offers something it should not.
+
 ## Decisions taken, so they are not reopened
 
 - **Zoom stays smooth.** `useMapZoom` is not snapped. Playtesting found no real problem with pixel art
