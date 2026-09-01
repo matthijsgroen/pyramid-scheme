@@ -16,6 +16,7 @@
     "generate-world": "tsx scripts/generateWorld.ts && yarn prettier --write src/data/generatedWorld.ts",
     "generate-mosaic": "tsx scripts/traceMask.ts && yarn prettier --write src/ui/atoms/mosaic{Pieces,Geometry}.generated.ts",
     "generate-font": "tsx scripts/generateFont.ts && yarn prettier --write src/ui/tokens/hieroglyphFont.generated.ts",
+    "generate-dummy-tiles": "tsx scripts/generateDummyTiles.ts",
     "validate-world": "tsx scripts/generateWorld.ts --validate-only",
     "generate-seeds": "tsx scripts/puzzleSeeds.ts generate",
     "seeds-info": "tsx scripts/puzzleSeeds.ts info",

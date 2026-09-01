@@ -7,3 +7,5 @@
 !maskable*
 !masonry*.png
 !stained-glass*.png
+!tiles/**
+tiles/preview.png
