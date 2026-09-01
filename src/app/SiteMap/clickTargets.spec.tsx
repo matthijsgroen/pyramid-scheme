@@ -5,6 +5,7 @@ import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, findPath } from "@/game/gridNavigation"
 import type { FloorGrid } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
+import { cellCenter } from "./mapScale"
 
 // jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
 Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
@@ -137,4 +138,39 @@ describe("what the map offers", () => {
       expect(unwalkable).toEqual([])
     })
   }
+})
+
+// The corridor detector's own hint is a marker on the cell BESIDE a hidden passage: masking erases the
+// hidden cell, takes away this cell's direction into it, and forces it reachable so the player can walk
+// back and stand there — which is what reveals the passage (useCorridorDetection). Gating markers on a
+// live walk must not take that hint away, so it is asserted here rather than left to be noticed.
+describe("the corridor detector's hint", () => {
+  it("still marks the cell beside a hidden passage", () => {
+    const grid: FloorGrid = {
+      siteId: "detector",
+      rows: 1,
+      cols: 3,
+      entrancePos: [0, 0],
+      exitPos: [0, 2],
+      staircases: {},
+      cells: [
+        [
+          { type: "room", roomType: "portal", dirs: new Set(["e"]), state: "completed" },
+          // The junction: its dir east was removed with the hidden cell beyond it, and the detector
+          // forced it reachable. The room west still points into it, which is how it stays walkable.
+          { type: "corridor", dirs: new Set(["w"]), state: "reachable" },
+          { type: "empty" },
+        ],
+      ],
+    }
+
+    const onCellClick = vi.fn()
+    const { container } = render(<SiteMapView grid={grid} explorerPos={[0, 0]} onCellClick={onCellClick} />)
+    const junction = Array.from(container.querySelectorAll<SVGGElement>("g")).find(
+      el => el.getAttribute("transform") === `translate(${cellCenter(0, 1).cx}, ${cellCenter(0, 1).cy})`
+    )
+
+    expect(junction?.querySelector("circle[stroke]")).toBeTruthy()
+    expect(junction?.style.cursor).toBe("pointer")
+  })
 })
