@@ -22,6 +22,11 @@ export const useMergedCompassScanner = (): CompassScanner => {
     // eslint-disable-next-line react-hooks/rules-of-hooks -- stable registry order; see above
     scanners.push(useScanner())
   }
+  // The length is fixed for a given BUILD, which is what makes the loop above safe. A hot reload is
+  // the exception: a re-evaluated mod module registers its scanner again, this list grows by one, and
+  // React reports "a change in the order of Hooks" for whatever component is rendering. It is a
+  // development artifact — a full reload clears it — and the durable fix would be registering by id,
+  // the way screenRegistry does.
   return useMemo<CompassScanner>(
     () => target => scanners.flatMap(scan => scan(target)),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fixed-length list of stable scanners
