@@ -495,6 +495,31 @@ One row of data per tier, all of it overlay — never extra art.
 | **pharaoh**  | near-black      | very low | gold catching a single lamp    | none       | very high | glinting dust   |
 | **the gods** | starlit blue    | low      | the walls themselves, no flame | slow pulse | mid       | drifting sparks |
 
+## Bringing in art that was not drawn to tile
+
+A generated image does not tile, and the two megatiles have to. `yarn make-seamless <file>` does the
+standard fix, so it is a command rather than hand-work:
+
+1. Shift the image by half its size, wrapping — a diagonal quadrant swap. The outer edges are then
+   seamless BY CONSTRUCTION, because they used to be the middle, and every seam has collapsed into a
+   cross through the centre.
+2. Lay the untouched original back on top through a soft mask. Its centre is clean, so it covers the
+   cross with matching content.
+
+`--axis` is not optional to think about. A floor tile repeats both ways and wants the full
+treatment. A wall FACE repeats only horizontally — its top is the cap catching light and its bottom
+the dark base — so a vertical shift would destroy the registration that makes every wall in the map
+read alike. Use `--axis=x` for it, and the patch becomes a vertical band rather than a disc.
+
+It has one honest limit: a texture with a global gradient across it cannot be made to tile without a
+crease somewhere, because a monotonic ramp has to turn around. Stone has no such ramp, so the creases
+do not appear — but a tile lit brightly on one side will show one, and that is the art to reject
+rather than the tool to blame.
+
+So the route in, for each file: generate → `make-seamless` (megatiles only) → drop it in at
+`src/assets/tiles/<tier>/<name>.png`, at the size the slot expects. The resolver is an
+`import.meta.glob` by filename, so nothing else changes and one file can land at a time.
+
 ## Dummy sprites — rasterised SVG, for testing the pipeline
 
 `yarn generate-dummy-tiles` (`scripts/generateDummyTiles.ts`) writes a full placeholder art set
