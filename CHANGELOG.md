@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- The site map is stone now: walls stand as carved masonry you look at, floors are laid slab by slab,
+  every tomb is built of its own owner's material, and its chambers hold their furnishings.
+
 ### Fixed
 
 - A passage that runs on into the unexplored dark still ends open — only bare stone is walled off.
