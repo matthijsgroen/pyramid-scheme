@@ -1,17 +1,12 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
-import { SiteMapView } from "./SiteMapView"
-import { CELL, WALL_THICKNESS } from "./mapScale"
+import { SiteMapView, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
+import { CELL, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 
-// PAD === CELL in SiteMapView, so a cell at (row, col) always centers at this pixel —
-// derived from the shared scale constant rather than hardcoded, so a future EM change
-// doesn't silently break every position assumption in this file.
-const cellCenter = (row: number, col: number) => ({
-  cx: CELL + col * CELL + CELL / 2,
-  cy: CELL + row * CELL + CELL / 2,
-})
+// Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
+// place of its own), so a change there can't silently break every position assumption in this file.
 
 // ── Grid factory ──────────────────────────────────────────────────────────────
 
@@ -149,29 +144,28 @@ describe("SiteMapView — room clickability", () => {
   })
 })
 
-// Finds the cell group by its exact translate transform, then checks whether it has a
-// wall rect on the given relative edge. North and west walls (and south and east) share
-// an x,y origin — only width/height tell them apart — so all four dimensions are matched,
-// not just position.
-const hasWallRect = (container: HTMLElement, cx: number, cy: number, edge: "n" | "s" | "e" | "w") => {
-  const g = Array.from(container.querySelectorAll("g")).find(
-    el => el.getAttribute("transform") === `translate(${cx}, ${cy})`
-  )
-  if (!g) throw new Error(`no cell group at (${cx}, ${cy})`)
-  const half = CELL / 2
-  const rect = {
-    n: { x: -half, y: -half, w: CELL, h: WALL_THICKNESS },
-    s: { x: -half, y: half - WALL_THICKNESS, w: CELL, h: WALL_THICKNESS },
-    w: { x: -half, y: -half, w: WALL_THICKNESS, h: CELL },
-    e: { x: half - WALL_THICKNESS, y: -half, w: WALL_THICKNESS, h: CELL },
-  }[edge]
-  return Array.from(g.querySelectorAll('rect[fill="#080502"]')).some(
-    r =>
-      r.getAttribute("x") === String(rect.x) &&
-      r.getAttribute("y") === String(rect.y) &&
-      r.getAttribute("width") === String(rect.w) &&
-      r.getAttribute("height") === String(rect.h)
-  )
+// Walls are cells, not edges (see tileRegions.ts), so "is there a wall here" is a question about
+// which region a CELL landed in — asserted on the region data rather than sniffed out of rendered SVG.
+const regionsOf = (grid: FloorGrid) => tileRegionsFor(grid, buildRoomClaims(grid))
+
+const coversSquare = (rects: readonly (readonly number[])[], row: number, col: number) =>
+  rects.some(([x, y, w, h]) => x === cellLeft(col) && y === cellTop(row) && w === CELL && h === CELL)
+
+const isWall = (grid: FloorGrid, row: number, col: number) => {
+  const regions = regionsOf(grid)
+  return coversSquare([...Object.values(regions.wallMass).flat(), ...Object.values(regions.wallFace).flat()], row, col)
+}
+
+// The state group a drawn cell landed in. A claimed cell borrows its owner's state, so this is how
+// the map says which room owns a contested void cell.
+const floorStateOf = (grid: FloorGrid, row: number, col: number) => {
+  const regions = regionsOf(grid)
+  for (const groups of [regions.floorRoom, regions.floorCorridor]) {
+    for (const [state, rects] of Object.entries(groups)) {
+      if (coversSquare(rects, row, col)) return state
+    }
+  }
+  return null
 }
 
 describe("SiteMapView — junction merging", () => {
@@ -179,17 +173,17 @@ describe("SiteMapView — junction merging", () => {
   it("opens the wall between two forks that each claim a side of the void between them", () => {
     // Neither fork has a real graph edge to the other; each claims its own adjacent void
     // cell, and the shared boundary should render with no wall on either side.
-    const { container } = render(<SiteMapView grid={makeGrid([[fork("visible"), empty, fork("visible")]])} />)
-    expect(hasWallRect(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy, "e")).toBe(false)
-    expect(hasWallRect(container, cellCenter(0, 2).cx, cellCenter(0, 2).cy, "w")).toBe(false)
+    const grid = makeGrid([[fork("visible"), empty, fork("visible")]])
+    expect(isWall(grid, 0, 1)).toBe(false)
+    expect(floorStateOf(grid, 0, 1)).toBe("visible")
   })
 
   it("does not merge non-junction rooms sharing a claimed void the same way", () => {
     // puzzle rooms don't claim void at all, so the shared cell renders as nothing and
     // each room keeps its own wall facing the gap.
-    const { container } = render(<SiteMapView grid={makeGrid([[room("visible"), empty, room("visible")]])} />)
-    expect(hasWallRect(container, cellCenter(0, 0).cx, cellCenter(0, 0).cy, "e")).toBe(true)
-    expect(hasWallRect(container, cellCenter(0, 2).cx, cellCenter(0, 2).cy, "w")).toBe(true)
+    const grid = makeGrid([[room("visible"), empty, room("visible")]])
+    expect(isWall(grid, 0, 1)).toBe(true)
+    expect(floorStateOf(grid, 0, 1)).toBe(null)
   })
 })
 
@@ -208,23 +202,15 @@ describe("SiteMapView — diagonal claim stability across a hidden-passage revea
       [empty, straightCorridor("reachable", ["e"]), fork("reachable", ["n", "w"])],
     ])
 
-  const floorFillAt = (container: HTMLElement, cx: number, cy: number) => {
-    const g = Array.from(container.querySelectorAll("g")).find(
-      el => el.getAttribute("transform") === `translate(${cx}, ${cy})`
-    )
-    if (!g) throw new Error(`no cell group at (${cx}, ${cy})`)
-    return g.querySelector("rect")?.getAttribute("fill")
-  }
-
   it("keeps the fork's claim on the shared diagonal cell once the hidden treasure is revealed", () => {
-    // Distinct states give the fork and treasure distinct floor tints, so whichever one
-    // owns cell (1,1) can be identified from its rendered fill color.
-    const hidden = render(<SiteMapView grid={buildGrid(empty)} />)
-    const revealed = render(<SiteMapView grid={buildGrid(leafTreasure("visible", ["s"]))} />)
+    // Distinct states put the fork and the treasure in distinct floor groups, so whichever one owns
+    // cell (1,1) is named by the group that cell lands in.
+    const hidden = buildGrid(empty)
+    const revealed = buildGrid(leafTreasure("visible", ["s"]))
 
-    const forkFill = floorFillAt(hidden.container, cellCenter(2, 2).cx, cellCenter(2, 2).cy)
-    expect(floorFillAt(hidden.container, cellCenter(1, 1).cx, cellCenter(1, 1).cy)).toBe(forkFill)
-    expect(floorFillAt(revealed.container, cellCenter(1, 1).cx, cellCenter(1, 1).cy)).toBe(forkFill)
+    const forkState = floorStateOf(hidden, 2, 2)
+    expect(floorStateOf(hidden, 1, 1)).toBe(forkState)
+    expect(floorStateOf(revealed, 1, 1)).toBe(forkState)
   })
 
   it("breaks an exact flank-strength tie in favor of the fork, regardless of either room's state", () => {
@@ -237,10 +223,9 @@ describe("SiteMapView — diagonal claim stability across a hidden-passage revea
     // tied on state too and ownership flipped again. Room type doesn't change mid-session,
     // so ranking by that — fork over leaf room — must hold no matter what state either is in.
     //
-    // Fork winning means (1,1) opens toward its own flanks, (1,0) [west] and (2,1) [south];
-    // treasure winning would instead open (1,1) toward (0,1) [north] and (1,2) [east]. Wall
-    // presence on a fixed side is used instead of floor tint, since matching states (as in
-    // the "both completed" case) give both owners the identical tint either way.
+    // Fork winning means (1,1) joins the fork's footprint and takes the fork's state with it. Only
+    // the differing-states case can say so: when both owners are in the SAME state the two
+    // outcomes are pixel-for-pixel identical, so there is nothing left to assert.
     const buildGrid = (treasureState: CellState, forkState: CellState): FloorGrid =>
       makeGrid([
         [empty, straightCorridor(treasureState, ["e"]), leafTreasure(treasureState, ["w"])],
@@ -248,14 +233,8 @@ describe("SiteMapView — diagonal claim stability across a hidden-passage revea
         [fork(forkState, ["n"]), empty, empty],
       ])
 
-    for (const [treasureState, forkState] of [
-      ["reachable", "completed"],
-      ["completed", "completed"],
-    ] as const) {
-      const { container } = render(<SiteMapView grid={buildGrid(treasureState, forkState)} />)
-      expect(hasWallRect(container, cellCenter(1, 1).cx, cellCenter(1, 1).cy, "n")).toBe(true)
-      expect(hasWallRect(container, cellCenter(1, 1).cx, cellCenter(1, 1).cy, "w")).toBe(false)
-    }
+    const grid = buildGrid("reachable", "completed")
+    expect(floorStateOf(grid, 1, 1)).toBe("completed")
   })
 })
 
@@ -488,8 +467,8 @@ describe("SiteMapView — a wall only opens onto something drawn", () => {
   // Void a lit room does not claim is bare stone — nothing is ever drawn there, so an opening onto
   // it reads as a doorway the player can walk through and cannot.
   it("keeps the wall toward void no lit room claims", () => {
-    const { container } = render(<SiteMapView grid={makeGrid([[fork("fogged"), empty, fork("reachable")]])} />)
-    expect(hasWallRect(container, cellCenter(0, 2).cx, cellCenter(0, 2).cy, "w")).toBe(true)
+    const grid = makeGrid([[fork("fogged"), empty, fork("reachable")]])
+    expect(isWall(grid, 0, 1)).toBe(true)
   })
 
   // Fog is not void: the corridor east is a real passage still in the dark, and the missing wall is
@@ -502,10 +481,9 @@ describe("SiteMapView — a wall only opens onto something drawn", () => {
       dirs: new Set<Direction>(["e"]),
       state: "reachable",
     }
-    const { container } = render(
-      <SiteMapView grid={makeGrid([[eastward, straightCorridor("fogged", ["w", "e"]), empty]])} />
-    )
-    expect(hasWallRect(container, cellCenter(0, 0).cx, cellCenter(0, 0).cy, "e")).toBe(false)
+    const grid = makeGrid([[eastward, straightCorridor("fogged", ["w", "e"]), empty]])
+    expect(isWall(grid, 0, 1)).toBe(false)
+    expect(floorStateOf(grid, 0, 1)).toBe(null)
   })
 
   // Same hole, other cause, opposite cure: the corridor east is real and lit, and only invisible
@@ -519,13 +497,8 @@ describe("SiteMapView — a wall only opens onto something drawn", () => {
       dirs: new Set<Direction>(["e"]),
       state: "reachable",
     }
-    const { container } = render(
-      <SiteMapView grid={makeGrid([[eastward, straightCorridor("visible", ["w"]), fork("fogged", ["w"])]])} />
-    )
-    const { cx, cy } = cellCenter(0, 1)
-    expect(
-      Array.from(container.querySelectorAll("g")).some(el => el.getAttribute("transform") === `translate(${cx}, ${cy})`)
-    ).toBe(true)
-    expect(hasWallRect(container, cellCenter(0, 0).cx, cellCenter(0, 0).cy, "e")).toBe(false)
+    const grid = makeGrid([[eastward, straightCorridor("visible", ["w"]), fork("fogged", ["w"])]])
+    expect(floorStateOf(grid, 0, 1)).toBe("visible")
+    expect(isWall(grid, 0, 1)).toBe(false)
   })
 })

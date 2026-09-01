@@ -1,15 +1,13 @@
 import { useEffect, useRef, useState } from "react"
 import type { FloorGrid } from "../../game/siteTypes"
 import { findPath } from "../../game/gridNavigation"
-import { CELL, EXPLORER_DOT_RADIUS } from "./mapScale"
+import { EXPLORER_DOT_RADIUS, cellCenter } from "./mapScale"
 
 type Point = { x: number; y: number }
 
 type Props = {
   grid: FloorGrid
   pos: readonly [number, number]
-  cellSize?: number
-  padding?: number
   /** Duration per grid-cell step in ms. Default 120. */
   segmentDuration?: number
   color?: string
@@ -17,19 +15,13 @@ type Props = {
   onArrive?: () => void
 }
 
-export const ExplorerDot = ({
-  grid,
-  pos,
-  cellSize = CELL,
-  padding = CELL,
-  segmentDuration = 120,
-  color = "#ffd060",
-  onArrive,
-}: Props) => {
-  const toPixel = ([r, c]: readonly [number, number]): Point => ({
-    x: padding + c * cellSize + cellSize / 2,
-    y: padding + r * cellSize + cellSize / 2,
-  })
+export const ExplorerDot = ({ grid, pos, segmentDuration = 120, color = "#ffd060", onArrive }: Props) => {
+  // The map lays cells out on a stretched pitch so every wall has a place of its own — the dot walks
+  // between floor-square centres, wherever those land.
+  const toPixel = ([r, c]: readonly [number, number]): Point => {
+    const { cx, cy } = cellCenter(r, c)
+    return { x: cx, y: cy }
+  }
 
   const [svgPos, setSvgPos] = useState<Point>(toPixel(pos))
   const prevPosRef = useRef<readonly [number, number]>(pos)

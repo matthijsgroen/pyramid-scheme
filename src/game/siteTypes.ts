@@ -103,6 +103,10 @@ export type GridCell = EmptyCell | CorridorCell | RoomCell
 
 export type FloorGrid = {
   readonly cells: ReadonlyArray<ReadonlyArray<GridCell>>
+  /** The floor's own tier, straight off its FloorConfig — what the map is built OF. Room-level
+   * `RoomCell.difficulty` can differ (a ward-chest teaser is authored at a later tier), so it must not
+   * be used to infer this. Optional only because test fixtures build grids by hand. */
+  readonly difficulty?: Difficulty
   readonly rows: number
   readonly cols: number
   readonly entrancePos: readonly [number, number]

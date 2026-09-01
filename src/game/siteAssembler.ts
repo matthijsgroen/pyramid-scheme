@@ -1481,15 +1481,14 @@ export const assembleFloor = (
       const cell = cells2D[r][c]
       if (cell.type === "room" && cell.dirs.size === 1) endpointPositions.add(pk)
     }
-    const decorationPoolIdx = new Map<DecorationKind[], number>()
-    const nextDecoration = (pool?: DecorationKind[]): DecorationKind | undefined => {
-      if (!pool) return undefined
-      const idx = decorationPoolIdx.get(pool) ?? 0
-      decorationPoolIdx.set(pool, idx + 1)
-      return pool[idx]
-    }
+    // Which prop a room draws is picked by WHERE it is, not by how many rooms drew before it. A
+    // per-pool counter looks equivalent but is not: the generated world gives every section its own
+    // pool literal, so each counter started at zero again and all but the first kind went unused —
+    // every fork in the world held a crate.
+    const pickDecoration = (pool: DecorationKind[] | undefined, pk: string): DecorationKind | undefined =>
+      pool?.length ? pool[hashString(`${siteId}:decoration:${pk}`) % pool.length] : undefined
     for (const pk of new Set([...forkPositions, ...endpointPositions])) {
-      const decoration = nextDecoration(cellDecorationPool.get(pk))
+      const decoration = pickDecoration(cellDecorationPool.get(pk), pk)
       if (!decoration) continue
       const [r, c] = pk.split(",").map(Number)
       const owner = cells2D[r][c]
@@ -1508,6 +1507,7 @@ export const assembleFloor = (
 
     const grid: FloorGrid = {
       cells: cells2D,
+      difficulty: config.difficulty,
       rows: N,
       cols: N,
       entrancePos: [entR, entC],

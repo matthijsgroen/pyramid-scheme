@@ -1,7 +1,7 @@
 import { render, act, fireEvent, cleanup } from "@testing-library/react"
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest"
 import type { FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
-import { CELL } from "./mapScale"
+import { cellCenter } from "./mapScale"
 import { clearGameData } from "@/support/useGameStorage"
 
 // Keys are enough to tell the buttons apart; none of these assertions read copy. Interpolated data
@@ -63,9 +63,10 @@ const settle = async () => {
   })
 }
 
-// The exit room's own <g>, addressed by the transform SiteMapView gives it (PAD === CELL).
+// The exit room's own <g>, addressed by the transform SiteMapView gives it.
+const exitCenter = cellCenter(0, 2)
 const exitNode = (container: HTMLElement) =>
-  container.querySelector<SVGGElement>(`g[transform="translate(${CELL + 2 * CELL + CELL / 2}, ${CELL + CELL / 2})"]`)!
+  container.querySelector<SVGGElement>(`g[transform="translate(${exitCenter.cx}, ${exitCenter.cy})"]`)!
 
 describe(SiteMapScreen, () => {
   beforeEach(async () => {
