@@ -52,7 +52,8 @@ const wizardCMapPieceGate: SideSectionConstraint = {
 }
 
 export const wizardRules: Rule[] = [
-  tier("wizard", { difficulty: "wizard" }),
+  // the gods' vault: an open coffin, a figure of light, a shaft with no bottom, columns of light.
+  tier("wizard", { difficulty: "wizard", decorations: ["sarcophagus", "statue", "pit", "pillar", "rubble"] }),
 
   // Wizard's character is DEPTH, where master's is BREADTH — the two tiers are meant to feel
   // structurally different, not just numerically harder. `mainFloors: 2` (master has one), two ward

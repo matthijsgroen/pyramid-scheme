@@ -30,7 +30,8 @@ const holdChest = (index: number) => wardChest({ tomb: "starter_treasure_tomb", 
 const HOLD_CYCLE = [1, 2, 0, 1]
 
 export const starterRules: Rule[] = [
-  tier("starter", { difficulty: "starter" }),
+  // a merchant's cellar: crates, spilled stores, a cellar shaft, a prop holding the roof, a water jar.
+  tier("starter", { difficulty: "starter", decorations: ["chestProp", "rubble", "pit", "pillar", "fountain"] }),
 
   tier("starter")
     .set({})

@@ -1,4 +1,5 @@
 import type { Difficulty, SideSection, TreasureReward } from "./types"
+import type { DecorationKind } from "../game/siteTypes"
 import { mulberry32 } from "../game/random"
 import { TIER_UNLOCK_PERK_IDS } from "../data/treasurePerks"
 import { hashStr, pathEndToReward, specToGate } from "./rewards"
@@ -109,6 +110,7 @@ export type BuildSideSectionsOptions<TExtra extends string = never> = {
    * skin under that name draws its default.
    */
   sideTheme?: string
+  sideDecorations?: DecorationKind[]
   /** Pyramid-only: prepends a hardcoded mapPiece branch pointing at this tier's tomb. */
   hasMapPieceBranch?: boolean
   /** Pyramid-only: prepends a hardcoded tier-unlock ward-key gate. */
@@ -132,7 +134,8 @@ const wearSiteRole = (
   sections: SideSection[],
   sideEncounter: string | string[] | undefined,
   sideEncounterArgs: unknown,
-  sideTheme: string | undefined
+  sideTheme: string | undefined,
+  sideDecorations: DecorationKind[] | undefined
 ): SideSection[] =>
   sections.map(section => ({
     ...section,
@@ -141,6 +144,7 @@ const wearSiteRole = (
       ? { encounterArgs: sideEncounterArgs }
       : {}),
     ...(sideTheme !== undefined && section.theme === undefined ? { theme: sideTheme } : {}),
+    ...(sideDecorations?.length && section.decorations === undefined ? { decorations: sideDecorations } : {}),
   }))
 
 export const buildSideSections = <TExtra extends string = never>(
@@ -162,6 +166,7 @@ export const buildSideSections = <TExtra extends string = never>(
     sideEncounter,
     sideEncounterArgs,
     sideTheme,
+    sideDecorations,
   } = opts
 
   const sections: SideSection[] = []
@@ -235,5 +240,5 @@ export const buildSideSections = <TExtra extends string = never>(
     }
   })
 
-  return wearSiteRole(sections, sideEncounter, sideEncounterArgs, sideTheme)
+  return wearSiteRole(sections, sideEncounter, sideEncounterArgs, sideTheme, sideDecorations)
 }

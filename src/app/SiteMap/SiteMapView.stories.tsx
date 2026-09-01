@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { useState } from "react"
 import { assembleFloor } from "../../game/siteAssembler"
+import { generatedWorldConfigs } from "../../data/generatedWorld"
 import { completeCell } from "../../game/gridNavigation"
 import type { FloorGrid } from "../../game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
@@ -76,6 +77,24 @@ export const FirstPyramidRevealAll: Story = {
     grid: getFirstPyramidGrid(),
     revealAllCells: true,
   },
+}
+
+// A real floor out of the generated world, which is the only way to see authored content — the
+// hand-built configs above carry no decoration pool, so no props land on them.
+const getWorldGrid = (siteId: string): FloorGrid => {
+  const floor = generatedWorldConfigs[siteId]?.flat()[0]
+  if (!floor) throw new Error(`no generated floor for ${siteId}`)
+  const result = assembleFloor(`${siteId}:0`, floor, 7)
+  if (!result.success) throw new Error("world grid assembly failed")
+  return result.grid
+}
+
+export const WorldFloorStarter: Story = {
+  args: { grid: getWorldGrid("starter_2"), revealAllCells: true },
+}
+
+export const WorldFloorMaster: Story = {
+  args: { grid: getWorldGrid("master_2"), revealAllCells: true },
 }
 
 export const Interactive: Story = {

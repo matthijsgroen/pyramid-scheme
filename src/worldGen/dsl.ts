@@ -204,6 +204,10 @@ export type PyramidConstraint = {
    * and sharedKeyChance. */
   keyColorsRange?: { min: number; max: number }
   difficulty?: Difficulty
+  /** Pool of decoration kinds every floor and side section of this site draws its props from, unless
+   * one names its own. Authored at tier level this dresses a whole rank in one line. Purely drawn —
+   * a free field (docs/game-design/world-spec-stability.md). */
+  decorations?: DecorationKind[]
   /** Default family/tag for this pyramid/tomb's main-path encounter rooms — e.g. a tomb sets
    * "tableau" (or the "tomb-puzzle" tag) here so every floor's main-path rooms use it. An array is
    * "any of these". */

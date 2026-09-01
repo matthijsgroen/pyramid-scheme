@@ -1,3 +1,5 @@
+import type { DecorationKind } from "../game/siteTypes"
+
 export type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
 // Authored puzzle-count progression across a journey's pyramids: `start` on pyramid 1,
 // `end` on the last pyramid, linearly interpolated in between. Explicit and literal —
@@ -37,6 +39,9 @@ export type SubSection = {
   /** The role this section's rooms were allocated FOR, kept after `encounter` is baked to a family id.
    * Mirrors game/siteTypes.ts's SubSection.role. */
   role?: string | string[]
+  /** Pool this section's fork/endpoint rooms draw props from — mirrors game/siteTypes.ts's
+   * SubSection.decorations. */
+  decorations?: DecorationKind[]
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
@@ -65,6 +70,9 @@ export type FloorConfig = {
   encounterArgs?: unknown
   /** Skin name for this floor's puzzle rooms — mirrors game/siteTypes.ts's FloorConfig.theme. */
   theme?: string
+  /** Pool this floor's main-path fork/endpoint rooms draw props from — mirrors
+   * game/siteTypes.ts's FloorConfig.decorations. */
+  decorations?: DecorationKind[]
   /** The role this floor's main-path rooms were allocated FOR — mirrors game/siteTypes.ts's FloorConfig.role. */
   role?: string | string[]
 }

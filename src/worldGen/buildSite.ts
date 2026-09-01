@@ -1,3 +1,4 @@
+import type { DecorationKind } from "../game/siteTypes"
 import type { Difficulty, FloorConfig, SideSection, Tier, TreasureReward } from "./types"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { GLOBAL_DEFAULTS } from "./spec/global"
@@ -96,6 +97,7 @@ export type BuildFloorOptions = {
   sealed?: boolean
   encounterArgs?: unknown
   theme?: string
+  decorations?: DecorationKind[]
 }
 
 // The common FloorConfig skeleton shared by every pyramid and tomb floor — defaults to a
@@ -109,6 +111,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.entrance ? { entrance: opts.entrance } : {}),
   ...(opts.mainEndReward ? { mainEndReward: opts.mainEndReward } : {}),
   ...(opts.encounter ? { encounter: opts.encounter } : {}),
+  ...(opts.decorations?.length ? { decorations: opts.decorations } : {}),
   ...(opts.encountersByIndex && Object.keys(opts.encountersByIndex).length
     ? { encountersByIndex: opts.encountersByIndex }
     : {}),
@@ -168,6 +171,7 @@ export type BuildSiteContext<TExtra extends string = never> = {
   sideEncounterArgs?: unknown
   /** Skin for side sections that author none. Safe for any site to hand down (see sideSections.ts). */
   sideTheme?: string
+  sideDecorations?: DecorationKind[]
 }
 
 // Builds one site's floors (the 3 floor-shape branches: authored floors[], auto multi-floor
@@ -187,6 +191,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sideEncounter,
     sideEncounterArgs,
     sideTheme,
+    sideDecorations,
   } = ctx
 
   const mainEndReward: TreasureReward = constraint.mainEndReward
@@ -225,6 +230,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         sideEncounter,
         sideEncounterArgs,
         sideTheme,
+        sideDecorations,
       })
       const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
@@ -258,6 +264,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           encounterArgs: fc.encounterArgs ?? constraint.encounterArgs,
           // A floor may wear its own skin inside a plainer pyramid; unset, it wears the site’s.
           theme: fc.theme ?? constraint.theme,
+          decorations: fc.decorations ?? constraint.decorations,
         })
       )
     }
@@ -314,6 +321,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         sideEncounter,
         sideEncounterArgs,
         sideTheme,
+        sideDecorations,
         declaredSidePaths: constraint.sidePaths,
         declaredHiddenPaths: constraint.hiddenPaths,
       })
