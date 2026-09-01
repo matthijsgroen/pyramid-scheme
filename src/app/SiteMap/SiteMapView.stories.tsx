@@ -93,6 +93,13 @@ export const WorldFloorStarter: Story = {
   args: { grid: getWorldGrid("starter_2"), revealAllCells: true },
 }
 
+// The same floor part-explored, which is the only way to judge what the fog gives away: a wall is
+// drawn where lit floor touches stone, so the shape of the drawn stone must not trace passages the
+// player has not walked.
+export const WorldFloorUnexplored: Story = {
+  args: { grid: getWorldGrid("starter_2") },
+}
+
 export const WorldFloorMaster: Story = {
   args: { grid: getWorldGrid("master_2"), revealAllCells: true },
 }

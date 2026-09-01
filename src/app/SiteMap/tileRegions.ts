@@ -25,9 +25,10 @@ export type CellKind = "room" | "corridor"
 
 /**
  * - `{ state, kind }` — the map draws floor here.
- * - `"unlit"` — a real passage the player has not seen yet. Nothing is drawn, and it is deliberately
- *   NOT walled: an opening onto black is how the map says the way carries on past what has been
- *   explored. Walling it would claim the passage is solid stone.
+ * - `"unlit"` — a real passage the player has not seen yet. Walled like stone, so its route stays
+ *   hidden, EXCEPT at its mouth: the one gap where lit floor meets it stays open, and that opening is
+ *   how the map says the way carries on past what has been explored. Leaving its whole length undrawn
+ *   traced the corridor instead — direction and length legible without walking it.
  * - `"stone"` — no passage at all. Wall, if anything drawn is next to it.
  */
 export type FloorAt = (row: number, col: number) => { state: CellState; kind: CellKind } | "unlit" | "stone"
@@ -77,17 +78,23 @@ export const buildTileRegions = (
     return typeof at === "string" ? null : at
   }
   const stateOf = (r: number, c: number) => floorOf(r, c)?.state ?? null
-  // A wall rect is lit by whatever floor lies around the cells it belongs to. Asking a wide enough
-  // neighbourhood is what stops a gap between two stone cells from being left unpainted — a black
-  // slot through the middle of a wall run.
-  const litAround = (...cells: readonly (readonly [number, number])[]) =>
-    brightest(...cells.flatMap(([r, c]) => [-1, 0, 1].flatMap(dr => [-1, 0, 1].map(dc => stateOf(r + dr, c + dc)))))
+  // A wall rect is lit by the floor it actually TOUCHES, and by nothing further away. Asking a
+  // 3x3 around two cells at once reached two cells out, which drew a band of stone around every
+  // corridor twice as thick as the wall it stands for.
+  const litTouching = (...cells: readonly (readonly [number, number])[]) =>
+    brightest(...cells.map(([r, c]) => stateOf(r, c)))
   const isUnlit = (r: number, c: number) => floorAt(r, c) === "unlit"
+  // An unlit passage is stone as far as the walls are concerned, and shows only at its MOUTH: the one
+  // gap where lit floor meets it. Drawing its whole length as nothing traced the route of a corridor
+  // the player has not walked — a black channel through the stone, its direction and length legible,
+  // which is exactly what the fog is for. "The way carries on" is a doorway, not a map.
+  const isMouth = (a: readonly [number, number], b: readonly [number, number]): boolean =>
+    (!!floorOf(...a) && isUnlit(...b)) || (!!floorOf(...b) && isUnlit(...a))
   // Is the gap north of this cell a wall face? Floor below to look at it from, no doorway through it,
   // and no unlit passage on either side. Asked by the gap itself AND by the corners beside it, so the
   // two can never disagree about where a wall band runs.
   const isFaceGap = (r: number, c: number): boolean => {
-    if (!floorOf(r, c) || isUnlit(r - 1, c) || isUnlit(r, c)) return false
+    if (!floorOf(r, c) || isMouth([r - 1, c], [r, c])) return false
     const above = floorOf(r - 1, c)
     return !(above && openBetween(r - 1, c, "s"))
   }
@@ -107,10 +114,20 @@ export const buildTileRegions = (
       // ── the cell's own floor square ──
       if (here) {
         floorGroup(here)[here.state].push([x, y, CELL, CELL])
-      } else if (floorAt(r, c) === "stone") {
+      } else {
         // Mass wherever stone touches something drawn, and nothing at all otherwise — bare rock the
-        // map has never had a reason to show.
-        const lit = litAround([r, c])
+        // map has never had a reason to show. An unlit passage is stone here too, so its route stays
+        // hidden; only its mouth shows, below.
+        const lit = litTouching(
+          [r - 1, c],
+          [r + 1, c],
+          [r, c - 1],
+          [r, c + 1],
+          [r - 1, c - 1],
+          [r - 1, c + 1],
+          [r + 1, c - 1],
+          [r + 1, c + 1]
+        )
         if (lit) regions.wallMass[lit].push([x, y, CELL, CELL])
       }
 
@@ -118,13 +135,13 @@ export const buildTileRegions = (
       const northGap: Rect = [x, y - WALL_H, CELL, WALL_H]
       if (here && north && openBetween(r - 1, c, "s")) {
         floorGroup(here, north)[brightest(here.state, north.state)!].push(northGap)
-      } else if (isUnlit(r - 1, c) || isUnlit(r, c)) {
+      } else if (isMouth([r - 1, c], [r, c])) {
         // The mouth of an unexplored passage. Left black on purpose: that opening is how the map says
         // the way carries on past what has been explored.
       } else if (isFaceGap(r, c)) {
         regions.wallFace[brightest(here!.state, north?.state)!].push(northGap)
       } else {
-        const lit = litAround([r, c], [r - 1, c])
+        const lit = litTouching([r - 1, c], [r, c], [r - 1, c - 1], [r - 1, c + 1], [r, c - 1], [r, c + 1])
         if (lit) regions.wallMass[lit].push(northGap)
       }
 
@@ -132,10 +149,10 @@ export const buildTileRegions = (
       const westGap: Rect = [x - SIDE_W, y, SIDE_W, CELL]
       if (here && west && openBetween(r, c - 1, "e")) {
         floorGroup(here, west)[brightest(here.state, west.state)!].push(westGap)
-      } else if (isUnlit(r, c - 1) || isUnlit(r, c)) {
+      } else if (isMouth([r, c - 1], [r, c])) {
         // Same mouth, sideways.
       } else {
-        const lit = litAround([r, c], [r, c - 1])
+        const lit = litTouching([r, c], [r, c - 1], [r - 1, c], [r - 1, c - 1], [r + 1, c], [r + 1, c - 1])
         if (lit) regions.wallMass[lit].push(westGap)
       }
 
@@ -166,7 +183,7 @@ export const buildTileRegions = (
         openBetween(r, c - 1, "e") &&
         openBetween(r - 1, c - 1, "s") &&
         openBetween(r - 1, c - 1, "e")
-      const cornerLit = litAround([r, c], [r - 1, c - 1])
+      const cornerLit = litTouching([r, c], [r - 1, c], [r, c - 1], [r - 1, c - 1])
       if (insideOneSpace) {
         floorGroup(here, north, west, northWest)[brightest(here.state, north.state, west.state, northWest.state)!].push(
           corner

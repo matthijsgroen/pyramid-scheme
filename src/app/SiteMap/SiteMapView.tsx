@@ -1144,9 +1144,14 @@ export const SiteMapView = ({
           role="img"
           aria-label="site map"
           className="block"
+          // The ground IS stone: a pyramid is carved out of rock, so everything the map has not lit
+          // is the tier's own dark stone rather than a void. Two things fall out of that — the shape of
+          // the drawn stone can no longer trace passages the player has not walked, and a pocket
+          // enclosed by a thick wall stops reading as a hole punched through it.
+          //
           // Pixel art: no smoothing, so a tile stays crisp instead of turning to mush as the map
           // scales. Crisp at every zoom needs useMapZoom to snap to whole steps — not done yet.
-          style={{ background: "#0b0b0e", imageRendering: "pixelated" }}
+          style={{ background: tierPalette[tier].wallBase, imageRendering: "pixelated" }}
         >
           <TileLayers regions={regions} tier={tier} />
 

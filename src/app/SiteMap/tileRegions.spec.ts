@@ -147,13 +147,18 @@ describe("buildTileRegions — walls", () => {
     expect(has(allWall(regions), square(1, 1))).toBe(true)
   })
 
-  // A real passage the player has not reached is not stone. Walling it would tell the player the way
-  // ends there; leaving it black is how the map says it carries on.
-  it("neither draws nor walls an unlit passage", () => {
+  // An unexplored passage shows at its MOUTH and nowhere else. Drawing its whole length as nothing
+  // traced the route of a corridor the player had not walked — a black channel through the stone, its
+  // direction and length legible, which is what the fog is for. The open mouth says the way carries
+  // on; the walled cell behind it says nothing about where.
+  it("walls an unlit passage but leaves its mouth open", () => {
     const regions = buildTileRegions(1, 3, gridOf({ "0,0": "reachable" }, [], ["0,1"]), allPassable)
 
-    expect(has(allWall(regions), square(0, 1))).toBe(false)
+    expect(has(allWall(regions), square(0, 1))).toBe(true)
     expect(has(allFloor(regions), square(0, 1))).toBe(false)
+    // The gap between the lit floor and the passage is the mouth: neither floor nor wall.
+    expect(has(allWall(regions), westGap(0, 1))).toBe(false)
+    expect(has(allFloor(regions), westGap(0, 1))).toBe(false)
   })
 
   it("gives a wall the brightest state around it, so the near side of a wall is never dimmed", () => {

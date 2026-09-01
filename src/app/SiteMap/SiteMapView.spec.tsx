@@ -1,7 +1,7 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
-import { CELL, cellCenter, cellLeft, cellTop } from "./mapScale"
+import { CELL, SIDE_W, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 
@@ -150,6 +150,19 @@ const regionsOf = (grid: FloorGrid) => tileRegionsFor(grid, buildRoomClaims(grid
 
 const coversSquare = (rects: readonly (readonly number[])[], row: number, col: number) =>
   rects.some(([x, y, w, h]) => x === cellLeft(col) && y === cellTop(row) && w === CELL && h === CELL)
+
+// What the map draws in the thin gap on a cell's west side — floor where the way is open, wall where
+// it is not, and nothing at all where it is the mouth of a passage still in the dark.
+const westGapOf = (grid: FloorGrid, row: number, col: number): "floor" | "wall" | "nothing" => {
+  const regions = regionsOf(grid)
+  const isGap = ([x, y, w, h]: readonly number[]) =>
+    x === cellLeft(col) - SIDE_W && y === cellTop(row) && w === SIDE_W && h === CELL
+  const floor = [...Object.values(regions.floorRoom).flat(), ...Object.values(regions.floorCorridor).flat()]
+  const wall = [...Object.values(regions.wallMass).flat(), ...Object.values(regions.wallFace).flat()]
+  if (floor.some(isGap)) return "floor"
+  if (wall.some(isGap)) return "wall"
+  return "nothing"
+}
 
 const isWall = (grid: FloorGrid, row: number, col: number) => {
   const regions = regionsOf(grid)
@@ -471,9 +484,10 @@ describe("SiteMapView — a wall only opens onto something drawn", () => {
     expect(isWall(grid, 0, 1)).toBe(true)
   })
 
-  // Fog is not void: the corridor east is a real passage still in the dark, and the missing wall is
-  // exactly how the map says the way carries on past what has been explored.
-  it("leaves the far end of an unexplored passage open", () => {
+  // Fog is not void, but nor is a passage's whole route the map's to give away: drawing an unlit
+  // corridor as nothing traced it through the stone, direction and length readable without walking it.
+  // The passage is walled; only its MOUTH stays open, and that opening is what says the way carries on.
+  it("hides an unexplored passage and leaves only its mouth open", () => {
     const eastward: GridCell = {
       type: "room",
       roomType: "encounter",
@@ -482,8 +496,10 @@ describe("SiteMapView — a wall only opens onto something drawn", () => {
       state: "reachable",
     }
     const grid = makeGrid([[eastward, straightCorridor("fogged", ["w", "e"]), empty]])
-    expect(isWall(grid, 0, 1)).toBe(false)
+    expect(isWall(grid, 0, 1)).toBe(true)
     expect(floorStateOf(grid, 0, 1)).toBe(null)
+    // Between the lit room and the dark passage: the mouth.
+    expect(westGapOf(grid, 0, 1)).toBe("nothing")
   })
 
   // Same hole, other cause, opposite cure: the corridor east is real and lit, and only invisible

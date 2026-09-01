@@ -267,8 +267,20 @@ painting moved out. `FloorTile` went with it. The old `isOpenSide` survives as `
 only about two cells that are both drawn floor: it decides whether the gap between them is floor or
 wall, and it is the only edge question the model asks.
 
-**An unlit passage is neither floor nor wall.** Walling a real corridor the player has not reached
-would say the way ends there; leaving it black is how the map says it carries on.
+**An unlit passage is walled, and open only at its mouth.** Leaving its whole length undrawn traced
+the corridor — a channel through the stone whose direction and length read off the map without anyone
+walking it. The mouth (the one gap where lit floor meets it) stays open, which is all that "the way
+carries on" ever needed.
+
+**The ground is stone, not void.** A pyramid is carved out of rock, so everything the map has not lit
+is the tier's own dark stone. Two things fall out of that: the shape of the drawn stone can no longer
+trace anything, and a pocket enclosed by a thick wall stops reading as a hole punched through it. Wall
+mass is that same stone plus the state wash, so rock beside explored floor carries a little more
+weight than rock nobody has seen.
+
+**Stone reaches exactly one cell from lit floor.** A wall rect is lit by the floor it TOUCHES; asking a
+3×3 around two cells at once reached two cells out and drew a band around every corridor twice as
+thick as the wall it stood for.
 
 **The silhouette stroke goes UNDER the fills.** Stroked on top it traces every cell's own border and
 lays a grid over the floor; underneath, only the outward half survives, which is exactly the
