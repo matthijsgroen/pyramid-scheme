@@ -142,3 +142,81 @@ describe("useOfflineStorage — the load effect", () => {
     expect(fresh.result.current[0]).toEqual(["persisted", "newer", "after"])
   })
 })
+
+// The shape the app really has: one key read by many hooks at once. `useJourneys()` is not a
+// context and is instantiated ten times, so two updates can be issued from two instances against
+// the same key. Each instance used to compute its next value from its OWN copy, so whichever write
+// landed second silently dropped the other — which is how a walk saved the cell it explored and
+// lost the position it moved to.
+describe("two hooks on one key", () => {
+  it("does not lose an update issued from another instance", async () => {
+    const store = `shared-${Math.random()}`
+    const first = renderHook(() => useOfflineStorage<Record<string, string>>("state", {}, store))
+    const second = renderHook(() => useOfflineStorage<Record<string, string>>("state", {}, store))
+
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    await act(async () => {
+      // Interleaved on purpose: one instance adds a key, the other adds a different one.
+      await Promise.all([
+        first.result.current[1](prev => ({ ...prev, explored: "yes" })),
+        second.result.current[1](prev => ({ ...prev, position: "0:25,26" })),
+      ])
+    })
+
+    // Both survive, whichever order they landed in.
+    expect(first.result.current[0]).toEqual({ explored: "yes", position: "0:25,26" })
+  })
+})
+
+// Writes are ordered by when they were ISSUED, not by when the database happens to finish them. An
+// older write landing late used to be broadcast to every subscriber, walking the state backwards —
+// which the player saw as the explorer jumping to where it was going, snapping back to where it
+// started, and then walking there.
+describe("out-of-order writes", () => {
+  const reorderWritesFor = (storeName: string) => {
+    const backing = localForage.createInstance({ name: `${storeName}-backing` })
+    const pending: (() => void)[] = []
+    vi.spyOn(localForage, "createInstance").mockImplementationOnce(
+      () =>
+        ({
+          getItem: (k: string) => backing.getItem(k),
+          setItem: (k: string, v: unknown) =>
+            new Promise(resolve => pending.push(() => resolve(backing.setItem(k, v)))),
+          removeItem: (k: string) => backing.removeItem(k),
+          clear: () => backing.clear(),
+        }) as unknown as LocalForage
+    )
+    // Finish them in reverse: the first write lands last, exactly the case that walked state back.
+    return {
+      releaseReversed: () =>
+        pending
+          .splice(0)
+          .reverse()
+          .forEach(finish => finish()),
+    }
+  }
+
+  it("never announces a value an in-flight newer write has already replaced", async () => {
+    const storeName = `reorder-${Math.random()}`
+    const io = reorderWritesFor(storeName)
+    const hook = renderHook(() => useOfflineStorage<string>("position", "start", storeName))
+
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    const writes = act(async () => {
+      void hook.result.current[1]("first")
+      void hook.result.current[1]("second")
+      await Promise.resolve()
+      io.releaseReversed()
+      await Promise.resolve()
+    })
+    await writes
+
+    expect(hook.result.current[0]).toBe("second")
+  })
+})
