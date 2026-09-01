@@ -1,0 +1,129 @@
+# Tile Art Brief — every piece the site map can draw
+
+The commission list. `spritesheet-renderer-prep.md` says how the renderer works and why; this says **what to
+draw**, one line per file, named specifically enough to hand over: which god the statue is, what the rubble is
+rubble _of_.
+
+Five ranks, and a rank is **whose tomb this is** — merchant, nobleman, priest, pharaoh, the gods
+(`journeys.md` §4–§8 names them). A kind is a **silhouette**; the rank is its skin. That is what keeps the
+fifth rank from costing as much to draw as the first.
+
+## The contract
+
+| Slot           | File                         | Size    | Anchor                                                                |
+| -------------- | ---------------------------- | ------- | --------------------------------------------------------------------- |
+| Floor megatile | `tiles/<rank>/floor.png`     | 448×448 | tiles both ways, world-aligned. `yarn make-seamless`                  |
+| Wall face      | `tiles/<rank>/wall-face.png` | 448×56  | tiles horizontally only — `make-seamless --axis=x`                    |
+| Threshold sill | `tiles/<rank>/threshold.png` | 56×12   | laid across the way through, at a rank seam                           |
+| Archway        | `tiles/<rank>/arch.png`      | 84×56   | middle transparent; jambs in the outer 14px each side                 |
+| Chamber prop   | `tiles/<rank>/<kind>.png`    | 56×84   | **bottom-anchored**; the top 28 is headroom, used only by tall things |
+| Wall item      | `tiles/<rank>/<kind>.png`    | 56×28   | painted on the face band                                              |
+| Floor scatter  | `tiles/<rank>/<kind>.png`    | 56×56   | flat on the floor, soft-edged (**needs building** — §5)               |
+| Shared         | `tiles/default/<name>.png`   | varies  | not a rank: the explorer, the scarab                                  |
+
+Everything is **pixel art at 1 tile = 1 cell = 56px**, transparent background, near-black outline where a
+shape meets floor, a contact shadow under anything standing. A missing file falls back to `default/`, then to
+a placeholder glyph — so this list can land one PNG at a time and nothing breaks while it is half-drawn.
+
+**Variants**: `rubble.png`, `rubble-2.png`, `rubble-3.png`. Same kind, different drawing, picked per cell.
+(**Needs building** — §5.)
+
+## 1. Surfaces — 4 per rank
+
+| Rank         | Floor megatile                                                                               | Wall face                                                                                            | Sill                       | Arch                                             |
+| ------------ | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------- | ------------------------------------------------ |
+| **merchant** | trodden earth over limestone chips, spilled grain, jar rings, tally scratches                | mudbrick courses, flaking whitewash, tally marks, merchant seals, peg holes, awning brackets         | a worn mudbrick step       | timber lintel on mudbrick jambs, whitewash gone  |
+| **nobleman** | dressed limestone slabs, ochre banding painted on, plaster patched at the joints             | full plaster, procession murals (banquet, hunt, granary), painted dado band                          | dressed limestone, painted | plastered jambs, painted lintel, a small cornice |
+| **priest**   | dark basalt paving, natron dust, a water channel along one side, hollows worn at thresholds  | sunk-relief hieroglyph columns, mud-brick plugs with cord seals, censer soot, a star band at ceiling | basalt, hollowed by feet   | granite jambs, cavetto cornice, sunk-relief text |
+| **pharaoh**  | black granite with faience inlay bands, alabaster panels, gold leaf in the joints            | gilded panels, cartouche friezes, electrum banding, faience tile registers                           | alabaster, gold-lined      | gilded pylon gate, winged disc over the lintel   |
+| **gods**     | polished calcite lit from beneath, star-field inlay, seams stopping mid-slab, no dust at all | seamless ashlar, no tool marks, inlaid constellations, light leaking from the joints                 | a line of light            | an opening with no visible structure holding it  |
+
+Both megatiles must survive being **cut by a wall at any offset** — masonry, veins, cracks, stains, courses,
+inscription bands are all safe; anything with an outline the player expects whole is not, and belongs in §2–§5.
+
+## 2. Chamber props — 16 kinds × 5 ranks
+
+One per claimed room cell, drawn standing on the floor. **A `·` means the rank's pool does not author it** —
+but draw it anyway if cheap: a pocket authored at one rank can sit inside a site of another, and two of those
+exist in the world today, so `starter/sarcophagus.png` really can be asked for.
+
+| Kind              | merchant                                                                                           | nobleman                                                                                           | priest                                                                                                       | pharaoh                                                                                 | the gods                                                                                      |
+| ----------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| **statue**        | **Bes** — dwarf, lion mane, tongue out; **Taweret** — standing hippo; a ka-statue still half block | painted limestone **ka-statue of the owner**, seated, kilt and wig; **Hathor**, cow horns and disc | **Anubis** recumbent jackal on a naos; **Thoth** ibis-headed with palette; **Sekhmet** lioness with sun disc | gilded **Osiris** colossus, crook and flail, atef crown; **Horus** falcon, double crown | **Ra-Horakhty** falcon with disc; **Nut** arched and star-covered; **Ma'at** with her feather |
+| **shrine**        | goods niche with a Bes figure and a lamp                                                           | miniature false-door stela with an offering table before it                                        | **naos, doors shut**, cord-sealed                                                                            | gilded shrine, Anubis couchant on the lid                                               | **a window on the cosmos** — night sky inside                                                 |
+| **sarcophagus**   | · plain wooden coffin, undecorated, propped upright                                                | anthropoid wooden coffin, painted face, yellow ground                                              | priest's coffin, corded, crossed arms                                                                        | gold-inlaid stone, lid ajar, cartouche band                                             | open, empty, radiant                                                                          |
+| **jarRack**       | **wine and oil amphorae**, mud-stoppered, wooden rack, ink dockets                                 | estate jars labelled by year and vineyard, one tipped                                              | **four canopic jars** — Imsety human, Hapi baboon, Duamutef jackal, Qebehsenuef falcon                       | sealed gold vessels, alabaster ointment jars                                            | vessels holding nothing                                                                       |
+| **offeringTable** | market table, balance scales, weights, a heap of grain                                             | dining table laid: bread cones, roast duck, figs, a wine jar                                       | **altar** with a libation channel cut in it, bread and incense                                               | tribute laid in state on a gilded table                                                 | a slab with no supports, offerings hovering                                                   |
+| **basin**         | water jar on a wooden stand, dipper cup                                                            | ablution basin, painted rim                                                                        | **sacred pool**, steps down into it, natron crust at the waterline                                           | libation basin, alabaster, gold rim                                                     | pool with stars in it, no bottom                                                              |
+| **shelf**         | mudbrick shelving: linen bundles, sealed jars, a tally ostracon leaning                            | linen press, folded sheets, a mirror case, paired sandals                                          | **papyrus rolls** in a cedar rack, ends clay-sealed, one unrolled                                            | tribute shelf: gold vessels, lapis inlay boxes                                          | ledge of grown calcite, things resting on nothing                                             |
+| **chestProp**     | reed baskets and a rope-handled crate, stoppered jars on top                                       | sealed chest, wax seals on a knotted cord, painted panels                                          | relic box, cedar, seal intact                                                                                | gilded chest, cavetto lid, inlaid cartouche                                             | reliquary of light                                                                            |
+| **lamp**          | single-wick pottery lamp on a stool                                                                | bronze lamp stand, shallow oil bowl                                                                | **tall oil-fed stand**, papyrus-column shaft                                                                 | gilded lamp tree, several wicks, alabaster shades                                       | lights with nothing holding them                                                              |
+| **hanging**       | patched awning cloth on a pole                                                                     | linen hanging, dyed border                                                                         | **veil before the shrine**, folded back on one side                                                          | gold-shot curtain, weighted hem                                                         | a curtain of aurora                                                                           |
+| **pillar**        | timber prop holding the roof, wedges at its foot                                                   | palm column, painted capital                                                                       | papyrus-bundle column, sunk relief on the shaft                                                              | gilded column, cartouche band, faience inlay                                            | column of light                                                                               |
+| **brazier**       | cold ash in a clay dish                                                                            | lit and smoking on an iron tripod                                                                  | **censer on a chain**, incense smoke                                                                         | gold, burning low, hieroglyph frieze                                                    | cold light, no flame                                                                          |
+| **rubble**        | mortar spill, broken mudbrick, potsherds                                                           | plaster fall, painted fragments face-up                                                            | collapsed door plug, cord-seal fragments, natron crust                                                       | shattered alabaster, gold-leaf flakes in the dust                                       | stone shattered from within, edges still lit                                                  |
+| **pit**           | cellar shaft, rope ladder over the lip                                                             | · lifted floor slab, dark below                                                                    | robbed-out hole, broken lid slab beside it                                                                   | · shaft with its seal broken off                                                        | a shaft with no bottom, stars in it                                                           |
+| **mat**           | reed matting, frayed, one corner curled                                                            | reed mat, dyed border                                                                              | rush mat before the altar, worn through in the middle                                                        | · gold-threaded mat                                                                     | · a mat of woven light                                                                        |
+| **crystal**       | · calcite lump part-cut from the wall                                                              | ·                                                                                                  | natron and quartz crust in a cut                                                                             | ·                                                                                       | **calcite cluster lit from inside**                                                           |
+
+## 3. Wall items — 8 kinds × 5 ranks, plus the two holes
+
+Painted into the face band above a cell — bounded things that hang **on** a wall.
+
+| Kind           | merchant                                                 | nobleman                                        | priest                                                | pharaoh                                           | the gods                                          |
+| -------------- | -------------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------- |
+| **niche**      | **goods niche** — jars and bundles on a mud shelf        | lamp niche, soot fanning above it               | wall shrine niche, cord-sealed doors                  | **offering niche**, gilded surround               | a niche holding one star                          |
+| **stela**      | rough limestone slab, a name scratched on it             | **false-door stela**, painted, offering formula | sunk-relief: the dead before Osiris                   | granite, cartouches, gold leaf in the cuts        | a stela of light with nothing written on it       |
+| **sconce**     | peg with a lamp hung on it                               | bronze bracket and oil lamp                     | **hanging lamp on a chain**                           | **bronze mirror sconce**, disc catching the flame | crystal bracket, light with no lamp               |
+| **veil**       | sacking hung on a cord                                   | linen drape on a rail                           | **veil rail and veil** before the shrine              | gold-shot drape, weighted                         | aurora on a rail                                  |
+| **wallShrine** | mud niche with a Bes amulet                              | painted shrine box                              | **wall shrine**, doors ajar, lamp lit inside          | gilded shrine, winged disc above                  | a shrine that is only an opening                  |
+| **tallyBoard** | **tally board** — scratched strokes, a plank on two pegs | estate ledger board, ink columns                | ostracon board, hieratic in red and black             | inventory in gold on a black panel                | a board of moving figures                         |
+| **mask**       | plaster face-cast, unpainted                             | painted cartonnage face                         | jackal-headed ritual mask on a peg                    | **gilded mask**, lapis stripes                    | a face of light                                   |
+| **starShaft**  | ·                                                        | ·                                               | slot in the ceiling with a star band round it         | ·                                                 | **star shaft** — a slot on the night, stars in it |
+| **breach** ⭑   | robbers' hole punched through mudbrick, plaster fallen   | plaster hacked through, mural cut in half       | **plug removed**, cord seal hanging, dark void behind | pried-off inlay, sockets left in the gold         | a crack with light coming through it              |
+| **plug** ⭑     | mud-brick fill, hand-smoothed                            | plastered-over doorway, outline showing         | **mud-brick plug, cord seal intact**                  | granite blocking stone, half-lowered              | an opening that closed itself                     |
+
+⭑ = new kind, no code change needed — `WallDecorationKind` takes them and the pools author them.
+
+## 4. Floor scatter — what is lying about
+
+**This is the group that has no home yet** (§5). Props stand one per room; scatter is small stuff strewn
+where the player walks, corridors included, several to a floor.
+
+| Kind         | What it is                         | merchant                                        | nobleman                                 | priest                                | pharaoh                               | the gods                         |
+| ------------ | ---------------------------------- | ----------------------------------------------- | ---------------------------------------- | ------------------------------------- | ------------------------------------- | -------------------------------- |
+| **sand**     | a drift blown in                   | fan of sand through a breach, footprint-scuffed | sand over a threshold, swept to one side | sand and natron crust in a corner     | fine sand in the joints of the paving | no sand at all — a clean seam    |
+| **planks**   | timber left behind                 | sledge runners, a broken ladder, rope coil      | scaffold poles, lashings still knotted   | coffin trestles, a snapped pole       | gilded prop, split                    | ·                                |
+| **sherds**   | pottery broken where it fell       | jar smashed, mud stopper rolled aside           | wine cup shattered, a stain under it     | broken canopic lid, seal fragments    | alabaster splinters, gold flakes      | glass that fell without breaking |
+| **plunder**  | a robbery, mid-act                 | basket tipped, contents gone                    | shabti box smashed, figures spilled      | mummy wrappings pulled out and heaped | pried chest, lid split, inlay sockets | an emptiness with a shape        |
+| **stain**    | something spilled long ago         | oil pooled and dried black                      | wine, sunk into plaster                  | resin and natron, crusted white       | scorch under a lamp tree              | a spill of light                 |
+| **tilework** | a patch of the floor that is finer | one salvaged tile set into the earth            | ochre band painted across the slabs      | faience panel, tiles missing from it  | inlay panel, lapis and gold, complete | star-field inlay, still moving   |
+
+## 5. What has to be built for §3–§4
+
+| Needed for                | Change                                                                                                                                                | Size   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| `breach`, `plug` (§3)     | two names in `WallDecorationKind`, two entries per rank pool                                                                                          | tiny   |
+| Variants (`rubble-2.png`) | resolve `<kind>-N` from the asset glob, pick per cell by the same positional hash the props use — the prep doc already sketches it                    | small  |
+| Floor scatter (§4)        | a scatter layer: N per floor, deterministic cells, drawn over the floor and under props; needs its own pool field (`scatter`) or a fixed per-rank set | medium |
+| Statues by name           | nothing — three statue variants per rank is exactly what the variant pick above is for                                                                | —      |
+
+## 6. Counts, and what to draw first
+
+| Group                                                      | Files    |
+| ---------------------------------------------------------- | -------- |
+| Surfaces (§1)                                              | 20       |
+| Chamber props (§2), all ranks × all kinds                  | 80       |
+| Wall items (§3), 8 existing kinds                          | 40       |
+| The two holes (§3)                                         | 10       |
+| Floor scatter (§4)                                         | 30       |
+| Variants — statue ×3, rubble/sherds/sand ×3 each, per rank | ~40      |
+| Shared: explorer ×3, scarab                                | 4        |
+| **Total**                                                  | **~224** |
+
+Today **123 placeholder files** exist for the slots that already resolve, all generated
+(`yarn generate-dummy-tiles`), all deliberately crude.
+
+**Draw the merchant first, end to end** — it is the rank the player meets, and it is the shortest way to find
+out whether the whole idiom holds: 4 surfaces + 15 props + 4 wall items + 6 scatter = **29 files**. Everything
+else in this document is that same list four more times, with better stone.

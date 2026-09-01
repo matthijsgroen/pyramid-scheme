@@ -302,13 +302,13 @@ silhouette.
 
 `theme` in `dsl.ts` is a **puzzle skin name** (`"night"`), not floor art. It is not hijacked.
 
-| Layer                                  | Keyed by                                                             |
-| -------------------------------------- | -------------------------------------------------------------------- |
-| Floor + wall material                  | `FloorGrid.difficulty` — the floor's own tier, one pattern per floor |
-| Wall dressing, prop pool, light colour | per-room `RoomCell.difficulty`                                       |
-| Mood overlay (the hour)                | `theme` — one wash and one light colour, never a second art set      |
-| Freestanding props                     | `RoomCell.decoration`, resolved as `tiles/<tier>/<kind>.png`         |
-| WHICH prop or wall item, out of that pool | the room's `role` — the place it is (journeys.md §2)            |
+| Layer                                     | Keyed by                                                             |
+| ----------------------------------------- | -------------------------------------------------------------------- |
+| Floor + wall material                     | `FloorGrid.difficulty` — the floor's own tier, one pattern per floor |
+| Wall dressing, prop pool, light colour    | per-room `RoomCell.difficulty`                                       |
+| Mood overlay (the hour)                   | `theme` — one wash and one light colour, never a second art set      |
+| Freestanding props                        | `RoomCell.decoration`, resolved as `tiles/<tier>/<kind>.png`         |
+| WHICH prop or wall item, out of that pool | the room's `role` — the place it is (journeys.md §2)                 |
 
 Floor material follows the floor tier, not the room's, so a mixed-difficulty floor can never
 produce a material seam mid-corridor. Section difficulty is read off the wall dressing, prop
@@ -508,6 +508,9 @@ items are `wallDecoration` on a cell.
 
 ### Chamber props
 
+**The full commission list — every file, named specifically, per rank — is
+[tile-art-brief.md](tile-art-brief.md).** This section is the mechanism; that document is what to draw.
+
 A kind is a **silhouette**; the tier is its skin, resolved as `tiles/<tier>/<kind>.png`. That is what
 keeps the fifth rank from costing as much to draw as the first. A `—` means that tier's pool does not
 author the kind, so no sprite is needed.
@@ -644,13 +647,13 @@ Still open, and both want an answer before a rank is drawn:
 One row of data per tier, all of it overlay — never extra art. **Built** (`moodSettings.ts`, `MapMood.tsx`),
 and three mechanisms carry every mood there is a name for:
 
-| the mood            | the mechanism                                                      |
-| ------------------- | ------------------------------------------------------------------ |
-| night               | `tint` — one colour over the whole map                             |
-| sand                | `drift` — many small motes, quick, blown across                    |
-| fog                 | `drift` — a few huge soft ones, slow. Same mechanism, other numbers |
-| dust, soot, sparks  | `drift` again, per rank                                            |
-| scarabs scurrying   | `life` — sprites on lit floor                                      |
+| the mood           | the mechanism                                                       |
+| ------------------ | ------------------------------------------------------------------- |
+| night              | `tint` — one colour over the whole map                              |
+| sand               | `drift` — many small motes, quick, blown across                     |
+| fog                | `drift` — a few huge soft ones, slow. Same mechanism, other numbers |
+| dust, soot, sparks | `drift` again, per rank                                             |
+| scarabs scurrying  | `life` — sprites on lit floor                                       |
 
 Sand and fog being the same mechanism is the point: one drift field with a size and a pace covers chaff,
 soot, incense haze, glinting dust, sparks, a sandstorm and a fog bank, where one idea per name would have
