@@ -38,27 +38,40 @@ type Kind =
   | "pillar"
   | "pit"
   | "statue"
-  | "fountain"
+  | "basin"
   | "sarcophagus"
   | "chestProp"
   | "offeringTable"
   | "jarRack"
   | "brazier"
+  | "lamp"
+  | "hanging"
+  | "shelf"
   | "shrine"
-  | "roots"
+  | "crystal"
+  | "mat"
 
-// Which props each tier's pools draw from — docs/game-design/spritesheet-renderer-prep.md,
-// "Decorations per tier". A tier that never authors a kind needs no sprite for it.
-const ALL: Kind[] = ["rubble", "pillar", "pit", "statue", "fountain", "sarcophagus", "chestProp", "offeringTable", "jarRack", "brazier", "shrine", "roots"] // prettier-ignore
-const without = (...skip: Kind[]): Kind[] => ALL.filter(k => !skip.includes(k))
-
-const PROPS: Record<string, Kind[]> = {
-  starter: without("sarcophagus", "roots"),
-  junior: without("pit", "roots"),
-  expert: without(),
-  master: without("rubble", "pit", "roots"),
-  wizard: without("brazier"),
-}
+// Every kind for every tier. A real art pass draws only what a rank's pool authors — a tier with no
+// sarcophagus needs no sarcophagus — but a placeholder costs a kilobyte, and generating the lot means
+// authoring a pool never waits on the generator catching up.
+const ALL_KINDS: Kind[] = [
+  "rubble",
+  "pillar",
+  "pit",
+  "statue",
+  "basin",
+  "sarcophagus",
+  "chestProp",
+  "offeringTable",
+  "jarRack",
+  "brazier",
+  "lamp",
+  "hanging",
+  "shelf",
+  "shrine",
+  "crystal",
+  "mat",
+]
 
 // Deterministic jitter — the same tier always rasterises to the same bytes.
 const hash = (a: number, b: number, salt: number): number => {
@@ -215,7 +228,7 @@ const shapes: Record<Kind, (p: Palette) => string> = {
     <rect x="22" y="${BASE - 28}" width="12" height="22" fill="${p.prop}"/>
     <rect x="24" y="${BASE - 38}" width="8" height="10" fill="${p.prop}"/>
     <rect x="22" y="${BASE - 30}" width="12" height="3" fill="${p.accent}"/>`,
-  fountain: p => `
+  basin: p => `
     <rect x="12" y="${BASE - 16}" width="32" height="16" fill="${p.propDark}"/>
     <rect x="16" y="${BASE - 12}" width="24" height="8" fill="${p.accent}" opacity="0.75"/>
     <rect x="24" y="${BASE - 30}" width="8" height="14" fill="${p.prop}"/>`,
@@ -246,14 +259,30 @@ const shapes: Record<Kind, (p: Palette) => string> = {
     <rect x="14" y="${BASE - 34}" width="28" height="34" fill="${p.propDark}"/>
     <path d="M 10 ${BASE - 34} L 28 ${BASE - 44} L 46 ${BASE - 34} Z" fill="${p.prop}"/>
     <rect x="20" y="${BASE - 28}" width="16" height="24" fill="${p.accent}" opacity="0.5"/>`,
-  roots: p =>
-    [
-      `M 4 ${BASE} Q 16 ${BASE - 26} 28 ${BASE - 8}`,
-      `M 28 ${BASE - 8} Q 40 ${BASE - 30} 52 ${BASE - 10}`,
-      `M 14 ${BASE} Q 26 ${BASE - 14} 38 ${BASE}`,
-    ]
-      .map(d => `<path d="${d}" fill="none" stroke="${p.propDark}" stroke-width="5" stroke-linecap="round"/>`)
-      .join(""),
+  lamp: p => `
+    <rect x="26" y="${BASE - 8}" width="4" height="8" fill="${p.propDark}"/>
+    <rect x="20" y="${BASE - 12}" width="16" height="4" fill="${p.propDark}"/>
+    <rect x="24" y="${BASE - 34}" width="8" height="22" fill="${p.prop}"/>
+    <ellipse cx="28" cy="${BASE - 38}" rx="9" ry="5" fill="${p.accent}"/>`,
+  hanging: p => `
+    <rect x="10" y="${BASE - 44}" width="36" height="3" fill="${p.propDark}"/>
+    <path d="M 12 ${BASE - 41} L 12 ${BASE - 6} Q 28 ${BASE} 44 ${BASE - 6} L 44 ${BASE - 41} Z" fill="${p.prop}"/>
+    <rect x="26" y="${BASE - 41}" width="4" height="35" fill="${p.accent}" opacity="0.5"/>`,
+  shelf: p => `
+    <rect x="8" y="${BASE - 40}" width="40" height="4" fill="${p.propDark}"/>
+    <rect x="8" y="${BASE - 22}" width="40" height="4" fill="${p.propDark}"/>
+    <rect x="12" y="${BASE - 36}" width="12" height="14" fill="${p.prop}"/>
+    <rect x="28" y="${BASE - 36}" width="16" height="14" fill="${p.accent}" opacity="0.8"/>
+    <rect x="14" y="${BASE - 18}" width="20" height="12" fill="${p.prop}"/>`,
+  crystal: p => `
+    <path d="M 20 ${BASE} L 24 ${BASE - 34} L 30 ${BASE - 20} L 34 ${BASE} Z" fill="${p.accent}"/>
+    <path d="M 34 ${BASE} L 38 ${BASE - 22} L 44 ${BASE} Z" fill="${p.prop}"/>
+    <path d="M 10 ${BASE} L 16 ${BASE - 16} L 20 ${BASE} Z" fill="${p.prop}"/>`,
+  mat: p => `
+    <rect x="6" y="${BASE - 16}" width="44" height="16" fill="${p.propDark}"/>
+    <rect x="10" y="${BASE - 13}" width="36" height="10" fill="${p.prop}"/>
+    ${[14, 22, 30, 38].map(x => `<rect x="${x}" y="${BASE - 13}" width="2" height="10" fill="${p.propDark}"/>`).join("")}
+    <rect x="6" y="${BASE - 16}" width="44" height="2" fill="${p.accent}" opacity="0.7"/>`,
 }
 
 const propSvg = (tier: string, kind: Kind): Buffer => {
@@ -408,8 +437,8 @@ const main = async (): Promise<void> => {
     await write(tier, "floor", floorSvg(tier), MEGA, MEGA)
     await write(tier, "wall-face", wallFaceSvg(tier), MEGA, FACE)
     await write(tier, "threshold", thresholdSvg(tier), TILE, SILL)
-    for (const kind of PROPS[tier]) await write(tier, kind, propSvg(tier, kind), TILE, TILE)
-    count += 3 + PROPS[tier].length
+    for (const kind of ALL_KINDS) await write(tier, kind, propSvg(tier, kind), TILE, TILE)
+    count += 3 + ALL_KINDS.length
   }
   console.log(`${count} dummy tiles written to src/assets/tiles/ (${tiers.length} tiers)`)
   if (process.argv.includes("--preview")) console.log(`preview: ${await preview(tiers)}`)

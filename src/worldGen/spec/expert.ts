@@ -102,10 +102,26 @@ const wardRules: Rule[] = EXPERT_PYRAMIDS.flatMap(([jid, n], ji) => {
 })
 
 export const expertRules: Rule[] = [
-  // a priest's temple: corded coffins, god-figures, the sacred pool, papyrus columns.
+  // a priest's temple: canopic jars, an altar, the sacred pool, a veil before the shrine.
   tier("expert", {
     difficulty: "expert",
-    decorations: ["sarcophagus", "statue", "fountain", "pillar", "rubble", "pit"],
+    decorations: [
+      "shelf",
+      "chestProp",
+      "jarRack",
+      "offeringTable",
+      "basin",
+      "statue",
+      "lamp",
+      "hanging",
+      "shrine",
+      "sarcophagus",
+      "pillar",
+      "brazier",
+      "rubble",
+      "pit",
+      "mat",
+    ],
   }),
 
   tier("expert").set({

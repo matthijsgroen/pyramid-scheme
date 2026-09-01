@@ -46,6 +46,10 @@ export type OpenBetween = (row: number, col: number, dir: "s" | "e") => boolean
 export type Rect = readonly [x: number, y: number, w: number, h: number]
 
 export type StateGroups = {
+  /** the sill laid where this tier's stone meets another's, across a gap the player walks through —
+   * so a change of material is an authored threshold rather than an abrupt edge. Keyed on the tier
+   * being ENTERED, which is the sill's own stone. */
+  threshold: Rect[]
   floorRoom: Record<CellState, Rect[]>
   floorCorridor: Record<CellState, Rect[]>
   /** solid stone: whole cells of it, the corners between them, and side walls seen edge-on */
@@ -68,6 +72,7 @@ const emptyStateGroups = (): StateGroups => ({
   floorCorridor: emptyGroups(),
   wallMass: emptyGroups(),
   wallFace: emptyGroups(),
+  threshold: [],
 })
 
 // A wall borrows the brightest state around it: a wall between an explored room and an unlit passage
@@ -166,6 +171,7 @@ export const buildTileRegions = (
       if (here && north && openBetween(r - 1, c, "s")) {
         const groups = groupsFor(tierAt([r, c], [r - 1, c]))
         floorGroup(groups, here, north)[brightest(here.state, north.state)!].push(northGap)
+        if (here.tier !== north.tier) groupsFor(here.tier).threshold.push(northGap)
       } else if (isMouth([r - 1, c], [r, c])) {
         // The mouth of an unexplored passage. Left black on purpose: that opening is how the map says
         // the way carries on past what has been explored.
@@ -189,6 +195,7 @@ export const buildTileRegions = (
       if (here && west && openBetween(r, c - 1, "e")) {
         const groups = groupsFor(tierAt([r, c], [r, c - 1]))
         floorGroup(groups, here, west)[brightest(here.state, west.state)!].push(westGap)
+        if (here.tier !== west.tier) groupsFor(here.tier).threshold.push(westGap)
       } else if (isMouth([r, c - 1], [r, c])) {
         // Same mouth, sideways.
       } else {

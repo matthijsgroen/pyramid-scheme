@@ -51,4 +51,19 @@ describe("a floor is built of the tiers its sections were authored at", () => {
     expect(rects(junior.floorCorridor).length).toBeGreaterThan(0)
     expect(rects(junior.floorRoom).length).toBeGreaterThan(0)
   })
+
+  // Where one rank's stone meets another's, the change is a laid sill rather than the line where the
+  // art happens to change. It belongs to the tier being ENTERED — the sill is that rank's masonry.
+  it("lays a sill where the material changes across a way the player walks", () => {
+    const grid = revealAll(starterFloorOne())
+    const regions = tileRegionsFor(grid, buildRoomClaims(grid))
+
+    const sills = [...regions.values()].flatMap(groups => groups.threshold)
+    expect(sills.length).toBeGreaterThan(0)
+    // Only at a boundary: far fewer sills than floor rects, or it is drawing them everywhere.
+    const floors = [...regions.values()].flatMap(groups =>
+      ALL_STATES.flatMap(state => [...groups.floorRoom[state], ...groups.floorCorridor[state]])
+    )
+    expect(sills.length).toBeLessThan(floors.length / 10)
+  })
 })

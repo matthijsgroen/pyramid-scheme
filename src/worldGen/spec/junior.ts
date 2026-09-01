@@ -41,8 +41,26 @@ const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 0, p
 const oldWorkings = () => sidePath({ puzzles: 1, tier: "starter", endReward: "junk" })
 
 export const juniorRules: Rule[] = [
-  // a nobleman's wing: a painted ka-statue, sealed chests, an ablution basin, palm columns.
-  tier("junior", { difficulty: "junior", decorations: ["statue", "chestProp", "fountain", "pillar", "rubble"] }),
+  // a nobleman's wing: a painted ka-statue, sealed chests, an ablution basin, linen and lamps.
+  tier("junior", {
+    difficulty: "junior",
+    decorations: [
+      "shelf",
+      "chestProp",
+      "jarRack",
+      "offeringTable",
+      "basin",
+      "statue",
+      "lamp",
+      "hanging",
+      "shrine",
+      "sarcophagus",
+      "pillar",
+      "brazier",
+      "rubble",
+      "mat",
+    ],
+  }),
 
   tier("junior")
     .set({})

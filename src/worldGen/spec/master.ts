@@ -75,8 +75,24 @@ const KEY_CHAIN: SideSectionConstraint = {
 }
 
 export const masterRules: Rule[] = [
-  // a pharaoh's halls: gold-inlaid coffins, colossi, tribute, gilded columns, an alabaster basin.
-  tier("master", { difficulty: "master", decorations: ["sarcophagus", "statue", "chestProp", "pillar", "fountain"] }),
+  // a pharaoh's halls: tribute laid in state, gilded shrines and columns, an alabaster basin.
+  tier("master", {
+    difficulty: "master",
+    decorations: [
+      "shelf",
+      "chestProp",
+      "jarRack",
+      "offeringTable",
+      "basin",
+      "statue",
+      "lamp",
+      "hanging",
+      "shrine",
+      "sarcophagus",
+      "pillar",
+      "brazier",
+    ],
+  }),
 
   tier("master").set({
     wardWings: 1,

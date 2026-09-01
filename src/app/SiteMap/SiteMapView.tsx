@@ -950,6 +950,7 @@ const TileLayers = ({ regions, tier }: { regions: TileRegions; tier: Difficulty 
         {tiers.map(t => {
           const floor = tileUrl(t, "floor")
           const face = tileUrl(t, "wall-face")
+          const sill = tileUrl(t, "threshold")
           return (
             <Fragment key={t}>
               {floor && (
@@ -964,6 +965,13 @@ const TileLayers = ({ regions, tier }: { regions: TileRegions; tier: Difficulty 
                 // and repeats on it. Every face in the map then shows the same courses at the same height.
                 <pattern id={`face-${t}`} width={mega} height={WALL_H} patternUnits="userSpaceOnUse">
                   <image href={face} width={mega} height={WALL_H} preserveAspectRatio="none" />
+                </pattern>
+              )}
+              {sill && (
+                // A sill is laid ACROSS the way through, so it tiles on the cell rather than on the
+                // megatile: the same stone step wherever two ranks meet.
+                <pattern id={`sill-${t}`} width={CELL} height={CELL} patternUnits="userSpaceOnUse">
+                  <image href={sill} width={CELL} height={CELL} preserveAspectRatio="none" />
                 </pattern>
               )}
             </Fragment>
@@ -983,6 +991,7 @@ const TileLayers = ({ regions, tier }: { regions: TileRegions; tier: Difficulty 
           const groups = regions.get(t)!
           const floorFill = tileUrl(t, "floor") ? `url(#floor-${t})` : palette.slab
           const faceFill = tileUrl(t, "wall-face") ? `url(#face-${t})` : palette.wall
+          const sillFill = tileUrl(t, "threshold") ? `url(#sill-${t})` : palette.wallTop
           return (
             <g key={t}>
               {ALL_STATES.map(state => {
@@ -992,6 +1001,8 @@ const TileLayers = ({ regions, tier }: { regions: TileRegions; tier: Difficulty 
                 const mass = rectsToPath(groups.wallMass[state])
                 const faces = rectsToPath(groups.wallFace[state])
                 const shadows = faceShadowsToPath(groups.wallFace[state], FACE_SHADOW)
+                // One sill per boundary, not one per cell state: it is masonry, not lighting.
+                const thresholds = rectsToPath(groups.threshold)
                 return (
                   <g key={state}>
                     {mass && <path d={mass} fill={palette.wallBase} />}
@@ -1003,6 +1014,9 @@ const TileLayers = ({ regions, tier }: { regions: TileRegions; tier: Difficulty 
                       </>
                     )}
                     {faces && <path d={faces} fill={faceFill} />}
+                    {/* Laid over the floor of the gap it crosses, so a change of material reads as a
+                        step between two places rather than a line where the art changes. */}
+                    {state === "reachable" && thresholds && <path d={thresholds} fill={sillFill} opacity={0.9} />}
                     {shadows && <path d={shadows} fill={palette.outline} opacity={0.45} />}
                     {wash && <path d={room + corridor + faces + mass} fill={wash.fill} opacity={wash.opacity} />}
                   </g>
@@ -1047,7 +1061,7 @@ const DecorationGlyph = ({ kind }: { kind: DecorationKind }) => {
           <rect x={-4} y={-4} width={8} height={14} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
         </>
       )
-    case "fountain":
+    case "basin":
       return (
         <>
           <circle r={9} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
@@ -1066,9 +1080,13 @@ const DecorationGlyph = ({ kind }: { kind: DecorationKind }) => {
       )
     case "pillar":
       return <rect x={-4} y={-10} width={8} height={20} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
-    case "chestProp":
+    case "mat":
+      return <rect x={-9} y={-5} width={18} height={10} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
+    default:
+      // Every kind has art per tier; this is only ever seen for one that does not yet, and says
+      // "something stands here" without pretending to say what.
       return (
-        <rect x={-6} y={-5} width={12} height={10} rx={1} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
+        <rect x={-6} y={-6} width={12} height={12} rx={1} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
       )
   }
 }

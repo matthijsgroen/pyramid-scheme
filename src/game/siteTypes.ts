@@ -41,7 +41,27 @@ export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 // hues in whatever order a floor's gates came out, and a status readout that reshuffles between
 // floors is unreadable.
 export const KEY_COLORS: readonly KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
-export type DecorationKind = "sarcophagus" | "statue" | "fountain" | "pit" | "rubble" | "pillar" | "chestProp"
+// What stands in a chamber. A kind is a SILHOUETTE and the tier is its skin, resolved as
+// tiles/<tier>/<kind>.png — which is what keeps a fifth rank from costing as much to draw as the
+// first (docs/game-design/spritesheet-renderer-prep.md, "Chamber props"). `basin` rather than
+// "fountain": Egypt had libation basins, ablution basins and temple lakes, not pressurised fountains.
+export type DecorationKind =
+  | "rubble"
+  | "pillar"
+  | "pit"
+  | "statue"
+  | "basin"
+  | "sarcophagus"
+  | "chestProp"
+  | "offeringTable"
+  | "jarRack"
+  | "brazier"
+  | "lamp"
+  | "hanging"
+  | "shelf"
+  | "shrine"
+  | "crystal"
+  | "mat"
 export type RoomCell = {
   type: "room"
   roomType: RoomType
