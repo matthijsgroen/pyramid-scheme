@@ -117,6 +117,16 @@ Four surfaces took most of a day. The art was never the slow part; these were.
     one thresholded on brightness and missed a textured top face, the other found the underside shadow
     instead of the top edge. Both were reported as fact before being checked against the picture.
 
+14. **A preview must compose the way the RENDERER composes.** The arch previews drew a continuous wall
+    face behind the gateway; the renderer puts an arch in a GAP, where the band is floor and the faces are
+    only to its left and right. So the beam had nothing behind it in the app and read as floating, while
+    the preview showed it seated. Every judgement made against that preview was made against a picture the
+    game never draws.
+15. **Watch for constraints that cannot both hold.** With the sprite height fixed, an arch's rise and drop
+    trade off exactly: `drop = ARCH_H − WALL_H − rise`. Two separate asks — "beam level with the wall top"
+    and "posts three below the wall's bottom" — pinned both ends, which forced the slot's height instead
+    (31, not 42) and with it the aspect the art must be drawn at (2.7:1, not 2:1).
+
 ## Open, and worth deciding while generating
 
 - **`SIDE_W` reads thin** against a full-cell face. Free to widen; `WALL_H` is not (it must divide `CELL`).
