@@ -1372,7 +1372,10 @@ const Archways = ({
  * the stone being lit rather than as a coloured overlay on top of it — and it must never compete with the
  * state washes that tell the player what is explored.
  */
-// Weak, and nearly flat across the place. The pool at the explorer's feet already does the close light;
+// Weak, flat across the place, and it stops AT the place — no bleed onto what happens to sit next to it.
+// Spilling onto neighbours used grid adjacency rather than connectivity, so a corridor with a wall between
+// it and the room lit up anyway; and the map already tells the player what is reachable.
+// The pool at the explorer's feet already does the close light;
 // this only has to say which room they are in, so a strong wash under the player was the same light drawn
 // twice and read as a bright tile rather than a lit room. It still has to clear an UNVISITED room, since
 // `completed` washes a visited one 20% darker and standing somewhere must not be dimmer than never having
@@ -1423,46 +1426,33 @@ const litPlaceCells = (grid: FloorGrid, claims: RoomClaims, at: readonly [number
 }
 
 const TORCH_LIT = "#ffe2b0"
-const TORCH_SPILL = "#ffb347"
 
 const LitPlace = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; at?: readonly [number, number] }) => {
   if (!at) return null
   const place = litPlaceCells(grid, claims, at)
 
-  // Light spills. A torch in a corridor does not stop at the cell's edge — the stretch either side of the
-  // player catches some of it, which is also what tells them a passage carries on. The spill is every
-  // floor cell touching the lit place, at half the strength, and it is what keeps the pool from reading as
-  // a lit square with hard edges.
   const lit = new Set(place)
-  const spill = new Set<string>()
-  for (const key of lit) {
-    const [r, c] = key.split(",").map(Number)
-    for (const [dr, dc] of [
-      [-1, 0],
-      [1, 0],
-      [0, -1],
-      [0, 1],
-    ] as const) {
-      const near = `${r + dr},${c + dc}`
-      if (lit.has(near)) continue
-      const cell = cellAt(grid, r + dr, c + dc)
-      if (cell.type === "empty" || cell.state === "fogged") continue
-      spill.add(near)
-    }
-  }
 
-  const pathFor = (keys: Iterable<string>) =>
+  // A cell's square PLUS the gap to any lit neighbour. The map's pitch is a cell plus a wall band, so two
+  // cells of a corridor sit 28 units apart with floor between them — squares alone left that band dark and
+  // the run read as a row of lit tiles rather than as a lit passage. The floor layers fill those gaps for
+  // the same reason; light has to as well.
+  const pathFor = (keys: Iterable<string>, joinsTo: ReadonlySet<string>) =>
     [...keys]
-      .map(key => {
+      .flatMap(key => {
         const [r, c] = key.split(",").map(Number)
-        return `M${cellLeft(c)} ${cellTop(r)}h${CELL}v${CELL}h${-CELL}z`
+        const parts = [`M${cellLeft(c)} ${cellTop(r)}h${CELL}v${CELL}h${-CELL}z`]
+        if (joinsTo.has(`${r - 1},${c}`))
+          parts.push(`M${cellLeft(c)} ${cellTop(r) - WALL_H}h${CELL}v${WALL_H}h${-CELL}z`)
+        if (joinsTo.has(`${r},${c - 1}`))
+          parts.push(`M${cellLeft(c) - SIDE_W} ${cellTop(r)}h${SIDE_W}v${CELL}h${-SIDE_W}z`)
+        return parts
       })
       .join("")
 
   return (
     <g style={{ mixBlendMode: "screen" }} pointerEvents="none">
-      <path data-torch="lit" d={pathFor(lit)} fill={TORCH_LIT} opacity={0.16} />
-      <path data-torch="spill" d={pathFor(spill)} fill={TORCH_SPILL} opacity={0.08} />
+      <path data-torch="lit" d={pathFor(lit, lit)} fill={TORCH_LIT} opacity={0.1} />
     </g>
   )
 }

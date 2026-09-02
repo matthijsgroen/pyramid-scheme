@@ -645,9 +645,10 @@ describe("archways", () => {
 
 describe("the place the explorer stands is lit", () => {
   // Both washes are one path each, so the cells they cover are countable by the moves in the `d`.
+  // Cell squares only: the path also carries the bands joining one lit cell to the next.
   const litCounts = (container: HTMLElement) =>
     Array.from(container.querySelectorAll<SVGPathElement>("[data-torch]")).map(
-      el => (el.getAttribute("d")?.match(/M/g) ?? []).length
+      el => (el.getAttribute("d")?.match(/h56v56h-56z/g) ?? []).length
     )
 
   it("lights the whole corridor RUN, not the tile stood on", () => {
