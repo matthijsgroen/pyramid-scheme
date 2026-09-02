@@ -34,3 +34,21 @@ export const ART_IMAGE_RENDERING = "pixelated"
 /** Art that is the same in every tomb, from `tiles/default/`. The explorer is one person walking down
  * five ranks of tomb, not a fifth of a set — a rank dresses the place, never the player. */
 export const sharedTileUrl = (name: string): string | undefined => byTier.get(`default/${name}`)
+
+/**
+ * The frames of one animation, in order: `<prefix>-1`, `<prefix>-2`, … as far as they go. A single
+ * `<prefix>` with no number is a one-frame animation, which is what the placeholder set is and what any
+ * half-imported set is on the way in — so a facing with three frames drawn and a facing with one both work
+ * without anything being declared anywhere. Adding a frame is dropping a file in.
+ */
+export const sharedTileFrames = (prefix: string): string[] => {
+  const frames: string[] = []
+  for (let n = 1; ; n++) {
+    const url = byTier.get(`default/${prefix}-${n}`)
+    if (!url) break
+    frames.push(url)
+  }
+  if (frames.length > 0) return frames
+  const single = byTier.get(`default/${prefix}`)
+  return single ? [single] : []
+}

@@ -365,10 +365,25 @@ one stairhead).
 The art is **shared, in `tiles/default/`** (`sharedTileUrl`), never per tier: one person walks down all
 five ranks, and a rank dresses the place rather than the player.
 
-**Three files, not four** — `explorer-s`, `explorer-n`, `explorer-e` at 40 × 48, bottom-anchored on the
-cell's floor line so the figure stands in its own square. Facing west is facing east mirrored with
-`scale(-1, 1)`, which is the whole reason for three. Facing itself is derived from the step being walked
-(per segment, so a route that turns turns the figure), and rest faces south — met face on.
+**Three directions of art, not four** — `explorer-s-<n>`, `explorer-n-<n>`, `explorer-e-<n>` at 40 × 70.
+Facing west is facing east mirrored with `scale(-1, 1)`, which is the whole reason for three. Facing
+itself is derived from the step being walked (per segment, so a route that turns turns the figure), and
+rest faces south — met face on.
+
+**The figure is TALLER than its cell** (70 against 56), bottom-anchored on the floor line, so its head
+reaches into the band above — and being drawn after the walls, it covers it. That overlap is what makes
+the character stand in FRONT of the wall at the back of a corridor rather than look pasted onto the
+floor. The proportion is not a guess: two generated sheets measured 0.56–0.57 wide-to-tall, where the
+40 × 48 box this started with is 0.833, and filling it squashed a person into a barrel.
+
+**The walk cycles on DISTANCE, not on a clock** (`walkCycle.ts`): two frames per cell, so the feet keep
+time with the body instead of sliding. The counter is monotonic and each facing takes it modulo its own
+frame count — the first real sheet gave four usable front frames, four back and only three side (the
+other three were mirrors), and one counter has to serve all of them. Standing still is frame 1.
+
+**Frames are found, not declared** (`sharedTileFrames`): `explorer-s-1`, `-2`, … as far as they go, and a
+bare `explorer-s` counts as a one-frame animation. Adding a frame is dropping a file in; a half-imported
+facing animates as far as it has been drawn.
 
 **With no art present it falls back to the dot the map had before**, so no look is locked in by the
 plumbing: dropping three PNGs in swaps the character, deleting them takes it back. `ExplorerFigure` is

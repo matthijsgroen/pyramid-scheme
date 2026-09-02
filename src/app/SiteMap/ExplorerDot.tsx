@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react"
 import type { Direction, FloorGrid } from "../../game/siteTypes"
 import { findPath } from "../../game/gridNavigation"
 import { CELL, EXPLORER_DOT_RADIUS, cellCenter } from "./mapScale"
-import { sharedTileUrl } from "./tileAssets"
+import { sharedTileFrames } from "./tileAssets"
+import { stepsWalked } from "./walkCycle"
 
 type Point = { x: number; y: number }
 
@@ -10,7 +11,7 @@ type Point = { x: number; y: number }
 // sit on the cell's floor line and the head stays inside its own square. Small enough that the map still
 // reads as a map, big enough to be a person rather than a token.
 const CHAR_W = 40
-const CHAR_H = 48
+const CHAR_H = 70
 
 // Which way the character faces, taken from the step being walked — no stored direction, no state to keep
 // in sync with the route. West is EAST mirrored, so the art is three files rather than four.
@@ -38,6 +39,8 @@ export const ExplorerDot = ({ grid, pos, segmentDuration = 120, color = "#ffd060
   const [svgPos, setSvgPos] = useState<Point>(toPixel(pos))
   // Facing the viewer at rest, which is how a character sprite is meant to be met.
   const [facing, setFacing] = useState<Direction>("s")
+  // Which step of the walk. Back to 0 on arrival, so standing still is always the first frame.
+  const [step, setStep] = useState(0)
   const prevPosRef = useRef<readonly [number, number]>(pos)
   const animatingRef = useRef(false)
   const rafRef = useRef<number | null>(null)
@@ -106,6 +109,7 @@ export const ExplorerDot = ({ grid, pos, segmentDuration = 120, color = "#ffd060
         x: segStart.x + (segEnd.x - segStart.x) * eased,
         y: segStart.y + (segEnd.y - segStart.y) * eased,
       })
+      setStep(stepsWalked(segIdx + eased))
       if (t >= 1) {
         segIdx++
         if (segIdx < waypoints.length - 1) {
@@ -116,6 +120,7 @@ export const ExplorerDot = ({ grid, pos, segmentDuration = 120, color = "#ffd060
           rafRef.current = requestAnimationFrame(animate)
         } else {
           animatingRef.current = false
+          setStep(0)
           onArriveRef.current?.()
         }
       } else {
@@ -135,7 +140,7 @@ export const ExplorerDot = ({ grid, pos, segmentDuration = 120, color = "#ffd060
   // ask where the explorer is without caring whether it came out as a sprite or as the fallback dot.
   return (
     <g data-explorer="" transform={`translate(${svgPos.x}, ${svgPos.y})`} style={{ pointerEvents: "none" }}>
-      <ExplorerFigure facing={facing} color={color} />
+      <ExplorerFigure facing={facing} step={step} color={color} />
     </g>
   )
 }
@@ -146,9 +151,19 @@ export const ExplorerDot = ({ grid, pos, segmentDuration = 120, color = "#ffd060
  * the movement: the art is three PNGs in `tiles/default/`, and with none of them present this falls back
  * to the dot the map had before — so no look is locked in by anything here.
  */
-export const ExplorerFigure = ({ facing, color = "#ffd060" }: { facing: Direction; color?: string }) => {
-  // Three sprites, not four: facing west is facing east mirrored.
-  const url = sharedTileUrl(`explorer-${facing === "w" ? "e" : facing}`)
+export const ExplorerFigure = ({
+  facing,
+  step = 0,
+  color = "#ffd060",
+}: {
+  facing: Direction
+  /** How many steps have been walked. Taken modulo this facing's own frame count. */
+  step?: number
+  color?: string
+}) => {
+  // Three directions of art, not four: facing west is facing east mirrored.
+  const frames = sharedTileFrames(`explorer-${facing === "w" ? "e" : facing}`)
+  const url = frames[step % frames.length]
   if (!url) return <circle r={EXPLORER_DOT_RADIUS} fill={color} stroke="#110d08" strokeWidth={2} />
   return (
     <g transform={facing === "w" ? "scale(-1, 1)" : undefined}>

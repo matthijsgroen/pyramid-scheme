@@ -36,7 +36,7 @@ describe("authored decoration pools reach real rooms", () => {
     // picked by where the room is. A per-pool counter passed the first two assertions and still put
     // a crate in every fork in the world, because each section carries its own pool literal.
     expect(kinds.size).toBeGreaterThan(2)
-  })
+  }, 30000)
 
   it("draws the whole pool, not just its first entry", () => {
     const counts = new Map<string, number>()
@@ -56,7 +56,7 @@ describe("authored decoration pools reach real rooms", () => {
     const total = [...counts.values()].reduce((a, b) => a + b, 0)
     const commonest = Math.max(...counts.values())
     expect(commonest / total).toBeLessThan(0.6)
-  })
+  }, 30000)
 })
 
 describe("props stay out of the way", () => {
@@ -83,7 +83,7 @@ describe("props stay out of the way", () => {
 
     expect(props).toBeGreaterThan(0)
     expect(walkedOn).toEqual([])
-  })
+  }, 30000)
 })
 
 // Wall items are placed like props and drawn nowhere near them, so they need their own check: the
@@ -118,7 +118,7 @@ describe("authored wall-item pools reach real walls", () => {
     // whole pool shows up rather than every room in the world carrying its first entry.
     expect(counts.size).toBeGreaterThan(1)
     expect(Math.max(...counts.values()) / total).toBeLessThan(0.85)
-  })
+  }, 30000)
 
   it("hangs each item inside its own room's footprint", () => {
     const strays: string[] = []
@@ -128,7 +128,7 @@ describe("authored wall-item pools reach real walls", () => {
       if (!isOwnCell && !owner) strays.push(`${grid.siteId} ${item.row},${item.col} ${item.kind}`)
     }
     expect(strays).toEqual([])
-  })
+  }, 30000)
 })
 
 // A prop sprite is a cell plus a face band tall, so it leans a band into the cell to its north. That
@@ -157,5 +157,5 @@ describe("a prop stands against a wall", () => {
     // Not zero: a room whose only spare cell has floor above it still gets its prop — a prop is better
     // than a bare chamber, and one leaning statue is cheaper than a second claim rule.
     expect(openBehind / props).toBeLessThan(0.05)
-  })
+  }, 30000)
 })

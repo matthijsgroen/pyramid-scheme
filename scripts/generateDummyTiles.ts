@@ -11,7 +11,7 @@
  * Output is git-ignored. Regenerate, don't commit: yarn generate-dummy-tiles [--preview]
  */
 
-import { mkdirSync, readFileSync } from "fs"
+import { existsSync, mkdirSync, readFileSync } from "fs"
 import { dirname, join } from "path"
 import { fileURLToPath } from "url"
 import sharp from "sharp"
@@ -400,7 +400,7 @@ const propSvg = (p: Palette, kind: Kind): Buffer => {
 // Bottom-anchored like a prop, with its own palette rather than a tier's: the explorer has to read
 // against limestone and against black granite alike, so it is light linen and dark hair either way.
 const CHAR_W = 40
-const CHAR_H = 48
+const CHAR_H = 70
 const SKIN = "#c98a52"
 const LINEN = "#e8e2d0"
 const HAIR = "#1b1712"
@@ -423,13 +423,17 @@ const scarabSvg = (): Buffer =>
      </g>`
   )
 
-const explorerSvg = (facing: "s" | "n" | "e"): Buffer => {
+// Four frames per facing, legs swinging, so the PLACEHOLDER exercises the same walk cycle real art will:
+// a one-frame stand-in would have left the animation untested until the day the art landed.
+const explorerSvg = (facing: "s" | "n" | "e", frame: number): Buffer => {
   const feet = CHAR_H - 2
+  // The swing: forward, neutral, back, neutral. Frame 1 is also the standing pose.
+  const swing = [0, 3, 0, -3][frame % 4]
   const body = `
     <rect x="12" y="${feet - 26}" width="16" height="20" fill="${LINEN}"/>
     <rect x="12" y="${feet - 14}" width="16" height="3" fill="${SASH}"/>
-    <rect x="14" y="${feet - 6}" width="4" height="6" fill="${SKIN}"/>
-    <rect x="22" y="${feet - 6}" width="4" height="6" fill="${SKIN}"/>`
+    <rect x="14" y="${feet - 6 - Math.max(0, swing)}" width="4" height="${6 + Math.abs(swing)}" fill="${SKIN}"/>
+    <rect x="22" y="${feet - 6 - Math.max(0, -swing)}" width="4" height="${6 + Math.abs(swing)}" fill="${SKIN}"/>`
   const head = `<rect x="14" y="${feet - 40}" width="12" height="14" fill="${SKIN}"/>`
   const hairCap = `<rect x="13" y="${feet - 42}" width="14" height="7" fill="${HAIR}"/>`
   const face =
@@ -459,10 +463,22 @@ const explorerSvg = (facing: "s" | "n" | "e"): Buffer => {
 
 // ── Write ─────────────────────────────────────────────────────────────────────
 
+let skipped = 0
+
+/**
+ * Writes a placeholder — unless a file is already there and --force was not passed.
+ *
+ * Real art lands at these exact paths, so without this guard the next `yarn generate-dummy-tiles` after
+ * a rank is drawn would quietly paint over it with the stand-ins. Regenerating has to stay safe to run.
+ */
 const write = async (tier: string, name: string, data: Buffer, w: number, h: number): Promise<void> => {
   const dir = join(OUT_ROOT, tier)
   mkdirSync(dir, { recursive: true })
   const file = join(dir, `${name}.png`)
+  if (existsSync(file) && !process.argv.includes("--force")) {
+    skipped++
+    return
+  }
   await sharp(data).png({ compressionLevel: 9 }).toFile(file)
   const meta = await sharp(file).metadata()
   if (meta.width !== w || meta.height !== h) {
@@ -884,10 +900,15 @@ const main = async (): Promise<void> => {
   await write("default", "scarab", scarabSvg(), 14, 10)
   count++
   for (const facing of ["s", "n", "e"] as const) {
-    await write("default", `explorer-${facing}`, explorerSvg(facing), CHAR_W, CHAR_H)
-    count++
+    for (let frame = 1; frame <= 4; frame++) {
+      await write("default", `explorer-${facing}-${frame}`, explorerSvg(facing, frame - 1), CHAR_W, CHAR_H)
+      count++
+    }
   }
-  console.log(`${count} dummy tiles written to src/assets/tiles/ (${tiers.length} tiers + shared)`)
+  console.log(
+    `${count - skipped} dummy tiles written to src/assets/tiles/ (${tiers.length} tiers + shared)` +
+      (skipped > 0 ? `, ${skipped} left alone — already there. --force to overwrite` : "")
+  )
   if (process.argv.includes("--preview")) console.log(`preview: ${await preview(tiers)}`)
   if (process.argv.includes("--palettes")) console.log(`palettes: ${await paletteTest()}`)
 }

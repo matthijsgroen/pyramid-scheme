@@ -1,6 +1,7 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
+import { ExplorerFigure } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
 import { ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
@@ -630,6 +631,48 @@ describe("archways", () => {
 // ── Mood ──────────────────────────────────────────────────────────────────────
 // The air is overlay only: a wash, drifting motes, and scarabs on the floor (moodSettings.ts). It must
 // never be a second set of art, and never stand where there is no floor.
+
+// ── The explorer ──────────────────────────────────────────────────────────────
+
+describe("the explorer stands in the room", () => {
+  const spriteIn = (container: HTMLElement) => container.querySelector<SVGImageElement>("[data-explorer] image")
+
+  it("stands taller than its cell, so its head is against the wall behind it", () => {
+    // The question this answers: walking a corridor, is the character in FRONT of the wall at the far
+    // side of it? The figure is bottom-anchored on the cell's floor line and taller than the cell, so its
+    // head reaches into the band above — the face of that wall — and the explorer is drawn after the tile
+    // layers, so it covers it. Standing in front of the back wall is what that overlap IS.
+    const { container } = render(<SiteMapView grid={makeGrid([[corridor("completed", false)]])} explorerPos={[0, 0]} />)
+    const sprite = spriteIn(container)!
+    const height = Number(sprite.getAttribute("height"))
+    expect(height).toBeGreaterThan(CELL)
+    // Bottom on the floor line, top inside the band above it.
+    const { cy } = cellCenter(0, 0)
+    const top = cy + CELL / 2 - height
+    expect(top).toBeLessThan(cy - CELL / 2)
+    expect(top).toBeGreaterThanOrEqual(cy - CELL / 2 - WALL_H)
+
+    // Drawn after the walls: the tile layer is the first child, the explorer comes later.
+    const svg = container.querySelector("svg")!
+    const explorer = container.querySelector("[data-explorer]")!
+    expect(svg.firstElementChild!.compareDocumentPosition(explorer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it("walks through the frames its facing has", () => {
+    // One counter, taken modulo whatever the facing was drawn with — so this holds for the side view's
+    // three frames and the front's four alike.
+    const frames = new Set<string>()
+    for (const step of [0, 1, 2, 3]) {
+      const { container } = render(
+        <svg>
+          <ExplorerFigure facing="s" step={step} />
+        </svg>
+      )
+      frames.add(container.querySelector("image")!.getAttribute("href")!)
+    }
+    expect(frames.size).toBeGreaterThan(1)
+  })
+})
 
 describe("the air on a floor", () => {
   const litGrid = () => makeGrid([[corridor("completed", false)], [chamber("completed")]])

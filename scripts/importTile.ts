@@ -42,7 +42,7 @@ const SLOTS = {
   arch: { w: ARCH_W, h: ARCH_H, seat: false },
   prop: { w: TILE, h: TILE + WALL_H, seat: true },
   wall: { w: TILE, h: WALL_H, seat: false },
-  explorer: { w: 40, h: 48, seat: true },
+  explorer: { w: 40, h: 70, seat: true },
 } as const
 
 type Slot = keyof typeof SLOTS
