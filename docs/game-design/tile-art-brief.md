@@ -153,6 +153,13 @@ where the player walks, corridors included, several to a floor.
 | Floor scatter (§4)        | a scatter layer: N per floor, deterministic cells, drawn over the floor and under props; needs its own pool field (`scatter`) or a fixed per-rank set | medium |
 | Statues by name           | nothing — three statue variants per rank is exactly what the variant pick above is for                                                                | —      |
 
+## 6a. The prompts
+
+The merchant rank's 23 prompts are written out in
+[starter-art-prompts.md](starter-art-prompts.md), with the palette, the view, the aspect per slot and the
+import command. Generate the floor first and reuse it as a reference image, or 23 files come out of 23
+different tombs.
+
 ## 6. Counts, and what to draw first
 
 | Group                                                      | Files    |

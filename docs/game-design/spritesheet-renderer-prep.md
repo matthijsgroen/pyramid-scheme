@@ -614,6 +614,10 @@ Build order, each step visible on its own:
 - `yarn generate-dummy-tiles [--preview]` — rewrites every placeholder tile, deterministically: the
   same tier always rasterises to the same bytes. `--preview` also writes `tiles/preview.png`, a dry
   run of the renderer over a hand-written plan, five ranks side by side.
+- `yarn import-tile <file> --tier=starter --name=jarRack --slot=prop` — turns a generated image into a
+  tile: keys the flat background colour out to alpha, re-seats a prop on its floor line (trim, then centre
+  on the bottom edge of the slot's aspect), resizes to the slot's exact size, writes it in. Slots carry the
+  brief's own numbers, so there is one place that knows a prop is 56x84. `--filter=smooth` for painted art.
 - `yarn generate-dummy-tiles --palettes` — candidate palettes for a rank, each drawn on the SAME plan, with
   the gold click marker, the five key colours, the fog wash and the rank's mood tint laid over them, plus a
   contrast table on stdout whose floor is what the shipping ranks already manage. Colour cannot be judged as
