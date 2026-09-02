@@ -16,6 +16,8 @@
  *   --tolerance=60   how far from that colour still counts as background (0-441, default 60)
  *   --filter=nearest keep hard pixel edges. --filter=smooth for painted art (default: nearest)
  *   --no-trim        keep the frame as generated instead of re-seating the object on the floor line
+ *   --flip           mirror horizontally. The renderer mirrors EAST into west, so a side view drawn
+ *                    facing left has to come in facing right
  */
 
 import { mkdirSync } from "fs"
@@ -102,6 +104,7 @@ const main = async (): Promise<void> => {
   const smooth = arg("filter", "nearest") === "smooth"
 
   let img = sharp(file)
+  if (process.argv.includes("--flip")) img = sharp(await img.flop().png().toBuffer())
   if (key !== "none") img = await keyOut(img, key, tolerance)
   if (seat && !process.argv.includes("--no-trim")) img = await seatOnFloorLine(img, w / h)
 
