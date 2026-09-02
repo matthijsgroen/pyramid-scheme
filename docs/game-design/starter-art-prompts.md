@@ -203,7 +203,16 @@ stroke, and nothing goes darker than #282219 or lighter than #a49781.
 Even lighting left to right, no hotspot, no vignette.
 ```
 
-**`arch` — 3:2, magenta #ff00ff EVERYWHERE except the gateway itself**
+**`arch` — the frame 2.7:1 (84×31), magenta #ff00ff EVERYWHERE except the gateway itself**
+
+The import FITS an arch to the slot rather than trusting the drawing: it finds the posts and the opening
+and rescales the three bands to `SIDE_W` : `CELL` : `SIDE_W` — 14 : 56 : 14 — so the jambs land in the
+corner slots and the way through is exactly a cell wide. Two things follow. The horizontal proportions in
+the prompt are a guide, not a requirement; and the beam's overhang past the posts is DISCARDED, because
+the slot is the doorway plus one corner either side and nothing more.
+
+What the import cannot fix is the frame's vertical proportion: drawn at 2:1 and fitted into a 2.7:1 slot,
+the merchant's arch lost a quarter of its beam thickness. Draw the remaining ranks at 2.7:1.
 
 An OBJECT, not a piece of wall. Three rolls were spent drawing a doorway in a stretch of masonry, and each
 time the wall around it squeezed the way through: asked for jambs a sixth of the frame the model drew a

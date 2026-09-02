@@ -30,7 +30,7 @@ import { mkdirSync } from "fs"
 import { dirname, join } from "path"
 import { fileURLToPath } from "url"
 import sharp from "sharp"
-import { ARCH_H, ARCH_W, WALL_H } from "../src/app/SiteMap/mapScale"
+import { ARCH_H, ARCH_W, CELL, WALL_H } from "../src/app/SiteMap/mapScale"
 import { tierPalette } from "../src/app/SiteMap/tileMaterials"
 import type { Difficulty } from "../src/data/difficultyLevels"
 
@@ -103,19 +103,79 @@ const keyOut = async (input: sharp.Sharp, key: string, tolerance: number): Promi
 }
 
 /**
- * Trims an archway down to the timber, so the frame the model chose stops mattering.
+ * Fits an archway to the slot's own geometry: jamb, opening, jamb at exactly `SIDE_W` : `CELL` : `SIDE_W`.
  *
  * An arch is drawn as an OBJECT — two posts and a beam, magenta outside it and magenta through it — not as
- * a piece of wall with a hole. That was the change that made it work: asked for a doorway in a wall, a
- * model draws a generous stretch of wall around it (jambs a third of the frame when a sixth was asked for,
- * twice), and the way through then imports at 29px for a 40-wide explorer. Asked for the gateway alone, the
- * only thing left in the picture is the thing the slot wants, and cropping is just discarding the empty
- * border.
+ * a piece of wall with a hole. Asked for a doorway in a wall, a model draws a generous stretch of wall
+ * around it and the way through comes out a third of the width instead of two thirds. Asked for the
+ * gateway alone, the only thing in the picture is the thing the slot wants.
  *
- * Runs after the key, so both the outside and the way through are already alpha and one trim finds both.
+ * Two things then have to be true, and neither can be asked for:
+ *
+ * - The bounding box must be the TIMBER. A single stray off-background pixel at the canvas edge defeats a
+ *   naive trim, which is exactly what happened: one pixel in the last column kept the full 2000-wide
+ *   canvas, the frame was squashed into the left six sevenths of the slot, and the arch sat off-centre
+ *   with the wall showing through where its right post should have been. So a row or column counts as
+ *   content only when a real share of it is opaque.
+ * - The posts must land in the CORNER slots either side of the doorway, because that is where a jamb
+ *   belongs and what keeps the way through a full cell wide. A model puts them wherever it likes, so the
+ *   three vertical bands are measured and rescaled to the widths the slot defines.
  */
-const trimToObject = async (img: sharp.Sharp): Promise<sharp.Sharp> =>
-  sharp(await img.trim({ threshold: 1 }).png().toBuffer())
+const fitToDoorway = async (img: sharp.Sharp, w: number, h: number, smooth: boolean): Promise<sharp.Sharp> => {
+  const kernel = smooth ? "lanczos3" : "nearest"
+  const { data, info } = await img.ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  const opaque = (x: number, y: number) => data[(y * info.width + x) * info.channels + 3] >= 128
+
+  /** The range of rows or columns carrying a real share of the drawing, not one stray pixel. */
+  const span = (count: number, across: number, at: (i: number, j: number) => boolean) => {
+    const floor = Math.max(2, Math.round(across * 0.01))
+    const filled: boolean[] = []
+    for (let i = 0; i < count; i++) {
+      let n = 0
+      for (let j = 0; j < across; j++) if (at(i, j)) n++
+      filled.push(n >= floor)
+    }
+    return [filled.indexOf(true), filled.lastIndexOf(true)] as const
+  }
+
+  const [left, right] = span(info.width, info.height, (x, y) => opaque(x, y))
+  const [top, bottom] = span(info.height, info.width, (y, x) => opaque(x, y))
+  if (right < 0 || bottom < 0) throw new Error("nothing to import: the whole frame keyed out")
+
+  // The opening, measured on a row below the beam where only the two posts are left — scanning OUTWARD
+  // from the middle, because a beam overhangs its posts and a scan inward from the edge finds the gap
+  // under that overhang instead of the doorway.
+  const probe = Math.round(bottom - (bottom - top) * 0.15)
+  const middle = Math.round((left + right) / 2)
+  let openFrom = middle
+  while (openFrom > left && !opaque(openFrom - 1, probe)) openFrom--
+  let openTo = middle
+  while (openTo < right && !opaque(openTo + 1, probe)) openTo++
+
+  const band = async (from: number, to: number, width: number) =>
+    await img
+      .clone()
+      .extract({ left: from, top, width: to - from + 1, height: bottom - top + 1 })
+      .resize(width, h, { fit: "fill", kernel })
+      .png()
+      .toBuffer()
+
+  // The POSTS, not "everything either side of the opening": a beam overhangs its posts, and carrying that
+  // overhang into the corner slot leaves the post too narrow to fill it — so the wall shows through beside
+  // the doorway. The overhang is discarded and the beam ends flush with the posts, which is what the slot
+  // is: the doorway plus exactly one corner each side.
+  let postFrom = openFrom - 1
+  while (postFrom > left && opaque(postFrom - 1, probe)) postFrom--
+  let postTo = openTo + 1
+  while (postTo < right && opaque(postTo + 1, probe)) postTo++
+
+  const jamb = (w - CELL) / 2
+  return sharp({ create: { width: w, height: h, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).composite([
+    { input: await band(postFrom, openFrom - 1, jamb), left: 0, top: 0 },
+    { input: await band(openFrom, openTo, CELL), left: jamb, top: 0 },
+    { input: await band(openTo + 1, postTo, jamb), left: w - jamb, top: 0 },
+  ])
+}
 
 /** Re-seats a trimmed object on the bottom edge of its slot's aspect: what makes a prop stand on the floor
  * line rather than float in the middle of its cell. The object keeps its own proportions. */
@@ -155,8 +215,10 @@ const main = async (): Promise<void> => {
   let img = sharp(file)
   if (process.argv.includes("--flip")) img = sharp(await img.flop().png().toBuffer())
   if (key !== "none") img = await keyOut(img, key, tolerance)
-  // After the key: an arch is an object with magenta on both sides, so one trim finds its timber.
-  if (slot === "arch" && !process.argv.includes("--no-trim")) img = await trimToObject(img)
+  // After the key: an arch is an object with magenta on both sides, so one pass finds its timber and
+  // seats its posts in the corner slots. It is already at the slot size when it comes back.
+  const archFitted = slot === "arch" && !process.argv.includes("--no-trim")
+  if (archFitted) img = await fitToDoorway(img, w, h, smooth)
   if (seat && !process.argv.includes("--no-trim")) img = await seatOnFloorLine(img, w / h)
 
   const dir = join(OUT_ROOT, tier)
