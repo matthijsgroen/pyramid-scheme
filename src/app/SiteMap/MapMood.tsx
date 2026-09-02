@@ -61,12 +61,21 @@ type Props = {
   siteId: string
   width: number
   height: number
-  /** Lit floor cells, for the things that live on the floor rather than in the air. */
+  /**
+   * EVERY floor cell of the floor, lit or not, in a fixed order — not just the explored ones.
+   *
+   * A scarab picks its cell by index into this list, so the list cannot be allowed to grow: indexing the
+   * LIT cells meant every reveal lengthened it and every scarab landed somewhere else, teleporting across
+   * the map each time the player opened up another corridor. The beetle was always there; the player just
+   * had not seen that corner yet, and that is what `isLit` is for.
+   */
   floorCells: ReadonlyArray<readonly [number, number]>
+  /** Whether the player has seen that cell yet. A scarab in the dark is simply not drawn. */
+  isLit: (row: number, col: number) => boolean
 }
 
 /** Scarabs: on the floor, under everything that stands on it. */
-export const MapLife = ({ mood, siteId, floorCells }: Omit<Props, "width" | "height">) => {
+export const MapLife = ({ mood, siteId, floorCells, isLit }: Omit<Props, "width" | "height">) => {
   const url = sharedTileUrl("scarab")
   if (!mood.life || !url || floorCells.length === 0) return null
   return (
@@ -74,6 +83,7 @@ export const MapLife = ({ mood, siteId, floorCells }: Omit<Props, "width" | "hei
       {Array.from({ length: mood.life }, (_, i) => {
         // Each one keeps to a cell of real floor, so nothing ever scurries into the stone.
         const [row, col] = floorCells[Math.floor(rand(siteId, "scarab-cell", i) * floorCells.length)]
+        if (!isLit(row, col)) return null
         const { cx, cy } = cellCenter(row, col)
         const away = rand(siteId, "scarab-dir", i) > 0.5 ? 1 : -1
         return (
@@ -101,7 +111,7 @@ export const MapLife = ({ mood, siteId, floorCells }: Omit<Props, "width" | "hei
 }
 
 /** Drift and tint: between the player and the world, so over everything the map draws. */
-export const MapWeather = ({ mood, siteId, width, height }: Omit<Props, "floorCells">) => {
+export const MapWeather = ({ mood, siteId, width, height }: Omit<Props, "floorCells" | "isLit">) => {
   const { drift, tint } = mood
   if (!drift && !tint) return null
   return (

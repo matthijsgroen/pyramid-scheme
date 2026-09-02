@@ -686,6 +686,13 @@ which put all three scarabs on the same tile).
 Scarabs sit UNDER the props and icons, because they are on the floor; drift and tint sit over everything,
 arches included, because weather is between the player and the world.
 
+**A scarab picks its cell out of every floor cell the floor has, lit or not**, and is simply not drawn while
+that cell is dark. Picking out of the EXPLORED cells looked equivalent and was not: the list grows as the
+player reveals the map, so every index into it lands somewhere else and the beetles teleport across the
+floor each time a corridor opens up. Anything positioned by an index into a list has to index something the
+game cannot lengthen — which is the same trap as the per-pool prop counter (§ "What is authored"), one layer
+down.
+
 | Rank         | Ambient tint    | Ambient  | Light                          | Flicker    | Contrast  | Particles       |
 | ------------ | --------------- | -------- | ------------------------------ | ---------- | --------- | --------------- |
 | **merchant** | dusty warm-grey | high     | daylight down the stair        | none       | low       | chaff and dust  |

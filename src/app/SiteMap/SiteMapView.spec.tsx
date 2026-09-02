@@ -646,6 +646,33 @@ describe("the air on a floor", () => {
     expect(washOf(night.container)).not.toBe(washOf(container))
   })
 
+  it("keeps a scarab where it was as more of the floor is explored", () => {
+    // The bug this is here for: a scarab picked its cell by index into the LIT cells, so every reveal
+    // lengthened that list and every scarab landed somewhere else — they teleported across the map each
+    // time the player opened up another corridor. The beetle was always there; the player had not seen
+    // that corner yet.
+    const halfLit = makeGrid([
+      [corridor("completed", false), corridor("fogged", false)],
+      [corridor("completed", false), corridor("fogged", false)],
+      [chamber("completed"), corridor("fogged", false)],
+    ])
+    const fullyLit = makeGrid([
+      [corridor("completed", false), corridor("completed", false)],
+      [corridor("completed", false), corridor("completed", false)],
+      [chamber("completed"), corridor("completed", false)],
+    ])
+    const spots = (grid: FloorGrid) =>
+      Array.from(render(<SiteMapView grid={grid} />).container.querySelectorAll(".map-scarab")).map(
+        el => `${el.getAttribute("x")},${el.getAttribute("y")}`
+      )
+
+    const before = spots(halfLit)
+    const after = spots(fullyLit)
+    // Exploring can only ever REVEAL one: every scarab visible before is in the same place after.
+    expect(before.length).toBeGreaterThan(0)
+    expect(after).toEqual(expect.arrayContaining(before))
+  })
+
   it("puts nothing living where there is no lit floor", () => {
     // Fog is not a place a beetle can be: it is what the player has not seen.
     const dark = makeGrid([[corridor("fogged", false)], [chamber("fogged")]])

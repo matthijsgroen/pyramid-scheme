@@ -1367,17 +1367,19 @@ export const SiteMapView = ({
   // its sill (see TileLayers.archedGaps).
   // The air on this floor: its rank's, with whatever hour it authors (moodSettings.ts).
   const mood = useMemo(() => moodFor(tier, grid.theme), [tier, grid.theme])
-  // Where something living may be: lit floor the player could walk, never stone and never fog.
+  // Where something living may be: every real floor cell of this floor, explored or not. Deliberately NOT
+  // filtered by what the player has seen — see MapLife's `floorCells`: a list that grows as the map is
+  // revealed moves everything indexed into it.
   const floorCells = useMemo(() => {
     const cells: Array<readonly [number, number]> = []
     for (let r = 0; r < grid.rows; r++) {
       for (let c = 0; c < grid.cols; c++) {
-        const cell = grid.cells[r][c]
-        if (cell.type !== "empty" && cell.state !== "fogged") cells.push([r, c])
+        if (grid.cells[r][c].type !== "empty") cells.push([r, c])
       }
     }
     return cells
-  }, [grid])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the SHAPE of the floor, which a reveal never changes
+  }, [grid.rows, grid.cols, grid.siteId])
   const archedGaps = useMemo(
     () => new Set(doorways.map(({ row, col }) => `${cellLeft(col)},${cellTop(row) - WALL_H}`)),
     [doorways]
@@ -1447,7 +1449,15 @@ export const SiteMapView = ({
           style={{ background: tierPalette[tier].wallBase, imageRendering: ART_IMAGE_RENDERING }}
         >
           <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
-          <MapLife mood={mood} siteId={grid.siteId} floorCells={floorCells} />
+          <MapLife
+            mood={mood}
+            siteId={grid.siteId}
+            floorCells={floorCells}
+            isLit={(r, c) => {
+              const cell = cellAt(grid, r, c)
+              return cell.type !== "empty" && cell.state !== "fogged"
+            }}
+          />
           <WallItems items={wallItems} />
 
           {Array.from({ length: grid.rows + 2 }, (_, ri) => {
