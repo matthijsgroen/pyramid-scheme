@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The explorer carries light now: a pool of torchlight at their feet that gutters as they stand, and a
   warm cast over the room or passage they are in, reaching the stretch either side. A chamber lights
-  whole; a corridor lights where you stand and a little beyond. Where you are standing is the brightest
+  whole; a passage lights as far as its next turn. Where you are standing is the brightest
   place on the floor — a room you have walked into no longer goes darker than one you have only seen.
 - The dots and arrows you tap to move are bigger, and each carries an invisible target wider than the
   mark itself, so a thumb finds them.

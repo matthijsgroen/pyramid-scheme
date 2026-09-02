@@ -1377,22 +1377,63 @@ const Archways = ({
 // twice and read as a bright tile rather than a lit room. It still has to clear an UNVISITED room, since
 // `completed` washes a visited one 20% darker and standing somewhere must not be dimmer than never having
 // been there — on starter stone that puts the place at 102 against an unvisited 96 and a visited 77.
+/**
+ * The PLACE the explorer is standing in — a whole chamber, or the stretch of corridor they are on.
+ *
+ * A place, never a tile. A torch carried into a room lights the room; carried along a passage it lights
+ * the passage as far as the next turn. Lighting the single cell drew a bright square on a floor with no
+ * edge to justify it, which read as a tile rather than as somewhere being lit.
+ *
+ * The room case has to handle standing on the room's OWN cell as well as on one it claims: `claimedBy`
+ * maps a claimed cell to its owner and has no entry for the owner itself, so looking up the owner and
+ * stopping there lit one square whenever the player stood in the middle of their own chamber.
+ */
+const litPlaceCells = (grid: FloorGrid, claims: RoomClaims, at: readonly [number, number]): string[] => {
+  const here = `${at[0]},${at[1]}`
+  const owner = claims.claimedBy.get(here) ?? here
+  const footprint = [owner, ...[...claims.claimedBy.entries()].filter(([, o]) => o === owner).map(([cell]) => cell)]
+  if (footprint.length > 1) return footprint
+
+  const cell = cellAt(grid, at[0], at[1])
+  if (cell.type !== "corridor") return [here]
+
+  // The run: out from the cell in every open direction, following the passage until it turns or opens
+  // into something else. The turn itself is included — a light that stopped one cell short of the corner
+  // would leave the corner darker than the straight, which is the opposite of how a corner reads.
+  const cells = [here]
+  for (const dir of cell.dirs) {
+    let [dr, dc] = DIR_MOVES[dir]
+    let r = at[0] + dr
+    let c = at[1] + dc
+    let from: Direction = dir
+    for (let steps = 0; steps < grid.rows + grid.cols; steps++) {
+      const next = cellAt(grid, r, c)
+      if (next.type !== "corridor" || next.state === "fogged") break
+      cells.push(`${r},${c}`)
+      if (isCorridorCorner(next.dirs)) break
+      const onward = ([...next.dirs] as Direction[]).find(d => d !== OPPOSITE_DIR[from])
+      if (!onward) break
+      ;[dr, dc] = DIR_MOVES[onward]
+      r += dr
+      c += dc
+      from = onward
+    }
+  }
+  return cells
+}
+
 const TORCH_LIT = "#ffe2b0"
 const TORCH_SPILL = "#ffb347"
 
 const LitPlace = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; at?: readonly [number, number] }) => {
   if (!at) return null
-  const here = `${at[0]},${at[1]}`
-  const owner = claims.claimedBy.get(here)
-  const room = owner
-    ? [owner, ...[...claims.claimedBy.entries()].filter(([, o]) => o === owner).map(([cell]) => cell)]
-    : [here]
+  const place = litPlaceCells(grid, claims, at)
 
   // Light spills. A torch in a corridor does not stop at the cell's edge — the stretch either side of the
   // player catches some of it, which is also what tells them a passage carries on. The spill is every
   // floor cell touching the lit place, at half the strength, and it is what keeps the pool from reading as
   // a lit square with hard edges.
-  const lit = new Set(room)
+  const lit = new Set(place)
   const spill = new Set<string>()
   for (const key of lit) {
     const [r, c] = key.split(",").map(Number)

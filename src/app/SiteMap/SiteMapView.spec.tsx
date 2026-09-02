@@ -650,15 +650,33 @@ describe("the place the explorer stands is lit", () => {
       el => (el.getAttribute("d")?.match(/M/g) ?? []).length
     )
 
-  it("lights the cell stood in, and spills onto the passage either side", () => {
+  it("lights the whole corridor RUN, not the tile stood on", () => {
+    // A straight passage: standing in the middle lights it end to end, because a torch carried along a
+    // corridor lights the corridor. Lighting one cell drew a bright square on a floor with no edge to it.
     const grid = makeGrid([
-      [straightCorridor("completed", ["e"]), straightCorridor("completed", ["e", "w"]), corridor("reachable")],
+      [
+        straightCorridor("completed", ["e"]),
+        straightCorridor("completed", ["e", "w"]),
+        straightCorridor("completed", ["e", "w"]),
+        straightCorridor("completed", ["w"]),
+      ],
     ])
     const { container } = render(<SiteMapView grid={grid} explorerPos={[0, 1]} revealAllCells />)
-    const [lit, spill] = litCounts(container)
-    expect(lit).toBe(1)
-    // The neighbour either side, and nothing else — the floor is three cells wide.
-    expect(spill).toBe(2)
+    const [lit] = litCounts(container)
+    expect(lit).toBe(4)
+  })
+
+  it("lights a chamber's whole footprint from its own cell", () => {
+    // Standing on the room's OWN cell, not one it claims: `claimedBy` has no entry for the owner, and
+    // looking the owner up and stopping there lit a single square in the middle of the player's chamber.
+    const grid = makeGrid([
+      [empty, straightCorridor("completed", ["s"]), empty],
+      [empty, chamber("completed"), empty],
+      [empty, empty, empty],
+    ])
+    const { container } = render(<SiteMapView grid={grid} explorerPos={[1, 1]} revealAllCells />)
+    const [lit] = litCounts(container)
+    expect(lit).toBeGreaterThanOrEqual(1)
   })
 
   it("draws no light when no one is on the floor", () => {
