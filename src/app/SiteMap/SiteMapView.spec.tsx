@@ -346,7 +346,9 @@ describe("SiteMapView — long corridor click target", () => {
     const { container } = render(<SiteMapView grid={grid} explorerPos={[0, 0]} />)
     const nearCell = findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)
     expect(nearCell?.querySelector("polygon")).toBeTruthy()
-    expect(nearCell?.querySelector("circle")).toBeNull()
+    // No dot — only the invisible disc that catches the tap, which every marker carries.
+    const circles = Array.from(nearCell?.querySelectorAll("circle") ?? [])
+    expect(circles.every(c => c.getAttribute("fill") === "transparent")).toBe(true)
   })
 
   it("hides the run-target marker the instant the explorer starts traveling elsewhere", () => {
@@ -638,6 +640,33 @@ describe("archways", () => {
 // never be a second set of art, and never stand where there is no floor.
 
 // ── The explorer ──────────────────────────────────────────────────────────────
+
+// ── Torchlight ────────────────────────────────────────────────────────────────
+
+describe("the place the explorer stands is lit", () => {
+  // Both washes are one path each, so the cells they cover are countable by the moves in the `d`.
+  const litCounts = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll<SVGPathElement>("path"))
+      .filter(el => el.getAttribute("fill") === "#ffb347")
+      .map(el => (el.getAttribute("d")?.match(/M/g) ?? []).length)
+
+  it("lights the cell stood in, and spills onto the passage either side", () => {
+    const grid = makeGrid([
+      [straightCorridor("completed", ["e"]), straightCorridor("completed", ["e", "w"]), corridor("reachable")],
+    ])
+    const { container } = render(<SiteMapView grid={grid} explorerPos={[0, 1]} revealAllCells />)
+    const [lit, spill] = litCounts(container)
+    expect(lit).toBe(1)
+    // The neighbour either side, and nothing else — the floor is three cells wide.
+    expect(spill).toBe(2)
+  })
+
+  it("draws no light when no one is on the floor", () => {
+    const grid = makeGrid([[corridor("completed"), corridor("completed")]])
+    const { container } = render(<SiteMapView grid={grid} revealAllCells />)
+    expect(litCounts(container)).toEqual([])
+  })
+})
 
 describe("the explorer stands in the room", () => {
   const spriteIn = (container: HTMLElement) => container.querySelector<SVGImageElement>("[data-explorer] image")

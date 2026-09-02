@@ -19,6 +19,7 @@ import { ExplorerDot } from "./ExplorerDot"
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
+  MARKER_HIT,
   MARKER_RADIUS,
   NODE_RADIUS_FORK,
   NODE_RADIUS_LARGE,
@@ -1357,6 +1358,68 @@ const Archways = ({
   </g>
 )
 
+// ─── Torchlight on the place the player is standing ─────────────────────────────
+
+/**
+ * The room or corridor cell the explorer is in, washed warm — the same torch that pools at their feet
+ * reaching the walls around them.
+ *
+ * A CHAMBER lights whole: a torch carried into a small room lights the room, and lighting one cell of it
+ * would draw a square of light on a floor with no edge to justify it. A corridor lights only the cell
+ * stood in, because a corridor has no extent to fill.
+ *
+ * Screen-blended and weak on purpose. This sits under the player for the whole game, so it has to read as
+ * the stone being lit rather than as a coloured overlay on top of it — and it must never compete with the
+ * state washes that tell the player what is explored.
+ */
+const TORCH_LIGHT = "#ffb347"
+
+const LitPlace = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; at?: readonly [number, number] }) => {
+  if (!at) return null
+  const here = `${at[0]},${at[1]}`
+  const owner = claims.claimedBy.get(here)
+  const room = owner
+    ? [owner, ...[...claims.claimedBy.entries()].filter(([, o]) => o === owner).map(([cell]) => cell)]
+    : [here]
+
+  // Light spills. A torch in a corridor does not stop at the cell's edge — the stretch either side of the
+  // player catches some of it, which is also what tells them a passage carries on. The spill is every
+  // floor cell touching the lit place, at half the strength, and it is what keeps the pool from reading as
+  // a lit square with hard edges.
+  const lit = new Set(room)
+  const spill = new Set<string>()
+  for (const key of lit) {
+    const [r, c] = key.split(",").map(Number)
+    for (const [dr, dc] of [
+      [-1, 0],
+      [1, 0],
+      [0, -1],
+      [0, 1],
+    ] as const) {
+      const near = `${r + dr},${c + dc}`
+      if (lit.has(near)) continue
+      const cell = cellAt(grid, r + dr, c + dc)
+      if (cell.type === "empty" || cell.state === "fogged") continue
+      spill.add(near)
+    }
+  }
+
+  const pathFor = (keys: Iterable<string>) =>
+    [...keys]
+      .map(key => {
+        const [r, c] = key.split(",").map(Number)
+        return `M${cellLeft(c)} ${cellTop(r)}h${CELL}v${CELL}h${-CELL}z`
+      })
+      .join("")
+
+  return (
+    <g style={{ mixBlendMode: "screen" }} pointerEvents="none">
+      <path d={pathFor(lit)} fill={TORCH_LIGHT} opacity={0.15} />
+      <path d={pathFor(spill)} fill={TORCH_LIGHT} opacity={0.07} />
+    </g>
+  )
+}
+
 // ─── Click-target markers ───────────────────────────────────────────────────────
 
 // A plain corner's reachable marker has no single direction to point in — a corner or
@@ -1372,19 +1435,31 @@ const DIR_ROTATION: Record<Direction, number> = { n: 0, e: 90, s: 180, w: 270 }
 const MARKER_FILL = "#ffd766"
 const MARKER_OUTLINE = "#161009"
 
-const ReachableDot = () => <circle r={MARKER_RADIUS} fill={MARKER_FILL} stroke={MARKER_OUTLINE} strokeWidth={2} />
+const ReachableDot = () => (
+  <>
+    <TapTarget />
+    <circle r={MARKER_RADIUS} fill={MARKER_FILL} stroke={MARKER_OUTLINE} strokeWidth={2} />
+  </>
+)
+
+/** Invisible, and the reason a marker can be small and still easy to hit. `fill="transparent"` rather than
+ * `none`: a shape with no fill is not there as far as pointer events are concerned. */
+const TapTarget = () => <circle r={MARKER_HIT} fill="transparent" />
 
 const RunTargetArrow = ({ dir }: { dir: Direction }) => {
   const r = MARKER_RADIUS * 1.2
   return (
-    <polygon
-      points={`0,${-r} ${r},${r} ${-r},${r}`}
-      fill={MARKER_FILL}
-      stroke={MARKER_OUTLINE}
-      strokeWidth={2}
-      strokeLinejoin="round"
-      transform={`rotate(${DIR_ROTATION[dir]})`}
-    />
+    <>
+      <TapTarget />
+      <polygon
+        points={`0,${-r} ${r},${r} ${-r},${r}`}
+        fill={MARKER_FILL}
+        stroke={MARKER_OUTLINE}
+        strokeWidth={2}
+        strokeLinejoin="round"
+        transform={`rotate(${DIR_ROTATION[dir]})`}
+      />
+    </>
   )
 }
 
@@ -1503,6 +1578,7 @@ export const SiteMapView = ({
           style={{ background: tierPalette[tier].wallBase, imageRendering: ART_IMAGE_RENDERING }}
         >
           <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
+          <LitPlace grid={grid} claims={claims} at={settledExplorerPos} />
           <MapLife
             mood={mood}
             siteId={grid.siteId}

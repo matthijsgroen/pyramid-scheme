@@ -12,6 +12,9 @@ type Point = { x: number; y: number }
 // reads as a map, big enough to be a person rather than a token.
 const CHAR_W = 40
 const CHAR_H = 70
+// A few units off the cell's bottom edge. Standing exactly on it, the feet met the wall band below and the
+// figure read as leaning against the wall rather than standing in front of it.
+const FOOT_LIFT = 5
 
 // Which way the character faces, taken from the step being walked — no stored direction, no state to keep
 // in sync with the route. West is EAST mirrored, so the art is three files rather than four.
@@ -145,6 +148,51 @@ export const ExplorerDot = ({ grid, pos, segmentDuration = 120, color = "#ffd060
   )
 }
 
+// The torch the explorer carries, as light on the ground rather than a beam: a soft pool at the feet,
+// screen-blended so it lifts whatever stone it lands on instead of painting a yellow disc over it. The
+// flicker is mostly opacity, plus a two-pixel wander: a lamp gutters, it does not pulse, and this sits
+// under the player's eye the whole game. SCALING it was the version that read as the pool breathing —
+// wandering a pixel or two is a flame moving in someone's hand, which is the thing being drawn.
+const TORCH_CLASS = "map-torch"
+const TORCH_RADIUS = CELL * 0.85
+const TORCH_CSS = `
+.${TORCH_CLASS} { animation: map-torch-flicker 2.2s ease-in-out infinite; }
+@keyframes map-torch-flicker {
+  0%   { opacity: 0.86; transform: translate(0, 0); }
+  18%  { opacity: 1;    transform: translate(1px, -1px); }
+  37%  { opacity: 0.82; transform: translate(-1px, 1px); }
+  58%  { opacity: 0.97; transform: translate(1px, 1px); }
+  79%  { opacity: 0.85; transform: translate(-1px, 0); }
+  100% { opacity: 0.86; transform: translate(0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .${TORCH_CLASS} { animation: none; }
+}
+`
+
+/** The pool of torchlight the explorer stands in. Drawn UNDER the figure, so the light is on the floor and
+ * the person is in it. */
+const TorchGlow = () => (
+  <>
+    <style>{TORCH_CSS}</style>
+    <defs>
+      <radialGradient id="torch-pool">
+        <stop offset="0" stopColor="#ffca6a" stopOpacity="0.55" />
+        <stop offset="0.45" stopColor="#ffab3d" stopOpacity="0.26" />
+        <stop offset="1" stopColor="#ff9a2e" stopOpacity="0" />
+      </radialGradient>
+    </defs>
+    <circle
+      className={TORCH_CLASS}
+      cy={CELL * 0.22 - FOOT_LIFT}
+      r={TORCH_RADIUS}
+      fill="url(#torch-pool)"
+      style={{ mixBlendMode: "screen" }}
+      pointerEvents="none"
+    />
+  </>
+)
+
 /**
  * The explorer as drawn, in cell-local units around the centre of the cell it stands on. Separate from the
  * walking above so the look can be judged on its own (see the Facings story) and swapped without touching
@@ -164,10 +212,21 @@ export const ExplorerFigure = ({
   // Three directions of art, not four: facing west is facing east mirrored.
   const frames = sharedTileFrames(`explorer-${facing === "w" ? "e" : facing}`)
   const url = frames[step % frames.length]
-  if (!url) return <circle r={EXPLORER_DOT_RADIUS} fill={color} stroke="#110d08" strokeWidth={2} />
+  if (!url)
+    return (
+      <>
+        <TorchGlow />
+        <circle r={EXPLORER_DOT_RADIUS} fill={color} stroke="#110d08" strokeWidth={2} />
+      </>
+    )
   return (
-    <g transform={facing === "w" ? "scale(-1, 1)" : undefined}>
-      <image href={url} x={-CHAR_W / 2} y={CELL / 2 - CHAR_H} width={CHAR_W} height={CHAR_H} />
-    </g>
+    <>
+      <TorchGlow />
+      {/* Mirrored for west, and the glow is left out of that transform: a pool of light on the floor has
+          no handedness, and flipping it would swing it across the cell every time the player turned. */}
+      <g transform={facing === "w" ? "scale(-1, 1)" : undefined}>
+        <image href={url} x={-CHAR_W / 2} y={CELL / 2 - CHAR_H - FOOT_LIFT} width={CHAR_W} height={CHAR_H} />
+      </g>
+    </>
   )
 }

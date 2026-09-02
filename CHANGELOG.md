@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The explorer carries light now: a pool of torchlight at their feet that gutters as they stand, and a
+  warm cast over the room or passage they are in, reaching the stretch either side. A chamber lights
+  whole; a corridor lights where you stand and a little beyond.
+- The dots and arrows you tap to move are bigger, and each carries an invisible target wider than the
+  mark itself, so a thumb finds them.
+- The explorer stands a little clear of the wall behind, rather than with their feet against it.
+
 - A wall shows its top now, the same stone its sides are cut from, so it stands up off the floor instead
   of lying flat on it.
 - The sill at a ward gate is laid the right way round: it used to be stretched to the wrong size and, in a

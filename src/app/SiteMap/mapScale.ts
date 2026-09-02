@@ -13,7 +13,13 @@ export const NODE_RADIUS_PUZZLE = CELL * 0.36 // puzzle, trap — ~20
 export const NODE_RADIUS_FORK = CELL * 0.16 // junctions stay small — connective tissue, not a destination — ~9
 
 export const EXPLORER_DOT_RADIUS = CELL * 0.2 // ~11
-export const MARKER_RADIUS = CELL * 0.07 // reachable-corner dot / corridor-run arrow — ~4
+export const MARKER_RADIUS = CELL * 0.11 // reachable-corner dot / corridor-run arrow — ~6
+
+/** The invisible disc behind a marker that actually catches the tap. An SVG group only receives pointer
+ * events where its children PAINT, so a 6-unit dot was a 6-unit target — fine with a mouse, small with a
+ * thumb. The disc is a third of a cell, which is well inside the cell pitch, so two adjacent markers never
+ * fight over a click. */
+export const MARKER_HIT = CELL * 0.36 // ~20
 
 // ─── Map geometry ─────────────────────────────────────────────────────────────
 // A wall needs somewhere to BE. Cells are laid out on a stretched pitch: every cell carries an
