@@ -7,7 +7,30 @@ that accepts a reference image (Gemini), but nothing here depends on that beyond
 Floor scatter (planks, sand, sherds…) is deliberately absent: it has no renderer slot yet, so generating it
 now would be art with nowhere to go.
 
-## 0. How to run one
+## 0. The loop, one file at a time
+
+Two people and a model, and the file is not done until BOTH have looked. Never start the next file
+while the current one is still open — a set drifts when two are in flight.
+
+1. **Claude hands over a full prompt** — preamble and per-file prompt as one block, ready to paste, plus
+   which reference image to supply. Never a delta against a previous message: the whole thing, every time,
+   because a delta gets pasted on top of the wrong base.
+2. **You generate** and paste the result back.
+3. **Claude verifies by measuring** — `yarn tile-stats`, against the rank's palette and against the files
+   already in the folder. Value, hue, aspect, and for a surface, whether it sits behind what stands on it.
+   Numbers first, opinion second, and the verdict says import or re-roll.
+4. **You verify by looking** — Storybook, `App/SiteMap/SiteMapView` → **World Floor Starter**. Hard-refresh;
+   Vite caches by URL and the path does not change. Measurement cannot see busy, and busy is what kills a
+   tile. A prop is judged against a wall, never against a swatch.
+5. **Iterate on the same file** until you both say good. Some of it is post-fixable at import
+   (`--repeat`, `--flatten`) and does not need a re-roll; Claude says which.
+6. **Then, and only then, the next file.** The accepted file becomes the reference image for the one after,
+   so the set comes out of one tomb.
+
+The one thing that breaks this: reporting a step as done without running it. A file is written when
+`tile-stats` has been run on the file ON DISK and the numbers are in the message.
+
+## 0b. The commands
 
 1. **Generate the floor first** and keep it. It is the style anchor: pass it back as a reference image with
    every later prompt so 23 files come out of one tomb rather than 23.
@@ -122,22 +145,55 @@ Even lighting across the entire image, no hotspot, no vignette. Edge to edge tex
 
 **`wall-face` — 8:1 strip (if the model refuses, 4:1 and let the import squash it), fills the frame**
 
-```
-Seamless horizontal strip of a mudbrick wall, seen straight on from the front, eye level.
-Courses of mud brick offset half a brick per row, running unbroken across the whole strip.
-Whitewash worn thin over the brick, more gone than left — the worn paint is dusty #a49781, never white,
-and the joints between bricks are hairline, not dark outlines.
-Merchant seals and tally marks in ochre, wooden peg holes, an iron awning bracket.
-A lighter cap along the very top edge where the wall's top surface catches light, and a dark base along
-the bottom edge. Even lighting left to right. It tiles left to right: nothing crosses the full width,
-and no single object big enough to be recognised twice in a row.
-```
-
-**`threshold` — 4:1 (import crops to 56x12), fills the frame**
+Seen from the FRONT, not from above: this is the face of the wall the player looks at, standing behind
+every chamber. It repeats left to right forever and is only 56 units tall, so a brick is small and a
+whole wall is mostly texture.
 
 ```
-A single worn mudbrick step seen from above, spanning the full width of a doorway, twelve pixels tall.
-Rounded by feet, mortar crumbling at both ends, one ochre line of paint left along its front edge.
+Seamless horizontal strip of a mudbrick wall, seen straight on from the front at eye level.
+Wide strip, exactly 8 times as wide as it is tall.
+COUNT THE BRICKS: exactly 3 courses stacked in the strip's height and 16 bricks across its width,
+each course offset half a brick from the one above. Small mud bricks, square corners.
+The bricks BUTT AGAINST EACH OTHER. The joint between two bricks is a shallow GROOVE: a soft narrow
+shadow where the surface dips and rises again — modelled, never a drawn line, never black. No brick
+has a contour around it.
+The wall is DARK. Base mud brick #4a4137, and that is the colour most of the wall actually is — DARKER
+than the stone floor standing in front of it, not lighter. A poor merchant's mudbrick: brown and
+earthen, not pale dressed limestone, not grey.
+Whitewash survives only in PATCHES over about a third of the wall, soft-edged, fading out at their
+edges rather than flaking off in hard-edged chips. Worn paint is dusty #a49781, never white, and no
+patch is lighter than #736858. Most of what you see is bare brick.
+A merchant's wall, so it has been USED: ochre tally marks and a pressed clay seal, two wooden peg
+holes with a peg still in one, an iron awning bracket, a dark rubbed band at hand height where people
+have leaned. All of it painted as depth, none of it outlined.
+The very top edge carries a lighter cap where the wall's top surface catches the light; the very
+bottom edge a darker base where it meets the floor. Those two bands run unbroken the whole width —
+they are the only things that do.
+It tiles left to right: nothing else crosses the full width, no crack or stain longer than an eighth
+of it, and no object big enough to be recognised twice in a row.
+Even lighting left to right, no hotspot, no vignette. Edge to edge texture.
+```
+
+**`threshold` — 5:1 strip (import fits it to 56×12), fills the frame**
+
+The sill on a ward-gate seam, where one rank's stone gives way to the next. It is 56×12 — a twelfth of a
+cell tall — so it is a BAND, not an object: no shape a player could lose half of, and it is seen from
+directly above like the floor, not from the front like the wall.
+
+```
+A single worn mudbrick step seen from straight above, spanning the full width of a doorway.
+Wide strip, exactly 5 times as wide as it is tall, filling the frame edge to edge with no background.
+It is ONE band of stone across the whole width: a soft shadow along its far edge where it drops to the
+floor beyond, its own worn top surface across the middle, a soft shadow along its near edge. No object
+sits on it and nothing crosses it end to end except those two edges.
+The stone is the floor's own mudbrick, #6c6257, a step darker where it is worn hollow — this is the same
+paving as the chamber, laid as one long block. Slightly DARKER than the floor either side of it, never
+lighter.
+Rounded and dished in the middle by feet, mortar crumbled at both ends, one ochre #b07a3c line of paint
+left along its near edge, mostly rubbed away.
+Painted, matte, soft brush texture and grit. NO OUTLINES: every edge is a change of value, never a
+stroke, and nothing goes darker than #282219 or lighter than #a49781.
+Even lighting left to right, no hotspot, no vignette.
 ```
 
 **`arch` — 3:2, magenta #ff00ff background, middle open**

@@ -18,8 +18,8 @@
  *   --repeat=1.4     fit the art N times across the slot instead of once, for a megatile whose subject
  *                    came back too big. Fractional is the point — a whole number makes the repeat
  *                    visible. Run `make-seamless` on the SOURCE first, or the grid shows its own seams.
- *   --flatten=0.5    blend toward the rank's own slab colour, so the floor sits behind the props rather
- *                    than competing. Toward the SLAB, not toward grey: flattening keeps the hue.
+ *   --flatten=0.5    blend toward the material the slot is made of — the rank's slab for a floor, its wall
+ *                    for a face — so a surface sits behind the props. Toward the palette, not toward grey.
  *   --no-trim        keep the frame as generated instead of re-seating the object on the floor line
  *   --flip           mirror horizontally. The renderer mirrors EAST into west, so a side view drawn
  *                    facing left has to come in facing right
@@ -171,16 +171,22 @@ const main = async (): Promise<void> => {
           }))
         )
 
-  // Blends the art toward the rank's own slab colour: a flat wash of it, laid over at `flatten` opacity.
-  // A generator overshoots contrast far more often than it undershoots, and a floor is background — it has
-  // to sit behind the props and the explorer rather than compete with them. 0 leaves it alone.
+  // Blends the art toward the material it is supposed to BE: a flat wash of that colour, laid over at
+  // `flatten` opacity. A generator overshoots contrast far more often than it undershoots, and a surface is
+  // background — it has to sit behind the props and the explorer rather than compete. 0 leaves it alone.
   //
-  // Toward the SLAB, not toward the image's own mean. Flattening toward a mean is flattening toward grey,
-  // and the hue goes with it (measured: -4 warmth at a strength that only halved the spread). Flattening
-  // toward the palette's stone makes staying in the palette and calming down the same move.
+  // Toward the palette, not toward the image's own mean. Flattening toward a mean is flattening toward grey
+  // and the hue goes with it (measured: -4 warmth at a strength that only halved the spread). Toward the
+  // palette, calming down and staying in the palette are the same move.
+  //
+  // Which colour depends on the slot, and getting this wrong is worse than not flattening: the map's depth
+  // comes from a wall face being DARKER than the floor in front of it, so a wall washed toward the floor's
+  // slab colour is a wall that stops being a wall.
   const flatten = Number(arg("flatten", "0"))
   const laid = await tiles.png().toBuffer()
-  const [wr, wg, wb] = hexToRgb(tierPalette[tier as Difficulty]?.slab ?? "#000000")
+  const palette = tierPalette[tier as Difficulty]
+  const washColour = slot === "face" || slot === "wall" ? palette?.wall : palette?.slab
+  const [wr, wg, wb] = hexToRgb(washColour ?? "#000000")
   const wash = {
     input: {
       create: { width: w, height: h, channels: 4 as const, background: { r: wr, g: wg, b: wb, alpha: flatten } },
