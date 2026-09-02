@@ -91,10 +91,12 @@ Every colour comes from that list. Nothing lighter than #a49781, nothing white, 
 worn paint reads as lighter DUST, not as white flakes. Nothing darker than #282219.
 Muted, dusty, very low contrast — neighbouring surfaces sit within a few steps of each other.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE CAMERA, the same for every file: looking down and slightly forward, about 25 degrees off vertical.
-Surfaces that face UP — the floor, the top of a wall, the top of a beam, the lid of a chest — are seen
-from straight above at their true size. Surfaces that face the viewer are seen straight on and squashed
-to HALF their real height. So everything with height SHOWS ITS TOP, and that is what gives it depth.
+THE CAMERA, the same for every file: 30 degrees above the floor, looking slightly down.
+Depth going away from the viewer is squashed to HALF: the top of a wall, the top of a beam, the lid of a
+chest are all seen as bands half as deep as they really are, at full width. Height is barely squashed at
+all: a surface facing the viewer is close to its true height.
+So a square wooden beam shows a top face a bit more than HALF as deep as the front of it is tall — a clear
+band, not a sliver. Everything with height shows its top that way, and that is what gives it depth.
 Verticals stay vertical, horizontals stay horizontal: an orthographic squash, never a vanishing point.
 Not isometric, not photographic, no 3D render, no perspective convergence.
 Nothing Greek, Roman or Mesoamerican: no coopered barrels, no acanthus capitals, no step pyramids.

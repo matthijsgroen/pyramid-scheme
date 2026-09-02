@@ -32,23 +32,40 @@ this list can land one file at a time and nothing breaks while it is half-drawn.
 
 ## The camera — one angle for the whole set
 
-Every file is drawn from the SAME viewpoint, and the renderer's own numbers say what it is
-(`mapScale.ts`): a cell is 56 units, the visible height of a wall is `WALL_H` = 28, and the thickness of
-a side wall seen edge-on is `SIDE_W` = 14. A wall a whole cell high images half a cell tall. That fixes the
-angle for everything else:
+Every file is drawn from the SAME viewpoint, and the renderer pins it. A side wall seen edge-on is
+`SIDE_W` = 14 units thick, and the strip of its top surface that shows above a face is `FACE_TOP` = 7. The
+same 14 units of depth images as 7 going away from the viewer, so:
 
-- **Looking down and slightly forward, about 25° off vertical.** Two units up for every one unit back.
-- **Surfaces that face UP — floor, the top of a wall, the top of a beam, the lid of a chest — are seen
-  from straight above**, at their true size.
-- **Surfaces that face the PLAYER — a wall face, the front of a plinth, the side of a jar — are seen
-  straight on and FORESHORTENED TO HALF their real height.** No perspective convergence: verticals stay
-  vertical, horizontals stay horizontal. It is an orthographic squash, not a vanishing point.
-- **So everything with height shows a top.** That is what gives the map depth, and its absence is what
-  makes a wall look like a painted line and an archway look like a sticker. A beam shows the top of the
-  beam; a statue's shoulders and its base both show their upper surfaces; a jar shows the ellipse of its
-  mouth.
-- **Nothing is drawn from behind or from a three-quarter angle.** One camera, or a room full of objects
-  disagrees with itself.
+```
+cos θ = 7 / 14 = 0.5   →   θ ≈ 60° off vertical, i.e. 30° above the floor
+```
+
+A fairly LOW camera, not a steep one. What follows from it:
+
+- **Depth going away from you images at half its true size** (`cos 60°`). A surface facing UP — a floor, the
+  top of a wall, the top of a beam, the lid of a chest — is squashed to half its depth, but keeps its full
+  width.
+- **Height images at nearly full size** (`sin 60°` ≈ 0.87). A surface facing the viewer is barely
+  foreshortened.
+- **So a square-section timber shows a top face about 0.58 as deep as its front is tall** — a visible band,
+  not a sliver, and not a dominant plane either. That ratio is the single number to check a drawing
+  against; a generated archway measured 0.28 and read as though seen from standing height.
+- **Everything with height still shows its top.** Its absence is what makes a wall look like a painted line
+  and an archway like a sticker.
+- **There are exactly TWO planes in this world: facing the viewer, and facing up.** There is no third.
+  A side wall is a flat strip with no face of its own, so nothing may show a left or right side, turn away,
+  or be seen at an angle — every edge is horizontal or vertical. A block is two stacked rectangles: an
+  up-facing band on top, a viewer-facing rectangle below. An archway drawn with a shaded inner reveal broke
+  this, and read as wrong against its own wall while measuring correctly.
+- **Never draw a surface the geometry hides.** A post's top is under the beam resting on it; asked for one
+  anyway, a generator invents a capital to justify it.
+- **Verticals stay vertical, horizontals stay horizontal.** An orthographic squash, never a vanishing
+  point. Nothing is drawn from behind or three-quarter: one camera, or a room of objects disagrees with
+  itself.
+
+An earlier draft of this section said 25° off vertical, derived by assuming a wall is exactly one cell
+tall. Nothing says that, and the assumption asked for arches seven times more top-down than the wall the
+same document had already accepted.
 
 ## The style
 

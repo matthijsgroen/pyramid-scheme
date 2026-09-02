@@ -97,6 +97,26 @@ Four surfaces took most of a day. The art was never the slow part; these were.
 7. **Report a file as written only after reading it back off disk.** Twice a chosen variant was described
    as imported when the command had never run, so the next Storybook look was of stale art.
 
+8. **Draw a thing as an OBJECT when the slot holds an object.** The arch took eight rolls, and the turn
+   came when it stopped being "a doorway in a wall" and became "a wooden frame alone on magenta". A wall
+   drawn around the subject is a wall whose proportions the model chooses, and it chose wrong every time.
+9. **This world has exactly TWO planes: facing the viewer, and facing up.** No sides, no third plane, no
+   diagonals. Side walls have no side face, so an archway with a shaded inner reveal was more dimensional
+   than everything around it — which is why it looked wrong even while measuring fine. Say this in the
+   prompt before the subject; it governs every prop still to come.
+10. **Never ask for a surface that is physically hidden.** A post's top face is under the beam that rests
+    on it. Asked for it anyway, the model resolved the contradiction by inventing capitals.
+11. **Check a proportion at SLOT size, not at generation size.** "The beam's top band is a third of a
+    fifth" is 3px in a 42-tall slot: invisible. The sill made the same mistake at 12px. Do the arithmetic
+    down to the slot before writing the fraction.
+12. **Proportions belong to the OBJECT, not the canvas.** The import trims to the drawn thing, so the
+    frame's own aspect is what reaches the slot — a 2:1 canvas with margin gives a frame that is not 2:1.
+    State the ratio as "measured from the outer edge of one post to the other".
+13. **A proxy metric is worthless until it has agreed with a case you can already judge by eye.** Two
+    different automatic measurements of the beam's top-to-front ratio both gave confident wrong answers —
+    one thresholded on brightness and missed a textured top face, the other found the underside shadow
+    instead of the top edge. Both were reported as fact before being checked against the picture.
+
 ## Open, and worth deciding while generating
 
 - **`SIDE_W` reads thin** against a full-cell face. Free to widen; `WALL_H` is not (it must divide `CELL`).
