@@ -41,9 +41,9 @@ export const COL_PITCH = CELL + SIDE_W // 70
  * The clear opening under the lintel comes out at 46 against a 48-tall explorer. Confined to the band it
  * was 22, and a doorway half the height of the person in it reads as a hatch however correct the
  * projection is: nothing ever overlapped, the two just could not both be believed. */
-export const ARCH_RISE = 0 // none: the beam's top face lands level with the wall's own top surface
-export const ARCH_DROP = 3 // just past the wall's own bottom edge, so the posts stand on the floor
-export const ARCH_H = ARCH_RISE + WALL_H + ARCH_DROP // 31
+export const ARCH_RISE = 11 // the beam stands proud of the wall, which is what makes a gateway read
+export const ARCH_DROP = 10 // the posts come down PAST the wall's bottom edge, so they stand in front of it
+export const ARCH_H = ARCH_RISE + WALL_H + ARCH_DROP // 49
 
 /** An arch is wider than the doorway it frames by one CORNER on each side (the `SIDE_W` slot where four
  * cells meet), because that corner is the wall's own thickness and is where a jamb belongs. Hanging the
