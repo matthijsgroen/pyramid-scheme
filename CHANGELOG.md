@@ -13,10 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   of lying flat on it.
 - The sill at a ward gate is laid the right way round: it used to be stretched to the wrong size and, in a
   doorway between two chambers side by side, turned on its side.
-- The way into a chamber is a mudbrick doorway now: timber lintel, jambs worn where hands have passed,
-  and the dark of the wall's thickness around the opening, so it reads as a way through rather than a
-  paler patch of wall. Where a doorway is also the seam between two tombs, the sill is laid under it and
-  the gateway stands on the step.
+- The way into a chamber is a timber gateway now: two rough-hewn posts and a heavy beam across them, its
+  top face catching the light and its underside in shadow. Brown wood against grey stone, so a doorway is
+  something you see rather than a paler patch of wall. Where a doorway is also the seam between two tombs,
+  the sill is laid under it and the gateway stands on the step.
 - Where one tomb gives way to a richer one, a worn mudbrick sill is laid across the doorway, dished in
   the middle by feet with a rubbed line of ochre paint still along its edge.
 - The merchant's chamber walls are mudbrick now: courses of brick under whitewash worn back to patches,

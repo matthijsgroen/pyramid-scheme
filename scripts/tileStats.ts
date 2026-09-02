@@ -16,7 +16,8 @@
  * - THE WRONG TARGET. A wall face measured against the floor's slab band reads as a failure when it is
  *   correct: it is SUPPOSED to be darker than the floor, and to carry a light cap and a dark base. Pass
  *   `--slot=face` and it is graded as three bands against `wall` / `wallTop` / `wallBase` instead, with
- *   only the brick field deciding the verdict.
+ *   only the brick field deciding the verdict. An OBJECT — prop, wall item, archway, explorer — is held to
+ *   the palette's ends and nothing else: it is meant to differ from the stone behind it.
  *
  * Magenta background and transparent pixels are excluded, so a prop measures its object only.
  */
@@ -44,44 +45,6 @@ const warmth = (r: number, _g: number, b: number) => r - b
 /** The band of a face that is neither its light cap nor its dark base — the brick itself. */
 const FIELD = [0.1, 0.9]
 
-/**
- * How much darker the band just outside the opening is than the jamb face beyond it. The opening is found
- * by its transparency, so this runs on the keyed file as well as on a magenta one.
- */
-const revealDepth = (data: Buffer, info: sharp.OutputInfo, stride: number) => {
-  const { width, height } = info
-  const isHole = (x: number, y: number) => {
-    const i = (y * width + x) * stride
-    return data[i + 3] < 128 || (data[i] > 180 && data[i + 2] > 180 && data[i + 1] < 120)
-  }
-  let minX = width
-  let maxX = -1
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      if (!isHole(x, y)) continue
-      if (x < minX) minX = x
-      if (x > maxX) maxX = x
-    }
-  }
-  if (maxX < 0) return null
-  const band = Math.max(2, Math.round((maxX - minX) * 0.02))
-  const strip = (from: number, to: number) => {
-    let sum = 0
-    let n = 0
-    for (let y = Math.round(height * 0.4); y < Math.round(height * 0.7); y++) {
-      for (let x = Math.max(0, from); x < Math.min(width, to); x++) {
-        const i = (y * width + x) * stride
-        sum += luminance(data[i], data[i + 1], data[i + 2])
-        n++
-      }
-    }
-    return n ? sum / n : 0
-  }
-  const edge = (strip(minX - band * 2, minX - 1) + strip(maxX + 1, maxX + band * 2)) / 2
-  const face = (strip(minX - band * 7, minX - band * 3) + strip(maxX + band * 3, maxX + band * 7)) / 2
-  return { depth: Math.round(face - edge), edge: Math.round(edge), face: Math.round(face) }
-}
-
 const main = async () => {
   const file = process.argv[2]
   if (!file) throw new Error("usage: yarn tile-stats <file.png> [--tier=starter] [--slot=face]")
@@ -90,8 +53,11 @@ const main = async () => {
   // An arch is cut from the wall it pierces, so it is graded as wall stone, not floor stone. Its cap and
   // base bands are the wall's own, which is what makes a gateway line up with the run either side of it.
   const slot = arg("slot") ?? ""
-  const isFace = ["face", "wall", "arch"].includes(slot)
-  const isArch = slot === "arch"
+  // A face is the one slot that IS the wall. Everything with a shape — a prop, a wall item, the timber
+  // archway, the explorer — is an object, and an object is supposed to differ from the stone it stands
+  // against: that difference is how it reads. So an object is held to the palette's ENDS and nothing else.
+  const isFace = slot === "face"
+  const isObject = ["prop", "arch", "wall", "explorer"].includes(slot)
   const palette = tierPalette[tier]
   if (!palette) throw new Error(`unknown tier: ${tier}`)
 
@@ -125,8 +91,6 @@ const main = async () => {
   const mean = sums.map(s => s / values.length) as [number, number, number]
   values.sort((a, b) => a - b)
 
-  const reveal = isArch ? revealDepth(data, info, stride) : null
-
   const at = (q: number) => Math.round(values[Math.floor((q / 100) * (values.length - 1))])
   const share = (test: (v: number) => boolean) => (values.filter(test).length / values.length) * 100
   const tooLight = share(v => v > lightest)
@@ -155,7 +119,6 @@ const main = async () => {
       isFace ? lumOf(palette.wall) : `${lumOf(palette.slabLo)}–${lumOf(palette.slabHi)}`
     })`
   )
-  if (reveal) console.log(`reveal  edge ${reveal.edge} against the jamb's ${reveal.face}   ${reveal.depth} deep`)
   if (isFace) {
     console.log(
       `bands  cap ${bandMean(0, 0.05)} (wants ${lumOf(palette.wallTop)})   field ${at(50)} (wants ${lumOf(
@@ -188,22 +151,24 @@ const main = async () => {
   // below the floor's mortar colour are expected there and only the LIGHT end can overshoot — which is
   // the failure a wall actually has (one came back at median 129 against a wall colour of 66).
   const outside = isFace ? tooLight : tooLight + tooDark
-  const faults = [
-    outside >= 2 || (!isArch && spread >= spreadLimit)
-      ? `too contrasty: p5–p95 spans ${spread}, restate the value clamp`
-      : null,
-    reveal && reveal.depth < 25
-      ? `no reveal: the opening's edge is ${reveal.depth} darker than the jamb, wants 25+ — a doorway needs a dark inner edge`
-      : null,
-    // 15 is about the width of one palette step, so a drift past it is a different brown, not a variation.
-    Math.abs(drift) > 15
-      ? `${drift > 0 ? "too warm" : "too cool"} by ${Math.abs(Math.round(drift))}, restate the palette hexes`
-      : null,
-    // A surface that is not the value of its own material is the failure that inverts the map's depth.
-    offMaterial > 20
-      ? `${at(50) > lumOf(material) ? "too light" : "too dark"} by ${offMaterial} for ${material}`
-      : null,
-  ].filter(Boolean)
+  const faults = isObject
+    ? [
+        // Only the LIGHT end. An object's dark end is its own shadow — the underside of a beam, the inner
+        // face of a post — which is what seats it in the world; the failure objects actually have is
+        // chalky highlights, the same white flaking that ruined the first floor.
+        tooLight >= 2 ? `${tooLight.toFixed(1)}% lighter than ${lightest} — restate the value clamp` : null,
+      ].filter(Boolean)
+    : [
+        outside >= 2 || spread >= spreadLimit ? `too contrasty: p5–p95 spans ${spread}, restate the value clamp` : null,
+        // 15 is about the width of one palette step, so a drift past it is a different brown, not a variation.
+        Math.abs(drift) > 15
+          ? `${drift > 0 ? "too warm" : "too cool"} by ${Math.abs(Math.round(drift))}, restate the palette hexes`
+          : null,
+        // A surface that is not the value of its own material is the failure that inverts the map's depth.
+        offMaterial > 20
+          ? `${at(50) > lumOf(material) ? "too light" : "too dark"} by ${offMaterial} for ${material}`
+          : null,
+      ].filter(Boolean)
   console.log(faults.length === 0 ? "reads as one tomb — import it" : faults.join("\n"))
 }
 
