@@ -4,6 +4,7 @@ import { assembleFloor } from "../../game/siteAssembler"
 import { completeCell } from "../../game/gridNavigation"
 import type { Direction, FloorGrid } from "../../game/siteTypes"
 import { CELL } from "./mapScale"
+import { ART_IMAGE_RENDERING } from "./tileAssets"
 import { ExplorerDot, ExplorerFigure } from "./ExplorerDot"
 import { SiteMapView } from "./SiteMapView"
 
@@ -75,7 +76,7 @@ export const Facings: Story = {
                 width={FACINGS.length * CELL * scale}
                 height={CELL * scale}
                 viewBox={`0 0 ${FACINGS.length * CELL} ${CELL}`}
-                style={{ background: ground, imageRendering: "pixelated" }}
+                style={{ background: ground, imageRendering: ART_IMAGE_RENDERING }}
               >
                 {FACINGS.map((facing, i) => (
                   <g key={facing} transform={`translate(${i * CELL + CELL / 2}, ${CELL / 2})`}>

@@ -21,9 +21,36 @@ fifth rank from costing as much to draw as the first.
 | Floor scatter  | `tiles/<rank>/<kind>.png`    | 56×56   | flat on the floor, soft-edged (**needs building** — §5)               |
 | Shared         | `tiles/default/<name>.png`   | varies  | not a rank: the explorer, the scarab                                  |
 
-Everything is **pixel art at 1 tile = 1 cell = 56px**, transparent background, near-black outline where a
-shape meets floor, a contact shadow under anything standing. A missing file falls back to `default/`, then to
-a placeholder glyph — so this list can land one PNG at a time and nothing breaks while it is half-drawn.
+**The sizes above are MAP UNITS, not pixels.** A cell is 56 units; whether a file is 56 or 112 or 168 px
+across is the multiplier, and that is part of the question below. Everything else in the table — which slot,
+which anchor, what has to tile — holds whatever the art turns out to be.
+
+Fixed regardless of style: transparent background, an outline where a shape meets the floor and a contact
+shadow under anything standing (that is what makes an object sit ON the ground in a top-down view, in any
+medium), and the megatiles tiling. A missing file falls back to `default/`, then to a placeholder glyph — so
+this list can land one file at a time and nothing breaks while it is half-drawn.
+
+## The style is not decided
+
+Everything drawn so far is placeholder art generated at **1 tile = 1 cell = 56px**, which is pixel art by
+default rather than by decision. The real set could as easily be painted at 2x and scaled down. What actually
+hangs on the answer:
+
+|                | pixel art, 1x (56px)                                                                                   | painted, 2x (112px)                                |
+| -------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| files          | 56×84 for a prop                                                                                       | 112×168 for the same prop                          |
+| scaling filter | `ART_IMAGE_RENDERING = "pixelated"` (tileAssets.ts)                                                    | flip it to `"auto"`                                |
+| zoom           | crisp only at whole steps, soft in between — playtested as acceptable, so `useMapZoom` was left smooth | soft scaling is what it wants; smooth zoom is free |
+| outline        | 1–2px, hard                                                                                            | can be soft, or ambient occlusion instead          |
+| cost per file  | lower                                                                                                  | higher, and a wall megatile at 2x is 896²          |
+
+**Nothing else in this document changes either way**, which is the point of writing it in map units: the
+slots, the anchors, the subjects, the counts and the per-rank material are all the same brief. The one code
+line that follows the answer is named above, and the one thing not to do is judge a painted set through
+`"pixelated"` — it will look crunchy and the art will get the blame.
+
+The cheapest way to settle it: draw ONE merchant prop both ways (a jar rack, which has curves, edges and a
+repeating element) and look at them on a real floor at both ends of the zoom range.
 
 **Variants**: `rubble.png`, `rubble-2.png`, `rubble-3.png`. Same kind, different drawing, picked per cell.
 (**Needs building** — §5.)

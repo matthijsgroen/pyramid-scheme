@@ -80,8 +80,10 @@ or the `FloorGrid` data model.
 Decided before any of it is drawn, because these choices are what make the second theme cheap
 and the first prop lookable-at on its own.
 
-**Pixel art at 56px square** — one tile is exactly the 56-unit cell (`mapScale.ts`), so at zoom 1
-the art is 1:1. Transparent background. See "Perspective" below for the zoom cost this carries.
+**One tile is exactly the 56-unit cell** (`mapScale.ts`). Transparent background. Whether the art is pixel
+art at 1:1 or painted at 2× and scaled down is **not settled** — see "The style is not decided" in
+[tile-art-brief.md](tile-art-brief.md). Every size in this document is in map units, so the answer changes
+the files and one line of the renderer (`ART_IMAGE_RENDERING`), and nothing else here.
 
 **A prop sprite is 56 × 84 — a cell plus a face band — anchored by its BOTTOM edge on the cell's floor
 line.** Props are painted after every wall, so a statue stands IN FRONT of the wall behind it and may be
@@ -207,9 +209,10 @@ never covered — void cells carry no node icons.
 True isometric was rejected: it costs hit testing, claim shapes, scroll maths, a wall sprite per
 orientation and occlusion sorting, and a rotated maze reads worse, not better.
 
-### Pixel art, and the one thing it costs
+### If it is pixel art, this is the one thing it costs
 
-The art is **pixel art at one tile = one cell = 56px**, not painted at 2×. At zoom 1 it is 1:1.
+The placeholders are **pixel art at one tile = one cell = 56px**, 1:1 at zoom 1. A painted set at 2× is still
+open (see the brief); what follows is the cost of the pixel answer.
 
 The cost, and the only place this reaches outside the renderer: crisp pixel art needs
 `image-rendering: pixelated` and **integer (or half-integer) zoom steps**, so `useMapZoom`'s smooth
@@ -627,7 +630,8 @@ Build order, each step visible on its own:
 
 - **Zoom stays smooth.** `useMapZoom` is not snapped. Playtesting found no real problem with pixel art
   softening at off-integer zoom, so the art is not bound to strict pixel discipline — which gives a
-  generator more room than a hard 56px grid would.
+  generator more room than a hard 56px grid would, and is one less thing riding on the pixel-or-painted
+  question.
 - **The floor material is per SECTION, not per floor.** A pocket gated behind a junior key is junior
   stone inside a starter pyramid. `FloorGrid.difficulty` is the floor's own tier and is only the
   fallback; `RoomCell.difficulty` / `CorridorCell.difficulty` carry each cell's section tier.
@@ -638,6 +642,9 @@ Still open, and both want an answer before a rank is drawn:
 
 - **`SIDE_W`** is a quarter cell, which reads thin against a full-cell face. Widening it is free — the
   pitch already accounts for it — but `WALL_H` is not free: it must divide `CELL`.
+- **Pixel art, or painted at 2× and scaled down.** The only open question with a code line attached
+  (`ART_IMAGE_RENDERING` in `tileAssets.ts`); everything else is written in map units so it does not care.
+  A painted set judged through `"pixelated"` will look crunchy and the art will get the blame.
 - **Whether a rank needs its own props at all** where the doc's table says `—`. The dummy generator
   draws all sixteen for all five ranks so authoring never waits on it; a real art pass should draw
   only what a pool authors.

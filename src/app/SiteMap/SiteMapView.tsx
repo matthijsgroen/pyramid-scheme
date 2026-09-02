@@ -37,7 +37,7 @@ import {
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
 import { moodFor } from "./moodSettings"
 import { MapLife, MapWeather } from "./MapMood"
-import { tileUrl } from "./tileAssets"
+import { ART_IMAGE_RENDERING, tileUrl } from "./tileAssets"
 import { ALL_STATES, buildTileRegions, faceShadowsToPath, hasWallFace, rectsToPath } from "./tileRegions"
 import type { FloorAt, TileRegions } from "./tileRegions"
 
@@ -1444,7 +1444,7 @@ export const SiteMapView = ({
           //
           // Pixel art: no smoothing, so a tile stays crisp instead of turning to mush as the map
           // scales. Crisp at every zoom needs useMapZoom to snap to whole steps — not done yet.
-          style={{ background: tierPalette[tier].wallBase, imageRendering: "pixelated" }}
+          style={{ background: tierPalette[tier].wallBase, imageRendering: ART_IMAGE_RENDERING }}
         >
           <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
           <MapLife mood={mood} siteId={grid.siteId} floorCells={floorCells} />
