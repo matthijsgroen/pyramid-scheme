@@ -1372,7 +1372,11 @@ const Archways = ({
  * the stone being lit rather than as a coloured overlay on top of it — and it must never compete with the
  * state washes that tell the player what is explored.
  */
-const TORCH_LIGHT = "#ffb347"
+// Two colours, because this layer does two jobs. The lit place is lifted with a PALE warm — it has to
+// out-brighten an unvisited room, since `completed` washes a visited one 20% darker and standing in a
+// place must never be dimmer than never having been there. The spill is the torch's own orange, weak.
+const TORCH_LIT = "#ffe2b0"
+const TORCH_SPILL = "#ffb347"
 
 const LitPlace = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; at?: readonly [number, number] }) => {
   if (!at) return null
@@ -1414,8 +1418,8 @@ const LitPlace = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; a
 
   return (
     <g style={{ mixBlendMode: "screen" }} pointerEvents="none">
-      <path d={pathFor(lit)} fill={TORCH_LIGHT} opacity={0.15} />
-      <path d={pathFor(spill)} fill={TORCH_LIGHT} opacity={0.07} />
+      <path data-torch="lit" d={pathFor(lit)} fill={TORCH_LIT} opacity={0.28} />
+      <path data-torch="spill" d={pathFor(spill)} fill={TORCH_SPILL} opacity={0.1} />
     </g>
   )
 }

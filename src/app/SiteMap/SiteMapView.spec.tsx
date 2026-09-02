@@ -646,9 +646,9 @@ describe("archways", () => {
 describe("the place the explorer stands is lit", () => {
   // Both washes are one path each, so the cells they cover are countable by the moves in the `d`.
   const litCounts = (container: HTMLElement) =>
-    Array.from(container.querySelectorAll<SVGPathElement>("path"))
-      .filter(el => el.getAttribute("fill") === "#ffb347")
-      .map(el => (el.getAttribute("d")?.match(/M/g) ?? []).length)
+    Array.from(container.querySelectorAll<SVGPathElement>("[data-torch]")).map(
+      el => (el.getAttribute("d")?.match(/M/g) ?? []).length
+    )
 
   it("lights the cell stood in, and spills onto the passage either side", () => {
     const grid = makeGrid([
