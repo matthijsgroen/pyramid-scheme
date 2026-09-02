@@ -21,15 +21,14 @@ export const tileUrl = (tier: Difficulty, name: string): string | undefined =>
   byTier.get(`${tier}/${name}`) ?? byTier.get(`default/${name}`)
 
 /**
- * How the browser scales a tile — the ONE line that follows from whether the art is pixel art or painted,
- * and that question is not settled (docs/game-design/tile-art-brief.md, "The style is not decided").
+ * How the browser scales a tile — the ONE line that follows from whether the art is pixel art or painted.
  *
- * `"pixelated"` is right for art drawn at 1 tile = 1 cell = 56px: it keeps the pixels crisp instead of
- * blurring them as the map zooms. It is WRONG for a painted set drawn at 2x and scaled down — that comes
- * out crunchy, and worse, it would be crunchy while being judged. Flip this to `"auto"` the moment a
- * painted set goes in the folder, or the art gets blamed for the filter over it.
+ * The set is PAINTED, generated well above map size and scaled down (docs/game-design/tile-art-brief.md,
+ * "The style"). `"auto"` is what that wants: `"pixelated"` would render a painted tile crunchy, and the art
+ * would get blamed for the filter over it. Smooth zoom stays smooth, which is what a painted set prefers
+ * anyway.
  */
-export const ART_IMAGE_RENDERING = "pixelated"
+export const ART_IMAGE_RENDERING = "auto"
 
 /** Art that is the same in every tomb, from `tiles/default/`. The explorer is one person walking down
  * five ranks of tomb, not a fifth of a set — a rank dresses the place, never the player. */

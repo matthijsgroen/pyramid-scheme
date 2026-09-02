@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The merchant's floor is real stone now, painted rather than drawn: worn paving with scratches where
+  sledges dragged, corners chipped away and hairline cracks. Zoomed out it is a quiet floor to walk
+  across; zoomed in the wear is all still there.
 - The site map is stone now: walls stand as carved masonry you look at, floors are laid slab by slab,
   every tomb is built of its own owner's material, and its chambers hold their furnishings.
 - Chamber walls carry things now: a merchant hangs his tally board and his niche of goods, a priest a

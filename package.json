@@ -27,7 +27,8 @@
     "verify-floors": "vitest run src/app/SiteMap/worldFloorAssembly.spec.ts",
     "world-info": "tsx scripts/worldInfo.ts",
     "release": "tsx scripts/release.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "tile-stats": "tsx scripts/tileStats.ts"
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --fix",

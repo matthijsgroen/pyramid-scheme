@@ -25,15 +25,18 @@ placeholder branch name already, so a push is safe whenever.
 # 2. a sheet of frames (characters):
 yarn cut-sheet ~/Downloads/sheet.png --out=/tmp/frames --rows=front,back,side --min=0.8
 
-# 3. one file into its slot:
+# 3. measure it against the palette before importing:
+yarn tile-stats ~/Downloads/gen.png
+
+# 4. one file into its slot:
 yarn import-tile /tmp/frames/front-1.png --tier=default --name=explorer-s-1 --slot=explorer --filter=smooth
 yarn import-tile ~/Downloads/gen.png --tier=starter --name=jarRack --slot=prop --filter=smooth
 
-# 4. megatiles only:
+# 5. megatiles only:
 yarn make-seamless src/assets/tiles/starter/floor.png
 yarn make-seamless --axis=x src/assets/tiles/starter/wall-face.png
 
-# 5. look at it
+# 6. look at it
 yarn storybook   # App/SiteMap/SiteMapView → World Floor Starter (a real generated floor)
                  # App/SiteMap/ExplorerDot → Facings (every facing × 4 steps, two grounds)
 yarn generate-dummy-tiles --preview    # five ranks side by side
@@ -44,7 +47,7 @@ Slots: `floor` 448² · `face` 448×56 · `sill` 56×12 · `arch` 84×56 · `pro
 `explorer` 40×70. `import-tile` keys the background to alpha, despills the magenta that soaked into the
 art, re-seats props and characters on their floor line, and resizes.
 
-## What generation actually gets wrong, from two real returns
+## What generation actually gets wrong, from three real returns
 
 1. **The frame count is not negotiable with the model.** Ask for four, six come back. Don't fight it —
    `cut-sheet` takes the sheet apart by its GUTTERS (a generated sheet is never on an even pitch) and you
@@ -58,14 +61,16 @@ art, re-seats props and characters on their floor line, and resizes.
    cast survives import.
 5. **Aspect is the one thing import cannot fix** — it stretches to the slot on purpose, so a wrong shape is
    visible rather than silently cropped. Generate at the slot's aspect.
-6. **Detail below the slot's resolution is wasted.** At 40×70 a compass, vest pockets and the X on a map are
+6. **The value clamp is dropped before the subject is.** The first starter floor kept every element the
+   prompt asked for and none of its palette: lum 36–179 where the palette spans 88–114, white whitewash
+   flakes and a near-black outline around every slab. `yarn tile-stats` measures it before import.
+7. **Anything crossing the whole frame tiles into wallpaper.** That same floor had one crack corner to
+   corner. At 448² it repeats in every cell, and `make-seamless` has to fight a feature touching two edges.
+8. **Detail below the slot's resolution is wasted.** At 40×70 a compass, vest pockets and the X on a map are
    all gone. Simplify rather than embellish.
 
 ## Open, and worth deciding while generating
 
-- **Pixel art or painted at 2×.** Not settled. Everything is written in map units so only the file
-  resolution and one line change — `ART_IMAGE_RENDERING` in `tileAssets.ts`. Do not judge a painted set
-  through `"pixelated"`. The brief suggests settling it with one jar rack drawn both ways.
 - **`SIDE_W` reads thin** against a full-cell face. Free to widen; `WALL_H` is not (it must divide `CELL`).
 - **Floor scatter** (planks, sand drifts, sherds, plunder, stains, tilework) has no renderer slot yet — the
   brief §4–§5 says what it needs. Nothing is generated for it on purpose.

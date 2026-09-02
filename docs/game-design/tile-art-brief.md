@@ -21,8 +21,8 @@ fifth rank from costing as much to draw as the first.
 | Floor scatter  | `tiles/<rank>/<kind>.png`    | 56×56   | flat on the floor, soft-edged (**needs building** — §5)               |
 | Shared         | `tiles/default/<name>.png`   | varies  | not a rank: the explorer, the scarab                                  |
 
-**The sizes above are MAP UNITS, not pixels.** A cell is 56 units; whether a file is 56 or 112 or 168 px
-across is the multiplier, and that is part of the question below. Everything else in the table — which slot,
+**The sizes above are MAP UNITS, not pixels.** A cell is 56 units; a painted file is drawn far larger and
+`import-tile` resizes it into the slot. Everything else in the table — which slot,
 which anchor, what has to tile — holds whatever the art turns out to be.
 
 Fixed regardless of style: transparent background, an outline where a shape meets the floor and a contact
@@ -30,27 +30,26 @@ shadow under anything standing (that is what makes an object sit ON the ground i
 medium), and the megatiles tiling. A missing file falls back to `default/`, then to a placeholder glyph — so
 this list can land one file at a time and nothing breaks while it is half-drawn.
 
-## The style is not decided
+## The style
 
-Everything drawn so far is placeholder art generated at **1 tile = 1 cell = 56px**, which is pixel art by
-default rather than by decision. The real set could as easily be painted at 2x and scaled down. What actually
-hangs on the answer:
+**Painted, generated well above map size and scaled down.** Settled on the merchant floor: an image model
+draws at 2000² and `import-tile` resizes into the slot, so a file's own resolution stopped being a
+question — only the map units below matter. `ART_IMAGE_RENDERING` is `"auto"` to suit it, and
+`useMapZoom` keeps its smooth continuous zoom, which is what a painted set wanted anyway.
 
-|                | pixel art, 1x (56px)                                                                                   | painted, 2x (112px)                                |
-| -------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
-| files          | 56×84 for a prop                                                                                       | 112×168 for the same prop                          |
-| scaling filter | `ART_IMAGE_RENDERING = "pixelated"` (tileAssets.ts)                                                    | flip it to `"auto"`                                |
-| zoom           | crisp only at whole steps, soft in between — playtested as acceptable, so `useMapZoom` was left smooth | soft scaling is what it wants; smooth zoom is free |
-| outline        | 1–2px, hard                                                                                            | can be soft, or ambient occlusion instead          |
-| cost per file  | lower                                                                                                  | higher, and a wall megatile at 2x is 896²          |
+What painted means for a drawing, and every one of these was learned by measuring a failure:
 
-**Nothing else in this document changes either way**, which is the point of writing it in map units: the
-slots, the anchors, the subjects, the counts and the per-rank material are all the same brief. The one code
-line that follows the answer is named above, and the one thing not to do is judge a painted set through
-`"pixelated"` — it will look crunchy and the art will get the blame.
-
-The cheapest way to settle it: draw ONE merchant prop both ways (a jar rack, which has curves, edges and a
-repeating element) and look at them on a real floor at both ends of the zoom range.
+- **No outlines on a surface.** Matte, soft brush texture, grit; an edge is a change of value, never a
+  stroke. Asking a model to outline is asking it for cel-shaded line art, and line art is all contrast.
+  Objects keep the soft darker edge and contact shadow that seat them on the floor — that is not an ink line.
+- **A floor is background.** It sits behind the props and the explorer rather than competing. The merchant
+  floor measures a p5–p95 luminance spread of 19, inside the palette's own slab band, nothing outside
+  either end. Detail survives at 1:1 and disappears when the map is zoomed out; that is the target.
+- **The palette is a clamp, not a suggestion.** Nothing lighter than the lightest object colour, nothing
+  darker than the mortar. `yarn tile-stats` measures both ends and the hue drift before a file is imported.
+- **Scale is fixed at import, not in the prompt.** A model cannot see the grid it draws at.
+  `import-tile --repeat` shrinks and re-tiles; `--flatten` blends toward the rank's slab colour. The
+  merchant floor came in at `--repeat=2.4 --flatten=0.65`.
 
 **Variants**: `rubble.png`, `rubble-2.png`, `rubble-3.png`. Same kind, different drawing, picked per cell.
 (**Needs building** — §5.)

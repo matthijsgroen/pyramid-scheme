@@ -15,6 +15,11 @@
  *   --key=#ff00ff    background colour to make transparent (default magenta). --key=none to skip.
  *   --tolerance=60   how far from that colour still counts as background (0-441, default 60)
  *   --filter=nearest keep hard pixel edges. --filter=smooth for painted art (default: nearest)
+ *   --repeat=1.4     fit the art N times across the slot instead of once, for a megatile whose subject
+ *                    came back too big. Fractional is the point — a whole number makes the repeat
+ *                    visible. Run `make-seamless` on the SOURCE first, or the grid shows its own seams.
+ *   --flatten=0.5    blend toward the rank's own slab colour, so the floor sits behind the props rather
+ *                    than competing. Toward the SLAB, not toward grey: flattening keeps the hue.
  *   --no-trim        keep the frame as generated instead of re-seating the object on the floor line
  *   --flip           mirror horizontally. The renderer mirrors EAST into west, so a side view drawn
  *                    facing left has to come in facing right
@@ -25,6 +30,8 @@ import { dirname, join } from "path"
 import { fileURLToPath } from "url"
 import sharp from "sharp"
 import { ARCH_H, ARCH_W, WALL_H } from "../src/app/SiteMap/mapScale"
+import { tierPalette } from "../src/app/SiteMap/tileMaterials"
+import type { Difficulty } from "../src/data/difficultyLevels"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const OUT_ROOT = join(__dirname, "..", "src", "assets", "tiles")
@@ -134,10 +141,53 @@ const main = async (): Promise<void> => {
   const dir = join(OUT_ROOT, tier)
   mkdirSync(dir, { recursive: true })
   const out = join(dir, `${name}.png`)
-  await img
+  const repeat = Number(arg("repeat", "1"))
+  const tileW = Math.round(w / repeat)
+  const tileH = Math.round(h / repeat)
+  const resized = await img
     // `fill`: the slot's size is not negotiable, and the prompts ask for the slot's aspect, so any
     // squashing here is the generation's own aspect being wrong — better visible than silently cropped.
-    .resize(w, h, { fit: "fill", kernel: smooth ? "lanczos3" : "nearest" })
+    .resize(tileW, tileH, { fit: "fill", kernel: smooth ? "lanczos3" : "nearest" })
+    .png()
+    .toBuffer()
+
+  // One tile, or a grid of a smaller copy. A generator draws a floor's subject at whatever scale it likes
+  // and cannot be talked down reliably; shrinking and repeating is the one lever that needs no re-roll.
+  //
+  // `repeat` is fractional on purpose. A whole number is what makes a repeat VISIBLE — at 2 the megatile
+  // is four identical quarters and the eye finds them at once. At 1.4 the copies run off the edge and are
+  // cropped, so no two are the same, and because the source is already seamless (run `make-seamless` on
+  // it first) the crop still tiles.
+  const across = Math.ceil(w / tileW)
+  const down = Math.ceil(h / tileH)
+  const tiles =
+    repeat === 1
+      ? sharp(resized)
+      : sharp({ create: { width: w, height: h, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).composite(
+          Array.from({ length: across * down }, (_, i) => ({
+            input: resized,
+            left: (i % across) * tileW,
+            top: Math.floor(i / across) * tileH,
+          }))
+        )
+
+  // Blends the art toward the rank's own slab colour: a flat wash of it, laid over at `flatten` opacity.
+  // A generator overshoots contrast far more often than it undershoots, and a floor is background — it has
+  // to sit behind the props and the explorer rather than compete with them. 0 leaves it alone.
+  //
+  // Toward the SLAB, not toward the image's own mean. Flattening toward a mean is flattening toward grey,
+  // and the hue goes with it (measured: -4 warmth at a strength that only halved the spread). Flattening
+  // toward the palette's stone makes staying in the palette and calming down the same move.
+  const flatten = Number(arg("flatten", "0"))
+  const laid = await tiles.png().toBuffer()
+  const [wr, wg, wb] = hexToRgb(tierPalette[tier as Difficulty]?.slab ?? "#000000")
+  const wash = {
+    input: {
+      create: { width: w, height: h, channels: 4 as const, background: { r: wr, g: wg, b: wb, alpha: flatten } },
+    },
+  }
+  await sharp(laid)
+    .composite(flatten > 0 ? [wash] : [])
     .png({ compressionLevel: 9 })
     .toFile(out)
 
