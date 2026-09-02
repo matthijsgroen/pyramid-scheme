@@ -354,6 +354,23 @@ one stairhead).
    merchant's cellar straight into the gods' vault would not be, and the ladder is what stops the
    art from being asked for that.
 
+### Revisit once the real arches exist
+
+Two things about the sill are decided against a PLACEHOLDER arch, so both are worth looking at again the
+moment `starter/arch.png` is real art rather than a blue-barred door:
+
+- **Whether an arched gap should still lay its sill.** It does not today, because a sill is the tier being
+  entered and an arch is the tier of the band it pierces, so at a seam the two stones disagree. The arch's
+  middle is transparent, so the sill COULD show between the jambs — it just has to be drawn in the arch's
+  stone rather than the entered tier's. Then the arch stands on the threshold instead of replacing it.
+  Small change: drop the `archedGaps` filter and pick `sillFill` from the band's tier when the gap is arched.
+- **Where the seam reads as being.** The material changes at the gate → stairhead edge, and an arch on the
+  gate's own doorway is one gap earlier — so walking through, you pass under the arch, cross one cell of
+  the OLD rank, and only then reach the sill. That is what the rules above say and it may be exactly right;
+  it is also not what a player expects, which is to change rooms and change stone in one step.
+
+Neither is a bug. Both are judgements that need a real arch under them to make.
+
 ## The explorer — a person, not a rank
 
 The art is **shared, in `tiles/default/`** (`sharedTileUrl`), never per tier: one person walks down all
