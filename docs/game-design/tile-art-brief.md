@@ -55,6 +55,24 @@ repeating element) and look at them on a real floor at both ends of the zoom ran
 **Variants**: `rubble.png`, `rubble-2.png`, `rubble-3.png`. Same kind, different drawing, picked per cell.
 (**Needs building** — §5.)
 
+## Colour, before the art
+
+The merchant palette was settled with `yarn generate-dummy-tiles --palettes` (see the prep doc's tools) and
+is **dark grey-brown** — a cellar of mudbrick and limestone chips lit by the stair and a wick, not a gallery
+of pale dressed stone. The pale cool grey the placeholders wore was measurably the worst of the candidates:
+the gold click marker sat at 1.78 contrast against its floor where the chosen one gives 4.31, and props
+separated from the ground at 1.29 against 2.08.
+
+Two constraints came out of that test and hold for the other four ranks:
+
+- **A rank must not out-brown the rank above it.** Junior is dressed sandstone with ochre paint, so it has
+  to read as the step UP in wealth; the mudbrick candidate lost partly for being more ochre than junior.
+- **Value separation, not hue separation.** Floor against wall face, floor against wall mass, floor against
+  outline, floor against prop, floor against the marker — the table prints all five, and a candidate that
+  goes below what already ships is flagged. Hue is taste; those numbers are not.
+
+Run it before drawing a rank, not after.
+
 ## 1. Surfaces — 4 per rank
 
 | Rank         | Floor megatile                                                                               | Wall face                                                                                            | Sill                       | Arch                                             |

@@ -27,19 +27,26 @@ export type TierPalette = {
 }
 
 export const tierPalette: Record<Difficulty, TierPalette> = {
+  // A merchant's cellar is DARK: mudbrick and limestone chips, lit by the stair and a wick, not a
+  // gallery of pale dressed stone. Grey-brown rather than blue-grey, and deliberately not more ochre than
+  // junior — junior's sandstone has to read as the step UP in wealth, so the first rank stays neutral.
+  // Settled with `yarn generate-dummy-tiles --palettes`: of the candidates it was the one that kept the
+  // gold click marker legible (4.31 against the floor, where the pale grey managed 1.78), kept props
+  // separate from the ground they stand on (2.08 against 1.29), and still held its wall FACE apart from
+  // the floor (1.68 — better than any rank shipping before it).
   starter: {
-    bed: "#8e9099",
-    slab: "#a3a5ad",
-    slabHi: "#aeb0b8",
-    slabLo: "#989aa3",
-    joint: "#2a2a33",
-    accent: "#b8845a",
-    wall: "#6b6e7a",
-    wallTop: "#8b8f9c",
-    wallBase: "#3d404b",
-    prop: "#b9bcc4",
-    propDark: "#7b7e88",
-    outline: "#14141a",
+    bed: "#544b40",
+    slab: "#6c6257",
+    slabHi: "#7b7166",
+    slabLo: "#5f564b",
+    joint: "#282219",
+    accent: "#b07a3c",
+    wall: "#4a4137",
+    wallTop: "#736858",
+    wallBase: "#2b261f",
+    prop: "#a49781",
+    propDark: "#5c5347",
+    outline: "#15110c",
   },
   junior: {
     bed: "#b08a5c",

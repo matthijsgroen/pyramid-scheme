@@ -15,7 +15,8 @@ import { mkdirSync, readFileSync } from "fs"
 import { dirname, join } from "path"
 import { fileURLToPath } from "url"
 import sharp from "sharp"
-import { tierPalette } from "../src/app/SiteMap/tileMaterials"
+import { stateWash, tierPalette } from "../src/app/SiteMap/tileMaterials"
+import { moodFor } from "../src/app/SiteMap/moodSettings"
 import { ARCH_H, ARCH_W, SIDE_W, WALL_H } from "../src/app/SiteMap/mapScale"
 import type { TierPalette } from "../src/app/SiteMap/tileMaterials"
 
@@ -102,8 +103,7 @@ const svg = (w: number, h: number, body: string): Buffer =>
 const SLAB_W = 64
 const SLAB_H = 32
 
-const floorSvg = (tier: string): Buffer => {
-  const p = PALETTES[tier]
+const floorSvg = (p: Palette): Buffer => {
   const parts = [`<rect width="${MEGA}" height="${MEGA}" fill="${p.slabLo}"/>`]
 
   for (let course = 0; course < MEGA / SLAB_H; course++) {
@@ -155,8 +155,7 @@ const floorSvg = (tier: string): Buffer => {
 // and the cap-light / base-dark registration comes out identical on every face with no per-row
 // transform. Courses are offset half a block per row and run unbroken across cell boundaries —
 // the thing a per-cell wall sprite cannot do.
-const wallFaceSvg = (tier: string): Buffer => {
-  const p = PALETTES[tier]
+const wallFaceSvg = (p: Palette): Buffer => {
   const parts: string[] = [
     `<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
        <stop offset="0" stop-color="${p.wallTop}"/><stop offset="0.5" stop-color="${p.wall}"/>
@@ -195,8 +194,7 @@ const wallFaceSvg = (tier: string): Buffer => {
 // ── Threshold ─────────────────────────────────────────────────────────────────
 // Sits on the shared edge of a gate cell and its stairhead, so a material change is an authored
 // sill rather than an accidental seam.
-const thresholdSvg = (tier: string): Buffer => {
-  const p = PALETTES[tier]
+const thresholdSvg = (p: Palette): Buffer => {
   return svg(
     TILE,
     SILL,
@@ -348,8 +346,7 @@ const wallShapes: Record<WallKind, (p: Palette) => string> = {
 // of it, the way a pylon gate rises above the wall it pierces. The middle stays TRANSPARENT: the floor of
 // the way through shows beneath it, so the arch reads as something the player walks under. The renderer
 // paints it over everything, explorer included, and fades it while the player is in the doorway.
-const archSvg = (tier: string): Buffer => {
-  const p = PALETTES[tier]
+const archSvg = (p: Palette): Buffer => {
   // The jambs occupy the CORNER slots either side of the doorway — the wall's own thickness — so the way
   // through stays a full cell wide and a figure walks between them rather than behind them.
   const jamb = SIDE_W
@@ -373,13 +370,11 @@ const archSvg = (tier: string): Buffer => {
   )
 }
 
-const wallItemSvg = (tier: string, kind: WallKind): Buffer => {
-  const p = PALETTES[tier]
+const wallItemSvg = (p: Palette, kind: WallKind): Buffer => {
   return svg(TILE, BAND, `<g stroke="${p.outline}" stroke-width="2" stroke-linejoin="round">${wallShapes[kind](p)}</g>`)
 }
 
-const propSvg = (tier: string, kind: Kind): Buffer => {
-  const p = PALETTES[tier]
+const propSvg = (p: Palette, kind: Kind): Buffer => {
   // A brazier is the tier's light source, so it carries its own glow — in this idiom the lighting
   // is a sprite halo, not a shader.
   const glow =
@@ -502,11 +497,18 @@ const PROP_AT: Record<string, Kind> = {
   "6,6": "pillar",
 }
 
-const preview = async (tiers: string[]): Promise<string> => {
-  const rows = PLAN.length
-  const cols = PLAN[0].length
-  const pw = TILE * cols
-  const ph = TILE * rows
+const PLAN_ROWS = PLAN.length
+const PLAN_COLS = PLAN[0].length
+const PLAN_W = TILE * PLAN_COLS
+const PLAN_H = TILE * PLAN_ROWS
+
+/** One panel of the plan, drawn with a palette's own art. `uri` resolves a tile name ("floor",
+ * "wall-face", "statue"…) to something an `<image href>` can take: a file for the preview, a data URI for
+ * the palette sheet. The drawing is the same either way, and has to be — a palette judged on different
+ * geometry than the map uses is not judged at all. */
+const planPanel = (p: Palette, id: string, uri: (name: string) => string, ox: number): string => {
+  const rows = PLAN_ROWS
+  const cols = PLAN_COLS
   const at = (r: number, c: number): string => PLAN[r]?.[c] ?? "#"
   const walkable = (r: number, c: number): boolean => at(r, c) !== "#"
   // A wall is the void the maze leaves next to a passage. Void further out than that is unlit
@@ -519,19 +521,14 @@ const preview = async (tiers: string[]): Promise<string> => {
     return false
   }
 
-  const uri = (file: string): string => `data:image/png;base64,${readFileSync(file).toString("base64")}`
+  const defs = [
+    `<pattern id="floor-${id}" x="${ox}" width="${MEGA}" height="${MEGA}" patternUnits="userSpaceOnUse">
+       <image href="${uri("floor")}" width="${MEGA}" height="${MEGA}"/></pattern>`,
+    `<pattern id="face-${id}" x="${ox}" width="${MEGA}" height="${FACE}" patternUnits="userSpaceOnUse">
+       <image href="${uri("wall-face")}" width="${MEGA}" height="${FACE}"/></pattern>`,
+  ].join("")
 
-  const panels = tiers.map((tier, i) => {
-    const p = PALETTES[tier]
-    const dir = join(OUT_ROOT, tier)
-    const ox = i * pw
-    const defs = [
-      `<pattern id="floor-${tier}" x="${ox}" width="${MEGA}" height="${MEGA}" patternUnits="userSpaceOnUse">
-         <image href="${uri(join(dir, "floor.png"))}" width="${MEGA}" height="${MEGA}"/></pattern>`,
-      `<pattern id="face-${tier}" x="${ox}" width="${MEGA}" height="${FACE}" patternUnits="userSpaceOnUse">
-           <image href="${uri(join(dir, "wall-face.png"))}" width="${MEGA}" height="${FACE}"/></pattern>`,
-    ].join("")
-
+  {
     const floors: string[] = []
     const tops: string[] = []
     const faces: string[] = []
@@ -542,17 +539,15 @@ const preview = async (tiers: string[]): Promise<string> => {
         const x = ox + c * TILE
         const y = r * TILE
         if (walkable(r, c)) {
-          floors.push(`<rect x="${x}" y="${y}" width="${TILE}" height="${TILE}" fill="url(#floor-${tier})"/>`)
+          floors.push(`<rect x="${x}" y="${y}" width="${TILE}" height="${TILE}" fill="url(#floor-${id})"/>`)
           if (at(r, c) === "T") {
-            faces.push(
-              `<image href="${uri(join(dir, "threshold.png"))}" x="${x}" y="${y}" width="${TILE}" height="${SILL}"/>`
-            )
+            faces.push(`<image href="${uri("threshold")}" x="${x}" y="${y}" width="${TILE}" height="${SILL}"/>`)
           }
           const prop = PROP_AT[`${r},${c}`]
           if (prop && ALL_KINDS.includes(prop)) {
             props.push(
               // Drawn on the cell's floor line with the band's headroom above it, exactly as the renderer does.
-              `<image href="${uri(join(dir, `${prop}.png`))}" x="${x}" y="${y - BAND}" width="${TILE}" height="${PROP_H}"/>`
+              `<image href="${uri(prop)}" x="${x}" y="${y - BAND}" width="${TILE}" height="${PROP_H}"/>`
             )
           }
           continue
@@ -562,7 +557,7 @@ const preview = async (tiers: string[]): Promise<string> => {
         // wall is therefore all face, which is what makes it read as a wall rather than a ledge.
         if (walkable(r + 1, c)) {
           faces.push(
-            `<rect x="${x}" y="${y}" width="${TILE}" height="${FACE}" fill="url(#face-${tier})"/>`,
+            `<rect x="${x}" y="${y}" width="${TILE}" height="${FACE}" fill="url(#face-${id})"/>`,
             // The hard shadow the wall throws on the floor in front of it — in this idiom that
             // shadow, not the floor shading, is what puts the wall above the ground.
             `<rect x="${x}" y="${y + FACE}" width="${TILE}" height="6" fill="${p.outline}" opacity="0.45"/>`
@@ -580,12 +575,295 @@ const preview = async (tiers: string[]): Promise<string> => {
       }
     }
     return `<defs>${defs}</defs>${floors.join("")}${tops.join("")}${faces.join("")}${props.join("")}`
-  })
+  }
+}
 
+const preview = async (tiers: string[]): Promise<string> => {
+  const fileUri = (dir: string) => (name: string) =>
+    `data:image/png;base64,${readFileSync(join(dir, `${name}.png`)).toString("base64")}`
+  const panels = tiers.map((tier, i) => planPanel(PALETTES[tier], tier, fileUri(join(OUT_ROOT, tier)), i * PLAN_W))
   const file = join(OUT_ROOT, "preview.png")
-  await sharp(svg(pw * tiers.length, ph, `<rect width="100%" height="100%" fill="#0b0b0e"/>${panels.join("")}`))
+  await sharp(svg(PLAN_W * tiers.length, PLAN_H, `<rect width="100%" height="100%" fill="#0b0b0e"/>${panels.join("")}`))
     .png()
     .toFile(file)
+  return file
+}
+
+// ── Palette test ──────────────────────────────────────────────────────────────
+// `yarn generate-dummy-tiles --palettes` writes palette-test.png: candidate palettes for the merchant
+// rank, each drawn on the SAME plan the preview uses, with the things that have to stay legible laid over
+// them — the click marker, the five key colours, the fog wash, and the rank's own mood tint.
+//
+// Colour cannot be judged as swatches here. The failure this catches is the one the first dummy pass hit:
+// a wall top and a lit floor at similar VALUE blur into each other however different their hues are, and
+// only the near-black silhouette separates them. So the test is the geometry, and the numbers printed
+// beside it say the same thing arithmetically.
+
+// Fixed by the UI, so every candidate has to carry them: what the player taps, and what a locked door is
+// labelled with.
+const MARKER_GOLD = "#ffd766"
+const KEY_HUES = ["#4a8fd6", "#d64a4a", "#4ad67a", "#d6c84a", "#a34ad6"]
+
+const relLuminance = (hex: string): number => {
+  const v = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255)
+  const lin = v.map(c => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
+  return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+}
+
+/** WCAG contrast ratio, 1 (identical) to 21 (black on white). Not an accessibility claim — it is the
+ * cheapest number that says "these two will not blur into each other". */
+const contrast = (a: string, b: string): number => {
+  const [l1, l2] = [relLuminance(a), relLuminance(b)].sort((x, y) => y - x)
+  return (l1 + 0.05) / (l2 + 0.05)
+}
+
+// The pairs that have to stay apart. There is no absolute threshold worth inventing here, so the floor is
+// measured instead: whatever the five shipping ranks already manage is what a candidate has to match.
+const CHECKS: Array<{ what: string; of: (p: Palette) => [string, string] }> = [
+  { what: "floor|face", of: p => [p.slab, p.wall] },
+  { what: "floor|mass", of: p => [p.slab, p.wallBase] },
+  { what: "floor|outline", of: p => [p.slab, p.outline] },
+  { what: "floor|prop", of: p => [p.slab, p.prop] },
+  { what: "floor|marker", of: p => [p.slab, MARKER_GOLD] },
+  { what: "slab steps", of: p => [p.slabHi, p.slabLo] },
+]
+
+// Four merchant cellars, the same room in each — DARKER than the placeholder grey the map has worn so far,
+// and brown-grey rather than blue-grey. A cellar of mudbrick and limestone chips lit by a stair and one
+// wick is not pale stone; the brief's "limestone chips and mudbrick, whitewash" is a range of answers, and
+// these are four points in it.
+const CANDIDATES: Record<string, Palette> = {
+  // LEGO dark bluish grey (#6c6e68) as the floor: neutral, slightly green-grey, and the reference asked
+  // for. Warm ochre accent so the tier still signs itself.
+  legoGrey: {
+    bed: "#55574f",
+    slab: "#6c6e68",
+    slabHi: "#787a73",
+    slabLo: "#5f6159",
+    joint: "#2b2c28",
+    accent: "#a8703c",
+    wall: "#4e5049",
+    wallTop: "#6c6e68",
+    wallBase: "#2b2c28",
+    prop: "#9a9c93",
+    propDark: "#5f6159",
+    outline: "#14150f",
+  },
+  // The same value, taken brown: dust and mudbrick rather than stone dust.
+  brownGrey: {
+    bed: "#574e42",
+    slab: "#6f6558",
+    slabHi: "#7d7365",
+    slabLo: "#625849",
+    joint: "#2a251d",
+    accent: "#b07a3c",
+    wall: "#574d41",
+    wallTop: "#7a6f5f",
+    wallBase: "#2f2a22",
+    prop: "#9b8f7c",
+    propDark: "#5f5548",
+    outline: "#17130d",
+  },
+  // Further into the brick: what a merchant could actually afford to build with.
+  mudbrick: {
+    bed: "#533f30",
+    slab: "#6b5340",
+    slabHi: "#7a6049",
+    slabLo: "#5e4837",
+    joint: "#291e15",
+    accent: "#c07a3a",
+    wall: "#533e2e",
+    wallTop: "#77593f",
+    wallBase: "#2a1f17",
+    prop: "#a8886a",
+    propDark: "#5e4837",
+    outline: "#150e08",
+  },
+  // LEGO dark grey taken brown and its wall dropped a step: the one number brownGrey lost was floor
+  // against wall FACE, and a face that close to the floor it stands on blurs into it — the whole reason
+  // the map draws a silhouette at all.
+  brownStone: {
+    bed: "#544b40",
+    slab: "#6c6257",
+    slabHi: "#7b7166",
+    slabLo: "#5f564b",
+    joint: "#282219",
+    accent: "#b07a3c",
+    wall: "#4a4137",
+    wallTop: "#736858",
+    wallBase: "#2b261f",
+    prop: "#a49781",
+    propDark: "#5c5347",
+    outline: "#15110c",
+  },
+  // The same, one step darker still, for a cellar lit by a single wick rather than by the stair.
+  brownStoneDeep: {
+    bed: "#484036",
+    slab: "#5e564c",
+    slabHi: "#6c6459",
+    slabLo: "#524b42",
+    joint: "#221d16",
+    accent: "#b8813f",
+    wall: "#3f382f",
+    wallTop: "#655b4d",
+    wallBase: "#241f1a",
+    prop: "#9b8e79",
+    propDark: "#524b42",
+    outline: "#120f0a",
+  },
+  // What the placeholders wore before this test, kept as the thing to reject against: pale, cool, daylit.
+  // Held by value, not as PALETTES.starter — the point of a baseline is that adopting a winner does not
+  // move it.
+  paleLimestone: {
+    bed: "#8e9099",
+    slab: "#a3a5ad",
+    slabHi: "#aeb0b8",
+    slabLo: "#989aa3",
+    joint: "#2a2a33",
+    accent: "#b8845a",
+    wall: "#6b6e7a",
+    wallTop: "#8b8f9c",
+    wallBase: "#3d404b",
+    prop: "#b9bcc4",
+    propDark: "#7b7e88",
+    outline: "#14141a",
+  },
+}
+
+const paletteTest = async (): Promise<string> => {
+  const names = Object.keys(CANDIDATES)
+  const swatchW = 26
+  const rowH = PLAN_H
+  const width = swatchW + PLAN_W * 2
+  const rows: string[] = []
+
+  for (const [i, name] of names.entries()) {
+    const p = CANDIDATES[name]
+    // Rasterised in memory: a candidate is not a rank and has no folder of its own.
+    const png = async (b: Buffer): Promise<string> =>
+      "data:image/png;base64," + (await sharp(b).png().toBuffer()).toString("base64")
+    const art: Record<string, string> = {
+      floor: await png(floorSvg(p)),
+      "wall-face": await png(wallFaceSvg(p)),
+      threshold: await png(thresholdSvg(p)),
+    }
+    for (const kind of ALL_KINDS) art[kind] = await png(propSvg(p, kind))
+    const uri = (n: string): string => art[n] ?? ""
+    const y = i * rowH
+
+    // The plan twice: as it is, and under the rank's own air (moodSettings.ts) — a tint that flattens a
+    // palette is a property of the pair, not of either one.
+    const mood = moodFor("starter")
+    const panels = planPanel(p, name + "-a", uri, swatchW) + planPanel(p, name + "-b", uri, swatchW + PLAN_W)
+    const tinted = mood.tint
+      ? '<rect x="' +
+        (swatchW + PLAN_W) +
+        '" y="0" width="' +
+        PLAN_W +
+        '" height="' +
+        PLAN_H +
+        '" fill="' +
+        mood.tint.fill +
+        '" opacity="' +
+        mood.tint.opacity +
+        '"/>'
+      : ""
+
+    // Over the floor of both halves: what has to stay legible on this ground.
+    const fog = stateWash.fogged
+    const marks = [0, 1].flatMap(half => {
+      const ox = swatchW + half * PLAN_W
+      return [
+        '<circle cx="' +
+          (ox + TILE * 2 + 28) +
+          '" cy="' +
+          (TILE + 28) +
+          '" r="4" fill="' +
+          MARKER_GOLD +
+          '" stroke="#161009" stroke-width="2"/>',
+        ...KEY_HUES.map(
+          (hue, k) =>
+            '<rect x="' +
+            (ox + TILE * 3 + k * 12) +
+            '" y="' +
+            (TILE + 20) +
+            '" width="8" height="16" rx="2" fill="' +
+            hue +
+            '" stroke="#161009" stroke-width="1.5"/>'
+        ),
+        // The fog wash over a strip of floor: unexplored ground still has to read as ground.
+        '<rect x="' +
+          (ox + TILE) +
+          '" y="' +
+          TILE * 6 +
+          '" width="' +
+          TILE * 6 +
+          '" height="' +
+          TILE +
+          '" fill="' +
+          (fog?.fill ?? "#000") +
+          '" opacity="' +
+          (fog?.opacity ?? 0.6) +
+          '"/>',
+      ]
+    })
+
+    rows.push(
+      '<g transform="translate(0, ' +
+        y +
+        ')">' +
+        '<rect width="' +
+        swatchW +
+        '" height="' +
+        rowH +
+        '" fill="' +
+        p.slab +
+        '"/>' +
+        '<rect y="' +
+        rowH / 3 +
+        '" width="' +
+        swatchW +
+        '" height="' +
+        rowH / 3 +
+        '" fill="' +
+        p.wall +
+        '"/>' +
+        '<rect y="' +
+        (rowH * 2) / 3 +
+        '" width="' +
+        swatchW +
+        '" height="' +
+        rowH / 3 +
+        '" fill="' +
+        p.wallBase +
+        '"/>' +
+        panels +
+        tinted +
+        marks.join("") +
+        "</g>"
+    )
+  }
+
+  const file = join(OUT_ROOT, "palette-test.png")
+  await sharp(svg(width, rowH * names.length, '<rect width="100%" height="100%" fill="#0b0b0e"/>' + rows.join("")))
+    .png()
+    .toFile(file)
+
+  // The arithmetic beside the picture. The floor per check is what the shipping ranks already manage, so a
+  // candidate is flagged for being worse than the map already is rather than for missing a made-up number.
+  const shipping = Object.values(PALETTES)
+  const floors = CHECKS.map(({ of }) => Math.min(...shipping.map(p => contrast(...of(p)))))
+  const report = (label: string, p: Palette): void => {
+    const cells = CHECKS.map(({ what, of }, k) => {
+      const ratio = contrast(...of(p))
+      return what + " " + ratio.toFixed(2) + (ratio < floors[k] - 0.001 ? "!" : " ")
+    })
+    console.log(label.padEnd(11) + cells.join(" | "))
+  }
+  console.log("(! = worse than every rank that already ships)")
+  for (const name of names) report(name, CANDIDATES[name])
+  console.log("-- what ships today --")
+  for (const [tier, p] of Object.entries(PALETTES)) report(tier, p)
   return file
 }
 
@@ -593,12 +871,13 @@ const main = async (): Promise<void> => {
   const tiers = Object.keys(PALETTES)
   let count = 0
   for (const tier of tiers) {
-    await write(tier, "floor", floorSvg(tier), MEGA, MEGA)
-    await write(tier, "wall-face", wallFaceSvg(tier), MEGA, FACE)
-    await write(tier, "threshold", thresholdSvg(tier), TILE, SILL)
-    for (const kind of ALL_KINDS) await write(tier, kind, propSvg(tier, kind), TILE, PROP_H)
-    for (const kind of WALL_KINDS) await write(tier, kind, wallItemSvg(tier, kind), TILE, BAND)
-    await write(tier, "arch", archSvg(tier), ARCH_W, ARCH_H)
+    const p = PALETTES[tier]
+    await write(tier, "floor", floorSvg(p), MEGA, MEGA)
+    await write(tier, "wall-face", wallFaceSvg(p), MEGA, FACE)
+    await write(tier, "threshold", thresholdSvg(p), TILE, SILL)
+    for (const kind of ALL_KINDS) await write(tier, kind, propSvg(p, kind), TILE, PROP_H)
+    for (const kind of WALL_KINDS) await write(tier, kind, wallItemSvg(p, kind), TILE, BAND)
+    await write(tier, "arch", archSvg(p), ARCH_W, ARCH_H)
     count += 4 + ALL_KINDS.length + WALL_KINDS.length
   }
   // Shared art, written once: neither the explorer nor a beetle is a rank.
@@ -610,6 +889,7 @@ const main = async (): Promise<void> => {
   }
   console.log(`${count} dummy tiles written to src/assets/tiles/ (${tiers.length} tiers + shared)`)
   if (process.argv.includes("--preview")) console.log(`preview: ${await preview(tiers)}`)
+  if (process.argv.includes("--palettes")) console.log(`palettes: ${await paletteTest()}`)
 }
 
 main().catch(err => {
