@@ -367,7 +367,9 @@ moment `starter/arch.png` is real art rather than a blue-barred door:
 - **Where the seam reads as being.** The material changes at the gate → stairhead edge, and an arch on the
   gate's own doorway is one gap earlier — so walking through, you pass under the arch, cross one cell of
   the OLD rank, and only then reach the sill. That is what the rules above say and it may be exactly right;
-  it is also not what a player expects, which is to change rooms and change stone in one step.
+  it is also not what a player expects, which is to change rooms and change stone in one step. Moving the
+  seam onto the gate's own doorway would put the sill RIGHT AT THE GATE NODE, so the icon and the change
+  of stone land in one place rather than a cell apart.
 
 Neither is a bug. Both are judgements that need a real arch under them to make.
 

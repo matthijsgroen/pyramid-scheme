@@ -198,11 +198,31 @@ Even lighting left to right, no hotspot, no vignette.
 
 **`arch` — 3:2, magenta #ff00ff background, middle open**
 
+A hole in a WALL RUN, not a monument. The bands either side of the opening are `wall-face`, so this is the
+same masonry seen from the same angle at the same brick size, with the same lighter cap along the top and
+darker base at the foot — anything else reads as a doorway imported from another tomb. The jambs stand in
+the 14-unit corner slots, the way through is a full cell wide, and the crown rises above the wall line while
+the jambs drop onto the floor beyond it.
+
 ```
-A doorway frame seen from the front: two mudbrick jambs at the far left and far right edges,
-a timber lintel spanning the top, a thin mudbrick cornice above that. The MIDDLE IS EMPTY —
-flat magenta #ff00ff showing through, since the player walks under it. Whitewash gone from the jambs,
-the timber cracked and grey with age. Background flat magenta #ff00ff, no shadow cast on it.
+A doorway through a mudbrick wall, seen STRAIGHT ON FROM THE FRONT at eye level — exactly the same view,
+the same wall and the same brick size as a plain stretch of that wall, because this is a hole in it.
+Two mudbrick jambs at the far left and far right edges, each about a sixth of the width, a timber lintel
+spanning the top between them, a thin mudbrick cornice above that.
+THE MIDDLE IS EMPTY: flat magenta #ff00ff from the inside face of one jamb to the other and all the way
+down, since the player walks under it. No door, no gate, no bars, no curtain, nothing spanning the gap.
+No shadow cast onto the magenta.
+The jambs are the same wall as everywhere else: base mud brick #4a4137, DARKER than the stone floor, with
+whitewash surviving only in soft-edged patches, dusty #a49781 and never white. Same small bricks, same
+courses, same shallow grooved joints — modelled, never drawn, no contour around anything.
+A lighter cap along the very top edge where the cornice catches light, a darker base at the very bottom of
+each jamb where it meets the floor: the same two bands the plain wall carries, so a gateway lines up with
+the wall either side of it.
+The timber lintel is grey and split with age, #5c5347, the whitewash long gone from it.
+Worn where people pass: the inner edge of each jamb rubbed rounder and paler than the outer, brick corners
+knocked off at shoulder height, a dark rubbed patch where hands have touched.
+Painted, matte, soft brush texture and grit. Nothing darker than #282219, nothing lighter than #a49781.
+Even lighting, no hotspot, no vignette.
 ```
 
 ## 3. Chamber props — 15 files, 2:3, magenta background

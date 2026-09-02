@@ -962,13 +962,28 @@ const TileLayers = ({
 }: {
   regions: TileRegions
   tier: Difficulty
-  /** "x,y" of every gap an archway stands in. A gap gets ONE piece of masonry: where an arch marks the
-   * way through, the sill would be a second threshold inside its opening — and at a ward gate, where the
-   * rank changes, the two even disagree about the stone, since a sill is the tier being ENTERED and an
-   * arch is the chamber it belongs to. The arch says everything the sill says and says it standing up. */
-  archedGaps?: ReadonlySet<string>
+  /** "x,y" of every gap an archway stands in, and the arch's own tier. An arch's middle is transparent, so
+   * the sill shows THROUGH it — the step the jambs stand on, which is what stops a doorway hovering in a
+   * gap with its reveal running straight into floor. The one thing the two disagreed about was stone: a
+   * sill takes the tier being ENTERED and an arch the tier of the band it pierces, so at a ward gate the
+   * map laid one rank's threshold inside another's gateway. Settled by giving the gap to the arch — an
+   * arched sill is drawn in the arch's stone, so an opening is one material. */
+  archedGaps?: ReadonlyMap<string, Difficulty>
 }) => {
   const mega = CELL * 8
+  // Every sill that an arch stands in, filed under the ARCH's tier rather than the tier being entered.
+  // At a ward gate those differ, and one opening showing two ranks of stone is the reason the sill used to
+  // be skipped here entirely.
+  const archedSills = new Map<Difficulty, Rect[]>()
+  for (const [, groups] of regions) {
+    for (const rect of groups.threshold) {
+      const archTier = archedGaps?.get(`${rect[0]},${rect[1]}`)
+      if (!archTier) continue
+      const list = archedSills.get(archTier)
+      if (list) list.push(rect)
+      else archedSills.set(archTier, [rect])
+    }
+  }
   const allFloor = rectsToPath(
     [...regions.values()].flatMap(groups => [
       ...Object.values(groups.floorRoom).flat(),
@@ -1034,9 +1049,10 @@ const TileLayers = ({
                 const mass = rectsToPath(groups.wallMass[state])
                 const faces = rectsToPath(groups.wallFace[state])
                 const shadows = faceShadowsToPath(groups.wallFace[state], FACE_SHADOW)
-                // One sill per boundary, not one per cell state: it is masonry, not lighting. And none
-                // where an arch already stands in that gap.
+                // One sill per boundary, not one per cell state: it is masonry, not lighting. A sill under
+                // an arch is drawn with the ARCH's tier rather than this one, so it is handled below.
                 const thresholds = rectsToPath(groups.threshold.filter(([x, y]) => !archedGaps?.has(`${x},${y}`)))
+                const arched = rectsToPath(archedSills.get(t) ?? [])
                 return (
                   <g key={state}>
                     {mass && <path d={mass} fill={palette.wallBase} />}
@@ -1051,6 +1067,9 @@ const TileLayers = ({
                     {/* Laid over the floor of the gap it crosses, so a change of material reads as a
                         step between two places rather than a line where the art changes. */}
                     {state === "reachable" && thresholds && <path d={thresholds} fill={sillFill} opacity={0.9} />}
+                    {/* The sill an arch stands on, in the arch's own stone. Drawn with this tier's faces
+                        rather than the entered tier's, which is the whole point of moving it here. */}
+                    {state === "reachable" && arched && <path d={arched} fill={sillFill} opacity={0.9} />}
                     {shadows && <path d={shadows} fill={palette.outline} opacity={0.45} />}
                     {wash && <path d={room + corridor + faces + mass} fill={wash.fill} opacity={wash.opacity} />}
                   </g>
@@ -1363,8 +1382,8 @@ export const SiteMapView = ({
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
-  // Where the arches are, in the same terms the wall bands are built in, so a gap that has one can skip
-  // its sill (see TileLayers.archedGaps).
+  // Where the arches are, in the same terms the wall bands are built in, with the stone each one is cut
+  // from — the sill in that gap is drawn to match it (see TileLayers.archedGaps).
   // The air on this floor: its rank's, with whatever hour it authors (moodSettings.ts).
   const mood = useMemo(() => moodFor(tier, grid.theme), [tier, grid.theme])
   // Where something living may be: every real floor cell of this floor, explored or not. Deliberately NOT
@@ -1381,7 +1400,8 @@ export const SiteMapView = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the SHAPE of the floor, which a reveal never changes
   }, [grid.rows, grid.cols, grid.siteId])
   const archedGaps = useMemo(
-    () => new Set(doorways.map(({ row, col }) => `${cellLeft(col)},${cellTop(row) - WALL_H}`)),
+    () =>
+      new Map(doorways.map(({ row, col, tier: archTier }) => [`${cellLeft(col)},${cellTop(row) - WALL_H}`, archTier])),
     [doorways]
   )
   // Corridor-run markers track the explorer dot's visual position, not the logical one:

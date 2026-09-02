@@ -598,10 +598,12 @@ describe("archways", () => {
     expect(archesIn(render(<SiteMapView grid={station} />).container)).toHaveLength(0)
   })
 
-  it("gives a ward gate one piece of masonry, in the stone of the wall it pierces", () => {
-    // A doorway that is ALSO a rank seam: the chamber beyond is junior, the corridor into it starter. The
-    // sill and the arch would otherwise both land in this one gap, in two different tiers' stone — a
-    // sandstone threshold laid inside a grey gateway, which is what the ward gate looked like.
+  it("gives a ward gate one STONE, with the arch standing on its sill", () => {
+    // A doorway that is ALSO a rank seam: the chamber beyond is junior, the corridor into it starter. Both
+    // the arch and the sill land in this one gap. The arch's middle is transparent so the sill shows
+    // through it — without one the jambs stop in mid-air and the reveal runs straight into floor. What
+    // must NOT happen is the two using different tiers' stone: a sandstone threshold inside a grey
+    // gateway, which is what the ward gate used to look like.
     const seam = makeGrid([
       [empty, corridor("completed", false), empty],
       [empty, corridor("completed", false), empty],
@@ -615,7 +617,9 @@ describe("archways", () => {
     const sills = Array.from(container.querySelectorAll<SVGPathElement>("path")).filter(el =>
       (el.getAttribute("fill") ?? "").includes("sill")
     )
-    expect(sills).toEqual([])
+    expect(sills).toHaveLength(1)
+    // The arch's stone, not the entered tier's — one opening, one material.
+    expect(sills[0].getAttribute("fill")).toContain("sill-junior")
   })
 
   it("draws no arch into the fog", () => {

@@ -44,12 +44,54 @@ const warmth = (r: number, _g: number, b: number) => r - b
 /** The band of a face that is neither its light cap nor its dark base — the brick itself. */
 const FIELD = [0.1, 0.9]
 
+/**
+ * How much darker the band just outside the opening is than the jamb face beyond it. The opening is found
+ * by its transparency, so this runs on the keyed file as well as on a magenta one.
+ */
+const revealDepth = (data: Buffer, info: sharp.OutputInfo, stride: number) => {
+  const { width, height } = info
+  const isHole = (x: number, y: number) => {
+    const i = (y * width + x) * stride
+    return data[i + 3] < 128 || (data[i] > 180 && data[i + 2] > 180 && data[i + 1] < 120)
+  }
+  let minX = width
+  let maxX = -1
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if (!isHole(x, y)) continue
+      if (x < minX) minX = x
+      if (x > maxX) maxX = x
+    }
+  }
+  if (maxX < 0) return null
+  const band = Math.max(2, Math.round((maxX - minX) * 0.02))
+  const strip = (from: number, to: number) => {
+    let sum = 0
+    let n = 0
+    for (let y = Math.round(height * 0.4); y < Math.round(height * 0.7); y++) {
+      for (let x = Math.max(0, from); x < Math.min(width, to); x++) {
+        const i = (y * width + x) * stride
+        sum += luminance(data[i], data[i + 1], data[i + 2])
+        n++
+      }
+    }
+    return n ? sum / n : 0
+  }
+  const edge = (strip(minX - band * 2, minX - 1) + strip(maxX + 1, maxX + band * 2)) / 2
+  const face = (strip(minX - band * 7, minX - band * 3) + strip(maxX + band * 3, maxX + band * 7)) / 2
+  return { depth: Math.round(face - edge), edge: Math.round(edge), face: Math.round(face) }
+}
+
 const main = async () => {
   const file = process.argv[2]
   if (!file) throw new Error("usage: yarn tile-stats <file.png> [--tier=starter] [--slot=face]")
   const arg = (name: string) => process.argv.find(a => a.startsWith(`--${name}=`))?.split("=")[1]
   const tier = (arg("tier") ?? "starter") as Difficulty
-  const isFace = arg("slot") === "face" || arg("slot") === "wall"
+  // An arch is cut from the wall it pierces, so it is graded as wall stone, not floor stone. Its cap and
+  // base bands are the wall's own, which is what makes a gateway line up with the run either side of it.
+  const slot = arg("slot") ?? ""
+  const isFace = ["face", "wall", "arch"].includes(slot)
+  const isArch = slot === "arch"
   const palette = tierPalette[tier]
   if (!palette) throw new Error(`unknown tier: ${tier}`)
 
@@ -83,6 +125,8 @@ const main = async () => {
   const mean = sums.map(s => s / values.length) as [number, number, number]
   values.sort((a, b) => a - b)
 
+  const reveal = isArch ? revealDepth(data, info, stride) : null
+
   const at = (q: number) => Math.round(values[Math.floor((q / 100) * (values.length - 1))])
   const share = (test: (v: number) => boolean) => (values.filter(test).length / values.length) * 100
   const tooLight = share(v => v > lightest)
@@ -111,6 +155,7 @@ const main = async () => {
       isFace ? lumOf(palette.wall) : `${lumOf(palette.slabLo)}–${lumOf(palette.slabHi)}`
     })`
   )
+  if (reveal) console.log(`reveal  edge ${reveal.edge} against the jamb's ${reveal.face}   ${reveal.depth} deep`)
   if (isFace) {
     console.log(
       `bands  cap ${bandMean(0, 0.05)} (wants ${lumOf(palette.wallTop)})   field ${at(50)} (wants ${lumOf(
@@ -133,13 +178,23 @@ const main = async () => {
   // A face carries a deliberate top-to-bottom gradient, so its field is allowed a wider spread than a
   // floor, which has nothing to model but its own stone.
   const spreadLimit = isFace ? 90 : 60
+
+  // An arch spans from its reveal shadow to its lit cornice on purpose, so spread says nothing about it.
+  // What DOES decide it is whether the reveal is there: the inner faces of the jambs and the underside of
+  // the lintel, turned away from the light. Without that dark frame a doorway is a slightly paler rectangle
+  // in a wall and the eye slides over it — which is exactly how one roll failed.
   const offMaterial = Math.abs(at(50) - lumOf(material))
   // A face's dark end is a designed gradient running down to `wallBase`, plus a joint grid, so pixels
   // below the floor's mortar colour are expected there and only the LIGHT end can overshoot — which is
   // the failure a wall actually has (one came back at median 129 against a wall colour of 66).
   const outside = isFace ? tooLight : tooLight + tooDark
   const faults = [
-    outside >= 2 || spread >= spreadLimit ? `too contrasty: p5–p95 spans ${spread}, restate the value clamp` : null,
+    outside >= 2 || (!isArch && spread >= spreadLimit)
+      ? `too contrasty: p5–p95 spans ${spread}, restate the value clamp`
+      : null,
+    reveal && reveal.depth < 25
+      ? `no reveal: the opening's edge is ${reveal.depth} darker than the jamb, wants 25+ — a doorway needs a dark inner edge`
+      : null,
     // 15 is about the width of one palette step, so a drift past it is a different brown, not a variation.
     Math.abs(drift) > 15
       ? `${drift > 0 ? "too warm" : "too cool"} by ${Math.abs(Math.round(drift))}, restate the palette hexes`
