@@ -21,7 +21,7 @@
  *   --flatten=0.5    blend toward the material the slot is made of — the rank's slab for a floor, its wall
  *                    for a face — so a surface sits behind the props. Toward the palette, not toward grey.
  *   --no-trim        keep the frame as generated instead of re-seating the object on the floor line.
- *                    On an arch it also skips the crop that rebuilds the frame around the opening.
+ *                    On an arch it skips the trim that discards everything around the timber.
  *   --flip           mirror horizontally. The renderer mirrors EAST into west, so a side view drawn
  *                    facing left has to come in facing right
  */
@@ -30,7 +30,7 @@ import { mkdirSync } from "fs"
 import { dirname, join } from "path"
 import { fileURLToPath } from "url"
 import sharp from "sharp"
-import { ARCH_DROP, ARCH_H, ARCH_W, CELL, SIDE_W, WALL_H } from "../src/app/SiteMap/mapScale"
+import { ARCH_H, ARCH_W, WALL_H } from "../src/app/SiteMap/mapScale"
 import { tierPalette } from "../src/app/SiteMap/tileMaterials"
 import type { Difficulty } from "../src/data/difficultyLevels"
 
@@ -46,7 +46,10 @@ const MEGA = TILE * 8
 const SLOTS = {
   floor: { w: MEGA, h: MEGA, seat: false },
   face: { w: MEGA, h: TILE, seat: false },
-  sill: { w: TILE, h: 12, seat: false },
+  // A sill fills the gap between two rows: a cell wide, a wall band deep. It was 56x12 here and in the
+  // brief, a size the renderer never draws — the art came back a twelfth of a cell tall and was stretched
+  // to fill a band nearly three times that.
+  sill: { w: TILE, h: WALL_H, seat: false },
   arch: { w: ARCH_W, h: ARCH_H, seat: false },
   prop: { w: TILE, h: TILE + WALL_H, seat: true },
   wall: { w: TILE, h: WALL_H, seat: false },
@@ -100,53 +103,19 @@ const keyOut = async (input: sharp.Sharp, key: string, tolerance: number): Promi
 }
 
 /**
- * Crops an archway down to the doorway the slot actually wants, using the opening itself as the ruler.
+ * Trims an archway down to the timber, so the frame the model chose stops mattering.
  *
- * The slot is jamb : opening : jamb = `SIDE_W` : `CELL` : `SIDE_W`, so a jamb is a QUARTER of the opening's
- * width, and the masonry above it is `ARCH_H - opening` — the same fixed fractions every time. A generator
- * cannot be talked into those: asked for jambs a sixth of the frame it drew them a third twice running, and
- * a third means the way through imports to 29px with a 40-wide explorer walking into it. But the model does
- * reliably put down a big flat magenta rectangle, and that rectangle is a measurement. So the frame is
- * discarded and rebuilt around the opening.
+ * An arch is drawn as an OBJECT — two posts and a beam, magenta outside it and magenta through it — not as
+ * a piece of wall with a hole. That was the change that made it work: asked for a doorway in a wall, a
+ * model draws a generous stretch of wall around it (jambs a third of the frame when a sixth was asked for,
+ * twice), and the way through then imports at 29px for a 40-wide explorer. Asked for the gateway alone, the
+ * only thing left in the picture is the thing the slot wants, and cropping is just discarding the empty
+ * border.
  *
- * The extra wall the model insists on drawing either side is not a failure to fix — it is what makes the
- * crop possible, since there has to be something there to crop.
+ * Runs after the key, so both the outside and the way through are already alpha and one trim finds both.
  */
-const cropToDoorway = async (img: sharp.Sharp, key: string, tolerance: number): Promise<sharp.Sharp> => {
-  const [kr, kg, kb] = hexToRgb(key)
-  const { data, info } = await img.ensureAlpha().raw().toBuffer({ resolveWithObject: true })
-  let minX = info.width
-  let maxX = -1
-  let minY = info.height
-  for (let y = 0; y < info.height; y++) {
-    for (let x = 0; x < info.width; x++) {
-      const i = (y * info.width + x) * info.channels
-      if (Math.hypot(data[i] - kr, data[i + 1] - kg, data[i + 2] - kb) > tolerance) continue
-      if (x < minX) minX = x
-      if (x > maxX) maxX = x
-      if (y < minY) minY = y
-    }
-  }
-  if (maxX < 0) throw new Error("no opening found: an arch needs a magenta middle to measure from")
-
-  const opening = maxX - minX + 1
-  const jamb = Math.round((opening * SIDE_W) / CELL)
-  // Everything above the opening — lintel and cornice — in the same proportion the slot gives it.
-  const crown = Math.round((opening * (ARCH_H - (WALL_H + ARCH_DROP))) / CELL)
-  const left = Math.max(0, minX - jamb)
-  const top = Math.max(0, minY - crown)
-  return sharp(
-    await img
-      .extract({
-        left,
-        top,
-        width: Math.min(info.width - left, opening + jamb * 2),
-        height: info.height - top,
-      })
-      .png()
-      .toBuffer()
-  )
-}
+const trimToObject = async (img: sharp.Sharp): Promise<sharp.Sharp> =>
+  sharp(await img.trim({ threshold: 1 }).png().toBuffer())
 
 /** Re-seats a trimmed object on the bottom edge of its slot's aspect: what makes a prop stand on the floor
  * line rather than float in the middle of its cell. The object keeps its own proportions. */
@@ -185,9 +154,9 @@ const main = async (): Promise<void> => {
 
   let img = sharp(file)
   if (process.argv.includes("--flip")) img = sharp(await img.flop().png().toBuffer())
-  // Before the key, while the opening is still a colour that can be measured.
-  if (slot === "arch" && key !== "none") img = await cropToDoorway(img, key, tolerance)
   if (key !== "none") img = await keyOut(img, key, tolerance)
+  // After the key: an arch is an object with magenta on both sides, so one trim finds its timber.
+  if (slot === "arch" && !process.argv.includes("--no-trim")) img = await trimToObject(img)
   if (seat && !process.argv.includes("--no-trim")) img = await seatOnFloorLine(img, w / h)
 
   const dir = join(OUT_ROOT, tier)

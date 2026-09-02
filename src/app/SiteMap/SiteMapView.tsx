@@ -38,7 +38,15 @@ import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
 import { moodFor } from "./moodSettings"
 import { MapLife, MapWeather } from "./MapMood"
 import { ART_IMAGE_RENDERING, tileUrl } from "./tileAssets"
-import { ALL_STATES, buildTileRegions, faceShadowsToPath, hasWallFace, rectsToPath } from "./tileRegions"
+import {
+  ALL_STATES,
+  buildTileRegions,
+  faceShadowsToPath,
+  faceTopsToPath,
+  hasWallFace,
+  rectsToPath,
+} from "./tileRegions"
+import type { Rect } from "./tileRegions"
 import type { FloorAt, TileRegions } from "./tileRegions"
 
 // Cells one step outside the grid are still real void for claiming purposes — a fork or
@@ -948,6 +956,9 @@ const useCorridorRunTargets = (
 // docs/game-design/spritesheet-renderer-prep.md for why.
 
 const FACE_SHADOW = CELL / 8
+// How much of a wall's TOP surface shows above its face. A wall has thickness, and the side walls already
+// show theirs edge-on; without this a face is a flat band of brick with nothing above it.
+const FACE_TOP = SIDE_W / 2
 
 // The floor's material follows the FLOOR's own tier, carried on the grid — not the rooms'. A
 // starter pyramid's ward-chest teaser is authored at a LATER tier on purpose (spec/starter.ts), so
@@ -1016,11 +1027,24 @@ const TileLayers = ({
                 </pattern>
               )}
               {sill && (
-                // A sill is laid ACROSS the way through, so it tiles on the cell rather than on the
-                // megatile: the same stone step wherever two ranks meet.
-                <pattern id={`sill-${t}`} width={CELL} height={CELL} patternUnits="userSpaceOnUse">
-                  <image href={sill} width={CELL} height={CELL} preserveAspectRatio="none" />
-                </pattern>
+                <>
+                  {/* A sill fills the GAP it is laid in, and there are two shapes of gap. Between two rows
+                      it is a cell wide and a wall band deep, which is how the art is drawn. Between two
+                      columns it is the same step turned ninety degrees into a side wall's thickness — one
+                      pattern stretched over both is how a step ended up lying on its side. */}
+                  <pattern id={`sill-h-${t}`} width={CELL} height={WALL_H} patternUnits="userSpaceOnUse">
+                    <image href={sill} width={CELL} height={WALL_H} preserveAspectRatio="none" />
+                  </pattern>
+                  <pattern id={`sill-v-${t}`} width={SIDE_W} height={CELL} patternUnits="userSpaceOnUse">
+                    <image
+                      href={sill}
+                      width={CELL}
+                      height={SIDE_W}
+                      transform={`translate(${SIDE_W},0) rotate(90)`}
+                      preserveAspectRatio="none"
+                    />
+                  </pattern>
+                </>
               )}
             </Fragment>
           )
@@ -1039,7 +1063,9 @@ const TileLayers = ({
           const groups = regions.get(t)!
           const floorFill = tileUrl(t, "floor") ? `url(#floor-${t})` : palette.slab
           const faceFill = tileUrl(t, "wall-face") ? `url(#face-${t})` : palette.wall
-          const sillFill = tileUrl(t, "threshold") ? `url(#sill-${t})` : palette.wallTop
+          const hasSill = !!tileUrl(t, "threshold")
+          // A gap between two ROWS is a cell wide; one between two columns is a side wall's thickness.
+          const sillFill = ([, , w]: Rect) => (hasSill ? `url(#sill-${w === CELL ? "h" : "v"}-${t})` : palette.wallTop)
           return (
             <g key={t}>
               {ALL_STATES.map(state => {
@@ -1049,10 +1075,11 @@ const TileLayers = ({
                 const mass = rectsToPath(groups.wallMass[state])
                 const faces = rectsToPath(groups.wallFace[state])
                 const shadows = faceShadowsToPath(groups.wallFace[state], FACE_SHADOW)
+                const tops = faceTopsToPath(groups.wallFace[state], FACE_TOP)
                 // One sill per boundary, not one per cell state: it is masonry, not lighting. A sill under
                 // an arch is drawn with the ARCH's tier rather than this one, so it is handled below.
-                const thresholds = rectsToPath(groups.threshold.filter(([x, y]) => !archedGaps?.has(`${x},${y}`)))
-                const arched = rectsToPath(archedSills.get(t) ?? [])
+                const thresholds = groups.threshold.filter(([x, y]) => !archedGaps?.has(`${x},${y}`))
+                const arched = archedSills.get(t) ?? []
                 return (
                   <g key={state}>
                     {mass && <path d={mass} fill={palette.wallBase} />}
@@ -1064,12 +1091,19 @@ const TileLayers = ({
                       </>
                     )}
                     {faces && <path d={faces} fill={faceFill} />}
+                    {/* The wall's own top surface, in the stone the side walls and the wall mass already
+                        use. A face without it is a band of brick with nothing above it, and a wall stops
+                        reading as a solid thing. */}
+                    {tops && <path d={tops} fill={palette.wallBase} />}
                     {/* Laid over the floor of the gap it crosses, so a change of material reads as a
                         step between two places rather than a line where the art changes. */}
-                    {state === "reachable" && thresholds && <path d={thresholds} fill={sillFill} opacity={0.9} />}
-                    {/* The sill an arch stands on, in the arch's own stone. Drawn with this tier's faces
-                        rather than the entered tier's, which is the whole point of moving it here. */}
-                    {state === "reachable" && arched && <path d={arched} fill={sillFill} opacity={0.9} />}
+                    {/* One path per sill: each takes the pattern for the shape of gap it lies in. The sill
+                        an arch stands in is drawn here too, in the ARCH's stone rather than the entered
+                        tier's, which is why it is filed under this tier at all. */}
+                    {state === "reachable" &&
+                      [...thresholds, ...arched].map(rect => (
+                        <path key={rect.join(",")} d={rectsToPath([rect])} fill={sillFill(rect)} opacity={0.9} />
+                      ))}
                     {shadows && <path d={shadows} fill={palette.outline} opacity={0.45} />}
                     {wash && <path d={room + corridor + faces + mass} fill={wash.fill} opacity={wash.opacity} />}
                   </g>

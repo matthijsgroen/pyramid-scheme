@@ -69,6 +69,34 @@ art, re-seats props and characters on their floor line, and resizes.
 8. **Detail below the slot's resolution is wasted.** At 40×70 a compass, vest pockets and the X on a map are
    all gone. Simplify rather than embellish.
 
+## What the first four files cost, and what stops it costing that again
+
+Four surfaces took most of a day. The art was never the slow part; these were.
+
+1. **Check where an asset APPEARS before generating it.** A sill exists only where the rank changes: over
+   the generated world, 36 sampled floors have none at all and the rest have one or two. The story we were
+   judging against is single-tier, so it could never show one. A census beats an opinion — render the real
+   floors and count.
+2. **Check what the renderer actually FILLS, not what the brief says.** The brief called a sill 56x12. The
+   renderer fills a 56x28 gap between rows and a 14x56 gap between columns, from one stretched pattern, so
+   the art arrived a twelfth of a cell tall and was shown lying on its side. A slot size is a claim about
+   code, and has to be read out of the code.
+3. **State the camera once, in the renderer's own numbers.** `WALL_H` is half a `CELL`, so a vertical
+   surface images at half height and everything with height shows its top. Until that was written down
+   each prompt invented its own angle, and the arch came back flat.
+4. **Draw a thing as an OBJECT when the slot is an object.** Three arch rolls fought the wall the model
+   insisted on drawing around the doorway — jambs a third of the frame when a sixth was asked for, twice.
+   Asked for a free-standing gateway on magenta there is no wall left to get wrong, and the import trims
+   to the timber.
+5. **A number a model cannot see is not an instruction.** "Slabs roughly 64x32 pixels", "jambs a sixth of
+   the frame": ignored, repeatedly. Fix scale at import (`--repeat`, the arch trim) and ask for counts.
+6. **`yarn tsc --noEmit` checks NOTHING here** — the root tsconfig is solution-style, so it compiles an
+   empty file list. `yarn tsc -b` is the real check, and it found an error already committed. Same class:
+   `npx prettier` resolves to a different major than the project's and silently reformats unrelated code.
+   Use `yarn` for every tool.
+7. **Report a file as written only after reading it back off disk.** Twice a chosen variant was described
+   as imported when the command had never run, so the next Storybook look was of stale art.
+
 ## Open, and worth deciding while generating
 
 - **`SIDE_W` reads thin** against a full-cell face. Free to widen; `WALL_H` is not (it must divide `CELL`).

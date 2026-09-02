@@ -91,7 +91,12 @@ Every colour comes from that list. Nothing lighter than #a49781, nothing white, 
 worn paint reads as lighter DUST, not as white flakes. Nothing darker than #282219.
 Muted, dusty, very low contrast — neighbouring surfaces sit within a few steps of each other.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-Not isometric, not photographic, no 3D render, no perspective convergence — flat orthographic.
+THE CAMERA, the same for every file: looking down and slightly forward, about 25 degrees off vertical.
+Surfaces that face UP — the floor, the top of a wall, the top of a beam, the lid of a chest — are seen
+from straight above at their true size. Surfaces that face the viewer are seen straight on and squashed
+to HALF their real height. So everything with height SHOWS ITS TOP, and that is what gives it depth.
+Verticals stay vertical, horizontals stay horizontal: an orthographic squash, never a vanishing point.
+Not isometric, not photographic, no 3D render, no perspective convergence.
 Nothing Greek, Roman or Mesoamerican: no coopered barrels, no acanthus capitals, no step pyramids.
 ```
 
@@ -196,33 +201,34 @@ stroke, and nothing goes darker than #282219 or lighter than #a49781.
 Even lighting left to right, no hotspot, no vignette.
 ```
 
-**`arch` — 3:2, magenta #ff00ff background, middle open**
+**`arch` — 3:2, magenta #ff00ff EVERYWHERE except the gateway itself**
 
-A hole in a WALL RUN, not a monument. The bands either side of the opening are `wall-face`, so this is the
-same masonry seen from the same angle at the same brick size, with the same lighter cap along the top and
-darker base at the foot — anything else reads as a doorway imported from another tomb. The jambs stand in
-the 14-unit corner slots, the way through is a full cell wide, and the crown rises above the wall line while
-the jambs drop onto the floor beyond it.
+An OBJECT, not a piece of wall. Three rolls were spent drawing a doorway in a stretch of masonry, and each
+time the wall around it squeezed the way through: asked for jambs a sixth of the frame the model drew a
+third, twice, which imports to a 29px opening for a 40-wide explorer. Drawn as a free-standing gateway
+there is no wall to get the proportions wrong with, the import trims to the timber, and its brick can no
+longer disagree with the wall's brick because it has none.
 
 ```
-A doorway through a mudbrick wall, seen STRAIGHT ON FROM THE FRONT at eye level — exactly the same view,
-the same wall and the same brick size as a plain stretch of that wall, because this is a hole in it.
-Two mudbrick jambs at the far left and far right edges, each about a sixth of the width, a timber lintel
-spanning the top between them, a thin mudbrick cornice above that.
-THE MIDDLE IS EMPTY: flat magenta #ff00ff from the inside face of one jamb to the other and all the way
-down, since the player walks under it. No door, no gate, no bars, no curtain, nothing spanning the gap.
-No shadow cast onto the magenta.
-The jambs are the same wall as everywhere else: base mud brick #4a4137, DARKER than the stone floor, with
-whitewash surviving only in soft-edged patches, dusty #a49781 and never white. Same small bricks, same
-courses, same shallow grooved joints — modelled, never drawn, no contour around anything.
-A lighter cap along the very top edge where the cornice catches light, a darker base at the very bottom of
-each jamb where it meets the floor: the same two bands the plain wall carries, so a gateway lines up with
-the wall either side of it.
-The timber lintel is grey and split with age, #5c5347, the whitewash long gone from it.
-Worn where people pass: the inner edge of each jamb rubbed rounder and paler than the outer, brick corners
-knocked off at shoulder height, a dark rubbed patch where hands have touched.
-Painted, matte, soft brush texture and grit. Nothing darker than #282219, nothing lighter than #a49781.
-Even lighting, no hotspot, no vignette.
+A free-standing wooden doorway frame, alone on a flat magenta #ff00ff background. Nothing else in the
+picture: no wall, no floor, no ground, no shadow cast on the magenta.
+Two thick upright wooden posts, one at the left and one at the right, and a heavy beam lying across the
+top of them. THE MIDDLE IS EMPTY — flat magenta #ff00ff between the posts, from under the beam all the
+way down and off the bottom edge of the picture. Magenta OUTSIDE the frame too, left of the left post,
+right of the right post, and above the beam.
+Each post is about a sixth of the picture's width. The gap between them is the remaining two thirds.
+The wood is a warm mid BROWN, clearly browner and warmer than any grey stone: #6f5334 in the light,
+#4a3a24 in shadow. Old rough-hewn timber, split along the grain, adze marks, the ends of the beam left
+rough where it was cut.
+EVERY PIECE SHOWS ITS TOP. The beam is seen from slightly above, so its whole upper face is visible as a
+band running the full width, lighter than the front of the beam beneath it. Each post shows the small top
+face where the beam rests on it. That top-and-front is what gives the gateway its depth — a frame with no
+tops reads as a flat sticker.
+The underside of the beam, where it overhangs the opening, is in deep shadow. The inner face of each post
+is in shadow too. That dark edge around the empty middle is what makes the gateway read as a way through.
+Painted, matte, soft brush texture and visible wood grain. NO OUTLINES: no black contour around anything,
+no ink, no cel shading. Every edge is a change of value.
+Even lighting left to right, no hotspot, no vignette.
 ```
 
 ## 3. Chamber props — 15 files, 2:3, magenta background

@@ -30,6 +30,26 @@ shadow under anything standing (that is what makes an object sit ON the ground i
 medium), and the megatiles tiling. A missing file falls back to `default/`, then to a placeholder glyph — so
 this list can land one file at a time and nothing breaks while it is half-drawn.
 
+## The camera — one angle for the whole set
+
+Every file is drawn from the SAME viewpoint, and the renderer's own numbers say what it is
+(`mapScale.ts`): a cell is 56 units, the visible height of a wall is `WALL_H` = 28, and the thickness of
+a side wall seen edge-on is `SIDE_W` = 14. A wall a whole cell high images half a cell tall. That fixes the
+angle for everything else:
+
+- **Looking down and slightly forward, about 25° off vertical.** Two units up for every one unit back.
+- **Surfaces that face UP — floor, the top of a wall, the top of a beam, the lid of a chest — are seen
+  from straight above**, at their true size.
+- **Surfaces that face the PLAYER — a wall face, the front of a plinth, the side of a jar — are seen
+  straight on and FORESHORTENED TO HALF their real height.** No perspective convergence: verticals stay
+  vertical, horizontals stay horizontal. It is an orthographic squash, not a vanishing point.
+- **So everything with height shows a top.** That is what gives the map depth, and its absence is what
+  makes a wall look like a painted line and an archway look like a sticker. A beam shows the top of the
+  beam; a statue's shoulders and its base both show their upper surfaces; a jar shows the ellipse of its
+  mouth.
+- **Nothing is drawn from behind or from a three-quarter angle.** One camera, or a room full of objects
+  disagrees with itself.
+
 ## The style
 
 **Painted, generated well above map size and scaled down.** Settled on the merchant floor: an image model

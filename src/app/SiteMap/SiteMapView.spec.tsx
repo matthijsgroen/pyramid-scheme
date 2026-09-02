@@ -619,7 +619,8 @@ describe("archways", () => {
     )
     expect(sills).toHaveLength(1)
     // The arch's stone, not the entered tier's — one opening, one material.
-    expect(sills[0].getAttribute("fill")).toContain("sill-junior")
+    // A gap between two rows takes the horizontal pattern; the vertical one is the same step turned.
+    expect(sills[0].getAttribute("fill")).toContain("sill-h-junior")
   })
 
   it("draws no arch into the fog", () => {

@@ -278,3 +278,14 @@ export const rectsToPath = (rects: readonly Rect[]): string =>
  * shading on the floor itself, is what puts the wall above the ground. */
 export const faceShadowsToPath = (faces: readonly Rect[], height: number): string =>
   faces.map(([x, y, w, h]) => `M${x} ${y + h}h${w}v${height}h${-w}z`).join("")
+
+/**
+ * The strip along the TOP of a wall face: the wall's own top surface, seen from above.
+ *
+ * A face is the side of a wall you look at, and a wall has thickness, so above every face there is a
+ * sliver of its top — the same surface the side walls show edge-on, in the same stone. Without it a wall
+ * run is a flat band of brick with nothing above it, and the map loses the one cue that says a wall is a
+ * solid thing rather than a painted line.
+ */
+export const faceTopsToPath = (faces: readonly Rect[], depth: number): string =>
+  faces.map(([x, y, w]) => `M${x} ${y}h${w}v${depth}h${-w}z`).join("")

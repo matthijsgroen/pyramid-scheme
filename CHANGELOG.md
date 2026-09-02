@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A wall shows its top now, the same stone its sides are cut from, so it stands up off the floor instead
+  of lying flat on it.
+- The sill at a ward gate is laid the right way round: it used to be stretched to the wrong size and, in a
+  doorway between two chambers side by side, turned on its side.
 - The way into a chamber is a mudbrick doorway now: timber lintel, jambs worn where hands have passed,
   and the dark of the wall's thickness around the opening, so it reads as a way through rather than a
   paler patch of wall. Where a doorway is also the seam between two tombs, the sill is laid under it and
