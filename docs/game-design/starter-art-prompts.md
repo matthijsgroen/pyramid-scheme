@@ -144,3 +144,33 @@ needs them added before they render. Two lines each; see the brief §5.)
 
 If the set comes out and the map reads worse than the placeholders do, the likely culprit is contrast rather
 than craft: run `yarn generate-dummy-tiles --palettes` and compare the numbers.
+
+## 6. When it comes back as a sheet
+
+The model will hand you a sheet whether or not you asked for one, and it will not obey a frame count: ask
+for four columns and six come back. **Stop negotiating the count.** Cut the sheet and take what you need:
+
+```
+yarn cut-sheet ~/Downloads/sheet.png --out=/tmp/frames --rows=front,back,side --min=0.8
+yarn import-tile /tmp/frames/front-1.png --tier=default --name=explorer-s --slot=explorer --filter=smooth
+```
+
+`cut-sheet` finds the sprites by their **gutters**, not by an even grid, because a generated sheet is never
+on an exact pitch — on the one this was written against the columns sat at a 348px pitch inside 333px cells,
+so grid-slicing cut the torch off one sprite and stapled it to the next. It also:
+
+- **pads every frame to one box, bottom-centred.** The side views came back 465px tall against the front's
+  382, and imported to their own tight boxes each facing fills the slot on its own terms — the character
+  changes size when it turns around.
+- **reports a frame the canvas edge clipped** rather than importing it half-width (`--min`). Every row of
+  that sheet had one: the 6th sprite ran off the right edge.
+
+Three things worth putting in the prompt, all learned from real returns:
+
+1. **Ask for margin around the whole sheet**, or the last column loses an arm to the canvas edge.
+2. **Nothing needs animating yet.** The renderer draws one sprite per facing, so three frames is the whole
+   requirement; a walk cycle can be cut from the same sheet later.
+3. **A flat magenta background comes back as `#fd25fd`, not `#ff00ff`** — close enough for the default
+   tolerance, and `import-tile` despills what soaked into the art. Without that, every silhouette carries a
+   purple rim: about half the outline pixels of a generated sprite are part background, and at 40px wide
+   that halo is a visible fraction of the character. After import it measures under 1%.

@@ -19,6 +19,7 @@
     "generate-dummy-tiles": "tsx scripts/generateDummyTiles.ts",
     "make-seamless": "tsx scripts/makeSeamless.ts",
     "import-tile": "tsx scripts/importTile.ts",
+    "cut-sheet": "tsx scripts/cutSheet.ts",
     "validate-world": "tsx scripts/generateWorld.ts --validate-only",
     "generate-seeds": "tsx scripts/puzzleSeeds.ts generate",
     "seeds-info": "tsx scripts/puzzleSeeds.ts info",

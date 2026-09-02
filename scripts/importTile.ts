@@ -56,14 +56,37 @@ const hexToRgb = (hex: string): [number, number, number] => [
   parseInt(hex.slice(5, 7), 16),
 ]
 
-/** Everything close enough to the key colour becomes transparent. A flat generated background keys clean;
- * a gradient one does not, which is why the prompts ask for flat. */
+/**
+ * Everything close enough to the key colour becomes transparent, and everything that was PARTLY the key
+ * colour gets it taken back out.
+ *
+ * The second half matters more than it sounds. A generated sprite's outline pixels are a blend of the art
+ * and the background, so keying alone leaves a magenta halo tracing the whole silhouette — at 40px wide
+ * that halo is a visible fraction of the character, and it reads as a purple rim light nobody asked for.
+ *
+ * So: inside the tolerance, transparent. Out to twice the tolerance, alpha falls off (that band is the
+ * blend, and it belongs to the background as much as to the art). Then a despill on what is left: where
+ * red and blue both run above green, the excess is magenta that soaked into the art, and it is pulled back
+ * to green. Nothing in these tomb palettes is genuinely magenta, so there is nothing to protect.
+ */
 const keyOut = async (input: sharp.Sharp, key: string, tolerance: number): Promise<sharp.Sharp> => {
   const [kr, kg, kb] = hexToRgb(key)
   const { data, info } = await input.ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  const keyIsMagenta = kr > 200 && kb > 200 && kg < 120
   for (let i = 0; i < data.length; i += info.channels) {
     const d = Math.hypot(data[i] - kr, data[i + 1] - kg, data[i + 2] - kb)
-    if (d <= tolerance) data[i + 3] = 0
+    if (d <= tolerance) {
+      data[i + 3] = 0
+      continue
+    }
+    if (d < tolerance * 2) data[i + 3] = Math.round(data[i + 3] * ((d - tolerance) / tolerance))
+    if (keyIsMagenta) {
+      const spill = Math.min(data[i], data[i + 2]) - data[i + 1]
+      if (spill > 0) {
+        data[i] -= spill
+        data[i + 2] -= spill
+      }
+    }
   }
   return sharp(data, { raw: { width: info.width, height: info.height, channels: info.channels } })
 }
