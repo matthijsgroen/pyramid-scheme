@@ -28,7 +28,8 @@
     "world-info": "tsx scripts/worldInfo.ts",
     "release": "tsx scripts/release.ts",
     "prepare": "husky",
-    "tile-stats": "tsx scripts/tileStats.ts"
+    "tile-stats": "tsx scripts/tileStats.ts",
+    "make-arch": "tsx scripts/makeArch.ts"
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --fix",

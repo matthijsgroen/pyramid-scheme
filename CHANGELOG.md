@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The merchant's chamber walls are mudbrick now: courses of brick under whitewash worn back to patches,
   a tally scratched in ochre, a peg still in its hole, an awning bracket. The wall stands darker than the
   floor in front of it, so a chamber has depth rather than being flat pattern.
+- A nobleman's doorway is cut from his own walls: plastered jambs and a lintel with its top face catching
+  the light, standing a little proud of the wall it pierces.
 - The sill at a nobleman's doorway is one cut block of his own limestone, dished by feet, a line of red
   ochre along its near edge.
 - A nobleman's walls are plastered and painted: a procession of small figures carrying jars and sheaves

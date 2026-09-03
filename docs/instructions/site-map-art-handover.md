@@ -89,11 +89,18 @@ is the workflow: how to check, and how the checking has gone wrong.
    automatic measurements of a beam's top-to-front ratio both gave confident wrong answers — one
    thresholded on brightness and missed a textured top face, the other found the underside shadow instead
    of the top edge. Both were reported as fact before being checked against the picture.
-5. **`yarn tsc --noEmit` checks NOTHING here** — the root tsconfig is solution-style, so it compiles an
+5. **Profile the input before scoring it.** The arch builder samples a band of the rank's wall for its
+   stone, and the band picker was guessed wrong three times: scoring by how much ROW MEANS differ called a
+   procession frieze plain (a row of figures averages out like the row above it), scoring by variation
+   ALONG a row picked the dado (a solid painted stripe is the most uniform thing on a wall), and scoring by
+   both still missed because the search window was wider than the one clean strip and the cap/base
+   exclusion put that strip out of reach. Printing every row's colour distance and variation answered it in
+   one command. Same lesson as the beam metric: measure the thing, then write the rule.
+6. **`yarn tsc --noEmit` checks NOTHING here** — the root tsconfig is solution-style, so it compiles an
    empty file list. `yarn tsc -b` is the real check, and it found an error that had already been committed.
    Same class: `npx prettier` resolves to a different major than the project's and silently reformats
    unrelated code. Use `yarn` for every tool.
-6. **Report a file as written only after reading it back off disk.** Twice a chosen variant was described as
+7. **Report a file as written only after reading it back off disk.** Twice a chosen variant was described as
    imported when the command had never run, so the next Storybook look was of stale art.
 
 ## Open, and worth deciding while generating
