@@ -25,6 +25,7 @@ import {
   NODE_RADIUS_LARGE,
   NODE_RADIUS_PUZZLE,
   ARCH_H,
+  ARCH_DROP,
   ARCH_RISE,
   ARCH_W,
   SIDE_W,
@@ -1358,6 +1359,30 @@ const Archways = ({
   </g>
 )
 
+/**
+ * The shadow an archway's jambs throw on the floor they stand on.
+ *
+ * Drawn with the FLOOR, not with the arch. An arch is painted last, over the explorer, because the player
+ * walks under it — but they walk OVER its shadow, and a shadow that darkened their feet as they passed
+ * through the doorway would read as the gateway lying on top of them.
+ *
+ * It cannot be baked into the sprite either: the shadow falls below the jamb feet, outside the 84x49 slot.
+ *
+ * Same depth and colour as a wall face's, because it is the same light: what makes a wall sit on the floor
+ * rather than float above it, applied to the one other thing standing on it.
+ */
+const ArchShadows = ({ doorways }: { doorways: readonly Doorway[] }) => {
+  const feet = doorways.flatMap(({ row, col }) => {
+    const left = cellLeft(col) - SIDE_W
+    const top = cellTop(row) + ARCH_DROP
+    return [left, left + ARCH_W - SIDE_W].map(x => `M${x} ${top}h${SIDE_W}v${FACE_SHADOW}h${-SIDE_W}z`)
+  })
+  if (!feet.length) return null
+  return (
+    <path data-arch-shadow d={feet.join("")} fill={tierPalette.starter.outline} opacity={0.45} pointerEvents="none" />
+  )
+}
+
 // ─── Torchlight on the place the player is standing ─────────────────────────────
 
 /**
@@ -1673,6 +1698,7 @@ export const SiteMapView = ({
           style={{ background: tierPalette[tier].wallBase, imageRendering: ART_IMAGE_RENDERING }}
         >
           <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
+          <ArchShadows doorways={doorways} />
           <LitPlaces grid={grid} claims={claims} at={explorerPos} />
           <MapLife
             mood={mood}

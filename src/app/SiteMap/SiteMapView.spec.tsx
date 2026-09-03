@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
 import { ExplorerFigure } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
-import { ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
+import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 
@@ -587,6 +587,28 @@ describe("archways", () => {
       const opacity = Number(archesIn(container)[0].getAttribute("opacity"))
       expect(opacity, `explorer at ${pos}`).toBeLessThan(1)
     }
+  })
+
+  it("stands its jambs on the floor with a shadow, drawn under the explorer", () => {
+    // The arch is painted over the player because they walk UNDER it. They walk OVER its shadow, so the
+    // shadow belongs with the floor: darkening their feet as they crossed the doorway would read as the
+    // gateway lying on top of them.
+    const grid = makeGrid([
+      [empty, corridor("completed", false), empty],
+      [empty, corridor("completed", false), empty],
+      [empty, chamber("completed"), empty],
+    ])
+    const { container } = render(<SiteMapView grid={grid} explorerPos={[1, 1]} />)
+    const shadow = container.querySelector<SVGPathElement>("[data-arch-shadow]")
+    expect(shadow, "an arch casts on the floor it stands on").toBeTruthy()
+    // One band under each jamb, and both at the arch's foot — ARCH_DROP below the wall line it pierces.
+    const foot = Number(archesIn(container)[0].getAttribute("y")) + ARCH_H
+    const bands = shadow!.getAttribute("d")!.match(/M\d+ (\d+)/g) ?? []
+    expect(bands).toHaveLength(2)
+    expect(bands.every(b => Number(b.split(" ")[1]) === foot)).toBe(true)
+    // Before the explorer in document order, so the player walks over it rather than under it.
+    const explorer = container.querySelector("[data-explorer]")
+    expect(shadow!.compareDocumentPosition(explorer!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it("draws no arch around an encounter node, which is a station and not a place", () => {

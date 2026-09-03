@@ -52,6 +52,26 @@ const hexToRgb = (hex: string) => ({
   b: parseInt(hex.slice(5, 7), 16),
 })
 
+/**
+ * A band that fades from dark at the top to nothing — the lintel's shadow falling down the fronts beneath
+ * it. On the FRONTS only: the top face is the surface catching the light, and shading it would undo the
+ * one thing that gives the gateway depth.
+ */
+const castDown = async (w: number, h: number, hex: string, alpha: number) =>
+  sharp(
+    Buffer.from(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
+         <defs><linearGradient id="d" x1="0" y1="0" x2="0" y2="1">
+           <stop offset="0" stop-color="${hex}" stop-opacity="${alpha}"/>
+           <stop offset="1" stop-color="${hex}" stop-opacity="0"/>
+         </linearGradient></defs>
+         <rect width="${w}" height="${h}" fill="url(#d)"/>
+       </svg>`
+    )
+  )
+    .png()
+    .toBuffer()
+
 const fill = async (w: number, h: number, hex: string, alpha = 1) =>
   sharp({ create: { width: w, height: h, channels: 4, background: { ...hexToRgb(hex), alpha } } })
     .png()
@@ -188,6 +208,15 @@ const main = async () => {
     { input: await fill(jambW, jambH, palette.wallBase, lift * 0.35), left: ARCH_W - jambW, top: LINTEL_H },
     // A hairline where the top face meets the front, so the two planes do not blur into one.
     { input: await fill(ARCH_W, 1, palette.wallBase, 0.5), left: 0, top: LINTEL_TOP_H },
+    // What the lintel throws onto what is under it: down the top of each jamb's front, and a little onto
+    // its own front where the top face overhangs. Never onto the top face itself.
+    { input: await castDown(jambW, Math.round(jambH * 0.45), palette.wallBase, 0.5), left: 0, top: LINTEL_H },
+    {
+      input: await castDown(jambW, Math.round(jambH * 0.45), palette.wallBase, 0.5),
+      left: ARCH_W - jambW,
+      top: LINTEL_H,
+    },
+    { input: await castDown(ARCH_W, Math.round(LINTEL_H * 0.3), palette.wallBase, 0.35), left: 0, top: LINTEL_TOP_H },
     // The soffit, and a shadow down the inner edge of each jamb where the wall's thickness turns away.
     { input: await fill(CELL, SOFFIT_H, palette.wallBase, 0.55), left: jambW, top: LINTEL_H },
     { input: await fill(1, jambH, palette.wallBase, 0.35), left: jambW - 1, top: LINTEL_H },
