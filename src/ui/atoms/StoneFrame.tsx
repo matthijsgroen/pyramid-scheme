@@ -2,9 +2,9 @@ import type { FC, PropsWithChildren } from "react"
 import clsx from "clsx"
 import masonryStone from "@/assets/masonry-stone.png"
 
-// A block of the game's stonework wrapped around something, with the opening cut into it.
-// Same tile and tint as the tomb backdrops (see tombImageMap.ts), so a framed thing reads as
-// set into the same walls the player has been walking through.
+// A block of stonework wrapped around something, with the opening cut into it. Its tile belongs to no
+// rank — a mosaic window is not in anyone's tomb — so it keeps a plain square masonry tile of its own,
+// where a tomb wall (tombImageMap.ts) is a rank's own strip laid by width.
 export const StoneFrame: FC<PropsWithChildren<{ className?: string }>> = ({ children, className }) => (
   <div
     className={clsx("inline-block bg-yellow-800 p-3", className)}

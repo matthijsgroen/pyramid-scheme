@@ -1,7 +1,7 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import clsx from "clsx"
 import type { FC, PropsWithChildren } from "react"
-import { imageMap } from "./tombImageMap"
+import { imageMap, WALL_SIZE } from "./tombImageMap"
 
 export const TombDoor: FC<PropsWithChildren<{ className?: string; open?: boolean; difficulty: Difficulty }>> = ({
   children,
@@ -20,7 +20,7 @@ export const TombDoor: FC<PropsWithChildren<{ className?: string; open?: boolean
         )}
         style={{
           backgroundImage: `url(${settings.image})`,
-          backgroundSize: "140px 140px",
+          backgroundSize: WALL_SIZE,
           backgroundPosition: "bottom center",
           backgroundAttachment: "fixed",
         }}

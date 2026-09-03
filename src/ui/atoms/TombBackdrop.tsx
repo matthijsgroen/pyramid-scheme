@@ -1,7 +1,7 @@
 import type { FC, PropsWithChildren } from "react"
 import clsx from "clsx"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { imageMap } from "./tombImageMap"
+import { imageMap, WALL_SIZE } from "./tombImageMap"
 
 export const TombBackdrop: FC<
   PropsWithChildren<{
@@ -30,7 +30,7 @@ export const TombBackdrop: FC<
           scale === "large"
             ? `url(${settings.image})`
             : `url(${settings.image}), linear-gradient(var(--tw-gradient-stops))`,
-        backgroundSize: scale === "large" ? "140px 140px" : "40px 40px, 100% 100%",
+        backgroundSize: scale === "large" ? WALL_SIZE : `${WALL_SIZE}, 100% 100%`,
         backgroundPosition: "bottom center",
         backgroundAttachment: "fixed",
       }}
