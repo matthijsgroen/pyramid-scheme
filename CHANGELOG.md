@@ -38,6 +38,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ochre along its near edge.
 - A nobleman's walls are plastered and painted: a procession of small figures carrying jars and sheaves
   walks the length of every chamber, above a red dado band rubbed thin by passing shoulders.
+- A pharaoh's chamber walls are polished black granite dressed with gold: a row of royal cartouches,
+  each a gold ring around signs cut into the stone, over a fine chequered ribbon of gold and granite
+  inlay. The darkest wall in the game, and the only one where the decoration is metal rather than paint.
 - A pharaoh's floor is black granite: huge polished panels laid in a strict aligned grid, gold leaf
   pressed into a seam here and there, one panel of pale alabaster among them. The darkest ground in the
   game, and the only one where the wealth is the stone itself rather than anything painted on it.
