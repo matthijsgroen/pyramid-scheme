@@ -38,6 +38,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ochre along its near edge.
 - A nobleman's walls are plastered and painted: a procession of small figures carrying jars and sheaves
   walks the length of every chamber, above a red dado band rubbed thin by passing shoulders.
+- A priest's floor is basalt: great slabs of cold grey-blue stone, two paces across, laid so tight the
+  seams barely show, polished smooth by sandals and crusted with natron where the libation water dried.
+  Hard stone after the nobleman's soft limestone — the ground goes quiet and cold as you climb.
 - A nobleman's floor is cut limestone: big squared flagstones laid true, plaster patched into the joints,
   chipped at a corner here and there but kept. Pale and sunlit where the merchant's cellar is grey — you
   can see which tomb you are in by the ground you walk on.
