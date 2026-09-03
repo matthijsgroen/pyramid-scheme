@@ -30,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The merchant's chamber walls are mudbrick now: courses of brick under whitewash worn back to patches,
   a tally scratched in ochre, a peg still in its hole, an awning bracket. The wall stands darker than the
   floor in front of it, so a chamber has depth rather than being flat pattern.
+- A nobleman's floor is cut limestone: big squared flagstones laid true, plaster patched into the joints,
+  chipped at a corner here and there but kept. Pale and sunlit where the merchant's cellar is grey — you
+  can see which tomb you are in by the ground you walk on.
 - The merchant's floor is real stone now, painted rather than drawn: worn paving with scratches where
   sledges dragged, corners chipped away and hairline cracks. Zoomed out it is a quiet floor to walk
   across; zoomed in the wear is all still there.
