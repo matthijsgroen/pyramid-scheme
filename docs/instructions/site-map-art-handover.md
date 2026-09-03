@@ -142,6 +142,13 @@ is the workflow: how to check, and how the checking has gone wrong.
 - **Whether a rank draws the kinds its own pool never authors.** Two starter-difficulty pockets sit inside
   junior pyramids, so `starter/sarcophagus.png` really can be asked for. A shared `default/` set would
   cover every such hole in one place.
+- **Every built arch is the same silhouette.** `make-arch` has one layer stack — lintel two fifths of
+  the height, jambs always `SIDE_W` wide, no cornice, no batter — so four of the five gateways differ
+  only in the stone band they sample and read as one shape recoloured. The brief's arch column asks for
+  distinct shapes (a small cornice, a cavetto, a battered pylon, an opening with nothing holding it), and
+  the cheap route is a per-rank geometry table in the builder rather than a generation per rank. Deferred
+  on purpose: a gateway is 84x49 and sits in an empty chamber today. Judge it again once wall items and
+  props are in and a doorway has something to be seen among.
 - **Whether the merchant's arch should be rebuilt too.** Four of five arches are built from their rank's
   wall; the merchant's is painted timber and stays, because its adze marks and split grain are half of why
   it works. They have never been seen side by side across a seam — the RankSeams story is where to look.
