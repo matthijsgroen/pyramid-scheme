@@ -680,6 +680,20 @@ describe("the place the explorer stands is lit", () => {
     expect(lit).toBeGreaterThanOrEqual(1)
   })
 
+  it("crossfades: both the place left and the place entered are drawn during a move", () => {
+    // A path cannot tween between two shapes, so the fade is between two of them — the old place going
+    // out and the new one coming in. Without it the wash snapped from one room to the next on arrival.
+    const grid = makeGrid([
+      [straightCorridor("completed", ["s"]), empty],
+      [corridor("completed"), empty],
+      [straightCorridor("completed", ["n"]), empty],
+    ])
+    const { container, rerender } = render(<SiteMapView grid={grid} explorerPos={[0, 0]} revealAllCells />)
+    expect(container.querySelectorAll("[data-torch]")).toHaveLength(1)
+    rerender(<SiteMapView grid={grid} explorerPos={[2, 0]} revealAllCells />)
+    expect(container.querySelectorAll("[data-torch]")).toHaveLength(2)
+  })
+
   it("draws no light when no one is on the floor", () => {
     const grid = makeGrid([[corridor("completed"), corridor("completed")]])
     const { container } = render(<SiteMapView grid={grid} revealAllCells />)

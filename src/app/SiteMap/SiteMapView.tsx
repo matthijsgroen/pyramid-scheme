@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from "react"
+import { Fragment, useEffect, useMemo, useRef, useState } from "react"
 import type {
   CellState,
   DecorationKind,
@@ -1427,9 +1427,18 @@ const litPlaceCells = (grid: FloorGrid, claims: RoomClaims, at: readonly [number
 
 const TORCH_LIT = "#ffe2b0"
 
-const LitPlace = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; at?: readonly [number, number] }) => {
-  if (!at) return null
-  const place = litPlaceCells(grid, claims, at)
+const LitPlace = ({
+  grid,
+  claims,
+  at,
+  className,
+}: {
+  grid: FloorGrid
+  claims: RoomClaims
+  at?: readonly [number, number]
+  className: string
+}) => {
+  const place = at ? litPlaceCells(grid, claims, at) : []
 
   const lit = new Set(place)
 
@@ -1450,9 +1459,53 @@ const LitPlace = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; a
       })
       .join("")
 
+  if (!lit.size) return null
+  return <path data-torch="lit" className={className} d={pathFor(lit, lit)} fill={TORCH_LIT} />
+}
+
+const FADE_MS = 320
+const FADE_IN = "map-lit-in"
+const FADE_OUT = "map-lit-out"
+const LIT_OPACITY = 0.1
+const LIT_CSS = `
+.${FADE_IN} { animation: map-lit-in ${FADE_MS}ms ease-out both; }
+.${FADE_OUT} { animation: map-lit-out ${FADE_MS}ms ease-in both; }
+@keyframes map-lit-in { from { opacity: 0 } to { opacity: ${LIT_OPACITY} } }
+@keyframes map-lit-out { from { opacity: ${LIT_OPACITY} } to { opacity: 0 } }
+@media (prefers-reduced-motion: reduce) {
+  .${FADE_IN} { animation: none; opacity: ${LIT_OPACITY} }
+  .${FADE_OUT} { animation: none; opacity: 0 }
+}
+`
+
+/**
+ * The lit place, crossfaded as the explorer walks from one to the next.
+ *
+ * Tied to the LIVE position rather than the settled one, so the room ahead comes up over the walk instead
+ * of snapping on at the moment of arrival. Both places are drawn during the crossing — the old one going
+ * out, the new one coming in — because a path cannot tween between two shapes, so the fade has to be
+ * between two of them.
+ */
+const LitPlaces = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; at?: readonly [number, number] }) => {
+  const key = at ? litPlaceCells(grid, claims, at).join("|") : ""
+  const [leaving, setLeaving] = useState<readonly [number, number] | undefined>(undefined)
+  const prevRef = useRef<{ key: string; at?: readonly [number, number] }>({ key, at })
+
+  useEffect(() => {
+    const prev = prevRef.current
+    prevRef.current = { key, at }
+    if (prev.key === key || !prev.at) return
+    setLeaving(prev.at)
+    const timer = setTimeout(() => setLeaving(undefined), FADE_MS)
+    return () => clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the PLACE, which is what `key` is
+  }, [key])
+
   return (
     <g style={{ mixBlendMode: "screen" }} pointerEvents="none">
-      <path data-torch="lit" d={pathFor(lit, lit)} fill={TORCH_LIT} opacity={0.1} />
+      <style>{LIT_CSS}</style>
+      {leaving && <LitPlace key="leaving" grid={grid} claims={claims} at={leaving} className={FADE_OUT} />}
+      <LitPlace key={key} grid={grid} claims={claims} at={at} className={FADE_IN} />
     </g>
   )
 }
@@ -1615,7 +1668,7 @@ export const SiteMapView = ({
           style={{ background: tierPalette[tier].wallBase, imageRendering: ART_IMAGE_RENDERING }}
         >
           <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
-          <LitPlace grid={grid} claims={claims} at={settledExplorerPos} />
+          <LitPlaces grid={grid} claims={claims} at={explorerPos} />
           <MapLife
             mood={mood}
             siteId={grid.siteId}
