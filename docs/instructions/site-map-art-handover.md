@@ -47,7 +47,7 @@ Slots: `floor` 448² · `face` 448×56 · `sill` 56×12 · `arch` 84×56 · `pro
 `explorer` 40×70. `import-tile` keys the background to alpha, despills the magenta that soaked into the
 art, re-seats props and characters on their floor line, and resizes.
 
-## What generation actually gets wrong, from three real returns
+## What the TOOLS get wrong, from real returns
 
 1. **The frame count is not negotiable with the model.** Ask for four, six come back. Don't fight it —
    `cut-sheet` takes the sheet apart by its GUTTERS (a generated sheet is never on an even pitch) and you
@@ -61,82 +61,40 @@ art, re-seats props and characters on their floor line, and resizes.
    cast survives import.
 5. **Aspect is the one thing import cannot fix** — it stretches to the slot on purpose, so a wrong shape is
    visible rather than silently cropped. Generate at the slot's aspect.
-6. **The value clamp is dropped before the subject is.** The first starter floor kept every element the
-   prompt asked for and none of its palette: lum 36–179 where the palette spans 88–114, white whitewash
-   flakes and a near-black outline around every slab. `yarn tile-stats` measures it before import.
-7. **Anything crossing the whole frame tiles into wallpaper.** That same floor had one crack corner to
-   corner. At 448² it repeats in every cell, and `make-seamless` has to fight a feature touching two edges.
-8. **Detail below the slot's resolution is wasted.** At 40×70 a compass, vest pockets and the X on a map are
-   all gone. Simplify rather than embellish.
+6. **What a generation gets wrong about the ART** — the value clamp, outlines, anything crossing the
+   frame, detail below the slot's resolution — is in [tile-art-brief.md](../game-design/tile-art-brief.md)
+   under "Writing a prompt". The five above are about the TOOLS: what a sheet does, what keying does, what
+   the import will and will not fix.
 
-## What the first four files cost, and what stops it costing that again
+## What the first files cost, and what stops it costing that again
 
-Four surfaces took most of a day. The art was never the slow part; these were.
+The rules a PROMPT has to follow moved to [tile-art-brief.md](../game-design/tile-art-brief.md), under
+"Writing a prompt" — that is the document open when a prompt is written, and keeping them here meant
+writing the nobleman's arch from the brief alone and repeating a mistake already recorded. What stays here
+is the workflow: how to check, and how the checking has gone wrong.
 
 1. **Check where an asset APPEARS before generating it.** A sill exists only where the rank changes: over
    the generated world, 36 sampled floors have none at all and the rest have one or two. The story we were
-   judging against is single-tier, so it could never show one. A census beats an opinion — render the real
+   judging against was single-tier, so it could never show one. A census beats an opinion — render the real
    floors and count.
 2. **Check what the renderer actually FILLS, not what the brief says.** The brief called a sill 56x12. The
    renderer fills a 56x28 gap between rows and a 14x56 gap between columns, from one stretched pattern, so
    the art arrived a twelfth of a cell tall and was shown lying on its side. A slot size is a claim about
    code, and has to be read out of the code.
-3. **State the camera once, in the renderer's own numbers.** `WALL_H` is half a `CELL`, so a vertical
-   surface images at half height and everything with height shows its top. Until that was written down
-   each prompt invented its own angle, and the arch came back flat.
-4. **Draw a thing as an OBJECT when the slot is an object.** Three arch rolls fought the wall the model
-   insisted on drawing around the doorway — jambs a third of the frame when a sixth was asked for, twice.
-   Asked for a free-standing gateway on magenta there is no wall left to get wrong, and the import trims
-   to the timber.
-5. **A number a model cannot see is not an instruction.** "Slabs roughly 64x32 pixels", "jambs a sixth of
-   the frame": ignored, repeatedly. Fix scale at import (`--repeat`, the arch trim) and ask for counts.
-6. **`yarn tsc --noEmit` checks NOTHING here** — the root tsconfig is solution-style, so it compiles an
-   empty file list. `yarn tsc -b` is the real check, and it found an error already committed. Same class:
-   `npx prettier` resolves to a different major than the project's and silently reformats unrelated code.
-   Use `yarn` for every tool.
-7. **Report a file as written only after reading it back off disk.** Twice a chosen variant was described
-   as imported when the command had never run, so the next Storybook look was of stale art.
-
-8. **Draw a thing as an OBJECT when the slot holds an object.** The arch took eight rolls, and the turn
-   came when it stopped being "a doorway in a wall" and became "a wooden frame alone on magenta". A wall
-   drawn around the subject is a wall whose proportions the model chooses, and it chose wrong every time.
-9. **This world has exactly TWO planes: facing the viewer, and facing up.** No sides, no third plane, no
-   diagonals. Side walls have no side face, so an archway with a shaded inner reveal was more dimensional
-   than everything around it — which is why it looked wrong even while measuring fine. Say this in the
-   prompt before the subject; it governs every prop still to come.
-10. **Never ask for a surface that is physically hidden.** A post's top face is under the beam that rests
-    on it. Asked for it anyway, the model resolved the contradiction by inventing capitals.
-11. **Check a proportion at SLOT size, not at generation size.** "The beam's top band is a third of a
-    fifth" is 3px in a 42-tall slot: invisible. The sill made the same mistake at 12px. Do the arithmetic
-    down to the slot before writing the fraction.
-12. **Proportions belong to the OBJECT, not the canvas.** The import trims to the drawn thing, so the
-    frame's own aspect is what reaches the slot — a 2:1 canvas with margin gives a frame that is not 2:1.
-    State the ratio as "measured from the outer edge of one post to the other".
-13. **A proxy metric is worthless until it has agreed with a case you can already judge by eye.** Two
-    different automatic measurements of the beam's top-to-front ratio both gave confident wrong answers —
-    one thresholded on brightness and missed a textured top face, the other found the underside shadow
-    instead of the top edge. Both were reported as fact before being checked against the picture.
-
-14. **A preview must compose the way the RENDERER composes.** The arch previews drew a continuous wall
-    face behind the gateway; the renderer puts an arch in a GAP, where the band is floor and the faces are
-    only to its left and right. So the beam had nothing behind it in the app and read as floating, while
-    the preview showed it seated. Every judgement made against that preview was made against a picture the
-    game never draws.
-15. **Watch for constraints that cannot both hold.** With the sprite height fixed, an arch's rise and drop
-    trade off exactly: `drop = ARCH_H − WALL_H − rise`. Two separate asks — "beam level with the wall top"
-    and "posts three below the wall's bottom" — pinned both ends, which forced the slot's height instead
-    (31, not 42) and with it the aspect the art must be drawn at (2.7:1, not 2:1).
-
-16. **`--flatten` is a corrective, not a step in the recipe.** The merchant's wall needed 0.6 because it
-    arrived at median 129 against a target of 66. The nobleman's arrived at 104 against 111 — flattening it
-    out of habit pulled its cap from 139 to 126 and its base from 50 to 77, both away from spec, and washed
-    the frieze. Import at 0 first; reach for flatten only when the numbers say the roll missed.
-
-17. **A reference image carries LAYOUT as strongly as it carries colour, and words do not beat it.** The
-    nobleman's arch was given the nobleman's wall as a style reference, with "do not copy its layout" in
-    the prompt; it came back as an 8:1 strip of wall with a doorway in it. Reference the thing whose SHAPE
-    you want — the previous rank's arch for an arch — and override the material in words, which is the
-    part a reference gives up more easily.
+3. **A preview must compose the way the RENDERER composes.** The arch previews drew a continuous wall face
+   behind the gateway; the renderer puts an arch in a GAP, where that band is floor and the faces are only
+   to its left and right. Every judgement made against that preview was made against a picture the game
+   never draws.
+4. **A proxy metric is worthless until it has agreed with a case you can already judge by eye.** Two
+   automatic measurements of a beam's top-to-front ratio both gave confident wrong answers — one
+   thresholded on brightness and missed a textured top face, the other found the underside shadow instead
+   of the top edge. Both were reported as fact before being checked against the picture.
+5. **`yarn tsc --noEmit` checks NOTHING here** — the root tsconfig is solution-style, so it compiles an
+   empty file list. `yarn tsc -b` is the real check, and it found an error that had already been committed.
+   Same class: `npx prettier` resolves to a different major than the project's and silently reformats
+   unrelated code. Use `yarn` for every tool.
+6. **Report a file as written only after reading it back off disk.** Twice a chosen variant was described as
+   imported when the command had never run, so the next Storybook look was of stale art.
 
 ## Open, and worth deciding while generating
 

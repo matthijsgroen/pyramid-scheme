@@ -67,6 +67,56 @@ An earlier draft of this section said 25° off vertical, derived by assuming a w
 tall. Nothing says that, and the assumption asked for arches seven times more top-down than the wall the
 same document had already accepted.
 
+## Writing a prompt — the rules a generation keeps breaking
+
+Every one of these cost at least one roll. They are here, in the brief, rather than in a handover,
+because this is the document open when a prompt is written.
+
+**Draw a thing as an OBJECT when the slot holds an object.** The merchant's arch took eight rolls, and the
+turn came when it stopped being "a doorway in a wall" and became "a wooden frame alone on magenta". A wall
+drawn around the subject is a wall whose proportions the model picks, and it picked jambs a third of the
+frame every time when a sixth was asked for. There is no wall in a doorway's picture.
+
+**A reference image carries LAYOUT as strongly as it carries colour, and words do not beat it.** A
+nobleman's arch given the nobleman's WALL as a style reference — with "do not copy its layout" written in
+the prompt — came back as an 8:1 strip of wall with a doorway in it. Reference the thing whose SHAPE you
+want (the previous rank's arch, for an arch) and override the material in words: material is the part a
+reference gives up more easily. Say what the attachment is FOR, inside the prompt.
+
+**A number a model cannot see is not an instruction.** "Slabs roughly 64x32 pixels" and "jambs a sixth of
+the frame" were both ignored, repeatedly. Ask for COUNTS and for fractions of something visible in the
+drawing — "exactly 7 slabs across", "the top face is the upper third of the block". Fix the rest at import
+(`--repeat`, the arch's slot fitting), which is deterministic where a prompt is not.
+
+**Check a proportion at SLOT size before writing it.** "The cornice takes the top fifth, and its top face
+is part of that" is five pixels in a 49-tall sprite: the model drew it and nobody could see it. The
+merchant's working arch made its beam two fifths of the frame and the top face a third of THAT. Do the
+arithmetic down to the slot.
+
+**Proportions belong to the OBJECT, not the canvas.** The import trims to the drawn thing, so the frame's
+own aspect is what reaches the slot — a 2:1 canvas with a margin gives a frame that is not 2:1. State the
+ratio as measured from the outer edge of one part to the other.
+
+**Never ask for a surface the geometry hides.** A post's top is under the beam resting on it. Asked for one
+anyway, a generator invents a capital to justify it.
+
+**Anything crossing the whole frame tiles into wallpaper.** A floor with one corner-to-corner crack repeats
+that crack in every cell; a nobleman's ochre band across the paving became a red stripe every eight cells.
+Only a wall's cap, base and dado may cross, because a face tiles in one direction and those bands are what
+register it.
+
+**Detail below the slot's resolution is wasted.** At 40×70 a compass, vest pockets and the X on a map are
+all gone. Simplify rather than embellish.
+
+**The value clamp is the first thing dropped, and an outline instruction is what undoes it.** Asked to
+outline, a model draws cel-shaded line art, and line art is all contrast. Say NO OUTLINES, and say what the
+palette's two ends are.
+
+**`--flatten` is a corrective, not a step in the recipe.** The merchant's wall needed 0.6 because it
+arrived at median 129 against a target of 66. The nobleman's arrived at 104 against 111, and flattening it
+out of habit pulled its cap and base away from spec and washed its frieze. Import at 0; reach for flatten
+only when the numbers say the roll missed.
+
 ## The style
 
 **Painted, generated well above map size and scaled down.** Settled on the merchant floor: an image model
