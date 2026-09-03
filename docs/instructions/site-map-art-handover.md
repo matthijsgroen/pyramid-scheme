@@ -127,6 +127,11 @@ Four surfaces took most of a day. The art was never the slow part; these were.
     and "posts three below the wall's bottom" — pinned both ends, which forced the slot's height instead
     (31, not 42) and with it the aspect the art must be drawn at (2.7:1, not 2:1).
 
+16. **`--flatten` is a corrective, not a step in the recipe.** The merchant's wall needed 0.6 because it
+    arrived at median 129 against a target of 66. The nobleman's arrived at 104 against 111 — flattening it
+    out of habit pulled its cap from 139 to 126 and its base from 50 to 77, both away from spec, and washed
+    the frieze. Import at 0 first; reach for flatten only when the numbers say the roll missed.
+
 ## Open, and worth deciding while generating
 
 - **`SIDE_W` reads thin** against a full-cell face. Free to widen; `WALL_H` is not (it must divide `CELL`).
