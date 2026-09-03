@@ -1455,6 +1455,11 @@ const LitPlace = ({
           parts.push(`M${cellLeft(c)} ${cellTop(r) - WALL_H}h${CELL}v${WALL_H}h${-CELL}z`)
         if (joinsTo.has(`${r},${c - 1}`))
           parts.push(`M${cellLeft(c) - SIDE_W} ${cellTop(r)}h${SIDE_W}v${CELL}h${-SIDE_W}z`)
+        // And the little square where four lit cells meet — the corner between a north gap and a west
+        // gap. Filling both bands and not the corner between them leaves an unlit dot at every crossing
+        // inside a room, which is the artefact a floor of squares always has if you stop at the edges.
+        if (joinsTo.has(`${r - 1},${c}`) && joinsTo.has(`${r},${c - 1}`) && joinsTo.has(`${r - 1},${c - 1}`))
+          parts.push(`M${cellLeft(c) - SIDE_W} ${cellTop(r) - WALL_H}h${SIDE_W}v${WALL_H}h${-SIDE_W}z`)
         return parts
       })
       .join("")
