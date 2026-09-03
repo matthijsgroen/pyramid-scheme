@@ -91,6 +91,9 @@ Every colour comes from that list. Nothing lighter than #a49781, nothing white, 
 worn paint reads as lighter DUST, not as white flakes. Nothing darker than #282219.
 Muted, dusty, very low contrast — neighbouring surfaces sit within a few steps of each other.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality, its texture, its restraint and
+its lighting. Do NOT take its colours or its subject from it — the palette below is the only source of
+colour, and it may be a different rank's stone entirely.
 THE CAMERA, the same for every file: 30 degrees above the floor, looking slightly down.
 Depth going away from the viewer is squashed to HALF: the top of a wall, the top of a beam, the lid of a
 chest are all seen as bands half as deep as they really are, at full width. Height is barely squashed at
@@ -101,6 +104,11 @@ Verticals stay vertical, horizontals stay horizontal: an orthographic squash, ne
 Not isometric, not photographic, no 3D render, no perspective convergence.
 Nothing Greek, Roman or Mesoamerican: no coopered barrels, no acanthus capitals, no step pyramids.
 ```
+
+The reference line has to be IN the prompt, not said to the model alongside it. A reference carries
+colour as strongly as it carries handling, and the ranks differ by colour more than by anything else: a
+merchant floor attached to a nobleman prompt is an instruction to paint the nobleman's limestone
+grey-brown. Naming the reference's job in the prompt is what stops that.
 
 **Pass the merchant floor as the reference image** — `src/assets/tiles/starter/floor.png` once it is in, or
 `src/assets/rushHour/market/ground.webp` before that. Painted, no contours, joints modelled as shallow
