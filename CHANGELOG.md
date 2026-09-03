@@ -38,6 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ochre along its near edge.
 - A nobleman's walls are plastered and painted: a procession of small figures carrying jars and sheaves
   walks the length of every chamber, above a red dado band rubbed thin by passing shoulders.
+- A pharaoh's doorway is cut from his own granite, with a gold winged sun disc spread across the
+  lintel over it — the one gateway in the game that announces itself.
 - The sill at a pharaoh's doorway is one block of dark alabaster with a broad ribbon of gold inlaid
   along it, worn back to bare stone in places. On the blackest floor in the game it is the one bright
   line underfoot, so you see the threshold before you cross it.
