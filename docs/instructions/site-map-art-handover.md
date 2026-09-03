@@ -149,6 +149,11 @@ is the workflow: how to check, and how the checking has gone wrong.
 - **Whether a rank draws the kinds its own pool never authors.** Two starter-difficulty pockets sit inside
   junior pyramids, so `starter/sarcophagus.png` really can be asked for. A shared `default/` set would
   cover every such hole in one place.
+- **The wall generations would make puzzle backgrounds.** Each rank's wall reads well at full size,
+  and a puzzle board wants something behind it that says which tomb the player is in. The map's own
+  `wall-face.png` is 448x56 and useless for that; what is worth reusing is the SOURCE, 2000x240, in
+  `~/tile-previews/` — outside the repo, so it would have to be committed as its own asset at its own
+  size rather than shared with the map. Nothing is built for this.
 - **Every built arch is the same silhouette.** `make-arch` has one layer stack — lintel two fifths of
   the height, jambs always `SIDE_W` wide, no cornice, no batter — so four of the five gateways differ
   only in the stone band they sample and read as one shape recoloured. The brief's arch column asks for
