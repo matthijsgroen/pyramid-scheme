@@ -6,9 +6,14 @@ import { completeCell } from "../../game/gridNavigation"
 import type { FloorGrid } from "../../game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 
+// A map SCROLLS: its root is an overflow-auto box that sizes to the floor inside it, so it only scrolls
+// when something bounds it. Centred layout sizes the wrapper to the content instead, and a real generated
+// floor then ran off the screen with no way to reach the rest of it — which is most of what these stories
+// are for. Fullscreen plus a viewport-sized box gives the scroll container something to scroll inside.
 const meta = {
   component: SiteMapView,
-  parameters: { layout: "centered" },
+  parameters: { layout: "fullscreen" },
+  args: { className: "h-screen w-screen" },
 } satisfies Meta<typeof SiteMapView>
 
 export default meta
@@ -116,8 +121,9 @@ export const Interactive: Story = {
     const [grid, setGrid] = useState<FloorGrid>(initial)
     const [explorerPos, setExplorerPos] = useState<readonly [number, number]>(linearGrid.entrancePos)
     return (
-      <div>
+      <div className="flex h-screen flex-col">
         <SiteMapView
+          className="min-h-0 flex-1"
           grid={grid}
           explorerPos={explorerPos}
           onCellClick={(r, c) => {
@@ -143,8 +149,9 @@ export const InteractiveFirstPyramid: Story = {
     const [grid, setGrid] = useState<FloorGrid>(firstPyramidInitial)
     const [explorerPos, setExplorerPos] = useState<readonly [number, number]>(firstPyramidGrid.entrancePos)
     return (
-      <div className="flex flex-col gap-3">
+      <div className="flex h-screen flex-col gap-3">
         <SiteMapView
+          className="min-h-0 flex-1"
           grid={grid}
           explorerPos={explorerPos}
           onCellClick={(r, c) => {
