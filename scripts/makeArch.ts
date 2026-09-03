@@ -28,6 +28,7 @@ import { dirname, join } from "path"
 import { fileURLToPath } from "url"
 import sharp from "sharp"
 import { ARCH_H, ARCH_W, CELL, WALL_H } from "../src/app/SiteMap/mapScale"
+import { keyOut } from "./keyOut"
 import { tierPalette } from "../src/app/SiteMap/tileMaterials"
 import type { Difficulty } from "../src/data/difficultyLevels"
 
@@ -230,7 +231,7 @@ const main = async () => {
     const w = Math.round(CELL * 0.9)
     const h = LINTEL_H - LINTEL_TOP_H - 2
     layers.push({
-      input: await sharp(ornamentPath).resize(w, h, { fit: "inside" }).png().toBuffer(),
+      input: await (await keyOut(sharp(ornamentPath), "#ff00ff", 60)).resize(w, h, { fit: "inside" }).png().toBuffer(),
       left: Math.round((ARCH_W - w) / 2),
       top: LINTEL_TOP_H + 1,
     })
