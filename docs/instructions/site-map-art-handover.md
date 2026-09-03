@@ -132,6 +132,12 @@ Four surfaces took most of a day. The art was never the slow part; these were.
     out of habit pulled its cap from 139 to 126 and its base from 50 to 77, both away from spec, and washed
     the frieze. Import at 0 first; reach for flatten only when the numbers say the roll missed.
 
+17. **A reference image carries LAYOUT as strongly as it carries colour, and words do not beat it.** The
+    nobleman's arch was given the nobleman's wall as a style reference, with "do not copy its layout" in
+    the prompt; it came back as an 8:1 strip of wall with a doorway in it. Reference the thing whose SHAPE
+    you want — the previous rank's arch for an arch — and override the material in words, which is the
+    part a reference gives up more easily.
+
 ## Open, and worth deciding while generating
 
 - **`SIDE_W` reads thin** against a full-cell face. Free to widen; `WALL_H` is not (it must divide `CELL`).
