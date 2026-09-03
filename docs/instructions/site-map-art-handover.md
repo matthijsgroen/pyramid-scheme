@@ -1,51 +1,75 @@
 # Site-map art — where this stands, and what to do next
 
-Handover for the art-generation work on `feat/site-map-sprites`. The design docs are canonical; this
-says what state the branch is in and how to run the next step.
+Handover for the art work on `feat/site-map-sprites`. The design docs are canonical; this says what state
+the branch is in and how to run the next step.
 
+- **[tile-art-brief.md](../game-design/tile-art-brief.md)** — every file the map can draw, the camera, the
+  two-plane rule, and **"Writing a prompt"**, which is the list of rules a generation keeps breaking. Read
+  that section before authoring any prompt: it is where the cost of the first eight files is banked.
 - **[spritesheet-renderer-prep.md](../game-design/spritesheet-renderer-prep.md)** — how the renderer works
-  and why. Its build order says what is done; its "Decisions taken" section exists so they are not
-  reopened.
-- **[tile-art-brief.md](../game-design/tile-art-brief.md)** — every file the map can draw, named. Which
-  god each statue is, what the rubble is rubble of, the slot sizes, ~224 files in total.
-- **[starter-art-prompts.md](../game-design/starter-art-prompts.md)** — the 23 merchant-rank prompts, the
-  palette to quote, and the import commands. **This is the next thing to work through.**
+  and why. Its "Decisions taken" section exists so they are not reopened.
+- **[starter-art-prompts.md](../game-design/starter-art-prompts.md)** — the merchant prompts, the loop, and
+  the import commands. Per-rank prompts are written fresh from the brief; this file is the worked example.
 
 ## Branch state
 
-`feat/site-map-sprites`, ~36 commits, **not pushed**, tree clean, suite green (2837). Renamed off the
-placeholder branch name already, so a push is safe whenever.
+`feat/site-map-sprites`, **not pushed**, tree clean, `yarn tsc -b` clean, suite green.
 
-## The generation loop
+**Two ranks of surfaces are real art.** Merchant (starter) and nobleman (junior) each have `floor`,
+`wall-face`, `threshold` and `arch`. Everything else in every rank is still `generate-dummy-tiles`
+placeholder, which is fine: a missing or placeholder file never breaks a floor.
+
+Sources for everything imported live in `~/tile-previews/` — re-import with different flags without
+regenerating.
+
+## What to do next
+
+**Priest (expert), then pharaoh (master), then the gods (wizard) — surfaces first, props after.** The
+material follows each SECTION rather than the floor, so one floor routinely shows two or three ranks at
+once (twenty of fifty-six sampled floors do). Finishing one rank completely would leave real stone butted
+against placeholder SVG across a ward gate; finishing the surfaces across ranks does not.
+
+Per rank that is **three generations, not four**: `floor`, `wall-face`, `threshold` — and then
 
 ```
-# 1. generate from a prompt in starter-art-prompts.md — floor FIRST, then reuse it as a
-#    reference image so 23 files come out of one tomb
-
-# 2. a sheet of frames (characters):
-yarn cut-sheet ~/Downloads/sheet.png --out=/tmp/frames --rows=front,back,side --min=0.8
-
-# 3. measure it against the palette before importing:
-yarn tile-stats ~/Downloads/gen.png
-
-# 4. one file into its slot:
-yarn import-tile /tmp/frames/front-1.png --tier=default --name=explorer-s-1 --slot=explorer --filter=smooth
-yarn import-tile ~/Downloads/gen.png --tier=starter --name=jarRack --slot=prop --filter=smooth
-
-# 5. megatiles only:
-yarn make-seamless src/assets/tiles/starter/floor.png
-yarn make-seamless --axis=x src/assets/tiles/starter/wall-face.png
-
-# 6. look at it
-yarn storybook   # App/SiteMap/SiteMapView → World Floor Starter (a real generated floor)
-                 # App/SiteMap/ExplorerDot → Facings (every facing × 4 steps, two grounds)
-yarn generate-dummy-tiles --preview    # five ranks side by side
-yarn generate-dummy-tiles --palettes   # candidate palettes + a contrast table
+yarn make-arch --tier=expert
 ```
 
-Slots: `floor` 448² · `face` 448×56 · `sill` 56×12 · `arch` 84×56 · `prop` 56×84 · `wall` 56×28 ·
-`explorer` 40×70. `import-tile` keys the background to alpha, despills the magenta that soaked into the
-art, re-seats props and characters on their floor line, and resizes.
+builds the arch out of that rank's own wall in a second. Pharaoh needs one extra small generation, a
+winged disc alone on magenta, passed as `--ornament`.
+
+Judge a new rank in **Storybook → App/SiteMap/SiteMapBuilder → RankSeams**, which puts three ranks and two
+gates on one floor. The main path and both side sections have difficulty selects, so any combination can
+be built.
+
+## The loop, per file
+
+```
+# 1. write the prompt from tile-art-brief.md — the rank's row in the material table, its palette from
+#    tierPalette, and every rule in "Writing a prompt"
+# 2. measure what comes back, BEFORE importing
+yarn tile-stats ~/Downloads/gen.png --tier=expert            # floor, threshold
+yarn tile-stats ~/Downloads/gen.png --tier=expert --slot=face  # wall face: graded as three bands
+
+# 3. import it
+yarn make-seamless ~/Downloads/gen.png                 # floor: both axes
+yarn make-seamless --axis=x ~/Downloads/gen.png        # wall face: horizontal only
+yarn import-tile ~/Downloads/gen.png --tier=expert --name=floor --slot=floor \
+  --filter=smooth --key=none --repeat=2.4 --flatten=0.65
+yarn import-tile ~/Downloads/gen.png --tier=expert --name=wall-face --slot=face \
+  --filter=smooth --key=none --headroom=0.14
+yarn make-arch --tier=expert
+
+# 4. read the numbers back OFF DISK, then look at it in Storybook
+```
+
+Slots: `floor` 448² · `face` 448×56 · `sill` 56×28 · `arch` 84×49 · `prop` 56×84 · `wall` 56×28 ·
+`explorer` 40×70.
+
+Import flags that exist because a generation could not be talked into them: `--repeat` (fractional, shrinks
+and re-tiles), `--flatten` (blends toward the slot's own material — a corrective, not a step),
+`--headroom` (a face's top is covered by the wall's top band; give the art that room), `--slot=arch` (fits
+jamb : opening : jamb to 14 : 56 : 14 whatever the drawing did).
 
 ## What the TOOLS get wrong, from real returns
 
@@ -113,11 +137,22 @@ is the workflow: how to check, and how the checking has gone wrong.
 - **Whether a rank draws the kinds its own pool never authors.** Two starter-difficulty pockets sit inside
   junior pyramids, so `starter/sarcophagus.png` really can be asked for. A shared `default/` set would
   cover every such hole in one place.
+- **Whether the merchant's arch should be rebuilt too.** Four of five arches are built from their rank's
+  wall; the merchant's is painted timber and stays, because its adze marks and split grain are half of why
+  it works. They have never been seen side by side across a seam — the RankSeams story is where to look.
+- **Whether `reachable` should be the brightest state at all.** The torch now makes the place the player
+  stands the brightest thing on a floor, but `stateWash` still leaves an unvisited room unwashed and dims
+  a visited one, so brightness reads as a call to action rather than as light. Changing that is a
+  `stateWash` conversation, not a lighting one.
+- **The pharaoh's winged disc**, and whatever the gods' "opening with no visible structure" turns out to
+  be. Both are `make-arch --ornament` inputs rather than whole gateways.
 
 ## Two things not to trip over
 
 - **`yarn generate-dummy-tiles` no longer overwrites art it did not write.** Real art lands at the same
   paths. `--force` when you do want the placeholders back (that is also how to restore one file: delete it,
   regenerate).
+- **The explorer is drawn near-front-on**, in a flatter projection than the walls now use, and he is
+  `tiles/default/` so he cannot be fixed per rank. Nobody has judged whether that reads wrong yet.
 - **The explorer is committed real art now** — 4 front frames, 4 back, 3 side, at 40×70, walking on
   distance (`walkCycle.ts`). `tiles/default/` is shared art, never per rank: one person walks all five.
