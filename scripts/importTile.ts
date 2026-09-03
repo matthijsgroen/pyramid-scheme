@@ -22,6 +22,9 @@
  *                    renderer draws the wall's top surface over the top of a face, so that much of the
  *                    art is never seen — and a frieze drawn to the top of the picture comes out with its
  *                    figures' heads cut off by it.
+ *   --contrast=1.25  push values away from mid-grey before anything else — the inverse of --flatten, for
+ *                    a roll whose carving is too shallow to read. 1 leaves it alone; below 1 is not
+ *                    allowed, as it would eat an object's transparency.
  *   --flatten=0.5    blend toward the material the slot is made of — the rank's slab for a floor, its wall
  *                    for a face — so a surface sits behind the props. Toward the palette, not toward grey.
  *   --no-trim        keep the frame as generated instead of re-seating the object on the floor line.
@@ -258,7 +261,12 @@ const main = async (): Promise<void> => {
   const out = join(dir, `${name}.png`)
   const repeat = Number(arg("repeat", "1"))
   const tileW = Math.round(w / repeat)
-  const tileH = Math.round(h / repeat)
+  // A face repeats HORIZONTALLY only, the same axis `make-seamless --axis=x` works on: its bands are
+  // registered top to bottom and stacking a second copy under them would draw two walls. It is also the
+  // one slot whose art is not shown at the shape it is stored in — the renderer draws a 448x56 face into
+  // a 448x28 band — so a face drawn at 8:1 arrives on screen at 16:1 and reads stretched. `--repeat=2`
+  // on a face is the correction: half as wide per copy, which is the aspect it is SEEN at.
+  const tileH = slot === "face" ? h : Math.round(h / repeat)
   const resized = await img
     // `fill`: the slot's size is not negotiable, and the prompts ask for the slot's aspect, so any
     // squashing here is the generation's own aspect being wrong — better visible than silently cropped.
@@ -300,10 +308,18 @@ const main = async (): Promise<void> => {
   const palette = tierPalette[tier as Difficulty]
   const flatten = Number(arg("flatten", "0"))
   const headroom = Number(arg("headroom", "0"))
-  const laid =
-    headroom > 0
-      ? await withHeadroom(await tiles.png().toBuffer(), w, h, headroom, palette)
-      : await tiles.png().toBuffer()
+  // Contrast first, so it acts on the ART: the headroom cap is a flat band of the wall's own top colour
+  // and must stay exactly that, and the flatten wash is a correction in the other direction.
+  const contrast = Number(arg("contrast", "1"))
+  if (contrast < 1) throw new Error("--contrast below 1 would eat the alpha channel; use --flatten instead")
+  const stretched =
+    contrast === 1
+      ? await tiles.png().toBuffer()
+      : await sharp(await tiles.png().toBuffer())
+          .linear(contrast, 128 * (1 - contrast))
+          .png()
+          .toBuffer()
+  const laid = headroom > 0 ? await withHeadroom(stretched, w, h, headroom, palette) : stretched
   const washColour = ["face", "wall", "arch"].includes(slot) ? palette?.wall : palette?.slab
   const [wr, wg, wb] = hexToRgb(washColour ?? "#000000")
   const wash = {

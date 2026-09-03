@@ -38,6 +38,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ochre along its near edge.
 - A nobleman's walls are plastered and painted: a procession of small figures carrying jars and sheaves
   walks the length of every chamber, above a red dado band rubbed thin by passing shoulders.
+- Every chamber wall in the game was being drawn at twice its proper width — bricks too wide, a
+  nobleman's procession too squat, a priest's hieroglyphs stretched. They are drawn at the shape they
+  are seen at now, so the masonry and the figures on it have the proportions they were painted with.
+- A priest's chamber walls are dressed grey-blue stone carved with a line of hieroglyphs deep enough to
+  read as you pass — an ankh, an owl, an eye of Horus, a jackal — under a band of stars along the top
+  where the ceiling would be.
 - A priest's floor is basalt: great slabs of cold grey-blue stone, two paces across, laid so tight the
   seams barely show, polished smooth by sandals and crusted with natron where the libation water dried.
   Hard stone after the nobleman's soft limestone — the ground goes quiet and cold as you climb.

@@ -57,19 +57,21 @@ yarn make-seamless --axis=x ~/Downloads/gen.png        # wall face: horizontal o
 yarn import-tile ~/Downloads/gen.png --tier=expert --name=floor --slot=floor \
   --filter=smooth --key=none --repeat=2.4 --flatten=0.65
 yarn import-tile ~/Downloads/gen.png --tier=expert --name=wall-face --slot=face \
-  --filter=smooth --key=none --headroom=0.14
+  --filter=smooth --key=none --headroom=0.14 --repeat=2
 yarn make-arch --tier=expert
 
 # 4. read the numbers back OFF DISK, then look at it in Storybook
 ```
 
-Slots: `floor` 448² · `face` 448×56 · `sill` 56×28 · `arch` 84×49 · `prop` 56×84 · `wall` 56×28 ·
-`explorer` 40×70.
+Slots: `floor` 448² · `face` 448×56 (drawn into 448×28 — see the brief's contract table) · `sill` 56×28 ·
+`arch` 84×49 · `prop` 56×84 · `wall` 56×28 · `explorer` 40×70.
 
 Import flags that exist because a generation could not be talked into them: `--repeat` (fractional, shrinks
 and re-tiles), `--flatten` (blends toward the slot's own material — a corrective, not a step),
-`--headroom` (a face's top is covered by the wall's top band; give the art that room), `--slot=arch` (fits
-jamb : opening : jamb to 14 : 56 : 14 whatever the drawing did).
+`--headroom` (a face's top is covered by the wall's top band; give the art that room), `--contrast`
+(the inverse of `--flatten`, for carving too shallow to read; it refuses values below 1, which would eat
+an object's alpha), `--slot=arch` (fits jamb : opening : jamb to 14 : 56 : 14 whatever the drawing did).
+`--repeat` divides both axes except on a face, which repeats across only.
 
 ## What the TOOLS get wrong, from real returns
 
@@ -104,7 +106,10 @@ is the workflow: how to check, and how the checking has gone wrong.
 2. **Check what the renderer actually FILLS, not what the brief says.** The brief called a sill 56x12. The
    renderer fills a 56x28 gap between rows and a 14x56 gap between columns, from one stretched pattern, so
    the art arrived a twelfth of a cell tall and was shown lying on its side. A slot size is a claim about
-   code, and has to be read out of the code.
+   code, and has to be read out of the code. The face slipped through the same check twice over: it is
+   stored 448x56 and drawn into 448x28, so three ranks of wall shipped stretched to twice their width
+   before anyone said so out loud. The cheap way to see it is to resize a face to what the renderer fills
+   and look at THAT, which is one line of sharp.
 3. **A preview must compose the way the RENDERER composes.** The arch previews drew a continuous wall face
    behind the gateway; the renderer puts an arch in a GAP, where that band is floor and the faces are only
    to its left and right. Every judgement made against that preview was made against a picture the game

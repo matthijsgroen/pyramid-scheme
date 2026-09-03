@@ -13,13 +13,19 @@ fifth rank from costing as much to draw as the first.
 | Slot           | File                         | Size    | Anchor                                                                |
 | -------------- | ---------------------------- | ------- | --------------------------------------------------------------------- |
 | Floor megatile | `tiles/<rank>/floor.png`     | 448×448 | tiles both ways, world-aligned. `yarn make-seamless`                  |
-| Wall face      | `tiles/<rank>/wall-face.png` | 448×56  | tiles horizontally only — `make-seamless --axis=x`                    |
+| Wall face      | `tiles/<rank>/wall-face.png` | 448×56  | tiles horizontally only; **shown at 448×28** — see below              |
 | Threshold sill | `tiles/<rank>/threshold.png` | 56×12   | laid across the way through, at a rank seam                           |
 | Archway        | `tiles/<rank>/arch.png`      | 84×56   | middle transparent; jambs in the outer 14px each side                 |
 | Chamber prop   | `tiles/<rank>/<kind>.png`    | 56×84   | **bottom-anchored**; the top 28 is headroom, used only by tall things |
 | Wall item      | `tiles/<rank>/<kind>.png`    | 56×28   | painted on the face band                                              |
 | Floor scatter  | `tiles/<rank>/<kind>.png`    | 56×56   | flat on the floor, soft-edged (**needs building** — §5)               |
 | Shared         | `tiles/default/<name>.png`   | varies  | not a rank: the explorer, the scarab                                  |
+
+**A face is the one slot whose file is not the shape it is seen at.** The renderer draws a 448×56 face
+into a band `WALL_H` = 28 tall, so art drawn at 8:1 arrives on screen at 16:1 and every sign, brick and
+figure on it is twice as wide as it should be. Draw it at 8:1 anyway — a model handles that aspect and not
+16:1 — and import with `--repeat=2`, which on a face lays the art down twice ACROSS only. The file then
+holds art at twice its final width, and the renderer's squash puts it right.
 
 **The sizes above are MAP UNITS, not pixels.** A cell is 56 units; a painted file is drawn far larger and
 `import-tile` resizes it into the slot. Everything else in the table — which slot,

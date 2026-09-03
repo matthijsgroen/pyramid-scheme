@@ -48,7 +48,8 @@ The one thing that breaks this: reporting a step as done without running it. A f
    yarn import-tile ~/Downloads/gen.png --tier=starter --name=jarRack --slot=prop --filter=smooth
    ```
 
-   Slots: `floor` (448²) · `face` (448×56) · `sill` (56×12) · `arch` (84×56) · `prop` (56×84) ·
+   Slots: `floor` (448²) · `face` (448×56, drawn into 448×28 — import it `--repeat=2`) · `sill` (56×12) ·
+   `arch` (84×56) · `prop` (56×84) ·
    `wall` (56×28). Keys out the magenta, re-seats a prop on its floor line, resizes, writes it in.
    `--filter=smooth` on everything: the set is painted (brief, "The style").
 
