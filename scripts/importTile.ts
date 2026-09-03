@@ -18,6 +18,10 @@
  *   --repeat=1.4     fit the art N times across the slot instead of once, for a megatile whose subject
  *                    came back too big. Fractional is the point — a whole number makes the repeat
  *                    visible. Run `make-seamless` on the SOURCE first, or the grid shows its own seams.
+ *   --headroom=0.25  (face) squeeze the art into the LOWER part of the slot and cap the rest. The
+ *                    renderer draws the wall's top surface over the top of a face, so that much of the
+ *                    art is never seen — and a frieze drawn to the top of the picture comes out with its
+ *                    figures' heads cut off by it.
  *   --flatten=0.5    blend toward the material the slot is made of — the rank's slab for a floor, its wall
  *                    for a face — so a surface sits behind the props. Toward the palette, not toward grey.
  *   --no-trim        keep the frame as generated instead of re-seating the object on the floor line.
@@ -177,6 +181,34 @@ const fitToDoorway = async (img: sharp.Sharp, w: number, h: number, smooth: bool
   ])
 }
 
+/**
+ * Squeezes a face into the lower part of its slot, capping the space above it with the wall's own top
+ * colour.
+ *
+ * The renderer paints the wall's top surface over the top of every face — a quarter of it — so a quarter
+ * of the art is never seen. A wall of plain brick does not care. A wall with a PROCESSION on it does: the
+ * nobleman's figures were drawn to the top of the picture and came out with their heads cut off by the
+ * band. This gives the art the headroom the renderer takes.
+ */
+const withHeadroom = async (
+  laid: Buffer,
+  w: number,
+  h: number,
+  headroom: number,
+  palette: { wallTop: string; wall: string } | undefined
+): Promise<Buffer> => {
+  const capH = Math.round(h * headroom)
+  const [r, g, b] = hexToRgb(palette?.wallTop ?? "#000000")
+  const squeezed = await sharp(laid)
+    .resize(w, h - capH, { fit: "fill", kernel: "lanczos3" })
+    .png()
+    .toBuffer()
+  return sharp({ create: { width: w, height: h, channels: 4, background: { r, g, b, alpha: 1 } } })
+    .composite([{ input: squeezed, left: 0, top: capH }])
+    .png()
+    .toBuffer()
+}
+
 /** Re-seats a trimmed object on the bottom edge of its slot's aspect: what makes a prop stand on the floor
  * line rather than float in the middle of its cell. The object keeps its own proportions. */
 const seatOnFloorLine = async (img: sharp.Sharp, aspect: number): Promise<sharp.Sharp> => {
@@ -265,9 +297,13 @@ const main = async (): Promise<void> => {
   // Which colour depends on the slot, and getting this wrong is worse than not flattening: the map's depth
   // comes from a wall face being DARKER than the floor in front of it, so a wall washed toward the floor's
   // slab colour is a wall that stops being a wall.
-  const flatten = Number(arg("flatten", "0"))
-  const laid = await tiles.png().toBuffer()
   const palette = tierPalette[tier as Difficulty]
+  const flatten = Number(arg("flatten", "0"))
+  const headroom = Number(arg("headroom", "0"))
+  const laid =
+    headroom > 0
+      ? await withHeadroom(await tiles.png().toBuffer(), w, h, headroom, palette)
+      : await tiles.png().toBuffer()
   const washColour = ["face", "wall", "arch"].includes(slot) ? palette?.wall : palette?.slab
   const [wr, wg, wb] = hexToRgb(washColour ?? "#000000")
   const wash = {

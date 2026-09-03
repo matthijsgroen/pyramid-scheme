@@ -5,6 +5,7 @@
  *   yarn make-arch --tier=junior
  *   yarn make-arch --tier=pharaoh --ornament=~/Downloads/winged-disc.png
  *   yarn make-arch --tier=junior --force        # replace an arch that is already there
+ *   yarn make-arch --tier=priest --lift=0.8     # harder separation between the top face and the fronts
  *
  * An arch is the one slot whose geometry is fully determined — `SIDE_W : CELL : SIDE_W` across, a lintel
  * over an opening, a top face on the lintel and nothing else — and it is the slot a generator fought
@@ -156,6 +157,9 @@ const main = async () => {
 
   const jambW = (ARCH_W - CELL) / 2
   const jambH = ARCH_H - LINTEL_H
+  // How hard the top face is lifted and the fronts pushed down. One knob, because the two only matter
+  // relative to each other.
+  const lift = Number(arg("lift") ?? "0.65")
 
   // Narrow on purpose. A rank's bare stone can be a thin strip — the nobleman's is eight rows, between
   // his dado and his base — and a search window wider than that strip cannot land inside it, so every
@@ -176,8 +180,12 @@ const main = async () => {
     { input: jambR, left: ARCH_W - jambW, top: LINTEL_H },
     { input: lintelFront, left: 0, top: LINTEL_TOP_H },
     { input: lintelTop, left: 0, top: 0 },
-    // The top face catches the light and the front does not: the one cue that says this thing has depth.
-    { input: await fill(ARCH_W, LINTEL_TOP_H, palette.wallTop, 0.45), left: 0, top: 0 },
+    // The top face catches the light and the front is pulled DOWN away from it: the gap between those two
+    // is the only cue that this thing has depth, and cut from one band of wall they start identical.
+    { input: await fill(ARCH_W, LINTEL_TOP_H, palette.wallTop, lift), left: 0, top: 0 },
+    { input: await fill(ARCH_W, LINTEL_H - LINTEL_TOP_H, palette.wallBase, lift * 0.35), left: 0, top: LINTEL_TOP_H },
+    { input: await fill(jambW, jambH, palette.wallBase, lift * 0.35), left: 0, top: LINTEL_H },
+    { input: await fill(jambW, jambH, palette.wallBase, lift * 0.35), left: ARCH_W - jambW, top: LINTEL_H },
     // A hairline where the top face meets the front, so the two planes do not blur into one.
     { input: await fill(ARCH_W, 1, palette.wallBase, 0.5), left: 0, top: LINTEL_TOP_H },
     // The soffit, and a shadow down the inner edge of each jamb where the wall's thickness turns away.
