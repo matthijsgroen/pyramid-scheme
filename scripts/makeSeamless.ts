@@ -10,6 +10,12 @@
  * collapsed into a cross through the centre. Then lay the untouched original back on top through a
  * soft mask: its centre is clean, so it covers the cross with matching content.
  *
+ * --roll=0.3 shifts the image by that fraction, wrapping, BEFORE any of it. The patch above lays the
+ * original's CENTRE back down, so whatever sits in the middle of a generation ends up drawn twice — a
+ * pharaoh's one alabaster panel came out as four, and a priest's single libation ring as two. Roll a
+ * plain stretch of the picture into the middle first and the duplicate falls on stone nobody can tell
+ * apart.
+ *
  * --axis matters. A floor tile repeats in both directions and wants the full treatment. A wall FACE
  * repeats only horizontally: its top is the cap catching light and its bottom the dark base, so
  * shifting it vertically would destroy the very registration that makes every wall read alike. Use
@@ -83,6 +89,32 @@ const maskFor = (width: number, height: number, axis: Axis): Buffer => {
   )
 }
 
+/** A wrap-around shift by an arbitrary fraction: the same four-piece move as swapHalves, off centre. */
+const roll = async (file: string, fraction: number): Promise<void> => {
+  const { width, height } = await sharp(file).metadata()
+  if (!width || !height) throw new Error(`${file}: no dimensions`)
+  const dx = Math.round(width * fraction) % width
+  const dy = Math.round(height * fraction) % height
+  const pieces = [
+    { left: 0, top: 0, width: width - dx, height: height - dy, toLeft: dx, toTop: dy },
+    { left: width - dx, top: 0, width: dx, height: height - dy, toLeft: 0, toTop: dy },
+    { left: 0, top: height - dy, width: width - dx, height: dy, toLeft: dx, toTop: 0 },
+    { left: width - dx, top: height - dy, width: dx, height: dy, toLeft: 0, toTop: 0 },
+  ].filter(p => p.width > 0 && p.height > 0)
+  const cut = await Promise.all(
+    pieces.map(async p => ({
+      input: await sharp(file).extract({ left: p.left, top: p.top, width: p.width, height: p.height }).toBuffer(),
+      left: p.toLeft,
+      top: p.toTop,
+    }))
+  )
+  const rolled = await sharp({ create: { width, height, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    .composite(cut)
+    .png()
+    .toBuffer()
+  await sharp(rolled).png({ compressionLevel: 9 }).toFile(file)
+}
+
 const makeSeamless = async (file: string, axis: Axis): Promise<string> => {
   const { width, height } = await sharp(file).metadata()
   if (!width || !height) throw new Error(`${file}: no dimensions`)
@@ -112,8 +144,12 @@ const main = async (): Promise<void> => {
     process.exit(1)
   }
   if (!["both", "x", "y"].includes(axis)) throw new Error(`unknown --axis=${axis}`)
+  const rollBy = Number(args.find(a => a.startsWith("--roll="))?.split("=")[1] ?? "0")
 
-  for (const file of files) console.log(`seamless: ${await makeSeamless(file, axis)}`)
+  for (const file of files) {
+    if (rollBy > 0) await roll(file, rollBy)
+    console.log(`seamless: ${await makeSeamless(file, axis)}${rollBy > 0 ? ` roll=${rollBy}` : ""}`)
+  }
 }
 
 main().catch(err => {

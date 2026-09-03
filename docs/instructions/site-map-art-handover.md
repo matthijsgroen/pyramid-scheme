@@ -53,6 +53,7 @@ yarn tile-stats ~/Downloads/gen.png --tier=expert --slot=face  # wall face: grad
 
 # 3. import it
 yarn make-seamless ~/Downloads/gen.png                 # floor: both axes
+yarn make-seamless --roll=0.15 ~/Downloads/gen.png     # ...and move the middle out of the way first
 yarn make-seamless --axis=x ~/Downloads/gen.png        # wall face: horizontal only
 yarn import-tile ~/Downloads/gen.png --tier=expert --name=floor --slot=floor \
   --filter=smooth --key=none --repeat=2.4 --flatten=0.65
@@ -72,6 +73,12 @@ and re-tiles), `--flatten` (blends toward the slot's own material — a correcti
 (the inverse of `--flatten`, for carving too shallow to read; it refuses values below 1, which would eat
 an object's alpha), `--slot=arch` (fits jamb : opening : jamb to 14 : 56 : 14 whatever the drawing did).
 `--repeat` divides both axes except on a face, which repeats across only.
+
+`make-seamless --roll=0.15` shifts a source before the seamless pass. Its patch lays the original's
+CENTRE back over the seam cross, so a subject sitting in the middle of a generation is drawn twice: a
+pharaoh's one alabaster panel arrived as four, a priest's single libation ring as two. Roll until the
+middle is plain stone. Too far and the patch swallows the subject instead — 0.3 erased that panel
+altogether — so it is a knob to look at, not a constant.
 
 ## What the TOOLS get wrong, from real returns
 
