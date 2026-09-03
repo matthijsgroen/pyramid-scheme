@@ -57,6 +57,9 @@ const main = async () => {
   // archway, the explorer — is an object, and an object is supposed to differ from the stone it stands
   // against: that difference is how it reads. So an object is held to the palette's ENDS and nothing else.
   const isFace = slot === "face"
+  // A sill is floor stone, so it is graded against the slab — but it is a STEP, and its two edge shadows
+  // are what make it one. Judging its spread the way a floor's is judged called every sill too contrasty.
+  const isStep = slot === "sill"
   const isObject = ["prop", "arch", "wall", "explorer"].includes(slot)
   const palette = tierPalette[tier]
   if (!palette) throw new Error(`unknown tier: ${tier}`)
@@ -159,7 +162,9 @@ const main = async () => {
         tooLight >= 2 ? `${tooLight.toFixed(1)}% lighter than ${lightest} — restate the value clamp` : null,
       ].filter(Boolean)
     : [
-        outside >= 2 || spread >= spreadLimit ? `too contrasty: p5–p95 spans ${spread}, restate the value clamp` : null,
+        (outside >= 2 || spread >= spreadLimit) && !isStep
+          ? `too contrasty: p5–p95 spans ${spread}, restate the value clamp`
+          : null,
         // 15 is about the width of one palette step, so a drift past it is a different brown, not a variation.
         Math.abs(drift) > 15
           ? `${drift > 0 ? "too warm" : "too cool"} by ${Math.abs(Math.round(drift))}, restate the palette hexes`
