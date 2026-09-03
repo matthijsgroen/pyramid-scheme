@@ -38,6 +38,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ochre along its near edge.
 - A nobleman's walls are plastered and painted: a procession of small figures carrying jars and sheaves
   walks the length of every chamber, above a red dado band rubbed thin by passing shoulders.
+- Every tomb in the game is built of its own stone now: a merchant's mudbrick cellar, a nobleman's
+  painted limestone, a priest's carved basalt, a pharaoh's granite and gold, and the gods' lit calcite.
+  Walking through a ward gate you can see the tomb change under your feet and either side of you.
 - The threshold into the gods' tomb is a band of light lying in the stone — no step, no block, nothing
   laid there. You cross a line of light instead of a worn slab.
 - The gods' chamber walls are grown green calcite with no joint, no course and no tool mark anywhere

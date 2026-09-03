@@ -15,30 +15,28 @@ the branch is in and how to run the next step.
 
 `feat/site-map-sprites`, **not pushed**, tree clean, `yarn tsc -b` clean, suite green.
 
-**Two ranks of surfaces are real art.** Merchant (starter) and nobleman (junior) each have `floor`,
-`wall-face`, `threshold` and `arch`. Everything else in every rank is still `generate-dummy-tiles`
-placeholder, which is fine: a missing or placeholder file never breaks a floor.
+**All five ranks have real surfaces.** Merchant, nobleman, priest, pharaoh and the gods each have
+`floor`, `wall-face`, `threshold` and `arch`. Every PROP and every WALL ITEM in every rank is still
+`generate-dummy-tiles` placeholder, which is fine: a placeholder file never breaks a floor.
+
+Four of the five arches are `make-arch` output, cut from their own wall; the merchant's is the painted
+timber one and does not sample anything.
 
 Sources for everything imported live in `~/tile-previews/` — re-import with different flags without
 regenerating.
 
 ## What to do next
 
-**Priest (expert), then pharaoh (master), then the gods (wizard) — surfaces first, props after.** The
-material follows each SECTION rather than the floor, so one floor routinely shows two or three ranks at
-once (twenty of fifty-six sampled floors do). Finishing one rank completely would leave real stone butted
-against placeholder SVG across a ward gate; finishing the surfaces across ranks does not.
+**Props and wall items, and they are where the count is.** Surfaces were 20 files; §2 and §3 of the brief
+are 80 props and 50 wall items. The order that matters is the same one the surfaces used — go ACROSS the
+ranks rather than finishing one — because the material follows each SECTION rather than the floor, so one
+floor routinely shows two or three ranks at once (twenty of fifty-six sampled floors do).
 
-Per rank that is **three generations, not four**: `floor`, `wall-face`, `threshold` — and then
+Two things a prop needs that a surface did not: it is bottom-anchored in a 56x84 slot whose top 28 is
+headroom only tall things use, and it is graded as an OBJECT — held to the palette's ends and nothing
+else, because an object is meant to differ from the stone behind it.
 
-```
-yarn make-arch --tier=expert
-```
-
-builds the arch out of that rank's own wall in a second. Pharaoh needs one extra small generation, a
-winged disc alone on magenta, passed as `--ornament`.
-
-Judge a new rank in **Storybook → App/SiteMap/SiteMapBuilder → RankSeams**, which puts three ranks and two
+Judge a rank in **Storybook → App/SiteMap/SiteMapBuilder → RankSeams**, which puts three ranks and two
 gates on one floor. The main path and both side sections have difficulty selects, so any combination can
 be built.
 
