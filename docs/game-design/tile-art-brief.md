@@ -130,6 +130,14 @@ that crack in every cell; a nobleman's ochre band across the paving became a red
 Only a wall's cap, base and dado may cross, because a face tiles in one direction and those bands are what
 register it.
 
+**A prop's size on the map is its ASPECT, not how big you draw it.** The import trims to the object and
+re-seats it on the floor line, so the margins around it are thrown away: an object drawn small in a big
+frame is simply scaled up. What survives is the shape. Drawn height in the cell is `56 x (height /
+width)`, capped at the slot's 84 — so anything drawn 2:3 or taller fills the full 84 whatever it is, and
+a merchant's household Bes came out 84 against the explorer's 70, taller than a person. To make a small
+thing read small, draw it WIDER than 2:3: a lamp that should stand 40 units wants roughly 5:4, and one
+that should stand a full cell wants 1:1.
+
 **Detail below the slot's resolution is wasted.** At 40×70 a compass, vest pockets and the X on a map are
 all gone. Simplify rather than embellish.
 

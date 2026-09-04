@@ -45,8 +45,16 @@ const WALL_ITEMS: WallDecorationKind[] = [
 ]
 
 const PROP_H = CELL + WALL_H
+/** The explorer's slot, from importTile's SLOTS — he is the ruler everything else is measured against. */
+const EXPLORER_W = 40
+const EXPLORER_H = 70
 
-/** One chamber cell: the rank's wall band above, its floor below, the object standing on the floor line. */
+/** Three cells across and two deep, so an object is seen with floor around it rather than cropped to
+ * its own cell — and with the explorer beside it, which is the only thing that says whether a prop is
+ * the right SIZE rather than merely the right shape. */
+const CHAMBER_W = CELL * 3
+const CHAMBER_H = CELL * 2
+
 const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; zoom: number }> = ({
   tier,
   name,
@@ -57,11 +65,16 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; zoom: nu
   const art = tileUrl(tier, name)
   const floor = tileUrl(tier, "floor")
   const face = tileUrl(tier, "wall-face")
+  const explorer = tileUrl("starter", "explorer-s-1")
+  // Where feet and bases land: one cell up from the bottom, so there is floor in FRONT of the object
+  // as well as behind it.
+  const floorLine = (WALL_H + CELL) * zoom
+  const propLeft = (CHAMBER_W * zoom) / 2 - CELL * zoom
   return (
     <figure className="m-0 flex flex-col items-center gap-1">
       <div
-        className="relative"
-        style={{ width: CELL * zoom, height: (CELL + WALL_H) * zoom, background: palette.slab }}
+        className="relative overflow-hidden"
+        style={{ width: CHAMBER_W * zoom, height: (WALL_H + CHAMBER_H) * zoom, background: palette.slab }}
       >
         {/* the wall band the prop's headroom overlaps, and which a wall item is painted onto */}
         <div
@@ -76,24 +89,53 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; zoom: nu
         <div
           className="absolute inset-x-0 bottom-0"
           style={{
-            height: CELL * zoom,
+            height: CHAMBER_H * zoom,
             background: floor ? `url(${floor})` : palette.slab,
             backgroundSize: `${CELL * 8 * zoom}px ${CELL * 8 * zoom}px`,
             imageRendering: ART_IMAGE_RENDERING,
           }}
         />
-        {art && (
+        {art &&
+          (wallItem ? (
+            <img
+              src={art}
+              alt={name}
+              className="absolute"
+              style={{
+                left: propLeft,
+                top: 0,
+                width: CELL * zoom,
+                height: WALL_H * zoom,
+                imageRendering: ART_IMAGE_RENDERING,
+              }}
+            />
+          ) : (
+            // Bottom-anchored on the floor line and CELL + WALL_H tall, so the headroom rises over the band.
+            <img
+              src={art}
+              alt={name}
+              className="absolute"
+              style={{
+                left: propLeft,
+                top: floorLine - PROP_H * zoom,
+                width: CELL * zoom,
+                height: PROP_H * zoom,
+                imageRendering: ART_IMAGE_RENDERING,
+              }}
+            />
+          ))}
+        {explorer && (
           <img
-            src={art}
-            alt={name}
+            src={explorer}
+            alt="explorer"
             className="absolute"
-            // A prop is bottom-anchored on the floor line and CELL + WALL_H tall, so its headroom rises
-            // over the wall band. A wall item is painted into the band itself.
-            style={
-              wallItem
-                ? { left: 0, top: 0, width: CELL * zoom, height: WALL_H * zoom, imageRendering: ART_IMAGE_RENDERING }
-                : { left: 0, top: 0, width: CELL * zoom, height: PROP_H * zoom, imageRendering: ART_IMAGE_RENDERING }
-            }
+            style={{
+              left: propLeft + (CELL + CELL / 2) * zoom,
+              top: floorLine - EXPLORER_H * zoom,
+              width: EXPLORER_W * zoom,
+              height: EXPLORER_H * zoom,
+              imageRendering: ART_IMAGE_RENDERING,
+            }}
           />
         )}
       </div>
