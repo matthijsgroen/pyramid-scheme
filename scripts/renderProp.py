@@ -20,7 +20,7 @@ worked: no camera placement produces it. It is a SHEAR applied before an orthogr
         z' = z + k * y  depth pushes straight up
         (y is then discarded by the orthographic front view)
 
-`k` is the depth ratio: 1.0 is cavalier (full depth, what props use), 0.5 is cabinet (half depth, what
+`k` is the depth ratio: 1.0 is textbook cavalier, 0.5 is cabinet (half depth, what
 the renderer's WALLS use — SIDE_W 14 of thickness images as FACE_TOP 7). See tile-art-brief.md, "A PROP
 is tilted more steeply than a WALL, on purpose".
 
@@ -284,7 +284,7 @@ def add_camera(obj, width, height, margin=1.06):
     bpy.context.scene.camera = cam
 
 
-def add_light():
+def add_light(ambient=0.35):
     """Flat and frontal on purpose. The set is painted, matte, with no specular anywhere
     (tile-art-brief.md, "The style"), so a rendered prop must not arrive with highlights the painted
     ones do not have. This is the part most likely to look wrong beside the painted props."""
@@ -299,7 +299,10 @@ def add_light():
     sun.rotation_euler = (math.radians(22), 0, math.radians(-28))
     world = bpy.data.worlds.new("world")
     world.use_nodes = True
-    world.node_tree.nodes["Background"].inputs[1].default_value = 0.35
+    # Ambient is what stops a shadow being an absence. On the Cycles path a shadow catcher reports how
+    # much light a point LOST, so with no ambient the area under a tabletop loses everything and renders
+    # as a black hole. Raising this trades shadow contrast for a shadow that reads as shadow.
+    world.node_tree.nodes["Background"].inputs[1].default_value = ambient
     bpy.context.scene.world = world
 
 
@@ -348,7 +351,11 @@ def main():
     if not mesh and not primitive:
         raise SystemExit("pass --mesh=<file> or --primitive=cube")
     out = arg("out", "/tmp/prop.png")
-    k = float(arg("shear", "1.0"))
+    # 0.7, not the 1.0 of textbook cavalier: matched against the props already hand-painted and approved.
+    # The market table drawn by hand has aspect 0.77; at shear 1.0 the render comes out 0.98 and reads
+    # markedly more top-down than the set, at 0.7 it comes out 0.83. The painted work is the baseline the
+    # rendered work has to join, not the other way round.
+    k = float(arg("shear", "0.7"))
     spin = float(arg("spin", "0"))
     width = int(arg("width", DEFAULT_W))
     height = int(arg("height", DEFAULT_H))
@@ -379,7 +386,7 @@ def main():
     # After the shear the drawn height is the object's height plus k times its depth: that is the whole
     # projection in one line, and it is why a deep object comes out taller on the page than a shallow one.
     add_camera(obj, width, height)
-    add_light()
+    add_light(float(arg("ambient", "0.35")))
     render(out, width, height, engine, int(arg("samples", "64")))
     print(f"{out} — {width}x{height}, {engine}, shear {k}, spin {spin}deg, colour {colour}, object {w_units:.2f} wide {d_units:.2f} deep")
 
