@@ -110,6 +110,34 @@ def prim_crate():
 PRIMITIVES.update({"cube": prim_cube, "table": prim_table, "crate": prim_crate})
 
 
+def srgb_to_linear(c):
+    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+
+def paint(obj, hex_colour):
+    """A flat matte material in the rank's own colour.
+
+    Not decoration: a grey render is unrecognisable. Asked to repaint an untextured grey table, the
+    generator read the shape as wooden door panels and filled them with photographic burl. A scaffold
+    that already arrives brown, in palette, and lit so its top reads lighter than its front is a table
+    the model can recognise, and the repaint becomes texture rather than interpretation.
+
+    Roughness 1 and zero specular: the set is painted and matte, with no highlight anywhere
+    (tile-art-brief.md, "The style")."""
+    h = hex_colour.lstrip("#")
+    rgb = tuple(srgb_to_linear(int(h[i : i + 2], 16) / 255) for i in (0, 2, 4))
+    mat = bpy.data.materials.new("prop")
+    mat.use_nodes = True
+    bsdf = mat.node_tree.nodes["Principled BSDF"]
+    bsdf.inputs["Base Color"].default_value = (*rgb, 1.0)
+    bsdf.inputs["Roughness"].default_value = 1.0
+    for name in ("Specular IOR Level", "Specular"):
+        if name in bsdf.inputs:
+            bsdf.inputs[name].default_value = 0.0
+    obj.data.materials.clear()
+    obj.data.materials.append(mat)
+
+
 def load_subject(mesh_path, primitive):
     if primitive:
         if primitive not in PRIMITIVES:
@@ -261,8 +289,12 @@ def main():
     width = int(arg("width", DEFAULT_W))
     height = int(arg("height", DEFAULT_H))
 
+    colour = arg("colour", "#5c5347")
+
     clear_scene()
     obj = load_subject(mesh, primitive)
+    if primitive:
+        paint(obj, colour)
     w_units, d_units = seat_and_normalise(obj)
     shear(obj, k, spin)
     # After the shear the drawn height is the object's height plus k times its depth: that is the whole
@@ -270,7 +302,7 @@ def main():
     add_camera(obj, width, height)
     add_light()
     render(out, width, height)
-    print(f"{out} — {width}x{height}, shear {k}, spin {spin}deg, object {w_units:.2f} wide {d_units:.2f} deep")
+    print(f"{out} — {width}x{height}, shear {k}, spin {spin}deg, colour {colour}, object {w_units:.2f} wide {d_units:.2f} deep")
 
 
 main()
