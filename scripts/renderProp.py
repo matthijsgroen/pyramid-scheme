@@ -203,31 +203,38 @@ def seat_and_normalise(obj):
     return x1 - x0, y1 - y0
 
 
-def make_shadow(obj, opacity, offset_x, offset_y):
-    """The object's own footprint, lying on the floor.
+def make_shadow(obj, depth, floor_hex, offset_x, offset_y):
+    """The object's own footprint, lying on the floor, painted as that floor in shadow.
 
     Blender knows the shape, so the shadow does not have to be invented in paint — and this projection
     makes it almost free. A floor point (x, y, 0) draws at (x, k*y), so the shadow is the object
     FLATTENED to z=0 and put through the same shear. No ray tracing, no shadow catcher, no dependence on
     which engine or which Blender version.
 
-    `offset` is the light: shifting the flattened copy is what moves the sun. Positive y pushes the
-    shadow away from the viewer, which reads as light from the front."""
+    It is OPAQUE, and it is the rank's floor colour darkened rather than a translucent black. A
+    semi-transparent shadow composites against the magenta backdrop and comes out magenta-tinted, which
+    the keyer then either eats or fringes. Opaque floor-in-shadow keys cleanly and is the colour the
+    thing will actually sit on.
+
+    `offset` is the light: shifting the flattened copy is what moves the sun."""
     shadow = obj.copy()
     shadow.data = obj.data.copy()
     bpy.context.scene.collection.objects.link(shadow)
     shadow.data.transform(Matrix.Diagonal((1.0, 1.0, 0.0, 1.0)))
     shadow.data.transform(Matrix.Translation((offset_x, offset_y, 0.0)))
+    h = floor_hex.lstrip("#")
+    rgb = tuple(srgb_to_linear(int(h[i : i + 2], 16) / 255) * (1.0 - depth) for i in (0, 2, 4))
     mat = bpy.data.materials.new("shadow")
     mat.use_nodes = True
-    bsdf = mat.node_tree.nodes["Principled BSDF"]
-    bsdf.inputs["Base Color"].default_value = (0.02, 0.015, 0.01, 1.0)
-    bsdf.inputs["Roughness"].default_value = 1.0
-    if "Alpha" in bsdf.inputs:
-        bsdf.inputs["Alpha"].default_value = opacity
-    for attr, value in (("blend_method", "BLEND"), ("surface_render_method", "BLENDED")):
-        if hasattr(mat, attr):
-            setattr(mat, attr, value)
+    tree = mat.node_tree
+    for node in list(tree.nodes):
+        if node.type != "OUTPUT_MATERIAL":
+            tree.nodes.remove(node)
+    # Emission, so the shadow is exactly the colour asked for and is not itself lit or shaded.
+    emission = tree.nodes.new("ShaderNodeEmission")
+    emission.inputs["Color"].default_value = (*rgb, 1.0)
+    out = next(n for n in tree.nodes if n.type == "OUTPUT_MATERIAL")
+    tree.links.new(emission.outputs[0], out.inputs["Surface"])
     shadow.data.materials.clear()
     shadow.data.materials.append(mat)
     return shadow
@@ -306,6 +313,37 @@ def add_light(ambient=0.35):
     bpy.context.scene.world = world
 
 
+def add_backdrop(hex_colour, obj):
+    """A flat emissive plane behind everything, in the colour the generator expects to key out.
+
+    An EMISSION shader, so the backdrop is exactly the hex asked for and takes no light. The compositor
+    would have been tidier, but `scene.node_tree` no longer exists in Blender 5 and a plane works on
+    every version.
+
+    Why bother at all: the generator cannot output alpha, which is why every prompt in this set asks for
+    magenta and every import keys it out. A render HAS alpha, so the magenta never needs asking for — and
+    one we lay down ourselves is exactly flat, exactly the right hex, and reaches all four edges, which
+    is three things a prompt no longer has to nag about."""
+    (x0, x1), _, (z0, z1) = local_bounds(obj)
+    span = max(x1 - x0, z1 - z0) * 8
+    bpy.ops.mesh.primitive_plane_add(size=span, location=(0, 12, (z0 + z1) / 2), rotation=(math.radians(90), 0, 0))
+    plane = bpy.context.object
+    mat = bpy.data.materials.new("backdrop")
+    mat.use_nodes = True
+    tree = mat.node_tree
+    for node in list(tree.nodes):
+        if node.type != "OUTPUT_MATERIAL":
+            tree.nodes.remove(node)
+    emission = tree.nodes.new("ShaderNodeEmission")
+    h = hex_colour.lstrip("#")
+    emission.inputs["Color"].default_value = (*(srgb_to_linear(int(h[i : i + 2], 16) / 255) for i in (0, 2, 4)), 1.0)
+    emission.inputs["Strength"].default_value = 1.0
+    out = next(n for n in tree.nodes if n.type == "OUTPUT_MATERIAL")
+    tree.links.new(emission.outputs[0], out.inputs["Surface"])
+    plane.data.materials.append(mat)
+    return plane
+
+
 def render(out_path, width, height, engine, samples):
     scene = bpy.context.scene
     if engine == "cycles":
@@ -335,7 +373,14 @@ def render(out_path, width, height, engine, samples):
                 break
             except TypeError:
                 continue
+    # Transparent film even when a background is composited: the compositor needs the alpha to lay the
+    # render over the colour, and --background=none then gives a genuine cut-out for masking later.
     scene.render.film_transparent = True
+    # Standard, not AgX. Blender's default view transform is a film emulation: it would roll off the
+    # highlights and shift every hex on the way out, so a material set to #a49781 would not render as
+    # #a49781 and the palette clamp would be measuring something the art never contained.
+    scene.view_settings.view_transform = "Standard"
+    scene.view_settings.look = "None"
     scene.render.resolution_x = width
     scene.render.resolution_y = height
     scene.render.resolution_percentage = 100
@@ -362,9 +407,9 @@ def main():
 
     colour = arg("colour", "#5c5347")
 
-    # Low on purpose. Flat and hard-edged it reads as a translucent panel, not a shadow — its job is to
-    # hand the repaint the exact footprint and light direction to soften, not to be the finished shadow.
-    shadow_alpha = float(arg("shadow", "0.22"))
+    # How far the floor is darkened where the object stands: 0.35 is a clear shadow that still reads as
+    # the same stone. Its job is to hand the repaint an exact footprint and light direction to soften.
+    shadow_alpha = float(arg("shadow", "0.35"))
 
     clear_scene()
     obj = load_subject(mesh, primitive)
@@ -379,7 +424,11 @@ def main():
         shear(obj, k, 0)
         add_shadow_catcher(k, max(w_units, d_units, 1.0))
     else:
-        shadow = make_shadow(obj, shadow_alpha, 0.0, -0.10 * d_units) if shadow_alpha > 0 else None
+        shadow = (
+            make_shadow(obj, shadow_alpha, arg("floor", "#6c6257"), 0.0, -0.10 * d_units)
+            if shadow_alpha > 0
+            else None
+        )
         if shadow:
             shadow.data.transform(Matrix(((1, 0, 0, 0), (0, 1, 0, 0), (0, k, 1, 0), (0, 0, 0, 1))))
         shear(obj, k, 0)
@@ -387,6 +436,9 @@ def main():
     # projection in one line, and it is why a deep object comes out taller on the page than a shallow one.
     add_camera(obj, width, height)
     add_light(float(arg("ambient", "0.35")))
+    background = arg("background", "#ff00ff")
+    if background != "none":
+        add_backdrop(background, obj)
     render(out, width, height, engine, int(arg("samples", "64")))
     print(f"{out} — {width}x{height}, {engine}, shear {k}, spin {spin}deg, colour {colour}, object {w_units:.2f} wide {d_units:.2f} deep")
 
