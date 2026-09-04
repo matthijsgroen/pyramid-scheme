@@ -11,7 +11,7 @@ export const TombDoor: FC<PropsWithChildren<{ className?: string; open?: boolean
 }) => {
   const settings = imageMap[difficulty]
   return (
-    <div className={clsx("bg-amber-950", "perspective-midrange perspective-origin-left ", className)}>
+    <div className={clsx(settings.behind, "perspective-midrange perspective-origin-left", className)}>
       <div
         className={clsx(
           settings.color,
@@ -21,8 +21,8 @@ export const TombDoor: FC<PropsWithChildren<{ className?: string; open?: boolean
         style={{
           backgroundImage: `url(${settings.image})`,
           backgroundSize: WALL_SIZE,
-          backgroundPosition: "bottom center",
-          backgroundAttachment: "fixed",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       >
         {children}

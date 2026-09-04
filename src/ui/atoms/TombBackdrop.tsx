@@ -31,7 +31,7 @@ export const TombBackdrop: FC<
             ? `url(${settings.image})`
             : `url(${settings.image}), linear-gradient(var(--tw-gradient-stops))`,
         backgroundSize: scale === "large" ? WALL_SIZE : `${WALL_SIZE}, 100% 100%`,
-        backgroundPosition: "bottom center",
+        backgroundPosition: "center",
         backgroundAttachment: "fixed",
       }}
     >
