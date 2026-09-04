@@ -170,26 +170,45 @@ const TORCH_CSS = `
 }
 `
 
-/** The pool of torchlight the explorer stands in. Drawn UNDER the figure, so the light is on the floor and
- * the person is in it. */
-const TorchGlow = () => (
+export const LIGHT_POOL_ID = "torch-pool"
+
+/** The gradient every pool of light on this map is filled with, defined ONCE.
+ *
+ * Rendered into the map's own `<defs>` rather than beside each pool: a lit lamp in every third chamber
+ * would otherwise redeclare the same id a dozen times, and the explorer's pool would depend on the
+ * explorer being mounted to have a fill at all. */
+export const LightPoolDefs = () => (
   <>
     <style>{TORCH_CSS}</style>
-    <defs>
-      <radialGradient id="torch-pool">
-        <stop offset="0" stopColor="#ffca6a" stopOpacity="0.55" />
-        <stop offset="0.45" stopColor="#ffab3d" stopOpacity="0.26" />
-        <stop offset="1" stopColor="#ff9a2e" stopOpacity="0" />
-      </radialGradient>
-    </defs>
-    <circle
-      className={TORCH_CLASS}
-      cy={CELL * 0.22 - FOOT_LIFT}
-      r={TORCH_RADIUS}
-      fill="url(#torch-pool)"
-      style={{ mixBlendMode: "screen" }}
-      pointerEvents="none"
-    />
+    <radialGradient id={LIGHT_POOL_ID}>
+      <stop offset="0" stopColor="#ffca6a" stopOpacity="0.55" />
+      <stop offset="0.45" stopColor="#ffab3d" stopOpacity="0.26" />
+      <stop offset="1" stopColor="#ff9a2e" stopOpacity="0" />
+    </radialGradient>
+  </>
+)
+
+/** A pool of light lying on the floor, screen-blended so it lifts the stone it lands on instead of
+ * painting a yellow disc over it. Drawn UNDER whatever carries the flame, so the light is on the floor
+ * and the thing is standing in it. */
+export const LightPool = ({ r, cy = 0 }: { r: number; cy?: number }) => (
+  <circle
+    data-light-pool=""
+    className={TORCH_CLASS}
+    cy={cy}
+    r={r}
+    fill={`url(#${LIGHT_POOL_ID})`}
+    style={{ mixBlendMode: "screen" }}
+    pointerEvents="none"
+  />
+)
+
+const TorchGlow = () => (
+  <>
+    {/* The style tag comes with the defs on the map. A story that renders the figure on its own still
+        needs the flicker, and a duplicate <style> is harmless where a duplicate id is not. */}
+    <style>{TORCH_CSS}</style>
+    <LightPool r={TORCH_RADIUS} cy={CELL * 0.22 - FOOT_LIFT} />
   </>
 )
 

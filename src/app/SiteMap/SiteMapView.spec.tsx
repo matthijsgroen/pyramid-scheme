@@ -1,11 +1,11 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
-import { ExplorerFigure } from "./ExplorerDot"
+import { ExplorerFigure, LIGHT_POOL_ID } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
 import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
-import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
+import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 
 // Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
 // place of its own), so a change there can't silently break every position assumption in this file.
@@ -760,6 +760,40 @@ describe("the explorer stands in the room", () => {
       frames.add(container.querySelector("image")!.getAttribute("href")!)
     }
     expect(frames.size).toBeGreaterThan(1)
+  })
+})
+
+describe("a prop that carries a flame lights the floor", () => {
+  // One pool belongs to the explorer's torch; a lit prop adds a second. Counting them is what separates
+  // "the lamp glows" from "the explorer is standing next to it".
+  const pools = (grid: FloorGrid) =>
+    render(<SiteMapView grid={grid} explorerPos={[0, 1]} revealAllCells />).container.querySelectorAll(
+      "[data-light-pool]"
+    ).length
+
+  const withProp = (decoration: DecorationKind) => {
+    // Narrowed rather than cast: `chamber` is typed as the whole GridCell union, and spreading that
+    // union offers `decoration` to EmptyCell as well.
+    const room = chamber("completed")
+    if (room.type !== "room") throw new Error("the chamber fixture stopped being a room")
+    return makeGrid([
+      [empty, corridor("completed", false), empty],
+      [empty, { ...room, decoration }, empty],
+      [empty, empty, empty],
+    ])
+  }
+
+  it("draws a pool under a lamp and none under a prop with no flame", () => {
+    expect(pools(withProp("lamp"))).toBe(pools(withProp("shelf")) + 1)
+  })
+
+  it("fills every pool from one shared gradient, however many are drawn", () => {
+    // A lamp in every third chamber redeclaring the same gradient id is the failure this guards: the
+    // definition belongs to the map, not to each pool.
+    const { container } = render(<SiteMapView grid={withProp("lamp")} explorerPos={[0, 1]} revealAllCells />)
+    expect(container.querySelectorAll(`#${LIGHT_POOL_ID}`)).toHaveLength(1)
+    for (const pool of container.querySelectorAll("[data-light-pool]"))
+      expect(pool.getAttribute("fill")).toBe(`url(#${LIGHT_POOL_ID})`)
   })
 })
 

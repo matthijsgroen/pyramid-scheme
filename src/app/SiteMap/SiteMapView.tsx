@@ -15,7 +15,7 @@ import type {
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { keyColorHex } from "@/ui/tokens/keyColors"
-import { ExplorerDot } from "./ExplorerDot"
+import { ExplorerDot, LightPool, LightPoolDefs } from "./ExplorerDot"
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
@@ -1051,6 +1051,7 @@ const TileLayers = ({
             </Fragment>
           )
         })}
+        <LightPoolDefs />
       </defs>
 
       <g>
@@ -1132,12 +1133,30 @@ const TileLayers = ({
 // into wall rather than over the room's own icon.
 const PROP_H = CELL + WALL_H
 
+/** Props that carry a live flame, and so light the floor they stand on.
+ *
+ * Only `lamp` for now, and the reason is per-RANK rather than per-kind: the brief gives the merchant a
+ * brazier of cold ash and the nobleman one "lit and smoking", so a brazier's light depends on whose tomb
+ * it is. Widen this to a (rank, kind) lookup when a rank that lights its brazier has the art for it —
+ * lighting the merchant's would contradict the sprite, which was painted with no flame and no glow. */
+const LIT_DECORATIONS = new Set<DecorationKind>(["lamp"])
+
+/** A lamp's pool is smaller and steadier than the explorer's — it sits on a stool rather than being
+ * carried, and at a cell and a half across it would light the room the torch is meant to light. */
+const LAMP_POOL_RADIUS = CELL * 0.42
+
 const Decoration = ({ kind, tier }: { kind: DecorationKind; tier: Difficulty }) => {
   const url = tileUrl(tier, kind)
-  return url ? (
-    <image href={url} x={-CELL / 2} y={CELL / 2 - PROP_H} width={CELL} height={PROP_H} />
-  ) : (
-    <DecorationGlyph kind={kind} />
+  return (
+    <>
+      {/* Under the sprite, so the light is on the floor and the lamp is standing in it. */}
+      {LIT_DECORATIONS.has(kind) && <LightPool r={LAMP_POOL_RADIUS} cy={CELL * 0.3} />}
+      {url ? (
+        <image href={url} x={-CELL / 2} y={CELL / 2 - PROP_H} width={CELL} height={PROP_H} />
+      ) : (
+        <DecorationGlyph kind={kind} />
+      )}
+    </>
   )
 }
 
