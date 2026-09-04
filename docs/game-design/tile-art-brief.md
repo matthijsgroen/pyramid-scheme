@@ -100,6 +100,9 @@ each new object finds a symptom the list did not cover. The projection itself is
 
 ```
 HOW DEPTH IS DRAWN
+This deliberately BREAKS the standard rules of 3D perspective. It is not how a camera sees and it must
+not look correct to a photographer. Ignore everything you know about vanishing points and foreshortening
+and follow these three lines instead.
 Width is unchanged: something 10 wide is drawn 10 wide, wherever it sits.
 Height is unchanged: something 10 tall is drawn 10 tall.
 DEPTH GOES STRAIGHT UP THE PAGE AT HALF SIZE: a point 10 units further back is drawn 5 units HIGHER
