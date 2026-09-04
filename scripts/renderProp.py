@@ -292,11 +292,17 @@ def array_copies(obj, count, gap, jitter):
             copy.data = obj.data.copy()
             bpy.context.scene.collection.objects.link(copy)
         turn = math.radians(((i * 37) % 21) - 10) * jitter
+        # And a little size variation. Identical SILHOUETTES are what makes a repeated sprite obvious —
+        # not identical subjects, which is what a set of mould-made shabtis genuinely is. Rotation varies
+        # the shading, size varies the outline, and between them four copies stop reading as one copied
+        # four times.
+        grow = 1.0 + (((i * 29) % 9) - 4) / 100.0 * 3 * jitter
         # Depth jitter stays TINY. Under this shear a copy set further back is drawn higher, which is
         # correct and which at 40 pixels reads as the thing hovering. Turning them is what breaks the
         # repetition; moving them back is what breaks the floor.
         depth = ((i * 53) % 7 - 3) / 3 * (y1 - y0) * 0.05 * jitter
         copy.data.transform(Matrix.Rotation(turn, 4, "Z"))
+        copy.data.transform(Matrix.Diagonal((grow, grow, grow, 1.0)))
         copy.data.transform(Matrix.Translation((offset, depth, 0.0)))
         originals.append(copy)
     bpy.ops.object.select_all(action="DESELECT")
