@@ -18,7 +18,7 @@ fifth rank from costing as much to draw as the first.
 | Archway        | `tiles/<rank>/arch.png`      | 84×56   | middle transparent; jambs in the outer 14px each side                 |
 | Chamber prop   | `tiles/<rank>/<kind>.png`    | 56×84   | **bottom-anchored**; the top 28 is headroom, used only by tall things |
 | Wall item      | `tiles/<rank>/<kind>.png`    | 56×28   | painted on the face band                                              |
-| Floor scatter  | `tiles/<rank>/<kind>.png`    | 56×56   | flat on the floor, soft-edged (**needs building** — §5)               |
+| Floor scatter  | `tiles/<rank>/<kind>.png`    | 56×84   | flat on the floor, soft-edged; the PROP box, bottom-anchored          |
 | Shared         | `tiles/default/<name>.png`   | varies  | not a rank: the explorer, the scarab                                  |
 
 **A face is the one slot whose file is not the shape it is seen at.** The renderer draws a 448×56 face
@@ -315,8 +315,21 @@ Painted into the face band above a cell — bounded things that hang **on** a wa
 
 ## 4. Floor scatter — what is lying about
 
-**This is the group that has no home yet** (§5). Props stand one per room; scatter is small stuff strewn
-where the player walks, corridors included, several to a floor.
+Props stand one per room, on a cell the player never walks on. Scatter is the opposite: small stuff
+strewn where the player DOES walk, corridors included, several to a floor, drawn under the props and
+under the explorer so you pass over it.
+
+The layer is `src/app/SiteMap/floorScatter.ts`. It places off the floor's own shape and its site id
+rather than off an authored pool — nothing names a scatter kind in a spec — in two passes, because the
+two sorts are not the same thing. GROUND (sand, rubble) goes anywhere walkable; FURNISHING (a mat) goes
+in a room. One pass for both was measured over the generated world and failed at both ends: a floor has
+around fifty walkable cells of which two or three are rooms, so a mat turned up on one floor in five.
+As built it measures 6.7 pieces a floor over 166 real floors — 1.8 mats, and 91% of the ground on
+corridors.
+
+Scatter uses the PROP box (56×84, bottom-anchored on the cell's floor line) rather than a slot of its
+own, so `import-tile --slot=prop` imports it and nothing new was needed in the importer. Flat art only
+fills the lower part of that box, so nothing reaches the wall band a prop's headroom is for.
 
 | Kind         | What it is                         | merchant                                        | nobleman                                 | priest                                | pharaoh                               | the gods                         |
 | ------------ | ---------------------------------- | ----------------------------------------------- | ---------------------------------------- | ------------------------------------- | ------------------------------------- | -------------------------------- |
@@ -333,7 +346,7 @@ where the player walks, corridors included, several to a floor.
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
 | `breach`, `plug` (§3)     | two names in `WallDecorationKind`, two entries per rank pool                                                                                          | tiny   |
 | Variants (`rubble-2.png`) | resolve `<kind>-N` from the asset glob, pick per cell by the same positional hash the props use — the prep doc already sketches it                    | small  |
-| Floor scatter (§4)        | a scatter layer: N per floor, deterministic cells, drawn over the floor and under props; needs its own pool field (`scatter`) or a fixed per-rank set | medium |
+| Floor scatter (§4)        | **built** — `floorScatter.ts`, deterministic cells off the floor's shape, drawn over the floor and under props. No pool field: a kind is placed by RULE, not authored, so a rank is a skin | — |
 | Statues by name           | nothing — three statue variants per rank is exactly what the variant pick above is for                                                                | —      |
 
 ## 6a. The prompts

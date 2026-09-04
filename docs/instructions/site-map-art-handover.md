@@ -27,10 +27,15 @@ and samples nothing.
 Sources for everything imported live in `~/tile-previews/`, meshes in `~/tile-previews/meshes/` —
 re-import with different flags without regenerating.
 
-**Roughly 70 of the remaining files cannot be used even if drawn today**, because §5 of the brief lists
-three things nobody has built: `breach` and `plug` are missing from `WallDecorationKind` (tiny), the
-variant resolver that picks `rubble-2.png` by positional hash does not exist (small), and floor scatter
-has no renderer slot at all (medium). Art first; those when a rank is otherwise done.
+**Roughly 40 of the remaining files cannot be used even if drawn today**, because §5 of the brief lists
+two things nobody has built: `breach` and `plug` are missing from `WallDecorationKind` (tiny), and the
+variant resolver that picks `rubble-2.png` by positional hash does not exist (small). Art first; those
+when a rank is otherwise done.
+
+**Floor scatter now has a layer** — `src/app/SiteMap/floorScatter.ts` — so §4's six kinds per rank are
+drawable. It uses the PROP box and `--slot=prop`, needs no authoring, and places by rule: sand and
+rubble anywhere walkable, a mat in a room. Only `sand` has art (a placeholder), and `mat` and `rubble`
+have the merchant's. That is 30 files of §4 the pipeline can now reach.
 
 ## What to do next
 

@@ -16,6 +16,7 @@ import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 import { ExplorerDot, LightPool, LightPoolDefs } from "./ExplorerDot"
+import { FLOOR_KINDS, scatterFor, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
@@ -1146,6 +1147,9 @@ const LIT_DECORATIONS = new Set<DecorationKind>(["lamp"])
 const LAMP_POOL_RADIUS = CELL * 0.42
 
 const Decoration = ({ kind, tier }: { kind: DecorationKind; tier: Difficulty }) => {
+  // A room may have authored a kind that lies on the floor rather than standing on it. The scatter
+  // layer draws those, on a cell the player walks over — see floorScatter's FLOOR_KINDS.
+  if (FLOOR_KINDS.has(kind)) return null
   const url = tileUrl(tier, kind)
   return (
     <>
@@ -1159,6 +1163,50 @@ const Decoration = ({ kind, tier }: { kind: DecorationKind; tier: Difficulty }) 
     </>
   )
 }
+
+/** What is lying about, drawn over the floor and under everything that stands on it.
+ *
+ * Bottom-anchored in the same box a prop uses, so it sits on the cell's floor line — flat scatter only
+ * fills the lower part of that box, so nothing reaches into the wall band a prop's headroom is for.
+ *
+ * A fogged cell draws nothing: sand in an unlit passage would be the one thing visible in it. */
+const FloorScatter = ({
+  grid,
+  scatter,
+  tier,
+}: {
+  grid: FloorGrid
+  scatter: ReadonlyMap<string, ScatterKind>
+  tier: Difficulty
+}) => (
+  <g pointerEvents="none">
+    {[...scatter].map(([cellKey, kind]) => {
+      const [r, c] = cellKey.split(",").map(Number)
+      const cell = cellAt(grid, r, c)
+      if (cell.type === "empty" || cell.state === "fogged") return null
+      const url = tileUrl(tier, kind)
+      if (!url) return null
+      const { cx, cy } = cellCenter(r, c)
+      // The same wash the floor under it takes, as BRIGHTNESS rather than as an overlay. `stateWash` is
+      // a black fill at an opacity and TileLayers applies it to the floor PATHS, so everything drawn
+      // afterwards is unwashed — a drift of sand on a cell the player has only seen came out the
+      // brightest thing on that cell. A rect over the sprite cannot stand in for it, because the sprite
+      // is mostly transparent; brightness(1 - opacity) is the same sum on the pixels that exist.
+      const wash = stateWash[cell.state]
+      return (
+        <image
+          key={cellKey}
+          href={url}
+          x={cx - CELL / 2}
+          y={cy + CELL / 2 - PROP_H}
+          width={CELL}
+          height={PROP_H}
+          style={wash ? { filter: `brightness(${1 - wash.opacity})` } : undefined}
+        />
+      )
+    })}
+  </g>
+)
 
 const DECORATION_COLOR = "#5a4a30"
 
@@ -1647,6 +1695,8 @@ export const SiteMapView = ({
     return cells
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the SHAPE of the floor, which a reveal never changes
   }, [grid.rows, grid.cols, grid.siteId])
+  // What is strewn on this floor. A function of the floor's shape and its id, so it never moves.
+  const scatter = useMemo(() => scatterFor(grid), [grid])
   const archedGaps = useMemo(
     () =>
       new Map(doorways.map(({ row, col, tier: archTier }) => [`${cellLeft(col)},${cellTop(row) - WALL_H}`, archTier])),
@@ -1717,6 +1767,7 @@ export const SiteMapView = ({
           style={{ background: tierPalette[tier].wallBase, imageRendering: ART_IMAGE_RENDERING }}
         >
           <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
+          <FloorScatter grid={grid} scatter={scatter} tier={tier} />
           <ArchShadows doorways={doorways} />
           <LitPlaces grid={grid} claims={claims} at={explorerPos} />
           <MapLife

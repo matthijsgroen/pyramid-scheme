@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   its next turn, and nothing beyond it. Where you are standing is the brightest
   place on the floor — a room you have walked into no longer goes darker than one you have only seen.
   A lit lamp standing in a chamber casts its own smaller pool.
+- Sand drifts and fallen rubble lie about the floors now, in passages as well as chambers, and a reed
+  mat in the odd room. You walk over all of it.
 - The dots and arrows you tap to move are bigger, and each carries an invisible target wider than the
   mark itself, so a thumb finds them.
 - The explorer stands a little clear of the wall behind, rather than with their feet against it.

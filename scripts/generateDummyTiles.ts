@@ -54,11 +54,17 @@ type Kind =
   | "shrine"
   | "crystal"
   | "mat"
+  | "sand"
 
 // Every kind for every tier. A real art pass draws only what a rank's pool authors — a tier with no
 // sarcophagus needs no sarcophagus — but a placeholder costs a kilobyte, and generating the lot means
 // authoring a pool never waits on the generator catching up.
+//
+// `sand` is here without being in any authored pool, because it is FLOOR SCATTER: the scatter layer
+// places it off the floor's own shape rather than off a pool, so nothing authors it by name and its
+// placeholder is the only thing that says the layer is working before the art exists.
 const ALL_KINDS: Kind[] = [
+  "sand",
   "rubble",
   "pillar",
   "pit",
@@ -290,6 +296,12 @@ const shapes: Record<Kind, (p: Palette) => string> = {
     <rect x="10" y="${BASE - 13}" width="36" height="10" fill="${p.prop}"/>
     ${[14, 22, 30, 38].map(x => `<rect x="${x}" y="${BASE - 13}" width="2" height="10" fill="${p.propDark}"/>`).join("")}
     <rect x="6" y="${BASE - 16}" width="44" height="2" fill="${p.accent}" opacity="0.7"/>`,
+  // Floor scatter, so it lies FLAT on the cell's floor line rather than standing up off it: a low
+  // drift with a soft edge, wider than it is tall, and nothing above the line at all.
+  sand: p => `
+    <ellipse cx="28" cy="${BASE - 3}" rx="22" ry="5" fill="${p.propDark}" opacity="0.8"/>
+    <ellipse cx="26" cy="${BASE - 5}" rx="17" ry="4" fill="${p.prop}"/>
+    <ellipse cx="34" cy="${BASE - 7}" rx="8" ry="3" fill="${p.prop}"/>`,
 }
 
 // ── Wall items ────────────────────────────────────────────────────────────────

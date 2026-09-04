@@ -763,6 +763,35 @@ describe("the explorer stands in the room", () => {
   })
 })
 
+describe("what is lying about is on the floor, not standing on it", () => {
+  // `mat` and `rubble` are still named in the ranks' authored prop pools — the world is generated and
+  // re-authoring those reshuffles every prop in it, because pickDressing indexes by pool LENGTH. Which
+  // LAYER a kind belongs to is decided in floorScatter instead, so a room that authored one draws no
+  // standing prop for it.
+  const withDecoration = (decoration: DecorationKind) => {
+    const room = chamber("completed")
+    if (room.type !== "room") throw new Error("the chamber fixture stopped being a room")
+    return makeGrid([
+      [empty, corridor("completed", false), empty],
+      [empty, { ...room, decoration }, empty],
+      [empty, empty, empty],
+    ])
+  }
+  // The scatter layer is bottom-anchored in the same box a prop uses, so a box count alone cannot tell
+  // the two apart. Counting a floor kind AGAINST a standing one can: the scatter is identical between
+  // the two renders, so the difference is the prop.
+  const propBoxes = (decoration: DecorationKind) =>
+    Array.from(
+      render(
+        <SiteMapView grid={withDecoration(decoration)} explorerPos={[0, 1]} revealAllCells />
+      ).container.querySelectorAll("image")
+    ).filter(el => el.getAttribute("height") === String(CELL + WALL_H)).length
+
+  it("draws one fewer sprite for a kind that lies on the floor than for one that stands", () => {
+    expect(propBoxes("mat")).toBe(propBoxes("statue") - 1)
+  })
+})
+
 describe("a prop that carries a flame lights the floor", () => {
   // One pool belongs to the explorer's torch; a lit prop adds a second. Counting them is what separates
   // "the lamp glows" from "the explorer is standing next to it".

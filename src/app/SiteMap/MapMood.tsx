@@ -1,4 +1,4 @@
-import { hashString } from "@/support/hashString"
+import { hashUnit } from "@/support/hashString"
 import type { Mood } from "./moodSettings"
 import { CELL, cellCenter } from "./mapScale"
 import { sharedTileUrl } from "./tileAssets"
@@ -42,19 +42,7 @@ const MOOD_CSS = `
 }
 `
 
-/** A deterministic 0..1 from a name, so the air is the same every time a floor is drawn — a mote that
- * moved when the player opened a chest would read as something happening.
- *
- * The avalanche matters. `hashString` is `hash * 31 + char`, so two names differing only in their last
- * character hash one apart, and reducing that straight to a fraction put all three scarabs on the same
- * floor tile, 0.003 of a cell apart. Mixing the bits down from the top is what makes an index into a
- * position rather than into a neighbour. */
-const rand = (siteId: string, salt: string, i: number): number => {
-  let h = hashString(`${siteId}:${salt}:${i}`)
-  h = Math.imul(h ^ (h >>> 15), 2246822507)
-  h = Math.imul(h ^ (h >>> 13), 3266489909)
-  return ((h ^ (h >>> 16)) >>> 0) / 4294967296
-}
+const rand = hashUnit
 
 type Props = {
   mood: Mood
