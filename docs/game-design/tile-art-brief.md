@@ -110,6 +110,9 @@ wide at the top as at the bottom — measure across the top edge and across the 
 numbers are the same_, and _a top face is a rectangle, not a trapezoid: its far edge is exactly as long
 as its near edge and as the front face below it_. Those go WITH the rotation, never instead of it.
 
+Said shortest, and this is the wording that actually landed it: _the lines of the top and front should
+be straight and parallel from top to bottom._
+
 **Check a proportion at SLOT size before writing it.** "The cornice takes the top fifth, and its top face
 is part of that" is five pixels in a 49-tall sprite: the model drew it and nobody could see it. The
 merchant's working arch made its beam two fifths of the frame and the top face a third of THAT. Do the
