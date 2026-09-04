@@ -246,6 +246,20 @@ def shear(obj, k, spin_degrees):
     obj.data.transform(Matrix(((1, 0, 0, 0), (0, 1, 0, 0), (0, k, 1, 0), (0, 0, 0, 1))))
 
 
+def add_shadow_catcher(k, span):
+    """A ground plane that catches a REAL shadow, for the Cycles path.
+
+    It is sheared with the same matrix as the object, which is what makes the shadow correct rather than
+    merely plausible: a shear is linear, so shadows computed on sheared geometry are the sheared true
+    shadows — provided the light direction is sheared too. A straight-down sun is the happy case, because
+    this matrix maps (0, 0, -1) to itself, so nothing has to be corrected."""
+    bpy.ops.mesh.primitive_plane_add(size=span * 6, location=(0, 0, 0))
+    plane = bpy.context.object
+    plane.data.transform(Matrix(((1, 0, 0, 0), (0, 1, 0, 0), (0, k, 1, 0), (0, 0, 0, 1))))
+    plane.is_shadow_catcher = True
+    return plane
+
+
 def add_camera(obj, width, height, margin=1.06):
     """Framed from the bounds AFTER the shear, which are not the bounds before it.
 
@@ -289,15 +303,35 @@ def add_light():
     bpy.context.scene.world = world
 
 
-def render(out_path, width, height):
+def render(out_path, width, height, engine, samples):
     scene = bpy.context.scene
-    # EEVEE was renamed in 4.2. Take whichever this build has rather than pinning a version.
-    for name in ("BLENDER_EEVEE_NEXT", "BLENDER_EEVEE", "CYCLES"):
+    if engine == "cycles":
+        scene.render.engine = "CYCLES"
+        scene.cycles.samples = samples
+        # Metal on Apple silicon, CUDA elsewhere; falls back to CPU if neither is configured, which for
+        # a scene of a few hundred triangles costs seconds rather than minutes.
         try:
-            scene.render.engine = name
-            break
-        except TypeError:
-            continue
+            prefs = bpy.context.preferences.addons["cycles"].preferences
+            for kind in ("METAL", "CUDA", "OPTIX", "HIP"):
+                try:
+                    prefs.compute_device_type = kind
+                    break
+                except TypeError:
+                    continue
+            prefs.get_devices()
+            for d in prefs.devices:
+                d.use = True
+            scene.cycles.device = "GPU"
+        except (KeyError, AttributeError):
+            pass
+    else:
+        # EEVEE was renamed in 4.2. Take whichever this build has rather than pinning a version.
+        for name in ("BLENDER_EEVEE_NEXT", "BLENDER_EEVEE", "CYCLES"):
+            try:
+                scene.render.engine = name
+                break
+            except TypeError:
+                continue
     scene.render.film_transparent = True
     scene.render.resolution_x = width
     scene.render.resolution_y = height
@@ -332,16 +366,22 @@ def main():
     w_units, d_units = seat_and_normalise(obj)
     if spin:
         obj.data.transform(Matrix.Rotation(math.radians(spin), 4, "Z"))
-    shadow = make_shadow(obj, shadow_alpha, 0.0, -0.10 * d_units) if shadow_alpha > 0 else None
-    if shadow:
-        shadow.data.transform(Matrix(((1, 0, 0, 0), (0, 1, 0, 0), (0, k, 1, 0), (0, 0, 0, 1))))
-    shear(obj, k, 0)
+    engine = arg("engine", "eevee")
+    if engine == "cycles":
+        # A real cast shadow, softened by the sun's angular size, instead of a flat footprint.
+        shear(obj, k, 0)
+        add_shadow_catcher(k, max(w_units, d_units, 1.0))
+    else:
+        shadow = make_shadow(obj, shadow_alpha, 0.0, -0.10 * d_units) if shadow_alpha > 0 else None
+        if shadow:
+            shadow.data.transform(Matrix(((1, 0, 0, 0), (0, 1, 0, 0), (0, k, 1, 0), (0, 0, 0, 1))))
+        shear(obj, k, 0)
     # After the shear the drawn height is the object's height plus k times its depth: that is the whole
     # projection in one line, and it is why a deep object comes out taller on the page than a shallow one.
     add_camera(obj, width, height)
     add_light()
-    render(out, width, height)
-    print(f"{out} — {width}x{height}, shear {k}, spin {spin}deg, colour {colour}, object {w_units:.2f} wide {d_units:.2f} deep")
+    render(out, width, height, engine, int(arg("samples", "64")))
+    print(f"{out} — {width}x{height}, {engine}, shear {k}, spin {spin}deg, colour {colour}, object {w_units:.2f} wide {d_units:.2f} deep")
 
 
 main()
