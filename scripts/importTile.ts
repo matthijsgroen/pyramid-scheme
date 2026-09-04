@@ -314,11 +314,12 @@ const main = async (): Promise<void> => {
   const contrast = Number(arg("contrast", "1"))
   if (contrast < 1) throw new Error("--contrast below 1 would eat the alpha channel; use --flatten instead")
   const brightness = Number(arg("brightness", "1"))
+  const saturation = Number(arg("saturation", "1"))
   const lit =
-    brightness === 1
+    brightness === 1 && saturation === 1
       ? await tiles.png().toBuffer()
       : await sharp(await tiles.png().toBuffer())
-          .modulate({ brightness })
+          .modulate({ brightness, saturation })
           .png()
           .toBuffer()
   const stretched =

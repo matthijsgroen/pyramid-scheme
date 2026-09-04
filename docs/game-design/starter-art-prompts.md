@@ -318,6 +318,13 @@ cannot check while drawing. "Its body is #a49781, the lightest thing in the pict
 hard-edged disc of different ground that travelled with the sprite and read as a decal. The renderer draws
 the floor; a prop draws only its own contact shadow.
 
+**A REPAINT comes back COOLER than the hand-painted set, and that is a flag rather than a re-roll.** The
+hand-painted props measure +22 to +25 warmth against the merchant slab; a repainted render came back at
++14, because a generator desaturates toward grey when it is copying a render rather than inventing one.
+The scaffold is not at fault — its own timber measures +22 before the repaint touches it.
+`--saturation=1.3` on the import lands it at +24, inside the painted band. Same class of lever as
+`--brightness`, and measured the same way.
+
 **A REPAINT prompt has two colours it will get wrong unless they are named as hex.** The generator
 drifts the background off #ff00ff to a dulled purple, and then paints the shadow in that same background
 colour rather than as stone — measured at #b9419d against a background of #ba409c, identical. Both are
