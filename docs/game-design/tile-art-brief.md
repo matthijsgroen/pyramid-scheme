@@ -94,6 +94,23 @@ the frame" were both ignored, repeatedly. Ask for COUNTS and for fractions of so
 drawing — "exactly 7 slabs across", "the top face is the upper third of the block". Fix the rest at import
 (`--repeat`, the arch's slot fitting), which is deterministic where a prompt is not.
 
+**Say what the tilt IS, once, as a rule that generates every case.** Listing symptoms — no vanishing
+point, no trapezoid tops, symmetrical, no side faces — is treating the disease one rash at a time, and
+each new object finds a symptom the list did not cover. The projection itself is three lines:
+
+```
+HOW DEPTH IS DRAWN
+Width is unchanged: something 10 wide is drawn 10 wide, wherever it sits.
+Height is unchanged: something 10 tall is drawn 10 tall.
+DEPTH GOES STRAIGHT UP THE PAGE AT HALF SIZE: a point 10 units further back is drawn 5 units HIGHER
+on the page, and not one pixel to the left or right.
+```
+
+Everything else follows and can be checked against it: a box 20 deep shows a top band 10 tall and
+exactly as wide as its front; the band's back edge equals its front edge, because nothing moves
+sideways with depth; verticals stay vertical; a circle lying on a top face is an ellipse half as tall
+as it is wide. It is also what the renderer does — `SIDE_W` 14 of wall thickness images as `FACE_TOP` 7.
+
 **Do not ask for a ROTATION. Ask the model to describe the projection, then hand its own words back.**
 Every phrasing invented on this side lost: "30 degrees above the floor", "orthographic", "depth squashed
 to half", and worst of all "rotate the object towards the camera until the top shows as a third" — which
