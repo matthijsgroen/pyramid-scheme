@@ -107,7 +107,43 @@ def prim_crate():
     return join_all()
 
 
-PRIMITIVES.update({"cube": prim_cube, "table": prim_table, "crate": prim_crate})
+def jar(x, y, height, belly):
+    """One Egyptian storage jar: a round belly tapering to a point, a short neck, a domed stopper.
+
+    Built from a sphere squeezed and a cone rather than modelled, because at 56 units what survives is
+    the silhouette — a round shoulder over a taper — and nothing finer."""
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=24, ring_count=12, radius=belly, location=(x, y, height * 0.62))
+    body = bpy.context.object
+    body.scale = (1.0, 1.0, height * 0.42 / belly)
+    bpy.ops.object.transform_apply(scale=True)
+    bpy.ops.mesh.primitive_cone_add(vertices=24, radius1=belly, radius2=0.0, depth=height * 0.5, location=(x, y, height * 0.37))
+    point = bpy.context.object
+    point.rotation_euler = (math.radians(180), 0, 0)
+    bpy.ops.object.transform_apply(rotation=True)
+    bpy.ops.mesh.primitive_cylinder_add(vertices=20, radius=belly * 0.42, depth=height * 0.12, location=(x, y, height * 0.98))
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=10, radius=belly * 0.44, location=(x, y, height * 1.03))
+    dome = bpy.context.object
+    dome.scale = (1.0, 1.0, 0.55)
+    bpy.ops.object.transform_apply(scale=True)
+
+
+def prim_jarrack():
+    """The merchant's rack: two uprights, two rails, three jars standing in it.
+
+    The test this exists for is CURVES. Boxes came through the shear on the first try; a sphere and a
+    cone are where a projection usually gives itself away, and a jar's stopper seen from above is the
+    tell — under this shear a circle lying flat must draw as an ellipse exactly as wide as the jar."""
+    post, w, d, h = 0.07, 0.95, 0.34, 0.62
+    for sx in (-1, 1):
+        box(post, d, h, x=sx * (w / 2 - post / 2), z=h / 2)
+    for z in (h - 0.06, 0.16):
+        box(w - post * 2, 0.05, 0.05, z=z)
+    for i, x in enumerate((-0.29, 0.0, 0.29)):
+        jar(x, 0.0, h * 0.92, 0.125)
+    return join_all()
+
+
+PRIMITIVES.update({"cube": prim_cube, "table": prim_table, "crate": prim_crate, "jarrack": prim_jarrack})
 
 
 def srgb_to_linear(c):
