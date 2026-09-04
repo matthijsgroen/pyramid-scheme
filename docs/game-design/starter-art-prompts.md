@@ -318,6 +318,13 @@ cannot check while drawing. "Its body is #a49781, the lightest thing in the pict
 hard-edged disc of different ground that travelled with the sprite and read as a decal. The renderer draws
 the floor; a prop draws only its own contact shadow.
 
+**A REPAINT prompt has two colours it will get wrong unless they are named as hex.** The generator
+drifts the background off #ff00ff to a dulled purple, and then paints the shadow in that same background
+colour rather than as stone — measured at #b9419d against a background of #ba409c, identical. Both are
+fixed by naming them: _the background is exactly #ff00ff, red 255 green 0 blue 255_, and _the shadow is
+exactly the grey-brown of stone in shade, around #3a342c, completely free of pink or purple_. Also say
+out loud that the shadow is PART OF THE PICTURE and not empty space.
+
 **Two things that will bite.** Never ask for strict symmetry and asymmetric damage in the same prompt —
 a broken shoulder against "perfectly symmetrical left-to-right" degraded the geometry every time;
 establish the shape first and add damage after. And a prop always comes back too light:
