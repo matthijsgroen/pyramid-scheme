@@ -1,4 +1,5 @@
 import type { FloorGrid } from "@/game/siteTypes"
+import type { RoomClaims } from "./SiteMapView"
 import { hashUnit } from "@/support/hashString"
 
 /**
@@ -30,67 +31,75 @@ export const FLOOR_KINDS: ReadonlySet<string> = new Set<ScatterKind>(["sand", "r
 /**
  * Two passes, because the two sorts of scatter are not the same thing and one pass gets both wrong.
  *
- * GROUND is what blows in and falls: sand and rubble, anywhere the player walks, a passage very much
- * included. FURNISHING is a mat, which belongs to an ENCOUNTER room — a chamber someone furnished. Not
- * to any cell of type "room": that includes the `portal` rooms, which are the floor's entrance and its
- * way out, and a rug laid under the exit marker reads as part of the marker.
+ * A CHAMBER is a room with a footprint — it claims the cells around it, so it is a place you enter
+ * rather than a station on a corridor. Those cells are what a chamber's floor is made of, and they are
+ * where furnishing goes: a mat belongs in a room someone lived in, not in a passage.
  *
- * Picking one kind per cell over all the cells was measured over the generated world and failed at both
- * ends: a real floor has around fifty walkable cells of which only a couple are rooms, so a mat turned
- * up 36 times across 166 floors — one floor in five — while the ground pass ran into its own ceiling on
- * every floor. Giving the rooms their own pass makes a mat as common as rooms are, and lets the ground
- * be thinned without thinning it away.
+ * GROUND is what blows in and falls: sand and rubble, along the passages, where nobody swept.
+ *
+ * Both halves were got wrong before, and the same blind spot did it twice. A claimed cell is
+ * `type: "empty"` in the grid — the claim is a render-time fact — so walking `grid.cells` and taking
+ * only rooms and corridors cannot see a chamber's floor at all. Measured over the generated world:
+ * 1475 chambers of 8.78 cells apiece, and 8% of them had any scatter on them, all of it on the one
+ * owner cell. Hence a pass that walks the CHAMBERS rather than the cells.
  */
 const GROUND_KINDS: readonly ScatterKind[] = ["sand", "rubble"]
+const CHAMBER_KINDS: readonly ScatterKind[] = ["mat", "rubble", "sand"]
 
-/** One piece per this many walkable cells, within the bounds. Measured at 6.9 a floor when the divisor
+/** One piece per this many corridor cells, within the bounds. Measured at 6.9 a floor when the divisor
  * was 7 and the cap 7 — which is to say every floor was at the cap, and a passage with something in
  * nearly every stretch of it stops reading as a passage. */
 const CELLS_PER_GROUND = 12
 const MIN_GROUND = 2
 const MAX_GROUND = 5
 
-/** And a mat for about every third room, never more than two on a floor. */
-const ROOMS_PER_MAT = 3
-const MAX_MATS = 2
+/** How many pieces a chamber is dressed with. Its floor is around nine cells, so two is a furnished
+ * room and not a junk heap. */
+const PER_CHAMBER = 2
 
 /**
  * Where the scatter lies on this floor, as `"row,col" -> kind`.
  *
- * Keyed off the floor's OWN cell shape and never off what has been revealed — the same trap `MapLife`
+ * Keyed off the floor's OWN shape and never off what has been revealed — the same trap `MapLife`
  * documents. A list that grows as the map is explored moves everything indexed into it, so a drift of
  * sand would crawl to another cell each time the player lit a new room.
  */
-export const scatterFor = (grid: FloorGrid): ReadonlyMap<string, ScatterKind> => {
-  const walkable: Array<readonly [number, number]> = []
-  const rooms: Array<readonly [number, number]> = []
-  for (let r = 0; r < grid.rows; r++) {
-    for (let c = 0; c < grid.cols; c++) {
-      const cell = grid.cells[r][c]
-      // A PORTAL room is the floor's entrance or its way out, and it carries a marker of its own —
-      // a stairhead, a star. Nothing is strewn on one, ground included: the brief gives the nobleman
-      // "sand over a threshold" and it is a real loss, but a drift drawn under the exit marker reads
-      // as part of the marker rather than as sand.
-      if (cell.type === "room" && cell.roomType === "portal") continue
-      if (cell.type === "room" && cell.roomType === "encounter") rooms.push([r, c])
-      if (cell.type === "room" || cell.type === "corridor") walkable.push([r, c])
+export const scatterFor = (grid: FloorGrid, claims: RoomClaims): ReadonlyMap<string, ScatterKind> => {
+  const out = new Map<string, ScatterKind>()
+
+  // ── the chambers, each dressed on its own floor ──
+  //
+  // Sorted, because the placement is indexed and Map order is insertion order: which chamber is
+  // "first" would otherwise depend on how the claims happened to be built.
+  const footprints = new Map<string, string[]>()
+  for (const [cellKey, ownerKey] of claims.claimedBy) {
+    const list = footprints.get(ownerKey)
+    if (list) list.push(cellKey)
+    else footprints.set(ownerKey, [cellKey])
+  }
+  for (const [c, [ownerKey, cells]] of [...footprints].sort(([a], [b]) => (a < b ? -1 : 1)).entries()) {
+    // NOT the owner's own cell: that is where the room's icon goes — a puzzle's family, an exit's star
+    // — and not a cell that already carries the room's prop, which `decorationAt` has put on one of
+    // the claims. Dressing lies on the floor AROUND what the room is for.
+    const free = cells.filter(key => !claims.decorationAt.has(key) && key !== ownerKey)
+    for (let i = 0; i < PER_CHAMBER && free.length; i++) {
+      const key = free[Math.floor(hashUnit(grid.siteId, `chamber-cell-${c}`, i) * free.length)]
+      out.set(key, CHAMBER_KINDS[Math.floor(hashUnit(grid.siteId, `chamber-kind-${c}`, i) * CHAMBER_KINDS.length)])
     }
   }
-  const out = new Map<string, ScatterKind>()
-  if (walkable.length === 0) return out
 
-  const mats = Math.min(MAX_MATS, Math.floor(rooms.length / ROOMS_PER_MAT))
-  for (let i = 0; i < mats; i++) {
-    const [r, c] = rooms[Math.floor(hashUnit(grid.siteId, "mat-cell", i) * rooms.length)]
-    out.set(`${r},${c}`, "mat")
+  // ── the passages ──
+  const corridors: string[] = []
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      if (grid.cells[r][c].type === "corridor" && !claims.claimedBy.has(`${r},${c}`)) corridors.push(`${r},${c}`)
+    }
   }
-
-  // Ground goes down after the mats and may overwrite one: a drift of sand across a rug is a thing that
-  // happens, and letting it win keeps the total honest rather than growing the count to fit both.
-  const ground = Math.min(MAX_GROUND, Math.max(MIN_GROUND, Math.round(walkable.length / CELLS_PER_GROUND)))
+  if (corridors.length === 0) return out
+  const ground = Math.min(MAX_GROUND, Math.max(MIN_GROUND, Math.round(corridors.length / CELLS_PER_GROUND)))
   for (let i = 0; i < ground; i++) {
-    const [r, c] = walkable[Math.floor(hashUnit(grid.siteId, "ground-cell", i) * walkable.length)]
-    out.set(`${r},${c}`, GROUND_KINDS[Math.floor(hashUnit(grid.siteId, "ground-kind", i) * GROUND_KINDS.length)])
+    const key = corridors[Math.floor(hashUnit(grid.siteId, "ground-cell", i) * corridors.length)]
+    out.set(key, GROUND_KINDS[Math.floor(hashUnit(grid.siteId, "ground-kind", i) * GROUND_KINDS.length)])
   }
   return out
 }

@@ -635,7 +635,7 @@ const edgeKey = (r1: number, c1: number, r2: number, c2: number): string => {
   return a < b ? `${a}|${b}` : `${b}|${a}`
 }
 
-type RoomClaims = {
+export type RoomClaims = {
   /** claimed-cell key ("r,c") -> owning room's key ("r,c") */
   claimedBy: ReadonlyMap<string, string>
   /** the one claimed cell (per owner) that carries the owner's decoration, if any */
@@ -1696,7 +1696,7 @@ export const SiteMapView = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the SHAPE of the floor, which a reveal never changes
   }, [grid.rows, grid.cols, grid.siteId])
   // What is strewn on this floor. A function of the floor's shape and its id, so it never moves.
-  const scatter = useMemo(() => scatterFor(grid), [grid])
+  const scatter = useMemo(() => scatterFor(grid, claims), [grid, claims])
   const archedGaps = useMemo(
     () =>
       new Map(doorways.map(({ row, col, tier: archTier }) => [`${cellLeft(col)},${cellTop(row) - WALL_H}`, archTier])),

@@ -321,11 +321,18 @@ under the explorer so you pass over it.
 
 The layer is `src/app/SiteMap/floorScatter.ts`. It places off the floor's own shape and its site id
 rather than off an authored pool — nothing names a scatter kind in a spec — in two passes, because the
-two sorts are not the same thing. GROUND (sand, rubble) goes anywhere walkable; FURNISHING (a mat) goes
-in a room. One pass for both was measured over the generated world and failed at both ends: a floor has
-around fifty walkable cells of which two or three are rooms, so a mat turned up on one floor in five.
-As built it measures 6.7 pieces a floor over 166 real floors — 1.8 mats, and 91% of the ground on
-corridors.
+two sorts are not the same thing. A CHAMBER is dressed on its own floor, two pieces on the cells of its
+footprint, furnishing included; the PASSAGES get ground, sand and rubble only, because a mat belongs in
+a room someone lived in.
+
+Walking the cells instead of the chambers is the mistake to avoid, and it was made twice: a claimed
+cell is `type: "empty"` in the grid, since a claim is a render-time fact, so a chamber's floor is
+invisible to anything that iterates `grid.cells` for rooms and corridors. Measured that way, 8% of the
+world's 1475 chambers had any scatter at all. Walking the chambers: 100%, 1.84 pieces apiece, 22 pieces
+a floor.
+
+Neither the owner's own cell nor the cell carrying the room's prop is dressed — the first holds the
+room's icon and the second its furniture. Dressing lies on the floor around what the room is for.
 
 Scatter uses the PROP box (56×84, bottom-anchored on the cell's floor line) rather than a slot of its
 own, so `import-tile --slot=prop` imports it and nothing new was needed in the importer. Flat art only
