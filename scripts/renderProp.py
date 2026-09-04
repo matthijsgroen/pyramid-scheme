@@ -188,6 +188,13 @@ def load_subject(mesh_path, primitive):
             bpy.ops.wm.obj_import(filepath=mesh_path)
         else:
             bpy.ops.import_scene.obj(filepath=mesh_path)
+    elif mesh_path.endswith(".stl"):
+        # Museum scans arrive as STL more often than anything else, and carry no materials at all —
+        # which suits a scaffold, since --colour paints it in the rank's own stone anyway.
+        if hasattr(bpy.ops.wm, "stl_import"):
+            bpy.ops.wm.stl_import(filepath=mesh_path)
+        else:
+            bpy.ops.import_mesh.stl(filepath=mesh_path)
     elif mesh_path.endswith(".ply"):
         if hasattr(bpy.ops.wm, "ply_import"):
             bpy.ops.wm.ply_import(filepath=mesh_path)
@@ -449,7 +456,10 @@ def main():
 
     clear_scene()
     obj = load_subject(mesh, primitive)
-    if primitive:
+    # Meshes get painted too, not just primitives: a scan has no material and a generated mesh usually
+    # has a photographic one, and neither is what the repaint wants to be handed. --colour=none keeps
+    # whatever the file brought.
+    if colour != "none":
         paint(obj, colour)
     w_units, d_units = seat_and_normalise(obj)
     if spin:
