@@ -22,6 +22,10 @@
  *                    renderer draws the wall's top surface over the top of a face, so that much of the
  *                    art is never seen — and a frieze drawn to the top of the picture comes out with its
  *                    figures' heads cut off by it.
+ *   --mask=render.png cut the art to another image's alpha. For the render-and-repaint pipeline: the
+ *                    Blender render's alpha is the true silhouette, and a repaint that softened an edge
+ *                    into the magenta leaves a keyed halo the despill cannot reach. Masking to the
+ *                    render throws that away and guarantees the shape the geometry actually had.
  *   --brightness=0.8 scale everything darker (or lighter above 1). The failure an OBJECT actually has is
  *                    chalky highlights — a prop comes back lit for a gallery rather than for a cellar —
  *                    and no wording has reliably prevented it. Uses a brightness modulation rather than a
@@ -184,6 +188,25 @@ const withHeadroom = async (
 
 /** Re-seats a trimmed object on the bottom edge of its slot's aspect: what makes a prop stand on the floor
  * line rather than float in the middle of its cell. The object keeps its own proportions. */
+/**
+ * Replaces the art's alpha with another image's.
+ *
+ * The render-and-repaint pipeline has one thing the generator can never give: a true silhouette, from
+ * the mesh the geometry was built from. A repaint that feathered a shadow out into the magenta leaves a
+ * violet halo once keyed — the despill pulls red and blue down toward green, which cannot rescue a soft
+ * edge spread over a hundred pixels. Cutting to the render's own alpha removes it by construction, and
+ * pins the shape against any drift the repaint introduced.
+ */
+const cutToMask = async (img: sharp.Sharp, maskPath: string): Promise<sharp.Sharp> => {
+  const art = await img.ensureAlpha().png().toBuffer({ resolveWithObject: true })
+  const { width, height } = art.info
+  // `dest-in` keeps the art only where the mask is opaque, which is the same idiom make-seamless uses.
+  // `joinChannel` looks like the direct way to do it and does not work here: the joined band never
+  // becomes alpha and every pixel comes out opaque.
+  const mask = await sharp(maskPath).ensureAlpha().resize(width, height, { fit: "fill" }).png().toBuffer()
+  return sharp(art.data).composite([{ input: mask, blend: "dest-in" }])
+}
+
 const seatOnFloorLine = async (img: sharp.Sharp, aspect: number): Promise<sharp.Sharp> => {
   // Encoded, not raw: `composite` needs an image it can parse, and a sharp instance built from a raw
   // buffer has no format of its own to fall back on.
@@ -224,6 +247,8 @@ const main = async (): Promise<void> => {
   // seats its posts in the corner slots. It is already at the slot size when it comes back.
   const archFitted = slot === "arch" && !process.argv.includes("--no-trim")
   if (archFitted) img = await fitToDoorway(img, w, h, smooth)
+  const maskPath = arg("mask")
+  if (maskPath) img = await cutToMask(img, maskPath)
   if (seat && !process.argv.includes("--no-trim")) img = await seatOnFloorLine(img, w / h)
 
   const dir = join(OUT_ROOT, tier)
