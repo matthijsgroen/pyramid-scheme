@@ -174,6 +174,10 @@ target taken from the props already painted by hand, not from taste:
 | gap against the floor it stands on       | 10 or more, either direction | `--brightness`, or a re-roll if it cannot reach without clipping |
 | warmth against the slab                  | +22 to +25 for the merchant  | `--saturation`, 1.3 lands +24                                    |
 
+**`--saturation` runs BOTH ways, and both ends have been hit in one rank.** The mat came back photoreal
+straw at +51 and needed 0.6; the brazier came back near-achromatic at +1 and needed 2.2. A repaint being
+cooler than the painted set is the common case, not the only one — measure before reaching for 1.3.
+
 **`--saturation` scales the chroma that is THERE, so it cannot warm a prop the generator painted grey.**
 The shelf came back at +10 and needed 1.45; the crate came back at +14 and needed none at all once its
 invented floor was masked away. The brazier came back at **+1** and 1.4 moved it to +5 — it took 2.2 to

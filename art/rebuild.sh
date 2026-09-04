@@ -64,16 +64,18 @@ scaffold pillar
 yarn import-tile art/props/starter/pillar.webp --tier=starter --name=pillar --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.7 --brightness=0.9
 
-# The one prop whose shadow is dialled DOWN, and the one that needs no --saturation at all.
+# The mat is a flat rug and nothing else, and it is the only prop here whose identity is PAINT: under
+# this projection a flat thing on the floor has no silhouette. Three shaped designs were rendered and
+# rejected first — see prim_mat, which records why a fold at the NEAR edge is invisible.
 #
-# A mat LIES ON the floor, so it has no gap to cast into: the standard --shadow=0.8 --sun=0.30 puts a
-# dark slab of the sheet's own silhouette right beneath the sheet and reads as a second step, the same
-# failure as a stone pad. Turning it off entirely is worse — the sheet then measures 2 from the floor's
-# own value, which is the vanishing the pipeline's floor-gap number exists to catch, and its warmth runs
-# to +46 with nothing neutral left in the frame. 0.55 at 0.12 is the tuck that passes both.
+# --spin=9 is the one thing geometry still owes it: a rug lying askew of the grid cannot be read as part
+# of the paving, where an axis-aligned one can. --shadow=0.5 --sun=0.03 tucks the footprint tight, since
+# a slab at floor level otherwise casts a copy of itself and reads as a second step.
 #
-# --scale=0.9, high for this set, because the SPIRAL on the roll's end and the weave on the sheet are
-# what say mat rather than log, and at 0.63 both are finer than a tenth of the object and gone.
-scaffold mat --shadow=0.55 --sun=0.12
+# --saturation BELOW 1, the only prop that needs it: the repaint came back photoreal straw at +51 warmth
+# against a rank that sits at +22 to +25. The lever runs both ways, and the brazier is the other end of
+# it at 2.2. --brightness=0.86 is a narrow window — 0.8 left the rug only 7 from the floor's own value
+# and 0.9 put 2.4% of it over the light end.
+scaffold mat --spin=9 --shadow=0.5 --sun=0.03
 yarn import-tile art/props/starter/mat.webp --tier=starter --name=mat --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.9 --brightness=0.78
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6

@@ -317,35 +317,28 @@ def prim_pillar():
 
 
 def prim_mat():
-    """A reed mat rolled up and stood on its end, part unrolled at its foot, one corner curled.
+    """A reed mat lying flat on the floor — one thin sheet, and nothing else.
 
-    THE WEAKEST PROP IN THE SET, and the reason is structural rather than a bad roll: under this
-    projection a flat thing lying on the floor has no silhouette, which is the same wall
-    tile-art-brief.md hits with floor scatter. Three designs were rendered and measured:
+    THE ONE PROP WHOSE IDENTITY IS PAINT, not geometry, and that is a finding rather than a shortcut.
+    Under this projection a flat thing on the floor has no silhouette, which is the wall
+    tile-art-brief.md hits with floor scatter. Three shaped designs were rendered and measured before
+    this one:
 
-    1. Flat sheet, thin roll behind. All top face — two pale bands of one value with nothing between
+    1. Flat sheet with a roll behind it. All top face — two pale bands of one value, nothing between
        them to say mat rather than slab.
-    2. Roll stood on its end (this one). The roll gains a front elevation, but a cylinder upright is
-       drum-shaped whatever is painted on it, and at 50 units it reads close to the crate's reed
-       baskets. The marks that would separate them — a spiral on the roll's end, the weave on the
-       sheet — are finer than a tenth of the object and mostly gone.
-    3. Flat sheet with its edges FOLDED. Worth knowing why this fails, because the rule is general: a
-       fold at the NEAR edge is invisible. Lifting the front edge raises its z, but as the flap swings
-       up its tip travels back toward the hinge, and under z + 0.7y the terms nearly cancel — measured
-       at 0.016 of the drawn height for 0.13 of real lift. Only the FAR edge gains from both, and a
-       far-edge fold draws as one more pale band above the sheet, separated by its own underside.
+    2. The roll stood on its end. That gains a front elevation, but a cylinder upright is drum-shaped
+       whatever is painted on it, and at 50 units it read as one of the crate's reed baskets.
+    3. The sheet with its edges FOLDED. A fold at the NEAR edge is invisible, and the rule is general:
+       lifting the front edge raises its z, but as the flap swings up its tip travels back toward the
+       hinge, and under z + 0.7y the two terms nearly cancel — 0.016 of drawn height for 0.13 of real
+       lift. Relief at the FRONT of any prop is free to model and impossible to see. Only the far edge
+       gains from both, and a far-edge fold draws as one more pale band above the sheet.
 
-    So relief at the FRONT of any prop is free to model and impossible to see, and this prop's identity
-    has to come from the weave. Design 2 is what is imported, because it at least has a shape.
-
-    The tongue runs UNDER the roll and OVERLAPS it in x. Set beside it, touching at one x, the roll
-    towers over a 0.03 sheet and the two share only their bottom pixel: it reads as a drum standing next
-    to a mat, with a shadow ellipse of its own. Nor may the roll lean — tipped 6 degrees its base lifts
-    off the floor on one side, which is the floating the shear punishes hardest."""
-    roll_h, r = 0.50, 0.17
-    box(0.80, 0.42, 0.03, x=-0.14, y=-0.08, z=0.015)
-    cyl(r, roll_h, x=0.12, y=0.05, z=roll_h / 2, verts=18)
-    tilt(box(0.20, 0.16, 0.03, x=-0.46, y=-0.26, z=0.05), 40, "X")
+    So the sheet is left alone and the weave carries it: a coarse checker of eight squares across is
+    about 6 units apiece at slot size, which survives where a spiral or a frayed straw does not. What
+    geometry still owes the prop is a shape that is not a FLOOR TILE, and --spin is what buys that — a
+    rug lying askew of the grid cannot be read as part of the paving, and it costs one flag."""
+    box(0.95, 0.72, 0.055, z=0.0275)
     return join_all()
 
 
