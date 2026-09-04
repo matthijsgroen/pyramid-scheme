@@ -90,10 +90,28 @@ construction, the same move `make-arch` made for gateways.
 Geometry from the deterministic step, paint from the model's strength, and neither asked to do the
 other's job.
 
-**None of this is verified.** The script was written on a machine with no Blender. Run the cube first:
-if the cube is right the matrix is right, whatever a mesh does afterwards. Then one real prop end to
-end, stood beside the four painted ones at 56x84 — the only question that decides this is whether a
-repainted render looks like it belongs in the same tomb.
+**Proven end to end on Blender 5.2.1, on a Mac, with no GPU.** The calibration cube measures exactly:
+height/width 2.006 against a required 2.000, no row narrowing, top/front split at 50.0%. A rendered and
+repainted market table then stood beside two hand-painted props at 56x84 and could not be picked out by
+idiom — p50 131, 25 lighter than its floor, 0.2% over the clamp at `--brightness=0.95`.
+
+Two things the probe cost, both now in the script or the prompt:
+
+- **Colour the scaffold before rendering.** A grey render is unrecognisable: asked to repaint an
+  untextured grey table, the generator read it as a pair of wooden door panels and filled them with
+  photographic burl. `--colour=#a49781` makes it arrive brown, in palette, top lighter than front, and
+  the repaint drops from interpretation to texture.
+- **Name the parts in the repaint prompt.** "The large light rectangle is the TABLETOP seen from above,
+  the narrow band below it is the front edge, the four bars are legs. It is a table, not a door." The
+  first repaint failed for want of that sentence.
+
+The repaint prompt contains NO projection language at all. That is the point of the whole arrangement:
+geometry from the matrix, paint from the generator, neither asked to do the other's job.
+
+Still open: the contact shadow comes back near-black and solid, which reads as a hole under the object
+rather than as shadow — a prop is only graded on its light end so nothing catches it. And at
+`--shear=1.0` depth adds its full size to drawn height, so boxy props tend to fill the slot; `0.7` is
+worth trying for the set.
 
 ## The loop, per file
 
