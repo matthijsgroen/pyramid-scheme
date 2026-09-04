@@ -69,9 +69,17 @@ def load_subject(mesh_path, primitive):
     if mesh_path.endswith(".glb") or mesh_path.endswith(".gltf"):
         bpy.ops.import_scene.gltf(filepath=mesh_path)
     elif mesh_path.endswith(".obj"):
-        bpy.ops.wm.obj_import(filepath=mesh_path)
+        # The importer moved namespace in Blender 4.0; accept either so the script does not depend on
+        # which build happens to be installed.
+        if hasattr(bpy.ops.wm, "obj_import"):
+            bpy.ops.wm.obj_import(filepath=mesh_path)
+        else:
+            bpy.ops.import_scene.obj(filepath=mesh_path)
     elif mesh_path.endswith(".ply"):
-        bpy.ops.wm.ply_import(filepath=mesh_path)
+        if hasattr(bpy.ops.wm, "ply_import"):
+            bpy.ops.wm.ply_import(filepath=mesh_path)
+        else:
+            bpy.ops.import_mesh.ply(filepath=mesh_path)
     else:
         raise SystemExit(f"unknown mesh format: {mesh_path}")
     bpy.ops.object.select_all(action="SELECT")
@@ -138,7 +146,13 @@ def add_light():
 
 def render(out_path, width, height):
     scene = bpy.context.scene
-    scene.render.engine = "BLENDER_EEVEE_NEXT"
+    # EEVEE was renamed in 4.2. Take whichever this build has rather than pinning a version.
+    for name in ("BLENDER_EEVEE_NEXT", "BLENDER_EEVEE", "CYCLES"):
+        try:
+            scene.render.engine = name
+            break
+        except TypeError:
+            continue
     scene.render.film_transparent = True
     scene.render.resolution_x = width
     scene.render.resolution_y = height
