@@ -13,7 +13,14 @@ the branch is in and how to run the next step.
 
 ## Branch state
 
-`feat/site-map-sprites`, **not pushed**, `yarn tsc -b` clean, suite green (254 files, 2843 tests).
+`feat/site-map-sprites`, pushed, `yarn tsc -b` clean, `yarn lint` no errors, suite green (255 files,
+2856 tests).
+
+The map gained four things beyond the art, all in
+[spritesheet-renderer-prep.md](../game-design/spritesheet-renderer-prep.md): a FLOOR SCATTER layer
+(§4 of the brief, `floorScatter.ts`), a light pool under a prop that carries a flame, a mouth that now
+asks whether the way is open before leaving a band black, and two chambers you can already walk between
+drawing no partition.
 
 **30 of the brief's ~224 files exist.** All five ranks have real surfaces — `floor`, `wall-face`,
 `threshold`, `arch` — plus five whole-wall panels for the tableau, and TEN merchant props: `jarRack`,
