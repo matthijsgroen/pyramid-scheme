@@ -96,12 +96,17 @@ def make_active(obj):
 
 
 def local_bounds(obj):
-    """The mesh's own extents. `bound_box` yields plain float triples, not Vectors, so they are wrapped
-    before any matrix touches them."""
-    corners = [Vector(c) for c in obj.bound_box]
-    xs = [c.x for c in corners]
-    ys = [c.y for c in corners]
-    zs = [c.z for c in corners]
+    """The mesh's own extents, read from the VERTICES.
+
+    Not from `bound_box`: that is a cached value and it does not refresh after `data.transform`, so it
+    keeps reporting the shape as it was before the shear. The first cube framed itself from those stale
+    numbers and came out cropped, with the geometry perfectly correct underneath."""
+    vs = obj.data.vertices
+    if not vs:
+        raise SystemExit("mesh has no vertices")
+    xs = [v.co.x for v in vs]
+    ys = [v.co.y for v in vs]
+    zs = [v.co.z for v in vs]
     return (min(xs), max(xs)), (min(ys), max(ys)), (min(zs), max(zs))
 
 
@@ -134,15 +139,26 @@ def shear(obj, k, spin_degrees):
     obj.data.transform(Matrix(((1, 0, 0, 0), (0, 1, 0, 0), (0, k, 1, 0), (0, 0, 0, 1))))
 
 
-def add_camera(width_units, height_units):
+def add_camera(obj, width, height, margin=1.06):
+    """Framed from the bounds AFTER the shear, which are not the bounds before it.
+
+    Shearing pushes the near-bottom edge DOWN as far as it pushes the far-top edge up: a unit cube at
+    k=1 spans -0.5 to 1.5, not 0 to 2. Framing from the pre-shear box cropped half a unit off the
+    bottom of the first cube rendered, which measured as 1.5 units of a 2-unit object."""
+    (x0, x1), _, (z0, z1) = local_bounds(obj)
+    span_x = (x1 - x0) * margin
+    span_z = (z1 - z0) * margin
+    # ortho_scale covers the LARGER rendered dimension, so the other one has to be derived from it or the
+    # object is framed to one axis and cropped on the other.
+    scale = max(span_x if width >= height else span_x * height / width, span_z if height >= width else span_z * width / height)
     cam_data = bpy.data.cameras.new("cam")
     cam_data.type = "ORTHO"
-    # The shear has already put depth into height, so the camera only has to look straight on. Any tilt
-    # here would ADD perspective on top of the projection and undo the entire point of the file.
-    cam_data.ortho_scale = max(width_units, height_units)
+    # No tilt: the shear has already put depth into height. Any camera angle here would ADD perspective
+    # on top of the projection and undo the entire point of the file.
+    cam_data.ortho_scale = scale
     cam = bpy.data.objects.new("cam", cam_data)
     bpy.context.scene.collection.objects.link(cam)
-    cam.location = (0, -10, height_units / 2)
+    cam.location = (0, -10, (z0 + z1) / 2)
     cam.rotation_euler = (math.radians(90), 0, 0)
     bpy.context.scene.camera = cam
 
@@ -199,7 +215,7 @@ def main():
     shear(obj, k, spin)
     # After the shear the drawn height is the object's height plus k times its depth: that is the whole
     # projection in one line, and it is why a deep object comes out taller on the page than a shallow one.
-    add_camera(max(w_units, 1.0) * 1.15, (1.0 + k * d_units) * 1.15)
+    add_camera(obj, width, height)
     add_light()
     render(out, width, height)
     print(f"{out} — {width}x{height}, shear {k}, spin {spin}deg, object {w_units:.2f} wide {d_units:.2f} deep")
