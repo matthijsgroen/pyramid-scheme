@@ -86,6 +86,17 @@ Slots: `floor` 448² · `face` 448×56 (drawn into 448×28 — see the brief's c
 
 Import flags that exist because a generation could not be talked into them: `--repeat` (fractional, shrinks
 and re-tiles), `--flatten` (blends toward the slot's own material — a corrective, not a step),
+**A PROP comes back too light, every time.** The brief says it and the first two proved it: an object
+is drawn lit for a gallery rather than for a cellar, and a merchant's Bes statue arrived with 27% of
+itself above the palette's light end. `--brightness=0.75` fixes that at import in one pass, and it is the
+flag to reach for before considering a re-roll — no wording has ever prevented it. It modulates
+brightness rather than scaling linearly, so the alpha, and with it the object's silhouette, survives.
+
+**Judge a prop composited on its own floor at 56x84, not by looking at the generation.** The Bes statue
+came back with a plinth drawn in perspective, against every rule in the prompt; at slot size that plinth
+is twelve pixels and nobody can see it. What DOES show at that size is value, which is why the light-end
+number decides a prop and the projection rarely does.
+
 `--headroom` (a face's top is covered by the wall's top band; give the art that room), `--contrast`
 (the inverse of `--flatten`, for carving too shallow to read; it refuses values below 1, which would eat
 an object's alpha), `--slot=arch` (fits jamb : opening : jamb to 14 : 56 : 14 whatever the drawing did).

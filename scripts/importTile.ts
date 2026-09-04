@@ -22,6 +22,10 @@
  *                    renderer draws the wall's top surface over the top of a face, so that much of the
  *                    art is never seen — and a frieze drawn to the top of the picture comes out with its
  *                    figures' heads cut off by it.
+ *   --brightness=0.8 scale everything darker (or lighter above 1). The failure an OBJECT actually has is
+ *                    chalky highlights — a prop comes back lit for a gallery rather than for a cellar —
+ *                    and no wording has reliably prevented it. Uses a brightness modulation rather than a
+ *                    linear scale so the alpha channel, and with it the object's silhouette, is untouched.
  *   --contrast=1.25  push values away from mid-grey before anything else — the inverse of --flatten, for
  *                    a roll whose carving is too shallow to read. 1 leaves it alone; below 1 is not
  *                    allowed, as it would eat an object's transparency.
@@ -278,10 +282,18 @@ const main = async (): Promise<void> => {
   // and must stay exactly that, and the flatten wash is a correction in the other direction.
   const contrast = Number(arg("contrast", "1"))
   if (contrast < 1) throw new Error("--contrast below 1 would eat the alpha channel; use --flatten instead")
-  const stretched =
-    contrast === 1
+  const brightness = Number(arg("brightness", "1"))
+  const lit =
+    brightness === 1
       ? await tiles.png().toBuffer()
       : await sharp(await tiles.png().toBuffer())
+          .modulate({ brightness })
+          .png()
+          .toBuffer()
+  const stretched =
+    contrast === 1
+      ? lit
+      : await sharp(lit)
           .linear(contrast, 128 * (1 - contrast))
           .png()
           .toBuffer()
