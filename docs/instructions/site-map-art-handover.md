@@ -40,6 +40,25 @@ Judge a rank in **Storybook → App/SiteMap/SiteMapBuilder → RankSeams**, whic
 gates on one floor. The main path and both side sections have difficulty selects, so any combination can
 be built.
 
+## The tomb puzzle's walls — a second consumer, and a different shape
+
+A tableau puzzle is played against a wall of its own rank, in `src/assets/tombWall/<tier>.webp`, wired
+through `src/ui/atoms/tombImageMap.ts`. Those are NOT the map's files and must not be shared with them:
+
+- **The map's `wall-face.png` is a 448x56 strip** drawn at 8:1 and shown at 16:1. The puzzle's is a
+  1200x1200 PANEL, a whole wall from ceiling to floor, laid with `cover`. Same rank, same generation
+  session, different drawing.
+- **A panel is decorated TOP TO BOTTOM.** Three of them were first drawn with the decoration in one band
+  and the lower two thirds plain; that reads as a hat on an empty wall, and worse, the tableau card
+  covers the top of the leaf, so the empty part is the part a player sees. Real tomb walls are worked
+  floor to ceiling — registers of scenes, or columns of sunk relief, running down to the base band.
+- **Nothing in a panel may be a doorway.** The finish animation swings the leaf open to make a secret
+  passage through it, so the wall must be unbroken; every prompt says so explicitly.
+- The face grader's `cap` and `base` bands are cut for the map's strip. On a panel those are a ceiling
+  ledge and a dusty floor line and never match. Only the FIELD number carries between the two formats.
+
+Sources are `~/tile-previews/<tier>-wall-panel.png` at 2000x2000.
+
 ## The loop, per file
 
 ```
@@ -147,11 +166,6 @@ is the workflow: how to check, and how the checking has gone wrong.
 - **Whether a rank draws the kinds its own pool never authors.** Two starter-difficulty pockets sit inside
   junior pyramids, so `starter/sarcophagus.png` really can be asked for. A shared `default/` set would
   cover every such hole in one place.
-- **The wall generations would make puzzle backgrounds.** Each rank's wall reads well at full size,
-  and a puzzle board wants something behind it that says which tomb the player is in. The map's own
-  `wall-face.png` is 448x56 and useless for that; what is worth reusing is the SOURCE, 2000x240, in
-  `~/tile-previews/` — outside the repo, so it would have to be committed as its own asset at its own
-  size rather than shared with the map. Nothing is built for this.
 - **Every built arch is the same silhouette.** `make-arch` has one layer stack — lintel two fifths of
   the height, jambs always `SIDE_W` wide, no cornice, no batter — so four of the five gateways differ
   only in the stone band they sample and read as one shape recoloured. The brief's arch column asks for
