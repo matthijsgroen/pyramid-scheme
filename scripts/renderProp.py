@@ -107,21 +107,21 @@ def prim_crate():
     return join_all()
 
 
-def jar(x, y, height, belly):
+def jar(x, y, height, belly, z=0.0):
     """One Egyptian storage jar: a round belly tapering to a point, a short neck, a domed stopper.
 
     Built from a sphere squeezed and a cone rather than modelled, because at 56 units what survives is
     the silhouette — a round shoulder over a taper — and nothing finer."""
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=24, ring_count=12, radius=belly, location=(x, y, height * 0.62))
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=24, ring_count=12, radius=belly, location=(x, y, z + height * 0.62))
     body = bpy.context.object
     body.scale = (1.0, 1.0, height * 0.42 / belly)
     bpy.ops.object.transform_apply(scale=True)
-    bpy.ops.mesh.primitive_cone_add(vertices=24, radius1=belly, radius2=0.0, depth=height * 0.5, location=(x, y, height * 0.37))
+    bpy.ops.mesh.primitive_cone_add(vertices=24, radius1=belly, radius2=0.0, depth=height * 0.5, location=(x, y, z + height * 0.37))
     point = bpy.context.object
     point.rotation_euler = (math.radians(180), 0, 0)
     bpy.ops.object.transform_apply(rotation=True)
-    bpy.ops.mesh.primitive_cylinder_add(vertices=20, radius=belly * 0.42, depth=height * 0.12, location=(x, y, height * 0.98))
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=10, radius=belly * 0.44, location=(x, y, height * 1.03))
+    bpy.ops.mesh.primitive_cylinder_add(vertices=20, radius=belly * 0.42, depth=height * 0.12, location=(x, y, z + height * 0.98))
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=10, radius=belly * 0.44, location=(x, y, z + height * 1.03))
     dome = bpy.context.object
     dome.scale = (1.0, 1.0, 0.55)
     bpy.ops.object.transform_apply(scale=True)
@@ -173,6 +173,182 @@ def prim_market():
     return join_all()
 
 
+def tilt(obj, degrees, axis="Y"):
+    """Leans one part over, about its own centre.
+
+    Object-level rotation and nothing applied: `join_all` bakes every part's matrix into the result, so
+    a part only has to be POSED, never baked. Rotating the mesh data instead means translating it to the
+    origin and back, because `box` leaves its vertices centred and its offset in the object."""
+    i = "XYZ".index(axis)
+    obj.rotation_euler[i] = math.radians(degrees)
+    return obj
+
+
+def prim_shelf():
+    """Mudbrick shelving: a back slab, two side piers, two open levels, and what stands in them.
+
+    An OPENING is shorter than the gap that makes it. The shelf above is a slab of depth d, and its
+    front-bottom edge sits at y = -d/2, so the shear draws that edge 0.7*(d/2) LOWER than its own z. A
+    pot the gap could hold is beheaded by the lip; the room a pot really has is
+    (z_above - 0.35*d) - (z_below + 0.35*d), which is where the 0.22 below comes from.
+
+    Two more, learned the same way. The contents have to be COARSE — a jar of 0.07 belly on a 1.35-wide
+    unit is three pixels in the slot, the brief's tenth-of-the-object rule failed by a factor of two —
+    and they have to be SQUAT, because an amphora slim enough to read as an amphora is finer than that
+    limit. These are storage pots, and the ostracon lies flat on the top course where the shear shows a
+    top face generously, rather than leaning in an opening where nothing is lit."""
+    w, d, h, brick = 1.15, 0.30, 0.86, 0.08
+    lip = 0.35 * d
+    box(w, brick, h, y=(d - brick) / 2, z=h / 2)
+    for sx in (-1, 1):
+        box(brick, d, h, x=sx * (w / 2 - brick / 2), z=h / 2)
+    shelf_z, shelf_t = 0.40, 0.07
+    box(w - brick * 2, d, shelf_t, z=shelf_z)
+    box(w, d, brick, z=h - brick / 2)
+    # Upper level: two mud-stoppered storage pots, sized to the room the lip really leaves.
+    base = shelf_z + shelf_t / 2
+    room = (h - brick - lip) - (base + lip)
+    for x in (-0.33, -0.02):
+        jar(x, -0.02, room / 1.15, 0.10, z=base)
+    # Lower level: folded linen, stacked.
+    box(0.52, 0.24, 0.11, x=-0.28, z=0.055)
+    box(0.46, 0.22, 0.10, x=-0.31, z=0.16)
+    cyl(0.12, 0.23, x=0.29, y=-0.01, z=0.115, verts=16)
+    # The tally ostracon, lying on the top course.
+    tilt(box(0.26, 0.20, 0.03, x=0.34, y=-0.01, z=h + 0.015), 7, "X")
+    return join_all()
+
+
+def prim_chest():
+    """Reed baskets and a rope-handled crate stacked together, a stoppered jar on the crate.
+
+    The lid is SLID BACK, not tipped up on its hinge: a tilted lid is a pale plane wider than the crate
+    itself and the eye reads the whole thing as a table, where a lid pushed back leaves a dark slot at
+    the front that says ajar in three pixels. The crate is also shallower than a crate really is (0.38
+    on 0.70), so its front face outweighs the top face the shear reveals."""
+    cw, cd, ch = 0.70, 0.38, 0.46
+    box(cw, cd, ch, x=-0.30, z=ch / 2)
+    box(cw + 0.04, cd * 0.76, 0.05, x=-0.30, y=cd * 0.17, z=ch + 0.025)
+    jar(-0.32, -0.02, 0.24, 0.11, z=ch + 0.05)
+    # Two reed baskets beside it, the smaller stacked on the larger, each with its lid on.
+    cyl(0.19, 0.28, x=0.34, y=0.01, z=0.14, verts=20)
+    cyl(0.21, 0.04, x=0.34, y=0.01, z=0.30, verts=20)
+    cyl(0.15, 0.22, x=0.31, y=-0.03, z=0.42, verts=20)
+    cyl(0.17, 0.04, x=0.31, y=-0.03, z=0.55, verts=20)
+    return join_all()
+
+
+def prim_brazier():
+    """A shallow clay dish on three splayed legs, cold ash in it, one unburnt stick across the rim.
+
+    A round dish on legs reads as a TABLE unless two things are true: the legs splay out past the dish
+    so the tripod is part of the silhouette, and the ash sits low enough inside that a ring of rim shows
+    all round it. The ring has to be a tenth of the object wide to survive the slot, which is what sets
+    the dish at 0.34 against ash at 0.24 — a rim any thinner measured three pixels and the dish came
+    back as a solid disc.
+
+    Wide and low, so the shear reveals a lot of TOP and it lands portrait at --scale=1 whatever the real
+    object does. Its size is set at import, not here."""
+    leg_h, foot_r = 0.24, 0.22
+    for i in range(3):
+        a = math.radians(90 + i * 120)
+        leg = cyl(0.035, leg_h + 0.04, x=math.cos(a) * foot_r, y=math.sin(a) * foot_r, z=leg_h / 2, verts=8)
+        leg.rotation_euler = (math.radians(math.sin(a) * 11), math.radians(-math.cos(a) * 11), 0)
+    bpy.ops.mesh.primitive_cone_add(vertices=28, radius1=0.17, radius2=0.34, depth=0.18, location=(0, 0, leg_h + 0.09))
+    ash = cyl(0.25, 0.10, z=leg_h + 0.20, verts=24)
+    ash.scale = (1.0, 1.0, 0.6)
+    tilt(box(0.34, 0.04, 0.04, y=-0.07, z=leg_h + 0.23), 9)
+    return join_all()
+
+
+def prim_lamp():
+    """A single-wick pottery oil lamp on a low wooden stool, and its flame.
+
+    Nothing on this may point at the VIEWER. A pinched spout modelled along -Y draws, under the shear,
+    as a cone hanging straight down off the saucer, and the first scaffold read as a flying saucer with
+    a nose cone. The spout goes out along X, where the projection leaves it alone.
+
+    The flame is modelled rather than left to the repaint because it is the one place the ochre accent
+    is allowed, and a prompt can only put paint where there is already a shape. But it is a NUB and not
+    a cone: a sharp triangle a fifth of the object tall is the most salient shape in the picture, and
+    the scaffold read as a flying saucer with a nose cone. The lamp is a straight cylinder for the same
+    reason — a flared saucer overhangs its own base and the black crescent of its underside was bigger
+    than the lamp.
+
+    Two things about the STOOL, both about the seat's top face, which is the shape that eats this prop.
+    A seat 0.26 deep put 40% of the drawn height into one featureless pale rectangle and read as a wall
+    with legs; at 0.16 it is 22% and reads as a seat. And whatever stands on that seat must OVERHANG its
+    front edge, because a dish sitting wholly within the seat draws its own pale top INSIDE a pale
+    rectangle of the same value and the eye reads the dark side wall as a hole in the furniture rather
+    than as a bowl. Hanging the lamp over the front breaks the seat's top-to-front boundary, which is the
+    one edge in the picture that says which surface is which."""
+    top_h, leg, w, d, h = 0.045, 0.04, 0.36, 0.16, 0.30
+    box(w, d, top_h, z=h - top_h / 2)
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            box(leg, leg, h - top_h, x=sx * (w / 2 - leg), y=sy * (d / 2 - leg), z=(h - top_h) / 2)
+    cyl(0.095, 0.05, x=-0.02, y=-0.04, z=h + 0.025, verts=20)
+    box(0.075, 0.05, 0.03, x=0.13, y=-0.04, z=h + 0.03)
+    bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.028, radius2=0.0, depth=0.055, location=(0.13, -0.04, h + 0.075))
+    return join_all()
+
+
+def prim_pillar():
+    """A rough timber prop leaning against the roof it holds up, wedges hammered in at its foot.
+
+    Its top is out of frame on purpose, so it fills the slot's height. Standing it plumb made it 20
+    units wide in a 56 unit cell and read as a turned column; the 12 degree LEAN is what makes it a
+    makeshift prop and it is also the only thing that buys width. The post is rotated about its middle
+    and then slid back by sin(lean)*h/2, so the foot still lands where it started.
+
+    NO STONE PAD, and the reason generalises to every prop: a WIDE FLAT SLAB lying at floor level casts
+    a shadow of its own silhouette directly beneath itself, because this projection draws a footprint
+    0.7*depth lower than the thing that made it and a slab has almost no height to separate the two. The
+    eye stacks them and reads a two-tier plinth. --sun cannot help — it shifts the footprint sideways in
+    depth, not out from under a shape as wide as the shadow it makes. A pad also added nothing the brief
+    asked for; the wedges are what it names, and they are chunky here so they survive the slot."""
+    post_h, lean = 2.0, 12.0
+    bpy.ops.mesh.primitive_cone_add(vertices=14, radius1=0.155, radius2=0.115, depth=post_h,
+                                    location=(math.sin(math.radians(lean)) * post_h / 2, 0, post_h / 2))
+    bpy.context.object.rotation_euler = (0, math.radians(lean), 0)
+    for sx in (-1, 1):
+        tilt(box(0.20, 0.13, 0.10, x=sx * 0.20, y=sx * 0.03, z=0.05), sx * 16)
+    return join_all()
+
+
+def prim_mat():
+    """A reed mat rolled up and stood on its end, part unrolled at its foot, one corner curled.
+
+    THE WEAKEST PROP IN THE SET, and the reason is structural rather than a bad roll: under this
+    projection a flat thing lying on the floor has no silhouette, which is the same wall
+    tile-art-brief.md hits with floor scatter. Three designs were rendered and measured:
+
+    1. Flat sheet, thin roll behind. All top face — two pale bands of one value with nothing between
+       them to say mat rather than slab.
+    2. Roll stood on its end (this one). The roll gains a front elevation, but a cylinder upright is
+       drum-shaped whatever is painted on it, and at 50 units it reads close to the crate's reed
+       baskets. The marks that would separate them — a spiral on the roll's end, the weave on the
+       sheet — are finer than a tenth of the object and mostly gone.
+    3. Flat sheet with its edges FOLDED. Worth knowing why this fails, because the rule is general: a
+       fold at the NEAR edge is invisible. Lifting the front edge raises its z, but as the flap swings
+       up its tip travels back toward the hinge, and under z + 0.7y the terms nearly cancel — measured
+       at 0.016 of the drawn height for 0.13 of real lift. Only the FAR edge gains from both, and a
+       far-edge fold draws as one more pale band above the sheet, separated by its own underside.
+
+    So relief at the FRONT of any prop is free to model and impossible to see, and this prop's identity
+    has to come from the weave. Design 2 is what is imported, because it at least has a shape.
+
+    The tongue runs UNDER the roll and OVERLAPS it in x. Set beside it, touching at one x, the roll
+    towers over a 0.03 sheet and the two share only their bottom pixel: it reads as a drum standing next
+    to a mat, with a shadow ellipse of its own. Nor may the roll lean — tipped 6 degrees its base lifts
+    off the floor on one side, which is the floating the shear punishes hardest."""
+    roll_h, r = 0.50, 0.17
+    box(0.80, 0.42, 0.03, x=-0.14, y=-0.08, z=0.015)
+    cyl(r, roll_h, x=0.12, y=0.05, z=roll_h / 2, verts=18)
+    tilt(box(0.20, 0.16, 0.03, x=-0.46, y=-0.26, z=0.05), 40, "X")
+    return join_all()
+
+
 PRIMITIVES.update(
     {
         "cube": prim_cube,
@@ -180,6 +356,12 @@ PRIMITIVES.update(
         "crate": prim_crate,
         "jarrack": prim_jarrack,
         "market": prim_market,
+        "shelf": prim_shelf,
+        "chest": prim_chest,
+        "brazier": prim_brazier,
+        "lamp": prim_lamp,
+        "pillar": prim_pillar,
+        "mat": prim_mat,
     }
 )
 
@@ -539,6 +721,12 @@ def main():
     # a thing, and a rendered prop has to join that convention or it floats.
     shadow_alpha = float(arg("shadow", "0.8"))
 
+    # How far the flattened footprint is pushed toward the viewer, as a fraction of the object's depth —
+    # which is to say where the sun is. 0.10 matched the painted props for DARKNESS and not for EXTENT:
+    # at that offset the shear draws the shadow almost entirely behind the object and one pixel of it
+    # shows, where the hand-painted props spread a visible pool in front of the thing.
+    sun = float(arg("sun", "0.30"))
+
     clear_scene()
     obj = load_subject(mesh, primitive)
     # Meshes get painted too, not just primitives: a scan has no material and a generated mesh usually
@@ -565,7 +753,7 @@ def main():
         add_shadow_catcher(k, max(w_units, d_units, 1.0))
     else:
         shadow = (
-            make_shadow(obj, shadow_alpha, arg("floor", "#6c6257"), 0.0, -0.10 * d_units)
+            make_shadow(obj, shadow_alpha, arg("floor", "#6c6257"), 0.0, -sun * d_units)
             if shadow_alpha > 0
             else None
         )
@@ -579,6 +767,19 @@ def main():
     background = arg("background", "#ff00ff")
     if background != "none":
         add_backdrop(background, obj)
+    # --only=shadow renders the footprint ALONE, in the same frame as the object.
+    #
+    # A prop's shadow is geometry, not material, and every repaint so far has proved it: told to paint a
+    # shadow the generator paints an invented floor across the footprint instead, and the mask then keeps
+    # a slab of floor-coloured pixels where the seating should be. The shelf and the crate both came back
+    # with nothing at all below 35 where the hand-painted props sit at 2% to 11%. So the shadow is kept
+    # out of the repaint's hands: mask the art to the OBJECT alone (--shadow=0) and put this render back
+    # underneath it at import (--seat).
+    #
+    # Removed after add_camera and add_backdrop on purpose — both frame from the object, so all three
+    # renders of a prop share one frame to the pixel and composite without alignment.
+    if arg("only", "both") == "shadow":
+        bpy.data.objects.remove(obj, do_unlink=True)
     render(out, width, height, engine, int(arg("samples", "64")))
     # What it will actually BE, in map units, before a single repaint is spent on it. The import trims to
     # the object and scales it into a 56x84 slot, so drawn height is 56 * (height / width) capped at 84 —

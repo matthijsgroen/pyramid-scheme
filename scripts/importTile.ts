@@ -26,6 +26,11 @@
  *                    Blender render's alpha is the true silhouette, and a repaint that softened an edge
  *                    into the magenta leaves a keyed halo the despill cannot reach. Masking to the
  *                    render throws that away and guarantees the shape the geometry actually had.
+ *   --seat=shadow.png put a rendered shadow back UNDER the art. Pair it with a --mask of the object
+ *                    alone: a prop's shadow is geometry, and asked for a shadow the generator paints an
+ *                    invented floor over the footprint instead, so the tile arrives with nothing below
+ *                    35 and does not sit on anything. `render-prop --only=shadow` draws it in the same
+ *                    frame as the object, which is what makes the two line up.
  *   --scale=0.45     how much of the SLOT the object fills, still standing on the floor line. Without it
  *                    a prop grows until it touches an edge, so a lamp and a sarcophagus arrive the same
  *                    height — a shabti, which is a 20cm figurine, landed 84 units tall.
@@ -219,6 +224,18 @@ const cutToMask = async (img: sharp.Sharp, maskPath: string): Promise<sharp.Shar
   return sharp(cut)
 }
 
+const underlayShadow = async (img: sharp.Sharp, shadowPath: string): Promise<sharp.Sharp> => {
+  const art = await img.ensureAlpha().png().toBuffer({ resolveWithObject: true })
+  const { width, height } = art.info
+  // Rendered out first for the same reason cutToMask does it: sharp resizes before it composites.
+  const shadow = await sharp(shadowPath).ensureAlpha().resize(width, height, { fit: "fill" }).png().toBuffer()
+  const seated = await sharp(shadow)
+    .composite([{ input: art.data }])
+    .png()
+    .toBuffer()
+  return sharp(seated)
+}
+
 const seatOnFloorLine = async (img: sharp.Sharp, aspect: number, scale: number): Promise<sharp.Sharp> => {
   // Encoded, not raw: `composite` needs an image it can parse, and a sharp instance built from a raw
   // buffer has no format of its own to fall back on.
@@ -263,6 +280,10 @@ const main = async (): Promise<void> => {
   if (archFitted) img = await fitToDoorway(img, w, h, smooth)
   const maskPath = arg("mask")
   if (maskPath) img = await cutToMask(img, maskPath)
+  // After the mask, so the shadow is laid under the object's true silhouette and not under a repaint's
+  // invented floor; before the seat, so the trim treats object and shadow as one sprite.
+  const shadowPath = arg("seat")
+  if (shadowPath) img = await underlayShadow(img, shadowPath)
   if (seat && !process.argv.includes("--no-trim")) img = await seatOnFloorLine(img, w / h, Number(arg("scale", "1")))
 
   const dir = join(OUT_ROOT, tier)

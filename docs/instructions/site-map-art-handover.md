@@ -15,10 +15,11 @@ the branch is in and how to run the next step.
 
 `feat/site-map-sprites`, **not pushed**, `yarn tsc -b` clean, suite green (254 files, 2843 tests).
 
-**24 of the brief's ~224 files exist.** All five ranks have real surfaces — `floor`, `wall-face`,
-`threshold`, `arch` — plus five whole-wall panels for the tableau, and four merchant props: `jarRack`,
-`statue`, `offeringTable`, `basin`. Everything else is `generate-dummy-tiles` placeholder, which never
-breaks a floor.
+**30 of the brief's ~224 files exist.** All five ranks have real surfaces — `floor`, `wall-face`,
+`threshold`, `arch` — plus five whole-wall panels for the tableau, and TEN merchant props: `jarRack`,
+`statue`, `offeringTable`, `basin`, `shelf`, `chestProp`, `brazier`, `lamp`, `pillar`, `mat`. Every one
+of the last six is a parametric primitive in `renderProp.py` and rebuilds from its master with
+`art/rebuild.sh`. Everything else is `generate-dummy-tiles` placeholder, which never breaks a floor.
 
 Four of the five arches are `make-arch` output cut from their own wall; the merchant's is painted timber
 and samples nothing.
@@ -33,18 +34,28 @@ has no renderer slot at all (medium). Art first; those when a rank is otherwise 
 
 ## What to do next
 
-**The six parametric merchant props**: `shelf`, `chestProp`, `brazier`, `lamp`, `pillar`, `mat`. No
-scans and no new code — `crate` is already modelled in `renderProp.py`. Follow
-[prop-pipeline.md](prop-pipeline.md), which has a gate at every step.
+**The six parametric merchant props are done.** The five remaining merchant props need what the pipeline
+cannot yet give them: `shrine`, `sarcophagus` and `crystal` want museum scans, and `hanging` and
+`rubble` are cloth and scatter, which Step 0 lists as unsolved. The four merchant WALL ITEMS are the
+next thing the pipeline can actually reach, and they are a different slot — see below.
 
-This is also the first real test of THROUGHPUT rather than quality. The pipeline made each attempt
-reliable; it did not make attempts fewer. Every prop is still two renders, a paste into the generator,
-an import and a look — and at ~130 props that round trip is the actual budget. If it drags, the untested
-lever is batching: several scaffolds in one sheet, `cut-sheet` splits the repaint apart afterwards.
+**Where the throughput actually goes, measured on the first two.** Not the repaint: both took ONE roll.
+The cost is MODELLING — `shelf` needed five renders and `mat` four before either read as its object at
+56 units, and every one of those was caught by looking at a scaffold rather than by spending a roll.
+Batching several scaffolds into one repaint sheet would therefore save the cheap half of the loop and
+leave the expensive half alone; it is still untested and no longer the obvious lever.
+
+What modelling keeps getting wrong is written into each primitive's docstring, because the rules are
+geometric and general: an opening holds `0.35 * depth` less than its gap (the shelf above draws its front
+lip that much lower than its own z), nothing may point at the viewer (a spout modelled along -Y draws as
+a cone hanging straight down), a flat thing lying on the floor is ALL top face and has no silhouette to
+read, and a part set beside another rather than overlapping it reads as a separate object with its own
+shadow.
 
 Then the four merchant wall items, which are a DIFFERENT slot — 56x28, painted onto the wall band, no
 floor and no shadow. The pipeline has never been run against that slot and may need a mode of its own in
-the renderer.
+the renderer. Note that `--seat` and `--sun` have nothing to do there: a wall item hangs, so the whole
+shadow half of Step 4 is skipped.
 
 Judge a rank in **Storybook → App/SiteMap/PropSheet**, which stages every kind of a rank on that rank's
 floor with the explorer beside it for scale, and says `(none)` where art is still missing.
@@ -72,8 +83,13 @@ Sources are `~/tile-previews/<tier>-wall-panel.png` at 2000x2000.
 
 Four steps with a gate on each, written out in [prop-pipeline.md](prop-pipeline.md): decide the object
 and where its mesh comes from, render the geometry, hand a scaffold to the generator for MATERIAL only,
-import through the render's own alpha. The expensive step is the repaint, so nothing reaches it that a
-measurement could have rejected first.
+import through the render's own alpha and seat it on a rendered shadow. The expensive step is the
+repaint, so nothing reaches it that a measurement could have rejected first.
+
+The shadow is on the Blender side of that line for a reason worth knowing before writing a prompt: no
+wording makes a generator paint one. Told in words, told as a hex, told that it is part of the picture,
+it paints an invented floor across the footprint instead, and the first two props both arrived with
+nothing below 35 where the hand-painted set sits at 2% to 11%.
 
 It exists because geometry is not a thing to ask for. Cavalier oblique is one matrix — a shear under an
 orthographic front view — and eighteen rolls went into asking for it in words before that was accepted.
@@ -222,3 +238,32 @@ is the workflow: how to check, and how the checking has gone wrong.
   `tiles/default/` so he cannot be fixed per rank. Nobody has judged whether that reads wrong yet.
 - **The explorer is committed real art now** — 4 front frames, 4 back, 3 side, at 40×70, walking on
   distance (`walkCycle.ts`). `tiles/default/` is shared art, never per rank: one person walks all five.
+
+## Where the masters live
+
+The high-resolution image each tile was made from lives in `art/`, laid out in [its own
+README](../../art/README.md):
+
+```
+art/props/<tier>/<name>.webp     a prop's painted return
+art/surfaces/<tier>-<slot>.webp  floor, wall-face, threshold
+art/tombWall/<tier>.webp         the tableau's whole-wall panel
+art/rebuild.sh                   re-imports from the masters, with each tile's flags
+```
+
+`art/` sits outside `src/`, so Vite never sees it and none of it reaches the bundle — what ships is still
+only `src/assets/tiles/<tier>/<name>.png` at slot size and `src/assets/tombWall/<tier>.webp`.
+
+Scaffolds and masks are NOT stored: they are `renderProp.py` on fixed arguments and come back byte for
+byte, so `rebuild.sh` carries the argument list instead, which is both smaller and the only record of how
+a tile was imported. A generator's return cannot be reproduced, which is why that half is kept. Masters
+are webp at quality 92 — a 1334x2000 return is 3.3MB as PNG and about 140KB this way, which is the
+difference between a repository that can hold the brief's ~224 files and one that cannot.
+
+Two holes, both named in `art/README.md`: the backfilled masters have no rebuild lines, because their
+tiles were imported before there was anywhere to write the command down; and the MERCHANT's floor,
+wall-face and threshold have no master at all, because `~/tile-previews/` holds two candidates for each
+and the shipped tiles cannot decide between them.
+
+`~/tile-previews/` is still the scratch directory for work in progress. Nothing there is depended on once
+a tile is approved and its master is in `art/`.

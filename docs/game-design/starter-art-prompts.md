@@ -310,6 +310,12 @@ three-view turnaround every few props however firmly the prompt says one object,
 the same breath. `yarn cut-sheet <file>` splits it on the gutters; run `tile-stats` over the frames and
 keep whichever measures best. The merchant basin came out of the middle frame of three.
 
+**Never call a prop GREY — say what is grey relative to the palette.** A cold brazier's prompt banned the
+ochre accent outright and called its ash grey, and the repaint came back at +1 warmth against a rank that
+sits at +22 to +25. `--saturation` could not rescue it: it multiplies the chroma already present, so 1.4
+moved +1 to +5 and it took 2.2 to reach +19. "The ash is the coolest thing in the picture, the clay is
+still #a49781" is the same instruction without the cost.
+
 **Name the object’s own hex, do not ask it to be lighter than something.** "A warm mid brown, clearly
 lighter than the floor" produced pottery at exactly the floor’s value twice: it is a comparison the model
 cannot check while drawing. "Its body is #a49781, the lightest thing in the picture" is one it can.
