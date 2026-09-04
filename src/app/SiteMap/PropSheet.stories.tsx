@@ -148,7 +148,9 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; zoom: nu
 }
 
 const Sheet: FC<{ tier: Difficulty; zoom: number }> = ({ tier, zoom }) => (
-  <div className="flex flex-col gap-6 bg-neutral-900 p-6">
+  // h-screen + overflow-auto, because at zoom 6 the sheet is wider and taller than the canvas and a
+  // fullscreen story clips instead of scrolling.
+  <div className="flex h-screen flex-col gap-6 overflow-auto bg-neutral-900 p-6">
     <h2 className="m-0 text-sm text-white/80">{tier} — chamber props</h2>
     <div className="flex flex-wrap gap-4">
       {PROPS.map(kind => (
