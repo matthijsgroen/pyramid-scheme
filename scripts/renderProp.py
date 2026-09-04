@@ -203,6 +203,36 @@ def seat_and_normalise(obj):
     return x1 - x0, y1 - y0
 
 
+def make_shadow(obj, opacity, offset_x, offset_y):
+    """The object's own footprint, lying on the floor.
+
+    Blender knows the shape, so the shadow does not have to be invented in paint — and this projection
+    makes it almost free. A floor point (x, y, 0) draws at (x, k*y), so the shadow is the object
+    FLATTENED to z=0 and put through the same shear. No ray tracing, no shadow catcher, no dependence on
+    which engine or which Blender version.
+
+    `offset` is the light: shifting the flattened copy is what moves the sun. Positive y pushes the
+    shadow away from the viewer, which reads as light from the front."""
+    shadow = obj.copy()
+    shadow.data = obj.data.copy()
+    bpy.context.scene.collection.objects.link(shadow)
+    shadow.data.transform(Matrix.Diagonal((1.0, 1.0, 0.0, 1.0)))
+    shadow.data.transform(Matrix.Translation((offset_x, offset_y, 0.0)))
+    mat = bpy.data.materials.new("shadow")
+    mat.use_nodes = True
+    bsdf = mat.node_tree.nodes["Principled BSDF"]
+    bsdf.inputs["Base Color"].default_value = (0.02, 0.015, 0.01, 1.0)
+    bsdf.inputs["Roughness"].default_value = 1.0
+    if "Alpha" in bsdf.inputs:
+        bsdf.inputs["Alpha"].default_value = opacity
+    for attr, value in (("blend_method", "BLEND"), ("surface_render_method", "BLENDED")):
+        if hasattr(mat, attr):
+            setattr(mat, attr, value)
+    shadow.data.materials.clear()
+    shadow.data.materials.append(mat)
+    return shadow
+
+
 def shear(obj, k, spin_degrees):
     """Spin on the floor first, then shear. Order matters: shearing a spun object is a different view of
     the same thing, while spinning a sheared one is nonsense.
@@ -291,12 +321,21 @@ def main():
 
     colour = arg("colour", "#5c5347")
 
+    # Low on purpose. Flat and hard-edged it reads as a translucent panel, not a shadow — its job is to
+    # hand the repaint the exact footprint and light direction to soften, not to be the finished shadow.
+    shadow_alpha = float(arg("shadow", "0.22"))
+
     clear_scene()
     obj = load_subject(mesh, primitive)
     if primitive:
         paint(obj, colour)
     w_units, d_units = seat_and_normalise(obj)
-    shear(obj, k, spin)
+    if spin:
+        obj.data.transform(Matrix.Rotation(math.radians(spin), 4, "Z"))
+    shadow = make_shadow(obj, shadow_alpha, 0.0, -0.10 * d_units) if shadow_alpha > 0 else None
+    if shadow:
+        shadow.data.transform(Matrix(((1, 0, 0, 0), (0, 1, 0, 0), (0, k, 1, 0), (0, 0, 0, 1))))
+    shear(obj, k, 0)
     # After the shear the drawn height is the object's height plus k times its depth: that is the whole
     # projection in one line, and it is why a deep object comes out taller on the page than a shallow one.
     add_camera(obj, width, height)
