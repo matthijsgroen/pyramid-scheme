@@ -143,7 +143,45 @@ def prim_jarrack():
     return join_all()
 
 
-PRIMITIVES.update({"cube": prim_cube, "table": prim_table, "crate": prim_crate, "jarrack": prim_jarrack})
+def cyl(r, h, x=0.0, y=0.0, z=0.0, verts=16):
+    bpy.ops.mesh.primitive_cylinder_add(vertices=verts, radius=r, depth=h, location=(x, y, z))
+    return bpy.context.object
+
+
+def prim_market():
+    """The merchant's market table: the table he traded from, his balance, and a heap of grain.
+
+    A prop is not its silhouette alone — the painted version of this reads as a market stall because of
+    what stands ON it, and the scaffold has to carry that or the repaint has nothing to paint. The scale
+    is a post, a beam and two pans; the grain is a squashed cone. Nothing here is finer than a thumb at
+    slot size, which is the budget."""
+    top_h, leg, w, d, h = 0.07, 0.06, 1.2, 0.6, 0.5
+    box(w, d, top_h, z=h - top_h / 2)
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            box(leg, leg, h - top_h, x=sx * (w / 2 - leg), y=sy * (d / 2 - leg), z=(h - top_h) / 2)
+    # The balance, standing on the right of the top: post, beam across it, a shallow pan hanging at
+    # each end. Pans are discs, which under this shear draw as ellipses — the same tell as the jar lids.
+    post_x, post_h = 0.28, 0.30
+    cyl(0.022, post_h, x=post_x, z=h + post_h / 2)
+    box(0.44, 0.035, 0.035, x=post_x, z=h + post_h)
+    for sx in (-1, 1):
+        cyl(0.019, 0.10, x=post_x + sx * 0.19, z=h + post_h - 0.05, verts=8)
+        cyl(0.085, 0.02, x=post_x + sx * 0.19, z=h + post_h - 0.10)
+    # The grain, heaped on the left: a low cone, spilling a little over the front edge.
+    bpy.ops.mesh.primitive_cone_add(vertices=20, radius1=0.24, radius2=0.0, depth=0.13, location=(-0.26, 0.02, h + 0.065))
+    return join_all()
+
+
+PRIMITIVES.update(
+    {
+        "cube": prim_cube,
+        "table": prim_table,
+        "crate": prim_crate,
+        "jarrack": prim_jarrack,
+        "market": prim_market,
+    }
+)
 
 
 def srgb_to_linear(c):
