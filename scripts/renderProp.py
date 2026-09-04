@@ -488,9 +488,11 @@ def main():
 
     colour = arg("colour", "#5c5347")
 
-    # How far the floor is darkened where the object stands: 0.35 is a clear shadow that still reads as
-    # the same stone. Its job is to hand the repaint an exact footprint and light direction to soften.
-    shadow_alpha = float(arg("shadow", "0.35"))
+    # How far the floor is darkened where the object stands. 0.8, which is far darker than it sounds,
+    # because it was measured against the props already painted by hand rather than guessed: their bottom
+    # bands come in at 12, 18 and 37, where 0.35 rendered 81. The painted set puts a near-black void under
+    # a thing, and a rendered prop has to join that convention or it floats.
+    shadow_alpha = float(arg("shadow", "0.8"))
 
     clear_scene()
     obj = load_subject(mesh, primitive)
@@ -500,6 +502,14 @@ def main():
     if colour != "none":
         paint(obj, colour)
     w_units, d_units = seat_and_normalise(obj)
+    # Depth is the strongest lever on how a prop reads: it decides how much TOP the shear reveals, and so
+    # how tall the sprite lands in its cell. Tuned against the hand-painted props rather than guessed.
+    depth = float(arg("depth", "1.0"))
+    if depth != 1.0:
+        obj.data.transform(Matrix.Diagonal((1.0, depth, 1.0, 1.0)))
+        w_units, d_units = local_bounds(obj)[0][1] - local_bounds(obj)[0][0], (
+            local_bounds(obj)[1][1] - local_bounds(obj)[1][0]
+        )
     if spin:
         obj.data.transform(Matrix.Rotation(math.radians(spin), 4, "Z"))
     engine = arg("engine", "eevee")
