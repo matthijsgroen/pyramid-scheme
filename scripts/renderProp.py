@@ -1,6 +1,7 @@
 """Renders a prop in the map's projection, exactly, from a 3D mesh.
 
     blender -b -P scripts/renderProp.py -- --primitive=cube --out=/tmp/cube.png
+    blender -b -P scripts/renderProp.py -- --primitive=table --out=/tmp/table.png
     blender -b -P scripts/renderProp.py -- --mesh=jarRack.glb --out=jarRack.png
     blender -b -P scripts/renderProp.py -- --mesh=jarRack.glb --out=rack-e.png --spin=90
 
@@ -62,10 +63,58 @@ def clear_scene():
                 block.remove(item)
 
 
+def box(sx, sy, sz, x=0.0, y=0.0, z=0.0):
+    """One rectangular block, sized and placed by its CENTRE."""
+    bpy.ops.mesh.primitive_cube_add(size=1, location=(x, y, z))
+    o = bpy.context.object
+    o.scale = (sx, sy, sz)
+    bpy.ops.object.transform_apply(scale=True)
+    return o
+
+
+def join_all():
+    bpy.ops.object.select_all(action="SELECT")
+    bpy.context.view_layer.objects.active = bpy.context.selected_objects[0]
+    bpy.ops.object.join()
+    return bpy.context.object
+
+
+# Parametric shapes, so the boxy half of the prop list needs no mesh generator at all. A market table is
+# four legs and a slab; a crate is a box with a rim. Proportions are in metres and read as real furniture
+# because the projection cares about depth, and an object with no depth has no top to show.
+PRIMITIVES = {}
+
+
+def prim_cube():
+    bpy.ops.mesh.primitive_cube_add(size=1)
+    return bpy.context.object
+
+
+def prim_table():
+    """A low market table: 1.2 wide, 0.6 deep, 0.55 high."""
+    top_h, leg = 0.07, 0.06
+    box(1.2, 0.6, top_h, z=0.55 - top_h / 2)
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            box(leg, leg, 0.55 - top_h, x=sx * (0.6 - leg), y=sy * (0.3 - leg), z=(0.55 - top_h) / 2)
+    return join_all()
+
+
+def prim_crate():
+    """A rope-handled crate: 0.7 wide, 0.5 deep, 0.5 high, with a lid rim standing proud of the box."""
+    box(0.7, 0.5, 0.46, z=0.23)
+    box(0.74, 0.54, 0.05, z=0.485)
+    return join_all()
+
+
+PRIMITIVES.update({"cube": prim_cube, "table": prim_table, "crate": prim_crate})
+
+
 def load_subject(mesh_path, primitive):
-    if primitive == "cube":
-        bpy.ops.mesh.primitive_cube_add(size=1)
-        return bpy.context.object
+    if primitive:
+        if primitive not in PRIMITIVES:
+            raise SystemExit(f"unknown primitive: {primitive} (have {', '.join(sorted(PRIMITIVES))})")
+        return PRIMITIVES[primitive]()
     if mesh_path.endswith(".glb") or mesh_path.endswith(".gltf"):
         bpy.ops.import_scene.gltf(filepath=mesh_path)
     elif mesh_path.endswith(".obj"):
@@ -168,14 +217,17 @@ def add_light():
     (tile-art-brief.md, "The style"), so a rendered prop must not arrive with highlights the painted
     ones do not have. This is the part most likely to look wrong beside the painted props."""
     sun_data = bpy.data.lights.new("sun", type="SUN")
-    sun_data.energy = 2.0
+    sun_data.energy = 3.0
     sun_data.angle = math.radians(45)
     sun = bpy.data.objects.new("sun", sun_data)
     bpy.context.scene.collection.objects.link(sun)
-    sun.rotation_euler = (math.radians(50), 0, math.radians(-35))
+    # Steep, so UP-facing faces read clearly brighter than viewer-facing ones. The shear tilts every
+    # normal toward the camera, which flattens the difference between a top and a front until the whole
+    # object is one grey — and a scaffold with no face separation gives the repaint nothing to hold.
+    sun.rotation_euler = (math.radians(22), 0, math.radians(-28))
     world = bpy.data.worlds.new("world")
     world.use_nodes = True
-    world.node_tree.nodes["Background"].inputs[1].default_value = 0.6
+    world.node_tree.nodes["Background"].inputs[1].default_value = 0.35
     bpy.context.scene.world = world
 
 
