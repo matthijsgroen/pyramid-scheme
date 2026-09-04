@@ -299,11 +299,17 @@ the aspect is all that survives: drawn height in the cell is `56 x (height / wid
 slot's 84. As wide as tall lands about a cell; 1.4 times wider than tall lands knee-high; 2:3 or taller
 fills the slot. The jar rack is 56x50, the market table 56x43, the ka-statue 56x84.
 
+**A prop must read AGAINST the floor it stands on, and the palette gives it room to: `prop` #a49781 sits
+at 152 where the merchant slab sits at 96.** `tile-stats --slot=prop` prints the gap and faults under 10.
+Either direction counts — the jar rack separates by being 25 DARKER, the market table by being 24 lighter.
+The trap is `--brightness`: it is for clipping the tail above 152, never for pulling the median down, and
+doing the latter put the table at exactly the floor’s own value where it vanished.
+
 **Two things that will bite.** Never ask for strict symmetry and asymmetric damage in the same prompt —
 a broken shoulder against "perfectly symmetrical left-to-right" degraded the geometry every time;
 establish the shape first and add damage after. And a prop always comes back too light:
-`--brightness=0.72` fixed the statue, `0.8` the table, `0.92` the rack, and no wording has ever
-prevented it.
+`--brightness` clipped the statue to 0.85; the rack and the table needed none. No wording has ever
+prevented the chalkiness.
 
 ## 3. Chamber props — 15 files, 2:3, magenta background
 

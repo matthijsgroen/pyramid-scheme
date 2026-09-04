@@ -139,6 +139,17 @@ const main = async () => {
       drift >= 0 ? "+" : ""
     }${Math.round(drift)} warmth`
   )
+  // An OBJECT has to be told apart from the floor it stands on, and the palette gives it room to be:
+  // `prop` sits well above `slab`. The failure is silent — a prop pulled to the floor's own value passes
+  // every other check and then disappears under the player's eye — so the gap is printed for every object
+  // and faulted when it closes. Either direction counts: a merchant's jar rack separates by being darker.
+  const floorGap = at(50) - lumOf(palette.slab)
+  if (isObject)
+    console.log(
+      `against the floor it stands on: ${Math.abs(floorGap)} ${floorGap >= 0 ? "lighter" : "darker"} (the slab is ${lumOf(
+        palette.slab
+      )})`
+    )
 
   const spread = at(95) - at(5)
   // A face carries a deliberate top-to-bottom gradient, so its field is allowed a wider spread than a
@@ -160,6 +171,10 @@ const main = async () => {
         // face of a post — which is what seats it in the world; the failure objects actually have is
         // chalky highlights, the same white flaking that ruined the first floor.
         tooLight >= 2 ? `${tooLight.toFixed(1)}% lighter than ${lightest} — restate the value clamp` : null,
+        // 10 is about a palette step. Closer than that and the object is the floor's own value.
+        Math.abs(floorGap) < 10
+          ? `only ${Math.abs(floorGap)} from the floor it stands on — it will not read against it`
+          : null,
       ].filter(Boolean)
     : [
         (outside >= 2 || spread >= spreadLimit) && !isStep
