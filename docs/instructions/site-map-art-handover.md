@@ -13,32 +13,41 @@ the branch is in and how to run the next step.
 
 ## Branch state
 
-`feat/site-map-sprites`, **not pushed**, tree clean, `yarn tsc -b` clean, suite green.
+`feat/site-map-sprites`, **not pushed**, `yarn tsc -b` clean, suite green (254 files, 2843 tests).
 
-**All five ranks have real surfaces.** Merchant, nobleman, priest, pharaoh and the gods each have
-`floor`, `wall-face`, `threshold` and `arch`. Every PROP and every WALL ITEM in every rank is still
-`generate-dummy-tiles` placeholder, which is fine: a placeholder file never breaks a floor.
+**24 of the brief's ~224 files exist.** All five ranks have real surfaces — `floor`, `wall-face`,
+`threshold`, `arch` — plus five whole-wall panels for the tableau, and four merchant props: `jarRack`,
+`statue`, `offeringTable`, `basin`. Everything else is `generate-dummy-tiles` placeholder, which never
+breaks a floor.
 
-Four of the five arches are `make-arch` output, cut from their own wall; the merchant's is the painted
-timber one and does not sample anything.
+Four of the five arches are `make-arch` output cut from their own wall; the merchant's is painted timber
+and samples nothing.
 
-Sources for everything imported live in `~/tile-previews/` — re-import with different flags without
-regenerating.
+Sources for everything imported live in `~/tile-previews/`, meshes in `~/tile-previews/meshes/` —
+re-import with different flags without regenerating.
+
+**Roughly 70 of the remaining files cannot be used even if drawn today**, because §5 of the brief lists
+three things nobody has built: `breach` and `plug` are missing from `WallDecorationKind` (tiny), the
+variant resolver that picks `rubble-2.png` by positional hash does not exist (small), and floor scatter
+has no renderer slot at all (medium). Art first; those when a rank is otherwise done.
 
 ## What to do next
 
-**Props and wall items, and they are where the count is.** Surfaces were 20 files; §2 and §3 of the brief
-are 80 props and 50 wall items. The order that matters is the same one the surfaces used — go ACROSS the
-ranks rather than finishing one — because the material follows each SECTION rather than the floor, so one
-floor routinely shows two or three ranks at once (twenty of fifty-six sampled floors do).
+**The six parametric merchant props**: `shelf`, `chestProp`, `brazier`, `lamp`, `pillar`, `mat`. No
+scans and no new code — `crate` is already modelled in `renderProp.py`. Follow
+[prop-pipeline.md](prop-pipeline.md), which has a gate at every step.
 
-Two things a prop needs that a surface did not: it is bottom-anchored in a 56x84 slot whose top 28 is
-headroom only tall things use, and it is graded as an OBJECT — held to the palette's ends and nothing
-else, because an object is meant to differ from the stone behind it.
+This is also the first real test of THROUGHPUT rather than quality. The pipeline made each attempt
+reliable; it did not make attempts fewer. Every prop is still two renders, a paste into the generator,
+an import and a look — and at ~130 props that round trip is the actual budget. If it drags, the untested
+lever is batching: several scaffolds in one sheet, `cut-sheet` splits the repaint apart afterwards.
 
-Judge a rank in **Storybook → App/SiteMap/SiteMapBuilder → RankSeams**, which puts three ranks and two
-gates on one floor. The main path and both side sections have difficulty selects, so any combination can
-be built.
+Then the four merchant wall items, which are a DIFFERENT slot — 56x28, painted onto the wall band, no
+floor and no shadow. The pipeline has never been run against that slot and may need a mode of its own in
+the renderer.
+
+Judge a rank in **Storybook → App/SiteMap/PropSheet**, which stages every kind of a rank on that rank's
+floor with the explorer beside it for scale, and says `(none)` where art is still missing.
 
 ## The tomb puzzle's walls — a second consumer, and a different shape
 
