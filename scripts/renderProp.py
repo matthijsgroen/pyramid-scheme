@@ -268,6 +268,45 @@ def local_bounds(obj):
     return (min(xs), max(xs)), (min(ys), max(ys)), (min(zs), max(zs))
 
 
+def array_copies(obj, count, gap, jitter):
+    """Stands several of the object side by side, each turned a little.
+
+    Some props are not one thing. A shabti is a 20cm figurine and a burial held dozens of them — 365 in
+    a generous one, stood in rows — so a single one alone in the middle of a chamber is both wrong and
+    lonely, 14 units wide in a 56 unit cell. The same is true of sherds, of loose bricks, of a heap of
+    anything.
+
+    Copies are turned slightly and set at slightly different depths, because a row of identical figures
+    facing exactly the same way reads as a repeated sprite rather than as a set of objects."""
+    if count < 2:
+        return obj
+    (x0, x1), (y0, y1), _ = local_bounds(obj)
+    step = (x1 - x0) * gap
+    originals = []
+    for i in range(count):
+        offset = (i - (count - 1) / 2) * step
+        if i == 0:
+            copy = obj
+        else:
+            copy = obj.copy()
+            copy.data = obj.data.copy()
+            bpy.context.scene.collection.objects.link(copy)
+        turn = math.radians(((i * 37) % 21) - 10) * jitter
+        # Depth jitter stays TINY. Under this shear a copy set further back is drawn higher, which is
+        # correct and which at 40 pixels reads as the thing hovering. Turning them is what breaks the
+        # repetition; moving them back is what breaks the floor.
+        depth = ((i * 53) % 7 - 3) / 3 * (y1 - y0) * 0.05 * jitter
+        copy.data.transform(Matrix.Rotation(turn, 4, "Z"))
+        copy.data.transform(Matrix.Translation((offset, depth, 0.0)))
+        originals.append(copy)
+    bpy.ops.object.select_all(action="DESELECT")
+    for o in originals:
+        o.select_set(True)
+    bpy.context.view_layer.objects.active = originals[0]
+    bpy.ops.object.join()
+    return bpy.context.object
+
+
 def seat_and_normalise(obj):
     """One unit tall, centred on X and Y, standing on z=0 — so every prop enters the shear at the same
     size whatever the mesh generator handed back, and the framing below can be fixed rather than fitted."""
@@ -501,6 +540,7 @@ def main():
     # whatever the file brought.
     if colour != "none":
         paint(obj, colour)
+    obj = array_copies(obj, int(arg("copies", "1")), float(arg("gap", "1.35")), float(arg("jitter", "1.0")))
     w_units, d_units = seat_and_normalise(obj)
     # Depth is the strongest lever on how a prop reads: it decides how much TOP the shear reveals, and so
     # how tall the sprite lands in its cell. Tuned against the hand-painted props rather than guessed.
