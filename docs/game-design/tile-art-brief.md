@@ -103,6 +103,13 @@ the other two thirds._ One third is this camera — a square-section timber show
 as its front is tall, so top over total is 0.58 / 1.58. Asking for two thirds gives a view looking DOWN
 into the object, which no wall in this set agrees with.
 
+**The rotation line does not carry orthographic on its own — say PARALLEL as something measurable.**
+Asked to rotate, a model rotates in perspective: the rack's uprights converged and its top narrowed
+toward the back. Two statements fix it, and both can be checked while drawing: _the object is exactly as
+wide at the top as at the bottom — measure across the top edge and across the bottom edge and the two
+numbers are the same_, and _a top face is a rectangle, not a trapezoid: its far edge is exactly as long
+as its near edge and as the front face below it_. Those go WITH the rotation, never instead of it.
+
 **Check a proportion at SLOT size before writing it.** "The cornice takes the top fifth, and its top face
 is part of that" is five pixels in a 49-tall sprite: the model drew it and nobody could see it. The
 merchant's working arch made its beam two fifths of the frame and the top face a third of THAT. Do the
