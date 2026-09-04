@@ -459,6 +459,17 @@ map dims, so the fade reads as this doorway rather than as a lighting change.
 Both sides have to be drawn floor, so an unexplored way through carries no arch — an arch is a thing you
 can see, and the fog is what you cannot.
 
+**A mouth is a doorway, so it needs the way to be OPEN.** The gap where lit floor meets an unlit passage
+is left blank — that blank is how the map says the way carries on. But the test for it asked only
+whether one side was unlit and the other floor, which is also true of a chamber standing against an
+unexplored corridor it is walled off from: a treasure chamber with a junior corridor running along its
+back lost that whole wall and read as open to the void. Passability is the condition that separates a
+doorway from a coincidence, and it is asked in one place (`mouthTest`) because the wall band and
+`hasWallFace` — which is where a wall ITEM hangs — must never disagree about where a wall runs.
+
+Note the direction: this reveals LESS. An unlit corridor's length was already blank on both sides and
+is untouched; only a lit boundary changes, and it changes from nothing to stone.
+
 ## Whose tomb it is — the tier ladder
 
 A tier is a **rank**: whose tomb the player is robbing. The catalogue already asserts the ladder, tier

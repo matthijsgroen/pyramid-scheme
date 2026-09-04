@@ -193,6 +193,21 @@ describe("buildTileRegions — walls", () => {
     expect(has(allFloor(regions), westGap(0, 1))).toBe(false)
   })
 
+  // ...but a mouth is a DOORWAY, so it needs the way to be open. A treasure chamber with an unexplored
+  // junior corridor running along the back of it, walled off from it, was losing that whole wall: floor
+  // sat against an unlit cell, which was all the mouth test asked for. The blank is how the map says
+  // "you can go this way", so it may only appear somewhere the player can.
+  it("walls a chamber off from an unlit passage it has no way through to", () => {
+    const closed = buildTileRegions(2, 1, gridOf({ "1,0": "reachable" }, ["1,0"], ["0,0"]), nothingPassable, "starter")
+    expect(has(allWall(closed), northGap(1, 0))).toBe(true)
+    expect(has(allFloor(closed), northGap(1, 0))).toBe(false)
+
+    // The same two cells with a way between them is the mouth the test above is about, and stays open.
+    const open = buildTileRegions(2, 1, gridOf({ "1,0": "reachable" }, ["1,0"], ["0,0"]), allPassable, "starter")
+    expect(has(allWall(open), northGap(1, 0))).toBe(false)
+    expect(has(allFloor(open), northGap(1, 0))).toBe(false)
+  })
+
   it("gives a wall the brightest state around it, so the near side of a wall is never dimmed", () => {
     const regions = buildTileRegions(3, 1, gridOf({ "0,0": "visible", "2,0": "reachable" }), allPassable, "starter")
 

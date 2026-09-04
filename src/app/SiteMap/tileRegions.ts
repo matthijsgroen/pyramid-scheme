@@ -82,17 +82,41 @@ const BRIGHTNESS: Record<CellState, number> = { fogged: 0, visible: 1, completed
 const brightest = (...states: (CellState | null | undefined)[]): CellState | null =>
   states.reduce<CellState | null>((best, s) => (s && (!best || BRIGHTNESS[s] > BRIGHTNESS[best]) ? s : best), null)
 
+type FloorHere = { state: CellState; kind: CellKind; tier: Difficulty } | null
+
+/**
+ * Is this gap the MOUTH of an unlit passage — the one gap where lit floor meets it?
+ *
+ * An unlit passage is stone as far as the walls are concerned and shows only at its mouth. Drawing its
+ * whole length as nothing traced the route of a corridor the player has not walked: a black channel
+ * through the stone, its direction and length legible, which is exactly what the fog is for. "The way
+ * carries on" is a doorway, not a map.
+ *
+ * A doorway, though — which is why the way has to be OPEN. Without that condition this fired on any
+ * boundary where floor happened to sit against an unexplored passage, and blanked it: a treasure
+ * chamber with a junior corridor running past its back, walled off from it, lost its whole north wall
+ * and read as open to the void. The blank is how the map says "you can go this way", so it may only
+ * appear somewhere the player can.
+ *
+ * Shared by the band and by `hasWallFace` because the two must never disagree about where a wall runs.
+ */
+const mouthTest =
+  (floorAt: FloorAt, openBetween: OpenBetween, floorOf: (r: number, c: number) => FloorHere) =>
+  (a: readonly [number, number], b: readonly [number, number], dir: "s" | "e"): boolean =>
+    openBetween(a[0], a[1], dir) &&
+    ((!!floorOf(...a) && floorAt(...b) === "unlit") || (!!floorOf(...b) && floorAt(...a) === "unlit"))
+
 /** Is the gap north of this cell a wall FACE — the side you look at? Floor below to look at it from,
- * no doorway through it, and no unlit passage on either side (a mouth stays open). Exported because a
- * wall item hangs in that band, so the renderer has to ask the same question the band does. */
+ * no doorway through it, and no unlit passage you could WALK INTO on either side (a mouth stays open).
+ * Exported because a wall item hangs in that band, so the renderer has to ask the same question the
+ * band does. */
 export const hasWallFace = (floorAt: FloorAt, openBetween: OpenBetween, row: number, col: number): boolean => {
   const floorOf = (r: number, c: number) => {
     const at = floorAt(r, c)
     return typeof at === "string" ? null : at
   }
-  const isMouth = (a: readonly [number, number], b: readonly [number, number]): boolean =>
-    (!!floorOf(...a) && floorAt(...b) === "unlit") || (!!floorOf(...b) && floorAt(...a) === "unlit")
-  if (!floorOf(row, col) || isMouth([row - 1, col], [row, col])) return false
+  const isMouth = mouthTest(floorAt, openBetween, floorOf)
+  if (!floorOf(row, col) || isMouth([row - 1, col], [row, col], "s")) return false
   const above = floorOf(row - 1, col)
   return !(above && openBetween(row - 1, col, "s"))
 }
@@ -132,13 +156,7 @@ export const buildTileRegions = (
   // corridor twice as thick as the wall it stands for.
   const litTouching = (...cells: readonly (readonly [number, number])[]) =>
     brightest(...cells.map(([r, c]) => stateOf(r, c)))
-  const isUnlit = (r: number, c: number) => floorAt(r, c) === "unlit"
-  // An unlit passage is stone as far as the walls are concerned, and shows only at its MOUTH: the one
-  // gap where lit floor meets it. Drawing its whole length as nothing traced the route of a corridor
-  // the player has not walked — a black channel through the stone, its direction and length legible,
-  // which is exactly what the fog is for. "The way carries on" is a doorway, not a map.
-  const isMouth = (a: readonly [number, number], b: readonly [number, number]): boolean =>
-    (!!floorOf(...a) && isUnlit(...b)) || (!!floorOf(...b) && isUnlit(...a))
+  const isMouth = mouthTest(floorAt, openBetween, floorOf)
   // Asked by the gap itself AND by the corners beside it, so the two can never disagree about where a
   // wall band runs — and by the renderer, to find a cell with a band to hang a wall item on.
   const isFaceGap = (r: number, c: number): boolean => hasWallFace(floorAt, openBetween, r, c)
@@ -182,7 +200,7 @@ export const buildTileRegions = (
         const groups = groupsFor(tierAt([r, c], [r - 1, c]))
         floorGroup(groups, here, north)[brightest(here.state, north.state)!].push(northGap)
         if (here.tier !== north.tier) groupsFor(here.tier).threshold.push(northGap)
-      } else if (isMouth([r - 1, c], [r, c])) {
+      } else if (isMouth([r - 1, c], [r, c], "s")) {
         // The mouth of an unexplored passage. Left black on purpose: that opening is how the map says
         // the way carries on past what has been explored.
       } else if (isFaceGap(r, c)) {
@@ -206,7 +224,7 @@ export const buildTileRegions = (
         const groups = groupsFor(tierAt([r, c], [r, c - 1]))
         floorGroup(groups, here, west)[brightest(here.state, west.state)!].push(westGap)
         if (here.tier !== west.tier) groupsFor(here.tier).threshold.push(westGap)
-      } else if (isMouth([r, c - 1], [r, c])) {
+      } else if (isMouth([r, c - 1], [r, c], "e")) {
         // Same mouth, sideways.
       } else {
         const around = [
