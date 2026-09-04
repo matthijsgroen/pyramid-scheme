@@ -94,24 +94,41 @@ the frame" were both ignored, repeatedly. Ask for COUNTS and for fractions of so
 drawing — "exactly 7 slabs across", "the top face is the upper third of the block". Fix the rest at import
 (`--repeat`, the arch's slot fitting), which is deterministic where a prompt is not.
 
-**Ask for the camera as a ROTATION with a fraction, not as an angle.** Every abstract phrasing has
-lost: "30 degrees above the floor", "orthographic", "depth squashed to half" all came back as
-three-quarter perspective, on arches and on props alike. What works is telling the model to rotate the
-object and saying how much of it that should reveal: _rotate this object towards the camera over the
-horizontal axis, so that the TOP of it shows as about one third of the object's height and the front as
-the other two thirds._ One third is this camera — a square-section timber shows a top face 0.58 as deep
-as its front is tall, so top over total is 0.58 / 1.58. Asking for two thirds gives a view looking DOWN
-into the object, which no wall in this set agrees with.
+**Do not ask for a ROTATION. Ask the model to describe the projection, then hand its own words back.**
+Every phrasing invented on this side lost: "30 degrees above the floor", "orthographic", "depth squashed
+to half", and worst of all "rotate the object towards the camera until the top shows as a third" — which
+is a request for 3D and was answered with 3D, converging uprights and trapezoid tops, three rolls running.
 
-**The rotation line does not carry orthographic on its own — say PARALLEL as something measurable.**
-Asked to rotate, a model rotates in perspective: the rack's uprights converged and its top narrowed
-toward the back. Two statements fix it, and both can be checked while drawing: _the object is exactly as
-wide at the top as at the bottom — measure across the top edge and across the bottom edge and the two
-numbers are the same_, and _a top face is a rectangle, not a trapezoid: its far edge is exactly as long
-as its near edge and as the front face below it_. Those go WITH the rotation, never instead of it.
+What worked was showing the model a picture that was right and asking it how to reproduce that view. It
+named the thing, which is most of the value, and the rule set below is its own answer. Paste it verbatim;
+a model follows its own wording better than ours.
 
-Said shortest, and this is the wording that actually landed it: _the lines of the top and front should
-be straight and parallel from top to bottom._
+```
+THE VIEW: FLAT ORTHOGRAPHIC HYBRID
+
+NO PERSPECTIVE OR CONVERGENCE: There is no vanishing point. Nothing gets smaller as it goes back in
+space. All vertical lines remain perfectly vertical and parallel. All horizontal lines remain
+perfectly horizontal and parallel.
+
+FRONTS AND TOPS ONLY: You may only show the exact front face of an object, plus the top face of
+horizontal elements. You must NEVER show the side (left, right, or inside) of any object or part.
+
+THE STACKED TOP RULE: If a horizontal part has a visible top, draw the top as a flat rectangular band
+sitting directly above its front face. The top band must be EXACTLY THE SAME WIDTH as the front face
+beneath it. It must be a perfect rectangle — it does not taper, it does not slant, and it is not a
+parallelogram or a trapezoid. Simply draw a lighter rectangle directly on top of a darker rectangle.
+
+STRICT SYMMETRY: The object must be perfectly symmetrical left-to-right. If one side shows a different
+angle or more of its surface than the other, the view has incorrectly tipped into 3D.
+
+NO DEPTH OR ROTATION ON THE Y-AXIS: The object faces perfectly square to the camera. Never angle the
+object diagonally. Every edge is either strictly horizontal or strictly vertical, except for organic
+curves (like the taper of a jar or a character's silhouette) which must still be drawn perfectly
+straight-on.
+```
+
+It is missing one number, and this document has it: a top band is about HALF as deep as the front face
+beneath it is tall (0.58, from the camera above). Add that line or the tops come out as slivers.
 
 **Check a proportion at SLOT size before writing it.** "The cornice takes the top fifth, and its top face
 is part of that" is five pixels in a 49-tall sprite: the model drew it and nobody could see it. The
