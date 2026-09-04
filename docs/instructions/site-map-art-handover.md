@@ -59,6 +59,42 @@ through `src/ui/atoms/tombImageMap.ts`. Those are NOT the map's files and must n
 
 Sources are `~/tile-previews/<tier>-wall-panel.png` at 2000x2000.
 
+## The prop pipeline — why it is changing, and to what
+
+Four merchant props were made by prompting alone and cost eighteen rolls. The pattern in those rolls is
+the whole argument: the generator obeys the projection on BOXES (jar rack, market table — one roll each
+once the STYLE block settled) and refuses it on FIGURES and CURVES (ka-statue seven rolls, water jar
+three). Worse, every prop is an independent throw, so consistency across ~125 remaining props is luck,
+and nothing in the loop can rotate an object or make a variant.
+
+The projection is not a matter of taste. Cavalier oblique is ONE MATRIX — a shear, `z' = z + k*y`,
+under an orthographic front view — which is why no camera phrasing ever produced it: no camera
+placement can. `scripts/renderProp.py` applies it in Blender, so geometry becomes correct by
+construction, the same move `make-arch` made for gateways.
+
+**The pipeline, in four steps:**
+
+1. **Mesh** — image-to-3D from a painted concept, or from text. TRELLIS (MIT), TripoSR (MIT) and
+   Hunyuan3D (open weights, check its commercial terms) all run on a CUDA machine; Meshy and Tripo AI
+   are hosted and paid. Verify licences before relying on them.
+2. **Render** — `yarn render-prop --mesh=x.glb --out=y.png [--spin=90] [--shear=1.0]`. Orthographic,
+   sheared, flat-lit, transparent. `--spin` turns the object on the floor before the shear, which is
+   the thing prompting could never do. `--primitive=cube` is the calibration case: at shear 1.0 a unit
+   cube's top face must come out exactly as wide and as tall as its front, nothing narrowing.
+3. **Repaint** — hand the render to the generator as an image and ask only for MATERIAL: _redraw this
+   exact shape, keep every edge exactly where it is, paint it as merchant mudbrick and timber._ This
+   is the task it has been reliable at all session — every wall and floor re-roll was of that shape —
+   and it means the prompt no longer contains a word about projection.
+4. **Import** — `import-tile --slot=prop` as now, with `--brightness` and the floor-separation check.
+
+Geometry from the deterministic step, paint from the model's strength, and neither asked to do the
+other's job.
+
+**None of this is verified.** The script was written on a machine with no Blender. Run the cube first:
+if the cube is right the matrix is right, whatever a mesh does afterwards. Then one real prop end to
+end, stood beside the four painted ones at 56x84 — the only question that decides this is whether a
+repainted render looks like it belongs in the same tomb.
+
 ## The loop, per file
 
 ```

@@ -29,7 +29,8 @@
     "release": "tsx scripts/release.ts",
     "prepare": "husky",
     "tile-stats": "tsx scripts/tileStats.ts",
-    "make-arch": "tsx scripts/makeArch.ts"
+    "make-arch": "tsx scripts/makeArch.ts",
+    "render-prop": "blender -b -P scripts/renderProp.py --"
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --fix",
