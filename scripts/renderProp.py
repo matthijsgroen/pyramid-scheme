@@ -37,7 +37,7 @@ thing to run.
 import sys
 import math
 import bpy
-from mathutils import Matrix
+from mathutils import Matrix, Vector
 
 # The slot is 56x84 map units; render well above it and let `import-tile` resize, the same way every
 # painted tile in this set is generated far above map size (tile-art-brief.md, "The style").
@@ -64,7 +64,7 @@ def clear_scene():
 
 def load_subject(mesh_path, primitive):
     if primitive == "cube":
-        bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, 0.5))
+        bpy.ops.mesh.primitive_cube_add(size=1)
         return bpy.context.object
     if mesh_path.endswith(".glb") or mesh_path.endswith(".gltf"):
         bpy.ops.import_scene.gltf(filepath=mesh_path)
@@ -87,32 +87,51 @@ def load_subject(mesh_path, primitive):
     return bpy.context.object
 
 
+def make_active(obj):
+    """transform_apply needs an active, selected object in object mode, and an imported mesh is not
+    reliably either."""
+    bpy.ops.object.select_all(action="DESELECT")
+    obj.select_set(True)
+    bpy.context.view_layer.objects.active = obj
+
+
+def local_bounds(obj):
+    """The mesh's own extents. `bound_box` yields plain float triples, not Vectors, so they are wrapped
+    before any matrix touches them."""
+    corners = [Vector(c) for c in obj.bound_box]
+    xs = [c.x for c in corners]
+    ys = [c.y for c in corners]
+    zs = [c.z for c in corners]
+    return (min(xs), max(xs)), (min(ys), max(ys)), (min(zs), max(zs))
+
+
 def seat_and_normalise(obj):
     """One unit tall, centred on X and Y, standing on z=0 — so every prop enters the shear at the same
     size whatever the mesh generator handed back, and the framing below can be fixed rather than fitted."""
+    make_active(obj)
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-    bbox = [obj.matrix_world @ Matrix.Identity(4).to_3x3() @ v for v in obj.bound_box]
-    xs, ys, zs = zip(*[(v[0], v[1], v[2]) for v in bbox])
-    height = max(zs) - min(zs)
+    (x0, x1), (y0, y1), (z0, z1) = local_bounds(obj)
+    height = z1 - z0
     if height <= 0:
         raise SystemExit("mesh has no height")
-    obj.scale = (1 / height,) * 3
-    bpy.ops.object.transform_apply(scale=True)
-    bbox = [Matrix.Identity(4).to_3x3() @ v for v in obj.bound_box]
-    xs, ys, zs = zip(*[(v[0], v[1], v[2]) for v in bbox])
-    obj.location = (-(max(xs) + min(xs)) / 2, -(max(ys) + min(ys)) / 2, -min(zs))
-    bpy.ops.object.transform_apply(location=True)
-    return max(xs) - min(xs), max(ys) - min(ys)
+    obj.data.transform(Matrix.Scale(1 / height, 4))
+    (x0, x1), (y0, y1), (z0, z1) = local_bounds(obj)
+    obj.data.transform(Matrix.Translation((-(x1 + x0) / 2, -(y1 + y0) / 2, -z0)))
+    (x0, x1), (y0, y1), (z0, z1) = local_bounds(obj)
+    return x1 - x0, y1 - y0
 
 
 def shear(obj, k, spin_degrees):
     """Spin on the floor first, then shear. Order matters: shearing a spun object is a different view of
-    the same thing, while spinning a sheared one is nonsense."""
+    the same thing, while spinning a sheared one is nonsense.
+
+    Both go onto the MESH DATA, not onto the object's transform. An object matrix is decomposed into
+    location, rotation and scale — a shear is none of those and would be silently thrown away, leaving a
+    plain front elevation that looks like the projection simply failed again."""
     if spin_degrees:
-        obj.rotation_euler = (0, 0, math.radians(spin_degrees))
-        bpy.ops.object.transform_apply(rotation=True)
+        obj.data.transform(Matrix.Rotation(math.radians(spin_degrees), 4, "Z"))
     # z' = z + k*y, everything else identity.
-    obj.matrix_world = Matrix(((1, 0, 0, 0), (0, 1, 0, 0), (0, k, 1, 0), (0, 0, 0, 1))) @ obj.matrix_world
+    obj.data.transform(Matrix(((1, 0, 0, 0), (0, 1, 0, 0), (0, k, 1, 0), (0, 0, 0, 1))))
 
 
 def add_camera(width_units, height_units):
