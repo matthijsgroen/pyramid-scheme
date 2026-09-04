@@ -251,6 +251,46 @@ no ink, no cel shading. Every edge is a change of value.
 Even lighting left to right, no hotspot, no vignette.
 ```
 
+## 3a. The prop preamble — paste above every prop, unchanged
+
+Settled on the jar rack and the Bes/ka-statue, at a cost of fifteen rolls. Paste it verbatim: every
+attempt to improve the wording mid-set cost a roll and taught nothing, because the theory and the
+phrasing changed together.
+
+```
+straight-on oblique projection. 50% top, 50% front, no sides.
+imagined on a parallel grid used in top down 16 bit games
+
+One object alone, painted and matte, with soft brush texture and grit. Soft modelled shading,
+never flat cel shading. NO OUTLINES: no dark contour around the object or any part of it —
+every edge is a change of value, never a stroke.
+
+It stands on the bottom edge of the picture, centred. A soft dark shadow lies on the ground
+beneath it, darkest where it meets the floor, no wider than the object and reaching no further
+below it than a tenth of its height. No hard edge, no drawn ellipse.
+
+Everything that is not the object or its shadow is flat magenta #ff00ff to all four edges — no
+floor, no wall, no room, no gradient, no glow.
+
+Palette, strictly: objects #a49781 and #5c5347, one warm ochre accent #b07a3c, against floor
+#6c6257 and walls #4a4137. NOTHING LIGHTER THAN #a49781 — no white, no cream, no pale grey, no
+highlight brighter than that, no shine, no gloss. Nothing darker than #282219.
+
+It will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE: few,
+large, simple shapes and nothing finer than a tenth of the object. No text, no letters, no
+hieroglyphs, no watermark, no frame, no border.
+```
+
+Then one line of subject from the table below, and one line of ASPECT — which is what sets the prop's
+size on the map, since the import trims to the object: drawn height in the cell is `56 x (height /
+width)`, capped at 84. As wide as tall lands about a cell; 1.25 times wider than tall lands waist-high;
+2:3 or taller fills the slot.
+
+Two more things learned the hard way. **Never ask for strict symmetry and asymmetric damage in the same
+prompt** — a broken shoulder against "perfectly symmetrical left-to-right" degraded the geometry every
+time; establish the shape first, add damage after. And **a prop always comes back too light**:
+`--brightness=0.72` fixed the statue, `0.92` the rack, and no wording has ever prevented it.
+
 ## 3. Chamber props — 15 files, 2:3, magenta background
 
 Each of these is one object, standing on the bottom edge of the frame, roughly two thirds of the frame

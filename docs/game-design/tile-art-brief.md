@@ -94,6 +94,21 @@ the frame" were both ignored, repeatedly. Ask for COUNTS and for fractions of so
 drawing — "exactly 7 slabs across", "the top face is the upper third of the block". Fix the rest at import
 (`--repeat`, the arch's slot fitting), which is deterministic where a prompt is not.
 
+**The projection has a NAME, and naming it is the whole instruction.** Everything below this paragraph
+was derived the hard way — three-line depth rules, stacked-top rules, construction procedures, the
+generator's own rule set — and all of it together took nine rolls on one jar rack and six on one statue.
+What actually works is four phrases:
+
+```
+straight-on oblique projection. 50% top, 50% front, no sides.
+imagined on a parallel grid used in top down 16 bit games
+```
+
+"Oblique projection" is the real term for what all those paragraphs were describing, so the model already
+knows it and does not have to be taught it. "50% top, 50% front" fixes the tilt, "no sides" kills the
+isometric rotation, and the 16-bit grid names the convention. Use those four phrases; keep the longer
+material below only as the explanation of WHY, for a human reading this.
+
 **A PROP is tilted more steeply than a WALL, on purpose.** The renderer's geometry fixes the wall at
 half — `SIDE_W` 14 of thickness images as `FACE_TOP` 7 — and at that angle an object shows so little of
 its top that it reads as a cardboard cut-out standing on the floor. Props therefore use depth at FULL
