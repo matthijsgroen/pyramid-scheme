@@ -59,59 +59,15 @@ through `src/ui/atoms/tombImageMap.ts`. Those are NOT the map's files and must n
 
 Sources are `~/tile-previews/<tier>-wall-panel.png` at 2000x2000.
 
-## The prop pipeline — why it is changing, and to what
+## The prop pipeline
 
-Four merchant props were made by prompting alone and cost eighteen rolls. The pattern in those rolls is
-the whole argument: the generator obeys the projection on BOXES (jar rack, market table — one roll each
-once the STYLE block settled) and refuses it on FIGURES and CURVES (ka-statue seven rolls, water jar
-three). Worse, every prop is an independent throw, so consistency across ~125 remaining props is luck,
-and nothing in the loop can rotate an object or make a variant.
+Four steps with a gate on each, written out in [prop-pipeline.md](prop-pipeline.md): decide the object
+and where its mesh comes from, render the geometry, hand a scaffold to the generator for MATERIAL only,
+import through the render's own alpha. The expensive step is the repaint, so nothing reaches it that a
+measurement could have rejected first.
 
-The projection is not a matter of taste. Cavalier oblique is ONE MATRIX — a shear, `z' = z + k*y`,
-under an orthographic front view — which is why no camera phrasing ever produced it: no camera
-placement can. `scripts/renderProp.py` applies it in Blender, so geometry becomes correct by
-construction, the same move `make-arch` made for gateways.
-
-**The pipeline, in four steps:**
-
-1. **Mesh** — image-to-3D from a painted concept, or from text. TRELLIS (MIT), TripoSR (MIT) and
-   Hunyuan3D (open weights, check its commercial terms) all run on a CUDA machine; Meshy and Tripo AI
-   are hosted and paid. Verify licences before relying on them.
-2. **Render** — `yarn render-prop --mesh=x.glb --out=y.png [--spin=90] [--shear=1.0]`. Orthographic,
-   sheared, flat-lit, transparent. `--spin` turns the object on the floor before the shear, which is
-   the thing prompting could never do. `--primitive=cube` is the calibration case: at shear 1.0 a unit
-   cube's top face must come out exactly as wide and as tall as its front, nothing narrowing.
-3. **Repaint** — hand the render to the generator as an image and ask only for MATERIAL: _redraw this
-   exact shape, keep every edge exactly where it is, paint it as merchant mudbrick and timber._ This
-   is the task it has been reliable at all session — every wall and floor re-roll was of that shape —
-   and it means the prompt no longer contains a word about projection.
-4. **Import** — `import-tile --slot=prop` as now, with `--brightness` and the floor-separation check.
-
-Geometry from the deterministic step, paint from the model's strength, and neither asked to do the
-other's job.
-
-**Proven end to end on Blender 5.2.1, on a Mac, with no GPU.** The calibration cube measures exactly:
-height/width 2.006 against a required 2.000, no row narrowing, top/front split at 50.0%. A rendered and
-repainted market table then stood beside two hand-painted props at 56x84 and could not be picked out by
-idiom — p50 131, 25 lighter than its floor, 0.2% over the clamp at `--brightness=0.95`.
-
-Two things the probe cost, both now in the script or the prompt:
-
-- **Colour the scaffold before rendering.** A grey render is unrecognisable: asked to repaint an
-  untextured grey table, the generator read it as a pair of wooden door panels and filled them with
-  photographic burl. `--colour=#a49781` makes it arrive brown, in palette, top lighter than front, and
-  the repaint drops from interpretation to texture.
-- **Name the parts in the repaint prompt.** "The large light rectangle is the TABLETOP seen from above,
-  the narrow band below it is the front edge, the four bars are legs. It is a table, not a door." The
-  first repaint failed for want of that sentence.
-
-The repaint prompt contains NO projection language at all. That is the point of the whole arrangement:
-geometry from the matrix, paint from the generator, neither asked to do the other's job.
-
-Still open: the contact shadow comes back near-black and solid, which reads as a hole under the object
-rather than as shadow — a prop is only graded on its light end so nothing catches it. And at
-`--shear=1.0` depth adds its full size to drawn height, so boxy props tend to fill the slot; `0.7` is
-worth trying for the set.
+It exists because geometry is not a thing to ask for. Cavalier oblique is one matrix — a shear under an
+orthographic front view — and eighteen rolls went into asking for it in words before that was accepted.
 
 ## The loop, per file
 

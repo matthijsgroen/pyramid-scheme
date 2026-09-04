@@ -580,7 +580,17 @@ def main():
     if background != "none":
         add_backdrop(background, obj)
     render(out, width, height, engine, int(arg("samples", "64")))
-    print(f"{out} — {width}x{height}, {engine}, shear {k}, spin {spin}deg, colour {colour}, object {w_units:.2f} wide {d_units:.2f} deep")
+    # What it will actually BE, in map units, before a single repaint is spent on it. The import trims to
+    # the object and scales it into a 56x84 slot, so drawn height is 56 * (height / width) capped at 84 —
+    # which is how a 20cm shabti arrived 84 units tall, as tall as the explorer, and nobody noticed until
+    # after it had been painted. --scale divides both.
+    drawn_h = 1.0 + k * d_units
+    aspect = drawn_h / w_units if w_units else 0
+    cell_h = min(84, round(56 * aspect))
+    cell_w = round(cell_h / aspect) if aspect else 0
+    print(f"{out} — {width}x{height}, {engine}, shear {k}, spin {spin}deg, colour {colour}")
+    print(f"  object {w_units:.2f} wide {d_units:.2f} deep, aspect {aspect:.2f}")
+    print(f"  lands at {cell_w}x{cell_h} map units at --scale=1   (a cell is 56, the explorer is 40x70)")
 
 
 main()
