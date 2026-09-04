@@ -26,6 +26,12 @@
  *                    Blender render's alpha is the true silhouette, and a repaint that softened an edge
  *                    into the magenta leaves a keyed halo the despill cannot reach. Masking to the
  *                    render throws that away and guarantees the shape the geometry actually had.
+ *   --scale=0.45     how much of the SLOT the object fills, still standing on the floor line. Without it
+ *                    a prop grows until it touches an edge, so a lamp and a sarcophagus arrive the same
+ *                    height — a shabti, which is a 20cm figurine, landed 84 units tall.
+ *   --saturation=1.3 push colour further from grey. A repaint of a render comes back COOLER than the
+ *                    hand-painted set — +14 warmth where the painted props sit at +22 to +25 — because a
+ *                    generator desaturates toward grey when copying rather than inventing.
  *   --brightness=0.8 scale everything darker (or lighter above 1). The failure an OBJECT actually has is
  *                    chalky highlights — a prop comes back lit for a gallery rather than for a cellar —
  *                    and no wording has reliably prevented it. Uses a brightness modulation rather than a
@@ -213,13 +219,15 @@ const cutToMask = async (img: sharp.Sharp, maskPath: string): Promise<sharp.Shar
   return sharp(cut)
 }
 
-const seatOnFloorLine = async (img: sharp.Sharp, aspect: number): Promise<sharp.Sharp> => {
+const seatOnFloorLine = async (img: sharp.Sharp, aspect: number, scale: number): Promise<sharp.Sharp> => {
   // Encoded, not raw: `composite` needs an image it can parse, and a sharp instance built from a raw
   // buffer has no format of its own to fall back on.
   const trimmed = await img.trim({ threshold: 1 }).png().toBuffer({ resolveWithObject: true })
   const { width, height } = trimmed.info
   // A frame of the slot's shape, at least as big as the object, with the object centred on its bottom edge.
-  const frameH = Math.max(height, Math.round(width / aspect))
+  // `scale` is how much of the slot the object may fill. At 1 it grows until it touches an edge, which
+  // is why every prop otherwise arrives the same height whatever the real thing is.
+  const frameH = Math.max(Math.round(height / scale), Math.round(width / aspect / scale))
   const frameW = Math.max(width, Math.round(frameH * aspect))
   // Rendered out before it goes back into the pipeline, because sharp resizes BEFORE it composites: left
   // lazy, the frame would be shrunk to the slot first and then asked to take a full-size object onto it.
@@ -255,7 +263,7 @@ const main = async (): Promise<void> => {
   if (archFitted) img = await fitToDoorway(img, w, h, smooth)
   const maskPath = arg("mask")
   if (maskPath) img = await cutToMask(img, maskPath)
-  if (seat && !process.argv.includes("--no-trim")) img = await seatOnFloorLine(img, w / h)
+  if (seat && !process.argv.includes("--no-trim")) img = await seatOnFloorLine(img, w / h, Number(arg("scale", "1")))
 
   const dir = join(OUT_ROOT, tier)
   mkdirSync(dir, { recursive: true })
