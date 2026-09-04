@@ -39,8 +39,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A nobleman's walls are plastered and painted: a procession of small figures carrying jars and sheaves
   walks the length of every chamber, above a red dado band rubbed thin by passing shoulders.
 - A merchant's chamber holds his goods: a timber rack of sealed wine and oil jars with one leaning
-  against its neighbour, and a squat limestone Bes on a plinth, tongue out, guarding the place with the
-  last of his paint worn off.
+  against its neighbour, his trading table with a balance and a heap of grain, a water jar on its stand,
+  and a small worn shabti standing knee-high beside them — the cheap mass-made figurine a poor man was
+  buried with, its paint long gone.
 - A tomb puzzle is set against a whole wall of the tomb it was found in — a merchant's mudbrick with
   his tally scratched on it, a nobleman's four registers of harvest and banquet with the plaster fallen
   through them, a priest's columns of carved hieroglyphs, a pharaoh's granite worked to the floor, and
