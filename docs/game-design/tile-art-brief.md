@@ -94,6 +94,15 @@ the frame" were both ignored, repeatedly. Ask for COUNTS and for fractions of so
 drawing — "exactly 7 slabs across", "the top face is the upper third of the block". Fix the rest at import
 (`--repeat`, the arch's slot fitting), which is deterministic where a prompt is not.
 
+**Ask for the camera as a ROTATION with a fraction, not as an angle.** Every abstract phrasing has
+lost: "30 degrees above the floor", "orthographic", "depth squashed to half" all came back as
+three-quarter perspective, on arches and on props alike. What works is telling the model to rotate the
+object and saying how much of it that should reveal: _rotate this object towards the camera over the
+horizontal axis, so that the TOP of it shows as about one third of the object's height and the front as
+the other two thirds._ One third is this camera — a square-section timber shows a top face 0.58 as deep
+as its front is tall, so top over total is 0.58 / 1.58. Asking for two thirds gives a view looking DOWN
+into the object, which no wall in this set agrees with.
+
 **Check a proportion at SLOT size before writing it.** "The cornice takes the top fifth, and its top face
 is part of that" is five pixels in a 49-tall sprite: the model drew it and nobody could see it. The
 merchant's working arch made its beam two fifths of the frame and the top face a third of THAT. Do the
