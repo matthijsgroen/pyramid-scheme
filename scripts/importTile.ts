@@ -204,7 +204,13 @@ const cutToMask = async (img: sharp.Sharp, maskPath: string): Promise<sharp.Shar
   // `joinChannel` looks like the direct way to do it and does not work here: the joined band never
   // becomes alpha and every pixel comes out opaque.
   const mask = await sharp(maskPath).ensureAlpha().resize(width, height, { fit: "fill" }).png().toBuffer()
-  return sharp(art.data).composite([{ input: mask, blend: "dest-in" }])
+  // Rendered out before it goes back into the pipeline. sharp resizes BEFORE it composites, so a lazy
+  // composite handed downstream is applied at the wrong size — the same trap make-seamless documents.
+  const cut = await sharp(art.data)
+    .composite([{ input: mask, blend: "dest-in" }])
+    .png()
+    .toBuffer()
+  return sharp(cut)
 }
 
 const seatOnFloorLine = async (img: sharp.Sharp, aspect: number): Promise<sharp.Sharp> => {
