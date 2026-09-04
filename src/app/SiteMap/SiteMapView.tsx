@@ -642,6 +642,8 @@ export type RoomClaims = {
   decorationAt: ReadonlyMap<string, DecorationKind>
   /** unordered cell-pair keys with no wall between them (owner<->claim, or diagonal<->flank) */
   openEdges: ReadonlySet<string>
+  /** unordered OWNER-pair keys for two chambers the player can already walk between */
+  joinedOwners: ReadonlySet<string>
 }
 
 // Row-major scan order, plus a strength ranking for contested diagonals (see below), so
@@ -784,7 +786,44 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
     decorationAt.set(candidates.find(wallBehind) ?? candidates[0], owner.decoration)
   }
 
-  return { claimedBy, decorationAt, openEdges }
+  /**
+   * Two chambers the player can ALREADY walk between are one space, so no partition is drawn anywhere
+   * along their shared boundary.
+   *
+   * A footprint is several cells wide and only the one cell-pair carrying the graph edge was open, so
+   * the rest of the boundary stayed walled: a partition running partway into a room you can walk
+   * straight across. Nothing here changes what is walkable or the shape of either footprint — the
+   * rooms are already where they are, and the wall between them is the only thing that goes.
+   *
+   * Keyed by OWNER pair rather than by cell pair, because the question is about the two rooms and not
+   * about the boundary: find the edge once, and the whole seam opens.
+   */
+  const joinedOwners = new Set<string>()
+  const ownerOfKey = (key: string): string | undefined => {
+    const [r, c] = key.split(",").map(Number)
+    return claimedBy.get(key) ?? (cellAt(grid, r, c).type === "room" ? key : undefined)
+  }
+  for (const key of [...claimedBy.keys(), ...new Set(claimedBy.values())]) {
+    const [r, c] = key.split(",").map(Number)
+    const own = ownerOfKey(key)
+    if (!own) continue
+    for (const [dr, dc] of ORTHO_OFFSETS) {
+      const nr = r + dr,
+        nc = c + dc
+      const other = ownerOfKey(`${nr},${nc}`)
+      if (!other || other === own) continue
+      // A REAL way through, from either side — the graph, not the claim.
+      const here = cellAt(grid, r, c)
+      const there = cellAt(grid, nr, nc)
+      const dir = dr === 1 ? "s" : dr === -1 ? "n" : dc === 1 ? "e" : "w"
+      const open =
+        ((here.type === "room" || here.type === "corridor") && here.dirs.has(dir)) ||
+        ((there.type === "room" || there.type === "corridor") && there.dirs.has(OPPOSITE_DIR[dir]))
+      if (open) joinedOwners.add([own, other].sort().join("|"))
+    }
+  }
+
+  return { claimedBy, decorationAt, openEdges, joinedOwners }
 }
 
 // The room a claimed cell renders as part of, if that room is lit — the claim borrows the owner's
@@ -835,7 +874,9 @@ const isPassable = (grid: FloorGrid, claims: RoomClaims, r: number, c: number, d
   const ownerOf = (row: number, col: number): string | undefined =>
     claims.claimedBy.get(`${row},${col}`) ?? (cellAt(grid, row, col).type === "room" ? `${row},${col}` : undefined)
   const own = ownerOf(r, c)
-  return !!own && own === ownerOf(nr, nc)
+  const other = ownerOf(nr, nc)
+  if (own && other && own !== other) return claims.joinedOwners.has([own, other].sort().join("|"))
+  return !!own && own === other
 }
 
 // **A wall is a cell, not an edge.** Whether two neighbouring drawn cells read as one open space is

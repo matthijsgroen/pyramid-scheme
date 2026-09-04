@@ -4,6 +4,7 @@ import { SiteMapView, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
 import { ExplorerFigure, LIGHT_POOL_ID } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
 import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
+import { ALL_STATES } from "./tileRegions"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 
@@ -68,6 +69,13 @@ const makeGrid = (cells: GridCell[][]): FloorGrid => ({
   exitPos: [0, 0],
   siteId: "test",
   staircases: {},
+})
+
+/** The cell between two chambers: a way through when linked, a dead end beside them when not. */
+const corridorBetween = (linked: boolean): GridCell => ({
+  type: "corridor",
+  dirs: new Set<Direction>(linked ? ["w", "e"] : []),
+  state: "completed",
 })
 
 const clickableIn = (container: HTMLElement) =>
@@ -760,6 +768,55 @@ describe("the explorer stands in the room", () => {
       frames.add(container.querySelector("image")!.getAttribute("href")!)
     }
     expect(frames.size).toBeGreaterThan(1)
+  })
+})
+
+describe("two chambers you can already walk between are one space", () => {
+  // A footprint is several cells wide, and only the one cell-pair carrying the graph edge was open —
+  // so the rest of the shared boundary stayed walled and a partition ran partway into a room the
+  // player can walk straight across. Nothing about walkability or either footprint's shape changes;
+  // the wall between them is the only thing that goes.
+  const treasureRoom = (dirs: Direction[]): GridCell => ({
+    type: "room",
+    roomType: "encounter",
+    family: "treasure-chest",
+    tags: ["treasure"],
+    dirs: new Set<Direction>(dirs),
+    state: "completed",
+  })
+
+  /** Two claiming chambers with one corridor cell between them. Whether they are JOINED is whether
+   * anything actually opens across that cell — the rooms' OWN dirs count, not just the corridor's, so
+   * an "unlinked" pair has to face away from each other as well. */
+  const twoChambers = (linked: boolean) =>
+    makeGrid([
+      [empty, empty, empty, empty, empty],
+      [empty, treasureRoom([linked ? "e" : "n"]), corridorBetween(linked), treasureRoom([linked ? "w" : "n"]), empty],
+      [empty, empty, empty, empty, empty],
+    ])
+
+  /** Is anything walled in the band between the two footprints — the side wall at column 3, a row
+   * below the rooms' own cells so it is claim against claim rather than room against room? */
+  const partitioned = (linked: boolean) => {
+    const grid = twoChambers(linked)
+    const claims = buildRoomClaims(grid)
+    const regions = tileRegionsFor(grid, claims)
+    const gap = [cellLeft(3) - SIDE_W, cellTop(2), SIDE_W, CELL]
+    return [...regions.values()].some(groups =>
+      ALL_STATES.some(state =>
+        [...groups.wallMass[state], ...groups.wallFace[state]].some(rect => rect.every((n, i) => n === gap[i]))
+      )
+    )
+  }
+
+  it("drops the partition between them", () => {
+    expect(buildRoomClaims(twoChambers(true)).joinedOwners.size).toBe(1)
+    expect(partitioned(true)).toBe(false)
+  })
+
+  it("keeps it between two chambers that merely sit side by side", () => {
+    expect(buildRoomClaims(twoChambers(false)).joinedOwners.size).toBe(0)
+    expect(partitioned(false)).toBe(true)
   })
 })
 

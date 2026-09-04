@@ -459,6 +459,17 @@ map dims, so the fade reads as this doorway rather than as a lighting change.
 Both sides have to be drawn floor, so an unexplored way through carries no arch — an arch is a thing you
 can see, and the fog is what you cannot.
 
+**Two chambers the player can already walk between draw no partition.** A footprint is several cells
+wide and only the one cell-pair carrying the graph edge was open, so the rest of the shared boundary
+stayed walled — a partition running partway into a room you can walk straight across. `joinedOwners`
+answers it per PAIR OF ROOMS rather than per boundary: find the edge once and the whole seam opens.
+
+Nothing about this changes what is walkable or the shape of either footprint. The rooms are already
+where they are and already connected; the wall between them is the only thing that goes, and what it
+leaves is one larger floor to stand things on. Two chambers that merely sit side by side keep their
+wall, which is the rule this narrows rather than replaces — a claim is a render-time fact, so merging
+unconnected rooms would show one open space the player then could not cross.
+
 **A mouth is a doorway, so it needs the way to be OPEN.** The gap where lit floor meets an unlit passage
 is left blank — that blank is how the map says the way carries on. But the test for it asked only
 whether one side was unlit and the other floor, which is also true of a chamber standing against an
