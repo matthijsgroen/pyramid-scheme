@@ -100,9 +100,13 @@ generator's own rule set — and all of it together took nine rolls on one jar r
 What actually works is four phrases:
 
 ```
-straight-on oblique projection. 50% top, 50% front, no sides.
-imagined on a parallel grid used in top down 16 bit games
+STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. Display exactly 50% flat front
+elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
+vertical Y-axis. Strictly hide all left and right side planes.
 ```
+
+The whole prop prompt format sits in [starter-art-prompts.md](starter-art-prompts.md) §3a.
 
 "Oblique projection" is the real term for what all those paragraphs were describing, so the model already
 knows it and does not have to be taught it. "50% top, 50% front" fixes the tilt, "no sides" kills the

@@ -251,45 +251,59 @@ no ink, no cel shading. Every edge is a change of value.
 Even lighting left to right, no hotspot, no vignette.
 ```
 
-## 3a. The prop preamble — paste above every prop, unchanged
+## 3a. The prop prompt — a fixed format, five labelled blocks
 
-Settled on the jar rack and the Bes/ka-statue, at a cost of fifteen rolls. Paste it verbatim: every
-attempt to improve the wording mid-set cost a roll and taught nothing, because the theory and the
-phrasing changed together.
+Settled on the jar rack, the ka-statue and the market table, at a cost of about eighteen rolls. Paste it
+verbatim and change only SUBJECT and the last line of SCALE. Every attempt to improve the wording
+mid-set cost a roll and taught nothing, because the theory and the phrasing changed together.
+
+Attach the last accepted prop of the same rank as a reference image: it carries the paint and the
+projection without spending words on either.
 
 ```
-straight-on oblique projection. 50% top, 50% front, no sides.
-imagined on a parallel grid used in top down 16 bit games
+STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. Display exactly 50% flat front
+elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
+vertical Y-axis. Strictly hide all left and right side planes.
 
-One object alone, painted and matte, with soft brush texture and grit. Soft modelled shading,
-never flat cel shading. NO OUTLINES: no dark contour around the object or any part of it —
-every edge is a change of value, never a stroke.
+SUBJECT: <one or two sentences. What it is, what it is made of, what stands on it.>
 
+RENDERING: one object alone, painted and matte, with soft brush texture and grit. Soft modelled
+shading, never flat cel shading. NO OUTLINES: no dark contour around the object or any part of it
+— every edge is a change of value, never a stroke.
 It stands on the bottom edge of the picture, centred. A soft dark shadow lies on the ground
 beneath it, darkest where it meets the floor, no wider than the object and reaching no further
 below it than a tenth of its height. No hard edge, no drawn ellipse.
-
 Everything that is not the object or its shadow is flat magenta #ff00ff to all four edges — no
 floor, no wall, no room, no gradient, no glow.
 
-Palette, strictly: objects #a49781 and #5c5347, one warm ochre accent #b07a3c, against floor
+PALETTE, strictly: objects #a49781 and #5c5347, one warm ochre accent #b07a3c, against floor
 #6c6257 and walls #4a4137. NOTHING LIGHTER THAN #a49781 — no white, no cream, no pale grey, no
 highlight brighter than that, no shine, no gloss. Nothing darker than #282219.
 
-It will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE: few,
-large, simple shapes and nothing finer than a tenth of the object. No text, no letters, no
+SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
+few, large, simple shapes and nothing finer than a tenth of the object. No text, no letters, no
 hieroglyphs, no watermark, no frame, no border.
+<one line: the object is N times as wide as it is tall, and what that means physically.>
 ```
 
-Then one line of subject from the table below, and one line of ASPECT — which is what sets the prop's
-size on the map, since the import trims to the object: drawn height in the cell is `56 x (height /
-width)`, capped at 84. As wide as tall lands about a cell; 1.25 times wider than tall lands waist-high;
-2:3 or taller fills the slot.
+**Why that STYLE line and not a paragraph.** It is the generator's own wording, arrived at by showing it
+a correct picture and asking how to reproduce the view. `Cavalier oblique` is the real name for the
+projection — depth extruded at FULL scale, which is exactly the steeper tilt props use — so the model
+already knows it instead of being taught it. Nine rolls of hand-derived geometry (three-line depth rules,
+stacked-top rules, two-pass construction) never held; this held on a box of jars, a human figure and a
+table, first time each.
 
-Two more things learned the hard way. **Never ask for strict symmetry and asymmetric damage in the same
-prompt** — a broken shoulder against "perfectly symmetrical left-to-right" degraded the geometry every
-time; establish the shape first, add damage after. And **a prop always comes back too light**:
-`--brightness=0.72` fixed the statue, `0.92` the rack, and no wording has ever prevented it.
+**SCALE's last line is the size control.** The import trims to the object, so margins are discarded and
+the aspect is all that survives: drawn height in the cell is `56 x (height / width)`, capped at the
+slot's 84. As wide as tall lands about a cell; 1.4 times wider than tall lands knee-high; 2:3 or taller
+fills the slot. The jar rack is 56x50, the market table 56x43, the ka-statue 56x84.
+
+**Two things that will bite.** Never ask for strict symmetry and asymmetric damage in the same prompt —
+a broken shoulder against "perfectly symmetrical left-to-right" degraded the geometry every time;
+establish the shape first and add damage after. And a prop always comes back too light:
+`--brightness=0.72` fixed the statue, `0.8` the table, `0.92` the rack, and no wording has ever
+prevented it.
 
 ## 3. Chamber props — 15 files, 2:3, magenta background
 
