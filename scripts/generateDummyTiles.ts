@@ -911,8 +911,13 @@ const main = async (): Promise<void> => {
   // Shared art, written once: neither the explorer nor a beetle is a rank.
   await write("default", "scarab", scarabSvg(), 14, 10)
   count++
+  // How many frames each facing really has. Writing four for every one of them ADDED a fifth-hand
+  // placeholder beside the real east art, which has three: the generator skips a file that already
+  // exists, so it left 1-3 alone and wrote a 271-byte dummy as `explorer-e-4`. `sharedTileFrames`
+  // counts up until a gap, so that dummy became the fourth frame of the walk cycle.
+  const EXPLORER_FRAMES = { s: 4, n: 4, e: 3 } as const
   for (const facing of ["s", "n", "e"] as const) {
-    for (let frame = 1; frame <= 4; frame++) {
+    for (let frame = 1; frame <= EXPLORER_FRAMES[facing]; frame++) {
       await write("default", `explorer-${facing}-${frame}`, explorerSvg(facing, frame - 1), CHAR_W, CHAR_H)
       count++
     }
