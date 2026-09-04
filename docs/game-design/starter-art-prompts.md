@@ -305,6 +305,19 @@ Either direction counts — the jar rack separates by being 25 DARKER, the marke
 The trap is `--brightness`: it is for clipping the tail above 152, never for pulling the median down, and
 doing the latter put the table at exactly the floor’s own value where it vanished.
 
+**When it returns a SHEET instead of one object, cut it rather than re-rolling.** The generator draws a
+three-view turnaround every few props however firmly the prompt says one object, and apologises for it in
+the same breath. `yarn cut-sheet <file>` splits it on the gutters; run `tile-stats` over the frames and
+keep whichever measures best. The merchant basin came out of the middle frame of three.
+
+**Name the object’s own hex, do not ask it to be lighter than something.** "A warm mid brown, clearly
+lighter than the floor" produced pottery at exactly the floor’s value twice: it is a comparison the model
+cannot check while drawing. "Its body is #a49781, the lightest thing in the picture" is one it can.
+
+**A prop must not carry the floor with it.** A damp patch asked for around a water jar arrived as a
+hard-edged disc of different ground that travelled with the sprite and read as a decal. The renderer draws
+the floor; a prop draws only its own contact shadow.
+
 **Two things that will bite.** Never ask for strict symmetry and asymmetric damage in the same prompt —
 a broken shoulder against "perfectly symmetrical left-to-right" degraded the geometry every time;
 establish the shape first and add damage after. And a prop always comes back too light:
