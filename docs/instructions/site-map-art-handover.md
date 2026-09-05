@@ -13,14 +13,31 @@ the branch is in and how to run the next step.
 
 ## Branch state
 
-`feat/site-map-sprites`, pushed, `yarn tsc -b` clean, `yarn lint` no errors, suite green (255 files,
-2856 tests).
+`feat/site-map-sprites`. `yarn tsc -b` clean, `yarn lint` no errors, suite green. **A large body of work is
+UNCOMMITTED** — see "What is uncommitted" below before doing anything else.
 
 The map gained four things beyond the art, all in
 [spritesheet-renderer-prep.md](../game-design/spritesheet-renderer-prep.md): a FLOOR SCATTER layer
 (§4 of the brief, `floorScatter.ts`), a light pool under a prop that carries a flame, a mouth that now
 asks whether the way is open before leaving a band black, and two chambers you can already walk between
 drawing no partition.
+
+Run `yarn art-census` before planning any of it: it counts, per rank, how many ROOMS each prop and wall
+item actually lands in and whether that file is real art, a placeholder, or missing. A kind belongs to a
+rank through its ROLE tags rather than through its tier, so which files a rank needs cannot be read off a
+table — guessing cost real work here: the starter prompts below list four wall items where the world only
+ever authors two, and name `sarcophagus` and `crystal` as merchant props when neither appears below junior
+and wizard respectively.
+
+**Open `App/SiteMap/ArtBacklog` in Storybook** — that is the to-do list, sorted by how many rooms are
+waiting on each file, with the tile itself beside each row. `yarn art-census` prints the same thing.
+74 files remain and 1253 rooms are drawing a placeholder. The top seven rows are all WALL ITEMS, which is
+also the cheapest slot to fill.
+
+A placeholder is told from painted art by COUNTING COLOURS, not by file size: a `generate-dummy-tiles`
+placeholder is flat SVG with 2–4 distinct colours where painted art has 300–1600. Size cannot separate
+them — the junior brazier's placeholder is 2125 bytes and the starter statue's real art is 1964 — and a
+size threshold reported dummies as finished work.
 
 **30 of the brief's ~224 files exist.** All five ranks have real surfaces — `floor`, `wall-face`,
 `threshold`, `arch` — plus five whole-wall panels for the tableau, and TEN merchant props: `jarRack`,
@@ -43,6 +60,54 @@ when a rank is otherwise done.
 drawable. It uses the PROP box and `--slot=prop`, needs no authoring, and places by rule: sand and
 rubble anywhere walkable, a mat in a room. Only `sand` has art (a placeholder), and `mat` and `rubble`
 have the merchant's. That is 30 files of §4 the pipeline can now reach.
+
+## What is uncommitted
+
+Nothing below has been committed. In rough order of size:
+
+- **The explorer's walk cycle moved out of React into CSS** (`ExplorerDot.tsx`): a `steps()` animation over
+  a strip of the numbered frames, clipped by a nested `<svg>`, so it keeps time whether or not React
+  renders. `CELLS_PER_CYCLE = 2` makes the frame rate follow the frame COUNT, so a facing drawn in four
+  frames and one drawn in twelve still take the same two cells to complete a stride. `walkCycle.ts` is
+  deleted; there is a new `Walking` story with a walking toggle and a ms-per-cell slider.
+- **New explorer side art** — a four-frame east cycle from the newest sheet, replacing frames that were
+  near-duplicates. Two south frames were deleted for the same reason.
+- **A SITE CONDITION axis** — `condition: { kind, amount }` on `PyramidConstraint`, authorable at journey
+  level and overridable per pyramid, copied onto every floor so it survives the climb through the ranks.
+  `moodSettings.ts` COMPOSES it over the rank's ambience rather than replacing it, and `MapGrowth` draws
+  one shared sprite per kind from `tiles/default/`. Placeholders exist for `overgrown` and `flooded`; no
+  real art yet.
+- **Rooms are dressed for a PURPOSE** (`siteAssembler.ts`): the prop leads, and the wall item is drawn
+  from the kinds that share its role — but only where that leaves two or more to choose between. Both
+  halves of that rule were measured; the numbers and what they cost are in the code comments.
+- **`rubble` is two objects** — a flat spill the scatter layer lays on cells the player walks over, and a
+  standing `rubbleHeap` a room is dressed with, resolved through `STANDING_VARIANT`. This also fixed 77
+  authored dressing slots across the world that were drawing nothing at all.
+- **New tooling**: `yarn art-census`, `authoredKinds.ts` (+ spec), the `ArtBacklog` story, `--gamma` on
+  `import-tile`, transparent headroom for hanging items, `prim_niche` and `prim_rubbleheap`.
+- **Merchant wall items are DONE** — `niche` and `tallyBoard`, 121 rooms.
+
+## Decided but NOT built
+
+- **Patron gods** — Anubis, Horus, Sobek, Bastet, Ma'at, Ra, Sekhmet. The design is a variant selector on
+  five existing kinds (`statue`, `shrine`, `wallShrine`, `stela`, `mask`), resolved like `STANDING_VARIANT`:
+  `statue` becomes `statue-anubis.png` where that file exists and falls back to the generic art where it
+  does not. No new kinds, no pool edits, no world regeneration, and art can be added one file at a time.
+  The plaques are FLAT wall items, so most of it is straight to the generator; only the statues need scans.
+- **New wall kinds to close the purpose gaps** — `sheaf` (agriculture) and `tideLine` (water) proposed.
+  These DO need pool edits in `spec/*.ts` and `yarn generate-world`, which reshuffles every room's dressing,
+  so it is a large reviewable diff. Deliberately not started. Note the dummy generator has its own
+  hardcoded `WALL_KINDS` list and a per-kind drawing, so each new name needs a line there too.
+
+## Where the art is thinnest, and why it shows
+
+`yarn art-census` ranks the gaps by rooms waiting on them. The one that is not obvious from it: a room is
+dressed for a PURPOSE — the assembler picks one role its pools share and draws the prop and the wall item
+from it — and several purposes have almost nothing to draw with. `water`, `agriculture` and `light` have NO
+wall item at all, and `logistics`, `judgement`, `scribe` and `sky` have exactly one each, which is 336
+rooms that can only ever hang the same thing. Until that is filled the pairing can do very little: it
+moves agreement from 58.2% to 62.8% and costs two floors of extra repetition, because the rule only fires
+where a purpose has two wall items to choose between.
 
 ## What to do next
 
@@ -131,6 +196,39 @@ yarn make-arch --tier=expert
 Slots: `floor` 448² · `face` 448×56 (drawn into 448×28 — see the brief's contract table) · `sill` 56×28 ·
 `arch` 84×49 · `prop` 56×84 · `wall` 56×28 · `explorer` 40×70.
 
+**The flags a FRAME of an animation needs, and why each one bites.** The explorer's walk cost a round
+trip on every one of these:
+
+- `--filter=smooth` — the default is `nearest`, which renders painted art crunchy against a set that is
+  smooth everywhere else. Not optional for this set.
+- `--no-trim` — `seatOnFloorLine` trims each file to its own content and rescales it into the slot, which
+  throws away the common box `cut-sheet` padded the frames into. Frames that vary in height then each get
+  a different scale factor and the character grows and shrinks: the side row came back 487–505px tall and
+  the head bobbed. A frame that came through `cut-sheet` is already boxed — import it untrimmed.
+- Pad a lone frame to the sheet's box before importing it. Re-cutting one frame later gives its own tight
+  bounding box, and importing that shifts the body a pixel against the frames beside it.
+- `--gamma=0.65` — a later drawing session comes back at a different exposure. The explorer's side row
+  arrived at HALF the luminance of the front and back, and the error was not a uniform factor: the shadows
+  were out by 2.2x where the highlights were out by 1.5x, so `--brightness` blows the highlights out before
+  the midtones arrive. A power curve fits the whole range at once.
+
+**A WALL ITEM is two different jobs, and the split is whether it has DEPTH.** The band is not a flat
+elevation: it is the same oblique world as everything else at HALF depth (`mapScale`'s SIDE_W 14 of wall
+thickness images as 7 of drawn height, so k = 0.5 — cabinet, where a prop is cavalier at k = 1).
+
+- **With depth** — a niche, anything standing off the wall — is MODELLED like a prop and rendered with
+  `--shear=0.5`. A recess drawn by a generator comes back receding to a vanishing point, which is
+  photographically correct and wrong for this map; modelled, its floor draws ABOVE its front lip, which is
+  what makes it read as a hole. Size on the DRAWN shape: drawn height is `h + k*d`, so a 0.62-tall,
+  0.34-deep bay draws 0.79 against its own width.
+- **Flat** — a plaque, a stela, a tally board hanging against the surface — goes straight to the generator
+  with no mesh and no mask.
+- `--headroom` on both. A wall item that fills the band to the pixel breaks the wall's own top line and
+  reads as a block stuck on rather than a thing hung up. 0.15–0.22 is the range so far. The cap is
+  transparent on every slot but `face`, because a face IS the wall and everything else merely hangs on one.
+- `--brightness` bites here too. The merchant's tally board came back 10.3% above the palette's light end;
+  the sweep was 1.0 → 8.6%, 0.9 → 2.0%, 0.85 → 0%.
+
 Import flags that exist because a generation could not be talked into them: `--repeat` (fractional, shrinks
 and re-tiles), `--flatten` (blends toward the slot's own material — a corrective, not a step),
 **A PROP comes back too light, every time.** The brief says it and the first two proved it: an object
@@ -169,7 +267,14 @@ altogether — so it is a knob to look at, not a constant.
    cast survives import.
 5. **Aspect is the one thing import cannot fix** — it stretches to the slot on purpose, so a wrong shape is
    visible rather than silently cropped. Generate at the slot's aspect.
-6. **What a generation gets wrong about the ART** — the value clamp, outlines, anything crossing the
+6. **A measurement can be as confidently wrong as an opinion.** Judging the explorer's legs by clustering
+   luminance said one leg was 31 apart when the sample was a four-pixel boot tip, and called a real edit a
+   2.5-point change where a pixel diff showed 9.1 — the filter excluding boots had excluded exactly the
+   pixels that were darkened. What told the truth immediately: diff the edited file against its original
+   and report changed-pixel count, mean luminance before and after, and the rows touched. For animation,
+   diff ALPHA ONLY: that separates "the pose moved" from "the colour changed", and colour diff alone
+   called a 46% change on a frame whose silhouette had barely moved.
+7. **What a generation gets wrong about the ART** — the value clamp, outlines, anything crossing the
    frame, detail below the slot's resolution — is in [tile-art-brief.md](../game-design/tile-art-brief.md)
    under "Writing a prompt". The five above are about the TOOLS: what a sheet does, what keying does, what
    the import will and will not fix.

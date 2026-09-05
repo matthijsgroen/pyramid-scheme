@@ -13,11 +13,24 @@ three). Geometry is not a thing to ask for. It is a matrix.
 From [tile-art-brief.md](../game-design/tile-art-brief.md) §2–§4: the kind, the rank, and what the rank's
 row says it is made of. Also decide where the mesh comes from:
 
-| the object is                             | mesh from                                                                            |
-| ----------------------------------------- | ------------------------------------------------------------------------------------ |
-| furniture, racks, chests, plinths, stands | a parametric primitive in `renderProp.py`                                            |
-| statues, sarcophagi, canopic jars         | a museum scan — Scan the World, Smithsonian Open Access, Sketchfab, mostly CC0/CC-BY |
-| cloth, heaps, rubble, scatter             | still unsolved; paint by hand or generate                                            |
+| the object is                                                    | mesh from                                                                            |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| furniture, racks, chests, plinths, stands                        | a parametric primitive in `renderProp.py`                                            |
+| a wall item WITH depth — a niche, anything standing off the wall | a parametric primitive too, rendered `--shear=0.5` (see below)                       |
+| heaps of BRICK or cut stone                                      | a parametric primitive — a brick is a box (`prim_rubbleheap`)                        |
+| statues, sarcophagi, canopic jars                                | a museum scan — Scan the World, Smithsonian Open Access, Sketchfab, mostly CC0/CC-BY |
+| a FLAT wall item — a plaque, a stela, a board                    | no mesh: straight to the generator                                                   |
+| cloth, sand, loose scatter                                       | still unsolved; paint by hand or generate                                            |
+
+**A wall item is not exempt from projection.** The band is the same oblique world at HALF depth
+(`mapScale`'s SIDE_W 14 imaging as 7, so k = 0.5 — cabinet, where a prop is cavalier at k = 1). Anything
+with depth is therefore modelled and rendered with `--shear=0.5`; asked for in words, a recess comes back
+receding to a vanishing point. Only a genuinely flat thing hanging against the surface skips the mesh.
+
+**"Scatter" is about SAND, not about rubble.** A merchant's rubble is broken mudbrick, and a brick is a
+box — the modeller was always able to make it. What a heap needs is height put at the BACK (under z + k*y
+mass behind the centre buys drawn height twice over), every piece rolled off level and not merely yawed,
+and contact judged in the SHEARED projection: two pieces touching in Blender need not touch on the page.
 
 **Gate.** For a scan, reject it before downloading if it is Roman or Ptolemaic (armour, drapery,
 naturalistic faces), gilded, or a fragment. A Horus scan rendered perfectly and suited no rank in the
@@ -188,7 +201,7 @@ Which makes the wording the real fix, and the brazier's prompt is where it went 
 use the warm ochre accent anywhere" and "the ash is grey", and got a grey OBJECT. Say what is grey
 RELATIVE to the palette — the ash is the coolest thing in the picture, the clay is still `#a49781` —
 because the palette's own object colours are warm and banning the warm end throws the rank away.
-| drawn size                               | against the explorer's 40x70 | `--scale`                                                        |
+| drawn size | against the explorer's 40x70 | `--scale` |
 
 A prop is graded on its LIGHT end only — its dark end is its own shadow, which is what seats it.
 

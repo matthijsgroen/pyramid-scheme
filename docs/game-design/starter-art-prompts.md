@@ -374,15 +374,40 @@ on the background.
 | `pit`           | A dark square cellar shaft cut into the floor, seen from just above, a knotted rope ladder hooked over its near lip and disappearing into black.                                  |
 | `mat`           | A rolled and partly unrolled reed mat, frayed at both ends, one corner curled up, the weave visible.                                                                              |
 
-## 4. Wall items — 4 files, 2:1, magenta background
+## 4. Wall items — 2:1, magenta background
 
 These hang ON a wall and are painted into a band above a cell, so they are wider than tall and have no
-ground under them. Append to every wall-item prompt:
+ground under them.
+
+**The band is NOT a flat elevation.** It is the same oblique world as the rest of the map at HALF depth —
+`mapScale`'s SIDE_W 14 of wall thickness images as 7 of drawn height, so k = 0.5. That is CABINET oblique,
+where a prop is cavalier at k = 1. Which route a wall item takes follows from whether it has depth:
+
+**A wall item WITH depth is modelled**, like a prop, and rendered with `--shear=0.5`. A recess asked for in
+words comes back receding to a vanishing point — photographically correct and wrong here. Modelled, its
+floor draws ABOVE its front lip, and that is the whole difference between a hole in the wall and a picture
+of one. `prim_niche` is the worked example: one bay of `prim_shelf`, hollowed. Size on the DRAWN shape —
+drawn height is `h + k*d`, so a bay 0.62 tall and 0.34 deep draws 0.79 and needs its width set against
+that, not against 0.62. Then repaint for MATERIAL only and import with `--mask`, exactly as for a prop.
+
+**A FLAT wall item goes straight to the generator** — a plaque, a stela, a tally board hanging against the
+surface. No mesh, no mask. Give it the projection block anyway, because even a plank has pegs behind it:
 
 ```
-Seen straight on from the front, mounted on a wall, nothing below it. Fills the frame width.
+STYLE: Pure Cabinet Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. The front face is a flat front
+elevation, seen straight on. All depth INTO the wall extrudes straight upwards along the vertical
+Y-axis at HALF scale: a point 10 units deeper is drawn 5 units HIGHER and not one pixel sideways.
+Strictly hide all left and right side planes.
+
+Mounted on a wall, nothing below it, filling the frame width.
 Background flat magenta #ff00ff, no cast shadow on the background.
 ```
+
+**Import both with `--headroom`** (0.15–0.22 so far). A wall item drawn to the top of its band breaks the
+wall's own top line and reads as a block stuck on rather than a thing hung up; the cap is left transparent
+on every slot but `face`, so the rank's brick still shows above it. `--brightness` bites here as it does on
+a prop: the merchant's tally board came back 10.3% above the palette's light end and needed 0.85.
 
 | File         | Prompt                                                                                                                                                         |
 | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
