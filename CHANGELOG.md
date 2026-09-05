@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fallen brick is two different things depending on where you meet it: a spill across a passage floor you
   walk over, and a knee-high heap in the corner of a chamber you walk around. Seventy-seven rooms that
   were furnished with one and drew nothing at all now draw the heap.
+- A cellar shaft is cut into the merchant's floor: a black hole with a rough pole laid across its mouth,
+  a knotted rope ladder hanging into it, and the mudbrick that came out of it lying about the edge.
 - A merchant's walls carry his trade: a goods niche of sealed jars and a tied bundle set into the
   mudbrick, and the tally board hung beside it on two pegs, its strokes scratched in fives and crossed
   through.

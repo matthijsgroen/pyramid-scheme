@@ -79,3 +79,18 @@ yarn import-tile art/props/starter/pillar.webp --tier=starter --name=pillar --sl
 scaffold mat --spin=9 --shadow=0.5 --sun=0.03
 yarn import-tile art/props/starter/mat.webp --tier=starter --name=mat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
+
+# A hole casts nothing. --shadow=0 on the render and NO --seat at import: `make_shadow` flattens the
+# object to z=0 and pushes it toward the viewer, so a pit's footprint is a second dark parallelogram
+# lying in front of the first one and the tile reads as two holes.
+#
+# --saturation=2.2 is high for the same reason the brazier's is — the repaint came back at 0 warmth
+# against a rank that sits at +22 to +25, and saturation SCALES existing chroma, so there was almost
+# nothing to multiply. 2.2 lands it at +24. --brightness=0.9 clips a light end that was 2.4% over 152:
+# the spoil is broken mudbrick, which is the palest thing the merchant owns.
+#
+# The dark-end fault `tile-stats` prints for this tile — 43% below 35 — is the shaft, and is the point
+# of it. No other prop may read that way.
+scaffold pit --shadow=0
+yarn import-tile art/props/starter/pit.webp --tier=starter --name=pit --slot=prop \
+  --filter=smooth --mask="$OBJ" --saturation=2.2 --brightness=0.9
