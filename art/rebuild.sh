@@ -113,3 +113,18 @@ yarn import-tile art/props/starter/pit.webp --tier=starter --name=pit --slot=pro
 scaffold niche --contents=lamp --shear=0.5 --width=448 --height=224 --colour=#e0c193
 yarn import-tile art/props/junior/niche.webp --tier=junior --name=niche --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18 --saturation=1.3 --brightness=0.85
+
+# NO scaffold: a false-door stela is FLAT — a slab hanging against the surface — so it skips the mesh
+# and the mask both, and the generation's own silhouette is the tile. Step 0's table is the triage:
+# depth is modelled, flat goes straight to the generator.
+#
+# --brightness=0.74, which is the deepest clip in this file. Dressed limestone against mud plaster comes
+# back the palest thing in the rank: untouched it measured 171 against a wall face at 108. 0.74 puts the
+# jamb stone at +73 warmth and 123 luminance against the wall's +77 and 108 — fifteen lighter, which is
+# the separation the hand-painted market table already uses, and reads as stone set into plaster.
+#
+# NO --contrast, though the incised columns beg for it. The carving does not survive 28 pixels either
+# way, and 1.35 bought nothing but chroma: the jamb went from +74 warmth to +100 while its luminance
+# never moved. Contrast is not free on a warm rank.
+yarn import-tile art/props/junior/stela.webp --tier=junior --name=stela --slot=wall \
+  --filter=smooth --headroom=0.18 --brightness=0.74

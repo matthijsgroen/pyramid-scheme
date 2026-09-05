@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fallen brick is two different things depending on where you meet it: a spill across a passage floor you
   walk over, and a knee-high heap in the corner of a chamber you walk around. Seventy-seven rooms that
   were furnished with one and drew nothing at all now draw the heap.
+- A false door stands in the nobleman's walls: a painted limestone stela cut as a doorway that leads
+  nowhere, its columns of offering formula worn back to the red ochre in the cuts.
 - A lamp niche is cut into the nobleman's chapel walls: one clay lamp burning in it, a second waiting
   cold, the oil jar they are filled from, and years of soot fanned up the stone above the flame.
 - A cellar shaft is cut into the merchant's floor: a black hole with a rough pole laid across its mouth,
