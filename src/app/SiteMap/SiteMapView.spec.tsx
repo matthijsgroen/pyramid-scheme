@@ -769,6 +769,21 @@ describe("the explorer stands in the room", () => {
     }
     expect(frames.size).toBeGreaterThan(1)
   })
+
+  it("hands the walk cycle to CSS, so it keeps time without a render per frame", () => {
+    // Every frame side by side inside a clip one frame wide, slid a whole frame at a time. If the span and
+    // the step count ever disagree with how many frames were laid out, the legs land between two poses.
+    const { container } = render(
+      <svg>
+        <ExplorerFigure facing="s" walking />
+      </svg>
+    )
+    const strip = container.querySelector<SVGGElement>("g[style*='steps']")!
+    const laidOut = strip.querySelectorAll("image").length
+    expect(laidOut).toBeGreaterThan(1)
+    expect(strip.style.animationTimingFunction).toBe(`steps(${laidOut})`)
+    expect(strip.style.getPropertyValue("--walk-span")).toBe(`${-laidOut * 40}px`)
+  })
 })
 
 describe("two chambers you can already walk between are one space", () => {
@@ -820,11 +835,11 @@ describe("two chambers you can already walk between are one space", () => {
   })
 })
 
-describe("what is lying about is on the floor, not standing on it", () => {
-  // `mat` and `rubble` are still named in the ranks' authored prop pools — the world is generated and
-  // re-authoring those reshuffles every prop in it, because pickDressing indexes by pool LENGTH. Which
-  // LAYER a kind belongs to is decided in floorScatter instead, so a room that authored one draws no
-  // standing prop for it.
+describe("a kind that lies on the floor still dresses a room", () => {
+  // `mat` and `rubble` are named BOTH in the ranks' authored prop pools and in the scatter layer's own
+  // kinds, and the two mean different objects: scatter lies on cells the player walks over, a room's
+  // dressing stands on an empty claimed cell nobody walks. For a long while the prop layer simply
+  // dropped these, so 77 authored dressing slots across the world drew nothing at all.
   const withDecoration = (decoration: DecorationKind) => {
     const room = chamber("completed")
     if (room.type !== "room") throw new Error("the chamber fixture stopped being a room")
@@ -836,7 +851,7 @@ describe("what is lying about is on the floor, not standing on it", () => {
   }
   // The scatter layer is bottom-anchored in the same box a prop uses, so a box count alone cannot tell
   // the two apart. Counting a floor kind AGAINST a standing one can: the scatter is identical between
-  // the two renders, so the difference is the prop.
+  // the two renders, so any difference is the prop.
   const propBoxes = (decoration: DecorationKind) =>
     Array.from(
       render(
@@ -844,8 +859,9 @@ describe("what is lying about is on the floor, not standing on it", () => {
       ).container.querySelectorAll("image")
     ).filter(el => el.getAttribute("height") === String(CELL + WALL_H)).length
 
-  it("draws one fewer sprite for a kind that lies on the floor than for one that stands", () => {
-    expect(propBoxes("mat")).toBe(propBoxes("statue") - 1)
+  it("draws it standing, the same as any other prop", () => {
+    expect(propBoxes("mat")).toBe(propBoxes("statue"))
+    expect(propBoxes("rubble")).toBe(propBoxes("statue"))
   })
 })
 

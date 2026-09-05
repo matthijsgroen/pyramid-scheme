@@ -1,4 +1,5 @@
 import type { DecorationKind, WallDecorationKind } from "../game/siteTypes"
+import { PROP_ROLES, WALL_ITEM_ROLES } from "../game/dressingTags"
 import type { SiteConfig, SubSection } from "./types"
 
 // A role is the PLACE a stretch of floor is (journeys.md §2: the role is the place, the theme is only
@@ -6,39 +7,10 @@ import type { SiteConfig, SubSection } from "./types"
 // holds a coffin and a false-door stela. Dressing a journey IS authoring its role, and until now the
 // role reached the puzzle families and nothing else: every rank furnished every place identically.
 //
-// The tag lives on the KIND, not in a pool per (rank × role). A rank stays one authored line — what a
-// merchant's tomb is furnished WITH — and the role only decides which of those things this particular
-// wing shows. Authoring a pool per combination would be 5 ranks × 10 roles of tables to keep, and the
-// second half of them would say the same thing as the first.
-//
-// **An untagged kind fits anywhere.** Rubble, a pillar, a chest, a mat and a pit belong to no place in
-// particular, so they survive every narrowing and are what keeps a pool from collapsing.
-const PROP_ROLES: Partial<Record<DecorationKind, readonly string[]>> = {
-  shelf: ["trade", "shop", "scribe", "logistics"],
-  jarRack: ["trade", "shop", "water", "agriculture", "logistics"],
-  offeringTable: ["trade", "funerary", "judgement"],
-  basin: ["water", "agriculture"],
-  statue: ["funerary", "judgement", "cosmos"],
-  sarcophagus: ["funerary"],
-  shrine: ["funerary", "cosmos"],
-  hanging: ["funerary", "cosmos"],
-  lamp: ["light", "scribe"],
-  brazier: ["light", "funerary"],
-  crystal: ["cosmos", "sky", "light"],
-}
-
-const WALL_ITEM_ROLES: Partial<Record<WallDecorationKind, readonly string[]>> = {
-  niche: ["trade", "shop", "logistics"],
-  tallyBoard: ["trade", "shop", "scribe"],
-  stela: ["funerary"],
-  veil: ["funerary", "cosmos"],
-  wallShrine: ["funerary", "cosmos"],
-  starShaft: ["cosmos", "sky"],
-  mask: ["funerary", "judgement"],
-  // `sconce` carries no tag on purpose: a bracket for a lamp belongs on any wall, and it is what keeps
-  // a rank whose other wall items are all funerary from hanging nothing at all in a trade wing.
-}
-
+// The tag lives on the KIND, not in a pool per (rank × role) — see game/dressingTags.ts, which holds
+// the table because the ASSEMBLER needs it too: this file narrows a wing's pool to its role, and the
+// assembler then gives one room one purpose out of what survived. A rank stays one authored line, and
+// authoring a pool per combination would be 5 ranks × 10 roles of tables to keep.
 const rolesOf = (role: string | string[] | undefined): readonly string[] =>
   role === undefined ? [] : Array.isArray(role) ? role : [role]
 

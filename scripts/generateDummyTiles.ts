@@ -63,9 +63,14 @@ type Kind =
 // `sand` is here without being in any authored pool, because it is FLOOR SCATTER: the scatter layer
 // places it off the floor's own shape rather than off a pool, so nothing authors it by name and its
 // placeholder is the only thing that says the layer is working before the art exists.
+//
+// `rubbleHeap` is here for the same reason from the other direction: it is not a kind at all but the
+// STANDING variant a room's `rubble` resolves to (SiteMapView's STANDING_VARIANT), so no pool can ever
+// name it. Without a placeholder it silently falls back to the flat spill and the two look identical.
 const ALL_KINDS: Kind[] = [
   "sand",
   "rubble",
+  "rubbleHeap" as Kind,
   "pillar",
   "pit",
   "statue",
@@ -228,6 +233,14 @@ const shapes: Record<Kind, (p: Palette) => string> = {
     <rect x="14" y="${BASE - 10}" width="12" height="10" fill="${p.propDark}"/>
     <rect x="26" y="${BASE - 16}" width="16" height="16" fill="${p.prop}"/>
     <rect x="20" y="${BASE - 6}" width="10" height="6" fill="${p.prop}"/>`,
+  // The STANDING variant, and the placeholder has to say so: the flat spill above is walked over, this
+  // is walked around, and two placeholders that looked alike would hide which layer drew which.
+  rubbleHeap: p => `
+    <rect x="8" y="${BASE - 12}" width="18" height="12" fill="${p.propDark}"/>
+    <rect x="24" y="${BASE - 14}" width="20" height="14" fill="${p.prop}"/>
+    <rect x="14" y="${BASE - 24}" width="16" height="12" fill="${p.prop}"/>
+    <rect x="28" y="${BASE - 26}" width="14" height="12" fill="${p.propDark}"/>
+    <rect x="18" y="${BASE - 34}" width="20" height="9" fill="${p.prop}"/>`,
   pillar: p => `
     <rect x="20" y="${BASE - 66}" width="16" height="66" fill="${p.prop}"/>
     <rect x="16" y="${BASE - 72}" width="24" height="8" fill="${p.propDark}"/>
@@ -418,6 +431,35 @@ const LINEN = "#e8e2d0"
 const HAIR = "#1b1712"
 const SASH = "#c8a33c"
 const INK = "#120f0b"
+
+// A tuft forcing its way out of a joint, for an overgrown site. Drawn from a corner rather than
+// centred: it is coming OUT of something, which is the whole difference between a weed and a pot plant.
+const overgrownSvg = (): Buffer =>
+  svg(
+    22,
+    22,
+    `<g stroke="#1b2b12" stroke-width="1" fill="none">
+       <path d="M11 21 C 10 14, 6 10, 3 7" stroke="#3f6b28"/>
+       <path d="M11 21 C 12 13, 15 9, 19 6" stroke="#4d7a2e"/>
+       <path d="M11 21 C 11 15, 11 11, 11 8" stroke="#5a8c35"/>
+       <ellipse cx="3" cy="7" rx="3" ry="2" fill="#4d7a2e" stroke="none"/>
+       <ellipse cx="19" cy="6" rx="3" ry="2" fill="#5a8c35" stroke="none"/>
+       <ellipse cx="11" cy="7" rx="2" ry="3" fill="#3f6b28" stroke="none"/>
+     </g>`
+  )
+
+// Standing water: a dark pool with one pale rim where the light catches it. Flat on purpose — it lies
+// on the floor and must not read as an object standing on it.
+const floodedSvg = (): Buffer =>
+  svg(
+    22,
+    22,
+    `<g>
+       <ellipse cx="11" cy="14" rx="10" ry="5" fill="#2b4c5a" opacity="0.75"/>
+       <ellipse cx="11" cy="14" rx="10" ry="5" fill="none" stroke="#6f97a3" stroke-width="1" opacity="0.6"/>
+       <ellipse cx="8" cy="12" rx="4" ry="1" fill="#8fb3bd" opacity="0.5"/>
+     </g>`
+  )
 
 // A scarab, for the moods that have something living in the air. Shared like the explorer: a beetle is a
 // beetle in every rank of tomb.
@@ -911,11 +953,21 @@ const main = async (): Promise<void> => {
   // Shared art, written once: neither the explorer nor a beetle is a rank.
   await write("default", "scarab", scarabSvg(), 14, 10)
   count++
+  // What has got INTO a site (moodSettings' CONDITION_MOOD) — one sprite per kind, shared across ranks
+  // the same way, because a weed forcing through brick is the same weed forcing through granite. Named
+  // for the condition rather than for a plant so the map can look one up by `mood.growth.kind`.
+  for (const [kind, svgOf] of [
+    ["overgrown", overgrownSvg],
+    ["flooded", floodedSvg],
+  ] as const) {
+    await write("default", kind, svgOf(), 22, 22)
+    count++
+  }
   // How many frames each facing really has. Writing four for every one of them ADDED a fifth-hand
   // placeholder beside the real east art, which has three: the generator skips a file that already
   // exists, so it left 1-3 alone and wrote a 271-byte dummy as `explorer-e-4`. `sharedTileFrames`
   // counts up until a gap, so that dummy became the fourth frame of the walk cycle.
-  const EXPLORER_FRAMES = { s: 4, n: 4, e: 3 } as const
+  const EXPLORER_FRAMES = { s: 2, n: 4, e: 4 } as const
   for (const facing of ["s", "n", "e"] as const) {
     for (let frame = 1; frame <= EXPLORER_FRAMES[facing]; frame++) {
       await write("default", `explorer-${facing}-${frame}`, explorerSvg(facing, frame - 1), CHAR_W, CHAR_H)

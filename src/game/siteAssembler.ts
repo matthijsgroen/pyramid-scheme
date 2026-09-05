@@ -17,6 +17,7 @@ import type {
 } from "./siteTypes"
 import type { ResolveBoardIndex } from "./seeds/boardIndex"
 import { validateSite } from "./siteValidator"
+import { rolesOfProp, rolesOfWallItem } from "./dressingTags"
 
 // Resolves an authored `encounter` (exact family id, or tag(s)) to a concrete family id
 // plus that family's own tags. Injected by the caller so this domain module never needs
@@ -1158,6 +1159,7 @@ export const assembleFloor = (
           ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
           difficulty: config.difficulty,
           ...(config.theme !== undefined ? { theme: config.theme } : {}),
+          ...(config.condition !== undefined ? { condition: config.condition } : {}),
           ...(config.role !== undefined ? { role: config.role } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
@@ -1511,12 +1513,51 @@ export const assembleFloor = (
     // every fork in the world held a crate.
     const pickDressing = <T>(pool: T[] | undefined, pk: string, salt: string): T | undefined =>
       pool?.length ? pool[hashString(`${siteId}:${salt}:${pk}`) % pool.length] : undefined
+
+    /**
+     * A ROOM SERVES ONE PURPOSE, and what hangs on its wall agrees with what stands in it.
+     *
+     * The two were drawn independently before, with different salts specifically so they would not
+     * correlate. That bought variety and cost meaning: a wing whose pool spans two places could stand a
+     * sarcophagus under a tally board, and a floor of such rooms reads as furniture distributed rather
+     * than as somewhere anyone lived. What a player should be able to say walking in is "this is the
+     * storeroom", "this is where they sold", "this is where they washed", "this is where they prayed".
+     *
+     * THE PROP LEADS. It is the room's statement; the wall item follows it. Narrowing both pools by a
+     * shared purpose instead — the first attempt — let the WALL pool decide which props could exist at
+     * all, and the catalogue is far too thin for that: the merchant hangs only a goods niche and a tally
+     * board, which speak trade, so his statue, shrine, basin, hanging and brazier all disappeared from
+     * the rank. Five kinds of furniture deleted by two wall items is the tail wagging the dog.
+     *
+     * Where the wall pool has nothing to say about the prop's purpose, it simply draws as before. A room
+     * that says nothing is the cheaper mistake: forcing the wall to speak whenever the prop is universal
+     * was measured at taking floors where ONE wall item fills three quarters of the rooms from 19 to 27
+     * of 97, and a floor repeating one furnished corner reads worse than a floor with plain rooms on it.
+     */
+    const wallSuiting = (pool: WallDecorationKind[], prop: DecorationKind | undefined) => {
+      const purposes = prop ? rolesOfProp(prop) : undefined
+      if (!purposes?.length) return pool
+      const fits = pool.filter(k => rolesOfWallItem(k)?.some(role => purposes.includes(role)))
+      // NARROW ONLY WHERE THERE IS A CHOICE. Four purposes have exactly one wall item to their name
+      // (logistics a niche, judgement a mask, scribe a tally board, sky a star shaft) and three have
+      // none at all, so narrowing to a single survivor does not make a room agree with itself — it
+      // makes every room of that purpose hang the identical thing. Measured: it took the floors where
+      // one wall item fills three quarters of the rooms from 17 to 31 of 97. Agreement is worth having
+      // only while it still leaves something to vary; below that the whole pool is the better answer,
+      // and the fix is more wall items rather than a stricter rule here (`yarn art-census`).
+      return fits.length >= 2 ? fits : pool
+    }
+
     for (const pk of new Set([...forkPositions, ...endpointPositions])) {
       const pools = cellDressing.get(pk)
       const decoration = pickDressing(pools?.props, pk, "decoration")
       // Its own salt, so a rank whose two pools are the same length does not pair the same stela with
       // the same jar rack in every room that draws them.
-      const wallDecoration = pickDressing(pools?.wall, pk, "wallDecoration")
+      const wallDecoration = pickDressing(
+        pools?.wall ? wallSuiting(pools.wall, decoration) : undefined,
+        pk,
+        "wallDecoration"
+      )
       if (!decoration && !wallDecoration) continue
       const [r, c] = pk.split(",").map(Number)
       const owner = cells2D[r][c]
@@ -1543,6 +1584,7 @@ export const assembleFloor = (
       cells: cells2D,
       difficulty: config.difficulty,
       ...(config.theme !== undefined ? { theme: config.theme } : {}),
+      ...(config.condition !== undefined ? { condition: config.condition } : {}),
       rows: N,
       cols: N,
       entrancePos: [entR, entC],

@@ -16,7 +16,7 @@ import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 import { ExplorerDot, LightPool, LightPoolDefs } from "./ExplorerDot"
-import { FLOOR_KINDS, scatterFor, type ScatterKind } from "./floorScatter"
+import { scatterFor, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
@@ -39,7 +39,7 @@ import {
 } from "./mapScale"
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
 import { moodFor } from "./moodSettings"
-import { MapLife, MapWeather } from "./MapMood"
+import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { ART_IMAGE_RENDERING, tileUrl } from "./tileAssets"
 import {
   ALL_STATES,
@@ -1187,11 +1187,23 @@ const LIT_DECORATIONS = new Set<DecorationKind>(["lamp"])
  * carried, and at a cell and a half across it would light the room the torch is meant to light. */
 const LAMP_POOL_RADIUS = CELL * 0.42
 
+/** What a floor kind is drawn as when a ROOM was dressed with it, rather than when it blew in.
+ *
+ * The two are not the same object. Scatter lies on cells the player walks over, so it has to be flat
+ * enough to walk through — a drift, a spill, a mat underfoot. A room's dressing lands on an empty
+ * claimed cell the player CANNOT walk on (see `decorationAt`), so it is free to stand up and be walked
+ * around: a knee-high heap of fallen brick is a thing in the corner of a chamber, and it would be
+ * nonsense in the middle of a passage.
+ *
+ * `mat` needs no variant — a mat is flat wherever it lies, and on a cell nobody walks it simply reads
+ * as a rug against the wall. Only `rubble` is two objects sharing one name. */
+const STANDING_VARIANT: Partial<Record<DecorationKind, string>> = { rubble: "rubbleHeap" }
+
 const Decoration = ({ kind, tier }: { kind: DecorationKind; tier: Difficulty }) => {
-  // A room may have authored a kind that lies on the floor rather than standing on it. The scatter
-  // layer draws those, on a cell the player walks over — see floorScatter's FLOOR_KINDS.
-  if (FLOOR_KINDS.has(kind)) return null
-  const url = tileUrl(tier, kind)
+  // Falls back to the kind's own art while a variant is still unpainted: a room drawing the flat spill
+  // is wrong but harmless, where a room drawing the placeholder GLYPH is a regression the player sees.
+  const variant = STANDING_VARIANT[kind]
+  const url = (variant && tileUrl(tier, variant)) ?? tileUrl(tier, kind)
   return (
     <>
       {/* Under the sprite, so the light is on the floor and the lamp is standing in it. */}
@@ -1722,7 +1734,7 @@ export const SiteMapView = ({
   // Where the arches are, in the same terms the wall bands are built in, with the stone each one is cut
   // from — the sill in that gap is drawn to match it (see TileLayers.archedGaps).
   // The air on this floor: its rank's, with whatever hour it authors (moodSettings.ts).
-  const mood = useMemo(() => moodFor(tier, grid.theme), [tier, grid.theme])
+  const mood = useMemo(() => moodFor(tier, grid.theme, grid.condition), [tier, grid.theme, grid.condition])
   // Where something living may be: every real floor cell of this floor, explored or not. Deliberately NOT
   // filtered by what the player has seen — see MapLife's `floorCells`: a list that grows as the map is
   // revealed moves everything indexed into it.
@@ -1812,6 +1824,17 @@ export const SiteMapView = ({
           <ArchShadows doorways={doorways} />
           <LitPlaces grid={grid} claims={claims} at={explorerPos} />
           <MapLife
+            mood={mood}
+            siteId={grid.siteId}
+            floorCells={floorCells}
+            isLit={(r, c) => {
+              const cell = cellAt(grid, r, c)
+              return cell.type !== "empty" && cell.state !== "fogged"
+            }}
+          />
+          {/* Over the scarabs, under the wall items: something growing out of a wall is in front of the
+              floor and behind whatever is hung on that wall. */}
+          <MapGrowth
             mood={mood}
             siteId={grid.siteId}
             floorCells={floorCells}

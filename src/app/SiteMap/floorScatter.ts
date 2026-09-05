@@ -18,13 +18,18 @@ import { hashUnit } from "@/support/hashString"
 export type ScatterKind = "sand" | "rubble" | "mat"
 
 /**
- * The kinds drawn on the floor layer, and therefore never as a standing prop.
+ * The kinds the scatter layer places — what blows in and falls, on the cells the player walks.
  *
- * `rubble` and `mat` are still named in the ranks' authored `decorations` pools, because that is a
- * generated world and re-authoring the pools reshuffles every prop in it — `pickDressing` indexes by
- * pool LENGTH, so dropping two names moves the prop in every room that has one. Which LAYER a kind
- * belongs to is a renderer decision anyway, and this is where it is made: `Decoration` skips these and
- * the scatter layer places them instead.
+ * These names ALSO appear in the ranks' authored `decorations` pools, and a room that rolls one is
+ * dressed with it: `Decoration` draws it standing, on an empty claimed cell nobody walks, through
+ * `STANDING_VARIANT`. So a name here is not a name excluded from the prop layer — it is a name that
+ * means two different objects depending on which layer asked for it. A spill of brick underfoot and a
+ * heap of it in the corner of a chamber are both `rubble`.
+ *
+ * The pools are left alone deliberately: that is a generated world, and re-authoring them reshuffles
+ * every prop in it — `pickDressing` indexes by pool LENGTH, so dropping a name moves the prop in every
+ * room that has one. Which layer a kind belongs to is a renderer decision, and it is made here and in
+ * `STANDING_VARIANT`.
  */
 export const FLOOR_KINDS: ReadonlySet<string> = new Set<ScatterKind>(["sand", "rubble", "mat"])
 
