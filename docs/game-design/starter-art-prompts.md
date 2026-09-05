@@ -310,6 +310,14 @@ three-view turnaround every few props however firmly the prompt says one object,
 the same breath. `yarn cut-sheet <file>` splits it on the gutters; run `tile-stats` over the frames and
 keep whichever measures best. The merchant basin came out of the middle frame of three.
 
+**`tile-stats`' warmth and value are WHOLE-SPRITE means, and a sprite that is largely void breaks them.**
+The pit is 43% black shaft; black has no chroma, so it drags the mean warmth down, and tuning the whole
+tile to the painted band's +24 pushed the STONE to +75 against a rank whose wall face sits at +29. It was
+imported, measured, reported inside the band and shipped that way, and what caught it was somebody looking
+at the map. The band belongs to the MATERIAL being matched, not to the sprite: measure the brick alone
+against the rank's own brick, the timber against its timber. The same trap is waiting for anything with a
+big dark or transparent area — a veil, a breach, a shaft, a flame.
+
 **Never call a prop GREY — say what is grey relative to the palette.** A cold brazier's prompt banned the
 ochre accent outright and called its ash grey, and the repaint came back at +1 warmth against a rank that
 sits at +22 to +25. `--saturation` could not rescue it: it multiplies the chroma already present, so 1.4

@@ -84,13 +84,16 @@ yarn import-tile art/props/starter/mat.webp --tier=starter --name=mat --slot=pro
 # object to z=0 and pushes it toward the viewer, so a pit's footprint is a second dark parallelogram
 # lying in front of the first one and the tile reads as two holes.
 #
-# --saturation=2.2 is high for the same reason the brazier's is — the repaint came back at 0 warmth
-# against a rank that sits at +22 to +25, and saturation SCALES existing chroma, so there was almost
-# nothing to multiply. 2.2 lands it at +24. --brightness=0.9 clips a light end that was 2.4% over 152:
-# the spoil is broken mudbrick, which is the palest thing the merchant owns.
+# NO --saturation, and the reason is a measurement that was confidently wrong. `tile-stats` reports
+# warmth as a WHOLE-SPRITE mean, and 43% of this sprite is black shaft; black has no chroma, so it
+# drags that mean down, and tuning the whole tile to the painted band's +24 pushed the STONE to +75
+# against a rank whose wall sits at +29. It shipped that way and was caught by eye, not by a number.
+# The band belongs to the material being matched: measure the brick alone against the rank's own brick.
 #
-# The dark-end fault `tile-stats` prints for this tile — 43% below 35 — is the shaft, and is the point
-# of it. No other prop may read that way.
+# --brightness=0.82 puts the spoil at #847561, +35 warmth and 119 luminance, against the niche's
+# mudbrick at +35 and 112 and the wall face's +29 and 112. Seven lighter than the wall is right — the
+# spoil is freshly broken faces where the wall is worn and sooted. 0.78 matched the wall exactly and
+# took the pole and the ladder down with it, until the timber was as dark as the shaft.
 scaffold pit --shadow=0
 yarn import-tile art/props/starter/pit.webp --tier=starter --name=pit --slot=prop \
-  --filter=smooth --mask="$OBJ" --saturation=2.2 --brightness=0.9
+  --filter=smooth --mask="$OBJ" --brightness=0.82
