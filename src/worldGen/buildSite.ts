@@ -1,4 +1,4 @@
-import type { DecorationKind, WallDecorationKind } from "../game/siteTypes"
+import type { DecorationKind, SiteCondition, WallDecorationKind } from "../game/siteTypes"
 import type { Difficulty, FloorConfig, SideSection, Tier, TreasureReward } from "./types"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { GLOBAL_DEFAULTS } from "./spec/global"
@@ -98,6 +98,8 @@ export type BuildFloorOptions = {
   encounterArgs?: unknown
   theme?: string
   decorations?: DecorationKind[]
+  /** What has got into the site. Copied onto every floor, which is what makes it survive the climb. */
+  condition?: SiteCondition
   wallDecorations?: WallDecorationKind[]
 }
 
@@ -114,6 +116,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.encounter ? { encounter: opts.encounter } : {}),
   ...(opts.decorations?.length ? { decorations: opts.decorations } : {}),
   ...(opts.wallDecorations?.length ? { wallDecorations: opts.wallDecorations } : {}),
+  ...(opts.condition ? { condition: opts.condition } : {}),
   ...(opts.encountersByIndex && Object.keys(opts.encountersByIndex).length
     ? { encountersByIndex: opts.encountersByIndex }
     : {}),
@@ -271,6 +274,9 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           theme: fc.theme ?? constraint.theme,
           decorations: fc.decorations ?? constraint.decorations,
           wallDecorations: fc.wallDecorations ?? constraint.wallDecorations,
+          // No per-floor override: a condition that stopped halfway up would read as an authoring slip
+          // rather than as weather. It is the site's, and every floor of it carries the same one.
+          condition: constraint.condition,
         })
       )
     }

@@ -1,4 +1,5 @@
 import type { Difficulty } from "@/data/difficultyLevels"
+import type { ConditionKind, SiteCondition } from "@/game/siteTypes"
 
 // What the air in a tomb is like. Everything here is OVERLAY — a wash, some drifting motes, a few living
 // things — never a second set of art (docs/game-design/spritesheet-renderer-prep.md, "Mood settings"): a
@@ -19,6 +20,10 @@ import type { Difficulty } from "@/data/difficultyLevels"
 // theme replaces only the parts it names.
 
 export type Mood = {
+  /** Things growing on the stone: how many, and which sprite. Placed like `life` but STILL — a weed in
+   * a corner does not scurry — and drawn against the wall band as well as the floor, because the point
+   * of a vine is that it came through the wall. */
+  growth?: { count: number; kind: ConditionKind }
   /** One colour laid over the whole map. The hour, and nothing else. */
   tint?: { fill: string; opacity: number }
   /** Things carried on the air: dust, chaff, soot, sand, sparks — or fog, which is the same thing drawn
@@ -70,10 +75,54 @@ const THEME_MOOD: Record<string, Mood> = {
   },
 }
 
-/** The air on this floor: its rank's own, with whatever its authored hour replaces. An unknown theme name
- * is not an error — a family may recognise a skin the map has no weather for — and simply leaves the
- * rank's ambience alone. */
-export const moodFor = (tier: Difficulty, theme?: string): Mood => ({
-  ...RANK_MOOD[tier],
-  ...(theme ? (THEME_MOOD[theme] ?? {}) : {}),
-})
+/**
+ * What a condition does to the air, at full strength. Scaled by the site's own `amount` before use.
+ *
+ * A condition COMPOSES where an hour REPLACES, and the difference is the whole reason it is a separate
+ * axis. An hour is what the light is doing, so a night floor's tint is simply the tint. A condition is
+ * something wrong with the place, and the place is still there underneath: a flooded merchant's cellar
+ * is a cellar with water in it, and if its brackish cast replaced the rank's own the cellar would stop
+ * being a cellar the moment it got wet.
+ */
+const CONDITION_MOOD: Record<ConditionKind, { tint: { fill: string; opacity: number }; growth: number }> = {
+  // Green forcing through the brick, and the light under it going green with it.
+  overgrown: { tint: { fill: "#4d7a2e", opacity: 0.18 }, growth: 9 },
+  // Standing water: cooler, darker, and what grows in it grows at the edges.
+  flooded: { tint: { fill: "#2b4c5a", opacity: 0.22 }, growth: 5 },
+}
+
+/** Two tints laid over each other, as one. The overlay is drawn once, so a condition cannot simply add
+ * a second `tint` key — it has to fold into the one the rank already has. Alpha compositing over an
+ * opaque ground: the result's opacity is what the two together let through, and its colour is the two
+ * mixed in the proportion each contributes. */
+const overlay = (
+  base: { fill: string; opacity: number } | undefined,
+  over: { fill: string; opacity: number }
+): { fill: string; opacity: number } => {
+  if (!base) return over
+  const opacity = base.opacity + over.opacity * (1 - base.opacity)
+  if (opacity === 0) return over
+  const mix = (channel: number) => {
+    const b = parseInt(base.fill.slice(1 + channel * 2, 3 + channel * 2), 16)
+    const o = parseInt(over.fill.slice(1 + channel * 2, 3 + channel * 2), 16)
+    return Math.round((o * over.opacity + b * base.opacity * (1 - over.opacity)) / opacity)
+  }
+  const hex = [0, 1, 2].map(c => mix(c).toString(16).padStart(2, "0")).join("")
+  return { fill: `#${hex}`, opacity }
+}
+
+/** The air on this floor: its rank's own, with whatever its authored hour replaces, and whatever has got
+ * into the site laid over the result. An unknown theme name is not an error — a family may recognise a
+ * skin the map has no weather for — and simply leaves the rank's ambience alone. */
+export const moodFor = (tier: Difficulty, theme?: string, condition?: SiteCondition): Mood => {
+  const hour: Mood = { ...RANK_MOOD[tier], ...(theme ? (THEME_MOOD[theme] ?? {}) : {}) }
+  if (!condition) return hour
+  const amount = Math.max(0, Math.min(1, condition.amount))
+  const spec = CONDITION_MOOD[condition.kind]
+  if (!spec || amount === 0) return hour
+  return {
+    ...hour,
+    tint: overlay(hour.tint, { fill: spec.tint.fill, opacity: spec.tint.opacity * amount }),
+    growth: { count: Math.round(spec.growth * amount), kind: condition.kind },
+  }
+}

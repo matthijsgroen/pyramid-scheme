@@ -69,6 +69,26 @@ export type DecorationKind =
 // tiles/<tier>/<kind>.png at CELL x WALL_H — the band's own shape, not a square.
 export type WallDecorationKind =
   "niche" | "stela" | "sconce" | "veil" | "starShaft" | "wallShrine" | "tallyBoard" | "mask"
+
+/**
+ * Something that has got INTO a site and runs through the whole of it — water standing in the floors,
+ * green forcing its way through the brick.
+ *
+ * A third axis beside role and theme, and it has to be its own: journeys.md §2 fixes the role as the
+ * PLACE and the theme as the HOUR, and a flooded pyramid is neither. It is the same place at the same
+ * hour with something wrong with it, and unlike either of those it is a property of the SITE — the point
+ * is that it persists as the player climbs from a merchant's cellar to the gods' vault.
+ *
+ * Drawn as OVERLAY, never as a second set of tiles per rank: `moodSettings.ts` composes it over the
+ * rank's own ambience the same way an hour does, and one shared sprite serves every rank the way
+ * `scarab.png` already does. Doubling the sheet count to say a tomb is overgrown would buy the player
+ * nothing that a green cast and some weeds in the corners does not.
+ */
+export type ConditionKind = "overgrown" | "flooded"
+
+/** How far gone a site is, 0–1. The DSL's other knobs are all fractions, so this is one too: 0.25 is a
+ * damp corner, 1 is the pyramid the journey is remembered for. */
+export type SiteCondition = { kind: ConditionKind; amount: number }
 export type RoomCell = {
   type: "room"
   roomType: RoomType
@@ -139,6 +159,9 @@ export type FloorGrid = {
    * `RoomCell.difficulty` can differ (a ward-chest teaser is authored at a later tier), so it must not
    * be used to infer this. Optional only because test fixtures build grids by hand. */
   readonly difficulty?: Difficulty
+  /** What has got into this site, if anything — see SiteCondition. Runs through every floor of a
+   * pyramid by construction: it is authored once, on the pyramid. */
+  readonly condition?: SiteCondition
   /** The hour this floor is at — its authored `theme` (docs/game-design/journeys.md §2: the role is the
    * place, the theme is the hour). The map reads it for its mood overlay and nothing else; a family reads
    * the same name off its own room to pick a skin. Optional: most floors author none and wear their
@@ -203,6 +226,9 @@ export type FloorConfig = {
   decorations?: DecorationKind[]
   /** Pool of wall-item kinds for the same rooms, hung on a wall instead of standing on the floor. */
   wallDecorations?: WallDecorationKind[]
+  /** What has got into this site — see SiteCondition. Authored once on the pyramid, so every floor
+   * carries the same one and it runs through the whole climb. */
+  condition?: SiteCondition
   mainEndReward?: TreasureReward
   rewards?: (TreasureReward | undefined)[]
   /** Default family/tag(s) for this floor's main-path encounter rooms. An array means "any of these". */

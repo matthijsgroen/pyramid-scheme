@@ -1,4 +1,4 @@
-import type { DecorationKind, WallDecorationKind } from "../game/siteTypes"
+import type { DecorationKind, SiteCondition, WallDecorationKind } from "../game/siteTypes"
 
 export type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
 // Authored puzzle-count progression across a journey's pyramids: `start` on pyramid 1,
@@ -81,6 +81,9 @@ export type FloorConfig = {
   wallDecorations?: WallDecorationKind[]
   /** The role this floor's main-path rooms were allocated FOR — mirrors game/siteTypes.ts's FloorConfig.role. */
   role?: string | string[]
+  /** What has got into this site — mirrors game/siteTypes.ts's FloorConfig.condition. Authored on the
+   * PYRAMID and copied onto every floor, so it survives the climb through the ranks. */
+  condition?: SiteCondition
 }
 
 export type SiteConfig = FloorConfig[]

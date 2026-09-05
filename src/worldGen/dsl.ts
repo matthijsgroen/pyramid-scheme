@@ -1,5 +1,5 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
-import type { DecorationKind, WallDecorationKind } from "../game/siteTypes"
+import type { DecorationKind, SiteCondition, WallDecorationKind } from "../game/siteTypes"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { wardKeyDifficulty } from "../data/difficultyLevels"
 
@@ -216,6 +216,17 @@ export type PyramidConstraint = {
    * its own. Its own vocabulary, because a wall item is not a prop (see WallDecorationKind). Purely
    * drawn — a free field (docs/game-design/world-spec-stability.md). */
   wallDecorations?: WallDecorationKind[]
+  /**
+   * Something that has got into this whole site and shows on every floor of it: water standing in it,
+   * green forcing through the brick. `amount` is 0-1 like every other fraction here — 0.25 is a damp
+   * corner, 1 is the pyramid the journey is remembered for.
+   *
+   * Authored HERE rather than per floor on purpose. The point of a condition is that it survives the
+   * climb: an agriculture journey can push one of its pyramids to overdrive and have the green follow
+   * the player from the merchant's cellar to the gods' vault, which is not something a per-floor hour
+   * can say. Purely drawn — a free field (docs/game-design/world-spec-stability.md).
+   */
+  condition?: SiteCondition
   /** Default family/tag for this pyramid/tomb's main-path encounter rooms — e.g. a tomb sets
    * "tableau" (or the "tomb-puzzle" tag) here so every floor's main-path rooms use it. An array is
    * "any of these". */

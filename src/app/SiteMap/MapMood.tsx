@@ -62,6 +62,45 @@ type Props = {
   isLit: (row: number, col: number) => boolean
 }
 
+/**
+ * What is growing on the stone, drawn with the scarabs and under everything that stands on it.
+ *
+ * The same trick `MapLife` uses and for the same reason: ONE shared sprite in `tiles/default/`, placed
+ * by index into the fixed floor-cell list, so a rank costs no files and a reveal cannot make anything
+ * jump. Still rather than scurrying — a weed in a corner does not run — and nudged toward the top of its
+ * cell, where the wall band is: what makes a vine read as a vine rather than as a plant in a pot is that
+ * it came THROUGH the wall, and the band above a cell is the only wall the map draws.
+ *
+ * Draws nothing until the sprite exists, which is deliberate: the condition can be authored, composed
+ * and seen as a wash before a single file is painted.
+ */
+export const MapGrowth = ({ mood, siteId, floorCells, isLit }: Omit<Props, "width" | "height">) => {
+  const url = sharedTileUrl(mood.growth?.kind ?? "")
+  if (!mood.growth?.count || !url || floorCells.length === 0) return null
+  return (
+    <g aria-hidden="true" style={{ pointerEvents: "none" }}>
+      {Array.from({ length: mood.growth.count }, (_, i) => {
+        const [row, col] = floorCells[Math.floor(rand(siteId, "growth-cell", i) * floorCells.length)]
+        if (!isLit(row, col)) return null
+        const { cx, cy } = cellCenter(row, col)
+        const size = 12 + rand(siteId, "growth-size", i) * 10
+        return (
+          <image
+            key={i}
+            href={url}
+            x={cx - size / 2 + (rand(siteId, "growth-x", i) - 0.5) * (CELL * 0.7)}
+            // Biased UP the cell: toward the wall band it is meant to be coming out of.
+            y={cy - size + (rand(siteId, "growth-y", i) - 0.5) * (CELL * 0.4)}
+            width={size}
+            height={size}
+            style={{ transform: rand(siteId, "growth-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
+          />
+        )
+      })}
+    </g>
+  )
+}
+
 /** Scarabs: on the floor, under everything that stands on it. */
 export const MapLife = ({ mood, siteId, floorCells, isLit }: Omit<Props, "width" | "height">) => {
   const url = sharedTileUrl("scarab")
