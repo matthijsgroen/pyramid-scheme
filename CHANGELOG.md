@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A room is furnished for something now, rather than with whatever came to hand: what stands in it and
+  what hangs on its wall agree, so a chamber reads as the storeroom, or the place they sold, or the place
+  they prayed. Rooms whose furniture belongs nowhere in particular — a pillar, a chest, a fallen heap —
+  are left as they were, because a floor where every room announces a purpose is worse than one with a
+  few plain rooms on it.
+- Fallen brick is two different things depending on where you meet it: a spill across a passage floor you
+  walk over, and a knee-high heap in the corner of a chamber you walk around. Seventy-seven rooms that
+  were furnished with one and drew nothing at all now draw the heap.
+- A merchant's walls carry his trade: a goods niche of sealed jars and a tied bundle set into the
+  mudbrick, and the tally board hung beside it on two pegs, its strokes scratched in fives and crossed
+  through.
+- The reed mat lies flat on the floor rather than looking lifted at one edge.
+- The explorer walks rather than slides: the legs cycle through their frames the whole way down a
+  passage, and stop on a standing pose the moment they arrive. The cycle keeps its own time now, so a
+  busy floor no longer freezes it mid-stride.
 - The explorer carries light now: a pool of torchlight at their feet that gutters as they stand, and a
   faint warmth over the room or passage they are in. A chamber lights whole; a passage lights as far as
   its next turn, and nothing beyond it. Where you are standing is the brightest
