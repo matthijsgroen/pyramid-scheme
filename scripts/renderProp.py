@@ -207,7 +207,7 @@ def prim_shelf():
     box(w, d, brick, z=h - brick / 2)
     # Upper level: two mud-stoppered storage pots, sized to the room the lip really leaves.
     base = shelf_z + shelf_t / 2
-    room = (h - brick - lip) - (base + lip)
+    room = (h - head - lip) - (base + lip)
     for x in (-0.33, -0.02):
         jar(x, -0.02, room / 1.15, 0.10, z=base)
     # Lower level: folded linen, stacked.
@@ -495,16 +495,58 @@ def prim_niche():
     # squashed it a sixth. Widening the bay rather than flattening it keeps the room the pots need.
     w, d, h, brick = 1.62, 0.34, 0.62, 0.09
     lip = 0.35 * d
+    # THE BAY'S HEIGHT IS NOT NEGOTIABLE. A lintel twice as deep was tried, to give the nobleman's soot
+    # a surface to fan across, and it cost more bay than the soot was worth: the contents flattened and
+    # the oil jar came out a dot. What makes this bay read is that it is 78% of the drawn height, and
+    # anything taken off the opening is taken off the only part anyone can see.
+    head = brick
     # The surround: back slab, two jambs, a sill under and a lintel over. The hollow between them IS the
     # niche, so nothing is modelled where the opening is.
     box(w, brick, h, y=(d - brick) / 2, z=h / 2)
     for sx in (-1, 1):
         box(brick, d, h, x=sx * (w / 2 - brick / 2), z=h / 2)
     box(w, d, brick, z=brick / 2)
-    box(w, d, brick, z=h - brick / 2)
-    # What stands in it, sized to the room the lintel actually leaves.
+    box(w, d, head, z=h - head / 2)
+    # What stands in it, sized to the room the lintel actually leaves. The BAY is the same at every rank
+    # — the brief gives each one a niche, and a cut recess is a cut recess — so `--contents` is the only
+    # thing that changes, and a rank costs a repaint rather than a model.
     base = brick
-    room = (h - brick - lip) - (base + lip)
+    room = (h - head - lip) - (base + lip)
+    if arg("contents", "goods") == "lamp":
+        # The nobleman's LAMP NICHE, and everything here is about what survives 28 pixels.
+        #
+        # A LAMP IS THE WRONG SHAPE FOR THIS BAND, and two renders proved it. A lamp is a shallow dish,
+        # four times as wide as it is tall; laid on the sill its whole silhouette is the sill itself, and
+        # it came back a smear with a tail. Stood on a foot it became a spoon. What reads in this bay is
+        # what reads in the merchant's — a chunky mass with a ROUND top, held clear of the sill and the
+        # lintel both. So the lamps are squat rounded bodies with a spout, which is a lamp of the fat
+        # closed sort, and the spout is the only fine thing on them.
+        #
+        # The spouts run along X. Along -Y a spout draws as a cone hanging off the body, `prim_lamp`'s
+        # first failure, and at half shear there is even less room to recover from it.
+        #
+        # THREE objects evenly spread, because the merchant's bay proves that is what fills one: two and
+        # a gap reads as a bay with two things left in it.
+        for x, scale, lit in ((-0.50, 1.0, True), (-0.02, 0.88, False)):
+            # DOMED, not squashed. The merchant's bundle is a sphere flattened to 0.62 of its radius
+            # and it reads — but it reads BESIDE two tall jars, and the contrast is doing the work. A
+            # bay of nothing but flattened masses came back as two dishes and a dot, twice. A lamp of
+            # this closed sort is about as tall as it is half wide, so the sphere keeps its height and
+            # loses its radius instead.
+            bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=12, radius=0.112 * scale,
+                                                 location=(x, -0.02, base + 0.098 * scale))
+            body = bpy.context.object
+            body.scale = (1.35, 0.9, 1.0)
+            bpy.ops.object.transform_apply(scale=True)
+            box(0.15 * scale, 0.065, 0.075 * scale, x=x + 0.185 * scale, y=-0.02, z=base + 0.075 * scale)
+            if lit:
+                bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.055, radius2=0.0, depth=room * 0.44,
+                                                location=(x, -0.02, base + 0.20 + room * 0.20))
+        # The oil jar they are filled from, taller than the lamps so the row is not one flat line. SLIM:
+        # `jar()`'s stopper is a fixed fraction of the height, so a fat short one is mostly dome and
+        # reads as an onion — 0.105 of belly did exactly that. Narrow puts the shoulder back in charge.
+        jar(0.48, -0.02, room / 0.72, 0.095, z=base)
+        return join_all()
     # SLIMMER than the prop slot's pots. `jar()` puts a domed stopper on a spherical belly, which reads
     # as a jar at 84 units and as an onion at 28: the stopper is a fixed fraction of the height, so the
     # shorter the jar the more of it is dome. Taller and narrower puts the shoulder back in charge.

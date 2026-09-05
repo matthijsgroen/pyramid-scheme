@@ -32,7 +32,11 @@ const composed = await sharp({
   .composite([
     { input: floor, top: BAND, left: 0 },
     { input: face, top: 0, left: 0 },
-    { input: await sprite.toBuffer(), top: BAND + CELL - height + 14, left: Math.round((W - width) / 2) },
+    // A WALL ITEM goes in the band; a prop stands on the floor line below it. Told apart by height,
+    // because the wall slot is the only one shorter than the band.
+    height <= BAND
+      ? { input: await sprite.toBuffer(), top: BAND - height, left: CELL }
+      : { input: await sprite.toBuffer(), top: BAND + CELL - height + 14, left: Math.round((W - width) / 2) },
   ])
   .png()
   .toBuffer()

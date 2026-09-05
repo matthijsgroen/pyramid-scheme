@@ -28,6 +28,25 @@ row says it is made of. Also decide where the mesh comes from:
 with depth is therefore modelled and rendered with `--shear=0.5`; asked for in words, a recess comes back
 receding to a vanishing point. Only a genuinely flat thing hanging against the surface skips the mesh.
 
+**ONE PRIMITIVE, FIVE RANKS: the bay is the same and only `--contents` changes.** The brief gives every
+rank a `niche`, and a cut recess is a cut recess — so `prim_niche` takes `--contents` and a rank costs a
+repaint rather than a model. Render it at the SLOT'S ASPECT (`--width=448 --height=224` for the 56x28
+band): the default frame is the prop's 2:3, and a 2:1 object dropped into it is framed to the width, so
+the import trims a strip and the tile arrives a third of its height.
+
+What the nobleman's lamp niche cost, because it is the same lesson every time and it is about 28 PIXELS:
+
+- **A lamp is the wrong shape for this band.** It is a shallow dish, four times as wide as it is tall;
+  on the sill its whole silhouette IS the sill, and it rendered as a smear with a tail. Put on a foot it
+  became a spoon. Three renders.
+- **A flattened mass only reads BESIDE a tall one.** The merchant's bundle is a sphere squashed to 0.62
+  and it works — next to two tall jars. A bay of nothing but flattened masses came back as two dishes
+  and a dot, twice. The lamps keep their height and lose their radius instead.
+- **The bay's height is not negotiable.** A lintel twice as deep, to give the brief's soot a surface to
+  fan across, cost more bay than the soot was worth. The opening is 78% of the drawn height and that is
+  the only part anyone can see. Soot goes in the PROMPT, on the lintel and the upper interior, where the
+  mask already covers.
+
 **A HOLE is one parallelogram deep, and its dark is geometry too.** Under z + k*y the ground in front of
 an opening draws lower as it comes toward the viewer, so it covers the shaft below the near lip: the whole
 of a floor hole is the band between its two lip lines, `k*d` tall, and a far wall of exactly that height
