@@ -23,12 +23,14 @@ trap 'rm -f "$OBJ" "$SHADOW"' EXIT
 scaffold() {
   prim=$1
   shift
-  # --shadow=0 goes BEFORE "$@": renderProp's arg() returns the FIRST match, so a per-prop --shadow
-  # passed for the footprint render cannot put a footprint back into the mask.
-  "$BLENDER" -b -P scripts/renderProp.py -- --primitive="$prim" --colour=#a49781 --floor=#6c6257 \
-    --shadow=0 --background=none --out="$OBJ" "$@" >/dev/null
-  "$BLENDER" -b -P scripts/renderProp.py -- --primitive="$prim" --colour=#a49781 --floor=#6c6257 \
-    --only=shadow --background=none --out="$SHADOW" "$@" >/dev/null
+  # arg() returns the FIRST match, and the argument ORDER here is load-bearing in both directions.
+  # --shadow=0 goes BEFORE "$@", so a per-prop --shadow passed for the footprint render cannot put a
+  # footprint back into the mask. The rank's stone goes AFTER, so it is a DEFAULT: a prop that does not
+  # name a colour gets the merchant's, and a rank that does gets its own out of `tierPalette`.
+  "$BLENDER" -b -P scripts/renderProp.py -- --primitive="$prim" \
+    --shadow=0 --background=none --out="$OBJ" "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
+  "$BLENDER" -b -P scripts/renderProp.py -- --primitive="$prim" \
+    --only=shadow --background=none --out="$SHADOW" "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
 }
 
 # starter — the merchant
@@ -97,3 +99,17 @@ yarn import-tile art/props/starter/mat.webp --tier=starter --name=mat --slot=pro
 scaffold pit --shadow=0
 yarn import-tile art/props/starter/pit.webp --tier=starter --name=pit --slot=prop \
   --filter=smooth --mask="$OBJ" --brightness=0.82
+
+# junior — the nobleman
+#
+# The bay is `prim_niche`; only --contents changes between ranks. --width and --height are the SLOT'S
+# aspect and not the prop frame's: the default 2:3 frames a 2:1 object to its width, and the import
+# trimmed the strip and delivered a tile a third of its height.
+#
+# --saturation=1.3 --brightness=0.85 put the surround at +81 warmth and 107 luminance against the junior
+# wall face's +77 and 108. Measured over a FIXED region of the surround, not over pixels above a
+# luminance threshold: as the tile darkens, fewer pixels clear the threshold and the mean of the
+# survivors barely moves, so the knob reads as dead. The threshold called this same file +96 and 151.
+scaffold niche --contents=lamp --shear=0.5 --width=448 --height=224 --colour=#e0c193
+yarn import-tile art/props/junior/niche.webp --tier=junior --name=niche --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18 --saturation=1.3 --brightness=0.85
