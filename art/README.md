@@ -25,10 +25,6 @@ smaller than the images and also says how the tile was imported.
 before anything measured it. It costs nothing to notice and cannot be recovered later; every master here
 was re-made from `~/Downloads` once that turned up.
 
-`pit.webp` is the ONE master here that came through the paste path, at 1334x2000. It is kept because it
-is the only copy of an irreplaceable return, and it is the first file to replace if the download turns up:
-`rebuild.sh` reproduces the tile from whatever is at that path, so swapping it costs one command.
-
 A master that arrived as a SHEET is stored as the sheet — `basin-sheet.webp` is three frames and the tile
 is the middle one via `cut-sheet`. The sheet is what the generator actually returned, and a crop guessed
 after the fact would be a master under a name claiming more than it knows.

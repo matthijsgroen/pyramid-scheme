@@ -207,7 +207,7 @@ def prim_shelf():
     box(w, d, brick, z=h - brick / 2)
     # Upper level: two mud-stoppered storage pots, sized to the room the lip really leaves.
     base = shelf_z + shelf_t / 2
-    room = (h - head - lip) - (base + lip)
+    room = (h - brick - lip) - (base + lip)
     for x in (-0.33, -0.02):
         jar(x, -0.02, room / 1.15, 0.10, z=base)
     # Lower level: folded linen, stacked.
