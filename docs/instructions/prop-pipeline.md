@@ -154,6 +154,14 @@ half with the reference's crate and baskets. The mask cut them away and the prop
 the fix is to reference a SURFACE rather than an object: `~/tile-previews/<tier>-wall-panel.png` is the
 same brush and the same palette with nothing in it to copy.
 
+**And the surface has to be PLAIN, which `<tier>-wall-panel.png` is only at some ranks.** The nobleman's
+lamp niche was rolled against `junior-wall-panel.png` and came back as that panel REDRAWN — four registers
+of procession, the same jar bearers, the same cattle and geese, the same banquet row, and no niche in it
+anywhere. The advice above was written against the merchant's panel, which is mudbrick and whitewash and
+has nothing in it to copy; the nobleman's is a figured mural and is the most content-rich image in the
+set. Cut the plain part out and reference THAT — `junior-plaster.png` is the dado and the plaster below
+the lowest register. Same brush, same palette, nothing to draw.
+
 **Gate: compare it against the scaffold before importing.** Two failures are visible at a glance — an
 invented floor (harmless now: the mask is the object alone, so the floor AND the repaint's idea of a
 shadow are both discarded, and Step 4's `--seat` puts a rendered shadow back) and a part that has MOVED
