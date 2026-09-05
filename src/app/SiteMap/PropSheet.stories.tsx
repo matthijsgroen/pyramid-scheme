@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { DecorationKind, WallDecorationKind } from "@/game/siteTypes"
 import { CELL, WALL_H } from "./mapScale"
+import { authoredKindsFor } from "./authoredKinds"
 import { ART_IMAGE_RENDERING, tileUrl } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
 
@@ -13,36 +13,6 @@ import { tierPalette } from "./tileMaterials"
 //
 // A generated floor cannot do this job: RankSeams draws whatever its pools happen to author, so there is
 // no way to ask it for the one object you just imported.
-
-const PROPS: DecorationKind[] = [
-  "statue",
-  "shrine",
-  "sarcophagus",
-  "jarRack",
-  "offeringTable",
-  "basin",
-  "shelf",
-  "chestProp",
-  "lamp",
-  "hanging",
-  "pillar",
-  "brazier",
-  "rubble",
-  "pit",
-  "mat",
-  "crystal",
-]
-
-const WALL_ITEMS: WallDecorationKind[] = [
-  "niche",
-  "stela",
-  "sconce",
-  "veil",
-  "wallShrine",
-  "tallyBoard",
-  "mask",
-  "starShaft",
-]
 
 const PROP_H = CELL + WALL_H
 /** The explorer's slot, from importTile's SLOTS — he is the ruler everything else is measured against. */
@@ -147,24 +117,35 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; zoom: nu
   )
 }
 
-const Sheet: FC<{ tier: Difficulty; zoom: number }> = ({ tier, zoom }) => (
-  // h-screen + overflow-auto, because at zoom 6 the sheet is wider and taller than the canvas and a
-  // fullscreen story clips instead of scrolling.
-  <div className="flex h-screen flex-col gap-6 overflow-auto bg-neutral-900 p-6">
-    <h2 className="m-0 text-sm text-white/80">{tier} — chamber props</h2>
-    <div className="flex flex-wrap gap-4">
-      {PROPS.map(kind => (
-        <Chamber key={kind} tier={tier} name={kind} zoom={zoom} />
-      ))}
+// Only what this rank is actually furnished with. Staging every kind at every rank invites work that
+// will never be seen: the merchant's sheet used to show a sarcophagus and a crystal, neither of which
+// the world authors below junior and wizard, and six wall items where it authors two. See
+// `authoredKinds.ts`, and `yarn art-census` for the same list with room counts and what has art.
+const Sheet: FC<{ tier: Difficulty; zoom: number }> = ({ tier, zoom }) => {
+  const { props, wallItems } = authoredKindsFor(tier)
+  return (
+    // h-screen + overflow-auto, because at zoom 6 the sheet is wider and taller than the canvas and a
+    // fullscreen story clips instead of scrolling.
+    <div className="flex h-screen flex-col gap-6 overflow-auto bg-neutral-900 p-6">
+      <h2 className="m-0 text-sm text-white/80">
+        {tier} — chamber props <span className="text-white/40">({props.length} the world authors here)</span>
+      </h2>
+      <div className="flex flex-wrap gap-4">
+        {props.map(kind => (
+          <Chamber key={kind} tier={tier} name={kind} zoom={zoom} />
+        ))}
+      </div>
+      <h2 className="m-0 text-sm text-white/80">
+        {tier} — wall items <span className="text-white/40">({wallItems.length})</span>
+      </h2>
+      <div className="flex flex-wrap gap-4">
+        {wallItems.map(kind => (
+          <Chamber key={kind} tier={tier} name={kind} wallItem zoom={zoom} />
+        ))}
+      </div>
     </div>
-    <h2 className="m-0 text-sm text-white/80">{tier} — wall items</h2>
-    <div className="flex flex-wrap gap-4">
-      {WALL_ITEMS.map(kind => (
-        <Chamber key={kind} tier={tier} name={kind} wallItem zoom={zoom} />
-      ))}
-    </div>
-  </div>
-)
+  )
+}
 
 const meta = {
   component: Sheet,

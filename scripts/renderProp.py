@@ -334,11 +334,126 @@ def prim_mat():
        lift. Relief at the FRONT of any prop is free to model and impossible to see. Only the far edge
        gains from both, and a far-edge fold draws as one more pale band above the sheet.
 
+    ITS OWN THICKNESS IS THE TRAP. The sheet is a box, and a box has a side: spun on the floor, the shear
+    draws that edge as a dark band down one side, and a dark band down one side of a flat thing reads as
+    the thing being RAISED off the floor rather than lying on it. At 0.055 on a 0.95-wide sheet that band
+    is only a couple of pixels in the slot and it was still the first thing anyone noticed. Keep a floor-
+    lying sheet as thin as the mesh allows, and let the paint carry the edge instead of the geometry.
+
     So the sheet is left alone and the weave carries it: a coarse checker of eight squares across is
     about 6 units apiece at slot size, which survives where a spiral or a frayed straw does not. What
     geometry still owes the prop is a shape that is not a FLOOR TILE, and --spin is what buys that — a
     rug lying askew of the grid cannot be read as part of the paving, and it costs one flag."""
     box(0.95, 0.72, 0.055, z=0.0275)
+    return join_all()
+
+
+def prim_rubbleheap():
+    """A heap of broken mudbrick, one brick still whole — the ROOM's rubble, not the scatter's.
+
+    `rubble` is two objects sharing one name (SiteMapView's STANDING_VARIANT). The scatter layer lays a
+    spill on cells the player WALKS OVER, so that one has to stay flat enough to walk through. This is
+    the other one: a room's dressing lands on an empty claimed cell nobody can walk on, so it is free to
+    stand up and be walked around. Knee-high is the point of it, and would be nonsense underfoot.
+
+    Step 0 of the pipeline files rubble under "cloth, heaps, scatter — still unsolved". That is right
+    about SAND and wrong about this: a merchant's rubble is broken MUDBRICK, and a brick is a box.
+
+    What the heap has to beat is `prim_mat`'s finding — a flat thing on the floor is all top face and
+    has no silhouette. So the heap is built with real height, and the height is put at the BACK: under
+    z + 0.7y a piece one unit further back draws 0.7 higher, so mass behind the centre buys drawn height
+    twice over where the same mass in front buys almost none.
+
+    NO BASE UNDER IT. The first version stood the bricks on two flattened blocks meant to read as a
+    mound of mortar; they drew as a clean rectangular plinth with rubble sitting on it, because a big
+    box is a big box whatever it is called. The mound has to BE the bricks.
+
+    EVERY PIECE IS ROLLED OFF LEVEL, not merely turned on the floor. Yaw alone leaves every top face
+    parallel to every other and the pile reads as stacking — as a wall being built rather than one that
+    fell. A few degrees about Y is what says the pieces came to rest where they landed.
+
+    Sizes are a real mudbrick's proportions, roughly 2 : 1 : 0.6, so the pieces read as brick rather
+    than gravel: at slot size a whole brick is about 14 units, the smallest thing that still says brick.
+    The mortar dust and the sherd scatter are PAINT, like the mat's weave — geometry that small does not
+    survive the slot."""
+    B = 0.30  # a whole brick's length
+    # (length, width, height, x, y, z, yaw, roll). Fixed rather than random: a primitive that renders
+    # differently every run cannot be judged against its last roll.
+    pieces = [
+        # the bed — wide, low, overlapping, and reaching back
+        (B * 0.9, 0.15, 0.09, -0.22, 0.00, 0.045, -8, 4),
+        (B * 0.8, 0.14, 0.09, 0.02, -0.04, 0.045, 14, -6),
+        (B * 0.7, 0.15, 0.09, 0.25, 0.02, 0.045, -19, 5),
+        (B * 0.6, 0.13, 0.08, -0.30, 0.09, 0.05, 26, -3),
+        (B * 0.9, 0.15, 0.09, 0.10, 0.13, 0.05, -5, 7),
+        # the second course, drawn higher by being further back as well as by z
+        (B * 0.55, 0.14, 0.09, -0.14, 0.09, 0.14, 17, -11),
+        (B * 0.75, 0.15, 0.09, 0.09, 0.06, 0.15, -12, 8),
+        (B * 0.45, 0.13, 0.08, 0.28, 0.14, 0.14, 22, -5),
+    ]
+    for sx, sy, sz, x, y, z, yaw, roll in pieces:
+        piece = box(sx, sy, sz, x=x, y=y, z=z)
+        tilt(piece, yaw, "Z")
+        tilt(piece, roll, "Y")
+    # The one whole brick: full length, on top of the crown where nothing crops it, tipped so it reads
+    # as come to rest rather than as laid.
+    # The whole brick IS the crown, rather than a tenth piece balanced on one. A separate crown sat
+    # behind it at nearly the same DRAWN height — z + 0.7y makes a piece further back climb to meet
+    # whatever is in front of it — so it hid behind the brick instead of supporting it, and the heap
+    # showed a clear gap of magenta between its top and the course below. Judge contact in the sheared
+    # projection, never in world space: two pieces that touch in Blender need not touch on the page,
+    # and two that are far apart in y can land on top of each other.
+    whole = box(B, 0.15, 0.095, x=-0.04, y=0.14, z=0.19)
+    tilt(whole, -14, "Z")
+    tilt(whole, 6, "Y")
+    return join_all()
+
+
+def prim_niche():
+    """A goods recess cut into a wall — one bay of `prim_shelf`, hollowed instead of shelved.
+
+    WHY THIS IS MODELLED AT ALL. A wall item was taken for the one slot a generator could draw straight,
+    on the grounds that it is seen face-on. That is true of its FRONT PLANE and false of everything
+    behind it: the band is part of the same oblique world as the rest of the map, at HALF depth
+    (`mapScale`'s SIDE_W 14 of wall thickness images as 7 of drawn height, so k = 0.5). A recess has
+    depth by definition, so the first roll came back with its interior receding to a vanishing point —
+    photographically correct and wrong for this map. Render it with `--shear=0.5` and the projection is
+    right by construction, exactly as it is for a prop; the repaint then only has to supply material.
+
+    So the rule the triage needs is not "wall items are flat". It is: a wall item with DEPTH is modelled
+    like a prop and rendered at half shear, and only a genuinely flat one — a plaque, a stela, a tally
+    board hanging against the surface — is straight to the generator.
+
+    THE RECESS FLOOR IS DRAWN ABOVE ITS FRONT LIP, which is the whole reason this reads as a hole rather
+    than as a picture hung on the wall: depth going back is depth going up. `prim_shelf`'s lip rule
+    applies unchanged — an opening holds `0.35 * depth` less than its gap — so the pots are sized to
+    what the lintel really leaves, not to the gap it appears to leave.
+    """
+    # Sized so the DRAWN shape is the slot's 2:1. Drawn height is h + k*d with k = 0.5, so a bay 0.62
+    # tall and 0.34 deep draws 0.79 — against 1.30 of width that is 1.65:1, and the import would have
+    # squashed it a sixth. Widening the bay rather than flattening it keeps the room the pots need.
+    w, d, h, brick = 1.62, 0.34, 0.62, 0.09
+    lip = 0.35 * d
+    # The surround: back slab, two jambs, a sill under and a lintel over. The hollow between them IS the
+    # niche, so nothing is modelled where the opening is.
+    box(w, brick, h, y=(d - brick) / 2, z=h / 2)
+    for sx in (-1, 1):
+        box(brick, d, h, x=sx * (w / 2 - brick / 2), z=h / 2)
+    box(w, d, brick, z=brick / 2)
+    box(w, d, brick, z=h - brick / 2)
+    # What stands in it, sized to the room the lintel actually leaves.
+    base = brick
+    room = (h - brick - lip) - (base + lip)
+    # SLIMMER than the prop slot's pots. `jar()` puts a domed stopper on a spherical belly, which reads
+    # as a jar at 84 units and as an onion at 28: the stopper is a fixed fraction of the height, so the
+    # shorter the jar the more of it is dome. Taller and narrower puts the shoulder back in charge.
+    jar(-0.46, -0.02, room / 0.82, 0.095, z=base)
+    jar(-0.14, -0.02, room / 0.90, 0.088, z=base)
+    # The tied cloth bundle: a squashed sphere, because a bundle is a silhouette and nothing finer.
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=12, radius=0.16, location=(0.40, -0.02, base + 0.13))
+    bundle = bpy.context.object
+    bundle.scale = (1.15, 0.9, 0.62)
+    bpy.ops.object.transform_apply(scale=True)
     return join_all()
 
 
@@ -355,6 +470,8 @@ PRIMITIVES.update(
         "lamp": prim_lamp,
         "pillar": prim_pillar,
         "mat": prim_mat,
+        "rubbleHeap": prim_rubbleheap,
+        "niche": prim_niche,
     }
 )
 

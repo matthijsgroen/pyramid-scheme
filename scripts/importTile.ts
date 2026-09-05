@@ -18,7 +18,10 @@
  *   --repeat=1.4     fit the art N times across the slot instead of once, for a megatile whose subject
  *                    came back too big. Fractional is the point — a whole number makes the repeat
  *                    visible. Run `make-seamless` on the SOURCE first, or the grid shows its own seams.
- *   --headroom=0.25  (face) squeeze the art into the LOWER part of the slot and cap the rest. The
+ *   --headroom=0.25  squeeze the art into the LOWER part of the slot and leave the rest clear. On a FACE
+ *                    the cap is painted the wall's own top colour, because a face IS the wall; on any
+ *                    other slot it is left transparent, so the wall behind a hanging thing still shows.
+ *                    (face) The
  *                    renderer draws the wall's top surface over the top of a face, so that much of the
  *                    art is never seen — and a frieze drawn to the top of the picture comes out with its
  *                    figures' heads cut off by it.
@@ -41,6 +44,12 @@
  *                    chalky highlights — a prop comes back lit for a gallery rather than for a cellar —
  *                    and no wording has reliably prevented it. Uses a brightness modulation rather than a
  *                    linear scale so the alpha channel, and with it the object's silhouette, is untouched.
+ *   --gamma=0.65     lift a whole generation onto another one's exposure. A sheet drawn in a later session
+ *                    comes back at a different overall level — the explorer's side row arrived at HALF the
+ *                    luminance of the front and back drawn earlier, and it is not a uniform factor: the
+ *                    shadows were out by 2.2x where the highlights were out by 1.5x, so --brightness blows
+ *                    the highlights out before the midtones arrive. A power curve on the colour channels
+ *                    fits the whole range at once. Below 1 lifts, above 1 darkens; alpha is untouched.
  *   --contrast=1.25  push values away from mid-grey before anything else — the inverse of --flatten, for
  *                    a roll whose carving is too shallow to read. 1 leaves it alone; below 1 is not
  *                    allowed, as it would eat an object's transparency.
@@ -183,7 +192,12 @@ const withHeadroom = async (
   w: number,
   h: number,
   headroom: number,
-  palette: { wallTop: string; wall: string } | undefined
+  palette: { wallTop: string; wall: string } | undefined,
+  /** A FACE is the wall, so its cap is the wall's own top surface, painted. Anything else HANGS on a
+   * wall — a niche, a stela, a sconce — and its cap has to be transparent or the rank's brick stops
+   * showing through above it: the merchant's niche filled the band to the pixel and read as a block
+   * breaking the wall's top line rather than as a hole cut into it. */
+  opaqueCap: boolean
 ): Promise<Buffer> => {
   const capH = Math.round(h * headroom)
   const [r, g, b] = hexToRgb(palette?.wallTop ?? "#000000")
@@ -191,7 +205,14 @@ const withHeadroom = async (
     .resize(w, h - capH, { fit: "fill", kernel: "lanczos3" })
     .png()
     .toBuffer()
-  return sharp({ create: { width: w, height: h, channels: 4, background: { r, g, b, alpha: 1 } } })
+  return sharp({
+    create: {
+      width: w,
+      height: h,
+      channels: 4,
+      background: opaqueCap ? { r, g, b, alpha: 1 } : { r: 0, g: 0, b: 0, alpha: 0 },
+    },
+  })
     .composite([{ input: squeezed, left: 0, top: capH }])
     .png()
     .toBuffer()
@@ -234,6 +255,19 @@ const underlayShadow = async (img: sharp.Sharp, shadowPath: string): Promise<sha
     .png()
     .toBuffer()
   return sharp(seated)
+}
+
+/** A power curve on the colour channels, leaving alpha alone: `out = 255 * (in/255) ** exponent`. Below 1
+ * lifts the shadows further than the highlights, which is the shape of an exposure difference between two
+ * generation sessions — see `--gamma` above. */
+const applyGamma = async (input: Buffer, exponent: number): Promise<Buffer> => {
+  const { data, info } = await sharp(input).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  const curve = new Uint8Array(256)
+  for (let v = 0; v < 256; v++) curve[v] = Math.round(255 * Math.pow(v / 255, exponent))
+  for (let i = 0; i < data.length; i += info.channels) for (let c = 0; c < 3; c++) data[i + c] = curve[data[i + c]]
+  return sharp(data, { raw: { width: info.width, height: info.height, channels: info.channels } })
+    .png()
+    .toBuffer()
 }
 
 const seatOnFloorLine = async (img: sharp.Sharp, aspect: number, scale: number): Promise<sharp.Sharp> => {
@@ -344,13 +378,15 @@ const main = async (): Promise<void> => {
   if (contrast < 1) throw new Error("--contrast below 1 would eat the alpha channel; use --flatten instead")
   const brightness = Number(arg("brightness", "1"))
   const saturation = Number(arg("saturation", "1"))
-  const lit =
+  const modulated =
     brightness === 1 && saturation === 1
       ? await tiles.png().toBuffer()
       : await sharp(await tiles.png().toBuffer())
           .modulate({ brightness, saturation })
           .png()
           .toBuffer()
+  const gamma = Number(arg("gamma", "1"))
+  const lit = gamma === 1 ? modulated : await applyGamma(modulated, gamma)
   const stretched =
     contrast === 1
       ? lit
@@ -358,7 +394,7 @@ const main = async (): Promise<void> => {
           .linear(contrast, 128 * (1 - contrast))
           .png()
           .toBuffer()
-  const laid = headroom > 0 ? await withHeadroom(stretched, w, h, headroom, palette) : stretched
+  const laid = headroom > 0 ? await withHeadroom(stretched, w, h, headroom, palette, slot === "face") : stretched
   const washColour = ["face", "wall", "arch"].includes(slot) ? palette?.wall : palette?.slab
   const [wr, wg, wb] = hexToRgb(washColour ?? "#000000")
   const wash = {
