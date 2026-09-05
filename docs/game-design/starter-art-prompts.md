@@ -371,8 +371,40 @@ on the background.
 | `pillar`        | A rough timber prop holding up the ceiling, wooden wedges hammered in at its foot, the top out of frame, bark still on one side.                                                  |
 | `brazier`       | A shallow clay dish on three short legs holding cold grey ash and one unburnt stick. No flame, no glow.                                                                           |
 | `rubble`        | A spill of dry mortar, broken mudbricks and pottery sherds heaped on the ground, dust settling around it, one brick still whole.                                                  |
-| `pit`           | A dark square cellar shaft cut into the floor, seen from just above, a knotted rope ladder hooked over its near lip and disappearing into black.                                  |
+| `pit`           | MODELLED — `prim_pit`, see below. Its old prompt asked for a ladder over the NEAR lip, which this projection does not draw. |
 | `mat`           | A rolled and partly unrolled reed mat, frayed at both ends, one corner curled up, the weave visible.                                                                              |
+
+### `pit` is modelled, and what its repaint is asked for
+
+A hole in the floor cannot be prompted. Under z + k*y the ground in FRONT of an opening draws lower as it
+comes toward the viewer, so it covers the shaft below the near lip: a hole is exactly one parallelogram
+deep, a far wall of height `k*d` fills that band top to bottom, and a ladder hung over the NEAR lip —
+which is what the row above used to ask for — descends into the half that is never drawn. `prim_pit` puts
+the ladder over the far lip instead, on a pole laid ACROSS the mouth, because a rope taken back in depth
+draws as a vertical post and nothing else.
+
+```
+yarn render-prop --primitive=pit --colour=#a49781 --floor=#6c6257 --shadow=0
+```
+
+`--shadow=0` on all three renders, and NO `--seat` at import: `make_shadow` flattens the object to z=0 and
+pushes it toward the viewer, so a pit's footprint is a second dark parallelogram lying in front of the
+first one and the tile reads as two holes. A hole casts nothing.
+
+The scaffold arrives with its shaft already near-black — `--void`, the one part of one primitive that is
+not painted in the rank's stone. That is deliberate and has to survive the repaint: a hole's identity is
+its VALUE, and one flat colour over the whole scaffold measured the same as the floor behind it once the
+sprite was 56 units wide. So the SUBJECT block names the black as black, and names nothing as a rim:
+
+> A cellar shaft cut down through a mudbrick floor. The black quadrilateral is the OPENING — the inside of
+> the shaft, seen from above, and it is the darkest thing in the picture with no detail in it at all; it is
+> not a wall, not a doorway and not a niche. The pale bar above it is a rough wooden pole laid across the
+> mouth. The two pale verticals and the three bars between them are a rope ladder hanging from that pole
+> down into the shaft. The loose blocks below and beside the opening are broken mudbrick dug out of it,
+> lying on the floor. There is no rim, no coping and no frame around the hole.
+
+Judge the result with `yarn on-floor src/assets/tiles/starter/pit.png starter /tmp/pit.png`, never on the
+render: the shaft was mid-grey and perfectly legible at 448 wide, and invisible at 56.
 
 ## 4. Wall items — 2:1, magenta background
 

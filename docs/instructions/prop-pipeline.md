@@ -18,6 +18,7 @@ row says it is made of. Also decide where the mesh comes from:
 | furniture, racks, chests, plinths, stands                        | a parametric primitive in `renderProp.py`                                            |
 | a wall item WITH depth — a niche, anything standing off the wall | a parametric primitive too, rendered `--shear=0.5` (see below)                       |
 | heaps of BRICK or cut stone                                      | a parametric primitive — a brick is a box (`prim_rubbleheap`)                        |
+| a HOLE — in the floor or in a wall                                | a parametric primitive, its inside marked `VOID` (`prim_pit`)                         |
 | statues, sarcophagi, canopic jars                                | a museum scan — Scan the World, Smithsonian Open Access, Sketchfab, mostly CC0/CC-BY |
 | a FLAT wall item — a plaque, a stela, a board                    | no mesh: straight to the generator                                                   |
 | cloth, sand, loose scatter                                       | still unsolved; paint by hand or generate                                            |
@@ -26,6 +27,14 @@ row says it is made of. Also decide where the mesh comes from:
 (`mapScale`'s SIDE_W 14 imaging as 7, so k = 0.5 — cabinet, where a prop is cavalier at k = 1). Anything
 with depth is therefore modelled and rendered with `--shear=0.5`; asked for in words, a recess comes back
 receding to a vanishing point. Only a genuinely flat thing hanging against the surface skips the mesh.
+
+**A HOLE is one parallelogram deep, and its dark is geometry too.** Under z + k*y the ground in front of
+an opening draws lower as it comes toward the viewer, so it covers the shaft below the near lip: the whole
+of a floor hole is the band between its two lip lines, `k*d` tall, and a far wall of exactly that height
+fills it. Anything modelled deeper is behind the floor tile the sprite is composited onto, and anything
+hung over the NEAR lip is never drawn at all. The VALUE is not promptable either — a scaffold in one flat
+colour hands the generator a rack with a grey gap in it — so a primitive marks the inside of a hole with
+the `VOID` material and `--void` paints it near-black before the repaint ever sees it.
 
 **"Scatter" is about SAND, not about rubble.** A merchant's rubble is broken mudbrick, and a brick is a
 box — the modeller was always able to make it. What a heap needs is height put at the BACK (under z + k*y

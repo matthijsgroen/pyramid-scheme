@@ -111,10 +111,19 @@ where a purpose has two wall items to choose between.
 
 ## What to do next
 
-**The six parametric merchant props are done.** The five remaining merchant props need what the pipeline
-cannot yet give them: `shrine`, `sarcophagus` and `crystal` want museum scans, and `hanging` and
-`rubble` are cloth and scatter, which Step 0 lists as unsolved. The four merchant WALL ITEMS are the
-next thing the pipeline can actually reach, and they are a different slot — see below.
+**The merchant's wall items are done and so are seven parametric props.** What the census says is left
+at starter is four files, and it is not the list the prompts doc used to give: `pit` (11 rooms), `hanging`
+(9), `shrine` (8) and the standing `rubble` (6). `sarcophagus` and `crystal` are not among them — no
+starter room authors either.
+
+**`pit` and `rubbleHeap` are modelled and waiting on a repaint.** Both scaffold from `renderProp.py` and
+neither needs a scan; `prim_pit`'s docstring and
+[starter-art-prompts.md](../game-design/starter-art-prompts.md) carry its prompt and the two flags that
+are peculiar to it — `--shadow=0` with no `--seat`, because a hole casts nothing, and `--void`, because a
+hole's identity is its VALUE and a scaffold painted one flat colour reads as a rack.
+
+That leaves `shrine` (a scan, or a mudbrick box built like `prim_niche`) and `hanging` (cloth, which Step 0
+still lists as unsolved) as the only starter files the pipeline cannot reach today.
 
 **Where the throughput actually goes, measured on the first two.** Not the repaint: both took ONE roll.
 The cost is MODELLING — `shelf` needed five renders and `mat` four before either read as its object at
@@ -133,6 +142,12 @@ Then the four merchant wall items, which are a DIFFERENT slot — 56x28, painted
 floor and no shadow. The pipeline has never been run against that slot and may need a mode of its own in
 the renderer. Note that `--seat` and `--sun` have nothing to do there: a wall item hangs, so the whole
 shadow half of Step 4 is skipped.
+
+`yarn on-floor <tile> <tier> <out.png>` puts one tile on its rank's floor at CELL size and blows the
+result up, which is the only picture worth judging a scaffold or a repaint against. The pit's shaft was
+mid-grey and perfectly legible in a 448-wide render and measured the floor's own value at 56 across, so no
+hole read at all; the Bes statue's perspective plinth is twelve pixels and nobody can see it. Both were
+invisible in the render and obvious in this one.
 
 Judge a rank in **Storybook → App/SiteMap/PropSheet**, which stages every kind of a rank on that rank's
 floor with the explorer beside it for scale, and says `(none)` where art is still missing.

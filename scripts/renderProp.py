@@ -409,6 +409,67 @@ def prim_rubbleheap():
     return join_all()
 
 
+def prim_pit():
+    """A cellar shaft cut through the floor, a pole laid across its far lip and a rope ladder over it.
+
+    A HOLE IN THE FLOOR IS EXACTLY ONE PARALLELOGRAM DEEP, and everything below that is wasted mesh.
+    Under z + k*y the ground in FRONT of the opening draws lower and lower as it comes toward the
+    viewer, so it covers the shaft below the near lip's own line. Work the drawn extents: the far lip
+    (y=+d/2, z=0) draws at +k*d/2, the near lip (y=-d/2, z=0) at -k*d/2, so the opening is a band k*d
+    tall — and a vertical far wall of height exactly k*d fills it top to bottom and stops where the
+    near lip is. One unit deeper and the extra is behind the floor the sprite is composited onto.
+
+    That is why the shaft is a WALL and not a well: `hv = k * d`, and no near wall, no bottom, no
+    sides. A shaft modelled as a hollow box shows the OUTSIDE of its near wall under the lip, which
+    reads as a crate standing on the floor rather than as a hole in it.
+
+    The dark comes from the NORMAL, not from the paint. That far wall faces the viewer, so it shades
+    like any front face and the repaint is only asked to take it further down — which a generator will
+    do for a shape that is already there, and will not do for one that is not.
+
+    NOTHING IS BUILT ROUND THE MOUTH, and four renders were spent learning it. This shear has no
+    convergence — it moves points up, never inward — so anything laid round a rectangular hole stays a
+    rectangle on the page: a coping on all four sides read as a window with a sill, the same under a
+    raised cross-bar read as a doorway with a lintel, and a kerb in front and behind read as a SHELF,
+    because two pale bars with a dark slot between them is what `prim_shelf` is. The floor tile the
+    sprite is composited onto is the rim. All this has to draw is the hole, what lies loose at its
+    edge, and what hangs into it.
+
+    NOTHING RUNS ALONG -Y. A rope taken back over the lip to a stake draws as a vertical post, because
+    a bar lying in depth images as drawn height and nothing else; one render grew three fence posts out
+    of the rim. `prim_lamp`'s spout rule, one axis over: nothing may point at the viewer, and nothing
+    may run away from him. So the ladder hangs from a pole laid ACROSS the mouth, along X.
+
+    NO FOOTPRINT. Import this with --shadow=0 and no --seat: `make_shadow` flattens the object to z=0
+    and pushes it toward the viewer, so a pit's footprint is a second dark parallelogram lying in front
+    of the first one, and the tile reads as two holes. A hole casts nothing."""
+    w, d = 0.94, 0.66  # the opening
+    k = 0.7  # the shear this set is drawn at; the shaft's visible height is a function of it
+    hv = k * d
+    # The shaft: the far wall alone, exactly filling the drawn opening, and the only VOID part of any
+    # primitive — everything else here is stone in the rank's own colour.
+    mark(box(w, 0.05, hv, y=(d - 0.05) / 2, z=-hv / 2), VOID)
+    # The spoil: what came out of the shaft, lying at its near edge and over the corners, so the mouth
+    # has no straight side left. Drawn BELOW the hole, where this projection puts anything in front.
+    for sx, sy, x, y, yaw in (
+        (0.26, 0.13, -0.44, -0.40, -9),
+        (0.22, 0.12, 0.44, -0.42, 13),
+        (0.20, 0.12, -0.58, -0.16, 66),
+        (0.18, 0.12, 0.57, -0.10, -58),
+    ):
+        mark(tilt(box(sx, sy, 0.08, x=x, y=y, z=0.04), yaw, "Z"), "body")
+    # The pole laid across the far lip, and the ladder over it. Coarse on purpose — at 56 units across
+    # the opening a rope of 0.03 is two pixels and the ladder becomes a smudge.
+    rope_y = (d - 0.05) / 2 - 0.055
+    pole = mark(cyl(0.05, w - 0.06, x=0, y=d / 2 + 0.01, z=0.05, verts=12), "body")
+    pole.rotation_euler = (0, math.radians(90), 0)
+    for sx in (-1, 1):
+        mark(box(0.05, 0.05, 0.10 + hv, x=sx * 0.25, y=rope_y, z=(0.10 - hv) / 2), "body")
+    for i in range(3):
+        mark(box(0.55, 0.055, 0.055, y=rope_y, z=-0.09 - i * 0.15), "body")
+    return join_all()
+
+
 def prim_niche():
     """A goods recess cut into a wall — one bay of `prim_shelf`, hollowed instead of shelved.
 
@@ -472,6 +533,7 @@ PRIMITIVES.update(
         "mat": prim_mat,
         "rubbleHeap": prim_rubbleheap,
         "niche": prim_niche,
+        "pit": prim_pit,
     }
 )
 
@@ -480,28 +542,52 @@ def srgb_to_linear(c):
     return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
 
 
-def paint(obj, hex_colour):
-    """A flat matte material in the rank's own colour.
+VOID = "void"  # the material name a primitive marks the inside of a hole with
+
+
+def mark(obj, name):
+    """Puts one part in a named material slot, so `paint` can colour it apart from the rest."""
+    obj.data.materials.clear()
+    obj.data.materials.append(bpy.data.materials.get(name) or bpy.data.materials.new(name))
+    return obj
+
+
+def flat_material(name, hex_colour):
+    """A flat matte material in one colour. Roughness 1 and zero specular: the set is painted and matte,
+    with no highlight anywhere (tile-art-brief.md, "The style")."""
+    h = hex_colour.lstrip("#")
+    rgb = tuple(srgb_to_linear(int(h[i : i + 2], 16) / 255) for i in (0, 2, 4))
+    mat = bpy.data.materials.new(name)
+    mat.use_nodes = True
+    bsdf = mat.node_tree.nodes["Principled BSDF"]
+    bsdf.inputs["Base Color"].default_value = (*rgb, 1.0)
+    bsdf.inputs["Roughness"].default_value = 1.0
+    for slot in ("Specular IOR Level", "Specular"):
+        if slot in bsdf.inputs:
+            bsdf.inputs[slot].default_value = 0.0
+    return mat
+
+
+def paint(obj, hex_colour, void_hex):
+    """The rank's own colour over the whole prop — and a dark one wherever a primitive marked itself VOID.
 
     Not decoration: a grey render is unrecognisable. Asked to repaint an untextured grey table, the
     generator read the shape as wooden door panels and filled them with photographic burl. A scaffold
     that already arrives brown, in palette, and lit so its top reads lighter than its front is a table
     the model can recognise, and the repaint becomes texture rather than interpretation.
 
-    Roughness 1 and zero specular: the set is painted and matte, with no highlight anywhere
-    (tile-art-brief.md, "The style")."""
-    h = hex_colour.lstrip("#")
-    rgb = tuple(srgb_to_linear(int(h[i : i + 2], 16) / 255) for i in (0, 2, 4))
-    mat = bpy.data.materials.new("prop")
-    mat.use_nodes = True
-    bsdf = mat.node_tree.nodes["Principled BSDF"]
-    bsdf.inputs["Base Color"].default_value = (*rgb, 1.0)
-    bsdf.inputs["Roughness"].default_value = 1.0
-    for name in ("Specular IOR Level", "Specular"):
-        if name in bsdf.inputs:
-            bsdf.inputs[name].default_value = 0.0
-    obj.data.materials.clear()
-    obj.data.materials.append(mat)
+    TWO colours rather than one, because a hole's identity is its VALUE. `prim_pit`'s shaft is a
+    surface like any other and shades like any other, so one flat colour over everything handed the
+    generator a rack with a mid-grey gap in it; at slot size that gap measured the same as the floor
+    behind the sprite and no hole read at all. A part marked VOID is painted near-black here instead,
+    which is the one thing about a shaft that a prompt cannot put back."""
+    void = [i for i, m in enumerate(obj.data.materials) if m and m.name == VOID]
+    if not void:
+        obj.data.materials.clear()
+        obj.data.materials.append(flat_material("prop", hex_colour))
+        return
+    for i in range(len(obj.data.materials)):
+        obj.data.materials[i] = flat_material(f"prop{i}", void_hex if i in void else hex_colour)
 
 
 def load_subject(mesh_path, primitive):
@@ -843,7 +929,7 @@ def main():
     # has a photographic one, and neither is what the repaint wants to be handed. --colour=none keeps
     # whatever the file brought.
     if colour != "none":
-        paint(obj, colour)
+        paint(obj, colour, arg("void", "#2a2520"))
     obj = array_copies(obj, int(arg("copies", "1")), float(arg("gap", "1.35")), float(arg("jitter", "1.0")))
     w_units, d_units = seat_and_normalise(obj)
     # Depth is the strongest lever on how a prop reads: it decides how much TOP the shear reveals, and so
