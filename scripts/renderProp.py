@@ -138,8 +138,19 @@ def prim_jarrack():
         box(post, d, h, x=sx * (w / 2 - post / 2), z=h / 2)
     for z in (h - 0.06, 0.16):
         box(w - post * 2, 0.05, 0.05, z=z)
-    for i, x in enumerate((-0.29, 0.0, 0.29)):
-        jar(x, 0.0, h * 0.92, 0.125)
+    # --contents=none renders the FRAME alone, and it exists for the shadow rather than for the picture.
+    # `make_shadow` flattens the whole object to z=0, so jars held clear of the floor in a rack cast their
+    # BELLIES: three fat ellipses sitting in front of the rack, where the hand-painted merchant version
+    # has one narrow band under the frame. --sun cannot fix it, for `prim_pillar`'s reason — it shifts a
+    # footprint in depth, not out from under a shape as wide as the shadow it makes.
+    #
+    # This is safe to composite because the jars sit INSIDE the frame's bounding box on all three axes —
+    # 0.57 tall against posts of 0.62, x within ±0.415 against ±0.44, depth within ±0.125 against 0.34 —
+    # so `add_camera`, which frames from the object's own bounds, gives both renders the same frame. A
+    # primitive whose contents overflowed its frame could not be shadowed this way.
+    if arg("contents") != "none":
+        for x in (-0.29, 0.0, 0.29):
+            jar(x, 0.0, h * 0.92, 0.125)
     return join_all()
 
 

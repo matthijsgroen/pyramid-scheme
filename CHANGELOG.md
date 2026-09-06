@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fallen brick is two different things depending on where you meet it: a spill across a passage floor you
   walk over, and a knee-high heap in the corner of a chamber you walk around. Seventy-seven rooms that
   were furnished with one and drew nothing at all now draw the heap.
+- The nobleman's chambers start to furnish: a bordered reed mat, a fire burning on its tripod, a fall of
+  painted wall plaster with the mural still readable on the pieces, and a rack of estate wine jars
+  docketed by year.
 - A bronze bracket carries a burning lamp on the nobleman's walls, its flame the only light in the
   chapel that is not the explorer's own.
 - A false door stands in the nobleman's walls: a painted limestone stela cut as a doorway that leads
