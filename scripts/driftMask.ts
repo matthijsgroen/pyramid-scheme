@@ -55,6 +55,17 @@ const main = async (): Promise<void> => {
   const lobeCount = Number(arg("lobes", "3"))
   /** Where the taper starts, as a fraction of the lobe's radius. Solid core, soft third. */
   const CORE = 0.55
+  /**
+   * The most opaque the drift ever gets, and it is never 1.
+   *
+   * Sand lies THIN. Only the deepest part of a drift hides the stone under it, and at full opacity the
+   * tile stops being sand on a floor and becomes a pale shape ON the floor — which reads as light spilled
+   * across the passage rather than as something lying in it. Under 1 the floor's own value comes through
+   * everywhere, so the drift is dulled by the stone it lies on instead of by a brightness knob, and it
+   * dulls by the right amount at each rank without being tuned per rank: more over the pharaoh's dark
+   * granite, less over the nobleman's pale sandstone.
+   */
+  const peak = Number(arg("peak", "0.8"))
 
   // A few overlapping lobes rather than one blob: sand piles against things in more than one place, and
   // two lobes meeting leave the pinch that says a drift rather than a puddle.
@@ -98,7 +109,7 @@ const main = async (): Promise<void> => {
       data[i] = 255
       data[i + 1] = 255
       data[i + 2] = 255
-      data[i + 3] = Math.round(Math.min(1, a) * 255)
+      data[i + 3] = Math.round(Math.min(1, a) * peak * 255)
     }
   }
 

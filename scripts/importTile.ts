@@ -91,6 +91,10 @@ const SLOTS = {
   arch: { w: ARCH_W, h: ARCH_H, seat: false },
   prop: { w: TILE, h: TILE + WALL_H, seat: true },
   wall: { w: TILE, h: WALL_H, seat: false },
+  // A sand DRIFT: square and several cells across, because it is not a cell-sized thing. It takes no
+  // seat — a drift lies ON the floor rather than standing on it — and its shape comes from `--mask`
+  // (yarn drift-mask) rather than from the art, which is a full-bleed texture with no shape at all.
+  drift: { w: TILE * 3, h: TILE * 3, seat: false },
   explorer: { w: 40, h: 70, seat: true },
 } as const
 

@@ -165,6 +165,32 @@ scaffold shrine --sun=0.18
 yarn import-tile art/props/starter/shrine.webp --tier=starter --name=shrine --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85 --brightness=0.70 --saturation=1.5
 
+# shared — one desert blows into all five tombs
+#
+# Sand is the only tile whose SHAPE this repository generates. It is not an object: a drift has no
+# silhouette, only an edge, and asked for one on magenta a generator returns a rim feathered over a
+# hundred pixels that keys to a violet halo. So the return is a full-bleed TEXTURE with no shape at all —
+# nothing it can get wrong — and `drift-mask` supplies the alpha, which `--mask` composites with dest-in
+# so a soft rim stays soft. Same split as every prop: geometry ours, material theirs.
+#
+# --key=none because there is no background to key. The mask IS the shape.
+#
+# --peak=0.5 with --brightness=0.78, and the transparency is doing most of that work. SAND LIES THIN:
+# only the deepest part of a drift hides the stone, and at full opacity the tile stopped being sand on a
+# floor and became a pale shape ON it — it read as light spilled across the passage. Under 1 the floor's
+# own value comes through everywhere, which dulls the drift by the stone it lies on rather than by a
+# knob, and dulls it by the right amount at each rank without being tuned per rank: more over the
+# pharaoh's dark granite, less over the nobleman's pale sandstone.
+#
+# DO NOT TUNE THIS BY THE NUMBERS. Composited, the drift shifts the nobleman's floor by -2 luminance —
+# his sandstone is very nearly sand's own colour — and by that measure it is invisible there. It is not:
+# what reads is the RIPPLE against his slabs, and a mean over the tile cannot see texture. Look at it on
+# all four floors instead; that check is one command (`yarn on-floor`) and it has now caught three
+# measurements in this file that were confidently wrong.
+yarn drift-mask --out="$OBJ" --seed=fan --size=504 --peak=0.5
+yarn import-tile art/surfaces/sand.webp --tier=default --name=sand --slot=drift \
+  --filter=smooth --key=none --mask="$OBJ" --brightness=0.78
+
 # junior — the nobleman
 #
 # The bay is `prim_niche`; only --contents changes between ranks. --width and --height are the SLOT'S
@@ -267,6 +293,32 @@ yarn import-tile art/props/starter/rubbleHeap.webp --tier=starter --name=rubbleH
 scaffold shrine --sun=0.18
 yarn import-tile art/props/starter/shrine.webp --tier=starter --name=shrine --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85 --brightness=0.70 --saturation=1.5
+
+# shared — one desert blows into all five tombs
+#
+# Sand is the only tile whose SHAPE this repository generates. It is not an object: a drift has no
+# silhouette, only an edge, and asked for one on magenta a generator returns a rim feathered over a
+# hundred pixels that keys to a violet halo. So the return is a full-bleed TEXTURE with no shape at all —
+# nothing it can get wrong — and `drift-mask` supplies the alpha, which `--mask` composites with dest-in
+# so a soft rim stays soft. Same split as every prop: geometry ours, material theirs.
+#
+# --key=none because there is no background to key. The mask IS the shape.
+#
+# --peak=0.5 with --brightness=0.78, and the transparency is doing most of that work. SAND LIES THIN:
+# only the deepest part of a drift hides the stone, and at full opacity the tile stopped being sand on a
+# floor and became a pale shape ON it — it read as light spilled across the passage. Under 1 the floor's
+# own value comes through everywhere, which dulls the drift by the stone it lies on rather than by a
+# knob, and dulls it by the right amount at each rank without being tuned per rank: more over the
+# pharaoh's dark granite, less over the nobleman's pale sandstone.
+#
+# DO NOT TUNE THIS BY THE NUMBERS. Composited, the drift shifts the nobleman's floor by -2 luminance —
+# his sandstone is very nearly sand's own colour — and by that measure it is invisible there. It is not:
+# what reads is the RIPPLE against his slabs, and a mean over the tile cannot see texture. Look at it on
+# all four floors instead; that check is one command (`yarn on-floor`) and it has now caught three
+# measurements in this file that were confidently wrong.
+yarn drift-mask --out="$OBJ" --seed=fan --size=504 --peak=0.5
+yarn import-tile art/surfaces/sand.webp --tier=default --name=sand --slot=drift \
+  --filter=smooth --key=none --mask="$OBJ" --brightness=0.78
 
 # junior — the nobleman
 #
