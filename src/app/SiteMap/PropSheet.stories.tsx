@@ -3,6 +3,7 @@ import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { CELL, WALL_H } from "./mapScale"
 import { authoredKindsFor } from "./authoredKinds"
+import { DRIFT_KINDS } from "./floorScatter"
 import { ART_IMAGE_RENDERING, tileUrl } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
 
@@ -25,6 +26,10 @@ const EXPLORER_H = 70
 const CHAMBER_W = CELL * 3
 const CHAMBER_H = CELL * 2
 
+/** A drift's staged size, in cells — roughly what `driftsFor` gives one in an open chamber. */
+const DRIFT_W = 2.2
+const DRIFT_H = 1.3
+
 const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; underfoot?: boolean; zoom: number }> = ({
   tier,
   name,
@@ -32,6 +37,7 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; underfoo
   underfoot = false,
   zoom,
 }) => {
+  const drift = DRIFT_KINDS.has(name)
   const palette = tierPalette[tier]
   const art = tileUrl(tier, name)
   const floor = tileUrl(tier, "floor")
@@ -67,7 +73,24 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; underfoo
           }}
         />
         {art &&
-          (wallItem ? (
+          (drift ? (
+            // Centred on the cell and sized in CELLS, the way SandDrifts draws it — a drift stopped
+            // being a prop-box sprite the moment it outgrew a cell. Not clipped here: the sheet has no
+            // walls to cut it against, and what this view is for is the sand's OWN edge, which is the
+            // half of the shape the map's clip does not supply.
+            <img
+              src={art}
+              alt={name}
+              className="absolute"
+              style={{
+                left: propLeft + (CELL / 2 - (CELL * DRIFT_W) / 2) * zoom,
+                top: floorLine - (CELL / 2 + (CELL * DRIFT_H) / 2) * zoom,
+                width: CELL * DRIFT_W * zoom,
+                height: CELL * DRIFT_H * zoom,
+                imageRendering: ART_IMAGE_RENDERING,
+              }}
+            />
+          ) : wallItem ? (
             <img
               src={art}
               alt={name}

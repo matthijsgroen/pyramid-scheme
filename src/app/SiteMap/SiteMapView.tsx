@@ -1225,20 +1225,22 @@ const SandDrifts = ({ grid, drifts, tier }: { grid: FloorGrid; drifts: Drift[]; 
   if (!url) return null
   return (
     <g pointerEvents="none" clipPath="url(#walkable-floor)">
-      {drifts.map(({ row, col, cells }, i) => {
+      {drifts.map(({ row, col, w, h }, i) => {
         const cell = cellAt(grid, row, col)
         if (cell.type === "empty") return null
         const wash = stateWash[cell.state]
         const { cx, cy } = cellCenter(row, col)
-        const size = CELL * cells
+        const dw = CELL * w
+        const dh = CELL * h
         return (
           <image
             key={i}
             href={url}
-            x={cx - size / 2}
-            y={cy - size / 2}
-            width={size}
-            height={size}
+            preserveAspectRatio="none"
+            x={cx - dw / 2}
+            y={cy - dh / 2}
+            width={dw}
+            height={dh}
             style={wash ? { filter: `brightness(${1 - wash.opacity})` } : undefined}
           />
         )

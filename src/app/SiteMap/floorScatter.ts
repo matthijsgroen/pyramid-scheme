@@ -46,13 +46,34 @@ export const STANDING_VARIANT: Partial<Record<DecorationKind, string>> = { rubbl
 
 export const FLOOR_KINDS: ReadonlySet<string> = new Set<ScatterKind>(["sand", "rubble", "mat"])
 
-/** One drift of blown sand: where it lies, and how many CELLS across it is. */
-export type Drift = { row: number; col: number; cells: number }
+/** Scatter kinds drawn as DRIFTS rather than as cell-sized sprites — see `driftsFor`. Exported so a
+ * sheet staging one stages it the way the map does: centred on the cell and sized in cells, not
+ * bottom-anchored in a prop box, which is what it stops being the moment it outgrows a cell. */
+export const DRIFT_KINDS: ReadonlySet<string> = new Set(["sand"])
+
+/** One drift of blown sand: where it lies, and how many CELLS it spans on each axis. */
+export type Drift = { row: number; col: number; w: number; h: number }
 
 /** Drifts to a floor, by walkable cells. Sparse on purpose — sand is weather, not furnishing. */
 const CELLS_PER_DRIFT = 26
 const MIN_DRIFTS = 1
 const MAX_DRIFTS = 4
+/** How far a run is followed before it stops mattering: past this the drift is capped anyway. */
+const MAX_RUN = 4
+
+/** Walkable cells in a straight line through (row, col), counting both ways and the cell itself. */
+const runThrough = (grid: FloorGrid, row: number, col: number, dr: number, dc: number): number => {
+  let n = 1
+  for (const sign of [1, -1])
+    for (let i = 1; i <= MAX_RUN; i++) {
+      const r = row + dr * i * sign
+      const c = col + dc * i * sign
+      const type = grid.cells[r]?.[c]?.type
+      if (type !== "room" && type !== "corridor") break
+      n++
+    }
+  return n
+}
 
 /**
  * Where the SAND lies, as drifts rather than as cell-sized sprites.
@@ -63,9 +84,17 @@ const MAX_DRIFTS = 4
  * cell-sized sand sprite has never read as more than a stain with an outline.
  *
  * So a drift is drawn LARGER THAN A CELL and clipped to the walkable floor, which the renderer already
- * has as one path. It crosses cells, it stops dead at a wall, and the shape it ends up with is the shape
- * of the room it blew into rather than anything the art had to guess. `tile-art-brief` §4 asks for "a fan
- * of sand through a breach", which was never a cell-sized object in the first place.
+ * has as one path. It crosses cells, stops dead at a wall, and the shape it ends up with is the shape of
+ * the room it blew into rather than anything the art had to guess. `tile-art-brief` §4 asks for "a fan of
+ * sand through a breach", which was never a cell-sized object in the first place.
+ *
+ * A DRIFT IS SIZED TO THE RUN IT LANDS IN, and that is not a refinement — it is what makes the clip
+ * read as a clip. A square drift of two or three cells dropped in a one-cell passage has EVERY edge cut
+ * by a wall, so nothing of the sand's own shape survives and the corridor just comes out a different
+ * colour, hard-edged, like a floor tile someone swapped. The fix is the thing real drifts do: run LONG
+ * along the passage, where the art tapers and shows its own edge, and overflow ACROSS it, where the wall
+ * does the cutting. In a chamber both runs are wide and the same rule leaves it tapered on the long axis
+ * and cut on the short one.
  *
  * It also collapses the art to ONE file. Sand has its own colour — it is sand, not the rank's stone in
  * another shade — so it is the same sand in all five tombs and lives in `tiles/default/`, the way the
@@ -88,9 +117,14 @@ export const driftsFor = (grid: FloorGrid, tier: Difficulty): Drift[] => {
     const [row, col] = walkable[Math.floor(hashUnit(grid.siteId, "drift-cell", i) * walkable.length)]
       .split(",")
       .map(Number)
-    // Two to three and a half cells across: big enough to cross a passage and pool in a corner, small
-    // enough that a floor never becomes a beach.
-    return { row, col, cells: 2 + hashUnit(grid.siteId, "drift-size", i) * 1.5 }
+    const across = runThrough(grid, row, col, 0, 1)
+    const down = runThrough(grid, row, col, 1, 0)
+    // 0.75 of the long run so the sand's own edge is inside the floor; the short run plus a cell so the
+    // wall cuts it. Floored at 1.2 — a drift narrower than a cell is a stain again.
+    const long = Math.max(1.2, Math.min(MAX_RUN, Math.max(across, down)) * 0.75)
+    const short = Math.min(across, down) + 1
+    const stretch = 0.9 + hashUnit(grid.siteId, "drift-size", i) * 0.35
+    return across >= down ? { row, col, w: long * stretch, h: short } : { row, col, w: short, h: long * stretch }
   })
 }
 
