@@ -25,10 +25,11 @@ const EXPLORER_H = 70
 const CHAMBER_W = CELL * 3
 const CHAMBER_H = CELL * 2
 
-const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; zoom: number }> = ({
+const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; underfoot?: boolean; zoom: number }> = ({
   tier,
   name,
   wallItem = false,
+  underfoot = false,
   zoom,
 }) => {
   const palette = tierPalette[tier]
@@ -94,13 +95,17 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; zoom: nu
               }}
             />
           ))}
+        {/* SCATTER is staged with the explorer ON it, not beside it, because that is the whole difference
+            between this layer and a prop: a prop stands on a cell nobody can reach and scatter lies on the
+            cells the player crosses, drawn UNDER him. Seeing a drift with a boot in the middle of it is
+            what says whether it reads as ground or as an object in the way. */}
         {explorer && (
           <img
             src={explorer}
             alt="explorer"
             className="absolute"
             style={{
-              left: propLeft + (CELL + CELL / 2) * zoom,
+              left: propLeft + (underfoot ? CELL / 8 : CELL + CELL / 2) * zoom,
               top: floorLine - EXPLORER_H * zoom,
               width: EXPLORER_W * zoom,
               height: EXPLORER_H * zoom,
@@ -122,7 +127,7 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; zoom: nu
 // the world authors below junior and wizard, and six wall items where it authors two. See
 // `authoredKinds.ts`, and `yarn art-census` for the same list with room counts and what has art.
 const Sheet: FC<{ tier: Difficulty; zoom: number }> = ({ tier, zoom }) => {
-  const { props, wallItems } = authoredKindsFor(tier)
+  const { props, wallItems, scatter } = authoredKindsFor(tier)
   return (
     // h-screen + overflow-auto, because at zoom 6 the sheet is wider and taller than the canvas and a
     // fullscreen story clips instead of scrolling.
@@ -141,6 +146,18 @@ const Sheet: FC<{ tier: Difficulty; zoom: number }> = ({ tier, zoom }) => {
       <div className="flex flex-wrap gap-4">
         {wallItems.map(kind => (
           <Chamber key={kind} tier={tier} name={kind} wallItem zoom={zoom} />
+        ))}
+      </div>
+      {/* The layer this sheet used to be blind to, for the same reason `yarn art-census` was: nothing
+          authors scatter, so a list read off the pools cannot contain it. It is also the layer with the
+          most pieces on a floor, and the only one the player walks over. */}
+      <h2 className="m-0 text-sm text-white/80">
+        {tier} — floor scatter{" "}
+        <span className="text-white/40">({scatter.length}, placed by rule — the explorer stands ON these)</span>
+      </h2>
+      <div className="flex flex-wrap gap-4">
+        {scatter.map(kind => (
+          <Chamber key={kind} tier={tier} name={kind} underfoot zoom={zoom} />
         ))}
       </div>
     </div>
