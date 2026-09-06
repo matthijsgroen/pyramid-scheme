@@ -258,6 +258,14 @@ def prim_brazier():
     ash = cyl(0.25, 0.10, z=leg_h + 0.20, verts=24)
     ash.scale = (1.0, 1.0, 0.6)
     tilt(box(0.34, 0.04, 0.04, y=-0.07, z=leg_h + 0.23), 9)
+    # --lit is the nobleman's, whose brazier is burning where the merchant's is cold. The flame is
+    # modelled only because it is the one place the ochre accent is allowed and a prompt can put paint
+    # only where there is a shape. It is a NUB and never a cone: a sharp triangle a fifth of the object
+    # tall is the most salient thing in the picture, and it has turned a lamp into a rocket twice in
+    # this file already (`prim_lamp`, `prim_sconce`).
+    if arg("lit"):
+        bpy.ops.mesh.primitive_cone_add(vertices=14, radius1=0.075, radius2=0.0, depth=0.12,
+                                        location=(0, -0.01, leg_h + 0.29))
     return join_all()
 
 
@@ -376,6 +384,34 @@ def prim_rubbleheap():
     than gravel: at slot size a whole brick is about 14 units, the smallest thing that still says brick.
     The mortar dust and the sherd scatter are PAINT, like the mat's weave — geometry that small does not
     survive the slot."""
+    if arg("contents") == "plaster":
+        # The nobleman's rubble is a PLASTER FALL, and a fall is not a heap. Plaster comes off a wall in
+        # thin painted sheets that land face-up and slide, so the pieces are a third the thickness of a
+        # brick and lie nearly flat, spread wide rather than stacked into courses.
+        #
+        # That costs the drawn height a heap gets from putting mass at the BACK, so the silhouette has to
+        # come from somewhere else: the sheets are given a real ROLL, five to fifteen degrees off level,
+        # which is what a curved plaster flake does when it lands and is the only relief a flat thing can
+        # own under this projection (`prim_mat` — a flat thing on the floor is all top face).
+        #
+        # Two upright shards leaning against the pile are the exception, and they are what stops the whole
+        # thing reading as a stain. Their painted faces are the point of the kind.
+        for sx, sy, x, y, z, yaw, roll in (
+            (0.30, 0.22, -0.30, -0.06, 0.018, -12, 7),
+            (0.26, 0.20, 0.01, -0.12, 0.018, 21, -9),
+            (0.28, 0.21, 0.30, -0.02, 0.018, -6, 11),
+            (0.24, 0.19, -0.13, 0.12, 0.055, 34, -14),
+            (0.27, 0.20, 0.19, 0.15, 0.055, -18, 8),
+            (0.20, 0.16, -0.38, 0.16, 0.052, 9, -6),
+        ):
+            piece = box(sx, sy, 0.035, x=x, y=y, z=z)
+            tilt(piece, yaw, "Z")
+            tilt(piece, roll, "Y")
+        for x, y, lean, yaw in ((-0.06, 0.05, 58, -22), (0.13, 0.02, -47, 15)):
+            shard = box(0.23, 0.035, 0.20, x=x, y=y, z=0.10)
+            tilt(shard, yaw, "Z")
+            tilt(shard, lean, "Y")
+        return join_all()
     B = 0.30  # a whole brick's length
     # (length, width, height, x, y, z, yaw, roll). Fixed rather than random: a primitive that renders
     # differently every run cannot be judged against its last roll.
