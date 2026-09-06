@@ -1157,6 +1157,15 @@ def main():
     # which is to say where the sun is. 0.10 matched the painted props for DARKNESS and not for EXTENT:
     # at that offset the shear draws the shadow almost entirely behind the object and one pixel of it
     # shows, where the hand-painted props spread a visible pool in front of the thing.
+    #
+    # 0.30 IS A TALL PROP'S NUMBER. The offset is a fraction of DEPTH but what hides it is HEIGHT: a
+    # shelf or a jar rack stands over its own footprint and covers most of it, while a low wide thing
+    # does not, and the pool slides out from under and reads as a separate slab lying beside the object.
+    # Three have needed it small now — the mat at 0.03, the nobleman's plaster fall at 0.05, the
+    # merchant's brick heap at 0.12 — and the rule is the object's height against its depth, not what it
+    # is made of. `prim_pillar` records the other end of the same problem: at any offset, a slab flat on
+    # the floor casts a copy of itself, because --sun shifts a footprint in depth and never out from
+    # under a shape as wide as the shadow it makes.
     sun = float(arg("sun", "0.30"))
 
     clear_scene()
