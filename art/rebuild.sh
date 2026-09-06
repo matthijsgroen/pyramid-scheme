@@ -165,6 +165,19 @@ scaffold shrine --sun=0.18
 yarn import-tile art/props/starter/shrine.webp --tier=starter --name=shrine --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85 --brightness=0.70 --saturation=1.5
 
+# The first CLOTH in the set, and the one the pipeline's own table said could not be made. --sun=0.16
+# because an awning is a sheet, and a sheet flattened to z=0 is prim_pillar's slab: at the default the
+# footprint slides out from under and reads as a second sheet on the floor. The posts are what it is
+# really cast by.
+#
+# --saturation=1.5 is the repaint drift again, on linen: it came back at +7 warmth against a rank whose
+# hand-painted props sit at +22 to +25. Judge that on the CLOTH and not on the sprite — a fifth of this
+# tile is shadow, and the whole-sprite mean put it 9 from the floor when the cloth itself is 18 lighter
+# and 21 warmer.
+scaffold hanging --sun=0.16
+yarn import-tile art/props/starter/hanging.webp --tier=starter --name=hanging --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92 --saturation=1.5
+
 # shared — one desert blows into all five tombs
 #
 # Sand is the only tile whose SHAPE this repository generates. It is not an object: a drift has no
@@ -293,6 +306,19 @@ yarn import-tile art/props/starter/rubbleHeap.webp --tier=starter --name=rubbleH
 scaffold shrine --sun=0.18
 yarn import-tile art/props/starter/shrine.webp --tier=starter --name=shrine --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85 --brightness=0.70 --saturation=1.5
+
+# The first CLOTH in the set, and the one the pipeline's own table said could not be made. --sun=0.16
+# because an awning is a sheet, and a sheet flattened to z=0 is prim_pillar's slab: at the default the
+# footprint slides out from under and reads as a second sheet on the floor. The posts are what it is
+# really cast by.
+#
+# --saturation=1.5 is the repaint drift again, on linen: it came back at +7 warmth against a rank whose
+# hand-painted props sit at +22 to +25. Judge that on the CLOTH and not on the sprite — a fifth of this
+# tile is shadow, and the whole-sprite mean put it 9 from the floor when the cloth itself is 18 lighter
+# and 21 warmer.
+scaffold hanging --sun=0.16
+yarn import-tile art/props/starter/hanging.webp --tier=starter --name=hanging --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92 --saturation=1.5
 
 # shared — one desert blows into all five tombs
 #

@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   stopping dead against the walls, taking the shape of whatever room it drifted into. It lies thin enough
   that the paving reads through it, keeps its own desert colour in every tomb, and the last rank has none
   at all.
+- A patched linen awning hangs in the merchant's chambers, slung over a bar on two posts, mended with
+  stitched patches and frayed to threads along its hem.
 - A merchant keeps a god in the corner: a whitewashed mudbrick shrine with a coarse clay Bes standing in
   its niche and a lamp burning beside him, the only warm light in the chamber that is not carried.
 - Fallen brick is drawn where a room was dressed with it: a knee-high heap of broken mudbrick in the
