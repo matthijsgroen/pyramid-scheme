@@ -430,6 +430,53 @@ def prim_rubbleheap():
     than gravel: at slot size a whole brick is about 14 units, the smallest thing that still says brick.
     The mortar dust and the sherd scatter are PAINT, like the mat's weave — geometry that small does not
     survive the slot."""
+    if arg("contents") == "spill":
+        """A spill of broken mudbrick underfoot — the SCATTER layer's rubble, not the room's.
+
+        The third object sharing this name, and the one with the least to work with. `rubbleHeap` stands
+        knee-high on a cell nobody can reach and is free to have a silhouette; this lies on the cells the
+        player WALKS OVER, so it has to stay flat enough to walk through — a heap in the middle of a
+        passage is a wall, not a decoration.
+
+        Which means `prim_mat`'s finding applies in full and cannot be worked around: a flat thing on the
+        floor is all top face and has no outline of its own. The heap answers that by putting mass at the
+        BACK, where z + k*y draws it twice over. A spill cannot: any height it gains is height the player
+        appears to walk through.
+
+        So the silhouette is spent OUTWARD instead of upward. Fourteen pieces spread over a full cell and
+        a half rather than eight piled into a third of one, with the outline deliberately ragged — a
+        long, broken, uneven edge is a shape even when nothing in it is more than a finger tall. Each
+        piece still keeps a little height, and that is not decoration either: at 0.05 a fragment draws a
+        front face and a footprint of its own, so a dozen of them give a dozen small edges, and that
+        texture is what stops the whole thing reading as a stain.
+
+        NOTHING STANDS UP. `--contents=plaster` leans two shards against its pile because a room's
+        dressing may; here they would be the one thing the player's feet pass through."""
+        # Denser where it fell and thinning outward, with pieces OVERLAPPING near the middle. Spread
+        # evenly the first pass read as fourteen bricks someone had set down, not as one thing that
+        # broke: what says spill is that the eye finds a body to it and a scatter around the edge.
+        for sx, sy, x, y, z, yaw, roll in (
+            # the body — overlapping, close, the middle of the fall
+            (0.26, 0.14, -0.20, -0.04, 0.026, -11, 4),
+            (0.22, 0.13, -0.05, -0.14, 0.026, 24, -5),
+            (0.28, 0.15, 0.10, 0.00, 0.028, -6, 6),
+            (0.24, 0.13, 0.26, -0.11, 0.026, 17, -3),
+            (0.25, 0.14, -0.30, 0.10, 0.028, 8, -6),
+            (0.21, 0.12, 0.02, 0.14, 0.024, -19, 4),
+            (0.27, 0.14, 0.30, 0.09, 0.028, 31, -7),
+            # the scatter — smaller, further out, thinning
+            (0.20, 0.12, -0.48, -0.14, 0.024, -28, 5),
+            (0.19, 0.11, 0.50, 0.00, 0.022, -9, 5),
+            (0.14, 0.10, -0.60, 0.10, 0.020, 42, -4),
+            (0.13, 0.09, 0.62, 0.16, 0.020, -37, 6),
+            (0.11, 0.08, -0.12, 0.30, 0.018, 15, -3),
+            (0.10, 0.08, 0.42, -0.28, 0.018, -22, 4),
+            (0.09, 0.07, -0.40, -0.28, 0.016, 33, -5),
+        ):
+            piece = box(sx, sy, z * 2, x=x, y=y, z=z)
+            tilt(piece, yaw, "Z")
+            tilt(piece, roll, "Y")
+        return join_all()
     if arg("contents") == "plaster":
         # The nobleman's rubble is a PLASTER FALL, and a fall is not a heap. Plaster comes off a wall in
         # thin painted sheets that land face-up and slide, so the pieces are a third the thickness of a
