@@ -1,3 +1,4 @@
+import type { Difficulty } from "@/data/difficultyLevels"
 import type { DecorationKind, FloorGrid } from "@/game/siteTypes"
 import type { RoomClaims } from "./SiteMapView"
 import { hashUnit } from "@/support/hashString"
@@ -45,6 +46,54 @@ export const STANDING_VARIANT: Partial<Record<DecorationKind, string>> = { rubbl
 
 export const FLOOR_KINDS: ReadonlySet<string> = new Set<ScatterKind>(["sand", "rubble", "mat"])
 
+/** One drift of blown sand: where it lies, and how many CELLS across it is. */
+export type Drift = { row: number; col: number; cells: number }
+
+/** Drifts to a floor, by walkable cells. Sparse on purpose — sand is weather, not furnishing. */
+const CELLS_PER_DRIFT = 26
+const MIN_DRIFTS = 1
+const MAX_DRIFTS = 4
+
+/**
+ * Where the SAND lies, as drifts rather than as cell-sized sprites.
+ *
+ * Sand is the one scatter kind that is not an object. A mat and a spill of brick have edges and sit on a
+ * cell; a drift has blown in, pooled against whatever stopped it, and has no silhouette of its own —
+ * which is exactly the wall `prim_mat` records for anything flat on the floor, and the reason a
+ * cell-sized sand sprite has never read as more than a stain with an outline.
+ *
+ * So a drift is drawn LARGER THAN A CELL and clipped to the walkable floor, which the renderer already
+ * has as one path. It crosses cells, it stops dead at a wall, and the shape it ends up with is the shape
+ * of the room it blew into rather than anything the art had to guess. `tile-art-brief` §4 asks for "a fan
+ * of sand through a breach", which was never a cell-sized object in the first place.
+ *
+ * It also collapses the art to ONE file. Sand has its own colour — it is sand, not the rank's stone in
+ * another shade — so it is the same sand in all five tombs and lives in `tiles/default/`, the way the
+ * explorer does: one person walks all five, and one desert blows into all five.
+ *
+ * THE GODS GET NONE. §4 gives the last rank "no sand at all — a clean seam", and that is the only
+ * per-rank difference sand has once its colour stops being one.
+ */
+export const driftsFor = (grid: FloorGrid, tier: Difficulty): Drift[] => {
+  if (tier === "wizard") return []
+  const walkable: string[] = []
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const type = grid.cells[r][c].type
+      if (type === "room" || type === "corridor") walkable.push(`${r},${c}`)
+    }
+  if (!walkable.length) return []
+  const n = Math.min(MAX_DRIFTS, Math.max(MIN_DRIFTS, Math.round(walkable.length / CELLS_PER_DRIFT)))
+  return Array.from({ length: n }, (_, i) => {
+    const [row, col] = walkable[Math.floor(hashUnit(grid.siteId, "drift-cell", i) * walkable.length)]
+      .split(",")
+      .map(Number)
+    // Two to three and a half cells across: big enough to cross a passage and pool in a corner, small
+    // enough that a floor never becomes a beach.
+    return { row, col, cells: 2 + hashUnit(grid.siteId, "drift-size", i) * 1.5 }
+  })
+}
+
 /**
  * Two passes, because the two sorts of scatter are not the same thing and one pass gets both wrong.
  *
@@ -60,8 +109,9 @@ export const FLOOR_KINDS: ReadonlySet<string> = new Set<ScatterKind>(["sand", "r
  * 1475 chambers of 8.78 cells apiece, and 8% of them had any scatter on them, all of it on the one
  * owner cell. Hence a pass that walks the CHAMBERS rather than the cells.
  */
-const GROUND_KINDS: readonly ScatterKind[] = ["sand", "rubble"]
-const CHAMBER_KINDS: readonly ScatterKind[] = ["mat", "rubble", "sand"]
+// SAND IS NOT HERE, and that is the point of `driftsFor` below: a drift does not fit in a cell.
+const GROUND_KINDS: readonly ScatterKind[] = ["rubble"]
+const CHAMBER_KINDS: readonly ScatterKind[] = ["mat", "rubble"]
 
 /** One piece per this many corridor cells, within the bounds. Measured at 6.9 a floor when the divisor
  * was 7 and the cap 7 — which is to say every floor was at the cap, and a passage with something in

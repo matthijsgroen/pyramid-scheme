@@ -525,6 +525,27 @@ let skipped = 0
  * Real art lands at these exact paths, so without this guard the next `yarn generate-dummy-tiles` after
  * a rank is drawn would quietly paint over it with the stand-ins. Regenerating has to stay safe to run.
  */
+/** A drift is several cells across; `driftsFor` scales it from there. */
+const DRIFT = TILE * 3
+
+const sandDriftSvg = (): Buffer =>
+  // FLAT and OPAQUE, through the same `svg()` helper as every other placeholder, and that is not a style
+  // choice. `art-census` tells a placeholder from art by COUNTING DISTINCT COLOURS — under 32 is a dummy
+  // — and the first version of this drew soft ellipses at partial opacity, whose blends put it over the
+  // threshold. The census then reported sand as finished art at all five ranks, which is exactly the
+  // kind of lie that census exists to prevent.
+  //
+  // No outline even so. Every other placeholder is stroked so it shouts, which is right for a thing
+  // standing against a wall; sand lies on the cells the player crosses, and an outlined ellipse underfoot
+  // reads as an object in the way rather than as missing art.
+  svg(
+    DRIFT,
+    DRIFT,
+    `<ellipse cx="${DRIFT * 0.5}" cy="${DRIFT * 0.54}" rx="${DRIFT * 0.44}" ry="${DRIFT * 0.3}" fill="#c9b184"/>` +
+      `<ellipse cx="${DRIFT * 0.42}" cy="${DRIFT * 0.47}" rx="${DRIFT * 0.3}" ry="${DRIFT * 0.2}" fill="#d8c39a"/>` +
+      `<ellipse cx="${DRIFT * 0.6}" cy="${DRIFT * 0.6}" rx="${DRIFT * 0.22}" ry="${DRIFT * 0.14}" fill="#e2d0ac"/>`
+  )
+
 const write = async (tier: string, name: string, data: Buffer, w: number, h: number): Promise<void> => {
   const dir = join(OUT_ROOT, tier)
   mkdirSync(dir, { recursive: true })
@@ -945,11 +966,27 @@ const main = async (): Promise<void> => {
     await write(tier, "floor", floorSvg(p), MEGA, MEGA)
     await write(tier, "wall-face", wallFaceSvg(p), MEGA, FACE)
     await write(tier, "threshold", thresholdSvg(p), TILE, SILL)
-    for (const kind of ALL_KINDS) await write(tier, kind, propSvg(p, kind), TILE, PROP_H)
+    // SAND IS SHARED, so it is written once to `default/` below and never per rank. It is drawn as a
+    // DRIFT — several cells across, clipped to the walkable floor — and it has its own colour, because it
+    // is sand rather than the rank's stone in another shade. Written per tier it would shadow the shared
+    // file through tileUrl's `default/` fallback and every rank would go back to a cell-sized stain.
+    for (const kind of ALL_KINDS) {
+      if (kind === "sand") continue
+      await write(tier, kind, propSvg(p, kind), TILE, PROP_H)
+    }
     for (const kind of WALL_KINDS) await write(tier, kind, wallItemSvg(p, kind), TILE, BAND)
     await write(tier, "arch", archSvg(p), ARCH_W, ARCH_H)
     count += 4 + ALL_KINDS.length + WALL_KINDS.length
   }
+  // One desert blows into all five tombs, so the drift is shared the way the explorer is, and it is
+  // SQUARE: `driftsFor` gives it a size in cells and the walkable-floor clip gives it its shape.
+  //
+  // The only placeholder in this file with NO OUTLINE, and deliberately. Every other one is drawn with a
+  // stroke so it shouts, which is right for a thing standing against a wall — but sand lies on the cells
+  // the player crosses, and an outlined ellipse underfoot reads as an object in the way rather than as
+  // missing art. A soft blob is honest about being unfinished without lying about what it will become.
+  await write("default", "sand", sandDriftSvg(), DRIFT, DRIFT)
+  count++
   // Shared art, written once: neither the explorer nor a beetle is a rank.
   await write("default", "scarab", scarabSvg(), 14, 10)
   count++

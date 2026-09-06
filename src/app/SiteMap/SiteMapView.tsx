@@ -16,7 +16,7 @@ import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 import { ExplorerDot, LightPool, LightPoolDefs } from "./ExplorerDot"
-import { STANDING_VARIANT, scatterFor, type ScatterKind } from "./floorScatter"
+import { STANDING_VARIANT, driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
@@ -1050,6 +1050,12 @@ const TileLayers = ({
   return (
     <>
       <defs>
+        {/* The walkable floor as a CLIP. Sand is drawn larger than a cell and cut to this, so a drift
+            crosses cells and stops dead at a wall — see `driftsFor`. The path is the same one the
+            outline stroke below uses; it costs nothing to reuse it. */}
+        <clipPath id="walkable-floor">
+          <path d={allFloor} />
+        </clipPath>
         {tiers.map(t => {
           const floor = tileUrl(t, "floor")
           const face = tileUrl(t, "wall-face")
@@ -1187,7 +1193,6 @@ const LIT_DECORATIONS = new Set<DecorationKind>(["lamp"])
  * carried, and at a cell and a half across it would light the room the torch is meant to light. */
 const LAMP_POOL_RADIUS = CELL * 0.42
 
-
 const Decoration = ({ kind, tier }: { kind: DecorationKind; tier: Difficulty }) => {
   // Falls back to the kind's own art while a variant is still unpainted: a room drawing the flat spill
   // is wrong but harmless, where a room drawing the placeholder GLYPH is a regression the player sees.
@@ -1203,6 +1208,42 @@ const Decoration = ({ kind, tier }: { kind: DecorationKind; tier: Difficulty }) 
         <DecorationGlyph kind={kind} />
       )}
     </>
+  )
+}
+
+/** Blown sand, drawn over the floor and clipped to it.
+ *
+ * The one scatter kind that is not cell-sized. A drift has no silhouette of its own — it is the shape of
+ * whatever stopped it — so it is drawn several cells across and cut to `walkable-floor`, and the wall
+ * does the drawing. See `driftsFor` for why sand is one shared file rather than five.
+ *
+ * No per-cell fog check, because a drift is not per-cell: it is washed by the DARKEST state it crosses,
+ * so a drift reaching into an unlit passage cannot light it. That is the same sum `FloorScatter` does
+ * with `brightness`, taken over a region instead of over a cell. */
+const SandDrifts = ({ grid, drifts, tier }: { grid: FloorGrid; drifts: Drift[]; tier: Difficulty }) => {
+  const url = tileUrl(tier, "sand")
+  if (!url) return null
+  return (
+    <g pointerEvents="none" clipPath="url(#walkable-floor)">
+      {drifts.map(({ row, col, cells }, i) => {
+        const cell = cellAt(grid, row, col)
+        if (cell.type === "empty") return null
+        const wash = stateWash[cell.state]
+        const { cx, cy } = cellCenter(row, col)
+        const size = CELL * cells
+        return (
+          <image
+            key={i}
+            href={url}
+            x={cx - size / 2}
+            y={cy - size / 2}
+            width={size}
+            height={size}
+            style={wash ? { filter: `brightness(${1 - wash.opacity})` } : undefined}
+          />
+        )
+      })}
+    </g>
   )
 }
 
@@ -1739,6 +1780,7 @@ export const SiteMapView = ({
   }, [grid.rows, grid.cols, grid.siteId])
   // What is strewn on this floor. A function of the floor's shape and its id, so it never moves.
   const scatter = useMemo(() => scatterFor(grid, claims), [grid, claims])
+  const drifts = useMemo(() => driftsFor(grid, tier), [grid, tier])
   const archedGaps = useMemo(
     () =>
       new Map(doorways.map(({ row, col, tier: archTier }) => [`${cellLeft(col)},${cellTop(row) - WALL_H}`, archTier])),
@@ -1809,6 +1851,7 @@ export const SiteMapView = ({
           style={{ background: tierPalette[tier].wallBase, imageRendering: ART_IMAGE_RENDERING }}
         >
           <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
+          <SandDrifts grid={grid} drifts={drifts} tier={tier} />
           <FloorScatter grid={grid} scatter={scatter} tier={tier} />
           <ArchShadows doorways={doorways} />
           <LitPlaces grid={grid} claims={claims} at={explorerPos} />

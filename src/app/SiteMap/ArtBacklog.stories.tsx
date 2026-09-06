@@ -68,7 +68,8 @@ const countRooms = (): Row[] => {
   for (const tier of TIERS) {
     const { props, wallItems, scatter } = authoredKindsFor(tier)
     for (const kind of props) rows.push({ tier, kind, layer: "prop", rooms: counts.get(`${tier}/prop/${kind}`) ?? 0 })
-    for (const kind of wallItems) rows.push({ tier, kind, layer: "wall", rooms: counts.get(`${tier}/wall/${kind}`) ?? 0 })
+    for (const kind of wallItems)
+      rows.push({ tier, kind, layer: "wall", rooms: counts.get(`${tier}/wall/${kind}`) ?? 0 })
     // SCATTER is not authored and is not counted: it is placed by rule on the cells the player WALKS
     // OVER, two to a chamber and about twenty-two to a floor. Both this story and `yarn art-census` were
     // built on authored pools and dressed rooms, so both were blind to it, and both called a rank nearly
@@ -117,7 +118,8 @@ const Backlog: FC<{ onlyTodo: boolean }> = ({ onlyTodo }) => {
   return (
     <div className="flex h-screen flex-col gap-3 overflow-auto bg-neutral-900 p-6 text-white/80">
       <h2 className="m-0 text-sm">
-        art backlog — {shown.length} files, {waiting} rooms waiting on a placeholder, plus {scatterTodo} scatter files underfoot
+        art backlog — {shown.length} files, {waiting} rooms waiting on a placeholder, plus {scatterTodo} scatter files
+        underfoot
       </h2>
       <table className="text-xs">
         <thead className="text-white/40">

@@ -50,13 +50,16 @@ const coloursIn = async (path: string): Promise<number> => {
     if (data[i + 3] >= 128) seen.add((data[i] << 16) | (data[i + 1] << 8) | data[i + 2])
   return seen.size
 }
+/** Counted per rank, but a rank falls back to `default/` exactly as `tileUrl` does — sand is one shared
+ * drift for all five tombs, and read only per rank it would report as MISSING everywhere. */
 const artFor = async (tier: string): Promise<Map<string, number>> => {
-  const dir = join(TILES, tier)
   const colours = new Map<string, number>()
-  if (!existsSync(dir)) return colours
-  for (const f of readdirSync(dir, { withFileTypes: true }))
-    if (f.isFile() && f.name.endsWith(".png"))
-      colours.set(f.name.replace(/\.png$/, ""), await coloursIn(join(dir, f.name)))
+  for (const dir of [join(TILES, "default"), join(TILES, tier)]) {
+    if (!existsSync(dir)) continue
+    for (const f of readdirSync(dir, { withFileTypes: true }))
+      if (f.isFile() && f.name.endsWith(".png"))
+        colours.set(f.name.replace(/\.png$/, ""), await coloursIn(join(dir, f.name)))
+  }
   return colours
 }
 
@@ -103,7 +106,9 @@ const report = async (title: string, counts: Map<string, number>) => {
       const drawn = STANDING_VARIANT[kind as DecorationKind] ?? kind
       const colours = art.get(drawn)
       const state = colours === undefined ? "MISSING" : colours < PAINTED_MIN_COLOURS ? "placeholder" : "art"
-      console.log(`    ${kind.padEnd(16)} ${String(n).padStart(4)} rooms   ${state}${drawn === kind ? "" : `  (draws ${drawn})`}`)
+      console.log(
+        `    ${kind.padEnd(16)} ${String(n).padStart(4)} rooms   ${state}${drawn === kind ? "" : `  (draws ${drawn})`}`
+      )
     }
   }
 }
