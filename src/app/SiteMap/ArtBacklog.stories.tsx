@@ -44,7 +44,9 @@ const coloursIn = (url: string): Promise<number> =>
     img.src = url
   })
 
-type Row = { tier: Difficulty; kind: string; wall: boolean; rooms: number }
+/** `rooms` is null for SCATTER, which no room places: `floorScatter` works off the floor's own shape, so
+ * there is nothing to count and the sort puts those rows at the top of their own group instead. */
+type Row = { tier: Difficulty; kind: string; layer: "prop" | "wall" | "scatter"; rooms: number | null }
 
 /** How many rooms of the generated world each kind lands in. Assembles every floor, which takes a few
  * seconds — the reason this is its own story rather than a badge on the prop sheet. */
@@ -64,11 +66,16 @@ const countRooms = (): Row[] => {
     })
   const rows: Row[] = []
   for (const tier of TIERS) {
-    const { props, wallItems } = authoredKindsFor(tier)
-    for (const kind of props) rows.push({ tier, kind, wall: false, rooms: counts.get(`${tier}/prop/${kind}`) ?? 0 })
-    for (const kind of wallItems) rows.push({ tier, kind, wall: true, rooms: counts.get(`${tier}/wall/${kind}`) ?? 0 })
+    const { props, wallItems, scatter } = authoredKindsFor(tier)
+    for (const kind of props) rows.push({ tier, kind, layer: "prop", rooms: counts.get(`${tier}/prop/${kind}`) ?? 0 })
+    for (const kind of wallItems) rows.push({ tier, kind, layer: "wall", rooms: counts.get(`${tier}/wall/${kind}`) ?? 0 })
+    // SCATTER is not authored and is not counted: it is placed by rule on the cells the player WALKS
+    // OVER, two to a chamber and about twenty-two to a floor. Both this story and `yarn art-census` were
+    // built on authored pools and dressed rooms, so both were blind to it, and both called a rank nearly
+    // finished while the drifts underfoot were still placeholders.
+    for (const kind of scatter) rows.push({ tier, kind, layer: "scatter", rooms: null })
   }
-  return rows.sort((a, b) => b.rooms - a.rooms)
+  return rows.sort((a, b) => (b.rooms ?? Infinity) - (a.rooms ?? Infinity))
 }
 
 const Backlog: FC<{ onlyTodo: boolean }> = ({ onlyTodo }) => {
@@ -102,12 +109,15 @@ const Backlog: FC<{ onlyTodo: boolean }> = ({ onlyTodo }) => {
     return colours === 0 ? "missing" : colours < PAINTED_MIN_COLOURS ? "placeholder" : "art"
   }
   const shown = onlyTodo ? rows.filter(r => state(r) !== "art") : rows
-  const waiting = rows.filter(r => state(r) === "placeholder").reduce((n, r) => n + r.rooms, 0)
+  const waiting = rows.filter(r => state(r) === "placeholder").reduce((n, r) => n + (r.rooms ?? 0), 0)
+  // Counted apart, because these have no room count to add into the total and would otherwise vanish
+  // from the headline the way they vanished from the backlog itself.
+  const scatterTodo = rows.filter(r => r.layer === "scatter" && state(r) === "placeholder").length
 
   return (
     <div className="flex h-screen flex-col gap-3 overflow-auto bg-neutral-900 p-6 text-white/80">
       <h2 className="m-0 text-sm">
-        art backlog — {shown.length} files, {waiting} rooms waiting on a placeholder
+        art backlog — {shown.length} files, {waiting} rooms waiting on a placeholder, plus {scatterTodo} scatter files underfoot
       </h2>
       <table className="text-xs">
         <thead className="text-white/40">
@@ -137,8 +147,8 @@ const Backlog: FC<{ onlyTodo: boolean }> = ({ onlyTodo }) => {
                 </td>
                 <td className="px-2">{row.tier}</td>
                 <td className="px-2">{row.kind}</td>
-                <td className="px-2 text-white/50">{row.wall ? "wall" : "prop"}</td>
-                <td className="px-2 text-right">{row.rooms}</td>
+                <td className="px-2 text-white/50">{row.layer}</td>
+                <td className="px-2 text-right">{row.rooms ?? "underfoot"}</td>
                 <td
                   className={`px-2 ${s === "art" ? "text-emerald-400" : s === "missing" ? "text-red-400" : "text-amber-400"}`}
                 >

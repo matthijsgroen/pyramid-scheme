@@ -22,6 +22,14 @@ The map gained four things beyond the art, all in
 asks whether the way is open before leaving a band black, and two chambers you can already walk between
 drawing no partition.
 
+**The census has THREE sections, and the third exists because the first two could not see it.** Wall
+items and chamber props are counted by assembling every floor and counting DRESSED ROOMS; floor scatter is
+placed by rule off the floor's own shape, so no room places it and no pool authors it. Both the census and
+the ArtBacklog story were built on those two facts and were blind to the layer by construction — which
+reported the merchant as one file from finished while the drifts and spills the player walks over were
+still placeholders. It is the most visible layer there is: two pieces to a chamber, about twenty-two to a
+floor, on the cells you actually cross, where a prop stands on a cell nobody can reach.
+
 Run `yarn art-census` before planning any of it: it counts, per rank, how many ROOMS each prop and wall
 item actually lands in and whether that file is real art, a placeholder, or missing. A kind belongs to a
 rank through its ROLE tags rather than through its tier, so which files a rank needs cannot be read off a

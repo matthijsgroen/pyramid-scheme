@@ -21,6 +21,8 @@ import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import type { Difficulty } from "../src/data/difficultyLevels"
 import { STANDING_VARIANT } from "@/app/SiteMap/floorScatter"
 import type { DecorationKind } from "@/game/siteTypes"
+import { authoredKindsFor } from "@/app/SiteMap/authoredKinds"
+import type { Difficulty } from "@/data/difficultyLevels"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const TILES = join(__dirname, "..", "src", "assets", "tiles")
@@ -108,4 +110,27 @@ const report = async (title: string, counts: Map<string, number>) => {
 
 await report("WALL ITEMS", wall)
 await report("CHAMBER PROPS", prop)
+
+/**
+ * FLOOR SCATTER has no room count, because no room places it.
+ *
+ * `floorScatter` works off the floor's own shape and its site id — nothing names a scatter kind in a
+ * spec — so the two sections above, which count DRESSED ROOMS, are blind to it by construction. That
+ * blindness reported the merchant as one file from finished while the drifts and spills he walks over
+ * were still placeholders, and it is the most visible layer there is: about two pieces to a chamber and
+ * twenty-two to a floor, on the cells the player actually crosses.
+ *
+ * Every rank draws all three kinds, so there is nothing to count and the art state is the whole report.
+ */
+console.log("\nFLOOR SCATTER   (placed by rule on cells the player walks — every rank draws all three)")
+for (const tier of TIERS) {
+  if (only && tier !== only) continue
+  const art = await artFor(tier)
+  console.log(`  ${tier}`)
+  for (const kind of authoredKindsFor(tier as Difficulty).scatter) {
+    const colours = art.get(kind)
+    const state = colours === undefined ? "MISSING" : colours < PAINTED_MIN_COLOURS ? "placeholder" : "art"
+    console.log(`    ${kind.padEnd(16)} ${"".padStart(4)}         ${state}`)
+  }
+}
 console.log("\nkinds with no rooms at a tier are not listed: that rank never draws them.")
