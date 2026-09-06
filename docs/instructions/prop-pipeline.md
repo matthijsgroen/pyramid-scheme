@@ -28,6 +28,19 @@ row says it is made of. Also decide where the mesh comes from:
 with depth is therefore modelled and rendered with `--shear=0.5`; asked for in words, a recess comes back
 receding to a vanishing point. Only a genuinely flat thing hanging against the surface skips the mesh.
 
+**THE Y-Z PLANE COLLAPSES TO A VERTICAL LINE, and a wall bracket is the object that proves it.** Only x
+is drawn horizontally; y and z both feed the vertical. So any structure living in the plane of the wall's
+depth — a plate, an arm reaching out of it, the diagonal stay under that arm, the lamp on its end — draws
+as one vertical stack however truthfully it is built, and at 28 units that is a smudge. `prim_sconce`
+turns the arm into X instead: a cantilever a smith would frown at, and the only version that reads. A
+brace goes in the x-z plane for the same reason — in y-z it is invisible by construction, not merely
+small. `prim_lamp`'s "nothing may point at the viewer" is this same law, one axis over.
+
+**A COMPACT wall item needs `--margin`, not a scale flag.** `SLOTS.wall` is `seat: false`: the import does
+not trim and re-seat, it scales the whole FRAME into 56x28. A prop's frame is thrown away and its object
+re-seated; a wall item's frame IS its placement. So a niche or a stela is authored to fill the band, and a
+sconce — one bracket on a broad wall — is given air in the render (`--margin=1.4`) and keeps it.
+
 **ONE PRIMITIVE, FIVE RANKS: the bay is the same and only `--contents` changes.** The brief gives every
 rank a `niche`, and a cut recess is a cut recess — so `prim_niche` takes `--contents` and a rank costs a
 repaint rather than a model. Render it at the SLOT'S ASPECT (`--width=448 --height=224` for the 56x28

@@ -470,6 +470,52 @@ def prim_pit():
     return join_all()
 
 
+def prim_sconce():
+    """A bronze bracket on the wall with an oil lamp standing on it — the nobleman's.
+
+    THE Y-Z PLANE COLLAPSES TO A VERTICAL LINE, and this is the finding a wall bracket exists to teach.
+    Only x is drawn horizontally; y and z both feed the vertical. So ANY structure that lives in the
+    plane of the wall's depth — a plate, an arm reaching out of it, a diagonal stay under that arm, the
+    lamp on its end — draws as one vertical stack, however truthfully it is built. A bracket modelled the
+    way a bracket really is cannot read as an arm reaching out; it reads as three small blobs above one
+    another, and at 28 units that is a smudge.
+
+    So the arm is turned into X. The plate is against the wall at one end and the arm runs ACROSS the
+    band to the lamp, which is a cantilever a smith would frown at and the only version that reads. The
+    brace under it is in the x-z plane for the same reason — a brace in y-z is invisible by construction,
+    not merely small. `prim_lamp`'s spout rule is the same law one axis over.
+
+    WIDTH COMES FROM THE ARM, and it has to, because the wall slot does not trim: `SLOTS.wall` is
+    `seat: false`, so whatever frame the render hands over is what gets scaled into 56x28. A compact
+    object needs `--margin` rather than a scale flag, and its own proportions have to be near the band's
+    2:1 or the import squashes it.
+
+    The lamp is the merchant niche's mass — a rounded body with a spout — because that is the one content
+    shape proven to survive this band. The flame is a nub, not a cone: it exists so the repaint has a
+    shape to put the ochre accent on, and a sharp triangle a fifth of the object tall turns a lamp into a
+    rocket (`prim_lamp`).
+    """
+    # The wall plate: flat against the wall, its own depth shallow so it does not out-draw the arm. Tall
+    # enough for the brace to land ON it — the brace's foot has to meet the plate in the DRAWN picture,
+    # and the two sit at different y, so the plate draws 0.07 higher than its own z and the brace 0.025.
+    box(0.20, 0.07, 0.62, x=-0.42, y=0.14, z=0.53)
+    # The arm, across the band, and the two pegs that fix the plate to the wall.
+    box(0.80, 0.10, 0.10, x=-0.02, y=0.05, z=0.50)
+    for z in (0.74, 0.32):
+        box(0.11, 0.15, 0.07, x=-0.42, y=0.05, z=z)
+    # The brace, in the x-z plane where a diagonal is drawn as a diagonal. In y-z it would be invisible by
+    # construction rather than merely small.
+    tilt(box(0.36, 0.07, 0.06, x=-0.22, y=0.05, z=0.40), -38, "Y")
+    # The lamp standing on the arm's end: the niche's proven mass, its spout along X.
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=12, radius=0.16, location=(0.26, 0.0, 0.68))
+    body = bpy.context.object
+    body.scale = (1.3, 0.9, 0.95)
+    bpy.ops.object.transform_apply(scale=True)
+    box(0.17, 0.08, 0.08, x=0.52, y=0.0, z=0.65)
+    bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.065, radius2=0.0, depth=0.12, location=(0.26, 0.0, 0.88))
+    return join_all()
+
+
 def prim_niche():
     """A goods recess cut into a wall — one bay of `prim_shelf`, hollowed instead of shelved.
 
@@ -576,6 +622,7 @@ PRIMITIVES.update(
         "rubbleHeap": prim_rubbleheap,
         "niche": prim_niche,
         "pit": prim_pit,
+        "sconce": prim_sconce,
     }
 )
 
@@ -1000,7 +1047,11 @@ def main():
         shear(obj, k, 0)
     # After the shear the drawn height is the object's height plus k times its depth: that is the whole
     # projection in one line, and it is why a deep object comes out taller on the page than a shallow one.
-    add_camera(obj, width, height)
+    # --margin is air around the object, and it matters on the WALL slot in a way it does not elsewhere:
+    # `SLOTS.wall` is `seat: false`, so the import does not trim and re-seat — it scales the whole FRAME
+    # into 56x28. A prop's frame is discarded; a wall item's frame IS its placement. So a compact thing
+    # like a sconce is given margin here rather than being blown up to fill the band.
+    add_camera(obj, width, height, float(arg("margin", "1.06")))
     add_light(float(arg("ambient", "0.35")))
     background = arg("background", "#ff00ff")
     if background != "none":
