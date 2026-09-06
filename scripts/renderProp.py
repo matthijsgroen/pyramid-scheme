@@ -173,14 +173,24 @@ def prim_market():
             box(leg, leg, h - top_h, x=sx * (w / 2 - leg), y=sy * (d / 2 - leg), z=(h - top_h) / 2)
     # The balance, standing on the right of the top: post, beam across it, a shallow pan hanging at
     # each end. Pans are discs, which under this shear draw as ellipses — the same tell as the jar lids.
-    post_x, post_h = 0.28, 0.30
+    post_x, post_h = 0.30, 0.32
     cyl(0.022, post_h, x=post_x, z=h + post_h / 2)
-    box(0.44, 0.035, 0.035, x=post_x, z=h + post_h)
+    box(0.46, 0.035, 0.035, x=post_x, z=h + post_h)
     for sx in (-1, 1):
-        cyl(0.019, 0.10, x=post_x + sx * 0.19, z=h + post_h - 0.05, verts=8)
-        cyl(0.085, 0.02, x=post_x + sx * 0.19, z=h + post_h - 0.10)
-    # The grain, heaped on the left: a low cone, spilling a little over the front edge.
-    bpy.ops.mesh.primitive_cone_add(vertices=20, radius1=0.24, radius2=0.0, depth=0.13, location=(-0.26, 0.02, h + 0.065))
+        # The cord is THIN and long. At 0.019 on a 0.10 drop it drew as a stalk and the pair read as two
+        # mushrooms standing on the table rather than as pans hanging off a beam; what says "hanging" is
+        # a gap of daylight between the pan and everything below it, not the cord itself.
+        cyl(0.009, 0.15, x=post_x + sx * 0.20, z=h + post_h - 0.085, verts=6)
+        cyl(0.098, 0.016, x=post_x + sx * 0.20, z=h + post_h - 0.165)
+    # The grain, heaped on the left and OVERHANGING the front edge, which is the whole reason it reads.
+    # `prim_lamp` records the rule from the other end: a dish sitting wholly within the stool's seat draws
+    # its own pale top inside a pale rectangle of the same value, and the eye takes the dark side for a
+    # hole in the furniture. A heap in the middle of this tabletop is worse still — a cone 0.24 across and
+    # 0.13 tall is all top face, and it rendered as a discoloured patch in the timber. Breaking the
+    # table's top-to-front edge is what turns it back into a heap, because that edge is the one line in
+    # the picture that says which surface is which.
+    bpy.ops.mesh.primitive_cone_add(vertices=20, radius1=0.25, radius2=0.0, depth=0.20,
+                                    location=(-0.28, -d / 2 + 0.06, h + 0.10))
     return join_all()
 
 
