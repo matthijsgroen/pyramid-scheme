@@ -107,24 +107,31 @@ def prim_crate():
     return join_all()
 
 
-def jar(x, y, height, belly, z=0.0):
+def jar(x, y, height, belly, z=0.0, part="pottery"):
     """One Egyptian storage jar: a round belly tapering to a point, a short neck, a domed stopper.
 
     Built from a sphere squeezed and a cone rather than modelled, because at 56 units what survives is
-    the silhouette — a round shoulder over a taper — and nothing finer."""
+    the silhouette — a round shoulder over a taper — and nothing finer.
+
+    Every piece takes `part`, because a primitive that marks any of itself has to mark all of itself:
+    `join_all` merges material slots by name and the polygons keep their indices, so an unmarked jar in a
+    marked rack would come out in whatever slot landed at index 0."""
     bpy.ops.mesh.primitive_uv_sphere_add(segments=24, ring_count=12, radius=belly, location=(x, y, z + height * 0.62))
     body = bpy.context.object
     body.scale = (1.0, 1.0, height * 0.42 / belly)
     bpy.ops.object.transform_apply(scale=True)
+    mark(body, part)
     bpy.ops.mesh.primitive_cone_add(vertices=24, radius1=belly, radius2=0.0, depth=height * 0.5, location=(x, y, z + height * 0.37))
     point = bpy.context.object
     point.rotation_euler = (math.radians(180), 0, 0)
     bpy.ops.object.transform_apply(rotation=True)
-    bpy.ops.mesh.primitive_cylinder_add(vertices=20, radius=belly * 0.42, depth=height * 0.12, location=(x, y, z + height * 0.98))
+    mark(point, part)
+    mark(cyl(belly * 0.42, height * 0.12, x=x, y=y, z=z + height * 0.98, verts=20), part)
     bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=10, radius=belly * 0.44, location=(x, y, z + height * 1.03))
     dome = bpy.context.object
     dome.scale = (1.0, 1.0, 0.55)
     bpy.ops.object.transform_apply(scale=True)
+    mark(dome, part)
 
 
 def prim_jarrack():
