@@ -598,6 +598,70 @@ def prim_sconce():
     return join_all()
 
 
+def prim_shrine():
+    """A merchant's household shrine: a mudbrick box standing on the floor, a Bes figure and a lamp in it.
+
+    `prim_niche`'s bay, stood up. Same construction — back slab, two jambs, a sill under and a lintel
+    over, the hollow between them being the shrine — and the same lip rule: an opening holds `0.35 * d`
+    less than its gap, because the lintel's front-bottom edge draws that much lower than its own z. What
+    changes is the shear. A niche is a wall item at k = 0.5; this stands on the floor at k = 0.7, so the
+    same depth buys half again as much drawn height and the box has to be NARROWER to keep its slot's
+    portrait shape.
+
+    THE RECESS FLOOR DRAWS ABOVE ITS FRONT LIP, which is what makes a hollow read as a hollow rather than
+    a panel stuck on the front: depth going back is depth going up. It is the one thing a generator will
+    not do asked in words, and the whole reason this is modelled.
+
+    WHAT STANDS IN IT IS A SILHOUETTE AND NOTHING FINER. Bes is a squat bearded dwarf with a lion's mane
+    and his tongue out, and none of that survives at 56 units — what survives is that he is WIDE and
+    short with an outsized head, which is the one thing about him a shape can carry. The rest is paint.
+
+    The lamp beside him is the merchant's own: a saucer with the spout out along X, never toward the
+    viewer (`prim_lamp`), and a flame that is a NUB. Four primitives in this file have now grown a nose
+    cone at the first attempt."""
+    plinth_h, brick = 0.09, 0.075
+    w, d, h = 0.60, 0.40, 0.60  # the shrine box itself, above its plinth
+    lip = 0.35 * d
+    mark(box(w + 0.08, d + 0.06, plinth_h, z=plinth_h / 2), "body")
+    base = plinth_h
+    mark(box(w, brick, h, y=(d - brick) / 2, z=base + h / 2), "body")
+    for sx in (-1, 1):
+        mark(box(brick, d, h, x=sx * (w / 2 - brick / 2), z=base + h / 2), "body")
+    mark(box(w, d, brick, z=base + brick / 2), "body")
+    mark(box(w, d, brick, z=base + h - brick / 2), "body")
+    # A cavetto would be the next rank's; a merchant's is a plain mud coping, and it is what stops the box
+    # reading as an open-topped crate. It must not be DEEPER than the box: the shear draws a coping's top
+    # face at 0.7 of its depth, so overhanging it by 0.05 all round put a pale slab across the top third
+    # of the tile and the shrine read as a table with a hole in it. Overhang in X only, where overhang is
+    # drawn as overhang.
+    mark(box(w + 0.07, d, 0.05, z=base + h + 0.025), "body")
+    # What stands in it, sized to the room the lintel really leaves.
+    floor_z = base + brick
+    room = (base + h - brick - lip) - (floor_z + lip)
+    # Bes: wide, short, outsized head. Body and head are two masses and there is no third — a figure this
+    # small has room for a silhouette and no features at all.
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=18, ring_count=10, radius=0.10, location=(-0.10, -0.01, floor_z + room * 0.26))
+    body = bpy.context.object
+    body.scale = (1.5, 0.85, 0.82)
+    bpy.ops.object.transform_apply(scale=True)
+    mark(body, "pottery")
+    # A GAP at the neck, or the two masses fuse into one beehive — which is what the first render gave,
+    # a stack of domes rather than a figure. The head is smaller than the body and sits clear of it, and
+    # those two facts are the whole of what a 12-pixel Bes can say: wide, short, big-headed.
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=18, ring_count=10, radius=0.072, location=(-0.10, -0.01, floor_z + room * 0.74))
+    head = bpy.context.object
+    head.scale = (1.2, 0.9, 0.92)
+    bpy.ops.object.transform_apply(scale=True)
+    mark(head, "pottery")
+    # The lamp: a saucer on the sill beside him, its spout along X.
+    mark(cyl(0.075, room * 0.16, x=0.16, y=-0.02, z=floor_z + room * 0.08, verts=16), "pottery")
+    mark(box(0.06, 0.045, room * 0.11, x=0.235, y=-0.02, z=floor_z + room * 0.07), "pottery")
+    bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.032, radius2=0.0, depth=room * 0.26,
+                                    location=(0.16, -0.02, floor_z + room * 0.29))
+    mark(bpy.context.object, "accent")
+    return join_all()
+
+
 def prim_niche():
     """A goods recess cut into a wall — one bay of `prim_shelf`, hollowed instead of shelved.
 
@@ -705,6 +769,7 @@ PRIMITIVES.update(
         "niche": prim_niche,
         "pit": prim_pit,
         "sconce": prim_sconce,
+        "shrine": prim_shrine,
     }
 )
 
