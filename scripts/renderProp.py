@@ -182,15 +182,32 @@ def prim_market():
         # a gap of daylight between the pan and everything below it, not the cord itself.
         cyl(0.009, 0.15, x=post_x + sx * 0.20, z=h + post_h - 0.085, verts=6)
         cyl(0.098, 0.016, x=post_x + sx * 0.20, z=h + post_h - 0.165)
-    # The grain, heaped on the left and OVERHANGING the front edge, which is the whole reason it reads.
-    # `prim_lamp` records the rule from the other end: a dish sitting wholly within the stool's seat draws
-    # its own pale top inside a pale rectangle of the same value, and the eye takes the dark side for a
-    # hole in the furniture. A heap in the middle of this tabletop is worse still — a cone 0.24 across and
-    # 0.13 tall is all top face, and it rendered as a discoloured patch in the timber. Breaking the
-    # table's top-to-front edge is what turns it back into a heap, because that edge is the one line in
-    # the picture that says which surface is which.
-    bpy.ops.mesh.primitive_cone_add(vertices=20, radius1=0.25, radius2=0.0, depth=0.20,
-                                    location=(-0.28, -d / 2 + 0.06, h + 0.10))
+    # The grain, heaped on the left. Where it goes is DERIVED, and the derivation has a wrong turn in it
+    # worth keeping, because the obvious fix is the one that fails.
+    #
+    # It has to own a silhouette. `prim_lamp` records the rule from the other end: a dish sitting wholly
+    # within the stool's seat draws its own pale top inside a pale rectangle of the same value, and the
+    # eye takes the dark side for a hole in the furniture. A heap set on this tabletop is worse still — a
+    # cone 0.24 across and 0.13 tall is all top face and rendered as discoloured timber.
+    #
+    # The obvious answer is to push it over the FRONT edge, and it is wrong twice. Pushed far enough to
+    # break that edge, the base ran -0.49 to 0.01 against a top that stops at -0.30: nearly half the heap
+    # hanging in the air. Pulled back until it is supported, its front rim lands exactly ON the edge — the
+    # arithmetic is clean, `-d/2 + r` draws at `h - k*d/2` to three decimals — and it still reads as a
+    # stain, because touching a boundary tangentially does not break it.
+    #
+    # The edge to break is the FAR one. Under z + k*y the back of the tabletop is the HIGH boundary, at
+    # h + k*d/2, and anything that tops it is drawn against the background instead of against timber. So
+    # the heap is sized to reach over that line rather than pushed off the near side, and it stays wholly
+    # on the table: base -0.30 to 0.30 against a top of exactly that, apex drawn at 0.740 against a back
+    # edge at 0.710.
+    #
+    # It costs a heap slightly steeper than grain really lies — 0.8 of its radius where the angle of
+    # repose gives 0.65. At natural slope, fully supported, the apex misses the back edge by 0.015 and
+    # there is nowhere else to find it: that is what the extra height is buying.
+    grain_r = 0.30
+    bpy.ops.mesh.primitive_cone_add(vertices=20, radius1=grain_r, radius2=0.0, depth=0.24,
+                                    location=(-0.26, 0.0, h + 0.12))
     return join_all()
 
 
