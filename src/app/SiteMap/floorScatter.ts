@@ -1,4 +1,4 @@
-import type { FloorGrid } from "@/game/siteTypes"
+import type { DecorationKind, FloorGrid } from "@/game/siteTypes"
 import type { RoomClaims } from "./SiteMapView"
 import { hashUnit } from "@/support/hashString"
 
@@ -31,6 +31,18 @@ export type ScatterKind = "sand" | "rubble" | "mat"
  * room that has one. Which layer a kind belongs to is a renderer decision, and it is made here and in
  * `STANDING_VARIANT`.
  */
+/** What a floor kind is drawn as when a ROOM was dressed with it, rather than when it blew in.
+ *
+ * The two are not the same object. Scatter lies on cells the player walks over, so it has to be flat
+ * enough to walk through — a drift, a spill, a mat underfoot. A room's dressing lands on an empty
+ * claimed cell the player CANNOT walk on (see `decorationAt`), so it is free to stand up and be walked
+ * around: a knee-high heap of fallen brick is a thing in the corner of a chamber, and it would be
+ * nonsense in the middle of a passage.
+ *
+ * `mat` needs no variant — a mat is flat wherever it lies, and on a cell nobody walks it simply reads
+ * as a rug against the wall. Only `rubble` is two objects sharing one name. */
+export const STANDING_VARIANT: Partial<Record<DecorationKind, string>> = { rubble: "rubbleHeap" }
+
 export const FLOOR_KINDS: ReadonlySet<string> = new Set<ScatterKind>(["sand", "rubble", "mat"])
 
 /**

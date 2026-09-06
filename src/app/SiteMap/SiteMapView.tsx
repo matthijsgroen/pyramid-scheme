@@ -16,7 +16,7 @@ import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 import { ExplorerDot, LightPool, LightPoolDefs } from "./ExplorerDot"
-import { scatterFor, type ScatterKind } from "./floorScatter"
+import { STANDING_VARIANT, scatterFor, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
@@ -1187,17 +1187,6 @@ const LIT_DECORATIONS = new Set<DecorationKind>(["lamp"])
  * carried, and at a cell and a half across it would light the room the torch is meant to light. */
 const LAMP_POOL_RADIUS = CELL * 0.42
 
-/** What a floor kind is drawn as when a ROOM was dressed with it, rather than when it blew in.
- *
- * The two are not the same object. Scatter lies on cells the player walks over, so it has to be flat
- * enough to walk through — a drift, a spill, a mat underfoot. A room's dressing lands on an empty
- * claimed cell the player CANNOT walk on (see `decorationAt`), so it is free to stand up and be walked
- * around: a knee-high heap of fallen brick is a thing in the corner of a chamber, and it would be
- * nonsense in the middle of a passage.
- *
- * `mat` needs no variant — a mat is flat wherever it lies, and on a cell nobody walks it simply reads
- * as a rug against the wall. Only `rubble` is two objects sharing one name. */
-const STANDING_VARIANT: Partial<Record<DecorationKind, string>> = { rubble: "rubbleHeap" }
 
 const Decoration = ({ kind, tier }: { kind: DecorationKind; tier: Difficulty }) => {
   // Falls back to the kind's own art while a variant is still unpainted: a room drawing the flat spill

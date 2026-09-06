@@ -135,6 +135,21 @@ scaffold jarrack
 yarn import-tile art/props/starter/jarRack.webp --tier=starter --name=jarRack --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.7
 
+# The standing rubble: `rubble` is two objects and this is the one a ROOM is dressed with, resolved
+# through SiteMapView's STANDING_VARIANT. The scatter layer's flat spill shares the name and not the art.
+#
+# --sun=0.12 rather than the default 0.30. The offset is a fraction of depth but what hides the pool is
+# HEIGHT, and a knee-high heap does not stand over its own footprint: at 0.30 the shadow slid out and lay
+# beside the bricks as a separate slab.
+#
+# --brightness=0.82 --saturation=1.45. Untouched it measured 6 LIGHTER than the slab, which tile-stats
+# faults outright — under 10 either way a prop does not read against the floor it stands on. Down at 0.82
+# it separates by 15 the other way, and the saturation brings +11 warmth back to +22, the bottom of the
+# hand-painted band.
+scaffold rubbleHeap --sun=0.12
+yarn import-tile art/props/starter/rubbleHeap.webp --tier=starter --name=rubbleHeap --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.45
+
 # junior — the nobleman
 #
 # The bay is `prim_niche`; only --contents changes between ranks. --width and --height are the SLOT'S
@@ -208,6 +223,21 @@ scaffold jarrack
 yarn import-tile art/props/starter/jarRack.webp --tier=starter --name=jarRack --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.7
 
+# The standing rubble: `rubble` is two objects and this is the one a ROOM is dressed with, resolved
+# through SiteMapView's STANDING_VARIANT. The scatter layer's flat spill shares the name and not the art.
+#
+# --sun=0.12 rather than the default 0.30. The offset is a fraction of depth but what hides the pool is
+# HEIGHT, and a knee-high heap does not stand over its own footprint: at 0.30 the shadow slid out and lay
+# beside the bricks as a separate slab.
+#
+# --brightness=0.82 --saturation=1.45. Untouched it measured 6 LIGHTER than the slab, which tile-stats
+# faults outright — under 10 either way a prop does not read against the floor it stands on. Down at 0.82
+# it separates by 15 the other way, and the saturation brings +11 warmth back to +22, the bottom of the
+# hand-painted band.
+scaffold rubbleHeap --sun=0.12
+yarn import-tile art/props/starter/rubbleHeap.webp --tier=starter --name=rubbleHeap --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.45
+
 # junior — the nobleman
 #
 # All four are the merchant's primitives at the nobleman's colour, so they cost a repaint and no model.
@@ -227,12 +257,16 @@ scaffold brazier --lit=1 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/props/junior/brazier.webp --tier=junior --name=brazier --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7 --brightness=0.92
 
+# rubbleHEAP, not rubble: this is what a ROOM is dressed with, and `rubble` is the scatter layer's flat
+# spill sharing the name. It went in under the wrong one and the nobleman's 24 rooms went on drawing a
+# placeholder while a painted plaster fall sat in the file beside it.
+#
 # --shadow=0.6 --sun=0.05, and this is the FLAT-THING rule the mat already records: a plaster fall lies
 # at floor level, so a footprint pushed the default 0.30 of its depth toward the viewer draws clear of
 # the pieces and the whole tile floats. Only the SHADOW render takes those two — scaffold() passes
 # --shadow=0 ahead of "$@" for the mask, so the mask cannot pick one up.
 scaffold rubbleHeap --contents=plaster --shadow=0.6 --sun=0.05 --colour=#e0c193 --floor=#c39c68
-yarn import-tile art/props/junior/rubble.webp --tier=junior --name=rubble --slot=prop \
+yarn import-tile art/props/junior/rubbleHeap.webp --tier=junior --name=rubbleHeap --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85 --saturation=1.25
 
 scaffold jarrack --colour=#e0c193 --floor=#c39c68

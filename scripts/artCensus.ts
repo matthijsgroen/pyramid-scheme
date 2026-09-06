@@ -19,6 +19,8 @@ import { assembleFloor } from "../src/game/siteAssembler"
 import { journeys } from "../src/data/journeys"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import type { Difficulty } from "../src/data/difficultyLevels"
+import { STANDING_VARIANT } from "@/app/SiteMap/floorScatter"
+import type { DecorationKind } from "@/game/siteTypes"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const TILES = join(__dirname, "..", "src", "assets", "tiles")
@@ -92,9 +94,14 @@ const report = async (title: string, counts: Map<string, number>) => {
     console.log(`  ${tier}`)
     for (const [key, n] of rows) {
       const kind = key.split("/")[1]
-      const colours = art.get(kind)
+      // A ROOM dressed with a kind may not draw that kind's own file: `rubble` is two objects sharing
+      // one name and a room gets the standing heap, where the scatter layer gets the flat spill. Reading
+      // the kind's file called `rubble` a placeholder at every rank while `rubbleHeap` was painted — and
+      // this census IS the to-do list, so it was planning work that no longer existed.
+      const drawn = STANDING_VARIANT[kind as DecorationKind] ?? kind
+      const colours = art.get(drawn)
       const state = colours === undefined ? "MISSING" : colours < PAINTED_MIN_COLOURS ? "placeholder" : "art"
-      console.log(`    ${kind.padEnd(16)} ${String(n).padStart(4)} rooms   ${state}`)
+      console.log(`    ${kind.padEnd(16)} ${String(n).padStart(4)} rooms   ${state}${drawn === kind ? "" : `  (draws ${drawn})`}`)
     }
   }
 }
