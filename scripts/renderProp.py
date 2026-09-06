@@ -598,6 +598,64 @@ def prim_sconce():
     return join_all()
 
 
+def prim_hanging():
+    """A patched awning cloth slung from a pole — the merchant's, and the first CLOTH in the set.
+
+    Step 0's table filed cloth under "still unsolved" beside sand and loose scatter. That was a guess
+    about difficulty rather than a measurement, and it is wrong in the same direction the sand note was:
+    a hanging cloth is one of the EASIEST things this projection draws.
+
+    It is nearly all FRONT FACE, and the front plane is the one the shear leaves alone — no top to fight
+    and no depth to foreshorten, which is most of what every other primitive in this file spends its
+    docstring on. Its folds run vertically, and a vertical ridge draws as a vertical ridge. Nothing here
+    runs along -Y and nothing points at the viewer, so `prim_lamp`'s rule and `prim_sconce`'s never come
+    up at all.
+
+    NO SIMULATION, and not as a shortcut. Blender's cloth solver would give a drape that changes with the
+    frame it was baked on, and a primitive that renders differently every run cannot be judged against
+    its last roll — the whole file depends on a scaffold coming back byte for byte. A cloth hung from a
+    bar is anyway a formula: it hangs in a sine along its width, pinched to nothing where it is tied and
+    swinging widest at the free hem. That is two lines, and it is deterministic.
+
+    THE FOLDS DISPLACE IN Y, toward and away from the viewer, not in X. Under z + k*y a fold pushed back
+    is drawn HIGHER, so the ripple lands as a shift in the drawn surface and its shading does the rest —
+    which is what a fold looks like. Displaced sideways instead, the cloth would merely get narrower and
+    wider and read as a flag with a scalloped edge.
+
+    The HEM is ragged and the corners are torn, because that is the only thing separating an awning from
+    a banner at 56 units: a banner is hemmed straight."""
+    w, h = 0.86, 0.78
+    pole_r = 0.045
+    mark(cyl(pole_r, w + 0.16, x=0, y=0, z=h, verts=12), "body").rotation_euler = (0, math.radians(90), 0)
+    # Two posts under the pole's ends. A prop stands on a floor cell, and without them the bar hangs in
+    # the air with a shadow under it — an awning nailed to a wall the tile does not draw. They also give
+    # the footprint something to be cast BY: the cloth itself is a sheet, and a sheet flattened to z=0 is
+    # `prim_pillar`'s slab, a shadow the same width as the thing above it.
+    for sx in (-1, 1):
+        mark(cyl(0.035, h, x=sx * (w / 2 + 0.055), y=0.0, z=h / 2, verts=8), "body")
+    # The sheet: a grid, stood up into the XZ plane, then pushed back and forth in Y.
+    bpy.ops.mesh.primitive_grid_add(x_subdivisions=26, y_subdivisions=14, size=1)
+    cloth = bpy.context.object
+    cloth.rotation_euler = (math.radians(90), 0, 0)
+    bpy.ops.object.transform_apply(rotation=True)
+    cloth.data.transform(Matrix.Diagonal((w, 1.0, h, 1.0)))
+    cloth.data.transform(Matrix.Translation((0.0, 0.0, h / 2)))
+    for v in cloth.data.vertices:
+        # 0 at the pole, 1 at the hem: the cloth is tied at the top and free at the bottom.
+        drop = 1.0 - (v.co.z / h)
+        # Folds across the width, and a shallower second wave so they are not evenly spaced.
+        fold = math.sin(v.co.x / w * math.pi * 7.0) * 0.055 + math.sin(v.co.x / w * math.pi * 3.0 + 1.1) * 0.03
+        v.co.y += fold * (0.15 + drop * 0.85)
+        # The hem: torn, and lower at one end than the other, so it is an awning and not a banner.
+        if drop > 0.93:
+            v.co.z -= 0.035 + math.sin(v.co.x / w * math.pi * 5.0 + 0.6) * 0.03 + (v.co.x / w) * 0.05
+    mark(cloth, "cloth")
+    # Two ties over the pole. They are the only things that say it is HUNG rather than floating.
+    for sx in (-1, 1):
+        mark(box(0.05, 0.10, 0.16, x=sx * w * 0.3, y=0.0, z=h - 0.02), "cloth")
+    return join_all()
+
+
 def prim_shrine():
     """A merchant's household shrine: a mudbrick box standing on the floor, a Bes figure and a lamp in it.
 
@@ -770,6 +828,7 @@ PRIMITIVES.update(
         "pit": prim_pit,
         "sconce": prim_sconce,
         "shrine": prim_shrine,
+        "hanging": prim_hanging,
     }
 )
 

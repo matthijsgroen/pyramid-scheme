@@ -21,7 +21,9 @@ row says it is made of. Also decide where the mesh comes from:
 | a HOLE — in the floor or in a wall                                | a parametric primitive, its inside marked `VOID` (`prim_pit`)                         |
 | statues, sarcophagi, canopic jars                                | a museum scan — Scan the World, Smithsonian Open Access, Sketchfab, mostly CC0/CC-BY |
 | a FLAT wall item — a plaque, a stela, a board                    | no mesh: straight to the generator                                                   |
-| cloth, sand, loose scatter                                       | still unsolved; paint by hand or generate                                            |
+| CLOTH — a hanging, an awning, a veil                             | a parametric primitive: cloth is a formula, not a simulation (`prim_hanging`)         |
+| a DRIFT of sand                                                  | a full-bleed texture, cut to a generated alpha (`yarn drift-mask`)                    |
+| loose scatter, sherds, dust                                      | still unsolved; paint by hand or generate                                            |
 
 **A wall item is not exempt from projection.** The band is the same oblique world at HALF depth
 (`mapScale`'s SIDE_W 14 imaging as 7, so k = 0.5 — cabinet, where a prop is cavalier at k = 1). Anything
@@ -59,6 +61,19 @@ What the nobleman's lamp niche cost, because it is the same lesson every time an
   fan across, cost more bay than the soot was worth. The opening is 78% of the drawn height and that is
   the only part anyone can see. Soot goes in the PROMPT, on the lintel and the upper interior, where the
   mask already covers.
+
+**CLOTH IS A FORMULA, and calling it unsolved was a guess rather than a measurement.** It sat in the
+table above beside sand and loose scatter for as long as nobody tried it, and it is one of the EASIEST
+things this projection draws: a hanging is nearly all front face, and the front plane is the one the
+shear leaves alone. Its folds run vertically and draw as vertical ridges, so neither `prim_lamp`'s rule
+about pointing at the viewer nor `prim_sconce`'s about running away from him ever comes up.
+
+No simulation, and not as a shortcut. A solver gives a drape that depends on the frame it was baked on,
+and a primitive that renders differently every run cannot be judged against its last roll. A cloth hung
+from a bar is a sine along its width, pinched to nothing where it is tied and swinging widest at the free
+hem — two lines, deterministic. Displace the folds in Y and not in X: under z + k*y a fold pushed back is
+drawn HIGHER, so the ripple lands as a shift in the surface and its shading does the rest, where a
+sideways displacement only makes the sheet narrower and wider and reads as a flag with a scalloped edge.
 
 **A HOLE is one parallelogram deep, and its dark is geometry too.** Under z + k*y the ground in front of
 an opening draws lower as it comes toward the viewer, so it covers the shaft below the near lip: the whole
