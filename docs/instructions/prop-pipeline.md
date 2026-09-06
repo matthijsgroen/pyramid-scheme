@@ -113,7 +113,8 @@ whatever a mesh does afterwards.
 ## Step 2 — the scaffold, the mask and the shadow
 
 THREE renders from IDENTICAL parameters. Only the first is ever seen by a person; the other two are what
-the import puts back together.
+the import puts back together — the mask cuts the repaint to the render's own alpha, and the footprint is
+laid back UNDER it translucent (Step 4), so it shades the floor rather than replacing it.
 
 ```
 yarn render-prop … --out=~/tile-previews/render-x.png                              # hand this over
@@ -131,6 +132,19 @@ All three share one frame to the pixel: the camera and the backdrop are both fit
 lighter than its front. A GREY render is unrecognisable: asked to repaint an untextured grey table, the
 generator read it as a pair of wooden door panels and filled them with photographic burl. `--colour`
 exists for that, and it applies to meshes as well as primitives.
+
+**Paint the PARTS, not just the prop.** `--colour` puts one hex over everything, and that is only half the
+argument for having it: a market table in a single brown is a brown table with brown things on it, and the
+repaint is left to work out from silhouette alone which lump is metal and which is grain. A primitive
+calls `mark(obj, "<name>")` on each of its pieces and `paint` gives each name its own hex — `body` takes
+`--colour`, and `metal`, `accent`, `cloth` and `void` take `--colour-<name>` or the defaults in
+`PART_COLOURS`. Three colours on the market table turned a beige assembly into a timber table with a grey
+balance standing on it and an ochre heap beside it, and the generator stops having to guess.
+
+Two rules come with it. Every piece of a primitive that marks ANY of itself has to be marked, `body`
+included — `join_all` merges slots by name and polygons keep their indices, so an unmarked piece inherits
+whatever slot lands at index 0. And keep the part colours IN the rank's palette: they are a scaffold's
+hint, not the finished art, and a bright one invites a bright repaint.
 
 **Gate: no wide flat slab at floor level.** This projection draws a footprint 0.7*depth below the thing
 that made it, and a slab has almost no height to separate the two — so a slab's shadow is a copy of the
@@ -203,6 +217,10 @@ in their place. On the merchant's near-black floor nobody saw it; on the noblema
 every prop sat in a hole. And `make_shadow` paints the floor colour darkened, so `--floor` has to name the
 rank being built — left at its default, four of the nobleman's props were seated in a patch of the
 MERCHANT's floor.
+
+**A hole and a hanging thing take NO seat at all.** `--shadow=0` on every render and no `--seat`: a wall
+item hangs, so there is nothing under it, and a pit is an absence — `make_shadow` would lay a second dark
+parallelogram in front of the first and the tile reads as two holes.
 
 **`--seat` exists because a repaint will not paint a shadow.** Told in words, told again as a hex, told
 that it is part of the picture, the generator paints an invented FLOOR across the footprint instead — and

@@ -167,21 +167,21 @@ def prim_market():
     is a post, a beam and two pans; the grain is a squashed cone. Nothing here is finer than a thumb at
     slot size, which is the budget."""
     top_h, leg, w, d, h = 0.07, 0.06, 1.2, 0.6, 0.5
-    box(w, d, top_h, z=h - top_h / 2)
+    mark(box(w, d, top_h, z=h - top_h / 2), "body")
     for sx in (-1, 1):
         for sy in (-1, 1):
-            box(leg, leg, h - top_h, x=sx * (w / 2 - leg), y=sy * (d / 2 - leg), z=(h - top_h) / 2)
+            mark(box(leg, leg, h - top_h, x=sx * (w / 2 - leg), y=sy * (d / 2 - leg), z=(h - top_h) / 2), "body")
     # The balance, standing on the right of the top: post, beam across it, a shallow pan hanging at
     # each end. Pans are discs, which under this shear draw as ellipses — the same tell as the jar lids.
     post_x, post_h = 0.30, 0.32
-    cyl(0.022, post_h, x=post_x, z=h + post_h / 2)
-    box(0.46, 0.035, 0.035, x=post_x, z=h + post_h)
+    mark(cyl(0.022, post_h, x=post_x, z=h + post_h / 2), "metal")
+    mark(box(0.46, 0.035, 0.035, x=post_x, z=h + post_h), "metal")
     for sx in (-1, 1):
         # The cord is THIN and long. At 0.019 on a 0.10 drop it drew as a stalk and the pair read as two
         # mushrooms standing on the table rather than as pans hanging off a beam; what says "hanging" is
         # a gap of daylight between the pan and everything below it, not the cord itself.
-        cyl(0.009, 0.15, x=post_x + sx * 0.20, z=h + post_h - 0.085, verts=6)
-        cyl(0.098, 0.016, x=post_x + sx * 0.20, z=h + post_h - 0.165)
+        mark(cyl(0.009, 0.15, x=post_x + sx * 0.20, z=h + post_h - 0.085, verts=6), "metal")
+        mark(cyl(0.098, 0.016, x=post_x + sx * 0.20, z=h + post_h - 0.165), "metal")
     # The grain, heaped on the left. Where it goes is DERIVED, and the derivation has a wrong turn in it
     # worth keeping, because the obvious fix is the one that fails.
     #
@@ -208,6 +208,7 @@ def prim_market():
     grain_r = 0.30
     bpy.ops.mesh.primitive_cone_add(vertices=20, radius1=grain_r, radius2=0.0, depth=0.24,
                                     location=(-0.26, 0.0, h + 0.12))
+    mark(bpy.context.object, "accent")
     return join_all()
 
 
@@ -707,9 +708,25 @@ def srgb_to_linear(c):
 
 VOID = "void"  # the material name a primitive marks the inside of a hole with
 
+# What a marked part is painted, when the caller names no colour for it. A scaffold's job is to be
+# RECOGNISED — tile-art-brief.md's whole argument for --colour is that a grey render came back as
+# photographic burl on wooden door panels — and one flat colour over a whole prop only gets that half
+# done. A market table in one brown is a brown table with brown things on it, and the repaint has to
+# guess which lump is metal. Marked parts arrive already told apart.
+PART_COLOURS = {
+    VOID: "#2a2520",  # the inside of a hole: near-black, and the one part a prompt cannot put back
+    "metal": "#8a7f6d",  # dull, never bright — the set is matte and has no highlight anywhere
+    "accent": "#b07a3c",  # the rank's one warm ochre; override per rank with --colour-accent
+    "cloth": "#bdb3a0",
+}
+
 
 def mark(obj, name):
-    """Puts one part in a named material slot, so `paint` can colour it apart from the rest."""
+    """Puts one part in a named material slot, so `paint` can colour it apart from the rest.
+
+    Every part of a primitive that marks ANY of itself has to be marked, `body` included: `join_all`
+    merges slots by name and the polygons keep their indices, so an unmarked part would inherit whatever
+    slot happens to land at index 0."""
     obj.data.materials.clear()
     obj.data.materials.append(bpy.data.materials.get(name) or bpy.data.materials.new(name))
     return obj
@@ -731,26 +748,30 @@ def flat_material(name, hex_colour):
     return mat
 
 
-def paint(obj, hex_colour, void_hex):
-    """The rank's own colour over the whole prop — and a dark one wherever a primitive marked itself VOID.
+def paint(obj, hex_colour):
+    """The rank's own colour over the prop, and its own colour over any part that asked for one.
 
     Not decoration: a grey render is unrecognisable. Asked to repaint an untextured grey table, the
     generator read the shape as wooden door panels and filled them with photographic burl. A scaffold
     that already arrives brown, in palette, and lit so its top reads lighter than its front is a table
     the model can recognise, and the repaint becomes texture rather than interpretation.
 
-    TWO colours rather than one, because a hole's identity is its VALUE. `prim_pit`'s shaft is a
-    surface like any other and shades like any other, so one flat colour over everything handed the
-    generator a rack with a mid-grey gap in it; at slot size that gap measured the same as the floor
-    behind the sprite and no hole read at all. A part marked VOID is painted near-black here instead,
-    which is the one thing about a shaft that a prompt cannot put back."""
-    void = [i for i, m in enumerate(obj.data.materials) if m and m.name == VOID]
-    if not void:
+    ONE colour only gets that half done. A market table painted in a single brown is a brown table with
+    brown things on it, and the balance and the grain heap are left for the repaint to identify from
+    silhouette alone. Marked parts arrive told apart, and each takes `--colour-<name>` or the default in
+    PART_COLOURS.
+
+    The hole is the case that forced this. `prim_pit`'s shaft is a surface like any other and shades like
+    any other, so one flat colour handed the generator a rack with a mid-grey gap in it; at slot size
+    that gap measured the same value as the floor behind the sprite and no hole read at all."""
+    names = [m.name if m else "" for m in obj.data.materials]
+    if not any(names):
         obj.data.materials.clear()
         obj.data.materials.append(flat_material("prop", hex_colour))
         return
-    for i in range(len(obj.data.materials)):
-        obj.data.materials[i] = flat_material(f"prop{i}", void_hex if i in void else hex_colour)
+    for i, name in enumerate(names):
+        default = PART_COLOURS.get(name, hex_colour)
+        obj.data.materials[i] = flat_material(f"prop{i}", arg(f"colour-{name}", default))
 
 
 def load_subject(mesh_path, primitive):
@@ -1097,7 +1118,7 @@ def main():
     # has a photographic one, and neither is what the repaint wants to be handed. --colour=none keeps
     # whatever the file brought.
     if colour != "none":
-        paint(obj, colour, arg("void", "#2a2520"))
+        paint(obj, colour)
     obj = array_copies(obj, int(arg("copies", "1")), float(arg("gap", "1.35")), float(arg("jitter", "1.0")))
     w_units, d_units = seat_and_normalise(obj)
     # Depth is the strongest lever on how a prop reads: it decides how much TOP the shear reveals, and so
