@@ -20,6 +20,7 @@
     "make-seamless": "tsx scripts/makeSeamless.ts",
     "import-tile": "tsx scripts/importTile.ts",
     "art-census": "tsx scripts/artCensus.ts",
+    "drift-mask": "tsx scripts/driftMask.ts",
     "on-floor": "node scripts/onFloorPreview.mjs",
     "cut-sheet": "tsx scripts/cutSheet.ts",
     "validate-world": "tsx scripts/generateWorld.ts --validate-only",
