@@ -150,6 +150,21 @@ scaffold rubbleHeap --sun=0.12
 yarn import-tile art/props/starter/rubbleHeap.webp --tier=starter --name=rubbleHeap --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.45
 
+# --brightness=0.70 is the deepest clip in this file, and it is a WHITEWASH problem rather than the usual
+# repaint drift. Told the shrine is whitewashed, the generator painted it white: untouched, 54.7% of the
+# tile sat over the rank's 152 light end and the sprite measured 60 LIGHTER than the floor.
+#
+# It is still meant to be the brightest thing the merchant owns, and it is — the whitewash lands at 146
+# with a max of 161, against a floor at 99 and a wall face whose own worn whitewash tops out at 120. What
+# 0.70 buys over 0.74 is the tail: 4.0% of the sprite over the clamp instead of 19.4%.
+#
+# Judge that number on the WHITEWASH and not on the sprite. This tile is a pale box, a near-black recess
+# and a shadow, so its whole-sprite mean sits near the floor's own value however bright the box is, and
+# tile-stats' "1 lighter than the slab" at 0.65 said nothing about whether the shrine reads.
+scaffold shrine --sun=0.18
+yarn import-tile art/props/starter/shrine.webp --tier=starter --name=shrine --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85 --brightness=0.70 --saturation=1.5
+
 # junior — the nobleman
 #
 # The bay is `prim_niche`; only --contents changes between ranks. --width and --height are the SLOT'S
@@ -237,6 +252,21 @@ yarn import-tile art/props/starter/jarRack.webp --tier=starter --name=jarRack --
 scaffold rubbleHeap --sun=0.12
 yarn import-tile art/props/starter/rubbleHeap.webp --tier=starter --name=rubbleHeap --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.45
+
+# --brightness=0.70 is the deepest clip in this file, and it is a WHITEWASH problem rather than the usual
+# repaint drift. Told the shrine is whitewashed, the generator painted it white: untouched, 54.7% of the
+# tile sat over the rank's 152 light end and the sprite measured 60 LIGHTER than the floor.
+#
+# It is still meant to be the brightest thing the merchant owns, and it is — the whitewash lands at 146
+# with a max of 161, against a floor at 99 and a wall face whose own worn whitewash tops out at 120. What
+# 0.70 buys over 0.74 is the tail: 4.0% of the sprite over the clamp instead of 19.4%.
+#
+# Judge that number on the WHITEWASH and not on the sprite. This tile is a pale box, a near-black recess
+# and a shadow, so its whole-sprite mean sits near the floor's own value however bright the box is, and
+# tile-stats' "1 lighter than the slab" at 0.65 said nothing about whether the shrine reads.
+scaffold shrine --sun=0.18
+yarn import-tile art/props/starter/shrine.webp --tier=starter --name=shrine --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85 --brightness=0.70 --saturation=1.5
 
 # junior — the nobleman
 #

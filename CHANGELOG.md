@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fallen brick is two different things depending on where you meet it: a spill across a passage floor you
   walk over, and a knee-high heap in the corner of a chamber you walk around. Seventy-seven rooms that
   were furnished with one and drew nothing at all now draw the heap.
+- A merchant keeps a god in the corner: a whitewashed mudbrick shrine with a coarse clay Bes standing in
+  its niche and a lamp burning beside him, the only warm light in the chamber that is not carried.
 - Fallen brick is drawn where a room was dressed with it: a knee-high heap of broken mudbrick in the
   merchant's chambers, straw still in the breaks, and the nobleman's fall of painted plaster, which had
   been painted but was landing in the wrong file and so never appeared.
