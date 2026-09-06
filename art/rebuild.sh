@@ -128,3 +128,19 @@ yarn import-tile art/props/junior/niche.webp --tier=junior --name=niche --slot=w
 # never moved. Contrast is not free on a warm rank.
 yarn import-tile art/props/junior/stela.webp --tier=junior --name=stela --slot=wall \
   --filter=smooth --headroom=0.18 --brightness=0.74
+
+# --margin=1.4 is the whole reason this one is legible: `SLOTS.wall` is `seat: false`, so the import
+# scales the FRAME into 56x28 rather than trimming and re-seating. A niche fills the band by design; a
+# sconce is one bracket on a broad wall and keeps only the air the render gave it.
+#
+# NO --brightness and NO --saturation, the only tile here with neither. Nothing is over the rank's 197
+# clamp, and the bracket separates from the wall by being DARK — the bronze arm measures 79 against a
+# wall face at 108 — rather than by being warm. It reads 15 cooler than the wall (+62 against +77) and
+# that is the patina the prompt asked for, not a fault to correct.
+#
+# The mask is doing real work on this one. The repaint feathered the flame's glow out into the
+# background and it keyed VIOLET, and it drew the lamp larger than the render; cutting to the render's
+# own alpha removed the halo by construction and pinned the lamp back to its modelled size.
+scaffold sconce --shear=0.5 --width=448 --height=224 --margin=1.4 --colour=#e0c193
+yarn import-tile art/props/junior/sconce.webp --tier=junior --name=sconce --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
