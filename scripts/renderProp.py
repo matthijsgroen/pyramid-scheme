@@ -851,10 +851,15 @@ def make_shadow(obj, depth, floor_hex, offset_x, offset_y):
     FLATTENED to z=0 and put through the same shear. No ray tracing, no shadow catcher, no dependence on
     which engine or which Blender version.
 
-    It is OPAQUE, and it is the rank's floor colour darkened rather than a translucent black. A
-    semi-transparent shadow composites against the magenta backdrop and comes out magenta-tinted, which
-    the keyer then either eats or fringes. Opaque floor-in-shadow keys cleanly and is the colour the
-    thing will actually sit on.
+    It is rendered OPAQUE, in the rank's floor colour darkened. Opaque because the SCAFFOLD carries this
+    shadow against the magenta backdrop, where any alpha comes back magenta-tinted and the keyer either
+    eats it or fringes it. The seat render has no backdrop, and `import-tile --seat-opacity` fades it
+    there instead, so the paving shows through it — an opaque patch replaces the floor rather than
+    shading it, and on a pale rank every prop sits in a hole.
+
+    `--floor` therefore has to name the RANK BEING BUILT. Left at its default the nobleman's props were
+    each seated in a patch of the merchant's floor, 62 luminance darker than the one they stand on, and
+    that — not the shadow being a shadow — is what read as too black.
 
     `offset` is the light: shifting the flattened copy is what moves the sun."""
     shadow = obj.copy()

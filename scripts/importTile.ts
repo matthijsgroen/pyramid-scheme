@@ -29,6 +29,8 @@
  *                    Blender render's alpha is the true silhouette, and a repaint that softened an edge
  *                    into the magenta leaves a keyed halo the despill cannot reach. Masking to the
  *                    render throws that away and guarantees the shape the geometry actually had.
+ *   --seat-opacity=0.55  how solid that shadow is laid down. Below 1 the floor's own paving shows
+ *                    through it, which is what a shadow does; at 1 the footprint replaces the floor.
  *   --seat=shadow.png put a rendered shadow back UNDER the art. Pair it with a --mask of the object
  *                    alone: a prop's shadow is geometry, and asked for a shadow the generator paints an
  *                    invented floor over the footprint instead, so the tile arrives with nothing below
@@ -245,16 +247,39 @@ const cutToMask = async (img: sharp.Sharp, maskPath: string): Promise<sharp.Shar
   return sharp(cut)
 }
 
-const underlayShadow = async (img: sharp.Sharp, shadowPath: string): Promise<sharp.Sharp> => {
+/**
+ * Lays the rendered footprint under the art, TRANSLUCENT, so the floor is shaded rather than replaced.
+ *
+ * `make_shadow` paints an opaque patch — the rank's floor colour darkened — and opaque was right while
+ * the shadow was being composited against the magenta backdrop, where any alpha came back magenta-tinted
+ * and the keyer either ate it or fringed it. The seat render has no backdrop (`--background=none`), so
+ * that reason is gone and the cost is left: an opaque patch throws the floor's own paving, joints and
+ * grit away and drops a flat slab of dark in their place. On the merchant's near-black floor nobody saw
+ * it; on the nobleman's, which is 62 luminance lighter, every prop sat in a hole.
+ *
+ * At `opacity` the tile darkens what is behind it instead: floor*(1-a) + shade*a, which keeps the
+ * paving legible through the shadow and makes the seat's own colour a nudge rather than a claim.
+ */
+const underlayShadow = async (img: sharp.Sharp, shadowPath: string, opacity: number): Promise<sharp.Sharp> => {
   const art = await img.ensureAlpha().png().toBuffer({ resolveWithObject: true })
   const { width, height } = art.info
   // Rendered out first for the same reason cutToMask does it: sharp resizes before it composites.
-  const shadow = await sharp(shadowPath).ensureAlpha().resize(width, height, { fit: "fill" }).png().toBuffer()
+  const fitted = await sharp(shadowPath).ensureAlpha().resize(width, height, { fit: "fill" }).png().toBuffer()
+  const shadow = opacity >= 1 ? fitted : await fadeAlpha(fitted, opacity)
   const seated = await sharp(shadow)
     .composite([{ input: art.data }])
     .png()
     .toBuffer()
   return sharp(seated)
+}
+
+/** Scales an image's alpha channel, leaving its colours alone. */
+const fadeAlpha = async (input: Buffer, factor: number): Promise<Buffer> => {
+  const { data, info } = await sharp(input).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  for (let i = info.channels - 1; i < data.length; i += info.channels) data[i] = Math.round(data[i] * factor)
+  return sharp(data, { raw: { width: info.width, height: info.height, channels: info.channels } })
+    .png()
+    .toBuffer()
 }
 
 /** A power curve on the colour channels, leaving alpha alone: `out = 255 * (in/255) ** exponent`. Below 1
@@ -317,7 +342,7 @@ const main = async (): Promise<void> => {
   // After the mask, so the shadow is laid under the object's true silhouette and not under a repaint's
   // invented floor; before the seat, so the trim treats object and shadow as one sprite.
   const shadowPath = arg("seat")
-  if (shadowPath) img = await underlayShadow(img, shadowPath)
+  if (shadowPath) img = await underlayShadow(img, shadowPath, Number(arg("seat-opacity", "0.55")))
   if (seat && !process.argv.includes("--no-trim")) img = await seatOnFloorLine(img, w / h, Number(arg("scale", "1")))
 
   const dir = join(OUT_ROOT, tier)

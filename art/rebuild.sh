@@ -3,7 +3,10 @@
 #
 # Three renders per prop, none of them stored:
 #   OBJ    the object alone, no shadow — the mask the repaint is cut to
-#   SHADOW the footprint alone, in the same frame — put back under the art at import
+#   SHADOW the footprint alone, in the same frame — laid back under the art at import, TRANSLUCENT, so
+#          the rank's own paving shows through it. It is painted the rank's floor darkened, so --floor
+#          has to name the rank being built: left at the default, the nobleman's props each sat in a
+#          patch of the MERCHANT's floor, 62 luminance darker than the one they stand on.
 # The scaffold that was handed to the generator is a third, and is not needed here.
 #
 # The shadow is rendered rather than painted because a repaint will not paint one: told to, the
@@ -30,13 +33,7 @@ scaffold() {
   "$BLENDER" -b -P scripts/renderProp.py -- --primitive="$prim" \
     --shadow=0 --background=none --out="$OBJ" "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
   "$BLENDER" -b -P scripts/renderProp.py -- --primitive="$prim" \
-    --only=shadow --background=none --out="$SHADOW" $SHADOW_EXTRA "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
-  # SHADOW_EXTRA is for a prop whose FOOTPRINT is not its whole self. `make_shadow` flattens everything
-  # to z=0, so anything a prop merely HOLDS off the floor casts its own belly — the jar rack's three
-  # amphorae came out as three fat ellipses in front of it, where the hand-painted merchant version has
-  # one narrow band under the frame. It goes before "$@" so it wins arg()'s first-match, and it is reset
-  # after so it cannot leak into the next prop.
-  SHADOW_EXTRA=
+    --only=shadow --background=none --out="$SHADOW" "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
 }
 
 # starter — the merchant
@@ -161,12 +158,12 @@ yarn import-tile art/props/junior/sconce.webp --tier=junior --name=sconce --slot
 # The rug has to SEPARATE from the paving or it is paving. Untouched it measured 1 lighter than the slab
 # and vanished; 0.86/0.6 puts it 23 darker, which is the merchant mat's own pair of numbers — the same
 # repaint failure at both ranks, straw drawn far warmer and lighter than the floor it lies on.
-scaffold mat --spin=9 --shadow=0.5 --sun=0.03 --colour=#e0c193
+scaffold mat --spin=9 --shadow=0.5 --sun=0.03 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/props/junior/mat.webp --tier=junior --name=mat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
 
 # --lit=1: the nobleman's brazier burns where the merchant's holds cold ash.
-scaffold brazier --lit=1 --colour=#e0c193
+scaffold brazier --lit=1 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/props/junior/brazier.webp --tier=junior --name=brazier --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7 --brightness=0.92
 
@@ -174,12 +171,10 @@ yarn import-tile art/props/junior/brazier.webp --tier=junior --name=brazier --sl
 # at floor level, so a footprint pushed the default 0.30 of its depth toward the viewer draws clear of
 # the pieces and the whole tile floats. Only the SHADOW render takes those two — scaffold() passes
 # --shadow=0 ahead of "$@" for the mask, so the mask cannot pick one up.
-scaffold rubbleHeap --contents=plaster --shadow=0.6 --sun=0.05 --colour=#e0c193
+scaffold rubbleHeap --contents=plaster --shadow=0.6 --sun=0.05 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/props/junior/rubble.webp --tier=junior --name=rubble --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85 --saturation=1.25
 
-# The jars are cast OFF the shadow: see SHADOW_EXTRA above. Safe only because they sit inside the
-# frame's bounding box on all three axes, so both renders get the same camera.
-SHADOW_EXTRA=--contents=none scaffold jarrack --colour=#e0c193
+scaffold jarrack --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/props/junior/jarRack.webp --tier=junior --name=jarRack --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92

@@ -197,6 +197,13 @@ yarn import-tile ~/tile-previews/render-x-painted.png --tier=starter --name=offe
 `--mask` cuts to the render's own alpha, which is the true silhouette; keying runs as well, and removes
 the background pixels that sit INSIDE the mask where a part shifted.
 
+**The seat goes down TRANSLUCENT, and its colour is the rank's own floor.** `--seat-opacity` defaults to
+0.55: an opaque footprint throws away the paving, joints and grit underneath and drops a flat slab of dark
+in their place. On the merchant's near-black floor nobody saw it; on the nobleman's, 62 luminance lighter,
+every prop sat in a hole. And `make_shadow` paints the floor colour darkened, so `--floor` has to name the
+rank being built — left at its default, four of the nobleman's props were seated in a patch of the
+MERCHANT's floor.
+
 **`--seat` exists because a repaint will not paint a shadow.** Told in words, told again as a hex, told
 that it is part of the picture, the generator paints an invented FLOOR across the footprint instead — and
 a mask that included the footprint then preserved a slab of floor-coloured pixels where the seating
