@@ -103,6 +103,18 @@ scaffold pit --shadow=0
 yarn import-tile art/props/starter/pit.webp --tier=starter --name=pit --slot=prop \
   --filter=smooth --mask="$OBJ" --brightness=0.82
 
+# The market table was one of the four made by PROMPTING alone, before the pipeline existed, so its
+# shadow was painted into the art and it had no scaffold, no mask and no rebuild line — which is how it
+# missed the translucent seat that shelf, chest, brazier, lamp, pillar and mat all got. Re-rolled over
+# prim_market, it joins them.
+#
+# --saturation=1.3 is the documented repaint drift, not a choice: a generator copying a render
+# desaturates toward grey, and this came back at +14 warmth against a rank whose hand-painted props sit
+# at +22 to +25. 1.3 lands it at +24, beside the jar rack at +22 and the ka-statue at +22.
+scaffold market
+yarn import-tile art/props/starter/offeringTable.webp --tier=starter --name=offeringTable --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.3
+
 # junior — the nobleman
 #
 # The bay is `prim_niche`; only --contents changes between ranks. --width and --height are the SLOT'S
@@ -147,6 +159,18 @@ yarn import-tile art/props/junior/stela.webp --tier=junior --name=stela --slot=w
 scaffold sconce --shear=0.5 --width=448 --height=224 --margin=1.4 --colour=#e0c193
 yarn import-tile art/props/junior/sconce.webp --tier=junior --name=sconce --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18
+
+# The market table was one of the four made by PROMPTING alone, before the pipeline existed, so its
+# shadow was painted into the art and it had no scaffold, no mask and no rebuild line — which is how it
+# missed the translucent seat that shelf, chest, brazier, lamp, pillar and mat all got. Re-rolled over
+# prim_market, it joins them.
+#
+# --saturation=1.3 is the documented repaint drift, not a choice: a generator copying a render
+# desaturates toward grey, and this came back at +14 warmth against a rank whose hand-painted props sit
+# at +22 to +25. 1.3 lands it at +24, beside the jar rack at +22 and the ka-statue at +22.
+scaffold market
+yarn import-tile art/props/starter/offeringTable.webp --tier=starter --name=offeringTable --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.3
 
 # junior — the nobleman
 #
