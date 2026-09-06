@@ -135,9 +135,9 @@ def prim_jarrack():
     tell — under this shear a circle lying flat must draw as an ellipse exactly as wide as the jar."""
     post, w, d, h = 0.07, 0.95, 0.34, 0.62
     for sx in (-1, 1):
-        box(post, d, h, x=sx * (w / 2 - post / 2), z=h / 2)
+        mark(box(post, d, h, x=sx * (w / 2 - post / 2), z=h / 2), "body")
     for z in (h - 0.06, 0.16):
-        box(w - post * 2, 0.05, 0.05, z=z)
+        mark(box(w - post * 2, 0.05, 0.05, z=z), "body")
     # --contents=none renders the FRAME alone, and it exists for the shadow rather than for the picture.
     # `make_shadow` flattens the whole object to z=0, so jars held clear of the floor in a rack cast their
     # BELLIES: three fat ellipses sitting in front of the rack, where the hand-painted merchant version
@@ -717,6 +717,7 @@ PART_COLOURS = {
     VOID: "#2a2520",  # the inside of a hole: near-black, and the one part a prompt cannot put back
     "metal": "#8a7f6d",  # dull, never bright — the set is matte and has no highlight anywhere
     "accent": "#b07a3c",  # the rank's one warm ochre; override per rank with --colour-accent
+    "pottery": "#8f7358",  # fired clay: warmer and duller than timber, and never the ochre accent
     "cloth": "#bdb3a0",
 }
 
@@ -960,13 +961,24 @@ def add_shadow_catcher(k, span):
     return plane
 
 
-def add_camera(obj, width, height, margin=1.06):
+def add_camera(obj, width, height, margin=1.06, drop=0.0):
     """Framed from the bounds AFTER the shear, which are not the bounds before it.
 
     Shearing pushes the near-bottom edge DOWN as far as it pushes the far-top edge up: a unit cube at
     k=1 spans -0.5 to 1.5, not 0 to 2. Framing from the pre-shear box cropped half a unit off the
-    bottom of the first cube rendered, which measured as 1.5 units of a 2-unit object."""
+    bottom of the first cube rendered, which measured as 1.5 units of a 2-unit object.
+
+    `drop` is room under the object for its SHADOW, and it is not optional. The footprint is pushed
+    `--sun` of the object's depth toward the viewer, and the shear draws that as k*sun*depth BELOW the
+    object's own lowest point — outside a frame fitted to the object, where it is cut off square. It
+    showed worst on the brazier, whose dish is wide and whose legs are short, so most of its pool fell
+    past the edge and the tile arrived with a straight line sliced across the shadow.
+
+    It is computed from --sun and the depth rather than taken from the shadow's own bounds, and that
+    matters: the mask is rendered with --shadow=0 and so has no shadow object to measure. Measured, the
+    three renders of a prop would be framed differently and would no longer composite."""
     (x0, x1), _, (z0, z1) = local_bounds(obj)
+    z0 -= drop
     span_x = (x1 - x0) * margin
     span_z = (z1 - z0) * margin
     # ortho_scale covers the LARGER rendered dimension, so the other one has to be derived from it or the
@@ -1151,7 +1163,7 @@ def main():
     # `SLOTS.wall` is `seat: false`, so the import does not trim and re-seat — it scales the whole FRAME
     # into 56x28. A prop's frame is discarded; a wall item's frame IS its placement. So a compact thing
     # like a sconce is given margin here rather than being blown up to fill the band.
-    add_camera(obj, width, height, float(arg("margin", "1.06")))
+    add_camera(obj, width, height, float(arg("margin", "1.06")), k * sun * d_units)
     add_light(float(arg("ambient", "0.35")))
     background = arg("background", "#ff00ff")
     if background != "none":

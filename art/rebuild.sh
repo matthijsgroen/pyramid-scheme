@@ -85,7 +85,11 @@ scaffold mat --spin=9 --shadow=0.5 --sun=0.03
 yarn import-tile art/props/starter/mat.webp --tier=starter --name=mat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
 
-# A hole casts nothing. --shadow=0 on the render and NO --seat at import: `make_shadow` flattens the
+# A hole casts nothing, and --sun=0 says so to the CAMERA as well as to the shadow. The frame leaves
+# room under an object for the footprint the sun pushes toward the viewer; with no footprint that room
+# is empty, and on a slot that does not re-seat — every wall slot — it just shifts the art up its band.
+#
+# --shadow=0 on the render and NO --seat at import: `make_shadow` flattens the
 # object to z=0 and pushes it toward the viewer, so a pit's footprint is a second dark parallelogram
 # lying in front of the first one and the tile reads as two holes.
 #
@@ -99,7 +103,7 @@ yarn import-tile art/props/starter/mat.webp --tier=starter --name=mat --slot=pro
 # mudbrick at +35 and 112 and the wall face's +29 and 112. Seven lighter than the wall is right — the
 # spoil is freshly broken faces where the wall is worn and sooted. 0.78 matched the wall exactly and
 # took the pole and the ladder down with it, until the timber was as dark as the shaft.
-scaffold pit --shadow=0
+scaffold pit --shadow=0 --sun=0
 yarn import-tile art/props/starter/pit.webp --tier=starter --name=pit --slot=prop \
   --filter=smooth --mask="$OBJ" --brightness=0.82
 
@@ -125,7 +129,7 @@ yarn import-tile art/props/starter/offeringTable.webp --tier=starter --name=offe
 # wall face's +77 and 108. Measured over a FIXED region of the surround, not over pixels above a
 # luminance threshold: as the tile darkens, fewer pixels clear the threshold and the mean of the
 # survivors barely moves, so the knob reads as dead. The threshold called this same file +96 and 151.
-scaffold niche --contents=lamp --shear=0.5 --width=448 --height=224 --colour=#e0c193
+scaffold niche --contents=lamp --shear=0.5 --width=448 --height=224 --colour=#e0c193 --sun=0
 yarn import-tile art/props/junior/niche.webp --tier=junior --name=niche --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18 --saturation=1.3 --brightness=0.85
 
@@ -156,7 +160,7 @@ yarn import-tile art/props/junior/stela.webp --tier=junior --name=stela --slot=w
 # The mask is doing real work on this one. The repaint feathered the flame's glow out into the
 # background and it keyed VIOLET, and it drew the lamp larger than the render; cutting to the render's
 # own alpha removed the halo by construction and pinned the lamp back to its modelled size.
-scaffold sconce --shear=0.5 --width=448 --height=224 --margin=1.4 --colour=#e0c193
+scaffold sconce --shear=0.5 --width=448 --height=224 --margin=1.4 --colour=#e0c193 --sun=0
 yarn import-tile art/props/junior/sconce.webp --tier=junior --name=sconce --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18
 
