@@ -85,6 +85,23 @@ yarn render-prop --primitive=market --depth=0.4 --colour=#a49781 --floor=#6c6257
 yarn render-prop --mesh=~/tile-previews/meshes/shabti.stl --copies=4 --colour=#a49781
 ```
 
+**Gate: look at the MESH, with `--preview`.**
+
+```
+yarn render-prop --primitive=rubbleHeap --colour=#a49781 --preview=1 --width=600 --height=450
+```
+
+A perspective three-quarter view, unsheared. Every other render in this pipeline goes through the shear,
+which answers one question perfectly and another not at all: it says exactly what the map will draw, and
+nothing about whether the thing is BUILT. Under z + k*y two parts that touch in the world need not touch
+on the page, and two far apart in depth can land on top of each other — `prim_rubbleheap` records a crown
+that hid behind the brick it was meant to sit on, and `prim_sconce` a brace that floated under its own
+arm. Both were obvious the moment the mesh was seen from the side, and neither was visible head-on.
+
+Judge contact, overlap and proportion here. Judge the TILE in the sheared render and on the floor, never
+the other way round: a heap that looks well built in three-quarter can still draw as a smudge at 56 units,
+which is what most of the docstrings in `renderProp.py` are about.
+
 **Gate: the numbers it prints.**
 
 ```

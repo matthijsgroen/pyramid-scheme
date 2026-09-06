@@ -1003,6 +1003,34 @@ def add_camera(obj, width, height, margin=1.06, drop=0.0):
     bpy.context.scene.camera = cam
 
 
+def add_preview_camera(obj, spin_degrees=35.0, pitch_degrees=28.0):
+    """A PERSPECTIVE three-quarter view of the mesh, unsheared — for checking the model, never the tile.
+
+    Everything else in this file renders through the shear, which is the point of it, and that view
+    answers one question well and another not at all. It says exactly what the map will draw. It says
+    nothing about whether the thing is BUILT: under z + k*y two parts that touch in the world need not
+    touch on the page, and two far apart in depth can land on top of each other — `prim_rubbleheap`
+    records a crown that hid behind the brick it was meant to sit on, and `prim_sconce` a brace that
+    floated under its own arm. Both were obvious the moment the mesh was seen from the side.
+
+    So this is a MODELLER's view. Judge contact, overlap and proportion here; judge the tile in the
+    sheared render and on the floor, and never the other way round — a heap that looks well built in
+    three-quarter can still draw as a smudge at 56 units, which is most of what this file's docstrings
+    are about."""
+    (x0, x1), (y0, y1), (z0, z1) = local_bounds(obj)
+    centre = Vector(((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2))
+    reach = max(x1 - x0, y1 - y0, z1 - z0) * 2.6
+    yaw, pitch = math.radians(spin_degrees), math.radians(pitch_degrees)
+    offset = Vector((math.sin(yaw) * math.cos(pitch), -math.cos(yaw) * math.cos(pitch), math.sin(pitch))) * reach
+    cam_data = bpy.data.cameras.new("preview")
+    cam_data.lens = 60
+    cam = bpy.data.objects.new("preview", cam_data)
+    bpy.context.scene.collection.objects.link(cam)
+    cam.location = centre + offset
+    cam.rotation_euler = (centre - cam.location).to_track_quat("-Z", "Y").to_euler()
+    bpy.context.scene.camera = cam
+
+
 def add_light(ambient=0.35):
     """Flat and frontal on purpose. The set is painted, matte, with no specular anywhere
     (tile-art-brief.md, "The style"), so a rendered prop must not arrive with highlights the painted
@@ -1151,6 +1179,15 @@ def main():
     if spin:
         obj.data.transform(Matrix.Rotation(math.radians(spin), 4, "Z"))
     engine = arg("engine", "eevee")
+    # --preview short-circuits the whole projection: no shadow, no shear, a perspective camera. It is for
+    # looking at the MESH, and nothing it shows is what the map draws.
+    if arg("preview"):
+        add_preview_camera(obj, float(arg("spin-view", "35")), float(arg("pitch-view", "28")))
+        # No backdrop: `add_backdrop` sizes its card to the SHEARED framing and a perspective camera
+        # sees straight past it. A modeller's view wants the silhouette against nothing anyway.
+        add_light(float(arg("ambient", "0.35")))
+        render(out, width, height, engine, int(arg("samples", "64")))
+        return
     if engine == "cycles":
         # A real cast shadow, softened by the sun's angular size, instead of a flat footprint.
         shear(obj, k, 0)
