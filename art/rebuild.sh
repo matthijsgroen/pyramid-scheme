@@ -119,6 +119,22 @@ scaffold market
 yarn import-tile art/props/starter/offeringTable.webp --tier=starter --name=offeringTable --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.3
 
+# The jar rack, the second of the four prompted props to be re-rolled over its primitive. Its scaffold
+# marks the frame `body` and every piece of every jar `pottery`, so the repaint is told which lump is
+# timber and which is clay instead of inferring it from silhouette.
+#
+# --brightness=0.82 --saturation=1.7, and 1.7 is the highest in this file after the brazier's 2.2 for the
+# same reason: a generator copying a render desaturates toward grey, and split pale timber has little
+# chroma to begin with, so there was almost nothing to multiply. It came back at +7 warmth and lands at
+# +23, inside the hand-painted band of +22 to +25.
+#
+# The dark-end fault tile-stats prints — 8.3% below 35 — is the clay and the shadow, and the painted
+# basin sits at 23.8%. It is the LIGHT end that matters on this one: untouched, the timber put 12% of the
+# tile over the clamp.
+scaffold jarrack
+yarn import-tile art/props/starter/jarRack.webp --tier=starter --name=jarRack --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.7
+
 # junior — the nobleman
 #
 # The bay is `prim_niche`; only --contents changes between ranks. --width and --height are the SLOT'S
@@ -175,6 +191,22 @@ yarn import-tile art/props/junior/sconce.webp --tier=junior --name=sconce --slot
 scaffold market
 yarn import-tile art/props/starter/offeringTable.webp --tier=starter --name=offeringTable --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.3
+
+# The jar rack, the second of the four prompted props to be re-rolled over its primitive. Its scaffold
+# marks the frame `body` and every piece of every jar `pottery`, so the repaint is told which lump is
+# timber and which is clay instead of inferring it from silhouette.
+#
+# --brightness=0.82 --saturation=1.7, and 1.7 is the highest in this file after the brazier's 2.2 for the
+# same reason: a generator copying a render desaturates toward grey, and split pale timber has little
+# chroma to begin with, so there was almost nothing to multiply. It came back at +7 warmth and lands at
+# +23, inside the hand-painted band of +22 to +25.
+#
+# The dark-end fault tile-stats prints — 8.3% below 35 — is the clay and the shadow, and the painted
+# basin sits at 23.8%. It is the LIGHT end that matters on this one: untouched, the timber put 12% of the
+# tile over the clamp.
+scaffold jarrack
+yarn import-tile art/props/starter/jarRack.webp --tier=starter --name=jarRack --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.7
 
 # junior — the nobleman
 #

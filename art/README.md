@@ -39,14 +39,14 @@ see whether a change to `importTile.ts` moved a tile that is already approved.
 
 Only the props made through [the prop pipeline](../docs/instructions/prop-pipeline.md) have a rebuild
 line, because the pipeline records the flags as it goes. At the merchant that is `shelf`, `chestProp`,
-`brazier`, `lamp`, `pillar`, `mat`, `pit` and now `offeringTable`; at the nobleman all four props and all
+`brazier`, `lamp`, `pillar`, `mat`, `pit`, `offeringTable` and `jarRack`; at the nobleman all four props and all
 three wall items.
 
 **A prompted tile cannot simply be GIVEN a rebuild line, which is why `offeringTable` had to be re-rolled
 to get one.** Its shadow was painted into the art, so there is nothing to mask it against and nothing to
 seat under it, and the painted table was never drawn over a scaffold in the first place — the mask would
-have cut a shape the art does not fill. `jarRack`, `statue` and `basin` are in the same position: one roll
-each over their primitive, and they join the script. Until then they keep the opaque painted shadow, where
+have cut a shape the art does not fill. `statue` and `basin` are the last two in that position: one roll each over their
+primitive, and they join the script — though `statue` needs a scan and `basin` has no primitive yet. Until then they keep the opaque painted shadow, where
 everything on a rebuild line now shades the floor instead of replacing it.
 
 The four earlier merchant props were matched back to their downloads by fingerprint rather than by

@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fallen brick is two different things depending on where you meet it: a spill across a passage floor you
   walk over, and a knee-high heap in the corner of a chamber you walk around. Seventy-seven rooms that
   were furnished with one and drew nothing at all now draw the heap.
+- The merchant's jars stand in a rack of split timber, three mud-stoppered amphorae with a trader's mark
+  brushed on each shoulder, one of them fired paler than its neighbours.
 - The merchant's market table is his trade laid out: barley heaped loose on the boards and a two-pan
   balance standing beside it, its pans swinging on their cords.
 - What a prop stands in is a shadow rather than a hole: the floor's own paving, joints and grit show
