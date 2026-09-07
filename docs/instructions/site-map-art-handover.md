@@ -397,9 +397,9 @@ The high-resolution image each tile was made from lives in `art/`, laid out in [
 README](../../art/README.md):
 
 ```
-art/props/<tier>/<name>.webp     a prop's painted return
-art/surfaces/<tier>-<slot>.webp  floor, wall-face, threshold
-art/tombWall/<tier>.webp         the tableau's whole-wall panel
+art/masters/props/<tier>/<name>.webp     a prop's painted return
+art/masters/surfaces/<tier>-<slot>.webp  floor, wall-face, threshold
+art/masters/tombWall/<tier>.webp         the tableau's whole-wall panel
 art/rebuild.sh                   re-imports from the masters, with each tile's flags
 ```
 

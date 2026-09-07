@@ -8,9 +8,9 @@ reaches the bundle. What ships is `src/assets/tiles/<tier>/<name>.png` at slot s
 copies the game loads.
 
 ```
-art/props/<tier>/<name>.webp   a prop's painted return, ~1334x2000
-art/surfaces/<tier>-<slot>.webp  floor 2000x2000, wall-face 2000x240, threshold ~2000x900
-art/tombWall/<tier>.webp       the tableau's whole-wall panel, 2000x2000
+art/masters/props/<tier>/<name>.webp   a prop's painted return, ~1334x2000
+art/masters/surfaces/<tier>-<slot>.webp  floor 2000x2000, wall-face 2000x240, threshold ~2000x900
+art/masters/tombWall/<tier>.webp       the tableau's whole-wall panel, 2000x2000
 art/rebuild.sh                 re-imports from the masters, with the flags each tile was imported with
 ```
 
@@ -35,27 +35,35 @@ which is the difference between a repository that can hold the brief's ~224 file
 `rebuild.sh` re-imports every tile it covers from its master. Run it after changing an import flag, or to
 see whether a change to `importTile.ts` moved a tile that is already approved.
 
-## What is still missing a master, and why fingerprinting cannot find it
+## How a master is matched back to its return, and why the fingerprint is the weaker test
 
-The merchant's `niche` and `tallyBoard` were recorded here as unidentifiable and are not: they are
-`Mudbrick Recess Image` and `Mudbrick Recess Image (1)` in `~/Downloads`. **The fingerprint could not see
-it, and the reason generalises to every masked tile.** A wall item's raw return is mostly magenta, so a
-grey thumbnail of it cannot resemble the finished tile — the method needs the key and the trim applied
-first, and even then a mask plus unknown brightness leaves it a judgement call at 26 against 43.
+Everything generated is in `~/Downloads`, under names the generator chose — `Cavalier Oblique Market
+Table Render (3).jpeg` — so the job is matching a return to the tile it made. Six were unmatched here and
+five are now matched: the merchant's `niche`, `tallyBoard`, `floor`, `wall-face` and `threshold`.
 
-What identified them was CONTENT. Only one candidate is a recess holding two jars and a bundle; only one
-is a plank of tally strokes with a chalk stub on it. And the proof is REPRODUCTION: imported with the
-flags now in `rebuild.sh`, they come back at the shipped tiles' own numbers — lum 61 warmth +20, and lum
-111 warmth +35. That is a stronger test than any distance metric, and it is the one to use next time.
+**The fingerprint is the weaker test and it failed on all five.** It downscales both to 48x48 greyscale
+and takes the smallest RMS, and it works on the four props made by prompting because their returns look
+like their tiles. It cannot work where the pipeline transforms the source:
 
-**The merchant's `floor`, `wall-face` and `threshold` still have no master, and comparison cannot find
-them.** A floor goes through `make-seamless` BEFORE import, which patches the source's own centre over
-its seam, so the shipped tile's real input is a make-seamless OUTPUT and no download can match it. Worse,
-`--flatten=0.65` lays a uniform wash over two thirds of the tile: candidates converged to 5.5 against a
-next-best of 6.2 on luminance, and 0.43 against 0.40 on gradient correlation. Both are noise. The
-candidates are in `~/Downloads` as `Egyptian Merchant Tomb Tile` and friends; picking one means
-re-importing and accepting that the merchant's surfaces shift, which is the only way they get rebuild
-lines and 2x.
+- A MASKED tile's return is mostly magenta, so a grey thumbnail of it cannot resemble the finished tile.
+  The niche scored 34 against a field of 35 — indistinguishable from absent. Keying and trimming first
+  got 26 against 43: better, still a judgement call.
+- A FLOOR is imported with `--flatten=0.65`, which washes two thirds of the tile toward one palette
+  colour, and `--repeat=2.4`, which shrinks and re-tiles it. Candidates converged to 5.5 against a
+  next-best of 6.2 on luminance, and 0.43 against 0.40 on gradient correlation. Both noise.
+
+**REPRODUCTION is the test that works.** Import each candidate through this pipeline and look at the
+result beside the shipped tile. It took one contact sheet per slot and none of the five was close: only
+one candidate is a recess holding two jars and a bundle, only one is a plank of tally strokes with a
+chalk stub, only one floor has that slab scale with those scattered circles and incised marks, only one
+face has the pale whitewash patches in the same places, only one sill has the dished band with a rubbed
+ochre line along its edge. Where the numbers matter they agree exactly — the niche came back at lum 61
+warmth +20 and the tally board at lum 111 warmth +35, both the shipped tiles' own.
+
+**One orphan is left: the merchant's `arch`.** Its master is not in `~/Downloads` under any name, and it
+is not a variant of the candidates that are — the shipped lintel is a single flat plank where every
+candidate has a stepped one with a dark reveal, and it is paler than all of them at any flatten. Left
+unmatched on purpose: guessing would put a wrong master in the repository, which is worse than a gap.
 
 ## Stored resolution: 2x, and the one seam in it
 
@@ -67,13 +75,12 @@ it buys is real pixels for a zoomed map and a retina display, where a 1:1 tile h
 Every slot dimension goes through `px()`. Scaling `TILE` alone would desynchronise it from `WALL_H`,
 `ARCH_W` and `ARCH_H`, which come from `mapScale` in map units.
 
-**It reaches only what has a rebuild line**, which is every prop and wall item and none of the surfaces:
-floors, faces and thresholds were backfilled without their flags (below), so they are still 448 and 1x.
-That is a seam, and a mild one — a floor is a repeating pattern seen mostly at 1:1, and the objects a
-player looks at are the ones that doubled. Measured on the nobleman's floor, re-imported from its master
-with the docs' per-slot recipe: 232K at 1x against 388K at 2x, and the five surfaces are 1.2M of the
-2.5M that ships. Doubling them is not expensive; what it costs is that their flags would be re-derived
-rather than recorded, and that changes approved art.
+**It reaches everything with a rebuild line**, which is now every prop, every wall item, and the
+merchant's three surfaces. The other four ranks' floors, faces and thresholds have masters but no
+recorded flags, so they are still 448 and 1x — the remaining seam. The merchant's closed once his
+returns were matched, and closing the rest is the same move: re-import with the docs' per-slot recipe and
+check the result against the shipped tile, which is exactly how his were identified. Cost, measured on
+the nobleman's floor: 232K at 1x against 388K at 2x.
 
 ## What rebuild.sh covers, and what it does not
 

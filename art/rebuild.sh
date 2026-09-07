@@ -37,14 +37,33 @@ scaffold() {
 }
 
 # starter — the merchant
+
+# The merchant's SURFACES, matched back to their downloads and given rebuild lines for the first time.
+# art/README recorded them as unidentifiable, and no distance metric could pick between the candidates:
+# --flatten=0.65 washes two thirds of a floor toward one palette colour, so they converged to 5.5 against
+# a next-best 6.2 on luminance and 0.43 against 0.40 on gradient correlation. Both noise.
+#
+# What settled it was importing each candidate through this pipeline and LOOKING at the result beside the
+# shipped tile, which took one sheet per slot and was not close: the floor's slab scale, its scattered
+# circles and incised marks; the face's pale whitewash patches in the same places; the sill's dished band
+# and the rubbed ochre line along its edge. Reproduction identifies a master where a metric cannot.
+#
+# The flags are the docs' per-slot recipe (tile-art-brief, "The loop"), which is what those numbers were
+# always meant to be.
+yarn import-tile art/masters/surfaces/starter-floor.webp --tier=starter --name=floor --slot=floor \
+  --filter=smooth --key=none --repeat=2.4 --flatten=0.65
+yarn import-tile art/masters/surfaces/starter-wall-face.webp --tier=starter --name=wall-face --slot=face \
+  --filter=smooth --key=none --headroom=0.14 --repeat=2
+yarn import-tile art/masters/surfaces/starter-threshold.webp --tier=starter --name=threshold --slot=sill \
+  --filter=smooth --key=none
 scaffold shelf
-yarn import-tile art/props/starter/shelf.webp --tier=starter --name=shelf --slot=prop \
+yarn import-tile art/masters/props/starter/shelf.webp --tier=starter --name=shelf --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.45 --brightness=0.93
 
 # No --saturation: masking away this repaint's invented floor leaves only wood and reed, which are
 # already the warmest things in the rank. 1.3 put it at +38 against a target band of +22 to +25.
 scaffold chest
-yarn import-tile art/props/starter/chestProp.webp --tier=starter --name=chestProp --slot=prop \
+yarn import-tile art/masters/props/starter/chestProp.webp --tier=starter --name=chestProp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # --depth=0.65 must match what the master was painted over: a circular dish gives a top face so large
@@ -52,21 +71,21 @@ yarn import-tile art/props/starter/chestProp.webp --tier=starter --name=chestPro
 # came back nearly achromatic (+1 warmth) and saturation SCALES existing chroma, so a grey prop needs
 # multiples of what a brown one does. 2.7 reaches the +22 band and turns humble clay to brass.
 scaffold brazier --depth=0.65
-yarn import-tile art/props/starter/brazier.webp --tier=starter --name=brazier --slot=prop \
+yarn import-tile art/masters/props/starter/brazier.webp --tier=starter --name=brazier --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7 --saturation=2.2 --brightness=0.95
 
 # The stool's seat is 0.16 deep, not 0.26: at 0.26 its top face was 40% of the drawn height and read as
 # a wall with legs. --brightness=0.85 clips a repaint that came back 9.3% over the light end — the
 # palest of the four so far, because pale split timber is most of its surface.
 scaffold lamp
-yarn import-tile art/props/starter/lamp.webp --tier=starter --name=lamp --slot=prop \
+yarn import-tile art/masters/props/starter/lamp.webp --tier=starter --name=lamp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.48 --saturation=1.6 --brightness=0.85
 
 # No stone pad in the model: a wide flat slab at floor level casts a shadow of its own silhouette
 # right under itself and reads as a second step. --saturation=1.7 because the repaint gave the trunk
 # grey-green bark; the wedges are the only warm thing on it.
 scaffold pillar
-yarn import-tile art/props/starter/pillar.webp --tier=starter --name=pillar --slot=prop \
+yarn import-tile art/masters/props/starter/pillar.webp --tier=starter --name=pillar --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.7 --brightness=0.9
 
 # The mat is a flat rug and nothing else, and it is the only prop here whose identity is PAINT: under
@@ -82,7 +101,7 @@ yarn import-tile art/props/starter/pillar.webp --tier=starter --name=pillar --sl
 # it at 2.2. --brightness=0.86 is a narrow window — 0.8 left the rug only 7 from the floor's own value
 # and 0.9 put 2.4% of it over the light end.
 scaffold mat --spin=9 --shadow=0.5
-yarn import-tile art/props/starter/mat.webp --tier=starter --name=mat --slot=prop \
+yarn import-tile art/masters/props/starter/mat.webp --tier=starter --name=mat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
 
 # A hole casts nothing, and --sun=0 says so to the CAMERA as well as to the shadow. The frame leaves
@@ -104,7 +123,7 @@ yarn import-tile art/props/starter/mat.webp --tier=starter --name=mat --slot=pro
 # spoil is freshly broken faces where the wall is worn and sooted. 0.78 matched the wall exactly and
 # took the pole and the ladder down with it, until the timber was as dark as the shaft.
 scaffold pit --shadow=0 --sun=0
-yarn import-tile art/props/starter/pit.webp --tier=starter --name=pit --slot=prop \
+yarn import-tile art/masters/props/starter/pit.webp --tier=starter --name=pit --slot=prop \
   --filter=smooth --mask="$OBJ" --brightness=0.82
 
 # The market table was one of the four made by PROMPTING alone, before the pipeline existed, so its
@@ -116,7 +135,7 @@ yarn import-tile art/props/starter/pit.webp --tier=starter --name=pit --slot=pro
 # desaturates toward grey, and this came back at +14 warmth against a rank whose hand-painted props sit
 # at +22 to +25. 1.3 lands it at +24, beside the jar rack at +22 and the ka-statue at +22.
 scaffold market
-yarn import-tile art/props/starter/offeringTable.webp --tier=starter --name=offeringTable --slot=prop \
+yarn import-tile art/masters/props/starter/offeringTable.webp --tier=starter --name=offeringTable --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.3
 
 # The jar rack, the second of the four prompted props to be re-rolled over its primitive. Its scaffold
@@ -132,7 +151,7 @@ yarn import-tile art/props/starter/offeringTable.webp --tier=starter --name=offe
 # basin sits at 23.8%. It is the LIGHT end that matters on this one: untouched, the timber put 12% of the
 # tile over the clamp.
 scaffold jarrack
-yarn import-tile art/props/starter/jarRack.webp --tier=starter --name=jarRack --slot=prop \
+yarn import-tile art/masters/props/starter/jarRack.webp --tier=starter --name=jarRack --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.7
 
 # The standing rubble: `rubble` is two objects and this is the one a ROOM is dressed with, resolved
@@ -143,7 +162,7 @@ yarn import-tile art/props/starter/jarRack.webp --tier=starter --name=jarRack --
 # it separates by 15 the other way, and the saturation brings +11 warmth back to +22, the bottom of the
 # hand-painted band.
 scaffold rubblePile
-yarn import-tile art/props/starter/rubblePile.webp --tier=starter --name=rubblePile --slot=prop \
+yarn import-tile art/masters/props/starter/rubblePile.webp --tier=starter --name=rubblePile --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.45
 
 # --brightness=0.70 is the deepest clip in this file, and it is a WHITEWASH problem rather than the usual
@@ -158,7 +177,7 @@ yarn import-tile art/props/starter/rubblePile.webp --tier=starter --name=rubbleP
 # and a shadow, so its whole-sprite mean sits near the floor's own value however bright the box is, and
 # tile-stats' "1 lighter than the slab" at 0.65 said nothing about whether the shrine reads.
 scaffold shrine
-yarn import-tile art/props/starter/shrine.webp --tier=starter --name=shrine --slot=prop \
+yarn import-tile art/masters/props/starter/shrine.webp --tier=starter --name=shrine --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85 --brightness=0.70 --saturation=1.5
 
 # The first CLOTH in the set, and the one the pipeline's own table said could not be made. --sun=0.16
@@ -171,7 +190,7 @@ yarn import-tile art/props/starter/shrine.webp --tier=starter --name=shrine --sl
 # tile is shadow, and the whole-sprite mean put it 9 from the floor when the cloth itself is 18 lighter
 # and 21 warmer.
 scaffold hanging
-yarn import-tile art/props/starter/hanging.webp --tier=starter --name=hanging --slot=prop \
+yarn import-tile art/masters/props/starter/hanging.webp --tier=starter --name=hanging --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92 --saturation=1.5
 
 # The merchant's two wall items, matched back to their downloads and given rebuild lines for the first
@@ -184,13 +203,13 @@ yarn import-tile art/props/starter/hanging.webp --tier=starter --name=hanging --
 #
 # --sun=0 on both: a wall item hangs, so the frame leaves no room under it (see the pit).
 scaffold niche --shear=0.5 --width=448 --height=224 --sun=0
-yarn import-tile art/props/starter/niche.webp --tier=starter --name=niche --slot=wall \
+yarn import-tile art/masters/props/starter/niche.webp --tier=starter --name=niche --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18
 
 # FLAT — a plank hanging against the surface, so no mesh and no mask, the same route as the nobleman's
 # stela. --brightness=0.85 clips a return that came back over the light end, which the handover already
 # recorded as 10.3% before anyone had the flag written down.
-yarn import-tile art/props/starter/tallyBoard.webp --tier=starter --name=tallyBoard --slot=wall \
+yarn import-tile art/masters/props/starter/tallyBoard.webp --tier=starter --name=tallyBoard --slot=wall \
   --filter=smooth --headroom=0.18 --brightness=0.85
 
 # shared — one desert blows into all five tombs
@@ -216,7 +235,7 @@ yarn import-tile art/props/starter/tallyBoard.webp --tier=starter --name=tallyBo
 # all four floors instead; that check is one command (`yarn on-floor`) and it has now caught three
 # measurements in this file that were confidently wrong.
 yarn drift-mask --out="$OBJ" --seed=fan --size=504 --peak=0.5
-yarn import-tile art/surfaces/sand.webp --tier=default --name=sand --slot=drift \
+yarn import-tile art/masters/surfaces/sand.webp --tier=default --name=sand --slot=drift \
   --filter=smooth --key=none --mask="$OBJ" --brightness=0.78
 
 # junior — the nobleman
@@ -230,7 +249,7 @@ yarn import-tile art/surfaces/sand.webp --tier=default --name=sand --slot=drift 
 # luminance threshold: as the tile darkens, fewer pixels clear the threshold and the mean of the
 # survivors barely moves, so the knob reads as dead. The threshold called this same file +96 and 151.
 scaffold niche --contents=lamp --shear=0.5 --width=448 --height=224 --colour=#e0c193 --sun=0
-yarn import-tile art/props/junior/niche.webp --tier=junior --name=niche --slot=wall \
+yarn import-tile art/masters/props/junior/niche.webp --tier=junior --name=niche --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18 --saturation=1.3 --brightness=0.85
 
 # NO scaffold: a false-door stela is FLAT — a slab hanging against the surface — so it skips the mesh
@@ -245,7 +264,7 @@ yarn import-tile art/props/junior/niche.webp --tier=junior --name=niche --slot=w
 # NO --contrast, though the incised columns beg for it. The carving does not survive 28 pixels either
 # way, and 1.35 bought nothing but chroma: the jamb went from +74 warmth to +100 while its luminance
 # never moved. Contrast is not free on a warm rank.
-yarn import-tile art/props/junior/stela.webp --tier=junior --name=stela --slot=wall \
+yarn import-tile art/masters/props/junior/stela.webp --tier=junior --name=stela --slot=wall \
   --filter=smooth --headroom=0.18 --brightness=0.74
 
 # --margin=1.4 is the whole reason this one is legible: `SLOTS.wall` is `seat: false`, so the import
@@ -261,7 +280,7 @@ yarn import-tile art/props/junior/stela.webp --tier=junior --name=stela --slot=w
 # background and it keyed VIOLET, and it drew the lamp larger than the render; cutting to the render's
 # own alpha removed the halo by construction and pinned the lamp back to its modelled size.
 scaffold sconce --shear=0.5 --width=448 --height=224 --margin=1.4 --colour=#e0c193 --sun=0
-yarn import-tile art/props/junior/sconce.webp --tier=junior --name=sconce --slot=wall \
+yarn import-tile art/masters/props/junior/sconce.webp --tier=junior --name=sconce --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18
 # junior — the nobleman
 #
@@ -274,20 +293,20 @@ yarn import-tile art/props/junior/sconce.webp --tier=junior --name=sconce --slot
 # and vanished; 0.86/0.6 puts it 23 darker, which is the merchant mat's own pair of numbers — the same
 # repaint failure at both ranks, straw drawn far warmer and lighter than the floor it lies on.
 scaffold mat --spin=9 --shadow=0.5 --colour=#e0c193 --floor=#c39c68
-yarn import-tile art/props/junior/mat.webp --tier=junior --name=mat --slot=prop \
+yarn import-tile art/masters/props/junior/mat.webp --tier=junior --name=mat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
 
 # --lit=1: the nobleman's brazier burns where the merchant's holds cold ash.
 scaffold brazier --lit=1 --colour=#e0c193 --floor=#c39c68
-yarn import-tile art/props/junior/brazier.webp --tier=junior --name=brazier --slot=prop \
+yarn import-tile art/masters/props/junior/brazier.webp --tier=junior --name=brazier --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7 --brightness=0.92
 
 # --shadow=0.6 keeps a flat fall's footprint faint. Only the SHADOW render takes it — scaffold() passes
 # --shadow=0 ahead of "$@" for the mask, so the mask cannot pick one up.
 scaffold rubblePile --contents=plaster --shadow=0.6 --colour=#e0c193 --floor=#c39c68
-yarn import-tile art/props/junior/rubblePile.webp --tier=junior --name=rubblePile --slot=prop \
+yarn import-tile art/masters/props/junior/rubblePile.webp --tier=junior --name=rubblePile --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85 --saturation=1.25
 
 scaffold jarrack --colour=#e0c193 --floor=#c39c68
-yarn import-tile art/props/junior/jarRack.webp --tier=junior --name=jarRack --slot=prop \
+yarn import-tile art/masters/props/junior/jarRack.webp --tier=junior --name=jarRack --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92
