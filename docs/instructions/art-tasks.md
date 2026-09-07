@@ -68,19 +68,26 @@ it means a re-roll, same as §1.
 
 ## 3. Painted, but wrong or not to standard
 
-**`starter/statue` — the last merchant prop outside the pipeline.** Still 56x84 where everything else at
-that rank is 112x168, with a painted opaque shadow where every other prop has a translucent rendered one,
-and no rebuild line. Its masters (`statue.webp`, `statue-shabti.webp`) are prompted returns never drawn
-over a scaffold — so a mask would cut a shape the art does not fill, exactly as it would have for the
-market table. It is a Bes figure and the one prop the pipeline sends to a museum scan;
-`statue-shabti.webp` suggests a shabti scan was used once already, and `~/tile-previews/meshes/` is where
-those live.
+Nothing at the merchant's rank is below standard any more: every tile of his is a return, 2x, masked, on a
+rebuild line, and seated in a rendered translucent shadow.
 
-`starter/basin` is DONE this way: modelled as `prim_basin --contents=jar`, re-rolled over its own
-scaffold, and on a rebuild line. `basin-sheet.webp` — the prompted return it used to ship from — is
-deleted, since a master that was never the tile's input is a claim the repository cannot back.
+**`starter/statue` is to standard but OFF-BRIEF, and that is now the only complaint against it.** The
+shipped tile is a shabti — a mummiform figure in a nemes — and the brief's merchant row asks for Bes (dwarf,
+lion mane, tongue out), Taweret (standing hippo), or a ka-statue still half block. A shabti is none of the
+three.
 
-The statue is the only thing standing between the merchant and a complete rank.
+Both of its masters are worth knowing apart before anyone re-rolls it:
+
+- `statue-shabti.webp` is the SHIPPED lineage: a repaint over a scaffold rendered from `shabti.stl`, and
+  what kept it out of the pipeline for so long was never the geometry. It was the two things the repaint
+  added — a soft grey field behind the figure and a painted black shadow at its foot — which `--mask` and
+  `--seat` remove by construction. It needed no re-roll at all.
+- `statue.webp` is the ON-BRIEF subject and NOT to standard: a half-block ka-statue, prompted at 2048
+  square with no scaffold behind it and a painted shadow, so a mask would cut a shape its paint does not
+  fill. It is kept as the record of what the brief actually wants here, not as an input to anything.
+
+So the choice is the reader's: accept the shabti, or roll one of the brief's three over geometry. Neither is
+urgent — nine rooms — and the rank is otherwise finished.
 
 ## 4. Waiting on one roll — scaffold ready
 
@@ -143,6 +150,17 @@ Sketchfab, mostly CC0/CC-BY). Reject Roman or Ptolemaic, gilded, or fragments BE
 
 - `junior/sarcophagus` — 20 rooms, anthropoid wooden coffin, painted face
 - `junior/statue` — 8 rooms, ka-statue of the owner, seated
+
+**Two scans are already on disk in `~/tile-previews/meshes/`** and one of them is unused: `shabti.stl`,
+which the merchant's statue is drawn from, and `horus.stl` — and Horus with the double crown is the
+MASTER's own row in the brief, where `statue` is 29 rooms. That is a tile away from existing.
+
+**The meshes are not in the repository and that is unfinished business.** `art/masters/` exists so a
+rebuild does not read out of a download folder, and `rebuild.sh`'s `meshscaffold` currently takes its path
+from `$MESHES`, defaulting to `~/tile-previews/meshes` — so the statue's line runs on this machine and
+nowhere else. What is blocking the obvious fix is not size (a decimated STL would be small enough) but
+PROVENANCE: neither file's licence has been checked, and a scan redistributed under the wrong one is worse
+than a build step that needs a variable set. Check the source first, then commit them and drop the default.
 
 ## 7. Flat — a prompt and nothing else
 

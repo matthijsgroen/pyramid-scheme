@@ -36,6 +36,24 @@ scaffold() {
     --only=shadow --background=none --out="$SHADOW" "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
 }
 
+# The same pair for a prop whose subject is a MUSEUM SCAN rather than a primitive. Step 0's table sends
+# statues and coffins here; everything downstream is identical, because the pipeline only ever wanted a
+# mesh and does not care where it came from.
+#
+# The scans live OUTSIDE the repository and that is not settled. `art/masters/` exists precisely so a
+# rebuild does not read from a download folder, and a 69MB STL under an unverified licence is the one
+# thing that cannot just be copied in — see art-tasks.md §6. Until the provenance is checked, the path is
+# an override, so this line runs here and needs one variable to become repo-local.
+MESHES=${MESHES:-$HOME/tile-previews/meshes}
+meshscaffold() {
+  mesh=$1
+  shift
+  "$BLENDER" -b -P scripts/renderProp.py -- --mesh="$MESHES/$mesh" \
+    --shadow=0 --background=none --out="$OBJ" "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
+  "$BLENDER" -b -P scripts/renderProp.py -- --mesh="$MESHES/$mesh" \
+    --only=shadow --background=none --out="$SHADOW" "$@" --colour=#a49781 --floor=#6c6257 >/dev/null
+}
+
 # starter — the merchant
 
 # The merchant's SURFACES, matched back to their downloads and given rebuild lines for the first time.
@@ -92,6 +110,24 @@ yarn import-tile art/masters/props/starter/pillar.webp --tier=starter --name=pil
 # this projection a flat thing on the floor has no silhouette. Three shaped designs were rendered and
 # rejected first — see prim_mat, which records why a fold at the NEAR edge is invisible.
 #
+# The STATUE, and it needed no re-roll at all — which is worth recording, because art-tasks had it filed
+# under "waiting on a scan" and the scan had already been used. `statue-shabti.webp` is a repaint over a
+# scaffold rendered from `shabti.stl` at these very defaults: no --scale, no --spin, no --margin, which is
+# how the mask lines up with the paint on the first try.
+#
+# What kept it out of the pipeline was not the geometry but the two things the repaint added — a soft grey
+# field behind the figure and a painted black shadow at its foot. Those are what --mask and --seat are
+# for. Masking to the render's own alpha removes an invented background by construction, which is the
+# whole argument of prop-pipeline.md, and the rendered seat is translucent where the painted one was not.
+#
+# --brightness=0.96 --saturation=1.4. Pale limestone came back at +13 warmth, under the rank's band, with
+# 6.1% of the sprite over the 152 light end. 1.4 brings warmth to +25 and 0.96 takes the tail to 0.6%,
+# and it stays 13 LIGHTER than the slab: a shabti is meant to be pale against mudbrick, the same argument
+# the whitewashed shrine makes at the other end of the file.
+meshscaffold shabti.stl
+yarn import-tile art/masters/props/starter/statue-shabti.webp --tier=starter --name=statue --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.96 --saturation=1.4
+
 # The merchant's BASIN, re-rolled over its geometry, which is what took it out of art-tasks §3. The tile
 # it replaces was a prompted return with a painted opaque shadow and no scaffold behind it, so a mask
 # would have cut a shape the art did not fill.

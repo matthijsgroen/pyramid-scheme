@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and the water jar on its stand all sit on the floor they are drawn on.
 - The merchant's water basin and the broken brick spilled across his passages are drawn rather than
   stood in for.
+- Every object in a merchant's cellar is drawn now, at the same resolution and lit the same way as the
+  rest: his water basin, the broken brick spilled across his passages, and the statue in his shrine, which
+  used to stand in a painted black puddle at half the detail of everything around it.
 - A room is furnished for something now, rather than with whatever came to hand: what stands in it and
   what hangs on its wall agree, so a chamber reads as the storeroom, or the place they sold, or the place
   they prayed. Rooms whose furniture belongs nowhere in particular — a pillar, a chest, a fallen heap —
