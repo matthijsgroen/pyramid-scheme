@@ -1852,6 +1852,50 @@ def drop_void_faces(mesh_obj):
     bm.free()
 
 
+# The vertical allowance `add_camera` has always made for the sun. It buys nothing now that the offset
+# runs in X, but it is kept to the digit: the span it produces is the span every painted master's mask was
+# cut at, and a frame that changes zoom leaves the art no longer fitting the silhouette.
+K_SUN_DROP_LEGACY = 0.7
+
+
+def sun_offset(obj, sun, width, height, margin):
+    """How far to push the footprint, and ALONG WHICH AXIS. Returns (dx, dy), and dy is always zero.
+
+    THE DERIVATION, because this was patched three times before it was worked out. A world point
+    (x, y, z) draws at (x, z + k*y), so a floor point (x, y, 0) draws at (x, k*y) — which means an
+    UNSHIFTED footprint touches its object by construction, at every contact point, for free.
+
+    Now shift the footprint by (dx, dy). The dx moves it sideways and changes nothing about its drawn
+    height. The dy moves every point of it k*dy vertically, and there is no value of dy that does
+    anything else: a footprint pushed toward the viewer is drawn BELOW the object's own lowest edge by
+    k*|dy|, leaving a crescent of shadow with no object above it, and a footprint pushed away is drawn
+    above and hides behind the object entirely. The first reads as the prop hovering; the second reads as
+    no shadow at all.
+
+    So `--sun` may only move along X. That is the same law as `prim_sconce`'s arm and `prim_lamp`'s spout
+    — Y is the depth axis and feeds the drawn vertical, X is the only axis the projection leaves alone —
+    and here it applies to the light rather than to the geometry. It also agrees with the rig: `add_light`
+    aims its sun at (+0.18, +0.33, -0.93), so the shadow belongs to the RIGHT. The old code pushed it
+    toward the viewer, which is the one direction the light never came from.
+
+    CLAMPED to the air the frame already has, and that is deliberate. `add_camera` is framed from --sun
+    rather than from the shadow's own bounds so that the three renders of a prop composite, which means
+    changing the framing changes the MASK — and every painted master was drawn over the mask it had. So
+    the offset gives way to the frame instead of the frame giving way to the offset. A tall prop has
+    plenty of horizontal air and gets the full sun; a wide flat one has almost none and gets almost no
+    offset, which is right anyway — `prim_pillar` records that a slab's own footprint lies under itself
+    and no sun can pull it clear."""
+    (x0, x1), _, (z0, z1) = local_bounds(obj)
+    span_x = (x1 - x0) * margin
+    span_z = (z1 - z0 + K_SUN_DROP_LEGACY * sun) * margin
+    scale = max(span_x if width >= height else span_x * height / width,
+                span_z if height >= width else span_z * width / height)
+    frame_w = scale if width >= height else scale * width / height
+    # The frame is centred on x=0 (see `add_camera`), so the room is on the +x side alone.
+    room = frame_w / 2 - x1
+    return max(0.0, min(sun, room * 0.9)), 0.0
+
+
 def make_shadow(obj, depth, floor_hex, offset_x, offset_y):
     """The object's own footprint, lying on the floor, painted as that floor in shadow.
 
@@ -1870,15 +1914,18 @@ def make_shadow(obj, depth, floor_hex, offset_x, offset_y):
     each seated in a patch of the merchant's floor, 62 luminance darker than the one they stand on, and
     that — not the shadow being a shadow — is what read as too black.
 
-    `offset` is the light: shifting the flattened copy is what moves the sun."""
-    # TWO flattened copies, unioned: one exactly under the object and one pushed toward the viewer.
+    `offset` is the light, and it may only move along X. See `sun_offset` for the derivation — a shift in
+    Y is arithmetically the same thing as lifting the object off the ground."""
+    # TWO flattened copies, unioned: one exactly under the object and one pushed along the light.
     #
     # A shadow touches its object where the OBJECT TOUCHES THE GROUND, and translating the whole
-    # footprint moves that contact edge away — so any offset at all detaches it and the thing floats.
-    # Shrinking --sun shrinks the gap and never closes it, which is why the props kept looking lifted
-    # however low the sun was set. The copy at zero holds the contact; the offset copy gives the pool its
-    # direction and spread. They overlap, and that costs nothing: the material is flat emission, so two
-    # copies of it render exactly as one.
+    # footprint moves that contact away. The copy at zero holds the contact; the offset copy gives the
+    # pool its direction and spread. They overlap, and that costs nothing: the material is flat emission,
+    # so two copies of it render exactly as one.
+    #
+    # This union is NOT what makes the shadow attach, which took four goes to see. With a Y offset the
+    # union's lowest drawn edge is still k*|dy| below the object's own, and that protruding crescent is
+    # the whole tell. Only `sun_offset`'s rule fixes it.
     shadow = obj.copy()
     shadow.data = obj.data.copy()
     bpy.context.scene.collection.objects.link(shadow)
@@ -1891,6 +1938,12 @@ def make_shadow(obj, depth, floor_hex, offset_x, offset_y):
     # cast them. Taking the minimum z of what survives the void-drop puts the shadow back on the ground —
     # and leaves every ordinary prop exactly where it was, because for those that minimum IS zero.
     rest = min((v.co.z for v in shadow.data.vertices), default=0.0)
+    # NOT CAST FROM THE LOW GEOMETRY ONLY, which was tried here and is worth recording as a dead end.
+    # The plan of a light straight overhead reaches past the contact for anything whose widest part is
+    # high — the basin's jar overhangs its tripod — so keeping only the faces within a third of the
+    # resting plane looked like the fix. It is not: the market table loses its pool and arrives as four
+    # black dots at the feet, which reads as debris on the floor rather than as a table's shadow. The
+    # overhang is honest, and once the sun runs in X it is attached at the feet anyway.
     shadow.data.transform(Matrix.Diagonal((1.0, 1.0, 0.0, 1.0)))
     shadow.data.transform(Matrix.Translation((0.0, 0.0, rest)))
     if offset_x or offset_y:
@@ -2184,11 +2237,8 @@ def main():
         shear(obj, k, 0)
         add_shadow_catcher(k, max(w_units, d_units, 1.0))
     else:
-        shadow = (
-            make_shadow(obj, shadow_alpha, arg("floor", "#6c6257"), 0.0, -sun)
-            if shadow_alpha > 0
-            else None
-        )
+        dx, dy = sun_offset(obj, sun, width, height, float(arg("margin", "1.06")))
+        shadow = make_shadow(obj, shadow_alpha, arg("floor", "#6c6257"), dx, dy) if shadow_alpha > 0 else None
         if shadow:
             shadow.data.transform(Matrix(((1, 0, 0, 0), (0, 1, 0, 0), (0, k, 1, 0), (0, 0, 0, 1))))
         shear(obj, k, 0)

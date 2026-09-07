@@ -92,6 +92,34 @@ yarn import-tile art/masters/props/starter/pillar.webp --tier=starter --name=pil
 # this projection a flat thing on the floor has no silhouette. Three shaped designs were rendered and
 # rejected first — see prim_mat, which records why a fold at the NEAR edge is invisible.
 #
+# The merchant's BASIN, re-rolled over its geometry, which is what took it out of art-tasks §3. The tile
+# it replaces was a prompted return with a painted opaque shadow and no scaffold behind it, so a mask
+# would have cut a shape the art did not fill.
+#
+# --brightness=0.90 --saturation=1.45. Untouched the pale buff jar put 12.7% of the sprite over the
+# rank's 152 light end and measured only +12 warmth, well under the hand-painted band; 0.90 takes the
+# tail to 2.6% and 1.45 brings warmth to +24. It ends 31 darker than the slab, which is more separation
+# than most props here need and is honest — the stand is dark timber and only the jar is pale.
+scaffold basin --contents=jar
+yarn import-tile art/masters/props/starter/basin.webp --tier=starter --name=basin --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.90 --saturation=1.45
+
+# The scatter layer's SPILL, and the one tile in this file whose repaint ignored the scaffold's layout:
+# the return came back as forty of its own fragments spread over the frame instead of the modelled
+# fourteen. --mask is what makes that survivable — it cuts brick material into the modelled silhouettes,
+# so the shape, the footprint and the shadow are all still ours and only the paint is the generator's.
+# Some fragments are cut through the middle of a brick; at 23 drawn units that reads as brick.
+#
+# --brightness=0.80 --saturation=1.0, and the brightness is doing the whole job. Untouched, broken pale
+# brick measured 45 LIGHTER than the slab with 28.6% of it over the light end. 0.70 was the other
+# failure: it lands the sprite at exactly the floor's own value, and tile-stats faults under 10 either
+# way, because a prop that measures level with the floor does not read against it. 0.80 gives 14 lighter,
+# +26 warmth and a 1.5% tail. NO saturation lift, unlike the standing pile — this return came back warm
+# already, and 1.45 would have taken it to +38.
+scaffold rubblePile --contents=spill
+yarn import-tile art/masters/props/starter/rubbleSpill.webp --tier=starter --name=rubbleSpill --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.80 --saturation=1.0
+
 # --spin=9 is the one thing geometry still owes it: a rug lying askew of the grid cannot be read as part
 # of the paving, where an axis-aligned one can. --shadow=0.5 keeps the footprint faint, since a slab at
 # floor level casts a copy of itself at any offset and reads as a second step (`prim_pillar`).

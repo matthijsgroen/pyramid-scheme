@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Props stand in their shadows instead of hovering over them. The sun that offsets a prop's footprint now
+  moves it sideways rather than toward you, which is the only direction this projection can move a shadow
+  without also moving it up or down — so the brick round a pit's mouth, the timber prop against the roof
+  and the water jar on its stand all sit on the floor they are drawn on.
+- The merchant's water basin and the broken brick spilled across his passages are drawn rather than
+  stood in for.
 - A room is furnished for something now, rather than with whatever came to hand: what stands in it and
   what hangs on its wall agree, so a chamber reads as the storeroom, or the place they sold, or the place
   they prayed. Rooms whose furniture belongs nowhere in particular — a pillar, a chest, a fallen heap —

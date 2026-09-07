@@ -68,20 +68,19 @@ it means a re-roll, same as §1.
 
 ## 3. Painted, but wrong or not to standard
 
-**`starter/statue` and `starter/basin` — the last two merchant props outside the pipeline.** Both are
-still 56x84 where everything else at that rank is 112x168, both have painted opaque shadows where every
-other prop has a translucent rendered one, and neither has a rebuild line. They have masters
-(`statue.webp`, `statue-shabti.webp`, `basin-sheet.webp`) but those are prompted returns, never drawn
+**`starter/statue` — the last merchant prop outside the pipeline.** Still 56x84 where everything else at
+that rank is 112x168, with a painted opaque shadow where every other prop has a translucent rendered one,
+and no rebuild line. Its masters (`statue.webp`, `statue-shabti.webp`) are prompted returns never drawn
 over a scaffold — so a mask would cut a shape the art does not fill, exactly as it would have for the
-market table. Each needs a re-roll over its geometry to join the rest:
+market table. It is a Bes figure and the one prop the pipeline sends to a museum scan;
+`statue-shabti.webp` suggests a shabti scan was used once already, and `~/tile-previews/meshes/` is where
+those live.
 
-- `basin` — a water jar on a three-legged stand. MODELLED: `prim_basin --contents=jar`, renders in
-  `~/tile-previews/basin-starter*`, so it is in §4 and needs only the roll.
-- `statue` — a Bes figure, and the one prop the pipeline sends to a museum scan. `statue-shabti.webp`
-  suggests a shabti scan was already used once; `~/tile-previews/meshes/` is where those live.
+`starter/basin` is DONE this way: modelled as `prim_basin --contents=jar`, re-rolled over its own
+scaffold, and on a rebuild line. `basin-sheet.webp` — the prompted return it used to ship from — is
+deleted, since a master that was never the tile's input is a claim the repository cannot back.
 
-Doing these two closes the merchant completely: every tile a return, every tile 2x, every tile on a
-rebuild line.
+The statue is the only thing standing between the merchant and a complete rank.
 
 ## 4. Waiting on one roll — scaffold ready
 
@@ -90,8 +89,6 @@ one repaint and one `import-tile` line and it is done.
 
 | kind                   | primitive                       | renders                 |
 | ---------------------- | ------------------------------- | ----------------------- |
-| `starter/rubbleSpill`  | `rubblePile --contents=spill`   | `rubble-starter*`       |
-| `starter/basin`        | `basin --contents=jar`          | `basin-starter*`        |
 | `junior/pillar`        | `palm`                          | `palm-junior*`          |
 | `junior/shrine`        | `falseDoor`                     | `falsedoor-junior*`     |
 | `junior/chestProp`     | `sealedChest`                   | `sealedchest-junior*`   |
@@ -114,9 +111,6 @@ one repaint and one `import-tile` line and it is done.
 | `expert/hanging`       | `hanging --contents=veil`       | `hanging-expert*`       |
 | `master/hanging`       | `hanging --contents=gold`       | `hanging-master*`       |
 | `wizard/hanging`       | `hanging --contents=aurora`     | `hanging-wizard*`       |
-
-`starter/rubbleSpill` and `starter/basin` are the merchant's last two files, and `basin` also closes §3's
-first bullet.
 
 `wizard/hanging` is the one that imports differently: a curtain of aurora casts nothing, so it has no
 shadow render and its line takes no `--seat`. It also wants `--colour-accent` set to the rank's own light —
