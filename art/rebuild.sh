@@ -239,6 +239,25 @@ yarn import-tile art/masters/surfaces/sand.webp --tier=default --name=sand --slo
   --filter=smooth --key=none --mask="$OBJ" --brightness=0.78
 
 # junior — the nobleman
+
+# The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
+# replaces was a post-processing copy whose flags could not be recovered (art/README).
+#
+# The master is stored AFTER `make-seamless`, because that pass is not reproducible from a flag list —
+# it rolls the source and lays its centre back over the seam cross. Storing the pre-seamless return
+# would make this line un-runnable.
+#
+# --repeat=1.6 and the reason matters for every surface after this one. The prompt asked for "sixteen
+# slabs across the width" and got about eight, so the shrink is what closes the gap. The FIRST attempt
+# asked for "a texture drawn at eight cells across" — a generator has no idea what a cell is — and came
+# back at brick scale needing --repeat=4.5, which multiplies every distinctive mark four or five times
+# and turned the brief's ochre banding into a lattice. Count the features, and forbid strong ones.
+#
+# --flatten=0.45: it is the ground the props stand on. At these numbers the tile measures #bc9667, lum
+# 156 warmth +84, against the tile it replaces at 156 and +86 — so every prop keeps its separation, 26
+# to 33 darker.
+yarn import-tile art/masters/surfaces/junior-floor.webp --tier=junior --name=floor --slot=floor \
+  --filter=smooth --key=none --repeat=1.6 --flatten=0.45
 #
 # The bay is `prim_niche`; only --contents changes between ranks. --width and --height are the SLOT'S
 # aspect and not the prop frame's: the default 2:3 frames a 2:1 object to its width, and the import
@@ -283,6 +302,25 @@ scaffold sconce --shear=0.5 --width=448 --height=224 --margin=1.4 --colour=#e0c1
 yarn import-tile art/masters/props/junior/sconce.webp --tier=junior --name=sconce --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18
 # junior — the nobleman
+
+# The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
+# replaces was a post-processing copy whose flags could not be recovered (art/README).
+#
+# The master is stored AFTER `make-seamless`, because that pass is not reproducible from a flag list —
+# it rolls the source and lays its centre back over the seam cross. Storing the pre-seamless return
+# would make this line un-runnable.
+#
+# --repeat=1.6 and the reason matters for every surface after this one. The prompt asked for "sixteen
+# slabs across the width" and got about eight, so the shrink is what closes the gap. The FIRST attempt
+# asked for "a texture drawn at eight cells across" — a generator has no idea what a cell is — and came
+# back at brick scale needing --repeat=4.5, which multiplies every distinctive mark four or five times
+# and turned the brief's ochre banding into a lattice. Count the features, and forbid strong ones.
+#
+# --flatten=0.45: it is the ground the props stand on. At these numbers the tile measures #bc9667, lum
+# 156 warmth +84, against the tile it replaces at 156 and +86 — so every prop keeps its separation, 26
+# to 33 darker.
+yarn import-tile art/masters/surfaces/junior-floor.webp --tier=junior --name=floor --slot=floor \
+  --filter=smooth --key=none --repeat=1.6 --flatten=0.45
 #
 # All four are the merchant's primitives at the nobleman's colour, so they cost a repaint and no model.
 # --brightness on three of them and --saturation on two: the rank's own stone is #e0c193 against the
