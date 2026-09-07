@@ -371,6 +371,57 @@ def prim_pillar():
     return join_all()
 
 
+def prim_palm():
+    """The nobleman's palm column: a tapered shaft, a bound collar, a palm-frond capital.
+
+    NOT `prim_pillar`. That is the merchant's makeshift timber prop, leaning on wedges, and the brief
+    gives this rank a dressed column with a painted capital — a different object at the same slot, which
+    is the mistake `art-tasks.md` warns about.
+
+    ITS TOP IS OUT OF FRAME, like the timber prop's, and for the same reason: a column runs floor to
+    ceiling and the slot is 56x84. What is drawn is the shaft and the collar; the capital is only
+    suggested by the fronds beginning at the top edge, because a capital drawn whole would push the
+    shaft down to a stump.
+
+    STANDING PLUMB IS THE PROBLEM the leaning prop does not have. A vertical cylinder at 56 units wide
+    is a featureless pale bar — `prim_pillar` records that a plumb post read as a turned column, which is
+    exactly what is wanted here and leaves nothing for the eye. So the width has to be earned by the
+    COLLAR and the fronds: rings of bound cord at the base and shoulder, and the frond tips splaying past
+    the shaft's own width, which is the one thing that says palm rather than pipe.
+
+    The taper is real and shallow — a palm trunk narrows going up, and at 0.16 to 0.13 over the drawn
+    height it is about three pixels of difference, which is the most the slot can carry.
+
+    THE CROWN SETS THE WIDTH, and the first pass got it wrong in a way worth recording: a slim shaft with
+    the fronds at 54 degrees landed the whole prop 25 units wide in a 56 unit cell — under half a cell,
+    which reads as a pole in the distance rather than a column in the room. Nothing about the shaft can
+    fix that, because the import fits the OBJECT to the slot and the object was tall and narrow. Splaying
+    the fronds to 66 degrees and shortening the shaft is what widens the silhouette."""
+    shaft_h = 1.55
+    bpy.ops.mesh.primitive_cone_add(vertices=16, radius1=0.16, radius2=0.13, depth=shaft_h,
+                                    location=(0, 0, shaft_h / 2))
+    mark(bpy.context.object, "body")
+    # Bound cord: two collars, one at the foot and one at the shoulder. Wider than the shaft, so they
+    # read as something tied ON rather than as a change in the stone.
+    for z, r in ((0.14, 0.185), (1.62, 0.175)):
+        mark(cyl(r, 0.075, z=z, verts=16), "cloth")
+        mark(cyl(r * 0.97, 0.03, z=z + 0.06, verts=16), "cloth")
+    # The fronds, splaying from the shaft's top. Each is built with its BASE at its own object origin —
+    # `tilt` turns a part about its centre, and rotating a frond about its middle threw all six of them
+    # off the column into the air. Base at the origin, then Y to tip it out and Z to spin it round, is
+    # the only arrangement where the join stays put.
+    #
+    # NOCAST on all six: they are three metres up a column, and this projection's shadow is a flattened
+    # copy, which laid six separate dashes on the floor around the foot.
+    for i in range(6):
+        frond = box(0.10, 0.055, 0.62)
+        frond.data.transform(Matrix.Translation((0.0, 0.0, 0.31)))
+        frond.location = (0.0, 0.0, shaft_h - 0.06)
+        frond.rotation_euler = (0.0, math.radians(66), math.radians(i * 60 + 15))
+        mark(frond, NOCAST)
+    return join_all()
+
+
 def prim_mat():
     """A reed mat lying flat on the floor — one thin sheet, and nothing else.
 
@@ -870,6 +921,7 @@ PRIMITIVES.update(
         "brazier": prim_brazier,
         "lamp": prim_lamp,
         "pillar": prim_pillar,
+        "palm": prim_palm,
         "mat": prim_mat,
         "rubblePile": prim_rubbleheap,
         "niche": prim_niche,
