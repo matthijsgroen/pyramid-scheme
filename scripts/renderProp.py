@@ -826,9 +826,20 @@ def prim_rubbleheap():
             (0.10, 0.08, 0.42, -0.28, 0.018, -22, 4),
             (0.09, 0.07, -0.40, -0.28, 0.016, 33, -5),
         ):
-            piece = box(sx, sy, z * 2, x=x, y=y, z=z)
-            tilt(piece, yaw, "Z")
+            # BUILT AT THE ORIGIN, TURNED, THEN PLACED — and that order is the whole reason the pieces
+            # rest on the floor. `tilt` pivots about the world origin (see its docstring), so a fragment
+            # placed at x=0.62 and then rolled 7 degrees is lifted 0.075 clear of the ground: nearly twice
+            # its own height, and the footprint underneath it stayed where the floor is. It read as brick
+            # hovering over its own shadow, and no --sun value could have fixed it, because nothing was
+            # wrong with the shadow.
+            #
+            # The two branches below keep the old order. Their masters were painted over what it really
+            # does, and moving the geometry now would leave the masks cutting shapes the art no longer
+            # fills.
+            piece = box(sx, sy, z * 2)
             tilt(piece, roll, "Y")
+            tilt(piece, yaw, "Z")
+            piece.location = (x, y, z)
         return join_all()
     if arg("contents") == "plaster":
         # The nobleman's rubble is a PLASTER FALL, and a fall is not a heap. Plaster comes off a wall in
