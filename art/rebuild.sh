@@ -270,6 +270,20 @@ yarn import-tile art/masters/surfaces/junior-floor.webp --tier=junior --name=flo
 # tile it replaces at 143 and +82.
 yarn import-tile art/masters/surfaces/junior-threshold.webp --tier=junior --name=threshold --slot=sill \
   --filter=smooth --key=none --saturation=2.2 --brightness=1.28
+
+# The nobleman's WALL FACE, re-rolled, and the one re-roll that had to be asked for twice. The first
+# prompt described worn plaster over mudbrick and got a good tile of the WRONG THING: the brief gives
+# this rank "full plaster, procession murals (banquet, hunt, granary), painted dado band", and the tile
+# it would have replaced already had that. Naming the registers explicitly — offering bearers, then
+# cattle and geese, then a banquet, about thirty figures across — got all three.
+#
+# --repeat=1, not the docs' 2. The return is already one wall's height at 8:1 with the figures at the
+# right size; doubling it halves them and puts the whole procession on the strip twice.
+#
+# It sits at lum 98 against the floor's 156, which is 58 darker — the wall being darker than the floor in
+# front of it is where the map's depth comes from, and it is worth checking on every face.
+yarn import-tile art/masters/surfaces/junior-wall-face.webp --tier=junior --name=wall-face --slot=face \
+  --filter=smooth --key=none --headroom=0.14
 #
 # The bay is `prim_niche`; only --contents changes between ranks. --width and --height are the SLOT'S
 # aspect and not the prop frame's: the default 2:3 frames a 2:1 object to its width, and the import
@@ -345,6 +359,20 @@ yarn import-tile art/masters/surfaces/junior-floor.webp --tier=junior --name=flo
 # tile it replaces at 143 and +82.
 yarn import-tile art/masters/surfaces/junior-threshold.webp --tier=junior --name=threshold --slot=sill \
   --filter=smooth --key=none --saturation=2.2 --brightness=1.28
+
+# The nobleman's WALL FACE, re-rolled, and the one re-roll that had to be asked for twice. The first
+# prompt described worn plaster over mudbrick and got a good tile of the WRONG THING: the brief gives
+# this rank "full plaster, procession murals (banquet, hunt, granary), painted dado band", and the tile
+# it would have replaced already had that. Naming the registers explicitly — offering bearers, then
+# cattle and geese, then a banquet, about thirty figures across — got all three.
+#
+# --repeat=1, not the docs' 2. The return is already one wall's height at 8:1 with the figures at the
+# right size; doubling it halves them and puts the whole procession on the strip twice.
+#
+# It sits at lum 98 against the floor's 156, which is 58 darker — the wall being darker than the floor in
+# front of it is where the map's depth comes from, and it is worth checking on every face.
+yarn import-tile art/masters/surfaces/junior-wall-face.webp --tier=junior --name=wall-face --slot=face \
+  --filter=smooth --key=none --headroom=0.14
 #
 # All four are the merchant's primitives at the nobleman's colour, so they cost a repaint and no model.
 # --brightness on three of them and --saturation on two: the rank's own stone is #e0c193 against the

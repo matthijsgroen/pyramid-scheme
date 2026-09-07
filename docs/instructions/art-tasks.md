@@ -25,10 +25,27 @@ lineage and not the shipped tiles' input, so the route is a re-roll rather than 
 
 | rank   | floor | wall-face | threshold |
 | ------ | ----- | --------- | --------- |
-| junior | ☐     | ☐         | ☐         |
+| junior | ✅    | ✅        | ✅        |
 | expert | ☐     | ☐         | ☐         |
 | master | ☐     | ☐         | ☐         |
 | wizard | ☐     | ☐         | ☐         |
+
+**The junior three are the worked example — read their block in `art/rebuild.sh` before rolling another
+rank.** What the prompts had to learn, in the order it cost rolls:
+
+1. **Count the features; never mention cells.** "A texture drawn at eight cells across" means nothing to
+   a generator and came back at brick scale, needing `--repeat=4.5` — which multiplies every distinctive
+   mark four or five times and turned the brief's ochre banding into a lattice. "About sixteen slabs
+   across the width, in irregular sizes" came back at eight, needing 1.6.
+2. **Forbid strong features outright.** Whatever is distinctive gets repeated. The accent belongs in a
+   joint or a worn patch, never as a band.
+3. **State the aspect and it is obeyed** — 8:1 for a face and 4:1 for a sill both came back within 1%.
+4. **Name what the brief names.** The first face prompt described worn plaster and produced a good tile
+   of the wrong thing; the brief wants a procession, and naming the three registers got all three.
+5. **A face must measure DARKER than its floor** — junior's is 98 against 156. That difference is where
+   the map's depth comes from, so check it every time.
+6. **A sill is neither tiled nor repeated**, and it may need `--brightness` above 1: on a near-grey
+   return, saturation converts brightness into chroma and drives the tile darker before it is warm.
 
 Each one: roll it, `yarn import-tile` through the per-slot recipe, keep the download as
 `art/masters/surfaces/<rank>-<slot>.webp`, add its rebuild line. Then that rank's surfaces are 2x and the
