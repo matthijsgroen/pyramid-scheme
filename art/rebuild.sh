@@ -400,3 +400,24 @@ yarn import-tile art/masters/props/junior/rubblePile.webp --tier=junior --name=r
 scaffold jarrack --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/masters/props/junior/jarRack.webp --tier=junior --name=jarRack --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92
+
+# expert — the priest
+#
+# His three surfaces, re-rolled to the current standard, and the prompts are junior's with the priest's
+# row swapped in — the six lessons in art-tasks.md held, so this rank cost three rolls and no retries.
+#
+# --repeat=1.4 on the floor: the return came back at about five slabs across where the rank draws seven.
+# No repeat on the face, which arrives as one wall's height at 8:1 with its hieroglyph columns already
+# the right size.
+#
+# --brightness=1.32 on the SILL, for the opposite reason to the nobleman's. Basalt returned very dark —
+# lum 94, level with the wall face — and a sill has to sit BETWEEN the floor and the wall or it reads as
+# a hole in the paving rather than a step across it. 1.32 puts it at 124 between the face's 98 and the
+# floor's 138. The nobleman's needed lifting because it came back too pale; this one because it came
+# back too dark. The rule is the ordering, not the number.
+yarn import-tile art/masters/surfaces/expert-floor.webp --tier=expert --name=floor --slot=floor \
+  --filter=smooth --key=none --repeat=1.4 --flatten=0.45
+yarn import-tile art/masters/surfaces/expert-wall-face.webp --tier=expert --name=wall-face --slot=face \
+  --filter=smooth --key=none --headroom=0.14
+yarn import-tile art/masters/surfaces/expert-threshold.webp --tier=expert --name=threshold --slot=sill \
+  --filter=smooth --key=none --brightness=1.32

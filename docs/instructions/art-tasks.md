@@ -26,7 +26,7 @@ lineage and not the shipped tiles' input, so the route is a re-roll rather than 
 | rank   | floor | wall-face | threshold |
 | ------ | ----- | --------- | --------- |
 | junior | ✅    | ✅        | ✅        |
-| expert | ☐     | ☐         | ☐         |
+| expert | ✅    | ✅        | ✅        |
 | master | ☐     | ☐         | ☐         |
 | wizard | ☐     | ☐         | ☐         |
 
@@ -44,8 +44,11 @@ rank.** What the prompts had to learn, in the order it cost rolls:
    of the wrong thing; the brief wants a procession, and naming the three registers got all three.
 5. **A face must measure DARKER than its floor** — junior's is 98 against 156. That difference is where
    the map's depth comes from, so check it every time.
-6. **A sill is neither tiled nor repeated**, and it may need `--brightness` above 1: on a near-grey
-   return, saturation converts brightness into chroma and drives the tile darker before it is warm.
+6. **A sill is neither tiled nor repeated**, and it needs `--brightness` in whichever direction the
+   ORDERING requires: a sill sits between the floor and the wall in value, or it reads as a hole in the
+   paving rather than a step across it. The nobleman's came back too pale and cool (1.28 to lift it into
+   warmth); the priest's basalt came back too dark at 94, level with his wall face (1.32 to put it at 124
+   between the face's 98 and the floor's 138). The rule is the ordering, not the number.
 
 Each one: roll it, `yarn import-tile` through the per-slot recipe, keep the download as
 `art/masters/surfaces/<rank>-<slot>.webp`, add its rebuild line. Then that rank's surfaces are 2x and the
