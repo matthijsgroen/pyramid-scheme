@@ -273,11 +273,20 @@ its warmth runs to +46, because the shadow was the only neutral thing in the fra
 FIRST match, so the mask's `--shadow=0` must precede any per-prop `--shadow` or the footprint lands back
 inside the mask — measured at 156,707 opaque pixels against 116,661.
 
-**`--sun` is how far the footprint is pushed toward the viewer**, as a fraction of the object's depth.
-0.10 matched the painted props for darkness and not for extent: at that offset the shear draws the
-shadow almost entirely behind its own object and one pixel of it shows. 0.30 is the default and reads.
-Note the coupling — the shadow is inside the sprite's trim box, so a longer one SHRINKS the object in its
-slot; 0.55 cost the shelf and the crate visible size for a shadow no better than 0.30's.
+**`--sun` is how far the footprint is pushed toward the viewer, and it scales with HEIGHT, not depth.**
+A shadow's offset is `height / tan(elevation)`: a tall thing throws its shadow far and a flat thing
+throws it barely at all, and the object's depth has nothing to do with it. It was multiplied by depth for
+a long time, and the numbers came out close to random — the brick spill, the flattest object in the set,
+got the LARGEST offset of any prop at 0.240, because a wide flat spread normalised to height 1 becomes
+enormous in y; the awning, which stands tall, got 0.027. Every prop needed its own `--sun` to undo that.
+
+`seat_and_normalise` makes every object exactly 1.0 tall, so height is a constant and `--sun` is simply
+the offset: ONE number for the whole set, which is what a single sun elevation means. 0.12 is the
+default, and the only override left in `art/rebuild.sh` is `--sun=0`, which means a thing casts nothing —
+a hole, a wall item, anything that hangs.
+
+Note the coupling: the shadow is inside the sprite's trim box, so a longer one SHRINKS the object in its
+slot.
 
 **The shadow dilutes the warmth number.** It is the floor colour darkened, so it is far less saturated
 than painted timber, and it drags a prop's mean toward neutral: the shelf measured +22 before it was

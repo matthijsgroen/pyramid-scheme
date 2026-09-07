@@ -74,14 +74,14 @@ yarn import-tile art/props/starter/pillar.webp --tier=starter --name=pillar --sl
 # rejected first — see prim_mat, which records why a fold at the NEAR edge is invisible.
 #
 # --spin=9 is the one thing geometry still owes it: a rug lying askew of the grid cannot be read as part
-# of the paving, where an axis-aligned one can. --shadow=0.5 --sun=0.03 tucks the footprint tight, since
-# a slab at floor level otherwise casts a copy of itself and reads as a second step.
+# of the paving, where an axis-aligned one can. --shadow=0.5 keeps the footprint faint, since a slab at
+# floor level casts a copy of itself at any offset and reads as a second step (`prim_pillar`).
 #
 # --saturation BELOW 1, the only prop that needs it: the repaint came back photoreal straw at +51 warmth
 # against a rank that sits at +22 to +25. The lever runs both ways, and the brazier is the other end of
 # it at 2.2. --brightness=0.86 is a narrow window — 0.8 left the rug only 7 from the floor's own value
 # and 0.9 put 2.4% of it over the light end.
-scaffold mat --spin=9 --shadow=0.5 --sun=0.03
+scaffold mat --spin=9 --shadow=0.5
 yarn import-tile art/props/starter/mat.webp --tier=starter --name=mat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
 
@@ -138,15 +138,11 @@ yarn import-tile art/props/starter/jarRack.webp --tier=starter --name=jarRack --
 # The standing rubble: `rubble` is two objects and this is the one a ROOM is dressed with, resolved
 # through SiteMapView's STANDING_VARIANT. The scatter layer's flat spill shares the name and not the art.
 #
-# --sun=0.12 rather than the default 0.30. The offset is a fraction of depth but what hides the pool is
-# HEIGHT, and a knee-high heap does not stand over its own footprint: at 0.30 the shadow slid out and lay
-# beside the bricks as a separate slab.
-#
 # --brightness=0.82 --saturation=1.45. Untouched it measured 6 LIGHTER than the slab, which tile-stats
 # faults outright — under 10 either way a prop does not read against the floor it stands on. Down at 0.82
 # it separates by 15 the other way, and the saturation brings +11 warmth back to +22, the bottom of the
 # hand-painted band.
-scaffold rubbleHeap --sun=0.12
+scaffold rubbleHeap
 yarn import-tile art/props/starter/rubbleHeap.webp --tier=starter --name=rubbleHeap --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.45
 
@@ -161,7 +157,7 @@ yarn import-tile art/props/starter/rubbleHeap.webp --tier=starter --name=rubbleH
 # Judge that number on the WHITEWASH and not on the sprite. This tile is a pale box, a near-black recess
 # and a shadow, so its whole-sprite mean sits near the floor's own value however bright the box is, and
 # tile-stats' "1 lighter than the slab" at 0.65 said nothing about whether the shrine reads.
-scaffold shrine --sun=0.18
+scaffold shrine
 yarn import-tile art/props/starter/shrine.webp --tier=starter --name=shrine --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85 --brightness=0.70 --saturation=1.5
 
@@ -174,7 +170,7 @@ yarn import-tile art/props/starter/shrine.webp --tier=starter --name=shrine --sl
 # hand-painted props sit at +22 to +25. Judge that on the CLOTH and not on the sprite — a fifth of this
 # tile is shadow, and the whole-sprite mean put it 9 from the floor when the cloth itself is 18 lighter
 # and 21 warmer.
-scaffold hanging --sun=0.16
+scaffold hanging
 yarn import-tile art/props/starter/hanging.webp --tier=starter --name=hanging --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92 --saturation=1.5
 
@@ -248,104 +244,6 @@ yarn import-tile art/props/junior/stela.webp --tier=junior --name=stela --slot=w
 scaffold sconce --shear=0.5 --width=448 --height=224 --margin=1.4 --colour=#e0c193 --sun=0
 yarn import-tile art/props/junior/sconce.webp --tier=junior --name=sconce --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18
-
-# The market table was one of the four made by PROMPTING alone, before the pipeline existed, so its
-# shadow was painted into the art and it had no scaffold, no mask and no rebuild line — which is how it
-# missed the translucent seat that shelf, chest, brazier, lamp, pillar and mat all got. Re-rolled over
-# prim_market, it joins them.
-#
-# --saturation=1.3 is the documented repaint drift, not a choice: a generator copying a render
-# desaturates toward grey, and this came back at +14 warmth against a rank whose hand-painted props sit
-# at +22 to +25. 1.3 lands it at +24, beside the jar rack at +22 and the ka-statue at +22.
-scaffold market
-yarn import-tile art/props/starter/offeringTable.webp --tier=starter --name=offeringTable --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.3
-
-# The jar rack, the second of the four prompted props to be re-rolled over its primitive. Its scaffold
-# marks the frame `body` and every piece of every jar `pottery`, so the repaint is told which lump is
-# timber and which is clay instead of inferring it from silhouette.
-#
-# --brightness=0.82 --saturation=1.7, and 1.7 is the highest in this file after the brazier's 2.2 for the
-# same reason: a generator copying a render desaturates toward grey, and split pale timber has little
-# chroma to begin with, so there was almost nothing to multiply. It came back at +7 warmth and lands at
-# +23, inside the hand-painted band of +22 to +25.
-#
-# The dark-end fault tile-stats prints — 8.3% below 35 — is the clay and the shadow, and the painted
-# basin sits at 23.8%. It is the LIGHT end that matters on this one: untouched, the timber put 12% of the
-# tile over the clamp.
-scaffold jarrack
-yarn import-tile art/props/starter/jarRack.webp --tier=starter --name=jarRack --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.7
-
-# The standing rubble: `rubble` is two objects and this is the one a ROOM is dressed with, resolved
-# through SiteMapView's STANDING_VARIANT. The scatter layer's flat spill shares the name and not the art.
-#
-# --sun=0.12 rather than the default 0.30. The offset is a fraction of depth but what hides the pool is
-# HEIGHT, and a knee-high heap does not stand over its own footprint: at 0.30 the shadow slid out and lay
-# beside the bricks as a separate slab.
-#
-# --brightness=0.82 --saturation=1.45. Untouched it measured 6 LIGHTER than the slab, which tile-stats
-# faults outright — under 10 either way a prop does not read against the floor it stands on. Down at 0.82
-# it separates by 15 the other way, and the saturation brings +11 warmth back to +22, the bottom of the
-# hand-painted band.
-scaffold rubbleHeap --sun=0.12
-yarn import-tile art/props/starter/rubbleHeap.webp --tier=starter --name=rubbleHeap --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.45
-
-# --brightness=0.70 is the deepest clip in this file, and it is a WHITEWASH problem rather than the usual
-# repaint drift. Told the shrine is whitewashed, the generator painted it white: untouched, 54.7% of the
-# tile sat over the rank's 152 light end and the sprite measured 60 LIGHTER than the floor.
-#
-# It is still meant to be the brightest thing the merchant owns, and it is — the whitewash lands at 146
-# with a max of 161, against a floor at 99 and a wall face whose own worn whitewash tops out at 120. What
-# 0.70 buys over 0.74 is the tail: 4.0% of the sprite over the clamp instead of 19.4%.
-#
-# Judge that number on the WHITEWASH and not on the sprite. This tile is a pale box, a near-black recess
-# and a shadow, so its whole-sprite mean sits near the floor's own value however bright the box is, and
-# tile-stats' "1 lighter than the slab" at 0.65 said nothing about whether the shrine reads.
-scaffold shrine --sun=0.18
-yarn import-tile art/props/starter/shrine.webp --tier=starter --name=shrine --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85 --brightness=0.70 --saturation=1.5
-
-# The first CLOTH in the set, and the one the pipeline's own table said could not be made. --sun=0.16
-# because an awning is a sheet, and a sheet flattened to z=0 is prim_pillar's slab: at the default the
-# footprint slides out from under and reads as a second sheet on the floor. The posts are what it is
-# really cast by.
-#
-# --saturation=1.5 is the repaint drift again, on linen: it came back at +7 warmth against a rank whose
-# hand-painted props sit at +22 to +25. Judge that on the CLOTH and not on the sprite — a fifth of this
-# tile is shadow, and the whole-sprite mean put it 9 from the floor when the cloth itself is 18 lighter
-# and 21 warmer.
-scaffold hanging --sun=0.16
-yarn import-tile art/props/starter/hanging.webp --tier=starter --name=hanging --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92 --saturation=1.5
-
-# shared — one desert blows into all five tombs
-#
-# Sand is the only tile whose SHAPE this repository generates. It is not an object: a drift has no
-# silhouette, only an edge, and asked for one on magenta a generator returns a rim feathered over a
-# hundred pixels that keys to a violet halo. So the return is a full-bleed TEXTURE with no shape at all —
-# nothing it can get wrong — and `drift-mask` supplies the alpha, which `--mask` composites with dest-in
-# so a soft rim stays soft. Same split as every prop: geometry ours, material theirs.
-#
-# --key=none because there is no background to key. The mask IS the shape.
-#
-# --peak=0.5 with --brightness=0.78, and the transparency is doing most of that work. SAND LIES THIN:
-# only the deepest part of a drift hides the stone, and at full opacity the tile stopped being sand on a
-# floor and became a pale shape ON it — it read as light spilled across the passage. Under 1 the floor's
-# own value comes through everywhere, which dulls the drift by the stone it lies on rather than by a
-# knob, and dulls it by the right amount at each rank without being tuned per rank: more over the
-# pharaoh's dark granite, less over the nobleman's pale sandstone.
-#
-# DO NOT TUNE THIS BY THE NUMBERS. Composited, the drift shifts the nobleman's floor by -2 luminance —
-# his sandstone is very nearly sand's own colour — and by that measure it is invisible there. It is not:
-# what reads is the RIPPLE against his slabs, and a mean over the tile cannot see texture. Look at it on
-# all four floors instead; that check is one command (`yarn on-floor`) and it has now caught three
-# measurements in this file that were confidently wrong.
-yarn drift-mask --out="$OBJ" --seed=fan --size=504 --peak=0.5
-yarn import-tile art/surfaces/sand.webp --tier=default --name=sand --slot=drift \
-  --filter=smooth --key=none --mask="$OBJ" --brightness=0.78
-
 # junior — the nobleman
 #
 # All four are the merchant's primitives at the nobleman's colour, so they cost a repaint and no model.
@@ -356,7 +254,7 @@ yarn import-tile art/surfaces/sand.webp --tier=default --name=sand --slot=drift 
 # The rug has to SEPARATE from the paving or it is paving. Untouched it measured 1 lighter than the slab
 # and vanished; 0.86/0.6 puts it 23 darker, which is the merchant mat's own pair of numbers — the same
 # repaint failure at both ranks, straw drawn far warmer and lighter than the floor it lies on.
-scaffold mat --spin=9 --shadow=0.5 --sun=0.03 --colour=#e0c193 --floor=#c39c68
+scaffold mat --spin=9 --shadow=0.5 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/props/junior/mat.webp --tier=junior --name=mat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
 
@@ -369,11 +267,9 @@ yarn import-tile art/props/junior/brazier.webp --tier=junior --name=brazier --sl
 # spill sharing the name. It went in under the wrong one and the nobleman's 24 rooms went on drawing a
 # placeholder while a painted plaster fall sat in the file beside it.
 #
-# --shadow=0.6 --sun=0.05, and this is the FLAT-THING rule the mat already records: a plaster fall lies
-# at floor level, so a footprint pushed the default 0.30 of its depth toward the viewer draws clear of
-# the pieces and the whole tile floats. Only the SHADOW render takes those two — scaffold() passes
+# --shadow=0.6 keeps a flat fall's footprint faint. Only the SHADOW render takes it — scaffold() passes
 # --shadow=0 ahead of "$@" for the mask, so the mask cannot pick one up.
-scaffold rubbleHeap --contents=plaster --shadow=0.6 --sun=0.05 --colour=#e0c193 --floor=#c39c68
+scaffold rubbleHeap --contents=plaster --shadow=0.6 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/props/junior/rubbleHeap.webp --tier=junior --name=rubbleHeap --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85 --saturation=1.25
 

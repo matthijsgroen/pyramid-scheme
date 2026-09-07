@@ -1324,20 +1324,23 @@ def main():
     # a thing, and a rendered prop has to join that convention or it floats.
     shadow_alpha = float(arg("shadow", "0.8"))
 
-    # How far the flattened footprint is pushed toward the viewer, as a fraction of the object's depth —
-    # which is to say where the sun is. 0.10 matched the painted props for DARKNESS and not for EXTENT:
-    # at that offset the shear draws the shadow almost entirely behind the object and one pixel of it
-    # shows, where the hand-painted props spread a visible pool in front of the thing.
+    # How far the flattened footprint is pushed toward the viewer — which is to say where the sun is.
     #
-    # 0.30 IS A TALL PROP'S NUMBER. The offset is a fraction of DEPTH but what hides it is HEIGHT: a
-    # shelf or a jar rack stands over its own footprint and covers most of it, while a low wide thing
-    # does not, and the pool slides out from under and reads as a separate slab lying beside the object.
-    # Three have needed it small now — the mat at 0.03, the nobleman's plaster fall at 0.05, the
-    # merchant's brick heap at 0.12 — and the rule is the object's height against its depth, not what it
-    # is made of. `prim_pillar` records the other end of the same problem: at any offset, a slab flat on
-    # the floor casts a copy of itself, because --sun shifts a footprint in depth and never out from
-    # under a shape as wide as the shadow it makes.
-    sun = float(arg("sun", "0.30"))
+    # IT SCALES WITH HEIGHT, NOT WITH DEPTH, and getting that backwards is what made every prop in this
+    # file need its own --sun. A shadow's offset is `height / tan(elevation)`: a tall thing throws its
+    # shadow far and a flat thing throws it barely at all, and the object's DEPTH has nothing to do with
+    # it. Multiplied by depth instead, the numbers came out close to random — the brick spill, the
+    # flattest thing in the set, got the LARGEST offset of any prop at 0.240, because a wide flat spread
+    # normalised to height 1 becomes enormous in y; the awning, which stands tall, got 0.027.
+    #
+    # `seat_and_normalise` makes every object exactly 1.0 tall, so height is a constant here and --sun is
+    # simply the offset. One number for the whole set, which is what a single sun elevation means: the
+    # per-prop overrides existed only to undo the depth term.
+    #
+    # `prim_pillar` records the limit this does not fix: a slab flat on the floor casts a copy of itself
+    # at ANY offset, because --sun shifts a footprint in depth and never out from under a shape as wide
+    # as the shadow it makes.
+    sun = float(arg("sun", "0.12"))
 
     clear_scene()
     obj = load_subject(mesh, primitive)
@@ -1374,7 +1377,7 @@ def main():
         add_shadow_catcher(k, max(w_units, d_units, 1.0))
     else:
         shadow = (
-            make_shadow(obj, shadow_alpha, arg("floor", "#6c6257"), 0.0, -sun * d_units)
+            make_shadow(obj, shadow_alpha, arg("floor", "#6c6257"), 0.0, -sun)
             if shadow_alpha > 0
             else None
         )
@@ -1387,7 +1390,7 @@ def main():
     # `SLOTS.wall` is `seat: false`, so the import does not trim and re-seat — it scales the whole FRAME
     # into 56x28. A prop's frame is discarded; a wall item's frame IS its placement. So a compact thing
     # like a sconce is given margin here rather than being blown up to fill the band.
-    add_camera(obj, width, height, float(arg("margin", "1.06")), k * sun * d_units)
+    add_camera(obj, width, height, float(arg("margin", "1.06")), k * sun)
     add_light(float(arg("ambient", "0.35")))
     background = arg("background", "#ff00ff")
     if background != "none":
