@@ -422,6 +422,53 @@ def prim_palm():
     return join_all()
 
 
+def prim_falsedoor():
+    """The nobleman's shrine: a miniature false-door stela with an offering table set before it.
+
+    A FALSE DOOR IS A RECESS, so `prim_niche`'s rule carries over unchanged and is the whole reason this
+    is modelled: the recessed panel's floor draws ABOVE its front lip, because depth going back is depth
+    going up. Asked for in words a generator draws the recess receding to a vanishing point, which is
+    photographically correct and wrong here. What differs from the niche is the shear — this stands on
+    the floor at k = 0.7 rather than hanging on a wall at 0.5 — and that it is TALL rather than wide.
+
+    THE TABLE IN FRONT IS THE HARD PART, and it is `prim_market`'s grain heap again from the other side.
+    A slab set before the door overlaps it in the drawn picture, and under z + k*y anything nearer the
+    viewer draws LOWER — so the table lands over the door's base and hides exactly the part that says
+    recess. It is therefore kept LOW and SHALLOW: a slab on two short piers, its top well below the
+    recess floor, so the door's own sill still reads above it.
+
+    Three registers of sunk relief are what a real false door has. At 56 units they are three horizontal
+    bands and nothing finer, which is what the jambs and the lintel courses provide — the carving is
+    paint, as it was for the stela."""
+    w, d, h, brick = 0.66, 0.30, 1.32, 0.085
+    lip = 0.35 * d
+    # The stela: a back slab, two stepped jambs, a sill and a lintel, hollow between them.
+    mark(box(w, brick, h, y=(d - brick) / 2, z=h / 2), "body")
+    for sx in (-1, 1):
+        mark(box(brick * 1.5, d, h, x=sx * (w / 2 - brick * 0.75), z=h / 2), "body")
+        # the outer step, which is what makes a false door read as a doorway rather than a niche
+        mark(box(brick, d * 0.7, h * 0.92, x=sx * (w / 2 + brick * 0.4), z=h * 0.46), "body")
+    mark(box(w, d, brick * 1.4, z=brick * 0.7), "body")
+    mark(box(w, d, brick * 1.6, z=h - brick * 0.8), "body")
+    # A drum roll over the opening, and a cavetto slab on top: the two things that say false DOOR.
+    roll = mark(cyl(brick * 0.9, w * 0.92, x=0, y=-d * 0.1, z=h - brick * 1.9, verts=12), "body")
+    roll.rotation_euler = (0, math.radians(90), 0)
+    mark(box(w + brick * 1.2, d + 0.03, brick * 1.1, z=h + brick * 0.55), "body")
+    # The offering table: LOW and shallow, its top below the recess floor so the sill still reads.
+    top_z = brick * 1.4 + 0.13
+    mark(box(w * 0.62, d * 0.52, 0.05, y=-d * 0.62, z=top_z), "body")
+    for sx in (-1, 1):
+        mark(box(0.05, 0.05, top_z - 0.02, x=sx * w * 0.22, y=-d * 0.62, z=(top_z - 0.02) / 2), "body")
+    # One loaf and a jar on it, coarse enough to survive the slot.
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=14, ring_count=8, radius=0.055, location=(-0.10, -d * 0.62, top_z + 0.05))
+    loaf = bpy.context.object
+    loaf.scale = (1.3, 1.0, 0.7)
+    bpy.ops.object.transform_apply(scale=True)
+    mark(loaf, "accent")
+    jar(0.10, -d * 0.62, 0.17, 0.048, z=top_z + 0.025, part="pottery")
+    return join_all()
+
+
 def prim_mat():
     """A reed mat lying flat on the floor — one thin sheet, and nothing else.
 
@@ -928,6 +975,7 @@ PRIMITIVES.update(
         "pit": prim_pit,
         "sconce": prim_sconce,
         "shrine": prim_shrine,
+        "falseDoor": prim_falsedoor,
         "hanging": prim_hanging,
     }
 )
