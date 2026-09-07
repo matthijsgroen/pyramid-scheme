@@ -110,21 +110,37 @@ one repaint and one `import-tile` line and it is done.
 | `master/mask`          | `mask`                          | `mask-master*`          |
 | `wizard/wallShrine`    | `wallShrine --contents=opening` | `wallshrine-wizard*`    |
 | `wizard/starShaft`     | `starShaft`                     | `starshaft-wizard*`     |
+| `junior/hanging`       | `hanging --contents=linen`      | `hanging-junior*`       |
+| `expert/hanging`       | `hanging --contents=veil`       | `hanging-expert*`       |
+| `master/hanging`       | `hanging --contents=gold`       | `hanging-master*`       |
+| `wizard/hanging`       | `hanging --contents=aurora`     | `hanging-wizard*`       |
 
 `starter/rubbleSpill` and `starter/basin` are the merchant's last two files, and `basin` also closes §3's
 first bullet.
 
-Five of these are one primitive serving two ranks on `--contents`, which is `prim_niche`'s pattern and is
-what made the nobleman's props cost renders instead of models. What each rank's object actually IS still
-comes from the brief's own row — `palm` against `pillar` and `sealedChest` against `chest` are different
-objects in the same slot, and confusing them cost real work once.
+`wizard/hanging` is the one that imports differently: a curtain of aurora casts nothing, so it has no
+shadow render and its line takes no `--seat`. It also wants `--colour-accent` set to the rank's own light —
+the whole sheet is `accent`, and left at the default the scaffold goes to the generator in ochre.
+
+All but three of these are one primitive serving several ranks on `--contents`, which is `prim_niche`'s
+pattern and is what made the last three ranks' wall items cost renders instead of models. What each rank's
+object actually IS still comes from the brief's own row — `palm` against `pillar` and `sealedChest` against
+`chest` are different objects in the same slot, and confusing them cost real work once.
 
 ## 5. Waiting on a model
 
-Nothing at the first two ranks: every merchant and nobleman prop and wall item is either painted or in §4.
-The models still owed are §8's — expert, master and wizard — and `prim_niche`, `prim_sconce`, `prim_basin`,
-`prim_lamp`, `prim_shelf` and `prim_market` all take `--contents`, so a good part of that block is a repaint
-rather than a model.
+Nothing at the first two ranks, and no WALL ITEM anywhere: everything the merchant and the nobleman author
+is painted, in §4, or in §6 waiting on a scan, and §4 holds every wall item of the last three ranks.
+
+What is left is the last three ranks' CHAMBER PROPS. The biggest, by rooms: `chestProp` at master (42) and
+wizard (35), `jarRack` at master (35), `pit` at expert (33), `statue` at master (29), `pillar` at master
+(28), `offeringTable` at master (27) and `crystal` at wizard (27) — which is a kind no earlier rank draws
+and the only one here with no primitive to build on. `sarcophagus` and `statue` are §6's business wherever
+they appear.
+
+Almost all the rest is `--contents` on a primitive that exists: `prim_niche`, `prim_sconce`, `prim_basin`,
+`prim_lamp`, `prim_shelf`, `prim_market`, `prim_hanging`, `prim_wallshrine`, `prim_pit`, `prim_jarrack` and
+`prim_rubbleheap` all take it, and `prim_hanging` alone now serves five ranks.
 
 ## 6. Waiting on a scan
 
