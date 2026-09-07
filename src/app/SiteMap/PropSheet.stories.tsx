@@ -47,11 +47,70 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; underfoo
   // as well as behind it.
   const floorLine = (WALL_H + CELL) * zoom
   const propLeft = (CHAMBER_W * zoom) / 2 - CELL * zoom
+  // SCATTER IS STAGED TWICE: once under the explorer's boots and once on its own, a cell or so to the
+  // right. Both readings matter and neither substitutes for the other — with a boot on it you can tell
+  // whether it reads as ground rather than as an object in the way, and without one you can tell what
+  // was actually drawn. Under a sprite 40 wide, most of a 56-wide tile is hidden.
+  //
+  // A drift needs the wider gap because it is sized in CELLS and outgrows one: at 2.2 across, a copy set
+  // a cell over lands on top of the first.
+  const soloGap = drift ? CELL * (DRIFT_W + 0.35) : CELL * 1.55
+  // Wide enough for the second copy and half a cell of floor past it, rather than CHAMBER_W plus the gap,
+  // which left a cell and a half of empty paving on the right of every scatter row.
+  const soloRight = drift ? CELL + soloGap + (CELL * DRIFT_W) / 2 : CELL / 2 + soloGap + CELL
+  const stageW = underfoot ? soloRight + CELL / 2 : CHAMBER_W
+  const artAt = (dx: number) =>
+    art &&
+    (drift ? (
+      // Centred on the cell and sized in CELLS, the way SandDrifts draws it — a drift stopped being a
+      // prop-box sprite the moment it outgrew a cell. Not clipped here: the sheet has no walls to cut it
+      // against, and what this view is for is the sand's OWN edge, which is the half of the shape the
+      // map's clip does not supply.
+      <img
+        src={art}
+        alt={name}
+        className="absolute"
+        style={{
+          left: propLeft + dx + (CELL / 2 - (CELL * DRIFT_W) / 2) * zoom,
+          top: floorLine - (CELL / 2 + (CELL * DRIFT_H) / 2) * zoom,
+          width: CELL * DRIFT_W * zoom,
+          height: CELL * DRIFT_H * zoom,
+          imageRendering: ART_IMAGE_RENDERING,
+        }}
+      />
+    ) : wallItem ? (
+      <img
+        src={art}
+        alt={name}
+        className="absolute"
+        style={{
+          left: propLeft + dx,
+          top: 0,
+          width: CELL * zoom,
+          height: WALL_H * zoom,
+          imageRendering: ART_IMAGE_RENDERING,
+        }}
+      />
+    ) : (
+      // Bottom-anchored on the floor line and CELL + WALL_H tall, so the headroom rises over the band.
+      <img
+        src={art}
+        alt={name}
+        className="absolute"
+        style={{
+          left: propLeft + dx,
+          top: floorLine - PROP_H * zoom,
+          width: CELL * zoom,
+          height: PROP_H * zoom,
+          imageRendering: ART_IMAGE_RENDERING,
+        }}
+      />
+    ))
   return (
     <figure className="m-0 flex flex-col items-center gap-1">
       <div
         className="relative overflow-hidden"
-        style={{ width: CHAMBER_W * zoom, height: (WALL_H + CHAMBER_H) * zoom, background: palette.slab }}
+        style={{ width: stageW * zoom, height: (WALL_H + CHAMBER_H) * zoom, background: palette.slab }}
       >
         {/* the wall band the prop's headroom overlaps, and which a wall item is painted onto */}
         <div
@@ -72,56 +131,12 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; underfoo
             imageRendering: ART_IMAGE_RENDERING,
           }}
         />
-        {art &&
-          (drift ? (
-            // Centred on the cell and sized in CELLS, the way SandDrifts draws it — a drift stopped
-            // being a prop-box sprite the moment it outgrew a cell. Not clipped here: the sheet has no
-            // walls to cut it against, and what this view is for is the sand's OWN edge, which is the
-            // half of the shape the map's clip does not supply.
-            <img
-              src={art}
-              alt={name}
-              className="absolute"
-              style={{
-                left: propLeft + (CELL / 2 - (CELL * DRIFT_W) / 2) * zoom,
-                top: floorLine - (CELL / 2 + (CELL * DRIFT_H) / 2) * zoom,
-                width: CELL * DRIFT_W * zoom,
-                height: CELL * DRIFT_H * zoom,
-                imageRendering: ART_IMAGE_RENDERING,
-              }}
-            />
-          ) : wallItem ? (
-            <img
-              src={art}
-              alt={name}
-              className="absolute"
-              style={{
-                left: propLeft,
-                top: 0,
-                width: CELL * zoom,
-                height: WALL_H * zoom,
-                imageRendering: ART_IMAGE_RENDERING,
-              }}
-            />
-          ) : (
-            // Bottom-anchored on the floor line and CELL + WALL_H tall, so the headroom rises over the band.
-            <img
-              src={art}
-              alt={name}
-              className="absolute"
-              style={{
-                left: propLeft,
-                top: floorLine - PROP_H * zoom,
-                width: CELL * zoom,
-                height: PROP_H * zoom,
-                imageRendering: ART_IMAGE_RENDERING,
-              }}
-            />
-          ))}
-        {/* SCATTER is staged with the explorer ON it, not beside it, because that is the whole difference
-            between this layer and a prop: a prop stands on a cell nobody can reach and scatter lies on the
-            cells the player crosses, drawn UNDER him. Seeing a drift with a boot in the middle of it is
-            what says whether it reads as ground or as an object in the way. */}
+        {artAt(0)}
+        {underfoot && artAt(soloGap * zoom)}
+        {/* SCATTER puts the explorer ON the first copy, not beside it, because that is the whole
+            difference between this layer and a prop: a prop stands on a cell nobody can reach and scatter
+            lies on the cells the player crosses, drawn UNDER him. The second copy to its right is the same
+            tile with nothing on it — see `artAt`. */}
         {explorer && (
           <img
             src={explorer}
@@ -176,7 +191,7 @@ const Sheet: FC<{ tier: Difficulty; zoom: number }> = ({ tier, zoom }) => {
           most pieces on a floor, and the only one the player walks over. */}
       <h2 className="m-0 text-sm text-white/80">
         {tier} — floor scatter{" "}
-        <span className="text-white/40">({scatter.length}, placed by rule — the explorer stands ON these)</span>
+        <span className="text-white/40">({scatter.length}, placed by rule — each staged twice: under his boots, then alone)</span>
       </h2>
       <div className="flex flex-wrap gap-4">
         {scatter.map(kind => (
