@@ -248,13 +248,34 @@ def prim_market():
 
 
 def tilt(obj, degrees, axis="Y"):
-    """Leans one part over, about its own centre.
+    """Leans one part over, about THE WORLD ORIGIN — not about its own centre.
 
-    Object-level rotation and nothing applied: `join_all` bakes every part's matrix into the result, so
-    a part only has to be POSED, never baked. Rotating the mesh data instead means translating it to the
-    origin and back, because `box` leaves its vertices centred and its offset in the object."""
+    That is not what it was written to do, and it is worth knowing which it really is. `box` ends with
+    `transform_apply(scale=True)`, and that operator applies the LOCATION too: the offset lands in the
+    mesh and the object's origin stays at (0, 0, 0). So object-level rotation pivots a part about the
+    origin of the whole prop, and the further from it a part sits the further the turn throws it. A bar
+    0.30 long at z=0.60 turned 90 degrees does not stand up; it lies along X at z=0.
+
+    Nobody noticed because every caller is a small angle on a part that is near the origin or long enough
+    not to care — a wedge at 16 degrees, an ostracon at 7. It is left ALONE rather than corrected: the
+    merchant's pillar, shelf and sconce were all painted over what it really does, and their masks would
+    cut shapes the art no longer fills.
+
+    For anything new, use `turn`, which is what this docstring used to claim."""
     i = "XYZ".index(axis)
     obj.rotation_euler[i] = math.radians(degrees)
+    return obj
+
+
+def turn(obj, degrees, axis="Y", x=0.0, y=0.0, z=0.0):
+    """Turns a part about its own centre, then puts it where it belongs. Build it at the ORIGIN.
+
+    The pair of transforms in the order that matters: `obj.location` is a translation applied after the
+    rotation, so a part made at the origin turns in place and then moves out. `join_all` bakes both. See
+    `tilt` for what happens when a part is placed first and turned second."""
+    i = "XYZ".index(axis)
+    obj.rotation_euler[i] = math.radians(degrees)
+    obj.location = (x, y, z)
     return obj
 
 
@@ -955,25 +976,90 @@ def prim_sconce():
     shape proven to survive this band. The flame is a nub, not a cone: it exists so the repaint has a
     shape to put the ochre accent on, and a sharp triangle a fifth of the object tall turns a lamp into a
     rocket (`prim_lamp`).
+
+    FOUR RANKS ON --contents, and the plate, the arm and the brace are the same in all of them because
+    the y-z finding above applies to every one: `lamp` is the nobleman's bracket lamp, `chain` the
+    priest's lamp hung on a chain, `mirror` the master's bronze mirror sconce, `crystal` the wizard's
+    bracket with light and no lamp. What hangs on the end is the only difference, which is `prim_niche`'s
+    pattern — the ranks that follow cost a repaint and not a model.
+
+    The nobleman's numbers do not move. A master was painted over them, and the mask would cut a shape
+    the art no longer fills.
     """
+    contents = arg("contents", "lamp")
+
+    def put(obj, name):
+        # The nobleman's is left UNMARKED, exactly as it was painted; every later rank marks all of
+        # itself, because `mark`'s rule is that a primitive marking any of itself has to mark the rest —
+        # an unmarked part inherits whatever slot lands at index 0.
+        return obj if contents == "lamp" else mark(obj, name)
+
     # The wall plate: flat against the wall, its own depth shallow so it does not out-draw the arm. Tall
     # enough for the brace to land ON it — the brace's foot has to meet the plate in the DRAWN picture,
     # and the two sit at different y, so the plate draws 0.07 higher than its own z and the brace 0.025.
-    box(0.20, 0.07, 0.62, x=-0.42, y=0.14, z=0.53)
+    put(box(0.20, 0.07, 0.62, x=-0.42, y=0.14, z=0.53), "metal")
     # The arm, across the band, and the two pegs that fix the plate to the wall.
-    box(0.80, 0.10, 0.10, x=-0.02, y=0.05, z=0.50)
+    put(box(0.80, 0.10, 0.10, x=-0.02, y=0.05, z=0.50), "metal")
     for z in (0.74, 0.32):
-        box(0.11, 0.15, 0.07, x=-0.42, y=0.05, z=z)
+        put(box(0.11, 0.15, 0.07, x=-0.42, y=0.05, z=z), "metal")
     # The brace, in the x-z plane where a diagonal is drawn as a diagonal. In y-z it would be invisible by
     # construction rather than merely small.
-    tilt(box(0.36, 0.07, 0.06, x=-0.22, y=0.05, z=0.40), -38, "Y")
-    # The lamp standing on the arm's end: the niche's proven mass, its spout along X.
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=12, radius=0.16, location=(0.26, 0.0, 0.68))
-    body = bpy.context.object
-    body.scale = (1.3, 0.9, 0.95)
+    put(tilt(box(0.36, 0.07, 0.06, x=-0.22, y=0.05, z=0.40), -38, "Y"), "metal")
+    if contents == "lamp":
+        # The lamp standing on the arm's end: the niche's proven mass, its spout along X.
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=12, radius=0.16, location=(0.26, 0.0, 0.68))
+        body = bpy.context.object
+        body.scale = (1.3, 0.9, 0.95)
+        bpy.ops.object.transform_apply(scale=True)
+        box(0.17, 0.08, 0.08, x=0.52, y=0.0, z=0.65)
+        bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.065, radius2=0.0, depth=0.12, location=(0.26, 0.0, 0.88))
+        return join_all()
+    if contents == "chain":
+        # The priest's: the lamp HANGS, two links below the arm. A chain is the one structure that may
+        # run in z — it is drawn vertically because it IS vertical — but the band is 2:1, so there are
+        # two links and not five, and the arm is where the width still comes from.
+        for z in (0.44, 0.34):
+            mark(box(0.05, 0.05, 0.07, x=0.30, y=0.0, z=z), "metal")
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=12, radius=0.15, location=(0.30, 0.0, 0.22))
+        bowl = bpy.context.object
+        bowl.scale = (1.25, 0.9, 0.62)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(bowl, "metal")
+        # The spout and its flame go out along X, not up: above the bowl they sit under the chain, which
+        # is the one place on a HANGING lamp that is already occupied.
+        mark(box(0.16, 0.07, 0.07, x=0.46, y=0.0, z=0.21), "metal")
+        bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.06, radius2=0.0, depth=0.13, location=(0.50, 0.0, 0.29))
+        mark(bpy.context.object, "accent")
+        return join_all()
+    if contents == "mirror":
+        # The master's mirror sconce: a DISC IN THE X-Z PLANE, which is the only orientation that draws
+        # as a disc — flat against the wall it would be an ellipse, and in y-z it would be a line. The
+        # lamp stands in front of it, small, so the disc is the shape and the flame is the incident.
+        disc = mark(cyl(0.26, 0.035, x=0.26, y=0.10, z=0.70, verts=24), "metal")
+        disc.rotation_euler = (math.radians(90), 0, 0)
+        mark(cyl(0.05, 0.16, x=0.26, y=0.10, z=0.50, verts=10), "metal")
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=12, radius=0.12, location=(0.26, -0.10, 0.56))
+        lamp = bpy.context.object
+        lamp.scale = (1.3, 0.9, 0.7)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(lamp, "metal")
+        bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.055, radius2=0.0, depth=0.14, location=(0.26, -0.10, 0.70))
+        mark(bpy.context.object, "accent")
+        return join_all()
+    # The wizard's: LIGHT WITH NO LAMP. Three crystal shards standing off the arm and one accent nub
+    # above them, and the nub is the whole tile — it is the only thing a repaint can put light on, and
+    # there is deliberately no vessel under it for the light to be coming out of.
+    for x, tall in ((0.08, 0.34), (0.28, 0.46), (0.46, 0.26)):
+        bpy.ops.mesh.primitive_cone_add(vertices=6, radius1=0.075, radius2=0.0, depth=tall,
+                                        location=(x, 0.0, 0.55 + tall / 2))
+        mark(bpy.context.object, "metal")
+    # NESTED among the tips, not above them. Set clear of the cluster it read as a ball floating over a
+    # row of pegs — the same detachment `prim_palm` and the pit's shadow both cost a render to find.
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=16, ring_count=10, radius=0.13, location=(0.28, 0.0, 0.80))
+    glow = bpy.context.object
+    glow.scale = (1.0, 0.8, 1.1)
     bpy.ops.object.transform_apply(scale=True)
-    box(0.17, 0.08, 0.08, x=0.52, y=0.0, z=0.65)
-    bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.065, radius2=0.0, depth=0.12, location=(0.26, 0.0, 0.88))
+    mark(glow, "accent")
     return join_all()
 
 
@@ -1129,19 +1215,75 @@ def prim_niche():
     # the oil jar came out a dot. What makes this bay read is that it is 78% of the drawn height, and
     # anything taken off the opening is taken off the only part anyone can see.
     head = brick
+    contents = arg("contents", "goods")
+    # The merchant's and the nobleman's are left UNMARKED, exactly as they were painted; the ranks added
+    # since mark all of themselves, because `mark`'s rule is that a primitive marking any of itself has
+    # to mark the rest. The master's SURROUND is the marked part that matters — his row is a gilded
+    # surround, and a scaffold in one colour cannot say which part is the gold.
+    marked = contents in ("sealed", "offering", "star")
+
+    def put(obj, name):
+        return mark(obj, name) if marked else obj
+
+    surround = "accent" if contents == "offering" else "body"
+    # The wizard's bay is BLACK inside — his row is a niche holding one star, so the back of it is night
+    # and not plaster. VOID is the marker for exactly that (`prim_pit`).
+    back = VOID if contents == "star" else "body"
     # The surround: back slab, two jambs, a sill under and a lintel over. The hollow between them IS the
     # niche, so nothing is modelled where the opening is.
-    box(w, brick, h, y=(d - brick) / 2, z=h / 2)
+    put(box(w, brick, h, y=(d - brick) / 2, z=h / 2), back)
     for sx in (-1, 1):
-        box(brick, d, h, x=sx * (w / 2 - brick / 2), z=h / 2)
-    box(w, d, brick, z=brick / 2)
-    box(w, d, head, z=h - head / 2)
+        put(box(brick, d, h, x=sx * (w / 2 - brick / 2), z=h / 2), surround)
+    put(box(w, d, brick, z=brick / 2), surround)
+    put(box(w, d, head, z=h - head / 2), surround)
     # What stands in it, sized to the room the lintel actually leaves. The BAY is the same at every rank
     # — the brief gives each one a niche, and a cut recess is a cut recess — so `--contents` is the only
     # thing that changes, and a rank costs a repaint rather than a model.
     base = brick
     room = (h - head - lip) - (base + lip)
-    if arg("contents", "goods") == "lamp":
+    if contents == "sealed":
+        # The priest's: DOORS SHUT ACROSS THE OPENING, with a cord and a seal over the join. Set back
+        # from the front lip rather than flush with it, so a reveal of jamb still shows on either side —
+        # flush, the whole thing is a panel and the bay it is set in is gone.
+        leaf = (w - brick * 2) / 2 - 0.012
+        for sx in (-1, 1):
+            put(box(leaf, 0.05, h - brick * 2, x=sx * (w - brick * 2) / 4, y=0.02, z=h / 2), "timber")
+        put(box((w - brick * 2) * 0.82, 0.04, 0.05, y=-0.02, z=h * 0.52), "cloth")
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=0.075, location=(0.0, -0.055, h * 0.52))
+        seal = bpy.context.object
+        seal.scale = (1.0, 0.5, 1.0)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(seal, "accent")
+        return join_all()
+    if contents == "offering":
+        # The master's: a platter of loaves and a jar on the sill, inside a gilded surround. The loaves
+        # are `cloth` and the platter `pottery` for one reason only — two warm masses of one value read as
+        # one lump at 28 units, and the repaint needs to be told which is bread.
+        # The platter is an ELLIPSE, wide in x and shallow in y. Round at a radius that reads, it was
+        # wider than the bay is DEEP and hung out through the opening — which the shear then charges to
+        # the drawn height, so the tile came out a fifth taller than the band it has to fill.
+        platter = cyl(0.24, 0.035, x=-0.34, y=-0.02, z=base + 0.018, verts=20)
+        platter.scale = (1.0, 0.55, 1.0)
+        bpy.ops.object.transform_apply(scale=True)
+        put(platter, "pottery")
+        for lx, r in ((-0.50, 0.095), (-0.34, 0.085), (-0.20, 0.075)):
+            bpy.ops.mesh.primitive_uv_sphere_add(segments=14, ring_count=8, radius=r, location=(lx, -0.02, base + 0.055))
+            loaf = bpy.context.object
+            loaf.scale = (1.15, 0.85, 0.6)
+            bpy.ops.object.transform_apply(scale=True)
+            mark(loaf, "cloth")
+        # In a ring, for `prim_basin`'s reason: `jar()` tapers to a point and a point on a flat sill has a
+        # contact one pixel wide, which reads as balancing rather than standing.
+        put(cyl(0.10, 0.04, x=0.42, y=-0.02, z=base + 0.02, verts=14), "pottery")
+        jar(0.42, -0.02, room / 0.78, 0.092, z=base, part="pottery")
+        return join_all()
+    if contents == "star":
+        # The wizard's: ONE STAR, and nothing else in the bay. Three crossed bars, which is a six-pointed
+        # star and the most a 28-unit band will resolve; a modelled point count above that is a blur.
+        for deg in (0, 60, 120):
+            mark(turn(box(room * 2.0, 0.06, 0.05), deg, "Y", 0.0, -0.04, base + room * 1.1), "accent")
+        return join_all()
+    if contents == "lamp":
         # The nobleman's LAMP NICHE, and everything here is about what survives 28 pixels.
         #
         # A LAMP IS THE WRONG SHAPE FOR THIS BAND, and two renders proved it. A lamp is a shallow dish,
@@ -1237,6 +1379,10 @@ PART_COLOURS = {
     "metal": "#8a7f6d",  # dull, never bright — the set is matte and has no highlight anywhere
     "accent": "#b07a3c",  # the rank's one warm ochre; override per rank with --colour-accent
     "pottery": "#8f7358",  # fired clay: warmer and duller than timber, and never the ochre accent
+    # Worked wood, and DARK — the one part that has to out-value the rank's own stone. A door shut
+    # across a niche is parallel to the jambs beside it, so it catches exactly the same light and a
+    # scaffold in one colour draws it as a filled-in wall. Nothing but a different slot separates them.
+    "timber": "#6b5236",
     "cloth": "#bdb3a0",
     # NOCAST is not a colour: a part kept out of the footprint is still painted the rank's stone.
 }

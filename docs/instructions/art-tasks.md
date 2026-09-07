@@ -99,6 +99,12 @@ one repaint and one `import-tile` line and it is done.
 | `junior/lamp`          | `lamp --contents=stand`       | `lamp-junior*`          |
 | `junior/shelf`         | `shelf --contents=linen`      | `shelf-junior*`         |
 | `junior/offeringTable` | `market --contents=laid`      | `offeringtable-junior*` |
+| `expert/niche`         | `niche --contents=sealed`     | `niche-expert*`         |
+| `expert/sconce`        | `sconce --contents=chain`     | `sconce-expert*`        |
+| `master/niche`         | `niche --contents=offering`   | `niche-master*`         |
+| `master/sconce`        | `sconce --contents=mirror`    | `sconce-master*`        |
+| `wizard/niche`         | `niche --contents=star`       | `niche-wizard*`         |
+| `wizard/sconce`        | `sconce --contents=crystal`   | `sconce-wizard*`        |
 
 `starter/rubbleSpill` and `starter/basin` are the merchant's last two files, and `basin` also closes §3's
 first bullet.
@@ -131,10 +137,13 @@ No mesh, no mask; the generation's own silhouette is the tile.
 
 ## 8. The other three ranks
 
-Expert, master and wizard have no props or wall items painted at all. The biggest single kinds are
-`wallShrine` at wizard (129 rooms), `mask` at master (117), `sconce` at master (105) and `wallShrine` at
-expert (95). `prim_niche` and `prim_sconce` already exist, so the niche and shrine family is contents
-edits rather than new models — the cheapest large block on the board.
+Expert, master and wizard have no props or wall items PAINTED at all, though six of their wall items are
+modelled and sitting in §4. What is left, biggest first: `wallShrine` at wizard (129 rooms), `mask` at
+master (117), `wallShrine` at expert (95), `starShaft` at wizard (91) and `veil` at expert (87), then the
+chamber props, which none of these three ranks has started.
+
+`prim_niche` and `prim_sconce` now cover four ranks each on `--contents`, and `prim_hanging` should cover
+the priest's veil the same way. `wallShrine`, `mask` and `starShaft` are the models still owed.
 
 `yarn art-census` ranks all of it by rooms waiting.
 
