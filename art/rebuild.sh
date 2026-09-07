@@ -258,6 +258,18 @@ yarn import-tile art/masters/surfaces/sand.webp --tier=default --name=sand --slo
 # to 33 darker.
 yarn import-tile art/masters/surfaces/junior-floor.webp --tier=junior --name=floor --slot=floor \
   --filter=smooth --key=none --repeat=1.6 --flatten=0.45
+
+# The nobleman's SILL, re-rolled. A sill is not a tiling texture and takes neither a slab count nor a
+# repeat: it is one band four times wider than it is tall, dished where feet cross it. No make-seamless
+# either — it butts against thresholds rather than tiling.
+#
+# --saturation=2.2 --brightness=1.28, and brightness ABOVE 1 is the only one in this file. The return came
+# back pale cool grey where the rank is warm limestone, and on a near-grey source saturation has almost no
+# chroma to multiply — it converts brightness into colour and drove the tile from lum 143 down to 107
+# before it was warm enough. Lifting and warming together lands #b48d64, lum 148 warmth +80, against the
+# tile it replaces at 143 and +82.
+yarn import-tile art/masters/surfaces/junior-threshold.webp --tier=junior --name=threshold --slot=sill \
+  --filter=smooth --key=none --saturation=2.2 --brightness=1.28
 #
 # The bay is `prim_niche`; only --contents changes between ranks. --width and --height are the SLOT'S
 # aspect and not the prop frame's: the default 2:3 frames a 2:1 object to its width, and the import
@@ -321,6 +333,18 @@ yarn import-tile art/masters/props/junior/sconce.webp --tier=junior --name=sconc
 # to 33 darker.
 yarn import-tile art/masters/surfaces/junior-floor.webp --tier=junior --name=floor --slot=floor \
   --filter=smooth --key=none --repeat=1.6 --flatten=0.45
+
+# The nobleman's SILL, re-rolled. A sill is not a tiling texture and takes neither a slab count nor a
+# repeat: it is one band four times wider than it is tall, dished where feet cross it. No make-seamless
+# either — it butts against thresholds rather than tiling.
+#
+# --saturation=2.2 --brightness=1.28, and brightness ABOVE 1 is the only one in this file. The return came
+# back pale cool grey where the rank is warm limestone, and on a near-grey source saturation has almost no
+# chroma to multiply — it converts brightness into colour and drove the tile from lum 143 down to 107
+# before it was warm enough. Lifting and warming together lands #b48d64, lum 148 warmth +80, against the
+# tile it replaces at 143 and +82.
+yarn import-tile art/masters/surfaces/junior-threshold.webp --tier=junior --name=threshold --slot=sill \
+  --filter=smooth --key=none --saturation=2.2 --brightness=1.28
 #
 # All four are the merchant's primitives at the nobleman's colour, so they cost a repaint and no model.
 # --brightness on three of them and --saturation on two: the rank's own stone is #e0c193 against the
