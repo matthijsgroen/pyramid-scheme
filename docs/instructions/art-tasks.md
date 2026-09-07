@@ -66,12 +66,40 @@ candidate has a stepped one with a dark reveal, and it is paler than all of them
 unmatched because guessing would put a wrong master in the repository, which is worse than a gap. Closing
 it means a re-roll, same as §1.
 
-## 3. Waiting on one roll — scaffold ready
+## 3. Painted, but wrong or not to standard
+
+**`starter/pit` — the spoil casts no shadow.** The tile is imported with `--shadow=0` and no `--seat`,
+on the rule that a hole casts nothing, and that is right about the HOLE and wrong about the broken
+mudbrick lying round its mouth. Those pieces sit on the floor like any other prop and should have a
+footprint under them; without one they read as pasted on rather than dropped there.
+
+The blanket flag is the bug. The fix belongs in `make_shadow`: a part marked `VOID` is an absence and an
+absence casts nothing, so the flatten should SKIP void geometry rather than the caller skipping the
+shadow. Then the pit takes a normal `--seat` and only its bricks cast — and the rule generalises to
+every hole the set ever gets, which is `breach` and `plug` next. Note `--sun=0` on the pit's scaffold
+would have to go with it, since that also tells the camera to leave no room underneath.
+
+**`starter/statue` and `starter/basin` — the last two merchant props outside the pipeline.** Both are
+still 56x84 where everything else at that rank is 112x168, both have painted opaque shadows where every
+other prop has a translucent rendered one, and neither has a rebuild line. They have masters
+(`statue.webp`, `statue-shabti.webp`, `basin-sheet.webp`) but those are prompted returns, never drawn
+over a scaffold — so a mask would cut a shape the art does not fill, exactly as it would have for the
+market table. Each needs a re-roll over its geometry to join the rest:
+
+- `basin` — a water jar on a three-legged stand. No primitive yet; it is `jar()` on three legs and is
+  the cheapest model left anywhere.
+- `statue` — a Bes figure, and the one prop the pipeline sends to a museum scan. `statue-shabti.webp`
+  suggests a shabti scan was already used once; `~/tile-previews/meshes/` is where those live.
+
+Doing these two closes the merchant completely: every tile a return, every tile 2x, every tile on a
+rebuild line.
+
+## 4. Waiting on one roll — scaffold ready
 
 - **`starter/rubbleSpill`** — `prim_rubbleheap --contents=spill` is modelled and its three renders are in
   `~/tile-previews/rubble-starter*`. The merchant's last file.
 
-## 4. Waiting on a model
+## 5. Waiting on a model
 
 Every one of these is a primitive in `renderProp.py` plus one roll. The nobleman's column is the brief's
 §2 row, and it is NOT the merchant's object — that mistake cost real work before, so read the row.
@@ -89,7 +117,7 @@ Every one of these is a primitive in `renderProp.py` plus one roll. The nobleman
 `prim_niche` is the pattern to copy: one primitive, `--contents` per rank, so a rank costs a repaint and
 not a model. It already covers two ranks.
 
-## 5. Waiting on a scan
+## 6. Waiting on a scan
 
 Step 0's table sends statues and coffins to a museum scan (Scan the World, Smithsonian Open Access,
 Sketchfab, mostly CC0/CC-BY). Reject Roman or Ptolemaic, gilded, or fragments BEFORE downloading.
@@ -97,13 +125,13 @@ Sketchfab, mostly CC0/CC-BY). Reject Roman or Ptolemaic, gilded, or fragments BE
 - `junior/sarcophagus` — 20 rooms, anthropoid wooden coffin, painted face
 - `junior/statue` — 8 rooms, ka-statue of the owner, seated
 
-## 6. Flat — a prompt and nothing else
+## 7. Flat — a prompt and nothing else
 
 No mesh, no mask; the generation's own silhouette is the tile.
 
 - `junior/tallyBoard` — 5 rooms, estate ledger board, ink columns
 
-## 7. The other three ranks
+## 8. The other three ranks
 
 Expert, master and wizard have no props or wall items painted at all. The biggest single kinds are
 `wallShrine` at wizard (129 rooms), `mask` at master (117), `sconce` at master (105) and `wallShrine` at
@@ -112,7 +140,7 @@ edits rather than new models — the cheapest large block on the board.
 
 `yarn art-census` ranks all of it by rooms waiting.
 
-## 8. Not a tile
+## 9. Not a tile
 
 - **`breach` and `plug`** are missing from `WallDecorationKind`, so roughly 40 drawn files could not be
   used even if painted today. Two lines each, plus a line in `generateDummyTiles`' own `WALL_KINDS`.
