@@ -35,6 +35,30 @@ which is the difference between a repository that can hold the brief's ~224 file
 `rebuild.sh` re-imports every tile it covers from its master. Run it after changing an import flag, or to
 see whether a change to `importTile.ts` moved a tile that is already approved.
 
+## The other four ranks' surfaces cannot be recovered, and should be re-rolled
+
+Twelve files — `floor`, `wall-face` and `threshold` at junior, expert, master and wizard. They have
+masters and no recorded flags, so the obvious move is to re-derive the flags by reproduction, the way the
+merchant's were. It was tried and it does not close, and the narrowing is worth keeping so nobody spends
+the afternoon again:
+
+- **`--repeat=1`, not the docs' 2.4.** On the nobleman's floor, 2.4 scores 0.02 against the shipped tile
+  and 1.0 scores 0.71. The per-slot recipe in the brief is not what these were imported with.
+- **`--flatten` is not a discriminator at all.** It lays a uniform wash, which preserves gradients: 0
+  through 0.8 moved the score 0.709 to 0.669. Do not tune with it.
+- **`make-seamless` and `--roll` both make it worse** — 0.54 and negative respectively. So the master is
+  already past whatever seamless pass it had.
+- **The masters carry artifacts the shipped tiles do not.** `junior-floor.webp` has the ochre band the
+  brief asks for running across it and along its edges; re-imported at repeat=1 the pattern matches the
+  shipped tile slab for slab, and an orange band appears at top and bottom that the shipped tile has
+  not. The handover records why: "a nobleman's ochre band across the paving became a red stripe every
+  eight cells". Whatever removed it is not in this repository.
+
+So these masters are the right LINEAGE and not the shipped tiles' direct input, exactly as the note
+below says of post-processing copies. The route to 2x for them is a re-roll, not archaeology: generate
+each surface again, import it through the recipe, keep the return as the master. That also gets the four
+ranks something the merchant now has and they do not — a master that is a return.
+
 ## How a master is matched back to its return, and why the fingerprint is the weaker test
 
 Everything generated is in `~/Downloads`, under names the generator chose — `Cavalier Oblique Market
