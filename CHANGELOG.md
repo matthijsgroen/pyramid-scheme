@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A furnished room looks like somewhere things were left, not like a page of stickers. Every object now
+  stands at its own angle on the floor, a room that has space for it gets a second piece of furniture
+  serving the same purpose as the first, and a kind can have more than one drawing — so the merchant sells
+  from a table in one room and from reed baskets in another.
 - Props stand in their shadows instead of hovering over them. The sun that offsets a prop's footprint now
   moves it sideways rather than toward you, which is the only direction this projection can move a shadow
   without also moving it up or down — so the brick round a pit's mouth, the timber prop against the roof

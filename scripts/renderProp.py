@@ -180,6 +180,51 @@ def prim_market():
     is what tops the back edge, so the platter and the loaves may sit flat on the timber."""
     contents = arg("contents", "market")
     top_h, leg, w, d, h = 0.07, 0.06, 1.2, 0.6, 0.5
+    if contents == "baskets":
+        # TRADED FROM THE GROUND, not from a table. Market scenes in tomb painting show goods sold out of
+        # big reed baskets set down on the floor, with the scales beside them — the table in the brief's
+        # merchant row is the doubtful part of it, and this is the alternative to look at.
+        #
+        # Built INSTEAD of the table, so nothing of the carcass above is reached: the whole point is that
+        # there is no table.
+        #
+        # A basket is a drum, and a drum is the shape this projection is least kind to — `prim_brazier`'s
+        # dish and `prim_lamp`'s foot both record it. Round costs depth, and depth is charged to the drawn
+        # height at k, so three round baskets side by side would be as tall drawn as they are wide. They
+        # are squashed to 0.62 in y for that reason, which also reads correctly: a coiled basket packed
+        # against its neighbours is not a circle.
+        #
+        # What says REED at 56 units is not the weave, which is finer than a pixel here. It is the RIM —
+        # a ring proud of the body, which is how a coiled basket is finished — and a LID leaning against
+        # one of them. Both are geometry the repaint can put a weave on; neither is paint alone.
+        for bx, br, bh, part in ((-0.34, 0.28, 0.40, "body"), (0.10, 0.24, 0.32, "body"), (0.46, 0.19, 0.22, "body")):
+            body = cyl(br, bh, x=bx, y=0.0, z=bh / 2, verts=18)
+            body.scale = (1.0, 0.62, 1.0)
+            bpy.ops.object.transform_apply(scale=True)
+            mark(body, part)
+            rim = cyl(br * 1.07, 0.05, x=bx, y=0.0, z=bh, verts=18)
+            rim.scale = (1.0, 0.62, 1.0)
+            bpy.ops.object.transform_apply(scale=True)
+            mark(rim, part)
+        # The first basket is OPEN, heaped over its rim: a lid on every one of them is a row of drums, and
+        # what says market is being able to see what is for sale. `prim_market`'s grain heap is the shape.
+        bpy.ops.mesh.primitive_cone_add(vertices=18, radius1=0.26, radius2=0.0, depth=0.20,
+                                        location=(-0.34, 0.0, 0.48))
+        heap = bpy.context.object
+        heap.scale = (1.0, 0.62, 1.0)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(heap, "accent")
+        # The second is lidded, and the third's lid LEANS against it — the one part of a basket that is
+        # not a drum, and the thing that stops the group reading as three pots.
+        lid = cyl(0.25, 0.045, x=0.10, y=0.0, z=0.345, verts=18)
+        lid.scale = (1.0, 0.62, 1.0)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(lid, "body")
+        leaning = cyl(0.17, 0.04, verts=18)
+        leaning.scale = (1.0, 0.62, 1.0)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(turn(leaning, 68, "Y", 0.66, -0.06, 0.17), "body")
+        return join_all()
     mark(box(w, d, top_h, z=h - top_h / 2), "body")
     for sx in (-1, 1):
         for sy in (-1, 1):
@@ -635,14 +680,19 @@ def prim_sealedchest():
         for sy in (-1, 1):
             mark(box(0.07, 0.07, foot, x=sx * (w / 2 - 0.07), y=sy * (d / 2 - 0.07), z=foot / 2), "body")
     # The cord: over the lid, down over its front lip, with a seal where it crosses.
-    mark(box(0.045, d + 0.06, 0.05, x=-0.06, z=foot + h + 0.088), "cloth")
-    mark(box(0.045, 0.05, h * 0.78, x=-0.06, y=-(d / 2 + 0.045), z=foot + h * 0.70), "cloth")
+    mark(box(0.045, d + 0.06, 0.05, x=-0.06, z=foot + h + 0.088), nocast("cloth"))
+    # It stops HALFWAY DOWN the face, and that is a --spin lesson (pipeline Step 1b). A part standing
+    # proud of a front face is moved in Y by the spin, and Y feeds the drawn vertical — so at 0.78 of the
+    # body's height the strap's drawn foot dropped past the chest's own base once the chest was turned 27
+    # degrees, and hung under it like a loose stick. Nothing was wrong with it square-on, which is exactly
+    # why the spin has to be chosen before the master is painted.
+    mark(box(0.045, 0.05, h * 0.55, x=-0.06, y=-(d / 2 + 0.045), z=foot + h * 0.80), nocast("cloth"))
     bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=0.058,
                                          location=(-0.06, -(d / 2 + 0.085), foot + h * 0.58))
     seal = bpy.context.object
     seal.scale = (1.0, 0.5, 1.0)
     bpy.ops.object.transform_apply(scale=True)
-    mark(seal, "accent")
+    mark(seal, nocast("accent"))
     return join_all()
 
 
@@ -1610,6 +1660,25 @@ VOID = "void"  # the material name a primitive marks the inside of a hole with
 # they hang over and into the shaft, so there is no floor under them to catch a shadow, and flattened to
 # z=0 they came out as dark slabs lying beside the hole.
 NOCAST = "nocast"
+# The same thing as a SUFFIX on any other part name, so a part can keep its colour and still cast nothing:
+# `cloth!nocast` is painted as cloth and dropped from the footprint. Bare NOCAST is that suffix with no
+# part in front of it, and stays for the pit's pole and ladder, which want the rank's plain stone.
+#
+# The case that wanted it: `prim_sealedchest`'s cord stands proud of the chest's front face, and a
+# flattened footprint put a thin grey bar on the floor in front of the chest — a shadow belonging to the
+# chest's own face, drawn on the ground. Marking it bare NOCAST would have fixed the shadow and painted
+# the cord in mudbrick, which the repaint then has no reason to read as cord.
+NOCAST_SUFFIX = "!nocast"
+
+
+def nocast(name):
+    """`name`, kept out of the footprint. Colour by the part, cast by nothing."""
+    return f"{name}{NOCAST_SUFFIX}"
+
+
+def part_of(slot_name):
+    """The PART a slot names, with Blender's uniquifying suffix and the nocast marker both stripped."""
+    return slot_name.split(".")[0].removesuffix(NOCAST_SUFFIX)
 
 # What a marked part is painted, when the caller names no colour for it. A scaffold's job is to be
 # RECOGNISED — tile-art-brief.md's whole argument for --colour is that a grey render came back as
@@ -1694,7 +1763,8 @@ def paint(obj, hex_colour):
         obj.data.materials.append(flat_material("prop", hex_colour))
         return
     for i, name in enumerate(names):
-        default = PART_COLOURS.get(name, hex_colour)
+        # By the PART, so `cloth!nocast` is painted cloth — see `nocast`.
+        default = PART_COLOURS.get(part_of(name), hex_colour)
         # Keeps the slot's NAME, not `prop{i}`. `make_shadow` reads it back to find the void, and a
         # renamed slot leaves it unable to tell an absence from stone.
         obj.data.materials[i] = flat_material(name, arg(f"colour-{name}", default))
@@ -1837,7 +1907,11 @@ def drop_void_faces(mesh_obj):
     # then `paint` creates ANOTHER material with that name — so Blender uniquifies it to "void.001" and an
     # exact-name test silently matches nothing. This function quietly did nothing at all until that was
     # printed out.
-    void = [i for i, m in enumerate(mesh_obj.data.materials) if m and m.name.split(".")[0] in (VOID, NOCAST)]
+    void = [
+        i
+        for i, m in enumerate(mesh_obj.data.materials)
+        if m and (part_of(m.name) in (VOID, NOCAST) or m.name.split(".")[0].endswith(NOCAST_SUFFIX))
+    ]
     if not void:
         return
     mesh = mesh_obj.data

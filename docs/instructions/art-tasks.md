@@ -99,30 +99,36 @@ brief's three over geometry. The rank is otherwise finished.
 Modelled, self-verified in the sheared render, and the three renders are in `~/tile-previews/`. Each needs
 one repaint and one `import-tile` line and it is done.
 
-| kind                   | primitive                       | renders                 |
-| ---------------------- | ------------------------------- | ----------------------- |
-| `junior/pillar`        | `palm`                          | `palm-junior*`          |
-| `junior/shrine`        | `falseDoor`                     | `falsedoor-junior*`     |
-| `junior/chestProp`     | `sealedChest`                   | `sealedchest-junior*`   |
-| `junior/basin`         | `basin --contents=bowl`         | `basin-junior*`         |
-| `junior/lamp`          | `lamp --contents=stand`         | `lamp-junior*`          |
-| `junior/shelf`         | `shelf --contents=linen`        | `shelf-junior*`         |
-| `junior/offeringTable` | `market --contents=laid`        | `offeringtable-junior*` |
-| `expert/niche`         | `niche --contents=sealed`       | `niche-expert*`         |
-| `expert/sconce`        | `sconce --contents=chain`       | `sconce-expert*`        |
-| `master/niche`         | `niche --contents=offering`     | `niche-master*`         |
-| `master/sconce`        | `sconce --contents=mirror`      | `sconce-master*`        |
-| `wizard/niche`         | `niche --contents=star`         | `niche-wizard*`         |
-| `wizard/sconce`        | `sconce --contents=crystal`     | `sconce-wizard*`        |
-| `expert/wallShrine`    | `wallShrine --contents=ajar`    | `wallshrine-expert*`    |
-| `expert/veil`          | `hanging --contents=rail`       | `veil-expert*`          |
-| `master/mask`          | `mask`                          | `mask-master*`          |
-| `wizard/wallShrine`    | `wallShrine --contents=opening` | `wallshrine-wizard*`    |
-| `wizard/starShaft`     | `starShaft`                     | `starshaft-wizard*`     |
-| `junior/hanging`       | `hanging --contents=linen`      | `hanging-junior*`       |
-| `expert/hanging`       | `hanging --contents=veil`       | `hanging-expert*`       |
-| `master/hanging`       | `hanging --contents=gold`       | `hanging-master*`       |
-| `wizard/hanging`       | `hanging --contents=aurora`     | `hanging-wizard*`       |
+| kind                   | primitive                             | renders                 |
+| ---------------------- | ------------------------------------- | ----------------------- |
+| `junior/pillar`        | `palm --spin=22`                      | `palm-junior*`          |
+| `junior/shrine`        | `falseDoor --spin=6`                  | `falsedoor-junior*`     |
+| `junior/chestProp`     | `sealedChest --spin=-27`              | `sealedchest-junior*`   |
+| `junior/basin`         | `basin --contents=bowl --spin=14`     | `basin-junior*`         |
+| `junior/lamp`          | `lamp --contents=stand --spin=8`      | `lamp-junior*`          |
+| `junior/shelf`         | `shelf --contents=linen --spin=5`     | `shelf-junior*`         |
+| `junior/offeringTable` | `market --contents=laid --spin=-16`   | `offeringtable-junior*` |
+| `expert/niche`         | `niche --contents=sealed`             | `niche-expert*`         |
+| `expert/sconce`        | `sconce --contents=chain`             | `sconce-expert*`        |
+| `master/niche`         | `niche --contents=offering`           | `niche-master*`         |
+| `master/sconce`        | `sconce --contents=mirror`            | `sconce-master*`        |
+| `wizard/niche`         | `niche --contents=star`               | `niche-wizard*`         |
+| `wizard/sconce`        | `sconce --contents=crystal`           | `sconce-wizard*`        |
+| `expert/wallShrine`    | `wallShrine --contents=ajar`          | `wallshrine-expert*`    |
+| `expert/veil`          | `hanging --contents=rail`             | `veil-expert*`          |
+| `master/mask`          | `mask`                                | `mask-master*`          |
+| `wizard/wallShrine`    | `wallShrine --contents=opening`       | `wallshrine-wizard*`    |
+| `wizard/starShaft`     | `starShaft`                           | `starshaft-wizard*`     |
+| `junior/hanging`       | `hanging --contents=linen --spin=38`  | `hanging-junior*`       |
+| `expert/hanging`       | `hanging --contents=veil --spin=42`   | `hanging-expert*`       |
+| `master/hanging`       | `hanging --contents=gold --spin=33`   | `hanging-master*`       |
+| `wizard/hanging`       | `hanging --contents=aurora --spin=47` | `hanging-wizard*`       |
+
+Every floor prop here carries a `--spin`, which is pipeline Step 1b: a room holds two props now
+(`companionProps`) plus its scatter, and square-on they read as a sticker sheet rather than as a place
+someone left things in. The angles are small where an object's back belongs to a wall and larger where
+nothing anchors it — the step's table gives the ranges. Wall items take none: they are ON the band, at half
+shear, with no floor to be askew of.
 
 `wizard/hanging` is the one that imports differently: a curtain of aurora casts nothing, so it has no
 shadow render and its line takes no `--seat`. It also wants `--colour-accent` set to the rank's own light —

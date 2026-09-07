@@ -18,11 +18,11 @@ row says it is made of. Also decide where the mesh comes from:
 | furniture, racks, chests, plinths, stands                        | a parametric primitive in `renderProp.py`                                            |
 | a wall item WITH depth — a niche, anything standing off the wall | a parametric primitive too, rendered `--shear=0.5` (see below)                       |
 | heaps of BRICK or cut stone                                      | a parametric primitive — a brick is a box (`prim_rubbleheap`)                        |
-| a HOLE — in the floor or in a wall                                | a parametric primitive, its inside marked `VOID` (`prim_pit`)                         |
+| a HOLE — in the floor or in a wall                               | a parametric primitive, its inside marked `VOID` (`prim_pit`)                        |
 | statues, sarcophagi, canopic jars                                | a museum scan — Scan the World, Smithsonian Open Access, Sketchfab, mostly CC0/CC-BY |
 | a FLAT wall item — a plaque, a stela, a board                    | no mesh: straight to the generator                                                   |
-| CLOTH — a hanging, an awning, a veil                             | a parametric primitive: cloth is a formula, not a simulation (`prim_hanging`)         |
-| a DRIFT of sand                                                  | a full-bleed texture, cut to a generated alpha (`yarn drift-mask`)                    |
+| CLOTH — a hanging, an awning, a veil                             | a parametric primitive: cloth is a formula, not a simulation (`prim_hanging`)        |
+| a DRIFT of sand                                                  | a full-bleed texture, cut to a generated alpha (`yarn drift-mask`)                   |
 | loose scatter, sherds, dust                                      | still unsolved; paint by hand or generate                                            |
 
 **A wall item is not exempt from projection.** The band is the same oblique world at HALF depth
@@ -71,20 +71,16 @@ about pointing at the viewer nor `prim_sconce`'s about running away from him eve
 No simulation, and not as a shortcut. A solver gives a drape that depends on the frame it was baked on,
 and a primitive that renders differently every run cannot be judged against its last roll. A cloth hung
 from a bar is a sine along its width, pinched to nothing where it is tied and swinging widest at the free
-hem — two lines, deterministic. Displace the folds in Y and not in X: under z + k*y a fold pushed back is
+hem — two lines, deterministic. Displace the folds in Y and not in X: under z + k\*y a fold pushed back is
 drawn HIGHER, so the ripple lands as a shift in the surface and its shading does the rest, where a
 sideways displacement only makes the sheet narrower and wider and reads as a flag with a scalloped edge.
 
 **A HOLE is one parallelogram deep, and its dark is geometry too.** Under z + k*y the ground in front of
 an opening draws lower as it comes toward the viewer, so it covers the shaft below the near lip: the whole
-of a floor hole is the band between its two lip lines, `k*d` tall, and a far wall of exactly that height
-fills it. Anything modelled deeper is behind the floor tile the sprite is composited onto, and anything
-hung over the NEAR lip is never drawn at all. The VALUE is not promptable either — a scaffold in one flat
-colour hands the generator a rack with a grey gap in it — so a primitive marks the inside of a hole with
-the `VOID` material and `--void` paints it near-black before the repaint ever sees it.
+of a floor hole is the band between its two lip lines, `k*d`tall, and a far wall of exactly that height fills it. Anything modelled deeper is behind the floor tile the sprite is composited onto, and anything hung over the NEAR lip is never drawn at all. The VALUE is not promptable either — a scaffold in one flat colour hands the generator a rack with a grey gap in it — so a primitive marks the inside of a hole with the`VOID`material and`--void` paints it near-black before the repaint ever sees it.
 
 **"Scatter" is about SAND, not about rubble.** A merchant's rubble is broken mudbrick, and a brick is a
-box — the modeller was always able to make it. What a heap needs is height put at the BACK (under z + k*y
+box — the modeller was always able to make it. What a heap needs is height put at the BACK (under z + k\*y
 mass behind the centre buys drawn height twice over), every piece rolled off level and not merely yawed,
 and contact judged in the SHEARED projection: two pieces touching in Blender need not touch on the page.
 
@@ -108,7 +104,7 @@ yarn render-prop --primitive=rubbleHeap --colour=#a49781 --preview=1 --width=600
 
 A perspective three-quarter view, unsheared. Every other render in this pipeline goes through the shear,
 which answers one question perfectly and another not at all: it says exactly what the map will draw, and
-nothing about whether the thing is BUILT. Under z + k*y two parts that touch in the world need not touch
+nothing about whether the thing is BUILT. Under z + k\*y two parts that touch in the world need not touch
 on the page, and two far apart in depth can land on top of each other — `prim_rubbleheap` records a crown
 that hid behind the brick it was meant to sit on, and `prim_sconce` a brace that floated under its own
 arm. Both were obvious the moment the mesh was seen from the side, and neither was visible head-on.
@@ -141,6 +137,48 @@ yarn render-prop --primitive=cube --shear=0.7
 At `--shear=1.0` a unit cube must measure height/width 2.000, no row narrowing, and a top/front split of
 exactly 50/50. It measured 2.006 and 50.0% on Blender 5.2.1. If the cube is right, the matrix is right,
 whatever a mesh does afterwards.
+
+## Step 1b — give it a SPIN
+
+Every free-standing prop is rendered at an angle on the floor. `--spin` turns the object BEFORE the shear,
+which is the one thing a prompt could never do — and the reason it is a step of its own rather than a
+per-prop whim is what a room looks like without it.
+
+**Square-on props read as a sticker sheet.** A room now holds two of them (`companionProps`) and its floor
+holds scatter besides, and if every one of them faces the viewer dead-on the cell stops looking like a
+place someone left things in and starts looking like items laid out on a page. The paving is on the grid;
+anything else on the grid joins it. `prim_mat` recorded half of this rule for one prop — "a rug lying askew
+of the grid cannot be read as part of the paving, where an axis-aligned one can" — and it generalises to
+every object that is not fixed to a wall.
+
+It is BAKED, per tile, at render time. Rotating the sprite at runtime is not the same thing and is not
+available: `shear`'s own docstring is the reason — turning an object and then shearing it is a projection,
+turning an already-sheared sprite is a skew, and the second one throws the whole file's geometry away.
+
+### How much
+
+| class                                                                    | spin   | why                                                                                                                                                       |
+| ------------------------------------------------------------------------ | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| free-standing on the floor — a chest, a table, a basket group, a hanging | 15–45° | Nothing anchors it to an axis. This is where the variety has to come from.                                                                                |
+| against a wall — a stela, a false door, a linen press, a shelf           | 0–8°   | Its back belongs flat to the wall behind it. A false door turned 30° reads as furniture that has fallen over.                                             |
+| round, or nearly — a basin, a lamp stand, a brazier, a column            | 8–22°  | Spin is nearly invisible on a body of revolution, so it costs nothing and buys a little on whatever is asymmetric: a spout, a dipper, a capital's fronds. |
+| a hole in the floor — `pit`                                              | 0      | Its mouth is a parallelogram cut to the cell. Turned, it stops agreeing with the paving it is cut into.                                                   |
+| a wall item — niche, sconce, mask, shaft, wall shrine, veil              | 0      | It is ON the band, at half shear. There is no floor for it to be askew of.                                                                                |
+
+Pick a number per prop and WRITE IT DOWN in the prop's `rebuild.sh` line, the way every other flag is
+recorded. Do not derive it from a hash inside the renderer: a default that silently decides geometry is
+the one kind of change that invalidates a master without anyone touching the master.
+
+### The one hard constraint
+
+**A painted tile's spin can never change.** The mask is cut from the render, the master was painted over
+that mask, and a spin moves every edge of it — so adopting this step means adopting it for work that is not
+yet painted. The merchant's rank is painted square-on except for his mat (9°) and his hanging (45°), and it
+stays that way unless a tile is re-rolled for some other reason anyway.
+
+Two spins of the SAME object are two variants, not one tile: `tileVariants` picks between `<name>.png` and
+`<name>-2.png` by position, so a kind can be square in one room and turned in another. That costs a repaint
+per angle, so it is worth it only where a kind fills a lot of rooms.
 
 ## Step 2 — the scaffold, the mask and the shadow
 
@@ -178,7 +216,7 @@ included — `join_all` merges slots by name and polygons keep their indices, so
 whatever slot lands at index 0. And keep the part colours IN the rank's palette: they are a scaffold's
 hint, not the finished art, and a bright one invites a bright repaint.
 
-**Gate: no wide flat slab at floor level.** This projection draws a footprint 0.7*depth below the thing
+**Gate: no wide flat slab at floor level.** This projection draws a footprint 0.7\*depth below the thing
 that made it, and a slab has almost no height to separate the two — so a slab's shadow is a copy of the
 slab, directly beneath it, and the eye reads a two-tier plinth. `--sun` cannot help: it shifts the
 footprint in depth, not out from under a shape as wide as the shadow it makes. The pillar's stone pad was
@@ -268,8 +306,7 @@ the SAME shadow on every prop of a rank, which no amount of prompting would have
 into, so the standard `--shadow=0.8 --sun=0.30` puts a dark copy of the sheet's own silhouette directly
 beneath the sheet and reads as a second step. Turning it off is worse and the numbers say why: the sheet
 then measures 2 against the floor's own value — the vanishing the floor-gap number exists to catch — and
-its warmth runs to +46, because the shadow was the only neutral thing in the frame. `--shadow=0.55
---sun=0.12` passes both. Note the flag order in `art/rebuild.sh`: `renderProp`'s `arg()` returns the
+its warmth runs to +46, because the shadow was the only neutral thing in the frame. `--shadow=0.55 --sun=0.12` passes both. Note the flag order in `art/rebuild.sh`: `renderProp`'s `arg()` returns the
 FIRST match, so the mask's `--shadow=0` must precede any per-prop `--shadow` or the footprint lands back
 inside the mask — measured at 156,707 opaque pixels against 116,661.
 

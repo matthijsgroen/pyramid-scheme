@@ -256,6 +256,16 @@ yarn import-tile art/masters/props/starter/shrine.webp --tier=starter --name=shr
 # hand-painted props sit at +22 to +25. Judge that on the CLOTH and not on the sprite — a fifth of this
 # tile is shadow, and the whole-sprite mean put it 9 from the floor when the cloth itself is 18 lighter
 # and 21 warmer.
+# NO --spin YET, and the empty line above the flag is the point: this tile is PAINTED square-on, and its
+# spin arrives with its repaint or not at all. Step 1b of the pipeline states the constraint and this file
+# proved it — set to --spin=45 against the existing master, the frontal cloth was cut by a diagonal mask
+# and the tile came out a smear with a loose diagonal shadow beside it.
+#
+# The spun scaffold is rendered and waiting in ~/tile-previews/hanging-starter*, and art-tasks records what
+# the repaint is for: `hanging` is tagged funerary and cosmos in dressingTags, so world-gen only puts it
+# where someone prayed or watched the sky, and the brief's merchant row describes a market awning — the one
+# thing those rooms have no use for. The turn is what stops it reading as part of the paving (`prim_mat`'s
+# --spin=9 argument), and the repaint is what makes it a screening cloth rather than a stall's canopy.
 scaffold hanging
 yarn import-tile art/masters/props/starter/hanging.webp --tier=starter --name=hanging --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92 --saturation=1.5
