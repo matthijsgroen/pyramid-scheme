@@ -5,6 +5,7 @@ import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
 import { ART_IMAGE_RENDERING, tileUrl } from "./tileAssets"
 import { authoredKindsFor } from "./authoredKinds"
+import { tileNameFor } from "./floorScatter"
 
 // The art backlog, as the world itself reports it — the same numbers `yarn art-census` prints, in the
 // place the art is actually judged. What it answers that PropSheet cannot: which of these files is REAL,
@@ -48,6 +49,9 @@ const coloursIn = (url: string): Promise<number> =>
  * there is nothing to count and the sort puts those rows at the top of their own group instead. */
 type Row = { tier: Difficulty; kind: string; layer: "prop" | "wall" | "scatter"; rooms: number | null }
 
+/** The file a row draws, which is not its kind where `rubble` is concerned — see `tileNameFor`. */
+const fileFor = (row: Row): string => tileNameFor(row.kind, row.layer === "scatter" ? "scatter" : "prop")
+
 /** How many rooms of the generated world each kind lands in. Assembles every floor, which takes a few
  * seconds — the reason this is its own story rather than a badge on the prop sheet. */
 const countRooms = (): Row[] => {
@@ -90,9 +94,9 @@ const Backlog: FC<{ onlyTodo: boolean }> = ({ onlyTodo }) => {
     let live = true
     void Promise.all(
       measured.map(async row => {
-        const url = tileUrl(row.tier, row.kind)
+        const url = tileUrl(row.tier, fileFor(row))
         if (!url) return null as [string, number] | null
-        return [`${row.tier}/${row.kind}`, await coloursIn(url)] as [string, number]
+        return [`${row.tier}/${fileFor(row)}`, await coloursIn(url)] as [string, number]
       })
     ).then(pairs => {
       if (live) setSizes(Object.fromEntries(pairs.filter((pair): pair is [string, number] => pair !== null)))
@@ -105,7 +109,7 @@ const Backlog: FC<{ onlyTodo: boolean }> = ({ onlyTodo }) => {
   if (!rows) return <div className="p-6 text-sm text-white/70">assembling every floor of the world…</div>
 
   const state = (row: Row) => {
-    const colours = sizes[`${row.tier}/${row.kind}`]
+    const colours = sizes[`${row.tier}/${fileFor(row)}`]
     if (colours === undefined) return "…"
     return colours === 0 ? "missing" : colours < PAINTED_MIN_COLOURS ? "placeholder" : "art"
   }
@@ -134,7 +138,7 @@ const Backlog: FC<{ onlyTodo: boolean }> = ({ onlyTodo }) => {
         </thead>
         <tbody>
           {shown.map(row => {
-            const url = tileUrl(row.tier, row.kind)
+            const url = tileUrl(row.tier, fileFor(row))
             const s = state(row)
             return (
               <tr key={`${row.tier}/${row.kind}`} className="border-t border-white/10">
@@ -148,7 +152,10 @@ const Backlog: FC<{ onlyTodo: boolean }> = ({ onlyTodo }) => {
                   )}
                 </td>
                 <td className="px-2">{row.tier}</td>
-                <td className="px-2">{row.kind}</td>
+                <td className="px-2">
+                  {row.kind}
+                  {fileFor(row) === row.kind ? "" : <span className="text-white/40"> → {fileFor(row)}</span>}
+                </td>
                 <td className="px-2 text-white/50">{row.layer}</td>
                 <td className="px-2 text-right">{row.rooms ?? "underfoot"}</td>
                 <td

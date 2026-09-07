@@ -1089,11 +1089,27 @@ def make_shadow(obj, depth, floor_hex, offset_x, offset_y):
     that — not the shadow being a shadow — is what read as too black.
 
     `offset` is the light: shifting the flattened copy is what moves the sun."""
+    # TWO flattened copies, unioned: one exactly under the object and one pushed toward the viewer.
+    #
+    # A shadow touches its object where the OBJECT TOUCHES THE GROUND, and translating the whole
+    # footprint moves that contact edge away — so any offset at all detaches it and the thing floats.
+    # Shrinking --sun shrinks the gap and never closes it, which is why the props kept looking lifted
+    # however low the sun was set. The copy at zero holds the contact; the offset copy gives the pool its
+    # direction and spread. They overlap, and that costs nothing: the material is flat emission, so two
+    # copies of it render exactly as one.
     shadow = obj.copy()
     shadow.data = obj.data.copy()
     bpy.context.scene.collection.objects.link(shadow)
     shadow.data.transform(Matrix.Diagonal((1.0, 1.0, 0.0, 1.0)))
-    shadow.data.transform(Matrix.Translation((offset_x, offset_y, 0.0)))
+    if offset_x or offset_y:
+        anchored = shadow.data.copy()
+        shadow.data.transform(Matrix.Translation((offset_x, offset_y, 0.0)))
+        contact = bpy.data.objects.new("shadow-contact", anchored)
+        bpy.context.scene.collection.objects.link(contact)
+        make_active(shadow)
+        contact.select_set(True)
+        bpy.ops.object.join()
+        shadow = bpy.context.object
     h = floor_hex.lstrip("#")
     rgb = tuple(srgb_to_linear(int(h[i : i + 2], 16) / 255) * (1.0 - depth) for i in (0, 2, 4))
     mat = bpy.data.materials.new("shadow")

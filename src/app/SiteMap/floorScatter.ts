@@ -46,6 +46,15 @@ export const STANDING_VARIANT: Partial<Record<DecorationKind, string>> = { rubbl
 
 export const FLOOR_KINDS: ReadonlySet<string> = new Set<ScatterKind>(["sand", "rubble", "mat"])
 
+/** The FILE a kind draws in a given layer, which is not always the kind's own name.
+ *
+ * `rubble` is two objects sharing one name: a room's dressing gets the standing heap and the scatter
+ * layer gets the flat spill. Anything listing both layers therefore shows the name twice, and unless it
+ * resolves this it shows the same file twice as well — the prop sheet was staging the SPILL where a room
+ * draws the heap, which is the same blindness `art-census` had. */
+export const tileNameFor = (kind: string, layer: "prop" | "scatter"): string =>
+  layer === "prop" ? (STANDING_VARIANT[kind as DecorationKind] ?? kind) : kind
+
 /** Scatter kinds drawn as DRIFTS rather than as cell-sized sprites — see `driftsFor`. Exported so a
  * sheet staging one stages it the way the map does: centred on the cell and sized in cells, not
  * bottom-anchored in a prop box, which is what it stops being the moment it outgrows a cell. */

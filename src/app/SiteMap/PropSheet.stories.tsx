@@ -3,7 +3,7 @@ import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { CELL, WALL_H } from "./mapScale"
 import { authoredKindsFor } from "./authoredKinds"
-import { DRIFT_KINDS } from "./floorScatter"
+import { DRIFT_KINDS, tileNameFor } from "./floorScatter"
 import { ART_IMAGE_RENDERING, tileUrl } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
 
@@ -38,8 +38,11 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; underfoo
   zoom,
 }) => {
   const drift = DRIFT_KINDS.has(name)
+  // The file this row actually draws. A room dressed with `rubble` gets the standing heap; the scatter
+  // layer gets the flat spill. Staged by kind alone, both rows showed the spill.
+  const file = tileNameFor(name, underfoot ? "scatter" : "prop")
   const palette = tierPalette[tier]
-  const art = tileUrl(tier, name)
+  const art = tileUrl(tier, file)
   const floor = tileUrl(tier, "floor")
   const face = tileUrl(tier, "wall-face")
   const explorer = tileUrl("starter", "explorer-s-1")
@@ -139,6 +142,7 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; underfoo
       </div>
       <figcaption className="text-[10px] text-white/60">
         {name}
+        {file === name ? "" : ` → ${file}`}
         {art ? "" : " (none)"}
       </figcaption>
     </figure>
