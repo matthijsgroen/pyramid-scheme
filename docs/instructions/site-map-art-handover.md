@@ -30,6 +30,11 @@ reported the merchant as one file from finished while the drifts and spills the 
 still placeholders. It is the most visible layer there is: two pieces to a chamber, about twenty-two to a
 floor, on the cells you actually cross, where a prop stands on a cell nobody can reach.
 
+**[art-tasks.md](art-tasks.md) is the queue** — what is left to draw and what each gap is waiting on: a
+roll, a model, a scan, or a code change. The census cannot tell you those, and it also calls a tile "art"
+when it is painted but has no master, or a master that is a copy rather than a return. That list tracks
+both.
+
 Run `yarn art-census` before planning any of it: it counts, per rank, how many ROOMS each prop and wall
 item actually lands in and whether that file is real art, a placeholder, or missing. A kind belongs to a
 rank through its ROLE tags rather than through its tier, so which files a rank needs cannot be read off a
