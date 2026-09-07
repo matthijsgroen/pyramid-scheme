@@ -75,8 +75,8 @@ other prop has a translucent rendered one, and neither has a rebuild line. They 
 over a scaffold — so a mask would cut a shape the art does not fill, exactly as it would have for the
 market table. Each needs a re-roll over its geometry to join the rest:
 
-- `basin` — a water jar on a three-legged stand. No primitive yet; it is `jar()` on three legs and is
-  the cheapest model left anywhere.
+- `basin` — a water jar on a three-legged stand. MODELLED: `prim_basin --contents=jar`, renders in
+  `~/tile-previews/basin-starter*`, so it is in §4 and needs only the roll.
 - `statue` — a Bes figure, and the one prop the pipeline sends to a museum scan. `statue-shabti.webp`
   suggests a shabti scan was already used once; `~/tile-previews/meshes/` is where those live.
 
@@ -85,26 +85,34 @@ rebuild line.
 
 ## 4. Waiting on one roll — scaffold ready
 
-- **`starter/rubbleSpill`** — `prim_rubbleheap --contents=spill` is modelled and its three renders are in
-  `~/tile-previews/rubble-starter*`. The merchant's last file.
+Modelled, self-verified in the sheared render, and the three renders are in `~/tile-previews/`. Each needs
+one repaint and an `import-tile` line and it is done.
+
+| kind                  | primitive                     | renders               |
+| --------------------- | ----------------------------- | --------------------- |
+| `starter/rubbleSpill` | `rubblePile --contents=spill` | `rubble-starter*`     |
+| `starter/basin`       | `basin --contents=jar`        | `basin-starter*`      |
+| `junior/pillar`       | `palm`                        | `palm-junior*`        |
+| `junior/shrine`       | `falseDoor`                   | `falsedoor-junior*`   |
+| `junior/chestProp`    | `sealedChest`                 | `sealedchest-junior*` |
+| `junior/basin`        | `basin --contents=bowl`       | `basin-junior*`       |
+
+`starter/rubbleSpill` and `starter/basin` are the merchant's last two files, and `basin` also closes §3's
+first bullet.
 
 ## 5. Waiting on a model
 
-Every one of these is a primitive in `renderProp.py` plus one roll. The nobleman's column is the brief's
-§2 row, and it is NOT the merchant's object — that mistake cost real work before, so read the row.
+Every one of these is a primitive in `renderProp.py` plus one roll. The nobleman's object is NOT the
+merchant's in any of these rows — that mistake cost real work before, so read the row.
 
-| kind                 | rooms | what the nobleman's is                                  |
-| -------------------- | ----- | ------------------------------------------------------- |
-| `junior/pillar`      | 25    | palm column, painted capital — not a leaning timber prop |
-| `junior/chestProp`   | 21    | one sealed chest, wax seals on a cord — not baskets      |
-| `junior/shrine`      | 22    | miniature false-door stela with an offering table        |
-| `junior/basin`       | 19    | ablution basin, painted rim                              |
-| `junior/offeringTable` | 12  | a laid dining table — not a balance and grain            |
-| `junior/shelf`       | 9     | linen press, folded sheets, a mirror case                |
-| `junior/lamp`        | 8     | bronze lamp stand — not a lamp on a stool                |
+| kind                   | rooms | what the nobleman's is                        |
+| ---------------------- | ----- | --------------------------------------------- |
+| `junior/offeringTable` | 12    | a laid dining table — not a balance and grain |
+| `junior/shelf`         | 9     | linen press, folded sheets, a mirror case     |
+| `junior/lamp`          | 8     | bronze lamp stand — not a lamp on a stool     |
 
-`prim_niche` is the pattern to copy: one primitive, `--contents` per rank, so a rank costs a repaint and
-not a model. It already covers two ranks.
+`prim_niche` is the pattern to copy, and `prim_basin` is now a second one: one primitive, `--contents` per
+rank, so a rank costs a repaint and not a model. Between them they cover four ranks' worth of rows.
 
 ## 6. Waiting on a scan
 

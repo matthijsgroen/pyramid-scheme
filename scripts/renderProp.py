@@ -469,6 +469,127 @@ def prim_falsedoor():
     return join_all()
 
 
+def prim_sealedchest():
+    """The nobleman's chest: one sealed box, a banded lid, wax seals on a knotted cord.
+
+    NOT `prim_chest`, which is the merchant's baskets-and-crate. The brief gives this rank a single sealed
+    chest with painted panels, and one object is a harder silhouette than three: there is nothing beside it
+    to give it scale or to break its outline.
+
+    WHAT MAKES A BOX READ AS A CHEST is a line across it, and the first pass learned that a lid you can
+    see in three-quarter view is invisible in the tile. An overhanging lid, feet, a proud front lip — all
+    of them were there in the preview and none survived the shear, because the shear turns the lid's top
+    into one pale field and the body's front into one darker field, and a box has exactly that boundary
+    whether it opens or not. So the line is a BAND: a strip round the body's top in `metal`, which is a
+    different colour and not a different orientation. `mark` is how the geometry offers a line the shear
+    cannot flatten away.
+
+    The feet stay, for `prim_pillar`'s reason: a box flat on the floor has its footprint directly beneath
+    it and joins the ground, where four short feet leave a visible gap under the body.
+
+    Shallower than it is wide, again for `prim_chest`'s reason: a deep box gives the shear a big pale top
+    face and the whole thing reads as furniture rather than as a container.
+
+    The cord is coarse on purpose — at 0.02 it is one pixel at slot size, so it is 0.045 and reads as a
+    strap — and the seal stands in FRONT of it, not behind: behind, the strap split the seal in two."""
+    w, d, h, foot = 0.72, 0.40, 0.40, 0.055
+    mark(box(w, d, h, z=foot + h / 2), "body")
+    # The band that says lid. A colour change, because an edge is not one — see the docstring.
+    mark(box(w + 0.03, d + 0.03, 0.035, z=foot + h), "metal")
+    # The lid, overhanging on every side so it steps out at the corners as well.
+    mark(box(w + 0.05, d + 0.04, 0.06, z=foot + h + 0.048), "body")
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            mark(box(0.07, 0.07, foot, x=sx * (w / 2 - 0.07), y=sy * (d / 2 - 0.07), z=foot / 2), "body")
+    # The cord: over the lid, down over its front lip, with a seal where it crosses.
+    mark(box(0.045, d + 0.06, 0.05, x=-0.06, z=foot + h + 0.088), "cloth")
+    mark(box(0.045, 0.05, h * 0.78, x=-0.06, y=-(d / 2 + 0.045), z=foot + h * 0.70), "cloth")
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=0.058,
+                                         location=(-0.06, -(d / 2 + 0.085), foot + h * 0.58))
+    seal = bpy.context.object
+    seal.scale = (1.0, 0.5, 1.0)
+    bpy.ops.object.transform_apply(scale=True)
+    mark(seal, "accent")
+    return join_all()
+
+
+def prim_basin():
+    """The stand two ranks share: three splayed legs, a collar, and `--contents` for what stands in it.
+
+    `--contents=jar` (the merchant) is a pointed water jar; `--contents=bowl` (the nobleman) is an open
+    ablution basin with a thick rim. One primitive for both because `prim_niche` proved the pattern: the
+    stand is the same at both ranks and only the vessel differs, so the second rank costs a repaint and
+    not a model.
+
+    Three things this had to learn, in the order the previews showed them:
+
+    THE LEGS SPLAY. `prim_brazier` records why — a round vessel on straight legs reads as a table, and
+    what fixes it is the feet standing outside the vessel's own width, so the tripod is part of the
+    silhouette rather than hidden behind it.
+
+    THE VESSEL SITS IN THE COLLAR, not on it. `jar()` tapers to a POINT, and resting that point on a flat
+    ring drew an egg balancing on a pin: the contact was one pixel wide, and a shape whose contact you
+    cannot see reads as floating however solid the mesh is. So the collar is a short drum WIDER than the
+    jar's waist and the jar sinks into it past its taper — the contact the eye gets is a fat overlap. The
+    drum is solid rather than bored out because nothing sees its top: under the shear the jar's own belly
+    covers it, and a boolean would cost geometry for a face that never renders.
+
+    IT HAS TO BE WIDE ENOUGH TO BE SEEN. `seat_and_normalise` makes every object exactly one tall, so a
+    tall narrow prop is scaled by its HEIGHT and lands well inside the slot's 56 — the first pass came
+    out 32 wide and read as spindly. Short legs and a fat belly, and it lands near 50."""
+    contents = arg("contents", "jar")
+    # The nobleman's basin is SHALLOW, so its stand is tall: a squat vessel on short legs is scaled by
+    # its width and lands about 48 high in an 84 slot, which wastes the tallest thing on the floor.
+    leg_h = 0.45 if contents == "bowl" else 0.30
+    foot_r, belly = 0.26, 0.21
+    for i in range(3):
+        a = math.radians(90 + i * 120)
+        leg = mark(cyl(0.042, leg_h + 0.06, x=math.cos(a) * foot_r, y=math.sin(a) * foot_r, z=leg_h / 2, verts=8), "body")
+        leg.rotation_euler = (math.radians(math.sin(a) * 15), math.radians(-math.cos(a) * 15), 0)
+    if contents == "bowl":
+        # A truncated cone opening upward, a rim ring of its own, and a VOID disc for the water.
+        #
+        # The rim is a RING several pixels thick and not the edge between two faces, because the brief
+        # paints that rim and a repaint cannot put a band of colour on a crease. The interior is a hole
+        # by `prim_pit`'s marker rather than a boolean: VOID renders near-black and casts nothing, which
+        # is what the inside of an open vessel looks like from above, and it costs one primitive.
+        # FLARED hard — 45 degrees, not 30. The rig lights by face angle, and a wall that leans only
+        # 30 degrees off vertical renders as dark as the legs do, so the vessel and its black interior
+        # merged into one mass under a pale rim. At 45 the wall catches light and reads as a dish.
+        rim_r, basin_h = 0.28, 0.16
+        # A cone whose radius2 exceeds its radius1 comes out of Blender with its side normals pointing
+        # INWARD, so it renders near-black: the first bowl was a dark cauldron under a pale rim, and the
+        # material slots said "pottery" throughout — only the low-pitch preview showed it. Turning the
+        # cone over does NOT fix it, because the normals turn with the geometry; `recalc_outward` does.
+        bpy.ops.mesh.primitive_cone_add(vertices=24, radius1=rim_r * 0.45, radius2=rim_r, depth=basin_h,
+                                        location=(0, 0, leg_h + basin_h / 2))
+        mark(recalc_outward(bpy.context.object), "pottery")
+        mark(cyl(rim_r * 1.06, 0.045, z=leg_h + basin_h, verts=24), "pottery")
+        # PROUD of the rim ring, not inside it. A disc set below the ring is covered by it — a `cyl`
+        # is a solid drum and not a hoop — and the basin renders as a stool with a lid.
+        mark(cyl(rim_r * 1.06 - 0.055, 0.014, z=leg_h + basin_h + 0.026, verts=24), VOID)
+        rim_r = rim_r * 1.06
+        rim_z = leg_h + basin_h
+    else:
+        # The collar: a drum the jar sinks into past its taper, and only just wider than the belly.
+        #
+        # `jar()` tapers to a POINT, and resting that point on a flat ring drew an egg balancing on a pin:
+        # the contact was a pixel wide, and a shape whose contact you cannot see reads as floating however
+        # solid the mesh is. Sunk in, the contact is a fat overlap. And the drum is 1.02 of the belly and
+        # not 1.10 — at 1.10 its top face was a pale ellipse wider than the jar and the pair read as an
+        # egg on a stool, which is `prim_brazier`'s failure in a new place. Solid, not bored: under the
+        # shear the belly covers the top, so a boolean would buy a face nothing renders.
+        mark(cyl(belly * 1.02, 0.10, z=leg_h - 0.01, verts=18), "body")
+        jar(0.0, 0.0, 0.62, belly, z=leg_h - 0.10, part="pottery")
+        rim_r = belly
+        rim_z = leg_h + 0.62 * 0.42
+    # The dipper, hung at the widest point so it OVERHANGS the outline. `prim_lamp`'s rule: a cup wholly
+    # inside a pale shape is a dark spot in it and reads as a hole in the pottery, not a second object.
+    mark(cyl(0.075, 0.09, x=rim_r + 0.03, y=-0.03, z=rim_z, verts=12), "pottery")
+    mark(box(0.09, 0.03, 0.026, x=rim_r - 0.02, y=-0.03, z=rim_z + 0.04), "pottery")
+    return join_all()
+
+
 def prim_mat():
     """A reed mat lying flat on the floor — one thin sheet, and nothing else.
 
@@ -976,6 +1097,8 @@ PRIMITIVES.update(
         "sconce": prim_sconce,
         "shrine": prim_shrine,
         "falseDoor": prim_falsedoor,
+        "sealedChest": prim_sealedchest,
+        "basin": prim_basin,
         "hanging": prim_hanging,
     }
 )
@@ -1005,6 +1128,21 @@ PART_COLOURS = {
     "cloth": "#bdb3a0",
     # NOCAST is not a colour: a part kept out of the footprint is still painted the rank's stone.
 }
+
+
+def recalc_outward(obj):
+    """Points every face of a mesh out of its own volume.
+
+    Blender's cone primitive winds its side faces the other way round when the TOP radius is the larger
+    one, and an inward normal in this rig renders near-black — the flat lighting has nothing behind the
+    surface to catch. Rotating the object does not help: the normals rotate with it. Returns the object so
+    it can be wrapped round a `mark`."""
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    bm.to_mesh(obj.data)
+    bm.free()
+    return obj
 
 
 def mark(obj, name):
