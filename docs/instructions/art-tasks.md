@@ -88,23 +88,28 @@ rebuild line.
 Modelled, self-verified in the sheared render, and the three renders are in `~/tile-previews/`. Each needs
 one repaint and one `import-tile` line and it is done.
 
-| kind                   | primitive                     | renders                 |
-| ---------------------- | ----------------------------- | ----------------------- |
-| `starter/rubbleSpill`  | `rubblePile --contents=spill` | `rubble-starter*`       |
-| `starter/basin`        | `basin --contents=jar`        | `basin-starter*`        |
-| `junior/pillar`        | `palm`                        | `palm-junior*`          |
-| `junior/shrine`        | `falseDoor`                   | `falsedoor-junior*`     |
-| `junior/chestProp`     | `sealedChest`                 | `sealedchest-junior*`   |
-| `junior/basin`         | `basin --contents=bowl`       | `basin-junior*`         |
-| `junior/lamp`          | `lamp --contents=stand`       | `lamp-junior*`          |
-| `junior/shelf`         | `shelf --contents=linen`      | `shelf-junior*`         |
-| `junior/offeringTable` | `market --contents=laid`      | `offeringtable-junior*` |
-| `expert/niche`         | `niche --contents=sealed`     | `niche-expert*`         |
-| `expert/sconce`        | `sconce --contents=chain`     | `sconce-expert*`        |
-| `master/niche`         | `niche --contents=offering`   | `niche-master*`         |
-| `master/sconce`        | `sconce --contents=mirror`    | `sconce-master*`        |
-| `wizard/niche`         | `niche --contents=star`       | `niche-wizard*`         |
-| `wizard/sconce`        | `sconce --contents=crystal`   | `sconce-wizard*`        |
+| kind                   | primitive                       | renders                 |
+| ---------------------- | ------------------------------- | ----------------------- |
+| `starter/rubbleSpill`  | `rubblePile --contents=spill`   | `rubble-starter*`       |
+| `starter/basin`        | `basin --contents=jar`          | `basin-starter*`        |
+| `junior/pillar`        | `palm`                          | `palm-junior*`          |
+| `junior/shrine`        | `falseDoor`                     | `falsedoor-junior*`     |
+| `junior/chestProp`     | `sealedChest`                   | `sealedchest-junior*`   |
+| `junior/basin`         | `basin --contents=bowl`         | `basin-junior*`         |
+| `junior/lamp`          | `lamp --contents=stand`         | `lamp-junior*`          |
+| `junior/shelf`         | `shelf --contents=linen`        | `shelf-junior*`         |
+| `junior/offeringTable` | `market --contents=laid`        | `offeringtable-junior*` |
+| `expert/niche`         | `niche --contents=sealed`       | `niche-expert*`         |
+| `expert/sconce`        | `sconce --contents=chain`       | `sconce-expert*`        |
+| `master/niche`         | `niche --contents=offering`     | `niche-master*`         |
+| `master/sconce`        | `sconce --contents=mirror`      | `sconce-master*`        |
+| `wizard/niche`         | `niche --contents=star`         | `niche-wizard*`         |
+| `wizard/sconce`        | `sconce --contents=crystal`     | `sconce-wizard*`        |
+| `expert/wallShrine`    | `wallShrine --contents=ajar`    | `wallshrine-expert*`    |
+| `expert/veil`          | `hanging --contents=rail`       | `veil-expert*`          |
+| `master/mask`          | `mask`                          | `mask-master*`          |
+| `wizard/wallShrine`    | `wallShrine --contents=opening` | `wallshrine-wizard*`    |
+| `wizard/starShaft`     | `starShaft`                     | `starshaft-wizard*`     |
 
 `starter/rubbleSpill` and `starter/basin` are the merchant's last two files, and `basin` also closes §3's
 first bullet.
@@ -137,13 +142,14 @@ No mesh, no mask; the generation's own silhouette is the tile.
 
 ## 8. The other three ranks
 
-Expert, master and wizard have no props or wall items PAINTED at all, though six of their wall items are
-modelled and sitting in §4. What is left, biggest first: `wallShrine` at wizard (129 rooms), `mask` at
-master (117), `wallShrine` at expert (95), `starShaft` at wizard (91) and `veil` at expert (87), then the
-chamber props, which none of these three ranks has started.
+Every WALL ITEM the last three ranks author is now modelled and sitting in §4 — eleven of them, 940 rooms
+between them, each waiting on one repaint. Nothing at these ranks is painted yet.
 
-`prim_niche` and `prim_sconce` now cover four ranks each on `--contents`, and `prim_hanging` should cover
-the priest's veil the same way. `wallShrine`, `mask` and `starShaft` are the models still owed.
+What is left is their CHAMBER PROPS, which none of the three has started: `yarn art-census` ranks them, and
+the biggest are `pit` at expert (33 rooms), `sarcophagus` at expert (26) and `lamp` at expert (21). Most of
+them already have a primitive at the merchant's or nobleman's rank, so the cheap route is the one §4 is
+full of — `--contents` on what exists rather than a new model. `prim_niche`, `prim_sconce`, `prim_basin`,
+`prim_lamp`, `prim_shelf`, `prim_market`, `prim_hanging` and `prim_wallshrine` all take it.
 
 `yarn art-census` ranks all of it by rooms waiting.
 

@@ -1088,7 +1088,37 @@ def prim_hanging():
     wider and read as a flag with a scalloped edge.
 
     The HEM is ragged and the corners are torn, because that is the only thing separating an awning from
-    a banner at 56 units: a banner is hemmed straight."""
+    a banner at 56 units: a banner is hemmed straight.
+
+    `--contents=rail` is the priest's VEIL, and it is the same cloth in the wall band rather than on the
+    floor: a rail across the band, the drape hanging from it, and the whole thing FOLDED BACK ON ONE SIDE,
+    which his row asks for and is also what stops a 2:1 sheet reading as a blank panel. No posts — a wall
+    item stands on nothing — and it is wide and short where the awning is nearly square."""
+    if arg("contents", "awning") == "rail":
+        w, h = 1.46, 0.50
+        mark(cyl(0.04, w + 0.10, x=0, y=0, z=h, verts=12), "metal").rotation_euler = (0, math.radians(90), 0)
+        for sx in (-1, 1):
+            mark(box(0.09, 0.14, 0.10, x=sx * (w / 2 + 0.04), y=0.05, z=h), "metal")
+        # The drape covers the left of the rail and stops short of the right, where it is gathered into a
+        # bunch. Two masses of different width is the whole tile: an even sheet across a 2:1 band has no
+        # silhouette at all, and a veil that is not drawn back is a wall.
+        drape_w = w * 0.66
+        bpy.ops.mesh.primitive_grid_add(x_subdivisions=24, y_subdivisions=10, size=1)
+        cloth = bpy.context.object
+        cloth.rotation_euler = (math.radians(90), 0, 0)
+        bpy.ops.object.transform_apply(rotation=True)
+        cloth.data.transform(Matrix.Diagonal((drape_w, 1.0, h * 0.94, 1.0)))
+        cloth.data.transform(Matrix.Translation((-w / 2 + drape_w / 2, 0.0, h * 0.47)))
+        for v in cloth.data.vertices:
+            drop = 1.0 - (v.co.z / (h * 0.94))
+            fold = math.sin(v.co.x / drape_w * math.pi * 8.0) * 0.05 + math.sin(v.co.x / drape_w * math.pi * 3.0 + 0.7) * 0.028
+            v.co.y += fold * (0.15 + drop * 0.85)
+        mark(cloth, "cloth")
+        # The gathered end: three bundles of falling width, which reads as cloth pulled aside where one
+        # cylinder reads as a column.
+        for i, (dx, r) in enumerate(((0.0, 0.085), (0.055, 0.065), (0.10, 0.045))):
+            mark(cyl(r, h * (0.92 - i * 0.06), x=w * 0.34 + dx, y=-0.02 - i * 0.03, z=h * (0.53 + i * 0.03), verts=10), "cloth")
+        return join_all()
     w, h = 0.86, 0.78
     pole_r = 0.045
     mark(cyl(pole_r, w + 0.16, x=0, y=0, z=h, verts=12), "body").rotation_euler = (0, math.radians(90), 0)
@@ -1331,6 +1361,122 @@ def prim_niche():
     return join_all()
 
 
+def prim_wallshrine():
+    """A shrine BOX standing proud of the wall: `--contents=ajar` is the priest's, doors part open with a
+    lamp lit inside; `--contents=opening` is the wizard's, which his row says is only an opening.
+
+    NOT `prim_niche`, and the difference is the point of having both. A niche is cut INTO the wall and
+    everything about it is a reveal — jambs, a sill, a lintel, and depth going back. A shrine is a cabinet
+    ON the wall: it has a plinth under it and a cavetto cornice over it, and those two are the whole
+    silhouette. At 28 units the box between them is a rectangle either way.
+
+    THE DOORS ARE SLID, NOT SWUNG. A leaf on a vertical hinge swings into -y, and the y-z plane collapses
+    to a vertical line under this projection (`prim_sconce`), so an open door draws as a stripe on the
+    front of the shrine rather than as a door standing open. `prim_chest` solved the same problem for a
+    lid by sliding it back. So one leaf covers the left of the opening, the other rather less of the
+    right, and what says ajar is the BLACK GAP between them with a lamp standing in it.
+
+    The interior is VOID — `prim_pit`'s marker — and it does the work in both variants: the priest's is a
+    dark slot with one lit thing in it, and the wizard's is nothing else at all."""
+    contents = arg("contents", "ajar")
+    w, h, d = 1.50, 0.62, 0.28
+    plinth, corn, jamb = 0.12, 0.14, 0.11
+    # THE PLINTH AND THE CORNICE BOTH OVERHANG, and generously. The wizard's variant is an opening and
+    # nothing else, and with a thin frame it drew as a black rectangle — the same picture as his niche
+    # holding no star and as his star shaft, three tiles the map could not tell apart. What separates a
+    # shrine from a hole is that it is a CABINET ON the wall: a foot under it and a cavetto over it,
+    # both wider than the box between them. `prim_sealedchest` records the other half — an edge flush
+    # with what is below it is not drawn as an edge at all.
+    mark(box(w + 0.10, d + 0.06, plinth, z=plinth / 2), "body")
+    mark(box(w + 0.16, d + 0.08, corn, z=h - corn / 2), "body")
+    for sx in (-1, 1):
+        mark(box(jamb, d, h - plinth - corn, x=sx * (w / 2 - jamb / 2), z=(h + plinth - corn) / 2), "body")
+    # The interior, at the BACK of the box: near-black, and the only thing behind the doors.
+    inner_w, inner_h = w - jamb * 2, h - plinth - corn
+    mark(box(inner_w, 0.05, inner_h, y=d / 2 - 0.04, z=(h + plinth - corn) / 2), VOID)
+    if contents == "ajar":
+        # Two leaves, unequal, near the FRONT of the box so the gap between them is deep.
+        for sx, frac in ((-1, 0.42), (1, 0.24)):
+            mark(box(inner_w * frac, 0.05, inner_h, x=sx * (inner_w / 2 - inner_w * frac / 2), y=-d / 2 + 0.05,
+                     z=(h + plinth - corn) / 2), "timber")
+        # The lamp in the gap: the niche's proven mass, spout along X, flame a nub.
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=18, ring_count=10, radius=0.11, location=(0.02, 0.0, plinth + 0.10))
+        body = bpy.context.object
+        body.scale = (1.3, 0.9, 1.0)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(body, "pottery")
+        bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.055, radius2=0.0, depth=0.10,
+                                        location=(0.02, 0.0, plinth + 0.23))
+        mark(bpy.context.object, "accent")
+    return join_all()
+
+
+def prim_starshaft():
+    """The wizard's shaft: a slot on the night, with stars in it.
+
+    A hole and nothing else, so it is `prim_pit`'s marker doing the whole tile — VOID renders near-black
+    and casts nothing, and the stars are the only lit thing in the band. What it needs from geometry is a
+    SURROUND thick enough to read: the slot is a rectangle of black, and without a frame round it the tile
+    is a black bar that reads as a gap in the wall rather than as an opening cut through it.
+
+    The stars are crossed bars through `turn`, not `tilt` — see `tilt` for why a part placed and then
+    turned swings out of the frame. Six points each at this size; anything finer is a blur at 28 units."""
+    w, h, d = 1.44, 0.46, 0.20
+    frame = 0.10
+    mark(box(w, d, frame, z=frame / 2), "body")
+    mark(box(w, d, frame, z=h - frame / 2), "body")
+    for sx in (-1, 1):
+        mark(box(frame, d, h - frame * 2, x=sx * (w / 2 - frame / 2), z=h / 2), "body")
+    mark(box(w - frame * 2, 0.05, h - frame * 2, y=d / 2 - 0.04, z=h / 2), VOID)
+    for x, r in ((-0.42, 0.085), (-0.05, 0.115), (0.34, 0.07)):
+        for deg in (0, 60, 120):
+            mark(turn(box(r * 2, 0.05, r * 0.34), deg, "Y", x, -0.03, h / 2), "accent")
+    return join_all()
+
+
+def prim_mask():
+    """The master's funerary mask: nemes headdress, lappets, a face, a beard, a collar.
+
+    PORTRAIT IN A LANDSCAPE BAND, and that is fine — the wall render's frame is 448x224 and the slot is
+    56x28, which is the same 8:1 reduction on both axes, so nothing is squashed. A tall object is fitted
+    by its height and simply leaves air at the sides, which is what a mask hung on a broad wall looks
+    like. It is `--margin` that decides how much air, not a scale flag (`prim_sconce`).
+
+    Marked in two slots and not one, because the row is a GILDED mask with LAPIS stripes: the face and
+    the headdress are `accent` and the lappets are `metal`. Stripes are paint, not geometry — at this size
+    a modelled stripe is a moiré — so all the scaffold can do is hand the repaint a separate part to put
+    them on."""
+    # ONE MASS IN FRONT OF ANOTHER, not five blocks in a row. Two passes were built as a crown, two
+    # lappets, a face, a beard and a collar, each butted against its neighbours, and both drew as a NICHE
+    # WITH AN EGG IN IT — which is the honest reading, because a nemes headdress modelled as a frame round
+    # a face IS a frame, and at 28 units a frame is the strongest shape in the picture.
+    #
+    # What fixes it is depth. The headdress is one rounded dome, and the face, the lappets and the beard
+    # all stand in FRONT of it at negative y. Under z + k*y a part pushed forward is drawn LOWER, so the
+    # face separates from the headcloth by position and by shading instead of by an outline, and the
+    # silhouette stays a single blob — which is what a mask on a wall is.
+    # The collar is TALL, and it is the fix for a gap the shear opens rather than one the geometry has:
+    # everything in front sits at negative y, so it is all drawn 0.05 LOWER than it is built, and a
+    # face resting exactly on a collar hangs a hairline above it in the picture.
+    mark(box(0.66, 0.20, 0.24, z=0.12), "accent")  # the collar it stands in
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=22, ring_count=14, radius=0.36, location=(0.0, 0.06, 0.52))
+    nemes = bpy.context.object
+    nemes.scale = (1.0, 0.55, 0.85)
+    bpy.ops.object.transform_apply(scale=True)
+    mark(nemes, "metal")  # the headcloth: STRIPED by the repaint, which is why it is its own slot
+    for sx in (-1, 1):
+        mark(box(0.13, 0.14, 0.46, x=sx * 0.27, y=-0.06, z=0.33), "metal")  # the lappets, down onto the collar
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=12, radius=0.19, location=(0.0, -0.10, 0.46))
+    face = bpy.context.object
+    # Long enough to REACH the collar and wide enough to touch the lappets: left short, the gap under the
+    # chin and the two slivers beside it were dark dome, and a mask with a hole under its face is a jar.
+    face.scale = (1.05, 0.8, 1.32)
+    bpy.ops.object.transform_apply(scale=True)
+    mark(face, "accent")  # gilded, and the one part that must not be striped
+    mark(box(0.10, 0.12, 0.20, y=-0.12, z=0.26), "accent")  # the beard, clear of the collar
+    return join_all()
+
+
 PRIMITIVES.update(
     {
         "cube": prim_cube,
@@ -1354,6 +1500,9 @@ PRIMITIVES.update(
         "sealedChest": prim_sealedchest,
         "basin": prim_basin,
         "hanging": prim_hanging,
+        "wallShrine": prim_wallshrine,
+        "starShaft": prim_starshaft,
+        "mask": prim_mask,
     }
 )
 
