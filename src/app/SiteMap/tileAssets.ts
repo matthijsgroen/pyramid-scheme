@@ -21,6 +21,40 @@ export const tileUrl = (tier: Difficulty, name: string): string | undefined =>
   byTier.get(`${tier}/${name}`) ?? byTier.get(`default/${name}`)
 
 /**
+ * Every drawing a tier has for one name: `<name>`, `<name>-2`, `<name>-3`, as far as they go.
+ *
+ * The same convention `sharedTileFrames` uses for animation frames, and for the same reason — adding one
+ * is dropping a PNG in, with no manifest to keep by hand. What it buys is a kind with MORE THAN ONE
+ * drawing: the brief's §5 asks for it so that a room does not have to mean one picture, and the merchant's
+ * trade room is the case that wanted it first. Tomb painting shows goods sold out of big reed baskets set
+ * on the floor as often as off a table, and both are the same statement — this is where they sold — so
+ * they belong to one KIND rather than to two.
+ *
+ * A kind, not a pool: adding a variant FILE cannot move anything. `pickDressing` draws from the kind pool
+ * and only the pool's LENGTH changes what lands where, so a second drawing of `offeringTable` reshuffles
+ * nothing and needs no world regeneration. Which rooms show which drawing is a seeded layer on top, taken
+ * from the cell's own position — see `Decoration`.
+ *
+ * Mixed tiers resolve per NAME and not per variant: a tier that draws none of its own falls back to
+ * `default` wholesale, so a half-imported set never shows one rank's table beside another rank's baskets.
+ */
+export const tileVariants = (tier: Difficulty, name: string): string[] => {
+  const forTier = (t: string): string[] => {
+    const base = byTier.get(`${t}/${name}`)
+    if (!base) return []
+    const found = [base]
+    for (let n = 2; ; n++) {
+      const url = byTier.get(`${t}/${name}-${n}`)
+      if (!url) break
+      found.push(url)
+    }
+    return found
+  }
+  const own = forTier(tier)
+  return own.length > 0 ? own : forTier("default")
+}
+
+/**
  * How the browser scales a tile — the ONE line that follows from whether the art is pixel art or painted.
  *
  * The set is PAINTED, generated well above map size and scaled down (docs/game-design/tile-art-brief.md,

@@ -40,7 +40,9 @@ import {
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
 import { moodFor } from "./moodSettings"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
-import { ART_IMAGE_RENDERING, tileUrl } from "./tileAssets"
+import { hashString } from "@/support/hashString"
+import { companionFor } from "./companionProps"
+import { ART_IMAGE_RENDERING, tileUrl, tileVariants } from "./tileAssets"
 import {
   ALL_STATES,
   buildTileRegions,
@@ -779,11 +781,26 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
     return cellAt(grid, r - 1, c).type === "empty"
   }
   const decorationAt = new Map<string, DecorationKind>()
+  const roomsForCompanion: { ownerKey: string; leader: DecorationKind; free: string[] }[] = []
   for (const [ownerKey, candidates] of ownerPropCandidates) {
     const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
     const owner = grid.cells[ownerRow]?.[ownerCol]
     if (owner?.type !== "room" || !owner.decoration) continue
-    decorationAt.set(candidates.find(wallBehind) ?? candidates[0], owner.decoration)
+    const taken = candidates.find(wallBehind) ?? candidates[0]
+    decorationAt.set(taken, owner.decoration)
+    roomsForCompanion.push({ ownerKey, leader: owner.decoration, free: candidates.filter(key => key !== taken) })
+  }
+  // A SECOND prop of the same purpose, in some of the rooms with space for one — see `companionProps`.
+  // It goes into `decorationAt` rather than into a layer of its own, which is what keeps the rest of the
+  // map honest for free: `floorScatter` dresses the cells this map does NOT hold, so a companion is a cell
+  // scatter avoids without anything being told about it.
+  for (const [key, kind] of companionFor(
+    grid.siteId,
+    roomsForCompanion,
+    kind => !!tileUrl(grid.difficulty ?? "starter", kind),
+    free => free.find(wallBehind) ?? free[0]
+  )) {
+    decorationAt.set(key, kind)
   }
 
   /**
@@ -1193,8 +1210,15 @@ const LIT_DECORATIONS = new Set<DecorationKind>(["lamp"])
  * carried, and at a cell and a half across it would light the room the torch is meant to light. */
 const LAMP_POOL_RADIUS = CELL * 0.42
 
-const Decoration = ({ kind, tier }: { kind: DecorationKind; tier: Difficulty }) => {
-  const url = tileUrl(tier, kind)
+/** One room's prop. `seed` decides WHICH drawing of the kind, where a kind has more than one.
+ *
+ * The choice is positional and deterministic — the cell's own coordinates inside its site — which keeps it
+ * a seeded layer over placement rather than part of it: the same floor draws the same thing every time it
+ * is opened, and dropping a second drawing in reshuffles no furniture, because `pickDressing` never sees
+ * it (see `tileVariants`). */
+const Decoration = ({ kind, tier, seed }: { kind: DecorationKind; tier: Difficulty; seed: string }) => {
+  const variants = tileVariants(tier, kind)
+  const url = variants.length > 1 ? variants[hashString(`${seed}:${kind}`) % variants.length] : tileUrl(tier, kind)
   return (
     <>
       {/* Under the sprite, so the light is on the floor and the lamp is standing in it. */}
@@ -1924,7 +1948,13 @@ export const SiteMapView = ({
                       ) : (
                         cell.state === "reachable" && isCorner && <ReachableDot />
                       ))}
-                    {decoration && <Decoration kind={decoration} tier={claimOwner.difficulty ?? tier} />}
+                    {decoration && (
+                      <Decoration
+                        kind={decoration}
+                        tier={claimOwner.difficulty ?? tier}
+                        seed={`${grid.siteId}:${cellKey}`}
+                      />
+                    )}
                   </g>
                 )
               }

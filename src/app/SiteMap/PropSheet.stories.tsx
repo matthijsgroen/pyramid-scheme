@@ -191,7 +191,9 @@ const Sheet: FC<{ tier: Difficulty; zoom: number }> = ({ tier, zoom }) => {
           most pieces on a floor, and the only one the player walks over. */}
       <h2 className="m-0 text-sm text-white/80">
         {tier} — floor scatter{" "}
-        <span className="text-white/40">({scatter.length}, placed by rule — each staged twice: under his boots, then alone)</span>
+        <span className="text-white/40">
+          ({scatter.length}, placed by rule — each staged twice: under his boots, then alone)
+        </span>
       </h2>
       <div className="flex flex-wrap gap-4">
         {scatter.map(kind => (
