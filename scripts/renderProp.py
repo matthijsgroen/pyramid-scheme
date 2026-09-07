@@ -1094,7 +1094,89 @@ def prim_hanging():
     floor: a rail across the band, the drape hanging from it, and the whole thing FOLDED BACK ON ONE SIDE,
     which his row asks for and is also what stops a 2:1 sheet reading as a blank panel. No posts — a wall
     item stands on nothing — and it is wide and short where the awning is nearly square."""
-    if arg("contents", "awning") == "rail":
+    contents = arg("contents", "awning")
+
+    def sheet(width, height, x0=0.0, folds=(8.0, 3.0), amp=(0.05, 0.028), hem=None, crown=None):
+        """One hung sheet: a grid stood into the XZ plane, rippled in Y, its hem shaped by `hem`.
+
+        The ripple is in Y and not in X for the reason the docstring above gives — a fold pushed back is
+        drawn higher, which is what a fold looks like, where a fold pushed sideways only makes the cloth
+        narrower and reads as a scalloped flag. `hem` takes the x fraction and returns how much to lift or
+        drop that column's bottom edge, which is the one line separating an awning from a curtain."""
+        bpy.ops.mesh.primitive_grid_add(x_subdivisions=24, y_subdivisions=12, size=1)
+        cloth = bpy.context.object
+        cloth.rotation_euler = (math.radians(90), 0, 0)
+        bpy.ops.object.transform_apply(rotation=True)
+        cloth.data.transform(Matrix.Diagonal((width, 1.0, height, 1.0)))
+        cloth.data.transform(Matrix.Translation((x0, 0.0, height / 2)))
+        for v in cloth.data.vertices:
+            drop = 1.0 - (v.co.z / height)
+            u = (v.co.x - x0) / width
+            fold = (math.sin(u * math.pi * folds[0]) * amp[0]
+                    + math.sin(u * math.pi * folds[1] + 0.7) * amp[1])
+            v.co.y += fold * (0.15 + drop * 0.85)
+            if hem and drop > 0.93:
+                v.co.z += hem(u)
+            if crown and drop < 0.07:
+                v.co.z += crown(u)
+        return cloth
+
+    if contents in ("linen", "veil", "gold"):
+        # The three that hang from a POLE on posts, which is the merchant's frame unchanged: a prop stands
+        # on a floor cell, and without the posts the bar hangs in the air over a shadow.
+        w, h = 0.90, 0.80
+        mark(cyl(0.045, w + 0.16, x=0, y=0, z=h, verts=12), "body").rotation_euler = (0, math.radians(90), 0)
+        for sx in (-1, 1):
+            mark(cyl(0.035, h, x=sx * (w / 2 + 0.055), y=0.0, z=h / 2, verts=8), "body")
+        if contents == "linen":
+            # The nobleman's: a STRAIGHT hem with a dyed border along it. His row is one dyed band and
+            # that band is the whole tile — a linen sheet with a ragged hem is the merchant's awning in
+            # cleaner cloth, and at 56 units nobody would read the difference.
+            mark(sheet(w, h * 0.97), "cloth")
+            # The border is a strip IN FRONT of the hem, and its z is set for where the shear DRAWS it,
+            # not for where it sits: everything at negative y comes out k*y lower, so a band built level
+            # with the hem draws below the cloth and reads as a plinth the hanging stands on. This one is
+            # built 0.09 high and lands on the hem. (The master's mask pays the same tax on its collar.)
+            mark(box(w * 0.98, 0.03, 0.07, y=-0.12, z=0.11), "accent")
+            for sx in (-1, 1):
+                mark(box(0.05, 0.10, 0.16, x=sx * w * 0.3, y=0.0, z=h - 0.02), "cloth")
+            return join_all()
+        if contents == "veil":
+            # The priest's, on the floor rather than on the wall: the same veil as `rail`, DRAWN BACK to
+            # one side. Two masses of different width is what says a veil someone opened.
+            mark(sheet(w * 0.62, h * 0.95, x0=-w * 0.19), "cloth")
+            for i, r in enumerate((0.085, 0.062, 0.042)):
+                mark(cyl(r, h * (0.94 - i * 0.06), x=w * 0.30 + i * 0.055, y=-0.02 - i * 0.03,
+                         z=h * (0.52 + i * 0.03), verts=10), "cloth")
+            return join_all()
+        # The master's: a gold-shot curtain with a WEIGHTED HEM, and the weights are the tile. A hem that
+        # hangs straight is the nobleman's; weights pull it into scallops between them, so the hem is
+        # lifted where a weight is not and each weight is a bead of its own below the cloth.
+        mark(sheet(w, h * 0.97, hem=lambda u: 0.05 * (1.0 - abs(math.sin(u * math.pi * 4.0)))), "cloth")
+        for i in range(4):
+            u = (i + 0.5) / 4.0
+            mark(cyl(0.038, 0.075, x=(u - 0.5) * w, y=-0.03, z=h * 0.02, verts=8), "accent")
+        for sx in (-1, 1):
+            mark(box(0.05, 0.10, 0.16, x=sx * w * 0.3, y=0.0, z=h - 0.02), "cloth")
+        return join_all()
+    if contents == "aurora":
+        # The wizard's: A CURTAIN OF AURORA, so there is nothing holding it up. No pole and no posts —
+        # what a prompt cannot invent is a shape, and a rail in this scaffold would be painted as a rail.
+        #
+        # It stands on its own hem instead, which is the only reason the footprint is honest, and it is
+        # marked `accent` throughout: this is the one prop in the file that is nothing but the light.
+        # Wider folds than cloth, and fewer of them — light does not crease.
+        w, h = 0.80, 1.00
+        mark(sheet(w, h, folds=(3.0, 1.0), amp=(0.09, 0.05),
+                   hem=lambda u: 0.02 * math.sin(u * math.pi * 3.0),
+                   crown=lambda u: 0.11 * math.sin(u * math.pi * 2.5 + 0.4) - 0.03), "accent")
+        # NO TONGUES rising off the top edge. Three cones were tried there, to say the curtain ends in
+        # nothing, and they were the most salient shape in the picture by a distance — `prim_lamp`'s
+        # flame rule, which says a sharp triangle a fifth of the object tall takes the whole tile. They
+        # read as teeth. The top edge waves instead, which is the same statement in the silhouette the
+        # cloth already has.
+        return join_all()
+    if contents == "rail":
         w, h = 1.46, 0.50
         mark(cyl(0.04, w + 0.10, x=0, y=0, z=h, verts=12), "metal").rotation_euler = (0, math.radians(90), 0)
         for sx in (-1, 1):
