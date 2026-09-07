@@ -75,8 +75,30 @@ import type { Difficulty } from "../src/data/difficultyLevels"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const OUT_ROOT = join(__dirname, "..", "src", "assets", "tiles")
 
-const TILE = 56
-const MEGA = TILE * 8
+/**
+ * How many STORED pixels a tile carries per map unit.
+ *
+ * The renderer draws every tile as `<image width={CELL}>` in SVG user units, so a tile's stored
+ * resolution is independent of its layout: nothing about placement, seating or the wall band moves when
+ * this changes. What it buys is real pixels for the browser to use when the map is zoomed in or the
+ * display is retina, where a 1:1 tile has none and goes soft. `ART_IMAGE_RENDERING` is already `auto`
+ * (smooth), which is what a painted set wants, so no filter has to change either.
+ *
+ * The masters are 1686x2528 and 2000x2000 — far above 2x — so this costs nothing in the art, only in
+ * the bundle, and it is the FLOORS that dominate there: a floor is eight cells square where a prop is
+ * one.
+ *
+ * The one gap: the merchant's `floor`, `wall-face` and `threshold` have no master at all
+ * (art/README.md), so those three cannot be re-made at any resolution and stay at 1x. They are the
+ * tiles least hurt by it — a floor is a repeating pattern seen mostly at 1:1 — but it is a real seam
+ * until those masters are identified or re-rolled.
+ */
+const SPRITE_SCALE = Number(process.env.SPRITE_SCALE ?? 2)
+/** Map units to stored pixels. Every slot dimension goes through this, or the slots desynchronise. */
+const px = (units: number): number => Math.round(units * SPRITE_SCALE)
+
+const TILE = px(CELL)
+const MEGA = px(CELL * 8)
 
 // The slots, in map units — the same numbers docs/game-design/tile-art-brief.md hands to the artist. A
 // prop is a cell PLUS a face band tall, and bottom-anchored, which is why it is the only one that gets
@@ -87,15 +109,15 @@ const SLOTS = {
   // A sill fills the gap between two rows: a cell wide, a wall band deep. It was 56x12 here and in the
   // brief, a size the renderer never draws — the art came back a twelfth of a cell tall and was stretched
   // to fill a band nearly three times that.
-  sill: { w: TILE, h: WALL_H, seat: false },
-  arch: { w: ARCH_W, h: ARCH_H, seat: false },
-  prop: { w: TILE, h: TILE + WALL_H, seat: true },
-  wall: { w: TILE, h: WALL_H, seat: false },
+  sill: { w: TILE, h: px(WALL_H), seat: false },
+  arch: { w: px(ARCH_W), h: px(ARCH_H), seat: false },
+  prop: { w: TILE, h: TILE + px(WALL_H), seat: true },
+  wall: { w: TILE, h: px(WALL_H), seat: false },
   // A sand DRIFT: square and several cells across, because it is not a cell-sized thing. It takes no
   // seat — a drift lies ON the floor rather than standing on it — and its shape comes from `--mask`
   // (yarn drift-mask) rather than from the art, which is a full-bleed texture with no shape at all.
   drift: { w: TILE * 3, h: TILE * 3, seat: false },
-  explorer: { w: 40, h: 70, seat: true },
+  explorer: { w: px(40), h: px(70), seat: true },
 } as const
 
 type Slot = keyof typeof SLOTS
@@ -176,10 +198,10 @@ const fitToDoorway = async (img: sharp.Sharp, w: number, h: number, smooth: bool
   let postTo = openTo + 1
   while (postTo < right && opaque(postTo + 1, probe)) postTo++
 
-  const jamb = (w - CELL) / 2
+  const jamb = (w - px(CELL)) / 2
   return sharp({ create: { width: w, height: h, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).composite([
     { input: await band(postFrom, openFrom - 1, jamb), left: 0, top: 0 },
-    { input: await band(openFrom, openTo, CELL), left: jamb, top: 0 },
+    { input: await band(openFrom, openTo, px(CELL)), left: jamb, top: 0 },
     { input: await band(openTo + 1, postTo, jamb), left: w - jamb, top: 0 },
   ])
 }

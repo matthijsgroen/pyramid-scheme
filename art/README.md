@@ -35,6 +35,24 @@ which is the difference between a repository that can hold the brief's ~224 file
 `rebuild.sh` re-imports every tile it covers from its master. Run it after changing an import flag, or to
 see whether a change to `importTile.ts` moved a tile that is already approved.
 
+## Stored resolution: 2x, and the one seam in it
+
+`importTile`'s `SPRITE_SCALE` is how many stored pixels a tile carries per map unit, and it is 2. The
+renderer draws every tile as `<image width={CELL}>` in SVG user units, so stored resolution is
+independent of layout — nothing about placement, seating or the wall band moves when this changes. What
+it buys is real pixels for a zoomed map and a retina display, where a 1:1 tile has none.
+
+Every slot dimension goes through `px()`. Scaling `TILE` alone would desynchronise it from `WALL_H`,
+`ARCH_W` and `ARCH_H`, which come from `mapScale` in map units.
+
+**It reaches only what has a rebuild line**, which is every prop and wall item and none of the surfaces:
+floors, faces and thresholds were backfilled without their flags (below), so they are still 448 and 1x.
+That is a seam, and a mild one — a floor is a repeating pattern seen mostly at 1:1, and the objects a
+player looks at are the ones that doubled. Measured on the nobleman's floor, re-imported from its master
+with the docs' per-slot recipe: 232K at 1x against 388K at 2x, and the five surfaces are 1.2M of the
+2.5M that ships. Doubling them is not expensive; what it costs is that their flags would be re-derived
+rather than recorded, and that changes approved art.
+
 ## What rebuild.sh covers, and what it does not
 
 Only the props made through [the prop pipeline](../docs/instructions/prop-pipeline.md) have a rebuild
