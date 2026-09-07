@@ -38,7 +38,7 @@ const PALETTES = tierPalette
 type Palette = TierPalette
 
 type Kind =
-  | "rubble"
+  | "rubbleSpill"
   | "pillar"
   | "pit"
   | "statue"
@@ -64,13 +64,13 @@ type Kind =
 // places it off the floor's own shape rather than off a pool, so nothing authors it by name and its
 // placeholder is the only thing that says the layer is working before the art exists.
 //
-// `rubbleHeap` is here for the same reason from the other direction: it is not a kind at all but the
-// STANDING variant a room's `rubble` resolves to (SiteMapView's STANDING_VARIANT), so no pool can ever
-// name it. Without a placeholder it silently falls back to the flat spill and the two look identical.
+// `rubbleSpill` is here for the same reason as sand: it is the scatter layer's brick and no pool names
+// it. Its knee-high twin `rubblePile` IS authored, and the two were one name until the rename — which
+// cost three separate bugs, all of them a list drawing the wrong one of the pair.
 const ALL_KINDS: Kind[] = [
   "sand",
-  "rubble",
-  "rubbleHeap" as Kind,
+  "rubbleSpill",
+  "rubblePile" as Kind,
   "pillar",
   "pit",
   "statue",
@@ -229,13 +229,13 @@ const PROP_H = TILE + BAND
 const BASE = PROP_H - 6
 
 const shapes: Record<Kind, (p: Palette) => string> = {
-  rubble: p => `
+  rubbleSpill: p => `
     <rect x="14" y="${BASE - 10}" width="12" height="10" fill="${p.propDark}"/>
     <rect x="26" y="${BASE - 16}" width="16" height="16" fill="${p.prop}"/>
     <rect x="20" y="${BASE - 6}" width="10" height="6" fill="${p.prop}"/>`,
   // The STANDING variant, and the placeholder has to say so: the flat spill above is walked over, this
   // is walked around, and two placeholders that looked alike would hide which layer drew which.
-  rubbleHeap: p => `
+  rubblePile: p => `
     <rect x="8" y="${BASE - 12}" width="18" height="12" fill="${p.propDark}"/>
     <rect x="24" y="${BASE - 14}" width="20" height="14" fill="${p.prop}"/>
     <rect x="14" y="${BASE - 24}" width="16" height="12" fill="${p.prop}"/>
@@ -584,7 +584,7 @@ const PROP_AT: Record<string, Kind> = {
   "3,4": "statue",
   "4,5": "chestProp",
   "6,7": "chestProp",
-  "6,4": "rubble",
+  "6,4": "rubbleSpill",
   "6,6": "pillar",
 }
 

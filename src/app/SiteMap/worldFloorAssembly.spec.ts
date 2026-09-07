@@ -258,7 +258,7 @@ describe("what a world-spec setting may and may not move", () => {
       "the decoration pool",
       c =>
         edited(c, n => {
-          if (n.decorations) n.decorations = ["rubble"]
+          if (n.decorations) n.decorations = ["rubblePile"]
           if (n.wallDecorations) n.wallDecorations = ["niche"]
         }),
     ],

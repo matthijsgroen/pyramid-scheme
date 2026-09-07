@@ -118,7 +118,7 @@ export const expertRules: Rule[] = [
       "sarcophagus",
       "pillar",
       "brazier",
-      "rubble",
+      "rubblePile",
       "pit",
       "mat",
     ],

@@ -57,7 +57,7 @@ export const juniorRules: Rule[] = [
       "sarcophagus",
       "pillar",
       "brazier",
-      "rubble",
+      "rubblePile",
       "mat",
     ],
     // a nobleman's wing: a false-door stela, a lamp niche, a bracket for the lamp.

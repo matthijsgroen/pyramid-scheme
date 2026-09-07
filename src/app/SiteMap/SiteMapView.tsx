@@ -16,7 +16,7 @@ import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 import { ExplorerDot, LightPool, LightPoolDefs } from "./ExplorerDot"
-import { STANDING_VARIANT, driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
+import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
@@ -1194,10 +1194,7 @@ const LIT_DECORATIONS = new Set<DecorationKind>(["lamp"])
 const LAMP_POOL_RADIUS = CELL * 0.42
 
 const Decoration = ({ kind, tier }: { kind: DecorationKind; tier: Difficulty }) => {
-  // Falls back to the kind's own art while a variant is still unpainted: a room drawing the flat spill
-  // is wrong but harmless, where a room drawing the placeholder GLYPH is a regression the player sees.
-  const variant = STANDING_VARIANT[kind]
-  const url = (variant && tileUrl(tier, variant)) ?? tileUrl(tier, kind)
+  const url = tileUrl(tier, kind)
   return (
     <>
       {/* Under the sprite, so the light is on the floor and the lamp is standing in it. */}
@@ -1317,7 +1314,7 @@ const DecorationGlyph = ({ kind }: { kind: DecorationKind }) => {
       )
     case "pit":
       return <ellipse rx={9} ry={7} fill="#0a0604" stroke={DECORATION_COLOR} strokeWidth={1.5} />
-    case "rubble":
+    case "rubblePile":
       return (
         <>
           <circle cx={-4} cy={2} r={3} fill={DECORATION_COLOR} opacity={0.7} />

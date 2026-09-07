@@ -17,7 +17,7 @@ const RANK_POOL = [
   "sarcophagus",
   "pillar",
   "brazier",
-  "rubble",
+  "rubblePile",
   "pit",
   "mat",
 ] as const
@@ -57,7 +57,7 @@ describe("a role furnishes the place it is", () => {
     // These are what stop a narrowed pool from collapsing to one thing, so they must survive every role.
     for (const role of ["funerary", "trade", "water", "cosmos", "light"]) {
       const dressed = dress(floor({ role }))
-      expect(dressed.decorations, role).toEqual(expect.arrayContaining(["rubble", "pillar", "chestProp", "mat"]))
+      expect(dressed.decorations, role).toEqual(expect.arrayContaining(["rubblePile", "pillar", "chestProp", "mat"]))
     }
   })
 

@@ -142,8 +142,8 @@ yarn import-tile art/props/starter/jarRack.webp --tier=starter --name=jarRack --
 # faults outright — under 10 either way a prop does not read against the floor it stands on. Down at 0.82
 # it separates by 15 the other way, and the saturation brings +11 warmth back to +22, the bottom of the
 # hand-painted band.
-scaffold rubbleHeap
-yarn import-tile art/props/starter/rubbleHeap.webp --tier=starter --name=rubbleHeap --slot=prop \
+scaffold rubblePile
+yarn import-tile art/props/starter/rubblePile.webp --tier=starter --name=rubblePile --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.45
 
 # --brightness=0.70 is the deepest clip in this file, and it is a WHITEWASH problem rather than the usual
@@ -263,14 +263,10 @@ scaffold brazier --lit=1 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/props/junior/brazier.webp --tier=junior --name=brazier --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7 --brightness=0.92
 
-# rubbleHEAP, not rubble: this is what a ROOM is dressed with, and `rubble` is the scatter layer's flat
-# spill sharing the name. It went in under the wrong one and the nobleman's 24 rooms went on drawing a
-# placeholder while a painted plaster fall sat in the file beside it.
-#
 # --shadow=0.6 keeps a flat fall's footprint faint. Only the SHADOW render takes it — scaffold() passes
 # --shadow=0 ahead of "$@" for the mask, so the mask cannot pick one up.
-scaffold rubbleHeap --contents=plaster --shadow=0.6 --colour=#e0c193 --floor=#c39c68
-yarn import-tile art/props/junior/rubbleHeap.webp --tier=junior --name=rubbleHeap --slot=prop \
+scaffold rubblePile --contents=plaster --shadow=0.6 --colour=#e0c193 --floor=#c39c68
+yarn import-tile art/props/junior/rubblePile.webp --tier=junior --name=rubblePile --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85 --saturation=1.25
 
 scaffold jarrack --colour=#e0c193 --floor=#c39c68

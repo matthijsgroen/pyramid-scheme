@@ -861,7 +861,7 @@ describe("a kind that lies on the floor still dresses a room", () => {
 
   it("draws it standing, the same as any other prop", () => {
     expect(propBoxes("mat")).toBe(propBoxes("statue"))
-    expect(propBoxes("rubble")).toBe(propBoxes("statue"))
+    expect(propBoxes("rubblePile")).toBe(propBoxes("statue"))
   })
 })
 

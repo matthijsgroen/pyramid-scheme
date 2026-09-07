@@ -88,12 +88,24 @@ Nothing below has been committed. In rough order of size:
 - **Rooms are dressed for a PURPOSE** (`siteAssembler.ts`): the prop leads, and the wall item is drawn
   from the kinds that share its role — but only where that leaves two or more to choose between. Both
   halves of that rule were measured; the numbers and what they cost are in the code comments.
-- **`rubble` is two objects** — a flat spill the scatter layer lays on cells the player walks over, and a
-  standing `rubbleHeap` a room is dressed with, resolved through `STANDING_VARIANT`. This also fixed 77
-  authored dressing slots across the world that were drawing nothing at all.
+- **Broken brick is two objects with two names** — `rubbleSpill`, flat, on the cells the player walks
+  over, and `rubblePile`, knee-high, in a chamber corner nobody walks. They shared the name `rubble` and
+  a `STANDING_VARIANT` lookup told them apart, which went wrong three times before the rename.
 - **New tooling**: `yarn art-census`, `authoredKinds.ts` (+ spec), the `ArtBacklog` story, `--gamma` on
   `import-tile`, transparent headroom for hanging items, `prim_niche` and `prim_rubbleheap`.
 - **Merchant wall items are DONE** — `niche` and `tallyBoard`, 121 rooms.
+
+## Renaming a decoration kind is cheap; adding one is not
+
+Both were treated as the same cost for a long time and they are not close. `pickDressing` is
+`pool[hash(siteId, roomKey) % pool.length]`, so what moves every room's prop is a change of LENGTH —
+adding a name or dropping one. Renaming one in place keeps the length and the index: `rubble` →
+`rubblePile` regenerated the world with 698 pool entries changed and NOT ONE placement moved, verified by
+diffing the artifact (the only other line to change was `worldContentHash`, which is derived).
+
+Nothing is baked either way. The generated world stores the POOLS; the choice is made at assemble time
+from a hash of the site id and the room key, and zero per-room decorations are stored. So `sheaf` and
+`tideLine` are still the expensive kind of change, and only because they are NEW.
 
 ## Decided but NOT built
 

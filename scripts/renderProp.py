@@ -431,9 +431,9 @@ def prim_rubbleheap():
     The mortar dust and the sherd scatter are PAINT, like the mat's weave — geometry that small does not
     survive the slot."""
     if arg("contents") == "spill":
-        """A spill of broken mudbrick underfoot — the SCATTER layer's rubble, not the room's.
+        """A spill of broken mudbrick underfoot — the SCATTER layer's brick, not the room's.
 
-        The third object sharing this name, and the one with the least to work with. `rubbleHeap` stands
+        The third object sharing this name, and the one with the least to work with. `rubblePile` stands
         knee-high on a cell nobody can reach and is free to have a silhouette; this lies on the cells the
         player WALKS OVER, so it has to stay flat enough to walk through — a heap in the middle of a
         passage is a wall, not a decoration.
@@ -870,7 +870,7 @@ PRIMITIVES.update(
         "lamp": prim_lamp,
         "pillar": prim_pillar,
         "mat": prim_mat,
-        "rubbleHeap": prim_rubbleheap,
+        "rubblePile": prim_rubbleheap,
         "niche": prim_niche,
         "pit": prim_pit,
         "sconce": prim_sconce,

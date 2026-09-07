@@ -1,5 +1,5 @@
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { DecorationKind, FloorGrid } from "@/game/siteTypes"
+import type { FloorGrid } from "@/game/siteTypes"
 import type { RoomClaims } from "./SiteMapView"
 import { hashUnit } from "@/support/hashString"
 
@@ -16,44 +16,28 @@ import { hashUnit } from "@/support/hashString"
  * brief's §4 (docs/game-design/tile-art-brief.md) and resolve as `tiles/<tier>/<kind>.png`, so a rank
  * is a skin and not a new set of files.
  */
-export type ScatterKind = "sand" | "rubble" | "mat"
+export type ScatterKind = "sand" | "rubbleSpill" | "mat"
 
 /**
  * The kinds the scatter layer places — what blows in and falls, on the cells the player walks.
  *
- * These names ALSO appear in the ranks' authored `decorations` pools, and a room that rolls one is
- * dressed with it: `Decoration` draws it standing, on an empty claimed cell nobody walks, through
- * `STANDING_VARIANT`. So a name here is not a name excluded from the prop layer — it is a name that
- * means two different objects depending on which layer asked for it. A spill of brick underfoot and a
- * heap of it in the corner of a chamber are both `rubble`.
+ * `mat` also appears in the ranks' authored `decorations` pools, and a room that rolls one is dressed
+ * with it — a mat is flat wherever it lies, so the same file serves both layers.
  *
- * The pools are left alone deliberately: that is a generated world, and re-authoring them reshuffles
- * every prop in it — `pickDressing` indexes by pool LENGTH, so dropping a name moves the prop in every
- * room that has one. Which layer a kind belongs to is a renderer decision, and it is made here and in
- * `STANDING_VARIANT`.
+ * Broken brick is TWO OBJECTS and they are now two names: `rubbleSpill` here, flat enough to walk
+ * through, and `rubblePile` in the pools, knee-high in the corner of a chamber where nobody walks. They
+ * shared the name `rubble` for a long time and a `STANDING_VARIANT` lookup told them apart, which went
+ * wrong in three separate places — the census called a painted pile a placeholder, an import put the
+ * nobleman's plaster fall in the spill's file so 24 rooms drew nothing, and the prop sheet staged the
+ * spill where a room draws the pile. Two names cost a rename; one name cost three bugs.
+ *
+ * RENAMING A KIND IS CHEAP, which is the other thing that took a while to see. `pickDressing` is
+ * `pool[hash(...) % pool.length]`, so what moves every room's prop is a change of LENGTH — adding or
+ * dropping a name. Renaming one in place keeps the length and the index: regenerating the world after
+ * this changed 698 pool entries and not one placement.
  */
-/** What a floor kind is drawn as when a ROOM was dressed with it, rather than when it blew in.
- *
- * The two are not the same object. Scatter lies on cells the player walks over, so it has to be flat
- * enough to walk through — a drift, a spill, a mat underfoot. A room's dressing lands on an empty
- * claimed cell the player CANNOT walk on (see `decorationAt`), so it is free to stand up and be walked
- * around: a knee-high heap of fallen brick is a thing in the corner of a chamber, and it would be
- * nonsense in the middle of a passage.
- *
- * `mat` needs no variant — a mat is flat wherever it lies, and on a cell nobody walks it simply reads
- * as a rug against the wall. Only `rubble` is two objects sharing one name. */
-export const STANDING_VARIANT: Partial<Record<DecorationKind, string>> = { rubble: "rubbleHeap" }
 
-export const FLOOR_KINDS: ReadonlySet<string> = new Set<ScatterKind>(["sand", "rubble", "mat"])
-
-/** The FILE a kind draws in a given layer, which is not always the kind's own name.
- *
- * `rubble` is two objects sharing one name: a room's dressing gets the standing heap and the scatter
- * layer gets the flat spill. Anything listing both layers therefore shows the name twice, and unless it
- * resolves this it shows the same file twice as well — the prop sheet was staging the SPILL where a room
- * draws the heap, which is the same blindness `art-census` had. */
-export const tileNameFor = (kind: string, layer: "prop" | "scatter"): string =>
-  layer === "prop" ? (STANDING_VARIANT[kind as DecorationKind] ?? kind) : kind
+export const FLOOR_KINDS: ReadonlySet<string> = new Set<ScatterKind>(["sand", "rubbleSpill", "mat"])
 
 /** Scatter kinds drawn as DRIFTS rather than as cell-sized sprites — see `driftsFor`. Exported so a
  * sheet staging one stages it the way the map does: centred on the cell and sized in cells, not
@@ -153,8 +137,8 @@ export const driftsFor = (grid: FloorGrid, tier: Difficulty): Drift[] => {
  * owner cell. Hence a pass that walks the CHAMBERS rather than the cells.
  */
 // SAND IS NOT HERE, and that is the point of `driftsFor` below: a drift does not fit in a cell.
-const GROUND_KINDS: readonly ScatterKind[] = ["rubble"]
-const CHAMBER_KINDS: readonly ScatterKind[] = ["mat", "rubble"]
+const GROUND_KINDS: readonly ScatterKind[] = ["rubbleSpill"]
+const CHAMBER_KINDS: readonly ScatterKind[] = ["mat", "rubbleSpill"]
 
 /** One piece per this many corridor cells, within the bounds. Measured at 6.9 a floor when the divisor
  * was 7 and the cap 7 — which is to say every floor was at the cap, and a passage with something in

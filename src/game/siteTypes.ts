@@ -46,7 +46,7 @@ export const KEY_COLORS: readonly KeyColor[] = ["blue", "red", "green", "yellow"
 // first (docs/game-design/spritesheet-renderer-prep.md, "Chamber props"). `basin` rather than
 // "fountain": Egypt had libation basins, ablution basins and temple lakes, not pressurised fountains.
 export type DecorationKind =
-  | "rubble"
+  | "rubblePile"
   | "pillar"
   | "pit"
   | "statue"

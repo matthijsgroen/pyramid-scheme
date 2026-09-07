@@ -45,7 +45,7 @@ export const starterRules: Rule[] = [
       "shrine",
       "pillar",
       "brazier",
-      "rubble",
+      "rubblePile",
       "pit",
       "mat",
     ],
