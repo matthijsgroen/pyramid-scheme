@@ -68,17 +68,6 @@ it means a re-roll, same as §1.
 
 ## 3. Painted, but wrong or not to standard
 
-**`starter/pit` — the spoil casts no shadow.** The tile is imported with `--shadow=0` and no `--seat`,
-on the rule that a hole casts nothing, and that is right about the HOLE and wrong about the broken
-mudbrick lying round its mouth. Those pieces sit on the floor like any other prop and should have a
-footprint under them; without one they read as pasted on rather than dropped there.
-
-The blanket flag is the bug. The fix belongs in `make_shadow`: a part marked `VOID` is an absence and an
-absence casts nothing, so the flatten should SKIP void geometry rather than the caller skipping the
-shadow. Then the pit takes a normal `--seat` and only its bricks cast — and the rule generalises to
-every hole the set ever gets, which is `breach` and `plug` next. Note `--sun=0` on the pit's scaffold
-would have to go with it, since that also tells the camera to leave no room underneath.
-
 **`starter/statue` and `starter/basin` — the last two merchant props outside the pipeline.** Both are
 still 56x84 where everything else at that rank is 112x168, both have painted opaque shadows where every
 other prop has a translucent rendered one, and neither has a rebuild line. They have masters

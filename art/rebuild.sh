@@ -104,13 +104,11 @@ scaffold mat --spin=9 --shadow=0.5
 yarn import-tile art/masters/props/starter/mat.webp --tier=starter --name=mat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
 
-# A hole casts nothing, and --sun=0 says so to the CAMERA as well as to the shadow. The frame leaves
-# room under an object for the footprint the sun pushes toward the viewer; with no footprint that room
-# is empty, and on a slot that does not re-seat — every wall slot — it just shifts the art up its band.
-#
-# --shadow=0 on the render and NO --seat at import: `make_shadow` flattens the
-# object to z=0 and pushes it toward the viewer, so a pit's footprint is a second dark parallelogram
-# lying in front of the first one and the tile reads as two holes.
+# The hole casts nothing and the BRICKS ROUND IT DO, which took two goes to get right. The tile shipped
+# with --shadow=0 and no --seat, on the rule that a hole casts nothing — true of the hole, false of the
+# broken mudbrick lying at its mouth, which sits on the floor like any other prop and came out with no
+# footprint, reading as pasted on. `make_shadow` now drops VOID faces before flattening, so an absence
+# casts nothing on its own and the pit takes a normal seat.
 #
 # NO --saturation, and the reason is a measurement that was confidently wrong. `tile-stats` reports
 # warmth as a WHOLE-SPRITE mean, and 43% of this sprite is black shaft; black has no chroma, so it
@@ -122,9 +120,9 @@ yarn import-tile art/masters/props/starter/mat.webp --tier=starter --name=mat --
 # mudbrick at +35 and 112 and the wall face's +29 and 112. Seven lighter than the wall is right — the
 # spoil is freshly broken faces where the wall is worn and sooted. 0.78 matched the wall exactly and
 # took the pole and the ladder down with it, until the timber was as dark as the shaft.
-scaffold pit --shadow=0 --sun=0
+scaffold pit
 yarn import-tile art/masters/props/starter/pit.webp --tier=starter --name=pit --slot=prop \
-  --filter=smooth --mask="$OBJ" --brightness=0.82
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82
 
 # The market table was one of the four made by PROMPTING alone, before the pipeline existed, so its
 # shadow was painted into the art and it had no scaffold, no mask and no rebuild line — which is how it

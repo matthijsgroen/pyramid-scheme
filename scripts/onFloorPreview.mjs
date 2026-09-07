@@ -23,8 +23,30 @@ const face = await sharp(`src/assets/tiles/${tier}/wall-face.png`).resize(W, BAN
 const floor = await sharp(`src/assets/tiles/${tier}/floor.png`)
   .resize(W, CELL * 2, { fit: "cover" })
   .toBuffer()
-const sprite = sharp(tile)
-const { width, height } = await sprite.metadata()
+/**
+ * A tile's stored size is no longer its size in MAP UNITS — `importTile`'s SPRITE_SCALE is 2, so a prop
+ * is 112x168 for a 56x84 slot. This preview composites in map units, so it has to divide that back out
+ * or the sprite arrives twice the size of the cell it stands on (which is how it broke).
+ *
+ * Derived from the slot's own aspect rather than from a constant, so it stays right if the scale changes
+ * again — and so a 1x tile that has no rebuild line yet still previews correctly beside a 2x one.
+ */
+const SLOTS_IN_UNITS = [
+  [CELL, CELL + BAND], // prop
+  [CELL, BAND], // wall and sill
+  [CELL * 3, CELL * 3], // drift
+  [CELL * 8, CELL * 8], // floor
+  [CELL * 8, CELL], // face
+  [84, 49], // arch
+  [40, 70], // explorer
+]
+const spriteMeta = await sharp(tile).metadata()
+const aspect = spriteMeta.width / spriteMeta.height
+const slot = SLOTS_IN_UNITS.reduce((best, s) =>
+  Math.abs(s[0] / s[1] - aspect) < Math.abs(best[0] / best[1] - aspect) ? s : best
+)
+const [width, height] = slot
+const sprite = sharp(await sharp(tile).resize(width, height, { fit: "fill" }).png().toBuffer())
 // Bottom-aligned on the middle cell's floor line, the way SiteMapView draws a prop.
 const composed = await sharp({
   create: { width: W, height: H, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 1 } },

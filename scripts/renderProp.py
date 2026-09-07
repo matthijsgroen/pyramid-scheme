@@ -38,6 +38,7 @@ thing to run.
 import sys
 import math
 import bpy
+import bmesh
 from mathutils import Matrix, Vector
 
 # The slot is 56x84 map units; render well above it and let `import-tile` resize, the same way every
@@ -590,12 +591,12 @@ def prim_pit():
     # The pole laid across the far lip, and the ladder over it. Coarse on purpose — at 56 units across
     # the opening a rope of 0.03 is two pixels and the ladder becomes a smudge.
     rope_y = (d - 0.05) / 2 - 0.055
-    pole = mark(cyl(0.05, w - 0.06, x=0, y=d / 2 + 0.01, z=0.05, verts=12), "body")
+    pole = mark(cyl(0.05, w - 0.06, x=0, y=d / 2 + 0.01, z=0.05, verts=12), NOCAST)
     pole.rotation_euler = (0, math.radians(90), 0)
     for sx in (-1, 1):
-        mark(box(0.05, 0.05, 0.10 + hv, x=sx * 0.25, y=rope_y, z=(0.10 - hv) / 2), "body")
+        mark(box(0.05, 0.05, 0.10 + hv, x=sx * 0.25, y=rope_y, z=(0.10 - hv) / 2), NOCAST)
     for i in range(3):
-        mark(box(0.55, 0.055, 0.055, y=rope_y, z=-0.09 - i * 0.15), "body")
+        mark(box(0.55, 0.055, 0.055, y=rope_y, z=-0.09 - i * 0.15), NOCAST)
     return join_all()
 
 
@@ -885,6 +886,11 @@ def srgb_to_linear(c):
 
 
 VOID = "void"  # the material name a primitive marks the inside of a hole with
+# A part that does not TOUCH THE FLOOR, and so casts nothing on it. Coloured like any other part — it is
+# the footprint it is kept out of, not the picture. `prim_pit`'s pole and its rope ladder are the case:
+# they hang over and into the shaft, so there is no floor under them to catch a shadow, and flattened to
+# z=0 they came out as dark slabs lying beside the hole.
+NOCAST = "nocast"
 
 # What a marked part is painted, when the caller names no colour for it. A scaffold's job is to be
 # RECOGNISED — tile-art-brief.md's whole argument for --colour is that a grey render came back as
@@ -897,6 +903,7 @@ PART_COLOURS = {
     "accent": "#b07a3c",  # the rank's one warm ochre; override per rank with --colour-accent
     "pottery": "#8f7358",  # fired clay: warmer and duller than timber, and never the ochre accent
     "cloth": "#bdb3a0",
+    # NOCAST is not a colour: a part kept out of the footprint is still painted the rank's stone.
 }
 
 
@@ -950,7 +957,9 @@ def paint(obj, hex_colour):
         return
     for i, name in enumerate(names):
         default = PART_COLOURS.get(name, hex_colour)
-        obj.data.materials[i] = flat_material(f"prop{i}", arg(f"colour-{name}", default))
+        # Keeps the slot's NAME, not `prop{i}`. `make_shadow` reads it back to find the void, and a
+        # renamed slot leaves it unable to tell an absence from stone.
+        obj.data.materials[i] = flat_material(name, arg(f"colour-{name}", default))
 
 
 def load_subject(mesh_path, primitive):
@@ -1070,6 +1079,41 @@ def seat_and_normalise(obj):
     return x1 - x0, y1 - y0
 
 
+def drop_void_faces(mesh_obj):
+    """Removes any face marked VOID or NOCAST, so nothing that fails to touch the floor casts on it.
+
+    A part marked void is a HOLE — the inside of `prim_pit`'s shaft — and a hole does not sit on the
+    floor, so it must not appear in a flattened footprint. The pit was given `--shadow=0` instead, which
+    is right about the hole and wrong about everything beside it: the broken mudbrick round its mouth
+    lies on the floor like any other prop and came out with no footprint at all, reading as pasted on
+    rather than dropped there.
+
+    NOCAST is the same idea for a part that is solid but hangs: the pit's pole lies across the mouth and
+    its ladder hangs into the shaft, and flattening those to z=0 put dark slabs on the floor beside the
+    hole. A shadow belongs to whatever TOUCHES the ground, which for that tile is the spoil and nothing
+    else.
+
+    Doing it here rather than in the caller means the rule holds for every hole the set gets — `breach`
+    and `plug` are next — and a primitive with a void part takes a normal `--seat` like anything else."""
+    # `m.name.split(".")[0]`, and the suffix is not cosmetic. `mark` creates a datablock called "void",
+    # then `paint` creates ANOTHER material with that name — so Blender uniquifies it to "void.001" and an
+    # exact-name test silently matches nothing. This function quietly did nothing at all until that was
+    # printed out.
+    void = [i for i, m in enumerate(mesh_obj.data.materials) if m and m.name.split(".")[0] in (VOID, NOCAST)]
+    if not void:
+        return
+    mesh = mesh_obj.data
+    doomed = [poly.index for poly in mesh.polygons if poly.material_index in void]
+    if not doomed:
+        return
+    bm = bmesh.new()
+    bm.from_mesh(mesh)
+    bm.faces.ensure_lookup_table()
+    bmesh.ops.delete(bm, geom=[bm.faces[i] for i in doomed], context="FACES")
+    bm.to_mesh(mesh)
+    bm.free()
+
+
 def make_shadow(obj, depth, floor_hex, offset_x, offset_y):
     """The object's own footprint, lying on the floor, painted as that floor in shadow.
 
@@ -1100,7 +1144,17 @@ def make_shadow(obj, depth, floor_hex, offset_x, offset_y):
     shadow = obj.copy()
     shadow.data = obj.data.copy()
     bpy.context.scene.collection.objects.link(shadow)
+    drop_void_faces(shadow)
+    # Flattened to the plane the CASTING GEOMETRY RESTS ON, which is not always z=0.
+    #
+    # `seat_and_normalise` puts the object's lowest point at z=0, and for almost everything that is the
+    # floor. For `prim_pit` it is the bottom of the SHAFT: the floor sits three quarters of the way up the
+    # object, so flattening to z=0 laid the spoil's footprints half a shaft-depth below the bricks that
+    # cast them. Taking the minimum z of what survives the void-drop puts the shadow back on the ground —
+    # and leaves every ordinary prop exactly where it was, because for those that minimum IS zero.
+    rest = min((v.co.z for v in shadow.data.vertices), default=0.0)
     shadow.data.transform(Matrix.Diagonal((1.0, 1.0, 0.0, 1.0)))
+    shadow.data.transform(Matrix.Translation((0.0, 0.0, rest)))
     if offset_x or offset_y:
         anchored = shadow.data.copy()
         shadow.data.transform(Matrix.Translation((offset_x, offset_y, 0.0)))
