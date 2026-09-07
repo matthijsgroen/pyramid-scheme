@@ -168,17 +168,44 @@ def cyl(r, h, x=0.0, y=0.0, z=0.0, verts=16):
 
 
 def prim_market():
-    """The merchant's market table: the table he traded from, his balance, and a heap of grain.
+    """One table and what is on it: `--contents=market` is the merchant's balance and heap of grain,
+    `--contents=laid` the nobleman's laid dining table.
 
     A prop is not its silhouette alone — the painted version of this reads as a market stall because of
     what stands ON it, and the scaffold has to carry that or the repaint has nothing to paint. The scale
     is a post, a beam and two pans; the grain is a squashed cone. Nothing here is finer than a thumb at
-    slot size, which is the budget."""
+    slot size, which is the budget.
+
+    The laid table is the same carcass, and it obeys the far-edge rule below for the same reason: its jar
+    is what tops the back edge, so the platter and the loaves may sit flat on the timber."""
+    contents = arg("contents", "market")
     top_h, leg, w, d, h = 0.07, 0.06, 1.2, 0.6, 0.5
     mark(box(w, d, top_h, z=h - top_h / 2), "body")
     for sx in (-1, 1):
         for sy in (-1, 1):
             mark(box(leg, leg, h - top_h, x=sx * (w / 2 - leg), y=sy * (d / 2 - leg), z=(h - top_h) / 2), "body")
+    if contents == "laid":
+        # A platter of loaves, two cups, and a stoppered jar. The JAR is the piece that has to top the
+        # back edge — see the derivation below, which the grain heap paid for: under z + k*y the back of
+        # the tabletop is the HIGH boundary at h + k*d/2, and anything drawn against timber rather than
+        # against the background reads as a stain on it. The jar clears that line by 0.13, so everything
+        # else is free to lie flat.
+        # In a ring, not on its point. `prim_basin` records the failure: `jar()` tapers to a point, and
+        # a point standing on a flat surface gives a contact one pixel wide that reads as balancing.
+        mark(cyl(0.108, 0.045, x=-0.30, y=0.06, z=h + 0.022, verts=14), "pottery")
+        jar(-0.30, 0.06, 0.30, 0.105, z=h - 0.02, part="pottery")
+        mark(cyl(0.21, 0.028, x=0.16, y=-0.02, z=h + 0.014, verts=20), "pottery")
+        # Loaves: squashed spheres, coarse for the same reason `prim_shelf`'s pots are.
+        for lx, ly, r in ((0.08, 0.02, 0.085), (0.24, -0.06, 0.075), (0.19, 0.09, 0.07)):
+            bpy.ops.mesh.primitive_uv_sphere_add(segments=14, ring_count=8, radius=r,
+                                                 location=(lx, ly, h + 0.045))
+            loaf = bpy.context.object
+            loaf.scale = (1.25, 1.0, 0.55)
+            bpy.ops.object.transform_apply(scale=True)
+            mark(loaf, "accent")
+        for cx in (0.44, 0.52):
+            mark(cyl(0.052, 0.075, x=cx, y=-0.09 if cx > 0.5 else 0.06, z=h + 0.037, verts=12), "pottery")
+        return join_all()
     # The balance, standing on the right of the top: post, beam across it, a shallow pan hanging at
     # each end. Pans are discs, which under this shear draw as ellipses — the same tell as the jar lids.
     post_x, post_h = 0.30, 0.32
@@ -232,7 +259,8 @@ def tilt(obj, degrees, axis="Y"):
 
 
 def prim_shelf():
-    """Mudbrick shelving: a back slab, two side piers, two open levels, and what stands in them.
+    """Mudbrick shelving and what stands in it: `--contents=storage` is the merchant's pots and linen,
+    `--contents=linen` the nobleman's linen press with a mirror case on the top course.
 
     An OPENING is shorter than the gap that makes it. The shelf above is a slab of depth d, and its
     front-bottom edge sits at y = -d/2, so the shear draws that edge 0.7*(d/2) LOWER than its own z. A
@@ -243,26 +271,55 @@ def prim_shelf():
     unit is three pixels in the slot, the brief's tenth-of-the-object rule failed by a factor of two —
     and they have to be SQUAT, because an amphora slim enough to read as an amphora is finer than that
     limit. These are storage pots, and the ostracon lies flat on the top course where the shear shows a
-    top face generously, rather than leaning in an opening where nothing is lit."""
+    top face generously, rather than leaning in an opening where nothing is lit.
+
+    The linen press is the same carcass with FOLDED CLOTH in it, and it is marked `cloth` throughout —
+    stacked sheets and stacked anything else are the same boxes, so the only thing that tells the repaint
+    which it is looking at is the colour it arrives in. The mirror case goes on the top course for the
+    ostracon's reason, and it is `metal`, which is the one part of this prop that is not mud or cloth."""
+    contents = arg("contents", "storage")
+    linen = contents == "linen"
+
+    def put(obj, name):
+        return mark(obj, name) if linen else obj
+
     w, d, h, brick = 1.15, 0.30, 0.86, 0.08
     lip = 0.35 * d
-    box(w, brick, h, y=(d - brick) / 2, z=h / 2)
+    put(box(w, brick, h, y=(d - brick) / 2, z=h / 2), "body")
     for sx in (-1, 1):
-        box(brick, d, h, x=sx * (w / 2 - brick / 2), z=h / 2)
+        put(box(brick, d, h, x=sx * (w / 2 - brick / 2), z=h / 2), "body")
     shelf_z, shelf_t = 0.40, 0.07
-    box(w - brick * 2, d, shelf_t, z=shelf_z)
-    box(w, d, brick, z=h - brick / 2)
-    # Upper level: two mud-stoppered storage pots, sized to the room the lip really leaves.
+    put(box(w - brick * 2, d, shelf_t, z=shelf_z), "body")
+    put(box(w, d, brick, z=h - brick / 2), "body")
     base = shelf_z + shelf_t / 2
-    room = (h - brick - lip) - (base + lip)
-    for x in (-0.33, -0.02):
-        jar(x, -0.02, room / 1.15, 0.10, z=base)
-    # Lower level: folded linen, stacked.
-    box(0.52, 0.24, 0.11, x=-0.28, z=0.055)
-    box(0.46, 0.22, 0.10, x=-0.31, z=0.16)
-    cyl(0.12, 0.23, x=0.29, y=-0.01, z=0.115, verts=16)
-    # The tally ostracon, lying on the top course.
-    tilt(box(0.26, 0.20, 0.03, x=0.34, y=-0.01, z=h + 0.015), 7, "X")
+    if linen:
+        # Upper level: two stacks of folded sheets, and a rolled bolt lying along X beside them. The bolt
+        # lies rather than stands for `prim_lamp`'s reason about pointing at the viewer: a cylinder on end
+        # in an opening is a disc, and a disc in a dark gap is a hole.
+        put(box(0.40, 0.24, 0.055, x=-0.28, z=base + 0.028), "cloth")
+        put(box(0.36, 0.22, 0.05, x=-0.30, z=base + 0.081), "cloth")
+        bolt = put(cyl(0.055, 0.34, x=0.28, y=-0.02, z=base + 0.055, verts=12), "cloth")
+        bolt.rotation_euler = (0, math.radians(90), 0)
+        # Lower level: three sheets stacked, each a little smaller, which is what says folded rather than
+        # one block — the offsets are bigger than the thicknesses on purpose.
+        put(box(0.56, 0.26, 0.075, x=-0.24, z=0.038), "cloth")
+        put(box(0.50, 0.24, 0.065, x=-0.28, z=0.108), "cloth")
+        put(box(0.44, 0.22, 0.06, x=-0.22, z=0.170), "cloth")
+        put(box(0.30, 0.24, 0.20, x=0.30, y=-0.01, z=0.10), "cloth")
+        # The mirror case, flat on the top course: a disc and its handle, the one metal thing here.
+        put(cyl(0.15, 0.032, x=0.30, y=-0.01, z=h + 0.016, verts=20), "metal")
+        put(box(0.20, 0.06, 0.028, x=0.06, y=-0.01, z=h + 0.014), "metal")
+    else:
+        # Upper level: two mud-stoppered storage pots, sized to the room the lip really leaves.
+        room = (h - brick - lip) - (base + lip)
+        for x in (-0.33, -0.02):
+            jar(x, -0.02, room / 1.15, 0.10, z=base)
+        # Lower level: folded linen, stacked.
+        box(0.52, 0.24, 0.11, x=-0.28, z=0.055)
+        box(0.46, 0.22, 0.10, x=-0.31, z=0.16)
+        cyl(0.12, 0.23, x=0.29, y=-0.01, z=0.115, verts=16)
+        # The tally ostracon, lying on the top course.
+        tilt(box(0.26, 0.20, 0.03, x=0.34, y=-0.01, z=h + 0.015), 7, "X")
     return join_all()
 
 
@@ -317,34 +374,89 @@ def prim_brazier():
 
 
 def prim_lamp():
-    """A single-wick pottery oil lamp on a low wooden stool, and its flame.
+    """An oil lamp and the thing it stands on: `--contents=stool` is the merchant's low wooden stool,
+    `--contents=stand` the nobleman's tall bronze stand. The lamp itself is the same object at both ranks,
+    which is `prim_niche`'s pattern and why the second rank cost no model.
 
-    Nothing on this may point at the VIEWER. A pinched spout modelled along -Y draws, under the shear,
-    as a cone hanging straight down off the saucer, and the first scaffold read as a flying saucer with
-    a nose cone. The spout goes out along X, where the projection leaves it alone.
+    Nothing on this may point at the VIEWER. A pinched spout modelled along -Y draws, under the shear, as
+    a cone hanging straight down off the saucer, and the first scaffold read as a flying saucer with a
+    nose cone. The spout goes out along X, where the projection leaves it alone.
 
-    The flame is modelled rather than left to the repaint because it is the one place the ochre accent
-    is allowed, and a prompt can only put paint where there is already a shape. But it is a NUB and not
-    a cone: a sharp triangle a fifth of the object tall is the most salient shape in the picture, and
-    the scaffold read as a flying saucer with a nose cone. The lamp is a straight cylinder for the same
-    reason — a flared saucer overhangs its own base and the black crescent of its underside was bigger
-    than the lamp.
+    The flame is modelled rather than left to the repaint because it is the one place the ochre accent is
+    allowed, and a prompt can only put paint where there is already a shape. But it is a NUB and not a
+    cone: a sharp triangle a fifth of the object tall is the most salient shape in the picture. The lamp
+    is a straight cylinder for the same reason — a flared saucer overhangs its own base and the black
+    crescent of its underside was bigger than the lamp.
 
-    Two things about the STOOL, both about the seat's top face, which is the shape that eats this prop.
-    A seat 0.26 deep put 40% of the drawn height into one featureless pale rectangle and read as a wall
-    with legs; at 0.16 it is 22% and reads as a seat. And whatever stands on that seat must OVERHANG its
-    front edge, because a dish sitting wholly within the seat draws its own pale top INSIDE a pale
-    rectangle of the same value and the eye reads the dark side wall as a hole in the furniture rather
-    than as a bowl. Hanging the lamp over the front breaks the seat's top-to-front boundary, which is the
-    one edge in the picture that says which surface is which."""
-    top_h, leg, w, d, h = 0.045, 0.04, 0.36, 0.16, 0.30
-    box(w, d, top_h, z=h - top_h / 2)
-    for sx in (-1, 1):
-        for sy in (-1, 1):
-            box(leg, leg, h - top_h, x=sx * (w / 2 - leg), y=sy * (d / 2 - leg), z=(h - top_h) / 2)
-    cyl(0.095, 0.05, x=-0.02, y=-0.04, z=h + 0.025, verts=20)
-    box(0.075, 0.05, 0.03, x=0.13, y=-0.04, z=h + 0.03)
-    bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.028, radius2=0.0, depth=0.055, location=(0.13, -0.04, h + 0.075))
+    Two things about the STOOL, both about the seat's top face, which is the shape that eats this prop. A
+    seat 0.26 deep put 40% of the drawn height into one featureless pale rectangle and read as a wall with
+    legs; at 0.16 it is 22% and reads as a seat. And whatever stands on that seat must OVERHANG its front
+    edge, because a dish sitting wholly within the seat draws its own pale top INSIDE a pale rectangle of
+    the same value and the eye reads the dark side wall as a hole in the furniture rather than as a bowl.
+    Hanging the lamp over the front breaks the seat's top-to-front boundary, which is the one edge in the
+    picture that says which surface is which.
+
+    The STAND is that rule again with nothing to hide behind. A single shaft is 8 units wide in a 56 unit
+    cell, so the width has to come from the FOOT and the DISH, and the two of them are what the eye gets:
+    splayed feet at the bottom, a saucer wider than the shaft at the top, and one collar in the middle so
+    the shaft is not a single unbroken line. Every part of it is marked `metal` — the whole point of the
+    rank's row is that this one is bronze and the merchant's is wood, and a scaffold that does not say so
+    comes back as another wooden stool."""
+    contents = arg("contents", "stool")
+    stand = contents == "stand"
+    part = "metal" if stand else None
+
+    def put(obj):
+        return mark(obj, part) if part else obj
+
+    if stand:
+        # A FLARED TRUMPET FOOT, not a tripod, and FLATTENED IN DEPTH.
+        #
+        # Two failures, and the second is the one worth keeping. Splayed legs are `prim_brazier`'s answer
+        # to a vessel that reads as a table, but they buy almost no width: `tilt` turns a part about its
+        # own centre, so a leg 0.20 long reaches 0.07 and the widest thing in the prop stayed the saucer.
+        # A cone opening downward is one primitive and as wide as it is told to be.
+        #
+        # But a ROUND foot 0.44 across still landed 33 of 56, because the shear TAXES DEPTH INTO HEIGHT:
+        # the drawn height is not the object's z extent but max(z + k*y) - min(z + k*y), so 0.44 of depth
+        # adds 0.31 of drawn height and eats the width it just bought. Every round-footed prop pays this;
+        # this one cannot afford it, having no width anywhere else. So the foot is an ELLIPSE — wide in x,
+        # 0.55 of that in y — which costs nothing, because the projection only ever draws one view.
+        #
+        # The cone is built radius1-wide, which is the orientation Blender winds outward; see
+        # `recalc_outward` for what the other way round costs.
+        foot_r, shaft_h = 0.26, 0.38
+        bpy.ops.mesh.primitive_cone_add(vertices=20, radius1=foot_r, radius2=0.06, depth=0.20,
+                                        location=(0, 0, 0.10))
+        foot = bpy.context.object
+        foot.scale = (1.0, 0.55, 1.0)
+        bpy.ops.object.transform_apply(scale=True)
+        put(foot)
+        put(cyl(0.10, 0.04, z=0.20, verts=16))
+        put(cyl(0.038, shaft_h, z=0.20 + shaft_h / 2, verts=12))
+        # One collar, so the shaft is not a single unbroken stroke at slot size.
+        put(cyl(0.062, 0.045, z=0.20 + shaft_h * 0.45, verts=12))
+        h = 0.20 + shaft_h
+        # The stand's lamp IS its saucer, one wide dish and not a small one standing in a big one: at
+        # 0.095 inside a 0.17 saucer the lamp was a bump on a plate, two pale discs of one value.
+        lamp_x, lamp_y, dish_r, spout_x = 0.0, 0.0, 0.17, 0.178
+    else:
+        top_h, leg, w, d, h = 0.045, 0.04, 0.36, 0.16, 0.30
+        box(w, d, top_h, z=h - top_h / 2)
+        for sx in (-1, 1):
+            for sy in (-1, 1):
+                box(leg, leg, h - top_h, x=sx * (w / 2 - leg), y=sy * (d / 2 - leg), z=(h - top_h) / 2)
+        lamp_x, lamp_y, dish_r, spout_x = -0.02, -0.04, 0.095, 0.13
+    # The spout OVERLAPS the rim. At the merchant's 0.13 on a 0.095 dish it clears by 0.018 and reads as
+    # a pinched lip, but the same clearance on the stand's 0.17 saucer read as a flame floating beside the
+    # lamp. Its own number per rank, and the merchant's is left at 0.13 to the digit: the geometry a master
+    # was painted over cannot move afterwards or the mask cuts a shape the art no longer fills.
+    put(cyl(dish_r, 0.05, x=lamp_x, y=lamp_y, z=h + 0.025, verts=20))
+    put(box(0.075, 0.05, 0.03, x=spout_x, y=lamp_y, z=h + 0.03))
+    bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.028, radius2=0.0, depth=0.055,
+                                    location=(spout_x, lamp_y, h + 0.075))
+    if stand:
+        mark(bpy.context.object, "accent")
     return join_all()
 
 

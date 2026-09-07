@@ -86,33 +86,34 @@ rebuild line.
 ## 4. Waiting on one roll — scaffold ready
 
 Modelled, self-verified in the sheared render, and the three renders are in `~/tile-previews/`. Each needs
-one repaint and an `import-tile` line and it is done.
+one repaint and one `import-tile` line and it is done.
 
-| kind                  | primitive                     | renders               |
-| --------------------- | ----------------------------- | --------------------- |
-| `starter/rubbleSpill` | `rubblePile --contents=spill` | `rubble-starter*`     |
-| `starter/basin`       | `basin --contents=jar`        | `basin-starter*`      |
-| `junior/pillar`       | `palm`                        | `palm-junior*`        |
-| `junior/shrine`       | `falseDoor`                   | `falsedoor-junior*`   |
-| `junior/chestProp`    | `sealedChest`                 | `sealedchest-junior*` |
-| `junior/basin`        | `basin --contents=bowl`       | `basin-junior*`       |
+| kind                   | primitive                     | renders                 |
+| ---------------------- | ----------------------------- | ----------------------- |
+| `starter/rubbleSpill`  | `rubblePile --contents=spill` | `rubble-starter*`       |
+| `starter/basin`        | `basin --contents=jar`        | `basin-starter*`        |
+| `junior/pillar`        | `palm`                        | `palm-junior*`          |
+| `junior/shrine`        | `falseDoor`                   | `falsedoor-junior*`     |
+| `junior/chestProp`     | `sealedChest`                 | `sealedchest-junior*`   |
+| `junior/basin`         | `basin --contents=bowl`       | `basin-junior*`         |
+| `junior/lamp`          | `lamp --contents=stand`       | `lamp-junior*`          |
+| `junior/shelf`         | `shelf --contents=linen`      | `shelf-junior*`         |
+| `junior/offeringTable` | `market --contents=laid`      | `offeringtable-junior*` |
 
 `starter/rubbleSpill` and `starter/basin` are the merchant's last two files, and `basin` also closes §3's
 first bullet.
 
+Five of these are one primitive serving two ranks on `--contents`, which is `prim_niche`'s pattern and is
+what made the nobleman's props cost renders instead of models. What each rank's object actually IS still
+comes from the brief's own row — `palm` against `pillar` and `sealedChest` against `chest` are different
+objects in the same slot, and confusing them cost real work once.
+
 ## 5. Waiting on a model
 
-Every one of these is a primitive in `renderProp.py` plus one roll. The nobleman's object is NOT the
-merchant's in any of these rows — that mistake cost real work before, so read the row.
-
-| kind                   | rooms | what the nobleman's is                        |
-| ---------------------- | ----- | --------------------------------------------- |
-| `junior/offeringTable` | 12    | a laid dining table — not a balance and grain |
-| `junior/shelf`         | 9     | linen press, folded sheets, a mirror case     |
-| `junior/lamp`          | 8     | bronze lamp stand — not a lamp on a stool     |
-
-`prim_niche` is the pattern to copy, and `prim_basin` is now a second one: one primitive, `--contents` per
-rank, so a rank costs a repaint and not a model. Between them they cover four ranks' worth of rows.
+Nothing at the first two ranks: every merchant and nobleman prop and wall item is either painted or in §4.
+The models still owed are §8's — expert, master and wizard — and `prim_niche`, `prim_sconce`, `prim_basin`,
+`prim_lamp`, `prim_shelf` and `prim_market` all take `--contents`, so a good part of that block is a repaint
+rather than a model.
 
 ## 6. Waiting on a scan
 
