@@ -71,10 +71,15 @@ it means a re-roll, same as §1.
 Nothing at the merchant's rank is below standard any more: every tile of his is a return, 2x, masked, on a
 rebuild line, and seated in a rendered translucent shadow.
 
-**`starter/statue` is to standard but OFF-BRIEF, and that is now the only complaint against it.** The
-shipped tile is a shabti — a mummiform figure in a nemes — and the brief's merchant row asks for Bes (dwarf,
-lion mane, tongue out), Taweret (standing hippo), or a ka-statue still half block. A shabti is none of the
-three.
+**`starter/statue` is to standard, and the only question left about it is one the DOCS disagree on.** The
+shipped tile is a shabti, and:
+
+- `tile-art-brief.md`'s merchant row asks for Bes (dwarf, lion mane, tongue out), Taweret (standing hippo),
+  or a ka-statue still half block. A shabti is none of the three.
+- `prop-pipeline.md`'s Gate says the opposite in as many words: "a shabti is right for a merchant because
+  it is the humblest thing in the catalogue, and wrong for a pharaoh for the same reason."
+
+Both were written deliberately, so this is a decision and not a defect. Nine rooms either way.
 
 Both of its masters are worth knowing apart before anyone re-rolls it:
 
@@ -86,8 +91,8 @@ Both of its masters are worth knowing apart before anyone re-rolls it:
   square with no scaffold behind it and a painted shadow, so a mask would cut a shape its paint does not
   fill. It is kept as the record of what the brief actually wants here, not as an input to anything.
 
-So the choice is the reader's: accept the shabti, or roll one of the brief's three over geometry. Neither is
-urgent — nine rooms — and the rank is otherwise finished.
+So the choice is the reader's: leave the shabti and let the Gate's argument stand, or roll one of the
+brief's three over geometry. The rank is otherwise finished.
 
 ## 4. Waiting on one roll — scaffold ready
 
@@ -146,21 +151,21 @@ Almost all the rest is `--contents` on a primitive that exists: `prim_niche`, `p
 ## 6. Waiting on a scan
 
 Step 0's table sends statues and coffins to a museum scan (Scan the World, Smithsonian Open Access,
-Sketchfab, mostly CC0/CC-BY). Reject Roman or Ptolemaic, gilded, or fragments BEFORE downloading.
+Sketchfab). Read `prop-pipeline.md`'s **Gate** before downloading anything: reject Roman or Ptolemaic,
+gilded, or a fragment, and check the RANK as well as the object.
 
 - `junior/sarcophagus` — 20 rooms, anthropoid wooden coffin, painted face
 - `junior/statue` — 8 rooms, ka-statue of the owner, seated
 
-**Two scans are already on disk in `~/tile-previews/meshes/`** and one of them is unused: `shabti.stl`,
-which the merchant's statue is drawn from, and `horus.stl` — and Horus with the double crown is the
-MASTER's own row in the brief, where `statue` is 29 rooms. That is a tile away from existing.
+**The merchant's scan is in the repository now**, decimated, with its licence recorded in `CREDITS.md`:
+`art/masters/meshes/shabti.glb`, from Scan The World's shabtis of King Senkamanisken, CC BY-NC-SA 4.0.
+`rebuild.sh`'s `meshscaffold` reads `$MESHES`, defaulting there, so the statue's line runs anywhere.
 
-**The meshes are not in the repository and that is unfinished business.** `art/masters/` exists so a
-rebuild does not read out of a download folder, and `rebuild.sh`'s `meshscaffold` currently takes its path
-from `$MESHES`, defaulting to `~/tile-previews/meshes` — so the statue's line runs on this machine and
-nowhere else. What is blocking the obvious fix is not size (a decimated STL would be small enough) but
-PROVENANCE: neither file's licence has been checked, and a scan redistributed under the wrong one is worse
-than a build step that needs a variable set. Check the source first, then commit them and drop the default.
+**`horus.stl` is REJECTED, not available** — it is the scan the Gate is written about ("A Horus scan
+rendered perfectly and suited no rank in the game, because it was Roman"). It sits in
+`~/tile-previews/meshes/` as a downloaded reject, and it is not a head start on the master's statue row.
+Anyone reading a mesh off that folder should check the Gate first; the folder is a download history, not a
+library.
 
 ## 7. Flat — a prompt and nothing else
 

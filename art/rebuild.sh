@@ -40,11 +40,16 @@ scaffold() {
 # statues and coffins here; everything downstream is identical, because the pipeline only ever wanted a
 # mesh and does not care where it came from.
 #
-# The scans live OUTSIDE the repository and that is not settled. `art/masters/` exists precisely so a
-# rebuild does not read from a download folder, and a 69MB STL under an unverified licence is the one
-# thing that cannot just be copied in — see art-tasks.md §6. Until the provenance is checked, the path is
-# an override, so this line runs here and needs one variable to become repo-local.
-MESHES=${MESHES:-$HOME/tile-previews/meshes}
+# The scans are IN the repository, DECIMATED, and that took a licence check to settle: CC BY-NC-SA 4.0 is
+# fine for a non-commercial project, and redistributing the mesh under the same terms with attribution is
+# what CREDITS.md is for. `art/masters/` exists precisely so a rebuild does not read from a download
+# folder, and a scan is no exception.
+#
+# 1.38M faces to 27.6K — a 2% decimation, 69MB of STL to 2.2MB of GLB. That is not a compromise at this
+# size: the decimated silhouette differs from the full one by 76 pixels of 70,706 at render resolution,
+# 0.11%, which is edge noise before the tile is even scaled down to 112 wide. What a scaffold needs from a
+# scan is a shape at 56 units, and a million faces is four hundred times more than that can carry.
+MESHES=${MESHES:-art/masters/meshes}
 meshscaffold() {
   mesh=$1
   shift
@@ -124,7 +129,7 @@ yarn import-tile art/masters/props/starter/pillar.webp --tier=starter --name=pil
 # 6.1% of the sprite over the 152 light end. 1.4 brings warmth to +25 and 0.96 takes the tail to 0.6%,
 # and it stays 13 LIGHTER than the slab: a shabti is meant to be pale against mudbrick, the same argument
 # the whitewashed shrine makes at the other end of the file.
-meshscaffold shabti.stl
+meshscaffold shabti.glb
 yarn import-tile art/masters/props/starter/statue-shabti.webp --tier=starter --name=statue --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.96 --saturation=1.4
 
