@@ -174,6 +174,25 @@ scaffold hanging
 yarn import-tile art/props/starter/hanging.webp --tier=starter --name=hanging --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92 --saturation=1.5
 
+# The merchant's two wall items, matched back to their downloads and given rebuild lines for the first
+# time. art/README recorded them as masters that could not be identified; they were `Mudbrick Recess
+# Image` and `Mudbrick Recess Image (1)`, and the fingerprint could not see it because a masked wall
+# item's raw return is mostly magenta — a grey thumbnail of that cannot resemble the finished tile. What
+# identified them was CONTENT: only one candidate is a recess holding two jars and a bundle, and only one
+# is a plank of tally strokes with a chalk stub on it. Reproduction is the proof: imported with these
+# flags they come back at the shipped tiles' own numbers, lum 61 warmth +20 and lum 111 warmth +35.
+#
+# --sun=0 on both: a wall item hangs, so the frame leaves no room under it (see the pit).
+scaffold niche --shear=0.5 --width=448 --height=224 --sun=0
+yarn import-tile art/props/starter/niche.webp --tier=starter --name=niche --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+
+# FLAT — a plank hanging against the surface, so no mesh and no mask, the same route as the nobleman's
+# stela. --brightness=0.85 clips a return that came back over the light end, which the handover already
+# recorded as 10.3% before anyone had the flag written down.
+yarn import-tile art/props/starter/tallyBoard.webp --tier=starter --name=tallyBoard --slot=wall \
+  --filter=smooth --headroom=0.18 --brightness=0.85
+
 # shared — one desert blows into all five tombs
 #
 # Sand is the only tile whose SHAPE this repository generates. It is not an object: a drift has no

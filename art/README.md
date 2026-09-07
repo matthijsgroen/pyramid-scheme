@@ -35,6 +35,28 @@ which is the difference between a repository that can hold the brief's ~224 file
 `rebuild.sh` re-imports every tile it covers from its master. Run it after changing an import flag, or to
 see whether a change to `importTile.ts` moved a tile that is already approved.
 
+## What is still missing a master, and why fingerprinting cannot find it
+
+The merchant's `niche` and `tallyBoard` were recorded here as unidentifiable and are not: they are
+`Mudbrick Recess Image` and `Mudbrick Recess Image (1)` in `~/Downloads`. **The fingerprint could not see
+it, and the reason generalises to every masked tile.** A wall item's raw return is mostly magenta, so a
+grey thumbnail of it cannot resemble the finished tile — the method needs the key and the trim applied
+first, and even then a mask plus unknown brightness leaves it a judgement call at 26 against 43.
+
+What identified them was CONTENT. Only one candidate is a recess holding two jars and a bundle; only one
+is a plank of tally strokes with a chalk stub on it. And the proof is REPRODUCTION: imported with the
+flags now in `rebuild.sh`, they come back at the shipped tiles' own numbers — lum 61 warmth +20, and lum
+111 warmth +35. That is a stronger test than any distance metric, and it is the one to use next time.
+
+**The merchant's `floor`, `wall-face` and `threshold` still have no master, and comparison cannot find
+them.** A floor goes through `make-seamless` BEFORE import, which patches the source's own centre over
+its seam, so the shipped tile's real input is a make-seamless OUTPUT and no download can match it. Worse,
+`--flatten=0.65` lays a uniform wash over two thirds of the tile: candidates converged to 5.5 against a
+next-best of 6.2 on luminance, and 0.43 against 0.40 on gradient correlation. Both are noise. The
+candidates are in `~/Downloads` as `Egyptian Merchant Tomb Tile` and friends; picking one means
+re-importing and accepting that the merchant's surfaces shift, which is the only way they get rebuild
+lines and 2x.
+
 ## Stored resolution: 2x, and the one seam in it
 
 `importTile`'s `SPRITE_SCALE` is how many stored pixels a tile carries per map unit, and it is 2. The
