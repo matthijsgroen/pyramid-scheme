@@ -89,6 +89,29 @@ naturalistic faces), gilded, or a fragment. A Horus scan rendered perfectly and 
 game, because it was Roman. Check the RANK too: a shabti is right for a merchant because it is the
 humblest thing in the catalogue, and wrong for a pharaoh for the same reason.
 
+## The laws of this projection
+
+Every one of these was paid for with renders, and every one was written down only where it was FOUND —
+inside whichever primitive's docstring happened to discover it. That is the wrong place for a law: nobody
+reads two thousand lines of Python before modelling a prop, so each of these has been re-discovered at
+least once. Stated here, with a pointer to the code that carries the reasoning and the numbers.
+
+The projection is `drawn = (x, z + k*y)`, k = 0.7 for a floor prop and 0.5 for a wall item. Everything
+below follows from that one line.
+
+| law                                                                                                                                                                                                 | consequence                                                                                                                                                                                                                                                                                                                       | paid for in                       |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| **Only x is horizontal.** y and z both feed the drawn vertical.                                                                                                                                     | Anything that must read as reaching sideways runs in X: a bracket's arm, a lamp's spout, a chest's cord. A structure built in the y-z plane draws as a vertical stack however truthfully it is built.                                                                                                                             | `prim_sconce`, `prim_lamp`        |
+| **The shear taxes DEPTH into height.** Drawn height is `max(z + k*y) - min(z + k*y)`, not the z extent.                                                                                             | A round foot 0.44 across adds 0.31 of drawn height and eats the width it just bought. `seat_and_normalise` then scales by height, so a deep prop lands narrow: the lamp stand came out 27 units of 56 while every fix made it taller. Flatten in y what only needs to read from the front.                                        | `prim_lamp`                       |
+| **Negative y draws LOWER.** A part in front of another is drawn `k*y` down from where it is built.                                                                                                  | A face resting exactly on a collar hangs a hairline above it in the picture; a border level with a hem draws below the cloth and reads as a plinth. Set z for where the shear DRAWS a part, not for where it sits.                                                                                                                | `prim_mask`, `prim_hanging`       |
+| **A hairline is a gap.** At 28 units a pixel of background between two parts separates them.                                                                                                        | Parts overlap by ~0.03 rather than butting. Five blocks butted edge to edge drew as a crown floating over an egg between two pillars.                                                                                                                                                                                             | `prim_mask`                       |
+| **A shadow may only be moved in X.** A floor point `(x, y, 0)` draws at `k*y`, so an unshifted footprint touches its object for free; shifting it in y moves it `k*dy` vertically and nothing else. | Toward the viewer it leaves a crescent under the object with nothing above it — reads as hovering at ANY magnitude, which is why three rounds of tuning `--sun` failed. Away, it hides entirely.                                                                                                                                  | `sun_offset`                      |
+| **`tilt` turns a part about the WORLD ORIGIN**, not its own centre — `box` ends with `transform_apply(scale=True)`, which applies the location too.                                                 | A bar 0.30 long at z=0.60 turned 60 degrees swings out of the frame. Build at the origin, turn, then place: that is `turn`. `tilt` is kept only because painted masters were rendered through it.                                                                                                                                 | `tilt`, `turn`, `prim_rubbleheap` |
+| **A frame with black inside is one tile, however many kinds ask for it.**                                                                                                                           | The wizard's shrine, his niche holding no star, and his star shaft all drew as a black rectangle in a thin frame. What separates them is silhouette: a shrine is a cabinet ON the wall, so its plinth and cavetto are both wider than the box between them.                                                                       | `prim_wallshrine`                 |
+| **Blender inverts a cone's side normals when the top radius is the larger one**, and it renders near-black.                                                                                         | Turning the cone over does not help — the normals turn with it. `recalc_outward` does. Material slots read correctly the whole time, so only a low-pitch `--preview` shows it.                                                                                                                                                    | `recalc_outward`, `prim_basin`    |
+| **A mean taken over the wrong pixels lies.**                                                                                                                                                        | Measure a FIXED REGION, not "pixels above a threshold": as a tile darkens, fewer pixels clear the threshold and the mean of the survivors barely moves, so the knob reads as dead. Four tiles were mistuned this way — the pit's spoil over a sprite 43% black, the shrine's whitewash, the awning's cloth, sand on a pale floor. | `art/rebuild.sh`                  |
+| **Reproduction identifies a master where a metric cannot.**                                                                                                                                         | No distance metric could pick the merchant's floor from its candidates (5.5 against 6.2 on luminance, noise). Importing each one and LOOKING beside the shipped tile settled it in one sheet per slot.                                                                                                                            | `art/README.md`                   |
+
 ## Step 1 — geometry
 
 ```
@@ -264,6 +287,15 @@ invented floor (harmless now: the mask is the object alone, so the floor AND the
 shadow are both discarded, and Step 4's `--seat` puts a rendered shadow back) and a part that has MOVED
 (not harmless: the mask keeps the render's silhouette, so a shifted part leaves background colour inside
 the shape).
+
+**A MULTI-PIECE scaffold's layout will not be respected, and that is survivable.** Asked to repaint a
+spill of fourteen brick fragments, the generator returned forty of its own, spread over the frame in its
+own arrangement. Nothing in the prompt got that obeyed. It did not matter: `--mask` cuts the return to the
+render's own alpha, so brick material lands inside the MODELLED silhouettes and the shape, the footprint
+and the shadow all stay ours — some fragments cut through the middle of a brick, which at 23 drawn units
+reads as brick. The lesson is which half to insist on. For a SINGLE object the silhouette comes back
+faithfully and a moved part is a real failure (the Gate above); for a scatter of many, ask for the
+material and let the mask decide the arrangement.
 
 **Take the return from the generator's DOWNLOAD, not from a pasted image.** Gemini returns 1686x2528
 and a paste resizes it to 1334x2000 — a fifth of the resolution, gone before the import has looked at it.

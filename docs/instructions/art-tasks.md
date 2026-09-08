@@ -99,30 +99,45 @@ brief's three over geometry. The rank is otherwise finished.
 Modelled, self-verified in the sheared render, and the three renders are in `~/tile-previews/`. Each needs
 one repaint and one `import-tile` line and it is done.
 
-| kind                   | primitive                             | renders                 |
-| ---------------------- | ------------------------------------- | ----------------------- |
-| `junior/pillar`        | `palm --spin=22`                      | `palm-junior*`          |
-| `junior/shrine`        | `falseDoor --spin=6`                  | `falsedoor-junior*`     |
-| `junior/chestProp`     | `sealedChest --spin=-27`              | `sealedchest-junior*`   |
-| `junior/basin`         | `basin --contents=bowl --spin=14`     | `basin-junior*`         |
-| `junior/lamp`          | `lamp --contents=stand --spin=8`      | `lamp-junior*`          |
-| `junior/shelf`         | `shelf --contents=linen --spin=5`     | `shelf-junior*`         |
-| `junior/offeringTable` | `market --contents=laid --spin=-16`   | `offeringtable-junior*` |
-| `expert/niche`         | `niche --contents=sealed`             | `niche-expert*`         |
-| `expert/sconce`        | `sconce --contents=chain`             | `sconce-expert*`        |
-| `master/niche`         | `niche --contents=offering`           | `niche-master*`         |
-| `master/sconce`        | `sconce --contents=mirror`            | `sconce-master*`        |
-| `wizard/niche`         | `niche --contents=star`               | `niche-wizard*`         |
-| `wizard/sconce`        | `sconce --contents=crystal`           | `sconce-wizard*`        |
-| `expert/wallShrine`    | `wallShrine --contents=ajar`          | `wallshrine-expert*`    |
-| `expert/veil`          | `hanging --contents=rail`             | `veil-expert*`          |
-| `master/mask`          | `mask`                                | `mask-master*`          |
-| `wizard/wallShrine`    | `wallShrine --contents=opening`       | `wallshrine-wizard*`    |
-| `wizard/starShaft`     | `starShaft`                           | `starshaft-wizard*`     |
-| `junior/hanging`       | `hanging --contents=linen --spin=38`  | `hanging-junior*`       |
-| `expert/hanging`       | `hanging --contents=veil --spin=42`   | `hanging-expert*`       |
-| `master/hanging`       | `hanging --contents=gold --spin=33`   | `hanging-master*`       |
-| `wizard/hanging`       | `hanging --contents=aurora --spin=47` | `hanging-wizard*`       |
+| kind                        | primitive                             | renders                 |
+| --------------------------- | ------------------------------------- | ----------------------- |
+| `junior/pillar`             | `palm --spin=22`                      | `palm-junior*`          |
+| `junior/shrine`             | `falseDoor --spin=6`                  | `falsedoor-junior*`     |
+| `junior/chestProp`          | `sealedChest --spin=-27`              | `sealedchest-junior*`   |
+| `junior/basin`              | `basin --contents=bowl --spin=14`     | `basin-junior*`         |
+| `junior/lamp`               | `lamp --contents=stand --spin=8`      | `lamp-junior*`          |
+| `junior/shelf`              | `shelf --contents=linen --spin=5`     | `shelf-junior*`         |
+| `junior/offeringTable`      | `market --contents=laid --spin=-16`   | `offeringtable-junior*` |
+| `expert/niche`              | `niche --contents=sealed`             | `niche-expert*`         |
+| `expert/sconce`             | `sconce --contents=chain`             | `sconce-expert*`        |
+| `master/niche`              | `niche --contents=offering`           | `niche-master*`         |
+| `master/sconce`             | `sconce --contents=mirror`            | `sconce-master*`        |
+| `wizard/niche`              | `niche --contents=star`               | `niche-wizard*`         |
+| `wizard/sconce`             | `sconce --contents=crystal`           | `sconce-wizard*`        |
+| `expert/wallShrine`         | `wallShrine --contents=ajar`          | `wallshrine-expert*`    |
+| `expert/veil`               | `hanging --contents=rail`             | `veil-expert*`          |
+| `master/mask`               | `mask`                                | `mask-master*`          |
+| `wizard/wallShrine`         | `wallShrine --contents=opening`       | `wallshrine-wizard*`    |
+| `wizard/starShaft`          | `starShaft`                           | `starshaft-wizard*`     |
+| `junior/hanging`            | `hanging --contents=linen --spin=38`  | `hanging-junior*`       |
+| `expert/hanging`            | `hanging --contents=veil --spin=42`   | `hanging-expert*`       |
+| `master/hanging`            | `hanging --contents=gold --spin=33`   | `hanging-master*`       |
+| `wizard/hanging`            | `hanging --contents=aurora --spin=47` | `hanging-wizard*`       |
+| `starter/hanging` ↻         | `hanging --spin=45`                   | `hanging-starter*`      |
+| `starter/offeringTable-2` ✚ | `market --contents=baskets`           | —                       |
+
+↻ **`starter/hanging` already ships and is being REDRAWN**, so its `--spin=45` is not in `rebuild.sh` yet:
+Step 1b's constraint is that a painted tile's spin cannot change, and set against the existing master the
+frontal cloth was cut by a diagonal mask and came out a smear. The flag and the new master go in together.
+What the repaint is for: `hanging` is tagged funerary and cosmos in `dressingTags`, so world-gen only puts
+it where someone prayed or watched the sky, and the brief's merchant row describes a market awning — the one
+object those rooms have no use for. Same cloth, same pole, described as a screening cloth.
+
+✚ **`starter/offeringTable-2` is a VARIANT, not a new kind** — the second drawing of the merchant's trade
+room, picked per room by `tileVariants`. Tomb painting shows goods sold out of big reed baskets set on the
+floor at least as often as off a table, and both are the same statement, so they share a kind. Modelled as
+`market --contents=baskets`; its renders still need generating at the rank's colours. Because it is a
+variant and not a pool entry, adding it moves no furniture anywhere.
 
 Every floor prop here carries a `--spin`, which is pipeline Step 1b: a room holds two props now
 (`companionProps`) plus its scatter, and square-on they read as a sticker sheet rather than as a place
@@ -194,9 +209,18 @@ full of — `--contents` on what exists rather than a new model. `prim_niche`, `
 
 ## 9. Not a tile
 
-- **`breach` and `plug`** are missing from `WallDecorationKind`, so roughly 40 drawn files could not be
-  used even if painted today. Two lines each, plus a line in `generateDummyTiles`' own `WALL_KINDS`.
-- **The variant resolver** from the brief's §5 — picks `rubble-2.png` by positional hash. Not built, and
-  it is what lets a kind have more than one drawing.
-- **Patron gods** — designed, not built. A variant selector on `statue`, `shrine`, `wallShrine`, `stela`
-  and `mask`; no new kinds, no pool edits, no world regeneration, and art can arrive one file at a time.
+- **`breach` and `plug`** are missing from `WallDecorationKind`, so they cannot be authored or drawn at
+  all. Two lines each, plus a line in `generateDummyTiles`' own `WALL_KINDS`. Ten files' worth of art sit
+  behind that (two kinds across five ranks) and NONE of it is drawn, so the gate is the kinds and not the
+  art. Adding them lengthens the wall-item pools, which is the one edit that reshuffles placement.
+- **Patron gods** — designed, and now UNBLOCKED rather than unbuilt: `tileVariants` is the selector they
+  needed. A patron is `statue-2.png` beside `statue.png`, and the same for `shrine`, `wallShrine`, `stela`
+  and `mask`. No new kinds, no pool edits, no world regeneration, and art can arrive one file at a time.
+
+**Built since this list was written**, and noted because the list claimed otherwise for a while:
+
+- The **variant resolver** is `tileVariants` in `tileAssets.ts`, picking `<name>-2.png` by the cell's own
+  position. `starter/offeringTable-2` above is the first thing waiting on it.
+- A **second prop per room** is `companionProps.ts`: one more piece of furniture of the SAME purpose, in a
+  third of the rooms with space for it. Neither touches world generation — no pool changes length, so no
+  floor needs regenerating.

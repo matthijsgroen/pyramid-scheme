@@ -100,6 +100,11 @@ yarn storybook    # Component docs at http://localhost:6006
 
 Always run `yarn check-types` and `yarn lint` before considering a change complete.
 
+Fix formatting with **`yarn lint --fix`**, not with a bare `npx prettier --write`. Prettier runs inside
+ESLint here (`prettier/prettier`), so it uses the repository's own pinned version; `npx` may resolve a
+different one, which then disagrees about the same file and leaves `yarn lint` reporting errors that a
+`--write` has just "fixed".
+
 ### Branch Naming
 
 Worktrees/branches here often start from a Warp script that generates a random placeholder name (e.g. `zinc-pronghorn`). Before the first `git push` of a branch (or opening a PR), check whether the current branch name is still that placeholder or otherwise doesn't describe the work. If so, rename it to something topic-based (e.g. `git branch -m mods/ledger-currency-registry`) before pushing — don't publish a placeholder name upstream.
