@@ -4,7 +4,7 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import { CELL, WALL_H } from "./mapScale"
 import { authoredKindsFor } from "./authoredKinds"
 import { DRIFT_KINDS } from "./floorScatter"
-import { ART_IMAGE_RENDERING, tileUrl } from "./tileAssets"
+import { ART_IMAGE_RENDERING, sharedTileUrl, tileUrl } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
 
 // Every prop of a rank, staged the way the renderer stages one: standing on that rank's floor, its top
@@ -160,6 +160,84 @@ const Chamber: FC<{ tier: Difficulty; name: string; wallItem?: boolean; underfoo
   )
 }
 
+/** The three places a CONDITION shows, staged at the sizes `MapGrowth` really draws them.
+ *
+ * It needs its own component rather than a `Chamber` variant because a condition is not a tile in a slot:
+ * a tuft is a small sprite anywhere on the floor, a root hangs off the wall BAND and past its bottom edge,
+ * and a plant stands on a chamber floor. Their sizes are the ones in `MapGrowth`, copied here on purpose —
+ * seeing them at map scale is the only way to tell whether a root reads as coming through the brick, and
+ * that judgement cannot be made on the whole-floor inspector, where each one is 20 units of a 3000-unit
+ * map. It is the same argument that gave props this sheet in the first place. */
+const GrowthRow: FC<{ tier: Difficulty; kind: string; zoom: number }> = ({ tier, kind, zoom }) => {
+  const palette = tierPalette[tier]
+  const floor = tileUrl(tier, "floor")
+  const face = tileUrl(tier, "wall-face")
+  const tuft = sharedTileUrl(kind)
+  const root = sharedTileUrl(`${kind}-wall`) ?? tuft
+  const plant = sharedTileUrl(`${kind}-plant`) ?? tuft
+  const w = CELL * 3
+  const floorLine = (WALL_H + CELL) * zoom
+  return (
+    <figure className="m-0 flex flex-col items-center gap-1">
+      <div
+        className="relative overflow-hidden"
+        style={{ width: w * zoom, height: (WALL_H + CELL * 2) * zoom, background: palette.slab }}
+      >
+        <div
+          className="absolute inset-x-0 top-0"
+          style={{
+            height: WALL_H * zoom,
+            background: face ? `url(${face})` : palette.wall,
+            backgroundSize: `${CELL * 8 * zoom}px ${WALL_H * zoom}px`,
+            imageRendering: ART_IMAGE_RENDERING,
+          }}
+        />
+        <div
+          className="absolute inset-x-0 bottom-0"
+          style={{
+            height: CELL * 2 * zoom,
+            background: floor ? `url(${floor})` : palette.slab,
+            backgroundSize: `${CELL * 8 * zoom}px ${CELL * 8 * zoom}px`,
+            imageRendering: ART_IMAGE_RENDERING,
+          }}
+        />
+        {/* a tuft in a joint: 12-22 units, anywhere on the floor */}
+        {tuft && (
+          <img
+            src={tuft}
+            alt={`${kind} tuft`}
+            className="absolute"
+            style={{ left: CELL * 0.3 * zoom, top: floorLine - 18 * zoom, width: 18 * zoom, height: 18 * zoom }}
+          />
+        )}
+        {/* roots through the band: anchored to its TOP and hanging past its bottom, which is the whole
+            point — WALL_H is 28 and this is 40. */}
+        {root && (
+          <img
+            src={root}
+            alt={`${kind} roots`}
+            className="absolute"
+            style={{ left: CELL * 1.15 * zoom, top: 0, width: 26 * zoom, height: 40 * zoom }}
+          />
+        )}
+        {/* a chamber plant: bottom-anchored on the floor, 30-46 units */}
+        {plant && (
+          <img
+            src={plant}
+            alt={`${kind} plant`}
+            className="absolute"
+            style={{ left: CELL * 2.1 * zoom, top: floorLine - 38 * zoom, width: 38 * zoom, height: 38 * zoom }}
+          />
+        )}
+      </div>
+      <figcaption className="text-[10px] text-white/60">
+        {kind} — joint / wall / chamber
+        {sharedTileUrl(`${kind}-wall`) ? "" : " (wall+plant fall back to the tuft)"}
+      </figcaption>
+    </figure>
+  )
+}
+
 // Only what this rank is actually furnished with. Staging every kind at every rank invites work that
 // will never be seen: the merchant's sheet used to show a sarcophagus and a crystal, neither of which
 // the world authors below junior and wizard, and six wall items where it authors two. See
@@ -198,6 +276,17 @@ const Sheet: FC<{ tier: Difficulty; zoom: number }> = ({ tier, zoom }) => {
       <div className="flex flex-wrap gap-4">
         {scatter.map(kind => (
           <Chamber key={kind} tier={tier} name={kind} underfoot zoom={zoom} />
+        ))}
+      </div>
+      {/* CONDITIONS: not per rank at all — one shared sprite per kind, over this rank's own stone. Staged
+          here because the whole-floor inspector cannot answer the question these sprites raise: at 20
+          units on a 3000-unit map you can confirm they EXIST and nothing more. */}
+      <h2 className="m-0 text-sm text-white/80">
+        conditions <span className="text-white/40">(shared sprites, drawn over {tier}&apos;s stone)</span>
+      </h2>
+      <div className="flex flex-wrap gap-4">
+        {["overgrown", "flooded"].map(kind => (
+          <GrowthRow key={kind} tier={tier} kind={kind} zoom={zoom} />
         ))}
       </div>
     </div>

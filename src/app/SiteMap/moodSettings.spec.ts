@@ -37,3 +37,33 @@ describe("the air a floor is drawn in", () => {
     expect(moodFor("expert", "constellation")).toEqual(moodFor("expert"))
   })
 })
+
+describe("what a condition grows, and where", () => {
+  it("puts growth in three places, fewest where the sprites are biggest", () => {
+    const g = moodFor("expert", undefined, { kind: "overgrown", amount: 1 }).growth
+    expect(g).toEqual({ count: 9, wallCount: 5, plantCount: 2, kind: "overgrown" })
+  })
+
+  it("scales all three with the amount, so a journey can build toward its overdrive pyramid", () => {
+    const at = (amount: number) => moodFor("expert", undefined, { kind: "overgrown", amount }).growth
+    expect(at(0.2)).toMatchObject({ count: 2, plantCount: 0 })
+    expect(at(0.65)).toMatchObject({ count: 6, plantCount: 1 })
+    expect(at(1)).toMatchObject({ count: 9, plantCount: 2 })
+  })
+
+  it("keeps at least one WALL root at any amount above zero", () => {
+    // The roots are the part that says a building is losing, so they must not be the first thing to
+    // round away: 0.1 of five is 0.5, and rounding that gives none.
+    expect(moodFor("expert", undefined, { kind: "overgrown", amount: 0.1 }).growth?.wallCount).toBe(1)
+  })
+
+  it("grows nothing at all at amount zero", () => {
+    expect(moodFor("expert", undefined, { kind: "overgrown", amount: 0 }).growth).toBeUndefined()
+  })
+
+  it("gives a flooded site a tide line but no plants — water grows no shrub in a chamber", () => {
+    const g = moodFor("expert", undefined, { kind: "flooded", amount: 1 }).growth
+    expect(g?.wallCount).toBeGreaterThan(0)
+    expect(g?.plantCount).toBe(0)
+  })
+})

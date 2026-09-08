@@ -1,6 +1,6 @@
 import { hashUnit } from "@/support/hashString"
 import type { Mood } from "./moodSettings"
-import { CELL, cellCenter } from "./mapScale"
+import { CELL, WALL_H, cellCenter } from "./mapScale"
 import { sharedTileUrl } from "./tileAssets"
 
 // The air, drawn in three layers over the stone: what is carried on it (drift), what lives in it (life),
@@ -58,6 +58,10 @@ type Props = {
    * had not seen that corner yet, and that is what `isLit` is for.
    */
   floorCells: ReadonlyArray<readonly [number, number]>
+  /** Cells with a wall BAND above them — void to the north. Where a root can come through. */
+  wallCells?: ReadonlyArray<readonly [number, number]>
+  /** A chamber's claimed floor: room for a plant that is not in the player's way. */
+  chamberCells?: ReadonlyArray<readonly [number, number]>
   /** Whether the player has seen that cell yet. A scarab in the dark is simply not drawn. */
   isLit: (row: number, col: number) => boolean
 }
@@ -74,29 +78,95 @@ type Props = {
  * Draws nothing until the sprite exists, which is deliberate: the condition can be authored, composed
  * and seen as a wash before a single file is painted.
  */
-export const MapGrowth = ({ mood, siteId, floorCells, isLit }: Omit<Props, "width" | "height">) => {
-  const url = sharedTileUrl(mood.growth?.kind ?? "")
-  if (!mood.growth?.count || !url || floorCells.length === 0) return null
+export const MapGrowth = ({
+  mood,
+  siteId,
+  floorCells,
+  wallCells = [],
+  chamberCells = [],
+  isLit,
+}: Omit<Props, "width" | "height">) => {
+  const g = mood.growth
+  if (!g?.count && !g?.wallCount && !g?.plantCount) return null
+  // One sprite per PLACE, falling back to the plain one where the other two are not drawn yet. The
+  // fallback is deliberate: it lets the placement be judged — whether the roots sit in the right part of
+  // the band, whether a chamber plant is the right size — before anyone paints a root. Same argument as
+  // drawing the condition as a wash before any sprite existed at all.
+  const tuft = sharedTileUrl(g.kind)
+  if (!tuft) return null
+  const root = sharedTileUrl(`${g.kind}-wall`) ?? tuft
+  const plant = sharedTileUrl(`${g.kind}-plant`) ?? tuft
+  const pick = (cells: ReadonlyArray<readonly [number, number]>, salt: string, i: number) =>
+    cells[Math.floor(rand(siteId, salt, i) * cells.length)]
   return (
     <g aria-hidden="true" style={{ pointerEvents: "none" }}>
-      {Array.from({ length: mood.growth.count }, (_, i) => {
-        const [row, col] = floorCells[Math.floor(rand(siteId, "growth-cell", i) * floorCells.length)]
-        if (!isLit(row, col)) return null
-        const { cx, cy } = cellCenter(row, col)
-        const size = 12 + rand(siteId, "growth-size", i) * 10
-        return (
-          <image
-            key={i}
-            href={url}
-            x={cx - size / 2 + (rand(siteId, "growth-x", i) - 0.5) * (CELL * 0.7)}
-            // Biased UP the cell: toward the wall band it is meant to be coming out of.
-            y={cy - size + (rand(siteId, "growth-y", i) - 0.5) * (CELL * 0.4)}
-            width={size}
-            height={size}
-            style={{ transform: rand(siteId, "growth-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
-          />
-        )
-      })}
+      {/* ── the JOINTS: many, small, on any floor cell ── */}
+      {floorCells.length > 0 &&
+        Array.from({ length: g.count }, (_, i) => {
+          const [row, col] = pick(floorCells, "growth-cell", i)
+          if (!isLit(row, col)) return null
+          const { cx, cy } = cellCenter(row, col)
+          const size = 12 + rand(siteId, "growth-size", i) * 10
+          return (
+            <image
+              key={`tuft-${i}`}
+              href={tuft}
+              x={cx - size / 2 + (rand(siteId, "growth-x", i) - 0.5) * (CELL * 0.7)}
+              // Biased UP the cell: toward the wall band it is meant to be coming out of.
+              y={cy - size + (rand(siteId, "growth-y", i) - 0.5) * (CELL * 0.4)}
+              width={size}
+              height={size}
+              style={{ transform: rand(siteId, "growth-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
+            />
+          )
+        })}
+      {/* ── the WALL: roots through the band above a cell, hanging down into it ──
+          `wallCells` is only the cells with a band drawn above them (void to the north), because a root
+          has to come THROUGH something the map actually draws. Anchored to the band's top edge and
+          allowed to hang past its bottom — the band is WALL_H and these are taller on purpose, which is
+          what says the root came through the wall rather than being painted on it. */}
+      {wallCells.length > 0 &&
+        Array.from({ length: g.wallCount }, (_, i) => {
+          const [row, col] = pick(wallCells, "growth-wall-cell", i)
+          if (!isLit(row, col)) return null
+          const { cx, cy } = cellCenter(row, col)
+          const w = 16 + rand(siteId, "growth-wall-w", i) * 18
+          const h = WALL_H + 6 + rand(siteId, "growth-wall-h", i) * 18
+          return (
+            <image
+              key={`root-${i}`}
+              href={root}
+              preserveAspectRatio="none"
+              x={cx - w / 2 + (rand(siteId, "growth-wall-x", i) - 0.5) * (CELL * 0.6)}
+              y={cy - CELL / 2 - WALL_H}
+              width={w}
+              height={h}
+              style={{ transform: rand(siteId, "growth-wall-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
+            />
+          )
+        })}
+      {/* ── the CHAMBERS: a few big ones, and only where there is room to stand ──
+          Passages are excluded by construction, `chamberCells` being the claimed footprints: a plant half
+          a cell across in a corridor is something the player would have to walk through. Bottom-anchored
+          like a prop, so it stands on the floor instead of floating in the cell. */}
+      {chamberCells.length > 0 &&
+        Array.from({ length: g.plantCount }, (_, i) => {
+          const [row, col] = pick(chamberCells, "growth-plant-cell", i)
+          if (!isLit(row, col)) return null
+          const { cx, cy } = cellCenter(row, col)
+          const size = 30 + rand(siteId, "growth-plant-size", i) * 16
+          return (
+            <image
+              key={`plant-${i}`}
+              href={plant}
+              x={cx - size / 2 + (rand(siteId, "growth-plant-x", i) - 0.5) * (CELL * 0.4)}
+              y={cy + CELL / 2 - size}
+              width={size}
+              height={size}
+              style={{ transform: rand(siteId, "growth-plant-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
+            />
+          )
+        })}
     </g>
   )
 }

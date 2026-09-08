@@ -23,7 +23,9 @@ export type Mood = {
   /** Things growing on the stone: how many, and which sprite. Placed like `life` but STILL — a weed in
    * a corner does not scurry — and drawn against the wall band as well as the floor, because the point
    * of a vine is that it came through the wall. */
-  growth?: { count: number; kind: ConditionKind }
+  /** What is growing, in three places: `count` tufts in floor joints, `wallCount` roots through the wall
+   * band, `plantCount` big ones in chambers. See CONDITION_MOOD for why they differ in number. */
+  growth?: { count: number; wallCount: number; plantCount: number; kind: ConditionKind }
   /** One colour laid over the whole map. The hour, and nothing else. */
   tint?: { fill: string; opacity: number }
   /** Things carried on the air: dust, chaff, soot, sand, sparks — or fog, which is the same thing drawn
@@ -84,11 +86,26 @@ const THEME_MOOD: Record<string, Mood> = {
  * is a cellar with water in it, and if its brackish cast replaced the rank's own the cellar would stop
  * being a cellar the moment it got wet.
  */
-const CONDITION_MOOD: Record<ConditionKind, { tint: { fill: string; opacity: number }; growth: number }> = {
+const CONDITION_MOOD: Record<
+  ConditionKind,
+  { tint: { fill: string; opacity: number }; growth: number; wall: number; plant: number }
+> = {
   // Green forcing through the brick, and the light under it going green with it.
-  overgrown: { tint: { fill: "#4d7a2e", opacity: 0.18 }, growth: 9 },
-  // Standing water: cooler, darker, and what grows in it grows at the edges.
-  flooded: { tint: { fill: "#2b4c5a", opacity: 0.22 }, growth: 5 },
+  //
+  // THREE PLACES, not one, and the split is what makes a condition read as growth rather than as litter.
+  // `growth` is the tufts in the floor joints — many and small. `wall` is what comes THROUGH the brick,
+  // hanging off the band above a cell, and it is the whole reason the condition exists: a vine in a joint
+  // is a weed, a root through a wall is a building losing. `plant` is the few big ones, and they go in
+  // CHAMBERS only, because a plant that size in a passage is something the player would have to walk
+  // through.
+  //
+  // Fewer as they get bigger: nine tufts, five roots, two plants at full amount. A floor with nine of
+  // each reads as a garden.
+  overgrown: { tint: { fill: "#4d7a2e", opacity: 0.18 }, growth: 9, wall: 5, plant: 2 },
+  // Standing water: cooler, darker, and what grows in it grows at the edges. No PLANTS — water does not
+  // put a shrub in the middle of a chamber — but it does stain a wall, which is what the brief calls a
+  // tide line, so the wall pass is where its own art will go.
+  flooded: { tint: { fill: "#2b4c5a", opacity: 0.22 }, growth: 5, wall: 4, plant: 0 },
 }
 
 /** Two tints laid over each other, as one. The overlay is drawn once, so a condition cannot simply add
@@ -123,6 +140,13 @@ export const moodFor = (tier: Difficulty, theme?: string, condition?: SiteCondit
   return {
     ...hour,
     tint: overlay(hour.tint, { fill: spec.tint.fill, opacity: spec.tint.opacity * amount }),
-    growth: { count: Math.round(spec.growth * amount), kind: condition.kind },
+    growth: {
+      count: Math.round(spec.growth * amount),
+      // ceil, not round: at 0.2 of five roots, round gives one and ceil gives one, but at 0.1 round gives
+      // NONE and the wall — the part that matters most — would drop out first as a journey builds.
+      wallCount: amount > 0 ? Math.max(1, Math.ceil(spec.wall * amount)) : 0,
+      plantCount: Math.round(spec.plant * amount),
+      kind: condition.kind,
+    },
   }
 }

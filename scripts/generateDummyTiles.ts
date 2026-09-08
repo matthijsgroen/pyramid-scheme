@@ -448,6 +448,59 @@ const overgrownSvg = (): Buffer =>
      </g>`
   )
 
+// ROOTS THROUGH THE WALL BAND, hanging DOWN. Drawn tall in a narrow frame and stretched to fit
+// (`preserveAspectRatio="none"` at the call site), because what the placement needs is a shape that
+// starts at the top edge and reaches past the bottom of the band: a root that stops inside the band
+// reads as a stain painted on the wall rather than as something that came through it.
+const overgrownWallSvg = (): Buffer =>
+  svg(
+    22,
+    34,
+    `<g fill="none" stroke-width="1.5">
+       <path d="M8 0 C 8 8, 5 14, 6 22 C 7 28, 5 31, 4 34" stroke="#3f6b28"/>
+       <path d="M13 0 C 13 9, 16 15, 15 23 C 14 29, 16 32, 17 34" stroke="#4d7a2e"/>
+       <path d="M11 0 C 11 7, 10 12, 11 18 C 12 24, 11 29, 11 33" stroke="#5a8c35"/>
+       <ellipse cx="6" cy="12" rx="3" ry="2" fill="#4d7a2e" stroke="none"/>
+       <ellipse cx="16" cy="17" rx="3" ry="2" fill="#5a8c35" stroke="none"/>
+       <ellipse cx="10" cy="25" rx="2" ry="3" fill="#3f6b28" stroke="none"/>
+     </g>`
+  )
+
+// A PLANT for a chamber: bigger, and standing on the floor rather than coming out of a joint. Bottom
+// anchored at the call site, so it is drawn like a prop — a fan of fronds from one base, which is the
+// silhouette that reads at this size when a tuft would just be a smudge.
+const overgrownPlantSvg = (): Buffer =>
+  svg(
+    30,
+    30,
+    `<g fill="none" stroke-width="1.5">
+       <path d="M15 30 C 14 22, 8 17, 3 13" stroke="#3f6b28"/>
+       <path d="M15 30 C 16 21, 22 16, 27 12" stroke="#4d7a2e"/>
+       <path d="M15 30 C 15 21, 15 14, 15 8" stroke="#5a8c35"/>
+       <path d="M15 30 C 13 24, 9 22, 6 21" stroke="#4d7a2e"/>
+       <path d="M15 30 C 17 24, 21 22, 24 21" stroke="#3f6b28"/>
+       <ellipse cx="3" cy="13" rx="4" ry="2.5" fill="#4d7a2e" stroke="none"/>
+       <ellipse cx="27" cy="12" rx="4" ry="2.5" fill="#5a8c35" stroke="none"/>
+       <ellipse cx="15" cy="8" rx="2.5" ry="4" fill="#3f6b28" stroke="none"/>
+       <ellipse cx="6" cy="21" rx="3" ry="2" fill="#5a8c35" stroke="none"/>
+       <ellipse cx="24" cy="21" rx="3" ry="2" fill="#4d7a2e" stroke="none"/>
+     </g>`
+  )
+
+// A TIDE LINE for a flooded site: the wall's own damp stain, where an overgrown site puts a root. Not a
+// plant — water does not grow up a wall — so it is a band that fades upward, sitting at the bottom of
+// the band and stopping inside it, which is the opposite of what the roots above do on purpose.
+const floodedWallSvg = (): Buffer =>
+  svg(
+    22,
+    34,
+    `<g>
+       <rect x="0" y="22" width="22" height="12" fill="#2b4c5a" opacity="0.55"/>
+       <rect x="0" y="21" width="22" height="2" fill="#6f97a3" opacity="0.7"/>
+       <rect x="0" y="26" width="22" height="1" fill="#8fb3bd" opacity="0.35"/>
+     </g>`
+  )
+
 // Standing water: a dark pool with one pale rim where the light catches it. Flat on purpose — it lies
 // on the floor and must not read as an object standing on it.
 const floodedSvg = (): Buffer =>
@@ -993,11 +1046,18 @@ const main = async (): Promise<void> => {
   // What has got INTO a site (moodSettings' CONDITION_MOOD) — one sprite per kind, shared across ranks
   // the same way, because a weed forcing through brick is the same weed forcing through granite. Named
   // for the condition rather than for a plant so the map can look one up by `mood.growth.kind`.
-  for (const [kind, svgOf] of [
-    ["overgrown", overgrownSvg],
-    ["flooded", floodedSvg],
+  // Each carries its OWN size, because the three places a condition shows are three different shapes: a
+  // tuft is square, a root through the band is tall and narrow, a chamber plant is bigger than both. The
+  // writer asserts what it rasterised against these, which is how a mismatched viewBox is caught here
+  // rather than as a squashed sprite on the map.
+  for (const [kind, svgOf, w, h] of [
+    ["overgrown", overgrownSvg, 22, 22],
+    ["overgrown-wall", overgrownWallSvg, 22, 34],
+    ["overgrown-plant", overgrownPlantSvg, 30, 30],
+    ["flooded", floodedSvg, 22, 22],
+    ["flooded-wall", floodedWallSvg, 22, 34],
   ] as const) {
-    await write("default", kind, svgOf(), 22, 22)
+    await write("default", kind, svgOf(), w, h)
     count++
   }
   // How many frames each facing really has. Writing four for every one of them ADDED a fifth-hand

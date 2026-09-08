@@ -1801,6 +1801,27 @@ export const SiteMapView = ({
     return cells
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the SHAPE of the floor, which a reveal never changes
   }, [grid.rows, grid.cols, grid.siteId])
+  // Cells with a wall BAND above them, for the roots a condition puts through the brick. Void to the
+  // north is the test, which is the same one `wallBehind` uses to stand a prop against a wall — the map
+  // only draws a face where there is nothing beyond it.
+  const wallBandCells = useMemo(() => {
+    const cells: Array<readonly [number, number]> = []
+    for (let r = 0; r < grid.rows; r++) {
+      for (let c = 0; c < grid.cols; c++) {
+        if (grid.cells[r][c].type === "empty") continue
+        if (cellAt(grid, r - 1, c).type === "empty") cells.push([r, c])
+      }
+    }
+    return cells
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the SHAPE of the floor, which a reveal never changes
+  }, [grid.rows, grid.cols, grid.siteId])
+  // A chamber's own floor, for the big plants. Claimed cells are `type: "empty"` in the grid — the claim
+  // is a render-time fact — so this cannot be read off `grid.cells`, which is the trap `floorScatter`
+  // documents: walking the grid finds no chamber floor at all.
+  const chamberFloorCells = useMemo(
+    () => [...claims.claimedBy.keys()].map(key => key.split(",").map(Number) as [number, number]),
+    [claims]
+  )
   // What is strewn on this floor. A function of the floor's shape and its id, so it never moves.
   const scatter = useMemo(() => scatterFor(grid, claims), [grid, claims])
   const drifts = useMemo(() => driftsFor(grid, tier), [grid, tier])
@@ -1893,9 +1914,19 @@ export const SiteMapView = ({
             mood={mood}
             siteId={grid.siteId}
             floorCells={floorCells}
+            wallCells={wallBandCells}
+            chamberCells={chamberFloorCells}
             isLit={(r, c) => {
               const cell = cellAt(grid, r, c)
-              return cell.type !== "empty" && cell.state !== "fogged"
+              if (cell.type !== "empty") return cell.state !== "fogged"
+              // A CLAIMED cell is `type: "empty"` in the grid — the claim is a render-time fact — so a
+              // chamber's own floor fails the test above and every plant on it was dropped. It is lit
+              // when its ROOM is, which is the same blind spot `floorScatter` records for scatter.
+              const owner = claims.claimedBy.get(`${r},${c}`)
+              if (!owner) return false
+              const [or, oc] = owner.split(",").map(Number)
+              const room = cellAt(grid, or, oc)
+              return room.type !== "empty" && room.state !== "fogged"
             }}
           />
           <WallItems items={wallItems} />

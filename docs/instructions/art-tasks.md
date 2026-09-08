@@ -192,6 +192,22 @@ is no `--contents` to add. Its row in the brief is a growth of crystal in the go
 It sits in §5 above, but §5 reads as "the last three ranks' chamber props" and one kind that needs a model
 from nothing does not stand out in that sentence. This is that sentence.
 
+**A condition shows in THREE places now**, which is what `MapGrowth` draws and what `PropSheet`'s
+conditions row stages: a small tuft in a floor joint, ROOTS through the wall band — anchored to its top
+edge and hanging past its bottom, since a root that stops inside the band reads as a stain painted on it —
+and a larger PLANT standing on a chamber floor, chambers only, because a plant half a cell across in a
+passage is something the player would have to walk through. Fewer as they get bigger: nine, five, two at
+full amount.
+
+Each place has its own sprite name — `<kind>`, `<kind>-wall`, `<kind>-plant` — and the two new ones fall
+back to the plain tuft where they are not drawn yet, so the PLACEMENT can be judged before anything is
+painted. All five are `generate-dummy-tiles` placeholders today.
+
+**Judge them in `PropSheet`, never on the inspector.** At 20 units on a 3000-unit map the whole-floor view
+can tell you a sprite EXISTS and nothing more — three different attempts to locate one in a screenshot
+disagreed with each other. The sheet stages all three at map scale over the rank's own stone, which is the
+same reason props got that sheet.
+
 **`overgrown` — AUTHORED now, and worth painting.** The Nile Delta Expedition carries it across four of
 its five pyramids, graded 0.2 / 0.4 / 0.65 / 1, so its last pyramid is the overdrive one. `moodFor` turns
 that into 2, 4, 6 and 9 sprites plus a tint that goes from blue-grey to green, and the map draws them —
