@@ -58,23 +58,48 @@ away. A square return of this tile is unimportable and there is no flag that res
 2:1 oblique box and would cut jamb slices and a hole out of a front-on elevation. Check the pixel size
 first, and re-roll on 2048x2048 without measuring anything.
 
-What it drops when it does that is the PROJECTION: it redraws the shrine square-on, flat lintel, both
-jambs the same width, no top face. Hence the first paragraph below, which the other entries do not carry.
+It also loses the PROJECTION, in the other direction: told the view is raked it draws a cabinet in full
+low-angle perspective, converging edges and a vanishing point, and the scaffold is nothing of the sort.
+This tile is drawn flat — every edge horizontal or vertical, the cornice and plinth showing their top
+faces as plain pale BANDS the same width as the front beneath them.
+
+Hence the view block below, which the other entries do not carry. It is the brief's own
+`THE VIEW: FLAT ORTHOGRAPHIC HYBRID` verbatim (tile-art-brief.md, "Writing a prompt"), and verbatim is
+the point: that block is the model's own answer to being shown a correct picture, every phrasing invented
+on this side has lost, and describing the tilt in fresh words is what produced the perspective roll.
 
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
 
-Match the reference image's FRAME exactly: the same 2:1 landscape shape, the object in the same place in it, at the same size. Do not re-compose it into a square and do not draw the object front-on.
+Match the reference image's FRAME exactly: the same 2:1 landscape shape, the object in the same place in it, at the same size. Do not re-compose it into a square.
 
-The object: a small shrine cabinet standing out from a wall, its doors part open. It is seen in a raked
-projection, not straight on — the cornice and plinth show their TOP faces as parallelograms, the left
-jamb shows its side, and every horizontal edge runs at the same slant as in the reference. That slant is
-the whole point of the drawing: it is what makes the cabinet stand OUT of the wall.
+THE VIEW: FLAT ORTHOGRAPHIC HYBRID
 
-The wide slab over the top is a CAVETTO CORNICE and the slab under it is the PLINTH, both overhanging the
-box between them; the uprights at the sides are JAMBS; the two dark panels are the DOOR LEAVES, one
-covering more of the opening than the other; between them is a black GAP into the shrine's inside, and
-standing in it is a small LAMP with a FLAME above it.
+NO PERSPECTIVE OR CONVERGENCE: There is no vanishing point. Nothing gets smaller as it goes back in
+space. All vertical lines remain perfectly vertical and parallel. All horizontal lines remain
+perfectly horizontal and parallel.
+
+FRONTS AND TOPS ONLY: You may only show the exact front face of an object, plus the top face of
+horizontal elements. You must NEVER show the side (left, right, or inside) of any object or part.
+
+THE STACKED TOP RULE: If a horizontal part has a visible top, draw the top as a flat rectangular band
+sitting directly above its front face. The top band must be EXACTLY THE SAME WIDTH as the front face
+beneath it. It must be a perfect rectangle — it does not taper, it does not slant, and it is not a
+parallelogram or a trapezoid. Simply draw a lighter rectangle directly on top of a darker rectangle.
+
+STRICT SYMMETRY: The object must be perfectly symmetrical left-to-right. If one side shows a different
+angle or more of its surface than the other, the view has incorrectly tipped into 3D.
+
+NO DEPTH OR ROTATION ON THE Y-AXIS: The object faces perfectly square to the camera. Never angle the
+object diagonally. Every edge is either strictly horizontal or strictly vertical, except for organic
+curves (like the taper of a jar or a character's silhouette) which must still be drawn perfectly
+straight-on.
+
+The object: a small shrine cabinet standing against a wall, its doors part open. The wide slab over the
+top is a CAVETTO CORNICE and the slab under it is the PLINTH, both overhanging the box between them; the
+uprights at the sides are JAMBS; the two dark panels are the DOOR LEAVES, one covering more of the opening
+than the other; between them is a black GAP into the shrine's inside, and standing in it is a small LAMP
+with a FLAME above it.
 
 The cornice, plinth and jambs are dark basalt, cool grey-blue, dressed smooth. The doors are cedar, dark
 red-brown. The lamp is buff pottery, sooted at the lip; its flame is a small ochre-orange tongue, matte.
