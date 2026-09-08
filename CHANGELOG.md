@@ -176,8 +176,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rooms are furnished for the PLACE they are: a trading wing stacks amphorae on shelves and hangs its
   tally board, a funerary one holds a coffin and a false-door stela, a waterworks its basins.
 - The priest's walls are hung with his own things: a shrine niche with its doors corded and sealed, a
-  bronze lamp bracket with the lamp still lit on its chain, and a basalt shrine cabinet standing ajar with
-  a lamp burning inside it.
+  bronze lamp bracket with the lamp still lit on its chain, a basalt shrine cabinet standing ajar with a
+  lamp burning inside it, and a linen veil drawn back along its bronze rail.
 
 ### Fixed
 

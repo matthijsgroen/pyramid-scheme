@@ -23,12 +23,12 @@ return painted over its own scaffold, stored 2x, cut to a mask, seated in a rend
 and on a rebuild line. What is left of them is two museum scans — `junior/sarcophagus` (20 rooms) and
 `junior/statue` (8).
 
-`yarn art-census` is the authority and reports 60 placeholders: expert 19, wizard 20, master 17, junior 4.
+`yarn art-census` is the authority and reports 59 placeholders: expert 18, wizard 20, master 17, junior 4.
 
 ### The three files that run the work
 
 - **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
-  attach and the import line to run afterwards. 11 entries, all expert/master/wizard. `yarn repaint <key>`
+  attach and the import line to run afterwards. 10 entries, all expert/master/wizard. `yarn repaint <key>`
   copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
   Entries are DELETED as they land, so the file's length is the backlog.
 - **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
@@ -126,7 +126,7 @@ where a purpose has two wall items to choose between.
 API bills per image, so the paste is done by hand and the tooling only saves the searching.
 
 ```sh
-yarn repaint                  # the 11 keys still owed
+yarn repaint                  # the 10 keys still owed
 yarn repaint master/mask      # prompt to the clipboard, both attachments revealed in the Finder
 # attach the two, paste, generate, download to ~/Downloads
 ```

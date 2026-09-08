@@ -41,41 +41,9 @@ is fine: ask for the material and let the mask decide the layout.
 
 ---
 
-## Priest — two
+## Priest — one
 
-One wall item and one prop. No prop of his beyond the veil is modelled yet; see art-tasks §5.
-
-### `expert/veil` — a veil on its rail, drawn back
-
-**Attach:**
-
-1. `~/tile-previews/veil-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a veil hanging from a rail across a wall, drawn back to one side. The thin bar across the top
-is the RAIL and the blocks at its ends are its BRACKETS; the wide sheet in vertical folds hanging from the
-left two thirds is the VEIL; the three narrow bundles at the right are the same cloth GATHERED where it has
-been pulled aside.
-
-Fine bleached linen, cool white with grey shadow in the folds, so thin that it is slightly darker where it
-doubles in the gathers. A woven band of dull blue-green runs along its lower hem. The rail and brackets are
-dark bronze with a green patina.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold hanging --contents=rail --shear=0.5 --width=448 --height=224 --sun=0
-yarn import-tile art/masters/props/expert/veil.webp --tier=expert --name=veil --slot=wall \
-  --filter=smooth --mask="$OBJ" --headroom=0.18
-```
+One prop. No prop of his beyond this one is modelled yet; see art-tasks §5.
 
 ### `expert/hanging` — a veil before the shrine, on posts
 

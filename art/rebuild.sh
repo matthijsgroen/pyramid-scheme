@@ -675,3 +675,15 @@ yarn import-tile art/masters/props/expert/sconce.webp --tier=expert --name=sconc
 scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --colour=#a7b2be --sun=0
 yarn import-tile art/masters/props/expert/wallShrine.webp --tier=expert --name=wallShrine --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18
+
+# --brightness=0.78, and this rank's first tile clipped DOWN. Bleached linen on pale basalt is the worst
+# pairing in the set: untouched it measured ONE from a floor of 151 and 32% of itself over the light
+# clamp — the palm column's failure exactly, and tile-stats refuses it. The sweep was 1.0 -> 11 lighter
+# and 37.3% clipped, 0.88 -> 10 darker and 18.4%, 0.80 -> 24 and 4.9%, 0.72 -> 37 and 0.0% but 6.9%
+# under the dark end. 0.78 is where the two tails meet at about four apiece and it keeps 27 of separation.
+#
+# No --saturation, unlike the nobleman's linen at 1.4: his is warm and wants the lift, this one is cool
+# white and its only colour is the hem band, which is two pixels at slot size either way.
+scaffold hanging --contents=rail --shear=0.5 --width=448 --height=224 --colour=#a7b2be --sun=0
+yarn import-tile art/masters/props/expert/veil.webp --tier=expert --name=veil --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18 --brightness=0.78
