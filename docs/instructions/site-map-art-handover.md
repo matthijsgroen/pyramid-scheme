@@ -18,17 +18,30 @@ the branch is in and how to run the next step.
 master byte for byte. Run that last one after touching `renderProp.py` or `importTile.ts`: it is the only
 check that catches a geometry change silently invalidating a master.
 
-**The merchant and the nobleman are DONE.** Every prop, wall item and scatter kind either rank authors is a
-return painted over its own scaffold, stored 2x, cut to a mask, seated in a rendered translucent shadow,
-and on a rebuild line. What is left of them is two museum scans — `junior/sarcophagus` (20 rooms) and
-`junior/statue` (8).
+**The merchant is DONE** — every prop, wall item and scatter kind he authors is a return painted over its
+own scaffold, stored 2x, cut to a mask, seated in a rendered translucent shadow, and on a rebuild line.
+He is the only rank of which that is true.
 
-`yarn art-census` is the authority and reports 59 placeholders: expert 18, wizard 20, master 17, junior 4.
+**The nobleman is four short**, and only two of them are the museum scans everyone remembers:
+`junior/sarcophagus` (20 rooms) and `junior/statue` (8) wait on a mesh, but `junior/tallyBoard` (5 rooms)
+and `junior/rubbleSpill` are ordinary unpainted work that never got a rebuild line. This file called him
+DONE for several sessions while both sat in the census.
+
+**The priest has his five WALL items and nothing else.** niche, sconce, wallShrine, veil and the hanging
+are painted; his thirteen chamber props and his tallyBoard are not, and they are not in the repaint queue
+because none of them is MODELLED yet — a prompt cannot be written against a scaffold that does not exist.
+Step 0 and Step 1 come first for each. That is why his queue section emptied while his census count
+stands at 17.
+
+**Read `yarn art-census`, not this paragraph.** The count below is a snapshot and every summary of it in
+this file has drifted at least once.
+
+`yarn art-census` is the authority and reports 58 placeholders: wizard 20, expert 17, master 17, junior 4.
 
 ### The three files that run the work
 
 - **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
-  attach and the import line to run afterwards. 10 entries, all expert/master/wizard. `yarn repaint <key>`
+  attach and the import line to run afterwards. 9 entries, all expert/master/wizard. `yarn repaint <key>`
   copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
   Entries are DELETED as they land, so the file's length is the backlog.
 - **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
@@ -126,7 +139,7 @@ where a purpose has two wall items to choose between.
 API bills per image, so the paste is done by hand and the tooling only saves the searching.
 
 ```sh
-yarn repaint                  # the 10 keys still owed
+yarn repaint                  # the 9 keys still owed
 yarn repaint master/mask      # prompt to the clipboard, both attachments revealed in the Finder
 # attach the two, paste, generate, download to ~/Downloads
 ```
@@ -159,17 +172,28 @@ Expect master and wizard to behave like the nobleman on their dark stone and unl
 white linen against oiled timber, where no setting clears both clamps. `--contrast` below 1 is NOT the
 escape — the importer refuses it. Pick which end matters and say so in the rebuild line.
 
-**After the queue empties**, the open work in rough order of value:
+**The open work**, ranked by rooms waiting on it. The queue is only the part that already has a scaffold;
+most of what is left does not, which is why it is not in there.
 
-1. **`wizard/crystal`** — 27 rooms, authored, and the only kind in the set with no primitive to build on.
+1. **The priest's THIRTEEN chamber props** — about 240 rooms, and the biggest block in the set by a wide
+   margin: pit 33, sarcophagus 26, lamp 21, shelf 20, jarRack 18, basin 17, pillar 16, offeringTable 15,
+   rubblePile 14, brazier 14, statue 14, shrine 13, mat 11, chestProp 8. Each needs Step 0 and Step 1
+   before a prompt exists — his rank has no prop modelled beyond the hanging. Most are `--contents` on a
+   primitive the merchant or the nobleman already proved, so the modelling is a variant rather than a new
+   shape, and each one that lands can go straight into the queue.
+2. **`wizard/crystal`** — 27 rooms, authored, and the only kind in the set with no primitive to build on.
    Needs a model from nothing; everything else at those ranks is `--contents` on something that exists.
-2. **Paint the condition sprites** — `overgrown` is authored and drawn in three places, and all five files
+3. **`junior/sarcophagus` and `junior/statue`** — 28 rooms, museum scans, and read `prop-pipeline.md`'s
+   Gate first. `horus.stl` in `~/tile-previews/meshes/` is a REJECT, not a head start: that folder is a
+   download history, not a library.
+4. **Paint the condition sprites** — `overgrown` is authored and drawn in three places, and all five files
    are placeholders. They live in `tiles/default/`, so one set serves every rank. Judge in `PropSheet`.
-3. **The patron field** — see "Decided but NOT built". `tileVariants` is half of it already; what is
+5. **The four small stragglers nobody lists** — `junior/tallyBoard` (5 rooms), `expert/tallyBoard` (4),
+   and the floor scatter: `junior/rubbleSpill`, `expert/mat`, `expert/rubbleSpill`. Small, cheap, and the
+   reason "the nobleman is done" was wrong for several sessions. A tally board is FLAT and skips the mesh
+   entirely — straight to the generator, no scaffold, no mask.
+6. **The patron field** — see "Decided but NOT built". `tileVariants` is half of it already; what is
    missing is an authored value so a pyramid can say which god it belongs to.
-4. **`junior/sarcophagus` and `junior/statue`** — museum scans, and read `prop-pipeline.md`'s Gate first.
-   `horus.stl` in `~/tile-previews/meshes/` is a REJECT, not a head start: that folder is a download
-   history, not a library.
 
 `yarn on-floor <tile> <tier> <out.png>` puts one tile on its rank's floor at CELL size and blows the result
 up, which is the only picture worth judging a repaint against. The pit's shaft was mid-grey and perfectly

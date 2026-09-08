@@ -694,3 +694,21 @@ scaffold hanging --contents=rail --shear=0.5 --width=448 --height=224 --colour=#
   --alpha-cloth=0.6
 yarn import-tile art/masters/props/expert/veil.webp --tier=expert --name=veil --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18 --brightness=0.78
+
+# The priest's one PROP, and his second see-through cloth — same --alpha-cloth=0.6 as his veil, because
+# it is one rank's linen and not one tile's effect.
+#
+# The alpha reaches the SHADOW render too, since scaffold() passes its arguments to both, and it changes
+# nothing: make_shadow projects a footprint rather than tracing light, so the pair came back byte for
+# byte against an opaque render. A thin veil therefore darkens the floor exactly as much as its cedar
+# posts do. Left alone deliberately — the footprint is meant to be identical across the rank, and
+# --shadow is the knob if that ever needs revisiting.
+#
+# --brightness=0.82, clipped for the light end alone: the return had 32.4% over the light clamp, and the
+# dark tail it leaves at 10.7% is posts and seated shadow, which belong there. Junior's hanging shipped
+# at 0.2% light and 24.3% dark, so this is the same trade made further. His veil took 0.78 on the same
+# linen at the same rank: a wall item has no posts and no shadow under it, so the two ends sit
+# differently and the number does not carry between them.
+scaffold hanging --contents=veil --spin=42 --colour=#a7b2be --alpha-cloth=0.6
+yarn import-tile art/masters/props/expert/hanging.webp --tier=expert --name=hanging --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82

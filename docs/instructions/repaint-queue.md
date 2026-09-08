@@ -41,45 +41,6 @@ is fine: ask for the material and let the mask decide the layout.
 
 ---
 
-## Priest — one
-
-One prop. No prop of his beyond this one is modelled yet; see art-tasks §5.
-
-### `expert/hanging` — a veil before the shrine, on posts
-
-**Attach:**
-
-1. `~/tile-previews/hanging-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a veil on a pole between two posts, standing at an angle on the floor, drawn back to one side.
-The wide sheet in vertical folds is the VEIL; the bar across the top is the POLE; the uprights at the ends
-are POSTS standing on the floor; the narrow bundles at the right are the cloth GATHERED where it has been
-pulled aside.
-
-Fine bleached linen, cool white with grey shadow in the folds and darker where it doubles in the gathers.
-A woven band of dull blue-green along the hem. The posts and pole are dark cedar.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold hanging --contents=veil --spin=42
-yarn import-tile art/masters/props/expert/hanging.webp --tier=expert --name=hanging --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
----
-
 ## Pharaoh — four
 
 Wall items and one curtain. Gold is a flat colour at this rank, never a metal — every prompt below says so, because the generator will otherwise return a chrome highlight.
