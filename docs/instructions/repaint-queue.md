@@ -41,60 +41,9 @@ is fine: ask for the material and let the mask decide the layout.
 
 ---
 
-## Priest — three
+## Priest — two
 
-Two wall items and one prop. No prop of his beyond the veil is modelled yet; see art-tasks §5.
-
-### `expert/wallShrine` — a wall shrine, doors ajar, lamp lit inside
-
-**Attach:**
-
-1. `~/tile-previews/wallshrine-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-**This one keeps coming back with a view of its own**, so it carries one extra line and NOTHING else. The
-tell is the download's SIZE, before it is opened: 2912x1440 is the scaffold edited, 2048x2048 is a fresh
-square drawing with the attachment thrown away, unimportable, and no flag rescues it. Re-roll a square
-without measuring it.
-
-**Do not answer a wrong projection by describing the right one.** Two rolls were lost to that. Called
-raked, it drew a cabinet in full low-angle perspective; handed the brief's `FLAT ORTHOGRAPHIC HYBRID`
-block, it drew a flat elevation with no top faces, no inner floor and two matching doors. That block is
-for generating a whole tile, where nothing carries the view — here it CONTRADICTS the scaffold, which
-shows the inside of the opening and whose doors are deliberately unequal, and a rule in words beats a
-picture every time. The scaffold is the projection. The prompt's only job is material.
-
-The extra line is about the CANVAS, not the geometry, which is why it is allowed to stay: a square
-re-composition is the one failure the attachment cannot prevent by itself.
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-Match the reference image's FRAME exactly: the same 2:1 landscape shape, the object in the same place in it, at the same size. Do not re-compose it into a square.
-
-The object: a small shrine cabinet standing against a wall, its doors part open. The wide slab over the
-top is a CAVETTO CORNICE and the slab under it is the PLINTH, both overhanging the box between them; the
-uprights at the sides are JAMBS; the two dark panels are the DOOR LEAVES, one covering more of the opening
-than the other; between them is a black GAP into the shrine's inside, and standing in it is a small LAMP
-with a FLAME above it.
-
-The cornice, plinth and jambs are dark basalt, cool grey-blue, dressed smooth. The doors are cedar, dark
-red-brown. The lamp is buff pottery, sooted at the lip; its flame is a small ochre-orange tongue, matte.
-
-The near-black opening is a HOLE and must stay black — paint darkness in it, never a wall, a floor or a back panel. No pink and no purple anywhere in it. The lamp is the only lit thing and it throws no light on the doors.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --sun=0
-yarn import-tile art/masters/props/expert/wallShrine.webp --tier=expert --name=wallShrine --slot=wall \
-  --filter=smooth --mask="$OBJ" --headroom=0.18
-```
+One wall item and one prop. No prop of his beyond the veil is modelled yet; see art-tasks §5.
 
 ### `expert/veil` — a veil on its rail, drawn back
 

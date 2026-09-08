@@ -269,6 +269,22 @@ and texture only. The full format is in
   lighting the object as if it were floating in a white room: asked for no shadow at all, it lights the
   underside as brightly as the top.
 
+**When a return gets the projection wrong, do NOT answer it by describing the right one.** This is the
+expensive way to read the line above, and the priest's wall shrine cost two rolls proving it. Told the
+view was raked, it drew a cabinet in full low-angle perspective, converging edges and a vanishing point.
+Handed the brief's `THE VIEW: FLAT ORTHOGRAPHIC HYBRID` block instead, it drew a flat elevation with no
+top faces, no inner floor and two matching doors — because that block says "NEVER show the inside of any
+object" and "STRICT SYMMETRY", and this scaffold shows the inside of its opening and has deliberately
+unequal doors. **That block is for generating a WHOLE TILE, where nothing else carries the view. In a
+repaint it competes with the scaffold, and a rule in words beats a picture every time.** The third roll
+said nothing about the view and held it. Both directions are the same mistake: the fix for a projection
+that drifted is another roll of the SAME prompt, or a change to the model, never a paragraph about
+geometry.
+
+The one non-material line that has earned its place is about the CANVAS: an instruction to keep the
+reference's frame and not re-compose it square. A square return is the failure the attachment cannot
+prevent by itself, and naming the frame is not naming the projection.
+
 **A SPARSE scaffold pulls the reference image's CONTENT into the picture.** The reference is attached to
 carry the paint and the projection without spending words on either, and on three dense scaffolds it did
 exactly that. On the pillar — one thin post with most of the frame empty — the generator filled the empty
@@ -292,10 +308,12 @@ the shape).
 
 **The two tells, both cheap, and one of them is checkable before you even open the file.**
 
-_The size._ A return that EDITED the attached scaffold comes back at the scaffold's own 1686x2528. A return
-generated FRESH, with the attachment ignored or never attached, comes back 2048x2048 — square. The
-nobleman's palm column arrived square and nothing else needed to be looked at: `statue.webp`, the other
-prompted-only return in the repository, is 2048x2048 too.
+_The size._ A return that EDITED the attached scaffold comes back at the SCAFFOLD's own aspect — 1686x2528
+for a 2:3 prop, about 2912x1440 for a 2:1 wall item. A return generated FRESH, with the attachment ignored
+or never attached, comes back 2048x2048 — square, whatever the scaffold was. The nobleman's palm column
+arrived square and nothing else needed to be looked at: `statue.webp`, the other prompted-only return in
+the repository, is 2048x2048 too. Read the aspect off the scaffold rather than memorising one number; the
+square is the constant.
 
 _A PINK HALO inside the silhouette._ This is what "a part that has moved" actually looks like, and it is
 worth knowing by sight because it is not what anyone expects. Masking that square column to the modelled

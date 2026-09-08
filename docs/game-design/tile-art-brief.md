@@ -150,6 +150,14 @@ What worked was showing the model a picture that was right and asking it how to 
 named the thing, which is most of the value, and the rule set below is its own answer. Paste it verbatim;
 a model follows its own wording better than ours.
 
+**Only when the generation carries the view itself** — a floor, a wall face, an arch, any whole tile drawn
+from words alone. **Never in a repaint over a scaffold.** There the render already IS the projection, and
+this block becomes a second, competing description that the model follows instead of the picture: pasted
+into the priest's wall shrine it flattened the cabinet to an elevation, because "NEVER show the side
+(left, right, or inside) of any object" and "STRICT SYMMETRY" are both false of that scaffold, which shows
+the inside of its opening and has deliberately unequal doors. A repaint prompt names material and nothing
+else — see [prop-pipeline.md](../instructions/prop-pipeline.md) Step 3.
+
 ```
 THE VIEW: FLAT ORTHOGRAPHIC HYBRID
 

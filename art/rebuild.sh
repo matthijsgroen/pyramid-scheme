@@ -663,3 +663,15 @@ yarn import-tile art/masters/props/expert/niche.webp --tier=expert --name=niche 
 scaffold sconce --contents=chain --shear=0.5 --width=448 --height=224 --colour=#a7b2be --sun=0 --margin=1.4
 yarn import-tile art/masters/props/expert/sconce.webp --tier=expert --name=sconce --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18
+
+# Three rolls, and the two that failed both failed by being TOLD the projection: called raked it drew a
+# vanishing point, handed the brief's flat-orthographic block it drew an elevation with no top face, no
+# inner floor and two matching doors. The block is for generating a whole tile, where nothing else
+# carries the view. Against a scaffold it competes with the picture and wins. What landed says only that
+# the frame is 2:1 — the canvas, which the attachment cannot defend on its own — and nothing else.
+#
+# The return still slants a little where the mask does not. It survives because the silhouette is what
+# gets cut: the paint covers the mask everywhere but a one-pixel edge, and at 56x28 the slant is gone.
+scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --colour=#a7b2be --sun=0
+yarn import-tile art/masters/props/expert/wallShrine.webp --tier=expert --name=wallShrine --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
