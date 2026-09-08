@@ -3,6 +3,15 @@
 Every prompt still owed to the generator, with what to attach to each. One heading per tile, in the order
 worth doing them.
 
+**`yarn repaint <key>`** does the fetching for you: it copies that entry's prompt to the clipboard and
+reveals both attachments in the Finder, ready to drag. `yarn repaint` with no argument lists every key
+still owed. It parses THIS file, so a prompt edited here is the prompt that gets pasted — there is no second
+copy anywhere.
+
+The loop stays manual on purpose. Driving Gemini's web UI is against Google's terms, and the API bills per
+image; neither is worth it for two dozen tiles, so the paste is done by hand and the script only saves the
+searching — the right block out of nine hundred lines, and two files out of a folder of two hundred renders.
+
 **How to use one entry.** Attach the two images it names, paste the fenced block verbatim, take the result
 from the generator's DOWNLOAD (not a pasted image — a paste resizes 1686x2528 to 1334x2000 and the master
 is what the repository keeps), and drop it in `~/Downloads`. The import line under each block is what turns
