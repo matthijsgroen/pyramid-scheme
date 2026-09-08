@@ -114,34 +114,29 @@ recorded here rather than made silently.
 **The prompts for every one of these are written out in [repaint-queue.md](repaint-queue.md)**, with the two attachments each one takes and the import line to run afterwards. This section is the ledger; that file is the work.
 
 Modelled, self-verified in the sheared render, and the three renders are in `~/tile-previews/`. Each needs
-one repaint and one `import-tile` line and it is done.
+one repaint and one `import-tile` line and it is done. **The prompts are written out in
+[repaint-queue.md](repaint-queue.md)** and `yarn repaint <key>` hands you one.
 
-| kind                        | primitive                             | renders                 |
-| --------------------------- | ------------------------------------- | ----------------------- |
-| `junior/pillar`             | `palm --spin=22`                      | `palm-junior*`          |
-| `junior/shrine`             | `falseDoor --spin=6`                  | `falsedoor-junior*`     |
-| `junior/chestProp`          | `sealedChest --spin=-27`              | `sealedchest-junior*`   |
-| `junior/basin`              | `basin --contents=bowl --spin=14`     | `basin-junior*`         |
-| `junior/lamp`               | `lamp --contents=stand --spin=8`      | `lamp-junior*`          |
-| `junior/shelf`              | `shelf --contents=linen --spin=5`     | `shelf-junior*`         |
-| `junior/offeringTable`      | `market --contents=laid --spin=-16`   | `offeringtable-junior*` |
-| `expert/niche`              | `niche --contents=sealed`             | `niche-expert*`         |
-| `expert/sconce`             | `sconce --contents=chain`             | `sconce-expert*`        |
-| `master/niche`              | `niche --contents=offering`           | `niche-master*`         |
-| `master/sconce`             | `sconce --contents=mirror`            | `sconce-master*`        |
-| `wizard/niche`              | `niche --contents=star`               | `niche-wizard*`         |
-| `wizard/sconce`             | `sconce --contents=crystal`           | `sconce-wizard*`        |
-| `expert/wallShrine`         | `wallShrine --contents=ajar`          | `wallshrine-expert*`    |
-| `expert/veil`               | `hanging --contents=rail`             | `veil-expert*`          |
-| `master/mask`               | `mask`                                | `mask-master*`          |
-| `wizard/wallShrine`         | `wallShrine --contents=opening`       | `wallshrine-wizard*`    |
-| `wizard/starShaft`          | `starShaft`                           | `starshaft-wizard*`     |
-| `junior/hanging`            | `hanging --contents=linen --spin=38`  | `hanging-junior*`       |
-| `expert/hanging`            | `hanging --contents=veil --spin=42`   | `hanging-expert*`       |
-| `master/hanging`            | `hanging --contents=gold --spin=33`   | `hanging-master*`       |
-| `wizard/hanging`            | `hanging --contents=aurora --spin=47` | `hanging-wizard*`       |
-| `starter/hanging` ↻         | `hanging --spin=45`                   | `hanging-starter*`      |
-| `starter/offeringTable-2` ✚ | `market --contents=baskets`           | —                       |
+The merchant's and the nobleman's rows are gone from this table because they are DRAWN — every prop and
+wall item at both ranks is a return on a rebuild line, and what is left of them is the two museum scans
+in §6. What remains here is the last three ranks' wall items and their hangings.
+
+| kind                | primitive                             | renders              |
+| ------------------- | ------------------------------------- | -------------------- |
+| `expert/niche`      | `niche --contents=sealed`             | `niche-expert*`      |
+| `expert/sconce`     | `sconce --contents=chain`             | `sconce-expert*`     |
+| `master/niche`      | `niche --contents=offering`           | `niche-master*`      |
+| `master/sconce`     | `sconce --contents=mirror`            | `sconce-master*`     |
+| `wizard/niche`      | `niche --contents=star`               | `niche-wizard*`      |
+| `wizard/sconce`     | `sconce --contents=crystal`           | `sconce-wizard*`     |
+| `expert/wallShrine` | `wallShrine --contents=ajar`          | `wallshrine-expert*` |
+| `expert/veil`       | `hanging --contents=rail`             | `veil-expert*`       |
+| `master/mask`       | `mask`                                | `mask-master*`       |
+| `wizard/wallShrine` | `wallShrine --contents=opening`       | `wallshrine-wizard*` |
+| `wizard/starShaft`  | `starShaft`                           | `starshaft-wizard*`  |
+| `expert/hanging`    | `hanging --contents=veil --spin=42`   | `hanging-expert*`    |
+| `master/hanging`    | `hanging --contents=gold --spin=33`   | `hanging-master*`    |
+| `wizard/hanging`    | `hanging --contents=aurora --spin=47` | `hanging-wizard*`    |
 
 ↻ **`starter/hanging` already ships and is being REDRAWN**, so its `--spin=45` is not in `rebuild.sh` yet:
 Step 1b's constraint is that a painted tile's spin cannot change, and set against the existing master the

@@ -71,6 +71,7 @@ import { ARCH_H, ARCH_W, CELL, WALL_H } from "../src/app/SiteMap/mapScale"
 import { keyOut } from "./keyOut"
 import { tierPalette } from "../src/app/SiteMap/tileMaterials"
 import type { Difficulty } from "../src/data/difficultyLevels"
+import { pathToFileURL } from "url"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const OUT_ROOT = join(__dirname, "..", "src", "assets", "tiles")
@@ -257,17 +258,128 @@ const withHeadroom = async (
  * edge spread over a hundred pixels. Cutting to the render's own alpha removes it by construction, and
  * pins the shape against any drift the repaint introduced.
  */
-const cutToMask = async (img: sharp.Sharp, maskPath: string): Promise<sharp.Sharp> => {
+/** Below this, an added pixel is the repaint's SHADOW and not part of the object — see `cutToMask`'s
+ * growth. 70 of 255: the merchant's darkest prop measures 42 at its fifth percentile, so this sits above
+ * the paint a prop is made of and below the #3a342c the prompts ask a shadow to be. */
+const SHADOW_FLOOR = 70
+
+/**
+ * A mask grown by `radius`, admitting what the repaint ADDED but never what it added as shadow.
+ *
+ * Separable — a max filter along x, then along y. The obvious nested-disc version is O(w*h*r*r), and at
+ * r=100 that is seven billion operations on a 448x672 frame; two passes are O(w*h*r) and finish
+ * instantly. The kernel comes out square rather than round, which no eye can tell on a mask about to be
+ * scaled to 112 wide.
+ *
+ * Returns RGBA where alpha is the mask, which is what `dest-in` wants.
+ */
+export const growMask = ({
+  mask,
+  maskChannels,
+  art,
+  artChannels,
+  width,
+  height,
+  radius,
+}: {
+  mask: Buffer | Uint8Array
+  maskChannels: number
+  art: Buffer | Uint8Array
+  artChannels: number
+  width: number
+  height: number
+  radius: number
+}): Buffer => {
+  const inside = (i: number) => mask[i * maskChannels + maskChannels - 1] > 128
+  const rowPass = new Uint8Array(width * height)
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      let hit = 0
+      for (let dx = -radius; dx <= radius; dx++) {
+        const xx = x + dx
+        if (xx >= 0 && xx < width && inside(y * width + xx)) {
+          hit = 1
+          break
+        }
+      }
+      rowPass[y * width + x] = hit
+    }
+  }
+  const near = new Uint8Array(width * height)
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      let hit = 0
+      for (let dy = -radius; dy <= radius; dy++) {
+        const yy = y + dy
+        if (yy >= 0 && yy < height && rowPass[yy * width + x]) {
+          hit = 1
+          break
+        }
+      }
+      near[y * width + x] = hit
+    }
+  }
+  const out = Buffer.alloc(width * height * 4)
+  for (let i = 0; i < width * height; i++) {
+    let keep = inside(i)
+    if (!keep && near[i]) {
+      const a = art[i * artChannels + artChannels - 1]
+      const lum = 0.299 * art[i * artChannels] + 0.587 * art[i * artChannels + 1] + 0.114 * art[i * artChannels + 2]
+      keep = a > 128 && lum >= SHADOW_FLOOR
+    }
+    out[i * 4] = 255
+    out[i * 4 + 1] = 255
+    out[i * 4 + 2] = 255
+    out[i * 4 + 3] = keep ? 255 : 0
+  }
+  return out
+}
+
+const cutToMask = async (img: sharp.Sharp, maskPath: string, grow = 0): Promise<sharp.Sharp> => {
   const art = await img.ensureAlpha().png().toBuffer({ resolveWithObject: true })
   const { width, height } = art.info
   // `dest-in` keeps the art only where the mask is opaque, which is the same idiom make-seamless uses.
   // `joinChannel` looks like the direct way to do it and does not work here: the joined band never
   // becomes alpha and every pixel comes out opaque.
-  const mask = await sharp(maskPath).ensureAlpha().resize(width, height, { fit: "fill" }).png().toBuffer()
+  const base = sharp(maskPath).ensureAlpha().resize(width, height, { fit: "fill" })
+  let maskBuf = await base.png().toBuffer()
+  if (grow > 0) {
+    // GROWN, for the repaint that drew the object FULLER than the model rather than merely different.
+    //
+    // The nobleman's palm capital is the case that wanted it. The model gives it five fronds; the
+    // generator painted a rosette of fourteen, twice and unprompted, which is what a palm capital
+    // actually looks like. Cut to the model, nine of them are thrown away and the tile is sparse. Keyed
+    // instead of masked, they all survive — and so does the repaint's own opaque shadow, which is the
+    // thing `--seat` exists to replace.
+    //
+    // AND THE GROWTH REFUSES SHADOW, which had to be measured rather than assumed: the first attempt
+    // argued the painted shadow sat far enough below the column's foot to fall outside any dilation, and
+    // rendered, 30 pixels of growth admitted its top edge as a hard dark ellipse round the base. So an
+    // added pixel is kept only if the repaint painted it LIGHT. Inside the original mask nothing is
+    // filtered, so an object's own dark parts are never at risk.
+    //
+    // Done in RAW PIXELS on purpose. The same rule written as sharp blends — negate, multiply, screen
+    // over one-channel buffers — produced a mask identical to the ungrown one, and comparing renders was
+    // the only way to notice. A loop over 448x672 costs nothing and can be asserted.
+    const maskRaw = await base.raw().toBuffer({ resolveWithObject: true })
+    const artRaw = await img.clone().ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+    const out = growMask({
+      mask: maskRaw.data,
+      maskChannels: maskRaw.info.channels,
+      art: artRaw.data,
+      artChannels: artRaw.info.channels,
+      width,
+      height,
+      radius: Math.round(grow),
+    })
+    maskBuf = await sharp(out, { raw: { width, height, channels: 4 } })
+      .png()
+      .toBuffer()
+  }
   // Rendered out before it goes back into the pipeline. sharp resizes BEFORE it composites, so a lazy
   // composite handed downstream is applied at the wrong size — the same trap make-seamless documents.
   const cut = await sharp(art.data)
-    .composite([{ input: mask, blend: "dest-in" }])
+    .composite([{ input: maskBuf, blend: "dest-in" }])
     .png()
     .toBuffer()
   return sharp(cut)
@@ -364,7 +476,7 @@ const main = async (): Promise<void> => {
   const archFitted = slot === "arch" && !process.argv.includes("--no-trim")
   if (archFitted) img = await fitToDoorway(img, w, h, smooth)
   const maskPath = arg("mask")
-  if (maskPath) img = await cutToMask(img, maskPath)
+  if (maskPath) img = await cutToMask(img, maskPath, Number(arg("mask-grow", "0")))
   // After the mask, so the shadow is laid under the object's true silhouette and not under a repaint's
   // invented floor; before the seat, so the trim treats object and shadow as one sprite.
   const shadowPath = arg("seat")
@@ -464,7 +576,12 @@ const main = async (): Promise<void> => {
   console.log(`${out} — ${meta.width}x${meta.height}, ${slot} slot${key === "none" ? "" : `, keyed ${key}`}`)
 }
 
-main().catch(err => {
-  console.error(err)
-  process.exit(1)
-})
+// Only when RUN, not when imported. `growMask` has a spec beside this file, and importing the module to
+// reach it used to execute the CLI — which exits 1 for want of arguments and reports as an unhandled
+// rejection in the middle of a passing test run.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch(err => {
+    console.error(err)
+    process.exit(1)
+  })
+}

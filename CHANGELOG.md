@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Every object a merchant or a nobleman keeps is drawn: his palm column, his ablution basin with water
+  standing in it, and the linen hanging with its dyed border were the last three. Only their coffins and
+  ka-statues are still stand-ins.
 - The nobleman's rooms are furnished rather than sketched: his sealed chest, his bronze lamp stand, his
   linen press, his laid table and his false-door shrine are all drawn now, and the merchant's shrine corner
   is screened with patched linen instead of a market awning. He also sells from reed baskets in some rooms

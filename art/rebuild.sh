@@ -518,6 +518,24 @@ yarn import-tile art/masters/surfaces/junior-wall-face.webp --tier=junior --name
 # clamp, and nearly achromatic at -73 warmth. 0.80 clears the clamp outright and 2.0 pulls the cool cast
 # back to -58, which stays cooler than the floor on purpose — the stela makes the same argument at this
 # rank, and what matters is the 24 of separation, not its sign.
+# The nobleman's PALM COLUMN, on `prim_palm` — a dressed column with a painted capital, not the
+# merchant's leaning timber prop.
+#
+# --mask-grow=100 is the flag this tile invented, and the reason is worth the words. The model gives the
+# capital FIVE fronds; the generator painted a rosette of fourteen, twice and unprompted, which is what a
+# palm capital actually looks like. Cut to the model, nine of them are thrown away and the tile is a
+# five-spoke star. Keyed instead of masked, they all survive and so does the repaint's own opaque shadow,
+# which is the thing --seat exists to replace. Growing the mask keeps both, because the growth admits
+# added paint but refuses added SHADOW — see `growMask` in importTile.ts, which has a spec.
+#
+# --brightness=0.82 --saturation=1.5. Pale limestone on pale sandstone is the worst pairing in the set:
+# untouched the sprite measured ONE luminance from the floor and tile-stats refused it outright — under 10
+# a prop does not read against the ground it stands on. 0.82 puts it 33 darker, and 1.5 brings the warmth
+# from -43 to -23, which is where the rank's other dressed stone sits (its stela is -18).
+scaffold palm --spin=22
+yarn import-tile art/masters/props/junior/pillar.webp --tier=junior --name=pillar --slot=prop \
+  --filter=smooth --mask="$OBJ" --mask-grow=100 --seat="$SHADOW" --brightness=0.82 --saturation=1.5
+
 scaffold shelf --contents=linen --spin=5
 yarn import-tile art/masters/props/junior/shelf.webp --tier=junior --name=shelf --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.80 --saturation=2.0
@@ -528,6 +546,42 @@ yarn import-tile art/masters/props/junior/shelf.webp --tier=junior --name=shelf 
 # NO --brightness and NO --saturation. Timber against pale sandstone arrives 67 darker with 0.1% under the
 # dark clamp and 1.1% over the light one, and tile-stats passes it as it comes. The chest one line up is
 # the same object class and needed a lift only because cedar is darker still.
+# The nobleman's LINEN HANGING, on `prim_hanging --contents=linen` — a made hanging with a dyed border,
+# where the merchant's is a patched screen. His dyed band is the whole tile, which is why the border is a
+# marked part and not left to the paint.
+#
+# --brightness=0.88 --saturation=1.4, and this tile is SQUEEZED FROM BOTH ENDS — the only one in the file
+# that is. White linen runs into the light clamp and oiled timber into the dark one, so there is no
+# setting that clears both: at 0.92 it is 13.7% over the light end, at 0.84 it is 22.4% under the dark.
+# 0.88 puts one tail at 0.2% and leaves 18.5% clipped in the timber, which flattens the pole and the posts
+# and is the cheaper loss — the linen is what the tile is for.
+#
+# --contrast is NOT the answer and the importer says so: below 1 it would eat the alpha channel, and it
+# refuses. Compressing a squeezed tile means --flatten, which is for surfaces.
+# The nobleman's ABLUTION BASIN, on `prim_basin --contents=bowl` — the merchant's stand carrying an open
+# bowl instead of a water jar. It took two rolls and BOTH faults were in the scaffold, not the return:
+#
+# The water was marked VOID. That marker means a HOLE and renders near-black, the prompt then called it
+# the darkest thing in the picture, and the repaint obliged — a black disc that read as a hole punched in
+# a bowl, which is the one failure a mask cannot reach, being inside the silhouette. It is a `water`
+# material now (`nocast`, since it lies above the floor and the bowl already casts the footprint), and the
+# geometry did not move, so that first master would still have fitted.
+#
+# The LEGS MET NOTHING. The 15 degree splay pulls their tops to radius 0.194 and the bowl's cone is 0.155
+# across at that height, so they passed outside it — three struts beside a bowl. The hub is a drum they
+# meet, which is how a ring stand is built and what the jar variant already had in its collar.
+#
+# --brightness=1.2, a lift for the same reason as the chest and the lamp: dark timber legs under a pale
+# bowl arrived 87 below a slab of 161 with 15.2% of the sprite under the dark clamp. 1.2 keeps 71 of
+# separation — it is still one of the darkest things the rank owns — and takes the clipped tail to 11.1%.
+scaffold basin --contents=bowl --spin=14
+yarn import-tile art/masters/props/junior/basin.webp --tier=junior --name=basin --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=1.2
+
+scaffold hanging --contents=linen --spin=38
+yarn import-tile art/masters/props/junior/hanging.webp --tier=junior --name=hanging --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.88 --saturation=1.4
+
 scaffold market --contents=laid --spin=-16
 yarn import-tile art/masters/props/junior/offeringTable.webp --tier=junior --name=offeringTable \
   --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW"

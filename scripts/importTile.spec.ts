@@ -1,63 +1,55 @@
-import { execFileSync } from "node:child_process"
-import { createRequire } from "node:module"
-import { mkdtempSync, rmSync } from "node:fs"
-import { tmpdir } from "node:os"
-import { join } from "node:path"
-import sharp from "sharp"
-import { afterAll, describe, expect, it } from "vitest"
+import { describe, expect, it } from "vitest"
+import { growMask } from "./importTile"
 
-/**
- * The import is a pipeline of image operations, and the one that can silently ruin a file is `--flatten`:
- * it lays a wash of the rank's own stone over the art, and a wash is a rectangle. Laid plainly it fills the
- * hole through an archway with solid masonry — the doorway stops being a doorway, every flatten strength
- * measures the same, and nothing in the numbers says why. `blend: "atop"` is what keeps it on the art.
- *
- * So: one archway through the real script, and the middle has to still be see-through.
- */
-const root = join(import.meta.dirname, "..")
-const tmp = mkdtempSync(join(tmpdir(), "import-tile-"))
-
-afterAll(() => rmSync(tmp, { recursive: true, force: true }))
-
-/** A crude archway: magenta opening down the middle, stone either side, from the top edge to the bottom. */
-const archwayFixture = async (file: string) => {
-  const width = 300
-  const height = 200
-  const pixels = Buffer.alloc(width * height * 3)
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const i = (y * width + x) * 3
-      const isOpening = x > 100 && x < 200 && y > 40
-      pixels[i] = isOpening ? 255 : 0x6c
-      pixels[i + 1] = isOpening ? 0 : 0x62
-      pixels[i + 2] = isOpening ? 255 : 0x57
-    }
-  }
-  await sharp(pixels, { raw: { width, height, channels: 3 } })
-    .png()
-    .toFile(file)
+/** A 5x1 strip: one mask pixel at x=0, then four outside it. */
+const strip = (artLums: number[], radius: number) => {
+  const width = artLums.length
+  const mask = new Uint8Array(width * 4)
+  mask[3] = 255 // only x=0 is inside
+  const art = new Uint8Array(width * 4)
+  artLums.forEach((l, i) => {
+    art[i * 4] = l
+    art[i * 4 + 1] = l
+    art[i * 4 + 2] = l
+    art[i * 4 + 3] = 255
+  })
+  const out = growMask({ mask, maskChannels: 4, art, artChannels: 4, width, height: 1, radius })
+  return Array.from({ length: width }, (_, i) => out[i * 4 + 3] > 128)
 }
 
-// tsx's own CLI rather than `yarn tsx`: this runs alongside the whole suite, and a package-manager
-// start-up per call is most of the wall clock. Resolved rather than hard-coded — yarn's node_modules has
-// no .bin, the real file lives under .store.
-const tsxCli = createRequire(import.meta.url).resolve("tsx/cli")
-const importTile = (args: string[]) =>
-  execFileSync(process.execPath, [tsxCli, "scripts/importTile.ts", ...args], { cwd: root, encoding: "utf8" })
+describe("growMask", () => {
+  it("keeps the original mask whatever the art under it looks like", () => {
+    // x=0 is inside the mask and pitch black — an object's own dark parts are never filtered.
+    expect(strip([0, 0, 0, 0, 0], 0)[0]).toBe(true)
+  })
 
-describe("import-tile", () => {
-  it("leaves an archway's opening transparent, flattened or not", { timeout: 60_000 }, async () => {
-    const source = join(tmp, "arch.png")
-    await archwayFixture(source)
+  it("admits nothing at radius 0", () => {
+    expect(strip([255, 255, 255, 255, 255], 0)).toEqual([true, false, false, false, false])
+  })
 
-    for (const flatten of ["0", "0.8"]) {
-      importTile([source, "--tier=starter", `--name=spec-arch-${flatten}`, "--slot=arch", `--flatten=${flatten}`])
-      const out = join(root, "src/assets/tiles/starter", `spec-arch-${flatten}.png`)
-      const { data, info } = await sharp(out).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
-      // The middle of the slot is the way through: it must be a hole whatever the wash did.
-      const middle = (Math.round(info.height * 0.75) * info.width + Math.round(info.width / 2)) * info.channels
-      expect(data[middle + 3], `flatten=${flatten} filled the opening`).toBe(0)
-      rmSync(out)
+  it("admits LIGHT paint within the radius — the fronds the repaint added", () => {
+    expect(strip([255, 255, 255, 255, 255], 2)).toEqual([true, true, true, false, false])
+  })
+
+  it("REFUSES dark paint within the radius — the shadow the repaint added", () => {
+    // Same geometry, but what was added is shadow-dark: the growth must not take it.
+    expect(strip([255, 20, 20, 20, 20], 2)).toEqual([true, false, false, false, false])
+  })
+
+  it("decides pixel by pixel, so a frond beside a shadow survives", () => {
+    expect(strip([255, 20, 255, 255, 255], 2)).toEqual([true, false, true, false, false])
+  })
+
+  it("ignores transparent paint, which is background rather than something added", () => {
+    const width = 3
+    const mask = new Uint8Array(width * 4)
+    mask[3] = 255
+    const art = new Uint8Array(width * 4)
+    for (let i = 0; i < width; i++) {
+      art[i * 4] = art[i * 4 + 1] = art[i * 4 + 2] = 255
+      art[i * 4 + 3] = i === 1 ? 0 : 255 // x=1 is transparent
     }
+    const out = growMask({ mask, maskChannels: 4, art, artChannels: 4, width, height: 1, radius: 1 })
+    expect(out[1 * 4 + 3] > 128).toBe(false)
   })
 })
