@@ -27,11 +27,13 @@ He is the only rank of which that is true.
 and `junior/rubbleSpill` are ordinary unpainted work that never got a rebuild line. This file called him
 DONE for several sessions while both sat in the census.
 
-**The priest has his five WALL items and nothing else.** niche, sconce, wallShrine, veil and the hanging
-are painted; his thirteen chamber props and his tallyBoard are not, and they are not in the repaint queue
-because none of them is MODELLED yet — a prompt cannot be written against a scaffold that does not exist.
-Step 0 and Step 1 come first for each. That is why his queue section emptied while his census count
-stands at 17.
+**The priest has his five WALL items painted, and everything else MODELLED AND QUEUED.** niche, sconce,
+wallShrine, veil and the hanging are tiles; his twelve chamber props and his tallyBoard are scaffolds with
+prompts written against them, so every one of them is now a paste rather than a modelling job. Same for
+the pharaoh: nine of his are queued beside the four wall items that were already there.
+
+**Modelling is no longer the bottleneck at either rank — generation is.** The queue is 31 entries, which
+is most of what is left in the whole set, and none of it needs Blender again.
 
 **Read `yarn art-census`, not this paragraph.** The count below is a snapshot and every summary of it in
 this file has drifted at least once.
@@ -41,7 +43,7 @@ this file has drifted at least once.
 ### The three files that run the work
 
 - **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
-  attach and the import line to run afterwards. 9 entries, all expert/master/wizard. `yarn repaint <key>`
+  attach and the import line to run afterwards. 31 entries, all expert/master/wizard. `yarn repaint <key>`
   copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
   Entries are DELETED as they land, so the file's length is the backlog.
 - **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
@@ -139,7 +141,7 @@ where a purpose has two wall items to choose between.
 API bills per image, so the paste is done by hand and the tooling only saves the searching.
 
 ```sh
-yarn repaint                  # the 9 keys still owed
+yarn repaint                  # the 31 keys still owed
 yarn repaint master/mask      # prompt to the clipboard, both attachments revealed in the Finder
 # attach the two, paste, generate, download to ~/Downloads
 ```
@@ -175,12 +177,9 @@ escape — the importer refuses it. Pick which end matters and say so in the reb
 **The open work**, ranked by rooms waiting on it. The queue is only the part that already has a scaffold;
 most of what is left does not, which is why it is not in there.
 
-1. **The priest's THIRTEEN chamber props** — about 240 rooms, and the biggest block in the set by a wide
-   margin: pit 33, sarcophagus 26, lamp 21, shelf 20, jarRack 18, basin 17, pillar 16, offeringTable 15,
-   rubblePile 14, brazier 14, statue 14, shrine 13, mat 11, chestProp 8. Each needs Step 0 and Step 1
-   before a prompt exists — his rank has no prop modelled beyond the hanging. Most are `--contents` on a
-   primitive the merchant or the nobleman already proved, so the modelling is a variant rather than a new
-   shape, and each one that lands can go straight into the queue.
+1. **Work the queue** — 31 entries, about 900 rooms between them, and every one is a paste rather than a
+   modelling job. The priest's twelve chamber props and the pharaoh's nine were modelled and queued in one
+   pass; nothing in the queue needs Blender again. `yarn repaint` lists them in the order worth doing.
 2. **`wizard/crystal`** — 27 rooms, authored, and the only kind in the set with no primitive to build on.
    Needs a model from nothing; everything else at those ranks is `--contents` on something that exists.
 3. **`junior/sarcophagus` and `junior/statue`** — 28 rooms, museum scans, and read `prop-pipeline.md`'s
