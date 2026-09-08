@@ -96,6 +96,8 @@ brief's three over geometry. The rank is otherwise finished.
 
 ## 4. Waiting on one roll — scaffold ready
 
+**The prompts for every one of these are written out in [repaint-queue.md](repaint-queue.md)**, with the two attachments each one takes and the import line to run afterwards. This section is the ledger; that file is the work.
+
 Modelled, self-verified in the sheared render, and the three renders are in `~/tile-previews/`. Each needs
 one repaint and one `import-tile` line and it is done.
 

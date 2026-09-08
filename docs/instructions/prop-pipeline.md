@@ -252,6 +252,8 @@ generously and depth barely at all.
 
 ## Step 3 — the repaint
 
+The prompts still owed, already written against their scaffolds, are in [repaint-queue.md](repaint-queue.md). What follows is why they are shaped the way they are.
+
 The prompt says NOTHING about projection. Geometry is settled; the generator is being asked for material
 and texture only. The full format is in
 [starter-art-prompts.md](../game-design/starter-art-prompts.md) §3a. Its three load-bearing parts:
