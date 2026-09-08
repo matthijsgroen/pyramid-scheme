@@ -63,6 +63,8 @@ const artFor = async (tier: string): Promise<Map<string, number>> => {
 
 const wall = new Map<string, number>()
 const prop = new Map<string, number>()
+/** Floors whose site authors a condition, per kind — see the CONDITIONS section. */
+const condition = new Map<string, number>()
 const bump = (m: Map<string, number>, k: string) => m.set(k, (m.get(k) ?? 0) + 1)
 
 for (const journey of journeys) {
@@ -76,6 +78,7 @@ for (const journey of journeys) {
         floorRef: { journeyId: journey.id, floorIndex },
       })
       if (!result.success) return
+      if (result.grid.condition) bump(condition, result.grid.condition.kind)
       for (const row of result.grid.cells)
         for (const cell of row) {
           if (cell.type !== "room") continue
@@ -129,4 +132,34 @@ for (const tier of TIERS) {
     console.log(`    ${kind.padEnd(16)} ${"".padStart(4)}         ${state}`)
   }
 }
+/**
+ * CONDITIONS — the third axis, and the one this census was blind to.
+ *
+ * A condition is what has got INTO a site and runs through the whole of it: water standing in the floors,
+ * green forcing its way through the brick (siteTypes.ts, ConditionKind). It is drawn as an overlay — a
+ * tint over the rank's own ambience, plus a scatter of ONE shared sprite per kind from `tiles/default/`,
+ * placed by `MapGrowth` and biased up each cell toward the wall band it is meant to be coming through.
+ *
+ * It was missing from this report for the same reason FLOOR SCATTER was, one step further out: the two
+ * sections above count DRESSED ROOMS, and nothing about a condition is written on a room. Which made two
+ * facts invisible at once — that both sprites are still placeholders, and that no site in the world
+ * authors a condition at all, so neither is drawn anywhere yet however painted it gets.
+ *
+ * The plumbing is complete: `dsl.ts` takes `condition` at the pyramid level, `buildSite` carries it onto
+ * every floor, `moodSettings` turns it into a tint and a growth count, and `MapGrowth` draws it. What is
+ * missing is an authored site and two painted sprites, in that order — a painted vine helps nothing until
+ * some pyramid is overgrown.
+ */
+console.log("\nCONDITIONS   (one shared sprite per kind, in tiles/default — a tint plus that sprite scattered)")
+{
+  const art = await artFor("starter") // `default` is in every tier's lookup; the tier here is irrelevant.
+  for (const kind of ["overgrown", "flooded"]) {
+    const colours = art.get(kind)
+    const state = colours === undefined ? "MISSING" : colours < PAINTED_MIN_COLOURS ? "placeholder" : "art"
+    const floors = condition.get(kind) ?? 0
+    const where = floors === 0 ? "NO SITE AUTHORS IT" : `${floors} floors`
+    console.log(`    ${kind.padEnd(16)} ${String(where).padEnd(20)} ${state}`)
+  }
+}
+
 console.log("\nkinds with no rooms at a tier are not listed: that rank never draws them.")

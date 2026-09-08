@@ -181,6 +181,37 @@ Almost all the rest is `--contents` on a primitive that exists: `prim_niche`, `p
 `prim_lamp`, `prim_shelf`, `prim_market`, `prim_hanging`, `prim_wallshrine`, `prim_pit`, `prim_jarrack` and
 `prim_rubbleheap` all take it, and `prim_hanging` alone now serves five ranks.
 
+## 5b. Not in any list until now
+
+Three things were missing from this file, and the shape of the gap is worth naming: **this list only ever
+held what the world AUTHORS and what already has a scaffold.** Anything outside both fell through.
+
+**`wizard/crystal` — 27 rooms, authored, and with no primitive at all.** The biggest unmodelled kind
+anywhere, and the only one in the set with nothing to build on: no earlier rank draws a crystal, so there
+is no `--contents` to add. Its row in the brief is a growth of crystal in the gods' vault, lit from within.
+It sits in §5 above, but §5 reads as "the last three ranks' chamber props" and one kind that needs a model
+from nothing does not stand out in that sentence. This is that sentence.
+
+**`overgrown` and `flooded` — the condition sprites, and neither is drawn anywhere yet.** A condition is
+the third axis (`ConditionKind`): what has got into a site and runs through all of it. The plumbing is
+complete — `dsl.ts` takes it at the pyramid level, `buildSite` carries it to every floor, `moodSettings`
+turns it into a tint and a growth count, `MapGrowth` scatters one shared sprite per kind biased up toward
+the wall band. Two things are missing, in this order:
+
+1. **No site authors a condition.** Nothing in the generated world sets one, so a painted vine would be
+   drawn in exactly zero rooms. Authoring comes first.
+2. Both sprites are `generate-dummy-tiles` placeholders, 22x22 and three colours.
+
+`yarn art-census` reports them now. It could not before, for the same reason it was blind to floor scatter
+one step further out: the room-counting sections are the report, and nothing about a condition is written
+on a room.
+
+**`roots.png` at expert and wizard are DELETED.** `roots` was never a `DecorationKind` — the name appears
+nowhere in the source, and `git log -S` on `siteTypes.ts` has never seen it. Both files came from the
+original placeholder-generation commit: speculative art for a kind nobody added, which the census could not
+report because no room asks for it and which anyone reading the tile folder would take for work in
+progress.
+
 ## 6. Waiting on a scan
 
 Step 0's table sends statues and coffins to a museum scan (Scan the World, Smithsonian Open Access,
