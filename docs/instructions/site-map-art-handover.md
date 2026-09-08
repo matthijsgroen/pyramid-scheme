@@ -13,92 +13,71 @@ the branch is in and how to run the next step.
 
 ## Branch state
 
-`feat/site-map-sprites`. `yarn tsc -b` clean, `yarn lint` no errors, suite green. **A large body of work is
-UNCOMMITTED** — see "What is uncommitted" below before doing anything else.
+`feat/site-map-sprites`, 216 commits, **working tree clean**. `yarn tsc -b` clean, `yarn lint` 0 errors
+(19 pre-existing warnings), suite green, and `sh art/rebuild.sh` reproduces every painted tile from its
+master byte for byte. Run that last one after touching `renderProp.py` or `importTile.ts`: it is the only
+check that catches a geometry change silently invalidating a master.
 
-The map gained four things beyond the art, all in
-[spritesheet-renderer-prep.md](../game-design/spritesheet-renderer-prep.md): a FLOOR SCATTER layer
-(§4 of the brief, `floorScatter.ts`), a light pool under a prop that carries a flame, a mouth that now
-asks whether the way is open before leaving a band black, and two chambers you can already walk between
-drawing no partition.
+**The merchant and the nobleman are DONE.** Every prop, wall item and scatter kind either rank authors is a
+return painted over its own scaffold, stored 2x, cut to a mask, seated in a rendered translucent shadow,
+and on a rebuild line. What is left of them is two museum scans — `junior/sarcophagus` (20 rooms) and
+`junior/statue` (8).
 
-**The census has THREE sections, and the third exists because the first two could not see it.** Wall
-items and chamber props are counted by assembling every floor and counting DRESSED ROOMS; floor scatter is
-placed by rule off the floor's own shape, so no room places it and no pool authors it. Both the census and
-the ArtBacklog story were built on those two facts and were blind to the layer by construction — which
-reported the merchant as one file from finished while the drifts and spills the player walks over were
-still placeholders. It is the most visible layer there is: two pieces to a chamber, about twenty-two to a
-floor, on the cells you actually cross, where a prop stands on a cell nobody can reach.
+`yarn art-census` is the authority and reports 63 placeholders: expert 22, wizard 20, master 17, junior 4.
 
-**[art-tasks.md](art-tasks.md) is the queue** — what is left to draw and what each gap is waiting on: a
-roll, a model, a scan, or a code change. The census cannot tell you those, and it also calls a tile "art"
-when it is painted but has no master, or a master that is a copy rather than a return. That list tracks
-both.
+### The three files that run the work
 
-Run `yarn art-census` before planning any of it: it counts, per rank, how many ROOMS each prop and wall
-item actually lands in and whether that file is real art, a placeholder, or missing. A kind belongs to a
-rank through its ROLE tags rather than through its tier, so which files a rank needs cannot be read off a
-table — guessing cost real work here: the starter prompts below list four wall items where the world only
-ever authors two, and name `sarcophagus` and `crystal` as merchant props when neither appears below junior
-and wizard respectively.
+- **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
+  attach and the import line to run afterwards. 14 entries, all expert/master/wizard. `yarn repaint <key>`
+  copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
+  Entries are DELETED as they land, so the file's length is the backlog.
+- **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
+  cannot know. Also §3b, a costed choice left open, and §5b, the three things that were missing from every
+  list until someone asked.
+- **[prop-pipeline.md](prop-pipeline.md)** — **the laws of this projection**, then the five steps. Read the
+  laws table before modelling anything: every entry cost renders, and several were re-discovered because
+  they had only ever been written in the docstring of whichever primitive found them.
 
-**Open `App/SiteMap/ArtBacklog` in Storybook** — that is the to-do list, sorted by how many rooms are
-waiting on each file, with the tile itself beside each row. `yarn art-census` prints the same thing.
-74 files remain and 1253 rooms are drawing a placeholder. The top seven rows are all WALL ITEMS, which is
-also the cheapest slot to fill.
+## What landed in the last session
 
-A placeholder is told from painted art by COUNTING COLOURS, not by file size: a `generate-dummy-tiles`
-placeholder is flat SVG with 2–4 distinct colours where painted art has 300–1600. Size cannot separate
-them — the junior brazier's placeholder is 2125 bytes and the starter statue's real art is 1964 — and a
-size threshold reported dummies as finished work.
+Thirteen tiles painted, and the tooling that came out of doing it. `git log --oneline main..HEAD` is the
+record; the parts a fresh context needs to know:
 
-**30 of the brief's ~224 files exist.** All five ranks have real surfaces — `floor`, `wall-face`,
-`threshold`, `arch` — plus five whole-wall panels for the tableau, and TEN merchant props: `jarRack`,
-`statue`, `offeringTable`, `basin`, `shelf`, `chestProp`, `brazier`, `lamp`, `pillar`, `mat`. Every one
-of the last six is a parametric primitive in `renderProp.py` and rebuilds from its master with
-`art/rebuild.sh`. Everything else is `generate-dummy-tiles` placeholder, which never breaks a floor.
+- **`--spin` is now a pipeline STEP** (Step 1b), not a per-prop whim. Every free-standing prop is rendered
+  at an angle, because a room holds two props plus scatter now and square-on they read as a sticker sheet.
+  Its hard constraint: **a painted tile's spin can never change** — the mask moves and the master no longer
+  fits. Proved by setting it on an already-painted tile and watching the tile come out a smear.
+- **`--mask-grow`** admits paint the repaint ADDED while refusing what it added as SHADOW. Written for the
+  palm capital, where the generator painted fourteen fronds against a model with five, twice, unprompted.
+- **`tileVariants`** picks `<name>-2.png` by cell position, so a kind can have two drawings. First user:
+  the merchant sells off a table in some rooms and out of reed baskets in others.
+- **`companionProps`** puts a second prop of the SAME purpose in a third of the rooms with space for it.
+- **Conditions are real.** The Nile Delta Expedition is `overgrown`, graded 0.2 / 0.4 / 0.65 / 1 across its
+  five pyramids, and growth draws in three places — tufts in floor joints, roots through the wall band,
+  plants in chambers. `condition` had never reached a floor before this: four `buildFloor` calls passed
+  `theme` and none passed `condition`.
 
-Four of the five arches are `make-arch` output cut from their own wall; the merchant's is painted timber
-and samples nothing.
+## Traps, from the session that found them
 
-Sources for everything imported live in `~/tile-previews/`, meshes in `~/tile-previews/meshes/` —
-re-import with different flags without regenerating.
+Each of these cost real time and none is guessable from the code:
 
-**Roughly 40 of the remaining files cannot be used even if drawn today**, because §5 of the brief lists
-two things nobody has built: `breach` and `plug` are missing from `WallDecorationKind` (tiny), and the
-variant resolver that picks `rubble-2.png` by positional hash does not exist (small). Art first; those
-when a rank is otherwise done.
-
-**Floor scatter now has a layer** — `src/app/SiteMap/floorScatter.ts` — so §4's six kinds per rank are
-drawable. It uses the PROP box and `--slot=prop`, needs no authoring, and places by rule: sand and
-rubble anywhere walkable, a mat in a room. Only `sand` has art (a placeholder), and `mat` and `rubble`
-have the merchant's. That is 30 files of §4 the pipeline can now reach.
-
-## What is uncommitted
-
-Nothing below has been committed. In rough order of size:
-
-- **The explorer's walk cycle moved out of React into CSS** (`ExplorerDot.tsx`): a `steps()` animation over
-  a strip of the numbered frames, clipped by a nested `<svg>`, so it keeps time whether or not React
-  renders. `CELLS_PER_CYCLE = 2` makes the frame rate follow the frame COUNT, so a facing drawn in four
-  frames and one drawn in twelve still take the same two cells to complete a stride. `walkCycle.ts` is
-  deleted; there is a new `Walking` story with a walking toggle and a ms-per-cell slider.
-- **New explorer side art** — a four-frame east cycle from the newest sheet, replacing frames that were
-  near-duplicates. Two south frames were deleted for the same reason.
-- **A SITE CONDITION axis** — `condition: { kind, amount }` on `PyramidConstraint`, authorable at journey
-  level and overridable per pyramid, copied onto every floor so it survives the climb through the ranks.
-  `moodSettings.ts` COMPOSES it over the rank's ambience rather than replacing it, and `MapGrowth` draws
-  one shared sprite per kind from `tiles/default/`. Placeholders exist for `overgrown` and `flooded`; no
-  real art yet.
-- **Rooms are dressed for a PURPOSE** (`siteAssembler.ts`): the prop leads, and the wall item is drawn
-  from the kinds that share its role — but only where that leaves two or more to choose between. Both
-  halves of that rule were measured; the numbers and what they cost are in the code comments.
-- **Broken brick is two objects with two names** — `rubbleSpill`, flat, on the cells the player walks
-  over, and `rubblePile`, knee-high, in a chamber corner nobody walks. They shared the name `rubble` and
-  a `STANDING_VARIANT` lookup told them apart, which went wrong three times before the rename.
-- **New tooling**: `yarn art-census`, `authoredKinds.ts` (+ spec), the `ArtBacklog` story, `--gamma` on
-  `import-tile`, transparent headroom for hanging items, `prim_niche` and `prim_rubbleheap`.
-- **Merchant wall items are DONE** — `niche` and `tallyBoard`, 121 rooms.
+- **Never silence `yarn import-tile`.** It refuses `--contrast` below 1 ("would eat the alpha channel") and
+  three sweeps in a row reported identical numbers because the import was failing into `/dev/null` and the
+  tile on disk never changed. Stale output read as data.
+- **Format with `yarn lint --fix`, not `npx prettier --write`.** Prettier runs inside ESLint here, so `npx`
+  may resolve a different version that disagrees about the same file.
+- **`sh art/rebuild.sh` takes about four minutes** and re-renders every scaffold in Blender. Do not run
+  imports against a tile while it is running, and do not wait on it with `pgrep -f rebuild.sh` — that
+  pattern matches its own wait-loop command line and deadlocks. Use a sentinel file.
+- **Judge condition growth in `PropSheet`, never on the JourneyInspector.** At 20 units on a 3000-unit map
+  the whole-floor view can confirm a sprite exists and nothing more; three ways of mapping an element to
+  screenshot pixels disagreed with each other.
+- **A claimed chamber cell is `type: "empty"` in the grid.** The claim is a render-time fact, so anything
+  filtering cells by grid type silently drops a chamber's own floor. It has now bitten `floorScatter`,
+  `art-census` and `MapGrowth`.
+- **Gemini names every download after the first chat in the thread.** Identify returns by content, and by
+  frame size: 1686x2528 means the scaffold was edited, 2048x2048 means it was generated fresh and the
+  attachment was ignored.
 
 ## Renaming a decoration kind is cheap; adding one is not
 
@@ -119,6 +98,10 @@ from a hash of the site id and the room key, and zero per-room decorations are s
   `statue` becomes `statue-anubis.png` where that file exists and falls back to the generic art where it
   does not. No new kinds, no pool edits, no world regeneration, and art can be added one file at a time.
   The plaques are FLAT wall items, so most of it is straight to the generator; only the statues need scans.
+- **A steerable patron, as opposed to a varied one.** `tileVariants` already picks `<kind>-2.png` by cell
+  position, which buys variety and cannot be aimed. Patron needs the other half: an authored field on the
+  pyramid, purely drawn and therefore free, plus a resolver that prefers `<kind>-<patron>.png`. The
+  condition field is the worked example of exactly that shape — see `spec/expert.ts`.
 - **New wall kinds to close the purpose gaps** — `sheaf` (agriculture) and `tideLine` (water) proposed.
   These DO need pool edits in `spec/*.ts` and `yarn generate-world`, which reshuffles every room's dressing,
   so it is a large reviewable diff. Deliberately not started. Note the dummy generator has its own
@@ -136,46 +119,63 @@ where a purpose has two wall items to choose between.
 
 ## What to do next
 
-**The merchant's wall items are done and so are seven parametric props.** What the census says is left
-at starter is four files, and it is not the list the prompts doc used to give: `pit` (11 rooms), `hanging`
-(9), `shrine` (8) and the standing `rubble` (6). `sarcophagus` and `crystal` are not among them — no
-starter room authors either.
+**The loop, per tile.** It is manual on purpose: driving Gemini's web UI is against Google's terms and the
+API bills per image, so the paste is done by hand and the tooling only saves the searching.
 
-**`pit` and `rubbleHeap` are modelled and waiting on a repaint.** Both scaffold from `renderProp.py` and
-neither needs a scan; `prim_pit`'s docstring and
-[starter-art-prompts.md](../game-design/starter-art-prompts.md) carry its prompt and the two flags that
-are peculiar to it — `--shadow=0` with no `--seat`, because a hole casts nothing, and `--void`, because a
-hole's identity is its VALUE and a scaffold painted one flat colour reads as a rack.
+```sh
+yarn repaint                  # the 14 keys still owed
+yarn repaint master/mask      # prompt to the clipboard, both attachments revealed in the Finder
+# attach the two, paste, generate, download to ~/Downloads
+```
 
-That leaves `shrine` (a scan, or a mudbrick box built like `prim_niche`) and `hanging` (cloth, which Step 0
-still lists as unsolved) as the only starter files the pipeline cannot reach today.
+Then the import half, which is where the judgement is:
 
-**Where the throughput actually goes, measured on the first two.** Not the repaint: both took ONE roll.
-The cost is MODELLING — `shelf` needed five renders and `mat` four before either read as its object at
-56 units, and every one of those was caught by looking at a scaffold rather than by spending a roll.
-Batching several scaffolds into one repaint sheet would therefore save the cheap half of the loop and
-leave the expensive half alone; it is still untested and no longer the obvious lever.
+```sh
+# 1. store the return as the master, .webp at quality 92
+# 2. render the pair the tile is imported with — the entry's `scaffold` line
+# 3. import through the mask, then MEASURE and LOOK
+yarn tile-stats src/assets/tiles/<tier>/<name>.png --tier=<tier> --slot=prop
+yarn on-floor src/assets/tiles/<tier>/<name>.png <tier> /tmp/look.png
+# 4. add the rebuild line to art/rebuild.sh, then `sh art/rebuild.sh` and confirm nothing else moved
+```
 
-What modelling keeps getting wrong is written into each primitive's docstring, because the rules are
-geometric and general: an opening holds `0.35 * depth` less than its gap (the shelf above draws its front
-lip that much lower than its own z), nothing may point at the viewer (a spout modelled along -Y draws as
-a cone hanging straight down), a flat thing lying on the floor is ALL top face and has no silhouette to
-read, and a part set beside another rather than overlapping it reads as a separate object with its own
-shadow.
+**What the numbers have to reach**, from every tile in `art/rebuild.sh`:
 
-Then the four merchant wall items, which are a DIFFERENT slot — 56x28, painted onto the wall band, no
-floor and no shadow. The pipeline has never been run against that slot and may need a mode of its own in
-the renderer. Note that `--seat` and `--sun` have nothing to do there: a wall item hangs, so the whole
-shadow half of Step 4 is skipped.
+- **At least 10 luminance of separation from the floor, in EITHER direction.** Under 10, tile-stats refuses
+  it outright and it is right to: the nobleman's palm column measured ONE and vanished into his sandstone.
+- **Warmth in the rank's band** — about +22 to +25 at the merchant. Cooler than the floor is fine and
+  several of the nobleman's props are: what matters is the separation, not its sign.
+- **A tail under roughly 4%** over the light clamp or under the dark one.
 
-`yarn on-floor <tile> <tier> <out.png>` puts one tile on its rank's floor at CELL size and blows the
-result up, which is the only picture worth judging a scaffold or a repaint against. The pit's shaft was
-mid-grey and perfectly legible in a 448-wide render and measured the floor's own value at 56 across, so no
-hole read at all; the Bes statue's perspective plinth is twelve pixels and nobody can see it. Both were
-invisible in the render and obvious in this one.
+**Which way the knob goes is a property of the RANK, and this is the part worth carrying forward.** The
+merchant's floor is dark, so nearly everything of his needed clipping DOWN. The nobleman's is pale
+sandstone at 161, so three of his tiles needed a LIFT above 1 — his cedar chest 1.12, his bronze lamp 1.6.
+Expect master and wizard to behave like the nobleman on their dark stone and unlike him on their pale.
+
+**One tile in the file is squeezed from both ends** and is the shape to recognise: the nobleman's hanging,
+white linen against oiled timber, where no setting clears both clamps. `--contrast` below 1 is NOT the
+escape — the importer refuses it. Pick which end matters and say so in the rebuild line.
+
+**After the queue empties**, the open work in rough order of value:
+
+1. **`wizard/crystal`** — 27 rooms, authored, and the only kind in the set with no primitive to build on.
+   Needs a model from nothing; everything else at those ranks is `--contents` on something that exists.
+2. **Paint the condition sprites** — `overgrown` is authored and drawn in three places, and all five files
+   are placeholders. They live in `tiles/default/`, so one set serves every rank. Judge in `PropSheet`.
+3. **The patron field** — see "Decided but NOT built". `tileVariants` is half of it already; what is
+   missing is an authored value so a pyramid can say which god it belongs to.
+4. **`junior/sarcophagus` and `junior/statue`** — museum scans, and read `prop-pipeline.md`'s Gate first.
+   `horus.stl` in `~/tile-previews/meshes/` is a REJECT, not a head start: that folder is a download
+   history, not a library.
+
+`yarn on-floor <tile> <tier> <out.png>` puts one tile on its rank's floor at CELL size and blows the result
+up, which is the only picture worth judging a repaint against. The pit's shaft was mid-grey and perfectly
+legible in a 448-wide render and measured the floor's own value at 56 across, so no hole read at all. It
+was invisible in the render and obvious in this one.
 
 Judge a rank in **Storybook → App/SiteMap/PropSheet**, which stages every kind of a rank on that rank's
-floor with the explorer beside it for scale, and says `(none)` where art is still missing.
+floor with the explorer beside it for scale, says `(none)` where art is missing, stages scatter twice (once
+under his boots, once alone), and carries the conditions row at the bottom.
 
 ## The tomb puzzle's walls — a second consumer, and a different shape
 
@@ -194,11 +194,17 @@ through `src/ui/atoms/tombImageMap.ts`. Those are NOT the map's files and must n
 - The face grader's `cap` and `base` bands are cut for the map's strip. On a panel those are a ceiling
   ledge and a dusty floor line and never match. Only the FIELD number carries between the two formats.
 
-Sources are `~/tile-previews/<tier>-wall-panel.png` at 2000x2000.
+Sources are `~/tile-previews/<tier>-wall-panel.png` at 2000x2000. **Do not attach those to a prop
+repaint** — that is the trap `repaint-queue.md` explains: a sparse scaffold pulls the reference's content
+into the picture, and the nobleman's lamp niche came back as his wall panel redrawn. Every queue entry
+references `<tier>-plain.png`, a crop of that rank's own floor, which is a seamless texture with nothing in
+it to copy.
 
 ## The prop pipeline
 
-Four steps with a gate on each, written out in [prop-pipeline.md](prop-pipeline.md): decide the object
+Five steps now — Step 1b, the SPIN, was added between geometry and the scaffold — with a gate on each and
+a **laws of this projection** table before all of them, written out in
+[prop-pipeline.md](prop-pipeline.md): decide the object
 and where its mesh comes from, render the geometry, hand a scaffold to the generator for MATERIAL only,
 import through the render's own alpha and seat it on a rendered shadow. The expensive step is the
 repaint, so nothing reaches it that a measurement could have rejected first.
