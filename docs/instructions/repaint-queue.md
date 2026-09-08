@@ -52,48 +52,25 @@ Two wall items and one prop. No prop of his beyond the veil is modelled yet; see
 1. `~/tile-previews/wallshrine-expert.png` — the scaffold
 2. `~/tile-previews/expert-plain.png` — the material reference
 
-**This one has come back ignoring the scaffold**, and the tell is in the download's SIZE before it is
-opened: 2880x1440 is the scaffold edited, 2048x2048 is a fresh square drawing with the attachment thrown
-away. A square return of this tile is unimportable and there is no flag that rescues it — the mask is a
-2:1 oblique box and would cut jamb slices and a hole out of a front-on elevation. Check the pixel size
-first, and re-roll on 2048x2048 without measuring anything.
+**This one keeps coming back with a view of its own**, so it carries one extra line and NOTHING else. The
+tell is the download's SIZE, before it is opened: 2912x1440 is the scaffold edited, 2048x2048 is a fresh
+square drawing with the attachment thrown away, unimportable, and no flag rescues it. Re-roll a square
+without measuring it.
 
-It also loses the PROJECTION, in the other direction: told the view is raked it draws a cabinet in full
-low-angle perspective, converging edges and a vanishing point, and the scaffold is nothing of the sort.
-This tile is drawn flat — every edge horizontal or vertical, the cornice and plinth showing their top
-faces as plain pale BANDS the same width as the front beneath them.
+**Do not answer a wrong projection by describing the right one.** Two rolls were lost to that. Called
+raked, it drew a cabinet in full low-angle perspective; handed the brief's `FLAT ORTHOGRAPHIC HYBRID`
+block, it drew a flat elevation with no top faces, no inner floor and two matching doors. That block is
+for generating a whole tile, where nothing carries the view — here it CONTRADICTS the scaffold, which
+shows the inside of the opening and whose doors are deliberately unequal, and a rule in words beats a
+picture every time. The scaffold is the projection. The prompt's only job is material.
 
-Hence the view block below, which the other entries do not carry. It is the brief's own
-`THE VIEW: FLAT ORTHOGRAPHIC HYBRID` verbatim (tile-art-brief.md, "Writing a prompt"), and verbatim is
-the point: that block is the model's own answer to being shown a correct picture, every phrasing invented
-on this side has lost, and describing the tilt in fresh words is what produced the perspective roll.
+The extra line is about the CANVAS, not the geometry, which is why it is allowed to stay: a square
+re-composition is the one failure the attachment cannot prevent by itself.
 
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
 
 Match the reference image's FRAME exactly: the same 2:1 landscape shape, the object in the same place in it, at the same size. Do not re-compose it into a square.
-
-THE VIEW: FLAT ORTHOGRAPHIC HYBRID
-
-NO PERSPECTIVE OR CONVERGENCE: There is no vanishing point. Nothing gets smaller as it goes back in
-space. All vertical lines remain perfectly vertical and parallel. All horizontal lines remain
-perfectly horizontal and parallel.
-
-FRONTS AND TOPS ONLY: You may only show the exact front face of an object, plus the top face of
-horizontal elements. You must NEVER show the side (left, right, or inside) of any object or part.
-
-THE STACKED TOP RULE: If a horizontal part has a visible top, draw the top as a flat rectangular band
-sitting directly above its front face. The top band must be EXACTLY THE SAME WIDTH as the front face
-beneath it. It must be a perfect rectangle — it does not taper, it does not slant, and it is not a
-parallelogram or a trapezoid. Simply draw a lighter rectangle directly on top of a darker rectangle.
-
-STRICT SYMMETRY: The object must be perfectly symmetrical left-to-right. If one side shows a different
-angle or more of its surface than the other, the view has incorrectly tipped into 3D.
-
-NO DEPTH OR ROTATION ON THE Y-AXIS: The object faces perfectly square to the camera. Never angle the
-object diagonally. Every edge is either strictly horizontal or strictly vertical, except for organic
-curves (like the taper of a jar or a character's silhouette) which must still be drawn perfectly
-straight-on.
 
 The object: a small shrine cabinet standing against a wall, its doors part open. The wide slab over the
 top is a CAVETTO CORNICE and the slab under it is the PLINTH, both overhanging the box between them; the
