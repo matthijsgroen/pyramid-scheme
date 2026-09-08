@@ -94,6 +94,21 @@ Both of its masters are worth knowing apart before anyone re-rolls it:
 So the choice is the reader's: leave the shabti and let the Gate's argument stand, or roll one of the
 brief's three over geometry. The rank is otherwise finished.
 
+## 3b. A costed choice, not a defect
+
+**`junior/lamp`'s foot is flattened in depth and reads as a skirt rather than a circle lying on the
+floor.** `prim_lamp`'s stand has `foot.scale = (1.0, 0.55, 1.0)`, and the reason was real when it was
+written: a round foot 0.44 across added 0.31 of drawn height and the stand landed 27 units of 56.
+
+That reason has since expired and nobody noticed. The shaft was shortened in the same session, and
+re-measured now the flattening buys FIVE units: 47 against 42. Round, the foot lands wider than the palm
+column (37) and level with the basin (40), and it reads correctly — a circle on the floor instead of a cone
+seen side-on, which is what the painted return made obvious.
+
+So the change is one line and the cost is one re-roll, because the mask moves. The shipped tile is not
+broken and is on a rebuild line; this is a choice about whether the foot is worth a roll, and it is
+recorded here rather than made silently.
+
 ## 4. Waiting on one roll — scaffold ready
 
 **The prompts for every one of these are written out in [repaint-queue.md](repaint-queue.md)**, with the two attachments each one takes and the import line to run afterwards. This section is the ledger; that file is the work.

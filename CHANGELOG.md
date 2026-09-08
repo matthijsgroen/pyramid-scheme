@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The nobleman's rooms are furnished rather than sketched: his sealed chest, his bronze lamp stand, his
+  linen press, his laid table and his false-door shrine are all drawn now, and the merchant's shrine corner
+  is screened with patched linen instead of a market awning. He also sells from reed baskets in some rooms
+  and off a table in others.
 - A furnished room looks like somewhere things were left, not like a page of stickers. Every object now
   stands at its own angle on the floor, a room that has space for it gets a second piece of furniture
   serving the same purpose as the first, and a kind can have more than one drawing — so the merchant sells

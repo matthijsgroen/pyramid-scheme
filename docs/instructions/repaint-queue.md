@@ -1,7 +1,8 @@
 # The repaint queue
 
 Every prompt still owed to the generator, with what to attach to each. One heading per tile, in the order
-worth doing them.
+worth doing them. Entries are DELETED as they land, so the length of this file is the size of the backlog;
+what each finished tile ended up needing is recorded in its `art/rebuild.sh` line instead.
 
 **`yarn repaint <key>`** does the fetching for you: it copies that entry's prompt to the clipboard and
 reveals both attachments in the Finder, ready to drag. `yarn repaint` with no argument lists every key
@@ -40,96 +41,16 @@ is fine: ask for the material and let the mask decide the layout.
 
 ---
 
-## Merchant — one redraw and one new variant
-
-His rank is otherwise complete: every other tile of his is a return, 2x, masked and on a rebuild line.
-
-### 1. `starter/hanging` — a screening cloth, redrawn and turned
-
-**Attach:**
-
-1. `~/tile-previews/hanging-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-Replaces a tile that already ships. Its `--spin=45` is NOT in `rebuild.sh` yet — Step 1b's constraint is that a painted tile's spin cannot change, and against the old master the frontal cloth was cut by a diagonal mask and came out a smear. The flag and this master go in together.
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a screening cloth of coarse patched linen hung from a wooden pole slung between two rough
-posts, standing at an angle across the floor. The wide pale sheet is the CLOTH, hanging in vertical folds;
-the bar across its top is the POLE; the two uprights at the ends are POSTS standing on the floor; the two
-short blocks over the pole are cord TIES.
-
-The linen is undyed and sun-bleached to a pale grey-buff, darker along the top where it has been handled.
-It has been mended many times: squares of slightly mismatched cloth stitched over worn patches, the
-stitching in a dull red-brown thread. The lower hem is frayed and uneven and one corner has torn away. The
-pole and posts are unfinished timber, split and grey.
-
-This is the cloth a household screens its shrine corner with, not an awning over market goods: humble,
-domestic, much repaired.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Egyptian Middle Kingdom domestic linen and timber, nothing dyed bright, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold hanging --spin=45
-yarn import-tile art/masters/props/starter/hanging.webp --tier=starter --name=hanging --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
-### 2. `starter/offeringTable-2` — reed baskets, the second drawing of the trade room
-
-**Attach:**
-
-1. `~/tile-previews/baskets-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-A VARIANT, not a new kind: `tileVariants` picks between `offeringTable.png` and `offeringTable-2.png` by the cell's position, so some trade rooms sell from the table and others from the baskets. Adding it moves no furniture, because no pool changes length.
-
-```
-A wall-less product shot of a group of objects, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The objects: three big coiled reed baskets standing on the floor, goods for sale in them. The largest is
-OPEN with a heap of golden barley grain proud of its rim; the middle one has its flat LID on; the smallest
-has its lid leaning against its side. The raised ring round the top of each one is the coiled RIM where the
-basket is finished off.
-
-The reed is dry palm-leaf and halfa grass, coiled in visible rounds, straw-gold going grey-brown where it
-has been handled and scuffed pale at the rims. One basket is stained dark along its base from standing on a
-damp floor. The grain is warm ochre, dusty, matte.
-
-These are the baskets an Egyptian market traded from — set down on the ground, not on a table. Humble,
-hard-used, nothing woven decoratively and nothing dyed.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Egyptian Middle Kingdom market basketry, plain and worn.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold market --contents=baskets
-yarn import-tile art/masters/props/starter/offeringTable-2.webp --tier=starter --name=offeringTable-2 \
-  --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
----
-
 ## Nobleman — eight props, the whole rank
 
 Every one is modelled and spun; none is painted. This is the largest single block on the board.
 
-### 3. `junior/pillar` — a palm column
+### `junior/pillar` — a palm column
+
+**Rolled once and REJECTED.** It came back 2048x2048 — the size that means the scaffold was never
+edited — and masking it left a pink halo down both sides of the shaft where the painted column was
+narrower than the modelled one, with the capital's fronds clipped. See `prop-pipeline.md` Step 3, "the
+two tells". The prompt below is unchanged and fine; the scaffold has to actually go in with it.
 
 **Attach:**
 
@@ -164,77 +85,14 @@ yarn import-tile art/masters/props/junior/pillar.webp --tier=junior --name=pilla
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
-### 4. `junior/shrine` — a false-door stela
+### `junior/basin` — an ablution basin
 
-**Attach:**
-
-1. `~/tile-previews/falsedoor-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a miniature false-door stela with a low offering table before it. The tall slab is the STELA,
-carved limestone; the recess down its middle is the FALSE DOORWAY, sunk into the slab; the flat block in
-front of it at floor level is the OFFERING TABLE. It is a shrine, not a doorway you could walk through.
-
-Dressed pale limestone, with sunk-relief hieroglyph columns down the jambs and a painted red-brown lintel.
-The recess is deeper in shade than the face. The offering table's top is stained dark where libations have
-dried, and the stone is chipped at one lower corner.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's estate, Egyptian New Kingdom: dressed limestone and painted timber, ochre and red-brown, well kept but not royal. Nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold falseDoor --spin=6
-yarn import-tile art/masters/props/junior/shrine.webp --tier=junior --name=shrine --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
-### 5. `junior/chestProp` — a sealed chest
-
-**Attach:**
-
-1. `~/tile-previews/sealedchest-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-NOT the merchant's baskets-and-crate. One sealed chest, and its lid reads only because of the band — see `prim_sealedchest`.
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: one sealed wooden chest standing at an angle on four short feet. The wide pale surface on top
-is the LID, overhanging the body on every side; the narrow band between the lid and the body is a BRONZE
-BAND round the chest's top; the strip running over the lid and down the front is a knotted CORD; the lump
-where it crosses the front is a WAX SEAL, still intact. Four short blocks under it are FEET.
-
-The chest is cedar, warm red-brown, with painted panels on its front and sides in ochre and dull blue-green
-— the paint is worn thin along the lid's edge and at the corners where it has been carried. The band is
-dull bronze with a green patina. The cord is undyed linen, dirty; the seal is dark ochre-red clay stamped
-with a mark.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's estate, Egyptian New Kingdom: dressed limestone and painted timber, ochre and red-brown, well kept but not royal. Nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold sealedChest --spin=-27
-yarn import-tile art/masters/props/junior/chestProp.webp --tier=junior --name=chestProp --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
-### 6. `junior/basin` — an ablution basin
+**Rolled once and REJECTED, and the fault was in the scaffold rather than the return.** The water was
+modelled as VOID — the marker for a HOLE, which renders near-black — and the prompt then called it the
+darkest thing in the picture, so it came back pure black and read as a hole punched in a bowl. Black
+inside a silhouette is the one thing a mask cannot reach. The water is now its own `water` material and
+the scaffold shows it dark grey-green; the prompt below is corrected to match. The legs the return drew
+too long were never a problem: the mask cut them to length and they stood in their seat.
 
 **Attach:**
 
@@ -253,8 +111,10 @@ The basin is pale limestone, its rim painted with a band of dull blue-green and 
 where the dipper has knocked it. Lime scale has crusted the inside of the rim just above the water. The
 stand is dark oiled timber, worn smooth at the tops of the legs.
 
-The water is a flat dark surface, not a highlight and not a reflection: it is the darkest thing in the
-picture and shows nothing.
+The water is standing water in a bowl indoors: a dull dark grey-green, with the rim's own shadow falling
+across the near side of it and the basin's pale colour faintly in the rest. It is DARKER than the basin but
+it is not black and it is not a hole — paint water in it. Do not paint a reflection, a highlight, a ripple
+or a sky.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -271,114 +131,7 @@ yarn import-tile art/masters/props/junior/basin.webp --tier=junior --name=basin 
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
-### 7. `junior/lamp` — a bronze lamp stand
-
-**Attach:**
-
-1. `~/tile-previews/lamp-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-NOT the merchant's lamp on a stool: a bronze stand, and the scaffold marks it as metal so the repaint has no reason to read it as wood.
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a bronze lamp stand. The flared cone at the bottom is the FOOT; the slender upright is the
-SHAFT; the ring partway up is a cast COLLAR; the wide dish at the top is the LAMP itself, an open saucer of
-oil; the small block at its right edge is the SPOUT, and the nub above the spout is the FLAME.
-
-Cast bronze throughout, dull and dark with a green-black patina, rubbed to a warmer brown on the collar and
-the foot's edge where hands have held it. Soot has blackened the saucer's rim by the spout, and a film of
-oil sits in the dish. The flame is the one warm bright thing: a small ochre-orange tongue, matte, with no
-glow around it.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's estate, Egyptian New Kingdom: dressed limestone and painted timber, ochre and red-brown, well kept but not royal. Nothing gilded. Bronze, not gold.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold lamp --contents=stand --spin=8
-yarn import-tile art/masters/props/junior/lamp.webp --tier=junior --name=lamp --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
-### 8. `junior/shelf` — a linen press
-
-**Attach:**
-
-1. `~/tile-previews/shelf-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a mudbrick linen press with folded cloth on two open shelves and a mirror case lying on top.
-The upright slabs are the PIERS and the slab between them the SHELF; the stacked pale blocks on both levels
-are FOLDED SHEETS of linen; the long roll on the upper shelf is a BOLT of cloth lying on its side; the
-larger block at the lower right is a bundle; the disc with a handle on the top course is a bronze MIRROR
-in its CASE.
-
-The press is mudbrick under thin whitewash, grey-buff, flaking at the edges of the shelf. The linen is
-undyed and pale, each sheet a slightly different white, the top one crisper than those beneath; the bolt has
-a woven border in dull red. The mirror case is dark wood with a dull bronze disc.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's estate, Egyptian New Kingdom: dressed limestone and painted timber, ochre and red-brown, well kept but not royal. Nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold shelf --contents=linen --spin=5
-yarn import-tile art/masters/props/junior/shelf.webp --tier=junior --name=shelf --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
-### 9. `junior/offeringTable` — a laid dining table
-
-**Attach:**
-
-1. `~/tile-previews/offeringtable-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-NOT the merchant's balance and grain heap. A laid table.
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a dining table laid for a meal. The large pale surface is the TABLETOP seen from above and the
-band below it is its front edge; the four bars are LEGS. On the top: the round dish is a PLATTER; the three
-domed shapes on it are LOAVES of bread; the tall stoppered vessel standing in a ring at the left is a WINE
-JAR in its STAND; the two small cylinders at the right are CUPS. It is a table, not a door.
-
-The table is oiled timber, warm red-brown, its top paler and scuffed from use. The platter and cups are
-buff unglazed pottery. The loaves are baked ochre-brown, floury and matte, one split across the top. The
-wine jar is red-buff clay with a mud stopper and a dribble of dark wine dried down its shoulder.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's estate, Egyptian New Kingdom: dressed limestone and painted timber, ochre and red-brown, well kept but not royal. Nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold market --contents=laid --spin=-16
-yarn import-tile art/masters/props/junior/offeringTable.webp --tier=junior --name=offeringTable --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
-### 10. `junior/hanging` — a linen hanging with a dyed border
+### `junior/hanging` — a linen hanging with a dyed border
 
 **Attach:**
 
@@ -418,7 +171,7 @@ yarn import-tile art/masters/props/junior/hanging.webp --tier=junior --name=hang
 
 Four wall items and one prop. No prop of his beyond the veil is modelled yet; see art-tasks §5.
 
-### 11. `expert/niche` — a wall shrine niche, doors cord-sealed
+### `expert/niche` — a wall shrine niche, doors cord-sealed
 
 **Attach:**
 
@@ -450,7 +203,7 @@ yarn import-tile art/masters/props/expert/niche.webp --tier=expert --name=niche 
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
 
-### 12. `expert/sconce` — a lamp hung on a chain
+### `expert/sconce` — a lamp hung on a chain
 
 **Attach:**
 
@@ -482,7 +235,7 @@ yarn import-tile art/masters/props/expert/sconce.webp --tier=expert --name=sconc
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
 
-### 13. `expert/wallShrine` — a wall shrine, doors ajar, lamp lit inside
+### `expert/wallShrine` — a wall shrine, doors ajar, lamp lit inside
 
 **Attach:**
 
@@ -516,7 +269,7 @@ yarn import-tile art/masters/props/expert/wallShrine.webp --tier=expert --name=w
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
 
-### 14. `expert/veil` — a veil on its rail, drawn back
+### `expert/veil` — a veil on its rail, drawn back
 
 **Attach:**
 
@@ -548,7 +301,7 @@ yarn import-tile art/masters/props/expert/veil.webp --tier=expert --name=veil --
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
 
-### 15. `expert/hanging` — a veil before the shrine, on posts
+### `expert/hanging` — a veil before the shrine, on posts
 
 **Attach:**
 
@@ -587,7 +340,7 @@ yarn import-tile art/masters/props/expert/hanging.webp --tier=expert --name=hang
 
 Wall items and one curtain. Gold is a flat colour at this rank, never a metal — every prompt below says so, because the generator will otherwise return a chrome highlight.
 
-### 16. `master/niche` — an offering niche, gilded surround
+### `master/niche` — an offering niche, gilded surround
 
 **Attach:**
 
@@ -620,7 +373,7 @@ yarn import-tile art/masters/props/master/niche.webp --tier=master --name=niche 
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
 
-### 17. `master/sconce` — a bronze mirror sconce
+### `master/sconce` — a bronze mirror sconce
 
 **Attach:**
 
@@ -652,7 +405,7 @@ yarn import-tile art/masters/props/master/sconce.webp --tier=master --name=sconc
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
 
-### 18. `master/mask` — a gilded funerary mask
+### `master/mask` — a gilded funerary mask
 
 **Attach:**
 
@@ -687,7 +440,7 @@ yarn import-tile art/masters/props/master/mask.webp --tier=master --name=mask --
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
 
-### 19. `master/hanging` — a gold-shot curtain with a weighted hem
+### `master/hanging` — a gold-shot curtain with a weighted hem
 
 **Attach:**
 
@@ -729,7 +482,7 @@ yarn import-tile art/masters/props/master/hanging.webp --tier=master --name=hang
 
 Four of the five contain a VOID: a black opening that must come back black. His shrine, his niche and his shaft are the same rectangle if their frames are not what tells them apart, so the frame is what each prompt names first.
 
-### 20. `wizard/niche` — a niche holding one star
+### `wizard/niche` — a niche holding one star
 
 **Attach:**
 
@@ -762,7 +515,7 @@ yarn import-tile art/masters/props/wizard/niche.webp --tier=wizard --name=niche 
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
 
-### 21. `wizard/sconce` — a crystal bracket, light with no lamp
+### `wizard/sconce` — a crystal bracket, light with no lamp
 
 **Attach:**
 
@@ -795,7 +548,7 @@ yarn import-tile art/masters/props/wizard/sconce.webp --tier=wizard --name=sconc
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
 
-### 22. `wizard/wallShrine` — a shrine that is only an opening
+### `wizard/wallShrine` — a shrine that is only an opening
 
 **Attach:**
 
@@ -828,7 +581,7 @@ yarn import-tile art/masters/props/wizard/wallShrine.webp --tier=wizard --name=w
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
 
-### 23. `wizard/starShaft` — a slot on the night
+### `wizard/starShaft` — a slot on the night
 
 **Attach:**
 
@@ -861,7 +614,7 @@ yarn import-tile art/masters/props/wizard/starShaft.webp --tier=wizard --name=st
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
 
-### 24. `wizard/hanging` — a curtain of aurora
+### `wizard/hanging` — a curtain of aurora
 
 **Attach:**
 

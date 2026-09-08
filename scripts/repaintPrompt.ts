@@ -32,7 +32,7 @@ const parse = (md: string): Entry[] =>
       const prompt = /```\n([\s\S]*?)\n```/.exec(block)?.[1]
       if (!key || !prompt) return []
       const attachments = [...block.matchAll(/`(~\/[^`]+\.png)`/g)].map(m => m[1].replace("~", homedir()))
-      return [{ key, title: (/^\d+\.\s*(.*)$/m.exec(block)?.[1] ?? key).trim(), attachments, prompt }]
+      return [{ key, title: (block.split("\n")[0] ?? key).trim(), attachments, prompt }]
     })
 
 const entries = parse(readFileSync(QUEUE, "utf8"))

@@ -290,6 +290,23 @@ shadow are both discarded, and Step 4's `--seat` puts a rendered shadow back) an
 (not harmless: the mask keeps the render's silhouette, so a shifted part leaves background colour inside
 the shape).
 
+**The two tells, both cheap, and one of them is checkable before you even open the file.**
+
+_The size._ A return that EDITED the attached scaffold comes back at the scaffold's own 1686x2528. A return
+generated FRESH, with the attachment ignored or never attached, comes back 2048x2048 — square. The
+nobleman's palm column arrived square and nothing else needed to be looked at: `statue.webp`, the other
+prompted-only return in the repository, is 2048x2048 too.
+
+_A PINK HALO inside the silhouette._ This is what "a part that has moved" actually looks like, and it is
+worth knowing by sight because it is not what anyone expects. Masking that square column to the modelled
+one left a pink outline down both sides of the shaft and clipped the capital's fronds: the painted column
+was NARROWER than the modelled one, so the difference between the two silhouettes filled with the
+generator's background. The mask cannot help — it is the thing cutting the hole — and no despill, key or
+brightness reaches inside a shape. An invented background OUTSIDE the object costs nothing; the same paint
+one pixel inside the outline costs the tile.
+
+Either tell means re-roll with the scaffold attached. Neither means edit what came back.
+
 **A MULTI-PIECE scaffold's layout will not be respected, and that is survivable.** Asked to repaint a
 spill of fourteen brick fragments, the generator returned forty of its own, spread over the frame in its
 own arrangement. Nothing in the prompt got that obeyed. It did not matter: `--mask` cuts the return to the

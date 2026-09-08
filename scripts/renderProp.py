@@ -740,6 +740,15 @@ def prim_basin():
         # 30 degrees off vertical renders as dark as the legs do, so the vessel and its black interior
         # merged into one mass under a pale rim. At 45 the wall catches light and reads as a dish.
         rim_r, basin_h = 0.28, 0.16
+        # A HUB the legs meet, and without it they meet nothing. The bowl is a cone that narrows going
+        # down, so at the height the leg tops reach — radius 0.194, once the 15 degree splay has pulled
+        # them in — the cone is only 0.155 across, and the legs pass OUTSIDE it: three struts beside a
+        # bowl rather than under it. Widening the cone's base instead would flatten the flare back toward
+        # vertical, which is the shading failure recorded below.
+        #
+        # A ring stand is how the object is really built anyway, and it is what the merchant's jar variant
+        # already has in its collar. Same construction at both ranks now.
+        mark(cyl(0.21, 0.07, z=leg_h, verts=18), "body")
         # A cone whose radius2 exceeds its radius1 comes out of Blender with its side normals pointing
         # INWARD, so it renders near-black: the first bowl was a dark cauldron under a pale rim, and the
         # material slots said "pottery" throughout — only the low-pitch preview showed it. Turning the
@@ -750,7 +759,10 @@ def prim_basin():
         mark(cyl(rim_r * 1.06, 0.045, z=leg_h + basin_h, verts=24), "pottery")
         # PROUD of the rim ring, not inside it. A disc set below the ring is covered by it — a `cyl`
         # is a solid drum and not a hoop — and the basin renders as a stool with a lid.
-        mark(cyl(rim_r * 1.06 - 0.055, 0.014, z=leg_h + basin_h + 0.026, verts=24), VOID)
+        # WATER, not a void. `nocast` because it lies inside the vessel and touches no floor — the bowl
+        # casts the footprint, and the water is above it. The geometry is unchanged from when this was
+        # VOID: the disc is in the same place, so the MASK is byte-identical and only the paint differs.
+        mark(cyl(rim_r * 1.06 - 0.055, 0.014, z=leg_h + basin_h + 0.026, verts=24), nocast("water"))
         rim_r = rim_r * 1.06
         rim_z = leg_h + basin_h
     else:
@@ -1695,6 +1707,11 @@ PART_COLOURS = {
     # scaffold in one colour draws it as a filled-in wall. Nothing but a different slot separates them.
     "timber": "#6b5236",
     "cloth": "#bdb3a0",
+    # Standing water, and the point of it is that it is NOT a hole. The nobleman's basin had its water
+    # marked VOID — near-black, the marker for an absence — and the repaint did exactly what the scaffold
+    # and the prompt both said: it came back pure black and read as a hole punched in a bowl. Dark, with
+    # some of the vessel's own colour in it, is what water looks like in a basin indoors.
+    "water": "#4a4f4a",
     # NOCAST is not a colour: a part kept out of the footprint is still painted the rank's stone.
 }
 

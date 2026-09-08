@@ -133,6 +133,20 @@ meshscaffold shabti.glb
 yarn import-tile art/masters/props/starter/statue-shabti.webp --tier=starter --name=statue --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.96 --saturation=1.4
 
+# The merchant's trade room, SECOND DRAWING. `tileVariants` picks between this and offeringTable.png by
+# the cell's own position, so some of his trade rooms sell off a table and others out of baskets on the
+# floor — which is what tomb painting shows at least as often, and both are the same statement, so they
+# share a KIND. A variant is not a pool entry: adding this file moved no furniture anywhere.
+#
+# --brightness=0.86 --saturation=0.7, and the saturation is the second in this file to go BELOW 1 — the
+# mat is the other. Dry straw and palm-leaf come back as the warmest thing the generator can paint: +44
+# warmth untouched, against a rank that sits at +22 to +25, with 17.4% of the sprite over the 152 light
+# end. 0.7 pulls it to +24 and 0.86 takes the tail to 2.4%, leaving it 14 lighter than the slab. The
+# lever runs both ways and this end of it is as real as the brazier's 2.2.
+scaffold market --contents=baskets
+yarn import-tile art/masters/props/starter/offeringTable-2.webp --tier=starter --name=offeringTable-2 \
+  --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.7
+
 # The merchant's BASIN, re-rolled over its geometry, which is what took it out of art-tasks §3. The tile
 # it replaces was a prompted return with a painted opaque shadow and no scaffold behind it, so a mask
 # would have cut a shape the art did not fill.
@@ -256,19 +270,31 @@ yarn import-tile art/masters/props/starter/shrine.webp --tier=starter --name=shr
 # hand-painted props sit at +22 to +25. Judge that on the CLOTH and not on the sprite — a fifth of this
 # tile is shadow, and the whole-sprite mean put it 9 from the floor when the cloth itself is 18 lighter
 # and 21 warmer.
-# NO --spin YET, and the empty line above the flag is the point: this tile is PAINTED square-on, and its
-# spin arrives with its repaint or not at all. Step 1b of the pipeline states the constraint and this file
-# proved it — set to --spin=45 against the existing master, the frontal cloth was cut by a diagonal mask
-# and the tile came out a smear with a loose diagonal shadow beside it.
+# --spin=45, and the master is painted over it — the two arrived together, which is the only order Step 1b
+# allows. Against the OLD square-on master this same flag cut the frontal cloth with a diagonal mask and
+# the tile came out a smear with a loose diagonal shadow beside it; that is why the flag waited.
 #
-# The spun scaffold is rendered and waiting in ~/tile-previews/hanging-starter*, and art-tasks records what
-# the repaint is for: `hanging` is tagged funerary and cosmos in dressingTags, so world-gen only puts it
-# where someone prayed or watched the sky, and the brief's merchant row describes a market awning — the one
-# thing those rooms have no use for. The turn is what stops it reading as part of the paving (`prim_mat`'s
-# --spin=9 argument), and the repaint is what makes it a screening cloth rather than a stall's canopy.
-scaffold hanging
+# WHY IT IS TURNED, which is a placement argument and not a drawing one. An object askew of the paving
+# cannot be read as part of it (`prim_mat`'s --spin=9), and at 45 degrees the pole runs back INTO the
+# picture instead of lying across it, so the depth the shear draws is depth the object has. Square on, the
+# pole was one horizontal line and both posts were the same height.
+#
+# WHY IT IS A SCREEN and no longer an awning. `hanging` is tagged funerary and cosmos in dressingTags, so
+# world-gen only ever puts it where someone prayed or watched the sky — and the brief's merchant row
+# describes a market awning, the one object those rooms have no use for. The mesh was never the problem: it
+# is a sheet hanging DOWN off a pole, a drape and not a canopy. So the fix was the paint, and this master is
+# the same cloth on the same pole described as a screening cloth: patched, mended in dull red thread, hem
+# frayed and one corner torn away.
+#
+# --brightness=0.88 --saturation=2.3. Bleached linen came back ACHROMATIC — +0 warmth, with 29.8% of the
+# sprite over the rank's 152 light end — and saturation scales existing chroma, so a grey prop needs
+# multiples of what a brown one does: 2.3 here against 1.45 for the basin, the same argument the brazier
+# makes at 2.2. It lands at +25 warmth and 11 lighter than the slab, which is the separation a pale cloth
+# should have against mudbrick, with a 4.3% tail — the widest in this file after the shrine's whitewash,
+# and for the same reason: the thing is meant to be pale.
+scaffold hanging --spin=45
 yarn import-tile art/masters/props/starter/hanging.webp --tier=starter --name=hanging --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92 --saturation=1.5
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.88 --saturation=2.3
 
 # The merchant's two wall items, matched back to their downloads and given rebuild lines for the first
 # time. art/README recorded them as masters that could not be identified; they were `Mudbrick Recess
@@ -459,6 +485,65 @@ yarn import-tile art/masters/surfaces/junior-wall-face.webp --tier=junior --name
 # The rug has to SEPARATE from the paving or it is paving. Untouched it measured 1 lighter than the slab
 # and vanished; 0.86/0.6 puts it 23 darker, which is the merchant mat's own pair of numbers — the same
 # repaint failure at both ranks, straw drawn far warmer and lighter than the floor it lies on.
+# The nobleman's SHRINE: a false-door stela with an offering table before it, on `prim_falsedoor`.
+#
+# NO --brightness and NO --saturation, which is rare in this file and is what the numbers ask for.
+# Dressed limestone against his warm sandstone comes back COOLER than the rank — -18 warmth against a
+# slab of #c39c68 — and 31 darker than the floor with only 0.4% over the light end. tile-stats passes it
+# as it arrives. The stela at this rank makes the same argument from the other direction, being the palest
+# thing in it: what matters is the SEPARATION, not the sign of it.
+#
+# --spin=6 and no more, because its back belongs flat against a wall. Pipeline Step 1b's table: a false
+# door turned thirty degrees reads as furniture that has fallen over.
+# The nobleman's CHEST, on `prim_sealedchest` — one sealed chest, not the merchant's baskets and crate.
+#
+# --brightness=1.12, and it is the FIRST lift above 1 in this file. Cedar against pale sandstone is the
+# widest natural gap in the set: untouched the sprite sat 74 luminance below a slab of 161, with 9.3% of
+# it under the rank's dark clamp, where detail stops existing. 1.12 keeps 62 of separation — still the
+# darkest thing the rank owns — and halves the clipped tail. The knob runs both ways and every other use
+# of it in this file happens to go down.
+# The nobleman's LAMP STAND, on `prim_lamp --contents=stand` — bronze, where the merchant's is a pottery
+# lamp on a wooden stool. LIT_DECORATIONS keys the map's light pool by KIND and not by rank, so this tile
+# gets the same pool on the floor the merchant's does, for nothing.
+#
+# --brightness=1.6, the largest lift in this file by a distance, and it is the same story as the chest one
+# rank up. Dark patinated bronze against pale sandstone arrived 97 luminance below a slab of 161 with 38%
+# of the sprite under the dark clamp — more than a third of it flattened to one value. 1.6 leaves 58 of
+# separation and 10.4% clipped, which is as far as it goes before the patina starts to grey out.
+# The nobleman's LINEN PRESS, on `prim_shelf --contents=linen` — the merchant's carcass with folded cloth
+# in it instead of pots, and a mirror case on the top course.
+#
+# --brightness=0.80 --saturation=2.0. Whitewashed mudbrick holding white linen is the palest thing this
+# rank owns: untouched it measured 14 LIGHTER than a slab of 161 with 28.5% of the sprite over the light
+# clamp, and nearly achromatic at -73 warmth. 0.80 clears the clamp outright and 2.0 pulls the cool cast
+# back to -58, which stays cooler than the floor on purpose — the stela makes the same argument at this
+# rank, and what matters is the 24 of separation, not its sign.
+scaffold shelf --contents=linen --spin=5
+yarn import-tile art/masters/props/junior/shelf.webp --tier=junior --name=shelf --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.80 --saturation=2.0
+
+# The nobleman's LAID TABLE, on `prim_market --contents=laid` — a meal set out, where the merchant's is a
+# balance and a heap of grain. The jar stands in a RING for prim_basin's reason: `jar()` tapers to a point.
+#
+# NO --brightness and NO --saturation. Timber against pale sandstone arrives 67 darker with 0.1% under the
+# dark clamp and 1.1% over the light one, and tile-stats passes it as it comes. The chest one line up is
+# the same object class and needed a lift only because cedar is darker still.
+scaffold market --contents=laid --spin=-16
+yarn import-tile art/masters/props/junior/offeringTable.webp --tier=junior --name=offeringTable \
+  --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
+scaffold lamp --contents=stand --spin=8
+yarn import-tile art/masters/props/junior/lamp.webp --tier=junior --name=lamp --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=1.6
+
+scaffold sealedChest --spin=-27
+yarn import-tile art/masters/props/junior/chestProp.webp --tier=junior --name=chestProp --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=1.12
+
+scaffold falseDoor --spin=6
+yarn import-tile art/masters/props/junior/shrine.webp --tier=junior --name=shrine --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
 scaffold mat --spin=9 --shadow=0.5 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/masters/props/junior/mat.webp --tier=junior --name=mat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
