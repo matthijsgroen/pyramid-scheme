@@ -156,7 +156,89 @@ def prim_jarrack():
     # 0.57 tall against posts of 0.62, x within ±0.415 against ±0.44, depth within ±0.125 against 0.34 —
     # so `add_camera`, which frames from the object's own bounds, gives both renders the same frame. A
     # primitive whose contents overflowed its frame could not be shadowed this way.
-    if arg("contents") != "none":
+    if arg("contents") == "vessels":
+        # The pharaoh's rack: sealed gold vessels and alabaster ointment jars, so what it has that no
+        # other rank's has is VARIETY. The merchant's three are one jar repeated and the priest's four are
+        # one jar in four hats; a treasury shelf is a set of different objects, and at slot size that
+        # difference has to be in the SILHOUETTE — a squat pot, a tall footed vase, a shouldered flask.
+        #
+        # Two materials, marked apart: the vessels metal, the ointment jars pottery. The repaint is told
+        # which is gold and which is alabaster by the scaffold rather than by the prompt guessing, which
+        # is `prim_niche`'s rule and the reason every marked primitive marks all of itself.
+        #
+        # Everything stays under the frame's own 0.62, by the invariant stated below.
+        mark(cyl(0.135, 0.20, x=-0.31, y=0.0, z=0.10, verts=16), "metal")
+        mark(cyl(0.145, 0.03, x=-0.31, y=0.0, z=0.205, verts=16), "metal")
+        mark(cyl(0.055, 0.05, x=-0.31, y=0.0, z=0.245, verts=12), "metal")
+        # The tall footed vase, and its FOOT is a separate drum: a stem tapering straight into the floor
+        # reads as a bottle, where a foot standing proud reads as a vessel set down. Elliptical in y for
+        # the depth tax `prim_lamp` records — a round foot buys width and gives it straight back.
+        stem_foot = mark(cyl(0.085, 0.045, x=-0.03, y=0.0, z=0.022, verts=16), "metal")
+        stem_foot.scale = (1.0, 0.8, 1.0)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(cyl(0.038, 0.12, x=-0.03, y=0.0, z=0.10, verts=12), "metal")
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=18, ring_count=10, radius=0.115, location=(-0.03, 0.0, 0.26))
+        belly_v = bpy.context.object
+        belly_v.scale = (1.0, 0.86, 1.05)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(belly_v, "metal")
+        mark(cyl(0.062, 0.09, x=-0.03, y=0.0, z=0.40, verts=12), "metal")
+        # Two alabaster ointment jars, short and wide-shouldered — the shape that is NOT a gold vessel,
+        # which is the whole reason they are here.
+        for jx, jr in ((0.20, 0.10), (0.38, 0.082)):
+            mark(cyl(jr, 0.16, x=jx, y=0.0, z=0.08, verts=14), "pottery")
+            mark(cyl(jr * 1.10, 0.028, x=jx, y=0.0, z=0.172, verts=14), "pottery")
+            cap = cyl(jr * 0.72, 0.05, x=jx, y=0.0, z=0.208, verts=14)
+            cap.scale = (1.0, 1.0, 0.8)
+            bpy.ops.object.transform_apply(scale=True)
+            mark(cap, "pottery")
+    elif arg("contents") == "canopic":
+        # The priest's FOUR canopic jars, and the count is the point — four sons of Horus, one organ each,
+        # so three would be the wrong object rather than a sparser one. Four in a 0.95 rack is 0.10 of
+        # belly against the merchant's 0.125, which is at `prim_shelf`'s coarseness floor and no finer.
+        #
+        # A canopic jar is NOT `jar()`. That one tapers to a point, which is an amphora meant to stand in
+        # sand or a ring; a canopic jar has a FLAT BASE and stands on a shelf, and its shoulder is high
+        # and square rather than round. So the body is a barely-tapered drum and the whole silhouette
+        # difference lives in the head on top.
+        #
+        # The HEADS are what the repaint is being handed: human, baboon, jackal, falcon. At 0.10 of belly
+        # no muzzle survives as geometry, so each is a stopper of a different PROFILE — a dome, a taller
+        # dome, an upright wedge for the jackal's ears, a small round for the falcon — and the paint puts
+        # the faces on. Four identical domes would give the repaint nothing to tell them apart by, which
+        # is `prim_niche`'s lesson about a scaffold arriving already told apart.
+        # EVERYTHING STAYS UNDER THE RACK'S OWN HEIGHT. The first pass stood the jars on a plinth and
+        # their heads crossed the top rail at 0.71 against a frame of 0.62, which breaks the invariant
+        # stated above: contents inside the frame on all three axes, so add_camera gives the object and
+        # its shadow the same frame. A jackal ear poking out of the top is enough to shift one of them.
+        base_z = 0.0
+        for x, head in ((-0.30, "dome"), (-0.10, "tall"), (0.10, "ears"), (0.30, "round")):
+            body = cyl(0.086, 0.32, x=x, y=0.0, z=base_z + 0.16, verts=14)
+            body.scale = (1.0, 0.86, 1.0)
+            bpy.ops.object.transform_apply(scale=True)
+            mark(body, "pottery")
+            # A shoulder ring, proud of the body: it is where the lid meets the jar, it is the line the
+            # repaint paints the seal on, and without it the jar and its head are one blob.
+            mark(cyl(0.093, 0.035, x=x, y=0.0, z=base_z + 0.32, verts=14), "pottery")
+            top = base_z + 0.335
+            if head == "ears":
+                # The jackal, and its ears are CONES rather than boxes: two square prongs read as a fork
+                # or a crown, and what says jackal at this size is a point. They sit apart in X, never in
+                # Y — a pair built front-to-back stacks vertically under the shear and draws as one ear.
+                mark(cyl(0.066, 0.07, x=x, y=0.0, z=top + 0.035, verts=12), "pottery")
+                for ex in (-0.032, 0.032):
+                    bpy.ops.mesh.primitive_cone_add(vertices=10, radius1=0.028, radius2=0.004,
+                                                    depth=0.085, location=(x + ex, 0.0, top + 0.11))
+                    mark(bpy.context.object, "pottery")
+            else:
+                r, dome_h = {"dome": (0.072, 0.10), "tall": (0.064, 0.15), "round": (0.076, 0.085)}[head]
+                bpy.ops.mesh.primitive_uv_sphere_add(segments=14, ring_count=8, radius=r,
+                                                     location=(x, 0.0, top))
+                cap = bpy.context.object
+                cap.scale = (1.0, 0.86, dome_h / r)
+                bpy.ops.object.transform_apply(scale=True)
+                mark(cap, "pottery")
+    elif arg("contents") != "none":
         for x in (-0.29, 0.0, 0.29):
             jar(x, 0.0, h * 0.92, 0.125)
     return join_all()
@@ -224,6 +306,57 @@ def prim_market():
         leaning.scale = (1.0, 0.62, 1.0)
         bpy.ops.object.transform_apply(scale=True)
         mark(turn(leaning, 68, "Y", 0.66, -0.06, 0.17), "body")
+        return join_all()
+    if contents == "altar":
+        # The priest's, and it is NOT the table with different things on it: an altar is a solid block of
+        # stone standing on the floor, so the carcass above is skipped the way `baskets` skips it. What
+        # separates the two silhouettes at 56 units is exactly that — daylight under a top, or none.
+        #
+        # A CAVETTO over a battered body, both of which do work here. The overhang gives the block a
+        # drawn line across it that a plain cube has nowhere to put, and the taper stops the thing reading
+        # as a crate: `prim_chest` is a box this size and the two must not converge.
+        # FLAT IN Y, and this is the law about depth being taxed into height doing real damage: at a depth
+        # of 0.52 the top face drew 0.36 tall — bigger than the block under it — and the altar read as a
+        # table top with a dark slot in it. An altar only has to read from the FRONT, so the depth is cut
+        # to little more than the channel needs and the top comes back a band.
+        ab_w, ab_d, ab_h = 0.92, 0.34, 0.46
+        bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=0.72, radius2=0.64, depth=ab_h,
+                                        location=(0, 0, ab_h / 2))
+        body = bpy.context.object
+        body.rotation_euler = (0, 0, math.radians(45))
+        bpy.ops.object.transform_apply(rotation=True)
+        body.scale = (ab_w / 1.018, ab_d / 1.018, 1.0)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(recalc_outward(body), "body")
+        mark(box(ab_w + 0.10, ab_d + 0.08, 0.07, z=ab_h + 0.035), "body")
+        top = ab_h + 0.07
+        # The LIBATION CHANNEL, and it runs in X because that is the only horizontal axis: cut along y it
+        # would draw as a vertical stripe up the slab and read as a crack. VOID rather than a boolean, by
+        # `prim_pit`'s marker — near-black, casting nothing, which is what a groove holds.
+        #
+        # It sits FORWARD of centre and drains over the front lip, so the channel and its spout are one
+        # unbroken dark line to the edge. A channel stopping short of the rim reads as a scratch.
+        mark(box(ab_w - 0.08, 0.075, 0.05, y=-0.06, z=top - 0.038), VOID)
+        # The spout has to clear the CAVETTO, which overhangs by 0.05 a side: the first one was placed at
+        # the block's own half-width and vanished under the overhang, leaving the channel dead-ending in
+        # stone. It reaches out in X because that is the only horizontal axis there is.
+        mark(box(0.13, 0.115, 0.045, x=(ab_w + 0.10) / 2 + 0.04, y=-0.06, z=top - 0.035), "body")
+        # Something has to TOP THE BACK EDGE or everything on the slab reads as a stain on it — the rule
+        # `laid` paid for above. Here it is the incense: two cones standing at the back, which are also
+        # the one part of an altar that is unmistakably an altar's.
+        for cx in (-0.26, -0.09):
+            bpy.ops.mesh.primitive_cone_add(vertices=14, radius1=0.062, radius2=0.012, depth=0.20,
+                                            location=(cx, 0.09, top + 0.10))
+            mark(bpy.context.object, "accent")
+        # Bread, flat on the stone in front of the channel: squashed spheres, coarse for `prim_shelf`'s
+        # reason. They may lie flat because the cones already hold the back line.
+        for lx, ly, r in ((0.16, 0.07, 0.082), (0.32, 0.01, 0.072)):
+            bpy.ops.mesh.primitive_uv_sphere_add(segments=14, ring_count=8, radius=r,
+                                                 location=(lx, ly, top + 0.04))
+            loaf = bpy.context.object
+            loaf.scale = (1.25, 1.0, 0.5)
+            bpy.ops.object.transform_apply(scale=True)
+            mark(loaf, "accent")
         return join_all()
     mark(box(w, d, top_h, z=h - top_h / 2), "body")
     for sx in (-1, 1):
@@ -345,9 +478,13 @@ def prim_shelf():
     ostracon's reason, and it is `metal`, which is the one part of this prop that is not mud or cloth."""
     contents = arg("contents", "storage")
     linen = contents == "linen"
+    # Marking is per-VARIANT and not per-rank: the merchant's storage is one material throughout and
+    # marking it would only split a slot nothing overrides, where the later variants put cloth and
+    # papyrus against mudbrick and need them told apart before the repaint sees them.
+    marked = contents in ("linen", "papyrus")
 
     def put(obj, name):
-        return mark(obj, name) if linen else obj
+        return mark(obj, name) if marked else obj
 
     w, d, h, brick = 1.15, 0.30, 0.86, 0.08
     lip = 0.35 * d
@@ -358,7 +495,37 @@ def prim_shelf():
     put(box(w - brick * 2, d, shelf_t, z=shelf_z), "body")
     put(box(w, d, brick, z=h - brick / 2), "body")
     base = shelf_z + shelf_t / 2
-    if linen:
+    if contents == "papyrus":
+        # The priest's library: rolls in a cedar rack, and every one of them LIES ALONG X. A roll stood on
+        # end is a disc, and the shelf docstring already records what a disc in a dark opening reads as —
+        # a hole. Lying along X it is a bar with a round end showing, and the end is the part the brief
+        # wants clay-sealed, so that is the half worth keeping visible.
+        #
+        # THREE SHORT ROLLS ACROSS, not one long one per shelf. A single roll spanning the opening is a
+        # rail, and the rack already has rails; what says "many documents" is the repeated end-circle, so
+        # the width is spent on count rather than on length.
+        #
+        # The openings are TIGHT. By this primitive's own formula the usable height is
+        # (0.78 - 0.105) - (0.435 + 0.105) = 0.135 upstairs and 0.155 down, so a roll is 0.05 of radius
+        # and there is room for exactly one course. Two courses were tried and the upper one was cut in
+        # half by the lip.
+        for lvl, z0 in ((0, 0.105), (1, base + 0.062)):
+            for rx in (-0.32, 0.0, 0.32):
+                roll = put(cyl(0.05, 0.28, x=rx, y=-0.01, z=z0, verts=12), "cloth")
+                roll.rotation_euler = (0, math.radians(90), 0)
+                # A TIE round the middle of each, which is how a roll is kept shut and is the one thing
+                # separating this from a stack of dowels. Proud of the roll by more than a hairline, or
+                # `prim_mask`'s law says it disappears into the seam.
+                tie = put(cyl(0.056, 0.03, x=rx, y=-0.01, z=z0, verts=12), "accent")
+                tie.rotation_euler = (0, math.radians(90), 0)
+        # ONE UNROLLED, and it lies ON the shelf rather than hanging off the front of it. Hung outside the
+        # carcass it left the frame — the invariant `prim_jarrack` states, that contents stay inside the
+        # frame's bounds so both renders get the same camera — and at 0.30 tall it read as a crate stuck
+        # to the side. Lying on the course it is a pale sheet against mudbrick, which is all it has to be.
+        put(box(0.30, 0.20, 0.014, x=0.33, y=-0.01, z=h + 0.007), "cloth")
+        unrolled = put(cyl(0.038, 0.30, x=0.33, y=0.07, z=h + 0.038, verts=12), "cloth")
+        unrolled.rotation_euler = (0, math.radians(90), 0)
+    elif linen:
         # Upper level: two stacks of folded sheets, and a rolled bolt lying along X beside them. The bolt
         # lies rather than stands for `prim_lamp`'s reason about pointing at the viewer: a cylinder on end
         # in an opening is a disc, and a disc in a dark gap is a hole.
@@ -419,6 +586,48 @@ def prim_brazier():
 
     Wide and low, so the shear reveals a lot of TOP and it lands portrait at --scale=1 whatever the real
     object does. Its size is set at import, not here."""
+    if arg("contents") == "censer":
+        # The priest's, and it HANGS — a censer swung on chains, not a dish on legs. So it shares nothing
+        # with the tripod below except being a vessel, and the frame has to hold a stand to hang it from
+        # or the thing floats: a prop's shadow is its own footprint flattened, and a bowl in mid-air over
+        # a footprint reads as hovering however the shadow is tuned (`sun_offset`).
+        #
+        # The STAND is a shepherd's crook of a post: upright, with an arm reaching out in X. It reaches in
+        # X because that is the only horizontal axis there is — an arm built along y would draw as a
+        # vertical stub, which is `prim_sconce`'s whole docstring.
+        post_h = 0.92
+        mark(cyl(0.115, 0.045, x=-0.26, z=0.022, verts=16), "metal")
+        mark(cyl(0.035, post_h, x=-0.26, z=post_h / 2, verts=10), "metal")
+        arm = mark(cyl(0.028, 0.34, x=-0.10, z=post_h - 0.02, verts=10), "metal")
+        arm.rotation_euler = (0, math.radians(90), 0)
+        # THREE CHAINS drawn as two: the third hangs behind the bowl and the shear stacks it into the
+        # same drawn column as the front pair, so modelling it costs geometry for nothing. Each is a thin
+        # bar, because a real chain is finer than a pixel here and what has to read is the SUSPENSION.
+        bowl_z = post_h - 0.34
+        for cx in (-0.055, 0.055):
+            mark(box(0.016, 0.016, 0.26, x=0.06 + cx, y=0.0, z=bowl_z + 0.16), "metal")
+        # The bowl: a flared cone, rim ring proud of it, and the smoke. Flared HARD for `prim_basin`'s
+        # reason — a wall leaning only 30 degrees off vertical renders as dark as the chains and the
+        # vessel merges with its own interior.
+        bpy.ops.mesh.primitive_cone_add(vertices=24, radius1=0.075, radius2=0.17, depth=0.13,
+                                        location=(0.06, 0, bowl_z))
+        mark(recalc_outward(bpy.context.object), "metal")
+        mark(cyl(0.18, 0.035, x=0.06, z=bowl_z + 0.065, verts=24), "metal")
+        mark(cyl(0.135, 0.03, x=0.06, z=bowl_z + 0.055, verts=20), VOID)
+        # SMOKE IS PAINT, and this is the one place in the file where modelling something made it worse.
+        # Three tapering drums stacked over the rim came back as a tiered finial and the whole prop read
+        # as a street lamp — regular, opaque and solid, which are the three things smoke is not. Geometry
+        # can only offer smoke a silhouette, and a smoke silhouette is exactly what does not exist.
+        #
+        # What is left is ONE low dome sitting in the rim: enough of a shape for the repaint to have
+        # somewhere to start a plume, and small enough that it reads as burning incense if the paint says
+        # nothing. Same reasoning as the flame nubs elsewhere in the file, one step further — those keep a
+        # cone because a flame does have an outline.
+        smoulder = cyl(0.10, 0.05, x=0.06, y=0.0, z=bowl_z + 0.085, verts=14)
+        smoulder.scale = (1.0, 0.85, 1.0)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(smoulder, "accent")
+        return join_all()
     leg_h, foot_r = 0.24, 0.22
     for i in range(3):
         a = math.radians(90 + i * 120)
@@ -470,10 +679,52 @@ def prim_lamp():
     comes back as another wooden stool."""
     contents = arg("contents", "stool")
     stand = contents == "stand"
-    part = "metal" if stand else None
+    part = "metal" if stand or contents == "tree" else None
 
     def put(obj):
         return mark(obj, part) if part else obj
+
+    if contents == "tree":
+        # The pharaoh's LAMP TREE: one stem, three arms, a shallow shade over each wick. It is the only
+        # lamp in the file that is not one flame, and the count is the whole difference — a single saucer
+        # on a taller stand is the nobleman's object at a bigger size.
+        #
+        # THE ARMS REACH IN X, all three of them, because that is the only horizontal axis. An arm swung
+        # out along y would draw as a vertical stub growing out of the stem, which is the failure
+        # `prim_sconce`'s docstring is entirely about. So the tree is FLAT: a candelabrum seen edge-on,
+        # which is also how tomb painting draws one.
+        foot_r, stem_h = 0.24, 0.90
+        bpy.ops.mesh.primitive_cone_add(vertices=24, radius1=foot_r, radius2=0.05, depth=0.16,
+                                        location=(0, 0, 0.08))
+        foot = bpy.context.object
+        foot.scale = (1.0, 0.55, 1.0)  # ELLIPTICAL, for the depth-tax reason this primitive records above
+        bpy.ops.object.transform_apply(scale=True)
+        put(recalc_outward(foot))
+        put(cyl(0.035, stem_h, z=stem_h / 2, verts=12))
+        put(cyl(0.09, 0.035, z=0.20, verts=16))
+        # Three lights: the centre one on the stem itself and one at each end of a cross-arm, the outer
+        # pair set LOWER so the group reads as a tree rather than as a bar. Each is a saucer, a shade over
+        # it, and a NUB of flame between — never a cone, by the law four primitives here have paid for.
+        arm_z = stem_h - 0.16
+        bar = put(cyl(0.026, 0.62, z=arm_z, verts=10))
+        bar.rotation_euler = (0, math.radians(90), 0)
+        for lx, lz in ((-0.31, arm_z), (0.31, arm_z), (0.0, stem_h + 0.02)):
+            if lx:
+                put(cyl(0.022, 0.14, x=lx, z=lz + 0.07, verts=8))
+            saucer = put(cyl(0.105, 0.045, x=lx, z=lz + 0.16, verts=18))
+            saucer.scale = (1.0, 0.8, 1.0)
+            bpy.ops.object.transform_apply(scale=True)
+            bpy.ops.mesh.primitive_cone_add(vertices=14, radius1=0.05, radius2=0.0, depth=0.075,
+                                            location=(lx, -0.01, lz + 0.215))
+            mark(bpy.context.object, "accent")
+            # The SHADE, and it is what makes this the pharaoh's: alabaster over each wick, a dome the
+            # flame sits under. Marked pottery rather than metal so the repaint gets the two told apart —
+            # `prim_niche`'s lesson about a scaffold arriving already sorted.
+            shade = cyl(0.085, 0.055, x=lx, z=lz + 0.28, verts=16)
+            shade.scale = (1.0, 0.85, 1.0)
+            bpy.ops.object.transform_apply(scale=True)
+            mark(shade, "pottery")
+        return join_all()
 
     if stand:
         # A FLARED TRUMPET FOOT, not a tripod, and FLATTENED IN DEPTH.
@@ -575,6 +826,56 @@ def prim_palm():
     which reads as a pole in the distance rather than a column in the room. Nothing about the shaft can
     fix that, because the import fits the OBJECT to the slot and the object was tall and narrow. Splaying
     the fronds to 66 degrees and shortening the shaft is what widens the silhouette."""
+    if arg("contents") == "banded":
+        # The pharaoh's column, and it is the plainest shape in the set on purpose: a dressed shaft with
+        # bands round it, no frond and no sheaf. What makes it his is the GILDING and the cartouche the
+        # repaint puts on the bands, which is paint — so the geometry's whole job is to offer the bands.
+        #
+        # A plumb cylinder is a featureless pale bar; both columns above record it. The palm buys width
+        # from fronds and the sheaf from lobes, and this one has neither, so it buys it from a TAPER wide
+        # enough to read plus bands standing proud. It is the narrowest of the three and that is correct:
+        # dressed stone at this rank is meant to look cut, not bundled.
+        sh = 1.66
+        bpy.ops.mesh.primitive_cone_add(vertices=20, radius1=0.20, radius2=0.155, depth=sh,
+                                        location=(0, 0, sh / 2))
+        mark(bpy.context.object, "body")
+        # Three bands, and the middle one is the cartouche band the brief names. Proud of the shaft by
+        # more than a hairline — `prim_mask`'s law — or they read as a change of colour in the stone
+        # rather than as a moulding the paint can carry a name on.
+        for z, r, t in ((0.13, 0.225, 0.075), (0.80, 0.205, 0.115), (1.50, 0.185, 0.075)):
+            mark(cyl(r, t, z=z, verts=20), "metal")
+        return join_all()
+    if arg("contents") == "papyrus":
+        # The priest's papyrus-BUNDLE column: a sheaf of stems bound at top and bottom, not one drum.
+        #
+        # The lobes are what this variant is for. A plumb cylinder is a featureless pale bar — the
+        # failure `prim_pillar` and the palm above both record — and the palm buys its width from
+        # fronds it can splay. A papyrus column has no crown in frame to splay, so the width has to come
+        # out of the SHAFT, and a ring of stems gives a scalloped silhouette instead of a straight edge.
+        #
+        # EIGHT stems, of which five ever draw: the back three stack into the same drawn column as the
+        # front ones under the shear. They are modelled anyway because the silhouette's outer edge is
+        # made by the two at the sides, and dropping the back row shifts the ring's centre.
+        sh = 1.62
+        for i in range(8):
+            a = math.radians(i * 45)
+            stem = cyl(0.062, sh, x=math.cos(a) * 0.105, y=math.sin(a) * 0.105, z=sh / 2, verts=10)
+            mark(stem, "body")
+        # The BINDINGS, wider than the sheaf so they read as cord tied on rather than as a step in the
+        # stone — the palm's collars below make the same point and set these radii.
+        for z, r in ((0.16, 0.20), (1.44, 0.195)):
+            mark(cyl(r, 0.075, z=z, verts=18), "cloth")
+            mark(cyl(r * 0.96, 0.03, z=z + 0.06, verts=18), "cloth")
+        # The CLOSED BUD, and only its lower third is in frame — same rule as the palm's capital, whose
+        # docstring records that a capital drawn whole pushes the shaft down to a stump. A closed bud is
+        # WIDER than the sheaf and swells before it narrows, so what shows at the top edge is the swell,
+        # which is the one silhouette a palm capital cannot be mistaken for.
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=18, ring_count=10, radius=0.235, location=(0, 0, 1.74))
+        bud = bpy.context.object
+        bud.scale = (1.0, 1.0, 1.35)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(bud, "body")
+        return join_all()
     shaft_h = 1.55
     bpy.ops.mesh.primitive_cone_add(vertices=16, radius1=0.16, radius2=0.13, depth=shaft_h,
                                     location=(0, 0, shaft_h / 2))
@@ -671,6 +972,29 @@ def prim_sealedchest():
     The cord is coarse on purpose — at 0.02 it is one pixel at slot size, so it is 0.045 and reads as a
     strap — and the seal stands in FRONT of it, not behind: behind, the strap split the seal in two."""
     w, d, h, foot = 0.72, 0.40, 0.40, 0.055
+    if arg("contents") == "cavetto":
+        # The pharaoh's chest, and the only thing that changes is the LID: a cavetto cornice instead of a
+        # flat overhang, which is the one profile this rank puts on everything it owns. The carcass, the
+        # band and the feet are the nobleman's unchanged — this docstring's whole point is that the line
+        # across a box is what says chest, and that line is still there.
+        #
+        # No cord and no seal. His chest is inlaid rather than tied shut, so the strap the sealed variant
+        # spends its width on is spent here on the cornice's own step, and the cartouche is paint.
+        mark(box(w, d, h, z=foot + h / 2), "body")
+        mark(box(w + 0.03, d + 0.03, 0.035, z=foot + h), "metal")
+        # The cavetto: a flare that is WIDER AT THE TOP, built as two steps rather than a curve because a
+        # curve of 0.06 is under a pixel at slot size and costs a cone that has to be wound outward.
+        mark(box(w + 0.05, d + 0.03, 0.045, z=foot + h + 0.040), "body")
+        mark(box(w + 0.11, d + 0.05, 0.035, z=foot + h + 0.080), "body")
+        mark(box(w + 0.13, d + 0.06, 0.028, z=foot + h + 0.111), "body")
+        for sx in (-1, 1):
+            for sy in (-1, 1):
+                mark(box(0.07, 0.07, foot, x=sx * (w / 2 - 0.07), y=sy * (d / 2 - 0.07), z=foot / 2), "body")
+        # The INLAID PANEL, sunk into the front. It is a marked recess and not a painted rectangle,
+        # because a repaint cannot put a border on a flat face and have it stay put: `prim_chest`'s band
+        # makes the same argument one axis over.
+        mark(box(w * 0.62, 0.03, h * 0.52, y=-(d / 2) - 0.004, z=foot + h * 0.50), "accent")
+        return join_all()
     mark(box(w, d, h, z=foot + h / 2), "body")
     # The band that says lid. A colour change, because an edge is not one — see the docstring.
     mark(box(w + 0.03, d + 0.03, 0.035, z=foot + h), "metal")
@@ -721,6 +1045,40 @@ def prim_basin():
     tall narrow prop is scaled by its HEIGHT and lands well inside the slot's 56 — the first pass came
     out 32 wide and read as spindly. Short legs and a fat belly, and it lands near 50."""
     contents = arg("contents", "jar")
+    if contents == "pool":
+        # The priest's SACRED POOL, and it is not a vessel at all — it is a hole in the floor with water
+        # in it, so it is built on `prim_pit`'s law rather than on the stand below: under z + k*y the
+        # ground in front of an opening draws lower as it comes toward the viewer, so the opening is a
+        # band exactly k*d tall and a far wall of that height fills it top to bottom.
+        #
+        # The water is a part rather than a VOID. `prim_basin`'s own note records why the nobleman's
+        # basin could not use VOID for its water — the marker means an ABSENCE, and the repaint returned
+        # pure black and read as a hole punched in the bowl. A pool that reads as a shaft is the same
+        # failure one scale up, and here it is the whole difference between the two kinds.
+        pw, pd, k = 0.86, 0.30, 0.7
+        depth = k * pd
+        # THE COPING IS A LINE, NOT A LEDGE, and the first pass got this wrong the same way the altar did.
+        # A kerb 0.09 wide all round gave the shear a top face 0.7 * 0.62 = 0.43 tall — larger than the
+        # pool it framed — and the whole prop read as a pale slab with a notch in it. Kept thin in y, and
+        # only the two SIDES are raised: the near kerb would be drawn between the viewer and the water,
+        # covering the one thing this prop is.
+        for sx in (-1, 1):
+            mark(box(0.055, pd + 0.05, 0.05, x=sx * (pw + 0.055) / 2, z=0.025), "body")
+        mark(box(pw + 0.16, 0.05, 0.05, y=(pd + 0.05) / 2, z=0.025), "body")
+        # The far wall, filling the drawn opening exactly — `prim_pit`'s law, and the reason the pool is
+        # only k*pd deep: one parallelogram, and everything under it is mesh nobody sees.
+        mark(box(pw, 0.05, depth, y=(pd - 0.05) / 2, z=-depth / 2), "body")
+        # THE WATER FILLS THE OPENING, and it is not a puddle at the bottom of a shaft. Laid at -depth it
+        # drew as a dark band under the far wall and the pool read as a hole with a stain in it; brought
+        # up near the rim it IS the opening, which is what a full pool looks like from above.
+        mark(box(pw - 0.03, pd - 0.03, 0.025, z=-0.055), "water")
+        # STEPS, and only TWO of them break the waterline. They run in X so each tread draws as its own
+        # horizontal band; built across the far end they would stack into one wedge by the law that y and
+        # z both feed the drawn vertical. They sit at the near edge, where the water is drawn lowest, so
+        # they read as going down into it rather than as a shelf laid on top.
+        for sw, sz in ((0.26, -0.018), (0.17, -0.072)):
+            mark(box(sw, pd * 0.55, 0.038, x=-(pw - sw) / 2 + 0.02, y=-pd * 0.20, z=sz), "body")
+        return join_all()
     # The nobleman's basin is SHALLOW, so its stand is tall: a squat vessel on short legs is scaled by
     # its width and lands about 48 high in an 84 slot, which wastes the tallest thing on the floor.
     leg_h = 0.45 if contents == "bowl" else 0.30
@@ -1343,6 +1701,68 @@ def prim_shrine():
     # of the tile and the shrine read as a table with a hole in it. Overhang in X only, where overhang is
     # drawn as overhang.
     mark(box(w + 0.07, d, 0.05, z=base + h + 0.025), "body")
+    if arg("contents") == "couchant":
+        # The pharaoh's shrine, and what the brief gives it is a FIGURE ON THE LID — Anubis couchant. So
+        # unlike the priest's naos this one keeps its opening dark and puts its rank on the roof, which is
+        # also how the two escape the law about a frame with black inside drawing as one tile: the priest
+        # fills the frame, the pharaoh crowns it.
+        #
+        # A cavetto first, wider than the box in X only. The merchant's coping records why not in y: the
+        # shear draws a top face at 0.7 of its depth, and an overhang all round lays a pale slab over the
+        # top third of the tile.
+        mark(box(w + 0.15, d, 0.055, z=base + h + 0.078), "body")
+        # THE JACKAL LIES ALONG X. Couchant means lying down, and a recumbent animal is a long shape —
+        # built along y it would draw as a vertical lump on the roof, by the law that y and z both feed
+        # the drawn vertical. Along x it is a body, a head and a tail, which is the whole silhouette.
+        # IT HAS TO BE BIG ENOUGH TO BE THE POINT. The first pass drew the jackal at 0.46 along a lid of
+        # 0.75 and it read as a bird sitting on a cabinet — the shrine is 0.85 tall, so a figure a third
+        # of that is a detail rather than the crown, and this rank's whole silhouette is the crown. Two
+        # thirds of the lid's width, and it also stops overhanging the left end.
+        roof = base + h + 0.106
+        mark(box(0.50, 0.16, 0.125, x=0.055, y=0.0, z=roof + 0.062), "accent")
+        # The chest and head, at the LEFT end and higher than the body: a couchant jackal holds its head
+        # up. A GAP at the neck, or head and body fuse into one loaf — `prim_shrine`'s Bes paid for that.
+        mark(box(0.14, 0.14, 0.175, x=-0.145, y=0.0, z=roof + 0.150), "accent")
+        mark(box(0.155, 0.115, 0.095, x=-0.165, y=-0.012, z=roof + 0.283), "accent")
+        # The muzzle reaches further in X, and the EARS are two upright wedges set apart in x — never in
+        # y, where the pair would stack into one drawn ear. Same rule as the canopic jackal's stopper.
+        mark(box(0.125, 0.07, 0.05, x=-0.265, y=-0.018, z=roof + 0.268), "accent")
+        for ex in (-0.036, 0.022):
+            mark(box(0.032, 0.04, 0.09, x=-0.165 + ex, y=0.0, z=roof + 0.372), "accent")
+        # The TAIL, hanging down the right end of the lid: the one part that breaks the roof's line, and
+        # the reason the shape reads as an animal rather than as a box with a bump on it.
+        mark(box(0.06, 0.07, 0.135, x=0.30, y=-0.012, z=roof + 0.030), "accent")
+        return join_all()
+    if arg("contents") == "sealed":
+        # The priest's NAOS, doors shut and corded. Its opening is FILLED, which is the whole point: the
+        # law this file states about a frame with black inside says every such kind draws as one tile, and
+        # a shut naos is how this rank escapes that — no dark rectangle at all, just leaves in a surround.
+        #
+        # A CAVETTO over the merchant's plain coping, and it overhangs in X ONLY. The coping above records
+        # the reason: the shear draws a top face at 0.7 of its depth, so overhanging in y lays a pale slab
+        # across the top third of the tile and the box reads as a table.
+        mark(box(w + 0.15, d, 0.055, z=base + h + 0.078), "body")
+        mark(box(w + 0.11, d - 0.02, 0.035, z=base + h + 0.058), "body")
+        # The leaves. UNEQUAL is not an option here as it is on the wall shrine — shut means shut — so
+        # what stops them reading as one panel is the meeting stile between them, a dark seam of its own
+        # rather than the edge between two boxes. At this size an edge is not a line; a gap is.
+        inner_w, door_z0, door_z1 = w - brick * 2, base + brick, base + h - brick
+        door_h = door_z1 - door_z0
+        for sx in (-1, 1):
+            mark(box(inner_w / 2 - 0.014, 0.05, door_h, x=sx * (inner_w / 4 + 0.008),
+                     y=-(d / 2) + 0.03, z=door_z0 + door_h / 2), "timber")
+        mark(box(0.018, 0.055, door_h, y=-(d / 2) + 0.028, z=door_z0 + door_h / 2), VOID)
+        # The CORD runs in X across both leaves, and the SEAL sits where it crosses the seam. The cord is
+        # the one part that must clear the leaves in y or the shear draws it behind them: negative y
+        # draws lower, so it is set forward and its own z is nudged up to land back on the doors' middle.
+        mark(box(inner_w + 0.02, 0.022, 0.028, y=-(d / 2) + 0.005, z=door_z0 + door_h * 0.52), "cloth")
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=14, ring_count=8, radius=0.055,
+                                             location=(0, -(d / 2) - 0.01, door_z0 + door_h * 0.52))
+        seal = bpy.context.object
+        seal.scale = (1.0, 0.6, 1.0)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(seal, "accent")
+        return join_all()
     # What stands in it, sized to the room the lintel really leaves.
     floor_z = base + brick
     room = (base + h - brick - lip) - (floor_z + lip)
