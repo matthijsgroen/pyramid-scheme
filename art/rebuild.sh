@@ -684,6 +684,13 @@ yarn import-tile art/masters/props/expert/wallShrine.webp --tier=expert --name=w
 #
 # No --saturation, unlike the nobleman's linen at 1.4: his is warm and wants the lift, this one is cool
 # white and its only colour is the hem band, which is two pixels at slot size either way.
-scaffold hanging --contents=rail --shear=0.5 --width=448 --height=224 --colour=#a7b2be --sun=0
+#
+# --alpha-cloth=0.6 makes the PRIEST's linen see-through, and only his: fine bleached temple cloth, where
+# every other rank's is a heavier weave and stays opaque. It costs nothing at import — the mask is the
+# render's alpha and `dest-in` multiplies — and it moves no edge, so the master stays valid. The rail,
+# brackets and hem band are separate parts and stay solid. Where the cloth doubles in the gathers the two
+# layers multiply to 0.84, so the bundle reads denser than the sheet without anything asking it to.
+scaffold hanging --contents=rail --shear=0.5 --width=448 --height=224 --colour=#a7b2be --sun=0 \
+  --alpha-cloth=0.6
 yarn import-tile art/masters/props/expert/veil.webp --tier=expert --name=veil --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18 --brightness=0.78

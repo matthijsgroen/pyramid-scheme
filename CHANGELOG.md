@@ -177,7 +177,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   tally board, a funerary one holds a coffin and a false-door stela, a waterworks its basins.
 - The priest's walls are hung with his own things: a shrine niche with its doors corded and sealed, a
   bronze lamp bracket with the lamp still lit on its chain, a basalt shrine cabinet standing ajar with a
-  lamp burning inside it, and a linen veil drawn back along its bronze rail.
+  lamp burning inside it, and a linen veil drawn back along its bronze rail. His linen is fine enough to
+  see the wall through — the temple's cloth is thinner than anyone else's, and where it gathers into a
+  fold it thickens.
 
 ### Fixed
 

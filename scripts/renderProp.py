@@ -1742,9 +1742,18 @@ def mark(obj, name):
     return obj
 
 
-def flat_material(name, hex_colour):
+def flat_material(name, hex_colour, alpha=1.0):
     """A flat matte material in one colour. Roughness 1 and zero specular: the set is painted and matte,
-    with no highlight anywhere (tile-art-brief.md, "The style")."""
+    with no highlight anywhere (tile-art-brief.md, "The style").
+
+    `alpha` below 1 makes the part SEE-THROUGH in the render, and therefore in the tile: the film is
+    transparent, so the render's own alpha is what `import-tile --mask` cuts to, and sharp's `dest-in`
+    MULTIPLIES alpha rather than thresholding it. So a part rendered at 0.6 arrives 60% opaque over
+    whatever the map draws behind it, with no importer flag and no change to the art.
+
+    It moves no edge, which is what makes it safe to change on a tile that is already painted: the rule
+    that a painted tile's geometry can never move is about the SILHOUETTE, and this leaves the silhouette
+    exactly where it was. A master stays valid; only the re-import changes."""
     h = hex_colour.lstrip("#")
     rgb = tuple(srgb_to_linear(int(h[i : i + 2], 16) / 255) for i in (0, 2, 4))
     mat = bpy.data.materials.new(name)
@@ -1755,6 +1764,15 @@ def flat_material(name, hex_colour):
     for slot in ("Specular IOR Level", "Specular"):
         if slot in bsdf.inputs:
             bsdf.inputs[slot].default_value = 0.0
+    if alpha < 1.0:
+        bsdf.inputs["Alpha"].default_value = alpha
+        # EEVEE renders alpha only when the material asks for it, and the property was renamed: 4.2+
+        # calls it surface_render_method, older builds blend_method. Set whichever exists, or the part
+        # comes back fully opaque with no error to say why.
+        if hasattr(mat, "surface_render_method"):
+            mat.surface_render_method = "BLENDED"
+        elif hasattr(mat, "blend_method"):
+            mat.blend_method = "BLEND"
     return mat
 
 
@@ -1771,6 +1789,10 @@ def paint(obj, hex_colour):
     silhouette alone. Marked parts arrive told apart, and each takes `--colour-<name>` or the default in
     PART_COLOURS.
 
+    Each also takes `--alpha-<name>`, which makes that part see-through in the finished tile — the mask
+    is the render's alpha and the import multiplies by it. The priest's linen is the only user: his rank
+    is thin bleached cloth at `--alpha-cloth=0.6`, and every other rank's is heavier and stays opaque.
+
     The hole is the case that forced this. `prim_pit`'s shaft is a surface like any other and shades like
     any other, so one flat colour handed the generator a rack with a mid-grey gap in it; at slot size
     that gap measured the same value as the floor behind the sprite and no hole read at all."""
@@ -1784,7 +1806,9 @@ def paint(obj, hex_colour):
         default = PART_COLOURS.get(part_of(name), hex_colour)
         # Keeps the slot's NAME, not `prop{i}`. `make_shadow` reads it back to find the void, and a
         # renamed slot leaves it unable to tell an absence from stone.
-        obj.data.materials[i] = flat_material(name, arg(f"colour-{name}", default))
+        obj.data.materials[i] = flat_material(
+            name, arg(f"colour-{name}", default), float(arg(f"alpha-{name}", "1"))
+        )
 
 
 def load_subject(mesh_path, primitive):

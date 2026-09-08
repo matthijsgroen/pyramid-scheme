@@ -321,6 +321,18 @@ Painted into the face band above a cell — bounded things that hang **on** a wa
 
 ⭑ = new kind, no code change needed — `WallDecorationKind` takes them and the pools author them.
 
+**The priest's cloth is SEE-THROUGH, and no other rank's is.** His veil and his hanging are rendered
+`--alpha-cloth=0.6`, so the wall behind shows through the linen; the merchant's patched awning, the
+nobleman's dyed hanging, the pharaoh's gold-shot curtain and the gods' aurora are all heavier and stay
+opaque. It is a property of the RANK, not of the kind — thin bleached temple linen against everyone
+else's weave — so a new cloth tile inherits the rank's setting rather than deciding for itself.
+
+Nothing about it reaches a prompt. The transparency lives in the scaffold (`renderProp.py`, `--alpha-<part>`)
+and arrives through the mask, because `import-tile --mask` multiplies alpha rather than thresholding it.
+It moves no edge either, so it can be turned on or off on a tile that is already painted without
+re-rolling the art. Where cloth doubles over itself the layers multiply and the fold reads denser, which
+is the effect the prompts ask the paint for and now get for free.
+
 ## 4. Floor scatter — what is lying about
 
 Props stand one per room, on a cell the player never walks on. Scatter is the opposite: small stuff
