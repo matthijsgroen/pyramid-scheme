@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 212429215
+export const worldContentHash = 1380457739
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -6764,6 +6764,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "lightbeam",
+        condition: { kind: "overgrown", amount: 0.2 },
         role: "puzzle",
         encountersByIndex: {
           0: "lightbeam",
@@ -7045,6 +7046,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "procession",
+        condition: { kind: "overgrown", amount: 0.4 },
         role: "puzzle",
         encountersByIndex: {
           0: "procession",
@@ -7283,6 +7285,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "canisters",
+        condition: { kind: "overgrown", amount: 0.65 },
         role: "puzzle",
         encountersByIndex: {
           0: "canisters",
@@ -7312,6 +7315,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "expert_3:p3:wing0" },
         encounter: "procession",
+        condition: { kind: "overgrown", amount: 0.65 },
         role: "puzzle",
         encountersByIndex: { 0: "procession", 1: "sumplete" },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 3 },
@@ -7559,6 +7563,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "twin-stars",
+        condition: { kind: "overgrown", amount: 1 },
         role: "puzzle",
         encountersByIndex: {
           0: "twin-stars",
@@ -7588,6 +7593,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "expert_3:p4:wing0" },
         encounter: "sumplete",
+        condition: { kind: "overgrown", amount: 1 },
         role: "puzzle",
         encountersByIndex: { 0: "sumplete", 1: "eclipse" },
         mainEndReward: { type: "money", amount: 2 },

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The Nile Delta Expedition is growing over. Green forces through the brick a little more with every
+  pyramid of it, and the last one is thick with it — the same site read all the way up, from the entrance
+  floor to the vault.
 - Every object a merchant or a nobleman keeps is drawn: his palm column, his ablution basin with water
   standing in it, and the linen hanging with its dyed border were the last three. Only their coffins and
   ka-statues are still stand-ins.

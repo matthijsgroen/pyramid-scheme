@@ -314,6 +314,12 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             encounter: constraint.encounter,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
+            // The SITE's condition, on every floor. It rides beside `theme` at each of these calls, and the
+            // difference between the two is the point: a floor may wear its own hour, but green through the
+            // brick that stopped at floor three would read as an authoring slip rather than as weather.
+            // Only the explicit-`floors` branch used to set it, so a condition authored on any ordinary
+            // pyramid was silently dropped — invisible until the first one was authored.
+            condition: constraint.condition,
           })
         )
         continue
@@ -347,6 +353,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           encounter: constraint.encounter,
           encounterArgs: constraint.encounterArgs,
           theme: constraint.theme,
+          condition: constraint.condition,
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
           packing: resolvePacking(constraint, journeyId, i),
           sealed: resolveSealed(constraint),
@@ -416,6 +423,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             encounter: constraint.encounter,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
+            condition: constraint.condition,
           })
         )
       })
@@ -475,6 +483,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     encounter: constraint.encounter,
     encounterArgs: constraint.encounterArgs,
     theme: constraint.theme,
+    condition: constraint.condition,
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
     packing: resolvePacking(constraint, journeyId, i),
     sealed: resolveSealed(constraint),

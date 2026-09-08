@@ -192,15 +192,21 @@ is no `--contents` to add. Its row in the brief is a growth of crystal in the go
 It sits in §5 above, but §5 reads as "the last three ranks' chamber props" and one kind that needs a model
 from nothing does not stand out in that sentence. This is that sentence.
 
-**`overgrown` and `flooded` — the condition sprites, and neither is drawn anywhere yet.** A condition is
+**`overgrown` — AUTHORED now, and worth painting.** The Nile Delta Expedition carries it across four of
+its five pyramids, graded 0.2 / 0.4 / 0.65 / 1, so its last pyramid is the overdrive one. `moodFor` turns
+that into 2, 4, 6 and 9 sprites plus a tint that goes from blue-grey to green, and the map draws them —
+verified in the inspector, 0 sprites on pyramid 1 and 9 on pyramid 5. The sprite it draws is still a
+22x22 three-colour placeholder, so this is the one condition where paint is now the only thing missing.
+
+**`flooded` — still authored nowhere.** A condition is
 the third axis (`ConditionKind`): what has got into a site and runs through all of it. The plumbing is
 complete — `dsl.ts` takes it at the pyramid level, `buildSite` carries it to every floor, `moodSettings`
 turns it into a tint and a growth count, `MapGrowth` scatters one shared sprite per kind biased up toward
 the wall band. Two things are missing, in this order:
 
-1. **No site authors a condition.** Nothing in the generated world sets one, so a painted vine would be
-   drawn in exactly zero rooms. Authoring comes first.
-2. Both sprites are `generate-dummy-tiles` placeholders, 22x22 and three colours.
+1. **No site authors it**, so a painted sprite would be drawn in exactly zero rooms. Authoring comes
+   first — see `spec/expert.ts` for how the delta journey does it.
+2. Its sprite is a `generate-dummy-tiles` placeholder, 22x22 and three colours.
 
 `yarn art-census` reports them now. It could not before, for the same reason it was blind to floor scatter
 one step further out: the room-counting sections are the report, and nothing about a condition is written
