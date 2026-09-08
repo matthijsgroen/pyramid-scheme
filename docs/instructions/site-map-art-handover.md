@@ -23,12 +23,12 @@ return painted over its own scaffold, stored 2x, cut to a mask, seated in a rend
 and on a rebuild line. What is left of them is two museum scans — `junior/sarcophagus` (20 rooms) and
 `junior/statue` (8).
 
-`yarn art-census` is the authority and reports 63 placeholders: expert 22, wizard 20, master 17, junior 4.
+`yarn art-census` is the authority and reports 61 placeholders: expert 20, wizard 20, master 17, junior 4.
 
 ### The three files that run the work
 
 - **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
-  attach and the import line to run afterwards. 14 entries, all expert/master/wizard. `yarn repaint <key>`
+  attach and the import line to run afterwards. 12 entries, all expert/master/wizard. `yarn repaint <key>`
   copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
   Entries are DELETED as they land, so the file's length is the backlog.
 - **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
@@ -76,8 +76,11 @@ Each of these cost real time and none is guessable from the code:
   filtering cells by grid type silently drops a chamber's own floor. It has now bitten `floorScatter`,
   `art-census` and `MapGrowth`.
 - **Gemini names every download after the first chat in the thread.** Identify returns by content, and by
-  frame size: 1686x2528 means the scaffold was edited, 2048x2048 means it was generated fresh and the
-  attachment was ignored.
+  frame size: an edited scaffold comes back at the scaffold's own aspect — 1686x2528 for a 2:3 prop,
+  2880x1440 for a 2:1 wall item — and **2048x2048 means it was generated fresh and the attachment was
+  ignored**. That square is the one size worth checking before opening the file: the mask is the
+  scaffold's silhouette, so a fresh square drawing is unimportable and no flag rescues it. Re-roll without
+  measuring.
 
 ## Renaming a decoration kind is cheap; adding one is not
 
@@ -123,7 +126,7 @@ where a purpose has two wall items to choose between.
 API bills per image, so the paste is done by hand and the tooling only saves the searching.
 
 ```sh
-yarn repaint                  # the 14 keys still owed
+yarn repaint                  # the 12 keys still owed
 yarn repaint master/mask      # prompt to the clipboard, both attachments revealed in the Finder
 # attach the two, paste, generate, download to ~/Downloads
 ```

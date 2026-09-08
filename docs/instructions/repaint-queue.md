@@ -21,7 +21,7 @@ are placeholders until the return is measured against the rank's floor with `yar
 
 **Why every block repeats itself.** A block is the unit of use, so each one carries the whole prompt — the
 background hex, the shadow hex, the do-not-move sentence. The rules behind them are in
-`prop-pipeline.md` Step 3 and are not repeated here; the reason they appear in all 24 blocks is that you
+`prop-pipeline.md` Step 3 and are not repeated here; the reason they appear in every block is that you
 paste one block, not a block plus a preamble.
 
 **The two attachments, and why they are those two.**
@@ -41,73 +41,9 @@ is fine: ask for the material and let the mask decide the layout.
 
 ---
 
-## Priest — five
+## Priest — three
 
-Four wall items and one prop. No prop of his beyond the veil is modelled yet; see art-tasks §5.
-
-### `expert/niche` — a wall shrine niche, doors cord-sealed
-
-**Attach:**
-
-1. `~/tile-previews/niche-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a recess cut into a wall, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a shrine niche with its doors shut and sealed. The frame around the opening is the SURROUND —
-jambs at the sides, a lintel over, a sill under; the two dark panels filling the opening are the DOOR
-LEAVES, shut, with a narrow gap where they meet; the bar across them is a CORD; the lump where the cord
-crosses the gap is a CLAY SEAL, unbroken.
-
-The surround is dark basalt, cool grey-blue, dressed smooth with natron dust caught in its lower corners.
-The doors are cedar, dark red-brown, their grain running vertically, dulled with age. The cord is undyed
-linen, grubby; the seal is grey clay stamped with a mark.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold niche --contents=sealed --shear=0.5 --width=448 --height=224 --sun=0
-yarn import-tile art/masters/props/expert/niche.webp --tier=expert --name=niche --slot=wall \
-  --filter=smooth --mask="$OBJ" --headroom=0.18
-```
-
-### `expert/sconce` — a lamp hung on a chain
-
-**Attach:**
-
-1. `~/tile-previews/sconce-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a bronze wall bracket with an oil lamp hanging from it. The upright plate at the left is fixed
-to the WALL; the horizontal bar reaching right is the ARM; the diagonal below it is a BRACE; the two small
-blocks under the arm's end are CHAIN LINKS; the shallow bowl below them is the LAMP; the block at the
-lamp's right is its SPOUT and the nub beyond it the FLAME.
-
-Cast bronze, dark with a green-black patina, rubbed warmer on the arm's upper edge. The lamp's bowl is
-sooted black around the spout and holds a film of oil. The flame is a small ochre-orange tongue, matte,
-with no glow around it and no light thrown on the bracket.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold sconce --contents=chain --shear=0.5 --width=448 --height=224 --sun=0 --margin=1.4
-yarn import-tile art/masters/props/expert/sconce.webp --tier=expert --name=sconce --slot=wall \
-  --filter=smooth --mask="$OBJ" --headroom=0.18
-```
+Two wall items and one prop. No prop of his beyond the veil is modelled yet; see art-tasks §5.
 
 ### `expert/wallShrine` — a wall shrine, doors ajar, lamp lit inside
 
@@ -116,14 +52,29 @@ yarn import-tile art/masters/props/expert/sconce.webp --tier=expert --name=sconc
 1. `~/tile-previews/wallshrine-expert.png` — the scaffold
 2. `~/tile-previews/expert-plain.png` — the material reference
 
+**This one has come back ignoring the scaffold**, and the tell is in the download's SIZE before it is
+opened: 2880x1440 is the scaffold edited, 2048x2048 is a fresh square drawing with the attachment thrown
+away. A square return of this tile is unimportable and there is no flag that rescues it — the mask is a
+2:1 oblique box and would cut jamb slices and a hole out of a front-on elevation. Check the pixel size
+first, and re-roll on 2048x2048 without measuring anything.
+
+What it drops when it does that is the PROJECTION: it redraws the shrine square-on, flat lintel, both
+jambs the same width, no top face. Hence the first paragraph below, which the other entries do not carry.
+
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
 
-The object: a small shrine cabinet standing out from a wall, its doors part open. The wide slab over the
-top is a CAVETTO CORNICE and the slab under it is the PLINTH, both overhanging the box between them; the
-uprights at the sides are JAMBS; the two dark panels are the DOOR LEAVES, one covering more of the opening
-than the other; between them is a black GAP into the shrine's inside, and standing in it is a small LAMP
-with a FLAME above it.
+Match the reference image's FRAME exactly: the same 2:1 landscape shape, the object in the same place in it, at the same size. Do not re-compose it into a square and do not draw the object front-on.
+
+The object: a small shrine cabinet standing out from a wall, its doors part open. It is seen in a raked
+projection, not straight on — the cornice and plinth show their TOP faces as parallelograms, the left
+jamb shows its side, and every horizontal edge runs at the same slant as in the reference. That slant is
+the whole point of the drawing: it is what makes the cabinet stand OUT of the wall.
+
+The wide slab over the top is a CAVETTO CORNICE and the slab under it is the PLINTH, both overhanging the
+box between them; the uprights at the sides are JAMBS; the two dark panels are the DOOR LEAVES, one
+covering more of the opening than the other; between them is a black GAP into the shrine's inside, and
+standing in it is a small LAMP with a FLAME above it.
 
 The cornice, plinth and jambs are dark basalt, cool grey-blue, dressed smooth. The doors are cedar, dark
 red-brown. The lamp is buff pottery, sooted at the lip; its flame is a small ochre-orange tongue, matte.

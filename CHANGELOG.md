@@ -175,9 +175,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   system asks for reduced motion.
 - Rooms are furnished for the PLACE they are: a trading wing stacks amphorae on shelves and hangs its
   tally board, a funerary one holds a coffin and a false-door stela, a waterworks its basins.
+- The priest's walls are hung with his own things: a shrine niche with its doors corded and sealed, and a
+  bronze lamp bracket with the lamp still lit on its chain.
 
 ### Fixed
 
+- A tomb puzzle offline is played against its own painted wall. The five wall panels and the market
+  puzzle's pieces were left out of what the game stores for offline play, so with no connection they came
+  up blank.
 - A tap on the map only ever sends you somewhere you can walk to, and the map no longer marks a corner
   it has no way of reaching — an unreachable one now reads as the dead end it is.
 - Walking somewhere is remembered. A step used to be able to lose the position it moved to, which put

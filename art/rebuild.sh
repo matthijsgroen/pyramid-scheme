@@ -637,3 +637,29 @@ yarn import-tile art/masters/surfaces/expert-wall-face.webp --tier=expert --name
   --filter=smooth --key=none --headroom=0.14
 yarn import-tile art/masters/surfaces/expert-threshold.webp --tier=expert --name=threshold --slot=sill \
   --filter=smooth --key=none --brightness=1.32
+
+# His WALL ITEMS. Both are modelled and rendered with --shear=0.5, because both stand off the wall: the
+# band is the same oblique world at HALF depth, so a niche's own floor draws ABOVE its front lip and that
+# is what makes it read as a hole rather than a painted rectangle.
+#
+# No --brightness on either, which is the first pair in this file to need none. A prop comes back lit for
+# a gallery; these two came back dark, and the priest's floor is the palest of the five at 151, so what
+# would be a defect at the merchant is the separation here — the niche lands 80 under its floor and the
+# sconce 103, against a minimum of 10.
+#
+# The niche's cord and clay seal are the only pale things in it and carry the whole read at 56x28: the
+# doors go to near-black at that size and the bar across them is what says "sealed".
+scaffold niche --contents=sealed --shear=0.5 --width=448 --height=224 --colour=#a7b2be --sun=0
+yarn import-tile art/masters/props/expert/niche.webp --tier=expert --name=niche --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+
+# --margin=1.4 must match: the arm reaches a long way right of the wall plate and a tighter frame clips
+# the lamp off the end of it.
+#
+# +33 warmth, outside the +22 to +25 the merchant's props were held to, and left alone. That band is a
+# property of a rank, not of the set: green-black bronze against cool grey-blue basalt cannot help
+# reading warm, and junior's same sconce measures -35 against his sandstone and ships. Separation is the
+# gate; warmth's SIGN is a rank's own business.
+scaffold sconce --contents=chain --shear=0.5 --width=448 --height=224 --colour=#a7b2be --sun=0 --margin=1.4
+yarn import-tile art/masters/props/expert/sconce.webp --tier=expert --name=sconce --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
