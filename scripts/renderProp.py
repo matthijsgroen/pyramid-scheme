@@ -1064,51 +1064,56 @@ def prim_basin():
     out 32 wide and read as spindly. Short legs and a fat belly, and it lands near 50."""
     contents = arg("contents", "jar")
     if contents == "pool":
-        # The priest's SACRED POOL, and it is not a vessel at all — it is a hole in the floor with water
-        # in it, so it is built on `prim_pit`'s law rather than on the stand below: under z + k*y the
-        # ground in front of an opening draws lower as it comes toward the viewer, so the opening is a
-        # band exactly k*d tall and a far wall of that height fills it top to bottom.
+        # The priest's SACRED POOL: a hole cut in the floor, LINED, with water in it.
         #
-        # The water is a part rather than a VOID. `prim_basin`'s own note records why the nobleman's
-        # basin could not use VOID for its water — the marker means an ABSENCE, and the repaint returned
-        # pure black and read as a hole punched in the bowl. A pool that reads as a shaft is the same
-        # failure one scale up, and here it is the whole difference between the two kinds.
-        pw, pd, k = 0.86, 0.30, 0.7
+        # THE OPENING HAS TO BE MOST OF THE PICTURE, and getting that wrong is what cost this prop four
+        # rolls. Under z + k*y a hole of depth d draws a band only k*d tall, so at d = 0.30 the opening
+        # was 0.21 of an object a full unit wide — a dark stripe across a low box, which is exactly how
+        # every return drew it: a bench, a tank, a tray. Nothing in the prompt can argue a thin stripe
+        # into being a pool. The opening is now 0.62 deep, so it draws 0.43 tall and is the largest thing
+        # in the frame, which is what a pool in a floor actually looks like from here.
+        #
+        # AND NOTHING TALL MAY STAND BESIDE IT. A jar was added to put an object of known size on the
+        # paving, and it stole the frame: at 0.30 tall it set the drawn height and squeezed the opening
+        # into a third of what it should be. `seat_and_normalise` scales by height, so the tallest thing
+        # in a prop decides how big everything else is drawn. A hole's tile cannot afford a neighbour.
+        pw, pd, k = 0.92, 0.62, 0.7
         depth = k * pd
-        # THE COPING IS A LINE, NOT A LEDGE, and the first pass got this wrong the same way the altar did.
-        # A kerb 0.09 wide all round gave the shear a top face 0.7 * 0.62 = 0.43 tall — larger than the
-        # pool it framed — and the whole prop read as a pale slab with a notch in it. Kept thin in y, and
-        # only the two SIDES are raised: the near kerb would be drawn between the viewer and the water,
-        # covering the one thing this prop is.
+        # THE LINING, and it is the pool rather than the floor: far wall and both side walls dropping
+        # from the paving to the bottom. They have to belong to the POOL because the floor is omitted
+        # from the mask — a wall that belonged to the floor would be cut away with it and the tile would
+        # lose the one surface that says how deep this is.
+        # THE WATER IS THE OPENING, and this is the whole trick — everything else here was built twice
+        # before arriving at it.
+        #
+        # A horizontal plane spanning the hole draws as a band exactly k*pd tall, which IS the opening's
+        # drawn extent. So one water plane at the rim fills the hole corner to corner with nothing left
+        # to see through, and there is no need for a bottom or for walls dropping to one.
+        #
+        # Both of those were tried. Walls plus a water slab left the near half of the opening open to the
+        # backdrop, because the near lip draws lower than the water does. Adding a bottom to close it put
+        # geometry BELOW the near lip, where `prim_pit`'s law says nothing may go — and it did not merely
+        # waste mesh, it showed, as a pale lip hanging under the hole. Then the interior was fully visible
+        # and the thing read as a box with its front cut off.
+        mark(box(pw, pd, 0.03, z=-0.015), "water")
+        # A shallow band of wet stone above the waterline at the back, and nothing more. It is the only
+        # depth cue this needs: the far lip is stone, the rest is water.
+        mark(box(pw, 0.05, 0.07, y=(pd - 0.05) / 2, z=0.0), "body")
+        # STEPS crossing the near lip, which is what proves a hole is a hole — `prim_pit`'s ladder does
+        # the same job. They start ABOVE the paving and walk down through the waterline, so the eye has
+        # to read them as descending into something.
+        # They stop INSIDE the drawn opening. Walked down to -0.21 the lowest tread fell past the near lip,
+        # and `prim_pit`'s law says nothing may: it left a hole in the picture where neither step nor floor
+        # covered, 100 by 14 pixels of backdrop showing through. Four shallow treads inside the band read
+        # as descending perfectly well.
+        for sw, sz in ((0.34, 0.028), (0.29, -0.012), (0.24, -0.052), (0.19, -0.092)):
+            mark(box(sw, pd * 0.26, 0.038, x=-(pw - sw) / 2 + 0.04, y=-pd * 0.24, z=sz), "body")
+        # A KERB on the two sides and the far edge, and none across the near one: the near lip is where
+        # the paving runs straight up to the water, and fencing it off is what made the first three rolls
+        # read as the rim of a container.
         for sx in (-1, 1):
-            mark(box(0.055, pd + 0.05, 0.05, x=sx * (pw + 0.055) / 2, z=0.025), "body")
-        mark(box(pw + 0.16, 0.05, 0.05, y=(pd + 0.05) / 2, z=0.025), "body")
-        # The far wall, filling the drawn opening exactly — `prim_pit`'s law, and the reason the pool is
-        # only k*pd deep: one parallelogram, and everything under it is mesh nobody sees.
-        mark(box(pw, 0.05, depth, y=(pd - 0.05) / 2, z=-depth / 2), "body")
-        # THE WATER FILLS THE OPENING, and it is not a puddle at the bottom of a shaft. Laid at -depth it
-        # drew as a dark band under the far wall and the pool read as a hole with a stain in it; brought
-        # up near the rim it IS the opening, which is what a full pool looks like from above.
-        mark(box(pw - 0.03, pd - 0.03, 0.025, z=-0.055), "water")
-        # WHAT MAKES A HOLE READ IS WHAT CROSSES ITS EDGE, and this pool needed three rolls to arrive at
-        # the rule `prim_pit` has been demonstrating all along.
-        #
-        # A hole cannot prove itself. On magenta it is a dark shape in a frame, and a dark shape in a
-        # frame is equally a tank, a panel or a rug — the first roll came back as a raised stone tub and
-        # the second, told nothing may stand up, as a flat plan diagram with no depth at all. Look at what
-        # the pit does instead: a rope ladder goes OVER the near lip and disappears, and its spoil lies on
-        # the paving OUTSIDE the opening. One thing entering the hole and one thing lying on the surface
-        # around it. Neither is the hole; together they are the only reason it reads as one.
-        #
-        # So the steps now start ABOVE the floor line and walk down through the waterline, and a jar
-        # stands on the paving at the far end. Both cross a boundary the flat readings cannot explain.
-        for sw, sz in ((0.30, 0.028), (0.24, -0.030), (0.17, -0.088)):
-            mark(box(sw, pd * 0.5, 0.045, x=-(pw - sw) / 2 + 0.02, y=-pd * 0.22, z=sz), "body")
-        # The JAR, standing on the floor beside the pool. It is here to be an OBJECT AT KNOWN SIZE on the
-        # surrounding plane: the eye reads the paving from the thing standing on it, and once there is a
-        # floor there is something for the water to be sunk into. `prim_market`'s far-edge rule puts it at
-        # the back, where it tops the opening's own line rather than being drawn against it.
-        jar(pw * 0.38, pd * 0.42, 0.30, 0.10, z=0.0, part="pottery")
+            mark(box(0.06, pd + 0.06, 0.045, x=sx * (pw + 0.06) / 2, z=0.022), "body")
+        mark(box(pw + 0.18, 0.06, 0.045, y=(pd + 0.06) / 2, z=0.022), "body")
         return join_all()
     # The nobleman's basin is SHALLOW, so its stand is tall: a squat vessel on short legs is scaled by
     # its width and lands about 48 high in an 84 slot, which wastes the tallest thing on the floor.
@@ -3064,7 +3069,7 @@ def main():
             ox0, ox1, oy0, oy1 = -hw / 2, hw / 2, -hd / 2, hd / 2
         else:
             (ox0, ox1), (oy0, oy1), _ = local_bounds(obj)
-        far = 3.0
+        far = 20.0
         for bx0, bx1, by0, by1 in (
             (ox0 - far, ox1 + far, oy1, oy1 + far),  # beyond the far lip
             (ox0 - far, ox1 + far, oy0 - far, oy0),  # in front of the near lip

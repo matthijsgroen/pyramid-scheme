@@ -240,13 +240,13 @@ answered the only question the picture asked.
 
 `pit` survives the same shape without a floor because it is full of things that CROSS ITS OWN EDGE: a
 ladder over the near lip, its spoil on the paving outside. Where a hole has no such furniture, the surface
-has to be drawn instead — so this one is handed over rendered `--context=0.86x0.30`, which puts the rank's
+has to be drawn instead — so this one is handed over rendered `--context=0.92x0.62`, which puts the rank's
 floor round it with a hole of exactly that size cut in it, so the floor's own edge is the pool's lip. It
 is added after the camera, so the frame is unchanged, and the mask and the footprint are rendered WITHOUT
 it. No floor reaches the tile.
 
 **Regenerating this one's scaffold takes an extra flag** that no other entry needs —
-`--context=0.86x0.30` on the handed-over render, and on that render only. The exact command is under
+`--context=0.92x0.62 --shadow=0` on the handed-over render, and on that render only. The exact command is under
 "Regenerating the attachments" at the foot of this file, because a fenced block cannot go here: `yarn
 repaint` takes an entry's FIRST bare fence as the prompt, so a code block above it is what gets pasted.
 
@@ -1573,7 +1573,7 @@ floor reaches the tile.
 ```sh
 r() { yarn render-prop --primitive=basin --contents=pool --colour=#a7b2be --floor=#8d98a5 "$@"; }
 P=~/tile-previews/basin-expert
-r --context=0.86x0.30 --out=$P.png
+r --context=0.92x0.62 --shadow=0 --out=$P.png
 r --shadow=0 --background=none --out=$P-obj.png
 r --only=shadow --background=none --out=$P-shadow.png
 ```
