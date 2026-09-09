@@ -2136,6 +2136,48 @@ def prim_statue():
     mark(box(0.62, 0.46, plinth_h, z=plinth_h / 2), "body")
     b = plinth_h
 
+    if contents == "mummiform":
+        # A COFFIN, and it is a pose like any other: `sarcophagus` was the other half of the row Step 0
+        # sent to a museum scan, and it goes the same way Anubis did.
+        #
+        # IT STANDS UPRIGHT, propped against its own plinth, and that is a legibility decision taken
+        # against the obvious one. A coffin in a tomb chamber lies on a bier, and lying is what was built
+        # first — twice. The trouble is that a coffin's identity is its ANTHROPOID OUTLINE, narrow at the
+        # head, widest at the shoulders, tapering to the feet, and lying down that outline is in the TOP
+        # face, which this shear compresses to k of its depth. Two passes of it read as a chest with a
+        # stepped lid. Stood up, the outline is in the FRONT plane — the one plane the shear leaves alone,
+        # which is `prim_hanging`'s argument for why cloth is easy — and it is unmistakable.
+        #
+        # Everything the brief asks for at the four ranks that author one faces the viewer this way too: a
+        # painted face, crossed arms, a cartouche band, a lid ajar, and a hollow if it is open. The
+        # merchant's row proposes "propped upright" in as many words, so the staging is authored anyway.
+        #
+        # Upright also FILLS the slot. A coffin on its back is wide and short, and `seat_and_normalise`
+        # scales by height, so it landed small in a 56x84 portrait cell with paving either side of it.
+        opened = bool(arg("open"))
+        d, front = 0.20, -0.11
+        # The outline, foot to head. Steps in X are what the eye reads as a silhouette here, and they cost
+        # nothing: X is the only axis drawn horizontally, so a change of width is a change of width.
+        for cz, cw, ch in ((0.03, 0.24, 0.06), (0.16, 0.21, 0.20), (0.36, 0.27, 0.20), (0.55, 0.30, 0.18), (0.71, 0.17, 0.14)):
+            mark(box(cw, d, ch, z=b + cz + ch / 2), "figure")
+        if opened:
+            # The gods' is OPEN AND EMPTY. A VOID panel down the front is the whole of it, inset so a rim
+            # of case shows all round — `prim_brazier`'s rule about a dish needing a visible rim, one
+            # object over. Proud of the face it cuts rather than level with it, by the altar channel's
+            # lesson: buried under the surface, a recess renders as nothing.
+            mark(box(0.20, 0.06, 0.52, y=front - 0.015, z=b + 0.36), VOID)
+        else:
+            # THE MASK, marked apart. The one feature every rank's prompt names, and the canopic jars
+            # proved it is worth modelling as a PROFILE rather than a face: give the repaint a raised
+            # panel where a face goes and it paints a face there.
+            mark(box(0.13, 0.04, 0.12, y=front - 0.012, z=b + 0.74), "accent")
+            # CROSSED ARMS over the chest, and they run in X because an arm reaching sideways is the only
+            # arm this projection can draw (`prim_sconce`). Three of the four ranks ask for these or for a
+            # cord across the same place, so this is where a band goes at every rank but the gods'.
+            for ax, az in ((-0.045, 0.50), (0.045, 0.425)):
+                mark(box(0.19, 0.035, 0.045, x=ax, y=front - 0.01, z=b + az), "figure")
+        return join_all()
+
     if contents in ("couchant", "lioness"):
         # ANIMALS. `couchant` lies along X — a recumbent beast is a long shape, and built along y it draws
         # as a vertical lump by the law that y and z both feed the drawn vertical. `lioness` sits up, which

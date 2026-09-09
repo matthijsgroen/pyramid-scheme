@@ -71,6 +71,110 @@ loose prompt invites: the freer the paint, the less ambiguity the geometry may c
 
 ---
 
+## Nobleman — two
+
+Both were believed blocked on a museum scan until `prim_statue` existed. Neither is: a figure is a POSE
+and its face is paint, which the priest's canopic jars and his Anubis both proved. See `expert/statue`
+for the worked example of a shape-free prompt, and the five numbered rules in it that keep one honest.
+
+### `junior/statue` — the owner's ka-statue, seated
+
+**Attach:**
+
+1. `~/tile-previews/statue-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+THE REFERENCE IS A BLOCK, NOT A FINISHED STATUE. It is stone roughed out to the pose, and your job is to
+carve the figure out of it.
+
+CHANGE, freely, and ONLY this: the contour of the man himself. A shoulder slopes, a knee is round, a face
+is not a cube. Cut all of that.
+
+CARVE INWARD ONLY. Every curve you cut goes INSIDE the rough shape you were given — take stone away, never
+add it outside the block's outline.
+
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+3. HE IS SEATED, facing the viewer, hands flat on his knees. The slab behind him is the THRONE BACK and the block under him the SEAT — they stay square-cut stone furniture, not part of his body.
+4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+The object: a KA-STATUE of the tomb's owner, seated on a throne. The tapering block on his head is a
+NEMES headcloth, widening to his shoulders. The block across his hips is a KILT.
+
+Painted limestone, and brightly: pale creamy stone under the paint, skin a warm red-brown, the nemes
+striped in blue and gold, the kilt white with a painted belt, the eyes rimmed in black kohl with white
+and dark brown in them. The paint is worn thin on the knees and the shoulders where it has been touched,
+showing bare stone through. The throne and plinth are plain limestone with an ochre band along the plinth.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
+yarn import-tile art/masters/props/junior/statue.webp --tier=junior --name=statue --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/sarcophagus` — an anthropoid coffin, painted face, yellow ground
+
+**IT STANDS UPRIGHT, and that is deliberate.** A coffin's identity is its anthropoid outline, and lying on
+a bier that outline is in the top face, which this shear compresses — two passes of it read as a chest
+with a stepped lid. Stood up, the outline is in the front plane, the one plane the shear leaves alone.
+Everything the brief asks of a coffin at any rank faces the viewer this way: a painted face, crossed arms,
+a cartouche band, a hollow if it is open. See `prim_statue`.
+
+**Attach:**
+
+1. `~/tile-previews/sarcophagus-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. No perspective and no vanishing point: verticals stay vertical, horizontals stay horizontal.
+
+The object: an ANTHROPOID COFFIN, standing upright and propped against its own plinth, seen from the
+front. It is body-shaped — narrow at the head, widest at the shoulders, tapering to the feet. The raised
+panel at the top is the FACE. The two bars across the chest are the ARMS, crossed. The slab it stands on
+is the PLINTH.
+
+It stands. Do not lay it down, and do not open it.
+
+Carved and plastered wood, painted on a YELLOW GROUND — the whole case a warm ochre-yellow, divided into
+panels by bands of blue, red and white. The face is painted flesh-red with a blue-and-gold striped wig
+either side of it and heavy black kohl round the eyes. The crossed arms are painted dark red. Bands of
+small dark hieroglyphs run down the front and across the chest, too fine to read. The plaster is chipped
+at the foot and along one shoulder, showing pale wood beneath. The plinth is plain limestone.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=mummiform --spin=11 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
+yarn import-tile art/masters/props/junior/sarcophagus.webp --tier=junior --name=sarcophagus --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+---
+
 ## Priest — eleven
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
@@ -81,24 +185,34 @@ FLAT thing in the section: no mesh, no mask, straight to the generator.
 
 Still missing after this: `sarcophagus`, which waits on a museum scan — unless `expert/statue` lands, in which case a coffin is a posture too (art-tasks §5).
 
-### `expert/shelf` — papyrus rolls in a cedar rack
+### `expert/sarcophagus` — the priest's coffin, corded and sealed
+
+Upright, for the reason `junior/sarcophagus` records: an anthropoid outline lives in the front plane,
+which is the one plane this shear leaves alone.
 
 **Attach:**
 
-1. `~/tile-previews/shelf-expert.png` — the scaffold
+1. `~/tile-previews/sarcophagus-expert.png` — the scaffold
 2. `~/tile-previews/expert-plain.png` — the material reference
 
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
 
-The object: a rack of PAPYRUS ROLLS. The frame with a shelf across its middle is the RACK. The six short
-cylinders lying on their sides in it — three to a level — are rolled documents, seen from the end, and the
-narrow band round the middle of each is the TIE that keeps it shut. The flat sheet lying on the top of the
-rack with one cylinder resting on it is a roll left UNROLLED.
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. No perspective and no vanishing point: verticals stay vertical, horizontals stay horizontal.
 
-The rolls are pale straw-buff papyrus, dusty, each cut end a slightly paler disc with a blob of grey clay
-sealing it. The ties are undyed linen cord. The unrolled sheet is the same papyrus with columns of small
-dark writing on it, too fine to read. The rack is dark cedar, and the shelf behind them is in shade.
+The object: a PRIEST'S COFFIN, standing upright against its own plinth, seen from the front. It is
+body-shaped — narrow at the head, widest at the shoulders, tapering to the feet. The raised panel at the
+top is the FACE. The two bars across the chest are the ARMS, crossed. The slab it stands on is the PLINTH.
+
+It stands, and it is SHUT. Do not lay it down and do not open it.
+
+Dark cedar, oiled almost black, its grain running down the length of the case. The face is carved wood
+left bare and rubbed paler, its eyes inlaid with white shell and dark stone. The crossed arms are carved
+in low relief. A single band of small incised hieroglyphs runs down the front, filled with pale paste.
+
+CORDED AND SEALED: an undyed linen cord is wound round the case twice, above and below the arms, and where
+it crosses at the centre there is a lump of grey CLAY stamped with a mark. The seal is unbroken. Natron
+dust has collected along the cords and in the carving.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -110,12 +224,24 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shelf --contents=papyrus --spin=-14 --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/shelf.webp --tier=expert --name=shelf --slot=prop \
+scaffold statue --contents=mummiform --spin=-6 --colour=#a7b2be --colour-figure=#6f6459 --floor=#8d98a5
+yarn import-tile art/masters/props/expert/sarcophagus.webp --tier=expert --name=sarcophagus --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `expert/basin` — a sacred pool with steps down into it
+
+**A HOLE CANNOT BE A PRODUCT SHOT, and this is the entry that found out.** The first roll came back as a
+raised stone TANK — a tub with thick walls standing on the ground, water recessed in its top — and it was
+not disobeying the prompt so much as answering the only question the picture asked. Every other scaffold
+in this file is an object on magenta, and an object on magenta is a thing you could pick up. A hole is
+defined by the SURFACE IT IS CUT INTO, and there is no surface in a product shot, so a generator with
+water and a rim and nothing else builds something to hold the water in.
+
+`pit` survives the same shape only because it is full of clutter that cannot be a vessel — a pole across
+the mouth, a rope ladder over the lip, the broken slabs of its own lid. A clean rectangle of water in a
+clean frame has nothing to break the reading. So this prompt has to say, in as many words, that nothing
+stands up.
 
 **Attach:**
 
@@ -125,16 +251,25 @@ yarn import-tile art/masters/props/expert/shelf.webp --tier=expert --name=shelf 
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
 
-The object: a SACRED POOL sunk into the floor. The raised stone edging along the sides and the far side is
-the COPING. The large dark rectangle it frames is WATER, filling the pool nearly to the rim. The two steps
-at the left, the lower one half under the surface, are STEPS DOWN INTO IT.
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
 
-This is a pool and not a shaft: the dark area is WATER and must read as water, never as a hole. Paint it
-as a still surface — a flat dark green-grey, slightly lighter where it meets the coping.
+The object: a SACRED POOL, which is a HOLE CUT DOWN INTO A STONE FLOOR and filled with water. You are
+looking down into it from above and slightly in front.
 
-The coping is dark basalt, cool grey-blue, dressed smooth. A pale crust of NATRON has dried along the
-waterline all round, and on the tread of the step that stands clear of the water. The submerged step is
-darker and greener than the one above it.
+NOTHING STANDS UP. This is not a tank, a tub, a trough, a basin or a vessel, and it has no walls, no
+sides and no base you could see from outside. The only thing above the level of the paving is a low
+KERB round the edge, one hand high — the pale border in the reference. Everything else is below ground.
+If it looks like something you could lift, it is wrong.
+
+The large dark area the kerb frames is WATER, filling the pool nearly to the brim. The two ledges at the
+left, the lower one half submerged, are STEPS DOWN INTO IT.
+
+The water must read as WATER and not as a shaft: a still flat surface, dark green-grey, a touch lighter
+where it meets the stone.
+
+The kerb and the steps are dark basalt, cool grey-blue, dressed smooth. A pale crust of NATRON has dried
+along the waterline all round and on the tread of the step that stands clear of the water. The submerged
+step is darker and greener than the one above it.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -472,9 +607,111 @@ yarn import-tile art/masters/props/expert/tallyBoard.webp --tier=expert --name=t
 
 ---
 
-## Pharaoh — thirteen
+## Pharaoh — fifteen
 
 Wall items and one curtain. Gold is a flat colour at this rank, never a metal — every prompt below says so, because the generator will otherwise return a chrome highlight.
+
+### `master/statue` — a gilded Osiris colossus
+
+**Attach:**
+
+1. `~/tile-previews/statue-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+THE REFERENCE IS A BLOCK, NOT A FINISHED STATUE. It is stone roughed out to the pose, and your job is to
+carve the figure out of it.
+
+CHANGE, freely, and ONLY this: the contour of the figure himself. A shoulder slopes, a calf is round, a
+face is not a cube. Cut all of that.
+
+CARVE INWARD ONLY. Every curve you cut goes INSIDE the rough shape you were given — take stone away, never
+add it outside the block's outline.
+
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column or a mummy wrap.
+4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+The object: a colossal statue of OSIRIS. The tapering block on his head is his ATEF CROWN, a tall conical
+cap. The block across his hips is a KILT. He holds a CROOK and a FLAIL crossed over his chest — draw them
+as two short staffs, and they must not stand out past the edges of his own shoulders.
+
+GILDED: gold leaf over black granite, a flat warm ochre-yellow, worn through to the dark stone on the
+shins, the forearms and the crown's front edge — every surface a hand reaches. His face and hands are left
+BARE GRANITE, polished near-black, which is how Osiris is finished and the one contrast that carries him.
+The crown is gilded with a band of blue-green faience at its base. The plinth is black granite with a
+gilded cartouche band along its front.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=standing --spin=-12 --colour=#d9a93f --colour-figure=#8a7434 --floor=#57534b
+yarn import-tile art/masters/props/master/statue.webp --tier=master --name=statue --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/sarcophagus` — gold-inlaid stone, cartouche band
+
+Upright, for the reason `junior/sarcophagus` records. The brief asks for the LID AJAR at this rank and
+that is PAINT here, not geometry: a lid slid back is two pixels at slot size, so it is a dark seam down
+one side rather than a displaced mass. If it ever needs to be real, `prim_statue` takes `--open`.
+
+**Attach:**
+
+1. `~/tile-previews/sarcophagus-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. No perspective and no vanishing point: verticals stay vertical, horizontals stay horizontal.
+
+The object: a STONE SARCOPHAGUS, standing upright against its own plinth, seen from the front. It is
+body-shaped — narrow at the head, widest at the shoulders, tapering to the feet. The raised panel at the
+top is the FACE. The two bars across the chest are the ARMS, crossed. The slab it stands on is the PLINTH.
+
+It stands. Do not lay it down.
+
+Polished black granite, close-grained, INLAID with gold: a broad CARTOUCHE BAND across the chest under the
+arms, its oval frames filled with hieroglyphs in gold and blue-green faience, and narrow gold strips down
+the length of the case dividing it into panels. The face is carved granite left bare and polished, its
+eyes inlaid with alabaster and dark lapis. The crossed arms hold a gold crook and flail in low relief.
+
+THE LID IS AJAR: draw a dark seam running down the case a little off centre, where the lid has been slid
+back and no longer meets the shell, with a hairline of shadow inside it. The lid is not lifted off and
+nothing of the inside shows but that dark line.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=mummiform --spin=14 --colour=#d9a93f --colour-figure=#8a7434 --floor=#57534b
+yarn import-tile art/masters/props/master/sarcophagus.webp --tier=master --name=sarcophagus --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
 
 ### `master/niche` — an offering niche, gilded surround
 
@@ -964,9 +1201,112 @@ yarn import-tile art/masters/props/master/shelf.webp --tier=master --name=shelf 
 ```
 ---
 
-## Gods — five
+## Gods — seven
 
 Four of the five contain a VOID: a black opening that must come back black. His shrine, his niche and his shaft are the same rectangle if their frames are not what tells them apart, so the frame is what each prompt names first.
+
+### `wizard/statue` — Ra-Horakhty, falcon-headed, standing
+
+**Attach:**
+
+1. `~/tile-previews/statue-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+THE REFERENCE IS A BLOCK, NOT A FINISHED STATUE. It is stone roughed out to the pose, and your job is to
+carve the figure out of it.
+
+CHANGE, freely, and ONLY this: the contour of the figure himself, and the shape of his head, which is a
+FALCON'S and not a man's — a curved beak, a domed skull, no muzzle. Cut all of that.
+
+CARVE INWARD ONLY. Every curve you cut goes INSIDE the rough shape you were given — take stone away, never
+add it outside the block's outline.
+
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
+4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+The object: RA-HORAKHTY, a standing figure with a falcon's head. The tapering block above his head is the
+SUN DISC he wears — carve it round, and it sits on the crown of his skull rather than floating over it.
+The block across his hips is a KILT.
+
+Polished calcite, cool green-white, seamless and without a tool mark or a speck of dust on it. It is lit
+FROM WITHIN AND FROM BENEATH: the stone is faintly brighter at its lower edges and in the hollows, as
+though the light is coming up through it, and there is no shadow anywhere on the figure itself. His eye is
+a flat pale ring. The sun disc is a flat pale gold, a colour and not a shine. Star-field inlay runs in a
+band round the plinth — small pale points in dark stone.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=standing --spin=5 --colour=#8fd9bd --colour-figure=#7fa596 --floor=#5a8074
+yarn import-tile art/masters/props/wizard/statue.webp --tier=wizard --name=statue --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `wizard/sarcophagus` — open, empty, radiant
+
+The only coffin in the set rendered with `--open`, because the brief's row for this rank is three words
+and one of them is EMPTY. A hollow is geometry, not paint: the VOID panel down its front is what makes it
+read as opened rather than as a coffin with a dark stripe.
+
+**Attach:**
+
+1. `~/tile-previews/sarcophagus-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. No perspective and no vanishing point: verticals stay vertical, horizontals stay horizontal.
+
+The object: an OPEN, EMPTY COFFIN, standing upright against its own plinth, seen from the front. It is
+body-shaped — narrow at the head, widest at the shoulders, tapering to the feet. The lid is GONE. The dark
+panel down the front is the HOLLOW INSIDE, and there is nothing in it.
+
+It stands, and it is open and empty. Do not lay it down, do not put a lid on it, and do not put a body,
+a wrapping or an object inside it.
+
+Polished calcite, cool green-white, seamless and without a tool mark or a speck of dust. It is lit FROM
+WITHIN: the shell is faintly brighter along its inner edges, as though the light is coming up out of the
+hollow, and there is no cast shadow on the stone anywhere.
+
+The HOLLOW is the subject. It is dark but it is not black: a deep cool green-grey, a little lighter where
+it meets the rim, so it reads as a lined space with nothing in it rather than as a hole punched through
+the case. No pink and no purple anywhere in it. A band of star-field inlay runs round the plinth — small
+pale points in dark stone.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=mummiform --open=1 --spin=-9 --colour=#8fd9bd --colour-figure=#7fa596 --floor=#5a8074
+yarn import-tile art/masters/props/wizard/sarcophagus.webp --tier=wizard --name=sarcophagus --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
 
 ### `wizard/niche` — a niche holding one star
 

@@ -81,6 +81,15 @@ hem — two lines, deterministic. Displace the folds in Y and not in X: under z 
 drawn HIGHER, so the ripple lands as a shift in the surface and its shading does the rest, where a
 sideways displacement only makes the sheet narrower and wider and reads as a flag with a scalloped edge.
 
+**A HOLE CANNOT BE A PRODUCT SHOT, and its prompt has to say what does not stand up.** Every other
+scaffold is an object on magenta, which is a thing you could pick up — and a hole is defined by the
+surface it is cut into, which a product shot does not have. Handed water in a rim and nothing else, the
+priest's sacred pool came back as a raised stone TANK: walls, a base, water recessed in the top. That is
+the only question the picture asked, answered reasonably. `prim_pit` escapes it by being full of things
+that cannot be a vessel — a pole across the mouth, a rope ladder over the lip, the broken slabs of its own
+lid — so a clean rectangle of water in a clean frame is the case that needs the words. Say that nothing
+rises above the paving but the kerb, and name the vessels it must not be.
+
 **A HOLE is one parallelogram deep, and its dark is geometry too.** Under z + k*y the ground in front of
 an opening draws lower as it comes toward the viewer, so it covers the shaft below the near lip: the whole
 of a floor hole is the band between its two lip lines, `k*d`tall, and a far wall of exactly that height fills it. Anything modelled deeper is behind the floor tile the sprite is composited onto, and anything hung over the NEAR lip is never drawn at all. The VALUE is not promptable either — a scaffold in one flat colour hands the generator a rack with a grey gap in it — so a primitive marks the inside of a hole with the`VOID`material and`--void` paints it near-black before the repaint ever sees it.

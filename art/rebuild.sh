@@ -765,3 +765,12 @@ yarn import-tile art/masters/props/expert/jarRack.webp --tier=expert --name=jarR
 scaffold statue --contents=couchant --spin=-8 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/statue.webp --tier=expert --name=statue --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
+# His PAPYRUS LIBRARY. --brightness=0.9 for pale straw papyrus against basalt: 9.5% over the light clamp
+# untouched, 0.3% at 0.9, and it keeps 73 of separation.
+#
+# The rolls read at 56x84 because they LIE ALONG X and show their cut ends. Stood on end they would be
+# discs, and this primitive's own docstring records what a disc in a dark opening reads as: a hole.
+scaffold shelf --contents=papyrus --spin=-14 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/shelf.webp --tier=expert --name=shelf --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.9
