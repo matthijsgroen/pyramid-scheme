@@ -8,6 +8,7 @@ import type {
   GateVariant,
   GridCell,
   KeyColor,
+  Patron,
   RoomCell,
   RoomType,
   WallDecorationKind,
@@ -42,7 +43,7 @@ import { moodFor } from "./moodSettings"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
 import { companionFor } from "./companionProps"
-import { ART_IMAGE_RENDERING, tileUrl, tileVariants } from "./tileAssets"
+import { ART_IMAGE_RENDERING, patronTileUrl, tileUrl, tileVariants } from "./tileAssets"
 import {
   ALL_STATES,
   buildTileRegions,
@@ -1216,9 +1217,26 @@ const LAMP_POOL_RADIUS = CELL * 0.42
  * a seeded layer over placement rather than part of it: the same floor draws the same thing every time it
  * is opened, and dropping a second drawing in reshuffles no furniture, because `pickDressing` never sees
  * it (see `tileVariants`). */
-const Decoration = ({ kind, tier, seed }: { kind: DecorationKind; tier: Difficulty; seed: string }) => {
+const Decoration = ({
+  kind,
+  tier,
+  seed,
+  patron,
+}: {
+  kind: DecorationKind
+  tier: Difficulty
+  seed: string
+  patron?: Patron
+}) => {
+  // A PATRON BEATS A VARIANT. Both choose a drawing, and where a site names a god that choice is
+  // authored rather than positional — a dedicated tomb whose statues varied by cell would be saying two
+  // things at once. Falls straight through to the variant pick wherever no patron art exists, which is
+  // everywhere today.
+  const dedicated = patron ? patronTileUrl(tier, kind, patron) : undefined
+  const own = dedicated && dedicated !== tileUrl(tier, kind) ? dedicated : undefined
   const variants = tileVariants(tier, kind)
-  const url = variants.length > 1 ? variants[hashString(`${seed}:${kind}`) % variants.length] : tileUrl(tier, kind)
+  const url =
+    own ?? (variants.length > 1 ? variants[hashString(`${seed}:${kind}`) % variants.length] : tileUrl(tier, kind))
   return (
     <>
       {/* Under the sprite, so the light is on the floor and the lamp is standing in it. */}
@@ -1405,10 +1423,10 @@ export const wallItemsFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: Re
   return items
 }
 
-const WallItems = ({ items }: { items: readonly WallItem[] }) => (
+const WallItems = ({ items, patron }: { items: readonly WallItem[]; patron?: Patron }) => (
   <g>
     {items.map(({ row, col, kind, tier, state }) => {
-      const url = tileUrl(tier, kind)
+      const url = patronTileUrl(tier, kind, patron)
       const x = cellLeft(col)
       const y = cellTop(row) - WALL_H
       const wash = stateWash[state]
@@ -1929,7 +1947,7 @@ export const SiteMapView = ({
               return room.type !== "empty" && room.state !== "fogged"
             }}
           />
-          <WallItems items={wallItems} />
+          <WallItems items={wallItems} patron={grid.patron} />
 
           {Array.from({ length: grid.rows + 2 }, (_, ri) => {
             const r = ri - 1
@@ -1983,6 +2001,7 @@ export const SiteMapView = ({
                       <Decoration
                         kind={decoration}
                         tier={claimOwner.difficulty ?? tier}
+                        patron={grid.patron}
                         seed={`${grid.siteId}:${cellKey}`}
                       />
                     )}

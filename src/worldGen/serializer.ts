@@ -91,6 +91,7 @@ const serializeFloor = (c: FloorConfig): string => {
   if (c.theme) lines.push(`    theme: ${JSON.stringify(c.theme)},`)
   if (c.decorations?.length) lines.push(`    decorations: ${JSON.stringify(c.decorations)},`)
   if (c.condition) lines.push(`    condition: ${JSON.stringify(c.condition)},`)
+  if (c.patron) lines.push(`    patron: ${JSON.stringify(c.patron)},`)
   if (c.wallDecorations?.length) lines.push(`    wallDecorations: ${JSON.stringify(c.wallDecorations)},`)
   if (c.role) lines.push(`    role: ${serializeEncounter(c.role)},`)
   if (c.encountersByIndex && Object.keys(c.encountersByIndex).length)

@@ -288,4 +288,8 @@ export const wizardRules: Rule[] = [
   // specificity (8) overrides the tier-pyramid rule above (6) for wizard_4 only;
   // wizard_1/2/3 keep the normal gated branch untouched.
   journey("wizard_4").pyramid("last-1", { sideSections: [] }),
+
+  // Ra's Solar Journey and the Chamber of Ma'at — see the patron note in spec/starter.ts.
+  journey("wizard_1").set({ patron: "ra" }),
+  journey("wizard_3").set({ patron: "maat" }),
 ]

@@ -197,4 +197,11 @@ export const starterRules: Rule[] = [
       { mainEndReward: "tombTreasure" },
     ],
   }),
+
+  // PATRONS. A journey named for a god says so once, here, and every floor of it is dedicated: `set`
+  // is journey-wide, which is the point — a dedication that stopped halfway up the climb would read as
+  // an authoring slip. Purely drawn and free to author
+  // (docs/game-design/world-spec-stability.md), and it falls back to the generic art everywhere the
+  // patron file does not exist, which is everywhere today.
+  journey("starter_3").set({ patron: "bastet" }),
 ]

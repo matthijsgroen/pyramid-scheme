@@ -271,4 +271,14 @@ export const masterRules: Rule[] = [
       },
     ],
   }),
+
+  // The two treasure tombs are named for their gods too — see the patron note in spec/starter.ts.
+  journey("master_treasure_tomb").set({ patron: "maat" }),
+  journey("master_treasure_tomb_b").set({ patron: "osiris" }),
+
+  // One pyramid each, in journeys not named for a god — see the note in spec/expert.ts. Horus takes the
+  // Great Pyramid because its role is `sky` and the living king IS Horus; Sekhmet takes the Curse of the
+  // Pharaohs because a curse and an omen are hers.
+  journey("master_1").pyramid("last", { patron: "horus" }),
+  journey("master_3").pyramid("last", { patron: "sekhmet" }),
 ]

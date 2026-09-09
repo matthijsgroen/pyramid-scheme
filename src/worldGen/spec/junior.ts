@@ -181,4 +181,7 @@ export const juniorRules: Rule[] = [
       },
     ],
   }),
+
+  // Temple of Thoth — see the patron note in spec/starter.ts.
+  journey("junior_3").set({ patron: "thoth" }),
 ]

@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1380457739
+export const worldContentHash = 1098542231
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -708,6 +708,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "futoshiki",
+        patron: "bastet",
         role: "puzzle",
         encountersByIndex: { 0: "futoshiki", 1: "balance-scale" },
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
@@ -856,6 +857,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "rush-hour",
+        patron: "bastet",
         role: "puzzle",
         encountersByIndex: { 0: "rush-hour", 1: "hidato", 2: "sudoku" },
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
@@ -1008,6 +1010,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "futoshiki",
+        patron: "bastet",
         role: "puzzle",
         encountersByIndex: { 0: "futoshiki", 1: "sudoku", 2: "rush-hour" },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art5", pieceIndex: 0 },
@@ -1160,6 +1163,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "eclipse",
+        patron: "bastet",
         role: "puzzle",
         encountersByIndex: { 0: "eclipse", 1: "constellation", 2: "sumplete", 3: "balance-scale" },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 0 },
@@ -3059,6 +3063,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "futoshiki",
+        patron: "thoth",
         role: "puzzle",
         encountersByIndex: { 0: "futoshiki", 1: "sumplete", 2: "lightbeam", 3: "star-battle" },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d15", pieceIndex: 0 },
@@ -3290,6 +3295,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "constellation",
+        patron: "thoth",
         role: "puzzle",
         encountersByIndex: { 0: "constellation", 1: "balance-scale", 2: "sumplete", 3: "star-battle", 4: "hidato" },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d15", pieceIndex: 1 },
@@ -3552,6 +3558,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "futoshiki",
+        patron: "thoth",
         role: "puzzle",
         encountersByIndex: { 0: "futoshiki", 1: "balance-scale", 2: "constellation", 3: "hidato", 4: "sudoku" },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11", pieceIndex: 1 },
@@ -3565,6 +3572,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "junior_3:p2:wing0" },
         encounter: "star-battle",
+        patron: "thoth",
         role: "puzzle",
         encountersByIndex: { 0: "star-battle" },
         mainEndReward: { type: "sellable", itemId: "sell_bronze_5" },
@@ -3745,6 +3753,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "canisters",
+        patron: "thoth",
         role: "puzzle",
         encountersByIndex: {
           0: "canisters",
@@ -3765,6 +3774,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "junior_3:p3:wing0" },
         encounter: "eclipse",
+        patron: "thoth",
         role: "puzzle",
         encountersByIndex: { 0: "eclipse", 1: "rush-hour" },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d9", pieceIndex: 1 },
@@ -5296,6 +5306,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "hidato",
+        patron: "anubis",
         role: ["funerary", "puzzle"],
         encountersByIndex: { 0: "hidato", 1: "canisters", 2: "sudoku", 3: "constellation", 4: "procession" },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d3", pieceIndex: 0 },
@@ -5315,6 +5326,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "expert_1:p3:wing0" },
         encounter: "constellation",
+        patron: "anubis",
         role: ["funerary", "puzzle"],
         encountersByIndex: { 0: "constellation", 1: "sumplete" },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 1 },
@@ -7564,6 +7576,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         encounter: "twin-stars",
         condition: { kind: "overgrown", amount: 1 },
+        patron: "sobek",
         role: "puzzle",
         encountersByIndex: {
           0: "twin-stars",
@@ -7594,6 +7607,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         entrance: { stairId: "expert_3:p4:wing0" },
         encounter: "sumplete",
         condition: { kind: "overgrown", amount: 1 },
+        patron: "sobek",
         role: "puzzle",
         encountersByIndex: { 0: "sumplete", 1: "eclipse" },
         mainEndReward: { type: "money", amount: 2 },
@@ -9444,6 +9458,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "lightbeam",
+        patron: "horus",
         role: ["trade", "puzzle"],
         encountersByIndex: {
           0: "lightbeam",
@@ -9472,6 +9487,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "master_1:p3:wing0" },
         encounter: "futoshiki",
+        patron: "horus",
         role: ["trade", "puzzle"],
         encountersByIndex: {
           0: "futoshiki",
@@ -11814,6 +11830,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "constellation",
+        patron: "sekhmet",
         role: ["funerary", "puzzle"],
         encountersByIndex: {
           0: "constellation",
@@ -11846,6 +11863,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "master_3:p4:wing0" },
         encounter: "sudoku",
+        patron: "sekhmet",
         role: ["funerary", "puzzle"],
         encountersByIndex: {
           0: "sudoku",
@@ -12940,6 +12958,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: { stairId: "wizard_1:p0:main0" },
         sideSections: [],
         encounter: "canisters",
+        patron: "ra",
         role: ["funerary", "puzzle"],
         encountersByIndex: {
           0: "canisters",
@@ -13109,6 +13128,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "wizard_1:p0:main0" },
         encounter: "constellation",
+        patron: "ra",
         role: ["funerary", "puzzle"],
         encountersByIndex: {
           0: "constellation",
@@ -13139,6 +13159,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "wizard_1:p0:wing0" },
         encounter: "eclipse",
+        patron: "ra",
         role: ["funerary", "puzzle"],
         encountersByIndex: { 0: "eclipse", 1: "hidato", 2: "procession" },
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
@@ -13153,6 +13174,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: { stairId: "wizard_1:p1:main0" },
         sideSections: [],
         encounter: "sumplete",
+        patron: "ra",
         role: ["funerary", "puzzle"],
         encountersByIndex: {
           0: "sumplete",
@@ -13320,6 +13342,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "wizard_1:p1:main0" },
         encounter: "sumplete",
+        patron: "ra",
         role: ["funerary", "puzzle"],
         encountersByIndex: {
           0: "sumplete",
@@ -13352,6 +13375,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "wizard_1:p1:wing0" },
         encounter: "canisters",
+        patron: "ra",
         role: ["funerary", "puzzle"],
         encountersByIndex: {
           0: "canisters",
@@ -13384,6 +13408,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: { stairId: "wizard_1:p2:main0" },
         sideSections: [],
         encounter: "sumplete",
+        patron: "ra",
         role: ["funerary", "puzzle"],
         encountersByIndex: {
           0: "sumplete",
@@ -13559,6 +13584,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "wizard_1:p2:main0" },
         encounter: "eclipse",
+        patron: "ra",
         role: ["funerary", "puzzle"],
         encountersByIndex: {
           0: "eclipse",
@@ -13590,6 +13616,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "wizard_1:p2:wing0" },
         encounter: "rush-hour",
+        patron: "ra",
         role: ["funerary", "puzzle"],
         encountersByIndex: {
           0: "rush-hour",
@@ -13613,6 +13640,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: { stairId: "wizard_1:p3:main0" },
         sideSections: [],
         encounter: "procession",
+        patron: "ra",
         role: ["funerary", "puzzle"],
         encountersByIndex: {
           0: "procession",
@@ -13767,6 +13795,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "wizard_1:p3:main0" },
         encounter: "balance-scale",
+        patron: "ra",
         role: ["funerary", "puzzle"],
         encountersByIndex: {
           0: "balance-scale",
@@ -13790,6 +13819,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "wizard_1:p3:wing0" },
         encounter: "balance-scale",
+        patron: "ra",
         role: ["funerary", "puzzle"],
         encountersByIndex: {
           0: "balance-scale",
@@ -15154,6 +15184,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: { stairId: "wizard_3:p0:main0" },
         sideSections: [],
         encounter: "constellation",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "constellation",
@@ -15332,6 +15363,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "wizard_3:p0:main0" },
         encounter: "star-battle",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "star-battle",
@@ -15354,6 +15386,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "wizard_3:p0:wing0" },
         encounter: "balance-scale",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "balance-scale",
@@ -15376,6 +15409,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: { stairId: "wizard_3:p1:main0" },
         sideSections: [],
         encounter: "procession",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "procession",
@@ -15541,6 +15575,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "wizard_3:p1:main0" },
         encounter: "canisters",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "canisters",
@@ -15562,6 +15597,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "wizard_3:p1:wing0" },
         encounter: "futoshiki",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "futoshiki",
@@ -15584,6 +15620,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: { stairId: "wizard_3:p2:main0" },
         sideSections: [],
         encounter: "futoshiki",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "futoshiki",
@@ -15764,6 +15801,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "wizard_3:p2:main0" },
         encounter: "sudoku",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "sudoku",
@@ -15787,6 +15825,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "wizard_3:p2:wing0" },
         encounter: "constellation",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "constellation",
@@ -15810,6 +15849,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: { stairId: "wizard_3:p3:main0" },
         sideSections: [],
         encounter: "futoshiki",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "futoshiki",
@@ -15974,6 +16014,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "wizard_3:p3:main0" },
         encounter: "balance-scale",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "balance-scale",
@@ -15997,6 +16038,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "wizard_3:p3:wing0" },
         encounter: "rush-hour",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "rush-hour",
@@ -16020,6 +16062,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: { stairId: "wizard_3:p4:main0" },
         sideSections: [],
         encounter: "balance-scale",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "balance-scale",
@@ -16174,6 +16217,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "wizard_3:p4:main0" },
         encounter: "twin-stars",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "twin-stars",
@@ -16197,6 +16241,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "wizard_3:p4:wing0" },
         encounter: "sudoku",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "sudoku",
@@ -16221,6 +16266,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: { stairId: "wizard_3:p5:main0" },
         sideSections: [],
         encounter: "balance-scale",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "balance-scale",
@@ -16375,6 +16421,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "wizard_3:p5:main0" },
         encounter: "constellation",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "constellation",
@@ -16398,6 +16445,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "wizard_3:p5:wing0" },
         encounter: "balance-scale",
+        patron: "maat",
         role: ["judgement", "funerary", "puzzle"],
         encountersByIndex: {
           0: "balance-scale",
@@ -19185,6 +19233,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "pillar",
           "brazier",
         ],
+        patron: "maat",
         wallDecorations: ["sconce", "mask", "niche"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "tableau", 4: "tableau", 5: "crocodile" },
@@ -19237,6 +19286,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "pillar",
           "brazier",
         ],
+        patron: "maat",
         wallDecorations: ["sconce", "mask", "niche"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "tableau", 4: "tableau", 5: "crocodile" },
@@ -19289,6 +19339,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "pillar",
           "brazier",
         ],
+        patron: "maat",
         wallDecorations: ["sconce", "mask", "niche"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "tableau", 4: "tableau", 5: "crocodile" },
@@ -19341,6 +19392,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "pillar",
           "brazier",
         ],
+        patron: "maat",
         wallDecorations: ["sconce", "mask", "niche"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "tableau", 4: "tableau", 5: "crocodile" },
@@ -19394,6 +19446,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "pillar",
           "brazier",
         ],
+        patron: "maat",
         wallDecorations: ["sconce", "mask", "niche"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "tableau", 4: "tableau", 5: "crocodile" },
@@ -19467,6 +19520,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "pillar",
           "brazier",
         ],
+        patron: "osiris",
         wallDecorations: ["sconce", "mask", "niche"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "tableau", 4: "tableau", 5: "crocodile" },
@@ -19520,6 +19574,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "pillar",
           "brazier",
         ],
+        patron: "osiris",
         wallDecorations: ["sconce", "mask", "niche"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "tableau", 4: "tableau", 5: "crocodile" },
@@ -19573,6 +19628,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "pillar",
           "brazier",
         ],
+        patron: "osiris",
         wallDecorations: ["sconce", "mask", "niche"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "tableau", 4: "tableau", 5: "crocodile" },
@@ -19626,6 +19682,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "pillar",
           "brazier",
         ],
+        patron: "osiris",
         wallDecorations: ["sconce", "mask", "niche"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "tableau", 4: "tableau", 5: "crocodile" },
@@ -19680,6 +19737,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "pillar",
           "brazier",
         ],
+        patron: "osiris",
         wallDecorations: ["sconce", "mask", "niche"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "tableau", 4: "tableau", 5: "crocodile" },

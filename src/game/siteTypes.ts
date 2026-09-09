@@ -89,6 +89,27 @@ export type ConditionKind = "overgrown" | "flooded"
 /** How far gone a site is, 0–1. The DSL's other knobs are all fractions, so this is one too: 0.25 is a
  * damp corner, 1 is the pyramid the journey is remembered for. */
 export type SiteCondition = { kind: ConditionKind; amount: number }
+
+/**
+ * Whose tomb this is dedicated to, if anyone.
+ *
+ * A closed union rather than an open string, unlike `theme` or `role`: a patron does nothing but choose a
+ * DRAWING, so an unrecognised one would fail silently as a tile that never resolves — where a misspelt
+ * theme at least reaches a family that can complain.
+ *
+ * NINE, not the seven the handover proposed. The design's list was written without checking the world
+ * against it, and the world disagrees in both directions: six journeys are NAMED for a god, and two of
+ * those — Thoth's temple and the Hall of Osiris — were missing from the seven, while Horus, Sobek and
+ * Sekhmet are on the list and named by no journey at all. Both were already in the art brief's statue row
+ * ("Thoth ibis-headed with palette", "gilded Osiris colossus"), so the list was the thing that was short.
+ *
+ * PURELY DRAWN, and free to author (docs/game-design/world-spec-stability.md). It picks
+ * `<kind>-<patron>.png` over `<kind>.png` for the five kinds a god can appear on, and falls back to the
+ * generic art wherever that file does not exist — which is everywhere today. Nothing else reads it: not
+ * the carve, not the hashes, not a family.
+ */
+export const PATRONS = ["anubis", "horus", "sobek", "bastet", "maat", "ra", "sekhmet", "thoth", "osiris"] as const
+export type Patron = (typeof PATRONS)[number]
 export type RoomCell = {
   type: "room"
   roomType: RoomType
@@ -162,6 +183,9 @@ export type FloorGrid = {
   /** What has got into this site, if anything — see SiteCondition. Runs through every floor of a
    * pyramid by construction: it is authored once, on the pyramid. */
   readonly condition?: SiteCondition
+  /** Whose tomb this is — see Patron. Authored once on the pyramid like `condition`, so every floor of
+   * the climb is dedicated to the same god. Chooses a drawing and nothing else. */
+  readonly patron?: Patron
   /** The hour this floor is at — its authored `theme` (docs/game-design/journeys.md §2: the role is the
    * place, the theme is the hour). The map reads it for its mood overlay and nothing else; a family reads
    * the same name off its own room to pick a skin. Optional: most floors author none and wear their
@@ -229,6 +253,8 @@ export type FloorConfig = {
   /** What has got into this site — see SiteCondition. Authored once on the pyramid, so every floor
    * carries the same one and it runs through the whole climb. */
   condition?: SiteCondition
+  /** Whose tomb this is — see Patron. Authored once on the pyramid and copied onto every floor of it. */
+  patron?: Patron
   mainEndReward?: TreasureReward
   rewards?: (TreasureReward | undefined)[]
   /** Default family/tag(s) for this floor's main-path encounter rooms. An array means "any of these". */

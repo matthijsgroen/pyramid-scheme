@@ -1,4 +1,4 @@
-import type { DecorationKind, SiteCondition, WallDecorationKind } from "../game/siteTypes"
+import type { DecorationKind, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
 import type { Difficulty, FloorConfig, SideSection, Tier, TreasureReward } from "./types"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { GLOBAL_DEFAULTS } from "./spec/global"
@@ -100,6 +100,7 @@ export type BuildFloorOptions = {
   decorations?: DecorationKind[]
   /** What has got into the site. Copied onto every floor, which is what makes it survive the climb. */
   condition?: SiteCondition
+  patron?: Patron
   wallDecorations?: WallDecorationKind[]
 }
 
@@ -117,6 +118,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.decorations?.length ? { decorations: opts.decorations } : {}),
   ...(opts.wallDecorations?.length ? { wallDecorations: opts.wallDecorations } : {}),
   ...(opts.condition ? { condition: opts.condition } : {}),
+  ...(opts.patron ? { patron: opts.patron } : {}),
   ...(opts.encountersByIndex && Object.keys(opts.encountersByIndex).length
     ? { encountersByIndex: opts.encountersByIndex }
     : {}),
@@ -277,6 +279,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           // No per-floor override: a condition that stopped halfway up would read as an authoring slip
           // rather than as weather. It is the site's, and every floor of it carries the same one.
           condition: constraint.condition,
+          patron: constraint.patron,
         })
       )
     }
@@ -320,6 +323,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             // Only the explicit-`floors` branch used to set it, so a condition authored on any ordinary
             // pyramid was silently dropped — invisible until the first one was authored.
             condition: constraint.condition,
+            patron: constraint.patron,
           })
         )
         continue
@@ -354,6 +358,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           encounterArgs: constraint.encounterArgs,
           theme: constraint.theme,
           condition: constraint.condition,
+          patron: constraint.patron,
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
           packing: resolvePacking(constraint, journeyId, i),
           sealed: resolveSealed(constraint),
@@ -424,6 +429,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
             condition: constraint.condition,
+            patron: constraint.patron,
           })
         )
       })
@@ -484,6 +490,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     encounterArgs: constraint.encounterArgs,
     theme: constraint.theme,
     condition: constraint.condition,
+    patron: constraint.patron,
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
     packing: resolvePacking(constraint, journeyId, i),
     sealed: resolveSealed(constraint),

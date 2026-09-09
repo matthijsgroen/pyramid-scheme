@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import type { FC } from "react"
 import { useEffect, useState } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
+import { PATRONS as ALL_PATRONS } from "@/game/siteTypes"
 import { CELL, WALL_H } from "./mapScale"
 import { ART_IMAGE_RENDERING, tileUrl } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
@@ -19,10 +20,11 @@ import { tierPalette } from "./tileMaterials"
 // today, before any resolver exists — and the convention it reads is the contract that resolver will have
 // to honour, which is the other half of why it is worth having first.
 
-/** The seven the design settles on, in `docs/instructions/site-map-art-handover.md`, "Decided but NOT
- * built". Sobek and Ma'at are here because a tomb's patron is not always a funerary god — a waterworks
- * wing belongs to the crocodile and a judgement hall to the feather. */
-const PATRONS = ["anubis", "horus", "sobek", "bastet", "maat", "ra", "sekhmet"] as const
+/** The canonical list, imported rather than copied: this sheet counts coverage, and a sheet counting
+ * against its own private list would keep reporting complete while a god nobody drew was missing from it.
+ * It grew from seven to nine that way — Thoth and Osiris are named by journeys and were not on the
+ * design's original list. */
+const PATRONS = ALL_PATRONS
 
 /** The five kinds a patron can dress, and no more. Every one of them is something a god is DEPICTED on —
  * a statue of him, a shrine to him, his plaque, his mask — so a patron variant is a different drawing of

@@ -1,5 +1,5 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
-import type { DecorationKind, SiteCondition, WallDecorationKind } from "../game/siteTypes"
+import type { DecorationKind, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { wardKeyDifficulty } from "../data/difficultyLevels"
 
@@ -227,6 +227,18 @@ export type PyramidConstraint = {
    * can say. Purely drawn — a free field (docs/game-design/world-spec-stability.md).
    */
   condition?: SiteCondition
+  /**
+   * Whose tomb this is — see Patron in game/siteTypes.ts.
+   *
+   * Authored on the PYRAMID beside `condition` and for the same reason: a dedication is a property of
+   * the site, not of one floor, and the point is that it holds all the way up the climb. A journey
+   * named for a god says so once here rather than seven times.
+   *
+   * Purely drawn — a free field (docs/game-design/world-spec-stability.md). It chooses
+   * `<kind>-<patron>.png` over the generic art for the five kinds a god appears on, and falls back
+   * silently where that file does not exist.
+   */
+  patron?: Patron
   /** Default family/tag for this pyramid/tomb's main-path encounter rooms — e.g. a tomb sets
    * "tableau" (or the "tomb-puzzle" tag) here so every floor's main-path rooms use it. An array is
    * "any of these". */

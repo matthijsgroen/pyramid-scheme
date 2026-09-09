@@ -1,4 +1,4 @@
-import type { DecorationKind, SiteCondition, WallDecorationKind } from "../game/siteTypes"
+import type { DecorationKind, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
 
 export type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
 // Authored puzzle-count progression across a journey's pyramids: `start` on pyramid 1,
@@ -83,6 +83,9 @@ export type FloorConfig = {
   role?: string | string[]
   /** What has got into this site — mirrors game/siteTypes.ts's FloorConfig.condition. Authored on the
    * PYRAMID and copied onto every floor, so it survives the climb through the ranks. */
+  /** Whose tomb this is — mirrors game/siteTypes.ts's FloorConfig.patron. Authored on the PYRAMID
+   * and copied onto every floor, exactly as `condition` is. */
+  patron?: Patron
   condition?: SiteCondition
 }
 

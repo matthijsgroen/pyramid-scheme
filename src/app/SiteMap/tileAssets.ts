@@ -54,6 +54,28 @@ export const tileVariants = (tier: Difficulty, name: string): string[] => {
   return own.length > 0 ? own : forTier("default")
 }
 
+/** The five kinds a god can be depicted on. Everything else ignores the patron entirely — a jar rack does
+ * not belong to Anubis, and a patron that changed the rubble would be a theme, not a dedication. */
+const PATRON_KINDS = new Set<string>(["statue", "shrine", "wallShrine", "stela", "mask"])
+
+/**
+ * The tile for a kind in a site dedicated to a god: `<kind>-<patron>` where that file exists, and the
+ * rank's generic drawing where it does not.
+ *
+ * The OTHER HALF of `tileVariants`, and the difference is worth stating because they look alike. That one
+ * picks between drawings by cell position, which buys variety and cannot be aimed; this one is AUTHORED,
+ * so a pyramid can say whose tomb it is and have every statue in it agree. Variety and dedication are
+ * different things and a site wants both.
+ *
+ * FALLING BACK IS THE NORMAL CASE, not an error path. No patron art exists yet, so today this returns the
+ * generic drawing every time — which means a rank's generic kind is in effect its DEFAULT GOD, and the
+ * priest's Anubis statue serves an Anubis pyramid and a Ma'at one alike until a second god is painted.
+ * That is the decided behaviour rather than a gap (see the handover's patron note), and it is why
+ * authoring a patron today is safe: it cannot make a floor look worse than it already does.
+ */
+export const patronTileUrl = (tier: Difficulty, name: string, patron?: string): string | undefined =>
+  (patron && PATRON_KINDS.has(name) ? byTier.get(`${tier}/${name}-${patron}`) : undefined) ?? tileUrl(tier, name)
+
 /**
  * How the browser scales a tile — the ONE line that follows from whether the art is pixel art or painted.
  *

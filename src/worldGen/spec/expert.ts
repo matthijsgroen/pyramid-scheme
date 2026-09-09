@@ -279,4 +279,15 @@ export const expertRules: Rule[] = [
       },
     ],
   }),
+
+  // A god on ONE PYRAMID, in journeys that are not named for one. These four are the patrons the world
+  // never names, and a whole journey dedicated to a god it is not called after would overstate it — a
+  // single pyramid reads as a shrine on the way up instead. `last` each time: the climax pyramid is the
+  // one a journey is remembered by.
+  //
+  // Chosen by the journey's own authored ROLE and not by its title. Anubis takes the Valley of the Kings
+  // because its role is funerary and its brief says necropolis, and he is the necropolis. Sobek takes the
+  // Nile Delta because that journey's brief already lists a crocodile.
+  journey("expert_1").pyramid("last", { patron: "anubis" }),
+  journey("expert_3").pyramid("last", { patron: "sobek" }),
 ]
