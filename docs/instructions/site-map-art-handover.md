@@ -120,6 +120,13 @@ from a hash of the site id and the room key, and zero per-room decorations are s
   The plaques are FLAT wall items, so most of it is straight to the generator; and the statues need no
   scan either now that `prim_statue` exists — `couchant` is Anubis or Sobek, `lioness` is Sekhmet or
   Bastet, and Horus, Ra and Ma'at are `standing` with a different head and attribute.
+  **A rank's GENERIC kind is its default god, and that is decided.** The priest's `statue` is an Anubis
+  and it lives at `expert/statue.png`, not at `statue-anubis.png` — so every statue in his tomb is Anubis
+  until a second god is painted for that rank. Chosen over duplicating the file under a patron name
+  because it needs no work now, forecloses nothing, and leaves the generic slot filled for rooms no
+  patron ever reaches. The consequence to expect: `PatronSheet` honestly reads 0 of 35 until someone
+  paints a SECOND god for a rank, which is the point at which patrons start being visible in play.
+
   **`App/SiteMap/PatronSheet` is the sheet to judge them on**, and it works before any of the code does:
   it stages all seven crossed with all five on a rank's floor, reads `<kind>-<patron>.png` straight off
   the filesystem, dims a cell that is falling back to the generic art and counts how many of the

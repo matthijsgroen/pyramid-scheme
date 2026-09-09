@@ -154,7 +154,10 @@ const Cell: FC<{ tier: Difficulty; kind: string; patron: string; zoom: number }>
 const Sheet: FC<{ tier: Difficulty; zoom: number }> = ({ tier, zoom }) => {
   const drawn = PATRONS.flatMap(p => KINDS.filter(k => tileUrl(tier, `${k}-${p}`))).length
   return (
-    <div className="min-h-screen bg-neutral-900 p-4 text-white">
+    // h-screen + overflow-auto, NOT min-h-screen: a `layout: "fullscreen"` story clips instead of
+    // scrolling, so a sheet taller than the canvas simply loses its lower rows — and seven patrons is
+    // always taller than the canvas. `PropSheet` records the same thing and this story ignored it.
+    <div className="flex h-screen flex-col overflow-auto bg-neutral-900 p-4 text-white">
       <h1 className="mb-1 text-sm">
         Patrons · {tier} · {drawn} of {PATRONS.length * KINDS.length} drawn
       </h1>
