@@ -2141,24 +2141,29 @@ def prim_statue():
         # as a vertical lump by the law that y and z both feed the drawn vertical. `lioness` sits up, which
         # is the same parts in a taller stack.
         lying = contents == "couchant"
+        # NARROWER THAN ITS PLINTH, and stood clear of it. The first envelope laid a body slab 0.54 wide
+        # flush on a plinth 0.62 wide, in the same material: two rough slabs meeting with no step and no
+        # colour change, which the generator resolved by reading the LOWER one as pedestal and the body
+        # as more pedestal — then carved a small jackal on top of the pair. An animal has to overhang
+        # nothing and to sit on a visible ledge.
         if lying:
-            mark(box(0.54, 0.23, 0.19, x=0.03, z=b + 0.095), "body")          # body, roughed FAT
-            chest_z, head_z, hx = b + 0.235, b + 0.35, -0.18
+            mark(box(0.46, 0.21, 0.19, x=0.04, z=b + 0.115), "figure")        # body, roughed FAT
+            chest_z, head_z, hx = b + 0.255, b + 0.37, -0.17
         else:
-            mark(box(0.26, 0.24, 0.30, x=0.0, y=0.03, z=b + 0.15), "body")    # haunches, set BACK
-            mark(box(0.13, 0.13, 0.26, x=0.0, y=-0.16, z=b + 0.13), "body")   # forelegs, forward and down
-            chest_z, head_z, hx = b + 0.40, b + 0.52, 0.0
-        mark(box(0.20, 0.20, 0.19, x=hx, z=chest_z), "body")                  # chest
-        mark(box(0.17, 0.16, 0.15, x=hx - (0.02 if lying else 0), z=head_z), "body")
+            mark(box(0.26, 0.24, 0.30, x=0.0, y=0.03, z=b + 0.17), "figure")  # haunches, set BACK
+            mark(box(0.13, 0.13, 0.26, x=0.0, y=-0.16, z=b + 0.15), "figure") # forelegs, forward and down
+            chest_z, head_z, hx = b + 0.42, b + 0.54, 0.0
+        mark(box(0.20, 0.20, 0.19, x=hx, z=chest_z), "figure")                # chest
+        mark(box(0.17, 0.16, 0.15, x=hx - (0.02 if lying else 0), z=head_z), "figure")
         # The MUZZLE reaches in X and the EARS stand apart in X — a pair built front-to-back stacks into
         # one drawn ear, which the canopic jackal's stopper records.
-        mark(box(0.15, 0.10, 0.09, x=hx - 0.14, y=-0.015, z=head_z - 0.01), "body")
+        mark(box(0.15, 0.10, 0.09, x=hx - 0.14, y=-0.015, z=head_z - 0.01), "figure")
         for ex in (-0.045, 0.045):
             bpy.ops.mesh.primitive_cone_add(vertices=10, radius1=0.032, radius2=0.005, depth=0.10,
                                             location=(hx + ex, 0.0, head_z + 0.105))
-            mark(bpy.context.object, "body")
+            mark(bpy.context.object, "figure")
         if lying:
-            mark(box(0.06, 0.07, 0.14, x=0.28, y=-0.01, z=b + 0.06), "body")  # tail over the end
+            mark(box(0.06, 0.07, 0.14, x=0.26, y=-0.01, z=b + 0.075), "figure")  # tail over the end
         return join_all()
 
     seated = contents == "seated"
@@ -2169,27 +2174,27 @@ def prim_statue():
         mark(box(0.40, 0.34, 0.10, y=-0.06, z=b + 0.32), "body")              # seat
         # LAP AND SHINS. The lap runs forward in -y so the shear draws it lower than the seat, and the
         # shins drop from its front edge: together they are the L that says seated.
-        mark(box(0.30, 0.22, 0.11, y=-0.16, z=b + 0.40), "body")              # thighs
-        mark(box(0.28, 0.10, 0.34, y=-0.24, z=b + 0.18), "body")              # shins
-        mark(box(0.30, 0.14, 0.06, y=-0.30, z=b + 0.03), "body")              # feet
+        mark(box(0.30, 0.22, 0.11, y=-0.16, z=b + 0.40), "figure")            # thighs
+        mark(box(0.28, 0.10, 0.34, y=-0.24, z=b + 0.18), "figure")            # shins
+        mark(box(0.30, 0.14, 0.06, y=-0.30, z=b + 0.03), "figure")            # feet
         torso_z, torso_h = b + 0.62, 0.30
     else:
         # STANDING, striding: one leg advanced in -y so it draws lower and the two legs do not merge into
         # a column. A figure standing with its feet level is a post with a head.
-        mark(box(0.13, 0.13, 0.44, x=-0.08, y=0.04, z=b + 0.22), "body")      # back leg
-        mark(box(0.13, 0.15, 0.44, x=0.09, y=-0.09, z=b + 0.22), "body")      # advanced leg
-        mark(box(0.34, 0.22, 0.16, z=b + 0.50), "body")                       # kilt, over both
+        mark(box(0.13, 0.13, 0.44, x=-0.08, y=0.04, z=b + 0.22), "figure")    # back leg
+        mark(box(0.13, 0.15, 0.44, x=0.09, y=-0.09, z=b + 0.22), "figure")    # advanced leg
+        mark(box(0.34, 0.22, 0.16, z=b + 0.50), "figure")                     # kilt, part of the figure
         torso_z, torso_h = b + 0.58, 0.34
 
-    mark(box(0.32, 0.20, torso_h, y=0.01, z=torso_z + torso_h / 2), "body")   # torso
+    mark(box(0.32, 0.20, torso_h, y=0.01, z=torso_z + torso_h / 2), "figure") # torso
     # ARMS in X, down the sides, because an arm is the one part of a figure that can only read sideways.
     for sx in (-1, 1):
-        mark(box(0.075, 0.14, torso_h * 0.82, x=sx * 0.20, y=-0.02, z=torso_z + torso_h * 0.44), "body")
+        mark(box(0.075, 0.14, torso_h * 0.82, x=sx * 0.20, y=-0.02, z=torso_z + torso_h * 0.44), "figure")
     top = torso_z + torso_h
     # THE GAP AT THE NECK — 0.03 of clear air, which is the one measurement in this primitive that is not
     # negotiable. Bes and the jackal both fused without it.
-    mark(box(0.09, 0.10, 0.05, z=top + 0.025), "body")                        # neck
-    mark(box(0.17, 0.17, 0.17, z=top + 0.135), "body")                        # head
+    mark(box(0.09, 0.10, 0.05, z=top + 0.025), "figure")                      # neck
+    mark(box(0.17, 0.17, 0.17, z=top + 0.135), "figure")                      # head
     # THE NEMES: a trapezoid widening to the shoulders, and the whole reason a human figure reads at all.
     # Built as a cone of four sides so its taper is real geometry rather than a painted edge.
     bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=0.21, radius2=0.135, depth=0.20,
@@ -2199,7 +2204,7 @@ def prim_statue():
     bpy.ops.object.transform_apply(rotation=True)
     nemes.scale = (1.0, 0.72, 1.0)
     bpy.ops.object.transform_apply(scale=True)
-    mark(recalc_outward(nemes), "body")
+    mark(recalc_outward(nemes), "figure")
     return join_all()
 
 
@@ -2284,6 +2289,20 @@ PART_COLOURS = {
     # and the prompt both said: it came back pure black and read as a hole punched in a bowl. Dark, with
     # some of the vessel's own colour in it, is what water looks like in a basin indoors.
     "water": "#4a4f4a",
+    # A carved FIGURE, and the one part whose job is to be a different colour from the stone under it.
+    # `prim_statue`'s envelope is rough slabs, and a rough slab of animal sitting on a rough slab of
+    # plinth is one mass: told apart only by shape, the first Anubis came back with his BODY read as
+    # pedestal and a smaller jackal carved on top of it. A figure and its base are never the same
+    # material anyway — black resin on basalt, painted limestone on granite — so this is also true.
+    #
+    # MID-TONE, and not the black the prompt asks for. Anubis is black resin and the obvious default was
+    # #3a3630, which told him apart from the plinth and then cost the thing the scaffold is FOR: at that
+    # value his top faces and his front faces shade the same and the planes stop reading, which is the
+    # grey-render failure Step 2's gate is about. #6f6459 is far enough from pale basalt to be a
+    # different object and light enough to still catch the rig. A scaffold's colour is a legibility aid,
+    # never a colour instruction — the niche arrives in stone and comes back with cedar doors.
+    # Override per rank with --colour-figure.
+    "figure": "#6f6459",
     # NOCAST is not a colour: a part kept out of the footprint is still painted the rank's stone.
 }
 

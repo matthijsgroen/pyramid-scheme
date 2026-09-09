@@ -59,6 +59,16 @@ free — the frame's aspect, that there is no perspective, which way the long ax
 way the figure faces, and that placement and size are unchanged. Releasing one constraint means writing
 the others out explicitly, because they were never separate sentences.
 
+**AND THE ENVELOPE HAS TO SAY WHICH SLAB IS THE ANIMAL.** The second Anubis held the frame, the
+projection and the facing — every rule above worked — and still came back wrong: the jackal had shrunk to
+a third of its size and the plinth had grown into a tall pedestal. Cause was the model, not the words. A
+rough slab of body sitting flush on a rough slab of plinth, both painted the rank's one stone, is a single
+mass, and the generator resolved it by reading the body AS pedestal and carving a small jackal on top.
+
+`prim_statue` now marks the figure a different PART from its base, so the scaffold arrives told apart —
+`prim_niche`'s rule, and the reason a marked primitive marks all of itself. This is the failure mode a
+loose prompt invites: the freer the paint, the less ambiguity the geometry may contain.
+
 ---
 
 ## Priest — twelve
