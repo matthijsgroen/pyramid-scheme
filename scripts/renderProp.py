@@ -1119,11 +1119,31 @@ def prim_basin():
         #
         # The near length is drawn in FRONT of the water — nearest the camera, so it occludes the water's
         # bottom edge — which is exactly what a coping does and what the missing edge was asking for.
+        #
+        # ALL FOUR LENGTHS END FLUSH, so the coping's outline is a clean 1.04 by 0.74 rectangle and
+        # `--context`'s opening can be cut to exactly that. The near and far lengths used to run 0.06
+        # past the sides, which left four tabs poking out at the corners; harmless while the paving
+        # stopped short of the coping, and a z-fighting overlap the moment the two became coplanar.
         for sx in (-1, 1):
             mark(box(0.06, pd + 0.12, 0.045, x=sx * (pw + 0.06) / 2, z=0.022), "body")
         for sy in (-1, 1):
-            mark(box(pw + 0.18, 0.06, 0.045, y=sy * (pd + 0.06) / 2, z=0.022), "body")
-        return join_all()
+            mark(box(pw + 0.12, 0.06, 0.045, y=sy * (pd + 0.06) / 2, z=0.022), "body")
+        pool = join_all()
+        # THE COPING'S TOP IS THE FLOOR, so the whole pool drops until it is at z=0.
+        #
+        # Nothing about the object changes — this is a uniform translation, and `seat_and_normalise`
+        # removes it again — but z=0 is where `--context` lays the paving, so moving it moves the FLOOR.
+        # Built with the paving at the water's rim the kerb stood a finger proud of it and the first
+        # painted return read exactly as that: a framed slab lying ON the floor, with its own shadow
+        # under it, rather than an opening cut INTO the floor. A temple pool's coping is a course of kerb
+        # bedded flush, and flush is also what stops the tile reading as a picture hung on a wall.
+        #
+        # Which leaves nothing standing above the paving, so this prop casts NOTHING and is imported with
+        # no `--seat`. That is the same rule `prim_pit` follows and for once with no exception to it:
+        # the pit keeps a seat because its spoil lies on the floor beside the hole, and there is no
+        # equivalent here — every part of this is at or below the paving.
+        pool.data.transform(Matrix.Translation((0.0, 0.0, -0.0445)))
+        return pool
     # The nobleman's basin is SHALLOW, so its stand is tall: a squat vessel on short legs is scaled by
     # its width and lands about 48 high in an 84 slot, which wastes the tallest thing on the floor.
     leg_h = 0.45 if contents == "bowl" else 0.30

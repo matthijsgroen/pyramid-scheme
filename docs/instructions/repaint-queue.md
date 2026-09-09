@@ -240,18 +240,23 @@ answered the only question the picture asked.
 
 `pit` survives the same shape without a floor because it is full of things that CROSS ITS OWN EDGE: a
 ladder over the near lip, its spoil on the paving outside. Where a hole has no such furniture, the surface
-has to be drawn instead — so this one is handed over rendered `--context=0.92x0.62`, which puts the rank's
-floor round it with a hole of exactly that size cut in it, so the floor's own edge is the pool's lip. It
-is added after the camera, so the frame is unchanged, and the mask and the footprint are rendered WITHOUT
-it. No floor reaches the tile. The two numbers are the pool's own metres, the same `pw, pd` the primitive
-is built from; `prop-pipeline.md` has why that needs saying and what it cost.
+has to be drawn instead — so this one is handed over rendered `--context=1.04x0.74`, which puts the rank's
+floor round it with a hole of exactly that size cut in it, so the floor's own edge is the coping's outer
+edge. It is added after the camera, so the frame is unchanged, and the mask is rendered WITHOUT it. No
+floor reaches the tile. The two numbers are the coping's own metres, measured off the primitive;
+`prop-pipeline.md` has why that needs saying and what it cost.
 
-**The floor runs off ALL FOUR EDGES**, the near one included, and that is the difference between this
-reference and the four before it. Ground that stops inside the frame is a plinth with a hole in it, and
-with a shadow beneath, a slab floating in the air.
+**The floor runs off ALL FOUR EDGES**, the near one included. Ground that stops inside the frame is a
+plinth with a hole in it, and with a shadow beneath, a slab floating in the air.
+
+**AND THE COPING IS BEDDED FLUSH, which is what the fifth roll was for.** Built with the paving at the
+water's rim the kerb stood a finger proud of it, and the painted return read exactly as that: a framed
+slab lying ON the floor with its own shadow under it, which at 56 units is a picture hung on a wall. The
+whole pool now drops until the coping's top IS the paving. Nothing stands above the floor any more, so
+this is the one prop in the file imported with no `--seat` — there is nothing left to cast a shadow.
 
 **Regenerating this one's scaffold takes an extra flag** that no other entry needs —
-`--context=0.92x0.62 --shadow=0` on the handed-over render, and on that render only. The exact command is under
+`--context=1.04x0.74 --shadow=0` on the handed-over render, and on that render only. The exact command is under
 "Regenerating the attachments" at the foot of this file, because a fenced block cannot go here: `yarn
 repaint` takes an entry's FIRST bare fence as the prompt, so a code block above it is what gets pasted.
 
@@ -278,13 +283,16 @@ laid flush with the paving on all four sides, and the length of it nearest you p
 water. The four ledges at the left, the lowest of them under the surface, are STEPS walking down into the
 pool from the paving.
 
-Nothing here is a tank, a tub, a trough or a basin, and nothing has an outside you could see. Apart from
-the coping, which stands a hand's width proud, everything is at or below the level of the paving.
+Nothing here is a tank, a tub, a trough or a basin, and nothing has an outside you could see. NOTHING
+STANDS ABOVE THE PAVING — not even the coping, which is bedded level with it, its top face in the same
+plane as the slabs it is set into. Everything else is below.
 
 The paving is dark basalt, cool grey-blue, laid in large dressed slabs and dusted with natron. The ruled
 grid across the whole frame gives the JOINTS between those slabs; keep every one of them where it is, so
-the paving reads as one continuous floor running out of the picture on all four sides. The coping is
-the same stone, its edge rubbed pale where feet cross it. The steps are worn hollow in their middles.
+the paving reads as one continuous floor running out of the picture on all four sides. The coping is the
+same stone in one unbroken course with no joints in it, its inner edge rubbed pale where feet cross it —
+that change of surface is all that separates it from the paving, so do not draw a shadow beside it. The
+steps are worn hollow in their middles.
 
 The water is a still flat surface, dark green-grey, a touch lighter where it meets the stone, and darker
 in the far corners. A pale crust of NATRON has dried along the waterline all round and on the tread of the
@@ -301,7 +309,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold basin --contents=pool --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/basin.webp --tier=expert --name=basin --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+  --filter=smooth --mask="$OBJ" --brightness=0.9
 ```
 
 ### `expert/brazier` — a censer hanging on its stand
@@ -1572,15 +1580,15 @@ override `art/rebuild.sh` takes.
 
 **A HOLE's scaffold takes `--context`, and only the handed-over render does.** `expert/basin` is the one
 entry that needs it: the floor goes round the object with a hole of the stated size cut in it, so the
-generator can see what the hole is cut INTO. The mask and the footprint are rendered without it, so no
-floor reaches the tile.
+generator can see what the hole is cut INTO. The mask is rendered without it, so no floor reaches the
+tile. The size is in the primitive's own metres; `prop-pipeline.md` has the rest of the laws. There is no
+footprint render here — nothing on this prop stands above the paving, so it casts nothing.
 
 ```sh
 r() { yarn render-prop --primitive=basin --contents=pool --colour=#a7b2be --floor=#8d98a5 "$@"; }
 P=~/tile-previews/basin-expert
-r --context=0.92x0.62 --shadow=0 --out=$P.png
+r --context=1.04x0.74 --shadow=0 --out=$P.png
 r --shadow=0 --background=none --out=$P-obj.png
-r --only=shadow --background=none --out=$P-shadow.png
 ```
 
 **And no fenced block may sit above an entry's prompt.** `yarn repaint` takes the FIRST bare fence in a

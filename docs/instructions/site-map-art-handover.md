@@ -39,7 +39,7 @@ is most of what is left in the whole set, and none of it needs Blender again.
 **Read `yarn art-census`, not this paragraph.** The count below is a snapshot and every summary of it in
 this file has drifted at least once.
 
-`yarn art-census` is the authority and reports 54 placeholders: wizard 20, master 17, expert 13, junior 4.
+`yarn art-census` is the authority and reports 53 placeholders: wizard 20, master 17, expert 12, junior 4.
 
 ### The three files that run the work
 
@@ -128,9 +128,9 @@ from a hash of the site id and the room key, and zero per-room decorations are s
   paints a SECOND god for a rank, which is the point at which patrons start being visible in play.
 
   **`App/SiteMap/PatronSheet` is the sheet to judge them on**, and it works before any of the code does:
-  it stages all seven crossed with all five on a rank's floor, reads `<kind>-<patron>.png` straight off
+  it stages all nine crossed with all five on a rank's floor, reads `<kind>-<patron>.png` straight off
   the filesystem, dims a cell that is falling back to the generic art and counts how many of the
-  thirty-five are real. Today it says 0 of 35, which is the honest number.
+  forty-five are real. Today it says 0 of 45, which is the honest number.
 - **A steerable patron, as opposed to a varied one.** `tileVariants` already picks `<kind>-2.png` by cell
   position, which buys variety and cannot be aimed. Patron needs the other half: an authored field on the
   pyramid, purely drawn and therefore free, plus a resolver that prefers `<kind>-<patron>.png`. The
@@ -156,7 +156,7 @@ where a purpose has two wall items to choose between.
 API bills per image, so the paste is done by hand and the tooling only saves the searching.
 
 ```sh
-yarn repaint                  # the 31 keys still owed
+yarn repaint                  # the 35 keys still owed
 yarn repaint master/mask      # prompt to the clipboard, both attachments revealed in the Finder
 # attach the two, paste, generate, download to ~/Downloads
 ```

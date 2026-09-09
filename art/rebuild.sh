@@ -774,3 +774,25 @@ yarn import-tile art/masters/props/expert/statue.webp --tier=expert --name=statu
 scaffold shelf --contents=papyrus --spin=-14 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/shelf.webp --tier=expert --name=shelf --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.9
+
+# The priest's SACRED POOL, and the only tile in this file whose scaffold was handed over with a FLOOR
+# under it. A hole cannot be a product shot: an object on magenta is a thing you could pick up, and the
+# early rolls came back a tank, a tray, a flat plan and a panel because that is the only question the
+# picture asked. `--context=1.04x0.74` on the handed-over render alone puts the rank's paving round it
+# with a hole of exactly that size cut in it, running off all four edges of the frame. The mask below is
+# rendered WITHOUT it, so none of the floor reaches the tile — see the entry in repaint-queue.md and the
+# `--context` laws in prop-pipeline.md.
+#
+# NO --seat, alone in this file. The coping is bedded FLUSH with the paving, so nothing on this prop
+# stands above the floor and there is nothing to cast. It was imported with one first, and the footprint
+# arrived a fifth of the tile BELOW the coping that cast it: `make_shadow` flattens to the lowest point
+# that survives the void-drop, which here is the bottom of the deepest submerged step, three quarters of
+# the object down. A bar of shadow under a hole is the one thing that makes a hole read as a slab.
+#
+# 0.9 for the NATRON. The crust along the waterline and on the dry treads is the whitest thing the priest
+# owns and put 11.5% over the light clamp untouched; at 0.9 it is 3.2%. The dark tail goes the other way
+# and is left alone on purpose — it is the water, and a hole is supposed to be dark. `pit`, shipped and
+# correct, measures 93% under the dark clamp.
+scaffold basin --contents=pool --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/basin.webp --tier=expert --name=basin --slot=prop \
+  --filter=smooth --mask="$OBJ" --brightness=0.9
