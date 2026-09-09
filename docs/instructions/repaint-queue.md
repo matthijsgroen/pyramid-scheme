@@ -240,9 +240,15 @@ answered the only question the picture asked.
 
 `pit` survives the same shape without a floor because it is full of things that CROSS ITS OWN EDGE: a
 ladder over the near lip, its spoil on the paving outside. Where a hole has no such furniture, the surface
-has to be drawn instead — so this one is rendered `--context=1`, which lays a slab of the rank's own floor
-under it for the generator's eye. It is added after the camera, so the frame is unchanged, and the mask
-and the footprint are rendered WITHOUT it. No floor reaches the tile.
+has to be drawn instead — so this one is handed over rendered `--context=0.86x0.30`, which puts the rank's
+floor round it with a hole of exactly that size cut in it, so the floor's own edge is the pool's lip. It
+is added after the camera, so the frame is unchanged, and the mask and the footprint are rendered WITHOUT
+it. No floor reaches the tile.
+
+**Regenerating this one's scaffold takes an extra flag** that no other entry needs —
+`--context=0.86x0.30` on the handed-over render, and on that render only. The exact command is under
+"Regenerating the attachments" at the foot of this file, because a fenced block cannot go here: `yarn
+repaint` takes an entry's FIRST bare fence as the prompt, so a code block above it is what gets pasted.
 
 **Which is why this prompt does not mention magenta.** There is none in the reference: the frame is
 paving. The paint that lands on the paving is discarded by the mask exactly as an invented background is,
@@ -1558,6 +1564,25 @@ silently.
 
 `render-prop` finds Blender in `/Applications` by itself; set `BLENDER` to point somewhere else, the same
 override `art/rebuild.sh` takes.
+
+**A HOLE's scaffold takes `--context`, and only the handed-over render does.** `expert/basin` is the one
+entry that needs it: the floor goes round the object with a hole of the stated size cut in it, so the
+generator can see what the hole is cut INTO. The mask and the footprint are rendered without it, so no
+floor reaches the tile.
+
+```sh
+r() { yarn render-prop --primitive=basin --contents=pool --colour=#a7b2be --floor=#8d98a5 "$@"; }
+P=~/tile-previews/basin-expert
+r --context=0.86x0.30 --out=$P.png
+r --shadow=0 --background=none --out=$P-obj.png
+r --only=shadow --background=none --out=$P-shadow.png
+```
+
+**And no fenced block may sit above an entry's prompt.** `yarn repaint` takes the FIRST bare fence in a
+block as the prompt, so a `sh` snippet added to an entry's prose silently becomes what gets pasted — the
+match runs from that snippet's CLOSING fence to the prompt's opening one and copies the prose between
+them. Caught here by the line count dropping from 29 to 10. Notes above the prompt stay prose; commands
+go under this heading.
 
 **The material references** — a quarter of each rank's own floor tile, upscaled. Plain by construction,
 because a floor tile is a seamless texture with no object in it:

@@ -3044,14 +3044,41 @@ def main():
     # purpose: a slab with visible edges would read as a plinth the hole is cut into rather than as ground
     # going on past the picture.
     if arg("context") and arg("only", "both") != "shadow":
-        ground = box(6.0, 6.0, 0.06, z=-0.03)
-        # SHEARED like everything else, and forgetting it renders NOTHING. The camera is an orthographic
-        # FRONT view — the shear is what supplies the projection — so a horizontal plane is edge-on and
-        # draws as a line of zero height. Sheared, its far edge lifts by k per unit of depth and it
-        # becomes the parallelogram of ground this flag exists to show.
-        shear(ground, k, 0)
-        ground.data.materials.clear()
-        ground.data.materials.append(flat_material("context", arg("floor", "#6c6257")))
+        # A FLOOR WITH A HOLE CUT IN IT, the hole being this object's own footprint.
+        #
+        # Not a slab behind the object, which is what this was first and which is a fudge: with no opening
+        # the floor is simply a backdrop the pool is drawn over, and the geometry says nothing the paint
+        # can trust. Cut, the floor's own edge IS the lip of the hole — the near edge stops where the
+        # paving stops, the far edge is what the water runs up to, and the shear draws all of it correctly
+        # without anything being positioned by eye to look right.
+        #
+        # Four boxes rather than a boolean: the opening is a rectangle, and four boxes round a rectangle
+        # ARE a rectangle with a hole in it, at no cost and with no modifier to apply.
+        # THE OPENING IS DECLARED, not measured off the object, and the jar is why. Cut to the object's
+        # own bounds the hole swallowed everything standing BESIDE the pool — and a jar on the paving is
+        # the whole point of having paving. `--context=WxD` gives the opening; `--context=1` falls back to
+        # the bounds for an object that is nothing but its hole.
+        spec = arg("context", "1")
+        if "x" in spec:
+            hw, hd = (float(v) for v in spec.split("x", 1))
+            ox0, ox1, oy0, oy1 = -hw / 2, hw / 2, -hd / 2, hd / 2
+        else:
+            (ox0, ox1), (oy0, oy1), _ = local_bounds(obj)
+        far = 3.0
+        for bx0, bx1, by0, by1 in (
+            (ox0 - far, ox1 + far, oy1, oy1 + far),  # beyond the far lip
+            (ox0 - far, ox1 + far, oy0 - far, oy0),  # in front of the near lip
+            (ox0 - far, ox0, oy0, oy1),  # left of the opening
+            (ox1, ox1 + far, oy0, oy1),  # right of it
+        ):
+            slab = box(bx1 - bx0, by1 - by0, 0.06, x=(bx0 + bx1) / 2, y=(by0 + by1) / 2, z=-0.03)
+            # SHEARED like everything else, and forgetting it renders NOTHING. The camera is an
+            # orthographic FRONT view — the shear is what supplies the projection — so a horizontal plane
+            # is edge-on and draws as a line of zero height. Sheared, its far edge lifts by k per unit of
+            # depth and it becomes the parallelogram of ground this flag exists to show.
+            shear(slab, k, 0)
+            slab.data.materials.clear()
+            slab.data.materials.append(flat_material("context", arg("floor", "#6c6257")))
     render(out, width, height, engine, int(arg("samples", "64")))
     # What it will actually BE, in map units, before a single repaint is spent on it. The import trims to
     # the object and scales it into a 56x84 slot, so drawn height is 56 * (height / width) capped at 84 —

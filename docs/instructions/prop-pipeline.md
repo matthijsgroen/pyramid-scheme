@@ -88,12 +88,23 @@ readings in turn: handed water in a rim it came back a raised stone TANK, and to
 up it came back a flat plan diagram with no depth at all. Words cannot fix this, and three rolls went into
 trying.
 
-`--context=1` lays a slab of the rank's own floor under the object. It is added AFTER `add_camera`, so the
-frame is unchanged, and it is passed only on the render that is handed over — the mask and the footprint
-never see it, so no floor reaches the tile and the paint that lands on it is discarded exactly as an
-invented background is. Two consequences worth knowing: the frame then has no magenta in it, so a
-context prompt should not ask for any; and **the ground must be SHEARED like everything else** or it
-renders as nothing, the camera being an orthographic front view in which a horizontal plane is edge-on.
+`--context=WxD` lays the rank's own floor round the object **with a hole of that size cut in it**, so the
+floor's own edge is the lip of the opening. It is added AFTER `add_camera`, so the frame is unchanged, and
+it is passed only on the render that is handed over — the mask and the footprint never see it, so no floor
+reaches the tile and the paint that lands on it is discarded exactly as an invented background is.
+
+Three things it took a few renders to get right:
+
+- **CUT, not laid behind.** The first version was a solid slab with the pool drawn over it, which is a
+  fudge: with no opening the floor is a backdrop, nothing in the geometry says "cut into", and the paint
+  has nothing to trust. Four boxes round a rectangle are a rectangle with a hole in it, at no cost.
+- **The opening is DECLARED, not measured off the object.** Cut to the object's own bounds it swallowed
+  everything standing BESIDE the hole — and a jar on the paving is the whole point of having paving.
+  `--context=1` still means "hole = object bounds", for an object that is nothing but its hole.
+- **The ground must be SHEARED like everything else** or it renders as nothing: the camera is an
+  orthographic front view, and a horizontal plane in it is edge-on.
+
+The frame then has no magenta in it, so a context prompt should not ask for any.
 
 What a hole needs beyond the floor is things that CROSS ITS EDGE. `prim_pit` never needed `--context`
 because it has them already — a ladder over the near lip, its spoil on the paving outside — and that is
