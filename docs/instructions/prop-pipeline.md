@@ -105,6 +105,8 @@ below follows from that one line.
 | **The shear taxes DEPTH into height.** Drawn height is `max(z + k*y) - min(z + k*y)`, not the z extent.                                                                                             | A round foot 0.44 across adds 0.31 of drawn height and eats the width it just bought. `seat_and_normalise` then scales by height, so a deep prop lands narrow: the lamp stand came out 27 units of 56 while every fix made it taller. Flatten in y what only needs to read from the front.                                        | `prim_lamp`                       |
 | **Negative y draws LOWER.** A part in front of another is drawn `k*y` down from where it is built.                                                                                                  | A face resting exactly on a collar hangs a hairline above it in the picture; a border level with a hem draws below the cloth and reads as a plinth. Set z for where the shear DRAWS a part, not for where it sits.                                                                                                                | `prim_mask`, `prim_hanging`       |
 | **A hairline is a gap.** At 28 units a pixel of background between two parts separates them.                                                                                                        | Parts overlap by ~0.03 rather than butting. Five blocks butted edge to edge drew as a crown floating over an egg between two pillars.                                                                                                                                                                                             | `prim_mask`                       |
+| **A SLIVER is a gap too — contact is not a boolean.** An overlap that is thin, at a corner, or on one face only reads as NO contact.                                                                 | The altar's spout overlapped its cornice by 0.025 at one corner, so the arithmetic said "attached" and the generator painted it as a separate cube flying beside the altar. Judge the overlap's AREA in the drawn view, not whether the boxes intersect. The fix is usually to delete the projecting part and extend an existing one instead. | `prim_market` (`altar`)           |
+| **A VOID recess must stand PROUD of the surface it cuts**, never level with it and never under it.                                                                                                  | The altar's channel, "sunk flush" at 0.013 below the slab's top face, vanished into solid stone. It went unnoticed because the repaint still came back with a groove in it — the PROMPT describes one — which is this pipeline running backwards, with words doing the geometry's job.                                                       | `prim_market` (`altar`)           |
 | **A shadow may only be moved in X.** A floor point `(x, y, 0)` draws at `k*y`, so an unshifted footprint touches its object for free; shifting it in y moves it `k*dy` vertically and nothing else. | Toward the viewer it leaves a crescent under the object with nothing above it — reads as hovering at ANY magnitude, which is why three rounds of tuning `--sun` failed. Away, it hides entirely.                                                                                                                                  | `sun_offset`                      |
 | **`tilt` turns a part about the WORLD ORIGIN**, not its own centre — `box` ends with `transform_apply(scale=True)`, which applies the location too.                                                 | A bar 0.30 long at z=0.60 turned 60 degrees swings out of the frame. Build at the origin, turn, then place: that is `turn`. `tilt` is kept only because painted masters were rendered through it.                                                                                                                                 | `tilt`, `turn`, `prim_rubbleheap` |
 | **A frame with black inside is one tile, however many kinds ask for it.**                                                                                                                           | The wizard's shrine, his niche holding no star, and his star shaft all drew as a black rectangle in a thin frame. What separates them is silhouette: a shrine is a cabinet ON the wall, so its plinth and cavetto are both wider than the box between them.                                                                       | `prim_wallshrine`                 |
@@ -226,6 +228,30 @@ lighter than its front. A GREY render is unrecognisable: asked to repaint an unt
 generator read it as a pair of wooden door panels and filled them with photographic burl. `--colour`
 exists for that, and it applies to meshes as well as primitives.
 
+**Gate: COUNT THE PIECES.** One command, and it is the only check here that catches a fault the eye and the
+arithmetic both miss — the altar's spout intersected its cornice on paper and still drew as a cube flying
+beside the altar:
+
+```sh
+magick ~/tile-previews/<name>-<tier>-obj.png -alpha extract -threshold 15% \
+  -define connected-components:verbose=true -define connected-components:area-threshold=40 \
+  -connected-components 8 null:
+```
+
+**One white component is the pass.** Two means a part of the prop is a separate island in the drawn view,
+whatever the mesh does in three dimensions, and the repaint will paint it detached because that is what it
+can see. Component 0 is the background; ignore it.
+
+**15%, and the threshold is load-bearing.** At 40% this reported the priest's sconce — shipped art, and
+correct — as two pieces, because it cuts the anti-aliased chain the lamp hangs from and severs a connector
+two pixels wide. Run it over the whole folder at 40% and you get false alarms on every thin link in the
+set; at 15% only the real one survived. The cost of the low threshold is the opposite error: a part joined
+by a hairline passes the count and can still read as detached, which is what the SLIVER law is about. The
+count is a screen, and the picture is still the judge.
+
+A prop that is MEANT to be several pieces — a rubble heap, a scatter — fails this by design, so it only
+applies where the object is one thing. Everything else is worth a re-seat before a roll is spent on it.
+
 **Paint the PARTS, not just the prop.** `--colour` puts one hex over everything, and that is only half the
 argument for having it: a market table in a single brown is a brown table with brown things on it, and the
 repaint is left to work out from silhouette alone which lump is metal and which is grain. A primitive
@@ -308,12 +334,19 @@ the shape).
 
 **The two tells, both cheap, and one of them is checkable before you even open the file.**
 
-_The size._ A return that EDITED the attached scaffold comes back at the SCAFFOLD's own aspect — 1686x2528
-for a 2:3 prop, about 2912x1440 for a 2:1 wall item. A return generated FRESH, with the attachment ignored
-or never attached, comes back 2048x2048 — square, whatever the scaffold was. The nobleman's palm column
-arrived square and nothing else needed to be looked at: `statue.webp`, the other prompted-only return in
-the repository, is 2048x2048 too. Read the aspect off the scaffold rather than memorising one number; the
-square is the constant.
+_The size._ A return that EDITED the attached scaffold usually comes back at the SCAFFOLD's own aspect —
+1686x2528 for a 2:3 prop, about 2912x1440 for a 2:1 wall item — and one generated FRESH comes back
+2048x2048, square, whatever the scaffold was. The nobleman's palm column arrived square, and
+`statue.webp`, the other prompted-only return in the repository, is 2048x2048 too.
+
+**But square does NOT prove the attachment was ignored, and this tell has been overstated in these docs
+once already.** The priest's altar came back 2048x2048 having faithfully edited the scaffold — the cones,
+the loaves and even a floating spout the model really had were all in the right places. So a square return
+is a reason to LOOK, not a verdict.
+
+It is unusable either way, which is the part worth acting on: the import scales the master to the slot, so
+a 1:1 master squashed into a 2:3 prop slot is a third out. Re-roll it, or re-frame it to the scaffold's
+aspect before storing it as the master — but do not import it as it stands.
 
 _A PINK HALO inside the silhouette._ This is what "a part that has moved" actually looks like, and it is
 worth knowing by sight because it is not what anyone expects. Masking that square column to the modelled

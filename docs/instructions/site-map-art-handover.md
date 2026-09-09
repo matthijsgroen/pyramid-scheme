@@ -91,11 +91,12 @@ Each of these cost real time and none is guessable from the code:
   filtering cells by grid type silently drops a chamber's own floor. It has now bitten `floorScatter`,
   `art-census` and `MapGrowth`.
 - **Gemini names every download after the first chat in the thread.** Identify returns by content, and by
-  frame size: an edited scaffold comes back at the scaffold's own aspect — 1686x2528 for a 2:3 prop,
-  2880x1440 for a 2:1 wall item — and **2048x2048 means it was generated fresh and the attachment was
-  ignored**. That square is the one size worth checking before opening the file: the mask is the
-  scaffold's silhouette, so a fresh square drawing is unimportable and no flag rescues it. Re-roll without
-  measuring.
+  frame size: an edited scaffold usually comes back at the scaffold's own aspect — 1686x2528 for a 2:3
+  prop, 2880x1440 for a 2:1 wall item — where a fresh generation comes back 2048x2048 square.
+  **A square return does NOT prove the attachment was ignored**, and this file claimed it did for a while:
+  the priest's altar came back square having edited the scaffold faithfully, floating spout and all. What
+  a square DOES mean is unimportable as it stands, because the import scales the master to the slot and a
+  1:1 master in a 2:3 slot is a third out. Look at it, then re-roll or re-frame — never import it.
 
 ## Renaming a decoration kind is cheap; adding one is not
 

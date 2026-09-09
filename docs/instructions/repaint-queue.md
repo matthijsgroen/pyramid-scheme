@@ -63,9 +63,12 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 The object: a stone ALTAR. The block standing on the floor is the altar itself, its sides leaning very
 slightly inward going up; the slab over it with a step under its front edge is a CORNICE; the dark line
-cut across the top slab is a LIBATION CHANNEL, a groove for pouring, and the small lip at its right end
-where it reaches the edge is the SPOUT it drains through. The two tall narrow cones standing at the back
-of the slab are INCENSE CONES. The two flat rounds in front of them are LOAVES of bread.
+cut across the top slab is a LIBATION CHANNEL, a groove for pouring, and it runs out over the slab's
+right-hand edge, where it drains. The two tall narrow cones standing at the back of the slab are INCENSE
+CONES. The two flat rounds in front of them are LOAVES of bread.
+
+Nothing stands out from the altar on any side. Do not add a spout, a lip or a block projecting past the
+cornice — the channel reaching the edge is the whole of how it drains.
 
 Dark basalt, cool grey-blue, dressed smooth, with natron dust caught along the cornice's step and in the
 channel's corners. The channel is stained darker than the stone around it, from use. The incense cones are

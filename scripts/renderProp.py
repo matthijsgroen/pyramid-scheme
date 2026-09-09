@@ -334,13 +334,28 @@ def prim_market():
         # would draw as a vertical stripe up the slab and read as a crack. VOID rather than a boolean, by
         # `prim_pit`'s marker — near-black, casting nothing, which is what a groove holds.
         #
-        # It sits FORWARD of centre and drains over the front lip, so the channel and its spout are one
-        # unbroken dark line to the edge. A channel stopping short of the rim reads as a scratch.
-        mark(box(ab_w - 0.08, 0.075, 0.05, y=-0.06, z=top - 0.038), VOID)
-        # The spout has to clear the CAVETTO, which overhangs by 0.05 a side: the first one was placed at
-        # the block's own half-width and vanished under the overhang, leaving the channel dead-ending in
-        # stone. It reaches out in X because that is the only horizontal axis there is.
-        mark(box(0.13, 0.115, 0.045, x=(ab_w + 0.10) / 2 + 0.04, y=-0.06, z=top - 0.035), "body")
+        # IT MUST BREAK THE SURFACE. Sunk "flush" at top - 0.038 its own top face landed 0.013 UNDER the
+        # slab's, so the groove was buried in solid stone and the scaffold came back with a blank top.
+        # The repaint still had a channel in it — because the prompt describes one in words — which is the
+        # pipeline running backwards and the reason it went unnoticed: the geometry is supposed to settle
+        # this before the generator ever sees it. A recess is cut by a VOID box standing slightly PROUD of
+        # the surface it cuts, never level with it and never below.
+        #
+        # It runs OFF the right-hand edge. There is no separate spout: a channel that reaches the rim is
+        # already draining, and the block that used to project past the cavetto is what floated (see
+        # below). Ending it short of the rim is what reads as a scratch, so it overshoots by 0.04.
+        mark(box(0.89, 0.075, 0.05, x=0.105, y=-0.06, z=top - 0.02), VOID)
+        # NO SPOUT, and this is the entry worth reading before adding any part that sticks out.
+        #
+        # It was a block 0.13 wide set past the cavetto's overhang, overlapping it by 0.025 at one corner.
+        # Non-zero, so the arithmetic said "attached" — and the generator drew it as a separate cube flying
+        # beside the altar. Contact is not a boolean: an overlap that is thin, or at a corner, or on one
+        # face only, reads as no contact at all and the repaint paints what it reads. `prim_mask`'s law
+        # says a hairline is a gap; this is its other half — a sliver is a gap too.
+        #
+        # The fix was not a bigger overlap. A projecting nub had nothing to say that extending an existing
+        # part could not: the brief asks for a channel cut in the altar, not for a spout, and the channel
+        # running out over the rim does the whole job. Delete the part rather than reseat it.
         # Something has to TOP THE BACK EDGE or everything on the slab reads as a stain on it — the rule
         # `laid` paid for above. Here it is the incense: two cones standing at the back, which are also
         # the one part of an altar that is unmistakably an altar's.
@@ -708,9 +723,12 @@ def prim_lamp():
         arm_z = stem_h - 0.16
         bar = put(cyl(0.026, 0.62, z=arm_z, verts=10))
         bar.rotation_euler = (0, math.radians(90), 0)
-        for lx, lz in ((-0.31, arm_z), (0.31, arm_z), (0.0, stem_h + 0.02)):
-            if lx:
-                put(cyl(0.022, 0.14, x=lx, z=lz + 0.07, verts=8))
+        # EVERY LIGHT GETS A RISER, the centre one included, and leaving it off is what floated it: the
+        # outer pair stand on the arm and were given a stalk up to their saucers, while the centre sat at
+        # stem_h + 0.18 with nothing under it — the stem stops at stem_h. `--spin` did not cause it and
+        # arithmetic did not catch it; the piece count in Step 2's gate did, in one command.
+        for lx, lz in ((-0.31, arm_z), (0.31, arm_z), (0.0, stem_h - 0.14)):
+            put(cyl(0.022, 0.17, x=lx, z=lz + 0.075, verts=8))
             saucer = put(cyl(0.105, 0.045, x=lx, z=lz + 0.16, verts=18))
             saucer.scale = (1.0, 0.8, 1.0)
             bpy.ops.object.transform_apply(scale=True)
