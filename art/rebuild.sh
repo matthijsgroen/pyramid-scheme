@@ -745,3 +745,23 @@ yarn import-tile art/masters/props/expert/offeringTable.webp --tier=expert --nam
 scaffold jarrack --contents=canopic --spin=16 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/jarRack.webp --tier=expert --name=jarRack --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+
+# ANUBIS, and the tile that proved a statue needs no museum scan. Step 0's table sent statues to a scan
+# for as long as it existed; the canopic jars broke that row's other half, and this broke the rest.
+#
+# No --brightness and no --saturation. Black resin against pale basalt lands 88 apart with 1.7% over the
+# light clamp untouched. The 35.9% under the DARK clamp is the statue being black and is not a defect —
+# the value is the subject here, where every other prop's dark tail is shadow and posts.
+#
+# THREE ROLLS, and each failed somewhere different, which is the record worth keeping. The first was
+# carved beautifully and re-staged into three-quarter isometric, because the sentence every other prompt
+# ends with holds shape AND rotation and this one had dropped it to free the carving. The second held the
+# frame, the projection and the facing and shrank the jackal onto a grown pedestal, because a rough slab
+# of body flush on a rough slab of plinth in ONE material is a single mass and the generator read the
+# body as base. The third holds because the prompt writes out the five things that sentence used to cover
+# and the figure is marked a different part from its plinth.
+#
+# The lesson under all three: the freer the paint, the less ambiguity the geometry may contain.
+scaffold statue --contents=couchant --spin=-8 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/statue.webp --tier=expert --name=statue --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"

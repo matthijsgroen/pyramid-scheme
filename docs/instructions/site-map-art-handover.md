@@ -22,10 +22,11 @@ check that catches a geometry change silently invalidating a master.
 own scaffold, stored 2x, cut to a mask, seated in a rendered translucent shadow, and on a rebuild line.
 He is the only rank of which that is true.
 
-**The nobleman is four short**, and only two of them are the museum scans everyone remembers:
-`junior/sarcophagus` (20 rooms) and `junior/statue` (8) wait on a mesh, but `junior/tallyBoard` (5 rooms)
-and `junior/rubbleSpill` are ordinary unpainted work that never got a rebuild line. This file called him
-DONE for several sessions while both sat in the census.
+**The nobleman is four short**, and NONE of them waits on a museum scan any more. `junior/sarcophagus`
+(20 rooms) and `junior/statue` (8) were the two everyone remembers as blocked on a mesh — `prim_statue`
+settled that, so both are now `--contents` and a prompt. `junior/tallyBoard` (5 rooms) and
+`junior/rubbleSpill` are ordinary unpainted work that never got a rebuild line; this file called him DONE
+for several sessions while both sat in the census.
 
 **The priest has his five WALL items painted, and everything else MODELLED AND QUEUED.** niche, sconce,
 wallShrine, veil and the hanging are tiles; his twelve chamber props and his tallyBoard are scaffolds with
@@ -38,7 +39,7 @@ is most of what is left in the whole set, and none of it needs Blender again.
 **Read `yarn art-census`, not this paragraph.** The count below is a snapshot and every summary of it in
 this file has drifted at least once.
 
-`yarn art-census` is the authority and reports 56 placeholders: wizard 20, master 17, expert 15, junior 4.
+`yarn art-census` is the authority and reports 55 placeholders: wizard 20, master 17, expert 14, junior 4.
 
 ### The three files that run the work
 
@@ -183,9 +184,11 @@ most of what is left does not, which is why it is not in there.
    pass; nothing in the queue needs Blender again. `yarn repaint` lists them in the order worth doing.
 2. **`wizard/crystal`** — 27 rooms, authored, and the only kind in the set with no primitive to build on.
    Needs a model from nothing; everything else at those ranks is `--contents` on something that exists.
-3. **`junior/sarcophagus` and `junior/statue`** — 28 rooms, museum scans, and read `prop-pipeline.md`'s
-   Gate first. `horus.stl` in `~/tile-previews/meshes/` is a REJECT, not a head start: that folder is a
-   download history, not a library.
+3. **The rest of the STATUES and every SARCOPHAGUS** — about 165 rooms, and no longer blocked on anything.
+   `prim_statue` covers them: `--contents` is a pose (`seated`, `standing`, `couchant`, `lioness`) and the
+   god comes from the prompt, so each one is a scaffold render and an entry. A coffin is a posture too and
+   wants a `mummiform` pose adding. Copy `expert/statue`'s entry — it is the worked example, and its five
+   numbered rules about frame, projection and axis are what make a shape-free prompt hold.
 4. **Paint the condition sprites** — `overgrown` is authored and drawn in three places, and all five files
    are placeholders. They live in `tiles/default/`, so one set serves every rank. Judge in `PropSheet`.
 5. **The four small stragglers nobody lists** — `junior/tallyBoard` (5 rooms), `expert/tallyBoard` (4),

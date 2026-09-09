@@ -8,6 +8,12 @@ justifies the pipeline: a generator obeys the projection on BOXES (jar rack and 
 each once the wording settled) and refuses it on FIGURES and CURVES (ka-statue seven rolls, water jar
 three). Geometry is not a thing to ask for. It is a matrix.
 
+**Read that as an argument FOR handing a figure a scaffold, not against modelling one.** Those seven rolls
+were prompt-only, before any of this existed, and for years this file drew the wrong conclusion from them
+— that a statue needs a museum scan. A scaffold is precisely the fix for a projection a generator will not
+obey: the priest's Anubis is a slab envelope carved by the repaint, and it took three rolls, none of them
+lost to the projection. See `prim_statue`.
+
 ## Step 0 — decide what the object IS
 
 From [tile-art-brief.md](../game-design/tile-art-brief.md) §2–§4: the kind, the rank, and what the rank's
@@ -19,7 +25,7 @@ row says it is made of. Also decide where the mesh comes from:
 | a wall item WITH depth — a niche, anything standing off the wall | a parametric primitive too, rendered `--shear=0.5` (see below)                       |
 | heaps of BRICK or cut stone                                      | a parametric primitive — a brick is a box (`prim_rubbleheap`)                        |
 | a HOLE — in the floor or in a wall                               | a parametric primitive, its inside marked `VOID` (`prim_pit`)                        |
-| a FIGURE — a statue, an animal, a coffin                         | a parametric primitive: `--contents` is a POSE (`prim_statue`). A face is paint at this size, which the priest's canopic jars proved. A museum scan is the fallback, not the default |
+| a FIGURE — a statue, an animal, a coffin                         | a parametric primitive: `--contents` is a POSE (`prim_statue`), the face is paint. PROVEN by `expert/statue`, a black-resin Anubis carved off a slab envelope in three rolls. A museum scan is the fallback, not the default |
 | a FLAT wall item — a plaque, a stela, a board                    | no mesh: straight to the generator                                                   |
 | CLOTH — a hanging, an awning, a veil                             | a parametric primitive: cloth is a formula, not a simulation (`prim_hanging`)        |
 | a DRIFT of sand                                                  | a full-bleed texture, cut to a generated alpha (`yarn drift-mask`)                   |

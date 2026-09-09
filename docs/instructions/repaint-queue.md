@@ -71,7 +71,7 @@ loose prompt invites: the freer the paint, the less ambiguity the geometry may c
 
 ---
 
-## Priest — twelve
+## Priest — eleven
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
 the hanging. Six are new `--contents` variants — `statue` among them, which the table used to send to a scan — and five are geometry another rank already proved, which
@@ -80,76 +80,6 @@ the prompt is all that makes the reused ones his rank's. His `tallyBoard` is her
 FLAT thing in the section: no mesh, no mask, straight to the generator.
 
 Still missing after this: `sarcophagus`, which waits on a museum scan — unless `expert/statue` lands, in which case a coffin is a posture too (art-tasks §5).
-
-### `expert/statue` — Anubis, a recumbent jackal on a naos
-
-**DO THIS ONE FIRST — it is a test of whether a statue needs a museum scan at all.** Step 0's table sends
-statues to a scan, and it sent canopic jars there too until the priest's four came back with a human wig, a
-baboon's muzzle, a jackal's snout and a falcon's eye on four featureless modelled profiles. If a face is
-paint at 56x84 then a statue is a POSTURE, and `prim_statue` is that bet: `--contents` is a pose and never
-a deity, so one primitive covers every god at every rank.
-
-An ANIMAL is the right first test — an animal's proportions are far more forgiving than a human's, and the
-failure to watch for is the generator restyling the figure and the mask then CLIPPING it, which on a limb
-reads as an amputation rather than as a harmless crop. If this lands, `statue` and `sarcophagus` stop being
-blocked at four ranks — about 165 rooms. If it comes back mangled, the scan route still works and already
-ships two of the merchant's.
-
-**Attach:**
-
-1. `~/tile-previews/statue-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a statue of ANUBIS as a recumbent JACKAL, lying on a shrine box. The slab at the bottom is the
-NAOS — a plain stone box he lies on. The long low mass along the top is his BODY, lying down; the upright
-block at the left is his CHEST; above it his HEAD, with the block reaching further left his MUZZLE and the
-two points standing up his EARS. The short mass hanging over the right end is his TAIL.
-
-He is lying down, alert, head up, facing left. Keep him lying: he does not stand, sit or rise.
-
-The jackal is BLACK — black resin over wood, matte and slightly dusty, the way Anubis is always finished.
-A thin band of dull gold sits at his neck as a COLLAR, and the insides of his ears are lined with the same
-gold. His eyes are two small marks, gold rimmed in dark blue. Nothing else on him is gold and nothing
-shines.
-
-The naos under him is dark basalt, cool grey-blue, dressed smooth, with natron dust caught along its top
-edge and at its corners.
-
-THE REFERENCE IS A BLOCK, NOT A FINISHED STATUE — and this is the one prompt in this file that says so.
-It is a stone block roughed out to the pose, and your job is to carve the jackal out of it.
-
-CHANGE, freely, and ONLY this: the contour of the animal himself. A jackal's back dips, his haunch swells,
-his chest and muzzle are curved and his neck is not a post. Cut all of that.
-
-CARVE INWARD ONLY. Every curve you cut goes INSIDE the rough shape you were given — take stone away, never
-add it outside the block's outline. Nothing may end up further left, right, higher or lower than the rough
-shape reaches.
-
-EVERYTHING ELSE IS FIXED, and these five are not negotiable:
-
-1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square and do not re-centre the object in it.
-2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel. Nothing gets smaller as it goes back.
-3. THE PLINTH RUNS ACROSS THE PICTURE. Its long edges are horizontal, left to right, at the same slight tilt as the reference. It does NOT turn to recede into the distance, and the picture is not an isometric or three-quarter view of a plinth pointing away from you.
-4. HE FACES LEFT, lying along that same horizontal axis, head at the left end and tail at the right.
-5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
-
-You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the animal is.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold statue --contents=couchant --spin=-8 --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/statue.webp --tier=expert --name=statue --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `expert/shelf` — papyrus rolls in a cedar rack
 
