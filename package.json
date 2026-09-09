@@ -33,7 +33,7 @@
     "prepare": "husky",
     "tile-stats": "tsx scripts/tileStats.ts",
     "make-arch": "tsx scripts/makeArch.ts",
-    "render-prop": "blender -b -P scripts/renderProp.py --",
+    "render-prop": "${BLENDER:-/Applications/Blender.app/Contents/MacOS/Blender} -b -P scripts/renderProp.py --",
     "repaint": "tsx scripts/repaintPrompt.ts"
   },
   "lint-staged": {

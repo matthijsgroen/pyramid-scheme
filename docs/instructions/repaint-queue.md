@@ -1212,19 +1212,12 @@ yarn render-prop --primitive=niche --contents=sealed --shear=0.5 --width=448 --h
 Each entry's `scaffold`/`meshscaffold` line above gives the primitive, the contents and the spin to use;
 add the rank's two colours and the wall flags where they apply.
 
-**`yarn render-prop` needs `blender` ON THE PATH**, and on a stock macOS install it is not there — the app
-bundle hides it at `/Applications/Blender.app/Contents/MacOS/Blender`. The script fails with
-`command not found: blender`, which reads like a broken script rather than a missing symlink.
-`art/rebuild.sh` takes a `BLENDER` override for exactly this reason, and so does the form below. Every
-`yarn render-prop` line in this file assumes the symlink; use this shape if you do not have it.
-
 **All three renders**, which is what a prop actually needs — the scaffold to hand over, the mask to cut
 the return to, and the footprint to seat it in. `rebuild.sh` makes the last two for itself, so they are
 only wanted here when a repaint is going to be imported before the next rebuild:
 
 ```sh
-B=${BLENDER:-/Applications/Blender.app/Contents/MacOS/Blender}
-r() { "$B" -b -P scripts/renderProp.py -- --primitive=sealedChest --contents=cavetto --spin=25 \
+r() { yarn render-prop --primitive=sealedChest --contents=cavetto --spin=25 \
   --colour=#d9a93f --floor=#57534b "$@"; }
 P=~/tile-previews/chestProp-master
 r --out=$P.png
@@ -1240,6 +1233,9 @@ fail silently into nothing. `"$@"` behaves the same in sh, bash and zsh — whic
 They MUST agree on every parameter but the output and those two flags, or the mask keeps a silhouette the
 paint no longer fills — the invariant `prop-pipeline.md` Step 2 states, and the one a stray `--spin` breaks
 silently.
+
+`render-prop` finds Blender in `/Applications` by itself; set `BLENDER` to point somewhere else, the same
+override `art/rebuild.sh` takes.
 
 **The material references** — a quarter of each rank's own floor tile, upscaled. Plain by construction,
 because a floor tile is a seamless texture with no object in it:
