@@ -87,14 +87,27 @@ for the worked example of a shape-free prompt, and the five numbered rules in it
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
 
-THE REFERENCE IS A BLOCK, NOT A FINISHED STATUE. It is stone roughed out to the pose, and your job is to
-carve the figure out of it.
+The object: a KA-STATUE of the tomb's owner, seated on a throne, cut from one block of limestone. The
+tapering block on his head is a NEMES headcloth, widening to his shoulders. The block across his hips is
+a KILT.
 
-CHANGE, freely, and ONLY this: the contour of the man himself. A shoulder slopes, a knee is round, a face
-is not a cube. Cut all of that.
+IT IS A CARVED OBJECT AND NOT A PERSON, and this matters more than any other line here. Egyptian statuary
+is BLOCK-CARVED: flat planes, hard arrises, and the figure never leaves the block it was cut from. His
+upper arms stay joined to his sides, his hands stay flat on his knees, his calves stay merged with the
+seat, and there is no daylight anywhere between a limb and the stone behind it. Nothing is undercut. He
+has no expression, no gesture and no lifelike proportions — this is a cult object with a fixed face, not
+a character and not an illustration of a man.
 
-CARVE INWARD ONLY. Every curve you cut goes INSIDE the rough shape you were given — take stone away, never
-add it outside the block's outline.
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
+is to take the last of the waste off it.
+
+CHANGE, freely, and ONLY this: the contour of the man himself, and only by CUTTING. A shoulder gets its
+slope, a knee its front arris, a jaw its plane. These are chisel cuts on a block, not modelling in clay —
+every mass stays square-shouldered and stays recognisably the mass it already is.
+
+CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it
+outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape
+reaches.
 
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
@@ -104,13 +117,12 @@ EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
-The object: a KA-STATUE of the tomb's owner, seated on a throne. The tapering block on his head is a
-NEMES headcloth, widening to his shoulders. The block across his hips is a KILT.
-
-Painted limestone, and brightly: pale creamy stone under the paint, skin a warm red-brown, the nemes
-striped in blue and gold, the kilt white with a painted belt, the eyes rimmed in black kohl with white
-and dark brown in them. The paint is worn thin on the knees and the shoulders where it has been touched,
-showing bare stone through. The throne and plinth are plain limestone with an ochre band along the plinth.
+Painted LIMESTONE, and the paint is PIGMENT LYING ON STONE, never skin: pale creamy stone underneath, the
+flesh laid in flat warm red-brown with no shading, no blush and no soft edge where it meets the stone; the
+nemes striped in blue and gold; the kilt white with a painted belt; the eye carved first and then outlined
+in black kohl, flat, with no glint in it. The paint is worn thin on the knees, the shoulders and the nose
+where it has been touched, showing bare stone through, and it is chipped along every arris. The throne and
+plinth are plain limestone with an ochre band along the plinth.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
 
@@ -649,14 +661,28 @@ Wall items and one curtain. Gold is a flat colour at this rank, never a metal �
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
 
-THE REFERENCE IS A BLOCK, NOT A FINISHED STATUE. It is stone roughed out to the pose, and your job is to
-carve the figure out of it.
+The object: a colossal statue of OSIRIS, cut from one block of black granite. The tapering block on his
+head is his ATEF CROWN, a tall conical cap. The block across his hips is a KILT. He holds a CROOK and a
+FLAIL crossed over his chest — draw them as two short staffs, and they must not stand out past the edges
+of his own shoulders.
 
-CHANGE, freely, and ONLY this: the contour of the figure himself. A shoulder slopes, a calf is round, a
-face is not a cube. Cut all of that.
+IT IS A CARVED OBJECT AND NOT A PERSON, and this matters more than any other line here. Egyptian statuary
+is BLOCK-CARVED: flat planes, hard arrises, and the figure never leaves the block it was cut from. His
+upper arms stay joined to his sides, the crook and flail stay flat against his chest, the stone between
+his advanced leg and the block behind it is never cut through, and there is no daylight anywhere between
+a limb and the stone behind it. Nothing is undercut. He has no expression, no gesture and no lifelike
+proportions — this is a cult object with a fixed face, not a character and not an illustration of a man.
 
-CARVE INWARD ONLY. Every curve you cut goes INSIDE the rough shape you were given — take stone away, never
-add it outside the block's outline.
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
+is to take the last of the waste off it.
+
+CHANGE, freely, and ONLY this: the contour of the figure himself, and only by CUTTING. A shoulder gets its
+slope, a calf its front arris, a jaw its plane. These are chisel cuts on a block, not modelling in clay —
+every mass stays square-shouldered and stays recognisably the mass it already is.
+
+CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it
+outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape
+reaches.
 
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
@@ -665,10 +691,6 @@ EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column or a mummy wrap.
 4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
-
-The object: a colossal statue of OSIRIS. The tapering block on his head is his ATEF CROWN, a tall conical
-cap. The block across his hips is a KILT. He holds a CROOK and a FLAIL crossed over his chest — draw them
-as two short staffs, and they must not stand out past the edges of his own shoulders.
 
 GILDED: gold leaf over black granite, a flat warm ochre-yellow, worn through to the dark stone on the
 shins, the forearms and the crown's front edge — every surface a hand reaches. His face and hands are left
@@ -1243,14 +1265,27 @@ Four of the five contain a VOID: a black opening that must come back black. His 
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
 
-THE REFERENCE IS A BLOCK, NOT A FINISHED STATUE. It is stone roughed out to the pose, and your job is to
-carve the figure out of it.
+The object: RA-HORAKHTY, a standing figure with a falcon's head, cut from one block of calcite. The
+tapering block above his head is the SUN DISC he wears — carve it round, and it sits on the crown of his
+skull rather than floating over it. The block across his hips is a KILT.
+
+IT IS A CARVED OBJECT AND NOT A CREATURE, and this matters more than any other line here. Egyptian
+statuary is BLOCK-CARVED: flat planes, hard arrises, and the figure never leaves the block it was cut
+from. His upper arms stay joined to his sides, the stone between his advanced leg and the block behind it
+is never cut through, and there is no daylight anywhere between a limb and the stone behind it. Nothing is
+undercut. He has no expression, no gesture and no lifelike proportions — this is a cult object with a
+fixed face, not a character.
+
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
+is to take the last of the waste off it.
 
 CHANGE, freely, and ONLY this: the contour of the figure himself, and the shape of his head, which is a
-FALCON'S and not a man's — a curved beak, a domed skull, no muzzle. Cut all of that.
+FALCON'S and not a man's — a curved beak, a domed skull, no muzzle. Cut those, and only by CUTTING: every
+mass stays square-shouldered and stays recognisably the mass it already is.
 
-CARVE INWARD ONLY. Every curve you cut goes INSIDE the rough shape you were given — take stone away, never
-add it outside the block's outline.
+CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it
+outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape
+reaches.
 
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
@@ -1259,10 +1294,6 @@ EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
 4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
-
-The object: RA-HORAKHTY, a standing figure with a falcon's head. The tapering block above his head is the
-SUN DISC he wears — carve it round, and it sits on the crown of his skull rather than floating over it.
-The block across his hips is a KILT.
 
 Polished calcite, cool green-white, seamless and without a tool mark or a speck of dust on it. It is lit
 FROM WITHIN AND FROM BENEATH: the stone is faintly brighter at its lower edges and in the hollows, as

@@ -81,6 +81,29 @@ hem — two lines, deterministic. Displace the folds in Y and not in X: under z 
 drawn HIGHER, so the ripple lands as a shift in the surface and its shading does the rest, where a
 sideways displacement only makes the sheet narrower and wider and reads as a flag with a scalloped edge.
 
+**A HUMAN FIGURE NEEDS THE BLOCK SAID TWICE — the carve prompt does not transfer from an animal.** The
+statue prompts were all written off the priest's Anubis, which landed in three rolls, and the wording that
+worked on him is what broke the nobleman's ka-statue: *"a shoulder slopes, a knee is round, a face is not
+a cube. Cut all of that."* On a jackal that buys a dipped back and a swelling haunch. On a man it buys a
+cartoon character — the return read as an illustration of a person rather than a carved object, and the
+material paragraph made it worse by asking for skin and for eyes with whites and irises in them.
+
+Two additions, and they are in every human entry now:
+
+- **Say it is an object, not a person.** "Egyptian statuary is BLOCK-CARVED: flat planes, hard arrises,
+  and the figure never leaves the block it was cut from. Upper arms stay joined to the sides, calves stay
+  merged with the seat, nothing is undercut, no daylight anywhere between a limb and the stone behind it.
+  No expression, no gesture, no lifelike proportions." `prim_statue`'s docstring already argued all of
+  this to justify boxes over spheres; none of it had reached the prompts.
+- **Paint is PIGMENT ON STONE, never skin.** Flesh laid flat with no shading and no blush, the eye carved
+  first and then outlined, worn thin at the knees and the nose and chipped along every arris. The
+  difference between "skin a warm red-brown" and "the flesh laid in flat warm red-brown, pigment lying on
+  stone" is the whole distance between a character and a statue.
+
+The carve section stays — the scaffold is an envelope and the contour has to come from paint — but it is
+narrowed to CUTTING: "a shoulder gets its slope, a knee its front arris, a jaw its plane. Chisel cuts on a
+block, not modelling in clay."
+
 **A HOLE CANNOT BE A PRODUCT SHOT — give it a FLOOR with `--context`.** Every other scaffold is an object
 on magenta, which is a thing you could pick up. A hole is an absence in a surface, and with the surface
 missing the picture is equally a tank, a panel or a flat pattern. The priest's sacred pool proved both
