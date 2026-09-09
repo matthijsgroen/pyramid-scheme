@@ -94,9 +94,16 @@ a KILT.
 IT IS A CARVED OBJECT AND NOT A PERSON, and this matters more than any other line here. Egyptian statuary
 is BLOCK-CARVED: flat planes, hard arrises, and the figure never leaves the block it was cut from. His
 upper arms stay joined to his sides, his hands stay flat on his knees, his calves stay merged with the
-seat, and there is no daylight anywhere between a limb and the stone behind it. Nothing is undercut. He
-has no expression, no gesture and no lifelike proportions — this is a cult object with a fixed face, not
-a character and not an illustration of a man.
+seat, and there is no daylight anywhere between a limb and the stone behind it. Nothing is undercut and
+nothing projects past the front edge of the plinth.
+
+NO ANATOMY IS MODELLED: no muscle bellies, no nipples, no navel, no tendons, no separated toes, and not
+one highlight on a shoulder or a knee — a highlight there means a body is being painted, so paint the flat
+plane instead. He has no expression, no gesture and no lifelike proportions. This is a cult object with a
+fixed face, not a character and not an illustration of a man.
+
+The stone is one material throughout, the figure and the throne and the plinth alike. Do not paint a
+person sitting in front of a stone chair.
 
 THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
 is to take the last of the waste off it.
@@ -126,7 +133,7 @@ plinth are plain limestone with an ochre band along the plinth.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
 
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF, fingers and toes included, and a clipped limb reads as an amputation. Nothing is added below the plinth either — no ground, no shadow, no floor.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
 ```
@@ -670,8 +677,16 @@ IT IS A CARVED OBJECT AND NOT A PERSON, and this matters more than any other lin
 is BLOCK-CARVED: flat planes, hard arrises, and the figure never leaves the block it was cut from. His
 upper arms stay joined to his sides, the crook and flail stay flat against his chest, the stone between
 his advanced leg and the block behind it is never cut through, and there is no daylight anywhere between
-a limb and the stone behind it. Nothing is undercut. He has no expression, no gesture and no lifelike
-proportions — this is a cult object with a fixed face, not a character and not an illustration of a man.
+a limb and the stone behind it. Nothing is undercut and nothing projects past the front edge of the
+plinth.
+
+NO ANATOMY IS MODELLED: no muscle bellies, no nipples, no navel, no tendons, no separated toes, and not
+one highlight on a shoulder or a knee — a highlight there means a body is being painted, so paint the flat
+plane instead. He has no expression, no gesture and no lifelike proportions. This is a cult object with a
+fixed face, not a character and not an illustration of a man.
+
+The stone is one material throughout, the figure and the plinth alike. Gilding is a flat colour laid over
+that stone, not a skin the figure wears.
 
 THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
 is to take the last of the waste off it.
@@ -702,7 +717,7 @@ Gold here is a flat colour, not a metal: no highlights, no reflections, no shine
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
 
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF, fingers and toes included, and a clipped limb reads as an amputation. Nothing is added below the plinth either — no ground, no shadow, no floor.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
 ```
@@ -1273,8 +1288,14 @@ IT IS A CARVED OBJECT AND NOT A CREATURE, and this matters more than any other l
 statuary is BLOCK-CARVED: flat planes, hard arrises, and the figure never leaves the block it was cut
 from. His upper arms stay joined to his sides, the stone between his advanced leg and the block behind it
 is never cut through, and there is no daylight anywhere between a limb and the stone behind it. Nothing is
-undercut. He has no expression, no gesture and no lifelike proportions — this is a cult object with a
-fixed face, not a character.
+undercut and nothing projects past the front edge of the plinth.
+
+NO ANATOMY IS MODELLED: no muscle bellies, no nipples, no navel, no tendons, no separated toes, and not
+one highlight on a shoulder or a knee. He has no expression, no gesture and no lifelike proportions. This
+is a cult object with a fixed face, not a character.
+
+The stone is one material throughout, the figure and the plinth alike. Do not paint a creature standing
+in front of a stone slab.
 
 THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
 is to take the last of the waste off it.
@@ -1305,7 +1326,7 @@ Any light in this is a flat pale colour. No glow, no bloom, no rays, no highligh
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
 
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF, fingers and toes included, and a clipped limb reads as an amputation. Nothing is added below the plinth either — no ground, no shadow, no floor.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
 ```
