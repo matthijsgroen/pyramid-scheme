@@ -39,6 +39,14 @@ is the object alone, so both are discarded and Step 4 seats a rendered shadow in
 MOVED is the failure to look for. For a scatter of many pieces the arrangement will drift anyway and that
 is fine: ask for the material and let the mask decide the layout.
 
+**STATUES ARE THE EXCEPTION, and only statues.** Every other entry here says keep every edge, because
+every other scaffold hands over the object's real silhouette. A figure's does not: boxes cannot describe a
+carved contour, and a generator will not leave one alone anyway. So a statue's scaffold is an ENVELOPE —
+roughed-out stone, deliberately a little fat — and its prompt splits the difference explicitly: hold the
+projection, the pose, the placement and the overall size; carve the contour freely; and cut INWARD only,
+so the deviation lands inside the mask instead of being clipped by it. See `prim_statue`, and
+`expert/statue` for the worked example.
+
 ---
 
 ## Priest — twelve
@@ -88,8 +96,18 @@ shines.
 The naos under him is dark basalt, cool grey-blue, dressed smooth, with natron dust caught along its top
 edge and at its corners.
 
-Round his form as a carved figure would be — a jackal's back, haunch and muzzle are curved, not boxy — but
-do not change where any part sits, how big it is, or which way it faces.
+THE REFERENCE IS A BLOCK, NOT A FINISHED STATUE — and this is the one prompt in this file that says so.
+It is a stone block roughed out to the pose, and your job is to carve the jackal out of it. So:
+
+KEEP, exactly: the angle everything is seen at, the pose, where each part sits, which way he faces, how
+tall and how wide the whole thing is, and the flat stone block he lies on.
+
+CHANGE, freely: the contour of the animal himself. A jackal's back dips, his haunch swells, his chest and
+muzzle are curved and his neck is not a post. Cut all of that.
+
+CARVE INWARD ONLY. Every curve you cut goes INSIDE the rough shape you were given — take stone away, never
+add it outside the block's outline. Nothing may end up further left, right, higher or lower than the rough
+shape reaches.
 
 The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
 

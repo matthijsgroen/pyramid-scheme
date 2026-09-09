@@ -2114,6 +2114,22 @@ def prim_statue():
     `prim_market`'s baskets say round costs depth for nothing). And an Egyptian statue IS blocky: it is
     cut from a block, with flat planes and hard arrises, and the block statue is a whole genre. So boxes
     are not a compromise being tolerated here, they are what the subject actually looks like.
+
+    SO THIS SCAFFOLD IS AN ENVELOPE, and it is the only one in the file that is. Every other primitive
+    hands over the object's real silhouette and the prompt says keep every edge; a statue cannot, because
+    a figure carved to its true contour is beyond what boxes describe and beyond what a generator will
+    leave alone. The split is: geometry owns the PROJECTION and the POSE, and paint owns the CONTOUR.
+
+    Which means the masses are deliberately a little FATTER than the statue inside them — roughed-out
+    stone, with material to cut away. The prompt tells the generator it is looking at a block and to carve
+    INWARD only, so its deviation lands inside the mask rather than outside it, where the mask would clip
+    it. `--mask-grow` is the other way to buy that leeway and is NOT usable here: it admits an added pixel
+    only above `SHADOW_FLOOR` 70, and a black-resin Anubis is painted darker than that, so his own carving
+    would be thrown out as shadow. An envelope needs no flag.
+
+    What an uncovered envelope costs is nothing much, which the altar measured: 8% of its mask had no
+    paint over it and the tile came out with 8 magenta pixels, because the import keys magenta BEFORE it
+    masks. The silhouette then belongs to the paint, which is the intention here rather than a defect.
     """
     contents = arg("contents", "seated")
     plinth_h = 0.09
@@ -2126,17 +2142,17 @@ def prim_statue():
         # is the same parts in a taller stack.
         lying = contents == "couchant"
         if lying:
-            mark(box(0.50, 0.20, 0.15, x=0.03, z=b + 0.075), "body")          # body
-            chest_z, head_z, hx = b + 0.19, b + 0.30, -0.18
+            mark(box(0.54, 0.23, 0.19, x=0.03, z=b + 0.095), "body")          # body, roughed FAT
+            chest_z, head_z, hx = b + 0.235, b + 0.35, -0.18
         else:
             mark(box(0.26, 0.24, 0.30, x=0.0, y=0.03, z=b + 0.15), "body")    # haunches, set BACK
             mark(box(0.13, 0.13, 0.26, x=0.0, y=-0.16, z=b + 0.13), "body")   # forelegs, forward and down
             chest_z, head_z, hx = b + 0.40, b + 0.52, 0.0
-        mark(box(0.17, 0.17, 0.15, x=hx, z=chest_z), "body")                  # chest
-        mark(box(0.15, 0.14, 0.13, x=hx - (0.02 if lying else 0), z=head_z), "body")
+        mark(box(0.20, 0.20, 0.19, x=hx, z=chest_z), "body")                  # chest
+        mark(box(0.17, 0.16, 0.15, x=hx - (0.02 if lying else 0), z=head_z), "body")
         # The MUZZLE reaches in X and the EARS stand apart in X — a pair built front-to-back stacks into
         # one drawn ear, which the canopic jackal's stopper records.
-        mark(box(0.13, 0.08, 0.07, x=hx - 0.13, y=-0.015, z=head_z - 0.005), "body")
+        mark(box(0.15, 0.10, 0.09, x=hx - 0.14, y=-0.015, z=head_z - 0.01), "body")
         for ex in (-0.045, 0.045):
             bpy.ops.mesh.primitive_cone_add(vertices=10, radius1=0.032, radius2=0.005, depth=0.10,
                                             location=(hx + ex, 0.0, head_z + 0.105))
