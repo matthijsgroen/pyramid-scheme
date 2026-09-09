@@ -2100,6 +2100,20 @@ def prim_statue():
     - THE HEADDRESS IS THE SILHOUETTE. A bare head is an egg at any rank. A nemes widening to the
       shoulders is unmistakably Egyptian and costs one trapezoid, and it is the only part of a human
       figure whose outline a player can actually read in a 56-wide cell.
+
+    BOXES, AND ROUNDING THEM WAS TRIED AND LOST. The reasoning for rounding was good: the mask clips
+    whatever the generator adds beyond a flat face, so a boxy scaffold asks to be rounded and then
+    punishes the rounding on a jaw or a haunch. Every mass was rebuilt as a squeezed sphere to meet it
+    halfway — and all four poses came back worse. Seated and standing read as stacked eggs, the lioness
+    as a snowman with ears, and the couchant jackal as a slug: its body had been the one part that
+    clearly said "animal lying down" and became a pebble.
+
+    Two reasons, and the second is the one to remember. A sphere has no flat faces, so the shear has
+    nothing to reveal — this projection's whole legibility is a lighter top against a darker front, and a
+    smooth mass shades uniformly and reads as a blob (`prim_brazier` says the same of a drum, and
+    `prim_market`'s baskets say round costs depth for nothing). And an Egyptian statue IS blocky: it is
+    cut from a block, with flat planes and hard arrises, and the block statue is a whole genre. So boxes
+    are not a compromise being tolerated here, they are what the subject actually looks like.
     """
     contents = arg("contents", "seated")
     plinth_h = 0.09
