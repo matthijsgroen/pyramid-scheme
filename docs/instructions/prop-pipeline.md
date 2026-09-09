@@ -93,7 +93,8 @@ floor's own edge is the lip of the opening. It is added AFTER `add_camera`, so t
 it is passed only on the render that is handed over — the mask and the footprint never see it, so no floor
 reaches the tile and the paint that lands on it is discarded exactly as an invented background is.
 
-Three things it took a few renders to get right:
+Six things it took a good many renders to get right, and the last three are traps for anything built
+after a primitive, not just for a floor:
 
 - **CUT, not laid behind.** The first version was a solid slab with the pool drawn over it, which is a
   fudge: with no opening the floor is a backdrop, nothing in the geometry says "cut into", and the paint
@@ -101,6 +102,25 @@ Three things it took a few renders to get right:
 - **The opening is DECLARED, not measured off the object.** Cut to the object's own bounds it swallowed
   everything standing BESIDE the hole, and the paving exists precisely so that something can stand on it.
   `--context=1` still means "hole = object bounds", for an object that is nothing but its hole.
+- **It has to RUN OFF ALL FOUR EDGES** — front, both sides and back. Ground that stops inside the picture
+  is a plinth the hole is cut into, and with a shadow under it, something floating. The paving is laid
+  nine slabs each way against a frame about seven units wide, so it leaves on every side including the
+  near one, which runs down out of the bottom of the frame towards the camera.
+- **`box` applies SCALE ONLY, and `shear` transforms MESH DATA.** So a box's location lives on the object
+  transform where the shear cannot see it: sheared, it is slanted about its own centre and never lifted
+  by `k*y`. A grid of forty slabs drew as forty slabs piled into one band beside the hole with nothing
+  anywhere else, and joining them first does not fix it. Translate the MESH — `o.data.transform(
+  Matrix.Translation(...))` — before shearing. Primitives never meet this because `join_all` bakes every
+  part's world position into one mesh before the shear.
+- **Sizes are in the primitive's METRES, and seating has already rescaled the object.** `--context=WxD`
+  taken literally cut a hole a seventh of the size of the pool it belonged to. `seat_and_normalise` makes
+  everything exactly one unit tall, so a shallow prop is scaled hardest — the basin is 0.16m tall and
+  leaves seating 6.3 times bigger, 6.96 units wide. It now returns that scale, and `--context` multiplies
+  by it.
+- **The floor plane is the primitive's own z=0**, which seating has moved. Every primitive is authored
+  standing on z=0, and seating lifts that plane by the amount it shifted the mesh — 0.70 of a unit for
+  the basin. Paving left at z=0 lies that far under the coping, with the dark base filling the gap.
+  `seat_and_normalise` returns where the origin landed for the same reason it returns the scale.
 - **The ground must be SHEARED like everything else** or it renders as nothing: the camera is an
   orthographic front view, and a horizontal plane in it is edge-on.
 

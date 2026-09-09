@@ -2574,7 +2574,13 @@ def array_copies(obj, count, gap, jitter):
 
 def seat_and_normalise(obj):
     """One unit tall, centred on X and Y, standing on z=0 — so every prop enters the shear at the same
-    size whatever the mesh generator handed back, and the framing below can be fixed rather than fitted."""
+    size whatever the mesh generator handed back, and the framing below can be fixed rather than fitted.
+
+    Returns the drawn width and depth, and with them the SCALE it applied and WHERE THE PRIMITIVE'S OWN
+    ORIGIN LANDED. Anything built after this — `--context`'s floor is the only thing today — is authored
+    in the primitive's metres and has to be told both, or it draws at a seventh of its size a whole unit
+    below where it belongs. A shallow prop is scaled hardest: the basin is 0.16 metres tall, so it leaves
+    here 6.3 times bigger and its ground plane is 0.70 above the origin."""
     make_active(obj)
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
     (x0, x1), (y0, y1), (z0, z1) = local_bounds(obj)
@@ -2583,9 +2589,10 @@ def seat_and_normalise(obj):
         raise SystemExit("mesh has no height")
     obj.data.transform(Matrix.Scale(1 / height, 4))
     (x0, x1), (y0, y1), (z0, z1) = local_bounds(obj)
-    obj.data.transform(Matrix.Translation((-(x1 + x0) / 2, -(y1 + y0) / 2, -z0)))
+    origin = (-(x1 + x0) / 2, -(y1 + y0) / 2, -z0)
+    obj.data.transform(Matrix.Translation(origin))
     (x0, x1), (y0, y1), (z0, z1) = local_bounds(obj)
-    return x1 - x0, y1 - y0
+    return x1 - x0, y1 - y0, 1 / height, origin
 
 
 def drop_void_faces(mesh_obj):
@@ -2759,6 +2766,32 @@ def shear(obj, k, spin_degrees):
         obj.data.transform(Matrix.Rotation(math.radians(spin_degrees), 4, "Z"))
     # z' = z + k*y, everything else identity.
     obj.data.transform(Matrix(((1, 0, 0, 0), (0, 1, 0, 0), (0, k, 1, 0), (0, 0, 0, 1))))
+
+
+def join_and_shear(parts, k):
+    """Merge a list of freshly built objects into ONE mesh, then shear it.
+
+    `shear` transforms mesh DATA, and `box` applies only its scale — a box's location stays on the object
+    transform, so its local vertices sit around the origin however far out in the world it was placed.
+    Sheared one at a time, therefore, a row of boxes is each slanted about its own centre and NONE of them
+    is lifted by k*y: they all draw at the same height, piled into one band, and the rows further out
+    simply are not where they should be.
+
+    Primitives never meet this because `join_all` merges everything into one mesh BEFORE the shear, and
+    joining bakes each part's world position into the merged vertices. Anything built AFTER the primitive,
+    one object at a time — which is what `--context` does — has to do the same thing deliberately.
+
+    It cost a long chase. The symptom was "only the courses in front of the hole draw", and it drew three
+    confident and wrong explanations out of me in turn: z-fighting with the floor, the floor's extent, and
+    the camera being on the far side. None of them was it, and each looked plausible enough to act on."""
+    bpy.ops.object.select_all(action="DESELECT")
+    for p in parts:
+        p.select_set(True)
+    bpy.context.view_layer.objects.active = parts[0]
+    bpy.ops.object.join()
+    merged = bpy.context.object
+    shear(merged, k, 0)
+    return merged
 
 
 def add_shadow_catcher(k, span):
@@ -2986,7 +3019,7 @@ def main():
     if colour != "none":
         paint(obj, colour)
     obj = array_copies(obj, int(arg("copies", "1")), float(arg("gap", "1.35")), float(arg("jitter", "1.0")))
-    w_units, d_units = seat_and_normalise(obj)
+    w_units, d_units, norm, origin = seat_and_normalise(obj)
     # Depth is the strongest lever on how a prop reads: it decides how much TOP the shear reveals, and so
     # how tall the sprite lands in its cell. Tuned against the hand-painted props rather than guessed.
     depth = float(arg("depth", "1.0"))
@@ -3072,27 +3105,63 @@ def main():
         # swallows anything standing BESIDE it — and the paving is there precisely so that something can
         # stand on it, which is how the pool lost a jar to its own hole. `--context=WxD` gives the
         # opening; `--context=1` falls back to the bounds, for an object that is nothing but its hole.
+        #
+        # THE OPENING IS GIVEN IN THE PRIMITIVE'S OWN METRES, and converted here. `seat_and_normalise`
+        # has already made the object one unit tall, which for a shallow thing is an enormous scale —
+        # the basin is 0.16m tall and leaves seating 6.3x bigger, 6.96 units wide. Taken literally,
+        # `--context=0.92x0.62` therefore cut a hole a seventh of the size of the object it was meant to
+        # be the hole for, and laid the paving in a band narrower than the pool with the base showing
+        # round it. The same scale applies to the FLOOR PLANE: a primitive is authored standing on z=0,
+        # seating moves that plane up by `origin`, and paving left at z=0 sits a unit under the coping.
+        ox, oy, oz = origin
         spec = arg("context", "1")
         if "x" in spec:
-            hw, hd = (float(v) for v in spec.split("x", 1))
-            ox0, ox1, oy0, oy1 = -hw / 2, hw / 2, -hd / 2, hd / 2
+            hw, hd = (float(v) * norm for v in spec.split("x", 1))
+            ox0, ox1, oy0, oy1 = ox - hw / 2, ox + hw / 2, oy - hd / 2, oy + hd / 2
         else:
             (ox0, ox1), (oy0, oy1), _ = local_bounds(obj)
         far = 20.0
-        for bx0, bx1, by0, by1 in (
-            (ox0 - far, ox1 + far, oy1, oy1 + far),  # beyond the far lip
-            (ox0 - far, ox1 + far, oy0 - far, oy0),  # in front of the near lip
-            (ox0 - far, ox0, oy0, oy1),  # left of the opening
-            (ox1, ox1 + far, oy0, oy1),  # right of it
-        ):
-            slab = box(bx1 - bx0, by1 - by0, 0.06, x=(bx0 + bx1) / 2, y=(by0 + by1) / 2, z=-0.03)
-            # SHEARED like everything else, and forgetting it renders NOTHING. The camera is an
-            # orthographic FRONT view — the shear is what supplies the projection — so a horizontal plane
-            # is edge-on and draws as a line of zero height. Sheared, its far edge lifts by k per unit of
-            # depth and it becomes the parallelogram of ground this flag exists to show.
-            shear(slab, k, 0)
-            slab.data.materials.clear()
-            slab.data.materials.append(flat_material("context", arg("floor", "#6c6257")))
+        # THE FLOOR IS LAID AS SLABS WITH REAL GAPS over a dark base, and every piece is placed by
+        # TRANSLATING ITS MESH rather than by setting the object's location.
+        #
+        # That distinction is the whole reason this took as long as it did. `shear` transforms mesh DATA,
+        # and `box` applies only its SCALE — a box's location stays on the object transform, where the
+        # shear never sees it. Sheared, such a box is slanted about its own centre and not lifted by k*y
+        # at all, so a grid of forty slabs draws as forty slabs stacked in one band beside the hole with
+        # nothing anywhere else. Joining them first does not fix it either.
+        #
+        # Primitives never meet this because everything inside one is merged by `join_all` before the
+        # shear. Anything built AFTER, one object at a time, has to put its offset somewhere the shear can
+        # read — which means the mesh.
+        #
+        # Joints as gaps rather than bars laid on a solid floor: a gap is an absence and cannot lose a
+        # depth test to the surface it is cut in.
+        def ground(sx, sy, sz, x, y, z, mat):
+            o = box(sx, sy, sz)
+            o.data.transform(Matrix.Translation((x, y, z)))
+            shear(o, k, 0)
+            o.data.materials.clear()
+            o.data.materials.append(mat)
+            return o
+
+        dark = flat_material("joint", arg("joint", "#4c5560"))
+        paving = flat_material("context", arg("floor", "#6c6257"))
+        # The grid is ALIGNED TO THE HOLE, its slab size dividing the opening exactly, so no slab ever
+        # straddles the lip and the paving meets the coping on a joint rather than mid-slab. Slab size
+        # sets the joint width and the paving's thickness too, so the floor keeps its proportions at
+        # whatever scale seating chose.
+        sw, sd = (ox1 - ox0) / 4, (oy1 - oy0) / 2
+        gap, thick = sd * 0.05, sd * 0.08
+        ground(2 * far, 2 * far, thick, ox, oy, oz - thick * 0.9, dark)
+        # IT RUNS PAST THE FRAME ON ALL FOUR SIDES — nine slabs each way in x, eight in y, which at this
+        # slab size is roughly ±11 units against a frame about 7 wide. Ground that stops inside the
+        # picture is a plinth the hole is cut into; ground that leaves on every side is a floor.
+        for cx in range(-9, 10):
+            for cy in range(-8, 9):
+                bx0, by0 = ox0 + cx * sw, oy0 + cy * sd
+                if ox0 - 0.001 <= bx0 < ox1 - 0.001 and oy0 - 0.001 <= by0 < oy1 - 0.001:
+                    continue  # the opening itself
+                ground(sw - gap, sd - gap, thick, bx0 + sw / 2, by0 + sd / 2, oz - thick / 2, paving)
     render(out, width, height, engine, int(arg("samples", "64")))
     # What it will actually BE, in map units, before a single repaint is spent on it. The import trims to
     # the object and scales it into a 56x84 slot, so drawn height is 56 * (height / width) capped at 84 —

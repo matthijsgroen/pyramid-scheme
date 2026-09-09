@@ -243,7 +243,12 @@ ladder over the near lip, its spoil on the paving outside. Where a hole has no s
 has to be drawn instead — so this one is handed over rendered `--context=0.92x0.62`, which puts the rank's
 floor round it with a hole of exactly that size cut in it, so the floor's own edge is the pool's lip. It
 is added after the camera, so the frame is unchanged, and the mask and the footprint are rendered WITHOUT
-it. No floor reaches the tile.
+it. No floor reaches the tile. The two numbers are the pool's own metres, the same `pw, pd` the primitive
+is built from; `prop-pipeline.md` has why that needs saying and what it cost.
+
+**The floor runs off ALL FOUR EDGES**, the near one included, and that is the difference between this
+reference and the four before it. Ground that stops inside the frame is a plinth with a hole in it, and
+with a shadow beneath, a slab floating in the air.
 
 **Regenerating this one's scaffold takes an extra flag** that no other entry needs —
 `--context=0.92x0.62 --shadow=0` on the handed-over render, and on that render only. The exact command is under
@@ -276,9 +281,10 @@ pool from the paving.
 Nothing here is a tank, a tub, a trough or a basin, and nothing has an outside you could see. Apart from
 the coping, which stands a hand's width proud, everything is at or below the level of the paving.
 
-The paving is dark basalt, cool grey-blue, laid in large dressed slabs with fine joints and dusted with
-natron. The kerb is the same stone, its edge rubbed pale where feet cross it. The steps are worn hollow in
-their middles.
+The paving is dark basalt, cool grey-blue, laid in large dressed slabs and dusted with natron. The ruled
+grid across the whole frame gives the JOINTS between those slabs; keep every one of them where it is, so
+the paving reads as one continuous floor running out of the picture on all four sides. The coping is
+the same stone, its edge rubbed pale where feet cross it. The steps are worn hollow in their middles.
 
 The water is a still flat surface, dark green-grey, a touch lighter where it meets the stone, and darker
 in the far corners. A pale crust of NATRON has dried along the waterline all round and on the tread of the
