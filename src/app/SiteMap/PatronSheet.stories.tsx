@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import type { FC } from "react"
+import { useEffect, useState } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { CELL, WALL_H } from "./mapScale"
 import { ART_IMAGE_RENDERING, tileUrl } from "./tileAssets"
@@ -34,6 +35,48 @@ const WALL_KINDS = new Set<string>(["wallShrine", "stela", "mask"])
 
 const PROP_H = CELL + WALL_H
 
+/** Under this many distinct opaque colours a tile is a `generate-dummy-tiles` PLACEHOLDER and not art.
+ *
+ * The same number and the same test `yarn art-census` uses, for the reason its docstring gives: a
+ * placeholder is flat SVG shapes and lands at 2 to 4 colours where painted art lands at 300 to 1600,
+ * and FILE SIZE cannot separate them — the junior brazier's placeholder is 2125 bytes and the starter
+ * statue's real art is 1964.
+ *
+ * It matters here because without it this sheet lies in the direction that costs most. Three of the
+ * priest's five patron-able kinds have no art at all, and a cell showing the placeholder was captioned
+ * "generic" — which reads as "the generic art is standing in", when the truth is "there is nothing to
+ * stand in". A coverage sheet that cannot tell those apart is not one you can count from.
+ */
+const PAINTED_MIN_COLOURS = 32
+
+/** Distinct opaque colours in a tile, counted off a canvas. `undefined` while it loads. */
+const useColourCount = (url: string | undefined): number | undefined => {
+  const [count, setCount] = useState<number | undefined>(undefined)
+  useEffect(() => {
+    if (!url) return
+    let live = true
+    const img = new Image()
+    img.onload = () => {
+      const canvas = document.createElement("canvas")
+      canvas.width = img.naturalWidth
+      canvas.height = img.naturalHeight
+      const ctx = canvas.getContext("2d")
+      if (!ctx || !live) return
+      ctx.drawImage(img, 0, 0)
+      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      const seen = new Set<number>()
+      for (let i = 0; i < data.length; i += 4)
+        if (data[i + 3] >= 128) seen.add((data[i] << 16) | (data[i + 1] << 8) | data[i + 2])
+      if (live) setCount(seen.size)
+    }
+    img.src = url
+    return () => {
+      live = false
+    }
+  }, [url])
+  return count
+}
+
 /** One cell of the grid: the patron's art if it exists, the generic kind if it does not, and a label
  * saying WHICH of those you are looking at. The label is the point — a fallback that is not announced
  * reads as a finished patron, and this sheet exists to be counted from. */
@@ -42,7 +85,9 @@ const Cell: FC<{ tier: Difficulty; kind: string; patron: string; zoom: number }>
   const own = tileUrl(tier, `${kind}-${patron}`)
   const generic = tileUrl(tier, kind)
   const art = own ?? generic
-  const state = own ? "art" : generic ? "generic" : "none"
+  const colours = useColourCount(art)
+  const painted = colours === undefined || colours >= PAINTED_MIN_COLOURS
+  const state = !art ? "none" : own ? (painted ? "art" : "placeholder") : painted ? "generic" : "placeholder"
   const wallItem = WALL_KINDS.has(kind)
   const floor = tileUrl(tier, "floor")
   const face = tileUrl(tier, "wall-face")
@@ -93,9 +138,14 @@ const Cell: FC<{ tier: Difficulty; kind: string; patron: string; zoom: number }>
         {state === "none" && (
           <span className="absolute inset-0 flex items-center justify-center text-[10px] text-white/50">(none)</span>
         )}
+        {state === "placeholder" && (
+          <span className="absolute inset-0 flex items-center justify-center text-[10px] text-amber-300/70">
+            placeholder
+          </span>
+        )}
       </div>
       <figcaption className="text-[9px] text-white/45">
-        {state === "art" ? kind : state === "generic" ? `${kind} · generic` : kind}
+        {state === "art" ? kind : state === "generic" ? `${kind} · generic` : `${kind} · nothing drawn`}
       </figcaption>
     </figure>
   )
@@ -110,8 +160,9 @@ const Sheet: FC<{ tier: Difficulty; zoom: number }> = ({ tier, zoom }) => {
       </h1>
       <p className="mb-4 max-w-3xl text-[11px] text-white/50">
         Reads <code>&lt;kind&gt;-&lt;patron&gt;.png</code> from this rank&rsquo;s folder. Dimmed cells are the generic
-        kind standing in, not a patron — the resolver that would prefer the patron file is still unbuilt, so nothing in
-        the game reads these yet.
+        kind standing in, not a patron; <span className="text-amber-300/70">placeholder</span> means even the generic is
+        a dummy, so there is nothing to stand in. The resolver that would prefer the patron file is still unbuilt, so
+        nothing in the game reads these yet.
       </p>
       <div className="flex flex-col gap-4">
         {PATRONS.map(patron => (
