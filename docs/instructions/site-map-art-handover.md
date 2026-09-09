@@ -117,7 +117,13 @@ from a hash of the site id and the room key, and zero per-room decorations are s
   five existing kinds (`statue`, `shrine`, `wallShrine`, `stela`, `mask`), resolved like `STANDING_VARIANT`:
   `statue` becomes `statue-anubis.png` where that file exists and falls back to the generic art where it
   does not. No new kinds, no pool edits, no world regeneration, and art can be added one file at a time.
-  The plaques are FLAT wall items, so most of it is straight to the generator; only the statues need scans.
+  The plaques are FLAT wall items, so most of it is straight to the generator; and the statues need no
+  scan either now that `prim_statue` exists — `couchant` is Anubis or Sobek, `lioness` is Sekhmet or
+  Bastet, and Horus, Ra and Ma'at are `standing` with a different head and attribute.
+  **`App/SiteMap/PatronSheet` is the sheet to judge them on**, and it works before any of the code does:
+  it stages all seven crossed with all five on a rank's floor, reads `<kind>-<patron>.png` straight off
+  the filesystem, dims a cell that is falling back to the generic art and counts how many of the
+  thirty-five are real. Today it says 0 of 35, which is the honest number.
 - **A steerable patron, as opposed to a varied one.** `tileVariants` already picks `<kind>-2.png` by cell
   position, which buys variety and cannot be aimed. Patron needs the other half: an authored field on the
   pyramid, purely drawn and therefore free, plus a resolver that prefers `<kind>-<patron>.png`. The
