@@ -1108,12 +1108,21 @@ def prim_basin():
         # as descending perfectly well.
         for sw, sz in ((0.34, 0.028), (0.29, -0.012), (0.24, -0.052), (0.19, -0.092)):
             mark(box(sw, pd * 0.26, 0.038, x=-(pw - sw) / 2 + 0.04, y=-pd * 0.24, z=sz), "body")
-        # A KERB on the two sides and the far edge, and none across the near one: the near lip is where
-        # the paving runs straight up to the water, and fencing it off is what made the first three rolls
-        # read as the rim of a container.
+        # A KERB ALL FOUR WAYS ROUND, the near side included.
+        #
+        # It was left off the near edge on purpose once, reasoning that a rim across the front is what
+        # makes a hole read as a container. That was the wrong lesson from the right observation: what
+        # made the early rolls read as a tub was the object having an OUTSIDE, not its having a coping.
+        # Open at the front the water simply stopped in mid-air with nothing to stop it, and a border
+        # broken on the one side facing the viewer reads as unfinished rather than as open. A temple pool
+        # is coped all the way round, which is also what the reference now shows.
+        #
+        # The near length is drawn in FRONT of the water — nearest the camera, so it occludes the water's
+        # bottom edge — which is exactly what a coping does and what the missing edge was asking for.
         for sx in (-1, 1):
-            mark(box(0.06, pd + 0.06, 0.045, x=sx * (pw + 0.06) / 2, z=0.022), "body")
-        mark(box(pw + 0.18, 0.06, 0.045, y=(pd + 0.06) / 2, z=0.022), "body")
+            mark(box(0.06, pd + 0.12, 0.045, x=sx * (pw + 0.06) / 2, z=0.022), "body")
+        for sy in (-1, 1):
+            mark(box(pw + 0.18, 0.06, 0.045, y=sy * (pd + 0.06) / 2, z=0.022), "body")
         return join_all()
     # The nobleman's basin is SHALLOW, so its stand is tall: a squat vessel on short legs is scaled by
     # its width and lands about 48 high in an 84 slot, which wastes the tallest thing on the floor.
@@ -3059,10 +3068,10 @@ def main():
         #
         # Four boxes rather than a boolean: the opening is a rectangle, and four boxes round a rectangle
         # ARE a rectangle with a hole in it, at no cost and with no modifier to apply.
-        # THE OPENING IS DECLARED, not measured off the object, and the jar is why. Cut to the object's
-        # own bounds the hole swallowed everything standing BESIDE the pool — and a jar on the paving is
-        # the whole point of having paving. `--context=WxD` gives the opening; `--context=1` falls back to
-        # the bounds for an object that is nothing but its hole.
+        # THE OPENING IS DECLARED, not measured off the object. Cut to the object's own bounds the hole
+        # swallows anything standing BESIDE it — and the paving is there precisely so that something can
+        # stand on it, which is how the pool lost a jar to its own hole. `--context=WxD` gives the
+        # opening; `--context=1` falls back to the bounds, for an object that is nothing but its hole.
         spec = arg("context", "1")
         if "x" in spec:
             hw, hd = (float(v) for v in spec.split("x", 1))

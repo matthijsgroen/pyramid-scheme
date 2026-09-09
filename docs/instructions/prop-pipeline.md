@@ -99,7 +99,7 @@ Three things it took a few renders to get right:
   fudge: with no opening the floor is a backdrop, nothing in the geometry says "cut into", and the paint
   has nothing to trust. Four boxes round a rectangle are a rectangle with a hole in it, at no cost.
 - **The opening is DECLARED, not measured off the object.** Cut to the object's own bounds it swallowed
-  everything standing BESIDE the hole — and a jar on the paving is the whole point of having paving.
+  everything standing BESIDE the hole, and the paving exists precisely so that something can stand on it.
   `--context=1` still means "hole = object bounds", for an object that is nothing but its hole.
 - **The ground must be SHEARED like everything else** or it renders as nothing: the camera is an
   orthographic front view, and a horizontal plane in it is edge-on.
@@ -109,9 +109,16 @@ The frame then has no magenta in it, so a context prompt should not ask for any.
 What a hole needs beyond the floor is things that CROSS ITS EDGE. `prim_pit` never needed `--context`
 because it has them already — a ladder over the near lip, its spoil on the paving outside — and that is
 the whole of why it reads where a clean rectangle of water did not. Steps that start on the paving and
-walk down through the waterline, a jar standing on the floor beside the opening: neither is the hole, and
-together they are what proves there is one. Leave the NEAR lip open, too, so the paving runs straight up
-to the dark rather than being fenced off from it by a kerb the eye reads as a rim.
+walk down through the waterline do the same job: they are not the hole, and they are what proves there is
+one.
+
+**Border it ALL THE WAY ROUND, the near side included.** The pool was built once with its coping open at
+the front, on the reasoning that a rim across the near edge is what makes a hole read as a container. That
+was the wrong lesson from the right observation — what made the early rolls read as a tub was the object
+having an OUTSIDE, not its having a coping. Open at the front the water stopped in mid-air with nothing to
+stop it, and a border broken on the one side facing the viewer reads as unfinished rather than as open.
+The near length draws in front of the water and occludes its bottom edge, which is exactly what a coping
+does.
 
 **A HOLE is one parallelogram deep, and its dark is geometry too.** Under z + k*y the ground in front of
 an opening draws lower as it comes toward the viewer, so it covers the shaft below the near lip: the whole

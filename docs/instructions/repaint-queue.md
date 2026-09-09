@@ -268,13 +268,13 @@ The scene: a SACRED POOL cut down into a stone floor. The whole frame is that fl
 hole in it. You are painting a floor with a pool in it, not an object standing on a surface.
 
 The pale field filling the frame is the PAVING. The dark rectangle sunk into it is WATER, filling the pool
-nearly to the brim. The three ledges at the left, the lowest of them under the surface, are STEPS walking
-down into it from the paving. The low border along the two sides and the far edge is a stone KERB; there
-is none across the near edge, where the paving runs straight up to the water. The tall vessel standing on
-the paving beyond the pool is a WATER JAR.
+nearly to the brim. The low border running all the way round the water is a stone COPING, a course of kerb
+laid flush with the paving on all four sides, and the length of it nearest you passes IN FRONT of the
+water. The four ledges at the left, the lowest of them under the surface, are STEPS walking down into the
+pool from the paving.
 
-Nothing here is a tank, a tub, a trough or a basin, and nothing has an outside you could see. Everything
-but the kerb and the jar is at or below the level of the paving.
+Nothing here is a tank, a tub, a trough or a basin, and nothing has an outside you could see. Apart from
+the coping, which stands a hand's width proud, everything is at or below the level of the paving.
 
 The paving is dark basalt, cool grey-blue, laid in large dressed slabs with fine joints and dusted with
 natron. The kerb is the same stone, its edge rubbed pale where feet cross it. The steps are worn hollow in
@@ -284,7 +284,6 @@ The water is a still flat surface, dark green-grey, a touch lighter where it mee
 in the far corners. A pale crust of NATRON has dried along the waterline all round and on the tread of the
 step that stands clear of the water; the submerged step is darker and greener than the ones above it.
 
-The jar is buff pottery, its foot wet and its shoulder dusty.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
