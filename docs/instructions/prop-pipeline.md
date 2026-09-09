@@ -81,14 +81,26 @@ hem — two lines, deterministic. Displace the folds in Y and not in X: under z 
 drawn HIGHER, so the ripple lands as a shift in the surface and its shading does the rest, where a
 sideways displacement only makes the sheet narrower and wider and reads as a flag with a scalloped edge.
 
-**A HOLE CANNOT BE A PRODUCT SHOT, and its prompt has to say what does not stand up.** Every other
-scaffold is an object on magenta, which is a thing you could pick up — and a hole is defined by the
-surface it is cut into, which a product shot does not have. Handed water in a rim and nothing else, the
-priest's sacred pool came back as a raised stone TANK: walls, a base, water recessed in the top. That is
-the only question the picture asked, answered reasonably. `prim_pit` escapes it by being full of things
-that cannot be a vessel — a pole across the mouth, a rope ladder over the lip, the broken slabs of its own
-lid — so a clean rectangle of water in a clean frame is the case that needs the words. Say that nothing
-rises above the paving but the kerb, and name the vessels it must not be.
+**A HOLE CANNOT BE A PRODUCT SHOT — give it a FLOOR with `--context`.** Every other scaffold is an object
+on magenta, which is a thing you could pick up. A hole is an absence in a surface, and with the surface
+missing the picture is equally a tank, a panel or a flat pattern. The priest's sacred pool proved both
+readings in turn: handed water in a rim it came back a raised stone TANK, and told that nothing may stand
+up it came back a flat plan diagram with no depth at all. Words cannot fix this, and three rolls went into
+trying.
+
+`--context=1` lays a slab of the rank's own floor under the object. It is added AFTER `add_camera`, so the
+frame is unchanged, and it is passed only on the render that is handed over — the mask and the footprint
+never see it, so no floor reaches the tile and the paint that lands on it is discarded exactly as an
+invented background is. Two consequences worth knowing: the frame then has no magenta in it, so a
+context prompt should not ask for any; and **the ground must be SHEARED like everything else** or it
+renders as nothing, the camera being an orthographic front view in which a horizontal plane is edge-on.
+
+What a hole needs beyond the floor is things that CROSS ITS EDGE. `prim_pit` never needed `--context`
+because it has them already — a ladder over the near lip, its spoil on the paving outside — and that is
+the whole of why it reads where a clean rectangle of water did not. Steps that start on the paving and
+walk down through the waterline, a jar standing on the floor beside the opening: neither is the hole, and
+together they are what proves there is one. Leave the NEAR lip open, too, so the paving runs straight up
+to the dark rather than being fenced off from it by a kerb the eye reads as a rim.
 
 **A HOLE is one parallelogram deep, and its dark is geometry too.** Under z + k*y the ground in front of
 an opening draws lower as it comes toward the viewer, so it covers the shaft below the near lip: the whole

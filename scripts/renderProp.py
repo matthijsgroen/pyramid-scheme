@@ -1090,12 +1090,25 @@ def prim_basin():
         # drew as a dark band under the far wall and the pool read as a hole with a stain in it; brought
         # up near the rim it IS the opening, which is what a full pool looks like from above.
         mark(box(pw - 0.03, pd - 0.03, 0.025, z=-0.055), "water")
-        # STEPS, and only TWO of them break the waterline. They run in X so each tread draws as its own
-        # horizontal band; built across the far end they would stack into one wedge by the law that y and
-        # z both feed the drawn vertical. They sit at the near edge, where the water is drawn lowest, so
-        # they read as going down into it rather than as a shelf laid on top.
-        for sw, sz in ((0.26, -0.018), (0.17, -0.072)):
-            mark(box(sw, pd * 0.55, 0.038, x=-(pw - sw) / 2 + 0.02, y=-pd * 0.20, z=sz), "body")
+        # WHAT MAKES A HOLE READ IS WHAT CROSSES ITS EDGE, and this pool needed three rolls to arrive at
+        # the rule `prim_pit` has been demonstrating all along.
+        #
+        # A hole cannot prove itself. On magenta it is a dark shape in a frame, and a dark shape in a
+        # frame is equally a tank, a panel or a rug — the first roll came back as a raised stone tub and
+        # the second, told nothing may stand up, as a flat plan diagram with no depth at all. Look at what
+        # the pit does instead: a rope ladder goes OVER the near lip and disappears, and its spoil lies on
+        # the paving OUTSIDE the opening. One thing entering the hole and one thing lying on the surface
+        # around it. Neither is the hole; together they are the only reason it reads as one.
+        #
+        # So the steps now start ABOVE the floor line and walk down through the waterline, and a jar
+        # stands on the paving at the far end. Both cross a boundary the flat readings cannot explain.
+        for sw, sz in ((0.30, 0.028), (0.24, -0.030), (0.17, -0.088)):
+            mark(box(sw, pd * 0.5, 0.045, x=-(pw - sw) / 2 + 0.02, y=-pd * 0.22, z=sz), "body")
+        # The JAR, standing on the floor beside the pool. It is here to be an OBJECT AT KNOWN SIZE on the
+        # surrounding plane: the eye reads the paving from the thing standing on it, and once there is a
+        # floor there is something for the water to be sunk into. `prim_market`'s far-edge rule puts it at
+        # the back, where it tops the opening's own line rather than being drawn against it.
+        jar(pw * 0.38, pd * 0.42, 0.30, 0.10, z=0.0, part="pottery")
         return join_all()
     # The nobleman's basin is SHALLOW, so its stand is tall: a squat vessel on short legs is scaled by
     # its width and lands about 48 high in an 84 slot, which wastes the tallest thing on the floor.
@@ -3014,6 +3027,31 @@ def main():
     # renders of a prop share one frame to the pixel and composite without alignment.
     if arg("only", "both") == "shadow":
         bpy.data.objects.remove(obj, do_unlink=True)
+    # --context lays a slab of FLOOR under the object, for the generator's eye and for nothing else.
+    #
+    # A HOLE CANNOT PROVE ITSELF ON MAGENTA. Every other prop is a thing you could pick up, and a product
+    # shot suits it; a hole is an absence in a surface, and with the surface missing the same picture is
+    # equally a tank, a panel or a flat pattern. The priest's sacred pool proved both readings in turn — a
+    # raised stone tub first, then, told nothing may stand up, a flat plan diagram with no depth at all.
+    #
+    # `prim_pit` gets away without this because it is full of things that cross its own edge: a ladder
+    # over the near lip, spoil on the paving outside it. Where a hole has no such furniture, the surface
+    # has to be drawn instead.
+    #
+    # It is added AFTER add_camera, so it cannot change the frame, and it is passed ONLY on the render
+    # that is handed over. The mask and the footprint never see it, so no floor reaches the tile and the
+    # paint that lands on it is discarded exactly as an invented background is. Bigger than the frame on
+    # purpose: a slab with visible edges would read as a plinth the hole is cut into rather than as ground
+    # going on past the picture.
+    if arg("context") and arg("only", "both") != "shadow":
+        ground = box(6.0, 6.0, 0.06, z=-0.03)
+        # SHEARED like everything else, and forgetting it renders NOTHING. The camera is an orthographic
+        # FRONT view — the shear is what supplies the projection — so a horizontal plane is edge-on and
+        # draws as a line of zero height. Sheared, its far edge lifts by k per unit of depth and it
+        # becomes the parallelogram of ground this flag exists to show.
+        shear(ground, k, 0)
+        ground.data.materials.clear()
+        ground.data.materials.append(flat_material("context", arg("floor", "#6c6257")))
     render(out, width, height, engine, int(arg("samples", "64")))
     # What it will actually BE, in map units, before a single repaint is spent on it. The import trims to
     # the object and scales it into a 56x84 slot, so drawn height is 56 * (height / width) capped at 84 —

@@ -231,17 +231,22 @@ yarn import-tile art/masters/props/expert/sarcophagus.webp --tier=expert --name=
 
 ### `expert/basin` — a sacred pool with steps down into it
 
-**A HOLE CANNOT BE A PRODUCT SHOT, and this is the entry that found out.** The first roll came back as a
-raised stone TANK — a tub with thick walls standing on the ground, water recessed in its top — and it was
-not disobeying the prompt so much as answering the only question the picture asked. Every other scaffold
-in this file is an object on magenta, and an object on magenta is a thing you could pick up. A hole is
-defined by the SURFACE IT IS CUT INTO, and there is no surface in a product shot, so a generator with
-water and a rim and nothing else builds something to hold the water in.
+**THE ONLY SCAFFOLD IN THIS FILE THAT COMES WITH A FLOOR, and three failed rolls are why.** A hole cannot
+be a product shot. Every other scaffold is an object on magenta and an object on magenta is a thing you
+could pick up; a hole is an ABSENCE IN A SURFACE, and with the surface missing the same picture is equally
+a tank, a panel or a flat pattern. Told plainly, it came back a raised stone tub. Told that nothing may
+stand up, it came back a flat plan diagram with no depth in it at all. Neither was disobedient — both
+answered the only question the picture asked.
 
-`pit` survives the same shape only because it is full of clutter that cannot be a vessel — a pole across
-the mouth, a rope ladder over the lip, the broken slabs of its own lid. A clean rectangle of water in a
-clean frame has nothing to break the reading. So this prompt has to say, in as many words, that nothing
-stands up.
+`pit` survives the same shape without a floor because it is full of things that CROSS ITS OWN EDGE: a
+ladder over the near lip, its spoil on the paving outside. Where a hole has no such furniture, the surface
+has to be drawn instead — so this one is rendered `--context=1`, which lays a slab of the rank's own floor
+under it for the generator's eye. It is added after the camera, so the frame is unchanged, and the mask
+and the footprint are rendered WITHOUT it. No floor reaches the tile.
+
+**Which is why this prompt does not mention magenta.** There is none in the reference: the frame is
+paving. The paint that lands on the paving is discarded by the mask exactly as an invented background is,
+so it costs nothing and is not worth a word of the prompt.
 
 **Attach:**
 
@@ -249,31 +254,35 @@ stands up.
 2. `~/tile-previews/expert-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A single object painted in flat matte gouache, seen from above and slightly in front, in the same raked
+view as the reference. Portrait, two units wide by three tall, exactly as the reference. No perspective
+and no vanishing point: verticals stay vertical, horizontals stay horizontal.
 
-Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+The scene: a SACRED POOL cut down into a stone floor. The whole frame is that floor, and the pool is a
+hole in it. You are painting a floor with a pool in it, not an object standing on a surface.
 
-The object: a SACRED POOL, which is a HOLE CUT DOWN INTO A STONE FLOOR and filled with water. You are
-looking down into it from above and slightly in front.
+The pale field filling the frame is the PAVING. The dark rectangle sunk into it is WATER, filling the pool
+nearly to the brim. The three ledges at the left, the lowest of them under the surface, are STEPS walking
+down into it from the paving. The low border along the two sides and the far edge is a stone KERB; there
+is none across the near edge, where the paving runs straight up to the water. The tall vessel standing on
+the paving beyond the pool is a WATER JAR.
 
-NOTHING STANDS UP. This is not a tank, a tub, a trough, a basin or a vessel, and it has no walls, no
-sides and no base you could see from outside. The only thing above the level of the paving is a low
-KERB round the edge, one hand high — the pale border in the reference. Everything else is below ground.
-If it looks like something you could lift, it is wrong.
+Nothing here is a tank, a tub, a trough or a basin, and nothing has an outside you could see. Everything
+but the kerb and the jar is at or below the level of the paving.
 
-The large dark area the kerb frames is WATER, filling the pool nearly to the brim. The two ledges at the
-left, the lower one half submerged, are STEPS DOWN INTO IT.
+The paving is dark basalt, cool grey-blue, laid in large dressed slabs with fine joints and dusted with
+natron. The kerb is the same stone, its edge rubbed pale where feet cross it. The steps are worn hollow in
+their middles.
 
-The water must read as WATER and not as a shaft: a still flat surface, dark green-grey, a touch lighter
-where it meets the stone.
+The water is a still flat surface, dark green-grey, a touch lighter where it meets the stone, and darker
+in the far corners. A pale crust of NATRON has dried along the waterline all round and on the tread of the
+step that stands clear of the water; the submerged step is darker and greener than the ones above it.
 
-The kerb and the steps are dark basalt, cool grey-blue, dressed smooth. A pale crust of NATRON has dried
-along the waterline all round and on the tread of the step that stands clear of the water. The submerged
-step is darker and greener than the one above it.
+The jar is buff pottery, its foot wet and its shoulder dusty.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
+No highlights, no gloss, no rim light, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
 ```
 
 Then, once the return is in `~/Downloads`:
