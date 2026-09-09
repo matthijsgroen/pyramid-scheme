@@ -41,40 +41,55 @@ is fine: ask for the material and let the mask decide the layout.
 
 ---
 
-## Priest — thirteen
+## Priest — twelve
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
-the hanging. Seven are new `--contents` variants and five are geometry another rank already proved, which
+the hanging. Six are new `--contents` variants — `statue` among them, which the table used to send to a scan — and five are geometry another rank already proved, which
 is the difference between them worth knowing — a variant's silhouette is his, a reused one's is not, and
 the prompt is all that makes the reused ones his rank's. His `tallyBoard` is here too, and it is the only
 FLAT thing in the section: no mesh, no mask, straight to the generator.
 
-Still missing after this: `statue` and `sarcophagus`, both waiting on a museum scan (art-tasks §5).
+Still missing after this: `sarcophagus`, which waits on a museum scan — unless `expert/statue` lands, in which case a coffin is a posture too (art-tasks §5).
 
-### `expert/offeringTable` — an altar with a libation channel
+### `expert/statue` — Anubis, a recumbent jackal on a naos
+
+**DO THIS ONE FIRST — it is a test of whether a statue needs a museum scan at all.** Step 0's table sends
+statues to a scan, and it sent canopic jars there too until the priest's four came back with a human wig, a
+baboon's muzzle, a jackal's snout and a falcon's eye on four featureless modelled profiles. If a face is
+paint at 56x84 then a statue is a POSTURE, and `prim_statue` is that bet: `--contents` is a pose and never
+a deity, so one primitive covers every god at every rank.
+
+An ANIMAL is the right first test — an animal's proportions are far more forgiving than a human's, and the
+failure to watch for is the generator restyling the figure and the mask then CLIPPING it, which on a limb
+reads as an amputation rather than as a harmless crop. If this lands, `statue` and `sarcophagus` stop being
+blocked at four ranks — about 165 rooms. If it comes back mangled, the scan route still works and already
+ships two of the merchant's.
 
 **Attach:**
 
-1. `~/tile-previews/offeringTable-expert.png` — the scaffold
+1. `~/tile-previews/statue-expert.png` — the scaffold
 2. `~/tile-previews/expert-plain.png` — the material reference
 
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
 
-The object: a stone ALTAR. The block standing on the floor is the altar itself, its sides leaning very
-slightly inward going up; the slab over it with a step under its front edge is a CORNICE; the dark line
-cut across the top slab is a LIBATION CHANNEL, a groove for pouring, and it runs out over the slab's
-right-hand edge, where it drains. The two tall narrow cones standing at the back of the slab are INCENSE
-CONES. The two flat rounds in front of them are LOAVES of bread.
+The object: a statue of ANUBIS as a recumbent JACKAL, lying on a shrine box. The slab at the bottom is the
+NAOS — a plain stone box he lies on. The long low mass along the top is his BODY, lying down; the upright
+block at the left is his CHEST; above it his HEAD, with the block reaching further left his MUZZLE and the
+two points standing up his EARS. The short mass hanging over the right end is his TAIL.
 
-Nothing stands out from the altar on any side. Do not add a spout, a lip or a block projecting past the
-cornice — the channel reaching the edge is the whole of how it drains.
+He is lying down, alert, head up, facing left. Keep him lying: he does not stand, sit or rise.
 
-Dark basalt, cool grey-blue, dressed smooth, with natron dust caught along the cornice's step and in the
-channel's corners. The channel is stained darker than the stone around it, from use. The incense cones are
-pale grey-buff resin; the loaves are baked ochre-brown and floury.
+The jackal is BLACK — black resin over wood, matte and slightly dusty, the way Anubis is always finished.
+A thin band of dull gold sits at his neck as a COLLAR, and the insides of his ears are lined with the same
+gold. His eyes are two small marks, gold rimmed in dark blue. Nothing else on him is gold and nothing
+shines.
 
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+The naos under him is dark basalt, cool grey-blue, dressed smooth, with natron dust caught along its top
+edge and at its corners.
+
+Round his form as a carved figure would be — a jackal's back, haunch and muzzle are curved, not boxy — but
+do not change where any part sits, how big it is, or which way it faces.
 
 The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
 
@@ -84,44 +99,8 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold market --contents=altar --spin=-11 --colour=#a7b2be
-yarn import-tile art/masters/props/expert/offeringTable.webp --tier=expert --name=offeringTable \
-  --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
-### `expert/jarRack` — four canopic jars
-
-**Attach:**
-
-1. `~/tile-previews/jarRack-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: FOUR CANOPIC JARS standing in a wooden rack. The two uprights and two rails are the RACK. The
-four flat-based jars are the canopic jars, and each has a different STOPPER carved as a head — from the
-left: a human head, then a baboon's taller domed head, then a jackal's with its two pointed ears, then a
-falcon's low round one. The ring round each jar below its stopper is the LID JOINT.
-
-Count them: there are four, and there must stay four.
-
-Pale creamy alabaster, faintly banded, dulled with dust. Each lid joint is sealed with grey clay. The
-stopper heads are painted in the same alabaster with their features picked out in dark line — a black wig
-on the human, a dark muzzle on the jackal, a dark eye on the falcon. The rack is dark cedar.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold jarrack --contents=canopic --spin=16 --colour=#a7b2be
-yarn import-tile art/masters/props/expert/jarRack.webp --tier=expert --name=jarRack --slot=prop \
+scaffold statue --contents=couchant --spin=-8 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/statue.webp --tier=expert --name=statue --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
@@ -154,7 +133,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shelf --contents=papyrus --spin=-14 --colour=#a7b2be
+scaffold shelf --contents=papyrus --spin=-14 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/shelf.webp --tier=expert --name=shelf --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -188,7 +167,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold basin --contents=pool --colour=#a7b2be
+scaffold basin --contents=pool --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/basin.webp --tier=expert --name=basin --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -226,7 +205,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold brazier --contents=censer --spin=22 --colour=#a7b2be
+scaffold brazier --contents=censer --spin=22 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/brazier.webp --tier=expert --name=brazier --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -262,7 +241,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold palm --contents=papyrus --spin=6 --colour=#a7b2be
+scaffold palm --contents=papyrus --spin=6 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/pillar.webp --tier=expert --name=pillar --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -300,7 +279,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shrine --contents=sealed --spin=-19 --colour=#a7b2be
+scaffold shrine --contents=sealed --spin=-19 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/shrine.webp --tier=expert --name=shrine --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -340,7 +319,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold pit --colour=#a7b2be
+scaffold pit --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/pit.webp --tier=expert --name=pit --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -373,7 +352,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold rubblePile --colour=#a7b2be
+scaffold rubblePile --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/rubblePile.webp --tier=expert --name=rubblePile --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -406,7 +385,7 @@ No highlights, no gloss, no rim light, no shadow, no reflections. Matte througho
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold mat --spin=12 --shadow=0.5 --colour=#a7b2be
+scaffold mat --spin=12 --shadow=0.5 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/mat.webp --tier=expert --name=mat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -439,7 +418,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold sealedChest --spin=-24 --colour=#a7b2be
+scaffold sealedChest --spin=-24 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/chestProp.webp --tier=expert --name=chestProp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -474,7 +453,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold lamp --contents=stand --spin=11 --colour=#a7b2be
+scaffold lamp --contents=stand --spin=11 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/lamp.webp --tier=expert --name=lamp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -651,7 +630,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold hanging --contents=gold --spin=33
+scaffold hanging --contents=gold --spin=33 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/hanging.webp --tier=master --name=hanging --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -692,7 +671,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold lamp --contents=tree --spin=9 --colour=#d9a93f
+scaffold lamp --contents=tree --spin=9 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/lamp.webp --tier=master --name=lamp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -726,7 +705,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold palm --contents=banded --spin=-7 --colour=#d9a93f
+scaffold palm --contents=banded --spin=-7 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/pillar.webp --tier=master --name=pillar --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -763,7 +742,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold sealedChest --contents=cavetto --spin=25 --colour=#d9a93f
+scaffold sealedChest --contents=cavetto --spin=25 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/chestProp.webp --tier=master --name=chestProp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -804,7 +783,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold jarrack --contents=vessels --spin=-16 --colour=#d9a93f
+scaffold jarrack --contents=vessels --spin=-16 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/jarRack.webp --tier=master --name=jarRack --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -847,7 +826,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shrine --contents=couchant --spin=18 --colour=#d9a93f
+scaffold shrine --contents=couchant --spin=18 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/shrine.webp --tier=master --name=shrine --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -887,7 +866,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold market --contents=laid --spin=-21 --colour=#d9a93f
+scaffold market --contents=laid --spin=-21 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/offeringTable.webp --tier=master --name=offeringTable \
   --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -925,7 +904,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold brazier --lit=1 --spin=14 --colour=#d9a93f
+scaffold brazier --lit=1 --spin=14 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/brazier.webp --tier=master --name=brazier --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -964,7 +943,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold basin --contents=bowl --spin=-9 --colour=#d9a93f
+scaffold basin --contents=bowl --spin=-9 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/basin.webp --tier=master --name=basin --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1002,7 +981,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shelf --spin=17 --colour=#d9a93f
+scaffold shelf --spin=17 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/shelf.webp --tier=master --name=shelf --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -1214,6 +1193,20 @@ yarn render-prop --primitive=niche --contents=sealed --shear=0.5 --width=448 --h
 
 Each entry's `scaffold`/`meshscaffold` line above gives the primitive, the contents and the spin to use;
 add the rank's two colours and the wall flags where they apply.
+
+**A PROP NEEDS BOTH COLOURS, and `--floor` is the one that gets forgotten.** `--colour` is obvious because
+a wrong one is visible in the scaffold; `--floor` paints the FOOTPRINT, which no one looks at, and
+`scaffold()` supplies the merchant's as a default — so a prop at another rank silently seats itself in a
+patch of the wrong stone. `rebuild.sh`'s header has warned about this since the nobleman's props were
+found sitting in merchant floor 62 luminance out.
+
+It is worth knowing how small it looks and how it hides. On the priest it is 686 pixels of an 18,816-pixel
+tile, RMSE 0.5% — nothing you would catch by eye. And the rebuild HIDES it: a tile imported by hand with
+the right shadow is overwritten by the next `sh art/rebuild.sh`, so if you commit after a rebuild you
+commit the rebuild's version, and every rebuild after that compares its own output against itself and
+reports no change. Three of the priest's tiles shipped that way before anyone diffed the two shadows.
+
+Every prop line in this file now carries `--floor`. Keep it there, and check the table above for the pair.
 
 **All three renders**, which is what a prop actually needs — the scaffold to hand over, the mask to cut
 the return to, and the footprint to seat it in. `rebuild.sh` makes the last two for itself, so they are

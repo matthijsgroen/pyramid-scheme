@@ -32,18 +32,18 @@ wallShrine, veil and the hanging are tiles; his twelve chamber props and his tal
 prompts written against them, so every one of them is now a paste rather than a modelling job. Same for
 the pharaoh: nine of his are queued beside the four wall items that were already there.
 
-**Modelling is no longer the bottleneck at either rank — generation is.** The queue is 31 entries, which
+**Modelling is no longer the bottleneck at either rank — generation is.** The queue is 29 entries, which
 is most of what is left in the whole set, and none of it needs Blender again.
 
 **Read `yarn art-census`, not this paragraph.** The count below is a snapshot and every summary of it in
 this file has drifted at least once.
 
-`yarn art-census` is the authority and reports 58 placeholders: wizard 20, expert 17, master 17, junior 4.
+`yarn art-census` is the authority and reports 56 placeholders: wizard 20, master 17, expert 15, junior 4.
 
 ### The three files that run the work
 
 - **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
-  attach and the import line to run afterwards. 31 entries, all expert/master/wizard. `yarn repaint <key>`
+  attach and the import line to run afterwards. 29 entries, all expert/master/wizard. `yarn repaint <key>`
   copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
   Entries are DELETED as they land, so the file's length is the backlog.
 - **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
@@ -178,7 +178,7 @@ escape — the importer refuses it. Pick which end matters and say so in the reb
 **The open work**, ranked by rooms waiting on it. The queue is only the part that already has a scaffold;
 most of what is left does not, which is why it is not in there.
 
-1. **Work the queue** — 31 entries, about 900 rooms between them, and every one is a paste rather than a
+1. **Work the queue** — 29 entries, about 900 rooms between them, and every one is a paste rather than a
    modelling job. The priest's twelve chamber props and the pharaoh's nine were modelled and queued in one
    pass; nothing in the queue needs Blender again. `yarn repaint` lists them in the order worth doing.
 2. **`wizard/crystal`** — 27 rooms, authored, and the only kind in the set with no primitive to build on.

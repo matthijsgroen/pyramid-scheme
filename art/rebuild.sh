@@ -709,6 +709,39 @@ yarn import-tile art/masters/props/expert/veil.webp --tier=expert --name=veil --
 # at 0.2% light and 24.3% dark, so this is the same trade made further. His veil took 0.78 on the same
 # linen at the same rank: a wall item has no posts and no shadow under it, so the two ends sit
 # differently and the number does not carry between them.
-scaffold hanging --contents=veil --spin=42 --colour=#a7b2be --alpha-cloth=0.6
+scaffold hanging --contents=veil --spin=42 --colour=#a7b2be --alpha-cloth=0.6 --floor=#8d98a5
 yarn import-tile art/masters/props/expert/hanging.webp --tier=expert --name=hanging --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82
+
+# The priest's ALTAR, and the first of his chamber props. No --brightness and no --saturation, which makes
+# it the cleanest return in the file: 67 under its floor, 0.0% over the light clamp and 0.9% under the
+# dark one, straight out of the generator. Dark basalt against pale basalt does not need help.
+#
+# Three rolls, and the first two were the MODEL's fault rather than the generation's — a spout that
+# overlapped its cornice by a 0.025 sliver and drew as a cube flying beside the altar, and a libation
+# channel "sunk flush" 0.013 under the slab's face, which buried it in solid stone. Both are laws in
+# prop-pipeline.md now, and Step 2's gate counts the pieces so neither can ship again unseen.
+#
+# The third return sits a little higher in its frame than the mask does, so about 8% of the mask has no
+# paint over it along the base. It cost nothing: the import keys magenta BEFORE it masks, so an uncovered
+# region goes transparent instead of leaving the pink halo that a moved part usually gives — 8 pixels of
+# cast in the whole tile. The silhouette is then the paint's rather than the model's, which is only safe
+# because the shadow is seated from the same render and the difference is an edge.
+scaffold market --contents=altar --spin=-11 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/offeringTable.webp --tier=expert --name=offeringTable \
+  --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
+# His CANOPIC JARS, and the reason this one matters beyond the tile: the four gods are recognisable at
+# 56x84 and NOT ONE FACE IS MODELLED. The scaffold gives four stopper PROFILES — a dome, a taller dome,
+# two pointed ears, a low round — and the repaint put a human wig, a baboon's muzzle, a jackal's snout and
+# a falcon's eye markings on them unprompted by any geometry. Profile is enough to aim a face.
+#
+# --brightness=0.85: creamy alabaster is the palest thing this rank owns and came back 20.4% over the
+# light clamp. 0.85 takes that to 0.6% and leaves 62 of separation.
+#
+# +58 warmth, left alone and more than twice the merchant's band. It is the same argument as the sconce's
+# one rank over: warm cream against cool grey-blue basalt cannot measure otherwise, and pulling it into
+# the band with --saturation would take the alabaster with it. Separation is the gate.
+scaffold jarrack --contents=canopic --spin=16 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/jarRack.webp --tier=expert --name=jarRack --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85

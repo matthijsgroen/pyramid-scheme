@@ -2070,8 +2070,112 @@ def prim_mask():
     return join_all()
 
 
+def prim_statue():
+    """A statue, built out of boxes — and Step 0's table said this needed a museum scan.
+
+    THE CANOPIC JARS ARE WHY IT DOES NOT. That row read "statues, sarcophagi, canopic jars: a museum
+    scan", and the priest's four jars came back with a human wig, a baboon's muzzle, a jackal's snout and
+    a falcon's painted eye — recognisable at 56x84 with NOT ONE FEATURE MODELLED. The scaffold gave four
+    stopper profiles and the repaint did every face. A face is paint at this size.
+
+    What that leaves geometry is POSTURE, and posture is the one thing paint cannot fix, because the mask
+    cuts the return to the render's own silhouette. So `--contents` is a pose and never a deity: `seated`
+    and `standing` are human, `couchant` is an animal lying down, `lioness` an animal sitting up. Which
+    god it is comes from the prompt.
+
+    The pipeline's opening says a generator "refuses the projection on FIGURES", and the ka-statue's seven
+    rolls are the evidence — but those were PROMPT-ONLY, before any of this existed. A scaffold is exactly
+    the fix for a projection a generator will not obey, so the old count argues for this route rather than
+    against it.
+
+    WHAT A FIGURE MUST HAVE AT 28 UNITS, in the order the shrine's jackal taught it:
+
+    - A GAP AT THE NECK. `prim_shrine`'s Bes paid for this and the jackal paid again: a head touching its
+      shoulders fuses into one loaf and the thing reads as a beehive. The head is smaller than the torso
+      and stands clear of it.
+    - MASS AT THE BACK, not the front. Under z + k*y anything behind the centre is drawn higher, so a
+      seated figure's seat-back buys drawn height twice over where its knees buy none.
+    - A LAP DRAWS LOWER THAN ITS SEAT. Negative y draws lower by k*y, which is what makes a seated figure
+      read as seated rather than as a block with a head: the knees come toward the viewer and fall away.
+    - THE HEADDRESS IS THE SILHOUETTE. A bare head is an egg at any rank. A nemes widening to the
+      shoulders is unmistakably Egyptian and costs one trapezoid, and it is the only part of a human
+      figure whose outline a player can actually read in a 56-wide cell.
+    """
+    contents = arg("contents", "seated")
+    plinth_h = 0.09
+    mark(box(0.62, 0.46, plinth_h, z=plinth_h / 2), "body")
+    b = plinth_h
+
+    if contents in ("couchant", "lioness"):
+        # ANIMALS. `couchant` lies along X — a recumbent beast is a long shape, and built along y it draws
+        # as a vertical lump by the law that y and z both feed the drawn vertical. `lioness` sits up, which
+        # is the same parts in a taller stack.
+        lying = contents == "couchant"
+        if lying:
+            mark(box(0.50, 0.20, 0.15, x=0.03, z=b + 0.075), "body")          # body
+            chest_z, head_z, hx = b + 0.19, b + 0.30, -0.18
+        else:
+            mark(box(0.26, 0.24, 0.30, x=0.0, y=0.03, z=b + 0.15), "body")    # haunches, set BACK
+            mark(box(0.13, 0.13, 0.26, x=0.0, y=-0.16, z=b + 0.13), "body")   # forelegs, forward and down
+            chest_z, head_z, hx = b + 0.40, b + 0.52, 0.0
+        mark(box(0.17, 0.17, 0.15, x=hx, z=chest_z), "body")                  # chest
+        mark(box(0.15, 0.14, 0.13, x=hx - (0.02 if lying else 0), z=head_z), "body")
+        # The MUZZLE reaches in X and the EARS stand apart in X — a pair built front-to-back stacks into
+        # one drawn ear, which the canopic jackal's stopper records.
+        mark(box(0.13, 0.08, 0.07, x=hx - 0.13, y=-0.015, z=head_z - 0.005), "body")
+        for ex in (-0.045, 0.045):
+            bpy.ops.mesh.primitive_cone_add(vertices=10, radius1=0.032, radius2=0.005, depth=0.10,
+                                            location=(hx + ex, 0.0, head_z + 0.105))
+            mark(bpy.context.object, "body")
+        if lying:
+            mark(box(0.06, 0.07, 0.14, x=0.28, y=-0.01, z=b + 0.06), "body")  # tail over the end
+        return join_all()
+
+    seated = contents == "seated"
+    if seated:
+        # The THRONE, and it is most of the silhouette: a back slab standing behind the figure, which is
+        # also the mass that buys drawn height. The seat is what the lap sits on.
+        mark(box(0.44, 0.30, 0.62, y=0.09, z=b + 0.31), "body")               # back slab
+        mark(box(0.40, 0.34, 0.10, y=-0.06, z=b + 0.32), "body")              # seat
+        # LAP AND SHINS. The lap runs forward in -y so the shear draws it lower than the seat, and the
+        # shins drop from its front edge: together they are the L that says seated.
+        mark(box(0.30, 0.22, 0.11, y=-0.16, z=b + 0.40), "body")              # thighs
+        mark(box(0.28, 0.10, 0.34, y=-0.24, z=b + 0.18), "body")              # shins
+        mark(box(0.30, 0.14, 0.06, y=-0.30, z=b + 0.03), "body")              # feet
+        torso_z, torso_h = b + 0.62, 0.30
+    else:
+        # STANDING, striding: one leg advanced in -y so it draws lower and the two legs do not merge into
+        # a column. A figure standing with its feet level is a post with a head.
+        mark(box(0.13, 0.13, 0.44, x=-0.08, y=0.04, z=b + 0.22), "body")      # back leg
+        mark(box(0.13, 0.15, 0.44, x=0.09, y=-0.09, z=b + 0.22), "body")      # advanced leg
+        mark(box(0.34, 0.22, 0.16, z=b + 0.50), "body")                       # kilt, over both
+        torso_z, torso_h = b + 0.58, 0.34
+
+    mark(box(0.32, 0.20, torso_h, y=0.01, z=torso_z + torso_h / 2), "body")   # torso
+    # ARMS in X, down the sides, because an arm is the one part of a figure that can only read sideways.
+    for sx in (-1, 1):
+        mark(box(0.075, 0.14, torso_h * 0.82, x=sx * 0.20, y=-0.02, z=torso_z + torso_h * 0.44), "body")
+    top = torso_z + torso_h
+    # THE GAP AT THE NECK — 0.03 of clear air, which is the one measurement in this primitive that is not
+    # negotiable. Bes and the jackal both fused without it.
+    mark(box(0.09, 0.10, 0.05, z=top + 0.025), "body")                        # neck
+    mark(box(0.17, 0.17, 0.17, z=top + 0.135), "body")                        # head
+    # THE NEMES: a trapezoid widening to the shoulders, and the whole reason a human figure reads at all.
+    # Built as a cone of four sides so its taper is real geometry rather than a painted edge.
+    bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=0.21, radius2=0.135, depth=0.20,
+                                    location=(0, 0.01, top + 0.13))
+    nemes = bpy.context.object
+    nemes.rotation_euler = (0, 0, math.radians(45))
+    bpy.ops.object.transform_apply(rotation=True)
+    nemes.scale = (1.0, 0.72, 1.0)
+    bpy.ops.object.transform_apply(scale=True)
+    mark(recalc_outward(nemes), "body")
+    return join_all()
+
+
 PRIMITIVES.update(
     {
+        "statue": prim_statue,
         "cube": prim_cube,
         "table": prim_table,
         "crate": prim_crate,

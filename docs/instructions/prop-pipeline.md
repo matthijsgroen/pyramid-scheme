@@ -19,7 +19,7 @@ row says it is made of. Also decide where the mesh comes from:
 | a wall item WITH depth — a niche, anything standing off the wall | a parametric primitive too, rendered `--shear=0.5` (see below)                       |
 | heaps of BRICK or cut stone                                      | a parametric primitive — a brick is a box (`prim_rubbleheap`)                        |
 | a HOLE — in the floor or in a wall                               | a parametric primitive, its inside marked `VOID` (`prim_pit`)                        |
-| statues, sarcophagi, canopic jars                                | a museum scan — Scan the World, Smithsonian Open Access, Sketchfab, mostly CC0/CC-BY |
+| a FIGURE — a statue, an animal, a coffin                         | a parametric primitive: `--contents` is a POSE (`prim_statue`). A face is paint at this size, which the priest's canopic jars proved. A museum scan is the fallback, not the default |
 | a FLAT wall item — a plaque, a stela, a board                    | no mesh: straight to the generator                                                   |
 | CLOTH — a hanging, an awning, a veil                             | a parametric primitive: cloth is a formula, not a simulation (`prim_hanging`)        |
 | a DRIFT of sand                                                  | a full-bleed texture, cut to a generated alpha (`yarn drift-mask`)                   |
