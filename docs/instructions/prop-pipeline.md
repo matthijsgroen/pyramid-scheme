@@ -170,6 +170,20 @@ magenta fills the frame to its edges and there is no wall, no floor and no surfa
 and state the FRAME'S ASPECT while you are there, since a flat item has no scaffold to imply one and this
 one came back square for a slot that is twice as wide as it is tall.
 
+**JUDGE A RETURN AGAINST THE LANDED TILE OF ITS OWN POSE, never against another pose's depth cues.**
+Four rolls of the nobleman's Thoth statue were rejected for coming back "plain oblique" — near-frontal,
+almost no top faces — and all four were probably fine. They were being compared to the couchant Anubis,
+which shows a broad plinth top because it lies along X and is spun to -22. A SEATED figure at 7 degrees
+has nothing to show: the pose is a throne back slab, a torso and a head, all front faces, and the
+plinth's top is a sliver. `junior/statue` shipped exactly that flat.
+
+The check that ends the argument is mask overlap, not the eye: the accepted Thoth master measures 83.9%
+IoU against the landed ka-statue's 86.1%. Two points apart, and one had been called a projection
+failure four times.
+
+So before rewriting a prompt because a return looks re-staged: render the scaffold, look at the landed
+tile of the same `--contents`, and measure the overlap. The pose sets how much depth there is TO show.
+
 **THE SCAFFOLD IS THE PROJECTION. NEVER DESCRIBE THE PROJECTION IN WORDS.** This is the oldest rule in
 this file and the one most easily lost, because a re-staged return looks like a wording problem. It is
 not. The nobleman's Thoth statue took four rolls and each was a different way of saying the same thing

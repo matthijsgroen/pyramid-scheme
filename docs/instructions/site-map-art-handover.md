@@ -37,7 +37,7 @@ two figures and five wall items were written down already; their ten chamber pro
 beside them, on primitives every other rank had already proved. Only `wizard/crystal` still needs
 geometry.
 
-**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 70 entries, which is
+**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 69 entries, which is
 everything left in the whole set bar one primitive, and none of it needs Blender again.
 
 **Read `yarn art-census`, not this paragraph.** The count below is a snapshot and every summary of it in
@@ -48,7 +48,7 @@ this file has drifted at least once.
 ### The three files that run the work
 
 - **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
-  attach and the import line to run afterwards. 70 entries: the priest, the pharaoh, the gods, the shared scatter and conditions, and twenty patron variants. `yarn repaint <key>`
+  attach and the import line to run afterwards. 69 entries: the priest, the pharaoh, the gods, the shared scatter and conditions, and nineteen patron variants. `yarn repaint <key>`
   copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
   Entries are DELETED as they land, so the file's length is the backlog.
 - **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
@@ -167,7 +167,7 @@ where a purpose has two wall items to choose between.
 API bills per image, so the paste is done by hand and the tooling only saves the searching.
 
 ```sh
-yarn repaint                  # the 70 keys still owed
+yarn repaint                  # the 69 keys still owed
 yarn repaint master/mask      # prompt to the clipboard, both attachments revealed in the Finder
 # attach the two, paste, generate, download to ~/Downloads
 ```
@@ -211,7 +211,7 @@ carries it:
 - `expert/basin` — painted already; its entry is a RE-ROLL against a rebedded scaffold.
 - `wizard/niche` — queued, but no room at that rank draws a niche until the gods' wall pool includes one.
 
-1. **Work the queue** — 70 entries and every one is a paste rather than a modelling job. `yarn repaint`
+1. **Work the queue** — 69 entries and every one is a paste rather than a modelling job. `yarn repaint`
    lists them GROUPED BY RANK, poorest tomb first, which is how a rank actually gets finished and how
    the material reference stays the same between pastes.
 
@@ -221,7 +221,7 @@ carries it:
 2. **`wizard/crystal`** — 27 rooms, authored, and the only kind in the set with no primitive to build on.
    Needs a model from nothing; everything else at those ranks is `--contents` on something that exists.
    Its queue entry says what the geometry has to be.
-3. **Patron art — twenty entries left, and three of them can be rolled today.** `yarn art-census` grew
+3. **Patron art — nineteen entries left, and two of them can be rolled today.** `yarn art-census` grew
    a PATRONS section for this, because it was invisible in exactly the way the floor scatter and the
    conditions were: the resolver is live, the world names gods on sixty-odd pyramids, and every one of
    them silently drew the generic art with nothing anywhere reporting it. A patron tile is ABSENT rather
@@ -230,13 +230,13 @@ carries it:
 
    The census counts PAIRINGS rather than gods. Nine patrons across five kinds is forty-five files; only
    twenty-seven are reachable, because a god authored on a pyramid holding none of those five kinds draws
-   nothing. Between them they cover 379 rooms; seven are painted and 222 rooms are still owed. That count
+   nothing. Between them they cover 379 rooms; eight are painted and 219 rooms are still owed. That count
    went up rather than down when the shrine rooms landed, which is the trade named there: the world
    shows more gods, so more gods have to be painted.
 
-   **Three still owed have a painted generic under them and can be rolled today**: `junior/statue-thoth`
-   (3 rooms), `expert/wallShrine-anubis` (4) and `expert/statue-anubis` (1). Seven have landed — 85
-   rooms, the two largest pairings in the world among them.
+   **Two still owed have a painted generic under them and can be rolled today**: `expert/wallShrine-anubis`
+   (4 rooms) and `expert/statue-anubis` (1). Eight have landed — 88 rooms, the two largest pairings in
+   the world among them, and the nobleman's patron art is now complete.
 
    The other fourteen sit on a placeholder — `master/mask-osiris` at 33 rooms,
    `master/mask-maat` at 32, `wizard/wallShrine-maat` at 19, `master/statue-osiris` at 13 — and each
@@ -246,9 +246,8 @@ carries it:
    another WITHIN a rank. The nobleman had only Thoth until the Noble's Hidden Vault was dedicated to
    Anubis, and that one line in `spec/junior.ts` is what turned his patron tiles from 11 rooms of
    decoration into 79 — 84 now that the Sacred Ibis Migration is Thoth's too, the ibis being his bird
-   and that journey the only one in the world named for a god's attribute rather than the god. 83 of
-   those rooms are painted; the exception is `statue-thoth`, one room, whose first two rolls came back
-   a flat elevation and then an isometric one.
+   and that journey the only one in the world named for a god's attribute rather than the god. All of it
+   is painted: his rank is the first whose patron art is finished as well as its generics.
 
    The merchant is still in the old position: Bastet is his only visible god, so his `statue-bastet` is
    his generic statue under another name until a second god is authored at his rank.

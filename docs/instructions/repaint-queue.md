@@ -2220,7 +2220,7 @@ yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name
 
 ---
 
-## Patrons — twenty
+## Patrons — nineteen
 
 **A PATRON IS WHOSE TOMB A PYRAMID IS**, and it reaches the map through one mechanism only: for five
 kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUrl` prefers
@@ -2228,7 +2228,7 @@ kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUr
 none of these is a placeholder and nothing on the map is wrong without them. They are the difference
 between a rank whose every tomb looks the same and one where the god is legible from the corridor.
 
-**Twenty-seven pairings, not forty-five**, and seven of them have landed. The count grew when dedicated
+**Twenty-seven pairings, not forty-five**, and eight of them have landed. The count grew when dedicated
 floors started keeping a room for their god: more rooms show a patron, so more pairings exist to paint.
 Re-read `yarn art-census` rather than this number. Nine gods across five kinds is forty-five files, and painting
 forty-five is not the job: a god authored on a pyramid holding none of those five kinds draws nothing
@@ -2315,71 +2315,6 @@ yarn import-tile art/masters/props/expert/wallShrine-anubis.webp --tier=expert -
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
 
-### `junior/statue-thoth` — Thoth as the nobleman's ka-statue
-
-1 room, and the cheapest of the five: same scaffold, same pose, same material as `junior/statue`, with an
-ibis head instead of a man's. Read that tile's rebuild line first — a figure's bare painted flesh is what
-made it come back a cartoon character twice, and this one keeps the same answer, unpainted stone.
-
-**Attach:**
-
-1. `~/tile-previews/statue-thoth-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a seated statue of THOTH, cut from one block of limestone. The slab at the bottom is the
-PLINTH, the tall slab behind him the THRONE BACK and the ledge under him the SEAT. Above the seat is his
-TORSO, with an upright block down each side for his UPPER ARMS. The block across his hips and the block
-below it are a LONG LINEN KILT, wrapped from his waist down over his knees to his shins.
-
-HIS HEAD IS AN IBIS'S: a narrow skull and a long curved down-swept beak, on a man's shoulders. The
-tapering mass above the shoulders in the reference is that head and its wig — carve the beak out of it,
-reaching forward and down.
-
-IT IS A CARVED OBJECT AND NOT A PERSON. Egyptian statuary is BLOCK-CARVED: flat planes, hard arrises, and
-the figure never leaves the block it was cut from. His upper arms stay joined to his sides, his hands
-stay flat on the kilt, his shins stay merged with the seat. Nothing is undercut and nothing projects past
-the front edge of the plinth. No anatomy is modelled and no highlight sits on a shoulder.
-
-Mostly bare limestone, pale and creamy and a little dusty. The painted parts are few: his head and beak a
-dull blue-black, a broad collar in bands of blue and ochre, the kilt an unbleached linen white barely
-lighter than the stone. Nothing else carries paint, and nothing in this picture is bright.
-
-THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
-is to take the last of the waste off it.
-
-CHANGE, freely, and ONLY this: the contour of the figure himself, and only by CUTTING. A shoulder gets
-its slope, a knee its front arris, the beak its curve. These are chisel cuts on a block, not modelling in clay — every mass stays square-shouldered and stays recognisably
-the mass it already is.
-
-CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it
-outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape
-reaches.
-
-EVERYTHING ELSE IS FIXED, and these five are not negotiable:
-
-1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either. This is the ONE thing about the picture you are given rather than asked for.
-3. HE IS SEATED, facing the viewer, hands flat on the kilt over his knees. The slab behind him is the THRONE BACK and the block under him the SEAT — they stay square-cut stone furniture, not part of his body.
-4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. Do not swing it round, do not flatten it, do not straighten it.
-5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
-
-You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
-
-ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF, fingers and toes included, and a clipped limb reads as an amputation. Nothing is added below the plinth either — no ground, no shadow, no floor.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, sparingly painted, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
-yarn import-tile art/masters/props/junior/statue-thoth.webp --tier=junior --name=statue-thoth --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.76 --saturation=1.3
-```
 ### `master/mask-osiris` — Osiris on the pharaoh's funerary mask
 
 **33 rooms, the biggest patron pairing in the world — and it WAITS ON `master/mask`,** which is still a

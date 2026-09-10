@@ -1013,3 +1013,26 @@ yarn import-tile art/masters/props/junior/shrine-thoth.webp --tier=junior --name
 scaffold shrine --spin=-12 --colour=#a49781 --floor=#6c6257
 yarn import-tile art/masters/props/starter/shrine-bastet.webp --tier=starter --name=shrine-bastet --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.76 --saturation=1.6
+
+# THOTH as the nobleman's ka-statue, 3 rooms, and the tile that cost four rolls to a fault that was not
+# one. Same `--contents=seated` scaffold, same --spin=7, same material handling as his generic statue.
+#
+# FOUR ROLLS WERE SPENT REJECTING A CORRECT PROJECTION. Each return came back "plain oblique" — a
+# near-frontal view with almost no top faces — and each was judged against the couchant Anubis, which
+# shows a broad plinth top because it is long along X and spun to -22. A SEATED figure at 7 degrees has
+# nothing to show: the pose is a throne back slab, a torso and a head, all front faces, and the plinth's
+# top is a sliver. Look at `junior/statue`, which shipped: it is as flat as any of the rolls that were
+# thrown away. The measurement that ends the argument is mask overlap — this master sits at 83.9% IoU
+# against the landed statue's 86.1%, two points apart.
+#
+# The prompt rewrites those rolls bought are worth keeping anyway, and the queue records them: the
+# projection is now pinned to the reference rather than described in prose, which is the older rule and
+# the one that kept getting lost. But the lesson here is about JUDGING: compare a return to the landed
+# tile of its OWN POSE, never to another pose's depth cues.
+#
+# --brightness=0.8 --saturation=1.3, which lands on the generic's own numbers almost exactly — -37
+# warmth against its -39, 21 darker against its 20, a 2.1% dark tail against its 2.5%. That is what a
+# variant should measure: the same object at the same rank with a different god on it.
+scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
+yarn import-tile art/masters/props/junior/statue-thoth.webp --tier=junior --name=statue-thoth --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.8 --saturation=1.3
