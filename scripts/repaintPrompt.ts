@@ -39,9 +39,31 @@ const parse = (md: string): Entry[] =>
 const entries = parse(readFileSync(QUEUE, "utf8"))
 const wanted = process.argv[2]
 
+/** Rank order, poorest tomb first, which is the order the ranks were painted in and the order the
+ * sections of the queue are written in. Anything the pattern does not recognise sorts last rather than
+ * being dropped — a listing that silently loses an entry is worse than one with an odd row in it. */
+const TIERS = ["starter", "junior", "expert", "master", "wizard", "default"]
+
 if (!wanted) {
+  // GROUPED BY RANK, not in file order. The file is written in rank sections and used to list that way
+  // for free, until the patron entries arrived: those are one section covering five ranks, because what
+  // orders them is rooms rather than whose tomb they are. Working a rank at a time is how the ranks
+  // actually get finished, and it is also how the material reference stays the same between pastes.
   console.log(`${entries.length} prompts owed — \`yarn repaint <key>\` for one of:\n`)
-  for (const e of entries) console.log(`  ${e.key.padEnd(26)} ${e.title.replace(/`/g, "")}`)
+  const rank = (key: string) => {
+    const at = TIERS.indexOf(key.split("/")[0])
+    return at < 0 ? TIERS.length : at
+  }
+  let last = ""
+  for (const e of [...entries].sort((a, b) => rank(a.key) - rank(b.key))) {
+    const tier = e.key.split("/")[0]
+    if (tier !== last) console.log(`${last ? "\n" : ""}  ${tier}`)
+    last = tier
+    // The heading repeats the key, and under a rank header printing it twice more is noise: the column
+    // gives the name and the rest of the line says what the thing is.
+    const what = e.title.replace(/`/g, "").replace(/^\S+\s+—\s+/, "")
+    console.log(`    ${(e.key.split("/")[1] ?? e.key).padEnd(22)} ${what}`)
+  }
   process.exit(0)
 }
 

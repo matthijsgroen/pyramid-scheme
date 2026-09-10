@@ -779,7 +779,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold mask --shear=0.5 --width=448 --height=224 --sun=0 --margin=1.2
+scaffold mask --shear=0.5 --width=448 --height=224 --sun=0 --margin=1.2 --colour=#d9a93f
 yarn import-tile art/masters/props/master/mask.webp --tier=master --name=mask --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
@@ -1829,7 +1829,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold wallShrine --contents=opening --shear=0.5 --width=448 --height=224 --sun=0
+scaffold wallShrine --contents=opening --shear=0.5 --width=448 --height=224 --sun=0 --colour=#8fd9bd
 yarn import-tile art/masters/props/wizard/wallShrine.webp --tier=wizard --name=wallShrine --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18
 ```
@@ -2206,6 +2206,879 @@ Then, once the return is in `~/Downloads`:
 ```sh
 yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name=overgrown-plant --slot=growth \
   --filter=smooth
+```
+
+---
+
+## Patrons — nineteen
+
+**A PATRON IS WHOSE TOMB A PYRAMID IS**, and it reaches the map through one mechanism only: for five
+kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUrl` prefers
+`<kind>-<patron>.png` over the generic drawing, and falls back silently where that file is absent. So
+none of these is a placeholder and nothing on the map is wrong without them. They are the difference
+between a rank whose every tomb looks the same and one where the god is legible from the corridor.
+
+**Nineteen pairings, not forty-five.** Nine gods across five kinds is forty-five files, and painting
+forty-five is not the job: a god authored on a pyramid holding none of those five kinds draws nothing
+whatever, and the same god at another rank is a different painting. `yarn art-census`'s PATRONS section
+counts the pairings the world actually makes, in room order, and that list is what this section is.
+Re-run it after authoring a journey — a god moved to another pyramid changes which files are worth
+having.
+
+**THE FIVE BELOW COME FIRST because their generic is painted.** The other fourteen sit on a kind that is
+still a placeholder, including the four biggest — `master/mask-osiris` at 33 rooms, `master/mask-maat`
+at 32, `wizard/wallShrine-maat` at 19, `master/statue-osiris` at 13. A god's variant painted before the
+kind he varies is out of order twice over: the rank still draws a dummy in every room no patron reaches,
+and the variant has nothing to be judged against. Each blocked entry names what it waits on.
+
+**Each variant reuses its generic's own scaffold**, so it drops into the same footprint at the same size
+and a room reads as the same furniture with a different god on it. Where the generic's scaffold carries a
+deity of its own — the pharaoh's shrine has Anubis couchant on its lid — the patron version drops that
+`--contents` and takes the plain form instead, because a jackal cannot be repainted into Ma'at.
+
+**The god has to be legible at 56 units, so each prompt names ONE identifying mark and leans on it.**
+This is the same argument the canopic jars settled: a face is paint at this size, and what carries it is
+the silhouette of a head plus one attribute, never a costume.
+
+| god     | the one mark                                                             |
+| ------- | ------------------------------------------------------------------------ |
+| anubis  | a jackal's head, black — long muzzle, two tall pointed ears              |
+| bastet  | a cat's head, small and round-eared                                      |
+| horus   | a falcon's head under the double crown, red round white                  |
+| maat    | a woman's head with one tall straight OSTRICH FEATHER standing up on it  |
+| osiris  | mummiform and wrapped, the tall white ATEF crown with a plume each side  |
+| ra      | a falcon's head carrying a SUN DISC, the disc ringed by a cobra          |
+| sekhmet | a lioness's head carrying a sun disc — a mane where Bastet has none      |
+| sobek   | a crocodile's head, long flat snout                                      |
+| thoth   | an IBIS head, a long curved down-swept beak                              |
+
+### `junior/stela-thoth` — Thoth on the nobleman's false-door stela
+
+7 rooms, and the largest patron pairing whose generic is already painted. FLAT — no scaffold and no
+mask, the same route as the stela it varies.
+
+**Attach:**
+
+1. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Landscape, twice as wide as it is tall. The magenta fills the whole frame right to its edges, and the
+object floats in the middle of it with magenta on all four sides. There is no wall, no floor and no
+surface behind the object — only flat magenta.
+
+The object: a FALSE-DOOR STELA — a slab of dressed limestone cut as a doorway that is not a doorway. A
+recessed panel in the middle is the door itself; a jamb runs up each side of it; a lintel crosses above.
+It is seen perfectly square on.
+
+Standing in the recessed panel, facing the viewer, is THOTH: a slim standing figure with an IBIS HEAD —
+a long curved down-swept beak and a narrow skull, unmistakably a bird's, on a man's shoulders. He holds
+a scribe's PALETTE, a narrow flat board, across his front. He is carved in sunk relief, so his outline
+is cut INTO the panel rather than standing out of it.
+
+Painted limestone, warm cream, the paint worn thin where the stone is proud. The figure's flesh is left
+as bare stone; his head is painted a dull blue-black and his kilt white. The jambs and lintel carry bands
+of ochre and red. No letters and no words anywhere on it, in any language: the only marks are the figure
+and the bands.
+
+Draw it perfectly square-on and flat. No thickness at the sides, no top face, no shadow.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall \
+  --filter=smooth --headroom=0.18 --brightness=0.74
+```
+
+### `starter/statue-bastet` — Bastet in the merchant's tomb
+
+4 rooms. **The one variant that does NOT reuse its generic's scaffold**, and for a good reason: the
+merchant's statue is `shabti.glb`, a mummiform figurine, and Bastet is a seated cat. `prim_statue
+--contents=lioness` is the pose — an animal sitting up — and it is the only patron here that needs a
+scaffold of its own.
+
+**Attach:**
+
+1. `~/tile-previews/statue-bastet-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a statue of BASTET as a seated CAT, on a plinth. The slab at the bottom is the PLINTH. The
+mass set back above it is her HAUNCHES, sitting; the block reaching forward and down at the front is her
+FORELEGS, straight; above them the upright mass is her CHEST, the shape over that her HEAD, and the two
+points standing up are her EARS.
+
+She sits upright, alert, facing the viewer, forelegs straight down in front of her. Her head is a CAT'S —
+small, round, short-muzzled, with two pointed ears — and not a lion's: no mane, no ruff.
+
+Cast BRONZE gone dark, a brown-black patina with green in the hollows and rubbed to bare warm metal on
+the crown of her head, the tips of her ears and the front of her forelegs, which is where a household
+statue is touched. A thin band of incised collar round her neck, and a small ring in one ear. The plinth
+is plain mudbrick, dusty and chipped at its corners.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's tomb: mudbrick, plaster, reed and rough timber. Warm dark earth, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=lioness --spin=-9 --colour=#a49781 --colour-figure=#6f6459 --floor=#6c6257
+yarn import-tile art/masters/props/starter/statue-bastet.webp --tier=starter --name=statue-bastet --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/shrine-thoth` — Thoth in the nobleman's false-door shrine
+
+3 rooms. Reuses the shrine's own scaffold, `falseDoor`.
+
+**Attach:**
+
+1. `~/tile-previews/shrine-thoth-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a miniature FALSE-DOOR SHRINE standing on the floor. The slab at the bottom is its PLINTH;
+the uprights either side are JAMBS; the slab across the top is the LINTEL; the recessed panel between
+them is the door that is not a door. A small OFFERING TABLE stands on the plinth in front of it.
+
+Standing in the recessed panel, facing the viewer, is THOTH: a slim figure with an IBIS HEAD — a long
+curved down-swept beak and a narrow skull, unmistakably a bird's, on a man's shoulders. He is carved in
+sunk relief, cut INTO the panel rather than standing out of it, and he holds a scribe's PALETTE across
+his front.
+
+Painted limestone, warm cream, worn thin on the jambs where hands have passed. The figure's flesh is bare
+stone, his head a dull blue-black, his kilt white. An ochre band runs along the lintel and another round
+the plinth. The offering table is the same limestone with three round loaves on it.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#c39c68
+yarn import-tile art/masters/props/junior/shrine-thoth.webp --tier=junior --name=shrine-thoth --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/wallShrine-anubis` — Anubis in the priest's wall shrine
+
+2 rooms. Reuses the priest's own wall-shrine scaffold, doors ajar.
+
+**Attach:**
+
+1. `~/tile-previews/wallShrine-anubis-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a WALL SHRINE, its two doors standing ajar. The slab over the top is a CAVETTO CORNICE and
+the one under it the SILL; the uprights at the sides are JAMBS; the two panels swung part-open are the
+DOOR LEAVES, and the gap between them shows the inside.
+
+In that gap, lit by the lamp inside, stands ANUBIS: a small standing figure with a JACKAL'S HEAD — a long
+straight muzzle and two tall pointed ears, black. Only part of him shows through the opening; the doors
+cover the rest, and that is right.
+
+The cornice, sill and jambs are dark basalt, cool grey-blue, dressed smooth with natron dust caught in
+the cornice's step. The doors are cedar, dark red-brown, their grain vertical. Inside, the shrine's back
+is a warm dull ochre from the lamp, and Anubis is black resin over wood with a thin dull-gold collar —
+the darkest thing in the picture against the lit back panel behind him.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --colour=#a7b2be --sun=0
+yarn import-tile art/masters/props/expert/wallShrine-anubis.webp --tier=expert --name=wallShrine-anubis --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `junior/statue-thoth` — Thoth as the nobleman's ka-statue
+
+1 room, and the cheapest of the five: same scaffold, same pose, same material as `junior/statue`, with an
+ibis head instead of a man's. Read that tile's rebuild line first — a figure's bare painted flesh is what
+made it come back a cartoon character twice, and this one keeps the same answer, unpainted stone.
+
+**Attach:**
+
+1. `~/tile-previews/statue-thoth-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a seated statue of THOTH, cut from one block of limestone. The slab at the bottom is the
+PLINTH, the tall slab behind him the THRONE BACK and the ledge under him the SEAT. Above the seat is his
+TORSO, with an upright block down each side for his UPPER ARMS. The block across his hips and the block
+below it are a LONG LINEN KILT, wrapped from his waist down over his knees to his shins.
+
+HIS HEAD IS AN IBIS'S: a narrow skull and a long curved down-swept beak, on a man's shoulders. The
+tapering mass above the shoulders in the reference is that head and its wig — carve the beak out of it,
+reaching forward and down.
+
+IT IS A CARVED OBJECT AND NOT A PERSON. Egyptian statuary is BLOCK-CARVED: flat planes, hard arrises, and
+the figure never leaves the block it was cut from. His upper arms stay joined to his sides, his hands
+stay flat on the kilt, his shins stay merged with the seat. Nothing is undercut and nothing projects past
+the front edge of the plinth. No anatomy is modelled and no highlight sits on a shoulder.
+
+Mostly bare limestone, pale and creamy and a little dusty. The painted parts are few: his head and beak a
+dull blue-black, a broad collar in bands of blue and ochre, the kilt an unbleached linen white barely
+lighter than the stone. Nothing else carries paint, and nothing in this picture is bright.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, sparingly painted, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
+yarn import-tile art/masters/props/junior/statue-thoth.webp --tier=junior --name=statue-thoth --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.76 --saturation=1.3
+```
+### `master/mask-osiris` — Osiris on the pharaoh's funerary mask
+
+**33 rooms, the biggest patron pairing in the world — and it WAITS ON `master/mask`,** which is still a
+placeholder. Paint the generic first: until it exists there is nothing to judge this against, and every
+room at the rank that no patron reaches still draws a dummy.
+
+**Attach:**
+
+1. `~/tile-previews/mask-osiris-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a funerary mask hanging on a wall. The rounded mass behind and above is the HEADDRESS; the
+oval in front of it is the FACE; the two bars flanking the face are the headdress's LAPPETS hanging down
+at the sides; the small block below the chin is the false BEARD; the wide band at the bottom is the broad
+COLLAR the mask sits in.
+
+IT IS OSIRIS, and the headdress is his ATEF CROWN rather than a nemes: paint the mass above the face as a
+tall smooth white cone, narrowing as it rises, with a single narrow PLUME standing against it on each
+side. The lappets hang plain and undecorated below it.
+
+His FACE IS GREEN — a flat dull green, the colour of new growth, which is how Osiris is finished and the
+one thing that names him at a glance. The brows and eye rims are inlaid in dark blue lapis. The atef
+crown is unpainted white, its plumes banded in ochre and dull green. The beard is dark blue lapis, long
+and squared off, and it is PLAITED — cross-hatched, not smooth. The collar is banded faience in
+blue-green, dark blue and gold; the gold is a flat warm ochre-yellow.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine anywhere on it.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold mask --shear=0.5 --width=448 --height=224 --sun=0 --margin=1.2 --colour=#d9a93f
+yarn import-tile art/masters/props/master/mask-osiris.webp --tier=master --name=mask-osiris --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `master/mask-maat` — Ma'at on the pharaoh's funerary mask
+
+32 rooms. **WAITS ON `master/mask`.**
+
+**Attach:**
+
+1. `~/tile-previews/mask-maat-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a funerary mask hanging on a wall. The rounded mass behind and above is the HEADDRESS; the
+oval in front of it is the FACE; the two bars flanking the face are the headdress's LAPPETS hanging down
+at the sides; the small block below the chin is a squared TAB; the wide band at the bottom is the broad
+COLLAR the mask sits in.
+
+IT IS MA'AT, and one mark names her: a single tall straight OSTRICH FEATHER standing upright out of the
+headdress, its shaft dead vertical and its vane splitting to a soft point. Paint the mass above the face
+as a plain dark WIG, smooth and close, and stand the feather up out of the middle of it. There is nothing
+else on her head.
+
+Her face is gold leaf — a flat warm ochre-yellow, evenly laid, brows and eye rims inlaid in dark blue
+lapis. The wig and lappets are solid dark blue lapis, undecorated, so the feather reads against them. The
+feather is white with a fine ochre midrib. The collar is banded faience in blue-green, dark blue and
+gold.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine anywhere on it.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold mask --shear=0.5 --width=448 --height=224 --sun=0 --margin=1.2 --colour=#d9a93f
+yarn import-tile art/masters/props/master/mask-maat.webp --tier=master --name=mask-maat --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `wizard/wallShrine-maat` — Ma'at's feather in the gods' opening
+
+19 rooms. **WAITS ON `wizard/wallShrine`.** The generic is an opening with nothing in it at all, and
+that emptiness is its subject; a patron version is the same opening with ONE thing in it.
+
+**Attach:**
+
+1. `~/tile-previews/wallShrine-maat-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a shrine cabinet on a wall. The wide slab over the top is a CAVETTO CORNICE and the slab
+under it is the PLINTH, both overhanging the box between them; the uprights at the sides are JAMBS;
+between them is the opening.
+
+Inside the opening, and nothing else in it, stands a single tall OSTRICH FEATHER — Ma'at's feather —
+upright, its shaft dead vertical and its vane splitting to a soft point. It is drawn as a flat pale
+green-white light against the dark of the opening, a colour and not a glow, and it does not touch the
+sides or the top.
+
+The cornice, plinth and jambs are polished calcite, cool green-white, seamless, without tool marks or
+dust, and light leaks faintly from the joints between them. The opening behind the feather is a deep even
+black going back further than the box is deep.
+
+The opening is a HOLE and stays black — paint darkness in it, never a wall, a floor or a back panel. No pink and no purple anywhere in it.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold wallShrine --contents=opening --shear=0.5 --width=448 --height=224 --sun=0 --colour=#8fd9bd
+yarn import-tile art/masters/props/wizard/wallShrine-maat.webp --tier=wizard --name=wallShrine-maat --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `master/statue-osiris` — the pharaoh's Osiris colossus, as his patron
+
+13 rooms. **WAITS ON `master/statue`.** That entry already asks for Osiris, so this file is very nearly
+the same painting; it exists because the resolver reads a filename and the generic has to stay generic
+for the rooms no patron reaches. When `master/statue` lands, roll this one from the same prompt with the
+atef crown and the green face pushed harder, and keep the generic drier.
+
+**Attach:**
+
+1. `~/tile-previews/statue-osiris-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a colossal statue of OSIRIS, cut from one block of black granite. The slab at the bottom is
+the PLINTH. The tapering block on his head is his ATEF CROWN — a tall smooth cone with a narrow plume
+standing against it on each side. The block across his hips is a KILT. He holds a CROOK and a FLAIL
+crossed over his chest, two short staffs, and they must not stand out past the edges of his own
+shoulders.
+
+IT IS A CARVED OBJECT AND NOT A PERSON. Egyptian statuary is BLOCK-CARVED: flat planes, hard arrises, and
+the figure never leaves the block. His upper arms stay joined to his sides, the crook and flail stay flat
+against his chest, the stone between his advanced leg and the block behind it is never cut through.
+Nothing is undercut and nothing projects past the front edge of the plinth. No anatomy is modelled and no
+highlight sits on a shoulder or a shin.
+
+GILDED, and his FACE AND HANDS ARE GREEN. Gold leaf over the granite everywhere else — a flat warm
+ochre-yellow, worn through to the dark stone on the shins, the forearms and the crown's front edge, which
+is every surface a hand reaches. His face and hands are a flat dull green, the colour of new growth,
+which is how Osiris is finished and the one thing that names him at a glance. The atef crown is
+unpainted white with its plumes banded ochre and dull green. The plinth is black granite with a gilded
+band along its front.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=standing --spin=-12 --colour=#d9a93f --colour-figure=#8a7434 --floor=#57534b
+yarn import-tile art/masters/props/master/statue-osiris.webp --tier=master --name=statue-osiris --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `wizard/wallShrine-ra` — Ra's disc in the gods' opening
+
+12 rooms. **WAITS ON `wizard/wallShrine`.**
+
+**Attach:**
+
+1. `~/tile-previews/wallShrine-ra-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a shrine cabinet on a wall. The wide slab over the top is a CAVETTO CORNICE and the slab
+under it is the PLINTH, both overhanging the box between them; the uprights at the sides are JAMBS;
+between them is the opening.
+
+Inside the opening, and nothing else in it, hangs a single SUN DISC — Ra's disc — a plain flat circle,
+centred, touching nothing. A COBRA is coiled once round it, its head raised at the disc's right edge, so
+the circle is not a bare ring. The disc is a flat pale gold, a colour and not a shine.
+
+The cornice, plinth and jambs are polished calcite, cool green-white, seamless, without tool marks or
+dust, and light leaks faintly from the joints between them. The opening behind the disc is a deep even
+black going back further than the box is deep.
+
+The opening is a HOLE and stays black — paint darkness in it, never a wall, a floor or a back panel. No pink and no purple anywhere in it.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight — the disc is a circle of flat colour and casts nothing.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold wallShrine --contents=opening --shear=0.5 --width=448 --height=224 --sun=0 --colour=#8fd9bd
+yarn import-tile art/masters/props/wizard/wallShrine-ra.webp --tier=wizard --name=wallShrine-ra --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `master/statue-maat` — Ma'at in the pharaoh's tomb
+
+7 rooms. **WAITS ON `master/statue`.**
+
+**Attach:**
+
+1. `~/tile-previews/statue-maat-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a standing statue of MA'AT, cut from one block of black granite. The slab at the bottom is
+the PLINTH. The block across her hips is a long sheath DRESS reaching her ankles. The tapering block on
+her head is her WIG, and standing up out of it is her one attribute.
+
+HER ONE MARK IS THE FEATHER: a single tall straight OSTRICH FEATHER standing upright out of the top of
+her wig, shaft dead vertical, vane splitting to a soft point. Carve it out of the tapering block the
+reference gives you. Nothing else identifies her and nothing else needs to.
+
+IT IS A CARVED OBJECT AND NOT A PERSON. Egyptian statuary is BLOCK-CARVED: flat planes, hard arrises, and
+the figure never leaves the block. Her upper arms stay joined to her sides, the stone between her legs is
+never cut through, nothing is undercut and nothing projects past the front edge of the plinth. No anatomy
+is modelled and no highlight sits on a shoulder.
+
+Black granite, close-grained and dressed smooth. GILDED in three places only: the feather, the broad
+collar at her throat and the band round the plinth, all a flat warm ochre-yellow worn through to the
+stone along their lower edges. Her face, arms and the dress are bare polished granite. The gold on the
+feather is what carries her across a room.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=standing --spin=-12 --colour=#d9a93f --colour-figure=#8a7434 --floor=#57534b
+yarn import-tile art/masters/props/master/statue-maat.webp --tier=master --name=statue-maat --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+### `master/shrine-maat` — Ma'at in the pharaoh's shrine
+
+4 rooms. **WAITS ON `master/shrine`.** It drops the generic's `--contents=couchant`: that scaffold puts
+Anubis on the lid, and a jackal cannot be repainted into Ma'at.
+
+**Attach:**
+
+1. `~/tile-previews/shrine-maat-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a SHRINE standing on a plinth, the slab stepping out over it a CAVETTO CORNICE, and an
+opening in its front.
+
+Standing in the opening is MA'AT: a slim figure in a long sheath dress, facing the viewer, with a single
+tall straight OSTRICH FEATHER standing upright out of her wig — shaft dead vertical, vane splitting to a
+soft point. The feather is her whole identity and it must clear the top of her head cleanly against the
+dark of the opening.
+
+The shrine is gilded — gold leaf over wood, a flat warm ochre-yellow — worn through to dark timber on the
+cornice's steps, along the front lip and at the corners, which is where a shrine is handled. The plinth
+is black granite with a gilded band. Inside, the back of the shrine is deep shade. Ma'at is pale creamy
+ALABASTER against it, her dress unpainted, her collar and her feather gilded.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shrine --spin=18 --colour=#d9a93f --floor=#57534b
+yarn import-tile art/masters/props/master/shrine-maat.webp --tier=master --name=shrine-maat --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/mask-sekhmet` — Sekhmet on the pharaoh's mask
+
+3 rooms. **WAITS ON `master/mask`.** The mask scaffold is a human oval, so the lioness has to be carved
+out of it inward — a broad flat muzzle and a mane filling the headdress, and nothing reaching past the
+outline the reference gives.
+
+**Attach:**
+
+1. `~/tile-previews/mask-sekhmet-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a funerary mask hanging on a wall. The rounded mass behind and above is the HEADDRESS; the
+oval in front of it is the FACE; the two bars flanking the face are the headdress's LAPPETS hanging down
+at the sides; the wide band at the bottom is the broad COLLAR the mask sits in.
+
+IT IS SEKHMET, so the face is a LIONESS'S: a broad flat muzzle low in the oval, a wide short nose, small
+round ears set at the top corners, and a MANE filling the headdress behind — ruffed, not striped. Carve
+all of that INSIDE the outline the reference gives; nothing may reach past it. Above the mane sits a
+plain flat SUN DISC.
+
+The lioness's face is gold leaf — a flat warm ochre-yellow — with the muzzle and the eye rims inlaid in
+dark blue lapis. The mane is a deeper red-gold, worked in short strokes so it reads as fur where a nemes
+would read as stripes. The sun disc is a flat deep red, ringed by a fine gold line. The collar is banded
+faience in blue-green, dark blue and gold.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine anywhere on it.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold mask --shear=0.5 --width=448 --height=224 --sun=0 --margin=1.2 --colour=#d9a93f
+yarn import-tile art/masters/props/master/mask-sekhmet.webp --tier=master --name=mask-sekhmet --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `wizard/shrine-ra` — Ra's disc in the gods' window on the cosmos
+
+3 rooms. **WAITS ON `wizard/shrine`.**
+
+**Attach:**
+
+1. `~/tile-previews/shrine-ra-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a SHRINE — a box standing on a plinth, the slab stepping out over it a CAVETTO CORNICE, and
+the opening in its front standing open.
+
+What is inside is the NIGHT SKY: a deep blue-black going back further than the shrine is deep, with pale
+STARS scattered through it. Hanging in the middle of that night, touching nothing, is a single SUN DISC —
+Ra's disc — a plain flat circle with a COBRA coiled once round it, its head raised at the disc's right
+edge. The disc is a flat pale gold, a colour and not a shine, and the stars thin out around it.
+
+Do not paint a back panel, a floor or a wall behind them. The disc hangs in depth.
+
+The shrine itself is polished calcite, cool green-white, seamless and without a tool mark or a speck of
+dust, LIT FROM WITHIN AND FROM BENEATH so it is palest along the cornice's lower step and round the
+opening's rim. A band of star-field inlay runs along the plinth.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shrine --spin=-11 --colour=#8fd9bd --floor=#5a8074
+yarn import-tile art/masters/props/wizard/shrine-ra.webp --tier=wizard --name=shrine-ra --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `wizard/statue-maat` — Ma'at in the gods' vault
+
+3 rooms. **WAITS ON `wizard/statue`.**
+
+**Attach:**
+
+1. `~/tile-previews/statue-maat-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a standing statue of MA'AT, cut from one block of calcite. The slab at the bottom is the
+PLINTH. The block across her hips is a long sheath DRESS to her ankles. The tapering block above her head
+is her one attribute.
+
+HER ONE MARK IS THE FEATHER: a single tall straight OSTRICH FEATHER standing upright out of her wig,
+shaft dead vertical, vane splitting to a soft point. Carve it out of the tapering block the reference
+gives you, and nothing else identifies her.
+
+IT IS A CARVED OBJECT AND NOT A PERSON. Egyptian statuary is BLOCK-CARVED: flat planes, hard arrises, and
+the figure never leaves the block. Her upper arms stay joined to her sides, the stone between her legs is
+never cut through, nothing is undercut and nothing projects past the front edge of the plinth. No anatomy
+is modelled.
+
+Polished calcite, cool green-white, seamless and without a tool mark or a speck of dust. It is LIT FROM
+WITHIN AND FROM BENEATH: the stone is faintly brighter at its lower edges and in the hollows, as though
+the light comes up through it, and there is no shadow anywhere on the figure. The FEATHER is the palest
+part of her, a flat pale green-white brighter than the stone it rises from. Her eye is a flat pale ring.
+Star-field inlay runs round the plinth — small pale points in dark stone.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=standing --spin=5 --colour=#8fd9bd --colour-figure=#7fa596 --floor=#5a8074
+yarn import-tile art/masters/props/wizard/statue-maat.webp --tier=wizard --name=statue-maat --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `wizard/shrine-maat` — Ma'at's feather in the gods' shrine
+
+2 rooms. **WAITS ON `wizard/shrine`.** Same object as `wizard/shrine-ra` with the other god's mark in
+the opening, so roll them together.
+
+**Attach:**
+
+1. `~/tile-previews/shrine-maat-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a SHRINE — a box standing on a plinth, the slab stepping out over it a CAVETTO CORNICE, and
+the opening in its front standing open.
+
+What is inside is the NIGHT SKY: a deep blue-black going back further than the shrine is deep, with pale
+STARS scattered through it. Standing in the middle of that night, touching nothing, is a single tall
+OSTRICH FEATHER — Ma'at's feather — upright, shaft dead vertical, vane splitting to a soft point. It is a
+flat pale green-white against the dark, a colour and not a glow, and the stars thin out around it.
+
+Do not paint a back panel, a floor or a wall behind them. The feather stands in depth.
+
+The shrine itself is polished calcite, cool green-white, seamless and without a tool mark or a speck of
+dust, LIT FROM WITHIN AND FROM BENEATH so it is palest along the cornice's lower step and round the
+opening's rim. A band of star-field inlay runs along the plinth.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shrine --spin=-11 --colour=#8fd9bd --floor=#5a8074
+yarn import-tile art/masters/props/wizard/shrine-maat.webp --tier=wizard --name=shrine-maat --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/mask-horus` — Horus on the pharaoh's mask
+
+1 room. **WAITS ON `master/mask`.**
+
+**Attach:**
+
+1. `~/tile-previews/mask-horus-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a funerary mask hanging on a wall. The rounded mass behind and above is the HEADDRESS; the
+oval in front of it is the FACE; the two bars flanking the face are the headdress's LAPPETS hanging down
+at the sides; the wide band at the bottom is the broad COLLAR the mask sits in.
+
+IT IS HORUS, so the face is a FALCON'S: a short hooked BEAK low in the oval, a smooth domed skull, and a
+dark stripe running back and down from each eye — the falcon's mark, and the thing that says bird rather
+than man at any size. Carve it INSIDE the outline the reference gives; nothing may reach past it. Above
+the headdress sits the DOUBLE CROWN — a tall white cone standing inside a red one that flares behind it.
+
+The falcon's head is gold leaf — a flat warm ochre-yellow — with the beak and eye stripe in dark blue
+lapis and the eye rimmed the same. The headdress and lappets are striped in gold and deep lapis blue,
+narrow and even. The double crown is flat unpainted white inside flat deep red, no shading in either. The
+collar is banded faience in blue-green, dark blue and gold.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine anywhere on it.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold mask --shear=0.5 --width=448 --height=224 --sun=0 --margin=1.2 --colour=#d9a93f
+yarn import-tile art/masters/props/master/mask-horus.webp --tier=master --name=mask-horus --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `master/shrine-sekhmet` — Sekhmet in the pharaoh's shrine
+
+1 room. **WAITS ON `master/shrine`.** Drops `--contents=couchant` for the same reason `master/shrine-maat`
+does.
+
+**Attach:**
+
+1. `~/tile-previews/shrine-sekhmet-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a SHRINE standing on a plinth, the slab stepping out over it a CAVETTO CORNICE, and an
+opening in its front.
+
+Standing in the opening is SEKHMET: a figure in a long sheath dress with a LIONESS'S HEAD — a broad flat
+muzzle, a wide short nose, small round ears and a ruffed mane at the shoulders. A plain flat SUN DISC
+sits on top of her head. She is a lioness and not a cat: the mane is the difference and it must show.
+
+The shrine is gilded — gold leaf over wood, a flat warm ochre-yellow — worn through to dark timber on the
+cornice's steps, along the front lip and at the corners. The plinth is black granite with a gilded band.
+Inside, the back of the shrine is deep shade. Sekhmet is dark polished granite against it, her dress
+unpainted, her sun disc a flat deep red ringed with gold and her collar gilded.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shrine --spin=18 --colour=#d9a93f --floor=#57534b
+yarn import-tile art/masters/props/master/shrine-sekhmet.webp --tier=master --name=shrine-sekhmet --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `wizard/statue-ra` — Ra in the gods' vault
+
+1 room. **WAITS ON `wizard/statue`.** That entry already asks for Ra-Horakhty, falcon-headed with a sun
+disc, so this file is very nearly the same painting — it exists because the resolver reads a filename and
+the generic has to stay generic for the rooms no patron reaches. Roll it from the same prompt once
+`wizard/statue` has landed.
+
+**Attach:**
+
+1. `~/tile-previews/statue-ra-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a standing statue of RA, falcon-headed, cut from one block of calcite. The slab at the bottom
+is the PLINTH. The block across his hips is a KILT. The tapering block above his head is the SUN DISC he
+wears — carve it round, and sit it on the crown of his skull rather than floating over it.
+
+HIS HEAD IS A FALCON'S: a short hooked beak, a smooth domed skull, no muzzle, and a dark stripe running
+back and down from the eye.
+
+IT IS A CARVED OBJECT AND NOT A CREATURE. Egyptian statuary is BLOCK-CARVED: flat planes, hard arrises,
+and the figure never leaves the block. His upper arms stay joined to his sides, the stone between his
+advanced leg and the block behind it is never cut through, nothing is undercut and nothing projects past
+the front edge of the plinth. No anatomy is modelled.
+
+Polished calcite, cool green-white, seamless and without a tool mark or a speck of dust, LIT FROM WITHIN
+AND FROM BENEATH so the stone is faintly brighter at its lower edges and in the hollows, with no shadow
+anywhere on the figure. The SUN DISC is a flat pale gold, a colour and not a shine, with a COBRA coiled
+once round it. His eye is a flat pale ring. Star-field inlay runs round the plinth.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=standing --spin=5 --colour=#8fd9bd --colour-figure=#7fa596 --floor=#5a8074
+yarn import-tile art/masters/props/wizard/statue-ra.webp --tier=wizard --name=statue-ra --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ## Regenerating the attachments

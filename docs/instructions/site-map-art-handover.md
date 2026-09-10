@@ -37,7 +37,7 @@ two figures and five wall items were written down already; their ten chamber pro
 beside them, on primitives every other rank had already proved. Only `wizard/crystal` still needs
 geometry.
 
-**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 50 entries, which is
+**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 69 entries, which is
 everything left in the whole set bar one primitive, and none of it needs Blender again.
 
 **Read `yarn art-census`, not this paragraph.** The count below is a snapshot and every summary of it in
@@ -48,7 +48,7 @@ this file has drifted at least once.
 ### The three files that run the work
 
 - **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
-  attach and the import line to run afterwards. 50 entries, the priest, the pharaoh and the gods. `yarn repaint <key>`
+  attach and the import line to run afterwards. 69 entries: the priest, the pharaoh, the gods, the shared scatter and conditions, and nineteen patron variants. `yarn repaint <key>`
   copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
   Entries are DELETED as they land, so the file's length is the backlog.
 - **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
@@ -137,7 +137,7 @@ from a hash of the site id and the room key, and zero per-room decorations are s
   forty-five are real. Today it says 0 of 45, which is the honest number.
 
   `yarn art-census`'s PATRONS section is the other half and the one to plan from: the sheet shows all
-  forty-five because it cannot know which are reachable, and the census shows the twenty-one that the
+  forty-five because it cannot know which are reachable, and the census shows the nineteen that the
   world actually pairs, in room order, with the art state of the generic each one would replace.
 - **A steerable patron, as opposed to a varied one.** `tileVariants` already picks `<kind>-2.png` by cell
   position, which buys variety and cannot be aimed. Patron needs the other half: an authored field on the
@@ -164,7 +164,7 @@ where a purpose has two wall items to choose between.
 API bills per image, so the paste is done by hand and the tooling only saves the searching.
 
 ```sh
-yarn repaint                  # the 50 keys still owed
+yarn repaint                  # the 69 keys still owed
 yarn repaint master/mask      # prompt to the clipboard, both attachments revealed in the Finder
 # attach the two, paste, generate, download to ~/Downloads
 ```
@@ -197,10 +197,10 @@ Expect master and wizard to behave like the nobleman on their dark stone and unl
 white linen against oiled timber, where no setting clears both clamps. `--contrast` below 1 is NOT the
 escape — the importer refuses it. Pick which end matters and say so in the rebuild line.
 
-**The open work**, ranked by rooms waiting on it. **Everything that needs a paint is now IN the queue** —
-that was not true until this pass, and the gap was 17 tiles: the gods' whole chamber, six floor-scatter
-tiles nobody counted, one tally board and the condition sprites. `yarn art-census` and `yarn repaint`
-reconcile exactly now, with four differences and each one written down in the entry that carries it:
+**The open work**, ranked by rooms waiting on it. **Everything the map can draw is now IN the queue** — every
+placeholder the census counts, and every patron variant the world pairs. `yarn art-census` and
+`yarn repaint` reconcile exactly, with four differences and each one written down in the entry that
+carries it:
 
 - `wizard/crystal` — an entry with no prompt, because there is no primitive to render a scaffold from.
 - `default/flooded` — not queued: no site in the world authors a flooded condition, so a painted tide
@@ -208,33 +208,37 @@ reconcile exactly now, with four differences and each one written down in the en
 - `expert/basin` — painted already; its entry is a RE-ROLL against a rebedded scaffold.
 - `wizard/niche` — queued, but no room at that rank draws a niche until the gods' wall pool includes one.
 
-1. **Work the queue** — 50 entries and every one is a paste rather than a modelling job. `yarn repaint`
-   lists them in the order worth doing. The largest single block in it is the gods' rank: two figures,
-   ten chamber props and five wall items, about 257 rooms, and the section preamble carries what is
-   peculiar about it — a brief full of absences, which three of its prompts answer by painting a part OUT
+1. **Work the queue** — 69 entries and every one is a paste rather than a modelling job. `yarn repaint`
+   lists them GROUPED BY RANK, poorest tomb first, which is how a rank actually gets finished and how
+   the material reference stays the same between pastes.
+
+   The largest single block is the gods' rank — two figures, ten chamber props and five wall items,
+   about 257 rooms — and its section preamble carries what is peculiar about it — a brief full of absences, which three of its prompts answer by painting a part OUT
    in the background's own magenta so the import keys it away.
 2. **`wizard/crystal`** — 27 rooms, authored, and the only kind in the set with no primitive to build on.
    Needs a model from nothing; everything else at those ranks is `--contents` on something that exists.
    Its queue entry says what the geometry has to be.
-3. **Patron art** — and it is NOT in the queue, deliberately. `yarn art-census` grew a PATRONS section
-   for it, because it was invisible to this file in exactly the way the floor scatter and the conditions
-   were: the resolver is live, fifty-eight pyramids name a god, and every one of them silently draws the
-   generic art. A patron tile is ABSENT rather than a placeholder — the fallback is by design and
-   nothing on the map is wrong today — which is why it does not belong in a list of things that need a
-   paint.
+3. **Patron art — nineteen entries, and the five with a painted generic come first.** `yarn art-census`
+   grew a PATRONS section for this, because it was invisible to this file in exactly the way the floor
+   scatter and the conditions were: the resolver is live, fifty-eight pyramids name a god, and every one
+   of them silently drew the generic art with nothing anywhere reporting it. A patron tile is ABSENT
+   rather than a placeholder, so nothing on the map is wrong without them — they are the difference
+   between a rank whose every tomb looks the same and one where the god is legible from the corridor.
 
    The census counts PAIRINGS rather than gods, and that is the whole use of it. Nine patrons across
-   five kinds is forty-five files; only twenty-one of them are reachable at all, because a god authored
-   on a pyramid with no statue, shrine, stela, mask or wall shrine in it draws nothing. And of those
-   twenty-one, **sixteen sit on a generic that is still a placeholder** — including the four biggest,
-   `master/mask-osiris` at 33 rooms, `master/mask-maat` at 32, `wizard/wallShrine-maat` at 19 and
-   `master/statue-osiris` at 13. Painting a god's variant before the kind he varies is out of order,
-   and finishing items 1 and 2 above is what unblocks them.
+   five kinds is forty-five files; only nineteen are reachable at all, because a god authored on a
+   pyramid holding none of those five kinds draws nothing. Fourteen of the nineteen sit on a generic
+   that is still a placeholder — including the four biggest, `master/mask-osiris` at 33 rooms,
+   `master/mask-maat` at 32, `wizard/wallShrine-maat` at 19 and `master/statue-osiris` at 13 — and each
+   of those entries names what it waits on. Painting a god's variant before the kind he varies is out of
+   order twice over: the rank still draws a dummy in every room no patron reaches, and the variant has
+   nothing to be judged against.
 
-   Five are paintable today and total 17 rooms: `junior/stela-thoth` (7), `starter/statue-bastet` (4),
-   `junior/shrine-thoth` (3), `expert/wallShrine-anubis` (2), `junior/statue-thoth` (1). Judge the whole
-   axis in **Storybook → App/SiteMap/PatronSheet**, which stages all nine crossed with all five and
-   dims a cell that is falling back.
+   Five are paintable today, 17 rooms between them: `junior/stela-thoth` (7), `starter/statue-bastet`
+   (4), `junior/shrine-thoth` (3), `expert/wallShrine-anubis` (2), `junior/statue-thoth` (1). Judge the
+   axis in **Storybook → App/SiteMap/PatronSheet**, which stages all nine gods crossed with all five
+   kinds and dims a cell that is falling back. Re-run the census after authoring a journey: a god moved
+   to another pyramid changes which files are worth having.
 
 `yarn on-floor <tile> <tier> <out.png>` puts one tile on its rank's floor at CELL size and blows the result
 up, which is the only picture worth judging a repaint against. The pit's shaft was mid-grey and perfectly
