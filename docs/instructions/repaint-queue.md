@@ -91,101 +91,13 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Priest — ten
+## Priest — nine
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
-the hanging. Six are new `--contents` variants — `statue` among them, which the table used to send to a scan — and five are geometry another rank already proved, which
+the hanging. Five are new `--contents` variants — `statue` among them, which the table used to send to a scan — and five are geometry another rank already proved, which
 is the difference between them worth knowing — a variant's silhouette is his, a reused one's is not, and
 the prompt is all that makes the reused ones his rank's. His `tallyBoard` is here too, and it is the only
 FLAT thing in the section: no mesh, no mask, straight to the generator.
-
-### `expert/basin` — a sacred pool with steps down into it
-
-**THE TILE IS ALREADY PAINTED — this entry is a RE-ROLL**, and the only one in the file. The landed art
-has its coping standing proud of the paving and a bar of shadow beneath it, which reads as a framed slab
-lying on the floor rather than an opening cut into it. The scaffold has since been rebedded flush and the
-seat dropped; `art/rebuild.sh` keeps the current tile working until the new roll lands.
-
-**A SCAFFOLD THAT COMES WITH A FLOOR — this one and `wizard/basin`, and five failed rolls are why.** A hole cannot
-be a product shot. Every other scaffold is an object on magenta and an object on magenta is a thing you
-could pick up; a hole is an ABSENCE IN A SURFACE, and with the surface missing the same picture is equally
-a tank, a panel or a flat pattern. Told plainly, it came back a raised stone tub. Told that nothing may
-stand up, it came back a flat plan diagram with no depth in it at all. Neither was disobedient — both
-answered the only question the picture asked.
-
-`pit` survives the same shape without a floor because it is full of things that CROSS ITS OWN EDGE: a
-ladder over the near lip, its spoil on the paving outside. Where a hole has no such furniture, the surface
-has to be drawn instead — so this one is handed over rendered `--context=1.04x0.74`, which puts the rank's
-floor round it with a hole of exactly that size cut in it, so the floor's own edge is the coping's outer
-edge. It is added after the camera, so the frame is unchanged, and the mask is rendered WITHOUT it. No
-floor reaches the tile. The two numbers are the coping's own metres, measured off the primitive;
-`prop-pipeline.md` has why that needs saying and what it cost.
-
-**The floor runs off ALL FOUR EDGES**, the near one included. Ground that stops inside the frame is a
-plinth with a hole in it, and with a shadow beneath, a slab floating in the air.
-
-**AND THE COPING IS BEDDED FLUSH, which is what the fifth roll was for.** Built with the paving at the
-water's rim the kerb stood a finger proud of it, and the painted return read exactly as that: a framed
-slab lying ON the floor with its own shadow under it, which at 56 units is a picture hung on a wall. The
-whole pool now drops until the coping's top IS the paving. Nothing stands above the floor any more, so
-this is the one prop in the file imported with no `--seat` — there is nothing left to cast a shadow.
-
-**Regenerating this one's scaffold takes an extra flag** that no other entry needs —
-`--context=1.04x0.74 --shadow=0` on the handed-over render, and on that render only. The exact command is under
-"Regenerating the attachments" at the foot of this file, because a fenced block cannot go here: `yarn
-repaint` takes an entry's FIRST bare fence as the prompt, so a code block above it is what gets pasted.
-
-**Which is why this prompt does not mention magenta.** There is none in the reference: the frame is
-paving. The paint that lands on the paving is discarded by the mask exactly as an invented background is,
-so it costs nothing and is not worth a word of the prompt.
-
-**Attach:**
-
-1. `~/tile-previews/basin-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A single object painted in flat matte gouache, seen from above and slightly in front, in the same raked
-view as the reference. Portrait, two units wide by three tall, exactly as the reference. No perspective
-and no vanishing point: verticals stay vertical, horizontals stay horizontal.
-
-The scene: a SACRED POOL cut down into a stone floor. The whole frame is that floor, and the pool is a
-hole in it. You are painting a floor with a pool in it, not an object standing on a surface.
-
-The pale field filling the frame is the PAVING. The dark rectangle sunk into it is WATER, filling the pool
-nearly to the brim. The low border running all the way round the water is a stone COPING, a course of kerb
-laid flush with the paving on all four sides, and the length of it nearest you passes IN FRONT of the
-water. The four ledges at the left, the lowest of them under the surface, are STEPS walking down into the
-pool from the paving.
-
-Nothing here is a tank, a tub, a trough or a basin, and nothing has an outside you could see. NOTHING
-STANDS ABOVE THE PAVING — not even the coping, which is bedded level with it, its top face in the same
-plane as the slabs it is set into. Everything else is below.
-
-The paving is dark basalt, cool grey-blue, laid in large dressed slabs and dusted with natron. The ruled
-grid across the whole frame gives the JOINTS between those slabs; keep every one of them where it is, so
-the paving reads as one continuous floor running out of the picture on all four sides. The coping is the
-same stone in one unbroken course with no joints in it, its inner edge rubbed pale where feet cross it —
-that change of surface is all that separates it from the paving, so do not draw a shadow beside it. The
-steps are worn hollow in their middles.
-
-The water is a still flat surface, dark green-grey, a touch lighter where it meets the stone, and darker
-in the far corners. A pale crust of NATRON has dried along the waterline all round and on the tread of the
-step that stands clear of the water; the submerged step is darker and greener than the ones above it.
-
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold basin --contents=pool --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/basin.webp --tier=expert --name=basin --slot=prop \
-  --filter=smooth --mask="$OBJ" --brightness=0.9
-```
 
 ### `expert/brazier` — a censer hanging on its stand
 
@@ -3342,19 +3254,12 @@ silently.
 `render-prop` finds Blender in `/Applications` by itself; set `BLENDER` to point somewhere else, the same
 override `art/rebuild.sh` takes.
 
-**A HOLE's scaffold takes `--context`, and only the handed-over render does.** `expert/basin` and
-`wizard/basin` need it: the floor goes round the object with a hole of the stated size cut in it, so the
+**A HOLE's scaffold takes `--context`, and only the handed-over render does.** `wizard/basin` needs it: the floor goes round the object with a hole of the stated size cut in it, so the
 generator can see what the hole is cut INTO. The mask is rendered without it, so no floor reaches the
 tile. The size is in the primitive's own metres; `prop-pipeline.md` has the rest of the laws. There is no
 footprint render here — nothing on this prop stands above the paving, so it casts nothing.
 
 ```sh
-r() { yarn render-prop --primitive=basin --contents=pool --colour=#a7b2be --floor=#8d98a5 "$@"; }
-P=~/tile-previews/basin-expert
-r --context=1.04x0.74 --shadow=0 --out=$P.png
-r --shadow=0 --background=none --out=$P-obj.png
-
-# and the gods', the same shape in the other rank's stone
 r() { yarn render-prop --primitive=basin --contents=pool --colour=#8fd9bd --floor=#5a8074 "$@"; }
 P=~/tile-previews/basin-wizard
 r --context=1.04x0.74 --shadow=0 --out=$P.png

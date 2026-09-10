@@ -188,8 +188,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   cedar posts before the shrine. His linen is fine enough to see the wall through — the temple's cloth is
   thinner than anyone else's, and where it gathers into a fold it thickens.
 - The priest's chambers hold his own furniture now: an altar with a libation channel worn into it, four
-  canopic jars under their human, baboon, jackal and falcon heads, and Anubis himself lying black and
-  gold-collared on a slab of basalt.
+  canopic jars under their human, baboon, jackal and falcon heads, his corded coffin with its arms
+  crossed, a sacred pool cut into the paving with steps walking down into the water, and Anubis himself
+  lying black and gold-collared on a slab of basalt.
 
 ### Fixed
 
