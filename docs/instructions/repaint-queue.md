@@ -1905,85 +1905,16 @@ yarn import-tile art/masters/props/wizard/hanging.webp --tier=wizard --name=hang
 
 ---
 
-## Floor scatter and one board — six
+## Floor scatter — five
 
 **FLOOR SCATTER IS PLACED BY RULE, not by an author**, so every rank draws all three of `mat`,
 `rubblePile` and `rubbleSpill` and a missing one shows on every floor of that rank rather than in a
 handful of rooms. `art-census` prints no room count for them for the same reason. That makes these the
-cheapest coverage left in the file: five tiles, three primitives already proved, and no new geometry.
+cheapest coverage left in the file: five tiles, two primitives already proved, and no new geometry.
 
 The spill and the pile are the SAME primitive at different `--contents`: `rubblePile` is the standing
 heap, `rubblePile --contents=spill` the flat scatter, and `--contents=plaster` the nobleman's variant with
 two shards leaning on it. Whichever a rank uses for its pile, its spill is `--contents=spill`.
-
-### `junior/tallyBoard` — an estate ledger board in counting marks
-
-The last tile the nobleman is missing anywhere in this file.
-
-FLAT, so it has NO scaffold and NO mask: a board hanging on two pegs is a slab, and Step 0's table sends
-flat things straight to the generator. Its own silhouette becomes the tile, which is why this one has a
-single attachment and an import line with no `--mask`.
-
-**NEVER ASK FOR WRITING — ask for MARKS.** The first roll of this came back a modern accounting sheet in
-English: columns headed "Bookkeeping", "Entries", "Totals", figures in Arabic numerals with decimal
-commas, and a struck-through line reading "stewarded on 1986". That is what "columns of small hieratic
-figures in a scribe's quick hand" buys. Hieroglyphs are safe because they are PICTURES and a generator
-has pictures to draw; hieratic is HANDWRITING, it has no pictorial vocabulary to fall back on, and what
-comes back is handwriting in the only script the model actually writes.
-
-The merchant's board is the proof and it landed first roll: it asks for scratched strokes grouped in
-fives, and a stroke belongs to no language. So does this one.
-
-**And it asked for a wall, and got one.** "Hanging flat against a wall" put the whole frame under white
-brick with the magenta pushed out to a border. A wall item hangs on nothing in its scaffold; the band it
-sits in is the renderer's job.
-
-**Then the second roll wrote the word RED four times.** The marks were right, the frame was right and the
-wall was gone — and at the foot of each column, where the prompt asked for "a row of larger RED marks",
-it lettered R-E-D in dark red and put the strokes after it. CAPITALS IN THESE PROMPTS MEAN "THIS IS A
-THING IN THE PICTURE", and every other capitalised word is a noun for something to draw, so a capitalised
-ADJECTIVE reads as one more thing to put on the board. Colour words are lower case here now, and the
-prompt says in as many words that no word appears on the board, the name of a colour included.
-
-**Attach:**
-
-1. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-Landscape, twice as wide as it is tall. The magenta fills the whole frame right to its edges, and the
-object floats in the middle of it with magenta on all four sides. There is no wall, no floor, no room and
-no surface behind the object — only flat magenta.
-
-The object: a LEDGER BOARD — a thin rectangular plank, twice as wide as it is tall, hanging from a peg at
-each top corner with a cord slung between them. It is seen perfectly square on.
-
-Whitewashed cedar, the wash thin enough that the grain shows through and chipped away at the corners. The
-pegs are dark cedar, the cord undyed linen.
-
-WHAT IS ON THE BOARD IS COUNTING, NOT WRITING. There are NO LETTERS, NO WORDS and NO NUMERALS anywhere on
-it, in any language or any alphabet — nothing a reader could read. It carries four ruled COLUMNS separated
-by thin red lines, and each column is filled with COUNTING MARKS: short vertical strokes in groups of
-five, the fifth struck diagonally through the other four, in black ink, row under row. Every column ends
-in a bottom row of the same marks again, larger and in dark red instead of black, and that row is its
-total. One group has been rubbed out and re-marked beside it, and one whole row is crossed through with
-a single red line.
-
-No word appears anywhere on this board, and that includes the name of a colour: write nothing, spell
-nothing, letter nothing. Every mark on it is a stroke.
-
-Draw it perfectly square-on and flat. No thickness at the sides, no top face, no shadow.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-yarn import-tile art/masters/props/junior/tallyBoard.webp --tier=junior --name=tallyBoard --slot=wall \
-  --filter=smooth
-```
 
 ### `expert/rubbleSpill` — cord-seal fragments and natron crust
 

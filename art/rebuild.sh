@@ -854,3 +854,24 @@ yarn import-tile art/masters/props/junior/sarcophagus.webp --tier=junior --name=
 scaffold rubblePile --contents=spill --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/masters/props/junior/rubbleSpill.webp --tier=junior --name=rubbleSpill --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.84
+
+# The nobleman's LEDGER BOARD. FLAT — no mesh, no mask, no seat, the same route as the merchant's tally
+# board and his own stela: a plank on two pegs is a slab, and its own silhouette becomes the tile.
+#
+# THE MASTER HAS THE WORD "RED" LETTERED ON IT FOUR TIMES, and it is not a defect in the tile. Three
+# rolls went into this one. The first came back a modern accounting sheet with English column headings
+# and Arabic numerals, which is what asking for hieratic in a scribe's hand buys — hieroglyphs are
+# pictures and come back as pictures, cursive has no pictorial vocabulary and comes back as English.
+# Rewritten to ask for counting strokes it got the marks right and then lettered R-E-D at the foot of
+# every column, because the prompt asked for "a row of larger RED marks" and capitals in these prompts
+# mean a thing to draw. At 56x28 those three letters are two pixels tall and sit in a row of red
+# strokes: they are not legible and not distinguishable from the tallies. A fourth roll would buy
+# nothing the map can see, and the prompt is fixed for whoever needs the next board.
+#
+# --brightness=0.80 --saturation=1.6, and the pair is doing two different jobs. Whitewashed cedar is the
+# palest thing this rank owns: untouched it put 42.8% over the light clamp and 0.85 fixed that but left
+# the board 7 luminance from the floor, inside the ten the separation rule refuses. 0.80 gives 17. The
+# saturation is for warmth — bare whitewash measures -73 against a rank that runs -4 to -63, and 1.6
+# brings it to -62, beside the lamp's -63.
+yarn import-tile art/masters/props/junior/tallyBoard.webp --tier=junior --name=tallyBoard --slot=wall \
+  --filter=smooth --headroom=0.18 --brightness=0.80 --saturation=1.6
