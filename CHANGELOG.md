@@ -192,7 +192,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   crossed, a sacred pool cut into the paving with steps walking down into the water, a censer of incense
   smouldering on its chains, a papyrus-bundle column carved with sunk relief and bound with stone cord,
   a naos with its cedar doors corded and sealed, the shaft robbers left open with a rope ladder over its
-  lip, and Anubis himself lying black and gold-collared on a slab of basalt.
+  lip, the door plug they knocked through lying in a heap with its seal in pieces, and Anubis himself
+  lying black and gold-collared on a slab of basalt.
 
 ### Fixed
 

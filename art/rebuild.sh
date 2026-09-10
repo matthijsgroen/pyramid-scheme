@@ -844,6 +844,16 @@ scaffold pit --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/pit.webp --tier=expert --name=pit --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 
+# His COLLAPSED DOOR PLUG. --brightness=0.85 for the NATRON: the crust between the blocks came back 11.5%
+# over the light clamp and lands at 2.0%, keeping 63 of separation.
+#
+# The return spread forty of its own blocks over the frame where the scaffold heaps twelve, which is the
+# multi-piece rule doing its job — the mask cuts basalt into the MODELLED silhouettes and the arrangement,
+# the footprint and the shadow all stay ours. Ask a scatter for material, never for layout.
+scaffold rubblePile --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/rubblePile.webp --tier=expert --name=rubblePile --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+
 # The nobleman's KA-STATUE, and the entry that cost the most rolls in the file for a reason that turned
 # out not to be about the painting at all. Two returns came back a cartoon character, and measuring them
 # found nothing wrong: 85% of the paint landed inside the mask, so it WAS a repaint of the scaffold, and

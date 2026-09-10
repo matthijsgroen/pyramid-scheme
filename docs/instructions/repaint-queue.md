@@ -98,46 +98,13 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Priest — five
+## Priest — four
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
 the hanging. Some are new `--contents` variants and some are geometry another rank already proved, which
 is the difference between them worth knowing — a variant's silhouette is his, a reused one's is not, and
 the prompt is all that makes the reused ones his rank's. His `tallyBoard` is here too, and it is the only
 FLAT thing in the section: no mesh, no mask, straight to the generator.
-
-### `expert/rubblePile` — a collapsed door plug
-
-**Attach:**
-
-1. `~/tile-previews/rubblePile-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a HEAP of broken stone — the blocks of a door plug that has been knocked through and has
-fallen inward. Every piece is a block of the same masonry, at a different angle.
-
-Dark basalt, cool grey-blue. Each block has a DRESSED face, smooth and dust-filmed, and BROKEN faces that
-are paler, rougher and sharper-edged: the contrast between the two is what says these were cut and are now
-smashed. A pale crust of NATRON has dried over the pieces low in the heap. Scattered among them are a few
-fragments of grey CLAY SEAL, some with part of a stamped mark still on them, and one short length of
-undyed linen CORD.
-
-The arrangement of the pieces does not matter and need not match the reference — paint the material and
-let the pieces fall where they fall.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold rubblePile --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/rubblePile.webp --tier=expert --name=rubblePile --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `expert/mat` — a rush mat worn through in the middle
 
@@ -152,14 +119,23 @@ nothing but the material tells this from the merchant's. See `prim_mat`.
 ```
 A flat rectangular MAT seen from above, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a rush mat lying on the floor before an altar, knelt on for years. It is woven from split
-rush in a close plain weave, running in bands across its width, with a plaited edge all round.
+The object: a rush mat lying on the floor before an altar, knelt on for years. The pale four-sided shape
+in the middle of the picture is the MAT, seen from above and lying TURNED on the floor, so none of its
+edges are parallel to the edges of the picture. The narrow darker band along its lower edge is its
+THICKNESS, where the mat sits on the stone. Everything outside that shape is background and stays
+magenta — the mat does not reach the edges of the picture.
+
+It is woven from split rush in a close plain weave, running in bands across its width, with a plaited edge
+all round. The weave runs with the MAT'S OWN edges, following the shape it is painted on, never square to
+the picture.
 
 Pale straw-buff, greyed and dulled with dust. It is WORN THROUGH IN THE MIDDLE: at the centre the weave
 has gone thin and broken, showing dark gaps and loose frayed ends, and the wear fades out toward the
 edges, which are still sound. The plaited edge is darker than the field, from handling.
 
-Fill the whole shape to its edges. The wear is the subject: without it this is a new mat.
+The wear is the subject: without it this is a new mat.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it lies at. Paint only material and wear.
 
 No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
 ```
