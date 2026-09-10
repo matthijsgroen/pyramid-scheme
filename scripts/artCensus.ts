@@ -65,7 +65,19 @@ const wall = new Map<string, number>()
 const prop = new Map<string, number>()
 /** Floors whose site authors a condition, per kind — see the CONDITIONS section. */
 const condition = new Map<string, number>()
+/** Rooms drawing a patron-able kind in a site that names a patron — see the PATRONS section. */
+const patron = new Map<string, number>()
 const bump = (m: Map<string, number>, k: string) => m.set(k, (m.get(k) ?? 0) + 1)
+
+/**
+ * The five kinds a god can be DEPICTED on, copied from `tileAssets.ts` rather than imported for the
+ * reason the header gives: that module pulls in the app's PNG imports, which tsx cannot resolve.
+ *
+ * Copied lists drift, and this one is checked: `artCensus.spec.ts` reads the set out of `tileAssets.ts`
+ * and fails if the two stop matching. A census counting against its own stale list is the failure this
+ * whole file exists to prevent.
+ */
+const PATRON_KINDS = new Set(["statue", "shrine", "wallShrine", "stela", "mask"])
 
 for (const journey of journeys) {
   const siteConfigs = journey.siteConfigs
@@ -79,12 +91,18 @@ for (const journey of journeys) {
       })
       if (!result.success) return
       if (result.grid.condition) bump(condition, result.grid.condition.kind)
+      const god = result.grid.patron
       for (const row of result.grid.cells)
         for (const cell of row) {
           if (cell.type !== "room") continue
           if (cell.wallDecoration) bump(wall, `${config.difficulty}/${cell.wallDecoration}`)
           const d = (cell as { decoration?: string }).decoration
           if (d) bump(prop, `${config.difficulty}/${d}`)
+          // A patron only reaches the map through one of five kinds, so a god authored on a pyramid
+          // with none of them in it draws nothing at all. Counting the pairing rather than the god is
+          // the whole point: it is what says which of the forty-five files are worth painting.
+          for (const kind of [cell.wallDecoration, d])
+            if (kind && god && PATRON_KINDS.has(kind)) bump(patron, `${config.difficulty}/${kind}-${god}`)
         }
     })
   }
@@ -159,6 +177,40 @@ console.log("\nCONDITIONS   (one shared sprite per kind, in tiles/default — a 
     const floors = condition.get(kind) ?? 0
     const where = floors === 0 ? "NO SITE AUTHORS IT" : `${floors} floors`
     console.log(`    ${kind.padEnd(16)} ${String(where).padEnd(20)} ${state}`)
+  }
+}
+
+/**
+ * PATRONS — the fourth axis, and this census was blind to it exactly as it was blind to the other two.
+ *
+ * A patron is whose tomb a pyramid is. It reaches the map through ONE mechanism and no other: for five
+ * kinds, `patronTileUrl` prefers `<kind>-<patron>.png` over the generic drawing and falls back silently
+ * where that file is absent. Silently is why nothing noticed — the two sections above count a room's
+ * KIND, the resolver is live, fifty-eight pyramids name a god, and every one of them draws the generic
+ * art with no report anywhere saying so.
+ *
+ * COUNTED AS PAIRINGS, not as gods. Nine patrons across five kinds is forty-five files, and painting
+ * forty-five is not the job: a god authored on a pyramid with no statue, shrine, stela, mask or wall
+ * shrine in it draws nothing whatever, and the same god at another rank is a different painting. What
+ * the map can actually show is the list below, in room order, and it is a good deal shorter than
+ * forty-five.
+ */
+console.log("\nPATRONS   (<kind>-<patron>.png, preferred over the generic drawing for five kinds)")
+{
+  const rows = [...patron.entries()].sort((a, b) => b[1] - a[1])
+  if (!rows.length) console.log("    no site pairs a patron with a kind that can carry one")
+  for (const tier of TIERS) {
+    if (only && tier !== only) continue
+    const mine = rows.filter(([k]) => k.startsWith(`${tier}/`))
+    if (!mine.length) continue
+    const art = await artFor(tier)
+    console.log(`  ${tier}`)
+    for (const [key, n] of mine) {
+      const name = key.split("/")[1]
+      const colours = art.get(name)
+      const state = colours === undefined ? "not drawn" : colours < PAINTED_MIN_COLOURS ? "placeholder" : "art"
+      console.log(`    ${name.padEnd(22)} ${String(n).padStart(4)} rooms   ${state}`)
+    }
   }
 }
 

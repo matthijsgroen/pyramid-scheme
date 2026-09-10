@@ -128,13 +128,17 @@ from a hash of the site id and the room key, and zero per-room decorations are s
   and it lives at `expert/statue.png`, not at `statue-anubis.png` — so every statue in his tomb is Anubis
   until a second god is painted for that rank. Chosen over duplicating the file under a patron name
   because it needs no work now, forecloses nothing, and leaves the generic slot filled for rooms no
-  patron ever reaches. The consequence to expect: `PatronSheet` honestly reads 0 of 35 until someone
+  patron ever reaches. The consequence to expect: `PatronSheet` honestly reads 0 of 45 until someone
   paints a SECOND god for a rank, which is the point at which patrons start being visible in play.
 
   **`App/SiteMap/PatronSheet` is the sheet to judge them on**, and it works before any of the code does:
   it stages all nine crossed with all five on a rank's floor, reads `<kind>-<patron>.png` straight off
   the filesystem, dims a cell that is falling back to the generic art and counts how many of the
   forty-five are real. Today it says 0 of 45, which is the honest number.
+
+  `yarn art-census`'s PATRONS section is the other half and the one to plan from: the sheet shows all
+  forty-five because it cannot know which are reachable, and the census shows the twenty-one that the
+  world actually pairs, in room order, with the art state of the generic each one would replace.
 - **A steerable patron, as opposed to a varied one.** `tileVariants` already picks `<kind>-2.png` by cell
   position, which buys variety and cannot be aimed. Patron needs the other half: an authored field on the
   pyramid, purely drawn and therefore free, plus a resolver that prefers `<kind>-<patron>.png`. The
@@ -212,8 +216,25 @@ reconcile exactly now, with four differences and each one written down in the en
 2. **`wizard/crystal`** — 27 rooms, authored, and the only kind in the set with no primitive to build on.
    Needs a model from nothing; everything else at those ranks is `--contents` on something that exists.
    Its queue entry says what the geometry has to be.
-3. **The patron field** — see "Decided but NOT built". `tileVariants` is half of it already; what is
-   missing is a resolver that prefers `<kind>-<patron>.png`.
+3. **Patron art** — and it is NOT in the queue, deliberately. `yarn art-census` grew a PATRONS section
+   for it, because it was invisible to this file in exactly the way the floor scatter and the conditions
+   were: the resolver is live, fifty-eight pyramids name a god, and every one of them silently draws the
+   generic art. A patron tile is ABSENT rather than a placeholder — the fallback is by design and
+   nothing on the map is wrong today — which is why it does not belong in a list of things that need a
+   paint.
+
+   The census counts PAIRINGS rather than gods, and that is the whole use of it. Nine patrons across
+   five kinds is forty-five files; only twenty-one of them are reachable at all, because a god authored
+   on a pyramid with no statue, shrine, stela, mask or wall shrine in it draws nothing. And of those
+   twenty-one, **sixteen sit on a generic that is still a placeholder** — including the four biggest,
+   `master/mask-osiris` at 33 rooms, `master/mask-maat` at 32, `wizard/wallShrine-maat` at 19 and
+   `master/statue-osiris` at 13. Painting a god's variant before the kind he varies is out of order,
+   and finishing items 1 and 2 above is what unblocks them.
+
+   Five are paintable today and total 17 rooms: `junior/stela-thoth` (7), `starter/statue-bastet` (4),
+   `junior/shrine-thoth` (3), `expert/wallShrine-anubis` (2), `junior/statue-thoth` (1). Judge the whole
+   axis in **Storybook → App/SiteMap/PatronSheet**, which stages all nine crossed with all five and
+   dims a cell that is falling back.
 
 `yarn on-floor <tile> <tier> <out.png>` puts one tile on its rank's floor at CELL size and blows the result
 up, which is the only picture worth judging a repaint against. The pit's shaft was mid-grey and perfectly
