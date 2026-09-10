@@ -2260,9 +2260,11 @@ def prim_statue():
         # A left-facing head's ears belong at ±Y. Under the shear that separates them by only k*0.09 =
         # 0.063 of drawn height, against an ear 0.10 tall and at the same X, so the near one swallows
         # the far one and the pair reads as a single lump — the stacking the canopic jackal's stopper
-        # records. At ±X they separate cleanly and sit fore-and-aft along the snout, which is wrong on
-        # the model and right on the page: the priest's Anubis landed off this scaffold with them
-        # painted as a near ear and a far ear, which is what a left-facing head actually looks like.
+        # records — rendered both ways to be sure, and at ±Y the pair comes out as one cone with a hint
+        # of a second behind it. At ±X they separate cleanly and sit fore-and-aft along the snout,
+        # which is wrong on the model and right on the page: the priest's Anubis landed off this
+        # scaffold with them painted as a near ear and a far ear, which is what a left-facing head
+        # actually looks like.
         #
         # So do not "fix" these to match the lioness fix above. That one moved the MUZZLE, because her
         # body faces the viewer and her face did not. The ears were never the fault in either pose.
