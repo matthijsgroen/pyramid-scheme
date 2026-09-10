@@ -2465,9 +2465,28 @@ the crown of her head, the tips of her ears and the front of her forelegs, which
 statue is touched. A thin band of incised collar round her neck, and a small ring in one ear. The plinth
 is plain mudbrick, dusty and chipped at its corners.
 
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
+is to take the last of the waste off it.
 
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+CHANGE, freely, and ONLY this: the contour of the cat herself, and only by CUTTING. A haunch swells, a
+chest rounds, a skull is not a cube. These are chisel cuts on a block, not modelling in clay — every mass stays square-shouldered and stays recognisably
+the mass it already is.
+
+CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it
+outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape
+reaches.
+
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+3. SHE SITS UPRIGHT, facing the viewer, forelegs straight down in front of her. She does not stand, lie or crouch.
+4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF, fingers and toes included, and a clipped limb reads as an amputation. Nothing is added below the plinth either — no ground, no shadow, no floor.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's tomb: mudbrick, plaster, reed and rough timber. Warm dark earth, nothing gilded.
 ```
@@ -2590,9 +2609,28 @@ Mostly bare limestone, pale and creamy and a little dusty. The painted parts are
 dull blue-black, a broad collar in bands of blue and ochre, the kilt an unbleached linen white barely
 lighter than the stone. Nothing else carries paint, and nothing in this picture is bright.
 
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
+is to take the last of the waste off it.
 
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+CHANGE, freely, and ONLY this: the contour of the figure himself, and only by CUTTING. A shoulder gets
+its slope, a knee its front arris, the beak its curve. These are chisel cuts on a block, not modelling in clay — every mass stays square-shouldered and stays recognisably
+the mass it already is.
+
+CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it
+outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape
+reaches.
+
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+3. HE IS SEATED, facing the viewer, hands flat on the kilt over his knees. The slab behind him is the THRONE BACK and the block under him the SEAT — they stay square-cut stone furniture, not part of his body.
+4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF, fingers and toes included, and a clipped limb reads as an amputation. Nothing is added below the plinth either — no ground, no shadow, no floor.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, sparingly painted, nothing gilded.
 ```
@@ -2769,9 +2807,28 @@ band along its front.
 
 Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
 
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
+is to take the last of the waste off it.
 
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+CHANGE, freely, and ONLY this: the contour of the figure himself, and only by CUTTING. A shoulder gets
+its slope, a calf its front arris, a jaw its plane. These are chisel cuts on a block, not modelling in clay — every mass stays square-shouldered and stays recognisably
+the mass it already is.
+
+CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it
+outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape
+reaches.
+
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column or a mummy wrap.
+4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF, fingers and toes included, and a clipped limb reads as an amputation. Nothing is added below the plinth either — no ground, no shadow, no floor.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
 ```
@@ -2857,9 +2914,28 @@ feather is what carries her across a room.
 
 Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
 
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
+is to take the last of the waste off it.
 
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+CHANGE, freely, and ONLY this: the contour of the figure herself, and only by CUTTING. A shoulder gets
+its slope, a calf its front arris, a jaw its plane. These are chisel cuts on a block, not modelling in clay — every mass stays square-shouldered and stays recognisably
+the mass it already is.
+
+CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it
+outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape
+reaches.
+
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+3. SHE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
+4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF, fingers and toes included, and a clipped limb reads as an amputation. Nothing is added below the plinth either — no ground, no shadow, no floor.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
 ```
@@ -3033,9 +3109,28 @@ Star-field inlay runs round the plinth — small pale points in dark stone.
 
 Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
 
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
+is to take the last of the waste off it.
 
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+CHANGE, freely, and ONLY this: the contour of the figure herself, and only by CUTTING. A shoulder gets
+its slope, a calf its front arris, a jaw its plane. These are chisel cuts on a block, not modelling in clay — every mass stays square-shouldered and stays recognisably
+the mass it already is.
+
+CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it
+outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape
+reaches.
+
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+3. SHE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
+4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF, fingers and toes included, and a clipped limb reads as an amputation. Nothing is added below the plinth either — no ground, no shadow, no floor.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
 ```
@@ -3209,9 +3304,28 @@ once round it. His eye is a flat pale ring. Star-field inlay runs round the plin
 
 Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
 
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
+is to take the last of the waste off it.
 
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+CHANGE, freely, and ONLY this: the contour of the figure himself, and only by CUTTING. A shoulder gets
+its slope, a calf its front arris, the beak its hook. These are chisel cuts on a block, not modelling in clay — every mass stays square-shouldered and stays recognisably
+the mass it already is.
+
+CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it
+outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape
+reaches.
+
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
+4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
+
+ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF, fingers and toes included, and a clipped limb reads as an amputation. Nothing is added below the plinth either — no ground, no shadow, no floor.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
 ```
