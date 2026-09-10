@@ -170,6 +170,33 @@ magenta fills the frame to its edges and there is no wall, no floor and no surfa
 and state the FRAME'S ASPECT while you are there, since a flat item has no scaffold to imply one and this
 one came back square for a slot that is twice as wide as it is tall.
 
+**THE SCAFFOLD IS THE PROJECTION. NEVER DESCRIBE THE PROJECTION IN WORDS.** This is the oldest rule in
+this file and the one most easily lost, because a re-staged return looks like a wording problem. It is
+not. The nobleman's Thoth statue took four rolls and each was a different way of saying the same thing
+wrong:
+
+| wording | what came back |
+| --- | --- |
+| "no vanishing point, nothing converges, verticals stay vertical" | flat front elevation, no top faces |
+| ...plus "you never see round the side of anything" | flat, guaranteed |
+| ...plus "you see the top faces, the plinth's top is a parallelogram" | full three-quarter isometric |
+| "front faces are undistorted rectangles, only depth slants" | plain oblique, re-staged again |
+
+Each wording is defensible read on its own, and each walked into a different wall. Prose about geometry
+oscillates, because a generator weighs adjectives against each other and the picture it already wants to
+draw. What it does not argue with is the attachment.
+
+So the rule reads, in every statue and every shrine prompt:
+
+> THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from
+> the reference image exactly and do not reason about them.
+
+**And the reason it went missing on statues is worth knowing.** A statue's scaffold is an ENVELOPE, so
+its prompt drops "keep every edge, every proportion and every silhouette" — and that sentence had been
+carrying the projection for free. Releasing the CONTOUR pulled the PROJECTION out with it, and four
+rolls went into writing back in prose what one clause had held. Contour and projection are separate
+things: free the first, pin the second to the reference, and say nothing about geometry at all.
+
 **FORBIDDING PERSPECTIVE IS NOT THE SAME AS FORBIDDING DEPTH, and the wording that confuses them costs a
 roll.** The projection rule every scaffold prompt carries reads "there is no vanishing point and nothing
 converges; every vertical stays vertical, every horizontal stays horizontal; nothing gets smaller as it

@@ -618,11 +618,9 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
-
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either. This is the ONE thing about the picture you are given rather than asked for.
 3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column or a mummy wrap.
-4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
-
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. Do not swing it round, do not flatten it, do not straighten it.
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 GILDED: gold leaf over black granite, a flat warm ochre-yellow, worn through to the dark stone on the
@@ -1248,11 +1246,9 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
-
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either. This is the ONE thing about the picture you are given rather than asked for.
 3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
-4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
-
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. Do not swing it round, do not flatten it, do not straighten it.
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 Polished calcite, cool green-white, seamless and without a tool mark or a speck of dust on it. It is lit
@@ -2365,11 +2361,9 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
-
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either. This is the ONE thing about the picture you are given rather than asked for.
 3. HE IS SEATED, facing the viewer, hands flat on the kilt over his knees. The slab behind him is the THRONE BACK and the block under him the SEAT — they stay square-cut stone furniture, not part of his body.
-4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
-
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. Do not swing it round, do not flatten it, do not straighten it.
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
@@ -2565,11 +2559,9 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
-
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either. This is the ONE thing about the picture you are given rather than asked for.
 3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column or a mummy wrap.
-4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
-
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. Do not swing it round, do not flatten it, do not straighten it.
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
@@ -2674,11 +2666,9 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
-
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either. This is the ONE thing about the picture you are given rather than asked for.
 3. SHE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
-4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
-
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. Do not swing it round, do not flatten it, do not straighten it.
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
@@ -2723,12 +2713,10 @@ ALABASTER against it, her dress unpainted, her collar and her feather gilded.
 
 Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
 
-THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
-vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
-ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
-point away from you. Reproduce the reference's angle exactly: do not re-stage it and do not turn it into
-a three-quarter view, but do keep the top faces the reference shows you. This view is oblique, not flat —
-nothing gets smaller as it goes back, and nothing is squashed into a front elevation either.
+THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the
+reference image exactly and do not reason about them: whatever it does with verticals, with top faces,
+with depth and with which way the object is turned, do the same. It is not a photograph and not an
+isometric view, and it is not for you to correct into either.
 
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
@@ -2817,12 +2805,10 @@ opening's rim. A band of star-field inlay runs along the plinth.
 
 Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
 
-THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
-vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
-ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
-point away from you. Reproduce the reference's angle exactly: do not re-stage it and do not turn it into
-a three-quarter view, but do keep the top faces the reference shows you. This view is oblique, not flat —
-nothing gets smaller as it goes back, and nothing is squashed into a front elevation either.
+THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the
+reference image exactly and do not reason about them: whatever it does with verticals, with top faces,
+with depth and with which way the object is turned, do the same. It is not a photograph and not an
+isometric view, and it is not for you to correct into either.
 
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
@@ -2887,11 +2873,9 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
-
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either. This is the ONE thing about the picture you are given rather than asked for.
 3. SHE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
-4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
-
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. Do not swing it round, do not flatten it, do not straighten it.
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
@@ -2938,12 +2922,10 @@ opening's rim. A band of star-field inlay runs along the plinth.
 
 Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
 
-THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
-vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
-ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
-point away from you. Reproduce the reference's angle exactly: do not re-stage it and do not turn it into
-a three-quarter view, but do keep the top faces the reference shows you. This view is oblique, not flat —
-nothing gets smaller as it goes back, and nothing is squashed into a front elevation either.
+THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the
+reference image exactly and do not reason about them: whatever it does with verticals, with top faces,
+with depth and with which way the object is turned, do the same. It is not a photograph and not an
+isometric view, and it is not for you to correct into either.
 
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
@@ -3029,12 +3011,10 @@ unpainted, her sun disc a flat deep red ringed with gold and her collar gilded.
 
 Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
 
-THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
-vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
-ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
-point away from you. Reproduce the reference's angle exactly: do not re-stage it and do not turn it into
-a three-quarter view, but do keep the top faces the reference shows you. This view is oblique, not flat —
-nothing gets smaller as it goes back, and nothing is squashed into a front elevation either.
+THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the
+reference image exactly and do not reason about them: whatever it does with verticals, with top faces,
+with depth and with which way the object is turned, do the same. It is not a photograph and not an
+isometric view, and it is not for you to correct into either.
 
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
@@ -3100,11 +3080,9 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
-
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either. This is the ONE thing about the picture you are given rather than asked for.
 3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
-4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
-
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. Do not swing it round, do not flatten it, do not straighten it.
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
@@ -3205,9 +3183,11 @@ its top edge and at its corners.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either. This is the ONE thing about the picture you are given rather than asked for.
+
 3. HE LIES ALONG THE PLINTH, head at the left end and tail at the right. He does not stand, sit or rise.
-4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. Do not swing it round, do not flatten it, do not straighten it.
+
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the animal is.
@@ -3266,9 +3246,11 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either. This is the ONE thing about the picture you are given rather than asked for.
+
 3. SHE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
-4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. Do not swing it round, do not flatten it, do not straighten it.
+
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
@@ -3329,9 +3311,11 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either. This is the ONE thing about the picture you are given rather than asked for.
+
 3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
-4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. Do not swing it round, do not flatten it, do not straighten it.
+
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
