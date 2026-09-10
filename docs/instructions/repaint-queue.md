@@ -2280,6 +2280,15 @@ the silhouette of a head plus one attribute, never a costume.
 `couchant` pose rather than the rank's `seated` one: a recumbent jackal is what a vault has at its door,
 and the priest's Anubis proved that pose in three rolls. Read that tile's rebuild line first.
 
+**`--spin=-22`, where the priest's is -8, and the extra turn is the EARS.** `couchant` faces left and
+carries its ears apart in X, which on a head seen in pure profile puts one in front of the other along
+the snout: anatomically wrong, and chosen because a pair at ±Y merges into one cone under the shear —
+rendered both ways to check. Turning the animal is the way out, and it costs no geometry: at -22 the head
+reads as turned toward the viewer, so the same two cones now sit either side of the skull and separate
+cleanly. Moving them in the MODEL was tried and reverted — it blunts the ear tips on the priest's landed
+tile, whose master was painted over the ±X mask, which is the whole reason a painted tile's geometry can
+never change.
+
 **Attach:**
 
 1. `~/tile-previews/statue-anubis-junior.png` — the scaffold
@@ -2323,7 +2332,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold statue --contents=couchant --spin=-8 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
+scaffold statue --contents=couchant --spin=-22 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
 yarn import-tile art/masters/props/junior/statue-anubis.webp --tier=junior --name=statue-anubis --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```

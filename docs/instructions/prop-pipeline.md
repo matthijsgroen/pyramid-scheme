@@ -154,6 +154,21 @@ magenta fills the frame to its edges and there is no wall, no floor and no surfa
 and state the FRAME'S ASPECT while you are there, since a flat item has no scaffold to imply one and this
 one came back square for a slot that is twice as wide as it is tall.
 
+**AN AWKWARD READING IS OFTEN A SPIN PROBLEM, NOT A GEOMETRY PROBLEM — and spin is free where geometry
+is not.** `prim_statue`'s `couchant` faces left and carries its ears apart in X, which on a head seen in
+pure profile puts one ear in front of the other along the snout. The obvious fix is to move them to ±Y
+where they anatomically belong. Doing that costs two things and buys one: at ±Y the pair merges into a
+single cone under the shear unless the base is widened, and — the expensive part — it moves the mask of
+a tile that is already painted. The priest's Anubis came back with his ear tips blunted, because his
+master was drawn over the ±X silhouette.
+
+Turning the ANIMAL solves it for nothing. At `--spin=-22` instead of `-8` the head reads as turned
+toward the viewer, and the same two cones sit either side of the skull. `--spin` is per entry, so a new
+tile can take a different one without touching a rank that has already landed — which is the other half
+of the rule that a painted tile's spin can never change.
+
+So before editing a primitive that other ranks have painted over: try the spin.
+
 **A HOLE CANNOT BE A PRODUCT SHOT — give it a FLOOR with `--context`.** Every other scaffold is an object
 on magenta, which is a thing you could pick up. A hole is an absence in a surface, and with the surface
 missing the picture is equally a tank, a panel or a flat pattern. The priest's sacred pool proved both
