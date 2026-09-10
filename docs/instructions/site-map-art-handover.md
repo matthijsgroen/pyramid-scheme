@@ -37,7 +37,7 @@ two figures and five wall items were written down already; their ten chamber pro
 beside them, on primitives every other rank had already proved. Only `wizard/crystal` still needs
 geometry.
 
-**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 72 entries, which is
+**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 71 entries, which is
 everything left in the whole set bar one primitive, and none of it needs Blender again.
 
 **Read `yarn art-census`, not this paragraph.** The count below is a snapshot and every summary of it in
@@ -48,7 +48,7 @@ this file has drifted at least once.
 ### The three files that run the work
 
 - **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
-  attach and the import line to run afterwards. 72 entries: the priest, the pharaoh, the gods, the shared scatter and conditions, and twenty-two patron variants. `yarn repaint <key>`
+  attach and the import line to run afterwards. 71 entries: the priest, the pharaoh, the gods, the shared scatter and conditions, and twenty-one patron variants. `yarn repaint <key>`
   copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
   Entries are DELETED as they land, so the file's length is the backlog.
 - **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
@@ -164,7 +164,7 @@ where a purpose has two wall items to choose between.
 API bills per image, so the paste is done by hand and the tooling only saves the searching.
 
 ```sh
-yarn repaint                  # the 72 keys still owed
+yarn repaint                  # the 71 keys still owed
 yarn repaint master/mask      # prompt to the clipboard, both attachments revealed in the Finder
 # attach the two, paste, generate, download to ~/Downloads
 ```
@@ -208,7 +208,7 @@ carries it:
 - `expert/basin` — painted already; its entry is a RE-ROLL against a rebedded scaffold.
 - `wizard/niche` — queued, but no room at that rank draws a niche until the gods' wall pool includes one.
 
-1. **Work the queue** — 72 entries and every one is a paste rather than a modelling job. `yarn repaint`
+1. **Work the queue** — 71 entries and every one is a paste rather than a modelling job. `yarn repaint`
    lists them GROUPED BY RANK, poorest tomb first, which is how a rank actually gets finished and how
    the material reference stays the same between pastes.
 
@@ -218,7 +218,7 @@ carries it:
 2. **`wizard/crystal`** — 27 rooms, authored, and the only kind in the set with no primitive to build on.
    Needs a model from nothing; everything else at those ranks is `--contents` on something that exists.
    Its queue entry says what the geometry has to be.
-3. **Patron art — twenty-two entries, and eight of them can be painted today.** `yarn art-census` grew
+3. **Patron art — twenty-one entries left, and seven of them can be painted today.** `yarn art-census` grew
    a PATRONS section for this, because it was invisible in exactly the way the floor scatter and the
    conditions were: the resolver is live, the world names gods on sixty-odd pyramids, and every one of
    them silently drew the generic art with nothing anywhere reporting it. A patron tile is ABSENT rather
@@ -227,9 +227,9 @@ carries it:
 
    The census counts PAIRINGS rather than gods. Nine patrons across five kinds is forty-five files; only
    twenty-two are reachable, because a god authored on a pyramid holding none of those five kinds draws
-   nothing. Between them they cover 219 rooms.
+   nothing. Between them they cover 219 rooms, and the merchant's Bastet is the first of them painted.
 
-   **Eight have a painted generic under them, worth 85 rooms, and six of those eight are the
+   **Seven still owed have a painted generic under them, worth 81 rooms, and six of the seven are the
    nobleman's.** His rank is finished, so nothing about them waits on anything: `junior/stela-anubis`
    is 44 rooms on its own, the largest patron pairing in the world, and `junior/shrine-anubis` is 18.
    The other fourteen sit on a placeholder — `master/mask-osiris` at 33, `master/mask-maat` at 32,

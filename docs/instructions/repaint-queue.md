@@ -2210,7 +2210,7 @@ yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name
 
 ---
 
-## Patrons — twenty-two
+## Patrons — twenty-one
 
 **A PATRON IS WHOSE TOMB A PYRAMID IS**, and it reaches the map through one mechanism only: for five
 kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUrl` prefers
@@ -2218,15 +2218,15 @@ kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUr
 none of these is a placeholder and nothing on the map is wrong without them. They are the difference
 between a rank whose every tomb looks the same and one where the god is legible from the corridor.
 
-**Twenty-two pairings, not forty-five.** Nine gods across five kinds is forty-five files, and painting
+**Twenty-two pairings, not forty-five**, and one of them has landed. Nine gods across five kinds is forty-five files, and painting
 forty-five is not the job: a god authored on a pyramid holding none of those five kinds draws nothing
 whatever, and the same god at another rank is a different painting. `yarn art-census`'s PATRONS section
 counts the pairings the world actually makes, in room order, and that list is what this section is.
 Re-run it after authoring a journey — a god moved to another pyramid changes which files are worth
 having.
 
-**THE EIGHT BELOW COME FIRST because their generic is painted**, and between them they are 85 of the
-219 rooms this section covers. Six of the eight are the nobleman's, worth 79 rooms — 68 of them Anubis's
+**THE SEVEN BELOW COME FIRST because their generic is painted**, and between them they are 81 of the
+215 rooms still owed here. Bastet was the eighth and has landed — the first patron tile in the set. Six of the eight are the nobleman's, worth 79 rooms — 68 of them Anubis's
 alone — and his rank is finished, so nothing about them waits on anything.
 
 The other fourteen sit on a kind that is still a placeholder, including
@@ -2435,68 +2435,6 @@ Then, once the return is in `~/Downloads`:
 ```sh
 yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall \
   --filter=smooth --headroom=0.18 --brightness=0.74
-```
-
-### `starter/statue-bastet` — Bastet in the merchant's tomb
-
-4 rooms. **The one variant that does NOT reuse its generic's scaffold**, and for a good reason: the
-merchant's statue is `shabti.glb`, a mummiform figurine, and Bastet is a seated cat. `prim_statue
---contents=lioness` is the pose — an animal sitting up — and it is the only patron here that needs a
-scaffold of its own.
-
-**Attach:**
-
-1. `~/tile-previews/statue-bastet-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a statue of BASTET as a seated CAT, on a plinth. The slab at the bottom is the PLINTH. The
-mass set back above it is her HAUNCHES, sitting; the block reaching forward and down at the front is her
-FORELEGS, straight; above them the upright mass is her CHEST, the shape over that her HEAD, and the two
-points standing up are her EARS.
-
-She sits upright, alert, facing the viewer, forelegs straight down in front of her. Her head is a CAT'S —
-small, round, short-muzzled, with two pointed ears — and not a lion's: no mane, no ruff.
-
-Cast BRONZE gone dark, a brown-black patina with green in the hollows and rubbed to bare warm metal on
-the crown of her head, the tips of her ears and the front of her forelegs, which is where a household
-statue is touched. A thin band of incised collar round her neck, and a small ring in one ear. The plinth
-is plain mudbrick, dusty and chipped at its corners.
-
-THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
-is to take the last of the waste off it.
-
-CHANGE, freely, and ONLY this: the contour of the cat herself, and only by CUTTING. A haunch swells, a
-chest rounds, a skull is not a cube. These are chisel cuts on a block, not modelling in clay — every mass stays square-shouldered and stays recognisably
-the mass it already is.
-
-CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it
-outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape
-reaches.
-
-EVERYTHING ELSE IS FIXED, and these five are not negotiable:
-
-1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
-3. SHE SITS UPRIGHT, facing the viewer, forelegs straight down in front of her. She does not stand, lie or crouch.
-4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
-5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
-
-You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
-
-ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF, fingers and toes included, and a clipped limb reads as an amputation. Nothing is added below the plinth either — no ground, no shadow, no floor.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's tomb: mudbrick, plaster, reed and rough timber. Warm dark earth, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold statue --contents=lioness --spin=-9 --colour=#a49781 --colour-figure=#6f6459 --floor=#6c6257
-yarn import-tile art/masters/props/starter/statue-bastet.webp --tier=starter --name=statue-bastet --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `junior/shrine-thoth` — Thoth in the nobleman's false-door shrine

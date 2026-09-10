@@ -2244,9 +2244,24 @@ def prim_statue():
             chest_z, head_z, hx = b + 0.42, b + 0.54, 0.0
         mark(box(0.20, 0.20, 0.19, x=hx, z=chest_z), "figure")                # chest
         mark(box(0.17, 0.16, 0.15, x=hx - (0.02 if lying else 0), z=head_z), "figure")
-        # The MUZZLE reaches in X and the EARS stand apart in X — a pair built front-to-back stacks into
-        # one drawn ear, which the canopic jackal's stopper records.
-        mark(box(0.15, 0.10, 0.09, x=hx - 0.14, y=-0.015, z=head_z - 0.01), "figure")
+        # THE MUZZLE FOLLOWS THE BODY, and getting that wrong is what the sitting pose was shipped with.
+        #
+        # `couchant` lies along X and faces LEFT, so its muzzle reaches in -X. `lioness` sits up facing
+        # the VIEWER, and it inherited that muzzle — a head turned side-on above a body squared to the
+        # camera. The ears then read as the fault, because with the face pointing left a pair standing
+        # apart in X is one ear in front of the other along the snout rather than one either side of it.
+        #
+        # Sitting, the muzzle reaches in -Y instead. That also draws it LOWER by k*y, which is what a
+        # face jutting toward the viewer should do, and it costs nothing: y is the axis the shear turns
+        # into drawn height, and the muzzle is the one part of a head whose height is not load-bearing.
+        #
+        # The EARS stay apart in X either way. A pair built front-to-back stacks into one drawn ear,
+        # which the canopic jackal's stopper records, and that rule is about the projection rather than
+        # about which way the animal looks.
+        if lying:
+            mark(box(0.15, 0.10, 0.09, x=hx - 0.14, y=-0.015, z=head_z - 0.01), "figure")
+        else:
+            mark(box(0.11, 0.13, 0.09, x=hx, y=-0.13, z=head_z - 0.02), "figure")
         for ex in (-0.045, 0.045):
             bpy.ops.mesh.primitive_cone_add(vertices=10, radius1=0.032, radius2=0.005, depth=0.10,
                                             location=(hx + ex, 0.0, head_z + 0.105))

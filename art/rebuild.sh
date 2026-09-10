@@ -875,3 +875,29 @@ yarn import-tile art/masters/props/junior/rubbleSpill.webp --tier=junior --name=
 # brings it to -62, beside the lamp's -63.
 yarn import-tile art/masters/props/junior/tallyBoard.webp --tier=junior --name=tallyBoard --slot=wall \
   --filter=smooth --headroom=0.18 --brightness=0.80 --saturation=1.6
+
+# BASTET, the merchant's patron, and the first patron tile in the set — `<kind>-<patron>.png`, which
+# `patronTileUrl` prefers over the generic drawing for five kinds and falls back from silently.
+#
+# The one variant that does NOT reuse its generic's scaffold: the merchant's statue is `shabti.glb`, a
+# mummiform figurine, and Bastet is a seated cat. `--contents=lioness` is the pose — an animal sitting
+# up — and the scaffold had a bug the first roll found. It inherited `couchant`'s head, whose muzzle
+# reaches in -X because a recumbent jackal faces left, so the scaffold's cat sat squared to the camera
+# with its face turned sideways; the ears, correctly apart in X, then read as one in front of the other
+# along the snout. The muzzle now reaches in -Y when the animal sits, which also draws it lower and is
+# what a face jutting at the viewer should do. The return had already ignored the geometry and followed
+# the prompt's "facing the viewer", so this master fits either scaffold — proved by importing against
+# both and diffing: not one pixel apart, which is what an ENVELOPE is for.
+#
+# --brightness=0.92 --saturation=1.15. Untouched the tile measured EXACTLY 10 luminance from the floor,
+# which is the value tile-stats refuses below — dark bronze on the merchant's dark floor is the tightest
+# pairing at this rank. 0.92 gives 18. The saturation is warmth: bronze came back at +18 against a rank
+# that sits at +22 to +25, and 1.15 lands it at +23. The 8.2% under the dark clamp is the bronze itself.
+#
+# NO VISIBLE SHADOW, and it is not a missing seat: the painted plinth came back larger than the modelled
+# one and covers its own footprint entirely. The plinth's drawn underside carries the contact instead.
+# If this is ever re-rolled, the thing to fix is the plinth — it came back in three-quarter perspective
+# where rule 4 asks for its long edges horizontal.
+scaffold statue --contents=lioness --spin=-9 --colour=#a49781 --colour-figure=#6f6459 --floor=#6c6257
+yarn import-tile art/masters/props/starter/statue-bastet.webp --tier=starter --name=statue-bastet --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92 --saturation=1.15
