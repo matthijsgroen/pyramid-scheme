@@ -134,7 +134,12 @@ yarn import-tile art/masters/props/expert/sarcophagus.webp --tier=expert --name=
 
 ### `expert/basin` — a sacred pool with steps down into it
 
-**THE ONLY SCAFFOLD IN THIS FILE THAT COMES WITH A FLOOR, and three failed rolls are why.** A hole cannot
+**THE TILE IS ALREADY PAINTED — this entry is a RE-ROLL**, and the only one in the file. The landed art
+has its coping standing proud of the paving and a bar of shadow beneath it, which reads as a framed slab
+lying on the floor rather than an opening cut into it. The scaffold has since been rebedded flush and the
+seat dropped; `art/rebuild.sh` keeps the current tile working until the new roll lands.
+
+**A SCAFFOLD THAT COMES WITH A FLOOR — this one and `wizard/basin`, and five failed rolls are why.** A hole cannot
 be a product shot. Every other scaffold is an object on magenta and an object on magenta is a thing you
 could pick up; a hole is an ABSENCE IN A SURFACE, and with the surface missing the same picture is equally
 a tank, a panel or a flat pattern. Told plainly, it came back a raised stone tub. Told that nothing may
@@ -1150,9 +1155,28 @@ yarn import-tile art/masters/props/master/shelf.webp --tier=master --name=shelf 
 ```
 ---
 
-## Gods — seven
+## Gods — seventeen
 
-Four of the five contain a VOID: a black opening that must come back black. His shrine, his niche and his shaft are the same rectangle if their frames are not what tells them apart, so the frame is what each prompt names first.
+The rank's whole tomb, and the largest block left in the file: two figures, ten chamber props and five
+wall items. It was the biggest gap in the census by a distance — 257 rooms — and until now only the
+figures and the wall items were written down, which is the reason this section is where the file grew.
+
+**Four of the wall items contain a VOID**: a black opening that must come back black. The shrine, the
+niche and the shaft are the same rectangle if their frames are not what tells them apart, so the frame is
+what each prompt names first.
+
+**And this rank asks for things a prop cannot be.** Its brief is full of absences — a slab with no
+supports, lights with nothing holding them, a shaft with no bottom, a column of light — and there is no
+geometry for any of that, because a scaffold's job is the projection and the pose. So three of these
+prompts PAINT A PART OUT: the reference renders the stem, the arm or the legs so the rest is placed
+correctly, and the prompt says to paint them the plain magenta of the background. The import keys magenta
+BEFORE it masks, so a part painted out arrives as a keyed hole rather than as stone. It also means those
+tiles fail Step 2's piece count by design — that gate is for a prop meant to be one thing, and these are
+not.
+
+**`wizard/crystal` is BLOCKED**, alone in this file, on a primitive nobody has written. Its entry says so
+and carries no prompt; `yarn repaint` therefore does not list it, and the twenty-seven rooms behind it
+are the best argument for the next piece of geometry.
 
 ### `wizard/statue` — Ra-Horakhty, falcon-headed, standing
 
@@ -1272,7 +1296,429 @@ yarn import-tile art/masters/props/wizard/sarcophagus.webp --tier=wizard --name=
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
+### `wizard/chestProp` — a reliquary of light
+
+Thirty-five rooms, the largest single gap left in the file.
+
+**Attach:**
+
+1. `~/tile-previews/chestProp-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a CHEST on four short feet. The band round its top is where the LID meets the body. Above that
+the three slabs stepping out one over the other are a CAVETTO CORNICE forming the lid. The sunken
+rectangle on the front face is an INLAID PANEL.
+
+Polished calcite, cool green-white, seamless and without a tool mark or a speck of dust on it, its walls
+thin enough to look faintly translucent at the cornice's steps. It is LIT FROM WITHIN: the stone is palest
+along the lower edge of each step and in the panel's recess, as though what the chest holds is shining
+through it, and there is no shadow anywhere on the object. The inlaid panel is a flat pale gold, a colour
+and not a shine, with a band of star-field inlay along the lid — small pale points in dark stone.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sealedChest --contents=cavetto --spin=-19 --colour=#8fd9bd --floor=#5a8074
+yarn import-tile art/masters/props/wizard/chestProp.webp --tier=wizard --name=chestProp --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `wizard/crystal` — a calcite cluster lit from inside
+
+**BLOCKED ON GEOMETRY, and it is the only entry in this file that is.** There is no `crystal` primitive:
+the merchant's is a lump part-cut from the wall and the priest's a natron crust in a cut, and neither has
+been modelled either. Twenty-seven rooms wait on it, which makes it the most valuable primitive still
+unwritten. It stays here so the backlog is honest — do not paste this one until a scaffold exists.
+
+What it needs from geometry: a cluster of four or five prisms of different heights leaning out of a common
+base, each a four- or six-sided column cut off at a slant. Flat faces, because `prim_statue` records what
+a smooth mass does under this shear — it shades uniformly and reads as a blob — and a crystal is the one
+subject where flat faces are also the truth.
+
+### `wizard/jarRack` — vessels holding nothing
+
+**Attach:**
+
+1. `~/tile-previews/jarRack-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a rack holding FOUR VESSELS, and no two are the same shape. The two uprights and two rails are
+the RACK. From the left: a squat lidded JAR with a small knob on its lid; a tall footed VASE — a round
+belly on a stem standing on its own foot, with a long neck; then two short wide-shouldered JARS with flat
+lids.
+
+THEY HOLD NOTHING, and that is the subject. Every vessel is open to the eye: the stone of each is pale
+enough to see into, and where a jar's belly should hold shadow it holds the same clear pale stone as its
+wall. Nothing is sealed, nothing is stoppered, nothing is full.
+
+Polished calcite throughout, cool green-white, seamless and without a tool mark or a speck of dust. The
+rack is the same stone as the vessels. It is all LIT FROM WITHIN AND FROM BENEATH: palest at the lower
+edge of every belly and in every hollow, as though the light comes up through the stone, and there is no
+shadow anywhere on the object.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold jarrack --contents=vessels --spin=13 --colour=#8fd9bd --floor=#5a8074
+yarn import-tile art/masters/props/wizard/jarRack.webp --tier=wizard --name=jarRack --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `wizard/offeringTable` — a slab with no supports, offerings hovering
+
+**Attach:**
+
+1. `~/tile-previews/offeringTable-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a low TABLE with offerings laid on it. The slab on four legs is the table. Standing at the
+back is a JAR in a ring; the flat round in the middle is a PLATTER with three loaves of BREAD on it; the
+two small drums at the right are CUPS.
+
+THE TABLE HAS NO SUPPORTS. The four legs in the reference are there to hold the slab up for you and are
+not part of what you paint: paint them as EMPTY AIR, the plain magenta of the background, so the slab
+floats with nothing under it. Everything above the slab stays exactly where the reference puts it.
+
+Polished calcite, cool green-white, seamless and without a tool mark or a speck of dust on it. The slab,
+the jar, the platter, the cups and the loaves are all the same stone — nothing here is bread or clay any
+more, only the shape of it cut in calcite. It is LIT FROM WITHIN AND FROM BENEATH: palest along the slab's
+lower edge and under each object, as though the light comes up through it, and there is no shadow anywhere
+on the object. A band of star-field inlay runs along the slab's front edge — small pale points in dark
+stone.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+**The legs are painted OUT, and the mask keeps them out.** `--mask` cuts the return to the render's own
+alpha, so a leg painted magenta arrives as a keyed hole rather than as stone — the import keys magenta
+BEFORE it masks, which is the same order that leaves the altar its eight transparent pixels. If the
+generator paints them anyway, the tile is still correct and the table simply has legs; re-roll only if the
+hovering reads as worth another paste.
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold market --contents=laid --spin=-15 --colour=#8fd9bd --floor=#5a8074
+yarn import-tile art/masters/props/wizard/offeringTable.webp --tier=wizard --name=offeringTable --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `wizard/basin` — a pool with stars in it and no bottom
+
+**TAKES `--context`, the second entry in the file to need it.** A hole cannot be a product shot: with the
+surface missing the same picture is equally a tank, a panel or a flat pattern, and the priest's sacred
+pool spent five rolls proving it. `--context=1.04x0.74` on the handed-over render alone lays the rank's
+own floor round the object with a hole of exactly that size cut in it, running off all four edges of the
+frame. The mask is rendered without it, so no floor reaches the tile. `prop-pipeline.md` has the laws;
+the exact command is under "Regenerating the attachments".
+
+**No `--seat`.** The coping is bedded flush with the paving, so nothing on this prop stands above the
+floor and there is nothing to cast — the priest's pool records why a bar of shadow under a hole is the one
+thing that makes a hole read as a slab.
+
+**Attach:**
+
+1. `~/tile-previews/basin-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A single object painted in flat matte gouache, seen from above and slightly in front, in the same raked
+view as the reference. Portrait, two units wide by three tall, exactly as the reference. No perspective
+and no vanishing point: verticals stay vertical, horizontals stay horizontal.
+
+The scene: a POOL cut down into a stone floor. The whole frame is that floor, and the pool is a hole in
+it. You are painting a floor with a pool in it, not an object standing on a surface.
+
+The pale field filling the frame is the PAVING. The dark rectangle sunk into it is the pool. The low
+border running all the way round it is a stone COPING, bedded flush with the paving on all four sides, and
+the length of it nearest you passes IN FRONT of the pool. The four ledges at the left, the lowest of them
+below the surface, are STEPS walking down into it.
+
+THE POOL HAS NO BOTTOM AND IT HAS STARS IN IT. What fills the opening is not water and not stone: it is
+NIGHT, a deep blue-black going down further than the floor is thick, with small pale STARS scattered in
+it, smaller and fainter toward the far end. Nothing floats on it and nothing reflects off it. Do not paint
+a floor, a wall or a back panel inside the opening — paint depth.
+
+Nothing here is a tank, a tub, a trough or a basin, and nothing has an outside you could see. NOTHING
+STANDS ABOVE THE PAVING — not even the coping, which is bedded level with it, its top face in the same
+plane as the slabs it is set into.
+
+The paving is polished calcite, cool green-white, seamless and without a tool mark or a speck of dust. The
+ruled grid across the whole frame gives the JOINTS between the slabs; keep every one of them where it is,
+and let a thin line of pale light lie in each joint, so the paving reads as one continuous floor running
+out of the picture on all four sides. The coping is the same stone in one unbroken course with no joints
+in it, palest along its inner edge where it meets the night, and there is no shadow beside it.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold basin --contents=pool --colour=#8fd9bd --floor=#5a8074
+yarn import-tile art/masters/props/wizard/basin.webp --tier=wizard --name=basin --slot=prop \
+  --filter=smooth --mask="$OBJ"
+```
+
+### `wizard/shelf` — a ledge of grown calcite, things resting on nothing
+
+**Attach:**
+
+1. `~/tile-previews/shelf-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: SHELVING with things standing in it. The frame with a shelf across its middle is the unit. In
+the upper opening stand two round-bellied VESSELS with short necks. In the lower one are two stacked flat
+BOXES at the left and a taller drum-shaped JAR at the right. Lying on the top course is a flat slab, a
+BOX LID.
+
+THE LEDGE IS GROWN, NOT BUILT. It is one piece of calcite that has crystallised into the shape of
+shelving — no joints, no courses, no dressed faces, no mason's marks. Its edges are very slightly uneven
+the way a crystal face is, never the way a cut stone is.
+
+Polished calcite throughout, cool green-white, seamless and without a tool mark or a speck of dust. Every
+object on it is the same stone as the ledge, so nothing reads as timber, metal or clay. It is LIT FROM
+WITHIN AND FROM BENEATH: palest at the lower edge of the shelf and under each object, as though the light
+comes up through the stone. The openings behind the objects are NOT in shade — they are the same pale
+stone, so nothing has a dark side and nothing is seen to rest on anything.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shelf --spin=-13 --colour=#8fd9bd --floor=#5a8074
+yarn import-tile art/masters/props/wizard/shelf.webp --tier=wizard --name=shelf --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `wizard/shrine` — a window on the cosmos
+
+**Attach:**
+
+1. `~/tile-previews/shrine-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a SHRINE — a box standing on a plinth, the slab stepping out over it a CAVETTO CORNICE, and
+the opening in its front standing open.
+
+WHAT IS INSIDE IS THE NIGHT SKY, and it is the subject. The opening is not a dark interior and not a box
+with a back to it: it is a WINDOW ON THE COSMOS, a deep blue-black going back further than the shrine is
+deep, with pale STARS scattered through it, denser toward the middle and fainter at the edges. Do not
+paint a back panel, a floor or a wall behind them. Nothing stands in the opening.
+
+The shrine itself is polished calcite, cool green-white, seamless and without a tool mark or a speck of
+dust. It is LIT FROM WITHIN AND FROM BENEATH: palest along the cornice's lower step and round the
+opening's rim, as though the light comes up through the stone, and there is no shadow anywhere on it. A
+band of star-field inlay runs along the plinth — small pale points in dark stone, the same night in
+miniature as the opening holds whole.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shrine --spin=-11 --colour=#8fd9bd --floor=#5a8074
+yarn import-tile art/masters/props/wizard/shrine.webp --tier=wizard --name=shrine --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `wizard/lamp` — lights with nothing holding them
+
+**Attach:**
+
+1. `~/tile-previews/lamp-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a LAMP TREE with three lights. The flared cone on the floor is its FOOT, the upright above it
+the STEM, and the horizontal bar across the stem the ARM. At each end of the arm and at the top of the
+stem is a shallow SAUCER; over each saucer is a domed SHADE; between saucer and shade is a small nub of
+LIGHT. The centre light stands higher than the two on the arm.
+
+Count them: there are three lights.
+
+NOTHING HOLDS THEM UP. The stem and the arm in the reference are there to place the lights for you and are
+not part of what you paint: paint the stem and the arm as EMPTY AIR, the plain magenta of the background,
+so the three lights and their saucers hang with nothing between them. Keep the foot. Everything stays
+exactly where the reference puts it.
+
+The foot, the saucers and the shades are polished calcite, cool green-white, seamless and without a tool
+mark or a speck of dust, thin enough at the shades to look faintly translucent. Each light is a flat pale
+gold, a colour and not a shine, with no flame and no wick. The stone is palest where it is nearest a
+light. There is no shadow anywhere on the object.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+**Painting a part OUT is the gods' rank trick and it has a ceiling**: `--mask` cuts the return to the
+render's alpha, and the import keys magenta first, so a stem painted magenta arrives as a keyed hole. The
+piece count then reports three or four islands instead of one, which is correct here and not a fault — the
+gate in `prop-pipeline.md` Step 2 applies to a prop that is meant to be one thing, and this one is not.
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold lamp --contents=tree --spin=-8 --colour=#8fd9bd --floor=#5a8074
+yarn import-tile art/masters/props/wizard/lamp.webp --tier=wizard --name=lamp --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `wizard/pillar` — a column of light
+
+**Attach:**
+
+1. `~/tile-previews/pillar-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a COLUMN, running from the floor up out of the top of the picture, tapering very slightly as
+it rises. The three collars round it are BANDS.
+
+IT IS A COLUMN OF LIGHT. The shaft is not stone: it is a standing body of pale light, a flat pale
+green-white all the way up, palest at its lower edge where it meets the floor and cooling very slightly as
+it rises. It has no grain, no joints, no courses and no relief. It is a flat colour and not a beam — no
+rays, no bloom, nothing streaming out of it.
+
+The three bands ARE stone: polished calcite, cool green-white, seamless and without a tool mark or a speck
+of dust, each set with star-field inlay — small pale points in dark stone. They are the only part of this
+with an edge you could touch, and they are what proves the shaft has none.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold palm --contents=banded --spin=6 --colour=#8fd9bd --floor=#5a8074
+yarn import-tile art/masters/props/wizard/pillar.webp --tier=wizard --name=pillar --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `wizard/pit` — a shaft with no bottom, stars in it
+
+`pit` is the one hole in the set that needs no `--context`: it is full of things that CROSS ITS OWN EDGE —
+a pole over the far lip, a ladder going down, broken lid slabs on the paving outside — and that is what
+makes it read as an opening without the surface having to be drawn.
+
+**Attach:**
+
+1. `~/tile-previews/pit-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a HOLE cut through the floor. The near-black rectangle is the SHAFT going down. The raised
+stone edging round it is the KERB. The pole laid across its far lip is a POLE and the ladder over it a
+LADDER going down. The broken slabs lying beside the hole are the pieces of its LID, lifted off and set
+down.
+
+THE SHAFT HAS NO BOTTOM AND IT HAS STARS IN IT. What fills it is NIGHT — a deep blue-black going down
+further than any floor is thick, with small pale STARS scattered in it, fewer and fainter the deeper they
+are. Paint depth in it, never a floor, a wall or a back panel. No pink and no purple in it at all.
+
+The kerb and the lid pieces are polished calcite, cool green-white, seamless and without a tool mark or a
+speck of dust, LIT FROM WITHIN AND FROM BENEATH so the stone is palest along the shaft's rim where it
+meets the night. The pieces are not broken — they are cut clean, and their cut faces are as smooth as
+their tops. The pole and the ladder are the same calcite, thin enough to look faintly translucent.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold pit --colour=#8fd9bd --floor=#5a8074
+yarn import-tile art/masters/props/wizard/pit.webp --tier=wizard --name=pit --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
 ### `wizard/niche` — a niche holding one star
+
+**NO ROOM AT THIS RANK DRAWS A NICHE TODAY**, so `art-census` does not list it and painting it changes
+nothing on the map until the gods' wall pool includes one. It is the only entry in the file in that
+position, and it is kept because the brief asks for it and because a pool is a one-line change where a
+painting is a paste. Do the ones with rooms behind them first.
 
 **Attach:**
 
@@ -1440,6 +1886,382 @@ yarn import-tile art/masters/props/wizard/hanging.webp --tier=wizard --name=hang
 
 ---
 
+---
+
+## Floor scatter and one board — seven
+
+**FLOOR SCATTER IS PLACED BY RULE, not by an author**, so every rank draws all three of `mat`,
+`rubblePile` and `rubbleSpill` and a missing one shows on every floor of that rank rather than in a
+handful of rooms. `art-census` prints no room count for them for the same reason. That makes these the
+cheapest coverage left in the file: six tiles, three primitives already proved, and no new geometry.
+
+The spill and the pile are the SAME primitive at different `--contents`: `rubblePile` is the standing
+heap, `rubblePile --contents=spill` the flat scatter, and `--contents=plaster` the nobleman's variant with
+two shards leaning on it. Whichever a rank uses for its pile, its spill is `--contents=spill`.
+
+### `junior/tallyBoard` — an estate ledger board in ink columns
+
+The last wall item the nobleman is missing, and the only tile of his left anywhere in this file.
+
+**Attach:**
+
+1. `~/tile-previews/tallyBoard-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a LEDGER BOARD hanging flat against a wall — a thin rectangular plank, wider than it is tall,
+with a peg at each top corner and a cord between them. Nothing about it stands out from the wall: it is a
+flat board seen square on.
+
+Whitewashed cedar, the wash thin enough that the grain shows through and chipped away at the corners. It
+carries an ESTATE LEDGER: four or five ruled COLUMNS of small figures in black ink, with the column
+headings and every total in RED. The hand is a steward's, quick and even. The writing is too fine to read
+and must not be drawn as hieroglyphs — this is cursive bookkeeping, not carved signs. One column is
+struck through and rewritten beside it. The pegs are dark cedar, the cord undyed linen.
+
+Draw it perfectly square-on and flat. No thickness at the sides, no top face, no shadow.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/props/junior/tallyBoard.webp --tier=junior --name=tallyBoard --slot=wall \
+  --filter=smooth
+```
+
+### `junior/rubbleSpill` — plaster fall, painted fragments face-up
+
+**Attach:**
+
+1. `~/tile-previews/rubbleSpill-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a SPILL of fallen plaster lying flat on the floor — flakes and slabs of wall plaster that have
+come off a painted wall and dropped, each piece at a different angle.
+
+Every piece is the same material: lime plaster, off-white and chalky on its broken underside, and PAINTED
+on the face that used to show. The painted faces are the subject and most of them have landed FACE-UP:
+fragments of a tomb painting in ochre, red and black on a cream ground — part of a striped kilt, half a
+hand, a band of border pattern, three signs of a text — never a whole figure, and never anything a viewer
+could read. The rest have landed face-down and are plain chalky white.
+
+Fine plaster dust lies round the edges of the spill and over the lowest pieces.
+
+The arrangement of the pieces does not matter and need not match the reference — paint the material and
+let the pieces fall where they fall.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold rubblePile --contents=spill --colour=#e0c193 --floor=#c39c68
+yarn import-tile art/masters/props/junior/rubbleSpill.webp --tier=junior --name=rubbleSpill --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/rubbleSpill` — cord-seal fragments and natron crust
+
+**Attach:**
+
+1. `~/tile-previews/rubbleSpill-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a SPILL of broken stone lying flat on the floor — the smaller debris of a door plug that has
+been knocked through, each piece at a different angle.
+
+Dark basalt, cool grey-blue. Each piece has a DRESSED face, smooth and dust-filmed, and BROKEN faces that
+are paler, rougher and sharper-edged: the contrast between the two is what says these were cut and are now
+smashed. A pale crust of NATRON has dried over the pieces low in the spill. Scattered among them are
+several fragments of grey CLAY SEAL, some with part of a stamped mark still on them, and two short lengths
+of undyed linen CORD lying slack across the stone.
+
+The arrangement of the pieces does not matter and need not match the reference — paint the material and
+let the pieces fall where they fall.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold rubblePile --contents=spill --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/rubbleSpill.webp --tier=expert --name=rubbleSpill --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/rubbleSpill` — shattered alabaster, gold leaf in the dust
+
+**Attach:**
+
+1. `~/tile-previews/rubbleSpill-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a SPILL of shattered stone lying flat on the floor — a broken alabaster vessel and the pieces
+of the gilded fitting it stood in, each at a different angle.
+
+Most pieces are pale creamy ALABASTER, faintly banded, polished on the face that used to show and matt
+and sugary on every broken edge. A few are black granite. Lying among them are curled FLAKES OF GOLD LEAF
+that have lifted off what they covered — a flat warm ochre-yellow, thin enough to have crumpled, never a
+metallic shine — and the dust between the pieces glints with smaller flakes of the same. Two fragments
+carry part of a blue-green FAIENCE inlay still set in a strip of gold.
+
+The arrangement of the pieces does not matter and need not match the reference — paint the material and
+let the pieces fall where they fall.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold rubblePile --contents=spill --colour=#d9a93f --floor=#57534b
+yarn import-tile art/masters/props/master/rubbleSpill.webp --tier=master --name=rubbleSpill --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `wizard/rubbleSpill` — stone shattered from within, edges still lit
+
+**Attach:**
+
+1. `~/tile-previews/rubbleSpill-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a SPILL of shattered stone lying flat on the floor, each piece at a different angle.
+
+Polished calcite, cool green-white, seamless and without a tool mark or a speck of dust on any face that
+used to show. IT BROKE FROM WITHIN: every fracture runs outward, and the BROKEN EDGES ARE STILL LIT — each
+new face is palest right at its edge, as though the light that was inside the stone has not finished
+leaving it, and the pieces lying deepest in the spill are the brightest. Nothing is scorched and nothing
+is dirty. There is no dust between them.
+
+The arrangement of the pieces does not matter and need not match the reference — paint the material and
+let the pieces fall where they fall.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold rubblePile --contents=spill --colour=#8fd9bd --floor=#5a8074
+yarn import-tile art/masters/props/wizard/rubbleSpill.webp --tier=wizard --name=rubbleSpill --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/mat` — a gold-threaded mat
+
+**Attach:**
+
+1. `~/tile-previews/mat-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A flat rectangular MAT seen from above, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a mat laid before a shrine in a king's tomb. It is woven from fine reed in a close plain
+weave, running in bands across its width, with a plaited edge all round.
+
+Deep red-brown reed, and GOLD THREAD worked through it: a line of gold running with every third band, and
+a broader gold border inside the plaited edge, carrying a row of small woven CARTOUCHES. The gold is a
+flat warm ochre-yellow, a colour and not a metal — no shine anywhere in it. The thread has pulled and
+broken in the middle where the mat is knelt on, so the gold line goes dotted and then absent across the
+centre, and a few loose ends lie on the surface.
+
+Fill the whole shape to its edges. The worn gold is the subject: without it this is a new mat.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold mat --spin=9 --shadow=0.5 --colour=#d9a93f --floor=#57534b
+yarn import-tile art/masters/props/master/mat.webp --tier=master --name=mat --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `wizard/mat` — a mat of woven light
+
+**Attach:**
+
+1. `~/tile-previews/mat-wizard.png` — the scaffold
+2. `~/tile-previews/wizard-plain.png` — the material reference
+
+```
+A flat rectangular MAT seen from above, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a mat lying on the floor of the gods' vault, woven from LIGHT rather than from reed. It has
+the structure of a mat and none of its substance: a close plain weave running in bands across its width,
+with a plaited edge all round, and every strand of it a thread of pale light.
+
+Flat pale green-white throughout, a colour and not a glow. The weave reads as a grid of slightly lighter
+and slightly darker strands crossing, and the plaited edge is the palest part of it. It is not frayed, not
+worn and not dusty — nothing here decays. Toward the middle the weave is very slightly OPEN, the strands
+further apart, so a darker gap shows between them; that is the only variation in it.
+
+Fill the whole shape to its edges.
+
+Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold mat --spin=9 --shadow=0.5 --colour=#8fd9bd --floor=#5a8074
+yarn import-tile art/masters/props/wizard/mat.webp --tier=wizard --name=mat --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+---
+
+## Conditions — three
+
+A condition is what has got INTO a site and shows on every floor of it. It draws as a tint over the
+rank's own ambience plus a scatter of ONE shared sprite per place, from `tiles/default/`, so these are
+tier-less: one painting serves all five ranks, which is why three tiles cover a whole axis of the map.
+
+They were invisible in the census until it learned to count them, and that hid two facts at once — that
+the sprites are placeholders, and that no site authored a condition at all. The second half is fixed:
+five floors are now `overgrown`. `flooded` still has no author anywhere in the world, so its two sprites
+are NOT queued here — a painted tide line helps nothing until some pyramid is flooded, and when one is,
+these three entries are the template.
+
+**No scaffold and no mask.** There is no primitive for a weed, and there does not need to be: these are
+small, they are drawn at 22 to 46 units, and their shape IS the art. Straight to the generator, keyed on
+magenta, like the tally boards.
+
+**Three places, three sprites, and the difference between them is the whole point.** `MapGrowth` falls
+back to the plain tuft wherever the other two are missing, so a half-painted set silently looks finished
+— which is exactly what it did before this section existed.
+
+### `default/overgrown` — a tuft forcing its way out of a joint
+
+The many small ones, scattered over any floor cell and biased UP the cell toward the wall band.
+
+**Attach:**
+
+1. `~/tile-previews/expert-plain.png` — the material reference (any rank's will do; this tile is shared)
+
+```
+A single small object painted in flat matte gouache, no background, on pure magenta #FF00FF. Square, one unit by one.
+
+The object: a TUFT OF WEED forcing its way up out of a joint between two floor slabs, in a tomb that has
+been open to the damp for a long time. Three or four stems from one point at the BOTTOM CORNER of the
+picture, fanning up and outward, with a few blunt leaves on them.
+
+It comes OUT of something, and that is the difference between a weed and a pot plant: the stems all
+converge on one point at the bottom, they are thickest there, and nothing is centred in the frame.
+
+Dull green — a grey-green, dusty, nothing lush and nothing bright. The lower stems are almost brown and
+the leaf tips are palest. A little pale grit is caught at the base where the stems come through.
+
+Fill only the tuft. Everything round it is background.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp. This tile is SHARED by all five ranks, so it belongs to no rank's palette: dull grey-green growth, nothing gilded, nothing bright.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown.webp --tier=default --name=overgrown --slot=growth \
+  --filter=smooth
+```
+
+### `default/overgrown-wall` — roots through the band, hanging down
+
+Drawn TALL in a narrow frame and stretched to fit, because the renderer anchors it to the band's top edge
+and lets it hang past the bottom. That overhang is what says the root came through the wall rather than
+being painted on it.
+
+**Attach:**
+
+1. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A single object painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall.
+
+The object: ROOTS that have come THROUGH a wall and hang down it. Three roots enter at the TOP EDGE of
+the picture, run down the whole height of it, and leave at the BOTTOM EDGE — they are cut off by both
+edges and end at neither. They wander as they descend, cross one another once or twice, and carry a few
+blunt leaves low down.
+
+They must touch the top edge and the bottom edge. A root that stops inside the frame reads as a stain
+painted on a wall instead of something that broke through it.
+
+Dull green — a grey-green, dusty, nothing lush and nothing bright — going brown and woody toward the top
+where the root is oldest, and palest at the leaf tips. A little pale grit and crumbled mortar clings
+where they enter at the top.
+
+Fill only the roots. Everything round them is background.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp. This tile is SHARED by all five ranks, so it belongs to no rank's palette: dull grey-green growth, nothing gilded, nothing bright.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-wall.webp --tier=default --name=overgrown-wall --slot=growthWall \
+  --filter=smooth
+```
+
+### `default/overgrown-plant` — a plant standing in a chamber
+
+The few big ones, and only in chambers — a plant half a cell across in a corridor is something the player
+would have to walk through. Bottom-anchored like a prop, so it stands on the floor.
+
+**Attach:**
+
+1. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A single object painted in flat matte gouache, no background, on pure magenta #FF00FF. Square, one unit by one.
+
+The object: a PLANT standing on the floor of a tomb chamber that has been open to the damp for years — a
+fan of long blunt fronds rising from one base at the BOTTOM CENTRE of the picture, spreading wider as
+they rise. Six or seven fronds, no two the same length, the outer ones arching over.
+
+It stands on the floor rather than coming out of a joint, so its base is a short thickened stem with a
+few dead lower fronds collapsed round it, and it is centred left to right.
+
+Dull green — a grey-green, dusty, nothing lush and nothing bright. The dead fronds at the base are straw
+brown. The tips of the standing fronds are dry and paler, some split.
+
+Fill only the plant. Everything round it is background.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp. This tile is SHARED by all five ranks, so it belongs to no rank's palette: dull grey-green growth, nothing gilded, nothing bright.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name=overgrown-plant --slot=growth \
+  --filter=smooth
+```
+
 ## Regenerating the attachments
 
 Both kinds of attachment live in `~/tile-previews/`, which is outside the repository on purpose: they are
@@ -1514,8 +2336,8 @@ silently.
 `render-prop` finds Blender in `/Applications` by itself; set `BLENDER` to point somewhere else, the same
 override `art/rebuild.sh` takes.
 
-**A HOLE's scaffold takes `--context`, and only the handed-over render does.** `expert/basin` is the one
-entry that needs it: the floor goes round the object with a hole of the stated size cut in it, so the
+**A HOLE's scaffold takes `--context`, and only the handed-over render does.** `expert/basin` and
+`wizard/basin` need it: the floor goes round the object with a hole of the stated size cut in it, so the
 generator can see what the hole is cut INTO. The mask is rendered without it, so no floor reaches the
 tile. The size is in the primitive's own metres; `prop-pipeline.md` has the rest of the laws. There is no
 footprint render here — nothing on this prop stands above the paving, so it casts nothing.
@@ -1523,6 +2345,12 @@ footprint render here — nothing on this prop stands above the paving, so it ca
 ```sh
 r() { yarn render-prop --primitive=basin --contents=pool --colour=#a7b2be --floor=#8d98a5 "$@"; }
 P=~/tile-previews/basin-expert
+r --context=1.04x0.74 --shadow=0 --out=$P.png
+r --shadow=0 --background=none --out=$P-obj.png
+
+# and the gods', the same shape in the other rank's stone
+r() { yarn render-prop --primitive=basin --contents=pool --colour=#8fd9bd --floor=#5a8074 "$@"; }
+P=~/tile-previews/basin-wizard
 r --context=1.04x0.74 --shadow=0 --out=$P.png
 r --shadow=0 --background=none --out=$P-obj.png
 ```

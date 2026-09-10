@@ -118,6 +118,15 @@ const SLOTS = {
   // seat — a drift lies ON the floor rather than standing on it — and its shape comes from `--mask`
   // (yarn drift-mask) rather than from the art, which is a full-bleed texture with no shape at all.
   drift: { w: TILE * 3, h: TILE * 3, seat: false },
+  // A CONDITION's sprite — the tuft in a joint and the plant in a chamber. Small and square, and it
+  // takes no seat: `MapGrowth` anchors each one itself, the tuft biased up its cell toward the band it
+  // is coming out of and the plant bottom-anchored like a prop. The sizes are the dummy generator's,
+  // which are the sizes the renderer draws them at.
+  growth: { w: px(22), h: px(22), seat: false },
+  // The same condition coming THROUGH the wall band, and taller than it is wide because the renderer
+  // stretches it with `preserveAspectRatio="none"` from the band's top edge to past its bottom. A root
+  // that stops inside the band reads as a stain painted on the wall.
+  growthWall: { w: px(22), h: px(34), seat: false },
   explorer: { w: px(40), h: px(70), seat: true },
 } as const
 

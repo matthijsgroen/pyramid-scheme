@@ -22,10 +22,10 @@ check that catches a geometry change silently invalidating a master.
 own scaffold, stored 2x, cut to a mask, seated in a rendered translucent shadow, and on a rebuild line.
 He is the only rank of which that is true.
 
-**The nobleman is four short**, and NONE of them waits on a museum scan any more. `junior/sarcophagus`
-(20 rooms) and `junior/statue` (8) were the two everyone remembers as blocked on a mesh — `prim_statue`
-settled that, so both are now `--contents` and a prompt. `junior/tallyBoard` (5 rooms) and
-`junior/rubbleSpill` are ordinary unpainted work that never got a rebuild line; this file called him DONE
+**The nobleman is two short**, and his two figures are done: `junior/statue` and `junior/sarcophagus`
+were the ones everyone remembers as blocked on a museum scan, and `prim_statue` settled both — a figure
+is a POSE and its face is paint. What is left of him is `junior/tallyBoard` (5 rooms) and
+`junior/rubbleSpill`, ordinary unpainted work that never got a rebuild line; this file called him DONE
 for several sessions while both sat in the census.
 
 **The priest has his five WALL items painted, and everything else MODELLED AND QUEUED.** niche, sconce,
@@ -33,18 +33,23 @@ wallShrine, veil and the hanging are tiles; his twelve chamber props and his tal
 prompts written against them, so every one of them is now a paste rather than a modelling job. Same for
 the pharaoh: nine of his are queued beside the four wall items that were already there.
 
-**Modelling is no longer the bottleneck at either rank — generation is.** The queue is 34 entries, which
-is most of what is left in the whole set, and none of it needs Blender again.
+**And the GODS are queued too, which is the block this file kept naming as the largest one left.** Their
+two figures and five wall items were written down already; their ten chamber props are now written down
+beside them, on primitives every other rank had already proved. Only `wizard/crystal` still needs
+geometry.
+
+**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 52 entries, which is
+everything left in the whole set bar one primitive, and none of it needs Blender again.
 
 **Read `yarn art-census`, not this paragraph.** The count below is a snapshot and every summary of it in
 this file has drifted at least once.
 
-`yarn art-census` is the authority and reports 52 placeholders: wizard 20, master 17, expert 12, junior 3.
+`yarn art-census` is the authority and reports 51 placeholders: wizard 20, master 17, expert 12, junior 2.
 
 ### The three files that run the work
 
 - **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
-  attach and the import line to run afterwards. 34 entries, every rank but the merchant. `yarn repaint <key>`
+  attach and the import line to run afterwards. 52 entries, every rank but the merchant. `yarn repaint <key>`
   copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
   Entries are DELETED as they land, so the file's length is the backlog.
 - **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
@@ -156,7 +161,7 @@ where a purpose has two wall items to choose between.
 API bills per image, so the paste is done by hand and the tooling only saves the searching.
 
 ```sh
-yarn repaint                  # the 34 keys still owed
+yarn repaint                  # the 52 keys still owed
 yarn repaint master/mask      # prompt to the clipboard, both attachments revealed in the Finder
 # attach the two, paste, generate, download to ~/Downloads
 ```
@@ -189,28 +194,27 @@ Expect master and wizard to behave like the nobleman on their dark stone and unl
 white linen against oiled timber, where no setting clears both clamps. `--contrast` below 1 is NOT the
 escape — the importer refuses it. Pick which end matters and say so in the rebuild line.
 
-**The open work**, ranked by rooms waiting on it. The queue is only the part that already has a scaffold;
-most of what is left does not, which is why it is not in there.
+**The open work**, ranked by rooms waiting on it. **Everything that needs a paint is now IN the queue** —
+that was not true until this pass, and the gap was 17 tiles: the gods' whole chamber, six floor-scatter
+tiles nobody counted, one tally board and the condition sprites. `yarn art-census` and `yarn repaint`
+reconcile exactly now, with four differences and each one written down in the entry that carries it:
 
-1. **Work the queue** — 34 entries, about 900 rooms between them, and every one is a paste rather than a
-   modelling job. The priest's twelve chamber props and the pharaoh's nine were modelled and queued in one
-   pass; nothing in the queue needs Blender again. `yarn repaint` lists them in the order worth doing.
+- `wizard/crystal` — an entry with no prompt, because there is no primitive to render a scaffold from.
+- `default/flooded` — not queued: no site in the world authors a flooded condition, so a painted tide
+  line would be drawn nowhere.
+- `expert/basin` — painted already; its entry is a RE-ROLL against a rebedded scaffold.
+- `wizard/niche` — queued, but no room at that rank draws a niche until the gods' wall pool includes one.
+
+1. **Work the queue** — 52 entries and every one is a paste rather than a modelling job. `yarn repaint`
+   lists them in the order worth doing. The largest single block in it is the gods' rank: two figures,
+   ten chamber props and five wall items, about 257 rooms, and the section preamble carries what is
+   peculiar about it — a brief full of absences, which three of its prompts answer by painting a part OUT
+   in the background's own magenta so the import keys it away.
 2. **`wizard/crystal`** — 27 rooms, authored, and the only kind in the set with no primitive to build on.
    Needs a model from nothing; everything else at those ranks is `--contents` on something that exists.
-3. **The GODS' twelve chamber props** — about 257 rooms, the largest block left, and the only rank whose
-   chamber props are not modelled at all. Same work the priest's and the pharaoh's took: a `--contents`
-   variant where the brief asks for a different object, a reused primitive where it asks only for a
-   different finish. `wizard/crystal` is the exception and is item 4.
-   *(Every statue and every sarcophagus is now queued — `prim_statue` covers both, `--contents` being a
-   pose and the god coming from the prompt. `expert/statue` is the worked example.)*
-4. **Paint the condition sprites** — `overgrown` is authored and drawn in three places, and all five files
-   are placeholders. They live in `tiles/default/`, so one set serves every rank. Judge in `PropSheet`.
-5. **The four small stragglers nobody lists** — `junior/tallyBoard` (5 rooms), `expert/tallyBoard` (4),
-   and the floor scatter: `junior/rubbleSpill`, `expert/mat`, `expert/rubbleSpill`. Small, cheap, and the
-   reason "the nobleman is done" was wrong for several sessions. A tally board is FLAT and skips the mesh
-   entirely — straight to the generator, no scaffold, no mask.
-6. **The patron field** — see "Decided but NOT built". `tileVariants` is half of it already; what is
-   missing is an authored value so a pyramid can say which god it belongs to.
+   Its queue entry says what the geometry has to be.
+3. **The patron field** — see "Decided but NOT built". `tileVariants` is half of it already; what is
+   missing is a resolver that prefers `<kind>-<patron>.png`.
 
 `yarn on-floor <tile> <tier> <out.png>` puts one tile on its rank's floor at CELL size and blows the result
 up, which is the only picture worth judging a repaint against. The pit's shaft was mid-grey and perfectly
