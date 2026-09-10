@@ -27,17 +27,17 @@ settled both, a figure being a POSE with its face in paint — plus a plaster fa
 were ordinary unpainted work nobody had written a rebuild line for. This file called him DONE for
 several sessions before he was.
 
-**The priest is TWO WALL ITEMS AND EIGHT CHAMBER PROPS from done**, and his figures are the ones that
-landed: `expert/statue` (Anubis couchant) and `expert/sarcophagus` are both painted, which is the pair
-every earlier version of this file called blocked on a museum scan. His niche, sconce, wallShrine, veil
-and hanging were already tiles. What is left of him is a paste each.
+**The priest is FIVE from done** — `rubblePile`, `mat`, `chestProp`, `lamp` and his flat `tallyBoard`,
+a paste each. His figures landed long ago (`expert/statue`, the couchant Anubis, and `expert/sarcophagus`),
+and his pool, censer, papyrus column, naos and robbed-out shaft are painted now too. His niche, sconce,
+wallShrine, veil and hanging were already tiles.
 
 **And the GODS are queued too, which is the block this file kept naming as the largest one left.** Their
 two figures and five wall items were written down already; their ten chamber props are now written down
 beside them, on primitives every other rank had already proved. Only `wizard/crystal` still needs
 geometry.
 
-**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 65 entries, which is
+**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 63 entries, which is
 everything left in the whole set bar one primitive, and none of it needs Blender again.
 
 **Read `yarn art-census`, not this paragraph.** The count below is a snapshot and every summary of it in
@@ -48,7 +48,7 @@ this file has drifted at least once.
 ### The three files that run the work
 
 - **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
-  attach and the import line to run afterwards. 65 entries: the priest, the pharaoh, the gods, the shared scatter and conditions, and nineteen patron variants. `yarn repaint <key>`
+  attach and the import line to run afterwards. 63 entries: the priest, the pharaoh, the gods, the shared scatter and conditions, and nineteen patron variants. `yarn repaint <key>`
   copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
   Entries are DELETED as they land, so the file's length is the backlog.
 - **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
@@ -127,6 +127,15 @@ Each of these cost real time and none is guessable from the code:
   a square DOES mean is unimportable as it stands, because the import scales the master to the slot and a
   1:1 master in a 2:3 slot is a third out. Look at it, then re-roll or re-frame — never import it.
 
+- **A square return in a FRESH chat with both files attached is the prompt missing its frame sentence,
+  and it is fixed in the entry rather than in the thread.** The priest's naos came back 2048x2048 with a
+  vanishing point, a diagonal cord and none of the scaffold's `-19` turn — a painting made from the words
+  with the attachment sitting unread beside them. Its entry was one of the ones with no frame line; adding
+  "Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+  Paint over the reference image itself." landed the next roll at 1696x2528, on the scaffold. That
+  sentence is the ONE non-material line allowed in a repaint — naming the canvas is not naming the
+  projection — so check an entry carries it before blaming a thread or a spin.
+
 ## Renaming a decoration kind is cheap; adding one is not
 
 Both were treated as the same cost for a long time and they are not close. `pickDressing` is
@@ -188,7 +197,7 @@ where a purpose has two wall items to choose between.
 API bills per image, so the paste is done by hand and the tooling only saves the searching.
 
 ```sh
-yarn repaint                  # the 65 keys still owed
+yarn repaint                  # the 63 keys still owed
 yarn repaint master/mask      # prompt to the clipboard, both attachments revealed in the Finder
 # attach the two, paste, generate, download to ~/Downloads
 ```
@@ -231,7 +240,7 @@ carries it:
   line would be drawn nowhere.
 - `wizard/niche` — queued, but no room at that rank draws a niche until the gods' wall pool includes one.
 
-1. **Work the queue** — 65 entries and every one is a paste rather than a modelling job. `yarn repaint`
+1. **Work the queue** — 63 entries and every one is a paste rather than a modelling job. `yarn repaint`
    lists them GROUPED BY RANK, poorest tomb first, which is how a rank actually gets finished and how
    the material reference stays the same between pastes.
 

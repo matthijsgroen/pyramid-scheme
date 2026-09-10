@@ -820,6 +820,30 @@ scaffold palm --contents=papyrus --spin=6 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/pillar.webp --tier=expert --name=pillar --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
+# His NAOS, doors shut and cord-sealed. No grading flags: 54 of separation, 0.2% over the light clamp and
+# +20 warmth, which is the cedar doing the work against basalt that carries none.
+#
+# The cornice's top face is the palest thing on the prop and is meant to be — it is the one up-facing
+# plane the object has, and it is what tells a shut cabinet from a slab at 56 units.
+scaffold shrine --contents=sealed --spin=-19 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/shrine.webp --tier=expert --name=shrine --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
+# His ROBBED-OUT SHAFT. --brightness=0.85 for the ROPE: bleached hemp is the palest thing in the frame and
+# put 7.9% over the light clamp untouched, 1.7% here. 0.8 reaches 0.2% and is not taken — the rope is the
+# thing that CROSSES THE LIP, which is the whole of why a hole reads as a hole, and dimming it into the
+# stone spends the tile to buy a number.
+#
+# --spin=0, like every pit: the mouth is a parallelogram cut to the cell and a turned one stops agreeing
+# with the paving around it. The 19% under the dark clamp is the shaft, and a shaft is meant to be dark.
+#
+# Its top lip is painted as a TIMBER BAULK where the brief's row says a broken lid slab. Kept on purpose:
+# at 84 units it is a two-pixel band that reads as a beam across the mouth, and the ladder and the spoil
+# are what carry the tile.
+scaffold pit --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/pit.webp --tier=expert --name=pit --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+
 # The nobleman's KA-STATUE, and the entry that cost the most rolls in the file for a reason that turned
 # out not to be about the painting at all. Two returns came back a cartoon character, and measuring them
 # found nothing wrong: 85% of the paint landed inside the mask, so it WAS a repaint of the scaffold, and

@@ -23,6 +23,13 @@ and the scaffold is the only thing that has ever made it obey.
 A square return is also unimportable as it stands, whatever it looks like: the import scales the master
 into the slot, and a 1:1 master in a 2:3 slot is a third out.
 
+**Which is why every prompt here now opens by naming its FRAME** — portrait two by three for a prop,
+landscape two by one for a wall item, "exactly as the reference", and do not re-compose it square. It is
+the one non-material sentence a repaint may carry: naming the canvas is not naming the projection, which
+is what the scaffold is for. The priest's naos is why it is in all of them rather than in thirteen — a
+fresh chat with both files attached still answered from the words alone, and the sentence landed the very
+next roll on the scaffold. A new entry gets the line too.
+
 **How to use one entry.** START A NEW CHAT — a thread that has already done a tile is the commonest
 cause of a re-roll, and `site-map-art-handover.md` measures why. Then attach the two images it names, paste the fenced block verbatim, take the result
 from the generator's DOWNLOAD (not a pasted image — a paste resizes 1686x2528 to 1334x2000 and the master
@@ -91,91 +98,13 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Priest — seven
+## Priest — five
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
 the hanging. Some are new `--contents` variants and some are geometry another rank already proved, which
 is the difference between them worth knowing — a variant's silhouette is his, a reused one's is not, and
 the prompt is all that makes the reused ones his rank's. His `tallyBoard` is here too, and it is the only
 FLAT thing in the section: no mesh, no mask, straight to the generator.
-
-### `expert/shrine` — a naos, doors shut and sealed
-
-**Attach:**
-
-1. `~/tile-previews/shrine-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a NAOS — a shrine cabinet standing on the floor, its doors shut. The slab under it is the
-PLINTH; the two slabs stepping out at the top are a CAVETTO CORNICE; the uprights either side of the doors
-are JAMBS. The two panels filling the front are the DOOR LEAVES, shut, with a narrow dark GAP where they
-meet. The bar across both of them is a CORD, and the lump where it crosses the gap is a CLAY SEAL,
-unbroken.
-
-The doors are SHUT. There is no opening, no gap into an interior, and nothing visible inside.
-
-The plinth, cornice and jambs are dark basalt, cool grey-blue, dressed smooth, with natron dust in the
-cornice's step and along the plinth's top. The doors are cedar, dark red-brown, their grain running
-vertically and dulled with age. The cord is undyed linen, grubby; the seal is grey clay stamped with a
-mark.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold shrine --contents=sealed --spin=-19 --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/shrine.webp --tier=expert --name=shrine --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
-### `expert/pit` — a robbed-out hole, its lid slab broken beside it
-
-The geometry is the MERCHANT's, unchanged, and so are the four below. Nothing about the shape is this
-rank's — the prompt is the whole of what makes it his, which is why these five read as the cheap half of
-the section. Reuse is the point: a variant was only modelled where the brief asks for a different OBJECT.
-
-**Attach:**
-
-1. `~/tile-previews/pit-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a HOLE cut through the floor, robbed out. The near-black rectangle is the SHAFT going down and
-it must stay black. The raised stone edging round it is the KERB. The pole laid across its far lip is a
-POLE and the ladder over it a ROPE LADDER going down. The broken slabs lying beside the hole are the
-pieces of its LID, prised off and dropped.
-
-The kerb and the lid pieces are dark basalt, cool grey-blue, dressed smooth on their faces and freshly
-broken on the edges — the break is paler and rougher than the dressed face, which is what says recent.
-Natron dust and grit are scattered round the kerb and over the lid pieces. The pole is dark cedar, the
-ladder undyed linen rope.
-
-The shaft is a HOLE. Paint darkness in it, never a floor, a wall or a back panel. No pink and no purple
-anywhere in it.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold pit --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/pit.webp --tier=expert --name=pit --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `expert/rubblePile` — a collapsed door plug
 
@@ -185,7 +114,7 @@ yarn import-tile art/masters/props/expert/pit.webp --tier=expert --name=pit --sl
 2. `~/tile-previews/expert-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a HEAP of broken stone — the blocks of a door plug that has been knocked through and has
 fallen inward. Every piece is a block of the same masonry, at a different angle.
@@ -221,7 +150,7 @@ nothing but the material tells this from the merchant's. See `prim_mat`.
 2. `~/tile-previews/expert-plain.png` — the material reference
 
 ```
-A flat rectangular MAT seen from above, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A flat rectangular MAT seen from above, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a rush mat lying on the floor before an altar, knelt on for years. It is woven from split
 rush in a close plain weave, running in bands across its width, with a plaited edge all round.
@@ -251,7 +180,7 @@ yarn import-tile art/masters/props/expert/mat.webp --tier=expert --name=mat --sl
 2. `~/tile-previews/expert-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a RELIC BOX with its seal unbroken. The box standing on four short FEET is the body; the band
 round its top is where the LID meets it and the slab above that is the lid. The strap running over the lid
@@ -284,7 +213,7 @@ yarn import-tile art/masters/props/expert/chestProp.webp --tier=expert --name=ch
 2. `~/tile-previews/expert-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a tall OIL LAMP STAND. The wide flared cone at the bottom is its FOOT; the upright between
 foot and top is the SHAFT; the collar partway up is a BAND; the shallow dish on top is the OIL BOWL and
@@ -328,7 +257,7 @@ counting strokes and a short row of real hieroglyphs as a heading — and nothin
 1. `~/tile-previews/expert-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall. Do not re-compose it into a square.
 
 Landscape, twice as wide as it is tall. The magenta fills the whole frame right to its edges, and the
 object floats in the middle of it with magenta on all four sides. There is no wall, no floor, no room and
@@ -517,7 +446,7 @@ yarn import-tile art/masters/props/master/sarcophagus.webp --tier=master --name=
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a recess cut into a wall, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a recess cut into a wall, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: an offering niche with food set in it. The frame around the opening is the SURROUND — jambs,
 lintel and sill; inside, the shallow oval dish is a PLATTER, the three domed shapes on it are LOAVES of
@@ -550,7 +479,7 @@ yarn import-tile art/masters/props/master/niche.webp --tier=master --name=niche 
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a mirror sconce on a wall. The upright plate at the left is fixed to the WALL; the bar reaching
 right is the ARM; the diagonal below it is a BRACE; the large disc standing upright at the arm's end is a
@@ -582,7 +511,7 @@ yarn import-tile art/masters/props/master/sconce.webp --tier=master --name=sconc
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a gilded funerary mask hanging on a wall. The rounded mass behind and above is the NEMES
 HEADDRESS; the oval in front of it is the FACE; the two bars flanking the face are the headdress's LAPPETS
@@ -617,7 +546,7 @@ yarn import-tile art/masters/props/master/mask.webp --tier=master --name=mask --
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a heavy curtain on a pole between two posts, standing at an angle on the floor. The wide sheet
 in deep vertical folds is the CURTAIN; the bar across the top is the POLE; the uprights are POSTS; the
@@ -654,7 +583,7 @@ yarn import-tile art/masters/props/master/hanging.webp --tier=master --name=hang
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a LAMP TREE with three lights. The flared cone on the floor is its FOOT, the upright above it
 the STEM, and the horizontal bar across the stem the ARM. At each end of the arm and at the top of the
@@ -694,7 +623,7 @@ yarn import-tile art/masters/props/master/lamp.webp --tier=master --name=lamp --
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a dressed COLUMN, running from the floor up out of the top of the picture, tapering very
 slightly as it rises. The three collars round it are BANDS. The middle band is the widest and is the
@@ -728,7 +657,7 @@ yarn import-tile art/masters/props/master/pillar.webp --tier=master --name=pilla
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a CHEST on four short feet. The band round its top is where the LID meets the body. Above that
 the three slabs stepping out one over the other are a CAVETTO CORNICE forming the lid. The sunken
@@ -765,7 +694,7 @@ yarn import-tile art/masters/props/master/chestProp.webp --tier=master --name=ch
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a treasury rack holding FOUR VESSELS, and no two are the same shape. The two uprights and two
 rails are the RACK. From the left: a squat lidded JAR with a small knob on its lid; a tall footed VASE — a
@@ -806,7 +735,7 @@ yarn import-tile art/masters/props/master/jarRack.webp --tier=master --name=jarR
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a SHRINE with a figure lying on its roof. The box standing on a plinth is the shrine; the slab
 stepping out over it is a CAVETTO CORNICE; the dark opening in its front is the shrine's inside, in deep
@@ -853,7 +782,7 @@ laid with better things is still a laid table.
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a low TABLE with tribute laid out on it. The slab on four legs is the table. Standing at the
 back is a stoppered JAR in a ring; the flat round in the middle is a PLATTER with three loaves of BREAD on
@@ -889,7 +818,7 @@ yarn import-tile art/masters/props/master/offeringTable.webp --tier=master --nam
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a shallow DISH on three splayed legs, burning low. The three legs are a TRIPOD; the wide
 shallow vessel is the dish; the low mass inside it is EMBERS; the small nub above them is a FLAME; the bar
@@ -927,7 +856,7 @@ yarn import-tile art/masters/props/master/brazier.webp --tier=master --name=braz
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a shallow BASIN on a stand. The three splayed legs and the drum they meet are the STAND; the
 flared open vessel above it is the basin; the ring round its top edge is the RIM; the dark disc inside it
@@ -966,7 +895,7 @@ yarn import-tile art/masters/props/master/basin.webp --tier=master --name=basin 
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: SHELVING with treasure stacked in it. The frame with a shelf across its middle is the unit. In
 the upper opening stand two round-bellied VESSELS with short necks. In the lower one are two stacked flat
@@ -1168,7 +1097,7 @@ Thirty-five rooms, the largest single gap left in the file.
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a CHEST on four short feet. The band round its top is where the LID meets the body. Above that
 the three slabs stepping out one over the other are a CAVETTO CORNICE forming the lid. The sunken
@@ -1217,7 +1146,7 @@ subject where flat faces are also the truth.
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a rack holding FOUR VESSELS, and no two are the same shape. The two uprights and two rails are
 the RACK. From the left: a squat lidded JAR with a small knob on its lid; a tall footed VASE — a round
@@ -1258,7 +1187,7 @@ yarn import-tile art/masters/props/wizard/jarRack.webp --tier=wizard --name=jarR
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a low TABLE with offerings laid on it. The slab on four legs is the table. Standing at the
 back is a JAR in a ring; the flat round in the middle is a PLATTER with three loaves of BREAD on it; the
@@ -1317,7 +1246,7 @@ thing that makes a hole read as a slab.
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A single object painted in flat matte gouache, seen from above and slightly in front, in the same raked
+A single object painted in flat matte gouache, seen from above and slightly in front, in the same raked Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 view as the reference. Portrait, two units wide by three tall, exactly as the reference. No perspective
 and no vanishing point: verticals stay vertical, horizontals stay horizontal.
 
@@ -1367,7 +1296,7 @@ yarn import-tile art/masters/props/wizard/basin.webp --tier=wizard --name=basin 
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: SHELVING with things standing in it. The frame with a shelf across its middle is the unit. In
 the upper opening stand two round-bellied VESSELS with short necks. In the lower one are two stacked flat
@@ -1409,7 +1338,7 @@ yarn import-tile art/masters/props/wizard/shelf.webp --tier=wizard --name=shelf 
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a SHRINE — a box standing on a plinth, the slab stepping out over it a CAVETTO CORNICE, and
 the opening in its front standing open.
@@ -1450,7 +1379,7 @@ yarn import-tile art/masters/props/wizard/shrine.webp --tier=wizard --name=shrin
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a LAMP TREE with three lights. The flared cone on the floor is its FOOT, the upright above it
 the STEM, and the horizontal bar across the stem the ARM. At each end of the arm and at the top of the
@@ -1499,7 +1428,7 @@ yarn import-tile art/masters/props/wizard/lamp.webp --tier=wizard --name=lamp --
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a COLUMN, running from the floor up out of the top of the picture, tapering very slightly as
 it rises. The three collars round it are BANDS.
@@ -1542,7 +1471,7 @@ makes it read as an opening without the surface having to be drawn.
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a HOLE cut through the floor. The near-black rectangle is the SHAFT going down. The raised
 stone edging round it is the KERB. The pole laid across its far lip is a POLE and the ladder over it a
@@ -1588,7 +1517,7 @@ painting is a paste. Do the ones with rooms behind them first.
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a recess cut into a wall, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a recess cut into a wall, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a niche with a single star in it. The frame around the opening is the SURROUND — jambs, lintel
 and sill; the opening itself is black, a piece of night sky; the six-pointed shape floating in the middle
@@ -1621,7 +1550,7 @@ yarn import-tile art/masters/props/wizard/niche.webp --tier=wizard --name=niche 
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a crystal bracket on a wall, with light on it and no lamp anywhere. The upright plate at the
 left is fixed to the WALL; the bar reaching right is the ARM; the diagonal below it is a BRACE; the three
@@ -1654,7 +1583,7 @@ yarn import-tile art/masters/props/wizard/sconce.webp --tier=wizard --name=sconc
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a shrine cabinet on a wall with nothing inside it. The wide slab over the top is a CAVETTO
 CORNICE and the slab under it is the PLINTH, both overhanging the box between them; the uprights at the
@@ -1687,7 +1616,7 @@ yarn import-tile art/masters/props/wizard/wallShrine.webp --tier=wizard --name=w
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a slot cut through a wall, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a slot cut through a wall, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a shaft cut through the stone with stars showing in it. The band around the opening is the
 FRAME — a bar above, a bar below, a jamb at each side; the opening itself is black, open night; the three
@@ -1722,7 +1651,7 @@ yarn import-tile art/masters/props/wizard/starShaft.webp --tier=wizard --name=st
 Imports differently: light casts nothing, so it takes NO `--seat` and its scaffold is rendered with `--shadow=0`. `--colour-accent` must name the rank's light or the scaffold goes to the generator in ochre.
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a curtain of light, standing at an angle, hanging from nothing. The whole shape is the CURTAIN:
 a broad sheet falling in a few wide vertical folds, its top edge rippling in a slow wave and its lower edge
@@ -1769,7 +1698,7 @@ two shards leaning on it. Whichever a rank uses for its pile, its spill is `--co
 2. `~/tile-previews/expert-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a SPILL of broken stone lying flat on the floor — the smaller debris of a door plug that has
 been knocked through, each piece at a different angle.
@@ -1802,7 +1731,7 @@ yarn import-tile art/masters/props/expert/rubbleSpill.webp --tier=expert --name=
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a SPILL of shattered stone lying flat on the floor — a broken alabaster vessel and the pieces
 of the gilded fitting it stood in, each at a different angle.
@@ -1835,7 +1764,7 @@ yarn import-tile art/masters/props/master/rubbleSpill.webp --tier=master --name=
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a SPILL of shattered stone lying flat on the floor, each piece at a different angle.
 
@@ -1869,7 +1798,7 @@ yarn import-tile art/masters/props/wizard/rubbleSpill.webp --tier=wizard --name=
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A flat rectangular MAT seen from above, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A flat rectangular MAT seen from above, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a mat laid before a shrine in a king's tomb. It is woven from fine reed in a close plain
 weave, running in bands across its width, with a plaited edge all round.
@@ -1901,7 +1830,7 @@ yarn import-tile art/masters/props/master/mat.webp --tier=master --name=mat --sl
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A flat rectangular MAT seen from above, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A flat rectangular MAT seen from above, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a mat lying on the floor of the gods' vault, woven from LIGHT rather than from reed. It has
 the structure of a mat and none of its substance: a close plain weave running in bands across its width,
@@ -2122,7 +2051,7 @@ the silhouette of a head plus one attribute, never a costume.
 2. `~/tile-previews/expert-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a WALL SHRINE, its two doors standing ajar. The slab over the top is a CAVETTO CORNICE and
 the one under it the SILL; the uprights at the sides are JAMBS; the two panels swung part-open are the
@@ -2162,7 +2091,7 @@ room at the rank that no patron reaches still draws a dummy.
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a funerary mask hanging on a wall. The rounded mass behind and above is the HEADDRESS; the
 oval in front of it is the FACE; the two bars flanking the face are the headdress's LAPPETS hanging down
@@ -2204,7 +2133,7 @@ yarn import-tile art/masters/props/master/mask-osiris.webp --tier=master --name=
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a funerary mask hanging on a wall. The rounded mass behind and above is the HEADDRESS; the
 oval in front of it is the FACE; the two bars flanking the face are the headdress's LAPPETS hanging down
@@ -2247,7 +2176,7 @@ that emptiness is its subject; a patron version is the same opening with ONE thi
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a shrine cabinet on a wall. The wide slab over the top is a CAVETTO CORNICE and the slab
 under it is the PLINTH, both overhanging the box between them; the uprights at the sides are JAMBS;
@@ -2359,7 +2288,7 @@ yarn import-tile art/masters/props/master/statue-osiris.webp --tier=master --nam
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a shrine cabinet on a wall. The wide slab over the top is a CAVETTO CORNICE and the slab
 under it is the PLINTH, both overhanging the box between them; the uprights at the sides are JAMBS;
@@ -2466,7 +2395,7 @@ Anubis on the lid, and a jackal cannot be repainted into Ma'at.
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a SHRINE standing on a plinth, the slab stepping out over it a CAVETTO CORNICE, and an
 opening in its front.
@@ -2516,7 +2445,7 @@ outline the reference gives.
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a funerary mask hanging on a wall. The rounded mass behind and above is the HEADDRESS; the
 oval in front of it is the FACE; the two bars flanking the face are the headdress's LAPPETS hanging down
@@ -2557,7 +2486,7 @@ yarn import-tile art/masters/props/master/mask-sekhmet.webp --tier=master --name
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a SHRINE — a box standing on a plinth, the slab stepping out over it a CAVETTO CORNICE, and
 the opening in its front standing open.
@@ -2674,7 +2603,7 @@ the opening, so roll them together.
 2. `~/tile-previews/wizard-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a SHRINE — a box standing on a plinth, the slab stepping out over it a CAVETTO CORNICE, and
 the opening in its front standing open.
@@ -2723,7 +2652,7 @@ yarn import-tile art/masters/props/wizard/shrine-maat.webp --tier=wizard --name=
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a funerary mask hanging on a wall. The rounded mass behind and above is the HEADDRESS; the
 oval in front of it is the FACE; the two bars flanking the face are the headdress's LAPPETS hanging down
@@ -2765,7 +2694,7 @@ does.
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a SHRINE standing on a plinth, the slab stepping out over it a CAVETTO CORNICE, and an
 opening in its front.
@@ -2882,7 +2811,7 @@ on the lid, and a jackal cannot be repainted into Osiris.
 2. `~/tile-previews/master-plain.png` — the material reference
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a SHRINE standing on a plinth, the slab stepping out over it a CAVETTO CORNICE, and an
 opening in its front.

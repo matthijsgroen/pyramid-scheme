@@ -191,7 +191,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   canopic jars under their human, baboon, jackal and falcon heads, his corded coffin with its arms
   crossed, a sacred pool cut into the paving with steps walking down into the water, a censer of incense
   smouldering on its chains, a papyrus-bundle column carved with sunk relief and bound with stone cord,
-  and Anubis himself lying black and gold-collared on a slab of basalt.
+  a naos with its cedar doors corded and sealed, the shaft robbers left open with a rope ladder over its
+  lip, and Anubis himself lying black and gold-collared on a slab of basalt.
 
 ### Fixed
 
