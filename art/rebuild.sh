@@ -836,3 +836,21 @@ yarn import-tile art/masters/props/junior/statue.webp --tier=junior --name=statu
 scaffold statue --contents=mummiform --spin=11 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
 yarn import-tile art/masters/props/junior/sarcophagus.webp --tier=junior --name=sarcophagus --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
+# The nobleman's PLASTER FALL, and the difference from his standing pile is entirely paint: the pile is
+# `--contents=plaster` and this is `--contents=spill`, the same primitive laid flat on the floor. What
+# makes it his is that the fragments landed FACE-UP — the painted side of a tomb wall, ochre and red and
+# black on cream, part of a kilt, half a hand, a band of chevrons, a few signs — where the priest's spill
+# is broken basalt and the merchant's is mudbrick.
+#
+# The hieroglyphs on one fragment are fine and are not the tally board's problem: a hieroglyph is a
+# PICTURE and comes back a picture. It is cursive the generator cannot draw without writing English.
+#
+# --brightness=0.84 and no saturation. Cream plaster on pale sandstone is the rank's worst pairing and
+# untouched it put 22.4% over the light clamp; 0.84 takes that to 1.9% and leaves it 42 darker than the
+# slab. The 6.1% under the DARK clamp is the black line-work on the painted faces and is left alone —
+# the same argument the pit's shaft makes, that a tail belonging to the subject is not a fault. 1.25
+# saturation was tried and pushed warmth from -35 to -21 without helping anything read.
+scaffold rubblePile --contents=spill --colour=#e0c193 --floor=#c39c68
+yarn import-tile art/masters/props/junior/rubbleSpill.webp --tier=junior --name=rubbleSpill --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.84

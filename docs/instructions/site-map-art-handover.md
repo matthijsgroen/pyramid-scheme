@@ -22,11 +22,11 @@ check that catches a geometry change silently invalidating a master.
 own scaffold, stored 2x, cut to a mask, seated in a rendered translucent shadow, and on a rebuild line.
 He is the only rank of which that is true.
 
-**The nobleman is two short**, and his two figures are done: `junior/statue` and `junior/sarcophagus`
-were the ones everyone remembers as blocked on a museum scan, and `prim_statue` settled both — a figure
-is a POSE and its face is paint. What is left of him is `junior/tallyBoard` (5 rooms) and
-`junior/rubbleSpill`, ordinary unpainted work that never got a rebuild line; this file called him DONE
-for several sessions while both sat in the census.
+**The nobleman is ONE short** — `junior/tallyBoard`, 5 rooms. His two figures are done: `junior/statue`
+and `junior/sarcophagus` were the ones everyone remembers as blocked on a museum scan, and `prim_statue`
+settled both — a figure is a POSE and its face is paint. His plaster fall is done too. All three were
+ordinary unpainted work that never got a rebuild line, and this file called him DONE for several
+sessions while they sat in the census.
 
 **The priest has his five WALL items painted, and everything else MODELLED AND QUEUED.** niche, sconce,
 wallShrine, veil and the hanging are tiles; his twelve chamber props and his tallyBoard are scaffolds with
@@ -38,18 +38,18 @@ two figures and five wall items were written down already; their ten chamber pro
 beside them, on primitives every other rank had already proved. Only `wizard/crystal` still needs
 geometry.
 
-**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 52 entries, which is
+**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 51 entries, which is
 everything left in the whole set bar one primitive, and none of it needs Blender again.
 
 **Read `yarn art-census`, not this paragraph.** The count below is a snapshot and every summary of it in
 this file has drifted at least once.
 
-`yarn art-census` is the authority and reports 51 placeholders: wizard 20, master 17, expert 12, junior 2.
+`yarn art-census` is the authority and reports 50 placeholders: wizard 20, master 17, expert 12, junior 1.
 
 ### The three files that run the work
 
 - **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
-  attach and the import line to run afterwards. 52 entries, every rank but the merchant. `yarn repaint <key>`
+  attach and the import line to run afterwards. 51 entries, every rank but the merchant. `yarn repaint <key>`
   copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
   Entries are DELETED as they land, so the file's length is the backlog.
 - **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
@@ -161,7 +161,7 @@ where a purpose has two wall items to choose between.
 API bills per image, so the paste is done by hand and the tooling only saves the searching.
 
 ```sh
-yarn repaint                  # the 52 keys still owed
+yarn repaint                  # the 51 keys still owed
 yarn repaint master/mask      # prompt to the clipboard, both attachments revealed in the Finder
 # attach the two, paste, generate, download to ~/Downloads
 ```
@@ -205,7 +205,7 @@ reconcile exactly now, with four differences and each one written down in the en
 - `expert/basin` — painted already; its entry is a RE-ROLL against a rebedded scaffold.
 - `wizard/niche` — queued, but no room at that rank draws a niche until the gods' wall pool includes one.
 
-1. **Work the queue** — 52 entries and every one is a paste rather than a modelling job. `yarn repaint`
+1. **Work the queue** — 51 entries and every one is a paste rather than a modelling job. `yarn repaint`
    lists them in the order worth doing. The largest single block in it is the gods' rank: two figures,
    ten chamber props and five wall items, about 257 rooms, and the section preamble carries what is
    peculiar about it — a brief full of absences, which three of its prompts answer by painting a part OUT

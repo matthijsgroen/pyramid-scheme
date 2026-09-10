@@ -1902,12 +1902,12 @@ yarn import-tile art/masters/props/wizard/hanging.webp --tier=wizard --name=hang
 
 ---
 
-## Floor scatter and one board — seven
+## Floor scatter and one board — six
 
 **FLOOR SCATTER IS PLACED BY RULE, not by an author**, so every rank draws all three of `mat`,
 `rubblePile` and `rubbleSpill` and a missing one shows on every floor of that rank rather than in a
 handful of rooms. `art-census` prints no room count for them for the same reason. That makes these the
-cheapest coverage left in the file: six tiles, three primitives already proved, and no new geometry.
+cheapest coverage left in the file: five tiles, three primitives already proved, and no new geometry.
 
 The spill and the pile are the SAME primitive at different `--contents`: `rubblePile` is the standing
 heap, `rubblePile --contents=spill` the flat scatter, and `--contents=plaster` the nobleman's variant with
@@ -1915,7 +1915,7 @@ two shards leaning on it. Whichever a rank uses for its pile, its spill is `--co
 
 ### `junior/tallyBoard` — an estate ledger board in counting marks
 
-The last wall item the nobleman is missing, and one of only two tiles of his left anywhere in this file.
+The last tile the nobleman is missing anywhere in this file.
 
 FLAT, so it has NO scaffold and NO mask: a board hanging on two pegs is a slab, and Step 0's table sends
 flat things straight to the generator. Its own silhouette becomes the tile, which is why this one has a
@@ -1969,41 +1969,6 @@ Then, once the return is in `~/Downloads`:
 ```sh
 yarn import-tile art/masters/props/junior/tallyBoard.webp --tier=junior --name=tallyBoard --slot=wall \
   --filter=smooth
-```
-
-### `junior/rubbleSpill` — plaster fall, painted fragments face-up
-
-**Attach:**
-
-1. `~/tile-previews/rubbleSpill-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a SPILL of fallen plaster lying flat on the floor — flakes and slabs of wall plaster that have
-come off a painted wall and dropped, each piece at a different angle.
-
-Every piece is the same material: lime plaster, off-white and chalky on its broken underside, and PAINTED
-on the face that used to show. The painted faces are the subject and most of them have landed FACE-UP:
-fragments of a tomb painting in ochre, red and black on a cream ground — part of a striped kilt, half a
-hand, a band of border pattern, three signs of a text — never a whole figure, and never anything a viewer
-could read. The rest have landed face-down and are plain chalky white.
-
-Fine plaster dust lies round the edges of the spill and over the lowest pieces.
-
-The arrangement of the pieces does not matter and need not match the reference — paint the material and
-let the pieces fall where they fall.
-
-No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold rubblePile --contents=spill --colour=#e0c193 --floor=#c39c68
-yarn import-tile art/masters/props/junior/rubbleSpill.webp --tier=junior --name=rubbleSpill --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `expert/rubbleSpill` — cord-seal fragments and natron crust
