@@ -13,6 +13,16 @@ The loop stays manual on purpose. Driving Gemini's web UI is against Google's te
 image; neither is worth it for two dozen tiles, so the paste is done by hand and the script only saves the
 searching — the right block out of nine hundred lines, and two files out of a folder of two hundred renders.
 
+**A 2048x2048 SQUARE RETURN MEANS THE SCAFFOLD WAS NOT USED — re-attach it and roll again.** An edited
+scaffold comes back at the scaffold's own aspect, 1686x2528 for a prop and 2912x1440 for a wall item; a
+generation made from the prompt alone comes back square. The nobleman's three Anubis tiles all came back
+2048x2048 and all three were re-staged into three-quarter isometric, which is what a prompt gets when
+there is no geometry under it — `prop-pipeline.md`'s opening says a generator refuses this projection,
+and the scaffold is the only thing that has ever made it obey.
+
+A square return is also unimportable as it stands, whatever it looks like: the import scales the master
+into the slot, and a 1:1 master in a 2:3 slot is a third out.
+
 **How to use one entry.** Attach the two images it names, paste the fenced block verbatim, take the result
 from the generator's DOWNLOAD (not a pasted image — a paste resizes 1686x2528 to 1334x2000 and the master
 is what the repository keeps), and drop it in `~/Downloads`. The import line under each block is what turns
@@ -2276,25 +2286,36 @@ floor of it dresses. FLAT — no scaffold and no mask, the same route as the ste
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
 
-Landscape, twice as wide as it is tall. The magenta fills the whole frame right to its edges, and the
-object floats in the middle of it with magenta on all four sides. There is no wall, no floor and no
-surface behind the object — only flat magenta.
+Landscape, twice as wide as it is tall.
 
-The object: a FALSE-DOOR STELA — a slab of dressed limestone cut as a doorway that is not a doorway. A
-recessed panel in the middle is the door itself; a jamb runs up each side of it; a lintel crosses above.
-It is seen perfectly square on.
+ONE OBJECT, AND IT FILLS THE FRAME. A single stela, drawn edge to edge — it reaches the left edge and
+the right edge of the picture and very nearly the top and the bottom. It is not repeated, not two, not
+three, and there is no row of them. Around its outer edge, and nowhere else, is flat magenta: no wall,
+no floor and no surface behind it.
 
-Standing in the recessed panel, facing the viewer, is ANUBIS: a slim standing figure with a JACKAL'S HEAD
-— a long straight muzzle and two tall pointed ears, unmistakably an animal's, on a man's shoulders. One
-hand rests on the head of a small couchant jackal beside his feet. He is carved in sunk relief, so his
-outline is cut INTO the panel rather than standing out of it.
+The object: a FALSE-DOOR STELA — a WIDE slab of dressed limestone cut as a doorway that is not a
+doorway. In the middle is a deep, dark, rectangular DOORWAY, its opening about a third of the picture's
+width and running most of its height. A broad JAMB stands either side of that doorway, and each jamb is
+as wide as the doorway itself — the two jambs are most of the picture. A LINTEL with a rolled moulding
+crosses above the doorway, and a cornice caps the whole slab.
 
-Painted limestone, warm cream, the paint worn thin where the stone is proud. The figure's flesh is left
-as bare stone; his head and the small jackal are painted a dense flat BLACK, the darkest thing in the
-picture, and his kilt is white. The jambs and lintel carry bands of ochre and red. No letters and no
-words anywhere on it, in any language: the only marks are the figures and the bands.
+Standing in the dark of the doorway, facing the viewer, is ANUBIS: a slim standing figure with a JACKAL'S
+HEAD — a long straight muzzle and two tall pointed ears, unmistakably an animal's, on a man's shoulders.
+One hand rests on the head of a small couchant jackal beside his feet. He is carved in sunk relief, cut
+INTO the stone rather than standing out of it, and he is the only figure in the picture.
 
-Draw it perfectly square-on and flat. No thickness at the sides, no top face, no shadow.
+Each jamb carries vertical COLUMNS of incised hieroglyphs separated by thin red rules — carved signs,
+pictures, birds and reeds and eyes, and nothing cursive and nothing in any alphabet.
+
+Painted limestone, warm cream, the paint worn thin where the stone is proud and chipped away at the lower
+corners. Anubis's flesh is left as bare stone; his head and the small jackal are painted a dense flat
+black, the darkest thing in the picture apart from the doorway, and his kilt is white. The doorway
+behind him is deep warm brown going almost to black.
+
+Draw it perfectly square-on and FLAT, as if photographed dead in front of the wall it is set into. There
+is no perspective and no vanishing point: every vertical stays vertical, every horizontal stays
+horizontal, nothing converges and nothing recedes. No side faces, no top face, no thickness at the
+edges, no shadow.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
 ```
@@ -2330,6 +2351,13 @@ Painted limestone, warm cream, worn thin on the jambs where hands have passed. T
 stone, his kilt white, and his head a dense flat BLACK — the darkest thing in the picture and the one
 mark that names him at a glance. An ochre band runs along the lintel and another round the plinth. The
 offering table is the same limestone with three round loaves on it.
+
+THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
+vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
+ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
+point away from you, and you never see round the side of the object. Reproduce the reference's angle
+exactly; do not re-stage it, and do not turn it into a three-quarter view.
+
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -2379,10 +2407,15 @@ His eyes are two small ochre marks. Nothing on him is gilded and nothing shines.
 The naos under him is warm cream limestone, dressed smooth, with an ochre band round its top edge and
 dust caught at its corners. It is the pale thing that makes the black read.
 
-Do not re-stage it. The plinth runs ACROSS the picture, its long edges horizontal at the reference's own
-slight tilt, and it does not turn to recede into the distance. There is no perspective and no vanishing
-point: verticals stay vertical, horizontals stay horizontal. Every part stays where the reference puts
-it, and the object stays as tall and as wide in the frame as it already is.
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. There is no vanishing point, nothing converges and nothing recedes. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel. You never see round the side of anything.
+3. HE LIES ALONG THE PLINTH, head at the left end and tail at the right, facing left. He does not stand, sit or rise, and he does not turn to face you.
+4. THE PLINTH RUNS ACROSS THE PICTURE. Its long edges are horizontal, left to right, at the same slight tilt as the reference. It does NOT turn to point away from you, and this is not a three-quarter view of a box.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the animal is.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
 ```
@@ -2461,6 +2494,13 @@ his front.
 Painted limestone, warm cream, worn thin on the jambs where hands have passed. The figure's flesh is bare
 stone, his head a dull blue-black, his kilt white. An ochre band runs along the lintel and another round
 the plinth. The offering table is the same limestone with three round loaves on it.
+
+THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
+vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
+ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
+point away from you, and you never see round the side of the object. Reproduce the reference's angle
+exactly; do not re-stage it, and do not turn it into a three-quarter view.
+
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -2913,6 +2953,13 @@ ALABASTER against it, her dress unpainted, her collar and her feather gilded.
 
 Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
 
+THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
+vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
+ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
+point away from you, and you never see round the side of the object. Reproduce the reference's angle
+exactly; do not re-stage it, and do not turn it into a three-quarter view.
+
+
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
 The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
@@ -2998,6 +3045,13 @@ dust, LIT FROM WITHIN AND FROM BENEATH so it is palest along the cornice's lower
 opening's rim. A band of star-field inlay runs along the plinth.
 
 Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
+
+THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
+vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
+ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
+point away from you, and you never see round the side of the object. Reproduce the reference's angle
+exactly; do not re-stage it, and do not turn it into a three-quarter view.
+
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -3110,6 +3164,13 @@ opening's rim. A band of star-field inlay runs along the plinth.
 
 Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
 
+THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
+vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
+ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
+point away from you, and you never see round the side of the object. Reproduce the reference's angle
+exactly; do not re-stage it, and do not turn it into a three-quarter view.
+
+
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
 The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
@@ -3192,6 +3253,13 @@ Inside, the back of the shrine is deep shade. Sekhmet is dark polished granite a
 unpainted, her sun disc a flat deep red ringed with gold and her collar gilded.
 
 Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
+vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
+ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
+point away from you, and you never see round the side of the object. Reproduce the reference's angle
+exactly; do not re-stage it, and do not turn it into a three-quarter view.
+
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
