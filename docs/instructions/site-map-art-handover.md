@@ -27,10 +27,12 @@ settled both, a figure being a POSE with its face in paint — plus a plaster fa
 were ordinary unpainted work nobody had written a rebuild line for. This file called him DONE for
 several sessions before he was.
 
-**The priest is FOUR from done** — `mat`, `chestProp`, `lamp` and his flat `tallyBoard`,
-a paste each. His figures landed long ago (`expert/statue`, the couchant Anubis, and `expert/sarcophagus`),
-and his pool, censer, papyrus column, naos and robbed-out shaft are painted now too. His niche, sconce,
-wallShrine, veil and hanging were already tiles.
+**The priest is SEVEN keys from done** — `mat`, `chestProp`, `lamp`, his flat `tallyBoard`, the
+`rubbleSpill` his passages scatter, and his two patron variants `wallShrine-anubis` and `statue-anubis`.
+A paste each. His figures landed long ago (`expert/statue`, the couchant Anubis, and `expert/sarcophagus`),
+and his pool, censer, papyrus column, naos, robbed-out shaft and collapsed door plug are painted now too.
+His niche, sconce, wallShrine, veil and hanging were already tiles. **He is the next release's headline**
+— see "The order the work goes in" below.
 
 **And the GODS are queued too, which is the block this file kept naming as the largest one left.** Their
 two figures and five wall items were written down already; their ten chamber props are now written down
@@ -229,6 +231,21 @@ Expect master and wizard to behave like the nobleman on their dark stone and unl
 **One tile in the file is squeezed from both ends** and is the shape to recognise: the nobleman's hanging,
 white linen against oiled timber, where no setting clears both clamps. `--contrast` below 1 is NOT the
 escape — the importer refuses it. Pick which end matters and say so in the rebuild line.
+
+## The order the work goes in, and it is a decision
+
+Not "ranked by rooms waiting" any more. The next release ships the priest's rank finished and the two
+things the map cannot draw at all, and the last two ranks come after it:
+
+1. **Finish the priest** — seven keys: `mat`, `chestProp`, `lamp`, `tallyBoard`, `rubbleSpill`, and his
+   two patron variants `wallShrine-anubis` and `statue-anubis`. That closes the third rank of five.
+2. **The plants** — `default/overgrown`, `-wall` and `-plant`. Shared art, one paste each, and the only
+   condition the world authors: the Nile Delta Expedition carries it across four pyramids graded 0.2 to 1,
+   and every one of them draws a 22x22 three-colour placeholder today. Judge them in `PropSheet`.
+3. **Stairways and ward gates** — NEW work, not in the queue and not in the brief's ~224. See the section
+   below for what it costs and the one decision it needs first.
+4. **Release.**
+5. **The pharaoh and the gods**, 51 keys between them, plus `wizard/crystal`'s primitive.
 
 **The open work**, ranked by rooms waiting on it. **Everything the map can draw is now IN the queue** — every
 placeholder the census counts, and every patron variant the world pairs. `yarn art-census` and
@@ -505,6 +522,40 @@ is the workflow: how to check, and how the checking has gone wrong.
   `stateWash` conversation, not a lighting one.
 - **The pharaoh's winged disc**, and whatever the gods' "opening with no visible structure" turns out to
   be. Both are `make-arch --ornament` inputs rather than whole gateways.
+
+## Stairways and ward gates — new work, and the decision that comes first
+
+Wanted for the next release, in neither the queue nor the brief's ~224. What makes them different from
+everything painted so far: **a gate and a stairhead are NODES, not tiles.** Every node on the map is
+hand-coded vector SVG inline in `SiteMapView.tsx` — the gate is a `<rect>` and three bars (`:246`), the
+stairhead an octagon and a stepped path (`:342`), the exit a `<circle>` (`:354`) — and not one of them
+goes anywhere near `tileUrl`. There is no node art in `src/assets/tiles/` at all.
+
+Two facts decide the shape of the work:
+
+- **A node is a quarter the area of a prop.** `NODE_RADIUS_LARGE` is `CELL * 0.34`, so a node occupies
+  about 38x38 against a prop's 56x84. Paint at that size and most of what the pipeline delivers is gone.
+- **A node's COLOUR carries state, and paint cannot.** `stairFill`, `stairStroke` and `stairIcon`
+  (`:499-518`) are keyed on `CellState` — fogged, visible, reachable, completed — and a floor-key gate is
+  tinted by its key colour on top of that (`:231-257`). Only the ward gate has any rank in it today, and
+  only as an accent tint: `DIFFICULTY_GATE_ACCENT` (`:474-481`), same square and same three bars at all
+  five ranks.
+
+**The decision: do they stay state-coloured markers, or become places?** Three routes, and the first is
+the one to take unless someone argues otherwise:
+
+1. **Art UNDER the marker.** Paint the gate and the stair mouth as tiles on the cell, the way a `pit` is,
+   and keep a smaller vector marker on top for state and key colour. Ten tiles, no state problem, and the
+   marker goes on doing the job it does now.
+2. **Art INSTEAD of the marker, washed by state.** Five tiles a kind instead of ten and `stateWash`
+   recolours them — but a wash over painted stone is the same argument already open under "whether
+   `reachable` should be the brightest state at all".
+3. **Art per state** — 4 states x 2 kinds x 5 ranks = 40 tiles. Not worth it.
+
+On route 1 the cost is two primitives — a gate leaf in its jamb, and a stair mouth, which is `prim_pit`
+with treads and the `VOID` material it already proves — then ten tiles at about a day, plus half a day to
+a day of renderer work for the slot and the marker resize. It is RENDER-ONLY: no pool changes any length,
+so no floor regenerates and no placement moves.
 
 ## Two things not to trip over
 
