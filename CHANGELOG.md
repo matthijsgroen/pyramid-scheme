@@ -189,8 +189,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   thinner than anyone else's, and where it gathers into a fold it thickens.
 - The priest's chambers hold his own furniture now: an altar with a libation channel worn into it, four
   canopic jars under their human, baboon, jackal and falcon heads, his corded coffin with its arms
-  crossed, a sacred pool cut into the paving with steps walking down into the water, and Anubis himself
-  lying black and gold-collared on a slab of basalt.
+  crossed, a sacred pool cut into the paving with steps walking down into the water, a censer of incense
+  smouldering on its chains, and Anubis himself lying black and gold-collared on a slab of basalt.
 
 ### Fixed
 

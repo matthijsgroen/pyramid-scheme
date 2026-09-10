@@ -797,6 +797,18 @@ scaffold basin --contents=pool --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/basin.webp --tier=expert --name=basin --slot=prop \
   --filter=smooth --mask="$OBJ" --brightness=0.9
 
+# His CENSER, hanging on its stand. No --brightness and no --saturation: green-black patina against pale
+# basalt lands 83 apart with nothing over the light clamp, and the ember carries +31 warmth on its own.
+#
+# The 31.7% under the dark clamp is the bronze, and it sits between the statue's 35.9% and the coffin's
+# 22.7% at this rank — the value IS the subject, as it is on every dark-metal prop here.
+#
+# The arm reaches in X and the chains hang from it, which is prim_sconce's law one primitive over: a
+# bracket built in the y-z plane draws as a vertical stack and disappears at slot size.
+scaffold brazier --contents=censer --spin=22 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/brazier.webp --tier=expert --name=brazier --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
 # The nobleman's KA-STATUE, and the entry that cost the most rolls in the file for a reason that turned
 # out not to be about the painting at all. Two returns came back a cartoon character, and measuring them
 # found nothing wrong: 85% of the paint landed inside the mask, so it WAS a repaint of the scaffold, and

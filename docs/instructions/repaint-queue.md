@@ -91,51 +91,13 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Priest — nine
+## Priest — eight
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
-the hanging. Five are new `--contents` variants — `statue` among them, which the table used to send to a scan — and five are geometry another rank already proved, which
+the hanging. Some are new `--contents` variants and some are geometry another rank already proved, which
 is the difference between them worth knowing — a variant's silhouette is his, a reused one's is not, and
 the prompt is all that makes the reused ones his rank's. His `tallyBoard` is here too, and it is the only
 FLAT thing in the section: no mesh, no mask, straight to the generator.
-
-### `expert/brazier` — a censer hanging on its stand
-
-**Attach:**
-
-1. `~/tile-previews/brazier-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a CENSER hanging from a stand. The disc on the floor is the stand's FOOT, the upright above it
-the POST, and the bar reaching right from its top the ARM. The two thin verticals hanging from the arm are
-CHAINS. The wide shallow vessel they hold is the CENSER, and the low round mass inside it is BURNING
-INCENSE. Under the censer, its underside is in deep shade.
-
-Cast bronze throughout the stand, chains and vessel, dark with a green-black patina, rubbed warmer along
-the arm's upper edge and on the foot's rim where it is handled. The censer's inside is sooted black. The
-burning incense is a dull ember red-orange, matte, darkest at its edges and only faintly brighter at its
-centre — no glow, no light thrown on the bronze, and no flame.
-
-Smoke may rise from it in a thin grey haze, but it must be faint enough to see the chains through and must
-not touch the frame's edges.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold brazier --contents=censer --spin=22 --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/brazier.webp --tier=expert --name=brazier --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `expert/pillar` — a papyrus-bundle column
 
