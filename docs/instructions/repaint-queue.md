@@ -508,9 +508,15 @@ yarn import-tile art/masters/props/expert/lamp.webp --tier=expert --name=lamp --
 
 ### `expert/tallyBoard` — an ostracon board in red and black
 
-FLAT, so it has NO scaffold and NO mask: a board hanging against a wall is a slab, and Step 0's table
-sends flat things straight to the generator. Its own silhouette becomes the tile, which is why this one
-has a single attachment and an import line with no `--mask`.
+FLAT, so it has NO scaffold and NO mask: a board hanging on two pegs is a slab, and Step 0's table sends
+flat things straight to the generator. Its own silhouette becomes the tile, which is why this one has a
+single attachment and an import line with no `--mask`.
+
+**MARKS, NOT WRITING — see `junior/tallyBoard`,** which asked for hieratic in a scribe's hand and came
+back a modern accounting sheet with English column headings and Arabic numerals. Hieroglyphs are safe
+because they are pictures; hieratic is handwriting, and a generator writes the script it knows. The
+priest's board is a temple day-book rather than an estate ledger, so its marks are TALLIES AND SIGNS —
+counting strokes and a short row of real hieroglyphs as a heading — and nothing cursive at all.
 
 **Attach:**
 
@@ -519,15 +525,23 @@ has a single attachment and an import line with no `--mask`.
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
 
-The object: an OSTRACON BOARD hanging flat against a wall — a thin rectangular plank, wider than it is
-tall, with a peg at each top corner and a cord between them. Nothing about it stands out from the wall: it
-is a flat board seen square on.
+Landscape, twice as wide as it is tall. The magenta fills the whole frame right to its edges, and the
+object floats in the middle of it with magenta on all four sides. There is no wall, no floor, no room and
+no surface behind the object — only flat magenta.
 
-Whitewashed cedar, the wash thin enough that the grain shows through and chipped away at the corners. It
-is written on in two colours: columns of small hieratic figures in BLACK, with the headings and every
-total in RED, in a scribe's quick hand. The writing is too fine to read and must not be drawn as
-hieroglyphs — this is cursive bookkeeping, not carved signs. Some lines are struck through and rewritten.
-The pegs are dark cedar, the cord undyed linen.
+The object: an OSTRACON BOARD — a thin rectangular plank, twice as wide as it is tall, hanging from a peg
+at each top corner with a cord slung between them. It is seen perfectly square on.
+
+Whitewashed cedar, the wash thin enough that the grain shows through and chipped away at the corners. The
+pegs are dark cedar, the cord undyed linen.
+
+WHAT IS ON THE BOARD IS COUNTING AND SIGNS, NOT WRITING. There are NO LETTERS, NO WORDS and NO NUMERALS
+anywhere on it, in any language or any alphabet — nothing a reader could read. Across the top runs a
+single short row of carved-style HIEROGLYPHS in red: bird, water, reed, eye, seated figure, six or seven
+signs and no more. Under it are three ruled COLUMNS separated by thin red lines, filled with COUNTING
+MARKS in black — short vertical strokes in groups of five, the fifth struck diagonally across the other
+four, row under row. Each column ends in a row of the same marks in RED. One row is crossed through with
+a single red line and re-marked beneath.
 
 Draw it perfectly square-on and flat. No thickness at the sides, no top face, no shadow.
 
@@ -1899,13 +1913,27 @@ The spill and the pile are the SAME primitive at different `--contents`: `rubble
 heap, `rubblePile --contents=spill` the flat scatter, and `--contents=plaster` the nobleman's variant with
 two shards leaning on it. Whichever a rank uses for its pile, its spill is `--contents=spill`.
 
-### `junior/tallyBoard` — an estate ledger board in ink columns
+### `junior/tallyBoard` — an estate ledger board in counting marks
 
 The last wall item the nobleman is missing, and one of only two tiles of his left anywhere in this file.
 
-FLAT, so it has NO scaffold and NO mask: a board hanging against a wall is a slab, and Step 0's table
-sends flat things straight to the generator. Its own silhouette becomes the tile, which is why this one
-has a single attachment and an import line with no `--mask`.
+FLAT, so it has NO scaffold and NO mask: a board hanging on two pegs is a slab, and Step 0's table sends
+flat things straight to the generator. Its own silhouette becomes the tile, which is why this one has a
+single attachment and an import line with no `--mask`.
+
+**NEVER ASK FOR WRITING — ask for MARKS.** The first roll of this came back a modern accounting sheet in
+English: columns headed "Bookkeeping", "Entries", "Totals", figures in Arabic numerals with decimal
+commas, and a struck-through line reading "stewarded on 1986". That is what "columns of small hieratic
+figures in a scribe's quick hand" buys. Hieroglyphs are safe because they are PICTURES and a generator
+has pictures to draw; hieratic is HANDWRITING, it has no pictorial vocabulary to fall back on, and what
+comes back is handwriting in the only script the model actually writes.
+
+The merchant's board is the proof and it landed first roll: it asks for scratched strokes grouped in
+fives, and a stroke belongs to no language. So does this one.
+
+**And it asked for a wall, and got one.** "Hanging flat against a wall" put the whole frame under white
+brick with the magenta pushed out to a border. A wall item hangs on nothing in its scaffold; the band it
+sits in is the renderer's job.
 
 **Attach:**
 
@@ -1914,19 +1942,24 @@ has a single attachment and an import line with no `--mask`.
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
 
-The object: a LEDGER BOARD hanging flat against a wall — a thin rectangular plank, wider than it is tall,
-with a peg at each top corner and a cord between them. Nothing about it stands out from the wall: it is a
-flat board seen square on.
+Landscape, twice as wide as it is tall. The magenta fills the whole frame right to its edges, and the
+object floats in the middle of it with magenta on all four sides. There is no wall, no floor, no room and
+no surface behind the object — only flat magenta.
 
-Whitewashed cedar, the wash thin enough that the grain shows through and chipped away at the corners. It
-carries an ESTATE LEDGER: four or five ruled COLUMNS of small figures in black ink, with the column
-headings and every total in RED. The hand is a steward's, quick and even. The writing is too fine to read
-and must not be drawn as hieroglyphs — this is cursive bookkeeping, not carved signs. One column is
-struck through and rewritten beside it. The pegs are dark cedar, the cord undyed linen.
+The object: a LEDGER BOARD — a thin rectangular plank, twice as wide as it is tall, hanging from a peg at
+each top corner with a cord slung between them. It is seen perfectly square on.
+
+Whitewashed cedar, the wash thin enough that the grain shows through and chipped away at the corners. The
+pegs are dark cedar, the cord undyed linen.
+
+WHAT IS ON THE BOARD IS COUNTING, NOT WRITING. There are NO LETTERS, NO WORDS and NO NUMERALS anywhere on
+it, in any language or any alphabet — nothing a reader could read. It carries four ruled COLUMNS separated
+by thin red lines, and each column is filled with COUNTING MARKS: short vertical strokes in groups of
+five, the fifth struck diagonally through the other four, in black ink, row under row. Every column ends
+in a row of larger RED marks of the same kind, its total. One group has been rubbed out and re-marked
+beside it, and one whole row is crossed through with a single red line.
 
 Draw it perfectly square-on and flat. No thickness at the sides, no top face, no shadow.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
 ```

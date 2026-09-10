@@ -121,6 +121,32 @@ against 4.5% or below for every other prop at the rank. Pale limestone needs `--
 because 0.86 fixed the clamp and left the tile exactly level with the floor, which fails the
 ten-luminance separation rule outright.
 
+**NEVER ASK FOR WRITING — ASK FOR MARKS.** The nobleman's ledger board asked for "columns of small
+hieratic figures in a scribe's quick hand" and came back a modern accounting sheet: columns headed
+*Bookkeeping*, *Entries*, *Totals*, figures in Arabic numerals with decimal commas, and a struck-through
+line reading *stewarded on 1986*. The prompt's own guard — "must not be drawn as hieroglyphs, this is
+cursive bookkeeping" — is what steered it there.
+
+The distinction that matters is not Egyptian versus not:
+
+- **Hieroglyphs are PICTURES**, and a generator has pictures to draw. Every entry that asks for a
+  cartouche band or a row of incised signs has come back with plausible signs, the nobleman's coffin
+  included. These are safe and stay.
+- **Hieratic is HANDWRITING.** There is no pictorial vocabulary to fall back on, so what arrives is
+  handwriting in the only script the model actually writes, which is English in a copperplate hand.
+
+So anything that would be cursive is specified as COUNTING instead — strokes in groups of five, the fifth
+struck through the other four — with an explicit "no letters, no words and no numerals, in any language
+or any alphabet". The merchant's tally board landed on the first roll asking for exactly that, and a
+stroke belongs to no language.
+
+**A WALL ITEM MUST NOT BE TOLD IT IS ON A WALL.** The same return put the entire frame under white
+brickwork and pushed the magenta out to a border, because the prompt opened "a board hanging flat against
+a wall". A wall item hangs on nothing in its scaffold; the band behind it is the renderer's job. Say the
+magenta fills the frame to its edges and there is no wall, no floor and no surface behind the object —
+and state the FRAME'S ASPECT while you are there, since a flat item has no scaffold to imply one and this
+one came back square for a slot that is twice as wide as it is tall.
+
 **A HOLE CANNOT BE A PRODUCT SHOT — give it a FLOOR with `--context`.** Every other scaffold is an object
 on magenta, which is a thing you could pick up. A hole is an absence in a surface, and with the surface
 missing the picture is equally a tank, a panel or a flat pattern. The priest's sacred pool proved both
