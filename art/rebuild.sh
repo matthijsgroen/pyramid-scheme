@@ -993,3 +993,23 @@ yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=
 scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/masters/props/junior/shrine-thoth.webp --tier=junior --name=shrine-thoth --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+
+# BASTET in the merchant's household SHRINE, 3 rooms, and the second patron tile at his rank. Same
+# `prim_shrine` default as his generic — a mudbrick box with a figure and a lamp in the niche — with a
+# seated bronze cat where Bes stands. The lamp sooting the back wall is the generic's own detail kept.
+#
+# Its first roll came back 2048x2048 SQUARE, the tell that the scaffold was never attached, and was
+# staged three-quarter isometric to match. Nothing was rewritten: the reroll came back 1686x2528 and
+# held the projection. Check the aspect before touching a prompt.
+#
+# --brightness=0.76 --saturation=1.6, and the two clamps pull opposite ways here, which is worth
+# recording because the merchant's rank does it often. Whitewash on his near-black floor came back 52
+# LIGHTER with 49.4% over the light clamp. Darkening fixes the clamp but walks the tile THROUGH zero
+# separation on the way — 0.66 lands it 3 darker, which fails the ten-luminance rule from the other
+# side, and 0.6 makes a whitewashed shrine darker than the floor it stands on, which inverts what the
+# object is. 0.76 keeps it 13 LIGHTER, where the generic shrine sits at 10, and leaves both tails near
+# 9%. The saturation stops at 1.6: 2.2 hits the rank's +25 warmth band exactly and turns the worn ochre
+# patches a garish orange, and the generic shrine ships at +9 anyway.
+scaffold shrine --spin=-12 --colour=#a49781 --floor=#6c6257
+yarn import-tile art/masters/props/starter/shrine-bastet.webp --tier=starter --name=shrine-bastet --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.76 --saturation=1.6

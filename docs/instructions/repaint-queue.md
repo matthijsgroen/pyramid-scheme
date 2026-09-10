@@ -2224,7 +2224,7 @@ yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name
 
 ---
 
-## Patrons — twenty-one
+## Patrons — twenty
 
 **A PATRON IS WHOSE TOMB A PYRAMID IS**, and it reaches the map through one mechanism only: for five
 kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUrl` prefers
@@ -2232,7 +2232,7 @@ kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUr
 none of these is a placeholder and nothing on the map is wrong without them. They are the difference
 between a rank whose every tomb looks the same and one where the god is legible from the corridor.
 
-**Twenty-seven pairings, not forty-five**, and six of them have landed. The count grew when dedicated
+**Twenty-seven pairings, not forty-five**, and seven of them have landed. The count grew when dedicated
 floors started keeping a room for their god: more rooms show a patron, so more pairings exist to paint.
 Re-read `yarn art-census` rather than this number. Nine gods across five kinds is forty-five files, and painting
 forty-five is not the job: a god authored on a pyramid holding none of those five kinds draws nothing
@@ -3163,48 +3163,6 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold shrine --spin=18 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/shrine-osiris.webp --tier=master --name=shrine-osiris --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
-### `starter/shrine-bastet` — Bastet in the merchant's shrine
-
-3 rooms, and its generic is painted, so it can be rolled today. `prim_shrine`'s default is the merchant's
-own household shrine — a mudbrick box with a figure and a lamp in it — so this is the same scaffold with
-a cat in the niche instead of Bes.
-
-**Attach:**
-
-1. `~/tile-previews/shrine-bastet-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a household SHRINE — a whitewashed mudbrick box standing on the floor, its front open as a
-niche. A small figure stands in the niche and a clay LAMP burns on the ledge beside it.
-
-The figure is BASTET as a seated CAT: small, upright, forelegs straight down in front of her, with a
-round short-muzzled head and two pointed ears. She is a cat and not a lion — no mane, no ruff — and she
-is the only figure in the niche.
-
-The shrine is mudbrick under thin whitewash, the wash worn off the corners and the front lip where hands
-have passed, the brick showing through warm and dusty. Inside the niche the plaster is sooted above the
-lamp. Bastet is cast BRONZE gone dark, a brown-black patina with green in the hollows, rubbed to bare
-warm metal on the crown of her head and the tips of her ears. The lamp's flame is the only warm light,
-and it is a flat colour rather than a glow.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's tomb: mudbrick, plaster, reed and rough timber. Warm dark earth, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold shrine --spin=-12 --colour=#a49781 --floor=#6c6257
-yarn import-tile art/masters/props/starter/shrine-bastet.webp --tier=starter --name=shrine-bastet --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
