@@ -935,3 +935,30 @@ yarn import-tile art/masters/props/junior/stela-anubis.webp --tier=junior --name
 scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#c39c68
 yarn import-tile art/masters/props/junior/shrine-anubis.webp --tier=junior --name=shrine-anubis --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.8
+
+# ANUBIS COUCHANT in the vault, 6 rooms, and the tile that cost three rolls to three different faults —
+# worth reading in order, because two of them were the prompt correcting itself into the opposite ditch.
+#
+# --spin=-22 where the priest's Anubis is -8, and the extra turn is the EARS. `couchant` faces left and
+# carries its ears apart in X, which in pure profile puts one in front of the other along the snout.
+# Moving them to ±Y where they anatomically belong was tried and reverted: they merge into one cone
+# under the shear, and worse, it moves the mask of the priest's tile, whose master was painted over the
+# ±X silhouette — his ear tips came back blunted. Turning the ANIMAL costs no geometry, and at -22 the
+# same two cones sit either side of the skull. Spin is per entry; that is what makes it free.
+#
+# ROLL 1 came back 2048x2048 square and three-quarter isometric — the tell that the scaffold was not
+# used at all. ROLL 2 came back the right aspect and a FLAT SIDE ELEVATION with no plinth top and one
+# ear, because rule 2 had been "strengthened" to end "you never see round the side of anything". In a
+# cavalier oblique you DO see round the side; that clause asks for an elevation and got one. Rule 3 was
+# pulling the same way with "he does not turn to face you", written when the spin was -8 and simply
+# untrue at -22. ROLL 3 landed once rule 2 said "nothing gets smaller as it goes back" — the wording the
+# priest's Anubis landed on — rule 3 stated the turn positively, and rule 4 asked for the plinth's TOP
+# FACE by name. It came back turned a little further than the scaffold, and the envelope absorbed it:
+# 90% IoU, 98.8% of the paint inside the mask.
+#
+# --brightness=0.9 for the PLINTH, not the jackal. Pale limestone put 13.6% over the light clamp; 0.9
+# takes it to 0.0%. The 49% under the dark clamp is the black resin and is not a defect — the priest's
+# shipped Anubis measures 35.9% for the same reason.
+scaffold statue --contents=couchant --spin=-22 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
+yarn import-tile art/masters/props/junior/statue-anubis.webp --tier=junior --name=statue-anubis --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.9

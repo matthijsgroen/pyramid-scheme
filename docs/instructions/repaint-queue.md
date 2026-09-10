@@ -2220,7 +2220,7 @@ yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name
 
 ---
 
-## Patrons — nineteen
+## Patrons — eighteen
 
 **A PATRON IS WHOSE TOMB A PYRAMID IS**, and it reaches the map through one mechanism only: for five
 kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUrl` prefers
@@ -2235,9 +2235,9 @@ counts the pairings the world actually makes, in room order, and that list is wh
 Re-run it after authoring a journey — a god moved to another pyramid changes which files are worth
 having.
 
-**THE FIVE BELOW COME FIRST because their generic is painted**, and between them they are 19 of the
-153 rooms still owed here. Three have landed already — Bastet, and the vault's stela and shrine, which
-were 62 rooms between them and the two largest pairings in the world. Six of the eight are the nobleman's, worth 79 rooms — 68 of them Anubis's
+**THE FOUR BELOW COME FIRST because their generic is painted**, and between them they are 13 of the
+147 rooms still owed here. Four have landed — Bastet, and the vault's stela, shrine and couchant
+Anubis, which were 68 rooms between them and include the two largest pairings in the world. Six of the eight are the nobleman's, worth 79 rooms — 68 of them Anubis's
 alone — and his rank is finished, so nothing about them waits on anything.
 
 The other fourteen sit on a kind that is still a placeholder, including
@@ -2273,83 +2273,6 @@ the silhouette of a head plus one attribute, never a costume.
 | sekhmet | a lioness's head carrying a sun disc — a mane where Bastet has none      |
 | sobek   | a crocodile's head, long flat snout                                      |
 | thoth   | an IBIS head, a long curved down-swept beak                              |
-
-### `junior/statue-anubis` — Anubis couchant in the vault
-
-6 rooms. **The only patron statue in the file that is an ANIMAL rather than a figure**, and it takes the
-`couchant` pose rather than the rank's `seated` one: a recumbent jackal is what a vault has at its door,
-and the priest's Anubis proved that pose in three rolls. Read that tile's rebuild line first.
-
-**`--spin=-22`, where the priest's is -8, and the extra turn is the EARS.** `couchant` faces left and
-carries its ears apart in X, which on a head seen in pure profile puts one in front of the other along
-the snout: anatomically wrong, and chosen because a pair at ±Y merges into one cone under the shear —
-rendered both ways to check. Turning the animal is the way out, and it costs no geometry: at -22 the head
-reads as turned toward the viewer, so the same two cones now sit either side of the skull and separate
-cleanly. Moving them in the MODEL was tried and reverted — it blunts the ear tips on the priest's landed
-tile, whose master was painted over the ±X mask, which is the whole reason a painted tile's geometry can
-never change.
-
-**AND ITS FIRST REROLL CAME BACK A FLAT SIDE VIEW, which was a word in the prompt and not the model.**
-Rule 2 had been strengthened to end "you never see round the side of anything". In a cavalier oblique
-you DO see round the side — the top faces and the receding faces ARE the projection — so that clause
-asks for a front elevation, and got one. The Anubis that landed at the priest's rank ends the same rule
-"nothing gets smaller as it goes back", which forbids perspective without forbidding the oblique, and
-that wording is back in every entry that had lost it.
-
-Two more clauses were pulling the same way and are gone with it. Rule 3 said "he does not turn to face
-you", which was written when the spin was -8 and is now flatly untrue: at -22 he IS turned, and that is
-the whole point of the spin. It says so positively instead, and names the pay-off — both ears visible,
-one nearer and one further. Rule 4 asks for the plinth's TOP FACE by name, because a shallow
-parallelogram behind the animal is the single most diagnostic thing in the picture and the flat return
-had none of it.
-
-**Attach:**
-
-1. `~/tile-previews/statue-anubis-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a statue of ANUBIS as a recumbent JACKAL, lying on a shrine box. The slab at the bottom is
-the NAOS — a plain stone box he lies on. The long low mass along the top is his BODY, lying down; the
-upright block at the left is his CHEST; above it his HEAD, with the block reaching further left his
-MUZZLE and the two points standing up his EARS. The short mass hanging over the right end is his TAIL.
-
-He is lying down, alert, head up, facing left. Keep him lying: he does not stand, sit or rise.
-
-THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
-is to take the last of the waste off it. Cut the jackal's contour — a back that dips, a haunch that
-swells, a curved chest and muzzle — and cut it INWARD only: every cut goes inside the shape you were
-given, and nothing may end up further left, right, higher or lower than it reaches.
-
-The jackal is BLACK — black resin over wood, matte and slightly dusty, the way Anubis is always finished.
-A thin band of ochre sits at his neck as a COLLAR and the insides of his ears are lined with the same.
-His eyes are two small ochre marks. Nothing on him is gilded and nothing shines.
-
-The naos under him is warm cream limestone, dressed smooth, with an ochre band round its top edge and
-dust caught at its corners. It is the pale thing that makes the black read.
-
-EVERYTHING ELSE IS FIXED, and these five are not negotiable:
-
-1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel. Nothing gets smaller as it goes back.
-3. HE LIES ALONG THE PLINTH, head at the left end and tail at the right. He does not stand, sit or rise. He is turned slightly toward you, exactly as far as the reference turns him — enough that you see a little of his chest and that BOTH EARS are visible, one nearer and one further. This is not a flat profile.
-4. THE PLINTH RUNS ACROSS THE PICTURE, and YOU SEE ITS TOP. Its long edges are horizontal, left to right, at the same slight tilt as the reference, and its top face shows as a shallow parallelogram behind the animal, exactly as the reference draws it. It does NOT swing round to point away from you — but it is not a flat slab seen edge-on either, and a picture with no top face on that plinth is wrong.
-5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
-
-You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the animal is.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold statue --contents=couchant --spin=-22 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
-yarn import-tile art/masters/props/junior/statue-anubis.webp --tier=junior --name=statue-anubis --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `junior/stela-thoth` — Thoth on the nobleman's false-door stela
 
