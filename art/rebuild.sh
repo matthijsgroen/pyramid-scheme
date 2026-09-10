@@ -809,6 +809,17 @@ scaffold brazier --contents=censer --spin=22 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/brazier.webp --tier=expert --name=brazier --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
+# His PAPYRUS-BUNDLE COLUMN. Nothing to grade: 63 of separation, nothing over either clamp, and +10
+# warmth, which is the low end of this rank and where dressed basalt belongs — the jar rack's +58 is
+# alabaster, not the stone.
+#
+# --spin=6 because its back belongs to the wall it holds up, which is Step 1b's against-a-wall band. The
+# sunk relief on the ribs drops below slot resolution and is not what the tile reads by; the scalloped
+# edge of the bundle is, so the ribs stay separate ribs in the prompt.
+scaffold palm --contents=papyrus --spin=6 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/pillar.webp --tier=expert --name=pillar --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
 # The nobleman's KA-STATUE, and the entry that cost the most rolls in the file for a reason that turned
 # out not to be about the painting at all. Two returns came back a cartoon character, and measuring them
 # found nothing wrong: 85% of the paint landed inside the mask, so it WAS a repaint of the scaffold, and

@@ -91,49 +91,13 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Priest — eight
+## Priest — seven
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
 the hanging. Some are new `--contents` variants and some are geometry another rank already proved, which
 is the difference between them worth knowing — a variant's silhouette is his, a reused one's is not, and
 the prompt is all that makes the reused ones his rank's. His `tallyBoard` is here too, and it is the only
 FLAT thing in the section: no mesh, no mask, straight to the generator.
-
-### `expert/pillar` — a papyrus-bundle column
-
-**Attach:**
-
-1. `~/tile-previews/pillar-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a PAPYRUS-BUNDLE COLUMN, running from the floor up out of the top of the picture. The shaft is
-carved as a bundle of stems standing side by side, so its surface is a row of tall rounded RIBS and its
-edges are scalloped rather than straight. The thick band low down and the one near the top are BINDINGS,
-cord tied round the bundle. The swelling shape above the upper binding is the base of a CLOSED PAPYRUS BUD
-capital, and only its lower part is in the picture.
-
-Dark basalt, cool grey-blue, dressed smooth. Each rib carries SUNK RELIEF — shallow carved hieroglyph
-columns, cut into the stone rather than raised on it, their insides a touch darker than the face. Natron
-dust has collected along the lower binding and in the joints between the ribs. The bindings are the same
-stone, carved to look like cord, with the cord's twist showing.
-
-The ribs must stay as separate ribs down the whole shaft: do not smooth them into one round column.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold palm --contents=papyrus --spin=6 --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/pillar.webp --tier=expert --name=pillar --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `expert/shrine` — a naos, doors shut and sealed
 
