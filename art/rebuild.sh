@@ -1036,3 +1036,27 @@ yarn import-tile art/masters/props/starter/shrine-bastet.webp --tier=starter --n
 scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
 yarn import-tile art/masters/props/junior/statue-thoth.webp --tier=junior --name=statue-thoth --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.8 --saturation=1.3
+
+# The priest's COFFIN, propped upright — `prim_statue --contents=mummiform`, the pose that puts an
+# anthropoid outline in the FRONT plane, the one plane this shear leaves alone.
+#
+# NO KNOBS. 0.2% over the light clamp, +27 warmth, 59 darker than the slab. The 22.7% under the dark
+# clamp is the coffin being dark cedar and is not a defect — the priest's own Anubis ships at 35.9%.
+#
+# TWO FAULTS AND ONE OF THEM WAS THE PROMPT'S SILENCE. The first roll came back with the boxes painted
+# AS BOXES: a cube for a head with a square plaque of a face on it, the crossed arms as two rectangular
+# bars. It was obeying — the entry ended with "keep every edge, every proportion and every silhouette",
+# and `mummiform` is a `prim_statue` pose, so its scaffold is an ENVELOPE and owed the carve section
+# instead. The entry now carries one written for a coffin. `junior/sarcophagus` landed FIRST ROLL off
+# the same wrong instruction, which is why it went unnoticed for so long: the model interpreted loosely
+# that time, and in a clean chat it interprets literally.
+#
+# The second roll carved the coffin perfectly and drew the plinth as a FLAT PANEL behind it, because the
+# coffin carve block had four numbered rules where the statues have five — the plinth rule was the one
+# missing. THE MASK RESCUED IT: cut to the scaffold's own silhouette the panel becomes the plinth, and
+# the natron dust the painter put on it reads as the slab's top face. 87.2% IoU, 91.6% of the paint
+# inside the mask, the best of any envelope return in the session and better than the junior coffin's
+# 80.4%. The rule is added anyway, for the pharaoh's and the gods' coffins.
+scaffold statue --contents=mummiform --spin=-6 --colour=#a7b2be --colour-figure=#6f6459 --floor=#8d98a5
+yarn import-tile art/masters/props/expert/sarcophagus.webp --tier=expert --name=sarcophagus --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"

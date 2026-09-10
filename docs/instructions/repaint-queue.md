@@ -91,76 +91,13 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Priest — eleven
+## Priest — ten
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
 the hanging. Six are new `--contents` variants — `statue` among them, which the table used to send to a scan — and five are geometry another rank already proved, which
 is the difference between them worth knowing — a variant's silhouette is his, a reused one's is not, and
 the prompt is all that makes the reused ones his rank's. His `tallyBoard` is here too, and it is the only
 FLAT thing in the section: no mesh, no mask, straight to the generator.
-
-### `expert/sarcophagus` — the priest's coffin, corded and sealed
-
-Upright, for the reason `junior/sarcophagus` records: an anthropoid outline lives in the front plane,
-which is the one plane this shear leaves alone.
-
-**Attach:**
-
-1. `~/tile-previews/sarcophagus-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. No perspective and no vanishing point: verticals stay vertical, horizontals stay horizontal.
-
-The object: a PRIEST'S COFFIN, standing upright against its own plinth, seen from the front. It is
-body-shaped — narrow at the head, widest at the shoulders, tapering to the feet. The raised panel at the
-top is the FACE. The two bars across the chest are the ARMS, crossed. The slab it stands on is the PLINTH.
-
-It stands, and it is SHUT. Do not lay it down and do not open it.
-
-Dark cedar, oiled almost black, its grain running down the length of the case. The face is carved wood
-left bare and rubbed paler, its eyes inlaid with white shell and dark stone. The crossed arms are carved
-in low relief. A single band of small incised hieroglyphs runs down the front, filled with pale paste.
-
-CORDED AND SEALED: an undyed linen cord is wound round the case twice, above and below the arms, and where
-it crosses at the centre there is a lump of grey CLAY stamped with a mark. The seal is unbroken. Natron
-dust has collected along the cords and in the carving.
-
-THE REFERENCE IS A ROUGHED-OUT BLOCK, NOT A FINISHED COFFIN. It is timber cut to the shape and left
-square, and your job is to take the last of the waste off it.
-
-CHANGE, freely, and ONLY this: the OUTLINE of the coffin itself. An anthropoid coffin is narrow at the
-head, widest at the shoulders and tapers to the feet, and every edge of it is a curve — cut all of that.
-The head is a rounded mass and not a cube, the shoulders slope, the arms are rounded limbs lying on the
-chest. If a face is drawn on a square plaque and the arms are drawn as rectangular bars, the block has
-been painted rather than carved.
-
-CARVE INWARD ONLY. Every curve you cut goes INSIDE the rough shape you were given — take timber away,
-never add it outside the block's outline. Nothing may end up further left, right, higher or lower than
-the rough shape reaches.
-
-EVERYTHING ELSE IS FIXED, and these four are not negotiable:
-
-1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either.
-3. IT STANDS UPRIGHT, propped against its own plinth, facing the viewer. It does not lie down and it does not lean away.
-4. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
-
-You are re-carving a shape, not re-staging a photograph.
-
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold statue --contents=mummiform --spin=-6 --colour=#a7b2be --colour-figure=#6f6459 --floor=#8d98a5
-yarn import-tile art/masters/props/expert/sarcophagus.webp --tier=expert --name=sarcophagus --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `expert/basin` — a sacred pool with steps down into it
 
@@ -712,12 +649,13 @@ CARVE INWARD ONLY. Every curve you cut goes INSIDE the rough shape you were give
 never add it outside the block's outline. Nothing may end up further left, right, higher or lower than
 the rough shape reaches.
 
-EVERYTHING ELSE IS FIXED, and these four are not negotiable:
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
 2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either.
 3. IT STANDS UPRIGHT, propped against its own plinth, facing the viewer. It does not lie down and it does not lean away.
-4. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. It is a SLAB the coffin stands on and not a flat panel behind it: do not swing it round, do not flatten it, do not straighten it, and do not lose the top face it shows you.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph.
 
@@ -1360,12 +1298,13 @@ CARVE INWARD ONLY. Every curve you cut goes INSIDE the rough shape you were give
 never add it outside the block's outline. Nothing may end up further left, right, higher or lower than
 the rough shape reaches.
 
-EVERYTHING ELSE IS FIXED, and these four are not negotiable:
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
 2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either.
 3. IT STANDS UPRIGHT, propped against its own plinth, facing the viewer. It does not lie down and it does not lean away.
-4. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. It is a SLAB the coffin stands on and not a flat panel behind it: do not swing it round, do not flatten it, do not straighten it, and do not lose the top face it shows you.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph.
 
