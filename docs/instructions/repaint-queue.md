@@ -71,114 +71,12 @@ loose prompt invites: the freer the paint, the less ambiguity the geometry may c
 
 ---
 
-## Nobleman — two
+## Nobleman — one
 
-Both were believed blocked on a museum scan until `prim_statue` existed. Neither is: a figure is a POSE
-and its face is paint, which the priest's canopic jars and his Anubis both proved. See `expert/statue`
-for the worked example of a shape-free prompt, and the five numbered rules in it that keep one honest.
-
-### `junior/statue` — the owner's ka-statue, seated
-
-**CLOTHED, AND HIS FLESH IS LEFT UNPAINTED, and that is a change to the brief rather than to the wording.**
-Two rolls came back a cartoon character, and the interesting part is that MEASURING them found nothing
-wrong: 85% of the paint landed inside the mask, so it was a real repaint of the scaffold, and its
-colour-share, saturation and brush texture all sat inside the range of the fifteen landed props at this
-rank. There is no gouache-versus-cartoon signal in the pixels. What was different was the SUBJECT — it is
-the only tile in the set with a bare torso, arms, knees and separated toes, and the only one with a
-portrait face. The set's one other figure, the merchant's shabti, is mummiform: a wrapped column with a
-flat mask and no limbs at all, and it landed on the first roll.
-
-So the fix is compositional. A long linen kilt to the shins covers the thighs and the knees, which is
-exactly where the modelled anatomy and the highlights were living, and unpainted limestone flesh removes
-the large saturated skin mass that made the thing read as a person. Both are ordinary for a nobleman's
-ka-statue; a fully painted one is the exception, not the rule.
-
-**And it needs `--brightness=0.8`.** The only measurement that did fall outside the rank was the light
-end: 18.5% of the tile over the clamp, where every landed prop here is at 4.5% or below and most are at
-0.0%. The white kilt and the near-white throne made it four times the brightest thing the nobleman owns.
-0.8 measured 0.0% over the clamp against 2.6% under the dark one.
-
-Its rank line ends "sparingly painted" where every other nobleman entry says "brightly painted" — the one
-word is deliberate and is the only place in the file where a rank's own style line is varied. Left as it
-was it argued with the paragraph above it, which is the whole point of this rewrite.
-
-**Attach:**
-
-1. `~/tile-previews/statue-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a KA-STATUE of the tomb's owner, seated on a throne, cut from one block of limestone. The
-tapering block on his head is a NEMES headcloth, widening to his shoulders. The block across his hips and
-the block below it are a LONG LINEN KILT, wrapped from his waist down over his knees to his shins.
-
-HE IS CLOTHED AND HE IS BARE STONE. The kilt covers him from waist to shin — no thighs, no knees, no lap
-showing. Above it he wears a broad flat COLLAR across the chest and shoulders. And his flesh is NOT
-PAINTED: his face, arms, hands, shins and feet are the plain pale limestone of the block, the same stone
-as the throne he sits on, with nothing but the kohl round his eyes picked out on it.
-
-The reference renders the figure DARKER than the throne so the masses can be told apart. That is not his
-colour. He is the same limestone as the furniture behind him.
-
-IT IS A CARVED OBJECT AND NOT A PERSON, and this matters more than any other line here. Egyptian statuary
-is BLOCK-CARVED: flat planes, hard arrises, and the figure never leaves the block it was cut from. His
-upper arms stay joined to his sides, his hands stay flat on the kilt, his shins stay merged with the
-seat, and there is no daylight anywhere between a limb and the stone behind it. Nothing is undercut and
-nothing projects past the front edge of the plinth.
-
-NO ANATOMY IS MODELLED: no muscle bellies, no collarbones, no tendons, no separated toes, and not one
-highlight on a shoulder or a shin — a highlight there means a body is being painted, so paint the flat
-plane instead. He has no expression, no gesture and no lifelike proportions. This is a cult object with a
-fixed face, not a character and not an illustration of a man.
-
-The stone is one material throughout, the figure and the throne and the plinth alike. Do not paint a
-person sitting in front of a stone chair.
-
-THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
-is to take the last of the waste off it.
-
-CHANGE, freely, and ONLY this: the contour of the man himself, and only by CUTTING. A shoulder gets its
-slope, a knee its front arris, a jaw its plane. These are chisel cuts on a block, not modelling in clay —
-every mass stays square-shouldered and stays recognisably the mass it already is.
-
-CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it
-outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape
-reaches.
-
-EVERYTHING ELSE IS FIXED, and these five are not negotiable:
-
-1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
-3. HE IS SEATED, facing the viewer, hands flat on the kilt over his knees. The slab behind him is the THRONE BACK and the block under him the SEAT — they stay square-cut stone furniture, not part of his body.
-4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
-5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
-
-MOSTLY BARE LIMESTONE, pale and creamy and a little dusty, and the painted parts are few: the nemes
-striped in blue and ochre, the broad collar in bands of blue, red and ochre, the kilt an unbleached linen
-white barely lighter than the stone, and the eyes outlined in black kohl — flat, with no glint and no
-whites. Nothing else carries paint. Where paint does sit it is PIGMENT LYING ON STONE, laid flat with no
-shading and no soft edge, worn thin along the nemes lappets and the collar's lower edge and chipped at
-every arris. The throne and plinth are the same limestone with an ochre band along the plinth.
-
-Nothing in this picture is bright. The stone is a soft warm grey-cream, not white, and the linen is the
-same value as the stone rather than a highlight against it.
-
-You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
-
-ANYTHING DRAWN OUTSIDE THE ROUGH SHAPE IS CUT OFF, fingers and toes included, and a clipped limb reads as an amputation. Nothing is added below the plinth either — no ground, no shadow, no floor.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, sparingly painted, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
-yarn import-tile art/masters/props/junior/statue.webp --tier=junior --name=statue --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.8
-```
+Believed blocked on a museum scan until `prim_statue` existed, and it is not: a figure is a POSE and its
+face is paint, which the priest's canopic jars and his Anubis both proved. The rank's ka-statue has since
+landed too, and `art/rebuild.sh` carries what it cost — five rolls, none of them fixed by wording, and
+the one that worked changed the SUBJECT instead: clothed, and his flesh left as bare stone.
 
 ### `junior/sarcophagus` — an anthropoid coffin, painted face, yellow ground
 

@@ -81,28 +81,45 @@ hem — two lines, deterministic. Displace the folds in Y and not in X: under z 
 drawn HIGHER, so the ripple lands as a shift in the surface and its shading does the rest, where a
 sideways displacement only makes the sheet narrower and wider and reads as a flag with a scalloped edge.
 
-**A HUMAN FIGURE NEEDS THE BLOCK SAID TWICE — the carve prompt does not transfer from an animal.** The
-statue prompts were all written off the priest's Anubis, which landed in three rolls, and the wording that
-worked on him is what broke the nobleman's ka-statue: *"a shoulder slopes, a knee is round, a face is not
-a cube. Cut all of that."* On a jackal that buys a dipped back and a swelling haunch. On a man it buys a
-cartoon character — the return read as an illustration of a person rather than a carved object, and the
-material paragraph made it worse by asking for skin and for eyes with whites and irises in them.
+**A FIGURE THAT READS AS A CHARACTER IS A BRIEF PROBLEM, NOT A PAINTING PROBLEM — and the only way to
+find that out was to MEASURE.** The nobleman's ka-statue came back a cartoon character twice, and two
+rounds of sharper wording bought nothing at all. What settled it was numbers, against the fifteen landed
+props at the same rank:
 
-Two additions, and they are in every human entry now:
+| | the return | landed junior props |
+| --- | --- | --- |
+| paint inside the mask | 85.4% IoU | it is a real repaint of the scaffold, not a redrawing |
+| top-8 colour share | 53.1% | 24–71% |
+| saturation | 44 | 15–57 |
+| interior brush texture (smooth %) | 58.2% | 4.5–60.6% |
+| warmth against the slab | −22 | −4 to −74 |
 
-- **Say it is an object, not a person.** "Egyptian statuary is BLOCK-CARVED: flat planes, hard arrises,
-  and the figure never leaves the block it was cut from. Upper arms stay joined to the sides, calves stay
-  merged with the seat, nothing is undercut, no daylight anywhere between a limb and the stone behind it.
-  No expression, no gesture, no lifelike proportions." `prim_statue`'s docstring already argued all of
-  this to justify boxes over spheres; none of it had reached the prompts.
-- **Paint is PIGMENT ON STONE, never skin.** Flesh laid flat with no shading and no blush, the eye carved
-  first and then outlined, worn thin at the knees and the nose and chipped along every arris. The
-  difference between "skin a warm red-brown" and "the flesh laid in flat warm red-brown, pigment lying on
-  stone" is the whole distance between a character and a statue.
+Every one inside the rank's own distribution. **There is no gouache-versus-cartoon signal in the pixels**,
+and three plausible explanations died on that table: that the generator had stopped repainting and started
+drawing, that it was filling flat cel shapes, and that it had lost the brushwork. It had done none of
+those.
 
-The carve section stays — the scaffold is an envelope and the contour has to come from paint — but it is
-narrowed to CUTTING: "a shoulder gets its slope, a knee its front arris, a jaw its plane. Chisel cuts on a
-block, not modelling in clay."
+What was different was the SUBJECT. It was the only tile in the set with a bare torso, arms, knees and
+separated toes, and the only one with a portrait face — where the set's other figure, the merchant's
+shabti, is mummiform, a wrapped column with a flat mask and no limbs at all, and landed on the first roll.
+
+So the brief changed. A long kilt to the shins covers exactly where the modelled anatomy and the
+highlights were living, and the flesh is left as unpainted limestone, which takes the large saturated skin
+mass out of the picture. Colour stays only on the nemes and the collar. It landed on the next roll.
+
+Two things to carry:
+
+- **Measure before rewriting a prompt twice.** `tile-stats` covers the imported tile; the colour-share,
+  brush-texture and mask-IoU checks above were thrown away after use, and re-deriving them cost less than
+  either wasted roll.
+- **A statue's flesh is the thing to watch.** Bare painted skin is a large saturated mass with no
+  equivalent anywhere else in a rank, and at 56 units it is what makes a carved object read as a person.
+  Clothe the figure or leave the stone bare.
+
+The one measurement that DID fall outside was the light end: 39.7% over the clamp on the roll that landed,
+against 4.5% or below for every other prop at the rank. Pale limestone needs `--brightness` — 0.76 here,
+because 0.86 fixed the clamp and left the tile exactly level with the floor, which fails the
+ten-luminance separation rule outright.
 
 **A HOLE CANNOT BE A PRODUCT SHOT — give it a FLOOR with `--context`.** Every other scaffold is an object
 on magenta, which is a thing you could pick up. A hole is an absence in a surface, and with the surface

@@ -796,3 +796,24 @@ yarn import-tile art/masters/props/expert/shelf.webp --tier=expert --name=shelf 
 scaffold basin --contents=pool --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/basin.webp --tier=expert --name=basin --slot=prop \
   --filter=smooth --mask="$OBJ" --brightness=0.9
+
+# The nobleman's KA-STATUE, and the entry that cost the most rolls in the file for a reason that turned
+# out not to be about the painting at all. Two returns came back a cartoon character, and measuring them
+# found nothing wrong: 85% of the paint landed inside the mask, so it WAS a repaint of the scaffold, and
+# its colour-share, saturation and interior brush texture all sat inside the range of the fifteen landed
+# props at this rank. Two rounds of sharper wording bought nothing, because the wording was not the fault.
+#
+# The SUBJECT was. It was the only tile in the set with a bare torso, arms, knees and separated toes, and
+# the only one with a portrait face — where the set's other figure, the merchant's shabti, is a wrapped
+# column with a flat mask and no limbs, and landed first roll. So the brief changed rather than the
+# prompt: a long kilt to the shins covers exactly where the modelled anatomy and the highlights lived,
+# and the flesh is left unpainted limestone, which takes the large saturated skin mass out of the picture.
+#
+# --brightness=0.76 --saturation=1.3. Untouched it put 39.7% over the light clamp — the whole figure is
+# pale limestone now — where every other prop here is at 4.5% or below. 0.86 fixed the clamp and left it
+# EXACTLY level with the floor, which fails the ten-luminance separation rule outright; 0.76 puts it 20
+# darker. The saturation is for warmth: bare stone came back at -50 and 1.3 brings it to -39, beside the
+# lamp at -63 and the chest at -15.
+scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
+yarn import-tile art/masters/props/junior/statue.webp --tier=junior --name=statue --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.76 --saturation=1.3
