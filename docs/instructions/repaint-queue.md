@@ -540,8 +540,11 @@ anywhere on it, in any language or any alphabet — nothing a reader could read.
 single short row of carved-style HIEROGLYPHS in red: bird, water, reed, eye, seated figure, six or seven
 signs and no more. Under it are three ruled COLUMNS separated by thin red lines, filled with COUNTING
 MARKS in black — short vertical strokes in groups of five, the fifth struck diagonally across the other
-four, row under row. Each column ends in a row of the same marks in RED. One row is crossed through with
-a single red line and re-marked beneath.
+four, row under row. The bottom row of each column is the same marks again in dark red instead of black,
+and that is its total. One row is crossed through with a single red line and re-marked beneath.
+
+No word appears anywhere on this board, and that includes the name of a colour: write nothing, spell
+nothing, letter nothing. Every mark on it is a stroke.
 
 Draw it perfectly square-on and flat. No thickness at the sides, no top face, no shadow.
 
@@ -1743,7 +1746,7 @@ painting is a paste. Do the ones with rooms behind them first.
 A wall-less product shot of a recess cut into a wall, painted in flat matte gouache, no background, on pure magenta #FF00FF.
 
 The object: a niche with a single star in it. The frame around the opening is the SURROUND — jambs, lintel
-and sill; the opening itself is BLACK, a piece of night sky; the six-pointed shape floating in the middle
+and sill; the opening itself is black, a piece of night sky; the six-pointed shape floating in the middle
 of it is one STAR.
 
 The surround is polished calcite, cool green-white, seamless and without tool marks or dust. The opening is
@@ -1810,7 +1813,7 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 The object: a shrine cabinet on a wall with nothing inside it. The wide slab over the top is a CAVETTO
 CORNICE and the slab under it is the PLINTH, both overhanging the box between them; the uprights at the
-sides are JAMBS; between them the opening is BLACK and completely empty.
+sides are JAMBS; between them the opening is black and completely empty.
 
 The cornice, plinth and jambs are polished calcite, cool green-white, seamless, without tool marks or dust,
 and light leaks faintly from the joints between them. The opening is a deep even black.
@@ -1842,7 +1845,7 @@ yarn import-tile art/masters/props/wizard/wallShrine.webp --tier=wizard --name=w
 A wall-less product shot of a slot cut through a wall, painted in flat matte gouache, no background, on pure magenta #FF00FF.
 
 The object: a shaft cut through the stone with stars showing in it. The band around the opening is the
-FRAME — a bar above, a bar below, a jamb at each side; the opening itself is BLACK, open night; the three
+FRAME — a bar above, a bar below, a jamb at each side; the opening itself is black, open night; the three
 six-pointed shapes in it are STARS.
 
 The frame is polished calcite, cool green-white, seamless and dustless, with light leaking faintly from its
@@ -1935,6 +1938,13 @@ fives, and a stroke belongs to no language. So does this one.
 brick with the magenta pushed out to a border. A wall item hangs on nothing in its scaffold; the band it
 sits in is the renderer's job.
 
+**Then the second roll wrote the word RED four times.** The marks were right, the frame was right and the
+wall was gone — and at the foot of each column, where the prompt asked for "a row of larger RED marks",
+it lettered R-E-D in dark red and put the strokes after it. CAPITALS IN THESE PROMPTS MEAN "THIS IS A
+THING IN THE PICTURE", and every other capitalised word is a noun for something to draw, so a capitalised
+ADJECTIVE reads as one more thing to put on the board. Colour words are lower case here now, and the
+prompt says in as many words that no word appears on the board, the name of a colour included.
+
 **Attach:**
 
 1. `~/tile-previews/junior-plain.png` — the material reference
@@ -1956,8 +1966,12 @@ WHAT IS ON THE BOARD IS COUNTING, NOT WRITING. There are NO LETTERS, NO WORDS an
 it, in any language or any alphabet — nothing a reader could read. It carries four ruled COLUMNS separated
 by thin red lines, and each column is filled with COUNTING MARKS: short vertical strokes in groups of
 five, the fifth struck diagonally through the other four, in black ink, row under row. Every column ends
-in a row of larger RED marks of the same kind, its total. One group has been rubbed out and re-marked
-beside it, and one whole row is crossed through with a single red line.
+in a bottom row of the same marks again, larger and in dark red instead of black, and that row is its
+total. One group has been rubbed out and re-marked beside it, and one whole row is crossed through with
+a single red line.
+
+No word appears anywhere on this board, and that includes the name of a colour: write nothing, spell
+nothing, letter nothing. Every mark on it is a stroke.
 
 Draw it perfectly square-on and flat. No thickness at the sides, no top face, no shadow.
 

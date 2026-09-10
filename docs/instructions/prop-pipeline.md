@@ -140,6 +140,13 @@ struck through the other four — with an explicit "no letters, no words and no 
 or any alphabet". The merchant's tally board landed on the first roll asking for exactly that, and a
 stroke belongs to no language.
 
+**And do not put a COLOUR in capitals.** The next roll of that board got the marks, the frame and the
+absence of a wall all right, and then lettered R-E-D at the foot of every column, because the prompt
+asked for "a row of larger RED marks". Capitals in these prompts mean *this is a thing in the picture* —
+every other capitalised word in them is a noun for something to draw — so a capitalised adjective reads
+as one more thing to put on the surface. Emphasise the noun, never the colour, and on anything that
+could carry writing say outright that no word appears on it, the name of a colour included.
+
 **A WALL ITEM MUST NOT BE TOLD IT IS ON A WALL.** The same return put the entire frame under white
 brickwork and pushed the magenta out to a border, because the prompt opened "a board hanging flat against
 a wall". A wall item hangs on nothing in its scaffold; the band behind it is the renderer's job. Say the
