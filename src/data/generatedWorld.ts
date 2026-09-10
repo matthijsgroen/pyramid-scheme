@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1620907817
+export const worldContentHash = 1449221941
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -1924,6 +1924,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "hidato",
+        patron: "thoth",
         role: "water",
         encountersByIndex: { 0: "hidato", 1: "constellation" },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art12", pieceIndex: 1 },
@@ -2022,6 +2023,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "twin-stars",
+        patron: "thoth",
         role: "water",
         encountersByIndex: { 0: "twin-stars", 1: "canisters", 2: "constellation" },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d2", pieceIndex: 0 },
@@ -2119,6 +2121,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "star-battle",
+        patron: "thoth",
         role: "water",
         encountersByIndex: { 0: "star-battle", 1: "hidato", 2: "canisters", 3: "procession" },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d2", pieceIndex: 1 },
@@ -2137,6 +2140,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "junior_1:p2:wing0" },
         encounter: "constellation",
+        patron: "thoth",
         role: "water",
         encountersByIndex: { 0: "constellation" },
         mainEndReward: { type: "mosaicPiece", tier: "junior" },

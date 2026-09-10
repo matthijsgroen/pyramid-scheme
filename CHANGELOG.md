@@ -15,8 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every object a merchant or a nobleman keeps is drawn. The nobleman's last four were his seated
   ka-statue, his upright coffin, the painted plaster fallen off his walls and the ledger board hanging
   in his stores — so two whole ranks of tomb are now painted rather than sketched.
-- The Noble's Hidden Vault belongs to Anubis, where the rest of the nobleman's climb belongs to Thoth.
-  Nothing about the vault has moved; it is whose tomb it is.
+- The Noble's Hidden Vault belongs to Anubis, where the rest of the nobleman's climb belongs to Thoth —
+  the Temple of Thoth and the Sacred Ibis Migration alike, the ibis being his bird. Nothing about those
+  places has moved; it is whose tombs they are, and the shrines and stelae in them are his.
 - The nobleman's rooms are furnished rather than sketched: his sealed chest, his bronze lamp stand, his
   linen press, his laid table and his false-door shrine are all drawn now, and the merchant's shrine corner
   is screened with patched linen instead of a market awning. He also sells from reed baskets in some rooms

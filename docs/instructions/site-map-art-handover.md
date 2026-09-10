@@ -227,7 +227,7 @@ carries it:
 
    The census counts PAIRINGS rather than gods. Nine patrons across five kinds is forty-five files; only
    twenty-two are reachable, because a god authored on a pyramid holding none of those five kinds draws
-   nothing. Between them they cover 219 rooms; six are painted and 137 rooms are still owed.
+   nothing. Between them they cover 224 rooms; six are painted and 137 rooms are still owed.
 
    **Two still owed have a painted generic under them and can be rolled today**, and they are 3 rooms:
    `junior/statue-thoth` (1) and `expert/wallShrine-anubis` (2). Six have landed and they were the
@@ -240,8 +240,10 @@ carries it:
    **Two gods per rank is the floor for any of it to show**, because a patron tells one pyramid from
    another WITHIN a rank. The nobleman had only Thoth until the Noble's Hidden Vault was dedicated to
    Anubis, and that one line in `spec/junior.ts` is what turned his patron tiles from 11 rooms of
-   decoration into 79, and 78 of those rooms are painted — everything but his `statue-thoth`, which is
-   one room and whose first roll came back a flat elevation.
+   decoration into 79 — 84 now that the Sacred Ibis Migration is Thoth's too, the ibis being his bird
+   and that journey the only one in the world named for a god's attribute rather than the god. 83 of
+   those rooms are painted; the exception is `statue-thoth`, one room, whose first two rolls came back
+   a flat elevation and then an isometric one.
 
    The merchant is still in the old position: Bastet is his only visible god, so his `statue-bastet` is
    his generic statue under another name until a second god is authored at his rank.
