@@ -98,6 +98,23 @@ Each of these cost real time and none is guessable from the code:
 - **A claimed chamber cell is `type: "empty"` in the grid.** The claim is a render-time fact, so anything
   filtering cells by grid type silently drops a chamber's own floor. It has now bitten `floorScatter`,
   `art-census` and `MapGrowth`.
+- **ONE FRESH CHAT PER TILE. A long thread is the single biggest cause of re-rolls, and it hides as a
+  prompt problem.** Gemini names every download after the FIRST prompt in its thread, which makes the
+  damage measurable after the fact: one session produced thirteen downloads named "Gouache Painting
+  Sacred Pool" and nine named "Anubis False-Door Stela" — thirteen different tiles pasted into a thread
+  that began with the priest's pool, and nine into one that began with a stela. Every paste after the
+  first lands in a context already holding a dozen prompts AND a dozen scaffold images.
+
+  What that produces, and nothing else explains: returns coming back 2048x2048 square because the model
+  generates from accumulated context instead of editing the attachment (three in one session, a failure
+  mode absent from every earlier one); returns re-staged into a PREVIOUS tile's projection — the
+  merchant's Bastet shrine came back isometric in a thread whose earlier images were isometric shrines;
+  and prompts that landed first-roll at one rank fighting for four rolls at another, thirteen prompts
+  deep.
+
+  Four rolls of `junior/statue-thoth` were spent rewriting a projection rule that was never the problem.
+  Before touching a prompt because a return looks wrong, check how deep its thread is.
+
 - **Gemini names every download after the first chat in the thread.** Identify returns by content, and by
   frame size: an edited scaffold usually comes back at the scaffold's own aspect — 1686x2528 for a 2:3
   prop, 2880x1440 for a 2:1 wall item — where a fresh generation comes back 2048x2048 square.

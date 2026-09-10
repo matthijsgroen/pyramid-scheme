@@ -23,7 +23,8 @@ and the scaffold is the only thing that has ever made it obey.
 A square return is also unimportable as it stands, whatever it looks like: the import scales the master
 into the slot, and a 1:1 master in a 2:3 slot is a third out.
 
-**How to use one entry.** Attach the two images it names, paste the fenced block verbatim, take the result
+**How to use one entry.** START A NEW CHAT — a thread that has already done a tile is the commonest
+cause of a re-roll, and `site-map-art-handover.md` measures why. Then attach the two images it names, paste the fenced block verbatim, take the result
 from the generator's DOWNLOAD (not a pasted image — a paste resizes 1686x2528 to 1334x2000 and the master
 is what the repository keeps), and drop it in `~/Downloads`. The import line under each block is what turns
 it into a tile; it is recorded here so the flags are not re-derived, but the brightness and saturation in it
