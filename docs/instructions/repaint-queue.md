@@ -2296,6 +2296,13 @@ asks for a front elevation, and got one. The Anubis that landed at the priest's 
 "nothing gets smaller as it goes back", which forbids perspective without forbidding the oblique, and
 that wording is back in every entry that had lost it.
 
+Two more clauses were pulling the same way and are gone with it. Rule 3 said "he does not turn to face
+you", which was written when the spin was -8 and is now flatly untrue: at -22 he IS turned, and that is
+the whole point of the spin. It says so positively instead, and names the pay-off — both ears visible,
+one nearer and one further. Rule 4 asks for the plinth's TOP FACE by name, because a shallow
+parallelogram behind the animal is the single most diagnostic thing in the picture and the flat return
+had none of it.
+
 **Attach:**
 
 1. `~/tile-previews/statue-anubis-junior.png` — the scaffold
@@ -2327,8 +2334,8 @@ EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
 2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel. Nothing gets smaller as it goes back.
-3. HE LIES ALONG THE PLINTH, head at the left end and tail at the right, facing left. He does not stand, sit or rise, and he does not turn to face you.
-4. THE PLINTH RUNS ACROSS THE PICTURE. Its long edges are horizontal, left to right, at the same slight tilt as the reference. It does NOT turn to point away from you, and this is not a three-quarter view of a box.
+3. HE LIES ALONG THE PLINTH, head at the left end and tail at the right. He does not stand, sit or rise. He is turned slightly toward you, exactly as far as the reference turns him — enough that you see a little of his chest and that BOTH EARS are visible, one nearer and one further. This is not a flat profile.
+4. THE PLINTH RUNS ACROSS THE PICTURE, and YOU SEE ITS TOP. Its long edges are horizontal, left to right, at the same slight tilt as the reference, and its top face shows as a shallow parallelogram behind the animal, exactly as the reference draws it. It does NOT swing round to point away from you — but it is not a flat slab seen edge-on either, and a picture with no top face on that plinth is wrong.
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the animal is.
