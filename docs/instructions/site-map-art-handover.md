@@ -13,7 +13,7 @@ the branch is in and how to run the next step.
 
 ## Branch state
 
-`feat/site-map-sprites`, 216 commits, **working tree clean**. `yarn tsc -b` clean, `yarn lint` 0 errors
+`feat/site-map-sprites`, 280 commits, **working tree clean**. `yarn tsc -b` clean, `yarn lint` 0 errors
 (19 pre-existing warnings), suite green, and `sh art/rebuild.sh` reproduces every painted tile from its
 master byte for byte. Run that last one after touching `renderProp.py` or `importTile.ts`: it is the only
 check that catches a geometry change silently invalidating a master.
@@ -27,10 +27,10 @@ settled both, a figure being a POSE with its face in paint — plus a plaster fa
 were ordinary unpainted work nobody had written a rebuild line for. This file called him DONE for
 several sessions before he was.
 
-**The priest has his five WALL items painted, and everything else MODELLED AND QUEUED.** niche, sconce,
-wallShrine, veil and the hanging are tiles; his twelve chamber props and his tallyBoard are scaffolds with
-prompts written against them, so every one of them is now a paste rather than a modelling job. Same for
-the pharaoh: nine of his are queued beside the four wall items that were already there.
+**The priest is TWO WALL ITEMS AND EIGHT CHAMBER PROPS from done**, and his figures are the ones that
+landed: `expert/statue` (Anubis couchant) and `expert/sarcophagus` are both painted, which is the pair
+every earlier version of this file called blocked on a museum scan. His niche, sconce, wallShrine, veil
+and hanging were already tiles. What is left of him is a paste each.
 
 **And the GODS are queued too, which is the block this file kept naming as the largest one left.** Their
 two figures and five wall items were written down already; their ten chamber props are now written down
@@ -60,22 +60,26 @@ this file has drifted at least once.
 
 ## What landed in the last session
 
-Thirteen tiles painted, and the tooling that came out of doing it. `git log --oneline main..HEAD` is the
-record; the parts a fresh context needs to know:
+Twelve tiles, the patron feature end to end, and four laws that each cost real rolls. `git log --oneline
+main..HEAD` is the record; what a fresh context needs:
 
-- **`--spin` is now a pipeline STEP** (Step 1b), not a per-prop whim. Every free-standing prop is rendered
-  at an angle, because a room holds two props plus scatter now and square-on they read as a sticker sheet.
-  Its hard constraint: **a painted tile's spin can never change** — the mask moves and the master no longer
-  fits. Proved by setting it on an already-painted tile and watching the tile come out a smear.
-- **`--mask-grow`** admits paint the repaint ADDED while refusing what it added as SHADOW. Written for the
-  palm capital, where the generator painted fourteen fronds against a model with five, twice, unprompted.
-- **`tileVariants`** picks `<name>-2.png` by cell position, so a kind can have two drawings. First user:
-  the merchant sells off a table in some rooms and out of reed baskets in others.
-- **`companionProps`** puts a second prop of the SAME purpose in a third of the rooms with space for it.
-- **Conditions are real.** The Nile Delta Expedition is `overgrown`, graded 0.2 / 0.4 / 0.65 / 1 across its
-  five pyramids, and growth draws in three places — tufts in floor joints, roots through the wall band,
-  plants in chambers. `condition` had never reached a floor before this: four `buildFloor` calls passed
-  `theme` and none passed `condition`.
+- **The nobleman is finished, patron art included** — 84 rooms of it. The priest's two figures landed
+  too, which closes the museum-scan question for good.
+- **Patrons are a real axis now.** `art-census` grew a PATRONS section that counts (kind, god) PAIRINGS
+  rather than gods — nine gods across five kinds is forty-five files but only twenty-seven are
+  reachable, because a god on a pyramid holding none of those kinds draws nothing. Eight are painted.
+- **Every dedicated floor keeps a room for its god**, dressed with a god-bearing prop AND wall item, and
+  a second statue beside the first. That pairing is also how the renderer recognises the room — no new
+  field. `PATRON_PER_FLOOR` in `siteAssembler.ts`. A weighted pool was built and measured first and
+  rejected: it raised the art debt more than the visibility.
+- **ONE FRESH CHAT PER TILE**, which is in Traps below with the numbers. It is the single biggest cause
+  of re-rolls and it hides as a prompt problem — four rolls of one statue went into rewriting a
+  projection rule that was never the fault.
+- **The scaffold is the projection.** Fourteen prompts stopped describing geometry in prose and now say
+  only that the perspective, projection, angle and rotation are the reference's. `prop-pipeline.md` has
+  the table of four wordings and the four different ways they failed.
+- **An envelope is defined by its scaffold, not its name.** Anything rendered from `prim_statue` — the
+  coffins included — releases the contour and cuts inward. `repaintQueue.spec.ts` holds it.
 
 ## Traps, from the session that found them
 
