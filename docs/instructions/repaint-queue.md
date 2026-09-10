@@ -2210,7 +2210,7 @@ yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name
 
 ---
 
-## Patrons — nineteen
+## Patrons — twenty-two
 
 **A PATRON IS WHOSE TOMB A PYRAMID IS**, and it reaches the map through one mechanism only: for five
 kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUrl` prefers
@@ -2218,18 +2218,29 @@ kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUr
 none of these is a placeholder and nothing on the map is wrong without them. They are the difference
 between a rank whose every tomb looks the same and one where the god is legible from the corridor.
 
-**Nineteen pairings, not forty-five.** Nine gods across five kinds is forty-five files, and painting
+**Twenty-two pairings, not forty-five.** Nine gods across five kinds is forty-five files, and painting
 forty-five is not the job: a god authored on a pyramid holding none of those five kinds draws nothing
 whatever, and the same god at another rank is a different painting. `yarn art-census`'s PATRONS section
 counts the pairings the world actually makes, in room order, and that list is what this section is.
 Re-run it after authoring a journey — a god moved to another pyramid changes which files are worth
 having.
 
-**THE FIVE BELOW COME FIRST because their generic is painted.** The other fourteen sit on a kind that is
-still a placeholder, including the four biggest — `master/mask-osiris` at 33 rooms, `master/mask-maat`
-at 32, `wizard/wallShrine-maat` at 19, `master/statue-osiris` at 13. A god's variant painted before the
-kind he varies is out of order twice over: the rank still draws a dummy in every room no patron reaches,
-and the variant has nothing to be judged against. Each blocked entry names what it waits on.
+**THE EIGHT BELOW COME FIRST because their generic is painted**, and between them they are 85 of the
+219 rooms this section covers. Six of the eight are the nobleman's, worth 79 rooms — 68 of them Anubis's
+alone — and his rank is finished, so nothing about them waits on anything.
+
+The other fourteen sit on a kind that is still a placeholder, including
+`master/mask-osiris` at 33 rooms, `master/mask-maat` at 32, `wizard/wallShrine-maat` at 19 and
+`master/statue-osiris` at 13. A god's variant painted before the kind he varies is out of order twice
+over: the rank still draws a dummy in every room no patron reaches, and the variant has nothing to be
+judged against. Each blocked entry names what it waits on.
+
+**AND TWO GODS PER RANK IS THE FLOOR FOR ANY OF THIS TO SHOW.** A patron tells one pyramid from another
+WITHIN a rank; where a rank names only one god, `<kind>-<god>.png` is its generic drawing under another
+name and painting it buys nothing. That was true of the nobleman until the Noble's Hidden Vault was
+dedicated to Anubis beside the Temple of Thoth — one line in `spec/junior.ts`, and it is what turned his
+three patron tiles from decoration into 68 rooms. Check `art-census` before painting for a rank: starter
+still has one visible god, and until it has two its Bastet is exactly this trap.
 
 **Each variant reuses its generic's own scaffold**, so it drops into the same footprint at the same size
 and a room reads as the same furniture with a different god on it. Where the generic's scaffold carries a
@@ -2251,6 +2262,138 @@ the silhouette of a head plus one attribute, never a costume.
 | sekhmet | a lioness's head carrying a sun disc — a mane where Bastet has none      |
 | sobek   | a crocodile's head, long flat snout                                      |
 | thoth   | an IBIS head, a long curved down-swept beak                              |
+
+### `junior/stela-anubis` — Anubis on the vault's false-door stela
+
+**44 rooms, the largest patron pairing in the world**, and its generic is already painted — so it is the
+best-value single tile left anywhere in this file. The Noble's Hidden Vault is six floors deep and every
+floor of it dresses. FLAT — no scaffold and no mask, the same route as the stela it varies.
+
+**Attach:**
+
+1. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Landscape, twice as wide as it is tall. The magenta fills the whole frame right to its edges, and the
+object floats in the middle of it with magenta on all four sides. There is no wall, no floor and no
+surface behind the object — only flat magenta.
+
+The object: a FALSE-DOOR STELA — a slab of dressed limestone cut as a doorway that is not a doorway. A
+recessed panel in the middle is the door itself; a jamb runs up each side of it; a lintel crosses above.
+It is seen perfectly square on.
+
+Standing in the recessed panel, facing the viewer, is ANUBIS: a slim standing figure with a JACKAL'S HEAD
+— a long straight muzzle and two tall pointed ears, unmistakably an animal's, on a man's shoulders. One
+hand rests on the head of a small couchant jackal beside his feet. He is carved in sunk relief, so his
+outline is cut INTO the panel rather than standing out of it.
+
+Painted limestone, warm cream, the paint worn thin where the stone is proud. The figure's flesh is left
+as bare stone; his head and the small jackal are painted a dense flat BLACK, the darkest thing in the
+picture, and his kilt is white. The jambs and lintel carry bands of ochre and red. No letters and no
+words anywhere on it, in any language: the only marks are the figures and the bands.
+
+Draw it perfectly square-on and flat. No thickness at the sides, no top face, no shadow.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/props/junior/stela-anubis.webp --tier=junior --name=stela-anubis --slot=wall \
+  --filter=smooth --headroom=0.18 --brightness=0.74
+```
+
+### `junior/shrine-anubis` — Anubis in the vault's false-door shrine
+
+18 rooms, the third largest pairing in the world. Reuses the shrine's own scaffold, `falseDoor`.
+
+**Attach:**
+
+1. `~/tile-previews/shrine-anubis-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a miniature FALSE-DOOR SHRINE standing on the floor. The slab at the bottom is its PLINTH;
+the uprights either side are JAMBS; the slab across the top is the LINTEL; the recessed panel between
+them is the door that is not a door. A small OFFERING TABLE stands on the plinth in front of it.
+
+Standing in the recessed panel, facing the viewer, is ANUBIS: a figure with a JACKAL'S HEAD — a long
+straight muzzle and two tall pointed ears, unmistakably an animal's, on a man's shoulders. He is carved
+in sunk relief, cut INTO the panel rather than standing out of it.
+
+Painted limestone, warm cream, worn thin on the jambs where hands have passed. The figure's flesh is bare
+stone, his kilt white, and his head a dense flat BLACK — the darkest thing in the picture and the one
+mark that names him at a glance. An ochre band runs along the lintel and another round the plinth. The
+offering table is the same limestone with three round loaves on it.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#c39c68
+yarn import-tile art/masters/props/junior/shrine-anubis.webp --tier=junior --name=shrine-anubis --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `junior/statue-anubis` — Anubis couchant in the vault
+
+6 rooms. **The only patron statue in the file that is an ANIMAL rather than a figure**, and it takes the
+`couchant` pose rather than the rank's `seated` one: a recumbent jackal is what a vault has at its door,
+and the priest's Anubis proved that pose in three rolls. Read that tile's rebuild line first.
+
+**Attach:**
+
+1. `~/tile-previews/statue-anubis-junior.png` — the scaffold
+2. `~/tile-previews/junior-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a statue of ANUBIS as a recumbent JACKAL, lying on a shrine box. The slab at the bottom is
+the NAOS — a plain stone box he lies on. The long low mass along the top is his BODY, lying down; the
+upright block at the left is his CHEST; above it his HEAD, with the block reaching further left his
+MUZZLE and the two points standing up his EARS. The short mass hanging over the right end is his TAIL.
+
+He is lying down, alert, head up, facing left. Keep him lying: he does not stand, sit or rise.
+
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
+is to take the last of the waste off it. Cut the jackal's contour — a back that dips, a haunch that
+swells, a curved chest and muzzle — and cut it INWARD only: every cut goes inside the shape you were
+given, and nothing may end up further left, right, higher or lower than it reaches.
+
+The jackal is BLACK — black resin over wood, matte and slightly dusty, the way Anubis is always finished.
+A thin band of ochre sits at his neck as a COLLAR and the insides of his ears are lined with the same.
+His eyes are two small ochre marks. Nothing on him is gilded and nothing shines.
+
+The naos under him is warm cream limestone, dressed smooth, with an ochre band round its top edge and
+dust caught at its corners. It is the pale thing that makes the black read.
+
+Do not re-stage it. The plinth runs ACROSS the picture, its long edges horizontal at the reference's own
+slight tilt, and it does not turn to recede into the distance. There is no perspective and no vanishing
+point: verticals stay vertical, horizontals stay horizontal. Every part stays where the reference puts
+it, and the object stays as tall and as wide in the frame as it already is.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=couchant --spin=-8 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
+yarn import-tile art/masters/props/junior/statue-anubis.webp --tier=junior --name=statue-anubis --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
 
 ### `junior/stela-thoth` — Thoth on the nobleman's false-door stela
 

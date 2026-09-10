@@ -184,4 +184,19 @@ export const juniorRules: Rule[] = [
 
   // Temple of Thoth — see the patron note in spec/starter.ts.
   journey("junior_3").set({ patron: "thoth" }),
+
+  // The NOBLE'S HIDDEN VAULT takes Anubis, and it is the largest single patron pairing in the world —
+  // 68 rooms against the 33 of the next one. A treasure tomb is six floors deep and every floor of it
+  // dresses, so a whole-journey `set` reaches further here than anywhere else; the pharaoh's two
+  // treasure tombs are dedicated the same way and for the same reason.
+  //
+  // Anubis by role rather than by title. The journey is not named for a god, but it is a sealed vault in
+  // a necropolis, and he is the necropolis — the same argument that gave him the Valley of the Kings at
+  // the priest's rank.
+  //
+  // AND IT IS WHAT MAKES THE NOBLEMAN'S PATRON ART WORTH PAINTING AT ALL. A patron tells one pyramid
+  // from another WITHIN a rank; before this every patron-carrying pyramid of his named Thoth, so a
+  // `<kind>-thoth.png` would have been his generic drawing under another name. Two gods is the floor
+  // for the feature to show, which `PatronSheet` has said since it was written.
+  journey("junior_treasure_tomb").set({ patron: "anubis" }),
 ]

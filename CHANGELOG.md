@@ -12,9 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The Nile Delta Expedition is growing over. Green forces through the brick a little more with every
   pyramid of it, and the last one is thick with it — the same site read all the way up, from the entrance
   floor to the vault.
-- Every object a merchant or a nobleman keeps is drawn: his palm column, his ablution basin with water
-  standing in it, and the linen hanging with its dyed border were the last three. Only their coffins and
-  ka-statues are still stand-ins.
+- Every object a merchant or a nobleman keeps is drawn. The nobleman's last four were his seated
+  ka-statue, his upright coffin, the painted plaster fallen off his walls and the ledger board hanging
+  in his stores — so two whole ranks of tomb are now painted rather than sketched.
+- The Noble's Hidden Vault belongs to Anubis, where the rest of the nobleman's climb belongs to Thoth.
+  Nothing about the vault has moved; it is whose tomb it is.
 - The nobleman's rooms are furnished rather than sketched: his sealed chest, his bronze lamp stand, his
   linen press, his laid table and his false-door shrine are all drawn now, and the merchant's shrine corner
   is screened with patched linen instead of a market awning. He also sells from reed baskets in some rooms

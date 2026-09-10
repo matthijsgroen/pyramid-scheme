@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1098542231
+export const worldContentHash = 1620907817
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -18312,6 +18312,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "rubblePile",
           "mat",
         ],
+        patron: "anubis",
         wallDecorations: ["stela", "niche", "sconce"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "crocodile" },
@@ -18368,6 +18369,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "rubblePile",
           "mat",
         ],
+        patron: "anubis",
         wallDecorations: ["stela", "niche", "sconce"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "crocodile" },
@@ -18451,6 +18453,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "rubblePile",
           "mat",
         ],
+        patron: "anubis",
         wallDecorations: ["stela", "niche", "sconce"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "crocodile" },
@@ -18507,6 +18510,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "rubblePile",
           "mat",
         ],
+        patron: "anubis",
         wallDecorations: ["stela", "niche", "sconce"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "crocodile" },
@@ -18563,6 +18567,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "rubblePile",
           "mat",
         ],
+        patron: "anubis",
         wallDecorations: ["stela", "niche", "sconce"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "crocodile" },
@@ -18620,6 +18625,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "rubblePile",
           "mat",
         ],
+        patron: "anubis",
         wallDecorations: ["stela", "niche", "sconce"],
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "crocodile" },
