@@ -1901,12 +1901,15 @@ two shards leaning on it. Whichever a rank uses for its pile, its spill is `--co
 
 ### `junior/tallyBoard` — an estate ledger board in ink columns
 
-The last wall item the nobleman is missing, and the only tile of his left anywhere in this file.
+The last wall item the nobleman is missing, and one of only two tiles of his left anywhere in this file.
+
+FLAT, so it has NO scaffold and NO mask: a board hanging against a wall is a slab, and Step 0's table
+sends flat things straight to the generator. Its own silhouette becomes the tile, which is why this one
+has a single attachment and an import line with no `--mask`.
 
 **Attach:**
 
-1. `~/tile-previews/tallyBoard-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
+1. `~/tile-previews/junior-plain.png` — the material reference
 
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
@@ -2296,6 +2299,11 @@ yarn render-prop --primitive=niche --contents=sealed --shear=0.5 --width=448 --h
 
 Each entry's `scaffold`/`meshscaffold` line above gives the primitive, the contents and the spin to use;
 add the rank's two colours and the wall flags where they apply.
+
+**`yarn repaint <key> --check` says which are missing and touches nothing** — no clipboard, no Finder.
+Use it to sweep the whole file; the plain form reveals its two attachments, and running that over every
+entry in turn steals the desktop's focus fifty-two times and leaves the clipboard holding whichever
+prompt came last.
 
 **A PROP NEEDS BOTH COLOURS, and `--floor` is the one that gets forgotten.** `--colour` is obvious because
 a wrong one is visible in the scaffold; `--floor` paints the FOOTPRINT, which no one looks at, and

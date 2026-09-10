@@ -4,6 +4,7 @@
  *
  *   yarn repaint                 # list every key still owed
  *   yarn repaint junior/lamp     # prompt to the clipboard, both files revealed
+ *   yarn repaint junior/lamp --check   # report only: no clipboard, no Finder
  *
  * The loop is manual on purpose: driving Gemini's web UI is against Google's terms and the API costs
  * money, so the prompt is pasted by hand. What that leaves worth automating is the fetching — finding the
@@ -55,15 +56,24 @@ if (found.length !== 1) {
 }
 
 const entry = found[0]
-// The clipboard is the point of the whole script; everything else is a convenience around it.
-execFileSync("pbcopy", { input: entry.prompt })
-console.log(`${entry.key} — prompt copied to the clipboard (${entry.prompt.split("\n").length} lines)\n`)
+// --check reports and touches NOTHING — no clipboard, no Finder. It exists because the obvious way to
+// audit the queue is to run this over every key, and doing that steals the desktop's focus once per
+// entry and leaves the clipboard holding whichever prompt happened to be last. Fifty-two of those in a
+// row is not a tolerable way to answer "which attachments are missing".
+const check = process.argv.includes("--check")
+if (!check) {
+  // The clipboard is the point of the whole script; everything else is a convenience around it.
+  execFileSync("pbcopy", { input: entry.prompt })
+}
+console.log(
+  `${entry.key} — ${check ? `${entry.prompt.split("\n").length} lines` : `prompt copied to the clipboard (${entry.prompt.split("\n").length} lines)`}\n`
+)
 
 const missing = entry.attachments.filter(p => !existsSync(p))
 for (const p of entry.attachments) console.log(`  attach  ${p}${existsSync(p) ? "" : "   MISSING"}`)
 if (missing.length > 0) {
   console.log(`\n${missing.length} missing — see "Regenerating the attachments" in ${QUEUE}.`)
-} else if (process.platform === "darwin") {
+} else if (!check && process.platform === "darwin") {
   // -R reveals rather than opens: a revealed file can be dragged straight into the browser, where an
   // opened one is a Preview window in the way.
   execFileSync("open", ["-R", ...entry.attachments])
