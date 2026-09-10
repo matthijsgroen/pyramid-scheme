@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every object a merchant or a nobleman keeps is drawn. The nobleman's last four were his seated
   ka-statue, his upright coffin, the painted plaster fallen off his walls and the ledger board hanging
   in his stores — so two whole ranks of tomb are now painted rather than sketched.
+- A tomb dedicated to a god now shows him. Every floor of a dedicated pyramid keeps one room for its
+  patron — a statue or a shrine of his, under his stela or his mask — and where the room has space, a
+  second statue stands beside the first, so the pair flank the wall between them. 104 of the 137
+  dedicated floors have one; the rest are floors with no fork or dead end to dress at all.
 - The Noble's Hidden Vault belongs to Anubis, where the rest of the nobleman's climb belongs to Thoth —
   the Temple of Thoth and the Sacred Ibis Migration alike, the ibis being his bird. Nothing about those
   places has moved; it is whose tombs they are, and the shrines and stelae in them are his.

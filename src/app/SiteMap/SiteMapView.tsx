@@ -43,7 +43,7 @@ import { moodFor } from "./moodSettings"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
 import { companionFor } from "./companionProps"
-import { ART_IMAGE_RENDERING, patronTileUrl, tileUrl, tileVariants } from "./tileAssets"
+import { ART_IMAGE_RENDERING, PATRON_KINDS, patronTileUrl, tileUrl, tileVariants } from "./tileAssets"
 import {
   ALL_STATES,
   buildTileRegions,
@@ -789,7 +789,20 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
     if (owner?.type !== "room" || !owner.decoration) continue
     const taken = candidates.find(wallBehind) ?? candidates[0]
     decorationAt.set(taken, owner.decoration)
-    roomsForCompanion.push({ ownerKey, leader: owner.decoration, free: candidates.filter(key => key !== taken) })
+    // THE GOD'S ROOM, recognised rather than recorded: the assembler gives one room per floor of a
+    // dedicated site both a god-bearing prop and a god-bearing wall item, and no other room is dressed
+    // that way. So the pairing IS the flag, and no field had to be added to the cell for it.
+    const shrine =
+      grid.patron !== undefined &&
+      PATRON_KINDS.has(owner.decoration) &&
+      owner.wallDecoration !== undefined &&
+      PATRON_KINDS.has(owner.wallDecoration)
+    roomsForCompanion.push({
+      ownerKey,
+      leader: owner.decoration,
+      free: candidates.filter(key => key !== taken),
+      ...(shrine ? { shrine } : {}),
+    })
   }
   // A SECOND prop of the same purpose, in some of the rooms with space for one — see `companionProps`.
   // It goes into `decorationAt` rather than into a layer of its own, which is what keeps the rest of the

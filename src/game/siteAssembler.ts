@@ -209,6 +209,14 @@ const DEFAULT_PACKING = 1
 const RECOVERY_ATTEMPT = 30
 const ASSEMBLY_ATTEMPTS = 60
 
+/** The five kinds a god can be DEPICTED on, as `tileAssets.ts`'s resolver reads them: a patron reaches
+ * the map through these and nothing else. Copied rather than imported for the reason `artCensus.ts`
+ * gives — that module pulls in the app's PNG imports. */
+const PATRON_KINDS = new Set<string>(["statue", "shrine", "wallShrine", "stela", "mask"])
+/** How many rooms per floor a dedicated site gives to its god. See `patronRooms` for why this is a
+ * count rather than a weight, and what weighting cost when it was measured. */
+const PATRON_PER_FLOOR = 1
+
 // Generate a perfect DFS maze on an N×N grid starting from (entR, entC).
 // Returns adjacency function, BFS path from entrance to the chosen main-path endpoint, and
 // passages set. `targetDistance` picks the main path's length: the *true* farthest node in
@@ -1549,13 +1557,52 @@ export const assembleFloor = (
       return fits.length >= 2 ? fits : pool
     }
 
-    for (const pk of new Set([...forkPositions, ...endpointPositions])) {
+    const dressedPositions = [...new Set([...forkPositions, ...endpointPositions])]
+
+    /**
+     * A DEDICATED FLOOR SHOWS ITS GOD AT LEAST ONCE — a guaranteed count, not a raised probability.
+     *
+     * A patron reaches the map through five kinds and no others (`patronTileUrl`), so on a pyramid that
+     * names a god every room drawing something else is a room where the dedication is invisible. The
+     * obvious fix is to weight those kinds in the pool, and it was built and measured first: it does
+     * not work. Weighting multiplies a share, and the share is tiny — the whole nobleman rank holds
+     * eight statue rooms, because only forks and dead ends dress at all — so tripling it moved his
+     * Thoth statue from one room to two while costing `master/niche` forty-five rooms and inventing
+     * four new patron pairings nobody had painted. It raised the art debt from 137 rooms owed to 215.
+     *
+     * A floor is the right unit and a count is the right instrument. One room per floor is taken and
+     * given to the god, so a dedicated site shows him once wherever you are in it, and the cost is
+     * exactly one room per floor rather than a shifted distribution across every rank.
+     *
+     * WHICH room is chosen by hash rather than by position, so it is stable, spread, and not always the
+     * entrance fork. Only rooms whose own pool can carry a patron are eligible — a section that never
+     * offered a statue is not made to.
+     */
+    const patronRooms = new Set<string>()
+    if (config.patron !== undefined && PATRON_PER_FLOOR > 0) {
+      const eligible = dressedPositions
+        .filter(pk => (cellDressing.get(pk)?.props ?? []).some(k => PATRON_KINDS.has(k)))
+        .sort(
+          (a, b) =>
+            hashString(`${siteId}:patronPick:${a}`) - hashString(`${siteId}:patronPick:${b}`) || a.localeCompare(b)
+        )
+      for (const pk of eligible.slice(0, PATRON_PER_FLOOR)) patronRooms.add(pk)
+    }
+
+    for (const pk of dressedPositions) {
       const pools = cellDressing.get(pk)
-      const decoration = pickDressing(pools?.props, pk, "decoration")
+      // In a guaranteed room the pool is narrowed to what a god can appear on, and the same hash then
+      // chooses among those — so which god-bearing kind it is still varies from room to room.
+      const propPool = patronRooms.has(pk) ? pools?.props?.filter(k => PATRON_KINDS.has(k)) : pools?.props
+      const decoration = pickDressing(propPool, pk, "decoration")
+      // THE GOD'S ROOM TAKES A GOD'S WALL ITEM TOO, where its pool has one. Prop and wall both being
+      // patron kinds is also the SIGNAL the renderer reads to find this room — it needs no new field on
+      // the cell, and a room dressed that way is the god's by construction rather than by a flag.
+      const patronWall = patronRooms.has(pk) ? pools?.wall?.filter(k => PATRON_KINDS.has(k)) : undefined
       // Its own salt, so a rank whose two pools are the same length does not pair the same stela with
       // the same jar rack in every room that draws them.
       const wallDecoration = pickDressing(
-        pools?.wall ? wallSuiting(pools.wall, decoration) : undefined,
+        patronWall?.length ? patronWall : pools?.wall ? wallSuiting(pools.wall, decoration) : undefined,
         pk,
         "wallDecoration"
       )

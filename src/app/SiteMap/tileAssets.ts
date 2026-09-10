@@ -56,7 +56,10 @@ export const tileVariants = (tier: Difficulty, name: string): string[] => {
 
 /** The five kinds a god can be depicted on. Everything else ignores the patron entirely — a jar rack does
  * not belong to Anubis, and a patron that changed the rubble would be a theme, not a dedication. */
-const PATRON_KINDS = new Set<string>(["statue", "shrine", "wallShrine", "stela", "mask"])
+/** The five kinds a god can be DEPICTED on. Exported because `SiteMapView` reads it to recognise a
+ * dedicated site's shrine room — a room whose prop AND wall item are both patron kinds, which the
+ * assembler dresses that way and nothing else does. */
+export const PATRON_KINDS = new Set<string>(["statue", "shrine", "wallShrine", "stela", "mask"])
 
 /**
  * The tile for a kind in a site dedicated to a god: `<kind>-<patron>` where that file exists, and the

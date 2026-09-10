@@ -61,15 +61,29 @@ export const companionsFor = (leader: DecorationKind, hasArt: (kind: DecorationK
  */
 export const companionFor = (
   siteId: string,
-  rooms: readonly { ownerKey: string; leader: DecorationKind; free: readonly string[] }[],
+  rooms: readonly { ownerKey: string; leader: DecorationKind; free: readonly string[]; shrine?: boolean }[],
   hasArt: (kind: DecorationKind) => boolean,
   pick: (free: readonly string[]) => string
 ): ReadonlyMap<string, DecorationKind> => {
   const out = new Map<string, DecorationKind>()
   // Sorted for the reason `scatterFor` sorts: the placement is indexed, and Map order is insertion order,
   // so which room is "first" would otherwise depend on how the claims happened to be built.
-  for (const { ownerKey, leader, free } of [...rooms].sort((a, b) => (a.ownerKey < b.ownerKey ? -1 : 1))) {
+  for (const { ownerKey, leader, free, shrine } of [...rooms].sort((a, b) => (a.ownerKey < b.ownerKey ? -1 : 1))) {
     if (free.length < MIN_FREE) continue
+    // THE GOD'S ROOM IS THE ONE EXCEPTION TO BOTH GATES, and it breaks rule 2 on purpose.
+    //
+    // A dedicated site gives one room per floor to its patron: the assembler dresses it with a
+    // god-bearing prop AND a god-bearing wall item, and the renderer recognises it by that pairing
+    // rather than by a new field. Such a room gets its second prop always rather than a third of the
+    // time, and that second prop is the SAME kind as the first — a pair of statues flanking a stela is
+    // a shrine, where a statue beside some other object is only a furnished room. `tileVariants` picks
+    // by cell position, so two statues side by side are not necessarily the same drawing.
+    //
+    // Everywhere else the rules stand: same purpose, never the leader again, one room in three.
+    if (shrine) {
+      if (hasArt(leader)) out.set(pick(free), leader)
+      continue
+    }
     if (hashUnit(siteId, `companion-room:${ownerKey}`, 0) > SHARE) continue
     const options = companionsFor(leader, hasArt)
     if (options.length === 0) continue
