@@ -901,3 +901,37 @@ yarn import-tile art/masters/props/junior/tallyBoard.webp --tier=junior --name=t
 scaffold statue --contents=lioness --spin=-9 --colour=#a49781 --colour-figure=#6f6459 --floor=#6c6257
 yarn import-tile art/masters/props/starter/statue-bastet.webp --tier=starter --name=statue-bastet --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92 --saturation=1.15
+
+# ANUBIS on the vault's FALSE-DOOR STELA — 44 rooms, the largest patron pairing in the world, because
+# the Noble's Hidden Vault is six floors deep and every floor of it dresses. FLAT: no mesh, no mask, no
+# seat, the same route as the generic stela it varies.
+#
+# The first roll came back THREE COPIES of the stela in a row. The prompt asked for a landscape frame
+# twice as wide as tall — correct, it is a wall item — around an object described as a portrait doorway,
+# and the generator filled the width the obvious way. The fix was to describe what the landed generic
+# actually is: one WIDE false door reaching both edges, a dark doorway a third of the picture across
+# with a broad jamb either side, and "ONE object, and it fills the frame" said outright.
+#
+# --brightness=0.74, the same as the generic, and it is not a coincidence: warm cream limestone on pale
+# sandstone is the pairing that rank struggles with. Untouched it put 54.5% over the light clamp and
+# landed 40 LIGHTER than the floor; 0.85 fixed the clamp and left 6 of separation, inside the ten the
+# rule refuses. 0.74 gives 17 darker and 0.0% over.
+yarn import-tile art/masters/props/junior/stela-anubis.webp --tier=junior --name=stela-anubis --slot=wall \
+  --filter=smooth --headroom=0.18 --brightness=0.74
+
+# ANUBIS in the vault's FALSE-DOOR SHRINE, 18 rooms. Same `falseDoor` scaffold as the nobleman's generic
+# shrine, so it drops into the same footprint; what makes it his patron's is the black jackal head in the
+# recess, which at 56 units is the only part of the figure that reads and is exactly what the one-mark
+# rule asks for.
+#
+# Its first roll was re-staged into three-quarter isometric and came back 2048x2048 SQUARE — the tell
+# that the scaffold was not used at all. The reroll came back 1686x2528, the scaffold's own aspect, and
+# held the projection without another word being added. Aspect first, prompt second, when a return is
+# re-staged.
+#
+# --brightness=0.8. Untouched, pale limestone put 18.1% over the light clamp and read 18 LIGHTER than the
+# floor; 0.88 cleared the clamp but left 6 of separation. 0.8 gives 22 darker, 0.0% over and a 1.1% dark
+# tail, which is the cleanest pair of numbers at this rank.
+scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#c39c68
+yarn import-tile art/masters/props/junior/shrine-anubis.webp --tier=junior --name=shrine-anubis --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.8
