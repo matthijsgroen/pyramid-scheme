@@ -147,6 +147,22 @@ every other capitalised word in them is a noun for something to draw — so a ca
 as one more thing to put on the surface. Emphasise the noun, never the colour, and on anything that
 could carry writing say outright that no word appears on it, the name of a colour included.
 
+**A WALL ITEM MUST FILL ITS FRAME, because a wall item's frame IS its placement.** A prop's frame is
+thrown away — the import trims to the object and re-seats it on the floor line — but `SLOTS.wall` is
+`seat: false` and scales the whole picture into 56x28. Air the generator left round the object therefore
+becomes air in the band, and the tile reads as a sticker stuck on the wall rather than something set
+into it.
+
+Measured across the nobleman's three stelae, which is the cleanest comparison in the set: the two that
+read fill 96% and 97% of the frame's width, and the one that does not fills 74%. Nothing else about it
+was wrong.
+
+Both halves are fixed. The prompt says ONE OBJECT, AND IT FILLS THE FRAME, reaching the left and right
+edges — the older wording said the object "floats in the middle with magenta on all four sides", which
+is exactly what it got. And `import-tile --trim` cuts the keyed background away and scales the object
+until it touches the band top and bottom, keeping its aspect, so a return that is otherwise good costs a
+flag rather than a paste.
+
 **A WALL ITEM MUST NOT BE TOLD IT IS ON A WALL.** The same return put the entire frame under white
 brickwork and pushed the magenta out to a border, because the prompt opened "a board hanging flat against
 a wall". A wall item hangs on nothing in its scaffold; the band behind it is the renderer's job. Say the
@@ -166,6 +182,24 @@ The two failures look alike in a bug report and are opposites in the prompt. "Re
 three-quarter isometric, which wants the rule TIGHTER, or a flat elevation, which wants it looser.
 Look at the return before touching the wording, and keep "nothing gets smaller as it goes back" as the
 form of words: it is the one that has landed statues.
+
+**AND THE TWO DITCHES ARE ADJACENT — say what the projection IS, not what it is not.** The nobleman's
+Thoth statue proved it in two rolls. Told "no vanishing point, nothing converges, verticals stay
+vertical" — all negative, nothing about depth — it came back a flat front elevation with no top face on
+anything. Told additionally that the top faces show and to draw the plinth's top as a parallelogram, it
+came back a full three-quarter isometric with the plinth turned corner-on. Each fix walked straight into
+the opposite wall, and both wordings are defensible read on their own.
+
+What settles it is the fact neither wording contained: **in an oblique the FRONT faces are undistorted
+rectangles with dead-horizontal edges, and only DEPTH slants.** That distinguishes the projection from
+both failures at once, and it gives two checks a reader can run on the return:
+
+- no horizontal edges left in the picture → it has become isometric;
+- no top faces at all → it has been squashed to an elevation.
+
+Every statue entry now carries that as rule 2, with rule 4 saying the plinth's front face is a plain
+rectangle facing the viewer and its top a shallow parallelogram behind it. Adjectives oscillate;
+a geometric test does not.
 
 **AN AWKWARD READING IS OFTEN A SPIN PROBLEM, NOT A GEOMETRY PROBLEM — and spin is free where geometry
 is not.** `prim_statue`'s `couchant` faces left and carries its ears apart in X, which on a head seen in

@@ -962,3 +962,34 @@ yarn import-tile art/masters/props/junior/shrine-anubis.webp --tier=junior --nam
 scaffold statue --contents=couchant --spin=-22 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
 yarn import-tile art/masters/props/junior/statue-anubis.webp --tier=junior --name=statue-anubis --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.9
+
+# THOTH on the nobleman's FALSE-DOOR STELA, 7 rooms. The rank's second god, and the reason his patron
+# art is worth painting at all: before the Noble's Hidden Vault was dedicated to Anubis every
+# patron-carrying pyramid of his named Thoth, and a lone god is the generic drawing under another name.
+# FLAT — no mesh, no mask, no seat, the same route as the generic stela.
+#
+# --brightness=0.74, the third tile at this rank to land on exactly that number, and not by habit: warm
+# cream limestone on pale sandstone is the pairing the nobleman struggles with, and it always arrives
+# too light. Untouched this put 49.2% over the light clamp and read 35 LIGHTER than the floor. 0.8 fixed
+# the clamp and left 9 of separation, one under the ten the rule refuses. 0.74 gives 21.
+#
+# --trim, and it is the only tile in the file that needs it. A WALL item never trims: a prop's frame is
+# thrown away and its object re-seated, but a wall item's frame IS its placement, so air round the
+# object becomes air in the band and the tile reads as a sticker stuck on the wall. Measured across the
+# nobleman's three stelae: the two that read fill 96% and 97% of the frame width, this one 74%. --trim
+# cuts the keyed background away and scales the object until it touches the band top and bottom,
+# keeping its aspect, so the leftover air moves to the SIDES where it does no harm.
+yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall \
+  --filter=smooth --headroom=0.18 --brightness=0.74 --trim
+
+# THOTH in the nobleman's FALSE-DOOR SHRINE, 3 rooms. Same `falseDoor` scaffold as his generic shrine
+# and as `shrine-anubis`, so all three drop into one footprint and a room reads as the same furniture
+# with a different god in the recess. The blue IBIS HEAD is the whole of what identifies him at 56
+# units — the beak is two pixels and the colour is what carries it, which is the one-mark rule working.
+#
+# --brightness=0.85 where `shrine-anubis` took 0.8: same object, same scaffold, different return, and
+# the numbers are per image rather than per entry. Untouched it put 14.7% over the light clamp and sat
+# 7 from the floor; 0.85 gives 0.0% and 32 darker.
+scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#c39c68
+yarn import-tile art/masters/props/junior/shrine-thoth.webp --tier=junior --name=shrine-thoth --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85

@@ -57,6 +57,9 @@
  *                    allowed, as it would eat an object's transparency.
  *   --flatten=0.5    blend toward the material the slot is made of — the rank's slab for a floor, its wall
  *                    for a face — so a surface sits behind the props. Toward the palette, not toward grey.
+ *   --trim           trim the keyed background away and scale the object to fill the slot, keeping its
+ *                    aspect. For a WALL item, whose frame IS its placement: a return with air round the
+ *                    object leaves that air in the band and reads as a sticker stuck on the wall.
  *   --no-trim        keep the frame as generated instead of re-seating the object on the floor line.
  *                    On an arch it skips the trim that discards everything around the timber.
  *   --flip           mirror horizontally. The renderer mirrors EAST into west, so a side view drawn
@@ -491,6 +494,27 @@ const main = async (): Promise<void> => {
   const shadowPath = arg("seat")
   if (shadowPath) img = await underlayShadow(img, shadowPath, Number(arg("seat-opacity", "0.55")))
   if (seat && !process.argv.includes("--no-trim")) img = await seatOnFloorLine(img, w / h, Number(arg("scale", "1")))
+  // `--trim` is the positive of `--no-trim`, for the slots that never trim at all.
+  //
+  // A prop's frame is thrown away and its object re-seated; a WALL item's frame IS its placement, so a
+  // return that leaves air round the object leaves that air in the band, and the tile reads as a sticker
+  // stuck on the wall rather than as something set into it. The nobleman's three stelae measure the
+  // problem exactly: the two that read fill 96% and 97% of the frame's width, and the one that does not
+  // fills 74%.
+  //
+  // The fix belongs here rather than in the prompt when the art is otherwise good — the prompt is fixed
+  // too, but a re-roll is a paste and this is a flag. Aspect is preserved: the object is scaled until it
+  // touches the band top and bottom and centred, so a shape narrower than the slot keeps air at its
+  // SIDES, where air is harmless, instead of at its top and bottom, where it is the whole complaint.
+  if (!seat && process.argv.includes("--trim")) {
+    const trimmed = await img.trim({ threshold: 1 }).png().toBuffer()
+    img = sharp(
+      await sharp(trimmed)
+        .resize(w, h, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+        .png()
+        .toBuffer()
+    )
+  }
 
   const dir = join(OUT_ROOT, tier)
   mkdirSync(dir, { recursive: true })

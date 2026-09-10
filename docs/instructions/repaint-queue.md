@@ -618,9 +618,11 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
+
 3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column or a mummy wrap.
-4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
+
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 GILDED: gold leaf over black granite, a flat warm ochre-yellow, worn through to the dark stone on the
@@ -1246,9 +1248,11 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
+
 3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
-4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
+
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 Polished calcite, cool green-white, seamless and without a tool mark or a speck of dust on it. It is lit
@@ -2220,7 +2224,7 @@ yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name
 
 ---
 
-## Patrons — eighteen
+## Patrons — sixteen
 
 **A PATRON IS WHOSE TOMB A PYRAMID IS**, and it reaches the map through one mechanism only: for five
 kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUrl` prefers
@@ -2235,9 +2239,10 @@ counts the pairings the world actually makes, in room order, and that list is wh
 Re-run it after authoring a journey — a god moved to another pyramid changes which files are worth
 having.
 
-**THE FOUR BELOW COME FIRST because their generic is painted**, and between them they are 13 of the
-147 rooms still owed here. Four have landed — Bastet, and the vault's stela, shrine and couchant
-Anubis, which were 68 rooms between them and include the two largest pairings in the world. Six of the eight are the nobleman's, worth 79 rooms — 68 of them Anubis's
+**TWO BELOW CAN BE ROLLED TODAY**, and they are only 3 of the 137 rooms still owed here: `junior/statue-thoth`
+at 1 room, whose first roll came back a flat elevation, and `expert/wallShrine-anubis` at 2. Six have
+landed — Bastet, the vault's three Anubis tiles, and the nobleman's Thoth stela and shrine — 82 rooms
+including the two largest pairings in the world. Six of the eight are the nobleman's, worth 79 rooms — 68 of them Anubis's
 alone — and his rank is finished, so nothing about them waits on anything.
 
 The other fourteen sit on a kind that is still a placeholder, including
@@ -2273,96 +2278,6 @@ the silhouette of a head plus one attribute, never a costume.
 | sekhmet | a lioness's head carrying a sun disc — a mane where Bastet has none      |
 | sobek   | a crocodile's head, long flat snout                                      |
 | thoth   | an IBIS head, a long curved down-swept beak                              |
-
-### `junior/stela-thoth` — Thoth on the nobleman's false-door stela
-
-7 rooms, and the largest patron pairing whose generic is already painted. FLAT — no scaffold and no
-mask, the same route as the stela it varies.
-
-**Attach:**
-
-1. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-Landscape, twice as wide as it is tall. The magenta fills the whole frame right to its edges, and the
-object floats in the middle of it with magenta on all four sides. There is no wall, no floor and no
-surface behind the object — only flat magenta.
-
-The object: a FALSE-DOOR STELA — a slab of dressed limestone cut as a doorway that is not a doorway. A
-recessed panel in the middle is the door itself; a jamb runs up each side of it; a lintel crosses above.
-It is seen perfectly square on.
-
-Standing in the recessed panel, facing the viewer, is THOTH: a slim standing figure with an IBIS HEAD —
-a long curved down-swept beak and a narrow skull, unmistakably a bird's, on a man's shoulders. He holds
-a scribe's PALETTE, a narrow flat board, across his front. He is carved in sunk relief, so his outline
-is cut INTO the panel rather than standing out of it.
-
-Painted limestone, warm cream, the paint worn thin where the stone is proud. The figure's flesh is left
-as bare stone; his head is painted a dull blue-black and his kilt white. The jambs and lintel carry bands
-of ochre and red. No letters and no words anywhere on it, in any language: the only marks are the figure
-and the bands.
-
-Draw it perfectly square-on and flat. No thickness at the sides, no top face, no shadow.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-yarn import-tile art/masters/props/junior/stela-thoth.webp --tier=junior --name=stela-thoth --slot=wall \
-  --filter=smooth --headroom=0.18 --brightness=0.74
-```
-
-### `junior/shrine-thoth` — Thoth in the nobleman's false-door shrine
-
-3 rooms. Reuses the shrine's own scaffold, `falseDoor`.
-
-**Attach:**
-
-1. `~/tile-previews/shrine-thoth-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a miniature FALSE-DOOR SHRINE standing on the floor. The slab at the bottom is its PLINTH;
-the uprights either side are JAMBS; the slab across the top is the LINTEL; the recessed panel between
-them is the door that is not a door. A small OFFERING TABLE stands on the plinth in front of it.
-
-Standing in the recessed panel, facing the viewer, is THOTH: a slim figure with an IBIS HEAD — a long
-curved down-swept beak and a narrow skull, unmistakably a bird's, on a man's shoulders. He is carved in
-sunk relief, cut INTO the panel rather than standing out of it, and he holds a scribe's PALETTE across
-his front.
-
-Painted limestone, warm cream, worn thin on the jambs where hands have passed. The figure's flesh is bare
-stone, his head a dull blue-black, his kilt white. An ochre band runs along the lintel and another round
-the plinth. The offering table is the same limestone with three round loaves on it.
-
-THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
-vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
-ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
-point away from you. Reproduce the reference's angle exactly: do not re-stage it and do not turn it into
-a three-quarter view, but do keep the top faces the reference shows you. This view is oblique, not flat —
-nothing gets smaller as it goes back, and nothing is squashed into a front elevation either.
-
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold falseDoor --spin=6 --colour=#e0c193 --floor=#c39c68
-yarn import-tile art/masters/props/junior/shrine-thoth.webp --tier=junior --name=shrine-thoth --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ### `expert/wallShrine-anubis` — Anubis in the priest's wall shrine
 
@@ -2448,9 +2363,11 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
+
 3. HE IS SEATED, facing the viewer, hands flat on the kilt over his knees. The slab behind him is the THRONE BACK and the block under him the SEAT — they stay square-cut stone furniture, not part of his body.
-4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
+
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
@@ -2646,9 +2563,11 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
+
 3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column or a mummy wrap.
-4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
+
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
@@ -2753,9 +2672,11 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
+
 3. SHE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
-4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
+
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
@@ -2964,9 +2885,11 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
+
 3. SHE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
-4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
+
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
@@ -3175,9 +3098,11 @@ reaches.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel.
+2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
+
 3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
-4. THE PLINTH runs across the picture, its long edges horizontal at the same slight tilt as the reference. It does not turn to recede into the distance.
+4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
+
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
 
 You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
