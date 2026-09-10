@@ -2224,7 +2224,7 @@ yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name
 
 ---
 
-## Patrons — sixteen
+## Patrons — twenty-one
 
 **A PATRON IS WHOSE TOMB A PYRAMID IS**, and it reaches the map through one mechanism only: for five
 kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUrl` prefers
@@ -2232,7 +2232,9 @@ kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUr
 none of these is a placeholder and nothing on the map is wrong without them. They are the difference
 between a rank whose every tomb looks the same and one where the god is legible from the corridor.
 
-**Twenty-two pairings, not forty-five**, and one of them has landed. Nine gods across five kinds is forty-five files, and painting
+**Twenty-seven pairings, not forty-five**, and six of them have landed. The count grew when dedicated
+floors started keeping a room for their god: more rooms show a patron, so more pairings exist to paint.
+Re-read `yarn art-census` rather than this number. Nine gods across five kinds is forty-five files, and painting
 forty-five is not the job: a god authored on a pyramid holding none of those five kinds draws nothing
 whatever, and the same god at another rank is a different painting. `yarn art-census`'s PATRONS section
 counts the pairings the world actually makes, in room order, and that list is what this section is.
@@ -3117,6 +3119,273 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold statue --contents=standing --spin=5 --colour=#8fd9bd --colour-figure=#7fa596 --floor=#5a8074
 yarn import-tile art/masters/props/wizard/statue-ra.webp --tier=wizard --name=statue-ra --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/shrine-osiris` — Osiris in the pharaoh's shrine
+
+25 rooms, and the largest of the pairings the shrine rooms created. **WAITS ON `master/shrine`.** Drops
+the generic's `--contents=couchant` for the reason `master/shrine-maat` does: that scaffold puts Anubis
+on the lid, and a jackal cannot be repainted into Osiris.
+
+**Attach:**
+
+1. `~/tile-previews/shrine-osiris-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a SHRINE standing on a plinth, the slab stepping out over it a CAVETTO CORNICE, and an
+opening in its front.
+
+Standing in the opening is OSIRIS: a mummiform figure, wrapped straight from the shoulders down so he
+has no separate legs, with a tall smooth white ATEF CROWN on his head and a narrow plume standing
+against it on each side. A CROOK and a FLAIL are crossed on his chest as two short staffs. His face and
+hands are a flat dull green, which is how Osiris is finished and the one thing that names him.
+
+The shrine is gilded — gold leaf over wood, a flat warm ochre-yellow — worn through to dark timber on
+the cornice's steps, along the front lip and at the corners, which is where a shrine is handled. The
+plinth is black granite with a gilded band. Inside, the back of the shrine is deep shade, and Osiris
+stands against it wrapped in unbleached linen with his crown unpainted white.
+
+Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shrine --spin=18 --colour=#d9a93f --floor=#57534b
+yarn import-tile art/masters/props/master/shrine-osiris.webp --tier=master --name=shrine-osiris --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `starter/shrine-bastet` — Bastet in the merchant's shrine
+
+3 rooms, and its generic is painted, so it can be rolled today. `prim_shrine`'s default is the merchant's
+own household shrine — a mudbrick box with a figure and a lamp in it — so this is the same scaffold with
+a cat in the niche instead of Bes.
+
+**Attach:**
+
+1. `~/tile-previews/shrine-bastet-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a household SHRINE — a whitewashed mudbrick box standing on the floor, its front open as a
+niche. A small figure stands in the niche and a clay LAMP burns on the ledge beside it.
+
+The figure is BASTET as a seated CAT: small, upright, forelegs straight down in front of her, with a
+round short-muzzled head and two pointed ears. She is a cat and not a lion — no mane, no ruff — and she
+is the only figure in the niche.
+
+The shrine is mudbrick under thin whitewash, the wash worn off the corners and the front lip where hands
+have passed, the brick showing through warm and dusty. Inside the niche the plaster is sooted above the
+lamp. Bastet is cast BRONZE gone dark, a brown-black patina with green in the hollows, rubbed to bare
+warm metal on the crown of her head and the tips of her ears. The lamp's flame is the only warm light,
+and it is a flat colour rather than a glow.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's tomb: mudbrick, plaster, reed and rough timber. Warm dark earth, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shrine --spin=-12 --colour=#a49781 --floor=#6c6257
+yarn import-tile art/masters/props/starter/shrine-bastet.webp --tier=starter --name=shrine-bastet --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/statue-anubis` — Anubis couchant in the priest's chambers
+
+1 room, and its generic is painted — `expert/statue` IS a couchant Anubis, so this file is very nearly
+that painting again. It exists because the resolver reads a filename and the generic has to stay generic
+for the rooms no patron reaches. Roll it from the priest's own prompt with `--spin=-22` rather than his
+`-8`, which is what turns the head enough for both ears to read; `art/rebuild.sh` has the argument under
+the vault's Anubis.
+
+**Attach:**
+
+1. `~/tile-previews/statue-anubis-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a statue of ANUBIS as a recumbent JACKAL, lying on a shrine box. The slab at the bottom is
+the NAOS — a plain stone box he lies on. The long low mass along the top is his BODY, lying down; the
+upright block at the left is his CHEST; above it his HEAD, with the block reaching further left his
+MUZZLE and the two points standing up his EARS. The short mass hanging over the right end is his TAIL.
+
+He is lying down, alert, head up, facing left. Keep him lying: he does not stand, sit or rise. He is
+turned slightly toward you, exactly as far as the reference turns him — enough that BOTH EARS are
+visible, one nearer and one further.
+
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
+is to take the last of the waste off it. Cut the jackal's contour — a back that dips, a haunch that
+swells, a curved chest and muzzle — and cut it INWARD only: every cut goes inside the shape you were
+given, and nothing may end up further left, right, higher or lower than it reaches.
+
+The jackal is BLACK — black resin over wood, matte and slightly dusty, the way Anubis is always finished.
+A thin band of dull gold sits at his neck as a COLLAR and the insides of his ears are lined with the
+same. His eyes are two small gold marks rimmed in dark blue. Nothing else on him is gold and nothing
+shines. The naos under him is dark basalt, cool grey-blue, dressed smooth, with natron dust caught along
+its top edge and at its corners.
+
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
+3. HE LIES ALONG THE PLINTH, head at the left end and tail at the right. He does not stand, sit or rise.
+4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the animal is.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=couchant --spin=-22 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/statue-anubis.webp --tier=expert --name=statue-anubis --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+### `master/statue-sekhmet` — Sekhmet in the pharaoh's tomb
+
+1 room. **WAITS ON `master/statue`.**
+
+**Attach:**
+
+1. `~/tile-previews/statue-sekhmet-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a standing statue of SEKHMET, cut from one block of black granite. The slab at the bottom is
+the PLINTH. The block across her hips is a long sheath DRESS to her ankles. The tapering block above her
+shoulders is her head and what she wears on it.
+
+HER HEAD IS A LIONESS'S: a broad flat muzzle, a wide short nose, small round ears set at the top corners
+and a ruffed MANE at the shoulders. She is a lioness and not a cat — the mane is the difference and it
+must show. A plain flat SUN DISC sits on top of her head.
+
+IT IS A CARVED OBJECT AND NOT A CREATURE. Egyptian statuary is BLOCK-CARVED: flat planes, hard arrises,
+and the figure never leaves the block. Her upper arms stay joined to her sides, the stone between her
+legs is never cut through, nothing is undercut and nothing projects past the front edge of the plinth.
+No anatomy is modelled and no highlight sits on a shoulder.
+
+Black granite, close-grained and dressed smooth. GILDED in three places only: the sun disc, the broad
+collar at her throat and the band round the plinth, all a flat warm ochre-yellow worn through to the
+stone along their lower edges. Her face, mane, arms and dress are bare polished granite. The disc is a
+flat deep red inside its gold ring.
+
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
+is to take the last of the waste off it.
+
+CHANGE, freely, and ONLY this: the contour of the figure herself, and only by CUTTING. A shoulder gets
+its slope, a calf its front arris, the muzzle its plane. These are chisel cuts on a block, not modelling
+in clay — every mass stays square-shouldered and stays recognisably the mass it already is.
+
+CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it
+outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape
+reaches.
+
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
+3. SHE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
+4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=standing --spin=-12 --colour=#d9a93f --colour-figure=#8a7434 --floor=#57534b
+yarn import-tile art/masters/props/master/statue-sekhmet.webp --tier=master --name=statue-sekhmet --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `master/statue-horus` — Horus in the pharaoh's tomb
+
+1 room. **WAITS ON `master/statue`.** Same object as `master/statue-sekhmet` with the other god's head,
+so roll them together.
+
+**Attach:**
+
+1. `~/tile-previews/statue-horus-master.png` — the scaffold
+2. `~/tile-previews/master-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+The object: a standing statue of HORUS, cut from one block of black granite. The slab at the bottom is
+the PLINTH. The block across his hips is a KILT. The tapering block above his shoulders is his head and
+the crown on it.
+
+HIS HEAD IS A FALCON'S: a short hooked BEAK low in the mass, a smooth domed skull, no muzzle, and a dark
+stripe running back and down from the eye — the falcon's mark, and what says bird rather than man at any
+size. Above it sits the DOUBLE CROWN, a tall cone standing inside a second one that flares behind it.
+
+IT IS A CARVED OBJECT AND NOT A CREATURE. Egyptian statuary is BLOCK-CARVED: flat planes, hard arrises,
+and the figure never leaves the block. His upper arms stay joined to his sides, the stone between his
+advanced leg and the block behind it is never cut through, nothing is undercut and nothing projects past
+the front edge of the plinth. No anatomy is modelled and no highlight sits on a shoulder.
+
+Black granite, close-grained and dressed smooth. The beak and the eye stripe are inlaid in dark blue
+lapis. GILDED in three places only: the crown, the broad collar at his throat and the band round the
+plinth, a flat warm ochre-yellow worn through to the stone along their lower edges. The crown's inner
+cone is flat unpainted white and the flare behind it flat deep red, no shading in either.
+
+THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
+is to take the last of the waste off it.
+
+CHANGE, freely, and ONLY this: the contour of the figure himself, and only by CUTTING. A shoulder gets
+its slope, a calf its front arris, the beak its hook. These are chisel cuts on a block, not modelling in
+clay — every mass stays square-shouldered and stays recognisably the mass it already is.
+
+CARVE INWARD ONLY. Every cut goes INSIDE the rough shape you were given — take stone away, never add it
+outside the block's outline. Nothing may end up further left, right, higher or lower than the rough shape
+reaches.
+
+EVERYTHING ELSE IS FIXED, and these five are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE VIEW IS OBLIQUE: NOT PERSPECTIVE, NOT ISOMETRIC, NOT FLAT. Every face that points at you is an undistorted rectangle whose edges are dead horizontal and dead vertical — nothing converges, nothing tapers, nothing gets smaller as it goes back. Only DEPTH slants: the top faces and the side faces run off behind those front faces at a constant shallow angle, always parallel to each other. Two ways to check it. If no horizontal edges are left in the picture, it has been turned into an isometric or three-quarter view and is wrong. If there are no top faces at all, it has been squashed into a flat elevation and is equally wrong.
+3. HE STANDS, facing the viewer, one leg advanced. Both legs stay separate — do not merge them into a column.
+4. THE PLINTH RUNS ACROSS THE PICTURE. Its front face is a plain rectangle facing you, its long edges dead horizontal, left to right, at the same slight tilt as the reference. Its top shows behind that front face as a shallow parallelogram, no deeper than the reference draws it. The plinth does NOT swing round so that a corner of it points at you.
+5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the figure is.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold statue --contents=standing --spin=-12 --colour=#d9a93f --colour-figure=#8a7434 --floor=#57534b
+yarn import-tile art/masters/props/master/statue-horus.webp --tier=master --name=statue-horus --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
