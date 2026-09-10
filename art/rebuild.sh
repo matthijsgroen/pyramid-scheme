@@ -817,3 +817,22 @@ yarn import-tile art/masters/props/expert/basin.webp --tier=expert --name=basin 
 scaffold statue --contents=seated --spin=7 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
 yarn import-tile art/masters/props/junior/statue.webp --tier=junior --name=statue --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.76 --saturation=1.3
+
+# The nobleman's COFFIN, propped upright — `prim_statue --contents=mummiform`, the pose that stands a
+# sarcophagus on end so its anthropoid outline lands in the FRONT plane, the one plane the shear leaves
+# alone. Lying down that outline is in the top face, which this projection compresses to k of its depth,
+# and two passes of it read as a chest with a stepped lid.
+#
+# NO --brightness, and it is the first prop at this rank that needed none. Yellow-ground coffin paint is
+# already inside the palette: 2.1% over the light clamp, 3.4% under the dark one, +(-15) warmth beside
+# the chest at -15, and 13 luminance darker than the floor. Every knob left at 1.0 measures better than
+# any setting of them.
+#
+# The one blemish is a PAINTED SHADOW ON THE PLINTH — a dark wedge the repaint cast from the coffin onto
+# the bier beside it. It survives because it lies INSIDE the mask, where the rendered seat cannot replace
+# it, and at 56 units it reads as a notch out of the bier rather than as shade. The prompt's "paint the
+# shadow at its foot" line is what invites it, and it is worth nothing on a prop that takes --seat: the
+# masked-away version costs nothing, this one does not.
+scaffold statue --contents=mummiform --spin=11 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
+yarn import-tile art/masters/props/junior/sarcophagus.webp --tier=junior --name=sarcophagus --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"

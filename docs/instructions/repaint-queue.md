@@ -69,60 +69,14 @@ mass, and the generator resolved it by reading the body AS pedestal and carving 
 `prim_niche`'s rule, and the reason a marked primitive marks all of itself. This is the failure mode a
 loose prompt invites: the freer the paint, the less ambiguity the geometry may contain.
 
----
-
-## Nobleman — one
-
-Believed blocked on a museum scan until `prim_statue` existed, and it is not: a figure is a POSE and its
-face is paint, which the priest's canopic jars and his Anubis both proved. The rank's ka-statue has since
-landed too, and `art/rebuild.sh` carries what it cost — five rolls, none of them fixed by wording, and
-the one that worked changed the SUBJECT instead: clothed, and his flesh left as bare stone.
-
-### `junior/sarcophagus` — an anthropoid coffin, painted face, yellow ground
-
-**IT STANDS UPRIGHT, and that is deliberate.** A coffin's identity is its anthropoid outline, and lying on
-a bier that outline is in the top face, which this shear compresses — two passes of it read as a chest
-with a stepped lid. Stood up, the outline is in the front plane, the one plane the shear leaves alone.
-Everything the brief asks of a coffin at any rank faces the viewer this way: a painted face, crossed arms,
-a cartouche band, a hollow if it is open. See `prim_statue`.
-
-**Attach:**
-
-1. `~/tile-previews/sarcophagus-junior.png` — the scaffold
-2. `~/tile-previews/junior-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. No perspective and no vanishing point: verticals stay vertical, horizontals stay horizontal.
-
-The object: an ANTHROPOID COFFIN, standing upright and propped against its own plinth, seen from the
-front. It is body-shaped — narrow at the head, widest at the shoulders, tapering to the feet. The raised
-panel at the top is the FACE. The two bars across the chest are the ARMS, crossed. The slab it stands on
-is the PLINTH.
-
-It stands. Do not lay it down, and do not open it.
-
-Carved and plastered wood, painted on a YELLOW GROUND — the whole case a warm ochre-yellow, divided into
-panels by bands of blue, red and white. The face is painted flesh-red with a blue-and-gold striped wig
-either side of it and heavy black kohl round the eyes. The crossed arms are painted dark red. Bands of
-small dark hieroglyphs run down the front and across the chest, too fine to read. The plaster is chipped
-at the foot and along one shoulder, showing pale wood beneath. The plinth is plain limestone.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Nobleman's tomb: dressed limestone, painted plaster, ochre and red banding. Warm sandstone, brightly painted, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold statue --contents=mummiform --spin=11 --colour=#e0c193 --colour-figure=#8a6a44 --floor=#c39c68
-yarn import-tile art/masters/props/junior/sarcophagus.webp --tier=junior --name=sarcophagus --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
+**AND A HUMAN FIGURE'S BARE FLESH IS THE THING THAT BREAKS THE STYLE.** The nobleman's ka-statue came
+back a cartoon character twice and two rounds of sharper wording changed nothing, because the wording was
+never the fault: measured against the fifteen landed props at that rank, the return sat inside the
+distribution on mask overlap, colour-share, saturation and brush texture alike. What was different was
+the subject — the only tile in the set with a bare torso, arms, knees and separated toes. Painted skin is
+a large saturated mass with no equivalent anywhere else in a rank, and at 56 units it is what makes a
+carved object read as a person. Clothe the figure, or leave its stone unpainted. The roll after that
+landed. `prop-pipeline.md` has the numbers.
 
 ---
 
@@ -133,8 +87,6 @@ the hanging. Six are new `--contents` variants — `statue` among them, which th
 is the difference between them worth knowing — a variant's silhouette is his, a reused one's is not, and
 the prompt is all that makes the reused ones his rank's. His `tallyBoard` is here too, and it is the only
 FLAT thing in the section: no mesh, no mask, straight to the generator.
-
-Still missing after this: `sarcophagus`, which waits on a museum scan — unless `expert/statue` lands, in which case a coffin is a posture too (art-tasks §5).
 
 ### `expert/sarcophagus` — the priest's coffin, corded and sealed
 
