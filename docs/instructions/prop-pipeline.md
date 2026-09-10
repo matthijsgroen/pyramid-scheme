@@ -154,6 +154,19 @@ magenta fills the frame to its edges and there is no wall, no floor and no surfa
 and state the FRAME'S ASPECT while you are there, since a flat item has no scaffold to imply one and this
 one came back square for a slot that is twice as wide as it is tall.
 
+**FORBIDDING PERSPECTIVE IS NOT THE SAME AS FORBIDDING DEPTH, and the wording that confuses them costs a
+roll.** The projection rule every scaffold prompt carries reads "there is no vanishing point and nothing
+converges; every vertical stays vertical, every horizontal stays horizontal; nothing gets smaller as it
+goes back". Tightening that last clause to "you never see round the side of anything" looks like more of
+the same and is the opposite: in a cavalier oblique the top faces and the receding faces ARE the
+projection. Asked never to see a side, a generator draws a front elevation — the vault's Anubis came
+back a flat side view off exactly that edit, having held the projection perfectly well the roll before.
+
+The two failures look alike in a bug report and are opposites in the prompt. "Re-staged" can mean
+three-quarter isometric, which wants the rule TIGHTER, or a flat elevation, which wants it looser.
+Look at the return before touching the wording, and keep "nothing gets smaller as it goes back" as the
+form of words: it is the one that has landed statues.
+
 **AN AWKWARD READING IS OFTEN A SPIN PROBLEM, NOT A GEOMETRY PROBLEM — and spin is free where geometry
 is not.** `prim_statue`'s `couchant` faces left and carries its ears apart in X, which on a head seen in
 pure profile puts one ear in front of the other along the snout. The obvious fix is to move them to ±Y

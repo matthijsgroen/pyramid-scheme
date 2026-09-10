@@ -2289,6 +2289,13 @@ cleanly. Moving them in the MODEL was tried and reverted — it blunts the ear t
 tile, whose master was painted over the ±X mask, which is the whole reason a painted tile's geometry can
 never change.
 
+**AND ITS FIRST REROLL CAME BACK A FLAT SIDE VIEW, which was a word in the prompt and not the model.**
+Rule 2 had been strengthened to end "you never see round the side of anything". In a cavalier oblique
+you DO see round the side — the top faces and the receding faces ARE the projection — so that clause
+asks for a front elevation, and got one. The Anubis that landed at the priest's rank ends the same rule
+"nothing gets smaller as it goes back", which forbids perspective without forbidding the oblique, and
+that wording is back in every entry that had lost it.
+
 **Attach:**
 
 1. `~/tile-previews/statue-anubis-junior.png` — the scaffold
@@ -2319,7 +2326,7 @@ dust caught at its corners. It is the pale thing that makes the black read.
 EVERYTHING ELSE IS FIXED, and these five are not negotiable:
 
 1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. There is no vanishing point, nothing converges and nothing recedes. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel. You never see round the side of anything.
+2. THE VIEW HAS NO PERSPECTIVE. There is no vanishing point and nothing converges. Every vertical line stays vertical and parallel; every horizontal line stays horizontal and parallel. Nothing gets smaller as it goes back.
 3. HE LIES ALONG THE PLINTH, head at the left end and tail at the right, facing left. He does not stand, sit or rise, and he does not turn to face you.
 4. THE PLINTH RUNS ACROSS THE PICTURE. Its long edges are horizontal, left to right, at the same slight tilt as the reference. It does NOT turn to point away from you, and this is not a three-quarter view of a box.
 5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
@@ -2407,8 +2414,9 @@ the plinth. The offering table is the same limestone with three round loaves on 
 THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
 vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
 ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
-point away from you, and you never see round the side of the object. Reproduce the reference's angle
-exactly; do not re-stage it, and do not turn it into a three-quarter view.
+point away from you. Reproduce the reference's angle exactly: do not re-stage it and do not turn it into
+a three-quarter view, but do keep the top faces the reference shows you. This view is oblique, not flat —
+nothing gets smaller as it goes back, and nothing is squashed into a front elevation either.
 
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
@@ -2865,8 +2873,9 @@ Gold here is a flat colour, not a metal: no highlights, no reflections, no shine
 THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
 vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
 ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
-point away from you, and you never see round the side of the object. Reproduce the reference's angle
-exactly; do not re-stage it, and do not turn it into a three-quarter view.
+point away from you. Reproduce the reference's angle exactly: do not re-stage it and do not turn it into
+a three-quarter view, but do keep the top faces the reference shows you. This view is oblique, not flat —
+nothing gets smaller as it goes back, and nothing is squashed into a front elevation either.
 
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
@@ -2958,8 +2967,9 @@ Any light in this is a flat pale colour. No glow, no bloom, no rays, no highligh
 THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
 vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
 ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
-point away from you, and you never see round the side of the object. Reproduce the reference's angle
-exactly; do not re-stage it, and do not turn it into a three-quarter view.
+point away from you. Reproduce the reference's angle exactly: do not re-stage it and do not turn it into
+a three-quarter view, but do keep the top faces the reference shows you. This view is oblique, not flat —
+nothing gets smaller as it goes back, and nothing is squashed into a front elevation either.
 
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
@@ -3076,8 +3086,9 @@ Any light in this is a flat pale colour. No glow, no bloom, no rays, no highligh
 THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
 vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
 ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
-point away from you, and you never see round the side of the object. Reproduce the reference's angle
-exactly; do not re-stage it, and do not turn it into a three-quarter view.
+point away from you. Reproduce the reference's angle exactly: do not re-stage it and do not turn it into
+a three-quarter view, but do keep the top faces the reference shows you. This view is oblique, not flat —
+nothing gets smaller as it goes back, and nothing is squashed into a front elevation either.
 
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
@@ -3166,8 +3177,9 @@ Gold here is a flat colour, not a metal: no highlights, no reflections, no shine
 THE VIEW IS NOT ISOMETRIC AND HAS NO PERSPECTIVE. Nothing converges, nothing recedes and there is no
 vanishing point: every vertical stays vertical, every horizontal stays horizontal. The PLINTH runs
 ACROSS the picture, its long edges horizontal at the reference's own slight tilt — it does not turn to
-point away from you, and you never see round the side of the object. Reproduce the reference's angle
-exactly; do not re-stage it, and do not turn it into a three-quarter view.
+point away from you. Reproduce the reference's angle exactly: do not re-stage it and do not turn it into
+a three-quarter view, but do keep the top faces the reference shows you. This view is oblique, not flat —
+nothing gets smaller as it goes back, and nothing is squashed into a front elevation either.
 
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
