@@ -170,6 +170,23 @@ magenta fills the frame to its edges and there is no wall, no floor and no surfa
 and state the FRAME'S ASPECT while you are there, since a flat item has no scaffold to imply one and this
 one came back square for a slot that is twice as wide as it is tall.
 
+**AN ENVELOPE IS DEFINED BY ITS SCAFFOLD, NOT BY ITS NAME — and a coffin is one.** Everything rendered
+from `prim_statue` is an envelope: `--contents` is a pose, and `mummiform` is a pose like `seated` or
+`couchant`. So all three SARCOPHAGI needed the carve section and all three had the strict "keep every
+edge, every proportion and every silhouette" instead.
+
+`expert/sarcophagus` then obeyed it exactly. The projection was perfect — a fresh chat had fixed that —
+and it painted the boxes AS BOXES: a cube for a head with a square plaque of a face on it, the crossed
+arms as two rectangular bars, no anthropoid outline anywhere. Told to keep every edge of a block, it
+kept every edge of a block.
+
+`junior/sarcophagus` landed FIRST ROLL off the same wrong instruction, which is why nobody caught it.
+The model simply interpreted loosely that time; in a clean thread it interprets literally. A prompt that
+works by being disobeyed is a prompt waiting to fail.
+
+`repaintQueue.spec.ts` now tests the scaffold rather than the key — `scaffold statue` in the import
+block — because "starts with statue" is what let the coffins through.
+
 **JUDGE A RETURN AGAINST THE LANDED TILE OF ITS OWN POSE, never against another pose's depth cues.**
 Four rolls of the nobleman's Thoth statue were rejected for coming back "plain oblique" — near-frontal,
 almost no top faces — and all four were probably fine. They were being compared to the couchant Anubis,

@@ -128,9 +128,28 @@ CORDED AND SEALED: an undyed linen cord is wound round the case twice, above and
 it crosses at the centre there is a lump of grey CLAY stamped with a mark. The seal is unbroken. Natron
 dust has collected along the cords and in the carving.
 
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+THE REFERENCE IS A ROUGHED-OUT BLOCK, NOT A FINISHED COFFIN. It is timber cut to the shape and left
+square, and your job is to take the last of the waste off it.
 
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+CHANGE, freely, and ONLY this: the OUTLINE of the coffin itself. An anthropoid coffin is narrow at the
+head, widest at the shoulders and tapers to the feet, and every edge of it is a curve — cut all of that.
+The head is a rounded mass and not a cube, the shoulders slope, the arms are rounded limbs lying on the
+chest. If a face is drawn on a square plaque and the arms are drawn as rectangular bars, the block has
+been painted rather than carved.
+
+CARVE INWARD ONLY. Every curve you cut goes INSIDE the rough shape you were given — take timber away,
+never add it outside the block's outline. Nothing may end up further left, right, higher or lower than
+the rough shape reaches.
+
+EVERYTHING ELSE IS FIXED, and these four are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either.
+3. IT STANDS UPRIGHT, propped against its own plinth, facing the viewer. It does not lie down and it does not lean away.
+4. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+You are re-carving a shape, not re-staging a photograph.
+
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
 ```
@@ -680,9 +699,28 @@ nothing of the inside shows but that dark line.
 
 Gold here is a flat colour, not a metal: no highlights, no reflections, no shine.
 
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+THE REFERENCE IS A ROUGHED-OUT BLOCK, NOT A FINISHED COFFIN. It is timber cut to the shape and left
+square, and your job is to take the last of the waste off it.
 
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+CHANGE, freely, and ONLY this: the OUTLINE of the coffin itself. An anthropoid coffin is narrow at the
+head, widest at the shoulders and tapers to the feet, and every edge of it is a curve — cut all of that.
+The head is a rounded mass and not a cube, the shoulders slope, the arms are rounded limbs lying on the
+chest. If a face is drawn on a square plaque and the arms are drawn as rectangular bars, the block has
+been painted rather than carved.
+
+CARVE INWARD ONLY. Every curve you cut goes INSIDE the rough shape you were given — take timber away,
+never add it outside the block's outline. Nothing may end up further left, right, higher or lower than
+the rough shape reaches.
+
+EVERYTHING ELSE IS FIXED, and these four are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either.
+3. IT STANDS UPRIGHT, propped against its own plinth, facing the viewer. It does not lie down and it does not lean away.
+4. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+You are re-carving a shape, not re-staging a photograph.
+
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Pharaoh's tomb: black granite, alabaster, faience inlay and gold leaf. Rich, but matte — gold here is a flat warm ochre-yellow, never a metallic highlight.
 ```
@@ -1309,9 +1347,28 @@ pale points in dark stone.
 
 Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
 
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+THE REFERENCE IS A ROUGHED-OUT BLOCK, NOT A FINISHED COFFIN. It is timber cut to the shape and left
+square, and your job is to take the last of the waste off it.
 
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+CHANGE, freely, and ONLY this: the OUTLINE of the coffin itself. An anthropoid coffin is narrow at the
+head, widest at the shoulders and tapers to the feet, and every edge of it is a curve — cut all of that.
+The head is a rounded mass and not a cube, the shoulders slope, the arms are rounded limbs lying on the
+chest. If a face is drawn on a square plaque and the arms are drawn as rectangular bars, the block has
+been painted rather than carved.
+
+CARVE INWARD ONLY. Every curve you cut goes INSIDE the rough shape you were given — take timber away,
+never add it outside the block's outline. Nothing may end up further left, right, higher or lower than
+the rough shape reaches.
+
+EVERYTHING ELSE IS FIXED, and these four are not negotiable:
+
+1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either.
+3. IT STANDS UPRIGHT, propped against its own plinth, facing the viewer. It does not lie down and it does not lean away.
+4. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
+
+You are re-carving a shape, not re-staging a photograph.
+
 
 No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
 ```

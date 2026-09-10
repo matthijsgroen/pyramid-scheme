@@ -18,6 +18,15 @@ import { join } from "path"
  *
  * A statue entry must therefore CARVE and must not KEEP, and the two are checked separately because
  * having neither is as wrong as having both.
+ *
+ * AND THE PREDICATE IS THE SCAFFOLD, NOT THE NAME. This test first asked whether the key began with
+ * "statue", which let all three SARCOPHAGI through — `--contents=mummiform` is a `prim_statue` pose like
+ * any other, so a coffin's scaffold is an envelope too, and all three still ended with the strict
+ * sentence. `expert/sarcophagus` then came back with the boxes painted AS BOXES: a cube for a head with
+ * a square plaque of a face on it, and the crossed arms as two rectangular bars. It was obeying.
+ *
+ * So an entry is an envelope when it is RENDERED FROM `prim_statue` — `scaffold statue` in its import
+ * block — whatever it is called. That is the fact the rule is actually about.
  */
 const QUEUE = join(__dirname, "..", "docs", "instructions", "repaint-queue.md")
 
@@ -33,9 +42,11 @@ const entries = readFileSync(QUEUE, "utf8")
     return key ? [{ key, block }] : []
   })
 
-const statues = entries.filter(e => e.key.split("/")[1].startsWith("statue"))
+/** An ENVELOPE: anything whose scaffold comes from `prim_statue`, coffins included. */
+const isEnvelope = (block: string) => /^scaffold statue /m.test(block)
+const statues = entries.filter(e => isEnvelope(e.block))
 
-describe("the repaint queue's statue entries", () => {
+describe("the repaint queue's ENVELOPE entries — anything rendered from prim_statue", () => {
   it("has some to check", () => {
     expect(statues.length).toBeGreaterThan(0)
   })
@@ -89,7 +100,7 @@ const holdsItsShape = (block: string) =>
   !/Fill the whole shape to its edges/.test(block)
 
 describe("the repaint queue's other entries", () => {
-  it.each(entries.filter(e => !e.key.split("/")[1].startsWith("statue") && holdsItsShape(e.block)).map(e => e.key))(
+  it.each(entries.filter(e => !isEnvelope(e.block) && holdsItsShape(e.block)).map(e => e.key))(
     "%s holds the paint to the reference",
     key => {
       const { block } = entries.find(e => e.key === key)!
