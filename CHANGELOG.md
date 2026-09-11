@@ -203,8 +203,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   lamp burning inside it, a linen veil drawn back along its bronze rail, and a second veil standing on
   cedar posts before the shrine. His linen is fine enough to see the wall through — the temple's cloth is
   thinner than anyone else's, and where it gathers into a fold it thickens.
+- A staircase is drawn as the flight it is: steps going down into the dark with a torch burning at the
+  mouth, and its light falling on the floor beside it. One turned across the passage for a stair entered
+  from the side.
 - The priest's chambers hold his own furniture now: an altar with a libation channel worn into it, four
-  canopic jars under their human, baboon, jackal and falcon heads, his corded coffin with its arms
+  canopic jars under their human, baboon, jackal and falcon heads, his cedar relic box with its seal
+  unbroken, his corded coffin with its arms
   crossed, a sacred pool cut into the paving with steps walking down into the water, a censer of incense
   smouldering on its chains, a papyrus-bundle column carved with sunk relief and bound with stone cord,
   a naos with its cedar doors corded and sealed, the shaft robbers left open with a rope ladder over its

@@ -343,6 +343,23 @@ yarn import-tile art/masters/surfaces/sand.webp --tier=default --name=sand --slo
 
 # junior — the nobleman
 
+# THE MERCHANT'S STAIRS, and the first tiles of a kind that is not a room's furniture: the map draws
+# them at a stairhead, which is why a hole in the floor means a way down and the `pit` was retired.
+#
+# NO --seat on either: a hole casts nothing, exactly as a pit did not.
+#
+# --contents=down-side is the SAME hole walked across, for a stairhead entered from the east or the
+# west; the renderer mirrors it in x for the other side, which is a real oblique view where turning a
+# sheared sprite would be a skew. 0.9 for its top tread, the palest thing in the frame: 7.7% over the
+# light clamp untouched, 2.0% here.
+scaffold stair --contents=down --shadow=0
+yarn import-tile art/masters/props/starter/stair-down.webp --tier=starter --name=stair-down --slot=prop \
+  --filter=smooth --mask="$OBJ"
+
+scaffold stair --contents=down-side --shadow=0
+yarn import-tile art/masters/props/starter/stair-down-side.webp --tier=starter --name=stair-down-side --slot=prop \
+  --filter=smooth --mask="$OBJ" --brightness=0.9
+
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
 # replaces was a post-processing copy whose flags could not be recovered (art/README).
 #
@@ -843,6 +860,16 @@ yarn import-tile art/masters/props/expert/shrine.webp --tier=expert --name=shrin
 scaffold pit --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/pit.webp --tier=expert --name=pit --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+
+# His CEDAR RELIC BOX, cord-bound with the seal unbroken. No grading flags at all.
+#
+# +76 WARMTH, the highest anything of his measures, and left alone for the jar rack's reason one prop
+# over: red cedar against grey-blue basalt cannot measure otherwise. Pulling it toward the rank's band
+# was tried — 0.9 gives +71, 0.8 gives +67, 0.7 gives +62 — so the saturation knob buys four points a
+# step and takes the wood with it. Separation is the gate, and it is 82.
+scaffold sealedChest --spin=-24 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/chestProp.webp --tier=expert --name=chestProp --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # His COLLAPSED DOOR PLUG. --brightness=0.85 for the NATRON: the crust between the blocks came back 11.5%
 # over the light clamp and lands at 2.0%, keeping 63 of separation.

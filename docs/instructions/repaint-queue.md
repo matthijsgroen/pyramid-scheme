@@ -98,7 +98,7 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Stairs — three, and they are a NEW kind
+## Stairs — two, and they are a NEW kind
 
 The way down a floor, drawn at last. `prim_stair` builds both: `--contents=up` climbs away between its
 parapets, `--contents=down` cuts into the paving with three treads and a cresset at its mouth. The
@@ -154,52 +154,6 @@ yarn import-tile art/masters/props/starter/stair-down.webp --tier=starter --name
   --filter=smooth --mask="$OBJ"
 ```
 
-### `starter/stair-down-side` — the same hole, walked across
-
-For a stairhead entered from the EAST or the WEST. One file serves both: the renderer mirrors it in x,
-which is a real oblique view of the mirrored object where turning a sheared sprite would be a skew.
-
-**Attach:**
-
-1. `~/tile-previews/stair-down-side-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a STAIRCASE going down through the floor of a cellar, walked across rather than away. The
-wide dark rectangle is the SHAFT the steps go into. The three slabs stepping down to the LEFT are
-TREADS: the one at the right is paving, level with the floor and lit; the middle one is in shade; the
-one at the left is nearly lost in the dark. The post standing at the right of the opening is a TORCH — a
-plain iron cresset on a spike, with a small flame in its bowl.
-
-Cut through trodden earth over limestone chips. The treads are re-used limestone slabs, chipped along
-the edge where feet land, gritty and pale at the top of the flight and going grey and then almost black
-as they descend. Dust and chips have collected in the angle of each step.
-
-THE OPENING AND THE THREE TREADS KEEP EXACTLY THE SIZE AND PLACE THEY HAVE IN THE REFERENCE. Do not
-enlarge the hole, do not move it, and do not shift a tread — each one is painted over the slab that is
-already there. Paint no floor around the opening: what is outside it is background.
-
-THE DARK IS DEPTH, not a panel. What is beyond the lowest tread is the shaft going on down past what the
-picture shows: a warm near-black with nothing drawn in it, never a floor, a wall or a back board.
-
-The torch is dull black iron, its flame a small low orange with no glow, no bloom and no rays. It lights
-the tread nearest it and the edge of the opening beside it and nothing else.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's cellar, Egyptian New Kingdom: mudbrick, limestone chips, timber and reed. Dark grey-brown stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold stair --contents=down-side --shadow=0
-yarn import-tile art/masters/props/starter/stair-down-side.webp --tier=starter --name=stair-down-side --slot=prop \
-  --filter=smooth --mask="$OBJ"
-```
-
 ### `starter/stair-up` — a flight climbing between its parapets
 
 **Attach:**
@@ -238,7 +192,7 @@ yarn import-tile art/masters/props/starter/stair-up.webp --tier=starter --name=s
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
-## Priest — four
+## Priest — three
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
 the hanging. Some are new `--contents` variants and some are geometry another rank already proved, which
@@ -285,43 +239,6 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold mat --spin=12 --shadow=0.5 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/mat.webp --tier=expert --name=mat --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
-### `expert/chestProp` — a cedar relic box, seal intact
-
-**This is the TREASURE NODE's art, not a room's furniture.** No pool authors a chest any more — a
-chest that opens and a chest that is furniture cannot be the same picture — so `yarn art-census` counts
-zero rooms for it and every treasure room in the rank draws it beside its marker.
-
-**Attach:**
-
-1. `~/tile-previews/chestProp-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a RELIC BOX with its seal unbroken. The box standing on four short FEET is the body; the band
-round its top is where the LID meets it and the slab above that is the lid. The strap running over the lid
-and down its front is a CORD, and the lump where it lies against the front face is a CLAY SEAL, intact.
-
-Cedar, dark red-brown, its grain running along the length of the box, the corners rubbed paler where it
-has been carried. The lid band is dull bronze, dark with a green-black patina. The cord is undyed linen,
-grubby. The seal is grey clay with a stamped mark still crisp on it — this box has not been opened.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold sealedChest --spin=-24 --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/chestProp.webp --tier=expert --name=chestProp --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
