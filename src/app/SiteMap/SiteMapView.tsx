@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from "react"
+import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import type {
   CellState,
   DecorationKind,
@@ -388,6 +388,31 @@ const shapeKindFor = (
 // tint under it, and never for clickability or badges.
 const isLockedGate = (cell: RoomCell, ownedKeys: ReadonlySet<string> | undefined): boolean =>
   cell.tags?.includes("gate") === true && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)
+
+/** Anything standing on the floor, with the line it stands on — a room's own furniture and a node's.
+ *
+ * One list so the PLAYER can be drawn in the middle of it. Two things stand on a map: the explorer and
+ * whatever a room holds, and which occludes which is decided by the floor line, never by the sprite's
+ * top — a tall statue at the back of a chamber belongs behind a low chest at its front.
+ */
+type StandingSprite = {
+  key: string
+  /** The y a sprite's own floor line sits at, in map space. Lower on the page is nearer the viewer. */
+  baseY: number
+  /** Node art is cut to the room it stands in; a room's furniture reaches into the wall band above it. */
+  clipped: boolean
+  node: ReactNode
+}
+
+/** One half of the sorted set — the clipped sprites in their own group, so the clip stays in map space. */
+const StandingLayer = ({ sprites }: { sprites: readonly StandingSprite[] }) => (
+  <>
+    <g pointerEvents="none" clipPath={`url(#${STANDING_ROOM_CLIP})`}>
+      {sprites.filter(s => s.clipped).map(s => s.node)}
+    </g>
+    {sprites.filter(s => !s.clipped).map(s => s.node)}
+  </>
+)
 
 /** Every node's own furniture on one floor, in map space — chests beside treasure rooms, flights at
  * stairheads. See `NodeSprite` for why this is a list and not a child of each node's own `<g>`.
@@ -1862,6 +1887,56 @@ export const SiteMapView = ({
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const nodeSprites = useMemo(() => nodeSpritesFor(grid, tier), [grid, tier])
+
+  // Everything that stands on this floor, in one list: a room's furniture and a node's own, each with
+  // the line it stands on. Split at the explorer's own floor line so he is drawn in the middle.
+  const standing = useMemo((): StandingSprite[] => {
+    const sprites: StandingSprite[] = nodeSprites.map(sprite => ({
+      key: sprite.key,
+      baseY: sprite.y + PROP_H,
+      clipped: true,
+      node: (
+        <image
+          key={sprite.key}
+          href={sprite.url}
+          x={sprite.mirrored ? -sprite.x - CELL : sprite.x}
+          y={sprite.y}
+          width={CELL}
+          height={PROP_H}
+          transform={sprite.mirrored ? "scale(-1, 1)" : undefined}
+        />
+      ),
+    }))
+    for (const [cellKey, kind] of claims.decorationAt) {
+      const [r, c] = cellKey.split(",").map(Number)
+      const owner = litClaimOwner(grid, claims, r, c)
+      if (!owner) continue
+      const { cx, cy } = cellCenter(r, c)
+      sprites.push({
+        key: `prop:${cellKey}`,
+        baseY: cy + CELL / 2,
+        clipped: false,
+        node: (
+          <g key={`prop:${cellKey}`} transform={`translate(${cx}, ${cy})`}>
+            <Decoration
+              kind={kind}
+              tier={owner.difficulty ?? tier}
+              patron={grid.patron}
+              seed={`${grid.siteId}:${cellKey}`}
+            />
+          </g>
+        ),
+      })
+    }
+    return sprites.sort((a, b) => a.baseY - b.baseY)
+  }, [grid, claims, tier, nodeSprites])
+
+  // The line the player stands on. A sprite lower than it is nearer the viewer and is drawn after him;
+  // one level with it loses the tie, because the actor belongs in front of the furniture he shares a
+  // floor line with.
+  const explorerBaseY = explorerPos ? cellCenter(explorerPos[0], explorerPos[1]).cy + CELL / 2 : Infinity
+  const behindExplorer = standing.filter(s => s.baseY <= explorerBaseY)
+  const inFrontOfExplorer = standing.filter(s => s.baseY > explorerBaseY)
   const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Where the arches are, in the same terms the wall bands are built in, with the stone each one is cut
   // from — the sill in that gap is drawn to match it (see TileLayers.archedGaps).
@@ -2035,7 +2110,6 @@ export const SiteMapView = ({
               // it falls through to the corridor rendering below and stands on its own state, rather
               // than leaving the rooms around it opening onto a gap that draws nothing.
               if (claimOwner) {
-                const decoration = claims.decorationAt.get(cellKey)
                 const isCorner = cell.type === "corridor" && isCorridorCorner(cell.dirs)
                 const runTarget = cell.type === "corridor" ? corridorRunTargets.get(cellKey) : undefined
                 const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
@@ -2058,14 +2132,6 @@ export const SiteMapView = ({
                       ) : (
                         cell.state === "reachable" && isCorner && <ReachableDot />
                       ))}
-                    {decoration && (
-                      <Decoration
-                        kind={decoration}
-                        tier={claimOwner.difficulty ?? tier}
-                        patron={grid.patron}
-                        seed={`${grid.siteId}:${cellKey}`}
-                      />
-                    )}
                   </g>
                 )
               }
@@ -2162,22 +2228,16 @@ export const SiteMapView = ({
             })
           })}
 
-          {/* A node's own furniture, in MAP space and clipped as one layer. Inside each node's own
-              `<g transform>` the clip resolved in that cell's space and cut every sprite away — the
-              chests were absent from the whole game while the tests, which do not rasterise, passed. */}
-          <g pointerEvents="none" clipPath={`url(#${STANDING_ROOM_CLIP})`}>
-            {nodeSprites.map(sprite => (
-              <image
-                key={sprite.key}
-                href={sprite.url}
-                x={sprite.mirrored ? -sprite.x - CELL : sprite.x}
-                y={sprite.y}
-                width={CELL}
-                height={PROP_H}
-                transform={sprite.mirrored ? "scale(-1, 1)" : undefined}
-              />
-            ))}
-          </g>
+          {/* EVERYTHING STANDING ON THE FLOOR IS SORTED AGAINST THE PLAYER, and the player is drawn in
+              the middle of it. Anything whose floor line is LOWER than his is nearer the viewer and is
+              drawn after him, so he passes behind the chest at the front of a room and in front of the
+              one at the back. Sorting by the floor line and not by the sprite's top is what makes a
+              tall thing still stand behind a short thing in front of it.
+
+              A node's furniture is additionally clipped, and in MAP space: inside each node's own
+              `<g transform>` the clip resolved in that cell's space and cut every sprite away, which
+              emptied the game of chests while the tests, which do not rasterise, passed. */}
+          <StandingLayer sprites={behindExplorer} />
 
           {explorerPos && (
             <ExplorerDot
@@ -2187,6 +2247,8 @@ export const SiteMapView = ({
               onArrive={() => setSettledExplorerPos(explorerPos)}
             />
           )}
+
+          <StandingLayer sprites={inFrontOfExplorer} />
 
           {/* Last, so a doorway passes in FRONT of the player walking under it — see Archways. */}
           <Archways doorways={doorways} explorerPos={explorerPos} />

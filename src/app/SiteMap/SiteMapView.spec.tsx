@@ -1061,3 +1061,41 @@ describe("a staircase is drawn as the flight it is", () => {
     expect(marker?.getAttribute("opacity")).toBe("1")
   })
 })
+
+describe("the player is drawn among the furniture, not always over it", () => {
+  // Two things stand on a map: the explorer and what a room holds. Which occludes which is the FLOOR
+  // LINE — a chest at the front of a chamber is nearer the viewer than a player at its back, and the
+  // player should pass behind it. Sorting by the sprite's top instead would put a tall statue at the
+  // back in front of a low chest at the front.
+  const chamberAt = (row: number) => {
+    const cells: GridCell[][] = [
+      [empty, corridor("completed", false), empty],
+      [empty, empty, empty],
+      [empty, empty, empty],
+    ]
+    cells[row][1] = chamber("reachable")
+    return makeGrid(cells)
+  }
+
+  const orderOf = (container: HTMLElement) => {
+    const all = Array.from(container.querySelectorAll("image, [data-explorer]"))
+    const chest = all.findIndex(el => (el.getAttribute("href") ?? "").includes("chestProp"))
+    const explorer = all.findIndex(el => el.hasAttribute("data-explorer"))
+    return { chest, explorer }
+  }
+
+  it("draws the player in front of a chest standing further back", () => {
+    // Chest in the top row, player below it: the chest's floor line is higher up the page.
+    const { container } = render(<SiteMapView grid={chamberAt(0)} explorerPos={[2, 1]} revealAllCells />)
+    const { chest, explorer } = orderOf(container)
+    expect(chest).toBeGreaterThanOrEqual(0)
+    expect(explorer).toBeGreaterThan(chest)
+  })
+
+  it("draws the player behind a chest standing nearer the viewer", () => {
+    const { container } = render(<SiteMapView grid={chamberAt(2)} explorerPos={[0, 1]} revealAllCells />)
+    const { chest, explorer } = orderOf(container)
+    expect(chest).toBeGreaterThanOrEqual(0)
+    expect(chest).toBeGreaterThan(explorer)
+  })
+})
