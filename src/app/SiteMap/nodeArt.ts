@@ -72,4 +72,11 @@ export type NodeSprite = {
    * off centre, so a pool laid at the middle of the cell fell under the shaft — the one part of the tile
    * that is drawn near-black over it — and the torch lit nothing anyone could see. */
   light?: { x: number; y: number; r: number }
+  /** The cells this sprite may be drawn on: its room's own footprint, as "r,c" keys.
+   *
+   * ITS OWN ROOM AND NOT THE WHOLE FLOOR. Furniture stands off-centre, and a sprite is a cell wide, so
+   * it reaches past its cell — clipped to every floor rect on the map it simply passed THROUGH a wall
+   * and appeared in the corridor on the other side. A room's own footprint is the only shape that both
+   * lets a chest overlap the paving beside it and stops it at the masonry. */
+  footprint: readonly string[]
 }

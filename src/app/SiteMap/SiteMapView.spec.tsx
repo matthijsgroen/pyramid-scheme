@@ -1020,11 +1020,15 @@ describe("a node's furniture is cut by the walls around it", () => {
     [empty, chamber("reachable"), empty],
   ])
 
-  it("clips it to the standing room, and defines that clip once", () => {
+  it("clips it to its OWN room, not to every floor cell on the map", () => {
+    // The map-wide clip is the union of all floor: furniture offset toward a wall passed through it and
+    // appeared in the corridor on the other side. A room's own footprint is the shape that stops it.
     const { container } = render(<SiteMapView grid={grid} revealAllCells />)
     const clipped = chestIn(container)!.closest("g[clip-path]")
-    expect(clipped?.getAttribute("clip-path")).toBe(`url(#${STANDING_ROOM_CLIP})`)
-    expect(container.querySelectorAll(`#${STANDING_ROOM_CLIP}`)).toHaveLength(1)
+    const id = clipped?.getAttribute("clip-path")
+    expect(id).toMatch(/^url\(#room-clip-chest:/)
+    expect(id).not.toBe(`url(#${STANDING_ROOM_CLIP})`)
+    expect(container.querySelectorAll(`clipPath[id^="room-clip-"]`).length).toBeGreaterThan(0)
   })
 
   it("leaves the headroom above the floor open, so a tall thing still crosses the wall band", () => {
@@ -1127,5 +1131,31 @@ describe("a stair's torch lights the floor beside it", () => {
       return Math.abs(Number(m[1]) - cx) > CELL / 4
     })
     expect(moved).toBe(true)
+  })
+})
+
+describe("furniture stops at the wall of its own room", () => {
+  // Reported from starter_4: a chest offset toward the wall was visible on the far side of it, standing
+  // in the corridor beyond. The clip was every floor cell on the map, so there was nothing to stop it.
+  it("clips to the room's own cells and no others", () => {
+    const room = chamber("reachable")
+    if (room.type !== "room") throw new Error("the chamber fixture stopped being a room")
+    // A chamber, a wall's width of stone, and a separate corridor beyond it.
+    const grid = makeGrid([
+      [empty, corridor("completed", false), empty, empty, straightCorridor("completed", ["n", "s"])],
+      [empty, room, empty, empty, straightCorridor("completed", ["n", "s"])],
+    ])
+    const { container } = render(<SiteMapView grid={grid} revealAllCells />)
+    const chest = Array.from(container.querySelectorAll<SVGImageElement>("image")).find(el =>
+      (el.getAttribute("href") ?? "").includes("chestProp")
+    )!
+    const clipId = chest.closest("g[clip-path]")!.getAttribute("clip-path")!.slice(5, -1)
+    const path = container
+      .querySelector(`#${CSS.escape(clipId)}`)!
+      .querySelector("path")!
+      .getAttribute("d")!
+    // The far corridor's own column must not appear in this room's clip.
+    const farLeft = cellLeft(4)
+    expect(path).not.toContain(`M${farLeft} `)
   })
 })

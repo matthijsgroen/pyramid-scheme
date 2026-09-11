@@ -396,6 +396,16 @@ const shapeKindFor = (
 const isLockedGate = (cell: RoomCell, ownedKeys: ReadonlySet<string> | undefined): boolean =>
   cell.tags?.includes("gate") === true && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)
 
+/** A room's own footprint as a clip path: each of its cells, grown upward by a prop's headroom so a
+ * tall thing still crosses the wall band behind it. */
+const footprintPath = (cells: readonly string[]): string =>
+  rectsToPath(
+    cells.map(key => {
+      const [r, c] = key.split(",").map(Number)
+      return [cellLeft(c), cellTop(r) - PROP_H, CELL, CELL + PROP_H] as Rect
+    })
+  )
+
 /** How far the cresset at a stair's mouth stands from the middle of its cell, measured off the painted
  * tile rather than guessed: the flame's own pixels land 24 units left of centre. */
 const STAIR_FLAME_DX = CELL * 0.43
@@ -410,8 +420,10 @@ type StandingSprite = {
   key: string
   /** The y a sprite's own floor line sits at, in map space. Lower on the page is nearer the viewer. */
   baseY: number
-  /** Node art is cut to the room it stands in; a room's furniture reaches into the wall band above it. */
-  clipped: boolean
+  /** The clip this sprite is drawn through, if any — its own room's footprint, grown upward by a
+   * prop's headroom. A room's own furniture is not clipped at all: it stands centred on its cell and
+   * reaches only into the wall band above it, which is where a tall thing belongs. */
+  clipId?: string
   /** Where this sprite's own flame lands on the floor, if it carries one — see NodeSprite.light. */
   light?: NodeSprite["light"]
   node: ReactNode
@@ -420,10 +432,15 @@ type StandingSprite = {
 /** One half of the sorted set — the clipped sprites in their own group, so the clip stays in map space. */
 const StandingLayer = ({ sprites }: { sprites: readonly StandingSprite[] }) => (
   <>
-    <g pointerEvents="none" clipPath={`url(#${STANDING_ROOM_CLIP})`}>
-      {sprites.filter(s => s.clipped).map(s => s.node)}
-    </g>
-    {sprites.filter(s => !s.clipped).map(s => s.node)}
+    {sprites.map(s =>
+      s.clipId ? (
+        <g key={s.key} pointerEvents="none" clipPath={`url(#${s.clipId})`}>
+          {s.node}
+        </g>
+      ) : (
+        s.node
+      )
+    )}
   </>
 )
 
@@ -435,7 +452,14 @@ const StandingLayer = ({ sprites }: { sprites: readonly StandingSprite[] }) => (
  * own `entrancePos` is the way back UP (pyramid-interior-design.md: a stairhead descends), and absent
  * art simply yields nothing, leaving the vector marker to carry the node as it always did.
  */
-const nodeSpritesFor = (grid: FloorGrid, floorTier: Difficulty): NodeSprite[] => {
+const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficulty): NodeSprite[] => {
+  // Which cells belong to each room: the room's own, plus everything it claimed.
+  const footprints = new Map<string, string[]>()
+  for (const [cellKey, ownerKey] of claims.claimedBy) {
+    const own = footprints.get(ownerKey)
+    if (own) own.push(cellKey)
+    else footprints.set(ownerKey, [ownerKey, cellKey])
+  }
   const out: NodeSprite[] = []
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
@@ -444,11 +468,13 @@ const nodeSpritesFor = (grid: FloorGrid, floorTier: Difficulty): NodeSprite[] =>
       const kind = shapeKindFor(grid, r, c, cell.roomType, cell.tags, cell.stairId)
       const tier = cell.difficulty ?? floorTier
       const { cx, cy } = cellCenter(r, c)
+      const footprint = footprints.get(`${r},${c}`) ?? [`${r},${c}`]
       if (kind === "treasure" && !cell.tags?.includes("shop")) {
         const url = tileUrl(tier, "chestProp")
         if (!url) continue
         const { dx, dy } = nodeArtOffset(cell.dirs)
         out.push({
+          footprint,
           key: `chest:${r},${c}`,
           url,
           x: cx + dx - CELL / 2,
@@ -476,6 +502,7 @@ const nodeSpritesFor = (grid: FloorGrid, floorTier: Difficulty): NodeSprite[] =>
             y: cy - CELL * 0.1,
             r: LAMP_POOL_RADIUS,
           },
+          footprint,
           key: `stair:${r},${c}`,
           url,
           x: cx - CELL / 2,
@@ -1916,7 +1943,7 @@ export const SiteMapView = ({
   const canWalkTo = (row: number, col: number) => !walkable || walkable.has(`${row},${col}`)
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
-  const nodeSprites = useMemo(() => nodeSpritesFor(grid, tier), [grid, tier])
+  const nodeSprites = useMemo(() => nodeSpritesFor(grid, claims, tier), [grid, claims, tier])
 
   // Everything that stands on this floor, in one list: a room's furniture and a node's own, each with
   // the line it stands on. Split at the explorer's own floor line so he is drawn in the middle.
@@ -1924,7 +1951,7 @@ export const SiteMapView = ({
     const sprites: StandingSprite[] = nodeSprites.map(sprite => ({
       key: sprite.key,
       baseY: sprite.y + PROP_H,
-      clipped: true,
+      clipId: `room-clip-${sprite.key}`,
       ...(sprite.light ? { light: sprite.light } : {}),
       node: (
         <image
@@ -1946,7 +1973,6 @@ export const SiteMapView = ({
       sprites.push({
         key: `prop:${cellKey}`,
         baseY: cy + CELL / 2,
-        clipped: false,
         node: (
           <g key={`prop:${cellKey}`} transform={`translate(${cx}, ${cy})`}>
             <Decoration
@@ -2266,6 +2292,18 @@ export const SiteMapView = ({
               A node's furniture is additionally clipped, and in MAP space: inside each node's own
               `<g transform>` the clip resolved in that cell's space and cut every sprite away, which
               emptied the game of chests while the tests, which do not rasterise, passed. */}
+          {/* One clip per sprite, cut to its OWN room. The map-wide clip is every floor cell there is,
+              so furniture offset toward a wall passed straight through it and appeared in the corridor
+              beyond; a room's footprint lets a chest overlap the paving beside it and stops it at the
+              masonry. */}
+          <defs>
+            {nodeSprites.map(sprite => (
+              <clipPath key={sprite.key} id={`room-clip-${sprite.key}`}>
+                <path d={footprintPath(sprite.footprint)} />
+              </clipPath>
+            ))}
+          </defs>
+
           {/* The floor light first, so everything standing is standing IN it. */}
           {standing.map(s2 =>
             s2.light ? (
