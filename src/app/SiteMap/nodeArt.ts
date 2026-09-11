@@ -1,0 +1,41 @@
+import type { Direction } from "@/game/siteTypes"
+import { CELL } from "./mapScale"
+
+/** How far a node's own furniture stands out of the way of its marker, across and up the cell.
+ *
+ * The marker is centred on the cell and so is the explorer, so furniture drawn square on the cell is
+ * furniture the player is standing inside. Across is the bigger step: a sprite is a cell wide and only
+ * the middle of it is the object, so it takes more sideways than backwards to clear the figure. */
+export const NODE_ART_DX = CELL * 0.3
+export const NODE_ART_DY = CELL * 0.2
+
+/** The marker over its own furniture. It still has to read as a node — the state colour and the key
+ * badges are on it — so this eases it back rather than hiding it; the art says what the room holds and
+ * the marker says whether you can get to it. */
+export const NODE_OVER_ART_OPACITY = 0.72
+
+/** Which corner of its cell a node's furniture stands in: AWAY from every way out.
+ *
+ * The player enters by one of the cell's own `dirs` and leaves by another, so the free quarter is the
+ * one no exit points at — the far end of a dead end, the side of a through room, the corner away from
+ * both arms of a bend. Summing the exits and walking the other way gives all of those from one rule.
+ *
+ * A cell whose exits cancel — a straight passage, a crossroads — has no free quarter, and there the
+ * answer is simply "off the path": it steps aside and stays level, which on a north-south passage is
+ * the wall and on a crossroads is the only room left. */
+export const nodeArtOffset = (dirs: ReadonlySet<Direction> | undefined): { dx: number; dy: number } => {
+  let x = 0
+  let y = 0
+  for (const dir of dirs ?? []) {
+    if (dir === "e") x += 1
+    if (dir === "w") x -= 1
+    // North is UP the page, so it is negative y — the same axis the sprite is anchored on.
+    if (dir === "n") y -= 1
+    if (dir === "s") y += 1
+  }
+  if (x === 0 && y === 0) return { dx: NODE_ART_DX, dy: 0 }
+  // Stepped rather than scaled, and written out so an axis with no exits on it lands on a plain 0
+  // rather than on the -0 that `-Math.sign(0) * size` gives.
+  const step = (sum: number, size: number) => (sum === 0 ? 0 : -Math.sign(sum) * size)
+  return { dx: step(x, NODE_ART_DX), dy: step(y, NODE_ART_DY) }
+}

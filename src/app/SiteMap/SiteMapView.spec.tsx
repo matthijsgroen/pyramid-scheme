@@ -1,6 +1,7 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
-import { SiteMapView, buildRoomClaims, tileRegionsFor, NODE_OVER_ART_OPACITY } from "./SiteMapView"
+import { SiteMapView, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
+import { NODE_OVER_ART_OPACITY } from "./nodeArt"
 import { ExplorerFigure, LIGHT_POOL_ID } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
 import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
@@ -963,13 +964,13 @@ describe("a treasure room stands its own chest beside the marker", () => {
       [empty, cell, empty],
     ])
 
-  it("draws the chest offset sideways, in the prop's own box", () => {
+  it("draws the chest out of the doorway, in the prop's own box", () => {
+    // The fixture's only way out is north, so the chest stands at the SOUTH end of the cell — the far
+    // end from where the player walks in.
     const { container } = render(<SiteMapView grid={gridWith(chamber("reachable"))} revealAllCells />)
     const chests = chestsIn(container)
     expect(chests).toHaveLength(1)
-    // Offset in X only: a shift in depth would ride up the page under the shear and lift the chest off
-    // the floor line it is anchored to.
-    expect(Number(chests[0].getAttribute("x"))).toBeGreaterThan(-CELL / 2)
+    expect(Number(chests[0].getAttribute("y"))).toBeGreaterThan(CELL / 2 - (CELL + WALL_H))
     expect(chests[0].getAttribute("height")).toBe(String(CELL + WALL_H))
   })
 
