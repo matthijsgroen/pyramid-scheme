@@ -1456,7 +1456,7 @@ def prim_pit():
     return join_all()
 
 
-def _stair_torch(x, y):
+def _stair_torch(x, y, scale=1.0):
     """A cresset standing beside a stair mouth, and the reason the flight is graded at all.
 
     A hole gets no light — its walls stand in the y-z plane and draw as lines, so `--sun` has nothing
@@ -1472,10 +1472,13 @@ def _stair_torch(x, y):
     # SHORT, because `seat_and_normalise` scales the whole object to one unit tall: a cresset at head
     # height is the tallest thing in the frame and shrinks the hole it is meant to light. At 0.30 it
     # stands beside the mouth instead of over it.
-    mark(cyl(0.030, 0.30, x=x, y=y, z=0.15, verts=10), "metal")
-    mark(cyl(0.070, 0.08, x=x, y=y, z=0.33, verts=12), "metal")
+    # `scale` exists because a painted tile's mask can never move. The flight that walks ACROSS was
+    # painted over the full-height cresset and keeps it; the one coming toward the viewer took a
+    # shorter one so the OPENING dominates the frame, which is what a painter draws when handed this.
+    mark(cyl(0.030 * scale, 0.30 * scale, x=x, y=y, z=0.15 * scale, verts=10), "metal")
+    mark(cyl(0.070 * scale, 0.08 * scale, x=x, y=y, z=0.33 * scale, verts=12), "metal")
     # The flame is a shape, not a light: an accent-coloured mass the repaint knows to burn.
-    mark(box(0.085, 0.07, 0.11, x=x, y=y, z=0.42), "accent")
+    mark(box(0.085 * scale, 0.07 * scale, 0.11 * scale, x=x, y=y, z=0.42 * scale), "accent")
 
 
 def prim_stair():
@@ -1504,7 +1507,7 @@ def prim_stair():
     """
     k = 0.7
     if arg("contents") == "down":
-        w, d = 0.92, 0.62  # the opening
+        w, d = 0.98, 0.74  # the opening
         hv = k * d
         # The shaft behind the steps: the far wall alone, filling the drawn opening, marked VOID so it
         # renders near-black before any paint reaches it.
@@ -1516,8 +1519,8 @@ def prim_stair():
             # Three values, one per tread: paving, stone in shade, and then the shaft's own dark, so the
             # last step is already going out of sight. That falloff is what a hole cannot get from the
             # lamp — its walls stand in the y-z plane and draw as lines, so no light reaches down it.
-            mark(box(w - 0.14, 0.10, 0.035, y=(d / 2) - 0.13 - i * 0.10, z=-0.05 - i * 0.07), ("body", "deep", VOID)[i])
-        _stair_torch(-(w / 2) + 0.02, (d / 2) - 0.04)
+            mark(box(w - 0.10, 0.14, 0.05, y=(d / 2) - 0.16 - i * 0.14, z=-0.06 - i * 0.10), ("body", "deep", VOID)[i])
+        _stair_torch(-(w / 2) + 0.02, (d / 2) - 0.04, scale=0.68)
         return join_all()
 
     if arg("contents") == "down-side":

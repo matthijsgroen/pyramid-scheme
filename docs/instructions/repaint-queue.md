@@ -122,9 +122,11 @@ they are what says walkable rather than shaft.
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a STAIRCASE going down through the floor of a cellar. The wide dark rectangle is the SHAFT
-the steps go into. The three bars across it are TREADS: the top one is paving, level with the floor and
-lit; the one under it is in shade; the lowest is nearly lost in the dark. The post standing at the left
-of the opening is a TORCH — a plain iron cresset on a spike, with a small flame in its bowl.
+the steps go into, and it fills most of the picture. The three bands across it are TREADS: the top one is
+paving, level with the floor and lit; the one under it is in shade; the lowest is nearly lost in the
+dark. The small post at the upper LEFT, clear of the opening, is a TORCH — a plain iron cresset on a
+spike. It is SMALL: the whole torch is about a fifth of the picture's height, and its flame is a
+thumbnail of orange sitting in the bowl, not above it.
 
 Cut through trodden earth over limestone chips. The treads are re-used limestone slabs, chipped at their
 front edges where feet land, gritty and pale at the top and going grey and then almost black as they
@@ -137,9 +139,11 @@ The torch is dull black iron, its flame a small low orange with no glow, no bloo
 the top tread and the edge of the opening nearest it and nothing else — the light falls off within a
 hand's width, and no light reaches the bottom of the shaft.
 
-THE OPENING AND THE THREE TREADS KEEP EXACTLY THE SIZE AND PLACE THEY HAVE IN THE REFERENCE. Do not
-enlarge the hole, do not move it, and do not shift a tread up or down — each one is painted over the bar
-that is already there. Paint no floor around the opening: what is outside it is background.
+EVERYTHING KEEPS THE SIZE AND PLACE IT HAS IN THE REFERENCE, and this is the one the last two rolls got
+wrong: do not zoom in, do not crop, do not enlarge the hole and do not shift a tread. Each tread is
+painted over the band that is already there, the torch over the post that is already there, and its
+flame inside the bowl that is already there. Paint no floor around the opening: what is outside it is
+background.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 

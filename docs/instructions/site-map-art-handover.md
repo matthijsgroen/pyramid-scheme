@@ -18,6 +18,12 @@ the branch is in and how to run the next step.
 master byte for byte. Run that last one after touching `renderProp.py` or `importTile.ts`: it is the only
 check that catches a geometry change silently invalidating a master.
 
+**THE STAIRS ARE THE LIVE WORK, and they are half done** — the map draws a flight at a stairhead now,
+aimed by the room's one exit and lit by its own torch. `starter/stair-down-side` has landed;
+`starter/stair-down` is imported but wants one more roll; `starter/stair-up` has never been rolled.
+The plan is ONE GENERIC SET in `tiles/default/` rather than five per-rank sets, and the whole of it is
+in "Stairways and ward gates" below.
+
 **The merchant is DONE** — every prop, wall item and scatter kind he authors is a return painted over its
 own scaffold, stored 2x, cut to a mask, seated in a rendered translucent shadow, and on a rebuild line.
 
@@ -529,40 +535,67 @@ is the workflow: how to check, and how the checking has gone wrong.
 - **The pharaoh's winged disc**, and whatever the gods' "opening with no visible structure" turns out to
   be. Both are `make-arch --ornament` inputs rather than whole gateways.
 
-## Stairways and ward gates — new work, and the decision that comes first
+## Stairways and ward gates — HALF BUILT, and where to pick it up
 
-Wanted for the next release, in neither the queue nor the brief's ~224. What makes them different from
-everything painted so far: **a gate and a stairhead are NODES, not tiles.** Every node on the map is
-hand-coded vector SVG inline in `SiteMapView.tsx` — the gate is a `<rect>` and three bars (`:246`), the
-stairhead an octagon and a stepped path (`:342`), the exit a `<circle>` (`:354`) — and not one of them
-goes anywhere near `tileUrl`. There is no node art in `src/assets/tiles/` at all.
+**Route 1 was taken and the stairs are live**: art under the marker, the marker eased to 0.72 over it.
+A stairhead draws `stair-up` at the floor's own `entrancePos` and `stair-down` anywhere else, takes
+`stair-down-side` where its one exit faces east or west, and mirrors that file in x for a west-facing
+one. The ward GATE is untouched — still the vector `<rect>` and three bars — and is what remains of this
+section's original scope.
 
-Two facts decide the shape of the work:
+**What is painted:** `starter/stair-down-side` (landed, on a rebuild line) and `starter/stair-down`
+(imported, wants one more roll — see the framing law above). `starter/stair-up` has never been rolled.
+Nothing at the other four ranks.
+
+### One generic set, not five — and the renderer already does it
+
+**`tileUrl` falls back `<tier>/<name>` → `default/<name>`** (`tileAssets.ts:20`), which is how the
+explorer and the sand are already shared. So the cheap shape is THREE files in `tiles/default/`, serving
+every rank, with a rank overriding one later by dropping its own file in — no code, no manifest.
+
+Two reasons to prefer that here, beyond the arithmetic of 3 files against 15:
+
+- **A stair is mostly absence.** The tile is a dark shaft with two or three treads and a small cresset;
+  the stone that says which tomb this is surrounds it on the map and is not in the sprite.
+- **It is navigation, not furniture.** The explorer is shared for the same reason — one person walks all
+  five ranks — and a way down reads the same in any tomb.
+
+Where it will show and want an override first: the GODS, whose floor is lit calcite with no dust in it
+and whose every other tile glows, and the PHARAOH's gilding. Take those two when the rest is done, and
+leave the merchant's three as `default/` for the middle ranks.
+
+**The count that sizes the work**: 443 stairheads, and every rank has plenty —
+
+| rank | stairheads | go up | face east/west |
+| --- | --- | --- | --- |
+| merchant | 30 | 15 | 20 |
+| nobleman | 68 | 34 | 36 |
+| priest | 61 | 31 | 34 |
+| pharaoh | 126 | 63 | 69 |
+| gods | 158 | 79 | 74 |
+
+Half of every rank's stairheads are the way back UP, so `stair-up` is not an optional third file — it is
+half the doors in the game.
+
+### What is left, in order
+
+1. **Roll `starter/stair-down` once more** against the re-framed scaffold, and `starter/stair-up` for
+   the first time. `yarn repaint` has both.
+2. **Move the three into `tiles/default/`** once they land, so every rank draws them. That is a rename
+   of the files and the rebuild lines; the renderer needs nothing.
+3. **The ward gate**, which is the untouched half of this section: a gate leaf in its jamb, one primitive,
+   and the same art-under-marker treatment. Its marker carries a key COLOUR as well as state, so the
+   vector stays on top.
+4. **Overrides for the gods and the pharaoh**, if the generic set reads wrong on their stone.
+
+### Two facts that decided the shape
 
 - **A node is a quarter the area of a prop.** `NODE_RADIUS_LARGE` is `CELL * 0.34`, so a node occupies
-  about 38x38 against a prop's 56x84. Paint at that size and most of what the pipeline delivers is gone.
-- **A node's COLOUR carries state, and paint cannot.** `stairFill`, `stairStroke` and `stairIcon`
-  (`:499-518`) are keyed on `CellState` — fogged, visible, reachable, completed — and a floor-key gate is
-  tinted by its key colour on top of that (`:231-257`). Only the ward gate has any rank in it today, and
-  only as an accent tint: `DIFFICULTY_GATE_ACCENT` (`:474-481`), same square and same three bars at all
-  five ranks.
-
-**The decision: do they stay state-coloured markers, or become places?** Three routes, and the first is
-the one to take unless someone argues otherwise:
-
-1. **Art UNDER the marker.** Paint the gate and the stair mouth as tiles on the cell, the way a `pit` is,
-   and keep a smaller vector marker on top for state and key colour. Ten tiles, no state problem, and the
-   marker goes on doing the job it does now.
-2. **Art INSTEAD of the marker, washed by state.** Five tiles a kind instead of ten and `stateWash`
-   recolours them — but a wash over painted stone is the same argument already open under "whether
-   `reachable` should be the brightest state at all".
-3. **Art per state** — 4 states x 2 kinds x 5 ranks = 40 tiles. Not worth it.
-
-On route 1 the cost was two primitives, and **the stair is BUILT: `prim_stair`, `--contents=up` and
-`--contents=down`.** What is left is the gate leaf in its jamb, ten repaints at about a day, and half a
-day to a day of renderer work for the slot and the marker resize. It is RENDER-ONLY: no pool changes any
-length, so no floor regenerates and no placement moves.
-
+  about 38x38 against a prop's 56x84 — which is why the art is a full prop-box sprite UNDER the marker
+  rather than a painted marker.
+- **A node's COLOUR carries state, and paint cannot.** `stairFill`, `stairStroke` and `stairIcon` are
+  keyed on `CellState`, and a floor-key gate is tinted by its key colour on top of that. The marker
+  stays for exactly that reason, eased to `NODE_OVER_ART_OPACITY` where art sits under it.
 **Three things the two flights cost, and none is guessable from the code:**
 
 - **They are not mirror images.** Drawn height is `z + k*y`, so a flight RISING as it recedes separates
@@ -592,6 +625,18 @@ so no lamp reaches down it and `--sun` has nothing to bite on. The descending fl
 generator the falloff already built: tread one is paving (`body`), tread two is stone in shade
 (`deep`, new in `PART_COLOURS`), tread three is the shaft's own `VOID`. Three values say "going down"
 before a word of the prompt does — which is the same argument `prim_pit` makes about a rack's gap.
+
+**FRAME THE SCAFFOLD LIKE THE PICTURE YOU WANT, because scale is what two rolls were lost to.** The
+merchant's descending stair came back twice with its treads masked away, and neither time was the
+painting bad: both were CLOSE-UPS. The scaffold had a tall cresset beside a low opening, so the camera
+fitted the torch and the hole sat in the middle third — and a painter handed that draws the stairs, not
+the empty half. The mask then kept thin bars where the paint had shaft.
+
+Widening the opening to 0.98 x 0.74 and shrinking the cresset to 0.68 of its height made the hole the
+subject, and re-importing the SAME master against the new mask took it from one tread visible to two.
+The rest is a roll. `_stair_torch` takes that scale as an argument rather than being edited in place:
+the flight that walks across was painted over the full-height cresset and a painted tile's mask can
+never move.
 
 **A TORCH AT THE MOUTH IS WHAT MOTIVATES THE FALLOFF.** Graded treads on their own are shading nobody
 asked for; a cresset beside the opening makes the top tread the one the light reaches and every one
