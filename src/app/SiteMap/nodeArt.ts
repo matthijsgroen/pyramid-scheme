@@ -44,3 +44,20 @@ export const nodeArtOffset = (dirs: ReadonlySet<Direction> | undefined): { dx: n
  * headroom. Side walls and the wall below cut the sprite; the band above does not, because rising into
  * it is how a tall thing occludes the wall behind it. Defined in `SiteMapView`'s `<defs>`. */
 export const STANDING_ROOM_CLIP = "standing-room"
+
+/** One sprite of a node's own furniture, in MAP space.
+ *
+ * Map space and not the cell's, which is the whole reason this is a list rather than a child of each
+ * node's `<g transform>`: `clip-path` resolves in the element's own transformed space, so a clip built
+ * from the floor's rectangles lands offset by the cell's position and cuts the sprite away. In jsdom
+ * nothing rasterises, so the `<image>` exists and a test sees it; in a browser the chests vanished from
+ * every floor in the game. Drawn as one clipped layer in map space, the clip means what it says.
+ */
+export type NodeSprite = {
+  key: string
+  url: string
+  x: number
+  y: number
+  /** Mirrored in x — how a stair is aimed. A reflection is a real oblique view; a rotation is a skew. */
+  mirrored: boolean
+}

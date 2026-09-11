@@ -98,6 +98,96 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
+## Stairs — two, and they are a NEW kind
+
+The way down a floor, drawn at last. `prim_stair` builds both: `--contents=up` climbs away between its
+parapets, `--contents=down` cuts into the paving with three treads and a cresset at its mouth. The
+renderer draws them on any stairhead and mirrors in x for a west-facing one, so **one file serves all four
+facings** and a rank costs two repaints rather than eight.
+
+These two are the merchant's. If they land, the other four ranks are the same pair in their own stone.
+
+**A STAIRCASE IS THE ONLY HOLE IN THE FLOOR NOW** — the `pit` was retired for exactly this reason
+(tile-art-brief §2), so nothing else in the set may read as a way down. That makes the TREADS the subject:
+they are what says walkable rather than shaft.
+
+### `starter/stair-down` — steps into the dark, a torch at the mouth
+
+**Attach:**
+
+1. `~/tile-previews/stair-down-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a STAIRCASE going down through the floor of a cellar. The wide dark rectangle is the SHAFT
+the steps go into. The three bars across it are TREADS: the top one is paving, level with the floor and
+lit; the one under it is in shade; the lowest is nearly lost in the dark. The post standing at the left
+of the opening is a TORCH — a plain iron cresset on a spike, with a small flame in its bowl.
+
+Cut through trodden earth over limestone chips. The treads are re-used limestone slabs, chipped at their
+front edges where feet land, gritty and pale at the top and going grey and then almost black as they
+descend. Dust and chips have collected in the angle of each step.
+
+THE DARK IS DEPTH, not a panel. What is below the lowest tread is the shaft going on down past what the
+picture shows: a warm near-black with nothing drawn in it, never a floor, a wall or a back board.
+
+The torch is dull black iron, its flame a small low orange with no glow, no bloom and no rays. It lights
+the top tread and the edge of the opening nearest it and nothing else — the light falls off within a
+hand's width, and no light reaches the bottom of the shaft.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's cellar, Egyptian New Kingdom: mudbrick, limestone chips, timber and reed. Dark grey-brown stone, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold stair --contents=down --shadow=0
+yarn import-tile art/masters/props/starter/stair-down.webp --tier=starter --name=stair-down --slot=prop \
+  --filter=smooth --mask="$OBJ"
+```
+
+### `starter/stair-up` — a flight climbing between its parapets
+
+**Attach:**
+
+1. `~/tile-previews/stair-up-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a STAIRCASE going up, away from you, cut between two walls. The five pale bands are TREADS,
+each one a step higher than the one in front of it; the darker bands between them are the RISERS. The
+blocks running up either side are the PARAPETS, low walls the flight is cut between, and they step up
+with it.
+
+Re-used limestone slabs over mudbrick, the treads worn hollow in their middles and chipped along their
+front edges, the mortar between them crumbling. The parapets are mudbrick under flaking whitewash, rubbed
+brown along their tops where hands have passed.
+
+EACH TREAD IS LIGHTER THAN THE RISER UNDER IT, which is what makes the flight read as climbing rather
+than as a course of masonry; keep that difference on every step and do not even the value out.
+
+The top of the flight goes up out of the picture into the dark, so the last riser is the deepest shade in
+it. Nothing is drawn above the top tread.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's cellar, Egyptian New Kingdom: mudbrick, limestone chips, timber and reed. Dark grey-brown stone, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold stair --contents=up
+yarn import-tile art/masters/props/starter/stair-up.webp --tier=starter --name=stair-up --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
 ## Priest — four
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and

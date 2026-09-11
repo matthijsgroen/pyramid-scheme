@@ -964,6 +964,20 @@ describe("a treasure room stands its own chest beside the marker", () => {
       [empty, cell, empty],
     ])
 
+  it("draws the chest in MAP space, not inside the cell's own transform", () => {
+    // THE BUG THIS EXISTS FOR: clip-path resolves in the element's own transformed space, so art
+    // nested inside a node's `<g transform="translate(cx, cy)">` was clipped by rectangles offset by
+    // that cell's position — every chest in the game was cut away, and jsdom, which never rasterises,
+    // reported them present. What catches it is the ancestry, not the element.
+    const { container } = render(<SiteMapView grid={gridWith(chamber("reachable"))} revealAllCells />)
+    const chest = chestsIn(container)[0]
+    expect(chest.closest("g[transform]")).toBeNull()
+    expect(chest.closest("g[clip-path]")).not.toBeNull()
+    // In map space a sprite sits at its own cell, so its x is a map coordinate rather than a small
+    // offset from the cell's centre.
+    expect(Number(chest.getAttribute("x"))).toBeGreaterThan(CELL)
+  })
+
   it("draws the chest out of the doorway, in the prop's own box", () => {
     // The fixture's only way out is north, so the chest stands at the SOUTH end of the cell — the far
     // end from where the player walks in.
@@ -1021,5 +1035,29 @@ describe("a node's furniture is cut by the walls around it", () => {
     // topmost edge of the clip is higher than the topmost floor line.
     const tops = [...clip.matchAll(/M-?[\d.]+ (-?[\d.]+)h/g)].map(m => Number(m[1]))
     expect(Math.min(...tops)).toBe(cellTop(0) - (CELL + WALL_H))
+  })
+})
+
+describe("a staircase is drawn as the flight it is", () => {
+  const stairGrid = (stairAt: "entrance" | "exit") => {
+    const grid = makeGrid([
+      [empty, portal("reachable", "s1"), empty],
+      [empty, corridor("completed", false), empty],
+    ])
+    // The floor's entrance decides direction: a stairhead standing on it is the way back up.
+    return { ...grid, entrancePos: stairAt === "entrance" ? ([0, 1] as const) : ([1, 1] as const) }
+  }
+
+  const stairsIn = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll<SVGImageElement>("image")).filter(el =>
+      (el.getAttribute("href") ?? "").includes("stair-")
+    )
+
+  it("draws nothing extra while the art is absent, so the marker still carries the node", () => {
+    // No `stair-up.png` or `stair-down.png` ships yet. The node must look exactly as it did.
+    const { container } = render(<SiteMapView grid={stairGrid("exit")} revealAllCells />)
+    expect(stairsIn(container)).toHaveLength(0)
+    const marker = container.querySelector<SVGGElement>("g[opacity]")
+    expect(marker?.getAttribute("opacity")).toBe("1")
   })
 })

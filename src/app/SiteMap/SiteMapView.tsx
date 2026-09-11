@@ -38,7 +38,7 @@ import {
   mapHeight,
   mapWidth,
 } from "./mapScale"
-import { NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP, nodeArtOffset } from "./nodeArt"
+import { NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP, nodeArtOffset, type NodeSprite } from "./nodeArt"
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
 import { moodFor } from "./moodSettings"
 import { cellAt, isClaimableNeighbor } from "@/game/roomFootprint"
@@ -389,21 +389,49 @@ const shapeKindFor = (
 const isLockedGate = (cell: RoomCell, ownedKeys: ReadonlySet<string> | undefined): boolean =>
   cell.tags?.includes("gate") === true && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)
 
-/** A treasure room's own CHEST, drawn beside the marker in the rank's own stone.
+/** Every node's own furniture on one floor, in map space — chests beside treasure rooms, flights at
+ * stairheads. See `NodeSprite` for why this is a list and not a child of each node's own `<g>`.
  *
- * No new art: `chestProp` is painted at every rank already, and this is the same sprite the dressing
- * layer stands in a chamber, in the same bottom-anchored box. A SHOP wears the treasure marker too and
- * gets none of this — his goods are a market stall rather than a sealed chest, and drawing one would say
- * the wrong thing about a room you buy from. */
-const NodeChest = ({ tier, dirs }: { tier: Difficulty; dirs: ReadonlySet<Direction> | undefined }) => {
-  const url = tileUrl(tier, "chestProp")
-  if (!url) return null
-  const { dx, dy } = nodeArtOffset(dirs)
-  return (
-    <g clipPath={`url(#${STANDING_ROOM_CLIP})`}>
-      <image href={url} x={dx - CELL / 2} y={dy + CELL / 2 - PROP_H} width={CELL} height={PROP_H} />
-    </g>
-  )
+ * A SHOP wears the treasure marker and gets no chest: his goods are a market stall rather than a sealed
+ * chest, and drawing one would say the wrong thing about a room you buy from. A stairhead at the floor's
+ * own `entrancePos` is the way back UP (pyramid-interior-design.md: a stairhead descends), and absent
+ * art simply yields nothing, leaving the vector marker to carry the node as it always did.
+ */
+const nodeSpritesFor = (grid: FloorGrid, floorTier: Difficulty): NodeSprite[] => {
+  const out: NodeSprite[] = []
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room" || cell.state === "fogged") continue
+      const kind = shapeKindFor(grid, r, c, cell.roomType, cell.tags, cell.stairId)
+      const tier = cell.difficulty ?? floorTier
+      const { cx, cy } = cellCenter(r, c)
+      if (kind === "treasure" && !cell.tags?.includes("shop")) {
+        const url = tileUrl(tier, "chestProp")
+        if (!url) continue
+        const { dx, dy } = nodeArtOffset(cell.dirs)
+        out.push({
+          key: `chest:${r},${c}`,
+          url,
+          x: cx + dx - CELL / 2,
+          y: cy + dy + CELL / 2 - PROP_H,
+          mirrored: false,
+        })
+      } else if (kind === "stairhead") {
+        const goesUp = r === grid.entrancePos[0] && c === grid.entrancePos[1]
+        const url = tileUrl(tier, goesUp ? "stair-up" : "stair-down")
+        if (!url) continue
+        out.push({
+          key: `stair:${r},${c}`,
+          url,
+          x: cx - CELL / 2,
+          y: cy + CELL / 2 - PROP_H,
+          mirrored: cell.dirs.has("w") && !cell.dirs.has("e"),
+        })
+      }
+    }
+  }
+  return out
 }
 
 const nodeRadius: Record<ShapeKind, number> = {
@@ -1833,6 +1861,7 @@ export const SiteMapView = ({
   const canWalkTo = (row: number, col: number) => !walkable || walkable.has(`${row},${col}`)
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
+  const nodeSprites = useMemo(() => nodeSpritesFor(grid, tier), [grid, tier])
   const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Where the arches are, in the same terms the wall bands are built in, with the stone each one is cut
   // from — the sill in that gap is drawn to match it (see TileLayers.archedGaps).
@@ -2092,6 +2121,10 @@ export const SiteMapView = ({
               // A fogged room never reaches here — the loop above draws unlit cells — so no guard is
               // needed to keep a chest out of the dark.
               const hasChest = shapeKind === "treasure" && !cell.tags?.includes("shop")
+              // A stairhead at the floor's own entrance is the way back UP; any other descends.
+              const isStair = shapeKind === "stairhead"
+              const goesUp = isStair && r === grid.entrancePos[0] && c === grid.entrancePos[1]
+              const hasStair = isStair && !!tileUrl(cell.difficulty ?? tier, goesUp ? "stair-up" : "stair-down")
               const roomR = nodeRadius[shapeKind]
               const locked = isLockedGate(cell, ownedKeys)
               const displayState: CellState = locked && state === "reachable" ? "visible" : state
@@ -2103,8 +2136,14 @@ export const SiteMapView = ({
                   onClick={clickable ? () => onCellClick(r, c) : undefined}
                   style={{ cursor: clickable ? "pointer" : "default" }}
                 >
-                  {hasChest && <NodeChest tier={cell.difficulty ?? tier} dirs={cell.dirs} />}
-                  <g opacity={isCompleted && !isPending && !isPortal ? 0.45 : hasChest ? NODE_OVER_ART_OPACITY : 1}>
+                  {/* The torch at a stair's mouth lights the floor for real, the way a lamp does in a
+                      chamber — see LIT_DECORATIONS. The flight itself is drawn in the sprite layer. */}
+                  {hasStair && <LightPool r={LAMP_POOL_RADIUS} cy={CELL * 0.2} />}
+                  <g
+                    opacity={
+                      isCompleted && !isPending && !isPortal ? 0.45 : hasChest || hasStair ? NODE_OVER_ART_OPACITY : 1
+                    }
+                  >
                     <NodeShape
                       type={shapeKind}
                       state={displayState}
@@ -2122,6 +2161,23 @@ export const SiteMapView = ({
               )
             })
           })}
+
+          {/* A node's own furniture, in MAP space and clipped as one layer. Inside each node's own
+              `<g transform>` the clip resolved in that cell's space and cut every sprite away — the
+              chests were absent from the whole game while the tests, which do not rasterise, passed. */}
+          <g pointerEvents="none" clipPath={`url(#${STANDING_ROOM_CLIP})`}>
+            {nodeSprites.map(sprite => (
+              <image
+                key={sprite.key}
+                href={sprite.url}
+                x={sprite.mirrored ? -sprite.x - CELL : sprite.x}
+                y={sprite.y}
+                width={CELL}
+                height={PROP_H}
+                transform={sprite.mirrored ? "scale(-1, 1)" : undefined}
+              />
+            ))}
+          </g>
 
           {explorerPos && (
             <ExplorerDot
