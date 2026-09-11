@@ -65,6 +65,13 @@ type Props = {
   grid: FloorGrid
   onCellClick?: (row: number, col: number) => void
   revealAllCells?: boolean
+  /** Every floor cell is a click target, corridors included, and the run rules are set aside.
+   *
+   * For an EXHIBIT rather than a run: judging art means standing the explorer wherever the art is,
+   * and in play only a corridor's CORNER is clickable (a straight passage borrows a far corner's
+   * target), so half the moves on a revealed map have nothing to click. Off by default — the game
+   * itself never sets it. */
+  freeWalk?: boolean
   explorerPos?: readonly [number, number]
   /** Current floor index. Keys the explorer dot so a floor switch remounts it (instant snap to the
    * new floor's entrance) instead of animating a walk from the previous floor's coordinates. */
@@ -444,7 +451,15 @@ const nodeSpritesFor = (grid: FloorGrid, floorTier: Difficulty): NodeSprite[] =>
         })
       } else if (kind === "stairhead") {
         const goesUp = r === grid.entrancePos[0] && c === grid.entrancePos[1]
-        const url = tileUrl(tier, goesUp ? "stair-up" : "stair-down")
+        // A FLIGHT IS AIMED BY WHICH ONE IS DRAWN, not by turning one. Descending, it can only come
+        // TOWARD the viewer — receding, the rise subtracts what the going adds and the treads collapse
+        // into one band — so a stairhead entered from the side takes the flight that walks across X
+        // instead, and west is that one mirrored. Absent art falls back to the toward-viewer flight, so
+        // a rank with one file still draws all four facings.
+        const sideways = cell.dirs.has("e") || cell.dirs.has("w")
+        const url = goesUp
+          ? tileUrl(tier, "stair-up")
+          : ((sideways ? tileUrl(tier, "stair-down-side") : undefined) ?? tileUrl(tier, "stair-down"))
         if (!url) continue
         out.push({
           key: `stair:${r},${c}`,
@@ -1865,6 +1880,7 @@ export const SiteMapView = ({
   grid: gridProp,
   onCellClick,
   revealAllCells = false,
+  freeWalk = false,
   explorerPos,
   currentFloor,
   pendingCells,
@@ -2117,7 +2133,8 @@ export const SiteMapView = ({
                   cell.type === "corridor" &&
                   onCellClick &&
                   canWalkTo(clickTarget[0], clickTarget[1]) &&
-                  ((cell.state === "reachable" || cell.state === "completed") && isCorner ? true : !!runTarget)
+                  (freeWalk ||
+                    ((cell.state === "reachable" || cell.state === "completed") && isCorner ? true : !!runTarget))
                 return (
                   <g
                     key={cellKey}
@@ -2149,7 +2166,7 @@ export const SiteMapView = ({
                 const corridorClickable =
                   onCellClick &&
                   canWalkTo(clickTarget[0], clickTarget[1]) &&
-                  (((cell.state === "reachable" || cell.state === "completed") && isCorner) || !!runTarget)
+                  (freeWalk || ((cell.state === "reachable" || cell.state === "completed") && isCorner) || !!runTarget)
                 return (
                   <g
                     key={`${r},${c}`}

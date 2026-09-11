@@ -1053,9 +1053,17 @@ describe("a staircase is drawn as the flight it is", () => {
       (el.getAttribute("href") ?? "").includes("stair-")
     )
 
-  it("draws nothing extra while the art is absent, so the marker still carries the node", () => {
-    // No `stair-up.png` or `stair-down.png` ships yet. The node must look exactly as it did.
+  it("draws the flight where the rank has one, and eases the marker over it", () => {
     const { container } = render(<SiteMapView grid={stairGrid("exit")} revealAllCells />)
+    expect(stairsIn(container)).toHaveLength(1)
+    const marker = container.querySelector<SVGGElement>("g[opacity]")
+    expect(marker?.getAttribute("opacity")).toBe(String(NODE_OVER_ART_OPACITY))
+  })
+
+  it("draws nothing extra at a rank with no flight painted, so the marker carries the node alone", () => {
+    // Absent art is the normal state of four ranks out of five, and it must look exactly as it did.
+    const grid = { ...stairGrid("exit"), difficulty: "wizard" as const }
+    const { container } = render(<SiteMapView grid={grid} revealAllCells />)
     expect(stairsIn(container)).toHaveLength(0)
     const marker = container.querySelector<SVGGElement>("g[opacity]")
     expect(marker?.getAttribute("opacity")).toBe("1")
