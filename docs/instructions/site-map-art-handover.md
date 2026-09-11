@@ -19,8 +19,9 @@ master byte for byte. Run that last one after touching `renderProp.py` or `impor
 check that catches a geometry change silently invalidating a master.
 
 **THE STAIRS ARE THE LIVE WORK, and they are half done** — the map draws a flight at a stairhead now,
-aimed by the room's one exit and lit by its own torch. `starter/stair-down-side` has landed;
-`starter/stair-down` is imported but wants one more roll; `starter/stair-up` has never been rolled.
+aimed by the room's one exit and lit by its own torch. `default/stair-down-side` has landed;
+`default/stair-down` is imported but wants one more roll; `stair-up` has never been rolled. They are in
+`tiles/default/` already, so every rank draws them.
 The plan is ONE GENERIC SET in `tiles/default/` rather than five per-rank sets, and the whole of it is
 in "Stairways and ward gates" below.
 
@@ -543,9 +544,10 @@ A stairhead draws `stair-up` at the floor's own `entrancePos` and `stair-down` a
 one. The ward GATE is untouched — still the vector `<rect>` and three bars — and is what remains of this
 section's original scope.
 
-**What is painted:** `starter/stair-down-side` (landed, on a rebuild line) and `starter/stair-down`
-(imported, wants one more roll — see the framing law above). `starter/stair-up` has never been rolled.
-Nothing at the other four ranks.
+**What is painted:** `default/stair-down-side` (landed, on a rebuild line) and `default/stair-down`
+(imported, wants one more roll — see the framing law above). `stair-up` has never been rolled. They live
+in `tiles/default/` and every rank draws them.
+
 
 ### One generic set, not five — and the renderer already does it
 
@@ -581,8 +583,8 @@ half the doors in the game.
 
 1. **Roll `starter/stair-down` once more** against the re-framed scaffold, and `starter/stair-up` for
    the first time. `yarn repaint` has both.
-2. **Move the three into `tiles/default/`** once they land, so every rank draws them. That is a rename
-   of the files and the rebuild lines; the renderer needs nothing.
+2. **They already live in `tiles/default/`** — an import writes them there, so a roll is drawn at every
+   rank the moment it lands.
 3. **The ward gate**, which is the untouched half of this section: a gate leaf in its jamb, one primitive,
    and the same art-under-marker treatment. Its marker carries a key COLOUR as well as state, so the
    vector stays on top.

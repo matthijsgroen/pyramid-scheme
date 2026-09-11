@@ -103,9 +103,16 @@ landed. `prop-pipeline.md` has the numbers.
 The way down a floor, drawn at last. `prim_stair` builds both: `--contents=up` climbs away between its
 parapets, `--contents=down` cuts into the paving with three treads and a cresset at its mouth. The
 renderer draws them on any stairhead and mirrors in x for a west-facing one, so **one file serves all four
-facings** and a rank costs two repaints rather than eight.
+facings**.
 
-These two are the merchant's. If they land, the other four ranks are the same pair in their own stone.
+**THESE ARE SHARED, NOT THE MERCHANT'S**: they import to `tiles/default/` and every rank draws them, the
+way the explorer and the sand are shared. Measured on all five floors before that was settled — 61, 123,
+113, 45 and 81 of separation — because a stair is mostly absence and the stone around it is the map's,
+not the sprite's. A rank that reads wrong later overrides one by dropping its own file in; the gods and
+the pharaoh are the two to expect.
+
+They are painted in the MERCHANT's palette all the same, since something had to be chosen and his cellar
+is the plainest stone in the game.
 
 **A STAIRCASE IS THE ONLY HOLE IN THE FLOOR NOW** — the `pit` was retired for exactly this reason
 (tile-art-brief §2), so nothing else in the set may read as a way down. That makes the TREADS the subject:
@@ -154,7 +161,7 @@ Then, once the return is in `~/Downloads`:
 
 ```sh
 scaffold stair --contents=down --shadow=0
-yarn import-tile art/masters/props/starter/stair-down.webp --tier=starter --name=stair-down --slot=prop \
+yarn import-tile art/masters/props/default/stair-down.webp --tier=default --name=stair-down --slot=prop \
   --filter=smooth --mask="$OBJ"
 ```
 
@@ -192,7 +199,7 @@ Then, once the return is in `~/Downloads`:
 
 ```sh
 scaffold stair --contents=up
-yarn import-tile art/masters/props/starter/stair-up.webp --tier=starter --name=stair-up --slot=prop \
+yarn import-tile art/masters/props/default/stair-up.webp --tier=default --name=stair-up --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 

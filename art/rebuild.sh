@@ -343,8 +343,16 @@ yarn import-tile art/masters/surfaces/sand.webp --tier=default --name=sand --slo
 
 # junior — the nobleman
 
-# THE MERCHANT'S STAIRS, and the first tiles of a kind that is not a room's furniture: the map draws
-# them at a stairhead, which is why a hole in the floor means a way down and the `pit` was retired.
+# THE STAIRS, and they are SHARED: `tiles/default/`, drawn at every rank. `tileUrl` falls back
+# <tier>/<name> to default/<name>, the way the explorer and the sand already do, so three files serve
+# all five tombs and a rank overrides one later by dropping its own file in.
+#
+# Measured on every rank's own floor before it was shared: 61, 123, 113, 45 and 81 of separation
+# against slabs from 83 to 161, where 10 is the floor. A stair is mostly ABSENCE — a dark shaft, two
+# or three treads, a small cresset — so the stone that says whose tomb this is surrounds it on the map
+# rather than being in the sprite.
+#
+# They are also why a hole in the floor means a way down and the `pit` was retired.
 #
 # NO --seat on either: a hole casts nothing, exactly as a pit did not.
 #
@@ -353,11 +361,11 @@ yarn import-tile art/masters/surfaces/sand.webp --tier=default --name=sand --slo
 # sheared sprite would be a skew. 0.9 for its top tread, the palest thing in the frame: 7.7% over the
 # light clamp untouched, 2.0% here.
 scaffold stair --contents=down --shadow=0
-yarn import-tile art/masters/props/starter/stair-down.webp --tier=starter --name=stair-down --slot=prop \
+yarn import-tile art/masters/props/default/stair-down.webp --tier=default --name=stair-down --slot=prop \
   --filter=smooth --mask="$OBJ"
 
 scaffold stair --contents=down-side --shadow=0
-yarn import-tile art/masters/props/starter/stair-down-side.webp --tier=starter --name=stair-down-side --slot=prop \
+yarn import-tile art/masters/props/default/stair-down-side.webp --tier=default --name=stair-down-side --slot=prop \
   --filter=smooth --mask="$OBJ" --brightness=0.9
 
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
