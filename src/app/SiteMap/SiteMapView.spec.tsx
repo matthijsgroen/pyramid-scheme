@@ -1064,13 +1064,14 @@ describe("a staircase is drawn as the flight it is", () => {
     expect(marker?.getAttribute("opacity")).toBe(String(NODE_OVER_ART_OPACITY))
   })
 
-  it("draws nothing extra at a rank with no flight painted, so the marker carries the node alone", () => {
-    // Absent art is the normal state of four ranks out of five, and it must look exactly as it did.
+  it("draws the same flight at a rank with no stair art of its own", () => {
+    // The flights live in `tiles/default/`, the way the explorer and the sand do, so a rank that has
+    // painted none of its own still shows one: `tileUrl` falls back <tier>/<name> to default/<name>.
     const grid = { ...stairGrid("exit"), difficulty: "wizard" as const }
     const { container } = render(<SiteMapView grid={grid} revealAllCells />)
-    expect(stairsIn(container)).toHaveLength(0)
-    const marker = container.querySelector<SVGGElement>("g[opacity]")
-    expect(marker?.getAttribute("opacity")).toBe("1")
+    const drawn = stairsIn(container)
+    expect(drawn).toHaveLength(1)
+    expect(drawn[0].getAttribute("href")).toContain("default/")
   })
 })
 

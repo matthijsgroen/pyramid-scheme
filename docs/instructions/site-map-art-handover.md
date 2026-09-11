@@ -19,9 +19,8 @@ master byte for byte. Run that last one after touching `renderProp.py` or `impor
 check that catches a geometry change silently invalidating a master.
 
 **THE STAIRS ARE THE LIVE WORK, and they are half done** — the map draws a flight at a stairhead now,
-aimed by the room's one exit and lit by its own torch. `default/stair-down-side` has landed;
-`default/stair-down` is imported but wants one more roll; `stair-up` has never been rolled. They are in
-`tiles/default/` already, so every rank draws them.
+aimed by the room's one exit and lit by its own torch. `default/stair-down` and `default/stair-down-side` have both landed; `stair-up` has never been rolled.
+They are in `tiles/default/`, so every rank draws them.
 The plan is ONE GENERIC SET in `tiles/default/` rather than five per-rank sets, and the whole of it is
 in "Stairways and ward gates" below.
 
@@ -46,7 +45,7 @@ two figures and five wall items were written down already; their ten chamber pro
 beside them, on primitives every other rank had already proved. Only `wizard/crystal` still needs
 geometry.
 
-**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 62 entries, which is
+**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 61 entries, which is
 everything left in the whole set bar one primitive, and none of it needs Blender again.
 
 **Read `yarn art-census`, not this paragraph.** The count below is a snapshot and every summary of it in
@@ -57,7 +56,7 @@ this file has drifted at least once.
 ### The three files that run the work
 
 - **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
-  attach and the import line to run afterwards. 62 entries: the priest, the merchant's two stairs, the pharaoh, the gods, the shared scatter and conditions, and nineteen patron variants. `yarn repaint <key>`
+  attach and the import line to run afterwards. 61 entries: the priest, the merchant's two stairs, the pharaoh, the gods, the shared scatter and conditions, and nineteen patron variants. `yarn repaint <key>`
   copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
   Entries are DELETED as they land, so the file's length is the backlog.
 - **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
@@ -206,7 +205,7 @@ where a purpose has two wall items to choose between.
 API bills per image, so the paste is done by hand and the tooling only saves the searching.
 
 ```sh
-yarn repaint                  # the 62 keys still owed
+yarn repaint                  # the 61 keys still owed
 yarn repaint master/mask      # prompt to the clipboard, both attachments revealed in the Finder
 # attach the two, paste, generate, download to ~/Downloads
 ```
@@ -270,7 +269,7 @@ carries it:
   back in a `decorations` pool — a chest that opens and a chest that is furniture cannot be the same
   picture, which is the whole reason it left the pools.
 
-1. **Work the queue** — 62 entries and every one is a paste rather than a modelling job. `yarn repaint`
+1. **Work the queue** — 61 entries and every one is a paste rather than a modelling job. `yarn repaint`
    lists them GROUPED BY RANK, poorest tomb first, which is how a rank actually gets finished and how
    the material reference stays the same between pastes.
 
@@ -544,9 +543,8 @@ A stairhead draws `stair-up` at the floor's own `entrancePos` and `stair-down` a
 one. The ward GATE is untouched — still the vector `<rect>` and three bars — and is what remains of this
 section's original scope.
 
-**What is painted:** `default/stair-down-side` (landed, on a rebuild line) and `default/stair-down`
-(imported, wants one more roll — see the framing law above). `stair-up` has never been rolled. They live
-in `tiles/default/` and every rank draws them.
+**What is painted:** `default/stair-down` and `default/stair-down-side`, both on rebuild lines in
+`tiles/default/`. `stair-up` has never been rolled, and it is half the stairheads in the game.
 
 
 ### One generic set, not five — and the renderer already does it
@@ -634,11 +632,14 @@ painting bad: both were CLOSE-UPS. The scaffold had a tall cresset beside a low 
 fitted the torch and the hole sat in the middle third — and a painter handed that draws the stairs, not
 the empty half. The mask then kept thin bars where the paint had shaft.
 
-Widening the opening to 0.98 x 0.74 and shrinking the cresset to 0.68 of its height made the hole the
-subject, and re-importing the SAME master against the new mask took it from one tread visible to two.
-The rest is a roll. `_stair_torch` takes that scale as an argument rather than being edited in place:
-the flight that walks across was painted over the full-height cresset and a painted tile's mask can
-never move.
+**And the way out was to move the MODEL, which is the opposite of everything else in this file.** The
+third roll never happened: the FIRST painting was the best of them, so the geometry was tuned to it
+instead — opening 0.98 x 0.92, treads spread to a 0.17 going, cresset at 1.35 — and the same master went
+from one tread visible to two with its torch lit. A mask is ours to change and a return is not, so where
+a painting is good and the alignment is wrong, move the mask.
+
+`_stair_torch` takes its scale as an argument rather than being edited in place, because the flight that
+walks ACROSS was painted over the full-height cresset and a painted tile's mask can never move.
 
 **A TORCH AT THE MOUTH IS WHAT MOTIVATES THE FALLOFF.** Graded treads on their own are shading nobody
 asked for; a cresset beside the opening makes the top tread the one the light reaches and every one

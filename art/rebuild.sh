@@ -347,8 +347,15 @@ yarn import-tile art/masters/surfaces/sand.webp --tier=default --name=sand --slo
 # <tier>/<name> to default/<name>, the way the explorer and the sand already do, so three files serve
 # all five tombs and a rank overrides one later by dropping its own file in.
 #
-# Measured on every rank's own floor before it was shared: 61, 123, 113, 45 and 81 of separation
-# against slabs from 83 to 161, where 10 is the floor. A stair is mostly ABSENCE — a dark shaft, two
+# Measured on every rank's own floor before it was shared: 49, 111, 101, 33 and 69 of separation
+# against slabs from 83 to 161, where 10 is the floor.
+#
+# THE GEOMETRY WAS TUNED TO THE PAINTING, not the other way round, which is the opposite of every
+# other line in this file and is why it is written down. Two re-rolls came back as CLOSE-UPS because
+# the scaffold framed a tall cresset beside a low opening; the third kept the first roll's painting
+# and moved the model to meet it — opening 0.98 x 0.92, treads spread to a 0.17 going, cresset at
+# 1.35. A mask is ours to change while a return is not, and the first roll was the best picture of
+# the three. A stair is mostly ABSENCE — a dark shaft, two
 # or three treads, a small cresset — so the stone that says whose tomb this is surrounds it on the map
 # rather than being in the sprite.
 #
@@ -367,6 +374,17 @@ yarn import-tile art/masters/props/default/stair-down.webp --tier=default --name
 scaffold stair --contents=down-side --shadow=0
 yarn import-tile art/masters/props/default/stair-down-side.webp --tier=default --name=stair-down-side --slot=prop \
   --filter=smooth --mask="$OBJ" --brightness=0.9
+
+# The flight CLIMBING away, between its parapets, and the one stair that seats: it stands on the floor
+# rather than being cut into it.
+#
+# 0.7, and SHARED ART IS WHY IT IS THAT LOW. Whitewashed mudbrick is nearly the merchant's own slab —
+# untouched it measured FOUR from his floor, which tile-stats refuses outright, and 14.2% over his light
+# clamp. A tile drawn at every rank has to clear the darkest floor in the game as well: the pharaoh's
+# slab is 83, so the sweep was read on his too. At 0.7 the five ranks measure 33, 95, 85, 17 and 53.
+scaffold stair --contents=up
+yarn import-tile art/masters/props/default/stair-up.webp --tier=default --name=stair-up --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.7
 
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
 # replaces was a post-processing copy whose flags could not be recovered (art/README).

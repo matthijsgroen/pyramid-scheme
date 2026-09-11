@@ -1507,7 +1507,7 @@ def prim_stair():
     """
     k = 0.7
     if arg("contents") == "down":
-        w, d = 0.98, 0.74  # the opening
+        w, d = 0.98, 0.92  # the opening
         hv = k * d
         # The shaft behind the steps: the far wall alone, filling the drawn opening, marked VOID so it
         # renders near-black before any paint reaches it.
@@ -1519,8 +1519,8 @@ def prim_stair():
             # Three values, one per tread: paving, stone in shade, and then the shaft's own dark, so the
             # last step is already going out of sight. That falloff is what a hole cannot get from the
             # lamp — its walls stand in the y-z plane and draw as lines, so no light reaches down it.
-            mark(box(w - 0.10, 0.14, 0.05, y=(d / 2) - 0.16 - i * 0.14, z=-0.06 - i * 0.10), ("body", "deep", VOID)[i])
-        _stair_torch(-(w / 2) + 0.02, (d / 2) - 0.04, scale=0.68)
+            mark(box(w - 0.10, 0.17, 0.05, y=(d / 2) - 0.19 - i * 0.17, z=-0.06 - i * 0.13), ("body", "deep", VOID)[i])
+        _stair_torch(-(w / 2) + 0.02, (d / 2) - 0.10, scale=1.35)
         return join_all()
 
     if arg("contents") == "down-side":
@@ -1542,6 +1542,26 @@ def prim_stair():
                 ("body", "deep", VOID)[i],
             )
         _stair_torch((w / 2) - 0.02, (d / 2) - 0.04)
+        return join_all()
+
+    if arg("contents") == "up-side":
+        # CLIMBING ACROSS, for a stairhead entered from the east or the west, and the mirror of it
+        # serves the other side. The going runs in X, where width is drawn honestly, so the flight
+        # reads as a staircase seen from the side — the one arrangement in this projection that shows a
+        # stair's profile at all. The rise still draws vertically, so tread and riser alternate the way
+        # they do climbing away.
+        #
+        # The parapets run along X too, one behind the flight and one in front of it. Under z + k*y the
+        # back one draws HIGHER than the treads and the front one LOWER, which is what boxes the flight
+        # in — a parapet at either END would be two vertical bars and say nothing.
+        going, rise, w = 0.17, 0.10, 0.30
+        for i in range(5):
+            h = 0.06 + i * rise
+            mark(box(going, w, h, x=-0.34 + i * going, y=0.0, z=h / 2), "body")
+        # ONE parapet, at the BACK. The front one drew lower than everything it was meant to frame and
+        # laid a pale band across the flight; behind it, it draws higher and reads as the wall the stair
+        # is cut against.
+        mark(box(going * 5.4, 0.10, 0.30, x=-0.34 + going * 2, y=(w / 2) + 0.05, z=0.15), "body")
         return join_all()
 
     # Climbing away between its parapets. Five treads, each set back and up; the top faces are the whole

@@ -489,9 +489,8 @@ const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficul
         // instead, and west is that one mirrored. Absent art falls back to the toward-viewer flight, so
         // a rank with one file still draws all four facings.
         const sideways = cell.dirs.has("e") || cell.dirs.has("w")
-        const url = goesUp
-          ? tileUrl(tier, "stair-up")
-          : ((sideways ? tileUrl(tier, "stair-down-side") : undefined) ?? tileUrl(tier, "stair-down"))
+        const side = sideways ? tileUrl(tier, goesUp ? "stair-up-side" : "stair-down-side") : undefined
+        const url = side ?? tileUrl(tier, goesUp ? "stair-up" : "stair-down")
         if (!url) continue
         const mirrored = cell.dirs.has("w") && !cell.dirs.has("e")
         out.push({

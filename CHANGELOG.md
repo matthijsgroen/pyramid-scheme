@@ -204,8 +204,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   cedar posts before the shrine. His linen is fine enough to see the wall through — the temple's cloth is
   thinner than anyone else's, and where it gathers into a fold it thickens.
 - A staircase is drawn as the flight it is: steps going down into the dark with a torch burning at the
-  mouth, and its light falling on the floor beside it. One turned across the passage for a stair entered
-  from the side.
+  mouth and its light falling on the floor beside it, or climbing away between whitewashed parapets where
+  it leads back up. A stair entered from the side is turned across the passage, so it always faces the
+  way you came from. The same flights are cut into every tomb, whatever its stone.
 - The priest's chambers hold his own furniture now: an altar with a libation channel worn into it, four
   canopic jars under their human, baboon, jackal and falcon heads, his cedar relic box with its seal
   unbroken, his corded coffin with its arms

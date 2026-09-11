@@ -98,59 +98,37 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Stairs — two, and they are a NEW kind
+## Stairs — one, and it is SHARED art
 
-The way down a floor, drawn at last. `prim_stair` builds both: `--contents=up` climbs away between its
-parapets, `--contents=down` cuts into the paving with three treads and a cresset at its mouth. The
-renderer draws them on any stairhead and mirrors in x for a west-facing one, so **one file serves all four
-facings**.
+Three of the four flights are painted and live in `tiles/default/`, drawn at every rank: `stair-down`,
+`stair-down-side` and `stair-up`. This is the fourth — the climb entered from the SIDE — and with it a
+stairhead reads right from all four approaches, since west is east mirrored.
 
-**THESE ARE SHARED, NOT THE MERCHANT'S**: they import to `tiles/default/` and every rank draws them, the
-way the explorer and the sand are shared. Measured on all five floors before that was settled — 61, 123,
-113, 45 and 81 of separation — because a stair is mostly absence and the stone around it is the map's,
-not the sprite's. A rank that reads wrong later overrides one by dropping its own file in; the gods and
-the pharaoh are the two to expect.
-
-They are painted in the MERCHANT's palette all the same, since something had to be chosen and his cellar
-is the plainest stone in the game.
-
-**A STAIRCASE IS THE ONLY HOLE IN THE FLOOR NOW** — the `pit` was retired for exactly this reason
-(tile-art-brief §2), so nothing else in the set may read as a way down. That makes the TREADS the subject:
-they are what says walkable rather than shaft.
-
-### `starter/stair-down` — steps into the dark, a torch at the mouth
+### `default/stair-up-side` — a flight climbing across the passage
 
 **Attach:**
 
-1. `~/tile-previews/stair-down-starter.png` — the scaffold
+1. `~/tile-previews/stair-up-side-starter.png` — the scaffold
 2. `~/tile-previews/starter-plain.png` — the material reference
 
 ```
 A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a STAIRCASE going down through the floor of a cellar. The wide dark rectangle is the SHAFT
-the steps go into, and it fills most of the picture. The three bands across it are TREADS: the top one is
-paving, level with the floor and lit; the one under it is in shade; the lowest is nearly lost in the
-dark. The small post at the upper LEFT, clear of the opening, is a TORCH — a plain iron cresset on a
-spike. It is SMALL: the whole torch is about a fifth of the picture's height, and its flame is a
-thumbnail of orange sitting in the bowl, not above it.
+The object: a STAIRCASE going up, seen from the side, climbing to the RIGHT. The five pale squares are the
+TREADS, each one a step higher than the one before it; the dark faces below and between them are the
+RISERS. The long mass behind the flight is the WALL the stair is cut against, and it runs the whole
+length of it.
 
-Cut through trodden earth over limestone chips. The treads are re-used limestone slabs, chipped at their
-front edges where feet land, gritty and pale at the top and going grey and then almost black as they
-descend. Dust and chips have collected in the angle of each step.
+Re-used limestone slabs over mudbrick: the treads worn hollow in their middles and chipped along their
+front edges, the mortar between them crumbling, grit collected in the angle of every step. The wall
+behind is mudbrick under flaking whitewash, rubbed brown where hands and shoulders have passed.
 
-THE DARK IS DEPTH, not a panel. What is below the lowest tread is the shaft going on down past what the
-picture shows: a warm near-black with nothing drawn in it, never a floor, a wall or a back board.
+EACH TREAD IS LIGHTER THAN THE RISER UNDER IT, which is what makes a flight read as climbing rather than
+as a course of masonry. Keep that difference on every step and do not even the value out.
 
-The torch is dull black iron, its flame a small low orange with no glow, no bloom and no rays. It lights
-the top tread and the edge of the opening nearest it and nothing else — the light falls off within a
-hand's width, and no light reaches the bottom of the shaft.
-
-EVERYTHING KEEPS THE SIZE AND PLACE IT HAS IN THE REFERENCE, and this is the one the last two rolls got
-wrong: do not zoom in, do not crop, do not enlarge the hole and do not shift a tread. Each tread is
-painted over the band that is already there, the torch over the post that is already there, and its
-flame inside the bowl that is already there. Paint no floor around the opening: what is outside it is
-background.
+EVERYTHING KEEPS THE SIZE AND PLACE IT HAS IN THE REFERENCE: do not zoom in, do not crop, and paint each
+tread over the square that is already there. The flight goes up out of the picture at the right, so
+nothing is drawn past the top step.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -160,47 +138,9 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold stair --contents=down --shadow=0
-yarn import-tile art/masters/props/default/stair-down.webp --tier=default --name=stair-down --slot=prop \
-  --filter=smooth --mask="$OBJ"
-```
-
-### `starter/stair-up` — a flight climbing between its parapets
-
-**Attach:**
-
-1. `~/tile-previews/stair-up-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a STAIRCASE going up, away from you, cut between two walls. The five pale bands are TREADS,
-each one a step higher than the one in front of it; the darker bands between them are the RISERS. The
-blocks running up either side are the PARAPETS, low walls the flight is cut between, and they step up
-with it.
-
-Re-used limestone slabs over mudbrick, the treads worn hollow in their middles and chipped along their
-front edges, the mortar between them crumbling. The parapets are mudbrick under flaking whitewash, rubbed
-brown along their tops where hands have passed.
-
-EACH TREAD IS LIGHTER THAN THE RISER UNDER IT, which is what makes the flight read as climbing rather
-than as a course of masonry; keep that difference on every step and do not even the value out.
-
-The top of the flight goes up out of the picture into the dark, so the last riser is the deepest shade in
-it. Nothing is drawn above the top tread.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's cellar, Egyptian New Kingdom: mudbrick, limestone chips, timber and reed. Dark grey-brown stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold stair --contents=up
-yarn import-tile art/masters/props/default/stair-up.webp --tier=default --name=stair-up --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+scaffold stair --contents=up-side
+yarn import-tile art/masters/props/default/stair-up-side.webp --tier=default --name=stair-up-side --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.7
 ```
 
 ## Priest — three
