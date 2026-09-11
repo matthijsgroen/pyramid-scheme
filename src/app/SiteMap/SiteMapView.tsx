@@ -41,10 +41,11 @@ import {
 import { NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP, nodeArtOffset } from "./nodeArt"
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
 import { moodFor } from "./moodSettings"
+import { cellAt, isClaimableNeighbor } from "@/game/roomFootprint"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
 import { companionFor } from "./companionProps"
-import { ART_IMAGE_RENDERING, PATRON_KINDS, patronTileUrl, tileUrl, tileVariants } from "./tileAssets"
+import { ART_IMAGE_RENDERING, patronTileUrl, tileUrl, tileVariants } from "./tileAssets"
 import {
   ALL_STATES,
   buildTileRegions,
@@ -59,7 +60,6 @@ import type { FloorAt, TileRegions } from "./tileRegions"
 // Cells one step outside the grid are still real void for claiming purposes — a fork or
 // endpoint sitting on the map's edge shouldn't look artificially clipped next to one
 // that happens to have interior void around it. Anything beyond the grid is `empty`.
-const cellAt = (grid: FloorGrid, r: number, c: number): GridCell => grid.cells[r]?.[c] ?? { type: "empty" }
 
 type Props = {
   grid: FloorGrid
@@ -631,24 +631,6 @@ const DIAGONAL_OFFSETS: ReadonlyArray<{
   },
 ]
 
-// A neighbor is claimable if it's genuine void (`empty`), or — the one exception — a
-// single corridor tile that only exists to *approach* a gate: either a real gate room
-// two steps away (revealed), or a corridor stub whose far side got masked to `empty`
-// because it leads into an undetected hidden section. Either way that corridor tile
-// reads better as the junction's own doorway than as a separate hallway segment.
-// Diagonal neighbors can only ever be void — a real edge is never diagonal.
-const isClaimableNeighbor = (grid: FloorGrid, ownerR: number, ownerC: number, nr: number, nc: number): boolean => {
-  const cell = cellAt(grid, nr, nc)
-  if (cell.type === "empty") return true
-  if (cell.type !== "corridor") return false
-  const dr = nr - ownerR,
-    dc = nc - ownerC
-  if (Math.abs(dr) + Math.abs(dc) !== 1) return false
-  const beyond = grid.cells[ownerR + dr * 2]?.[ownerC + dc * 2]
-  const leadsToGate = beyond?.type === "room" && !!beyond.tags?.includes("gate")
-  return leadsToGate || cell.dirs.size === 1
-}
-
 const OFFSET_TO_DIR: Record<string, Direction> = { "-1,0": "n", "1,0": "s", "0,-1": "w", "0,1": "e" }
 const edgeKey = (r1: number, c1: number, r2: number, c2: number): string => {
   const a = `${r1},${c1}`,
@@ -799,22 +781,28 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
     const [r, c] = cellKey.split(",").map(Number)
     return cellAt(grid, r - 1, c).type === "empty"
   }
+  // ON THE MAP, not off the edge of it. A claim takes out-of-bounds cells too — the renderer reads
+  // beyond the grid as void — so an edge room's own furniture could stand in the margin outside the
+  // floor, which is where the Temple of Bastet put its statue of her. Inside first, and the
+  // wall-behind preference decides among what is left.
+  const onGrid = (key: string): boolean => {
+    const [r, c] = key.split(",").map(Number)
+    return r >= 0 && c >= 0 && r < grid.rows && c < grid.cols
+  }
   const decorationAt = new Map<string, DecorationKind>()
   const roomsForCompanion: { ownerKey: string; leader: DecorationKind; free: string[] }[] = []
   for (const [ownerKey, candidates] of ownerPropCandidates) {
     const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
     const owner = grid.cells[ownerRow]?.[ownerCol]
     if (owner?.type !== "room" || !owner.decoration) continue
-    const taken = candidates.find(wallBehind) ?? candidates[0]
+    const inside = candidates.filter(onGrid)
+    const usable = inside.length ? inside : candidates
+    const taken = usable.find(wallBehind) ?? usable[0]
     decorationAt.set(taken, owner.decoration)
-    // THE GOD'S ROOM, recognised rather than recorded: the assembler gives one room per floor of a
-    // dedicated site both a god-bearing prop and a god-bearing wall item, and no other room is dressed
-    // that way. So the pairing IS the flag, and no field had to be added to the cell for it.
-    const shrine =
-      grid.patron !== undefined &&
-      PATRON_KINDS.has(owner.decoration) &&
-      owner.wallDecoration !== undefined &&
-      PATRON_KINDS.has(owner.wallDecoration)
+    // THE GOD'S ROOM is written on the cell by the assembler (RoomCell.patronRoom). It used to be
+    // inferred from prop and wall item both being patron kinds, which is unreachable at a rank whose
+    // wall pool holds nothing a god can appear on — the merchant hangs a goods niche and a tally board.
+    const shrine = owner.patronRoom === true
     roomsForCompanion.push({
       ownerKey,
       leader: owner.decoration,
@@ -830,7 +818,12 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
     grid.siteId,
     roomsForCompanion,
     kind => !!tileUrl(grid.difficulty ?? "starter", kind),
-    free => free.find(wallBehind) ?? free[0]
+    // Same rule as the leader: on the map first, then the wall-behind preference.
+    free => {
+      const inside = free.filter(onGrid)
+      const usable = inside.length ? inside : free
+      return usable.find(wallBehind) ?? usable[0]
+    }
   )) {
     decorationAt.set(key, kind)
   }

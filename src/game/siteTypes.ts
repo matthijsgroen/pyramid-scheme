@@ -175,6 +175,16 @@ export type RoomCell = {
   stairId?: string
   decoration?: DecorationKind
   wallDecoration?: WallDecorationKind
+  /**
+   * THE GOD'S ROOM on a dedicated floor: the biggest chamber, dressed with a statue of him and paired.
+   *
+   * It used to be inferred — prop AND wall item both being patron kinds — which needed no field and
+   * worked at every rank that hangs something a god can appear on. The merchant hangs a goods niche and
+   * a tally board, so at his rank the inference can never be true, and the Temple of Bastet's main hall
+   * stood a statue beside a sarcophagus instead of beside a second statue. A room the assembler CHOSE is
+   * a fact about that room, not something to re-derive from what it happens to be wearing.
+   */
+  patronRoom?: boolean
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 

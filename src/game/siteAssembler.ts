@@ -15,6 +15,7 @@ import type {
   WallDecorationKind,
   Difficulty,
 } from "./siteTypes"
+import { footprintSize } from "./roomFootprint"
 import type { ResolveBoardIndex } from "./seeds/boardIndex"
 import { validateSite } from "./siteValidator"
 import { rolesOfProp, rolesOfWallItem } from "./dressingTags"
@@ -1574,17 +1575,52 @@ export const assembleFloor = (
      * given to the god, so a dedicated site shows him once wherever you are in it, and the cost is
      * exactly one room per floor rather than a shifted distribution across every rank.
      *
-     * WHICH room is chosen by hash rather than by position, so it is stable, spread, and not always the
-     * entrance fork. Only rooms whose own pool can carry a patron are eligible — a section that never
-     * offered a statue is not made to.
+     * WHICH room is THE BIGGEST ONE, and that is the whole point of a temple. A god given a random
+     * eligible room lands in a side pocket as often as not, and a dedication the player walks past in a
+     * cupboard while the hall next door holds jars is not a dedication. So the eligible rooms are ranked
+     * by how much floor they will draw — the free cells around them, which is the footprint the renderer
+     * claims (`canClaimVoid`: a room takes the free part of its own 3x3) — and the god takes the largest.
+     * Hash only breaks ties, so the choice stays stable and spread between floors of the same size.
+     *
+     * Size earns its keep twice: the biggest room is also the one most likely to have two spare cells,
+     * which is what `companionProps` needs before it can stand the god's SECOND statue beside the first.
+     * A pair flanking a wall reads as a shrine; one statue in a corner reads as furniture.
+     *
+     * Only rooms whose own pool can carry a patron are eligible — a section that never offered a statue
+     * is not made to.
      */
     const patronRooms = new Set<string>()
     if (config.patron !== undefined && PATRON_PER_FLOOR > 0) {
+      // The grid as it stands, so rooms can be ranked by the floor they will DRAW. `footprintSize` is
+      // the renderer's own claim rule, kept in the domain precisely so both sides answer this the same.
+      const claimGrid: FloorGrid = {
+        cells: cells2D,
+        rows: N,
+        cols: N,
+        entrancePos: [entR, entC],
+        exitPos: [exR, exC],
+        siteId,
+        staircases: {},
+      }
+      const rowCol = (pk: string): [number, number] => {
+        const [r, c] = pk.split(",").map(Number)
+        return [r, c]
+      }
       const eligible = dressedPositions
         .filter(pk => (cellDressing.get(pk)?.props ?? []).some(k => PATRON_KINDS.has(k)))
+        // NOT THE ENTRANCE, and not the stair down. A portal is a doorway the player passes through
+        // twice, and its footprint is mostly the margin outside the grid — a pair of statues there reads
+        // as a porch rather than as the room the tomb was dug for. The god takes a CHAMBER.
+        .filter(pk => {
+          const [r, c] = rowCol(pk)
+          const cell = cells2D[r][c]
+          return cell.type === "room" && cell.roomType !== "portal"
+        })
         .sort(
           (a, b) =>
-            hashString(`${siteId}:patronPick:${a}`) - hashString(`${siteId}:patronPick:${b}`) || a.localeCompare(b)
+            footprintSize(claimGrid, ...rowCol(b)) - footprintSize(claimGrid, ...rowCol(a)) ||
+            hashString(`${siteId}:patronPick:${a}`) - hashString(`${siteId}:patronPick:${b}`) ||
+            a.localeCompare(b)
         )
       for (const pk of eligible.slice(0, PATRON_PER_FLOOR)) patronRooms.add(pk)
     }
@@ -1593,7 +1629,15 @@ export const assembleFloor = (
       const pools = cellDressing.get(pk)
       // In a guaranteed room the pool is narrowed to what a god can appear on, and the same hash then
       // chooses among those — so which god-bearing kind it is still varies from room to room.
-      const propPool = patronRooms.has(pk) ? pools?.props?.filter(k => PATRON_KINDS.has(k)) : pools?.props
+      //
+      // A STATUE FIRST, where the pool has one. The five patron kinds are not equal at this job: a
+      // statue IS the god standing in the room, where a shrine is a cabinet that might hold him and a
+      // mask is a thing on a wall. The god's own room takes the figure and leaves the rest to the rooms
+      // around it — and because `companionProps` pairs whatever this room draws, choosing the statue is
+      // also what puts TWO of them in the biggest chamber on the floor.
+      const patronProps = pools?.props?.filter(k => PATRON_KINDS.has(k))
+      const godProps = patronProps?.includes("statue") ? (["statue"] as DecorationKind[]) : patronProps
+      const propPool = patronRooms.has(pk) ? godProps : pools?.props
       const decoration = pickDressing(propPool, pk, "decoration")
       // THE GOD'S ROOM TAKES A GOD'S WALL ITEM TOO, where its pool has one. Prop and wall both being
       // patron kinds is also the SIGNAL the renderer reads to find this room — it needs no new field on
@@ -1614,6 +1658,8 @@ export const assembleFloor = (
           ...owner,
           ...(decoration ? { decoration } : {}),
           ...(wallDecoration ? { wallDecoration } : {}),
+          // Written down rather than inferred from the pairing — see RoomCell.patronRoom.
+          ...(patronRooms.has(pk) && decoration ? { patronRoom: true } : {}),
         }
       }
     }
