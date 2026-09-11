@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   pocket as often as the hall — and sometimes as a cabinet rather than a figure.
 - Furniture stands on the map. A room at the edge of the grid could put its statue in the margin
   outside the floor, where it read as standing in the dark beyond the wall.
+- A hole in the floor is a way down and nothing else. Rooms no longer hold a decorative shaft you cannot
+  climb into — it was the same picture as a staircase, and in seven rooms the two stood side by side.
 - Junction rooms are furnished. A pyramid only dressed the rooms on its side paths, so the big chambers
   where passages meet stood empty in every tomb in the game — the first floor of the Temple of Bastet
   had five of its ten chambers bare. Nothing moved: the rooms that were furnished are furnished the same.

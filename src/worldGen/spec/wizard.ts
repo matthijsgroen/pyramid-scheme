@@ -66,7 +66,6 @@ export const wizardRules: Rule[] = [
       "shrine",
       "sarcophagus",
       "pillar",
-      "pit",
       "crystal",
     ],
     // the gods': a shaft looking out on the night, a crystal bracket, a shrine of light.

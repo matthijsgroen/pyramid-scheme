@@ -185,3 +185,23 @@ describe("a prop stands against a wall", () => {
     expect(f.open / f.props).toBeLessThan(0.3)
   }, 30000)
 })
+
+describe("a hole and a way down are not the same room", () => {
+  // A `pit` is a shaft cut in the floor; a staircase is a way to the floor below. Drawn in one room they
+  // say the same thing and only one of them is real — the player can take the stair and cannot take the
+  // pit. Seven rooms in the world stood one beside the other before this.
+  it("never stands a pit in a room that holds a staircase", () => {
+    const offenders: string[] = []
+    for (const [siteId, levels] of Object.entries(generatedWorldConfigs)) {
+      levels.flat().forEach((floor, i) => {
+        const result = assembleFloor(`${siteId}:${i}`, floor, 7)
+        if (!result.success) return
+        for (const [r, row] of result.grid.cells.entries())
+          for (const [c, cell] of row.entries())
+            if (cell.type === "room" && cell.stairId && cell.decoration === "pit")
+              offenders.push(`${siteId} floor ${i} (${r},${c})`)
+      })
+    }
+    expect(offenders).toEqual([])
+  }, 30000)
+})

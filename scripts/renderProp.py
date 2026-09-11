@@ -1418,6 +1418,12 @@ def prim_pit():
     of the rim. `prim_lamp`'s spout rule, one axis over: nothing may point at the viewer, and nothing
     may run away from him. So the ladder hangs from a pole laid ACROSS the mouth, along X.
 
+    `--contents=plain` LEAVES THE WAY DOWN OUT, and that is a rule about meaning rather than about
+    modelling: a staircase is a way to the floor below and the player can take it, where a pit is
+    scenery they cannot. A hole with a ladder in it makes the same offer a stairwell makes, and only
+    one of the two is real. The SPOIL carries the reading on its own — it already lies over the near
+    lip and the corners, which is what says "opening" rather than "dark rectangle".
+
     NO FOOTPRINT. Import this with --shadow=0 and no --seat: `make_shadow` flattens the object to z=0
     and pushes it toward the viewer, so a pit's footprint is a second dark parallelogram lying in front
     of the first one, and the tile reads as two holes. A hole casts nothing."""
@@ -1436,6 +1442,8 @@ def prim_pit():
         (0.18, 0.12, 0.57, -0.10, -58),
     ):
         mark(tilt(box(sx, sy, 0.08, x=x, y=y, z=0.04), yaw, "Z"), "body")
+    if arg("contents") == "plain":
+        return join_all()
     # The pole laid across the far lip, and the ladder over it. Coarse on purpose — at 56 units across
     # the opening a rope of 0.03 is two pixels and the ladder becomes a smudge.
     rope_y = (d - 0.05) / 2 - 0.055

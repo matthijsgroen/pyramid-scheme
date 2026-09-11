@@ -1648,7 +1648,23 @@ export const assembleFloor = (
       const patronProps = pools?.props?.filter(k => PATRON_KINDS.has(k))
       const godProps = patronProps?.includes("statue") ? (["statue"] as DecorationKind[]) : patronProps
       const propPool = patronRooms.has(pk) ? godProps : pools?.props
-      const decoration = pickDressing(propPool, pk, "decoration")
+      const picked = pickDressing(propPool, pk, "decoration")
+      // NO HOLE BESIDE A WAY DOWN. A `pit` is a shaft cut in the floor and a staircase is a way to the
+      // floor below, so the two say the same thing in the same room and only one of them is real — the
+      // player can take the stair and cannot take the pit. Re-picked rather than filtered out of the
+      // pool: dropping a kind would change the pool's LENGTH and with it every stairhead's furniture,
+      // where this moves the seven rooms that actually collided.
+      const [pr, pc] = pk.split(",").map(Number)
+      const pitCell = cells2D[pr][pc]
+      const besideStair = pitCell.type === "room" && pitCell.roomType === "portal" && pitCell.stairId !== undefined
+      const decoration =
+        picked === "pit" && besideStair
+          ? pickDressing(
+              propPool?.filter(k => k !== "pit"),
+              pk,
+              "decoration:not-a-pit"
+            )
+          : picked
       // THE GOD'S ROOM TAKES A GOD'S WALL ITEM TOO, where its pool has one. Prop and wall both being
       // patron kinds is also the SIGNAL the renderer reads to find this room — it needs no new field on
       // the cell, and a room dressed that way is the god's by construction rather than by a flag.

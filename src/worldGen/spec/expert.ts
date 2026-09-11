@@ -118,7 +118,6 @@ export const expertRules: Rule[] = [
       "pillar",
       "brazier",
       "rubblePile",
-      "pit",
       "mat",
     ],
     // a priest's wing: the veil before the shrine, a wall shrine, a hanging lamp.

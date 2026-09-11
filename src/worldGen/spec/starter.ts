@@ -45,7 +45,6 @@ export const starterRules: Rule[] = [
       "pillar",
       "brazier",
       "rubblePile",
-      "pit",
       "mat",
     ],
     // a merchant hangs inventory: a niche of goods and the tally board beside it.

@@ -910,7 +910,7 @@ yarn import-tile art/masters/props/master/shelf.webp --tier=master --name=shelf 
 ```
 ---
 
-## Gods — seventeen
+## Gods — sixteen
 
 The rank's whole tomb, and the largest block left in the file: two figures, ten chamber props and five
 wall items. It was the biggest gap in the census by a distance — 257 rooms — and until now only the
@@ -1444,51 +1444,6 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold palm --contents=banded --spin=6 --colour=#8fd9bd --floor=#5a8074
 yarn import-tile art/masters/props/wizard/pillar.webp --tier=wizard --name=pillar --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
-### `wizard/pit` — a shaft with no bottom, stars in it
-
-`pit` is the one hole in the set that needs no `--context`: it is full of things that CROSS ITS OWN EDGE —
-a pole over the far lip, a ladder going down, broken lid slabs on the paving outside — and that is what
-makes it read as an opening without the surface having to be drawn.
-
-**Attach:**
-
-1. `~/tile-previews/pit-wizard.png` — the scaffold
-2. `~/tile-previews/wizard-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a HOLE cut through the floor. The near-black rectangle is the SHAFT going down. The raised
-stone edging round it is the KERB. The pole laid across its far lip is a POLE and the ladder over it a
-LADDER going down. The broken slabs lying beside the hole are the pieces of its LID, lifted off and set
-down.
-
-THE SHAFT HAS NO BOTTOM AND IT HAS STARS IN IT. What fills it is NIGHT — a deep blue-black going down
-further than any floor is thick, with small pale STARS scattered in it, fewer and fainter the deeper they
-are. Paint depth in it, never a floor, a wall or a back panel. No pink and no purple in it at all.
-
-The kerb and the lid pieces are polished calcite, cool green-white, seamless and without a tool mark or a
-speck of dust, LIT FROM WITHIN AND FROM BENEATH so the stone is palest along the shaft's rim where it
-meets the night. The pieces are not broken — they are cut clean, and their cut faces are as smooth as
-their tops. The pole and the ladder are the same calcite, thin enough to look faintly translucent.
-
-Any light in this is a flat pale colour. No glow, no bloom, no rays, no highlight.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout. The gods' vault: polished calcite lit from beneath, star-field inlay, seamless stone with no tool marks and no dust at all. Cool green-white, and any light in it is a flat pale colour, never a glow.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold pit --colour=#8fd9bd --floor=#5a8074
-yarn import-tile art/masters/props/wizard/pit.webp --tier=wizard --name=pit --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
