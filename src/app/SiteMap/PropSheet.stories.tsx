@@ -278,6 +278,19 @@ const Sheet: FC<{ tier: Difficulty; zoom: number }> = ({ tier, zoom }) => {
           <Chamber key={kind} tier={tier} name={kind} underfoot zoom={zoom} />
         ))}
       </div>
+      {/* NODE ART: what the map draws at a NODE rather than in a room, so no pool authors it and a list
+          read off the pools cannot contain it — the same blind spot scatter and conditions had. A chest
+          stands beside every treasure room's marker and a flight at every stairhead; the flights are the
+          only tiles in the set drawn for a DIRECTION, so the sheet stages each of them. */}
+      <h2 className="m-0 text-sm text-white/80">
+        {tier} — node art <span className="text-white/40">(drawn at a marker, not authored by any pool)</span>
+      </h2>
+      <div className="flex flex-wrap gap-4">
+        {["chestProp", "stair-down", "stair-down-side", "stair-up"].map(kind => (
+          <Chamber key={kind} tier={tier} name={kind} zoom={zoom} />
+        ))}
+      </div>
+
       {/* CONDITIONS: not per rank at all — one shared sprite per kind, over this rank's own stone. Staged
           here because the whole-floor inspector cannot answer the question these sprites raise: at 20
           units on a 3000-unit map you can confirm they EXIST and nothing more. */}
