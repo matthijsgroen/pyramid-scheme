@@ -66,4 +66,10 @@ export type NodeSprite = {
   y: number
   /** Mirrored in x — how a stair is aimed. A reflection is a real oblique view; a rotation is a skew. */
   mirrored: boolean
+  /** Where this sprite's own flame lands on the floor, in map space, if it carries one.
+   *
+   * AT THE FLAME AND NOT AT THE CELL. A stair's cresset stands at the edge of its mouth, some 24 units
+   * off centre, so a pool laid at the middle of the cell fell under the shaft — the one part of the tile
+   * that is drawn near-black over it — and the torch lit nothing anyone could see. */
+  light?: { x: number; y: number; r: number }
 }

@@ -1107,3 +1107,25 @@ describe("the player is drawn among the furniture, not always over it", () => {
     expect(chest).toBeGreaterThan(explorer)
   })
 })
+
+describe("a stair's torch lights the floor beside it", () => {
+  it("lays the pool at the flame, not at the middle of the cell", () => {
+    // The cresset stands at the edge of the mouth. A pool at the cell's centre fell under the shaft —
+    // the one part of the tile drawn near-black over it — so the torch lit nothing anyone could see.
+    const grid = makeGrid([
+      [empty, portal("reachable", "s1"), empty],
+      [empty, corridor("completed", false), empty],
+    ])
+    const { container } = render(<SiteMapView grid={{ ...grid, entrancePos: [1, 1] }} revealAllCells />)
+    const pools = Array.from(container.querySelectorAll("[data-light-pool]"))
+    expect(pools.length).toBeGreaterThan(0)
+    const moved = pools.some(pool => {
+      const g = pool.closest("g[transform]")
+      const m = /translate\(([-\d.]+), ([-\d.]+)\)/.exec(g?.getAttribute("transform") ?? "")
+      if (!m) return false
+      const { cx } = cellCenter(0, 1)
+      return Math.abs(Number(m[1]) - cx) > CELL / 4
+    })
+    expect(moved).toBe(true)
+  })
+})

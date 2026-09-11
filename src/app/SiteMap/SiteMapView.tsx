@@ -396,6 +396,10 @@ const shapeKindFor = (
 const isLockedGate = (cell: RoomCell, ownedKeys: ReadonlySet<string> | undefined): boolean =>
   cell.tags?.includes("gate") === true && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)
 
+/** How far the cresset at a stair's mouth stands from the middle of its cell, measured off the painted
+ * tile rather than guessed: the flame's own pixels land 24 units left of centre. */
+const STAIR_FLAME_DX = CELL * 0.43
+
 /** Anything standing on the floor, with the line it stands on — a room's own furniture and a node's.
  *
  * One list so the PLAYER can be drawn in the middle of it. Two things stand on a map: the explorer and
@@ -408,6 +412,8 @@ type StandingSprite = {
   baseY: number
   /** Node art is cut to the room it stands in; a room's furniture reaches into the wall band above it. */
   clipped: boolean
+  /** Where this sprite's own flame lands on the floor, if it carries one — see NodeSprite.light. */
+  light?: NodeSprite["light"]
   node: ReactNode
 }
 
@@ -461,12 +467,20 @@ const nodeSpritesFor = (grid: FloorGrid, floorTier: Difficulty): NodeSprite[] =>
           ? tileUrl(tier, "stair-up")
           : ((sideways ? tileUrl(tier, "stair-down-side") : undefined) ?? tileUrl(tier, "stair-down"))
         if (!url) continue
+        const mirrored = cell.dirs.has("w") && !cell.dirs.has("e")
         out.push({
+          light: {
+            // Measured off the painted tile: the flame sits 24 units left of the cell's centre, a
+            // little above it, and swaps sides when the flight is mirrored.
+            x: cx + (mirrored ? STAIR_FLAME_DX : -STAIR_FLAME_DX),
+            y: cy - CELL * 0.1,
+            r: LAMP_POOL_RADIUS,
+          },
           key: `stair:${r},${c}`,
           url,
           x: cx - CELL / 2,
           y: cy + CELL / 2 - PROP_H,
-          mirrored: cell.dirs.has("w") && !cell.dirs.has("e"),
+          mirrored,
         })
       }
     }
@@ -1911,6 +1925,7 @@ export const SiteMapView = ({
       key: sprite.key,
       baseY: sprite.y + PROP_H,
       clipped: true,
+      ...(sprite.light ? { light: sprite.light } : {}),
       node: (
         <image
           key={sprite.key}
@@ -2219,9 +2234,6 @@ export const SiteMapView = ({
                   onClick={clickable ? () => onCellClick(r, c) : undefined}
                   style={{ cursor: clickable ? "pointer" : "default" }}
                 >
-                  {/* The torch at a stair's mouth lights the floor for real, the way a lamp does in a
-                      chamber — see LIT_DECORATIONS. The flight itself is drawn in the sprite layer. */}
-                  {hasStair && <LightPool r={LAMP_POOL_RADIUS} cy={CELL * 0.2} />}
                   <g
                     opacity={
                       isCompleted && !isPending && !isPortal ? 0.45 : hasChest || hasStair ? NODE_OVER_ART_OPACITY : 1
@@ -2254,6 +2266,15 @@ export const SiteMapView = ({
               A node's furniture is additionally clipped, and in MAP space: inside each node's own
               `<g transform>` the clip resolved in that cell's space and cut every sprite away, which
               emptied the game of chests while the tests, which do not rasterise, passed. */}
+          {/* The floor light first, so everything standing is standing IN it. */}
+          {standing.map(s2 =>
+            s2.light ? (
+              <g key={`light:${s2.key}`} transform={`translate(${s2.light.x}, ${s2.light.y})`}>
+                <LightPool r={s2.light.r} />
+              </g>
+            ) : null
+          )}
+
           <StandingLayer sprites={behindExplorer} />
 
           {explorerPos && (
