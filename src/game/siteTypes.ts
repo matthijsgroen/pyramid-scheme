@@ -52,6 +52,10 @@ export type DecorationKind =
   | "statue"
   | "basin"
   | "sarcophagus"
+  // A CHEST MEANS TREASURE YOU CAN OPEN, so no rank's pool authors one as furniture. The kind stays
+  // because the art does: a treasure room draws `tiles/<tier>/chestProp.png` beside its marker
+  // (`NodeChest`). Put it back in a `decorations` pool and the map starts saying "you may open this
+  // one and not that one" with the same picture.
   | "chestProp"
   | "offeringTable"
   | "jarRack"

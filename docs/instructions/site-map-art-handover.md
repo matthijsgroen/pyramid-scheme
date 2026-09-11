@@ -249,13 +249,19 @@ things the map cannot draw at all, and the last two ranks come after it:
 
 **The open work**, ranked by rooms waiting on it. **Everything the map can draw is now IN the queue** — every
 placeholder the census counts, and every patron variant the world pairs. `yarn art-census` and
-`yarn repaint` reconcile exactly, with three differences and each one written down in the entry that
+`yarn repaint` reconcile exactly, with four differences and each one written down in the entry that
 carries it:
 
 - `wizard/crystal` — an entry with no prompt, because there is no primitive to render a scaffold from.
 - `default/flooded` — not queued: no site in the world authors a flooded condition, so a painted tide
   line would be drawn nowhere.
 - `wizard/niche` — queued, but no room at that rank draws a niche until the gods' wall pool includes one.
+- **`<rank>/chestProp` — queued at three ranks and counted by the census at NONE of them**, because no
+  pool authors a chest any more. It is the TREASURE NODE's art now: a treasure room draws its rank's
+  chest beside the marker (`NodeChest` in `SiteMapView.tsx`), so every rank needs the file and the census,
+  which counts dressing slots, reports zero. Do not read that zero as "not needed" and do not put the kind
+  back in a `decorations` pool — a chest that opens and a chest that is furniture cannot be the same
+  picture, which is the whole reason it left the pools.
 
 1. **Work the queue** — 62 entries and every one is a paste rather than a modelling job. `yarn repaint`
    lists them GROUPED BY RANK, poorest tomb first, which is how a rank actually gets finished and how

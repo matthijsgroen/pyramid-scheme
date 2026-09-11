@@ -107,7 +107,6 @@ export const expertRules: Rule[] = [
     difficulty: "expert",
     decorations: [
       "shelf",
-      "chestProp",
       "jarRack",
       "offeringTable",
       "basin",

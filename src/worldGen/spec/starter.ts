@@ -35,7 +35,6 @@ export const starterRules: Rule[] = [
     difficulty: "starter",
     decorations: [
       "shelf",
-      "chestProp",
       "jarRack",
       "offeringTable",
       "basin",

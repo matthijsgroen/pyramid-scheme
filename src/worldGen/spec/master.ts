@@ -80,7 +80,6 @@ export const masterRules: Rule[] = [
     difficulty: "master",
     decorations: [
       "shelf",
-      "chestProp",
       "jarRack",
       "offeringTable",
       "basin",

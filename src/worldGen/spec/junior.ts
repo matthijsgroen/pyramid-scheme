@@ -46,7 +46,6 @@ export const juniorRules: Rule[] = [
     difficulty: "junior",
     decorations: [
       "shelf",
-      "chestProp",
       "jarRack",
       "offeringTable",
       "basin",

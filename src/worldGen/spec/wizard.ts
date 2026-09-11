@@ -57,7 +57,6 @@ export const wizardRules: Rule[] = [
     difficulty: "wizard",
     decorations: [
       "shelf",
-      "chestProp",
       "jarRack",
       "offeringTable",
       "basin",

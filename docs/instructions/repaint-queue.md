@@ -150,6 +150,10 @@ yarn import-tile art/masters/props/expert/mat.webp --tier=expert --name=mat --sl
 
 ### `expert/chestProp` — a cedar relic box, seal intact
 
+**This is the TREASURE NODE's art, not a room's furniture.** No pool authors a chest any more — a
+chest that opens and a chest that is furniture cannot be the same picture — so `yarn art-census` counts
+zero rooms for it and every treasure room in the rank draws it beside its marker.
+
 **Attach:**
 
 1. `~/tile-previews/chestProp-expert.png` — the scaffold
@@ -627,6 +631,10 @@ yarn import-tile art/masters/props/master/pillar.webp --tier=master --name=pilla
 
 ### `master/chestProp` — a gilded chest with a cavetto lid
 
+**This is the TREASURE NODE's art, not a room's furniture.** No pool authors a chest any more — a
+chest that opens and a chest that is furniture cannot be the same picture — so `yarn art-census` counts
+zero rooms for it and every treasure room in the rank draws it beside its marker.
+
 **Attach:**
 
 1. `~/tile-previews/chestProp-master.png` — the scaffold
@@ -1064,6 +1072,10 @@ yarn import-tile art/masters/props/wizard/sarcophagus.webp --tier=wizard --name=
 ```
 
 ### `wizard/chestProp` — a reliquary of light
+
+**This is the TREASURE NODE's art, not a room's furniture.** No pool authors a chest any more — a
+chest that opens and a chest that is furniture cannot be the same picture — so `yarn art-census` counts
+zero rooms for it and every treasure room in the rank draws it beside its marker.
 
 Thirty-five rooms, the largest single gap left in the file.
 

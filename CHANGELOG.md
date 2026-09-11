@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A chest on the map is treasure you can open. One stands beside the marker of every treasure room, in
+  that tomb's own stone, and no room is furnished with a chest any more — so a chest never means "not that
+  one". The hundred-odd rooms that held one are furnished with something else instead.
 - The Nile Delta Expedition is growing over. Green forces through the brick a little more with every
   pyramid of it, and the last one is thick with it — the same site read all the way up, from the entrance
   floor to the vault.
