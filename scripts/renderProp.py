@@ -1456,6 +1456,105 @@ def prim_pit():
     return join_all()
 
 
+def _stair_torch(x, y):
+    """A cresset standing beside a stair mouth, and the reason the flight is graded at all.
+
+    A hole gets no light — its walls stand in the y-z plane and draw as lines, so `--sun` has nothing
+    to bite on and the three values down the treads are shading nobody asked for. A torch at the mouth
+    gives them a SOURCE: the top tread is the one it reaches, and each one below is further from it.
+    Same argument as `prim_lamp`, one step further: the light is not drawn here, it is MOTIVATED here,
+    and the renderer lays its own pool on the floor (`LIT_DECORATIONS`).
+
+    It stands OFF to one side rather than over the opening: anything crossing the mouth reads as a
+    lintel, which `prim_pit` paid four renders to learn, and a post over a hole would be a handrail no
+    part of this set has.
+    """
+    # SHORT, because `seat_and_normalise` scales the whole object to one unit tall: a cresset at head
+    # height is the tallest thing in the frame and shrinks the hole it is meant to light. At 0.30 it
+    # stands beside the mouth instead of over it.
+    mark(cyl(0.030, 0.30, x=x, y=y, z=0.15, verts=10), "metal")
+    mark(cyl(0.070, 0.08, x=x, y=y, z=0.33, verts=12), "metal")
+    # The flame is a shape, not a light: an accent-coloured mass the repaint knows to burn.
+    mark(box(0.085, 0.07, 0.11, x=x, y=y, z=0.42), "accent")
+
+
+def prim_stair():
+    """A flight of steps: `--contents=up` climbs away from the viewer, `--contents=down` descends toward him.
+
+    THE TWO DIRECTIONS ARE NOT MIRROR IMAGES, and the projection is why. Drawn height is z + k*y, so a
+    flight that RISES as it recedes separates twice over — every tread gains its own rise and 0.7 of its
+    going — while one that DESCENDS as it recedes very nearly cancels: at a rise of 0.10 against a going
+    of 0.12 the treads move 0.016 apart on the page and the flight draws as a smear. So a descending
+    flight comes TOWARD the viewer, where the rise and the going add again.
+
+    A FLIGHT HEAD-ON IS A STRIPED WALL, which is the first thing this cost. There is no third plane to
+    show a staircase's side profile in, so pale tread, dark riser, pale tread is all the geometry says —
+    and a wall of courses says exactly the same. What tells them apart is the PARAPETS: a stair cut
+    between two walls, each climbing with it, gives the flight a silhouette that rises to one end, and a
+    wall has no such shape. They also stop the treads reaching the frame's edges, which is what made the
+    first render read as masonry filling the picture.
+
+    NOTHING IS BUILT ROUND THE MOUTH of the descending one, for `prim_pit`'s reason: this shear moves
+    points up rather than inward, so a kerb round a rectangular opening stays a rectangle on the page and
+    reads as a window sill. The floor tile the sprite is composited onto is the rim, and the treads stay
+    INSIDE the opening — a tread drawn below the near lip is a slab lying on the floor.
+
+    NO FOOTPRINT on the descending one: a hole casts nothing, so import it with --shadow=0 and no
+    --seat, exactly as a pit is. The climbing one stands on the floor and seats normally.
+    """
+    k = 0.7
+    if arg("contents") == "down":
+        w, d = 0.92, 0.62  # the opening
+        hv = k * d
+        # The shaft behind the steps: the far wall alone, filling the drawn opening, marked VOID so it
+        # renders near-black before any paint reaches it.
+        mark(box(w, 0.05, hv, y=(d - 0.05) / 2, z=-hv / 2), VOID)
+        # Three treads walking down and forward INTO that dark, the top one level with the paving. The
+        # rise and the going are set so the LAST one still draws above the near lip (-k*d/2): a tread
+        # below that line is drawn in front of the hole and reads as a slab lying on the floor.
+        for i in range(3):
+            # Three values, one per tread: paving, stone in shade, and then the shaft's own dark, so the
+            # last step is already going out of sight. That falloff is what a hole cannot get from the
+            # lamp — its walls stand in the y-z plane and draw as lines, so no light reaches down it.
+            mark(box(w - 0.14, 0.10, 0.035, y=(d / 2) - 0.13 - i * 0.10, z=-0.05 - i * 0.07), ("body", "deep", VOID)[i])
+        _stair_torch(-(w / 2) + 0.02, (d / 2) - 0.04)
+        return join_all()
+
+    if arg("contents") == "down-side":
+        # THE SAME HOLE, WALKED ACROSS. A stairhead is a dead end and faces whichever way the player
+        # came from — the four facings are almost evenly split over the world — and `--spin` cannot
+        # give them: the shaft is a far wall FACING THE VIEWER, so turning it edge-on collapses it to a
+        # black line and leaves the treads standing as vertical slabs. East and west are this one
+        # mirrored in X, which IS a valid oblique view of the mirrored object and costs the renderer a
+        # transform rather than a tile.
+        w, d = 0.92, 0.62
+        hv = k * d
+        mark(box(w, 0.05, hv, y=(d - 0.05) / 2, z=-hv / 2), VOID)
+        # Treads stepping down and to the LEFT, each one narrower into the dark. Width is drawn
+        # honestly here — only x is horizontal — so the flight reads as going sideways rather than as
+        # three bars stacked up the page.
+        for i in range(3):
+            mark(
+                box(0.30 - i * 0.04, 0.20, 0.035, x=0.26 - i * 0.24, y=(d / 2) - 0.22, z=-0.05 - i * 0.08),
+                ("body", "deep", VOID)[i],
+            )
+        _stair_torch((w / 2) - 0.02, (d / 2) - 0.04)
+        return join_all()
+
+    # Climbing away between its parapets. Five treads, each set back and up; the top faces are the whole
+    # of what reads, so the going is generous and the rise is what the shear multiplies.
+    tread_w, going, rise = 0.56, 0.13, 0.085
+    for i in range(5):
+        h = 0.06 + i * rise
+        mark(box(tread_w, going, h, y=-0.26 + i * going, z=h / 2), "body")
+    # The parapets: one each side, climbing with the flight and standing a little proud of it, so the
+    # silhouette is a shape that rises to one end rather than a rectangle of stripes.
+    for sx in (-1, 1):
+        mark(box(0.13, going * 5, 0.30, x=sx * (tread_w / 2 + 0.065), y=-0.26 + going * 2, z=0.15), "body")
+        mark(box(0.13, going * 2.2, 0.46, x=sx * (tread_w / 2 + 0.065), y=-0.26 + going * 3.9, z=0.23), "body")
+    return join_all()
+
+
 def prim_sconce():
     """A bronze bracket on the wall with an oil lamp standing on it — the nobleman's.
 
@@ -2348,6 +2447,7 @@ PRIMITIVES.update(
         "rubblePile": prim_rubbleheap,
         "niche": prim_niche,
         "pit": prim_pit,
+        "stair": prim_stair,
         "sconce": prim_sconce,
         "shrine": prim_shrine,
         "falseDoor": prim_falsedoor,
@@ -2406,6 +2506,11 @@ PART_COLOURS = {
     # scaffold in one colour draws it as a filled-in wall. Nothing but a different slot separates them.
     "timber": "#6b5236",
     "cloth": "#bdb3a0",
+    # STONE BELOW THE FLOOR LINE: the same material as `body`, carrying the light that reaches down a
+    # shaft rather than the light on the paving. A hole has no sun in it — its walls stand in the y-z
+    # plane and draw as lines — so depth cannot come from the lamp and has to be built as value. Two
+    # steps of it (body, then this) are enough to say "going down" before any paint is asked for.
+    "deep": "#5a544a",
     # Standing water, and the point of it is that it is NOT a hole. The nobleman's basin had its water
     # marked VOID — near-black, the marker for an absence — and the repaint did exactly what the scaffold
     # and the prompt both said: it came back pure black and read as a hole punched in a bowl. Dark, with

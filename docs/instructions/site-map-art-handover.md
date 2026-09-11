@@ -558,10 +558,54 @@ the one to take unless someone argues otherwise:
    `reachable` should be the brightest state at all".
 3. **Art per state** — 4 states x 2 kinds x 5 ranks = 40 tiles. Not worth it.
 
-On route 1 the cost is two primitives — a gate leaf in its jamb, and a stair mouth, which is `prim_pit`
-with treads and the `VOID` material it already proves — then ten tiles at about a day, plus half a day to
-a day of renderer work for the slot and the marker resize. It is RENDER-ONLY: no pool changes any length,
-so no floor regenerates and no placement moves.
+On route 1 the cost was two primitives, and **the stair is BUILT: `prim_stair`, `--contents=up` and
+`--contents=down`.** What is left is the gate leaf in its jamb, ten repaints at about a day, and half a
+day to a day of renderer work for the slot and the marker resize. It is RENDER-ONLY: no pool changes any
+length, so no floor regenerates and no placement moves.
+
+**Three things the two flights cost, and none is guessable from the code:**
+
+- **They are not mirror images.** Drawn height is `z + k*y`, so a flight RISING as it recedes separates
+  twice over — each tread gains its own rise and 0.7 of its going — while one DESCENDING as it recedes
+  cancels: 0.10 of rise against 0.12 of going leaves 0.016 on the page and the treads smear into one
+  band. A descending flight comes TOWARD the viewer, where rise and going add again.
+- **A flight head-on is a striped wall.** There is no third plane for a staircase's side profile, so
+  pale tread, dark riser, pale tread is all the geometry says — and a course of masonry says the same.
+  The PARAPETS are what separate them: a wall each side climbing with the flight gives it a silhouette
+  that rises to one end, which a wall has not. The first render without them filled the frame with
+  stripes.
+- **A tread below the near lip is a slab on the floor.** `prim_pit`'s law, met again: the descending
+  flight's rise and going are set so the last tread still draws above `-k*d/2`, or it is drawn in front
+  of its own hole.
+
+**AIMING ONE IS GEOMETRY, NOT `--spin`.** A stairhead is a dead end — 431 of the world's 443 — and its
+one exit is which way the player came from, spread almost evenly: n 107, e 108, s 102, w 114. So a
+flight wants to face four ways, and the obvious move fails: `--spin=90` turns the shaft's far wall
+EDGE-ON, and since that wall is the whole of the dark it collapses to a black line with the treads
+standing beside it as vertical slabs. `--contents=down-side` is the sideways flight built instead,
+treads walking across X with the far wall still facing the viewer. East and west are that one MIRRORED
+in x, which is a real oblique view of the mirrored object and costs a transform rather than a tile —
+rotating a sheared sprite is the thing that is forbidden, not reflecting it.
+
+**DEPTH IS VALUE, because a hole gets no light.** Its walls stand in the y-z plane and draw as lines,
+so no lamp reaches down it and `--sun` has nothing to bite on. The descending flights hand the
+generator the falloff already built: tread one is paving (`body`), tread two is stone in shade
+(`deep`, new in `PART_COLOURS`), tread three is the shaft's own `VOID`. Three values say "going down"
+before a word of the prompt does — which is the same argument `prim_pit` makes about a rack's gap.
+
+**A TORCH AT THE MOUTH IS WHAT MOTIVATES THE FALLOFF.** Graded treads on their own are shading nobody
+asked for; a cresset beside the opening makes the top tread the one the light reaches and every one
+below it further away. `_stair_torch` stands it OFF to one side — anything crossing the mouth reads as a
+lintel, which `prim_pit` paid four renders to learn — and SHORT, at 0.30: `seat_and_normalise` scales the
+whole object to one unit tall, so a cresset at head height is simply the tallest thing in the frame and
+shrinks the hole it was added to light. The first one took the sprite to 77 units and left the stair a
+band at the bottom.
+
+It also buys real light rather than painted light: `LIT_DECORATIONS` already lays a `LightPool` under a
+lamp, so a stair node can light its own floor the way a lamp lights a chamber.
+
+**And the pit is retired, which is half of why the stair can exist** — a hole in the floor now means a
+way down and nothing else. See the brief's §2 note.
 
 ## Two things not to trip over
 
