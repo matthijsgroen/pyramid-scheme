@@ -1606,6 +1606,11 @@ export const assembleFloor = (
         const [r, c] = pk.split(",").map(Number)
         return [r, c]
       }
+      const isFork = (pk: string): boolean => {
+        const [r, c] = rowCol(pk)
+        const cell = cells2D[r][c]
+        return cell.type === "room" && cell.roomType === "fork"
+      }
       const eligible = dressedPositions
         .filter(pk => (cellDressing.get(pk)?.props ?? []).some(k => PATRON_KINDS.has(k)))
         // NOT THE ENTRANCE, and not the stair down. A portal is a doorway the player passes through
@@ -1618,6 +1623,11 @@ export const assembleFloor = (
         })
         .sort(
           (a, b) =>
+            // A FORK FIRST, and only then the biggest. A junction is a hub — the player arrives at it,
+            // chooses, and comes back to it — where a dead end is somewhere they visit once and leave.
+            // A god belongs in the room his tomb is organised around, so size decides only among rooms
+            // of the same standing.
+            Number(isFork(b)) - Number(isFork(a)) ||
             footprintSize(claimGrid, ...rowCol(b)) - footprintSize(claimGrid, ...rowCol(a)) ||
             hashString(`${siteId}:patronPick:${a}`) - hashString(`${siteId}:patronPick:${b}`) ||
             a.localeCompare(b)
