@@ -39,3 +39,8 @@ export const nodeArtOffset = (dirs: ReadonlySet<Direction> | undefined): { dx: n
   const step = (sum: number, size: number) => (sum === 0 ? 0 : -Math.sign(sum) * size)
   return { dx: step(x, NODE_ART_DX), dy: step(y, NODE_ART_DY) }
 }
+
+/** The clip that keeps furniture inside the room it stands in: the floor, grown upward by a prop's
+ * headroom. Side walls and the wall below cut the sprite; the band above does not, because rising into
+ * it is how a tall thing occludes the wall behind it. Defined in `SiteMapView`'s `<defs>`. */
+export const STANDING_ROOM_CLIP = "standing-room"

@@ -1,7 +1,7 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
-import { NODE_OVER_ART_OPACITY } from "./nodeArt"
+import { NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP } from "./nodeArt"
 import { ExplorerFigure, LIGHT_POOL_ID } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
 import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
@@ -990,5 +990,36 @@ describe("a treasure room stands its own chest beside the marker", () => {
     }
     expect(opacityOf(chamber("reachable"))).toBe(String(NODE_OVER_ART_OPACITY))
     expect(opacityOf(room("reachable"))).toBe("1")
+  })
+})
+
+describe("a node's furniture is cut by the walls around it", () => {
+  // The sprite is a cell wide and stands off-centre, so without a clip it spills into the stone beside
+  // its room — which is what made a merchant's chest lie half inside a wall.
+  const chestIn = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll<SVGImageElement>("image")).find(el =>
+      (el.getAttribute("href") ?? "").includes("chestProp")
+    )
+
+  const grid = makeGrid([
+    [empty, corridor("completed", false), empty],
+    [empty, chamber("reachable"), empty],
+  ])
+
+  it("clips it to the standing room, and defines that clip once", () => {
+    const { container } = render(<SiteMapView grid={grid} revealAllCells />)
+    const clipped = chestIn(container)!.closest("g[clip-path]")
+    expect(clipped?.getAttribute("clip-path")).toBe(`url(#${STANDING_ROOM_CLIP})`)
+    expect(container.querySelectorAll(`#${STANDING_ROOM_CLIP}`)).toHaveLength(1)
+  })
+
+  it("leaves the headroom above the floor open, so a tall thing still crosses the wall band", () => {
+    const { container } = render(<SiteMapView grid={grid} revealAllCells />)
+    // `#id path` does not match inside <clipPath> in jsdom; ask the clip element itself for its path.
+    const clip = container.querySelector(`#${STANDING_ROOM_CLIP}`)!.querySelector("path")!.getAttribute("d")!
+    // Every rectangle in the clip starts a prop's headroom above the floor cell it belongs to, so the
+    // topmost edge of the clip is higher than the topmost floor line.
+    const tops = [...clip.matchAll(/M-?[\d.]+ (-?[\d.]+)h/g)].map(m => Number(m[1]))
+    expect(Math.min(...tops)).toBe(cellTop(0) - (CELL + WALL_H))
   })
 })

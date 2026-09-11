@@ -38,7 +38,7 @@ import {
   mapHeight,
   mapWidth,
 } from "./mapScale"
-import { NODE_OVER_ART_OPACITY, nodeArtOffset } from "./nodeArt"
+import { NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP, nodeArtOffset } from "./nodeArt"
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
 import { moodFor } from "./moodSettings"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
@@ -399,7 +399,11 @@ const NodeChest = ({ tier, dirs }: { tier: Difficulty; dirs: ReadonlySet<Directi
   const url = tileUrl(tier, "chestProp")
   if (!url) return null
   const { dx, dy } = nodeArtOffset(dirs)
-  return <image href={url} x={dx - CELL / 2} y={dy + CELL / 2 - PROP_H} width={CELL} height={PROP_H} />
+  return (
+    <g clipPath={`url(#${STANDING_ROOM_CLIP})`}>
+      <image href={url} x={dx - CELL / 2} y={dy + CELL / 2 - PROP_H} width={CELL} height={PROP_H} />
+    </g>
+  )
 }
 
 const nodeRadius: Record<ShapeKind, number> = {
@@ -1084,12 +1088,16 @@ const TileLayers = ({
       else archedSills.set(archTier, [rect])
     }
   }
-  const allFloor = rectsToPath(
-    [...regions.values()].flatMap(groups => [
-      ...Object.values(groups.floorRoom).flat(),
-      ...Object.values(groups.floorCorridor).flat(),
-    ])
-  )
+  const floorRects = [...regions.values()].flatMap(groups => [
+    ...Object.values(groups.floorRoom).flat(),
+    ...Object.values(groups.floorCorridor).flat(),
+  ])
+  const allFloor = rectsToPath(floorRects)
+  // The same floor, each cell grown UPWARD by a prop's headroom. Furniture standing off-centre in its
+  // cell is cut by the wall beside it and by the wall below it, and still rises into the band above —
+  // which is the one direction a prop is meant to cross, so a tall thing occludes the wall behind it
+  // instead of being sliced off at its own floor line.
+  const standingRoom = rectsToPath(floorRects.map(([x, y, w, h]) => [x, y - PROP_H, w, h + PROP_H] as Rect))
   const tiers = [...regions.keys()]
 
   return (
@@ -1100,6 +1108,10 @@ const TileLayers = ({
             outline stroke below uses; it costs nothing to reuse it. */}
         <clipPath id="walkable-floor">
           <path d={allFloor} />
+        </clipPath>
+        {/* Where a thing may STAND: the floor plus the headroom above it. See `standingRoom`. */}
+        <clipPath id={STANDING_ROOM_CLIP}>
+          <path d={standingRoom} />
         </clipPath>
         {tiers.map(t => {
           const floor = tileUrl(t, "floor")
