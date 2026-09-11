@@ -33,10 +33,16 @@ export const nodeArtOffset = (dirs: ReadonlySet<Direction> | undefined): { dx: n
     if (dir === "n") y -= 1
     if (dir === "s") y += 1
   }
-  if (x === 0 && y === 0) return { dx: NODE_ART_DX, dy: 0 }
   // Stepped rather than scaled, and written out so an axis with no exits on it lands on a plain 0
   // rather than on the -0 that `-Math.sign(0) * size` gives.
   const step = (sum: number, size: number) => (sum === 0 ? 0 : -Math.sign(sum) * size)
+  // WITH NO SOUTH DOOR, THE FURNITURE COMES SOUTH. A room entered only from the sides has its whole
+  // near edge free, and near the viewer is the good half of the cell: the player then walks BEHIND the
+  // chest rather than beside it, which is the whole of why the depth sort exists. Nothing is blocked,
+  // because no way out runs through it.
+  const nearSideFree = !(dirs?.has("s") ?? false)
+  if (y === 0 && nearSideFree) return { dx: x === 0 ? NODE_ART_DX : step(x, NODE_ART_DX), dy: NODE_ART_DY }
+  if (x === 0 && y === 0) return { dx: NODE_ART_DX, dy: 0 }
   return { dx: step(x, NODE_ART_DX), dy: step(y, NODE_ART_DY) }
 }
 
