@@ -19,8 +19,9 @@ master byte for byte. Run that last one after touching `renderProp.py` or `impor
 check that catches a geometry change silently invalidating a master.
 
 **THE STAIRS ARE THE LIVE WORK, and they are half done** — the map draws a flight at a stairhead now,
-aimed by the room's one exit and lit by its own torch. `default/stair-down` and `default/stair-down-side` have both landed; `stair-up` has never been rolled.
-They are in `tiles/default/`, so every rank draws them.
+aimed by the room's one exit and lit by its own torch. **All four flights are painted and shared** —
+`stair-down`, `stair-down-side`, `stair-up` and `stair-up-side` in `tiles/default/`, drawn at every rank,
+west mirrored from east. What is left of this section is the WARD GATE.
 The plan is ONE GENERIC SET in `tiles/default/` rather than five per-rank sets, and the whole of it is
 in "Stairways and ward gates" below.
 
@@ -45,7 +46,7 @@ two figures and five wall items were written down already; their ten chamber pro
 beside them, on primitives every other rank had already proved. Only `wizard/crystal` still needs
 geometry.
 
-**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 61 entries, which is
+**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 60 entries, which is
 everything left in the whole set bar one primitive, and none of it needs Blender again.
 
 **Read `yarn art-census`, not this paragraph.** The count below is a snapshot and every summary of it in
@@ -56,7 +57,7 @@ this file has drifted at least once.
 ### The three files that run the work
 
 - **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
-  attach and the import line to run afterwards. 61 entries: the priest, the merchant's two stairs, the pharaoh, the gods, the shared scatter and conditions, and nineteen patron variants. `yarn repaint <key>`
+  attach and the import line to run afterwards. 60 entries: the priest, the merchant's two stairs, the pharaoh, the gods, the shared scatter and conditions, and nineteen patron variants. `yarn repaint <key>`
   copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
   Entries are DELETED as they land, so the file's length is the backlog.
 - **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
@@ -205,7 +206,7 @@ where a purpose has two wall items to choose between.
 API bills per image, so the paste is done by hand and the tooling only saves the searching.
 
 ```sh
-yarn repaint                  # the 61 keys still owed
+yarn repaint                  # the 60 keys still owed
 yarn repaint master/mask      # prompt to the clipboard, both attachments revealed in the Finder
 # attach the two, paste, generate, download to ~/Downloads
 ```
@@ -269,7 +270,7 @@ carries it:
   back in a `decorations` pool — a chest that opens and a chest that is furniture cannot be the same
   picture, which is the whole reason it left the pools.
 
-1. **Work the queue** — 61 entries and every one is a paste rather than a modelling job. `yarn repaint`
+1. **Work the queue** — 60 entries and every one is a paste rather than a modelling job. `yarn repaint`
    lists them GROUPED BY RANK, poorest tomb first, which is how a rank actually gets finished and how
    the material reference stays the same between pastes.
 
@@ -543,8 +544,7 @@ A stairhead draws `stair-up` at the floor's own `entrancePos` and `stair-down` a
 one. The ward GATE is untouched — still the vector `<rect>` and three bars — and is what remains of this
 section's original scope.
 
-**What is painted:** `default/stair-down` and `default/stair-down-side`, both on rebuild lines in
-`tiles/default/`. `stair-up` has never been rolled, and it is half the stairheads in the game.
+**What is painted: all four**, on rebuild lines in `tiles/default/`. A stairhead reads from any approach.
 
 
 ### One generic set, not five — and the renderer already does it
@@ -579,8 +579,7 @@ half the doors in the game.
 
 ### What is left, in order
 
-1. **Roll `starter/stair-down` once more** against the re-framed scaffold, and `starter/stair-up` for
-   the first time. `yarn repaint` has both.
+1. ~~Roll the flights~~ — done, all four.
 2. **They already live in `tiles/default/`** — an import writes them there, so a roll is drawn at every
    rank the moment it lands.
 3. **The ward gate**, which is the untouched half of this section: a gate leaf in its jamb, one primitive,

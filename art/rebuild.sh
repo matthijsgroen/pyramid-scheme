@@ -386,6 +386,17 @@ scaffold stair --contents=up
 yarn import-tile art/masters/props/default/stair-up.webp --tier=default --name=stair-up --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.7
 
+# The climb walked ACROSS, which completes the four facings — west is east mirrored, so four flights
+# cover every approach. 0.7 for the same whitewash as the flight above, and the five ranks measure 34,
+# 96, 86, 18 and 54.
+#
+# ONE parapet, at the BACK. Modelled with one at either end, the front parapet drew LOWER than the
+# treads it was meant to frame and laid a pale band across the whole flight; behind, it draws higher and
+# reads as the wall the stair is cut against.
+scaffold stair --contents=up-side
+yarn import-tile art/masters/props/default/stair-up-side.webp --tier=default --name=stair-up-side --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.7
+
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
 # replaces was a post-processing copy whose flags could not be recovered (art/README).
 #

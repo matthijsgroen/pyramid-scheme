@@ -98,51 +98,6 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Stairs — one, and it is SHARED art
-
-Three of the four flights are painted and live in `tiles/default/`, drawn at every rank: `stair-down`,
-`stair-down-side` and `stair-up`. This is the fourth — the climb entered from the SIDE — and with it a
-stairhead reads right from all four approaches, since west is east mirrored.
-
-### `default/stair-up-side` — a flight climbing across the passage
-
-**Attach:**
-
-1. `~/tile-previews/stair-up-side-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a STAIRCASE going up, seen from the side, climbing to the RIGHT. The five pale squares are the
-TREADS, each one a step higher than the one before it; the dark faces below and between them are the
-RISERS. The long mass behind the flight is the WALL the stair is cut against, and it runs the whole
-length of it.
-
-Re-used limestone slabs over mudbrick: the treads worn hollow in their middles and chipped along their
-front edges, the mortar between them crumbling, grit collected in the angle of every step. The wall
-behind is mudbrick under flaking whitewash, rubbed brown where hands and shoulders have passed.
-
-EACH TREAD IS LIGHTER THAN THE RISER UNDER IT, which is what makes a flight read as climbing rather than
-as a course of masonry. Keep that difference on every step and do not even the value out.
-
-EVERYTHING KEEPS THE SIZE AND PLACE IT HAS IN THE REFERENCE: do not zoom in, do not crop, and paint each
-tread over the square that is already there. The flight goes up out of the picture at the right, so
-nothing is drawn past the top step.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's cellar, Egyptian New Kingdom: mudbrick, limestone chips, timber and reed. Dark grey-brown stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold stair --contents=up-side
-yarn import-tile art/masters/props/default/stair-up-side.webp --tier=default --name=stair-up-side --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.7
-```
-
 ## Priest — three
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
