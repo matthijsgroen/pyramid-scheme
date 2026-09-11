@@ -1,6 +1,6 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
-import { SiteMapView, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
+import { SiteMapView, buildRoomClaims, tileRegionsFor, NODE_OVER_ART_OPACITY } from "./SiteMapView"
 import { ExplorerFigure, LIGHT_POOL_ID } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
 import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
@@ -945,5 +945,49 @@ describe("the air on a floor", () => {
     // Fog is not a place a beetle can be: it is what the player has not seen.
     const dark = makeGrid([[corridor("fogged", false)], [chamber("fogged")]])
     expect(render(<SiteMapView grid={dark} />).container.querySelectorAll(".map-scarab")).toHaveLength(0)
+  })
+})
+
+describe("a treasure room stands its own chest beside the marker", () => {
+  // The node marker is centred on the cell and so is the explorer, so a chest drawn square on the cell
+  // is a chest the player is standing inside. The art says what the room holds; the marker still says
+  // whether it can be reached.
+  const chestsIn = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll<SVGImageElement>("image")).filter(el =>
+      (el.getAttribute("href") ?? "").includes("chestProp")
+    )
+
+  const gridWith = (cell: GridCell) =>
+    makeGrid([
+      [empty, corridor("completed", false), empty],
+      [empty, cell, empty],
+    ])
+
+  it("draws the chest offset sideways, in the prop's own box", () => {
+    const { container } = render(<SiteMapView grid={gridWith(chamber("reachable"))} revealAllCells />)
+    const chests = chestsIn(container)
+    expect(chests).toHaveLength(1)
+    // Offset in X only: a shift in depth would ride up the page under the shear and lift the chest off
+    // the floor line it is anchored to.
+    expect(Number(chests[0].getAttribute("x"))).toBeGreaterThan(-CELL / 2)
+    expect(chests[0].getAttribute("height")).toBe(String(CELL + WALL_H))
+  })
+
+  it("draws none for a shop, whose goods are a stall rather than a sealed chest", () => {
+    // Narrowed rather than cast: spreading the whole GridCell union offers `tags` to EmptyCell too.
+    const room = chamber("reachable")
+    if (room.type !== "room") throw new Error("the chamber fixture stopped being a room")
+    const shop: GridCell = { ...room, tags: ["shop"] }
+    expect(chestsIn(render(<SiteMapView grid={gridWith(shop)} revealAllCells />).container)).toHaveLength(0)
+  })
+
+  it("eases the marker back where the chest is under it, and leaves every other node alone", () => {
+    const opacityOf = (cell: GridCell) => {
+      const { container } = render(<SiteMapView grid={gridWith(cell)} revealAllCells />)
+      const marker = container.querySelector<SVGGElement>("g[opacity]")
+      return marker?.getAttribute("opacity")
+    }
+    expect(opacityOf(chamber("reachable"))).toBe(String(NODE_OVER_ART_OPACITY))
+    expect(opacityOf(room("reachable"))).toBe("1")
   })
 })

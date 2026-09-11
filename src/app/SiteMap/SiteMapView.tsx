@@ -388,6 +388,31 @@ const shapeKindFor = (
 const isLockedGate = (cell: RoomCell, ownedKeys: ReadonlySet<string> | undefined): boolean =>
   cell.tags?.includes("gate") === true && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)
 
+/** How far a node's own furniture stands to the side of its marker.
+ *
+ * The marker is centred on the cell and so is the explorer, so a chest drawn square on the cell is a
+ * chest the player is standing inside. Offset in X only: under `drawn = (x, z + k*y)` a shift in depth
+ * would move the sprite UP the page and lift it off the floor line, which is the same law that only lets
+ * a prop's shadow move sideways. */
+const NODE_ART_DX = CELL * 0.3
+
+/** The marker over its own furniture. It still has to read as a node — the state colour and the key
+ * badges are on it — so this eases it back rather than hiding it; the art says what the room holds and
+ * the marker says whether you can get to it. */
+export const NODE_OVER_ART_OPACITY = 0.72
+
+/** A treasure room's own CHEST, drawn beside the marker in the rank's own stone.
+ *
+ * No new art: `chestProp` is painted at every rank already, and this is the same sprite the dressing
+ * layer stands in a chamber, in the same bottom-anchored box. A SHOP wears the treasure marker too and
+ * gets none of this — his goods are a market stall rather than a sealed chest, and drawing one would say
+ * the wrong thing about a room you buy from. */
+const NodeChest = ({ tier }: { tier: Difficulty }) => {
+  const url = tileUrl(tier, "chestProp")
+  if (!url) return null
+  return <image href={url} x={NODE_ART_DX - CELL / 2} y={CELL / 2 - PROP_H} width={CELL} height={PROP_H} />
+}
+
 const nodeRadius: Record<ShapeKind, number> = {
   entrance: NODE_RADIUS_LARGE,
   puzzle: NODE_RADIUS_PUZZLE,
@@ -2070,6 +2095,9 @@ export const SiteMapView = ({
                 cell.reward?.type === "consumable" &&
                 (pendingCells?.has(`${r},${c}`) ?? false)
               const clickable = onCellClick && (state === "reachable" || state === "completed") && canWalkTo(r, c)
+              // A fogged room never reaches here — the loop above draws unlit cells — so no guard is
+              // needed to keep a chest out of the dark.
+              const hasChest = shapeKind === "treasure" && !cell.tags?.includes("shop")
               const roomR = nodeRadius[shapeKind]
               const locked = isLockedGate(cell, ownedKeys)
               const displayState: CellState = locked && state === "reachable" ? "visible" : state
@@ -2081,7 +2109,8 @@ export const SiteMapView = ({
                   onClick={clickable ? () => onCellClick(r, c) : undefined}
                   style={{ cursor: clickable ? "pointer" : "default" }}
                 >
-                  <g opacity={isCompleted && !isPending && !isPortal ? 0.45 : 1}>
+                  {hasChest && <NodeChest tier={cell.difficulty ?? tier} />}
+                  <g opacity={isCompleted && !isPending && !isPortal ? 0.45 : hasChest ? NODE_OVER_ART_OPACITY : 1}>
                     <NodeShape
                       type={shapeKind}
                       state={displayState}
