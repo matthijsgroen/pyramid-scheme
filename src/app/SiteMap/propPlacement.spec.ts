@@ -137,25 +137,49 @@ describe("authored wall-item pools reach real walls", () => {
 // behind it. So the prop cell is chosen for having void above it (buildRoomClaims). Half the props in
 // the world stood the other way before that preference existed.
 describe("a prop stands against a wall", () => {
-  it("puts the prop on a cell with void above it, all but never", () => {
-    let props = 0
-    let openBehind = 0
+  // Measured PER ROOM KIND, because the two kinds of room have different amounts of wall to offer and
+  // one bound over both hides that. A dead end is a pocket with stone on three sides; a FORK is a
+  // junction with passages leaving in three directions, so it often has no claimed cell with void above
+  // it at all. Lumped together they read 6.2%, which says nothing about either.
+  const openBehindByOwner = (): Map<string, { props: number; open: number }> => {
+    const tally = new Map<string, { props: number; open: number }>()
     for (const [siteId, levels] of Object.entries(generatedWorldConfigs).slice(0, 12)) {
       levels.flat().forEach((floor, i) => {
         const result = assembleFloor(`${siteId}:${i}`, floor, 7)
         if (!result.success) return
         const grid = revealAll(result.grid)
-        for (const [key] of buildRoomClaims(grid).decorationAt) {
-          props++
+        const claims = buildRoomClaims(grid)
+        for (const [key] of claims.decorationAt) {
+          const [or, oc] = (claims.claimedBy.get(key) ?? key).split(",").map(Number)
+          const owner = grid.cells[or]?.[oc]
+          const kind = owner?.type === "room" ? owner.roomType : "unknown"
           const [r, c] = key.split(",").map(Number)
           const north = grid.cells[r - 1]?.[c]
-          if (north && north.type !== "empty") openBehind++
+          const row = tally.get(kind) ?? { props: 0, open: 0 }
+          tally.set(kind, { props: row.props + 1, open: row.open + (north && north.type !== "empty" ? 1 : 0) })
         }
       })
     }
-    expect(props).toBeGreaterThan(0)
-    // Not zero: a room whose only spare cell has floor above it still gets its prop — a prop is better
-    // than a bare chamber, and one leaning statue is cheaper than a second claim rule.
-    expect(openBehind / props).toBeLessThan(0.05)
+    return tally
+  }
+
+  it("stands a pocket's prop against stone, all but never otherwise", () => {
+    const tally = openBehindByOwner()
+    const ends = tally.get("encounter")!
+    const portals = tally.get("portal")!
+    expect(ends.props).toBeGreaterThan(0)
+    // 0.3% and 1.1% measured. A room whose only spare cell has floor above it still gets its prop — a
+    // prop is better than a bare chamber, and one leaning statue is cheaper than a second claim rule.
+    expect(ends.open / ends.props).toBeLessThan(0.02)
+    expect(portals.open / portals.props).toBeLessThan(0.05)
+  }, 30000)
+
+  it("still leans most of a junction's props on stone, though it has less to lean on", () => {
+    const f = openBehindByOwner().get("fork")!
+    expect(f.props).toBeGreaterThan(0)
+    // 14.9% measured. A fork is dressed from its floor's own pool, and dressing it at all is why the
+    // world's chambers are furnished rather than bare — so the leaning ones are accepted, and bounded
+    // here so a placement change that gave up on the preference shows as a failure rather than as art.
+    expect(f.open / f.props).toBeLessThan(0.2)
   }, 30000)
 })

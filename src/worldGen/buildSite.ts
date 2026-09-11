@@ -324,6 +324,11 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             // pyramid was silently dropped — invisible until the first one was authored.
             condition: constraint.condition,
             patron: constraint.patron,
+            // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
+            // with no pool of its own dresses none of its junctions. Only the explicit-`floors` branch
+            // passed these, which left every fork on every ordinary pyramid bare.
+            decorations: constraint.decorations,
+            wallDecorations: constraint.wallDecorations,
           })
         )
         continue
@@ -359,6 +364,11 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           theme: constraint.theme,
           condition: constraint.condition,
           patron: constraint.patron,
+          // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
+          // with no pool of its own dresses none of its junctions. Only the explicit-`floors` branch
+          // passed these, which left every fork on every ordinary pyramid bare.
+          decorations: constraint.decorations,
+          wallDecorations: constraint.wallDecorations,
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
           packing: resolvePacking(constraint, journeyId, i),
           sealed: resolveSealed(constraint),
@@ -430,6 +440,11 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             theme: constraint.theme,
             condition: constraint.condition,
             patron: constraint.patron,
+            // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
+            // with no pool of its own dresses none of its junctions. Only the explicit-`floors` branch
+            // passed these, which left every fork on every ordinary pyramid bare.
+            decorations: constraint.decorations,
+            wallDecorations: constraint.wallDecorations,
           })
         )
       })
@@ -491,6 +506,11 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     theme: constraint.theme,
     condition: constraint.condition,
     patron: constraint.patron,
+    // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
+    // with no pool of its own dresses none of its junctions. Only the explicit-`floors` branch
+    // passed these, which left every fork on every ordinary pyramid bare.
+    decorations: constraint.decorations,
+    wallDecorations: constraint.wallDecorations,
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
     packing: resolvePacking(constraint, journeyId, i),
     sealed: resolveSealed(constraint),

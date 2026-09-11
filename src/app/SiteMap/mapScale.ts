@@ -62,9 +62,19 @@ export const ARCH_W = CELL + SIDE_W * 2 // 84
 /** Padding around the map: room for the one-cell ring of wall outside the grid. */
 export const PAD = CELL
 
+/** The NORTH side gets a prop's headroom on top of that ring.
+ *
+ * Everything standing on a floor is drawn bottom-anchored in a box a cell PLUS a wall band tall, so a
+ * tall thing on the top row reaches `WALL_H` above its own floor square — through the wall behind it and
+ * up to the very edge of the map. Inside the picture, but with nothing above it: at any zoom the topmost
+ * statue, column or hanging ends exactly where the map does and reads as cropped. This is the one side
+ * that needs it — nothing is drawn below its floor line, and the side walls cut sprites rather than
+ * being crossed by them. */
+export const PAD_TOP = PAD + WALL_H
+
 /** Top-left of a cell's own floor square, in SVG units. */
 export const cellLeft = (col: number): number => PAD + col * COL_PITCH + SIDE_W
-export const cellTop = (row: number): number => PAD + row * ROW_PITCH + WALL_H
+export const cellTop = (row: number): number => PAD_TOP + row * ROW_PITCH + WALL_H
 
 /** Where a node icon, prop or the explorer dot sits: the middle of the floor square. */
 export const cellCenter = (row: number, col: number): { cx: number; cy: number } => ({
@@ -73,4 +83,4 @@ export const cellCenter = (row: number, col: number): { cx: number; cy: number }
 })
 
 export const mapWidth = (cols: number): number => cols * COL_PITCH + SIDE_W + PAD * 2
-export const mapHeight = (rows: number): number => rows * ROW_PITCH + WALL_H + PAD * 2
+export const mapHeight = (rows: number): number => rows * ROW_PITCH + WALL_H + PAD_TOP + PAD

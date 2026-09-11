@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- Junction rooms are furnished. A pyramid only dressed the rooms on its side paths, so the big chambers
+  where passages meet stood empty in every tomb in the game — the first floor of the Temple of Bastet
+  had five of its ten chambers bare. Nothing moved: the rooms that were furnished are furnished the same.
+
 ### Changed
 
 - A chest on the map is treasure you can open. One stands beside the marker of every treasure room, in
