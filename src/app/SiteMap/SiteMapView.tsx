@@ -2367,226 +2367,232 @@ export const SiteMapView = ({
   }, [explorerPos?.[0], explorerPos?.[1]])
 
   return (
-    <div
-      ref={scrollRef}
-      {...scrollHandlers}
-      className={`flex overflow-auto pt-safe-top pr-safe-right pb-safe-bottom pl-safe-left${className ? ` ${className}` : ""}`}
-    >
-      {/* Sizer: carries the zoomed footprint so the scroll extents are real, while the map itself
+    /* The map's window, and the frame the air hangs in: the scrolling box is what MOVES, so a weather
+       layer inside it would be dragged about with the floor. See MapWeather. */
+    <div className={`relative${className ? ` ${className}` : ""}`}>
+      <div
+        ref={scrollRef}
+        {...scrollHandlers}
+        data-map-scroll=""
+        className="flex h-full w-full overflow-auto pt-safe-top pr-safe-right pb-safe-bottom pl-safe-left"
+      >
+        {/* Sizer: carries the zoomed footprint so the scroll extents are real, while the map itself
           scales by transform — see useMapZoom. Its size is written there, never by React. */}
-      <div ref={sizerRef} className="m-auto shrink-0">
-        <svg
-          ref={mapRef}
-          width={svgWidth}
-          height={svgHeight}
-          viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-          role="img"
-          aria-label="site map"
-          className="block"
-          // The ground IS stone: a pyramid is carved out of rock, so everything the map has not lit
-          // is the tier's own dark stone rather than a void. Two things fall out of that — the shape of
-          // the drawn stone can no longer trace passages the player has not walked, and a pocket
-          // enclosed by a thick wall stops reading as a hole punched through it.
-          //
-          // Pixel art: no smoothing, so a tile stays crisp instead of turning to mush as the map
-          // scales. Crisp at every zoom needs useMapZoom to snap to whole steps — not done yet.
-          style={{ background: tierPalette[tier].wallBase, imageRendering: ART_IMAGE_RENDERING }}
-        >
-          <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
-          <SandDrifts grid={grid} drifts={drifts} tier={tier} />
-          <FloorScatter grid={grid} scatter={scatter} tier={tier} />
-          <ArchShadows doorways={doorways} />
-          <LitPlaces grid={grid} claims={claims} at={explorerPos} />
-          <MapLife
-            mood={mood}
-            siteId={grid.siteId}
-            floorCells={floorCells}
-            isLit={(r, c) => {
-              const cell = cellAt(grid, r, c)
-              return cell.type !== "empty" && cell.state !== "fogged"
-            }}
-          />
-          {/* Over the scarabs, under the wall items: something growing out of a wall is in front of the
+        <div ref={sizerRef} className="m-auto shrink-0">
+          <svg
+            ref={mapRef}
+            width={svgWidth}
+            height={svgHeight}
+            viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+            role="img"
+            aria-label="site map"
+            className="block"
+            // The ground IS stone: a pyramid is carved out of rock, so everything the map has not lit
+            // is the tier's own dark stone rather than a void. Two things fall out of that — the shape of
+            // the drawn stone can no longer trace passages the player has not walked, and a pocket
+            // enclosed by a thick wall stops reading as a hole punched through it.
+            //
+            // Pixel art: no smoothing, so a tile stays crisp instead of turning to mush as the map
+            // scales. Crisp at every zoom needs useMapZoom to snap to whole steps — not done yet.
+            style={{ background: tierPalette[tier].wallBase, imageRendering: ART_IMAGE_RENDERING }}
+          >
+            <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
+            <SandDrifts grid={grid} drifts={drifts} tier={tier} />
+            <FloorScatter grid={grid} scatter={scatter} tier={tier} />
+            <ArchShadows doorways={doorways} />
+            <LitPlaces grid={grid} claims={claims} at={explorerPos} />
+            <MapLife
+              mood={mood}
+              siteId={grid.siteId}
+              floorCells={floorCells}
+              isLit={(r, c) => {
+                const cell = cellAt(grid, r, c)
+                return cell.type !== "empty" && cell.state !== "fogged"
+              }}
+            />
+            {/* Over the scarabs, under the wall items: something growing out of a wall is in front of the
               floor and behind whatever is hung on that wall. */}
-          <MapGrowth
-            mood={mood}
-            siteId={grid.siteId}
-            floorCells={floorCells}
-            wallCells={wallBandCells}
-            chamberCells={chamberFloorCells}
-            isLit={(r, c) => {
-              const cell = cellAt(grid, r, c)
-              if (cell.type !== "empty") return cell.state !== "fogged"
-              // A CLAIMED cell is `type: "empty"` in the grid — the claim is a render-time fact — so a
-              // chamber's own floor fails the test above and every plant on it was dropped. It is lit
-              // when its ROOM is, which is the same blind spot `floorScatter` records for scatter.
-              const owner = claims.claimedBy.get(`${r},${c}`)
-              if (!owner) return false
-              const [or, oc] = owner.split(",").map(Number)
-              const room = cellAt(grid, or, oc)
-              return room.type !== "empty" && room.state !== "fogged"
-            }}
-          />
-          <WallItems items={wallItems} patron={grid.patron} />
+            <MapGrowth
+              mood={mood}
+              siteId={grid.siteId}
+              floorCells={floorCells}
+              wallCells={wallBandCells}
+              chamberCells={chamberFloorCells}
+              isLit={(r, c) => {
+                const cell = cellAt(grid, r, c)
+                if (cell.type !== "empty") return cell.state !== "fogged"
+                // A CLAIMED cell is `type: "empty"` in the grid — the claim is a render-time fact — so a
+                // chamber's own floor fails the test above and every plant on it was dropped. It is lit
+                // when its ROOM is, which is the same blind spot `floorScatter` records for scatter.
+                const owner = claims.claimedBy.get(`${r},${c}`)
+                if (!owner) return false
+                const [or, oc] = owner.split(",").map(Number)
+                const room = cellAt(grid, or, oc)
+                return room.type !== "empty" && room.state !== "fogged"
+              }}
+            />
+            <WallItems items={wallItems} patron={grid.patron} />
 
-          {Array.from({ length: grid.rows + 2 }, (_, ri) => {
-            const r = ri - 1
-            return Array.from({ length: grid.cols + 2 }, (_, ci) => {
-              const c = ci - 1
-              const cell = cellAt(grid, r, c)
-              const { cx, cy } = cellCenter(r, c)
-              const cellKey = `${r},${c}`
-              const claimOwner = litClaimOwner(grid, claims, r, c)
+            {Array.from({ length: grid.rows + 2 }, (_, ri) => {
+              const r = ri - 1
+              return Array.from({ length: grid.cols + 2 }, (_, ci) => {
+                const c = ci - 1
+                const cell = cellAt(grid, r, c)
+                const { cx, cy } = cellCenter(r, c)
+                const cellKey = `${r},${c}`
+                const claimOwner = litClaimOwner(grid, claims, r, c)
 
-              // A cell claimed by a neighboring room — genuine void (including one step
-              // outside the grid), or a corridor absorbed as a gate's approach or a
-              // diagonal's flank anchor (see buildRoomClaims) — renders as part of that
-              // room, always, using the OWNER's state for the floor tint. The claim shape
-              // is a static function of the finished grid (independent of exploration
-              // progress), so the whole blob must render as a single visual unit — hiding
-              // a claimed corridor while its own fog state lags behind the owner's is what
-              // punched the "spotty" holes in an otherwise-explored room. Click/interaction
-              // still uses the corridor's own state, since it's a real, independently
-              // progressed passage for gameplay purposes even though it looks unified.
-              //
-              // **A fogged owner takes only what is its own.** Its void cells go dark with it, but a
-              // claimed CORRIDOR is a real passage the player may already have lit from the far end —
-              // it falls through to the corridor rendering below and stands on its own state, rather
-              // than leaving the rooms around it opening onto a gap that draws nothing.
-              if (claimOwner) {
-                const isCorner = cell.type === "corridor" && isCorridorCorner(cell.dirs)
-                const runTarget = cell.type === "corridor" ? corridorRunTargets.get(cellKey) : undefined
-                const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
-                const corridorClickable =
-                  cell.type === "corridor" &&
-                  onCellClick &&
-                  canWalkTo(clickTarget[0], clickTarget[1]) &&
-                  (freeWalk ||
-                    ((cell.state === "reachable" || cell.state === "completed") && isCorner ? true : !!runTarget))
-                return (
-                  <g
-                    key={cellKey}
-                    transform={`translate(${cx}, ${cy})`}
-                    onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
-                    style={{ cursor: corridorClickable ? "pointer" : "default" }}
-                  >
-                    {cell.type === "corridor" &&
-                      canWalkTo(clickTarget[0], clickTarget[1]) &&
-                      (runTarget ? (
-                        <RunTargetArrow dir={runTarget.dir} />
-                      ) : (
-                        cell.state === "reachable" && isCorner && <ReachableDot />
-                      ))}
-                  </g>
-                )
-              }
+                // A cell claimed by a neighboring room — genuine void (including one step
+                // outside the grid), or a corridor absorbed as a gate's approach or a
+                // diagonal's flank anchor (see buildRoomClaims) — renders as part of that
+                // room, always, using the OWNER's state for the floor tint. The claim shape
+                // is a static function of the finished grid (independent of exploration
+                // progress), so the whole blob must render as a single visual unit — hiding
+                // a claimed corridor while its own fog state lags behind the owner's is what
+                // punched the "spotty" holes in an otherwise-explored room. Click/interaction
+                // still uses the corridor's own state, since it's a real, independently
+                // progressed passage for gameplay purposes even though it looks unified.
+                //
+                // **A fogged owner takes only what is its own.** Its void cells go dark with it, but a
+                // claimed CORRIDOR is a real passage the player may already have lit from the far end —
+                // it falls through to the corridor rendering below and stands on its own state, rather
+                // than leaving the rooms around it opening onto a gap that draws nothing.
+                if (claimOwner) {
+                  const isCorner = cell.type === "corridor" && isCorridorCorner(cell.dirs)
+                  const runTarget = cell.type === "corridor" ? corridorRunTargets.get(cellKey) : undefined
+                  const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
+                  const corridorClickable =
+                    cell.type === "corridor" &&
+                    onCellClick &&
+                    canWalkTo(clickTarget[0], clickTarget[1]) &&
+                    (freeWalk ||
+                      ((cell.state === "reachable" || cell.state === "completed") && isCorner ? true : !!runTarget))
+                  return (
+                    <g
+                      key={cellKey}
+                      transform={`translate(${cx}, ${cy})`}
+                      onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
+                      style={{ cursor: corridorClickable ? "pointer" : "default" }}
+                    >
+                      {cell.type === "corridor" &&
+                        canWalkTo(clickTarget[0], clickTarget[1]) &&
+                        (runTarget ? (
+                          <RunTargetArrow dir={runTarget.dir} />
+                        ) : (
+                          cell.state === "reachable" && isCorner && <ReachableDot />
+                        ))}
+                    </g>
+                  )
+                }
 
-              if (cell.type === "empty") return null
-              if (cell.state === "fogged") return null
+                if (cell.type === "empty") return null
+                if (cell.state === "fogged") return null
 
-              if (cell.type === "corridor") {
-                const isCorner = isCorridorCorner(cell.dirs)
-                const runTarget = corridorRunTargets.get(cellKey)
-                // A visible run's near end has no corner of its own to click — it borrows the
-                // far corner's click target (see findCorridorRunTarget) so a long corridor
-                // that scrolls off screen still has something to tap right next to the player.
-                const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
-                const corridorClickable =
-                  onCellClick &&
-                  canWalkTo(clickTarget[0], clickTarget[1]) &&
-                  (freeWalk || ((cell.state === "reachable" || cell.state === "completed") && isCorner) || !!runTarget)
+                if (cell.type === "corridor") {
+                  const isCorner = isCorridorCorner(cell.dirs)
+                  const runTarget = corridorRunTargets.get(cellKey)
+                  // A visible run's near end has no corner of its own to click — it borrows the
+                  // far corner's click target (see findCorridorRunTarget) so a long corridor
+                  // that scrolls off screen still has something to tap right next to the player.
+                  const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
+                  const corridorClickable =
+                    onCellClick &&
+                    canWalkTo(clickTarget[0], clickTarget[1]) &&
+                    (freeWalk ||
+                      ((cell.state === "reachable" || cell.state === "completed") && isCorner) ||
+                      !!runTarget)
+                  return (
+                    <g
+                      key={`${r},${c}`}
+                      transform={`translate(${cx}, ${cy})`}
+                      onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
+                      style={{ cursor: corridorClickable ? "pointer" : "default" }}
+                    >
+                      {canWalkTo(clickTarget[0], clickTarget[1]) &&
+                        (runTarget ? (
+                          <RunTargetArrow dir={runTarget.dir} />
+                        ) : (
+                          cell.state === "reachable" && isCorner && <ReachableDot />
+                        ))}
+                    </g>
+                  )
+                }
+
+                // room cell
+                const state = cell.state
+                const isCompleted = state === "completed"
+                // Only ever a pending-loot marker for a treasure room with a consumable reward — this
+                // guards against stale coordinates in pendingCells (e.g. left over from before a site
+                // was regenerated) painting the badge onto whatever room now occupies that cell.
+                const shapeKind = shapeKindFor(grid, r, c, cell.roomType, cell.tags, cell.stairId)
+                // Portals (entrance/stairhead/exit) are transitions, not tasks — they can't be
+                // "completed", so they never get the completed dim or the ✓ badge even though the
+                // entrance is always marked explored (useAssembledFloor) and used staircases complete.
+                const isPortal = shapeKind === "entrance" || shapeKind === "stairhead" || shapeKind === "exit"
+                const isPending =
+                  isCompleted &&
+                  shapeKind === "treasure" &&
+                  cell.reward?.type === "consumable" &&
+                  (pendingCells?.has(`${r},${c}`) ?? false)
+                const clickable = onCellClick && (state === "reachable" || state === "completed") && canWalkTo(r, c)
+                // A fogged room never reaches here — the loop above draws unlit cells — so no guard is
+                // needed to keep a chest out of the dark.
+                const hasChest = shapeKind === "treasure" && !cell.tags?.includes("shop")
+                // A stairhead at the floor's own entrance is the way back UP; any other descends.
+                const isStair = shapeKind === "stairhead"
+                const goesUp = isStair && r === grid.entrancePos[0] && c === grid.entrancePos[1]
+                const hasStair = isStair && !!tileUrl(cell.difficulty ?? tier, goesUp ? "stair-up" : "stair-down")
+                // A DRAWN EXIT LOSES ITS MARKER for the stairhead's reason: the art IS the node, and unlike
+                // a gate it carries no key colour and no state — a portal is a transition, never completed
+                // — so the vector has nothing left to say that the doorway does not say better.
+                const hasExit = shapeKind === "exit" && !!tileUrl(cell.difficulty ?? tier, "exit")
+                const roomR = nodeRadius[shapeKind]
+                const locked = isLockedGate(cell, ownedKeys)
+                const displayState: CellState = locked && state === "reachable" ? "visible" : state
+
                 return (
                   <g
                     key={`${r},${c}`}
                     transform={`translate(${cx}, ${cy})`}
-                    onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
-                    style={{ cursor: corridorClickable ? "pointer" : "default" }}
+                    onClick={clickable ? () => onCellClick(r, c) : undefined}
+                    style={{ cursor: clickable ? "pointer" : "default" }}
                   >
-                    {canWalkTo(clickTarget[0], clickTarget[1]) &&
-                      (runTarget ? (
-                        <RunTargetArrow dir={runTarget.dir} />
-                      ) : (
-                        cell.state === "reachable" && isCorner && <ReachableDot />
-                      ))}
-                  </g>
-                )
-              }
-
-              // room cell
-              const state = cell.state
-              const isCompleted = state === "completed"
-              // Only ever a pending-loot marker for a treasure room with a consumable reward — this
-              // guards against stale coordinates in pendingCells (e.g. left over from before a site
-              // was regenerated) painting the badge onto whatever room now occupies that cell.
-              const shapeKind = shapeKindFor(grid, r, c, cell.roomType, cell.tags, cell.stairId)
-              // Portals (entrance/stairhead/exit) are transitions, not tasks — they can't be
-              // "completed", so they never get the completed dim or the ✓ badge even though the
-              // entrance is always marked explored (useAssembledFloor) and used staircases complete.
-              const isPortal = shapeKind === "entrance" || shapeKind === "stairhead" || shapeKind === "exit"
-              const isPending =
-                isCompleted &&
-                shapeKind === "treasure" &&
-                cell.reward?.type === "consumable" &&
-                (pendingCells?.has(`${r},${c}`) ?? false)
-              const clickable = onCellClick && (state === "reachable" || state === "completed") && canWalkTo(r, c)
-              // A fogged room never reaches here — the loop above draws unlit cells — so no guard is
-              // needed to keep a chest out of the dark.
-              const hasChest = shapeKind === "treasure" && !cell.tags?.includes("shop")
-              // A stairhead at the floor's own entrance is the way back UP; any other descends.
-              const isStair = shapeKind === "stairhead"
-              const goesUp = isStair && r === grid.entrancePos[0] && c === grid.entrancePos[1]
-              const hasStair = isStair && !!tileUrl(cell.difficulty ?? tier, goesUp ? "stair-up" : "stair-down")
-              // A DRAWN EXIT LOSES ITS MARKER for the stairhead's reason: the art IS the node, and unlike
-              // a gate it carries no key colour and no state — a portal is a transition, never completed
-              // — so the vector has nothing left to say that the doorway does not say better.
-              const hasExit = shapeKind === "exit" && !!tileUrl(cell.difficulty ?? tier, "exit")
-              const roomR = nodeRadius[shapeKind]
-              const locked = isLockedGate(cell, ownedKeys)
-              const displayState: CellState = locked && state === "reachable" ? "visible" : state
-
-              return (
-                <g
-                  key={`${r},${c}`}
-                  transform={`translate(${cx}, ${cy})`}
-                  onClick={clickable ? () => onCellClick(r, c) : undefined}
-                  style={{ cursor: clickable ? "pointer" : "default" }}
-                >
-                  {/* A FLIGHT SAYS STAIRS BETTER THAN A MARKER DOES, so where one is drawn the marker
+                    {/* A FLIGHT SAYS STAIRS BETTER THAN A MARKER DOES, so where one is drawn the marker
                       goes out entirely rather than merely easing back the way a chest's does. The
                       stair is the only node whose art IS the node — a chest stands BESIDE a treasure
                       room's marker and still needs it to say which room — so this is the one place the
                       vector can be spared. Opacity rather than a skipped render: the shape is what
                       gives the group its clickable area, and an invisible one still takes a hit. */}
-                  <g
-                    opacity={
-                      isCompleted && !isPending && !isPortal
-                        ? 0.45
-                        : hasStair || hasExit
-                          ? 0
-                          : hasChest
-                            ? NODE_OVER_ART_OPACITY
-                            : 1
-                    }
-                  >
-                    <NodeShape
-                      type={shapeKind}
-                      state={displayState}
-                      gateVariant={cell.gateVariant}
-                      keyColor={cell.keyColor}
-                      keyColors={cell.keyColors}
-                      difficulty={wardKeyDifficulty(cell.requiredKeyId)}
-                    />
+                    <g
+                      opacity={
+                        isCompleted && !isPending && !isPortal
+                          ? 0.45
+                          : hasStair || hasExit
+                            ? 0
+                            : hasChest
+                              ? NODE_OVER_ART_OPACITY
+                              : 1
+                      }
+                    >
+                      <NodeShape
+                        type={shapeKind}
+                        state={displayState}
+                        gateVariant={cell.gateVariant}
+                        keyColor={cell.keyColor}
+                        keyColors={cell.keyColors}
+                        difficulty={wardKeyDifficulty(cell.requiredKeyId)}
+                      />
+                    </g>
+                    {isCompleted &&
+                      !isPortal &&
+                      shapeKind !== "fork" &&
+                      (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
                   </g>
-                  {isCompleted &&
-                    !isPortal &&
-                    shapeKind !== "fork" &&
-                    (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
-                </g>
-              )
-            })
-          })}
+                )
+              })
+            })}
 
-          {/* EVERYTHING STANDING ON THE FLOOR IS SORTED AGAINST THE PLAYER, and the player is drawn in
+            {/* EVERYTHING STANDING ON THE FLOOR IS SORTED AGAINST THE PLAYER, and the player is drawn in
               the middle of it. Anything whose floor line is LOWER than his is nearer the viewer and is
               drawn after him, so he passes behind the chest at the front of a room and in front of the
               one at the back. Sorting by the floor line and not by the sprite's top is what makes a
@@ -2595,51 +2601,53 @@ export const SiteMapView = ({
               A node's furniture is additionally clipped, and in MAP space: inside each node's own
               `<g transform>` the clip resolved in that cell's space and cut every sprite away, which
               emptied the game of chests while the tests, which do not rasterise, passed. */}
-          {/* One clip per sprite, cut to its OWN room. The map-wide clip is every floor cell there is,
+            {/* One clip per sprite, cut to its OWN room. The map-wide clip is every floor cell there is,
               so furniture offset toward a wall passed straight through it and appeared in the corridor
               beyond; a room's footprint lets a chest overlap the paving beside it and stops it at the
               masonry. */}
-          <defs>
-            {nodeSprites.map(sprite => (
-              <clipPath key={sprite.key} id={`room-clip-${sprite.key}`}>
-                <path d={footprintPath(sprite.footprint)} />
-              </clipPath>
-            ))}
-          </defs>
+            <defs>
+              {nodeSprites.map(sprite => (
+                <clipPath key={sprite.key} id={`room-clip-${sprite.key}`}>
+                  <path d={footprintPath(sprite.footprint)} />
+                </clipPath>
+              ))}
+            </defs>
 
-          {/* The floor light first, so everything standing is standing IN it. */}
-          {standing.map(s2 =>
-            s2.light ? (
-              <g key={`light:${s2.key}`} transform={`translate(${s2.light.x}, ${s2.light.y})`}>
-                <LightPool r={s2.light.r} />
-              </g>
-            ) : null
-          )}
+            {/* The floor light first, so everything standing is standing IN it. */}
+            {standing.map(s2 =>
+              s2.light ? (
+                <g key={`light:${s2.key}`} transform={`translate(${s2.light.x}, ${s2.light.y})`}>
+                  <LightPool r={s2.light.r} />
+                </g>
+              ) : null
+            )}
 
-          <StandingLayer sprites={behindExplorer} />
+            <StandingLayer sprites={behindExplorer} />
 
-          {explorerPos && (
-            <ExplorerDot
-              key={currentFloor}
-              grid={grid}
-              pos={explorerPos}
-              onArrive={() => setSettledExplorerPos(explorerPos)}
-            />
-          )}
+            {explorerPos && (
+              <ExplorerDot
+                key={currentFloor}
+                grid={grid}
+                pos={explorerPos}
+                onArrive={() => setSettledExplorerPos(explorerPos)}
+              />
+            )}
 
-          <StandingLayer sprites={inFrontOfExplorer} />
+            <StandingLayer sprites={inFrontOfExplorer} />
 
-          {/* Last, so a doorway passes in FRONT of the player walking under it — see Archways. */}
-          <Archways doorways={doorways} explorerPos={explorerPos} />
+            {/* Last, so a doorway passes in FRONT of the player walking under it — see Archways. */}
+            <Archways doorways={doorways} explorerPos={explorerPos} />
 
-          {/* And the gate in front of the arch it is fitted into: the frame is the masonry of the
+            {/* And the gate in front of the arch it is fitted into: the frame is the masonry of the
               opening, the gate is what has been hung in it, so the leaf is the nearer of the two. */}
-          <StandingLayer sprites={gateSprites} />
-
-          {/* The air, over the stone and over the player: what is carried on it, and what hour it is. */}
-          <MapWeather mood={mood} siteId={grid.siteId} width={svgWidth} height={svgHeight} />
-        </svg>
+            <StandingLayer sprites={gateSprites} />
+          </svg>
+        </div>
       </div>
+
+      {/* The air, over the stone and over the player: what is carried on it, and what hour it is. Over the
+          SCROLLING BOX rather than inside it — air belongs to the window, not to the floor. */}
+      <MapWeather mood={mood} siteId={grid.siteId} />
     </div>
   )
 }

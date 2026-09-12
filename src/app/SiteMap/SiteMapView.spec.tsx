@@ -531,7 +531,7 @@ describe("SiteMapView — zoom", () => {
     const sizer = container.querySelector("svg")!.parentElement!
     return { width: parseFloat(sizer.style.width), height: parseFloat(sizer.style.height) }
   }
-  const scrollArea = (container: HTMLElement) => container.firstElementChild as HTMLElement
+  const scrollArea = (container: HTMLElement) => container.querySelector("[data-map-scroll]") as HTMLElement
 
   const wheel = (container: HTMLElement, deltaY: number, times = 1) => {
     for (let i = 0; i < times; i++) {
@@ -593,7 +593,7 @@ describe("SiteMapView — pinch zoom", () => {
 
   const mapScale = (container: HTMLElement) =>
     Number(/scale\(([\d.]+)\)/.exec(container.querySelector("svg")!.style.transform)?.[1])
-  const scrollArea = (container: HTMLElement) => container.firstElementChild as HTMLElement
+  const scrollArea = (container: HTMLElement) => container.querySelector("[data-map-scroll]") as HTMLElement
   const fingers = (spread: number) => [
     { clientX: 100 - spread, clientY: 100 },
     { clientX: 100 + spread, clientY: 100 },
@@ -623,7 +623,7 @@ describe("SiteMapView — zoom reset", () => {
 
   const mapScale = (container: HTMLElement) =>
     Number(/scale\(([\d.]+)\)/.exec(container.querySelector("svg")!.style.transform)?.[1])
-  const scrollArea = (container: HTMLElement) => container.firstElementChild as HTMLElement
+  const scrollArea = (container: HTMLElement) => container.querySelector("[data-map-scroll]") as HTMLElement
 
   it("returns to the default zoom on a double-click, however far the map was zoomed", () => {
     const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), room("reachable")]])} />)
@@ -1053,8 +1053,7 @@ describe("the air on a floor", () => {
     expect(container.querySelectorAll(".map-scarab").length).toBeGreaterThan(0)
 
     const night = render(<SiteMapView grid={{ ...litGrid(), theme: "night" }} />)
-    const washOf = (c: HTMLElement) =>
-      Array.from(c.querySelectorAll<SVGRectElement>("svg > g > rect")).pop()?.getAttribute("fill")
+    const washOf = (c: HTMLElement) => c.querySelector<HTMLElement>("[data-map-tint]")?.style.background
     expect(washOf(night.container)).not.toBe(washOf(container))
   })
 

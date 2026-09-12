@@ -173,7 +173,12 @@ const TORCH_CLASS = "map-torch"
 const WALK_CLASS = "map-walk"
 const TORCH_RADIUS = CELL * 0.85
 const TORCH_CSS = `
-.${TORCH_CLASS} { animation: map-torch-flicker 2.2s ease-in-out infinite; }
+/* A FLAME JUMPS, IT DOES NOT EASE. Stepped rather than interpolated, which is the cheap way round as well
+   as the truer one: a pool of light is a screen-blended gradient inside the map's own SVG, so every
+   interpolated frame re-rasterised the gradient and re-composited the stone under it — four lamps came to
+   a measured 5% of a core, burning on a map nobody was touching. Five steps a cycle is five repaints
+   instead of 130, and a torch that snaps between brightnesses reads more like fire than one that breathes. */
+.${TORCH_CLASS} { animation: map-torch-flicker 2.2s steps(1, end) infinite; }
 @keyframes map-torch-flicker {
   0%   { opacity: 0.86; transform: translate(0, 0); }
   18%  { opacity: 1;    transform: translate(1px, -1px); }

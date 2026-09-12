@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- The map stops heating the phone in your hand: the dust in the air and the flicker of the lamps are drawn the cheap way now, so a map nobody is touching costs nothing to leave open.
+
 ## 0.43.0 - 2026-09-12
 
 ### Added

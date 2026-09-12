@@ -5,11 +5,17 @@ import { sharedTileUrl } from "./tileAssets"
 
 // The air, drawn in three layers over the stone: what is carried on it (drift), what lives in it (life),
 // and what colour it is (tint). All of it CSS-animated rather than driven from React — a mote that
-// re-rendered the map every frame would cost more than everything else the map draws, and the compositor
-// can move a hundred of these for nothing.
+// re-rendered the map every frame would cost more than everything else the map draws.
 //
 // The layers are split because they sit at different depths: scarabs are ON the floor and belong under the
 // props and icons, while drift and tint are between the player and the world and belong over everything.
+//
+// DRIFT AND TINT ARE HTML, NOT SVG, and that is a performance fact rather than a taste: an SVG child gets
+// no layer of its own, so 26 animated <circle>s repainted the whole map — tiles re-decoded, gradients
+// re-rasterised — 60 times a second, for a measured 5% of a core on an idle map and a phone that got warm
+// in the hand. A div with a transform animation is composited: the same motes cost nothing to move. They
+// also no longer belong to the map's coordinate space, which is why they cross the SCREEN rather than the
+// floor — ambience in front of the world, unaffected by pan and zoom.
 
 const MOTE_CLASS = "map-mote"
 const SCARAB_CLASS = "map-scarab"
@@ -22,13 +28,18 @@ const SCARAB_CLASS = "map-scarab"
 // Reduced motion stops all of it. This is ambience: it says nothing the player needs, so it is exactly the
 // kind of movement someone who asked for less of it should not have to watch.
 const MOOD_CSS = `
-.${MOTE_CLASS} { animation: map-drift linear infinite; }
+.${MOTE_CLASS} {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform, opacity;
+  animation: map-drift linear infinite;
+}
 .${SCARAB_CLASS} { animation: map-scurry steps(5, end) infinite; }
 @keyframes map-drift {
-  0% { transform: translate(0, 0); opacity: 0; }
+  0% { translate: 0 0; opacity: 0; }
   15% { opacity: var(--o, 0.5); }
   85% { opacity: var(--o, 0.5); }
-  100% { transform: translate(var(--dx, -160px), var(--dy, 70px)); opacity: 0; }
+  100% { translate: var(--dx, -160px) var(--dy, 70px); opacity: 0; }
 }
 @keyframes map-scurry {
   0% { transform: translate(0, 0); }
@@ -78,8 +89,6 @@ const turned = (degrees: number, mirrored: boolean) => ({
 type Props = {
   mood: Mood
   siteId: string
-  width: number
-  height: number
   /**
    * EVERY floor cell of the floor, lit or not, in a fixed order — not just the explored ones.
    *
@@ -109,14 +118,7 @@ type Props = {
  * Draws nothing until the sprite exists, which is deliberate: the condition can be authored, composed
  * and seen as a wash before a single file is painted.
  */
-export const MapGrowth = ({
-  mood,
-  siteId,
-  floorCells,
-  wallCells = [],
-  chamberCells = [],
-  isLit,
-}: Omit<Props, "width" | "height">) => {
+export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCells = [], isLit }: Props) => {
   const g = mood.growth
   if (!g?.floor && !g?.wall && !g?.chamber) return null
   // One sprite per PLACE, falling back to the plain one where the other two are not drawn yet. The
@@ -251,7 +253,7 @@ export const MapGrowth = ({
 }
 
 /** Scarabs: on the floor, under everything that stands on it. */
-export const MapLife = ({ mood, siteId, floorCells, isLit }: Omit<Props, "width" | "height">) => {
+export const MapLife = ({ mood, siteId, floorCells, isLit }: Props) => {
   const url = sharedTileUrl("scarab")
   if (!mood.life || !url || floorCells.length === 0) return null
   return (
@@ -286,39 +288,54 @@ export const MapLife = ({ mood, siteId, floorCells, isLit }: Omit<Props, "width"
   )
 }
 
-/** Drift and tint: between the player and the world, so over everything the map draws. */
-export const MapWeather = ({ mood, siteId, width, height }: Omit<Props, "floorCells" | "isLit">) => {
+/** Drift and tint: between the player and the world, so over everything the map draws — and an HTML
+ * layer over the map rather than the last group inside it.
+ *
+ * ACROSS THE SCREEN, NOT ACROSS THE FLOOR. A mote in map space had to be placed against the floor's own
+ * width and height, moved with the pan and grew with the zoom — dust the size of a chest at 5×. Air is
+ * between the player and the world, so it belongs to the viewport: the layer is the size of the map's
+ * window, and a floor twice the screen costs exactly the same motes as one that fits.
+ *
+ * Each mote is its own div with a `translate` animation, which the compositor owns — see the note at the
+ * top of this file for the repaint this replaced. */
+export const MapWeather = ({ mood, siteId }: Pick<Props, "mood" | "siteId">) => {
   const { drift, tint } = mood
   if (!drift && !tint) return null
   return (
-    <g aria-hidden="true" style={{ pointerEvents: "none" }}>
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
       <style>{MOOD_CSS}</style>
       {drift &&
-        Array.from({ length: drift.count }, (_, i) => (
-          <circle
-            key={i}
-            className={MOTE_CLASS}
-            cx={rand(siteId, "mote-x", i) * width}
-            cy={rand(siteId, "mote-y", i) * height}
-            r={drift.size * (0.6 + rand(siteId, "mote-r", i) * 0.8)}
-            fill={drift.fill}
-            style={
-              {
-                "--o": drift.opacity,
-                // Blown across and down, at its own angle and pace — one vector for all of them reads as a
-                // sheet of rain rather than as air.
-                "--dx": `${-(60 + rand(siteId, "mote-dx", i) * 200)}px`,
-                "--dy": `${(rand(siteId, "mote-dy", i) - 0.35) * 120}px`,
-                animationDuration: `${drift.seconds * (0.7 + rand(siteId, "mote-s", i) * 0.6)}s`,
-                // Negative delay: they are already mid-crossing on the first frame, rather than all
-                // starting together in a wave.
-                animationDelay: `-${rand(siteId, "mote-d", i) * drift.seconds}s`,
-              } as React.CSSProperties
-            }
-          />
-        ))}
+        Array.from({ length: drift.count }, (_, i) => {
+          const size = drift.size * 2 * (0.6 + rand(siteId, "mote-r", i) * 0.8)
+          return (
+            <div
+              key={i}
+              className={MOTE_CLASS}
+              style={
+                {
+                  left: `${rand(siteId, "mote-x", i) * 100}%`,
+                  top: `${rand(siteId, "mote-y", i) * 100}%`,
+                  width: `${size}px`,
+                  height: `${size}px`,
+                  background: drift.fill,
+                  "--o": drift.opacity,
+                  // Blown across and down, at its own angle and pace — one vector for all of them reads as a
+                  // sheet of rain rather than as air.
+                  "--dx": `${-(60 + rand(siteId, "mote-dx", i) * 200)}px`,
+                  "--dy": `${(rand(siteId, "mote-dy", i) - 0.35) * 120}px`,
+                  animationDuration: `${drift.seconds * (0.7 + rand(siteId, "mote-s", i) * 0.6)}s`,
+                  // Negative delay: they are already mid-crossing on the first frame, rather than all
+                  // starting together in a wave.
+                  animationDelay: `-${rand(siteId, "mote-d", i) * drift.seconds}s`,
+                } as React.CSSProperties
+              }
+            />
+          )
+        })}
       {/* Last, so the hour lies over the motes as well as the stone. */}
-      {tint && <rect width={width} height={height} fill={tint.fill} opacity={tint.opacity} />}
-    </g>
+      {tint && (
+        <div data-map-tint="" className="absolute inset-0" style={{ background: tint.fill, opacity: tint.opacity }} />
+      )}
+    </div>
   )
 }
