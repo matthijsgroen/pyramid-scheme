@@ -691,6 +691,13 @@ half the doors in the game.
    0.28 and 0.9) because with an additive composite the SUM is what clips — at the old values the cone
    saturated to a solid mass and took the glyph column with it. Thinnest margin is the gods' lit calcite.
 
+   **AND THE LIGHT IS RENDERED UNLIT** (`render-prop --unlit=haze,daylight`), which is the fix for the
+   one thing that looked wrong after all of the above: the top of the beam DARKENED what it crossed. A
+   lit surface is shaded by its angle to the rig and a cone's sides turn away as it narrows, so the shaft
+   rendered darker than its own hex exactly where it is thinnest — over the merchant's wall band it
+   measured luminance 46 against the band's 49. Emitting instead of reflecting, it runs +23 to +91 down
+   the whole tile. Anything that IS light wants this flag; anything light falls on does not.
+
    **The shaft is THREE NESTED CONES**, which is how a flat material gets a falloff. One cone is a wedge:
    a hard edge down each side and the same value all the way across, and beside the pool at its foot —
    one disc, soft because it is round — that wedge is the part that reads as a shape rather than as

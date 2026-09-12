@@ -482,6 +482,13 @@ yarn import-tile "$OBJ" --tier=default --name=gate-open-side --slot=prop \
 # that read at all. Added, the stone inside the shaft is simply lit stone and no depth is needed to say
 # so.
 #
+# --unlit=haze,daylight, and without it the top of the beam DARKENS what it crosses. A lit surface is
+# shaded by its angle to the rig, and a cone's sides turn away as it narrows — so the shaft rendered
+# darker than its own hex exactly where it is thinnest, and added to the tile that top read as a smear of
+# tan pulling the ground down. Measured over the merchant's wall band it sat at luminance 46 against the
+# band's own 49, and over his paving 90 against 101; unlit it runs +23 to +91 all the way down. Light is
+# the source, so it takes no shading from anywhere else.
+#
 # THE LAYER IS RENDERED DIM BECAUSE THE SUM IS WHAT CLIPS. --alpha-haze=0.12 and --alpha-daylight=0.26
 # against the 0.28/0.9 the free-standing beam used: at those the cone saturated to a solid tan mass and
 # took the glyph column with it. The haze number is low for a second reason too — the shaft is THREE
@@ -505,7 +512,7 @@ exit_layer() {
 }
 LIGHT=$(mktemp -t propexitlight).png
 exit_layer --drop=haze,daylight --out="$OBJ"
-exit_layer --drop=body --alpha-haze=0.12 --alpha-daylight=0.26 --out="$LIGHT"
+exit_layer --drop=body --unlit=haze,daylight --alpha-haze=0.12 --alpha-daylight=0.26 --out="$LIGHT"
 yarn import-tile art/masters/props/default/exit.webp --tier=default --name=exit --slot=prop \
   --filter=smooth --mask="$OBJ" --glow="$LIGHT" --brightness=0.85
 rm -f "$LIGHT"

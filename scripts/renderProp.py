@@ -2750,6 +2750,14 @@ def nocast(name):
     return f"{name}{NOCAST_SUFFIX}"
 
 
+def unlit_parts():
+    """The parts `--unlit=a,b` names, which are rendered EMITTING their colour rather than reflecting it.
+
+    For a part that IS light rather than a thing light falls on. See `flat_material`: the exit's shaft is
+    the only user, and the top of it rendered darker than its own hex until this existed."""
+    return {p.strip() for p in (arg("unlit") or "").split(",") if p.strip()}
+
+
 def part_of(slot_name):
     """The PART a slot names, with Blender's uniquifying suffix and the nocast marker both stripped."""
     return slot_name.split(".")[0].removesuffix(NOCAST_SUFFIX)
@@ -2832,9 +2840,16 @@ def mark(obj, name):
     return obj
 
 
-def flat_material(name, hex_colour, alpha=1.0):
+def flat_material(name, hex_colour, alpha=1.0, unlit=False):
     """A flat matte material in one colour. Roughness 1 and zero specular: the set is painted and matte,
     with no highlight anywhere (tile-art-brief.md, "The style").
+
+    `unlit` makes it EMIT that colour instead of reflecting it, which is what a part that IS light needs.
+    A lit surface is shaded by its angle to the rig, and the exit's shaft is a cone — so its sides turn
+    away as it narrows and the top of the beam rendered DARKER than its own hex. Added to the tile that
+    top reads as a smear of tan pulling the ground down rather than as light on it: measured over the
+    merchant's wall band the beam sat at luminance 46 against the band's own 49, and over his paving 90
+    against 101. Light does not take shading from somewhere else; it is the source.
 
     `alpha` below 1 makes the part SEE-THROUGH in the render, and therefore in the tile: the film is
     transparent, so the render's own alpha is what `import-tile --mask` cuts to, and sharp's `dest-in`
@@ -2854,6 +2869,12 @@ def flat_material(name, hex_colour, alpha=1.0):
     for slot in ("Specular IOR Level", "Specular"):
         if slot in bsdf.inputs:
             bsdf.inputs[slot].default_value = 0.0
+    if unlit:
+        # Emission on the same BSDF rather than a separate shader, so the alpha branch below still
+        # applies to it — an emissive part that cannot be made transparent is no use to a beam.
+        bsdf.inputs["Base Color"].default_value = (0.0, 0.0, 0.0, 1.0)
+        bsdf.inputs["Emission Color"].default_value = (*rgb, 1.0)
+        bsdf.inputs["Emission Strength"].default_value = 1.0
     if alpha < 1.0:
         bsdf.inputs["Alpha"].default_value = alpha
         # EEVEE renders alpha only when the material asks for it, and the property was renamed: 4.2+
@@ -2903,7 +2924,10 @@ def paint(obj, hex_colour):
         # opaque every time, which reads as the beam being too bright rather than as a flag not arriving.
         part = part_of(name)
         obj.data.materials[i] = flat_material(
-            name, arg(f"colour-{part}", default), float(arg(f"alpha-{part}", "1"))
+            name,
+            arg(f"colour-{part}", default),
+            float(arg(f"alpha-{part}", "1")),
+            part in unlit_parts(),
         )
 
 
