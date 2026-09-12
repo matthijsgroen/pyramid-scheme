@@ -1456,6 +1456,127 @@ def prim_pit():
     return join_all()
 
 
+def prim_gate():
+    """A ward gate across a passage: `--contents=shut` has the grille down, `--contents=open` has it sunk
+    into the threshold it stands on.
+
+    IT IS DRAWN FOR THE BOUNDARY between the gate's square and the one in front of it — the map halts the
+    player on the approach and stands this across the mouth (`SiteMapView`, `useSiteNavigation`) — so it
+    is a thing seen face on across a corridor, and the whole of the job is that the two states read apart
+    at 56 units.
+
+    IT IS A GRILLE, AND THAT IS WHY IT NEEDS NO REPAINT. Every other tile in this set is a Blender render
+    sent out to be painted, because flat-shaded stone is a slab of one colour and the repaint is what puts
+    limestone in it. Bars have nothing to paint: a steel upright is a straight edge and a single value,
+    which is exactly what the renderer already draws, so the render IS the tile and the master is the
+    Python. The boarded leaf this replaced is the half that wanted paint, and it is gone.
+
+    THE OPENING IS EMPTY, NOT VOID, and that is the one decision here that is not obvious. Every other
+    hole in this set marks its inside VOID so it renders near-black; a gate must not, because an OPEN
+    gate drawn that way is a black rectangle standing in a lit corridor, and the passage it has just
+    stopped blocking is exactly what the player should now see through it. The gaps BETWEEN the bars are
+    the same argument while it is shut, and they can be transparent safely because this tile stands on
+    the APPROACH: what shows between them is the corridor the player is already in, never the sealed
+    pocket whose tier is the thing being kept back (`cellFloorAt`).
+
+    A LINTEL IS THE POINT, where `prim_pit` had to keep one out. Anything crossing a mouth reads as a
+    lintel, which cost that primitive four renders to learn as a hazard; here it is the read being asked
+    for, so the mouth is crossed deliberately and the jambs are what it lands on.
+
+    BARS RUN IN X, the one axis drawn honestly, so their spacing is the spacing the player sees; in y or
+    z they would be a stack of lines. At 56 units an upright lands near 3px and a gap near 4, the
+    narrowest a grille can be and still read as one — a hairline is a gap, and here that law is being
+    USED rather than worked around.
+
+    THE GRILLE IS ALSO WHAT KEEPS THE TILE OFF `tile-stats`' "too dark" complaint without a correction
+    flag. A solid leaf read 36 below the slab it stands on; the bars give the floor back between them and
+    the tile lands at a median of 81 against a slab band of 87-114, the closest anything in this set gets.
+
+    THE CAVETTO IS SHALLOW IN Y, and that is its whole tuning. Its top face is the one horizontal plane up
+    there and takes the light square on, so a course built the full thickness of the wall laid the
+    brightest band on the entire floor — brighter than the paving, the walls and every prop beside it.
+    """
+    k = 0.7
+    opening, jamb, d = 0.66, 0.13, 0.22
+    h = 1.02  # jamb height; the lintel sits on top of it
+    half = opening / 2 + jamb / 2
+    span = opening + 2 * jamb
+    open_gate = arg("contents") == "open"
+
+    if arg("contents", "").endswith("-side"):
+        # THE SAME GATE IN A WALL THAT RUNS UP THE PAGE, for a passage walked across — half of them.
+        #
+        # NARROW AND TALL, which is the whole of it, and the first attempt got it backwards. This gate's
+        # plane is the y-z one: its width runs in DEPTH and its height in z, so `drawn = (x, z + k*y)`
+        # gives it no horizontal extent at all and piles the passage's whole width onto its height. A
+        # side gate built as wide as the face-on one is therefore not a side view of anything — it is the
+        # face-on gate again, one size down, which is exactly how it read on the map.
+        #
+        # So it is drawn the shape the projection actually makes: a tall narrow panel standing in the
+        # seam between two columns, which is SIDE_W — a quarter of a cell — where the face-on gate spans
+        # a whole one. That difference in silhouette is what tells a player which way a passage runs,
+        # and it is the same trade `prim_stair` makes at `--contents=down-side`: not a truthful
+        # projection of the object, but the one drawing that still says what the object is.
+        #
+        # ONE BAR, because that is what a grille seen from the side IS. The uprights of a portcullis stand
+        # in a row across the passage, so edge-on they line up behind one another and the whole rank
+        # draws as a single upright — a second bar beside it would be a second GATE, not a second bar.
+        # Five went to three, three to two, and each step was still drawing the face-on gate at a smaller
+        # size; one is the count the view actually has.
+        #
+        # WHICH IS WHY THE MODEL IS SMALL. With one upright there is nothing to be wide for: the panel is
+        # the wall's own thickness, SIDE_W, a quarter of a cell, and at 0.12 it lands near that. The
+        # earlier cuts were wide enough to keep bars apart and read as doorways because of it.
+        w, thick = 0.12, 0.16
+        # A pier at the head and one at the foot — the jambs of a north-south wall stand north and south
+        # of the opening, so in the picture they stack rather than flank.
+        mark(box(w + 0.07, thick, 0.12, z=0.06), "body")
+        mark(box(w + 0.07, thick, 0.14, z=0.92), "body")
+        if arg("contents") == "open-side":
+            mark(box(w, thick * 0.7, 0.07, z=0.155), "metal")
+            return join_all()
+        grille_h = 0.76
+        mark(box(0.05, thick * 0.55, grille_h, z=grille_h / 2 + 0.12), "metal")
+        # The drawbar, edge-on too: a stub either side of the upright rather than a bar across a row.
+        mark(box(w + 0.05, thick * 0.45, 0.07, z=0.50), "metal")
+        return join_all()
+
+    # A pad under each jamb rather than a sill across the whole doorway: the opening has to reach the
+    # floor or there is nothing to walk through. Parts overlap by ~0.03 rather than butting.
+    for sx in (-1, 1):
+        mark(box(jamb + 0.06, d, 0.05, x=sx * half, z=0.025), "body")
+        mark(box(jamb, d, h, x=sx * half, z=h / 2 + 0.03), "body")
+        # The socket the drawbar sits in: a proud block, not a recess. A recess must stand clear of the
+        # face it cuts, and at this size a sunk one is simply not there.
+        mark(box(jamb * 0.78, d * 0.45, 0.10, x=sx * half, y=-(d / 2) - 0.01, z=0.60 - k * ((d / 2) + 0.01)), "deep")
+    # The threshold, kept SHALLOW in y so its top face draws as a line and not as a band.
+    mark(box(opening + 0.04, d * 0.3, 0.035, z=0.018), "body")
+    # The lintel across both jambs, and a cavetto over it — the one moulding that says EGYPTIAN doorway
+    # at this size, and the only thing making the silhouette more than a rectangle.
+    mark(box(span, d, 0.11, z=h + 0.055), "body")
+    mark(box(span + 0.09, d * 0.42, 0.06, y=-(d * 0.25), z=h + 0.14 + k * (d * 0.25)), "body")
+
+    proud = 0.05
+    lift = k * proud
+
+    if open_gate:
+        # Gone down into its slot: the grille that filled the doorway now lies along the bottom of it,
+        # still steel, so the colour that was barring the way is the colour lying in the threshold.
+        mark(box(opening, d * 0.32, 0.09, y=-proud, z=0.08 + lift), "metal")
+        return join_all()
+
+    # Five uprights, floor to lintel.
+    bars, grille_h = 5, h - 0.10
+    for i in range(bars):
+        x = (i - (bars - 1) / 2) * (opening / bars)
+        mark(box(0.052, d * 0.22, grille_h, x=x, y=-proud, z=grille_h / 2 + 0.05 + lift), "metal")
+    # Two rails tying them together, and the drawbar long enough to reach the sockets in the jambs — a
+    # bar that stops short of them is a stripe on a grille rather than a thing holding the gate shut.
+    mark(box(opening + 0.02, d * 0.24, 0.05, y=-proud, z=0.93 + lift), "metal")
+    mark(box(span * 0.94, d * 0.26, 0.09, y=-proud - 0.03, z=0.60 + k * (proud + 0.03)), "metal")
+    return join_all()
+
+
 def _stair_torch(x, y, scale=1.0):
     """A cresset standing beside a stair mouth, and the reason the flight is graded at all.
 
@@ -2471,6 +2592,7 @@ PRIMITIVES.update(
         "niche": prim_niche,
         "pit": prim_pit,
         "stair": prim_stair,
+        "gate": prim_gate,
         "sconce": prim_sconce,
         "shrine": prim_shrine,
         "falseDoor": prim_falsedoor,

@@ -397,6 +397,35 @@ scaffold stair --contents=up-side
 yarn import-tile art/masters/props/default/stair-up-side.webp --tier=default --name=stair-up-side --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.7
 
+# THE WARD GATE, and the only pair in the set IMPORTED FROM ITS OWN RENDER rather than from a painted
+# master — which is why these two lines name "$OBJ" where every other names a .webp. There is no return
+# to reproduce: the render IS the tile. Send it through a repaint later and the only change here is the
+# source path, because the mask and the seat are already the ones a repaint would be cut to.
+#
+# No --brightness and no --gamma, and that was measured rather than left out. Every tile in this set
+# trips `tile-stats` — stair-down-side spans 130 and reads 65 dark — and the gate untouched lands at
+# 47/63/128 with a span of 81, the tightest of the flights and chests it stands beside. A correction
+# fitted to the warning rather than to the set would have been the only thing putting it out of place.
+scaffold gate --contents=shut
+yarn import-tile "$OBJ" --tier=default --name=gate --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
+scaffold gate --contents=open
+yarn import-tile "$OBJ" --tier=default --name=gate-open --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
+# THE SAME GATE IN A WALL THAT RUNS UP THE PAGE, for a passage walked across — `prim_stair`'s four
+# facings, one axis over. The grille's own plane is the y-z one and this projection draws that as a
+# line, so the bars go on facing the viewer and the JAMBS move into depth instead: a pier above and a
+# pier below, where the face-on gate has one either side.
+scaffold gate --contents=shut-side
+yarn import-tile "$OBJ" --tier=default --name=gate-side --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
+scaffold gate --contents=open-side
+yarn import-tile "$OBJ" --tier=default --name=gate-open-side --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
 # replaces was a post-processing copy whose flags could not be recovered (art/README).
 #
