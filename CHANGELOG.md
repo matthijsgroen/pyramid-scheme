@@ -7,15 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Changed
+### Added
 
-- The inside of a pyramid is a place now rather than a diagram. Its floors, walls and doorways are
-  painted stone that changes with the rank you are in; its rooms are furnished with the things that tomb
+- The inside of a pyramid is drawn. It is a place now rather than a diagram: floors, walls and doorways
+  are painted stone that changes with the rank you are in; rooms are furnished with the things that tomb
   would hold, and a pyramid dedicated to a god keeps a room for him with his statue in it; stairs, ward
-  gates and the way out are drawn where they stand instead of standing for themselves as symbols; and a
-  site something has got into — the green in the Nile Delta — shows it on every floor. Three of the five
-  ranks are painted throughout. The pharaoh's and the gods' are still being drawn, and until they are,
-  anything not yet painted keeps the placeholder it had.
+  gates and the way out are drawn where they stand instead of standing for themselves as symbols; a
+  site something has got into — the green in the Nile Delta — shows it on every floor; and every
+  encounter is met against the wall of the floor you are standing on. Three of the five ranks are
+  painted throughout. The pharaoh's and the gods' are still being drawn, and until they are, anything
+  not yet painted keeps the placeholder it had.
 
 ### Fixed
 
