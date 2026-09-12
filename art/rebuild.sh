@@ -962,6 +962,27 @@ yarn import-tile art/masters/props/expert/mat.webp --tier=expert --name=mat --sl
   --filter=smooth --key=none --mask="$OBJ" --seat="$SHADOW" \
   --brightness=0.78 --saturation=0.55 --contrast=1.35
 
+# His LAMP STAND, and the one tile in this rank that needed LIFTING rather than clipping. Dark bronze
+# gone green came back with 52.2% of itself below the palette's dark end — on his pale basalt it read as
+# a silhouette with the bands and the flutes lost inside it. --brightness=1.35 takes that to 16.7%, which
+# is still deeper than the clamp and still shallower than his own statue's 35.9%, and it is what brings
+# the gilt collars back. 87 of separation either way: nothing at this rank has trouble being seen against
+# the floor, only against itself.
+scaffold lamp --contents=stand --spin=11 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/lamp.webp --tier=expert --name=lamp --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=1.35
+
+# His TALLY BOARD, FLAT like the merchant's and the nobleman's stela: no mesh, no mask, the return's own
+# silhouette becomes the tile. The marks are TALLIES AND SIGNS rather than script — counting strokes
+# under a row of hieroglyphs — because junior/tallyBoard proved that asking for hieratic gets a modern
+# accounting sheet with English headings. A picture is safe; handwriting is not.
+#
+# --brightness=0.72, the deepest clip of any wall item here. Whitewashed board on pale basalt came back
+# 63.1% over the light clamp — the two palest things in the rank on top of each other. 0.72 lands it 0.0%
+# over and 1.8% under, 14 from the floor, and the red and black marks keep their bite.
+yarn import-tile art/masters/props/expert/tallyBoard.webp --tier=expert --name=tallyBoard --slot=wall \
+  --filter=smooth --headroom=0.18 --brightness=0.72
+
 # ANUBIS, and the tile that proved a statue needs no museum scan. Step 0's table sent statues to a scan
 # for as long as it existed; the canopic jars broke that row's other half, and this broke the rest.
 #

@@ -36,6 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The priest's chambers are lit and counted. A tall bronze lamp stand on a papyrus shaft burns in his
+  rooms, and a temple day-book hangs on his walls — an ostracon board of tally strokes in red and black
+  under a row of hieroglyphs — where both were placeholders before.
 - The priest kneels on a real mat. The rush mat laid before his altars is drawn now — worn pale and smooth
   down the middle where knees have been, its plaited edge darker from handling — where every one of his
   tombs had a three-colour placeholder lying on the floor.
