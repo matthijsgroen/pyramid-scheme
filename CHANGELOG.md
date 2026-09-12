@@ -43,8 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   with the sun disc on him — standing in a timber shrine on the floor, and again in the cupboard set into
   the wall — where before it showed the same Bes-and-whitewash corner as every other merchant's tomb. Two
   gods are now told apart at that rank, which is the point at which a dedication is visible at all.
-- The way out of a pyramid is a marker stone: a round limestone pillar, a column of hieroglyphs cut down
-  it in red ochre, standing in a pool of daylight with the sun behind its head. It reads the same from whichever
+- The way out of a pyramid is a marker stone standing in a shaft of daylight: a round limestone pillar
+  with a column of hieroglyphs cut down it in red ochre, the light falling on it from somewhere above and
+  pooling on the paving at its foot. It reads the same from whichever
   direction you come at it, and the marker that used to stand for it is gone — the stone says it better.
   It was a bare shaft of light first, and light on its own read as a drift of sand: somebody has to have
   PUT a thing there for it to mean "leave here".

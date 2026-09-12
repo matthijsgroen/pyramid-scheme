@@ -470,41 +470,44 @@ scaffold gate --contents=open-side
 yarn import-tile "$OBJ" --tier=default --name=gate-open-side --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
-# THE WAY OUT: a round marker pillar standing in daylight, and the ONLY TILE IN THE SET BUILT FROM TWO
-# RENDERS. The stone half is a scaffold like any other prop's and goes through the generator; the light
-# half never can — a return comes back opaque on magenta, and daylight that does not let the paving show
-# through it is a disc of paint with a post in front of it. So `--drop` renders each half alone, in one
-# frame, and `--behind` lays the light back under the paint at import.
+# THE WAY OUT: a round marker pillar standing in a shaft of daylight, and the ONLY TILE IN THE SET BUILT
+# FROM TWO RENDERS. The stone half is a scaffold like any other prop's and goes through the generator;
+# the light half never can — a return comes back opaque on magenta, and a beam that does not let the
+# paving show through it is a post. So `--drop` renders each half alone, in one frame, and `--glow` lays
+# the light back over the paint at import.
 #
-# UNDER, not over, and that is the depth order rather than a preference. Every part of the light stands
-# further from the viewer than the stone does, so the stone occludes all of it; composited on top, the
-# pool drew straight across the pillar's foot and took the base with it. Sharp has no depth buffer, so
-# the arrangement has to be one a flat stack can express.
+# ADDED, not laid over, and that is what lets the beam stand where the marker stands. Sharp has no depth
+# buffer, so a layer composited `over` must be wholly in front of the paint or wholly behind it — every
+# earlier arrangement of this tile had to dodge the stone sideways, and a disc behind it was the only one
+# that read at all. Added, the stone inside the shaft is simply lit stone and no depth is needed to say
+# so.
 #
-# The light keeps its `--alpha-haze` and `--alpha-daylight`: the mask is the render's own alpha and the
-# composite multiplies by it, so the transparency reaches the tile with no importer flag of its own.
-# Everything of it is `!nocast`, so the footprint under the tile is the pillar's alone — light casts
-# nothing, and the pool at the foot is the map's (`NodeSprite.light`) as well as the tile's.
+# THE LAYER IS RENDERED DIM BECAUSE THE SUM IS WHAT CLIPS. --alpha-haze=0.12 and --alpha-daylight=0.26
+# against the 0.28/0.9 the free-standing beam used: at those the cone saturated to a solid tan mass and
+# took the glyph column with it. The haze number is low for a second reason too — the shaft is THREE
+# nested cones, so the middle of it carries three of them and the outer edge one, and 0.12 is what the
+# innermost sum can take. The margin is thinnest on the gods' lit calcite, which is where to look first
+# if this is ever re-tuned.
+#
+# NO --seat, and it is the light that removes the need. The sun here is straight overhead, so the pillar's
+# shadow falls under its own base; the rendered footprint lands off to one side, where it read as a hard
+# dark block beside the pool the moment the pool stopped being bright enough to hide it. Everything of
+# the light is `!nocast` anyway.
 #
 # --brightness=0.85 IS THE STONE'S NUMBER, not the sprite's. Pale limestone came back 40.6% over the
-# light clamp with nothing at the dark end; 0.85 takes that to 5.1% and leaves 19 of separation. Measured
-# on the finished tile it reads 18.3% over and 9 of separation instead, and both of those are the
-# DAYLIGHT — a third of the sprite is the thing that is supposed to be the brightest on the map. Same
-# argument the merchant's shrine records: judge the clamp on the material, not on the whole picture.
-#
-# --shadow=0 is passed PER CALL rather than baked into the function, because it is the footprint's own
-# alpha: the footprint render is the one call that must not carry it, exactly as `scaffold()` above
-# arranges for every other prop.
+# light clamp with nothing at the dark end; 0.85 takes that to 5.1% and leaves 19 of separation. The
+# finished tile measures over twice that, and all of the excess is the beam — which is the one thing in
+# this set that is meant to be the brightest on the map. Same argument the merchant's shrine records:
+# judge the clamp on the material, not on the whole picture.
 exit_layer() {
-  "$BLENDER" -b -P scripts/renderProp.py -- --primitive=exit --background=none \
+  "$BLENDER" -b -P scripts/renderProp.py -- --primitive=exit --shadow=0 --background=none \
     --colour=#a49781 --floor=#6c6257 "$@" >/dev/null
 }
 LIGHT=$(mktemp -t propexitlight).png
-exit_layer --shadow=0 --drop=haze,daylight --out="$OBJ"
-exit_layer --only=shadow --out="$SHADOW"
-exit_layer --shadow=0 --drop=body --alpha-haze=0.28 --alpha-daylight=0.9 --out="$LIGHT"
+exit_layer --drop=haze,daylight --out="$OBJ"
+exit_layer --drop=body --alpha-haze=0.12 --alpha-daylight=0.26 --out="$LIGHT"
 yarn import-tile art/masters/props/default/exit.webp --tier=default --name=exit --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --behind="$LIGHT" --brightness=0.85
+  --filter=smooth --mask="$OBJ" --glow="$LIGHT" --brightness=0.85
 rm -f "$LIGHT"
 
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it

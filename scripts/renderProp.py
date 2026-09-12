@@ -1628,32 +1628,50 @@ def prim_exit():
     battered cippus with a sunk panel for its inscription, which is a thing that was placed, and the light
     is then what singles it out rather than what has to carry the whole meaning.
 
-    THE STONE STANDS IN FRONT OF THE BEAM, and the projection is why rather than taste. Drawn height is
-    z + k*y, so anything nearer the viewer draws LOWER: at y = -0.16 against the shaft's +0.12 the stone
-    lands clear of the light on the page instead of inside it. Concentric, the core would have sat over
-    the panel at 0.9 alpha and taken the inscription with it — `prim_falsedoor`'s offering table, the same
-    overlap arithmetic from the other side.
+    THE STONE STANDS INSIDE THE SHAFT, which is only possible because the import ADDS the light layer
+    rather than laying it over or under (`import-tile --glow`). Sharp has no depth buffer, so a composited
+    layer has to be wholly in front of the paint or wholly behind it — and a beam centred on a marker is
+    neither. Three arrangements were built to dodge that before the additive one: the stone in front of a
+    beam, the stone in front of a disc, and a shaft slanted past it. Added, the stone inside the shaft is
+    lit stone and nothing has to dodge.
 
     THE STONE IS PAINTED AND THE LIGHT IS NOT, which is why they are separate parts rather than one mesh.
     A repaint comes back opaque on magenta, so a painted beam is a post; the stone goes through the
-    generator as any prop does and the light is rendered and laid back over the return at import
-    (`--drop` here, `--overlay` there). Everything of the light is `!nocast`: it stands on the floor in the
-    picture but casts nothing on it, so the seat under the tile is the stone's footprint alone.
+    generator as any prop does and the light is rendered and added back at import (`--drop` here,
+    `--glow` there). Everything of the light is `!nocast`: it stands on the floor in the picture but casts
+    nothing on it.
+
+    AND THE LAYER IS RENDERED DIM, because with an additive composite the SUM is what clips. The free
+    beam's own 0.28 haze and 0.9 core saturate to a solid tan mass over the stone and take the glyph
+    column with them; 0.18 and 0.26 leave the inscription readable through the light.
     """
     # The pool on the paving, which is what roots the shaft to the floor rather than leaving it hovering.
     # Flat and shallow: depth is taxed into height here as everywhere.
     mark(cyl(0.30, 0.02, y=-0.14, z=0.01, verts=24), "daylight!nocast")
-    # The DISC, standing behind the stone: two rings, a wider haze round a brighter core.
-    for r, y_off, part in ((0.30, 0.16, "haze"), (0.21, 0.14, "daylight")):
-        disc = mark(cyl(r, 0.02, y=y_off, z=0.80, verts=26), f"{part}!nocast")
-        disc.rotation_euler = (math.radians(90), 0, 0)
-    # A SHAFT OVER THE PILLAR WAS TRIED AND DROPPED, in three sizes, and the reason is worth keeping
-    # because it is an obvious thing to want twice. Rising from the floor past the stone it is a spike
-    # through the disc; sized to land on the cap it is a candle flame, which a cone closing upward always
-    # is at 56 units; wide enough to flare past the stone it is a tent pitched over it. To read as a
-    # spotlight at all it would have to reach the top of the frame, and `seat_and_normalise` scales the
-    # whole object to one unit tall — so buying the shaft means shrinking the marker, which is the thing
-    # the light is there to pick out.
+    # The SHAFT, standing ON that pool and closing to a point above the pillar's cap. It is centred on the
+    # stone rather than set behind it, which is only possible because the import ADDS this layer
+    # (`--glow`): a beam composited over the paint would hide the marker, and one composited under it
+    # would be hidden BY the marker, so every earlier arrangement had to dodge sideways and none of them
+    # read. Added, the stone inside the shaft is simply lit stone.
+    #
+    # THREE NESTED CONES RATHER THAN ONE, which is how a flat material gets a falloff. One cone is a wedge
+    # with a hard edge down each side and the same value all the way across, and next to the pool at its
+    # foot — a single disc, soft because it is round — that wedge is the part that reads as a shape rather
+    # than as light. Nested and added, the sum steps up toward the middle and the outermost edge is the
+    # faintest thing in the tile, which is what an edge of light looks like.
+    #
+    # No brighter CORE part in it: the steps are all the same material, and it is the overlap that makes
+    # the middle bright. A core of its own colour is a hard edge up the centre, and against an additive
+    # composite that edge is where the sum clips first.
+    for r in (0.30, 0.21, 0.13):
+        mark(cone(r, 0.0, 1.30, y=-0.02, z=0.65), "haze!nocast")
+    # MOTES IN THE BEAM WERE TRIED AND CUT, and the arithmetic is the whole answer. A tile is stored at
+    # 2x, so a speck small enough to be a speck is two or three stored pixels and lands on ONE drawn — at
+    # 56 units that is a single pixel of added light inside a cone that is already light, and it is not
+    # visible at all. Enlarged until it was, it stopped being dust; moved off the shaft to keep clear of
+    # the stone, it fell where the cone is thin enough that it read as dirt on the lens. Over the pillar
+    # it was worse than invisible: additive, it brightens the glyph column, which is the one part of this
+    # tile that has to stay legible.
     # The marker stone: a stepped base, a round shaft between two collars, and a cap.
     #
     # ROUND, and SHORT. A square post with a sunk panel in it read as a shrine cabinet — the panel is a
@@ -2878,8 +2896,14 @@ def paint(obj, hex_colour):
         default = PART_COLOURS.get(part_of(name), hex_colour)
         # Keeps the slot's NAME, not `prop{i}`. `make_shadow` reads it back to find the void, and a
         # renamed slot leaves it unable to tell an absence from stone.
+        #
+        # But the FLAGS are looked up by the part, for the same reason the default is: a slot called
+        # `haze!nocast` is still haze, and `--alpha-haze` has to reach it. Keyed on the raw slot name the
+        # flag silently missed — the exit's shaft took its `--alpha-haze` for three sweeps and rendered
+        # opaque every time, which reads as the beam being too bright rather than as a flag not arriving.
+        part = part_of(name)
         obj.data.materials[i] = flat_material(
-            name, arg(f"colour-{name}", default), float(arg(f"alpha-{name}", "1"))
+            name, arg(f"colour-{part}", default), float(arg(f"alpha-{part}", "1"))
         )
 
 

@@ -683,12 +683,29 @@ half the doors in the game.
    alone in ONE frame — dropped after `add_camera`, exactly where `--only=shadow` removes the object —
    and `import-tile --behind` lays the light back in.
 
-   **UNDER the paint, not over it, and that is depth order rather than preference.** Every part of the
-   light stands further from the viewer than the stone, so the stone occludes all of it; composited on
-   top, the pool drew straight across the pillar's foot and took the base with it. Sharp has no depth
-   buffer, so the arrangement has to be one a flat stack can express: each rendered part wholly in front
-   of the paint or wholly behind it. The light keeps its `--alpha-haze`/`--alpha-daylight` and everything
-   of it is `!nocast`, so the seat under the tile is the pillar's footprint alone.
+   **ADDED rather than composited over, which is what let the beam come back.** Sharp has no depth
+   buffer, so a layer laid `over` must be wholly in front of the paint or wholly behind it — and a shaft
+   centred on a marker is neither, which is why three arrangements in a row had to dodge the stone
+   sideways and none of them read. `import-tile --glow` adds the layer instead: the stone inside the
+   shaft is simply lit stone. The layer is rendered DIM (0.12 haze, 0.26 pool against the free beam's
+   0.28 and 0.9) because with an additive composite the SUM is what clips — at the old values the cone
+   saturated to a solid mass and took the glyph column with it. Thinnest margin is the gods' lit calcite.
+
+   **The shaft is THREE NESTED CONES**, which is how a flat material gets a falloff. One cone is a wedge:
+   a hard edge down each side and the same value all the way across, and beside the pool at its foot —
+   one disc, soft because it is round — that wedge is the part that reads as a shape rather than as
+   light. Nested and added, the sum steps up toward the middle and the outermost edge is the faintest
+   thing in the tile. It is also why the haze alpha is as low as it is: the middle carries three of them.
+
+   **Two things were tried inside the beam and cut.** MOTES do not survive the slot: a tile is stored at
+   2x, so a speck small enough to be a speck lands on about ONE drawn pixel of added light inside a cone
+   that is already light. Enlarged until visible it stopped being dust, and over the stone it brightened
+   the glyph column, which is the one part that has to stay legible. The SEAT went too — the sun is
+   straight overhead here, so the pillar's shadow belongs under its own base, and the rendered footprint
+   sits off to one side where it read as a hard dark block beside the pool.
+
+   **A flag that was built and then deleted in the same session**: `--behind`, the under-the-paint
+   version. It existed only while the light had to dodge, and `--glow` removed its only user.
 
    The doorway is not lost: it is `prim_exit` as of 9cd4eecc, if architecture reads better later.
 
