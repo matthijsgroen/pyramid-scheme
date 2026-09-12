@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { CELL, WALL_H } from "./mapScale"
+import { CELL, WALL_FACE_H, WALL_H } from "./mapScale"
 import { authoredKindsFor } from "./authoredKinds"
 import { DRIFT_KINDS } from "./floorScatter"
 import { ART_IMAGE_RENDERING, sharedTileUrl, tileUrl } from "./tileAssets"
@@ -210,14 +210,20 @@ const GrowthRow: FC<{ tier: Difficulty; kind: string; zoom: number }> = ({ tier,
             style={{ left: CELL * 0.3 * zoom, top: floorLine - 18 * zoom, width: 18 * zoom, height: 18 * zoom }}
           />
         )}
-        {/* roots through the band, filling it exactly: top edge to bottom edge, WALL_H tall. Hung past
-            the bottom they end in mid-air over the paving and the sprite reads as floating. */}
+        {/* roots through the BRICK of the band: under the coping, down to the floor line. Hung past the
+            bottom they float over the paving; started at the band's top they begin on the flat coping,
+            which is a surface nothing grows out of. */}
         {root && (
           <img
             src={root}
             alt={`${kind} roots`}
             className="absolute"
-            style={{ left: CELL * 1.15 * zoom, top: 0, width: 26 * zoom, height: WALL_H * zoom }}
+            style={{
+              left: CELL * 1.15 * zoom,
+              top: (WALL_H - WALL_FACE_H) * zoom,
+              width: 26 * zoom,
+              height: WALL_FACE_H * zoom,
+            }}
           />
         )}
         {/* a chamber plant: bottom-anchored on the floor, 30-46 units */}

@@ -34,6 +34,20 @@ export const MARKER_HIT = CELL * 0.36 // ~20
 // different slice of the art and the dark ones read as black holes in the wall.
 export const WALL_H = CELL / 2 // 28 — the visible height of a back wall
 export const SIDE_W = CELL / 4 // 14 — the thickness of a side wall, seen edge-on
+
+/**
+ * How much of a face is its own TOP SURFACE rather than the wall you look at.
+ *
+ * A face IS the wall, so the strip along its top is the coping seen from above — painted into the tile at
+ * import (`import-tile --headroom`, and every rank's `wall-face` line in `art/rebuild.sh` passes 0.14).
+ * Below it are the courses.
+ *
+ * It has to be a number the map can read because anything growing OUT of a wall has to start under the
+ * coping. A root anchored to the band's top edge starts on the flat top instead, where nothing grows, and
+ * reads as hung on the wall rather than come through it. Keep this in step with that flag.
+ */
+export const FACE_CAP = 0.14
+export const WALL_FACE_H = WALL_H * (1 - FACE_CAP) // 24.08 — the part of a band that is brick
 export const ROW_PITCH = CELL + WALL_H // 84 = 3 faces
 export const COL_PITCH = CELL + SIDE_W // 70
 

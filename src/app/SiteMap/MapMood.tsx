@@ -1,6 +1,6 @@
 import { hashUnit } from "@/support/hashString"
 import type { Mood } from "./moodSettings"
-import { CELL, WALL_H, cellCenter } from "./mapScale"
+import { CELL, WALL_FACE_H, cellCenter } from "./mapScale"
 import { sharedTileUrl } from "./tileAssets"
 
 // The air, drawn in three layers over the stone: what is carried on it (drift), what lives in it (life),
@@ -124,13 +124,15 @@ export const MapGrowth = ({
           `wallCells` is only the cells with a band drawn above them (void to the north), because a root
           has to come THROUGH something the map actually draws.
 
-          IT FILLS THE BAND EXACTLY, top edge to bottom edge. Hanging it past the bottom was the first
-          shape — the band is WALL_H and the sprite was 34 to 52, on the argument that overshooting says
-          the root came through the wall rather than being painted on it. On the map it says the opposite:
-          the overshoot ends in mid-air over the paving with nothing to have grown out of, and the whole
-          sprite reads as floating rather than as rooted in the brick. The wall is what it is growing out
-          of, so the wall is what it is measured against, and the variance it used to carry lives in the
-          WIDTH instead. */}
+          IT FILLS THE BRICK EXACTLY — under the coping, down to the floor line. Two things were wrong
+          before, and they were opposite. Hanging past the bottom (the band is WALL_H and the sprite was
+          34 to 52) put the overshoot in mid-air over the paving with nothing to have grown out of, so the
+          whole sprite read as floating. Anchoring to the band's TOP then started it on the coping —
+          `FACE_CAP` of a face is its own flat top surface, seen from above, and nothing grows out of that.
+          A root that begins there is hung on the wall rather than come through it.
+
+          So it runs the part of the band that is BRICK, and the variance it used to carry in height lives
+          in the width instead. */}
       {wallCells.length > 0 &&
         Array.from({ length: g.wallCount }, (_, i) => {
           const [row, col] = pick(wallCells, "growth-wall-cell", i)
@@ -143,9 +145,9 @@ export const MapGrowth = ({
               href={root}
               preserveAspectRatio="none"
               x={cx - w / 2 + (rand(siteId, "growth-wall-x", i) - 0.5) * (CELL * 0.6)}
-              y={cy - CELL / 2 - WALL_H}
+              y={cy - CELL / 2 - WALL_FACE_H}
               width={w}
-              height={WALL_H}
+              height={WALL_FACE_H}
               style={{ transform: rand(siteId, "growth-wall-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
             />
           )
