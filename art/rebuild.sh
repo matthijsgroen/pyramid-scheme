@@ -315,6 +315,19 @@ yarn import-tile art/masters/props/starter/niche.webp --tier=starter --name=nich
 yarn import-tile art/masters/props/starter/tallyBoard.webp --tier=starter --name=tallyBoard --slot=wall \
   --filter=smooth --headroom=0.18 --brightness=0.85
 
+# The merchant's VEIL — a reed screen drawn back on a timber rail, so a doorway is dressed without being
+# shut. Same `hanging --contents=rail` scaffold the priest's veil uses; what makes this one the merchant's
+# is entirely the paint, coarse undyed linen against his cedar-less rough timber.
+#
+# NO CORRECTION FLAGS, and that is measured rather than skipped: the return landed at lum 51/92/138 with
+# nothing at all outside the palette either way and +0 warmth against his slab. The priest's veil needed
+# none either but sits 20.5% over the light clamp; this one is the best-behaved wall item on the rank.
+#
+# --sun=0 for the niche's reason: a wall item hangs, so the frame leaves no room under it.
+scaffold hanging --contents=rail --shear=0.5 --width=448 --height=224 --sun=0
+yarn import-tile art/masters/props/starter/veil.webp --tier=starter --name=veil --slot=wall \
+  --filter=smooth --mask="$OBJ"
+
 # shared — one desert blows into all five tombs
 #
 # Sand is the only tile whose SHAPE this repository generates. It is not an object: a drift has no

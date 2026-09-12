@@ -2936,9 +2936,9 @@ yarn import-tile art/masters/props/master/statue-horus.webp --tier=master --name
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
-## The last seven to expert — one room each
+## The last six to expert — one room each
 
-Everything else at starter, junior and expert is drawn. These seven are the whole remaining gap below
+Everything else at starter, junior and expert is drawn. These six are the whole remaining gap below
 master, and every one of them is a SINGLE room — which is why they sat unqueued while 62 rooms' worth of
 expert work went in ahead of them. They are here because "done up to expert" is not done with seven
 dummies still in it, not because any of them is urgent.
@@ -2947,41 +2947,6 @@ dummies still in it, not because any of them is urgent.
 what lifts his two variants out of the trap this file warns about above: a rank naming ONE god gets its
 generic drawing under another name and buys nothing. Starter names two, so Ra's shrine is what tells his
 pyramid from Bastet's.
-
-### `starter/veil` — a reed screen hung across a doorway
-
-1 room. The merchant's own wall slot, at half shear like every wall item.
-
-**Attach:**
-
-1. `~/tile-previews/veil-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a VEIL hung across a doorway on a rail. The horizontal bar along the top is the RAIL; the
-cloth below it is the VEIL, drawn back and gathered toward one side so the doorway is not sealed.
-
-Coarse undyed linen, thick and slubbed, the colour of unbleached flax gone grey with dust. It hangs in
-heavy vertical folds where it is gathered and falls slack where it is not; the hem is uneven and frayed,
-and the lower corner that gets handled is darker and greasy. The rail is rough timber, split and
-knot-marked, with the bark edge still on it.
-
-This is the merchant's, so nothing here is fine: no fringe, no border, no weave pattern, no dye.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's tomb: mudbrick, plaster, reed and rough timber. Warm dark earth, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold hanging --contents=rail --shear=0.5 --width=448 --height=224 --colour=#a49781 --sun=0
-yarn import-tile art/masters/props/starter/veil.webp --tier=starter --name=veil --slot=wall \
-  --filter=smooth --mask="$OBJ"
-```
 
 ### `starter/wallShrine` — a mudbrick niche with its doors ajar
 
