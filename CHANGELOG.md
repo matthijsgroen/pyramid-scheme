@@ -26,9 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   it has no way of reaching — an unreachable one now reads as the dead end it is.
 - Walking somewhere is remembered. A step used to be able to lose the position it moved to, which put
   you back where you started, and the explorer no longer jumps ahead before setting off.
-- A passage that runs on into the unexplored dark still ends open — only bare stone is walled off.
-- A honeycomb run no longer draws itself on into a number written in beside it, and a comb counts as
-  finished only once you have carried the run into its last number — those last steps are yours to make.
+
 ## 0.42.4 - 2026-08-31
 
 ### Changed
