@@ -2936,6 +2936,290 @@ yarn import-tile art/masters/props/master/statue-horus.webp --tier=master --name
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
+## The last seven to expert — one room each
+
+Everything else at starter, junior and expert is drawn. These seven are the whole remaining gap below
+master, and every one of them is a SINGLE room — which is why they sat unqueued while 62 rooms' worth of
+expert work went in ahead of them. They are here because "done up to expert" is not done with seven
+dummies still in it, not because any of them is urgent.
+
+**Ra is a real second god at starter now.** `art-census` pairs him at 2 rooms beside Bastet's 11, which is
+what lifts his two variants out of the trap this file warns about above: a rank naming ONE god gets its
+generic drawing under another name and buys nothing. Starter names two, so Ra's shrine is what tells his
+pyramid from Bastet's.
+
+### `starter/veil` — a reed screen hung across a doorway
+
+1 room. The merchant's own wall slot, at half shear like every wall item.
+
+**Attach:**
+
+1. `~/tile-previews/veil-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a VEIL hung across a doorway on a rail. The horizontal bar along the top is the RAIL; the
+cloth below it is the VEIL, drawn back and gathered toward one side so the doorway is not sealed.
+
+Coarse undyed linen, thick and slubbed, the colour of unbleached flax gone grey with dust. It hangs in
+heavy vertical folds where it is gathered and falls slack where it is not; the hem is uneven and frayed,
+and the lower corner that gets handled is darker and greasy. The rail is rough timber, split and
+knot-marked, with the bark edge still on it.
+
+This is the merchant's, so nothing here is fine: no fringe, no border, no weave pattern, no dye.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's tomb: mudbrick, plaster, reed and rough timber. Warm dark earth, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold hanging --contents=rail --shear=0.5 --width=448 --height=224 --colour=#a49781 --sun=0
+yarn import-tile art/masters/props/starter/veil.webp --tier=starter --name=veil --slot=wall \
+  --filter=smooth --mask="$OBJ"
+```
+
+### `starter/wallShrine` — a mudbrick niche with its doors ajar
+
+1 room. The generic the Ra variant below varies, so it goes first: a variant painted before its generic
+has nothing to be judged against.
+
+**Attach:**
+
+1. `~/tile-previews/wallShrine-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a small WALL SHRINE, a cupboard set into the wall. The wider slab under it is its PLINTH and
+the deeper slab over it is its CORNICE; between them is the BOX, with two leaves standing open and a dark
+opening between them.
+
+Mudbrick rendered in lime plaster, whitewashed and flaking — bare brick showing through at the corners and
+along the plinth's front edge where feet and baskets have knocked it. The two leaves are rough timber,
+grey and split, hung on leather straps. Inside, the back of the box is deep shade with nothing standing
+in it.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's tomb: mudbrick, plaster, reed and rough timber. Warm dark earth, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --colour=#a49781 --sun=0
+yarn import-tile art/masters/props/starter/wallShrine.webp --tier=starter --name=wallShrine --slot=wall \
+  --filter=smooth --mask="$OBJ"
+```
+
+### `starter/wallShrine-ra` — Ra's disc in the merchant's wall shrine
+
+1 room. Reuses the wall shrine above, so paint that one first.
+
+**Attach:**
+
+1. `~/tile-previews/wallShrine-ra-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a small WALL SHRINE, a cupboard set into the wall, with a god standing in its opening. The
+wider slab under it is its PLINTH and the deeper slab over it is its CORNICE; between them is the BOX,
+with two leaves standing open.
+
+Standing in the opening is RA: a small figure with a FALCON'S HEAD carrying a SUN DISC on it, the disc a
+flat ochre-gold circle ringed by a raised cobra. The head is the mark — a hooked beak and a flat skull,
+never a human profile — and the disc has to sit clearly ON it, proud of the skull, or he is any other
+falcon god.
+
+The shrine is mudbrick rendered in lime plaster, whitewashed and flaking to bare brick at the corners; the
+leaves are rough grey timber on leather straps. Ra is painted limestone, the falcon head dark, the disc
+the one warm ochre in the picture. Inside, the back of the box is deep shade.
+
+Ochre here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's tomb: mudbrick, plaster, reed and rough timber. Warm dark earth, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --colour=#a49781 --sun=0
+yarn import-tile art/masters/props/starter/wallShrine-ra.webp --tier=starter --name=wallShrine-ra --slot=wall \
+  --filter=smooth --mask="$OBJ"
+```
+
+### `starter/shrine-ra` — Ra's disc in the merchant's shrine
+
+1 room. Reuses the merchant's own shrine scaffold, which is already painted as `starter/shrine`.
+
+**Attach:**
+
+1. `~/tile-previews/shrine-ra-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a SHRINE standing on the floor, a cabinet on a plinth with a god inside it. The slab at the
+bottom is the PLINTH, the stepped slab on top is the CORNICE, and the box between them holds the figure.
+
+Standing inside is RA: a small figure with a FALCON'S HEAD carrying a SUN DISC on it, the disc a flat
+ochre-gold circle ringed by a raised cobra. The head is the mark — a hooked beak and a flat skull, never a
+human profile — and the disc sits proud on it.
+
+The shrine is rough timber over a mudbrick plinth, the wood grey and split, the plaster on the plinth
+flaking to bare brick at the corners and along the front lip where it is handled. Inside, the back is deep
+shade and Ra stands against it in painted limestone, the falcon head dark and the disc the one warm ochre
+in the picture.
+
+Ochre here is a flat colour, not a metal: no highlights, no reflections, no shine.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's tomb: mudbrick, plaster, reed and rough timber. Warm dark earth, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shrine --spin=-12 --colour=#a49781 --floor=#6c6257
+yarn import-tile art/masters/props/starter/shrine-ra.webp --tier=starter --name=shrine-ra --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/stela` — a basalt stela cut with a false door
+
+1 room. FLAT, like his tally board, so it has NO scaffold and NO mask: an upright slab against a wall has
+no silhouette this projection can give it that its own painted edge does not. One attachment, and an
+import line without `--mask`.
+
+**Attach:**
+
+1. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall. Do not re-compose it into a square.
+
+Landscape, twice as wide as it is tall. The magenta fills the whole frame right to its edges, and the
+object floats in the middle of it with magenta on all four sides. There is no wall, no floor and no room.
+
+The object: a STELA set against the wall — an upright slab, round-topped, cut with a false door.
+
+Dark basalt, close-grained and almost black-green, polished where hands have passed and dull everywhere
+else. The face is cut with a false door: a narrow recessed panel with two stepped jambs either side and a
+lintel over it, and above that a rounded lunette. The cutting is SHALLOW — sunk relief, a few millimetres
+— so it reads as shadow lines rather than as carving standing out.
+
+Natron dust has settled in the cut lines and along the top edge, pale grey against the stone, and that
+dust is what makes the cutting legible at all. One lower corner is chipped away to a paler fresh break.
+
+No hieroglyphs a reader could read: at this size they are texture, so cut them as even bands of small
+marks in the sunk panels and nothing more.
+
+Draw the slab itself: its outline is the tile, so give it a clean round-topped edge with nothing touching
+the frame.
+
+No highlights, no gloss, no rim light, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/props/expert/stela.webp --tier=expert --name=stela --slot=wall \
+  --filter=smooth
+```
+
+### `expert/shrine-thoth` — Thoth's ibis in the priest's shrine
+
+1 room. Reuses the priest's own shrine scaffold, and takes the PLAIN form: his generic carries a sealed
+lid, and a seal cannot be repainted into a god.
+
+**Attach:**
+
+1. `~/tile-previews/shrine-thoth-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a SHRINE standing on the floor, a cabinet on a plinth with a god inside it. The slab at the
+bottom is the PLINTH, the stepped slab on top is the CORNICE, and the box between them holds the figure.
+
+Standing inside is THOTH: a small figure with an IBIS HEAD — a long, smooth, curved beak sweeping DOWN
+from a narrow skull, and no ears. The beak is the mark and it must be long enough to read at a glance;
+a short or straight beak makes him a different god entirely.
+
+The shrine is cedar, dark and close-grained, with bronze fittings gone green-black at the hinges and along
+the front lip. The plinth is dark basalt with natron dust settled in its mouldings. Inside, the back is
+deep shade and Thoth stands against it in pale limestone, his ibis head and beak a flat dull black.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shrine --spin=-19 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/shrine-thoth.webp --tier=expert --name=shrine-thoth --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `expert/shrine-anubis` — Anubis's jackal in the priest's shrine
+
+1 room. The same scaffold as Thoth's above, plain form, so roll them in the same sitting but in SEPARATE
+chats — one fresh chat per tile is this file's most expensive lesson.
+
+**Attach:**
+
+1. `~/tile-previews/shrine-anubis-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a SHRINE standing on the floor, a cabinet on a plinth with a god inside it. The slab at the
+bottom is the PLINTH, the stepped slab on top is the CORNICE, and the box between them holds the figure.
+
+Standing inside is ANUBIS: a small figure with a JACKAL'S HEAD, flat black — a long straight muzzle and
+two tall pointed ears standing straight up. The ears and the muzzle are the mark; a rounded head or short
+ears makes him a cat.
+
+The shrine is cedar, dark and close-grained, with bronze fittings gone green-black at the hinges and along
+the front lip. The plinth is dark basalt with natron dust settled in its mouldings. Inside, the back is
+deep shade and Anubis stands against it in pale limestone, his jackal head and ears a flat dead black —
+the darkest thing in the picture.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shrine --spin=-19 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/shrine-anubis.webp --tier=expert --name=shrine-anubis --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
 ## Regenerating the attachments
 
 Both kinds of attachment live in `~/tile-previews/`, which is outside the repository on purpose: they are
