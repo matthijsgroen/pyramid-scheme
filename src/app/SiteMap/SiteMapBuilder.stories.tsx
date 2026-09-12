@@ -7,17 +7,22 @@ import { SiteMapView } from "./SiteMapView"
 
 type GateOption = "none" | GateConfig["type"]
 
+const DIFFICULTIES: Difficulty[] = ["starter", "junior", "expert", "master", "wizard"]
+
 type Props = {
   seed: number
+  difficulty: Difficulty
   pathPuzzles: number
   exitOrStaircase: FloorConfig["exitOrStaircase"]
   corridorStraightness: number
   packing: number
   section1: boolean
+  section1Difficulty: Difficulty
   section1Puzzles: number
   section1End: SideSection["end"]
   section1Gate: GateOption
   section2: boolean
+  section2Difficulty: Difficulty
   section2Puzzles: number
   section2End: SideSection["end"]
   section2Gate: GateOption
@@ -25,15 +30,18 @@ type Props = {
 
 const SiteMapBuilder = ({
   seed,
+  difficulty,
   pathPuzzles,
   exitOrStaircase,
   corridorStraightness,
   packing,
   section1,
+  section1Difficulty,
   section1Puzzles,
   section1End,
   section1Gate,
   section2,
+  section2Difficulty,
   section2Puzzles,
   section2End,
   section2Gate,
@@ -51,21 +59,21 @@ const SiteMapBuilder = ({
   if (section1)
     sideSections.push({
       pathPuzzles: section1Puzzles,
-      difficulty: "starter",
+      difficulty: section1Difficulty,
       end: section1End,
-      gate: toGate(section1Gate, "starter"),
+      gate: toGate(section1Gate, section1Difficulty),
     })
   if (section2)
     sideSections.push({
       pathPuzzles: section2Puzzles,
-      difficulty: "junior",
+      difficulty: section2Difficulty,
       end: section2End,
-      gate: toGate(section2Gate, "junior"),
+      gate: toGate(section2Gate, section2Difficulty),
     })
 
   const config: FloorConfig = {
     pathPuzzles,
-    difficulty: "starter",
+    difficulty,
     end: "treasure",
     exitOrStaircase,
     sideSections,
@@ -94,6 +102,12 @@ const meta = {
   parameters: { layout: "centered" },
   argTypes: {
     seed: { control: { type: "number" } },
+    // The five ranks, so a floor can be built out of any combination of stone. A floor routinely shows two
+    // or three at once — the material follows each SECTION, not the floor — and a seam is where a rank's
+    // art has to hold up against its neighbour's.
+    difficulty: { control: "select", options: DIFFICULTIES },
+    section1Difficulty: { control: "select", options: DIFFICULTIES },
+    section2Difficulty: { control: "select", options: DIFFICULTIES },
     pathPuzzles: { control: { type: "range", min: 0, max: 5, step: 1 } },
     exitOrStaircase: { control: "select", options: ["exit", "staircase"] },
     corridorStraightness: { control: { type: "range", min: 0, max: 1, step: 0.05 } },
@@ -115,19 +129,49 @@ type Story = StoryObj<typeof meta>
 export const Builder: Story = {
   args: {
     seed: 1,
+    difficulty: "starter",
     pathPuzzles: 0,
     exitOrStaircase: "exit",
     corridorStraightness: 0.65,
     packing: 1,
     section1: true,
+    section1Difficulty: "starter",
     section1Puzzles: 0,
     section1End: "treasure",
     section1Gate: "none",
     section2: true,
+    section2Difficulty: "junior",
     section2Puzzles: 1,
     section2End: "staircase",
     section2Gate: "floor-key",
   },
+}
+
+/**
+ * Three ranks on one floor, which is the case a rank's art has to survive: the material follows each
+ * SECTION rather than the floor, so a gate can put one tomb's stone against another's across a single
+ * doorway. Over the generated world twenty of fifty-six sampled floors are multi-tier.
+ */
+export const RankSeams: Story = {
+  args: {
+    seed: 3,
+    difficulty: "starter",
+    pathPuzzles: 1,
+    exitOrStaircase: "staircase",
+    corridorStraightness: 0.65,
+    packing: 1,
+    section1: true,
+    section1Difficulty: "junior",
+    section1Puzzles: 1,
+    section1End: "treasure",
+    section1Gate: "floor-key",
+    section2: true,
+    section2Difficulty: "expert",
+    section2Puzzles: 1,
+    section2End: "staircase",
+    section2Gate: "tomb-key",
+  },
+  parameters: { layout: "fullscreen" },
 }
 
 /** Dedicated demo for dialing the two layout knobs against a fixed amount of content:
@@ -135,15 +179,18 @@ export const Builder: Story = {
 export const PackingAndStraightness: Story = {
   args: {
     seed: 7,
+    difficulty: "starter",
     pathPuzzles: 4,
     exitOrStaircase: "exit",
     corridorStraightness: 0.65,
     packing: 1,
     section1: true,
+    section1Difficulty: "starter",
     section1Puzzles: 2,
     section1End: "treasure",
     section1Gate: "none",
     section2: true,
+    section2Difficulty: "junior",
     section2Puzzles: 2,
     section2End: "staircase",
     section2Gate: "floor-key",
@@ -154,15 +201,18 @@ export const PackingAndStraightness: Story = {
 export const FirstPyramid: Story = {
   args: {
     seed: 42,
+    difficulty: "starter",
     pathPuzzles: 0,
     exitOrStaircase: "exit",
     corridorStraightness: 0.65,
     packing: 1,
     section1: true,
+    section1Difficulty: "starter",
     section1Puzzles: 0,
     section1End: "treasure",
     section1Gate: "none",
     section2: true,
+    section2Difficulty: "junior",
     section2Puzzles: 1,
     section2End: "staircase",
     section2Gate: "floor-key",

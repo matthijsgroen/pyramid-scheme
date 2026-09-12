@@ -13,4 +13,88 @@ export const NODE_RADIUS_PUZZLE = CELL * 0.36 // puzzle, trap — ~20
 export const NODE_RADIUS_FORK = CELL * 0.16 // junctions stay small — connective tissue, not a destination — ~9
 
 export const EXPLORER_DOT_RADIUS = CELL * 0.2 // ~11
-export const MARKER_RADIUS = CELL * 0.07 // reachable-corner dot / corridor-run arrow — ~4
+export const MARKER_RADIUS = CELL * 0.11 // reachable-corner dot / corridor-run arrow — ~6
+
+/** The invisible disc behind a marker that actually catches the tap. An SVG group only receives pointer
+ * events where its children PAINT, so a 6-unit dot was a 6-unit target — fine with a mouse, small with a
+ * thumb. The disc is a third of a cell, which is well inside the cell pitch, so two adjacent markers never
+ * fight over a click. */
+export const MARKER_HIT = CELL * 0.36 // ~20
+
+// ─── Map geometry ─────────────────────────────────────────────────────────────
+// A wall needs somewhere to BE. Cells are laid out on a stretched pitch: every cell carries an
+// interstice on its north and west side, and that gap is a place in its own right — floor where the
+// player can walk through, wall where they cannot. Squeezing a wall onto a zero-width edge instead
+// is what made walls read at two different sizes, one a full face and one a bar.
+//
+// The north gap is tall, because it is the wall you look AT; the west gap is thin, because a wall
+// seen edge-on is only its own thickness.
+// WALL_H must DIVIDE CELL. The wall-face texture repeats on the face height, so every face lands on
+// the pattern origin only if the row pitch is a whole number of faces — otherwise each row samples a
+// different slice of the art and the dark ones read as black holes in the wall.
+export const WALL_H = CELL / 2 // 28 — the visible height of a back wall
+export const SIDE_W = CELL / 4 // 14 — the thickness of a side wall, seen edge-on
+
+/**
+ * How much of a face is its own TOP SURFACE rather than the wall you look at.
+ *
+ * A face IS the wall, so the strip along its top is the coping seen from above — painted into the tile at
+ * import (`import-tile --headroom`, and every rank's `wall-face` line in `art/rebuild.sh` passes 0.14).
+ * Below it are the courses.
+ *
+ * It has to be a number the map can read because anything growing OUT of a wall has to start under the
+ * coping. A root anchored to the band's top edge starts on the flat top instead, where nothing grows, and
+ * reads as hung on the wall rather than come through it. Keep this in step with that flag.
+ */
+export const FACE_CAP = 0.14
+export const WALL_FACE_H = WALL_H * (1 - FACE_CAP) // 24.08 — the part of a band that is brick
+export const ROW_PITCH = CELL + WALL_H // 84 = 3 faces
+export const COL_PITCH = CELL + SIDE_W // 70
+
+/** An archway grows out of the band in BOTH directions, because a doorway has to look walked-through:
+ * the crown stands `ARCH_RISE` proud of the wall it pierces, the way a pylon gate rises above it, and the
+ * jambs come `ARCH_DROP` down onto the floor of the way through, where a real jamb stands. Growing it
+ * upward alone would have bought the same opening at the cost of covering half the cell beyond — an arch
+ * is painted over everything (see Archways in SiteMapView), so height above the wall eats the ground
+ * behind it while height below eats only the doorway's own floor edges, which nothing else uses.
+ *
+ * The clear opening under the lintel comes out at 46 against a 48-tall explorer. Confined to the band it
+ * was 22, and a doorway half the height of the person in it reads as a hatch however correct the
+ * projection is: nothing ever overlapped, the two just could not both be believed. */
+export const ARCH_RISE = 11 // the beam stands proud of the wall, which is what makes a gateway read
+export const ARCH_DROP = 10 // the posts come down PAST the wall's bottom edge, so they stand in front of it
+export const ARCH_H = ARCH_RISE + WALL_H + ARCH_DROP // 49
+
+/** An arch is wider than the doorway it frames by one CORNER on each side (the `SIDE_W` slot where four
+ * cells meet), because that corner is the wall's own thickness and is where a jamb belongs. Hanging the
+ * jambs there instead of inside the opening keeps the way through a full cell wide — a figure walks
+ * between them rather than behind them — and makes the arch read as part of the wall run rather than as
+ * something set into the hole. Which is also the placement rule: a doorway only gets an arch when the
+ * bands either side of it are wall, so both corners are masonry (see doorwaysFor). */
+export const ARCH_W = CELL + SIDE_W * 2 // 84
+
+/** Padding around the map: room for the one-cell ring of wall outside the grid. */
+export const PAD = CELL
+
+/** The NORTH side gets a prop's headroom on top of that ring.
+ *
+ * Everything standing on a floor is drawn bottom-anchored in a box a cell PLUS a wall band tall, so a
+ * tall thing on the top row reaches `WALL_H` above its own floor square — through the wall behind it and
+ * up to the very edge of the map. Inside the picture, but with nothing above it: at any zoom the topmost
+ * statue, column or hanging ends exactly where the map does and reads as cropped. This is the one side
+ * that needs it — nothing is drawn below its floor line, and the side walls cut sprites rather than
+ * being crossed by them. */
+export const PAD_TOP = PAD + WALL_H
+
+/** Top-left of a cell's own floor square, in SVG units. */
+export const cellLeft = (col: number): number => PAD + col * COL_PITCH + SIDE_W
+export const cellTop = (row: number): number => PAD_TOP + row * ROW_PITCH + WALL_H
+
+/** Where a node icon, prop or the explorer dot sits: the middle of the floor square. */
+export const cellCenter = (row: number, col: number): { cx: number; cy: number } => ({
+  cx: cellLeft(col) + CELL / 2,
+  cy: cellTop(row) + CELL / 2,
+})
+
+export const mapWidth = (cols: number): number => cols * COL_PITCH + SIDE_W + PAD * 2
+export const mapHeight = (rows: number): number => rows * ROW_PITCH + WALL_H + PAD_TOP + PAD

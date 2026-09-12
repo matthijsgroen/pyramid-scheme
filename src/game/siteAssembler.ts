@@ -12,9 +12,13 @@ import type {
   SubSection,
   SideSection,
   DecorationKind,
+  WallDecorationKind,
+  Difficulty,
 } from "./siteTypes"
+import { footprintSize } from "./roomFootprint"
 import type { ResolveBoardIndex } from "./seeds/boardIndex"
 import { validateSite } from "./siteValidator"
+import { rolesOfProp, rolesOfWallItem } from "./dressingTags"
 
 // Resolves an authored `encounter` (exact family id, or tag(s)) to a concrete family id
 // plus that family's own tags. Injected by the caller so this domain module never needs
@@ -205,6 +209,14 @@ const DEFAULT_PACKING = 1
 // See the retry loop in assembleFloor for why the first stretch is deliberately frozen.
 const RECOVERY_ATTEMPT = 30
 const ASSEMBLY_ATTEMPTS = 60
+
+/** The five kinds a god can be DEPICTED on, as `tileAssets.ts`'s resolver reads them: a patron reaches
+ * the map through these and nothing else. Copied rather than imported for the reason `artCensus.ts`
+ * gives — that module pulls in the app's PNG imports. */
+const PATRON_KINDS = new Set<string>(["statue", "shrine", "wallShrine", "stela", "mask"])
+/** How many rooms per floor a dedicated site gives to its god. See `patronRooms` for why this is a
+ * count rather than a weight, and what weighting cost when it was measured. */
+const PATRON_PER_FLOOR = 1
 
 // Generate a perfect DFS maze on an N×N grid starting from (entR, entC).
 // Returns adjacency function, BFS path from entrance to the chosen main-path endpoint, and
@@ -982,8 +994,11 @@ export const assembleFloor = (
     const cellSectionHash = new Map<string, string>()
     const cellLegacySectionHash = new Map<string, string>()
     const hiddenCellPositions = new Set<string>()
-    // Which section's authored decoration pool a footprint room should draw from.
-    const cellDecorationPool = new Map<string, DecorationKind[] | undefined>()
+    // Which section's authored dressing pools a footprint room should draw from — what stands on its
+    // floor and what hangs on its wall, both keyed on the cell so a claimed footprint keeps its own
+    // section's pools.
+    type DressingPools = { props?: DecorationKind[]; wall?: WallDecorationKind[] }
+    const cellDressing = new Map<string, DressingPools>()
 
     const posKey = (r: number, c: number) => `${r},${c}`
 
@@ -1055,12 +1070,17 @@ export const assembleFloor = (
       return !gatedCellKeys.has(posKey(r, c)) && !gatedCellKeys.has(posKey(nr, nc))
     }
 
+    // Which tier each cell's own section was authored at, so a passage into a pocket of another
+    // difficulty is BUILT of that difficulty (docs/game-design/spritesheet-renderer-prep.md — the
+    // material is the rank whose tomb this is). Rooms carry it already; corridors did not.
+    const cellDifficulty = new Map<string, Difficulty>()
     const mainSectionHash = computeMainSectionHash(config, mainIsolated)
     const legacyMainSectionHash = computeLegacyMainSectionHash(config)
     for (const [r, c] of mainPath) {
       cellSectionHash.set(posKey(r, c), mainSectionHash)
       cellLegacySectionHash.set(posKey(r, c), legacyMainSectionHash)
-      cellDecorationPool.set(posKey(r, c), config.decorations)
+      cellDressing.set(posKey(r, c), { props: config.decorations, wall: config.wallDecorations })
+      cellDifficulty.set(posKey(r, c), config.difficulty)
     }
     for (const group of sectionGroups) {
       const sHash = computeSideSectionHash(
@@ -1071,11 +1091,16 @@ export const assembleFloor = (
       )
       const legacyHash = computeLegacySideSectionHash(sideSections[group.sectionIdx], group.sectionIdx)
       const isHidden = hiddenSectionIdxs.has(group.sectionIdx)
-      const pool = sideSections[group.sectionIdx].decorations
+      const pools: DressingPools = {
+        props: sideSections[group.sectionIdx].decorations,
+        wall: sideSections[group.sectionIdx].wallDecorations,
+      }
+      const sectionTier = sideSections[group.sectionIdx].difficulty
       for (const [r, c] of group.cells) {
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
-        cellDecorationPool.set(posKey(r, c), pool)
+        cellDressing.set(posKey(r, c), pools)
+        cellDifficulty.set(posKey(r, c), sectionTier)
         if (isHidden) hiddenCellPositions.add(posKey(r, c))
       }
     }
@@ -1091,7 +1116,8 @@ export const assembleFloor = (
       for (const [r, c] of cells) {
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
-        cellDecorationPool.set(posKey(r, c), subSection.decorations)
+        cellDressing.set(posKey(r, c), { props: subSection.decorations, wall: subSection.wallDecorations })
+        cellDifficulty.set(posKey(r, c), subSection.difficulty)
       }
     }
 
@@ -1142,6 +1168,8 @@ export const assembleFloor = (
           ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
           difficulty: config.difficulty,
           ...(config.theme !== undefined ? { theme: config.theme } : {}),
+          ...(config.condition !== undefined ? { condition: config.condition } : {}),
+          ...(config.patron !== undefined ? { patron: config.patron } : {}),
           ...(config.role !== undefined ? { role: config.role } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
@@ -1408,6 +1436,10 @@ export const assembleFloor = (
           type: "room",
           dirs,
           state: "fogged",
+          // The tier of the section this room stands in, so the map is BUILT of it — a treasure room
+          // in a junior pocket is junior stone even though only encounter rooms carry a difficulty of
+          // their own. The spread below still wins, so a room authored at its own tier keeps it.
+          ...(cellDifficulty.get(cellKey) ? { difficulty: cellDifficulty.get(cellKey) } : {}),
           sectionHash,
           legacySectionHash,
           ...(hidden ? { hidden } : {}),
@@ -1415,12 +1447,14 @@ export const assembleFloor = (
         }
         cells2D[r][c] = roomCell
       } else {
+        const cellTier = cellDifficulty.get(posKey(r, c))
         const corridorCell: CorridorCell = {
           type: "corridor",
           dirs,
           state: "fogged",
           sectionHash,
           legacySectionHash,
+          ...(cellTier ? { difficulty: cellTier } : {}),
           ...(hidden ? { hidden } : {}),
         }
         cells2D[r][c] = corridorCell
@@ -1447,12 +1481,14 @@ export const assembleFloor = (
           mc = (c + nc) / 2
         const hidden = hiddenCellPositions.has(cellKey) && hiddenCellPositions.has(neighborKey) ? true : undefined
         const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
+        const connectorTier = cellDifficulty.get(cellKey)
         cells2D[mr][mc] = {
           type: "corridor",
           dirs: new Set([d, OPPOSITE[d]]),
           state: "fogged",
           sectionHash,
           legacySectionHash: cellLegacySectionHash.get(cellKey) ?? legacyMainSectionHash,
+          ...(connectorTier ? { difficulty: connectorTier } : {}),
           ...(hidden ? { hidden } : {}),
         }
       }
@@ -1481,19 +1517,177 @@ export const assembleFloor = (
       const cell = cells2D[r][c]
       if (cell.type === "room" && cell.dirs.size === 1) endpointPositions.add(pk)
     }
-    const decorationPoolIdx = new Map<DecorationKind[], number>()
-    const nextDecoration = (pool?: DecorationKind[]): DecorationKind | undefined => {
-      if (!pool) return undefined
-      const idx = decorationPoolIdx.get(pool) ?? 0
-      decorationPoolIdx.set(pool, idx + 1)
-      return pool[idx]
+    // Which prop a room draws is picked by WHERE it is, not by how many rooms drew before it. A
+    // per-pool counter looks equivalent but is not: the generated world gives every section its own
+    // pool literal, so each counter started at zero again and all but the first kind went unused —
+    // every fork in the world held a crate.
+    const pickDressing = <T>(pool: T[] | undefined, pk: string, salt: string): T | undefined =>
+      pool?.length ? pool[hashString(`${siteId}:${salt}:${pk}`) % pool.length] : undefined
+
+    /**
+     * A ROOM SERVES ONE PURPOSE, and what hangs on its wall agrees with what stands in it.
+     *
+     * The two were drawn independently before, with different salts specifically so they would not
+     * correlate. That bought variety and cost meaning: a wing whose pool spans two places could stand a
+     * sarcophagus under a tally board, and a floor of such rooms reads as furniture distributed rather
+     * than as somewhere anyone lived. What a player should be able to say walking in is "this is the
+     * storeroom", "this is where they sold", "this is where they washed", "this is where they prayed".
+     *
+     * THE PROP LEADS. It is the room's statement; the wall item follows it. Narrowing both pools by a
+     * shared purpose instead — the first attempt — let the WALL pool decide which props could exist at
+     * all, and the catalogue is far too thin for that: the merchant hangs only a goods niche and a tally
+     * board, which speak trade, so his statue, shrine, basin, hanging and brazier all disappeared from
+     * the rank. Five kinds of furniture deleted by two wall items is the tail wagging the dog.
+     *
+     * Where the wall pool has nothing to say about the prop's purpose, it simply draws as before. A room
+     * that says nothing is the cheaper mistake: forcing the wall to speak whenever the prop is universal
+     * was measured at taking floors where ONE wall item fills three quarters of the rooms from 19 to 27
+     * of 97, and a floor repeating one furnished corner reads worse than a floor with plain rooms on it.
+     */
+    const wallSuiting = (pool: WallDecorationKind[], prop: DecorationKind | undefined) => {
+      const purposes = prop ? rolesOfProp(prop) : undefined
+      if (!purposes?.length) return pool
+      const fits = pool.filter(k => rolesOfWallItem(k)?.some(role => purposes.includes(role)))
+      // NARROW ONLY WHERE THERE IS A CHOICE. Four purposes have exactly one wall item to their name
+      // (logistics a niche, judgement a mask, scribe a tally board, sky a star shaft) and three have
+      // none at all, so narrowing to a single survivor does not make a room agree with itself — it
+      // makes every room of that purpose hang the identical thing. Measured: it took the floors where
+      // one wall item fills three quarters of the rooms from 17 to 31 of 97. Agreement is worth having
+      // only while it still leaves something to vary; below that the whole pool is the better answer,
+      // and the fix is more wall items rather than a stricter rule here (`yarn art-census`).
+      return fits.length >= 2 ? fits : pool
     }
-    for (const pk of new Set([...forkPositions, ...endpointPositions])) {
-      const decoration = nextDecoration(cellDecorationPool.get(pk))
-      if (!decoration) continue
+
+    const dressedPositions = [...new Set([...forkPositions, ...endpointPositions])]
+
+    /**
+     * A DEDICATED FLOOR SHOWS ITS GOD AT LEAST ONCE — a guaranteed count, not a raised probability.
+     *
+     * A patron reaches the map through five kinds and no others (`patronTileUrl`), so on a pyramid that
+     * names a god every room drawing something else is a room where the dedication is invisible. The
+     * obvious fix is to weight those kinds in the pool, and it was built and measured first: it does
+     * not work. Weighting multiplies a share, and the share is tiny — the whole nobleman rank holds
+     * eight statue rooms, because only forks and dead ends dress at all — so tripling it moved his
+     * Thoth statue from one room to two while costing `master/niche` forty-five rooms and inventing
+     * four new patron pairings nobody had painted. It raised the art debt from 137 rooms owed to 215.
+     *
+     * A floor is the right unit and a count is the right instrument. One room per floor is taken and
+     * given to the god, so a dedicated site shows him once wherever you are in it, and the cost is
+     * exactly one room per floor rather than a shifted distribution across every rank.
+     *
+     * WHICH room is THE BIGGEST ONE, and that is the whole point of a temple. A god given a random
+     * eligible room lands in a side pocket as often as not, and a dedication the player walks past in a
+     * cupboard while the hall next door holds jars is not a dedication. So the eligible rooms are ranked
+     * by how much floor they will draw — the free cells around them, which is the footprint the renderer
+     * claims (`canClaimVoid`: a room takes the free part of its own 3x3) — and the god takes the largest.
+     * Hash only breaks ties, so the choice stays stable and spread between floors of the same size.
+     *
+     * Size earns its keep twice: the biggest room is also the one most likely to have two spare cells,
+     * which is what `companionProps` needs before it can stand the god's SECOND statue beside the first.
+     * A pair flanking a wall reads as a shrine; one statue in a corner reads as furniture.
+     *
+     * Only rooms whose own pool can carry a patron are eligible — a section that never offered a statue
+     * is not made to.
+     */
+    const patronRooms = new Set<string>()
+    if (config.patron !== undefined && PATRON_PER_FLOOR > 0) {
+      // The grid as it stands, so rooms can be ranked by the floor they will DRAW. `footprintSize` is
+      // the renderer's own claim rule, kept in the domain precisely so both sides answer this the same.
+      const claimGrid: FloorGrid = {
+        cells: cells2D,
+        rows: N,
+        cols: N,
+        entrancePos: [entR, entC],
+        exitPos: [exR, exC],
+        siteId,
+        staircases: {},
+      }
+      const rowCol = (pk: string): [number, number] => {
+        const [r, c] = pk.split(",").map(Number)
+        return [r, c]
+      }
+      const isFork = (pk: string): boolean => {
+        const [r, c] = rowCol(pk)
+        const cell = cells2D[r][c]
+        return cell.type === "room" && cell.roomType === "fork"
+      }
+      const eligible = dressedPositions
+        .filter(pk => (cellDressing.get(pk)?.props ?? []).some(k => PATRON_KINDS.has(k)))
+        // NOT THE ENTRANCE, and not the stair down. A portal is a doorway the player passes through
+        // twice, and its footprint is mostly the margin outside the grid — a pair of statues there reads
+        // as a porch rather than as the room the tomb was dug for. The god takes a CHAMBER.
+        .filter(pk => {
+          const [r, c] = rowCol(pk)
+          const cell = cells2D[r][c]
+          return cell.type === "room" && cell.roomType !== "portal"
+        })
+        .sort(
+          (a, b) =>
+            // A FORK FIRST, and only then the biggest. A junction is a hub — the player arrives at it,
+            // chooses, and comes back to it — where a dead end is somewhere they visit once and leave.
+            // A god belongs in the room his tomb is organised around, so size decides only among rooms
+            // of the same standing.
+            Number(isFork(b)) - Number(isFork(a)) ||
+            footprintSize(claimGrid, ...rowCol(b)) - footprintSize(claimGrid, ...rowCol(a)) ||
+            hashString(`${siteId}:patronPick:${a}`) - hashString(`${siteId}:patronPick:${b}`) ||
+            a.localeCompare(b)
+        )
+      for (const pk of eligible.slice(0, PATRON_PER_FLOOR)) patronRooms.add(pk)
+    }
+
+    for (const pk of dressedPositions) {
+      const pools = cellDressing.get(pk)
+      // In a guaranteed room the pool is narrowed to what a god can appear on, and the same hash then
+      // chooses among those — so which god-bearing kind it is still varies from room to room.
+      //
+      // A STATUE FIRST, where the pool has one. The five patron kinds are not equal at this job: a
+      // statue IS the god standing in the room, where a shrine is a cabinet that might hold him and a
+      // mask is a thing on a wall. The god's own room takes the figure and leaves the rest to the rooms
+      // around it — and because `companionProps` pairs whatever this room draws, choosing the statue is
+      // also what puts TWO of them in the biggest chamber on the floor.
+      const patronProps = pools?.props?.filter(k => PATRON_KINDS.has(k))
+      const godProps = patronProps?.includes("statue") ? (["statue"] as DecorationKind[]) : patronProps
+      const propPool = patronRooms.has(pk) ? godProps : pools?.props
+      const picked = pickDressing(propPool, pk, "decoration")
+      // NO HOLE BESIDE A WAY DOWN. A `pit` is a shaft cut in the floor and a staircase is a way to the
+      // floor below, so the two say the same thing in the same room and only one of them is real — the
+      // player can take the stair and cannot take the pit. Re-picked rather than filtered out of the
+      // pool: dropping a kind would change the pool's LENGTH and with it every stairhead's furniture,
+      // where this moves the seven rooms that actually collided.
+      const [pr, pc] = pk.split(",").map(Number)
+      const pitCell = cells2D[pr][pc]
+      const besideStair = pitCell.type === "room" && pitCell.roomType === "portal" && pitCell.stairId !== undefined
+      const decoration =
+        picked === "pit" && besideStair
+          ? pickDressing(
+              propPool?.filter(k => k !== "pit"),
+              pk,
+              "decoration:not-a-pit"
+            )
+          : picked
+      // THE GOD'S ROOM TAKES A GOD'S WALL ITEM TOO, where its pool has one. Prop and wall both being
+      // patron kinds is also the SIGNAL the renderer reads to find this room — it needs no new field on
+      // the cell, and a room dressed that way is the god's by construction rather than by a flag.
+      const patronWall = patronRooms.has(pk) ? pools?.wall?.filter(k => PATRON_KINDS.has(k)) : undefined
+      // Its own salt, so a rank whose two pools are the same length does not pair the same stela with
+      // the same jar rack in every room that draws them.
+      const wallDecoration = pickDressing(
+        patronWall?.length ? patronWall : pools?.wall ? wallSuiting(pools.wall, decoration) : undefined,
+        pk,
+        "wallDecoration"
+      )
+      if (!decoration && !wallDecoration) continue
       const [r, c] = pk.split(",").map(Number)
       const owner = cells2D[r][c]
-      if (owner.type === "room") cells2D[r][c] = { ...owner, decoration }
+      if (owner.type === "room") {
+        cells2D[r][c] = {
+          ...owner,
+          ...(decoration ? { decoration } : {}),
+          ...(wallDecoration ? { wallDecoration } : {}),
+          // Written down rather than inferred from the pairing — see RoomCell.patronRoom.
+          ...(patronRooms.has(pk) && decoration ? { patronRoom: true } : {}),
+        }
+      }
     }
 
     const staircases: Record<string, readonly [number, number]> = {}
@@ -1508,6 +1702,10 @@ export const assembleFloor = (
 
     const grid: FloorGrid = {
       cells: cells2D,
+      difficulty: config.difficulty,
+      ...(config.theme !== undefined ? { theme: config.theme } : {}),
+      ...(config.condition !== undefined ? { condition: config.condition } : {}),
+      ...(config.patron !== undefined ? { patron: config.patron } : {}),
       rows: N,
       cols: N,
       entrancePos: [entR, entC],

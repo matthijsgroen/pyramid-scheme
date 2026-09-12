@@ -52,7 +52,25 @@ const wizardCMapPieceGate: SideSectionConstraint = {
 }
 
 export const wizardRules: Rule[] = [
-  tier("wizard", { difficulty: "wizard" }),
+  // the gods' vault: crystal grown from the walls, an open coffin, lights with nothing holding them.
+  tier("wizard", {
+    difficulty: "wizard",
+    decorations: [
+      "shelf",
+      "jarRack",
+      "offeringTable",
+      "basin",
+      "statue",
+      "lamp",
+      "hanging",
+      "shrine",
+      "sarcophagus",
+      "pillar",
+      "crystal",
+    ],
+    // the gods': a shaft looking out on the night, a crystal bracket, a shrine of light.
+    wallDecorations: ["starShaft", "sconce", "wallShrine"],
+  }),
 
   // Wizard's character is DEPTH, where master's is BREADTH — the two tiers are meant to feel
   // structurally different, not just numerically harder. `mainFloors: 2` (master has one), two ward
@@ -268,4 +286,8 @@ export const wizardRules: Rule[] = [
   // specificity (8) overrides the tier-pyramid rule above (6) for wizard_4 only;
   // wizard_1/2/3 keep the normal gated branch untouched.
   journey("wizard_4").pyramid("last-1", { sideSections: [] }),
+
+  // Ra's Solar Journey and the Chamber of Ma'at — see the patron note in spec/starter.ts.
+  journey("wizard_1").set({ patron: "ra" }),
+  journey("wizard_3").set({ patron: "maat" }),
 ]

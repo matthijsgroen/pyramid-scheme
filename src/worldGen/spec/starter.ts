@@ -30,7 +30,26 @@ const holdChest = (index: number) => wardChest({ tomb: "starter_treasure_tomb", 
 const HOLD_CYCLE = [1, 2, 0, 1]
 
 export const starterRules: Rule[] = [
-  tier("starter", { difficulty: "starter" }),
+  // a merchant's cellar: shelves and crates, amphorae, a market table, a water jar, mats.
+  tier("starter", {
+    difficulty: "starter",
+    decorations: [
+      "shelf",
+      "jarRack",
+      "offeringTable",
+      "basin",
+      "statue",
+      "lamp",
+      "hanging",
+      "shrine",
+      "pillar",
+      "brazier",
+      "rubblePile",
+      "mat",
+    ],
+    // a merchant hangs inventory: a niche of goods and the tally board beside it.
+    wallDecorations: ["niche", "tallyBoard"],
+  }),
 
   tier("starter")
     .set({})
@@ -176,4 +195,11 @@ export const starterRules: Rule[] = [
       { mainEndReward: "tombTreasure" },
     ],
   }),
+
+  // PATRONS. A journey named for a god says so once, here, and every floor of it is dedicated: `set`
+  // is journey-wide, which is the point — a dedication that stopped halfway up the climb would read as
+  // an authoring slip. Purely drawn and free to author
+  // (docs/game-design/world-spec-stability.md), and it falls back to the generic art everywhere the
+  // patron file does not exist, which is everywhere today.
+  journey("starter_3").set({ patron: "bastet" }),
 ]

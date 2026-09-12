@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- The inside of a pyramid is drawn. It is a place now rather than a diagram: floors, walls and doorways
+  are painted stone that changes with the rank you are in; rooms are furnished with the things that tomb
+  would hold, and a pyramid dedicated to a god keeps a room for him with his statue in it; stairs, ward
+  gates and the way out are drawn where they stand instead of standing for themselves as symbols; a
+  site something has got into — the green in the Nile Delta — shows it on every floor; and every
+  encounter is met against the wall of the floor you are standing on. Three of the five ranks are
+  painted throughout. The pharaoh's and the gods' are still being drawn, and until they are, anything
+  not yet painted keeps the placeholder it had.
+
+### Fixed
+
+- A tomb puzzle offline is played against its own painted wall. The five wall panels and the market
+  puzzle's pieces were left out of what the game stores for offline play, so with no connection they came
+  up blank.
+- A tap on the map only ever sends you somewhere you can walk to, and the map no longer marks a corner
+  it has no way of reaching — an unreachable one now reads as the dead end it is.
+- Walking somewhere is remembered. A step used to be able to lose the position it moved to, which put
+  you back where you started, and the explorer no longer jumps ahead before setting off.
+
 ## 0.42.4 - 2026-08-31
 
 ### Changed

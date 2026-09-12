@@ -1,5 +1,5 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
-import type { DecorationKind } from "../game/siteTypes"
+import type { DecorationKind, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { wardKeyDifficulty } from "../data/difficultyLevels"
 
@@ -112,6 +112,8 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   sideSections?: SideSectionConstraint<TExtra>[]
   /** Pool of decoration kinds this section's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
+  /** Pool of wall-item kinds those rooms may hang on a wall. */
+  wallDecorations?: WallDecorationKind[]
   /** "staircase" ends the path at a stairhead into the next floor instead of a treasure room. */
   end?: "treasure" | "staircase"
   /** Invisible without the Detection perk. */
@@ -147,6 +149,8 @@ export type FloorConstraint<TExtra extends string = never> = {
   theme?: Theme
   /** Pool of decoration kinds the main path's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
+  /** Pool of wall-item kinds those rooms may hang on a wall. */
+  wallDecorations?: WallDecorationKind[]
   /**
    * Side paths for this pyramid.
    * - SideIntensity | number: that many auto mosaic-piece paths, no explicit sections.
@@ -204,6 +208,37 @@ export type PyramidConstraint = {
    * and sharedKeyChance. */
   keyColorsRange?: { min: number; max: number }
   difficulty?: Difficulty
+  /** Pool of decoration kinds every floor and side section of this site draws its props from, unless
+   * one names its own. Authored at tier level this dresses a whole rank in one line. Purely drawn —
+   * a free field (docs/game-design/world-spec-stability.md). */
+  decorations?: DecorationKind[]
+  /** Pool of wall items every floor and side section of this site hangs on its walls, unless one names
+   * its own. Its own vocabulary, because a wall item is not a prop (see WallDecorationKind). Purely
+   * drawn — a free field (docs/game-design/world-spec-stability.md). */
+  wallDecorations?: WallDecorationKind[]
+  /**
+   * Something that has got into this whole site and shows on every floor of it: water standing in it,
+   * green forcing through the brick. `amount` is 0-1 like every other fraction here — 0.25 is a damp
+   * corner, 1 is the pyramid the journey is remembered for.
+   *
+   * Authored HERE rather than per floor on purpose. The point of a condition is that it survives the
+   * climb: an agriculture journey can push one of its pyramids to overdrive and have the green follow
+   * the player from the merchant's cellar to the gods' vault, which is not something a per-floor hour
+   * can say. Purely drawn — a free field (docs/game-design/world-spec-stability.md).
+   */
+  condition?: SiteCondition
+  /**
+   * Whose tomb this is — see Patron in game/siteTypes.ts.
+   *
+   * Authored on the PYRAMID beside `condition` and for the same reason: a dedication is a property of
+   * the site, not of one floor, and the point is that it holds all the way up the climb. A journey
+   * named for a god says so once here rather than seven times.
+   *
+   * Purely drawn — a free field (docs/game-design/world-spec-stability.md). It chooses
+   * `<kind>-<patron>.png` over the generic art for the five kinds a god appears on, and falls back
+   * silently where that file does not exist.
+   */
+  patron?: Patron
   /** Default family/tag for this pyramid/tomb's main-path encounter rooms — e.g. a tomb sets
    * "tableau" (or the "tomb-puzzle" tag) here so every floor's main-path rooms use it. An array is
    * "any of these". */

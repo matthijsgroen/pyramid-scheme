@@ -894,7 +894,7 @@
     "goal": "Cross the pit to the far bank.",
     "rules": {
       "want": "Each crocodile wants one answer from the row of stones behind it: the biggest, or the smallest.",
-      "mark": "The three bars beside it say which: the tall bar lit means it wants the biggest answer, the short bar lit means the smallest.",
+      "mark": "Its open mouth says which, and so does the sign beside it: > opens toward the biggest answer, < toward the smallest.",
       "bite": "Step on any other stone and it bites: you lose health and start again from the near bank."
     },
     "hint": {

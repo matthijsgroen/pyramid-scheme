@@ -166,7 +166,7 @@ export const PuzzleLab: FC = () => {
         <p className="mt-2 text-center text-xs text-red-300">{benchNotes(puzzle).join(" · ")}</p>
       )}
       {playing && puzzle !== undefined && (
-        <EncounterModal>
+        <EncounterModal difficulty={difficulty}>
           {/* Keyed so switching family, tier, theme or seed REMOUNTS the screen rather than handing the mounted
               one a different puzzle. A family holds the player's progress in its own state, sized to the board it
               was given — so a board arriving under it reads that state out of range and crashes. Real play cannot

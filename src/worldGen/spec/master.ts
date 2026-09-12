@@ -75,7 +75,25 @@ const KEY_CHAIN: SideSectionConstraint = {
 }
 
 export const masterRules: Rule[] = [
-  tier("master", { difficulty: "master" }),
+  // a pharaoh's halls: tribute laid in state, gilded shrines and columns, an alabaster basin.
+  tier("master", {
+    difficulty: "master",
+    decorations: [
+      "shelf",
+      "jarRack",
+      "offeringTable",
+      "basin",
+      "statue",
+      "lamp",
+      "hanging",
+      "shrine",
+      "sarcophagus",
+      "pillar",
+      "brazier",
+    ],
+    // a pharaoh's: a bronze mirror sconce, a gilded mask, an offering niche.
+    wallDecorations: ["sconce", "mask", "niche"],
+  }),
 
   tier("master").set({
     wardWings: 1,
@@ -252,4 +270,14 @@ export const masterRules: Rule[] = [
       },
     ],
   }),
+
+  // The two treasure tombs are named for their gods too — see the patron note in spec/starter.ts.
+  journey("master_treasure_tomb").set({ patron: "maat" }),
+  journey("master_treasure_tomb_b").set({ patron: "osiris" }),
+
+  // One pyramid each, in journeys not named for a god — see the note in spec/expert.ts. Horus takes the
+  // Great Pyramid because its role is `sky` and the living king IS Horus; Sekhmet takes the Curse of the
+  // Pharaohs because a curse and an omen are hers.
+  journey("master_1").pyramid("last", { patron: "horus" }),
+  journey("master_3").pyramid("last", { patron: "sekhmet" }),
 ]

@@ -41,7 +41,27 @@ const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 0, p
 const oldWorkings = () => sidePath({ puzzles: 1, tier: "starter", endReward: "junk" })
 
 export const juniorRules: Rule[] = [
-  tier("junior", { difficulty: "junior" }),
+  // a nobleman's wing: a painted ka-statue, sealed chests, an ablution basin, linen and lamps.
+  tier("junior", {
+    difficulty: "junior",
+    decorations: [
+      "shelf",
+      "jarRack",
+      "offeringTable",
+      "basin",
+      "statue",
+      "lamp",
+      "hanging",
+      "shrine",
+      "sarcophagus",
+      "pillar",
+      "brazier",
+      "rubblePile",
+      "mat",
+    ],
+    // a nobleman's wing: a false-door stela, a lamp niche, a bracket for the lamp.
+    wallDecorations: ["stela", "niche", "sconce"],
+  }),
 
   tier("junior")
     .set({})
@@ -160,4 +180,32 @@ export const juniorRules: Rule[] = [
       },
     ],
   }),
+
+  // Temple of Thoth — see the patron note in spec/starter.ts.
+  journey("junior_3").set({ patron: "thoth" }),
+
+  // THE SACRED IBIS MIGRATION IS THOTH'S TOO, and it is the one journey in the world named for a god's
+  // ATTRIBUTE rather than for the god: the ibis is his bird, and the journey was the only Thoth-named
+  // place in the climb not dedicated to him.
+  //
+  // Worth 5 rooms and authored anyway. Its 24 rooms are mostly `water`-role and few of them draw a
+  // statue, shrine, stela, mask or wall shrine, which are the only five kinds a patron reaches — so a
+  // dedication here buys `stela-thoth` 7 rooms to 12 and moves nothing else. Measured before authoring
+  // rather than assumed, because a journey's room count says nothing about its patron count.
+  journey("junior_1").set({ patron: "thoth" }),
+
+  // The NOBLE'S HIDDEN VAULT takes Anubis, and it is the largest single patron pairing in the world —
+  // 68 rooms against the 33 of the next one. A treasure tomb is six floors deep and every floor of it
+  // dresses, so a whole-journey `set` reaches further here than anywhere else; the pharaoh's two
+  // treasure tombs are dedicated the same way and for the same reason.
+  //
+  // Anubis by role rather than by title. The journey is not named for a god, but it is a sealed vault in
+  // a necropolis, and he is the necropolis — the same argument that gave him the Valley of the Kings at
+  // the priest's rank.
+  //
+  // AND IT IS WHAT MAKES THE NOBLEMAN'S PATRON ART WORTH PAINTING AT ALL. A patron tells one pyramid
+  // from another WITHIN a rank; before this every patron-carrying pyramid of his named Thoth, so a
+  // `<kind>-thoth.png` would have been his generic drawing under another name. Two gods is the floor
+  // for the feature to show, which `PatronSheet` has said since it was written.
+  journey("junior_treasure_tomb").set({ patron: "anubis" }),
 ]

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import type {
   CellState,
   DecorationKind,
@@ -8,32 +8,70 @@ import type {
   GateVariant,
   GridCell,
   KeyColor,
+  Patron,
   RoomCell,
   RoomType,
+  WallDecorationKind,
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
-import { revealAll } from "../../game/gridNavigation"
+import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { keyColorHex } from "@/ui/tokens/keyColors"
-import { ExplorerDot } from "./ExplorerDot"
+import { ExplorerDot, LightPool, LightPoolDefs } from "./ExplorerDot"
+import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
-  WALL_THICKNESS,
+  MARKER_HIT,
+  MARKER_RADIUS,
+  NODE_RADIUS_FORK,
   NODE_RADIUS_LARGE,
   NODE_RADIUS_PUZZLE,
-  NODE_RADIUS_FORK,
-  MARKER_RADIUS,
+  ARCH_H,
+  ARCH_DROP,
+  ARCH_RISE,
+  ARCH_W,
+  SIDE_W,
+  WALL_H,
+  cellCenter,
+  cellLeft,
+  cellTop,
+  mapHeight,
+  mapWidth,
 } from "./mapScale"
+import { NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP, nodeArtOffset, type NodeSprite } from "./nodeArt"
+import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
+import { moodFor } from "./moodSettings"
+import { cellAt, isClaimableNeighbor } from "@/game/roomFootprint"
+import { MapGrowth, MapLife, MapWeather } from "./MapMood"
+import { hashString } from "@/support/hashString"
+import { companionFor } from "./companionProps"
+import { ART_IMAGE_RENDERING, patronTileUrl, tileUrl, tileVariants } from "./tileAssets"
+import {
+  ALL_STATES,
+  buildTileRegions,
+  faceShadowsToPath,
+  faceTopsToPath,
+  hasWallFace,
+  rectsToPath,
+} from "./tileRegions"
+import type { Rect } from "./tileRegions"
+import type { FloorAt, TileRegions } from "./tileRegions"
 
 // Cells one step outside the grid are still real void for claiming purposes — a fork or
 // endpoint sitting on the map's edge shouldn't look artificially clipped next to one
 // that happens to have interior void around it. Anything beyond the grid is `empty`.
-const cellAt = (grid: FloorGrid, r: number, c: number): GridCell => grid.cells[r]?.[c] ?? { type: "empty" }
 
 type Props = {
   grid: FloorGrid
   onCellClick?: (row: number, col: number) => void
   revealAllCells?: boolean
+  /** Every floor cell is a click target, corridors included, and the run rules are set aside.
+   *
+   * For an EXHIBIT rather than a run: judging art means standing the explorer wherever the art is,
+   * and in play only a corridor's CORNER is clickable (a straight passage borrows a far corner's
+   * target), so half the moves on a revealed map have nothing to click. Off by default — the game
+   * itself never sets it. */
+  freeWalk?: boolean
   explorerPos?: readonly [number, number]
   /** Current floor index. Keys the explorer dot so a floor switch remounts it (instant snap to the
    * new floor's entrance) instead of animating a walk from the previous floor's coordinates. */
@@ -352,6 +390,330 @@ const shapeKindFor = (
   return "puzzle"
 }
 
+// Gating is soft: a locked gate is still "reachable" (clickable), so `state` doesn't distinguish
+// locked from unlocked. This recovers that purely cosmetic distinction for the icon AND the floor
+// tint under it, and never for clickability or badges.
+const isLockedGate = (cell: RoomCell, ownedKeys: ReadonlySet<string> | undefined): boolean =>
+  cell.tags?.includes("gate") === true && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)
+
+/** A room's own footprint as a clip path: each of its cells, grown upward by a prop's headroom so a
+ * tall thing still crosses the wall band behind it.
+ *
+ * AND THE SEAMS BETWEEN THEM. Cells do not touch — `cellLeft`/`cellTop` leave `SIDE_W` between columns
+ * and `WALL_H` between rows for the walls seen edge-on — so a clip built from cell rects alone has a
+ * hairline of nothing down every join. Furniture standing wholly inside one cell never met it; the ward
+ * gate, which straddles a seam on purpose because that is where its sill is laid, came out with the
+ * strip containing its bars cut clean away and its two jambs drawn as separate posts.
+ */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over cell keys, exported so tests can assert on the clip
+export const footprintPath = (cells: readonly string[]): string => {
+  const own = cells.map(key => key.split(",").map(Number) as [number, number])
+  const has = new Set(cells)
+  const rects: Rect[] = own.map(([r, c]) => [cellLeft(c), cellTop(r) - PROP_H, CELL, CELL + PROP_H])
+  for (const [r, c] of own) {
+    // Each seam once: only ever to the east and to the south, so a pair of cells cannot add it twice.
+    if (has.has(`${r},${c + 1}`)) rects.push([cellLeft(c) + CELL, cellTop(r) - PROP_H, SIDE_W, CELL + PROP_H])
+    if (has.has(`${r + 1},${c}`)) rects.push([cellLeft(c), cellTop(r) + CELL - PROP_H, CELL, WALL_H + PROP_H])
+  }
+  return rectsToPath(rects)
+}
+
+/** How far the cresset at a stair's mouth stands from the middle of its cell, measured off the painted
+ * tile rather than guessed: the flame's own pixels land 24 units left of centre. */
+const STAIR_FLAME_DX = CELL * 0.43
+
+/** Anything standing on the floor, with the line it stands on — a room's own furniture and a node's.
+ *
+ * One list so the PLAYER can be drawn in the middle of it. Two things stand on a map: the explorer and
+ * whatever a room holds, and which occludes which is decided by the floor line, never by the sprite's
+ * top — a tall statue at the back of a chamber belongs behind a low chest at its front.
+ */
+type StandingSprite = {
+  key: string
+  /** The y a sprite's own floor line sits at, in map space. Lower on the page is nearer the viewer. */
+  baseY: number
+  /** The clip this sprite is drawn through, if any — its own room's footprint, grown upward by a
+   * prop's headroom. A room's own furniture is not clipped at all: it stands centred on its cell and
+   * reaches only into the wall band above it, which is where a tall thing belongs. */
+  clipId?: string
+  /** Where this sprite's own flame lands on the floor, if it carries one — see NodeSprite.light. */
+  light?: NodeSprite["light"]
+  node: ReactNode
+}
+
+/** One half of the sorted set — the clipped sprites in their own group, so the clip stays in map space. */
+const StandingLayer = ({ sprites }: { sprites: readonly StandingSprite[] }) => (
+  <>
+    {sprites.map(s =>
+      s.clipId ? (
+        <g key={s.key} pointerEvents="none" clipPath={`url(#${s.clipId})`}>
+          {s.node}
+        </g>
+      ) : (
+        s.node
+      )
+    )}
+  </>
+)
+
+/** For every cell, the cell you came FROM walking out of the floor's entrance — so a node can be drawn
+ * on its own approach rather than on itself. Built once per floor and only when something asks, because
+ * only the gates do.
+ *
+ * A GATE'S LEAF STANDS IN THE PASSAGE IT SHUTS, one cell in front of the gate's own square, which is
+ * where a door is: between you and what it keeps you from. Every gate in the world is a CUT — nothing
+ * behind one is reachable another way — and the explorer is halted on this very cell rather than walked
+ * through it (`useSiteNavigation`), so the leaf and the player meet face to face.
+ */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on cells
+export const approachCells = (grid: FloorGrid): Map<string, readonly [number, number]> => {
+  const from = new Map<string, readonly [number, number]>()
+  const seen = new Set([`${grid.entrancePos[0]},${grid.entrancePos[1]}`])
+  const queue: Array<readonly [number, number]> = [grid.entrancePos]
+  for (let i = 0; i < queue.length; i++) {
+    const [r, c] = queue[i]
+    const cell = grid.cells[r]?.[c]
+    if (!cell || cell.type === "empty") continue
+    for (const dir of cell.dirs) {
+      const [dr, dc] = DIR_MOVES[dir]
+      const next = [r + dr, c + dc] as const
+      const key = `${next[0]},${next[1]}`
+      if (seen.has(key)) continue
+      seen.add(key)
+      from.set(key, [r, c])
+      queue.push(next)
+    }
+  }
+  return from
+}
+
+/** Every node's own furniture on one floor, in map space — chests beside treasure rooms, flights at
+ * stairheads. See `NodeSprite` for why this is a list and not a child of each node's own `<g>`.
+ *
+ * A SHOP wears the treasure marker and gets no chest: his goods are a market stall rather than a sealed
+ * chest, and drawing one would say the wrong thing about a room you buy from. A stairhead at the floor's
+ * own `entrancePos` is the way back UP (pyramid-interior-design.md: a stairhead descends), and absent
+ * art simply yields nothing, leaving the vector marker to carry the node as it always did.
+ */
+const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficulty): NodeSprite[] => {
+  // Which cells belong to each room: the room's own, plus everything it claimed.
+  const footprints = new Map<string, string[]>()
+  for (const [cellKey, ownerKey] of claims.claimedBy) {
+    const own = footprints.get(ownerKey)
+    if (own) own.push(cellKey)
+    else footprints.set(ownerKey, [ownerKey, cellKey])
+  }
+  /**
+   * The footprint a sprite is CLIPPED to: the room's own cells, plus any neighbour that is real floor.
+   *
+   * A chest is stepped away from its doorways (`nodeArtOffset`, 0.3 of a cell across and 0.2 down) and a
+   * node sprite is a cell wide, so the offset always hangs past the room's own cells. Clipped to those
+   * alone it lost a third of itself to the side of its own cell. Translating the clip with the art fixed
+   * that and broke the other half: where the step pointed at VOID, the clip went with it and the chest
+   * was drawn out over the dark beyond the wall.
+   *
+   * So the clip grows, but only into ground. A neighbour counts if the grid has something there — and a
+   * CLAIMED cell counts too, because a chamber's own floor is `type: "empty"` in the grid and the claim
+   * is a render-time fact, which is the trap `floorScatter` and `MapGrowth` both record. Where there is
+   * paving beside it the chest overlaps the paving; where there is masonry it is still cut at the
+   * masonry, which is what the clip was for.
+   */
+  const clipCells = (footprint: readonly string[]): string[] => {
+    const cells = new Set(footprint)
+    for (const key of footprint) {
+      const [r, c] = key.split(",").map(Number)
+      for (const [dr, dc] of [
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1],
+      ] as const) {
+        const nr = r + dr
+        const nc = c + dc
+        const neighbourKey = `${nr},${nc}`
+        if (cells.has(neighbourKey)) continue
+        const isFloor = cellAt(grid, nr, nc).type !== "empty" || claims.claimedBy.has(neighbourKey)
+        if (isFloor) cells.add(neighbourKey)
+      }
+    }
+    return [...cells]
+  }
+  const out: NodeSprite[] = []
+  let approach: Map<string, readonly [number, number]> | null = null
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room" || cell.state === "fogged") continue
+      const kind = shapeKindFor(grid, r, c, cell.roomType, cell.tags, cell.stairId)
+      const tier = cell.difficulty ?? floorTier
+      const { cx, cy } = cellCenter(r, c)
+      const footprint = clipCells(footprints.get(`${r},${c}`) ?? [`${r},${c}`])
+      if (kind === "treasure" && !cell.tags?.includes("shop")) {
+        const url = tileUrl(tier, "chestProp")
+        if (!url) continue
+        const { dx, dy } = nodeArtOffset(cell.dirs)
+        out.push({
+          footprint,
+          key: `chest:${r},${c}`,
+          url,
+          x: cx + dx - CELL / 2,
+          y: cy + dy + CELL / 2 - PROP_H,
+          mirrored: false,
+        })
+      } else if (kind === "exit") {
+        // THE WAY OUT IS A MARKER, NOT ARCHITECTURE. A doorway has to be aimed — face on it needs the
+        // wall it is cut in, and walked across it becomes a narrow lit slot that reads as a column, which
+        // this set already draws as `pillar`. A shaft of light standing free on the floor is the same
+        // picture from every approach, so it needs no facing, no side drawing and no seam to stand in: it
+        // is placed on its own cell like a chest, and the renderer lays a pool at its foot the way it does
+        // for a stair's cresset.
+        const url = tileUrl(tier, "exit")
+        if (!url) continue
+        const { cx: ex, cy: ey } = cellCenter(r, c)
+        out.push({
+          footprint,
+          key: `exit:${r},${c}`,
+          url,
+          x: ex - CELL / 2,
+          y: ey + CELL / 2 - PROP_H,
+          mirrored: false,
+          light: { x: ex, y: ey + CELL * 0.12, r: LAMP_POOL_RADIUS },
+        })
+      } else if (kind === "gate") {
+        // `gate` is shut and `gate-open` is the same leaf swung back or sunk into the floor; a rank with
+        // neither draws the marker alone, exactly as a stairhead did before its flights were painted.
+        //
+        // THE LEAF STANDS ONE CELL IN FRONT, in the passage it shuts (`approachCells`) — the MARKER keeps
+        // the gate's own square, because its colour is the only thing that says which key, and moving it
+        // would take that off the node it belongs to. Which is also why the leaf is clipped to the cell
+        // it stands in and not to the gate's room: a footprint clip is what keeps furniture inside its
+        // own walls, and the gate's would erase a leaf drawn outside them.
+        //
+        const open = cell.state === "completed"
+        approach ??= approachCells(grid)
+        const stands = approach.get(`${r},${c}`)
+        if (!stands) continue
+        const [ar, ac] = stands
+
+        // THE BARS FACE THE POCKET, NOT AWAY FROM THE PLAYER, and on two thirds of the gates in the
+        // world those are different directions. Only `ns` and `ew` gates run straight through; `es`,
+        // `sw`, `nw` and `en` are CORNERS, and on a corner the way you came in and the way that is
+        // sealed are at right angles — so "the side opposite the approach" hung the gate on a wall the
+        // pocket is not even behind, one turn away from the seam it belongs in.
+        //
+        // The sealed side is the one whose neighbour is reached THROUGH this gate, which `approachCells`
+        // already knows: it is the neighbour whose own approach is the gate itself. That also settles a
+        // cell with three ways out, where "not the way I came" would have been a choice of two.
+        const back: Direction = ar < r ? "n" : ar > r ? "s" : ac < c ? "w" : "e"
+        const sealed = [...cell.dirs].find(dir => {
+          if (dir === back) return false
+          const [mr, mc] = DIR_MOVES[dir]
+          const beyond = approach?.get(`${r + mr},${c + mc}`)
+          return beyond?.[0] === r && beyond?.[1] === c
+        })
+        const [dr, dc] = sealed ? DIR_MOVES[sealed] : [r - ar, c - ac]
+
+        // A GATE IS AIMED BY WHICH ONE IS DRAWN, the same as a flight. Shutting a way walked ACROSS, the
+        // grille's own plane is the y-z one and this projection draws that as a line, so `-side` is a
+        // second drawing: narrow and tall where the face-on one is broad, because that is the shape this
+        // projection actually makes of it. Turning the tile instead would be a skew — a reflection is a
+        // real oblique view and a rotation is not (`NodeSprite`).
+        const name = `${open ? "gate-open" : "gate"}${dc !== 0 ? "-side" : ""}`
+        const url =
+          tileUrl(tier, name) ??
+          tileUrl(tier, open ? "gate-open" : "gate") ??
+          (open ? tileUrl(tier, "gate") : undefined)
+        if (!url) continue
+
+        // THE BARS STAND ON THE SILL. Wherever one rank's stone meets another's across a way the player
+        // walks, the map lays a threshold in the tier being entered (`tileRegions`), and a ward gate is
+        // exactly such a seam because the pocket it shuts is authored at another tier. A shut gate's own
+        // square wears the FLOOR's stone rather than the pocket's (`cellFloorAt`, which is what stops the
+        // next tier being read off the paving early), so the seam falls on the sealed side of it: the
+        // gate's square is the ground you stand on to work the gate, and the bars are its far wall.
+        //
+        // Which is also why nothing halts the player short of it. He walks in and stops at the bars, the
+        // way you do at a locked gate, and the cell he is standing on is the gate's own.
+        // THE SEAM IN THE MAP'S OWN ARITHMETIC. `cellLeft`/`cellTop` put the gap BEFORE each cell, so the
+        // one AFTER cell c starts at `cellLeft(c) + CELL` and is `SIDE_W` wide, and the band after row r
+        // starts at `cellTop(r) + CELL` and is `WALL_H` tall. Both far cases were written as if the gap
+        // came before: the gate stood a whole `SIDE_W` west of the seam it belonged in, and rested on the
+        // TOP edge of the band below it rather than the bottom, hanging 28 units clear of its own sill.
+        const seamCx =
+          dc > 0 ? cellLeft(c) + CELL + SIDE_W / 2 : dc < 0 ? cellLeft(c) - SIDE_W / 2 : cellLeft(c) + CELL / 2
+        // IN the band, not under it and not on top of it. A horizontal seam is `WALL_H` of wall seen face
+        // on: feet on its lower edge hang the whole grille below the opening, in the room rather than in
+        // the doorway, and feet on its upper edge lift it clear of the floor it is supposed to bar. Half
+        // a band down from the top puts it in the middle of the masonry, which is where a gate hangs.
+        // A seam between COLUMNS has no such band — it is a side wall seen edge-on — so there the floor
+        // line is the floor line.
+        const seamBase = dr > 0 ? cellTop(r) + CELL + WALL_H / 2 : dr < 0 ? cellTop(r) - WALL_H / 2 : cellTop(r) + CELL
+        const base = seamBase
+        const left = seamCx - CELL / 2
+        out.push({
+          // The gate's cell AND the one beyond it, because the clip is what keeps furniture inside its
+          // own walls and this deliberately spans one: clipped to either alone, half the gate is cut.
+          footprint: [`${r},${c}`, `${r + dr},${c + dc}`],
+          // The same two cells fade it: they are the only ones ever behind a gate, exactly as a doorway
+          // fades for the two its arch spans.
+          fadeAt: [`${r},${c}`, `${r + dr},${c + dc}`],
+          key: `gate:${r},${c}`,
+          url,
+          x: left,
+          y: base - PROP_H,
+          mirrored: false,
+        })
+      } else if (kind === "stairhead") {
+        const goesUp = r === grid.entrancePos[0] && c === grid.entrancePos[1]
+        // A FLIGHT IS AIMED BY WHICH ONE IS DRAWN, not by turning one. Descending, it can only come
+        // TOWARD the viewer — receding, the rise subtracts what the going adds and the treads collapse
+        // into one band — so a stairhead entered from the side takes the flight that walks across X
+        // instead, mirrored when the corridor is on the wrong hand. Absent art falls back to the
+        // toward-viewer flight, so a rank with one file still draws all four facings.
+        const sideways = cell.dirs.has("e") || cell.dirs.has("w")
+        const side = sideways ? tileUrl(tier, goesUp ? "stair-up-side" : "stair-down-side") : undefined
+        // The descending flight walked the OTHER way up the page: entered from the south its treads are
+        // at the near lip of the shaft rather than the far one, which is the picture flipped in Y. That
+        // flip is the one thing the renderer must not do, because it would carry the cresset down with
+        // it and stand the flame on the floor — so the south approach is a file of its own, painted with
+        // the torch left where it stands. Absent, the north flight stands in for both.
+        const downhill = cell.dirs.has("s") && !cell.dirs.has("n") ? tileUrl(tier, "stair-down-south") : undefined
+        const url = side ?? (goesUp ? undefined : downhill) ?? tileUrl(tier, goesUp ? "stair-up" : "stair-down")
+        if (!url) continue
+        // The two side flights are painted opposite-handed, because each is drawn from where the player
+        // stands: the descending one is entered at its top tread on the EAST, the climbing one at its
+        // bottom tread on the WEST. So they mirror on opposite approaches, and a cell open both ways is
+        // approached from the east like any other.
+        const fromWest = cell.dirs.has("w") && !cell.dirs.has("e")
+        const mirrored = side !== undefined && goesUp ? !fromWest : fromWest
+        out.push({
+          // ONLY THE DESCENDING FLIGHTS CARRY A CRESSET. A shaft is a hole in the floor and needs a
+          // flame at its lip to read as one; the climbing flights are lit by the room they stand in and
+          // none was painted on them, so lighting one laid a pool of torchlight on the floor beside a
+          // stair with nothing burning on it. Measured off the painted tile: the flame sits 24 units
+          // left of the cell's centre, a little above it, and swaps sides when the flight is mirrored.
+          ...(goesUp
+            ? {}
+            : {
+                light: {
+                  x: cx + (mirrored ? STAIR_FLAME_DX : -STAIR_FLAME_DX),
+                  y: cy - CELL * 0.1,
+                  r: LAMP_POOL_RADIUS,
+                },
+              }),
+          footprint,
+          key: `stair:${r},${c}`,
+          url,
+          x: cx - CELL / 2,
+          y: cy + CELL / 2 - PROP_H,
+          mirrored,
+        })
+      }
+    }
+  }
+  return out
+}
+
 const nodeRadius: Record<ShapeKind, number> = {
   entrance: NODE_RADIUS_LARGE,
   puzzle: NODE_RADIUS_PUZZLE,
@@ -505,7 +867,6 @@ const exitIcon: Record<CellState, string> = {
 // fill plus 0-4 wall strips, chosen per side from the same `dirs` bitmask the future
 // sprite-tile renderer will use (see docs/game-design/spritesheet-renderer-prep.md).
 
-const ALL_DIRS: readonly Direction[] = ["n", "s", "e", "w"]
 const DIR_MOVES: Record<Direction, readonly [number, number]> = {
   n: [-1, 0],
   s: [1, 0],
@@ -578,24 +939,6 @@ const DIAGONAL_OFFSETS: ReadonlyArray<{
   },
 ]
 
-// A neighbor is claimable if it's genuine void (`empty`), or — the one exception — a
-// single corridor tile that only exists to *approach* a gate: either a real gate room
-// two steps away (revealed), or a corridor stub whose far side got masked to `empty`
-// because it leads into an undetected hidden section. Either way that corridor tile
-// reads better as the junction's own doorway than as a separate hallway segment.
-// Diagonal neighbors can only ever be void — a real edge is never diagonal.
-const isClaimableNeighbor = (grid: FloorGrid, ownerR: number, ownerC: number, nr: number, nc: number): boolean => {
-  const cell = cellAt(grid, nr, nc)
-  if (cell.type === "empty") return true
-  if (cell.type !== "corridor") return false
-  const dr = nr - ownerR,
-    dc = nc - ownerC
-  if (Math.abs(dr) + Math.abs(dc) !== 1) return false
-  const beyond = grid.cells[ownerR + dr * 2]?.[ownerC + dc * 2]
-  const leadsToGate = beyond?.type === "room" && !!beyond.tags?.includes("gate")
-  return leadsToGate || cell.dirs.size === 1
-}
-
 const OFFSET_TO_DIR: Record<string, Direction> = { "-1,0": "n", "1,0": "s", "0,-1": "w", "0,1": "e" }
 const edgeKey = (r1: number, c1: number, r2: number, c2: number): string => {
   const a = `${r1},${c1}`,
@@ -603,13 +946,15 @@ const edgeKey = (r1: number, c1: number, r2: number, c2: number): string => {
   return a < b ? `${a}|${b}` : `${b}|${a}`
 }
 
-type RoomClaims = {
+export type RoomClaims = {
   /** claimed-cell key ("r,c") -> owning room's key ("r,c") */
   claimedBy: ReadonlyMap<string, string>
   /** the one claimed cell (per owner) that carries the owner's decoration, if any */
   decorationAt: ReadonlyMap<string, DecorationKind>
   /** unordered cell-pair keys with no wall between them (owner<->claim, or diagonal<->flank) */
   openEdges: ReadonlySet<string>
+  /** unordered OWNER-pair keys for two chambers the player can already walk between */
+  joinedOwners: ReadonlySet<string>
 }
 
 // Row-major scan order, plus a strength ranking for contested diagonals (see below), so
@@ -619,13 +964,22 @@ type RoomClaims = {
 // occupied" instead of wandering off into open floor further away. A diagonal's flank can
 // be either claimed void or the owner's own real corridor arm — either way the diagonal
 // ends up visually flush with a wall the owner already has open, not floating by itself.
-const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
+// eslint-disable-next-line react-refresh/only-export-components -- grid-derived data, exported for tileRegions.spec-style assertions; the claim rules belong beside the wall model, not in a second copy
+export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
   const claimedBy = new Map<string, string>()
   const openEdges = new Set<string>()
-  const ownerFirstClaim = new Map<string, string>()
+  // Every claim of an owner's that a prop could stand on, in claim order: genuinely EMPTY cells only. A
+  // claimed corridor (a gate's approach, absorbed into the junction's footprint) is a real passage the
+  // player walks down, and a sarcophagus standing in it is something they walk straight through. A room
+  // with no empty cell to spare simply holds no prop.
+  const ownerPropCandidates = new Map<string, string[]>()
   const noteClaim = (cellKey: string, ownerKey: string) => {
     claimedBy.set(cellKey, ownerKey)
-    if (!ownerFirstClaim.has(ownerKey)) ownerFirstClaim.set(ownerKey, cellKey)
+    const [r, c] = cellKey.split(",").map(Number)
+    if (cellAt(grid, r, c).type !== "empty") return
+    const candidates = ownerPropCandidates.get(ownerKey)
+    if (candidates) candidates.push(cellKey)
+    else ownerPropCandidates.set(ownerKey, [cellKey])
   }
 
   // Ortho claims commit immediately, row-major first-come — two owners contending for the
@@ -723,26 +1077,103 @@ const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
     }
   }
 
-  // Decoration only ever lands on a genuine claim (void or diagonal), on whichever one
-  // was committed first for its owner — never on a flank corridor that's just re-tinted.
+  // Decoration only ever lands on an empty claimed cell — the room's own space, never a passage
+  // through it (see noteClaim).
+  //
+  // **A prop stands against a wall where it can.** Its sprite is a cell plus a face band tall, so it
+  // leans a band's worth into the cell to its north; on a cell with void above, that headroom lands on
+  // wall, which is where a statue belongs and where nothing can be behind it. On a cell with floor above
+  // it, the statue leans over ground the player walks, and the explorer dot — drawn last — passes in
+  // FRONT of its head. Half the props in the world stood that way before this preference.
+  const wallBehind = (cellKey: string): boolean => {
+    const [r, c] = cellKey.split(",").map(Number)
+    return cellAt(grid, r - 1, c).type === "empty"
+  }
+  // ON THE MAP, not off the edge of it. A claim takes out-of-bounds cells too — the renderer reads
+  // beyond the grid as void — so an edge room's own furniture could stand in the margin outside the
+  // floor, which is where the Temple of Bastet put its statue of her. Inside first, and the
+  // wall-behind preference decides among what is left.
+  const onGrid = (key: string): boolean => {
+    const [r, c] = key.split(",").map(Number)
+    return r >= 0 && c >= 0 && r < grid.rows && c < grid.cols
+  }
   const decorationAt = new Map<string, DecorationKind>()
-  for (const [ownerKey, cellKey] of ownerFirstClaim) {
+  const roomsForCompanion: { ownerKey: string; leader: DecorationKind; free: string[] }[] = []
+  for (const [ownerKey, candidates] of ownerPropCandidates) {
     const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
     const owner = grid.cells[ownerRow]?.[ownerCol]
-    if (owner?.type === "room" && owner.decoration) decorationAt.set(cellKey, owner.decoration)
+    if (owner?.type !== "room" || !owner.decoration) continue
+    const inside = candidates.filter(onGrid)
+    const usable = inside.length ? inside : candidates
+    const taken = usable.find(wallBehind) ?? usable[0]
+    decorationAt.set(taken, owner.decoration)
+    // THE GOD'S ROOM is written on the cell by the assembler (RoomCell.patronRoom). It used to be
+    // inferred from prop and wall item both being patron kinds, which is unreachable at a rank whose
+    // wall pool holds nothing a god can appear on — the merchant hangs a goods niche and a tally board.
+    const shrine = owner.patronRoom === true
+    roomsForCompanion.push({
+      ownerKey,
+      leader: owner.decoration,
+      free: candidates.filter(key => key !== taken),
+      ...(shrine ? { shrine } : {}),
+    })
+  }
+  // A SECOND prop of the same purpose, in some of the rooms with space for one — see `companionProps`.
+  // It goes into `decorationAt` rather than into a layer of its own, which is what keeps the rest of the
+  // map honest for free: `floorScatter` dresses the cells this map does NOT hold, so a companion is a cell
+  // scatter avoids without anything being told about it.
+  for (const [key, kind] of companionFor(
+    grid.siteId,
+    roomsForCompanion,
+    kind => !!tileUrl(grid.difficulty ?? "starter", kind),
+    // Same rule as the leader: on the map first, then the wall-behind preference.
+    free => {
+      const inside = free.filter(onGrid)
+      const usable = inside.length ? inside : free
+      return usable.find(wallBehind) ?? usable[0]
+    }
+  )) {
+    decorationAt.set(key, kind)
   }
 
-  return { claimedBy, decorationAt, openEdges }
-}
+  /**
+   * Two chambers the player can ALREADY walk between are one space, so no partition is drawn anywhere
+   * along their shared boundary.
+   *
+   * A footprint is several cells wide and only the one cell-pair carrying the graph edge was open, so
+   * the rest of the boundary stayed walled: a partition running partway into a room you can walk
+   * straight across. Nothing here changes what is walkable or the shape of either footprint — the
+   * rooms are already where they are, and the wall between them is the only thing that goes.
+   *
+   * Keyed by OWNER pair rather than by cell pair, because the question is about the two rooms and not
+   * about the boundary: find the edge once, and the whole seam opens.
+   */
+  const joinedOwners = new Set<string>()
+  const ownerOfKey = (key: string): string | undefined => {
+    const [r, c] = key.split(",").map(Number)
+    return claimedBy.get(key) ?? (cellAt(grid, r, c).type === "room" ? key : undefined)
+  }
+  for (const key of [...claimedBy.keys(), ...new Set(claimedBy.values())]) {
+    const [r, c] = key.split(",").map(Number)
+    const own = ownerOfKey(key)
+    if (!own) continue
+    for (const [dr, dc] of ORTHO_OFFSETS) {
+      const nr = r + dr,
+        nc = c + dc
+      const other = ownerOfKey(`${nr},${nc}`)
+      if (!other || other === own) continue
+      // A REAL way through, from either side — the graph, not the claim.
+      const here = cellAt(grid, r, c)
+      const there = cellAt(grid, nr, nc)
+      const dir = dr === 1 ? "s" : dr === -1 ? "n" : dc === 1 ? "e" : "w"
+      const open =
+        ((here.type === "room" || here.type === "corridor") && here.dirs.has(dir)) ||
+        ((there.type === "room" || there.type === "corridor") && there.dirs.has(OPPOSITE_DIR[dir]))
+      if (open) joinedOwners.add([own, other].sort().join("|"))
+    }
+  }
 
-// True if the void/corridor cell at `key` was claimed by a junction (fork) room — the
-// other end of a fork-to-fork merge (see isOpenSide below).
-const claimedByFork = (grid: FloorGrid, claims: RoomClaims, key: string): boolean => {
-  const ownerKey = claims.claimedBy.get(key)
-  if (!ownerKey) return false
-  const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
-  const owner = grid.cells[ownerRow]?.[ownerCol]
-  return owner?.type === "room" && owner.roomType === "fork"
+  return { claimedBy, decorationAt, openEdges, joinedOwners }
 }
 
 // The room a claimed cell renders as part of, if that room is lit — the claim borrows the owner's
@@ -757,35 +1188,167 @@ const litClaimOwner = (grid: FloorGrid, claims: RoomClaims, r: number, c: number
   return owner?.type === "room" && owner.state !== "fogged" ? owner : undefined
 }
 
-// Void the map will never draw anything for: a cell with no passage of its own, and no lit room
-// claiming it as part of its footprint. Bare stone, not somewhere the player could ever walk.
-const isUndrawnVoid = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): boolean =>
-  cellAt(grid, r, c).type === "empty" && !litClaimOwner(grid, claims, r, c)
+// True if the void/corridor cell at `key` was claimed by a junction (fork) room — the other end of
+// a fork-to-fork merge (see isPassable below).
+const claimedByFork = (grid: FloorGrid, claims: RoomClaims, key: string): boolean => {
+  const ownerKey = claims.claimedBy.get(key)
+  if (!ownerKey) return false
+  const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
+  const owner = grid.cells[ownerRow]?.[ownerCol]
+  return owner?.type === "room" && owner.roomType === "fork"
+}
 
-const isOpenSide = (grid: FloorGrid, claims: RoomClaims, r: number, c: number, dir: Direction): boolean => {
+// Whether the player can pass between two cells the map draws floor for. Adjacency is NOT passage:
+// a room claims the cells around it as footprint, so its floor can sit flush against a corridor it
+// has no way through to, and that boundary needs a partition (see tileRegions.ts) or the room reads
+// as something to walk around.
+const isPassable = (grid: FloorGrid, claims: RoomClaims, r: number, c: number, dir: "s" | "e"): boolean => {
   const cell = cellAt(grid, r, c)
   const [dr, dc] = DIR_MOVES[dir]
-  const nr = r + dr,
-    nc = c + dc
+  const nr = r + dr
+  const nc = c + dc
   const neighbor = cellAt(grid, nr, nc)
-  // **A side opens onto a place, not onto nothing.** An edge onto void the map draws nothing for
-  // reads as a doorway through bare stone the player cannot walk. Fog is not nothing, though: a real
-  // corridor or room still in the dark is what an open end is *for* — it is how the map says the
-  // passage carries on past what has been explored.
-  if (isUndrawnVoid(grid, claims, nr, nc)) return false
-  // a real graph edge is always open
+  // A real graph edge, from either side.
   if ((cell.type === "room" || cell.type === "corridor") && cell.dirs.has(dir)) return true
+  if ((neighbor.type === "room" || neighbor.type === "corridor") && neighbor.dirs.has(OPPOSITE_DIR[dir])) return true
   if (claims.openEdges.has(edgeKey(r, c, nr, nc))) return true
   // Two junction rooms that each claim their own side of a shared void/corridor cell
-  // (buildRoomClaims assigns that cell to whichever claims first) should still read as one
-  // open space — junctions are connective tissue, not a distinct place, unlike other room
-  // types, which stay visually separate even sitting right next to someone else's claim.
+  // (buildRoomClaims assigns that cell to whichever claims first) should still read as one open
+  // space — junctions are connective tissue, not a distinct place, unlike other room types, which
+  // stay visually separate even sitting right next to someone else's claim.
   const isForkMeetingClaim = (a: GridCell, bKey: string): boolean =>
     a.type === "room" && a.roomType === "fork" && claimedByFork(grid, claims, bKey)
   if (isForkMeetingClaim(cell, `${nr},${nc}`)) return true
   if (isForkMeetingClaim(neighbor, `${r},${c}`)) return true
-  return false
+  // Cells of one room's own footprint are one space: the claim is the room.
+  const ownerOf = (row: number, col: number): string | undefined =>
+    claims.claimedBy.get(`${row},${col}`) ?? (cellAt(grid, row, col).type === "room" ? `${row},${col}` : undefined)
+  const own = ownerOf(r, c)
+  const other = ownerOf(nr, nc)
+  if (own && other && own !== other) return claims.joinedOwners.has([own, other].sort().join("|"))
+  return !!own && own === other
 }
+
+// **A wall is a cell, not an edge.** Whether two neighbouring drawn cells read as one open space is
+// no longer a question the renderer asks: they are both floor, and the wall is whatever cell the map
+// draws no floor for (see tileRegions.ts). Two junctions each claiming their side of the void
+// between them therefore merge for free, and two rooms flanking unclaimed void keep the wall
+// between them for free.
+
+/** Everything on the ENTRANCE side of every gate, as "r,c" keys — the part of a floor you can walk
+ * without ever crossing a ward.
+ *
+ * A GATED SECTION DOES NOT BEGIN AT ITS GATE. World-gen authors the whole branch at the pocket's tier,
+ * gate included, and the gate can sit well down the branch — so the corridor leading TO it was already
+ * built of the pocket's stone. Drawn honestly that reads as starter, then expert, then a starter gate,
+ * then expert again: the material changes three times to say one thing. 693 cells over 59 floors did
+ * that, up to 30 on a single floor.
+ *
+ * So the seam is placed by TOPOLOGY, at the ward itself: this side of it is the floor's own stone,
+ * beyond it is the tier it is guarding. One crossing, exactly where the bars are drawn, which is also
+ * where the map lays its sill.
+ *
+ * The walk stops at a gate whatever STATE it is in. Stopping only at shut ones would flatten the whole
+ * floor to one tier the moment a gate was opened — the seam is where the ward stands, not whether the
+ * player has got through it yet.
+ */
+const entranceSide = new WeakMap<FloorGrid, ReadonlySet<string>>()
+const cellsThisSideOfAWard = (grid: FloorGrid): ReadonlySet<string> => {
+  const cached = entranceSide.get(grid)
+  if (cached) return cached
+  const isGate = (r: number, c: number) => {
+    const cell = grid.cells[r]?.[c]
+    return cell?.type === "room" && (cell.tags?.includes("gate") ?? false)
+  }
+  const [er, ec] = grid.entrancePos
+  // Nothing to place a seam against, and nowhere to walk from: a floor with no ward keeps every tier its
+  // sections were authored at, and one whose entrance is void would otherwise reach nothing and so call
+  // the whole map the far side.
+  const none: ReadonlySet<string> = new Set()
+  const start = grid.cells[er]?.[ec]
+  if (!start || start.type === "empty") return none
+  let anyGate = false
+  for (let r = 0; r < grid.rows && !anyGate; r++)
+    for (let c = 0; c < grid.cols && !anyGate; c++) if (isGate(r, c)) anyGate = true
+  if (!anyGate) {
+    entranceSide.set(grid, none)
+    return none
+  }
+  const reached = new Set([`${er},${ec}`])
+  const queue: Array<readonly [number, number]> = [grid.entrancePos]
+  for (let i = 0; i < queue.length; i++) {
+    const [r, c] = queue[i]
+    // A ward is reached and not passed: it stands on this side, and everything past it does not.
+    if (isGate(r, c) && !(r === er && c === ec)) continue
+    const cell = grid.cells[r]?.[c]
+    if (!cell || cell.type === "empty") continue
+    for (const dir of cell.dirs) {
+      const [dr, dc] = DIR_MOVES[dir]
+      const key = `${r + dr},${c + dc}`
+      if (reached.has(key)) continue
+      reached.add(key)
+      queue.push([r + dr, c + dc])
+    }
+  }
+  entranceSide.set(grid, reached)
+  return reached
+}
+
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on cells
+export const cellFloorAt = (
+  grid: FloorGrid,
+  claims: RoomClaims,
+  ownedKeys: ReadonlySet<string> | undefined,
+  r: number,
+  c: number
+): ReturnType<FloorAt> => {
+  // The stone a cell is built of is its own SECTION's tier, not its floor's: a pocket gated behind a
+  // junior key is junior stone inside a starter pyramid, and walking through the gate should say so.
+  const floorTierOf = grid.difficulty ?? "starter"
+  // A GATE NOT YET OPENED WEARS THE PYRAMID'S OWN STONE. The pocket behind it keeps its authored tier —
+  // that is the point of the material, and walking through says so — but the gate's own square is on
+  // THIS side of the door, and paving it in the pocket's stone let the player read next tier's
+  // difficulty off the floor before earning the right to see it. Everything further in is dark until
+  // the gate opens, so this one square was the whole of the peek.
+  // THE SEAM IS AT THE WARD. Everything this side of one — the gate's own square included — is the
+  // pyramid's own stone, and only what the gate guards is built of the tier it guards. That is one
+  // crossing instead of three, and it lands where the bars are (`cellsThisSideOfAWard`).
+  const thisSide = cellsThisSideOfAWard(grid)
+  const tierOf = (cell: { difficulty?: Difficulty }, row: number, col: number): Difficulty =>
+    thisSide.has(`${row},${col}`) ? floorTierOf : (cell.difficulty ?? floorTierOf)
+  const owner = litClaimOwner(grid, claims, r, c)
+  // A claimed cell renders as part of its owner: same material, same state, one continuous chamber.
+  // A claimed cell is grid VOID and so on no walk of the floor: it asks the question at its OWNER's
+  // square, or every chamber would come out the far side of every ward.
+  if (owner) {
+    const ownerKey = claims.claimedBy.get(`${r},${c}`) ?? `${r},${c}`
+    const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
+    return { state: owner.state, kind: "room", tier: tierOf(owner, ownerRow, ownerCol) }
+  }
+  const cell = cellAt(grid, r, c)
+  if (cell.type === "empty") return "stone"
+  // A real passage still in the dark is not stone — see FloorAt.
+  if (cell.state === "fogged") return "unlit"
+  const kind = cell.type === "room" ? "room" : "corridor"
+  const tier = tierOf(cell, r, c)
+  // A locked gate reads as not-yet-yours: cosmetic only, exactly as its icon does below.
+  if (cell.type === "room" && cell.state === "reachable" && isLockedGate(cell, ownedKeys)) {
+    return { state: "visible", kind, tier }
+  }
+  return { state: cell.state, kind, tier }
+}
+
+/** Which cells the map paints as floor and which as wall. Exported for tests: it is where the claim
+ * rules above meet the wall model, and asserting on cells beats sniffing rendered SVG. */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on cells instead of sniffing rendered SVG
+export const tileRegionsFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: ReadonlySet<string>): TileRegions =>
+  buildTileRegions(
+    grid.rows,
+    grid.cols,
+    (r, c) => cellFloorAt(grid, claims, ownedKeys, r, c),
+    (r, c, dir) => isPassable(grid, claims, r, c, dir),
+    grid.difficulty ?? "starter"
+  )
 
 // A corridor is a "corner" (and thus a valid click target for corner-reveal/hidden-
 // passage interaction) whenever it isn't a plain straight-through segment.
@@ -859,50 +1422,333 @@ const useCorridorRunTargets = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grid, explorerPos?.[0], explorerPos?.[1]])
 
-// Corridors and rooms share the same wall/opening logic, but get different floor tints
-// so a room's footprint (fork/endpoint chambers included) reads as a distinct place —
-// not just "a wide stretch of hallway". Room floor is warmer/lighter than corridor floor.
-const corridorFloorFill: Record<CellState, string> = {
-  fogged: "#130c07",
-  visible: "#1e130a",
-  reachable: "#22160b",
-  completed: "#1c130a",
-}
-const roomFloorFill: Record<CellState, string> = {
-  fogged: "#1c130a",
-  visible: "#382412",
-  reachable: "#3f2a15",
-  completed: "#332210",
-}
-const WALL_COLOR = "#080502"
+// ─── Tile layers ────────────────────────────────────────────────────────────────
+// Floors and walls are painted as a handful of pattern-filled paths under the whole map rather
+// than a rect per cell — see tileRegions.ts for the model and
+// docs/game-design/spritesheet-renderer-prep.md for why.
 
-const FloorTile = ({
-  state,
-  open,
-  kind,
+const FACE_SHADOW = CELL / 8
+// How much of a wall's TOP surface shows above its face. A wall has thickness, and the side walls already
+// show theirs edge-on; without this a face is a flat band of brick with nothing above it.
+const FACE_TOP = SIDE_W / 2
+
+// The floor's material follows the FLOOR's own tier, carried on the grid — not the rooms'. A
+// starter pyramid's ward-chest teaser is authored at a LATER tier on purpose (spec/starter.ts), so
+// room difficulties are the wrong thing to infer a floor's material from: a starter cellar came out
+// built of a pharaoh's granite. Per-room difficulty still dresses the room (props, light).
+const floorTier = (grid: FloorGrid): Difficulty => grid.difficulty ?? "starter"
+
+const TileLayers = ({
+  regions,
+  tier,
+  archedGaps,
 }: {
-  state: CellState
-  open: Record<Direction, boolean>
-  kind: "room" | "corridor"
+  regions: TileRegions
+  tier: Difficulty
+  /** "x,y" of every gap an archway stands in, and the arch's own tier. An arch's middle is transparent, so
+   * the sill shows THROUGH it — the step the jambs stand on, which is what stops a doorway hovering in a
+   * gap with its reveal running straight into floor. The one thing the two disagreed about was stone: a
+   * sill takes the tier being ENTERED and an arch the tier of the band it pierces, so at a ward gate the
+   * map laid one rank's threshold inside another's gateway. Settled by giving the gap to the arch — an
+   * arched sill is drawn in the arch's stone, so an opening is one material. */
+  archedGaps?: ReadonlyMap<string, Difficulty>
 }) => {
-  const half = CELL / 2
-  const fill = kind === "room" ? roomFloorFill[state] : corridorFloorFill[state]
+  const mega = CELL * 8
+  // Every sill that an arch stands in, filed under the ARCH's tier rather than the tier being entered.
+  // At a ward gate those differ, and one opening showing two ranks of stone is the reason the sill used to
+  // be skipped here entirely.
+  const archedSills = new Map<Difficulty, Rect[]>()
+  for (const [, groups] of regions) {
+    for (const rect of groups.threshold) {
+      const archTier = archedGaps?.get(`${rect[0]},${rect[1]}`)
+      if (!archTier) continue
+      const list = archedSills.get(archTier)
+      if (list) list.push(rect)
+      else archedSills.set(archTier, [rect])
+    }
+  }
+  const floorRects = [...regions.values()].flatMap(groups => [
+    ...Object.values(groups.floorRoom).flat(),
+    ...Object.values(groups.floorCorridor).flat(),
+  ])
+  const allFloor = rectsToPath(floorRects)
+  // The same floor, each cell grown UPWARD by a prop's headroom. Furniture standing off-centre in its
+  // cell is cut by the wall beside it and by the wall below it, and still rises into the band above —
+  // which is the one direction a prop is meant to cross, so a tall thing occludes the wall behind it
+  // instead of being sliced off at its own floor line.
+  const standingRoom = rectsToPath(floorRects.map(([x, y, w, h]) => [x, y - PROP_H, w, h + PROP_H] as Rect))
+  const tiers = [...regions.keys()]
+
   return (
     <>
-      <rect x={-half} y={-half} width={CELL} height={CELL} fill={fill} />
-      {!open.n && <rect x={-half} y={-half} width={CELL} height={WALL_THICKNESS} fill={WALL_COLOR} />}
-      {!open.s && <rect x={-half} y={half - WALL_THICKNESS} width={CELL} height={WALL_THICKNESS} fill={WALL_COLOR} />}
-      {!open.w && <rect x={-half} y={-half} width={WALL_THICKNESS} height={CELL} fill={WALL_COLOR} />}
-      {!open.e && <rect x={half - WALL_THICKNESS} y={-half} width={WALL_THICKNESS} height={CELL} fill={WALL_COLOR} />}
+      <defs>
+        {/* The walkable floor as a CLIP. Sand is drawn larger than a cell and cut to this, so a drift
+            crosses cells and stops dead at a wall — see `driftsFor`. The path is the same one the
+            outline stroke below uses; it costs nothing to reuse it. */}
+        <clipPath id="walkable-floor">
+          <path d={allFloor} />
+        </clipPath>
+        {/* Where a thing may STAND: the floor plus the headroom above it. See `standingRoom`. */}
+        <clipPath id={STANDING_ROOM_CLIP}>
+          <path d={standingRoom} />
+        </clipPath>
+        {tiers.map(t => {
+          const floor = tileUrl(t, "floor")
+          const face = tileUrl(t, "wall-face")
+          const sill = tileUrl(t, "threshold")
+          return (
+            <Fragment key={t}>
+              {floor && (
+                <pattern id={`floor-${t}`} width={mega} height={mega} patternUnits="userSpaceOnUse">
+                  {/* preserveAspectRatio="none": an <image> letterboxes itself by default, which leaves the
+                      rest of the pattern tile transparent — black slots in the middle of a wall. */}
+                  <image href={floor} width={mega} height={mega} preserveAspectRatio="none" />
+                </pattern>
+              )}
+              {face && (
+                // The face art is a cell tall; a face is WALL_H tall, so the pattern is scaled to that
+                // and repeats on it. Every face in the map then shows the same courses at the same height.
+                <pattern id={`face-${t}`} width={mega} height={WALL_H} patternUnits="userSpaceOnUse">
+                  <image href={face} width={mega} height={WALL_H} preserveAspectRatio="none" />
+                </pattern>
+              )}
+              {sill && (
+                <>
+                  {/* A sill fills the GAP it is laid in, and there are two shapes of gap. Between two rows
+                      it is a cell wide and a wall band deep, which is how the art is drawn. Between two
+                      columns it is the same step turned ninety degrees into a side wall's thickness — one
+                      pattern stretched over both is how a step ended up lying on its side. */}
+                  <pattern id={`sill-h-${t}`} width={CELL} height={WALL_H} patternUnits="userSpaceOnUse">
+                    <image href={sill} width={CELL} height={WALL_H} preserveAspectRatio="none" />
+                  </pattern>
+                  <pattern id={`sill-v-${t}`} width={SIDE_W} height={CELL} patternUnits="userSpaceOnUse">
+                    <image
+                      href={sill}
+                      width={CELL}
+                      height={SIDE_W}
+                      transform={`translate(${SIDE_W},0) rotate(90)`}
+                      preserveAspectRatio="none"
+                    />
+                  </pattern>
+                </>
+              )}
+            </Fragment>
+          )
+        })}
+        <LightPoolDefs />
+      </defs>
+
+      <g>
+        {/* The near-black silhouette that stops a wall mass and a lit floor of similar value from
+            blurring into each other. Stroked UNDER the fills, on the whole floor at once: a stroke
+            drawn on top would trace every cell's border and put a grid over the floor, while
+            underneath only the outward half of the outline survives, which is the silhouette. */}
+        <path d={allFloor} fill="none" stroke={tierPalette[tier].outline} strokeWidth={4} />
+
+        {tiers.map(t => {
+          const palette = tierPalette[t]
+          const groups = regions.get(t)!
+          const floorFill = tileUrl(t, "floor") ? `url(#floor-${t})` : palette.slab
+          const faceFill = tileUrl(t, "wall-face") ? `url(#face-${t})` : palette.wall
+          const hasSill = !!tileUrl(t, "threshold")
+          // A gap between two ROWS is a cell wide; one between two columns is a side wall's thickness.
+          const sillFill = ([, , w]: Rect) => (hasSill ? `url(#sill-${w === CELL ? "h" : "v"}-${t})` : palette.wallTop)
+          return (
+            <g key={t}>
+              {ALL_STATES.map(state => {
+                const wash = stateWash[state]
+                const room = rectsToPath(groups.floorRoom[state])
+                const corridor = rectsToPath(groups.floorCorridor[state])
+                const mass = rectsToPath(groups.wallMass[state])
+                const faces = rectsToPath(groups.wallFace[state])
+                const shadows = faceShadowsToPath(groups.wallFace[state], FACE_SHADOW)
+                const tops = faceTopsToPath(groups.wallFace[state], FACE_TOP)
+                // One sill per boundary, not one per cell state: it is masonry, not lighting. A sill under
+                // an arch is drawn with the ARCH's tier rather than this one, so it is handled below.
+                const thresholds = groups.threshold.filter(([x, y]) => !archedGaps?.has(`${x},${y}`))
+                const arched = archedSills.get(t) ?? []
+                return (
+                  <g key={state}>
+                    {mass && <path d={mass} fill={palette.wallBase} />}
+                    {room && <path d={room} fill={floorFill} />}
+                    {corridor && (
+                      <>
+                        <path d={corridor} fill={floorFill} />
+                        <path d={corridor} fill={corridorShade.fill} opacity={corridorShade.opacity} />
+                      </>
+                    )}
+                    {faces && <path d={faces} fill={faceFill} />}
+                    {/* The wall's own top surface, in the stone the side walls and the wall mass already
+                        use. A face without it is a band of brick with nothing above it, and a wall stops
+                        reading as a solid thing. */}
+                    {tops && <path d={tops} fill={palette.wallBase} />}
+                    {/* Laid over the floor of the gap it crosses, so a change of material reads as a
+                        step between two places rather than a line where the art changes. */}
+                    {/* One path per sill: each takes the pattern for the shape of gap it lies in. The sill
+                        an arch stands in is drawn here too, in the ARCH's stone rather than the entered
+                        tier's, which is why it is filed under this tier at all. */}
+                    {state === "reachable" &&
+                      [...thresholds, ...arched].map(rect => (
+                        <path key={rect.join(",")} d={rectsToPath([rect])} fill={sillFill(rect)} opacity={0.9} />
+                      ))}
+                    {shadows && <path d={shadows} fill={palette.outline} opacity={0.45} />}
+                    {wash && <path d={room + corridor + faces + mass} fill={wash.fill} opacity={wash.opacity} />}
+                  </g>
+                )
+              })}
+            </g>
+          )
+        })}
+      </g>
     </>
   )
 }
 
 // ─── Decorations ────────────────────────────────────────────────────────────────
-// Placeholder glyphs only — real sprite art arrives with the sprite-tile renderer
-// migration (see docs/game-design/spritesheet-renderer-prep.md). Rendered centered in
-// the room's first genuine claim (void or diagonal — never a flank corridor, see
-// buildRoomClaims above).
+// A prop is drawn in the room's first genuine claim (void or diagonal — never a flank corridor,
+// see buildRoomClaims above): the tier's sprite when it has one, and the placeholder glyph when it
+// does not, so art can land one piece at a time.
+
+// A prop sprite is a cell PLUS a face band tall, anchored by its BOTTOM edge on the cell's floor line.
+// Bottom-anchored is what makes it stand on the floor instead of floating over it; the band of headroom
+// is what lets it have height. Props are painted after every wall (see the render order below), so a
+// statue occludes the wall behind it rather than being cut off at its own cell — and a room's prop cell
+// is the first claim in row-major order, normally the cell NORTH of the room, so the headroom reaches
+// into wall rather than over the room's own icon.
+const PROP_H = CELL + WALL_H
+
+/** Props that carry a live flame, and so light the floor they stand on.
+ *
+ * Only `lamp` for now, and the reason is per-RANK rather than per-kind: the brief gives the merchant a
+ * brazier of cold ash and the nobleman one "lit and smoking", so a brazier's light depends on whose tomb
+ * it is. Widen this to a (rank, kind) lookup when a rank that lights its brazier has the art for it —
+ * lighting the merchant's would contradict the sprite, which was painted with no flame and no glow. */
+const LIT_DECORATIONS = new Set<DecorationKind>(["lamp"])
+
+/** A lamp's pool is smaller and steadier than the explorer's — it sits on a stool rather than being
+ * carried, and at a cell and a half across it would light the room the torch is meant to light. */
+const LAMP_POOL_RADIUS = CELL * 0.42
+
+/** One room's prop. `seed` decides WHICH drawing of the kind, where a kind has more than one.
+ *
+ * The choice is positional and deterministic — the cell's own coordinates inside its site — which keeps it
+ * a seeded layer over placement rather than part of it: the same floor draws the same thing every time it
+ * is opened, and dropping a second drawing in reshuffles no furniture, because `pickDressing` never sees
+ * it (see `tileVariants`). */
+const Decoration = ({
+  kind,
+  tier,
+  seed,
+  patron,
+}: {
+  kind: DecorationKind
+  tier: Difficulty
+  seed: string
+  patron?: Patron
+}) => {
+  // A PATRON BEATS A VARIANT. Both choose a drawing, and where a site names a god that choice is
+  // authored rather than positional — a dedicated tomb whose statues varied by cell would be saying two
+  // things at once. Falls straight through to the variant pick wherever no patron art exists, which is
+  // everywhere today.
+  const dedicated = patron ? patronTileUrl(tier, kind, patron) : undefined
+  const own = dedicated && dedicated !== tileUrl(tier, kind) ? dedicated : undefined
+  const variants = tileVariants(tier, kind)
+  const url =
+    own ?? (variants.length > 1 ? variants[hashString(`${seed}:${kind}`) % variants.length] : tileUrl(tier, kind))
+  return (
+    <>
+      {/* Under the sprite, so the light is on the floor and the lamp is standing in it. */}
+      {LIT_DECORATIONS.has(kind) && <LightPool r={LAMP_POOL_RADIUS} cy={CELL * 0.3} />}
+      {url ? (
+        <image href={url} x={-CELL / 2} y={CELL / 2 - PROP_H} width={CELL} height={PROP_H} />
+      ) : (
+        <DecorationGlyph kind={kind} />
+      )}
+    </>
+  )
+}
+
+/** Blown sand, drawn over the floor and clipped to it.
+ *
+ * The one scatter kind that is not cell-sized. A drift has no silhouette of its own — it is the shape of
+ * whatever stopped it — so it is drawn several cells across and cut to `walkable-floor`, and the wall
+ * does the drawing. See `driftsFor` for why sand is one shared file rather than five.
+ *
+ * No per-cell fog check, because a drift is not per-cell: it is washed by the DARKEST state it crosses,
+ * so a drift reaching into an unlit passage cannot light it. That is the same sum `FloorScatter` does
+ * with `brightness`, taken over a region instead of over a cell. */
+const SandDrifts = ({ grid, drifts, tier }: { grid: FloorGrid; drifts: Drift[]; tier: Difficulty }) => {
+  const url = tileUrl(tier, "sand")
+  if (!url) return null
+  return (
+    <g pointerEvents="none" clipPath="url(#walkable-floor)">
+      {drifts.map(({ row, col, w, h }, i) => {
+        const cell = cellAt(grid, row, col)
+        if (cell.type === "empty") return null
+        const wash = stateWash[cell.state]
+        const { cx, cy } = cellCenter(row, col)
+        const dw = CELL * w
+        const dh = CELL * h
+        return (
+          <image
+            key={i}
+            href={url}
+            preserveAspectRatio="none"
+            x={cx - dw / 2}
+            y={cy - dh / 2}
+            width={dw}
+            height={dh}
+            style={wash ? { filter: `brightness(${1 - wash.opacity})` } : undefined}
+          />
+        )
+      })}
+    </g>
+  )
+}
+
+/** What is lying about, drawn over the floor and under everything that stands on it.
+ *
+ * Bottom-anchored in the same box a prop uses, so it sits on the cell's floor line — flat scatter only
+ * fills the lower part of that box, so nothing reaches into the wall band a prop's headroom is for.
+ *
+ * A fogged cell draws nothing: sand in an unlit passage would be the one thing visible in it. */
+const FloorScatter = ({
+  grid,
+  scatter,
+  tier,
+}: {
+  grid: FloorGrid
+  scatter: ReadonlyMap<string, ScatterKind>
+  tier: Difficulty
+}) => (
+  <g pointerEvents="none">
+    {[...scatter].map(([cellKey, kind]) => {
+      const [r, c] = cellKey.split(",").map(Number)
+      const cell = cellAt(grid, r, c)
+      if (cell.type === "empty" || cell.state === "fogged") return null
+      const url = tileUrl(tier, kind)
+      if (!url) return null
+      const { cx, cy } = cellCenter(r, c)
+      // The same wash the floor under it takes, as BRIGHTNESS rather than as an overlay. `stateWash` is
+      // a black fill at an opacity and TileLayers applies it to the floor PATHS, so everything drawn
+      // afterwards is unwashed — a drift of sand on a cell the player has only seen came out the
+      // brightest thing on that cell. A rect over the sprite cannot stand in for it, because the sprite
+      // is mostly transparent; brightness(1 - opacity) is the same sum on the pixels that exist.
+      const wash = stateWash[cell.state]
+      return (
+        <image
+          key={cellKey}
+          href={url}
+          x={cx - CELL / 2}
+          y={cy + CELL / 2 - PROP_H}
+          width={CELL}
+          height={PROP_H}
+          style={wash ? { filter: `brightness(${1 - wash.opacity})` } : undefined}
+        />
+      )
+    })}
+  </g>
+)
 
 const DECORATION_COLOR = "#5a4a30"
 
@@ -919,7 +1765,7 @@ const DecorationGlyph = ({ kind }: { kind: DecorationKind }) => {
           <rect x={-4} y={-4} width={8} height={14} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
         </>
       )
-    case "fountain":
+    case "basin":
       return (
         <>
           <circle r={9} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
@@ -928,7 +1774,7 @@ const DecorationGlyph = ({ kind }: { kind: DecorationKind }) => {
       )
     case "pit":
       return <ellipse rx={9} ry={7} fill="#0a0604" stroke={DECORATION_COLOR} strokeWidth={1.5} />
-    case "rubble":
+    case "rubblePile":
       return (
         <>
           <circle cx={-4} cy={2} r={3} fill={DECORATION_COLOR} opacity={0.7} />
@@ -938,11 +1784,369 @@ const DecorationGlyph = ({ kind }: { kind: DecorationKind }) => {
       )
     case "pillar":
       return <rect x={-4} y={-10} width={8} height={20} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
-    case "chestProp":
+    case "mat":
+      return <rect x={-9} y={-5} width={18} height={10} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
+    default:
+      // Every kind has art per tier; this is only ever seen for one that does not yet, and says
+      // "something stands here" without pretending to say what.
       return (
-        <rect x={-6} y={-5} width={12} height={10} rx={1} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
+        <rect x={-6} y={-6} width={12} height={12} rx={1} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
       )
   }
+}
+
+// ─── Wall items ────────────────────────────────────────────────────────────────
+// A wall item hangs ON a wall, so unlike a prop it needs a wall to hang on: it is drawn into the face
+// band above a cell of the room's footprint that HAS a face — the room's own cell first, then the cells
+// it claims, in claim order. A room with no face anywhere in its footprint carries no wall item, which
+// is also what keeps one off a fogged room: fog reads as unlit passage, and an unlit gap has no band.
+
+type WallItem = {
+  row: number
+  col: number
+  kind: WallDecorationKind
+  tier: Difficulty
+  /** the band's own light, so an item is not brighter than the wall it hangs on */
+  state: CellState
+}
+
+/** Where each room's authored wall item lands. Exported for tests, same as the claim rules: cells
+ * beat sniffing rendered SVG. */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on cells
+export const wallItemsFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: ReadonlySet<string>): WallItem[] => {
+  const floorAt: FloorAt = (r, c) => cellFloorAt(grid, claims, ownedKeys, r, c)
+  const openBetween = (r: number, c: number, dir: "s" | "e") => isPassable(grid, claims, r, c, dir)
+  const claimedByOwner = new Map<string, string[]>()
+  for (const [cellKey, ownerKey] of claims.claimedBy) {
+    const list = claimedByOwner.get(ownerKey)
+    if (list) list.push(cellKey)
+    else claimedByOwner.set(ownerKey, [cellKey])
+  }
+  const items: WallItem[] = []
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room" || !cell.wallDecoration) continue
+      const ownerKey = `${r},${c}`
+      for (const key of [ownerKey, ...(claimedByOwner.get(ownerKey) ?? [])]) {
+        const [br, bc] = key.split(",").map(Number)
+        if (!hasWallFace(floorAt, openBetween, br, bc)) continue
+        const at = floorAt(br, bc)
+        if (typeof at === "string") continue
+        items.push({ row: br, col: bc, kind: cell.wallDecoration, tier: at.tier, state: at.state })
+        break
+      }
+    }
+  }
+  return items
+}
+
+const WallItems = ({ items, patron }: { items: readonly WallItem[]; patron?: Patron }) => (
+  <g>
+    {items.map(({ row, col, kind, tier, state }) => {
+      const url = patronTileUrl(tier, kind, patron)
+      const x = cellLeft(col)
+      const y = cellTop(row) - WALL_H
+      const wash = stateWash[state]
+      return (
+        <Fragment key={`${row},${col}`}>
+          {url ? (
+            // The band's shape, not a square: a wall item is painted on the face.
+            <image href={url} x={x} y={y} width={CELL} height={WALL_H} preserveAspectRatio="none" />
+          ) : (
+            <rect
+              x={x + CELL / 2 - 6}
+              y={y + WALL_H / 2 - 5}
+              width={12}
+              height={10}
+              fill="none"
+              stroke={DECORATION_COLOR}
+              strokeWidth={1.5}
+            />
+          )}
+          {wash && <rect x={x} y={y} width={CELL} height={WALL_H} fill={wash.fill} opacity={wash.opacity} />}
+        </Fragment>
+      )
+    })}
+  </g>
+)
+
+// ─── Archways ──────────────────────────────────────────────────────────────────
+// A doorway is where a passage meets a chamber, and in this idiom that is a gap the player walks
+// through with a band above it. An arch is drawn INTO that band, over the floor of the way through: the
+// lintel and jambs a chamber's entrance really had.
+//
+// Unlike everything else on the map an arch is painted LAST, over the explorer as well, because that is
+// what makes it a thing in the world rather than a decal: the player walks under it and it passes in
+// front of them. Which is also why it fades while they stand in it — an arch that hid the player would
+// be a wall, and a doorway is not.
+
+type Doorway = { row: number; col: number; tier: Difficulty }
+
+const ARCH_FADE = 0.35
+
+/** Every doorway on the floor: the way into a CHAMBER, held in a wall run that gives its jambs corners to
+ * stand on. Both sides have to be drawn floor, so an unexplored way through carries no arch — an arch is a
+ * thing you can see, and the fog is what you cannot. Exported for tests. */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on cells
+export const doorwaysFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: ReadonlySet<string>): Doorway[] => {
+  // A chamber is a room with a FOOTPRINT: it claims the cells around it, so it is a space you enter
+  // rather than a station on a corridor. Every claimed cell and every claim owner counts as part of one.
+  //
+  // An encounter node on the path is a single cell with no footprint, and arching it put a gateway on
+  // either side of every puzzle in the world — a corridor with doors across it every second step. A
+  // doorway is somewhere a place BEGINS, which is what a footprint marks.
+  const chamberCells = new Set<string>([...claims.claimedBy.keys(), ...claims.claimedBy.values()])
+  const isChamber = (r: number, c: number) => chamberCells.has(`${r},${c}`)
+
+  const floorOf = (r: number, c: number) => {
+    const at = cellFloorAt(grid, claims, ownedKeys, r, c)
+    return typeof at === "string" ? null : at
+  }
+  // Is the band above this cell a way through rather than wall?
+  const openGap = (r: number, c: number) =>
+    !!floorOf(r, c) && !!floorOf(r - 1, c) && isPassable(grid, claims, r - 1, c, "s")
+
+  const doorways: Doorway[] = []
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      const here = floorOf(r, c)
+      const north = floorOf(r - 1, c)
+      if (!here || !north || !openGap(r, c)) continue
+      // Exactly one side is the chamber: the other is what you come in FROM. Two footprint cells are the
+      // middle of one room, and neither being a chamber is a corridor with no door in it.
+      const chamberSide = isChamber(r, c) ? here : isChamber(r - 1, c) ? north : null
+      if (!chamberSide || (isChamber(r, c) && isChamber(r - 1, c))) continue
+      // **A doorway is a hole in a wall RUN.** The arch hangs its jambs on the corners either side of the
+      // opening (see ARCH_W), so those corners have to be masonry: if the band beside this one is itself a
+      // way through, the opening is not one door but an open side, and an arch there stands on nothing.
+      if (openGap(r, c - 1) || openGap(r, c + 1)) continue
+      // **The stone of the band it interrupts**, which is the SOUTH cell's — the same rule tileRegions
+      // colours that band by (tierAt), so an arch is cut from the wall it stands in rather than imported
+      // into it. At a ward gate, where the rank changes across the gap, this is also the tier being
+      // ENTERED, which is what the sill it replaces was keyed to: you pass through a sandstone gateway
+      // into the sandstone ward. Taking the chamber's tier instead put a grey starter arch in a junior
+      // wall, a doorway visibly imported from the wrong tomb.
+      doorways.push({ row: r, col: c, tier: here.tier })
+    }
+  }
+  return doorways
+}
+
+const Archways = ({
+  doorways,
+  explorerPos,
+}: {
+  doorways: readonly Doorway[]
+  explorerPos?: readonly [number, number]
+}) => (
+  <g>
+    {doorways.map(({ row, col, tier }) => {
+      const url = tileUrl(tier, "arch")
+      if (!url) return null
+      // Faded while the player is IN the doorway — standing on either of the two cells it spans. Only
+      // those two are ever behind it, so nothing else on the map dims.
+      const under = !!explorerPos && explorerPos[1] === col && (explorerPos[0] === row || explorerPos[0] === row - 1)
+      return (
+        <image
+          key={`${row},${col}`}
+          href={url}
+          // Wider than the cell by a corner on each side: the jambs stand IN those corners — the wall's
+          // own thickness — rather than inside the opening, so the way through stays a full cell wide and
+          // the arch reads as built into the wall run instead of set into the hole.
+          x={cellLeft(col) - SIDE_W}
+          // The band, plus the crown standing proud of the wall above it and the jambs reaching down onto
+          // the floor of the way through below it.
+          y={cellTop(row) - WALL_H - ARCH_RISE}
+          width={ARCH_W}
+          height={ARCH_H}
+          opacity={under ? ARCH_FADE : 1}
+          preserveAspectRatio="none"
+        />
+      )
+    })}
+  </g>
+)
+
+/**
+ * The shadow an archway's jambs throw on the floor they stand on.
+ *
+ * Drawn with the FLOOR, not with the arch. An arch is painted last, over the explorer, because the player
+ * walks under it — but they walk OVER its shadow, and a shadow that darkened their feet as they passed
+ * through the doorway would read as the gateway lying on top of them.
+ *
+ * It cannot be baked into the sprite either: the shadow falls below the jamb feet, outside the 84x49 slot.
+ *
+ * Same depth and colour as a wall face's, because it is the same light: what makes a wall sit on the floor
+ * rather than float above it, applied to the one other thing standing on it.
+ */
+const ArchShadows = ({ doorways }: { doorways: readonly Doorway[] }) => {
+  const feet = doorways.flatMap(({ row, col }) => {
+    const left = cellLeft(col) - SIDE_W
+    const top = cellTop(row) + ARCH_DROP
+    return [left, left + ARCH_W - SIDE_W].map(x => `M${x} ${top}h${SIDE_W}v${FACE_SHADOW}h${-SIDE_W}z`)
+  })
+  if (!feet.length) return null
+  return (
+    <path data-arch-shadow d={feet.join("")} fill={tierPalette.starter.outline} opacity={0.45} pointerEvents="none" />
+  )
+}
+
+// ─── Torchlight on the place the player is standing ─────────────────────────────
+
+/**
+ * The room or corridor cell the explorer is in, washed warm — the same torch that pools at their feet
+ * reaching the walls around them.
+ *
+ * A CHAMBER lights whole: a torch carried into a small room lights the room, and lighting one cell of it
+ * would draw a square of light on a floor with no edge to justify it. A corridor lights only the cell
+ * stood in, because a corridor has no extent to fill.
+ *
+ * Screen-blended and weak on purpose. This sits under the player for the whole game, so it has to read as
+ * the stone being lit rather than as a coloured overlay on top of it — and it must never compete with the
+ * state washes that tell the player what is explored.
+ */
+// Weak, flat across the place, and it stops AT the place — no bleed onto what happens to sit next to it.
+// Spilling onto neighbours used grid adjacency rather than connectivity, so a corridor with a wall between
+// it and the room lit up anyway; and the map already tells the player what is reachable.
+// The pool at the explorer's feet already does the close light;
+// this only has to say which room they are in, so a strong wash under the player was the same light drawn
+// twice and read as a bright tile rather than a lit room. It still has to clear an UNVISITED room, since
+// `completed` washes a visited one 20% darker and standing somewhere must not be dimmer than never having
+// been there — on starter stone that puts the place at 102 against an unvisited 96 and a visited 77.
+/**
+ * The PLACE the explorer is standing in — a whole chamber, or the stretch of corridor they are on.
+ *
+ * A place, never a tile. A torch carried into a room lights the room; carried along a passage it lights
+ * the passage as far as the next turn. Lighting the single cell drew a bright square on a floor with no
+ * edge to justify it, which read as a tile rather than as somewhere being lit.
+ *
+ * The room case has to handle standing on the room's OWN cell as well as on one it claims: `claimedBy`
+ * maps a claimed cell to its owner and has no entry for the owner itself, so looking up the owner and
+ * stopping there lit one square whenever the player stood in the middle of their own chamber.
+ */
+const litPlaceCells = (grid: FloorGrid, claims: RoomClaims, at: readonly [number, number]): string[] => {
+  const here = `${at[0]},${at[1]}`
+  const owner = claims.claimedBy.get(here) ?? here
+  const footprint = [owner, ...[...claims.claimedBy.entries()].filter(([, o]) => o === owner).map(([cell]) => cell)]
+  if (footprint.length > 1) return footprint
+
+  const cell = cellAt(grid, at[0], at[1])
+  if (cell.type !== "corridor") return [here]
+
+  // The run: out from the cell in every open direction, following the passage until it turns or opens
+  // into something else. The turn itself is included — a light that stopped one cell short of the corner
+  // would leave the corner darker than the straight, which is the opposite of how a corner reads.
+  const cells = [here]
+  for (const dir of cell.dirs) {
+    let [dr, dc] = DIR_MOVES[dir]
+    let r = at[0] + dr
+    let c = at[1] + dc
+    let from: Direction = dir
+    for (let steps = 0; steps < grid.rows + grid.cols; steps++) {
+      const next = cellAt(grid, r, c)
+      if (next.type !== "corridor" || next.state === "fogged") break
+      cells.push(`${r},${c}`)
+      if (isCorridorCorner(next.dirs)) break
+      const onward = ([...next.dirs] as Direction[]).find(d => d !== OPPOSITE_DIR[from])
+      if (!onward) break
+      ;[dr, dc] = DIR_MOVES[onward]
+      r += dr
+      c += dc
+      from = onward
+    }
+  }
+  return cells
+}
+
+const TORCH_LIT = "#ffe2b0"
+
+const LitPlace = ({
+  grid,
+  claims,
+  at,
+  className,
+}: {
+  grid: FloorGrid
+  claims: RoomClaims
+  at?: readonly [number, number]
+  className: string
+}) => {
+  const place = at ? litPlaceCells(grid, claims, at) : []
+
+  const lit = new Set(place)
+
+  // A cell's square PLUS the gap to any lit neighbour. The map's pitch is a cell plus a wall band, so two
+  // cells of a corridor sit 28 units apart with floor between them — squares alone left that band dark and
+  // the run read as a row of lit tiles rather than as a lit passage. The floor layers fill those gaps for
+  // the same reason; light has to as well.
+  const pathFor = (keys: Iterable<string>, joinsTo: ReadonlySet<string>) =>
+    [...keys]
+      .flatMap(key => {
+        const [r, c] = key.split(",").map(Number)
+        const parts = [`M${cellLeft(c)} ${cellTop(r)}h${CELL}v${CELL}h${-CELL}z`]
+        if (joinsTo.has(`${r - 1},${c}`))
+          parts.push(`M${cellLeft(c)} ${cellTop(r) - WALL_H}h${CELL}v${WALL_H}h${-CELL}z`)
+        if (joinsTo.has(`${r},${c - 1}`))
+          parts.push(`M${cellLeft(c) - SIDE_W} ${cellTop(r)}h${SIDE_W}v${CELL}h${-SIDE_W}z`)
+        // And the little square where four lit cells meet — the corner between a north gap and a west
+        // gap. Filling both bands and not the corner between them leaves an unlit dot at every crossing
+        // inside a room, which is the artefact a floor of squares always has if you stop at the edges.
+        if (joinsTo.has(`${r - 1},${c}`) && joinsTo.has(`${r},${c - 1}`) && joinsTo.has(`${r - 1},${c - 1}`))
+          parts.push(`M${cellLeft(c) - SIDE_W} ${cellTop(r) - WALL_H}h${SIDE_W}v${WALL_H}h${-SIDE_W}z`)
+        return parts
+      })
+      .join("")
+
+  if (!lit.size) return null
+  return <path data-torch="lit" className={className} d={pathFor(lit, lit)} fill={TORCH_LIT} />
+}
+
+const FADE_MS = 320
+const FADE_IN = "map-lit-in"
+const FADE_OUT = "map-lit-out"
+const LIT_OPACITY = 0.1
+const LIT_CSS = `
+.${FADE_IN} { animation: map-lit-in ${FADE_MS}ms ease-out both; }
+.${FADE_OUT} { animation: map-lit-out ${FADE_MS}ms ease-in both; }
+@keyframes map-lit-in { from { opacity: 0 } to { opacity: ${LIT_OPACITY} } }
+@keyframes map-lit-out { from { opacity: ${LIT_OPACITY} } to { opacity: 0 } }
+@media (prefers-reduced-motion: reduce) {
+  .${FADE_IN} { animation: none; opacity: ${LIT_OPACITY} }
+  .${FADE_OUT} { animation: none; opacity: 0 }
+}
+`
+
+/**
+ * The lit place, crossfaded as the explorer walks from one to the next.
+ *
+ * Tied to the LIVE position rather than the settled one, so the room ahead comes up over the walk instead
+ * of snapping on at the moment of arrival. Both places are drawn during the crossing — the old one going
+ * out, the new one coming in — because a path cannot tween between two shapes, so the fade has to be
+ * between two of them.
+ */
+const LitPlaces = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; at?: readonly [number, number] }) => {
+  const key = at ? litPlaceCells(grid, claims, at).join("|") : ""
+  const [leaving, setLeaving] = useState<readonly [number, number] | undefined>(undefined)
+  const prevRef = useRef<{ key: string; at?: readonly [number, number] }>({ key, at })
+
+  useEffect(() => {
+    const prev = prevRef.current
+    prevRef.current = { key, at }
+    if (prev.key === key || !prev.at) return
+    setLeaving(prev.at)
+    const timer = setTimeout(() => setLeaving(undefined), FADE_MS)
+    return () => clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the PLACE, which is what `key` is
+  }, [key])
+
+  return (
+    <g style={{ mixBlendMode: "screen" }} pointerEvents="none">
+      <style>{LIT_CSS}</style>
+      {leaving && <LitPlace key="leaving" grid={grid} claims={claims} at={leaving} className={FADE_OUT} />}
+      <LitPlace key={key} grid={grid} claims={claims} at={at} className={FADE_IN} />
+    </g>
+  )
 }
 
 // ─── Click-target markers ───────────────────────────────────────────────────────
@@ -953,17 +2157,38 @@ const DecorationGlyph = ({ kind }: { kind: DecorationKind }) => {
 // as an arrow instead of a dot to hint which way it leads.
 const DIR_ROTATION: Record<Direction, number> = { n: 0, e: 90, s: 180, w: 270 }
 
-const ReachableDot = () => <circle r={MARKER_RADIUS} fill="#d0a840" opacity={0.85} />
+// Both markers are outlined and fully opaque, because they have to read on any floor the game has:
+// a translucent gold dot was legible against the near-black map this replaced, and disappears into
+// pale limestone. The ring is what makes one mark work on light stone and dark granite alike, so the
+// player learns a single shape rather than a per-tier one.
+const MARKER_FILL = "#ffd766"
+const MARKER_OUTLINE = "#161009"
+
+const ReachableDot = () => (
+  <>
+    <TapTarget />
+    <circle r={MARKER_RADIUS} fill={MARKER_FILL} stroke={MARKER_OUTLINE} strokeWidth={2} />
+  </>
+)
+
+/** Invisible, and the reason a marker can be small and still easy to hit. `fill="transparent"` rather than
+ * `none`: a shape with no fill is not there as far as pointer events are concerned. */
+const TapTarget = () => <circle r={MARKER_HIT} fill="transparent" />
 
 const RunTargetArrow = ({ dir }: { dir: Direction }) => {
-  const r = MARKER_RADIUS
+  const r = MARKER_RADIUS * 1.2
   return (
-    <polygon
-      points={`0,${-r} ${r},${r} ${-r},${r}`}
-      fill="#d0a840"
-      opacity={0.85}
-      transform={`rotate(${DIR_ROTATION[dir]})`}
-    />
+    <>
+      <TapTarget />
+      <polygon
+        points={`0,${-r} ${r},${r} ${-r},${r}`}
+        fill={MARKER_FILL}
+        stroke={MARKER_OUTLINE}
+        strokeWidth={2}
+        strokeLinejoin="round"
+        transform={`rotate(${DIR_ROTATION[dir]})`}
+      />
+    </>
   )
 }
 
@@ -973,6 +2198,7 @@ export const SiteMapView = ({
   grid: gridProp,
   onCellClick,
   revealAllCells = false,
+  freeWalk = false,
   explorerPos,
   currentFloor,
   pendingCells,
@@ -981,6 +2207,127 @@ export const SiteMapView = ({
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
   const claims = useMemo(() => buildRoomClaims(grid), [grid])
+  const tier = useMemo(() => floorTier(grid), [grid])
+  // Where the player can actually walk to. A corner is marked "reachable" when it is revealed, from
+  // wherever the player stood THEN; whether a route still exists from where they stand NOW is a
+  // different question, and it is the one a marker has to answer — an unreachable marker is a tap
+  // that does nothing, where a plain dead end would have told the truth.
+  const walkable = useMemo(
+    () => (explorerPos ? walkableFrom(grid, explorerPos) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [grid, explorerPos?.[0], explorerPos?.[1]]
+  )
+  const canWalkTo = (row: number, col: number) => !walkable || walkable.has(`${row},${col}`)
+  const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
+  const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
+  const nodeSprites = useMemo(() => nodeSpritesFor(grid, claims, tier), [grid, claims, tier])
+
+  // Everything that stands on this floor, in one list: a room's furniture and a node's own, each with
+  // the line it stands on. Split at the explorer's own floor line so he is drawn in the middle.
+  const standing = useMemo((): StandingSprite[] => {
+    const standingOn = explorerPos ? `${explorerPos[0]},${explorerPos[1]}` : null
+    const sprites: StandingSprite[] = nodeSprites.map(sprite => ({
+      key: sprite.key,
+      baseY: sprite.y + PROP_H,
+      clipId: `room-clip-${sprite.key}`,
+      ...(sprite.light ? { light: sprite.light } : {}),
+      node: (
+        <image
+          key={sprite.key}
+          href={sprite.url}
+          x={sprite.mirrored ? -sprite.x - CELL : sprite.x}
+          y={sprite.y}
+          width={CELL}
+          height={PROP_H}
+          opacity={standingOn && sprite.fadeAt?.includes(standingOn) ? ARCH_FADE : undefined}
+          transform={sprite.mirrored ? "scale(-1, 1)" : undefined}
+        />
+      ),
+    }))
+    for (const [cellKey, kind] of claims.decorationAt) {
+      const [r, c] = cellKey.split(",").map(Number)
+      const owner = litClaimOwner(grid, claims, r, c)
+      if (!owner) continue
+      const { cx, cy } = cellCenter(r, c)
+      sprites.push({
+        key: `prop:${cellKey}`,
+        baseY: cy + CELL / 2,
+        node: (
+          <g key={`prop:${cellKey}`} transform={`translate(${cx}, ${cy})`}>
+            <Decoration
+              kind={kind}
+              tier={owner.difficulty ?? tier}
+              patron={grid.patron}
+              seed={`${grid.siteId}:${cellKey}`}
+            />
+          </g>
+        ),
+      })
+    }
+    return sprites.sort((a, b) => a.baseY - b.baseY)
+  }, [grid, claims, tier, nodeSprites, explorerPos])
+
+  // The line the player stands on. A sprite lower than it is nearer the viewer and is drawn after him;
+  // one level with it loses the tie, because the actor belongs in front of the furniture he shares a
+  // floor line with.
+  const explorerBaseY = explorerPos ? cellCenter(explorerPos[0], explorerPos[1]).cy + CELL / 2 : Infinity
+  // A GATE IS DRAWN WITH THE ARCHWAYS, after everything else, for the archway's own reason: it is a
+  // thing in the world rather than a decal, so the player walks BEHIND it, and it is hung in the wall
+  // band where an arch is — sorted by its floor line among the furniture it came out UNDER the doorway
+  // it is fitted into, which put the gate's own head behind a beam. It fades for the two cells it spans
+  // (`fadeAt`), exactly as a doorway does, so passing behind it never hides the player.
+  const isGate = (s: StandingSprite) => s.key.startsWith("gate:")
+  const gateSprites = standing.filter(isGate)
+  const seated = standing.filter(s => !isGate(s))
+  const behindExplorer = seated.filter(s => s.baseY <= explorerBaseY)
+  const inFrontOfExplorer = seated.filter(s => s.baseY > explorerBaseY)
+  const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
+  // Where the arches are, in the same terms the wall bands are built in, with the stone each one is cut
+  // from — the sill in that gap is drawn to match it (see TileLayers.archedGaps).
+  // The air on this floor: its rank's, with whatever hour it authors (moodSettings.ts).
+  const mood = useMemo(() => moodFor(tier, grid.theme, grid.condition), [tier, grid.theme, grid.condition])
+  // Where something living may be: every real floor cell of this floor, explored or not. Deliberately NOT
+  // filtered by what the player has seen — see MapLife's `floorCells`: a list that grows as the map is
+  // revealed moves everything indexed into it.
+  const floorCells = useMemo(() => {
+    const cells: Array<readonly [number, number]> = []
+    for (let r = 0; r < grid.rows; r++) {
+      for (let c = 0; c < grid.cols; c++) {
+        if (grid.cells[r][c].type !== "empty") cells.push([r, c])
+      }
+    }
+    return cells
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the SHAPE of the floor, which a reveal never changes
+  }, [grid.rows, grid.cols, grid.siteId])
+  // Cells with a wall BAND above them, for the roots a condition puts through the brick. Void to the
+  // north is the test, which is the same one `wallBehind` uses to stand a prop against a wall — the map
+  // only draws a face where there is nothing beyond it.
+  const wallBandCells = useMemo(() => {
+    const cells: Array<readonly [number, number]> = []
+    for (let r = 0; r < grid.rows; r++) {
+      for (let c = 0; c < grid.cols; c++) {
+        if (grid.cells[r][c].type === "empty") continue
+        if (cellAt(grid, r - 1, c).type === "empty") cells.push([r, c])
+      }
+    }
+    return cells
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the SHAPE of the floor, which a reveal never changes
+  }, [grid.rows, grid.cols, grid.siteId])
+  // A chamber's own floor, for the big plants. Claimed cells are `type: "empty"` in the grid — the claim
+  // is a render-time fact — so this cannot be read off `grid.cells`, which is the trap `floorScatter`
+  // documents: walking the grid finds no chamber floor at all.
+  const chamberFloorCells = useMemo(
+    () => [...claims.claimedBy.keys()].map(key => key.split(",").map(Number) as [number, number]),
+    [claims]
+  )
+  // What is strewn on this floor. A function of the floor's shape and its id, so it never moves.
+  const scatter = useMemo(() => scatterFor(grid, claims), [grid, claims])
+  const drifts = useMemo(() => driftsFor(grid, tier), [grid, tier])
+  const archedGaps = useMemo(
+    () =>
+      new Map(doorways.map(({ row, col, tier: archTier }) => [`${cellLeft(col)},${cellTop(row) - WALL_H}`, archTier])),
+    [doorways]
+  )
   // Corridor-run markers track the explorer dot's visual position, not the logical one:
   // hide them the instant a run target is clicked (the player has committed to a
   // destination, so the old markers no longer apply), and don't show the new ones at the
@@ -997,9 +2344,8 @@ export const SiteMapView = ({
   // Must be >= CELL: a fork/endpoint on the map's edge can claim one cell of "outside
   // the grid" void (see cellAt above), and that extra ring needs to physically fit
   // within the padding margin without clipping.
-  const PAD = CELL
-  const svgWidth = grid.cols * CELL + PAD * 2
-  const svgHeight = grid.rows * CELL + PAD * 2
+  const svgWidth = mapWidth(grid.cols)
+  const svgHeight = mapHeight(grid.rows)
 
   const { scrollRef, sizerRef, mapRef, zoomRef, scrollHandlers } = useMapZoom(svgWidth, svgHeight)
 
@@ -1013,8 +2359,9 @@ export const SiteMapView = ({
     const originY = mapRect.top - elRect.top + el.scrollTop
     // Cell coordinates are in unzoomed SVG units; the rendered map is `zoom` times that size.
     const zoom = zoomRef.current
-    const x = originX + (PAD + explorerPos[1] * CELL + CELL / 2) * zoom
-    const y = originY + (PAD + explorerPos[0] * CELL + CELL / 2) * zoom
+    const { cx, cy } = cellCenter(explorerPos[0], explorerPos[1])
+    const x = originX + cx * zoom
+    const y = originY + cy * zoom
     el.scrollTo({ left: x - el.clientWidth / 2, top: y - el.clientHeight / 2, behavior: "smooth" })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [explorerPos?.[0], explorerPos?.[1]])
@@ -1036,24 +2383,58 @@ export const SiteMapView = ({
           role="img"
           aria-label="site map"
           className="block"
-          style={{ background: "#110d08" }}
+          // The ground IS stone: a pyramid is carved out of rock, so everything the map has not lit
+          // is the tier's own dark stone rather than a void. Two things fall out of that — the shape of
+          // the drawn stone can no longer trace passages the player has not walked, and a pocket
+          // enclosed by a thick wall stops reading as a hole punched through it.
+          //
+          // Pixel art: no smoothing, so a tile stays crisp instead of turning to mush as the map
+          // scales. Crisp at every zoom needs useMapZoom to snap to whole steps — not done yet.
+          style={{ background: tierPalette[tier].wallBase, imageRendering: ART_IMAGE_RENDERING }}
         >
-          <defs>
-            <pattern id="stone" width={20} height={20} patternUnits="userSpaceOnUse">
-              <rect width={20} height={20} fill="#110d08" />
-              <rect x={0} y={0} width={10} height={10} fill="#130f09" />
-              <rect x={10} y={10} width={10} height={10} fill="#130f09" />
-            </pattern>
-          </defs>
-          <rect width={svgWidth} height={svgHeight} fill="url(#stone)" />
+          <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
+          <SandDrifts grid={grid} drifts={drifts} tier={tier} />
+          <FloorScatter grid={grid} scatter={scatter} tier={tier} />
+          <ArchShadows doorways={doorways} />
+          <LitPlaces grid={grid} claims={claims} at={explorerPos} />
+          <MapLife
+            mood={mood}
+            siteId={grid.siteId}
+            floorCells={floorCells}
+            isLit={(r, c) => {
+              const cell = cellAt(grid, r, c)
+              return cell.type !== "empty" && cell.state !== "fogged"
+            }}
+          />
+          {/* Over the scarabs, under the wall items: something growing out of a wall is in front of the
+              floor and behind whatever is hung on that wall. */}
+          <MapGrowth
+            mood={mood}
+            siteId={grid.siteId}
+            floorCells={floorCells}
+            wallCells={wallBandCells}
+            chamberCells={chamberFloorCells}
+            isLit={(r, c) => {
+              const cell = cellAt(grid, r, c)
+              if (cell.type !== "empty") return cell.state !== "fogged"
+              // A CLAIMED cell is `type: "empty"` in the grid — the claim is a render-time fact — so a
+              // chamber's own floor fails the test above and every plant on it was dropped. It is lit
+              // when its ROOM is, which is the same blind spot `floorScatter` records for scatter.
+              const owner = claims.claimedBy.get(`${r},${c}`)
+              if (!owner) return false
+              const [or, oc] = owner.split(",").map(Number)
+              const room = cellAt(grid, or, oc)
+              return room.type !== "empty" && room.state !== "fogged"
+            }}
+          />
+          <WallItems items={wallItems} patron={grid.patron} />
 
           {Array.from({ length: grid.rows + 2 }, (_, ri) => {
             const r = ri - 1
             return Array.from({ length: grid.cols + 2 }, (_, ci) => {
               const c = ci - 1
               const cell = cellAt(grid, r, c)
-              const cx = PAD + c * CELL + CELL / 2
-              const cy = PAD + r * CELL + CELL / 2
+              const { cx, cy } = cellCenter(r, c)
               const cellKey = `${r},${c}`
               const claimOwner = litClaimOwner(grid, claims, r, c)
 
@@ -1073,19 +2454,15 @@ export const SiteMapView = ({
               // it falls through to the corridor rendering below and stands on its own state, rather
               // than leaving the rooms around it opening onto a gap that draws nothing.
               if (claimOwner) {
-                const state = claimOwner.state
-                const open = Object.fromEntries(ALL_DIRS.map(d => [d, isOpenSide(grid, claims, r, c, d)])) as Record<
-                  Direction,
-                  boolean
-                >
-                const decoration = claims.decorationAt.get(cellKey)
                 const isCorner = cell.type === "corridor" && isCorridorCorner(cell.dirs)
                 const runTarget = cell.type === "corridor" ? corridorRunTargets.get(cellKey) : undefined
+                const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
                 const corridorClickable =
                   cell.type === "corridor" &&
                   onCellClick &&
-                  ((cell.state === "reachable" || cell.state === "completed") && isCorner ? true : !!runTarget)
-                const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
+                  canWalkTo(clickTarget[0], clickTarget[1]) &&
+                  (freeWalk ||
+                    ((cell.state === "reachable" || cell.state === "completed") && isCorner ? true : !!runTarget))
                 return (
                   <g
                     key={cellKey}
@@ -1093,14 +2470,13 @@ export const SiteMapView = ({
                     onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
                     style={{ cursor: corridorClickable ? "pointer" : "default" }}
                   >
-                    <FloorTile state={state} open={open} kind="room" />
                     {cell.type === "corridor" &&
+                      canWalkTo(clickTarget[0], clickTarget[1]) &&
                       (runTarget ? (
                         <RunTargetArrow dir={runTarget.dir} />
                       ) : (
                         cell.state === "reachable" && isCorner && <ReachableDot />
                       ))}
-                    {decoration && <DecorationGlyph kind={decoration} />}
                   </g>
                 )
               }
@@ -1108,21 +2484,17 @@ export const SiteMapView = ({
               if (cell.type === "empty") return null
               if (cell.state === "fogged") return null
 
-              const open = Object.fromEntries(ALL_DIRS.map(d => [d, isOpenSide(grid, claims, r, c, d)])) as Record<
-                Direction,
-                boolean
-              >
-
               if (cell.type === "corridor") {
                 const isCorner = isCorridorCorner(cell.dirs)
                 const runTarget = corridorRunTargets.get(cellKey)
                 // A visible run's near end has no corner of its own to click — it borrows the
                 // far corner's click target (see findCorridorRunTarget) so a long corridor
                 // that scrolls off screen still has something to tap right next to the player.
+                const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
                 const corridorClickable =
                   onCellClick &&
-                  (((cell.state === "reachable" || cell.state === "completed") && isCorner) || !!runTarget)
-                const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
+                  canWalkTo(clickTarget[0], clickTarget[1]) &&
+                  (freeWalk || ((cell.state === "reachable" || cell.state === "completed") && isCorner) || !!runTarget)
                 return (
                   <g
                     key={`${r},${c}`}
@@ -1130,12 +2502,12 @@ export const SiteMapView = ({
                     onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
                     style={{ cursor: corridorClickable ? "pointer" : "default" }}
                   >
-                    <FloorTile state={cell.state} open={open} kind="corridor" />
-                    {runTarget ? (
-                      <RunTargetArrow dir={runTarget.dir} />
-                    ) : (
-                      cell.state === "reachable" && isCorner && <ReachableDot />
-                    )}
+                    {canWalkTo(clickTarget[0], clickTarget[1]) &&
+                      (runTarget ? (
+                        <RunTargetArrow dir={runTarget.dir} />
+                      ) : (
+                        cell.state === "reachable" && isCorner && <ReachableDot />
+                      ))}
                   </g>
                 )
               }
@@ -1156,14 +2528,20 @@ export const SiteMapView = ({
                 shapeKind === "treasure" &&
                 cell.reward?.type === "consumable" &&
                 (pendingCells?.has(`${r},${c}`) ?? false)
-              const clickable = onCellClick && (state === "reachable" || state === "completed")
+              const clickable = onCellClick && (state === "reachable" || state === "completed") && canWalkTo(r, c)
+              // A fogged room never reaches here — the loop above draws unlit cells — so no guard is
+              // needed to keep a chest out of the dark.
+              const hasChest = shapeKind === "treasure" && !cell.tags?.includes("shop")
+              // A stairhead at the floor's own entrance is the way back UP; any other descends.
+              const isStair = shapeKind === "stairhead"
+              const goesUp = isStair && r === grid.entrancePos[0] && c === grid.entrancePos[1]
+              const hasStair = isStair && !!tileUrl(cell.difficulty ?? tier, goesUp ? "stair-up" : "stair-down")
+              // A DRAWN EXIT LOSES ITS MARKER for the stairhead's reason: the art IS the node, and unlike
+              // a gate it carries no key colour and no state — a portal is a transition, never completed
+              // — so the vector has nothing left to say that the doorway does not say better.
+              const hasExit = shapeKind === "exit" && !!tileUrl(cell.difficulty ?? tier, "exit")
               const roomR = nodeRadius[shapeKind]
-              // Gating is soft: a locked gate is still "reachable" (clickable), so `state`
-              // doesn't distinguish locked from unlocked. Recover that purely cosmetic
-              // distinction here, independent of `state` —
-              // `displayState` feeds the floor tint and icon only, never clickability/badges.
-              const locked =
-                shapeKind === "gate" && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)
+              const locked = isLockedGate(cell, ownedKeys)
               const displayState: CellState = locked && state === "reachable" ? "visible" : state
 
               return (
@@ -1173,8 +2551,23 @@ export const SiteMapView = ({
                   onClick={clickable ? () => onCellClick(r, c) : undefined}
                   style={{ cursor: clickable ? "pointer" : "default" }}
                 >
-                  <FloorTile state={displayState} open={open} kind="room" />
-                  <g opacity={isCompleted && !isPending && !isPortal ? 0.45 : 1}>
+                  {/* A FLIGHT SAYS STAIRS BETTER THAN A MARKER DOES, so where one is drawn the marker
+                      goes out entirely rather than merely easing back the way a chest's does. The
+                      stair is the only node whose art IS the node — a chest stands BESIDE a treasure
+                      room's marker and still needs it to say which room — so this is the one place the
+                      vector can be spared. Opacity rather than a skipped render: the shape is what
+                      gives the group its clickable area, and an invisible one still takes a hit. */}
+                  <g
+                    opacity={
+                      isCompleted && !isPending && !isPortal
+                        ? 0.45
+                        : hasStair || hasExit
+                          ? 0
+                          : hasChest
+                            ? NODE_OVER_ART_OPACITY
+                            : 1
+                    }
+                  >
                     <NodeShape
                       type={shapeKind}
                       state={displayState}
@@ -1193,6 +2586,38 @@ export const SiteMapView = ({
             })
           })}
 
+          {/* EVERYTHING STANDING ON THE FLOOR IS SORTED AGAINST THE PLAYER, and the player is drawn in
+              the middle of it. Anything whose floor line is LOWER than his is nearer the viewer and is
+              drawn after him, so he passes behind the chest at the front of a room and in front of the
+              one at the back. Sorting by the floor line and not by the sprite's top is what makes a
+              tall thing still stand behind a short thing in front of it.
+
+              A node's furniture is additionally clipped, and in MAP space: inside each node's own
+              `<g transform>` the clip resolved in that cell's space and cut every sprite away, which
+              emptied the game of chests while the tests, which do not rasterise, passed. */}
+          {/* One clip per sprite, cut to its OWN room. The map-wide clip is every floor cell there is,
+              so furniture offset toward a wall passed straight through it and appeared in the corridor
+              beyond; a room's footprint lets a chest overlap the paving beside it and stops it at the
+              masonry. */}
+          <defs>
+            {nodeSprites.map(sprite => (
+              <clipPath key={sprite.key} id={`room-clip-${sprite.key}`}>
+                <path d={footprintPath(sprite.footprint)} />
+              </clipPath>
+            ))}
+          </defs>
+
+          {/* The floor light first, so everything standing is standing IN it. */}
+          {standing.map(s2 =>
+            s2.light ? (
+              <g key={`light:${s2.key}`} transform={`translate(${s2.light.x}, ${s2.light.y})`}>
+                <LightPool r={s2.light.r} />
+              </g>
+            ) : null
+          )}
+
+          <StandingLayer sprites={behindExplorer} />
+
           {explorerPos && (
             <ExplorerDot
               key={currentFloor}
@@ -1201,6 +2626,18 @@ export const SiteMapView = ({
               onArrive={() => setSettledExplorerPos(explorerPos)}
             />
           )}
+
+          <StandingLayer sprites={inFrontOfExplorer} />
+
+          {/* Last, so a doorway passes in FRONT of the player walking under it — see Archways. */}
+          <Archways doorways={doorways} explorerPos={explorerPos} />
+
+          {/* And the gate in front of the arch it is fitted into: the frame is the masonry of the
+              opening, the gate is what has been hung in it, so the leaf is the nearer of the two. */}
+          <StandingLayer sprites={gateSprites} />
+
+          {/* The air, over the stone and over the player: what is carried on it, and what hour it is. */}
+          <MapWeather mood={mood} siteId={grid.siteId} width={svgWidth} height={svgHeight} />
         </svg>
       </div>
     </div>

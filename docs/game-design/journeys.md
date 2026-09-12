@@ -36,8 +36,10 @@ live, so the numbers here are a snapshot to read, not a thing to keep true by ha
 | `ctx.role`   | `encounter: "trade"` | **Which place is this?**                     |
 | `ctx.theme`  | `theme: "night"`     | **What is it like right now?** hour, weather |
 
-**Dressing a journey is authoring its role.** A role does two things at once: it narrows the pool to the
-families that serve that place, and it tells each of them which of its own faces this room is. The same
+**Dressing a journey is authoring its role.** A role does three things at once: it narrows the pool to the
+families that serve that place, it tells each of them which of its own faces this room is, and it furnishes
+the rooms themselves — the site map draws a trade wing's amphorae and a funerary wing's coffin out of the
+rank's own prop pool (`worldGen/dressingRoles.ts`, and docs/game-design/spritesheet-renderer-prep.md). The same
 constellation board is a star map for `sky`, a haul road for `trade`, a waterworks for `water` — and no
 site ever names a skin, which is what lets one authored word work across families that have never heard of
 each other. `theme` layers the hour onto whatever the role picked; it does not replace it. A trade pyramid

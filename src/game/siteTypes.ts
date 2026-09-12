@@ -24,6 +24,10 @@ export type CorridorCell = {
   type: "corridor"
   dirs: ReadonlySet<Direction>
   state: CellState
+  /** The tier this corridor's own section was authored at — what it is BUILT of, which is not always
+   * the floor's tier: a ward pocket gated behind a junior key is junior stone inside a starter
+   * pyramid. Mirrors RoomCell.difficulty, which has always carried this for rooms. */
+  difficulty?: Difficulty
   sectionHash?: string
   /** The hash this cell had before the section hash stopped covering the encounter, so a save
    *  written under the old scheme still recognises its own cells. Read-only compatibility — nothing
@@ -37,7 +41,79 @@ export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 // hues in whatever order a floor's gates came out, and a status readout that reshuffles between
 // floors is unreadable.
 export const KEY_COLORS: readonly KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
-export type DecorationKind = "sarcophagus" | "statue" | "fountain" | "pit" | "rubble" | "pillar" | "chestProp"
+// What stands in a chamber. A kind is a SILHOUETTE and the tier is its skin, resolved as
+// tiles/<tier>/<kind>.png — which is what keeps a fifth rank from costing as much to draw as the
+// first (docs/game-design/spritesheet-renderer-prep.md, "Chamber props"). `basin` rather than
+// "fountain": Egypt had libation basins, ablution basins and temple lakes, not pressurised fountains.
+export type DecorationKind =
+  | "rubblePile"
+  | "pillar"
+  | "pit"
+  | "statue"
+  | "basin"
+  | "sarcophagus"
+  // A CHEST MEANS TREASURE YOU CAN OPEN, so no rank's pool authors one as furniture. The kind stays
+  // because the art does: a treasure room draws `tiles/<tier>/chestProp.png` beside its marker
+  // (`NodeChest`). Put it back in a `decorations` pool and the map starts saying "you may open this
+  // one and not that one" with the same picture.
+  | "chestProp"
+  | "offeringTable"
+  | "jarRack"
+  | "brazier"
+  | "lamp"
+  | "hanging"
+  | "shelf"
+  | "shrine"
+  | "crystal"
+  | "mat"
+// What hangs ON a wall, drawn into a cell's face band rather than standing on its floor. Its own
+// vocabulary rather than a slice of DecorationKind: a stela is not a prop that could stand in the
+// middle of a chamber, and the two must not be confusable
+// (docs/game-design/spritesheet-renderer-prep.md, "Three things a tier dresses"). Resolved as
+// tiles/<tier>/<kind>.png at CELL x WALL_H — the band's own shape, not a square.
+export type WallDecorationKind =
+  "niche" | "stela" | "sconce" | "veil" | "starShaft" | "wallShrine" | "tallyBoard" | "mask"
+
+/**
+ * Something that has got INTO a site and runs through the whole of it — water standing in the floors,
+ * green forcing its way through the brick.
+ *
+ * A third axis beside role and theme, and it has to be its own: journeys.md §2 fixes the role as the
+ * PLACE and the theme as the HOUR, and a flooded pyramid is neither. It is the same place at the same
+ * hour with something wrong with it, and unlike either of those it is a property of the SITE — the point
+ * is that it persists as the player climbs from a merchant's cellar to the gods' vault.
+ *
+ * Drawn as OVERLAY, never as a second set of tiles per rank: `moodSettings.ts` composes it over the
+ * rank's own ambience the same way an hour does, and one shared sprite serves every rank the way
+ * `scarab.png` already does. Doubling the sheet count to say a tomb is overgrown would buy the player
+ * nothing that a green cast and some weeds in the corners does not.
+ */
+export type ConditionKind = "overgrown" | "flooded"
+
+/** How far gone a site is, 0–1. The DSL's other knobs are all fractions, so this is one too: 0.25 is a
+ * damp corner, 1 is the pyramid the journey is remembered for. */
+export type SiteCondition = { kind: ConditionKind; amount: number }
+
+/**
+ * Whose tomb this is dedicated to, if anyone.
+ *
+ * A closed union rather than an open string, unlike `theme` or `role`: a patron does nothing but choose a
+ * DRAWING, so an unrecognised one would fail silently as a tile that never resolves — where a misspelt
+ * theme at least reaches a family that can complain.
+ *
+ * NINE, not the seven the handover proposed. The design's list was written without checking the world
+ * against it, and the world disagrees in both directions: six journeys are NAMED for a god, and two of
+ * those — Thoth's temple and the Hall of Osiris — were missing from the seven, while Horus, Sobek and
+ * Sekhmet are on the list and named by no journey at all. Both were already in the art brief's statue row
+ * ("Thoth ibis-headed with palette", "gilded Osiris colossus"), so the list was the thing that was short.
+ *
+ * PURELY DRAWN, and free to author (docs/game-design/world-spec-stability.md). It picks
+ * `<kind>-<patron>.png` over `<kind>.png` for the five kinds a god can appear on, and falls back to the
+ * generic art wherever that file does not exist — which is everywhere today. Nothing else reads it: not
+ * the carve, not the hashes, not a family.
+ */
+export const PATRONS = ["anubis", "horus", "sobek", "bastet", "maat", "ra", "sekhmet", "thoth", "osiris"] as const
+export type Patron = (typeof PATRONS)[number]
 export type RoomCell = {
   type: "room"
   roomType: RoomType
@@ -98,11 +174,37 @@ export type RoomCell = {
   tags?: string[]
   stairId?: string
   decoration?: DecorationKind
+  wallDecoration?: WallDecorationKind
+  /**
+   * THE GOD'S ROOM on a dedicated floor: the biggest chamber, dressed with a statue of him and paired.
+   *
+   * It used to be inferred — prop AND wall item both being patron kinds — which needed no field and
+   * worked at every rank that hangs something a god can appear on. The merchant hangs a goods niche and
+   * a tally board, so at his rank the inference can never be true, and the Temple of Bastet's main hall
+   * stood a statue beside a sarcophagus instead of beside a second statue. A room the assembler CHOSE is
+   * a fact about that room, not something to re-derive from what it happens to be wearing.
+   */
+  patronRoom?: boolean
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 
 export type FloorGrid = {
   readonly cells: ReadonlyArray<ReadonlyArray<GridCell>>
+  /** The floor's own tier, straight off its FloorConfig — what the map is built OF. Room-level
+   * `RoomCell.difficulty` can differ (a ward-chest teaser is authored at a later tier), so it must not
+   * be used to infer this. Optional only because test fixtures build grids by hand. */
+  readonly difficulty?: Difficulty
+  /** What has got into this site, if anything — see SiteCondition. Runs through every floor of a
+   * pyramid by construction: it is authored once, on the pyramid. */
+  readonly condition?: SiteCondition
+  /** Whose tomb this is — see Patron. Authored once on the pyramid like `condition`, so every floor of
+   * the climb is dedicated to the same god. Chooses a drawing and nothing else. */
+  readonly patron?: Patron
+  /** The hour this floor is at — its authored `theme` (docs/game-design/journeys.md §2: the role is the
+   * place, the theme is the hour). The map reads it for its mood overlay and nothing else; a family reads
+   * the same name off its own room to pick a skin. Optional: most floors author none and wear their
+   * rank's own ambience. */
+  readonly theme?: string
   readonly rows: number
   readonly cols: number
   readonly entrancePos: readonly [number, number]
@@ -135,6 +237,8 @@ export type SubSection = {
   encountersByIndex?: Record<number, string | string[]>
   /** Pool of decoration kinds available to this section's fork/endpoint rooms. */
   decorations?: DecorationKind[]
+  /** Pool of wall-item kinds for the same rooms, hung on a wall instead of standing on the floor. */
+  wallDecorations?: WallDecorationKind[]
   /** Opaque payload for whichever family renders this section's rooms (e.g. a tableau's
    * `{runNr}`) — validated by that family's own ResolveKeyRequirements resolver, never
    * interpreted here. See ResolveKeyRequirements in siteAssembler.ts. */
@@ -158,6 +262,13 @@ export type FloorConfig = {
   sideSections: SideSection[]
   /** Pool of decoration kinds available to the main path's fork/endpoint rooms. */
   decorations?: DecorationKind[]
+  /** Pool of wall-item kinds for the same rooms, hung on a wall instead of standing on the floor. */
+  wallDecorations?: WallDecorationKind[]
+  /** What has got into this site — see SiteCondition. Authored once on the pyramid, so every floor
+   * carries the same one and it runs through the whole climb. */
+  condition?: SiteCondition
+  /** Whose tomb this is — see Patron. Authored once on the pyramid and copied onto every floor of it. */
+  patron?: Patron
   mainEndReward?: TreasureReward
   rewards?: (TreasureReward | undefined)[]
   /** Default family/tag(s) for this floor's main-path encounter rooms. An array means "any of these". */

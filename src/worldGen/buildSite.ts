@@ -1,3 +1,4 @@
+import type { DecorationKind, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
 import type { Difficulty, FloorConfig, SideSection, Tier, TreasureReward } from "./types"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { GLOBAL_DEFAULTS } from "./spec/global"
@@ -96,6 +97,11 @@ export type BuildFloorOptions = {
   sealed?: boolean
   encounterArgs?: unknown
   theme?: string
+  decorations?: DecorationKind[]
+  /** What has got into the site. Copied onto every floor, which is what makes it survive the climb. */
+  condition?: SiteCondition
+  patron?: Patron
+  wallDecorations?: WallDecorationKind[]
 }
 
 // The common FloorConfig skeleton shared by every pyramid and tomb floor — defaults to a
@@ -109,6 +115,10 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.entrance ? { entrance: opts.entrance } : {}),
   ...(opts.mainEndReward ? { mainEndReward: opts.mainEndReward } : {}),
   ...(opts.encounter ? { encounter: opts.encounter } : {}),
+  ...(opts.decorations?.length ? { decorations: opts.decorations } : {}),
+  ...(opts.wallDecorations?.length ? { wallDecorations: opts.wallDecorations } : {}),
+  ...(opts.condition ? { condition: opts.condition } : {}),
+  ...(opts.patron ? { patron: opts.patron } : {}),
   ...(opts.encountersByIndex && Object.keys(opts.encountersByIndex).length
     ? { encountersByIndex: opts.encountersByIndex }
     : {}),
@@ -168,6 +178,8 @@ export type BuildSiteContext<TExtra extends string = never> = {
   sideEncounterArgs?: unknown
   /** Skin for side sections that author none. Safe for any site to hand down (see sideSections.ts). */
   sideTheme?: string
+  sideDecorations?: DecorationKind[]
+  sideWallDecorations?: WallDecorationKind[]
 }
 
 // Builds one site's floors (the 3 floor-shape branches: authored floors[], auto multi-floor
@@ -187,6 +199,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sideEncounter,
     sideEncounterArgs,
     sideTheme,
+    sideDecorations,
+    sideWallDecorations,
   } = ctx
 
   const mainEndReward: TreasureReward = constraint.mainEndReward
@@ -225,6 +239,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         sideEncounter,
         sideEncounterArgs,
         sideTheme,
+        sideDecorations,
+        sideWallDecorations,
       })
       const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
@@ -258,6 +274,12 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           encounterArgs: fc.encounterArgs ?? constraint.encounterArgs,
           // A floor may wear its own skin inside a plainer pyramid; unset, it wears the site’s.
           theme: fc.theme ?? constraint.theme,
+          decorations: fc.decorations ?? constraint.decorations,
+          wallDecorations: fc.wallDecorations ?? constraint.wallDecorations,
+          // No per-floor override: a condition that stopped halfway up would read as an authoring slip
+          // rather than as weather. It is the site's, and every floor of it carries the same one.
+          condition: constraint.condition,
+          patron: constraint.patron,
         })
       )
     }
@@ -295,6 +317,18 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             encounter: constraint.encounter,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
+            // The SITE's condition, on every floor. It rides beside `theme` at each of these calls, and the
+            // difference between the two is the point: a floor may wear its own hour, but green through the
+            // brick that stopped at floor three would read as an authoring slip rather than as weather.
+            // Only the explicit-`floors` branch used to set it, so a condition authored on any ordinary
+            // pyramid was silently dropped — invisible until the first one was authored.
+            condition: constraint.condition,
+            patron: constraint.patron,
+            // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
+            // with no pool of its own dresses none of its junctions. Only the explicit-`floors` branch
+            // passed these, which left every fork on every ordinary pyramid bare.
+            decorations: constraint.decorations,
+            wallDecorations: constraint.wallDecorations,
           })
         )
         continue
@@ -314,6 +348,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         sideEncounter,
         sideEncounterArgs,
         sideTheme,
+        sideDecorations,
+        sideWallDecorations,
         declaredSidePaths: constraint.sidePaths,
         declaredHiddenPaths: constraint.hiddenPaths,
       })
@@ -326,6 +362,13 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           encounter: constraint.encounter,
           encounterArgs: constraint.encounterArgs,
           theme: constraint.theme,
+          condition: constraint.condition,
+          patron: constraint.patron,
+          // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
+          // with no pool of its own dresses none of its junctions. Only the explicit-`floors` branch
+          // passed these, which left every fork on every ordinary pyramid bare.
+          decorations: constraint.decorations,
+          wallDecorations: constraint.wallDecorations,
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
           packing: resolvePacking(constraint, journeyId, i),
           sealed: resolveSealed(constraint),
@@ -395,6 +438,13 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             encounter: constraint.encounter,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
+            condition: constraint.condition,
+            patron: constraint.patron,
+            // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
+            // with no pool of its own dresses none of its junctions. Only the explicit-`floors` branch
+            // passed these, which left every fork on every ordinary pyramid bare.
+            decorations: constraint.decorations,
+            wallDecorations: constraint.wallDecorations,
           })
         )
       })
@@ -441,6 +491,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sideEncounter,
     sideEncounterArgs,
     sideTheme,
+    sideDecorations,
+    sideWallDecorations,
     declaredSidePaths: constraint.sidePaths,
     declaredHiddenPaths: constraint.hiddenPaths,
   })
@@ -452,6 +504,13 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     encounter: constraint.encounter,
     encounterArgs: constraint.encounterArgs,
     theme: constraint.theme,
+    condition: constraint.condition,
+    patron: constraint.patron,
+    // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
+    // with no pool of its own dresses none of its junctions. Only the explicit-`floors` branch
+    // passed these, which left every fork on every ordinary pyramid bare.
+    decorations: constraint.decorations,
+    wallDecorations: constraint.wallDecorations,
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
     packing: resolvePacking(constraint, journeyId, i),
     sealed: resolveSealed(constraint),

@@ -102,7 +102,27 @@ const wardRules: Rule[] = EXPERT_PYRAMIDS.flatMap(([jid, n], ji) => {
 })
 
 export const expertRules: Rule[] = [
-  tier("expert", { difficulty: "expert" }),
+  // a priest's temple: canopic jars, an altar, the sacred pool, a veil before the shrine.
+  tier("expert", {
+    difficulty: "expert",
+    decorations: [
+      "shelf",
+      "jarRack",
+      "offeringTable",
+      "basin",
+      "statue",
+      "lamp",
+      "hanging",
+      "shrine",
+      "sarcophagus",
+      "pillar",
+      "brazier",
+      "rubblePile",
+      "mat",
+    ],
+    // a priest's wing: the veil before the shrine, a wall shrine, a hanging lamp.
+    wallDecorations: ["veil", "wallShrine", "sconce"],
+  }),
 
   tier("expert").set({
     keyDensity: "low",
@@ -142,6 +162,29 @@ export const expertRules: Rule[] = [
   // least varied journey in the game already ships (§11), so a tomb would be the same four boards over and
   // over. The share that comes out dressed is therefore the pool's natural rate rather than a chosen one;
   // weighting a preferred role is designed and unbuilt (§11).
+  // **The Nile Delta Expedition is OVERGROWN, and it gets worse the further in you go.** Its own
+  // description is the brief: a journey through the fertile delta and the river's annual flood. A
+  // condition is authored per SITE and carried onto every floor of it (see dsl.ts), so green forcing
+  // through the brick follows the player from a cellar to a vault rather than being a per-floor hour —
+  // which is the whole reason the field sits on the pyramid and not on the floor.
+  //
+  // GRADED, because one amount everywhere would say only "this journey is green". The point of a 0-1
+  // fraction is that a journey can BUILD: the first pyramid is the dry approach and carries nothing, and
+  // the last is the one the journey is remembered for. `amount` scales the tint and the number of sprites
+  // together (`moodSettings`), so 0.2 really is a damp corner and 1 really is overdrive.
+  //
+  // FIVE pyramids, not nine. `journeyStructure.ts` is what world-gen counts — `journeys.ts` carries a
+  // `levelCount: 9` for this journey, which is its map's own level count and not its pyramids. Authored
+  // against the wrong one, the last two rules simply matched nothing and the overdrive never appeared.
+  //
+  // Free to author (docs/game-design/world-spec-stability.md): a condition composes into the mood overlay
+  // and nothing else reads it, so no wall moves and no section hash changes. Verified rather than assumed
+  // — regenerating with these four rules left every non-condition line of generatedWorld.ts identical.
+  journey("expert_3").pyramid(2, { condition: { kind: "overgrown", amount: 0.2 } }),
+  journey("expert_3").pyramid(3, { condition: { kind: "overgrown", amount: 0.4 } }),
+  journey("expert_3").pyramid(4, { condition: { kind: "overgrown", amount: 0.65 } }),
+  journey("expert_3").pyramid(5, { condition: { kind: "overgrown", amount: 1 } }),
+
   journey("expert_1").pyramid("1-4", { encounter: ["funerary", "puzzle"] }),
 
   // expert_4 (the last journey) — some open main-path floors gain a floor-key lock (find a
@@ -234,4 +277,15 @@ export const expertRules: Rule[] = [
       },
     ],
   }),
+
+  // A god on ONE PYRAMID, in journeys that are not named for one. These four are the patrons the world
+  // never names, and a whole journey dedicated to a god it is not called after would overstate it — a
+  // single pyramid reads as a shrine on the way up instead. `last` each time: the climax pyramid is the
+  // one a journey is remembered by.
+  //
+  // Chosen by the journey's own authored ROLE and not by its title. Anubis takes the Valley of the Kings
+  // because its role is funerary and its brief says necropolis, and he is the necropolis. Sobek takes the
+  // Nile Delta because that journey's brief already lists a crocodile.
+  journey("expert_1").pyramid("last", { patron: "anubis" }),
+  journey("expert_3").pyramid("last", { patron: "sobek" }),
 ]

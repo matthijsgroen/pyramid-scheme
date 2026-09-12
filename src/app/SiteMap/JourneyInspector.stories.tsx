@@ -182,9 +182,23 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
   const pos: readonly [number, number] = explorerPos ?? grid?.entrancePos ?? [0, 0]
 
   const handleClick = (row: number, col: number) => {
-    if (!grid || revealAll) return
+    if (!grid) return
+    // REVEALED, THE MAP IS A WALKABLE EXHIBIT. Judging art means standing the explorer next to the
+    // thing being judged — behind a chest, at the mouth of a stair — and the run itself is beside the
+    // point with every room already open. So a click puts him on any floor cell, solves nothing and
+    // collects nothing, and the floor buttons above do the climbing. With reveal off it is the real
+    // flow again: only a reachable room, and stepping on a stairhead takes the stair.
+    if (revealAll) {
+      const cell = getCell(grid, row, col)
+      if (!cell || cell.type === "empty") return
+      setExplorerPos([row, col])
+      return
+    }
     const cell = getCell(grid, row, col)
-    if (!cell || cell.type !== "room" || cell.state !== "reachable") return
+    // A RUN ARROW AIMS AT THE FAR END of a corridor, and that room is "visible" rather than "reachable"
+    // until the player is beside it — so a gate of reachable-only dropped three arrows in four and left
+    // the inspector walking in one direction. The game itself walks the corridor to get there.
+    if (!cell || cell.type !== "room" || (cell.state !== "reachable" && cell.state !== "visible")) return
 
     const edgeId = encodeEdge(currentFloor, row, col)
     setSolvedEdges(prev => [...prev, edgeId])
@@ -268,7 +282,13 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
           </div>
         </div>
         <div className="relative">
-          <SiteMapView grid={grid} onCellClick={handleClick} explorerPos={pos} revealAllCells={revealAll} />
+          <SiteMapView
+            grid={grid}
+            onCellClick={handleClick}
+            explorerPos={pos}
+            revealAllCells={revealAll}
+            freeWalk={revealAll}
+          />
           <ExplorerDot grid={grid} pos={pos} />
         </div>
         <p className="text-xs text-stone-600">

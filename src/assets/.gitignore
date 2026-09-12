@@ -7,3 +7,10 @@
 !maskable*
 !masonry*.png
 !stained-glass*.png
+!tiles/**
+# `!tiles/**` re-includes EVERYTHING under tiles/, which undoes the global ignore too — a stray .DS_Store
+# in an art directory showed up as something to commit. Re-exclude it here rather than in the repo root:
+# the negation is what caused it, so the correction belongs beside it.
+tiles/**/.DS_Store
+tiles/preview.png
+tiles/palette-test.png

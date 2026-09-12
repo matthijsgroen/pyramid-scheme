@@ -894,7 +894,7 @@
     "goal": "Steek de kuil over naar de andere oever.",
     "rules": {
       "want": "Elke krokodil wil één antwoord uit de rij stenen achter zich: het grootste, of het kleinste.",
-      "mark": "De drie streepjes ernaast zeggen welke: brandt het lange streepje, dan wil hij het grootste antwoord; brandt het korte, dan het kleinste.",
+      "mark": "Zijn open bek zegt welke, en het teken ernaast ook: > staat open naar het grootste antwoord, < naar het kleinste.",
       "bite": "Stap je op een andere steen, dan hapt hij: je verliest een hart en begint weer bij de oever."
     },
     "hint": {

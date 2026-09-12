@@ -52,6 +52,9 @@ export const TombPuzzleView: FC<{
   inventoryItems,
   onInventoryItemClick,
 }) => (
+  // No backdrop of its own: `EncounterModal` wears the floor's wall now, so the whole card is stone and
+  // this view is the part of it the door stands in. Painting the wall here as well put the same image on
+  // three layers at three different scales.
   <div className="flex flex-1 flex-row overflow-y-auto">
     <div className="flex flex-1" />
     <div className="flex min-w-fit flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
