@@ -73,6 +73,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A chest on the map is treasure you can open. One stands beside the marker of every treasure room, in
   that tomb's own stone, and no room is furnished with a chest any more — so a chest never means "not that
   one". The hundred-odd rooms that held one are furnished with something else instead.
+- The green that has got into the Nile Delta Expedition is drawn. Tufts force their way out of the joints
+  in the paving, roots hang down through the wall band, and a plant stands in a chamber — where all three
+  were 22-pixel placeholders before. It is the only condition any site in the world authors.
 - The Nile Delta Expedition is growing over. Green forces through the brick a little more with every
   pyramid of it, and the last one is thick with it — the same site read all the way up, from the entrance
   floor to the vault.

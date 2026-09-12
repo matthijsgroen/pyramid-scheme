@@ -210,14 +210,14 @@ const GrowthRow: FC<{ tier: Difficulty; kind: string; zoom: number }> = ({ tier,
             style={{ left: CELL * 0.3 * zoom, top: floorLine - 18 * zoom, width: 18 * zoom, height: 18 * zoom }}
           />
         )}
-        {/* roots through the band: anchored to its TOP and hanging past its bottom, which is the whole
-            point — WALL_H is 28 and this is 40. */}
+        {/* roots through the band, filling it exactly: top edge to bottom edge, WALL_H tall. Hung past
+            the bottom they end in mid-air over the paving and the sprite reads as floating. */}
         {root && (
           <img
             src={root}
             alt={`${kind} roots`}
             className="absolute"
-            style={{ left: CELL * 1.15 * zoom, top: 0, width: 26 * zoom, height: 40 * zoom }}
+            style={{ left: CELL * 1.15 * zoom, top: 0, width: 26 * zoom, height: WALL_H * zoom }}
           />
         )}
         {/* a chamber plant: bottom-anchored on the floor, 30-46 units */}

@@ -527,6 +527,29 @@ yarn import-tile art/masters/props/default/exit.webp --tier=default --name=exit 
   --filter=smooth --mask="$OBJ" --glow="$LIGHT" --brightness=0.85
 rm -f "$LIGHT"
 
+# THE CONDITION SPRITES — the green that has got into a site and shows on every floor of it. NO SCAFFOLD
+# AND NO MASK on any of the three: there is no primitive for a weed and there does not need to be, because
+# these are drawn at 22 to 34 units and their shape IS the art. Straight to the generator, keyed on
+# magenta, the same route as the flat tally boards.
+#
+# NO CORRECTION FLAGS, and it is worth writing down which number that rests on. They are painted dull
+# grey-sage rather than green — the brief asks for that, because one drawing serves all five ranks and a
+# shared tile belongs to no rank's palette — and beside a lone product shot they look washed out. What
+# decides it is the separation against the floor they are actually drawn on, which is the PRIEST's pale
+# basalt and nothing else: overgrown lands 19 darker, -wall 21 and -plant 14, all past the ten-luminance
+# rule, with both tails under 3% and +33 to +35 of warmth against his cool stone. The warmth is what
+# makes them read as something living on it.
+#
+# ONLY EXPERT AUTHORS THEM (spec/expert.ts, journey expert_3 pyramids 2-5, graded 0.2 to 1), so the
+# palette note above is about where they COULD be drawn rather than where they are. A rank with a dark
+# floor would want them lighter, and that is an override to take when some other journey grows over.
+yarn import-tile art/masters/surfaces/overgrown.webp --tier=default --name=overgrown --slot=growth \
+  --filter=smooth
+yarn import-tile art/masters/surfaces/overgrown-wall.webp --tier=default --name=overgrown-wall --slot=growthWall \
+  --filter=smooth
+yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name=overgrown-plant --slot=growth \
+  --filter=smooth
+
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
 # replaces was a post-processing copy whose flags could not be recovered (art/README).
 #

@@ -120,18 +120,23 @@ export const MapGrowth = ({
             />
           )
         })}
-      {/* ── the WALL: roots through the band above a cell, hanging down into it ──
+      {/* ── the WALL: roots through the band above a cell ──
           `wallCells` is only the cells with a band drawn above them (void to the north), because a root
-          has to come THROUGH something the map actually draws. Anchored to the band's top edge and
-          allowed to hang past its bottom — the band is WALL_H and these are taller on purpose, which is
-          what says the root came through the wall rather than being painted on it. */}
+          has to come THROUGH something the map actually draws.
+
+          IT FILLS THE BAND EXACTLY, top edge to bottom edge. Hanging it past the bottom was the first
+          shape — the band is WALL_H and the sprite was 34 to 52, on the argument that overshooting says
+          the root came through the wall rather than being painted on it. On the map it says the opposite:
+          the overshoot ends in mid-air over the paving with nothing to have grown out of, and the whole
+          sprite reads as floating rather than as rooted in the brick. The wall is what it is growing out
+          of, so the wall is what it is measured against, and the variance it used to carry lives in the
+          WIDTH instead. */}
       {wallCells.length > 0 &&
         Array.from({ length: g.wallCount }, (_, i) => {
           const [row, col] = pick(wallCells, "growth-wall-cell", i)
           if (!isLit(row, col)) return null
           const { cx, cy } = cellCenter(row, col)
           const w = 16 + rand(siteId, "growth-wall-w", i) * 18
-          const h = WALL_H + 6 + rand(siteId, "growth-wall-h", i) * 18
           return (
             <image
               key={`root-${i}`}
@@ -140,7 +145,7 @@ export const MapGrowth = ({
               x={cx - w / 2 + (rand(siteId, "growth-wall-x", i) - 0.5) * (CELL * 0.6)}
               y={cy - CELL / 2 - WALL_H}
               width={w}
-              height={h}
+              height={WALL_H}
               style={{ transform: rand(siteId, "growth-wall-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
             />
           )
