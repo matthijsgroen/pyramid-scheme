@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import type { FloorGrid, GridCell, SiteConfig } from "@/game/siteTypes"
+import type { CellState, FloorGrid, GridCell, SiteConfig } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { useSiteNavigation } from "./useSiteNavigation"
 
@@ -9,6 +9,14 @@ const corridor: GridCell = { type: "corridor", dirs: new Set(["w", "e"]), state:
 const puzzleRoom: GridCell = { type: "room", roomType: "encounter", dirs: new Set(["w"]), state: "reachable" }
 const exitRoom: GridCell = { type: "room", roomType: "portal", dirs: new Set(["w"]), state: "reachable" }
 const fogged: GridCell = { type: "corridor", dirs: new Set(["w"]), state: "fogged" }
+const gate = (state: CellState = "reachable"): GridCell => ({
+  type: "room",
+  roomType: "encounter",
+  family: "key-gate",
+  tags: ["gate"],
+  dirs: new Set(["w", "e"]),
+  state,
+})
 
 const gridOf = (cells: GridCell[]): FloorGrid => ({
   cells: [cells],
@@ -84,6 +92,18 @@ describe("useSiteNavigation", () => {
     arrive()
 
     expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
+  })
+
+  // A gate's bars are drawn across the FAR side of its own square, so the square is ground the player
+  // stands on and the gate is walked into like any other room — no case of its own in here.
+  it("walks onto a gate the same as any other encounter room", () => {
+    const { hook, journeys, onEncounter } = setup([entrance, corridor, gate()])
+
+    act(() => hook.result.current.onCellClick(0, 2))
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", "0:0,2")
+
+    arrive()
+    expect(onEncounter).toHaveBeenCalledWith([0, 2], true)
   })
 
   it("asks about leaving on arrival at an exit, not on the tap that started the walk", () => {

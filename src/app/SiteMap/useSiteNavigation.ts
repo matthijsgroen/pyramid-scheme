@@ -47,7 +47,6 @@ export const useSiteNavigation = ({
       grid ? Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100 : 0,
     [grid, explorerPos]
   )
-
   const onCellClick = useCallback(
     (row: number, col: number) => {
       if (!grid) return
@@ -113,6 +112,10 @@ export const useSiteNavigation = ({
         journeys.markCellExplored(sectionHash, edgeId)
         journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "encounter") {
+        // A GATE IS WALKED INTO LIKE ANY OTHER ROOM. Its bars are drawn across the FAR side of its own
+        // square, on the sill where this rank's stone meets the pocket's (`SiteMapView`), so the square
+        // itself is the ground you stand on to work the gate rather than the barrier — which is why
+        // this needs no case of its own.
         journeys.updatePosition(journeyId, edgeId)
         scheduleArrival(walkDelay(row, col), () => onEncounter([row, col], true))
       } else if (cell.roomType === "portal") {

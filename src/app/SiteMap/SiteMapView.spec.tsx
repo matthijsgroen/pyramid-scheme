@@ -1,6 +1,6 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
-import { SiteMapView, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
+import { SiteMapView, approachCells, buildRoomClaims, footprintPath, tileRegionsFor } from "./SiteMapView"
 import { NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP } from "./nodeArt"
 import { ExplorerFigure, LIGHT_POOL_ID } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
@@ -62,6 +62,16 @@ const portal = (state: CellState, stairId?: string): GridCell => ({
   state,
 })
 
+// A portal room whose only way out runs east — the side approach, which takes the flight that walks
+// across X rather than the one that comes toward the viewer.
+const portalEast = (state: CellState, stairId?: string): GridCell => ({
+  type: "room",
+  roomType: "portal",
+  stairId,
+  dirs: new Set<Direction>(["e"]),
+  state,
+})
+
 const makeGrid = (cells: GridCell[][]): FloorGrid => ({
   cells,
   rows: cells.length,
@@ -77,6 +87,15 @@ const corridorBetween = (linked: boolean): GridCell => ({
   type: "corridor",
   dirs: new Set<Direction>(linked ? ["w", "e"] : []),
   state: "completed",
+})
+
+const gateRoom = (dirs: Direction[], state: CellState = "reachable"): GridCell => ({
+  type: "room",
+  roomType: "encounter",
+  family: "key-gate",
+  tags: ["gate"],
+  dirs: new Set(dirs),
+  state,
 })
 
 const clickableIn = (container: HTMLElement) =>
@@ -1057,11 +1076,22 @@ describe("a staircase is drawn as the flight it is", () => {
       (el.getAttribute("href") ?? "").includes("stair-")
     )
 
-  it("draws the flight where the rank has one, and eases the marker over it", () => {
+  it("draws the flight where the rank has one, and puts the marker away under it", () => {
     const { container } = render(<SiteMapView grid={stairGrid("exit")} revealAllCells />)
     expect(stairsIn(container)).toHaveLength(1)
     const marker = container.querySelector<SVGGElement>("g[opacity]")
-    expect(marker?.getAttribute("opacity")).toBe(String(NODE_OVER_ART_OPACITY))
+    expect(marker?.getAttribute("opacity")).toBe("0")
+  })
+
+  // Invisible, not absent: the shape is what gives the node its clickable area, so a stairhead that
+  // stopped rendering one would be a room the player could see and not walk to.
+  it("is still clickable with its marker invisible", () => {
+    const onClick = vi.fn()
+    const { container } = render(<SiteMapView grid={stairGrid("exit")} revealAllCells onCellClick={onClick} />)
+    // The stairhead is at 0,1 — asking for THAT cell is what makes this more than a corridor click.
+    const targets = clickableIn(container)
+    for (const el of targets) fireEvent.click(el)
+    expect(onClick).toHaveBeenCalledWith(0, 1)
   })
 
   it("draws the same flight at a rank with no stair art of its own", () => {
@@ -1072,6 +1102,24 @@ describe("a staircase is drawn as the flight it is", () => {
     const drawn = stairsIn(container)
     expect(drawn).toHaveLength(1)
     expect(drawn[0].getAttribute("href")).toContain("default/")
+  })
+
+  // The two side flights are painted from where the player stands, and that puts them on OPPOSITE
+  // hands: you meet the descending one at its top tread and the climbing one at its bottom tread. One
+  // mirror rule for both had every east-approached climb running backwards, up into the wall the
+  // player had just come through (starter_1's second floor, the starter tomb's).
+  it("turns the climbing flight the other way from the descending one on the same approach", () => {
+    const sideStairGrid = (stairAt: "entrance" | "exit") => {
+      const grid = makeGrid([[portalEast("reachable", "s1"), straightCorridor("completed", ["w"])]])
+      return { ...grid, entrancePos: stairAt === "entrance" ? ([0, 0] as const) : ([0, 1] as const) }
+    }
+    const facing = (stairAt: "entrance" | "exit") => {
+      const { container } = render(<SiteMapView grid={sideStairGrid(stairAt)} revealAllCells />)
+      const [flight] = stairsIn(container)
+      expect(flight.getAttribute("href")).toContain("-side")
+      return flight.getAttribute("transform")
+    }
+    expect(facing("entrance")).not.toBe(facing("exit"))
   })
 })
 
@@ -1113,6 +1161,131 @@ describe("the player is drawn among the furniture, not always over it", () => {
   })
 })
 
+// TWO THIRDS OF THE GATES IN THE WORLD STAND ON A CORNER — only `ns` and `ew` run straight through —
+// and on a corner the way you came in and the way that is sealed are at right angles. Aiming the bars
+// "opposite the approach" therefore hung 331 of the 489 on a wall the pocket was not behind.
+describe("a gate's bars face the pocket it shuts", () => {
+  // entrance corridor, then a corner gate whose only other way out runs NORTH into a sealed pocket.
+  const cornerGateGrid = () => {
+    const grid = makeGrid([
+      [empty, straightCorridor("reachable", ["s"])],
+      [straightCorridor("completed", ["e"]), gateRoom(["w", "n"])],
+    ])
+    return { ...grid, entrancePos: [1, 0] as const }
+  }
+
+  const gateImage = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll<SVGImageElement>("image")).find(el =>
+      (el.getAttribute("href") ?? "").includes("/gate")
+    )
+
+  it("puts them on the sealed side, not on the side away from the player", () => {
+    const { container } = render(<SiteMapView grid={cornerGateGrid()} revealAllCells />)
+    const img = gateImage(container)
+    expect(img, "the gate drew no art at all").toBeDefined()
+    // North of its own cell: x on the cell's own column, and hung in the MIDDLE of the band above it —
+    // its lower edge would put the grille below the opening, in the room rather than the doorway, and
+    // its upper edge would lift it clear of the floor it is barring.
+    expect(Number(img!.getAttribute("x"))).toBe(cellLeft(1))
+    expect(Number(img!.getAttribute("y"))).toBe(cellTop(1) - WALL_H / 2 - (CELL + WALL_H))
+  })
+
+  // Sealed EAST: entrance corridor, the gate, then the pocket beyond it to the right.
+  it("puts them on the east seam when the pocket is east", () => {
+    const grid = {
+      ...makeGrid([[straightCorridor("completed", ["e"]), gateRoom(["w", "e"]), straightCorridor("reachable", ["w"])]]),
+      entrancePos: [0, 0] as const,
+    }
+    const { container } = render(<SiteMapView grid={grid} revealAllCells />)
+    const img = Array.from(container.querySelectorAll<SVGImageElement>("image")).find(el =>
+      (el.getAttribute("href") ?? "").includes("/gate")
+    )
+    expect(img, "the gate drew no art at all").toBeDefined()
+    // The seam AFTER the gate's cell: it starts at cellLeft(c) + CELL and is SIDE_W wide, so the
+    // sprite's centre is half a seam past the cell's right edge — to the RIGHT of its own marker.
+    expect(Number(img!.getAttribute("x"))).toBe(cellLeft(1) + CELL + SIDE_W / 2 - CELL / 2)
+    expect(img!.getAttribute("href")).toContain("-side")
+  })
+
+  it("draws the face-on tile for a pocket sealed to the north, not the side one", () => {
+    const { container } = render(<SiteMapView grid={cornerGateGrid()} revealAllCells />)
+    expect(gateImage(container)!.getAttribute("href")).not.toContain("-side")
+  })
+
+  // A gate is hung IN a doorway, so it is the nearer of the two: the arch is the masonry of the opening
+  // and the gate is what has been fitted into it. Sorted by floor line among the furniture, the gate's
+  // own head came out behind the beam of the arch it stands in.
+  it("draws in front of the archway it is fitted into", () => {
+    const grid = cornerGateGrid()
+    const { container } = render(<SiteMapView grid={grid} revealAllCells />)
+    const hrefs = Array.from(container.querySelectorAll<SVGImageElement>("image")).map(
+      el => el.getAttribute("href") ?? ""
+    )
+    const gate = hrefs.findIndex(h => h.includes("/gate"))
+    const arches = hrefs.map((h, i) => (h.includes("/arch") ? i : -1)).filter(i => i >= 0)
+    expect(gate).toBeGreaterThanOrEqual(0)
+    for (const arch of arches) expect(gate).toBeGreaterThan(arch)
+  })
+
+  // A gate is drawn across the mouth of a way through, so the player passes BEHIND it — and a barrier
+  // that hid him would be a wall. The archway already does this for the two cells it spans.
+  it("goes see-through while the player is standing in it", () => {
+    const grid = cornerGateGrid()
+    const clear = render(<SiteMapView grid={grid} revealAllCells explorerPos={[1, 0]} />)
+    expect(gateImage(clear.container)!.getAttribute("opacity")).toBeNull()
+
+    const under = render(<SiteMapView grid={grid} revealAllCells explorerPos={[1, 1]} />)
+    expect(Number(gateImage(under.container)!.getAttribute("opacity"))).toBeLessThan(1)
+  })
+})
+
+// Cells do not touch: the map leaves SIDE_W between columns and WALL_H between rows for the walls seen
+// edge-on. A clip built from cell rects alone therefore has a hairline of nothing down every join, and
+// the ward gate straddles a join on purpose — it stands on the sill laid there — so the strip holding
+// its bars was cut away and its two jambs drew as separate posts.
+describe("a footprint clip bridges the seams between its own cells", () => {
+  const subpaths = (d: string) => d.split("M").length - 1
+
+  it("adds a rect for the gap between two cells side by side", () => {
+    expect(subpaths(footprintPath(["0,0", "0,1"]))).toBe(3)
+    expect(subpaths(footprintPath(["0,0", "1,0"]))).toBe(3)
+  })
+
+  it("adds nothing between cells that do not touch", () => {
+    expect(subpaths(footprintPath(["0,0", "0,2"]))).toBe(2)
+  })
+
+  it("counts each seam once, however the cells are ordered", () => {
+    expect(subpaths(footprintPath(["0,1", "0,0"]))).toBe(3)
+  })
+})
+
+// A gate's bars are drawn on the FAR side of its own square, so the map has to know which of a cell's
+// neighbours you arrive from. Everything else on the map is drawn on its own square.
+describe("the cell you approach a node from", () => {
+  it("is the neighbour toward the entrance, not the one beyond", () => {
+    // entrance ─ corridor ─ gate ─ corridor: the gate is entered from the WEST, and the corridor
+    // BEYOND it must not be mistaken for the way you came.
+    const grid = makeGrid([
+      [
+        straightCorridor("completed", ["e"]),
+        straightCorridor("completed", ["w", "e"]),
+        gateRoom(["w", "e"]),
+        straightCorridor("fogged", ["w"]),
+      ],
+    ])
+    const approach = approachCells(grid)
+    expect(approach.get("0,2")).toEqual([0, 1])
+    // and the cell beyond is approached THROUGH the gate, which is what makes it sealed.
+    expect(approach.get("0,3")).toEqual([0, 2])
+  })
+
+  it("leaves the entrance itself with nothing in front of it", () => {
+    const grid = makeGrid([[straightCorridor("completed", ["e"]), straightCorridor("completed", ["w"])]])
+    expect(approachCells(grid).get("0,0")).toBeUndefined()
+  })
+})
+
 describe("a stair's torch lights the floor beside it", () => {
   it("lays the pool at the flame, not at the middle of the cell", () => {
     // The cresset stands at the edge of the mouth. A pool at the cell's centre fell under the shaft —
@@ -1132,6 +1305,17 @@ describe("a stair's torch lights the floor beside it", () => {
       return Math.abs(Number(m[1]) - cx) > CELL / 4
     })
     expect(moved).toBe(true)
+  })
+
+  // Only the two DESCENDING tiles have a cresset painted on them. The climbing flights were lit the
+  // same way regardless, so a pool of torchlight lay on the floor beside a stair with nothing burning.
+  it("lights no flight that has no flame painted on it", () => {
+    const grid = makeGrid([
+      [empty, portal("reachable", "s1"), empty],
+      [empty, corridor("completed", false), empty],
+    ])
+    const { container } = render(<SiteMapView grid={{ ...grid, entrancePos: [0, 1] }} revealAllCells />)
+    expect(container.querySelectorAll("[data-light-pool]")).toHaveLength(0)
   })
 })
 

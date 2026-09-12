@@ -79,4 +79,10 @@ export type NodeSprite = {
    * and appeared in the corridor on the other side. A room's own footprint is the only shape that both
    * lets a chest overlap the paving beside it and stops it at the masonry. */
   footprint: readonly string[]
+  /** Cells whose occupant this sprite should go see-through for, as "r,c" keys.
+   *
+   * THE ARCHWAY'S RULE, for the same reason. A gate is drawn across the mouth of a way through, so the
+   * player walks BEHIND it — and a barrier that hid him would be a wall. `ARCH_FADE` is what a doorway
+   * already does when he stands in it, and a gate is a doorway with bars in it. */
+  fadeAt?: readonly string[]
 }

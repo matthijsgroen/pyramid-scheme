@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- A pyramid changes stone once at a ward, not three times around it. A gated branch is authored at the
+  tier it guards all the way back to where it leaves the main path, so the corridor UP TO the gate was
+  already built of the pocket's stone: you walked out of starter, through an expert passage, up to a
+  starter gate, and into expert again. Now everything this side of a ward is the pyramid's own stone and
+  only what the ward guards is built of the rank it guards — one crossing, at the bars. 693 stretches of
+  corridor across 59 floors read the old way.
+- Torchlight comes off a torch. A staircase UP has no cresset painted on it, but the map lit one
+  anyway, laying a pool of flamelight on the floor beside a stair with nothing burning on it.
+- A staircase faces the passage you came along. A flight entered from the side was drawn the wrong way
+  round, climbing into the wall behind it, and a shaft entered from the south put its steps at the far
+  lip so you went down it backwards — the second floor of the first pyramid and the starter tomb both
+  showed one.
 - A dedicated pyramid gives its god the biggest room on the floor, and a pair of his statues stand in
   it. The Temple of Bastet used to show her once per floor in whichever room a hash picked — a side
   pocket as often as the hall — and sometimes as a cabinet rather than a figure.
@@ -22,6 +34,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A ward gate is a gate now, not a symbol. A barred grille in a stone doorway, with a drawbar across it
+  into sockets in the jambs, stands across the far side of the gate's own room — on the sill the map
+  already lays where one rank's stone meets the next, which at a ward gate is exactly there. You walk in
+  and stop at the bars, and you pass behind them — they go see-through while you stand in the gateway,
+  the way an archway does. Opened, they sink into the threshold and the way through is clear. A passage
+  walked across gets its own drawing rather than a turned one, so a gate reads from either approach, and
+  all of it is drawn at every rank.
+- A staircase on the map is the flight itself. The node marker that used to sit over it is gone — the
+  painted stair says "stairs" better than a symbol did — and the room is clicked and walked to exactly
+  as before.
 - A chest on the map is treasure you can open. One stands beside the marker of every treasure room, in
   that tomb's own stone, and no room is furnished with a chest any more — so a chest never means "not that
   one". The hundred-odd rooms that held one are furnished with something else instead.

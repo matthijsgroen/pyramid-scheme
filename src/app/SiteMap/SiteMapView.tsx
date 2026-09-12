@@ -397,14 +397,26 @@ const isLockedGate = (cell: RoomCell, ownedKeys: ReadonlySet<string> | undefined
   cell.tags?.includes("gate") === true && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)
 
 /** A room's own footprint as a clip path: each of its cells, grown upward by a prop's headroom so a
- * tall thing still crosses the wall band behind it. */
-const footprintPath = (cells: readonly string[]): string =>
-  rectsToPath(
-    cells.map(key => {
-      const [r, c] = key.split(",").map(Number)
-      return [cellLeft(c), cellTop(r) - PROP_H, CELL, CELL + PROP_H] as Rect
-    })
-  )
+ * tall thing still crosses the wall band behind it.
+ *
+ * AND THE SEAMS BETWEEN THEM. Cells do not touch — `cellLeft`/`cellTop` leave `SIDE_W` between columns
+ * and `WALL_H` between rows for the walls seen edge-on — so a clip built from cell rects alone has a
+ * hairline of nothing down every join. Furniture standing wholly inside one cell never met it; the ward
+ * gate, which straddles a seam on purpose because that is where its sill is laid, came out with the
+ * strip containing its bars cut clean away and its two jambs drawn as separate posts.
+ */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over cell keys, exported so tests can assert on the clip
+export const footprintPath = (cells: readonly string[]): string => {
+  const own = cells.map(key => key.split(",").map(Number) as [number, number])
+  const has = new Set(cells)
+  const rects: Rect[] = own.map(([r, c]) => [cellLeft(c), cellTop(r) - PROP_H, CELL, CELL + PROP_H])
+  for (const [r, c] of own) {
+    // Each seam once: only ever to the east and to the south, so a pair of cells cannot add it twice.
+    if (has.has(`${r},${c + 1}`)) rects.push([cellLeft(c) + CELL, cellTop(r) - PROP_H, SIDE_W, CELL + PROP_H])
+    if (has.has(`${r + 1},${c}`)) rects.push([cellLeft(c), cellTop(r) + CELL - PROP_H, CELL, WALL_H + PROP_H])
+  }
+  return rectsToPath(rects)
+}
 
 /** How far the cresset at a stair's mouth stands from the middle of its cell, measured off the painted
  * tile rather than guessed: the flame's own pixels land 24 units left of centre. */
@@ -444,6 +456,37 @@ const StandingLayer = ({ sprites }: { sprites: readonly StandingSprite[] }) => (
   </>
 )
 
+/** For every cell, the cell you came FROM walking out of the floor's entrance — so a node can be drawn
+ * on its own approach rather than on itself. Built once per floor and only when something asks, because
+ * only the gates do.
+ *
+ * A GATE'S LEAF STANDS IN THE PASSAGE IT SHUTS, one cell in front of the gate's own square, which is
+ * where a door is: between you and what it keeps you from. Every gate in the world is a CUT — nothing
+ * behind one is reachable another way — and the explorer is halted on this very cell rather than walked
+ * through it (`useSiteNavigation`), so the leaf and the player meet face to face.
+ */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on cells
+export const approachCells = (grid: FloorGrid): Map<string, readonly [number, number]> => {
+  const from = new Map<string, readonly [number, number]>()
+  const seen = new Set([`${grid.entrancePos[0]},${grid.entrancePos[1]}`])
+  const queue: Array<readonly [number, number]> = [grid.entrancePos]
+  for (let i = 0; i < queue.length; i++) {
+    const [r, c] = queue[i]
+    const cell = grid.cells[r]?.[c]
+    if (!cell || cell.type === "empty") continue
+    for (const dir of cell.dirs) {
+      const [dr, dc] = DIR_MOVES[dir]
+      const next = [r + dr, c + dc] as const
+      const key = `${next[0]},${next[1]}`
+      if (seen.has(key)) continue
+      seen.add(key)
+      from.set(key, [r, c])
+      queue.push(next)
+    }
+  }
+  return from
+}
+
 /** Every node's own furniture on one floor, in map space — chests beside treasure rooms, flights at
  * stairheads. See `NodeSprite` for why this is a list and not a child of each node's own `<g>`.
  *
@@ -461,6 +504,7 @@ const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficul
     else footprints.set(ownerKey, [ownerKey, cellKey])
   }
   const out: NodeSprite[] = []
+  let approach: Map<string, readonly [number, number]> | null = null
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
@@ -481,26 +525,128 @@ const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficul
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
         })
+      } else if (kind === "gate") {
+        // `gate` is shut and `gate-open` is the same leaf swung back or sunk into the floor; a rank with
+        // neither draws the marker alone, exactly as a stairhead did before its flights were painted.
+        //
+        // THE LEAF STANDS ONE CELL IN FRONT, in the passage it shuts (`approachCells`) — the MARKER keeps
+        // the gate's own square, because its colour is the only thing that says which key, and moving it
+        // would take that off the node it belongs to. Which is also why the leaf is clipped to the cell
+        // it stands in and not to the gate's room: a footprint clip is what keeps furniture inside its
+        // own walls, and the gate's would erase a leaf drawn outside them.
+        //
+        const open = cell.state === "completed"
+        approach ??= approachCells(grid)
+        const stands = approach.get(`${r},${c}`)
+        if (!stands) continue
+        const [ar, ac] = stands
+
+        // THE BARS FACE THE POCKET, NOT AWAY FROM THE PLAYER, and on two thirds of the gates in the
+        // world those are different directions. Only `ns` and `ew` gates run straight through; `es`,
+        // `sw`, `nw` and `en` are CORNERS, and on a corner the way you came in and the way that is
+        // sealed are at right angles — so "the side opposite the approach" hung the gate on a wall the
+        // pocket is not even behind, one turn away from the seam it belongs in.
+        //
+        // The sealed side is the one whose neighbour is reached THROUGH this gate, which `approachCells`
+        // already knows: it is the neighbour whose own approach is the gate itself. That also settles a
+        // cell with three ways out, where "not the way I came" would have been a choice of two.
+        const back: Direction = ar < r ? "n" : ar > r ? "s" : ac < c ? "w" : "e"
+        const sealed = [...cell.dirs].find(dir => {
+          if (dir === back) return false
+          const [mr, mc] = DIR_MOVES[dir]
+          const beyond = approach?.get(`${r + mr},${c + mc}`)
+          return beyond?.[0] === r && beyond?.[1] === c
+        })
+        const [dr, dc] = sealed ? DIR_MOVES[sealed] : [r - ar, c - ac]
+
+        // A GATE IS AIMED BY WHICH ONE IS DRAWN, the same as a flight. Shutting a way walked ACROSS, the
+        // grille's own plane is the y-z one and this projection draws that as a line, so `-side` is a
+        // second drawing: narrow and tall where the face-on one is broad, because that is the shape this
+        // projection actually makes of it. Turning the tile instead would be a skew — a reflection is a
+        // real oblique view and a rotation is not (`NodeSprite`).
+        const name = `${open ? "gate-open" : "gate"}${dc !== 0 ? "-side" : ""}`
+        const url =
+          tileUrl(tier, name) ??
+          tileUrl(tier, open ? "gate-open" : "gate") ??
+          (open ? tileUrl(tier, "gate") : undefined)
+        if (!url) continue
+
+        // THE BARS STAND ON THE SILL. Wherever one rank's stone meets another's across a way the player
+        // walks, the map lays a threshold in the tier being entered (`tileRegions`), and a ward gate is
+        // exactly such a seam because the pocket it shuts is authored at another tier. A shut gate's own
+        // square wears the FLOOR's stone rather than the pocket's (`cellFloorAt`, which is what stops the
+        // next tier being read off the paving early), so the seam falls on the sealed side of it: the
+        // gate's square is the ground you stand on to work the gate, and the bars are its far wall.
+        //
+        // Which is also why nothing halts the player short of it. He walks in and stops at the bars, the
+        // way you do at a locked gate, and the cell he is standing on is the gate's own.
+        // THE SEAM IN THE MAP'S OWN ARITHMETIC. `cellLeft`/`cellTop` put the gap BEFORE each cell, so the
+        // one AFTER cell c starts at `cellLeft(c) + CELL` and is `SIDE_W` wide, and the band after row r
+        // starts at `cellTop(r) + CELL` and is `WALL_H` tall. Both far cases were written as if the gap
+        // came before: the gate stood a whole `SIDE_W` west of the seam it belonged in, and rested on the
+        // TOP edge of the band below it rather than the bottom, hanging 28 units clear of its own sill.
+        const seamCx =
+          dc > 0 ? cellLeft(c) + CELL + SIDE_W / 2 : dc < 0 ? cellLeft(c) - SIDE_W / 2 : cellLeft(c) + CELL / 2
+        // IN the band, not under it and not on top of it. A horizontal seam is `WALL_H` of wall seen face
+        // on: feet on its lower edge hang the whole grille below the opening, in the room rather than in
+        // the doorway, and feet on its upper edge lift it clear of the floor it is supposed to bar. Half
+        // a band down from the top puts it in the middle of the masonry, which is where a gate hangs.
+        // A seam between COLUMNS has no such band — it is a side wall seen edge-on — so there the floor
+        // line is the floor line.
+        const seamBase = dr > 0 ? cellTop(r) + CELL + WALL_H / 2 : dr < 0 ? cellTop(r) - WALL_H / 2 : cellTop(r) + CELL
+        const base = seamBase
+        const left = seamCx - CELL / 2
+        out.push({
+          // The gate's cell AND the one beyond it, because the clip is what keeps furniture inside its
+          // own walls and this deliberately spans one: clipped to either alone, half the gate is cut.
+          footprint: [`${r},${c}`, `${r + dr},${c + dc}`],
+          // The same two cells fade it: they are the only ones ever behind a gate, exactly as a doorway
+          // fades for the two its arch spans.
+          fadeAt: [`${r},${c}`, `${r + dr},${c + dc}`],
+          key: `gate:${r},${c}`,
+          url,
+          x: left,
+          y: base - PROP_H,
+          mirrored: false,
+        })
       } else if (kind === "stairhead") {
         const goesUp = r === grid.entrancePos[0] && c === grid.entrancePos[1]
         // A FLIGHT IS AIMED BY WHICH ONE IS DRAWN, not by turning one. Descending, it can only come
         // TOWARD the viewer — receding, the rise subtracts what the going adds and the treads collapse
         // into one band — so a stairhead entered from the side takes the flight that walks across X
-        // instead, and west is that one mirrored. Absent art falls back to the toward-viewer flight, so
-        // a rank with one file still draws all four facings.
+        // instead, mirrored when the corridor is on the wrong hand. Absent art falls back to the
+        // toward-viewer flight, so a rank with one file still draws all four facings.
         const sideways = cell.dirs.has("e") || cell.dirs.has("w")
         const side = sideways ? tileUrl(tier, goesUp ? "stair-up-side" : "stair-down-side") : undefined
-        const url = side ?? tileUrl(tier, goesUp ? "stair-up" : "stair-down")
+        // The descending flight walked the OTHER way up the page: entered from the south its treads are
+        // at the near lip of the shaft rather than the far one, which is the picture flipped in Y. That
+        // flip is the one thing the renderer must not do, because it would carry the cresset down with
+        // it and stand the flame on the floor — so the south approach is a file of its own, painted with
+        // the torch left where it stands. Absent, the north flight stands in for both.
+        const downhill = cell.dirs.has("s") && !cell.dirs.has("n") ? tileUrl(tier, "stair-down-south") : undefined
+        const url = side ?? (goesUp ? undefined : downhill) ?? tileUrl(tier, goesUp ? "stair-up" : "stair-down")
         if (!url) continue
-        const mirrored = cell.dirs.has("w") && !cell.dirs.has("e")
+        // The two side flights are painted opposite-handed, because each is drawn from where the player
+        // stands: the descending one is entered at its top tread on the EAST, the climbing one at its
+        // bottom tread on the WEST. So they mirror on opposite approaches, and a cell open both ways is
+        // approached from the east like any other.
+        const fromWest = cell.dirs.has("w") && !cell.dirs.has("e")
+        const mirrored = side !== undefined && goesUp ? !fromWest : fromWest
         out.push({
-          light: {
-            // Measured off the painted tile: the flame sits 24 units left of the cell's centre, a
-            // little above it, and swaps sides when the flight is mirrored.
-            x: cx + (mirrored ? STAIR_FLAME_DX : -STAIR_FLAME_DX),
-            y: cy - CELL * 0.1,
-            r: LAMP_POOL_RADIUS,
-          },
+          // ONLY THE DESCENDING FLIGHTS CARRY A CRESSET. A shaft is a hole in the floor and needs a
+          // flame at its lip to read as one; the climbing flights are lit by the room they stand in and
+          // none was painted on them, so lighting one laid a pool of torchlight on the floor beside a
+          // stair with nothing burning on it. Measured off the painted tile: the flame sits 24 units
+          // left of the cell's centre, a little above it, and swaps sides when the flight is mirrored.
+          ...(goesUp
+            ? {}
+            : {
+                light: {
+                  x: cx + (mirrored ? STAIR_FLAME_DX : -STAIR_FLAME_DX),
+                  y: cy - CELL * 0.1,
+                  r: LAMP_POOL_RADIUS,
+                },
+              }),
           footprint,
           key: `stair:${r},${c}`,
           url,
@@ -1034,7 +1180,68 @@ const isPassable = (grid: FloorGrid, claims: RoomClaims, r: number, c: number, d
 // draws no floor for (see tileRegions.ts). Two junctions each claiming their side of the void
 // between them therefore merge for free, and two rooms flanking unclaimed void keep the wall
 // between them for free.
-const cellFloorAt = (
+
+/** Everything on the ENTRANCE side of every gate, as "r,c" keys — the part of a floor you can walk
+ * without ever crossing a ward.
+ *
+ * A GATED SECTION DOES NOT BEGIN AT ITS GATE. World-gen authors the whole branch at the pocket's tier,
+ * gate included, and the gate can sit well down the branch — so the corridor leading TO it was already
+ * built of the pocket's stone. Drawn honestly that reads as starter, then expert, then a starter gate,
+ * then expert again: the material changes three times to say one thing. 693 cells over 59 floors did
+ * that, up to 30 on a single floor.
+ *
+ * So the seam is placed by TOPOLOGY, at the ward itself: this side of it is the floor's own stone,
+ * beyond it is the tier it is guarding. One crossing, exactly where the bars are drawn, which is also
+ * where the map lays its sill.
+ *
+ * The walk stops at a gate whatever STATE it is in. Stopping only at shut ones would flatten the whole
+ * floor to one tier the moment a gate was opened — the seam is where the ward stands, not whether the
+ * player has got through it yet.
+ */
+const entranceSide = new WeakMap<FloorGrid, ReadonlySet<string>>()
+const cellsThisSideOfAWard = (grid: FloorGrid): ReadonlySet<string> => {
+  const cached = entranceSide.get(grid)
+  if (cached) return cached
+  const isGate = (r: number, c: number) => {
+    const cell = grid.cells[r]?.[c]
+    return cell?.type === "room" && (cell.tags?.includes("gate") ?? false)
+  }
+  const [er, ec] = grid.entrancePos
+  // Nothing to place a seam against, and nowhere to walk from: a floor with no ward keeps every tier its
+  // sections were authored at, and one whose entrance is void would otherwise reach nothing and so call
+  // the whole map the far side.
+  const none: ReadonlySet<string> = new Set()
+  const start = grid.cells[er]?.[ec]
+  if (!start || start.type === "empty") return none
+  let anyGate = false
+  for (let r = 0; r < grid.rows && !anyGate; r++)
+    for (let c = 0; c < grid.cols && !anyGate; c++) if (isGate(r, c)) anyGate = true
+  if (!anyGate) {
+    entranceSide.set(grid, none)
+    return none
+  }
+  const reached = new Set([`${er},${ec}`])
+  const queue: Array<readonly [number, number]> = [grid.entrancePos]
+  for (let i = 0; i < queue.length; i++) {
+    const [r, c] = queue[i]
+    // A ward is reached and not passed: it stands on this side, and everything past it does not.
+    if (isGate(r, c) && !(r === er && c === ec)) continue
+    const cell = grid.cells[r]?.[c]
+    if (!cell || cell.type === "empty") continue
+    for (const dir of cell.dirs) {
+      const [dr, dc] = DIR_MOVES[dir]
+      const key = `${r + dr},${c + dc}`
+      if (reached.has(key)) continue
+      reached.add(key)
+      queue.push([r + dr, c + dc])
+    }
+  }
+  entranceSide.set(grid, reached)
+  return reached
+}
+
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on cells
+export const cellFloorAt = (
   grid: FloorGrid,
   claims: RoomClaims,
   ownedKeys: ReadonlySet<string> | undefined,
@@ -1044,15 +1251,32 @@ const cellFloorAt = (
   // The stone a cell is built of is its own SECTION's tier, not its floor's: a pocket gated behind a
   // junior key is junior stone inside a starter pyramid, and walking through the gate should say so.
   const floorTierOf = grid.difficulty ?? "starter"
+  // A GATE NOT YET OPENED WEARS THE PYRAMID'S OWN STONE. The pocket behind it keeps its authored tier —
+  // that is the point of the material, and walking through says so — but the gate's own square is on
+  // THIS side of the door, and paving it in the pocket's stone let the player read next tier's
+  // difficulty off the floor before earning the right to see it. Everything further in is dark until
+  // the gate opens, so this one square was the whole of the peek.
+  // THE SEAM IS AT THE WARD. Everything this side of one — the gate's own square included — is the
+  // pyramid's own stone, and only what the gate guards is built of the tier it guards. That is one
+  // crossing instead of three, and it lands where the bars are (`cellsThisSideOfAWard`).
+  const thisSide = cellsThisSideOfAWard(grid)
+  const tierOf = (cell: { difficulty?: Difficulty }, row: number, col: number): Difficulty =>
+    thisSide.has(`${row},${col}`) ? floorTierOf : (cell.difficulty ?? floorTierOf)
   const owner = litClaimOwner(grid, claims, r, c)
   // A claimed cell renders as part of its owner: same material, same state, one continuous chamber.
-  if (owner) return { state: owner.state, kind: "room", tier: owner.difficulty ?? floorTierOf }
+  // A claimed cell is grid VOID and so on no walk of the floor: it asks the question at its OWNER's
+  // square, or every chamber would come out the far side of every ward.
+  if (owner) {
+    const ownerKey = claims.claimedBy.get(`${r},${c}`) ?? `${r},${c}`
+    const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
+    return { state: owner.state, kind: "room", tier: tierOf(owner, ownerRow, ownerCol) }
+  }
   const cell = cellAt(grid, r, c)
   if (cell.type === "empty") return "stone"
   // A real passage still in the dark is not stone — see FloorAt.
   if (cell.state === "fogged") return "unlit"
   const kind = cell.type === "room" ? "room" : "corridor"
-  const tier = cell.difficulty ?? floorTierOf
+  const tier = tierOf(cell, r, c)
   // A locked gate reads as not-yet-yours: cosmetic only, exactly as its icon does below.
   if (cell.type === "room" && cell.state === "reachable" && isLockedGate(cell, ownedKeys)) {
     return { state: "visible", kind, tier }
@@ -1947,6 +2171,7 @@ export const SiteMapView = ({
   // Everything that stands on this floor, in one list: a room's furniture and a node's own, each with
   // the line it stands on. Split at the explorer's own floor line so he is drawn in the middle.
   const standing = useMemo((): StandingSprite[] => {
+    const standingOn = explorerPos ? `${explorerPos[0]},${explorerPos[1]}` : null
     const sprites: StandingSprite[] = nodeSprites.map(sprite => ({
       key: sprite.key,
       baseY: sprite.y + PROP_H,
@@ -1960,6 +2185,7 @@ export const SiteMapView = ({
           y={sprite.y}
           width={CELL}
           height={PROP_H}
+          opacity={standingOn && sprite.fadeAt?.includes(standingOn) ? ARCH_FADE : undefined}
           transform={sprite.mirrored ? "scale(-1, 1)" : undefined}
         />
       ),
@@ -1985,14 +2211,22 @@ export const SiteMapView = ({
       })
     }
     return sprites.sort((a, b) => a.baseY - b.baseY)
-  }, [grid, claims, tier, nodeSprites])
+  }, [grid, claims, tier, nodeSprites, explorerPos])
 
   // The line the player stands on. A sprite lower than it is nearer the viewer and is drawn after him;
   // one level with it loses the tie, because the actor belongs in front of the furniture he shares a
   // floor line with.
   const explorerBaseY = explorerPos ? cellCenter(explorerPos[0], explorerPos[1]).cy + CELL / 2 : Infinity
-  const behindExplorer = standing.filter(s => s.baseY <= explorerBaseY)
-  const inFrontOfExplorer = standing.filter(s => s.baseY > explorerBaseY)
+  // A GATE IS DRAWN WITH THE ARCHWAYS, after everything else, for the archway's own reason: it is a
+  // thing in the world rather than a decal, so the player walks BEHIND it, and it is hung in the wall
+  // band where an arch is — sorted by its floor line among the furniture it came out UNDER the doorway
+  // it is fitted into, which put the gate's own head behind a beam. It fades for the two cells it spans
+  // (`fadeAt`), exactly as a doorway does, so passing behind it never hides the player.
+  const isGate = (s: StandingSprite) => s.key.startsWith("gate:")
+  const gateSprites = standing.filter(isGate)
+  const seated = standing.filter(s => !isGate(s))
+  const behindExplorer = seated.filter(s => s.baseY <= explorerBaseY)
+  const inFrontOfExplorer = seated.filter(s => s.baseY > explorerBaseY)
   const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Where the arches are, in the same terms the wall bands are built in, with the stone each one is cut
   // from — the sill in that gap is drawn to match it (see TileLayers.archedGaps).
@@ -2259,9 +2493,21 @@ export const SiteMapView = ({
                   onClick={clickable ? () => onCellClick(r, c) : undefined}
                   style={{ cursor: clickable ? "pointer" : "default" }}
                 >
+                  {/* A FLIGHT SAYS STAIRS BETTER THAN A MARKER DOES, so where one is drawn the marker
+                      goes out entirely rather than merely easing back the way a chest's does. The
+                      stair is the only node whose art IS the node — a chest stands BESIDE a treasure
+                      room's marker and still needs it to say which room — so this is the one place the
+                      vector can be spared. Opacity rather than a skipped render: the shape is what
+                      gives the group its clickable area, and an invisible one still takes a hit. */}
                   <g
                     opacity={
-                      isCompleted && !isPending && !isPortal ? 0.45 : hasChest || hasStair ? NODE_OVER_ART_OPACITY : 1
+                      isCompleted && !isPending && !isPortal
+                        ? 0.45
+                        : hasStair
+                          ? 0
+                          : hasChest
+                            ? NODE_OVER_ART_OPACITY
+                            : 1
                     }
                   >
                     <NodeShape
@@ -2327,6 +2573,10 @@ export const SiteMapView = ({
 
           {/* Last, so a doorway passes in FRONT of the player walking under it — see Archways. */}
           <Archways doorways={doorways} explorerPos={explorerPos} />
+
+          {/* And the gate in front of the arch it is fitted into: the frame is the masonry of the
+              opening, the gate is what has been hung in it, so the leaf is the nearer of the two. */}
+          <StandingLayer sprites={gateSprites} />
 
           {/* The air, over the stone and over the player: what is carried on it, and what hour it is. */}
           <MapWeather mood={mood} siteId={grid.siteId} width={svgWidth} height={svgHeight} />

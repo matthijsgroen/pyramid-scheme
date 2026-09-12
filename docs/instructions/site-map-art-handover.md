@@ -18,10 +18,13 @@ the branch is in and how to run the next step.
 master byte for byte. Run that last one after touching `renderProp.py` or `importTile.ts`: it is the only
 check that catches a geometry change silently invalidating a master.
 
-**THE STAIRS ARE THE LIVE WORK, and they are half done** — the map draws a flight at a stairhead now,
-aimed by the room's one exit and lit by its own torch. **All four flights are painted and shared** —
-`stair-down`, `stair-down-side`, `stair-up` and `stair-up-side` in `tiles/default/`, drawn at every rank,
-west mirrored from east. What is left of this section is the WARD GATE.
+**THE STAIRS ARE THE LIVE WORK** — the map draws a flight at a stairhead, aimed by the room's one exit
+and lit by its own torch. **All five flights are painted and shared** — `stair-down`, `stair-down-south`,
+`stair-down-side`, `stair-up` and `stair-up-side` in `tiles/default/`, drawn at every rank, west mirrored
+from east. Two of those five exist because a TURN WOULD NOT DO: the side pair is painted opposite-handed,
+so they mirror on opposite approaches; and `stair-down-south` is `stair-down` flipped in Y with its
+cresset left upright where it stands, which a flip in the renderer could not have given. What is left of
+this section is nothing: the gate is built too.
 The plan is ONE GENERIC SET in `tiles/default/` rather than five per-rank sets, and the whole of it is
 in "Stairways and ward gates" below.
 
@@ -538,13 +541,18 @@ is the workflow: how to check, and how the checking has gone wrong.
 
 ## Stairways and ward gates — HALF BUILT, and where to pick it up
 
-**Route 1 was taken and the stairs are live**: art under the marker, the marker eased to 0.72 over it.
-A stairhead draws `stair-up` at the floor's own `entrancePos` and `stair-down` anywhere else, takes
-`stair-down-side` where its one exit faces east or west, and mirrors that file in x for a west-facing
-one. The ward GATE is untouched — still the vector `<rect>` and three bars — and is what remains of this
-section's original scope.
+**Route 1 was taken and the stairs are DONE**: art under the marker, and at a stairhead the marker is
+turned OFF entirely rather than eased — a painted flight says "stairs" better than a symbol does, and
+the stair is the one node whose art IS the node. The shape still renders at `opacity: 0`, because it is
+what gives the group its clickable area. A stairhead draws `stair-up` at the floor's own `entrancePos`
+and `stair-down` anywhere else, takes `stair-down-south` where its one exit faces south, takes the SIDE
+file where that exit faces east or west, and mirrors the side file in x for the other hand. The ward
+GATE is untouched — still the vector `<rect>` and three bars — and is what remains of this section.
 
-**What is painted: all four**, on rebuild lines in `tiles/default/`. A stairhead reads from any approach.
+**What is painted: all five**, in `tiles/default/`. A stairhead reads from any approach.
+
+**Only the DESCENDING flights carry a cresset**, so only they are given a light pool. A climbing flight
+is lit by the room it stands in.
 
 
 ### One generic set, not five — and the renderer already does it
@@ -582,19 +590,80 @@ half the doors in the game.
 1. ~~Roll the flights~~ — done, all four.
 2. **They already live in `tiles/default/`** — an import writes them there, so a roll is drawn at every
    rank the moment it lands.
-3. **The ward gate**, which is the untouched half of this section: a gate leaf in its jamb, one primitive,
-   and the same art-under-marker treatment. Its marker carries a key COLOUR as well as state, so the
-   vector stays on top.
-4. **Overrides for the gods and the pharaoh**, if the generic set reads wrong on their stone.
+3. ~~The ward gate~~ — **BUILT AND DRAWN**, `prim_gate` with `--contents=shut` and `--contents=open`,
+   on rebuild lines like everything else. It is the only pair in the set IMPORTED FROM ITS OWN RENDER:
+   there is no painted master, so the render is the tile, and sending it through a repaint later changes
+   one source path and nothing else. Unlike the stairhead's, the gate's marker STAYS — its colour is the
+   only thing that says which key — so the leaf sits under a vector eased to `NODE_OVER_ART_OPACITY`.
 
+   **A GATED BRANCH DOES NOT BEGIN AT ITS GATE**, which is what the material has to hide. World-gen
+   authors the whole branch at the tier it guards, gate included, and the gate can sit well down it — so
+   the corridor leading TO the ward was built of the pocket's stone and drawn in it. The map said
+   starter, expert, starter gate, expert: three changes to convey one, on 693 cells across 59 floors.
+   The seam is placed by TOPOLOGY now (`cellsThisSideOfAWard`): this side of a ward is the pyramid's own
+   stone, beyond it is the rank it guards. The walk stops at a gate whatever STATE it is in — stopping
+   only at shut ones would flatten a floor to one tier the moment a gate was opened.
+
+   **The bars stand on the SILL, at the gate's far side.** Wherever one rank's stone meets another's
+   across a way the player walks, the map lays a threshold in the tier being entered (`tileRegions`), and
+   a ward gate is exactly such a seam — the pocket it shuts is authored at another tier. A shut gate's
+   own square wears the FLOOR's stone rather than the pocket's (`cellFloorAt`, which is what stops the
+   next tier being read off the paving early), so the seam falls beyond it: the gate's square is the
+   ground you stand on to work the gate, and the bars are its far wall. `approachCells` is how the
+   renderer knows which side that is. 489 gates, every one of them a cut — nothing behind one is
+   reachable another way, median 34 cells sealed and up to 124.
+
+   **A clip built from cell rects has a seam in it**, which this is the first thing to straddle. Cells
+   are `SIDE_W` apart across and `WALL_H` down, and `footprintPath` bridged neither, so the strip holding
+   the gate's bars was cut away and its two jambs drew as separate posts. It bridges them now, between
+   cells that are both in the same footprint.
+
+   **THE BARS FACE THE POCKET, and that is not the same as facing away from the player.** Only `ns` and
+   `ew` gates run straight through; `es`, `sw`, `nw` and `en` are CORNERS, where the way in and the way
+   that is sealed are at right angles — so aiming them opposite the approach hung **331 of the 489** on a
+   wall the pocket was not behind. The sealed side is the neighbour whose own approach is the gate
+   itself, which `approachCells` already knows, and that settles three-way cells too.
+
+   **The side view is ONE bar, 14 units wide.** A portcullis's uprights stand in a row across the
+   passage, so edge-on they line up behind one another and the rank draws as a single upright — a second
+   bar beside it would be a second gate. Five went to three, three to two, and each was still the face-on
+   gate at a smaller size; one is the count the view actually has, and with one there is nothing to be
+   wide for, so the panel is `SIDE_W`, the wall's own thickness.
+
+   **It is drawn AFTER the archways**, with them rather than among the furniture. A gate is hung IN a
+   doorway: the arch is the masonry of the opening and the gate is what has been fitted into it, so the
+   gate is the nearer of the two. Sorted by floor line with the props, its own head came out behind the
+   beam of the arch it stands in.
+
+   **It stands ON the band and fades like an archway.** A horizontal seam is `WALL_H` of wall seen face
+   on: feet on its LOWER edge hang the whole grille below the opening, in the room rather than in the
+   doorway, so the gate comes down on the band's TOP edge where an arch's jambs do. And because a gate is
+   drawn across a way through, the player passes BEHIND it — a barrier that hid him would be a wall — so
+   it takes `ARCH_FADE` for the two cells it spans, exactly as a doorway does.
+
+   **Two drawings per state, because a gate is aimed the way a flight is.** Walked ACROSS, the grille's
+   own plane is the y-z one and this projection draws that as a line, so `-side` keeps the bars facing
+   the viewer and moves the JAMBS into depth: a pier above and a pier below, where the face-on gate has
+   one either side. Turning the tile was never an option — a reflection is a real oblique view and a
+   rotation is a skew (`NodeSprite`), which is `prim_stair`'s law one axis over. Four files:
+   `gate`, `gate-open`, `gate-side`, `gate-open-side`.
+
+   **The seam arithmetic is the thing to get right.** `cellLeft`/`cellTop` put the gap BEFORE each cell,
+   so the gap AFTER cell c starts at `cellLeft(c) + CELL` and the band after row r at `cellTop(r) + CELL`.
+   Written as if the gap came before, the gate stood a whole `SIDE_W` west of its own seam and rested on
+   the TOP edge of the band below it, hanging 28 units clear of the sill it is supposed to stand on.
+
+4. **Overrides for the gods and the pharaoh**, if the generic set reads wrong on their stone.
 ### Two facts that decided the shape
 
 - **A node is a quarter the area of a prop.** `NODE_RADIUS_LARGE` is `CELL * 0.34`, so a node occupies
   about 38x38 against a prop's 56x84 — which is why the art is a full prop-box sprite UNDER the marker
   rather than a painted marker.
 - **A node's COLOUR carries state, and paint cannot.** `stairFill`, `stairStroke` and `stairIcon` are
-  keyed on `CellState`, and a floor-key gate is tinted by its key colour on top of that. The marker
-  stays for exactly that reason, eased to `NODE_OVER_ART_OPACITY` where art sits under it.
+  keyed on `CellState`, and a floor-key gate is tinted by its key colour on top of that. That is why the
+  marker eases to `NODE_OVER_ART_OPACITY` over a chest rather than going out — and why the GATE's marker
+  will have to stay when its art lands, where the stair's could go. A stairhead is the exception because
+  a stair has no key and no state a player reads off its colour.
 **Three things the two flights cost, and none is guessable from the code:**
 
 - **They are not mirror images.** Drawn height is `z + k*y`, so a flight RISING as it recedes separates

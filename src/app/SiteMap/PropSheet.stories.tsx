@@ -286,7 +286,18 @@ const Sheet: FC<{ tier: Difficulty; zoom: number }> = ({ tier, zoom }) => {
         {tier} — node art <span className="text-white/40">(drawn at a marker, not authored by any pool)</span>
       </h2>
       <div className="flex flex-wrap gap-4">
-        {["chestProp", "stair-down", "stair-down-side", "stair-up"].map(kind => (
+        {[
+          "chestProp",
+          "gate",
+          "gate-open",
+          "gate-side",
+          "gate-open-side",
+          "stair-down",
+          "stair-down-south",
+          "stair-down-side",
+          "stair-up",
+          "stair-up-side",
+        ].map(kind => (
           <Chamber key={kind} tier={tier} name={kind} zoom={zoom} />
         ))}
       </div>
