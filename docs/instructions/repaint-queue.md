@@ -2936,9 +2936,9 @@ yarn import-tile art/masters/props/master/statue-horus.webp --tier=master --name
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
-## The last six to expert — one room each
+## The last five to expert — one room each
 
-Everything else at starter, junior and expert is drawn. These six are the whole remaining gap below
+Everything else at starter, junior and expert is drawn. These five are the whole remaining gap below
 master, and every one of them is a SINGLE room — which is why they sat unqueued while 62 rooms' worth of
 expert work went in ahead of them. They are here because "done up to expert" is not done with seven
 dummies still in it, not because any of them is urgent.
@@ -2947,59 +2947,6 @@ dummies still in it, not because any of them is urgent.
 what lifts his two variants out of the trap this file warns about above: a rank naming ONE god gets its
 generic drawing under another name and buys nothing. Starter names two, so Ra's shrine is what tells his
 pyramid from Bastet's.
-
-### `starter/wallShrine` — a mudbrick niche with its doors ajar
-
-1 room. The generic the Ra variant below varies, so it goes first: a variant painted before its generic
-has nothing to be judged against.
-
-**THERE IS A LAMP IN THE SCAFFOLD AND THE PROMPT HAS TO NAME IT.** `prim_wallshrine --contents=ajar` puts
-one in the black gap between the doors, and its docstring says that gap with a lamp standing in it is what
-says AJAR at all. The first roll of this entry was told the box was empty — a prompt contradicting the
-geometry it is painted over — so the generator painted the shape that was there with no idea what it was
-and returned a vague brown pot.
-
-**AND THE WHITEWASH HAS TO BE HELD DOWN.** That same roll came back near-white: lum 33/136/245, 43.7% over
-the light clamp, against the priest's shipped 20/63/110 at 0.2%. `--brightness` cannot fix it, because the
-span is the problem rather than the level — at 0.62 the light tail comes into band and the dark tail goes
-to 16.5%. Flaking lime plaster is a PALE GREY, not a white, and the prompt now says so.
-
-**Attach:**
-
-1. `~/tile-previews/wallShrine-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a small WALL SHRINE, a cupboard set into the wall. The wider slab under it is its PLINTH and
-the deeper slab over it is its CORNICE; between them is the BOX, with two leaves standing open and a dark
-opening between them.
-
-Mudbrick rendered in lime plaster, whitewashed and flaking — bare brick showing through at the corners and
-along the plinth's front edge where feet and baskets have knocked it. The two leaves are rough timber,
-grey and split, hung on leather straps.
-
-The whitewash is a dusty PALE GREY, close in value to the mudbrick it covers, not a white: it is old lime
-gone chalky in a dark cellar, and the brightest thing in this picture is barely brighter than the wall it
-hangs on. Nothing here approaches white.
-
-Standing in the dark gap between the leaves is a small OIL LAMP — a shallow clay saucer with a lit wick at
-its lip, the flame a small matte ochre tongue with no glow around it and no light thrown on the box. The
-lamp is the one thing inside; behind and around it the box is deep shade.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's tomb: mudbrick, plaster, reed and rough timber. Warm dark earth, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --colour=#a49781 --sun=0
-yarn import-tile art/masters/props/starter/wallShrine.webp --tier=starter --name=wallShrine --slot=wall \
-  --filter=smooth --mask="$OBJ"
-```
 
 ### `starter/wallShrine-ra` — Ra's disc in the merchant's wall shrine
 

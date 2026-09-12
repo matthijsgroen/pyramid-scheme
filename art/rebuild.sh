@@ -315,6 +315,23 @@ yarn import-tile art/masters/props/starter/niche.webp --tier=starter --name=nich
 yarn import-tile art/masters/props/starter/tallyBoard.webp --tier=starter --name=tallyBoard --slot=wall \
   --filter=smooth --headroom=0.18 --brightness=0.85
 
+# The merchant's WALL SHRINE — a whitewashed mudbrick cupboard, doors ajar, a lamp lit in the gap. The
+# lamp is the SCAFFOLD's, not the prompt's: `prim_wallshrine --contents=ajar` stands one there and its
+# docstring says that gap with a lamp in it is what says ajar at all. The first roll was told the box was
+# empty, which is a prompt contradicting the geometry under it, and it came back with a shapeless pot.
+#
+# --brightness=0.75, and the second roll is why the number is this one rather than the first roll's. Both
+# came back over the light clamp — 43.7% and 42.7% — but the first had 8% below the dark end already, so
+# scaling it down brought the top in and pushed the bottom out (16.5% at 0.62). The second sits at 0.0%
+# dark, so there is room to scale: at 0.75 it lands 1.7% light, 0.7% dark, median 103 inside his slab
+# band. THE SPAN IS WHAT DECIDES WHETHER --brightness CAN HELP AT ALL, not the level.
+#
+# -23 warmth and left alone, for the sconce's reason one rank over: whitewashed lime on warm mudbrick
+# cannot help reading cool, and the priest's own wall shrine ships at -26.
+scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --sun=0
+yarn import-tile art/masters/props/starter/wallShrine.webp --tier=starter --name=wallShrine --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18 --brightness=0.75
+
 # The merchant's VEIL — a reed screen drawn back on a timber rail, so a doorway is dressed without being
 # shut. Same `hanging --contents=rail` scaffold the priest's veil uses; what makes this one the merchant's
 # is entirely the paint, coarse undyed linen against his cedar-less rough timber.
