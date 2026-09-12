@@ -14,6 +14,10 @@ import {
 } from "@/mods/trap/game/crocodile/crossingState"
 import { isSolved, wantedStep, type CrossingPuzzle, type Sign } from "@/mods/trap/game/crocodile/crossingRules"
 import { useTrapProgress } from "@/mods/trap/app/useTrapProgress"
+// The explorer's BACK, because a crossing goes away from you into the pit — the same drawing the map
+// walks north with. One still frame rather than the walk cycle: nothing here moves him across a stone,
+// the pit slides under him.
+import explorer from "@/assets/tiles/default/explorer-n-1.png"
 import crocodileOpen from "@/assets/crocodile-250.png"
 import crocodileClosed from "@/assets/crocodile-closed-250.png"
 
@@ -155,7 +159,9 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
                 <div className="relative h-4 w-3/4 rounded-full bg-amber-700">
                   {/* The crossing is over the moment the far bank is reached, so that is where the
                       character is standing when the shell says so. */}
-                  {finished && <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xl">🧍</span>}
+                  {finished && (
+                    <img src={explorer} alt="" className="absolute -top-10 left-1/2 h-10 w-auto -translate-x-1/2" />
+                  )}
                 </div>
               </div>
 
@@ -205,7 +211,11 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
                             >
                               {formulaToString(stone.formula, {}, "no")}
                               {standing && !finished && (
-                                <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-xl">🧍</span>
+                                <img
+                                  src={explorer}
+                                  alt=""
+                                  className="absolute -top-10 left-1/2 h-10 w-auto -translate-x-1/2"
+                                />
                               )}
                               {bittenHere && (
                                 <img
@@ -242,7 +252,9 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
                 style={rowPlacement(-1 - facing)}
               >
                 <div className="relative h-4 w-2/3 rounded-full bg-amber-700">
-                  {path.length === 0 && <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xl">🧍</span>}
+                  {path.length === 0 && (
+                    <img src={explorer} alt="" className="absolute -top-10 left-1/2 h-10 w-auto -translate-x-1/2" />
+                  )}
                 </div>
               </div>
             </div>
