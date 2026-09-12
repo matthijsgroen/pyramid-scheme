@@ -1647,6 +1647,13 @@ def prim_exit():
     for r, y_off, part in ((0.30, 0.16, "haze"), (0.21, 0.14, "daylight")):
         disc = mark(cyl(r, 0.02, y=y_off, z=0.80, verts=26), f"{part}!nocast")
         disc.rotation_euler = (math.radians(90), 0, 0)
+    # A SHAFT OVER THE PILLAR WAS TRIED AND DROPPED, in three sizes, and the reason is worth keeping
+    # because it is an obvious thing to want twice. Rising from the floor past the stone it is a spike
+    # through the disc; sized to land on the cap it is a candle flame, which a cone closing upward always
+    # is at 56 units; wide enough to flare past the stone it is a tent pitched over it. To read as a
+    # spotlight at all it would have to reach the top of the frame, and `seat_and_normalise` scales the
+    # whole object to one unit tall — so buying the shaft means shrinking the marker, which is the thing
+    # the light is there to pick out.
     # The marker stone: a stepped base, a round shaft between two collars, and a cap.
     #
     # ROUND, and SHORT. A square post with a sunk panel in it read as a shrine cabinet — the panel is a

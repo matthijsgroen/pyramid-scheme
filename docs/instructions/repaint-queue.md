@@ -1541,8 +1541,6 @@ yarn import-tile art/masters/props/wizard/hanging.webp --tier=wizard --name=hang
 
 ---
 
----
-
 ## Floor scatter — five
 
 **FLOOR SCATTER IS PLACED BY RULE, not by an author**, so every rank draws all three of `mat`,
@@ -1845,67 +1843,6 @@ Then, once the return is in `~/Downloads`:
 yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name=overgrown-plant --slot=growth \
   --filter=smooth
 ```
-
----
-
-## Nodes — one
-
-A node's art is drawn UNDER its marker and is shared by every rank, in `tiles/default/`, for the stairs'
-reason: a way out reads the same in any tomb, and the stone that says whose tomb this is surrounds it on
-the map rather than being in the sprite.
-
-### `default/exit` — a marker pillar standing in daylight
-
-**HALF OF THIS TILE IS NOT PAINTED, and that is the only entry in the file where that is true.** The
-pillar is a scaffold like any other prop's; the daylight behind it is rendered and laid back under the
-return at import (`--behind`), because a return comes back OPAQUE on magenta and daylight that does not
-let the paving show through it is a disc of flat paint with a post in front of it. So the attachment
-below has no light in it at all — do not add any, do not paint a glow, a halo, a beam or a shadow of one.
-Anything of the kind lands on top of the real thing.
-
-**A BEAM ALONE WAS THE FIRST ANSWER AND IT FAILED IN PLAY.** At 56 units a pale cone on a pale disc reads
-as a drift of sand: nothing in it is BUILT, and a player reads "somebody put that there" off built things.
-Three more shapes went the same way before the disc — a shaft standing behind the stone is a party hat, a
-slanted one is a plank leaning on it, a narrow vertical one is a flame. What the stone must not become is
-a fourth: a square post with a sunk panel read as a SHRINE CABINET, because a panel is a doorway at this
-size whatever is painted in it.
-
-**THE REGISTER BETWEEN THE COLLARS IS THE SUBJECT.** A round shaft cannot be cut into without the relief
-curving away with it, so the glyphs are paint and the geometry owes them only a clean band to sit in. That
-band is what tells this from a bollard, and it is the one part of the picture worth detail.
-
-**Attach:**
-
-1. `~/tile-previews/exit-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a small ROUND MARKER PILLAR of limestone, standing about waist high on a stepped base — the
-stone a tomb sets where the way out is. Reading up from the floor: two square steps, a collar ring, a
-plain round REGISTER, a second collar ring, and a round cap over them.
-
-The register between the two collars carries ONE COLUMN OF HIEROGLYPHS running down the middle of it,
-cut into the stone and picked out in flat red ochre. They are shallow sunk relief, not raised, and they
-follow the curve of the shaft — crowded at the sides where it turns away, widest in the middle. The rest
-of the register is bare stone.
-
-The stone is pale limestone, dressed smooth and gone grey with dust, its arrises knocked and chipped
-where people have passed it, the base stained darker where the floor meets it. The ochre is a flat
-colour, not a metal: no highlights, no reflections, no shine.
-
-There is no light in this picture and nothing glowing. Do not add a beam, a halo, a glow, a lamp or a
-shadow — paint the stone alone against the magenta.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no reflections. Matte throughout, as if lit by one dull lamp. This tile is SHARED by all five ranks, so it belongs to no rank's palette: plain pale limestone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`, the three renders and the import are already written out in
-`art/rebuild.sh` under "THE WAY OUT" — change `"$OBJ"` in its `import-tile` line to the master's path and
-the rest stands.
 
 ---
 

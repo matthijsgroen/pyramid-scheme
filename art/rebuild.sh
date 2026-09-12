@@ -486,8 +486,11 @@ yarn import-tile "$OBJ" --tier=default --name=gate-open-side --slot=prop \
 # Everything of it is `!nocast`, so the footprint under the tile is the pillar's alone — light casts
 # nothing, and the pool at the foot is the map's (`NodeSprite.light`) as well as the tile's.
 #
-# Until a painted master lands (`repaint-queue.md`), the stone render IS the tile, as the ward gate's is.
-# When it does, one source path changes here and nothing else.
+# --brightness=0.85 IS THE STONE'S NUMBER, not the sprite's. Pale limestone came back 40.6% over the
+# light clamp with nothing at the dark end; 0.85 takes that to 5.1% and leaves 19 of separation. Measured
+# on the finished tile it reads 18.3% over and 9 of separation instead, and both of those are the
+# DAYLIGHT — a third of the sprite is the thing that is supposed to be the brightest on the map. Same
+# argument the merchant's shrine records: judge the clamp on the material, not on the whole picture.
 #
 # --shadow=0 is passed PER CALL rather than baked into the function, because it is the footprint's own
 # alpha: the footprint render is the one call that must not carry it, exactly as `scaffold()` above
@@ -500,8 +503,8 @@ LIGHT=$(mktemp -t propexitlight).png
 exit_layer --shadow=0 --drop=haze,daylight --out="$OBJ"
 exit_layer --only=shadow --out="$SHADOW"
 exit_layer --shadow=0 --drop=body --alpha-haze=0.28 --alpha-daylight=0.9 --out="$LIGHT"
-yarn import-tile "$OBJ" --tier=default --name=exit --slot=prop --filter=smooth \
-  --mask="$OBJ" --seat="$SHADOW" --behind="$LIGHT"
+yarn import-tile art/masters/props/default/exit.webp --tier=default --name=exit --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --behind="$LIGHT" --brightness=0.85
 rm -f "$LIGHT"
 
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
