@@ -1501,7 +1501,21 @@ def prim_gate():
     h = 1.02  # jamb height; the lintel sits on top of it
     half = opening / 2 + jamb / 2
     span = opening + 2 * jamb
-    open_gate = arg("contents") == "open"
+    # BOTH open facings: there is one opened drawing, so `open-side` must match here too.
+    open_gate = arg("contents", "").startswith("open")
+
+    if open_gate:
+        # OPENED, THE WHOLE GATE HAS GONE DOWN — frame and all, not just the grille. A ward that has been
+        # paid for should leave a corridor you can walk, and jambs and a lintel left standing in the
+        # passage go on saying "barred" long after the bar is lifted: at 56 units a doorway IS its frame,
+        # so keeping the stonework kept the obstacle.
+        #
+        # What is left is the slot the gate went into: a bar of dark metal lying flush in the threshold,
+        # the width of the opening. Not nothing at all — the player has to be able to see where the ward
+        # stood, and the map's own sill is laid across this same seam — but nothing that stands up out of
+        # the floor. The two facings need no separate drawing for this: a slot has no depth to collapse.
+        mark(box(0.86, 0.10, 0.045, z=0.022), "metal")
+        return join_all()
 
     if arg("contents", "").endswith("-side"):
         # THE SAME GATE IN A WALL THAT RUNS UP THE PAGE, for a passage walked across — half of them.
@@ -1532,9 +1546,6 @@ def prim_gate():
         # of the opening, so in the picture they stack rather than flank.
         mark(box(w + 0.07, thick, 0.12, z=0.06), "body")
         mark(box(w + 0.07, thick, 0.14, z=0.92), "body")
-        if arg("contents") == "open-side":
-            mark(box(w, thick * 0.7, 0.07, z=0.155), "metal")
-            return join_all()
         grille_h = 0.76
         mark(box(0.05, thick * 0.55, grille_h, z=grille_h / 2 + 0.12), "metal")
         # The drawbar, edge-on too: a stub either side of the upright rather than a bar across a row.
@@ -1558,12 +1569,6 @@ def prim_gate():
 
     proud = 0.05
     lift = k * proud
-
-    if open_gate:
-        # Gone down into its slot: the grille that filled the doorway now lies along the bottom of it,
-        # still steel, so the colour that was barring the way is the colour lying in the threshold.
-        mark(box(opening, d * 0.32, 0.09, y=-proud, z=0.08 + lift), "metal")
-        return join_all()
 
     # Five uprights, floor to lintel.
     bars, grille_h = 5, h - 0.10

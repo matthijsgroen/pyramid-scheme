@@ -40,7 +40,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   into sockets in the jambs, stands across the far side of the gate's own room — on the sill the map
   already lays where one rank's stone meets the next, which at a ward gate is exactly there. You walk in
   and stop at the bars, and you pass behind them — they go see-through while you stand in the gateway,
-  the way an archway does. Opened, they sink into the threshold and the way through is clear. A passage
+  the way an archway does. Opened, the whole of it goes down: frame, jambs and all, leaving a slot in
+  the floor and a corridor you can walk. A passage
   walked across gets its own drawing rather than a turned one, so a gate reads from either approach, and
   all of it is drawn at every rank.
 - A staircase on the map is the flight itself. The node marker that used to sit over it is gone — the

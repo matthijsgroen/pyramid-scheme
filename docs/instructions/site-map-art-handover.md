@@ -646,7 +646,8 @@ half the doors in the game.
    the viewer and moves the JAMBS into depth: a pier above and a pier below, where the face-on gate has
    one either side. Turning the tile was never an option — a reflection is a real oblique view and a
    rotation is a skew (`NodeSprite`), which is `prim_stair`'s law one axis over. Four files:
-   `gate`, `gate-open`, `gate-side`, `gate-open-side`.
+   `gate`, `gate-open`, `gate-side`, `gate-open-side` — though the two OPENED ones are the same drawing,
+   because an opened gate has gone down frame and all and a slot has no facing to collapse.
 
    **The seam arithmetic is the thing to get right.** `cellLeft`/`cellTop` put the gap BEFORE each cell,
    so the gap AFTER cell c starts at `cellLeft(c) + CELL` and the band after row r at `cellTop(r) + CELL`.
