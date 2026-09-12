@@ -3,6 +3,7 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import type { TableauLevel } from "@/data/tableaus"
 import type { HieroglyphSymbolResolver } from "@/data/resolveHieroglyphSymbol"
 import type { ChestState } from "@/ui/atoms/Chest"
+import { TombBackdrop } from "@/ui/atoms/TombBackdrop"
 import { TombDoor } from "@/ui/atoms/TombDoor"
 import { TombLockPanel } from "@/ui/molecules/TombLockPanel"
 import { HieroglyphInventoryStrip, type InventoryStripItem } from "@/ui/molecules/HieroglyphInventoryStrip"
@@ -52,7 +53,11 @@ export const TombPuzzleView: FC<{
   inventoryItems,
   onInventoryItemClick,
 }) => (
-  <div className="flex flex-1 flex-row overflow-y-auto">
+  // THE WALL IS THE WHOLE SCREEN, and the door is a panel of it that opens. The tableau used to be a
+  // door-sized rectangle of stone with the page's own background in the gutters either side of it, which
+  // reads as a wall propped up in a room rather than as the end of a chamber. `TombBackdrop` was built
+  // for this and had no caller anywhere in src.
+  <TombBackdrop difficulty={difficulty} className="flex flex-1 flex-row overflow-y-auto">
     <div className="flex flex-1" />
     <div className="flex min-w-fit flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
       <div className="flex flex-1" />
@@ -90,5 +95,5 @@ export const TombPuzzleView: FC<{
       </TombDoor>
     </div>
     <div className="flex flex-1" />
-  </div>
+  </TombBackdrop>
 )
