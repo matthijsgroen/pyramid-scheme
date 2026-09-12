@@ -332,6 +332,20 @@ scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --sun=0
 yarn import-tile art/masters/props/starter/wallShrine.webp --tier=starter --name=wallShrine --slot=wall \
   --filter=smooth --mask="$OBJ" --headroom=0.18 --brightness=0.75
 
+# RA in the same cupboard, on the same scaffold — the patron variant, one room. The lamp the scaffold
+# stands in the gap is painted over as the god: a falcon head with the sun disc proud of the skull, which
+# is the whole of what tells him from any other falcon. The mask is the generic's, so the figure has to
+# stay inside the box or it is cut off at the lintel.
+#
+# --brightness=0.68, lower than the generic's 0.75 because this return is a paler whitewash: 53.5% over
+# the light clamp against the generic's 42.7%. At 0.68 it lands median 106 against the shipped generic's
+# 103, which is the number to match here — the thresholds are not reachable. Its 13.7% below the dark end
+# is the BOX, which this prompt asks for in deep shade where the generic has a lit lamp in it, so scaling
+# further only darkens a hole that is meant to be black.
+scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --sun=0
+yarn import-tile art/masters/props/starter/wallShrine-ra.webp --tier=starter --name=wallShrine-ra --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18 --brightness=0.68
+
 # The merchant's VEIL — a reed screen drawn back on a timber rail, so a doorway is dressed without being
 # shut. Same `hanging --contents=rail` scaffold the priest's veil uses; what makes this one the merchant's
 # is entirely the paint, coarse undyed linen against his cedar-less rough timber.

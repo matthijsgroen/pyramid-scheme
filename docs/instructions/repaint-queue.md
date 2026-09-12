@@ -2948,46 +2948,6 @@ what lifts his two variants out of the trap this file warns about above: a rank 
 generic drawing under another name and buys nothing. Starter names two, so Ra's shrine is what tells his
 pyramid from Bastet's.
 
-### `starter/wallShrine-ra` — Ra's disc in the merchant's wall shrine
-
-1 room. Reuses the wall shrine above, so paint that one first.
-
-**Attach:**
-
-1. `~/tile-previews/wallShrine-ra-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a small WALL SHRINE, a cupboard set into the wall, with a god standing in its opening. The
-wider slab under it is its PLINTH and the deeper slab over it is its CORNICE; between them is the BOX,
-with two leaves standing open.
-
-Standing in the opening is RA: a small figure with a FALCON'S HEAD carrying a SUN DISC on it, the disc a
-flat ochre-gold circle ringed by a raised cobra. The head is the mark — a hooked beak and a flat skull,
-never a human profile — and the disc has to sit clearly ON it, proud of the skull, or he is any other
-falcon god.
-
-The shrine is mudbrick rendered in lime plaster, whitewashed and flaking to bare brick at the corners; the
-leaves are rough grey timber on leather straps. Ra is painted limestone, the falcon head dark, the disc
-the one warm ochre in the picture. Inside, the back of the box is deep shade.
-
-Ochre here is a flat colour, not a metal: no highlights, no reflections, no shine.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's tomb: mudbrick, plaster, reed and rough timber. Warm dark earth, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --colour=#a49781 --sun=0
-yarn import-tile art/masters/props/starter/wallShrine-ra.webp --tier=starter --name=wallShrine-ra --slot=wall \
-  --filter=smooth --mask="$OBJ"
-```
-
 ### `starter/shrine-ra` — Ra's disc in the merchant's shrine
 
 1 room. Reuses the merchant's own shrine scaffold, which is already painted as `starter/shrine`.
