@@ -16,7 +16,7 @@ import type {
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { keyColorHex } from "@/ui/tokens/keyColors"
-import { ExplorerDot, LightPool, LightPoolDefs } from "./ExplorerDot"
+import { ExplorerDot, LightPool, TorchStyle } from "./ExplorerDot"
 import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
@@ -38,8 +38,9 @@ import {
   mapHeight,
   mapWidth,
 } from "./mapScale"
-import { NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP, nodeArtOffset, type NodeSprite } from "./nodeArt"
+import { NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
+import { ClipLayer, Sprite } from "./htmlLayers"
 import { moodFor } from "./moodSettings"
 import { cellAt, isClaimableNeighbor } from "@/game/roomFootprint"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
@@ -425,29 +426,15 @@ type StandingSprite = {
   key: string
   /** The y a sprite's own floor line sits at, in map space. Lower on the page is nearer the viewer. */
   baseY: number
-  /** The clip this sprite is drawn through, if any — its own room's footprint, grown upward by a
-   * prop's headroom. A room's own furniture is not clipped at all: it stands centred on its cell and
-   * reaches only into the wall band above it, which is where a tall thing belongs. */
-  clipId?: string
   /** Where this sprite's own flame lands on the floor, if it carries one — see NodeSprite.light. */
   light?: NodeSprite["light"]
   node: ReactNode
 }
 
-/** One half of the sorted set — the clipped sprites in their own group, so the clip stays in map space. */
-const StandingLayer = ({ sprites }: { sprites: readonly StandingSprite[] }) => (
-  <>
-    {sprites.map(s =>
-      s.clipId ? (
-        <g key={s.key} pointerEvents="none" clipPath={`url(#${s.clipId})`}>
-          {s.node}
-        </g>
-      ) : (
-        s.node
-      )
-    )}
-  </>
-)
+/** One half of the sorted set. Depth is DOM order: the list is already sorted by floor line, so the
+ * later a thing is written the nearer the viewer it stands. A sprite that must be cut to its room
+ * carries its own clip (see `Sprite`'s `clipTo`) rather than being wrapped in a clipping group. */
+const StandingLayer = ({ sprites }: { sprites: readonly StandingSprite[] }) => <>{sprites.map(s => s.node)}</>
 
 /** For every cell, the cell you came FROM walking out of the floor's entrance — so a node can be drawn
  * on its own approach rather than on itself. Built once per floor and only when something asks, because
@@ -1431,30 +1418,6 @@ const FACE_TOP = SIDE_W / 2
 // built of a pharaoh's granite. Per-room difficulty still dresses the room (props, light).
 const floorTier = (grid: FloorGrid): Difficulty => grid.difficulty ?? "starter"
 
-/** The map's own `<defs>`: the two clips the SVG layers still cut themselves to, and the one gradient every
- * pool of light is filled from. Floor and walls left the SVG (see `TileLayers`); what stands ON them has
- * not, and a clip is the one thing HTML cannot lend it. */
-const MapDefs = ({ regions }: { regions: TileRegions }) => {
-  const floorRects = allFloorRects(regions)
-  return (
-    <defs>
-      {/* The walkable floor as a CLIP. Sand is drawn larger than a cell and cut to this, so a drift
-          crosses cells and stops dead at a wall — see `driftsFor`. */}
-      <clipPath id="walkable-floor">
-        <path d={rectsToPath(floorRects)} />
-      </clipPath>
-      {/* Where a thing may STAND: the floor plus the headroom above it. Furniture standing off-centre in
-          its cell is cut by the wall beside it and by the wall below it, and still rises into the band
-          above — the one direction a prop is meant to cross, so a tall thing occludes the wall behind it
-          instead of being sliced off at its own floor line. */}
-      <clipPath id={STANDING_ROOM_CLIP}>
-        <path d={rectsToPath(floorRects.map(([x, y, w, h]) => [x, y - PROP_H, w, h + PROP_H] as Rect))} />
-      </clipPath>
-      <LightPoolDefs />
-    </defs>
-  )
-}
-
 const allFloorRects = (regions: TileRegions): Rect[] =>
   [...regions.values()].flatMap(groups => [
     ...Object.values(groups.floorRoom).flat(),
@@ -1700,7 +1663,7 @@ const Decoration = ({
       {/* Under the sprite, so the light is on the floor and the lamp is standing in it. */}
       {LIT_DECORATIONS.has(kind) && <LightPool r={LAMP_POOL_RADIUS} cy={CELL * 0.3} />}
       {url ? (
-        <image href={url} x={-CELL / 2} y={CELL / 2 - PROP_H} width={CELL} height={PROP_H} />
+        <Sprite url={url} x={-CELL / 2} y={CELL / 2 - PROP_H} w={CELL} h={PROP_H} stretch={false} />
       ) : (
         <DecorationGlyph kind={kind} />
       )}
@@ -1717,11 +1680,22 @@ const Decoration = ({
  * No per-cell fog check, because a drift is not per-cell: it is washed by the DARKEST state it crosses,
  * so a drift reaching into an unlit passage cannot light it. That is the same sum `FloorScatter` does
  * with `brightness`, taken over a region instead of over a cell. */
-const SandDrifts = ({ grid, drifts, tier }: { grid: FloorGrid; drifts: Drift[]; tier: Difficulty }) => {
+const SandDrifts = ({
+  grid,
+  drifts,
+  tier,
+  floorPath,
+}: {
+  grid: FloorGrid
+  drifts: Drift[]
+  tier: Difficulty
+  /** The walkable floor, as a path in map coordinates: what the wall does the drawing with. */
+  floorPath: string
+}) => {
   const url = tileUrl(tier, "sand")
   if (!url) return null
   return (
-    <g pointerEvents="none" clipPath="url(#walkable-floor)">
+    <div style={{ position: "absolute", inset: 0, pointerEvents: "none", clipPath: `path("${floorPath}")` }}>
       {drifts.map(({ row, col, w, h }, i) => {
         const cell = cellAt(grid, row, col)
         if (cell.type === "empty") return null
@@ -1730,19 +1704,18 @@ const SandDrifts = ({ grid, drifts, tier }: { grid: FloorGrid; drifts: Drift[]; 
         const dw = CELL * w
         const dh = CELL * h
         return (
-          <image
+          <Sprite
             key={i}
-            href={url}
-            preserveAspectRatio="none"
+            url={url}
             x={cx - dw / 2}
             y={cy - dh / 2}
-            width={dw}
-            height={dh}
-            style={wash ? { filter: `brightness(${1 - wash.opacity})` } : undefined}
+            w={dw}
+            h={dh}
+            filter={wash ? `brightness(${1 - wash.opacity})` : undefined}
           />
         )
       })}
-    </g>
+    </div>
   )
 }
 
@@ -1761,7 +1734,7 @@ const FloorScatter = ({
   scatter: ReadonlyMap<string, ScatterKind>
   tier: Difficulty
 }) => (
-  <g pointerEvents="none">
+  <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
     {[...scatter].map(([cellKey, kind]) => {
       const [r, c] = cellKey.split(",").map(Number)
       const cell = cellAt(grid, r, c)
@@ -1776,23 +1749,40 @@ const FloorScatter = ({
       // is mostly transparent; brightness(1 - opacity) is the same sum on the pixels that exist.
       const wash = stateWash[cell.state]
       return (
-        <image
+        <Sprite
           key={cellKey}
-          href={url}
+          url={url}
           x={cx - CELL / 2}
           y={cy + CELL / 2 - PROP_H}
-          width={CELL}
-          height={PROP_H}
-          style={wash ? { filter: `brightness(${1 - wash.opacity})` } : undefined}
+          w={CELL}
+          h={PROP_H}
+          stretch={false}
+          filter={wash ? `brightness(${1 - wash.opacity})` : undefined}
         />
       )
     })}
-  </g>
+  </div>
 )
 
 const DECORATION_COLOR = "#5a4a30"
 
-const DecorationGlyph = ({ kind }: { kind: DecorationKind }) => {
+/** The placeholder for a prop with no art yet: a line drawing, so it is still a drawing and still vector.
+ *
+ * An inline `<svg>` of its own inside the HTML layer rather than shapes in the map's one big one — see
+ * docs/instructions/map-html-port.md on the markers. It is static, so it costs a paint once and never
+ * again; what the map could not afford was ANIMATION inside SVG. Centred on the cell like the sprite it
+ * stands in for, with `overflow: visible` so a glyph is never clipped by its own little box. */
+const DecorationGlyph = ({ kind }: { kind: DecorationKind }) => (
+  <svg
+    aria-hidden="true"
+    viewBox="-12 -12 24 24"
+    style={{ position: "absolute", left: -12, top: -12, width: 24, height: 24, overflow: "visible" }}
+  >
+    <GlyphShape kind={kind} />
+  </svg>
+)
+
+const GlyphShape = ({ kind }: { kind: DecorationKind }) => {
   switch (kind) {
     case "sarcophagus":
       return (
@@ -1882,7 +1872,7 @@ export const wallItemsFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: Re
 }
 
 const WallItems = ({ items, patron }: { items: readonly WallItem[]; patron?: Patron }) => (
-  <g>
+  <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
     {items.map(({ row, col, kind, tier, state }) => {
       const url = patronTileUrl(tier, kind, patron)
       const x = cellLeft(col)
@@ -1892,23 +1882,37 @@ const WallItems = ({ items, patron }: { items: readonly WallItem[]; patron?: Pat
         <Fragment key={`${row},${col}`}>
           {url ? (
             // The band's shape, not a square: a wall item is painted on the face.
-            <image href={url} x={x} y={y} width={CELL} height={WALL_H} preserveAspectRatio="none" />
+            <Sprite url={url} x={x} y={y} w={CELL} h={WALL_H} data-wall-item="" />
           ) : (
-            <rect
-              x={x + CELL / 2 - 6}
-              y={y + WALL_H / 2 - 5}
-              width={12}
-              height={10}
-              fill="none"
-              stroke={DECORATION_COLOR}
-              strokeWidth={1.5}
+            <div
+              style={{
+                position: "absolute",
+                left: x + CELL / 2 - 6,
+                top: y + WALL_H / 2 - 5,
+                width: 12,
+                height: 10,
+                border: `1.5px solid ${DECORATION_COLOR}`,
+                boxSizing: "border-box",
+              }}
             />
           )}
-          {wash && <rect x={x} y={y} width={CELL} height={WALL_H} fill={wash.fill} opacity={wash.opacity} />}
+          {wash && (
+            <div
+              style={{
+                position: "absolute",
+                left: x,
+                top: y,
+                width: CELL,
+                height: WALL_H,
+                background: wash.fill,
+                opacity: wash.opacity,
+              }}
+            />
+          )}
         </Fragment>
       )
     })}
-  </g>
+  </div>
 )
 
 // ─── Archways ──────────────────────────────────────────────────────────────────
@@ -1980,7 +1984,7 @@ const Archways = ({
   doorways: readonly Doorway[]
   explorerPos?: readonly [number, number]
 }) => (
-  <g>
+  <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
     {doorways.map(({ row, col, tier }) => {
       const url = tileUrl(tier, "arch")
       if (!url) return null
@@ -1988,9 +1992,10 @@ const Archways = ({
       // those two are ever behind it, so nothing else on the map dims.
       const under = !!explorerPos && explorerPos[1] === col && (explorerPos[0] === row || explorerPos[0] === row - 1)
       return (
-        <image
+        <Sprite
           key={`${row},${col}`}
-          href={url}
+          url={url}
+          data-arch=""
           // Wider than the cell by a corner on each side: the jambs stand IN those corners — the wall's
           // own thickness — rather than inside the opening, so the way through stays a full cell wide and
           // the arch reads as built into the wall run instead of set into the hole.
@@ -1998,14 +2003,13 @@ const Archways = ({
           // The band, plus the crown standing proud of the wall above it and the jambs reaching down onto
           // the floor of the way through below it.
           y={cellTop(row) - WALL_H - ARCH_RISE}
-          width={ARCH_W}
-          height={ARCH_H}
+          w={ARCH_W}
+          h={ARCH_H}
           opacity={under ? ARCH_FADE : 1}
-          preserveAspectRatio="none"
         />
       )
     })}
-  </g>
+  </div>
 )
 
 /**
@@ -2027,9 +2031,7 @@ const ArchShadows = ({ doorways }: { doorways: readonly Doorway[] }) => {
     return [left, left + ARCH_W - SIDE_W].map(x => `M${x} ${top}h${SIDE_W}v${FACE_SHADOW}h${-SIDE_W}z`)
   })
   if (!feet.length) return null
-  return (
-    <path data-arch-shadow d={feet.join("")} fill={tierPalette.starter.outline} opacity={0.45} pointerEvents="none" />
-  )
+  return <ClipLayer data-arch-shadow="" path={feet.join("")} fill={tierPalette.starter.outline} opacity={0.45} />
 }
 
 // ─── Torchlight on the place the player is standing ─────────────────────────────
@@ -2139,7 +2141,7 @@ const LitPlace = ({
       .join("")
 
   if (!lit.size) return null
-  return <path data-torch="lit" className={className} d={pathFor(lit, lit)} fill={TORCH_LIT} />
+  return <ClipLayer data-torch="lit" className={className} path={pathFor(lit, lit)} fill={TORCH_LIT} />
 }
 
 const FADE_MS = 320
@@ -2181,11 +2183,11 @@ const LitPlaces = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; 
   }, [key])
 
   return (
-    <g style={{ mixBlendMode: "screen" }} pointerEvents="none">
+    <div style={{ position: "absolute", inset: 0, mixBlendMode: "screen", pointerEvents: "none" }}>
       <style>{LIT_CSS}</style>
       {leaving && <LitPlace key="leaving" grid={grid} claims={claims} at={leaving} className={FADE_OUT} />}
       <LitPlace key={key} grid={grid} claims={claims} at={at} className={FADE_IN} />
-    </g>
+    </div>
   )
 }
 
@@ -2261,6 +2263,9 @@ export const SiteMapView = ({
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const nodeSprites = useMemo(() => nodeSpritesFor(grid, claims, tier), [grid, claims, tier])
+  // The walkable floor as one path: what a layer cut to the floor is cut to. The sand is the only one
+  // left — everything else that used to share the map-wide clip now carries its own shape.
+  const floorPath = useMemo(() => rectsToPath(allFloorRects(regions)), [regions])
 
   // Everything that stands on this floor, in one list: a room's furniture and a node's own, each with
   // the line it stands on. Split at the explorer's own floor line so he is drawn in the middle.
@@ -2269,18 +2274,21 @@ export const SiteMapView = ({
     const sprites: StandingSprite[] = nodeSprites.map(sprite => ({
       key: sprite.key,
       baseY: sprite.y + PROP_H,
-      clipId: `room-clip-${sprite.key}`,
       ...(sprite.light ? { light: sprite.light } : {}),
       node: (
-        <image
+        <Sprite
           key={sprite.key}
-          href={sprite.url}
-          x={sprite.mirrored ? -sprite.x - CELL : sprite.x}
+          data-node-sprite={sprite.key}
+          url={sprite.url}
+          x={sprite.x}
           y={sprite.y}
-          width={CELL}
-          height={PROP_H}
+          w={CELL}
+          h={PROP_H}
+          mirrored={sprite.mirrored}
+          // ITS OWN ROOM AND NOT THE WHOLE FLOOR: furniture stands off-centre and a sprite is a cell
+          // wide, so it reaches past its cell. See NodeSprite.footprint.
+          clipTo={footprintPath(sprite.footprint)}
           opacity={standingOn && sprite.fadeAt?.includes(standingOn) ? ARCH_FADE : undefined}
-          transform={sprite.mirrored ? "scale(-1, 1)" : undefined}
         />
       ),
     }))
@@ -2293,14 +2301,16 @@ export const SiteMapView = ({
         key: `prop:${cellKey}`,
         baseY: cy + CELL / 2,
         node: (
-          <g key={`prop:${cellKey}`} transform={`translate(${cx}, ${cy})`}>
+          // A box with no size of its own, standing at the middle of the cell: what is inside it is then
+          // drawn in cell-local units, the way it was inside a `<g transform>`.
+          <div key={`prop:${cellKey}`} style={{ position: "absolute", left: cx, top: cy, width: 0, height: 0 }}>
             <Decoration
               kind={kind}
               tier={owner.difficulty ?? tier}
               patron={grid.patron}
               seed={`${grid.siteId}:${cellKey}`}
             />
-          </g>
+          </div>
         ),
       })
     }
@@ -2446,51 +2456,53 @@ export const SiteMapView = ({
             }}
           >
             <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
+            <SandDrifts grid={grid} drifts={drifts} tier={tier} floorPath={floorPath} />
+            <FloorScatter grid={grid} scatter={scatter} tier={tier} />
+            <ArchShadows doorways={doorways} />
+            <LitPlaces grid={grid} claims={claims} at={explorerPos} />
+            <MapLife
+              mood={mood}
+              siteId={grid.siteId}
+              floorCells={floorCells}
+              isLit={(r, c) => {
+                const cell = cellAt(grid, r, c)
+                return cell.type !== "empty" && cell.state !== "fogged"
+              }}
+            />
+            {/* Over the scarabs, under the wall items: something growing out of a wall is in front of the
+              floor and behind whatever is hung on that wall. */}
+            <MapGrowth
+              mood={mood}
+              siteId={grid.siteId}
+              floorCells={floorCells}
+              wallCells={wallBandCells}
+              chamberCells={chamberFloorCells}
+              isLit={(r, c) => {
+                const cell = cellAt(grid, r, c)
+                if (cell.type !== "empty") return cell.state !== "fogged"
+                // A CLAIMED cell is `type: "empty"` in the grid — the claim is a render-time fact — so a
+                // chamber's own floor fails the test above and every plant on it was dropped. It is lit
+                // when its ROOM is, which is the same blind spot `floorScatter` records for scatter.
+                const owner = claims.claimedBy.get(`${r},${c}`)
+                if (!owner) return false
+                const [or, oc] = owner.split(",").map(Number)
+                const room = cellAt(grid, or, oc)
+                return room.type !== "empty" && room.state !== "fogged"
+              }}
+            />
+            <WallItems items={wallItems} patron={grid.patron} />
+
+            {/* THE MARKERS ARE THE LAST SVG ON THE MAP, and what they are is icons: a shape per kind, a
+                colour per state, key badges on the rim. One `<svg>` over the stone and under everything
+                standing on it, and the only layer that takes a tap. See the port plan's note on the
+                markers — static vector costs nothing; it was animation inside SVG that did. */}
             <svg
               width={svgWidth}
               height={svgHeight}
               viewBox={`0 0 ${svgWidth} ${svgHeight}`}
               aria-hidden="true"
               className="absolute inset-0 block"
-              style={{ imageRendering: ART_IMAGE_RENDERING }}
             >
-              <MapDefs regions={regions} />
-              <SandDrifts grid={grid} drifts={drifts} tier={tier} />
-              <FloorScatter grid={grid} scatter={scatter} tier={tier} />
-              <ArchShadows doorways={doorways} />
-              <LitPlaces grid={grid} claims={claims} at={explorerPos} />
-              <MapLife
-                mood={mood}
-                siteId={grid.siteId}
-                floorCells={floorCells}
-                isLit={(r, c) => {
-                  const cell = cellAt(grid, r, c)
-                  return cell.type !== "empty" && cell.state !== "fogged"
-                }}
-              />
-              {/* Over the scarabs, under the wall items: something growing out of a wall is in front of the
-              floor and behind whatever is hung on that wall. */}
-              <MapGrowth
-                mood={mood}
-                siteId={grid.siteId}
-                floorCells={floorCells}
-                wallCells={wallBandCells}
-                chamberCells={chamberFloorCells}
-                isLit={(r, c) => {
-                  const cell = cellAt(grid, r, c)
-                  if (cell.type !== "empty") return cell.state !== "fogged"
-                  // A CLAIMED cell is `type: "empty"` in the grid — the claim is a render-time fact — so a
-                  // chamber's own floor fails the test above and every plant on it was dropped. It is lit
-                  // when its ROOM is, which is the same blind spot `floorScatter` records for scatter.
-                  const owner = claims.claimedBy.get(`${r},${c}`)
-                  if (!owner) return false
-                  const [or, oc] = owner.split(",").map(Number)
-                  const room = cellAt(grid, or, oc)
-                  return room.type !== "empty" && room.state !== "fogged"
-                }}
-              />
-              <WallItems items={wallItems} patron={grid.patron} />
-
               {Array.from({ length: grid.rows + 2 }, (_, ri) => {
                 const r = ri - 1
                 return Array.from({ length: grid.cols + 2 }, (_, ci) => {
@@ -2649,35 +2661,23 @@ export const SiteMapView = ({
                   )
                 })
               })}
+            </svg>
 
-              {/* EVERYTHING STANDING ON THE FLOOR IS SORTED AGAINST THE PLAYER, and the player is drawn in
+            {/* EVERYTHING STANDING ON THE FLOOR IS SORTED AGAINST THE PLAYER, and the player is drawn in
               the middle of it. Anything whose floor line is LOWER than his is nearer the viewer and is
               drawn after him, so he passes behind the chest at the front of a room and in front of the
               one at the back. Sorting by the floor line and not by the sprite's top is what makes a
-              tall thing still stand behind a short thing in front of it.
+              tall thing still stand behind a short thing in front of it — and the sort IS the DOM order
+              here, so nothing needs a z-index.
 
-              A node's furniture is additionally clipped, and in MAP space: inside each node's own
-              `<g transform>` the clip resolved in that cell's space and cut every sprite away, which
-              emptied the game of chests while the tests, which do not rasterise, passed. */}
-              {/* One clip per sprite, cut to its OWN room. The map-wide clip is every floor cell there is,
-              so furniture offset toward a wall passed straight through it and appeared in the corridor
-              beyond; a room's footprint lets a chest overlap the paving beside it and stops it at the
-              masonry. */}
-              <defs>
-                {nodeSprites.map(sprite => (
-                  <clipPath key={sprite.key} id={`room-clip-${sprite.key}`}>
-                    <path d={footprintPath(sprite.footprint)} />
-                  </clipPath>
-                ))}
-              </defs>
-
+              A node's furniture is additionally clipped to its own room, in MAP space: a sprite that
+              carries a clip is laid out as a full-map layer with the art placed by background-position,
+              which is why the footprint path needs no translating (see `Sprite`). */}
+            <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+              <TorchStyle />
               {/* The floor light first, so everything standing is standing IN it. */}
               {standing.map(s2 =>
-                s2.light ? (
-                  <g key={`light:${s2.key}`} transform={`translate(${s2.light.x}, ${s2.light.y})`}>
-                    <LightPool r={s2.light.r} />
-                  </g>
-                ) : null
+                s2.light ? <LightPool key={`light:${s2.key}`} r={s2.light.r} cx={s2.light.x} cy={s2.light.y} /> : null
               )}
 
               <StandingLayer sprites={behindExplorer} />
@@ -2699,7 +2699,7 @@ export const SiteMapView = ({
               {/* And the gate in front of the arch it is fitted into: the frame is the masonry of the
               opening, the gate is what has been hung in it, so the leaf is the nearer of the two. */}
               <StandingLayer sprites={gateSprites} />
-            </svg>
+            </div>
           </div>
         </div>
       </div>

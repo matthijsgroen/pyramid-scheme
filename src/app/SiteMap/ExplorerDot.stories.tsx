@@ -34,9 +34,16 @@ type Story = StoryObj<typeof meta>
 export const AtEntrance: Story = {
   args: { grid, pos: grid.entrancePos },
   render: ({ pos }) => (
-    <svg width={grid.cols * 44 + 60} height={grid.rows * 44 + 60} style={{ background: "#110d08" }}>
+    <div
+      style={{
+        position: "relative",
+        width: grid.cols * 44 + 60,
+        height: grid.rows * 44 + 60,
+        background: "#110d08",
+      }}
+    >
       <ExplorerDot grid={grid} pos={pos} />
-    </svg>
+    </div>
   ),
 }
 
@@ -80,24 +87,45 @@ export const Facings: Story = {
         {grounds.map(ground => (
           <div key={ground} className="flex gap-4">
             {[1, 3].map(scale => (
-              <svg
+              // The map is HTML, so the figure is too: a box with no size of its own stands where a
+              // `<g transform>` used to, and the whole sheet is scaled by one transform.
+              <div
                 key={scale}
-                width={STEPS * CELL * scale}
-                height={FACINGS.length * rowH * scale}
-                viewBox={`0 0 ${STEPS * CELL} ${FACINGS.length * rowH}`}
-                style={{ background: ground, imageRendering: ART_IMAGE_RENDERING }}
+                style={{
+                  width: STEPS * CELL * scale,
+                  height: FACINGS.length * rowH * scale,
+                  background: ground,
+                  imageRendering: ART_IMAGE_RENDERING,
+                  overflow: "hidden",
+                }}
               >
-                {FACINGS.map((facing, row) =>
-                  Array.from({ length: STEPS }, (_, step) => (
-                    <g
-                      key={`${facing}-${step}`}
-                      transform={`translate(${step * CELL + CELL / 2}, ${row * rowH + rowH - CELL / 2})`}
-                    >
-                      <ExplorerFigure facing={facing} step={step} />
-                    </g>
-                  ))
-                )}
-              </svg>
+                <div
+                  style={{
+                    position: "relative",
+                    width: STEPS * CELL,
+                    height: FACINGS.length * rowH,
+                    transform: `scale(${scale})`,
+                    transformOrigin: "0 0",
+                  }}
+                >
+                  {FACINGS.map((facing, row) =>
+                    Array.from({ length: STEPS }, (_, step) => (
+                      <div
+                        key={`${facing}-${step}`}
+                        style={{
+                          position: "absolute",
+                          left: step * CELL + CELL / 2,
+                          top: row * rowH + rowH - CELL / 2,
+                          width: 0,
+                          height: 0,
+                        }}
+                      >
+                        <ExplorerFigure facing={facing} step={step} />
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
             ))}
           </div>
         ))}
@@ -141,19 +169,41 @@ export const Walking: Story = {
         {grounds.map(ground => (
           <div key={ground} className="flex gap-4">
             {[1, 3].map(scale => (
-              <svg
+              <div
                 key={scale}
-                width={FACINGS.length * CELL * scale}
-                height={rowH * scale}
-                viewBox={`0 0 ${FACINGS.length * CELL} ${rowH}`}
-                style={{ background: ground, imageRendering: ART_IMAGE_RENDERING }}
+                style={{
+                  width: FACINGS.length * CELL * scale,
+                  height: rowH * scale,
+                  background: ground,
+                  imageRendering: ART_IMAGE_RENDERING,
+                  overflow: "hidden",
+                }}
               >
-                {FACINGS.map((facing, col) => (
-                  <g key={facing} transform={`translate(${col * CELL + CELL / 2}, ${rowH - CELL / 2})`}>
-                    <ExplorerFigure facing={facing} walking={walking} cellMs={cellMs} />
-                  </g>
-                ))}
-              </svg>
+                <div
+                  style={{
+                    position: "relative",
+                    width: FACINGS.length * CELL,
+                    height: rowH,
+                    transform: `scale(${scale})`,
+                    transformOrigin: "0 0",
+                  }}
+                >
+                  {FACINGS.map((facing, col) => (
+                    <div
+                      key={facing}
+                      style={{
+                        position: "absolute",
+                        left: col * CELL + CELL / 2,
+                        top: rowH - CELL / 2,
+                        width: 0,
+                        height: 0,
+                      }}
+                    >
+                      <ExplorerFigure facing={facing} walking={walking} cellMs={cellMs} />
+                    </div>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         ))}

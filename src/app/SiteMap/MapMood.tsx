@@ -2,6 +2,7 @@ import { hashUnit } from "@/support/hashString"
 import type { Mood } from "./moodSettings"
 import { CELL, WALL_FACE_H, cellCenter } from "./mapScale"
 import { sharedTileUrl } from "./tileAssets"
+import { Sprite } from "./htmlLayers"
 
 // The air, drawn in three layers over the stone: what is carried on it (drift), what lives in it (life),
 // and what colour it is (tint). All of it CSS-animated rather than driven from React — a mote that
@@ -69,22 +70,13 @@ const rand = hashUnit
  */
 const TUFT_OPACITY = 0.7
 
-/**
- * A sprite turned about ITS OWN CENTRE, which on an SVG element is not what a bare transform does.
- *
- * `transform-box` defaults to `view-box`, so a CSS transform on an `<image>` is measured against the
- * whole SVG viewport rather than the element — and `scaleX(-1)`, which this file used alone, therefore
- * mirrored each sprite across the MIDDLE OF THE MAP instead of flipping it in place. A tuft authored in
- * the west corner of a wide floor was drawn in the east one, with `isLit` still answering for the cell it
- * came from, so half the growth on every floor was in the wrong place and some of it in the dark.
- *
- * `fill-box` with a centre origin is the fix, and it is also what makes a rotation usable at all.
- */
-const turned = (degrees: number, mirrored: boolean) => ({
-  transformBox: "fill-box" as const,
-  transformOrigin: "center" as const,
-  transform: `rotate(${degrees.toFixed(1)}deg)${mirrored ? " scaleX(-1)" : ""}`,
-})
+/** A sprite turned about its own centre. On a div that is simply what a transform does — the
+ * `transform-box` trap an SVG <image> had (it measures against the whole viewport, so a bare
+ * `scaleX(-1)` mirrored each sprite across the MIDDLE OF THE MAP and moved half the growth on a floor
+ * into the wrong corner) does not exist here. Kept as one helper so the rotation and the flip stay
+ * described in one place. */
+const turned = (degrees: number, mirrored: boolean) =>
+  `rotate(${degrees.toFixed(1)}deg)${mirrored ? " scaleX(-1)" : ""}`
 
 type Props = {
   mood: Mood
@@ -151,7 +143,7 @@ export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCel
     return ordered.slice(0, Math.max(1, Math.round(per * cells.length)))
   }
   return (
-    <g aria-hidden="true" style={{ pointerEvents: "none" }}>
+    <div aria-hidden="true" style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
       {/* ── the JOINTS: many, small, on any floor cell, and FAINT ──
           `TUFT_OPACITY`, because at one per cell and full strength they stopped being joints and started
           being a second crop of wall roots lying on the paving. Faint, they go back to being what they
@@ -171,9 +163,10 @@ export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCel
         // shape at the zoom a floor is actually read at, not a speck.
         const size = CELL * 0.5 + rand(siteId, "growth-size", i) * (CELL * 0.25)
         return (
-          <image
+          <Sprite
             key={`tuft-${i}`}
-            href={tuft}
+            url={tuft}
+            stretch={false}
             // THE PLAY IS WHAT THE SIZE LEAVES, so a tuft never crosses its own cell whatever size it
             // rolled. A fixed jitter was fine while these were specks and put the big ones over the wall
             // band the moment they were sized to be seen — which the spec above catches.
@@ -186,12 +179,12 @@ export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCel
             // through the band say "out of the wall" on their own; a tuft is in a joint, and joints are
             // everywhere.
             y={cy - size / 2 + (rand(siteId, "growth-y", i) - 0.5) * (CELL - size)}
-            width={size}
-            height={size}
+            w={size}
+            h={size}
             opacity={TUFT_OPACITY}
             // ANY angle: a tuft in a joint is seen from above and has no up. It is also what stops a
             // floor of them reading as one stamp repeated, which at this density is what they were.
-            style={turned(rand(siteId, "growth-rot", i) * 360, rand(siteId, "growth-flip", i) > 0.5)}
+            transform={turned(rand(siteId, "growth-rot", i) * 360, rand(siteId, "growth-flip", i) > 0.5)}
           />
         )
       })}
@@ -213,17 +206,19 @@ export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCel
         const { cx, cy } = cellCenter(row, col)
         const w = 16 + rand(siteId, "growth-wall-w", i) * 18
         return (
-          <image
+          <Sprite
             key={`root-${i}`}
-            href={root}
-            preserveAspectRatio="none"
+            url={root}
             x={cx - w / 2 + (rand(siteId, "growth-wall-x", i) - 0.5) * (CELL * 0.6)}
             y={cy - CELL / 2 - WALL_FACE_H}
-            width={w}
-            height={WALL_FACE_H}
+            w={w}
+            h={WALL_FACE_H}
             // A LEAN, not a turn: a root hangs, so gravity decides which way is down and only the flip
             // and a few degrees either side are free.
-            style={turned((rand(siteId, "growth-wall-rot", i) - 0.5) * 14, rand(siteId, "growth-wall-flip", i) > 0.5)}
+            transform={turned(
+              (rand(siteId, "growth-wall-rot", i) - 0.5) * 14,
+              rand(siteId, "growth-wall-flip", i) > 0.5
+            )}
           />
         )
       })}
@@ -236,19 +231,23 @@ export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCel
         const { cx, cy } = cellCenter(row, col)
         const size = 30 + rand(siteId, "growth-plant-size", i) * 16
         return (
-          <image
+          <Sprite
             key={`plant-${i}`}
-            href={plant}
+            url={plant}
+            stretch={false}
             x={cx - size / 2 + (rand(siteId, "growth-plant-x", i) - 0.5) * (CELL * 0.4)}
             y={cy + CELL / 2 - size}
-            width={size}
-            height={size}
+            w={size}
+            h={size}
             // Standing, so the same small lean the roots take rather than a turn.
-            style={turned((rand(siteId, "growth-plant-rot", i) - 0.5) * 10, rand(siteId, "growth-plant-flip", i) > 0.5)}
+            transform={turned(
+              (rand(siteId, "growth-plant-rot", i) - 0.5) * 10,
+              rand(siteId, "growth-plant-flip", i) > 0.5
+            )}
           />
         )
       })}
-    </g>
+    </div>
   )
 }
 
@@ -257,7 +256,7 @@ export const MapLife = ({ mood, siteId, floorCells, isLit }: Props) => {
   const url = sharedTileUrl("scarab")
   if (!mood.life || !url || floorCells.length === 0) return null
   return (
-    <g aria-hidden="true" style={{ pointerEvents: "none" }}>
+    <div aria-hidden="true" style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
       {Array.from({ length: mood.life }, (_, i) => {
         // Each one keeps to a cell of real floor, so nothing ever scurries into the stone.
         const [row, col] = floorCells[Math.floor(rand(siteId, "scarab-cell", i) * floorCells.length)]
@@ -265,16 +264,20 @@ export const MapLife = ({ mood, siteId, floorCells, isLit }: Props) => {
         const { cx, cy } = cellCenter(row, col)
         const away = rand(siteId, "scarab-dir", i) > 0.5 ? 1 : -1
         return (
-          <image
+          <div
             key={i}
             className={SCARAB_CLASS}
-            href={url}
-            x={cx - 7 + (rand(siteId, "scarab-x", i) - 0.5) * (CELL / 2)}
-            y={cy - 5 + (rand(siteId, "scarab-y", i) - 0.5) * (CELL / 2)}
-            width={14}
-            height={10}
             style={
               {
+                position: "absolute",
+                left: cx - 7 + (rand(siteId, "scarab-x", i) - 0.5) * (CELL / 2),
+                top: cy - 5 + (rand(siteId, "scarab-y", i) - 0.5) * (CELL / 2),
+                width: 14,
+                height: 10,
+                backgroundImage: `url(${url})`,
+                backgroundSize: "contain",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
                 "--sx": `${away * (10 + rand(siteId, "scarab-run", i) * 14)}px`,
                 "--sy": `${(rand(siteId, "scarab-side", i) - 0.5) * 16}px`,
                 animationDuration: `${5 + rand(siteId, "scarab-speed", i) * 6}s`,
@@ -284,7 +287,7 @@ export const MapLife = ({ mood, siteId, floorCells, isLit }: Props) => {
           />
         )
       })}
-    </g>
+    </div>
   )
 }
 

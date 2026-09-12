@@ -32,15 +32,15 @@ The geometry is already SVG-free and stays that way. `tileRegions.ts` merges cel
 border box — and the map is laid out at natural size and scaled by a transform (`useMapZoom`), so one unit
 is one pixel and no path has to be rewritten.
 
-| SVG today                           | HTML tomorrow                                                            |
-| ----------------------------------- | ------------------------------------------------------------------------ |
-| `<pattern>` + `<path fill=url(#…)>` | `div` with `background-image` + `background-size` + `clip-path: path(…)` |
-| `<image href>`                      | `div` with `background-image`, or `<img>`                                |
-| per-room `<clipPath>`               | `clip-path: path(footprintPath(...))` on the same element                |
-| `<radialGradient>` light pool       | `background: radial-gradient(...)` + `mix-blend-mode: screen`            |
-| walk-cycle strip in a clip          | `overflow: hidden` box + strip child — the ordinary CSS sprite           |
-| depth sort into one flat list       | same sort, written as DOM order                                          |
-| `image-rendering` on the `<svg>`    | the same property on the layers                                          |
+| SVG today                           | HTML tomorrow                                                                        |
+| ----------------------------------- | ------------------------------------------------------------------------------------ |
+| `<pattern>` + `<path fill=url(#…)>` | `div` with `background-image` + `background-size` + `clip-path: path(…)`             |
+| `<image href>`                      | `div` with `background-image`, or `<img>`                                            |
+| per-room `<clipPath>`               | `clip-path: path(footprintPath(...))` on the same element                            |
+| `<radialGradient>` light pool       | `background: radial-gradient(...)` + `mix-blend-mode: screen`                        |
+| walk-cycle strip in a clip          | `overflow: hidden` box + strip child — the ordinary CSS sprite                       |
+| depth sort into one flat list       | same sort, written as DOM order                                                      |
+| `image-rendering` on the `<svg>`    | the same property on the layers                                                      |
 | stroke-under-fill silhouette        | the floor rectangles grown a couple of units, in the outline colour, UNDER the fills |
 
 ## The slices
@@ -67,14 +67,28 @@ floor's masonry is 22 elements and the map has FEWER nodes than it did in SVG, 6
 The map root is an HTML box now, with the SVG riding on it as one absolutely positioned layer holding
 everything not yet moved. Both are the same coordinate space, so nothing had to be re-measured.
 
-**3 — everything that stands on the floor**, in one go, because it all sorts against the player: props,
-chests, stairs, exits, gates, scatter, drifts, growth, scarabs, and the explorer with his light pool and
-walk cycle. One layer, children in `baseY` order, each with its own room clip. Acceptance: the depth specs
-in `SiteMapView.spec.tsx` keep passing with element queries instead of SVG ones, and the explorer still
-passes behind the chest at the back of a room and in front of the one at the front.
+**3 — everything that stands on the floor. DONE.** Props, chests, stairs, exits, gates, scatter, drifts,
+growth, scarabs, wall items, arches and their shadows, the lit place, and the explorer with his pool and
+his walk cycle. Two primitives carry all of it (`htmlLayers.tsx`): `Sprite`, a box with the art as its
+background, and `ClipLayer`, a map-sized box cut to a path.
 
-**4 — markers and badges.** The node shapes are the one genuinely vector part: arch, chest, lock, ward
-gate, key colours, the ✓ and the `!`. See the open question below before starting.
+Three things worth knowing:
+
+- **A clipped sprite is laid out as a full-map layer**, with its art placed by `background-position`
+  instead of by `left`/`top` — a clip resolves in the element's OWN box, so this is what lets a footprint
+  path be used exactly as `footprintPath` already built it. Same reason the stone layers are shaped that
+  way.
+- **Depth is DOM order.** The list was already sorted by floor line; the sort is now simply the order the
+  nodes are written in, and no z-index appears anywhere.
+- **A light pool is a `radial-gradient` with `mix-blend-mode: screen`**, so the shared `<radialGradient>`
+  in `<defs>` is gone — and with it `MapDefs`, the two clip ids, and `STANDING_ROOM_CLIP`.
+
+The specs moved with it: `spritesIn`/`urlOf`/`boxOf`/`clipOf` at the top of `SiteMapView.spec.tsx` read a
+sprite off its style, and everything else asks for those rather than for `<image>`.
+
+**4 — markers and badges.** The node shapes are all that is left inside the map's one `<svg>`: arch,
+chest, lock, ward gate, key colours, the ✓ and the `!`. They are static, and static vector costs nothing,
+so this slice is about where they live rather than about what they cost. See the decision below.
 
 **5 — the root.** Delete the `<svg>`, retype `useMapZoom`'s `mapRef` to `HTMLDivElement` (nothing else in
 it changes — it already writes `transform: scale()` by hand), and sweep the spec file for
