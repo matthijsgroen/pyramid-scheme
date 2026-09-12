@@ -111,6 +111,18 @@ FLAT thing in the section: no mesh, no mask, straight to the generator.
 Its identity is PAINT: under this projection a flat thing on the floor has no silhouette at all, so
 nothing but the material tells this from the merchant's. See `prim_mat`.
 
+**"WORN THROUGH" WAS THE WHOLE PROBLEM, and the prompt no longer says it.** Several rolls came back with a
+hole blown through the middle of the mat, and one of them invented a slab of stone below to be seen
+through it — which is the prompt asking for an absence on a background that has nothing behind it. On
+magenta there is no floor to show, so a hole has to be filled with something and the generator fills it.
+The wear is now written as a change of COLOUR and nap with the mat explicitly whole, and the one-object
+line is there because the invented slab keyed in as part of the tile.
+
+**A featureless scaffold is also why this one re-composes.** The mat is a plain turned quad with nothing
+in it, which is the sparse-scaffold trap: one roll ignored it completely and drew a mat square to the
+frame, filling it. The frame sentence and "magenta at every corner" are what to check before blaming a
+thread.
+
 **Attach:**
 
 1. `~/tile-previews/mat-expert.png` — the scaffold
@@ -119,21 +131,27 @@ nothing but the material tells this from the merchant's. See `prim_mat`.
 ```
 A flat rectangular MAT seen from above, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a rush mat lying on the floor before an altar, knelt on for years. The pale four-sided shape
-in the middle of the picture is the MAT, seen from above and lying TURNED on the floor, so none of its
-edges are parallel to the edges of the picture. The narrow darker band along its lower edge is its
-THICKNESS, where the mat sits on the stone. Everything outside that shape is background and stays
-magenta — the mat does not reach the edges of the picture.
+The object: a rush mat lying on the floor before an altar, knelt on for years. There is exactly ONE object
+in this picture and it is the mat.
+
+The pale four-sided shape in the middle of the picture is the MAT, seen from above and lying TURNED on the
+floor, so none of its edges are parallel to the edges of the picture. It sits in the middle of the frame
+with magenta all round it and magenta at every corner — it does not fill the picture and it does not reach
+any edge of it. The narrow darker band along its lower edge is the THICKNESS of the mat itself where it
+meets the stone; it is part of the mat and not a second object lying in front of it.
 
 It is woven from split rush in a close plain weave, running in bands across its width, with a plaited edge
 all round. The weave runs with the MAT'S OWN edges, following the shape it is painted on, never square to
 the picture.
 
-Pale straw-buff, greyed and dulled with dust. It is WORN THROUGH IN THE MIDDLE: at the centre the weave
-has gone thin and broken, showing dark gaps and loose frayed ends, and the wear fades out toward the
-edges, which are still sound. The plaited edge is darker than the field, from handling.
+Pale straw-buff, greyed and dulled with dust. The middle is RUBBED SMOOTH by knees: the weave there is
+paler, flatter and fuzzy, its pattern worn faint, with a few strands broken and lying loose across it.
+That wear fades out toward the edges, which are still sound, and the plaited edge is darker than the
+field from handling.
 
-The wear is the subject: without it this is a new mat.
+THE MAT IS WHOLE. It is not torn, it has no hole in it, and there is no gap anywhere that anything shows
+through — no dark opening, no floor, no stone, no shadow beneath it. Wear here is a change of COLOUR and
+of nap, never a change of shape.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it lies at. Paint only material and wear.
 
