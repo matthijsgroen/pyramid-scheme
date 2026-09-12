@@ -1722,13 +1722,13 @@ yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name
 
 ## Patrons — nineteen
 
-**`shrine-<god>` TAKES `--contents=standing`, and the entries below say so.** `prim_shrine`'s default
-contents is BES — two wide domes, squat and big-headed — and a prompt asking for a god over that geometry
-gets what the geometry says: Thoth came back a pale heap with a beak stuck on it, unreadable at 56 units.
-Anubis survived the same scaffold only because a jackal is compact enough to be painted over a heap, and
-that is luck rather than a method. `--contents=standing` puts an upright figure in the box instead —
-narrow, with a gap at the neck — which is what a bird on a long neck or a god with a staff can be painted
-over. Regenerate the attachment before rolling one.
+**IF A GOD COMES BACK AS THE HEAP, `prim_shrine` TAKES `--contents=standing`.** The default contents is
+BES — two wide domes, squat and big-headed — so a shrine's god is painted onto or beside a rounded mass.
+Both of the priest's went that way and both shipped: Anubis stands beside the heap, Thoth is painted onto
+it as a coiled ibis. The flag is there for the god that cannot be — something upright with a staff, or a
+long neck that needs a silhouette rather than a lump. It puts a narrow standing figure in the box with a
+gap at the neck. Regenerate the attachment if you use it, and remember the mask: a tile already painted
+over Bes keeps the Bes scaffold for ever.
 
 **A PATRON IS WHOSE TOMB A PYRAMID IS**, and it reaches the map through one mechanism only: for five
 kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUrl` prefers
@@ -2134,7 +2134,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shrine --contents=standing --spin=18 --colour=#d9a93f --floor=#57534b
+scaffold shrine --spin=18 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/shrine-maat.webp --tier=master --name=shrine-maat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -2226,7 +2226,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shrine --contents=standing --spin=-11 --colour=#8fd9bd --floor=#5a8074
+scaffold shrine --spin=-11 --colour=#8fd9bd --floor=#5a8074
 yarn import-tile art/masters/props/wizard/shrine-ra.webp --tier=wizard --name=shrine-ra --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -2343,7 +2343,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shrine --contents=standing --spin=-11 --colour=#8fd9bd --floor=#5a8074
+scaffold shrine --spin=-11 --colour=#8fd9bd --floor=#5a8074
 yarn import-tile art/masters/props/wizard/shrine-maat.webp --tier=wizard --name=shrine-maat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -2432,7 +2432,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shrine --contents=standing --spin=18 --colour=#d9a93f --floor=#57534b
+scaffold shrine --spin=18 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/shrine-sekhmet.webp --tier=master --name=shrine-sekhmet --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -2544,7 +2544,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shrine --contents=standing --spin=18 --colour=#d9a93f --floor=#57534b
+scaffold shrine --spin=18 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/shrine-osiris.webp --tier=master --name=shrine-osiris --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -2684,43 +2684,4 @@ Everything else at starter, junior and expert is drawn. These three are the whol
 master, and every one of them is a SINGLE room — which is why they sat unqueued while 62 rooms' worth of
 expert work went in ahead of them. They are here because "done up to expert" is not done with dummies
 still in it, not because any of them is urgent.
-
-### `expert/shrine-thoth` — Thoth's ibis in the priest's shrine
-
-1 room. Reuses the priest's own shrine scaffold, and takes the PLAIN form: his generic carries a sealed
-lid, and a seal cannot be repainted into a god.
-
-**Attach:**
-
-1. `~/tile-previews/shrine-thoth-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a SHRINE standing on the floor, a cabinet on a plinth with a god inside it. The slab at the
-bottom is the PLINTH, the stepped slab on top is the CORNICE, and the box between them holds the figure.
-
-Standing inside is THOTH: a small figure with an IBIS HEAD — a long, smooth, curved beak sweeping DOWN
-from a narrow skull, and no ears. The beak is the mark and it must be long enough to read at a glance;
-a short or straight beak makes him a different god entirely.
-
-The shrine is cedar, dark and close-grained, with bronze fittings gone green-black at the hinges and along
-the front lip. The plinth is dark basalt with natron dust settled in its mouldings. Inside, the back is
-deep shade and Thoth stands against it in pale limestone, his ibis head and beak a flat dull black.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold shrine --contents=standing --spin=-19 --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/shrine-thoth.webp --tier=expert --name=shrine-thoth --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 

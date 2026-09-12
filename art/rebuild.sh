@@ -1048,6 +1048,19 @@ scaffold shrine --spin=-19 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/shrine-anubis.webp --tier=expert --name=shrine-anubis --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
+# THOTH in the same cabinet, on the same Bes scaffold, and the ibis is painted ONTO the heap rather than
+# beside it — a pale coiled mass with a black bill curving off it. Judged against a lone product shot
+# that is a lump; on the floor at 56 units the bill and the pale mass against the dark box are what a
+# player has to tell it by, and they carry.
+#
+# No correction flags. +53 warmth against the slab, more than twice the generic's +20, and left alone for
+# the jarRack's reason one prop over: the warmth is the MATERIAL — this one came back in timber where
+# the generic is basalt — and --saturation takes the timber with it. 0.7 buys 8 warmth and turns the
+# grain muddy; the generic's own door is red, so warm is already in this rank's family.
+scaffold shrine --spin=-19 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/shrine-thoth.webp --tier=expert --name=shrine-thoth --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
 # ANUBIS, and the tile that proved a statue needs no museum scan. Step 0's table sent statues to a scan
 # for as long as it existed; the canopic jars broke that row's other half, and this broke the rest.
 #
