@@ -111,17 +111,23 @@ FLAT thing in the section: no mesh, no mask, straight to the generator.
 Its identity is PAINT: under this projection a flat thing on the floor has no silhouette at all, so
 nothing but the material tells this from the merchant's. See `prim_mat`.
 
-**"WORN THROUGH" WAS THE WHOLE PROBLEM, and the prompt no longer says it.** Several rolls came back with a
+**"WORN THROUGH" WAS THE FIRST PROBLEM, and the prompt no longer says it.** Several rolls came back with a
 hole blown through the middle of the mat, and one of them invented a slab of stone below to be seen
 through it — which is the prompt asking for an absence on a background that has nothing behind it. On
 magenta there is no floor to show, so a hole has to be filled with something and the generator fills it.
-The wear is now written as a change of COLOUR and nap with the mat explicitly whole, and the one-object
-line is there because the invented slab keyed in as part of the tile.
+The wear is now written as a change of COLOUR and of nap with the mat explicitly whole, and the one-object
+line is there because the invented slab keyed in as part of the tile. That fix held: the roll after it came
+back sound.
 
-**A featureless scaffold is also why this one re-composes.** The mat is a plain turned quad with nothing
-in it, which is the sparse-scaffold trap: one roll ignored it completely and drew a mat square to the
-frame, filling it. The frame sentence and "magenta at every corner" are what to check before blaming a
-thread.
+**TAKES `--context`, and that is the second problem — the one the wording could not reach.** Three rolls in
+a row drew the mat SQUARE to the frame and filling it, the turn gone. It is the sparse-scaffold trap in its
+purest form: a flat sheet has no silhouette under this projection, so its scaffold is one plain quad on
+magenta, and a quad on nothing is a rectangle the generator is free to straighten. Nothing in it says
+foreshortened. `--context=0.95x0.72` on the handed-over render alone lays the rank's paving round it with
+its own footprint cut out, so the mat is askew to the JOINTS of a floor rather than askew to nothing, and
+the angle has something to be an angle against. The mask is rendered without it, so no paving reaches the
+tile — the same trade `wizard/basin` makes, and for the same reason. The command is under
+"Regenerating the attachments".
 
 **Attach:**
 
@@ -129,16 +135,21 @@ thread.
 2. `~/tile-previews/expert-plain.png` — the material reference
 
 ```
-A flat rectangular MAT seen from above, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+A stone floor with a MAT lying on it, seen from above and slightly in front, painted in flat matte gouache, in the same raked view as the reference. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself. No perspective and no vanishing point.
 
-The object: a rush mat lying on the floor before an altar, knelt on for years. There is exactly ONE object
-in this picture and it is the mat.
+The scene: the floor of a priest's tomb, with a rush mat lying on it before an altar, knelt on for years.
+You are painting a floor with a mat on it, not an object standing on a surface.
 
-The pale four-sided shape in the middle of the picture is the MAT, seen from above and lying TURNED on the
-floor, so none of its edges are parallel to the edges of the picture. It sits in the middle of the frame
-with magenta all round it and magenta at every corner — it does not fill the picture and it does not reach
-any edge of it. The narrow darker band along its lower edge is the THICKNESS of the mat itself where it
-meets the stone; it is part of the mat and not a second object lying in front of it.
+The paved band across the middle of the picture is the FLOOR: dark basalt slabs with open joints between
+them, running straight across. Above it and below it the picture is pure magenta #FF00FF and stays
+magenta.
+
+The pale four-sided shape lying on that paving is the MAT. It lies TURNED: its edges run askew to the
+joints of the floor and to the edges of the picture, and it is FORESHORTENED, which is why it is a slanted
+four-sided shape and not a rectangle. Do not straighten it, do not square it to the picture, and do not
+let it grow to fill the frame — it covers the paving and no more. The narrow darker band along its lower
+edge is the THICKNESS of the mat itself where it sits on the stone; it is part of the mat and not a second
+object lying in front of it.
 
 It is woven from split rush in a close plain weave, running in bands across its width, with a plaited edge
 all round. The weave runs with the MAT'S OWN edges, following the shape it is painted on, never square to
@@ -149,13 +160,13 @@ paler, flatter and fuzzy, its pattern worn faint, with a few strands broken and 
 That wear fades out toward the edges, which are still sound, and the plaited edge is darker than the
 field from handling.
 
-THE MAT IS WHOLE. It is not torn, it has no hole in it, and there is no gap anywhere that anything shows
-through — no dark opening, no floor, no stone, no shadow beneath it. Wear here is a change of COLOUR and
-of nap, never a change of shape.
+THE MAT IS WHOLE. It is not torn, it has no hole in it, and nothing shows through it anywhere — no dark
+opening, and no paving seen through the weave. Wear here is a change of COLOUR and of nap, never a change
+of shape.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it lies at. Paint only material and wear.
 
-No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
+No highlights, no gloss, no rim light, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -3170,6 +3181,20 @@ footprint render here — nothing on this prop stands above the paving, so it ca
 r() { yarn render-prop --primitive=basin --contents=pool --colour=#8fd9bd --floor=#5a8074 "$@"; }
 P=~/tile-previews/basin-wizard
 r --context=1.04x0.74 --shadow=0 --out=$P.png
+r --shadow=0 --background=none --out=$P-obj.png
+```
+
+**A FLAT THING ON THE FLOOR takes it too, and for the mirror of the hole's reason.** `expert/mat` is the
+case: a sheet has no silhouette under this projection, so its scaffold is one plain quad on magenta, and a
+quad on nothing is a rectangle a generator is free to straighten — three rolls came back square to the
+frame and filling it. Paving round it gives the turn something to be a turn against. The opening is the
+mat's OWN footprint, so the floor butts its edge rather than running under it, and the frame is given the
+prop slot's own 2:3 because the object is much wider than it is deep.
+
+```sh
+r() { yarn render-prop --primitive=mat --spin=12 --colour=#a7b2be --floor=#8d98a5 "$@"; }
+P=~/tile-previews/mat-expert
+r --context=0.95x0.72 --shadow=0 --width=448 --height=672 --out=$P.png
 r --shadow=0 --background=none --out=$P-obj.png
 ```
 
