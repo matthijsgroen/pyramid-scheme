@@ -3266,6 +3266,33 @@ const sharp = require("sharp");
 
 ## When a return lands
 
+**The whole loop, in order.** Every step has been skipped at least once and each one cost a re-roll or a
+bad master in the tree.
+
+1. **Check the aspect before anything else.** A square return means the scaffold was not used — re-attach
+   and roll again. A prop comes back 1686x2528, a wall item 2912x1440.
+2. **LOOK at it beside the scaffold**, and specifically at what is INSIDE it. The merchant's wall shrine
+   came back with a shapeless pot where the scaffold has a lamp, because the prompt said the box was
+   empty — a prompt contradicting the geometry it is painted over. Fix the PROMPT, not the tile.
+3. **Store the master** at `art/masters/props/<tier>/<name>.webp`, quality 95.
+4. **Render the mask** — the entry's `scaffold` line, out to a temp file. This is the third render
+   `rebuild.sh` does not make.
+5. **Import** with the entry's flags.
+6. **Measure**, and measure against a SHIPPED tile of the same kind rather than against the thresholds:
+   every tile in this set trips `too contrasty`, and most trip one of `too light`/`too dark`/`too cool`.
+   The numbers that matter are the palette tails and the separation.
+7. **`yarn on-floor`** — or, for a wall item, composite it into the rank's own band. A number in band can
+   still look wrong, and a wall item is 56x28 on the map, where a great deal of what is wrong in a return
+   simply disappears.
+8. **Record the flags in `art/rebuild.sh`** and **delete the entry here**. Then `yarn art-census` to
+   confirm the kind reads `art`.
+
+**`--brightness` can only help if the SPAN allows it.** Both rolls of the merchant's wall shrine came back
+about equally over the light clamp, 43.7% and 42.7%. The first already sat 8% below the dark end, so
+scaling it down brought the top in and pushed the bottom out — 16.5% at 0.62, worse overall. The second
+sat at 0.0% dark and took 0.75 cleanly. Read both tails before reaching for the flag; if both are out, the
+return is wrong and no flag will fix it.
+
 `yarn tile-stats <file> --tier=<tier> --slot=<slot>` measures it, and the numbers to hit are the ones
 `art/rebuild.sh` argues for tile by tile: about +22 to +25 warmth against the rank's slab, a tail under
 roughly 4% over the light clamp, and at least 10 luminance of separation from the floor in EITHER direction

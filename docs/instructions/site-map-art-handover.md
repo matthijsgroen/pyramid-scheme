@@ -97,6 +97,11 @@ main..HEAD` is the record; what a fresh context needs:
 
 Each of these cost real time and none is guessable from the code:
 
+- **Never silence a BLENDER RENDER either, for the same reason.** `render-prop` prints the object's
+  measured size — "object 0.82 wide, lands at 56x79 map units" — and that line is the only thing that
+  will tell you the primitive did something other than what you wrote. A `-side` variant built at 0.44
+  was reported at 0.82 because its branch had been inserted AFTER the shared stonework and was getting
+  the face-on jambs as well; the render said so on every roll, into `/dev/null`.
 - **Never silence `yarn import-tile`.** It refuses `--contrast` below 1 ("would eat the alpha channel") and
   three sweeps in a row reported identical numbers because the import was failing into `/dev/null` and the
   tile on disk never changed. Stale output read as data.
