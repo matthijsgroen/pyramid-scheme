@@ -1,7 +1,7 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, approachCells, buildRoomClaims, footprintPath, tileRegionsFor } from "./SiteMapView"
-import { NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP } from "./nodeArt"
+import { NODE_ART_DY, NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP } from "./nodeArt"
 import { ExplorerFigure, LIGHT_POOL_ID } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
 import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
@@ -70,6 +70,80 @@ const portalEast = (state: CellState, stairId?: string): GridCell => ({
   stairId,
   dirs: new Set<Direction>(["e"]),
   state,
+})
+
+describe("a node's furniture and the clip it is cut to", () => {
+  const treasureCell = (dirs: Direction[]): GridCell => ({
+    type: "room",
+    roomType: "encounter",
+    family: "treasure-chest",
+    tags: ["treasure"],
+    dirs: new Set<Direction>(dirs),
+    state: "completed",
+  })
+
+  it("moves the clip with the art, so a chest is never cut by its own offset", () => {
+    // A chest is STEPPED AWAY FROM ITS DOORWAYS — 0.3 of a cell across, 0.2 down — and the clip was not
+    // stepped with it. The sprite is a cell wide, so the whole offset hung past the clip's edge and was
+    // cut: the chest spanned 156.8 to 212.8 against a clip of 140 to 196, losing 30% of itself to the
+    // side of its own cell. The clip still stops it at the masonry a cell away; it just travels with it.
+    const grid = makeGrid([
+      [empty, empty, empty],
+      [empty, treasureCell(["w"]), empty],
+      [empty, empty, empty],
+    ])
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
+    const chest = [...container.querySelectorAll("image")].find(el =>
+      (el.getAttribute("href") ?? "").includes("chestProp")
+    )
+    expect(chest).toBeTruthy()
+    const offset = Number(chest!.getAttribute("x")) - cellLeft(1)
+    expect(offset).toBeGreaterThan(0)
+    const moved = [...container.querySelectorAll("clipPath path")]
+      .map(el => /translate\(([-\d.]+), ([-\d.]+)\)/.exec(el.getAttribute("transform") ?? ""))
+      .find(Boolean)
+    expect(moved).toBeTruthy()
+    expect(Number(moved![1])).toBeCloseTo(offset)
+    expect(Number(moved![2])).toBeCloseTo(NODE_ART_DY)
+  })
+})
+
+describe("what a condition grows on", () => {
+  // A CORRIDOR IS MOST OF A FLOOR. The expedition's third pyramid has 620 corridor cells to 44 room
+  // ones, so growth that keeps to the rooms is growth nobody sees — and "only in the rooms" is what it
+  // looked like from the map twice, once from a flat per-floor count and once from a transform that
+  // mirrored half of it across the viewport. Neither was the picking, and this is what says so.
+  const growOn = (cells: GridCell[][]) => {
+    const grid = { ...makeGrid(cells), condition: { kind: "overgrown" as const, amount: 1 } }
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
+    const sprites = [...container.querySelectorAll("image")].filter(el =>
+      (el.getAttribute("href") ?? "").includes("overgrown")
+    )
+    return cells[0].map((_, col) => {
+      const { cx } = cellCenter(0, col)
+      return sprites.filter(
+        el => Math.abs(Number(el.getAttribute("x")) + Number(el.getAttribute("width")) / 2 - cx) < CELL / 2
+      ).length
+    })
+  }
+
+  it("grows on a corridor cell as readily as on a room cell", () => {
+    const run = growOn([
+      [corridor("completed", false), corridor("completed", false), room("completed"), corridor("completed", false)],
+      [empty, empty, empty, empty],
+    ])
+    // Every column carries some: at amount 1 the density is one per cell, and a corridor is a cell.
+    expect(run.every(n => n > 0)).toBe(true)
+  })
+
+  it("draws nothing on a cell the player has not reached", () => {
+    const run = growOn([
+      [corridor("completed", false), corridor("fogged", false)],
+      [empty, empty],
+    ])
+    expect(run[0]).toBeGreaterThan(0)
+    expect(run[1]).toBe(0)
+  })
 })
 
 const makeGrid = (cells: GridCell[][]): FloorGrid => ({

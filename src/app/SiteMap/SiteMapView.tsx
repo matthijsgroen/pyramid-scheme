@@ -524,6 +524,8 @@ const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficul
           x: cx + dx - CELL / 2,
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
+          // The clip steps with the art: see NodeSprite.clipShift.
+          clipShift: { x: dx, y: dy },
         })
       } else if (kind === "exit") {
         // THE WAY OUT IS A MARKER, NOT ARCHITECTURE. A doorway has to be aimed — face on it needs the
@@ -2567,7 +2569,10 @@ export const SiteMapView = ({
           <defs>
             {nodeSprites.map(sprite => (
               <clipPath key={sprite.key} id={`room-clip-${sprite.key}`}>
-                <path d={footprintPath(sprite.footprint)} />
+                <path
+                  d={footprintPath(sprite.footprint)}
+                  transform={sprite.clipShift ? `translate(${sprite.clipShift.x}, ${sprite.clipShift.y})` : undefined}
+                />
               </clipPath>
             ))}
           </defs>
