@@ -260,7 +260,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
         />
       )}
       {encounter.isOpen && ActiveEncounterComponent && encounter.ctx && (
-        <EncounterModal>
+        <EncounterModal difficulty={encounter.ctx.difficulty}>
           <ActiveEncounterComponent
             puzzle={encounter.puzzle}
             ctx={encounter.ctx}
