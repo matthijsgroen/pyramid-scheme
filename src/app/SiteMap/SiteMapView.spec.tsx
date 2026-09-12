@@ -1161,10 +1161,10 @@ describe("the player is drawn among the furniture, not always over it", () => {
   })
 })
 
-// The way OUT is a doorway cut in the same wall a ward is, so it is placed the same way — on the far
-// side of its own cell — and it loses its marker for the stairhead's reason: the art IS the node, and
-// unlike a gate it carries no key colour and no state to convey.
-describe("the way out is drawn as a doorway", () => {
+// The way OUT is a MARKER rather than architecture: a shaft of light standing free on the floor, which
+// is the same picture from every approach and so needs no facing at all. It loses its own marker for the
+// stairhead's reason — the art IS the node, and unlike a gate it carries no key colour and no state.
+describe("the way out is drawn as a shaft of light", () => {
   const exitGrid = () => {
     const grid = makeGrid([
       [
@@ -1175,14 +1175,19 @@ describe("the way out is drawn as a doorway", () => {
     return { ...grid, entrancePos: [0, 0] as const, exitPos: [0, 1] as const }
   }
 
-  it("draws the exit tile on the far side of its cell, away from the way in", () => {
+  it("stands the shaft on the exit's own cell, whichever way it is approached", () => {
     const { container } = render(<SiteMapView grid={exitGrid()} revealAllCells />)
     const img = Array.from(container.querySelectorAll<SVGImageElement>("image")).find(el =>
       (el.getAttribute("href") ?? "").includes("/exit")
     )
     expect(img, "the exit drew no art at all").toBeDefined()
-    // Approached from the west, so the doorway is on the cell's EAST seam.
-    expect(Number(img!.getAttribute("x"))).toBe(cellLeft(1) + CELL + SIDE_W / 2 - CELL / 2)
+    // On the cell, not in a wall: a beam has no facing, so there is no seam for it to stand in.
+    expect(Number(img!.getAttribute("x"))).toBe(cellCenter(0, 1).cx - CELL / 2)
+  })
+
+  it("lays a pool of light at its foot", () => {
+    const { container } = render(<SiteMapView grid={exitGrid()} revealAllCells />)
+    expect(container.querySelectorAll("[data-light-pool]").length).toBeGreaterThan(0)
   })
 
   it("puts the marker away under it", () => {

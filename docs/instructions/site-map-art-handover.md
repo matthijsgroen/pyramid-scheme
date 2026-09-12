@@ -654,11 +654,22 @@ half the doors in the game.
    Written as if the gap came before, the gate stood a whole `SIDE_W` west of its own seam and rested on
    the TOP edge of the band below it, hanging 28 units clear of the sill it is supposed to stand on.
 
-4. ~~The way out~~ — **BUILT**, `prim_exit`: the gate's own masonry with the day let in, placed on the
-   far wall of its chamber the way a ward is, and its marker retired for the stairhead's reason. ONE
-   drawing and no side variant, which is the opposite of what a gate needed: a gate walked across becomes
-   a single bar and a bar reads as a bar, where a sideways exit is a narrow slot of light — a COLUMN at
-   56 units, which this set already draws as `pillar`. A doorway turned is the lesser compromise.
+4. ~~The way out~~ — **BUILT**, `prim_exit`: a shaft of light standing free on the floor, and its marker
+   retired for the stairhead's reason.
+
+   **A MARKER, NOT ARCHITECTURE, and the facings are why.** It was a doorway first — the ward gate's own
+   masonry with the day let in — and a doorway has to be aimed: face on it needs the wall it is cut in,
+   and walked across it becomes a narrow lit slot, which at 56 units is a COLUMN and collides with
+   `pillar`. A beam is the same picture from every approach, so it needs no side drawing, no seam to
+   stand in and no aiming at all. It is a game's convention rather than a tomb's, which is the trade.
+
+   **It is the one tile in the set with ALPHA in it.** A beam has to let the paving show through or it is
+   a post planted on the floor. `flat_material`'s alpha carries through the import untouched — the mask is
+   the render's own alpha and the composite multiplies by it — so no importer flag is involved. And no
+   `--seat`: light casts nothing, and the pool at its foot is laid by the renderer, the way a stair's
+   cresset is motivated in the tile and lit by the map.
+
+   The doorway is not lost: it is `prim_exit` as of 9cd4eecc, if architecture reads better later.
 
 5. **Overrides for the gods and the pharaoh**, if the generic set reads wrong on their stone.
 ### Two facts that decided the shape

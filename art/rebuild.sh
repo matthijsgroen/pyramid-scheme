@@ -426,13 +426,17 @@ scaffold gate --contents=open-side
 yarn import-tile "$OBJ" --tier=default --name=gate-open-side --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
-# THE WAY OUT, which is the gate's masonry with the light let in — same jambs, same lintel, same cavetto,
-# because a player reads the two doorways against each other and giving the exit its own architecture
-# made two openings with nothing to do with one another. Imported from its own render for the gate's
-# reason: a slab of daylight in a stone frame is a value, not a texture.
-scaffold exit
-yarn import-tile "$OBJ" --tier=default --name=exit --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+# THE WAY OUT, as a shaft of light rather than a door. It is the one tile in the set rendered with ALPHA
+# — `--alpha-haze` and `--alpha-daylight` — because a beam has to have the paving show through it or it
+# is a post planted on the floor; the mask is the render's own alpha and the composite multiplies by it,
+# so the transparency survives the import with no flag of its own.
+#
+# No --seat and no shadow: light casts nothing. The pool at its foot is laid by the RENDERER
+# (`NodeSprite.light`), the same way a stair's cresset is motivated in the tile and lit by the map.
+"$BLENDER" -b -P scripts/renderProp.py -- --primitive=exit \
+  --shadow=0 --background=none --alpha-haze=0.28 --alpha-daylight=0.9 \
+  --out="$OBJ" --colour=#a49781 --floor=#6c6257 >/dev/null
+yarn import-tile "$OBJ" --tier=default --name=exit --slot=prop --filter=smooth --mask="$OBJ"
 
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
 # replaces was a post-processing copy whose flags could not be recovered (art/README).

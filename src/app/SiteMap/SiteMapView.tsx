@@ -526,29 +526,23 @@ const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficul
           mirrored: false,
         })
       } else if (kind === "exit") {
-        // THE WAY OUT IS A DOORWAY TOO, and it is cut in the same wall a ward is — so it is placed the
-        // same way: on the FAR side of its own cell, in the seam, facing back down the passage you came
-        // along. An exit is a leaf with one way in, so the far side is simply the opposite of it; there
-        // is no pocket beyond to ask about the way a gate has.
-        approach ??= approachCells(grid)
-        const from = approach.get(`${r},${c}`)
-        if (!from) continue
-        const [dr, dc] = [r - from[0], c - from[1]]
-        // One drawing, face on, whichever way the passage runs: a sideways exit is a narrow slot of
-        // light, and at 56 units that is a column — which this set already draws as `pillar`.
+        // THE WAY OUT IS A MARKER, NOT ARCHITECTURE. A doorway has to be aimed — face on it needs the
+        // wall it is cut in, and walked across it becomes a narrow lit slot that reads as a column, which
+        // this set already draws as `pillar`. A shaft of light standing free on the floor is the same
+        // picture from every approach, so it needs no facing, no side drawing and no seam to stand in: it
+        // is placed on its own cell like a chest, and the renderer lays a pool at its foot the way it does
+        // for a stair's cresset.
         const url = tileUrl(tier, "exit")
         if (!url) continue
-        const seamCx =
-          dc > 0 ? cellLeft(c) + CELL + SIDE_W / 2 : dc < 0 ? cellLeft(c) - SIDE_W / 2 : cellLeft(c) + CELL / 2
-        const seamBase = dr > 0 ? cellTop(r) + CELL + WALL_H / 2 : dr < 0 ? cellTop(r) - WALL_H / 2 : cellTop(r) + CELL
+        const { cx: ex, cy: ey } = cellCenter(r, c)
         out.push({
-          footprint: [`${r},${c}`, `${r + dr},${c + dc}`],
-          fadeAt: [`${r},${c}`],
+          footprint,
           key: `exit:${r},${c}`,
           url,
-          x: seamCx - CELL / 2,
-          y: seamBase - PROP_H,
+          x: ex - CELL / 2,
+          y: ey + CELL / 2 - PROP_H,
           mirrored: false,
+          light: { x: ex, y: ey + CELL * 0.12, r: LAMP_POOL_RADIUS },
         })
       } else if (kind === "gate") {
         // `gate` is shut and `gate-open` is the same leaf swung back or sunk into the floor; a rank with

@@ -249,6 +249,17 @@ def cyl(r, h, x=0.0, y=0.0, z=0.0, verts=16):
     return bpy.context.object
 
 
+def cone(r_bottom, r_top, h, x=0.0, y=0.0, z=0.0, verts=18):
+    """A truncated cone. WIDEN IT UPWARD AND ITS SIDE NORMALS COME OUT INVERTED — the laws table records
+    it and `prim_basin` paid for it — so anything with the larger radius on top must go through
+    `recalc_outward` or it renders near-black with its material slots reading correctly the whole time."""
+    bpy.ops.mesh.primitive_cone_add(vertices=verts, radius1=r_bottom, radius2=r_top, depth=h, location=(x, y, z))
+    obj = bpy.context.object
+    if r_top > r_bottom:
+        recalc_outward(obj)
+    return obj
+
+
 def prim_market():
     """One table and what is on it: `--contents=market` is the merchant's balance and heap of grain,
     `--contents=laid` the nobleman's laid dining table.
@@ -1583,46 +1594,42 @@ def prim_gate():
 
 
 def prim_exit():
-    """The way OUT of a site: a doorway with the day behind it.
+    """The way out as a SHAFT OF LIGHT falling into the chamber — the marker a dungeon crawler uses to say
+    "leave here", rather than an architectural way out.
 
-    ONE DRAWING, FACE ON, AND NO SIDE VARIANT — which is the opposite of what a gate needs, for a reason
-    worth writing down. A gate walked across becomes a single bar, and a bar read as a bar. The same
-    treatment here is a narrow vertical slot of light, and at 56 units that is a COLUMN — which this set
-    already has a kind for. `pillar` and a sideways exit were the same picture. A doorway drawn face on
-    in a side wall is the lesser compromise: it is at worst turned, where the other was wrong.
+    IT HAS NO FACING, which is the whole argument for it. A doorway has to be aimed: face on it needs the
+    wall it is cut in, and walked across it becomes a narrow lit slot that reads as a column — `pillar`,
+    which this set already draws. A shaft standing free on the floor is the same picture from every
+    approach, so one drawing serves all four and there is nothing to aim.
 
-    IT IS THE GATE'S MASONRY WITH THE LIGHT LET IN. Both are doorways cut in the same wall, and a player
-    reads them against each other — so the jambs, the lintel and the cavetto are the gate's, and the whole
-    difference is what stands in the opening: bars against the dark there, the day here. Drawing the exit
-    its own architecture made two doorways that had nothing to do with one another.
+    IT WIDENS UPWARD, because that is light coming DOWN through a hole rather than a post standing up. The
+    first attempt tapered the other way in four stacked courses and read as a tiered stack of blocks: a
+    stepped silhouette is a built thing, and light has no steps in it.
 
-    A FRAME WITH BLACK INSIDE IS ONE TILE (`prim_wallshrine`), and this is the inverse of that law rather
-    than an exception to it: the opening is the palest thing in the frame instead of the darkest, which is
-    a difference of VALUE across the whole of it and cannot be confused with a niche, a shrine or a shaft.
-    It is also why the light is a solid slab and not a glow — a soft one washed out to the floor's own
-    value at 56 units and left a frame with nothing in it.
+    WHICH MEANS CONES, AND CONES WIDENING UPWARD INVERT THEIR SIDE NORMALS — the laws table's entry, which
+    `prim_basin` paid for. `cone` calls `recalc_outward` for exactly this case; without it the shaft
+    renders near-black while its material slots read correctly the whole time.
 
-    THE SILL CATCHES IT. A tongue of the same pale colour lies on the floor in front of the threshold,
-    which is what says the light is COMING THROUGH rather than painted on the back wall. Kept shallow in
-    y for `prim_gate`'s reason: a tongue built the wall's full thickness draws `k*d` of pale band up the
-    doorway and fills the opening it is meant to spill out of.
+    TWO VALUES, NOT ONE: a brighter CORE inside a wider HAZE. Rendered as a single slab of its own colour
+    the shaft is a hard-edged block of pale, which is a pillar again — the core is what you see, the haze
+    is what the dusty air does with it.
+
+    IT IS THE ONE TRANSPARENT THING IN THE SET, deliberately. `flat_material`'s alpha carries through the
+    import — the mask is the render's own alpha and the composite multiplies by it — so the paving and any
+    drift on it still show through, which is what stops it reading as a solid post planted on the floor.
+
+    The set is matte and has no glow anywhere, so nothing here is drawn being lit: the renderer lays its
+    own pool at the foot (`NodeSprite.light`), the same way a stair's cresset is MOTIVATED in the tile and
+    lit by the map.
     """
-    k = 0.7
-    opening, jamb, d = 0.62, 0.15, 0.22
-    h = 0.96
-    half = opening / 2 + jamb / 2
-    span = opening + 2 * jamb
-
-    for sx in (-1, 1):
-        mark(box(jamb + 0.06, d, 0.05, x=sx * half, z=0.025), "body")
-        mark(box(jamb, d, h, x=sx * half, z=h / 2 + 0.03), "body")
-    mark(box(opening + 0.04, d * 0.3, 0.035, z=0.018), "body")
-    mark(box(span, d, 0.11, z=h + 0.055), "body")
-    mark(box(span + 0.09, d * 0.42, 0.06, y=-(d * 0.25), z=h + 0.14 + k * (d * 0.25)), "body")
-    # The day, filling the opening from the threshold to the lintel.
-    mark(box(opening, d * 0.5, h - 0.08, z=(h - 0.08) / 2 + 0.05), "daylight")
-    # And the tongue of it lying on the floor in front.
-    mark(box(opening + 0.10, d * 0.34, 0.04, y=-(d * 0.55), z=0.02 + k * (d * 0.55)), "daylight")
+    # The pool on the paving, which is what roots the shaft to the floor rather than leaving it hovering.
+    # Flat and shallow: depth is taxed into height here as everywhere.
+    mark(cyl(0.34, 0.02, z=0.01, verts=22), "daylight")
+    # The haze and the core, both tapering to a POINT. Opening upward instead put a flat elliptical cap
+    # across the top of the shaft and the whole thing read as a funnel — light has no lid, and a cone
+    # closed at nothing is the one shape here with no cap face to draw at all.
+    mark(cone(0.40, 0.0, 1.06, z=0.53), "haze")
+    mark(cone(0.17, 0.0, 0.98, z=0.49), "daylight")
     return join_all()
 
 
@@ -2705,6 +2712,10 @@ PART_COLOURS = {
     # out-value the paving the way `timber` has to out-value the stone. Pale and warm rather than white,
     # because it is sand and low sun through a doorway, not a lamp.
     "daylight": "#e6d2a4",
+    # The air the beam stands in. Warmer and a shade deeper than the core, because a shaft of light in
+    # dust is not the light itself — rendered at the core's own colour the two read as one hard-edged
+    # slab, which is a pillar and not a beam.
+    "haze": "#d8b87c",
     "cloth": "#bdb3a0",
     # STONE BELOW THE FLOOR LINE: the same material as `body`, carrying the light that reaches down a
     # shaft rather than the light on the paving. A hole has no sun in it — its walls stand in the y-z
