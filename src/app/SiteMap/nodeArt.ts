@@ -14,6 +14,10 @@ export const NODE_ART_DY = CELL * 0.2
  * the marker says whether you can get to it. */
 export const NODE_OVER_ART_OPACITY = 0.72
 
+/** An emptied chest, eased back the way a completed marker is (0.45): still furniture in the room, no
+ * longer something the eye is sent to. */
+export const LOOTED_OPACITY = 0.5
+
 /** Which corner of its cell a node's furniture stands in: AWAY from every way out.
  *
  * The player enters by one of the cell's own `dirs` and leaves by another, so the free quarter is the
@@ -80,4 +84,12 @@ export type NodeSprite = {
    * player walks BEHIND it — and a barrier that hid him would be a wall. `ARCH_FADE` is what a doorway
    * already does when he stands in it, and a gate is a doorway with bars in it. */
   fadeAt?: readonly string[]
+  /** What a treasure room's chest has to say about itself: emptied (✓, and dimmed), or holding a reward
+   * the player had no room for (!).
+   *
+   * The chest art is the same picture either way and it stands OVER the room's marker, hiding the badge
+   * that carries this — so on the map a looted room looked exactly like one still worth walking to. The
+   * badge moves onto the chest, where the player is already looking, and the marker underneath drops
+   * its own so the room is not checked twice.  */
+  badge?: "taken" | "pending"
 }

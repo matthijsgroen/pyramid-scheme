@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - The map stops heating the phone in your hand: the dust in the air and the flicker of the lamps are drawn the cheap way now, so a map nobody is touching costs nothing to leave open.
+- A chest you have already emptied is drawn emptied: it stands back in the room with a tick on its lid, so a room worth walking to is told apart from one you have cleared.
+- The torch at the mouth of a staircase lights the floor it is standing on, instead of the floor on the other side of the steps.
 
 ## 0.43.0 - 2026-09-12
 

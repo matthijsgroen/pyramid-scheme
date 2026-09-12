@@ -38,7 +38,7 @@ import {
   mapHeight,
   mapWidth,
 } from "./mapScale"
-import { NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
+import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
 import { ClipLayer, Sprite } from "./htmlLayers"
 import { moodFor } from "./moodSettings"
@@ -125,6 +125,21 @@ const PendingLootBadge = ({ r }: { r: number }) => (
       !
     </text>
   </g>
+)
+
+/** A node's badge, worn by the ART rather than by the marker: a chest stands over its own marker, so the
+ * ✓ that says the room is done goes on the chest's lid where the eye already is.
+ *
+ * Its own little inline `<svg>` inside the HTML layer — the badges are icons, and static vector costs
+ * nothing (docs/instructions/map-html-port.md, "The markers"). Placed by its CENTRE, in map units. */
+const NodeBadge = ({ kind, x, y }: { kind: "taken" | "pending"; x: number; y: number }) => (
+  <svg
+    aria-hidden="true"
+    viewBox="-7 -7 14 14"
+    style={{ position: "absolute", left: x - 7, top: y - 7, width: 14, height: 14, overflow: "visible" }}
+  >
+    {kind === "pending" ? <PendingLootBadge r={7} /> : <CompletedBadge r={7} />}
+  </svg>
 )
 
 // ─── Node shape geometry ──────────────────────────────────────────────────────
@@ -413,7 +428,8 @@ export const footprintPath = (cells: readonly string[]): string => {
 }
 
 /** How far the cresset at a stair's mouth stands from the middle of its cell, measured off the painted
- * tile rather than guessed: the flame's own pixels land 24 units left of centre. */
+ * tile rather than guessed: the flame's own pixels land 24 units to one side of centre. WHICH side is a
+ * fact about the file — see `flameOnRight` where the flights are placed. */
 const STAIR_FLAME_DX = CELL * 0.43
 
 /** Anything standing on the floor, with the line it stands on — a room's own furniture and a node's.
@@ -475,7 +491,12 @@ export const approachCells = (grid: FloorGrid): Map<string, readonly [number, nu
  * own `entrancePos` is the way back UP (pyramid-interior-design.md: a stairhead descends), and absent
  * art simply yields nothing, leaving the vector marker to carry the node as it always did.
  */
-const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficulty): NodeSprite[] => {
+const nodeSpritesFor = (
+  grid: FloorGrid,
+  claims: RoomClaims,
+  floorTier: Difficulty,
+  pendingCells?: ReadonlySet<string>
+): NodeSprite[] => {
   // Which cells belong to each room: the room's own, plus everything it claimed.
   const footprints = new Map<string, string[]>()
   for (const [cellKey, ownerKey] of claims.claimedBy) {
@@ -539,6 +560,11 @@ const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficul
           x: cx + dx - CELL / 2,
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
+          // A reward left behind because the pack was full is still there to come back for: that chest
+          // stays full, and wears the `!` rather than the ✓.
+          ...(cell.state === "completed"
+            ? { badge: pendingCells?.has(`${r},${c}`) ? ("pending" as const) : ("taken" as const) }
+            : {}),
         })
       } else if (kind === "exit") {
         // THE WAY OUT IS A MARKER, NOT ARCHITECTURE. A doorway has to be aimed — face on it needs the
@@ -666,17 +692,24 @@ const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficul
         // approached from the east like any other.
         const fromWest = cell.dirs.has("w") && !cell.dirs.has("e")
         const mirrored = side !== undefined && goesUp ? !fromWest : fromWest
+        // WHICH SIDE THE CRESSET IS PAINTED ON IS A FACT ABOUT THE FILE, not about the approach. The
+        // toward-viewer flights — `stair-down` and `stair-down-south` — carry it on the LEFT of the cell;
+        // the side flight carries it on the RIGHT. Mirroring then swaps whichever it is. Reading the
+        // mirror flag alone put the pool on the wrong hand of every side flight: a stair entered from the
+        // east drew its torch on the right and lit the floor on the left.
+        const flameOnRight = side !== undefined
+        const flameDx = (flameOnRight === mirrored ? -1 : 1) * STAIR_FLAME_DX
         out.push({
           // ONLY THE DESCENDING FLIGHTS CARRY A CRESSET. A shaft is a hole in the floor and needs a
           // flame at its lip to read as one; the climbing flights are lit by the room they stand in and
           // none was painted on them, so lighting one laid a pool of torchlight on the floor beside a
-          // stair with nothing burning on it. Measured off the painted tile: the flame sits 24 units
-          // left of the cell's centre, a little above it, and swaps sides when the flight is mirrored.
+          // stair with nothing burning on it. Measured off the painted tile: the flame sits 24 units to
+          // one side of the cell's centre, a little above it.
           ...(goesUp
             ? {}
             : {
                 light: {
-                  x: cx + (mirrored ? STAIR_FLAME_DX : -STAIR_FLAME_DX),
+                  x: cx + flameDx,
                   y: cy - CELL * 0.1,
                   r: LAMP_POOL_RADIUS,
                 },
@@ -2262,7 +2295,10 @@ export const SiteMapView = ({
   const canWalkTo = (row: number, col: number) => !walkable || walkable.has(`${row},${col}`)
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
-  const nodeSprites = useMemo(() => nodeSpritesFor(grid, claims, tier), [grid, claims, tier])
+  const nodeSprites = useMemo(
+    () => nodeSpritesFor(grid, claims, tier, pendingCells),
+    [grid, claims, tier, pendingCells]
+  )
   // The walkable floor as one path: what a layer cut to the floor is cut to. The sand is the only one
   // left — everything else that used to share the map-wide clip now carries its own shape.
   const floorPath = useMemo(() => rectsToPath(allFloorRects(regions)), [regions])
@@ -2276,20 +2312,32 @@ export const SiteMapView = ({
       baseY: sprite.y + PROP_H,
       ...(sprite.light ? { light: sprite.light } : {}),
       node: (
-        <Sprite
-          key={sprite.key}
-          data-node-sprite={sprite.key}
-          url={sprite.url}
-          x={sprite.x}
-          y={sprite.y}
-          w={CELL}
-          h={PROP_H}
-          mirrored={sprite.mirrored}
-          // ITS OWN ROOM AND NOT THE WHOLE FLOOR: furniture stands off-centre and a sprite is a cell
-          // wide, so it reaches past its cell. See NodeSprite.footprint.
-          clipTo={footprintPath(sprite.footprint)}
-          opacity={standingOn && sprite.fadeAt?.includes(standingOn) ? ARCH_FADE : undefined}
-        />
+        <Fragment key={sprite.key}>
+          <Sprite
+            data-node-sprite={sprite.key}
+            url={sprite.url}
+            x={sprite.x}
+            y={sprite.y}
+            w={CELL}
+            h={PROP_H}
+            mirrored={sprite.mirrored}
+            // ITS OWN ROOM AND NOT THE WHOLE FLOOR: furniture stands off-centre and a sprite is a cell
+            // wide, so it reaches past its cell. See NodeSprite.footprint.
+            clipTo={footprintPath(sprite.footprint)}
+            opacity={
+              standingOn && sprite.fadeAt?.includes(standingOn)
+                ? ARCH_FADE
+                : sprite.badge === "taken"
+                  ? LOOTED_OPACITY
+                  : undefined
+            }
+          />
+          {/* ON THE CHEST, NOT ON THE MARKER: the marker's own ✓ is behind the sprite. Sat on the lid,
+              where the eye already is. */}
+          {sprite.badge && (
+            <NodeBadge kind={sprite.badge} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
+          )}
+        </Fragment>
       ),
     }))
     for (const [cellKey, kind] of claims.decorationAt) {
@@ -2653,8 +2701,10 @@ export const SiteMapView = ({
                           difficulty={wardKeyDifficulty(cell.requiredKeyId)}
                         />
                       </g>
+                      {/* A chest wears its own badge (`nodeSpritesFor`), because it stands over this one. */}
                       {isCompleted &&
                         !isPortal &&
+                        !hasChest &&
                         shapeKind !== "fork" &&
                         (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
                     </g>

@@ -1,7 +1,7 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, approachCells, buildRoomClaims, footprintPath, tileRegionsFor } from "./SiteMapView"
-import { NODE_OVER_ART_OPACITY } from "./nodeArt"
+import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY } from "./nodeArt"
 import { ExplorerFigure } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
 import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
@@ -104,6 +104,15 @@ const portalEast = (state: CellState, stairId?: string): GridCell => ({
   roomType: "portal",
   stairId,
   dirs: new Set<Direction>(["e"]),
+  state,
+})
+
+// The same, the other hand: a stairhead reached from the WEST, which mirrors the side flight.
+const portalWest = (state: CellState, stairId?: string): GridCell => ({
+  type: "room",
+  roomType: "portal",
+  stairId,
+  dirs: new Set<Direction>(["w"]),
   state,
 })
 
@@ -1494,5 +1503,70 @@ describe("furniture stops at the wall of its own room", () => {
     // The far corridor's own column must not appear in this room's clip.
     const farLeft = cellLeft(4)
     expect(path).not.toContain(`M${farLeft} `)
+  })
+})
+
+describe("an emptied chest says so", () => {
+  // The chest art is the same picture full or empty, and it stands over the room's marker — so without
+  // this the map gave a player no way to tell a room he had already cleared from one still worth the walk.
+  const chestIn = (container: HTMLElement) => spriteMatching(container, "chestProp")[0]
+  const ticks = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll("text")).filter(el => el.textContent === "✓")
+  const gridWith = (state: CellState) =>
+    makeGrid([
+      [empty, corridor("completed", false), empty],
+      [empty, chamber(state), empty],
+    ])
+
+  it("dims the chest and puts a single ✓ on it once the room is done", () => {
+    const { container } = render(<SiteMapView grid={gridWith("completed")} />)
+    expect(chestIn(container)?.style.opacity).toBe(String(LOOTED_OPACITY))
+    // ONE tick: the marker under the chest drops its own, or the room reads as checked twice.
+    expect(ticks(container)).toHaveLength(1)
+  })
+
+  it("leaves a chest the player has not opened alone", () => {
+    const { container } = render(<SiteMapView grid={gridWith("reachable")} />)
+    expect(chestIn(container)?.style.opacity).toBe("")
+    expect(ticks(container)).toHaveLength(0)
+  })
+
+  it("keeps a chest whose reward would not fit full, and badges it as waiting", () => {
+    const { container } = render(<SiteMapView grid={gridWith("completed")} pendingCells={new Set(["1,1"])} />)
+    expect(chestIn(container)?.style.opacity).toBe("")
+    expect(ticks(container)).toHaveLength(0)
+    expect(Array.from(container.querySelectorAll("text")).filter(el => el.textContent === "!")).toHaveLength(1)
+  })
+})
+
+describe("a stair's pool of light lands on the side the flame is painted", () => {
+  // Reported from play: a stairway down entered from the EAST drew its torch on the right of the cell
+  // and its pool of light on the left. The mirror flag alone cannot say where the flame is — the
+  // toward-viewer flights carry it on the left of the cell, the side flight carries it on the right, so
+  // reading the flag and nothing else puts every side flight's light on the wrong hand.
+  const sideStair = (from: "e" | "w") => {
+    const grid = makeGrid([
+      from === "e"
+        ? [empty, portalEast("reachable", "s1"), straightCorridor("completed", ["w"])]
+        : [straightCorridor("completed", ["e"]), portalWest("reachable", "s1"), empty],
+    ])
+    // The floor's entrance is the corridor, so the stairhead is a way DOWN — the flight with a cresset.
+    return { ...grid, entrancePos: (from === "e" ? [0, 2] : [0, 0]) as readonly [number, number] }
+  }
+
+  const poolSideOf = (from: "e" | "w") => {
+    const { container } = render(<SiteMapView grid={sideStair(from)} revealAllCells />)
+    const pool = container.querySelector<HTMLElement>("[data-light-pool]")
+    expect(pool, "a descending flight carries a cresset").toBeTruthy()
+    const box = boxOf(pool!)
+    return box.x + box.w / 2 - cellCenter(0, 1).cx > 0 ? "right" : "left"
+  }
+
+  it("puts it on the right of the cell for a flight entered from the east", () => {
+    expect(poolSideOf("e")).toBe("right")
+  })
+
+  it("swaps it with the flight when that is mirrored", () => {
+    expect(poolSideOf("w")).toBe("left")
   })
 })
