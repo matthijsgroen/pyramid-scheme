@@ -294,8 +294,8 @@ export const rectsToPath = (rects: readonly Rect[]): string =>
 
 /** The hard shadow a face throws onto the floor in front of it. In this idiom that shadow, not any
  * shading on the floor itself, is what puts the wall above the ground. */
-export const faceShadowsToPath = (faces: readonly Rect[], height: number): string =>
-  faces.map(([x, y, w, h]) => `M${x} ${y + h}h${w}v${height}h${-w}z`).join("")
+export const faceShadowRects = (faces: readonly Rect[], height: number): Rect[] =>
+  faces.map(([x, y, w, h]) => [x, y + h, w, height])
 
 /**
  * The strip along the TOP of a wall face: the wall's own top surface, seen from above.
@@ -305,5 +305,5 @@ export const faceShadowsToPath = (faces: readonly Rect[], height: number): strin
  * run is a flat band of brick with nothing above it, and the map loses the one cue that says a wall is a
  * solid thing rather than a painted line.
  */
-export const faceTopsToPath = (faces: readonly Rect[], depth: number): string =>
-  faces.map(([x, y, w]) => `M${x} ${y}h${w}v${depth}h${-w}z`).join("")
+export const faceTopRects = (faces: readonly Rect[], depth: number): Rect[] =>
+  faces.map(([x, y, w]) => [x, y, w, depth])

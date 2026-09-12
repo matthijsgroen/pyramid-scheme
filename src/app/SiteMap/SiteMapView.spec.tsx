@@ -524,11 +524,11 @@ describe("SiteMapView — zoom", () => {
   // The zoom is applied to the DOM directly (see useMapZoom): the map scales by transform, and the
   // sizer box around it carries the scaled footprint that the scroll area measures.
   const mapScale = (container: HTMLElement) => {
-    const transform = container.querySelector("svg")!.style.transform
+    const transform = container.querySelector<HTMLElement>("[data-map]")!.style.transform
     return Number(/scale\(([\d.]+)\)/.exec(transform)?.[1])
   }
   const sizerSize = (container: HTMLElement) => {
-    const sizer = container.querySelector("svg")!.parentElement!
+    const sizer = container.querySelector("[data-map]")!.parentElement!
     return { width: parseFloat(sizer.style.width), height: parseFloat(sizer.style.height) }
   }
   const scrollArea = (container: HTMLElement) => container.querySelector("[data-map-scroll]") as HTMLElement
@@ -592,7 +592,7 @@ describe("SiteMapView — pinch zoom", () => {
   Element.prototype.scrollTo = vi.fn()
 
   const mapScale = (container: HTMLElement) =>
-    Number(/scale\(([\d.]+)\)/.exec(container.querySelector("svg")!.style.transform)?.[1])
+    Number(/scale\(([\d.]+)\)/.exec(container.querySelector<HTMLElement>("[data-map]")!.style.transform)?.[1])
   const scrollArea = (container: HTMLElement) => container.querySelector("[data-map-scroll]") as HTMLElement
   const fingers = (spread: number) => [
     { clientX: 100 - spread, clientY: 100 },
@@ -622,7 +622,7 @@ describe("SiteMapView — zoom reset", () => {
   Element.prototype.scrollTo = vi.fn()
 
   const mapScale = (container: HTMLElement) =>
-    Number(/scale\(([\d.]+)\)/.exec(container.querySelector("svg")!.style.transform)?.[1])
+    Number(/scale\(([\d.]+)\)/.exec(container.querySelector<HTMLElement>("[data-map]")!.style.transform)?.[1])
   const scrollArea = (container: HTMLElement) => container.querySelector("[data-map-scroll]") as HTMLElement
 
   it("returns to the default zoom on a double-click, however far the map was zoomed", () => {
@@ -790,13 +790,11 @@ describe("archways", () => {
     expect(arches).toHaveLength(1)
     // The stone of the band it stands in, which here is the tier being entered.
     expect(arches[0].getAttribute("href")).toContain("junior")
-    const sills = Array.from(container.querySelectorAll<SVGPathElement>("path")).filter(el =>
-      (el.getAttribute("fill") ?? "").includes("sill")
-    )
+    const sills = Array.from(container.querySelectorAll<HTMLElement>("[data-tile^='sill-']"))
     expect(sills).toHaveLength(1)
     // The arch's stone, not the entered tier's — one opening, one material.
-    // A gap between two rows takes the horizontal pattern; the vertical one is the same step turned.
-    expect(sills[0].getAttribute("fill")).toContain("sill-h-junior")
+    // A gap between two rows takes the step as drawn; one between two columns is the same step turned.
+    expect(sills[0].dataset.tile).toBe("sill-h-junior")
   })
 
   it("draws no arch into the fog", () => {

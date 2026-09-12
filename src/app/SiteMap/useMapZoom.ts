@@ -32,7 +32,7 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
   // The box holding the map's scaled footprint. Sized here, never by React — a re-render would
   // otherwise reset it to the unzoomed size mid-gesture.
   const sizerRef = useRef<HTMLDivElement>(null)
-  const mapRef = useRef<SVGSVGElement>(null)
+  const mapRef = useRef<HTMLDivElement>(null)
   const zoomRef = useRef(1)
 
   const render = () => {

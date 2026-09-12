@@ -10,12 +10,12 @@ Not taste. An SVG child gets no layer of its own, so anything that MOVES inside 
 map: the browser repaints the region under it, which means re-rasterising the paths and re-decoding the
 tile PNGs beneath. Measured on a real Chrome against a starter floor, idle, nobody touching it:
 
-| | idle cost |
-|---|---|
-| map as it was | ~15% of a core, forever |
-| 26 drifting motes, alone | ~4% |
-| 4 flickering lamp pools, alone | ~5.5% |
-| a trace of the repaint | 25–30% of wall time inside `ImageDecodeTask` — tile PNGs decoded again and again |
+|                                | idle cost                                                                        |
+| ------------------------------ | -------------------------------------------------------------------------------- |
+| map as it was                  | ~15% of a core, forever                                                          |
+| 26 drifting motes, alone       | ~4%                                                                              |
+| 4 flickering lamp pools, alone | ~5.5%                                                                            |
+| a trace of the repaint         | 25–30% of wall time inside `ImageDecodeTask` — tile PNGs decoded again and again |
 
 That is the warm phone. The same motes as absolutely positioned `div`s with a `translate` animation are
 owned by the compositor: after the first slice a production build paints the same number of times with the
@@ -32,16 +32,16 @@ The geometry is already SVG-free and stays that way. `tileRegions.ts` merges cel
 border box — and the map is laid out at natural size and scaled by a transform (`useMapZoom`), so one unit
 is one pixel and no path has to be rewritten.
 
-| SVG today | HTML tomorrow |
-|---|---|
+| SVG today                           | HTML tomorrow                                                            |
+| ----------------------------------- | ------------------------------------------------------------------------ |
 | `<pattern>` + `<path fill=url(#…)>` | `div` with `background-image` + `background-size` + `clip-path: path(…)` |
-| `<image href>` | `div` with `background-image`, or `<img>` |
-| per-room `<clipPath>` | `clip-path: path(footprintPath(...))` on the same element |
-| `<radialGradient>` light pool | `background: radial-gradient(...)` + `mix-blend-mode: screen` |
-| walk-cycle strip in a clip | `overflow: hidden` box + strip child — the ordinary CSS sprite |
-| depth sort into one flat list | same sort, written as DOM order |
-| `image-rendering` on the `<svg>` | the same property on the layers |
-| stroke-under-fill silhouette | `filter: drop-shadow()` on the clipped floor layer |
+| `<image href>`                      | `div` with `background-image`, or `<img>`                                |
+| per-room `<clipPath>`               | `clip-path: path(footprintPath(...))` on the same element                |
+| `<radialGradient>` light pool       | `background: radial-gradient(...)` + `mix-blend-mode: screen`            |
+| walk-cycle strip in a clip          | `overflow: hidden` box + strip child — the ordinary CSS sprite           |
+| depth sort into one flat list       | same sort, written as DOM order                                          |
+| `image-rendering` on the `<svg>`    | the same property on the layers                                          |
+| stroke-under-fill silhouette        | the floor rectangles grown a couple of units, in the outline colour, UNDER the fills |
 
 ## The slices
 
@@ -54,10 +54,18 @@ the map, so motes cross the SCREEN rather than the floor and neither pan nor zoo
 flicker went `steps(1, end)`: five repaints a cycle instead of a hundred and thirty, and a flame that snaps
 reads better than one that breathes.
 
-**2 — floor and walls.** `TileLayers` becomes one absolutely positioned layer per tier per group, each a
-div with the tier's tile as a repeating background, clipped to that group's merged path. The `<defs>` full
-of `<pattern>` goes with it. Acceptance: the three painted ranks screenshot identically, `tileRegions.spec`
-is untouched (it never knew about SVG), and a floor built of two tiers still shows its seam.
+**2 — floor and walls. DONE.** `TileLayers` is one absolutely positioned layer per tier, per state, per
+group: a div the size of the map carrying the tier's tile as a repeating background, cut to that group's
+merged path with `clip-path: path()`. The `<defs>` full of `<pattern>` is gone; `MapDefs` keeps only the
+two clips the remaining SVG still cuts itself to, and the light-pool gradient.
+
+ONE ELEMENT PER GROUP, never one per rectangle. A div per rect is the obvious first go and it is wrong:
+floor, mass, face, top, shadow and wash come to some seven thousand elements on a real floor — which is
+what the merged `<path>` existed to avoid, and it took a test worker down with it. As it stands a whole
+floor's masonry is 22 elements and the map has FEWER nodes than it did in SVG, 687 against 754.
+
+The map root is an HTML box now, with the SVG riding on it as one absolutely positioned layer holding
+everything not yet moved. Both are the same coordinate space, so nothing had to be re-measured.
 
 **3 — everything that stands on the floor**, in one go, because it all sorts against the player: props,
 chests, stairs, exits, gates, scatter, drifts, growth, scarabs, and the explorer with his light pool and
@@ -73,7 +81,7 @@ it changes — it already writes `transform: scale()` by hand), and sweep the sp
 `querySelectorAll("image")` and friends. Data attributes over tag names: `[data-map-scroll]`,
 `[data-map-tint]` are already in, and each band should get one as it lands.
 
-## Open question, before slice 4
+## The markers, for slice 4
 
 The markers are drawn as paths and polygons and carry state colour and key badges. Three ways:
 
@@ -84,9 +92,9 @@ The markers are drawn as paths and polygons and carry state colour and key badge
 3. cut them as PNG/WebP sprites like everything else the map draws, which fits the art pipeline but ties a
    marker's colour to its file.
 
-(1) costs nothing and breaks no rule that matters — the problem was never SVG, it was ANIMATION inside
-SVG. (3) is the most consistent with how the map is painted. Decide before slice 4; slices 2 and 3 are
-unaffected.
+**DECIDED: (1), tiny inline SVG icons.** They cost nothing — the problem was never SVG, it was ANIMATION
+inside SVG — and they buy no drawing work at all. Slice 4 is then just moving each marker out of the map's
+one big `<svg>` and onto the HTML layer inside a little `<svg>` of its own.
 
 ## Watch out for
 
