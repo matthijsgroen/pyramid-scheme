@@ -81,18 +81,17 @@ const rowPlacement = (depth: number) => ({
  * not mean. Size is what the rule is actually about, so size is what the mark shows (P2: no words on
  * the board, the same in every locale).
  */
+/** Which way the mouth opens, and the one thing everybody already knows about a crocodile in a sum.
+ *
+ * `>` and `<` ARE crocodiles — the open end faces the bigger number, which is the mnemonic the sign was
+ * taught with. Three bars with the wanted one lit said the same thing and had to be read; this says it at
+ * a glance and needs no legend. The animal beside it is mirrored to agree, so the two are one statement
+ * rather than a picture and a key. */
+const openTowards = (sign: Sign) => (sign === "biggest" ? ">" : "<")
+
 const WantMark: FC<{ sign: Sign; dimmed: boolean }> = ({ sign, dimmed }) => (
-  <span className={clsx("flex items-end gap-0.5", dimmed && "opacity-40")}>
-    {[8, 14, 20].map(height => {
-      const eaten = sign === "biggest" ? height === 20 : height === 8
-      return (
-        <span
-          key={height}
-          style={{ height }}
-          className={clsx("w-2 rounded-t-sm", eaten ? "bg-amber-200" : "bg-amber-200/20")}
-        />
-      )
-    })}
+  <span aria-hidden className={clsx("font-pyramid text-2xl leading-none text-amber-200", dimmed && "opacity-40")}>
+    {openTowards(sign)}
   </span>
 )
 
@@ -221,7 +220,10 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
                                 <img
                                   src={crocodileClosed}
                                   alt=""
-                                  className="absolute -top-6 left-1/2 w-20 -translate-x-1/2 animate-bounce"
+                                  className={clsx(
+                                    "absolute -top-6 left-1/2 w-20 -translate-x-1/2 animate-bounce",
+                                    puzzle.signs[column] === "biggest" && "-scale-x-100"
+                                  )}
                                 />
                               )}
                             </button>
@@ -236,7 +238,13 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
                         <div
                           className={clsx("flex items-center justify-center gap-2 pt-1", depth !== 0 && "opacity-60")}
                         >
-                          <img src={crocodileOpen} alt="" className="w-14 -scale-x-100" />
+                          {/* The source art faces RIGHT, so "biggest" is the mirrored one: `>` opens to
+                              the left and so must the mouth. */}
+                          <img
+                            src={crocodileOpen}
+                            alt=""
+                            className={clsx("w-14", puzzle.signs[column] === "biggest" && "-scale-x-100")}
+                          />
                           <WantMark sign={puzzle.signs[column]} dimmed={depth !== 0} />
                         </div>
                       )}
