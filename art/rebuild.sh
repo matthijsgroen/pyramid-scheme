@@ -923,6 +923,32 @@ scaffold jarrack --contents=canopic --spin=16 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/jarRack.webp --tier=expert --name=jarRack --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 
+# His MAT, and the only master in this file that was not painted in one pass. Five rolls failed on SHAPE
+# rather than material: a flat sheet has no silhouette under this projection, so its scaffold is one plain
+# quad, and a quad on magenta is a rectangle a generator straightens and grows to fill the frame. The
+# sixth was painted square on purpose and then projected onto the scaffold by hand, in Gimp's
+# handle transform. `--context` on the scaffold — paving for the turn to be a turn against — is in
+# repaint-queue.md under "Regenerating the attachments", for whenever this is re-rolled.
+#
+# --key=none, which follows from that: a hand-composited master has a WHITE ground, not magenta, and the
+# mask is doing the cutting anyway. The keyer left in would have eaten the pale straw with it.
+#
+# --contrast=1.35 for the plaited border, and it is the honest limit of what the import can do here. The
+# weave came back a fine herringbone and at 56x33 units it averages away to a smooth panel — the coarse
+# checker the merchant's mat carries is what survives a slot this size, eight bands across and no finer
+# (prim_mat says so). Contrast brings the EDGE back, not the field. Above 1.7 it starts clipping and the
+# field is still smooth, so this is where it stops.
+#
+# --brightness=0.78: pale straw on pale basalt came back 43% over the light clamp with nothing at all at
+# the dark end, so there was room to scale and it takes it cleanly — both tails 0.0%, 17 of separation.
+# --saturation=0.55 pays for the contrast rather than for the straw: contrast pushes warmth too (+43 to
+# +49 over that step), and the rank tolerates warm — its jarRack ships at +58 for the reason written
+# above it — but this mat is the palest thing on his floor and untouched it lands at +69.
+scaffold mat --spin=12 --shadow=0.5 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/mat.webp --tier=expert --name=mat --slot=prop \
+  --filter=smooth --key=none --mask="$OBJ" --seat="$SHADOW" \
+  --brightness=0.78 --saturation=0.55 --contrast=1.35
+
 # ANUBIS, and the tile that proved a statue needs no museum scan. Step 0's table sent statues to a scan
 # for as long as it existed; the canopic jars broke that row's other half, and this broke the rest.
 #

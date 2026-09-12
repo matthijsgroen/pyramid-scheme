@@ -36,6 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The priest kneels on a real mat. The rush mat laid before his altars is drawn now — worn pale and smooth
+  down the middle where knees have been, its plaited edge darker from handling — where every one of his
+  tombs had a three-colour placeholder lying on the floor.
 - Ra keeps his own tomb at the merchant's rank. The pyramid dedicated to him shows a falcon-headed god
   with the sun disc on him — standing in a timber shrine on the floor, and again in the cupboard set into
   the wall — where before it showed the same Bes-and-whitewash corner as every other merchant's tomb. Two
