@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   starter gate, and into expert again. Now everything this side of a ward is the pyramid's own stone and
   only what the ward guards is built of the rank it guards — one crossing, at the bars. 693 stretches of
   corridor across 59 floors read the old way.
+- The priest's thresholds are one stone. The step laid where his rank's stone meets another's carried a
+  pale bar down each edge, and a threshold repeats once per cell — so a long sill came out banded.
 - Torchlight comes off a torch. A staircase UP has no cresset painted on it, but the map lit one
   anyway, laying a pool of flamelight on the floor beside a stair with nothing burning on it.
 - A staircase faces the passage you came along. A flight entered from the side was drawn the wrong way

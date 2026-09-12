@@ -718,6 +718,22 @@ yarn import-tile art/masters/surfaces/expert-floor.webp --tier=expert --name=flo
   --filter=smooth --key=none --repeat=1.4 --flatten=0.45
 yarn import-tile art/masters/surfaces/expert-wall-face.webp --tier=expert --name=wall-face --slot=face \
   --filter=smooth --key=none --headroom=0.14
+# THIS MASTER IS STORED CROPPED, 4128 wide down to 2384, and that is not tidying. The return came back
+# with a bright frame ramping from 244 at the edge to the picture's own 90 — and a sill REPEATS, once
+# per cell along a run, so the two ramps met and drew a pale bar every 56 units. It measured 99 between
+# edge and middle where every other rank sits between 2 and 15.
+#
+# THE RAMP IS LONG, which is the part that has to be measured rather than eyeballed: it does not settle
+# until 938px in on the left and 583 in from the right, and it is ASYMMETRIC, so a symmetric crop leaves
+# one edge still climbing. A first attempt at 230 each side looked fixed and still butted 128 against
+# 117. The bounds here are the pair that both settle AND match each other — 1058 and 3441, 90.4 against
+# 90.0 — found by walking the column means rather than by looking.
+#
+# `make-seamless` is the wrong tool and was tried twice: it makes the edges MATCH, which they then did
+# to within 1, but it does that by wrapping the frame into the picture, so the bar simply moved inboard
+# — and with --roll it came back as two bright wedges instead of one. A FRAME IS NOT A SEAM. Top and
+# bottom are untouched: that ramp is the sill's own registration, light step edge over dark base, which
+# every rank shares and which a vertical pass would destroy.
 yarn import-tile art/masters/surfaces/expert-threshold.webp --tier=expert --name=threshold --slot=sill \
   --filter=smooth --key=none --brightness=1.32
 
