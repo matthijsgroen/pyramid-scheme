@@ -47,14 +47,16 @@ const rand = hashUnit
 /**
  * How solid a tuft in a floor joint is drawn.
  *
- * The sprite is the same drawing the wall uses, and on the paving at full strength it read as a second
- * crop of roots lying flat rather than as something growing out of a joint. Faint, it is a texture the
- * floor has taken on — and the wall's roots, which stay solid, are then unmistakably the other thing.
+ * SET AGAINST THE ZOOM IT IS SEEN AT, which is what the first number got wrong. 0.3 was chosen while the
+ * tufts were still stacked against the wall band, where they were competing with the roots and wanted
+ * holding back. Scattered across the paving they are 12 to 22 units on a map three thousand across, and a
+ * few pixels at 30% is nothing at all: on the whole-floor view the roots and the chamber plants — both
+ * solid, and the plants twice the size — carried the condition alone, and the corridors read as bare.
  *
- * Only the JOINTS take it. A root through the brick and a plant standing in a chamber are objects, and an
- * object you can see through is a ghost.
+ * They still sit under the other two, which is the point of having a number here: a tuft is a texture the
+ * floor has taken on, and a root coming through brick is the thing that is meant to stop you.
  */
-const TUFT_OPACITY = 0.3
+const TUFT_OPACITY = 0.7
 
 /**
  * A sprite turned about ITS OWN CENTRE, which on an SVG element is not what a bare transform does.
@@ -157,12 +159,23 @@ export const MapGrowth = ({
       {grown(floorCells, "growth-cell", g.floor).map(({ cell: [row, col], index: i }) => {
         if (!isLit(row, col)) return null
         const { cx, cy } = cellCenter(row, col)
-        const size = 12 + rand(siteId, "growth-size", i) * 10
+        // SIZED AGAINST THE SCATTER, which is the thing on this floor that already reads. A mat or a
+        // spill of rubble is drawn at a full CELL wide in a prop box (`FloorScatter`), one per cell, at
+        // full strength. A tuft at 12 to 22 was a quarter of that and drawn at 30%, which is why the
+        // rubble in a corridor was plain and the growth in the same corridor was not there at all.
+        //
+        // Half a cell to three quarters of one. Not the whole box: a weed in a joint is smaller than a
+        // mat laid down on purpose, and several of them to a corridor is the look — but it has to be a
+        // shape at the zoom a floor is actually read at, not a speck.
+        const size = CELL * 0.5 + rand(siteId, "growth-size", i) * (CELL * 0.25)
         return (
           <image
             key={`tuft-${i}`}
             href={tuft}
-            x={cx - size / 2 + (rand(siteId, "growth-x", i) - 0.5) * (CELL * 0.7)}
+            // THE PLAY IS WHAT THE SIZE LEAVES, so a tuft never crosses its own cell whatever size it
+            // rolled. A fixed jitter was fine while these were specks and put the big ones over the wall
+            // band the moment they were sized to be seen — which the spec above catches.
+            x={cx - size / 2 + (rand(siteId, "growth-x", i) - 0.5) * (CELL - size)}
             // ACROSS THE CELL, not up it. These used to be pushed toward the wall band — the thing they
             // were meant to be coming out of — which put every one of them in the cell's top third and
             // some over the band itself. On a ROOM that is invisible, because the room's own plants fill
@@ -170,7 +183,7 @@ export const MapGrowth = ({
             // green along the wall above it, and read as growth that only happens in rooms. The roots
             // through the band say "out of the wall" on their own; a tuft is in a joint, and joints are
             // everywhere.
-            y={cy - size / 2 + (rand(siteId, "growth-y", i) - 0.5) * (CELL * 0.7)}
+            y={cy - size / 2 + (rand(siteId, "growth-y", i) - 0.5) * (CELL - size)}
             width={size}
             height={size}
             opacity={TUFT_OPACITY}
