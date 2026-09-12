@@ -163,8 +163,14 @@ export const MapGrowth = ({
             key={`tuft-${i}`}
             href={tuft}
             x={cx - size / 2 + (rand(siteId, "growth-x", i) - 0.5) * (CELL * 0.7)}
-            // Biased UP the cell: toward the wall band it is meant to be coming out of.
-            y={cy - size + (rand(siteId, "growth-y", i) - 0.5) * (CELL * 0.4)}
+            // ACROSS THE CELL, not up it. These used to be pushed toward the wall band — the thing they
+            // were meant to be coming out of — which put every one of them in the cell's top third and
+            // some over the band itself. On a ROOM that is invisible, because the room's own plants fill
+            // the middle; on a CORRIDOR, which is most of a floor, it left the paving bare with a line of
+            // green along the wall above it, and read as growth that only happens in rooms. The roots
+            // through the band say "out of the wall" on their own; a tuft is in a joint, and joints are
+            // everywhere.
+            y={cy - size / 2 + (rand(siteId, "growth-y", i) - 0.5) * (CELL * 0.7)}
             width={size}
             height={size}
             opacity={TUFT_OPACITY}

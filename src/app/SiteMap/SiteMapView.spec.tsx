@@ -136,6 +136,32 @@ describe("what a condition grows on", () => {
     expect(run.every(n => n > 0)).toBe(true)
   })
 
+  it("scatters a tuft across its cell instead of stacking it against the wall", () => {
+    // THE BUG THIS IS FOR, and it is the one that looked like "growth only happens in rooms". A tuft was
+    // biased UP its cell, toward the band it was meant to be coming out of, so with a size of up to 22
+    // and 11 of jitter it occupied cy-33 to cy-11 — the cell's top edge being cy-28. On a room that is
+    // invisible, because the room's own plants fill the middle. On a CORRIDOR, which is 620 cells of a
+    // floor against 44, it left the paving bare with a line of green along the wall above it.
+    const grid = {
+      ...makeGrid([
+        [corridor("completed", false), corridor("completed", false)],
+        [empty, empty],
+      ]),
+      condition: { kind: "overgrown" as const, amount: 1 },
+    }
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
+    const tufts = [...container.querySelectorAll("image")].filter(el =>
+      (el.getAttribute("href") ?? "").includes("overgrown.png")
+    )
+    expect(tufts.length).toBeGreaterThan(0)
+    for (const t of tufts) {
+      const y = Number(t.getAttribute("y"))
+      // Never over the band: a tuft is in a joint, and the joint is on the floor.
+      expect(y).toBeGreaterThanOrEqual(cellTop(0))
+      expect(y + Number(t.getAttribute("height"))).toBeLessThanOrEqual(cellTop(0) + CELL)
+    }
+  })
+
   it("draws nothing on a cell the player has not reached", () => {
     const run = growOn([
       [corridor("completed", false), corridor("fogged", false)],
