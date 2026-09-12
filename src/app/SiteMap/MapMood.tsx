@@ -44,6 +44,35 @@ const MOOD_CSS = `
 
 const rand = hashUnit
 
+/**
+ * How solid a tuft in a floor joint is drawn.
+ *
+ * The sprite is the same drawing the wall uses, and on the paving at full strength it read as a second
+ * crop of roots lying flat rather than as something growing out of a joint. Faint, it is a texture the
+ * floor has taken on — and the wall's roots, which stay solid, are then unmistakably the other thing.
+ *
+ * Only the JOINTS take it. A root through the brick and a plant standing in a chamber are objects, and an
+ * object you can see through is a ghost.
+ */
+const TUFT_OPACITY = 0.3
+
+/**
+ * A sprite turned about ITS OWN CENTRE, which on an SVG element is not what a bare transform does.
+ *
+ * `transform-box` defaults to `view-box`, so a CSS transform on an `<image>` is measured against the
+ * whole SVG viewport rather than the element — and `scaleX(-1)`, which this file used alone, therefore
+ * mirrored each sprite across the MIDDLE OF THE MAP instead of flipping it in place. A tuft authored in
+ * the west corner of a wide floor was drawn in the east one, with `isLit` still answering for the cell it
+ * came from, so half the growth on every floor was in the wrong place and some of it in the dark.
+ *
+ * `fill-box` with a centre origin is the fix, and it is also what makes a rotation usable at all.
+ */
+const turned = (degrees: number, mirrored: boolean) => ({
+  transformBox: "fill-box" as const,
+  transformOrigin: "center" as const,
+  transform: `rotate(${degrees.toFixed(1)}deg)${mirrored ? " scaleX(-1)" : ""}`,
+})
+
 type Props = {
   mood: Mood
   siteId: string
@@ -119,7 +148,12 @@ export const MapGrowth = ({
   }
   return (
     <g aria-hidden="true" style={{ pointerEvents: "none" }}>
-      {/* ── the JOINTS: many, small, on any floor cell ── */}
+      {/* ── the JOINTS: many, small, on any floor cell, and FAINT ──
+          `TUFT_OPACITY`, because at one per cell and full strength they stopped being joints and started
+          being a second crop of wall roots lying on the paving. Faint, they go back to being what they
+          are: a texture the floor has taken on, read as ground rather than as objects standing on it, and
+          told apart at a glance from the roots through the band, which stay solid because a root coming
+          through brick is the thing that is supposed to stop you. */}
       {grown(floorCells, "growth-cell", g.floor).map(({ cell: [row, col], index: i }) => {
         if (!isLit(row, col)) return null
         const { cx, cy } = cellCenter(row, col)
@@ -133,7 +167,10 @@ export const MapGrowth = ({
             y={cy - size + (rand(siteId, "growth-y", i) - 0.5) * (CELL * 0.4)}
             width={size}
             height={size}
-            style={{ transform: rand(siteId, "growth-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
+            opacity={TUFT_OPACITY}
+            // ANY angle: a tuft in a joint is seen from above and has no up. It is also what stops a
+            // floor of them reading as one stamp repeated, which at this density is what they were.
+            style={turned(rand(siteId, "growth-rot", i) * 360, rand(siteId, "growth-flip", i) > 0.5)}
           />
         )
       })}
@@ -163,7 +200,9 @@ export const MapGrowth = ({
             y={cy - CELL / 2 - WALL_FACE_H}
             width={w}
             height={WALL_FACE_H}
-            style={{ transform: rand(siteId, "growth-wall-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
+            // A LEAN, not a turn: a root hangs, so gravity decides which way is down and only the flip
+            // and a few degrees either side are free.
+            style={turned((rand(siteId, "growth-wall-rot", i) - 0.5) * 14, rand(siteId, "growth-wall-flip", i) > 0.5)}
           />
         )
       })}
@@ -183,7 +222,8 @@ export const MapGrowth = ({
             y={cy + CELL / 2 - size}
             width={size}
             height={size}
-            style={{ transform: rand(siteId, "growth-plant-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
+            // Standing, so the same small lean the roots take rather than a turn.
+            style={turned((rand(siteId, "growth-plant-rot", i) - 0.5) * 10, rand(siteId, "growth-plant-flip", i) > 0.5)}
           />
         )
       })}
