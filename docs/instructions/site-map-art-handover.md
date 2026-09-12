@@ -49,18 +49,18 @@ two figures and five wall items were written down already; their ten chamber pro
 beside them, on primitives every other rank had already proved. Only `wizard/crystal` still needs
 geometry.
 
-**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 60 entries, which is
+**Modelling is no longer the bottleneck anywhere — generation is.** The queue is 64 entries, which is
 everything left in the whole set bar one primitive, and none of it needs Blender again.
 
 **Read `yarn art-census`, not this paragraph.** The count below is a snapshot and every summary of it in
 this file has drifted at least once.
 
-`yarn art-census` is the authority and reports 48 placeholders: wizard 20, master 17, expert 11.
+`yarn art-census` is the authority and reports 45 placeholders, the bulk of them at master and wizard.
 
 ### The three files that run the work
 
 - **[repaint-queue.md](repaint-queue.md)** — **start here.** Every prompt still owed, with the two images to
-  attach and the import line to run afterwards. 60 entries: the priest, the merchant's two stairs, the pharaoh, the gods, the shared scatter and conditions, and nineteen patron variants. `yarn repaint <key>`
+  attach and the import line to run afterwards. 64 entries: the priest, the pharaoh, the gods, the way out, the shared scatter and conditions, and nineteen patron variants. `yarn repaint <key>`
   copies one to the clipboard and reveals its attachments in the Finder; `yarn repaint` lists the keys.
   Entries are DELETED as they land, so the file's length is the backlog.
 - **[art-tasks.md](art-tasks.md)** — the ledger: what each remaining gap is waiting on, which a census
@@ -659,20 +659,36 @@ half the doors in the game.
    Written as if the gap came before, the gate stood a whole `SIDE_W` west of its own seam and rested on
    the TOP edge of the band below it, hanging 28 units clear of the sill it is supposed to stand on.
 
-4. ~~The way out~~ — **BUILT**, `prim_exit`: a shaft of light standing free on the floor, and its marker
-   retired for the stairhead's reason.
+4. ~~The way out~~ — **BUILT**, `prim_exit`: a round marker pillar standing in daylight, its marker
+   retired for the stairhead's reason. Queued for paint as `default/exit`; the render is the tile until
+   that lands.
 
    **A MARKER, NOT ARCHITECTURE, and the facings are why.** It was a doorway first — the ward gate's own
    masonry with the day let in — and a doorway has to be aimed: face on it needs the wall it is cut in,
    and walked across it becomes a narrow lit slot, which at 56 units is a COLUMN and collides with
-   `pillar`. A beam is the same picture from every approach, so it needs no side drawing, no seam to
-   stand in and no aiming at all. It is a game's convention rather than a tomb's, which is the trade.
+   `pillar`. What stands there now needs no side drawing, no seam to stand in and no aiming at all.
 
-   **It is the one tile in the set with ALPHA in it.** A beam has to let the paving show through or it is
-   a post planted on the floor. `flat_material`'s alpha carries through the import untouched — the mask is
-   the render's own alpha and the composite multiplies by it — so no importer flag is involved. And no
-   `--seat`: light casts nothing, and the pool at its foot is laid by the renderer, the way a stair's
-   cresset is motivated in the tile and lit by the map.
+   **LIGHT ALONE IS NOT A MARKER, which is what shipping the beam proved.** On the paving at 56 units a
+   pale cone on a pale disc reads as a drift of sand — nothing in it is BUILT, and a player reads
+   "somebody put that there" off built things. Three more shapes failed the same way before the answer:
+   a shaft standing behind the stone is a party hat, a slanted one is a plank leaning on it, a narrow
+   vertical one is a flame. A DISC behind the stone is the one that reads, and it is the sun rather than
+   a borrowed game convention. The stone has its own trap on the other side: square with a sunk panel, it
+   read as a shrine cabinet, because a panel is a doorway at this size whatever is painted in it. Round,
+   short, and stepped — base, collar, register, collar, cap — is what is neither that nor `pillar`.
+
+   **IT IS THE ONLY TILE BUILT FROM TWO RENDERS**, and the split is what the light costs. The stone is
+   painted like any prop; the daylight cannot be, because a return comes back opaque on magenta and a
+   beam that does not let the paving through is a post. `render-prop --drop=<parts>` renders each half
+   alone in ONE frame — dropped after `add_camera`, exactly where `--only=shadow` removes the object —
+   and `import-tile --behind` lays the light back in.
+
+   **UNDER the paint, not over it, and that is depth order rather than preference.** Every part of the
+   light stands further from the viewer than the stone, so the stone occludes all of it; composited on
+   top, the pool drew straight across the pillar's foot and took the base with it. Sharp has no depth
+   buffer, so the arrangement has to be one a flat stack can express: each rendered part wholly in front
+   of the paint or wholly behind it. The light keeps its `--alpha-haze`/`--alpha-daylight` and everything
+   of it is `!nocast`, so the seat under the tile is the pillar's footprint alone.
 
    The doorway is not lost: it is `prim_exit` as of 9cd4eecc, if architecture reads better later.
 

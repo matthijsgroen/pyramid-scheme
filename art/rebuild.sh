@@ -470,17 +470,39 @@ scaffold gate --contents=open-side
 yarn import-tile "$OBJ" --tier=default --name=gate-open-side --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
-# THE WAY OUT, as a shaft of light rather than a door. It is the one tile in the set rendered with ALPHA
-# — `--alpha-haze` and `--alpha-daylight` — because a beam has to have the paving show through it or it
-# is a post planted on the floor; the mask is the render's own alpha and the composite multiplies by it,
-# so the transparency survives the import with no flag of its own.
+# THE WAY OUT: a round marker pillar standing in daylight, and the ONLY TILE IN THE SET BUILT FROM TWO
+# RENDERS. The stone half is a scaffold like any other prop's and goes through the generator; the light
+# half never can — a return comes back opaque on magenta, and daylight that does not let the paving show
+# through it is a disc of paint with a post in front of it. So `--drop` renders each half alone, in one
+# frame, and `--behind` lays the light back under the paint at import.
 #
-# No --seat and no shadow: light casts nothing. The pool at its foot is laid by the RENDERER
-# (`NodeSprite.light`), the same way a stair's cresset is motivated in the tile and lit by the map.
-"$BLENDER" -b -P scripts/renderProp.py -- --primitive=exit \
-  --shadow=0 --background=none --alpha-haze=0.28 --alpha-daylight=0.9 \
-  --out="$OBJ" --colour=#a49781 --floor=#6c6257 >/dev/null
-yarn import-tile "$OBJ" --tier=default --name=exit --slot=prop --filter=smooth --mask="$OBJ"
+# UNDER, not over, and that is the depth order rather than a preference. Every part of the light stands
+# further from the viewer than the stone does, so the stone occludes all of it; composited on top, the
+# pool drew straight across the pillar's foot and took the base with it. Sharp has no depth buffer, so
+# the arrangement has to be one a flat stack can express.
+#
+# The light keeps its `--alpha-haze` and `--alpha-daylight`: the mask is the render's own alpha and the
+# composite multiplies by it, so the transparency reaches the tile with no importer flag of its own.
+# Everything of it is `!nocast`, so the footprint under the tile is the pillar's alone — light casts
+# nothing, and the pool at the foot is the map's (`NodeSprite.light`) as well as the tile's.
+#
+# Until a painted master lands (`repaint-queue.md`), the stone render IS the tile, as the ward gate's is.
+# When it does, one source path changes here and nothing else.
+#
+# --shadow=0 is passed PER CALL rather than baked into the function, because it is the footprint's own
+# alpha: the footprint render is the one call that must not carry it, exactly as `scaffold()` above
+# arranges for every other prop.
+exit_layer() {
+  "$BLENDER" -b -P scripts/renderProp.py -- --primitive=exit --background=none \
+    --colour=#a49781 --floor=#6c6257 "$@" >/dev/null
+}
+LIGHT=$(mktemp -t propexitlight).png
+exit_layer --shadow=0 --drop=haze,daylight --out="$OBJ"
+exit_layer --only=shadow --out="$SHADOW"
+exit_layer --shadow=0 --drop=body --alpha-haze=0.28 --alpha-daylight=0.9 --out="$LIGHT"
+yarn import-tile "$OBJ" --tier=default --name=exit --slot=prop --filter=smooth \
+  --mask="$OBJ" --seat="$SHADOW" --behind="$LIGHT"
+rm -f "$LIGHT"
 
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
 # replaces was a post-processing copy whose flags could not be recovered (art/README).

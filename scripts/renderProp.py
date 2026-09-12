@@ -1621,15 +1621,51 @@ def prim_exit():
     The set is matte and has no glow anywhere, so nothing here is drawn being lit: the renderer lays its
     own pool at the foot (`NodeSprite.light`), the same way a stair's cresset is MOTIVATED in the tile and
     lit by the map.
+
+    A BEAM ALONE IS NOT A MARKER, which is what shipping it proved. On the paving at 56 units it read as a
+    pale cone on a pale disc — a drift of sand, a heap, anything conical — because nothing in it is BUILT
+    and a player reads "somebody put that there" off built things. So a marker STONE stands in it: a low
+    battered cippus with a sunk panel for its inscription, which is a thing that was placed, and the light
+    is then what singles it out rather than what has to carry the whole meaning.
+
+    THE STONE STANDS IN FRONT OF THE BEAM, and the projection is why rather than taste. Drawn height is
+    z + k*y, so anything nearer the viewer draws LOWER: at y = -0.16 against the shaft's +0.12 the stone
+    lands clear of the light on the page instead of inside it. Concentric, the core would have sat over
+    the panel at 0.9 alpha and taken the inscription with it — `prim_falsedoor`'s offering table, the same
+    overlap arithmetic from the other side.
+
+    THE STONE IS PAINTED AND THE LIGHT IS NOT, which is why they are separate parts rather than one mesh.
+    A repaint comes back opaque on magenta, so a painted beam is a post; the stone goes through the
+    generator as any prop does and the light is rendered and laid back over the return at import
+    (`--drop` here, `--overlay` there). Everything of the light is `!nocast`: it stands on the floor in the
+    picture but casts nothing on it, so the seat under the tile is the stone's footprint alone.
     """
     # The pool on the paving, which is what roots the shaft to the floor rather than leaving it hovering.
     # Flat and shallow: depth is taxed into height here as everywhere.
-    mark(cyl(0.34, 0.02, z=0.01, verts=22), "daylight")
-    # The haze and the core, both tapering to a POINT. Opening upward instead put a flat elliptical cap
-    # across the top of the shaft and the whole thing read as a funnel — light has no lid, and a cone
-    # closed at nothing is the one shape here with no cap face to draw at all.
-    mark(cone(0.40, 0.0, 1.06, z=0.53), "haze")
-    mark(cone(0.17, 0.0, 0.98, z=0.49), "daylight")
+    mark(cyl(0.30, 0.02, y=-0.14, z=0.01, verts=24), "daylight!nocast")
+    # The DISC, standing behind the stone: two rings, a wider haze round a brighter core.
+    for r, y_off, part in ((0.30, 0.16, "haze"), (0.21, 0.14, "daylight")):
+        disc = mark(cyl(r, 0.02, y=y_off, z=0.80, verts=26), f"{part}!nocast")
+        disc.rotation_euler = (math.radians(90), 0, 0)
+    # The marker stone: a stepped base, a round shaft between two collars, and a cap.
+    #
+    # ROUND, and SHORT. A square post with a sunk panel in it read as a shrine cabinet — the panel is a
+    # doorway at 56 units whatever is painted in it. A drum is the other failure and `prim_mat` recorded
+    # it: a bare cylinder upright is a basket whatever is on it. What tells this from both is the
+    # PROFILE — base, collar, plain register, collar, cap — which is a turned thing rather than a box or a
+    # tube, and it is nothing like `prim_pillar`, whose timber post leans and leaves the frame.
+    #
+    # THE REGISTER BETWEEN THE COLLARS IS WHERE THE SYMBOLS GO, and leaving it smooth is deliberate: a
+    # round face cannot be cut into without the relief going round with it, so the glyphs are PAINT and
+    # what the geometry owes them is a clean band of a known height to sit in.
+    y, r_low, r_high, h = -0.24, 0.105, 0.090, 0.62
+    mark(box(0.30, 0.22, 0.055, y=y, z=0.0275), "body")
+    mark(box(0.245, 0.18, 0.05, y=y, z=0.080), "body")
+    mark(cone(r_low, r_high, h, y=y, z=0.105 + h / 2, verts=20), "body")
+    for z in (0.130, 0.105 + h - 0.025):
+        mark(cyl(0.128, 0.042, y=y, z=z, verts=20), "body")
+    # The cap overhangs the collar under it, which is the one step that survives the slot.
+    mark(cyl(0.126, 0.05, y=y, z=0.105 + h + 0.025, verts=20), "body")
     return join_all()
 
 
@@ -3443,6 +3479,25 @@ def main():
     # renders of a prop share one frame to the pixel and composite without alignment.
     if arg("only", "both") == "shadow":
         bpy.data.objects.remove(obj, do_unlink=True)
+    # --drop=part[,part] renders the object WITHOUT those parts, for the same reason and in the same
+    # place: after the frame is fixed, so two renders of one primitive line up to the pixel.
+    #
+    # It exists so a tile can be part paint and part render. The exit is the case — a marker stone the
+    # generator paints and a shaft of light it cannot, because a repaint comes back opaque on magenta and
+    # the beam's whole point is that the paving shows through it. Rendering the stone alone and the light
+    # alone from the same primitive gives a scaffold to paint over and an overlay to lay back on top of
+    # the return (`import-tile --overlay`), with nothing positioned by hand.
+    #
+    # Dropping is FACES, not objects, because `join_all` has already merged everything into one mesh by
+    # then. Framing is unaffected either way: `seat_and_normalise` and `add_camera` have both run.
+    drop = {p.strip() for p in (arg("drop") or "").split(",") if p.strip()}
+    if drop and arg("only", "both") != "shadow":
+        bm = bmesh.new()
+        bm.from_mesh(obj.data)
+        gone = [f for f in bm.faces if part_of(obj.data.materials[f.material_index].name) in drop]
+        bmesh.ops.delete(bm, geom=gone, context="FACES")
+        bm.to_mesh(obj.data)
+        bm.free()
     # --context lays a slab of FLOOR under the object, for the generator's eye and for nothing else.
     #
     # A HOLE CANNOT PROVE ITSELF ON MAGENTA. Every other prop is a thing you could pick up, and a product

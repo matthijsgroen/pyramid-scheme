@@ -40,9 +40,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   with the sun disc on him — standing in a timber shrine on the floor, and again in the cupboard set into
   the wall — where before it showed the same Bes-and-whitewash corner as every other merchant's tomb. Two
   gods are now told apart at that rank, which is the point at which a dedication is visible at all.
-- The way out of a pyramid is a shaft of light standing in the chamber, with a pool of it on the floor.
-  It reads the same from whichever direction you come at it, and the marker that used to stand for it is
-  gone — the light says it better.
+- The way out of a pyramid is a marker stone: a round limestone pillar with a column of hieroglyphs cut
+  down it, standing in a pool of daylight with the sun behind its head. It reads the same from whichever
+  direction you come at it, and the marker that used to stand for it is gone — the stone says it better.
+  It was a bare shaft of light first, and light on its own read as a drift of sand: somebody has to have
+  PUT a thing there for it to mean "leave here".
 - A ward gate is a gate now, not a symbol. A barred grille in a stone doorway, with a drawbar across it
   into sockets in the jambs, stands across the far side of the gate's own room — on the sill the map
   already lays where one rank's stone meets the next, which at a ward gate is exactly there. You walk in

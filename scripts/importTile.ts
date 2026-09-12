@@ -36,6 +36,11 @@
  *                    invented floor over the footprint instead, so the tile arrives with nothing below
  *                    35 and does not sit on anything. `render-prop --only=shadow` draws it in the same
  *                    frame as the object, which is what makes the two line up.
+ *   --behind=light.png lay a rendered layer UNDER the art at full strength — --seat's sibling, for the
+ *                    part of a tile a repaint cannot make rather than will not. A return comes back
+ *                    opaque on magenta, so anything that has to be SEE-THROUGH has to be rendered. The
+ *                    exit is the only user: its marker stone is painted and its daylight is not, and
+ *                    `render-prop --drop` draws the two halves in one frame so they line up.
  *   --scale=0.45     how much of the SLOT the object fills, still standing on the floor line. Without it
  *                    a prop grows until it touches an edge, so a lamp and a sarcophagus arrive the same
  *                    height — a shabti, which is a 20cm figurine, landed 84 units tall.
@@ -398,7 +403,20 @@ const cutToMask = async (img: sharp.Sharp, maskPath: string, grow = 0): Promise<
 }
 
 /**
- * Lays the rendered footprint under the art, TRANSLUCENT, so the floor is shaded rather than replaced.
+ * Lays a rendered layer under the art. Two callers, and the difference between them is only `opacity`.
+ *
+ * `--seat` is the footprint, laid TRANSLUCENT so the floor is shaded rather than replaced. `--behind` is
+ * anything else the repaint could not make and the geometry must, laid at full strength.
+ *
+ * UNDER rather than over, and for the exit — the only user of `--behind` — that is not a preference but
+ * the depth order. Everything of its daylight stands further from the viewer than the marker stone does,
+ * so the stone occludes all of it; composited on TOP the pool of light drew across the pillar's own foot
+ * and took the base with it. Sharp has no depth buffer, so the arrangement has to be one a flat stack can
+ * express, which means every rendered part is either wholly in front of the paint or wholly behind it.
+ *
+ * Laid before `--seat` so the shadow falls ON the light rather than under it, and before the trim either
+ * way, so the layer and the art are trimmed and seated as one sprite: the exit's disc stands clear above
+ * the pillar's cap and is part of the silhouette the slot gets filled with.
  *
  * `make_shadow` paints an opaque patch — the rank's floor colour darkened — and opaque was right while
  * the shadow was being composited against the magenta backdrop, where any alpha came back magenta-tinted
@@ -410,13 +428,13 @@ const cutToMask = async (img: sharp.Sharp, maskPath: string, grow = 0): Promise<
  * At `opacity` the tile darkens what is behind it instead: floor*(1-a) + shade*a, which keeps the
  * paving legible through the shadow and makes the seat's own colour a nudge rather than a claim.
  */
-const underlayShadow = async (img: sharp.Sharp, shadowPath: string, opacity: number): Promise<sharp.Sharp> => {
+const underlay = async (img: sharp.Sharp, layerPath: string, opacity: number): Promise<sharp.Sharp> => {
   const art = await img.ensureAlpha().png().toBuffer({ resolveWithObject: true })
   const { width, height } = art.info
   // Rendered out first for the same reason cutToMask does it: sharp resizes before it composites.
-  const fitted = await sharp(shadowPath).ensureAlpha().resize(width, height, { fit: "fill" }).png().toBuffer()
-  const shadow = opacity >= 1 ? fitted : await fadeAlpha(fitted, opacity)
-  const seated = await sharp(shadow)
+  const fitted = await sharp(layerPath).ensureAlpha().resize(width, height, { fit: "fill" }).png().toBuffer()
+  const layer = opacity >= 1 ? fitted : await fadeAlpha(fitted, opacity)
+  const seated = await sharp(layer)
     .composite([{ input: art.data }])
     .png()
     .toBuffer()
@@ -489,10 +507,13 @@ const main = async (): Promise<void> => {
   if (archFitted) img = await fitToDoorway(img, w, h, smooth)
   const maskPath = arg("mask")
   if (maskPath) img = await cutToMask(img, maskPath, Number(arg("mask-grow", "0")))
-  // After the mask, so the shadow is laid under the object's true silhouette and not under a repaint's
-  // invented floor; before the seat, so the trim treats object and shadow as one sprite.
+  // Both of these go after the mask, so they are laid under the object's TRUE silhouette rather than
+  // under a repaint's invented floor, and before the trim, so it treats the whole stack as one sprite.
+  // `--behind` first, so the shadow falls on the light rather than under it: see `underlay`.
+  const behindPath = arg("behind")
+  if (behindPath) img = await underlay(img, behindPath, 1)
   const shadowPath = arg("seat")
-  if (shadowPath) img = await underlayShadow(img, shadowPath, Number(arg("seat-opacity", "0.55")))
+  if (shadowPath) img = await underlay(img, shadowPath, Number(arg("seat-opacity", "0.55")))
   if (seat && !process.argv.includes("--no-trim")) img = await seatOnFloorLine(img, w / h, Number(arg("scale", "1")))
   // `--trim` is the positive of `--no-trim`, for the slots that never trim at all.
   //
