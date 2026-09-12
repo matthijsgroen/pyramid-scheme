@@ -532,23 +532,29 @@ rm -f "$LIGHT"
 # these are drawn at 22 to 34 units and their shape IS the art. Straight to the generator, keyed on
 # magenta, the same route as the flat tally boards.
 #
-# NO CORRECTION FLAGS, and it is worth writing down which number that rests on. They are painted dull
-# grey-sage rather than green — the brief asks for that, because one drawing serves all five ranks and a
-# shared tile belongs to no rank's palette — and beside a lone product shot they look washed out. What
-# decides it is the separation against the floor they are actually drawn on, which is the PRIEST's pale
-# basalt and nothing else: overgrown lands 19 darker, -wall 21 and -plant 14, all past the ten-luminance
-# rule, with both tails under 3% and +33 to +35 of warmth against his cool stone. The warmth is what
-# makes them read as something living on it.
+# THEY COME BACK GREY-SAGE AND THE IMPORT MAKES THEM GREEN. The brief asks for dull growth belonging to
+# no rank's palette, because one drawing serves all five — and taken literally that is a plant the eye
+# reads as dried straw on pale basalt. Measured, the paint IS green-leaning: G exceeds R on 58% to 70% of
+# the subject. It exceeds it by about three, which is a hue nobody sees at 22 units.
+#
+# --saturation is what pulls that out, and it is the whole correction: it multiplies distance from grey,
+# so a three-point green gap becomes ten. Under 2 nothing changes; past this the WOODY parts go first,
+# which is why the three numbers differ rather than being one. The plant is mostly leaf and takes 3.2.
+# The roots are half trunk and the trunk turns orange, so they stop at 2.4. The tufts sit between.
+#
+# --brightness with it, because saturating alone leaves them sitting on the priest's pale floor at the
+# value they came back at. They land 41 to 47 darker than his slab with both tails at 0.0%, where the
+# untouched ones were 14 to 21 darker — the separation more than doubles and nothing clips.
 #
 # ONLY EXPERT AUTHORS THEM (spec/expert.ts, journey expert_3 pyramids 2-5, graded 0.2 to 1), so the
 # palette note above is about where they COULD be drawn rather than where they are. A rank with a dark
 # floor would want them lighter, and that is an override to take when some other journey grows over.
 yarn import-tile art/masters/surfaces/overgrown.webp --tier=default --name=overgrown --slot=growth \
-  --filter=smooth
+  --filter=smooth --saturation=2.6 --brightness=0.85
 yarn import-tile art/masters/surfaces/overgrown-wall.webp --tier=default --name=overgrown-wall --slot=growthWall \
-  --filter=smooth
+  --filter=smooth --saturation=2.4 --brightness=0.85
 yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name=overgrown-plant --slot=growth \
-  --filter=smooth
+  --filter=smooth --saturation=3.2 --brightness=0.82
 
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
 # replaces was a post-processing copy whose flags could not be recovered (art/README).
