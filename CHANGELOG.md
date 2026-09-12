@@ -36,6 +36,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Ra keeps his own tomb at the merchant's rank. The pyramid dedicated to him shows a falcon-headed god
+  with the sun disc on him — standing in a timber shrine on the floor, and again in the cupboard set into
+  the wall — where before it showed the same Bes-and-whitewash corner as every other merchant's tomb. Two
+  gods are now told apart at that rank, which is the point at which a dedication is visible at all.
 - The way out of a pyramid is a shaft of light standing in the chamber, with a pool of it on the floor.
   It reads the same from whichever direction you come at it, and the marker that used to stand for it is
   gone — the light says it better.
