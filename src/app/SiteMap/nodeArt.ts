@@ -79,14 +79,6 @@ export type NodeSprite = {
    * and appeared in the corridor on the other side. A room's own footprint is the only shape that both
    * lets a chest overlap the paving beside it and stops it at the masonry. */
   footprint: readonly string[]
-  /** How far this sprite's CLIP moves with it, when the sprite itself is drawn off its cell's centre.
-   *
-   * A chest is stepped away from its doorways (`nodeArtOffset`, 0.3 of a cell across and 0.2 down) and
-   * the clip was not stepped with it, so the displacement cut the art: a third of the chest was clipped
-   * off against the side of its own cell. Moving the clip by the same amount means the sprite is cut
-   * exactly where it would have been cut standing centred — still stopped at the masonry a cell away,
-   * but never by its own offset. */
-  clipShift?: { x: number; y: number }
   /** Cells whose occupant this sprite should go see-through for, as "r,c" keys.
    *
    * THE ARCHWAY'S RULE, for the same reason. A gate is drawn across the mouth of a way through, so the

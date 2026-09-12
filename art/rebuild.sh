@@ -549,8 +549,12 @@ rm -f "$LIGHT"
 # ONLY EXPERT AUTHORS THEM (spec/expert.ts, journey expert_3 pyramids 2-5, graded 0.2 to 1), so the
 # palette note above is about where they COULD be drawn rather than where they are. A rank with a dark
 # floor would want them lighter, and that is an override to take when some other journey grows over.
+# The TUFT goes darker than the other two — 0.58 against their 0.85 — and it is the only one that has a
+# reason to. It is drawn at 0.7 opacity, so the floor comes up through it: whatever value it is imported
+# at, the map draws it lighter. The other two are solid and land where they were put. 76 darker than the
+# priest's slab before the fade, which is about 53 after it.
 yarn import-tile art/masters/surfaces/overgrown.webp --tier=default --name=overgrown --slot=growth \
-  --filter=smooth --saturation=2.6 --brightness=0.85
+  --filter=smooth --saturation=2.6 --brightness=0.58
 yarn import-tile art/masters/surfaces/overgrown-wall.webp --tier=default --name=overgrown-wall --slot=growthWall \
   --filter=smooth --saturation=2.4 --brightness=0.85
 yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name=overgrown-plant --slot=growth \

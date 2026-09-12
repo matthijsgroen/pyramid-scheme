@@ -1,7 +1,7 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, approachCells, buildRoomClaims, footprintPath, tileRegionsFor } from "./SiteMapView"
-import { NODE_ART_DY, NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP } from "./nodeArt"
+import { NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP } from "./nodeArt"
 import { ExplorerFigure, LIGHT_POOL_ID } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
 import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
@@ -82,14 +82,13 @@ describe("a node's furniture and the clip it is cut to", () => {
     state: "completed",
   })
 
-  it("moves the clip with the art, so a chest is never cut by its own offset", () => {
-    // A chest is STEPPED AWAY FROM ITS DOORWAYS — 0.3 of a cell across, 0.2 down — and the clip was not
-    // stepped with it. The sprite is a cell wide, so the whole offset hung past the clip's edge and was
-    // cut: the chest spanned 156.8 to 212.8 against a clip of 140 to 196, losing 30% of itself to the
-    // side of its own cell. The clip still stops it at the masonry a cell away; it just travels with it.
+  it("grows the clip into the paving beside it, so a chest is not cut by its own offset", () => {
+    // A chest is STEPPED AWAY FROM ITS DOORWAYS — 0.3 of a cell across, 0.2 down — and a node sprite is
+    // a cell wide, so the offset always hangs past the room's own cells. Clipped to those alone it lost
+    // 30% of itself to the side of its own cell: it spanned 156.8 to 212.8 against a clip of 140 to 196.
     const grid = makeGrid([
       [empty, empty, empty],
-      [empty, treasureCell(["w"]), empty],
+      [corridorBetween(true), treasureCell(["w"]), corridorBetween(true)],
       [empty, empty, empty],
     ])
     const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
@@ -97,14 +96,39 @@ describe("a node's furniture and the clip it is cut to", () => {
       (el.getAttribute("href") ?? "").includes("chestProp")
     )
     expect(chest).toBeTruthy()
-    const offset = Number(chest!.getAttribute("x")) - cellLeft(1)
-    expect(offset).toBeGreaterThan(0)
-    const moved = [...container.querySelectorAll("clipPath path")]
-      .map(el => /translate\(([-\d.]+), ([-\d.]+)\)/.exec(el.getAttribute("transform") ?? ""))
-      .find(Boolean)
-    expect(moved).toBeTruthy()
-    expect(Number(moved![1])).toBeCloseTo(offset)
-    expect(Number(moved![2])).toBeCloseTo(NODE_ART_DY)
+    const clip = [...container.querySelectorAll("clipPath")].find(el => el.id.startsWith("room-clip-chest"))
+    const d = clip?.querySelector("path")?.getAttribute("d") ?? ""
+    // The corridor to the east is floor, so the clip reaches into it and the chest is whole.
+    expect(d).toContain(String(cellLeft(2)))
+  })
+
+  it("stops at the masonry: every rect of the clip is ground the room actually has", () => {
+    // Translating the clip with the art was the first fix and it broke this half — where the step
+    // pointed at VOID the clip went with it, and the chest was drawn out over the dark beyond the wall.
+    // Growing into NEIGHBOURS instead is only safe if a neighbour has to be real ground to qualify, and
+    // a CLAIMED cell counts: a chamber's own floor is `type: "empty"` in the grid, the claim being a
+    // render-time fact, which is the trap floorScatter and MapGrowth both record.
+    const cells = [
+      [empty, empty, empty],
+      [empty, treasureCell(["w"]), empty],
+      [empty, empty, empty],
+    ]
+    const grid = makeGrid(cells)
+    const claims = buildRoomClaims(grid)
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
+    const clip = [...container.querySelectorAll("clipPath")].find(el => el.id.startsWith("room-clip-chest"))
+    const d = clip?.querySelector("path")?.getAttribute("d") ?? ""
+    expect(d).not.toBe("")
+
+    const ground = new Set<number>()
+    for (let r = 0; r < grid.rows; r++)
+      for (let c = 0; c < grid.cols; c++)
+        if (cells[r][c].type !== "empty" || claims.claimedBy.has(`${r},${c}`)) {
+          ground.add(cellLeft(c))
+          // The seam east of a ground cell is bridged when its neighbour is ground too.
+          ground.add(cellLeft(c) + CELL)
+        }
+    for (const [, x] of d.matchAll(/M(-?\d+(?:\.\d+)?) /g)) expect(ground.has(Number(x))).toBe(true)
   })
 })
 

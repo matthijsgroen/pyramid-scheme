@@ -503,6 +503,41 @@ const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficul
     if (own) own.push(cellKey)
     else footprints.set(ownerKey, [ownerKey, cellKey])
   }
+  /**
+   * The footprint a sprite is CLIPPED to: the room's own cells, plus any neighbour that is real floor.
+   *
+   * A chest is stepped away from its doorways (`nodeArtOffset`, 0.3 of a cell across and 0.2 down) and a
+   * node sprite is a cell wide, so the offset always hangs past the room's own cells. Clipped to those
+   * alone it lost a third of itself to the side of its own cell. Translating the clip with the art fixed
+   * that and broke the other half: where the step pointed at VOID, the clip went with it and the chest
+   * was drawn out over the dark beyond the wall.
+   *
+   * So the clip grows, but only into ground. A neighbour counts if the grid has something there — and a
+   * CLAIMED cell counts too, because a chamber's own floor is `type: "empty"` in the grid and the claim
+   * is a render-time fact, which is the trap `floorScatter` and `MapGrowth` both record. Where there is
+   * paving beside it the chest overlaps the paving; where there is masonry it is still cut at the
+   * masonry, which is what the clip was for.
+   */
+  const clipCells = (footprint: readonly string[]): string[] => {
+    const cells = new Set(footprint)
+    for (const key of footprint) {
+      const [r, c] = key.split(",").map(Number)
+      for (const [dr, dc] of [
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1],
+      ] as const) {
+        const nr = r + dr
+        const nc = c + dc
+        const neighbourKey = `${nr},${nc}`
+        if (cells.has(neighbourKey)) continue
+        const isFloor = cellAt(grid, nr, nc).type !== "empty" || claims.claimedBy.has(neighbourKey)
+        if (isFloor) cells.add(neighbourKey)
+      }
+    }
+    return [...cells]
+  }
   const out: NodeSprite[] = []
   let approach: Map<string, readonly [number, number]> | null = null
   for (let r = 0; r < grid.rows; r++) {
@@ -512,7 +547,7 @@ const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficul
       const kind = shapeKindFor(grid, r, c, cell.roomType, cell.tags, cell.stairId)
       const tier = cell.difficulty ?? floorTier
       const { cx, cy } = cellCenter(r, c)
-      const footprint = footprints.get(`${r},${c}`) ?? [`${r},${c}`]
+      const footprint = clipCells(footprints.get(`${r},${c}`) ?? [`${r},${c}`])
       if (kind === "treasure" && !cell.tags?.includes("shop")) {
         const url = tileUrl(tier, "chestProp")
         if (!url) continue
@@ -524,8 +559,6 @@ const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficul
           x: cx + dx - CELL / 2,
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
-          // The clip steps with the art: see NodeSprite.clipShift.
-          clipShift: { x: dx, y: dy },
         })
       } else if (kind === "exit") {
         // THE WAY OUT IS A MARKER, NOT ARCHITECTURE. A doorway has to be aimed — face on it needs the
@@ -2569,10 +2602,7 @@ export const SiteMapView = ({
           <defs>
             {nodeSprites.map(sprite => (
               <clipPath key={sprite.key} id={`room-clip-${sprite.key}`}>
-                <path
-                  d={footprintPath(sprite.footprint)}
-                  transform={sprite.clipShift ? `translate(${sprite.clipShift.x}, ${sprite.clipShift.y})` : undefined}
-                />
+                <path d={footprintPath(sprite.footprint)} />
               </clipPath>
             ))}
           </defs>

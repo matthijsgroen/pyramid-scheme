@@ -71,7 +71,7 @@
  *                    facing left has to come in facing right
  */
 
-import { mkdirSync } from "fs"
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs"
 import { dirname, join } from "path"
 import { fileURLToPath } from "url"
 import sharp from "sharp"
@@ -634,15 +634,28 @@ const main = async (): Promise<void> => {
       create: { width: w, height: h, channels: 4 as const, background: { r: wr, g: wg, b: wb, alpha: flatten } },
     },
   }
-  await sharp(laid)
+  const rendered = await sharp(laid)
     // `atop` keeps the destination's alpha, so the wash lands on the art and NOT on the hole through it.
     // An arch is the first slot with real transparency, and a plain overlay filled its doorway with stone.
     .composite(flatten > 0 ? [{ ...wash, blend: "atop" as const }] : [])
     .png({ compressionLevel: 9 })
-    .toFile(out)
+    .toBuffer()
 
-  const meta = await sharp(out).metadata()
-  console.log(`${out} — ${meta.width}x${meta.height}, ${slot} slot${key === "none" ? "" : `, keyed ${key}`}`)
+  // ONLY WRITE WHAT CHANGED. `art/rebuild.sh` re-imports all 190 tiles to prove no geometry change has
+  // silently invalidated a master, and the proof it wants is that the BYTES come back the same — which
+  // is exactly the case where the file need not be touched at all. Rewriting them regardless gave every
+  // watcher in the project 190 changed files four minutes apart: a running Storybook reloaded on each
+  // sweep, over and over, for a one-tile edit.
+  //
+  // It also makes `git status` after a rebuild say precisely what moved, instead of saying nothing
+  // because the content matched while every mtime did not.
+  const unchanged = existsSync(out) && readFileSync(out).equals(rendered)
+  if (!unchanged) writeFileSync(out, rendered)
+
+  const meta = await sharp(rendered).metadata()
+  console.log(
+    `${out} — ${meta.width}x${meta.height}, ${slot} slot${key === "none" ? "" : `, keyed ${key}`}${unchanged ? " (unchanged)" : ""}`
+  )
 }
 
 // Only when RUN, not when imported. `growMask` has a spec beside this file, and importing the module to
