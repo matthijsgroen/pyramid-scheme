@@ -39,22 +39,17 @@ describe("the air a floor is drawn in", () => {
 })
 
 describe("what a condition grows, and where", () => {
-  it("puts growth in three places, fewest where the sprites are biggest", () => {
+  it("is a DENSITY per cell, and overgrown at full strength means every one of them", () => {
+    // The number a floor turns into a count. 1 is one sprite per available cell — every joint, every
+    // band, every chamber floor — which is what the word is supposed to mean.
     const g = moodFor("expert", undefined, { kind: "overgrown", amount: 1 }).growth
-    expect(g).toEqual({ count: 9, wallCount: 5, plantCount: 2, kind: "overgrown" })
+    expect(g).toEqual({ floor: 1, wall: 1, chamber: 1, kind: "overgrown" })
   })
 
-  it("scales all three with the amount, so a journey can build toward its overdrive pyramid", () => {
+  it("is a straight fraction of that, so an authored amount means what it says", () => {
     const at = (amount: number) => moodFor("expert", undefined, { kind: "overgrown", amount }).growth
-    expect(at(0.2)).toMatchObject({ count: 2, plantCount: 0 })
-    expect(at(0.65)).toMatchObject({ count: 6, plantCount: 1 })
-    expect(at(1)).toMatchObject({ count: 9, plantCount: 2 })
-  })
-
-  it("keeps at least one WALL root at any amount above zero", () => {
-    // The roots are the part that says a building is losing, so they must not be the first thing to
-    // round away: 0.1 of five is 0.5, and rounding that gives none.
-    expect(moodFor("expert", undefined, { kind: "overgrown", amount: 0.1 }).growth?.wallCount).toBe(1)
+    expect(at(0.2)).toMatchObject({ floor: 0.2, wall: 0.2, chamber: 0.2 })
+    expect(at(0.65)).toMatchObject({ floor: 0.65, wall: 0.65, chamber: 0.65 })
   })
 
   it("grows nothing at all at amount zero", () => {
@@ -63,7 +58,12 @@ describe("what a condition grows, and where", () => {
 
   it("gives a flooded site a tide line but no plants — water grows no shrub in a chamber", () => {
     const g = moodFor("expert", undefined, { kind: "flooded", amount: 1 }).growth
-    expect(g?.wallCount).toBeGreaterThan(0)
-    expect(g?.plantCount).toBe(0)
+    expect(g?.wall).toBeGreaterThan(0)
+    expect(g?.chamber).toBe(0)
+  })
+
+  it("floods less thickly than it grows over, and most where the water marks the wall", () => {
+    const g = moodFor("expert", undefined, { kind: "flooded", amount: 1 }).growth
+    expect(g!.wall).toBeGreaterThan(g!.floor)
   })
 })

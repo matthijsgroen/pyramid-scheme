@@ -23,9 +23,11 @@ export type Mood = {
   /** Things growing on the stone: how many, and which sprite. Placed like `life` but STILL — a weed in
    * a corner does not scurry — and drawn against the wall band as well as the floor, because the point
    * of a vine is that it came through the wall. */
-  /** What is growing, in three places: `count` tufts in floor joints, `wallCount` roots through the wall
-   * band, `plantCount` big ones in chambers. See CONDITION_MOOD for why they differ in number. */
-  growth?: { count: number; wallCount: number; plantCount: number; kind: ConditionKind }
+  /** What is growing, in three places, as a DENSITY per available cell rather than a count: `floor`
+   * tufts in the joints, `wall` roots through the band, `chamber` big ones in the rooms. 1 is one per
+   * cell — every joint, every band, every chamber floor. `MapGrowth` multiplies by what that floor
+   * actually has, which is the whole point: see CONDITION_MOOD. */
+  growth?: { floor: number; wall: number; chamber: number; kind: ConditionKind }
   /** One colour laid over the whole map. The hour, and nothing else. */
   tint?: { fill: string; opacity: number }
   /** Things carried on the air: dust, chaff, soot, sand, sparks — or fog, which is the same thing drawn
@@ -99,13 +101,20 @@ const CONDITION_MOOD: Record<
   // CHAMBERS only, because a plant that size in a passage is something the player would have to walk
   // through.
   //
-  // Fewer as they get bigger: nine tufts, five roots, two plants at full amount. A floor with nine of
-  // each reads as a garden.
-  overgrown: { tint: { fill: "#4d7a2e", opacity: 0.18 }, growth: 9, wall: 5, plant: 2 },
+  // A DENSITY PER CELL, NOT A COUNT, and that is the correction the map asked for. Nine tufts and five
+  // roots sounds like a lot and is a flat number for a whole floor however big it is — so the entrance
+  // floors, the ones you actually walk, got one sprite every four to eleven ROOMS while a five-room vault
+  // at the top of the same pyramid was choked with them. At 0.2 the first pyramid of the expedition had
+  // two tufts and one root across thirty-four rooms, and no plant at all.
+  //
+  // At 1 it is ONE PER CELL: every joint, every band, every chamber floor. That is what "overgrown"
+  // should mean at full strength, and the amount an author writes is then a real fraction of it. If it
+  // proves too much the number to move is here, not the scale underneath it.
+  overgrown: { tint: { fill: "#4d7a2e", opacity: 0.18 }, growth: 1, wall: 1, plant: 1 },
   // Standing water: cooler, darker, and what grows in it grows at the edges. No PLANTS — water does not
   // put a shrub in the middle of a chamber — but it does stain a wall, which is what the brief calls a
   // tide line, so the wall pass is where its own art will go.
-  flooded: { tint: { fill: "#2b4c5a", opacity: 0.22 }, growth: 5, wall: 4, plant: 0 },
+  flooded: { tint: { fill: "#2b4c5a", opacity: 0.22 }, growth: 0.55, wall: 0.8, plant: 0 },
 }
 
 /** Two tints laid over each other, as one. The overlay is drawn once, so a condition cannot simply add
@@ -140,12 +149,12 @@ export const moodFor = (tier: Difficulty, theme?: string, condition?: SiteCondit
   return {
     ...hour,
     tint: overlay(hour.tint, { fill: spec.tint.fill, opacity: spec.tint.opacity * amount }),
+    // Densities out, not counts: the floor is what knows how many cells it has. Rounding, and the rule
+    // that a root never rounds away, both moved to `MapGrowth` with them.
     growth: {
-      count: Math.round(spec.growth * amount),
-      // ceil, not round: at 0.2 of five roots, round gives one and ceil gives one, but at 0.1 round gives
-      // NONE and the wall — the part that matters most — would drop out first as a journey builds.
-      wallCount: amount > 0 ? Math.max(1, Math.ceil(spec.wall * amount)) : 0,
-      plantCount: Math.round(spec.plant * amount),
+      floor: spec.growth * amount,
+      wall: spec.wall * amount,
+      chamber: spec.plant * amount,
       kind: condition.kind,
     },
   }

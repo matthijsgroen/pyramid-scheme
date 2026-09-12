@@ -87,7 +87,7 @@ export const MapGrowth = ({
   isLit,
 }: Omit<Props, "width" | "height">) => {
   const g = mood.growth
-  if (!g?.count && !g?.wallCount && !g?.plantCount) return null
+  if (!g?.floor && !g?.wall && !g?.chamber) return null
   // One sprite per PLACE, falling back to the plain one where the other two are not drawn yet. The
   // fallback is deliberate: it lets the placement be judged — whether the roots sit in the right part of
   // the band, whether a chamber plant is the right size — before anyone paints a root. Same argument as
@@ -96,30 +96,47 @@ export const MapGrowth = ({
   if (!tuft) return null
   const root = sharedTileUrl(`${g.kind}-wall`) ?? tuft
   const plant = sharedTileUrl(`${g.kind}-plant`) ?? tuft
-  const pick = (cells: ReadonlyArray<readonly [number, number]>, salt: string, i: number) =>
-    cells[Math.floor(rand(siteId, salt, i) * cells.length)]
+  /**
+   * WHICH cells grow, at a density of `per` — 1 being every one of them.
+   *
+   * Drawn WITHOUT REPLACEMENT, which is what a density needs and a random index cannot give: picking a
+   * cell per sprite, at one sprite per cell, leaves about a third of the floor bare and stacks the rest
+   * two deep. So the list is put in a fixed hash order once and the front of it is taken. Scaling the
+   * density down then takes strictly fewer cells and moves none of the ones that stay, which is what
+   * makes the number safe to tune.
+   *
+   * Each cell keeps its ORIGINAL index as the seed for its own size and jitter, so those do not move
+   * either when the density changes.
+   */
+  const grown = (cells: ReadonlyArray<readonly [number, number]>, salt: string, per: number) => {
+    if (cells.length === 0 || per <= 0) return []
+    const ordered = cells
+      .map((cell, index) => ({ cell, index, order: rand(siteId, salt, index) }))
+      .sort((a, b) => a.order - b.order)
+    // At least one, because a density that rounds to nothing still means "this is happening here" — the
+    // roots are the part that says a building is losing and must not be the first thing to round away.
+    return ordered.slice(0, Math.max(1, Math.round(per * cells.length)))
+  }
   return (
     <g aria-hidden="true" style={{ pointerEvents: "none" }}>
       {/* ── the JOINTS: many, small, on any floor cell ── */}
-      {floorCells.length > 0 &&
-        Array.from({ length: g.count }, (_, i) => {
-          const [row, col] = pick(floorCells, "growth-cell", i)
-          if (!isLit(row, col)) return null
-          const { cx, cy } = cellCenter(row, col)
-          const size = 12 + rand(siteId, "growth-size", i) * 10
-          return (
-            <image
-              key={`tuft-${i}`}
-              href={tuft}
-              x={cx - size / 2 + (rand(siteId, "growth-x", i) - 0.5) * (CELL * 0.7)}
-              // Biased UP the cell: toward the wall band it is meant to be coming out of.
-              y={cy - size + (rand(siteId, "growth-y", i) - 0.5) * (CELL * 0.4)}
-              width={size}
-              height={size}
-              style={{ transform: rand(siteId, "growth-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
-            />
-          )
-        })}
+      {grown(floorCells, "growth-cell", g.floor).map(({ cell: [row, col], index: i }) => {
+        if (!isLit(row, col)) return null
+        const { cx, cy } = cellCenter(row, col)
+        const size = 12 + rand(siteId, "growth-size", i) * 10
+        return (
+          <image
+            key={`tuft-${i}`}
+            href={tuft}
+            x={cx - size / 2 + (rand(siteId, "growth-x", i) - 0.5) * (CELL * 0.7)}
+            // Biased UP the cell: toward the wall band it is meant to be coming out of.
+            y={cy - size + (rand(siteId, "growth-y", i) - 0.5) * (CELL * 0.4)}
+            width={size}
+            height={size}
+            style={{ transform: rand(siteId, "growth-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
+          />
+        )
+      })}
       {/* ── the WALL: roots through the band above a cell ──
           `wallCells` is only the cells with a band drawn above them (void to the north), because a root
           has to come THROUGH something the map actually draws.
@@ -133,47 +150,43 @@ export const MapGrowth = ({
 
           So it runs the part of the band that is BRICK, and the variance it used to carry in height lives
           in the width instead. */}
-      {wallCells.length > 0 &&
-        Array.from({ length: g.wallCount }, (_, i) => {
-          const [row, col] = pick(wallCells, "growth-wall-cell", i)
-          if (!isLit(row, col)) return null
-          const { cx, cy } = cellCenter(row, col)
-          const w = 16 + rand(siteId, "growth-wall-w", i) * 18
-          return (
-            <image
-              key={`root-${i}`}
-              href={root}
-              preserveAspectRatio="none"
-              x={cx - w / 2 + (rand(siteId, "growth-wall-x", i) - 0.5) * (CELL * 0.6)}
-              y={cy - CELL / 2 - WALL_FACE_H}
-              width={w}
-              height={WALL_FACE_H}
-              style={{ transform: rand(siteId, "growth-wall-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
-            />
-          )
-        })}
+      {grown(wallCells, "growth-wall-cell", g.wall).map(({ cell: [row, col], index: i }) => {
+        if (!isLit(row, col)) return null
+        const { cx, cy } = cellCenter(row, col)
+        const w = 16 + rand(siteId, "growth-wall-w", i) * 18
+        return (
+          <image
+            key={`root-${i}`}
+            href={root}
+            preserveAspectRatio="none"
+            x={cx - w / 2 + (rand(siteId, "growth-wall-x", i) - 0.5) * (CELL * 0.6)}
+            y={cy - CELL / 2 - WALL_FACE_H}
+            width={w}
+            height={WALL_FACE_H}
+            style={{ transform: rand(siteId, "growth-wall-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
+          />
+        )
+      })}
       {/* ── the CHAMBERS: a few big ones, and only where there is room to stand ──
           Passages are excluded by construction, `chamberCells` being the claimed footprints: a plant half
           a cell across in a corridor is something the player would have to walk through. Bottom-anchored
           like a prop, so it stands on the floor instead of floating in the cell. */}
-      {chamberCells.length > 0 &&
-        Array.from({ length: g.plantCount }, (_, i) => {
-          const [row, col] = pick(chamberCells, "growth-plant-cell", i)
-          if (!isLit(row, col)) return null
-          const { cx, cy } = cellCenter(row, col)
-          const size = 30 + rand(siteId, "growth-plant-size", i) * 16
-          return (
-            <image
-              key={`plant-${i}`}
-              href={plant}
-              x={cx - size / 2 + (rand(siteId, "growth-plant-x", i) - 0.5) * (CELL * 0.4)}
-              y={cy + CELL / 2 - size}
-              width={size}
-              height={size}
-              style={{ transform: rand(siteId, "growth-plant-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
-            />
-          )
-        })}
+      {grown(chamberCells, "growth-plant-cell", g.chamber).map(({ cell: [row, col], index: i }) => {
+        if (!isLit(row, col)) return null
+        const { cx, cy } = cellCenter(row, col)
+        const size = 30 + rand(siteId, "growth-plant-size", i) * 16
+        return (
+          <image
+            key={`plant-${i}`}
+            href={plant}
+            x={cx - size / 2 + (rand(siteId, "growth-plant-x", i) - 0.5) * (CELL * 0.4)}
+            y={cy + CELL / 2 - size}
+            width={size}
+            height={size}
+            style={{ transform: rand(siteId, "growth-plant-flip", i) > 0.5 ? "scaleX(-1)" : undefined }}
+          />
+        )
+      })}
     </g>
   )
 }
