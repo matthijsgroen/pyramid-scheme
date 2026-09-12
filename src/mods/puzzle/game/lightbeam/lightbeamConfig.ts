@@ -1,6 +1,6 @@
 import type { FamilyGenerationCtx } from "@/game/families/familyMeta"
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { LightbeamMode, LightbeamOptions } from "./generateLightbeam"
+import type { LightbeamDials, LightbeamOptions } from "./generateLightbeam"
 
 // Tier settings (design doc §6.4, measured in §11.19).
 //
@@ -10,27 +10,34 @@ import type { LightbeamMode, LightbeamOptions } from "./generateLightbeam"
 // construction, and a piece standing in a wrong ray is what §6.1 measured as the only thing that makes the
 // technique cap bite.
 //
+// **What a tier adds is a ceiling, not a debut** (§6.4, §7.4). The three lower tiers hold a pool of `flavours`
+// and draw one a board, so the piece list varies board to board: the ladder says how far a piece may be pushed
+// here — a two-cell track at starter, three cells at junior, a third mirror angle from expert — and the flavour
+// says which one this board is about. That correction came from playtesting, and the measurement behind it is
+// blunt: on 12 junior seeds the old single set of dials built 12 boards carrying six or seven turn mirrors and
+// exactly one three-stop slider. One puzzle, twelve times.
+//
 // Every tier gets a full configuration — this family is not gated to a debut tier, because a starter corridor
 // can sit behind a ward gate deep inside a wizard pyramid. So starter must be *gentle*, not empty.
 //
 // Measured over 40 seeds a tier (§11.19):
 //
-// | tier    | pieces | on the route | configurations | attempts a board | worst gen |
-// | starter | 3.0    | 3.0          | 8              | 1.00             | 10ms      |
-// | junior  | 4.0    | 4.0          | 16             | 1.10             |  7ms      |
-// | expert  | 5.5    | 4.0          | 80             | 3.30             | 20ms      |
-// | master  | 7.0    | 5.0          | 228            | 2.10             | 19ms      |
-// | wizard  | 9.8    | 6.8          | 1 741          | 2.70             | 616ms     |
+// | tier    | pieces | on the route | configurations | rejections a board | mean gen |
+// | starter | 4.8    | 3.3          | 35             | 2.3                |  20ms    |
+// | junior  | 7.8    | 5.3          | 425            | 6.8                |  33ms    |
+// | expert  | 8.3    | 5.4          | 816            | 3.8                |  12ms    |
+// | master  | 10.5   | 6.8          | 2 731          | 2.4                |  77ms    |
+// | wizard  | 12.9   | 6.8          | 65 494         | 5.5                | 1 222ms  |
 //
 // Configurations are **per board**. Stating that because the column this replaced was a total across all 40
 // boards while reading as per-board, and it cost a tuning pass aimed at putting 37 350 configurations on one
 // wizard grid before anyone noticed.
 //
-// | starter | right angles, branches that run straight out          |
-// | junior  | a longer route, and stone to die in (wall-heavy)      |
-// | expert  | branches that turn, and pieces that slide            |
-// | master  | the diagonal cut                                     |
-// | wizard  | doors, sockets and a trap — and two modes a board     |
+// | starter | right angles, branches that run straight out, two-cell tracks |
+// | junior  | a longer route, three-cell tracks, stone to die in            |
+// | expert  | the diagonal cut, the crossing, a third mirror angle          |
+// | master  | a trap, and two modes a board                                 |
+// | wizard  | three angles everywhere, branches that turn twice, an and-door |
 //
 // **Three constraints the measurements imposed on this table rather than the other way round** (§11.17,
 // §11.18):
@@ -83,8 +90,24 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     interactive: 1,
     branchDepth: 1,
     fiddleProof: true,
-    modes: ["wallHeavy"],
     techniqueCap: "neverReached",
+    // Six flavours, one a board (§7.4). Every piece §2 lists may turn up here — one at a time, on a board built
+    // around it, which is how a mechanic gets learned rather than averaged in. The tier is still gentle: the
+    // configuration space runs 16 to 87 across the pool, against the 34 the single recipe gave.
+    flavours: [
+      // Where the light died: stone closes the branches, and the mirrors all turn.
+      { modes: ["wallHeavy"] },
+      // Is it in the way: stone standing on the beam's own line, one cell from where it belongs.
+      { modes: ["wallHeavy"], slidingWalls: 1 },
+      // In the way or out: one mirror slides, and its track is two cells.
+      { modes: ["sliderHeavy"], sliders: 1, slidingStops: 2 },
+      // Not every mirror is yours: a share of the bends are givens to read around.
+      { modes: ["wallHeavy"], interactive: 0.7 },
+      // What opens that door: one door, one socket, and the order rung that comes with them.
+      { modes: ["switchHeavy"], doors: 1, doorNodes: 1 },
+      // A third angle: a mirror with three stops rather than two, and stone enough to read the wrong ones by.
+      { modes: ["wallHeavy"], forkSize: 3 },
+    ],
   },
   // One addition: **a piece that slides**, and the route length to hide it on. "Is it in the way, and which cell"
   // is a different question from "which way round", and a slider is the cheapest fork in the family — its wrong
@@ -101,8 +124,23 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     sliders: 1,
     slidingStops: 3,
     fiddleProof: true,
-    modes: ["sliderHeavy"],
     techniqueCap: "neverReached",
+    // The same six questions as starter, asked over five bends and with the sliding pieces on three-cell tracks:
+    // *which* stop rather than in-or-out. Measured 92 to 768 configurations across the pool, averaging 425.
+    flavours: [
+      // Which cell: the slider that gives this tier its name.
+      { modes: ["sliderHeavy"], sliders: 1, slidingStops: 3 },
+      // Stone to slide, and stone to die in.
+      { modes: ["wallHeavy"], slidingWalls: 1 },
+      // Two sliders, so "which cell" is asked twice on one beam.
+      { modes: ["sliderHeavy"], sliders: 2, slidingStops: 3 },
+      // A door, its socket, and a longer route to hide the order in.
+      { modes: ["switchHeavy"], doors: 1, doorNodes: 1 },
+      // Givens among the bends, and stone around them.
+      { modes: ["wallHeavy"], interactive: 0.8 },
+      // A bend more than the tier's own five, so a wrong turn runs further before it dies.
+      { modes: ["wallHeavy"], turns: 6 },
+    ],
   },
   // One addition: **the diagonal cut** (§11.8). The bend would have carried a mirror anyway; what changes is
   // that its answer is a half-step and its stop set reaches 67.5° the other way, so the ray leaves the rows and
@@ -130,11 +168,24 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     sliders: 1,
     slidingStops: 3,
     fiddleProof: true,
-    modes: ["sliderHeavy"],
     techniqueCap: "onlySurvivor",
+    // The cut and the crossing are the tier's, so every flavour carries them; what varies is what stands in the
+    // way. The three-stop mirror appears here as a flavour rather than as wizard's blanket rule — sparingly, on
+    // the boards built for it. Measured 400 to 2 106 configurations, averaging 816.
+    flavours: [
+      { modes: ["sliderHeavy"], sliders: 1, slidingStops: 3 },
+      // Mirrors with a third angle, and stone enough to read the wrong ones by.
+      { modes: ["wallHeavy"], forkSize: 3 },
+      { modes: ["wallHeavy"], slidingWalls: 1 },
+      { modes: ["switchHeavy"], doors: 1, doorNodes: 1 },
+      // The pool's top end: two sliders and three-angle mirrors on the same grid.
+      { modes: ["sliderHeavy"], sliders: 2, forkSize: 3 },
+    ],
   },
-  // One addition: **a socket, and a trap** (§11.1). Two modes of three a board, so a grid has character rather
-  // than every dial turned at once.
+  // One addition: **the trap** (§11.1). Two modes of three a board, so a grid has character rather than every
+  // dial turned at once. The door and its socket are met below, as one flavour of a lower tier's pool; what
+  // arrives here is the socket the light must be kept *away* from, and it is the whole reason this tier's cap
+  // reaches `wiringDead`.
   //
   // The trap is what this tier is for, and it is what the authoring construction is for. The trap has to be the
   // only reason a wrong setting fails, so that setting must otherwise reach the shrine — and a generator that
@@ -191,14 +242,15 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
 }
 
 /**
- * Modes a lab variant forces on top of the tier's own dials, for playtesting one shape at a time
- * (docs/instructions/puzzle-screens.md §6). A tier draws its own modes; this is how a developer looks
- * at just one of them.
+ * What a lab variant forces on top of the tier's own dials, for playtesting one shape at a time
+ * (docs/instructions/puzzle-screens.md §6). A tier draws its own flavour a board; this is how a developer
+ * looks at just one of them across a run of seeds.
  */
-const VARIANT_MODES: Record<string, LightbeamMode[]> = {
-  "wall-heavy": ["wallHeavy"],
-  "slider-heavy": ["sliderHeavy"],
-  "switch-heavy": ["switchHeavy"],
+const VARIANT_DIALS: Record<string, Partial<LightbeamDials>> = {
+  "wall-heavy": { modes: ["wallHeavy"] },
+  "slider-heavy": { modes: ["sliderHeavy"] },
+  "switch-heavy": { modes: ["switchHeavy"] },
+  "sliding-wall": { modes: ["wallHeavy"], slidingWalls: 1 },
 }
 
 /**
@@ -210,7 +262,8 @@ const VARIANT_MODES: Record<string, LightbeamMode[]> = {
  */
 export const resolveLightbeamOptions = ({ difficulty, variant }: FamilyGenerationCtx) => {
   const config = LIGHTBEAM_CONFIG[difficulty ?? "starter"]
-  const forced = variant ? VARIANT_MODES[variant] : undefined
-  // A forced mode replaces the pool rather than adding to it, or the board would still draw its own two.
-  return forced ? { ...config, modePool: undefined, modes: forced } : config
+  const forced = variant ? VARIANT_DIALS[variant] : undefined
+  // A forced shape replaces both pools rather than adding to them, or the board would still draw its own two
+  // modes — and a flavour naming its own would overwrite the very thing the lab is asking to see.
+  return forced ? { ...config, modePool: undefined, flavours: undefined, ...forced } : config
 }

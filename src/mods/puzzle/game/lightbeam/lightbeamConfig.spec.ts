@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { difficulties } from "@/data/difficultyLevels"
-import { LIGHTBEAM_CONFIG } from "./lightbeamConfig"
+import { LIGHTBEAM_CONFIG, resolveLightbeamOptions } from "./lightbeamConfig"
 import { generateLightbeam, reachableDeviations, LIGHTBEAM_MODES, type LightbeamGate } from "./generateLightbeam"
 import { routeIsUnique } from "./lightbeamGeometry"
 import { allPieceOptions, cellKey, isLit, pieceCells, restingState, traceBeam } from "./beam"
@@ -229,6 +229,41 @@ describe("the constraints the table has to respect", () => {
   it("gives starter the stone §6.4 asks for", () => {
     const stone = boardsFor("starter").map(board => board.fixed.filter(piece => piece.kind === "wall").length)
     expect(stone.reduce((total, count) => total + count, 0) / stone.length).toBeGreaterThan(1)
+  })
+
+  /**
+   * **A tier is a range of boards, not one recipe** (§7.4).
+   *
+   * The regression this guards is the one playtesting reported: every lightbeam board on a tier played the same,
+   * because a tier held one set of dials — starter was five turn mirrors and junior was six plus exactly one
+   * three-stop slider, every single board. A pool of flavours only fixes that if the draw lands on different
+   * ones, so the shapes are counted rather than the pool's length.
+   */
+  it.each(["starter", "junior", "expert"] as const)("draws several shapes of board at %s", tier => {
+    const shapes = new Set(
+      boardsFor(tier).map(board => [...board.modes, ...board.movable.map(piece => piece.kind).sort()].join("/"))
+    )
+    expect(shapes.size).toBeGreaterThan(2)
+  })
+
+  /** Every piece §2 lists reaches the low tiers, one board at a time — that is what the pools are for. */
+  it("puts the family's whole vocabulary within reach of starter and junior", () => {
+    const seen = new Set<string>()
+    for (const tier of ["starter", "junior"] as const)
+      for (const board of boardsFor(tier)) {
+        for (const piece of board.movable) seen.add(piece.kind)
+        for (const piece of board.fixed) seen.add(piece.kind)
+        if ((board.nodes?.length ?? 0) > 0) seen.add("socket")
+      }
+    expect([...seen].sort()).toEqual(["mirror", "slidingMirror", "slidingWall", "socket", "turnMirror", "wall"])
+  })
+
+  /** A lab variant asks to see one mode; a flavour naming its own would overwrite the very thing being forced. */
+  it("drops the flavour pool when a variant forces a mode", () => {
+    const forced = resolveLightbeamOptions({ difficulty: "junior", variant: "wall-heavy" })
+    expect(forced.modes).toEqual(["wallHeavy"])
+    expect(forced.flavours).toBeUndefined()
+    expect(resolveLightbeamOptions({ difficulty: "junior" }).flavours?.length).toBeGreaterThan(1)
   })
 
   /** Wizard's own addition: a mirror may offer three stops, drawn per piece so the forks are not uniform. */

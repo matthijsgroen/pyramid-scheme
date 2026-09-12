@@ -59,6 +59,13 @@ bending one. That is worth having precisely because it is a different verb: ever
 other piece answers "which way does the light turn", and this one answers "does
 the light get through at all".
 
+It comes in two forms and they are the same piece: **driven** by a socket, which is the door, and **tapped**,
+which is stone resting on the beam's own line one cell from where it belongs. The tapped one authors no
+corridor at all — its wrong stop is standing in the golden path, so the beam is absorbed in the piece itself —
+which is why it settles on `deadEnd` and belongs at the tiers still learning to read where the light died.
+**It always has exactly two stops.** A third would be a second cell off the beam's line, and stone off that
+line blocks nothing, so the board would have two answers.
+
 ## 3. Board model and beam tracing
 
 State is a flat array: one integer per movable piece, its chosen state. Nothing
@@ -462,6 +469,15 @@ The two currencies §6.3 separated fall out cleanly: junior buys length, expert 
 piece is exactly "a piece standing where a wrong ray goes"** — which is the lever authored angles could
 not supply (§11.4), and it arrives at the tier where the fork count needs to start moving.
 
+**What the ladder governs is how much of a piece a tier may ask for, not whether the piece exists there.** That
+is the correction §7.4 makes, and playtesting is what forced it: a tier authored to one set of dials builds one
+board over and over, so starter was five turn mirrors every time and junior was six plus exactly one three-stop
+slider every time. Every tier now draws a **flavour** a board, and the low tiers' pools reach the whole
+vocabulary — a slide, a given, a door — one mechanic a board and never two at once, which is how a mechanic gets
+met rather than averaged in. The ramp stays in the measurements: the configuration space still grows every tier
+(35 / 425 / 816 / 2 731 / 65 494 measured over 24 seeds), and what a flavour changes is which question a
+particular board asks.
+
 #### Where the ladder is now enforced rather than described
 
 The failure this guards against is a pool that introduces _vocabulary_ rather than quantity — a starter board
@@ -558,6 +574,49 @@ closes a branch also settles it. It buys legibility and spends uncertainty, so i
 Nothing about the mechanism is lightbeam-specific: Futoshiki could draw technique-flavour modes the same way.
 Left here until a second family actually wants it — a shared abstraction on one caller would be the premature
 kind.
+
+### 7.4 Flavours — the dials vary per board too
+
+A mode says what kind of maze is built around the route. Everything else about a board — how many pieces slide,
+whether one of them is stone, whether a bend is a given, whether there is a door, whether a mirror offers a
+third angle — was a **tier constant**, and that is what a player reports as "every one of these is the same
+puzzle". They were right, and the measurement is blunt: on 12 junior seeds, 12 boards carried six or seven turn
+mirrors and exactly one three-stop sliding mirror. Nothing else ever appeared.
+
+So a tier holds a **pool of flavours** and draws one a board, off the seed, exactly as `modePool` does for modes
+— a flavour is merged over the tier's own dials and may set any of them, modes included. The tier is the range;
+the board is the sample.
+
+Three rules keep it from becoming "every dial a little, per board":
+
+- **One mechanic a flavour.** A flavour that asked for a slider _and_ a door _and_ a given would be the average
+  board again, with extra steps. The pool's job is that a mechanic arrives on a board built around it.
+- **The tier still owns the ceiling.** §6.4's ladder says how far a piece may be pushed at a tier — a two-cell
+  track at starter, three cells at junior, a third mirror angle from expert — and a flavour may not exceed it.
+  What the ladder no longer says is that the piece is absent below its tier.
+- **A flavour that cannot be delivered is a rejection, not a downgrade** (§7.1). `noSlidingWall` joins
+  `noTrack`, `noDoor` and `noTrap`: a board recording a flavour it does not carry is the silent failure §7.2 is
+  about.
+
+One gate had to become a gate because of this. **"A piece off the winning beam's line"** (§6.1) used to hold by
+construction, since a tier had one set of dials and those dials produced one; a flavour that turns `interactive`
+down, or one whose branch mirrors all prune away as unreachable, can lose it — and a board where every piece
+stands in the winning beam is solved by following the light. It is now `noShadow`, asked of every board whose
+tier asked for branches at all.
+
+Measured over 24 seeds a tier, before → after:
+
+| Tier    | Distinct board shapes | Configurations | Rejections a board |
+| ------- | --------------------- | -------------- | ------------------ |
+| starter | 1 → 6                 | 34 → 35        | 1.1 → 2.3          |
+| junior  | 1 → 6                 | 304 → 425      | 4.0 → 6.8          |
+| expert  | 1 → 5                 | 328 → 816      | 2.1 → 3.8          |
+
+**The configuration space is not what moved, and that is the point.** Starter's is unchanged; what changed is
+that its 24 boards are six shapes instead of one.
+
+Master and wizard already drew two modes of three a board, so they keep their dials: at those tiers the
+composition is the puzzle, and the pool there would be arguing with §6.4's "everything".
 
 ## 8. Controls
 

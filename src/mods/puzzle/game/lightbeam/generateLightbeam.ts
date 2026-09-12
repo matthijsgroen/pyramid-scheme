@@ -14,6 +14,7 @@ import {
   reflect,
   restingState,
   segmentKey,
+  traceBeam,
   SQUARE_DIRECTIONS,
   stepCell,
   TURN_ANGLES,
@@ -134,6 +135,20 @@ export type LightbeamDials = {
    */
   slidingStops: number
   /**
+   * **How many sliding walls stand on the route's own line** — stone resting in the beam's way that the player
+   * slides aside (§2's sliding wall, as a piece a thumb owns rather than one a socket drives).
+   *
+   * The one piece in the family whose move is *clearing* a path rather than bending one, so it asks the only
+   * question the rest cannot: not "which way does the light turn" but "does the light get through at all". Its
+   * wrong stop absorbs the golden beam where it stands, so there is no corridor to author — the beam dies in
+   * the piece itself, which is also why it settles on `deadEnd` and suits the tiers still learning to read
+   * where the light died.
+   *
+   * **Two stops, always.** A third stop is a second cell off the beam's line, and a wall standing anywhere off
+   * that line blocks nothing — so the board would have two winning configurations.
+   */
+  slidingWalls: number
+  /**
    * Doors: stone across the route that no tap can shift, opened only by the light reaching a socket upstream
    * of it (§11.1, §11.2). Switch-heavy only.
    */
@@ -240,6 +255,21 @@ export type LightbeamOptions = Partial<LightbeamDials> & {
   modePool?: readonly LightbeamMode[]
   modeCount?: number
   /**
+   * **The dial sets a board may be drawn to, one per board, off the seed** — what `modePool` is for modes, for
+   * everything else.
+   *
+   * Without it a tier is one recipe: every junior board carried six turn mirrors and exactly one three-stop
+   * slider, because that is what its dials said and dials do not vary. A pool of flavours makes the tier the
+   * range and the board the sample, so the vocabulary §2 lists arrives a piece at a time — one board asks
+   * "which way round", the next "is it in the way", the next "what opens that door" — and the player meets each
+   * mechanic on a board built around it rather than all of them averaged together.
+   *
+   * A flavour is merged **over** the tier's own dials, and it may set `modes` like any other dial. Drawn off
+   * the seed rather than the attempt counter, for `modePool`'s reason: every attempt at a board must be the
+   * same board.
+   */
+  flavours?: readonly Partial<LightbeamDials>[]
+  /**
    * Diagnostics: called with the name of the gate that threw a draft away, once per rejected attempt.
    *
    * Off unless asked for, and it costs an optional call per rejection. It reports the gate rather than a
@@ -256,6 +286,10 @@ export type LightbeamGate =
   | "noCorridor"
   /** A mode asked for a sliding piece and no track fitted. */
   | "noTrack"
+  /** A flavour asked for a sliding wall and no straight stretch could carry one. */
+  | "noSlidingWall"
+  /** Every piece stood in the winning beam's own line, so following the light would solve the board. */
+  | "noShadow"
   /** Switch-heavy could not fit a door and its sockets on the route. */
   | "noDoor"
   /** No wrong setting could be routed to the shrine, so there was nothing to trap. */
@@ -1293,6 +1327,64 @@ const routeToShrine = (
 }
 
 /**
+ * Sliding walls the player owns: stone resting **in** the beam's way on a straight stretch, one cell aside
+ * from where it belongs (§2's sliding wall).
+ *
+ * The whole of the piece is that its move clears a path rather than bending one, so it is the one thing on the
+ * board that asks whether the light gets through at all. There is no corridor to author for its wrong stop:
+ * the stone is standing on the golden line, so the beam is absorbed in the piece itself, and the deviation
+ * closes where it started.
+ *
+ * Two stops, and the track is the same `fittingTrack` a sliding mirror uses — which is also what keeps the
+ * vacated cell off every other piece's shoulders. A third stop would be a second cell off the beam's line, and
+ * stone off that line blocks nothing, so the board would have two answers.
+ */
+const placeSlidingWalls = (
+  board: Authoring,
+  route: Route,
+  movable: MovablePiece[],
+  solution: number[],
+  walls: number,
+  claimed: Set<string>,
+  random: () => number
+): boolean => {
+  if (walls < 1) return true
+
+  // A straight square stretch: a bend already carries a mirror, a crossed square has to stay empty, and a
+  // diagonal leg has no square track to slide along.
+  //
+  // The shoulders are checked here rather than left to `fittingTrack`, which exempts the cell the piece is
+  // already standing in — right for a bend, where route geometry keeps the mirrors apart, and wrong for a cell
+  // this picks freely: a straight cell can sit diagonally beside a bend on a parallel leg, and `piecesAreSpaced`
+  // then threw the whole draft away (measured: 17 rejections a board).
+  const candidates = shuffle(
+    route.cells.filter(
+      cell =>
+        cell.exit === cell.enter &&
+        !runsDiagonally(cell.enter) &&
+        !route.crossings.has(cellKey(cell.at)) &&
+        !claimed.has(cellKey(cell.at)) &&
+        cellKey(cell.at) !== cellKey(board.shrine) &&
+        NEIGHBOURS.every(direction => !claimed.has(cellKey(stepCell(cell.at, direction))))
+    ),
+    random
+  )
+
+  let placed = 0
+  for (const cell of candidates) {
+    if (placed >= walls) break
+    const track = fittingTrack(board, cell.at, cell.enter, 2, claimed, claimed, random)
+    if (!track) continue
+    for (const at of track) claimed.add(cellKey(at))
+    movable.push({ kind: "slidingWall", stops: track })
+    // The answer is the stop **off** the golden line: getting out of the way is the piece's entire move.
+    solution.push(track.findIndex(at => !board.goldenCells.has(cellKey(at))))
+    placed++
+  }
+  return placed >= walls
+}
+
+/**
  * Doors, and the sockets that open them (§11.1, §11.2).
  *
  * A door is stone across the route that **no tap can shift** — that is the whole point, because a door the
@@ -1508,6 +1600,7 @@ const authorBranches = (
   forkSize: number,
   sliders: number,
   slidingStops: number,
+  slidingWalls: number,
   doors: number,
   doorNodes: number,
   traps: number,
@@ -1590,6 +1683,10 @@ const authorBranches = (
     liveBends.push({ at: bend.at, enter: bend.enter, angle: bend.angle, angles })
   }
   if (solution.some(state => state < 0)) return undefined
+
+  // Stone the player slides aside, before any corridor is authored: which cells are tappable is a fact about
+  // the whole board, and a branch closed against a half-built piece list was closed against the wrong board.
+  if (!placeSlidingWalls(board, route, movable, solution, slidingWalls, claimed, random)) return "noSlidingWall"
 
   // Pass one: lay the shape of every branch, including the mirrors it turns at. Geometry only — nothing is
   // judged yet, because a corridor can only be closed against the finished piece list.
@@ -1818,6 +1915,7 @@ const attemptAuthored = (
     forkSize,
     modes.includes("sliderHeavy") ? sliders : 0,
     dials.slidingStops,
+    dials.slidingWalls,
     dials.doors,
     dials.doorNodes,
     traps,
@@ -1871,6 +1969,20 @@ const attemptAuthored = (
       draft.solution = trimmed.solution
       reach = reachableDeviations(puzzle)
       if (draft.movable.length !== puzzle.movable.length) draft.movable = [...puzzle.movable]
+    }
+  }
+
+  // **A piece off the winning beam's line, on every board a tier asked branches of** (§6.1). Without one the
+  // board is solved by following the light and turning whatever it hits, which is the one thing this family's
+  // difficulty rests on not being possible. It used to hold by construction, because a tier had one set of
+  // dials; a flavour that turns `interactive` down, or one whose branch mirrors all get pruned as unreachable,
+  // can lose it. Only asked of a board with `branchDepth`, since that is what puts a piece in a wrong ray at
+  // all — a dial set without one never had a shadow to lose.
+  if (branchDepth > 0) {
+    const winning = new Set(traceBeam(puzzle, draft.solution).path.map(segment => cellKey(segment.at)))
+    if (!draft.movable.some(piece => !pieceCells(piece).some(at => winning.has(cellKey(at))))) {
+      reject?.("noShadow")
+      return undefined
     }
   }
 
@@ -1952,6 +2064,12 @@ export const generateLightbeam = (
   // single attempt instead of the full search must not file the board under a different bucket.
   attempts: number = MAX_ATTEMPTS
 ): LightbeamPuzzle => {
+  const { flavours = [], ...tier } = options
+  // One flavour a board, off the seed for the reason the modes below are: every attempt at a board has to be
+  // building the same board, or attempt three ships something the seed does not describe.
+  const flavour = flavours.length
+    ? flavours[Math.floor(mulberry32(seed * 40961)() * flavours.length)]
+    : ({} as Partial<LightbeamDials>)
   const {
     techniqueCap = "deadEnd",
     turns = 2,
@@ -1970,7 +2088,8 @@ export const generateLightbeam = (
     modes = [],
     modePool = [],
     modeCount = 0,
-  } = options
+    slidingWalls = 0,
+  } = { ...tier, ...flavour }
   // Drawn off the seed rather than the attempt counter, so every attempt at a board is built to the same
   // modes — a board that fell back to a different mode on attempt three would record a mode it was not
   // really the shape of.
@@ -1986,6 +2105,7 @@ export const generateLightbeam = (
     crossings,
     fiddleProof,
     slidingStops,
+    slidingWalls,
     doors,
     doorNodes,
     decoys,
