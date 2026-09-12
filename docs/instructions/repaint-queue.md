@@ -2936,58 +2936,12 @@ yarn import-tile art/masters/props/master/statue-horus.webp --tier=master --name
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
-## The last five to expert — one room each
+## The last three to expert — one room each
 
-Everything else at starter, junior and expert is drawn. These five are the whole remaining gap below
+Everything else at starter, junior and expert is drawn. These three are the whole remaining gap below
 master, and every one of them is a SINGLE room — which is why they sat unqueued while 62 rooms' worth of
-expert work went in ahead of them. They are here because "done up to expert" is not done with seven
-dummies still in it, not because any of them is urgent.
-
-**Ra is a real second god at starter now.** `art-census` pairs him at 2 rooms beside Bastet's 11, which is
-what lifts his two variants out of the trap this file warns about above: a rank naming ONE god gets its
-generic drawing under another name and buys nothing. Starter names two, so Ra's shrine is what tells his
-pyramid from Bastet's.
-
-### `starter/shrine-ra` — Ra's disc in the merchant's shrine
-
-1 room. Reuses the merchant's own shrine scaffold, which is already painted as `starter/shrine`.
-
-**Attach:**
-
-1. `~/tile-previews/shrine-ra-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a SHRINE standing on the floor, a cabinet on a plinth with a god inside it. The slab at the
-bottom is the PLINTH, the stepped slab on top is the CORNICE, and the box between them holds the figure.
-
-Standing inside is RA: a small figure with a FALCON'S HEAD carrying a SUN DISC on it, the disc a flat
-ochre-gold circle ringed by a raised cobra. The head is the mark — a hooked beak and a flat skull, never a
-human profile — and the disc sits proud on it.
-
-The shrine is rough timber over a mudbrick plinth, the wood grey and split, the plaster on the plinth
-flaking to bare brick at the corners and along the front lip where it is handled. Inside, the back is deep
-shade and Ra stands against it in painted limestone, the falcon head dark and the disc the one warm ochre
-in the picture.
-
-Ochre here is a flat colour, not a metal: no highlights, no reflections, no shine.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's tomb: mudbrick, plaster, reed and rough timber. Warm dark earth, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold shrine --spin=-12 --colour=#a49781 --floor=#6c6257
-yarn import-tile art/masters/props/starter/shrine-ra.webp --tier=starter --name=shrine-ra --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
+expert work went in ahead of them. They are here because "done up to expert" is not done with dummies
+still in it, not because any of them is urgent.
 
 ### `expert/stela` — a basalt stela cut with a false door
 

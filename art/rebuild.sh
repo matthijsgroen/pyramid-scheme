@@ -1236,6 +1236,23 @@ scaffold shrine --spin=-12 --colour=#a49781 --floor=#6c6257
 yarn import-tile art/masters/props/starter/shrine-bastet.webp --tier=starter --name=shrine-bastet --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.76 --saturation=1.6
 
+# RA in the same cabinet, the merchant's second god, 1 room. Same --spin=-12 scaffold as Bastet's, and
+# the scaffold's stacked bowls and lamp are painted over as the standing figure: a falcon head with the
+# sun disc proud of it, which is all that tells him from any other falcon god.
+#
+# NO --brightness, and that is measured rather than skipped. The return landed on the shipped generic's
+# own numbers untouched — median 109 against its 109, 10 lighter than the floor against its 10 — where
+# both whitewashed shrines at this rank needed a deep clip. The reason is the material: this one is grey
+# split timber over its plinth, not lime, so nothing in it is trying to be the brightest thing he owns.
+# Scaling it at all walks it the wrong way, 0.95 taking the separation to 4.
+#
+# --saturation=1.6 and no further, for Bastet's reason and with the same brick to watch: at 2.0 the
+# plinth's flaked-out corners go a garish orange at slot size, which is 6 warmth bought for the loudest
+# thing in the sprite. 1.6 lands +3, where the generic shrine ships at +9.
+scaffold shrine --spin=-12 --colour=#a49781 --floor=#6c6257
+yarn import-tile art/masters/props/starter/shrine-ra.webp --tier=starter --name=shrine-ra --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.6
+
 # THOTH as the nobleman's ka-statue, 3 rooms, and the tile that cost four rolls to a fault that was not
 # one. Same `--contents=seated` scaffold, same --spin=7, same material handling as his generic statue.
 #
