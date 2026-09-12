@@ -1,7 +1,7 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, approachCells, buildRoomClaims, footprintPath, tileRegionsFor } from "./SiteMapView"
-import { NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP } from "./nodeArt"
+import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP } from "./nodeArt"
 import { ExplorerFigure, LIGHT_POOL_ID } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
 import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
@@ -1502,5 +1502,41 @@ describe("furniture stops at the wall of its own room", () => {
     // The far corridor's own column must not appear in this room's clip.
     const farLeft = cellLeft(4)
     expect(path).not.toContain(`M${farLeft} `)
+  })
+})
+
+describe("an emptied chest says so", () => {
+  // The chest art is the same picture full or empty, and it stands over the room's marker — so without
+  // this the map gave a player no way to tell a room he had already cleared from one still worth the walk.
+  const chestIn = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll<SVGImageElement>("image")).find(el =>
+      (el.getAttribute("href") ?? "").includes("chestProp")
+    )
+  const ticks = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll("text")).filter(el => el.textContent === "✓")
+  const gridWith = (state: CellState) =>
+    makeGrid([
+      [empty, corridor("completed", false), empty],
+      [empty, chamber(state), empty],
+    ])
+
+  it("dims the chest and puts a single ✓ on it once the room is done", () => {
+    const { container } = render(<SiteMapView grid={gridWith("completed")} />)
+    expect(chestIn(container)?.getAttribute("opacity")).toBe(String(LOOTED_OPACITY))
+    // ONE tick: the marker under the chest drops its own, or the room reads as checked twice.
+    expect(ticks(container)).toHaveLength(1)
+  })
+
+  it("leaves a chest the player has not opened alone", () => {
+    const { container } = render(<SiteMapView grid={gridWith("reachable")} />)
+    expect(chestIn(container)?.getAttribute("opacity")).toBeNull()
+    expect(ticks(container)).toHaveLength(0)
+  })
+
+  it("keeps a chest whose reward would not fit full, and badges it as waiting", () => {
+    const { container } = render(<SiteMapView grid={gridWith("completed")} pendingCells={new Set(["1,1"])} />)
+    expect(chestIn(container)?.getAttribute("opacity")).toBeNull()
+    expect(ticks(container)).toHaveLength(0)
+    expect(Array.from(container.querySelectorAll("text")).filter(el => el.textContent === "!")).toHaveLength(1)
   })
 })

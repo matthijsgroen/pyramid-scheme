@@ -259,3 +259,33 @@ export const WardGatesOpen: Story = {
 export const WardGateWithPlayerUnderIt: Story = {
   args: { grid: gateCrossGrid("reachable"), explorerPos: [1, 3] },
 }
+
+// Chests taken and chests still shut, side by side. The chest art is the same picture either way, so
+// this is the story that says whether a player can tell an emptied room from one worth walking to.
+const treasureRoom = (dirs: Direction[], state: CellState): GridCell => ({
+  type: "room",
+  roomType: "encounter",
+  family: "tableau",
+  tags: ["treasure"],
+  dirs: new Set(dirs),
+  state,
+  reward: { type: "money", amount: 10 },
+})
+
+export const TreasureTakenAndNot: Story = {
+  args: {
+    grid: {
+      cells: [
+        [emptyCell, passage(["s", "e"]), passage(["w", "e"]), passage(["w", "s"]), emptyCell],
+        [emptyCell, treasureRoom(["n"], "reachable"), emptyCell, treasureRoom(["n"], "completed"), emptyCell],
+      ],
+      rows: 2,
+      cols: 5,
+      entrancePos: [0, 2],
+      exitPos: [0, 2],
+      siteId: "chest-stories",
+      difficulty: "junior",
+      staircases: {},
+    },
+  },
+}

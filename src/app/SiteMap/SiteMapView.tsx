@@ -38,7 +38,7 @@ import {
   mapHeight,
   mapWidth,
 } from "./mapScale"
-import { NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP, nodeArtOffset, type NodeSprite } from "./nodeArt"
+import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP, nodeArtOffset, type NodeSprite } from "./nodeArt"
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
 import { moodFor } from "./moodSettings"
 import { cellAt, isClaimableNeighbor } from "@/game/roomFootprint"
@@ -495,7 +495,12 @@ export const approachCells = (grid: FloorGrid): Map<string, readonly [number, nu
  * own `entrancePos` is the way back UP (pyramid-interior-design.md: a stairhead descends), and absent
  * art simply yields nothing, leaving the vector marker to carry the node as it always did.
  */
-const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficulty): NodeSprite[] => {
+const nodeSpritesFor = (
+  grid: FloorGrid,
+  claims: RoomClaims,
+  floorTier: Difficulty,
+  pendingCells?: ReadonlySet<string>
+): NodeSprite[] => {
   // Which cells belong to each room: the room's own, plus everything it claimed.
   const footprints = new Map<string, string[]>()
   for (const [cellKey, ownerKey] of claims.claimedBy) {
@@ -559,6 +564,11 @@ const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficul
           x: cx + dx - CELL / 2,
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
+          // A reward left behind because the pack was full is still there to come back for: that chest
+          // stays full, and wears the `!` rather than the ✓.
+          ...(cell.state === "completed"
+            ? { badge: pendingCells?.has(`${r},${c}`) ? ("pending" as const) : ("taken" as const) }
+            : {}),
         })
       } else if (kind === "exit") {
         // THE WAY OUT IS A MARKER, NOT ARCHITECTURE. A doorway has to be aimed — face on it needs the
@@ -2220,7 +2230,10 @@ export const SiteMapView = ({
   const canWalkTo = (row: number, col: number) => !walkable || walkable.has(`${row},${col}`)
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
-  const nodeSprites = useMemo(() => nodeSpritesFor(grid, claims, tier), [grid, claims, tier])
+  const nodeSprites = useMemo(
+    () => nodeSpritesFor(grid, claims, tier, pendingCells),
+    [grid, claims, tier, pendingCells]
+  )
 
   // Everything that stands on this floor, in one list: a room's furniture and a node's own, each with
   // the line it stands on. Split at the explorer's own floor line so he is drawn in the middle.
@@ -2232,16 +2245,30 @@ export const SiteMapView = ({
       clipId: `room-clip-${sprite.key}`,
       ...(sprite.light ? { light: sprite.light } : {}),
       node: (
-        <image
-          key={sprite.key}
-          href={sprite.url}
-          x={sprite.mirrored ? -sprite.x - CELL : sprite.x}
-          y={sprite.y}
-          width={CELL}
-          height={PROP_H}
-          opacity={standingOn && sprite.fadeAt?.includes(standingOn) ? ARCH_FADE : undefined}
-          transform={sprite.mirrored ? "scale(-1, 1)" : undefined}
-        />
+        <g key={sprite.key}>
+          <image
+            href={sprite.url}
+            x={sprite.mirrored ? -sprite.x - CELL : sprite.x}
+            y={sprite.y}
+            width={CELL}
+            height={PROP_H}
+            opacity={
+              standingOn && sprite.fadeAt?.includes(standingOn)
+                ? ARCH_FADE
+                : sprite.badge === "taken"
+                  ? LOOTED_OPACITY
+                  : undefined
+            }
+            transform={sprite.mirrored ? "scale(-1, 1)" : undefined}
+          />
+          {/* ON THE CHEST, NOT ON THE MARKER: the marker's own ✓ is behind the sprite. Sat on the lid,
+              where the eye already is. */}
+          {sprite.badge && (
+            <g transform={`translate(${sprite.x + CELL / 2}, ${sprite.y + PROP_H - CELL * 0.62})`}>
+              {sprite.badge === "pending" ? <PendingLootBadge r={7} /> : <CompletedBadge r={7} />}
+            </g>
+          )}
+        </g>
       ),
     }))
     for (const [cellKey, kind] of claims.decorationAt) {
@@ -2577,8 +2604,10 @@ export const SiteMapView = ({
                       difficulty={wardKeyDifficulty(cell.requiredKeyId)}
                     />
                   </g>
+                  {/* A chest wears its own badge (`nodeSpritesFor`), because it stands over this one. */}
                   {isCompleted &&
                     !isPortal &&
+                    !hasChest &&
                     shapeKind !== "fork" &&
                     (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
                 </g>

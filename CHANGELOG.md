@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- A chest you have already emptied is drawn emptied: it stands back in the room with a tick on its lid, so a room worth walking to is told apart from one you have cleared.
+
 ## 0.43.0 - 2026-09-12
 
 ### Added
