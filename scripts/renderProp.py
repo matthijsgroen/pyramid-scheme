@@ -1512,7 +1512,6 @@ def prim_gate():
     h = 1.02  # jamb height; the lintel sits on top of it
     half = opening / 2 + jamb / 2
     span = opening + 2 * jamb
-    # BOTH open facings: there is one opened drawing, so `open-side` must match here too.
     open_gate = arg("contents", "").startswith("open")
 
     if open_gate:
@@ -1524,8 +1523,18 @@ def prim_gate():
         # What is left is the slot the gate went into: a bar of dark metal lying flush in the threshold,
         # the width of the opening. Not nothing at all — the player has to be able to see where the ward
         # stood, and the map's own sill is laid across this same seam — but nothing that stands up out of
-        # the floor. The two facings need no separate drawing for this: a slot has no depth to collapse.
-        mark(box(0.86, 0.10, 0.045, z=0.022), "metal")
+        # the floor.
+        #
+        # AND THE SLOT IS AIMED, which this file claimed twice that it was not. "A slot has no depth to
+        # collapse" is true of its HEIGHT and false of its plan: the thing is a long thin rectangle lying
+        # on the floor, so it runs along the seam it was cut in. Across a passage walked face on that is
+        # x; up a passage walked across it is y, and the two are not the same drawing — the face-on slot
+        # used for both put a bar lying ACROSS the corridor the player walks down, at right angles to the
+        # gate that had just been there.
+        long, short = 0.86, 0.10
+        if arg("contents", "").endswith("-side"):
+            long, short = short, long
+        mark(box(long, short, 0.045, z=0.022), "metal")
         return join_all()
 
     if arg("contents", "").endswith("-side"):

@@ -36,6 +36,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The priest's tomb is drawn. Every object his rooms and passages put on the floor or hang on the wall is
+  painted now — the broken basalt his corridors spill, a basalt stela cut with a false door, and Anubis
+  himself in his wall shrine and couchant on his plinth. Three ranks of five are finished rather than
+  sketched.
 - The priest's chambers are lit and counted. A tall bronze lamp stand on a papyrus shaft burns in his
   rooms, and a temple day-book hangs on his walls — an ostracon board of tally strokes in red and black
   under a row of hieroglyphs — where both were placeholders before.

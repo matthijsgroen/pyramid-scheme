@@ -1459,39 +1459,6 @@ The spill and the pile are the SAME primitive at different `--contents`: `rubble
 heap, `rubblePile --contents=spill` the flat scatter, and `--contents=plaster` the nobleman's variant with
 two shards leaning on it. Whichever a rank uses for its pile, its spill is `--contents=spill`.
 
-### `expert/rubbleSpill` — cord-seal fragments and natron crust
-
-**Attach:**
-
-1. `~/tile-previews/rubbleSpill-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a SPILL of broken stone lying flat on the floor — the smaller debris of a door plug that has
-been knocked through, each piece at a different angle.
-
-Dark basalt, cool grey-blue. Each piece has a DRESSED face, smooth and dust-filmed, and BROKEN faces that
-are paler, rougher and sharper-edged: the contrast between the two is what says these were cut and are now
-smashed. A pale crust of NATRON has dried over the pieces low in the spill. Scattered among them are
-several fragments of grey CLAY SEAL, some with part of a stamped mark still on them, and two short lengths
-of undyed linen CORD lying slack across the stone.
-
-The arrangement of the pieces does not matter and need not match the reference — paint the material and
-let the pieces fall where they fall.
-
-No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold rubblePile --contents=spill --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/rubbleSpill.webp --tier=expert --name=rubbleSpill --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
 ### `master/rubbleSpill` — shattered alabaster, gold leaf in the dust
 
 **Attach:**
@@ -1809,44 +1776,6 @@ the silhouette of a head plus one attribute, never a costume.
 | sekhmet | a lioness's head carrying a sun disc — a mane where Bastet has none      |
 | sobek   | a crocodile's head, long flat snout                                      |
 | thoth   | an IBIS head, a long curved down-swept beak                              |
-
-### `expert/wallShrine-anubis` — Anubis in the priest's wall shrine
-
-2 rooms. Reuses the priest's own wall-shrine scaffold, doors ajar.
-
-**Attach:**
-
-1. `~/tile-previews/wallShrine-anubis-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a WALL SHRINE, its two doors standing ajar. The slab over the top is a CAVETTO CORNICE and
-the one under it the SILL; the uprights at the sides are JAMBS; the two panels swung part-open are the
-DOOR LEAVES, and the gap between them shows the inside.
-
-In that gap, lit by the lamp inside, stands ANUBIS: a small standing figure with a JACKAL'S HEAD — a long
-straight muzzle and two tall pointed ears, black. Only part of him shows through the opening; the doors
-cover the rest, and that is right.
-
-The cornice, sill and jambs are dark basalt, cool grey-blue, dressed smooth with natron dust caught in
-the cornice's step. The doors are cedar, dark red-brown, their grain vertical. Inside, the shrine's back
-is a warm dull ochre from the lamp, and Anubis is black resin over wood with a thin dull-gold collar —
-the darkest thing in the picture against the lit back panel behind him.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --colour=#a7b2be --sun=0
-yarn import-tile art/masters/props/expert/wallShrine-anubis.webp --tier=expert --name=wallShrine-anubis --slot=wall \
-  --filter=smooth --mask="$OBJ" --headroom=0.18
-```
 
 ### `master/mask-osiris` — Osiris on the pharaoh's funerary mask
 
@@ -2612,64 +2541,6 @@ yarn import-tile art/masters/props/master/shrine-osiris.webp --tier=master --nam
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
-### `expert/statue-anubis` — Anubis couchant in the priest's chambers
-
-1 room, and its generic is painted — `expert/statue` IS a couchant Anubis, so this file is very nearly
-that painting again. It exists because the resolver reads a filename and the generic has to stay generic
-for the rooms no patron reaches. Roll it from the priest's own prompt with `--spin=-22` rather than his
-`-8`, which is what turns the head enough for both ears to read; `art/rebuild.sh` has the argument under
-the vault's Anubis.
-
-**Attach:**
-
-1. `~/tile-previews/statue-anubis-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-The object: a statue of ANUBIS as a recumbent JACKAL, lying on a shrine box. The slab at the bottom is
-the NAOS — a plain stone box he lies on. The long low mass along the top is his BODY, lying down; the
-upright block at the left is his CHEST; above it his HEAD, with the block reaching further left his
-MUZZLE and the two points standing up his EARS. The short mass hanging over the right end is his TAIL.
-
-He is lying down, alert, head up, facing left. Keep him lying: he does not stand, sit or rise. He is
-turned slightly toward you, exactly as far as the reference turns him — enough that BOTH EARS are
-visible, one nearer and one further.
-
-THE REFERENCE IS A ROUGHED-OUT BLOCK. It is stone cut to the pose and deliberately left fat, and your job
-is to take the last of the waste off it. Cut the jackal's contour — a back that dips, a haunch that
-swells, a curved chest and muzzle — and cut it INWARD only: every cut goes inside the shape you were
-given, and nothing may end up further left, right, higher or lower than it reaches.
-
-The jackal is BLACK — black resin over wood, matte and slightly dusty, the way Anubis is always finished.
-A thin band of dull gold sits at his neck as a COLLAR and the insides of his ears are lined with the
-same. His eyes are two small gold marks rimmed in dark blue. Nothing else on him is gold and nothing
-shines. The naos under him is dark basalt, cool grey-blue, dressed smooth, with natron dust caught along
-its top edge and at its corners.
-
-EVERYTHING ELSE IS FIXED, and these five are not negotiable:
-
-1. THE FRAME. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
-2. THE PERSPECTIVE, THE PROJECTION, THE ANGLE AND THE ROTATION ARE THE REFERENCE'S. Take all four from the reference image exactly and do not reason about them: whatever it does with verticals, with top faces, with depth and with which way the object is turned, do the same. It is not a photograph and not an isometric view, and it is not for you to correct into either. This is the ONE thing about the picture you are given rather than asked for.
-
-3. HE LIES ALONG THE PLINTH, head at the left end and tail at the right. He does not stand, sit or rise.
-4. THE PLINTH IS EXACTLY AS THE REFERENCE DRAWS IT — its angle, its rotation, how much of its top shows, how its edges run. Do not swing it round, do not flatten it, do not straighten it.
-
-5. THE PLACEMENT AND THE SIZE. Every part stays where the reference puts it, and the whole object stays as tall and as wide in the frame as it already is.
-
-You are re-carving a shape, not re-staging a photograph. If the plinth ends up pointing away from the viewer, the projection is wrong however good the animal is.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold statue --contents=couchant --spin=-22 --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/statue-anubis.webp --tier=expert --name=statue-anubis --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 ### `master/statue-sekhmet` — Sekhmet in the pharaoh's tomb
 
 1 room. **WAITS ON `master/statue`.**
@@ -2805,48 +2676,6 @@ Everything else at starter, junior and expert is drawn. These three are the whol
 master, and every one of them is a SINGLE room — which is why they sat unqueued while 62 rooms' worth of
 expert work went in ahead of them. They are here because "done up to expert" is not done with dummies
 still in it, not because any of them is urgent.
-
-### `expert/stela` — a basalt stela cut with a false door
-
-1 room. FLAT, like his tally board, so it has NO scaffold and NO mask: an upright slab against a wall has
-no silhouette this projection can give it that its own painted edge does not. One attachment, and an
-import line without `--mask`.
-
-**Attach:**
-
-1. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall. Do not re-compose it into a square.
-
-Landscape, twice as wide as it is tall. The magenta fills the whole frame right to its edges, and the
-object floats in the middle of it with magenta on all four sides. There is no wall, no floor and no room.
-
-The object: a STELA set against the wall — an upright slab, round-topped, cut with a false door.
-
-Dark basalt, close-grained and almost black-green, polished where hands have passed and dull everywhere
-else. The face is cut with a false door: a narrow recessed panel with two stepped jambs either side and a
-lintel over it, and above that a rounded lunette. The cutting is SHALLOW — sunk relief, a few millimetres
-— so it reads as shadow lines rather than as carving standing out.
-
-Natron dust has settled in the cut lines and along the top edge, pale grey against the stone, and that
-dust is what makes the cutting legible at all. One lower corner is chipped away to a paler fresh break.
-
-No hieroglyphs a reader could read: at this size they are texture, so cut them as even bands of small
-marks in the sunk panels and nothing more.
-
-Draw the slab itself: its outline is the tile, so give it a clean round-topped edge with nothing touching
-the frame.
-
-No highlights, no gloss, no rim light, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-yarn import-tile art/masters/props/expert/stela.webp --tier=expert --name=stela --slot=wall \
-  --filter=smooth
-```
 
 ### `expert/shrine-thoth` — Thoth's ibis in the priest's shrine
 

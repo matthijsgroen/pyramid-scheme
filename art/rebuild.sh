@@ -466,6 +466,11 @@ scaffold gate --contents=shut-side
 yarn import-tile "$OBJ" --tier=default --name=gate-side --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
+# AND THE OPENED ONE IS AIMED TOO, which this was built not to be. An opened gate leaves the slot it
+# sank into — a long thin bar lying flush in the threshold — and a slot lying on the floor runs along the
+# seam it was cut in. Face on that is x; walked across it is y. Drawn once for both, the side tile put a
+# bar lying ACROSS the corridor the player walks down, at right angles to the gate that had just been
+# standing there.
 scaffold gate --contents=open-side
 yarn import-tile "$OBJ" --tier=default --name=gate-open-side --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
@@ -982,6 +987,48 @@ yarn import-tile art/masters/props/expert/lamp.webp --tier=expert --name=lamp --
 # over and 1.8% under, 14 from the floor, and the red and black marks keep their bite.
 yarn import-tile art/masters/props/expert/tallyBoard.webp --tier=expert --name=tallyBoard --slot=wall \
   --filter=smooth --headroom=0.18 --brightness=0.72
+
+# The RUBBLE his passages spill, and the one prop at this rank made of the rank's OWN stone — broken
+# basalt off his own walls, with cord-seal fragments and natron crust in it. +0 warmth against the slab
+# and that is honest rather than a miss: it is the same stone, so matching its hue is what the object is.
+#
+# --brightness=0.92, which buys separation and the light clamp in one move. Untouched it sat 7.5% over
+# the clamp at 12 from the floor, which is barely over the ten-luminance rule; 0.92 lands 0.5% over at 24
+# from the floor. A spill is darker than the paving it lies on, so darkening it helps both ends at once —
+# the opposite of every pale prop in this file.
+scaffold rubblePile --contents=spill --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/rubbleSpill.webp --tier=expert --name=rubbleSpill --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.92
+
+# ANUBIS in the priest's wall shrine, his first patron variant, on the generic's own scaffold. NO
+# CORRECTION FLAGS and that is measured: it lands median 77 against the generic's 63, 8.9% below the dark
+# end against its 21.8%, and 74 from the floor against its 88. Lighter than the generic throughout, which
+# is the ochre back the prompt asks for behind the jackal — and the thing that makes the god read at 56
+# units, since a black jackal in a dark box is a dark box.
+scaffold wallShrine --contents=ajar --shear=0.5 --width=448 --height=224 --colour=#a7b2be --sun=0
+yarn import-tile art/masters/props/expert/wallShrine-anubis.webp --tier=expert --name=wallShrine-anubis \
+  --slot=wall --filter=smooth --mask="$OBJ" --headroom=0.18
+
+# ANUBIS COUCHANT as his ka-statue, the second patron variant and the one that finishes his rank. NO
+# CORRECTION FLAGS, measured against the generic it stands in for: 40.6% below the dark end against its
+# 35.9%, median 58 against 63, 93 from the floor against 88. The same family to within a few points,
+# which is what a variant should be — what tells them apart is the gilt collar and the head carried up,
+# not the value.
+scaffold statue --contents=couchant --spin=-22 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/statue-anubis.webp --tier=expert --name=statue-anubis --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
+# His STELA, FLAT like the tally board: no mesh, no mask, the return's own edge is the tile. Clean
+# untouched — 0.1% over the light clamp, 5.3% under the dark one, 80 from the floor.
+#
+# NO --trim, and that is the interesting half. The return drew a PORTRAIT slab in the landscape frame a
+# wall item is given, so it fills about a third of the band's width — well under the 96% the nobleman's
+# two readable stelae fill. --trim cannot rescue that: it scales to fit while keeping aspect, so a tall
+# shape trimmed into a 2:1 slot comes out SMALLER rather than wider, which is the opposite of what the
+# flag does for a shape that is merely off-centre. A stela taller than the band is a framing problem to
+# fix in the prompt, and at one room it is not worth a re-roll.
+yarn import-tile art/masters/props/expert/stela.webp --tier=expert --name=stela --slot=wall \
+  --filter=smooth
 
 # ANUBIS, and the tile that proved a statue needs no museum scan. Step 0's table sent statues to a scan
 # for as long as it existed; the canopic jars broke that row's other half, and this broke the rest.
