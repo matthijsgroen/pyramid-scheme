@@ -654,7 +654,13 @@ half the doors in the game.
    Written as if the gap came before, the gate stood a whole `SIDE_W` west of its own seam and rested on
    the TOP edge of the band below it, hanging 28 units clear of the sill it is supposed to stand on.
 
-4. **Overrides for the gods and the pharaoh**, if the generic set reads wrong on their stone.
+4. ~~The way out~~ — **BUILT**, `prim_exit`: the gate's own masonry with the day let in, placed on the
+   far wall of its chamber the way a ward is, and its marker retired for the stairhead's reason. ONE
+   drawing and no side variant, which is the opposite of what a gate needed: a gate walked across becomes
+   a single bar and a bar reads as a bar, where a sideways exit is a narrow slot of light — a COLUMN at
+   56 units, which this set already draws as `pillar`. A doorway turned is the lesser compromise.
+
+5. **Overrides for the gods and the pharaoh**, if the generic set reads wrong on their stone.
 ### Two facts that decided the shape
 
 - **A node is a quarter the area of a prop.** `NODE_RADIUS_LARGE` is `CELL * 0.34`, so a node occupies

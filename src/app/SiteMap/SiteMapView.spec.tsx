@@ -1161,6 +1161,37 @@ describe("the player is drawn among the furniture, not always over it", () => {
   })
 })
 
+// The way OUT is a doorway cut in the same wall a ward is, so it is placed the same way — on the far
+// side of its own cell — and it loses its marker for the stairhead's reason: the art IS the node, and
+// unlike a gate it carries no key colour and no state to convey.
+describe("the way out is drawn as a doorway", () => {
+  const exitGrid = () => {
+    const grid = makeGrid([
+      [
+        straightCorridor("completed", ["e"]),
+        { type: "room", roomType: "portal", dirs: new Set<Direction>(["w"]), state: "reachable" },
+      ],
+    ])
+    return { ...grid, entrancePos: [0, 0] as const, exitPos: [0, 1] as const }
+  }
+
+  it("draws the exit tile on the far side of its cell, away from the way in", () => {
+    const { container } = render(<SiteMapView grid={exitGrid()} revealAllCells />)
+    const img = Array.from(container.querySelectorAll<SVGImageElement>("image")).find(el =>
+      (el.getAttribute("href") ?? "").includes("/exit")
+    )
+    expect(img, "the exit drew no art at all").toBeDefined()
+    // Approached from the west, so the doorway is on the cell's EAST seam.
+    expect(Number(img!.getAttribute("x"))).toBe(cellLeft(1) + CELL + SIDE_W / 2 - CELL / 2)
+  })
+
+  it("puts the marker away under it", () => {
+    const { container } = render(<SiteMapView grid={exitGrid()} revealAllCells />)
+    const marker = container.querySelector<SVGGElement>("g[opacity]")
+    expect(marker?.getAttribute("opacity")).toBe("0")
+  })
+})
+
 // TWO THIRDS OF THE GATES IN THE WORLD STAND ON A CORNER — only `ns` and `ew` run straight through —
 // and on a corner the way you came in and the way that is sealed are at right angles. Aiming the bars
 // "opposite the approach" therefore hung 331 of the 489 on a wall the pocket was not behind.

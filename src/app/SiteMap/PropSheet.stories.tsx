@@ -288,6 +288,7 @@ const Sheet: FC<{ tier: Difficulty; zoom: number }> = ({ tier, zoom }) => {
       <div className="flex flex-wrap gap-4">
         {[
           "chestProp",
+          "exit",
           "gate",
           "gate-open",
           "gate-side",

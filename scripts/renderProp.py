@@ -1582,6 +1582,50 @@ def prim_gate():
     return join_all()
 
 
+def prim_exit():
+    """The way OUT of a site: a doorway with the day behind it.
+
+    ONE DRAWING, FACE ON, AND NO SIDE VARIANT — which is the opposite of what a gate needs, for a reason
+    worth writing down. A gate walked across becomes a single bar, and a bar read as a bar. The same
+    treatment here is a narrow vertical slot of light, and at 56 units that is a COLUMN — which this set
+    already has a kind for. `pillar` and a sideways exit were the same picture. A doorway drawn face on
+    in a side wall is the lesser compromise: it is at worst turned, where the other was wrong.
+
+    IT IS THE GATE'S MASONRY WITH THE LIGHT LET IN. Both are doorways cut in the same wall, and a player
+    reads them against each other — so the jambs, the lintel and the cavetto are the gate's, and the whole
+    difference is what stands in the opening: bars against the dark there, the day here. Drawing the exit
+    its own architecture made two doorways that had nothing to do with one another.
+
+    A FRAME WITH BLACK INSIDE IS ONE TILE (`prim_wallshrine`), and this is the inverse of that law rather
+    than an exception to it: the opening is the palest thing in the frame instead of the darkest, which is
+    a difference of VALUE across the whole of it and cannot be confused with a niche, a shrine or a shaft.
+    It is also why the light is a solid slab and not a glow — a soft one washed out to the floor's own
+    value at 56 units and left a frame with nothing in it.
+
+    THE SILL CATCHES IT. A tongue of the same pale colour lies on the floor in front of the threshold,
+    which is what says the light is COMING THROUGH rather than painted on the back wall. Kept shallow in
+    y for `prim_gate`'s reason: a tongue built the wall's full thickness draws `k*d` of pale band up the
+    doorway and fills the opening it is meant to spill out of.
+    """
+    k = 0.7
+    opening, jamb, d = 0.62, 0.15, 0.22
+    h = 0.96
+    half = opening / 2 + jamb / 2
+    span = opening + 2 * jamb
+
+    for sx in (-1, 1):
+        mark(box(jamb + 0.06, d, 0.05, x=sx * half, z=0.025), "body")
+        mark(box(jamb, d, h, x=sx * half, z=h / 2 + 0.03), "body")
+    mark(box(opening + 0.04, d * 0.3, 0.035, z=0.018), "body")
+    mark(box(span, d, 0.11, z=h + 0.055), "body")
+    mark(box(span + 0.09, d * 0.42, 0.06, y=-(d * 0.25), z=h + 0.14 + k * (d * 0.25)), "body")
+    # The day, filling the opening from the threshold to the lintel.
+    mark(box(opening, d * 0.5, h - 0.08, z=(h - 0.08) / 2 + 0.05), "daylight")
+    # And the tongue of it lying on the floor in front.
+    mark(box(opening + 0.10, d * 0.34, 0.04, y=-(d * 0.55), z=0.02 + k * (d * 0.55)), "daylight")
+    return join_all()
+
+
 def _stair_torch(x, y, scale=1.0):
     """A cresset standing beside a stair mouth, and the reason the flight is graded at all.
 
@@ -2598,6 +2642,7 @@ PRIMITIVES.update(
         "pit": prim_pit,
         "stair": prim_stair,
         "gate": prim_gate,
+        "exit": prim_exit,
         "sconce": prim_sconce,
         "shrine": prim_shrine,
         "falseDoor": prim_falsedoor,
@@ -2655,6 +2700,11 @@ PART_COLOURS = {
     # across a niche is parallel to the jambs beside it, so it catches exactly the same light and a
     # scaffold in one colour draws it as a filled-in wall. Nothing but a different slot separates them.
     "timber": "#6b5236",
+    # THE DAY OUTSIDE, and the only part in the set that is meant to be the BRIGHTEST thing on the map.
+    # Every other tile is interior: an exit is the one place a tomb opens onto the sun, and it has to
+    # out-value the paving the way `timber` has to out-value the stone. Pale and warm rather than white,
+    # because it is sand and low sun through a doorway, not a lamp.
+    "daylight": "#e6d2a4",
     "cloth": "#bdb3a0",
     # STONE BELOW THE FLOOR LINE: the same material as `body`, carrying the light that reaches down a
     # shaft rather than the light on the paving. A hole has no sun in it — its walls stand in the y-z

@@ -525,6 +525,31 @@ const nodeSpritesFor = (grid: FloorGrid, claims: RoomClaims, floorTier: Difficul
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
         })
+      } else if (kind === "exit") {
+        // THE WAY OUT IS A DOORWAY TOO, and it is cut in the same wall a ward is — so it is placed the
+        // same way: on the FAR side of its own cell, in the seam, facing back down the passage you came
+        // along. An exit is a leaf with one way in, so the far side is simply the opposite of it; there
+        // is no pocket beyond to ask about the way a gate has.
+        approach ??= approachCells(grid)
+        const from = approach.get(`${r},${c}`)
+        if (!from) continue
+        const [dr, dc] = [r - from[0], c - from[1]]
+        // One drawing, face on, whichever way the passage runs: a sideways exit is a narrow slot of
+        // light, and at 56 units that is a column — which this set already draws as `pillar`.
+        const url = tileUrl(tier, "exit")
+        if (!url) continue
+        const seamCx =
+          dc > 0 ? cellLeft(c) + CELL + SIDE_W / 2 : dc < 0 ? cellLeft(c) - SIDE_W / 2 : cellLeft(c) + CELL / 2
+        const seamBase = dr > 0 ? cellTop(r) + CELL + WALL_H / 2 : dr < 0 ? cellTop(r) - WALL_H / 2 : cellTop(r) + CELL
+        out.push({
+          footprint: [`${r},${c}`, `${r + dr},${c + dc}`],
+          fadeAt: [`${r},${c}`],
+          key: `exit:${r},${c}`,
+          url,
+          x: seamCx - CELL / 2,
+          y: seamBase - PROP_H,
+          mirrored: false,
+        })
       } else if (kind === "gate") {
         // `gate` is shut and `gate-open` is the same leaf swung back or sunk into the floor; a rank with
         // neither draws the marker alone, exactly as a stairhead did before its flights were painted.
@@ -2482,6 +2507,10 @@ export const SiteMapView = ({
               const isStair = shapeKind === "stairhead"
               const goesUp = isStair && r === grid.entrancePos[0] && c === grid.entrancePos[1]
               const hasStair = isStair && !!tileUrl(cell.difficulty ?? tier, goesUp ? "stair-up" : "stair-down")
+              // A DRAWN EXIT LOSES ITS MARKER for the stairhead's reason: the art IS the node, and unlike
+              // a gate it carries no key colour and no state — a portal is a transition, never completed
+              // — so the vector has nothing left to say that the doorway does not say better.
+              const hasExit = shapeKind === "exit" && !!tileUrl(cell.difficulty ?? tier, "exit")
               const roomR = nodeRadius[shapeKind]
               const locked = isLockedGate(cell, ownedKeys)
               const displayState: CellState = locked && state === "reachable" ? "visible" : state
@@ -2503,7 +2532,7 @@ export const SiteMapView = ({
                     opacity={
                       isCompleted && !isPending && !isPortal
                         ? 0.45
-                        : hasStair
+                        : hasStair || hasExit
                           ? 0
                           : hasChest
                             ? NODE_OVER_ART_OPACITY

@@ -36,6 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The way out of a pyramid is a doorway with the day behind it, in the same masonry a ward gate is cut
+  from. It stands on the far wall of its chamber, facing back down the passage you came along, and the
+  marker that used to mark it is gone — the light says it better.
 - A ward gate is a gate now, not a symbol. A barred grille in a stone doorway, with a drawbar across it
   into sockets in the jambs, stands across the far side of the gate's own room — on the sill the map
   already lays where one rank's stone meets the next, which at a ward gate is exactly there. You walk in

@@ -426,6 +426,14 @@ scaffold gate --contents=open-side
 yarn import-tile "$OBJ" --tier=default --name=gate-open-side --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
+# THE WAY OUT, which is the gate's masonry with the light let in — same jambs, same lintel, same cavetto,
+# because a player reads the two doorways against each other and giving the exit its own architecture
+# made two openings with nothing to do with one another. Imported from its own render for the gate's
+# reason: a slab of daylight in a stone frame is a value, not a texture.
+scaffold exit
+yarn import-tile "$OBJ" --tier=default --name=exit --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
 # replaces was a post-processing copy whose flags could not be recovered (art/README).
 #
