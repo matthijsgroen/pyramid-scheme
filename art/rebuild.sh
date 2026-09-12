@@ -471,9 +471,14 @@ yarn import-tile "$OBJ" --tier=default --name=gate-side --slot=prop \
 # seam it was cut in. Face on that is x; walked across it is y. Drawn once for both, the side tile put a
 # bar lying ACROSS the corridor the player walks down, at right angles to the gate that had just been
 # standing there.
+# --scale=0.43 AND THE NUMBER IS DERIVED, not eyeballed. Aimed into depth the slot's length feeds the
+# DRAWN VERTICAL — drawn = z + k*y — so a bar 0.86 deep draws 0.6 tall where the face-on one draws 0.86
+# WIDE, and the import scales a sprite to fill its slot whatever shape it is. Left at 1 the same bar came
+# out 84 units tall: up the floor, across the wall band, and into the room above. The face-on slot lands
+# 52 units long, so this one wants 52 * k = 36, and 36 of the prop slot's 84 is 0.43.
 scaffold gate --contents=open-side
 yarn import-tile "$OBJ" --tier=default --name=gate-open-side --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.43
 
 # THE WAY OUT: a round marker pillar standing in a shaft of daylight, and the ONLY TILE IN THE SET BUILT
 # FROM TWO RENDERS. The stone half is a scaffold like any other prop's and goes through the generator;
@@ -1029,6 +1034,19 @@ yarn import-tile art/masters/props/expert/statue-anubis.webp --tier=expert --nam
 # fix in the prompt, and at one room it is not worth a re-roll.
 yarn import-tile art/masters/props/expert/stela.webp --tier=expert --name=stela --slot=wall \
   --filter=smooth
+
+# ANUBIS IN HIS SHRINE, and the one patron variant in this file painted over BES. `prim_shrine`'s default
+# contents is two wide domes, and what came back is a standing jackal painted BESIDE the heap rather than
+# onto it — which works, and works by luck: a jackal is compact enough that a painter can find room for
+# one. Thoth on the same scaffold came back a pale heap with a beak stuck on it. Every remaining
+# `shrine-<god>` now asks for `--contents=standing` instead; this one keeps the scaffold it was painted
+# over, because a painted tile's mask can never move.
+#
+# No correction flags: 28.8% below the dark end against the generic's 8.4%, which is the box interior
+# rather than the object, and 85 from the floor. What reads at 56 units is the ears.
+scaffold shrine --spin=-19 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/shrine-anubis.webp --tier=expert --name=shrine-anubis --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # ANUBIS, and the tile that proved a statue needs no museum scan. Step 0's table sent statues to a scan
 # for as long as it existed; the canopic jars broke that row's other half, and this broke the rest.

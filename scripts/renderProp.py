@@ -2208,6 +2208,36 @@ def prim_shrine():
     # What stands in it, sized to the room the lintel really leaves.
     floor_z = base + brick
     room = (base + h - brick - lip) - (floor_z + lip)
+    if arg("contents") == "standing":
+        # A GOD RATHER THAN BES, for the patron variants — `shrine-<god>` at every rank.
+        #
+        # IT EXISTS BECAUSE THE DEFAULT CONTENTS IS THE WRONG SHAPE FOR ONE. Bes is two wide domes, and a
+        # prompt asking for Thoth over that geometry got exactly what the geometry said: a pale heap with
+        # a beak stuck on it, unreadable at 56 units. The jackal survived the same scaffold only because
+        # a jackal is compact enough to be painted over a heap; a bird on a long neck is not, and neither
+        # is a standing figure with a staff. The lesson is `prim_wallshrine`'s lamp one kind over — a
+        # prompt that contradicts the geometry under it loses.
+        #
+        # UPRIGHT, NARROW, WITH A GAP AT THE NECK. Those three are the whole of what a 14-pixel god can
+        # carry, and the gap is the one that costs a render if it is skipped: without it the masses fuse
+        # into the beehive the Bes docstring above already records.
+        # SIZED IN THE BOX'S OWN METRES, not in `room`. `room` is what the lintel leaves once the lip is
+        # taken off both ends — 0.17 here — and Bes above ignores it for everything but placement, which
+        # is easy to miss: built to room*0.52 the god came out a third of Bes's height and read as a ball
+        # on a crate. The ceiling that matters is the lintel's DRAWN lower edge at `base + h - brick -
+        # lip`, and the head stops 0.02 under it.
+        mark(box(0.125, 0.095, 0.18, x=-0.09, y=-0.01, z=floor_z + 0.09), "figure")
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=16, ring_count=10, radius=0.05,
+                                             location=(-0.09, -0.01, floor_z + 0.24))
+        mark(bpy.context.object, "figure")
+        # The lamp beside him is the merchant's, unchanged: it is what keeps the box reading as a shrine
+        # rather than as a cupboard with a statue in it, and it gives the figure its scale.
+        mark(cyl(0.075, room * 0.16, x=0.16, y=-0.02, z=floor_z + room * 0.08, verts=16), "pottery")
+        mark(box(0.06, 0.045, room * 0.11, x=0.235, y=-0.02, z=floor_z + room * 0.07), "pottery")
+        bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.032, radius2=0.0, depth=room * 0.26,
+                                        location=(0.16, -0.02, floor_z + room * 0.29))
+        mark(bpy.context.object, "accent")
+        return join_all()
     # Bes: wide, short, outsized head. Body and head are two masses and there is no third — a figure this
     # small has room for a silhouette and no features at all.
     bpy.ops.mesh.primitive_uv_sphere_add(segments=18, ring_count=10, radius=0.10, location=(-0.10, -0.01, floor_z + room * 0.26))

@@ -1722,6 +1722,14 @@ yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name
 
 ## Patrons — nineteen
 
+**`shrine-<god>` TAKES `--contents=standing`, and the entries below say so.** `prim_shrine`'s default
+contents is BES — two wide domes, squat and big-headed — and a prompt asking for a god over that geometry
+gets what the geometry says: Thoth came back a pale heap with a beak stuck on it, unreadable at 56 units.
+Anubis survived the same scaffold only because a jackal is compact enough to be painted over a heap, and
+that is luck rather than a method. `--contents=standing` puts an upright figure in the box instead —
+narrow, with a gap at the neck — which is what a bird on a long neck or a god with a staff can be painted
+over. Regenerate the attachment before rolling one.
+
 **A PATRON IS WHOSE TOMB A PYRAMID IS**, and it reaches the map through one mechanism only: for five
 kinds — `statue`, `shrine`, `wallShrine`, `stela` and `mask` — `patronTileUrl` prefers
 `<kind>-<patron>.png` over the generic drawing, and falls back silently where that file is absent. So
@@ -2126,7 +2134,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shrine --spin=18 --colour=#d9a93f --floor=#57534b
+scaffold shrine --contents=standing --spin=18 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/shrine-maat.webp --tier=master --name=shrine-maat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -2218,7 +2226,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shrine --spin=-11 --colour=#8fd9bd --floor=#5a8074
+scaffold shrine --contents=standing --spin=-11 --colour=#8fd9bd --floor=#5a8074
 yarn import-tile art/masters/props/wizard/shrine-ra.webp --tier=wizard --name=shrine-ra --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -2335,7 +2343,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shrine --spin=-11 --colour=#8fd9bd --floor=#5a8074
+scaffold shrine --contents=standing --spin=-11 --colour=#8fd9bd --floor=#5a8074
 yarn import-tile art/masters/props/wizard/shrine-maat.webp --tier=wizard --name=shrine-maat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -2424,7 +2432,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shrine --spin=18 --colour=#d9a93f --floor=#57534b
+scaffold shrine --contents=standing --spin=18 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/shrine-sekhmet.webp --tier=master --name=shrine-sekhmet --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -2536,7 +2544,7 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shrine --spin=18 --colour=#d9a93f --floor=#57534b
+scaffold shrine --contents=standing --spin=18 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/shrine-osiris.webp --tier=master --name=shrine-osiris --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
@@ -2711,214 +2719,8 @@ No highlights, no gloss, no rim light, no ground plane, no reflections. Matte th
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold shrine --spin=-19 --colour=#a7b2be --floor=#8d98a5
+scaffold shrine --contents=standing --spin=-19 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/shrine-thoth.webp --tier=expert --name=shrine-thoth --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
-### `expert/shrine-anubis` — Anubis's jackal in the priest's shrine
-
-1 room. The same scaffold as Thoth's above, plain form, so roll them in the same sitting but in SEPARATE
-chats — one fresh chat per tile is this file's most expensive lesson.
-
-**Attach:**
-
-1. `~/tile-previews/shrine-anubis-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a SHRINE standing on the floor, a cabinet on a plinth with a god inside it. The slab at the
-bottom is the PLINTH, the stepped slab on top is the CORNICE, and the box between them holds the figure.
-
-Standing inside is ANUBIS: a small figure with a JACKAL'S HEAD, flat black — a long straight muzzle and
-two tall pointed ears standing straight up. The ears and the muzzle are the mark; a rounded head or short
-ears makes him a cat.
-
-The shrine is cedar, dark and close-grained, with bronze fittings gone green-black at the hinges and along
-the front lip. The plinth is dark basalt with natron dust settled in its mouldings. Inside, the back is
-deep shade and Anubis stands against it in pale limestone, his jackal head and ears a flat dead black —
-the darkest thing in the picture.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Priest's tomb, Egyptian New Kingdom: dark basalt, natron dust, bronze and cedar. Cool grey-blue stone, nothing gilded.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold shrine --spin=-19 --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/shrine-anubis.webp --tier=expert --name=shrine-anubis --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
-## Regenerating the attachments
-
-Both kinds of attachment live in `~/tile-previews/`, which is outside the repository on purpose: they are
-reproducible from what IS in it, so committing them would be committing derived binaries. If the folder is
-gone, or a primitive has changed, this is how they come back.
-
-**The rank's colours** — every render command needs the pair. From `tierPalette` in `tileMaterials.ts`:
-
-| rank    | `--colour` (prop) | `--floor` (its slab) |
-| ------- | ----------------- | -------------------- |
-| starter | `#a49781`         | `#6c6257`            |
-| junior  | `#e0c193`         | `#c39c68`            |
-| expert  | `#a7b2be`         | `#8d98a5`            |
-| master  | `#d9a93f`         | `#57534b`            |
-| wizard  | `#8fd9bd`         | `#5a8074`            |
-
-**A floor prop's scaffold** — the magenta-backed render the generator paints over. This is the third render
-of the three and the only one `rebuild.sh` does NOT make, because a repaint is not part of a rebuild:
-
-```sh
-yarn render-prop --primitive=sealedChest --spin=-27 \
-  --colour=#e0c193 --floor=#c39c68 --out=~/tile-previews/sealedchest-junior.png
-```
-
-**A wall item's scaffold** — the slot's own aspect and half shear, and no floor shadow, because a wall item
-stands on nothing:
-
-```sh
-yarn render-prop --primitive=niche --contents=sealed --shear=0.5 --width=448 --height=224 \
-  --sun=0 --shadow=0 --colour=#a7b2be --out=~/tile-previews/niche-expert.png
-```
-
-Each entry's `scaffold`/`meshscaffold` line above gives the primitive, the contents and the spin to use;
-add the rank's two colours and the wall flags where they apply.
-
-**`yarn repaint <key> --check` says which are missing and touches nothing** — no clipboard, no Finder.
-Use it to sweep the whole file; the plain form reveals its two attachments, and running that over every
-entry in turn steals the desktop's focus fifty-two times and leaves the clipboard holding whichever
-prompt came last.
-
-**A PROP NEEDS BOTH COLOURS, and `--floor` is the one that gets forgotten.** `--colour` is obvious because
-a wrong one is visible in the scaffold; `--floor` paints the FOOTPRINT, which no one looks at, and
-`scaffold()` supplies the merchant's as a default — so a prop at another rank silently seats itself in a
-patch of the wrong stone. `rebuild.sh`'s header has warned about this since the nobleman's props were
-found sitting in merchant floor 62 luminance out.
-
-It is worth knowing how small it looks and how it hides. On the priest it is 686 pixels of an 18,816-pixel
-tile, RMSE 0.5% — nothing you would catch by eye. And the rebuild HIDES it: a tile imported by hand with
-the right shadow is overwritten by the next `sh art/rebuild.sh`, so if you commit after a rebuild you
-commit the rebuild's version, and every rebuild after that compares its own output against itself and
-reports no change. Three of the priest's tiles shipped that way before anyone diffed the two shadows.
-
-Every prop line in this file now carries `--floor`. Keep it there, and check the table above for the pair.
-
-**All three renders**, which is what a prop actually needs — the scaffold to hand over, the mask to cut
-the return to, and the footprint to seat it in. `rebuild.sh` makes the last two for itself, so they are
-only wanted here when a repaint is going to be imported before the next rebuild:
-
-```sh
-r() { yarn render-prop --primitive=sealedChest --contents=cavetto --spin=25 \
-  --colour=#d9a93f --floor=#57534b "$@"; }
-P=~/tile-previews/chestProp-master
-r --out=$P.png
-r --shadow=0 --background=none --out=$P-obj.png
-r --only=shadow --background=none --out=$P-shadow.png
-```
-
-The shared arguments go in a FUNCTION rather than a variable, and that is not a style choice: under zsh an
-unquoted `$ARGS` does not word-split, so the whole string arrives as one argument and all three renders
-fail silently into nothing. `"$@"` behaves the same in sh, bash and zsh — which is why `rebuild.sh`'s own
-`scaffold()` is shaped this way.
-
-They MUST agree on every parameter but the output and those two flags, or the mask keeps a silhouette the
-paint no longer fills — the invariant `prop-pipeline.md` Step 2 states, and the one a stray `--spin` breaks
-silently.
-
-`render-prop` finds Blender in `/Applications` by itself; set `BLENDER` to point somewhere else, the same
-override `art/rebuild.sh` takes.
-
-**A HOLE's scaffold takes `--context`, and only the handed-over render does.** `wizard/basin` needs it: the floor goes round the object with a hole of the stated size cut in it, so the
-generator can see what the hole is cut INTO. The mask is rendered without it, so no floor reaches the
-tile. The size is in the primitive's own metres; `prop-pipeline.md` has the rest of the laws. There is no
-footprint render here — nothing on this prop stands above the paving, so it casts nothing.
-
-```sh
-r() { yarn render-prop --primitive=basin --contents=pool --colour=#8fd9bd --floor=#5a8074 "$@"; }
-P=~/tile-previews/basin-wizard
-r --context=1.04x0.74 --shadow=0 --out=$P.png
-r --shadow=0 --background=none --out=$P-obj.png
-```
-
-**A FLAT THING ON THE FLOOR takes it too, and for the mirror of the hole's reason.** `expert/mat` is the
-case: a sheet has no silhouette under this projection, so its scaffold is one plain quad on magenta, and a
-quad on nothing is a rectangle a generator is free to straighten — three rolls came back square to the
-frame and filling it. Paving round it gives the turn something to be a turn against. The opening is the
-mat's OWN footprint, so the floor butts its edge rather than running under it, and the frame is given the
-prop slot's own 2:3 because the object is much wider than it is deep.
-
-```sh
-r() { yarn render-prop --primitive=mat --spin=12 --colour=#a7b2be --floor=#8d98a5 "$@"; }
-P=~/tile-previews/mat-expert
-r --context=0.95x0.72 --shadow=0 --width=448 --height=672 --out=$P.png
-r --shadow=0 --background=none --out=$P-obj.png
-```
-
-**And no fenced block may sit above an entry's prompt.** `yarn repaint` takes the FIRST bare fence in a
-block as the prompt, so a `sh` snippet added to an entry's prose silently becomes what gets pasted — the
-match runs from that snippet's CLOSING fence to the prompt's opening one and copies the prose between
-them. Caught here by the line count dropping from 29 to 10. Notes above the prompt stay prose; commands
-go under this heading.
-
-**The material references** — a quarter of each rank's own floor tile, upscaled. Plain by construction,
-because a floor tile is a seamless texture with no object in it:
-
-```sh
-node -e '
-const sharp = require("sharp");
-(async () => {
-  for (const t of ["starter", "junior", "expert", "master", "wizard"]) {
-    const m = await sharp(`src/assets/tiles/${t}/floor.png`).metadata();
-    await sharp(`src/assets/tiles/${t}/floor.png`)
-      .extract({ left: 0, top: 0, width: Math.floor(m.width / 2), height: Math.floor(m.height / 2) })
-      .resize(1024, 1024, { kernel: "cubic" })
-      .toFile(`${process.env.HOME}/tile-previews/${t}-plain.png`);
-  }
-})();'
-```
-
-## When a return lands
-
-**The whole loop, in order.** Every step has been skipped at least once and each one cost a re-roll or a
-bad master in the tree.
-
-1. **Check the aspect before anything else.** A square return means the scaffold was not used — re-attach
-   and roll again. A prop comes back 1686x2528, a wall item 2912x1440.
-2. **LOOK at it beside the scaffold**, and specifically at what is INSIDE it. The merchant's wall shrine
-   came back with a shapeless pot where the scaffold has a lamp, because the prompt said the box was
-   empty — a prompt contradicting the geometry it is painted over. Fix the PROMPT, not the tile.
-3. **Store the master** at `art/masters/props/<tier>/<name>.webp`, quality 95.
-4. **Render the mask** — the entry's `scaffold` line, out to a temp file. This is the third render
-   `rebuild.sh` does not make.
-5. **Import** with the entry's flags.
-6. **Measure**, and measure against a SHIPPED tile of the same kind rather than against the thresholds:
-   every tile in this set trips `too contrasty`, and most trip one of `too light`/`too dark`/`too cool`.
-   The numbers that matter are the palette tails and the separation.
-7. **`yarn on-floor`** — or, for a wall item, composite it into the rank's own band. A number in band can
-   still look wrong, and a wall item is 56x28 on the map, where a great deal of what is wrong in a return
-   simply disappears.
-8. **Record the flags in `art/rebuild.sh`** and **delete the entry here**. Then `yarn art-census` to
-   confirm the kind reads `art`.
-
-**`--brightness` can only help if the SPAN allows it.** Both rolls of the merchant's wall shrine came back
-about equally over the light clamp, 43.7% and 42.7%. The first already sat 8% below the dark end, so
-scaling it down brought the top in and pushed the bottom out — 16.5% at 0.62, worse overall. The second
-sat at 0.0% dark and took 0.75 cleanly. Read both tails before reaching for the flag; if both are out, the
-return is wrong and no flag will fix it.
-
-`yarn tile-stats <file> --tier=<tier> --slot=<slot>` measures it, and the numbers to hit are the ones
-`art/rebuild.sh` argues for tile by tile: about +22 to +25 warmth against the rank's slab, a tail under
-roughly 4% over the light clamp, and at least 10 luminance of separation from the floor in EITHER direction
-— under 10 a prop does not read against the ground it stands on, which is what sank the spill at 0.70.
-`--brightness` and `--saturation` are how you get there, and `yarn on-floor <tile> <tier> <out>` is the
-check that matters, because a number in band can still look wrong.
-
-Nothing in this file is a rank's last word: `yarn art-census` is the authority on what is painted, and
-`docs/instructions/art-tasks.md` on what each remaining gap is waiting for.

@@ -36,6 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Anubis keeps a shrine in the priest's tomb, a jackal standing in the cabinet where every other shrine
+  at that rank holds a household god.
 - The priest's tomb is drawn. Every object his rooms and passages put on the floor or hang on the wall is
   painted now — the broken basalt his corridors spill, a basalt stela cut with a false door, and Anubis
   himself in his wall shrine and couchant on his plinth. Three ranks of five are finished rather than
