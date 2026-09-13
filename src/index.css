@@ -433,17 +433,38 @@ body {
 
   /* Dust, sand, soot, sparks — or fog, which is the same thing drawn huge and slow. It fades in and out
      across its crossing, which is what hides the jump when the animation loops. `translate` alone, so
-     the compositor owns every frame (docs/instructions/map-rendering.md). */
+     the compositor owns every frame (docs/instructions/map-rendering.md).
+
+     IT MEANDERS, AND IT CATCHES THE LIGHT. A speck taken straight from one side to the other at a
+     constant rate is a dot sliding on a rail — at the size real dust is drawn, that reads as a static
+     circle rather than as air. Two things fix it and neither costs a repaint: the waypoints push the
+     mote off its own line and back (`--wob`, its own for each), and the opacity dips between them, which
+     is a mote turning in the light. The x fraction at each waypoint is exactly the keyframe's own
+     percentage, so with `linear` the crossing keeps a constant pace and only the wander is uneven. */
   --animate-map-drift: map-drift linear infinite;
   @keyframes map-drift {
     0% {
       translate: 0 0;
       opacity: 0;
     }
-    15% {
+    12% {
+      translate: calc(var(--dx, -160px) * 0.12) calc(var(--dy, 70px) * 0.12 + var(--wob, 12px));
       opacity: var(--o, 0.5);
     }
-    85% {
+    31% {
+      translate: calc(var(--dx, -160px) * 0.31) calc(var(--dy, 70px) * 0.31 - var(--wob, 12px));
+      opacity: calc(var(--o, 0.5) * 0.4);
+    }
+    50% {
+      translate: calc(var(--dx, -160px) * 0.5) calc(var(--dy, 70px) * 0.5 + var(--wob, 12px));
+      opacity: var(--o, 0.5);
+    }
+    69% {
+      translate: calc(var(--dx, -160px) * 0.69) calc(var(--dy, 70px) * 0.69 - var(--wob, 12px));
+      opacity: calc(var(--o, 0.5) * 0.45);
+    }
+    88% {
+      translate: calc(var(--dx, -160px) * 0.88) calc(var(--dy, 70px) * 0.88 + var(--wob, 12px));
       opacity: var(--o, 0.5);
     }
     100% {

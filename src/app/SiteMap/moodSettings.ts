@@ -31,13 +31,27 @@ export type Mood = {
   /** One colour laid over the whole map. The hour, and nothing else. */
   tint?: { fill: string; opacity: number }
   /** Things carried on the air: dust, chaff, soot, sand, sparks — or fog, which is the same thing drawn
-   * huge and slow. `seconds` is one crossing; `size` is the radius in screen pixels.
+   * huge and slow. `seconds` is one crossing; `size` is the radius the field is written around, in screen
+   * pixels — each mote takes its own fraction of it and most take less than one (MapMood).
    *
    * COUNT IS PER SCREEN, not per floor. The air is drawn in an HTML layer over the map's window rather
    * than inside the map (MapMood), so these are the motes a player SEES — where the old numbers were
    * spread across a floor of which some 8% was on a phone at a time, and two specks reached the screen.
-   * Divided by roughly two and a half on the way across, which is a density between the two: a floor with
-   * air in it, and no blizzard. */
+   *
+   * DUST IS SPECKS, AND THERE ARE A LOT OF THEM. The first numbers here were a dozen motes two to five
+   * pixels across crossing the screen over a quarter of a minute, and at that size and that pace the eye
+   * does not read them as air at all: they are a handful of circles sitting on the stone. Real dust is
+   * mostly under two pixels and everywhere at once, so the sizes came down by half and the counts went up
+   * more than three-fold — the same ink spread over far more of it. It costs about what the dozen did: the
+   * specks ride paired on one element (`SPECKS` in MapMood), so a count here is a number of SPECKS and
+   * very nearly half a number of nodes.
+   *
+   * PACE IS `seconds`, NOT DISTANCE. A crossing is roughly two thirds of what it was, because a mote
+   * restarts where it began rather than wrapping round and a field that crosses much more than a phone's
+   * width spends half its time off the left-hand edge (MapMood).
+   *
+   * FOG IS THE EXCEPTION AND STAYS ONE. It is the same mechanism with the numbers at the other end — a
+   * few huge soft ones, barely moving — and it is meant to be a wash you see through, not weather. */
   drift?: { count: number; size: number; fill: string; opacity: number; seconds: number }
   /** How many scarabs are about. They scurry on lit floor, never through wall. */
   life?: number
@@ -49,12 +63,12 @@ export type Mood = {
 const RANK_MOOD: Record<Difficulty, Mood> = {
   starter: {
     tint: { fill: "#c8b48a", opacity: 0.06 },
-    drift: { count: 10, size: 1.6, fill: "#e8dcc0", opacity: 0.5, seconds: 14 },
+    drift: { count: 34, size: 0.9, fill: "#e8dcc0", opacity: 0.6, seconds: 8 },
     life: 3,
   },
   junior: {
     tint: { fill: "#c08840", opacity: 0.07 },
-    drift: { count: 8, size: 1.4, fill: "#2a2018", opacity: 0.45, seconds: 18 },
+    drift: { count: 30, size: 0.8, fill: "#2a2018", opacity: 0.55, seconds: 10 },
     life: 2,
   },
   expert: {
@@ -63,11 +77,11 @@ const RANK_MOOD: Record<Difficulty, Mood> = {
   },
   master: {
     tint: { fill: "#0b0a12", opacity: 0.12 },
-    drift: { count: 6, size: 1.2, fill: "#ffdf9a", opacity: 0.55, seconds: 22 },
+    drift: { count: 28, size: 0.7, fill: "#ffdf9a", opacity: 0.65, seconds: 12 },
   },
   wizard: {
     tint: { fill: "#26407a", opacity: 0.1 },
-    drift: { count: 7, size: 2, fill: "#bfe4ff", opacity: 0.6, seconds: 26 },
+    drift: { count: 32, size: 1, fill: "#bfe4ff", opacity: 0.7, seconds: 14 },
   },
 }
 
@@ -77,7 +91,7 @@ const THEME_MOOD: Record<string, Mood> = {
   night: { tint: { fill: "#0e1a3a", opacity: 0.3 } },
   sand: {
     tint: { fill: "#d8b070", opacity: 0.1 },
-    drift: { count: 26, size: 1.4, fill: "#f0dcb4", opacity: 0.55, seconds: 5 },
+    drift: { count: 66, size: 0.75, fill: "#f0dcb4", opacity: 0.6, seconds: 3.2 },
   },
   fog: {
     tint: { fill: "#aebccc", opacity: 0.12 },
