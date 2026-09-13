@@ -289,8 +289,32 @@ export const buildTileRegions = (
 }
 
 /** One closed rectangle per entry, as a single path. */
-export const rectsToPath = (rects: readonly Rect[]): string =>
-  rects.map(([x, y, w, h]) => `M${x} ${y}h${w}v${h}h${-w}z`).join("")
+/**
+ * Rectangles as one path, optionally in a frame of their own.
+ *
+ * `origin` shifts every coordinate, which is what lets a clipped layer be the size of its OWN content
+ * rather than the size of the map. A `clip-path` resolves in the element's box, so an element that spans
+ * the whole map has to be RASTERISED at the whole map's size — on a phone, at three device pixels to the
+ * unit, that is tens of megabytes per layer and a renderer that gets killed (it did: v0.43.1 crashed
+ * entering any floor on iOS). Bounded to its own box, the same drawing costs what it covers.
+ */
+export const rectsToPath = (rects: readonly Rect[], origin: readonly [number, number] = [0, 0]): string =>
+  rects.map(([x, y, w, h]) => `M${x - origin[0]} ${y - origin[1]}h${w}v${h}h${-w}z`).join("")
+
+/** The box a run of rectangles covers: where a layer cut to them has to sit, and how big it has to be. */
+export const boundsOf = (rects: readonly Rect[]): { x: number; y: number; w: number; h: number } => {
+  let minX = Infinity
+  let minY = Infinity
+  let maxX = -Infinity
+  let maxY = -Infinity
+  for (const [x, y, w, h] of rects) {
+    if (x < minX) minX = x
+    if (y < minY) minY = y
+    if (x + w > maxX) maxX = x + w
+    if (y + h > maxY) maxY = y + h
+  }
+  return { x: minX, y: minY, w: maxX - minX, h: maxY - minY }
+}
 
 /** The hard shadow a face throws onto the floor in front of it. In this idiom that shadow, not any
  * shading on the floor itself, is what puts the wall above the ground. */

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react"
+import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import type {
   CellState,
   DecorationKind,
@@ -16,7 +16,7 @@ import type {
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { keyColorHex } from "@/ui/tokens/keyColors"
-import { ExplorerDot, LightPool } from "./ExplorerDot"
+import { ExplorerDot, LightPool, LightPoolDefs } from "./ExplorerDot"
 import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
@@ -415,7 +415,7 @@ const isLockedGate = (cell: RoomCell, ownedKeys: ReadonlySet<string> | undefined
  * strip containing its bars cut clean away and its two jambs drawn as separate posts.
  */
 // eslint-disable-next-line react-refresh/only-export-components -- pure function over cell keys, exported so tests can assert on the clip
-export const footprintPath = (cells: readonly string[]): string => {
+export const footprintRects = (cells: readonly string[]): Rect[] => {
   const own = cells.map(key => key.split(",").map(Number) as [number, number])
   const has = new Set(cells)
   const rects: Rect[] = own.map(([r, c]) => [cellLeft(c), cellTop(r) - PROP_H, CELL, CELL + PROP_H])
@@ -424,8 +424,11 @@ export const footprintPath = (cells: readonly string[]): string => {
     if (has.has(`${r},${c + 1}`)) rects.push([cellLeft(c) + CELL, cellTop(r) - PROP_H, SIDE_W, CELL + PROP_H])
     if (has.has(`${r + 1},${c}`)) rects.push([cellLeft(c), cellTop(r) + CELL - PROP_H, CELL, WALL_H + PROP_H])
   }
-  return rectsToPath(rects)
+  return rects
 }
+
+/** The same shape as one path, for the tests that read it and for anything that wants it whole. */
+export const footprintPath = (cells: readonly string[]): string => rectsToPath(footprintRects(cells))
 
 /** How far the cresset at a stair's mouth stands from the middle of its cell, measured off the painted
  * tile rather than guessed: the flame's own pixels land 24 units to one side of centre. WHICH side is a
@@ -1472,80 +1475,20 @@ const allFloorRects = (regions: TileRegions): Rect[] =>
     ...Object.values(groups.floorCorridor).flat(),
   ])
 
-/** One run of stone: a single box the size of the whole map, cut to the rectangles that run belongs to.
+/**
+ * THE STONE IS ONE SVG, and that is a memory fact rather than a taste.
  *
- * ONE ELEMENT PER GROUP, NOT ONE PER RECTANGLE. A floor is a rectangle per cell, and every cell carries
- * mass, face, top, shadow and a wash on top of that — a div each came to some seven thousand elements on a
- * real floor, which is what the merged `<path>` existed to avoid. `clip-path: path()` takes the very `d`
- * string `rectsToPath` already builds, resolved in the element's own box, so the group stays one element
- * and the geometry code did not have to change at all.
+ * Everything that MOVES on this map is HTML and composited (docs/instructions/map-rendering.md). The
+ * stone does not move, and it is the one thing whose shapes span the whole floor: a merged run of floor
+ * or wall covers most of a map that can be 1876x2268 CSS px. As HTML that is one `clip-path` layer per
+ * group, and a clipped element has to be rasterised at its OWN size — 22 of them at three device pixels
+ * to the unit came to gigabytes, and iOS Safari killed the tab on entry to any floor (v0.43.1). One
+ * `<svg>` is one surface the compositor tiles as ordinary content, which is what shipped before and what
+ * ships again.
  *
- * The texture then tiles from the MAP's origin rather than from each rectangle, so it runs continuously
- * across the cells it is cut into — which is what an SVG `<pattern>` in user space did. */
-const StoneLayer = ({
-  rects,
-  kind,
-  color,
-  opacity,
-  texture,
-}: {
-  rects: readonly Rect[]
-  /** What this run of stone IS, for the tests and for anyone reading the DOM. */
-  kind: string
-  color?: string
-  opacity?: number
-  texture?: { url: string; w: number; h: number }
-}) => {
-  if (rects.length === 0) return null
-  const fill: CSSProperties = texture
-    ? { backgroundImage: `url(${texture.url})`, backgroundSize: `${texture.w}px ${texture.h}px` }
-    : { background: color }
-  return (
-    <div
-      data-tile={kind}
-      style={{ position: "absolute", inset: 0, opacity, clipPath: `path("${rectsToPath(rects)}")`, ...fill }}
-    />
-  )
-}
-
-/** A sill: the step laid in the gap between two places, so a change of material reads as a step between
- * them rather than as a line where the art changes.
- *
- * There are two shapes of gap. Between two ROWS it is a cell wide and a wall band deep, which is how the
- * art is drawn. Between two columns it is the same step turned ninety degrees into a side wall's
- * thickness — one image stretched over both is how a step ended up lying on its side. */
-const Sill = ({
-  rect: [x, y, w, h],
-  url,
-  color,
-  tier,
-}: {
-  rect: Rect
-  url?: string
-  color: string
-  tier: Difficulty
-}) => {
-  const horizontal = w === CELL
-  return (
-    <div
-      data-tile={`sill-${horizontal ? "h" : "v"}-${tier}`}
-      style={{ position: "absolute", left: x, top: y, width: w, height: h, opacity: 0.9, overflow: "hidden" }}
-    >
-      <div
-        style={{
-          width: horizontal ? w : h,
-          height: horizontal ? h : w,
-          ...(url ? { backgroundImage: `url(${url})`, backgroundSize: "100% 100%" } : { background: color }),
-          ...(horizontal ? {} : { transformOrigin: "0 0", transform: `translate(${w}px, 0) rotate(90deg)` }),
-        }}
-      />
-    </div>
-  )
-}
-
-/** How far the silhouette stands out past the floor it outlines. */
-const OUTLINE_W = 2
-
+ * A sprite is different: it is cut to ONE ROOM, so its layer is a room's worth of pixels, and those stay
+ * HTML.
+ */
 const TileLayers = ({
   regions,
   tier,
@@ -1575,82 +1518,134 @@ const TileLayers = ({
       else archedSills.set(archTier, [rect])
     }
   }
-  const floorRects = allFloorRects(regions)
+  const floorRects = [...regions.values()].flatMap(groups => [
+    ...Object.values(groups.floorRoom).flat(),
+    ...Object.values(groups.floorCorridor).flat(),
+  ])
+  const allFloor = rectsToPath(floorRects)
+  // The same floor, each cell grown UPWARD by a prop's headroom. Furniture standing off-centre in its
+  // cell is cut by the wall beside it and by the wall below it, and still rises into the band above —
+  // which is the one direction a prop is meant to cross, so a tall thing occludes the wall behind it
+  // instead of being sliced off at its own floor line.
+  const tiers = [...regions.keys()]
 
   return (
     <>
-      {/* The near-black silhouette that stops a wall mass and a lit floor of similar value from blurring
-          into each other: every floor rectangle grown a couple of units, UNDER the fills, so only the
-          outward part of it survives. Drawn on top it would trace each rectangle and put a grid over the
-          floor — which is why the stroke was under the fills when this was one path. */}
-      <StoneLayer
-        kind="outline"
-        rects={floorRects.map(([x, y, w, h]) => [x - OUTLINE_W, y - OUTLINE_W, w + OUTLINE_W * 2, h + OUTLINE_W * 2])}
-        color={tierPalette[tier].outline}
-      />
-
-      {[...regions.keys()].map(t => {
-        const palette = tierPalette[t]
-        const groups = regions.get(t)!
-        const floorArt = tileOrPlaceholder(t, "floor")
-        const faceArt = tileOrPlaceholder(t, "wall-face")
-        const sillArt = tileOrPlaceholder(t, "threshold")
-        const floorTexture = floorArt ? { url: floorArt, w: mega, h: mega } : undefined
-        // The face art is a cell tall; a face is WALL_H tall, so the tile is scaled to that and repeats on
-        // it. Every face in the map then shows the same courses at the same height.
-        const faceTexture = faceArt ? { url: faceArt, w: mega, h: WALL_H } : undefined
-        return (
-          <Fragment key={t}>
-            {ALL_STATES.map(state => {
-              const wash = stateWash[state]
-              const room = groups.floorRoom[state]
-              const corridor = groups.floorCorridor[state]
-              const mass = groups.wallMass[state]
-              const faces = groups.wallFace[state]
-              // One sill per boundary, not one per cell state: it is masonry, not lighting. A sill under
-              // an arch is drawn with the ARCH's tier rather than this one, so it is handled below.
-              const thresholds = groups.threshold.filter(([x, y]) => !archedGaps?.has(`${x},${y}`))
-              const arched = archedSills.get(t) ?? []
-              return (
-                <Fragment key={state}>
-                  <StoneLayer kind="wall-mass" rects={mass} color={palette.wallBase} />
-                  <StoneLayer kind="floor-room" rects={room} color={palette.slab} texture={floorTexture} />
-                  <StoneLayer kind="floor-corridor" rects={corridor} color={palette.slab} texture={floorTexture} />
-                  <StoneLayer
-                    kind="corridor-shade"
-                    rects={corridor}
-                    color={corridorShade.fill}
-                    opacity={corridorShade.opacity}
-                  />
-                  <StoneLayer kind="wall-face" rects={faces} color={palette.wall} texture={faceTexture} />
-                  {/* The wall's own top surface, in the stone the side walls and the wall mass already
-                      use. A face without it is a band of brick with nothing above it, and a wall stops
-                      reading as a solid thing. */}
-                  <StoneLayer kind="wall-top" rects={faceTopRects(faces, FACE_TOP)} color={palette.wallBase} />
-                  {state === "reachable" &&
-                    [...thresholds, ...arched].map(rect => (
-                      <Sill key={rect.join(",")} rect={rect} url={sillArt} color={palette.wallTop} tier={t} />
-                    ))}
-                  <StoneLayer
-                    kind="face-shadow"
-                    rects={faceShadowRects(faces, FACE_SHADOW)}
-                    color={palette.outline}
-                    opacity={0.45}
-                  />
-                  {wash && (
-                    <StoneLayer
-                      kind="state-wash"
-                      rects={[...room, ...corridor, ...faces, ...mass]}
-                      color={wash.fill}
-                      opacity={wash.opacity}
+      <defs>
+        {/* The walkable floor as a CLIP. Sand is drawn larger than a cell and cut to this, so a drift
+            crosses cells and stops dead at a wall — see `driftsFor`. The path is the same one the
+            outline stroke below uses; it costs nothing to reuse it. */}
+        <clipPath id="walkable-floor">
+          <path d={allFloor} />
+        </clipPath>
+        {tiers.map(t => {
+          const floor = tileUrl(t, "floor")
+          const face = tileUrl(t, "wall-face")
+          const sill = tileUrl(t, "threshold")
+          return (
+            <Fragment key={t}>
+              {floor && (
+                <pattern id={`floor-${t}`} width={mega} height={mega} patternUnits="userSpaceOnUse">
+                  {/* preserveAspectRatio="none": an <image> letterboxes itself by default, which leaves the
+                      rest of the pattern tile transparent — black slots in the middle of a wall. */}
+                  <image href={floor} width={mega} height={mega} preserveAspectRatio="none" />
+                </pattern>
+              )}
+              {face && (
+                // The face art is a cell tall; a face is WALL_H tall, so the pattern is scaled to that
+                // and repeats on it. Every face in the map then shows the same courses at the same height.
+                <pattern id={`face-${t}`} width={mega} height={WALL_H} patternUnits="userSpaceOnUse">
+                  <image href={face} width={mega} height={WALL_H} preserveAspectRatio="none" />
+                </pattern>
+              )}
+              {sill && (
+                <>
+                  {/* A sill fills the GAP it is laid in, and there are two shapes of gap. Between two rows
+                      it is a cell wide and a wall band deep, which is how the art is drawn. Between two
+                      columns it is the same step turned ninety degrees into a side wall's thickness — one
+                      pattern stretched over both is how a step ended up lying on its side. */}
+                  <pattern id={`sill-h-${t}`} width={CELL} height={WALL_H} patternUnits="userSpaceOnUse">
+                    <image href={sill} width={CELL} height={WALL_H} preserveAspectRatio="none" />
+                  </pattern>
+                  <pattern id={`sill-v-${t}`} width={SIDE_W} height={CELL} patternUnits="userSpaceOnUse">
+                    <image
+                      href={sill}
+                      width={CELL}
+                      height={SIDE_W}
+                      transform={`translate(${SIDE_W},0) rotate(90)`}
+                      preserveAspectRatio="none"
                     />
-                  )}
-                </Fragment>
-              )
-            })}
-          </Fragment>
-        )
-      })}
+                  </pattern>
+                </>
+              )}
+            </Fragment>
+          )
+        })}
+        <LightPoolDefs />
+      </defs>
+
+      <g>
+        {/* The near-black silhouette that stops a wall mass and a lit floor of similar value from
+            blurring into each other. Stroked UNDER the fills, on the whole floor at once: a stroke
+            drawn on top would trace every cell's border and put a grid over the floor, while
+            underneath only the outward half of the outline survives, which is the silhouette. */}
+        <path d={allFloor} fill="none" stroke={tierPalette[tier].outline} strokeWidth={4} />
+
+        {tiers.map(t => {
+          const palette = tierPalette[t]
+          const groups = regions.get(t)!
+          const floorFill = tileUrl(t, "floor") ? `url(#floor-${t})` : palette.slab
+          const faceFill = tileUrl(t, "wall-face") ? `url(#face-${t})` : palette.wall
+          const hasSill = !!tileUrl(t, "threshold")
+          // A gap between two ROWS is a cell wide; one between two columns is a side wall's thickness.
+          const sillFill = ([, , w]: Rect) => (hasSill ? `url(#sill-${w === CELL ? "h" : "v"}-${t})` : palette.wallTop)
+          return (
+            <g key={t}>
+              {ALL_STATES.map(state => {
+                const wash = stateWash[state]
+                const room = rectsToPath(groups.floorRoom[state])
+                const corridor = rectsToPath(groups.floorCorridor[state])
+                const mass = rectsToPath(groups.wallMass[state])
+                const faces = rectsToPath(groups.wallFace[state])
+                const shadows = rectsToPath(faceShadowRects(groups.wallFace[state], FACE_SHADOW))
+                const tops = rectsToPath(faceTopRects(groups.wallFace[state], FACE_TOP))
+                // One sill per boundary, not one per cell state: it is masonry, not lighting. A sill under
+                // an arch is drawn with the ARCH's tier rather than this one, so it is handled below.
+                const thresholds = groups.threshold.filter(([x, y]) => !archedGaps?.has(`${x},${y}`))
+                const arched = archedSills.get(t) ?? []
+                return (
+                  <g key={state}>
+                    {mass && <path d={mass} fill={palette.wallBase} />}
+                    {room && <path d={room} fill={floorFill} />}
+                    {corridor && (
+                      <>
+                        <path d={corridor} fill={floorFill} />
+                        <path d={corridor} fill={corridorShade.fill} opacity={corridorShade.opacity} />
+                      </>
+                    )}
+                    {faces && <path d={faces} fill={faceFill} />}
+                    {/* The wall's own top surface, in the stone the side walls and the wall mass already
+                        use. A face without it is a band of brick with nothing above it, and a wall stops
+                        reading as a solid thing. */}
+                    {tops && <path d={tops} fill={palette.wallBase} />}
+                    {/* Laid over the floor of the gap it crosses, so a change of material reads as a
+                        step between two places rather than a line where the art changes. */}
+                    {/* One path per sill: each takes the pattern for the shape of gap it lies in. The sill
+                        an arch stands in is drawn here too, in the ARCH's stone rather than the entered
+                        tier's, which is why it is filed under this tier at all. */}
+                    {state === "reachable" &&
+                      [...thresholds, ...arched].map(rect => (
+                        <path key={rect.join(",")} d={rectsToPath([rect])} fill={sillFill(rect)} opacity={0.9} />
+                      ))}
+                    {shadows && <path d={shadows} fill={palette.outline} opacity={0.45} />}
+                    {wash && <path d={room + corridor + faces + mass} fill={wash.fill} opacity={wash.opacity} />}
+                  </g>
+                )
+              })}
+            </g>
+          )
+        })}
+      </g>
     </>
   )
 }
@@ -1733,18 +1728,18 @@ const SandDrifts = ({
   grid,
   drifts,
   tier,
-  floorPath,
+  floorRects,
 }: {
   grid: FloorGrid
   drifts: Drift[]
   tier: Difficulty
-  /** The walkable floor, as a path in map coordinates: what the wall does the drawing with. */
-  floorPath: string
+  /** The walkable floor, as rectangles: what the wall does the drawing with. */
+  floorRects: readonly Rect[]
 }) => {
   const url = tileOrPlaceholder(tier, "sand")
-  if (!url) return null
+  if (!url || floorRects.length === 0) return null
   return (
-    <div style={{ position: "absolute", inset: 0, pointerEvents: "none", clipPath: `path("${floorPath}")` }}>
+    <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
       {drifts.map(({ row, col, w, h }, i) => {
         const cell = cellAt(grid, row, col)
         if (cell.type === "empty") return null
@@ -1752,6 +1747,13 @@ const SandDrifts = ({
         const { cx, cy } = cellCenter(row, col)
         const dw = CELL * w
         const dh = CELL * h
+        // EACH DRIFT IS CUT TO THE FLOOR IT LIES ON, and only to the part of it the drift can reach.
+        // Cutting them all to the whole walkable floor at once made one layer the size of the map, and a
+        // clipped element is rasterised at its own size — which is what a phone cannot afford.
+        const near = floorRects.filter(
+          ([fx, fy, fw, fh]) => fx < cx + dw / 2 && fx + fw > cx - dw / 2 && fy < cy + dh / 2 && fy + fh > cy - dh / 2
+        )
+        if (near.length === 0) return null
         return (
           <Sprite
             key={i}
@@ -1760,6 +1762,7 @@ const SandDrifts = ({
             y={cy - dh / 2}
             w={dw}
             h={dh}
+            clipTo={near}
             filter={wash ? `brightness(${1 - wash.opacity})` : undefined}
           />
         )
@@ -2074,13 +2077,27 @@ const Archways = ({
  * rather than float above it, applied to the one other thing standing on it.
  */
 const ArchShadows = ({ doorways }: { doorways: readonly Doorway[] }) => {
-  const feet = doorways.flatMap(({ row, col }) => {
-    const left = cellLeft(col) - SIDE_W
-    const top = cellTop(row) + ARCH_DROP
-    return [left, left + ARCH_W - SIDE_W].map(x => `M${x} ${top}h${SIDE_W}v${FACE_SHADOW}h${-SIDE_W}z`)
-  })
-  if (!feet.length) return null
-  return <ClipLayer data-arch-shadow="" path={feet.join("")} fill={tierPalette.starter.outline} opacity={0.45} />
+  // ONE LAYER PER DOORWAY, not one for every doorway on the floor: a clipped element is rasterised at
+  // its own size, and the shadows of all the doorways together span the map (which is what a phone's
+  // renderer died of). A doorway's own two feet are a few dozen pixels.
+  return (
+    <>
+      {doorways.map(({ row, col }) => {
+        const left = cellLeft(col) - SIDE_W
+        const top = cellTop(row) + ARCH_DROP
+        const feet: Rect[] = [left, left + ARCH_W - SIDE_W].map(x => [x, top, SIDE_W, FACE_SHADOW] as Rect)
+        return (
+          <ClipLayer
+            key={`${row},${col}`}
+            data-arch-shadow=""
+            rects={feet}
+            fill={tierPalette.starter.outline}
+            opacity={0.45}
+          />
+        )
+      })}
+    </>
+  )
 }
 
 // ─── Torchlight on the place the player is standing ─────────────────────────────
@@ -2171,26 +2188,22 @@ const LitPlace = ({
   // cells of a corridor sit 28 units apart with floor between them — squares alone left that band dark and
   // the run read as a row of lit tiles rather than as a lit passage. The floor layers fill those gaps for
   // the same reason; light has to as well.
-  const pathFor = (keys: Iterable<string>, joinsTo: ReadonlySet<string>) =>
-    [...keys]
-      .flatMap(key => {
-        const [r, c] = key.split(",").map(Number)
-        const parts = [`M${cellLeft(c)} ${cellTop(r)}h${CELL}v${CELL}h${-CELL}z`]
-        if (joinsTo.has(`${r - 1},${c}`))
-          parts.push(`M${cellLeft(c)} ${cellTop(r) - WALL_H}h${CELL}v${WALL_H}h${-CELL}z`)
-        if (joinsTo.has(`${r},${c - 1}`))
-          parts.push(`M${cellLeft(c) - SIDE_W} ${cellTop(r)}h${SIDE_W}v${CELL}h${-SIDE_W}z`)
-        // And the little square where four lit cells meet — the corner between a north gap and a west
-        // gap. Filling both bands and not the corner between them leaves an unlit dot at every crossing
-        // inside a room, which is the artefact a floor of squares always has if you stop at the edges.
-        if (joinsTo.has(`${r - 1},${c}`) && joinsTo.has(`${r},${c - 1}`) && joinsTo.has(`${r - 1},${c - 1}`))
-          parts.push(`M${cellLeft(c) - SIDE_W} ${cellTop(r) - WALL_H}h${SIDE_W}v${WALL_H}h${-SIDE_W}z`)
-        return parts
-      })
-      .join("")
+  const rectsFor = (keys: Iterable<string>, joinsTo: ReadonlySet<string>): Rect[] =>
+    [...keys].flatMap(key => {
+      const [r, c] = key.split(",").map(Number)
+      const parts: Rect[] = [[cellLeft(c), cellTop(r), CELL, CELL]]
+      if (joinsTo.has(`${r - 1},${c}`)) parts.push([cellLeft(c), cellTop(r) - WALL_H, CELL, WALL_H])
+      if (joinsTo.has(`${r},${c - 1}`)) parts.push([cellLeft(c) - SIDE_W, cellTop(r), SIDE_W, CELL])
+      // And the little square where four lit cells meet — the corner between a north gap and a west
+      // gap. Filling both bands and not the corner between them leaves an unlit dot at every crossing
+      // inside a room, which is the artefact a floor of squares always has if you stop at the edges.
+      if (joinsTo.has(`${r - 1},${c}`) && joinsTo.has(`${r},${c - 1}`) && joinsTo.has(`${r - 1},${c - 1}`))
+        parts.push([cellLeft(c) - SIDE_W, cellTop(r) - WALL_H, SIDE_W, WALL_H])
+      return parts
+    })
 
   if (!lit.size) return null
-  return <ClipLayer data-torch="lit" className={className} path={pathFor(lit, lit)} fill={TORCH_LIT} />
+  return <ClipLayer data-torch="lit" className={className} rects={rectsFor(lit, lit)} fill={TORCH_LIT} />
 }
 
 /** How long a place takes to come up, and to go out: the two have to agree, because both are drawn
@@ -2347,9 +2360,9 @@ export const SiteMapView = ({
     () => nodeSpritesFor(grid, claims, tier, pendingCells),
     [grid, claims, tier, pendingCells]
   )
-  // The walkable floor as one path: what a layer cut to the floor is cut to. The sand is the only one
+  // The walkable floor, as rectangles: what a layer cut to the floor is cut to. The sand is the only one
   // left — everything else that used to share the map-wide clip now carries its own shape.
-  const floorPath = useMemo(() => rectsToPath(allFloorRects(regions)), [regions])
+  const floorRects = useMemo(() => allFloorRects(regions), [regions])
 
   // Everything that stands on this floor, in one list: a room's furniture and a node's own, each with
   // the line it stands on. Split at the explorer's own floor line so he is drawn in the middle.
@@ -2371,7 +2384,7 @@ export const SiteMapView = ({
             mirrored={sprite.mirrored}
             // ITS OWN ROOM AND NOT THE WHOLE FLOOR: furniture stands off-centre and a sprite is a cell
             // wide, so it reaches past its cell. See NodeSprite.footprint.
-            clipTo={footprintPath(sprite.footprint)}
+            clipTo={footprintRects(sprite.footprint)}
             opacity={
               standingOn && sprite.fadeAt?.includes(standingOn)
                 ? ARCH_FADE
@@ -2551,8 +2564,17 @@ export const SiteMapView = ({
               imageRendering: ART_IMAGE_RENDERING,
             }}
           >
-            <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
-            <SandDrifts grid={grid} drifts={drifts} tier={tier} floorPath={floorPath} />
+            {/* The stone, as one SVG surface under everything — see TileLayers for why it is not HTML. */}
+            <svg
+              width={svgWidth}
+              height={svgHeight}
+              viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+              aria-hidden="true"
+              className="absolute inset-0 block"
+            >
+              <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
+            </svg>
+            <SandDrifts grid={grid} drifts={drifts} tier={tier} floorRects={floorRects} />
             <FloorScatter grid={grid} scatter={scatter} tier={tier} />
             <ArchShadows doorways={doorways} />
             <LitPlaces grid={grid} claims={claims} at={explorerPos} />

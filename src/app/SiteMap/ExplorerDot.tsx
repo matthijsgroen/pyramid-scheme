@@ -186,6 +186,11 @@ const TORCH_RADIUS = CELL * 0.85
 const LIGHT_POOL_FILL =
   "radial-gradient(closest-side, rgba(255,202,106,0.55) 0%, rgba(255,171,61,0.26) 45%, rgba(255,154,46,0) 100%)"
 
+/** What the map's own `<defs>` still carries: the flicker's stylesheet is Tailwind's now, but the stone
+ * is one `<svg>` again (see TileLayers) and its defs are where a shared clip belongs. Kept as a component
+ * so the map does not have to know what is in it. */
+export const LightPoolDefs = () => null
+
 /** A pool of light lying on the floor, screen-blended so it lifts the stone it lands on instead of
  * painting a yellow disc over it. Drawn UNDER whatever carries the flame, so the light is on the floor
  * and the thing is standing in it. Placed by its CENTRE, the way the circle it replaces was. */
