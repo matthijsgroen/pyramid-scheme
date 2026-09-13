@@ -145,3 +145,78 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
     expect(Math.max(...sizes), `${tier} largest region`).toBeGreaterThan(options.size)
   })
 })
+
+/**
+ * A SEED HAS TO MEAN THE SAME BOARD ON EVERY ENGINE, or the proven list is only proven on the machine
+ * that proved it. `yarn generate-seeds` and `yarn verify-seeds` both run on node, so nothing else here
+ * can notice a generator that draws differently under a different `Array.prototype.sort`.
+ *
+ * It did. `growRegions` broke ties with `random() - 0.5` INSIDE the comparator, so how many times the
+ * seeded stream advanced depended on how many comparisons the sort made — V8 sorts with TimSort,
+ * JavaScriptCore with a merge sort. 17 of this family's 42 proven seeds failed to build under a merge
+ * sort, which on a phone is a room that cannot be entered.
+ */
+describe("a board does not depend on the engine's sort", () => {
+  // A perfectly legal sort, just not this engine's. Stable, correct, different comparison order.
+  const mergeSort = function <T>(this: T[], compare?: (a: T, b: T) => number): T[] {
+    const cmp = compare ?? ((a: T, b: T) => (String(a) < String(b) ? -1 : 1))
+    const sorted = (items: T[]): T[] => {
+      if (items.length < 2) return items
+      const mid = items.length >> 1
+      const left = sorted(items.slice(0, mid))
+      const right = sorted(items.slice(mid))
+      const out: T[] = []
+      let i = 0
+      let j = 0
+      while (i < left.length && j < right.length) out.push(cmp(left[i], right[j]) <= 0 ? left[i++] : right[j++])
+      return out.concat(left.slice(i), right.slice(j))
+    }
+    const result = sorted([...this])
+    for (let index = 0; index < result.length; index++) this[index] = result[index]
+    return this
+  }
+
+  const underMergeSort = <T>(run: () => T): T => {
+    const original = Array.prototype.sort
+    Array.prototype.sort = mergeSort as typeof Array.prototype.sort
+    try {
+      return run()
+    } finally {
+      Array.prototype.sort = original
+    }
+  }
+
+  // Generating a wizard board twice — once through a merge sort written in TypeScript rather than the
+  // engine's own — runs to about three seconds here and past the five-second default on a CI runner.
+  it.each(["junior", "expert", "master", "wizard"] as const)(
+    "builds the same twin stars board at %s",
+    tier => {
+      const options = TWIN_STARS_CONFIG[tier]
+      const ours = generateStarBattle(12345, options)
+      const theirs = underMergeSort(() => generateStarBattle(12345, options))
+
+      expect(theirs.regions).toEqual(ours.regions)
+      expect(theirs.solution).toEqual(ours.solution)
+    },
+    30_000
+  )
+
+  it("builds every listed board of a tier under either sort, which is what the list promises", () => {
+    const options = TWIN_STARS_CONFIG.expert
+    const listed = puzzleSeeds[configHash(options)] ?? []
+    expect(listed.length).toBeGreaterThan(0)
+
+    const broken = underMergeSort(() =>
+      listed.filter(seed => {
+        try {
+          generateStarBattle(seed, options, 1)
+          return false
+        } catch {
+          return true
+        }
+      })
+    )
+
+    expect(broken).toEqual([])
+  }, 120_000)
+})
