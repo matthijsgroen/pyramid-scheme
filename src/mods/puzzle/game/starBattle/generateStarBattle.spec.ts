@@ -186,14 +186,20 @@ describe("a board does not depend on the engine's sort", () => {
     }
   }
 
-  it.each(["junior", "expert", "master", "wizard"] as const)("builds the same twin stars board at %s", tier => {
-    const options = TWIN_STARS_CONFIG[tier]
-    const ours = generateStarBattle(12345, options)
-    const theirs = underMergeSort(() => generateStarBattle(12345, options))
+  // Generating a wizard board twice — once through a merge sort written in TypeScript rather than the
+  // engine's own — runs to about three seconds here and past the five-second default on a CI runner.
+  it.each(["junior", "expert", "master", "wizard"] as const)(
+    "builds the same twin stars board at %s",
+    tier => {
+      const options = TWIN_STARS_CONFIG[tier]
+      const ours = generateStarBattle(12345, options)
+      const theirs = underMergeSort(() => generateStarBattle(12345, options))
 
-    expect(theirs.regions).toEqual(ours.regions)
-    expect(theirs.solution).toEqual(ours.solution)
-  })
+      expect(theirs.regions).toEqual(ours.regions)
+      expect(theirs.solution).toEqual(ours.solution)
+    },
+    30_000
+  )
 
   it("builds every listed board of a tier under either sort, which is what the list promises", () => {
     const options = TWIN_STARS_CONFIG.expert
