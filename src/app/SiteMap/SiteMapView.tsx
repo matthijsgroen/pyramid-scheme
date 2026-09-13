@@ -16,7 +16,7 @@ import type {
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { keyColorHex } from "@/ui/tokens/keyColors"
-import { ExplorerDot, LightPool, TorchStyle } from "./ExplorerDot"
+import { ExplorerDot, LightPool } from "./ExplorerDot"
 import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
@@ -2176,20 +2176,11 @@ const LitPlace = ({
   return <ClipLayer data-torch="lit" className={className} path={pathFor(lit, lit)} fill={TORCH_LIT} />
 }
 
+/** How long a place takes to come up, and to go out: the two have to agree, because both are drawn
+ * during the crossing. Matches `--animate-map-lit-in`/`-out` in the theme. */
 const FADE_MS = 320
-const FADE_IN = "map-lit-in"
-const FADE_OUT = "map-lit-out"
-const LIT_OPACITY = 0.1
-const LIT_CSS = `
-.${FADE_IN} { animation: map-lit-in ${FADE_MS}ms ease-out both; }
-.${FADE_OUT} { animation: map-lit-out ${FADE_MS}ms ease-in both; }
-@keyframes map-lit-in { from { opacity: 0 } to { opacity: ${LIT_OPACITY} } }
-@keyframes map-lit-out { from { opacity: ${LIT_OPACITY} } to { opacity: 0 } }
-@media (prefers-reduced-motion: reduce) {
-  .${FADE_IN} { animation: none; opacity: ${LIT_OPACITY} }
-  .${FADE_OUT} { animation: none; opacity: 0 }
-}
-`
+const FADE_IN = "animate-map-lit-in motion-reduce:animate-none motion-reduce:opacity-[0.1]"
+const FADE_OUT = "animate-map-lit-out motion-reduce:animate-none motion-reduce:opacity-0"
 
 /**
  * The lit place, crossfaded as the explorer walks from one to the next.
@@ -2216,7 +2207,6 @@ const LitPlaces = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; 
 
   return (
     <div style={{ position: "absolute", inset: 0, mixBlendMode: "screen", pointerEvents: "none" }}>
-      <style>{LIT_CSS}</style>
       {leaving && <LitPlace key="leaving" grid={grid} claims={claims} at={leaving} className={FADE_OUT} />}
       <LitPlace key={key} grid={grid} claims={claims} at={at} className={FADE_IN} />
     </div>
@@ -2757,7 +2747,6 @@ export const SiteMapView = ({
               carries a clip is laid out as a full-map layer with the art placed by background-position,
               which is why the footprint path needs no translating (see `Sprite`). */}
             <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-              <TorchStyle />
               {/* The floor light first, so everything standing is standing IN it. */}
               {standing.map(s2 =>
                 s2.light ? <LightPool key={`light:${s2.key}`} r={s2.light.r} cx={s2.light.x} cy={s2.light.y} /> : null

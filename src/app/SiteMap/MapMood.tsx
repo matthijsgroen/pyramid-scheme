@@ -18,41 +18,10 @@ import { Sprite } from "./htmlLayers"
 // also no longer belong to the map's coordinate space, which is why they cross the SCREEN rather than the
 // floor — ambience in front of the world, unaffected by pan and zoom.
 
-const MOTE_CLASS = "map-mote"
-const SCARAB_CLASS = "map-scarab"
-
-// One shared stylesheet for the whole map. `translate` only, so every frame is compositor work.
-//
-// A mote fades in and out across its crossing, which is what hides the jump when the animation loops —
-// the alternative is wrapping each one by hand every frame, in JS, for no visible gain.
-//
-// Reduced motion stops all of it. This is ambience: it says nothing the player needs, so it is exactly the
-// kind of movement someone who asked for less of it should not have to watch.
-const MOOD_CSS = `
-.${MOTE_CLASS} {
-  position: absolute;
-  border-radius: 50%;
-  will-change: transform, opacity;
-  animation: map-drift linear infinite;
-}
-.${SCARAB_CLASS} { animation: map-scurry steps(5, end) infinite; }
-@keyframes map-drift {
-  0% { translate: 0 0; opacity: 0; }
-  15% { opacity: var(--o, 0.5); }
-  85% { opacity: var(--o, 0.5); }
-  100% { translate: var(--dx, -160px) var(--dy, 70px); opacity: 0; }
-}
-@keyframes map-scurry {
-  0% { transform: translate(0, 0); }
-  25% { transform: translate(var(--sx, 16px), var(--sy, 5px)); }
-  50% { transform: translate(calc(var(--sx, 16px) * 0.6), calc(var(--sy, 5px) * -1.4)); }
-  75% { transform: translate(calc(var(--sx, 16px) * -0.5), calc(var(--sy, 5px) * 0.8)); }
-  100% { transform: translate(0, 0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .${MOTE_CLASS}, .${SCARAB_CLASS} { animation: none; }
-}
-`
+// What the map's motion is called lives in the theme (index.css, "The map's own motion"); these are the
+// hooks a test asks for, and the classes that carry the animation are alongside them at the point of use.
+const MOTE_CLASS = "map-mote absolute rounded-full will-change-transform animate-map-drift motion-reduce:animate-none"
+const SCARAB_CLASS = "map-scarab animate-map-scurry motion-reduce:animate-none"
 
 const rand = hashUnit
 
@@ -306,7 +275,6 @@ export const MapWeather = ({ mood, siteId }: Pick<Props, "mood" | "siteId">) => 
   if (!drift && !tint) return null
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-      <style>{MOOD_CSS}</style>
       {drift &&
         Array.from({ length: drift.count }, (_, i) => {
           const size = drift.size * 2 * (0.6 + rand(siteId, "mote-r", i) * 0.8)

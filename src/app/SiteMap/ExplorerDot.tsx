@@ -170,37 +170,13 @@ export const ExplorerDot = ({ grid, pos, segmentDuration = 180, color = "#ffd060
 // flicker is mostly opacity, plus a two-pixel wander: a lamp gutters, it does not pulse, and this sits
 // under the player's eye the whole game. SCALING it was the version that read as the pool breathing —
 // wandering a pixel or two is a flame moving in someone's hand, which is the thing being drawn.
-const TORCH_CLASS = "map-torch"
+const TORCH_CLASS = "map-torch animate-map-torch motion-reduce:animate-none"
 // The legs, cycled by the browser. The frames sit side by side inside a clip one frame wide and the strip
 // is slid a whole frame at a time — `steps()` doing what a spritesheet's background-position does, which is
 // why the span is the strip's FULL width and the step count is however many frames the facing was drawn
 // with. Both come in as inline values, so one keyframe serves every facing and every frame count.
-const WALK_CLASS = "map-walk"
+const WALK_CLASS = "animate-map-walk motion-reduce:animate-none"
 const TORCH_RADIUS = CELL * 0.85
-const TORCH_CSS = `
-/* A FLAME JUMPS, IT DOES NOT EASE. Stepped rather than interpolated, which is the cheap way round as well
-   as the truer one: a pool of light is a screen-blended gradient inside the map's own SVG, so every
-   interpolated frame re-rasterised the gradient and re-composited the stone under it — four lamps came to
-   a measured 5% of a core, burning on a map nobody was touching. Five steps a cycle is five repaints
-   instead of 130, and a torch that snaps between brightnesses reads more like fire than one that breathes. */
-.${TORCH_CLASS} { animation: map-torch-flicker 2.2s steps(1, end) infinite; }
-@keyframes map-torch-flicker {
-  0%   { opacity: 0.86; transform: translate(0, 0); }
-  18%  { opacity: 1;    transform: translate(1px, -1px); }
-  37%  { opacity: 0.82; transform: translate(-1px, 1px); }
-  58%  { opacity: 0.97; transform: translate(1px, 1px); }
-  79%  { opacity: 0.85; transform: translate(-1px, 0); }
-  100% { opacity: 0.86; transform: translate(0, 0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .${TORCH_CLASS} { animation: none; }
-}
-.${WALK_CLASS} { animation-name: map-walk; animation-iteration-count: infinite; }
-@keyframes map-walk { to { transform: translateX(var(--walk-span)); } }
-@media (prefers-reduced-motion: reduce) {
-  .${WALK_CLASS} { animation: none; }
-}
-`
 
 /** The colours a pool of light is made of, as one gradient every pool shares.
  *
@@ -230,16 +206,7 @@ export const LightPool = ({ r, cx = 0, cy = 0 }: { r: number; cx?: number; cy?: 
   />
 )
 
-/** The stylesheet the flicker and the walk cycle live in. One per map — a second copy is harmless, which
- * is what lets a story render the figure on its own and still see it move. */
-export const TorchStyle = () => <style>{TORCH_CSS}</style>
-
-const TorchGlow = () => (
-  <>
-    <TorchStyle />
-    <LightPool r={TORCH_RADIUS} cy={CELL * 0.22 - FOOT_LIFT} />
-  </>
-)
+const TorchGlow = () => <LightPool r={TORCH_RADIUS} cy={CELL * 0.22 - FOOT_LIFT} />
 
 /**
  * The explorer as drawn, in cell-local units around the centre of the cell it stands on. Separate from the
