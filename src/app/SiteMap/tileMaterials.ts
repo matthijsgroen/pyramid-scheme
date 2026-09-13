@@ -20,6 +20,14 @@ export type TierPalette = {
   wall: string
   wallTop: string
   wallBase: string
+  /** The wash lying over everything the lamp does not reach — the tier's own night, hue and all.
+   *
+   * ITS STRENGTH IS SET AGAINST THE TIER'S OWN SLABS, not shared: a master gallery is cut from stone
+   * two value steps darker than a merchant's cellar, and the same wash over it took the floor to black
+   * and left the gold trim floating on nothing. Each one lands its tier at about the same readable
+   * dimness; what varies between them on purpose is the HUE — how cold the dark outside the torchlight
+   * goes. */
+  shade: string
   /** freestanding props, and the near-black they are outlined in */
   prop: string
   propDark: string
@@ -44,6 +52,9 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     wall: "#4a4137",
     wallTop: "#736858",
     wallBase: "#2b261f",
+    // A wick is the only warm thing down here, so the dark it does not reach is left to go cold — the
+    // hue contrast that makes a torch read as a torch, at the tier that has the fewest of them.
+    shade: "rgba(14,13,24,0.56)",
     prop: "#a49781",
     propDark: "#5c5347",
     outline: "#15110c",
@@ -58,6 +69,9 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     wall: "#8f6a3f",
     wallTop: "#b58a55",
     wallBase: "#4a3520",
+    // The shallowest of the five, and sandstone gives the day's heat back all night: the one tier whose
+    // dark stays warm.
+    shade: "rgba(28,18,11,0.56)",
     prop: "#e0c193",
     propDark: "#9c7442",
     outline: "#241708",
@@ -72,6 +86,8 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     wall: "#5b6675",
     wallTop: "#7c8797",
     wallBase: "#323a46",
+    // Dressed stone, deep enough that nothing of the desert gets down here. The cold one.
+    shade: "rgba(7,13,30,0.58)",
     prop: "#a7b2be",
     propDark: "#69737f",
     outline: "#171c22",
@@ -86,6 +102,8 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     wall: "#3a3630",
     wallTop: "#5b554b",
     wallBase: "#201d19",
+    // Galleries lit for ceremony rather than for work: what is not lit is meant to read as black.
+    shade: "rgba(9,7,14,0.42)",
     prop: "#d9a93f",
     propDark: "#8a6a24",
     outline: "#141210",
@@ -100,6 +118,8 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     wall: "#3a6155",
     wallTop: "#4f7c6d",
     wallBase: "#1d3830",
+    // Verdigris and standing water. Not the absence of a lamp — the colour the place already is.
+    shade: "rgba(5,20,20,0.48)",
     prop: "#8fd9bd",
     propDark: "#3f7563",
     outline: "#0f231d",

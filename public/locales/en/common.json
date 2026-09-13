@@ -976,14 +976,14 @@
   "procession": {
     "name": {
       "default": "The Ordered Hours",
-      "funerary": "The Day of the Burial",
+      "funerary": "The Day in the Workmen's Valley",
       "cosmos": "The Night's Crossing",
       "water": "The Day of the Flood",
       "trade": "The Day at the Quay"
     },
     "goal": {
       "default": "Slide every thing that happens into its hour, until all the marks under the day hold.",
-      "funerary": "Slide every rite into its hour, until all the marks under the day hold.",
+      "funerary": "Slide every task into its hour, until all the marks under the day hold.",
       "cosmos": "Slide every light into its hour, until all the marks under the night hold.",
       "water": "Slide every task into its hour, until all the marks under the day hold.",
       "trade": "Slide every task into its hour, until all the marks under the day hold."
@@ -1014,12 +1014,12 @@
         "the night watch"
       ],
       "funerary": [
-        "the opening of the mouth",
-        "the wrapping",
-        "the anointing",
-        "the walk to the tomb",
-        "the offering",
-        "the sealing"
+        "the plastering",
+        "the grid drawing",
+        "the carving",
+        "the painting",
+        "the gilding",
+        "the door fitting"
       ],
       "cosmos": [
         "the sun's crossing",
