@@ -976,14 +976,14 @@
   "procession": {
     "name": {
       "default": "De Geordende Uren",
-      "funerary": "De Dag van de Begrafenis",
+      "funerary": "De Dag in het Dal van de Ambachtslieden",
       "cosmos": "De Tocht van de Nacht",
       "water": "De Dag van de Overstroming",
       "trade": "De Dag aan de Kade"
     },
     "goal": {
       "default": "Schuif elk ding dat gebeurt naar zijn uur, tot alle tekens onder de dag kloppen.",
-      "funerary": "Schuif elke rite naar zijn uur, tot alle tekens onder de dag kloppen.",
+      "funerary": "Schuif elke taak naar zijn uur, tot alle tekens onder de dag kloppen.",
       "cosmos": "Schuif elk licht naar zijn uur, tot alle tekens onder de nacht kloppen.",
       "water": "Schuif elke taak naar zijn uur, tot alle tekens onder de dag kloppen.",
       "trade": "Schuif elke taak naar zijn uur, tot alle tekens onder de dag kloppen."
@@ -1014,12 +1014,12 @@
         "de nachtwake"
       ],
       "funerary": [
-        "het openen van de mond",
-        "het wikkelen",
-        "het zalven",
-        "de tocht naar het graf",
-        "het offer",
-        "het verzegelen"
+        "het pleisteren",
+        "het uitzetten van het raster",
+        "het beitelen",
+        "het schilderen",
+        "het vergulden",
+        "het plaatsen van de deur"
       ],
       "cosmos": [
         "de tocht van de zon",

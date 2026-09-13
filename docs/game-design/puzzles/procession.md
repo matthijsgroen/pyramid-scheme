@@ -191,7 +191,7 @@ Five casts ship, and four of them carry a role tag outright:
 | Face       | Role       | The doings                                                                     |
 | ---------- | ---------- | ------------------------------------------------------------------------------ |
 | default    | —          | the fire, the water carrying, the baking, the boat trip, the ox driving, the night watch |
-| `funerary` | `funerary` | the opening of the mouth, the wrapping, the anointing, the walk to the tomb, the offering, the sealing |
+| `funerary` | `funerary` | the plastering, the grid drawing, the carving, the painting, the gilding, the door fitting |
 | `cosmos`   | `cosmos`   | the sun's crossing, the star's rising, the moon's watch, the open sky, the dawn, the turning year |
 | `water`    | `water`    | the flood, the channel digging, the basin filling, the field watering, the ferrying, the reaping |
 | `trade`    | `trade`    | the goods sorting, the bread selling, the beer selling, the ferrying, the hauling, the tally |
@@ -213,6 +213,12 @@ sign, colour, row position — and the doing's NAME is written out in every sent
 who cannot read the sign reads the sentence; a player who reads neither still solves the board from the
 chips. **Worth reviewing with fresh eyes anyway**, since a sign that reads as nothing is a missed chance
 rather than a bug.
+
+**The funerary cast is the workmen who cut the tomb, not the burial.** It is the rule above that decides
+this and not taste: a burial has exactly one order — nothing is sealed before it is wrapped — so dressed as
+rites, this board told a lie on every arrangement but one, which is the failure the paragraph below names.
+A day in the workmen's valley can be run in any order and stay true. That it is also a day a child can be
+handed, where scheduling an embalming is not, is the second reason and not the first.
 
 **The doings are a day and not a plot, deliberately.** The board says everything it knows in words — each
 mark is a sentence — but the SET of doings implies no order of its own. The generator decides what happens

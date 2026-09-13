@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- The Ordered Hours’ funerary board is a day cutting a tomb — plastering, carving, painting — rather than a burial.
+
 ## 0.43.2 - 2026-09-13
 
 ### Fixed
