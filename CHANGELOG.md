@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- The site map is lit rather than evenly bright: torchlight now carries real warmth against the tier’s own dark.
+
 ### Fixed
 
 - Pinching the map no longer drags it away from your fingers or stutters: the pinch scales, the phone keeps the panning.

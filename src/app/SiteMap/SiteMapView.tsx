@@ -2219,6 +2219,40 @@ const LitPlaces = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; 
   )
 }
 
+/**
+ * The tier's own night, lying over the whole floor.
+ *
+ * WITHOUT IT THE MAP HAS NO VALUE RANGE: every explored cell was drawn at full brightness whether
+ * anything lit it or not, so slab, wall face and void all landed within one narrow band and the
+ * picture read as a floorplan rather than as a place. The light that was there — the lit place, a
+ * torch's pool — had nothing to be bright AGAINST.
+ *
+ * A flat wash rather than a `multiply` blend, and both halves of that are deliberate. Alpha over the
+ * top lifts the blacks instead of crushing them, which is what keeps the layout readable when the
+ * player pulls back to look at the floor as a map; and it is one composited box rather than a second
+ * full-map blend group, which `docs/instructions/map-rendering.md` asks for.
+ *
+ * IT FALLS IN TWO PASSES, because the map has one layer that must not go dark with the rest of it.
+ * The full pass lies under the click markers — the markers are what the player reads the floor BY, and
+ * washing them with everything else costs them most of their contrast against the stone (a measured
+ * 3.8 down to 2.2). The second, lighter pass lies over everything, so that the furniture standing on
+ * the floor is seated in the same dark it stands in rather than cut out of it, and the markers pay a
+ * quarter of the wash instead of all of it — which, because the floor under them took both passes,
+ * leaves them further clear of it than before the shade existed at all.
+ */
+const FloorShade = ({ tier, strength = 1 }: { tier: Difficulty; strength?: number }) => (
+  <div
+    data-floor-shade=""
+    style={{
+      position: "absolute",
+      inset: 0,
+      background: tierPalette[tier].shade,
+      opacity: strength,
+      pointerEvents: "none",
+    }}
+  />
+)
+
 // ─── Click-target markers ───────────────────────────────────────────────────────
 
 // A plain corner's reachable marker has no single direction to point in — a corner or
@@ -2553,7 +2587,6 @@ export const SiteMapView = ({
             <SandDrifts grid={grid} drifts={drifts} tier={tier} floorRects={floorRects} />
             <FloorScatter grid={grid} scatter={scatter} tier={tier} />
             <ArchShadows doorways={doorways} />
-            <LitPlaces grid={grid} claims={claims} at={explorerPos} />
             <MapLife
               mood={mood}
               siteId={grid.siteId}
@@ -2585,6 +2618,11 @@ export const SiteMapView = ({
               }}
             />
             <WallItems items={wallItems} patron={grid.patron} />
+
+            {/* The dark, and then the light in it: the place the explorer is standing is the hole the
+              lamp burns in the shade, so it has to be laid over the shade rather than under it. */}
+            <FloorShade tier={tier} />
+            <LitPlaces grid={grid} claims={claims} at={explorerPos} />
 
             {/* THE MARKERS: an icon per cell, each in a little `<svg>` of its own — a shape per kind, a
                 colour per state, key badges on the rim. Over the stone, under everything standing on it,
@@ -2787,6 +2825,10 @@ export const SiteMapView = ({
               {/* And the gate in front of the arch it is fitted into: the frame is the masonry of the
               opening, the gate is what has been hung in it, so the leaf is the nearer of the two. */}
               <StandingLayer sprites={gateSprites} />
+
+              {/* The shade's second pass — see FloorShade. Everything standing has to be in the dark
+                with the floor, or it reads as cut out and pasted on. */}
+              <FloorShade tier={tier} strength={0.45} />
             </div>
           </div>
         </div>

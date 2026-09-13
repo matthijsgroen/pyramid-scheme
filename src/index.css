@@ -519,19 +519,21 @@ body {
 
   /* The place the player is standing coming up, and the one they left going out. Both are drawn during a
      crossing — a shape cannot tween into another shape, so the fade has to be between two of them. */
+  /* How far the lamp lifts the room it is standing in, back out of the tier's shade (FloorShade).
+     Read as a pair with that wash: this number is what the player sees when they ask "where am I". */
   --animate-map-lit-in: map-lit-in 320ms ease-out both;
   @keyframes map-lit-in {
     from {
       opacity: 0;
     }
     to {
-      opacity: 0.1;
+      opacity: 0.34;
     }
   }
   --animate-map-lit-out: map-lit-out 320ms ease-in both;
   @keyframes map-lit-out {
     from {
-      opacity: 0.1;
+      opacity: 0.34;
     }
     to {
       opacity: 0;
