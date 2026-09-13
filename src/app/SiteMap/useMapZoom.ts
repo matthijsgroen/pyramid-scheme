@@ -6,6 +6,11 @@ export const MAX_ZOOM = 5
 
 const clampZoom = (z: number): number => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z))
 
+/** How long the scroll container must go without a scroll event before a pinch is committed to it.
+ * Long enough to sit out the gaps between a momentum scroll's events, short enough that the scroll
+ * extents catch up with the new scale before anyone reaches the edge of the old ones. */
+const SCROLL_QUIET_MS = 140
+
 const touchDistance = (touches: TouchList): number =>
   Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY)
 
@@ -28,8 +33,14 @@ const touchMidpoint = (touches: TouchList): { x: number; y: number } => ({
 // moved, and `preventDefault` past that point is ignored), so our writes and its scrolling then drag
 // the map in two directions at once. So the pan is left entirely to the browser's two-finger scroll,
 // which composites, and the pinch only scales about the point it started on — a transform the
-// compositor can run without laying anything out. The zoom is committed to the sizer once, when the
-// fingers lift.
+// compositor can run without laying anything out.
+//
+// THE ZOOM IS COMMITTED TO THE SIZER ONCE THE SCROLLING HAS STOPPED, which is later than the fingers
+// lifting. Committing means measuring where the map ended up and scrolling to keep it there, and every
+// one of those numbers is read through the scroll offset — which iOS does not hand to this thread
+// until its scroll comes to rest. Committed on touchend, the measurement is of where the map sat
+// BEFORE the two-finger pan, and the map lands somewhere unrelated to the gesture. Waiting costs
+// nothing to look at: the transform is still showing exactly where the player left it.
 //
 // The listeners are attached by hand rather than as JSX props because a wheel handler must be
 // non-passive to preventDefault — without that the browser runs its own page zoom on top of this one.
@@ -103,6 +114,8 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
     }
 
     let start: { distance: number; zoom: number } | null = null
+    /** Pending commit, while the browser finishes whatever scrolling the gesture left it doing. */
+    let quiet = 0
 
     const onWheel = (e: WheelEvent) => {
       if (!e.ctrlKey && !e.metaKey) return
@@ -112,6 +125,9 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
     }
 
     const onTouchStart = (e: TouchEvent) => {
+      // A finger on the glass stops a scroll dead, so a pinch still waiting for stillness can be
+      // committed here and now — and must be, or the next gesture builds on the old scale.
+      if (quiet) commitPinch()
       if (e.touches.length !== 2) return
       const { x, y } = touchMidpoint(e.touches)
       const anchor = mapPointAt(x, y)
@@ -129,8 +145,17 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
       render()
     }
 
-    /** Fingers up: make the shown scale the real one, and keep what was on screen on screen. */
-    const endPinch = () => {
+    /**
+     * Make the shown scale the real one, and keep what is on screen on screen.
+     *
+     * ONLY SAFE WHILE THE BROWSER IS NOT SCROLLING. Every number here is read through the scroll
+     * offset — the map's box, the sizer's — and on iOS that offset does not reach this thread until
+     * the scroll has stopped. Called mid-scroll it measures where the map was BEFORE the two-finger
+     * pan, and scrolls to put that back, which lands the floor somewhere unrelated to the gesture.
+     */
+    const commitPinch = () => {
+      window.clearTimeout(quiet)
+      quiet = 0
       const pinch = pinchRef.current
       const map = mapRef.current
       if (!pinch || !map) return
@@ -147,6 +172,23 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
       putMapPointUnder(held, elLeft + centerX, elTop + centerY)
     }
 
+    /** Wait for the browser to stop scrolling, then commit. Each scroll it is still doing pushes this
+     * out again; a pan that has come to rest stops firing them and the commit lands on the truth. */
+    const commitOnceStill = () => {
+      window.clearTimeout(quiet)
+      quiet = window.setTimeout(commitPinch, SCROLL_QUIET_MS)
+    }
+
+    const onScroll = () => {
+      if (quiet) commitOnceStill()
+    }
+
+    // Fingers up. Nothing is committed yet — the map keeps showing the gesture's transform, which is
+    // where the player left it, so the wait costs them nothing to look at.
+    const endPinch = () => {
+      if (pinchRef.current) commitOnceStill()
+    }
+
     const onDoubleClick = (e: MouseEvent) => zoomTo(1, e.clientX, e.clientY)
 
     el.addEventListener("wheel", onWheel, { passive: false })
@@ -155,6 +197,7 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
     el.addEventListener("touchmove", onTouchMove, { passive: true })
     el.addEventListener("touchend", endPinch)
     el.addEventListener("touchcancel", endPinch)
+    el.addEventListener("scroll", onScroll, { passive: true })
     el.addEventListener("dblclick", onDoubleClick)
     return () => {
       el.removeEventListener("wheel", onWheel)
@@ -162,7 +205,9 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
       el.removeEventListener("touchmove", onTouchMove)
       el.removeEventListener("touchend", endPinch)
       el.removeEventListener("touchcancel", endPinch)
+      el.removeEventListener("scroll", onScroll)
       el.removeEventListener("dblclick", onDoubleClick)
+      window.clearTimeout(quiet)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseWidth, baseHeight])
@@ -174,6 +219,9 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
     sizerRef,
     mapRef,
     zoomRef,
-    scrollHandlers: { style: { touchAction: "pan-x pan-y" } as const },
+    // `overflow-anchor` off because the sizer changes size by a whole zoom step at the moment of the
+    // commit, and scroll anchoring answers a resize like that by moving the scroll to keep something
+    // in place — on top of the move the commit is already making.
+    scrollHandlers: { style: { touchAction: "pan-x pan-y", overflowAnchor: "none" } as const },
   }
 }
