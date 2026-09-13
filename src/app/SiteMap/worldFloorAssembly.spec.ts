@@ -436,3 +436,71 @@ describe("a rank is dressed with what it is authored to hold", () => {
     expect(wrong.slice(0, 10)).toEqual([])
   }, 60_000)
 })
+
+/**
+ * The boards themselves, built the way the player's tap builds them.
+ *
+ * THE GAP THIS FILLS: everything above is bookkeeping. The sweep next door works out WHICH board each
+ * room is dealt and proves no two rooms share one, but it never asks the family to build it — it reads
+ * the seed list and compares indexes. So a room could be dealt a perfectly unique board whose generator
+ * throws the moment anyone opens it, and every test in this repository would stay green.
+ *
+ * That is not hypothetical. Eleven rooms across the expert and wizard treasure tombs shipped with a
+ * number set and a `maxMultiplyOperandResult` that no formula can satisfy at once, and a puzzle is built
+ * during render — so opening one of them threw, React unmounted the tree, and the player got a black
+ * screen with nothing on it.
+ *
+ * It is slow, because building every board in the world is the only thing that could have caught that.
+ */
+describe("every room in the world builds the board its tap asks for", () => {
+  const failures = (): string[] => {
+    const broken: string[] = []
+    for (const floor of allFloors()) {
+      const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
+        resolveKeyRequirements,
+        floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+        resolveBoardIndex: boardIndexesForFloor(floor.journeyId, floor.levelIndex, floor.floorIndex),
+      })
+      if (!result.success) continue
+      result.grid.cells.forEach((row, r) =>
+        row.forEach((cell, c) => {
+          if (cell.type !== "room" || !cell.family) return
+          const family = getFamilyPlugin(cell.family)
+          if (!family) return
+          const edgeId = encodeEdge(floor.floorIndex, r, c)
+          try {
+            // The context useEncounter hands a family, built from the same cell.
+            family.generate(hashString(floor.journeyId + edgeId), {
+              journeyId: floor.journeyId,
+              edgeId,
+              sectionHash: cell.sectionHash ?? "",
+              freshArrival: true,
+              difficulty: cell.difficulty ?? floor.config.difficulty,
+              reward: cell.reward,
+              stock: cell.stock,
+              pathIndex: cell.pathIndex,
+              boardIndex: cell.boardIndex,
+              encounterArgs: cell.encounterArgs,
+              theme: cell.theme,
+              role: cell.role,
+              requiredKeyId: cell.requiredKeyId,
+              gateVariant: cell.gateVariant,
+              keyColor: cell.keyColor,
+              ownedKeys: new Set<string>(),
+            })
+          } catch (error) {
+            broken.push(
+              `${floor.label} (${r},${c}) ${cell.family}/${cell.difficulty ?? floor.config.difficulty}` +
+                ` role=${JSON.stringify(cell.role)}: ${(error as Error).message}`
+            )
+          }
+        })
+      )
+    }
+    return broken
+  }
+
+  it("builds every one of them", () => {
+    expect(failures()).toEqual([])
+  }, 600_000)
+})

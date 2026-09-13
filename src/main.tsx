@@ -5,10 +5,13 @@ import "@/i18n"
 import "@/app/state/registerCurrencies"
 import "@/app/SiteMap/registerRewardHandlers"
 import App from "@/App.tsx"
+import { CrashBoundary } from "@/app/CrashBoundary"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <CrashBoundary>
+      <App />
+    </CrashBoundary>
   </StrictMode>
 )
 
