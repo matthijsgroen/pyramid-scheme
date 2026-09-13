@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - The map opens again on a phone: drawing a floor asked for more memory than a phone has, and the browser killed the tab on the way in.
+- Puzzle boards are back. Most of them size themselves to the panel they stand on, and last release that panel shrank to nothing, so the board did too.
 
 ## 0.43.1 - 2026-09-13
 

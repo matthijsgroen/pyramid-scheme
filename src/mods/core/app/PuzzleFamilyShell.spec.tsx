@@ -121,3 +121,23 @@ describe("PuzzleFamilyShell", () => {
     }
   })
 })
+
+describe("the block the board stands on", () => {
+  afterEach(cleanup)
+
+  // REPORTED FROM PLAY, and it shipped: the board vanished, leaving a title, two buttons and the rules.
+  // Eleven of the twelve boards size themselves from this element (`aspect-square w-full` and the like),
+  // so a shrink-to-fit parent asks the board how wide it is while the board is asking back, and the board
+  // resolves to nothing. jsdom lays nothing out, so this asserts the CONTRACT rather than the pixels:
+  // the element a board is handed must offer a width of its own.
+  it("gives the board a width to size itself from", () => {
+    const { container } = render(
+      <PuzzleFamilyShell onSolved={() => {}} onCancel={() => {}} solved={false}>
+        {() => <div data-board="">board</div>}
+      </PuzzleFamilyShell>
+    )
+    const block = container.querySelector("[data-board]")!.parentElement!
+    expect(block.className).toContain("w-full")
+    expect(block.className).not.toContain("w-fit")
+  })
+})

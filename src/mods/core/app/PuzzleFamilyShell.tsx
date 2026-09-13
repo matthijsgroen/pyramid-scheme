@@ -209,12 +209,17 @@ export const PuzzleFamilyShell = ({
       {/* THE BOARD SITS ON ITS OWN BLOCK, translucent black over the floor's painted wall — the same block
           the hieroglyph strip under a tableau stands on. The wall behind an encounter is the room the
           player walked into and is drawn at full strength; what a puzzle needs is not a darker room but a
-          quieter patch of it to be read against, and that patch is this. `w-fit` so the block is the size
-          of the board rather than of the card, which is what keeps the wall visible around it. */}
+          quieter patch of it to be read against, and that patch is this.
+          
+          **`w-full`, AND IT IS LOAD-BEARING.** Eleven of the twelve boards size themselves from this
+          element — `aspect-square w-full` and the like — so a shrink-to-fit parent asks the board how wide
+          it is while the board is asking back, and the board resolves to nothing. Shipped as `w-fit` for
+          one release and every one of those boards vanished, leaving a title, two buttons and the rules.
+          Sumplete, the one board built out of fixed-size cells, was the one it was judged on. */}
       <div
         inert={finishing}
         className={clsx(
-          "flex w-fit max-w-full flex-col items-center gap-4 rounded-lg bg-black/30 p-3",
+          "flex w-full flex-col items-center gap-4 rounded-lg bg-black/30 p-3",
           finishing && "opacity-90"
         )}
       >

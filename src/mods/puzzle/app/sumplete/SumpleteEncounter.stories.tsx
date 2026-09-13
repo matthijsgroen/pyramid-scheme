@@ -3,6 +3,9 @@ import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 import { generateSumplete } from "@/mods/puzzle/game/sumplete/generateSumplete"
 import { SUMPLETE_CONFIG } from "@/mods/puzzle/game/sumplete/sumpleteConfig"
 import { SumpletePuzzle } from "./SumpletePuzzle"
+import { ConstellationPuzzle } from "../constellation/ConstellationPuzzle"
+import { generateConstellation } from "@/mods/puzzle/game/constellation/generateConstellation"
+import { CONSTELLATION_CONFIG } from "@/mods/puzzle/game/constellation/constellationConfig"
 import { EncounterModal } from "@/app/SiteMap/EncounterModal"
 
 // A real board in the frame every encounter is met in, with the wall it wears — and it exists for one
@@ -34,6 +37,22 @@ const Sumplete = ({ difficulty }: { difficulty: Difficulty }) => {
       onCancel={() => {}}
     />
   )
+}
+
+/** A board that sizes itself from the block it stands on — which is most of them, and the case a block
+ * sized to its content destroys. Sumplete is built of fixed cells and cannot show it. */
+export const SizedFromItsBlock: Story = {
+  args: { difficulty: "starter", children: null },
+  render: () => (
+    <EncounterModal difficulty="starter">
+      <ConstellationPuzzle
+        puzzle={generateConstellation(1, CONSTELLATION_CONFIG.starter)}
+        difficulty="starter"
+        onSolved={() => {}}
+        onCancel={() => {}}
+      />
+    </EncounterModal>
+  ),
 }
 
 export const Starter: Story = {
