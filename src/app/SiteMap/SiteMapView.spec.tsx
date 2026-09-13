@@ -1154,6 +1154,33 @@ describe("the explorer stands in the room", () => {
     expect(strip.style.animationTimingFunction).toBe(`steps(${laidOut})`)
     expect(strip.style.getPropertyValue("--walk-span")).toBe(`${-laidOut * 40}px`)
   })
+
+  it("casts a shadow at the floor line, which is the half of standing the light cannot do", () => {
+    // Every other thing standing on this floor has one: a prop's art bakes it into its own bottom rows,
+    // and an archway, whose shadow falls outside its slot, is given one by hand. The explorer's sprites
+    // stop at the boots, so a lit figure with no shadow reads as pasted onto the room.
+    const { container } = render(<SiteMapView grid={makeGrid([[corridor("completed", false)]])} explorerPos={[0, 0]} />)
+    const shadow = container.querySelector<HTMLElement>("[data-foot-shadow]")!
+    const sprite = spriteIn(container)!
+
+    expect(shadow).toBeTruthy()
+    // Under the boots, not trailing behind them: the ellipse straddles the sprite's own bottom edge.
+    const feet = parseFloat(sprite.parentElement!.style.top) + Number(sprite.getAttribute("height"))
+    const top = parseFloat(shadow.style.top)
+    expect(top).toBeLessThan(feet)
+    expect(top + parseFloat(shadow.style.height)).toBeGreaterThan(feet)
+  })
+
+  it("draws the shadow over the torch pool and under the figure", () => {
+    // A shadow is not lit by the pool it lies in, and the person casting it stands in front of it.
+    const { container } = render(<SiteMapView grid={makeGrid([[corridor("completed", false)]])} explorerPos={[0, 0]} />)
+    const order = Array.from(container.querySelectorAll("[data-explorer] *"))
+    const at = (selector: string) => order.findIndex(el => el.matches(selector))
+
+    expect(at("[data-light-pool]")).toBeGreaterThanOrEqual(0)
+    expect(at("[data-foot-shadow]")).toBeGreaterThan(at("[data-light-pool]"))
+    expect(at("[data-foot-shadow]")).toBeLessThan(at("img"))
+  })
 })
 
 describe("two chambers you can already walk between are one space", () => {

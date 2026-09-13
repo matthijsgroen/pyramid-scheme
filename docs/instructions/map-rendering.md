@@ -86,6 +86,13 @@ background, and **`ClipLayer`**, a map-sized box cut to a path.
   `drop-shadow` hugging the silhouette — the rim being the part that separates a figure from stone of a
   similar value at the zoom a floor is read at. Keep the brightness small: the art's own highlights are
   already near 229 and more of it clips them flat.
+- **Everything standing on this floor casts a shadow, so the explorer does too** (`FootShadow`). A prop's
+  art bakes a contact shadow into its own bottom rows — a chest fills 100 of its 112 columns with it — and
+  an archway, whose shadow falls outside its slot, is given one by hand (`ArchShadows`). The explorer's
+  sprites stop at the boots. Against a dim floor that passed; lifting the floor took away the last thing
+  holding the figure down. An ellipse rather than the straight band a wall casts, because a hard rectangle
+  under a pair of boots reads as a plinth, straddling the sprite's own bottom edge so it sits UNDER the
+  feet — and over the torch pool, since a shadow is not lit by the pool it lies in.
 - **A light pool is not clipped to the floor**, and is not meant to be: a wide one lays light over the
   solid rock beside a one-cell corridor, which reads as haze coming off the flame. What lights a ROOM as a
   room is still the lit place, which is clipped to the floor rects.

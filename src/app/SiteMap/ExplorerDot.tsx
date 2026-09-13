@@ -3,6 +3,7 @@ import type { Direction, FloorGrid } from "../../game/siteTypes"
 import { findPath } from "../../game/gridNavigation"
 import { CELL, EXPLORER_DOT_RADIUS, cellCenter } from "./mapScale"
 import { sharedTileFrames } from "./tileAssets"
+import { tierPalette } from "./tileMaterials"
 
 type Point = { x: number; y: number }
 
@@ -205,6 +206,48 @@ const LIGHT_POOL_FILL =
  */
 const FIGURE_LIT = "brightness(1.1) saturate(1.14) drop-shadow(0 0 5px rgba(255,186,102,0.6))"
 
+/**
+ * The dark the explorer stands in, which is the half of standing the light cannot do.
+ *
+ * EVERY OTHER THING STANDING ON THIS FLOOR HAS ONE and the explorer did not. A prop's art bakes a
+ * contact shadow into its own bottom rows — a chest fills 100 of its 112 columns with it — and an
+ * archway, whose shadow falls outside its slot, is given one by hand (`ArchShadows`). The explorer's
+ * sprites stop at the boots: 7 to 20 pixels of leather and then nothing. Against a dim floor that went
+ * unnoticed; lifting the floor to 150 took away the last thing holding the figure down, and a lit
+ * character with no shadow reads as pasted onto the room rather than standing in it.
+ *
+ * An ellipse rather than the straight band a wall casts, because a wall is a flat face and a person is
+ * not, and a hard rectangle under a pair of boots reads as a plinth. Soft to nothing at its rim for the
+ * same reason: contact, not a decal.
+ *
+ * Plain alpha, not `multiply` — the map keeps blend modes to the light pools on purpose (see
+ * docs/instructions/map-rendering.md), and alpha over the top lifts the blacks where a multiply would
+ * crush the paving texture out from under the feet.
+ */
+const FOOT_SHADOW_W = CHAR_W * 0.85
+const FOOT_SHADOW_H = CELL / 5
+/** The same near-black at the same depth an archway's feet are given, so the two read as one light. */
+const FOOT_SHADOW_FILL = `radial-gradient(closest-side, ${tierPalette.starter.outline}8c 0%, ${tierPalette.starter.outline}59 55%, ${tierPalette.starter.outline}00 100%)`
+
+/** Straddling the foot line, two thirds of it above and a third below, so the boots stand IN it rather
+ * than in front of it — centred on the line it would puddle, hung below it, trail behind them. Drawn
+ * over the torch pool and under the figure: a shadow is not lit by the pool it lies in, and the person
+ * casting it is in front of it. */
+const FootShadow = () => (
+  <div
+    data-foot-shadow=""
+    style={{
+      position: "absolute",
+      left: -FOOT_SHADOW_W / 2,
+      top: CELL / 2 - FOOT_LIFT - FOOT_SHADOW_H * 0.66,
+      width: FOOT_SHADOW_W,
+      height: FOOT_SHADOW_H,
+      background: FOOT_SHADOW_FILL,
+      pointerEvents: "none",
+    }}
+  />
+)
+
 /** What the map's own `<defs>` still carries: the flicker's stylesheet is Tailwind's now, but the stone
  * is one `<svg>` again (see TileLayers) and its defs are where a shared clip belongs. Kept as a component
  * so the map does not have to know what is in it. */
@@ -265,6 +308,9 @@ export const ExplorerFigure = ({
     return (
       <>
         <TorchGlow />
+        {/* No foot shadow on the fallback: the dot is drawn around the CELL'S CENTRE, not standing on
+            the floor line, so a shadow cast at the feet would sit half a figure below it with nothing
+            in between. A token has nothing to ground. */}
         <div
           data-explorer-dot=""
           style={{
@@ -285,6 +331,7 @@ export const ExplorerFigure = ({
   return (
     <>
       <TorchGlow />
+      <FootShadow />
       {/* The clip is a box one frame wide with the strip sliding behind it — `overflow: hidden` doing what
           the nested <svg> did.
           Mirrored for west, and the glow is left out of that transform: a pool of light on the floor has
