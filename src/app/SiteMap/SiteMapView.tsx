@@ -428,6 +428,7 @@ export const footprintRects = (cells: readonly string[]): Rect[] => {
 }
 
 /** The same shape as one path, for the tests that read it and for anything that wants it whole. */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over cell keys, exported so tests can assert on the clip
 export const footprintPath = (cells: readonly string[]): string => rectsToPath(footprintRects(cells))
 
 /** How far the cresset at a stair's mouth stands from the middle of its cell, measured off the painted
