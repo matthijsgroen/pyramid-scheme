@@ -1,6 +1,10 @@
 # Pyramid Interior Design
 
-Status: design doc · updated 2026-06-30 with trap system  
+Status: design doc · the game's spine, kept current  
+Most of what is here is BUILT — the two-world model, the node types, fragments, the floor system, the
+tomb interior (§8), world generation (§9) and the trap system (§11) all ship. The §13 open questions and
+anything this doc marks as undecided are the exception. A dated "last updated" line is not kept here: it
+went stale faster than the doc did, and `git log` answers the same question honestly.  
 Companion to: `game-loop.md`, `design-decisions.md`
 
 ---

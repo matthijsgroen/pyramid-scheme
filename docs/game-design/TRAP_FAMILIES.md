@@ -1,6 +1,10 @@
 # TRAP_FAMILIES.md
 
-Status: design draft  
+Status: PART BUILT · the catalogue is design, three of its families ship  
+**Built:** arithmetic reflex (§5.1) and clock reading (§5.2), both in `src/mods/trap/`, plus the
+crocodile, which is a trap the catalogue never named. Time limits (§3), difficulty gating (§4) and the
+consumable/health interaction (§6) are all live — `trapConfig.ts`, `trapHealth.ts`, `consumables.ts`.
+**Still design:** pattern recognition (§5.3), memory (§5.4) and the Egyptian-instrument family (§5.5).  
 Companion to: `PUZZLE_FAMILIES.md` (puzzle nodes), `pyramid-interior-design.md §11` (trap system design)
 
 This document defines the **trap families** the game can serve inside trapped corridors, how each scales, and which difficulty tier each is appropriate for. Tiers are referenced as **T1–T5**, matching the tier naming in `PUZZLE_FAMILIES.md`.
