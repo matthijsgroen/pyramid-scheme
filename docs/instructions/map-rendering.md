@@ -33,6 +33,7 @@ Bottom to top, all inside `[data-map]`:
 | the markers                                                             | one `MarkerCell` per cell: an icon in a little `<svg>`, in a box the size of the cell |
 | the standing layer                                                      | props, chests, stairs, exits, gates, the explorer — sorted by floor line              |
 | archways and gates                                                      | drawn last, so the player walks under them                                            |
+| the shade's second pass, then the light's                               | the dark that seats what is standing, and the lamp reaching it (see below)            |
 | `MapWeather`                                                            | over the SCROLLING BOX, not inside the map: drift and tint belong to the window       |
 
 Two primitives build almost all of it (`htmlLayers.tsx`): **`Sprite`**, a box with the art as its
@@ -64,6 +65,27 @@ background, and **`ClipLayer`**, a map-sized box cut to a path.
   one UNDER the click markers, which are the layer the floor is read by and lose most of their contrast if
   washed with it; a lighter one over everything, so furniture is seated in the same dark it stands in.
   Its strength is set per tier against that tier's own slabs, and its HUE is where the ranks differ.
+- **The light falls in the same two passes, and for the same reason read backwards.** A lit place drawn
+  only under the shade's second pass hands a quarter of the tier's night back to everything the lamp just
+  reached: measured on starter stone that took the lit floor from 114 to 89 and the explorer to 65 — a
+  hero darker than the ground under their own feet, on a map where nothing was above 106 of 255 to begin
+  with. So `LitPlaces` is drawn twice: the full pass on the floor, and a lighter one after the shade's
+  second, reaching a wall band ABOVE each lit cell so a prop standing against the north wall is lit to the
+  top of its own headroom instead of being cut off at the floor line.
+- **A light needs a source, or it is a highlight.** The lit place is clipped to the floor rects of a whole
+  room or corridor run — that is WHERE light may land, and it is set by the rules of the place, not by
+  distance. HOW MUCH lands where is the fill: a radial gradient centred on the cell the explorer is
+  standing in (`torchFill`), hottest at the flame and down to a bit under half of it at the far end. Flat,
+  the same shape read as a rectangle of floor raised by a fixed amount. It never falls to nothing, because
+  a torch carried along a passage lights the passage as far as the next turn, however long that is.
+- **Light is warm or it is not light.** A near-white lamp screen-blended over stone lifts every channel by
+  about the same amount, which turns the floor pale rather than warm — the old `#ffe2b0` left the lit floor
+  at 4% saturation on expert and 16% on starter. Hold the blue channel back.
+- **The explorer is lit too, not just the ground they stand on** (`FIGURE_LIT`). A pool on the floor is
+  under their feet and cannot reach them. A small brightness lift, a saturation lift, and a warm
+  `drop-shadow` hugging the silhouette — the rim being the part that separates a figure from stone of a
+  similar value at the zoom a floor is read at. Keep the brightness small: the art's own highlights are
+  already near 229 and more of it clips them flat.
 - **A light pool is not clipped to the floor**, and is not meant to be: a wide one lays light over the
   solid rock beside a one-cell corridor, which reads as haze coming off the flame. What lights a ROOM as a
   room is still the lit place, which is clipped to the floor rects.

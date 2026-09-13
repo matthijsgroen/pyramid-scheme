@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { Fragment, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react"
 import type {
   CellState,
   DecorationKind,
@@ -50,6 +50,7 @@ import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileUrl, tileVar
 import { authoredKindsFor } from "./authoredKinds"
 import {
   ALL_STATES,
+  boundsOf,
   buildTileRegions,
   faceShadowRects,
   faceTopRects,
@@ -2144,18 +2145,103 @@ const litPlaceCells = (grid: FloorGrid, claims: RoomClaims, at: readonly [number
   return cells
 }
 
-const TORCH_LIT = "#ffe2b0"
+/**
+ * What a torch lays on the stone around it — the CLIP says where light can land, this says how much of it
+ * lands where, and the second half is the one that was missing.
+ *
+ * A FLAT FILL IS NOT LIGHT. The lit place was one opacity across its whole shape, so a lit room was a
+ * rectangle of floor raised by a fixed amount: no falloff, no centre, nothing to say where the flame was.
+ * That reads as a highlight laid over a floorplan, and it is most of what "dull" meant — the only part of
+ * the map that looked like light was the torch's own pool, which is the one thing on it drawn as a
+ * gradient. Same shape, same clip, same single element and single paint: the fill is now a gradient about
+ * the cell the explorer is standing in, so the light has a source.
+ *
+ * IT NEVER FALLS TO NOTHING, because the place is lit by rule — a torch carried along a passage lights the
+ * passage as far as the next turn, however long that is (`litPlaceCells`). The far end of a long run
+ * drops to a bit under half of what the near end gets, which is a corridor receding; taking it to zero
+ * would be a torch that stops working at a distance the level design has already promised.
+ *
+ * WARMER THAN IT WAS, too. `#ffe2b0` is nearly white, and a screen blend with a near-white light lifts
+ * every channel by about the same amount — so the lamp turned the floor pale rather than warm, leaving the
+ * lit floor at 4% saturation on expert and 16% on starter: a grey room and a slightly less grey one. The
+ * stops below hold the blue channel back, and the hottest of them sits where the flame is.
+ */
+const TORCH_CORE = "rgba(255,216,152,1)"
+const TORCH_MID = "rgba(255,198,122,0.78)"
+const TORCH_EDGE = "rgba(255,174,94,0.44)"
+
+/** How far the falloff spans, at the least. A one-cell place — a dead end, a single chamber — has almost
+ * no distance to fall off over, and a gradient sized to it alone put a vignette inside one square. Below
+ * this the light is simply near-flat, which for a place that small is what it should be. */
+const TORCH_MIN_REACH = CELL * 2.2
+
+/** A pool of torchlight cut to a place: brightest at the flame, falling away to the edges of whatever the
+ * clip lets it reach. `farthest-corner` by hand rather than by keyword, because it needs a floor.
+ *
+ * The centre follows the LIVE cell, so walking a corridor drags the light along it rather than leaving it
+ * pinned where the run was entered. What that costs is one repaint of one clipped box per cell walked —
+ * five a second at the default step, of a layer that is a gradient fill and nothing else, and only while
+ * the explorer is moving, which is already a render a frame. It is not a map-wide invalidation: the box is
+ * the lit place's own bounds (see `ClipLayer`), never the floor's. */
+const torchFill = (box: { x: number; y: number; w: number; h: number }, at: readonly [number, number]) => {
+  const { cx, cy } = cellCenter(at[0], at[1])
+  const [x, y] = [cx - box.x, cy - box.y]
+  const corner = Math.max(
+    Math.hypot(x, y),
+    Math.hypot(box.w - x, y),
+    Math.hypot(x, box.h - y),
+    Math.hypot(box.w - x, box.h - y)
+  )
+  const reach = Math.max(corner, TORCH_MIN_REACH)
+  return `radial-gradient(circle ${reach.toFixed(1)}px at ${x.toFixed(1)}px ${y.toFixed(1)}px, ${TORCH_CORE} 0%, ${TORCH_MID} 38%, ${TORCH_EDGE} 100%)`
+}
+
+/**
+ * How far each pass of the light lifts the place it falls on. THE LIGHT FALLS IN THE SAME TWO PASSES THE
+ * SHADE DOES (FloorShade), and it has to, or the second wash simply takes the lamp back.
+ *
+ * The full pass lands on the floor under the click markers. The second lands after the shade's own second
+ * pass, over the furniture and the player standing in the room — and without it they were the only things
+ * on the map that the lamp never reached: the shade's second pass put a quarter of the tier's night back
+ * over everything the first pass had lit, which on starter stone took the lit floor from 114 down to 89
+ * and the explorer to 65 — a hero DARKER than the ground under their own feet.
+ *
+ * The two together are what give the map a top end at all. Before them nothing on the map was bright: the
+ * lit floor came out at 89–106 of 255, which on four of the five ranks is DIMMER than the bare slab art
+ * the tier is cut from. The light was only ever less dark. It now lands at 125–137 against an unlit 43–67,
+ * so a lit room reads brighter than the stone rather than a shade less black than the rest of it.
+ */
+const LIT_STRENGTH = 0.44
+const LIT_STANDING_STRENGTH = 0.24
+
+/** How long a place takes to come up, and to go out: the two have to agree, because both are drawn
+ * during the crossing. Matches `--animate-map-lit-in`/`-out` in the theme. */
+const FADE_MS = 320
+const FADE_IN = "animate-map-lit-in motion-reduce:animate-none"
+const FADE_OUT = "animate-map-lit-out motion-reduce:animate-none"
 
 const LitPlace = ({
   grid,
   claims,
   at,
-  className,
+  leaving = false,
+  strength,
+  headroom = false,
 }: {
   grid: FloorGrid
   claims: RoomClaims
   at?: readonly [number, number]
-  className: string
+  /** This is the place being walked OUT of: it fades away rather than up. */
+  leaving?: boolean
+  strength: number
+  /** Reach a wall band's worth ABOVE every lit cell, whether or not the cell north of it is lit.
+   *
+   * For the pass that falls on what is STANDING. A prop is bottom-anchored in its cell and a face band
+   * taller than it (`PROP_H`), and the explorer's head clears their own cell by about twenty units — so a
+   * light clipped to the floor squares cut a hard horizontal line across every statue standing against
+   * the north wall of a lit room, lighting it from the waist down. The band is also the wall the lamp is
+   * nearest: a torch in a room lights the face in front of it, so there is nothing to undo here. */
+  headroom?: boolean
 }) => {
   const place = at ? litPlaceCells(grid, claims, at) : []
 
@@ -2169,7 +2255,7 @@ const LitPlace = ({
     [...keys].flatMap(key => {
       const [r, c] = key.split(",").map(Number)
       const parts: Rect[] = [[cellLeft(c), cellTop(r), CELL, CELL]]
-      if (joinsTo.has(`${r - 1},${c}`)) parts.push([cellLeft(c), cellTop(r) - WALL_H, CELL, WALL_H])
+      if (headroom || joinsTo.has(`${r - 1},${c}`)) parts.push([cellLeft(c), cellTop(r) - WALL_H, CELL, WALL_H])
       if (joinsTo.has(`${r},${c - 1}`)) parts.push([cellLeft(c) - SIDE_W, cellTop(r), SIDE_W, CELL])
       // And the little square where four lit cells meet — the corner between a north gap and a west
       // gap. Filling both bands and not the corner between them leaves an unlit dot at every crossing
@@ -2179,15 +2265,22 @@ const LitPlace = ({
       return parts
     })
 
-  if (!lit.size) return null
-  return <ClipLayer data-torch="lit" className={className} rects={rectsFor(lit, lit)} fill={TORCH_LIT} />
+  if (!lit.size || !at) return null
+  const rects = rectsFor(lit, lit)
+  return (
+    <ClipLayer
+      data-torch={headroom ? "standing" : "lit"}
+      className={leaving ? FADE_OUT : FADE_IN}
+      rects={rects}
+      fill={torchFill(boundsOf(rects), at)}
+      // The strength the keyframes fade TO, and the opacity that stands when there are none: an animation
+      // is the one thing that outranks an inline style, so the same number written both ways is the
+      // `motion-reduce` fallback and not a second value to keep in step.
+      style={{ "--map-lit-strength": strength } as CSSProperties}
+      opacity={leaving ? 0 : strength}
+    />
+  )
 }
-
-/** How long a place takes to come up, and to go out: the two have to agree, because both are drawn
- * during the crossing. Matches `--animate-map-lit-in`/`-out` in the theme. */
-const FADE_MS = 320
-const FADE_IN = "animate-map-lit-in motion-reduce:animate-none motion-reduce:opacity-[0.1]"
-const FADE_OUT = "animate-map-lit-out motion-reduce:animate-none motion-reduce:opacity-0"
 
 /**
  * The lit place, crossfaded as the explorer walks from one to the next.
@@ -2197,7 +2290,19 @@ const FADE_OUT = "animate-map-lit-out motion-reduce:animate-none motion-reduce:o
  * out, the new one coming in — because a path cannot tween between two shapes, so the fade has to be
  * between two of them.
  */
-const LitPlaces = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; at?: readonly [number, number] }) => {
+const LitPlaces = ({
+  grid,
+  claims,
+  at,
+  strength = LIT_STRENGTH,
+  headroom = false,
+}: {
+  grid: FloorGrid
+  claims: RoomClaims
+  at?: readonly [number, number]
+  strength?: number
+  headroom?: boolean
+}) => {
   const key = at ? litPlaceCells(grid, claims, at).join("|") : ""
   const [leaving, setLeaving] = useState<readonly [number, number] | undefined>(undefined)
   const prevRef = useRef<{ key: string; at?: readonly [number, number] }>({ key, at })
@@ -2214,8 +2319,18 @@ const LitPlaces = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; 
 
   return (
     <div style={{ position: "absolute", inset: 0, mixBlendMode: "screen", pointerEvents: "none" }}>
-      {leaving && <LitPlace key="leaving" grid={grid} claims={claims} at={leaving} className={FADE_OUT} />}
-      <LitPlace key={key} grid={grid} claims={claims} at={at} className={FADE_IN} />
+      {leaving && (
+        <LitPlace
+          key="leaving"
+          grid={grid}
+          claims={claims}
+          at={leaving}
+          leaving
+          strength={strength}
+          headroom={headroom}
+        />
+      )}
+      <LitPlace key={key} grid={grid} claims={claims} at={at} strength={strength} headroom={headroom} />
     </div>
   )
 }
@@ -2830,6 +2945,14 @@ export const SiteMapView = ({
               {/* The shade's second pass — see FloorShade. Everything standing has to be in the dark
                 with the floor, or it reads as cut out and pasted on. */}
               <FloorShade tier={tier} strength={0.45} />
+
+              {/* AND THE LIGHT'S SECOND PASS OVER IT, for the same reason read the other way round: what
+                stands in a lit room is standing in the light, and the wash above took a quarter of the
+                tier's night back over everything the lamp had just reached. The explorer came out of it
+                darker than the floor under their feet. Lighter than the first pass and reaching a band
+                higher (see `headroom`), so the furniture is lit to the top of its own headroom rather
+                than sawn off at the floor line. */}
+              <LitPlaces grid={grid} claims={claims} at={explorerPos} strength={LIT_STANDING_STRENGTH} headroom />
             </div>
           </div>
         </div>

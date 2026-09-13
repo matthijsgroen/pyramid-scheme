@@ -111,6 +111,28 @@ export const WorldFloorMaster: Story = {
   args: { grid: getWorldGrid("master_2"), revealAllCells: true },
 }
 
+// WHERE THE MAP'S VALUE RANGE IS JUDGED, and the only view that shows all of it at once: the tier's own
+// dark over the whole floor, the lit place burning a hole in it, the explorer's torch pool inside that,
+// and the explorer standing in the middle carrying the flame. A floor revealed but with nobody on it
+// (the stories above) shows only the dark half.
+//
+// The question to ask of it is whether anything here is actually BRIGHT — whether the lit room reads as
+// lighter than the stone the tier is cut from rather than as a shade less black than the rest of it, and
+// whether the figure with the torch is the thing the eye goes to.
+const litWorldFloor = (siteId: string): Story["args"] => {
+  const grid = getWorldGrid(siteId)
+  // IN A PASSAGE, not on the entrance. A torch carried along a corridor lights the corridor as far as the
+  // next turn, which is the largest thing the lamp ever lights and the only place its falloff has room to
+  // be seen — the entrance is a one-cell room, and standing there lights one square.
+  const run = grid.cells.flatMap((row, r) =>
+    row.flatMap((cell, c) => (cell.type === "corridor" && cell.dirs.size > 1 ? [[r, c] as const] : []))
+  )
+  return { grid, revealAllCells: true, explorerPos: run[Math.floor(run.length / 2)] ?? grid.entrancePos }
+}
+
+export const TorchlitStarter: Story = { args: litWorldFloor("starter_1") }
+export const TorchlitMaster: Story = { args: litWorldFloor("master_2") }
+
 export const Interactive: Story = {
   args: { grid: linearGrid },
   render: () => {

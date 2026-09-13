@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- A lit room now reads as lit: the light has a source at your torch and falls away from it, it lands warm rather than pale, and it reaches the walls, the furniture and the explorer instead of stopping at the floor.
+
 ## 0.43.6 - 2026-09-13
 
 ### Fixed

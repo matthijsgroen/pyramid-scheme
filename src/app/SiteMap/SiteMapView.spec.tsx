@@ -1013,8 +1013,11 @@ describe("archways", () => {
 describe("the place the explorer stands is lit", () => {
   // Both washes are one path each, so the cells they cover are countable by the moves in the `d`.
   // Cell squares only: the path also carries the bands joining one lit cell to the next.
+  //
+  // The FULL pass, which is the one clipped to the floor. The light falls in two (see the standing pass
+  // below), and asking for `[data-torch]` flat would count each place twice.
   const litCounts = (container: HTMLElement) =>
-    Array.from(container.querySelectorAll<HTMLElement>("[data-torch]")).map(
+    Array.from(container.querySelectorAll<HTMLElement>("[data-torch='lit']")).map(
       el => (clipOf(el).match(/h56v56h-56z/g) ?? []).length
     )
 
@@ -1056,15 +1059,52 @@ describe("the place the explorer stands is lit", () => {
       [straightCorridor("completed", ["n"]), empty],
     ])
     const { container, rerender } = render(<SiteMapView grid={grid} explorerPos={[0, 0]} revealAllCells />)
-    expect(container.querySelectorAll("[data-torch]")).toHaveLength(1)
+    expect(container.querySelectorAll("[data-torch='lit']")).toHaveLength(1)
     rerender(<SiteMapView grid={grid} explorerPos={[2, 0]} revealAllCells />)
-    expect(container.querySelectorAll("[data-torch]")).toHaveLength(2)
+    expect(container.querySelectorAll("[data-torch='lit']")).toHaveLength(2)
   })
 
   it("draws no light when no one is on the floor", () => {
     const grid = makeGrid([[corridor("completed"), corridor("completed")]])
     const { container } = render(<SiteMapView grid={grid} revealAllCells />)
     expect(litCounts(container)).toEqual([])
+    expect(container.querySelectorAll("[data-torch]")).toHaveLength(0)
+  })
+})
+
+describe("the light falls in the same two passes the shade does", () => {
+  // The shade's second pass lies over everything standing, so that furniture is seated in the same dark
+  // it stands in. Without a light pass after it, that wash took a quarter of the tier's night back over
+  // everything the lamp had just lit — and the explorer, who is carrying the lamp, came out darker than
+  // the floor under their own feet.
+  const twoRooms = () => makeGrid([[chamber("completed"), chamber("completed")]])
+  const depthOf = (container: HTMLElement, el: Element) => Array.from(container.querySelectorAll("*")).indexOf(el)
+  const lit = (container: HTMLElement, pass: "lit" | "standing") =>
+    container.querySelector<HTMLElement>(`[data-torch='${pass}']`)!
+
+  it("relights what stands in the room, after the shade that seats it", () => {
+    const { container } = render(<SiteMapView grid={twoRooms()} explorerPos={[0, 0]} revealAllCells />)
+    const second = Array.from(container.querySelectorAll<HTMLElement>("[data-floor-shade]")).at(-1)!
+
+    expect(lit(container, "standing")).toBeTruthy()
+    expect(depthOf(container, lit(container, "standing"))).toBeGreaterThan(depthOf(container, second))
+  })
+
+  it("keeps the standing pass the lighter of the two, so the floor still carries the lamp", () => {
+    const { container } = render(<SiteMapView grid={twoRooms()} explorerPos={[0, 0]} revealAllCells />)
+
+    expect(Number(lit(container, "standing").style.opacity)).toBeLessThan(Number(lit(container, "lit").style.opacity))
+    expect(Number(lit(container, "standing").style.opacity)).toBeGreaterThan(0)
+  })
+
+  it("reaches a wall band above every lit cell, so a prop is not sawn off at the floor line", () => {
+    // A prop is bottom-anchored in its cell and a face band taller than it, and the explorer's head
+    // clears their own cell too. Clipped to the floor squares, the standing pass lit a statue against the
+    // room's north wall from the waist down and drew a hard line across it.
+    const { container } = render(<SiteMapView grid={twoRooms()} explorerPos={[0, 0]} revealAllCells />)
+    const topOf = (pass: "lit" | "standing") => parseFloat(lit(container, pass).style.top)
+
+    expect(topOf("standing")).toBe(topOf("lit") - WALL_H)
   })
 })
 

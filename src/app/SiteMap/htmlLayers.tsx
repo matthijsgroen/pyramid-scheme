@@ -93,12 +93,16 @@ export const ClipLayer = ({
   fill,
   opacity,
   className,
+  style,
   ...rest
 }: {
   rects: readonly Rect[]
   fill: string
   opacity?: number
   className?: string
+  /** Merged UNDER the box's own geometry, so a caller can hand the element a custom property — the
+   * strength an animation fades to, say — without being able to move the layer off its shape. */
+  style?: CSSProperties
 } & Record<`data-${string}`, string | undefined>) => {
   if (rects.length === 0) return null
   const box = boundsOf(rects)
@@ -107,6 +111,7 @@ export const ClipLayer = ({
       {...rest}
       className={className}
       style={{
+        ...style,
         position: "absolute",
         left: box.x,
         top: box.y,

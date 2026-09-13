@@ -518,22 +518,28 @@ body {
   }
 
   /* The place the player is standing coming up, and the one they left going out. Both are drawn during a
-     crossing — a shape cannot tween into another shape, so the fade has to be between two of them. */
-  /* How far the lamp lifts the room it is standing in, back out of the tier's shade (FloorShade).
-     Read as a pair with that wash: this number is what the player sees when they ask "where am I". */
+     crossing — a shape cannot tween into another shape, so the fade has to be between two of them.
+
+     HOW FAR IT LIFTS IS THE ELEMENT'S OWN (`--map-lit-strength`), because the light falls in the same two
+     passes the shade does (FloorShade, LitPlaces) and the two passes are not the same strength. One
+     keyframe pair serves both rather than four hand-kept numbers going out of step.
+
+     The fallback is the full pass's own strength, so a layer that forgets to set the variable still lights
+     something. Under reduced motion the animation is off and the element's inline opacity stands instead —
+     which is why LitPlace carries one. */
   --animate-map-lit-in: map-lit-in 320ms ease-out both;
   @keyframes map-lit-in {
     from {
       opacity: 0;
     }
     to {
-      opacity: 0.34;
+      opacity: var(--map-lit-strength, 0.44);
     }
   }
   --animate-map-lit-out: map-lit-out 320ms ease-in both;
   @keyframes map-lit-out {
     from {
-      opacity: 0.34;
+      opacity: var(--map-lit-strength, 0.44);
     }
     to {
       opacity: 0;

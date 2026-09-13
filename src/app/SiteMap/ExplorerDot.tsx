@@ -188,7 +188,22 @@ const TORCH_RADIUS = CELL * 1.7
  * over, so a lit lamp in every third chamber costs nothing, and a pool drawn on its own in a story does
  * not depend on the map being around it to have a fill at all. */
 const LIGHT_POOL_FILL =
-  "radial-gradient(closest-side, rgba(255,202,106,0.55) 0%, rgba(255,171,61,0.26) 45%, rgba(255,154,46,0) 100%)"
+  "radial-gradient(closest-side, rgba(255,239,198,0.72) 0%, rgba(255,202,106,0.52) 26%, rgba(255,171,61,0.24) 58%, rgba(255,154,46,0) 100%)"
+
+/**
+ * What the explorer's own flame does to the explorer.
+ *
+ * A pool on the FLOOR cannot light the person standing in it — it is under their feet — so the figure was
+ * the one thing on the map with a torch in its hand and no light on it. Measured against a lit starter
+ * floor the sprite came out at 65 of 255 to the floor's 89: a hero reading as a dark blob on brighter
+ * ground, which is the opposite of where an eye should be pulled.
+ *
+ * Three parts, and the rim is the one doing most of the work. `brightness` is kept small because the art's
+ * own highlights are already near 229 and any more of it clips them flat; `saturate` is what stops the
+ * lift going chalky; and the warm `drop-shadow` is spill off the flame, hugging the silhouette, which is
+ * what separates a figure from stone of a similar value at the zoom a floor is read at.
+ */
+const FIGURE_LIT = "brightness(1.1) saturate(1.14) drop-shadow(0 0 5px rgba(255,186,102,0.6))"
 
 /** What the map's own `<defs>` still carries: the flicker's stylesheet is Tailwind's now, but the stone
  * is one `<svg>` again (see TileLayers) and its defs are where a shared clip belongs. Kept as a component
@@ -262,6 +277,7 @@ export const ExplorerFigure = ({
             background: color,
             border: "2px solid #110d08",
             boxSizing: "border-box",
+            filter: FIGURE_LIT,
           }}
         />
       </>
@@ -282,6 +298,9 @@ export const ExplorerFigure = ({
           height: CHAR_H,
           overflow: "hidden",
           transform: facing === "w" ? "scaleX(-1)" : undefined,
+          // On the CLIP rather than on each frame: a filter resolves after the element's own overflow, so
+          // the rim follows the character's silhouette and one declaration covers every frame of a walk.
+          filter: FIGURE_LIT,
         }}
       >
         {walking && frames.length > 1 ? (
