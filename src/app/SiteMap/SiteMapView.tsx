@@ -36,6 +36,7 @@ import {
   cellTop,
   mapHeight,
   mapWidth,
+  PROP_H,
 } from "./mapScale"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
@@ -47,7 +48,15 @@ import { hashString } from "@/support/hashString"
 import { companionFor } from "./companionProps"
 import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileUrl, tileVariants } from "./tileAssets"
 import { authoredKindsFor } from "./authoredKinds"
-import { ALL_STATES, buildTileRegions, faceShadowRects, faceTopRects, hasWallFace, rectsToPath } from "./tileRegions"
+import {
+  ALL_STATES,
+  buildTileRegions,
+  faceShadowRects,
+  faceTopRects,
+  footprintRects,
+  hasWallFace,
+  rectsToPath,
+} from "./tileRegions"
 import type { Rect } from "./tileRegions"
 import type { FloorAt, TileRegions } from "./tileRegions"
 
@@ -404,32 +413,6 @@ const shapeKindFor = (
 // tint under it, and never for clickability or badges.
 const isLockedGate = (cell: RoomCell, ownedKeys: ReadonlySet<string> | undefined): boolean =>
   cell.tags?.includes("gate") === true && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)
-
-/** A room's own footprint as a clip path: each of its cells, grown upward by a prop's headroom so a
- * tall thing still crosses the wall band behind it.
- *
- * AND THE SEAMS BETWEEN THEM. Cells do not touch — `cellLeft`/`cellTop` leave `SIDE_W` between columns
- * and `WALL_H` between rows for the walls seen edge-on — so a clip built from cell rects alone has a
- * hairline of nothing down every join. Furniture standing wholly inside one cell never met it; the ward
- * gate, which straddles a seam on purpose because that is where its sill is laid, came out with the
- * strip containing its bars cut clean away and its two jambs drawn as separate posts.
- */
-// eslint-disable-next-line react-refresh/only-export-components -- pure function over cell keys, exported so tests can assert on the clip
-export const footprintRects = (cells: readonly string[]): Rect[] => {
-  const own = cells.map(key => key.split(",").map(Number) as [number, number])
-  const has = new Set(cells)
-  const rects: Rect[] = own.map(([r, c]) => [cellLeft(c), cellTop(r) - PROP_H, CELL, CELL + PROP_H])
-  for (const [r, c] of own) {
-    // Each seam once: only ever to the east and to the south, so a pair of cells cannot add it twice.
-    if (has.has(`${r},${c + 1}`)) rects.push([cellLeft(c) + CELL, cellTop(r) - PROP_H, SIDE_W, CELL + PROP_H])
-    if (has.has(`${r + 1},${c}`)) rects.push([cellLeft(c), cellTop(r) + CELL - PROP_H, CELL, WALL_H + PROP_H])
-  }
-  return rects
-}
-
-/** The same shape as one path, for the tests that read it and for anything that wants it whole. */
-// eslint-disable-next-line react-refresh/only-export-components -- pure function over cell keys, exported so tests can assert on the clip
-export const footprintPath = (cells: readonly string[]): string => rectsToPath(footprintRects(cells))
 
 /** How far the cresset at a stair's mouth stands from the middle of its cell, measured off the painted
  * tile rather than guessed: the flame's own pixels land 24 units to one side of centre. WHICH side is a
@@ -1655,14 +1638,6 @@ const TileLayers = ({
 // A prop is drawn in the room's first genuine claim (void or diagonal — never a flank corridor,
 // see buildRoomClaims above): the tier's sprite when it has one, and the placeholder glyph when it
 // does not, so art can land one piece at a time.
-
-// A prop sprite is a cell PLUS a face band tall, anchored by its BOTTOM edge on the cell's floor line.
-// Bottom-anchored is what makes it stand on the floor instead of floating over it; the band of headroom
-// is what lets it have height. Props are painted after every wall (see the render order below), so a
-// statue occludes the wall behind it rather than being cut off at its own cell — and a room's prop cell
-// is the first claim in row-major order, normally the cell NORTH of the room, so the headroom reaches
-// into wall rather than over the room's own icon.
-const PROP_H = CELL + WALL_H
 
 /** Props that carry a live flame, and so light the floor they stand on.
  *

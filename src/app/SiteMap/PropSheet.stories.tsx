@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { CELL, WALL_FACE_H, WALL_H } from "./mapScale"
+import { CELL, WALL_FACE_H, WALL_H, PROP_H } from "./mapScale"
 import { authoredKindsFor } from "./authoredKinds"
 import { DRIFT_KINDS } from "./floorScatter"
 import { ART_IMAGE_RENDERING, sharedTileUrl, tileUrl } from "./tileAssets"
@@ -15,7 +15,6 @@ import { tierPalette } from "./tileMaterials"
 // A generated floor cannot do this job: RankSeams draws whatever its pools happen to author, so there is
 // no way to ask it for the one object you just imported.
 
-const PROP_H = CELL + WALL_H
 /** The explorer's slot, from importTile's SLOTS — he is the ruler everything else is measured against. */
 const EXPLORER_W = 40
 const EXPLORER_H = 70

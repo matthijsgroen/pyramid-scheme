@@ -33,6 +33,15 @@ export const MARKER_HIT = CELL * 0.36 // ~20
 // the pattern origin only if the row pitch is a whole number of faces — otherwise each row samples a
 // different slice of the art and the dark ones read as black holes in the wall.
 export const WALL_H = CELL / 2 // 28 — the visible height of a back wall
+
+// A prop sprite is a cell PLUS a face band tall, anchored by its BOTTOM edge on the cell's floor line.
+// Bottom-anchored is what makes it stand on the floor instead of floating over it; the band of headroom
+// is what lets it have height. Props are painted after every wall, so a statue occludes the wall behind
+// it rather than being cut off at its own cell — and a room's prop cell is the first claim in row-major
+// order, normally the cell NORTH of the room, so the headroom reaches into wall rather than over the
+// room's own icon.
+export const PROP_H = CELL + WALL_H
+
 export const SIDE_W = CELL / 4 // 14 — the thickness of a side wall, seen edge-on
 
 /**
