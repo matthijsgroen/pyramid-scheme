@@ -176,11 +176,11 @@ const TORCH_CLASS = "map-torch animate-map-torch motion-reduce:animate-none"
 // why the span is the strip's FULL width and the step count is however many frames the facing was drawn
 // with. Both come in as inline values, so one keyframe serves every facing and every frame count.
 const WALK_CLASS = "animate-map-walk motion-reduce:animate-none"
-// A flame reaches past the cell it stands in: at 0.85 the pool did not clear the torch's own tile, so a
-// lit corridor read as a row of bright dots rather than as a passage someone is walking down. It stops
-// well short of a room, though — a pool is not clipped to the floor, and a wide one lays light over the
-// solid rock around a one-cell corridor. What lights a ROOM is the lit place, which is clipped.
-const TORCH_RADIUS = CELL * 1.05
+// What the player carries, and the widest light on the map: a torch in the hand throws a halo, not a
+// spot, and it is the thing that has to make the dark around it (FloorShade) feel like somewhere they are
+// walking through rather than a hole in the drawing. A pool is not clipped to the floor, so a wide one
+// lays light over the solid rock beside a one-cell corridor — read as haze off the flame, and kept.
+const TORCH_RADIUS = CELL * 1.7
 
 /** The colours a pool of light is made of, as one gradient every pool shares.
  *

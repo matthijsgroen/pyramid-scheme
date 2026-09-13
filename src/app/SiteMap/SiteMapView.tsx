@@ -1648,8 +1648,9 @@ const TileLayers = ({
 const LIT_DECORATIONS = new Set<DecorationKind>(["lamp"])
 
 /** A lamp's pool is smaller and steadier than the explorer's — it sits on a stool rather than being
- * carried, and at a cell and a half across it would light the room the torch is meant to light. */
-const LAMP_POOL_RADIUS = CELL * 0.42
+ * carried. It still has a room's worth of dark to hold back, though (FloorShade), so it reaches most of
+ * the way across a chamber: a flame that lit only its own tile left the place it stands in unlit. */
+const LAMP_POOL_RADIUS = CELL * 0.9
 
 /** One room's prop. `seed` decides WHICH drawing of the kind, where a kind has more than one.
  *
