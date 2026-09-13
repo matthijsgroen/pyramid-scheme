@@ -31,7 +31,7 @@ fresh chat with both files attached still answered from the words alone, and the
 next roll on the scaffold. A new entry gets the line too.
 
 **How to use one entry.** START A NEW CHAT — a thread that has already done a tile is the commonest
-cause of a re-roll, and `site-map-art-handover.md` measures why. Then attach the two images it names, paste the fenced block verbatim, take the result
+cause of a re-roll, and `prop-pipeline.md` measures why, under "Working the loop". Then attach the two images it names, paste the fenced block verbatim, take the result
 from the generator's DOWNLOAD (not a pasted image — a paste resizes 1686x2528 to 1334x2000 and the master
 is what the repository keeps), and drop it in `~/Downloads`. The import line under each block is what turns
 it into a tile; it is recorded here so the flags are not re-derived, but the brightness and saturation in it
@@ -381,7 +381,6 @@ scaffold hanging --contents=gold --spin=33 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/hanging.webp --tier=master --name=hanging --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
-
 
 ### `master/lamp` — a gilded lamp tree
 
@@ -736,6 +735,7 @@ scaffold shelf --spin=17 --colour=#d9a93f --floor=#57534b
 yarn import-tile art/masters/props/master/shelf.webp --tier=master --name=shelf --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
+
 ---
 
 ## Gods — sixteen
@@ -1647,17 +1647,17 @@ deity of its own — the pharaoh's shrine has Anubis couchant on its lid — the
 This is the same argument the canopic jars settled: a face is paint at this size, and what carries it is
 the silhouette of a head plus one attribute, never a costume.
 
-| god     | the one mark                                                             |
-| ------- | ------------------------------------------------------------------------ |
-| anubis  | a jackal's head, black — long muzzle, two tall pointed ears              |
-| bastet  | a cat's head, small and round-eared                                      |
-| horus   | a falcon's head under the double crown, red round white                  |
-| maat    | a woman's head with one tall straight OSTRICH FEATHER standing up on it  |
-| osiris  | mummiform and wrapped, the tall white ATEF crown with a plume each side  |
-| ra      | a falcon's head carrying a SUN DISC, the disc ringed by a cobra          |
-| sekhmet | a lioness's head carrying a sun disc — a mane where Bastet has none      |
-| sobek   | a crocodile's head, long flat snout                                      |
-| thoth   | an IBIS head, a long curved down-swept beak                              |
+| god     | the one mark                                                            |
+| ------- | ----------------------------------------------------------------------- |
+| anubis  | a jackal's head, black — long muzzle, two tall pointed ears             |
+| bastet  | a cat's head, small and round-eared                                     |
+| horus   | a falcon's head under the double crown, red round white                 |
+| maat    | a woman's head with one tall straight OSTRICH FEATHER standing up on it |
+| osiris  | mummiform and wrapped, the tall white ATEF crown with a plume each side |
+| ra      | a falcon's head carrying a SUN DISC, the disc ringed by a cobra         |
+| sekhmet | a lioness's head carrying a sun disc — a mane where Bastet has none     |
+| sobek   | a crocodile's head, long flat snout                                     |
+| thoth   | an IBIS head, a long curved down-swept beak                             |
 
 ### `master/mask-osiris` — Osiris on the pharaoh's funerary mask
 
@@ -1964,6 +1964,7 @@ scaffold statue --contents=standing --spin=-12 --colour=#d9a93f --colour-figure=
 yarn import-tile art/masters/props/master/statue-maat.webp --tier=master --name=statue-maat --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
+
 ### `master/shrine-maat` — Ma'at in the pharaoh's shrine
 
 4 rooms. **WAITS ON `master/shrine`.** It drops the generic's `--contents=couchant`: that scaffold puts
@@ -2558,4 +2559,3 @@ Everything else at starter, junior and expert is drawn. These three are the whol
 master, and every one of them is a SINGLE room — which is why they sat unqueued while 62 rooms' worth of
 expert work went in ahead of them. They are here because "done up to expert" is not done with dummies
 still in it, not because any of them is urgent.
-

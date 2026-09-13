@@ -289,3 +289,17 @@ full of — `--contents` on what exists rather than a new model. `prim_niche`, `
 - A **second prop per room** is `companionProps.ts`: one more piece of furniture of the SAME purpose, in a
   third of the rooms with space for it. Neither touches world generation — no pool changes length, so no
   floor needs regenerating.
+
+---
+
+## Renaming a decoration kind is cheap; adding one is not
+
+Both were treated as the same cost for a long time and they are not close. `pickDressing` is
+`pool[hash(siteId, roomKey) % pool.length]`, so what moves every room's prop is a change of LENGTH —
+adding a name or dropping one. Renaming one in place keeps the length and the index: `rubble` →
+`rubblePile` regenerated the world with 698 pool entries changed and NOT ONE placement moved, verified by
+diffing the artifact (the only other line to change was `worldContentHash`, which is derived).
+
+Nothing is baked either way. The generated world stores the POOLS; the choice is made at assemble time
+from a hash of the site id and the room key, and zero per-room decorations are stored. So `sheaf` and
+`tideLine` are still the expensive kind of change, and only because they are NEW.
