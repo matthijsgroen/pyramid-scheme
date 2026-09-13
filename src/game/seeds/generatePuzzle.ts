@@ -27,5 +27,16 @@ export const generatePuzzle = <T>(meta: FamilyMeta, seed: number, ctx: FamilyGen
   // which is what every family did before there were lists. Slower, never wrong, and it is what keeps
   // the puzzle lab usable while a tier is being tuned.
   if (!listed?.length) return seedable.generate(seed, options) as T
-  return seedable.generate(listed[(ctx.boardIndex ?? seed) % listed.length], options, VERIFIED_ATTEMPTS) as T
+  try {
+    return seedable.generate(listed[(ctx.boardIndex ?? seed) % listed.length], options, VERIFIED_ATTEMPTS) as T
+  } catch {
+    // THE LIST PROMISED ONE ATTEMPT AND ONE ATTEMPT IS ALL IT GETS, so there is no slack in this path:
+    // the moment a list and its generator disagree — a dial moved without `yarn generate-seeds`, a seed
+    // proven under options that have since shifted — the single attempt misses and the generator throws.
+    // A board is built during render, so that throw is the screen going away.
+    //
+    // Searching is what every family did before there were lists: slower, never wrong. Taking it costs a
+    // beat on one room and keeps the player in the game, where re-throwing costs them the app.
+    return seedable.generate(seed, options) as T
+  }
 }

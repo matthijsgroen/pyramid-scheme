@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- A puzzle whose stored seed no longer builds its board is searched for instead of taking the screen down.
+
 ## 0.43.5 - 2026-09-13
 
 ### Fixed
