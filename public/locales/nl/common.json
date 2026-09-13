@@ -926,6 +926,10 @@
       "ink_other": "Meet de gevraagde hoeveelheden inkt één voor één af en zeg telkens welke pot het heeft."
     },
     "rules": {
+      "method": {
+        "sums": "Elke hoeveelheid die je kunt maken is twee getallen van de bank, bij elkaar op of van elkaar af: de maat van een kruik, wat erin zit, of de ruimte die er nog bij kan.",
+        "backwards": "Werk dus terug vanaf de gevraagde hoeveelheid — welke twee getallen maken die, en hoe krijg je die twee tegelijk op de bank?"
+      },
       "claim": "Heb je de hoeveelheid? Tik dan op “deze”. Het verkeerde vat aanwijzen kost een zet.",
       "legs": "Daarna de volgende hoeveelheid, gemeten vanuit wat er nog in de vaten staat.",
       "default": {
@@ -960,11 +964,19 @@
       }
     },
     "hint": {
-      "fills": "Giet de {{from}} in de {{to}} — die neemt precies zoveel als erin kan, en wat er in de {{from}} achterblijft is waar je mee verder wilt.",
-      "empties": "Giet de {{from}} in de {{to}} — de {{from}} loopt helemaal leeg, en een lege kruik is wat je nu nodig hebt.",
-      "last": "Nog één: giet de {{from}} in de {{to}}, dan staat {{target}} op de bank. Zoek daarna uit welke kruik het heeft.",
+      "goal": {
+        "leftover": "Terugwerkend: {{amount}} is {{content}} met {{space}} eraf — een kruik met {{content}} erin, gegoten in een kruik waar nog {{space}} bij kan.",
+        "full": "Terugwerkend: {{amount}} is de maat van een kruik, en {{a}} en {{b}} samen zijn precies dat.",
+        "sum": "Terugwerkend: {{amount}} is {{a}} en {{b}} bij elkaar."
+      },
+      "claim": "Dat is nog één gieting. Zoek daarna uit welke kruik het heeft.",
       "stuck": "Vanaf hier krijg je {{target}} niet meer afgemeten met de zetten die je nog hebt. Neem een gieting terug, of begin opnieuw.",
-      "overBudget": "Je zetten zijn op. Neem er een terug, of begin opnieuw en zoek de kortere weg."
+      "overBudget": "Je zetten zijn op. Neem er een terug, of begin opnieuw en zoek de kortere weg.",
+      "next": {
+        "leftover": "De som daarvoor: {{amount}} — {{content}} gegoten in ruimte voor {{space}}.",
+        "full": "De som daarvoor: een kruik die vol staat op {{amount}} — {{a}} en {{b}} bij elkaar.",
+        "sum": "De som daarvoor: {{amount}} — {{a}} en {{b}} bij elkaar."
+      }
     },
     "movesLeft_one": "nog {{count}} zet",
     "movesLeft_other": "nog {{count}} zetten",
@@ -1005,14 +1017,7 @@
       }
     },
     "events": {
-      "default": [
-        "het vuur",
-        "het water halen",
-        "het bakken",
-        "de boottocht",
-        "het ossen drijven",
-        "de nachtwake"
-      ],
+      "default": ["het vuur", "het water halen", "het bakken", "de boottocht", "het ossen drijven", "de nachtwake"],
       "funerary": [
         "het pleisteren",
         "het uitzetten van het raster",

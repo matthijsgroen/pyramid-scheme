@@ -1,7 +1,7 @@
 import { useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import clsx from "clsx"
-import type { Capacities, Move, Volumes } from "@/mods/puzzle/game/canisters/canisters"
+import type { Capacities, Volumes } from "@/mods/puzzle/game/canisters/canisters"
 import { Vessel } from "./Vessel"
 import type { CanistersSkin } from "./skins"
 
@@ -12,8 +12,6 @@ type Props = {
   held?: number
   /** What the player has claimed, and whether it was right — the board answers, the canister never does. */
   claimed?: { canister: number; right: boolean; count: number }
-  /** The pour the hint names, lit where it stands. */
-  lit?: Move
   /** The completion run is under way, so what is in the canisters catches the light. */
   celebrating?: boolean
   /**
@@ -96,7 +94,6 @@ const Canister: FC<{
   volume: number
   tallest: number
   held: boolean
-  lit: boolean
   celebrating: boolean
   /** -1, 0 or 1: which way this canister is tipping, if it is pouring right now. */
   tilt: number
@@ -107,7 +104,7 @@ const Canister: FC<{
   onAnswered: () => void
   skin: CanistersSkin
   onTap: () => void
-}> = ({ capacity, volume, tallest, held, lit, celebrating, tilt, onSettled, answered, onAnswered, skin, onTap }) => {
+}> = ({ capacity, volume, tallest, held, celebrating, tilt, onSettled, answered, onAnswered, skin, onTap }) => {
   const rem = HEIGHT.min + (capacity / tallest) * (HEIGHT.max - HEIGHT.min)
   return (
     <button
@@ -126,7 +123,6 @@ const Canister: FC<{
           ...(tilt !== 0 ? ({ "--tilt": tilt } as Record<string, number>) : {}),
         }}
         className={clsx(
-          lit && skin.lit,
           "rounded",
           tilt !== 0 && "animate-pour",
           // A refused claim shakes the canister; an accepted one catches the light. Both animate, and not
@@ -163,7 +159,6 @@ export const CanistersBoard: FC<Props> = ({
   volumes,
   held,
   claimed,
-  lit,
   celebrating,
   lastPour,
   skin,
@@ -185,7 +180,6 @@ export const CanistersBoard: FC<Props> = ({
               volume={volumes[canister]}
               tallest={tallest}
               held={held === canister}
-              lit={lit !== undefined && lit.from === canister}
               celebrating={celebrating === true}
               // Which way to tip: toward the canister being filled, so a pour to the right rolls right.
               tilt={tipping !== undefined && tipping.from === canister ? Math.sign(tipping.to - canister) : 0}

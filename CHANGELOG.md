@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Canister hints now give the sums a board is made of instead of naming a pour, and how-to-play says how to work back from the amount asked for.
+
 ## 0.43.6 - 2026-09-13
 
 ### Fixed
