@@ -17,6 +17,11 @@ export type StoredJourneyStateV3 = {
   // keyed by sectionHash; cells explored in the site interior — persists across revisits
   // stale entries (section hash no longer in world) are silently ignored on apply
   exploredSections: Record<string, string[]>
+  /** The same exploration, remembered by each cell's place in its section rather than by its grid
+   *  coordinate (src/app/SiteMap/exploredOrdinals.ts). Written alongside `exploredSections` and
+   *  backfilled from it, so the reader can switch over once every live save carries it — a coordinate
+   *  only means something against the floor it was written against, and floors move. */
+  exploredOrdinals?: Record<string, string[]>
   position: string | null // current node ID "floor:row,col" or null (entrance)
   interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
   disabledTraps?: string[] // edgeIds where trapTool was spent to disarm the corridor
@@ -58,7 +63,10 @@ export type JourneyAPI = {
   completeJourney: () => void
   cancelJourney: () => void
   completeLevel: () => void
-  markCellExplored: (sectionHash: string, cellId: string) => void
+  markCellExplored: (sectionHash: string, cellId: string, ordinalKey?: string | null) => void
+  /** Saves still carrying only coordinate-keyed exploration — see useExploredOrdinalBackfill. */
+  journeysNeedingOrdinalBackfill: () => { journeyId: string; exploredSections: Record<string, string[]> }[]
+  setExploredOrdinals: (journeyId: string, exploredOrdinals: Record<string, string[]>) => void
   getExploredSections: (journeyId: string) => Record<string, string[]>
   updatePosition: (journeyId: string, nodeId: string) => void
   setInteriorLevel: (journeyId: string, levelNr: number | null) => void
@@ -249,17 +257,40 @@ export const createJourneysV3Api = ({
     )
   }
 
-  const markCellExplored = (sectionHash: string, cellId: string) => {
+  const markCellExplored = (sectionHash: string, cellId: string, ordinalKey?: string | null) => {
     if (!activeJourneyId) return
     const key = `${levelOf(activeJourneyId)}:${sectionHash}`
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
         const current = j.exploredSections[key] ?? []
-        if (current.includes(cellId)) return j
-        return { ...j, exploredSections: { ...j.exploredSections, [key]: [...current, cellId] } }
+        const ordinals = j.exploredOrdinals?.[key] ?? []
+        const haveCell = current.includes(cellId)
+        const haveOrdinal = !ordinalKey || ordinals.includes(ordinalKey)
+        if (haveCell && haveOrdinal) return j
+        return {
+          ...j,
+          exploredSections: haveCell ? j.exploredSections : { ...j.exploredSections, [key]: [...current, cellId] },
+          // BOTH ARE WRITTEN while the two formats overlap. The coordinate is what today's reader uses;
+          // the ordinal is what the reader uses once no live save predates it.
+          ...(ordinalKey && !haveOrdinal
+            ? { exploredOrdinals: { ...(j.exploredOrdinals ?? {}), [key]: [...ordinals, ordinalKey] } }
+            : {}),
+        }
       })
     )
+  }
+
+  // A save written before exploration was keyed by ordinal has sections but no ordinals. An EMPTY
+  // ordinal map still counts as migrated — a journey whose every stored coordinate turned out to be
+  // stale translates to nothing, and must not be re-translated on every launch.
+  const journeysNeedingOrdinalBackfill = () =>
+    journeys
+      .filter(j => Object.keys(j.exploredSections).length > 0 && j.exploredOrdinals === undefined)
+      .map(j => ({ journeyId: j.journeyId, exploredSections: j.exploredSections }))
+
+  const setExploredOrdinals = (journeyId: string, exploredOrdinals: Record<string, string[]>) => {
+    setJourneys(prev => prev.map(j => (j.journeyId === journeyId ? { ...j, exploredOrdinals } : j)))
   }
 
   const getExploredSections = (journeyId: string): Record<string, string[]> => {
@@ -455,6 +486,8 @@ export const createJourneysV3Api = ({
     cancelJourney,
     completeLevel,
     markCellExplored,
+    journeysNeedingOrdinalBackfill,
+    setExploredOrdinals,
     getExploredSections,
     updatePosition,
     setInteriorLevel,
