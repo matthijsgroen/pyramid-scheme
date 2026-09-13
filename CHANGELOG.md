@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.43.5 - 2026-09-13
+
 ### Fixed
 
 - Fifteen rooms in the expert and wizard treasure tombs could not be opened at all — the screen went black.
