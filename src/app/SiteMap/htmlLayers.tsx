@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react"
+import { boundsOf, rectsToPath, type Rect } from "./tileRegions"
 
 // The two primitives every HTML layer of the map is built from. See docs/instructions/map-rendering.md.
 
@@ -8,10 +9,10 @@ import type { CSSProperties } from "react"
  * fitted inside it and centred, which is what an `<image>` did by default and what the few sprites drawn
  * in a box of the wrong shape relied on.
  *
- * `clipTo` is a path in MAP coordinates, and taking one changes the shape of the element: a clip resolves
- * in the element's OWN box, so a sprite that must be cut to a room's footprint is laid out as a full-map
- * layer with the art placed by `background-position` instead of by `left`/`top`. Same trick as the stone
- * layers, and the reason a footprint path needs no translating. */
+ * `clipTo` is the shape the sprite is cut to, as rectangles in MAP coordinates. Taking one changes the
+ * element's box: a clip resolves in the element's OWN box, so the sprite is laid out over the CLIP's box —
+ * never over the whole map, which is what a phone's renderer cannot afford (see `rectsToPath`) — with the
+ * art placed inside it by `background-position`. */
 export const Sprite = ({
   url,
   x,
@@ -35,30 +36,37 @@ export const Sprite = ({
   opacity?: number
   filter?: string
   transform?: string
-  clipTo?: string
+  clipTo?: readonly Rect[]
   /** Mirrored in x — how a stair is aimed. A reflection is a real oblique view; a rotation is a skew. */
   mirrored?: boolean
 } & Record<`data-${string}`, string | undefined>) => {
   const art: CSSProperties = { backgroundImage: `url(${url})`, backgroundRepeat: "no-repeat" }
   const flip = mirrored ? "scaleX(-1)" : undefined
   const both = [transform, flip].filter(Boolean).join(" ") || undefined
-  return clipTo ? (
-    <div
-      {...rest}
-      style={{
-        position: "absolute",
-        inset: 0,
-        clipPath: `path("${clipTo}")`,
-        backgroundSize: `${w}px ${h}px`,
-        backgroundPosition: `${x}px ${y}px`,
-        transformOrigin: `${x + w / 2}px ${y + h / 2}px`,
-        opacity,
-        filter,
-        transform: both,
-        ...art,
-      }}
-    />
-  ) : (
+  if (clipTo && clipTo.length > 0) {
+    const box = boundsOf(clipTo)
+    return (
+      <div
+        {...rest}
+        style={{
+          position: "absolute",
+          left: box.x,
+          top: box.y,
+          width: box.w,
+          height: box.h,
+          clipPath: `path("${rectsToPath(clipTo, [box.x, box.y])}")`,
+          backgroundSize: `${w}px ${h}px`,
+          backgroundPosition: `${x - box.x}px ${y - box.y}px`,
+          transformOrigin: `${x - box.x + w / 2}px ${y - box.y + h / 2}px`,
+          opacity,
+          filter,
+          transform: both,
+          ...art,
+        }}
+      />
+    )
+  }
+  return (
     <div
       {...rest}
       style={{
@@ -78,22 +86,36 @@ export const Sprite = ({
   )
 }
 
-/** A layer the size of the map, cut to a path in map coordinates: the shape is the drawing. */
+/** A layer cut to a run of rectangles: the shape is the drawing, and the element is the size of the shape.
+ * Never the size of the map — see `rectsToPath`. */
 export const ClipLayer = ({
-  path,
+  rects,
   fill,
   opacity,
   className,
   ...rest
 }: {
-  path: string
+  rects: readonly Rect[]
   fill: string
   opacity?: number
   className?: string
-} & Record<`data-${string}`, string | undefined>) => (
-  <div
-    {...rest}
-    className={className}
-    style={{ position: "absolute", inset: 0, clipPath: `path("${path}")`, background: fill, opacity }}
-  />
-)
+} & Record<`data-${string}`, string | undefined>) => {
+  if (rects.length === 0) return null
+  const box = boundsOf(rects)
+  return (
+    <div
+      {...rest}
+      className={className}
+      style={{
+        position: "absolute",
+        left: box.x,
+        top: box.y,
+        width: box.w,
+        height: box.h,
+        clipPath: `path("${rectsToPath(rects, [box.x, box.y])}")`,
+        background: fill,
+        opacity,
+      }}
+    />
+  )
+}

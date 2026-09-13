@@ -3,7 +3,7 @@ import type { FC } from "react"
 import { useEffect, useState } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { PATRONS as ALL_PATRONS } from "@/game/siteTypes"
-import { CELL, WALL_H } from "./mapScale"
+import { CELL, WALL_H, PROP_H } from "./mapScale"
 import { ART_IMAGE_RENDERING, tileUrl } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
 
@@ -34,8 +34,6 @@ const KINDS = ["statue", "shrine", "wallShrine", "stela", "mask"] as const
 
 /** Wall items are painted onto the band; the other two stand on the floor. */
 const WALL_KINDS = new Set<string>(["wallShrine", "stela", "mask"])
-
-const PROP_H = CELL + WALL_H
 
 /** Under this many distinct opaque colours a tile is a `generate-dummy-tiles` PLACEHOLDER and not art.
  *

@@ -1,6 +1,7 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
-import { SiteMapView, approachCells, buildRoomClaims, footprintPath, tileRegionsFor } from "./SiteMapView"
+import { SiteMapView, approachCells, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
+import { footprintPath } from "./tileRegions"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY } from "./nodeArt"
 import { ExplorerFigure } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
@@ -9,6 +10,8 @@ import { ALL_STATES } from "./tileRegions"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 import { authoredKindsFor } from "./authoredKinds"
+import { generatedWorldConfigs } from "@/data/generatedWorld"
+import { assembleFloor } from "@/game/siteAssembler"
 
 // Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
 // place of its own), so a change there can't silently break every position assumption in this file.
@@ -25,15 +28,17 @@ const spritesIn = (root: HTMLElement | Element) =>
 
 const urlOf = (el: HTMLElement) => /url\(["']?(.*?)["']?\)/.exec(el.style.backgroundImage)?.[1] ?? ""
 
-/** Where a sprite's art actually lands, in map units.
+/** Where a sprite's art actually lands, in MAP units.
  *
- * A sprite that is cut to a room is laid out as a full-map layer with its art placed by
- * `background-position`, so the box is read from there rather than from `left`/`top` — see `Sprite`. */
+ * A clipped sprite is laid out over its CLIP's box, never over the whole map — a map-sized layer has to be
+ * rasterised at the map's size, which is what killed the renderer on a phone — so its art is placed inside
+ * that box by `background-position` and the box's own offset puts it back in map space. */
 const boxOf = (el: HTMLElement) => {
   if (el.style.clipPath) {
+    const [bx, by] = [parseFloat(el.style.left), parseFloat(el.style.top)]
     const [x, y] = el.style.backgroundPosition.split(" ").map(parseFloat)
     const [w, h] = el.style.backgroundSize.split(" ").map(parseFloat)
-    return { x, y, w, h }
+    return { x: x + bx, y: y + by, w, h }
   }
   return {
     x: parseFloat(el.style.left),
@@ -43,8 +48,15 @@ const boxOf = (el: HTMLElement) => {
   }
 }
 
-/** The path a layer is cut to, as the `d` string inside `clip-path: path("…")`. */
-const clipOf = (el: HTMLElement | null | undefined) => /path\("(.*)"\)/.exec(el?.style.clipPath ?? "")?.[1] ?? ""
+/** The path a layer is cut to, put back into MAP coordinates — the clip itself is written in the
+ * element's own frame, which is what keeps the element the size of its shape. */
+const clipOf = (el: HTMLElement | null | undefined) => {
+  const d = /path\("(.*)"\)/.exec(el?.style.clipPath ?? "")?.[1] ?? ""
+  if (!d || !el) return d
+  const dx = parseFloat(el.style.left) || 0
+  const dy = parseFloat(el.style.top) || 0
+  return d.replace(/M(-?[\d.]+) (-?[\d.]+)/g, (_, x: string, y: string) => `M${Number(x) + dx} ${Number(y) + dy}`)
+}
 
 const spriteMatching = (root: HTMLElement, part: string) => spritesIn(root).filter(el => urlOf(el).includes(part))
 
@@ -854,11 +866,14 @@ describe("archways", () => {
     expect(arches).toHaveLength(1)
     // The stone of the band it stands in, which here is the tier being entered.
     expect(urlOf(arches[0])).toContain("junior")
-    const sills = Array.from(container.querySelectorAll<HTMLElement>("[data-tile^='sill-']"))
+    // The stone is one SVG again (TileLayers), so a sill is a path filled from its tier's pattern.
+    const sills = Array.from(container.querySelectorAll<SVGPathElement>("path")).filter(el =>
+      (el.getAttribute("fill") ?? "").includes("sill")
+    )
     expect(sills).toHaveLength(1)
     // The arch's stone, not the entered tier's — one opening, one material.
-    // A gap between two rows takes the step as drawn; one between two columns is the same step turned.
-    expect(sills[0].dataset.tile).toBe("sill-h-junior")
+    // A gap between two rows takes the horizontal pattern; the vertical one is the same step turned.
+    expect(sills[0].getAttribute("fill")).toContain("sill-h-junior")
   })
 
   it("draws no arch into the fog", () => {
@@ -1159,15 +1174,20 @@ describe("a treasure room stands its own chest beside the marker", () => {
       [empty, cell, empty],
     ])
 
-  it("draws the chest in MAP space, not in the cell's own", () => {
-    // THE BUG THIS EXISTS FOR: a clip resolves in the element's own space, so art nested inside a node's
-    // own translated box was clipped by rectangles offset by that cell's position — every chest in the
-    // game was cut away, and jsdom, which never rasterises, reported them present. A clipped sprite is
-    // therefore laid out as a full-map layer with its art placed by background-position.
+  it("draws the chest in MAP space, and in a box no bigger than its own room", () => {
+    // TWO BUGS, ONE LINE OF DEFENCE. A clip resolves in the element's OWN space: art nested inside a
+    // node's translated box was clipped by rectangles offset by that cell's position, and every chest in
+    // the game was cut away while jsdom, which never rasterises, reported them present. The first fix
+    // made every clipped sprite a full-MAP layer — correct, and it has to be rasterised at the map's
+    // size, which killed the renderer on a phone (v0.43.1, crashing on entry to any floor).
+    //
+    // So the sprite is laid out over its CLIP's box: small, and still in map coordinates.
     const { container } = render(<SiteMapView grid={gridWith(chamber("reachable"))} revealAllCells />)
     const chest = chestsIn(container)[0]
     expect(chest.style.clipPath).toContain("path(")
-    expect(chest.style.inset).toBe("0px")
+    // Its own room's worth of layer, not the map's: a chamber and its claims, plus a prop's headroom.
+    expect(parseFloat(chest.style.width)).toBeLessThanOrEqual(CELL * 4)
+    expect(parseFloat(chest.style.height)).toBeLessThanOrEqual((CELL + WALL_H) * 4)
     // In map space a sprite sits at its own cell, so its x is a map coordinate rather than a small
     // offset from the cell's centre.
     expect(boxOf(chest).x).toBeGreaterThan(CELL)
@@ -1611,5 +1631,35 @@ describe("a rank is dressed with what it is authored to hold", () => {
     const expert = authoredKindsFor("expert").props
     expect(expert).not.toContain("crystal")
     expect(authoredKindsFor("wizard").props).toContain("crystal")
+  })
+})
+
+describe("nothing on the map is rasterised at the size of the map", () => {
+  // THE BUG THIS EXISTS FOR, and it shipped: a `clip-path` resolves in the element's own box, so an
+  // element that spans the floor has to be rasterised at the floor's size. v0.43.1 drew the stone as 22
+  // such layers and cut every sprite to the map as well — on an expert floor that is 10 Mpx per layer,
+  // ~350 MB each at a phone's three device pixels to the unit, and iOS Safari killed the tab on entry to
+  // any floor. The stone went back to one `<svg>` (one surface the compositor tiles) and every clipped
+  // element is now the size of its OWN shape.
+  const bigFloor = () => {
+    const floor = generatedWorldConfigs["expert_2"]?.flat()[0]
+    if (!floor) throw new Error("no expert_2 floor to measure")
+    const result = assembleFloor("expert_2", floor, 0)
+    if (!result.success) throw new Error("expert_2 floor did not assemble")
+    return result.grid
+  }
+
+  it("keeps every clipped layer to a room's worth of pixels, not a floor's", () => {
+    const grid = bigFloor()
+    const { container } = render(<SiteMapView grid={grid} revealAllCells explorerPos={[1, 1]} />)
+    const map = container.querySelector<HTMLElement>("[data-map]")!
+    const mapPx = parseFloat(map.style.width) * parseFloat(map.style.height)
+    const areas = Array.from(container.querySelectorAll<HTMLElement>("[style*='clip-path']")).map(
+      el => (parseFloat(el.style.width) || 0) * (parseFloat(el.style.height) || 0)
+    )
+    // A room and its headroom is a few percent of a floor; the map itself is the thing to stay away from.
+    expect(Math.max(...areas) / mapPx).toBeLessThan(0.1)
+    // And all of them together stay under the map, so no floor can be paid for many times over.
+    expect(areas.reduce((a, b) => a + b, 0) / mapPx).toBeLessThan(1)
   })
 })

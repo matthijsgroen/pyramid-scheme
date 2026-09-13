@@ -1,5 +1,5 @@
 import type { CellState, Difficulty } from "@/game/siteTypes"
-import { CELL, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
+import { CELL, PROP_H, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
 
 // Which rectangles the sprite renderer paints, grouped so each group becomes ONE filled path
 // instead of a rect per cell. Pure and grid-shaped: it knows nothing about SVG, claims or fog rules
@@ -289,8 +289,32 @@ export const buildTileRegions = (
 }
 
 /** One closed rectangle per entry, as a single path. */
-export const rectsToPath = (rects: readonly Rect[]): string =>
-  rects.map(([x, y, w, h]) => `M${x} ${y}h${w}v${h}h${-w}z`).join("")
+/**
+ * Rectangles as one path, optionally in a frame of their own.
+ *
+ * `origin` shifts every coordinate, which is what lets a clipped layer be the size of its OWN content
+ * rather than the size of the map. A `clip-path` resolves in the element's box, so an element that spans
+ * the whole map has to be RASTERISED at the whole map's size — on a phone, at three device pixels to the
+ * unit, that is tens of megabytes per layer and a renderer that gets killed (it did: v0.43.1 crashed
+ * entering any floor on iOS). Bounded to its own box, the same drawing costs what it covers.
+ */
+export const rectsToPath = (rects: readonly Rect[], origin: readonly [number, number] = [0, 0]): string =>
+  rects.map(([x, y, w, h]) => `M${x - origin[0]} ${y - origin[1]}h${w}v${h}h${-w}z`).join("")
+
+/** The box a run of rectangles covers: where a layer cut to them has to sit, and how big it has to be. */
+export const boundsOf = (rects: readonly Rect[]): { x: number; y: number; w: number; h: number } => {
+  let minX = Infinity
+  let minY = Infinity
+  let maxX = -Infinity
+  let maxY = -Infinity
+  for (const [x, y, w, h] of rects) {
+    if (x < minX) minX = x
+    if (y < minY) minY = y
+    if (x + w > maxX) maxX = x + w
+    if (y + h > maxY) maxY = y + h
+  }
+  return { x: minX, y: minY, w: maxX - minX, h: maxY - minY }
+}
 
 /** The hard shadow a face throws onto the floor in front of it. In this idiom that shadow, not any
  * shading on the floor itself, is what puts the wall above the ground. */
@@ -307,3 +331,27 @@ export const faceShadowRects = (faces: readonly Rect[], height: number): Rect[] 
  */
 export const faceTopRects = (faces: readonly Rect[], depth: number): Rect[] =>
   faces.map(([x, y, w]) => [x, y, w, depth])
+
+/** A room's own footprint as a clip path: each of its cells, grown upward by a prop's headroom so a
+ * tall thing still crosses the wall band behind it.
+ *
+ * AND THE SEAMS BETWEEN THEM. Cells do not touch — `cellLeft`/`cellTop` leave `SIDE_W` between columns
+ * and `WALL_H` between rows for the walls seen edge-on — so a clip built from cell rects alone has a
+ * hairline of nothing down every join. Furniture standing wholly inside one cell never met it; the ward
+ * gate, which straddles a seam on purpose because that is where its sill is laid, came out with the
+ * strip containing its bars cut clean away and its two jambs drawn as separate posts.
+ */
+export const footprintRects = (cells: readonly string[]): Rect[] => {
+  const own = cells.map(key => key.split(",").map(Number) as [number, number])
+  const has = new Set(cells)
+  const rects: Rect[] = own.map(([r, c]) => [cellLeft(c), cellTop(r) - PROP_H, CELL, CELL + PROP_H])
+  for (const [r, c] of own) {
+    // Each seam once: only ever to the east and to the south, so a pair of cells cannot add it twice.
+    if (has.has(`${r},${c + 1}`)) rects.push([cellLeft(c) + CELL, cellTop(r) - PROP_H, SIDE_W, CELL + PROP_H])
+    if (has.has(`${r + 1},${c}`)) rects.push([cellLeft(c), cellTop(r) + CELL - PROP_H, CELL, WALL_H + PROP_H])
+  }
+  return rects
+}
+
+/** The same shape as one path, for the tests that read it and for anything that wants it whole. */
+export const footprintPath = (cells: readonly string[]): string => rectsToPath(footprintRects(cells))
