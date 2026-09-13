@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - A lit room now reads as lit: the light has a source at your torch and falls away from it, it lands warm rather than pale, and it reaches the walls, the furniture and the explorer instead of stopping at the floor. The explorer stands in it rather than on top of it, with a shadow at their feet like everything else on the floor.
+- Exploration is now remembered by where a room sits in its corridor, so a reshaped pyramid keeps what you had walked.
 
 ## 0.43.6 - 2026-09-13
 

@@ -992,6 +992,15 @@ export const assembleFloor = (
     type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state" | "sectionHash" | "legacySectionHash" | "hidden">
     const roomSpecs = new Map<string, RoomSpec>()
     const cellSectionHash = new Map<string, string>()
+    /**
+     * WHERE A CELL SITS ALONG ITS SECTION'S WALK, which is what a save should remember it by.
+     *
+     * Exploration is stored per cell, and it was stored by grid coordinate — an accident of where the
+     * carve happened to land. Two carves of the SAME section put its third room at different
+     * coordinates, so a save restored onto a moved section marks rooms done that were never opened.
+     * The ordinal moves with the section instead: same shape, same ordinals, wherever it ends up.
+     */
+    const cellOrdinal = new Map<string, string>()
     const cellLegacySectionHash = new Map<string, string>()
     const hiddenCellPositions = new Set<string>()
     // Which section's authored dressing pools a footprint room should draw from — what stands on its
@@ -1076,6 +1085,7 @@ export const assembleFloor = (
     const cellDifficulty = new Map<string, Difficulty>()
     const mainSectionHash = computeMainSectionHash(config, mainIsolated)
     const legacyMainSectionHash = computeLegacyMainSectionHash(config)
+    mainPath.forEach(([r, c], step) => cellOrdinal.set(posKey(r, c), String(step)))
     for (const [r, c] of mainPath) {
       cellSectionHash.set(posKey(r, c), mainSectionHash)
       cellLegacySectionHash.set(posKey(r, c), legacyMainSectionHash)
@@ -1096,6 +1106,7 @@ export const assembleFloor = (
         wall: sideSections[group.sectionIdx].wallDecorations,
       }
       const sectionTier = sideSections[group.sectionIdx].difficulty
+      group.cells.forEach(([r, c], step) => cellOrdinal.set(posKey(r, c), String(step)))
       for (const [r, c] of group.cells) {
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
@@ -1113,6 +1124,7 @@ export const assembleFloor = (
         parentSectionIdx
       )
       const legacyHash = computeLegacySideSectionHash(subSection, subSectionIdx, parentSectionIdx)
+      cells.forEach(([r, c], step) => cellOrdinal.set(posKey(r, c), String(step)))
       for (const [r, c] of cells) {
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
@@ -1442,6 +1454,7 @@ export const assembleFloor = (
           ...(cellDifficulty.get(cellKey) ? { difficulty: cellDifficulty.get(cellKey) } : {}),
           sectionHash,
           legacySectionHash,
+          ...(cellOrdinal.get(cellKey) ? { ordinal: cellOrdinal.get(cellKey) } : {}),
           ...(hidden ? { hidden } : {}),
           ...spec,
         }
@@ -1454,6 +1467,7 @@ export const assembleFloor = (
           state: "fogged",
           sectionHash,
           legacySectionHash,
+          ...(cellOrdinal.get(cellKey) ? { ordinal: cellOrdinal.get(cellKey) } : {}),
           ...(cellTier ? { difficulty: cellTier } : {}),
           ...(hidden ? { hidden } : {}),
         }
@@ -1482,12 +1496,19 @@ export const assembleFloor = (
         const hidden = hiddenCellPositions.has(cellKey) && hiddenCellPositions.has(neighborKey) ? true : undefined
         const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
         const connectorTier = cellDifficulty.get(cellKey)
+        const endA = cellOrdinal.get(cellKey)
+        const endB = cellOrdinal.get(neighborKey)
+        const connectorOrdinal = endA && endB ? [endA, endB].sort().join("|") : undefined
         cells2D[mr][mc] = {
           type: "corridor",
           dirs: new Set([d, OPPOSITE[d]]),
           state: "fogged",
           sectionHash,
           legacySectionHash: cellLegacySectionHash.get(cellKey) ?? legacyMainSectionHash,
+          // A CONNECTOR IS NAMED BY THE TWO CELLS IT JOINS, sorted so it does not matter which end the
+          // edge was walked from. Its own coordinate is the midpoint of wherever the carve put those
+          // two, so it cannot be the identity; the pair of ordinals can, and survives the move.
+          ...(connectorOrdinal ? { ordinal: connectorOrdinal } : {}),
           ...(connectorTier ? { difficulty: connectorTier } : {}),
           ...(hidden ? { hidden } : {}),
         }
