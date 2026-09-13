@@ -468,3 +468,43 @@ describe("navigation mutators are awaitable", () => {
     expect(settled).toBe(true)
   })
 })
+
+// ── the ordinal backfill (docs/game-design/world-stability.md) ─────────────────
+
+describe("ordinal backfill bookkeeping", () => {
+  it("offers a save that has coordinates but no ordinals", () => {
+    const api = makeApi([makeStoredJourney({ exploredSections: { "1:abc": ["0:3,4"] } })])
+
+    expect(api.journeysNeedingOrdinalBackfill()).toEqual([
+      { journeyId: REAL_ID, exploredSections: { "1:abc": ["0:3,4"] } },
+    ])
+  })
+
+  it("leaves a fresh save alone — there is nothing to translate", () => {
+    expect(makeApi([makeStoredJourney()]).journeysNeedingOrdinalBackfill()).toEqual([])
+  })
+
+  it("counts an EMPTY result as migrated, so it is not retried on every launch", () => {
+    // A save whose every stored coordinate turned out to be stale translates to nothing. That is a
+    // finished migration, not an unstarted one.
+    const api = makeApi([makeStoredJourney({ exploredSections: { "1:abc": ["0:3,4"] }, exploredOrdinals: {} })])
+
+    expect(api.journeysNeedingOrdinalBackfill()).toEqual([])
+  })
+
+  it("writes the translated ordinals against the journey they came from", () => {
+    let state = [makeStoredJourney({ exploredSections: { "1:abc": ["0:3,4"] } })]
+    const api = createJourneysV3Api({
+      journeys: state,
+      setJourneys: updater => {
+        state = typeof updater === "function" ? updater(state) : updater
+      },
+      journeyData: [makeJourneyData(REAL_ID)],
+    })
+
+    api.setExploredOrdinals(REAL_ID, { "1:abc": ["7@rfork"] })
+
+    expect(state[0].exploredOrdinals).toEqual({ "1:abc": ["7@rfork"] })
+    expect(state[0].exploredSections).toEqual({ "1:abc": ["0:3,4"] })
+  })
+})

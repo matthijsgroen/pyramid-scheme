@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Exploration is now remembered by where a room sits in its corridor, so a reshaped pyramid keeps what you had walked.
+
 ## 0.43.6 - 2026-09-13
 
 ### Fixed

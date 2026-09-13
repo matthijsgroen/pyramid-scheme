@@ -33,6 +33,11 @@ export type CorridorCell = {
    *  written under the old scheme still recognises its own cells. Read-only compatibility — nothing
    *  writes it back, and it can go once no live save predates that change. */
   legacySectionHash?: string
+  /** Where this cell sits along its own section's walk — its index in path order, or for the
+   *  connector between two cells the pair of their indices. Stable when a section is carved in a
+   *  different place, which grid coordinates are not, so a save remembers a cell by this rather than
+   *  by where it landed. See docs/game-design/world-stability.md. */
+  ordinal?: string
   hidden?: boolean
 }
 export type GateVariant = "floor-key" | "tomb-key"
@@ -122,6 +127,11 @@ export type RoomCell = {
   sectionHash?: string
   /** See CorridorCell.legacySectionHash. */
   legacySectionHash?: string
+  /** Where this cell sits along its own section's walk — its index in path order, or for the
+   *  connector between two cells the pair of their indices. Stable when a section is carved in a
+   *  different place, which grid coordinates are not, so a save remembers a cell by this rather than
+   *  by where it landed. See docs/game-design/world-stability.md. */
+  ordinal?: string
   hidden?: boolean
   reward?: TreasureReward
   /** A shop node's stock: up to `rewardCapacity` reward slots (currency pieces + consumables) the
