@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.43.2 - 2026-09-13
+
 ### Fixed
 
 - The map opens again on a phone: drawing a floor asked for more memory than a phone has, and the browser killed the tab on the way in.
