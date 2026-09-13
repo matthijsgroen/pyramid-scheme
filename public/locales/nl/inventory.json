@@ -88,7 +88,7 @@
     },
     "p7": {
       "name": "Balsemer",
-      "description": "Heilige ambachtsman die de doden voorbereidde voor het hiernamaals door mummificatie."
+      "description": "Heilige ambachtsman die iemand gereedmaakte voor de reis naar het hiernamaals."
     },
     "p8": {
       "name": "Boer",
@@ -120,7 +120,7 @@
     },
     "p15": {
       "name": "Bewaker",
-      "description": "Beschermer van heilige plaatsen en graven, verzekeraars van de eeuwige rust van de doden."
+      "description": "Beschermer van heilige plaatsen en graven, die de eeuwige rust van de doden verzekert."
     }
   },
   "animals": {
@@ -208,7 +208,7 @@
     },
     "art6": {
       "name": "Canopische Kruik",
-      "description": "Heilig vat gebruikt om de organen van overledenen te bewaren tijdens mummificatie."
+      "description": "Heilige kruik met een beschermerskop als deksel \u2014 er stonden er vier rond een kist, op wacht."
     },
     "art7": {
       "name": "Scepter",

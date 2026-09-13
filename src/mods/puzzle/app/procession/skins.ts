@@ -78,11 +78,17 @@ const SKINS: Record<string, ProcessionSkin> = {
    */
   default: cast("default", ["𓊮", "𓈗", "𓏏", "𓊛", "𓃒", "𓇹"]),
   /**
-   * **The day of a burial** — the largest pool in the game, and the one this mechanic was named for. The
-   * rites are the doings: the opening of the mouth, the wrapping, the anointing, the walk to the tomb, the
-   * offering laid down, the sealing.
+   * **A day cutting a tomb** — the workmen's valley, and the largest pool in the game: the wall plastered,
+   * the grid drawn on it, the relief carved, the colour laid in, the gold leaf, the door hung.
+   *
+   * **Craft rather than rites, and that is a rule of the family and not a squeamishness.** §8 asks a cast to
+   * imply no order of its own, because the generator decides what happens when and a set carrying its own
+   * story tells a lie on every board whose answer runs the other way. A burial has exactly one order — you
+   * cannot seal before you wrap — so those six were the one cast that could not keep the promise. A
+   * workshop's day can be arranged any way round and stays true. It also puts a child in the room with the
+   * people who MADE the place, which is the better half of the subject.
    */
-  funerary: cast("funerary", ["𓁹", "𓋴", "𓏊", "𓂻", "𓊵", "𓊭"]),
+  funerary: cast("funerary", ["𓉐", "𓏞", "𓍋", "𓏊", "𓋞", "𓊃"]),
   /**
    * **A night of the sky** — decans and lights crossing it, each visible for its own stretch. This is the
    * face `wizard_4` has been waiting for: the one journey no pool serves (`journeys.md` §9).

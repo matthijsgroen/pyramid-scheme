@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - The site map is lit rather than evenly bright: torchlight now carries real warmth against the tier’s own dark.
+- The Ordered Hours’ funerary board is a day cutting a tomb — plastering, carving, painting — rather than a burial.
 
 ### Fixed
 

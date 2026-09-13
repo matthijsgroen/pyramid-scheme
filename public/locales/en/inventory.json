@@ -88,7 +88,7 @@
     },
     "p7": {
       "name": "Embalmer",
-      "description": "Sacred craftsman who prepared the dead for the afterlife through mummification."
+      "description": "Sacred craftsman who made someone ready for the journey to the afterlife."
     },
     "p8": {
       "name": "Farmer",
@@ -208,7 +208,7 @@
     },
     "art6": {
       "name": "Canopic Jar",
-      "description": "Sacred vessel used to store the organs of the deceased during mummification."
+      "description": "Sacred jar with a guardian's head for a lid \u2014 four of them stood around a coffin, keeping watch."
     },
     "art7": {
       "name": "Scepter",
