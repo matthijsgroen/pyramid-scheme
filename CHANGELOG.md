@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- Letting go of a pinch no longer throws the map somewhere else: the new zoom is settled once the map has stopped moving.
+
 ## 0.43.3 - 2026-09-13
 
 ### Changed

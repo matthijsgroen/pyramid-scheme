@@ -70,8 +70,14 @@ background, and **`ClipLayer`**, a map-sized box cut to a path.
 - **A pinch writes nothing but `transform`** (`useMapZoom`): it scales about the map point the fingers
   closed on, and the PAN is left to the browser's own two-finger scroll. Resizing the sizer or writing
   `scrollLeft` per move costs a layout of the floor a frame, and iOS has usually already taken the gesture
-  for its own scrolling by the time the second finger lands — so both then drag the map at once. The zoom
-  is committed to the sizer when the fingers lift.
+  for its own scrolling by the time the second finger lands — so both then drag the map at once.
+- **The zoom is committed to the sizer once the SCROLLING stops, not when the fingers lift.** Committing
+  measures the map and scrolls to keep it where it is, and every one of those numbers is read through the
+  scroll offset, which iOS withholds from the main thread until its scroll comes to rest. Measured
+  mid-scroll it reads where the floor sat BEFORE the pan and puts that back. The wait is invisible: the
+  gesture's transform is still on screen. `overflow-anchor` is off on the scroll box for the same moment
+  — the sizer resizes by a whole zoom step there, and scroll anchoring would answer that with a move of
+  its own.
 - **Tests address the map by data attribute**, never by tag: `[data-map]`, `[data-map-scroll]`,
   `[data-map-tint]`, `[data-tile]`, `[data-marker-cell]`, `[data-node-sprite]`, `[data-light-pool]`,
   `[data-torch]`, `[data-arch-shadow]`, `[data-explorer]`. `SiteMapView.spec.tsx` opens with

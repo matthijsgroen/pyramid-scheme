@@ -709,19 +709,60 @@ describe("SiteMapView — pinch zoom", () => {
     expect(shift + 100 * 2).toBeCloseTo(100)
   })
 
-  it("commits the pinch when the fingers lift, so the scrollable footprint catches up with the zoom", () => {
-    const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), room("reachable")]])} />)
-    const area = scrollArea(container)
-    const sizer = container.querySelector("[data-map]")!.parentElement as HTMLElement
-    const widthBefore = parseFloat(sizer.style.width)
+  it("holds the commit until the browser stops scrolling, then gives the footprint the new zoom", () => {
+    // THE BUG THIS IS FOR: committing the moment the fingers lifted measured the map through a scroll
+    // offset iOS had not yet handed to this thread — where the floor sat BEFORE the two-finger pan —
+    // and then scrolled to put that back. The zoom itself was right the whole way; letting go moved
+    // the map somewhere unrelated to the gesture.
+    vi.useFakeTimers()
+    try {
+      const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), room("reachable")]])} />)
+      const area = scrollArea(container)
+      const sizer = container.querySelector("[data-map]")!.parentElement as HTMLElement
+      const widthBefore = parseFloat(sizer.style.width)
 
-    fireEvent.touchStart(area, { touches: fingers(50) })
-    fireEvent.touchMove(area, { touches: fingers(100) })
-    fireEvent.touchEnd(area, { touches: [] })
+      fireEvent.touchStart(area, { touches: fingers(50) })
+      fireEvent.touchMove(area, { touches: fingers(100) })
+      fireEvent.touchEnd(area, { touches: [] })
 
-    expect(mapScale(container)).toBeCloseTo(2)
-    expect(parseFloat(sizer.style.width)).toBeCloseTo(widthBefore * 2)
-    expect(container.querySelector<HTMLElement>("[data-map]")!.style.transform).not.toContain("translate")
+      // The scale the fingers showed is on screen, but nothing has been measured yet.
+      expect(mapScale(container)).toBeCloseTo(2)
+      expect(parseFloat(sizer.style.width)).toBe(widthBefore)
+
+      // The pan is still running, and every scroll it does pushes the commit out again.
+      vi.advanceTimersByTime(100)
+      fireEvent.scroll(area)
+      vi.advanceTimersByTime(100)
+      expect(parseFloat(sizer.style.width)).toBe(widthBefore)
+
+      // It comes to rest.
+      vi.advanceTimersByTime(200)
+      expect(mapScale(container)).toBeCloseTo(2)
+      expect(parseFloat(sizer.style.width)).toBeCloseTo(widthBefore * 2)
+      expect(container.querySelector<HTMLElement>("[data-map]")!.style.transform).not.toContain("translate")
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it("commits a waiting pinch as soon as a finger lands, since that stops the scroll dead", () => {
+    vi.useFakeTimers()
+    try {
+      const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), room("reachable")]])} />)
+      const area = scrollArea(container)
+      const sizer = container.querySelector("[data-map]")!.parentElement as HTMLElement
+      const widthBefore = parseFloat(sizer.style.width)
+
+      fireEvent.touchStart(area, { touches: fingers(50) })
+      fireEvent.touchMove(area, { touches: fingers(100) })
+      fireEvent.touchEnd(area, { touches: [] })
+      // No waiting it out: the next gesture starts, and would otherwise build on the old scale.
+      fireEvent.touchStart(area, { touches: [{ clientX: 100, clientY: 100 }] })
+
+      expect(parseFloat(sizer.style.width)).toBeCloseTo(widthBefore * 2)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })
 
