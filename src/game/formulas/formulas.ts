@@ -114,7 +114,24 @@ export const countMultiplicativeOps = (formula: Formula): number => {
   return (isMultiplicative ? 1 : 0) + leftCount + rightCount
 }
 
+/** Every picked number, added left to right. The one shape that satisfies every verifier whatever the
+ * numbers are, which is what makes it usable as a last resort. */
+const additiveChain = (picked: number[]): Formula => {
+  if (picked.length < 2) throw new Error(`a formula needs at least two numbers, got ${JSON.stringify(picked)}`)
+  let node: Formula = {
+    left: { symbol: picked[0] },
+    right: { symbol: picked[1] },
+    operation: "+",
+    result: picked[0] + picked[1],
+  }
+  for (const next of picked.slice(2)) {
+    node = { left: node, right: { symbol: next }, operation: "+", result: getNumberValue(node) + next }
+  }
+  return node
+}
+
 export const createVerifiedFormula = (settings: FormulaSettings, random: () => number = Math.random): Formula => {
+  const { pickedNumbers } = settings
   let formula = createFormula(settings, random)
   // Ensure the result is positive and greater than 0
   let iteration = 0
@@ -176,19 +193,41 @@ export const createVerifiedFormula = (settings: FormulaSettings, random: () => n
     return leftOk && rightOk
   }
 
-  while (
-    !verifyOperand(formula.result) ||
-    !verifyOperand(formula.left) ||
-    !verifyOperand(formula.right) ||
-    !verifySelfDivision(formula) ||
-    !verifyNoAdditiveCancellation(formula) ||
-    !verifyMultiplyOperands(formula) ||
-    (settings.maxMultiplications !== undefined && countMultiplicativeOps(formula) > settings.maxMultiplications)
-  ) {
+  const passes = (candidate: Formula): boolean =>
+    verifyOperand(candidate.result) &&
+    verifyOperand(candidate.left) &&
+    verifyOperand(candidate.right) &&
+    verifySelfDivision(candidate) &&
+    verifyNoAdditiveCancellation(candidate) &&
+    verifyMultiplyOperands(candidate) &&
+    (settings.maxMultiplications === undefined || countMultiplicativeOps(formula) <= settings.maxMultiplications)
+
+  while (!passes(formula)) {
     iteration++
     if (iteration > 100) {
-      console.log("formula", formula, settings)
-      throw new Error("could not create verified formula")
+      // RE-ROLLING CANNOT ALWAYS WIN, because the numbers are the caller's and only the shape is
+      // re-rolled. With `useResult` allowing one, the largest picked number IS the result, so a set
+      // like 2, 6 and 12 leaves exactly one formula — 2 x 6 — and a `maxMultiplyOperandResult` of 5
+      // forbids it. Every attempt then returns the same rejected formula, and the hundredth is the
+      // first one anybody notices.
+      //
+      // The cap is a comfort, not a rule: it keeps a tier from asking for a multiplication bigger than
+      // its players are ready for. Solvability does not depend on it. So it is what gets dropped —
+      // one board above its tier's comfort beats a room that cannot be entered, which is what throwing
+      // here amounted to: the puzzle is built during render, so the throw took the whole app down.
+      if (settings.maxMultiplyOperandResult !== undefined) {
+        return createVerifiedFormula({ ...settings, maxMultiplyOperandResult: undefined }, random)
+      }
+      // AND RE-ROLLING IS NOT ALWAYS A RE-ROLL. For some number sets the shape is settled before any
+      // randomness gets a say: 16, 11 and 15 produce `(11 - 15) * -4` on all four hundred attempts we
+      // measured, and a negative operand is rejected every time. A hundred identical attempts is not
+      // bad luck to wait out, it is the same answer a hundred times.
+      //
+      // So the last resort is a formula that cannot fail: every picked number added together. Every
+      // operand stays positive, no symbol appears on both sides of a minus, and there is no
+      // multiplication to cap — it passes every check above by construction. A duller board than the
+      // tier asked for, and a board, which is what the room needs to be enterable at all.
+      return additiveChain(pickedNumbers)
     }
     formula = createFormula(settings, random)
   }

@@ -209,4 +209,49 @@ describe(createVerifiedFormula, () => {
       expect(countMultiplicativeOps(formula)).toBe(0)
     }
   })
+
+  // 2, 6 and 12 with a result allowed from the pool leaves exactly one formula — 2 x 6 — and a cap of 5
+  // forbids it. Re-rolling the shape cannot help, because the numbers belong to the caller: every attempt
+  // returns the same rejected formula. This is the set that shipped in eleven treasure-tomb rooms.
+  const contradictory = {
+    pickedNumbers: [2, 12, 6],
+    operations: ["+", "-", "*"] as const,
+    useResult: "allow" as const,
+    maxMultiplyOperandResult: 5,
+  }
+
+  it("builds a board anyway when the numbers and the multiply cap cannot both be met", () => {
+    // A puzzle is built during render, so throwing here took the whole app down — a black screen on a
+    // room the player simply could not enter. One board above its tier's comfort is the better trade.
+    const formula = createVerifiedFormula(
+      { ...contradictory, operations: [...contradictory.operations] },
+      mulberry32(7)
+    )
+
+    expect(formulaToString(formula)).toBe("2 * 6 = 12")
+  })
+
+  // 16, 11 and 15 settle on `(11 - 15) * -4` on every attempt — the shape is decided before any
+  // randomness gets a say, so a hundred retries are the same answer a hundred times.
+  it("falls back to a board that cannot fail when re-rolling only returns the same rejected shape", () => {
+    const formula = createVerifiedFormula(
+      { pickedNumbers: [16, 11, 15], operations: ["+", "-", "*"], useResult: "allow" },
+      mulberry32(999)
+    )
+
+    expect(formulaToString(formula)).toBe("16 + 11 + 15 = 42")
+  })
+
+  it("keeps the cap wherever it CAN be met, so relaxing it stays the last resort", () => {
+    const random = mulberry32(4242)
+    for (let i = 0; i < 20; i++) {
+      const formula = createVerifiedFormula(
+        { pickedNumbers: [2, 3, 6], operations: ["+", "-", "*"], useResult: "allow", maxMultiplyOperandResult: 5 },
+        random
+      )
+      if (formula.operation !== "*") continue
+      const operand = (side: Formula["left"]) => (typeof side === "object" && "symbol" in side ? side.symbol : 0)
+      expect(Math.max(operand(formula.left), operand(formula.right))).toBeLessThanOrEqual(5)
+    }
+  })
 })
