@@ -79,7 +79,7 @@ describe("useSiteNavigation", () => {
 
     act(() => hook.result.current.onCellClick(0, 1))
 
-    expect(journeys.markCellExplored).toHaveBeenCalledWith("", "0:0,1")
+    expect(journeys.markCellExplored).toHaveBeenCalledWith("", "0:0,1", null)
     expect(journeys.updatePosition).toHaveBeenCalledWith("j1", "0:0,1")
   })
 

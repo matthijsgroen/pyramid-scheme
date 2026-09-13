@@ -1,4 +1,5 @@
 import { useCallback } from "react"
+import { cellOrdinalKey } from "./exploredOrdinals"
 import { findPath, getCell } from "@/game/gridNavigation"
 import type { FloorGrid, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
@@ -67,7 +68,7 @@ export const useSiteNavigation = ({
       // staircase. The walk to the stairhead runs first; the floor only changes once the explorer
       // has actually reached the stairs.
       if (cell.type === "room" && cell.roomType === "portal" && cell.stairId) {
-        journeys.markCellExplored(sectionHash, edgeId)
+        journeys.markCellExplored(sectionHash, edgeId, cellOrdinalKey(cell))
         journeys.updatePosition(journeyId, edgeId)
         const stairId = cell.stairId
         scheduleArrival(walkDelay(row, col), () => {
@@ -101,7 +102,7 @@ export const useSiteNavigation = ({
       }
 
       if (cell.type === "corridor") {
-        journeys.markCellExplored(sectionHash, edgeId)
+        journeys.markCellExplored(sectionHash, edgeId, cellOrdinalKey(cell))
         journeys.updatePosition(journeyId, edgeId)
         return
       }
@@ -109,7 +110,7 @@ export const useSiteNavigation = ({
       if (cell.type !== "room") return
 
       if (cell.roomType === "fork") {
-        journeys.markCellExplored(sectionHash, edgeId)
+        journeys.markCellExplored(sectionHash, edgeId, cellOrdinalKey(cell))
         journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "encounter") {
         // A GATE IS WALKED INTO LIKE ANY OTHER ROOM. Its bars are drawn across the FAR side of its own
@@ -122,7 +123,7 @@ export const useSiteNavigation = ({
         // Staircase portals (with a stairId) are handled by the early teleport guard above; here a
         // portal is either this floor's own entrance (reposition only) or a real exit (leave the site).
         if (row === grid.entrancePos[0] && col === grid.entrancePos[1]) {
-          journeys.markCellExplored(sectionHash, edgeId)
+          journeys.markCellExplored(sectionHash, edgeId, cellOrdinalKey(cell))
           journeys.updatePosition(journeyId, edgeId)
         } else {
           journeys.updatePosition(journeyId, edgeId)

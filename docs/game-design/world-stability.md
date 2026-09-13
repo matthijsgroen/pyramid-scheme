@@ -46,6 +46,32 @@ The DSL lets authors change _which_ ward key is assigned to a gated section (e.g
 
 ---
 
+## Remembering a cell: the ordinal, not the coordinate
+
+`exploredSections` stores cell ids — `floor:row,col`. **A coordinate is an accident of the carve.** The
+section hash is computed from the authored spec, so the same section carved a second time keeps its
+hash while landing somewhere else entirely; a save restored against it then marks rooms done that were
+never opened. Measured on one floor of Valley of the Kings: all 11 sections kept their hash and 548 of
+676 cells moved.
+
+So every cell also carries an **ordinal** — its index along its own section's walk, and for the
+connector between two cells the pair of their indices. That moves with the section. The stored key is
+`<ordinal>@<kind>`; the kind is there because a section can re-shape without its hash moving, and a
+cell that was a corridor and is now a fork must read as unexplored rather than as a lie.
+
+**Switching over is a two-release migration, and the order matters.** A coordinate only means something
+against the floor it was written against:
+
+1. **The release before any reshape** writes both formats and backfills the ordinals from the stored
+   coordinates, while the old carve is still what the code produces (`migrateExploredToOrdinals`).
+2. **The release that reshapes** reads ordinals and drops coordinates.
+
+Landing both at once translates against the new carve, which is the original bug wearing a migration
+costume. A player who skips release 1 entirely has only coordinates, cannot be translated, and takes a
+one-time exploration reset.
+
+---
+
 ## Storage version
 
 Progression and journey state are stored under versioned keys. If a breaking migration is ever needed, the policy is to bump the storage version and hard-reset — accept a fresh start rather than attempt an in-place migration.

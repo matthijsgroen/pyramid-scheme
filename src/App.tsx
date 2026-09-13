@@ -2,6 +2,7 @@ import { useState } from "react"
 import { PyramidExpedition } from "@/app/PyramidExpedition"
 import { Base } from "@/app/Base"
 import { useJourneys } from "@/app/state/useJourneys"
+import { useExploredOrdinalBackfill } from "@/app/SiteMap/useExploredOrdinalBackfill"
 import { FezCompanion } from "./app/fez/FezCompanion"
 import { DevelopModeProvider } from "./contexts/DevelopMode"
 import PWABadge from "./PWABadge"
@@ -9,7 +10,10 @@ import { journeys as allJourneys } from "@/data/journeys"
 
 function App() {
   const [inGame, setInGame] = useState(false)
-  const { activeJourneyId, getJourney, completeLevel, completeJourney, startJourney } = useJourneys()
+  const journeys = useJourneys()
+  const { activeJourneyId, getJourney, completeLevel, completeJourney, startJourney } = journeys
+  // One-time, and it must happen in the release BEFORE any floor is reshaped — see the hook.
+  useExploredOrdinalBackfill(journeys)
 
   const journeyInfo = activeJourneyId ? getJourney(activeJourneyId) : null
 
