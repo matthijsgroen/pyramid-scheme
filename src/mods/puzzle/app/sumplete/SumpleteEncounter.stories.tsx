@@ -51,7 +51,7 @@ export const EveryRank: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       {difficulties.map(difficulty => (
-        <div key={difficulty} className="relative min-h-[720px]">
+        <div key={difficulty} className="relative min-h-180">
           <EncounterModal difficulty={difficulty}>
             <Sumplete difficulty={difficulty} />
           </EncounterModal>

@@ -2509,7 +2509,7 @@ export const SiteMapView = ({
         ref={scrollRef}
         {...scrollHandlers}
         data-map-scroll=""
-        className="flex h-full w-full overflow-auto pt-safe-top pr-safe-right pb-safe-bottom pl-safe-left"
+        className="flex size-full overflow-auto pt-safe-top pr-safe-right pb-safe-bottom pl-safe-left"
       >
         {/* Sizer: carries the zoomed footprint so the scroll extents are real, while the map itself
           scales by transform — see useMapZoom. Its size is written there, never by React. */}
