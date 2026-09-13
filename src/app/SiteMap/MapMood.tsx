@@ -2,45 +2,26 @@ import { hashUnit } from "@/support/hashString"
 import type { Mood } from "./moodSettings"
 import { CELL, WALL_FACE_H, cellCenter } from "./mapScale"
 import { sharedTileUrl } from "./tileAssets"
+import { Sprite } from "./htmlLayers"
 
 // The air, drawn in three layers over the stone: what is carried on it (drift), what lives in it (life),
 // and what colour it is (tint). All of it CSS-animated rather than driven from React — a mote that
-// re-rendered the map every frame would cost more than everything else the map draws, and the compositor
-// can move a hundred of these for nothing.
+// re-rendered the map every frame would cost more than everything else the map draws.
 //
 // The layers are split because they sit at different depths: scarabs are ON the floor and belong under the
 // props and icons, while drift and tint are between the player and the world and belong over everything.
-
-const MOTE_CLASS = "map-mote"
-const SCARAB_CLASS = "map-scarab"
-
-// One shared stylesheet for the whole map. `translate` only, so every frame is compositor work.
 //
-// A mote fades in and out across its crossing, which is what hides the jump when the animation loops —
-// the alternative is wrapping each one by hand every frame, in JS, for no visible gain.
-//
-// Reduced motion stops all of it. This is ambience: it says nothing the player needs, so it is exactly the
-// kind of movement someone who asked for less of it should not have to watch.
-const MOOD_CSS = `
-.${MOTE_CLASS} { animation: map-drift linear infinite; }
-.${SCARAB_CLASS} { animation: map-scurry steps(5, end) infinite; }
-@keyframes map-drift {
-  0% { transform: translate(0, 0); opacity: 0; }
-  15% { opacity: var(--o, 0.5); }
-  85% { opacity: var(--o, 0.5); }
-  100% { transform: translate(var(--dx, -160px), var(--dy, 70px)); opacity: 0; }
-}
-@keyframes map-scurry {
-  0% { transform: translate(0, 0); }
-  25% { transform: translate(var(--sx, 16px), var(--sy, 5px)); }
-  50% { transform: translate(calc(var(--sx, 16px) * 0.6), calc(var(--sy, 5px) * -1.4)); }
-  75% { transform: translate(calc(var(--sx, 16px) * -0.5), calc(var(--sy, 5px) * 0.8)); }
-  100% { transform: translate(0, 0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .${MOTE_CLASS}, .${SCARAB_CLASS} { animation: none; }
-}
-`
+// DRIFT AND TINT ARE HTML, NOT SVG, and that is a performance fact rather than a taste: an SVG child gets
+// no layer of its own, so 26 animated <circle>s repainted the whole map — tiles re-decoded, gradients
+// re-rasterised — 60 times a second, for a measured 5% of a core on an idle map and a phone that got warm
+// in the hand. A div with a transform animation is composited: the same motes cost nothing to move. They
+// also no longer belong to the map's coordinate space, which is why they cross the SCREEN rather than the
+// floor — ambience in front of the world, unaffected by pan and zoom.
+
+// What the map's motion is called lives in the theme (index.css, "The map's own motion"); these are the
+// hooks a test asks for, and the classes that carry the animation are alongside them at the point of use.
+const MOTE_CLASS = "map-mote absolute rounded-full will-change-transform animate-map-drift motion-reduce:animate-none"
+const SCARAB_CLASS = "map-scarab animate-map-scurry motion-reduce:animate-none"
 
 const rand = hashUnit
 
@@ -58,28 +39,17 @@ const rand = hashUnit
  */
 const TUFT_OPACITY = 0.7
 
-/**
- * A sprite turned about ITS OWN CENTRE, which on an SVG element is not what a bare transform does.
- *
- * `transform-box` defaults to `view-box`, so a CSS transform on an `<image>` is measured against the
- * whole SVG viewport rather than the element — and `scaleX(-1)`, which this file used alone, therefore
- * mirrored each sprite across the MIDDLE OF THE MAP instead of flipping it in place. A tuft authored in
- * the west corner of a wide floor was drawn in the east one, with `isLit` still answering for the cell it
- * came from, so half the growth on every floor was in the wrong place and some of it in the dark.
- *
- * `fill-box` with a centre origin is the fix, and it is also what makes a rotation usable at all.
- */
-const turned = (degrees: number, mirrored: boolean) => ({
-  transformBox: "fill-box" as const,
-  transformOrigin: "center" as const,
-  transform: `rotate(${degrees.toFixed(1)}deg)${mirrored ? " scaleX(-1)" : ""}`,
-})
+/** A sprite turned about its own centre. On a div that is simply what a transform does — the
+ * `transform-box` trap an SVG <image> had (it measures against the whole viewport, so a bare
+ * `scaleX(-1)` mirrored each sprite across the MIDDLE OF THE MAP and moved half the growth on a floor
+ * into the wrong corner) does not exist here. Kept as one helper so the rotation and the flip stay
+ * described in one place. */
+const turned = (degrees: number, mirrored: boolean) =>
+  `rotate(${degrees.toFixed(1)}deg)${mirrored ? " scaleX(-1)" : ""}`
 
 type Props = {
   mood: Mood
   siteId: string
-  width: number
-  height: number
   /**
    * EVERY floor cell of the floor, lit or not, in a fixed order — not just the explored ones.
    *
@@ -109,14 +79,7 @@ type Props = {
  * Draws nothing until the sprite exists, which is deliberate: the condition can be authored, composed
  * and seen as a wash before a single file is painted.
  */
-export const MapGrowth = ({
-  mood,
-  siteId,
-  floorCells,
-  wallCells = [],
-  chamberCells = [],
-  isLit,
-}: Omit<Props, "width" | "height">) => {
+export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCells = [], isLit }: Props) => {
   const g = mood.growth
   if (!g?.floor && !g?.wall && !g?.chamber) return null
   // One sprite per PLACE, falling back to the plain one where the other two are not drawn yet. The
@@ -149,7 +112,7 @@ export const MapGrowth = ({
     return ordered.slice(0, Math.max(1, Math.round(per * cells.length)))
   }
   return (
-    <g aria-hidden="true" style={{ pointerEvents: "none" }}>
+    <div aria-hidden="true" style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
       {/* ── the JOINTS: many, small, on any floor cell, and FAINT ──
           `TUFT_OPACITY`, because at one per cell and full strength they stopped being joints and started
           being a second crop of wall roots lying on the paving. Faint, they go back to being what they
@@ -169,9 +132,10 @@ export const MapGrowth = ({
         // shape at the zoom a floor is actually read at, not a speck.
         const size = CELL * 0.5 + rand(siteId, "growth-size", i) * (CELL * 0.25)
         return (
-          <image
+          <Sprite
             key={`tuft-${i}`}
-            href={tuft}
+            url={tuft}
+            stretch={false}
             // THE PLAY IS WHAT THE SIZE LEAVES, so a tuft never crosses its own cell whatever size it
             // rolled. A fixed jitter was fine while these were specks and put the big ones over the wall
             // band the moment they were sized to be seen — which the spec above catches.
@@ -184,12 +148,12 @@ export const MapGrowth = ({
             // through the band say "out of the wall" on their own; a tuft is in a joint, and joints are
             // everywhere.
             y={cy - size / 2 + (rand(siteId, "growth-y", i) - 0.5) * (CELL - size)}
-            width={size}
-            height={size}
+            w={size}
+            h={size}
             opacity={TUFT_OPACITY}
             // ANY angle: a tuft in a joint is seen from above and has no up. It is also what stops a
             // floor of them reading as one stamp repeated, which at this density is what they were.
-            style={turned(rand(siteId, "growth-rot", i) * 360, rand(siteId, "growth-flip", i) > 0.5)}
+            transform={turned(rand(siteId, "growth-rot", i) * 360, rand(siteId, "growth-flip", i) > 0.5)}
           />
         )
       })}
@@ -211,17 +175,19 @@ export const MapGrowth = ({
         const { cx, cy } = cellCenter(row, col)
         const w = 16 + rand(siteId, "growth-wall-w", i) * 18
         return (
-          <image
+          <Sprite
             key={`root-${i}`}
-            href={root}
-            preserveAspectRatio="none"
+            url={root}
             x={cx - w / 2 + (rand(siteId, "growth-wall-x", i) - 0.5) * (CELL * 0.6)}
             y={cy - CELL / 2 - WALL_FACE_H}
-            width={w}
-            height={WALL_FACE_H}
+            w={w}
+            h={WALL_FACE_H}
             // A LEAN, not a turn: a root hangs, so gravity decides which way is down and only the flip
             // and a few degrees either side are free.
-            style={turned((rand(siteId, "growth-wall-rot", i) - 0.5) * 14, rand(siteId, "growth-wall-flip", i) > 0.5)}
+            transform={turned(
+              (rand(siteId, "growth-wall-rot", i) - 0.5) * 14,
+              rand(siteId, "growth-wall-flip", i) > 0.5
+            )}
           />
         )
       })}
@@ -234,28 +200,32 @@ export const MapGrowth = ({
         const { cx, cy } = cellCenter(row, col)
         const size = 30 + rand(siteId, "growth-plant-size", i) * 16
         return (
-          <image
+          <Sprite
             key={`plant-${i}`}
-            href={plant}
+            url={plant}
+            stretch={false}
             x={cx - size / 2 + (rand(siteId, "growth-plant-x", i) - 0.5) * (CELL * 0.4)}
             y={cy + CELL / 2 - size}
-            width={size}
-            height={size}
+            w={size}
+            h={size}
             // Standing, so the same small lean the roots take rather than a turn.
-            style={turned((rand(siteId, "growth-plant-rot", i) - 0.5) * 10, rand(siteId, "growth-plant-flip", i) > 0.5)}
+            transform={turned(
+              (rand(siteId, "growth-plant-rot", i) - 0.5) * 10,
+              rand(siteId, "growth-plant-flip", i) > 0.5
+            )}
           />
         )
       })}
-    </g>
+    </div>
   )
 }
 
 /** Scarabs: on the floor, under everything that stands on it. */
-export const MapLife = ({ mood, siteId, floorCells, isLit }: Omit<Props, "width" | "height">) => {
+export const MapLife = ({ mood, siteId, floorCells, isLit }: Props) => {
   const url = sharedTileUrl("scarab")
   if (!mood.life || !url || floorCells.length === 0) return null
   return (
-    <g aria-hidden="true" style={{ pointerEvents: "none" }}>
+    <div aria-hidden="true" style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
       {Array.from({ length: mood.life }, (_, i) => {
         // Each one keeps to a cell of real floor, so nothing ever scurries into the stone.
         const [row, col] = floorCells[Math.floor(rand(siteId, "scarab-cell", i) * floorCells.length)]
@@ -263,16 +233,20 @@ export const MapLife = ({ mood, siteId, floorCells, isLit }: Omit<Props, "width"
         const { cx, cy } = cellCenter(row, col)
         const away = rand(siteId, "scarab-dir", i) > 0.5 ? 1 : -1
         return (
-          <image
+          <div
             key={i}
             className={SCARAB_CLASS}
-            href={url}
-            x={cx - 7 + (rand(siteId, "scarab-x", i) - 0.5) * (CELL / 2)}
-            y={cy - 5 + (rand(siteId, "scarab-y", i) - 0.5) * (CELL / 2)}
-            width={14}
-            height={10}
             style={
               {
+                position: "absolute",
+                left: cx - 7 + (rand(siteId, "scarab-x", i) - 0.5) * (CELL / 2),
+                top: cy - 5 + (rand(siteId, "scarab-y", i) - 0.5) * (CELL / 2),
+                width: 14,
+                height: 10,
+                backgroundImage: `url(${url})`,
+                backgroundSize: "contain",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
                 "--sx": `${away * (10 + rand(siteId, "scarab-run", i) * 14)}px`,
                 "--sy": `${(rand(siteId, "scarab-side", i) - 0.5) * 16}px`,
                 animationDuration: `${5 + rand(siteId, "scarab-speed", i) * 6}s`,
@@ -282,43 +256,57 @@ export const MapLife = ({ mood, siteId, floorCells, isLit }: Omit<Props, "width"
           />
         )
       })}
-    </g>
+    </div>
   )
 }
 
-/** Drift and tint: between the player and the world, so over everything the map draws. */
-export const MapWeather = ({ mood, siteId, width, height }: Omit<Props, "floorCells" | "isLit">) => {
+/** Drift and tint: between the player and the world, so over everything the map draws — and an HTML
+ * layer over the map rather than the last group inside it.
+ *
+ * ACROSS THE SCREEN, NOT ACROSS THE FLOOR. A mote in map space had to be placed against the floor's own
+ * width and height, moved with the pan and grew with the zoom — dust the size of a chest at 5×. Air is
+ * between the player and the world, so it belongs to the viewport: the layer is the size of the map's
+ * window, and a floor twice the screen costs exactly the same motes as one that fits.
+ *
+ * Each mote is its own div with a `translate` animation, which the compositor owns — see the note at the
+ * top of this file for the repaint this replaced. */
+export const MapWeather = ({ mood, siteId }: Pick<Props, "mood" | "siteId">) => {
   const { drift, tint } = mood
   if (!drift && !tint) return null
   return (
-    <g aria-hidden="true" style={{ pointerEvents: "none" }}>
-      <style>{MOOD_CSS}</style>
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
       {drift &&
-        Array.from({ length: drift.count }, (_, i) => (
-          <circle
-            key={i}
-            className={MOTE_CLASS}
-            cx={rand(siteId, "mote-x", i) * width}
-            cy={rand(siteId, "mote-y", i) * height}
-            r={drift.size * (0.6 + rand(siteId, "mote-r", i) * 0.8)}
-            fill={drift.fill}
-            style={
-              {
-                "--o": drift.opacity,
-                // Blown across and down, at its own angle and pace — one vector for all of them reads as a
-                // sheet of rain rather than as air.
-                "--dx": `${-(60 + rand(siteId, "mote-dx", i) * 200)}px`,
-                "--dy": `${(rand(siteId, "mote-dy", i) - 0.35) * 120}px`,
-                animationDuration: `${drift.seconds * (0.7 + rand(siteId, "mote-s", i) * 0.6)}s`,
-                // Negative delay: they are already mid-crossing on the first frame, rather than all
-                // starting together in a wave.
-                animationDelay: `-${rand(siteId, "mote-d", i) * drift.seconds}s`,
-              } as React.CSSProperties
-            }
-          />
-        ))}
+        Array.from({ length: drift.count }, (_, i) => {
+          const size = drift.size * 2 * (0.6 + rand(siteId, "mote-r", i) * 0.8)
+          return (
+            <div
+              key={i}
+              className={MOTE_CLASS}
+              style={
+                {
+                  left: `${rand(siteId, "mote-x", i) * 100}%`,
+                  top: `${rand(siteId, "mote-y", i) * 100}%`,
+                  width: `${size}px`,
+                  height: `${size}px`,
+                  background: drift.fill,
+                  "--o": drift.opacity,
+                  // Blown across and down, at its own angle and pace — one vector for all of them reads as a
+                  // sheet of rain rather than as air.
+                  "--dx": `${-(60 + rand(siteId, "mote-dx", i) * 200)}px`,
+                  "--dy": `${(rand(siteId, "mote-dy", i) - 0.35) * 120}px`,
+                  animationDuration: `${drift.seconds * (0.7 + rand(siteId, "mote-s", i) * 0.6)}s`,
+                  // Negative delay: they are already mid-crossing on the first frame, rather than all
+                  // starting together in a wave.
+                  animationDelay: `-${rand(siteId, "mote-d", i) * drift.seconds}s`,
+                } as React.CSSProperties
+              }
+            />
+          )
+        })}
       {/* Last, so the hour lies over the motes as well as the stone. */}
-      {tint && <rect width={width} height={height} fill={tint.fill} opacity={tint.opacity} />}
-    </g>
+      {tint && (
+        <div data-map-tint="" className="absolute inset-0" style={{ background: tint.fill, opacity: tint.opacity }} />
+      )}
+    </div>
   )
 }

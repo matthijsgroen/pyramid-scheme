@@ -259,3 +259,62 @@ export const WardGatesOpen: Story = {
 export const WardGateWithPlayerUnderIt: Story = {
   args: { grid: gateCrossGrid("reachable"), explorerPos: [1, 3] },
 }
+
+// Chests taken and chests still shut, side by side. The chest art is the same picture either way, so
+// this is the story that says whether a player can tell an emptied room from one worth walking to.
+const treasureRoom = (dirs: Direction[], state: CellState): GridCell => ({
+  type: "room",
+  roomType: "encounter",
+  family: "tableau",
+  tags: ["treasure"],
+  dirs: new Set(dirs),
+  state,
+  reward: { type: "money", amount: 10 },
+})
+
+export const TreasureTakenAndNot: Story = {
+  args: {
+    grid: {
+      cells: [
+        [emptyCell, passage(["s", "e"]), passage(["w", "e"]), passage(["w", "s"]), emptyCell],
+        [emptyCell, treasureRoom(["n"], "reachable"), emptyCell, treasureRoom(["n"], "completed"), emptyCell],
+      ],
+      rows: 2,
+      cols: 5,
+      entrancePos: [0, 2],
+      exitPos: [0, 2],
+      siteId: "chest-stories",
+      difficulty: "junior",
+      staircases: {},
+    },
+  },
+}
+
+// Both hands of the descending side flight, side by side: the pool of light has to land under the cresset
+// the tile actually carries, and the tile's flame swaps with the mirror. Reported from play — a stair
+// entered from the east drew its torch on the right and lit the floor on the left.
+export const SideStairsBothHands: Story = {
+  args: {
+    grid: (() => {
+      const cells: GridCell[][] = [
+        [
+          passage(["e"]),
+          { type: "room", roomType: "portal", stairId: "s1", dirs: new Set<Direction>(["w"]), state: "reachable" },
+          emptyCell,
+          { type: "room", roomType: "portal", stairId: "s2", dirs: new Set<Direction>(["e"]), state: "reachable" },
+          passage(["w"]),
+        ],
+      ]
+      return {
+        cells,
+        rows: 1,
+        cols: 5,
+        entrancePos: [0, 0] as const,
+        exitPos: [0, 4] as const,
+        siteId: "stair-stories",
+        difficulty: "starter" as const,
+        staircases: {},
+      }
+    })(),
+  },
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Writes a full placeholder tile set into src/assets/tiles/<tier>/ so the sprite renderer can be
+ * Writes a full placeholder tile set into src/assets/tiles/placeholder/ so the sprite renderer can be
  * built and measured before any real art exists: generated SVG, rasterised by sharp.
  *
  * The idiom is a top-down pixel dungeon: a wall owns its cells and shows a full-cell south-facing
@@ -8,7 +8,7 @@
  * low-contrast (all the depth comes from faces, the silhouette outline and hard shadows); props are
  * small, bottom-anchored and dark-outlined. See docs/game-design/spritesheet-renderer-prep.md.
  *
- * Output is git-ignored. Regenerate, don't commit: yarn generate-dummy-tiles [--preview]
+ * Regenerate with: yarn generate-dummy-tiles [--preview]
  */
 
 import { existsSync, mkdirSync, readFileSync } from "fs"
@@ -599,8 +599,25 @@ const sandDriftSvg = (): Buffer =>
       `<ellipse cx="${DRIFT * 0.6}" cy="${DRIFT * 0.6}" rx="${DRIFT * 0.22}" ry="${DRIFT * 0.14}" fill="#e2d0ac"/>`
   )
 
+/**
+ * A stand-in goes to `tiles/placeholder/`, ONE per kind, whatever rank asked for it.
+ *
+ * A rank's folder holds that rank's art and nothing else — that is what lets the renderer ask "is this
+ * painted here yet" and get a true answer (`tileUrl` vs `tileOrPlaceholder` in `tileAssets.ts`). While
+ * the dummies lived in the rank folders they answered yes for every kind at every rank, and
+ * `companionProps` — which places a second prop only where the kind IS drawn — put placeholder crystals
+ * in the Valley of the Kings on the strength of it.
+ *
+ * So the tier argument now says which rank ASKED, and is used only to leave real art alone. The tint per
+ * rank goes with it: a stand-in is not that rank's art, and pretending otherwise is the whole bug.
+ */
 const write = async (tier: string, name: string, data: Buffer, w: number, h: number): Promise<void> => {
-  const dir = join(OUT_ROOT, tier)
+  // Painted already, here or in the shared set? Then nothing is owed.
+  if (existsSync(join(OUT_ROOT, tier, `${name}.png`)) || existsSync(join(OUT_ROOT, "default", `${name}.png`))) {
+    skipped++
+    return
+  }
+  const dir = join(OUT_ROOT, "placeholder")
   mkdirSync(dir, { recursive: true })
   const file = join(dir, `${name}.png`)
   if (existsSync(file) && !process.argv.includes("--force")) {
@@ -610,7 +627,7 @@ const write = async (tier: string, name: string, data: Buffer, w: number, h: num
   await sharp(data).png({ compressionLevel: 9 }).toFile(file)
   const meta = await sharp(file).metadata()
   if (meta.width !== w || meta.height !== h) {
-    throw new Error(`${tier}/${name}.png rasterised to ${meta.width}x${meta.height}, expected ${w}x${h}`)
+    throw new Error(`placeholder/${name}.png rasterised to ${meta.width}x${meta.height}, expected ${w}x${h}`)
   }
 }
 
@@ -1072,7 +1089,7 @@ const main = async (): Promise<void> => {
     }
   }
   console.log(
-    `${count - skipped} dummy tiles written to src/assets/tiles/ (${tiers.length} tiers + shared)` +
+    `${count - skipped} stand-ins written to src/assets/tiles/placeholder/ (asked for by ${tiers.length} tiers + shared)` +
       (skipped > 0 ? `, ${skipped} left alone — already there. --force to overwrite` : "")
   )
   if (process.argv.includes("--preview")) console.log(`preview: ${await preview(tiers)}`)

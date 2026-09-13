@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { CellState, Difficulty } from "@/game/siteTypes"
-import { ALL_STATES, buildTileRegions, faceShadowsToPath, rectsToPath } from "./tileRegions"
+import { ALL_STATES, buildTileRegions, faceShadowRects, rectsToPath } from "./tileRegions"
 import type { FloorAt, OpenBetween, Rect, StateGroups, TileRegions } from "./tileRegions"
 import { CELL, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
 
@@ -223,6 +223,6 @@ describe("path building", () => {
   })
 
   it("puts a face's shadow on the floor in front of it", () => {
-    expect(faceShadowsToPath([[0, 0, 10, 6]], 4)).toBe("M0 6h10v4h-10z")
+    expect(faceShadowRects([[0, 0, 10, 6]], 4)).toEqual([[0, 6, 10, 4]])
   })
 })

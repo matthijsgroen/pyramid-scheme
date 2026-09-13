@@ -151,12 +151,17 @@ export const ExplorerDot = ({ grid, pos, segmentDuration = 180, color = "#ffd060
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pos[0], pos[1]])
 
-  // The group carries the position, so the figure inside is drawn in cell-local units — and a test can
-  // ask where the explorer is without caring whether it came out as a sprite or as the fallback dot.
+  // The box carries the position and has no size of its own, so the figure inside is drawn in cell-local
+  // units around the middle of the cell — and a test can ask where the explorer is without caring whether
+  // it came out as a sprite or as the fallback dot.
   return (
-    <g data-explorer="" transform={`translate(${svgPos.x}, ${svgPos.y})`} style={{ pointerEvents: "none" }}>
+    <div
+      data-explorer=""
+      data-at={`${svgPos.x},${svgPos.y}`}
+      style={{ position: "absolute", left: svgPos.x, top: svgPos.y, width: 0, height: 0, pointerEvents: "none" }}
+    >
       <ExplorerFigure facing={facing} walking={walking} cellMs={segmentDuration} color={color} />
-    </g>
+    </div>
   )
 }
 
@@ -165,74 +170,43 @@ export const ExplorerDot = ({ grid, pos, segmentDuration = 180, color = "#ffd060
 // flicker is mostly opacity, plus a two-pixel wander: a lamp gutters, it does not pulse, and this sits
 // under the player's eye the whole game. SCALING it was the version that read as the pool breathing —
 // wandering a pixel or two is a flame moving in someone's hand, which is the thing being drawn.
-const TORCH_CLASS = "map-torch"
+const TORCH_CLASS = "map-torch animate-map-torch motion-reduce:animate-none"
 // The legs, cycled by the browser. The frames sit side by side inside a clip one frame wide and the strip
 // is slid a whole frame at a time — `steps()` doing what a spritesheet's background-position does, which is
 // why the span is the strip's FULL width and the step count is however many frames the facing was drawn
 // with. Both come in as inline values, so one keyframe serves every facing and every frame count.
-const WALK_CLASS = "map-walk"
+const WALK_CLASS = "animate-map-walk motion-reduce:animate-none"
 const TORCH_RADIUS = CELL * 0.85
-const TORCH_CSS = `
-.${TORCH_CLASS} { animation: map-torch-flicker 2.2s ease-in-out infinite; }
-@keyframes map-torch-flicker {
-  0%   { opacity: 0.86; transform: translate(0, 0); }
-  18%  { opacity: 1;    transform: translate(1px, -1px); }
-  37%  { opacity: 0.82; transform: translate(-1px, 1px); }
-  58%  { opacity: 0.97; transform: translate(1px, 1px); }
-  79%  { opacity: 0.85; transform: translate(-1px, 0); }
-  100% { opacity: 0.86; transform: translate(0, 0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .${TORCH_CLASS} { animation: none; }
-}
-.${WALK_CLASS} { animation-name: map-walk; animation-iteration-count: infinite; }
-@keyframes map-walk { to { transform: translateX(var(--walk-span)); } }
-@media (prefers-reduced-motion: reduce) {
-  .${WALK_CLASS} { animation: none; }
-}
-`
 
-export const LIGHT_POOL_ID = "torch-pool"
-
-/** The gradient every pool of light on this map is filled with, defined ONCE.
+/** The colours a pool of light is made of, as one gradient every pool shares.
  *
- * Rendered into the map's own `<defs>` rather than beside each pool: a lit lamp in every third chamber
- * would otherwise redeclare the same id a dozen times, and the explorer's pool would depend on the
- * explorer being mounted to have a fill at all. */
-export const LightPoolDefs = () => (
-  <>
-    <style>{TORCH_CSS}</style>
-    <radialGradient id={LIGHT_POOL_ID}>
-      <stop offset="0" stopColor="#ffca6a" stopOpacity="0.55" />
-      <stop offset="0.45" stopColor="#ffab3d" stopOpacity="0.26" />
-      <stop offset="1" stopColor="#ff9a2e" stopOpacity="0" />
-    </radialGradient>
-  </>
-)
+ * A gradient in CSS rather than a `<radialGradient>` in the map's `<defs>`: there is no id to collide
+ * over, so a lit lamp in every third chamber costs nothing, and a pool drawn on its own in a story does
+ * not depend on the map being around it to have a fill at all. */
+const LIGHT_POOL_FILL =
+  "radial-gradient(closest-side, rgba(255,202,106,0.55) 0%, rgba(255,171,61,0.26) 45%, rgba(255,154,46,0) 100%)"
 
 /** A pool of light lying on the floor, screen-blended so it lifts the stone it lands on instead of
  * painting a yellow disc over it. Drawn UNDER whatever carries the flame, so the light is on the floor
- * and the thing is standing in it. */
-export const LightPool = ({ r, cy = 0 }: { r: number; cy?: number }) => (
-  <circle
+ * and the thing is standing in it. Placed by its CENTRE, the way the circle it replaces was. */
+export const LightPool = ({ r, cx = 0, cy = 0 }: { r: number; cx?: number; cy?: number }) => (
+  <div
     data-light-pool=""
     className={TORCH_CLASS}
-    cy={cy}
-    r={r}
-    fill={`url(#${LIGHT_POOL_ID})`}
-    style={{ mixBlendMode: "screen" }}
-    pointerEvents="none"
+    style={{
+      position: "absolute",
+      left: cx - r,
+      top: cy - r,
+      width: r * 2,
+      height: r * 2,
+      background: LIGHT_POOL_FILL,
+      mixBlendMode: "screen",
+      pointerEvents: "none",
+    }}
   />
 )
 
-const TorchGlow = () => (
-  <>
-    {/* The style tag comes with the defs on the map. A story that renders the figure on its own still
-        needs the flicker, and a duplicate <style> is harmless where a duplicate id is not. */}
-    <style>{TORCH_CSS}</style>
-    <LightPool r={TORCH_RADIUS} cy={CELL * 0.22 - FOOT_LIFT} />
-  </>
-)
+const TorchGlow = () => <LightPool r={TORCH_RADIUS} cy={CELL * 0.22 - FOOT_LIFT} />
 
 /**
  * The explorer as drawn, in cell-local units around the centre of the cell it stands on. Separate from the
@@ -267,37 +241,62 @@ export const ExplorerFigure = ({
     return (
       <>
         <TorchGlow />
-        <circle r={EXPLORER_DOT_RADIUS} fill={color} stroke="#110d08" strokeWidth={2} />
+        <div
+          data-explorer-dot=""
+          style={{
+            position: "absolute",
+            left: -EXPLORER_DOT_RADIUS,
+            top: -EXPLORER_DOT_RADIUS,
+            width: EXPLORER_DOT_RADIUS * 2,
+            height: EXPLORER_DOT_RADIUS * 2,
+            borderRadius: "50%",
+            background: color,
+            border: "2px solid #110d08",
+            boxSizing: "border-box",
+          }}
+        />
       </>
     )
   return (
     <>
       <TorchGlow />
-      {/* Mirrored for west, and the glow is left out of that transform: a pool of light on the floor has
+      {/* The clip is a box one frame wide with the strip sliding behind it — `overflow: hidden` doing what
+          the nested <svg> did.
+          Mirrored for west, and the glow is left out of that transform: a pool of light on the floor has
           no handedness, and flipping it would swing it across the cell every time the player turned. */}
-      <g transform={facing === "w" ? "scale(-1, 1)" : undefined}>
-        {/* A nested <svg> is the clip: one frame wide, whatever the strip inside it is doing. */}
-        <svg x={-CHAR_W / 2} y={CELL / 2 - CHAR_H - FOOT_LIFT} width={CHAR_W} height={CHAR_H} overflow="hidden">
-          {walking && frames.length > 1 ? (
-            <g
-              className={WALK_CLASS}
-              style={
-                {
-                  "--walk-span": `${-frames.length * CHAR_W}px`,
-                  animationDuration: `${frames.length * frameMs}ms`,
-                  animationTimingFunction: `steps(${frames.length})`,
-                } as CSSProperties
-              }
-            >
-              {frames.map((url, i) => (
-                <image key={url} href={url} x={i * CHAR_W} width={CHAR_W} height={CHAR_H} />
-              ))}
-            </g>
-          ) : (
-            <image href={frames[step % frames.length]} width={CHAR_W} height={CHAR_H} />
-          )}
-        </svg>
-      </g>
+      <div
+        style={{
+          position: "absolute",
+          left: -CHAR_W / 2,
+          top: CELL / 2 - CHAR_H - FOOT_LIFT,
+          width: CHAR_W,
+          height: CHAR_H,
+          overflow: "hidden",
+          transform: facing === "w" ? "scaleX(-1)" : undefined,
+        }}
+      >
+        {walking && frames.length > 1 ? (
+          <div
+            className={WALK_CLASS}
+            style={
+              {
+                display: "flex",
+                width: frames.length * CHAR_W,
+                height: CHAR_H,
+                "--walk-span": `${-frames.length * CHAR_W}px`,
+                animationDuration: `${frames.length * frameMs}ms`,
+                animationTimingFunction: `steps(${frames.length})`,
+              } as CSSProperties
+            }
+          >
+            {frames.map(url => (
+              <img key={url} src={url} width={CHAR_W} height={CHAR_H} alt="" />
+            ))}
+          </div>
+        ) : (
+          <img src={frames[step % frames.length]} width={CHAR_W} height={CHAR_H} alt="" />
+        )}
+      </div>
     </>
   )
 }

@@ -32,7 +32,7 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
   // The box holding the map's scaled footprint. Sized here, never by React — a re-render would
   // otherwise reset it to the unzoomed size mid-gesture.
   const sizerRef = useRef<HTMLDivElement>(null)
-  const mapRef = useRef<SVGSVGElement>(null)
+  const mapRef = useRef<HTMLDivElement>(null)
   const zoomRef = useRef(1)
 
   const render = () => {
@@ -52,30 +52,48 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
     const el = scrollRef.current
     if (!el) return
 
-    // Keeps the point under the gesture under the gesture. Measured rather than derived: the map
-    // is auto-centered while it's smaller than the viewport, so its offset within the scroll area
-    // moves as the zoom changes, and computing the new scroll from the old one silently zooms
-    // toward the middle of the screen instead.
-    const zoomTo = (target: number, clientX: number, clientY: number) => {
+    /** Which point of the MAP is under a point on the screen. Measured rather than derived: the map is
+     * auto-centred while it is smaller than the viewport, so its offset within the scroll area moves as
+     * the zoom changes, and computing the new scroll from the old one silently zooms toward the middle
+     * of the screen instead. */
+    const mapPointAt = (clientX: number, clientY: number) => {
       const sizer = sizerRef.current
-      if (!sizer) return
-      const next = clampZoom(target)
-      const previous = zoomRef.current
-      if (next === previous) return
-
-      const before = sizer.getBoundingClientRect()
-      const mapX = (clientX - before.left) / previous
-      const mapY = (clientY - before.top) / previous
-
-      zoomRef.current = next
-      render()
-
-      const after = sizer.getBoundingClientRect()
-      el.scrollLeft += after.left + mapX * next - clientX
-      el.scrollTop += after.top + mapY * next - clientY
+      if (!sizer) return null
+      const { left, top } = sizer.getBoundingClientRect()
+      return { x: (clientX - left) / zoomRef.current, y: (clientY - top) / zoomRef.current }
     }
 
-    let pinch: { distance: number; zoom: number } | null = null
+    /** Scroll so a point of the map sits under a point on the screen, at whatever the zoom is now. */
+    const putMapPointUnder = (point: { x: number; y: number }, clientX: number, clientY: number) => {
+      const sizer = sizerRef.current
+      if (!sizer) return
+      const { left, top } = sizer.getBoundingClientRect()
+      el.scrollLeft += left + point.x * zoomRef.current - clientX
+      el.scrollTop += top + point.y * zoomRef.current - clientY
+    }
+
+    /**
+     * Zoom to `target`, keeping `anchor` — a point of the map — under the screen point given.
+     *
+     * WITHOUT AN ANCHOR the point under the gesture is taken fresh each time, which is right for a wheel
+     * (the cursor is where it is) and WRONG for a pinch: re-reading it every move means whatever happens
+     * to be under the fingers at that instant stays under them, and the gesture's own travel is thrown
+     * away. Fingers drift — 70 pixels of drift across a pinch slid the map by most of a cell — so the
+     * thing the player put their fingers on walked out from between them. A pinch carries the point it
+     * started on, and that point both zooms and PANS with the fingers.
+     */
+    const zoomTo = (target: number, clientX: number, clientY: number, anchor?: { x: number; y: number } | null) => {
+      const point = anchor ?? mapPointAt(clientX, clientY)
+      if (!point) return
+      const next = clampZoom(target)
+      if (next !== zoomRef.current) {
+        zoomRef.current = next
+        render()
+      }
+      putMapPointUnder(point, clientX, clientY)
+    }
+
+    let pinch: { distance: number; zoom: number; anchor: { x: number; y: number } | null } | null = null
 
     const onWheel = (e: WheelEvent) => {
       if (!e.ctrlKey && !e.metaKey) return
@@ -84,13 +102,17 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
       zoomTo(zoomRef.current * Math.exp(-e.deltaY / 300), e.clientX, e.clientY)
     }
     const onTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 2) pinch = { distance: touchDistance(e.touches), zoom: zoomRef.current }
+      if (e.touches.length !== 2) return
+      const { x, y } = touchMidpoint(e.touches)
+      // The point between the fingers as the pinch begins: what the player is aiming at, and what the
+      // rest of the gesture is measured against.
+      pinch = { distance: touchDistance(e.touches), zoom: zoomRef.current, anchor: mapPointAt(x, y) }
     }
     const onTouchMove = (e: TouchEvent) => {
       if (!pinch || e.touches.length !== 2) return
       e.preventDefault()
       const { x, y } = touchMidpoint(e.touches)
-      zoomTo((pinch.zoom * touchDistance(e.touches)) / pinch.distance, x, y)
+      zoomTo((pinch.zoom * touchDistance(e.touches)) / pinch.distance, x, y, pinch.anchor)
     }
     const endPinch = () => {
       pinch = null

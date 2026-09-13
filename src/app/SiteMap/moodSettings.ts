@@ -31,7 +31,13 @@ export type Mood = {
   /** One colour laid over the whole map. The hour, and nothing else. */
   tint?: { fill: string; opacity: number }
   /** Things carried on the air: dust, chaff, soot, sand, sparks — or fog, which is the same thing drawn
-   * huge and slow. `seconds` is one crossing; `size` is the radius in map units. */
+   * huge and slow. `seconds` is one crossing; `size` is the radius in screen pixels.
+   *
+   * COUNT IS PER SCREEN, not per floor. The air is drawn in an HTML layer over the map's window rather
+   * than inside the map (MapMood), so these are the motes a player SEES — where the old numbers were
+   * spread across a floor of which some 8% was on a phone at a time, and two specks reached the screen.
+   * Divided by roughly two and a half on the way across, which is a density between the two: a floor with
+   * air in it, and no blizzard. */
   drift?: { count: number; size: number; fill: string; opacity: number; seconds: number }
   /** How many scarabs are about. They scurry on lit floor, never through wall. */
   life?: number
@@ -43,25 +49,25 @@ export type Mood = {
 const RANK_MOOD: Record<Difficulty, Mood> = {
   starter: {
     tint: { fill: "#c8b48a", opacity: 0.06 },
-    drift: { count: 26, size: 1.6, fill: "#e8dcc0", opacity: 0.5, seconds: 14 },
+    drift: { count: 10, size: 1.6, fill: "#e8dcc0", opacity: 0.5, seconds: 14 },
     life: 3,
   },
   junior: {
     tint: { fill: "#c08840", opacity: 0.07 },
-    drift: { count: 18, size: 1.4, fill: "#2a2018", opacity: 0.45, seconds: 18 },
+    drift: { count: 8, size: 1.4, fill: "#2a2018", opacity: 0.45, seconds: 18 },
     life: 2,
   },
   expert: {
     tint: { fill: "#6a86a8", opacity: 0.09 },
-    drift: { count: 7, size: 26, fill: "#93a8bd", opacity: 0.07, seconds: 40 },
+    drift: { count: 4, size: 26, fill: "#93a8bd", opacity: 0.07, seconds: 40 },
   },
   master: {
     tint: { fill: "#0b0a12", opacity: 0.12 },
-    drift: { count: 14, size: 1.2, fill: "#ffdf9a", opacity: 0.55, seconds: 22 },
+    drift: { count: 6, size: 1.2, fill: "#ffdf9a", opacity: 0.55, seconds: 22 },
   },
   wizard: {
     tint: { fill: "#26407a", opacity: 0.1 },
-    drift: { count: 16, size: 2, fill: "#bfe4ff", opacity: 0.6, seconds: 26 },
+    drift: { count: 7, size: 2, fill: "#bfe4ff", opacity: 0.6, seconds: 26 },
   },
 }
 
@@ -71,11 +77,11 @@ const THEME_MOOD: Record<string, Mood> = {
   night: { tint: { fill: "#0e1a3a", opacity: 0.3 } },
   sand: {
     tint: { fill: "#d8b070", opacity: 0.1 },
-    drift: { count: 70, size: 1.4, fill: "#f0dcb4", opacity: 0.55, seconds: 5 },
+    drift: { count: 26, size: 1.4, fill: "#f0dcb4", opacity: 0.55, seconds: 5 },
   },
   fog: {
     tint: { fill: "#aebccc", opacity: 0.12 },
-    drift: { count: 9, size: 34, fill: "#cfdae6", opacity: 0.1, seconds: 55 },
+    drift: { count: 4, size: 34, fill: "#cfdae6", opacity: 0.1, seconds: 55 },
   },
 }
 

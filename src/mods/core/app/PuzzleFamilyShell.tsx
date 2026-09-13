@@ -206,7 +206,18 @@ export const PuzzleFamilyShell = ({
           {title}
         </p>
       )}
-      <div inert={finishing} className={clsx("flex w-full flex-col items-center gap-4", finishing && "opacity-90")}>
+      {/* THE BOARD SITS ON ITS OWN BLOCK, translucent black over the floor's painted wall — the same block
+          the hieroglyph strip under a tableau stands on. The wall behind an encounter is the room the
+          player walked into and is drawn at full strength; what a puzzle needs is not a darker room but a
+          quieter patch of it to be read against, and that patch is this. `w-fit` so the block is the size
+          of the board rather than of the card, which is what keeps the wall visible around it. */}
+      <div
+        inert={finishing}
+        className={clsx(
+          "flex w-fit max-w-full flex-col items-center gap-4 rounded-lg bg-black/30 p-3",
+          finishing && "opacity-90"
+        )}
+      >
         {children({ solved: handleSolved, reportInput, hintVisible: revealed && hint !== undefined })}
       </div>
       {/* **Two slots, and only ever two.** A step back and a hint are the only controls that mean the same
@@ -272,9 +283,7 @@ export const PuzzleFamilyShell = ({
         </p>
       )}
       {(goal || rules) && (
-        <div
-          className={clsx("w-full border-t border-stone-700 pt-3 text-sm text-stone-400", solvedBanner && "invisible")}
-        >
+        <div className={clsx("w-full rounded-lg bg-black/30 p-3 text-sm text-stone-400", solvedBanner && "invisible")}>
           {goal && (
             <>
               <h3 className="mb-1 font-pyramid text-stone-300">{t("ui.goal")}</h3>

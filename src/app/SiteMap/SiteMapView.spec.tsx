@@ -1,16 +1,52 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, approachCells, buildRoomClaims, footprintPath, tileRegionsFor } from "./SiteMapView"
-import { NODE_OVER_ART_OPACITY, STANDING_ROOM_CLIP } from "./nodeArt"
-import { ExplorerFigure, LIGHT_POOL_ID } from "./ExplorerDot"
+import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY } from "./nodeArt"
+import { ExplorerFigure } from "./ExplorerDot"
 import type { Rect, StateGroups } from "./tileRegions"
 import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { ALL_STATES } from "./tileRegions"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
+import { authoredKindsFor } from "./authoredKinds"
 
 // Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
 // place of its own), so a change there can't silently break every position assumption in this file.
+
+// ── Reading the map ───────────────────────────────────────────────────────────
+// The map is HTML (docs/instructions/map-rendering.md): a sprite is a box with the art as its
+// background, and a run of stone or a pool of light is a box cut to a path. So a test asks for elements
+// carrying a background image and reads the url and the box off the style, rather than asking for
+// `<image>` and its attributes.
+
+/** Every sprite drawn anywhere under `root`, in DOM order — which is also depth order. */
+const spritesIn = (root: HTMLElement | Element) =>
+  Array.from(root.querySelectorAll<HTMLElement>("[style*='background-image']"))
+
+const urlOf = (el: HTMLElement) => /url\(["']?(.*?)["']?\)/.exec(el.style.backgroundImage)?.[1] ?? ""
+
+/** Where a sprite's art actually lands, in map units.
+ *
+ * A sprite that is cut to a room is laid out as a full-map layer with its art placed by
+ * `background-position`, so the box is read from there rather than from `left`/`top` — see `Sprite`. */
+const boxOf = (el: HTMLElement) => {
+  if (el.style.clipPath) {
+    const [x, y] = el.style.backgroundPosition.split(" ").map(parseFloat)
+    const [w, h] = el.style.backgroundSize.split(" ").map(parseFloat)
+    return { x, y, w, h }
+  }
+  return {
+    x: parseFloat(el.style.left),
+    y: parseFloat(el.style.top),
+    w: parseFloat(el.style.width),
+    h: parseFloat(el.style.height),
+  }
+}
+
+/** The path a layer is cut to, as the `d` string inside `clip-path: path("…")`. */
+const clipOf = (el: HTMLElement | null | undefined) => /path\("(.*)"\)/.exec(el?.style.clipPath ?? "")?.[1] ?? ""
+
+const spriteMatching = (root: HTMLElement, part: string) => spritesIn(root).filter(el => urlOf(el).includes(part))
 
 // ── Grid factory ──────────────────────────────────────────────────────────────
 
@@ -72,6 +108,15 @@ const portalEast = (state: CellState, stairId?: string): GridCell => ({
   state,
 })
 
+// The same, the other hand: a stairhead reached from the WEST, which mirrors the side flight.
+const portalWest = (state: CellState, stairId?: string): GridCell => ({
+  type: "room",
+  roomType: "portal",
+  stairId,
+  dirs: new Set<Direction>(["w"]),
+  state,
+})
+
 describe("a node's furniture and the clip it is cut to", () => {
   const treasureCell = (dirs: Direction[]): GridCell => ({
     type: "room",
@@ -92,12 +137,9 @@ describe("a node's furniture and the clip it is cut to", () => {
       [empty, empty, empty],
     ])
     const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
-    const chest = [...container.querySelectorAll("image")].find(el =>
-      (el.getAttribute("href") ?? "").includes("chestProp")
-    )
+    const chest = spriteMatching(container, "chestProp")[0]
     expect(chest).toBeTruthy()
-    const clip = [...container.querySelectorAll("clipPath")].find(el => el.id.startsWith("room-clip-chest"))
-    const d = clip?.querySelector("path")?.getAttribute("d") ?? ""
+    const d = clipOf(chest)
     // The corridor to the east is floor, so the clip reaches into it and the chest is whole.
     expect(d).toContain(String(cellLeft(2)))
   })
@@ -116,8 +158,7 @@ describe("a node's furniture and the clip it is cut to", () => {
     const grid = makeGrid(cells)
     const claims = buildRoomClaims(grid)
     const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
-    const clip = [...container.querySelectorAll("clipPath")].find(el => el.id.startsWith("room-clip-chest"))
-    const d = clip?.querySelector("path")?.getAttribute("d") ?? ""
+    const d = clipOf(spriteMatching(container, "chestProp")[0])
     expect(d).not.toBe("")
 
     const ground = new Set<number>()
@@ -140,14 +181,13 @@ describe("what a condition grows on", () => {
   const growOn = (cells: GridCell[][]) => {
     const grid = { ...makeGrid(cells), condition: { kind: "overgrown" as const, amount: 1 } }
     const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
-    const sprites = [...container.querySelectorAll("image")].filter(el =>
-      (el.getAttribute("href") ?? "").includes("overgrown")
-    )
+    const sprites = spriteMatching(container, "overgrown")
     return cells[0].map((_, col) => {
       const { cx } = cellCenter(0, col)
-      return sprites.filter(
-        el => Math.abs(Number(el.getAttribute("x")) + Number(el.getAttribute("width")) / 2 - cx) < CELL / 2
-      ).length
+      return sprites.filter(el => {
+        const box = boxOf(el)
+        return Math.abs(box.x + box.w / 2 - cx) < CELL / 2
+      }).length
     })
   }
 
@@ -174,15 +214,13 @@ describe("what a condition grows on", () => {
       condition: { kind: "overgrown" as const, amount: 1 },
     }
     const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
-    const tufts = [...container.querySelectorAll("image")].filter(el =>
-      (el.getAttribute("href") ?? "").includes("overgrown.png")
-    )
+    const tufts = spriteMatching(container, "overgrown.png")
     expect(tufts.length).toBeGreaterThan(0)
     for (const t of tufts) {
-      const y = Number(t.getAttribute("y"))
+      const { y, h } = boxOf(t)
       // Never over the band: a tuft is in a joint, and the joint is on the floor.
       expect(y).toBeGreaterThanOrEqual(cellTop(0))
-      expect(y + Number(t.getAttribute("height"))).toBeLessThanOrEqual(cellTop(0) + CELL)
+      expect(y + h).toBeLessThanOrEqual(cellTop(0) + CELL)
     }
   })
 
@@ -223,7 +261,7 @@ const gateRoom = (dirs: Direction[], state: CellState = "reachable"): GridCell =
 })
 
 const clickableIn = (container: HTMLElement) =>
-  Array.from(container.querySelectorAll<HTMLElement>("g")).filter(el => el.style?.cursor === "pointer")
+  Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).filter(el => el.style?.cursor === "pointer")
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
@@ -294,7 +332,7 @@ describe("SiteMapView — room clickability", () => {
 
   it("does not render a fogged room at all", () => {
     const { container } = render(<SiteMapView grid={makeGrid([[room("fogged"), empty]])} />)
-    expect(container.querySelectorAll("g[transform]")).toHaveLength(0)
+    expect(container.querySelectorAll("[data-marker-cell]")).toHaveLength(0)
   })
 })
 
@@ -427,7 +465,7 @@ describe("SiteMapView — portals never render as completed", () => {
 describe("SiteMapView — explorer snaps on floor switch", () => {
   Element.prototype.scrollTo = vi.fn()
 
-  // The explorer group carries the position, whether it drew as a character sprite or as the fallback
+  // The explorer's box carries the position, whether it drew as a character sprite or as the fallback
   // dot — so this asserts where the explorer IS without caring which of the two it got.
   const explorerAt = (container: HTMLElement) => container.querySelector("[data-explorer]")
 
@@ -441,7 +479,7 @@ describe("SiteMapView — explorer snaps on floor switch", () => {
     rerender(<SiteMapView grid={floor1} explorerPos={[0, 0]} currentFloor={1} />)
 
     const { cx, cy } = cellCenter(0, 0)
-    expect(explorerAt(container)?.getAttribute("transform")).toBe(`translate(${cx}, ${cy})`)
+    expect(explorerAt(container)?.getAttribute("data-at")).toBe(`${cx},${cy}`)
   })
 })
 
@@ -461,8 +499,11 @@ describe("SiteMapView — long corridor click target", () => {
     return 0
   })
 
+  // A marker's box is the cell it belongs to, so it is found by where that box sits.
   const findCell = (container: HTMLElement, cx: number, cy: number) =>
-    Array.from(container.querySelectorAll("g")).find(el => el.getAttribute("transform") === `translate(${cx}, ${cy})`)
+    Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
+      el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
+    )
 
   it("puts a clickable target at the near end of a long visible corridor, routed to the far corner", () => {
     // fork(0,0) -- visible -- visible -- reachable corner(0,3). Only the corner has a real
@@ -514,7 +555,8 @@ describe("SiteMapView — long corridor click target", () => {
     expect(findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)?.querySelector("polygon")).toBeTruthy()
 
     rerender(<SiteMapView grid={grid} explorerPos={[0, 2]} />)
-    expect(findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)?.querySelector("polygon")).toBeNull()
+    // Gone, and the box may be gone with it: a cell with nothing to draw and nothing to tap is not drawn.
+    expect(findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)?.querySelector("polygon")).toBeFalsy()
   })
 })
 
@@ -524,14 +566,14 @@ describe("SiteMapView — zoom", () => {
   // The zoom is applied to the DOM directly (see useMapZoom): the map scales by transform, and the
   // sizer box around it carries the scaled footprint that the scroll area measures.
   const mapScale = (container: HTMLElement) => {
-    const transform = container.querySelector("svg")!.style.transform
+    const transform = container.querySelector<HTMLElement>("[data-map]")!.style.transform
     return Number(/scale\(([\d.]+)\)/.exec(transform)?.[1])
   }
   const sizerSize = (container: HTMLElement) => {
-    const sizer = container.querySelector("svg")!.parentElement!
+    const sizer = container.querySelector("[data-map]")!.parentElement!
     return { width: parseFloat(sizer.style.width), height: parseFloat(sizer.style.height) }
   }
-  const scrollArea = (container: HTMLElement) => container.firstElementChild as HTMLElement
+  const scrollArea = (container: HTMLElement) => container.querySelector("[data-map-scroll]") as HTMLElement
 
   const wheel = (container: HTMLElement, deltaY: number, times = 1) => {
     for (let i = 0; i < times; i++) {
@@ -592,8 +634,8 @@ describe("SiteMapView — pinch zoom", () => {
   Element.prototype.scrollTo = vi.fn()
 
   const mapScale = (container: HTMLElement) =>
-    Number(/scale\(([\d.]+)\)/.exec(container.querySelector("svg")!.style.transform)?.[1])
-  const scrollArea = (container: HTMLElement) => container.firstElementChild as HTMLElement
+    Number(/scale\(([\d.]+)\)/.exec(container.querySelector<HTMLElement>("[data-map]")!.style.transform)?.[1])
+  const scrollArea = (container: HTMLElement) => container.querySelector("[data-map-scroll]") as HTMLElement
   const fingers = (spread: number) => [
     { clientX: 100 - spread, clientY: 100 },
     { clientX: 100 + spread, clientY: 100 },
@@ -616,14 +658,39 @@ describe("SiteMapView — pinch zoom", () => {
 
     expect(mapScale(container)).toBe(1)
   })
+
+  it("carries the map with the fingers, so a pinch that travels does not leave its target behind", () => {
+    // THE BUG THIS IS FOR: the point under the fingers was re-read every move, so whatever happened to be
+    // between them stayed between them and the gesture's own travel was thrown away. Fingers drift, and
+    // 70 pixels of drift walked the map most of a cell away from the thing the player was aiming at.
+    // Measured in a real browser at 0.8 map units of slip for a still pinch and 35 for a travelling one.
+    const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), room("reachable")]])} />)
+    const area = scrollArea(container)
+    // jsdom lays nothing out, so the map's box has to be told: 400 wide at the origin, which is all the
+    // scroll arithmetic reads.
+    const sizer = container.querySelector("[data-map]")!.parentElement!
+    sizer.getBoundingClientRect = () => ({ left: 0, top: 0, width: 400, height: 400 }) as DOMRect
+
+    const travelled = (spread: number, mid: number) => [
+      { clientX: mid - spread, clientY: 100 },
+      { clientX: mid + spread, clientY: 100 },
+    ]
+    fireEvent.touchStart(area, { touches: travelled(50, 100) })
+    // The same spread, moved bodily 40px to the right: no zoom in it at all, purely a two-finger drag.
+    fireEvent.touchMove(area, { touches: travelled(50, 140) })
+
+    expect(mapScale(container)).toBeCloseTo(1)
+    // The map followed: the content scrolled left by exactly what the fingers travelled.
+    expect(area.scrollLeft).toBeCloseTo(-40)
+  })
 })
 
 describe("SiteMapView — zoom reset", () => {
   Element.prototype.scrollTo = vi.fn()
 
   const mapScale = (container: HTMLElement) =>
-    Number(/scale\(([\d.]+)\)/.exec(container.querySelector("svg")!.style.transform)?.[1])
-  const scrollArea = (container: HTMLElement) => container.firstElementChild as HTMLElement
+    Number(/scale\(([\d.]+)\)/.exec(container.querySelector<HTMLElement>("[data-map]")!.style.transform)?.[1])
+  const scrollArea = (container: HTMLElement) => container.querySelector("[data-map-scroll]") as HTMLElement
 
   it("returns to the default zoom on a double-click, however far the map was zoomed", () => {
     const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), room("reachable")]])} />)
@@ -685,10 +752,7 @@ describe("SiteMapView — a wall only opens onto something drawn", () => {
 // side of the opening are wall, so its jambs have corners to stand on. It is the one thing on the map
 // painted OVER the explorer, which is what makes the player walk under it rather than over it.
 
-const archesIn = (container: HTMLElement) =>
-  Array.from(container.querySelectorAll<SVGImageElement>("image")).filter(el =>
-    (el.getAttribute("href") ?? "").includes("arch")
-  )
+const archesIn = (container: HTMLElement) => spriteMatching(container, "arch")
 
 // A dead-end treasure chamber. Its `treasure` tag is what makes it claim the cells around it — a footprint
 // is what separates a place from a station on the way (see canClaimVoid).
@@ -715,17 +779,17 @@ describe("archways", () => {
     const { container } = render(<SiteMapView grid={doorwayGrid()} />)
     const arches = archesIn(container)
     expect(arches).toHaveLength(1)
-    expect(arches[0].getAttribute("y")).toBe(String(cellTop(1) - WALL_H - ARCH_RISE))
+    expect(boxOf(arches[0]).y).toBe(cellTop(1) - WALL_H - ARCH_RISE)
     // A corner wide on each side of the doorway: the jambs stand in the wall's own thickness.
-    expect(arches[0].getAttribute("x")).toBe(String(cellLeft(1) - SIDE_W))
-    expect(arches[0].getAttribute("opacity")).toBe("1")
+    expect(boxOf(arches[0]).x).toBe(cellLeft(1) - SIDE_W)
+    expect(arches[0].style.opacity).toBe("1")
   })
 
   it("paints an arch after the explorer, so a doorway passes in front of the player", () => {
     // Only the air is above it (see the mood layer): weather is between the player and the world, an arch
     // is part of the world and stands in front of them in it.
     const { container } = render(<SiteMapView grid={doorwayGrid()} explorerPos={[2, 1]} />)
-    const arch = archesIn(container)[0].parentElement!
+    const arch = archesIn(container)[0]
     const explorer = container.querySelector("[data-explorer]")!
     expect(explorer.compareDocumentPosition(arch) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
@@ -736,7 +800,7 @@ describe("archways", () => {
       [1, 1],
     ] as const) {
       const { container } = render(<SiteMapView grid={doorwayGrid()} explorerPos={pos} />)
-      const opacity = Number(archesIn(container)[0].getAttribute("opacity"))
+      const opacity = Number(archesIn(container)[0].style.opacity)
       expect(opacity, `explorer at ${pos}`).toBeLessThan(1)
     }
   })
@@ -751,11 +815,11 @@ describe("archways", () => {
       [empty, chamber("completed"), empty],
     ])
     const { container } = render(<SiteMapView grid={grid} explorerPos={[1, 1]} />)
-    const shadow = container.querySelector<SVGPathElement>("[data-arch-shadow]")
+    const shadow = container.querySelector<HTMLElement>("[data-arch-shadow]")
     expect(shadow, "an arch casts on the floor it stands on").toBeTruthy()
     // One band under each jamb, and both at the arch's foot — ARCH_DROP below the wall line it pierces.
-    const foot = Number(archesIn(container)[0].getAttribute("y")) + ARCH_H
-    const bands = shadow!.getAttribute("d")!.match(/M\d+ (\d+)/g) ?? []
+    const foot = boxOf(archesIn(container)[0]).y + ARCH_H
+    const bands = clipOf(shadow).match(/M\d+ (\d+)/g) ?? []
     expect(bands).toHaveLength(2)
     expect(bands.every(b => Number(b.split(" ")[1]) === foot)).toBe(true)
     // Before the explorer in document order, so the player walks over it rather than under it.
@@ -789,14 +853,12 @@ describe("archways", () => {
     const arches = archesIn(container)
     expect(arches).toHaveLength(1)
     // The stone of the band it stands in, which here is the tier being entered.
-    expect(arches[0].getAttribute("href")).toContain("junior")
-    const sills = Array.from(container.querySelectorAll<SVGPathElement>("path")).filter(el =>
-      (el.getAttribute("fill") ?? "").includes("sill")
-    )
+    expect(urlOf(arches[0])).toContain("junior")
+    const sills = Array.from(container.querySelectorAll<HTMLElement>("[data-tile^='sill-']"))
     expect(sills).toHaveLength(1)
     // The arch's stone, not the entered tier's — one opening, one material.
-    // A gap between two rows takes the horizontal pattern; the vertical one is the same step turned.
-    expect(sills[0].getAttribute("fill")).toContain("sill-h-junior")
+    // A gap between two rows takes the step as drawn; one between two columns is the same step turned.
+    expect(sills[0].dataset.tile).toBe("sill-h-junior")
   })
 
   it("draws no arch into the fog", () => {
@@ -821,8 +883,8 @@ describe("the place the explorer stands is lit", () => {
   // Both washes are one path each, so the cells they cover are countable by the moves in the `d`.
   // Cell squares only: the path also carries the bands joining one lit cell to the next.
   const litCounts = (container: HTMLElement) =>
-    Array.from(container.querySelectorAll<SVGPathElement>("[data-torch]")).map(
-      el => (el.getAttribute("d")?.match(/h56v56h-56z/g) ?? []).length
+    Array.from(container.querySelectorAll<HTMLElement>("[data-torch]")).map(
+      el => (clipOf(el).match(/h56v56h-56z/g) ?? []).length
     )
 
   it("lights the whole corridor RUN, not the tile stood on", () => {
@@ -876,7 +938,7 @@ describe("the place the explorer stands is lit", () => {
 })
 
 describe("the explorer stands in the room", () => {
-  const spriteIn = (container: HTMLElement) => container.querySelector<SVGImageElement>("[data-explorer] image")
+  const spriteIn = (container: HTMLElement) => container.querySelector<HTMLImageElement>("[data-explorer] img")
 
   it("stands taller than its cell, so its head is against the wall behind it", () => {
     // The question this answers: walking a corridor, is the character in FRONT of the wall at the far
@@ -886,6 +948,7 @@ describe("the explorer stands in the room", () => {
     const { container } = render(<SiteMapView grid={makeGrid([[corridor("completed", false)]])} explorerPos={[0, 0]} />)
     const sprite = spriteIn(container)!
     const height = Number(sprite.getAttribute("height"))
+    expect(height).toBe(70)
     expect(height).toBeGreaterThan(CELL)
     // Bottom on the floor line, top inside the band above it.
     const { cy } = cellCenter(0, 0)
@@ -893,10 +956,10 @@ describe("the explorer stands in the room", () => {
     expect(top).toBeLessThan(cy - CELL / 2)
     expect(top).toBeGreaterThanOrEqual(cy - CELL / 2 - WALL_H)
 
-    // Drawn after the walls: the tile layer is the first child, the explorer comes later.
-    const svg = container.querySelector("svg")!
+    // Drawn after the walls: the stone is the map's first child, the explorer comes later.
+    const map = container.querySelector("[data-map]")!
     const explorer = container.querySelector("[data-explorer]")!
-    expect(svg.firstElementChild!.compareDocumentPosition(explorer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(map.firstElementChild!.compareDocumentPosition(explorer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it("walks through the frames its facing has", () => {
@@ -904,12 +967,8 @@ describe("the explorer stands in the room", () => {
     // three frames and the front's four alike.
     const frames = new Set<string>()
     for (const step of [0, 1, 2, 3]) {
-      const { container } = render(
-        <svg>
-          <ExplorerFigure facing="s" step={step} />
-        </svg>
-      )
-      frames.add(container.querySelector("image")!.getAttribute("href")!)
+      const { container } = render(<ExplorerFigure facing="s" step={step} />)
+      frames.add(container.querySelector("img")!.getAttribute("src")!)
     }
     expect(frames.size).toBeGreaterThan(1)
   })
@@ -917,13 +976,9 @@ describe("the explorer stands in the room", () => {
   it("hands the walk cycle to CSS, so it keeps time without a render per frame", () => {
     // Every frame side by side inside a clip one frame wide, slid a whole frame at a time. If the span and
     // the step count ever disagree with how many frames were laid out, the legs land between two poses.
-    const { container } = render(
-      <svg>
-        <ExplorerFigure facing="s" walking />
-      </svg>
-    )
-    const strip = container.querySelector<SVGGElement>("g[style*='steps']")!
-    const laidOut = strip.querySelectorAll("image").length
+    const { container } = render(<ExplorerFigure facing="s" walking />)
+    const strip = container.querySelector<HTMLElement>("[style*='steps']")!
+    const laidOut = strip.querySelectorAll("img").length
     expect(laidOut).toBeGreaterThan(1)
     expect(strip.style.animationTimingFunction).toBe(`steps(${laidOut})`)
     expect(strip.style.getPropertyValue("--walk-span")).toBe(`${-laidOut * 40}px`)
@@ -997,11 +1052,9 @@ describe("a kind that lies on the floor still dresses a room", () => {
   // the two apart. Counting a floor kind AGAINST a standing one can: the scatter is identical between
   // the two renders, so any difference is the prop.
   const propBoxes = (decoration: DecorationKind) =>
-    Array.from(
-      render(
-        <SiteMapView grid={withDecoration(decoration)} explorerPos={[0, 1]} revealAllCells />
-      ).container.querySelectorAll("image")
-    ).filter(el => el.getAttribute("height") === String(CELL + WALL_H)).length
+    spritesIn(render(<SiteMapView grid={withDecoration(decoration)} explorerPos={[0, 1]} revealAllCells />).container)
+      .map(boxOf)
+      .filter(box => box.h === CELL + WALL_H).length
 
   it("draws it standing, the same as any other prop", () => {
     expect(propBoxes("mat")).toBe(propBoxes("statue"))
@@ -1033,13 +1086,16 @@ describe("a prop that carries a flame lights the floor", () => {
     expect(pools(withProp("lamp"))).toBe(pools(withProp("shelf")) + 1)
   })
 
-  it("fills every pool from one shared gradient, however many are drawn", () => {
-    // A lamp in every third chamber redeclaring the same gradient id is the failure this guards: the
-    // definition belongs to the map, not to each pool.
+  it("fills every pool from the same gradient, however many are drawn", () => {
+    // One description of the light, shared: a lamp in every third chamber must not each bring their own.
+    // In CSS that is a constant rather than an id in a <defs>, so what this can still hold is that every
+    // pool on the map is filled the same way.
     const { container } = render(<SiteMapView grid={withProp("lamp")} explorerPos={[0, 1]} revealAllCells />)
-    expect(container.querySelectorAll(`#${LIGHT_POOL_ID}`)).toHaveLength(1)
-    for (const pool of container.querySelectorAll("[data-light-pool]"))
-      expect(pool.getAttribute("fill")).toBe(`url(#${LIGHT_POOL_ID})`)
+    const fills = new Set(
+      Array.from(container.querySelectorAll<HTMLElement>("[data-light-pool]")).map(el => el.style.background)
+    )
+    expect(fills.size).toBe(1)
+    expect([...fills][0]).toContain("radial-gradient")
   })
 })
 
@@ -1053,8 +1109,7 @@ describe("the air on a floor", () => {
     expect(container.querySelectorAll(".map-scarab").length).toBeGreaterThan(0)
 
     const night = render(<SiteMapView grid={{ ...litGrid(), theme: "night" }} />)
-    const washOf = (c: HTMLElement) =>
-      Array.from(c.querySelectorAll<SVGRectElement>("svg > g > rect")).pop()?.getAttribute("fill")
+    const washOf = (c: HTMLElement) => c.querySelector<HTMLElement>("[data-map-tint]")?.style.background
     expect(washOf(night.container)).not.toBe(washOf(container))
   })
 
@@ -1096,10 +1151,7 @@ describe("a treasure room stands its own chest beside the marker", () => {
   // The node marker is centred on the cell and so is the explorer, so a chest drawn square on the cell
   // is a chest the player is standing inside. The art says what the room holds; the marker still says
   // whether it can be reached.
-  const chestsIn = (container: HTMLElement) =>
-    Array.from(container.querySelectorAll<SVGImageElement>("image")).filter(el =>
-      (el.getAttribute("href") ?? "").includes("chestProp")
-    )
+  const chestsIn = (container: HTMLElement) => spriteMatching(container, "chestProp")
 
   const gridWith = (cell: GridCell) =>
     makeGrid([
@@ -1107,18 +1159,18 @@ describe("a treasure room stands its own chest beside the marker", () => {
       [empty, cell, empty],
     ])
 
-  it("draws the chest in MAP space, not inside the cell's own transform", () => {
-    // THE BUG THIS EXISTS FOR: clip-path resolves in the element's own transformed space, so art
-    // nested inside a node's `<g transform="translate(cx, cy)">` was clipped by rectangles offset by
-    // that cell's position — every chest in the game was cut away, and jsdom, which never rasterises,
-    // reported them present. What catches it is the ancestry, not the element.
+  it("draws the chest in MAP space, not in the cell's own", () => {
+    // THE BUG THIS EXISTS FOR: a clip resolves in the element's own space, so art nested inside a node's
+    // own translated box was clipped by rectangles offset by that cell's position — every chest in the
+    // game was cut away, and jsdom, which never rasterises, reported them present. A clipped sprite is
+    // therefore laid out as a full-map layer with its art placed by background-position.
     const { container } = render(<SiteMapView grid={gridWith(chamber("reachable"))} revealAllCells />)
     const chest = chestsIn(container)[0]
-    expect(chest.closest("g[transform]")).toBeNull()
-    expect(chest.closest("g[clip-path]")).not.toBeNull()
+    expect(chest.style.clipPath).toContain("path(")
+    expect(chest.style.inset).toBe("0px")
     // In map space a sprite sits at its own cell, so its x is a map coordinate rather than a small
     // offset from the cell's centre.
-    expect(Number(chest.getAttribute("x"))).toBeGreaterThan(CELL)
+    expect(boxOf(chest).x).toBeGreaterThan(CELL)
   })
 
   it("draws the chest out of the doorway, in the prop's own box", () => {
@@ -1127,8 +1179,8 @@ describe("a treasure room stands its own chest beside the marker", () => {
     const { container } = render(<SiteMapView grid={gridWith(chamber("reachable"))} revealAllCells />)
     const chests = chestsIn(container)
     expect(chests).toHaveLength(1)
-    expect(Number(chests[0].getAttribute("y"))).toBeGreaterThan(CELL / 2 - (CELL + WALL_H))
-    expect(chests[0].getAttribute("height")).toBe(String(CELL + WALL_H))
+    expect(boxOf(chests[0]).y).toBeGreaterThan(CELL / 2 - (CELL + WALL_H))
+    expect(boxOf(chests[0]).h).toBe(CELL + WALL_H)
   })
 
   it("draws none for a shop, whose goods are a stall rather than a sealed chest", () => {
@@ -1153,10 +1205,7 @@ describe("a treasure room stands its own chest beside the marker", () => {
 describe("a node's furniture is cut by the walls around it", () => {
   // The sprite is a cell wide and stands off-centre, so without a clip it spills into the stone beside
   // its room — which is what made a merchant's chest lie half inside a wall.
-  const chestIn = (container: HTMLElement) =>
-    Array.from(container.querySelectorAll<SVGImageElement>("image")).find(el =>
-      (el.getAttribute("href") ?? "").includes("chestProp")
-    )
+  const chestIn = (container: HTMLElement) => spriteMatching(container, "chestProp")[0]
 
   const grid = makeGrid([
     [empty, corridor("completed", false), empty],
@@ -1164,20 +1213,21 @@ describe("a node's furniture is cut by the walls around it", () => {
   ])
 
   it("clips it to its OWN room, not to every floor cell on the map", () => {
-    // The map-wide clip is the union of all floor: furniture offset toward a wall passed through it and
-    // appeared in the corridor on the other side. A room's own footprint is the shape that stops it.
+    // A clip of all the floor there is let furniture offset toward a wall pass through it and appear in
+    // the corridor on the other side. A room's own footprint is the shape that stops it, so the chest
+    // carries that path and nothing wider.
     const { container } = render(<SiteMapView grid={grid} revealAllCells />)
-    const clipped = chestIn(container)!.closest("g[clip-path]")
-    const id = clipped?.getAttribute("clip-path")
-    expect(id).toMatch(/^url\(#room-clip-chest:/)
-    expect(id).not.toBe(`url(#${STANDING_ROOM_CLIP})`)
-    expect(container.querySelectorAll(`clipPath[id^="room-clip-"]`).length).toBeGreaterThan(0)
+    const clip = clipOf(chestIn(container))
+    expect(clip).not.toBe("")
+    // The room is at (1,1): the clip grows one step into real ground, and no further — the column
+    // beyond that is stone, and a chest may not be drawn over it.
+    const lefts = [...clip.matchAll(/M(-?[\d.]+) /g)].map(m => Number(m[1]))
+    expect(Math.max(...lefts)).toBeLessThan(cellLeft(3))
   })
 
   it("leaves the headroom above the floor open, so a tall thing still crosses the wall band", () => {
     const { container } = render(<SiteMapView grid={grid} revealAllCells />)
-    // `#id path` does not match inside <clipPath> in jsdom; ask the clip element itself for its path.
-    const clip = container.querySelector(`#${STANDING_ROOM_CLIP}`)!.querySelector("path")!.getAttribute("d")!
+    const clip = clipOf(chestIn(container))
     // Every rectangle in the clip starts a prop's headroom above the floor cell it belongs to, so the
     // topmost edge of the clip is higher than the topmost floor line.
     const tops = [...clip.matchAll(/M-?[\d.]+ (-?[\d.]+)h/g)].map(m => Number(m[1]))
@@ -1195,10 +1245,7 @@ describe("a staircase is drawn as the flight it is", () => {
     return { ...grid, entrancePos: stairAt === "entrance" ? ([0, 1] as const) : ([1, 1] as const) }
   }
 
-  const stairsIn = (container: HTMLElement) =>
-    Array.from(container.querySelectorAll<SVGImageElement>("image")).filter(el =>
-      (el.getAttribute("href") ?? "").includes("stair-")
-    )
+  const stairsIn = (container: HTMLElement) => spriteMatching(container, "stair-")
 
   it("draws the flight where the rank has one, and puts the marker away under it", () => {
     const { container } = render(<SiteMapView grid={stairGrid("exit")} revealAllCells />)
@@ -1225,7 +1272,7 @@ describe("a staircase is drawn as the flight it is", () => {
     const { container } = render(<SiteMapView grid={grid} revealAllCells />)
     const drawn = stairsIn(container)
     expect(drawn).toHaveLength(1)
-    expect(drawn[0].getAttribute("href")).toContain("default/")
+    expect(urlOf(drawn[0])).toContain("default/")
   })
 
   // The two side flights are painted from where the player stands, and that puts them on OPPOSITE
@@ -1240,8 +1287,8 @@ describe("a staircase is drawn as the flight it is", () => {
     const facing = (stairAt: "entrance" | "exit") => {
       const { container } = render(<SiteMapView grid={sideStairGrid(stairAt)} revealAllCells />)
       const [flight] = stairsIn(container)
-      expect(flight.getAttribute("href")).toContain("-side")
-      return flight.getAttribute("transform")
+      expect(urlOf(flight)).toContain("-side")
+      return flight.style.transform
     }
     expect(facing("entrance")).not.toBe(facing("exit"))
   })
@@ -1263,8 +1310,9 @@ describe("the player is drawn among the furniture, not always over it", () => {
   }
 
   const orderOf = (container: HTMLElement) => {
-    const all = Array.from(container.querySelectorAll("image, [data-explorer]"))
-    const chest = all.findIndex(el => (el.getAttribute("href") ?? "").includes("chestProp"))
+    // Depth is DOM order in the standing layer, so this is the whole of the question.
+    const all = Array.from(container.querySelectorAll<HTMLElement>("[style*='background-image'], [data-explorer]"))
+    const chest = all.findIndex(el => urlOf(el).includes("chestProp"))
     const explorer = all.findIndex(el => el.hasAttribute("data-explorer"))
     return { chest, explorer }
   }
@@ -1301,12 +1349,10 @@ describe("the way out is drawn as a shaft of light", () => {
 
   it("stands the shaft on the exit's own cell, whichever way it is approached", () => {
     const { container } = render(<SiteMapView grid={exitGrid()} revealAllCells />)
-    const img = Array.from(container.querySelectorAll<SVGImageElement>("image")).find(el =>
-      (el.getAttribute("href") ?? "").includes("/exit")
-    )
+    const img = spriteMatching(container, "/exit")[0]
     expect(img, "the exit drew no art at all").toBeDefined()
     // On the cell, not in a wall: a beam has no facing, so there is no seam for it to stand in.
-    expect(Number(img!.getAttribute("x"))).toBe(cellCenter(0, 1).cx - CELL / 2)
+    expect(boxOf(img).x).toBe(cellCenter(0, 1).cx - CELL / 2)
   })
 
   it("lays a pool of light at its foot", () => {
@@ -1334,10 +1380,7 @@ describe("a gate's bars face the pocket it shuts", () => {
     return { ...grid, entrancePos: [1, 0] as const }
   }
 
-  const gateImage = (container: HTMLElement) =>
-    Array.from(container.querySelectorAll<SVGImageElement>("image")).find(el =>
-      (el.getAttribute("href") ?? "").includes("/gate")
-    )
+  const gateImage = (container: HTMLElement) => spriteMatching(container, "/gate")[0]
 
   it("puts them on the sealed side, not on the side away from the player", () => {
     const { container } = render(<SiteMapView grid={cornerGateGrid()} revealAllCells />)
@@ -1346,8 +1389,8 @@ describe("a gate's bars face the pocket it shuts", () => {
     // North of its own cell: x on the cell's own column, and hung in the MIDDLE of the band above it —
     // its lower edge would put the grille below the opening, in the room rather than the doorway, and
     // its upper edge would lift it clear of the floor it is barring.
-    expect(Number(img!.getAttribute("x"))).toBe(cellLeft(1))
-    expect(Number(img!.getAttribute("y"))).toBe(cellTop(1) - WALL_H / 2 - (CELL + WALL_H))
+    expect(boxOf(img!).x).toBe(cellLeft(1))
+    expect(boxOf(img!).y).toBe(cellTop(1) - WALL_H / 2 - (CELL + WALL_H))
   })
 
   // Sealed EAST: entrance corridor, the gate, then the pocket beyond it to the right.
@@ -1357,19 +1400,17 @@ describe("a gate's bars face the pocket it shuts", () => {
       entrancePos: [0, 0] as const,
     }
     const { container } = render(<SiteMapView grid={grid} revealAllCells />)
-    const img = Array.from(container.querySelectorAll<SVGImageElement>("image")).find(el =>
-      (el.getAttribute("href") ?? "").includes("/gate")
-    )
+    const img = spriteMatching(container, "/gate")[0]
     expect(img, "the gate drew no art at all").toBeDefined()
     // The seam AFTER the gate's cell: it starts at cellLeft(c) + CELL and is SIDE_W wide, so the
     // sprite's centre is half a seam past the cell's right edge — to the RIGHT of its own marker.
-    expect(Number(img!.getAttribute("x"))).toBe(cellLeft(1) + CELL + SIDE_W / 2 - CELL / 2)
-    expect(img!.getAttribute("href")).toContain("-side")
+    expect(boxOf(img).x).toBe(cellLeft(1) + CELL + SIDE_W / 2 - CELL / 2)
+    expect(urlOf(img)).toContain("-side")
   })
 
   it("draws the face-on tile for a pocket sealed to the north, not the side one", () => {
     const { container } = render(<SiteMapView grid={cornerGateGrid()} revealAllCells />)
-    expect(gateImage(container)!.getAttribute("href")).not.toContain("-side")
+    expect(urlOf(gateImage(container)!)).not.toContain("-side")
   })
 
   // A gate is hung IN a doorway, so it is the nearer of the two: the arch is the masonry of the opening
@@ -1378,9 +1419,7 @@ describe("a gate's bars face the pocket it shuts", () => {
   it("draws in front of the archway it is fitted into", () => {
     const grid = cornerGateGrid()
     const { container } = render(<SiteMapView grid={grid} revealAllCells />)
-    const hrefs = Array.from(container.querySelectorAll<SVGImageElement>("image")).map(
-      el => el.getAttribute("href") ?? ""
-    )
+    const hrefs = spritesIn(container).map(urlOf)
     const gate = hrefs.findIndex(h => h.includes("/gate"))
     const arches = hrefs.map((h, i) => (h.includes("/arch") ? i : -1)).filter(i => i >= 0)
     expect(gate).toBeGreaterThanOrEqual(0)
@@ -1392,10 +1431,10 @@ describe("a gate's bars face the pocket it shuts", () => {
   it("goes see-through while the player is standing in it", () => {
     const grid = cornerGateGrid()
     const clear = render(<SiteMapView grid={grid} revealAllCells explorerPos={[1, 0]} />)
-    expect(gateImage(clear.container)!.getAttribute("opacity")).toBeNull()
+    expect(gateImage(clear.container)!.style.opacity).toBe("")
 
     const under = render(<SiteMapView grid={grid} revealAllCells explorerPos={[1, 1]} />)
-    expect(Number(gateImage(under.container)!.getAttribute("opacity"))).toBeLessThan(1)
+    expect(Number(gateImage(under.container)!.style.opacity)).toBeLessThan(1)
   })
 })
 
@@ -1455,14 +1494,13 @@ describe("a stair's torch lights the floor beside it", () => {
       [empty, corridor("completed", false), empty],
     ])
     const { container } = render(<SiteMapView grid={{ ...grid, entrancePos: [1, 1] }} revealAllCells />)
-    const pools = Array.from(container.querySelectorAll("[data-light-pool]"))
+    const pools = Array.from(container.querySelectorAll<HTMLElement>("[data-light-pool]"))
     expect(pools.length).toBeGreaterThan(0)
     const moved = pools.some(pool => {
-      const g = pool.closest("g[transform]")
-      const m = /translate\(([-\d.]+), ([-\d.]+)\)/.exec(g?.getAttribute("transform") ?? "")
-      if (!m) return false
+      // A pool is placed by its centre, so its box's middle is where the flame is.
+      const box = boxOf(pool)
       const { cx } = cellCenter(0, 1)
-      return Math.abs(Number(m[1]) - cx) > CELL / 4
+      return Math.abs(box.x + box.w / 2 - cx) > CELL / 4
     })
     expect(moved).toBe(true)
   })
@@ -1491,16 +1529,87 @@ describe("furniture stops at the wall of its own room", () => {
       [empty, room, empty, empty, straightCorridor("completed", ["n", "s"])],
     ])
     const { container } = render(<SiteMapView grid={grid} revealAllCells />)
-    const chest = Array.from(container.querySelectorAll<SVGImageElement>("image")).find(el =>
-      (el.getAttribute("href") ?? "").includes("chestProp")
-    )!
-    const clipId = chest.closest("g[clip-path]")!.getAttribute("clip-path")!.slice(5, -1)
-    const path = container
-      .querySelector(`#${CSS.escape(clipId)}`)!
-      .querySelector("path")!
-      .getAttribute("d")!
+    const path = clipOf(spriteMatching(container, "chestProp")[0])
     // The far corridor's own column must not appear in this room's clip.
     const farLeft = cellLeft(4)
     expect(path).not.toContain(`M${farLeft} `)
+  })
+})
+
+describe("an emptied chest says so", () => {
+  // The chest art is the same picture full or empty, and it stands over the room's marker — so without
+  // this the map gave a player no way to tell a room he had already cleared from one still worth the walk.
+  const chestIn = (container: HTMLElement) => spriteMatching(container, "chestProp")[0]
+  const ticks = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll("text")).filter(el => el.textContent === "✓")
+  const gridWith = (state: CellState) =>
+    makeGrid([
+      [empty, corridor("completed", false), empty],
+      [empty, chamber(state), empty],
+    ])
+
+  it("dims the chest and puts a single ✓ on it once the room is done", () => {
+    const { container } = render(<SiteMapView grid={gridWith("completed")} />)
+    expect(chestIn(container)?.style.opacity).toBe(String(LOOTED_OPACITY))
+    // ONE tick: the marker under the chest drops its own, or the room reads as checked twice.
+    expect(ticks(container)).toHaveLength(1)
+  })
+
+  it("leaves a chest the player has not opened alone", () => {
+    const { container } = render(<SiteMapView grid={gridWith("reachable")} />)
+    expect(chestIn(container)?.style.opacity).toBe("")
+    expect(ticks(container)).toHaveLength(0)
+  })
+
+  it("keeps a chest whose reward would not fit full, and badges it as waiting", () => {
+    const { container } = render(<SiteMapView grid={gridWith("completed")} pendingCells={new Set(["1,1"])} />)
+    expect(chestIn(container)?.style.opacity).toBe("")
+    expect(ticks(container)).toHaveLength(0)
+    expect(Array.from(container.querySelectorAll("text")).filter(el => el.textContent === "!")).toHaveLength(1)
+  })
+})
+
+describe("a stair's pool of light lands on the side the flame is painted", () => {
+  // Reported from play: a stairway down entered from the EAST drew its torch on the right of the cell
+  // and its pool of light on the left. The mirror flag alone cannot say where the flame is — the
+  // toward-viewer flights carry it on the left of the cell, the side flight carries it on the right, so
+  // reading the flag and nothing else puts every side flight's light on the wrong hand.
+  const sideStair = (from: "e" | "w") => {
+    const grid = makeGrid([
+      from === "e"
+        ? [empty, portalEast("reachable", "s1"), straightCorridor("completed", ["w"])]
+        : [straightCorridor("completed", ["e"]), portalWest("reachable", "s1"), empty],
+    ])
+    // The floor's entrance is the corridor, so the stairhead is a way DOWN — the flight with a cresset.
+    return { ...grid, entrancePos: (from === "e" ? [0, 2] : [0, 0]) as readonly [number, number] }
+  }
+
+  const poolSideOf = (from: "e" | "w") => {
+    const { container } = render(<SiteMapView grid={sideStair(from)} revealAllCells />)
+    const pool = container.querySelector<HTMLElement>("[data-light-pool]")
+    expect(pool, "a descending flight carries a cresset").toBeTruthy()
+    const box = boxOf(pool!)
+    return box.x + box.w / 2 - cellCenter(0, 1).cx > 0 ? "right" : "left"
+  }
+
+  it("puts it on the right of the cell for a flight entered from the east", () => {
+    expect(poolSideOf("e")).toBe("right")
+  })
+
+  it("swaps it with the flight when that is mirrored", () => {
+    expect(poolSideOf("w")).toBe("left")
+  })
+})
+
+describe("a rank is dressed with what it is authored to hold", () => {
+  // Reported from play: a crystal — a wizard thing, the gods' vault — stood beside Anubis in the Valley
+  // of the Kings, which is expert. It was a COMPANION, the second prop placed beside one of the same
+  // purpose, and its guard asked only whether a FILE existed. Every kind has a placeholder, so every rank
+  // could reach the whole vocabulary. The world-wide sweep is in `worldFloorAssembly.spec`; this is the
+  // case that names the bug.
+  it("offers no companion the rank never authors, however well it agrees", () => {
+    const expert = authoredKindsFor("expert").props
+    expect(expert).not.toContain("crystal")
+    expect(authoredKindsFor("wizard").props).toContain("crystal")
   })
 })

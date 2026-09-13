@@ -19,17 +19,17 @@ lost to the projection. See `prim_statue`.
 From [tile-art-brief.md](../game-design/tile-art-brief.md) §2–§4: the kind, the rank, and what the rank's
 row says it is made of. Also decide where the mesh comes from:
 
-| the object is                                                    | mesh from                                                                            |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| furniture, racks, chests, plinths, stands                        | a parametric primitive in `renderProp.py`                                            |
-| a wall item WITH depth — a niche, anything standing off the wall | a parametric primitive too, rendered `--shear=0.5` (see below)                       |
-| heaps of BRICK or cut stone                                      | a parametric primitive — a brick is a box (`prim_rubbleheap`)                        |
-| a HOLE — in the floor or in a wall                               | a parametric primitive, its inside marked `VOID` (`prim_pit`)                        |
+| the object is                                                    | mesh from                                                                                                                                                                                                                    |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| furniture, racks, chests, plinths, stands                        | a parametric primitive in `renderProp.py`                                                                                                                                                                                    |
+| a wall item WITH depth — a niche, anything standing off the wall | a parametric primitive too, rendered `--shear=0.5` (see below)                                                                                                                                                               |
+| heaps of BRICK or cut stone                                      | a parametric primitive — a brick is a box (`prim_rubbleheap`)                                                                                                                                                                |
+| a HOLE — in the floor or in a wall                               | a parametric primitive, its inside marked `VOID` (`prim_pit`)                                                                                                                                                                |
 | a FIGURE — a statue, an animal, a coffin                         | a parametric primitive: `--contents` is a POSE (`prim_statue`), the face is paint. PROVEN by `expert/statue`, a black-resin Anubis carved off a slab envelope in three rolls. A museum scan is the fallback, not the default |
-| a FLAT wall item — a plaque, a stela, a board                    | no mesh: straight to the generator                                                   |
-| CLOTH — a hanging, an awning, a veil                             | a parametric primitive: cloth is a formula, not a simulation (`prim_hanging`)        |
-| a DRIFT of sand                                                  | a full-bleed texture, cut to a generated alpha (`yarn drift-mask`)                   |
-| loose scatter, sherds, dust                                      | still unsolved; paint by hand or generate                                            |
+| a FLAT wall item — a plaque, a stela, a board                    | no mesh: straight to the generator                                                                                                                                                                                           |
+| CLOTH — a hanging, an awning, a veil                             | a parametric primitive: cloth is a formula, not a simulation (`prim_hanging`)                                                                                                                                                |
+| a DRIFT of sand                                                  | a full-bleed texture, cut to a generated alpha (`yarn drift-mask`)                                                                                                                                                           |
+| loose scatter, sherds, dust                                      | still unsolved; paint by hand or generate                                                                                                                                                                                    |
 
 **A wall item is not exempt from projection.** The band is the same oblique world at HALF depth
 (`mapScale`'s SIDE_W 14 imaging as 7, so k = 0.5 — cabinet, where a prop is cavalier at k = 1). Anything
@@ -86,13 +86,13 @@ find that out was to MEASURE.** The nobleman's ka-statue came back a cartoon cha
 rounds of sharper wording bought nothing at all. What settled it was numbers, against the fifteen landed
 props at the same rank:
 
-| | the return | landed junior props |
-| --- | --- | --- |
-| paint inside the mask | 85.4% IoU | it is a real repaint of the scaffold, not a redrawing |
-| top-8 colour share | 53.1% | 24–71% |
-| saturation | 44 | 15–57 |
-| interior brush texture (smooth %) | 58.2% | 4.5–60.6% |
-| warmth against the slab | −22 | −4 to −74 |
+|                                   | the return | landed junior props                                   |
+| --------------------------------- | ---------- | ----------------------------------------------------- |
+| paint inside the mask             | 85.4% IoU  | it is a real repaint of the scaffold, not a redrawing |
+| top-8 colour share                | 53.1%      | 24–71%                                                |
+| saturation                        | 44         | 15–57                                                 |
+| interior brush texture (smooth %) | 58.2%      | 4.5–60.6%                                             |
+| warmth against the slab           | −22        | −4 to −74                                             |
 
 Every one inside the rank's own distribution. **There is no gouache-versus-cartoon signal in the pixels**,
 and three plausible explanations died on that table: that the generator had stopped repainting and started
@@ -123,8 +123,8 @@ ten-luminance separation rule outright.
 
 **NEVER ASK FOR WRITING — ASK FOR MARKS.** The nobleman's ledger board asked for "columns of small
 hieratic figures in a scribe's quick hand" and came back a modern accounting sheet: columns headed
-*Bookkeeping*, *Entries*, *Totals*, figures in Arabic numerals with decimal commas, and a struck-through
-line reading *stewarded on 1986*. The prompt's own guard — "must not be drawn as hieroglyphs, this is
+_Bookkeeping_, _Entries_, _Totals_, figures in Arabic numerals with decimal commas, and a struck-through
+line reading _stewarded on 1986_. The prompt's own guard — "must not be drawn as hieroglyphs, this is
 cursive bookkeeping" — is what steered it there.
 
 The distinction that matters is not Egyptian versus not:
@@ -142,7 +142,7 @@ stroke belongs to no language.
 
 **And do not put a COLOUR in capitals.** The next roll of that board got the marks, the frame and the
 absence of a wall all right, and then lettered R-E-D at the foot of every column, because the prompt
-asked for "a row of larger RED marks". Capitals in these prompts mean *this is a thing in the picture* —
+asked for "a row of larger RED marks". Capitals in these prompts mean _this is a thing in the picture_ —
 every other capitalised word in them is a noun for something to draw — so a capitalised adjective reads
 as one more thing to put on the surface. Emphasise the noun, never the colour, and on anything that
 could carry writing say outright that no word appears on it, the name of a colour included.
@@ -206,12 +206,12 @@ this file and the one most easily lost, because a re-staged return looks like a 
 not. The nobleman's Thoth statue took four rolls and each was a different way of saying the same thing
 wrong:
 
-| wording | what came back |
-| --- | --- |
-| "no vanishing point, nothing converges, verticals stay vertical" | flat front elevation, no top faces |
-| ...plus "you never see round the side of anything" | flat, guaranteed |
-| ...plus "you see the top faces, the plinth's top is a parallelogram" | full three-quarter isometric |
-| "front faces are undistorted rectangles, only depth slants" | plain oblique, re-staged again |
+| wording                                                              | what came back                     |
+| -------------------------------------------------------------------- | ---------------------------------- |
+| "no vanishing point, nothing converges, verticals stay vertical"     | flat front elevation, no top faces |
+| ...plus "you never see round the side of anything"                   | flat, guaranteed                   |
+| ...plus "you see the top faces, the plinth's top is a parallelogram" | full three-quarter isometric       |
+| "front faces are undistorted rectangles, only depth slants"          | plain oblique, re-staged again     |
 
 Each wording is defensible read on its own, and each walked into a different wall. Prose about geometry
 oscillates, because a generator weighs adjectives against each other and the picture it already wants to
@@ -303,7 +303,7 @@ after a primitive, not just for a floor:
   transform where the shear cannot see it: sheared, it is slanted about its own centre and never lifted
   by `k*y`. A grid of forty slabs drew as forty slabs piled into one band beside the hole with nothing
   anywhere else, and joining them first does not fix it. Translate the MESH — `o.data.transform(
-  Matrix.Translation(...))` — before shearing. Primitives never meet this because `join_all` bakes every
+Matrix.Translation(...))` — before shearing. Primitives never meet this because `join_all` bakes every
   part's world position into one mesh before the shear.
 - **Sizes are in the primitive's METRES, and seating has already rescaled the object.** `--context=WxD`
   taken literally cut a hole a seventh of the size of the pool it belonged to. `seat_and_normalise` makes
@@ -357,20 +357,20 @@ least once. Stated here, with a pointer to the code that carries the reasoning a
 The projection is `drawn = (x, z + k*y)`, k = 0.7 for a floor prop and 0.5 for a wall item. Everything
 below follows from that one line.
 
-| law                                                                                                                                                                                                 | consequence                                                                                                                                                                                                                                                                                                                       | paid for in                       |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| **Only x is horizontal.** y and z both feed the drawn vertical.                                                                                                                                     | Anything that must read as reaching sideways runs in X: a bracket's arm, a lamp's spout, a chest's cord. A structure built in the y-z plane draws as a vertical stack however truthfully it is built.                                                                                                                             | `prim_sconce`, `prim_lamp`        |
-| **The shear taxes DEPTH into height.** Drawn height is `max(z + k*y) - min(z + k*y)`, not the z extent.                                                                                             | A round foot 0.44 across adds 0.31 of drawn height and eats the width it just bought. `seat_and_normalise` then scales by height, so a deep prop lands narrow: the lamp stand came out 27 units of 56 while every fix made it taller. Flatten in y what only needs to read from the front.                                        | `prim_lamp`                       |
-| **Negative y draws LOWER.** A part in front of another is drawn `k*y` down from where it is built.                                                                                                  | A face resting exactly on a collar hangs a hairline above it in the picture; a border level with a hem draws below the cloth and reads as a plinth. Set z for where the shear DRAWS a part, not for where it sits.                                                                                                                | `prim_mask`, `prim_hanging`       |
-| **A hairline is a gap.** At 28 units a pixel of background between two parts separates them.                                                                                                        | Parts overlap by ~0.03 rather than butting. Five blocks butted edge to edge drew as a crown floating over an egg between two pillars.                                                                                                                                                                                             | `prim_mask`                       |
-| **A SLIVER is a gap too — contact is not a boolean.** An overlap that is thin, at a corner, or on one face only reads as NO contact.                                                                 | The altar's spout overlapped its cornice by 0.025 at one corner, so the arithmetic said "attached" and the generator painted it as a separate cube flying beside the altar. Judge the overlap's AREA in the drawn view, not whether the boxes intersect. The fix is usually to delete the projecting part and extend an existing one instead. | `prim_market` (`altar`)           |
-| **A VOID recess must stand PROUD of the surface it cuts**, never level with it and never under it.                                                                                                  | The altar's channel, "sunk flush" at 0.013 below the slab's top face, vanished into solid stone. It went unnoticed because the repaint still came back with a groove in it — the PROMPT describes one — which is this pipeline running backwards, with words doing the geometry's job.                                                       | `prim_market` (`altar`)           |
-| **A shadow may only be moved in X.** A floor point `(x, y, 0)` draws at `k*y`, so an unshifted footprint touches its object for free; shifting it in y moves it `k*dy` vertically and nothing else. | Toward the viewer it leaves a crescent under the object with nothing above it — reads as hovering at ANY magnitude, which is why three rounds of tuning `--sun` failed. Away, it hides entirely.                                                                                                                                  | `sun_offset`                      |
-| **`tilt` turns a part about the WORLD ORIGIN**, not its own centre — `box` ends with `transform_apply(scale=True)`, which applies the location too.                                                 | A bar 0.30 long at z=0.60 turned 60 degrees swings out of the frame. Build at the origin, turn, then place: that is `turn`. `tilt` is kept only because painted masters were rendered through it.                                                                                                                                 | `tilt`, `turn`, `prim_rubbleheap` |
-| **A frame with black inside is one tile, however many kinds ask for it.**                                                                                                                           | The wizard's shrine, his niche holding no star, and his star shaft all drew as a black rectangle in a thin frame. What separates them is silhouette: a shrine is a cabinet ON the wall, so its plinth and cavetto are both wider than the box between them.                                                                       | `prim_wallshrine`                 |
-| **Blender inverts a cone's side normals when the top radius is the larger one**, and it renders near-black.                                                                                         | Turning the cone over does not help — the normals turn with it. `recalc_outward` does. Material slots read correctly the whole time, so only a low-pitch `--preview` shows it.                                                                                                                                                    | `recalc_outward`, `prim_basin`    |
-| **A mean taken over the wrong pixels lies.**                                                                                                                                                        | Measure a FIXED REGION, not "pixels above a threshold": as a tile darkens, fewer pixels clear the threshold and the mean of the survivors barely moves, so the knob reads as dead. Four tiles were mistuned this way — the pit's spoil over a sprite 43% black, the shrine's whitewash, the awning's cloth, sand on a pale floor. | `art/rebuild.sh`                  |
-| **Reproduction identifies a master where a metric cannot.**                                                                                                                                         | No distance metric could pick the merchant's floor from its candidates (5.5 against 6.2 on luminance, noise). Importing each one and LOOKING beside the shipped tile settled it in one sheet per slot.                                                                                                                            | `art/README.md`                   |
+| law                                                                                                                                                                                                 | consequence                                                                                                                                                                                                                                                                                                                                   | paid for in                       |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| **Only x is horizontal.** y and z both feed the drawn vertical.                                                                                                                                     | Anything that must read as reaching sideways runs in X: a bracket's arm, a lamp's spout, a chest's cord. A structure built in the y-z plane draws as a vertical stack however truthfully it is built.                                                                                                                                         | `prim_sconce`, `prim_lamp`        |
+| **The shear taxes DEPTH into height.** Drawn height is `max(z + k*y) - min(z + k*y)`, not the z extent.                                                                                             | A round foot 0.44 across adds 0.31 of drawn height and eats the width it just bought. `seat_and_normalise` then scales by height, so a deep prop lands narrow: the lamp stand came out 27 units of 56 while every fix made it taller. Flatten in y what only needs to read from the front.                                                    | `prim_lamp`                       |
+| **Negative y draws LOWER.** A part in front of another is drawn `k*y` down from where it is built.                                                                                                  | A face resting exactly on a collar hangs a hairline above it in the picture; a border level with a hem draws below the cloth and reads as a plinth. Set z for where the shear DRAWS a part, not for where it sits.                                                                                                                            | `prim_mask`, `prim_hanging`       |
+| **A hairline is a gap.** At 28 units a pixel of background between two parts separates them.                                                                                                        | Parts overlap by ~0.03 rather than butting. Five blocks butted edge to edge drew as a crown floating over an egg between two pillars.                                                                                                                                                                                                         | `prim_mask`                       |
+| **A SLIVER is a gap too — contact is not a boolean.** An overlap that is thin, at a corner, or on one face only reads as NO contact.                                                                | The altar's spout overlapped its cornice by 0.025 at one corner, so the arithmetic said "attached" and the generator painted it as a separate cube flying beside the altar. Judge the overlap's AREA in the drawn view, not whether the boxes intersect. The fix is usually to delete the projecting part and extend an existing one instead. | `prim_market` (`altar`)           |
+| **A VOID recess must stand PROUD of the surface it cuts**, never level with it and never under it.                                                                                                  | The altar's channel, "sunk flush" at 0.013 below the slab's top face, vanished into solid stone. It went unnoticed because the repaint still came back with a groove in it — the PROMPT describes one — which is this pipeline running backwards, with words doing the geometry's job.                                                        | `prim_market` (`altar`)           |
+| **A shadow may only be moved in X.** A floor point `(x, y, 0)` draws at `k*y`, so an unshifted footprint touches its object for free; shifting it in y moves it `k*dy` vertically and nothing else. | Toward the viewer it leaves a crescent under the object with nothing above it — reads as hovering at ANY magnitude, which is why three rounds of tuning `--sun` failed. Away, it hides entirely.                                                                                                                                              | `sun_offset`                      |
+| **`tilt` turns a part about the WORLD ORIGIN**, not its own centre — `box` ends with `transform_apply(scale=True)`, which applies the location too.                                                 | A bar 0.30 long at z=0.60 turned 60 degrees swings out of the frame. Build at the origin, turn, then place: that is `turn`. `tilt` is kept only because painted masters were rendered through it.                                                                                                                                             | `tilt`, `turn`, `prim_rubbleheap` |
+| **A frame with black inside is one tile, however many kinds ask for it.**                                                                                                                           | The wizard's shrine, his niche holding no star, and his star shaft all drew as a black rectangle in a thin frame. What separates them is silhouette: a shrine is a cabinet ON the wall, so its plinth and cavetto are both wider than the box between them.                                                                                   | `prim_wallshrine`                 |
+| **Blender inverts a cone's side normals when the top radius is the larger one**, and it renders near-black.                                                                                         | Turning the cone over does not help — the normals turn with it. `recalc_outward` does. Material slots read correctly the whole time, so only a low-pitch `--preview` shows it.                                                                                                                                                                | `recalc_outward`, `prim_basin`    |
+| **A mean taken over the wrong pixels lies.**                                                                                                                                                        | Measure a FIXED REGION, not "pixels above a threshold": as a tile darkens, fewer pixels clear the threshold and the mean of the survivors barely moves, so the knob reads as dead. Four tiles were mistuned this way — the pit's spoil over a sprite 43% black, the shrine's whitewash, the awning's cloth, sand on a pale floor.             | `art/rebuild.sh`                  |
+| **Reproduction identifies a master where a metric cannot.**                                                                                                                                         | No distance metric could pick the merchant's floor from its candidates (5.5 against 6.2 on luminance, noise). Importing each one and LOOKING beside the shipped tile settled it in one sheet per slot.                                                                                                                                        | `art/README.md`                   |
 
 ## Step 1 — geometry
 
@@ -732,3 +732,175 @@ that failed the floor check; one pass through the pipeline produced a shabti at 
 every number. And it bought three things prompting could not do at all: a size that can be chosen
 (`--scale`), an object that can be turned (`--spin`), and statues that come from museum scans instead of
 from a model's idea of Egypt.
+
+---
+
+# Working the loop: the tools, the traps, and where it all lives
+
+Folded in from the site-map art handover when that branch landed. None of it is guessable from the code,
+and all of it cost real time at least once.
+
+## What the TOOLS get wrong, from real returns
+
+1. **The frame count is not negotiable with the model.** Ask for four, six come back. Don't fight it —
+   `cut-sheet` takes the sheet apart by its GUTTERS (a generated sheet is never on an even pitch) and you
+   pick what you want.
+2. **The last frame of every row gets clipped by the canvas edge.** Ask for margin around the whole sheet.
+   `--min=0.8` reports and skips them.
+3. **Facings come back at different heights** (side 465px vs front 382px). `cut-sheet` pads every frame to
+   one box, bottom-centred, or the character changes size when it turns around.
+4. **Magenta comes back as `#fd25fd`,** not `#ff00ff`, and about half of a sprite's outline pixels are part
+   background. The default tolerance handles the first; the despill handles the second. Under 1% magenta
+   cast survives import.
+5. **Aspect is the one thing import cannot fix** — it stretches to the slot on purpose, so a wrong shape is
+   visible rather than silently cropped. Generate at the slot's aspect.
+6. **A measurement can be as confidently wrong as an opinion.** Judging the explorer's legs by clustering
+   luminance said one leg was 31 apart when the sample was a four-pixel boot tip, and called a real edit a
+   2.5-point change where a pixel diff showed 9.1 — the filter excluding boots had excluded exactly the
+   pixels that were darkened. What told the truth immediately: diff the edited file against its original
+   and report changed-pixel count, mean luminance before and after, and the rows touched. For animation,
+   diff ALPHA ONLY: that separates "the pose moved" from "the colour changed", and colour diff alone
+   called a 46% change on a frame whose silhouette had barely moved.
+7. **What a generation gets wrong about the ART** — the value clamp, outlines, anything crossing the
+   frame, detail below the slot's resolution — is in [tile-art-brief.md](../game-design/tile-art-brief.md)
+   under "Writing a prompt". The five above are about the TOOLS: what a sheet does, what keying does, what
+   the import will and will not fix.
+
+## Traps, from the session that found them
+
+Each of these cost real time and none is guessable from the code:
+
+- **Never silence a BLENDER RENDER either, for the same reason.** `render-prop` prints the object's
+  measured size — "object 0.82 wide, lands at 56x79 map units" — and that line is the only thing that
+  will tell you the primitive did something other than what you wrote. A `-side` variant built at 0.44
+  was reported at 0.82 because its branch had been inserted AFTER the shared stonework and was getting
+  the face-on jambs as well; the render said so on every roll, into `/dev/null`.
+- **Never silence `yarn import-tile`.** It refuses `--contrast` below 1 ("would eat the alpha channel") and
+  three sweeps in a row reported identical numbers because the import was failing into `/dev/null` and the
+  tile on disk never changed. Stale output read as data.
+- **Format with `yarn lint --fix`, not `npx prettier --write`.** Prettier runs inside ESLint here, so `npx`
+  may resolve a different version that disagrees about the same file.
+- **`sh art/rebuild.sh` takes about four minutes** and re-renders every scaffold in Blender. Do not run
+  imports against a tile while it is running, and DO NOT SPAWN A WAITER FOR IT AT ALL. Running it in the
+  background already notifies on completion, so a wait loop is redundant — and `until ! pgrep -f
+"art/rebuild.sh"` never exits anyway, because the pattern matches the wait loop's own command line.
+  Five of those were left running in one session before anyone counted the shells: the deadlock is
+  invisible while the real notification keeps arriving on time.
+- **Judge condition growth in `PropSheet`, never on the JourneyInspector.** At 20 units on a 3000-unit map
+  the whole-floor view can confirm a sprite exists and nothing more; three ways of mapping an element to
+  screenshot pixels disagreed with each other.
+- **A claimed chamber cell is `type: "empty"` in the grid.** The claim is a render-time fact, so anything
+  filtering cells by grid type silently drops a chamber's own floor. It has now bitten `floorScatter`,
+  `art-census` and `MapGrowth`.
+- **ONE FRESH CHAT PER TILE. A long thread is the single biggest cause of re-rolls, and it hides as a
+  prompt problem.** Gemini names every download after the FIRST prompt in its thread, which makes the
+  damage measurable after the fact: one session produced thirteen downloads named "Gouache Painting
+  Sacred Pool" and nine named "Anubis False-Door Stela" — thirteen different tiles pasted into a thread
+  that began with the priest's pool, and nine into one that began with a stela. Every paste after the
+  first lands in a context already holding a dozen prompts AND a dozen scaffold images.
+
+  What that produces, and nothing else explains: returns coming back 2048x2048 square because the model
+  generates from accumulated context instead of editing the attachment (three in one session, a failure
+  mode absent from every earlier one); returns re-staged into a PREVIOUS tile's projection — the
+  merchant's Bastet shrine came back isometric in a thread whose earlier images were isometric shrines;
+  and prompts that landed first-roll at one rank fighting for four rolls at another, thirteen prompts
+  deep.
+
+  Four rolls of `junior/statue-thoth` were spent rewriting a projection rule that was never the problem.
+  Before touching a prompt because a return looks wrong, check how deep its thread is.
+
+- **Gemini names every download after the first chat in the thread.** Identify returns by content, and by
+  frame size: an edited scaffold usually comes back at the scaffold's own aspect — 1686x2528 for a 2:3
+  prop, 2880x1440 for a 2:1 wall item — where a fresh generation comes back 2048x2048 square.
+  **A square return does NOT prove the attachment was ignored**, and this file claimed it did for a while:
+  the priest's altar came back square having edited the scaffold faithfully, floating spout and all. What
+  a square DOES mean is unimportable as it stands, because the import scales the master to the slot and a
+  1:1 master in a 2:3 slot is a third out. Look at it, then re-roll or re-frame — never import it.
+
+- **A square return in a FRESH chat with both files attached is the prompt missing its frame sentence,
+  and it is fixed in the entry rather than in the thread.** The priest's naos came back 2048x2048 with a
+  vanishing point, a diagonal cord and none of the scaffold's `-19` turn — a painting made from the words
+  with the attachment sitting unread beside them. Its entry was one of the ones with no frame line; adding
+  "Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+  Paint over the reference image itself." landed the next roll at 1696x2528, on the scaffold. That
+  sentence is the ONE non-material line allowed in a repaint — naming the canvas is not naming the
+  projection — so check an entry carries it before blaming a thread or a spin.
+
+## Checking, and how the checking goes wrong
+
+The rules a PROMPT has to follow live in [tile-art-brief.md](../game-design/tile-art-brief.md), under
+"Writing a prompt" — that is the document open when a prompt is written. What follows is the WORKFLOW:
+how to check, and every way the checking itself has gone wrong.
+
+1. **Check where an asset APPEARS before generating it.** A sill exists only where the rank changes: over
+   the generated world, 36 sampled floors have none at all and the rest have one or two. The story we were
+   judging against was single-tier, so it could never show one. A census beats an opinion — render the real
+   floors and count.
+2. **Check what the renderer actually FILLS, not what the brief says.** The brief called a sill 56x12. The
+   renderer fills a 56x28 gap between rows and a 14x56 gap between columns, from one stretched pattern, so
+   the art arrived a twelfth of a cell tall and was shown lying on its side. A slot size is a claim about
+   code, and has to be read out of the code. The face slipped through the same check twice over: it is
+   stored 448x56 and drawn into 448x28, so three ranks of wall shipped stretched to twice their width
+   before anyone said so out loud. The cheap way to see it is to resize a face to what the renderer fills
+   and look at THAT, which is one line of sharp.
+3. **A preview must compose the way the RENDERER composes.** The arch previews drew a continuous wall face
+   behind the gateway; the renderer puts an arch in a GAP, where that band is floor and the faces are only
+   to its left and right. Every judgement made against that preview was made against a picture the game
+   never draws.
+4. **A proxy metric is worthless until it has agreed with a case you can already judge by eye.** Two
+   automatic measurements of a beam's top-to-front ratio both gave confident wrong answers — one
+   thresholded on brightness and missed a textured top face, the other found the underside shadow instead
+   of the top edge. Both were reported as fact before being checked against the picture.
+5. **Profile the input before scoring it.** The arch builder samples a band of the rank's wall for its
+   stone, and the band picker was guessed wrong three times: scoring by how much ROW MEANS differ called a
+   procession frieze plain (a row of figures averages out like the row above it), scoring by variation
+   ALONG a row picked the dado (a solid painted stripe is the most uniform thing on a wall), and scoring by
+   both still missed because the search window was wider than the one clean strip and the cap/base
+   exclusion put that strip out of reach. Printing every row's colour distance and variation answered it in
+   one command. Same lesson as the beam metric: measure the thing, then write the rule.
+6. **`yarn tsc --noEmit` checks NOTHING here** — the root tsconfig is solution-style, so it compiles an
+   empty file list. `yarn tsc -b` is the real check, and it found an error that had already been committed.
+   Same class: `npx prettier` resolves to a different major than the project's and silently reformats
+   unrelated code. Use `yarn` for every tool.
+7. **Report a file as written only after reading it back off disk.** Twice a chosen variant was described as
+   imported when the command had never run, so the next Storybook look was of stale art.
+
+## Loose ends
+
+- **`yarn generate-dummy-tiles` writes to `tiles/placeholder/`, never into a rank's folder.** A rank's
+  folder is that rank's art, which is what lets the renderer tell "painted here" from "drawable at all";
+  see the renderer doc's dummy-sprite section for the bug that taught us. It leaves alone any kind already
+  painted at the rank asking, or in `default/`. `--force` overwrites the stand-ins themselves.
+- **The explorer is drawn near-front-on**, in a flatter projection than the walls now use, and he is
+  `tiles/default/` so he cannot be fixed per rank. Nobody has judged whether that reads wrong yet.
+- **The explorer is committed real art now** — 4 front frames, 4 back, 3 side, at 40×70, walking on
+  distance (`walkCycle.ts`). `tiles/default/` is shared art, never per rank: one person walks all five.
+
+## Where the masters live
+
+The high-resolution image each tile was made from lives in `art/`, laid out in [its own
+README](../../art/README.md):
+
+```
+art/masters/props/<tier>/<name>.webp     a prop's painted return
+art/masters/surfaces/<tier>-<slot>.webp  floor, wall-face, threshold
+art/masters/tombWall/<tier>.webp         the tableau's whole-wall panel
+art/rebuild.sh                   re-imports from the masters, with each tile's flags
+```
+
+`art/` sits outside `src/`, so Vite never sees it and none of it reaches the bundle — what ships is still
+only `src/assets/tiles/<tier>/<name>.png` at slot size and `src/assets/tombWall/<tier>.webp`.
+
+Scaffolds and masks are NOT stored: they are `renderProp.py` on fixed arguments and come back byte for
+byte, so `rebuild.sh` carries the argument list instead, which is both smaller and the only record of how
+a tile was imported. A generator's return cannot be reproduced, which is why that half is kept. Masters
+are webp at quality 92 — a 1334x2000 return is 3.3MB as PNG and about 140KB this way, which is the
+difference between a repository that can hold the brief's ~224 files and one that cannot.
+
+Two holes, both named in `art/README.md`: the backfilled masters have no rebuild lines, because their
+tiles were imported before there was anywhere to write the command down; and the MERCHANT's floor,
+wall-face and threshold have no master at all, because `~/tile-previews/` holds two candidates for each
+and the shipped tiles cannot decide between them.
+
+`~/tile-previews/` is still the scratch directory for work in progress. Nothing there is depended on once
+a tile is approved and its master is in `art/`.

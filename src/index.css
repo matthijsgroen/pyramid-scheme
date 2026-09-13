@@ -422,6 +422,122 @@ body {
       transform: translateX(-4px);
     }
   }
+  /* ── The map's own motion ──────────────────────────────────────────────────────────────────────
+     Everything that moves on the site map, defined here rather than in a `<style>` tag the renderer
+     injects. Each one is driven by variables the element sets for itself — where a mote is blown, how
+     far a beetle scurries, how wide a walk cycle's strip is — so one definition serves every one of
+     them and the per-element numbers stay on the element.
+
+     Reduced motion is the `motion-reduce:animate-none` variant at the point of use: this is ambience,
+     it says nothing the player needs, and nothing listens for its `animationend`. */
+
+  /* Dust, sand, soot, sparks — or fog, which is the same thing drawn huge and slow. It fades in and out
+     across its crossing, which is what hides the jump when the animation loops. `translate` alone, so
+     the compositor owns every frame (docs/instructions/map-rendering.md). */
+  --animate-map-drift: map-drift linear infinite;
+  @keyframes map-drift {
+    0% {
+      translate: 0 0;
+      opacity: 0;
+    }
+    15% {
+      opacity: var(--o, 0.5);
+    }
+    85% {
+      opacity: var(--o, 0.5);
+    }
+    100% {
+      translate: var(--dx, -160px) var(--dy, 70px);
+      opacity: 0;
+    }
+  }
+
+  /* A beetle going about its business on the floor: a few steps out and back, in steps rather than
+     smoothly, because that is how a beetle moves. */
+  --animate-map-scurry: map-scurry steps(5, end) infinite;
+  @keyframes map-scurry {
+    0% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(var(--sx, 16px), var(--sy, 5px));
+    }
+    50% {
+      transform: translate(calc(var(--sx, 16px) * 0.6), calc(var(--sy, 5px) * -1.4));
+    }
+    75% {
+      transform: translate(calc(var(--sx, 16px) * -0.5), calc(var(--sy, 5px) * 0.8));
+    }
+    100% {
+      transform: translate(0, 0);
+    }
+  }
+
+  /* A FLAME JUMPS, IT DOES NOT EASE — `steps(1, end)`, which is the cheap way round as well as the truer
+     one: a pool of light is a screen-blended gradient, so every interpolated frame re-rasterised it and
+     re-composited the stone under it. Four lamps came to a measured 5% of a core on a map nobody was
+     touching. Five steps a cycle is five repaints instead of 130. Mostly opacity, plus a two-pixel
+     wander: a lamp gutters, it does not pulse. */
+  --animate-map-torch: map-torch-flicker 2.2s steps(1, end) infinite;
+  @keyframes map-torch-flicker {
+    0% {
+      opacity: 0.86;
+      transform: translate(0, 0);
+    }
+    18% {
+      opacity: 1;
+      transform: translate(1px, -1px);
+    }
+    37% {
+      opacity: 0.82;
+      transform: translate(-1px, 1px);
+    }
+    58% {
+      opacity: 0.97;
+      transform: translate(1px, 1px);
+    }
+    79% {
+      opacity: 0.85;
+      transform: translate(-1px, 0);
+    }
+    100% {
+      opacity: 0.86;
+      transform: translate(0, 0);
+    }
+  }
+
+  /* The explorer's legs: the frames side by side inside a box one frame wide, and the strip slid a whole
+     frame at a time — `steps()` doing what a spritesheet's background-position does. The span is the
+     strip's FULL width and the step count is however many frames the facing was drawn with, so both come
+     from the element. */
+  --animate-map-walk: map-walk infinite;
+  @keyframes map-walk {
+    to {
+      transform: translateX(var(--walk-span));
+    }
+  }
+
+  /* The place the player is standing coming up, and the one they left going out. Both are drawn during a
+     crossing — a shape cannot tween into another shape, so the fade has to be between two of them. */
+  --animate-map-lit-in: map-lit-in 320ms ease-out both;
+  @keyframes map-lit-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 0.1;
+    }
+  }
+  --animate-map-lit-out: map-lit-out 320ms ease-in both;
+  @keyframes map-lit-out {
+    from {
+      opacity: 0.1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
   --spacing-safe-top: env(safe-area-inset-top);
   --spacing-safe-bottom: env(safe-area-inset-bottom);
   --spacing-safe-left: env(safe-area-inset-left);

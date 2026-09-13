@@ -15,10 +15,31 @@ for (const [path, url] of Object.entries(urls)) {
   if (match) byTier.set(`${match[1]}/${match[2]}`, url)
 }
 
-/** `undefined` when that tier has no art of its own for the name — the caller falls back to
- * `default`, and then to the placeholder glyph. */
+/**
+ * THE ART OF A RANK, or the art every rank shares — and nothing else.
+ *
+ * `default/` is deliberately shared: one explorer walks all five tombs, one beetle scurries in them, one
+ * flight of stairs is drawn for every rank. That is the only fallback a rank gets. A kind this rank has
+ * not been painted has NO url here, and the caller decides what to do about it.
+ *
+ * `placeholder/` is not in that chain on purpose. A stand-in lives there rather than in a rank's folder
+ * so it cannot pass as that rank's art to anything that asks "is this drawn yet" — which is what let
+ * `companionProps` place crystals it was written never to place (its rule 3), on ranks where every
+ * crystal is a dummy. Ask `tileOrPlaceholder` when you mean "draw something"; ask this when you mean
+ * "is it painted".
+ */
 export const tileUrl = (tier: Difficulty, name: string): string | undefined =>
   byTier.get(`${tier}/${name}`) ?? byTier.get(`default/${name}`)
+
+/** The stand-in for a kind nobody has painted yet: flat shapes from `yarn generate-dummy-tiles`, one set
+ * for every rank, so a layer can be built and judged before its art exists. */
+export const placeholderUrl = (name: string): string | undefined => byTier.get(`placeholder/${name}`)
+
+/** What to DRAW for a kind: this rank's art, the shared art, or the stand-in — in that order. The map
+ * draws what a floor was authored to hold whether or not it is painted yet; what it must not do is add
+ * MORE of a kind because a dummy exists (see `tileUrl`). */
+export const tileOrPlaceholder = (tier: Difficulty, name: string): string | undefined =>
+  tileUrl(tier, name) ?? placeholderUrl(name)
 
 /**
  * Every drawing a tier has for one name: `<name>`, `<name>-2`, `<name>-3`, as far as they go.
@@ -51,7 +72,11 @@ export const tileVariants = (tier: Difficulty, name: string): string[] => {
     return found
   }
   const own = forTier(tier)
-  return own.length > 0 ? own : forTier("default")
+  if (own.length > 0) return own
+  const shared = forTier("default")
+  if (shared.length > 0) return shared
+  const stand = placeholderUrl(name)
+  return stand ? [stand] : []
 }
 
 /** The five kinds a god can be depicted on. Everything else ignores the patron entirely — a jar rack does
@@ -77,7 +102,8 @@ export const PATRON_KINDS = new Set<string>(["statue", "shrine", "wallShrine", "
  * authoring a patron today is safe: it cannot make a floor look worse than it already does.
  */
 export const patronTileUrl = (tier: Difficulty, name: string, patron?: string): string | undefined =>
-  (patron && PATRON_KINDS.has(name) ? byTier.get(`${tier}/${name}-${patron}`) : undefined) ?? tileUrl(tier, name)
+  (patron && PATRON_KINDS.has(name) ? byTier.get(`${tier}/${name}-${patron}`) : undefined) ??
+  tileOrPlaceholder(tier, name)
 
 /**
  * How the browser scales a tile — the ONE line that follows from whether the art is pixel art or painted.
@@ -91,7 +117,7 @@ export const ART_IMAGE_RENDERING = "auto"
 
 /** Art that is the same in every tomb, from `tiles/default/`. The explorer is one person walking down
  * five ranks of tomb, not a fifth of a set — a rank dresses the place, never the player. */
-export const sharedTileUrl = (name: string): string | undefined => byTier.get(`default/${name}`)
+export const sharedTileUrl = (name: string): string | undefined => byTier.get(`default/${name}`) ?? placeholderUrl(name)
 
 /**
  * The frames of one animation, in order: `<prefix>-1`, `<prefix>-2`, … as far as they go. A single

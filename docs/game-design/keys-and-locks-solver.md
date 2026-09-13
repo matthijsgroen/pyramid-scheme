@@ -1,6 +1,10 @@
 # The keys-and-locks solver
 
-Status: design doc · 2026-07-11  
+Status: BUILT · designed 2026-07-11, shipped through July 2026  
+The solver is `src/worldGen/reachability.ts` and `constraintResolver.ts`; the node-type collapse this
+doc argues for is `RoomType = "portal" | "fork" | "encounter"` in `src/game/siteTypes.ts`. Read it as the
+reasoning behind what is there, not as a plan. Where the code and this disagree, the code is the fact and
+the disagreement is worth writing down here.  
 Companion to `docs/game-design/pyramid-interior-design.md`. Also corrects
 `mods-architecture.md`'s old "Gates and ward paths — already core, no
 change" conclusion, but that's a secondary note — this is primarily a

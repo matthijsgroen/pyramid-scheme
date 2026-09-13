@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- The map is drawn a far cheaper way, and you should feel it: it no longer heats the phone in your hand, it costs almost nothing to leave open while you think, and panning and zooming stay smooth on a big floor.
+- A chest you have already emptied is drawn emptied: it stands back in the room with a tick on its lid, so a room worth walking to is told apart from one you have cleared.
+- The torch at the mouth of a staircase lights the floor it is standing on, instead of the floor on the other side of the steps.
+- A room is furnished with what its own rank has: no more crystals from the gods' vault turning up in the Valley of the Kings.
+
+### Changed
+
+- A puzzle and its rules sit on their own dark block, so the wall of the room you walked into is still behind you without competing with the board you are trying to read.
+
 ## 0.43.0 - 2026-09-12
 
 ### Added
