@@ -260,7 +260,9 @@ const gateRoom = (dirs: Direction[], state: CellState = "reachable"): GridCell =
 })
 
 const clickableIn = (container: HTMLElement) =>
-  Array.from(container.querySelectorAll<HTMLElement>("g")).filter(el => el.style?.cursor === "pointer")
+  Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).filter(
+    el => el.style?.cursor === "pointer"
+  )
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
@@ -331,7 +333,7 @@ describe("SiteMapView — room clickability", () => {
 
   it("does not render a fogged room at all", () => {
     const { container } = render(<SiteMapView grid={makeGrid([[room("fogged"), empty]])} />)
-    expect(container.querySelectorAll("g[transform]")).toHaveLength(0)
+    expect(container.querySelectorAll("[data-marker-cell]")).toHaveLength(0)
   })
 })
 
@@ -498,8 +500,11 @@ describe("SiteMapView — long corridor click target", () => {
     return 0
   })
 
+  // A marker's box is the cell it belongs to, so it is found by where that box sits.
   const findCell = (container: HTMLElement, cx: number, cy: number) =>
-    Array.from(container.querySelectorAll("g")).find(el => el.getAttribute("transform") === `translate(${cx}, ${cy})`)
+    Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
+      el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
+    )
 
   it("puts a clickable target at the near end of a long visible corridor, routed to the far corner", () => {
     // fork(0,0) -- visible -- visible -- reachable corner(0,3). Only the corner has a real
@@ -551,7 +556,8 @@ describe("SiteMapView — long corridor click target", () => {
     expect(findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)?.querySelector("polygon")).toBeTruthy()
 
     rerender(<SiteMapView grid={grid} explorerPos={[0, 2]} />)
-    expect(findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)?.querySelector("polygon")).toBeNull()
+    // Gone, and the box may be gone with it: a cell with nothing to draw and nothing to tap is not drawn.
+    expect(findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)?.querySelector("polygon")).toBeFalsy()
   })
 })
 

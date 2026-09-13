@@ -86,14 +86,21 @@ Three things worth knowing:
 The specs moved with it: `spritesIn`/`urlOf`/`boxOf`/`clipOf` at the top of `SiteMapView.spec.tsx` read a
 sprite off its style, and everything else asks for those rather than for `<image>`.
 
-**4 — markers and badges.** The node shapes are all that is left inside the map's one `<svg>`: arch,
-chest, lock, ward gate, key colours, the ✓ and the `!`. They are static, and static vector costs nothing,
-so this slice is about where they live rather than about what they cost. See the decision below.
+**4 — markers and badges. DONE.** Each marker is now an icon in a little `<svg>` of its own, inside a
+`MarkerCell` box the size of the cell it belongs to. The box is also the TAP TARGET, which is what the
+invisible disc inside the drawing used to be — a marker six units across was a six-unit target, and a
+cell's worth is bigger than that disc ever was without being able to poach a neighbour's, since cells do
+not overlap. Only a cell you can act on takes the tap; the rest are `pointer-events: none`, so a drag or a
+double-tap goes through to the map.
 
-**5 — the root.** Delete the `<svg>`, retype `useMapZoom`'s `mapRef` to `HTMLDivElement` (nothing else in
-it changes — it already writes `transform: scale()` by hand), and sweep the spec file for
-`querySelectorAll("image")` and friends. Data attributes over tag names: `[data-map-scroll]`,
-`[data-map-tint]` are already in, and each band should get one as it lands.
+**5 — the root. DONE.** The map's `<svg>` is gone; the map is a `div` the size of the floor with layers
+stacked in it, and `useMapZoom` scales that (it always wrote `transform: scale()` by hand — only the ref's
+type changed). Specs address the map by data attribute rather than by tag: `[data-map]`, `[data-map-scroll]`,
+`[data-map-tint]`, `[data-tile]`, `[data-marker-cell]`, `[data-node-sprite]`, `[data-light-pool]`,
+`[data-torch]`, `[data-arch-shadow]`, `[data-explorer]`.
+
+**The port is finished.** What SVG remains on the map is per-marker icons and the placeholder glyphs, which
+is the point: static vector is free, and it was never the problem.
 
 ## The markers, for slice 4
 

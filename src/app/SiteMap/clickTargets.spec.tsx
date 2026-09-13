@@ -5,7 +5,7 @@ import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, findPath } from "@/game/gridNavigation"
 import type { FloorGrid } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
-import { cellCenter } from "./mapScale"
+import { CELL, cellCenter } from "./mapScale"
 
 // jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
 Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
@@ -28,7 +28,9 @@ const arrivedAtEntrance = (siteId: string): { grid: FloorGrid; at: readonly [num
 const clickEveryTarget = (grid: FloorGrid, at: readonly [number, number]) => {
   const onCellClick = vi.fn()
   const { container } = render(<SiteMapView grid={grid} explorerPos={at} onCellClick={onCellClick} />)
-  const targets = Array.from(container.querySelectorAll<SVGGElement>("g")).filter(el => el.style?.cursor === "pointer")
+  const targets = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).filter(
+    el => el.style?.cursor === "pointer"
+  )
   for (const target of targets) fireEvent.click(target)
   return onCellClick.mock.calls as [number, number][]
 }
@@ -166,8 +168,8 @@ describe("the corridor detector's hint", () => {
 
     const onCellClick = vi.fn()
     const { container } = render(<SiteMapView grid={grid} explorerPos={[0, 0]} onCellClick={onCellClick} />)
-    const junction = Array.from(container.querySelectorAll<SVGGElement>("g")).find(
-      el => el.getAttribute("transform") === `translate(${cellCenter(0, 1).cx}, ${cellCenter(0, 1).cy})`
+    const junction = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
+      el => parseFloat(el.style.left) === cellCenter(0, 1).cx - CELL / 2
     )
 
     expect(junction?.querySelector("circle[stroke]")).toBeTruthy()
