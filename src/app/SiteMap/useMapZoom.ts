@@ -19,14 +19,20 @@ const touchMidpoint = (touches: TouchList): { x: number; y: number } => ({
 // Double-click / double-tap goes back to 1×.
 //
 // The zoom level is NOT React state: a pinch fires a move event per frame, and re-rendering a
-// floor's worth of cells that often is what made it stutter on a phone. Instead the gesture writes
-// the DOM directly — the sizer box takes the scaled footprint (so the scroll extents are real),
-// and the map itself is a `scale()` transform, which the browser can composite. Nothing in the
-// React tree depends on the zoom, so nothing re-renders while pinching.
+// floor's worth of cells that often is what made it stutter on a phone. The gesture writes the DOM
+// directly instead, and nothing in the React tree depends on the zoom.
 //
-// The listeners are attached by hand rather than as JSX props because React registers wheel and
-// touch handlers passively — a passive handler can't preventDefault, and without that the browser
-// runs its own page zoom on top of this one.
+// A PINCH TOUCHES NOTHING BUT `transform`. Resizing the sizer or writing `scrollLeft` per move costs
+// a layout of the whole floor and a scroll clamp on every frame — and on iOS the browser has usually
+// already committed the gesture to its own scrolling (the second finger lands after the first has
+// moved, and `preventDefault` past that point is ignored), so our writes and its scrolling then drag
+// the map in two directions at once. So the pan is left entirely to the browser's two-finger scroll,
+// which composites, and the pinch only scales about the point it started on — a transform the
+// compositor can run without laying anything out. The zoom is committed to the sizer once, when the
+// fingers lift.
+//
+// The listeners are attached by hand rather than as JSX props because a wheel handler must be
+// non-passive to preventDefault — without that the browser runs its own page zoom on top of this one.
 export const useMapZoom = (baseWidth: number, baseHeight: number) => {
   const scrollRef = useRef<HTMLDivElement>(null)
   // The box holding the map's scaled footprint. Sized here, never by React — a re-render would
@@ -34,16 +40,28 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
   const sizerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<HTMLDivElement>(null)
   const zoomRef = useRef(1)
+  /** The live pinch: the scale the fingers are showing, and the map point they closed on. */
+  const pinchRef = useRef<{ zoom: number; anchor: { x: number; y: number } } | null>(null)
 
   const render = () => {
     const sizer = sizerRef.current
     const map = mapRef.current
     if (!sizer || !map) return
     const zoom = zoomRef.current
+    // The footprint the scroll extents are measured from stays at the COMMITTED zoom: the sizer is
+    // laid out, and laying the floor out again every frame is the stutter.
     sizer.style.width = `${baseWidth * zoom}px`
     sizer.style.height = `${baseHeight * zoom}px`
     map.style.transformOrigin = "0 0"
-    map.style.transform = `scale(${zoom})`
+    const pinch = pinchRef.current
+    if (!pinch) {
+      map.style.transform = `scale(${zoom})`
+      return
+    }
+    // Hold the anchor where the committed footprint has it, so the map grows around the fingers
+    // rather than around its own top-left corner.
+    const shift = zoom - pinch.zoom
+    map.style.transform = `translate(${pinch.anchor.x * shift}px, ${pinch.anchor.y * shift}px) scale(${pinch.zoom})`
   }
 
   useLayoutEffect(render)
@@ -57,9 +75,9 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
      * the zoom changes, and computing the new scroll from the old one silently zooms toward the middle
      * of the screen instead. */
     const mapPointAt = (clientX: number, clientY: number) => {
-      const sizer = sizerRef.current
-      if (!sizer) return null
-      const { left, top } = sizer.getBoundingClientRect()
+      const map = mapRef.current
+      if (!map) return null
+      const { left, top } = map.getBoundingClientRect()
       return { x: (clientX - left) / zoomRef.current, y: (clientY - top) / zoomRef.current }
     }
 
@@ -72,18 +90,9 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
       el.scrollTop += top + point.y * zoomRef.current - clientY
     }
 
-    /**
-     * Zoom to `target`, keeping `anchor` — a point of the map — under the screen point given.
-     *
-     * WITHOUT AN ANCHOR the point under the gesture is taken fresh each time, which is right for a wheel
-     * (the cursor is where it is) and WRONG for a pinch: re-reading it every move means whatever happens
-     * to be under the fingers at that instant stays under them, and the gesture's own travel is thrown
-     * away. Fingers drift — 70 pixels of drift across a pinch slid the map by most of a cell — so the
-     * thing the player put their fingers on walked out from between them. A pinch carries the point it
-     * started on, and that point both zooms and PANS with the fingers.
-     */
-    const zoomTo = (target: number, clientX: number, clientY: number, anchor?: { x: number; y: number } | null) => {
-      const point = anchor ?? mapPointAt(clientX, clientY)
+    /** Zoom to `target`, keeping the point of the map under the given screen point where it is. */
+    const zoomTo = (target: number, clientX: number, clientY: number) => {
+      const point = mapPointAt(clientX, clientY)
       if (!point) return
       const next = clampZoom(target)
       if (next !== zoomRef.current) {
@@ -93,7 +102,7 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
       putMapPointUnder(point, clientX, clientY)
     }
 
-    let pinch: { distance: number; zoom: number; anchor: { x: number; y: number } | null } | null = null
+    let start: { distance: number; zoom: number } | null = null
 
     const onWheel = (e: WheelEvent) => {
       if (!e.ctrlKey && !e.metaKey) return
@@ -101,27 +110,49 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
       // Exponential so a step feels the same at every zoom level, unlike a fixed +/- amount.
       zoomTo(zoomRef.current * Math.exp(-e.deltaY / 300), e.clientX, e.clientY)
     }
+
     const onTouchStart = (e: TouchEvent) => {
       if (e.touches.length !== 2) return
       const { x, y } = touchMidpoint(e.touches)
-      // The point between the fingers as the pinch begins: what the player is aiming at, and what the
-      // rest of the gesture is measured against.
-      pinch = { distance: touchDistance(e.touches), zoom: zoomRef.current, anchor: mapPointAt(x, y) }
+      const anchor = mapPointAt(x, y)
+      if (!anchor) return
+      start = { distance: touchDistance(e.touches), zoom: zoomRef.current }
+      pinchRef.current = { zoom: zoomRef.current, anchor }
+      // One promise, for as long as the thing is actually moving.
+      if (mapRef.current) mapRef.current.style.willChange = "transform"
     }
+
     const onTouchMove = (e: TouchEvent) => {
-      if (!pinch || e.touches.length !== 2) return
-      e.preventDefault()
-      const { x, y } = touchMidpoint(e.touches)
-      zoomTo((pinch.zoom * touchDistance(e.touches)) / pinch.distance, x, y, pinch.anchor)
+      const pinch = pinchRef.current
+      if (!start || !pinch || e.touches.length !== 2) return
+      pinch.zoom = clampZoom((start.zoom * touchDistance(e.touches)) / start.distance)
+      render()
     }
+
+    /** Fingers up: make the shown scale the real one, and keep what was on screen on screen. */
     const endPinch = () => {
-      pinch = null
+      const pinch = pinchRef.current
+      const map = mapRef.current
+      if (!pinch || !map) return
+      const { left, top } = map.getBoundingClientRect()
+      const centerX = el.clientWidth / 2
+      const centerY = el.clientHeight / 2
+      const { left: elLeft, top: elTop } = el.getBoundingClientRect()
+      const held = { x: (elLeft + centerX - left) / pinch.zoom, y: (elTop + centerY - top) / pinch.zoom }
+      zoomRef.current = pinch.zoom
+      pinchRef.current = null
+      start = null
+      map.style.willChange = ""
+      render()
+      putMapPointUnder(held, elLeft + centerX, elTop + centerY)
     }
+
     const onDoubleClick = (e: MouseEvent) => zoomTo(1, e.clientX, e.clientY)
 
     el.addEventListener("wheel", onWheel, { passive: false })
     el.addEventListener("touchstart", onTouchStart, { passive: true })
-    el.addEventListener("touchmove", onTouchMove, { passive: false })
+    // Passive: the pan belongs to the browser's own two-finger scroll, so there is nothing to cancel.
+    el.addEventListener("touchmove", onTouchMove, { passive: true })
     el.addEventListener("touchend", endPinch)
     el.addEventListener("touchcancel", endPinch)
     el.addEventListener("dblclick", onDoubleClick)
@@ -136,7 +167,7 @@ export const useMapZoom = (baseWidth: number, baseHeight: number) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseWidth, baseHeight])
 
-  // One-finger drag still scrolls the map; the browser's own pinch-zoom is off, since this
+  // One- and two-finger drags both scroll the map; the browser's own page zoom is off, since this
   // handles it. `zoomRef` is for readers that need the current scale (the explorer centering).
   return {
     scrollRef,

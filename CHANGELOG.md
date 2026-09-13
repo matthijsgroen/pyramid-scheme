@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- Pinching the map no longer drags it away from your fingers or stutters: the pinch scales, the phone keeps the panning.
+
 ## 0.43.2 - 2026-09-13
 
 ### Fixed

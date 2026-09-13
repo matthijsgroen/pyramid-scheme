@@ -58,8 +58,11 @@ background, and **`ClipLayer`**, a map-sized box cut to a path.
 - **`mix-blend-mode` makes a stacking context** and forces what is under it to composite together. The
   light pools use it; do not spread it further.
 - **`will-change` is a promise, not a hint.** One per moving thing.
-- **A pinch carries the map point it STARTED on** (`useMapZoom`), so it pans as well as zooms. Re-reading
-  the point under the fingers each move throws the gesture's own travel away, and fingers drift.
+- **A pinch writes nothing but `transform`** (`useMapZoom`): it scales about the map point the fingers
+  closed on, and the PAN is left to the browser's own two-finger scroll. Resizing the sizer or writing
+  `scrollLeft` per move costs a layout of the floor a frame, and iOS has usually already taken the gesture
+  for its own scrolling by the time the second finger lands — so both then drag the map at once. The zoom
+  is committed to the sizer when the fingers lift.
 - **Tests address the map by data attribute**, never by tag: `[data-map]`, `[data-map-scroll]`,
   `[data-map-tint]`, `[data-tile]`, `[data-marker-cell]`, `[data-node-sprite]`, `[data-light-pool]`,
   `[data-torch]`, `[data-arch-shadow]`, `[data-explorer]`. `SiteMapView.spec.tsx` opens with

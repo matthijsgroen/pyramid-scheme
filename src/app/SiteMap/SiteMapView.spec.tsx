@@ -671,29 +671,56 @@ describe("SiteMapView — pinch zoom", () => {
     expect(mapScale(container)).toBe(1)
   })
 
-  it("carries the map with the fingers, so a pinch that travels does not leave its target behind", () => {
-    // THE BUG THIS IS FOR: the point under the fingers was re-read every move, so whatever happened to be
-    // between them stayed between them and the gesture's own travel was thrown away. Fingers drift, and
-    // 70 pixels of drift walked the map most of a cell away from the thing the player was aiming at.
-    // Measured in a real browser at 0.8 map units of slip for a still pinch and 35 for a travelling one.
+  it("moves nothing but the map's own transform, so the browser's scroll is not fought for the pan", () => {
+    // THE BUG THIS IS FOR: the pinch used to resize the sizer and write `scrollLeft` on every move. That
+    // is a layout of the whole floor and a scroll clamp per frame — and on iOS the browser has usually
+    // already taken the gesture for its own scrolling by the time the second finger lands, so the two
+    // dragged the map in opposite directions. The pan is the browser's two-finger scroll now; the pinch
+    // only scales.
     const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), room("reachable")]])} />)
     const area = scrollArea(container)
-    // jsdom lays nothing out, so the map's box has to be told: 400 wide at the origin, which is all the
-    // scroll arithmetic reads.
-    const sizer = container.querySelector("[data-map]")!.parentElement!
-    sizer.getBoundingClientRect = () => ({ left: 0, top: 0, width: 400, height: 400 }) as DOMRect
+    const sizer = container.querySelector("[data-map]")!.parentElement as HTMLElement
+    const footprintBefore = sizer.style.width
 
     const travelled = (spread: number, mid: number) => [
       { clientX: mid - spread, clientY: 100 },
       { clientX: mid + spread, clientY: 100 },
     ]
     fireEvent.touchStart(area, { touches: travelled(50, 100) })
-    // The same spread, moved bodily 40px to the right: no zoom in it at all, purely a two-finger drag.
-    fireEvent.touchMove(area, { touches: travelled(50, 140) })
+    fireEvent.touchMove(area, { touches: travelled(75, 140) })
 
-    expect(mapScale(container)).toBeCloseTo(1)
-    // The map followed: the content scrolled left by exactly what the fingers travelled.
-    expect(area.scrollLeft).toBeCloseTo(-40)
+    expect(mapScale(container)).toBeCloseTo(1.5)
+    expect(area.scrollLeft).toBe(0)
+    expect(sizer.style.width).toBe(footprintBefore)
+  })
+
+  it("grows the map around the point the fingers closed on, not around its own corner", () => {
+    const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), room("reachable")]])} />)
+    const map = container.querySelector<HTMLElement>("[data-map]")!
+
+    // jsdom lays nothing out, so the map sits at the origin: the midpoint of the fingers, x=100, is the
+    // map's own x=100 at 1x.
+    fireEvent.touchStart(scrollArea(container), { touches: fingers(50) })
+    fireEvent.touchMove(scrollArea(container), { touches: fingers(100) })
+
+    // At 2x that point would land at x=200 — the shift puts it back where the fingers are holding it.
+    const shift = Number(/translate\((-?[\d.]+)px/.exec(map.style.transform)?.[1])
+    expect(shift + 100 * 2).toBeCloseTo(100)
+  })
+
+  it("commits the pinch when the fingers lift, so the scrollable footprint catches up with the zoom", () => {
+    const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), room("reachable")]])} />)
+    const area = scrollArea(container)
+    const sizer = container.querySelector("[data-map]")!.parentElement as HTMLElement
+    const widthBefore = parseFloat(sizer.style.width)
+
+    fireEvent.touchStart(area, { touches: fingers(50) })
+    fireEvent.touchMove(area, { touches: fingers(100) })
+    fireEvent.touchEnd(area, { touches: [] })
+
+    expect(mapScale(container)).toBeCloseTo(2)
+    expect(parseFloat(sizer.style.width)).toBeCloseTo(widthBefore * 2)
+    expect(container.querySelector<HTMLElement>("[data-map]")!.style.transform).not.toContain("translate")
   })
 })
 
