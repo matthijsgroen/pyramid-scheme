@@ -2,17 +2,21 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 import { generateSumplete } from "@/mods/puzzle/game/sumplete/generateSumplete"
 import { SUMPLETE_CONFIG } from "@/mods/puzzle/game/sumplete/sumpleteConfig"
-import { SumpletePuzzle } from "@/mods/puzzle/app/sumplete/SumpletePuzzle"
-import { EncounterModal } from "./EncounterModal"
+import { SumpletePuzzle } from "./SumpletePuzzle"
+import { EncounterModal } from "@/app/SiteMap/EncounterModal"
 
-// The frame every encounter is met in, with the wall it wears — and it exists for one judgement: how the
-// board reads against the stone behind it. The wall is the room the player walked into and is drawn at
+// A real board in the frame every encounter is met in, with the wall it wears — and it exists for one
+// judgement: how the board reads against the stone behind it.
+//
+// It lives on the MOD side though the frame is core's, because it names Sumplete: core may not import a
+// mod (ARCHITECTURE.md, invariant 1 — a mod is removable), and a story is part of the build. The wall is the room the player walked into and is drawn at
 // full strength; the board and its rules pull away from it onto their own translucent black blocks
 // (`PuzzleFamilyShell`), the way the hieroglyph strip under a tableau does.
 //
 // Sumplete is the board to judge it on: the busiest one the game has, a grid of pale cells with numbers
 // down two edges, so anything the wall does behind it shows up at once.
 const meta = {
+  title: "Puzzle/SumpleteEncounter",
   component: EncounterModal,
   parameters: { layout: "fullscreen" },
 } satisfies Meta<typeof EncounterModal>
