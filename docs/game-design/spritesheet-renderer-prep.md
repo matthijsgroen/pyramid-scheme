@@ -780,11 +780,19 @@ So the route in, for each file: generate → `make-seamless` (megatiles only) �
 
 ## Dummy sprites — rasterised SVG, for testing the pipeline
 
-`yarn generate-dummy-tiles` (`scripts/generateDummyTiles.ts`) writes a full placeholder art set
-into `src/assets/tiles/<tier>/`: generated SVG rasterised by `sharp`, which is already a
-dependency. Nothing hand-drawn, nothing precious.
+`yarn generate-dummy-tiles` (`scripts/generateDummyTiles.ts`) writes a full placeholder art set into
+`src/assets/tiles/placeholder/`: generated SVG rasterised by `sharp`, which is already a dependency.
+Nothing hand-drawn, nothing precious.
 
-Per tier: `floor.png` (448², = 8 cells at 1:1), `wall-face.png` (448×56), `threshold.png` (56×12),
+**A STAND-IN NEVER LIVES IN A RANK'S FOLDER.** `tiles/<tier>/` is that rank's art and `tiles/default/` is
+art every rank shares on purpose — one explorer, one beetle, one flight of stairs. A dummy is neither, so
+it sits apart and the renderer asks for it by name: `tileUrl` answers "is this painted here" and
+`tileOrPlaceholder` answers "draw something" (`tileAssets.ts`). While the dummies sat in the rank folders
+those two questions had the same answer, and `companionProps` — which adds a second prop only for a kind
+the rank actually draws — put placeholder crystals in the Valley of the Kings on the strength of it. One
+set serves every rank: a stand-in is not a rank's art, and tinting it per rank was the lie in miniature.
+
+One per kind: `floor.png` (448², = 8 cells at 1:1), `wall-face.png` (448×56), `threshold.png` (56×12),
 one 56×84 PNG per decoration kind — a cell plus its headroom — and one 56×28 PNG per wall-item kind, the
 band's own shape. A wall top is a palette token, not a file.
 

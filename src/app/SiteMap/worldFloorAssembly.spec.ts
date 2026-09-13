@@ -7,6 +7,8 @@ import { configHash } from "@/game/seeds/configHash"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { hashString } from "@/support/hashString"
 import { boardIndexesForFloor } from "./boardIndexes"
+import { buildRoomClaims } from "./SiteMapView"
+import { authoredKindsFor } from "./authoredKinds"
 import { encodeEdge } from "./useAssembledFloor"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
@@ -408,4 +410,29 @@ describe("no two rooms in the world serve the same board", () => {
 
     expect(tooSmall, "run `yarn generate-seeds`").toEqual([])
   }, 120_000)
+})
+
+describe("a rank is dressed with what it is authored to hold", () => {
+  // REPORTED FROM PLAY: a crystal stood beside Anubis in the Valley of the Kings, which is expert. A
+  // crystal is a wizard thing — the gods' vault — and no expert site authors one anywhere. It arrived as
+  // a COMPANION: the second prop `companionProps` places beside a leader of the same purpose (a statue is
+  // funerary/judgement/cosmos, a crystal cosmos/sky/light). Its guard was "is this kind drawn at this
+  // rank", answered by whether a FILE exists — and every kind has a placeholder, so every rank could
+  // reach the whole vocabulary.
+  // Assembling and dressing the whole world, like the sweeps above: well past the default 5s budget.
+  it("places no prop of a kind its own rank never authors", () => {
+    const wrong: string[] = []
+    for (const floor of allFloors()) {
+      const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
+        resolveKeyRequirements,
+        floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+      })
+      if (!result.success) continue
+      const tier = result.grid.difficulty ?? "starter"
+      const authored = authoredKindsFor(tier).props
+      for (const [cell, kind] of buildRoomClaims(result.grid).decorationAt)
+        if (!authored.includes(kind)) wrong.push(`${floor.label} ${cell}: ${kind} at ${tier}`)
+    }
+    expect(wrong.slice(0, 10)).toEqual([])
+  }, 60_000)
 })

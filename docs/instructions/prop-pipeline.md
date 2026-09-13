@@ -867,9 +867,10 @@ how to check, and every way the checking itself has gone wrong.
 
 ## Loose ends
 
-- **`yarn generate-dummy-tiles` no longer overwrites art it did not write.** Real art lands at the same
-  paths. `--force` when you do want the placeholders back (that is also how to restore one file: delete it,
-  regenerate).
+- **`yarn generate-dummy-tiles` writes to `tiles/placeholder/`, never into a rank's folder.** A rank's
+  folder is that rank's art, which is what lets the renderer tell "painted here" from "drawable at all";
+  see the renderer doc's dummy-sprite section for the bug that taught us. It leaves alone any kind already
+  painted at the rank asking, or in `default/`. `--force` overwrites the stand-ins themselves.
 - **The explorer is drawn near-front-on**, in a flatter projection than the walls now use, and he is
   `tiles/default/` so he cannot be fixed per rank. Nobody has judged whether that reads wrong yet.
 - **The explorer is committed real art now** — 4 front frames, 4 back, 3 side, at 40×70, walking on

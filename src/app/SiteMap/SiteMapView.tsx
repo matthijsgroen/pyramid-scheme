@@ -45,7 +45,8 @@ import { cellAt, isClaimableNeighbor } from "@/game/roomFootprint"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
 import { companionFor } from "./companionProps"
-import { ART_IMAGE_RENDERING, patronTileUrl, tileUrl, tileVariants } from "./tileAssets"
+import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileUrl, tileVariants } from "./tileAssets"
+import { authoredKindsFor } from "./authoredKinds"
 import { ALL_STATES, buildTileRegions, faceShadowRects, faceTopRects, hasWallFace, rectsToPath } from "./tileRegions"
 import type { Rect } from "./tileRegions"
 import type { FloorAt, TileRegions } from "./tileRegions"
@@ -549,7 +550,7 @@ const nodeSpritesFor = (
       const { cx, cy } = cellCenter(r, c)
       const footprint = clipCells(footprints.get(`${r},${c}`) ?? [`${r},${c}`])
       if (kind === "treasure" && !cell.tags?.includes("shop")) {
-        const url = tileUrl(tier, "chestProp")
+        const url = tileOrPlaceholder(tier, "chestProp")
         if (!url) continue
         const { dx, dy } = nodeArtOffset(cell.dirs)
         out.push({
@@ -572,7 +573,7 @@ const nodeSpritesFor = (
         // picture from every approach, so it needs no facing, no side drawing and no seam to stand in: it
         // is placed on its own cell like a chest, and the renderer lays a pool at its foot the way it does
         // for a stair's cresset.
-        const url = tileUrl(tier, "exit")
+        const url = tileOrPlaceholder(tier, "exit")
         if (!url) continue
         const { cx: ex, cy: ey } = cellCenter(r, c)
         out.push({
@@ -625,9 +626,9 @@ const nodeSpritesFor = (
         // real oblique view and a rotation is not (`NodeSprite`).
         const name = `${open ? "gate-open" : "gate"}${dc !== 0 ? "-side" : ""}`
         const url =
-          tileUrl(tier, name) ??
-          tileUrl(tier, open ? "gate-open" : "gate") ??
-          (open ? tileUrl(tier, "gate") : undefined)
+          tileOrPlaceholder(tier, name) ??
+          tileOrPlaceholder(tier, open ? "gate-open" : "gate") ??
+          (open ? tileOrPlaceholder(tier, "gate") : undefined)
         if (!url) continue
 
         // THE BARS STAND ON THE SILL. Wherever one rank's stone meets another's across a way the player
@@ -676,14 +677,16 @@ const nodeSpritesFor = (
         // instead, mirrored when the corridor is on the wrong hand. Absent art falls back to the
         // toward-viewer flight, so a rank with one file still draws all four facings.
         const sideways = cell.dirs.has("e") || cell.dirs.has("w")
-        const side = sideways ? tileUrl(tier, goesUp ? "stair-up-side" : "stair-down-side") : undefined
+        const side = sideways ? tileOrPlaceholder(tier, goesUp ? "stair-up-side" : "stair-down-side") : undefined
         // The descending flight walked the OTHER way up the page: entered from the south its treads are
         // at the near lip of the shaft rather than the far one, which is the picture flipped in Y. That
         // flip is the one thing the renderer must not do, because it would carry the cresset down with
         // it and stand the flame on the floor — so the south approach is a file of its own, painted with
         // the torch left where it stands. Absent, the north flight stands in for both.
-        const downhill = cell.dirs.has("s") && !cell.dirs.has("n") ? tileUrl(tier, "stair-down-south") : undefined
-        const url = side ?? (goesUp ? undefined : downhill) ?? tileUrl(tier, goesUp ? "stair-up" : "stair-down")
+        const downhill =
+          cell.dirs.has("s") && !cell.dirs.has("n") ? tileOrPlaceholder(tier, "stair-down-south") : undefined
+        const url =
+          side ?? (goesUp ? undefined : downhill) ?? tileOrPlaceholder(tier, goesUp ? "stair-up" : "stair-down")
         if (!url) continue
         // The two side flights are painted opposite-handed, because each is drawn from where the player
         // stands: the descending one is entered at its top tread on the EAST, the climbing one at its
@@ -1130,6 +1133,8 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
       ...(shrine ? { shrine } : {}),
     })
   }
+  // What this rank is furnished with at all — see the two tests below.
+  const authoredHere = authoredKindsFor(grid.difficulty ?? "starter").props
   // A SECOND prop of the same purpose, in some of the rooms with space for one — see `companionProps`.
   // It goes into `decorationAt` rather than into a layer of its own, which is what keeps the rest of the
   // map honest for free: `floorScatter` dresses the cells this map does NOT hold, so a companion is a cell
@@ -1137,7 +1142,18 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
   for (const [key, kind] of companionFor(
     grid.siteId,
     roomsForCompanion,
-    kind => !!tileUrl(grid.difficulty ?? "starter", kind),
+    // TWO TESTS, and the first one is the one this got wrong.
+    //
+    // **A rank may only be dressed with what it is AUTHORED to hold.** A companion is placed by rule
+    // rather than by the world, so without this it can reach for any kind that shares a purpose — and a
+    // crystal is a wizard thing, the gods' vault, not something the Valley of the Kings has in it. One
+    // landed beside Anubis at expert exactly that way. `authoredKindsFor` is the rank's own vocabulary,
+    // read off the world artifact, so the answer moves when the authoring does.
+    //
+    // **And it has to be PAINTED here**, which is rule 3 of `companionProps`: `tileUrl` skips
+    // `placeholder/` on purpose, so a stand-in can never be multiplied across the map by a rule nobody
+    // is watching.
+    kind => authoredHere.includes(kind) && !!tileUrl(grid.difficulty ?? "starter", kind),
     // Same rule as the leader: on the map first, then the wall-behind preference.
     free => {
       const inside = free.filter(onGrid)
@@ -1576,9 +1592,9 @@ const TileLayers = ({
       {[...regions.keys()].map(t => {
         const palette = tierPalette[t]
         const groups = regions.get(t)!
-        const floorArt = tileUrl(t, "floor")
-        const faceArt = tileUrl(t, "wall-face")
-        const sillArt = tileUrl(t, "threshold")
+        const floorArt = tileOrPlaceholder(t, "floor")
+        const faceArt = tileOrPlaceholder(t, "wall-face")
+        const sillArt = tileOrPlaceholder(t, "threshold")
         const floorTexture = floorArt ? { url: floorArt, w: mega, h: mega } : undefined
         // The face art is a cell tall; a face is WALL_H tall, so the tile is scaled to that and repeats on
         // it. Every face in the map then shows the same courses at the same height.
@@ -1686,10 +1702,11 @@ const Decoration = ({
   // things at once. Falls straight through to the variant pick wherever no patron art exists, which is
   // everywhere today.
   const dedicated = patron ? patronTileUrl(tier, kind, patron) : undefined
-  const own = dedicated && dedicated !== tileUrl(tier, kind) ? dedicated : undefined
+  const own = dedicated && dedicated !== tileOrPlaceholder(tier, kind) ? dedicated : undefined
   const variants = tileVariants(tier, kind)
   const url =
-    own ?? (variants.length > 1 ? variants[hashString(`${seed}:${kind}`) % variants.length] : tileUrl(tier, kind))
+    own ??
+    (variants.length > 1 ? variants[hashString(`${seed}:${kind}`) % variants.length] : tileOrPlaceholder(tier, kind))
   return (
     <>
       {/* Under the sprite, so the light is on the floor and the lamp is standing in it. */}
@@ -1724,7 +1741,7 @@ const SandDrifts = ({
   /** The walkable floor, as a path in map coordinates: what the wall does the drawing with. */
   floorPath: string
 }) => {
-  const url = tileUrl(tier, "sand")
+  const url = tileOrPlaceholder(tier, "sand")
   if (!url) return null
   return (
     <div style={{ position: "absolute", inset: 0, pointerEvents: "none", clipPath: `path("${floorPath}")` }}>
@@ -1771,7 +1788,7 @@ const FloorScatter = ({
       const [r, c] = cellKey.split(",").map(Number)
       const cell = cellAt(grid, r, c)
       if (cell.type === "empty" || cell.state === "fogged") return null
-      const url = tileUrl(tier, kind)
+      const url = tileOrPlaceholder(tier, kind)
       if (!url) return null
       const { cx, cy } = cellCenter(r, c)
       // The same wash the floor under it takes, as BRIGHTNESS rather than as an overlay. `stateWash` is
@@ -2018,7 +2035,7 @@ const Archways = ({
 }) => (
   <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
     {doorways.map(({ row, col, tier }) => {
-      const url = tileUrl(tier, "arch")
+      const url = tileOrPlaceholder(tier, "arch")
       if (!url) return null
       // Faded while the player is IN the doorway — standing on either of the two cells it spans. Only
       // those two are ever behind it, so nothing else on the map dims.
@@ -2683,11 +2700,12 @@ export const SiteMapView = ({
                 // A stairhead at the floor's own entrance is the way back UP; any other descends.
                 const isStair = shapeKind === "stairhead"
                 const goesUp = isStair && r === grid.entrancePos[0] && c === grid.entrancePos[1]
-                const hasStair = isStair && !!tileUrl(cell.difficulty ?? tier, goesUp ? "stair-up" : "stair-down")
+                const hasStair =
+                  isStair && !!tileOrPlaceholder(cell.difficulty ?? tier, goesUp ? "stair-up" : "stair-down")
                 // A DRAWN EXIT LOSES ITS MARKER for the stairhead's reason: the art IS the node, and unlike
                 // a gate it carries no key colour and no state — a portal is a transition, never completed
                 // — so the vector has nothing left to say that the doorway does not say better.
-                const hasExit = shapeKind === "exit" && !!tileUrl(cell.difficulty ?? tier, "exit")
+                const hasExit = shapeKind === "exit" && !!tileOrPlaceholder(cell.difficulty ?? tier, "exit")
                 const roomR = nodeRadius[shapeKind]
                 const locked = isLockedGate(cell, ownedKeys)
                 const displayState: CellState = locked && state === "reachable" ? "visible" : state
