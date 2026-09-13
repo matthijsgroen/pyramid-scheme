@@ -210,6 +210,7 @@ Topic-specific guidelines for contributors and AI agents. Apply the relevant ins
 | [`docs/instructions/changelog.md`](docs/instructions/changelog.md)                     | Adding any user-facing change — to decide what belongs in `CHANGELOG.md`                                                                       |
 | [`docs/instructions/design-doc-fidelity.md`](docs/instructions/design-doc-fidelity.md) | Implementing or reviewing code against an existing `docs/game-design/` doc, or when the same kind of architectural gap surfaces more than once |
 | [`docs/instructions/puzzle-screens.md`](docs/instructions/puzzle-screens.md)           | Building or reviewing any puzzle family — layout, theming, reset/hint/back controls, and the logic-solvability bar                             |
+| [`docs/instructions/world-reshape-release.md`](docs/instructions/world-reshape-release.md) | **Read before touching `siteAssembler`’s shuffles** — what the pending reshape release must contain, in what order, and why splitting it the wrong way corrupts saves |
 
 ---
 
