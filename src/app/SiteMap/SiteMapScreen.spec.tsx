@@ -67,7 +67,8 @@ const settle = async () => {
 const exitCenter = cellCenter(0, 2)
 const exitNode = (container: HTMLElement) =>
   Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
-    el => parseFloat(el.style.left) === exitCenter.cx - CELL / 2 && parseFloat(el.style.top) === exitCenter.cy - CELL / 2
+    el =>
+      parseFloat(el.style.left) === exitCenter.cx - CELL / 2 && parseFloat(el.style.top) === exitCenter.cy - CELL / 2
   )!
 
 describe(SiteMapScreen, () => {

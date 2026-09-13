@@ -260,9 +260,7 @@ const gateRoom = (dirs: Direction[], state: CellState = "reachable"): GridCell =
 })
 
 const clickableIn = (container: HTMLElement) =>
-  Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).filter(
-    el => el.style?.cursor === "pointer"
-  )
+  Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).filter(el => el.style?.cursor === "pointer")
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 

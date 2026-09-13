@@ -20,6 +20,11 @@ import { imageMap, WALL_SIZE } from "@/ui/atoms/tombImageMap"
 // A SCRIM OVER IT, because the chrome above and below a board is small stone-coloured text and a painted
 // wall is not a background to read against. 0.55 is enough to keep it legible and light enough that the
 // courses still show — the wall is meant to be recognised, not just present.
+//
+// The wall keeps that brightness and the BOARD is what pulls away from it: a puzzle and its rules sit on
+// their own translucent black block (`PuzzleFamilyShell`), the way the hieroglyph strip under a tableau
+// does. Darkening the whole wall instead traded the room the player is standing in for concentration; a
+// block gives the concentration back without taking the room away.
 export const EncounterModal: FC<{ children: ReactNode; difficulty?: Difficulty }> = ({ children, difficulty }) => {
   const wall = difficulty ? imageMap[difficulty] : undefined
   return (
