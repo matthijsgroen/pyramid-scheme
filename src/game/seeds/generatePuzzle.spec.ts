@@ -72,4 +72,32 @@ describe("generatePuzzle", () => {
   it("refuses a family that declares no generator", () => {
     expect(() => generatePuzzle({ ...meta, seedable: undefined }, 1, {})).toThrow("declares no generator")
   })
+
+  // A list entry is only ever given ONE attempt, because that is what it was proven to need. So the
+  // moment a list and its generator disagree — a dial moved without `yarn generate-seeds`, a seed proven
+  // under options that have since shifted — the attempt misses and the generator throws. A board is built
+  // during render, so that throw is the screen going away. Searching instead is what every family did
+  // before there were lists: slower, never wrong.
+  const drifted: FamilyMeta = {
+    ...meta,
+    seedable: seedable({
+      resolveOptions: () => OPTIONS,
+      generate: (seed, _options, attempts) => {
+        calls.push({ seed, attempts })
+        if (attempts === 1) throw new Error("no board for size 8 at regionLine")
+        return { board: seed }
+      },
+      grade: () => ({ steps: 1 }),
+    }),
+  }
+
+  it("searches when a listed seed does not build first time, instead of letting the throw reach the screen", () => {
+    puzzleSeeds[HASH] = [10, 20]
+
+    expect(generatePuzzle(drifted, 77, {})).toEqual({ board: 77 })
+    expect(calls).toEqual([
+      { seed: 20, attempts: 1 },
+      { seed: 77, attempts: undefined },
+    ])
+  })
 })

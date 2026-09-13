@@ -48,7 +48,29 @@ registerFamily({
 })
 const stubRoom: GridCell = { ...emptyRoom, family: STUB_FAMILY }
 
+// A family whose generator cannot build its board. There is one in the wild — see the crash this spec
+// was written for — and no reproduction of it, which is the whole reason the room has to be named.
+const BROKEN_FAMILY = "broken"
+registerFamily({
+  meta: { id: BROKEN_FAMILY, ownerMod: "test", tags: ["puzzle"], icon: "", color: "", rewardPriority: 0 },
+  generate: () => {
+    throw new Error("star battle: no board for size 8 at regionLine")
+  },
+  Component: () => null,
+})
+const brokenRoom: GridCell = { ...emptyRoom, family: BROKEN_FAMILY, difficulty: "expert", boardIndex: 4 }
+
 describe("useEncounter", () => {
+  it("names the room when a board cannot be built, since the message alone names no room", () => {
+    // The generator says which CONFIGURATION failed. A configuration that builds everywhere it is swept
+    // is a dead end — what is needed is the cell, so the next report is a coordinate.
+    const { hook } = setup([brokenRoom])
+
+    expect(() => act(() => hook.result.current.open([0, 0], true))).toThrow(
+      /no board for size 8 at regionLine — journey=j1 edge=0:0,0 family=broken tier=expert board=4/
+    )
+  })
+
   it("resolves a room whose family isn't registered, so a toggled-off mod can't strand the player", () => {
     const { hook, journeys } = setup([emptyRoom])
 

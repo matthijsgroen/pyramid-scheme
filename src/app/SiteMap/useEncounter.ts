@@ -85,7 +85,25 @@ export const useEncounter = ({
 
   const puzzle = useMemo(() => {
     if (!family || !ctx) return null
-    return family.generate(hashString(journeyId + ctx.edgeId), ctx)
+    try {
+      return family.generate(hashString(journeyId + ctx.edgeId), ctx)
+    } catch (error) {
+      // A GENERATOR THAT THROWS TAKES THE APP DOWN, and until the crash screen there was nothing at all
+      // to go on. There still is not much: the message names a size and a technique, which identifies a
+      // configuration but not a ROOM, and a configuration that builds on this machine is a dead end.
+      // So the room comes with it — which journey, which floor, which cell, which board it was dealt.
+      // That is the coordinate a sweep can be pointed at.
+      const where = [
+        `journey=${ctx.journeyId}`,
+        `edge=${ctx.edgeId}`,
+        `family=${family.meta.id}`,
+        `tier=${ctx.difficulty}`,
+        `board=${ctx.boardIndex}`,
+        `role=${JSON.stringify(ctx.role)}`,
+        `theme=${ctx.theme}`,
+      ].join(" ")
+      throw new Error(`${(error as Error).message} — ${where}`, { cause: error })
+    }
   }, [family, ctx, journeyId])
 
   // The one thing core does on any solved encounter, for every family alike: mark the room explored
