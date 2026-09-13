@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react"
 
-// The two primitives every HTML layer of the map is built from. See docs/instructions/map-html-port.md.
+// The two primitives every HTML layer of the map is built from. See docs/instructions/map-rendering.md.
 
 /** One sprite standing in the map: a box with the art as its background.
  *

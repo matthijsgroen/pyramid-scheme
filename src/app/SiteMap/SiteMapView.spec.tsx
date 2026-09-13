@@ -13,7 +13,7 @@ import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "
 // place of its own), so a change there can't silently break every position assumption in this file.
 
 // ── Reading the map ───────────────────────────────────────────────────────────
-// The map is HTML (docs/instructions/map-html-port.md): a sprite is a box with the art as its
+// The map is HTML (docs/instructions/map-rendering.md): a sprite is a box with the art as its
 // background, and a run of stone or a pool of light is a box cut to a path. So a test asks for elements
 // carrying a background image and reads the url and the box off the style, rather than asking for
 // `<image>` and its attributes.

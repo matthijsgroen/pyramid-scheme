@@ -130,7 +130,7 @@ const PendingLootBadge = ({ r }: { r: number }) => (
  * ✓ that says the room is done goes on the chest's lid where the eye already is.
  *
  * Its own little inline `<svg>` inside the HTML layer — the badges are icons, and static vector costs
- * nothing (docs/instructions/map-html-port.md, "The markers"). Placed by its CENTRE, in map units. */
+ * nothing (docs/instructions/map-rendering.md, "The markers"). Placed by its CENTRE, in map units. */
 const NodeBadge = ({ kind, x, y }: { kind: "taken" | "pending"; x: number; y: number }) => (
   <svg
     aria-hidden="true"
@@ -1801,7 +1801,7 @@ const DECORATION_COLOR = "#5a4a30"
 /** The placeholder for a prop with no art yet: a line drawing, so it is still a drawing and still vector.
  *
  * An inline `<svg>` of its own inside the HTML layer rather than shapes in the map's one big one — see
- * docs/instructions/map-html-port.md on the markers. It is static, so it costs a paint once and never
+ * docs/instructions/map-rendering.md on the markers. It is static, so it costs a paint once and never
  * again; what the map could not afford was ANIMATION inside SVG. Centred on the cell like the sprite it
  * stands in for, with `overflow: visible` so a glyph is never clipped by its own little box. */
 const DecorationGlyph = ({ kind }: { kind: DecorationKind }) => (
@@ -2251,7 +2251,7 @@ const RunTargetArrow = ({ dir }: { dir: Direction }) => {
  * is bigger than that disc ever was and cannot poach a neighbour's, because cells do not overlap.
  *
  * The icon stays vector, and stays SVG: these are shapes with a state colour and key badges on them, and
- * a static `<svg>` costs a paint once and never again (docs/instructions/map-html-port.md). The viewBox
+ * a static `<svg>` costs a paint once and never again (docs/instructions/map-rendering.md). The viewBox
  * is centred so everything inside is drawn in the cell-local units it always was, and `overflow: visible`
  * lets a badge sit proud of the cell the way it did.
  */
@@ -2510,7 +2510,7 @@ export const SiteMapView = ({
         <div ref={sizerRef} className="m-auto shrink-0">
           {/* The map itself: an HTML box the size of the floor, scaled by `useMapZoom`.
               Floor and walls are boxes inside it (`TileLayers`); everything that stands on them is still
-              one SVG laid over the top, which is the next slice of docs/instructions/map-html-port.md.
+              one SVG laid over the top, which is the next slice of docs/instructions/map-rendering.md.
               Both live in the same coordinate space — one unit is one pixel and the zoom is a transform on
               this box — so nothing had to be re-measured to move a layer between them.
 

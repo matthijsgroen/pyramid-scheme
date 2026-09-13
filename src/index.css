@@ -433,7 +433,7 @@ body {
 
   /* Dust, sand, soot, sparks — or fog, which is the same thing drawn huge and slow. It fades in and out
      across its crossing, which is what hides the jump when the animation loops. `translate` alone, so
-     the compositor owns every frame (docs/instructions/map-html-port.md). */
+     the compositor owns every frame (docs/instructions/map-rendering.md). */
   --animate-map-drift: map-drift linear infinite;
   @keyframes map-drift {
     0% {
