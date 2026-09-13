@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { cellOrdinalKey } from "./exploredOrdinals"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FloorGrid, KeyColor, TreasureReward } from "@/game/siteTypes"
 import { getCell } from "@/game/gridNavigation"
@@ -115,7 +116,7 @@ export const useEncounter = ({
       const edgeId = encodeEdge(currentFloor, row, col)
       const cell = getCell(grid, row, col)
       const sectionHash = cell && cell.type !== "empty" ? (cell.sectionHash ?? "") : ""
-      journeys.markCellExplored(sectionHash, edgeId)
+      journeys.markCellExplored(sectionHash, edgeId, cell ? cellOrdinalKey(cell) : null)
       setActive(null)
 
       const reward = cell?.type === "room" ? cell.reward : undefined
