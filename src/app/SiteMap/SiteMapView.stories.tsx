@@ -130,7 +130,12 @@ const litWorldFloor = (siteId: string): Story["args"] => {
   return { grid, revealAllCells: true, explorerPos: run[Math.floor(run.length / 2)] ?? grid.entrancePos }
 }
 
+// One per rank that has its art, because the night is solved per rank to land them TOGETHER: the same
+// floor lightness and the same step back to the wall on all three, each in its own hue. Read side by
+// side, they answer the question the numbers cannot — whether the ranks look like one game.
 export const TorchlitStarter: Story = { args: litWorldFloor("starter_1") }
+export const TorchlitJunior: Story = { args: litWorldFloor("junior_2") }
+export const TorchlitExpert: Story = { args: litWorldFloor("expert_1") }
 export const TorchlitMaster: Story = { args: litWorldFloor("master_2") }
 
 export const Interactive: Story = {

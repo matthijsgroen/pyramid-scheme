@@ -809,6 +809,27 @@ describe("SiteMapView — the shade the lamp is read against", () => {
     expect(tierPalette.expert.shade).not.toBe(tierPalette.starter.shade)
   })
 
+  it("gives a wall face a helping of the night the floor does not take, so the two planes part", () => {
+    // A lamp is carried at floor level, so a vertical face takes it at a glancing angle. Without this
+    // the floor and the wall land within a step of each other once the night is over both, and the room
+    // reads as a floorplan with a change of texture rather than as a place with walls.
+    const { container } = render(<SiteMapView grid={twoRooms()} />)
+    const faceNight = container.querySelector<SVGElement>("[data-face-night]")!
+
+    expect(faceNight).toBeDefined()
+    expect(Number(faceNight.getAttribute("opacity"))).toBe(tierPalette.starter.faceNight)
+    // Under the night itself: it deepens the face's own stone rather than lying over the whole picture.
+    expect(depthOf(container, faceNight)).toBeLessThan(depthOf(container, shades(container)[0]))
+  })
+
+  it("takes that helping from the rank's own near-black, so a cold rank's wall parts coldly", () => {
+    const { container } = render(<SiteMapView grid={{ ...twoRooms(), difficulty: "expert" }} />)
+    const faceNight = container.querySelector<SVGElement>("[data-face-night]")!
+
+    expect(faceNight.getAttribute("fill")).toBe(tierPalette.expert.outline)
+    expect(tierPalette.expert.outline).not.toBe(tierPalette.starter.outline)
+  })
+
   it("leaves the click markers out of the full pass, which is what they are read by", () => {
     // Washing the markers with the floor costs them most of their contrast against it. The full pass
     // goes under them; only the second, lighter pass — the one that seats the standing furniture in the

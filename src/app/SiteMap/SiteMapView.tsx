@@ -13,7 +13,7 @@ import type {
   RoomType,
   WallDecorationKind,
 } from "../../game/siteTypes"
-import { wardKeyDifficulty } from "../../data/difficultyLevels"
+import { difficulties, wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 import { ExplorerDot, LightPool, LightPoolDefs } from "./ExplorerDot"
@@ -39,7 +39,7 @@ import {
   PROP_H,
 } from "./mapScale"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
-import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
+import { corridorShade, nightAlpha, stateWash, tierPalette } from "./tileMaterials"
 import { ClipLayer, Sprite } from "./htmlLayers"
 import { moodFor } from "./moodSettings"
 import { cellAt, isClaimableNeighbor } from "@/game/roomFootprint"
@@ -1609,6 +1609,14 @@ const TileLayers = ({
                       </>
                     )}
                     {faces && <path d={faces} fill={faceFill} />}
+                    {/* A wall stands in less light than the ground does — a lamp is carried at floor
+                        level, so a vertical face takes it at a glancing angle. Without this the two
+                        planes land within a step of each other once the night is over both, and a room
+                        reads as a floorplan with a change of texture rather than as a place with walls.
+                        See `faceNight`: it is solved per rank to the same rendered step, because the
+                        art's own step runs from 6.8 to 22.7 and it is what the PLAYER sees that has to
+                        agree between the ranks. */}
+                    {faces && <path data-face-night="" d={faces} fill={palette.outline} opacity={palette.faceNight} />}
                     {/* The wall's own top surface, in the stone the side walls and the wall mass already
                         use. A face without it is a band of brick with nothing above it, and a wall stops
                         reading as a solid thing. */}
@@ -1685,7 +1693,15 @@ const Decoration = ({
       {/* Under the sprite, so the light is on the floor and the lamp is standing in it. */}
       {LIT_DECORATIONS.has(kind) && <LightPool r={LAMP_POOL_RADIUS} cy={CELL * 0.3} />}
       {url ? (
-        <Sprite url={url} x={-CELL / 2} y={CELL / 2 - PROP_H} w={CELL} h={PROP_H} stretch={false} />
+        <Sprite
+          url={url}
+          x={-CELL / 2}
+          y={CELL / 2 - PROP_H}
+          w={CELL}
+          h={PROP_H}
+          stretch={false}
+          filter={STANDING_RELIEF[tier]}
+        />
       ) : (
         <DecorationGlyph kind={kind} />
       )}
@@ -2211,6 +2227,26 @@ const torchFill = (box: { x: number; y: number; w: number; h: number }, at: read
  * the tier is cut from. The light was only ever less dark. It now lands at 125–137 against an unlit 43–67,
  * so a lit room reads brighter than the stone rather than a shade less black than the rest of it.
  */
+/** How much of the tier's night the second pass lays over everything standing — see `FloorShade`. */
+const SEATING_PASS = 0.45
+
+/**
+ * The modelling that pass takes out of a prop, handed back to it.
+ *
+ * A WASH DIMS AND FLATTENS IN THE SAME STROKE (`art × (1−a) + wash × a`): the furniture seated in a dark
+ * room came out not only darker but flatter, a pale slab of a bench with no shadow left in its own joints,
+ * lying on the floor rather than standing on it. The value the night gives it is wanted; the lost contrast
+ * is not, and it is exactly `1 − a` of it, so this is that scale inverted. A prop may be as dark as the
+ * room is — it just has to keep its own darks, which is what a shape reads by against stone of its own
+ * value.
+ *
+ * Per sprite rather than on the layer holding them: a filter rasterises its subtree as ONE layer, and the
+ * standing layer is the size of the map (`docs/instructions/map-rendering.md`). A prop's own box is a cell.
+ */
+const STANDING_RELIEF: Record<Difficulty, string> = Object.fromEntries(
+  difficulties.map(tier => [tier, `contrast(${(1 / (1 - nightAlpha(tier) * SEATING_PASS)).toFixed(2)})`])
+) as Record<Difficulty, string>
+
 const LIT_STRENGTH = 0.44
 const LIT_STANDING_STRENGTH = 0.24
 
@@ -2508,6 +2544,7 @@ export const SiteMapView = ({
             w={CELL}
             h={PROP_H}
             mirrored={sprite.mirrored}
+            filter={STANDING_RELIEF[tier]}
             // ITS OWN ROOM AND NOT THE WHOLE FLOOR: furniture stands off-centre and a sprite is a cell
             // wide, so it reaches past its cell. See NodeSprite.footprint.
             clipTo={footprintRects(sprite.footprint)}
@@ -2944,7 +2981,7 @@ export const SiteMapView = ({
 
               {/* The shade's second pass — see FloorShade. Everything standing has to be in the dark
                 with the floor, or it reads as cut out and pasted on. */}
-              <FloorShade tier={tier} strength={0.45} />
+              <FloorShade tier={tier} strength={SEATING_PASS} />
 
               {/* AND THE LIGHT'S SECOND PASS OVER IT, for the same reason read the other way round: what
                 stands in a lit room is standing in the light, and the wash above took a quarter of the

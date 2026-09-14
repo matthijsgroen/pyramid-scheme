@@ -64,7 +64,23 @@ background, and **`ClipLayer`**, a map-sized box cut to a path.
   no value range and the light had nothing to be bright against. The shade falls in two passes — the full
   one UNDER the click markers, which are the layer the floor is read by and lose most of their contrast if
   washed with it; a lighter one over everything, so furniture is seated in the same dark it stands in.
-  Its strength is set per tier against that tier's own slabs, and its HUE is where the ranks differ.
+- **A wash is a scale plus an added colour, and both halves have to be paid for.** `art × (1−a) + wash × a`:
+  the scale flattens the art's own modelling, and at a floor already scaled to a third the added colour is
+  most of what is left of it. A near-neutral wash at `a = 0.56` took the starter floor from L\* 40 to 16
+  with 61% of its chroma gone and its hue dragged from ochre (73°) to a cold magenta (330°) — a lit room
+  of grey mush with pale cut-outs standing in it, on art that had the colour all along. So the wash colour
+  is the rank's OWN near-black (`outline`), which adds the rank's own hue rather than a foreign one, and
+  the alpha is solved rather than authored: whatever lands that rank's floor at **L\* ≈ 24**.
+- **The ranks are held together by their targets and told apart by their hues.** Floor at L\* 24 and a
+  7.5-step back to the wall on every rank; starter ochre at C\* 6.6, junior ochre at 18.2, expert cold at
+  263°, wizard verdigris at 168°. Consistent is not flat: same rule everywhere, different character in it.
+- **A vertical face takes a helping of the night the floor does not** (`faceNight`). A lamp is carried at
+  floor level, so a wall takes its light at a glancing angle — and without that the two planes land within
+  a step of each other once the night is over both (the starter art's 9.5 step measures 3.5 as drawn) and
+  a room reads as a floorplan with a change of texture rather than as a place with walls. Solved per rank
+  to the same RENDERED step, because the art's own runs from 6.8 to 22.7 and it is what the player sees
+  that has to agree. The wall MASS takes none of it: it is the rock seen from above, so it is lit like
+  ground, and it already sits 9–14 L\* under the floor.
 - **The light falls in the same two passes, and for the same reason read backwards.** A lit place drawn
   only under the shade's second pass hands a quarter of the tier's night back to everything the lamp just
   reached: measured on starter stone that took the lit floor from 114 to 89 and the explorer to 65 — a
@@ -118,3 +134,10 @@ Production build — a dev server's own overhead swamps the reading. Settle 30s,
 rather than CPU percent: `Paint`, `RasterTask`, `ImageDecodeTask` over five seconds, with the moving parts
 present and then deleted from the DOM. **If deleting them changes the paint count, they are not
 composited.** Compare screenshots by pixel diff rather than by eye.
+
+Colour and value are measured off the ART, composited through the operators the renderer actually uses —
+each wash as `art × (1−a) + wash × a`, each light as a `screen` at its opacity — and read as **L\***,
+**chroma** and **hue angle** rather than as a WCAG ratio, which is built for text and understates
+separation at the values a tomb is drawn at. Three numbers decide a change to the night: where the unlit
+floor lands, how much of the art's own chroma and hue survive to it, and what the lamp is still worth
+above it (the lit floor, less the unlit). A rank that moves alone has gone out of step with the others.
