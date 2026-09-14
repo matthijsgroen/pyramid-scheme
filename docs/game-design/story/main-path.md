@@ -108,6 +108,79 @@ floor's key is already one of the four that unlock wizard. The story is that the
 Sphinx inscription is the only new _place_, and it dresses a room rather than carving one — unless it is
 put behind a hidden corridor, which is a choice rather than a requirement.
 
+## What the inscription says — candidates
+
+Everything above is a delivery system for one sentence. These are real texts, but **every one is a
+translation and wordings differ by translator** — and for a game two children read in two languages they
+would be adapted anyway. Treat these as the sense, not as something to carve.
+
+### A. The tomb autobiography formula — Old Kingdom
+
+> I gave bread to the hungry, water to the thirsty, clothes to the naked, and a boat to him who had none.
+
+The standard "ideal biography" Egyptians wrote on their own tomb walls, **in order to be weighed by it** —
+so it is literally the answer to the scene the mural already ends on (Part 3: the Feather and the Heart).
+Four plain things, concrete enough for a child.
+
+Its force here comes from the game around it: a player who has spent fifty hours carrying treasure _out_ of
+tombs finds a sentence that is about none of what they collected. Not a scold — the same move Fez's decided
+arc already makes when he stops pricing things.
+
+**It closes a loop that is already written.** Part 3 §3.4 gives Fez's finale line as _"That's his record of
+us. And I'd say it balances."_ The Sphinx says what gets weighed; the mural is the player's answer to it;
+Fez reads the answer aloud. Three surfaces, already designed, joined by one sentence.
+
+**And it is a list of four**, which is a mechanism as well as a poem: four lines, one revealed per act as
+the player's reading improves, the last landing at `wizard_2` where the Sphinx loop closes. The inscription
+would then assemble the way everything else in this game does.
+
+### B. The Instruction of Ptahhotep (~2400 BC, the oldest wisdom text there is)
+
+> Good speech is more hidden than the green stone, yet it is found with the maidservants at the millstones.
+
+Value is never where you went looking — which is a treasure-hunting game with a junk economy, exactly. Too
+abstract for a child at the finale; **probably better as a merchant's ghost line mid-game** than as the
+ending.
+
+### C. Ptahhotep again
+
+> Do not be proud of your knowledge; take counsel with the ignorant as well as the wise.
+
+Fits "you became someone who can read". But it scolds the player at the moment they have just earned
+something, which is the wrong note to end fifty hours on.
+
+### D. The Harper's Song
+
+> Follow your heart as long as you live.
+
+Warm and instantly readable by a child. Recontextualises nothing — a fortune cookie at the end of a long
+game.
+
+### E. The Instruction of Amenemope
+
+> Better is poverty in the hand of the god than riches in a storehouse.
+
+Aimed straight at the shop economy and at Fez. Also the one the brainstorm has **already parked once**
+(Part 3 §3.4, the debt idea): moralising about money at children was judged not worth the fiction it needs.
+
+### F. The negative confession — Book of the Dead, Spell 125
+
+> I have not taken milk from the mouth of a child.
+
+Vivid and genuinely affecting, and `master_2` is literally named Book of the Dead. But a list of things
+_not_ done is a strange shape for an ending, and its register sits closer to frightening than the tone
+allows.
+
+### Reading these against each other
+
+| If the ending should…                                 | then                       |
+| ----------------------------------------------------- | -------------------------- |
+| reframe everything the player collected               | **A**                      |
+| reward the player for having learned to read          | C, and accept the scold    |
+| be quotable by a seven-year-old                       | D, and accept the shrug    |
+| tie off the shop and Fez's arc                        | E, and pay for its fiction |
+| assemble across the tiers instead of arriving at once | **A**, which is four lines |
+
 ## Open
 
 1. **Is the Sphinx inscription readable because of collected hieroglyphs, or because a ghost reads it to
@@ -119,5 +192,7 @@ put behind a hidden corridor, which is a choice rather than a requirement.
    Acts III–IV exactly, which suggests it _is_ the spine's middle rather than a side thread.
 4. **Which four treasures carry the tier-unlock keys, and do they want renaming?** They are already the
    four things that vouch for you; nothing says so.
-5. **What does the inscription say?** Everything above is a delivery system for one sentence, and that
-   sentence is not written.
+5. **What does the inscription say?** Six candidates above, with A (the tomb autobiography formula) the
+   only one that both reframes the collecting and arrives as four lines across four acts. Undecided.
+6. **If it is A, are the four lines found or earned?** One per act as the player’s reading improves is the
+   tidy version; one per tomb ghost, each reciting their own, is the warmer one.
