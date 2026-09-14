@@ -143,6 +143,16 @@ Two things it already gets right, worth not rebuilding:
   judge. So a waypoint pointing at something the player cannot yet reach is a solved problem rather than a
   bug waiting to happen.
 
+**A waypoint is granted by the ask, never by the refusal (decided).** Steering starts at the moment the
+player accepts the goal — not at the moment they get something wrong. Hanging it off a failure inverts the
+game: a player who is careful, or lucky, never gets steered at all, and one who blunders is rewarded for
+it. It also leaves the refusal free to do its own job, which is telling the player that what they are
+holding is wrong — legibility, not navigation, and those are different beats that read badly welded
+together.
+
+The side benefit is robustness to order. If steering exists from the ask, a player who wanders into the
+right place early finds things in a sensible sequence instead of hitting a room that means nothing yet.
+
 **The trap: perk-gating by someone else's progression.** Detectors unlock through perks earned from
 treasures that have nothing to do with your arc. A waypoint the player may simply not have makes the arc
 silently unreachable for them. The clean shape is for the arc's own **knowledge** prop to unlock its own

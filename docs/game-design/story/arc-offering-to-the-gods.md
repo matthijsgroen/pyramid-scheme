@@ -82,10 +82,16 @@ and everything in that row's consequences column applies.
 Both are deliberately L1. L3 would name the cell, which deletes the hidden corridor the arc is about — the
 player should be sent to `master_2` and left to find the rest.
 
-Each is unlocked by the arc's own knowledge prop rather than by a detector perk, so the arc cannot become
-invisible to a player who happened not to earn someone else's treasure. That also collapses two beats into
-one: the priest telling you what a proper offering is and the scan starting to return something are the
-same moment.
+**Both hang off an ask, never off the refusal** (FORMAT §7). Learning what a proper offering is points you
+at the pyramid that holds one; the early sketch of the altar points you at the altar. A player who never
+offers the fake still gets steered, and a player who does is not being rewarded for the mistake.
+
+Which leaves `k_seal_is_false` carrying no navigation at all — its job is legibility. It is how the player
+knows the thing in their hands is a copy, and how the offering lock can tell the difference. The corridor
+is still theirs to find.
+
+Each unlock is one of the arc's own props rather than a detector perk, so the arc cannot become invisible
+to a player who happened not to earn someone else's treasure.
 
 **Needs the core change first.** `CompassResult` carries `hieroglyphId` and `pieceIndex`, so no scanner can
 honestly point at `p_real` until those are generalised (FORMAT §7).
@@ -104,13 +110,12 @@ honestly point at `p_real` until those are generalised (FORMAT §7).
 
 1. **Is `rite` one of the four wizard-unlock treasures, or a fifth requirement?** B1 or B2 in Part 4 §4.5.
    B1 costs nothing and means a player can reach wizard without ever meeting the priest.
-2. **Does `b_no` point, or only refuse?** Pointing makes the hidden corridor findable and the twist land;
-   it also spends the one moment where this arc could have been genuinely mysterious.
+2. ~~**Does `b_no` point, or only refuse?**~~ **Decided: it only refuses.** Waypoints hang off the ask
+   (FORMAT §7), so the player is already pointed at `master_2` before they ever offer the fake. The
+   refusal's job is to say that what they hold is a copy — the corridor stays theirs to find.
 3. **Is the decoy worth a structural row?** Dropping `p_real`'s `hiddenPath` and putting `seal_true`
    behind an existing ward gate makes the arc free of re-carving, at the cost of the corridor being the
    thing the story is _about_.
 4. **Does the arc know about the predecessor** (Part 4 §4.11 Q5), or is the priest the whole cast?
-5. **Is the scan the reward for the refusal, or is the refusal enough?** Making `k_seal_is_false` unlock
-   `w_seal` is tidy, but it means a player who never offers the fake never learns the real one exists.
-6. **Three chains like this, or one?** At ~12 lines and 4 assets each, three is a fortnight of authoring
+5. **Three chains like this, or one?** At ~12 lines and 4 assets each, three is a fortnight of authoring
    and gives a player three routes to wizard; one is a spine that every player walks.
