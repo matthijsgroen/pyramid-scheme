@@ -623,7 +623,19 @@ line is much better.
 | **E2 The wizard chain first**                                                                           | whether the finale lands — but it cannot be played without four tiers of progress                      |
 | **E3 Copy only** — journey arrival lines on the existing 20, no items, no locks                         | whether "why this area" alone changes anything, for the price of text                                  |
 
-## 4.11 Open questions (Part 4)
+## 4.11 Where an arc is written down
+
+An arc is designed in its own file under `docs/game-design/story/`, to the shape in
+[`story/FORMAT.md`](story/FORMAT.md): cast, props, places, beats and the lock/key chain, every row carrying
+a status so a file can be half-designed on purpose, and every place addressed in the DSL's own selector
+vocabulary so a designed row becomes an authored rule with no invention in between.
+
+The section that makes it a decision tool rather than a fiction file is **Impact** — structure, systems,
+content, payoff — and [`story/README.md`](story/README.md) collapses that to one row per arc, so two arcs
+can be compared before either is written. [`story/arc-offering-to-the-gods.md`](story/arc-offering-to-the-gods.md)
+works the pitched arc through it.
+
+## 4.12 Open questions (Part 4)
 
 1. **Wall or choice** — B1, B2 or B3. Everything else in this part is downstream of it.
 2. **Log or no log** — A1, A2, A3. Forced to A2 if B2.
