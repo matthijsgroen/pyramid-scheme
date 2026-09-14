@@ -101,9 +101,12 @@ describe("what the map offers while walking a floor", () => {
       expect(offences).toEqual([])
       // A BUDGET THAT MATCHES THE WORKLOAD, the way worldFloorAssembly's does. Each case walks up to 40
       // steps and renders the whole site map at every one of them, so a single seed is some forty renders
-      // — a second or two on an idle machine and past the default five on a busy one. It came back red
-      // three times on a green tree, always here, always on the runner sharing its CPU with the second
-      // build of the same commit. The number is still low enough that a genuine hang fails rather than
+      // — a second or two on an idle machine, and past the default five on a slow one.
+      //
+      // WHICH MACHINE IT GETS IS THE WHOLE OF IT: `on: [push, pull_request]` runs this suite twice per
+      // commit on two separate runners, and three times running one came back red here while the other
+      // went green on the same commit. A test whose verdict depends on which VM drew the short straw is
+      // measuring the weather. The number is still low enough that a genuine hang fails rather than
       // hangs, and nothing about the assertions above is relaxed by it.
     },
     30_000
