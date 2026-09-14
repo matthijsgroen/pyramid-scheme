@@ -1,30 +1,21 @@
-import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { Fragment, useEffect, useMemo, useState, type ReactNode } from "react"
 import type {
   CellState,
   DecorationKind,
   Difficulty,
   Direction,
   FloorGrid,
-  GateVariant,
-  GridCell,
-  KeyColor,
   Patron,
-  RoomCell,
-  RoomType,
   WallDecorationKind,
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
-import { keyColorHex } from "@/ui/tokens/keyColors"
-import { ExplorerDot, LightPool, LightPoolDefs } from "./ExplorerDot"
+import { ExplorerDot, LightPool } from "./ExplorerDot"
 import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
   MARKER_RADIUS,
-  NODE_RADIUS_FORK,
-  NODE_RADIUS_LARGE,
-  NODE_RADIUS_PUZZLE,
   ARCH_H,
   ARCH_DROP,
   ARCH_RISE,
@@ -39,26 +30,40 @@ import {
   PROP_H,
 } from "./mapScale"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
-import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
+import { stateWash, tierPalette } from "./tileMaterials"
 import { ClipLayer, Sprite } from "./htmlLayers"
 import { moodFor } from "./moodSettings"
-import { cellAt, isClaimableNeighbor } from "@/game/roomFootprint"
+import { cellAt } from "@/game/roomFootprint"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
-import { companionFor } from "./companionProps"
-import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileUrl, tileVariants } from "./tileAssets"
-import { authoredKindsFor } from "./authoredKinds"
+import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileVariants } from "./tileAssets"
+import { isLockedGate, nodeRadius, shapeKindFor } from "./nodeKinds"
+import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
+import { FloorShade, LitPlaces } from "./torchlight"
+import { LIT_STANDING_STRENGTH, SEATING_PASS, STANDING_RELIEF } from "./lighting"
+import { TileLayers } from "./tileLayers"
+import { clickTargetAt } from "./clickTargets"
 import {
-  ALL_STATES,
-  buildTileRegions,
-  faceShadowRects,
-  faceTopRects,
-  footprintRects,
-  hasWallFace,
-  rectsToPath,
-} from "./tileRegions"
+  FACE_SHADOW,
+  allFloorRects,
+  buildRoomClaims,
+  cellFloorAt,
+  floorTier,
+  isPassable,
+  litClaimOwner,
+  tileRegionsFor,
+  type RoomClaims,
+} from "./roomClaims"
+import {
+  DIR_MOVES,
+  NO_RUN_TARGETS,
+  corridorRunTargetsFrom,
+  isCorridorCorner,
+  type CorridorRunTarget,
+} from "./corridorRuns"
+import { footprintRects, hasWallFace } from "./tileRegions"
 import type { Rect } from "./tileRegions"
-import type { FloorAt, TileRegions } from "./tileRegions"
+import type { FloorAt } from "./tileRegions"
 
 // Cells one step outside the grid are still real void for claiming purposes — a fork or
 // endpoint sitting on the map's edge shouldn't look artificially clipped next to one
@@ -85,334 +90,6 @@ type Props = {
   ownedKeys?: ReadonlySet<string>
   className?: string
 }
-
-const entranceFill: Record<CellState, string> = {
-  fogged: "#1a1208",
-  visible: "#281c08",
-  reachable: "#2a2010",
-  completed: "#2a2010",
-}
-const entranceStroke: Record<CellState, string> = {
-  fogged: "#2e2010",
-  visible: "#c09030",
-  reachable: "#d0a840",
-  completed: "#d0a840",
-}
-
-const EntranceShape = ({ state }: ShapeProps) => {
-  const r = NODE_RADIUS_LARGE
-  const fill = entranceFill[state]
-  const stroke = entranceStroke[state]
-  // arch: flat bottom, semicircle top
-  const archPath = `M ${-r},${r} L ${-r},0 A ${r},${r} 0 0,1 ${r},0 L ${r},${r} Z`
-  return (
-    <>
-      <path d={archPath} fill={fill} stroke={stroke} strokeWidth={1.5} />
-      {state !== "fogged" && (
-        <polygon points={`0,${-r + 4} 5,0 3,0 3,${r - 4} -3,${r - 4} -3,0 -5,0`} fill={entranceStroke[state]} />
-      )}
-    </>
-  )
-}
-
-// ─── Completed overlay ────────────────────────────────────────────────────────
-
-const CompletedBadge = ({ r }: { r: number }) => (
-  <g transform={`translate(${r - 7}, ${r - 7})`}>
-    <circle r={7} fill="#0e1e14" stroke="#3a8858" strokeWidth={1.5} />
-    <text textAnchor="middle" dominantBaseline="central" fontSize={8} fill="#60c080" style={{ userSelect: "none" }}>
-      ✓
-    </text>
-  </g>
-)
-
-// A treasure that couldn't be picked up (inventory was full) — still waiting to be looted
-const PendingLootBadge = ({ r }: { r: number }) => (
-  <g transform={`translate(${r - 7}, ${r - 7})`}>
-    <circle r={7} fill="#2a1e08" stroke="#d0a840" strokeWidth={1.5} />
-    <text textAnchor="middle" dominantBaseline="central" fontSize={9} fill="#f0c860" style={{ userSelect: "none" }}>
-      !
-    </text>
-  </g>
-)
-
-/** A node's badge, worn by the ART rather than by the marker: a chest stands over its own marker, so the
- * ✓ that says the room is done goes on the chest's lid where the eye already is.
- *
- * Its own little inline `<svg>` inside the HTML layer — the badges are icons, and static vector costs
- * nothing (docs/instructions/map-rendering.md, "The markers"). Placed by its CENTRE, in map units. */
-const NodeBadge = ({ kind, x, y }: { kind: "taken" | "pending"; x: number; y: number }) => (
-  <svg
-    aria-hidden="true"
-    viewBox="-7 -7 14 14"
-    style={{ position: "absolute", left: x - 7, top: y - 7, width: 14, height: 14, overflow: "visible" }}
-  >
-    {kind === "pending" ? <PendingLootBadge r={7} /> : <CompletedBadge r={7} />}
-  </svg>
-)
-
-// ─── Node shape geometry ──────────────────────────────────────────────────────
-
-type ShapeProps = {
-  state: CellState
-  gateVariant?: GateVariant
-  keyColor?: KeyColor
-  keyColors?: KeyColor[]
-  // A ward (tomb-key) gate's tier, derived from its key id — tints the gate by difficulty.
-  difficulty?: Difficulty
-}
-
-const PuzzleShape = ({ state }: ShapeProps) => {
-  const r = NODE_RADIUS_PUZZLE
-  const fill = puzzleFill[state]
-  const stroke = puzzleStroke[state]
-  return (
-    <>
-      <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={2} fill={fill} stroke={stroke} strokeWidth={1.5} />
-      {state !== "fogged" && (
-        <>
-          <circle cx={-r + 4} cy={-r + 4} r={2} fill={stroke} opacity={0.7} />
-          <circle cx={r - 4} cy={-r + 4} r={2} fill={stroke} opacity={0.7} />
-          <circle cx={-r + 4} cy={r - 4} r={2} fill={stroke} opacity={0.7} />
-          <circle cx={r - 4} cy={r - 4} r={2} fill={stroke} opacity={0.7} />
-        </>
-      )}
-      {state !== "fogged" && (
-        <g fill={puzzleIcon[state]}>
-          {(
-            [
-              [-8, -8],
-              [2, -8],
-              [-8, 2],
-              [2, 2],
-            ] as const
-          ).map(([x, y]) => (
-            <rect key={`${x},${y}`} x={x} y={y} width={6} height={6} rx={1} />
-          ))}
-        </g>
-      )}
-    </>
-  )
-}
-
-const trapFill: Record<CellState, string> = {
-  fogged: "#1a0808",
-  visible: "#2a0e08",
-  reachable: "#2a1010",
-  completed: "#2a1010",
-}
-const trapStroke: Record<CellState, string> = {
-  fogged: "#2e1010",
-  visible: "#903010",
-  reachable: "#c04020",
-  completed: "#c04020",
-}
-
-const TrapShape = ({ state }: ShapeProps) => {
-  const r = NODE_RADIUS_PUZZLE
-  const fill = trapFill[state]
-  const stroke = trapStroke[state]
-  return (
-    <>
-      <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={2} fill={fill} stroke={stroke} strokeWidth={1.5} />
-      {state !== "fogged" && (
-        // Skull: dome + eye sockets + teeth
-        <g fill={stroke}>
-          {/* Cranium */}
-          <ellipse cx={0} cy={-2} rx={6} ry={5.5} />
-          {/* Eye sockets */}
-          <ellipse cx={-2.5} cy={-2} rx={1.8} ry={2} fill={fill} />
-          <ellipse cx={2.5} cy={-2} rx={1.8} ry={2} fill={fill} />
-          {/* Jaw / teeth */}
-          <rect x={-5} y={2.5} width={3} height={3} rx={0.5} />
-          <rect x={-1} y={2.5} width={2} height={3} rx={0.5} />
-          <rect x={2} y={2.5} width={3} height={3} rx={0.5} />
-        </g>
-      )}
-    </>
-  )
-}
-
-const ForkShape = ({ state }: ShapeProps) => {
-  const r = NODE_RADIUS_FORK
-  const stroke = state === "fogged" ? "#2e2018" : "#5a4a30"
-  return <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill="#1e160e" stroke={stroke} strokeWidth={1.5} />
-}
-
-const GateNodeShape = ({ state, gateVariant, keyColor, difficulty }: ShapeProps) => {
-  const r = NODE_RADIUS_LARGE
-  const isTomb = gateVariant === "tomb-key"
-  const colorKey = state === "visible" ? "visible" : "reachable"
-  const fill = isTomb ? tombGateFill[state] : gateFill[state]
-  // A ward gate is tinted by its key's difficulty tier (so the map reads which tier a locked ward
-  // belongs to); tombGate* stays the fallback when no difficulty is known (or the default purple).
-  const tombAccent = difficulty ? DIFFICULTY_GATE_ACCENT[difficulty][colorKey] : undefined
-  const stroke =
-    state === "fogged"
-      ? isTomb
-        ? tombGateStroke[state]
-        : gateStroke[state]
-      : isTomb
-        ? (tombAccent ?? tombGateStroke[state])
-        : keyColor
-          ? keyColorHex[keyColor][colorKey]
-          : gateStroke[state]
-  const barColor =
-    state === "fogged"
-      ? "#3a2a10"
-      : isTomb
-        ? (tombAccent ?? (colorKey === "visible" ? "#8040c0" : "#9060e0"))
-        : keyColor
-          ? keyColorHex[keyColor][colorKey]
-          : colorKey === "visible"
-            ? "#c04020"
-            : "#c09020"
-  return (
-    <>
-      <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={1} fill={fill} stroke={stroke} strokeWidth={1.5} />
-      {state !== "fogged" && keyColor && !isTomb && (
-        <rect
-          x={-r}
-          y={-r}
-          width={r * 2}
-          height={r * 2}
-          rx={1}
-          fill={keyColorHex[keyColor][colorKey]}
-          fillOpacity={0.18}
-        />
-      )}
-      {state !== "fogged" &&
-        [-r / 3, 0, r / 3].map(bx => (
-          <line
-            key={bx}
-            x1={bx}
-            y1={-r + 3}
-            x2={bx}
-            y2={r - 3}
-            stroke={barColor}
-            strokeWidth={2}
-            strokeLinecap="round"
-          />
-        ))}
-      {state !== "fogged" && (
-        <line x1={-r + 3} y1={-r / 3} x2={r - 3} y2={-r / 3} stroke={barColor} strokeWidth={1.5} />
-      )}
-    </>
-  )
-}
-
-const TreasureShape = ({ state, keyColor, keyColors }: ShapeProps) => {
-  const r = NODE_RADIUS_LARGE
-  const colorKey = state === "visible" ? "visible" : "reachable"
-  const badges = keyColors && keyColors.length > 0 ? keyColors : keyColor ? [keyColor] : []
-  const primaryColor = badges[0]
-  const fill = treasureFill[state]
-  const stroke = state !== "fogged" && primaryColor ? keyColorHex[primaryColor][colorKey] : treasureStroke[state]
-  // Badge positions: single circle at top-right; multiple stacked in a column, 2-col for 4+
-  const badgePositions = (n: number): [number, number][] => {
-    if (n === 1) return [[9, -9]]
-    if (n <= 3) return Array.from({ length: n }, (_, i) => [9, -12 + i * 6] as [number, number])
-    return Array.from({ length: n }, (_, i) => [i % 2 === 0 ? 6 : 12, -12 + Math.floor(i / 2) * 6] as [number, number])
-  }
-  const positions = badgePositions(badges.length)
-  const badgeR = badges.length === 1 ? 4 : 3
-  return (
-    <>
-      <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill={fill} stroke={stroke} strokeWidth={1.5} />
-      {state !== "fogged" && primaryColor && (
-        <polygon
-          points={`0,${-r} ${r},0 0,${r} ${-r},0`}
-          fill={keyColorHex[primaryColor][colorKey]}
-          fillOpacity={0.18}
-        />
-      )}
-      {state !== "fogged" && (
-        <polygon
-          points="0,-9 2.4,-3.2 8.6,-2.8 3.8,1.2 5.3,7.3 0,4 -5.3,7.3 -3.8,1.2 -8.6,-2.8 -2.4,-3.2"
-          fill={treasureIcon[state]}
-        />
-      )}
-      {state !== "fogged" &&
-        badges.map((color, i) => (
-          <circle
-            key={color}
-            cx={positions[i][0]}
-            cy={positions[i][1]}
-            r={badgeR}
-            fill={keyColorHex[color][colorKey]}
-          />
-        ))}
-    </>
-  )
-}
-
-const StairheadShape = ({ state }: ShapeProps) => {
-  const r = NODE_RADIUS_LARGE
-  const cut = 6
-  const fill = stairFill[state]
-  const stroke = stairStroke[state]
-  const pts = [
-    `-${r - cut},-${r}`,
-    `${r - cut},-${r}`,
-    `${r},-${r - cut}`,
-    `${r},${r - cut}`,
-    `${r - cut},${r}`,
-    `-${r - cut},${r}`,
-    `-${r},${r - cut}`,
-    `-${r},-${r - cut}`,
-  ].join(" ")
-  return (
-    <>
-      <polygon points={pts} fill={fill} stroke={stroke} strokeWidth={1.5} />
-      {state !== "fogged" && (
-        <path d="M -9,-7 L -3,-7 L -3,-2 L 3,-2 L 3,3 L 9,3 L 9,9 L -9,9 Z" fill={stairIcon[state]} />
-      )}
-    </>
-  )
-}
-
-const ExitShape = ({ state }: ShapeProps) => {
-  const r = NODE_RADIUS_LARGE
-  const fill = exitFill[state]
-  const stroke = exitStroke[state]
-  return (
-    <>
-      <circle r={r} fill={fill} stroke={stroke} strokeWidth={1.5} />
-      {state !== "fogged" && <circle r={r - 6} fill="none" stroke={stroke} strokeWidth={1} opacity={0.4} />}
-      {state !== "fogged" && <polygon points="0,-9 6,-3 3,-3 3,8 -3,8 -3,-3 -6,-3" fill={exitIcon[state]} />}
-    </>
-  )
-}
-
-// The visual shape a room takes. "encounter" rooms pick among the hand-drawn
-// puzzle/trap/treasure/gate shapes by family tag; "portal" rooms (entrance/stairhead/exit
-// are all `RoomType: "portal"` — pure transitions, no family) pick by position/stairId.
-type ShapeKind = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
-
-const shapeKindFor = (
-  grid: FloorGrid,
-  r: number,
-  c: number,
-  roomType: RoomType,
-  tags: string[] | undefined,
-  stairId: string | undefined
-): ShapeKind => {
-  if (roomType === "fork") return "fork"
-  if (roomType === "portal") {
-    if (stairId) return "stairhead"
-    return r === grid.entrancePos[0] && c === grid.entrancePos[1] ? "entrance" : "exit"
-  }
-  if (tags?.includes("gate")) return "gate"
-  if (tags?.includes("trap")) return "trap"
-  if (tags?.includes("treasure") || tags?.includes("shop")) return "treasure"
-  return "puzzle"
-}
-
-// Gating is soft: a locked gate is still "reachable" (clickable), so `state` doesn't distinguish
-// locked from unlocked. This recovers that purely cosmetic distinction for the icon AND the floor
-// tint under it, and never for clickability or badges.
-const isLockedGate = (cell: RoomCell, ownedKeys: ReadonlySet<string> | undefined): boolean =>
-  cell.tags?.includes("gate") === true && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)
 
 /** How far the cresset at a stair's mouth stands from the middle of its cell, measured off the painted
  * tile rather than guessed: the flame's own pixels land 24 units to one side of centre. WHICH side is a
@@ -716,923 +393,21 @@ const nodeSpritesFor = (
   return out
 }
 
-const nodeRadius: Record<ShapeKind, number> = {
-  entrance: NODE_RADIUS_LARGE,
-  puzzle: NODE_RADIUS_PUZZLE,
-  trap: NODE_RADIUS_PUZZLE,
-  fork: NODE_RADIUS_FORK,
-  gate: NODE_RADIUS_LARGE,
-  treasure: NODE_RADIUS_LARGE,
-  stairhead: NODE_RADIUS_LARGE,
-  exit: NODE_RADIUS_LARGE,
-}
+// The floor's own geometry — which void a room claims, what stone a cell is cut from, and the tile
+// regions that fall out of both — lives in `roomClaims.ts`. It is pure grid reading, shared by the
+// renderer and by the map's click rules, and testable without mounting anything.
 
-const NodeShape = ({ type, state, gateVariant, keyColor, keyColors, difficulty }: ShapeProps & { type: ShapeKind }) => {
-  const p = { state, gateVariant, keyColor, keyColors, difficulty }
-  switch (type) {
-    case "entrance":
-      return <EntranceShape {...p} />
-    case "puzzle":
-      return <PuzzleShape {...p} />
-    case "trap":
-      return <TrapShape {...p} />
-    case "fork":
-      return <ForkShape {...p} />
-    case "gate":
-      return <GateNodeShape {...p} />
-    case "treasure":
-      return <TreasureShape {...p} />
-    case "stairhead":
-      return <StairheadShape {...p} />
-    case "exit":
-      return <ExitShape {...p} />
-  }
-}
-
-// ─── Color palettes per room type ─────────────────────────────────────────────
-
-const puzzleFill: Record<CellState, string> = {
-  fogged: "#1a1208",
-  visible: "#2a1e08",
-  reachable: "#1a2a10",
-  completed: "#1a2a10",
-}
-const puzzleStroke: Record<CellState, string> = {
-  fogged: "#2e2010",
-  visible: "#7a5010",
-  reachable: "#507030",
-  completed: "#507030",
-}
-const puzzleIcon: Record<CellState, string> = {
-  fogged: "#2e2010",
-  visible: "#d09030",
-  reachable: "#90c060",
-  completed: "#90c060",
-}
-
-const gateFill: Record<CellState, string> = {
-  fogged: "#1a1208",
-  visible: "#281408",
-  reachable: "#1e1a08",
-  completed: "#1e1a08",
-}
-const gateStroke: Record<CellState, string> = {
-  fogged: "#2e2010",
-  visible: "#883010",
-  reachable: "#887020",
-  completed: "#887020",
-}
-
-const tombGateFill: Record<CellState, string> = {
-  fogged: "#1a1208",
-  visible: "#140820",
-  reachable: "#10102a",
-  completed: "#10102a",
-}
-const tombGateStroke: Record<CellState, string> = {
-  fogged: "#2e2010",
-  visible: "#604898",
-  reachable: "#7060c0",
-  completed: "#7060c0",
-}
-
-// Ward (tomb-key) gate tint per difficulty tier — `visible` is the dimmer locked hue, `reachable`
-// the brighter one (also used for `completed`). Hues track the tier material palette
-// (difficultyColors.ts): stone / amber / slate / gold / emerald.
-const DIFFICULTY_GATE_ACCENT: Record<Difficulty, { visible: string; reachable: string }> = {
-  starter: { visible: "#8a857e", reachable: "#c4bcb2" },
-  junior: { visible: "#c2740e", reachable: "#f59e0b" },
-  expert: { visible: "#586274", reachable: "#94a3b8" },
-  master: { visible: "#c2a10b", reachable: "#eab308" },
-  wizard: { visible: "#0e9268", reachable: "#10b981" },
-}
-
-const treasureFill: Record<CellState, string> = {
-  fogged: "#1a1208",
-  visible: "#281808",
-  reachable: "#221808",
-  completed: "#221808",
-}
-const treasureStroke: Record<CellState, string> = {
-  fogged: "#2e2010",
-  visible: "#986020",
-  reachable: "#b08030",
-  completed: "#b08030",
-}
-const treasureIcon: Record<CellState, string> = {
-  fogged: "#2e2010",
-  visible: "#c08030",
-  reachable: "#d0a040",
-  completed: "#d0a040",
-}
-
-const stairFill: Record<CellState, string> = {
-  fogged: "#1a1208",
-  visible: "#181020",
-  reachable: "#141028",
-  completed: "#141028",
-}
-const stairStroke: Record<CellState, string> = {
-  fogged: "#2e2010",
-  visible: "#604880",
-  reachable: "#7060b0",
-  completed: "#7060b0",
-}
-const stairIcon: Record<CellState, string> = {
-  fogged: "#2e2010",
-  visible: "#9070c0",
-  reachable: "#a090d0",
-  completed: "#a090d0",
-}
-
-const exitFill: Record<CellState, string> = {
-  fogged: "#1a1208",
-  visible: "#201c08",
-  reachable: "#1c2008",
-  completed: "#1c2008",
-}
-const exitStroke: Record<CellState, string> = {
-  fogged: "#2e2010",
-  visible: "#909020",
-  reachable: "#a0b020",
-  completed: "#a0b020",
-}
-const exitIcon: Record<CellState, string> = {
-  fogged: "#2e2010",
-  visible: "#c0c030",
-  reachable: "#d0d850",
-  completed: "#d0d850",
-}
-
-// ─── Floor tiles ────────────────────────────────────────────────────────────────
-// Every occupied cell (room or corridor) is a floor tile composited from a full-cell
-// fill plus 0-4 wall strips, chosen per side from the same `dirs` bitmask the future
-// sprite-tile renderer will use (see docs/game-design/spritesheet-renderer-prep.md).
-
-const DIR_MOVES: Record<Direction, readonly [number, number]> = {
-  n: [-1, 0],
-  s: [1, 0],
-  e: [0, 1],
-  w: [0, -1],
-}
-
-// Forks and dead-end (leaf) treasure/stairhead/exit rooms claim adjacent grid cells as
-// part of their own footprint — real extra tiles, grid-aligned, rather than a rendering
-// stretch. That keeps every room shape made of whole cells, which is what the eventual
-// sprite-tile renderer needs to tile cleanly (see
-// docs/game-design/spritesheet-renderer-prep.md). Purely derived at render time from
-// the existing grid — no generation-side bookkeeping.
-const canClaimVoid = (
-  grid: FloorGrid,
-  r: number,
-  c: number,
-  roomType: RoomType,
-  tags: string[] | undefined,
-  stairId: string | undefined,
-  dirsSize: number
-): boolean => {
-  if (roomType === "fork") return true
-  const kind = shapeKindFor(grid, r, c, roomType, tags, stairId)
-  return (kind === "treasure" || kind === "stairhead" || kind === "exit") && dirsSize === 1
-}
-
-const ORTHO_OFFSETS: ReadonlyArray<readonly [number, number]> = [
-  [-1, 0],
-  [1, 0],
-  [0, -1],
-  [0, 1],
-]
-// Each diagonal offset paired with the two orthogonal offsets flanking it — a diagonal
-// only joins the claim if at least one flank "belongs" to the owner too (either also
-// claimed void, or the owner's own real corridor arm), otherwise it'd be a tile touching
-// the room by a single corner point with walls on all 4 sides (nothing to open toward),
-// which reads as a floating box rather than part of the room.
-const DIAGONAL_OFFSETS: ReadonlyArray<{
-  offset: readonly [number, number]
-  flanks: readonly [readonly [number, number], readonly [number, number]]
-}> = [
-  {
-    offset: [-1, -1],
-    flanks: [
-      [-1, 0],
-      [0, -1],
-    ],
-  },
-  {
-    offset: [-1, 1],
-    flanks: [
-      [-1, 0],
-      [0, 1],
-    ],
-  },
-  {
-    offset: [1, -1],
-    flanks: [
-      [1, 0],
-      [0, -1],
-    ],
-  },
-  {
-    offset: [1, 1],
-    flanks: [
-      [1, 0],
-      [0, 1],
-    ],
-  },
-]
-
-const OFFSET_TO_DIR: Record<string, Direction> = { "-1,0": "n", "1,0": "s", "0,-1": "w", "0,1": "e" }
-const edgeKey = (r1: number, c1: number, r2: number, c2: number): string => {
-  const a = `${r1},${c1}`,
-    b = `${r2},${c2}`
-  return a < b ? `${a}|${b}` : `${b}|${a}`
-}
-
-export type RoomClaims = {
-  /** claimed-cell key ("r,c") -> owning room's key ("r,c") */
-  claimedBy: ReadonlyMap<string, string>
-  /** the one claimed cell (per owner) that carries the owner's decoration, if any */
-  decorationAt: ReadonlyMap<string, DecorationKind>
-  /** unordered cell-pair keys with no wall between them (owner<->claim, or diagonal<->flank) */
-  openEdges: ReadonlySet<string>
-  /** unordered OWNER-pair keys for two chambers the player can already walk between */
-  joinedOwners: ReadonlySet<string>
-}
-
-// Row-major scan order, plus a strength ranking for contested diagonals (see below), so
-// two nearby claimable rooms never fight unpredictably over the same cell. Each owner
-// independently claims whichever of its 8 immediate neighbors (sides + diagonals) are
-// free — no flood-fill beyond that ring, so the shape stays a direct "3x3 minus whatever's
-// occupied" instead of wandering off into open floor further away. A diagonal's flank can
-// be either claimed void or the owner's own real corridor arm — either way the diagonal
-// ends up visually flush with a wall the owner already has open, not floating by itself.
-// eslint-disable-next-line react-refresh/only-export-components -- grid-derived data, exported for tileRegions.spec-style assertions; the claim rules belong beside the wall model, not in a second copy
-export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
-  const claimedBy = new Map<string, string>()
-  const openEdges = new Set<string>()
-  // Every claim of an owner's that a prop could stand on, in claim order: genuinely EMPTY cells only. A
-  // claimed corridor (a gate's approach, absorbed into the junction's footprint) is a real passage the
-  // player walks down, and a sarcophagus standing in it is something they walk straight through. A room
-  // with no empty cell to spare simply holds no prop.
-  const ownerPropCandidates = new Map<string, string[]>()
-  const noteClaim = (cellKey: string, ownerKey: string) => {
-    claimedBy.set(cellKey, ownerKey)
-    const [r, c] = cellKey.split(",").map(Number)
-    if (cellAt(grid, r, c).type !== "empty") return
-    const candidates = ownerPropCandidates.get(ownerKey)
-    if (candidates) candidates.push(cellKey)
-    else ownerPropCandidates.set(ownerKey, [cellKey])
-  }
-
-  // Ortho claims commit immediately, row-major first-come — two owners contending for the
-  // same orthogonal neighbor is rare enough not to warrant the ranking below. Diagonal
-  // claims are only proposed here and resolved afterward (see below).
-  type DiagonalCandidate = {
-    ownerKey: string
-    ownerRow: number
-    ownerCol: number
-    scanOrder: number
-    attachedFlanks: ReadonlyArray<readonly [number, number]>
-    realFlankCount: number
-  }
-  const diagonalCandidates = new Map<string, DiagonalCandidate[]>()
-  let scanOrder = 0
-
-  for (let r = 0; r < grid.rows; r++) {
-    for (let c = 0; c < grid.cols; c++) {
-      const cell = grid.cells[r][c]
-      if (cell.type !== "room" || !canClaimVoid(grid, r, c, cell.roomType, cell.tags, cell.stairId, cell.dirs.size))
-        continue
-      const ownerKey = `${r},${c}`
-      const claimedThisOwner = new Set<string>()
-      for (const [dr, dc] of ORTHO_OFFSETS) {
-        const nr = r + dr,
-          nc = c + dc
-        const key = `${nr},${nc}`
-        if (claimedBy.has(key) || !isClaimableNeighbor(grid, r, c, nr, nc)) continue
-        noteClaim(key, ownerKey)
-        claimedThisOwner.add(key)
-        openEdges.add(edgeKey(r, c, nr, nc))
-      }
-      for (const {
-        offset: [dr, dc],
-        flanks,
-      } of DIAGONAL_OFFSETS) {
-        const nr = r + dr,
-          nc = c + dc
-        const key = `${nr},${nc}`
-        if (!isClaimableNeighbor(grid, r, c, nr, nc)) continue
-        // A flank attached via the owner's own real graph edge is a durable structural
-        // fact; one attached only because this same pass just claimed it as void is
-        // incidental and shouldn't count as equally strong when ranking contested claims.
-        let realFlankCount = 0
-        const attachedFlanks = flanks.filter(([fr, fc]) => {
-          if (cell.dirs.has(OFFSET_TO_DIR[`${fr},${fc}`])) {
-            realFlankCount++
-            return true
-          }
-          return claimedThisOwner.has(`${r + fr},${c + fc}`)
-        })
-        if (attachedFlanks.length === 0) continue
-        const existing = diagonalCandidates.get(key) ?? []
-        existing.push({ ownerKey, ownerRow: r, ownerCol: c, scanOrder: scanOrder++, attachedFlanks, realFlankCount })
-        diagonalCandidates.set(key, existing)
-      }
-    }
-  }
-
-  // A room's *type* — unlike its progression state — never changes for the rest of the
-  // session, so it makes a stable tiebreaker. A completed/reachable/visible rank was tried
-  // here before and reintroduced the same bug one level up: two claimants tied on state
-  // (e.g. both eventually "completed") fell back to scan order and flipped ownership all
-  // over again the moment the player finished exploring. Forks are junctions, structurally
-  // meant to absorb the void around them; leaf rooms (treasure/stairhead/exit) are
-  // endpoints that happen to reach a shared diagonal too. Prefer the fork, permanently.
-  const roomTypeRankOf = (row: number, col: number): number => {
-    const owner = grid.cells[row]?.[col]
-    return owner?.type === "room" && owner.roomType === "fork" ? 1 : 0
-  }
-
-  // Resolve each contested diagonal by attachment strength — a diagonal flush against
-  // both its neighboring arms is a stronger, more established claim than one flush
-  // against only one. Without this, revealing a hidden room can introduce a new,
-  // weakly-attached claimant that — by pure scan order — steals a diagonal cell out from
-  // under a room that was already flush against it on two sides, visibly moving a wall.
-  for (const [key, candidates] of diagonalCandidates) {
-    if (claimedBy.has(key)) continue // already an ortho claim, which always wins
-    const winner = candidates.reduce((best, c) => {
-      if (c.realFlankCount !== best.realFlankCount) return c.realFlankCount > best.realFlankCount ? c : best
-      if (c.attachedFlanks.length !== best.attachedFlanks.length) {
-        return c.attachedFlanks.length > best.attachedFlanks.length ? c : best
-      }
-      const cRank = roomTypeRankOf(c.ownerRow, c.ownerCol)
-      const bestRank = roomTypeRankOf(best.ownerRow, best.ownerCol)
-      if (cRank !== bestRank) return cRank > bestRank ? c : best
-      return c.scanOrder < best.scanOrder ? c : best
-    })
-    noteClaim(key, winner.ownerKey)
-    const [kr, kc] = key.split(",").map(Number)
-    for (const [fr, fc] of winner.attachedFlanks) {
-      const flankKey = `${winner.ownerRow + fr},${winner.ownerCol + fc}`
-      openEdges.add(edgeKey(kr, kc, winner.ownerRow + fr, winner.ownerCol + fc))
-      if (!claimedBy.has(flankKey)) noteClaim(flankKey, winner.ownerKey)
-    }
-  }
-
-  // Decoration only ever lands on an empty claimed cell — the room's own space, never a passage
-  // through it (see noteClaim).
-  //
-  // **A prop stands against a wall where it can.** Its sprite is a cell plus a face band tall, so it
-  // leans a band's worth into the cell to its north; on a cell with void above, that headroom lands on
-  // wall, which is where a statue belongs and where nothing can be behind it. On a cell with floor above
-  // it, the statue leans over ground the player walks, and the explorer dot — drawn last — passes in
-  // FRONT of its head. Half the props in the world stood that way before this preference.
-  const wallBehind = (cellKey: string): boolean => {
-    const [r, c] = cellKey.split(",").map(Number)
-    return cellAt(grid, r - 1, c).type === "empty"
-  }
-  // ON THE MAP, not off the edge of it. A claim takes out-of-bounds cells too — the renderer reads
-  // beyond the grid as void — so an edge room's own furniture could stand in the margin outside the
-  // floor, which is where the Temple of Bastet put its statue of her. Inside first, and the
-  // wall-behind preference decides among what is left.
-  const onGrid = (key: string): boolean => {
-    const [r, c] = key.split(",").map(Number)
-    return r >= 0 && c >= 0 && r < grid.rows && c < grid.cols
-  }
-  const decorationAt = new Map<string, DecorationKind>()
-  const roomsForCompanion: { ownerKey: string; leader: DecorationKind; free: string[] }[] = []
-  for (const [ownerKey, candidates] of ownerPropCandidates) {
-    const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
-    const owner = grid.cells[ownerRow]?.[ownerCol]
-    if (owner?.type !== "room" || !owner.decoration) continue
-    const inside = candidates.filter(onGrid)
-    const usable = inside.length ? inside : candidates
-    const taken = usable.find(wallBehind) ?? usable[0]
-    decorationAt.set(taken, owner.decoration)
-    // THE GOD'S ROOM is written on the cell by the assembler (RoomCell.patronRoom). It used to be
-    // inferred from prop and wall item both being patron kinds, which is unreachable at a rank whose
-    // wall pool holds nothing a god can appear on — the merchant hangs a goods niche and a tally board.
-    const shrine = owner.patronRoom === true
-    roomsForCompanion.push({
-      ownerKey,
-      leader: owner.decoration,
-      free: candidates.filter(key => key !== taken),
-      ...(shrine ? { shrine } : {}),
-    })
-  }
-  // What this rank is furnished with at all — see the two tests below.
-  const authoredHere = authoredKindsFor(grid.difficulty ?? "starter").props
-  // A SECOND prop of the same purpose, in some of the rooms with space for one — see `companionProps`.
-  // It goes into `decorationAt` rather than into a layer of its own, which is what keeps the rest of the
-  // map honest for free: `floorScatter` dresses the cells this map does NOT hold, so a companion is a cell
-  // scatter avoids without anything being told about it.
-  for (const [key, kind] of companionFor(
-    grid.siteId,
-    roomsForCompanion,
-    // TWO TESTS, and the first one is the one this got wrong.
-    //
-    // **A rank may only be dressed with what it is AUTHORED to hold.** A companion is placed by rule
-    // rather than by the world, so without this it can reach for any kind that shares a purpose — and a
-    // crystal is a wizard thing, the gods' vault, not something the Valley of the Kings has in it. One
-    // landed beside Anubis at expert exactly that way. `authoredKindsFor` is the rank's own vocabulary,
-    // read off the world artifact, so the answer moves when the authoring does.
-    //
-    // **And it has to be PAINTED here**, which is rule 3 of `companionProps`: `tileUrl` skips
-    // `placeholder/` on purpose, so a stand-in can never be multiplied across the map by a rule nobody
-    // is watching.
-    kind => authoredHere.includes(kind) && !!tileUrl(grid.difficulty ?? "starter", kind),
-    // Same rule as the leader: on the map first, then the wall-behind preference.
-    free => {
-      const inside = free.filter(onGrid)
-      const usable = inside.length ? inside : free
-      return usable.find(wallBehind) ?? usable[0]
-    }
-  )) {
-    decorationAt.set(key, kind)
-  }
-
-  /**
-   * Two chambers the player can ALREADY walk between are one space, so no partition is drawn anywhere
-   * along their shared boundary.
-   *
-   * A footprint is several cells wide and only the one cell-pair carrying the graph edge was open, so
-   * the rest of the boundary stayed walled: a partition running partway into a room you can walk
-   * straight across. Nothing here changes what is walkable or the shape of either footprint — the
-   * rooms are already where they are, and the wall between them is the only thing that goes.
-   *
-   * Keyed by OWNER pair rather than by cell pair, because the question is about the two rooms and not
-   * about the boundary: find the edge once, and the whole seam opens.
-   */
-  const joinedOwners = new Set<string>()
-  const ownerOfKey = (key: string): string | undefined => {
-    const [r, c] = key.split(",").map(Number)
-    return claimedBy.get(key) ?? (cellAt(grid, r, c).type === "room" ? key : undefined)
-  }
-  for (const key of [...claimedBy.keys(), ...new Set(claimedBy.values())]) {
-    const [r, c] = key.split(",").map(Number)
-    const own = ownerOfKey(key)
-    if (!own) continue
-    for (const [dr, dc] of ORTHO_OFFSETS) {
-      const nr = r + dr,
-        nc = c + dc
-      const other = ownerOfKey(`${nr},${nc}`)
-      if (!other || other === own) continue
-      // A REAL way through, from either side — the graph, not the claim.
-      const here = cellAt(grid, r, c)
-      const there = cellAt(grid, nr, nc)
-      const dir = dr === 1 ? "s" : dr === -1 ? "n" : dc === 1 ? "e" : "w"
-      const open =
-        ((here.type === "room" || here.type === "corridor") && here.dirs.has(dir)) ||
-        ((there.type === "room" || there.type === "corridor") && there.dirs.has(OPPOSITE_DIR[dir]))
-      if (open) joinedOwners.add([own, other].sort().join("|"))
-    }
-  }
-
-  return { claimedBy, decorationAt, openEdges, joinedOwners }
-}
-
-// The room a claimed cell renders as part of, if that room is lit — the claim borrows the owner's
-// state, so a fogged owner takes its whole blob (void cells included) with it.
-const litClaimOwner = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): RoomCell | undefined => {
-  const cell = cellAt(grid, r, c)
-  if (cell.type !== "empty" && cell.type !== "corridor") return undefined
-  const ownerKey = claims.claimedBy.get(`${r},${c}`)
-  if (!ownerKey) return undefined
-  const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
-  const owner = grid.cells[ownerRow]?.[ownerCol]
-  return owner?.type === "room" && owner.state !== "fogged" ? owner : undefined
-}
-
-// True if the void/corridor cell at `key` was claimed by a junction (fork) room — the other end of
-// a fork-to-fork merge (see isPassable below).
-const claimedByFork = (grid: FloorGrid, claims: RoomClaims, key: string): boolean => {
-  const ownerKey = claims.claimedBy.get(key)
-  if (!ownerKey) return false
-  const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
-  const owner = grid.cells[ownerRow]?.[ownerCol]
-  return owner?.type === "room" && owner.roomType === "fork"
-}
-
-// Whether the player can pass between two cells the map draws floor for. Adjacency is NOT passage:
-// a room claims the cells around it as footprint, so its floor can sit flush against a corridor it
-// has no way through to, and that boundary needs a partition (see tileRegions.ts) or the room reads
-// as something to walk around.
-const isPassable = (grid: FloorGrid, claims: RoomClaims, r: number, c: number, dir: "s" | "e"): boolean => {
-  const cell = cellAt(grid, r, c)
-  const [dr, dc] = DIR_MOVES[dir]
-  const nr = r + dr
-  const nc = c + dc
-  const neighbor = cellAt(grid, nr, nc)
-  // A real graph edge, from either side.
-  if ((cell.type === "room" || cell.type === "corridor") && cell.dirs.has(dir)) return true
-  if ((neighbor.type === "room" || neighbor.type === "corridor") && neighbor.dirs.has(OPPOSITE_DIR[dir])) return true
-  if (claims.openEdges.has(edgeKey(r, c, nr, nc))) return true
-  // Two junction rooms that each claim their own side of a shared void/corridor cell
-  // (buildRoomClaims assigns that cell to whichever claims first) should still read as one open
-  // space — junctions are connective tissue, not a distinct place, unlike other room types, which
-  // stay visually separate even sitting right next to someone else's claim.
-  const isForkMeetingClaim = (a: GridCell, bKey: string): boolean =>
-    a.type === "room" && a.roomType === "fork" && claimedByFork(grid, claims, bKey)
-  if (isForkMeetingClaim(cell, `${nr},${nc}`)) return true
-  if (isForkMeetingClaim(neighbor, `${r},${c}`)) return true
-  // Cells of one room's own footprint are one space: the claim is the room.
-  const ownerOf = (row: number, col: number): string | undefined =>
-    claims.claimedBy.get(`${row},${col}`) ?? (cellAt(grid, row, col).type === "room" ? `${row},${col}` : undefined)
-  const own = ownerOf(r, c)
-  const other = ownerOf(nr, nc)
-  if (own && other && own !== other) return claims.joinedOwners.has([own, other].sort().join("|"))
-  return !!own && own === other
-}
-
-// **A wall is a cell, not an edge.** Whether two neighbouring drawn cells read as one open space is
-// no longer a question the renderer asks: they are both floor, and the wall is whatever cell the map
-// draws no floor for (see tileRegions.ts). Two junctions each claiming their side of the void
-// between them therefore merge for free, and two rooms flanking unclaimed void keep the wall
-// between them for free.
-
-/** Everything on the ENTRANCE side of every gate, as "r,c" keys — the part of a floor you can walk
- * without ever crossing a ward.
- *
- * A GATED SECTION DOES NOT BEGIN AT ITS GATE. World-gen authors the whole branch at the pocket's tier,
- * gate included, and the gate can sit well down the branch — so the corridor leading TO it was already
- * built of the pocket's stone. Drawn honestly that reads as starter, then expert, then a starter gate,
- * then expert again: the material changes three times to say one thing. 693 cells over 59 floors did
- * that, up to 30 on a single floor.
- *
- * So the seam is placed by TOPOLOGY, at the ward itself: this side of it is the floor's own stone,
- * beyond it is the tier it is guarding. One crossing, exactly where the bars are drawn, which is also
- * where the map lays its sill.
- *
- * The walk stops at a gate whatever STATE it is in. Stopping only at shut ones would flatten the whole
- * floor to one tier the moment a gate was opened — the seam is where the ward stands, not whether the
- * player has got through it yet.
- */
-const entranceSide = new WeakMap<FloorGrid, ReadonlySet<string>>()
-const cellsThisSideOfAWard = (grid: FloorGrid): ReadonlySet<string> => {
-  const cached = entranceSide.get(grid)
-  if (cached) return cached
-  const isGate = (r: number, c: number) => {
-    const cell = grid.cells[r]?.[c]
-    return cell?.type === "room" && (cell.tags?.includes("gate") ?? false)
-  }
-  const [er, ec] = grid.entrancePos
-  // Nothing to place a seam against, and nowhere to walk from: a floor with no ward keeps every tier its
-  // sections were authored at, and one whose entrance is void would otherwise reach nothing and so call
-  // the whole map the far side.
-  const none: ReadonlySet<string> = new Set()
-  const start = grid.cells[er]?.[ec]
-  if (!start || start.type === "empty") return none
-  let anyGate = false
-  for (let r = 0; r < grid.rows && !anyGate; r++)
-    for (let c = 0; c < grid.cols && !anyGate; c++) if (isGate(r, c)) anyGate = true
-  if (!anyGate) {
-    entranceSide.set(grid, none)
-    return none
-  }
-  const reached = new Set([`${er},${ec}`])
-  const queue: Array<readonly [number, number]> = [grid.entrancePos]
-  for (let i = 0; i < queue.length; i++) {
-    const [r, c] = queue[i]
-    // A ward is reached and not passed: it stands on this side, and everything past it does not.
-    if (isGate(r, c) && !(r === er && c === ec)) continue
-    const cell = grid.cells[r]?.[c]
-    if (!cell || cell.type === "empty") continue
-    for (const dir of cell.dirs) {
-      const [dr, dc] = DIR_MOVES[dir]
-      const key = `${r + dr},${c + dc}`
-      if (reached.has(key)) continue
-      reached.add(key)
-      queue.push([r + dr, c + dc])
-    }
-  }
-  entranceSide.set(grid, reached)
-  return reached
-}
-
-// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on cells
-export const cellFloorAt = (
-  grid: FloorGrid,
-  claims: RoomClaims,
-  ownedKeys: ReadonlySet<string> | undefined,
-  r: number,
-  c: number
-): ReturnType<FloorAt> => {
-  // The stone a cell is built of is its own SECTION's tier, not its floor's: a pocket gated behind a
-  // junior key is junior stone inside a starter pyramid, and walking through the gate should say so.
-  const floorTierOf = grid.difficulty ?? "starter"
-  // A GATE NOT YET OPENED WEARS THE PYRAMID'S OWN STONE. The pocket behind it keeps its authored tier —
-  // that is the point of the material, and walking through says so — but the gate's own square is on
-  // THIS side of the door, and paving it in the pocket's stone let the player read next tier's
-  // difficulty off the floor before earning the right to see it. Everything further in is dark until
-  // the gate opens, so this one square was the whole of the peek.
-  // THE SEAM IS AT THE WARD. Everything this side of one — the gate's own square included — is the
-  // pyramid's own stone, and only what the gate guards is built of the tier it guards. That is one
-  // crossing instead of three, and it lands where the bars are (`cellsThisSideOfAWard`).
-  const thisSide = cellsThisSideOfAWard(grid)
-  const tierOf = (cell: { difficulty?: Difficulty }, row: number, col: number): Difficulty =>
-    thisSide.has(`${row},${col}`) ? floorTierOf : (cell.difficulty ?? floorTierOf)
-  const owner = litClaimOwner(grid, claims, r, c)
-  // A claimed cell renders as part of its owner: same material, same state, one continuous chamber.
-  // A claimed cell is grid VOID and so on no walk of the floor: it asks the question at its OWNER's
-  // square, or every chamber would come out the far side of every ward.
-  if (owner) {
-    const ownerKey = claims.claimedBy.get(`${r},${c}`) ?? `${r},${c}`
-    const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
-    return { state: owner.state, kind: "room", tier: tierOf(owner, ownerRow, ownerCol) }
-  }
-  const cell = cellAt(grid, r, c)
-  if (cell.type === "empty") return "stone"
-  // A real passage still in the dark is not stone — see FloorAt.
-  if (cell.state === "fogged") return "unlit"
-  const kind = cell.type === "room" ? "room" : "corridor"
-  const tier = tierOf(cell, r, c)
-  // A locked gate reads as not-yet-yours: cosmetic only, exactly as its icon does below.
-  if (cell.type === "room" && cell.state === "reachable" && isLockedGate(cell, ownedKeys)) {
-    return { state: "visible", kind, tier }
-  }
-  return { state: cell.state, kind, tier }
-}
-
-/** Which cells the map paints as floor and which as wall. Exported for tests: it is where the claim
- * rules above meet the wall model, and asserting on cells beats sniffing rendered SVG. */
-// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on cells instead of sniffing rendered SVG
-export const tileRegionsFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: ReadonlySet<string>): TileRegions =>
-  buildTileRegions(
-    grid.rows,
-    grid.cols,
-    (r, c) => cellFloorAt(grid, claims, ownedKeys, r, c),
-    (r, c, dir) => isPassable(grid, claims, r, c, dir),
-    grid.difficulty ?? "starter"
-  )
-
-// A corridor is a "corner" (and thus a valid click target for corner-reveal/hidden-
-// passage interaction) whenever it isn't a plain straight-through segment.
-const isCorridorCorner = (dirs: ReadonlySet<Direction>): boolean =>
-  dirs.size !== 2 || !((dirs.has("n") && dirs.has("s")) || (dirs.has("e") && dirs.has("w")))
-
-const OPPOSITE_DIR: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
-
-// A straight run of "visible" corridor only ever has one real click target: the corner
-// (or room) that ends it, which can be many cells — and screens — away. Walking that far
-// out means the on-screen entrance to the run has nothing to tap. This walks a run
-// forward from its near end (right next to the explorer) to find that far target, so the
-// caller can render the click affordance where the player already is instead.
-const findCorridorRunTarget = (
-  grid: FloorGrid,
-  startR: number,
-  startC: number,
-  incomingDir: Direction
-): readonly [number, number] | null => {
-  let r = startR,
-    c = startC,
-    fromDir = incomingDir
-  for (let steps = 0; steps < grid.rows * grid.cols; steps++) {
-    const cell = cellAt(grid, r, c)
-    if (cell.type === "empty") return null
-    if (cell.type === "room") {
-      return cell.state === "reachable" || cell.state === "completed" ? [r, c] : null
-    }
-    if (isCorridorCorner(cell.dirs)) {
-      return cell.state === "reachable" || cell.state === "completed" ? [r, c] : null
-    }
-    if (cell.state !== "visible" && cell.state !== "reachable" && cell.state !== "completed") return null
-    const nextDir = ([...cell.dirs] as Direction[]).find(d => d !== OPPOSITE_DIR[fromDir])
-    if (!nextDir) return null
-    const [dr, dc] = DIR_MOVES[nextDir]
-    r += dr
-    c += dc
-    fromDir = nextDir
-  }
-  return null
-}
-
-type CorridorRunTarget = { row: number; col: number; dir: Direction }
-
-const EMPTY_RUN_TARGETS: ReadonlyMap<string, CorridorRunTarget> = new Map()
-
-// For each direction open from the explorer's current cell, find the corridor run's far
-// click target (if any) and key it by the NEAR cell — the first step of that run — so
-// rendering can put the click affordance right next to the player. `dir` is that first
-// step's direction, unambiguous by construction, so the marker can point the way there.
+// The corridor-run geometry lives in `corridorRuns.ts`; this is the memo that keeps one answer per
+// (grid, position) for the render. Recomputed on the explorer's own coordinates rather than on the
+// tuple, which is a fresh array every render.
 const useCorridorRunTargets = (
   grid: FloorGrid,
   explorerPos: readonly [number, number] | undefined
 ): ReadonlyMap<string, CorridorRunTarget> =>
-  useMemo(() => {
-    const targets = new Map<string, CorridorRunTarget>()
-    if (!explorerPos) return targets
-    const [er, ec] = explorerPos
-    const startCell = cellAt(grid, er, ec)
-    if (startCell.type !== "room" && startCell.type !== "corridor") return targets
-    for (const dir of startCell.dirs) {
-      const [dr, dc] = DIR_MOVES[dir]
-      const nearR = er + dr,
-        nearC = ec + dc
-      const target = findCorridorRunTarget(grid, nearR, nearC, dir)
-      if (target && (target[0] !== nearR || target[1] !== nearC)) {
-        targets.set(`${nearR},${nearC}`, { row: target[0], col: target[1], dir })
-      }
-    }
-    return targets
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grid, explorerPos?.[0], explorerPos?.[1]])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useMemo(() => corridorRunTargetsFrom(grid, explorerPos), [grid, explorerPos?.[0], explorerPos?.[1]])
 
-// ─── Tile layers ────────────────────────────────────────────────────────────────
-// Floors and walls are painted as a handful of pattern-filled paths under the whole map rather
-// than a rect per cell — see tileRegions.ts for the model and
-// docs/game-design/spritesheet-renderer-prep.md for why.
-
-const FACE_SHADOW = CELL / 8
-// How much of a wall's TOP surface shows above its face. A wall has thickness, and the side walls already
-// show theirs edge-on; without this a face is a flat band of brick with nothing above it.
-const FACE_TOP = SIDE_W / 2
-
-// The floor's material follows the FLOOR's own tier, carried on the grid — not the rooms'. A
-// starter pyramid's ward-chest teaser is authored at a LATER tier on purpose (spec/starter.ts), so
-// room difficulties are the wrong thing to infer a floor's material from: a starter cellar came out
-// built of a pharaoh's granite. Per-room difficulty still dresses the room (props, light).
-const floorTier = (grid: FloorGrid): Difficulty => grid.difficulty ?? "starter"
-
-const allFloorRects = (regions: TileRegions): Rect[] =>
-  [...regions.values()].flatMap(groups => [
-    ...Object.values(groups.floorRoom).flat(),
-    ...Object.values(groups.floorCorridor).flat(),
-  ])
-
-/**
- * THE STONE IS ONE SVG, and that is a memory fact rather than a taste.
- *
- * Everything that MOVES on this map is HTML and composited (docs/instructions/map-rendering.md). The
- * stone does not move, and it is the one thing whose shapes span the whole floor: a merged run of floor
- * or wall covers most of a map that can be 1876x2268 CSS px. As HTML that is one `clip-path` layer per
- * group, and a clipped element has to be rasterised at its OWN size — 22 of them at three device pixels
- * to the unit came to gigabytes, and iOS Safari killed the tab on entry to any floor (v0.43.1). One
- * `<svg>` is one surface the compositor tiles as ordinary content, which is what shipped before and what
- * ships again.
- *
- * A sprite is different: it is cut to ONE ROOM, so its layer is a room's worth of pixels, and those stay
- * HTML.
- */
-const TileLayers = ({
-  regions,
-  tier,
-  archedGaps,
-}: {
-  regions: TileRegions
-  tier: Difficulty
-  /** "x,y" of every gap an archway stands in, and the arch's own tier. An arch's middle is transparent, so
-   * the sill shows THROUGH it — the step the jambs stand on, which is what stops a doorway hovering in a
-   * gap with its reveal running straight into floor. The one thing the two disagreed about was stone: a
-   * sill takes the tier being ENTERED and an arch the tier of the band it pierces, so at a ward gate the
-   * map laid one rank's threshold inside another's gateway. Settled by giving the gap to the arch — an
-   * arched sill is drawn in the arch's stone, so an opening is one material. */
-  archedGaps?: ReadonlyMap<string, Difficulty>
-}) => {
-  const mega = CELL * 8
-  // Every sill that an arch stands in, filed under the ARCH's tier rather than the tier being entered.
-  // At a ward gate those differ, and one opening showing two ranks of stone is the reason the sill used to
-  // be skipped here entirely.
-  const archedSills = new Map<Difficulty, Rect[]>()
-  for (const [, groups] of regions) {
-    for (const rect of groups.threshold) {
-      const archTier = archedGaps?.get(`${rect[0]},${rect[1]}`)
-      if (!archTier) continue
-      const list = archedSills.get(archTier)
-      if (list) list.push(rect)
-      else archedSills.set(archTier, [rect])
-    }
-  }
-  const floorRects = [...regions.values()].flatMap(groups => [
-    ...Object.values(groups.floorRoom).flat(),
-    ...Object.values(groups.floorCorridor).flat(),
-  ])
-  const allFloor = rectsToPath(floorRects)
-  // The same floor, each cell grown UPWARD by a prop's headroom. Furniture standing off-centre in its
-  // cell is cut by the wall beside it and by the wall below it, and still rises into the band above —
-  // which is the one direction a prop is meant to cross, so a tall thing occludes the wall behind it
-  // instead of being sliced off at its own floor line.
-  const tiers = [...regions.keys()]
-
-  return (
-    <>
-      <defs>
-        {/* The walkable floor as a CLIP. Sand is drawn larger than a cell and cut to this, so a drift
-            crosses cells and stops dead at a wall — see `driftsFor`. The path is the same one the
-            outline stroke below uses; it costs nothing to reuse it. */}
-        <clipPath id="walkable-floor">
-          <path d={allFloor} />
-        </clipPath>
-        {tiers.map(t => {
-          const floor = tileUrl(t, "floor")
-          const face = tileUrl(t, "wall-face")
-          const sill = tileUrl(t, "threshold")
-          return (
-            <Fragment key={t}>
-              {floor && (
-                <pattern id={`floor-${t}`} width={mega} height={mega} patternUnits="userSpaceOnUse">
-                  {/* preserveAspectRatio="none": an <image> letterboxes itself by default, which leaves the
-                      rest of the pattern tile transparent — black slots in the middle of a wall. */}
-                  <image href={floor} width={mega} height={mega} preserveAspectRatio="none" />
-                </pattern>
-              )}
-              {face && (
-                // The face art is a cell tall; a face is WALL_H tall, so the pattern is scaled to that
-                // and repeats on it. Every face in the map then shows the same courses at the same height.
-                <pattern id={`face-${t}`} width={mega} height={WALL_H} patternUnits="userSpaceOnUse">
-                  <image href={face} width={mega} height={WALL_H} preserveAspectRatio="none" />
-                </pattern>
-              )}
-              {sill && (
-                <>
-                  {/* A sill fills the GAP it is laid in, and there are two shapes of gap. Between two rows
-                      it is a cell wide and a wall band deep, which is how the art is drawn. Between two
-                      columns it is the same step turned ninety degrees into a side wall's thickness — one
-                      pattern stretched over both is how a step ended up lying on its side. */}
-                  <pattern id={`sill-h-${t}`} width={CELL} height={WALL_H} patternUnits="userSpaceOnUse">
-                    <image href={sill} width={CELL} height={WALL_H} preserveAspectRatio="none" />
-                  </pattern>
-                  <pattern id={`sill-v-${t}`} width={SIDE_W} height={CELL} patternUnits="userSpaceOnUse">
-                    <image
-                      href={sill}
-                      width={CELL}
-                      height={SIDE_W}
-                      transform={`translate(${SIDE_W},0) rotate(90)`}
-                      preserveAspectRatio="none"
-                    />
-                  </pattern>
-                </>
-              )}
-            </Fragment>
-          )
-        })}
-        <LightPoolDefs />
-      </defs>
-
-      <g>
-        {/* The near-black silhouette that stops a wall mass and a lit floor of similar value from
-            blurring into each other. Stroked UNDER the fills, on the whole floor at once: a stroke
-            drawn on top would trace every cell's border and put a grid over the floor, while
-            underneath only the outward half of the outline survives, which is the silhouette. */}
-        <path d={allFloor} fill="none" stroke={tierPalette[tier].outline} strokeWidth={4} />
-
-        {tiers.map(t => {
-          const palette = tierPalette[t]
-          const groups = regions.get(t)!
-          const floorFill = tileUrl(t, "floor") ? `url(#floor-${t})` : palette.slab
-          const faceFill = tileUrl(t, "wall-face") ? `url(#face-${t})` : palette.wall
-          const hasSill = !!tileUrl(t, "threshold")
-          // A gap between two ROWS is a cell wide; one between two columns is a side wall's thickness.
-          const sillFill = ([, , w]: Rect) => (hasSill ? `url(#sill-${w === CELL ? "h" : "v"}-${t})` : palette.wallTop)
-          return (
-            <g key={t}>
-              {ALL_STATES.map(state => {
-                const wash = stateWash[state]
-                const room = rectsToPath(groups.floorRoom[state])
-                const corridor = rectsToPath(groups.floorCorridor[state])
-                const mass = rectsToPath(groups.wallMass[state])
-                const faces = rectsToPath(groups.wallFace[state])
-                const shadows = rectsToPath(faceShadowRects(groups.wallFace[state], FACE_SHADOW))
-                const tops = rectsToPath(faceTopRects(groups.wallFace[state], FACE_TOP))
-                // One sill per boundary, not one per cell state: it is masonry, not lighting. A sill under
-                // an arch is drawn with the ARCH's tier rather than this one, so it is handled below.
-                const thresholds = groups.threshold.filter(([x, y]) => !archedGaps?.has(`${x},${y}`))
-                const arched = archedSills.get(t) ?? []
-                return (
-                  <g key={state}>
-                    {mass && <path d={mass} fill={palette.wallBase} />}
-                    {room && <path d={room} fill={floorFill} />}
-                    {corridor && (
-                      <>
-                        <path d={corridor} fill={floorFill} />
-                        <path d={corridor} fill={corridorShade.fill} opacity={corridorShade.opacity} />
-                      </>
-                    )}
-                    {faces && <path d={faces} fill={faceFill} />}
-                    {/* The wall's own top surface, in the stone the side walls and the wall mass already
-                        use. A face without it is a band of brick with nothing above it, and a wall stops
-                        reading as a solid thing. */}
-                    {tops && <path d={tops} fill={palette.wallBase} />}
-                    {/* Laid over the floor of the gap it crosses, so a change of material reads as a
-                        step between two places rather than a line where the art changes. */}
-                    {/* One path per sill: each takes the pattern for the shape of gap it lies in. The sill
-                        an arch stands in is drawn here too, in the ARCH's stone rather than the entered
-                        tier's, which is why it is filed under this tier at all. */}
-                    {state === "reachable" &&
-                      [...thresholds, ...arched].map(rect => (
-                        <path key={rect.join(",")} d={rectsToPath([rect])} fill={sillFill(rect)} opacity={0.9} />
-                      ))}
-                    {shadows && <path d={shadows} fill={palette.outline} opacity={0.45} />}
-                    {wash && <path d={room + corridor + faces + mass} fill={wash.fill} opacity={wash.opacity} />}
-                  </g>
-                )
-              })}
-            </g>
-          )
-        })}
-      </g>
-    </>
-  )
-}
+// The stone — floor, wall mass, faces, sills and their washes — is drawn by `tileLayers.tsx`.
 
 // ─── Decorations ────────────────────────────────────────────────────────────────
 // A prop is drawn in the room's first genuine claim (void or diagonal — never a flank corridor,
@@ -1684,7 +459,15 @@ const Decoration = ({
       {/* Under the sprite, so the light is on the floor and the lamp is standing in it. */}
       {LIT_DECORATIONS.has(kind) && <LightPool r={LAMP_POOL_RADIUS} cy={CELL * 0.3} />}
       {url ? (
-        <Sprite url={url} x={-CELL / 2} y={CELL / 2 - PROP_H} w={CELL} h={PROP_H} stretch={false} />
+        <Sprite
+          url={url}
+          x={-CELL / 2}
+          y={CELL / 2 - PROP_H}
+          w={CELL}
+          h={PROP_H}
+          stretch={false}
+          filter={STANDING_RELIEF[tier]}
+        />
       ) : (
         <DecorationGlyph kind={kind} />
       )}
@@ -2077,182 +860,8 @@ const ArchShadows = ({ doorways }: { doorways: readonly Doorway[] }) => {
   )
 }
 
-// ─── Torchlight on the place the player is standing ─────────────────────────────
-
-/**
- * The room or corridor cell the explorer is in, washed warm — the same torch that pools at their feet
- * reaching the walls around them.
- *
- * A CHAMBER lights whole: a torch carried into a small room lights the room, and lighting one cell of it
- * would draw a square of light on a floor with no edge to justify it. A corridor lights only the cell
- * stood in, because a corridor has no extent to fill.
- *
- * Screen-blended and weak on purpose. This sits under the player for the whole game, so it has to read as
- * the stone being lit rather than as a coloured overlay on top of it — and it must never compete with the
- * state washes that tell the player what is explored.
- */
-// Weak, flat across the place, and it stops AT the place — no bleed onto what happens to sit next to it.
-// Spilling onto neighbours used grid adjacency rather than connectivity, so a corridor with a wall between
-// it and the room lit up anyway; and the map already tells the player what is reachable.
-// The pool at the explorer's feet already does the close light;
-// this only has to say which room they are in, so a strong wash under the player was the same light drawn
-// twice and read as a bright tile rather than a lit room. It still has to clear an UNVISITED room, since
-// `completed` washes a visited one 20% darker and standing somewhere must not be dimmer than never having
-// been there — on starter stone that puts the place at 102 against an unvisited 96 and a visited 77.
-/**
- * The PLACE the explorer is standing in — a whole chamber, or the stretch of corridor they are on.
- *
- * A place, never a tile. A torch carried into a room lights the room; carried along a passage it lights
- * the passage as far as the next turn. Lighting the single cell drew a bright square on a floor with no
- * edge to justify it, which read as a tile rather than as somewhere being lit.
- *
- * The room case has to handle standing on the room's OWN cell as well as on one it claims: `claimedBy`
- * maps a claimed cell to its owner and has no entry for the owner itself, so looking up the owner and
- * stopping there lit one square whenever the player stood in the middle of their own chamber.
- */
-const litPlaceCells = (grid: FloorGrid, claims: RoomClaims, at: readonly [number, number]): string[] => {
-  const here = `${at[0]},${at[1]}`
-  const owner = claims.claimedBy.get(here) ?? here
-  const footprint = [owner, ...[...claims.claimedBy.entries()].filter(([, o]) => o === owner).map(([cell]) => cell)]
-  if (footprint.length > 1) return footprint
-
-  const cell = cellAt(grid, at[0], at[1])
-  if (cell.type !== "corridor") return [here]
-
-  // The run: out from the cell in every open direction, following the passage until it turns or opens
-  // into something else. The turn itself is included — a light that stopped one cell short of the corner
-  // would leave the corner darker than the straight, which is the opposite of how a corner reads.
-  const cells = [here]
-  for (const dir of cell.dirs) {
-    let [dr, dc] = DIR_MOVES[dir]
-    let r = at[0] + dr
-    let c = at[1] + dc
-    let from: Direction = dir
-    for (let steps = 0; steps < grid.rows + grid.cols; steps++) {
-      const next = cellAt(grid, r, c)
-      if (next.type !== "corridor" || next.state === "fogged") break
-      cells.push(`${r},${c}`)
-      if (isCorridorCorner(next.dirs)) break
-      const onward = ([...next.dirs] as Direction[]).find(d => d !== OPPOSITE_DIR[from])
-      if (!onward) break
-      ;[dr, dc] = DIR_MOVES[onward]
-      r += dr
-      c += dc
-      from = onward
-    }
-  }
-  return cells
-}
-
-const TORCH_LIT = "#ffe2b0"
-
-const LitPlace = ({
-  grid,
-  claims,
-  at,
-  className,
-}: {
-  grid: FloorGrid
-  claims: RoomClaims
-  at?: readonly [number, number]
-  className: string
-}) => {
-  const place = at ? litPlaceCells(grid, claims, at) : []
-
-  const lit = new Set(place)
-
-  // A cell's square PLUS the gap to any lit neighbour. The map's pitch is a cell plus a wall band, so two
-  // cells of a corridor sit 28 units apart with floor between them — squares alone left that band dark and
-  // the run read as a row of lit tiles rather than as a lit passage. The floor layers fill those gaps for
-  // the same reason; light has to as well.
-  const rectsFor = (keys: Iterable<string>, joinsTo: ReadonlySet<string>): Rect[] =>
-    [...keys].flatMap(key => {
-      const [r, c] = key.split(",").map(Number)
-      const parts: Rect[] = [[cellLeft(c), cellTop(r), CELL, CELL]]
-      if (joinsTo.has(`${r - 1},${c}`)) parts.push([cellLeft(c), cellTop(r) - WALL_H, CELL, WALL_H])
-      if (joinsTo.has(`${r},${c - 1}`)) parts.push([cellLeft(c) - SIDE_W, cellTop(r), SIDE_W, CELL])
-      // And the little square where four lit cells meet — the corner between a north gap and a west
-      // gap. Filling both bands and not the corner between them leaves an unlit dot at every crossing
-      // inside a room, which is the artefact a floor of squares always has if you stop at the edges.
-      if (joinsTo.has(`${r - 1},${c}`) && joinsTo.has(`${r},${c - 1}`) && joinsTo.has(`${r - 1},${c - 1}`))
-        parts.push([cellLeft(c) - SIDE_W, cellTop(r) - WALL_H, SIDE_W, WALL_H])
-      return parts
-    })
-
-  if (!lit.size) return null
-  return <ClipLayer data-torch="lit" className={className} rects={rectsFor(lit, lit)} fill={TORCH_LIT} />
-}
-
-/** How long a place takes to come up, and to go out: the two have to agree, because both are drawn
- * during the crossing. Matches `--animate-map-lit-in`/`-out` in the theme. */
-const FADE_MS = 320
-const FADE_IN = "animate-map-lit-in motion-reduce:animate-none motion-reduce:opacity-[0.1]"
-const FADE_OUT = "animate-map-lit-out motion-reduce:animate-none motion-reduce:opacity-0"
-
-/**
- * The lit place, crossfaded as the explorer walks from one to the next.
- *
- * Tied to the LIVE position rather than the settled one, so the room ahead comes up over the walk instead
- * of snapping on at the moment of arrival. Both places are drawn during the crossing — the old one going
- * out, the new one coming in — because a path cannot tween between two shapes, so the fade has to be
- * between two of them.
- */
-const LitPlaces = ({ grid, claims, at }: { grid: FloorGrid; claims: RoomClaims; at?: readonly [number, number] }) => {
-  const key = at ? litPlaceCells(grid, claims, at).join("|") : ""
-  const [leaving, setLeaving] = useState<readonly [number, number] | undefined>(undefined)
-  const prevRef = useRef<{ key: string; at?: readonly [number, number] }>({ key, at })
-
-  useEffect(() => {
-    const prev = prevRef.current
-    prevRef.current = { key, at }
-    if (prev.key === key || !prev.at) return
-    setLeaving(prev.at)
-    const timer = setTimeout(() => setLeaving(undefined), FADE_MS)
-    return () => clearTimeout(timer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- the PLACE, which is what `key` is
-  }, [key])
-
-  return (
-    <div style={{ position: "absolute", inset: 0, mixBlendMode: "screen", pointerEvents: "none" }}>
-      {leaving && <LitPlace key="leaving" grid={grid} claims={claims} at={leaving} className={FADE_OUT} />}
-      <LitPlace key={key} grid={grid} claims={claims} at={at} className={FADE_IN} />
-    </div>
-  )
-}
-
-/**
- * The tier's own night, lying over the whole floor.
- *
- * WITHOUT IT THE MAP HAS NO VALUE RANGE: every explored cell was drawn at full brightness whether
- * anything lit it or not, so slab, wall face and void all landed within one narrow band and the
- * picture read as a floorplan rather than as a place. The light that was there — the lit place, a
- * torch's pool — had nothing to be bright AGAINST.
- *
- * A flat wash rather than a `multiply` blend, and both halves of that are deliberate. Alpha over the
- * top lifts the blacks instead of crushing them, which is what keeps the layout readable when the
- * player pulls back to look at the floor as a map; and it is one composited box rather than a second
- * full-map blend group, which `docs/instructions/map-rendering.md` asks for.
- *
- * IT FALLS IN TWO PASSES, because the map has one layer that must not go dark with the rest of it.
- * The full pass lies under the click markers — the markers are what the player reads the floor BY, and
- * washing them with everything else costs them most of their contrast against the stone (a measured
- * 3.8 down to 2.2). The second, lighter pass lies over everything, so that the furniture standing on
- * the floor is seated in the same dark it stands in rather than cut out of it, and the markers pay a
- * quarter of the wash instead of all of it — which, because the floor under them took both passes,
- * leaves them further clear of it than before the shade existed at all.
- */
-const FloorShade = ({ tier, strength = 1 }: { tier: Difficulty; strength?: number }) => (
-  <div
-    data-floor-shade=""
-    style={{
-      position: "absolute",
-      inset: 0,
-      background: tierPalette[tier].shade,
-      opacity: strength,
-      pointerEvents: "none",
-    }}
-  />
-)
+// The dark and the light in it — the tier's night, the lit place, and a prop's relief — live in
+// `torchlight.tsx`.
 
 // ─── Click-target markers ───────────────────────────────────────────────────────
 
@@ -2393,6 +1002,7 @@ export const SiteMapView = ({
             w={CELL}
             h={PROP_H}
             mirrored={sprite.mirrored}
+            filter={STANDING_RELIEF[tier]}
             // ITS OWN ROOM AND NOT THE WHOLE FLOOR: furniture stands off-centre and a sprite is a cell
             // wide, so it reaches past its cell. See NodeSprite.footprint.
             clipTo={footprintRects(sprite.footprint)}
@@ -2509,7 +1119,11 @@ export const SiteMapView = ({
     (explorerPos[0] !== settledExplorerPos[0] || explorerPos[1] !== settledExplorerPos[1])
   )
   const settledCorridorRunTargets = useCorridorRunTargets(grid, settledExplorerPos)
-  const corridorRunTargets = isTraveling ? EMPTY_RUN_TARGETS : settledCorridorRunTargets
+  const corridorRunTargets = isTraveling ? NO_RUN_TARGETS : settledCorridorRunTargets
+
+  // One rule for what a tap does, asked per cell below — see `clickTargets.ts`. The three branches of
+  // the marker loop used to spell it out for themselves, in two different spellings.
+  const offerContext = { runTargets: corridorRunTargets, canWalkTo, freeWalk }
 
   // Must be >= CELL: a fork/endpoint on the map's edge can claim one cell of "outside
   // the grid" void (see cellAt above), and that extra ring needs to physically fit
@@ -2657,18 +1271,13 @@ export const SiteMapView = ({
                   const isCorner = cell.type === "corridor" && isCorridorCorner(cell.dirs)
                   const runTarget = cell.type === "corridor" ? corridorRunTargets.get(cellKey) : undefined
                   const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
-                  const corridorClickable =
-                    cell.type === "corridor" &&
-                    onCellClick &&
-                    canWalkTo(clickTarget[0], clickTarget[1]) &&
-                    (freeWalk ||
-                      ((cell.state === "reachable" || cell.state === "completed") && isCorner ? true : !!runTarget))
+                  const offer = clickTargetAt(grid, claims, r, c, offerContext)
                   return (
                     <MarkerCell
                       key={cellKey}
                       cx={cx}
                       cy={cy}
-                      onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
+                      onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
                     >
                       {cell.type === "corridor" &&
                         canWalkTo(clickTarget[0], clickTarget[1]) &&
@@ -2691,18 +1300,13 @@ export const SiteMapView = ({
                   // far corner's click target (see findCorridorRunTarget) so a long corridor
                   // that scrolls off screen still has something to tap right next to the player.
                   const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
-                  const corridorClickable =
-                    onCellClick &&
-                    canWalkTo(clickTarget[0], clickTarget[1]) &&
-                    (freeWalk ||
-                      ((cell.state === "reachable" || cell.state === "completed") && isCorner) ||
-                      !!runTarget)
+                  const offer = clickTargetAt(grid, claims, r, c, offerContext)
                   return (
                     <MarkerCell
                       key={`${r},${c}`}
                       cx={cx}
                       cy={cy}
-                      onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
+                      onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
                     >
                       {canWalkTo(clickTarget[0], clickTarget[1]) &&
                         (runTarget ? (
@@ -2730,7 +1334,7 @@ export const SiteMapView = ({
                   shapeKind === "treasure" &&
                   cell.reward?.type === "consumable" &&
                   (pendingCells?.has(`${r},${c}`) ?? false)
-                const clickable = onCellClick && (state === "reachable" || state === "completed") && canWalkTo(r, c)
+                const offer = clickTargetAt(grid, claims, r, c, offerContext)
                 // A fogged room never reaches here — the loop above draws unlit cells — so no guard is
                 // needed to keep a chest out of the dark.
                 const hasChest = shapeKind === "treasure" && !cell.tags?.includes("shop")
@@ -2752,7 +1356,7 @@ export const SiteMapView = ({
                     key={`${r},${c}`}
                     cx={cx}
                     cy={cy}
-                    onClick={clickable ? () => onCellClick(r, c) : undefined}
+                    onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
                   >
                     {/* A FLIGHT SAYS STAIRS BETTER THAN A MARKER DOES, so where one is drawn the marker
                       goes out entirely rather than merely easing back the way a chest's does. The
@@ -2829,7 +1433,15 @@ export const SiteMapView = ({
 
               {/* The shade's second pass — see FloorShade. Everything standing has to be in the dark
                 with the floor, or it reads as cut out and pasted on. */}
-              <FloorShade tier={tier} strength={0.45} />
+              <FloorShade tier={tier} strength={SEATING_PASS} />
+
+              {/* AND THE LIGHT'S SECOND PASS OVER IT, for the same reason read the other way round: what
+                stands in a lit room is standing in the light, and the wash above took a quarter of the
+                tier's night back over everything the lamp had just reached. The explorer came out of it
+                darker than the floor under their feet. Lighter than the first pass and reaching a band
+                higher (see `headroom`), so the furniture is lit to the top of its own headroom rather
+                than sawn off at the floor line. */}
+              <LitPlaces grid={grid} claims={claims} at={explorerPos} strength={LIT_STANDING_STRENGTH} headroom />
             </div>
           </div>
         </div>

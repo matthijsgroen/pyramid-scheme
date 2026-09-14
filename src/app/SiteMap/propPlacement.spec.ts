@@ -3,7 +3,8 @@ import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
 import { revealAll } from "@/game/gridNavigation"
 import type { FloorGrid } from "@/game/siteTypes"
-import { buildRoomClaims, wallItemsFor } from "./SiteMapView"
+import { buildRoomClaims } from "./roomClaims"
+import { wallItemsFor } from "./SiteMapView"
 
 // The pools authored per rank (spec/*.ts) only mean something if props actually land on rooms. This
 // is the one check that the whole chain — tier constraint → floor config → assembler → cell — holds.

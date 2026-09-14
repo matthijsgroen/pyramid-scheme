@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- A lit room now reads as lit: the light has a source at your torch and falls away from it, it lands warm rather than pale, and it reaches the walls, the furniture and the explorer instead of stopping at the floor. The explorer stands in it rather than on top of it, with a shadow at their feet like everything else on the floor.
+- Dust in a tomb is now fine specks rather than a few circles: far smaller, far more of them, drifting quicker and wandering as they cross.
+- The dark in a tomb now keeps the colour of the stone it falls on, so floors and furniture stay warm or cold as their rank is instead of greying out, and a wall stands clearly back from the floor in front of it. Every rank sits at the same brightness in its own hue.
+
 ## 0.43.7 - 2026-09-13
 
 ### Changed

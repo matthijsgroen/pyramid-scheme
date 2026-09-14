@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
 import { revealAll } from "@/game/gridNavigation"
-import { buildRoomClaims, cellFloorAt, tileRegionsFor } from "./SiteMapView"
+import { buildRoomClaims, cellFloorAt, tileRegionsFor } from "./roomClaims"
 import { ALL_STATES } from "./tileRegions"
 
 // A floor is not all one tier. starter_1's ward-chest teasers are authored at junior on purpose
