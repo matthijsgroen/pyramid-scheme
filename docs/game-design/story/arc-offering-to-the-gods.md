@@ -72,16 +72,35 @@ If `rite` is made to _be_ one of `master_a_1..4`, the wizard gate needs no chang
 a key that already opens it (Part 4 §4.5 B1). If instead the gate is taught to require the arc, that is B2
 and everything in that row's consequences column applies.
 
-## 7. Impact
+## 7. Waypoints
+
+| id        | points at | mechanic         | precision                   | gated by              | status |
+| --------- | --------- | ---------------- | --------------------------- | --------------------- | ------ |
+| `w_seal`  | `p_real`  | compass (inward) | **L1 — which pyramid only** | `k_seal_is_false`     | sketch |
+| `w_altar` | `p_altar` | compass (inward) | L1                          | `k_what_priest_wants` | sketch |
+
+Both are deliberately L1. L3 would name the cell, which deletes the hidden corridor the arc is about — the
+player should be sent to `master_2` and left to find the rest.
+
+Each is unlocked by the arc's own knowledge prop rather than by a detector perk, so the arc cannot become
+invisible to a player who happened not to earn someone else's treasure. That also collapses two beats into
+one: the priest telling you what a proper offering is and the scan starting to return something are the
+same moment.
+
+**Needs the core change first.** `CompassResult` carries `hieroglyphId` and `pieceIndex`, so no scanner can
+honestly point at `p_real` until those are generalised (FORMAT §7).
+
+## 8. Impact
 
 | Axis          |                                                                                                                                                                                                                                                                                                                                                     |
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Structure** | One structural row: `p_real` needs a `hiddenPath` in `master_2`. That floor re-carves, so saved exploration for it is invalidated and this ships with a migration, not after one. Everything else dresses rooms that exist.                                                                                                                         |
 | **Systems**   | Two currencies (`seal_true`, `rite`) registered by a story mod — the supported extension point, since all gating currencies are already mod-owned. One new firing site: a lock that can _refuse_ and say why. **No change to `isTierUnlocked` if `rite` is a `master_a_*` treasure.** No new loot kind if the props ride `mapPiece`. No new screen. |
 | **Content**   | 5 places, 4 props, 5 beats, ~12 lines × 2 locales, 4 drawn assets.                                                                                                                                                                                                                                                                                  |
+| **Steering**  | Two compass waypoints at L1, both unlocked by the arc's own knowledge props — no dependency on unrelated perks. **Blocked on one core change**: `CompassResult` must stop naming hieroglyph fields before a story scanner can register honestly.                                                                                                    |
 | **Payoff**    | Lands on seams only — one `found`, three `link`, one `tier`. **It does not feed the drum**: no solve anywhere in this arc becomes more visible because of it. That is a real gap and not one this arc can close; it belongs to the reward cadence, not to the story.                                                                                |
 
-## 8. Open
+## 9. Open
 
 1. **Is `rite` one of the four wizard-unlock treasures, or a fifth requirement?** B1 or B2 in Part 4 §4.5.
    B1 costs nothing and means a player can reach wizard without ever meeting the priest.
@@ -91,5 +110,7 @@ and everything in that row's consequences column applies.
    behind an existing ward gate makes the arc free of re-carving, at the cost of the corridor being the
    thing the story is _about_.
 4. **Does the arc know about the predecessor** (Part 4 §4.11 Q5), or is the priest the whole cast?
-5. **Three chains like this, or one?** At ~12 lines and 4 assets each, three is a fortnight of authoring
+5. **Is the scan the reward for the refusal, or is the refusal enough?** Making `k_seal_is_false` unlock
+   `w_seal` is tidy, but it means a player who never offers the fake never learns the real one exists.
+6. **Three chains like this, or one?** At ~12 lines and 4 assets each, three is a fortnight of authoring
    and gives a player three routes to wizard; one is a spine that every player walks.

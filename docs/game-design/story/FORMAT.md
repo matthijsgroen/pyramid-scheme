@@ -102,19 +102,67 @@ may not assume anything.** That constraint is the reason this column exists rath
 is dressed. If this table is empty, the arc is flavour — which is a legitimate thing for an arc to be, but
 it should be said out loud.
 
-### 7. Impact
+### 7. Waypoints — how the player is steered there
+
+| id | prop/place it points at | mechanic | precision | gated by | status |
+
+Two steering mechanics exist, and they point in opposite directions
+(`docs/mods/collection-and-detector-design.md` §7):
+
+| Mechanic                                    | Direction          | Levels                                                                                  |
+| ------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------- |
+| **Compass / supplies** — active target mode | narrows **inward** | L1 which pyramid · L2 which floor · L3 exact location                                   |
+| **Corridor detector** — passive             | widens **outward** | L1 proximity · L2 somewhere on this floor · L3 pyramid marker · L4 travel-screen marker |
+
+Inward is how an arc says _go to that corner_. Outward is the long-range version — a marker on the
+journey list saying this pyramid still holds something — and it is the only tool here built for a player
+returning after a fortnight.
+
+**Precision is a reward, so an arc may withhold it.** Detector level comes from perks, which come from
+treasures, so vague early and exact later is the built progression rather than a compromise. An arc that
+wants a search to remain should ask for L1, not L3: pointing at the exact cell deletes the corridor that
+the twist was about.
+
+**The seam is a registry.** `registerCompassScanner` (`src/app/SiteMap/detectorScanners.ts`) takes a hook
+returning `(target: string) => CompassResult[]`, core merges every registered scanner, and the hieroglyph
+mod is the worked precedent. The target is an **opaque string** the registering mod interprets, and core
+"names no reward type" — so pointing at a story prop needs no core knowledge of the story.
+
+**But the result type is not yet generic, and this is the one real cost.** `CompassResult`
+(`src/game/siteTypes.ts`) carries `hieroglyphId` and `pieceIndex` alongside its address. The seam is
+generic going in and hieroglyph-shaped coming out, so a story scanner cannot fill it honestly. Generalising
+those two fields is a **core change**, not a mod one — small, but it is the thing to do first, and it is
+the answer to whether a scanner can point at a place rather than at a collectible.
+
+Two things it already gets right, worth not rebuilding:
+
+- **Its address is this format's address.** `journeyId`, `levelIdx`, `floorIdx`, `cell` — the same
+  journey / pyramid / floor / node shape a Places row uses.
+- **It already knows about gated content.** A result carries the ward keys between the floor and the
+  target, and whether it sits in a hidden corridor — deliberately as raw facts, leaving the consumer to
+  judge. So a waypoint pointing at something the player cannot yet reach is a solved problem rather than a
+  bug waiting to happen.
+
+**The trap: perk-gating by someone else's progression.** Detectors unlock through perks earned from
+treasures that have nothing to do with your arc. A waypoint the player may simply not have makes the arc
+silently unreachable for them. The clean shape is for the arc's own **knowledge** prop to unlock its own
+scan — then the arc owns its gating, the solver sees the whole chain, and "you now know what to look for"
+and "the scan now returns something" are the same beat rather than two.
+
+### 8. Impact
 
 The reason this format exists rather than a prose file. Four columns, so two arcs can be compared before
 either is written.
 
-| Axis          | What to record                                                                                                                                                                  |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Structure** | Every `structural?: yes` place. Whether any floor is re-carved, and so whether this needs a save migration to ship with it                                                      |
-| **Systems**   | New currency; new encounter kind; new loot kind; any change to `isTierUnlocked`; any new UI surface. Each of these has a known cost written down in Part 4                      |
-| **Content**   | Counts: places, props, beats, dialogue lines × 2 locales, drawn assets. This is the number that decides whether an arc is a weekend or a quarter                                |
-| **Payoff**    | What the player gets, on which rail it lands, and whether it feeds the drum (something visible per solve) or only the seams. An arc with no payoff row is a cost with no return |
+| Axis          | What to record                                                                                                                                                                                                                                                  |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Structure** | Every `structural?: yes` place. Whether any floor is re-carved, and so whether this needs a save migration to ship with it                                                                                                                                      |
+| **Systems**   | New currency; new encounter kind; new loot kind; any change to `isTierUnlocked`; any new UI surface. Each of these has a known cost written down in Part 4                                                                                                      |
+| **Content**   | Counts: places, props, beats, dialogue lines × 2 locales, drawn assets. This is the number that decides whether an arc is a weekend or a quarter                                                                                                                |
+| **Payoff**    | What the player gets, on which rail it lands, and whether it feeds the drum (something visible per solve) or only the seams. An arc with no payoff row is a cost with no return                                                                                 |
+| **Steering**  | Every waypoint the arc relies on, at what precision, and **what unlocks it**. A waypoint gated by a perk from an unrelated treasure is the failure this row exists to catch — the player who lacks it cannot see the arc at all, and nothing will tell them why |
 
-### 8. Open
+### 9. Open
 
 Numbered decisions, each with its options and what each option costs. Same shape as
 `story-and-time-brainstorm.md` — the file is for steering, so unresolved questions stay visible rather
@@ -123,7 +171,7 @@ than being quietly settled by whoever writes the next section.
 ## The index
 
 `docs/game-design/story/README.md` carries one line per arc: name, status, and its Impact row collapsed to
-four cells. That table is the overview — which arcs are cheap, which re-carve floors, which are pure copy,
+four cells — Steering folds into Systems there, because it only matters once an arc is being built. That table is the overview — which arcs are cheap, which re-carve floors, which are pure copy,
 and which actually pay the player.
 
 ## What would keep this honest later
