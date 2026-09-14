@@ -10,6 +10,9 @@ An arc is only as built as its least-built row, and its Impact row is only trust
 | ------------------------------------------------------ | ------ | ------------------------------ | ------------------------------------------------- | ---------------------------------------- | ----------------------------------- |
 | [An Offering to the Gods](arc-offering-to-the-gods.md) | sketch | 1 floor re-carved (`master_2`) | 2 currencies, 1 refusal beat, no gate change (B1) | 5 places, 4 props, 5 beats, ~12 lines ×2 | seams only — does not feed the drum |
 
+[**The main path**](main-path.md) is the spine these arcs hang from: five acts on the tier ladder, built
+almost entirely from journey names, tombs and treasures that already exist, ending where the game began.
+
 **Reading the columns.** _Structure_ is the expensive one: a re-carved floor invalidates saved exploration
 and has to ship with a migration. _Systems_ is where a cheap arc and a costly one diverge — a new currency
 is supported and small, a change to `isTierUnlocked` is neither. _Content_ decides whether an arc is a
