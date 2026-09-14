@@ -51,6 +51,8 @@ One paragraph, and one sentence of tone. What the player is after and why now.
 
 | id | who | where they speak | voice |
 
+Who these people are lives in [`cast.md`](cast.md), not here — this table is only who appears in THIS arc.
+
 Speaking is a rail, not a place — arrival, tier crossing, link completion. A character who needs a _scene_
 is a red flag: the game has no surface for one (Part 4 §4.11 Q5).
 

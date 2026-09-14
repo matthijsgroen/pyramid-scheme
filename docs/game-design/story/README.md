@@ -19,6 +19,9 @@ voice before nineteen more acts of it exist.
 [**Shipped copy**](shipped-copy.md) audits the 59 lines already in `fez.json`: 22 written for the
 redesign, 37 from before the explorer existed, and which of those to rewrite, recharacterise or delete.
 
+[**The cast**](cast.md) is who Fez and the explorer are — wants, voice, never-says, and the pair — kept
+in one place so copy written months apart still sounds like them.
+
 **Reading the columns.** _Structure_ is the expensive one: a re-carved floor invalidates saved exploration
 and has to ship with a migration. _Systems_ is where a cheap arc and a costly one diverge — a new currency
 is supported and small, a change to `isTierUnlocked` is neither. _Content_ decides whether an arc is a
