@@ -96,13 +96,16 @@ floor's key is already one of the four that unlock wizard. The story is that the
 
 ## The gaps — everything that would actually have to be written
 
-| Gap                                                                       | Kind                | Size                              |
-| ------------------------------------------------------------------------- | ------------------- | --------------------------------- |
-| The Sphinx inscription: unreadable at `starter_1`, readable at `wizard_2` | place + 2 beats     | **the whole ending**, and 2 rooms |
-| Five tomb ghosts, one per tier, each pedantic about something different   | cast + ~15 lines    | the spine's voice                 |
-| The forgery at `master_3`                                                 | 1 non-currency prop | the twist                         |
-| Arrival lines                                                             | copy                | 20 × 2 locales                    |
-| Act-break lines at each tomb                                              | copy                | 9 × 2 locales                     |
+| Gap                                                                       | Kind                    | Size                              |
+| ------------------------------------------------------------------------- | ----------------------- | --------------------------------- |
+| The Sphinx inscription: unreadable at `starter_1`, readable at `wizard_2` | place + 2 beats         | **the whole ending**, and 2 rooms |
+| Five tomb ghosts, one per tier, each pedantic about something different   | cast + ~15 source lines | the spine's voice                 |
+| The forgery at `master_3`                                                 | 1 non-currency prop     | the twist                         |
+| Arrival lines                                                             | copy                    | 20 source lines                   |
+| Act-break lines at each tomb                                              | copy                    | 9 source lines                    |
+
+Counts are **source** lines. The game is headed for most European languages, so each is paid for a dozen
+times over — the strongest practical argument for keeping story items drawn.
 
 **Structure: none.** Every beat above lands on a journey, a tomb or a treasure that already exists. The
 Sphinx inscription is the only new _place_, and it dresses a room rather than carving one — unless it is
@@ -171,6 +174,20 @@ Vivid and genuinely affecting, and `master_2` is literally named Book of the Dea
 _not_ done is a strange shape for an ending, and its register sits closer to frightening than the tone
 allows.
 
+### Translation is a selection criterion, not an afterthought
+
+The game is headed for most European languages, and every candidate here is **already** a translation — so
+whatever is chosen gets translated again, from English, a dozen times, loosely.
+
+Survivable for a wisdom line, but not neutral between these. **A is four concrete nouns**: bread, water,
+clothes, a boat. Those land in every language on the list without the translator needing any Egyptology.
+B does not — _more hidden than the green stone, yet found with the maidservants at the millstones_ leans on
+two metaphors and a job nobody has had for centuries, and in the twelfth language it will mean something
+else.
+
+The ending is the one line that has to be exactly as good in Polish as in English. That argues for plain
+nouns over beautiful images — the opposite of how a closing line would usually be picked.
+
 ### Reading these against each other
 
 | If the ending should…                                 | then                       |
@@ -180,6 +197,8 @@ allows.
 | be quotable by a seven-year-old                       | D, and accept the shrug    |
 | tie off the shop and Fez's arc                        | E, and pay for its fiction |
 | assemble across the tiers instead of arriving at once | **A**, which is four lines |
+| survive being re-translated into a dozen languages    | **A** — see above          |
+| survive being re-translated into a dozen languages    | **A** — see above          |
 
 ## Open
 

@@ -180,6 +180,28 @@ because toggling one off will degrade the arc, predictably and by design. That i
 doing its job, not a story bug. An arc leaning on five mods is not wrong, but it is fragile in five
 directions and should say so.
 
+### Counting copy when the game ships in a dozen languages
+
+The target is most European languages, not the two that exist today. So **a Content row counts source
+lines, never lines × locales** — multiplying by two understates a twelve-language build six times over, and
+an arc that reads cheap at ×2 can be a quarter's work at ×12.
+
+Three consequences worth having before any copy is written.
+
+**Loose translation is granted, and its boundary is already settled.** Story prose may be adapted freely —
+that is what makes a dozen locales affordable at all. What may never drift is anything the player matches
+against the board, and that cannot drift because it is not words: numbers and glyphs are identical in every
+locale and the player types nothing (P2). Prose adapts; mechanism does not translate.
+
+**At this scale, drawn stops being a preference and becomes the cheap option.** A drawn story item costs one
+asset whatever the language count; a written one costs a line per locale, forever, including every revision.
+§4.9 asks whether drawn-not-written is a rule or a preference — the budget answers from the other side, and
+both answers point the same way.
+
+**Plural forms are a production item, not a detail.** `src/i18n/plurals.spec.ts` imports `en` and `nl`
+directly and checks every `_one`/`_other` pair resolves. Slavic languages need `_few` and `_many` too, so
+the authored strings and that spec's shape both want generalising before a third locale lands.
+
 ### 9. Impact
 
 The reason this format exists rather than a prose file. Four columns, so two arcs can be compared before
@@ -189,7 +211,7 @@ either is written.
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Structure** | Every `structural?: yes` place. Whether any floor is re-carved, and so whether this needs a save migration to ship with it                                                                                                                                      |
 | **Systems**   | New currency; new encounter kind; new loot kind; any change to `isTierUnlocked`; any new UI surface. Each of these has a known cost written down in Part 4                                                                                                      |
-| **Content**   | Counts: places, props, beats, dialogue lines × 2 locales, drawn assets. This is the number that decides whether an arc is a weekend or a quarter                                                                                                                |
+| **Content**   | Counts: places, props, beats, **source** dialogue lines, drawn assets. Source lines, not lines × locales — the multiplier is heading for a dozen, see below                                                                                                     |
 | **Payoff**    | What the player gets, on which rail it lands, and whether it feeds the drum (something visible per solve) or only the seams. An arc with no payoff row is a cost with no return                                                                                 |
 | **Steering**  | Every waypoint the arc relies on, at what precision, and **what unlocks it**. A waypoint gated by a perk from an unrelated treasure is the failure this row exists to catch — the player who lacks it cannot see the arc at all, and nothing will tell them why |
 
