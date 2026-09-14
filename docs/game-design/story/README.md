@@ -16,6 +16,9 @@ almost entirely from journey names, tombs and treasures that already exist, endi
 [**Act I**](script-act-1.md) is the first written copy — 24 source lines, and the place to argue with the
 voice before nineteen more acts of it exist.
 
+[**Shipped copy**](shipped-copy.md) audits the 59 lines already in `fez.json`: 22 written for the
+redesign, 37 from before the explorer existed, and which of those to rewrite, recharacterise or delete.
+
 **Reading the columns.** _Structure_ is the expensive one: a re-carved floor invalidates saved exploration
 and has to ship with a migration. _Systems_ is where a cheap arc and a costly one diverge — a new currency
 is supported and small, a change to `isTierUnlocked` is neither. _Content_ decides whether an arc is a
