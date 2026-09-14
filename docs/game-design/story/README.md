@@ -13,6 +13,9 @@ An arc is only as built as its least-built row, and its Impact row is only trust
 [**The main path**](main-path.md) is the spine these arcs hang from: five acts on the tier ladder, built
 almost entirely from journey names, tombs and treasures that already exist, ending where the game began.
 
+[**Act I**](script-act-1.md) is the first written copy — 24 source lines, and the place to argue with the
+voice before nineteen more acts of it exist.
+
 **Reading the columns.** _Structure_ is the expensive one: a re-carved floor invalidates saved exploration
 and has to ship with a migration. _Systems_ is where a cheap arc and a costly one diverge — a new currency
 is supported and small, a change to `isTierUnlocked` is neither. _Content_ decides whether an arc is a

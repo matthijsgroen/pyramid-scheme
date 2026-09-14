@@ -91,7 +91,11 @@ ship with the migration, not after it.
 | id | rail | trigger | prop/place | what is said or shown | assumes | status |
 
 `rail` is one of: **arrival** (20, ordered), **tier** (5, ordered), **link** (unordered), **found**
-(unordered). `assumes` lists beat ids this one depends on having fired — **and a beat on an unordered rail
+(unordered), and **reaction** (unordered) — the last firing on what the player DID rather than on where
+they are: a board solved unaided, a wrong claim, a find. It is the only rail a relationship can be built
+on, because the explorer never speaks, so the companion can only ever be reacting. It is also the easiest
+to ruin: one beat per solve is a tooltip with legs, so reaction beats are rare, escalating, and remember
+the last one. `assumes` lists beat ids this one depends on having fired — **and a beat on an unordered rail
 may not assume anything.** That constraint is the reason this column exists rather than being remembered.
 
 ### 6. The chain
