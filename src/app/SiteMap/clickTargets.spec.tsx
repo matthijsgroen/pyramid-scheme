@@ -60,44 +60,54 @@ describe("what the map offers to click", () => {
 // to check — the invariant has to hold for whatever maze the seed produced. Hence a spread of seeds
 // rather than one.
 describe("what the map offers while walking a floor", () => {
-  it.each([1, 3, 7, 11, 19, 23, 31, 47])("never offers a target it cannot honour, seed %i", seed => {
-    const floor = generatedWorldConfigs["starter_1"]?.flat()[0]
-    if (!floor) throw new Error("no starter_1 floor to read")
-    const assembled = assembleFloor("starter_1:0", floor, seed)
-    if (!assembled.success) throw new Error("assembly failed")
+  it.each([1, 3, 7, 11, 19, 23, 31, 47])(
+    "never offers a target it cannot honour, seed %i",
+    seed => {
+      const floor = generatedWorldConfigs["starter_1"]?.flat()[0]
+      if (!floor) throw new Error("no starter_1 floor to read")
+      const assembled = assembleFloor("starter_1:0", floor, seed)
+      if (!assembled.success) throw new Error("assembly failed")
 
-    let grid = assembled.grid
-    let at = assembled.grid.entrancePos
-    const offences: string[] = []
-    let steps = 0
+      let grid = assembled.grid
+      let at = assembled.grid.entrancePos
+      const offences: string[] = []
+      let steps = 0
 
-    for (let step = 0; step < 40; step++) {
-      grid = completeCell(grid, at[0], at[1])
-      steps++
+      for (let step = 0; step < 40; step++) {
+        grid = completeCell(grid, at[0], at[1])
+        steps++
 
-      for (const [r, c] of clickEveryTarget(grid, at)) {
-        const cell = grid.cells[r]?.[c]
-        if (!cell || cell.type === "empty") offences.push(`step ${step}: (${r},${c}) is void`)
-        // …and standable is not enough: it has to be somewhere the player can actually walk to from
-        // where they stand, or the marker is a promise the map cannot keep.
-        else if (findPath(grid, at, [r, c]).length === 0) offences.push(`step ${step}: (${r},${c}) has no route`)
+        for (const [r, c] of clickEveryTarget(grid, at)) {
+          const cell = grid.cells[r]?.[c]
+          if (!cell || cell.type === "empty") offences.push(`step ${step}: (${r},${c}) is void`)
+          // …and standable is not enough: it has to be somewhere the player can actually walk to from
+          // where they stand, or the marker is a promise the map cannot keep.
+          else if (findPath(grid, at, [r, c]).length === 0) offences.push(`step ${step}: (${r},${c}) has no route`)
+        }
+
+        // Walk on: the nearest reachable cell that is not where we already stand.
+        const next: [number, number] | undefined = grid.cells.flatMap((row, r) =>
+          row.flatMap((cell, c) =>
+            cell.type !== "empty" && cell.state === "reachable" && !(r === at[0] && c === at[1])
+              ? ([[r, c]] as [number, number][])
+              : []
+          )
+        )[0]
+        if (!next) break
+        at = next
       }
 
-      // Walk on: the nearest reachable cell that is not where we already stand.
-      const next: [number, number] | undefined = grid.cells.flatMap((row, r) =>
-        row.flatMap((cell, c) =>
-          cell.type !== "empty" && cell.state === "reachable" && !(r === at[0] && c === at[1])
-            ? ([[r, c]] as [number, number][])
-            : []
-        )
-      )[0]
-      if (!next) break
-      at = next
-    }
-
-    expect(steps).toBeGreaterThan(5)
-    expect(offences).toEqual([])
-  })
+      expect(steps).toBeGreaterThan(5)
+      expect(offences).toEqual([])
+      // A BUDGET THAT MATCHES THE WORKLOAD, the way worldFloorAssembly's does. Each case walks up to 40
+      // steps and renders the whole site map at every one of them, so a single seed is some forty renders
+      // — a second or two on an idle machine and past the default five on a busy one. It came back red
+      // three times on a green tree, always here, always on the runner sharing its CPU with the second
+      // build of the same commit. The number is still low enough that a genuine hang fails rather than
+      // hangs, and nothing about the assertions above is relaxed by it.
+    },
+    30_000
+  )
 })
 
 // The other half of the same defect: the map only ever offered standable targets (above), but the
