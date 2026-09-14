@@ -13,6 +13,68 @@ do not — old places reopening once you are strong enough to come back.
 
 Tone: a cheerful expedition that keeps turning out to be more serious than the people in it think.
 
+### Which now, and whose then
+
+The player is a present-day explorer — hat, boots, compass, a folded map with a cross on it — walking into
+tombs sealed three thousand years ago. **So the priest cannot refuse anybody: he has been dead since long
+before anyone reading this was born.** Three answers, and the arc wants all three.
+
+**The person is gone; the mechanism is not.** The offering table still works because it was built to work
+with nobody attending it. The ask is a carving, the refusal is a lock that does not turn, and neither needs
+a voice — which also keeps the whole exchange _drawn_ rather than written (FORMAT §3). Nobody in this arc
+is a ghost, and nothing has to be resurrected to make it run.
+
+**The rite was interrupted, which is why it is still open.** The seal never reached the priest. Whatever
+happened three thousand years ago, the errand was left half-done, and the altar has been waiting for the
+rest of it ever since. That is the answer to "why is this still here for me to finish" that does not
+require anyone to have been keeping it warm.
+
+**And the forgery is modern.** A convincing copy of a pharaoh's seal is exactly what the antiquities trade
+makes, and somebody got here before the player. So the decoy is not an ancient imitation buried with a
+noble — it is recent, planted or abandoned by whoever tried this first. **That twist is only available
+because the game is set in the now**, and it knots the fake, the predecessor and Fez's own trade into one
+thing instead of three.
+
+The useful consequence: the paper the player finds comes in **two ages**. Ledgers three thousand years old,
+and notes from a hundred. Telling them apart is the same skill as telling a real seal from a copy.
+
+### Why the ladder runs merchant → noble → priest → pharaoh → gods
+
+**The arc does not invent this order. The world already has it**, in the tomb names, in tier order:
+
+| Tier    | Tomb                                                            |
+| ------- | --------------------------------------------------------------- |
+| starter | Forgotten Merchant's Cache                                      |
+| junior  | Noble's Hidden Vault                                            |
+| expert  | High Priest's Treasury · Inner Sanctum                          |
+| master  | Pharaoh's Secret Hoard · Hall of Osiris                         |
+| wizard  | Vault of the Gods · Realm of Cosmic Forces · Throne of Eternity |
+
+A social ascent, already authored and currently unsaid. Everything below is the arc noticing it.
+
+**The obvious tombs were robbed first, so what is left is paper.** The gold left a merchant's cache
+centuries ago. What nobody bothered carrying out is ledgers, tallies, a sketch of a door — which is why
+the early tiers hand the player knowledge rather than treasure, and makes that read as a discovery rather
+than as a design compromise.
+
+**Merchants kept records.** A cache says who supplied what to whom, including who fitted out a royal
+burial. The trail to a pharaoh's goods runs through the people who sold them — which gives Fez a domain he
+is genuinely good at, rather than a stall and a greeting.
+
+**You learn what real looks like by handling imitations.** Nobles were buried with cheaper copies of royal
+regalia. So the early tiers are where the player handles fakes without knowing that is what they are doing,
+and by master the decoy seal is convincing _because_ of it. The twist is then earned rather than sprung:
+it is the fiction of the difficulty curve.
+
+**Fez's reason is not the player's, and that is the joke.** He is not approaching the gods. Merchants and
+nobles are easier to rob and he is working up the market. He finds out late what he has been helping with,
+which is the arc his own beats already point at (Part 3 §3.4).
+
+**Introductions are what the tiers actually are.** You cannot walk up to a high priest. A merchant knew a
+noble, a noble knew a priest — so each tier's unlock treasure is the token that vouches for you at the next
+door. That reading costs nothing: it is Part 4 §4.5 B1, retro-fitting meaning onto `master_a_1..4` without
+touching `isTierUnlocked`, and it gives every tier a reason to exist that is not "bigger numbers".
+
 ## 2. Cast
 
 | id       | who                                                  | where they speak             | voice                                                   | status |
@@ -45,8 +107,9 @@ satisfiable without the hidden corridor and will happily certify a world where t
 | `p_doors`  | `wizard_1 / floor 0 / where: first`             | the god's doors, opened by `rite`                 | no          | sketch |
 | `p_rumour` | `expert_1 / any`                                | `note_priest` in ordinary loot                    | no          | sketch |
 
-`p_altar`, `p_decoy` and `p_doors` dress rooms that already exist — free. `p_real` needs a `hiddenPath`,
-which carves, and that is the single structural row in the arc.
+`p_altar` sits in the High Priest's Treasury because that is where the priest is — the tomb ladder is the
+arc's spine, not a backdrop to it. It, `p_decoy` and `p_doors` dress rooms that already exist, so all three
+are free. `p_real` needs a `hiddenPath`, which carves, and that is the single structural row in the arc.
 
 ## 5. Beats
 
@@ -116,6 +179,8 @@ honestly point at `p_real` until those are generalised (FORMAT §7).
 3. **Is the decoy worth a structural row?** Dropping `p_real`'s `hiddenPath` and putting `seal_true`
    behind an existing ward gate makes the arc free of re-carving, at the cost of the corridor being the
    thing the story is _about_.
-4. **Does the arc know about the predecessor** (Part 4 §4.11 Q5), or is the priest the whole cast?
+4. **How much of `the_other` is ever shown?** The forgery says someone tried this before and got it wrong,
+   which is the whole character and costs nothing. Saying more — a name, a fate, whether they are still
+   down here — is where this turns into needing a scene.
 5. **Three chains like this, or one?** At ~12 lines and 4 assets each, three is a fortnight of authoring
    and gives a player three routes to wizard; one is a spine that every player walks.
