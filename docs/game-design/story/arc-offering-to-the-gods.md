@@ -19,10 +19,18 @@ The player is a present-day explorer — hat, boots, compass, a folded map with 
 tombs sealed three thousand years ago. **So the priest cannot refuse anybody: he has been dead since long
 before anyone reading this was born.** Three answers, and the arc wants all three.
 
-**The person is gone; the mechanism is not.** The offering table still works because it was built to work
-with nobody attending it. The ask is a carving, the refusal is a lock that does not turn, and neither needs
-a voice — which also keeps the whole exchange _drawn_ rather than written (FORMAT §3). Nobody in this arc
-is a ghost, and nothing has to be resurrected to make it run.
+**Either the person is gone and the mechanism is not, or the priest is still standing there.** Both work
+and the choice is §10.6.
+
+_The mechanism._ The offering table was built to work with nobody attending it. The ask is a carving, the
+refusal is a lock that does not turn, neither needs a voice, and the whole exchange stays _drawn_ rather
+than written (FORMAT §3).
+
+_The ghost._ A high priest who is still at his post and extremely particular about procedure. It costs no
+new surface — he speaks on the same rail a carving does — and it is funnier: a forgery refused by a
+pedantic dead clerk is a character beat, where a lock not turning is a mechanism failing. He can also say
+what the rite is _for_, which is the one thing a carving cannot do and the thing that makes the tomb
+teach something.
 
 **The rite was interrupted, which is why it is still open.** The seal never reached the priest. Whatever
 happened three thousand years ago, the errand was left half-done, and the altar has been waiting for the
@@ -182,5 +190,9 @@ honestly point at `p_real` until those are generalised (FORMAT §7).
 4. **How much of `the_other` is ever shown?** The forgery says someone tried this before and got it wrong,
    which is the whole character and costs nothing. Saying more — a name, a fate, whether they are still
    down here — is where this turns into needing a scene.
-5. **Three chains like this, or one?** At ~12 lines and 4 assets each, three is a fortnight of authoring
+5. **Is the priest a carving or a ghost?** The carving costs no character and keeps the arc entirely
+   mechanical. The ghost costs no new surface either, is funnier at the refusal, and is the only version
+   that can explain what the rite was for — which is the arc's one chance to make a tomb teach something
+   about Egypt rather than just contain a puzzle.
+6. **Three chains like this, or one?** At ~12 lines and 4 assets each, three is a fortnight of authoring
    and gives a player three routes to wizard; one is a spine that every player walks.
