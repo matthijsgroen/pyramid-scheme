@@ -32,12 +32,12 @@ which is different from "anywhere" — say `any` when you mean anywhere.
 
 Every row carries one. This is the whole mechanism for filling detail in over time.
 
-| Status    | Means                                                            |
-| --------- | ---------------------------------------------------------------- |
-| `sketch`  | the idea, no address, no copy — safe to change freely            |
-| `placed`  | address chosen and checked against the world; copy still missing |
-| `written` | copy exists in both locales                                      |
-| `built`   | authored in the DSL / the story mod, and playable                |
+| Status    | Means                                                                  |
+| --------- | ---------------------------------------------------------------------- |
+| `sketch`  | the idea, no address, no copy — safe to change freely                  |
+| `placed`  | address chosen and checked against the world; copy still missing       |
+| `written` | copy exists in both locales                                            |
+| `built`   | authored in the DSL and in whichever mods own the pieces, and playable |
 
 An arc is only as built as its least-built row, and the impact ledger is only trustworthy from `placed`.
 
@@ -164,7 +164,23 @@ silently unreachable for them. The clean shape is for the arc's own **knowledge*
 scan — then the arc owns its gating, the solver sees the whole chain, and "you now know what to look for"
 and "the scan now returns something" are the same beat rather than two.
 
-### 8. Impact
+### 8. Where an arc lives — nowhere, and everywhere
+
+**An arc is not a mod.** Mod boundaries exist to keep technology from entangling; they are not containers
+for features or for fiction. So an arc has no home module. Each piece it needs lives wherever that
+_technology_ already lives — a gating currency with the currency machinery, a waypoint scanner with the
+detector machinery, an encounter family with the encounter families, copy in the locales, placement in the
+world-gen spec.
+
+What is left over — the premise, the cast, the order of beats — is **data and prose**, which need no module
+at all. That is what this file is.
+
+The practical consequence is for the Impact ledger below: an arc should **name the mods it leans on**,
+because toggling one off will degrade the arc, predictably and by design. That is a technical boundary
+doing its job, not a story bug. An arc leaning on five mods is not wrong, but it is fragile in five
+directions and should say so.
+
+### 9. Impact
 
 The reason this format exists rather than a prose file. Four columns, so two arcs can be compared before
 either is written.
@@ -177,7 +193,7 @@ either is written.
 | **Payoff**    | What the player gets, on which rail it lands, and whether it feeds the drum (something visible per solve) or only the seams. An arc with no payoff row is a cost with no return                                                                                 |
 | **Steering**  | Every waypoint the arc relies on, at what precision, and **what unlocks it**. A waypoint gated by a perk from an unrelated treasure is the failure this row exists to catch — the player who lacks it cannot see the arc at all, and nothing will tell them why |
 
-### 9. Open
+### 10. Open
 
 Numbered decisions, each with its options and what each option costs. Same shape as
 `story-and-time-brainstorm.md` — the file is for steering, so unresolved questions stay visible rather

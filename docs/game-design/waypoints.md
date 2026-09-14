@@ -5,9 +5,10 @@
 deeper tomb treasure are the others, and they are the ones that have to work whether or not any story
 exists.
 
-**So this is not story-owned.** A world with the story mod toggled off must still lead the player, which
-puts the pull itself in core or in its own mod, and lets the story register into it the way the hieroglyph
-mod registers a compass scanner today.
+**Guidance is a technology, not a feature of any narrative.** A mod boundary exists to keep technology from
+entangling, so the question "where does this live" is answered by what it _is_ — a registry, a set of
+ranges, a curation rule — and not by who happens to use it. A story arc is one caller among several, and it
+registers a scanner the way the hieroglyph mod already does.
 
 ## What exists now
 
@@ -78,8 +79,9 @@ much cheaper, and not a substitute — that hole belongs to the reward cadence.
 
 1. **Curation** — which of the three options above, and does a standing list become a log by another name?
 2. **Does a waypoint ever expire?** A thread surfaced once and never again is clean and punishes absence.
-3. **Core or its own mod?** Newly-possible is derived from core reachability facts; nearly-done reads mod
-   collection state, the way the compass already reaches into the hieroglyph mod.
+3. **Core or its own mod?** A technical question with a technical answer: newly-possible is derived from
+   core reachability facts, while nearly-done reads mod collection state the way the compass already
+   reaches into the hieroglyph mod. If the derivation needs no mod's state, it is core.
 4. **Does the map show them, or only the travel screen?** The corridor detector's L3/L4 markers imply both,
    and the map's own rendering work is live (`docs/instructions/map-html-port.md`).
 5. **What happens the first time two arcs and three derived pulls are live at once?** No design here
