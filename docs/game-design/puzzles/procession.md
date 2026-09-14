@@ -38,14 +38,14 @@ teaches itself: move something, watch a mark go red, learn what the mark meant.
 
 ### 2.1 The six marks
 
-| Mark          | Drawn as                                             | What it constrains                              |
-| ------------- | ---------------------------------------------------- | ----------------------------------------------- |
-| **pin**       | a notch on the track under one bar                   | that bar starts on that tick                     |
-| **link (n)**  | two swatches with a numeral between them             | exactly `n` ticks between A's end and B's start  |
-| **before**    | two swatches, one arrow                              | A ends no later than B starts                    |
-| **apart**     | two swatches, arrows both ways                       | the two never overlap — **in either order**     |
-| **together**  | two swatches drawn across each other                 | the two share at least one tick                  |
-| **span (T)**  | the rows stacked, with a numeral                     | first start to last end is exactly `T` ticks     |
+| Mark         | Drawn as                                 | What it constrains                              |
+| ------------ | ---------------------------------------- | ----------------------------------------------- |
+| **pin**      | a notch on the track under one bar       | that bar starts on that tick                    |
+| **link (n)** | two swatches with a numeral between them | exactly `n` ticks between A's end and B's start |
+| **before**   | two swatches, one arrow                  | A ends no later than B starts                   |
+| **apart**    | two swatches, arrows both ways           | the two never overlap — **in either order**     |
+| **together** | two swatches drawn across each other     | the two share at least one tick                 |
+| **span (T)** | the rows stacked, with a numeral         | first start to last end is exactly `T` ticks    |
 
 Two of them carry a number and those two are the arithmetic: **link** is a gap counted hour by hour,
 **span** is a sum over the whole day. **apart** is the only mark that does not say which way round, and the
@@ -102,7 +102,7 @@ a three-bar starter board asks what is left of the day once the pinned bar and t
 `chain` stays in the ladder because propagation has to start somewhere and the hint wording keys on it; a
 spec holds it to a hand-built board so the rung cannot rot.
 
-**There is no fifth rung, and that is a finding rather than a decision.** A supposition *inside* a
+**There is no fifth rung, and that is a finding rather than a decision.** A supposition _inside_ a
 supposition was designed as the top rung and does not occur: across 900 boards rolled at the widest days and
 bar counts this family ships, not one needed a second level. What separates the top two tiers instead is
 **how much of the board only yields to a supposition**, counted as candidates struck that way — a number,
@@ -136,13 +136,13 @@ the judging happens after a whole candidate exists.
 Rolled over 2000 seeds a tier, one attempt each — the search the offline pass runs. `steps` is what the
 ladder reported, and it is the closest thing to a bookkeeping measure this family has.
 
-| Tier    | Bars | Ticks | Marks in play             | Rung    | Splits | Seeds clean | Marks on the board | steps |
-| ------- | ---- | ----- | ------------------------- | ------- | ------ | ----------- | ------------------ | ----- |
-| starter | 3    | 8     | pin, link, before, span   | squeeze | —      | 7.1%        | 2–3                | 15–18 |
-| junior  | 4    | 10    | + apart, together         | apart   | —      | 13.3%       | 4–5                | 28–32 |
-| expert  | 5    | 12    | all                       | split   | 1–3    | 3.4%        | ~7                 | 43–49 |
-| master  | 5    | 14    | all                       | split   | 4–8    | 1.4%        | ~7                 | 52–58 |
-| wizard  | 6    | 16    | all                       | split   | 9–20   | 2.4%        | ~8                 | 73–83 |
+| Tier    | Bars | Ticks | Marks in play           | Rung    | Splits | Seeds clean | Marks on the board | steps |
+| ------- | ---- | ----- | ----------------------- | ------- | ------ | ----------- | ------------------ | ----- |
+| starter | 3    | 8     | pin, link, before, span | squeeze | —      | 7.1%        | 2–3                | 15–18 |
+| junior  | 4    | 10    | + apart, together       | apart   | —      | 13.3%       | 4–5                | 28–32 |
+| expert  | 5    | 12    | all                     | split   | 1–3    | 3.4%        | ~7                 | 43–49 |
+| master  | 5    | 14    | all                     | split   | 4–8    | 1.4%        | ~7                 | 52–58 |
+| wizard  | 6    | 16    | all                     | split   | 9–20   | 2.4%        | ~8                 | 73–83 |
 
 **The top three tiers are the same rung, and the splits column is what tells them apart** — how many
 candidates only fall to a supposition. The ceiling matters as much as the floor: past twenty, a board stops
@@ -188,13 +188,13 @@ language and a sign is not.
 
 Five casts ship, and four of them carry a role tag outright:
 
-| Face       | Role       | The doings                                                                     |
-| ---------- | ---------- | ------------------------------------------------------------------------------ |
-| default    | —          | the fire, the water carrying, the baking, the boat trip, the ox driving, the night watch |
-| `funerary` | `funerary` | the plastering, the grid drawing, the carving, the painting, the gilding, the door fitting |
+| Face       | Role       | The doings                                                                                        |
+| ---------- | ---------- | ------------------------------------------------------------------------------------------------- |
+| default    | —          | the fire, the water carrying, the baking, the boat trip, the ox driving, the night watch          |
+| `funerary` | `funerary` | the plastering, the grid drawing, the carving, the painting, the gilding, the door fitting        |
 | `cosmos`   | `cosmos`   | the sun's crossing, the star's rising, the moon's watch, the open sky, the dawn, the turning year |
-| `water`    | `water`    | the flood, the channel digging, the basin filling, the field watering, the ferrying, the reaping |
-| `trade`    | `trade`    | the goods sorting, the bread selling, the beer selling, the ferrying, the hauling, the tally |
+| `water`    | `water`    | the flood, the channel digging, the basin filling, the field watering, the ferrying, the reaping  |
+| `trade`    | `trade`    | the goods sorting, the bread selling, the beer selling, the ferrying, the hauling, the tally      |
 
 **What that buys, measured over the registered families**: `trade` goes from three members to **four**, which
 is the floor a journey must clear before it may restrict to a role (§11.0) — the pool §11.0 names first is

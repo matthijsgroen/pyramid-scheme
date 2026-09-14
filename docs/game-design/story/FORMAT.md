@@ -106,6 +106,11 @@ it should be said out loud.
 
 | id | prop/place it points at | mechanic | precision | gated by | status |
 
+Story waypoints are one client of a **guidance layer** that has to work with no story at all — motivating
+the next tier, an unopened side path, a tomb two treasures short. That layer, its ranges and the curation
+problem it stands on are in [`../waypoints.md`](../waypoints.md); this section is only the arc-authored
+slice of it.
+
 Two steering mechanics exist, and they point in opposite directions
 (`docs/mods/collection-and-detector-design.md` §7):
 
