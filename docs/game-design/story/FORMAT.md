@@ -98,6 +98,44 @@ to ruin: one beat per solve is a tooltip with legs, so reaction beats are rare, 
 the last one. `assumes` lists beat ids this one depends on having fired — **and a beat on an unordered rail
 may not assume anything.** That constraint is the reason this column exists rather than being remembered.
 
+#### Every line names its speaker
+
+A written line is always prefixed, never left to context:
+
+```
+> **Fez:** Three thousand years, and the receipts outlived the goods. Typical.
+> **Ipi:** I kept these accounts for forty years. I am not leaving them in that state.
+```
+
+Unattributed copy reads fine in a draft where one character happens to be talking and then goes wrong the
+moment a second one is added, a line moves between beats, or a translator opens the file with no idea who
+is speaking. It is also what lets a spec later check that every speaker in a script is a `id` in the arc's
+Cast table.
+
+**Speakers that are not people are still speakers.** A carving, a ledger, a wall: `**Carving:**`. If an arc
+wants stage directions rather than speech, those are italic and unprefixed — a reader can always tell what
+is said from what is seen.
+
+**The silent one is `Explorer:`, not `Player:`.** The player is the person holding the phone; the explorer
+is the character in the hat, and only one of those can be written for. Which matters because of the next
+rule.
+
+##### Whether the explorer speaks at all is a live decision, not a formatting one
+
+Today the explorer has no lines anywhere, and that is what the **reaction** rail exists for: a bond built
+out of Fez noticing what the player did, because there is nothing for the player to say back.
+
+P2 does not forbid it — it bans the player _producing_ language as input, and authored copy is not input.
+So the explorer could speak. The trade is the old silent-protagonist one:
+
+| Explorer           | What it buys                                                                     | What it costs                                                                                                            |
+| ------------------ | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **Silent** (today) | the explorer is whoever is holding the phone; bonds are built from being noticed | every relationship beat has to be one-sided, which is harder to write well                                               |
+| **Speaks**         | real dialogue, and the bond can be mutual                                        | the explorer becomes a person with opinions the player may not share, and every line is a line the player did not choose |
+
+For a game a child plays as themselves, silent is the safer default and the harder writing job. Decide it
+before Act II, because Act II is where the bond is supposed to start showing.
+
 ### 6. The chain
 
 | lock | scope | demands | supplied by | placed at | status |

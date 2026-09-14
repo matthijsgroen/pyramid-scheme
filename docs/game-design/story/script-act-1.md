@@ -16,21 +16,21 @@ See it, teach one true thing, land lightly. Fez speaks in "we"; he is a companio
 `story.arrival.starter_1.*` — arrival rail, assumes nothing. **The whole ending is set up here**, and the
 player must not know that.
 
-> There's writing on it. Down at the base, where the sand keeps shifting off.
+> **Fez:** There's writing on it. Down at the base, where the sand keeps shifting off.
 >
-> Can you read it? No. Me neither.
+> **Fez:** Can you read it? No. Me neither.
 >
-> Someone could, once.
+> **Fez:** Someone could, once.
 
 ## `starter_2` — Papyrus Merchant's Route · the paper trail
 
 `story.arrival.starter_2.*`
 
-> Now this I understand. Everything that ever went up the Nile came past here first.
+> **Fez:** Now this I understand. Everything that ever went up the Nile came past here first.
 >
-> And merchants write it all down. Who bought what, who owed whom, who was late.
+> **Fez:** And merchants write it all down. Who bought what, who owed whom, who was late.
 >
-> Three thousand years, and the receipts outlived the goods. Typical.
+> **Fez:** Three thousand years, and the receipts outlived the goods. Typical.
 
 ## `starter_3` — Temple of Bastet · the door
 
@@ -39,22 +39,22 @@ player must not know that.
 The mosaic's own Bastet lines already do the cat (`fez.json` `mosaicStarter`), so this does the **door** —
 which is the ward gates the player is about to start meeting.
 
-> People came here to ask for protection, and protection meant a door that stays shut.
+> **Fez:** People came here to ask for protection, and protection meant a door that stays shut.
 >
-> Every sealed thing in this country was sealed by someone who meant it.
+> **Fez:** Every sealed thing in this country was sealed by someone who meant it.
 >
-> Which is going to be inconvenient for us. I'll be honest with you.
+> **Fez:** Which is going to be inconvenient for us. I'll be honest with you.
 
 ## `starter_4` — Scribe's Academy · signs, and the hook paid forward
 
 `story.arrival.starter_4.*`
 
-> This is where they were taught. Sign by sign, on broken pottery — papyrus was far too dear to waste on
-> children.
+> **Fez:** This is where they were taught. Sign by sign, on broken pottery — papyrus was far too dear to
+> waste on children.
 >
-> Learn enough of them and a wall stops being decoration.
+> **Fez:** Learn enough of them and a wall stops being decoration.
 >
-> I'd like another look at that Sphinx. Not yet. Soon.
+> **Fez:** I'd like another look at that Sphinx. Not yet. Soon.
 
 ## `starter_treasure_tomb` — Forgotten Merchant's Cache · Ipi
 
@@ -143,19 +143,22 @@ That last line already says **us**. The middle three acts are what earns the wor
 
 **On the first board solved without a hint:**
 
-> That was quick.
+> **Fez:** That was quick.
 >
-> I've walked with people who'd take a week over a door like that. Not naming names. Mostly me.
+> **Fez:** I've walked with people who'd take a week over a door like that. Not naming names. Mostly me.
 
 **On leaving the first tomb, after Ipi:**
 
-> Right. I came for the resale. I'm saying it now, while it's still true.
+> **Fez:** Right. I came for the resale. I'm saying it now, while it's still true.
 
 The second is doing two jobs: it plants his stated reason where a child hears a joke and an adult hears a
 flag, and it makes Act V's refusal a payoff rather than a change of heart.
 
 ## Open
 
+0. **Does the explorer ever speak?** Nothing in Act I gives them a line, and the reaction rail
+   was designed on that assumption. FORMAT §5 has the trade; it wants settling before Act II, which is
+   where the bond is meant to start showing.
 1. **Does `starter_3` land too close to the mosaic's Bastet panel?** Both are about protection; this one is
    about doors and that one about cats, but they are twelve lines apart in a player's first hour.
 2. **Is "Someone could, once." too wistful for line three of the game?** The alternative is ending the
