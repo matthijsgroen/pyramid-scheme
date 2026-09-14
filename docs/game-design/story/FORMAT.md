@@ -92,8 +92,8 @@ ship with the migration, not after it.
 
 `rail` is one of: **arrival** (20, ordered), **tier** (5, ordered), **link** (unordered), **found**
 (unordered), and **reaction** (unordered) — the last firing on what the player DID rather than on where
-they are: a board solved unaided, a wrong claim, a find. It is the only rail a relationship can be built
-on, because the explorer never speaks, so the companion can only ever be reacting. It is also the easiest
+they are: a board solved unaided, a wrong claim, a find. It carries what dialogue cannot observe — a board solved
+unaided is not something a character can remark on having heard. It is also the easiest
 to ruin: one beat per solve is a tooltip with legs, so reaction beats are rare, escalating, and remember
 the last one. `assumes` lists beat ids this one depends on having fired — **and a beat on an unordered rail
 may not assume anything.** That constraint is the reason this column exists rather than being remembered.
@@ -116,25 +116,38 @@ Cast table.
 wants stage directions rather than speech, those are italic and unprefixed — a reader can always tell what
 is said from what is seen.
 
-**The silent one is `Explorer:`, not `Player:`.** The player is the person holding the phone; the explorer
-is the character in the hat, and only one of those can be written for. Which matters because of the next
-rule.
+**The prefix is `Explorer:`, not `Player:`.** The player is the person holding the phone; the explorer is
+the character in the hat, and only one of those can be written for.
 
-##### Whether the explorer speaks at all is a live decision, not a formatting one
+##### The explorer speaks, and is a character rather than an avatar (decided)
 
-Today the explorer has no lines anywhere, and that is what the **reaction** rail exists for: a bond built
-out of Fez noticing what the player did, because there is nothing for the player to say back.
+The explorer is **not** the player. There is no customisation screen and none is wanted, so the job is a
+character anybody is happy to be next to — which is a different and easier job than a blank the player is
+supposed to project onto.
 
-P2 does not forbid it — it bans the player _producing_ language as input, and authored copy is not input.
-So the explorer could speak. The trade is the old silent-protagonist one:
+They speak. One-sided comedy is hard, and a companion who only ever gets reactions cannot be funny with
+anyone.
 
-| Explorer           | What it buys                                                                     | What it costs                                                                                                            |
-| ------------------ | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **Silent** (today) | the explorer is whoever is holding the phone; bonds are built from being noticed | every relationship beat has to be one-sided, which is harder to write well                                               |
-| **Speaks**         | real dialogue, and the bond can be mutual                                        | the explorer becomes a person with opinions the player may not share, and every line is a line the player did not choose |
+**Fez is the excitable one already** — his shipped lines run to _"Wow, our first treasure! Well done!"_ So
+the explorer is the dry one. That pairing is funnier against a talking lizard in a fez than the reverse,
+and deadpan is the register that survives translation best: short, literal, no wordplay to reconstruct.
 
-For a game a child plays as themselves, silent is the safer default and the harder writing job. Decide it
-before Act II, because Act II is where the bond is supposed to start showing.
+Four rules keep them likable to everyone, and three of them are mechanical:
+
+- **No pronoun, ever.** Nobody refers to the explorer in the third person. Everyone addresses them as
+  "you", which is what dialogue does anyway. The art reads one way; the text commits to nothing.
+- **No name.** Nothing in the story needs to address them by one, and a name carries a language and a
+  place with it.
+- **No gendered self-description — and this is the one that bites in translation.** French, Italian,
+  Polish and the rest gender adjectives and past participles, so _"I was surprised"_ forces a translator to
+  pick. Keep their lines in the present tense, on questions, imperatives and observations about the world.
+  _"It was a door."_ translates everywhere. _"I'm exhausted."_ does not.
+- **No backstory that implies a demographic.** No family in the trade, no schooling, no home town.
+  Competence, curiosity, and being unbothered are traits anyone can wear.
+
+**The bond is now two-sided, so the reaction rail is a tool rather than the only one.** It still carries
+what Fez notices about how the player _plays_ — a board solved unaided is not something dialogue can
+observe — but the friendship itself can now be written as conversation.
 
 ### 6. The chain
 
