@@ -1,6 +1,7 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
-import { SiteMapView, approachCells, buildRoomClaims, tileRegionsFor } from "./SiteMapView"
+import { SiteMapView, approachCells } from "./SiteMapView"
+import { buildRoomClaims, tileRegionsFor } from "./roomClaims"
 import { footprintPath } from "./tileRegions"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY } from "./nodeArt"
 import { ExplorerFigure } from "./ExplorerDot"

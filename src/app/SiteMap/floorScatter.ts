@@ -1,6 +1,6 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FloorGrid } from "@/game/siteTypes"
-import type { RoomClaims } from "./SiteMapView"
+import type { RoomClaims } from "./roomClaims"
 import { hashUnit } from "@/support/hashString"
 
 /**

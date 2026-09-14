@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { FLOOR_KINDS, scatterFor } from "./floorScatter"
-import { buildRoomClaims } from "./SiteMapView"
+import { buildRoomClaims } from "./roomClaims"
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 
 const state: CellState = "completed"
