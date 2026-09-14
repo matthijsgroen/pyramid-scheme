@@ -133,7 +133,11 @@ background, and **`ClipLayer`**, a map-sized box cut to a path.
 Production build — a dev server's own overhead swamps the reading. Settle 30s, then count trace events
 rather than CPU percent: `Paint`, `RasterTask`, `ImageDecodeTask` over five seconds, with the moving parts
 present and then deleted from the DOM. **If deleting them changes the paint count, they are not
-composited.** Compare screenshots by pixel diff rather than by eye.
+composited.** Compare screenshots by pixel diff rather than by eye — **with motion disabled**
+(`reducedMotion: "reduce"`, which the map honours through `motion-reduce:animate-none`). The air is
+always moving, so two shots of an untouched map differ by a few percent of their subpixels; a
+behaviour-neutral change reads as several percent of noise until the dust is told to stand still, and
+then reads as zero.
 
 Colour and value are measured off the ART, composited through the operators the renderer actually uses —
 each wash as `art × (1−a) + wash × a`, each light as a `screen` at its opacity — and read as **L\***,

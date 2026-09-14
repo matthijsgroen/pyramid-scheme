@@ -1,7 +1,8 @@
 import type { DecorationKind, Direction, FloorGrid, GridCell, RoomCell, RoomType } from "@/game/siteTypes"
 import { cellAt, isClaimableNeighbor } from "@/game/roomFootprint"
 import { DIR_MOVES, OPPOSITE_DIR } from "./corridorRuns"
-import { buildTileRegions, type FloorAt, type TileRegions } from "./tileRegions"
+import { buildTileRegions, type FloorAt, type Rect, type TileRegions } from "./tileRegions"
+import { CELL, SIDE_W } from "./mapScale"
 import { authoredKindsFor } from "./authoredKinds"
 import { companionFor } from "./companionProps"
 import { tileUrl } from "./tileAssets"
@@ -503,3 +504,20 @@ export const tileRegionsFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: 
 
 // A corridor is a "corner" (and thus a valid click target for corner-reveal/hidden-
 // passage interaction) whenever it isn't a plain straight-through segment.
+
+export const FACE_SHADOW = CELL / 8
+// How much of a wall's TOP surface shows above its face. A wall has thickness, and the side walls already
+// show theirs edge-on; without this a face is a flat band of brick with nothing above it.
+export const FACE_TOP = SIDE_W / 2
+
+// The floor's material follows the FLOOR's own tier, carried on the grid — not the rooms'. A
+// starter pyramid's ward-chest teaser is authored at a LATER tier on purpose (spec/starter.ts), so
+// room difficulties are the wrong thing to infer a floor's material from: a starter cellar came out
+// built of a pharaoh's granite. Per-room difficulty still dresses the room (props, light).
+export const floorTier = (grid: FloorGrid): Difficulty => grid.difficulty ?? "starter"
+
+export const allFloorRects = (regions: TileRegions): Rect[] =>
+  [...regions.values()].flatMap(groups => [
+    ...Object.values(groups.floorRoom).flat(),
+    ...Object.values(groups.floorCorridor).flat(),
+  ])

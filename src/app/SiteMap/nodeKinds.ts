@@ -1,4 +1,5 @@
 import type { FloorGrid, RoomCell, RoomType } from "@/game/siteTypes"
+import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapScale"
 
 // What KIND of node a cell is, and whether its gate is shut: the two pure questions asked by both the
 // marker that draws it and the floor geometry that dresses the room around it (`roomClaims.ts`). Kept
@@ -30,3 +31,17 @@ export const shapeKindFor = (
 // tint under it, and never for clickability or badges.
 export const isLockedGate = (cell: RoomCell, ownedKeys: ReadonlySet<string> | undefined): boolean =>
   cell.tags?.includes("gate") === true && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)
+
+// The visual shape a room takes. "encounter" rooms pick among the hand-drawn
+// puzzle/trap/treasure/gate shapes by family tag; "portal" rooms (entrance/stairhead/exit
+// are all `RoomType: "portal"` — pure transitions, no family) pick by position/stairId.
+export const nodeRadius: Record<ShapeKind, number> = {
+  entrance: NODE_RADIUS_LARGE,
+  puzzle: NODE_RADIUS_PUZZLE,
+  trap: NODE_RADIUS_PUZZLE,
+  fork: NODE_RADIUS_FORK,
+  gate: NODE_RADIUS_LARGE,
+  treasure: NODE_RADIUS_LARGE,
+  stairhead: NODE_RADIUS_LARGE,
+  exit: NODE_RADIUS_LARGE,
+}
