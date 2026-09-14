@@ -54,13 +54,28 @@ One paragraph, and one sentence of tone. What the player is after and why now.
 Speaking is a rail, not a place — arrival, tier crossing, link completion. A character who needs a _scene_
 is a red flag: the game has no surface for one (Part 4 §4.11 Q5).
 
-### 3. Props
+### 3. Props — things carried, and things known
 
-| id | what it is | drawn / written | currency? | status |
+| id | what it is | kind | drawn / written | currency? | seen? | status |
+
+**`kind` is `item` or `knowledge`**, and mechanically they are the same thing: a precondition the player
+either has or does not. Adventure-game dependency diagrams have always treated them alike, and this world
+already can — a currency's key role and its collection-screen visibility are independent metadata, and all
+three combinations ship today (fragments key + seen, map pieces key + unseen, mosaic tiles seen + not a
+key). Knowledge is a currency that is not carried.
 
 **`currency?` is load-bearing.** A prop declared as a gating currency is registered with the solver and its
 reachability is proven. A prop that merely looks like one — a fake — must be plain loot, or the solver
 counts it as supply and certifies a world that cannot be finished (Part 4 §4.6).
+
+**`seen?` is how knowledge avoids being worse than a locked door.** An invisible precondition satisfied
+silently is the hardest failure in this family: the player may never learn that they now know something. A
+knowledge prop should almost always be `seen`, rendered as _what you have worked out_ rather than _what you
+carry_. Saying no is a deliberate choice to hide a thread, not a default.
+
+Where a prop is **acquired** is a place row like any other — including "by solving this node". The solver's
+slots are `end` or `puzzle`, and a currency placed on a `puzzle` slot is granted by solving it. That is
+exactly "knowing something after encounter 1", and it needs no new machinery.
 
 ### 4. Places
 
