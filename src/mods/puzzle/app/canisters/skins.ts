@@ -44,7 +44,6 @@ export type CanistersSkin = {
    */
   label: string
   /** The hint's own mark, which is never one of the board's own colours. */
-  lit: string
 }
 
 /** **The river.** Reed-green amphorae on silt, and Nile water in them. */
@@ -58,7 +57,6 @@ const river: CanistersSkin = {
   liquid: "fill-sky-600",
   measured: "fill-emerald-400",
   label: "text-amber-100",
-  lit: "ring-2 ring-rose-300",
 }
 
 /**
@@ -78,7 +76,6 @@ const granary: CanistersSkin = {
   liquid: "fill-amber-400",
   measured: "fill-emerald-400",
   label: "text-amber-50",
-  lit: "ring-2 ring-sky-300",
 }
 
 /** **The lamp room.** Oil measured out for the lamps, which is what a light this deep underground runs on. */
@@ -93,7 +90,6 @@ const lamps: CanistersSkin = {
   liquid: "fill-amber-500",
   measured: "fill-emerald-400",
   label: "text-amber-100",
-  lit: "ring-2 ring-sky-300",
 }
 
 /** **The merchant's cellar.** Wine decanted between sealed amphorae — the vessel trade actually moved in. */
@@ -107,7 +103,6 @@ const cellar: CanistersSkin = {
   liquid: "fill-red-800",
   measured: "fill-emerald-400",
   label: "text-stone-100",
-  lit: "ring-2 ring-sky-300",
 }
 
 /**
@@ -126,7 +121,6 @@ const rites: CanistersSkin = {
   liquid: "fill-stone-200",
   measured: "fill-emerald-400",
   label: "text-stone-100",
-  lit: "ring-2 ring-rose-300",
 }
 
 /**
@@ -145,7 +139,6 @@ const scriptorium: CanistersSkin = {
   liquid: "fill-stone-900",
   measured: "fill-emerald-600",
   label: "text-stone-800",
-  lit: "ring-2 ring-sky-700",
 }
 
 const SKINS: Record<string, CanistersSkin> = {

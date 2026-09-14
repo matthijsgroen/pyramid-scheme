@@ -75,38 +75,90 @@ pours a step. That is what `minForks` gates, and what `minLine` and `maxLine` bo
 
 ## 4. The hint, and what it is allowed to say
 
-**A hint names the pour and says why** — the bar every family here is held to (`puzzle-screens.md` §5): a
-hint names the move, never the answer. Three things it may say, and one it may not.
+**A board is a chain of sums, and the hint hands over links of it.** "Keep a 1 back" is advice nobody can
+act on: a player can obey it and learn nothing, because why a 1 is worth having is the search (below). So
+the hint says what the volume asked for is MADE of, and what sum comes before it — and the pours are left
+alone entirely.
 
-1. **Reach** — whether the volume can be measured at all from where the canisters stand, within the moves
+1. **What the volume asked for is made of** — `4 is 5 with 1 taken off it: a canister holding 5 poured into
+one with room for 1`. The last link of the chain. It holds for the whole board rather than for this
+   position, and it is the thing a player carries to the next board.
+2. **The sum before that** — `The sum before that: 2 — 5 poured into room for 3`. The earliest link not yet
+   made. Where the chain is a single sum, this is left off: the goal already is the next thing to do.
+3. **Reach** — whether the volume can be measured at all from where the canisters stand, within the moves
    that are left. A position that cannot be finished is the one thing a player cannot work out for
    themselves without playing it twice, so the hint says it outright and suggests taking a pour back.
-2. **The pour, with the reason it does something** — and the reason is always visible on the board, because
-   a pour can only end two ways: _"pour the 14 into the 10 — it takes all the 10 can hold, and what stays
-   in the 14 is what you want to be working with"_, or _"the 14 runs dry, and an empty canister is what you
-   need next"_. Which of the two happened is exactly the reading a pour leaves behind (§7).
-3. **The last pour** says the volume will be standing afterwards — and stops there. **Which canister holds
-   it is not part of the hint**, because that is the claim, and the claim is the puzzle's last question.
 
-**What a hint never contains is the vessel to claim.** The board writes how much is in each canister, so a
-hint naming an amount gives away nothing; naming where the volume ends up would give away the leg. Only
-the canisters’ own sizes and the volume asked for
-ever appear in a sentence, and a spec holds it to that.
+**Every number in a sentence is one the player can read or subtract for themselves**: a canister's size,
+what is in it, or the room it has left. Amounts other than the capacities appear freely — the board writes
+what is in each vessel (§7), so naming one gives away nothing.
 
-### Where the move comes from, and the cost of it
+### The chain, and why it is the thing worth giving
 
-**The pour a hint names is the first step of a search, not the output of a technique ladder** — and that is
-a departure from how every other family here sources a hint, written down rather than hidden.
+Walking the line forward while remembering how the amount in each canister came to be, then expanding the
+one the volume ends up in, gives a chain of sums that bottoms out at the capacities:
+
+```
+8/5/3 → 4, six pours          12/7/5 → 6, ten pours
+  4 = 5 - 1                     6 = 7 - 1
+    1 = 3 - 2                     1 = 5 - 4
+  2 = 5 - 3                     4 = 7 - 3   3 = 5 - 2   2 = 7 - 5
+```
+
+**It is about half the length of the line, at every length**, measured over every playable three-set up to
+15: 6 pours to 2.2 sums, 10 to 5, 12 to 6. The pours it does not account for make no new amount — they are
+getting two numbers to stand the right way at the same time.
+
+**Which is why the chain is what a hint gives and the line is not.** Those pours are not a second thing to
+work out: a player who knows which sum they are after can see what has to be standing where, and getting it
+there is the easy half. Naming them would be doing the player's tapping, and calling one of them arithmetic
+would be a lie about what it does. So a hint never says whether its next sum can be poured this instant.
+
+### The canisters are named by their numbers, never pointed at
+
+**Matching "5 poured into room for 3" to the vessels on the bench is the arithmetic this family is for.** A
+hint that named the two, or lit them, would do that step for the player and leave them tapping. So no
+sentence carries a position, nothing on the board lights up when a hint is asked for, and **the vessel to
+claim is never named** — that is the board's last question.
+
+### Three readings, because that is all a sum can be
+
+| Reading    | The amount                       | Made of                                 |
+| ---------- | -------------------------------- | --------------------------------------- |
+| `leftover` | what stays in the source         | a content minus the room the other has  |
+| `sum`      | the destination's new content    | two contents put together               |
+| `full`     | the size the destination reaches | two contents that are exactly that size |
+
+### Where the chain comes from, and the cost of it
+
+**It is read off the shortest line rather than deduced by a technique ladder**, and that is a departure from
+how every other family here sources a hint, written down rather than hidden.
 
 It is the price of pouring being the only move. The one local rule available — never put the water back
 where it just came from — prunes almost nothing, because with nowhere to fill from and nowhere to empty
-onto there are no wasteful moves for it to catch: 87% of steps still offer more than one pour worth making.
-There is no ladder of named deductions that reaches the next move, because from most positions two or three
-pours are equally defensible until you look further ahead than a rule can see.
+onto there are no wasteful moves for it to catch: 87% of steps still offer more than one pour worth making,
+and the reachability graph runs to four successors a state where a rule would need one.
 
-So the hint's REASON is honest and local — the player can check it against the canisters — while the CHOICE
-behind it is not reproducible from the board alone. Worth revisiting if a real technique for this shape
-turns up; until then, this is the seam.
+**So what the hint says is honest and checkable, and what it withholds is the part that was never
+reasoning.** Every number can be verified against the bench; which pour, in what order, stays the player's.
+Worth revisiting if a real technique for this shape turns up; until then, this is the seam, and giving the
+sums rather than the pours is what makes it a seam a player can work across.
+
+### The method itself is in how-to-play, not behind the hint button
+
+**This family is the only one that needs telling how to think**, and §6 says it unasked. Every other family
+teaches its method through its own clues — a futoshiki sign says what to do with it. Pouring says nothing,
+and there is no ladder to find it from, so a player never told would be buying a general truth about the
+family with a hint, one board at a time. It costs nothing to give: it is how to think, not what this
+board's answer is. Two bullets, and the hint then speaks in their words:
+
+- every amount is two numbers on the bench put together or taken apart — a size, a content, or the room
+  one has left;
+- so work back from the amount asked for: which two numbers make it?
+
+**A third bullet was written and cut**: that about half the pours make no new amount. True, and measured,
+but it is not something a player has to be told — knowing which sum you are after is knowing what to stand
+where, and the rest follows.
 
 ## 5. Tiers
 
@@ -239,6 +291,13 @@ lit by the lamp it is measuring oil for was never lit by anything else. If sand 
 these six wants to answer, the overlay goes on that face alone.
 
 ## 9. Open questions
+
+- **There is nowhere to write the plan down.** Sudoku and futoshiki have notes; this board has an execution
+  surface only — it says where the water IS, and nothing says where the player wants it to BE. So the chain
+  they have worked out is carried in their head across the positioning pours, which is the demand §7 already
+  removed once for the contents: it makes no board harder to solve, only cheaper to lose. The pencil-mark
+  equivalent here is a wanted amount on a canister — `3/8` reading `3/8 → 4` — set the way sudoku sets a
+  note. Designed nowhere and not built; it is an input surface rather than a hint change.
 
 - **Does the budget read as a threat or as a hint?** A player who sees "6 moves" may count backwards to
   the direction instead of reasoning forwards to it, which would be a different and easier puzzle. Worth

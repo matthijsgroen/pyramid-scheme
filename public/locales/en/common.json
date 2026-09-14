@@ -926,6 +926,10 @@
       "ink_other": "Measure out each measure of ink in turn, saying which pot holds it before the next."
     },
     "rules": {
+      "method": {
+        "sums": "Every amount you can make is two numbers on the bench put together or taken apart: a canister's size, what is in it, or the room it has left.",
+        "backwards": "So work back from the amount asked for — which two numbers make it, and how do you get those two standing at the same time?"
+      },
       "claim": "When you have the amount, tap “this one”. Naming the wrong vessel costs a move.",
       "legs": "Then the next amount, measured from whatever the vessels are left holding.",
       "default": {
@@ -960,11 +964,19 @@
       }
     },
     "hint": {
-      "fills": "Pour the {{from}} into the {{to}} — it takes all the {{to}} can hold, and what stays behind in the {{from}} is what you want to be working with.",
-      "empties": "Pour the {{from}} into the {{to}} — the {{from}} runs dry, and an empty canister is what you need next.",
-      "last": "One more: pour the {{from}} into the {{to}}, and {{target}} will be standing on the bench. Then work out which canister has it.",
+      "goal": {
+        "leftover": "Working back: {{amount}} is {{content}} with {{space}} taken off it — a canister holding {{content}} poured into one with room for {{space}}.",
+        "full": "Working back: {{amount}} is a canister's size, and {{a}} and {{b}} put together are exactly it.",
+        "sum": "Working back: {{amount}} is {{a}} and {{b}} put together."
+      },
+      "claim": "That is one pour away. Then work out which canister holds it.",
       "stuck": "From here {{target}} can no longer be measured in the moves you have left. Take a pour back, or start the board again.",
-      "overBudget": "There are no moves left. Take one back, or reset and find the shorter way."
+      "overBudget": "There are no moves left. Take one back, or reset and find the shorter way.",
+      "next": {
+        "leftover": "The sum before that: {{amount}} — {{content}} poured into room for {{space}}.",
+        "full": "The sum before that: a canister standing full at {{amount}} — {{a}} and {{b}} put together.",
+        "sum": "The sum before that: {{amount}} — {{a}} and {{b}} put together."
+      }
     },
     "movesLeft_one": "{{count}} move left",
     "movesLeft_other": "{{count}} moves left",
@@ -1005,14 +1017,7 @@
       }
     },
     "events": {
-      "default": [
-        "the fire",
-        "the water carrying",
-        "the baking",
-        "the boat trip",
-        "the ox driving",
-        "the night watch"
-      ],
+      "default": ["the fire", "the water carrying", "the baking", "the boat trip", "the ox driving", "the night watch"],
       "funerary": [
         "the plastering",
         "the grid drawing",

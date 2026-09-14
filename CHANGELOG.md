@@ -7,11 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.43.7 - 2026-09-13
+
 ### Changed
 
 - A lit room now reads as lit: the light has a source at your torch and falls away from it, it lands warm rather than pale, and it reaches the walls, the furniture and the explorer instead of stopping at the floor. The explorer stands in it rather than on top of it, with a shadow at their feet like everything else on the floor.
+- Canister hints now give the sums a board is made of instead of naming a pour, and how-to-play says how to work back from the amount asked for.
 - Exploration is now remembered by where a room sits in its corridor, so a reshaped pyramid keeps what you had walked.
 - Dust in a tomb is now fine specks rather than a few circles: far smaller, far more of them, drifting quicker and wandering as they cross.
+
+### Fixed
+
+- Star battle and twin stars rooms open on iPhone: their boards were drawn differently there than on the machine that proved them.
 
 ## 0.43.6 - 2026-09-13
 

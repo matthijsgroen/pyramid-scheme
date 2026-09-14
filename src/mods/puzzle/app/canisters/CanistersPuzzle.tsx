@@ -47,10 +47,17 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
   /** The amount this leg is asking for; the last one stays up once the board is done. */
   const wanted = puzzle.targets[Math.min(state.measured, puzzle.targets.length - 1)]
 
-  const hint = useMemo(
-    () => buildCanistersHint(puzzle, state.volumes, left, wanted),
-    [puzzle, state.volumes, left, wanted]
-  )
+  // **Two sentences, and the second is the one that makes the first usable.** An amount to aim for is
+  // only advice if the player knows why they would want it, and the reason is the search (design doc §4).
+  // So the hint says what the volume asked for is made of and what the next amount is, and leaves the
+  // middle — which pour, in what order — where it belongs.
+  const hintText = useMemo(() => {
+    const hint = buildCanistersHint(puzzle, state.volumes, left, wanted)
+    if (hint.key !== "line") return t(`canisters.hint.${hint.key}`, hint.params)
+    const goal = t(`canisters.hint.goal.${hint.goal.key}`, hint.goal.params)
+    if (hint.next) return `${goal} ${t(`canisters.hint.next.${hint.next.key}`, hint.next.params)}`
+    return hint.claim ? `${goal} ${t("canisters.hint.claim")}` : goal
+  }, [puzzle, state.volumes, left, wanted, t])
 
   // One tick a leg: what the player measured lights in the order it was claimed, which is the board saying
   // back what was done rather than a generic flourish (puzzle-screens.md §3).
@@ -65,7 +72,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
       // Undo gives the MOVE back as well as the pour (`undoPour`), so on this board it is the way out of a
       // budget spent on a wrong reading — not merely a convenience.
       undo={{ onPress: () => setState(undoPour), enabled: canUndoPour(state) && !solved }}
-      hint={t(`canisters.hint.${hint.key}`, hint.params)}
+      hint={hintText}
       idleMs={hintIdleDelay(difficulty)}
       title={t(`canisters.name.${skin.name}`)}
       // **The goal says what the board is for; the amount lives above the board.** Naming the number here
@@ -74,7 +81,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
       goal={t(`canisters.goal.${skin.name}`, { count: puzzle.targets.length })}
       rules={<CanistersRules skin={skin.name} legs={puzzle.targets.length} />}
     >
-      {({ reportInput, hintVisible }) => (
+      {({ reportInput }) => (
         <div className="flex flex-col items-center gap-3">
           <div className="flex items-baseline gap-2">
             <span className="text-sm text-stone-300">{t("canisters.wanted")}</span>
@@ -90,7 +97,6 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
             volumes={state.volumes}
             held={state.held}
             claimed={state.claimed}
-            lit={hintVisible ? hint.move : undefined}
             celebrating={celebration.progress > 0}
             lastPour={
               state.poured.length > 0
