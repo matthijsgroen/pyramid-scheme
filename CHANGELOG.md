@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Installed as an app, the game fills the screen again. Last release it stopped short of the bottom on a phone that draws the page under its system bars, leaving a black band along the edge.
+- A canister board keeps one height from the first pour to the last. Running the budget out used to add a line and grow the board under your hand, and the wall of the room behind it grew with it.
 
 ## 0.43.9 - 2026-09-15
 

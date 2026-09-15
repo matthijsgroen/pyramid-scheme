@@ -40,15 +40,20 @@ describe("the budget a canisters board is worked against", () => {
   /**
    * A spent budget refuses pours in silence (`pourInto`) — a tap that does nothing and says nothing.
    * The board says it instead of leaving the sentence behind the hint button.
+   *
+   * It is HELD rather than unmounted, so the board keeps one height from the first pour to the last:
+   * appearing outright grew the panel under the player's hand, and the wall behind it is sized to that
+   * panel. So what is asserted is whether it is announced, not whether it is in the document.
    */
   it("says so on the board once there is nothing left to pour", () => {
     const root = open()
-    expect(screen.queryByText("canisters.hint.overBudget")).toBeNull()
+    const warning = () => screen.getByText("canisters.hint.overBudget")
+    expect(warning().getAttribute("aria-hidden")).toBe("true")
     pour(root, 0, 1)
     pour(root, 1, 2)
     pour(root, 2, 0)
     expect(counter(root).className).toContain("text-rose-400")
-    expect(screen.getByText("canisters.hint.overBudget")).toBeTruthy()
+    expect(warning().getAttribute("aria-hidden")).toBe("false")
   })
 
   /** Undo gives the move back as well as the pour, so it is the way out of a budget spent wrongly. */
