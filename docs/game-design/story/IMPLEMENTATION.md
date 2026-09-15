@@ -102,8 +102,9 @@ conversation can be written today, because the explorer speaks and the voice rul
 
 ## Considered: shortcuts, ladders and layers
 
-Raised while the exterior board, board persistence and lighting were being fixed elsewhere. Kept here
-because the three ideas are not equally good.
+**Vocabulary, not a schedule.** These are structures the storytelling can lean on; when any of them lands
+is a separate decision. Kept here because the three ideas are not equally good, and because what they cost
+is changing under them (see the last section).
 
 ### A lever is a floor key, and that is the good news
 
@@ -145,8 +146,33 @@ migration.
 | **Lever instead of a floor key**         | a free field, one renderer state       | fiction, and an affordance the player can see in the room  |
 | **Lever opening a new one-way shortcut** | structural — re-carve plus a migration | the re-walk removed, which is what the backwards map costs |
 
-The first can ship whenever. The second wants to wait for the lighting and framing work, for the reason
-below.
+The first is free today. The second is expensive today and much cheaper after the exploration migration —
+see below.
+
+### What "structural" costs, once exploration is ordinals
+
+The prices above are the **pre-migration** ones. Exploration is moving from grid coordinates to
+`<ordinal>@<kind>` — where a cell sits in its section's walk, and what it is — and that changes what a
+corridor change costs, because a section hash comes from the authored spec rather than from the carve.
+
+`exploredOrdinals.ts` has the measurements, from one floor of Valley of the Kings:
+
+| Measured                                              | Cells        |
+| ----------------------------------------------------- | ------------ |
+| move when the carve changes                           | 548 of 676   |
+| swap kind at the same ordinal — the ones that degrade | **7 of 676** |
+
+So under coordinates, re-carving a floor loses 81% of what the player walked. Under ordinals it loses
+about **1%**, and loses it honestly: the kinds disagree, the entry is skipped, and that cell reads as
+unexplored rather than as a room the player never opened being marked done.
+
+**That is what makes the structural half affordable later.** A one-way shortcut, a new gate, a re-shaped
+section — all of them stop being all-or-nothing per floor and become a handful of cells forgetting
+themselves. The read still accepts coordinate matches as a fallback (`useAssembledFloor`), so this is the
+price _after_ the switch, not today's.
+
+**Which is the argument for designing these now and pricing them later.** Nothing here has to be built to
+be decided, and the cost of building it is on a downward curve that somebody else is already moving.
 
 ### Verticality is expensive and the want is weaker
 
@@ -167,8 +193,8 @@ worked on now.
 a problem that turns out to have been light, and generation changes cost a save migration where lighting
 costs nothing.
 
-Recommended order: let the lighting and framing land, look at a floor again, and only then decide whether
-the maze itself is the thin part.
+So: let the lighting and framing land, look at a floor again, and only then decide whether the maze itself
+is the thin part. Not a reason to leave it undesigned — a reason not to price it yet.
 
 ## Suggested order
 
