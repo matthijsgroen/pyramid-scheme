@@ -381,12 +381,12 @@ fills the lower part of that box, so nothing reaches the wall band a prop's head
 
 ## 5. What has to be built for §3–§4
 
-| Needed for                | Change                                                                                                                                                                                     | Size  |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- |
-| `breach`, `plug` (§3)     | two names in `WallDecorationKind`, two entries per rank pool                                                                                                                               | tiny  |
-| Variants (`rubble-2.png`) | resolve `<kind>-N` from the asset glob, pick per cell by the same positional hash the props use — the prep doc already sketches it                                                         | small |
-| Floor scatter (§4)        | **built** — `floorScatter.ts`, deterministic cells off the floor's shape, drawn over the floor and under props. No pool field: a kind is placed by RULE, not authored, so a rank is a skin | —     |
-| Statues by name           | nothing — three statue variants per rank is exactly what the variant pick above is for                                                                                                     | —     |
+| Needed for                | Change                                                                                                                                                | Size   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| `breach`, `plug` (§3)     | two names in `WallDecorationKind`, two entries per rank pool                                                                                          | tiny   |
+| Variants (`rubble-2.png`) | resolve `<kind>-N` from the asset glob, pick per cell by the same positional hash the props use — the prep doc already sketches it                    | small  |
+| Floor scatter (§4)        | **built** — `floorScatter.ts`, deterministic cells off the floor's shape, drawn over the floor and under props. No pool field: a kind is placed by RULE, not authored, so a rank is a skin | — |
+| Statues by name           | nothing — three statue variants per rank is exactly what the variant pick above is for                                                                | —      |
 
 ## 6a. The prompts
 
