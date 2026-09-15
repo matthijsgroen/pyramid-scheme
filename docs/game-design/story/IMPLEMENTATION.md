@@ -102,6 +102,9 @@ conversation can be written today, because the explorer speaks and the voice rul
 
 ## Considered: shortcuts, ladders and layers
 
+> Map variety has its own feasibility note now: [`../map-variety.md`](../map-variety.md). The headline is
+> that floors are trees — 843 sections end in a reward, 90 at a staircase, and nothing loops.
+
 **Vocabulary, not a schedule.** These are structures the storytelling can lean on; when any of them lands
 is a separate decision. Kept here because the three ideas are not equally good, and because what they cost
 is changing under them (see the last section).
