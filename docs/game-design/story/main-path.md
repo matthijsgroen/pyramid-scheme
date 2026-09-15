@@ -7,6 +7,11 @@ written.
 
 Status: **sketch**, every row. Addresses are real; beats are not yet copy.
 
+**The world can move to fit this.** Locations, perk placement and journey descriptions were all assigned
+before there was a story, so none of them is a fixed point — see [`../progression-route.md`](../progression-route.md)
+and [`../tomb-exteriors.md`](../tomb-exteriors.md). What is fixed is the shape of the ladder and the
+names, which are the only parts that were already telling a story.
+
 ## The one-line shape
 
 You arrive at a door you cannot read, and you spend the game becoming someone who can.
