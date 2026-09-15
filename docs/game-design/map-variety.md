@@ -105,9 +105,9 @@ cheaper in every language.
 
 ## Recommended order, if it moves
 
-**1, then 2.** The blocked passage is free and immediately makes floors feel like ruins rather than
-corridors. The loop is the one that changes how exploring _feels_, and its only real cost is teaching the
-solver to check that a loop has not unlocked a gate.
+**2, then 1.** Loop density is a dial on machinery that already works and already produces loops — the
+cheapest real change here, and it lands where the walking is worst. The blocked passage is free and makes
+floors read as ruins rather than corridors.
 
 3 waits for the HTML port. 4 is declined. 5 is last, and probably never.
 
