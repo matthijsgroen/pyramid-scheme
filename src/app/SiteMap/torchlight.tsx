@@ -51,14 +51,24 @@ import { LIT_STRENGTH, litPlaceCells } from "./lighting"
  * drops to a bit under half of what the near end gets, which is a corridor receding; taking it to zero
  * would be a torch that stops working at a distance the level design has already promised.
  *
- * WARMER THAN IT WAS, too. `#ffe2b0` is nearly white, and a screen blend with a near-white light lifts
- * every channel by about the same amount — so the lamp turned the floor pale rather than warm, leaving the
- * lit floor at 4% saturation on expert and 16% on starter: a grey room and a slightly less grey one. The
- * stops below hold the blue channel back, and the hottest of them sits where the flame is.
+ * LIGHT SCALES THE STONE UP; IT DOES NOT ADD WHITE TO IT. That is the whole of the colour below, and it
+ * is the same argument the night makes (`tileMaterials.ts`) read the other way round. A `screen` blend ADDS
+ * light, and adding lifts the darks far more than the lights: the joints came up with the slabs and the
+ * masonry flattened out. Measured on the starter floor, the lamp left **23% of the art's own texture** and
+ * put the lit floor 20 L* ABOVE the stone it is cut from — a bleached cream room, where the unlit half of
+ * the same map kept its grain. `color-dodge` DIVIDES instead (`backdrop / (1 − blend)`), which is a scale:
+ * the art's ratios come through it, so the stone stays stone. Same measurement, same brightness: **102%**.
+ *
+ * WHICH IS WHY THESE STOPS ARE NOT WHITE-HOT. Under a dodge, any channel at 255 divides by zero and blows
+ * that channel out — a near-white lamp turns the floor to paper, and a saturated one to neon (a 255-red
+ * torch measured chroma 39 against the art's 9). A warm-leaning near-neutral is a finite scale per channel,
+ * and because red is scaled a little harder than blue it comes out WARM without any of the light being
+ * orange: chroma 22 on a floor painted at 9. The alpha ramp is the falloff, and only the falloff — one
+ * flame, less of it further off.
  */
-const TORCH_CORE = "rgba(255,216,152,1)"
-const TORCH_MID = "rgba(255,198,122,0.78)"
-const TORCH_EDGE = "rgba(255,174,94,0.44)"
+const TORCH_CORE = "rgba(160,150,134,1)"
+const TORCH_MID = "rgba(160,150,134,0.78)"
+const TORCH_EDGE = "rgba(160,150,134,0.44)"
 
 /** How far the falloff spans, at the least. A one-cell place — a dead end, a single chamber — has almost
  * no distance to fall off over, and a gradient sized to it alone put a vignette inside one square. Below
@@ -206,7 +216,7 @@ export const LitPlaces = ({
   }, [key])
 
   return (
-    <div style={{ position: "absolute", inset: 0, mixBlendMode: "screen", pointerEvents: "none" }}>
+    <div style={{ position: "absolute", inset: 0, mixBlendMode: "color-dodge", pointerEvents: "none" }}>
       {leaving && (
         <LitPlace
           key="leaving"

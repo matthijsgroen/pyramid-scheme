@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- A lit room keeps its stone. The lamp now brightens the masonry instead of washing pale light over it, so slabs, joints and the grain of the floor read in the light the way they do in the dark.
+
 ### Fixed
 
 - The bare rock around a floor is drawn as rock instead of as blocks with black slits between them: a square and the seams beside it now agree about whether there is anything there to draw.

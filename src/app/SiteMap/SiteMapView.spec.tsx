@@ -852,6 +852,18 @@ describe("SiteMapView — the shade the lamp is read against", () => {
 
     expect(depthOf(container, lit)).toBeGreaterThan(depthOf(container, full))
   })
+
+  it("scales the stone up rather than adding light to it, so a lit room keeps its masonry", () => {
+    // `screen` ADDS, and adding lifts the darks further than the lights: the joints came up with the
+    // slabs and the floor flattened. Measured on the starter floor it left 23% of the art's own texture
+    // and put the lit floor 20 L* above the stone it is cut from — a bleached room beside an unlit one
+    // that had kept its grain. `color-dodge` DIVIDES, which is a scale, so the ratios that ARE the
+    // texture survive it: 102% at the same brightness. Pinned because the two are one word apart.
+    const { container } = render(<SiteMapView grid={twoRooms()} explorerPos={[0, 0]} />)
+    const lit = container.querySelector<HTMLElement>("[data-torch='lit']")!
+
+    expect(lit.parentElement?.style.mixBlendMode).toBe("color-dodge")
+  })
 })
 
 describe("SiteMapView — a wall only opens onto something drawn", () => {
