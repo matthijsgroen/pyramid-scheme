@@ -1,6 +1,6 @@
 # Act II — junior · what real looks like
 
-Source copy, English only. Voice and rules: `cast.md`. 41 source lines.
+Source copy, English only. Voice and rules: `cast.md`. 38 source lines.
 
 **The act's job.** The player handles imitations for a whole tier without being told that is what they are,
 so that Act IV's forgery is earned rather than sprung. And reading pays off for the first time — which is

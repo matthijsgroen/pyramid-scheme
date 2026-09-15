@@ -126,7 +126,8 @@ fragments. Competent — never the ignorant one, just not a scholar either.
 - **No gendered self-description.** French, Italian, Polish and the rest gender adjectives and past
   participles, so _"I was surprised"_ forces a translator to pick. Present tense, questions, and
   observations about the world.
-- No name, no pronoun for themselves beyond a present-tense "I".
+- No name, no pronoun for themselves beyond a present-tense "I". **The dead all have names** — Ipi,
+  Henut — and the contrast is deliberate: the explorer is the one person here nobody wrote down.
 - No backstory: no family in the trade, no schooling, no home.
 - Never exclaims. Enthusiasm is Fez's register and the joke dies if both of them have it.
 - Never cruel. Dry is not mean, and they never deflate Fez in a way that wounds him.

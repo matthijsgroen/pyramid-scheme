@@ -1,6 +1,6 @@
 # Act IV — master · the thing itself, and the forgery
 
-Source copy, English only. Voice and rules: `cast.md`. 44 source lines.
+Source copy, English only. Voice and rules: `cast.md`. 43 source lines.
 
 **The act's job.** The seal, the fake, and the turn. It works because of Act II: the player has handled
 imitations for a whole tier without being told, so a convincing copy is convincing rather than cheap.

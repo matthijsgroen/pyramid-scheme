@@ -1,6 +1,6 @@
 # Act V — wizard · announced, and read
 
-Source copy, English only. Voice and rules: `cast.md`. 46 source lines.
+Source copy, English only. Voice and rules: `cast.md`. 47 source lines.
 
 **The act's job.** The loop closes. `starter_1` was Dawn at the Sphinx; `wizard_2` is Secrets of the
 Sphinx, and the finale is the inscription from the first minute, read.

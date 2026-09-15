@@ -1,6 +1,6 @@
 # Act III — expert · the ask
 
-Source copy, English only. Voice and rules: `cast.md`. 40 source lines.
+Source copy, English only. Voice and rules: `cast.md`. 42 source lines.
 
 **The act's job.** The world starts refusing the player — this is the tier of traps and armour — and the
 refusal becomes a person. The priest states the terms of the offering, which is the arc's engine
