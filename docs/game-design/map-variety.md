@@ -24,13 +24,43 @@ number of the walkable graph — edges minus cells plus components, where 0 is a
 1,555 cells, master gets **one** across 3,691. The three largest floors in the game — `wizard_3 f1` at 739
 cells, `wizard_1 f1` at 481, `master_1 f0` at 433 — are perfect trees.
 
-So loops are **incidental rather than authored**: they fall out of small sections packed into a small grid,
-and they stop happening exactly as floors get big enough for the walk to matter. `junior_2 f0` has 16
-cycles in 221 cells; `master_3 f0` has none in 409.
+So loops are **incidental rather than authored**: they fall out of small sections packed into a small
+grid, and they stop happening exactly as floors get big enough for the walk to matter.
 
-That inverts the recommendation. The question is not _can floors loop_ — they can, the machinery allows it,
-and isolation survives it. It is that **the loops happen where they are least needed and vanish where the
-player is doing the most walking.**
+### Why master is a tree, measured twice
+
+Gating is the constraint that would stop loops being _added_, but it is not what produces today's numbers.
+Counting gate cells per floor against cycles:
+
+| Gates on the floor | Floors | Avg cycles | Avg cells |
+| ------------------ | ------ | ---------- | --------- |
+| 0                  | 14     | 0.0        | 109       |
+| 1                  | 43     | 0.5        | 155       |
+| 2                  | 4      | 2.8        | 202       |
+| 3                  | 5      | 1.0        | 332       |
+| 4                  | 3      | 0.3        | 389       |
+| 5+                 | 5      | 1.4        | 550       |
+
+And gates per floor barely move across tiers: starter 1.3, junior 1.1, expert 1.7, master 1.6, wizard 1.6.
+
+So gate **count** does not separate master from junior — cycles do not fall as gates rise, and the 2-gate
+bucket loops most. What tracks instead is **size**: a 109-cell floor has no cycles at all, and cycles per
+cell fall steadily as floors grow. Today's loops are an artifact of packing — sections crammed into a small
+grid put corridors accidentally adjacent, and a big grid has room to avoid it.
+
+### The rule that matters: isolation constrains cut edges, not cycles
+
+Isolation is a property of the edges that **cross a gate boundary**. It says nothing about a cycle that
+lives entirely inside one region. Master floors carry several regions each, and every one of them could
+loop internally without touching isolation.
+
+| Loop                             | Isolation                                     | Reachability | Solver          |
+| -------------------------------- | --------------------------------------------- | ------------ | --------------- |
+| wholly inside one region         | untouched                                     | untouched    | none            |
+| crossing a gate, both ways       | **broken** — the gate becomes decoration      | —            | —               |
+| crossing a gate, **one-way out** | preserved — the key is still needed to get IN | untouched    | none, see below |
+
+That last row is the one the game does not have.
 
 _(The measure counts 4-adjacency of non-empty cells as connection, which can only over-count edges. Real
 cycle counts are these or lower, so the shape of the finding holds.)_
@@ -65,6 +95,35 @@ What is left is a dial nobody has set: **loop density should rise with floor siz
 What it says: _people moved through here_ — a different claim from a tomb, and true of the service
 corridors real pyramids have.
 
+### 2b. One-way paths — the only safe way to loop a gated floor
+
+**The game has no directed edges.** Every connection works both ways, which is why a loop either respects
+isolation or destroys it, with nothing in between.
+
+A rope dangling down a shaft is the whole design: you jump the last stretch, and it is too high to climb
+back. No rule has to be explained — **the drawing is the rule**, which is the wordless standard every
+mechanic here is held to.
+
+**Direction decides everything about how it feels.** An earlier draft of this document declined one-way
+drops on tone, and that was too broad:
+
+| Direction                                                | Feeling                              |
+| -------------------------------------------------------- | ------------------------------------ |
+| one-way **in** — you drop somewhere and cannot get out   | commitment, and dread. Not this game |
+| one-way **out** — you drop into somewhere already walked | relief. The walk back, deleted       |
+
+Only the second is proposed. It strands nobody, because it lands where the player has already been.
+
+**And it costs the solver nothing.** A one-way that only ever leads to already-reachable ground adds no
+reachable content — everything it leads to was reachable before it existed. So reachability does not need
+to become directional: the solver can ignore these edges entirely, as long as placement guarantees they
+point that way.
+
+**It reads twice, from one asset.** From below, a rope you cannot reach says _there is something up there_
+— a waypoint made of architecture, self-curating, no UI. From above, it says _you do not have to walk back_.
+
+What it says: _somebody came down here in a hurry, and did not plan on returning._
+
 ### 3. A chamber bigger than one cell — renderer work
 
 Every room is one cell, so every room is equally important. A 2×2 space would be a **landmark**: somewhere
@@ -76,13 +135,11 @@ before it.
 What it says: _the important places look important_ — and it gives the ghosts somewhere to be that is not
 a corridor.
 
-### 4. A one-way drop — structural, and a tone risk
+### 4. A one-way drop that strands you — declined
 
-A shaft you go down and cannot climb. Classic, and it makes a floor feel deep.
-
-But it takes a choice away from the player permanently, and this game punishes almost nothing by design.
-It also sits badly with the not-scary rule: being unable to go back is the most frightening thing a map can
-do to a child. **Probably not this game**, and worth writing down as considered rather than rediscovering.
+A shaft you go down and cannot climb, landing somewhere new. It takes a choice away permanently in a game
+that punishes almost nothing, and being unable to go back is the most frightening thing a map can do to a
+child. **Superseded by 2b**, which is the same mechanic pointed the other way.
 
 ### 5. Vertical layers — expensive, weakest want
 
@@ -105,11 +162,12 @@ cheaper in every language.
 
 ## Recommended order, if it moves
 
-**2, then 1.** Loop density is a dial on machinery that already works and already produces loops — the
+**2 with 2b, then 1.** Loop density is a dial on machinery that already works and already produces loops — the
 cheapest real change here, and it lands where the walking is worst. The blocked passage is free and makes
 floors read as ruins rather than corridors.
 
-3 waits for the HTML port. 4 is declined. 5 is last, and probably never.
+2b rides with 2 — it is what makes a loop legal across a gate. 3 waits for the HTML port. 4 is declined
+and superseded. 5 is last, and probably never.
 
 ## Open
 
@@ -117,5 +175,8 @@ floors read as ruins rather than corridors.
    Finding the knob, or adding one, is the whole of option 2.
 2. **What is the right dose, and should it scale with cells?** `junior_2 f0` carries 16 cycles in 221
    cells and reads fine, so the ceiling is not low. The target is probably a rate, not a count.
-3. **Do blocked passages want to lie occasionally** — one of them being a hidden corridor after all? It
+3. **Does a one-way ever point at something new?** The solver can ignore these edges only while they lead
+   to already-reachable ground. One that opens new content makes reachability directional, which is a
+   different and much larger job.
+4. **Do blocked passages want to lie occasionally** — one of them being a hidden corridor after all? It
    makes every other one interesting, and it makes the detector mean something.
