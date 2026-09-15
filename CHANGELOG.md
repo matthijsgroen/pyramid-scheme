@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - A lit room keeps its stone. The lamp now brightens the masonry instead of washing pale light over it, so slabs, joints and the grain of the floor read in the light the way they do in the dark.
+- The air in a priest's wing is dust like everywhere else — small, many, and slow — instead of four big pale discs drifting across the floor.
 
 ### Fixed
 

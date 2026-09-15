@@ -72,8 +72,12 @@ const RANK_MOOD: Record<Difficulty, Mood> = {
     life: 2,
   },
   expert: {
+    // DUST, like every other rank, and cold and slow because the air down here is sealed. It was four
+    // discs of radius 26 at 0.07 — an incense haze in the writing, four big pale circles on the screen,
+    // and the one rank whose air did not read as air at all. Haze wants a wash; a field of specks is
+    // what the other four are and what this one is now, slower than any of them.
     tint: { fill: "#6a86a8", opacity: 0.09 },
-    drift: { count: 4, size: 26, fill: "#93a8bd", opacity: 0.07, seconds: 40 },
+    drift: { count: 30, size: 0.8, fill: "#93a8bd", opacity: 0.5, seconds: 18 },
   },
   master: {
     tint: { fill: "#0b0a12", opacity: 0.12 },
