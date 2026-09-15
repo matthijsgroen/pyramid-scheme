@@ -51,9 +51,14 @@ const boxOf = (el: HTMLElement) => {
 }
 
 /** The path a layer is cut to, put back into MAP coordinates — the clip itself is written in the
- * element's own frame, which is what keeps the element the size of its shape. */
+ * element's own frame, which is what keeps the element the size of its shape.
+ *
+ * A FEATHERED layer paints through a child (`ClipLayer`): a blur has to be applied to an already-cut
+ * shape, and on one element the filter would run before the clip. The box, and so the frame the path is
+ * written in, is still this element's. */
 const clipOf = (el: HTMLElement | null | undefined) => {
-  const d = /path\("(.*)"\)/.exec(el?.style.clipPath ?? "")?.[1] ?? ""
+  const painted = el?.style.clipPath ? el : el?.firstElementChild
+  const d = /path\("(.*)"\)/.exec((painted as HTMLElement | null | undefined)?.style.clipPath ?? "")?.[1] ?? ""
   if (!d || !el) return d
   const dx = parseFloat(el.style.left) || 0
   const dy = parseFloat(el.style.top) || 0
@@ -863,6 +868,22 @@ describe("SiteMapView — the shade the lamp is read against", () => {
     const lit = container.querySelector<HTMLElement>("[data-torch='lit']")!
 
     expect(lit.parentElement?.style.mixBlendMode).toBe("color-dodge")
+  })
+
+  it("softens its own edge, because nothing in the picture casts a hard-edged light", () => {
+    // The place is lit by rule and the rule is a union of cell squares, so the lamp used to end on a
+    // staircase of right angles — a ruled line down a corridor's flanks with nothing in the scene opaque
+    // enough to account for it. Read as a tile coloured in rather than as ground a lamp falls on.
+    //
+    // Both halves are asserted because either alone is the bug: the blur has to be there, and it has to
+    // be on the element that holds the cut rather than on the cut itself — a filter is applied BEFORE
+    // clip-path, so a blur written next to the path comes back with the same hard path.
+    const { container } = render(<SiteMapView grid={twoRooms()} explorerPos={[0, 0]} />)
+    const lit = container.querySelector<HTMLElement>("[data-torch='lit']")!
+
+    expect(lit.style.filter).toMatch(/^blur\([\d.]+px\)$/)
+    expect(lit.style.clipPath).toBe("")
+    expect((lit.firstElementChild as HTMLElement).style.clipPath).toContain("path(")
   })
 })
 

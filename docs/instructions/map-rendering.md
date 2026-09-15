@@ -37,14 +37,24 @@ Bottom to top, all inside `[data-map]`:
 | `MapWeather`                                                            | over the SCROLLING BOX, not inside the map: drift and tint belong to the window       |
 
 Two primitives build almost all of it (`htmlLayers.tsx`): **`Sprite`**, a box with the art as its
-background, and **`ClipLayer`**, a map-sized box cut to a path.
+background, and **`ClipLayer`**, a box cut to a path — the size of its own SHAPE, never of the map.
 
 ## What to keep in mind
 
 - **`clip-path: path()` takes the `d` strings the geometry already builds** — `rectsToPath`,
-  `footprintPath` — and resolves them in the element's OWN box. So a layer that carries a clip is laid out
-  at the map's full size with its art placed by `background-position`, never by `left`/`top`. That is why
-  a footprint path needs no translating.
+  `footprintPath` — and resolves them in the element's OWN box. So a clipped layer is laid out over the
+  CLIP's bounds, with its art placed inside them by `background-position` rather than by `left`/`top`, and
+  the path written in that box's frame. **Never over the whole map**: a map-sized clipped layer has to be
+  rasterised at the map's size, which is what killed the renderer on a phone in v0.43.1.
+- **A filter runs BEFORE the clip, so a soft edge needs two elements.** Same-element `filter: blur()` on a
+  clipped box comes back with the same hard path (CSS Filter Effects §2.2). `ClipLayer`'s `feather` keeps
+  the box, the identity and the animation on the layer and moves the PAINT to a child, so the blur has an
+  already-cut shape to soften. The filtered element is still the shape's own box — a filter rasterises its
+  subtree as one layer, which is the same reason `STANDING_RELIEF` is per sprite.
+- **Light does not get a hard edge; walls do.** The lit place is a union of cell squares, and cut exactly
+  it ends on a staircase of right angles that nothing in the scene casts. Measured on a lit starter
+  corridor, the mean one-pixel step across the cut was 54 and 50 on its two flanks; feathered at half a
+  wall band it is 22 and 14, with the stone's own grain inside the run untouched (std dev 26.0 → 26.5).
 - **One element per group, never one per rectangle.** Floor, mass, face, top, shadow and wash come to some
   seven thousand elements a floor that way, which is what the merged `<path>` existed to avoid. A floor's
   whole masonry is 22 elements.

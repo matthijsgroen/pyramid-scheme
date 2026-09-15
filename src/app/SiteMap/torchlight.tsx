@@ -75,6 +75,23 @@ const TORCH_EDGE = "rgba(160,150,134,0.44)"
  * this the light is simply near-flat, which for a place that small is what it should be. */
 const TORCH_MIN_REACH = CELL * 2.2
 
+/** How far the light's own edge is softened (`ClipLayer`'s `feather`).
+ *
+ * THE EDGE WAS THE DEFECT, NOT THE LIGHT. The place is lit by rule — a room lights whole, a passage as far
+ * as its next turn — and the rule is drawn as a union of cell squares, so the lamp ended on a STAIRCASE OF
+ * RIGHT ANGLES: a straight vertical cut down a corridor's flanks, a step at every turn. Nothing in the
+ * picture accounts for such a line. Hard-edged light means an opaque thing casting it, and there is none
+ * here, so the eye reads the bright part as a tile that has been coloured in rather than as ground a lamp
+ * is falling on. It is why a lit room could be dimmer AND flatter-looking than the dark one beside it while
+ * every value in it was correct.
+ *
+ * Half a wall band. Small enough that the place is still the place — the light does not creep into the
+ * next room, and what it does reach past its own cells is the band of wall standing around them, which is
+ * the one surface a lamp in the middle of a room is certainly lighting. Large enough that no straight run
+ * of the cut survives it: at this radius the falloff spans about a fifth of a cell, so the corner of a
+ * chamber rounds off and the flank of a corridor stops being a ruled line. */
+const TORCH_FEATHER = WALL_H / 2
+
 /** A pool of torchlight cut to a place: brightest at the flame, falling away to the edges of whatever the
  * clip lets it reach. `farthest-corner` by hand rather than by keyword, because it needs a floor.
  *
@@ -169,6 +186,7 @@ const LitPlace = ({
     <ClipLayer
       data-torch={headroom ? "standing" : "lit"}
       className={leaving ? FADE_OUT : FADE_IN}
+      feather={TORCH_FEATHER}
       rects={rects}
       fill={torchFill(boundsOf(rects), at)}
       // The strength the keyframes fade TO, and the opacity that stands when there are none: an animation
