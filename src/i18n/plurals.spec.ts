@@ -1,189 +1,194 @@
-import { describe, expect, it, beforeAll } from "vitest"
+import { beforeAll, describe, expect, it } from "vitest"
 import { createInstance, type i18n as I18n } from "i18next"
-import commonEn from "../../public/locales/en/common.json"
-import commonNl from "../../public/locales/nl/common.json"
+import { readdirSync, readFileSync } from "node:fs"
+import { resolve } from "node:path"
 
-// The rest of the suite mocks react-i18next with an identity `t`, which cannot tell whether a
-// plural form resolves — it only records the interpolation payload. These specs run the real
-// i18next against the shipped locale files, so they catch a missing `_one`/`_other` form, an
-// interpolation option that is not literally named `count` (i18next then skips plural selection
-// entirely), and drift between the two locales.
-describe("plural forms in the shipped locales", () => {
+/**
+ * That every plural form the shipped locales need actually resolves — checked as a MECHANISM, over
+ * whatever locales exist, rather than as a list of expected sentences.
+ *
+ * The defect being guarded is i18next's failure mode: a missing plural form is answered with the key
+ * itself, so it reaches the player as raw text like `chest.money_other`. That is invisible to the rest of
+ * the suite, which mocks `t` with an identity function and can only see the interpolation payload.
+ *
+ * **Nothing here asserts what a sentence says.** The game is headed for most European languages and
+ * translators are meant to adapt prose freely, so an expectation like "Opgelost met 1 hint" is a test that
+ * fails on a good translation. It also scales badly: a per-locale list of sentences is multiplied by every
+ * language added, while the rules below are written once and cover all 57 pluralised keys rather than the
+ * dozen somebody remembered — and a form nobody listed is exactly how the raw-key bug ships.
+ */
+
+// Vitest runs from the project root, which is also where the served locale files live.
+const localesDir = resolve(process.cwd(), "public/locales")
+const locales = readdirSync(localesDir, { withFileTypes: true })
+  .filter(entry => entry.isDirectory())
+  .map(entry => entry.name)
+
+const bundles = Object.fromEntries(
+  locales.map(locale => [
+    locale,
+    JSON.parse(readFileSync(`${localesDir}/${locale}/common.json`, "utf8")) as Record<string, unknown>,
+  ])
+)
+
+/** The locale the others are measured against for SHAPE — never for wording. */
+const reference = locales.includes("en") ? "en" : locales[0]
+
+/** Every plural category CLDR knows. English uses two of them; Polish uses four. */
+const SUFFIXES = ["zero", "one", "two", "few", "many", "other"] as const
+
+/** Dotted keys of every leaf string in a bundle, so a plural form nested three levels deep is still seen. */
+const leafKeys = (node: unknown, prefix = ""): string[] => {
+  if (typeof node === "string") return [prefix]
+  if (node === null || typeof node !== "object") return []
+  return Object.entries(node).flatMap(([key, value]) => leafKeys(value, prefix ? `${prefix}.${key}` : key))
+}
+
+/** The base keys a locale writes plural forms for, mapped to the categories it actually supplies. */
+const pluralForms = (bundle: Record<string, unknown>) => {
+  const forms = new Map<string, Set<string>>()
+  for (const key of leafKeys(bundle)) {
+    const suffix = SUFFIXES.find(each => key.endsWith(`_${each}`))
+    if (!suffix) continue
+    const base = key.slice(0, -(suffix.length + 1))
+    const seen = forms.get(base) ?? new Set<string>()
+    seen.add(suffix)
+    forms.set(base, seen)
+  }
+  return forms
+}
+
+const stringAt = (bundle: Record<string, unknown>, key: string): string | undefined => {
+  const value = key.split(".").reduce<unknown>((node, part) => {
+    if (node === null || typeof node !== "object") return undefined
+    return (node as Record<string, unknown>)[part]
+  }, bundle)
+  return typeof value === "string" ? value : undefined
+}
+
+/**
+ * The `{{name}}`s one plural form interpolates, minus `count`.
+ *
+ * `count` is left out on purpose: whether a form spells its number is a choice the language gets to make
+ * ("a coin" against "1 coin"), and demanding agreement there would fail a good translation. Every OTHER
+ * name is a value the caller supplies, so a form that drops one renders it as literal text or loses it
+ * silently — and neither of those is a translator's prerogative.
+ */
+const placeholders = (bundle: Record<string, unknown>, key: string): string | undefined => {
+  const value = stringAt(bundle, key)
+  if (value === undefined) return undefined
+  const names = new Set<string>()
+  for (const [, name] of value.matchAll(/\{\{\s*([\w.]+)[^}]*\}\}/g)) if (name !== "count") names.add(name)
+  return [...names].sort().join("+")
+}
+
+/**
+ * A count that lands in the given category for this language — found rather than tabulated, because which
+ * integer means "few" is a property of the language and not something this file should claim to know.
+ *
+ * Some categories are only reachable with a fraction (Spanish "many" is about large numbers, Welsh "zero"
+ * is literally 0), so a category no integer under 200 selects is left alone rather than guessed at.
+ */
+const countFor = (locale: string, category: string): number | undefined => {
+  const rules = new Intl.PluralRules(locale)
+  for (let count = 0; count <= 200; count++) if (rules.select(count) === category) return count
+  return undefined
+}
+
+describe("plural forms resolve in every shipped locale", () => {
   let i18n: I18n
 
   beforeAll(async () => {
     i18n = createInstance()
     await i18n.init({
-      lng: "en",
-      fallbackLng: "en",
+      lng: reference,
+      // No fallback: a locale falling back to English would hide exactly the miss this file looks for.
+      fallbackLng: false,
       interpolation: { escapeValue: false },
-      resources: { en: { common: commonEn }, nl: { common: commonNl } },
+      resources: Object.fromEntries(locales.map(locale => [locale, { common: bundles[locale] }])),
     })
   })
 
-  const t = (lng: string, key: string, opts: Record<string, unknown>) => i18n.getFixedT(lng, "common")(key, opts)
-
-  it.each([
-    ["en", 1, "Solved with 1 hint"],
-    ["en", 3, "Solved with 3 hints"],
-    ["nl", 1, "Opgelost met 1 hint"],
-    ["nl", 3, "Opgelost met 3 hints"],
-  ])("renders %s hint tally for %i as %s", (lng, count, expected) => {
-    expect(t(lng, "ui.solvedWithHints", { count })).toBe(expected)
+  it("found locales to check", () => {
+    // A rename of public/locales would otherwise turn this whole file into zero silent tests.
+    expect(locales.length).toBeGreaterThan(0)
+    expect(Object.values(bundles).every(bundle => leafKeys(bundle).length > 0)).toBe(true)
   })
 
-  it.each([
-    ["en", 1, "1 coin"],
-    ["en", 2, "2 coins"],
-    ["en", 42, "42 coins"],
-    ["nl", 1, "1 munt"],
-    ["nl", 2, "2 munten"],
-  ])("renders %s money reward for %i as %s", (lng, count, expected) => {
-    expect(t(lng, "chest.money", { count })).toBe(expected)
-  })
+  describe.each(locales)("%s", locale => {
+    const forms = pluralForms(bundles[locale])
+    const required = new Intl.PluralRules(locale).resolvedOptions().pluralCategories
 
-  /**
-   * The move a hint asks for (`puzzle-screens.md` §4) names the squares it marked, so it has to agree with
-   * how many there are — a hint reading "rule out the hatched squares" over one square is a hint the player
-   * has to re-read. i18next answers a missing plural form with the key itself, which reaches them as raw
-   * text, so both forms of every move are checked here rather than only their presence.
-   */
-  it.each([
-    ["starBattle.hint.default.action.ruleOut", "en", 1, "Rule out the hatched square."],
-    ["starBattle.hint.default.action.ruleOut", "en", 4, "Rule out the hatched squares."],
-    ["starBattle.hint.default.action.ruleOut", "nl", 1, "Streep het gearceerde vakje af."],
-    ["starBattle.hint.default.action.ruleOut", "nl", 4, "Streep de gearceerde vakjes af."],
-    ["sumplete.hint.action.strike", "en", 1, "Cross out the hatched number."],
-    ["sumplete.hint.action.strike", "en", 3, "Cross out the hatched numbers."],
-    ["sumplete.hint.action.keep", "nl", 1, "Markeer het gearceerde getal als blijvend."],
-    ["sumplete.hint.action.keep", "nl", 3, "Markeer de gearceerde getallen als blijvend."],
-  ])("renders %s in %s for %i as %s", (key, lng, count, expected) => {
-    expect(t(lng, key, { count })).toBe(expected)
-  })
+    it("pluralises something at all", () => {
+      expect(forms.size).toBeGreaterThan(0)
+    })
 
-  it.each([
-    ["en", 1, "Put ☀️ in the hatched square."],
-    ["en", 5, "Put ☀️ in the hatched squares."],
-    ["nl", 1, "Zet ☀️ in het gearceerde vakje."],
-    ["nl", 5, "Zet ☀️ in de gearceerde vakjes."],
-  ])("renders the %s eclipse move for %i as %s", (lng, count, expected) => {
-    expect(t(lng, "eclipse.hint.action.fill", { count, mark: "☀️" })).toBe(expected)
-  })
+    it("supplies every category this language needs, for every key it pluralises", () => {
+      // Partial coverage is the failure that ships: a key with `_one` and no `_other` reads perfectly on a
+      // board with one square and as a raw key on the next one. Only keys this locale already pluralises
+      // are checked — one it has not translated at all is a different thing, and not this file's business.
+      const missing = [...forms]
+        .flatMap(([base, supplied]) => required.filter(each => !supplied.has(each)).map(each => `${base}_${each}`))
+        .sort()
+      expect(missing).toEqual([])
+    })
 
-  it.each([
-    ["en", 1, "Put a ⭐ in the hatched square."],
-    ["en", 2, "Put a ⭐ in each hatched square."],
-    ["nl", 1, "Zet een ⭐ in het gearceerde vakje."],
-    ["nl", 2, "Zet een ⭐ in elk gearceerd vakje."],
-  ])("renders the %s star battle placement for %i as %s", (lng, count, expected) => {
-    expect(t(lng, "starBattle.hint.default.action.place", { count, token: "⭐" })).toBe(expected)
-  })
+    it("interpolates the same caller-supplied names as the reference locale", () => {
+      // Compared form by form rather than key by key: a union across a key's forms hides a placeholder
+      // dropped from exactly one of them, which is the version of this bug that reaches a player on the
+      // one board in ten where that form is the one selected.
+      const referenceForms = pluralForms(bundles[reference])
+      const drift: string[] = []
+      for (const [base, supplied] of forms) {
+        if (!referenceForms.has(base)) continue
+        for (const category of supplied) {
+          const key = `${base}_${category}`
+          const mine = placeholders(bundles[locale], key)
+          const theirs = placeholders(bundles[reference], key)
+          if (theirs === undefined || mine === theirs) continue
+          drift.push(`${key}: ${mine || "none"} vs ${reference} ${theirs || "none"}`)
+        }
+      }
+      expect(drift).toEqual([])
+    })
 
-  /**
-   * The star battle reasons that state a number, at both quotas the mechanic ships.
-   *
-   * These keys carry a dot of their own inside the `hint` block ("groupFull.row"), so the plural suffix
-   * lands on a key i18next has to find by its literal name rather than by walking one more level. That is a
-   * resolution path the identity-`t` suite cannot see through at all: a miss here reads as the raw key on a
-   * two-star board and as perfectly fine text on a one-star one.
-   */
-  it.each([
-    ["starBattle.hint.default.groupFull.region", "en", 1, "This region already has its ⭐."],
-    ["starBattle.hint.default.groupFull.region", "en", 2, "This region already has its 2 ⭐."],
-    ["starBattle.hint.default.groupTight.row", "en", 1, "This row is down to one square."],
-    ["starBattle.hint.default.groupTight.row", "en", 2, "This row is down to 2 squares."],
-    ["starBattle.hint.default.regionLine.row", "en", 2, "The marked region’s 2 ⭐ have to come from that row."],
-    ["starBattle.hint.default.lineRegion.col", "en", 2, "That column’s 2 ⭐ belong to the marked region."],
-    ["starBattle.hint.default.groupFull.region", "nl", 1, "Dit gebied heeft zijn ⭐ al."],
-    ["starBattle.hint.default.groupFull.region", "nl", 2, "Dit gebied heeft zijn 2 ⭐ al."],
-    ["starBattle.hint.default.groupTight.row", "nl", 2, "Deze rij heeft nog 2 vakjes over."],
-    ["starBattle.hint.default.lineRegion.col", "nl", 2, "De 2 ⭐ van die kolom horen bij het gemarkeerde gebied."],
-  ])("renders %s in %s for %i as %s", (key, lng, count, expected) => {
-    expect(t(lng, key, { count, token: "⭐" })).toBe(expected)
+    it("renders every plural form as text rather than as its own key", () => {
+      const t = i18n.getFixedT(locale, "common")
+      const raw: string[] = []
+      for (const base of forms.keys())
+        for (const category of required) {
+          const count = countFor(locale, category)
+          if (count === undefined) continue
+          const rendered = t(base, { count })
+          // i18next answers a form it cannot find with the key, and leaves `{{count}}` standing when the
+          // caller's interpolation option is named anything else.
+          if (rendered === base || rendered.startsWith(`${base}_`) || rendered.includes("{{count}}"))
+            raw.push(`${base} @ ${category} (count ${count}) → ${rendered}`)
+        }
+      expect(raw).toEqual([])
+    })
   })
+})
 
-  /**
-   * The same sentences over the mechanic's other face.
-   *
-   * Twin stars drawn for `agriculture` is a farm, and its wording is whole sentences rather than the sky's
-   * with a noun swapped (`puzzle-screens.md` §4.3) — so the plural forms are its own too, and a missing one
-   * here reaches the player as a raw key on a board that looks nothing like the one it was written for.
-   */
-  it.each([
-    ["starBattle.hint.fields.groupTight.region", "en", 2, "This holding is down to 2 plots."],
-    ["starBattle.hint.fields.onlyWay.region", "en", 2, "There is only one way to fit 2 🛖 on this holding."],
-    ["starBattle.hint.fields.action.place", "en", 2, "Raise a 🛖 on each hatched plot."],
-    ["starBattle.hint.fields.groupTight.region", "nl", 2, "Dit stuk land heeft nog 2 akkers over."],
-    ["starBattle.hint.fields.onlyWay.region", "nl", 2, "Er is maar één manier om 2 🛖 op dit stuk land te zetten."],
-    ["starBattle.hint.fields.action.place", "nl", 2, "Zet een 🛖 op elke gearceerde akker."],
-  ])("renders %s in %s for %i as %s", (key, lng, count, expected) => {
-    expect(t(lng, key, { count, token: "🛖" })).toBe(expected)
-  })
-
-  it.each([
-    ["en", 2, "Every row, every column and every holding has exactly 2 farmsteads."],
-    ["nl", 2, "Elke rij, elke kolom en elk stuk land heeft precies 2 boerderijen."],
-  ])("renders the %s farm goal for a quota of %i as %s", (lng, count, expected) => {
-    expect(t(lng, "starBattle.goal.fields", { count })).toBe(expected)
-  })
-
-  // The goal states which of the two rules the board is under, so it is the one line that must not fall
-  // back to a shared wording.
-  it.each([
-    ["en", 1, "Every row, every column and every region holds exactly one star."],
-    ["en", 2, "Every row, every column and every region holds exactly 2 stars."],
-    ["nl", 1, "Elke rij, elke kolom en elk gebied heeft precies één ster."],
-    ["nl", 2, "Elke rij, elke kolom en elk gebied heeft precies 2 sterren."],
-  ])("renders the %s goal for a quota of %i as %s", (lng, count, expected) => {
-    expect(t(lng, "starBattle.goal.default", { count })).toBe(expected)
-  })
-
-  /**
-   * Sudoku's elimination move, over both of its faces.
-   *
-   * A chamber-line rung settles anything from one square to four, and "rule 𓁹 out of the hatched
-   * squares" over a single square is a sentence the player has to read twice. The token is skinned as
-   * well as the noun here, which is why both faces are checked: the register's forms are its own
-   * sentences rather than the carved board's with a word swapped (`puzzle-screens.md` §4.3).
-   */
-  it.each([
-    ["sudoku.hint.default.action.ruleOut", "en", 1, "Rule 4 out of the hatched square."],
-    ["sudoku.hint.default.action.ruleOut", "en", 3, "Rule 4 out of the hatched squares."],
-    ["sudoku.hint.default.action.ruleOut", "nl", 1, "Streep 4 weg in het gearceerde vakje."],
-    ["sudoku.hint.default.action.ruleOut", "nl", 3, "Streep 4 weg in de gearceerde vakjes."],
-  ])("renders %s in %s for %i as %s", (key, lng, count, expected) => {
-    expect(t(lng, key, { count, token: "4" })).toBe(expected)
-  })
-
-  it.each([
-    ["sudoku.hint.papyrus.action.ruleOut", "en", 1, "Rule 𓁹 out of the hatched space."],
-    ["sudoku.hint.papyrus.action.ruleOut", "en", 3, "Rule 𓁹 out of the hatched spaces."],
-    ["sudoku.hint.papyrus.action.ruleOut", "nl", 1, "Streep 𓁹 weg op de gearceerde plek."],
-    ["sudoku.hint.papyrus.action.ruleOut", "nl", 3, "Streep 𓁹 weg op de gearceerde plekken."],
-  ])("renders %s in %s for %i as %s", (key, lng, count, expected) => {
-    expect(t(lng, key, { count, token: "𓁹" })).toBe(expected)
-  })
-  /**
-   * A procession mark says its gap in hours, and the sentence under the board is the flavour half of a
-   * mark whose chip carries the same fact wordlessly. A missing form reads as a raw key on the one board
-   * in ten whose gap happens to be a single hour, which is exactly the miss the identity-`t` suite cannot
-   * see.
-   *
-   * The sentences open lower case on purpose: a name is written once with its article and the board
-   * capitalises the first letter in CSS, so nothing needs a second copy of "the fire" for mid-sentence use.
-   */
-  it.each([
-    ["en", 1, "the baking starts 1 hour after the fire is done."],
-    ["en", 3, "the baking starts 3 hours after the fire is done."],
-    ["nl", 1, "het bakken begint 1 uur nadat het vuur klaar is."],
-    ["nl", 3, "het bakken begint 3 uur nadat het vuur klaar is."],
-  ])("renders the %s procession gap for %i as %s", (lng, count, expected) => {
-    expect(
-      t(lng, "procession.marks.default.link", {
-        count,
-        a: t(lng, "procession.events.default.2", {}),
-        b: t(lng, "procession.events.default.0", {}),
-      })
-    ).toBe(expected)
+/**
+ * Two sentences, kept deliberately.
+ *
+ * The rules above prove a form resolves; they cannot prove the harness is wired up at all. A silently
+ * empty locale list or a bundle that failed to parse would make every rule above vacuously true, and these
+ * are the smoke test for that — the only place in this file where changing a translation changes a result,
+ * which is why it is one key rather than fifty.
+ */
+describe("the harness itself resolves", () => {
+  it("picks the singular and the plural apart", async () => {
+    const i18n = createInstance()
+    await i18n.init({
+      lng: reference,
+      fallbackLng: false,
+      interpolation: { escapeValue: false },
+      resources: { [reference]: { common: bundles[reference] } },
+    })
+    const t = i18n.getFixedT(reference, "common")
+    expect(t("chest.money", { count: 1 })).toBe("1 coin")
+    expect(t("chest.money", { count: 2 })).toBe("2 coins")
   })
 })
