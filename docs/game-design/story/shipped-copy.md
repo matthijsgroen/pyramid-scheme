@@ -8,7 +8,11 @@
 | `shop*` — the stall, first visit and after                                     | 4    | the redesign, and his commercial arc                         |
 | everything else — `welcome*`, `pyramidIntro*`, `tombTutorial*`, `mapPiece*`, … | 37   | **before the explorer existed**                              |
 
-The 22 are fine. The 37 are one character explaining the game to nobody in particular, because when they
+The 22 are fine — and the 18 mosaic lines are now **the payoff of a running gag** rather than a lecture at
+the end of a tier: Fez is wrong about that tier's god early on, the tomb ghost corrects him, and the panel
+beat is him getting it right (`cast.md`). They do not want rewriting; they want setting up, two lines a
+tier.
+The 37 are one character explaining the game to nobody in particular, because when they
 were written there was nobody else in the room.
 
 ## The review's two complaints both land on the 37

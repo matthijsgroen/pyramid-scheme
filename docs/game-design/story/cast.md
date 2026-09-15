@@ -34,6 +34,39 @@ owed whom, and which stories get told in markets. He is not a scholar, and letti
 slightly wrong about a god is what keeps the game from being a lecture — and gives someone else something
 to correct.
 
+### One thing he is wrong about per tier (decided)
+
+Fez states something about a god or a king with total confidence and is **wrong**. The tier's tomb ghost
+corrects him — tartly, because being corrected by the dead is funnier than being corrected by a book. At
+the end of the tier he explains the mosaic panel, and gets it right.
+
+**This is what reconciles the shipped copy with his character.** The 18 `mosaic*` lines have him explaining
+Egyptology confidently and correctly, which fights "shaky about gods" — unless he learned it a few hours
+earlier from somebody who was there. So those lines do not want rewriting. They want **setting up**, and
+they become the payoff of the tier rather than a lecture at the end of it.
+
+It also gives every ghost a second job. They came to have their accounts settled; now they also put the
+lizard right about their own god.
+
+| Tier    | Panel he ends up explaining    | Wrong early, corrected by                                       |
+| ------- | ------------------------------ | --------------------------------------------------------------- |
+| starter | Bastet, the cat in the doorway | Ipi, who kept the accounts — the cats were an inventory measure |
+| junior  | Thoth, writing and counting    | the noble, on what a scribe was actually worth                  |
+| expert  | Amun-Ra, the hidden one        | the high priest, whose whole profession it was                  |
+| master  | Osiris, dead is not finished   | the pharaoh, who has opinions about coming back                 |
+| wizard  | Ma'at and the scale            | the last tomb, where being wrong about this matters most        |
+
+Ten source lines for the whole run — two a tier — and it turns eighteen lines that already exist into a
+thing the player earned.
+
+**The starter one is nearly written.** Fez believes the Egyptians kept cats because they were charming.
+Ipi, who spent forty years counting sacks, knows exactly what a cat was for: the grain. The correction is
+in character for a bookkeeper, it is true, and `mosaicStarter` already says the right version three lines
+later — _"they killed the snakes and the rats that got into the grain."_
+
+**Never let a correction humiliate him.** He takes it well and repeats it later as though he always knew,
+which is both funnier and kinder, and keeps the pair from souring.
+
 **Never says.**
 
 - Never explains a rule the board should be teaching. That is the boards' job, and it is how he became a
@@ -168,5 +201,5 @@ first question than who are you — and he is complaining rather than looming, w
 1. **Which setup**, and if the third: how long is the quiet, exactly one board or the whole first pyramid?
 2. **Does the map ever pay off?** Secondhand and vague is the right start, but a map nobody returns to is
    set dressing. It could be worthless for good, or turn out to be one of the earlier explorer's.
-3. **Does Fez get one thing he is wrong about per tier**, or is being shaky about gods an occasional
-   colour? A running one is funnier and needs someone to correct him.
+3. **Which five errors, exactly?** The starter one is nearly written; the other four want a real piece of
+   Egyptology each, wrong in a way a merchant plausibly would be.

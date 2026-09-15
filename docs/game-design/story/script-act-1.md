@@ -11,7 +11,7 @@ lightly. The travel-card blurbs are marketing prose and are not the model.
 the explorer carries no pronoun, no name and no gendered self-description — every line below is present
 tense, a question, or about the world rather than about themselves.
 
-33 source lines.
+40 source lines.
 
 ---
 
@@ -58,6 +58,13 @@ which is the ward gates the player is about to start meeting.
 > **Fez:** Anyone who didn't ask nicely. Us, mainly.
 >
 > **Fez:** Every sealed thing in this country was sealed by someone who meant it.
+>
+> **Fez:** And the cats! They kept cats here, you know. Adored them. Couldn't help themselves.
+
+**The error is planted here** (`cast.md`, "one thing he is wrong about per tier"). He is confident, he is
+charming, and he is wrong about why. Ipi puts him right two journeys later, and `mosaicStarter` — already
+shipped — has him explaining it correctly at the end of the tier, which is now something he learned rather
+than something he knew.
 
 ## `starter_4` — Scribe's Academy · signs, and the hook paid forward
 
@@ -99,6 +106,18 @@ room and the room is a hole in the ground.
 > herself. She never paid for the lapis.
 >
 > **Ipi:** Tell her Ipi sent you. That should spoil her afternoon.
+>
+> **Fez:** He'd have had cats, a man like this. Everyone did. Charming animals.
+>
+> **Ipi:** I had four, and not one of them was charming. They were for the grain.
+>
+> **Ipi:** Do you know what a rat costs you, over a season? I do. To the sack.
+>
+> **Fez:** …Right.
+>
+> **Explorer:** He wrote that down too.
+>
+> **Ipi:** Of course I wrote it down.
 >
 > **Fez:** I like him.
 >
