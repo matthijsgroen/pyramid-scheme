@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- A puzzle you walk away from keeps what you had worked out: the board is waiting as you left it when you come back, even after closing the game. Solving it clears it.
+- Revisiting a pyramid you already finished no longer asks you to solve its outer board again — the numbers you worked out are shown, and you step straight inside.
+
 ## 0.43.8 - 2026-09-15
 
 ### Changed

@@ -1,4 +1,5 @@
-import { useMemo, useState, type FC } from "react"
+import { useMemo, type FC } from "react"
+import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
@@ -40,7 +41,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
     7
   )
   const skin = skinFor(role, theme, shape)
-  const [state, setState] = useState(() => createCanistersState(puzzle))
+  const [state, setState] = usePuzzleState(() => createCanistersState(puzzle))
 
   const solved = isCanistersSolved(puzzle, state)
   const left = movesLeft(puzzle, state)

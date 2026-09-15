@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState, type FC } from "react"
+import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import { LightbeamBoard } from "@/mods/puzzle/app/lightbeam/LightbeamBoard"
 import { LightbeamRules } from "@/mods/puzzle/app/lightbeam/LightbeamRules"
@@ -23,7 +24,7 @@ type Props = {
 // is the shell, the board, and nothing in between.
 export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
-  const [state, setState] = useState(() => createLightbeamState(puzzle))
+  const [state, setState] = usePuzzleState(() => createLightbeamState(puzzle))
 
   const solved = isLit(puzzle, state.states)
 
@@ -69,7 +70,7 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
       if (solved) return // the light is on its way to the shrine; nothing may move under it
       setState(prev => cycleLightbeamPiece(prev, puzzle, piece))
     },
-    [puzzle, solved]
+    [puzzle, solved, setState]
   )
 
   return (

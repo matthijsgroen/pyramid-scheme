@@ -27,6 +27,7 @@ import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useDetectorReadout } from "@/app/SiteMap/useDetectorReadout"
+import { PuzzleRoomContext } from "@/mods/core/app/puzzleState"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { DetectorButton } from "@/ui/atoms/DetectorButton"
 import { BackButton } from "@/ui/atoms/BackButton"
@@ -261,16 +262,19 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
       )}
       {encounter.isOpen && ActiveEncounterComponent && encounter.ctx && (
         <EncounterModal difficulty={encounter.ctx.difficulty}>
-          <ActiveEncounterComponent
-            puzzle={encounter.puzzle}
-            ctx={encounter.ctx}
-            progression={progression}
-            journeys={journeys}
-            inventory={inventory}
-            applyReward={applyReward}
-            onSolved={encounter.solved}
-            onCancel={encounter.cancel}
-          />
+          {/* The room the board belongs to — what an unfinished board is saved against. */}
+          <PuzzleRoomContext value={encounter.roomKey}>
+            <ActiveEncounterComponent
+              puzzle={encounter.puzzle}
+              ctx={encounter.ctx}
+              progression={progression}
+              journeys={journeys}
+              inventory={inventory}
+              applyReward={applyReward}
+              onSolved={encounter.solved}
+              onCancel={encounter.cancel}
+            />
+          </PuzzleRoomContext>
         </EncounterModal>
       )}
       <RewardFlow pendingReward={rewardOffer.pending} onDismiss={rewardOffer.dismiss} />

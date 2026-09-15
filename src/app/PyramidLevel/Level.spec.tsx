@@ -103,3 +103,46 @@ describe("Level — a board restored from a previous visit", () => {
     expect(filled[0].value).toBe(String(solution[firstOpen.id]))
   })
 })
+
+describe("Level — a board this journey has already solved", () => {
+  beforeEach(async () => {
+    await clearGameData()
+  })
+
+  it("shows the numbers instead of asking for them again", async () => {
+    const content = makeContent()
+    const solution = getAnswers(content.pyramid)!
+
+    const { container } = render(<Level content={content} storageKey={STORAGE_KEY} revealed />)
+    await settle()
+    await settle()
+
+    const inputs = [...container.querySelectorAll<HTMLInputElement>("input")]
+    expect(inputs.length).toBeGreaterThan(0)
+    expect(inputs.every(input => input.value !== "")).toBe(true)
+    const shown = inputs.map(input => Number(input.value)).sort((a, b) => a - b)
+    const expected = Object.values(solution).sort((a, b) => a - b)
+    expect(shown).toEqual(expected)
+  })
+
+  it("stays out of the answer slot, so what is stored there is left alone", async () => {
+    const content = makeContent()
+    const solution = getAnswers(content.pyramid)!
+    const firstOpen = content.pyramid.blocks.find(b => b.isOpen)!
+    const { result } = renderHook(() =>
+      useGameStorage<{ key: string; values: Record<string, number | undefined> }>("levelAnswers", {
+        key: "",
+        values: {},
+      })
+    )
+    await act(async () => {
+      await result.current[1]({ key: STORAGE_KEY, values: { [firstOpen.id]: solution[firstOpen.id] } })
+    })
+
+    render(<Level content={content} storageKey={STORAGE_KEY} revealed />)
+    await settle()
+    await settle()
+
+    expect(result.current[0].values).toEqual({ [firstOpen.id]: solution[firstOpen.id] })
+  })
+})

@@ -1,5 +1,6 @@
 import clsx from "clsx"
 import { useCallback, useMemo, useState, type FC } from "react"
+import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
@@ -35,7 +36,7 @@ type Props = {
 
 export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
-  const [state, setState] = useState(() => createStarBattleState(puzzle))
+  const [state, setState] = usePuzzleState(() => createStarBattleState(puzzle))
   // Which place this room is. The board, the goal, the rules and every hint sentence are all drawn from it,
   // so it is resolved once.
   const skin = skinFor(role, theme)
