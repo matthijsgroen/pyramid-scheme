@@ -86,23 +86,25 @@ has thought of yet.
 
 ### The catalog itself
 
-| #   | Mechanic                   | Says                                        | Connectivity       | Cost     | Status       |
-| --- | -------------------------- | ------------------------------------------- | ------------------ | -------- | ------------ |
-| B1  | Ward gate                  | somebody locked this                        | region             | —        | **built**    |
-| B2  | Floor key                  | do that first, then this                    | region             | —        | **built**    |
-| B3  | Hidden corridor            | somebody concealed this                     | adds edge          | —        | **built**    |
-| B4  | Side path                  | there is more than the way on               | adds edge          | —        | **built**    |
-| B5  | Staircase                  | down is further in                          | adds edge          | —        | **built**    |
-| 1   | Blocked passage            | this place was bigger than you can reach    | **none**           | free     | proposed     |
-| 2   | Loop density dial          | people moved through here                   | adds edge          | tuning   | proposed     |
-| 2b  | One-way crossing           | somebody crossed here and did not come back | adds edge, one way | small    | proposed     |
-| 6   | Window or grille           | there is something there, and not yet       | **none**           | small    | proposed     |
-| 7   | Informational dead end     | the reward here is knowing something        | none               | free     | proposed     |
-| 8   | Lever-opened shortcut      | somebody closed this from the other side    | adds edge          | small    | proposed     |
-| 9   | Second way in              | you know this place from the other side now | adds edge          | medium   | proposed     |
-| 3   | Chamber bigger than a cell | this room mattered                          | footprint          | renderer | waiting      |
-| 4   | One-way drop that strands  | you are committed now                       | adds edge, one way | —        | **declined** |
-| 5   | Vertical layers            | the building has depth                      | region             | large    | last         |
+| #   | Mechanic                   | Says                                        | Connectivity       | Cost     | Status                          |
+| --- | -------------------------- | ------------------------------------------- | ------------------ | -------- | ------------------------------- |
+| B1  | Ward gate                  | somebody locked this                        | region             | —        | **built**                       |
+| B2  | Floor key                  | do that first, then this                    | region             | —        | **built**                       |
+| B3  | Hidden corridor            | somebody concealed this                     | adds edge          | —        | **built**                       |
+| B4  | Side path                  | there is more than the way on               | adds edge          | —        | **built**                       |
+| B5  | Staircase                  | down is further in                          | adds edge          | —        | **built**                       |
+| 1   | Blocked passage            | this place was bigger than you can reach    | **none**           | free     | proposed                        |
+| 2   | Loop density dial          | people moved through here                   | adds edge          | tuning   | proposed                        |
+| 2b  | One-way crossing           | somebody crossed here and did not come back | adds edge, one way | small    | proposed                        |
+| 6   | Window or grille           | there is something there, and not yet       | **none**           | small    | proposed                        |
+| 7   | Informational dead end     | the reward here is knowing something        | none               | free     | proposed                        |
+| 8   | Lever-opened shortcut      | somebody closed this from the other side    | adds edge          | small    | proposed                        |
+| 9   | Second way in              | you know this place from the other side now | adds edge          | medium   | proposed                        |
+| 3   | Chamber bigger than a cell | this room mattered                          | footprint          | renderer | waiting                         |
+| 4   | One-way drop that strands  | you are committed now                       | adds edge, one way | —        | **declined** — superseded by 2b |
+| 5   | Vertical layers            | the building has depth                      | region             | large    | last                            |
+
+**A floor is one plane.** Any mechanic whose fiction needs height is really entry 5, at entry 5's price — which rules out shafts, ledges and drops before they are designed, and is why 2b is a chasm rather than a shaft.
 
 ### The one-way crossing, in detail
 
