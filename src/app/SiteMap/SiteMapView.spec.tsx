@@ -1161,6 +1161,32 @@ describe("the light falls in the same two passes the shade does", () => {
 
     expect(topOf("standing")).toBe(topOf("lit") - WALL_H)
   })
+
+  it("carries that band across the seams between cells, so the back wall has no unlit slits in it", () => {
+    // Two lit cells side by side each carry their own band, with a side wall's thickness of map between
+    // them. Left out, that seam stood unlit in the middle of a wall the lamp was otherwise falling on —
+    // the back wall of a lit place drawn as a dashed line, one gap per column.
+    const grid = makeGrid([
+      [
+        straightCorridor("completed", ["e"]),
+        straightCorridor("completed", ["e", "w"]),
+        straightCorridor("completed", ["w"]),
+      ],
+    ])
+    const { container } = render(<SiteMapView grid={grid} explorerPos={[0, 1]} revealAllCells />)
+
+    const rects = [
+      ...clipOf(lit(container, "standing")).matchAll(/M(-?[\d.]+)\s*(-?[\d.]+)\s*h\s*(-?[\d.]+)\s*v\s*(-?[\d.]+)/g),
+    ].map(m => m.slice(1).map(Number) as [number, number, number, number])
+    const bandTop = Math.min(...rects.map(([, y]) => y))
+    const band = rects.filter(([, y, , h]) => y === bandTop && h === WALL_H).sort(([a], [b]) => a - b)
+
+    expect(band.length).toBeGreaterThan(1)
+    band.forEach(([x, , w], i) => {
+      if (i > 0) expect(x).toBe(band[i - 1][0] + band[i - 1][2])
+      expect(w).toBeGreaterThan(0)
+    })
+  })
 })
 
 describe("the explorer stands in the room", () => {

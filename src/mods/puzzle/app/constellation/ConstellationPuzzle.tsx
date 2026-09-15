@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState, type FC } from "react"
+import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
@@ -33,7 +34,7 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
   const { t } = useTranslation("common")
   // Which place this room is. The goal and the rules are both worded from it, so they are resolved once.
   const { name: skin } = skinFor(role, theme)
-  const [state, setState] = useState(() => createConstellationState(puzzle))
+  const [state, setState] = usePuzzleState(() => createConstellationState(puzzle))
 
   /**
    * Whether the player has asked for a hint, which is what gates deriving one.

@@ -7,6 +7,7 @@ import { hashString } from "@/support/hashString"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { getFamilyPlugin, type FamilyContext, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { encodeEdge } from "./useAssembledFloor"
+import { useClearPuzzleState } from "@/mods/core/app/puzzleState"
 
 type EncounterArgs = {
   journeys: JourneyAPI
@@ -26,6 +27,8 @@ export type Encounter = {
   puzzle: unknown
   /** True while a room is open, even if its family is missing. */
   isOpen: boolean
+  /** Names the open board, so its unfinished state is saved against this room and no other. */
+  roomKey: string | undefined
   open: (pos: readonly [number, number], freshArrival: boolean) => void
   solved: () => void
   cancel: () => void
@@ -107,6 +110,16 @@ export const useEncounter = ({
     }
   }, [family, ctx, journeyId])
 
+  // Which board is open, for the slot that holds its unfinished state. The family and the board it
+  // was dealt are part of it, not just the cell: two levels of one site can put different rooms at
+  // the same floor coordinate.
+  const roomKey = useMemo(() => {
+    if (!family || !ctx) return undefined
+    return [ctx.journeyId, ctx.edgeId, family.meta.id, ctx.boardIndex ?? ""].join("|")
+  }, [family, ctx])
+
+  const clearPuzzleState = useClearPuzzleState()
+
   // The one thing core does on any solved encounter, for every family alike: mark the room explored
   // and offer its reward, if it has one.
   const resolve = useCallback(
@@ -117,6 +130,8 @@ export const useEncounter = ({
       const cell = getCell(grid, row, col)
       const sectionHash = cell && cell.type !== "empty" ? (cell.sectionHash ?? "") : ""
       journeys.markCellExplored(sectionHash, edgeId, cell ? cellOrdinalKey(cell) : null)
+      // A resolved room is never reopened, so its moves have nothing left to say.
+      clearPuzzleState()
       setActive(null)
 
       const reward = cell?.type === "room" ? cell.reward : undefined
@@ -131,7 +146,7 @@ export const useEncounter = ({
           : undefined
       onReward(reward, edgeId, keyColors)
     },
-    [grid, journeys, currentFloor, onReward]
+    [grid, journeys, currentFloor, onReward, clearPuzzleState]
   )
 
   const open = useCallback(
@@ -150,5 +165,5 @@ export const useEncounter = ({
     if (active && family == null) resolve(active.pos)
   }, [active, family, resolve])
 
-  return { family, ctx, puzzle, isOpen: active !== null, open, solved, cancel }
+  return { family, ctx, puzzle, isOpen: active !== null, roomKey, open, solved, cancel }
 }

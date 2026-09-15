@@ -1,7 +1,7 @@
-import { type FC, useEffect, useRef } from "react"
+import { type FC, useEffect, useMemo, useRef } from "react"
 import type { PyramidLevel } from "@/game/types"
 import { PyramidDisplay } from "@/app/PyramidLevel/PyramidDisplay"
-import { isValid } from "@/game/state"
+import { getAnswers, isValid } from "@/game/state"
 import { useLevelAnswers } from "@/app/PyramidLevel/useLevelAnswers"
 import type { DayNightCycleStep } from "@/ui/atoms/backdropSelection"
 
@@ -13,8 +13,24 @@ export const Level: FC<{
   dayTime?: DayNightCycleStep
   entranceBlockId?: string
   interactive?: boolean
-}> = ({ content, storageKey, onComplete, decorationOffset = 0, dayTime, entranceBlockId, interactive = true }) => {
-  const { answers, loaded, setAnswer, clearAnswers } = useLevelAnswers(storageKey)
+  /** A board this journey has already solved: the numbers are shown instead of being asked for again. */
+  revealed?: boolean
+}> = ({
+  content,
+  storageKey,
+  onComplete,
+  decorationOffset = 0,
+  dayTime,
+  entranceBlockId,
+  interactive = true,
+  revealed = false,
+}) => {
+  const { answers: typed, loaded, setAnswer, clearAnswers } = useLevelAnswers(storageKey)
+
+  // A revealed board stores nothing: the pyramid carries the sums, so its solution is derived here
+  // rather than remembered from the run that first worked it out.
+  const solution = useMemo(() => (revealed ? getAnswers(content.pyramid) : undefined), [revealed, content.pyramid])
+  const answers = solution ?? typed
 
   const completed = isValid({
     levelNr: content.levelNr,
@@ -38,15 +54,14 @@ export const Level: FC<{
   }, [completed, onComplete])
 
   // A board restored from storage already solved is never useful — every input ends up `disabled`
-  // and every block deselected, so the player can't touch it. Re-entering a pyramid means
-  // re-solving its exterior board (see Travel's revisit path), so drop the stale solution and hand
-  // them an empty one. Only a *finished* solution is dropped; a partial one is what the slot is for.
+  // and every block deselected, so the player can't touch it. Drop the stale solution and hand them
+  // an empty one; only a *finished* solution is dropped, a partial one is what the slot is for.
   // `storageKey` first: a board rendered as scenery owns no slot and must never write to the one
-  // the playable board is using.
+  // the playable board is using. A revealed board owns no slot either — its numbers are derived.
   useEffect(() => {
-    if (!storageKey || !loaded || !completed || answeredThisVisitRef.current) return
+    if (revealed || !storageKey || !loaded || !completed || answeredThisVisitRef.current) return
     clearAnswers()
-  }, [storageKey, loaded, completed, clearAnswers])
+  }, [revealed, storageKey, loaded, completed, clearAnswers])
 
   return (
     <div className="relative flex size-full flex-col">
@@ -61,7 +76,7 @@ export const Level: FC<{
           entranceBlockId={entranceBlockId}
           interactive={interactive}
           onAnswer={
-            storageKey
+            storageKey && !revealed
               ? (blockId: string, value: number | undefined) => {
                   answeredThisVisitRef.current = true
                   setAnswer(blockId, value)

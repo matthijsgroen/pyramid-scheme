@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState, type FC } from "react"
+import { useCallback, useMemo, type FC } from "react"
+import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import { SumpleteBoard } from "@/mods/puzzle/app/sumplete/SumpleteBoard"
 import { SumpleteRules } from "@/mods/puzzle/app/sumplete/SumpleteRules"
@@ -21,9 +22,12 @@ type Props = {
 export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const { grid, rowTargets, colTargets, solution, techniqueCap } = puzzle
-  const [state, setState] = useState(() => createSumpleteState(grid.length))
+  const [state, setState] = usePuzzleState(() => createSumpleteState(grid.length))
 
-  const toggle = useCallback((row: number, col: number) => setState(prev => toggleSumpleteCell(prev, row, col)), [])
+  const toggle = useCallback(
+    (row: number, col: number) => setState(prev => toggleSumpleteCell(prev, row, col)),
+    [setState]
+  )
 
   const rows = computeRowLines(grid, state.cells, rowTargets)
   const cols = computeColLines(grid, state.cells, colTargets)

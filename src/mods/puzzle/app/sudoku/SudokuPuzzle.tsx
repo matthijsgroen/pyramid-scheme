@@ -1,4 +1,5 @@
-import { useMemo, useState, type FC } from "react"
+import { useMemo, type FC } from "react"
+import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import { SudokuBoard } from "@/mods/puzzle/app/sudoku/SudokuBoard"
 import { SudokuPad } from "@/mods/puzzle/app/sudoku/SudokuPad"
@@ -49,7 +50,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
   // Which place this room is. The board, the pad, the name, the goal, the rules and every hint
   // sentence are drawn from it — including what a value LOOKS like, which is this family's second face.
   const skin = skinFor(role, theme)
-  const [state, setState] = useState(() => createSudokuState(puzzle))
+  const [state, setState] = usePuzzleState(() => createSudokuState(puzzle))
   const { selected, pencil, selectCell, focusCell, togglePencil, clearSelection } = useSudokuEntry()
 
   const values = useMemo(() => sudokuValues(state), [state])

@@ -166,19 +166,26 @@ const LitPlace = ({
   // cells of a corridor sit 28 units apart with floor between them — squares alone left that band dark and
   // the run read as a row of lit tiles rather than as a lit passage. The floor layers fill those gaps for
   // the same reason; light has to as well.
-  const rectsFor = (keys: Iterable<string>, joinsTo: ReadonlySet<string>): Rect[] =>
-    [...keys].flatMap(key => {
+  const rectsFor = (keys: Iterable<string>, joinsTo: ReadonlySet<string>): Rect[] => {
+    // Whether this cell's own north band is part of the light: always on the pass that reaches over
+    // what is standing, and otherwise only where the cell above is lit too.
+    const bandAbove = (r: number, c: number) => headroom || joinsTo.has(`${r - 1},${c}`)
+    return [...keys].flatMap(key => {
       const [r, c] = key.split(",").map(Number)
       const parts: Rect[] = [[cellLeft(c), cellTop(r), CELL, CELL]]
-      if (headroom || joinsTo.has(`${r - 1},${c}`)) parts.push([cellLeft(c), cellTop(r) - WALL_H, CELL, WALL_H])
-      if (joinsTo.has(`${r},${c - 1}`)) parts.push([cellLeft(c) - SIDE_W, cellTop(r), SIDE_W, CELL])
-      // And the little square where four lit cells meet — the corner between a north gap and a west
-      // gap. Filling both bands and not the corner between them leaves an unlit dot at every crossing
-      // inside a room, which is the artefact a floor of squares always has if you stop at the edges.
-      if (joinsTo.has(`${r - 1},${c}`) && joinsTo.has(`${r},${c - 1}`) && joinsTo.has(`${r - 1},${c - 1}`))
-        parts.push([cellLeft(c) - SIDE_W, cellTop(r) - WALL_H, SIDE_W, WALL_H])
+      if (bandAbove(r, c)) parts.push([cellLeft(c), cellTop(r) - WALL_H, CELL, WALL_H])
+      if (joinsTo.has(`${r},${c - 1}`)) {
+        parts.push([cellLeft(c) - SIDE_W, cellTop(r), SIDE_W, CELL])
+        // And the little square between two bands, which is the SEAM OF THE BACK WALL: two lit cells
+        // side by side each carry their own band, and the wall runs on through the gap between them.
+        // Filling both bands and not the seam leaves an unlit slit standing in the wall at every
+        // column of a lit room — so the seam belongs to the light wherever both bands do.
+        if (bandAbove(r, c) && bandAbove(r, c - 1))
+          parts.push([cellLeft(c) - SIDE_W, cellTop(r) - WALL_H, SIDE_W, WALL_H])
+      }
       return parts
     })
+  }
 
   if (!lit.size || !at) return null
   const rects = rectsFor(lit, lit)
