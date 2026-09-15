@@ -105,22 +105,48 @@ conversation can be written today, because the explorer speaks and the voice rul
 Raised while the exterior board, board persistence and lighting were being fixed elsewhere. Kept here
 because the three ideas are not equally good.
 
-### A lever that drops a ladder is not a gate variant — it is a shortcut
+### A lever is a floor key, and that is the good news
 
-A gate asks _do you hold the key_. A lever asks nothing: it is opened from the far side and stays open. It
-gates no progress; it removes **repetition**.
+For **ordering within a floor** — go left, get blocked, go right first, come back — a lever and a floor key
+are the same mechanic. Both say _do B before A_. The lever adds fiction, not function.
 
-**Repetition is the problem the backwards map creates.** The best structural idea in this game is that a
-late key reopens an early pyramid — and the cost of that idea is walking a floor cleared six tiers ago to
-reach one gate. The review's toll-booth complaint is the same thing one level up: it is about paying to
-re-enter, and this is about paying to re-walk.
+Which makes it cheap, because `world-spec-stability.md` is explicit:
 
-So a shortcut opened on the first visit is what makes returning cheap, and **returning is the whole
-design**. That puts it above map variety rather than beside it: one serves the core loop, the other serves
-novelty.
+> `gate.wardKeyId`, `gate.color` — Which key opens a door… Gate _presence_ is structural; which key is not.
 
-It may also be nearly free to draw. A shortcut is an existing corridor connection that starts closed and
-opens permanently — if gates already render, a one-way opened gate is most of the art.
+**So replacing a floor key with a lever on a gate that already exists is a free field.** No re-carve, no
+invalidated exploration, no migration. The floor graph is untouched; only what opens the door changes.
+
+### What it buys that a key cannot: the affordance is in the room
+
+A key is in your bag. A lever is in the world.
+
+**An unpulled lever is a waypoint made of architecture.** It says _there is something here you did not do_
+without a marker, a list, or a screen — and it self-curates, because it is only visible where the player
+actually is. That is `../waypoints.md`'s hardest open question (curation: one thread, a standing list, or a
+ranked top N) answered for one case by level design instead of UI.
+
+It also reads better on the way back. Returning to an old pyramid with a late key, the player is looking
+for a door. Returning to one with an unpulled lever, they can see what they left.
+
+### The one thing that is genuinely new, and genuinely structural
+
+A key works from either side. **A lever can be one-way** — reachable only from beyond the barrier, opening
+a way back that could not have been opened coming in. That is the shortcut, it is what removes the re-walk,
+and it is the half a key cannot express.
+
+It is also the half that costs: a new connection changes connectivity, so it re-carves and ships with a
+migration.
+
+### So it is two features
+
+| Feature                                  | Cost                                   | Buys                                                       |
+| ---------------------------------------- | -------------------------------------- | ---------------------------------------------------------- |
+| **Lever instead of a floor key**         | a free field, one renderer state       | fiction, and an affordance the player can see in the room  |
+| **Lever opening a new one-way shortcut** | structural — re-carve plus a migration | the re-walk removed, which is what the backwards map costs |
+
+The first can ship whenever. The second wants to wait for the lighting and framing work, for the reason
+below.
 
 ### Verticality is expensive and the want is weaker
 
