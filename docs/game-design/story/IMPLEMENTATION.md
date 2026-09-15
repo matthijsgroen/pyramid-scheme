@@ -71,6 +71,65 @@ And Pile B gets cheaper as the exploration migration lands, so there is no rush 
 
 ---
 
+## What the full script needs authored
+
+All five acts are written (`script-act-1.md` … `script-act-5.md`, 208 source lines). This is what they ask
+for that does not exist. **Every item is Pile A** — none of it re-carves a floor.
+
+### No journey names change
+
+Checked all 29 against the five acts. The names carry the arc already: `junior_2` Valley of the Artisans is
+where the copies were made, `master_3` Curse of the Pharaohs is where somebody was here first, `wizard_2`
+Secrets of the Sphinx answers `starter_1` Dawn at the Sphinx. **Nothing needs renaming**, which also means
+nothing downstream of a name moves.
+
+Descriptions are a different matter and were already on the list — 29 brochures, nine of which state the
+difficulty (`shipped-copy.md` § journeys).
+
+### Specialised story encounters — four kinds
+
+A story encounter is a registered family rendered in `EncounterModal` with `ctx`, `onSolved`, `onCancel`
+(Part 4 §4.7). None of these is a puzzle; each is a screen that resolves.
+
+| Encounter        | Where                                    | What it does                                                                           |
+| ---------------- | ---------------------------------------- | -------------------------------------------------------------------------------------- |
+| **Conversation** | every tomb ghost, every arrival          | the existing Fez conversation, given a second speaker and a portrait                   |
+| **Reading**      | Henut's wall (II), the Sphinx (V)        | the player's collected glyphs resolve a line of text. **The ending is this encounter** |
+| **Offering**     | the priest's altar (III, IV, V)          | a lock that accepts one thing, refuses others, and says which                          |
+| **Found object** | `master_3`'s camp, `wizard_b`'s notebook | a thing examined rather than solved — the drawn-not-written items land here            |
+
+**Reading is the one with teeth.** It has to know which glyphs the player holds and render a line as
+legible or not, per glyph. That is the mechanism the whole ending runs on, it is the review's item 9
+(_let a hieroglyph keep its value_) arriving as a consequence, and it is the only one that touches an
+existing system rather than adding a screen.
+
+### Authoring hooks
+
+| Need                                        | Status                                                                     |
+| ------------------------------------------- | -------------------------------------------------------------------------- |
+| A conversation keyed to the journey entered | **missing** — all 20 pyramids fire the same `pyramidIntro` (§ Ready now 1) |
+| A conversation keyed to a tomb, per tier    | same hook, different key                                                   |
+| Beats exempt from the tutorials toggle      | **missing** — `shouldSkipConversation` would hide the plot                 |
+| A second speaker in a conversation          | **missing** — `fez.json` assumes one voice                                 |
+| Portraits in a conversation                 | **missing** — art exists, surface does not (`ART.md`)                      |
+| A story encounter placed at a specific node | exists — `nodes: [{ where, encounter }]`                                   |
+| A beat firing on a reaction                 | **missing** — triggers exist, firing does not (§ Ready now 6)              |
+| Holding a pause                             | **missing**, and the Sphinx needs it (`script-act-5.md` §Open 1)           |
+
+### What the ghosts need that rooms do not have
+
+Five ghosts want somewhere to be that is not a corridor. `roomClaims.ts` already gives forks and leaf
+rooms a bigger footprint at render time — so **a tomb room that claims cells is Pile A**, and the only
+missing piece is that nothing authored can ask for one.
+
+### Cost
+
+**208 source lines**, five ghosts, four encounter kinds, eight hooks. Source lines only — the locale count
+is heading for a dozen, which is the argument for the drawn items in `ART.md` and for settling the script
+before translation starts rather than after.
+
+---
+
 ## Ready now
 
 ### 1. Journey-keyed arrival conversations — S

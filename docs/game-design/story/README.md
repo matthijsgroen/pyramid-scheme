@@ -13,8 +13,9 @@ An arc is only as built as its least-built row, and its Impact row is only trust
 [**The main path**](main-path.md) is the spine these arcs hang from: five acts on the tier ladder, built
 almost entirely from journey names, tombs and treasures that already exist, ending where the game began.
 
-[**Act I**](script-act-1.md) is the first written copy — 24 source lines, and the place to argue with the
-voice before nineteen more acts of it exist.
+**The script** is complete: [Act I](script-act-1.md) · [II](script-act-2.md) · [III](script-act-3.md) ·
+[IV](script-act-4.md) · [V](script-act-5.md) — 208 source lines, five ghosts, and an ending that is the
+inscription from the game's first minute, read.
 
 [**Shipped copy**](shipped-copy.md) audits the 59 lines already in `fez.json`: 22 written for the
 redesign, 37 from before the explorer existed, and which of those to rewrite, recharacterise or delete.
