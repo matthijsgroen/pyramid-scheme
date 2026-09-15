@@ -1,4 +1,9 @@
-# The copy already in the game, and which half of it predates the explorer
+# The copy already in the game, and which of it predates the explorer
+
+Two bodies of shipped text were written before there was a story: most of `fez.json`, and all 29 journey
+descriptions. This audits both.
+
+## Fez
 
 `fez.json` holds 59 lines, and they were not written at the same time or for the same game.
 
@@ -82,7 +87,7 @@ appears in Act I of the story and is absent from the first ten minutes of the ga
 ever be to change — after localisation the same work is 37 × a dozen, plus the coordination. Pre-explorer
 copy is a debt that accrues in translators.
 
-## Open
+### Open — Fez
 
 1. **Per key: rewrite, recharacterise, or delete?** 37 decisions, and most are quick.
 2. **Does the explorer appear in the very first conversation?** `welcome` is the game's first screen. If
@@ -90,3 +95,70 @@ copy is a debt that accrues in translators.
    riskiest to change.
 3. **Does this wait for the wordless first instances**, so a key is not rewritten and then deleted? Or go
    first, since those are nine mechanics away and the copy is wrong today?
+
+---
+
+## Journey descriptions
+
+`journeys.json` holds 29 names and 29 descriptions, and they split the same way `fez.json` does: **the
+names are excellent and the descriptions predate everything.**
+
+The names are the spine. Read in tier order they are a social ladder and an arc, and `starter_1` Dawn at
+the Sphinx answers `wizard_2` Secrets of the Sphinx across the whole game (`main-path.md`). Nothing here
+proposes touching them.
+
+The descriptions are travel brochures. All 29 open with an imperative aimed at the player — Enter (5),
+Explore (3), Follow, Venture, Ascend, Infiltrate, Breach — and they were written for a game with no
+explorer in it, no Fez, and no story to be part of.
+
+### Three things wrong with them, in order of how fixable they are
+
+**They state the difficulty.** Nine of the 29 say it outright: _"A gentle introduction to the mysteries of
+Egypt"_, _"A perfect introduction to treasure hunting"_, _"Master the ultimate mathematical mysteries"_.
+This is the thing `puzzle-screens.md` §1.1 already decided against for room titles — a difficulty label
+_inside_ the thing says it in the wrong place, and the tier is already authored onto every path so the
+floor can show it while the player navigates. The travel card has the same problem one screen earlier.
+
+**They are brochures rather than hooks.** The casual-mobile review put it exactly: _"Journey through the
+fertile Nile Delta" is a brochure. "Something has got into this one" is a hook._ A description that sells
+the location cannot also make the player curious about it.
+
+**They address the player, not the explorer.** _"Begin your adventure"_ is a voice talking to whoever is
+holding the phone, from before there was a character between them and the game.
+
+### What a description is for now
+
+The travel card is the only place the player chooses **where**, so the description's job is to make one of
+four look more interesting than the other three. Three candidate shapes:
+
+| Shape                      | Example                                                     | Consequence                                                                            |
+| -------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **A rumour**               | _Something has got into this one._                          | Strongest hook; 29 of them is a lot of intrigue to pay off, and an unpaid rumour sours |
+| **A fact about the place** | _The village where the copies were made._                   | Always payable, teaches, and quietly carries the act it belongs to                     |
+| **Fez pitching it**        | _I know a man who came out of there with a very good year._ | In character, and he is the one who knows the country — but 29 lines of one voice      |
+
+**The middle one is the safest and does the most work.** It never writes a cheque the floor has to cash, it
+is true, and it lets each description carry its act: the junior four can all quietly be about copies and
+craft without any of them announcing a theme.
+
+### Where the descriptions and the story meet
+
+Each of the 20 pyramid arrivals already has a beat written or planned (`main-path.md`). The description is
+what the player reads **before** choosing; the arrival beat is what they hear **on getting there**. They
+should not say the same thing, and right now the description says nothing a beat could build on.
+
+The obvious division: the card says what the place _is_, the arrival says what is _odd about it_.
+
+### Cost
+
+29 source lines, same as the rest — cheapest now, before a dozen locales exist. The names stay, so nothing
+downstream of a name changes.
+
+### Open — journeys
+
+7. **Rumour, fact, or Fez?** And is it one shape for all 29 or a rumour only where an arc needs one?
+8. **Do the tomb descriptions differ from the pyramid ones?** Nine tombs already carry a rank and a ghost;
+   they may want to say less, not more.
+9. **Does the difficulty go somewhere else, or nowhere?** The floor already shows it. The travel card may
+   simply not need to say it — but a player picking between four unlocked journeys is choosing partly on
+   effort, and nothing else on that screen tells them.

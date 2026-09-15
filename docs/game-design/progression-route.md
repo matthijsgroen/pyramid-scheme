@@ -133,7 +133,7 @@ whether to keep going.
   is a real balance change, not a reshuffle.
 - **Nothing else.** No world regeneration, no reachability change, no new perk types.
 
-### Open
+### Open — the reshuffle
 
 4. **Is detection early a gift or a loss?** Early makes hidden corridors a language the game speaks
    throughout; late makes them a late-game reveal that the story can use as a turn.
