@@ -53,7 +53,6 @@ to land together rather than one at a time.
 | One-way crossing (2b)                             | adds an edge                                      |
 | Lever-opened shortcut (8)                         | adds an edge                                      |
 | Second way into a floor (9)                       | changes how a floor is entered                    |
-| Chamber bigger than one cell (3)                  | footprint, and the grid                           |
 | Vertical layers (5)                               | everything                                        |
 | A story place needing a new `hiddenPath`          | the offering arc's real seal is one of these      |
 | A story encounter **added** rather than replacing | `pathPuzzles` — the most structural knob there is |
