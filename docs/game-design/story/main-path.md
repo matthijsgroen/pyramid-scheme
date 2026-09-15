@@ -11,6 +11,11 @@ Status: **sketch**, every row. Addresses are real; beats are not yet copy.
 
 You arrive at a door you cannot read, and you spend the game becoming someone who can.
 
+The explorer came looking for something neat (`cast.md`). They find it, and it is a sentence — so the
+starting motive is **fulfilled rather than corrected**, and a game made of collecting treasure never has to
+tell the player that collecting treasure was the wrong thing to want. The motive that changes is Fez's,
+which is the one the ending is actually about.
+
 ## The ending was authored years ago
 
 `starter_1` is **Dawn at the Sphinx**. `wizard_2` is **Secrets of the Sphinx**. The first place the player

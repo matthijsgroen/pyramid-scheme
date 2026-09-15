@@ -52,9 +52,30 @@ to correct.
 **Not the player.** There is no customisation and none is wanted: the job is a character anybody is glad to
 be beside, which is a different and easier job than a blank to project onto.
 
-**Wants.** At the start, something ordinary — a find worth the trip, the X on a map they arrived holding.
-Then they meet writing they cannot read, and by the end that is what they came for. **The swap is the
-story**, which is why the stated goal at the start has to be small.
+**Wants (decided).** To find something neat. That is the whole of it at the start, and it is deliberately
+small: no fortune, no name to make, no wrong the world did them.
+
+> **Fez:** What are you after, then?
+>
+> **Explorer:** Something neat.
+>
+> **Fez:** …That's it?
+>
+> **Explorer:** I'll know it when I see it.
+
+**It is fulfilled rather than replaced, and that distinction is load-bearing.** The usual shape — came for
+treasure, found meaning — quietly says the first goal was wrong, which is an odd thing to tell a player who
+spends fifty hours collecting treasure, and odder still under an ending that is already about what was
+worth carrying (`main-path.md`, candidate A). Curiosity needs no correcting. The inscription is simply the
+best possible something-neat, so the explorer turns out to have been right and nobody is rebuked for
+wanting what the game is made of.
+
+**The changing motive belongs to Fez**, who is the character actually about value. One motive changes, one
+is rewarded, and the story never lectures.
+
+**The map is secondhand and probably worthless.** They bought it, it is vague, it may well be junk, and
+they came anyway — curiosity in object form. It also plants, quietly and in the first minute, that things
+bought from merchants are not always what they were sold as, which is what Act IV's forgery collects on.
 
 **Voice.** Dry, brief, present tense. Asks the question the player is already asking. Answers in
 fragments. Competent — never the ignorant one, just not a scholar either.
@@ -78,7 +99,13 @@ fragments. Competent — never the ignorant one, just not a scholar either.
 - Never cruel. Dry is not mean, and they never deflate Fez in a way that wounds him.
 - Never explains a rule — they are working it out too.
 
-**Arc.** Came for a find → leaves able to read the thing they could not read on the first morning.
+**Arc.** Came for something neat → found it, and it was a sentence.
+
+The Act V callback is already sitting there:
+
+> **Fez:** Was it neat?
+>
+> **Explorer:** It'll do.
 
 ---
 
@@ -139,7 +166,7 @@ first question than who are you — and he is complaining rather than looming, w
 ### Open
 
 1. **Which setup**, and if the third: how long is the quiet, exactly one board or the whole first pyramid?
-2. **What is on the explorer's map at the start?** It wants to be small and ordinary, and it must not be
-   the inscription — that is the thing that replaces it.
+2. **Does the map ever pay off?** Secondhand and vague is the right start, but a map nobody returns to is
+   set dressing. It could be worthless for good, or turn out to be one of the earlier explorer's.
 3. **Does Fez get one thing he is wrong about per tier**, or is being shaky about gods an occasional
    colour? A running one is funnier and needs someone to correct him.
