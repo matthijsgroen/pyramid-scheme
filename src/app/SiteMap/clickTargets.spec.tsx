@@ -3,6 +3,8 @@ import { describe, expect, it, vi } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, findPath } from "@/game/gridNavigation"
+import { offeredTargets } from "./clickTargets"
+import { buildRoomClaims } from "./roomClaims"
 import type { FloorGrid } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
@@ -53,51 +55,81 @@ describe("what the map offers to click", () => {
 })
 
 // Arrival is one state out of hundreds. This walks the floor the way a player does — step onto a
-// reachable cell, let the game reveal what that opens, look at what the map now offers — and holds the
-// same invariant at every step, because a target on void is the kind of thing that only appears once
-// a particular corner has been turned.
-// A pyramid is seeded from the player's own save (`randomSeed + levelNr`), so there is no single maze
-// to check — the invariant has to hold for whatever maze the seed produced. Hence a spread of seeds
-// rather than one.
+// reachable cell, let the game reveal what that opens, ask what the map now offers — and holds the same
+// invariant at every step, because a target on void is the kind of thing that only appears once a
+// particular corner has been turned.
+// A pyramid is seeded from the player's own save (`randomSeed + levelNr`), so there is no single maze to
+// check — the invariant has to hold for whatever maze the seed produced. Hence a spread of seeds.
+//
+// IT ASKS THE RULE, NOT THE DOM. This used to render the whole site map at every one of its 320 steps
+// and read the answer back out of the markup, which cost forty seconds for a second's worth of graph
+// work and made the suite's verdict depend on which CI runner it drew. `offeredTargets` is the same
+// rule the renderer uses (`clickTargets.ts`), and "the renderer really uses it" is asserted directly
+// below, so nothing is taken on trust. The seed list is longer than it was for the same reason: the
+// fuzzing is what catches these, and it is now nearly free.
 describe("what the map offers while walking a floor", () => {
-  it.each([1, 3, 7, 11, 19, 23, 31, 47])("never offers a target it cannot honour, seed %i", seed => {
-    const floor = generatedWorldConfigs["starter_1"]?.flat()[0]
-    if (!floor) throw new Error("no starter_1 floor to read")
-    const assembled = assembleFloor("starter_1:0", floor, seed)
-    if (!assembled.success) throw new Error("assembly failed")
+  it.each([1, 3, 7, 11, 19, 23, 31, 47, 53, 61, 71, 83, 97, 101, 103, 107])(
+    "never offers a target it cannot honour, seed %i",
+    seed => {
+      const floor = generatedWorldConfigs["starter_1"]?.flat()[0]
+      if (!floor) throw new Error("no starter_1 floor to read")
+      const assembled = assembleFloor("starter_1:0", floor, seed)
+      if (!assembled.success) throw new Error("assembly failed")
 
-    let grid = assembled.grid
-    let at = assembled.grid.entrancePos
-    const offences: string[] = []
-    let steps = 0
+      let grid = assembled.grid
+      let at = assembled.grid.entrancePos
+      const offences: string[] = []
+      let steps = 0
 
-    for (let step = 0; step < 40; step++) {
-      grid = completeCell(grid, at[0], at[1])
-      steps++
+      for (let step = 0; step < 40; step++) {
+        grid = completeCell(grid, at[0], at[1])
+        steps++
 
-      for (const [r, c] of clickEveryTarget(grid, at)) {
-        const cell = grid.cells[r]?.[c]
-        if (!cell || cell.type === "empty") offences.push(`step ${step}: (${r},${c}) is void`)
-        // …and standable is not enough: it has to be somewhere the player can actually walk to from
-        // where they stand, or the marker is a promise the map cannot keep.
-        else if (findPath(grid, at, [r, c]).length === 0) offences.push(`step ${step}: (${r},${c}) has no route`)
+        for (const [from, [r, c]] of offeredTargets(grid, buildRoomClaims(grid), at)) {
+          const cell = grid.cells[r]?.[c]
+          if (!cell || cell.type === "empty") offences.push(`step ${step}: ${from} offers void (${r},${c})`)
+          // …and standable is not enough: it has to be somewhere the player can actually walk to from
+          // where they stand, or the marker is a promise the map cannot keep.
+          else if (findPath(grid, at, [r, c]).length === 0)
+            offences.push(`step ${step}: ${from} offers (${r},${c}) with no route`)
+        }
+
+        // Walk on: the nearest reachable cell that is not where we already stand.
+        const next: [number, number] | undefined = grid.cells.flatMap((row, r) =>
+          row.flatMap((cell, c) =>
+            cell.type !== "empty" && cell.state === "reachable" && !(r === at[0] && c === at[1])
+              ? ([[r, c]] as [number, number][])
+              : []
+          )
+        )[0]
+        if (!next) break
+        at = next
       }
 
-      // Walk on: the nearest reachable cell that is not where we already stand.
-      const next: [number, number] | undefined = grid.cells.flatMap((row, r) =>
-        row.flatMap((cell, c) =>
-          cell.type !== "empty" && cell.state === "reachable" && !(r === at[0] && c === at[1])
-            ? ([[r, c]] as [number, number][])
-            : []
-        )
-      )[0]
-      if (!next) break
-      at = next
+      expect(steps).toBeGreaterThan(5)
+      expect(offences).toEqual([])
     }
+  )
+})
 
-    expect(steps).toBeGreaterThan(5)
-    expect(offences).toEqual([])
-  })
+// THE BRIDGE. The walk above is only worth anything if the rule it asks is the rule the map draws, so
+// this is the one place that still renders: every cell the map makes tappable, and the cell each of
+// those taps leads to, against what `offeredTargets` says without rendering anything. Renders a
+// handful of real floors rather than hundreds of steps of one.
+describe("the map taps exactly what the rule offers", () => {
+  const sorted = (pairs: readonly (readonly [number, number])[]) => [...pairs].map(([r, c]) => `${r},${c}`).sort()
+
+  for (const siteId of ["starter_1", "starter_2", "junior_1", "master_2"]) {
+    it(`agrees with the drawn map on ${siteId}`, () => {
+      const { grid, at } = arrivedAtEntrance(siteId)
+
+      const tapped = clickEveryTarget(grid, at)
+      const offered = [...offeredTargets(grid, buildRoomClaims(grid), at).values()]
+
+      expect(tapped.length).toBeGreaterThan(0)
+      expect(sorted(tapped)).toEqual(sorted(offered))
+    })
+  }
 })
 
 // The other half of the same defect: the map only ever offered standable targets (above), but the

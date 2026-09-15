@@ -33,6 +33,7 @@ Bottom to top, all inside `[data-map]`:
 | the markers                                                             | one `MarkerCell` per cell: an icon in a little `<svg>`, in a box the size of the cell |
 | the standing layer                                                      | props, chests, stairs, exits, gates, the explorer — sorted by floor line              |
 | archways and gates                                                      | drawn last, so the player walks under them                                            |
+| the shade's second pass, then the light's                               | the dark that seats what is standing, and the lamp reaching it (see below)            |
 | `MapWeather`                                                            | over the SCROLLING BOX, not inside the map: drift and tint belong to the window       |
 
 Two primitives build almost all of it (`htmlLayers.tsx`): **`Sprite`**, a box with the art as its
@@ -63,7 +64,51 @@ background, and **`ClipLayer`**, a map-sized box cut to a path.
   no value range and the light had nothing to be bright against. The shade falls in two passes — the full
   one UNDER the click markers, which are the layer the floor is read by and lose most of their contrast if
   washed with it; a lighter one over everything, so furniture is seated in the same dark it stands in.
-  Its strength is set per tier against that tier's own slabs, and its HUE is where the ranks differ.
+- **A wash is a scale plus an added colour, and both halves have to be paid for.** `art × (1−a) + wash × a`:
+  the scale flattens the art's own modelling, and at a floor already scaled to a third the added colour is
+  most of what is left of it. A near-neutral wash at `a = 0.56` took the starter floor from L\* 40 to 16
+  with 61% of its chroma gone and its hue dragged from ochre (73°) to a cold magenta (330°) — a lit room
+  of grey mush with pale cut-outs standing in it, on art that had the colour all along. So the wash colour
+  is the rank's OWN near-black (`outline`), which adds the rank's own hue rather than a foreign one, and
+  the alpha is solved rather than authored: whatever lands that rank's floor at **L\* ≈ 24**.
+- **The ranks are held together by their targets and told apart by their hues.** Floor at L\* 24 and a
+  7.5-step back to the wall on every rank; starter ochre at C\* 6.6, junior ochre at 18.2, expert cold at
+  263°, wizard verdigris at 168°. Consistent is not flat: same rule everywhere, different character in it.
+- **A vertical face takes a helping of the night the floor does not** (`faceNight`). A lamp is carried at
+  floor level, so a wall takes its light at a glancing angle — and without that the two planes land within
+  a step of each other once the night is over both (the starter art's 9.5 step measures 3.5 as drawn) and
+  a room reads as a floorplan with a change of texture rather than as a place with walls. Solved per rank
+  to the same RENDERED step, because the art's own runs from 6.8 to 22.7 and it is what the player sees
+  that has to agree. The wall MASS takes none of it: it is the rock seen from above, so it is lit like
+  ground, and it already sits 9–14 L\* under the floor.
+- **The light falls in the same two passes, and for the same reason read backwards.** A lit place drawn
+  only under the shade's second pass hands a quarter of the tier's night back to everything the lamp just
+  reached: measured on starter stone that took the lit floor from 114 to 89 and the explorer to 65 — a
+  hero darker than the ground under their own feet, on a map where nothing was above 106 of 255 to begin
+  with. So `LitPlaces` is drawn twice: the full pass on the floor, and a lighter one after the shade's
+  second, reaching a wall band ABOVE each lit cell so a prop standing against the north wall is lit to the
+  top of its own headroom instead of being cut off at the floor line.
+- **A light needs a source, or it is a highlight.** The lit place is clipped to the floor rects of a whole
+  room or corridor run — that is WHERE light may land, and it is set by the rules of the place, not by
+  distance. HOW MUCH lands where is the fill: a radial gradient centred on the cell the explorer is
+  standing in (`torchFill`), hottest at the flame and down to a bit under half of it at the far end. Flat,
+  the same shape read as a rectangle of floor raised by a fixed amount. It never falls to nothing, because
+  a torch carried along a passage lights the passage as far as the next turn, however long that is.
+- **Light is warm or it is not light.** A near-white lamp screen-blended over stone lifts every channel by
+  about the same amount, which turns the floor pale rather than warm — the old `#ffe2b0` left the lit floor
+  at 4% saturation on expert and 16% on starter. Hold the blue channel back.
+- **The explorer is lit too, not just the ground they stand on** (`FIGURE_LIT`). A pool on the floor is
+  under their feet and cannot reach them. A small brightness lift, a saturation lift, and a warm
+  `drop-shadow` hugging the silhouette — the rim being the part that separates a figure from stone of a
+  similar value at the zoom a floor is read at. Keep the brightness small: the art's own highlights are
+  already near 229 and more of it clips them flat.
+- **Everything standing on this floor casts a shadow, so the explorer does too** (`FootShadow`). A prop's
+  art bakes a contact shadow into its own bottom rows — a chest fills 100 of its 112 columns with it — and
+  an archway, whose shadow falls outside its slot, is given one by hand (`ArchShadows`). The explorer's
+  sprites stop at the boots. Against a dim floor that passed; lifting the floor took away the last thing
+  holding the figure down. An ellipse rather than the straight band a wall casts, because a hard rectangle
+  under a pair of boots reads as a plinth, straddling the sprite's own bottom edge so it sits UNDER the
+  feet — and over the torch pool, since a shadow is not lit by the pool it lies in.
 - **A light pool is not clipped to the floor**, and is not meant to be: a wide one lays light over the
   solid rock beside a one-cell corridor, which reads as haze coming off the flame. What lights a ROOM as a
   room is still the lit place, which is clipped to the floor rects.
@@ -88,4 +133,15 @@ background, and **`ClipLayer`**, a map-sized box cut to a path.
 Production build — a dev server's own overhead swamps the reading. Settle 30s, then count trace events
 rather than CPU percent: `Paint`, `RasterTask`, `ImageDecodeTask` over five seconds, with the moving parts
 present and then deleted from the DOM. **If deleting them changes the paint count, they are not
-composited.** Compare screenshots by pixel diff rather than by eye.
+composited.** Compare screenshots by pixel diff rather than by eye — **with motion disabled**
+(`reducedMotion: "reduce"`, which the map honours through `motion-reduce:animate-none`). The air is
+always moving, so two shots of an untouched map differ by a few percent of their subpixels; a
+behaviour-neutral change reads as several percent of noise until the dust is told to stand still, and
+then reads as zero.
+
+Colour and value are measured off the ART, composited through the operators the renderer actually uses —
+each wash as `art × (1−a) + wash × a`, each light as a `screen` at its opacity — and read as **L\***,
+**chroma** and **hue angle** rather than as a WCAG ratio, which is built for text and understates
+separation at the values a tomb is drawn at. Three numbers decide a change to the night: where the unlit
+floor lands, how much of the art's own chroma and hue survive to it, and what the lamp is still worth
+above it (the lit floor, less the unlit). A rank that moves alone has gone out of step with the others.

@@ -21,6 +21,24 @@ import { Sprite } from "./htmlLayers"
 // What the map's motion is called lives in the theme (index.css, "The map's own motion"); these are the
 // hooks a test asks for, and the classes that carry the animation are alongside them at the point of use.
 const MOTE_CLASS = "map-mote absolute rounded-full will-change-transform animate-map-drift motion-reduce:animate-none"
+
+/** How many specks ride on one animated element.
+ *
+ * AIR IS MANY AND ELEMENTS ARE NOT FREE, and the two pull against each other. A tomb only reads as dusty
+ * at a density of dozens, but a speck per div is dozens of nodes in every render of the map and dozens of
+ * layers for the compositor — and the whole reason these layers are HTML is that the map got LIGHTER
+ * (docs/instructions/map-rendering.md). A field of 34 one per div put 11% onto a site-map render.
+ *
+ * `box-shadow` is the way out: a shadow is the element's own box drawn again — offset, resized by its
+ * spread, rounded the same — so one animated element carries more than one speck across the screen for
+ * the cost of one. Paired, the count of nodes barely moves off what a dozen fat motes cost.
+ *
+ * TWO, NOT FOUR, and the number is a compromise rather than an oversight. A cluster travels as one body:
+ * its specks share a crossing, a wander and a shimmer, and the wider it is spread to hide that, the more
+ * of the field's placement comes from a handful of origins — at four the screen went visibly patchy. Two
+ * specks a stone's throw apart is a pairing no eye picks out of a drifting field, and it still halves the
+ * nodes. `drift.count` stays a number of SPECKS, because that is the number worth authoring. */
+const SPECKS = 2
 const SCARAB_CLASS = "map-scarab animate-map-scurry motion-reduce:animate-none"
 
 const rand = hashUnit
@@ -276,8 +294,17 @@ export const MapWeather = ({ mood, siteId }: Pick<Props, "mood" | "siteId">) => 
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
       {drift &&
-        Array.from({ length: drift.count }, (_, i) => {
-          const size = drift.size * 2 * (0.6 + rand(siteId, "mote-r", i) * 0.8)
+        Array.from({ length: Math.ceil(drift.count / SPECKS) }, (_, i) => {
+          // How many of this cluster's specks are real — the last one carries the remainder.
+          const riders = Math.min(SPECKS, drift.count - i * SPECKS)
+          // A SPREAD, NOT A SIZE. `drift.size` is the radius the field is written around and every speck
+          // takes its own fraction of it, most of them under it: `r * r` is weighted to the small end, so
+          // a field is mostly the smallest specks with the occasional bigger one caught in it. Dust of one
+          // size is a pattern, and the eye finds a pattern and stops seeing air.
+          const spreadOf = (n: number) => 0.5 + rand(siteId, "mote-r", i * SPECKS + n) ** 2 * 1.4
+          const spread = spreadOf(0)
+          const size = drift.size * 2 * spread
+          const wobble = rand(siteId, "mote-wd", i) > 0.5 ? 1 : -1
           return (
             <div
               key={i}
@@ -289,12 +316,34 @@ export const MapWeather = ({ mood, siteId }: Pick<Props, "mood" | "siteId">) => 
                   width: `${size}px`,
                   height: `${size}px`,
                   background: drift.fill,
-                  "--o": drift.opacity,
+                  // The specks riding along (SPECKS). A shadow's SPREAD is what gives it its own size: it
+                  // grows the copied box by that much on every side, so `(wanted - size) / 2` draws a speck
+                  // of any size off an element of another, and the rounding is copied with the box so they
+                  // stay circles.
+                  boxShadow:
+                    Array.from({ length: riders - 1 }, (_, n) => {
+                      const k = i * SPECKS + n + 1
+                      const ox = (rand(siteId, "speck-x", k) - 0.5) * 190
+                      const oy = (rand(siteId, "speck-y", k) - 0.5) * 150
+                      const grow = (drift.size * 2 * spreadOf(n + 1) - size) / 2
+                      return `${ox.toFixed(1)}px ${oy.toFixed(1)}px 0 ${grow.toFixed(2)}px ${drift.fill}`
+                    }).join(", ") || undefined,
+                  // The smallest specks are barely a pixel, and a pixel at half alpha is nothing at all —
+                  // so the ones under full size are drawn up to a fifth harder to stay visible against the
+                  // stone. The big ones keep the field's own opacity: that is what makes fog a wash.
+                  "--o": `${drift.opacity * (1 + Math.max(0, 1 - spread) * 0.2)}`,
                   // Blown across and down, at its own angle and pace — one vector for all of them reads as a
                   // sheet of rain rather than as air.
-                  "--dx": `${-(60 + rand(siteId, "mote-dx", i) * 200)}px`,
-                  "--dy": `${(rand(siteId, "mote-dy", i) - 0.35) * 120}px`,
-                  animationDuration: `${drift.seconds * (0.7 + rand(siteId, "mote-s", i) * 0.6)}s`,
+                  //
+                  // NOT MUCH FURTHER THAN THIS. A mote restarts where it began rather than wrapping round,
+                  // so a field that crosses much more than a phone's width is half of it sitting off the
+                  // left-hand side at any moment, and the screen thins out. Pace comes from `seconds`.
+                  "--dx": `${-(90 + rand(siteId, "mote-dx", i) * 240)}px`,
+                  "--dy": `${(rand(siteId, "mote-dy", i) - 0.35) * 150}px`,
+                  // How far off its own line the mote is pushed on the way over (index.css, `map-drift`).
+                  // Either way to start with, so a field does not breathe in unison.
+                  "--wob": `${wobble * (8 + rand(siteId, "mote-w", i) * 26)}px`,
+                  animationDuration: `${drift.seconds * (0.55 + rand(siteId, "mote-s", i) * 0.9)}s`,
                   // Negative delay: they are already mid-crossing on the first frame, rather than all
                   // starting together in a wave.
                   animationDelay: `-${rand(siteId, "mote-d", i) * drift.seconds}s`,

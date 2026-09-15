@@ -3,6 +3,7 @@ import type { Direction, FloorGrid } from "../../game/siteTypes"
 import { findPath } from "../../game/gridNavigation"
 import { CELL, EXPLORER_DOT_RADIUS, cellCenter } from "./mapScale"
 import { sharedTileFrames } from "./tileAssets"
+import { tierPalette } from "./tileMaterials"
 
 type Point = { x: number; y: number }
 
@@ -188,7 +189,64 @@ const TORCH_RADIUS = CELL * 1.7
  * over, so a lit lamp in every third chamber costs nothing, and a pool drawn on its own in a story does
  * not depend on the map being around it to have a fill at all. */
 const LIGHT_POOL_FILL =
-  "radial-gradient(closest-side, rgba(255,202,106,0.55) 0%, rgba(255,171,61,0.26) 45%, rgba(255,154,46,0) 100%)"
+  "radial-gradient(closest-side, rgba(255,239,198,0.72) 0%, rgba(255,202,106,0.52) 26%, rgba(255,171,61,0.24) 58%, rgba(255,154,46,0) 100%)"
+
+/**
+ * What the explorer's own flame does to the explorer.
+ *
+ * A pool on the FLOOR cannot light the person standing in it — it is under their feet — so the figure was
+ * the one thing on the map with a torch in its hand and no light on it. Measured against a lit starter
+ * floor the sprite came out at 65 of 255 to the floor's 89: a hero reading as a dark blob on brighter
+ * ground, which is the opposite of where an eye should be pulled.
+ *
+ * Three parts, and the rim is the one doing most of the work. `brightness` is kept small because the art's
+ * own highlights are already near 229 and any more of it clips them flat; `saturate` is what stops the
+ * lift going chalky; and the warm `drop-shadow` is spill off the flame, hugging the silhouette, which is
+ * what separates a figure from stone of a similar value at the zoom a floor is read at.
+ */
+const FIGURE_LIT = "brightness(1.1) saturate(1.14) drop-shadow(0 0 5px rgba(255,186,102,0.6))"
+
+/**
+ * The dark the explorer stands in, which is the half of standing the light cannot do.
+ *
+ * EVERY OTHER THING STANDING ON THIS FLOOR HAS ONE and the explorer did not. A prop's art bakes a
+ * contact shadow into its own bottom rows — a chest fills 100 of its 112 columns with it — and an
+ * archway, whose shadow falls outside its slot, is given one by hand (`ArchShadows`). The explorer's
+ * sprites stop at the boots: 7 to 20 pixels of leather and then nothing. Against a dim floor that went
+ * unnoticed; lifting the floor to 150 took away the last thing holding the figure down, and a lit
+ * character with no shadow reads as pasted onto the room rather than standing in it.
+ *
+ * An ellipse rather than the straight band a wall casts, because a wall is a flat face and a person is
+ * not, and a hard rectangle under a pair of boots reads as a plinth. Soft to nothing at its rim for the
+ * same reason: contact, not a decal.
+ *
+ * Plain alpha, not `multiply` — the map keeps blend modes to the light pools on purpose (see
+ * docs/instructions/map-rendering.md), and alpha over the top lifts the blacks where a multiply would
+ * crush the paving texture out from under the feet.
+ */
+const FOOT_SHADOW_W = CHAR_W * 0.85
+const FOOT_SHADOW_H = CELL / 5
+/** The same near-black at the same depth an archway's feet are given, so the two read as one light. */
+const FOOT_SHADOW_FILL = `radial-gradient(closest-side, ${tierPalette.starter.outline}8c 0%, ${tierPalette.starter.outline}59 55%, ${tierPalette.starter.outline}00 100%)`
+
+/** Straddling the foot line, two thirds of it above and a third below, so the boots stand IN it rather
+ * than in front of it — centred on the line it would puddle, hung below it, trail behind them. Drawn
+ * over the torch pool and under the figure: a shadow is not lit by the pool it lies in, and the person
+ * casting it is in front of it. */
+const FootShadow = () => (
+  <div
+    data-foot-shadow=""
+    style={{
+      position: "absolute",
+      left: -FOOT_SHADOW_W / 2,
+      top: CELL / 2 - FOOT_LIFT - FOOT_SHADOW_H * 0.66,
+      width: FOOT_SHADOW_W,
+      height: FOOT_SHADOW_H,
+      background: FOOT_SHADOW_FILL,
+      pointerEvents: "none",
+    }}
+  />
+)
 
 /** What the map's own `<defs>` still carries: the flicker's stylesheet is Tailwind's now, but the stone
  * is one `<svg>` again (see TileLayers) and its defs are where a shared clip belongs. Kept as a component
@@ -250,6 +308,9 @@ export const ExplorerFigure = ({
     return (
       <>
         <TorchGlow />
+        {/* No foot shadow on the fallback: the dot is drawn around the CELL'S CENTRE, not standing on
+            the floor line, so a shadow cast at the feet would sit half a figure below it with nothing
+            in between. A token has nothing to ground. */}
         <div
           data-explorer-dot=""
           style={{
@@ -262,6 +323,7 @@ export const ExplorerFigure = ({
             background: color,
             border: "2px solid #110d08",
             boxSizing: "border-box",
+            filter: FIGURE_LIT,
           }}
         />
       </>
@@ -269,6 +331,7 @@ export const ExplorerFigure = ({
   return (
     <>
       <TorchGlow />
+      <FootShadow />
       {/* The clip is a box one frame wide with the strip sliding behind it — `overflow: hidden` doing what
           the nested <svg> did.
           Mirrored for west, and the glow is left out of that transform: a pool of light on the floor has
@@ -282,6 +345,9 @@ export const ExplorerFigure = ({
           height: CHAR_H,
           overflow: "hidden",
           transform: facing === "w" ? "scaleX(-1)" : undefined,
+          // On the CLIP rather than on each frame: a filter resolves after the element's own overflow, so
+          // the rim follows the character's silhouette and one declaration covers every frame of a walk.
+          filter: FIGURE_LIT,
         }}
       >
         {walking && frames.length > 1 ? (
