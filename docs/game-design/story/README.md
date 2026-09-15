@@ -25,6 +25,10 @@ in one place so copy written months apart still sounds like them.
 [**Implementation**](IMPLEMENTATION.md) is what falls out of these documents as work, split by whether a
 story decision is in the way. Six items are pickable today.
 
+[**Art**](ART.md) is every drawing the story implies, and [**Review alignment**](REVIEW-ALIGNMENT.md) is
+where each of the casual-mobile review's twelve items now stands — including the six this pass does not
+touch.
+
 **Reading the columns.** _Structure_ is the expensive one: a re-carved floor invalidates saved exploration
 and has to ship with a migration. _Systems_ is where a cheap arc and a costly one diverge — a new currency
 is supported and small, a change to `isTierUnlocked` is neither. _Content_ decides whether an arc is a
