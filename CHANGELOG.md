@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.43.9 - 2026-09-15
+
 ### Changed
 
 - A puzzle you walk away from keeps what you had worked out: the board is waiting as you left it when you come back, even after closing the game. Solving it clears it.
