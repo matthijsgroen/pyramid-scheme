@@ -216,6 +216,64 @@ describe("buildTileRegions — walls", () => {
   })
 })
 
+// THE SEAMS BETWEEN SQUARES OF ROCK. A square of bare stone is drawn when any of its eight neighbours
+// is lit; the gaps between such squares used to ask a smaller question — the north and west gaps looked
+// at six cells and never at the row below, the corner at four — so a square drawn because the cell BELOW
+// it was lit stood against a gap that was not drawn at all. The map came out as blocks of stone with
+// black slits between them, worst at the corners where the test was narrowest.
+describe("buildTileRegions — the seams between squares of rock", () => {
+  it("draws the gap between two squares of rock that are both drawn", () => {
+    // Lit floor at each end of a short column: the rock at (1,0) is drawn because (0,0) is lit, the rock
+    // at (2,0) because (3,0) is. Nothing lit lies in the old six-cell window around the gap between them.
+    const regions = buildTileRegions(
+      4,
+      1,
+      gridOf({ "0,0": "reachable", "3,0": "reachable" }),
+      nothingPassable,
+      "starter"
+    )
+    const mass = across(regions, g => [g.wallMass])
+
+    expect(has(mass, square(1, 0))).toBe(true)
+    expect(has(mass, square(2, 0))).toBe(true)
+    expect(has(mass, northGap(2, 0))).toBe(true)
+  })
+
+  it("draws the corner where four squares of rock meet", () => {
+    // A 2x2 block of rock with a lit floor off each of its corners, so every square is drawn and none of
+    // the four is itself lit — which is exactly what the corner's old four-cell test asked for.
+    const regions = buildTileRegions(
+      4,
+      4,
+      gridOf({ "0,0": "reachable", "0,3": "reachable", "3,0": "reachable", "3,3": "reachable" }),
+      nothingPassable,
+      "starter"
+    )
+    const mass = across(regions, g => [g.wallMass])
+
+    for (const [r, c] of [
+      [1, 1],
+      [1, 2],
+      [2, 1],
+      [2, 2],
+    ] as const)
+      expect(has(mass, square(r, c))).toBe(true)
+    expect(has(mass, corner(2, 2))).toBe(true)
+  })
+
+  it("still leaves a mouth black, which is how the map says a way carries on", () => {
+    // The one gap that is meant to stay undrawn: an open way between explored floor and an unlit passage.
+    const regions = buildTileRegions(2, 1, gridOf({ "1,0": "reachable" }, [], ["0,0"]), allPassable, "starter")
+
+    expect(
+      has(
+        across(regions, g => [g.wallMass, g.wallFace]),
+        northGap(1, 0)
+      )
+    ).toBe(false)
+  })
+})
+
 describe("path building", () => {
   it("emits one closed rectangle per entry", () => {
     expect(rectsToPath([[5, 5, 10, 10]])).toBe("M5 5h10v10h-10z")
