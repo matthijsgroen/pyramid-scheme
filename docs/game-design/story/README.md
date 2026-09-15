@@ -22,6 +22,9 @@ redesign, 37 from before the explorer existed, and which of those to rewrite, re
 [**The cast**](cast.md) is who Fez and the explorer are — wants, voice, never-says, and the pair — kept
 in one place so copy written months apart still sounds like them.
 
+[**Implementation**](IMPLEMENTATION.md) is what falls out of these documents as work, split by whether a
+story decision is in the way. Six items are pickable today.
+
 **Reading the columns.** _Structure_ is the expensive one: a re-carved floor invalidates saved exploration
 and has to ship with a migration. _Systems_ is where a cheap arc and a costly one diverge — a new currency
 is supported and small, a change to `isTierUnlocked` is neither. _Content_ decides whether an arc is a
