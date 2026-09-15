@@ -1,7 +1,7 @@
 # The casual-mobile review, and where each item now stands
 
-`docs/ux/casual-mobile-review.md` ranks twelve changes. It lives on an **unmerged draft branch** (PR #282),
-so nothing here can link to it on `main` yet — that is worth resolving before this work is cited elsewhere.
+[`docs/ux/casual-mobile-review.md`](../../ux/casual-mobile-review.md) ranks twelve changes. It landed on
+`main` in PR #282.
 
 This table is the honest position after the story pass: what the story work actually addresses, what it
 merely _documents_, and what it does not touch at all. The middle column is the one to read sceptically —
@@ -42,6 +42,5 @@ lose six months.
 
 ## Open
 
-1. **Does PR #282 land?** The review is cited across these documents and is not on `main`.
-2. **Which of the six untouched items go in this PR's wake?** 1 and 4 are small and change how the game
+1. **Which of the six untouched items go in this PR's wake?** 1 and 4 are small and change how the game
    feels more than anything in the story does.
