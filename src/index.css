@@ -19,27 +19,23 @@ body {
   font-family: "Hieroglyphs", var(--default-font-family, ui-sans-serif, system-ui, sans-serif);
 }
 
+/*
+ * `svh` is the viewport with the browser's URL bar SHOWN — the smallest it gets. The game is one
+ * screen that does not scroll, with a HUD pinned to its bottom, so it has to fit that smallest case
+ * or the HUD sits below the fold. `lvh` measures the bar away, and `dvh` would resize the board
+ * every time the bar slides in or out. Installed as an app there is no bar and all three are equal.
+ */
 :root,
 html,
 body {
   height: 100vh;
-  height: calc(var(--vh, 1vh) * 100);
-  height: 100lvh;
-  min-height: -webkit-fill-available;
+  height: 100svh;
   overflow: hidden;
 }
 
 #root,
 #storybook-root {
   height: 100%;
-}
-
-@media all and (display-mode: standalone) {
-  :root,
-  html,
-  body {
-    height: 100lvh;
-  }
 }
 
 @font-face {

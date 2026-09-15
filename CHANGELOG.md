@@ -17,7 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- The wall behind a lit room is lit along its whole run instead of being broken by narrow dark slits where the stones meet.
+- Playing in a phone browser, the game now ends where the screen ends. It used to be laid out as if the browser's address bar were not there, which pushed the hearts, the coins and the lamp off the bottom of a tall screen — they were only all visible once the game was installed as an app.
+- On a narrow screen the pyramid's name and description no longer sit underneath the button that takes you inside it.
 - The bare rock around a floor is drawn as rock instead of as blocks with black slits between them: a square and the seams beside it now agree about whether there is anything there to draw.
 
 ## 0.43.8 - 2026-09-15
