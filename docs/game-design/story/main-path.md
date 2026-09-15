@@ -30,6 +30,9 @@ closes it, and the mural completes as the record of who did it (Part 3 §3.3).
 That also makes the mosaic's out-of-order completion a non-problem: the picture is a record, and a record
 does not mind which order it was earned in.
 
+The mechanical route this sits on — what opens each door, and what capability each tomb floor hands over —
+is in [`../progression-route.md`](../progression-route.md).
+
 ## Act I — starter · you cannot read it yet
 
 | Journey     | Name                       | Beat                                                                             | Uses what exists      |
