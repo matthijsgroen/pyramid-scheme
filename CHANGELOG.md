@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- The bare rock around a floor is drawn as rock instead of as blocks with black slits between them: a square and the seams beside it now agree about whether there is anything there to draw.
+
 ## 0.43.8 - 2026-09-15
 
 ### Changed

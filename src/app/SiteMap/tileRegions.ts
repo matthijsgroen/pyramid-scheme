@@ -157,6 +157,30 @@ export const buildTileRegions = (
   const litTouching = (...cells: readonly (readonly [number, number])[]) =>
     brightest(...cells.map(([r, c]) => stateOf(r, c)))
   const isMouth = mouthTest(floorAt, openBetween, floorOf)
+  /** The eight cells that can give a square of bare rock a reason to be drawn. */
+  const ringAround = (r: number, c: number) =>
+    [
+      [r - 1, c],
+      [r + 1, c],
+      [r, c - 1],
+      [r, c + 1],
+      [r - 1, c - 1],
+      [r - 1, c + 1],
+      [r + 1, c - 1],
+      [r + 1, c + 1],
+    ] as const
+  /**
+   * WHETHER A CELL IS DRAWN AT ALL, and under which state — floor if it has one, otherwise mass when
+   * something drawn touches it.
+   *
+   * THE SEAMS BETWEEN CELLS HAVE TO ASK THE SAME QUESTION THE CELLS DO. They used to ask a smaller one:
+   * a square of rock looked at all eight neighbours, the gap above it at six (never the row below), and
+   * the corner at four. So a square drawn because the cell BELOW it was lit sat against a gap that was
+   * not drawn at all, and the map came out as blocks of stone with black slits between them — 18 such
+   * seams on a walked starter floor, 9 on expert, worst at the corners where the test was narrowest.
+   */
+  const drawnState = (r: number, c: number): CellState | null =>
+    floorOf(r, c)?.state ?? litTouching(...ringAround(r, c))
   // Asked by the gap itself AND by the corners beside it, so the two can never disagree about where a
   // wall band runs — and by the renderer, to find a cell with a band to hang a wall item on.
   const isFaceGap = (r: number, c: number): boolean => hasWallFace(floorAt, openBetween, r, c)
@@ -180,16 +204,7 @@ export const buildTileRegions = (
         // Mass wherever stone touches something drawn, and nothing at all otherwise — bare rock the
         // map has never had a reason to show. An unlit passage is stone here too, so its route stays
         // hidden; only its mouth shows, below.
-        const around = [
-          [r - 1, c],
-          [r + 1, c],
-          [r, c - 1],
-          [r, c + 1],
-          [r - 1, c - 1],
-          [r - 1, c + 1],
-          [r + 1, c - 1],
-          [r + 1, c + 1],
-        ] as const
+        const around = ringAround(r, c)
         const lit = litTouching(...around)
         if (lit) groupsFor(tierAt(...around)).wallMass[lit].push([x, y, CELL, CELL])
       }
@@ -206,16 +221,14 @@ export const buildTileRegions = (
       } else if (isFaceGap(r, c)) {
         groupsFor(tierAt([r, c], [r - 1, c])).wallFace[brightest(here!.state, north?.state)!].push(northGap)
       } else {
+        // The seam between this square and the one above it: drawn whenever BOTH are, so a run of rock
+        // reads as rock rather than as bricks with the mortar missing.
         const around = [
           [r - 1, c],
           [r, c],
-          [r - 1, c - 1],
-          [r - 1, c + 1],
-          [r, c - 1],
-          [r, c + 1],
         ] as const
-        const lit = litTouching(...around)
-        if (lit) groupsFor(tierAt(...around)).wallMass[lit].push(northGap)
+        const lit = brightest(drawnState(r, c), drawnState(r - 1, c))
+        if (lit) groupsFor(tierAt(...around, [r - 1, c - 1], [r, c - 1])).wallMass[lit].push(northGap)
       }
 
       // ── the west gap: floor when the way is open, otherwise a side wall seen edge-on ──
@@ -227,16 +240,13 @@ export const buildTileRegions = (
       } else if (isMouth([r, c - 1], [r, c], "e")) {
         // Same mouth, sideways.
       } else {
+        // The same seam turned sideways — see the north gap above.
         const around = [
           [r, c],
           [r, c - 1],
-          [r - 1, c],
-          [r - 1, c - 1],
-          [r + 1, c],
-          [r + 1, c - 1],
         ] as const
-        const lit = litTouching(...around)
-        if (lit) groupsFor(tierAt(...around)).wallMass[lit].push(westGap)
+        const lit = brightest(drawnState(r, c), drawnState(r, c - 1))
+        if (lit) groupsFor(tierAt(...around, [r - 1, c], [r - 1, c - 1])).wallMass[lit].push(westGap)
       }
 
       // ── the corner where four cells meet ──
@@ -272,7 +282,9 @@ export const buildTileRegions = (
         [r, c - 1],
         [r - 1, c - 1],
       ] as const
-      const cornerLit = litTouching(...cornerCells)
+      // The corner asks the same question the four squares around it do: a pinhole of background where
+      // four drawn squares meet is the most visible seam of the three, because it has stone on all sides.
+      const cornerLit = brightest(...cornerCells.map(([cr, cc]) => drawnState(cr, cc)))
       const cornerGroups = groupsFor(tierAt(...cornerCells))
       if (insideOneSpace) {
         floorGroup(cornerGroups, here, north, west, northWest)[
