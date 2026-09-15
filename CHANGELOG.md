@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- A lit room keeps its stone. The lamp now brightens the masonry instead of washing pale light over it, so slabs, joints and the grain of the floor read in the light the way they do in the dark.
+- The air in a priest's wing is dust like everywhere else — small, many, and slow — instead of four big pale discs drifting across the floor.
+- Your torchlight fades into the dark at its edges instead of stopping on a straight line, so a lit room reads as a room with a lamp in it rather than as a bright rectangle laid over the floor.
+
+### Fixed
+
+- The bare rock around a floor is drawn as rock instead of as blocks with black slits between them: a square and the seams beside it now agree about whether there is anything there to draw.
+
 ## 0.43.8 - 2026-09-15
 
 ### Changed

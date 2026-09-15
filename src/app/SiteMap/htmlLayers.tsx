@@ -94,6 +94,7 @@ export const ClipLayer = ({
   opacity,
   className,
   style,
+  feather = 0,
   ...rest
 }: {
   rects: readonly Rect[]
@@ -103,24 +104,45 @@ export const ClipLayer = ({
   /** Merged UNDER the box's own geometry, so a caller can hand the element a custom property — the
    * strength an animation fades to, say — without being able to move the layer off its shape. */
   style?: CSSProperties
+  /** Soften the cut edge by this many units, instead of ending the layer on the path exactly.
+   *
+   * A clip is a decision with no middle: every pixel is in the shape or out of it. That is what a wall
+   * is, and it is not what LIGHT is — the lit place ended on a rectangle drawn around a room, which read
+   * as a bright tile laid on the floor rather than as a lamp burning in the middle of one.
+   *
+   * THE BLUR CANNOT GO ON THIS ELEMENT. A filter is applied BEFORE the clip (CSS Filter Effects §2.2), so
+   * a blurred box cut to a path comes back with the same hard path. It has to go on a PARENT: the child
+   * is clipped, the parent rasterises that result and softens it, and the light spills a little past the
+   * shape — onto the wall a lamp in the room would be lighting anyway.
+   *
+   * WHAT IT IS RASTERISED AT IS THIS LAYER'S OWN BOX, never the map's: a filter rasterises its subtree as
+   * one layer, which is the same reason `STANDING_RELIEF` is per sprite rather than on the layer holding
+   * the sprites (docs/instructions/map-rendering.md). So the element keeps its box, its identity and its
+   * animation, and only the PAINT moves down a level to be something the blur can be applied TO. */
+  feather?: number
 } & Record<`data-${string}`, string | undefined>) => {
   if (rects.length === 0) return null
   const box = boundsOf(rects)
-  return (
-    <div
-      {...rest}
-      className={className}
-      style={{
-        ...style,
-        position: "absolute",
-        left: box.x,
-        top: box.y,
-        width: box.w,
-        height: box.h,
-        clipPath: `path("${rectsToPath(rects, [box.x, box.y])}")`,
-        background: fill,
-        opacity,
-      }}
-    />
-  )
+  const cut: CSSProperties = {
+    clipPath: `path("${rectsToPath(rects, [box.x, box.y])}")`,
+    background: fill,
+  }
+  const placed: CSSProperties = {
+    ...style,
+    position: "absolute",
+    left: box.x,
+    top: box.y,
+    width: box.w,
+    height: box.h,
+    opacity,
+  }
+  // The layer stays the layer — same box, same identity, same animation. Only the PAINT moves down a
+  // level, because the softening has to happen to an already-cut shape and cannot happen to this one.
+  if (feather)
+    return (
+      <div {...rest} className={className} style={{ ...placed, filter: `blur(${feather}px)` }}>
+        <div style={{ position: "absolute", inset: 0, ...cut }} />
+      </div>
+    )
+  return <div {...rest} className={className} style={{ ...placed, ...cut }} />
 }

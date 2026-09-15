@@ -28,8 +28,8 @@ export const SEATING_PASS = 0.45
 export const STANDING_RELIEF: Record<Difficulty, string> = Object.fromEntries(
   difficulties.map(tier => [tier, `contrast(${(1 / (1 - nightAlpha(tier) * SEATING_PASS)).toFixed(2)})`])
 ) as Record<Difficulty, string>
-export const LIT_STRENGTH = 0.44
-export const LIT_STANDING_STRENGTH = 0.24
+export const LIT_STRENGTH = 0.5
+export const LIT_STANDING_STRENGTH = 0.25
 
 /**
  * The PLACE the explorer is standing in — a whole chamber, or the stretch of corridor they are on.
