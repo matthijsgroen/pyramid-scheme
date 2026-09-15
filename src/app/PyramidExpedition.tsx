@@ -26,6 +26,7 @@ import { createFloorStartIndices } from "@/app/PyramidLevel/support"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { Header } from "@/ui/atoms/Header"
+import { ActionButton } from "@/ui/atoms/ActionButton"
 
 const generateExpeditionLevel = (journey: PyramidJourney, baseSeed: number, levelNr: number): PyramidLevel | null => {
   const random = mulberry32(generateNewSeed(baseSeed, levelNr))
@@ -122,6 +123,12 @@ export const PyramidExpedition: FC<{
   useExpeditionIntro({ isTomb, hasBlockedBlocks, showConversation })
 
   const expeditionCompleted = activeJourney.levelNr > pyramidJourney.levelCount
+
+  // A site whose exterior this journey has already solved shows the answer instead of asking for it
+  // again: the pyramid is the way in, and a revisit is about the interior. Only ever a site with a
+  // persistent interior — its board is generated from a seed that never moves, so the numbers on it
+  // are the same ones the player worked out the first time.
+  const revealSolvedBoard = hasInterior && activeJourney.completionCount > 0 && !expeditionCompleted
 
   // Check if a new pyramid journey is unlocked (first time completing this journey)
   const nextPyramidJourneyId =
@@ -240,10 +247,16 @@ export const PyramidExpedition: FC<{
                   decorationOffset={activeJourney.randomSeed}
                   onComplete={flow.completeLevel}
                   dayTime={dayTime}
-                  entranceBlockId={entering || levelCompleted ? entranceBlockId : undefined}
+                  revealed={revealSolvedBoard}
+                  entranceBlockId={entering || levelCompleted || revealSolvedBoard ? entranceBlockId : undefined}
                 />
               )}
             </div>
+            {revealSolvedBoard && !showingInterior && !startNextLevel && (
+              <div className="absolute inset-x-0 bottom-4 z-20 mb-safe-bottom flex justify-center">
+                <ActionButton label={t("ui.enterSite")} onClick={flow.completionFinished} />
+              </div>
+            )}
             {expeditionCompleted && (
               <ExpeditionCompletionOverlay
                 onJourneyComplete={onJourneyComplete}

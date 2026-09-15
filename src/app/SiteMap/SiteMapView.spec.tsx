@@ -51,9 +51,14 @@ const boxOf = (el: HTMLElement) => {
 }
 
 /** The path a layer is cut to, put back into MAP coordinates — the clip itself is written in the
- * element's own frame, which is what keeps the element the size of its shape. */
+ * element's own frame, which is what keeps the element the size of its shape.
+ *
+ * A FEATHERED layer paints through a child (`ClipLayer`): a blur has to be applied to an already-cut
+ * shape, and on one element the filter would run before the clip. The box, and so the frame the path is
+ * written in, is still this element's. */
 const clipOf = (el: HTMLElement | null | undefined) => {
-  const d = /path\("(.*)"\)/.exec(el?.style.clipPath ?? "")?.[1] ?? ""
+  const painted = el?.style.clipPath ? el : el?.firstElementChild
+  const d = /path\("(.*)"\)/.exec((painted as HTMLElement | null | undefined)?.style.clipPath ?? "")?.[1] ?? ""
   if (!d || !el) return d
   const dx = parseFloat(el.style.left) || 0
   const dy = parseFloat(el.style.top) || 0
@@ -852,6 +857,34 @@ describe("SiteMapView — the shade the lamp is read against", () => {
 
     expect(depthOf(container, lit)).toBeGreaterThan(depthOf(container, full))
   })
+
+  it("scales the stone up rather than adding light to it, so a lit room keeps its masonry", () => {
+    // `screen` ADDS, and adding lifts the darks further than the lights: the joints came up with the
+    // slabs and the floor flattened. Measured on the starter floor it left 23% of the art's own texture
+    // and put the lit floor 20 L* above the stone it is cut from — a bleached room beside an unlit one
+    // that had kept its grain. `color-dodge` DIVIDES, which is a scale, so the ratios that ARE the
+    // texture survive it: 102% at the same brightness. Pinned because the two are one word apart.
+    const { container } = render(<SiteMapView grid={twoRooms()} explorerPos={[0, 0]} />)
+    const lit = container.querySelector<HTMLElement>("[data-torch='lit']")!
+
+    expect(lit.parentElement?.style.mixBlendMode).toBe("color-dodge")
+  })
+
+  it("softens its own edge, because nothing in the picture casts a hard-edged light", () => {
+    // The place is lit by rule and the rule is a union of cell squares, so the lamp used to end on a
+    // staircase of right angles — a ruled line down a corridor's flanks with nothing in the scene opaque
+    // enough to account for it. Read as a tile coloured in rather than as ground a lamp falls on.
+    //
+    // Both halves are asserted because either alone is the bug: the blur has to be there, and it has to
+    // be on the element that holds the cut rather than on the cut itself — a filter is applied BEFORE
+    // clip-path, so a blur written next to the path comes back with the same hard path.
+    const { container } = render(<SiteMapView grid={twoRooms()} explorerPos={[0, 0]} />)
+    const lit = container.querySelector<HTMLElement>("[data-torch='lit']")!
+
+    expect(lit.style.filter).toMatch(/^blur\([\d.]+px\)$/)
+    expect(lit.style.clipPath).toBe("")
+    expect((lit.firstElementChild as HTMLElement).style.clipPath).toContain("path(")
+  })
 })
 
 describe("SiteMapView — a wall only opens onto something drawn", () => {
@@ -1127,6 +1160,32 @@ describe("the light falls in the same two passes the shade does", () => {
     const topOf = (pass: "lit" | "standing") => parseFloat(lit(container, pass).style.top)
 
     expect(topOf("standing")).toBe(topOf("lit") - WALL_H)
+  })
+
+  it("carries that band across the seams between cells, so the back wall has no unlit slits in it", () => {
+    // Two lit cells side by side each carry their own band, with a side wall's thickness of map between
+    // them. Left out, that seam stood unlit in the middle of a wall the lamp was otherwise falling on —
+    // the back wall of a lit place drawn as a dashed line, one gap per column.
+    const grid = makeGrid([
+      [
+        straightCorridor("completed", ["e"]),
+        straightCorridor("completed", ["e", "w"]),
+        straightCorridor("completed", ["w"]),
+      ],
+    ])
+    const { container } = render(<SiteMapView grid={grid} explorerPos={[0, 1]} revealAllCells />)
+
+    const rects = [
+      ...clipOf(lit(container, "standing")).matchAll(/M(-?[\d.]+)\s*(-?[\d.]+)\s*h\s*(-?[\d.]+)\s*v\s*(-?[\d.]+)/g),
+    ].map(m => m.slice(1).map(Number) as [number, number, number, number])
+    const bandTop = Math.min(...rects.map(([, y]) => y))
+    const band = rects.filter(([, y, , h]) => y === bandTop && h === WALL_H).sort(([a], [b]) => a - b)
+
+    expect(band.length).toBeGreaterThan(1)
+    band.forEach(([x, , w], i) => {
+      if (i > 0) expect(x).toBe(band[i - 1][0] + band[i - 1][2])
+      expect(w).toBeGreaterThan(0)
+    })
   })
 })
 

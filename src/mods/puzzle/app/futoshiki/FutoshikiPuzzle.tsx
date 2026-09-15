@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState, type FC } from "react"
+import { useCallback, useMemo, type FC } from "react"
+import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import { FutoshikiBoard } from "@/mods/puzzle/app/futoshiki/FutoshikiBoard"
 import { FutoshikiPad } from "@/mods/puzzle/app/futoshiki/FutoshikiPad"
@@ -40,7 +41,7 @@ const exhaustedNumbers = (values: (number | undefined)[][], size: number): Reado
 export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const { size, solution, techniqueCap } = puzzle
-  const [state, setState] = useState(() => createFutoshikiState(puzzle))
+  const [state, setState] = usePuzzleState(() => createFutoshikiState(puzzle))
   const { selected, pencil, selectCell, focusCell, togglePencil, clearSelection } = useFutoshikiEntry()
 
   const values = useMemo(() => futoshikiValues(state), [state])
@@ -79,12 +80,12 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
       const { row, col } = selected
       setState(prev => (pencil ? toggleFutoshikiNote(prev, row, col, value) : setFutoshikiValue(prev, row, col, value)))
     },
-    [selected, pencil]
+    [selected, pencil, setState]
   )
 
   const eraseCell = useCallback(() => {
     if (selected) setState(prev => clearFutoshikiCell(prev, selected.row, selected.col))
-  }, [selected])
+  }, [selected, setState])
 
   return (
     <PuzzleFamilyShell

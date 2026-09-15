@@ -1,4 +1,5 @@
-import { useMemo, useState, type FC } from "react"
+import { useMemo, type FC } from "react"
+import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import { HidatoBoard } from "@/mods/puzzle/app/hidato/HidatoBoard"
 import { HidatoRules } from "@/mods/puzzle/app/hidato/HidatoRules"
@@ -36,7 +37,7 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
   const { t } = useTranslation("common")
   // Which place this room is. The board, the goal, the rules and every hint sentence are drawn from it.
   const skin = skinFor(role, theme)
-  const [state, setState] = useState(() => createHidatoState(puzzle))
+  const [state, setState] = usePuzzleState(() => createHidatoState(puzzle))
   const last = puzzle.cells.length
 
   const hint = useMemo(

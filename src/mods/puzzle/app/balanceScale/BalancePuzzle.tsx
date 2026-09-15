@@ -1,4 +1,5 @@
-import { useMemo, useState, type FC } from "react"
+import { useMemo, type FC } from "react"
+import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { useCelebration } from "@/mods/core/app/useCelebration"
@@ -40,7 +41,7 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSo
   const { t } = useTranslation("common")
   const skin = skinFor(role, theme)
   const { glyphs, scales, maxValue, solution, techniqueCap } = puzzle
-  const [state, setState] = useState(() => createBalanceState(glyphs))
+  const [state, setState] = usePuzzleState(() => createBalanceState(glyphs))
 
   const lines = computeBalanceLines(scales, state.values)
   const board = useMemo(
