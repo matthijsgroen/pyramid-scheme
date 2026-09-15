@@ -19,23 +19,24 @@ separate phases** — so placing something new in an existing slot never re-carv
 
 No change to `generatedWorld.ts`'s carve. Ships whenever, in any order.
 
-| Work                                          | Where it lives                                  |
-| --------------------------------------------- | ----------------------------------------------- |
-| Journey-keyed arrival conversations           | app                                             |
-| Story beats exempt from the tutorial toggle   | app                                             |
-| Generalise `CompassResult`                    | core types                                      |
-| `notEnoughHieroglyphs` key and copy           | one string                                      |
-| Rewrite the 37 pre-explorer `fez.json` keys   | strings                                         |
-| Rewrite the 29 journey descriptions           | strings                                         |
-| Explorer portrait, bust crop and surface      | art + app                                       |
-| Reaction-rail plumbing                        | app                                             |
-| The guidance layer                            | app — it reads the world, never writes it       |
-| A tomb-door family                            | app: the exterior is a screen, not a floor node |
-| Story currencies in existing loot slots       | the solver's loot phase                         |
-| A story encounter **replacing** a puzzle node | dressing, per the node-selector vocabulary      |
-| Blocked passage (catalogue 1)                 | decoration — explicitly no connectivity         |
-| Window or grille (6)                          | decoration                                      |
-| Informational dead end (7)                    | what sits at a dead end that already exists     |
+| Work                                          | Where it lives                                         |
+| --------------------------------------------- | ------------------------------------------------------ |
+| Journey-keyed arrival conversations           | app                                                    |
+| Story beats exempt from the tutorial toggle   | app                                                    |
+| Generalise `CompassResult`                    | core types                                             |
+| `notEnoughHieroglyphs` key and copy           | one string                                             |
+| Rewrite the 37 pre-explorer `fez.json` keys   | strings                                                |
+| Rewrite the 29 journey descriptions           | strings                                                |
+| Explorer portrait, bust crop and surface      | art + app                                              |
+| Reaction-rail plumbing                        | app                                                    |
+| The guidance layer                            | app — it reads the world, never writes it              |
+| A tomb-door family                            | app: the exterior is a screen, not a floor node        |
+| Story currencies in existing loot slots       | the solver's loot phase                                |
+| A story encounter **replacing** a puzzle node | dressing, per the node-selector vocabulary             |
+| Blocked passage (catalogue 1)                 | decoration — explicitly no connectivity                |
+| Window or grille (6)                          | decoration                                             |
+| Informational dead end (7)                    | what sits at a dead end that already exists            |
+| Which rooms claim a bigger footprint (B6)     | derived at render time — `roomClaims.ts` does it today |
 
 **One of these still touches saves without touching the world: the perk reshuffle.** Saves hold perk ids,
 so changing what an id grants changes what an existing save has. The world is stable; the player's
