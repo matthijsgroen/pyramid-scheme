@@ -165,10 +165,13 @@ export const PyramidExpedition: FC<{
           </Header>
         </div>
 
-        <div ref={scrollContainerRef} className="flex max-h-dvh flex-1 overflow-auto overscroll-contain">
+        <div ref={scrollContainerRef} className="flex max-h-svh flex-1 overflow-auto overscroll-contain">
           <div
             className={clsx(
-              "absolute bottom-4 left-4 mr-4 mb-safe-bottom hidden max-w-sm rounded-lg bg-black/10 p-4 md:bottom-10 md:left-10 mdh:block",
+              // The enter button is pinned bottom-centre. On a screen narrower than this card's own
+              // max-width there is no free corner beside it, so the card sits a button's height higher
+              // until there is room to share the row.
+              "absolute bottom-20 left-4 mr-4 mb-safe-bottom hidden max-w-sm rounded-lg bg-black/10 p-4 md:bottom-10 md:left-10 mdh:block",
               textColor
             )}
           >
@@ -179,7 +182,7 @@ export const PyramidExpedition: FC<{
             className="relative w-full min-w-(--level-width)"
             style={{
               "--level-width": `calc(var(--spacing) * 15 * ${width + 2})`,
-              minHeight: `min(100dvh, calc(var(--spacing) * 13 * ${(levelContent?.pyramid.floorCount ?? 0) + 2}))`,
+              minHeight: `min(100svh, calc(var(--spacing) * 13 * ${(levelContent?.pyramid.floorCount ?? 0) + 2}))`,
             }}
           >
             {/* inert: these two boards are scenery. They stack in the same scroll container as the
