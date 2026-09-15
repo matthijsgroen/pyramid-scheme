@@ -102,8 +102,9 @@ conversation can be written today, because the explorer speaks and the voice rul
 
 ## Considered: shortcuts, ladders and layers
 
-> Map variety has its own feasibility note now: [`../map-variety.md`](../map-variety.md). The headline is
-> that floors are trees — 843 sections end in a reward, 90 at a staircase, and nothing loops.
+> Map variety has its own feasibility note: [`../map-variety.md`](../map-variety.md). Floors do loop, and
+> gate isolation survives it — but only 11 of 74 floors loop at all, and density falls as floors grow.
+> Master has one cycle across 18 floors and 3,691 cells.
 
 **Vocabulary, not a schedule.** These are structures the storytelling can lean on; when any of them lands
 is a separate decision. Kept here because the three ideas are not equally good, and because what they cost

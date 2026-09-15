@@ -3,24 +3,37 @@
 Feasibility, on the premise that **a mechanic is storytelling vocabulary**. A hidden corridor already says
 _somebody concealed this_ without a line of dialogue; the question is what else the floor could say.
 
-## The finding: a floor is a tree
+## The finding: floors loop, rarely, and least where they are biggest
 
-Counted across the generated world, sections end in exactly two ways:
+An earlier draft of this document claimed there were no loops. That was wrong — it counted how sections
+_terminate_ (843 in a reward, 90 at a staircase), which says nothing about corridor shape inside one. Open
+main sections do loop, and gate isolation holds.
 
-| Section ends in | Count |
-| --------------- | ----- |
-| a reward        | 843   |
-| a staircase     | 90    |
+Measured properly, by assembling every floor of every journey at its real seed and taking the cyclomatic
+number of the walkable graph — edges minus cells plus components, where 0 is a tree:
 
-And the tier diagrams in `pyramid-interior-design.md` confirm the shape — a spine with forks, each branch
-running to a reward and stopping. **There is no loop anywhere in the game.**
+| Tier    | Floors | With any loop | Total cycles | Cells |
+| ------- | ------ | ------------- | ------------ | ----- |
+| starter | 10     | 3             | 11           | 1329  |
+| junior  | 10     | 4             | 21           | 1555  |
+| expert  | 12     | 1             | 4            | 2722  |
+| master  | 18     | **1**         | **1**        | 3691  |
+| wizard  | 24     | 2             | 7            | 5285  |
 
-That is the lever, and it is not room types. In a tree, every discovery has the same shape: walk in, take
-the thing, walk back out. In a graph, discovery is _this connects to that_ — coming out somewhere you
-recognise is the feeling exploration games actually sell, and this map cannot produce it at all.
+**Eleven of seventy-four floors loop at all**, and the density runs backwards: junior gets 21 cycles across
+1,555 cells, master gets **one** across 3,691. The three largest floors in the game — `wizard_3 f1` at 739
+cells, `wizard_1 f1` at 481, `master_1 f0` at 433 — are perfect trees.
 
-It is also why the backwards map is expensive to walk (`IMPLEMENTATION.md` § shortcuts): in a tree there is
-never a shorter way back, because there is only one way.
+So loops are **incidental rather than authored**: they fall out of small sections packed into a small grid,
+and they stop happening exactly as floors get big enough for the walk to matter. `junior_2 f0` has 16
+cycles in 221 cells; `master_3 f0` has none in 409.
+
+That inverts the recommendation. The question is not _can floors loop_ — they can, the machinery allows it,
+and isolation survives it. It is that **the loops happen where they are least needed and vanish where the
+player is doing the most walking.**
+
+_(The measure counts 4-adjacency of non-empty cells as connection, which can only over-count edges. Real
+cycle counts are these or lower, so the shape of the finding holds.)_
 
 ## Options, cheapest first
 
@@ -36,23 +49,21 @@ the forgery arc's world: places that have been got at before.
 Risk: a player who tries to find a way through and cannot will feel lied to. It has to read as **ruin**,
 not as a puzzle — which is a drawing problem, not a design one.
 
-### 2. One loop per floor — cheap to draw, one real question
+### 2. Loops where the floor is big — the machinery already allows it
 
-A section that rejoins the spine instead of dead-ending. The machinery is nearly there: 90 sections already
-end at a **named place** (`end: { stairId }`) rather than in loot, so "a section ends somewhere specific"
-is an idea the generator holds.
+Loops exist and gate isolation holds, so this is a **tuning** question rather than a feature: the generator
+can already produce them, and does, in the floors that need them least.
 
 - **Saves:** structural, but under ordinals that is ~1% of a floor's cells, not the floor
   (`IMPLEMENTATION.md`).
 - **Reachability:** a loop only ever ADDS connectivity, so nothing reachable before becomes unreachable.
-  The solver's invariant is safe by construction.
-- **The real question:** `world-spec-stability.md` says _"a gate is a room, and gated content is
-  isolated."_ **A loop can bypass a gate**, and then the gate is decoration. Whatever places loops has to
-  prove it did not open a way around a lock — which is a check the solver is well placed to do but does not
-  do today.
+- **Isolation:** already works — sections stay gated. That was the risk, and it is not one.
 
-What it says: _this was built to be moved through by people who lived here_ — which is a different claim
-from a tomb, and true of pyramids' service corridors.
+What is left is a dial nobody has set: **loop density should rise with floor size**, and today it falls. A
+739-cell tree is a long walk back out of every branch; the same floor with four loops is a place.
+
+What it says: _people moved through here_ — a different claim from a tomb, and true of the service
+corridors real pyramids have.
 
 ### 3. A chamber bigger than one cell — renderer work
 
@@ -102,9 +113,9 @@ solver to check that a loop has not unlocked a gate.
 
 ## Open
 
-1. **Does the solver check gate isolation over the whole floor graph, or does it assume a tree?** This
-   decides whether loops are a week or a month.
-2. **Is one loop per floor the right dose?** Enough to change the feel, few enough that the spine still
-   reads.
+1. **What sets loop density today?** It is evidently a consequence of section packing rather than a knob.
+   Finding the knob, or adding one, is the whole of option 2.
+2. **What is the right dose, and should it scale with cells?** `junior_2 f0` carries 16 cycles in 221
+   cells and reads fine, so the ceiling is not low. The target is probably a rate, not a count.
 3. **Do blocked passages want to lie occasionally** — one of them being a hidden corridor after all? It
    makes every other one interesting, and it makes the detector mean something.
