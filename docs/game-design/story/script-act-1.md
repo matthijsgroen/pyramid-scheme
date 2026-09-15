@@ -11,7 +11,7 @@ lightly. The travel-card blurbs are marketing prose and are not the model.
 the explorer carries no pronoun, no name and no gendered self-description — every line below is present
 tense, a question, or about the world rather than about themselves.
 
-40 source lines.
+43 source lines.
 
 ---
 
@@ -105,6 +105,12 @@ room and the room is a hole in the ground.
 > **Ipi:** You want to get on? Then there's a noblewoman north of here. Painted vault, very pleased with
 > herself. She never paid for the lapis.
 >
+> **Explorer:** Does she have a name?
+>
+> **Ipi:** Henut, daughter of Sennefer, of the western estates. Eleven deben of lapis, unpaid, third year.
+>
+> **Ipi:** Of course she has a name. I wrote it down.
+>
 > **Ipi:** Tell her Ipi sent you. That should spoil her afternoon.
 >
 > **Fez:** He'd have had cats, a man like this. Everyone did. Charming animals.
@@ -124,6 +130,10 @@ room and the room is a hole in the ground.
 > **Explorer:** You like that he's owed money.
 >
 > **Fez:** I like that he wrote it down.
+
+**He names her, and that is the point of him.** _Of course she has a name. I wrote it down._ — the debt,
+the parentage and the year, from memory, three thousand years on. It pays off in Act II, where the tomb
+wall she paid for gets her name wrong and his ledger does not.
 
 **This is the act break and the first introduction** (main-path, "introductions"): the player leaves with a
 name and a debt rather than with an instruction. It points at the Noble's Hidden Vault, whose treasure set
@@ -196,8 +206,9 @@ is how a story becomes the thing players tap through (Part 2 §2.6).
    about doors and that one about cats, but they are twelve lines apart in a player's first hour.
 2. **Is "Someone could, once." too wistful for the fifth line of the game?** The alternative is ending on
    _"No."_ and letting the hook be pure absence.
-3. **Should Ipi name the noblewoman?** A name is warmer and one more thing to carry; "a noblewoman north of
-   here" is cheaper and cannot contradict whatever the junior tomb turns out to be.
+3. ~~**Should Ipi name the noblewoman?**~~ **Decided: he does.** A man whose accounts are that good knows
+   the name, and withholding it would contradict the only thing he is characterised by. It also sets up
+   Act II — he has her name right and her own wall does not.
 4. **How rare is rare, for the reaction rail?** One beat per tier may be too thin to read as a
    relationship; one per journey is twenty and becomes commentary.
 5. **Does Fez react to failure as well as success?** A wrong claim is the moment a companion is most useful

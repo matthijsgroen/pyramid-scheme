@@ -1,6 +1,6 @@
 # Act II — junior · what real looks like
 
-Source copy, English only. Voice and rules: `cast.md`. 38 source lines.
+Source copy, English only. Voice and rules: `cast.md`. 41 source lines.
 
 **The act's job.** The player handles imitations for a whole tier without being told that is what they are,
 so that Act IV's forgery is earned rather than sprung. And reading pays off for the first time — which is
@@ -60,6 +60,9 @@ the ending's mechanism arriving quietly, four tiers early.
 
 `story.tomb.junior.*`
 
+Ipi named her in Act I, with her father and the year of the debt, so the player arrives knowing exactly
+who they are looking for.
+
 Henut is vain, buried with imitations, and entirely certain they are originals. Her want is mundane and
 real: **her name is spelled wrong on her own wall.** In Egyptian terms that is not vanity at all, and the
 game does not say so — Fez does, badly, and is corrected.
@@ -85,7 +88,11 @@ hieroglyphs do anything outside a tableau, and the mechanism the ending runs on.
 
 > **Henut:** There. Now it will still be my name in a thousand years.
 >
-> **Fez:** Does that matter, down here?
+> **Explorer:** Ipi spelled it correctly.
+>
+> **Henut:** Ipi spelled everything correctly. It was his one redeeming feature.
+>
+> **Fez:** Does it matter, down here?
 >
 > **Henut:** It is the only thing that does.
 
