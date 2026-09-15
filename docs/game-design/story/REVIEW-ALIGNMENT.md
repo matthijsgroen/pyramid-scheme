@@ -26,11 +26,11 @@ writing a plan is not shipping a fix.
 
 **Two of twelve are addressed as design** (10, and 7 by consequence). **Three are reframed or redirected**
 (2, 8, 11). **One is explicitly declined** (5 — the drum is a reward-cadence problem and the story says so
-rather than pretending). **Six are untouched**, and five of those are the ones the review ranked highest.
+rather than pretending). **Three are now in flight in another session** (1, 2, 3 — persistence, the once-only exterior, lighting). **Three remain untouched** (4, 6, 12).
 
 That is the expected shape — the review's top items are systems work and this pass was narrative — but it
 is worth stating plainly, because a story document that appears to answer a UX review is the easiest way to
-lose six months.
+lose six months. What closed items 1–3 was somebody building them, not this.
 
 ## What the story pass added that the review did not ask for
 

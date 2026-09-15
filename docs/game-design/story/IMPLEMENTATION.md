@@ -98,6 +98,52 @@ conversation can be written today, because the explorer speaks and the voice rul
 
 ---
 
+---
+
+## Considered: shortcuts, ladders and layers
+
+Raised while the exterior board, board persistence and lighting were being fixed elsewhere. Kept here
+because the three ideas are not equally good.
+
+### A lever that drops a ladder is not a gate variant — it is a shortcut
+
+A gate asks _do you hold the key_. A lever asks nothing: it is opened from the far side and stays open. It
+gates no progress; it removes **repetition**.
+
+**Repetition is the problem the backwards map creates.** The best structural idea in this game is that a
+late key reopens an early pyramid — and the cost of that idea is walking a floor cleared six tiers ago to
+reach one gate. The review's toll-booth complaint is the same thing one level up: it is about paying to
+re-enter, and this is about paying to re-walk.
+
+So a shortcut opened on the first visit is what makes returning cheap, and **returning is the whole
+design**. That puts it above map variety rather than beside it: one serves the core loop, the other serves
+novelty.
+
+It may also be nearly free to draw. A shortcut is an existing corridor connection that starts closed and
+opens permanently — if gates already render, a one-way opened gate is most of the art.
+
+### Verticality is expensive and the want is weaker
+
+True layers touch the renderer (the HTML port is in flight), pathing, and the section hash. And
+`world-spec-stability.md` is clear that corridor structure is structural: anything changing connectivity
+invalidates saved exploration for that floor, so it ships with a migration rather than after one.
+
+A ladder as **decoration within a floor** is a different and much cheaper thing, and buys atmosphere rather
+than exploration.
+
+### Before adding generation features, measure
+
+The review's complaint about the interior was not the maze. It was the camera — _"you built a stage and
+shot it through a mail slot"_ — and the frame being mostly empty. Camera framing and lighting are being
+worked on now.
+
+**Both of those change how the same maze feels.** Adding generation variety before they land risks solving
+a problem that turns out to have been light, and generation changes cost a save migration where lighting
+costs nothing.
+
+Recommended order: let the lighting and framing land, look at a floor again, and only then decide whether
+the maze itself is the thin part.
+
 ## Suggested order
 
 **1 → 3 → 4 → 2.** The first makes the story writable, the third is ten minutes, the fourth fixes three
