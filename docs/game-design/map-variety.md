@@ -65,102 +65,125 @@ That last row is the one the game does not have.
 _(The measure counts 4-adjacency of non-empty cells as connection, which can only over-count edges. Real
 cycle counts are these or lower, so the shape of the finding holds.)_
 
-## Options, cheapest first
+## The catalog
 
-### 1. A passage that visibly goes nowhere — free
+Nothing here ships alone. The intent is a **complete catalog first**, then one implementation pass — so
+the axes below exist to show what is missing as much as what is proposed.
 
-A collapsed or bricked-up opening, drawn, leading to nothing. **No connectivity, no generator change, no
-save consequence** — it is a decoration in the existing `wallDecorations` sense.
+### What a map mechanic can vary
 
-What it says: _this place was bigger than what you can reach._ That is the cheapest storytelling in the
-building, and it is the one thing on this list that could ship in an afternoon. It also quietly supports
-the forgery arc's world: places that have been got at before.
+Six axes. Every entry in the catalog is a point in this space, and an empty region is a mechanic nobody
+has thought of yet.
 
-Risk: a player who tries to find a way through and cannot will feel lied to. It has to read as **ruin**,
-not as a puzzle — which is a drawing problem, not a design one.
+| Axis             | Values                                                            |
+| ---------------- | ----------------------------------------------------------------- |
+| **Connectivity** | none (decoration) · adds an edge · removes one · changes a region |
+| **Direction**    | both ways · one way                                               |
+| **Opened by**    | nothing · a key · a lever · a tool · never                        |
+| **Visibility**   | invisible · visible when near · visible from afar                 |
+| **Persistence**  | permanent once opened · always open · never opens                 |
+| **Footprint**    | one cell · a corridor · bigger than a cell                        |
 
-### 2. Loops where the floor is big — the machinery already allows it
+### The catalog itself
 
-Loops exist and gate isolation holds, so this is a **tuning** question rather than a feature: the generator
-can already produce them, and does, in the floors that need them least.
+| #   | Mechanic                   | Says                                          | Connectivity       | Cost     | Status       |
+| --- | -------------------------- | --------------------------------------------- | ------------------ | -------- | ------------ |
+| B1  | Ward gate                  | somebody locked this                          | region             | —        | **built**    |
+| B2  | Floor key                  | do that first, then this                      | region             | —        | **built**    |
+| B3  | Hidden corridor            | somebody concealed this                       | adds edge          | —        | **built**    |
+| B4  | Side path                  | there is more than the way on                 | adds edge          | —        | **built**    |
+| B5  | Staircase                  | down is further in                            | adds edge          | —        | **built**    |
+| 1   | Blocked passage            | this place was bigger than you can reach      | **none**           | free     | proposed     |
+| 2   | Loop density dial          | people moved through here                     | adds edge          | tuning   | proposed     |
+| 2b  | One-way rope               | somebody came down and did not plan to return | adds edge, one way | small    | proposed     |
+| 6   | Window or grille           | there is something there, and not yet         | **none**           | small    | proposed     |
+| 7   | Informational dead end     | the reward here is knowing something          | none               | free     | proposed     |
+| 8   | Lever-opened shortcut      | somebody closed this from the other side      | adds edge          | small    | proposed     |
+| 9   | Second way in              | you know this place from the other side now   | adds edge          | medium   | proposed     |
+| 3   | Chamber bigger than a cell | this room mattered                            | footprint          | renderer | waiting      |
+| 4   | One-way drop that strands  | you are committed now                         | adds edge, one way | —        | **declined** |
+| 5   | Vertical layers            | the building has depth                        | region             | large    | last         |
 
-- **Saves:** structural, but under ordinals that is ~1% of a floor's cells, not the floor
-  (`IMPLEMENTATION.md`).
-- **Reachability:** a loop only ever ADDS connectivity, so nothing reachable before becomes unreachable.
-- **Isolation:** already works — sections stay gated. That was the risk, and it is not one.
-
-What is left is a dial nobody has set: **loop density should rise with floor size**, and today it falls. A
-739-cell tree is a long walk back out of every branch; the same floor with four loops is a place.
-
-What it says: _people moved through here_ — a different claim from a tomb, and true of the service
-corridors real pyramids have.
-
-### 2b. One-way paths — the only safe way to loop a gated floor
+### The one-way crossing, in detail
 
 **The game has no directed edges.** Every connection works both ways, which is why a loop either respects
 isolation or destroys it, with nothing in between.
 
-A rope dangling down a shaft is the whole design: you jump the last stretch, and it is too high to climb
-back. No rule has to be explained — **the drawing is the rule**, which is the wordless standard every
-mechanic here is held to.
+**And there is a constraint that prunes half the obvious fictions: a floor is one plane.** Anything whose
+one-wayness comes from _height_ — a shaft you drop down, a ledge too high to climb — is option 5 in
+disguise and costs what option 5 costs. A one-way that works here has to be one-way **in plan view**.
 
-**Direction decides everything about how it feels.** An earlier draft of this document declined one-way
-drops on tone, and that was too broad:
+Two that are:
 
-| Direction                                                | Feeling                              |
-| -------------------------------------------------------- | ------------------------------------ |
-| one-way **in** — you drop somewhere and cannot get out   | commitment, and dread. Not this game |
-| one-way **out** — you drop into somewhere already walked | relief. The walk back, deleted       |
+**A rope across a chasm.** The rope hangs on the far side; you grab it, swing over, and it swings back out
+of reach. Flat, drawable top-down as a break in the floor, and the crossing is one-way away from where the
+rope rests.
+
+The placement rule follows from that: **the rope hangs on the deep side.** Arriving from the walked side
+you see a chasm with a rope you cannot reach — which is the window (6), a visible promise you cannot take
+yet. Come round through the gate, reach the far side, and the same rope swings you home. **One asset, a
+promise on the way in and a shortcut on the way out.**
+
+**A current in a flooded corridor.** `condition` already puts standing water through a site; water that
+_moves_ carries you one way and not back. It costs a drawing and an animation rather than a mechanic, and
+it reuses something authored.
+
+**Direction decides how it feels.** An earlier draft declined one-way drops on tone, and that was too
+broad:
+
+| Direction                                                 | Feeling                              |
+| --------------------------------------------------------- | ------------------------------------ |
+| one-way **in** — you cross and cannot get out             | commitment, and dread. Not this game |
+| one-way **out** — you cross into somewhere already walked | relief. The walk back, deleted       |
 
 Only the second is proposed. It strands nobody, because it lands where the player has already been.
 
 **And it costs the solver nothing.** A one-way that only ever leads to already-reachable ground adds no
-reachable content — everything it leads to was reachable before it existed. So reachability does not need
-to become directional: the solver can ignore these edges entirely, as long as placement guarantees they
-point that way.
+reachable content — everything it leads to was reachable before it existed. So reachability does not have
+to become directional: the solver can ignore these edges entirely, as long as placement guarantees the
+direction.
 
-**It reads twice, from one asset.** From below, a rope you cannot reach says _there is something up there_
-— a waypoint made of architecture, self-curating, no UI. From above, it says _you do not have to walk back_.
+What it says: _somebody crossed here once and did not come back this way._
 
-What it says: _somebody came down here in a hurry, and did not plan on returning._
+### The other new ones
 
-### 3. A chamber bigger than one cell — renderer work
+**6 — a window or grille.** You can see into a region you cannot reach. **No connectivity at all**: it is a
+drawn opening showing the room beyond. The review called a locked door the game's best hook and said the
+map only whispers it — this is the version that does not whisper, and it costs no graph change, no solver
+work and no save consequence.
 
-Every room is one cell, so every room is equally important. A 2×2 space would be a **landmark**: somewhere
-to be _from_, and something to navigate relative to.
+It pairs with everything else: a window onto a ward-gated room is a promise, a window onto a room with a
+rope hanging in it is a route you have not found yet.
 
-Cost is in the renderer and the grid, not the fiction. Worth checking against the HTML port rather than
-before it.
+**7 — the informational dead end.** Every branch in the game currently ends in a reward: 843 of them. So a
+branch is never a gamble and taking one is never a judgement. The fix is not empty dead ends — players
+rightly hate those — but dead ends that **pay in information**: a blocked passage, a window, a rope out of
+reach. The player learns something about the floor instead of collecting something from it.
 
-What it says: _the important places look important_ — and it gives the ghosts somewhere to be that is not
-a corridor.
+This is free, and it is what makes 1, 6 and 2b worth placing at all.
 
-### 4. A one-way drop that strands you — declined
+**9 — a second way in.** Arriving on a floor from a different staircase on a later visit. It is a loop at
+floor scale rather than corridor scale, and it is the one entry that directly serves the backwards map: the
+floor you re-enter at wizard tier is not the walk you remember.
 
-A shaft you go down and cannot climb, landing somewhere new. It takes a choice away permanently in a game
-that punishes almost nothing, and being unable to go back is the most frightening thing a map can do to a
-child. **Superseded by 2b**, which is the same mechanic pointed the other way.
+Medium cost, because it touches how a floor is entered rather than how it is carved.
 
-### 5. Vertical layers — expensive, weakest want
+### Where the catalog is thin
 
-Real verticality touches the renderer, pathing, and the section hash. It buys atmosphere that lighting and
-framing are currently buying more cheaply.
+Reading the axes against the entries, two regions are empty:
 
-## What each one says, as a sentence
+- **Nothing REMOVES an edge.** No passage closes behind you, no route is available once and not twice.
+  That is probably correct for this game — it is the same family as the stranding drop, and it punishes.
+  Recorded so it is a decision rather than an oversight.
+- **Nothing is opened by a TOOL** except the hidden corridor, which is opened by a detector only in the
+  sense of being found. A door that needs a thing you carry, rather than a key you were given, is a whole
+  unexplored column — and the perk list already has candidates (`pack-mule`, `armor`, `trap-insight`)
+  that currently only change numbers.
 
-| Mechanic                | What it tells the player without a word  |
-| ----------------------- | ---------------------------------------- |
-| hidden corridor (built) | somebody concealed this                  |
-| blocked passage         | this place was bigger than you can reach |
-| loop                    | people moved through here                |
-| lever / shortcut        | somebody closed this from the other side |
-| big chamber             | this room mattered                       |
-| one-way drop            | you are committed now                    |
+That second one may be the most interesting gap in the table, and it is the only one that would make a
+perk feel like a verb rather than a statistic.
 
-**Half of these are things the story currently plans to say in dialogue.** A floor that says them itself is
-cheaper in every language.
-
-## Recommended order, if it moves
+## Order, once the catalog is full
 
 **2 with 2b, then 1.** Loop density is a dial on machinery that already works and already produces loops — the
 cheapest real change here, and it lands where the walking is worst. The blocked passage is free and makes
