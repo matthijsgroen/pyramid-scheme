@@ -21,6 +21,17 @@ import { imageMap, WALL_SIZE } from "@/ui/atoms/tombImageMap"
 // wall is not a background to read against. 0.55 is enough to keep it legible and light enough that the
 // courses still show — the wall is meant to be recognised, not just present.
 //
+// PINNED TO ITS TOP, for the encounters whose panel is wider than it is tall — a chest, a gate, a
+// short trap. There `cover` scales the wall to the panel's width and crops the surplus height, and
+// centred, a panel that changes height moves that crop at both ends at once, sliding the wall while
+// the player is looking at it. Anchored, the ceiling ledge stays put and the change is taken off the
+// bottom, where the base of the wall is already past the edge.
+//
+// This does nothing for a panel TALLER than it is wide, which is every panel with a board on it: there
+// `cover` scales to the height instead, the wall spans the panel exactly, and there is no vertical crop
+// to anchor. Such a panel changing height rescales the wall rather than repositioning it, and only a
+// size that does not depend on the panel's height would hold it still.
+//
 // The wall keeps that brightness and the BOARD is what pulls away from it: a puzzle and its rules sit on
 // their own translucent black block (`PuzzleFamilyShell`), the way the hieroglyph strip under a tableau
 // does. Darkening the whole wall instead traded the room the player is standing in for concentration; a
@@ -33,7 +44,7 @@ export const EncounterModal: FC<{ children: ReactNode; difficulty?: Difficulty }
         className="relative m-auto flex w-full max-w-md flex-col items-center gap-4 overflow-hidden rounded-lg border border-amber-900 bg-stone-900 p-3"
         style={
           wall
-            ? { backgroundImage: `url(${wall.image})`, backgroundSize: WALL_SIZE, backgroundPosition: "center" }
+            ? { backgroundImage: `url(${wall.image})`, backgroundSize: WALL_SIZE, backgroundPosition: "center top" }
             : undefined
         }
       >
