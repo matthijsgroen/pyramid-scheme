@@ -122,17 +122,46 @@ So this wants a metric pair rather than a target, and both numbers exist now:
 raising the straight share has made the map smaller and more boring, and the numbers say so without anybody
 arguing about it. That is a spec, not a preference — and it is the kind this project already writes.
 
-### The ordinal save system is what makes this affordable
+### Authoring addresses are what make this affordable — and ordinals were not enough
 
-Compaction means re-carving every floor, which under grid coordinates would have been unthinkable: 548 of
-676 cells move when a carve changes, so the whole world would read as unexplored for everyone mid-game.
+An earlier draft of this section said a re-carve would cost about 1% of a floor's cells under
+`<ordinal>@<kind>`. **That was wrong, and measuring it is what caught it** ([#290]).
 
-Under `<ordinal>@<kind>` it is **about 1% of a floor's cells**, degrading honestly to unexplored rather than
-to a lie. So the denser-map project is not blocked — it is **queued behind the ordinal read switch**, and
-gets cheap the moment that lands.
+An ordinal is the step along the **carved** walk, and the carve decides how long that walk is. It survives
+a re-_shuffle_ — which is what the 1% was measured against — and not a re-_length_. **Compaction is a
+re-length.** Re-carving `expert_1` L3 F0 at a neighbouring seed took it from 685 cells to 668 and moved
+the main chain's forks from steps 26/49/58 to 5/6/13/22/29/50.
 
-That is also why it belongs with the rest of Pile B. One re-carve, one migration, and the catalogue's
-structural entries plus the density work all arrive together instead of paying that cost five times.
+`sectionHash` is no better: it covers the floor's own `packing` and `corridorStraightness` — precisely the
+knobs compaction turns — so it moves for every section in the world at once.
+
+What works is keying to the **authoring**, which a re-carve cannot move:
+
+```
+${sectionAddress}#${floor}/${slot}
+```
+
+Corridors and forks have no authored identity — how many there are _is_ the carve — so they are
+`~${ordinal}`, resolving inside one carve and deliberately to nothing after. Their fog comes back by a
+**high-water mark**: the furthest room of each section the save names. A room is only ever restored by its
+own entry, never by the mark, so a chest cannot come back opened because something past it was reached.
+
+**This makes compaction cheaper than the 1% claim, not dearer.** Retuning the carve knobs costs
+**nothing** — the addresses do not mention the carve. The cost table is per authoring change instead:
+
+| Change                     | Cost                                                                    |
+| -------------------------- | ----------------------------------------------------------------------- |
+| carve knobs retuned        | **nothing**                                                             |
+| `pathPuzzles` 4 → 6        | the two new rooms only                                                  |
+| `pathPuzzles` 6 → 4        | nothing                                                                 |
+| ward gate added            | the gate room only                                                      |
+| section appended / removed | that section only / nothing                                             |
+| sidepath inserted ahead    | the newcomer inherits its neighbour's progress — unless given a `label` |
+
+So the density work is queued behind [#290] and the reshape release that follows it, and when it arrives
+the carve is free to move.
+
+[#290]: https://github.com/matthijsgroen/pyramid-scheme/pull/290
 
 ### Two complaints, two very different prices
 

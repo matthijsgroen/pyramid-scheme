@@ -44,9 +44,10 @@ inventory is not. It wants a migration and not a re-carve — which is a differe
 
 ### Pile B — the floor is re-carved
 
-Connectivity or room count changes, so saved exploration degrades. Under ordinals that is roughly **1% of a
-floor's cells**, reading as unexplored rather than as a lie — but it is still a migration, and these want
-to land together rather than one at a time.
+Connectivity or room count changes. **Once saves are keyed to the authoring rather than the carve**
+([#290](https://github.com/matthijsgroen/pyramid-scheme/pull/290)), retuning the carve costs nothing and
+an authoring change costs only the rooms it actually adds — so these want to land together, but the
+reason is a single world regeneration rather than a shared migration.
 
 | Work                                              | Why it re-carves                                  |
 | ------------------------------------------------- | ------------------------------------------------- |
