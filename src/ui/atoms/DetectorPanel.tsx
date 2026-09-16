@@ -93,7 +93,7 @@ const consumableKey = (r: ConsumableResult, level: number): string =>
     ? r.journeyId
     : level === 2
       ? `${r.journeyId}:${r.floorIdx}`
-      : `${r.journeyId}:${r.floorIdx}:${r.cell.row},${r.cell.col}`
+      : `${r.journeyId}:${r.floorIdx}:${r.cell ? `${r.cell.row},${r.cell.col}` : "?"}`
 
 // The supplies readout gets the same name treatment. Its L1 stays journey-wide, unlike the compass:
 // ConsumableResult carries no levelIdx (it's rebuilt from an edgeId), so pyramid precision here
@@ -102,7 +102,7 @@ const consumableLabel = (r: ConsumableResult, level: number, journeyName: (id: s
   const journey = journeyName(r.journeyId)
   if (level <= 1) return journey
   const floor = `${journey} F${r.floorIdx + 1}`
-  return level >= 3 ? `${floor} · (${r.cell.row},${r.cell.col})` : floor
+  return level >= 3 && r.cell ? `${floor} · (${r.cell.row},${r.cell.col})` : floor
 }
 
 export const DetectorPanel: FC<Props> = ({

@@ -6,6 +6,13 @@ import { persistentInteriorSeed } from "@/game/siteSeed"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { hashString } from "@/support/hashString"
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
+import { keyOfAddress, sectionOfAddress, type CarveIndependentState } from "@/app/SiteMap/cellIdentity"
+
+/** Bumped whenever a stored cell key changes shape. 2 named cells by their authored slot and floor
+ * rather than by their step along the carved walk. 3 named their SECTION by its authoring address
+ * (`main`, `s0`, `s0.1`) rather than by a structural hash, which moved whenever the floor's own carve
+ * knobs were retuned. See migrateJourneyToCarveIndependent. */
+export const CELL_KEY_VERSION = 3
 
 export type StoredJourneyStateV3 = {
   journeyId: string
@@ -17,17 +24,23 @@ export type StoredJourneyStateV3 = {
   // keyed by sectionHash; cells explored in the site interior — persists across revisits
   // stale entries (section hash no longer in world) are silently ignored on apply
   exploredSections: Record<string, string[]>
-  /** The same exploration, remembered by each cell's place in its section rather than by its grid
-   *  coordinate (src/app/SiteMap/exploredOrdinals.ts). Written alongside `exploredSections` and
-   *  backfilled from it, so the reader can switch over once every live save carries it — a coordinate
-   *  only means something against the floor it was written against, and floors move. */
-  exploredOrdinals?: Record<string, string[]>
-  position: string | null // current node ID "floor:row,col" or null (entrance)
+  /** The same exploration, keyed `${floor}/${slot}` inside each section — what a cell IS, not where the
+   *  carve put it (src/app/SiteMap/cellIdentity.ts). This is what the map restores from; the coordinates
+   *  above are kept only as the archive the re-keying reads, and go with the re-carve. */
+  exploredCells?: Record<string, string[]>
+  /** Which translation of this save's per-cell collections is stored, so a change to the key format
+   *  re-derives them from `exploredSections` instead of throwing a run away. Absent = coordinates only. */
+  cellKeyVersion?: number
+  position: string | null // "floor:row,col" or null (entrance) — the archive; positionKey is what is read
+  /** Where the player stands, as a cell address (src/app/SiteMap/cellIdentity.ts). Null = entrance. */
+  positionKey?: string | null
   interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
-  disabledTraps?: string[] // edgeIds where trapTool was spent to disarm the corridor
-  skippedConsumables?: string[] // edgeIds where inventory was full at collect time
-  purchasedStock?: string[] // `${edgeId}#${stockIndex}` of shop slots already bought
-  // Corridor detector (§7.2, found = noticed via proximity): both keyed `${levelNr}:${sectionHash}`.
+  // All three name cells by address — `${levelNr}:${sectionHash}#${floor}/${slot}` — so a
+  // re-carve moves the cell and takes the entry with it. See migrateJourneyToCarveIndependent.
+  disabledTraps?: string[] // cells where trapTool was spent to disarm the corridor
+  skippedConsumables?: string[] // cells where inventory was full at collect time
+  purchasedStock?: string[] // `${address}!${stockIndex}` of shop slots already bought
+  // Corridor detector (§7.2, found = noticed via proximity): both keyed `${levelNr}:${sectionAddress}`.
   // `known` = hidden corridors on floors the player has viewed; `found` = ones the detector stopped
   // them at. Outstanding (known \ found) drives the L3 pyramid + L4 travel "unexplored corridor" markers.
   knownHiddenCorridors?: string[]
@@ -63,21 +76,26 @@ export type JourneyAPI = {
   completeJourney: () => void
   cancelJourney: () => void
   completeLevel: () => void
-  markCellExplored: (sectionHash: string, cellId: string, ordinalKey?: string | null) => void
-  /** Saves still carrying only coordinate-keyed exploration — see useExploredOrdinalBackfill. */
-  journeysNeedingOrdinalBackfill: () => { journeyId: string; exploredSections: Record<string, string[]> }[]
-  setExploredOrdinals: (journeyId: string, exploredOrdinals: Record<string, string[]>) => void
-  getExploredSections: (journeyId: string) => Record<string, string[]>
-  updatePosition: (journeyId: string, nodeId: string) => void
+  /** `address` is the cell read off the grid with `cellAddress` — it carries the authoring section the
+   * entry is filed under. `sectionHash` and `cellId` only key the coordinate archive beside it. */
+  markCellExplored: (sectionHash: string, cellId: string, address?: string | null) => void
+  /** Saves whose per-cell collections predate the current key format — see useCarveIndependentBackfill. */
+  journeysNeedingReKey: () => StoredJourneyStateV3[]
+  setCarveIndependentState: (journeyId: string, state: CarveIndependentState) => void
+  /** This level's exploration, by section: the cell keys the map restores from. */
+  getExploredCells: (journeyId: string) => Record<string, string[]>
+  updatePosition: (journeyId: string, address: string, nodeId: string) => void
   setInteriorLevel: (journeyId: string, levelNr: number | null) => void
-  markTrapDisabled: (sectionHash: string, edgeId: string) => void
-  markConsumableSkipped: (edgeId: string) => void
-  clearConsumableSkipped: (edgeId: string) => void
+  // Every one of these names a cell by its `${sectionHash}#${floor}/${slot}` address, which
+  // the caller reads off the cell with `cellAddress`. The level is added here, as for exploration.
+  markTrapDisabled: (address: string) => void
+  markConsumableSkipped: (address: string) => void
+  clearConsumableSkipped: (address: string) => void
   getSkippedConsumables: (journeyId: string) => ReadonlySet<string>
-  markShopSlotPurchased: (edgeId: string, stockIndex: number) => void
+  markShopSlotPurchased: (address: string, stockIndex: number) => void
   getPurchasedShopSlots: (journeyId: string) => ReadonlySet<string>
-  registerHiddenCorridors: (sectionHashes: string[]) => void
-  markCorridorFound: (sectionHash: string) => void
+  registerHiddenCorridors: (sectionAddresses: string[]) => void
+  markCorridorFound: (sectionAddress: string) => void
   getFoundHiddenCorridors: (journeyId: string) => ReadonlySet<string>
   getOutstandingHiddenCorridorCount: (journeyId: string) => number
   registerFloorExploration: (
@@ -190,7 +208,7 @@ export const createJourneysV3Api = ({
           prev.map(j =>
             j.journeyId === journey.id
               ? alreadyCompletedRun
-                ? { ...j, active: true, levelNr: 1, position: null, interiorLevelNr: null }
+                ? { ...j, active: true, levelNr: 1, position: null, positionKey: null, interiorLevelNr: null }
                 : { ...j, active: true }
               : j
           )
@@ -223,6 +241,7 @@ export const createJourneysV3Api = ({
               active: false,
               completionCount: capCompletionCount ? Math.max(j.completionCount, 1) : j.completionCount + 1,
               position: null,
+              positionKey: null,
               interiorLevelNr: null,
             }
           : j
@@ -235,7 +254,7 @@ export const createJourneysV3Api = ({
       setJourneys(prev =>
         prev.map(j =>
           j.journeyId === journeyId
-            ? { ...j, active: true, levelNr: targetLevelNr, position: null, interiorLevelNr: null }
+            ? { ...j, active: true, levelNr: targetLevelNr, position: null, positionKey: null, interiorLevelNr: null }
             : j
         )
       )
@@ -252,60 +271,76 @@ export const createJourneysV3Api = ({
     if (!activeJourneyId) return
     setJourneys(prev =>
       prev.map(j =>
-        j.journeyId === activeJourneyId ? { ...j, levelNr: j.levelNr + 1, position: null, interiorLevelNr: null } : j
+        j.journeyId === activeJourneyId
+          ? { ...j, levelNr: j.levelNr + 1, position: null, positionKey: null, interiorLevelNr: null }
+          : j
       )
     )
   }
 
-  const markCellExplored = (sectionHash: string, cellId: string, ordinalKey?: string | null) => {
+  const markCellExplored = (sectionHash: string, cellId: string, address?: string | null) => {
     if (!activeJourneyId) return
-    const key = `${levelOf(activeJourneyId)}:${sectionHash}`
+    const levelNr = levelOf(activeJourneyId)
+    // Two keys, on purpose: exploration is filed by the section's AUTHORING address, the coordinate
+    // archive beside it stays filed by the structural hash it was always written under, so a later
+    // re-keying can still match it. Both go when the reshape drops the archive.
+    const key = `${levelNr}:${sectionHash}`
+    const cellKey = address ? keyOfAddress(address) : undefined
+    const sectionKey = address ? `${levelNr}:${sectionOfAddress(address)}` : key
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
-        const current = j.exploredSections[key] ?? []
-        const ordinals = j.exploredOrdinals?.[key] ?? []
-        const haveCell = current.includes(cellId)
-        const haveOrdinal = !ordinalKey || ordinals.includes(ordinalKey)
-        if (haveCell && haveOrdinal) return j
+        const coordinates = j.exploredSections[key] ?? []
+        const keys = j.exploredCells?.[sectionKey] ?? []
+        const haveCoordinate = coordinates.includes(cellId)
+        const haveKey = !cellKey || keys.includes(cellKey)
+        if (haveCoordinate && haveKey) return j
         return {
           ...j,
-          exploredSections: haveCell ? j.exploredSections : { ...j.exploredSections, [key]: [...current, cellId] },
-          // BOTH ARE WRITTEN while the two formats overlap. The coordinate is what today's reader uses;
-          // the ordinal is what the reader uses once no live save predates it.
-          ...(ordinalKey && !haveOrdinal
-            ? { exploredOrdinals: { ...(j.exploredOrdinals ?? {}), [key]: [...ordinals, ordinalKey] } }
+          // The cell key is what the map restores from. The coordinate is written alongside it purely
+          // as the archive a re-keying reads (see `cellKeyVersion`), and goes when the floors move.
+          exploredSections: haveCoordinate
+            ? j.exploredSections
+            : { ...j.exploredSections, [key]: [...coordinates, cellId] },
+          ...(cellKey && !haveKey
+            ? { exploredCells: { ...(j.exploredCells ?? {}), [sectionKey]: [...keys, cellKey] } }
             : {}),
         }
       })
     )
   }
 
-  // A save written before exploration was keyed by ordinal has sections but no ordinals. An EMPTY
-  // ordinal map still counts as migrated — a journey whose every stored coordinate turned out to be
-  // stale translates to nothing, and must not be re-translated on every launch.
-  const journeysNeedingOrdinalBackfill = () =>
-    journeys
-      .filter(j => Object.keys(j.exploredSections).length > 0 && j.exploredOrdinals === undefined)
-      .map(j => ({ journeyId: j.journeyId, exploredSections: j.exploredSections }))
+  // A save is behind whenever its per-cell collections were written under an older key format —
+  // coordinates only (no `cellKeyVersion` at all), or keys written under an earlier shape of the key.
+  // Every one of them is re-derived from `exploredSections`, which is why the coordinates are kept
+  // until the re-carve: they are the archive this reads. A journey with nothing explored has nothing
+  // to translate and is simply stamped.
+  const journeysNeedingReKey = () =>
+    journeys.filter(j => Object.keys(j.exploredSections).length > 0 && j.cellKeyVersion !== CELL_KEY_VERSION)
 
-  const setExploredOrdinals = (journeyId: string, exploredOrdinals: Record<string, string[]>) => {
-    setJourneys(prev => prev.map(j => (j.journeyId === journeyId ? { ...j, exploredOrdinals } : j)))
+  const setCarveIndependentState = (journeyId: string, state: CarveIndependentState) => {
+    setJourneys(prev =>
+      prev.map(j => (j.journeyId === journeyId ? { ...j, ...state, cellKeyVersion: CELL_KEY_VERSION } : j))
+    )
   }
 
-  const getExploredSections = (journeyId: string): Record<string, string[]> => {
+  const getExploredCells = (journeyId: string): Record<string, string[]> => {
     const j = journeys.find(j => j.journeyId === journeyId)
     if (!j) return {}
     const prefix = `${j.levelNr}:`
     const result: Record<string, string[]> = {}
-    for (const [key, cells] of Object.entries(j.exploredSections)) {
+    for (const [key, cells] of Object.entries(j.exploredCells ?? {})) {
       if (key.startsWith(prefix)) result[key.slice(prefix.length)] = cells
     }
     return result
   }
 
-  const updatePosition = (journeyId: string, nodeId: string) => {
-    setJourneys(prev => prev.map(j => (j.journeyId === journeyId ? { ...j, position: nodeId } : j)))
+  // Both are written: the address is what the map reads, the coordinate is the archive the backfill
+  // re-reads (see `exploredSections`), and both go stale together when the level changes.
+  const updatePosition = (journeyId: string, address: string, nodeId: string) => {
+    setJourneys(prev =>
+      prev.map(j => (j.journeyId === journeyId ? { ...j, position: nodeId, positionKey: address } : j))
+    )
   }
 
   const setInteriorLevel = (journeyId: string, levelNr: number | null) => {
@@ -318,57 +353,62 @@ export const createJourneysV3Api = ({
     return difficulty
   }, "starter")
 
-  const markTrapDisabled = (sectionHash: string, edgeId: string) => {
+  // The three cell collections below are stored level-first, the way exploration is, so a multi-level
+  // pyramid keeps its levels apart. Callers pass a bare address and never see the prefix: these add it
+  // on write, and the readers strip it back off for the level the journey is currently in.
+  const atLevel = (address: string) => `${levelOf(activeJourneyId)}:${address}`
+
+  const forThisLevel = (journeyId: string, entries: string[] | undefined): ReadonlySet<string> => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    if (!j) return new Set()
+    const prefix = `${j.levelNr}:`
+    return new Set((entries ?? []).filter(e => e.startsWith(prefix)).map(e => e.slice(prefix.length)))
+  }
+
+  const markTrapDisabled = (address: string) => {
     if (!activeJourneyId) return
-    const key = `${levelOf(activeJourneyId)}:${sectionHash}`
+    const key = atLevel(address)
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
         const traps = j.disabledTraps ?? []
-        if (traps.includes(edgeId)) return j
-        const current = j.exploredSections[key] ?? []
-        return {
-          ...j,
-          disabledTraps: [...traps, edgeId],
-          exploredSections: current.includes(edgeId)
-            ? j.exploredSections
-            : { ...j.exploredSections, [key]: [...current, edgeId] },
-        }
+        return traps.includes(key) ? j : { ...j, disabledTraps: [...traps, key] }
       })
     )
   }
 
-  const markConsumableSkipped = (edgeId: string) => {
+  const markConsumableSkipped = (address: string) => {
     if (!activeJourneyId) return
+    const key = atLevel(address)
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
         const skipped = j.skippedConsumables ?? []
-        if (skipped.includes(edgeId)) return j
-        return { ...j, skippedConsumables: [...skipped, edgeId] }
+        if (skipped.includes(key)) return j
+        return { ...j, skippedConsumables: [...skipped, key] }
       })
     )
   }
 
-  const clearConsumableSkipped = (edgeId: string) => {
+  const clearConsumableSkipped = (address: string) => {
     if (!activeJourneyId) return
+    const key = atLevel(address)
     setJourneys(prev =>
       prev.map(j =>
         j.journeyId === activeJourneyId
-          ? { ...j, skippedConsumables: (j.skippedConsumables ?? []).filter(id => id !== edgeId) }
+          ? { ...j, skippedConsumables: (j.skippedConsumables ?? []).filter(id => id !== key) }
           : j
       )
     )
   }
 
-  const getSkippedConsumables = (journeyId: string): ReadonlySet<string> => {
-    const j = journeys.find(j => j.journeyId === journeyId)
-    return new Set(j?.skippedConsumables ?? [])
-  }
+  const getSkippedConsumables = (journeyId: string): ReadonlySet<string> =>
+    forThisLevel(journeyId, journeys.find(j => j.journeyId === journeyId)?.skippedConsumables)
 
-  const markShopSlotPurchased = (edgeId: string, stockIndex: number) => {
+  const markShopSlotPurchased = (address: string, stockIndex: number) => {
     if (!activeJourneyId) return
-    const key = `${edgeId}#${stockIndex}`
+    // `!` and not `#`: the address already spends its `#` on the section it belongs to.
+    const key = `${atLevel(address)}!${stockIndex}`
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
@@ -379,30 +419,28 @@ export const createJourneysV3Api = ({
     )
   }
 
-  const getPurchasedShopSlots = (journeyId: string): ReadonlySet<string> => {
-    const j = journeys.find(j => j.journeyId === journeyId)
-    return new Set(j?.purchasedStock ?? [])
-  }
+  const getPurchasedShopSlots = (journeyId: string): ReadonlySet<string> =>
+    forThisLevel(journeyId, journeys.find(j => j.journeyId === journeyId)?.purchasedStock)
 
   // Corridor detector: hidden sections become "known" the moment the player views the floor
-  // holding them; keyed by levelNr like exploredSections so a multi-level pyramid keeps them apart.
-  const registerHiddenCorridors = (sectionHashes: string[]) => {
-    if (!activeJourneyId || sectionHashes.length === 0) return
+  // holding them; keyed by levelNr like exploration so a multi-level pyramid keeps them apart.
+  const registerHiddenCorridors = (sectionAddresses: string[]) => {
+    if (!activeJourneyId || sectionAddresses.length === 0) return
     const levelNr = levelOf(activeJourneyId)
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
         const known = j.knownHiddenCorridors ?? []
-        const additions = sectionHashes.map(h => `${levelNr}:${h}`).filter(key => !known.includes(key))
+        const additions = sectionAddresses.map(a => `${levelNr}:${a}`).filter(key => !known.includes(key))
         if (additions.length === 0) return j // no churn: unchanged reference lets React bail
         return { ...j, knownHiddenCorridors: [...known, ...additions] }
       })
     )
   }
 
-  const markCorridorFound = (sectionHash: string) => {
+  const markCorridorFound = (sectionAddress: string) => {
     if (!activeJourneyId) return
-    const key = `${levelOf(activeJourneyId)}:${sectionHash}`
+    const key = `${levelOf(activeJourneyId)}:${sectionAddress}`
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
@@ -486,9 +524,9 @@ export const createJourneysV3Api = ({
     cancelJourney,
     completeLevel,
     markCellExplored,
-    journeysNeedingOrdinalBackfill,
-    setExploredOrdinals,
-    getExploredSections,
+    journeysNeedingReKey,
+    setCarveIndependentState,
+    getExploredCells,
     updatePosition,
     setInteriorLevel,
     markTrapDisabled,

@@ -24,32 +24,43 @@ What is not mechanical is the cost: **every floor is carved somewhere else after
 
 ## What must be in the release, and why together
 
-| Change | Why it cannot be split off |
-| --- | --- |
-| The `siteAssembler` shuffles | The reshape itself |
-| Exploration read switched to ordinals | Reading coordinates against moved floors is the bug this whole migration exists to avoid |
+| Change                                                         | Why it cannot be split off                                                                                    |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| The `siteAssembler` shuffles                                   | The reshape itself                                                                                            |
+| Exploration read switched to slots, keyed by authoring address | **Already shipped.** Reading coordinates against moved floors is the bug this whole migration exists to avoid |
 
-The constraint is **asymmetric**. Shipping the read switch without the reshape is harmless — ordinals
-describe the current carve perfectly well. Shipping the reshape without the read switch restores saved
-coordinates onto floors that have moved, which marks rooms explored that were never opened, including
-ones holding keys. So if these are ever split, the read switch goes first. Never the reverse.
+The constraint is **asymmetric**. Shipping the read switch without the reshape is harmless — slots
+describe the current carve perfectly well, which is why it went first. Shipping the reshape without the
+read switch restores saved coordinates onto floors that have moved, which marks rooms explored that were
+never opened, including ones holding keys.
 
-**The read must not fall back to coordinates.** A save carrying no ordinals gets no exploration. The
+**The read does not fall back to coordinates, or to the hash.** A save carrying no slots gets no exploration. The
 fallback would fire precisely for the players the migration missed — the ones who skipped the capture
 release — and give them the mis-restore instead of a clean slate.
 
 ---
 
-## Why the ordinals still fit after the reshape
+## Why the slots still fit after the reshape
 
-A section hash is computed from the authored spec, not from where the section was carved. That is what
-made coordinates unsafe: a section keeps its hash while landing somewhere else entirely. It is also
-what makes this migration work — the hash does not move when the carve does, so the ordinals captured
-before the reshape are still valid keys after it.
+Nothing in a save's identity is read off the carve any more. A section is named by its **authoring
+address** (`main`, `s0`, `s0.1`) and a room by its **slot** (`p2`, `xtreasure-chest`, `stair:s1`) — both
+of which come from the authored spec, so they are still valid keys after every floor has moved.
 
-A section whose internal shape genuinely changes is caught by the kind in the key
-(`<ordinal>@<kind>`): the kinds disagree, the entry is skipped, and that cell reads as unexplored
-rather than as a lie. See `docs/game-design/world-stability.md`.
+**The structural hash is deliberately NOT the identity, and this release is why.** It covers the floor's
+own `packing` and `corridorStraightness`. If the compaction pass turns either — and turning them is the
+obvious way to compact — every hash in the world moves at once and every run resets. Keying by address
+is what makes the reshape survivable; if you find yourself reaching for `sectionHash` to decide whether
+something is the same place, that is the bug.
+
+**Do not reach for the ordinal here.** `cell.ordinal` is the step along the CARVED walk, and the carve
+decides how many steps that is: re-carving one expert floor at a neighbouring seed took it from 685
+cells to 668 and renumbered everything past the first divergence. An ordinal survives a re-shuffle, not
+a re-length, and a compaction is a re-length. `cellIdentity.ts` carries the measurements.
+
+Corridors and forks have no authored identity at all, so their keys DO go stale — by design. Their fog
+is rebuilt from the high-water mark of the rooms instead, which is the one thing about a corridor that
+outlives the carve. A section whose rooms genuinely change is caught by its hash moving: the entries are
+skipped and it reads as unexplored rather than as a lie. See `docs/game-design/world-stability.md`.
 
 ---
 
@@ -79,4 +90,8 @@ fragments already are, before the reshape ships.
 
 The capture release has to have been live long enough for players to have launched it once — a launch
 is all the backfill needs. There is no signal for this in the game today; if one is wanted, report how
-many saves still lack ordinals.
+many saves are still behind `CELL_KEY_VERSION`.
+
+Once the reshape ships, `exploredSections` and `position` have done their job as the archive the
+re-keying reads, and both can go. Until then they are what makes a change to the key format cost one
+launch instead of a player's run.

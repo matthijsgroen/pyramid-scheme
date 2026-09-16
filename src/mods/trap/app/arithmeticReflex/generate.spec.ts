@@ -9,6 +9,7 @@ const generate = (seed: number, difficulty: Difficulty) =>
   getFamilyPlugin("arithmetic-reflex")!.generate(seed, {
     journeyId: "test",
     edgeId: "test",
+    address: "s#0/0@rencounter",
     sectionHash: "test",
     freshArrival: true,
     difficulty,

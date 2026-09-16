@@ -28,15 +28,26 @@ export type CorridorCell = {
    * the floor's tier: a ward pocket gated behind a junior key is junior stone inside a starter
    * pyramid. Mirrors RoomCell.difficulty, which has always carried this for rooms. */
   difficulty?: Difficulty
+  /** WHICH SECTION OF THE AUTHORING this cell belongs to — `main`, `s0` for the first sidepath off it,
+   *  `s0.1` for that sidepath's second sub-path. This is what a save files the cell under, because it
+   *  is what the author steers: the first sidepath of the main path stays the first sidepath whether
+   *  the builder hangs it after the first encounter or the third, and whether it holds four puzzles or
+   *  six. Same addresses `boardIndex.ts` deals boards by. See docs/game-design/world-stability.md. */
+  sectionAddress?: string
+  /** Structural fingerprint of the section — how many rooms, how long the walk, what gates it. NOT the
+   *  save's identity any more (`sectionAddress` is): it moves when the floor's own carve knobs are
+   *  retuned, which is exactly what compacting the corridors does, and that would reset every run in
+   *  the world. Kept so the coordinate archive can still be matched while re-keying, and goes with it. */
   sectionHash?: string
   /** The hash this cell had before the section hash stopped covering the encounter, so a save
    *  written under the old scheme still recognises its own cells. Read-only compatibility — nothing
    *  writes it back, and it can go once no live save predates that change. */
   legacySectionHash?: string
-  /** Where this cell sits along its own section's walk — its index in path order, or for the
-   *  connector between two cells the pair of their indices. Stable when a section is carved in a
-   *  different place, which grid coordinates are not, so a save remembers a cell by this rather than
-   *  by where it landed. See docs/game-design/world-stability.md. */
+  /** How far along its own section's walk this cell sits — its index in path order, or for the
+   *  connector between two cells the pair of their indices. A property of the CARVE, not of the
+   *  authoring: the walk's length is the carve's choice, so re-carving renumbers it. Not an identity —
+   *  what a save names a cell by is its slot (cellIdentity.ts) — but the ORDER survives, which is what
+   *  restores the fog as far as the furthest room reached. See docs/game-design/world-stability.md. */
   ordinal?: string
   hidden?: boolean
 }
@@ -124,13 +135,21 @@ export type RoomCell = {
   roomType: RoomType
   dirs: ReadonlySet<Direction>
   state: CellState
+  /** WHICH SECTION OF THE AUTHORING this cell belongs to — `main`, `s0` for the first sidepath off it,
+   *  `s0.1` for that sidepath's second sub-path. This is what a save files the cell under, because it
+   *  is what the author steers: the first sidepath of the main path stays the first sidepath whether
+   *  the builder hangs it after the first encounter or the third, and whether it holds four puzzles or
+   *  six. Same addresses `boardIndex.ts` deals boards by. See docs/game-design/world-stability.md. */
+  sectionAddress?: string
+  /** See CorridorCell.sectionHash — structural, and no longer the save's identity. */
   sectionHash?: string
   /** See CorridorCell.legacySectionHash. */
   legacySectionHash?: string
-  /** Where this cell sits along its own section's walk — its index in path order, or for the
-   *  connector between two cells the pair of their indices. Stable when a section is carved in a
-   *  different place, which grid coordinates are not, so a save remembers a cell by this rather than
-   *  by where it landed. See docs/game-design/world-stability.md. */
+  /** How far along its own section's walk this cell sits — its index in path order, or for the
+   *  connector between two cells the pair of their indices. A property of the CARVE, not of the
+   *  authoring: the walk's length is the carve's choice, so re-carving renumbers it. Not an identity —
+   *  what a save names a cell by is its slot (cellIdentity.ts) — but the ORDER survives, which is what
+   *  restores the fog as far as the furthest room reached. See docs/game-design/world-stability.md. */
   ordinal?: string
   hidden?: boolean
   reward?: TreasureReward
@@ -362,11 +381,12 @@ export type CompassAccess = "open" | "locked" | "hidden" | "unknown"
 // A compass hit with its access verdict resolved against what the player currently holds.
 export type CompassHit = CompassResult & { access: CompassAccess; missingKeys?: readonly string[] }
 
-// floorIdx + cell decoded from edgeId ("floor:row,col") so the supplies detector can narrow its
-// readout by level (§7.2): L1 pyramid, L2 +floor, L3 +cell.
+// A chest whose consumable was left behind, so the supplies detector can narrow its readout by level
+// (§7.2): L1 pyramid, L2 +floor, L3 +cell. `floorIdx` reads straight off the address; `cell` needs an
+// assembled floor to say where that address landed, so it is only there for the floor on screen.
 export type ConsumableResult = {
   journeyId: string
-  edgeId: string
+  address: string
   floorIdx: number
-  cell: { row: number; col: number }
+  cell?: { row: number; col: number }
 }

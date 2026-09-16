@@ -88,13 +88,13 @@ describe("markCellExplored", () => {
     expect(state[0].exploredSections["1:abc123"]).toHaveLength(1)
   })
 
-  it("getExploredSections returns sections for the current level, with prefix stripped", () => {
+  it("getExploredCells returns sections for the current level, with prefix stripped", () => {
     const stored = makeStoredJourney({
       levelNr: 1,
-      exploredSections: { "1:sec1": ["0:0,0"], "1:sec2": ["0:1,1"], "2:sec1": ["0:2,2"] },
+      exploredCells: { "1:sec1": ["0/~0"], "1:sec2": ["0/p1"], "2:sec1": ["0/~2"] },
     })
     const api = makeApi([stored])
-    expect(api.getExploredSections(REAL_ID)).toEqual({ sec1: ["0:0,0"], sec2: ["0:1,1"] })
+    expect(api.getExploredCells(REAL_ID)).toEqual({ sec1: ["0/~0"], sec2: ["0/p1"] })
   })
 })
 
@@ -229,7 +229,7 @@ describe("getJourney randomSeed", () => {
 describe("markShopSlotPurchased / getPurchasedShopSlots", () => {
   it("is not purchased until marked", () => {
     const api = makeApi([makeStoredJourney()])
-    expect(api.getPurchasedShopSlots(REAL_ID).has("0:3,4#0")).toBe(false)
+    expect(api.getPurchasedShopSlots(REAL_ID).has("sec#0/p3!0")).toBe(false)
   })
 
   it("persists a per-slot purchase and reports it back", () => {
@@ -242,8 +242,8 @@ describe("markShopSlotPurchased / getPurchasedShopSlots", () => {
       },
       journeyData: [makeJourneyData(REAL_ID)],
     })
-    api.markShopSlotPurchased("0:3,4", 1)
-    expect(state[0].purchasedStock).toEqual(["0:3,4#1"])
+    api.markShopSlotPurchased("sec#0/p3", 1)
+    expect(state[0].purchasedStock).toEqual(["1:sec#0/p3!1"])
     expect(
       createJourneysV3Api({
         journeys: state,
@@ -251,7 +251,7 @@ describe("markShopSlotPurchased / getPurchasedShopSlots", () => {
         journeyData: [makeJourneyData(REAL_ID)],
       })
         .getPurchasedShopSlots(REAL_ID)
-        .has("0:3,4#1")
+        .has("sec#0/p3!1")
     ).toBe(true)
   })
 
@@ -265,10 +265,10 @@ describe("markShopSlotPurchased / getPurchasedShopSlots", () => {
       },
       journeyData: [makeJourneyData(REAL_ID)],
     })
-    api.markShopSlotPurchased("0:3,4", 0)
-    api.markShopSlotPurchased("0:3,4", 0) // dedup
-    api.markShopSlotPurchased("0:3,4", 2)
-    expect(state[0].purchasedStock).toEqual(["0:3,4#0", "0:3,4#2"])
+    api.markShopSlotPurchased("sec#0/p3", 0)
+    api.markShopSlotPurchased("sec#0/p3", 0) // dedup
+    api.markShopSlotPurchased("sec#0/p3", 2)
+    expect(state[0].purchasedStock).toEqual(["1:sec#0/p3!0", "1:sec#0/p3!2"])
   })
 })
 
@@ -471,28 +471,42 @@ describe("navigation mutators are awaitable", () => {
 
 // ── the ordinal backfill (docs/game-design/world-stability.md) ─────────────────
 
-describe("ordinal backfill bookkeeping", () => {
+describe("re-keying bookkeeping", () => {
   it("offers a save that has coordinates but no ordinals", () => {
     const api = makeApi([makeStoredJourney({ exploredSections: { "1:abc": ["0:3,4"] } })])
 
-    expect(api.journeysNeedingOrdinalBackfill()).toEqual([
-      { journeyId: REAL_ID, exploredSections: { "1:abc": ["0:3,4"] } },
+    expect(api.journeysNeedingReKey().map(j => j.journeyId)).toEqual([REAL_ID])
+  })
+
+  // The key format has changed once already (the floor joined it). A save re-keyed under the old one
+  // is as wrong as an untranslated save, and the archive it was translated from is still there.
+  it("offers a save translated under an older key format", () => {
+    const api = makeApi([
+      makeStoredJourney({
+        exploredSections: { "1:abc": ["0:3,4"] },
+        exploredCells: { "1:abc": ["7@rfork"] },
+        cellKeyVersion: 2,
+      }),
     ])
+
+    expect(api.journeysNeedingReKey().map(j => j.journeyId)).toEqual([REAL_ID])
   })
 
   it("leaves a fresh save alone — there is nothing to translate", () => {
-    expect(makeApi([makeStoredJourney()]).journeysNeedingOrdinalBackfill()).toEqual([])
+    expect(makeApi([makeStoredJourney()]).journeysNeedingReKey()).toEqual([])
   })
 
   it("counts an EMPTY result as migrated, so it is not retried on every launch", () => {
     // A save whose every stored coordinate turned out to be stale translates to nothing. That is a
-    // finished migration, not an unstarted one.
-    const api = makeApi([makeStoredJourney({ exploredSections: { "1:abc": ["0:3,4"] }, exploredOrdinals: {} })])
+    // finished migration, not an unstarted one — the stamp says so, not the contents.
+    const api = makeApi([
+      makeStoredJourney({ exploredSections: { "1:abc": ["0:3,4"] }, exploredCells: {}, cellKeyVersion: 3 }),
+    ])
 
-    expect(api.journeysNeedingOrdinalBackfill()).toEqual([])
+    expect(api.journeysNeedingReKey()).toEqual([])
   })
 
-  it("writes the translated ordinals against the journey they came from", () => {
+  it("writes the re-keyed state against the journey it came from", () => {
     let state = [makeStoredJourney({ exploredSections: { "1:abc": ["0:3,4"] } })]
     const api = createJourneysV3Api({
       journeys: state,
@@ -502,9 +516,21 @@ describe("ordinal backfill bookkeeping", () => {
       journeyData: [makeJourneyData(REAL_ID)],
     })
 
-    api.setExploredOrdinals(REAL_ID, { "1:abc": ["7@rfork"] })
+    api.setCarveIndependentState(REAL_ID, {
+      exploredCells: { "1:abc": ["0/p7"] },
+      positionKey: "abc#0/p7",
+      disabledTraps: ["1:abc#0/p2"],
+      skippedConsumables: [],
+      purchasedStock: [],
+      knownHiddenCorridors: [],
+      foundHiddenCorridors: [],
+    })
 
-    expect(state[0].exploredOrdinals).toEqual({ "1:abc": ["7@rfork"] })
+    expect(state[0].exploredCells).toEqual({ "1:abc": ["0/p7"] })
+    expect(state[0].positionKey).toBe("abc#0/p7")
+    expect(state[0].disabledTraps).toEqual(["1:abc#0/p2"])
+    // Stamped, so the next launch leaves it alone — and the coordinates stay as the archive.
+    expect(state[0].cellKeyVersion).toBe(3)
     expect(state[0].exploredSections).toEqual({ "1:abc": ["0:3,4"] })
   })
 })

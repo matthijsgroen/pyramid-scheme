@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Your progress in a pyramid survives its corridors being rebuilt or its rooms re-authored: only what actually changed comes back unexplored.
+
 ## 0.43.10 - 2026-09-16
 
 ### Fixed

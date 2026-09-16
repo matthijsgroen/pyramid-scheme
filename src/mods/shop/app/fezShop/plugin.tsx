@@ -42,7 +42,7 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
   // Always explored on arrival, regardless of whether anything gets bought — a shop room
   // is a claim point, not a challenge; reaching it is enough to unlock corridors past it.
   useEffect(() => {
-    journeys.markCellExplored(ctx.sectionHash, ctx.edgeId)
+    journeys.markCellExplored(ctx.sectionHash, ctx.edgeId, ctx.address)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once per room instance
   }, [ctx.edgeId])
 
@@ -51,12 +51,12 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
   // One buy path for every stock slot (currency piece or consumable alike): pay, apply, claim.
   const buySlot = (j: number) => {
     const item = stock[j]
-    if (!item || claimed.has(`${ctx.edgeId}#${j}`)) return
+    if (!item || claimed.has(`${ctx.address}!${j}`)) return
     // canAccept before spend — a full consumable pack refuses now, so nothing is charged then lost.
     if (!contributions.canAccept(item)) return
     if (!progression.ledger.spend("money", priceFor(item, tier))) return
     applyReward(item)
-    journeys.markShopSlotPurchased(ctx.edgeId, j)
+    journeys.markShopSlotPurchased(ctx.address, j)
   }
 
   // A slot renders once, split into the shop's two buy sections by reward type: consumables are
@@ -72,7 +72,7 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
       ...rewardText(item, t),
       price,
       affordable: balance >= price,
-      soldOut: claimed.has(`${ctx.edgeId}#${j}`) || contributions.skip(item),
+      soldOut: claimed.has(`${ctx.address}!${j}`) || contributions.skip(item),
     }
     if (item.type === "consumable") consumables.push(buyItem)
     else rareItems.push({ ...buyItem, featured: true })

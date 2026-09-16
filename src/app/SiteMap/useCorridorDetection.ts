@@ -11,7 +11,7 @@ type CorridorDetectionArgs = {
   detectorLevel: number
   grid: FloorGrid | null
   explorerPos: readonly [number, number]
-  hiddenSectionHashes: ReadonlySet<string>
+  hiddenSections: ReadonlySet<string>
   junctionSections: ReadonlyMap<string, ReadonlySet<string>>
   foundCorridors: ReadonlySet<string>
 }
@@ -38,17 +38,17 @@ export const useCorridorDetection = ({
   detectorLevel,
   grid,
   explorerPos,
-  hiddenSectionHashes,
+  hiddenSections,
   junctionSections,
   foundCorridors,
 }: CorridorDetectionArgs): CorridorDetection => {
-  const hiddenHashKey = useMemo(() => [...hiddenSectionHashes].sort().join(","), [hiddenSectionHashes])
+  const hiddenSectionKey = useMemo(() => [...hiddenSections].sort().join(","), [hiddenSections])
   useEffect(() => {
-    if (hiddenHashKey) journeys.registerHiddenCorridors(hiddenHashKey.split(","))
+    if (hiddenSectionKey) journeys.registerHiddenCorridors(hiddenSectionKey.split(","))
     // journeys is a fresh object each render; the reducer no-ops when nothing is added, so keying the
     // effect on the stable hash string (not journeys) is what stops a write loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hiddenHashKey, journeyId, currentFloor])
+  }, [hiddenSectionKey, journeyId, currentFloor])
   useEffect(() => {
     if (detectorLevel < 1) return
     const bordered = junctionSections.get(`${explorerPos[0]},${explorerPos[1]}`)
@@ -57,8 +57,8 @@ export const useCorridorDetection = ({
   }, [explorerPos, junctionSections, detectorLevel])
 
   const onThisFloor = useMemo(
-    () => [...hiddenSectionHashes].some(h => !foundCorridors.has(h)),
-    [hiddenSectionHashes, foundCorridors]
+    () => [...hiddenSections].some(h => !foundCorridors.has(h)),
+    [hiddenSections, foundCorridors]
   )
   // Recomputed as the player walks, so the readout flips from "nothing nearby" to "something nearby"
   // on approach.
@@ -72,8 +72,8 @@ export const useCorridorDetection = ({
   // is deliberate: a corridor behind a door the player cannot open yet would otherwise send them
   // hunting for something unreachable.
   const floorOutstanding = useMemo(
-    () => [...hiddenSectionHashes].filter(h => !foundCorridors.has(h)).length,
-    [hiddenSectionHashes, foundCorridors]
+    () => [...hiddenSections].filter(h => !foundCorridors.has(h)).length,
+    [hiddenSections, foundCorridors]
   )
   const onOtherFloor = journeys.getOutstandingHiddenCorridorCount(journeyId) - floorOutstanding > 0
 

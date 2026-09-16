@@ -21,7 +21,7 @@ const args = (over: Partial<Parameters<typeof useCorridorDetection>[0]> & { jour
   detectorLevel: 1,
   grid: null,
   explorerPos: [0, 0] as readonly [number, number],
-  hiddenSectionHashes: new Set<string>(),
+  hiddenSections: new Set<string>(),
   junctionSections: new Map<string, ReadonlySet<string>>(),
   foundCorridors: new Set<string>(),
   ...over,
@@ -31,7 +31,7 @@ describe("useCorridorDetection", () => {
   it("registers this floor's hidden corridors as known, so the pyramid tally counts viewed floors", () => {
     const { api, registerHiddenCorridors } = fakeJourneys()
 
-    renderHook(() => useCorridorDetection(args({ journeys: api, hiddenSectionHashes: new Set(["h2", "h1"]) })))
+    renderHook(() => useCorridorDetection(args({ journeys: api, hiddenSections: new Set(["h2", "h1"]) })))
 
     expect(registerHiddenCorridors).toHaveBeenCalledTimes(1)
     expect(registerHiddenCorridors.mock.calls[0][0].sort()).toEqual(["h1", "h2"])
@@ -39,8 +39,8 @@ describe("useCorridorDetection", () => {
 
   it("registers once per floor's worth of corridors, so a re-render can't feed a write loop", () => {
     const { api, registerHiddenCorridors } = fakeJourneys()
-    const hiddenSectionHashes = new Set(["h1"])
-    const { rerender } = renderHook(() => useCorridorDetection(args({ journeys: api, hiddenSectionHashes })))
+    const hiddenSections = new Set(["h1"])
+    const { rerender } = renderHook(() => useCorridorDetection(args({ journeys: api, hiddenSections })))
 
     rerender()
 
@@ -82,10 +82,10 @@ describe("useCorridorDetection", () => {
 
   it("reports this floor as holding a corridor only while one is still unnoticed", () => {
     const { api } = fakeJourneys()
-    const hiddenSectionHashes = new Set(["h1"])
+    const hiddenSections = new Set(["h1"])
 
     const { result, rerender } = renderHook(
-      ({ foundCorridors }) => useCorridorDetection(args({ journeys: api, hiddenSectionHashes, foundCorridors })),
+      ({ foundCorridors }) => useCorridorDetection(args({ journeys: api, hiddenSections, foundCorridors })),
       { initialProps: { foundCorridors: new Set<string>() } }
     )
     expect(result.current.onThisFloor).toBe(true)
@@ -99,9 +99,7 @@ describe("useCorridorDetection", () => {
     // Two outstanding in the pyramid, one of them right here: exactly one waits elsewhere.
     const { api } = fakeJourneys(2)
 
-    const { result } = renderHook(() =>
-      useCorridorDetection(args({ journeys: api, hiddenSectionHashes: new Set(["h1"]) }))
-    )
+    const { result } = renderHook(() => useCorridorDetection(args({ journeys: api, hiddenSections: new Set(["h1"]) })))
 
     expect(result.current.onOtherFloor).toBe(true)
   })
@@ -109,9 +107,7 @@ describe("useCorridorDetection", () => {
   it("keeps quiet about other floors when this floor is the only one outstanding", () => {
     const { api } = fakeJourneys(1)
 
-    const { result } = renderHook(() =>
-      useCorridorDetection(args({ journeys: api, hiddenSectionHashes: new Set(["h1"]) }))
-    )
+    const { result } = renderHook(() => useCorridorDetection(args({ journeys: api, hiddenSections: new Set(["h1"]) })))
 
     expect(result.current.onOtherFloor).toBe(false)
   })

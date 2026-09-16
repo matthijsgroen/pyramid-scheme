@@ -112,6 +112,9 @@ const computeLegacySideSectionHash = (section: SideSection | SubSection, idx: nu
     )
   )
 
+/** The main path's own address, in the same vocabulary boardIndex.ts uses for its chains. */
+const MAIN_SECTION_ADDRESS = "main"
+
 // The floor-wide inputs to the carve itself: change either and every cell on the floor moves.
 const carveShape = (config: FloorConfig) => ({
   packing: config.packing,
@@ -993,12 +996,20 @@ export const assembleFloor = (
     const roomSpecs = new Map<string, RoomSpec>()
     const cellSectionHash = new Map<string, string>()
     /**
-     * WHERE A CELL SITS ALONG ITS SECTION'S WALK, which is what a save should remember it by.
+     * WHICH AUTHORED SECTION each cell belongs to — `main`, `s0`, `s0.1`. What the author steers, and
+     * so what a save files the cell under: where the builder hangs a sidepath along the main walk, and
+     * how much it holds, are both free to change without the sidepath becoming a different place.
+     * Addressed exactly as boardIndex.ts addresses chains, because it is the same thing.
+     */
+    const cellSectionAddress = new Map<string, string>()
+    /**
+     * WHERE A CELL SITS ALONG ITS SECTION'S WALK — how far in it is, not which cell it is.
      *
-     * Exploration is stored per cell, and it was stored by grid coordinate — an accident of where the
-     * carve happened to land. Two carves of the SAME section put its third room at different
-     * coordinates, so a save restored onto a moved section marks rooms done that were never opened.
-     * The ordinal moves with the section instead: same shape, same ordinals, wherever it ends up.
+     * This is a property of the carve, not of the authoring: the walk's length is `targetDistance`'s
+     * choice, so re-carving a floor renumbers everything past the first divergence. A save must not
+     * name a cell by it (it names rooms by their authored slot — see cellIdentity.ts). What it is good
+     * for is ORDER, which survives: it puts a section's cells in the sequence the player walks them, so
+     * the fog can be restored as far as the furthest room they reached.
      */
     const cellOrdinal = new Map<string, string>()
     const cellLegacySectionHash = new Map<string, string>()
@@ -1086,6 +1097,7 @@ export const assembleFloor = (
     const mainSectionHash = computeMainSectionHash(config, mainIsolated)
     const legacyMainSectionHash = computeLegacyMainSectionHash(config)
     mainPath.forEach(([r, c], step) => cellOrdinal.set(posKey(r, c), String(step)))
+    mainPath.forEach(([r, c]) => cellSectionAddress.set(posKey(r, c), MAIN_SECTION_ADDRESS))
     for (const [r, c] of mainPath) {
       cellSectionHash.set(posKey(r, c), mainSectionHash)
       cellLegacySectionHash.set(posKey(r, c), legacyMainSectionHash)
@@ -1107,6 +1119,7 @@ export const assembleFloor = (
       }
       const sectionTier = sideSections[group.sectionIdx].difficulty
       group.cells.forEach(([r, c], step) => cellOrdinal.set(posKey(r, c), String(step)))
+      group.cells.forEach(([r, c]) => cellSectionAddress.set(posKey(r, c), `s${group.sectionIdx}`))
       for (const [r, c] of group.cells) {
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
@@ -1125,6 +1138,7 @@ export const assembleFloor = (
       )
       const legacyHash = computeLegacySideSectionHash(subSection, subSectionIdx, parentSectionIdx)
       cells.forEach(([r, c], step) => cellOrdinal.set(posKey(r, c), String(step)))
+      cells.forEach(([r, c]) => cellSectionAddress.set(posKey(r, c), `s${parentSectionIdx}.${subSectionIdx}`))
       for (const [r, c] of cells) {
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
@@ -1437,6 +1451,7 @@ export const assembleFloor = (
 
       const spec = roomSpecs.get(cellKey)
       const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
+      const sectionAddress = cellSectionAddress.get(cellKey) ?? MAIN_SECTION_ADDRESS
       const legacySectionHash = cellLegacySectionHash.get(cellKey) ?? legacyMainSectionHash
       const hidden = hiddenCellPositions.has(cellKey) || undefined
       if (spec) {
@@ -1452,6 +1467,7 @@ export const assembleFloor = (
           // in a junior pocket is junior stone even though only encounter rooms carry a difficulty of
           // their own. The spread below still wins, so a room authored at its own tier keeps it.
           ...(cellDifficulty.get(cellKey) ? { difficulty: cellDifficulty.get(cellKey) } : {}),
+          sectionAddress,
           sectionHash,
           legacySectionHash,
           ...(cellOrdinal.get(cellKey) ? { ordinal: cellOrdinal.get(cellKey) } : {}),
@@ -1465,6 +1481,7 @@ export const assembleFloor = (
           type: "corridor",
           dirs,
           state: "fogged",
+          sectionAddress,
           sectionHash,
           legacySectionHash,
           ...(cellOrdinal.get(cellKey) ? { ordinal: cellOrdinal.get(cellKey) } : {}),
@@ -1495,6 +1512,7 @@ export const assembleFloor = (
           mc = (c + nc) / 2
         const hidden = hiddenCellPositions.has(cellKey) && hiddenCellPositions.has(neighborKey) ? true : undefined
         const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
+        const sectionAddress = cellSectionAddress.get(cellKey) ?? MAIN_SECTION_ADDRESS
         const connectorTier = cellDifficulty.get(cellKey)
         const endA = cellOrdinal.get(cellKey)
         const endB = cellOrdinal.get(neighborKey)
@@ -1503,6 +1521,7 @@ export const assembleFloor = (
           type: "corridor",
           dirs: new Set([d, OPPOSITE[d]]),
           state: "fogged",
+          sectionAddress,
           sectionHash,
           legacySectionHash: cellLegacySectionHash.get(cellKey) ?? legacyMainSectionHash,
           // A CONNECTOR IS NAMED BY THE TWO CELLS IT JOINS, sorted so it does not matter which end the

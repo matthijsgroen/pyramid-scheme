@@ -11,6 +11,7 @@ import { getTableauLevel } from "@/data/tableaus"
 const ctxFor = (journeyId: string, runNr: number): FamilyContext => ({
   journeyId,
   edgeId: `edge-${runNr}`,
+  address: `s#0/${runNr}@rencounter`,
   sectionHash: "",
   freshArrival: true,
   difficulty: "starter",

@@ -2,10 +2,19 @@ import { renderHook } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "@/game/siteAssembler"
 import type { FloorGrid, FloorConfig, CorridorCell, RoomCell } from "@/game/siteTypes"
-import { encodeEdge, useAssembledFloor } from "./useAssembledFloor"
+import { useAssembledFloor } from "./useAssembledFloor"
+import { cellAddress, cellKey, cellSlot, walkPosition } from "./cellIdentity"
 // useAssembledFloor resolves families through the real registry — populate it, same as
 // SiteMapScreen.tsx does, so resolution doesn't silently fall back to untagged rooms.
 import "@/mods/registerModApps"
+
+/** The save a player standing on this cell would hold: the cell written down under its own key, the
+ * way `markCellExplored` writes it as they walk (cellIdentity.ts). */
+const exploredAt = (grid: FloorGrid, [row, col]: [number, number]): Record<string, string[]> => {
+  const cell = grid.cells[row][col]
+  if (cell.type === "empty") throw new Error(`no cell at ${row},${col}`)
+  return { [cell.sectionAddress ?? ""]: [cellKey(grid, 0, row, col)!] }
+}
 
 const OPPOSITE_DIR: Record<string, string> = { n: "s", s: "n", e: "w", w: "e" }
 const DIR_MOVE: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
@@ -73,10 +82,8 @@ describe("useAssembledFloor — hidden junctions", () => {
     // straight corridor — completeCell treats it as an ordinary passthrough and marks it
     // "visible" while auto-revealing past it, rather than stopping there. Completing the
     // predecessor (not the gateway itself) reproduces that real play sequence.
-    const { predecessorPos, predecessorCell } = findGatewayToHidden(grid)
-    const exploredSections = {
-      [predecessorCell.sectionHash ?? ""]: [encodeEdge(0, predecessorPos[0], predecessorPos[1])],
-    }
+    const { predecessorPos } = findGatewayToHidden(grid)
+    const exploredSections = exploredAt(grid, predecessorPos)
 
     const { result } = renderHook(() =>
       useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 1, new Set())
@@ -95,7 +102,7 @@ describe("useAssembledFloor — hidden junctions", () => {
     expect(result.current.junctionSections.size).toBeGreaterThan(0)
     for (const [, hashes] of result.current.junctionSections) {
       expect(hashes.size).toBeGreaterThan(0)
-      for (const h of hashes) expect(result.current.hiddenSectionHashes.has(h)).toBe(true)
+      for (const h of hashes) expect(result.current.hiddenSections.has(h)).toBe(true)
     }
   })
 
@@ -106,26 +113,24 @@ describe("useAssembledFloor — hidden junctions", () => {
     const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
     if (!assembled.success) throw new Error("assembly failed")
     const grid = assembled.grid
-    const { predecessorPos, predecessorCell } = findGatewayToHidden(grid)
-    const exploredSections = {
-      [predecessorCell.sectionHash ?? ""]: [encodeEdge(0, predecessorPos[0], predecessorPos[1])],
-    }
+    const { predecessorPos } = findGatewayToHidden(grid)
+    const exploredSections = exploredAt(grid, predecessorPos)
 
     // First pass, unrevealed: learn which section the junction borders (what SiteMapScreen reveals).
     const { result: masked } = renderHook(() =>
       useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 1, new Set())
     )
-    const revealed = new Set(masked.current.hiddenSectionHashes)
+    const revealed = new Set(masked.current.hiddenSections)
     expect(revealed.size).toBeGreaterThan(0)
 
     // Second pass, that section revealed: its cells are no longer masked to empty, and it's gone
-    // from hiddenSectionHashes — the corridor is now part of the walkable grid.
+    // from hiddenSections — the corridor is now part of the walkable grid.
     const { result } = renderHook(() =>
       useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 1, revealed)
     )
-    for (const h of revealed) expect(result.current.hiddenSectionHashes.has(h)).toBe(false)
+    for (const h of revealed) expect(result.current.hiddenSections.has(h)).toBe(false)
     const revealedCellShown = result.current.grid!.cells.some(row =>
-      row.some(cell => cell.type !== "empty" && "sectionHash" in cell && revealed.has(cell.sectionHash ?? ""))
+      row.some(cell => cell.type !== "empty" && revealed.has(cell.sectionAddress ?? ""))
     )
     expect(revealedCellShown).toBe(true)
   })
@@ -134,10 +139,8 @@ describe("useAssembledFloor — hidden junctions", () => {
     const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
     if (!assembled.success) throw new Error("assembly failed")
     const grid = assembled.grid
-    const { predecessorPos, predecessorCell } = findGatewayToHidden(grid)
-    const exploredSections = {
-      [predecessorCell.sectionHash ?? ""]: [encodeEdge(0, predecessorPos[0], predecessorPos[1])],
-    }
+    const { predecessorPos } = findGatewayToHidden(grid)
+    const exploredSections = exploredAt(grid, predecessorPos)
 
     const { result } = renderHook(() =>
       useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 0, new Set())
@@ -172,7 +175,7 @@ describe("useAssembledFloor — restoring a saved position", () => {
     const [hr, hc] = hiddenCellOf(assembled.grid)
 
     const { result } = renderHook(() =>
-      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, {}, encodeEdge(0, hr, hc), 0, new Set())
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, {}, cellAddress(assembled.grid, 0, hr, hc), 0, new Set())
     )
 
     // Masked to void, so it must not be honoured.
@@ -191,57 +194,93 @@ describe("useAssembledFloor — restoring a saved position", () => {
       .find(([r, c]) => grid.cells[r]?.[c]?.type !== "empty")!
 
     const { result: restored } = renderHook(() =>
-      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, {}, encodeEdge(0, standable[0], standable[1]), 0, new Set())
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, {}, cellAddress(grid, 0, standable[0], standable[1]), 0, new Set())
     )
     expect(restored.current.explorerPos).toEqual(standable)
   })
 })
 
-describe("useAssembledFloor — saves written under the old section hash", () => {
-  // The section hash stopped covering a section's encounter, so every hash in the world moved once.
-  // A looted room is remembered only by its explored-cell entry under that hash, so a save that
-  // stopped matching would hand every chest back unlooted. Cells carry their old hash for exactly
-  // this, and both readers accept it.
-  it("still counts a cell explored when the save filed it under the old hash", () => {
-    const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
-    if (!assembled.success) throw new Error("assembly failed")
-    const grid = assembled.grid
+describe("useAssembledFloor — the high-water mark", () => {
+  const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
+  if (!assembled.success) throw new Error("assembly failed")
+  const grid = assembled.grid
 
-    // A visible cell with both hashes on it — what an old save would have recorded.
-    let target: { pos: [number, number]; legacy: string } | null = null
-    for (let r = 0; r < grid.rows && !target; r++) {
-      for (let c = 0; c < grid.cols; c++) {
-        const cell = grid.cells[r][c]
-        if (cell.type === "empty" || cell.hidden || !cell.legacySectionHash) continue
-        if (cell.legacySectionHash === cell.sectionHash) continue
-        target = { pos: [r, c], legacy: cell.legacySectionHash }
-        break
-      }
+  /** Every room of one section, in the order its walk visits them. */
+  const chain = (section: string) =>
+    grid.cells
+      .flatMap((row, r) => row.flatMap((cell, c) => (cell.type === "empty" ? [] : [{ cell, r, c }])))
+      .filter(({ cell, r, c }) => (cell.sectionAddress ?? "") === section && cellSlot(grid, r, c))
+      .sort((a, b) => walkPosition(a.cell.ordinal!) - walkPosition(b.cell.ordinal!))
+
+  const longestSection = () => {
+    const sections = new Set(
+      grid.cells.flatMap(row => row.flatMap(cell => (cell.type === "empty" ? [] : [cell.sectionAddress ?? ""])))
+    )
+    return [...sections].sort((a, b) => chain(b).length - chain(a).length)[0]
+  }
+
+  const stateAt = (from: FloorGrid, r: number, c: number) => {
+    const cell = from.cells[r][c]
+    return cell.type === "empty" ? "empty" : cell.state
+  }
+
+  it("brings the corridors back as far as the furthest room the save names, and no further", () => {
+    const section = longestSection()
+    const rooms = chain(section)
+    expect(rooms.length).toBeGreaterThan(1)
+
+    // A save naming ONLY rooms — every corridor key gone, which is what a re-carve leaves behind.
+    const upTo = rooms[rooms.length - 2]
+    const saved = { [section]: rooms.slice(0, -1).map(({ r, c }) => cellKey(grid, 0, r, c)!) }
+
+    const { result } = renderHook(() => useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, saved, null, 0, new Set()))
+    const restored = result.current.grid!
+
+    const mark = walkPosition(upTo.cell.ordinal!)
+    const corridors = grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) =>
+        cell.type !== "empty" && !cellSlot(grid, r, c) && (cell.sectionAddress ?? "") === section && cell.ordinal
+          ? [{ r, c, at: walkPosition(cell.ordinal) }]
+          : []
+      )
+    )
+    expect(corridors.some(({ at }) => at < mark)).toBe(true)
+    expect(corridors.some(({ at }) => at > mark)).toBe(true)
+
+    for (const { r, c, at } of corridors) {
+      if (stateAt(restored, r, c) === "empty") continue
+      expect(stateAt(restored, r, c) === "completed").toBe(at <= mark)
     }
-    if (!target) throw new Error("no cell whose hash actually moved")
-
-    const oldSave = { [target.legacy]: [encodeEdge(0, target.pos[0], target.pos[1])] }
-    const { result } = renderHook(() => useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, oldSave, null, 0, new Set()))
-
-    const restored = result.current.grid!.cells[target.pos[0]][target.pos[1]]
-    expect(restored.type).not.toBe("empty")
-    expect((restored as CorridorCell | RoomCell).state).toBe("completed")
   })
 
-  it("still counts a hidden corridor found when the save filed it under the old hash", () => {
-    const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
-    if (!assembled.success) throw new Error("assembly failed")
-    const grid = assembled.grid
+  // The one thing the mark must never do. A looted room is remembered by nothing but its own entry, so
+  // a chest swept up by the fill would hand the player nothing when they opened it.
+  it("never opens a room the save does not name, however far past it the player got", () => {
+    const section = longestSection()
+    const rooms = chain(section)
+    const skipped = rooms[rooms.length - 2]
+    const saved = { [section]: rooms.filter(room => room !== skipped).map(({ r, c }) => cellKey(grid, 0, r, c)!) }
 
-    const hiddenCell = grid.cells.flat().find(c => c.type !== "empty" && c.hidden) as CorridorCell | RoomCell
-    const legacy = hiddenCell.legacySectionHash!
-    expect(legacy).not.toBe(hiddenCell.sectionHash)
+    const { result } = renderHook(() => useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, saved, null, 0, new Set()))
+    const restored = result.current.grid!
 
-    const { result } = renderHook(() => useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, {}, null, 0, new Set([legacy])))
+    expect(stateAt(restored, skipped.r, skipped.c)).not.toBe("completed")
+    // While the room after it, which the save does name, is restored — so the mark really did reach
+    // past the skipped one.
+    const after = rooms[rooms.length - 1]
+    expect(stateAt(restored, after.r, after.c)).toBe("completed")
+  })
 
-    // Unmasked, so a player standing inside it is still standing somewhere real.
-    expect(result.current.hiddenSectionHashes.size).toBe(0)
-    const stillThere = result.current.grid!.cells.flat().some(c => c.type !== "empty" && c.hidden)
-    expect(stillThere).toBe(true)
+  it("leaves a section the save no longer matches entirely fogged", () => {
+    const { result } = renderHook(() =>
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, { "gone-section": ["0/p0", "0/p1"] }, null, 0, new Set())
+    )
+    const restored = result.current.grid!
+
+    const completed = restored.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) => (cell.type !== "empty" && cell.state === "completed" ? [[r, c]] : []))
+    )
+    // Only the entrance, which is explored by standing in it.
+    expect(completed).toEqual([[...restored.entrancePos]])
   })
 })

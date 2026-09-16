@@ -57,7 +57,7 @@ export const useDetectorBand = ({
     }
     if (detector.activeDetector === "consumable") {
       const here = detector.consumableResults.filter(r => r.journeyId === journeyId && r.floorIdx === currentFloor)
-      const close = anyNearby(here.map(r => r.cell))
+      const close = anyNearby(here.flatMap(r => (r.cell ? [r.cell] : [])))
       return bandFromHits(
         levels.supplies,
         detector.consumableResults.map(r => ({ onThisFloor: here.includes(r), nearby: here.includes(r) && close }))

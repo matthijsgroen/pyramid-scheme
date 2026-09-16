@@ -15,7 +15,12 @@ export type { FamilyMeta }
 export type FamilyContext = {
   // This room's own identity, for families that act on journeys/progression directly.
   journeyId: string
+  /** Where this room is drawn in the carve that is on screen — for anything about the here and now. */
   edgeId: string
+  /** WHICH ROOM THIS IS, as `${sectionHash}#${floor}/${slot}` (cellIdentity.ts). A family
+   * that remembers anything per room — a bought shop slot, a disarmed trap, a half-finished board —
+   * files it under this, because the coordinate above moves when the floor is carved again. */
+  address: string
   sectionHash: string
   // False when the player re-clicks this room while already standing on it (vs. having
   // traveled away and back) — shop uses this to decide whether its own stock resets.

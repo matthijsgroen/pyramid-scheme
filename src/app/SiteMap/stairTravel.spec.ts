@@ -20,12 +20,15 @@ describe(floorOfPosition, () => {
     expect(floorOfPosition(undefined, 2)).toBe(0)
   })
 
+  // The floor is in the address, ahead of the slot, so it reads without assembling anything — which
+  // is what lets the map pick a floor to build before it can resolve the rest (cellIdentity.ts).
   it("reads the floor out of the stored position, so floor and position can never disagree", () => {
-    expect(floorOfPosition("1:4,2", 2)).toBe(1)
+    expect(floorOfPosition("sec#1/p2", 2)).toBe(1)
+    expect(floorOfPosition("sec#1/~4|5", 2)).toBe(1)
   })
 
   it("clamps a position pointing past the site's last floor", () => {
-    expect(floorOfPosition("7:4,2", 2)).toBe(1)
+    expect(floorOfPosition("sec#7/p2", 2)).toBe(1)
   })
 })
 

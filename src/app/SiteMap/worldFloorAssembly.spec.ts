@@ -9,7 +9,8 @@ import { hashString } from "@/support/hashString"
 import { boardIndexesForFloor } from "./boardIndexes"
 import { buildRoomClaims } from "./roomClaims"
 import { authoredKindsFor } from "./authoredKinds"
-import { encodeEdge } from "./useAssembledFloor"
+import { encodeEdge } from "./edgeId"
+import { cellAddress } from "./cellIdentity"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 // Populate the family registry, exactly as the app does — a room resolves its family through it.
@@ -473,6 +474,7 @@ describe("every room in the world builds the board its tap asks for", () => {
             family.generate(hashString(floor.journeyId + edgeId), {
               journeyId: floor.journeyId,
               edgeId,
+              address: cellAddress(result.grid, floor.floorIndex, r, c) ?? edgeId,
               sectionHash: cell.sectionHash ?? "",
               freshArrival: true,
               difficulty: cell.difficulty ?? floor.config.difficulty,

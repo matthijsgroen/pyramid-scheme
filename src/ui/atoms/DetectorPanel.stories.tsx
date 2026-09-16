@@ -83,9 +83,9 @@ const COMPASS_HITS: CompassHit[] = [
 ]
 
 const CONSUMABLE_HITS = [
-  { journeyId: "starter_1", edgeId: "0:3,4", floorIdx: 0, cell: { row: 3, col: 4 } },
-  { journeyId: "starter_1", edgeId: "0:5,1", floorIdx: 0, cell: { row: 5, col: 1 } },
-  { journeyId: "junior_1", edgeId: "1:2,5", floorIdx: 1, cell: { row: 2, col: 5 } },
+  { journeyId: "starter_1", address: "s#0/4@rencounter", floorIdx: 0, cell: { row: 3, col: 4 } },
+  { journeyId: "starter_1", address: "s#0/5@rencounter", floorIdx: 0, cell: { row: 5, col: 1 } },
+  { journeyId: "junior_1", address: "s#1/2@rencounter", floorIdx: 1, cell: { row: 2, col: 5 } },
 ]
 
 // L1 collapses every hit to its pyramid (one line per journey).

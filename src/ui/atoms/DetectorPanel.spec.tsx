@@ -55,8 +55,8 @@ const COMPASS: CompassHit[] = [
 ]
 
 const CONSUMABLE: ConsumableResult[] = [
-  { journeyId: "junior_1", edgeId: "0:2,3", floorIdx: 0, cell: { row: 2, col: 3 } },
-  { journeyId: "junior_1", edgeId: "1:6,1", floorIdx: 1, cell: { row: 6, col: 1 } },
+  { journeyId: "junior_1", address: "s#0/3@rencounter", floorIdx: 0, cell: { row: 2, col: 3 } },
+  { journeyId: "junior_1", address: "s#1/6@rencounter", floorIdx: 1, cell: { row: 6, col: 1 } },
 ]
 
 const renderCompass = (compassLevel: number, compassResults: CompassHit[] = COMPASS) =>

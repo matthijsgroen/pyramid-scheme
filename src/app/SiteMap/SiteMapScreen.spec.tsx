@@ -41,7 +41,7 @@ vi.mock("./useAssembledFloor", async importOriginal => {
       grid,
       explorerPos: [0, 0] as readonly [number, number],
       hiddenJunctions: new Set<string>(),
-      hiddenSectionHashes: new Set<string>(),
+      hiddenSections: new Set<string>(),
       junctionSections: new Map<string, ReadonlySet<string>>(),
     }),
   }
