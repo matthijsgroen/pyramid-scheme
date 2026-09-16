@@ -84,7 +84,19 @@ Two reasons that had to change:
 | difficulty retuned  | whole section resets   | all restores, new boards behind it                    |
 | carve knobs retuned | **everything resets**  | nothing resets                                        |
 
-**The address is positional.** Insert a new sidepath ahead of `s0` and every later one shifts down, so a player's progress follows the index rather than the place — the same hazard `boardIndex.ts` already documents for board dealing. Authored ids on sections would fix it; nothing needs them yet.
+**A positional address follows the index, not the place.** Insert a new sidepath ahead of `s0` and every later one shifts down, handing the newcomer the old one's name and a player's progress with it — the same hazard `boardIndex.ts` documents for board dealing.
+
+**A path that matters is given a `label`,** and then it is that path wherever it ends up in the list:
+
+```ts
+sideSections: [{ label: "burial-antechamber", pathPuzzles: 3, end: "treasure" }]
+```
+
+Labelling is per path, on purpose. Naming every sidepath in the world would be a tax on authoring for the sake of the few that are ever re-ordered, so an unlabelled one keeps its positional address and the hazard that comes with it. Name the paths you expect to move; leave the rest.
+
+A label is unique within a floor, may not be shaped like a positional address (`main`, `s3`, `s3.1`), and is made of letters, digits, `-` and `_` — `#` and `/` separate the parts of a cell address, so a label carrying either would read back as somewhere else. The assembler refuses to build a floor that breaks any of those — two sections a save cannot tell apart would share one player's progress between two places, which is data loss rather than a layout problem, so `yarn generate-world` and the floor sweep both stop on it.
+
+A label IS the identity, so adding, changing or removing one resets that section — an unlabelled path answers to `s0`, a labelled one to its label, and nothing can tell a rename from a replacement. Label a path when you author it, not after players have walked it.
 
 ---
 
@@ -152,21 +164,25 @@ Progression and journey state are stored under versioned keys. If a breaking mig
 
 ## What resets and what doesn't
 
-| Change                              | Resets exploration?                                                                    | Dupes/erases loot?                         |
-| ----------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------ |
-| Puzzle count changes in a section   | Yes — hash changes                                                                     | No                                         |
-| Path length or straightness changes | Yes — hash changes                                                                     | No                                         |
-| Which puzzle a room serves changes  | No — traps included                                                                    | No                                         |
-| Loot in a chest changes             | No                                                                                     | No — inventory-as-truth                    |
-| A chest's reward is swapped         | No                                                                                     | No — inventory-as-truth                    |
-| A section's `endReward` is removed  | Yes — it becomes a key-host candidate                                                  | No                                         |
-| Ward key reassigned                 | No                                                                                     | No                                         |
-| Gate added or removed               | Yes — hash changes                                                                     | No                                         |
-| A section is sealed or hidden       | Yes — hash changes                                                                     | No                                         |
-| Section added (new side path)       | N/A — new hash, fresh                                                                  | No                                         |
-| Section removed                     | N/A — stale hash ignored                                                               | No                                         |
-| Difficulty changes                  | Yes — hash changes                                                                     | No                                         |
-| Fragment re-ordered across chests   | No                                                                                     | No — piece index is stable per world build |
-| The carve moves, authoring does not | Corridors only — rooms keep their slots, and the fog comes back to the high-water mark | No                                         |
+| Change                                         | Resets exploration?                                      | Dupes/erases loot?                         |
+| ---------------------------------------------- | -------------------------------------------------------- | ------------------------------------------ |
+| Path length, straightness or packing changes   | No — the carve moves, the authoring does not             | No                                         |
+| Puzzle count changes in a section              | Only the rooms added or removed                          | No                                         |
+| Which puzzle a room serves changes             | No — traps included                                      | No                                         |
+| Difficulty changes                             | No — same rooms, different boards behind them            | No                                         |
+| Loot in a chest changes                        | No                                                       | No — inventory-as-truth                    |
+| A chest's reward is swapped                    | No                                                       | No — inventory-as-truth                    |
+| A section's `endReward` is removed             | No — but which sections host floor keys moves            | No                                         |
+| Ward key reassigned                            | No                                                       | No                                         |
+| Ward gate added or removed                     | Only the gate room                                       | No                                         |
+| Floor-key gate added                           | The gate room, and the key host it conjures              | No                                         |
+| A section is sealed                            | No — it only re-carves                                   | No                                         |
+| A section is hidden                            | No, but it must be found again before it can be walked   | No                                         |
+| Section added (new side path)                  | Itself only — unless inserted ahead of an unlabelled one | No                                         |
+| Section removed                                | N/A — its stale entries are ignored                      | No                                         |
+| A sidepath is labelled, relabelled, unlabelled | Yes, that section — the name is its identity             | No                                         |
+| Fragment re-ordered across chests              | No                                                       | No — piece index is stable per world build |
+
+Every row is a case in `src/app/SiteMap/authoringChangeCost.spec.ts`, which walks a floor, re-authors it and asserts what comes back.
 
 Per-field detail, and what makes each one safe or not: [world-spec-stability.md](./world-spec-stability.md).

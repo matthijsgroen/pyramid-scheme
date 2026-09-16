@@ -14,6 +14,9 @@ import type { TreasureReward, FragmentSlotReward, MapPieceReward, TombKeyReward 
 export type { TreasureReward, FragmentSlotReward, MapPieceReward, TombKeyReward }
 
 export type SubSection = {
+  /** The authored name for this path, if it has one — what a save files its cells under, in place of
+   * the positional `s0`/`s0.1`. Mirrors game/siteTypes.ts's SubSection.label. */
+  label?: string
   pathPuzzles: number
   difficulty: Difficulty
   end: "treasure" | "staircase" | { stairId: string }

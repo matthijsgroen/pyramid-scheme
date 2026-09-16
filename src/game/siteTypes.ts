@@ -246,6 +246,9 @@ export type GateConfig = { type: "floor-key"; color?: KeyColor } | { type: "tomb
 export type { Difficulty } from "@/data/difficultyLevels"
 import type { Difficulty } from "@/data/difficultyLevels"
 export type SubSection = {
+  /** The authored name for this path, if it has one — what a save files its cells under, in place of
+   * the positional `s0`/`s0.1`. See SideSectionConstraint.label and cellIdentity.ts. */
+  label?: string
   pathPuzzles: number
   difficulty: Difficulty
   end: "treasure" | "staircase" | { stairId: string }
@@ -337,7 +340,13 @@ export type ValidationReason =
   | { type: "mosaicDuplicate"; siteId: string }
 
 export type ValidationResult = { valid: true } | { valid: false; reasons: ValidationReason[] }
-export type AssemblerReason = ValidationReason | { type: "noUngatedSectionForKey" } | { type: "layoutNotFound" }
+export type AssemblerReason =
+  | ValidationReason
+  | { type: "noUngatedSectionForKey" }
+  | { type: "layoutNotFound" }
+  /** A section cannot be given a name a save could file it under: an authored `label` repeated, one
+   * shaped like the positional addresses, or one carrying an address separator. See SubSection.label. */
+  | { type: "unusableSectionAddress"; address: string }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
 
