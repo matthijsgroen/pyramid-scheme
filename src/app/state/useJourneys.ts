@@ -223,6 +223,8 @@ export const createJourneysV3Api = ({
       exploredSections: {},
       position: null,
       interiorLevelNr: null,
+      // Born current: a journey started under this release has never been keyed any other way.
+      cellKeyVersion: CELL_KEY_VERSION,
     }
     return Promise.resolve(setJourneys(prev => [...prev, newJourney]))
   }
@@ -313,10 +315,14 @@ export const createJourneysV3Api = ({
   // A save is behind whenever its per-cell collections were written under an older key format —
   // coordinates only (no `cellKeyVersion` at all), or keys written under an earlier shape of the key.
   // Every one of them is re-derived from `exploredSections`, which is why the coordinates are kept
-  // until the re-carve: they are the archive this reads. A journey with nothing explored has nothing
-  // to translate and is simply stamped.
-  const journeysNeedingReKey = () =>
-    journeys.filter(j => Object.keys(j.exploredSections).length > 0 && j.cellKeyVersion !== CELL_KEY_VERSION)
+  // until the re-carve: they are the archive this reads.
+  //
+  // A journey with nothing explored is picked up too, and translates to nothing. That is the point:
+  // once this has run, EVERY save carries the current stamp, so `cellKeyVersion` is an exact record of
+  // whether a save has been through this release — which is what the reshape reads to decide whether a
+  // save can be carried across at all. A stamp that only landed on journeys with exploration would
+  // read "never migrated" for a player who simply had not walked into a pyramid yet.
+  const journeysNeedingReKey = () => journeys.filter(j => j.cellKeyVersion !== CELL_KEY_VERSION)
 
   const setCarveIndependentState = (journeyId: string, state: CarveIndependentState) => {
     setJourneys(prev =>

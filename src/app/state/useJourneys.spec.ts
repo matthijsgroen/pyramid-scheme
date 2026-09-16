@@ -492,8 +492,12 @@ describe("re-keying bookkeeping", () => {
     expect(api.journeysNeedingReKey().map(j => j.journeyId)).toEqual([REAL_ID])
   })
 
-  it("leaves a fresh save alone — there is nothing to translate", () => {
-    expect(makeApi([makeStoredJourney()]).journeysNeedingReKey()).toEqual([])
+  it("picks up an unstamped save even with nothing to translate, so it ends up stamped", () => {
+    expect(
+      makeApi([makeStoredJourney()])
+        .journeysNeedingReKey()
+        .map(j => j.journeyId)
+    ).toEqual([REAL_ID])
   })
 
   it("counts an EMPTY result as migrated, so it is not retried on every launch", () => {
@@ -532,5 +536,39 @@ describe("re-keying bookkeeping", () => {
     // Stamped, so the next launch leaves it alone — and the coordinates stay as the archive.
     expect(state[0].cellKeyVersion).toBe(3)
     expect(state[0].exploredSections).toEqual({ "1:abc": ["0:3,4"] })
+  })
+})
+
+// ── the stamp as a watermark, which the reshape release reads ─────────────────
+
+describe("cellKeyVersion as a record of having been through this release", () => {
+  it("offers a save with nothing explored, so every save ends up stamped", () => {
+    // Not because there is anything to translate — there is not — but because the reshape decides
+    // whether a save can be carried across at all by this stamp, and "no pyramid walked yet" must not
+    // read the same as "never migrated".
+    const api = makeApi([makeStoredJourney({ exploredSections: {} })])
+
+    expect(api.journeysNeedingReKey().map(j => j.journeyId)).toEqual([REAL_ID])
+  })
+
+  it("starts a new journey already stamped", async () => {
+    let state: StoredJourneyStateV3[] = []
+    const api = createJourneysV3Api({
+      journeys: state,
+      setJourneys: updater => {
+        state = typeof updater === "function" ? updater(state) : updater
+      },
+      journeyData: [makeJourneyData(REAL_ID)],
+    })
+
+    await api.startJourney({ id: REAL_ID, levelCount: REAL_LEVEL_COUNT } as Parameters<typeof api.startJourney>[0])
+
+    expect(state[0].cellKeyVersion).toBe(3)
+  })
+
+  it("leaves a save that already carries the current stamp alone", () => {
+    const api = makeApi([makeStoredJourney({ cellKeyVersion: 3 })])
+
+    expect(api.journeysNeedingReKey()).toEqual([])
   })
 })
