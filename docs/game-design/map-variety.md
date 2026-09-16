@@ -65,6 +65,67 @@ That last row is the one the game does not have.
 _(The measure counts 4-adjacency of non-empty cells as connection, which can only over-count edges. Real
 cycle counts are these or lower, so the shape of the finding holds.)_
 
+## The floor is ninety per cent corridor
+
+Measured over every floor of every journey, at its real seed:
+
+| Tier    | Floors | Cells/floor | Corridor | Encounters | Cells per encounter | Extent  |
+| ------- | ------ | ----------- | -------- | ---------- | ------------------- | ------- |
+| starter | 10     | 133         | 90%      | 8.4        | 15.8                | 19 × 18 |
+| junior  | 10     | 156         | 90%      | 10.2       | 15.2                | 21 × 21 |
+| expert  | 12     | 227         | 91%      | 15.1       | 15.0                | 28 × 26 |
+| master  | 18     | 205         | 91%      | 12.8       | 16.0                | 25 × 26 |
+| wizard  | 24     | 220         | 92%      | 13.4       | 16.4                | 26 × 26 |
+
+**Nine cells in ten are hallway, and the player walks about sixteen of them per encounter.** The ratio is
+near-identical across all five tiers, so this is a constant of the carve rather than something that drifts
+as floors get bigger.
+
+### It explains the review's camera complaint too
+
+_"You built a stage and shot it through a mail slot"_ — the frame is mostly empty. That and the walking are
+**the same fact**: there is little to look at because nine tenths of what exists is corridor. Lighting and
+framing make the same hallway prettier; they do not make it shorter.
+
+### Two complaints, two very different prices
+
+**Scrolling** is how much floor fits on screen. Extents run to 26 × 26 cells, so at any legible zoom a
+floor is several screens in both directions. That is **render-side — Pile A**, free, and the HTML port is
+already in that code.
+
+**Walking** is how many cells sit between encounters. That is the carve — **Pile B**, and it wants the
+migration the rest of Pile B wants.
+
+Worth fixing in that order: a floor that fits on one screen may not feel long even at sixteen cells an
+encounter, and it costs nothing to find out.
+
+### Levers, if walking is still wrong after the zoom
+
+| Lever                                | Effect                                                             | Pile  |
+| ------------------------------------ | ------------------------------------------------------------------ | ----- |
+| Shorter corridor runs between rooms  | the direct fix — fewer cells for the same rooms                    | B     |
+| More encounters on the same floor    | raises density without shrinking anything                          | B     |
+| Fewer cells per floor                | smaller everything; also fixes scrolling, less well than zoom does | B     |
+| **Wider room footprints** (B6)       | raises the room-to-corridor ratio **as seen**, at render time      | **A** |
+| Something in the corridors (1, 6, 7) | does not shorten the walk; makes it worth having walked            | **A** |
+
+**The last two are the reason to finish the catalogue before touching the carve.** Wider footprints and
+things worth seeing in a hallway both attack "the floor feels empty" without a migration — and if they are
+enough, the sixteen-cell walk stops being the problem it looks like now.
+
+`pathPuzzles` is not the knob here: it is the number of **rooms** on a chain, so it lengthens the walk by
+adding encounters rather than by adding hallway. What sets the corridor length _between_ rooms is the carve
+itself, and nothing authored reaches it.
+
+### Open
+
+1. **Does the map fit-to-screen today, and at what cell size?** `CELL` is 56 SVG units and a floor is up to
+   28 wide. If it does not fit, that is the whole scrolling complaint and it is free.
+2. **What sets corridor run length?** Same shape of question as loop density — evidently a consequence of
+   the carve rather than a knob.
+3. **Is sixteen cells actually wrong?** It is consistent, which suggests it was chosen. Nothing here proves
+   it is too long — only that it is what the player is doing.
+
 ## The catalog
 
 Nothing here ships alone. The intent is a **complete catalog first**, then one implementation pass — so
