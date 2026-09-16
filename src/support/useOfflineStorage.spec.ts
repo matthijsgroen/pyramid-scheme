@@ -220,3 +220,43 @@ describe("out-of-order writes", () => {
     expect(hook.result.current[0]).toBe("second")
   })
 })
+
+// The read is async and nobody waits for it, so it routinely lands after the component has gone — a
+// screen left during its own first load. React schedules that update through the DOM scheduler, which
+// reaches for a `window` that is no longer there once the environment is torn down. In CI that showed
+// up as four uncaught `ReferenceError: window is not defined` per run, from whichever spec lost the
+// race, while all 3081 tests passed and the exit code failed anyway.
+describe("useOfflineStorage — a read that lands after the component is gone", () => {
+  it("does not touch state when the initial read resolves after unmount", async () => {
+    const deferred = deferReadsFor("late-read")
+    const { result, unmount } = renderHook(() => useOfflineStorage<string>("k", "seed", "late-read"))
+
+    expect(result.current[2]).toBe(false) // not loaded: the read is still parked
+
+    unmount()
+    await act(async () => {
+      deferred.release()
+      await Promise.resolve()
+    })
+
+    // Still the pre-unmount render. Had the guard not held, this is where React would have scheduled
+    // work for a tree that no longer exists.
+    expect(result.current[2]).toBe(false)
+  })
+
+  it("ignores a value another instance announces after unmount", async () => {
+    const { result: first } = renderHook(() => useOfflineStorage<string>("shared", "seed", "late-notify"))
+    const { result: second, unmount } = renderHook(() => useOfflineStorage<string>("shared", "seed", "late-notify"))
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    unmount()
+    await act(async () => {
+      await first.current[1]("written after the second went away")
+    })
+
+    expect(first.current[0]).toBe("written after the second went away")
+    expect(second.current[0]).toBe("seed")
+  })
+})

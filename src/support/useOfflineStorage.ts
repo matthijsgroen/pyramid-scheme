@@ -129,10 +129,17 @@ export const useOfflineStorage = <T>(
 
   useEffect(() => {
     const readAtVersion = stateVersionRef.current
+    // NOTHING BELOW MAY TOUCH STATE ONCE THIS EFFECT HAS BEEN CLEANED UP. The read is async and
+    // nobody waits for it, so it routinely lands after the component has gone — a screen left during
+    // its own first load, or, in a test, after the environment has been torn down. React schedules
+    // that update through the DOM scheduler, which then reaches for a `window` that is no longer
+    // there: four uncaught `ReferenceError: window is not defined` per CI run, from whichever spec
+    // happened to lose the race, while every test passed.
+    let cancelled = false
     loadPromiseRef.current = store
       .getItem<T>(key)
       .then(value => {
-        if (stateVersionRef.current !== readAtVersion) return
+        if (cancelled || stateVersionRef.current !== readAtVersion) return
         if (value !== null) {
           store.remember<T>(key, value)
           localStateRef.current = value
@@ -155,13 +162,18 @@ export const useOfflineStorage = <T>(
         // A failed read must not leave every later setValue awaiting a rejected promise.
       })
       .then(() => {
-        setLoaded(true)
+        if (!cancelled) setLoaded(true)
       })
-    return store.subscribe<T>(key, value => {
+    const unsubscribe = store.subscribe<T>(key, value => {
+      if (cancelled) return
       stateVersionRef.current += 1
       localStateRef.current = value
       setLocalState(value)
     })
+    return () => {
+      cancelled = true
+      unsubscribe()
+    }
   }, [key, store])
 
   const setValue = useCallback(
