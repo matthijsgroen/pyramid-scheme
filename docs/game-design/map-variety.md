@@ -87,6 +87,53 @@ _"You built a stage and shot it through a mail slot"_ — the frame is mostly em
 **the same fact**: there is little to look at because nine tenths of what exists is corridor. Lighting and
 framing make the same hallway prettier; they do not make it shorter.
 
+### And the corridor is mostly straight
+
+| Corridor cell | Count  | Share |
+| ------------- | ------ | ----- |
+| straight      | 11,101 | 83%   |
+| turn          | 2,145  | 16%   |
+| junction      | 66     | 0.5%  |
+| dead stub     | 0      | 0%    |
+
+Straight runs of two or more: **3,200 of them — median 4, p75 6, p90 9, p99 14, longest 22.**
+
+So the typical stretch between one thing and the next is a four-cell straight hall, one in ten runs nine or
+more, and **choice almost never happens in a corridor**: 66 junctions across 13,312 cells.
+
+A long straight hall is the hardest thing on a map to make interesting, because nothing about it changes
+while the player crosses it. That is what the catalogue's decorations are mitigating — and mitigating a
+hallway is a weaker result than not having one.
+
+### A denser map is a better map, and the two halves can fight
+
+The good version is **fewer cells per encounter AND no fewer turns**. The cheap way to shorten a corridor
+is to straighten it, which would make the map compact and duller at the same time.
+
+So this wants a metric pair rather than a target, and both numbers exist now:
+
+| Measure                    | Today | Direction |
+| -------------------------- | ----- | --------- |
+| Cells per encounter        | ~16   | **down**  |
+| Straight share of corridor | 83%   | **down**  |
+| Junctions per floor        | ~1    | **up**    |
+
+**Any generator change can be scored against all three.** A change that lowers cells-per-encounter while
+raising the straight share has made the map smaller and more boring, and the numbers say so without anybody
+arguing about it. That is a spec, not a preference — and it is the kind this project already writes.
+
+### The ordinal save system is what makes this affordable
+
+Compaction means re-carving every floor, which under grid coordinates would have been unthinkable: 548 of
+676 cells move when a carve changes, so the whole world would read as unexplored for everyone mid-game.
+
+Under `<ordinal>@<kind>` it is **about 1% of a floor's cells**, degrading honestly to unexplored rather than
+to a lie. So the denser-map project is not blocked — it is **queued behind the ordinal read switch**, and
+gets cheap the moment that lands.
+
+That is also why it belongs with the rest of Pile B. One re-carve, one migration, and the catalogue's
+structural entries plus the density work all arrive together instead of paying that cost five times.
+
 ### Two complaints, two very different prices
 
 **Scrolling** is how much floor fits on screen. Extents run to 26 × 26 cells, so at any legible zoom a
@@ -129,13 +176,13 @@ above made it look.
 
 ### Levers, if walking is still wrong after the zoom
 
-| Lever                                 | Effect                                                        | Pile  |
-| ------------------------------------- | ------------------------------------------------------------- | ----- |
-| Shorter corridor runs between rooms   | the direct fix — fewer cells for the same rooms               | B     |
-| ~~More encounters on the same floor~~ | **does not work** — the carve grows to match, same walk       | —     |
-| ~~Fewer cells per floor~~             | **authoring fewer encounters just shrinks it**, same walk     | —     |
-| **Wider room footprints** (B6)        | raises the room-to-corridor ratio **as seen**, at render time | **A** |
-| Something in the corridors (1, 6, 7)  | does not shorten the walk; makes it worth having walked       | **A** |
+| Lever                                 | Effect                                                                                                                     | Pile  |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----- |
+| Shorter corridor runs between rooms   | the direct fix — fewer cells for the same rooms, **scored against the straight share so it does not just straighten them** | B     |
+| ~~More encounters on the same floor~~ | **does not work** — the carve grows to match, same walk                                                                    | —     |
+| ~~Fewer cells per floor~~             | **authoring fewer encounters just shrinks it**, same walk                                                                  | —     |
+| **Wider room footprints** (B6)        | raises the room-to-corridor ratio **as seen**, at render time                                                              | **A** |
+| Something in the corridors (1, 6, 7)  | does not shorten the walk; makes it worth having walked                                                                    | **A** |
 
 **The last two are the reason to finish the catalogue before touching the carve.** Wider footprints and
 things worth seeing in a hallway both attack "the floor feels empty" without a migration — and if they are
