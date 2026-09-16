@@ -99,15 +99,43 @@ migration the rest of Pile B wants.
 Worth fixing in that order: a floor that fits on one screen may not feel long even at sixteen cells an
 encounter, and it costs nothing to find out.
 
+### Encounters are authored, and that makes the constant mean something
+
+Encounter count is not a generator outcome — it is authored, in `src/worldGen/spec/*.ts`, through
+`pathPuzzles`, side sections and node selectors. The carve does not decide how many rooms a floor has; it
+decides how much hallway to put between them.
+
+Which turns the table above into a ratio worth reading twice:
+
+| Tier    | Encounters (authored) | Cells (carved) | Cells per encounter |
+| ------- | --------------------- | -------------- | ------------------- |
+| starter | 8.4                   | 133            | 15.8                |
+| junior  | 10.2                  | 156            | 15.3                |
+| expert  | 15.1                  | 227            | 15.0                |
+| master  | 12.8                  | 205            | 16.0                |
+| wizard  | 13.4                  | 220            | 16.4                |
+
+**The carve produces fifteen to sixteen cells per authored encounter, every time.** It sizes itself to the
+content. So the floor is not big because somebody made it big — it is big because it was asked for that
+many rooms, and it spends the same hallway on each.
+
+**Which strikes a lever.** Authoring more encounters does not raise density: it grows the floor and leaves
+the walk exactly where it was. Authoring fewer shrinks the floor and leaves it there too. **The walk is not
+an authoring problem and cannot be fixed by authoring.**
+
+What is left for walking is one thing: **make the carve spend fewer cells per room.** There is no knob for
+it today, so it is new generator work rather than a setting — which is a much bigger job than the table
+above made it look.
+
 ### Levers, if walking is still wrong after the zoom
 
-| Lever                                | Effect                                                             | Pile  |
-| ------------------------------------ | ------------------------------------------------------------------ | ----- |
-| Shorter corridor runs between rooms  | the direct fix — fewer cells for the same rooms                    | B     |
-| More encounters on the same floor    | raises density without shrinking anything                          | B     |
-| Fewer cells per floor                | smaller everything; also fixes scrolling, less well than zoom does | B     |
-| **Wider room footprints** (B6)       | raises the room-to-corridor ratio **as seen**, at render time      | **A** |
-| Something in the corridors (1, 6, 7) | does not shorten the walk; makes it worth having walked            | **A** |
+| Lever                                 | Effect                                                        | Pile  |
+| ------------------------------------- | ------------------------------------------------------------- | ----- |
+| Shorter corridor runs between rooms   | the direct fix — fewer cells for the same rooms               | B     |
+| ~~More encounters on the same floor~~ | **does not work** — the carve grows to match, same walk       | —     |
+| ~~Fewer cells per floor~~             | **authoring fewer encounters just shrinks it**, same walk     | —     |
+| **Wider room footprints** (B6)        | raises the room-to-corridor ratio **as seen**, at render time | **A** |
+| Something in the corridors (1, 6, 7)  | does not shorten the walk; makes it worth having walked       | **A** |
 
 **The last two are the reason to finish the catalogue before touching the carve.** Wider footprints and
 things worth seeing in a hallway both attack "the floor feels empty" without a migration — and if they are
@@ -121,10 +149,11 @@ itself, and nothing authored reaches it.
 
 1. **Does the map fit-to-screen today, and at what cell size?** `CELL` is 56 SVG units and a floor is up to
    28 wide. If it does not fit, that is the whole scrolling complaint and it is free.
-2. **What sets corridor run length?** Same shape of question as loop density — evidently a consequence of
-   the carve rather than a knob.
-3. **Is sixteen cells actually wrong?** It is consistent, which suggests it was chosen. Nothing here proves
-   it is too long — only that it is what the player is doing.
+2. **What sets corridor run length, and can it be a knob?** This is now the only lever on walking, since
+   authoring cannot touch it. Same shape of question as loop density, and the same answer would serve both.
+3. **Is sixteen cells actually wrong?** It is consistent to two significant figures across 74 floors, which
+   means it was chosen, whether or not anybody remembers choosing it. Nothing here proves it is too long —
+   only that it is what the player is doing.
 
 ## The catalog
 
