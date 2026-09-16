@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
 import { floorKeyRing } from "@/game/floorKeys"
@@ -9,6 +9,7 @@ import type { SiteConfig } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor } from "./useAssembledFloor"
 import { floorOfPosition } from "./stairTravel"
+import { findByAddress, floorOfAddress } from "./cellIdentity"
 import { useFloorExplorationRecorder } from "./useFloorExplorationRecorder"
 import { useEncounter } from "./useEncounter"
 import { useRewardOffer } from "./useRewardOffer"
@@ -56,8 +57,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const progression = useProgression()
   const rewardContributions = useMergedRewardContributions()
   const inventory = useInventory()
-  const detector = useDetector(journeys)
-  const allEdges = journeys.getExploredSections(journeyId)
+  const exploredCells = journeys.getExploredCells(journeyId)
   const journeyState = journeys.getJourney(journeyId)
   const wardKeys = useMergedHeldKeys()
   // Detector levels come from the owning mods (compass←hieroglyph, supplies←trap, corridor←core) via
@@ -65,22 +65,35 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const detectorLevels = useMergedDetectorLevels()
   const readout = useDetectorReadout(detectorLevels)
 
-  const currentFloor = floorOfPosition(journeyState?.position, siteConfig.length)
+  const currentFloor = floorOfPosition(journeyState?.positionKey, siteConfig.length)
   const floorConfig = siteConfig[currentFloor]
 
   const foundCorridors = useFoundCorridors(journeys, journeyId)
 
-  const { grid, explorerPos, hiddenSectionHashes, junctionSections } = useAssembledFloor(
+  const { grid, explorerPos, hiddenSections, junctionSections } = useAssembledFloor(
     journeyId,
     floorConfig,
     seed,
     currentFloor,
-    allEdges,
-    journeyState?.position,
+    exploredCells,
+    journeyState?.positionKey,
     detectorLevels.corridor,
     foundCorridors,
     levelIndex
   )
+
+  // Where a stored address sits on the floor the player is looking at. Only this floor is assembled,
+  // so a hit anywhere else resolves to nothing and its readout stops at the floor (see ConsumableResult).
+  const resolveCell = useCallback(
+    (hitJourneyId: string, address: string) => {
+      if (!grid || hitJourneyId !== journeyId) return undefined
+      const at = findByAddress(grid, currentFloor, address)
+      return at ? { row: at[0], col: at[1] } : undefined
+    },
+    [grid, journeyId, currentFloor]
+  )
+
+  const detector = useDetector(journeys, resolveCell)
 
   const corridors = useCorridorDetection({
     journeys,
@@ -89,7 +102,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     detectorLevel: detectorLevels.corridor,
     grid,
     explorerPos,
-    hiddenSectionHashes,
+    hiddenSections,
     junctionSections,
     foundCorridors,
   })
@@ -119,14 +132,18 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   useFloorExplorationRecorder({ journeys, journeyId, levelNr: levelIndex + 1, currentFloor, grid })
 
+  // The chests on THIS floor still holding a consumable the player had no room for, as the coordinates
+  // the map draws badges at — resolved from their addresses against the floor as it is carved now.
   const pendingConsumableCells = useMemo(() => {
-    const prefix = `${currentFloor}:`
     const result = new Set<string>()
-    for (const edgeId of journeys.getSkippedConsumables(journeyId)) {
-      if (edgeId.startsWith(prefix)) result.add(edgeId.slice(prefix.length))
+    if (!grid) return result
+    for (const address of journeys.getSkippedConsumables(journeyId)) {
+      if (floorOfAddress(address) !== currentFloor) continue
+      const at = findByAddress(grid, currentFloor, address)
+      if (at) result.add(`${at[0]},${at[1]}`)
     }
     return result
-  }, [journeys, journeyId, currentFloor])
+  }, [journeys, journeyId, currentFloor, grid])
 
   // Applies a claimed reward to game state; whether it reaches the player at all is useRewardOffer's.
   const applyReward = useApplyReward(progression, inventory, journeyId)

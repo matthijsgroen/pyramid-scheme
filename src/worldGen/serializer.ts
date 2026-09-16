@@ -43,6 +43,7 @@ const serializePuzzleRewards = (rewards: (TreasureReward | undefined)[]): string
 const serializeSideSection = (s: SideSection): string => {
   const endStr = typeof s.end === "object" ? `{ stairId: "${s.end.stairId}" }` : `"${s.end}"`
   const parts = [`pathPuzzles: ${s.pathPuzzles}`, `difficulty: "${s.difficulty}"`, `end: ${endStr}`]
+  if (s.label !== undefined) parts.unshift(`label: ${JSON.stringify(s.label)}`)
   if (s.gate)
     parts.push(
       s.gate.type === "tomb-key"

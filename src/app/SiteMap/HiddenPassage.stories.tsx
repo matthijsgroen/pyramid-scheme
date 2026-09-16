@@ -2,7 +2,8 @@ import type { StoryObj } from "@storybook/react-vite"
 import { useState } from "react"
 import type { FloorConfig } from "../../game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
-import { useAssembledFloor, encodeEdge } from "./useAssembledFloor"
+import { useAssembledFloor } from "./useAssembledFloor"
+import { encodeEdge } from "./edgeId"
 
 const SEED = 17
 const JOURNEY_ID = "hidden-story"
@@ -31,7 +32,7 @@ const HiddenPassageDemo = ({ detectionLevel }: { detectionLevel: number }) => {
   const [revealedSections, setRevealedSections] = useState<ReadonlySet<string>>(new Set())
   const [mosaicFound, setMosaicFound] = useState(false)
 
-  const { grid, explorerPos, hiddenJunctions, hiddenSectionHashes } = useAssembledFloor(
+  const { grid, explorerPos, hiddenJunctions, hiddenSections } = useAssembledFloor(
     JOURNEY_ID,
     config,
     SEED,
@@ -68,7 +69,7 @@ const HiddenPassageDemo = ({ detectionLevel }: { detectionLevel: number }) => {
   }
 
   const handleReveal = () => {
-    setRevealedSections(prev => new Set([...prev, ...hiddenSectionHashes]))
+    setRevealedSections(prev => new Set([...prev, ...hiddenSections]))
   }
 
   const handleReset = () => {

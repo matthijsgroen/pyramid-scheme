@@ -2,7 +2,12 @@ import { type FC, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { version } from "@/../package.json"
 import { clearGameData, useGameStorage } from "@/support/useGameStorage"
+import { CELL_KEY_VERSION, type StoredJourneyStateV3 } from "@/app/state/useJourneys"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
+
+// Module constant, not an inline literal: a fresh array every render makes useOfflineStorage look
+// like it has a different default each time (same reason useJourneys keeps one).
+const NO_JOURNEYS: StoredJourneyStateV3[] = []
 
 type SettingsModalProps = {
   isOpen: boolean
@@ -13,6 +18,15 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { t, i18n } = useTranslation("common")
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [tutorialsEnabled, setTutorialsEnabled] = useGameStorage<boolean>("tutorialsEnabled", true)
+  const [journeys, , journeysLoaded] = useGameStorage<StoredJourneyStateV3[]>("journeys", NO_JOURNEYS)
+
+  // WHICH KEY FORMAT THIS SAVE IS ON, shown beside the app version so a player can read it out and the
+  // answer to "has your save been migrated yet?" is a number rather than a guess. The lowest across
+  // their journeys, because one left behind is the one that matters; a save with no journeys has
+  // nothing to migrate and is current by definition. Unstamped reads 0 — see CELL_KEY_VERSION.
+  const saveVersion = journeys.length
+    ? Math.min(...journeys.map(journey => journey.cellKeyVersion ?? 0))
+    : CELL_KEY_VERSION
 
   const handleClearGameData = async () => {
     await clearGameData()
@@ -103,7 +117,12 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         <div className="mt-6 flex items-center justify-end gap-4">
-          <div className="text-sm text-gray-500">{t("ui.footer", { year: new Date().getFullYear(), version })}</div>
+          <div className="text-sm text-gray-500">
+            {t("ui.footer", { year: new Date().getFullYear(), version })}
+            {/* Only once storage has actually been read — an unloaded store looks like no journeys at
+                all, which would show "current" to a player whose save is not. */}
+            {journeysLoaded && <span> {t("ui.saveVersion", { saveVersion })}</span>}
+          </div>
           <button
             onClick={handleClose}
             className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"

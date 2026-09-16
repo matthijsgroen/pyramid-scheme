@@ -14,9 +14,9 @@ export type RewardOffer = {
   /** The reward waiting on the player's acknowledgement; null while nothing is being offered. */
   pending: PendingReward | null
   /** A reward just won from an encounter. */
-  offerFound: (reward: TreasureReward, edgeId: string, keyColors?: readonly KeyColor[]) => void
+  offerFound: (reward: TreasureReward, address: string, keyColors?: readonly KeyColor[]) => void
   /** Re-offer of a consumable the player once left behind because their pack was full. */
-  offerSkipped: (reward: TreasureReward, edgeId: string) => void
+  offerSkipped: (reward: TreasureReward, address: string) => void
   dismiss: () => void
 }
 
@@ -35,10 +35,10 @@ export const useRewardOffer = ({ journeys, rewardContributions, applyReward }: R
   const [pending, setPending] = useState<PendingReward | null>(null)
 
   const offerFound = useCallback(
-    (reward: TreasureReward, edgeId: string, keyColors?: readonly KeyColor[]) => {
+    (reward: TreasureReward, address: string, keyColors?: readonly KeyColor[]) => {
       if (rewardContributions.skip(reward)) return
       if (!rewardContributions.canAccept(reward)) {
-        journeys.markConsumableSkipped(edgeId)
+        journeys.markConsumableSkipped(address)
         setPending({ reward, consumableFull: true, onCollect: () => {} })
         return
       }
@@ -48,7 +48,7 @@ export const useRewardOffer = ({ journeys, rewardContributions, applyReward }: R
   )
 
   const offerSkipped = useCallback(
-    (reward: TreasureReward, edgeId: string) => {
+    (reward: TreasureReward, address: string) => {
       if (!rewardContributions.canAccept(reward)) {
         setPending({ reward, consumableFull: true, onCollect: () => {} })
         return
@@ -57,7 +57,7 @@ export const useRewardOffer = ({ journeys, rewardContributions, applyReward }: R
         reward,
         onCollect: () => {
           applyReward(reward)
-          journeys.clearConsumableSkipped(edgeId)
+          journeys.clearConsumableSkipped(address)
         },
       })
     },

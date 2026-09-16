@@ -36,7 +36,20 @@ const setup = (cells: GridCell[], floorDifficulty: Difficulty = "starter") => {
   return { hook, journeys, onReward }
 }
 
-const emptyRoom: GridCell = { type: "room", roomType: "encounter", dirs: new Set(["e"]), state: "reachable" }
+// The section and the walk step the assembler gives every cell, because a write is filed under
+// `${sectionHash}#${floor}/${slot}` now (cellIdentity.ts) — without them this would test the fallback.
+const SECTION = "sec"
+const emptyRoom: GridCell = {
+  type: "room",
+  roomType: "encounter",
+  dirs: new Set(["e"]),
+  state: "reachable",
+  sectionHash: SECTION,
+  sectionAddress: SECTION,
+  ordinal: "0",
+  pathIndex: 0,
+}
+const ROOM_ADDRESS = `${SECTION}#0/p0`
 
 // The one exception to the empty-registry rule above: a room whose family IS registered stays open,
 // which is the only way to read the context core hands that family.
@@ -76,7 +89,7 @@ describe("useEncounter", () => {
 
     act(() => hook.result.current.open([0, 0], true))
 
-    expect(journeys.markCellExplored).toHaveBeenCalledWith("", "0:0,0", null)
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,0", ROOM_ADDRESS)
     expect(hook.result.current.isOpen).toBe(false)
   })
 
@@ -85,7 +98,7 @@ describe("useEncounter", () => {
 
     act(() => hook.result.current.open([0, 0], true))
 
-    expect(onReward).toHaveBeenCalledWith({ type: "consumable", itemId: "bandage" }, "0:0,0", undefined)
+    expect(onReward).toHaveBeenCalledWith({ type: "consumable", itemId: "bandage" }, ROOM_ADDRESS, undefined)
   })
 
   it("says which key a coloured chest held, so the reveal names the door it opens", () => {

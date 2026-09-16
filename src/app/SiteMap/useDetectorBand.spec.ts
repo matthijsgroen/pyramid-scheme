@@ -30,7 +30,7 @@ const compassHit = (over: Partial<CompassHit> = {}): CompassHit =>
 
 const consumableHit = (over: Partial<ConsumableResult> = {}): ConsumableResult => ({
   journeyId: "j1",
-  edgeId: "0:0,1",
+  address: "s#0/1@rencounter",
   floorIdx: 0,
   cell: { row: 0, col: 1 },
   ...over,

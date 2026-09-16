@@ -61,6 +61,7 @@ const buildDslSection = <TExtra extends string>(
   // on any path, not just the main path (§G).
   const encountersByIndex = resolveNodeSelectors(cs.nodes, pathPuzzles)
   return {
+    ...(cs.label !== undefined ? { label: cs.label } : {}),
     pathPuzzles,
     difficulty: sectionDifficulty,
     end,

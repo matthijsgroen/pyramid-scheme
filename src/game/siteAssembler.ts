@@ -112,6 +112,52 @@ const computeLegacySideSectionHash = (section: SideSection | SubSection, idx: nu
     )
   )
 
+/** The main path's own address, in the same vocabulary boardIndex.ts uses for its chains. */
+const MAIN_SECTION_ADDRESS = "main"
+
+/** The shape the positional addresses take, which an authored label must not imitate — otherwise a
+ * label could collide with a sibling that happens to sit at that index. */
+const POSITIONAL_ADDRESS = /^(main|s\d+(\.\d+)?)$/
+
+/** What a label may be made of. `#` and `/` are the address's own separators (cellIdentity.ts), so a
+ * label carrying either would produce a cell address that reads back as a different section or floor. */
+const USABLE_LABEL = /^[A-Za-z0-9][A-Za-z0-9_-]*$/
+
+/**
+ * What each of a floor's sections is called: its authored `label` where it has one, else where it sits.
+ *
+ * Labelling is opt-in per path, because naming every one of them would be a tax on authoring for the
+ * sake of the few that matter. An unlabelled section keeps the positional address and the hazard that
+ * comes with it — insert a sidepath ahead of it and it shifts — which is exactly what a label buys off.
+ *
+ * Returns the duplicates instead of the addresses when two sections would answer to the same name: a
+ * save cannot tell them apart, so their progress would be shared between two places.
+ */
+const sectionAddresses = (
+  config: FloorConfig
+): { ok: true; of: Map<string, string> } | { ok: false; duplicate: string } => {
+  const of = new Map<string, string>()
+  const taken = new Set<string>([MAIN_SECTION_ADDRESS])
+  const claim = (positional: string, label: string | undefined): string | null => {
+    const address = label ?? positional
+    // A label shaped like a positional address could collide with whichever sibling lands on that
+    // index; one carrying an address separator would not survive being read back at all.
+    if (label !== undefined && (POSITIONAL_ADDRESS.test(label) || !USABLE_LABEL.test(label))) return null
+    if (taken.has(address)) return null
+    taken.add(address)
+    of.set(positional, address)
+    return address
+  }
+  for (const [idx, side] of config.sideSections.entries()) {
+    if (claim(`s${idx}`, side.label) === null) return { ok: false, duplicate: side.label ?? `s${idx}` }
+    for (const [subIdx, sub] of (side.sideSections ?? []).entries()) {
+      if (claim(`s${idx}.${subIdx}`, sub.label) === null)
+        return { ok: false, duplicate: sub.label ?? `s${idx}.${subIdx}` }
+    }
+  }
+  return { ok: true, of }
+}
+
 // The floor-wide inputs to the carve itself: change either and every cell on the floor moves.
 const carveShape = (config: FloorConfig) => ({
   packing: config.packing,
@@ -394,6 +440,15 @@ export const assembleFloor = (
     floorRef = { journeyId: siteId, floorIndex: 0 },
     resolveBoardIndex,
   } = keyRequirements
+  // Before anything is carved: two sections a save could not tell apart is a data-loss bug, not a
+  // layout one, so it fails the floor loudly here rather than quietly sharing one player's progress
+  // between two places. `yarn generate-world` and the floor sweep both build every floor, so an
+  // authored label that collides cannot reach a player.
+  const addresses = sectionAddresses(config)
+  if (!addresses.ok) {
+    return { success: false, reasons: [{ type: "unusableSectionAddress", address: addresses.duplicate }] }
+  }
+
   const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
   const fezShop = resolveEncounter("fez-shop", "fez-shop")
   const keyGate = resolveEncounter("key-gate", "key-gate")
@@ -993,12 +1048,20 @@ export const assembleFloor = (
     const roomSpecs = new Map<string, RoomSpec>()
     const cellSectionHash = new Map<string, string>()
     /**
-     * WHERE A CELL SITS ALONG ITS SECTION'S WALK, which is what a save should remember it by.
+     * WHICH AUTHORED SECTION each cell belongs to — `main`, `s0`, `s0.1`. What the author steers, and
+     * so what a save files the cell under: where the builder hangs a sidepath along the main walk, and
+     * how much it holds, are both free to change without the sidepath becoming a different place.
+     * Addressed exactly as boardIndex.ts addresses chains, because it is the same thing.
+     */
+    const cellSectionAddress = new Map<string, string>()
+    /**
+     * WHERE A CELL SITS ALONG ITS SECTION'S WALK — how far in it is, not which cell it is.
      *
-     * Exploration is stored per cell, and it was stored by grid coordinate — an accident of where the
-     * carve happened to land. Two carves of the SAME section put its third room at different
-     * coordinates, so a save restored onto a moved section marks rooms done that were never opened.
-     * The ordinal moves with the section instead: same shape, same ordinals, wherever it ends up.
+     * This is a property of the carve, not of the authoring: the walk's length is `targetDistance`'s
+     * choice, so re-carving a floor renumbers everything past the first divergence. A save must not
+     * name a cell by it (it names rooms by their authored slot — see cellIdentity.ts). What it is good
+     * for is ORDER, which survives: it puts a section's cells in the sequence the player walks them, so
+     * the fog can be restored as far as the furthest room they reached.
      */
     const cellOrdinal = new Map<string, string>()
     const cellLegacySectionHash = new Map<string, string>()
@@ -1086,6 +1149,7 @@ export const assembleFloor = (
     const mainSectionHash = computeMainSectionHash(config, mainIsolated)
     const legacyMainSectionHash = computeLegacyMainSectionHash(config)
     mainPath.forEach(([r, c], step) => cellOrdinal.set(posKey(r, c), String(step)))
+    mainPath.forEach(([r, c]) => cellSectionAddress.set(posKey(r, c), MAIN_SECTION_ADDRESS))
     for (const [r, c] of mainPath) {
       cellSectionHash.set(posKey(r, c), mainSectionHash)
       cellLegacySectionHash.set(posKey(r, c), legacyMainSectionHash)
@@ -1107,6 +1171,8 @@ export const assembleFloor = (
       }
       const sectionTier = sideSections[group.sectionIdx].difficulty
       group.cells.forEach(([r, c], step) => cellOrdinal.set(posKey(r, c), String(step)))
+      const groupAddress = addresses.of.get(`s${group.sectionIdx}`) ?? `s${group.sectionIdx}`
+      group.cells.forEach(([r, c]) => cellSectionAddress.set(posKey(r, c), groupAddress))
       for (const [r, c] of group.cells) {
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
@@ -1125,6 +1191,9 @@ export const assembleFloor = (
       )
       const legacyHash = computeLegacySideSectionHash(subSection, subSectionIdx, parentSectionIdx)
       cells.forEach(([r, c], step) => cellOrdinal.set(posKey(r, c), String(step)))
+      const subAddress =
+        addresses.of.get(`s${parentSectionIdx}.${subSectionIdx}`) ?? `s${parentSectionIdx}.${subSectionIdx}`
+      cells.forEach(([r, c]) => cellSectionAddress.set(posKey(r, c), subAddress))
       for (const [r, c] of cells) {
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
@@ -1437,6 +1506,7 @@ export const assembleFloor = (
 
       const spec = roomSpecs.get(cellKey)
       const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
+      const sectionAddress = cellSectionAddress.get(cellKey) ?? MAIN_SECTION_ADDRESS
       const legacySectionHash = cellLegacySectionHash.get(cellKey) ?? legacyMainSectionHash
       const hidden = hiddenCellPositions.has(cellKey) || undefined
       if (spec) {
@@ -1452,6 +1522,7 @@ export const assembleFloor = (
           // in a junior pocket is junior stone even though only encounter rooms carry a difficulty of
           // their own. The spread below still wins, so a room authored at its own tier keeps it.
           ...(cellDifficulty.get(cellKey) ? { difficulty: cellDifficulty.get(cellKey) } : {}),
+          sectionAddress,
           sectionHash,
           legacySectionHash,
           ...(cellOrdinal.get(cellKey) ? { ordinal: cellOrdinal.get(cellKey) } : {}),
@@ -1465,6 +1536,7 @@ export const assembleFloor = (
           type: "corridor",
           dirs,
           state: "fogged",
+          sectionAddress,
           sectionHash,
           legacySectionHash,
           ...(cellOrdinal.get(cellKey) ? { ordinal: cellOrdinal.get(cellKey) } : {}),
@@ -1495,6 +1567,7 @@ export const assembleFloor = (
           mc = (c + nc) / 2
         const hidden = hiddenCellPositions.has(cellKey) && hiddenCellPositions.has(neighborKey) ? true : undefined
         const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
+        const sectionAddress = cellSectionAddress.get(cellKey) ?? MAIN_SECTION_ADDRESS
         const connectorTier = cellDifficulty.get(cellKey)
         const endA = cellOrdinal.get(cellKey)
         const endB = cellOrdinal.get(neighborKey)
@@ -1503,6 +1576,7 @@ export const assembleFloor = (
           type: "corridor",
           dirs: new Set([d, OPPOSITE[d]]),
           state: "fogged",
+          sectionAddress,
           sectionHash,
           legacySectionHash: cellLegacySectionHash.get(cellKey) ?? legacyMainSectionHash,
           // A CONNECTOR IS NAMED BY THE TWO CELLS IT JOINS, sorted so it does not matter which end the

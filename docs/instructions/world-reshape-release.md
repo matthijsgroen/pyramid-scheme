@@ -24,32 +24,43 @@ What is not mechanical is the cost: **every floor is carved somewhere else after
 
 ## What must be in the release, and why together
 
-| Change | Why it cannot be split off |
-| --- | --- |
-| The `siteAssembler` shuffles | The reshape itself |
-| Exploration read switched to ordinals | Reading coordinates against moved floors is the bug this whole migration exists to avoid |
+| Change                                                         | Why it cannot be split off                                                                                    |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| The `siteAssembler` shuffles                                   | The reshape itself                                                                                            |
+| Exploration read switched to slots, keyed by authoring address | **Already shipped.** Reading coordinates against moved floors is the bug this whole migration exists to avoid |
 
-The constraint is **asymmetric**. Shipping the read switch without the reshape is harmless — ordinals
-describe the current carve perfectly well. Shipping the reshape without the read switch restores saved
-coordinates onto floors that have moved, which marks rooms explored that were never opened, including
-ones holding keys. So if these are ever split, the read switch goes first. Never the reverse.
+The constraint is **asymmetric**. Shipping the read switch without the reshape is harmless — slots
+describe the current carve perfectly well, which is why it went first. Shipping the reshape without the
+read switch restores saved coordinates onto floors that have moved, which marks rooms explored that were
+never opened, including ones holding keys.
 
-**The read must not fall back to coordinates.** A save carrying no ordinals gets no exploration. The
+**The read does not fall back to coordinates, or to the hash.** A save carrying no slots gets no exploration. The
 fallback would fire precisely for the players the migration missed — the ones who skipped the capture
 release — and give them the mis-restore instead of a clean slate.
 
 ---
 
-## Why the ordinals still fit after the reshape
+## Why the slots still fit after the reshape
 
-A section hash is computed from the authored spec, not from where the section was carved. That is what
-made coordinates unsafe: a section keeps its hash while landing somewhere else entirely. It is also
-what makes this migration work — the hash does not move when the carve does, so the ordinals captured
-before the reshape are still valid keys after it.
+Nothing in a save's identity is read off the carve any more. A section is named by its **authoring
+address** (`main`, `s0`, `s0.1`) and a room by its **slot** (`p2`, `xtreasure-chest`, `stair:s1`) — both
+of which come from the authored spec, so they are still valid keys after every floor has moved.
 
-A section whose internal shape genuinely changes is caught by the kind in the key
-(`<ordinal>@<kind>`): the kinds disagree, the entry is skipped, and that cell reads as unexplored
-rather than as a lie. See `docs/game-design/world-stability.md`.
+**The structural hash is deliberately NOT the identity, and this release is why.** It covers the floor's
+own `packing` and `corridorStraightness`. If the compaction pass turns either — and turning them is the
+obvious way to compact — every hash in the world moves at once and every run resets. Keying by address
+is what makes the reshape survivable; if you find yourself reaching for `sectionHash` to decide whether
+something is the same place, that is the bug.
+
+**Do not reach for the ordinal here.** `cell.ordinal` is the step along the CARVED walk, and the carve
+decides how many steps that is: re-carving one expert floor at a neighbouring seed took it from 685
+cells to 668 and renumbered everything past the first divergence. An ordinal survives a re-shuffle, not
+a re-length, and a compaction is a re-length. `cellIdentity.ts` carries the measurements.
+
+Corridors and forks have no authored identity at all, so their keys DO go stale — by design. Their fog
+is rebuilt from the high-water mark of the rooms instead, which is the one thing about a corridor that
+outlives the carve. A section whose rooms genuinely change is caught by its hash moving: the entries are
+skipped and it reads as unexplored rather than as a lie. See `docs/game-design/world-stability.md`.
 
 ---
 
@@ -65,18 +76,67 @@ Layout decides these, so they are regenerated in the same release, not assumed:
 
 ---
 
-## The loot hole, if it is still open
+## What happens to a save that skipped the capture release
+
+**It is thrown away, deliberately, and in full.** Decided 2026-09-16.
+
+A player who never launched the capture release arrives here with coordinates and no current
+`cellKeyVersion`. Re-keying them now would translate those coordinates against the RESHAPED carve —
+the original bug, arriving through the migration's own front door. So the reshape release does not try:
+
+1. Delete `exploredSections`, `position`, `sectionHash`, `legacySectionHash`, the re-key
+   (`migrateJourneyToCarveIndependent`) and the hook that runs it. The archive only means anything
+   while the carve it was written against is still the one the code produces; the moment the floors
+   move it is garbage. Repoint `floorExploration.ts` to `sectionAddress` first — it is the last
+   non-migration reader of the hash.
+2. On launch, **any save not carrying the current `cellKeyVersion` is reset in full** — journeys,
+   `pyramid-scheme-progression-v4`, `inventory-v2`, `levelAnswers`, `puzzleState`. Not a storage-version
+   bump: that resets everyone, including the players this whole migration exists to protect. It is
+   per-save, and the stamp is what decides.
+
+`cellKeyVersion` outlives the re-key it was built for: after this release nothing re-keys anything, but
+the stamp is still the exact record of which saves came through, which is what the reset reads. Every
+save carries it — journeys with nothing explored are stamped too, precisely so "has not walked into a
+pyramid yet" cannot read as "never migrated".
+
+**Why a full reset rather than a partial restore.** A partial restore is what opens the loot hole
+below: sections reset while progression is kept, so a per-tomb map-piece count and a money balance are
+collected twice. A full reset keeps nothing, so nothing is collected twice — the player re-earns from
+zero. The loot that would actually hurt to duplicate is idempotent anyway (fragments are `id:index`,
+tomb keys are ids), so it cannot double even by accident.
+
+**Why this is acceptable at all.** The game is in alpha and says so on the first screen. The players
+who lose something here are the ones who tried it once and stopped. The ones who play daily will have
+launched the capture release within a week of it shipping, and keep everything.
+
+---
+
+## The loot hole — no longer this release's problem, still a problem
 
 Fragments (`id:index`) and tomb keys are idempotent and survive any reset. **Map pieces are a per-tomb
-count and money is a balance**, so both can be collected twice by a section that resets. This is not
-caused by the reshape — any legitimately restructured section does it today — but the reshape is the
-first change that could reset many sections at once. Key them to the reward's identity, the way
-fragments already are, before the reshape ships.
+count and money is a balance**, so both can be collected twice by a section that resets while the
+player's progression is kept.
+
+**The reshape no longer triggers it.** A save that comes across keeps everything — no section resets,
+because the identity is authored and the authoring has not moved. A save that does not come across is
+reset in full, progression included, so it re-earns from zero rather than collecting anything twice.
+
+It remains open for ordinary re-authoring, which is where it actually bites: relabel a path, or take a
+section out and put one back, and that section's chests are new ground again while the money already
+banked stays banked. Keying both to the reward's identity, the way fragments already are, is still the
+fix — it is just no longer gated on this release.
 
 ---
 
 ## Before starting
 
 The capture release has to have been live long enough for players to have launched it once — a launch
-is all the backfill needs. There is no signal for this in the game today; if one is wanted, report how
-many saves still lack ordinals.
+is all the re-keying needs. **A week is the agreed wait**, on the basis that the players worth
+protecting play daily; there is no telemetry for it and none is being built, because the failure mode
+for everyone else is a clean start rather than a corrupted one.
+
+Once the reshape ships, `exploredSections` and `position` have done their job as the archive the
+re-keying reads, and both go — along with the ability to re-key at all. Until then they are what makes
+a change to the key format cost one launch instead of a player's run; it has already paid for itself
+twice, at `cellKeyVersion` 2 and 3. After the reshape, a further change to the key format costs a
+reset, and that is the accepted trade.

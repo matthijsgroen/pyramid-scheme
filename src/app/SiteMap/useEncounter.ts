@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { cellOrdinalKey } from "./exploredOrdinals"
+import { cellAddress } from "./cellIdentity"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FloorGrid, KeyColor, TreasureReward } from "@/game/siteTypes"
 import { getCell } from "@/game/gridNavigation"
 import { hashString } from "@/support/hashString"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { getFamilyPlugin, type FamilyContext, type FamilyPlugin } from "@/app/families/familyRegistry"
-import { encodeEdge } from "./useAssembledFloor"
+import { encodeEdge } from "./edgeId"
 import { useClearPuzzleState } from "@/mods/core/app/puzzleState"
 
 type EncounterArgs = {
@@ -17,7 +17,7 @@ type EncounterArgs = {
   grid: FloorGrid | null
   ownedKeys: ReadonlySet<string>
   /** Called with whatever loot the solved room held — the offer itself is the reward topic's job. */
-  onReward: (reward: TreasureReward, edgeId: string, keyColors?: readonly KeyColor[]) => void
+  onReward: (reward: TreasureReward, address: string, keyColors?: readonly KeyColor[]) => void
 }
 
 export type Encounter = {
@@ -66,6 +66,9 @@ export const useEncounter = ({
     return {
       journeyId,
       edgeId,
+      // What a family files this room's state under. The coordinate above says where the room is drawn
+      // right now; this says which room it IS, and keeps saying it after the floor is carved again.
+      address: (grid && cellAddress(grid, currentFloor, row, col)) || edgeId,
       sectionHash,
       freshArrival: active.freshArrival,
       // The tier this room's own section was authored at, falling back to the floor's for a cell that
@@ -112,10 +115,11 @@ export const useEncounter = ({
 
   // Which board is open, for the slot that holds its unfinished state. The family and the board it
   // was dealt are part of it, not just the cell: two levels of one site can put different rooms at
-  // the same floor coordinate.
+  // the same place. The cell is named by its address, so half-finished moves stay with the room they
+  // were made in when the floor is carved again, rather than with whatever lands on its coordinate.
   const roomKey = useMemo(() => {
     if (!family || !ctx) return undefined
-    return [ctx.journeyId, ctx.edgeId, family.meta.id, ctx.boardIndex ?? ""].join("|")
+    return [ctx.journeyId, ctx.address, family.meta.id, ctx.boardIndex ?? ""].join("|")
   }, [family, ctx])
 
   const clearPuzzleState = useClearPuzzleState()
@@ -129,7 +133,8 @@ export const useEncounter = ({
       const edgeId = encodeEdge(currentFloor, row, col)
       const cell = getCell(grid, row, col)
       const sectionHash = cell && cell.type !== "empty" ? (cell.sectionHash ?? "") : ""
-      journeys.markCellExplored(sectionHash, edgeId, cell ? cellOrdinalKey(cell) : null)
+      const address = (grid && cellAddress(grid, currentFloor, row, col)) || edgeId
+      journeys.markCellExplored(sectionHash, edgeId, address)
       // A resolved room is never reopened, so its moves have nothing left to say.
       clearPuzzleState()
       setActive(null)
@@ -144,7 +149,7 @@ export const useEncounter = ({
         reward.type === "tombKey" && cell?.type === "room"
           ? (cell.keyColors ?? (cell.keyColor ? [cell.keyColor] : undefined))
           : undefined
-      onReward(reward, edgeId, keyColors)
+      onReward(reward, address, keyColors)
     },
     [grid, journeys, currentFloor, onReward, clearPuzzleState]
   )
