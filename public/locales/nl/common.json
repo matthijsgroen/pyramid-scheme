@@ -83,6 +83,7 @@
     "startJourney": "Start {{name}}",
     "answerNow": "Het antwoord is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "saveVersion": "· opslag v{{saveVersion}}",
     "resetPuzzle": "Opnieuw",
     "hint": "Hint",
     "undo": "Ongedaan",

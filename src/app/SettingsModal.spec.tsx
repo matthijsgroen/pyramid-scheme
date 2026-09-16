@@ -8,12 +8,20 @@ const changeLanguage = vi.fn((next: string) => {
   language = next
 })
 
+// Renders the key with whatever was interpolated into it, so a test can read the numbers back out.
 vi.mock("react-i18next", () => ({
-  useTranslation: () => ({ t: (key: string) => key, i18n: { language, changeLanguage } }),
+  useTranslation: () => ({
+    t: (key: string, vars?: Record<string, unknown>) => [key, ...(vars ? Object.values(vars) : [])].join(" "),
+    i18n: { language, changeLanguage },
+  }),
 }))
 
+// What the store holds, per key, for one test. `journeys` is read for the save version in the footer.
+let stored: { journeys?: unknown[]; loaded?: boolean } = {}
+
 vi.mock("@/support/useGameStorage", () => ({
-  useGameStorage: () => [true, vi.fn()],
+  useGameStorage: (key: string) =>
+    key === "journeys" ? [stored.journeys ?? [], vi.fn(), stored.loaded ?? true] : [true, vi.fn(), true],
   clearGameData: vi.fn(),
 }))
 
@@ -24,6 +32,7 @@ const selectIn = (container: HTMLElement) => container.querySelector<HTMLSelectE
 afterEach(() => {
   cleanup()
   language = "en"
+  stored = {}
   changeLanguage.mockClear()
 })
 
@@ -47,5 +56,46 @@ describe("SettingsModal language selection", () => {
     // No local copy to keep in step: the next render simply reflects i18n's new language.
     rerender(<SettingsModal isOpen onClose={() => {}} />)
     expect(selectIn(container).value).toBe("nl")
+  })
+})
+
+// ── the save version in the footer ────────────────────────────────────────────
+
+// A player can read this out, so "has your save been migrated yet?" is answered with a number rather
+// than a guess — which is what the reshape release's full reset turns on.
+describe("the save version beside the app version", () => {
+  const footerOf = (container: HTMLElement) => container.textContent ?? ""
+
+  it("shows the current version when there is nothing stored to migrate", () => {
+    const { container } = render(<SettingsModal isOpen onClose={vi.fn()} />)
+
+    expect(footerOf(container)).toContain("ui.saveVersion 3")
+  })
+
+  it("shows the lowest version across the saves, because one left behind is the one that matters", () => {
+    stored = { journeys: [{ cellKeyVersion: 3 }, { cellKeyVersion: 2 }, { cellKeyVersion: 3 }] }
+
+    const { container } = render(<SettingsModal isOpen onClose={vi.fn()} />)
+
+    expect(footerOf(container)).toContain("ui.saveVersion 2")
+  })
+
+  it("reads an unstamped save as 0, so a save that never migrated says so", () => {
+    stored = { journeys: [{ cellKeyVersion: 3 }, {}] }
+
+    const { container } = render(<SettingsModal isOpen onClose={vi.fn()} />)
+
+    expect(footerOf(container)).toContain("ui.saveVersion 0")
+  })
+
+  // An unloaded store looks exactly like no journeys at all, which would tell a player whose save is
+  // behind that they are current — the one wrong answer this must never give.
+  it("says nothing until storage has actually been read", () => {
+    stored = { journeys: [{ cellKeyVersion: 0 }], loaded: false }
+
+    const { container } = render(<SettingsModal isOpen onClose={vi.fn()} />)
+
+    expect(footerOf(container)).not.toContain("ui.saveVersion")
+    expect(footerOf(container)).toContain("ui.footer")
   })
 })
