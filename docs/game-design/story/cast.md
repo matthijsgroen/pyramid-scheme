@@ -73,6 +73,11 @@ which is both funnier and kinder, and keeps the pair from souring.
   tooltip the first time.
 - Never threatens, and is never the source of menace.
 - Never moralises about money at the player, however much the ending is about value.
+- **Never names the joke in the title.** The burial economy is a scheme — everyone paid in, the priests
+  and carvers and merchants were paid now, nobody ever collected, and Fez is still selling the receipts.
+  The story is built on that and says it nowhere. **Considered and declined**: he is the one character who
+  would see it as a business, so a line at `wizard_2` would land — and it would also explain a pun that
+  works better unexplained, and put a sermon where a joke was.
 - Never refers to the explorer by name or pronoun.
 - Never claims scholarship he has not got.
 
