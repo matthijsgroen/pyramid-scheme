@@ -7,14 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Fixed
-
-- Installed on an iPhone, the game fills the whole screen: it used to end a status bar short of the bottom, leaving a black band under the page.
+## 0.43.11 - 2026-09-17
 
 ### Changed
 
 - Your progress in a pyramid survives its corridors being rebuilt or its rooms re-authored: only what actually changed comes back unexplored.
 - Settings shows which version your save is on, beside the game version.
+
+### Fixed
+
+- Installed on an iPhone, the game fills the whole screen: it used to end a status bar short of the bottom, leaving a black band under the page.
 
 ## 0.43.10 - 2026-09-16
 
