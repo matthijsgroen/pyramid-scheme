@@ -78,6 +78,7 @@ export const PuzzleLab: FC = () => {
     () => ({
       journeyId: "puzzle-lab",
       edgeId: `lab:${seed}`,
+      address: `lab#${seed}@rencounter`,
       sectionHash: "lab",
       freshArrival: true,
       difficulty,

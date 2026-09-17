@@ -4,11 +4,54 @@ import type { CellState, FloorGrid, GridCell, SiteConfig } from "@/game/siteType
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { useSiteNavigation } from "./useSiteNavigation"
 
-const entrance: GridCell = { type: "room", roomType: "portal", dirs: new Set(["e"]), state: "completed" }
-const corridor: GridCell = { type: "corridor", dirs: new Set(["w", "e"]), state: "reachable" }
-const puzzleRoom: GridCell = { type: "room", roomType: "encounter", dirs: new Set(["w"]), state: "reachable" }
-const exitRoom: GridCell = { type: "room", roomType: "portal", dirs: new Set(["w"]), state: "reachable" }
-const fogged: GridCell = { type: "corridor", dirs: new Set(["w"]), state: "fogged" }
+// Every cell carries the section and the ordinal the assembler gives it, because that is what a write
+// is filed under now — `${sectionHash}#${floor}/${slot}` for a room, `~${ordinal}` for a corridor
+// (cellIdentity.ts). Without them these fixtures would exercise the fallback rather than the real path.
+const SECTION = "sec"
+const entrance: GridCell = {
+  type: "room",
+  roomType: "portal",
+  dirs: new Set(["e"]),
+  state: "completed",
+  sectionHash: SECTION,
+  sectionAddress: SECTION,
+  ordinal: "0",
+}
+const corridor: GridCell = {
+  type: "corridor",
+  dirs: new Set(["w", "e"]),
+  state: "reachable",
+  sectionHash: SECTION,
+  sectionAddress: SECTION,
+  ordinal: "1",
+}
+const puzzleRoom: GridCell = {
+  type: "room",
+  roomType: "encounter",
+  dirs: new Set(["w"]),
+  state: "reachable",
+  sectionHash: SECTION,
+  sectionAddress: SECTION,
+  ordinal: "1",
+  pathIndex: 0,
+}
+const exitRoom: GridCell = {
+  type: "room",
+  roomType: "portal",
+  dirs: new Set(["w"]),
+  state: "reachable",
+  sectionHash: SECTION,
+  sectionAddress: SECTION,
+  ordinal: "2",
+}
+const fogged: GridCell = {
+  type: "corridor",
+  dirs: new Set(["w"]),
+  state: "fogged",
+  sectionHash: SECTION,
+  sectionAddress: SECTION,
+  ordinal: "1",
+}
 const gate = (state: CellState = "reachable"): GridCell => ({
   type: "room",
   roomType: "encounter",
@@ -16,7 +59,15 @@ const gate = (state: CellState = "reachable"): GridCell => ({
   tags: ["gate"],
   dirs: new Set(["w", "e"]),
   state,
+  sectionHash: SECTION,
+  sectionAddress: SECTION,
+  ordinal: "2",
 })
+
+// What each fixture is filed under once it is placed on the grid.
+const CORRIDOR_AT_1 = `${SECTION}#0/~1`
+const PUZZLE_AT_1 = `${SECTION}#0/p0`
+const GATE_AT_2 = `${SECTION}#0/xkey-gate`
 
 const gridOf = (cells: GridCell[]): FloorGrid => ({
   cells: [cells],
@@ -79,8 +130,8 @@ describe("useSiteNavigation", () => {
 
     act(() => hook.result.current.onCellClick(0, 1))
 
-    expect(journeys.markCellExplored).toHaveBeenCalledWith("", "0:0,1", null)
-    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", "0:0,1")
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", CORRIDOR_AT_1)
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", CORRIDOR_AT_1, "0:0,1")
   })
 
   it("opens a room's encounter only once the explorer has walked there", () => {
@@ -100,7 +151,7 @@ describe("useSiteNavigation", () => {
     const { hook, journeys, onEncounter } = setup([entrance, corridor, gate()])
 
     act(() => hook.result.current.onCellClick(0, 2))
-    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", "0:0,2")
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", GATE_AT_2, "0:0,2")
 
     arrive()
     expect(onEncounter).toHaveBeenCalledWith([0, 2], true)
@@ -123,18 +174,21 @@ describe("useSiteNavigation", () => {
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
-    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", "0:0,1")
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", PUZZLE_AT_1, "0:0,1")
     expect(onEncounter).not.toHaveBeenCalled()
   })
 
   it("reopens a completed chest whose consumable was left behind, once the player is back at it", () => {
     const reward = { type: "consumable", itemId: "bandage" }
-    const { hook, onSkippedConsumable } = setup([entrance, { ...puzzleRoom, state: "completed", reward }], ["0:0,1"])
+    const { hook, onSkippedConsumable } = setup(
+      [entrance, { ...puzzleRoom, state: "completed", reward }],
+      [PUZZLE_AT_1]
+    )
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
-    expect(onSkippedConsumable).toHaveBeenCalledWith(reward, "0:0,1")
+    expect(onSkippedConsumable).toHaveBeenCalledWith(reward, PUZZLE_AT_1)
   })
 
   it("reopens a completed shop that still has unbought stock", () => {

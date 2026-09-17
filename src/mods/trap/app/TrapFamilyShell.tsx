@@ -34,7 +34,10 @@ export const TrapFamilyShell = <T,>({ question, ctx, journeys, onSolved, onCance
         onHeal={type => trap.useConsumable(type)}
         onDisable={() => {
           trap.useConsumable("trapTool")
-          journeys.markTrapDisabled(ctx.sectionHash, ctx.edgeId)
+          // Disarming walks the player through, so the cell is explored by the same act — and this
+          // path closes with onCancel, which is not the route that would otherwise record it.
+          journeys.markCellExplored(ctx.sectionHash, ctx.edgeId, ctx.address)
+          journeys.markTrapDisabled(ctx.address)
           onCancel()
         }}
       />

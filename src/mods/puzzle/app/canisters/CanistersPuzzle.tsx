@@ -130,10 +130,18 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
               {t("canisters.movesLeft", { count: Math.max(left, 0) })}
             </span>
             {/* A spent budget refuses pours in silence (`pourInto`) — a tap that does nothing and says
-                nothing. The same sentence the hint gives, said without having to ask for it. */}
-            {left <= 0 && !solved && (
-              <span className="text-center text-rose-300">{t("canisters.hint.overBudget")}</span>
-            )}
+                nothing. The same sentence the hint gives, said without having to ask for it.
+
+                Held rather than unmounted, so its two lines are part of the board's height from the
+                start. Appearing outright grew the panel under the player's hand at the worst moment —
+                and the encounter's wall is sized to that panel, so the whole room behind the board
+                jumped with it. */}
+            <span
+              aria-hidden={!(left <= 0 && !solved)}
+              className={`text-center text-rose-300 ${left <= 0 && !solved ? "" : "invisible"}`}
+            >
+              {t("canisters.hint.overBudget")}
+            </span>
           </div>
         </div>
       )}

@@ -83,6 +83,7 @@
     "startJourney": "Start {{name}}",
     "answerNow": "The answer is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "saveVersion": "· save v{{saveVersion}}",
     "resetPuzzle": "Reset",
     "hint": "Hint",
     "undo": "Undo",

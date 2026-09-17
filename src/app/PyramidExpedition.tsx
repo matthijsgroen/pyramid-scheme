@@ -168,7 +168,10 @@ export const PyramidExpedition: FC<{
         <div ref={scrollContainerRef} className="flex max-h-dvh flex-1 overflow-auto overscroll-contain">
           <div
             className={clsx(
-              "absolute bottom-4 left-4 mr-4 mb-safe-bottom hidden max-w-sm rounded-lg bg-black/10 p-4 md:bottom-10 md:left-10 mdh:block",
+              // The enter button is pinned bottom-centre. On a screen narrower than this card's own
+              // max-width there is no free corner beside it, so the card sits a button's height higher
+              // until there is room to share the row.
+              "absolute bottom-20 left-4 mr-4 mb-safe-bottom hidden max-w-sm rounded-lg bg-black/10 p-4 md:bottom-10 md:left-10 mdh:block",
               textColor
             )}
           >

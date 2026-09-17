@@ -8,7 +8,7 @@ import { journeys } from "../../data/journeys"
 import type { PyramidJourney, TreasureTombJourney } from "../../data/journeys"
 import { SiteMapView } from "./SiteMapView"
 import { ExplorerDot } from "./ExplorerDot"
-import { encodeEdge, decodeEdge } from "./useAssembledFloor"
+import { encodeEdge, decodeEdge } from "./edgeId"
 import type { FloorConfig } from "../../game/siteTypes"
 
 // ---------------------------------------------------------------------------

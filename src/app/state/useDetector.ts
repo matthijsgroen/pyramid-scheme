@@ -6,7 +6,7 @@ import type { JourneyAPI } from "./useJourneys"
 import { useMergedCompassScanner } from "@/app/SiteMap/detectorScanners"
 import { useCompassTarget } from "@/app/SiteMap/compassTarget"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
-import { decodeEdge } from "@/app/SiteMap/useAssembledFloor"
+import { floorOfAddress } from "@/app/SiteMap/cellIdentity"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "@/worldGen/data"
 import { TIER_UNLOCK_PERK_IDS } from "@/data/treasurePerks"
 
@@ -49,7 +49,12 @@ const accessOf = (
   return { access: "open" }
 }
 
-export const useDetector = (journeys: JourneyAPI): DetectorAPI => {
+/** `resolveCell` turns a cell address into a coordinate, and only the caller holding an assembled
+ * floor can: pass one to place hits on the floor the player is standing on. */
+export const useDetector = (
+  journeys: JourneyAPI,
+  resolveCell?: (journeyId: string, address: string) => { row: number; col: number } | undefined
+): DetectorAPI => {
   // Two separate things, deliberately: which detector is running, and whether its readout is on
   // screen. The readout is a card over the map, so the player wants it shut most of the time — while
   // the detector keeps reading, reported by the pulsing dot beside its button. Results below stay
@@ -79,19 +84,19 @@ export const useDetector = (journeys: JourneyAPI): DetectorAPI => {
 
   const consumableResults = useMemo((): ConsumableResult[] => {
     if (activeDetector !== "consumable") return []
-    // Returns edgeIds of chests with consumables that were skipped due to full inventory.
-    // We surface all journeys' skipped consumables so the player knows where to return.
+    // The addresses of chests whose consumable was left behind because the pack was full — every
+    // journey's, so the player knows where to go back to, not just this one's.
     const results: ConsumableResult[] = []
     for (const [journeyId] of Object.entries(generatedWorldConfigs)) {
-      const skipped = journeys.getSkippedConsumables(journeyId)
-      for (const edgeId of skipped) {
-        // edgeId encodes "floor:row,col" — decode so the panel can narrow the readout by level (§7.2).
-        const [floorIdx, row, col] = decodeEdge(edgeId)
-        results.push({ journeyId, edgeId, floorIdx, cell: { row, col } })
+      for (const address of journeys.getSkippedConsumables(journeyId)) {
+        // The floor is in the address, so the panel can narrow the readout by level (§7.2). The
+        // coordinate is not: it belongs to a carve, and only the floor on screen has one assembled.
+        // L3 therefore names a cell for a chest on this floor and stops at the floor for the rest.
+        results.push({ journeyId, address, floorIdx: floorOfAddress(address), cell: resolveCell?.(journeyId, address) })
       }
     }
     return results
-  }, [activeDetector, journeys])
+  }, [activeDetector, journeys, resolveCell])
 
   return {
     activeDetector,

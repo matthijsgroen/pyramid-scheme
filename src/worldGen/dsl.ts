@@ -89,6 +89,20 @@ export const resolveNodeSelectors = (
 }
 
 export type SideSectionConstraint<TExtra extends string = never> = {
+  /**
+   * A NAME FOR THIS PATH, so a player's progress in it is tied to the path rather than to its position
+   * among its siblings.
+   *
+   * Unlabelled sections are addressed by where they sit — `s0` is the first sidepath of the main path,
+   * `s0.1` its second sub-path — which is enough until a sidepath is inserted AHEAD of another: every
+   * later one shifts down, and a save follows the index rather than the place. Labelling the paths that
+   * matter pins them; the rest keep the positional address, so nothing has to be named that does not
+   * need to be. See docs/game-design/world-stability.md.
+   *
+   * Unique within a floor, and not of the form the positional addresses take (`main`, `s3`, `s3.1`) —
+   * the assembler refuses to build a floor that breaks either.
+   */
+  label?: string
   gate?: GateSpec
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty

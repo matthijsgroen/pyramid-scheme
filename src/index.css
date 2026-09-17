@@ -19,27 +19,35 @@ body {
   font-family: "Hieroglyphs", var(--default-font-family, ui-sans-serif, system-ui, sans-serif);
 }
 
+/*
+ * How tall one screen of this game is. It does not scroll and its HUD is pinned to the bottom, so
+ * measuring it a browser bar too tall puts the hearts and the lamp past the edge of the screen.
+ *
+ * `dvh` is the viewport as it stands right now, so it is right in both the cases this game runs in:
+ * in a browser it excludes the URL bar, and installed — where `viewport-fit=cover` draws the page
+ * under the system bars — it is the whole screen. `lvh` is wrong in the first (it measures the URL
+ * bar away and hides the HUD below the fold) and `svh` in the second (it stops short of the system
+ * bars and leaves a band of bare page along the bottom).
+ *
+ * `dvh` follows the URL bar as it slides, which would mean resizing the board mid-puzzle — but only
+ * scrolling the document moves that bar, and `overflow: hidden` here means the document never
+ * scrolls. Every scroller in this game is an inner one, which leaves the bar where it is.
+ *
+ * One unit rather than one per display mode, deliberately: `display: "fullscreen"` in the manifest
+ * means an installed copy does NOT match `(display-mode: standalone)`, so a rule keyed to that
+ * silently does nothing on the very device it is meant for.
+ */
 :root,
 html,
 body {
   height: 100vh;
-  height: calc(var(--vh, 1vh) * 100);
-  height: 100lvh;
-  min-height: -webkit-fill-available;
+  height: 100dvh;
   overflow: hidden;
 }
 
 #root,
 #storybook-root {
   height: 100%;
-}
-
-@media all and (display-mode: standalone) {
-  :root,
-  html,
-  body {
-    height: 100lvh;
-  }
 }
 
 @font-face {

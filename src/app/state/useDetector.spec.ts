@@ -87,17 +87,28 @@ describe("consumableResults", () => {
     expect(result.current.consumableResults).toHaveLength(0)
   })
 
-  it("returns skipped consumable locations with the edge decoded to floor + cell", () => {
-    const journeys = makeJourneys({ starter_1: ["1:2,3", "0:4,5"] })
+  it("reads the floor straight off the address, and leaves the cell to whoever has that floor built", () => {
+    const journeys = makeJourneys({ starter_1: ["sec#1/p2", "sec#0/xtreasure-chest"] })
     const { result } = renderHook(() => useDetector(journeys))
     act(() => result.current.setDetector("consumable"))
     expect(result.current.consumableResults).toHaveLength(2)
+    // No resolver passed: the floor is known, the coordinate is not, and the readout narrows to the
+    // floor rather than inventing a cell (§7.2).
     expect(result.current.consumableResults[0]).toEqual({
       journeyId: "starter_1",
-      edgeId: "1:2,3",
+      address: "sec#1/p2",
       floorIdx: 1,
-      cell: { row: 2, col: 3 },
+      cell: undefined,
     })
+  })
+
+  it("places a hit on the cell a caller can resolve, for the floor it has assembled", () => {
+    const journeys = makeJourneys({ starter_1: ["sec#1/p2"] })
+    const resolveCell = (_journeyId: string, address: string) =>
+      address === "sec#1/p2" ? { row: 2, col: 3 } : undefined
+    const { result } = renderHook(() => useDetector(journeys, resolveCell))
+    act(() => result.current.setDetector("consumable"))
+    expect(result.current.consumableResults[0].cell).toEqual({ row: 2, col: 3 })
   })
 
   it("returns [] when no consumables were skipped", () => {
