@@ -28,6 +28,7 @@
     "seeds-info": "tsx scripts/puzzleSeeds.ts info",
     "verify-seeds": "tsx scripts/puzzleSeeds.ts verify",
     "verify-floors": "vitest run src/app/SiteMap/worldFloorAssembly.spec.ts",
+    "verify-world": "vitest run --config vitest.verify.config.ts",
     "world-info": "tsx scripts/worldInfo.ts",
     "release": "tsx scripts/release.ts",
     "prepare": "husky",

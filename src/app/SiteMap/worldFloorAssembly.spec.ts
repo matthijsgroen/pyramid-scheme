@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { assembleFloor, type ResolveKeyRequirements } from "@/game/siteAssembler"
+import { assembleFloor } from "@/game/siteAssembler"
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
-import { journeys } from "@/data/journeys"
-import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
 import { configHash } from "@/game/seeds/configHash"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { hashString } from "@/support/hashString"
@@ -10,52 +8,9 @@ import { boardIndexesForFloor } from "./boardIndexes"
 import { buildRoomClaims } from "./roomClaims"
 import { authoredKindsFor } from "./authoredKinds"
 import { encodeEdge } from "./edgeId"
-import { cellAddress } from "./cellIdentity"
+import { allFloors, resolveKeyRequirements } from "./worldFloors.testing"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
-// Populate the family registry, exactly as the app does — a room resolves its family through it.
-import "@/mods/registerModApps"
-
-// Mirror useAssembledFloor's own resolver, so this walks the identical code path.
-const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
-  getFamilyPlugin(familyId)?.meta.resolveKeyRequirements?.(ctx)
-
-type Floor = {
-  label: string
-  config: FloorConfig
-  seed: number
-  floorIndex: number
-  journeyId: string
-  levelIndex: number
-}
-
-// Every floor a player can be sent into, at the exact seed the runtime will use.
-// Mirrors PyramidExpedition: one site per level number (1-based), falling back to the first
-// site config when a journey has more levels than site configs, and SiteMapScreen's own
-// per-floor seed offset.
-const allFloors = (): Floor[] => {
-  const floors: Floor[] = []
-  for (const journey of journeys) {
-    const siteConfigs = journey.siteConfigs
-    if (!siteConfigs?.length) continue
-    const siteSeed = persistentInteriorSeed(journey.id)
-    for (let levelNr = 1; levelNr <= journey.levelCount; levelNr++) {
-      const levelIndex = levelNr - 1
-      const site = siteConfigs[levelIndex] ?? siteConfigs[0]
-      site.forEach((config, floorIndex) => {
-        floors.push({
-          label: `${journey.id} level ${levelNr} floor ${floorIndex}`,
-          config,
-          seed: floorAssemblySeed(siteSeed, levelNr, floorIndex),
-          floorIndex,
-          journeyId: journey.id,
-          levelIndex,
-        })
-      })
-    }
-  }
-  return floors
-}
 
 // A floor whose layout cannot be carved at the one seed the runtime ever hands it renders
 // "Site layout unavailable." for every player, permanently — 17 authored floors once shipped that way
@@ -436,73 +391,4 @@ describe("a rank is dressed with what it is authored to hold", () => {
     }
     expect(wrong.slice(0, 10)).toEqual([])
   }, 60_000)
-})
-
-/**
- * The boards themselves, built the way the player's tap builds them.
- *
- * THE GAP THIS FILLS: everything above is bookkeeping. The sweep next door works out WHICH board each
- * room is dealt and proves no two rooms share one, but it never asks the family to build it — it reads
- * the seed list and compares indexes. So a room could be dealt a perfectly unique board whose generator
- * throws the moment anyone opens it, and every test in this repository would stay green.
- *
- * That is not hypothetical. Eleven rooms across the expert and wizard treasure tombs shipped with a
- * number set and a `maxMultiplyOperandResult` that no formula can satisfy at once, and a puzzle is built
- * during render — so opening one of them threw, React unmounted the tree, and the player got a black
- * screen with nothing on it.
- *
- * It is slow, because building every board in the world is the only thing that could have caught that.
- */
-describe("every room in the world builds the board its tap asks for", () => {
-  const failures = (): string[] => {
-    const broken: string[] = []
-    for (const floor of allFloors()) {
-      const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
-        resolveKeyRequirements,
-        floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
-        resolveBoardIndex: boardIndexesForFloor(floor.journeyId, floor.levelIndex, floor.floorIndex),
-      })
-      if (!result.success) continue
-      result.grid.cells.forEach((row, r) =>
-        row.forEach((cell, c) => {
-          if (cell.type !== "room" || !cell.family) return
-          const family = getFamilyPlugin(cell.family)
-          if (!family) return
-          const edgeId = encodeEdge(floor.floorIndex, r, c)
-          try {
-            // The context useEncounter hands a family, built from the same cell.
-            family.generate(hashString(floor.journeyId + edgeId), {
-              journeyId: floor.journeyId,
-              edgeId,
-              address: cellAddress(result.grid, floor.floorIndex, r, c) ?? edgeId,
-              sectionHash: cell.sectionHash ?? "",
-              freshArrival: true,
-              difficulty: cell.difficulty ?? floor.config.difficulty,
-              reward: cell.reward,
-              stock: cell.stock,
-              pathIndex: cell.pathIndex,
-              boardIndex: cell.boardIndex,
-              encounterArgs: cell.encounterArgs,
-              theme: cell.theme,
-              role: cell.role,
-              requiredKeyId: cell.requiredKeyId,
-              gateVariant: cell.gateVariant,
-              keyColor: cell.keyColor,
-              ownedKeys: new Set<string>(),
-            })
-          } catch (error) {
-            broken.push(
-              `${floor.label} (${r},${c}) ${cell.family}/${cell.difficulty ?? floor.config.difficulty}` +
-                ` role=${JSON.stringify(cell.role)}: ${(error as Error).message}`
-            )
-          }
-        })
-      )
-    }
-    return broken
-  }
-
-  it("builds every one of them", () => {
-    expect(failures()).toEqual([])
-  }, 600_000)
 })

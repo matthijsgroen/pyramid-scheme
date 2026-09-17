@@ -103,6 +103,25 @@ src/game/__tests__/siteAssembler.spec.ts   ✗
 
 ---
 
+## `.verify.ts` — the sweeps that are too expensive to be tests
+
+A `.verify.ts` file is a vitest file that `yarn test` never runs. It matches neither vitest's default
+`include` nor `vitest.verify.config.ts`'s by accident, so nothing can drift back onto the critical path.
+`yarn verify-world` runs them.
+
+**The bar is high, and it is about wall clock, not taste.** One test runs on one worker, so a single
+long `it()` sets a floor under the whole suite that no amount of parallelism can lift. Hold a sweep out
+only when it is minutes long, cannot be split, and guards something a change to its _own inputs_ would
+break — then say in the file which inputs those are, so a reader knows when to run it.
+
+Today that is `src/app/SiteMap/worldBoards.verify.ts`: it builds every board in the world, took 46% of
+the entire suite's work in one `it()`, and only world data, floor specs, seed lists or puzzle generators
+can break it. Everything else about the world — that every floor carves, that no encounter moves a wall,
+that no two rooms serve the same board — is fast enough to stay a test, and stays one in
+`worldFloorAssembly.spec.ts`.
+
+---
+
 ## Test description style
 
 Descriptions must state the **observable behavior** and the **invariant behind it** — not the implementation.
