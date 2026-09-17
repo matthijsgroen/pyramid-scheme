@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { afterEach, describe, expect, it } from "vitest"
 import { cleanup, render } from "@testing-library/react"
 import { createSudokuState } from "@/mods/puzzle/game/sudoku/sudokuState"

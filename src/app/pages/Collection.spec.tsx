@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import type { CollectionItem, CollectionSectionProps } from "./collectionSectionRegistry"

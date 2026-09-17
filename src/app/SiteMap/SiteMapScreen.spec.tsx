@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { render, act, fireEvent, cleanup } from "@testing-library/react"
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest"
 import type { FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
