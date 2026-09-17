@@ -1,7 +1,7 @@
 {
   "name": "pyramid-scheme",
   "private": true,
-  "version": "0.43.10",
+  "version": "0.43.11",
   "type": "module",
   "scripts": {
     "dev": "vite --port 9164",
