@@ -16,7 +16,7 @@ import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 // "Site layout unavailable." for every player, permanently — 17 authored floors once shipped that way
 // (expert_1, expert_4, master_1/2/4, and ten wizard floors). `yarn generate-world` fails on the same
 // thing, so a world that was built is a world that carves; this covers the artifact as it stands in the
-// repo, which is what the app reads. Run standalone via `yarn verify-floors`.
+// repo, which is what the app reads.
 describe("every authored floor assembles at its runtime seed", () => {
   it("has floors to check at all (a silent empty sweep would prove nothing)", () => {
     expect(allFloors().length).toBeGreaterThan(100)
