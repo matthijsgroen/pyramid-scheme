@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { render, act } from "@testing-library/react"
 import { describe, expect, it, vi, afterEach, beforeEach } from "vitest"
 // Registers every mod's reward handlers + displays (money + sellable are shop-owned now), so the

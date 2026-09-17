@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { describe, expect, it, vi } from "vitest"
 import { act, renderHook } from "@testing-library/react"
 import { SECRET_TAP_COUNT, SECRET_TAP_WINDOW_MS, useSecretTaps } from "./useSecretTaps"

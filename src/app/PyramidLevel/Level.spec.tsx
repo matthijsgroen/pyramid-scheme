@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { render, act } from "@testing-library/react"
 import { describe, expect, it, vi, beforeEach } from "vitest"
 import { Level } from "./Level"

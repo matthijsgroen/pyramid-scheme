@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { afterEach, describe, expect, it } from "vitest"
 import { cleanup, renderHook, waitFor } from "@testing-library/react"
 import { cellAt, eclipseConflicts, type EclipsePuzzle, type Mark } from "@/mods/puzzle/game/eclipse/eclipse"

@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { describe, expect, it } from "vitest"
 import { renderHook } from "@testing-library/react"
 import "@/mods/registerModApps" // populate the perk-contribution registry (all mods on)
