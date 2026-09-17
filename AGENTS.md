@@ -92,6 +92,7 @@ A component in `src/app/` or `src/mods/*/app/` owns the state and effects of **o
 yarn dev          # Dev server at http://localhost:9164
 yarn test         # Run all tests (Vitest)
 yarn test <file>  # Run a single test file
+yarn verify-world # Build every board in the world — on demand, ~11 min (docs/instructions/testing.md)
 yarn check-types  # TypeScript type checking
 yarn lint         # ESLint (includes Tailwind class order)
 yarn build        # Production build

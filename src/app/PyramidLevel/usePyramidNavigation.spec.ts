@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { renderHook, act } from "@testing-library/react"
 import { usePyramidNavigation } from "@/app/PyramidLevel/usePyramidNavigation"
 import { describe, expect, it, vi } from "vitest"

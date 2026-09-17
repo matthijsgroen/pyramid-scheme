@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { render, cleanup } from "@testing-library/react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { MOSAIC_TIERS } from "@/mods/mosaic/game/mosaicCurrency"

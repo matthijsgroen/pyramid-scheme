@@ -621,7 +621,7 @@ tier("starter", { difficulty: "starter", decorations: ["chestProp", "rubble", "p
 `decorations` reaches a whole site from `PyramidConstraint`, cascades onto every floor
 (`buildSite.ts`) and is inherited by side sections the way a theme is (`sideSections.ts`'s
 `wearSiteRole`) — a fork on a side path is exactly where a prop goes, so a pool that stopped at the
-main path would dress almost nothing. It is a free field: `yarn verify-floors` passes unchanged, and
+main path would dress almost nothing. It is a free field: the world sweep passes unchanged, and
 `worldContentHash` is the only thing in the generated world that moves.
 
 **Which prop a room draws is picked by WHERE the room is** — `hashString(siteId:decoration:row,col)`
