@@ -23,25 +23,35 @@ body {
  * How tall one screen of this game is. It does not scroll and its HUD is pinned to the bottom, so
  * measuring it a browser bar too tall puts the hearts and the lamp past the edge of the screen.
  *
- * `dvh` is the viewport as it stands right now, so it is right in both the cases this game runs in:
- * in a browser it excludes the URL bar, and installed — where `viewport-fit=cover` draws the page
- * under the system bars — it is the whole screen. `lvh` is wrong in the first (it measures the URL
- * bar away and hides the HUD below the fold) and `svh` in the second (it stops short of the system
- * bars and leaves a band of bare page along the bottom).
+ * `dvh` is the viewport as it stands right now: in a browser it excludes the URL bar, which is what
+ * the game needs (`lvh` measures the bar away and hides the HUD below the fold; `svh` leaves a band
+ * of bare page along the bottom whenever the bar is gone).
+ *
+ * Installed on iOS the page is drawn from the top of the SCREEN — `black-translucent` plus
+ * `viewport-fit=cover` — but `dvh` is still measured from below the status bar, so a screen sized at
+ * `100dvh` ends a status bar short of the bottom. Adding that inset back makes one screen the whole
+ * screen there, and changes nothing anywhere else: in a browser, and installed on Android where the
+ * system bars are gone, `safe-area-inset-top` is 0.
+ *
+ * `lvh` is the ceiling: the viewport with every retractable bar gone is as tall as a screen can be, so
+ * a device that reports an inset `dvh` already covers cannot push the HUD past the bottom edge.
  *
  * `dvh` follows the URL bar as it slides, which would mean resizing the board mid-puzzle — but only
  * scrolling the document moves that bar, and `overflow: hidden` here means the document never
  * scrolls. Every scroller in this game is an inner one, which leaves the bar where it is.
  *
- * One unit rather than one per display mode, deliberately: `display: "fullscreen"` in the manifest
- * means an installed copy does NOT match `(display-mode: standalone)`, so a rule keyed to that
- * silently does nothing on the very device it is meant for.
+ * One height for every display mode, deliberately: `display: "fullscreen"` in the manifest means an
+ * installed copy does NOT match `(display-mode: standalone)` on Android, so a rule keyed to that
+ * silently does nothing on the very device it is meant for. Everything that wants a full screen
+ * reads `--screen-height`; nothing in the app measures the viewport itself.
  */
 :root,
 html,
 body {
+  --screen-height: min(100lvh, calc(100dvh + env(safe-area-inset-top, 0px)));
+
   height: 100vh;
-  height: 100dvh;
+  height: var(--screen-height);
   overflow: hidden;
 }
 

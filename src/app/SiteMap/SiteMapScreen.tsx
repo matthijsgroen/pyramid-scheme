@@ -184,7 +184,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     <div className="relative flex h-full flex-col items-center justify-center">
       <BackButton onClick={onCancel} label={t("ui.back")} />
       {currentFloor > 0 && <FloorBadge label={t("ui.floor", { number: currentFloor + 1 })} />}
-      <div className="relative h-screen w-screen">
+      <div className="relative h-(--screen-height) w-screen">
         <SiteMapView
           grid={grid}
           onCellClick={onCellClick}
