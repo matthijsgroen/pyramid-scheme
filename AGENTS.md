@@ -95,11 +95,20 @@ yarn test <file>  # Run a single test file
 yarn verify-world # Build every board in the world — on demand, ~11 min (docs/instructions/testing.md)
 yarn check-types  # TypeScript type checking
 yarn lint         # ESLint (Tailwind class order; --max-warnings pins the warn backlog)
+yarn betterer     # The ratcheted guards — fails on a new occurrence, per file
+yarn betterer:update # Record a guard's new, lower state after fixing occurrences
 yarn build        # Production build
 yarn storybook    # Component docs at http://localhost:6006
 ```
 
 Always run `yarn check-types` and `yarn lint` before considering a change complete.
+
+`yarn betterer` holds the backlogs that a lint rule cannot express, in `.betterer.ts`. Each guard
+reports one issue per occurrence per file and `.betterer.results` records them, so a new occurrence
+fails even when another was fixed elsewhere in the same commit — which a single total cannot catch.
+After genuinely fixing some, run `yarn betterer:update` and commit the smaller results file; never
+update it to make a push go through. Today's one guard: design-doc references must name a file, not
+a `§` inside one (docs/instructions/comments.md).
 
 `yarn lint` runs with **`--max-warnings`** pinned at the current warning count, so a rule kept at
 `warn` while its backlog is worked through still cannot grow: one new warning fails the run. Clearing
