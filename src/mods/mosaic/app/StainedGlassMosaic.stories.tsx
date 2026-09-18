@@ -5,10 +5,7 @@ import { StoneFrame } from "@/ui/atoms/StoneFrame"
 import { MOSAIC_PIECES } from "@/ui/atoms/mosaicPieces.generated"
 import { LEVEL_STEPS } from "@/mods/mosaic/game/mosaicRevealOrder"
 
-// It lives on the MOD side though the component is core's, because it names mosaic: core may not
-// import a mod (ARCHITECTURE.md, invariant 1 — a mod is removable), and a story is part of
-// `yarn build-storybook`. Same reasoning as `SumpleteEncounter.stories.tsx`, moved in #271. The
-// component itself stays in `src/ui/` and names nothing: only the fixture is mosaic's.
+// Mod-side though the component is core's: it names mosaic, and a story ships in build-storybook.
 const meta = {
   title: "Mosaic/StainedGlassMosaic",
   component: StainedGlassMosaic,

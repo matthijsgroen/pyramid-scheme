@@ -6,13 +6,7 @@ import type { FloorConfig } from "@/game/siteTypes"
 // Populate the family registry, exactly as the app does — a room resolves its family through it.
 import "@/mods/registerModApps"
 
-/**
- * The world as the sweeps walk it, shared by everything that walks the whole thing.
- *
- * It lives outside a spec file because two of them need it and neither owns it: the suite's own
- * `worldFloorAssembly.spec.ts`, and `worldBoards.verify.ts`, which is not part of a test run at all.
- */
-
+// The world as the sweeps walk it, shared by `worldFloorAssembly.spec.ts` and `worldBoards.verify.ts`.
 export type Floor = {
   label: string
   config: FloorConfig
@@ -22,7 +16,7 @@ export type Floor = {
   levelIndex: number
 }
 
-// Mirror useAssembledFloor's own resolver, so a sweep walks the identical code path.
+// Mirrors useAssembledFloor, so a sweep walks the identical code path.
 export const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
   getFamilyPlugin(familyId)?.meta.resolveKeyRequirements?.(ctx)
 
