@@ -26,6 +26,20 @@ One line beats three. If a comment needs a paragraph, the code is probably the w
 
 Beyond the function-level role comment, only add an inline comment when the WHY is genuinely non-obvious — a hidden constraint, a subtle invariant, a workaround for a specific bug. If removing the comment wouldn't confuse a future reader, don't write it.
 
+## Reference a design file, never a paragraph in it
+
+`docs/game-design/puzzles/lightbeam.md` is a reference. `§6.4` is not, and neither is
+`lightbeam.md §6.4`: a section number survives only until the doc is reorganised, and nothing tells
+you when it stops resolving. Cutting the lightbeam journal left 116 code references to sections that
+no longer existed — §11.8 alone cited 47 times — and every one of them read as a live pointer.
+
+Name the file and say the claim. If the claim is too long to say, that is the signal it belongs in
+the doc and not in the comment.
+
+`src/designDocReferences.spec.ts` ratchets the remaining ones down.
+
+---
+
 ## Never
 
 - What the code used to do, what it replaced, or why a change was made — belongs in the design doc if it is durable, and nowhere if it is not. Not a commit-message body; see [`commit-messages.md`](commit-messages.md).
