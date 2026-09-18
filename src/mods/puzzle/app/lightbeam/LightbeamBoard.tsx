@@ -75,11 +75,7 @@ const viewGrid = (puzzle: LightbeamPuzzleData, states: readonly number[]): CellV
   return grid
 }
 
-// ---------------------------------------------------------------------------------------------------
-// Glyphs. Drawn rather than lettered, and each on its own 100-unit square so it scales with the cell
-// instead of with the screen — a 5-wide board and a 7-wide one then read the same (PUZZLE_FAMILIES.md
-// P2: the board carries no language).
-// ---------------------------------------------------------------------------------------------------
+// Glyphs. Drawn rather than lettered, each on its own 100-unit square so it scales with the cell.
 
 const Glyph: FC<{ children: ReactNode; className?: string }> = ({ children, className }) => (
   <svg viewBox="0 0 100 100" className={clsx("size-full overflow-visible", className)}>
@@ -103,46 +99,13 @@ const glyphTurn = (angle: MirrorAngle): number => {
 }
 
 /**
- * A mirror: the line it sits on, drawn as the polished edge it is — **and a tick at each stop it is not in**.
+ * A mirror: one canonical bar turned into place, so changing setting is a turn the eye can follow, and a
+ * tick at each stop it is *not* in. The bar is where it stands, the ticks are where else it goes.
  *
- * One canonical line, turned into place, rather than a glyph per angle — so changing setting is a turn the
- * eye can follow instead of a glyph that swaps between frames. Which setting a piece is in is the single
- * thing the player is deciding, and watching it turn is what says the tap landed on the piece they meant.
- *
- * **The ticks are the fork, and they are why there is one mirror glyph rather than two** (§11.13). A cut
- * mirror used to be drawn as a different object — a hollow plate against the ordinary mirror's solid bar —
- * because §11.9 measured that the 22.5° between two stop sets can never be read off a drawn angle. True,
- * and it was answered with one bit: *this list is the default pair, or it is not*. That bit says nothing
- * once the lists vary, which is what §11.8 rule 1 has always asked for. A tick at each unoccupied stop says
- * the whole thing instead — **the bar is where it stands, the ticks are where else it goes** — and it says
- * it inside one cell, which is the comparison §11.9 found there was nowhere to make.
- *
- * Three things the prototype settled rather than argued (§11.13):
- *
- * - **The ticks are the alternatives, never the current stop.** A tick at the angle the bar is already on
- *   is ink for a fact told twice, and it lies exactly under the bar where it cannot be seen anyway.
- * - **A ring is what does not work.** A mirror is a line across the whole cell, so it runs through the
- *   annulus any ring would occupy and occludes the very marks that annotate it. Rule 5's own suggestion —
- *   "a ring in as many segments" — is unbuildable, and pips stop being countable past three.
- * - **Every mirror gets its ticks, ordinary ones included.** The hard reading is bare-against-one-tick and
- *   the easy one is one-against-three; drawing the tick only where a piece is unusual would keep the hard
- *   reading and reintroduce the default the whole change removes. With one tick as the baseline the eye
- *   calibrates on, a bigger fork is the loud comparison rather than the quiet one.
- *
- * A stop's angle folds to one bearing in [0°, 180°) because a mirror line is the same line half a turn
- * later — otherwise one stop would draw two ticks and the fork would read at twice its size.
- *
- * **The tick lies across its bearing rather than along it, and that is the fix for the one thing the
- * prototype missed.** Drawn as a radial spoke it was collinear with the beam whenever a stop's line
- * happened to be the line the beam leaves on — which is not rare, since a beam travels one of eight
- * bearings and a stop is one of eight mirror lines — and the beam is drawn over the pieces with
- * `mix-blend-screen`, so the tick came out cream. That breaks §9's "nothing but light is drawn amber" and
- * costs the mark its meaning at the same time. A tangential dash cannot be collinear with anything radial:
- * the beam crosses it square, brightens the middle, and the ends stay sky.
- *
- * It also cannot be hidden by the bar. The bar is a diameter, so it meets the rim at its own bearing and
- * that bearing is the one stop no tick is ever drawn for — which is why candidate A's occlusion (a full
- * ring crossed by the bar) does not apply to arcs placed only at the stops the piece is not in.
+ * A stop folds to one bearing in [0°, 180°), since a mirror line is the same line half a turn later. The
+ * tick lies across that bearing, never along it: a radial tick would be collinear with the beam whenever a
+ * stop's line is the line the beam leaves on, and the beam draws over pieces with `mix-blend-screen`.
+ * `LightbeamBoard.spec.tsx` asserts both.
  */
 const Mirror: FC<{ angle: MirrorAngle; stops: readonly MirrorAngle[]; movable: boolean }> = ({
   angle,
@@ -202,14 +165,7 @@ const Wall: FC<{ movable: boolean }> = ({ movable }) => (
 
 const round = (n: number): number => Math.round(n * 100) / 100
 
-/**
- * The nose that says which way the light leaves — half of what the player has to know about the disc.
- *
- * Built from the direction rather than authored per direction, because there are eight of them now. The
- * four that were drawn by hand come out of this as the same four triangles — checked against them — two
- * of them with their base points in the other order, which a filled polygon does not care about. So this
- * is the same shape rotated, not a redraw.
- */
+/** The nose that says which way the light leaves: one triangle built from the direction, for all eight. */
 const nosePoints = (direction: Direction): string => {
   const { row, col } = directionStep(direction)
   const scale = Math.hypot(row, col)
@@ -242,27 +198,13 @@ const Shrine: FC<{ lit: boolean; flaring?: boolean }> = ({ lit, flaring }) => (
   </Glyph>
 )
 
-// ---------------------------------------------------------------------------------------------------
-// Nodes and their wiring (design doc §11.1). Prototyped before any of the logic, because the drawing is
-// the likeliest thing to kill the mechanic: the board already carries cells, a two-pass beam, glyphs,
-// movable rings, dashed tracks with ghost pieces and end markers, at 35px a cell on a 9-wide board.
+// Nodes and their wiring. Three rules keep the wire out of the beam's way, at any board size:
 //
-// Three rules keep the wire out of the beam's way, and they are the whole design. The first was designed;
-// the third the prototype had to find out:
-//
-// 1. **The beam owns cell centres and edge midpoints; the wire owns the grid lines.** Every beam segment
-//    runs midpoint → centre → midpoint, so a wire routed corner-to-corner along cell boundaries can only
-//    ever cross it transversally. They never share a lane, at any board size.
-// 2. **A wire is never amber.** Light is amber and mirror glass is sky; a wire is oxidised copper in one
-//    of a handful of hues, so a lit wire never reads as a stray beam. Which hue is not decoration — see
-//    `NODE_COLOURS`, where it turns out to do the work a generation gate was going to have to do.
-// 3. **The wire is dashed, and the beam is continuous.** Colour alone was not enough, and the prototype
-//    is what showed it: rule 1 keeps the wire out of the beam's lane but cannot stop it running one half
-//    cell from a parallel stretch of beam — the beam moves with every tap, and the wire cannot chase it.
-//    At 35px a cell, two solid lines that close together read as one double-tracked thing however they
-//    are coloured. A dashed line cannot be mistaken for light at any size, which is what makes this hold
-//    on the boards nobody has drawn yet rather than only on the three that were.
-// ---------------------------------------------------------------------------------------------------
+// 1. The beam owns cell centres and edge midpoints; the wire owns the grid lines, so they can only ever
+//    cross transversally and never share a lane.
+// 2. A wire is never amber. Light is amber, mirror glass is sky, a wire is oxidised copper.
+// 3. The wire is dashed and the beam is continuous. Colour alone is not enough: rule 1 cannot stop a wire
+//    running half a cell from a parallel stretch of beam, and two solid lines that close read as one.
 
 /**
  * The corner of `from`'s cell that faces `towards`. Both ends of a wire pick their facing corner, and
@@ -280,14 +222,8 @@ const wirePoints = (from: CellRef, to: CellRef): string => {
 }
 
 /**
- * Who owns a piece, said in colour.
- *
- * **White is the player's.** One colour, always the same, for everything a tap can move — so "can I touch
- * this?" is answered before any wire is traced. Every other colour belongs to a socket, and a piece
- * wearing it moves when that socket is crossed, not when it is tapped.
- *
- * That is what makes fan-out readable at a glance: one socket drives three pieces, and the three pieces
- * are the three wearing its colour. Following the wire confirms it; the colour is what makes you look.
+ * Who owns a piece, said in colour. White is the player's, always; every other colour belongs to a socket,
+ * so a fan-out is three pieces wearing one colour and "can I touch this?" needs no wire traced.
  */
 const NODE_COLOURS = [
   { stroke: "stroke-emerald-300", dim: "stroke-emerald-500/50", fill: "fill-emerald-300", ring: "#6ee7b7" },
@@ -371,22 +307,12 @@ const NodeLayer: FC<{ puzzle: LightbeamPuzzleData; walk: BeamWalk }> = ({ puzzle
   )
 }
 
-// ---------------------------------------------------------------------------------------------------
-// The beam. Drawn over the pieces rather than under them: light does touch the mirror it bounces off,
-// and a beam that stopped under a glyph would read as a beam that stopped short.
-// ---------------------------------------------------------------------------------------------------
+// The beam, drawn over the pieces: one that stopped under a glyph would read as one that stopped short.
 
 /**
- * Where a beam travelling `direction` leaves a cell: the midpoint of the edge it crosses — or, for a
- * diagonal, the **corner** it slips through, which is a whole lattice point rather than a half one.
- *
- * §11.2 rule 1 keeps the wire out of the beam's way by giving the beam cell centres and edge midpoints
- * and the wire the grid lines, and a diagonal beam takes its endpoints off the wire's side of that line.
- * The rule still holds where it matters: a wire runs *along* a grid line and a diagonal beam crosses the
- * cell interior, so they can still only ever meet transversally, at a point. What is new is that the
- * point can be a rivet, and often is — see `DiagonalBeam`, whose third frame is the one that had to be
- * looked at. It reads as a crossing rather than a join, because a beam polyline bends only at cell
- * centres: a corner point is always mid-line, so the beam can never appear to terminate on a rivet.
+ * Where a beam travelling `direction` leaves a cell: the midpoint of the edge it crosses, or, for a
+ * diagonal, the corner it slips through. A corner puts the beam on the wire's own lattice point, which
+ * still reads as a crossing: a beam polyline bends only at cell centres, so it never ends on a rivet.
  */
 const sidePoint = (at: CellRef, direction: Direction): [number, number] => {
   const { row, col } = directionStep(direction)
@@ -394,28 +320,15 @@ const sidePoint = (at: CellRef, direction: Direction): [number, number] => {
 }
 
 /**
- * Where to mark the end of the beam: the face it meets, or the cell **centre** when it ends on a diagonal.
- *
- * `sidePoint` is a cell corner for a diagonal direction, and a corner is the one point §11.8 rule 4 gives
- * the opposite meaning to everywhere else on the board — diagonal light slips *between* two corners rather
- * than stopping at one, so a dot on a corner says "it got through" on a board whose whole point is that it
- * did not. On a 9-wide grid it also lands in a four-cell junction and stops belonging to any of them.
- *
- * The centre is unambiguous and it is where a diagonal beam visibly ends anyway: the polyline already runs
- * into the middle of the cell and stops there. Both markers take it, which closes the question §11.10 left
- * open for the escape marker and §11.11 left open for the absorbed one — one answer, four lines apart.
+ * Where to mark the end of the beam: the face it meets, or the cell centre when it ends on a diagonal. A dot
+ * on a corner would say "it got through", which is what diagonal light slipping between two corners means.
  */
 const endPoint = (at: CellRef, direction: Direction): [number, number] =>
   direction % 2 === 1 ? [at.col + 0.5, at.row + 0.5] : sidePoint(at, direction)
 
 /**
  * One cell of beam: in through the face it entered, through the centre, out through the face it left.
- *
- * **`exit !== undefined`, never `exit`.** A `Direction` is an index and `DIR.right` is **0**, so a
- * truthiness test reads "the beam left rightward" as "the beam stopped here" and draws half a line — from
- * the entry face to the cell centre, and no further. Every rightward-travelling cell on every board was
- * drawn that way, which is around a third of the segments on a typical board, and it looked exactly like
- * what it was: a beam with holes in it.
+ * `exit !== undefined`, never `exit` — `DIR.right` is 0, so truthiness reads "went right" as "stopped".
  */
 const segmentPoints = (segment: BeamSegment): string => {
   const from = sidePoint(segment.at, opposite(segment.enter))
@@ -424,13 +337,8 @@ const segmentPoints = (segment: BeamSegment): string => {
   return points.map(([x, y]) => `${x},${y}`).join(" ")
 }
 
-/**
- * How far along the finishing run the light has travelled, and whether the shrine is flaring yet.
- *
- * The run is one sweep, split: the beam takes the first stretch of it and the shrine has the rest, so the
- * flare lands on a route that is already fully lit rather than racing it. Both come off one number, which is
- * all `useCelebration` reports.
- */
+/** The run is one sweep, split: the beam takes the first stretch and the shrine the rest, so the flare
+ * lands on a route that is already lit rather than racing it. */
 const TRAVEL_SHARE = 0.7
 const surgeHead = (progress: number, segments: number) => Math.round(Math.min(progress / TRAVEL_SHARE, 1) * segments)
 
@@ -520,27 +428,13 @@ const BeamLayer: FC<{ puzzle: LightbeamPuzzleData; walk: BeamWalk; lit?: BeamSeg
   )
 }
 
-// ---------------------------------------------------------------------------------------------------
-// The pieces themselves, in a layer of their own above the cells.
-//
-// They have to leave the grid to be animated at all: a piece drawn inside its cell can only be redrawn in
-// a different cell, which is a jump, and a jump is exactly what a sliding piece must not look like. Up
-// here each piece is one element that keeps its identity across taps, so its stop is a position it moves
-// to and its face is an angle it turns to.
-//
-// This matters more than polish now that a track can hold three stops (`slidingStops`). With two, a jump
-// is at least unambiguous — the piece was there, now it is here. With three, a jump leaves the player to
-// work out which way it went and how far, and the answer to "what did my tap just do" should not need
-// working out.
-// ---------------------------------------------------------------------------------------------------
+// The pieces, in a layer of their own above the cells. They have to leave the grid to be animated at all: a
+// piece drawn inside its cell can only be redrawn in a different one, which is a jump, and on a three-stop
+// track a jump leaves the player to work out which way it went and how far.
 
 /**
- * Who owns this piece, drawn as its outline: white for the player's, a socket's colour for a socket's.
- *
- * A piece driven by more than one socket wears all their colours, split evenly round the edge — which is
- * what an and-wiring looks like from the piece's end, and the only place it is visible at all without
- * following a wire. `pathLength` does the splitting: normalise the perimeter to the number of colours and
- * each one takes a single unit of dash.
+ * Who owns this piece, drawn as its outline. A piece driven by more than one socket wears all their
+ * colours, split evenly round the edge by `pathLength` — an and-wiring, seen from the piece's end.
  */
 const OwnerRing: FC<{ colours: string[] }> = ({ colours }) => (
   <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 size-full">
@@ -612,23 +506,16 @@ const cellCls = (view: CellView, state: { lit: boolean; movable: boolean }) =>
       "outline-2 -outline-offset-2 outline-stone-500/70 outline-dashed":
         view.kind === "stop" && view.track && !state.lit,
       "ring-2 ring-sky-300": state.lit,
-      // The tap target is bigger than the square it sits in. That is what lets this family's grid go past the
-      // 7-wide ceiling the other grid families stop at: there, every cell is tappable, so cell size IS target
-      // size. Here only the pieces are, and generation never lets two of them touch, so a piece owns the empty
-      // shoulders around it and can reach out into them. 5px each way puts a 35px cell — the 9-wide wizard
-      // board on a 360px screen — over the 44px bar without any two targets meeting.
+      // The tap target is bigger than its square: only pieces are tappable and generation never lets two
+      // touch, so a piece owns the empty shoulders around it. 5px each way puts a 35px cell over the 44px bar.
       "after:absolute after:inset-[-5px] after:content-['']": state.movable,
     }
   )
 
 export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam, surge = 0, onCycle }) => {
   const { size } = puzzle
-  // **The board as the light leaves it, not as the player set it.** A door the beam has already opened has
-  // moved, and drawing it where it rests draws stone across a lit stretch — the exact picture §11.1 promises
-  // the drawn beam is never one of ("effects land ahead of the light by construction"). `traceBeam` has
-  // always fired the wirings as it walks; only the pieces were still being drawn from the raw states, and it
-  // showed as a beam running straight through a brick on most wizard boards. Found while looking at a
-  // diagonal end marker (§11.12), which is why a mirror story is where it turned up.
+  // The board as the light leaves it, not as the player set it: a door the beam has already opened has
+  // moved, and drawing it where it rests draws stone across a lit stretch.
   const drawn = firedConfig(puzzle, states, firedWirings(puzzle, states))
   const grid = viewGrid(puzzle, drawn)
   const walk = traceBeam(puzzle, states)

@@ -8,7 +8,7 @@ import { isLit } from "@/mods/puzzle/game/lightbeam/beam"
 import type { LightbeamPuzzle as LightbeamPuzzleData } from "@/mods/puzzle/game/lightbeam/generateLightbeam"
 import { createLightbeamState, cycleLightbeamPiece } from "@/mods/puzzle/game/lightbeam/lightbeamState"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
-import { useCelebration } from "@/mods/core/app/useCelebration"
+import { useCelebration } from "../useCelebration"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
 

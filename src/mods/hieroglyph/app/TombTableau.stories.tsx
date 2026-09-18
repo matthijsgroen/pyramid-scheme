@@ -4,7 +4,7 @@ import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { hashString } from "@/support/hashString"
 import { generateRewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
 import { useMemo } from "react"
-import { TombTableau } from "./TombTableau"
+import { TombTableau } from "@/ui/organisms/TombTableau"
 import { createPositionOverview } from "@/mods/hieroglyph/game/filledPositions"
 import { useTableauTranslations } from "@/app/translations/useTableauTranslations"
 import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
@@ -24,7 +24,9 @@ const fillPositions = (keys: string[], value: number) => {
 }
 
 const tombJourneys = journeys.filter(j => j.type === "treasure_tomb")
+// Mod-side though the component is core's: it names hieroglyph, and a story ships in build-storybook.
 const meta = {
+  title: "Hieroglyph/TombTableau",
   parameters: {
     layout: "centered",
     backgrounds: {
@@ -112,7 +114,6 @@ const meta = {
           }}
           resolveTile={symbolId => resolveHieroglyphSymbol(symbolId, journey.difficulty)}
           hintFormulas={calculation.hintFormulas.map((f, i) => ({ formula: f, index: i }))}
-          annotations={{}}
         />
       </div>
     )

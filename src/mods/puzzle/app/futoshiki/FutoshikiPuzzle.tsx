@@ -18,7 +18,7 @@ import {
   undoFutoshikiMove,
 } from "@/mods/puzzle/game/futoshiki/futoshikiState"
 import { futoshikiConflicts, isFutoshikiSolved, strandedNotes } from "@/mods/puzzle/game/futoshiki/futoshikiStatus"
-import { useCelebration } from "@/mods/core/app/useCelebration"
+import { useCelebration } from "../useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"

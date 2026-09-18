@@ -20,7 +20,7 @@ export const PROCESSION_META: FamilyMeta = {
   // waiting on art that has not been drawn.
   //
   // `cosmos` is the one journey nothing serves today (`journeys.md` §9), and this family is its first
-  // member rather than the whole answer — a role needs four before a journey may restrict to it (§11.0).
+  // member rather than the whole answer — a role needs four before a journey may restrict to it.
   tags: ["puzzle", "funerary", "cosmos", "water", "trade"],
   faces: {
     funerary: ["funerary"],

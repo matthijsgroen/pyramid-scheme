@@ -102,18 +102,9 @@ describe.each(difficulties)("at %s", difficulty => {
   })
 
   /**
-   * Phase 1's correctness rule, asserted directly: no branch shares a `(cell, direction)` pair with the
-   * golden path, and none enters a cell a tappable piece occupies.
-   *
+   * The construction's correctness rule: no branch shares a `(cell, direction)` pair with the golden path.
    * The pair rather than "does it reach the shrine", because a branch rejoining *upstream* of where it left
-   * also delivers the light (design doc §11.15). And the tappable half is what phase 1 buys its proof with:
-   * a branch entering a tappable cell is one corridor **per stop of that piece**, so authoring covers only
-   * the stop it was traced against — which is exactly the two-branches-combine counterexample §11.15 found.
-   *
-   * Reuse itself is allowed and expected — that is what `corridorDies` recurses for. What may never happen is
-   * the **join**, and the retracing stop is the one case that looks like one and is not: it retraces through
-   * the mirrors that carried it, each still at its golden angle or the light would not have reached the bend,
-   * and the disc swallows it.
+   * also delivers the light. Reuse is allowed and expected — the join is what may never happen.
    */
   it("no branch joins the golden path", () => {
     for (const board of boards) {
@@ -145,35 +136,20 @@ describe.each(difficulties)("at %s", difficulty => {
   })
 
   /**
-   * **Every wall stops a branch** — there is no scenery, because stone is only ever placed where a corridor
-   * had nowhere else to end.
-   *
-   * Note what this does *not* claim, because measuring it corrected the plan: taking a wall away mostly does
-   * **not** break uniqueness. Measured over 1 000 boards, 692 of 722 walls are holding a branch out of a
-   * cell a tappable piece occupies, and the beam dies anyway once it gets there. They are load-bearing for
-   * phase 1's no-reuse invariant rather than for the answer, which is the real reason `thinWalls` must not
-   * run here: it re-checks uniqueness and the ladder, so it would strip exactly the stone that keeps
-   * branches away from tappable cells and hand phase 2's recursion §11.15's hazard.
+   * Every wall stops a branch; there is no scenery. Note what this does not claim: taking a wall away mostly
+   * does *not* break uniqueness, because most stone is holding a branch out of a tappable cell rather than
+   * holding up the answer. That is why `thinWalls` must not run here.
    */
   it("carries no wall that stops nothing", () => {
-    // Every wall is placed because a corridor had nowhere else to end, so some reachable beam must arrive at it.
-    //
-    // Asked of the reachable-deviation walk rather than by sampling, and the first attempt at this test is why:
-    // over the single- and double-piece deviations it fails at four tiers, because **walls really are
-    // load-bearing three and more settings deep** once branches may reuse the pieces already on the board. That
-    // is a fact about the construction rather than a gap in it — but it does mean nothing short of the full
-    // reachable tree can answer the question.
-    //
-    // Note what this therefore does and does not catch. It shares its walk with `pruneStone`, so it cannot catch
-    // a bug in the walk — the tree-against-product agreement asserted elsewhere is what covers that. What it does
-    // catch is scenery shipped because pruning was skipped, which happens by design whenever the exploration is
-    // cut short, and that is the case worth a guard.
+    // Asked of the full reachable-deviation walk rather than by sampling: walls are load-bearing three and
+    // more settings deep, so nothing shorter answers the question. It shares its walk with `pruneStone`, so
+    // what it catches is scenery shipped because pruning was skipped, not a bug in the walk itself.
     for (const board of boards) {
       const reach = reachableDeviations(board, board.solution)
       expect(reach?.complete).toBe(true)
 
       // Wall-heavy's corner pairs are the one stone that is there to be *read* rather than to stop something:
-      // two walls either side of a diagonal step, with the winning beam going through the gap (§11.8 rule 4).
+      // two walls either side of a diagonal step, with the winning beam going through the gap.
       const path = traceBeam(board, board.solution).path
       const cornerSlip = new Set<string>()
       for (let step = 1; step < path.length; step++) {
@@ -298,16 +274,9 @@ describe("dials past the shipped tiers", () => {
 })
 
 /**
- * §11.15's counterexample board, transcribed from the design doc.
- *
- * **This is the regression test the whole recursion exists for.** It is a board where every single-piece
- * deviation from the answer dies *and* satisfies the pair invariant — no branch shares a `(cell, direction)`
- * pair with the golden path, none reaches the shrine — and which is nevertheless not unique, because the
- * configuration that moves all three pieces lights the shrine by a second, shorter path. Two branches that
- * each die on their own, combining into a route.
- *
- * A generator that can produce this shape is wrong, so the gate has to see it. Angles are eighth-turns:
- * 22.5°=1, 45°=2, 67.5°=3, 112.5°=5, 135°=6.
+ * The regression test the whole recursion exists for: every single-piece deviation dies and satisfies the
+ * pair invariant, yet the configuration that moves all three pieces lights the shrine by a second, shorter
+ * path. Angles are eighth-turns: 22.5°=1, 45°=2, 67.5°=3, 112.5°=5, 135°=6.
  */
 const COUNTEREXAMPLE: LightbeamPuzzleData = {
   size: 5,
@@ -325,12 +294,12 @@ const COUNTEREXAMPLE: LightbeamPuzzleData = {
 }
 const COUNTEREXAMPLE_ANSWER = [1, 0, 0]
 
-describe("§11.15's counterexample", () => {
+describe("the two-branches-combine counterexample", () => {
   it("is a board whose answer works", () => {
     expect(isLit(COUNTEREXAMPLE, COUNTEREXAMPLE_ANSWER)).toBe(true)
   })
 
-  /** The half of §11.15 that is right: the pair is a genuine condition, and this board meets it. */
+  /** The half that is right: the pair is a genuine condition, and this board meets it. */
   it("satisfies the pair invariant — every single-piece deviation dies and none rejoins", () => {
     const goldenSegments = new Set(
       traceBeam(COUNTEREXAMPLE, COUNTEREXAMPLE_ANSWER).path.map(segment => segmentKey(segment.at, segment.enter))
@@ -415,7 +384,7 @@ describe("branches that turn", () => {
     }
   })
 
-  /** And it is cheaper, which is the claim §11.15 makes for it. */
+  /** And it is cheaper, which is the claim made for it. */
   it("costs less than the product it replaces", () => {
     for (const board of boards) {
       const reach = reachableDeviations(board, board.solution)
@@ -525,12 +494,12 @@ describe("branch depth against the technique cap", () => {
 })
 
 /**
- * Wall-heavy, the first of the three modes that replace the goal pool (§11.18).
+ * Wall-heavy, the first of the three modes that replace the goal pool.
  *
  * Two things it does, and they are the same idea twice: stone is more legible than the frame. A branch closed
  * in stone says "it hit that"; one that leaves the board says only "it went away". And on a diagonal golden
  * leg a **pair** of walls goes down either side of the step, so the winning beam is seen to slip between two
- * corners — §11.8 rule 4 taught by the board instead of by rules text.
+ * corners — the diagonal-step rule taught by the board instead of by rules text.
  */
 describe("wall-heavy", () => {
   const DIALS: LightbeamOptions & { size: number } = {
@@ -616,16 +585,9 @@ describe("wall-heavy", () => {
 })
 
 /**
- * Slider-heavy: golden bends that slide rather than turn.
- *
- * The cheapest fork in the family, and for a structural reason. A turn mirror's wrong setting sends the light
- * somewhere that has to be closed with authored stone; a slider's wrong setting is *"as if the piece were not
- * there"*, so the branch is the beam's own line carrying straight on through the cell it vacated. It also asks
- * a different question — not "which way round" but "is it in the way", and on a three-cell track, "which cell".
- *
- * It is the mode that needed the occupancy model: a sliding piece's **absence** from a cell is a fact about its
- * setting, so a beam crossing an empty track cell has learned something, and `(cell, direction)` alone no
- * longer determines the future.
+ * Slider-heavy: golden bends that slide rather than turn. A slider's wrong setting is "as if the piece were
+ * not there", so the branch is the beam carrying straight on through the cell it vacated — which is why a
+ * sliding piece's *absence* from a cell is itself a fact about its setting.
  */
 describe("slider-heavy", () => {
   const BASE: LightbeamOptions & { size: number } = {
@@ -872,17 +834,9 @@ describe("mode variance", () => {
 })
 
 /**
- * Switch-heavy: doors across the route, and the sockets that open them.
- *
- * A door is stone the player cannot shift, so the light is the only thing that opens it — which is what stops
- * the socket being decoration (§11.2). It buys a rung nothing else in the family does: **order**, "the light
- * has to get through here, this door is shut, so it must reach that socket first", seeded from the middle of
- * the board where a long route is thinnest.
- *
- * It is also the mode that generalises the proof. A socket changes the board mid-walk, so the determinism both
- * walks rest on is keyed on `(cell, direction, firedSet)` rather than `(cell, direction)`. That stays
- * well-founded because firing is **monotone** — a wiring fires once and never un-fires — so a walk cannot
- * cycle through door states.
+ * Switch-heavy: doors across the route, and the sockets that open them, which buys a rung nothing else does —
+ * order. A socket changes the board mid-walk, so determinism is keyed on `(cell, direction, firedSet)`; that
+ * stays well-founded because firing is monotone, so a walk cannot cycle through door states.
  */
 describe("switch-heavy", () => {
   const BASE: LightbeamOptions & { size: number } = {
@@ -1015,20 +969,9 @@ describe("switch-heavy", () => {
 })
 
 /**
- * **Traps** — §11.1's missing half, and the thing this whole architecture was for.
- *
- * §11.1 worked out what a trap needs and then explained why it could not be built. The trap has to be the
- * *only* reason a wrong setting fails, so that setting must otherwise **reach the shrine** — a would-be second
- * route — and route-then-obstruct is built to reject exactly those. It called looking for one "fishing in a pond
- * stocked against you", and measured what happens if you place the socket the way shadows are placed instead:
- * **23 traps across 120 boards, every single one of them decoration.**
- *
- * An authoring generator does not fish. It routes a wrong setting to the shrine on purpose (`routeToShrine`),
- * then puts the socket on that corridor and the stone further along it. The wrong setting's own light drops the
- * stone in front of itself and dies of its own doing, so uniqueness is restored *by the trap*.
- *
- * The acceptance test is §11.1's own, and it is a generation gate rather than only an assertion here: take the
- * trap out and the board must stop being a puzzle.
+ * Traps. The trap has to be the *only* reason a wrong setting fails, so that setting must otherwise reach the
+ * shrine — which is why it is authored (`routeToShrine`) rather than searched for. The acceptance test is
+ * below and is also a generation gate: take the trap out and the board must stop being a puzzle.
  */
 describe("traps", () => {
   const DIALS: LightbeamOptions & { size: number } = {

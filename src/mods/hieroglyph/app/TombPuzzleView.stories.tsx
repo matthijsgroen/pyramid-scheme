@@ -5,9 +5,11 @@ import { hashString } from "@/support/hashString"
 import { generateRewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
 import { useTableauTranslations } from "@/app/translations/useTableauTranslations"
 import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
-import { TombPuzzleView } from "./TombPuzzleView"
+import { TombPuzzleView } from "@/ui/organisms/TombPuzzleView"
 
+// Mod-side though the component is core's: it names hieroglyph, and a story ships in build-storybook.
 const meta = {
+  title: "Hieroglyph/TombPuzzleView",
   parameters: { layout: "fullscreen" },
 } satisfies Meta<Record<string, never>>
 
@@ -40,7 +42,6 @@ export const InProgress: Story = {
         filledState={{ symbolCounts: {}, filledPositions: {} }}
         resolveTile={resolveTile}
         hintFormulas={calculation.hintFormulas.map((f, i) => ({ formula: f, index: i }))}
-        annotations={{}}
         isPuzzleCompleted={false}
         lockState="empty"
         lockValue=""

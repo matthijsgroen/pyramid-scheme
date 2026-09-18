@@ -178,8 +178,8 @@ describe("neverReached", () => {
 })
 
 // ---------------------------------------------------------------------------------------------------
-// The cut mirror (design doc §11.8). The walk landed in step 2 and the boards below are the first proof
-// that a board carrying one can be *reasoned* rather than merely traced — §11.8's own closing paragraph
+// The cut mirror. The boards below are the first proof
+// that a board carrying one can be *reasoned* rather than merely traced — the closing claim
 // names that as one of the two remaining risks, and nothing had asked it before.
 // ---------------------------------------------------------------------------------------------------
 
@@ -203,7 +203,7 @@ const cutDiagonal: LightbeamPuzzleData = {
 }
 
 /**
- * §11.8 rule 3's stop set, `{0°, 45°, 135°}`: a three-stop piece, whose flat stop lies along the beam and
+ * The stop set `{0°, 45°, 135°}`: a three-stop piece, whose flat stop lies along the beam and
  * passes it straight through. Two of the three are wrong, and they are wrong in different ways — one runs
  * into stone and one off the frame — which is the case the wrong-ray derivation exists for.
  *
@@ -222,7 +222,7 @@ const cutThreeStop: LightbeamPuzzleData = {
 }
 
 /**
- * Two cut mirrors, out of the square and back — the shape a route with a diagonal leg has (§11.12), and
+ * Two cut mirrors, out of the square and back — the shape a route with a diagonal leg has, and
  * the one place a wrong setting sends the light **home**. The second piece's other stop lies 135° off its
  * answer, which for a 45° bend is exactly the way back: the beam retraces the diagonal, retraces the row
  * off the first mirror, and the disc swallows it.
@@ -265,7 +265,7 @@ describe("a route that leaves the rows and columns", () => {
       fixed: [],
       // A flat mirror lying square across a beam coming down the column sends it straight back up into the
       // disc. No stop set the generator may author holds a flat stop — it offers square light no quarter
-      // turn, which §11.8 rule 2 forbids — so this one is hand-built.
+      // turn, which the mirror law forbids — so this one is hand-built.
       movable: [{ kind: "turnMirror", at: { row: 2, col: 1 }, angles: [0, 6] }],
     }
     expect(firstStep(backOnItself, "deadEnd", "deadEnd")?.variant).toBe("disc")
@@ -302,7 +302,7 @@ describe("a board with a cut mirror on its route", () => {
     expect(solve.steps.filter(step => step.technique === "deadEnd").map(step => step.variant)).toEqual(["wall", "edge"])
   })
 
-  // A cut mirror is a species rather than an angle (§11.8 rule 3 against rule 2): a stop set off the two
+  // A cut mirror is a species rather than an angle: a stop set off the two
   // diagonals is cut whether or not it can turn light diagonally, and only a half-step can do that.
   it("is a four-direction board when its stops are all aligned", () => {
     expect(isCut(cutThreeStop.movable[0].kind === "turnMirror" ? cutThreeStop.movable[0].angles : [])).toBe(true)
