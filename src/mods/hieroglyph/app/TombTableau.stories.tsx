@@ -24,10 +24,7 @@ const fillPositions = (keys: string[], value: number) => {
 }
 
 const tombJourneys = journeys.filter(j => j.type === "treasure_tomb")
-// It lives on the MOD side though the component is core's, because it names hieroglyph: core may not
-// import a mod (ARCHITECTURE.md, invariant 1 — a mod is removable), and a story is part of
-// `yarn build-storybook`. Same reasoning as `SumpleteEncounter.stories.tsx`, moved in #271. The
-// component itself stays in `src/ui/` and names nothing: only the fixture is hieroglyph's.
+// Mod-side though the component is core's: it names hieroglyph, and a story ships in build-storybook.
 const meta = {
   title: "Hieroglyph/TombTableau",
   parameters: {

@@ -67,24 +67,20 @@ if (isModEnabled("tomb-treasure")) {
   // tombKey; drops out of the Collection screen when the mod is off.
   registerCollectionSection({ id: "tomb-treasure", order: 10, Component: TombTreasureCollectionSection })
 
-  // The cheat menu's tomb grants (§dev). Both stay here because both are this mod's state: core
-  // composes them into "Unlock everything" without learning what a ward key or a map piece is.
+  // The cheat menu's tomb grants — this mod's state, so this mod hands them out.
   registerDevGrants(() => {
     const { addTombKey, collectMapPiece, mapPieceCount, discoverTomb } = useTombTreasureProgress()
     return useMemo(
       () => [
         {
-          // Every tomb treasure at once: simultaneously every ward key (so gated pockets open), every
-          // tier unlock (TIER_UNLOCK_PERK_IDS is a subset of these), and every perk — including the
-          // compass and corridor detector, which is what makes hidden loot findable while testing.
+          // Every ward key, tier unlock and perk at once — including the detectors testing needs.
           label: "All treasures + keys",
           grant: () => {
             for (const perkIds of Object.values(TOMB_PERK_IDS)) for (const id of perkIds) addTombKey(id)
           },
         },
         {
-          // Tombs are entered on a map-piece threshold, not a key, so they need their own grant. Tops
-          // each tomb up to its own requirement and reveals it on the travel screen.
+          // Tombs open on a map-piece threshold, not a key, so they need their own grant.
           label: "All map pieces",
           grant: () => {
             for (const tombId of Object.keys(TOMB_PERK_IDS)) {

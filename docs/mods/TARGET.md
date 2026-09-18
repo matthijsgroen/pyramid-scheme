@@ -70,37 +70,18 @@ no unfakeable checkpoint). Per-slice steps live in `docs/mods/SLICE-CHECKLIST.md
 
 ## How the boundary is held while it is still being built
 
-`@typescript-eslint/no-restricted-imports` in `eslint.config.js` reports a core file
-importing `@/mods/<name>/` — `src/app/`, `src/ui/`, `src/game/`, `src/data/` and
-`src/worldGen/`. Two seams stay open by design: the top-level aggregates a mod
-registers itself through (`registeredMods`, `allFamilyMeta`, `registerModApps`,
-`allCurrencyDistributions`) and `@/mods/core/`, which is the engine rather than a mod.
+Two `no-restricted-imports` rules in `eslint.config.js`: core (`src/app`, `src/ui`, `src/game`,
+`src/data`, `src/worldGen`) may not import `@/mods/<name>/`, and no mod may import a sibling. Open by
+design: the aggregates a mod registers itself through (`registeredMods`, `allFamilyMeta`,
+`registerModApps`, `allCurrencyDistributions`), and `@/mods/core/`.
 
-It is a **warning**, because 11 real hits predate it — `hieroglyph` and `tombTreasure`
-hold most of them, read straight from `Travel`, `TableauInventory`, `inventoryLootLogic` and three
-core specs. `yarn lint` runs with `--max-warnings` pinned at the current total,
-so the backlog can only shrink: a new violation fails the run, and clearing one means
-lowering the pin in the same commit. Flip the rule to `error` and drop the pin once it
-reaches zero.
+Both are warnings; `yarn lint` pins the total with `--max-warnings`, so the backlog only shrinks.
+Flip to `error` and drop the pin at zero. Fix a hit by inverting the dependency — the fact moves to
+the owning mod, core reads it back through a registry — never by widening the allowlist. A core spec
+counts: importing a mod breaks the toggle-off gate as surely as production code.
 
-A second rule holds the sibling boundary: a file under `src/mods/<A>/` may not import
-`@/mods/<B>/`, because a mod that names a sibling is only removable together with it. That one
-stands at **1** — `hieroglyph/app/TombPuzzle.tsx` reads `usePuzzleProgress` for the scribes-eye
-level, which `puzzle/app/index.ts` declares puzzle-owned while the only thing that renders it is
-hieroglyph's tableau. It surfaced when `TombPuzzle` moved out of core: the dependency was always
-there, just hidden behind core as an intermediary. Whether scribes-eye belongs to puzzle, to
-hieroglyph, or behind a perk-level seam is an open question, not a mechanical fix.
-
-A hit is fixed by **inverting the dependency** — the fact moves into the owning mod and
-core reads it back through a registry — not by widening the rule's allowlist. A core
-_spec_ counts too: a spec that imports a mod breaks the toggle-off gate as surely as
-production code does.
-
-Placement is a separate question the rule cannot see: a file under `mods/core/` that
-only one mod ever imports belongs to that mod, whichever way the imports point.
-`useCelebration` moved to `mods/puzzle/app/` on exactly that ground. Still in core and
-genuinely shared, so staying: `PuzzleFamilyShell` (puzzle, hieroglyph, trap),
-`useHintAvailability` (puzzle, trap) and `puzzleState` (puzzle, and core's own
-`SiteMapScreen`/`useEncounter`). `keyGate` and `treasureChest` are families core
-registers itself — making either a mod is a slice with its own toggle-off proof
-(`SLICE-CHECKLIST.md`), not a file move.
+Placement is a separate question the rules cannot see: a file under `mods/core/` that only one mod
+imports belongs to that mod whichever way the arrows point. `useCelebration` moved to
+`mods/puzzle/app/` on that ground. Still shared, so staying: `PuzzleFamilyShell`,
+`useHintAvailability`, `puzzleState`. `keyGate` and `treasureChest` are families core registers
+itself — making either a mod is a slice with its own toggle-off proof.

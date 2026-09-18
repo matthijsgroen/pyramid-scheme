@@ -66,8 +66,7 @@ if (isModEnabled("hieroglyph")) {
   // keys. Core never learns these are hieroglyphs; a tableau node just exposes them as requiredKeyIds.
   registerHeldKeysProvider(() => useHieroglyphProgress().completedHieroglyphKeys)
 
-  // The cheat menu's hieroglyph grant (§dev): completing every hieroglyph is what makes a late tomb's
-  // tableau rooms solvable on arrival — without it, jumping there hits a wall of unfillable formulas.
+  // Without every hieroglyph, jumping to a late tomb hits a wall of unfillable tableau formulas.
   registerDevGrants(() => {
     const { addFragment } = useHieroglyphProgress()
     return useMemo(
