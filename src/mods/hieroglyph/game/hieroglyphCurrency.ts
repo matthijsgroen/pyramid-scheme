@@ -71,8 +71,8 @@ const JOURNEY_TIER: Record<string, Tier> = (() => {
 
 // Which THIRD of its own tier's journeys (in declaration order) a journey falls in: 0/0.5/1 for
 // first/middle/last third. Ties in `rank`'s pool score today all resolve to earliest-journey-first
-// (collectSlots walks in declaration order, and every ward-matched slot scored identically) —
-// exactly why a tier's first one or two pyramids used to hoard most of that tier's fragments.
+// (collectSlots walks in declaration order, and every ward-matched slot scored identically), which
+// piles a tier's fragments into its first one or two pyramids.
 // This lets `rank` break ties toward LATER journeys instead — bucketed into thirds rather than a
 // continuous ordinal, so it biases volume toward the tier's later stretch without collapsing every
 // tie onto the single literal last journey (which a continuous fraction does: it's ranked highest

@@ -50,7 +50,7 @@ if (isModEnabled("hieroglyph")) {
   registerJourneyCardSlot({ id: "hieroglyph:tableau-inventory", Component: TableauInventory })
   registerCompassScanner(useHieroglyphCompassScanner)
   // The compass perk (fragment detector) is hieroglyph-owned: describe it, and expose its derived
-  // level to the merged detector-level accessor (§7.4).
+  // level to the merged detector-level accessor.
   registerPerkContribution(() => {
     const { t } = useTranslation("treasures")
     return {
@@ -59,7 +59,7 @@ if (isModEnabled("hieroglyph")) {
     }
   })
   registerDetectorLevel("compass", () => useHieroglyphProgress().compassLevel)
-  // The hunt target is picked on the Collection screen (§3C) and stored in the mod's own state;
+  // The hunt target is picked on the Collection screen and stored in the mod's own state;
   // core reads it through this seam to drive the in-run compass readout without naming the mod.
   registerCompassTarget(() => useHieroglyphProgress().compassTarget)
   // …and how to show it, so the readout can say "looking for 𓎗" while core stays ignorant of what a

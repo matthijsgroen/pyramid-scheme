@@ -81,13 +81,11 @@ if (isModEnabled("hieroglyph"))
     meta: TABLEAU_META,
     generate: (seed, ctx): RewardCalculation => {
       const random = mulberry32(seed)
-      // Resolve the AUTHORED tableau for this tomb floor so the puzzle the player solves uses
-      // exactly the symbols world-gen guaranteed reachable fragments for (keyRequirements.ts, via
-      // the shared getTableauLevel) and that the inventory preview shows (TableauInventory). The
-      // floor's `{ runNr }` rides ctx.encounterArgs (same zod schema the world-gen resolver uses);
-      // levelNr is its structural pathIndex+1. This is the fix for the play-vs-authored disconnect:
-      // the puzzle used to draw random symbols from the whole tier pool, so it could demand a
-      // hieroglyph whose fragments were never placed reachable for that floor (unsolvable at 0/N).
+      // Resolve the AUTHORED tableau for this tomb floor, so the puzzle asks for exactly the
+      // symbols world-gen placed reachable fragments for (keyRequirements.ts, through the shared
+      // getTableauLevel) — anything else can be unsolvable at 0/N. The floor's `{ runNr }` rides
+      // ctx.encounterArgs on the same schema the world-gen resolver reads; levelNr is its
+      // structural pathIndex+1.
       const parsed = tableauEncounterArgsSchema.safeParse(ctx.encounterArgs)
       const journey = journeys.find(
         (j): j is TreasureTombJourney => j.id === ctx.journeyId && j.type === "treasure_tomb"

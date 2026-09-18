@@ -66,7 +66,7 @@ const CategoryGridSection: FC<{
   )
 }
 
-// The hunt bar (§3C): the Collection is the compass's target picker. Shown only when the compass is
+// The hunt bar: the Collection is the compass's target picker. Shown only when the compass is
 // unlocked (compassLevel > 0) — with the mod off there's no fragment section at all, so the whole
 // affordance is absent. Selecting an uncollected hieroglyph offers "hunt it"; the active target
 // shows with a way to stop.

@@ -22,7 +22,7 @@ const FRAGMENT_MATRIX: Record<Tier, Record<number, number> & { revisit: number }
 }
 
 // Per-hieroglyph required fragment count. A tier's tomb can be split across several journeys
-// once a single tomb got too large for exploration (pyramid-interior-design.md §5) — a symbol
+// once a single tomb got too large for exploration (pyramid-interior-design.md) — a symbol
 // may only ever appear in a secondary tomb's tableaus, so "first section" searches every tomb
 // of the tier, not just its primary (`${tier}_treasure_tomb`).
 export const HIEROGLYPH_REQUIRED: Record<string, number> = (() => {

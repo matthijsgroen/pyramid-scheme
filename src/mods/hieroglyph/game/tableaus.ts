@@ -85,15 +85,14 @@ function getTableauDescription(
 
 const tombJourneys = journeys.filter((j): j is TreasureTombJourney => j.type === "treasure_tomb")
 
-// N tableau rooms per REAL tomb floor (pyramid-interior-design.md §8). A tier's tomb may be split
-// across several journeys once one tomb grew too large for a single exploration (§5); every floor of
+// N tableau rooms per REAL tomb floor (pyramid-interior-design.md). A tier's tomb may be split
+// across several journeys once one tomb grew too large for a single exploration; every floor of
 // every tomb presents `TABLEAUS_PER_FLOOR[tier]` sequential tableau rooms.
 //
 // The authored story grid (objectsForStories / tableaus.json) covers
 // `<global floors in tier> × <rooms per floor>` and is keyed under the tier's PRIMARY tomb id. So a
 // tableau's required symbols ARE the objects its authored story is about, matched by construction —
-// no shuffled-pool slice that could drift (an earlier remap once made a "Fish for the Market"
-// tableau require Ankh + Ra). `sourceRun` is the global 1-based floor index across every tomb of the
+// no shuffled-pool slice that could drift away from the story. `sourceRun` is the global 1-based floor index across every tomb of the
 // tier (in tomb order); it indexes the grid, while the tomb's own id/floor are what world-gen and
 // the player see. storySource records which (primaryTombId, run, room) triple each real (floor,room)
 // maps to, so the lookup finds the existing story instead of falling back to placeholder text.
@@ -259,9 +258,8 @@ const tableauLevels = generateTableaus()
 
 // The single tableau-resolution point: which authored TableauLevel a tomb floor presents, keyed
 // by (journeyId, runNr, levelNr). Shared by world-gen fragment placement (keyRequirements.ts) and
-// the play-time tableau puzzle (hieroglyph plugin) so the tableau the solver guarantees fragments
-// for is byte-for-byte the tableau the player solves — the two used to derive symbols separately
-// and could diverge (the played puzzle drew random symbols from the whole tier pool).
+// the play-time tableau puzzle (hieroglyph plugin), so the tableau the solver guarantees fragments
+// for is byte-for-byte the tableau the player solves.
 export const getTableauLevel = (journeyId: string, runNr: number, levelNr: number): TableauLevel | undefined =>
   tableauLevels.find(t => t.tombJourneyId === journeyId && t.runNumber === runNr && t.levelNr === levelNr)
 

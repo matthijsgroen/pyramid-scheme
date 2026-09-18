@@ -46,7 +46,7 @@ export const TravelPage: FC<{
   // A completed journey (completionCount > 0) is in revisit/explore mode: selecting it from the grid
   // lands on the map (not the game) so the player picks which pyramid to re-enter.
   const isRevisit = (journeyId: string) => (getJourney(journeyId)?.completionCount ?? 0) > 0
-  // Corridor detector L4 (§7.2): only the top detector level surfaces the world-wide marker.
+  // Corridor detector L4: only the top detector level surfaces the world-wide marker.
   const corridorDetectorLevel = useMergedDetectorLevels().corridor
   const { isTombDiscovered, mapPieceCount, hasMapPiece: hasFoundMapPiece } = useTombTreasureProgress()
   const [showJourneySelection, setShowJourneySelection] = useState(false)

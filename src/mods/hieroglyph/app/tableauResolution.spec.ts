@@ -3,11 +3,9 @@ import "./plugin" // side-effect: registers the "tableau" family
 import { getFamilyPlugin, type FamilyContext } from "@/app/families/familyRegistry"
 import { getTableauLevel } from "@/mods/hieroglyph/game/tableaus"
 
-// Regression guard for the play-vs-authored tableau disconnect: the tableau the player SOLVES
-// (this family's generate) must use exactly the symbols world-gen placed fragments for — the
-// authored TableauLevel resolved from the floor's `encounterArgs.runNr`. It used to draw random
-// symbols from the whole tier pool, so it could demand a hieroglyph never made reachable for that
-// floor (stuck at 0/N). See src/mods/hieroglyph/app/plugin.tsx.
+// The tableau the player SOLVES (this family's generate) must ask for exactly the symbols world-gen
+// placed fragments for — the authored TableauLevel resolved from the floor's `encounterArgs.runNr`.
+// Any other symbol set can leave the floor stuck at 0/N. See src/mods/hieroglyph/app/plugin.tsx.
 const ctxFor = (journeyId: string, runNr: number): FamilyContext => ({
   journeyId,
   edgeId: `edge-${runNr}`,

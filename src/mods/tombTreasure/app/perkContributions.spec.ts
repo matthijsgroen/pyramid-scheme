@@ -5,7 +5,7 @@ import "@/mods/registerModApps" // populate the perk-contribution registry (all 
 import { useMergedPerkContributions } from "@/app/SiteMap/perkContributions"
 import { TREASURE_PERKS } from "../game/treasurePerks"
 
-// Guards the open-payload typo risk (§8.0): a stat perk whose `type` string no mod grants would
+// Guards the open-payload typo risk: a stat perk whose `type` string no mod grants would
 // silently no-op. `describe` is defined only by the perk's owning mod, so a defined describe proves
 // an owner exists — checked here for every stat perk in the authored TREASURE_PERKS, all mods on.
 // The non-perk types (addTombKey + discovery handle those) are not granted via the seam.

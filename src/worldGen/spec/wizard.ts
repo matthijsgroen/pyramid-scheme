@@ -144,24 +144,24 @@ export const wizardRules: Rule[] = [
   // same-key constraints (like sideSections) by specificity, journey-pyramid (8) over
   // tier-pyramid (6), overwriting wholesale rather than merging — and the tier("wizard")
   // .pyramid("last"/"last-1", ...) rules below already own those pyramids' sideSections (the
-  // secondary/tertiary-tomb map-piece unlock gates). An earlier revision put chests directly on
-  // those pyramids and silently deleted those gates for wizard_1/2/3; every entry here now
+  // secondary/tertiary-tomb map-piece unlock gates) — a chest authored onto one of those pyramids
+  // deletes those gates silently. Every entry here
   // targets a pyramid neither tier rule touches (and, for wizard_4, avoids the journey-specific
   // "last-1" override further below that intentionally keeps that one pyramid slot-free).
   journey("wizard_1").pyramid(1, {
     sideSections: [holdChestC(0), holdChestC(1)],
     wardWings: [starterWing()], // the full-circle starter-echo (see helper above)
   }),
-  // **The tomb journeys ask for the place their story is already set in** (docs/game-design/journeys.md §9).
+  // **The tomb journeys ask for the place their story is already set in** (docs/game-design/journeys.md).
   // Four families have a funerary face — balance scale weighs a heart against the feather, constellation
   // paints a ceiling, hidato opens sealed chambers, and sudoku's default already IS a wall of cut signs.
   //
   // **`puzzle` rides along on purpose, and it is what makes this safe.** A role list is a union, so the pool
   // stays every family and the draw does not change at all — what changes is that the four which can dress
   // now do. Restricting to the four instead would be 10 to 16 turns each across their 41 to 63 sections, far past the 6.3 repeats-per-family the
-  // least varied journey in the game already ships (§11), so a tomb would be the same four boards over and
+  // least varied journey in the game already ships, so a tomb would be the same four boards over and
   // over. The share that comes out dressed is therefore the pool's natural rate rather than a chosen one;
-  // weighting a preferred role is designed and unbuilt (§11).
+  // weighting a preferred role is designed and unbuilt.
   //
   // **The Chamber of Ma'at is a judgement too**, and its brief names the scales and the feather of truth
   // outright — the largest single journey any of this reaches, at 207 rooms.

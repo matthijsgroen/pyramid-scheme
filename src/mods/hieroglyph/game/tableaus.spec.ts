@@ -9,7 +9,7 @@ import type { Difficulty } from "@/data/difficultyLevels"
 const tombJourneys = journeys.filter((j): j is TreasureTombJourney => j.type === "treasure_tomb")
 
 describe("Tableau System", () => {
-  // N tableau rooms per tomb floor (pyramid-interior-design.md §8) — a tier's tomb may be split
+  // N tableau rooms per tomb floor (pyramid-interior-design.md) — a tier's tomb may be split
   // across several journeys once a single tomb got too large; each floor of each tomb presents
   // TABLEAUS_PER_FLOOR[tier] sequential rooms. See src/data/tableaus.ts's own comment.
 
