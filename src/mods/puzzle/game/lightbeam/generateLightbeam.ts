@@ -67,19 +67,18 @@ type GeneratedBoard = Omit<LightbeamPuzzle, "modes">
 // any configuration, let `k` be the first bend not at its golden angle, and the beam reaches `k` along the
 // golden path and leaves down a corridor built to kill it.
 //
-// Two conditions carry that argument, and both are §11.15's:
+// Two conditions carry that argument:
 //
 //  - A branch may share no `(cell, direction)` pair with the golden path. Sharing a *cell* while travelling
 //    differently is not a join; rejoining **upstream** of where it left is, which is why the test is the pair
 //    rather than "does it reach the shrine".
 //  - A branch entering a cell a tappable piece can occupy is **one corridor per state of that piece**, so
 //    `corridorDies` recurses over every one of them and requires each to die. Without that the invariant is
-//    necessary but not sufficient, and §11.15 has the 5x5 board that proves it.
+//    necessary but not sufficient — a 5x5 board proves it.
 //
-// The route builder **backtracks** rather than guessing, which is what makes a draft cost about one attempt
-// instead of the 70-356 discarded drafts route-then-obstruct paid at the top three tiers (§11.14, §11.19).
+// The route builder **backtracks** rather than guessing, so a draft costs about one attempt.
 //
-// A tier's character comes from its **modes** (§11.18) rather than from turning two dials hard, and the
+// A tier's character comes from its **modes** rather than from turning two dials hard, and the
 // load-bearing knob is `interactive`: a given costs a cell, contributes nothing to the configuration space
 // and authors no corridor, so one share thins a board on all three counts at once.
 
@@ -87,7 +86,7 @@ type GeneratedBoard = Omit<LightbeamPuzzle, "modes">
  * What kind of board this is, as against how hard it is — the modes that replace §7's goal pool.
  *
  * - **wall-heavy** — stone rather than the frame closes a branch, and a diagonal golden leg gets a *pair* of
- *   walls the beam visibly passes between: §11.8 rule 4's corner slip used as a feature rather than a rule to
+ *   walls the beam visibly passes between: the corner slip used as a feature rather than a rule to
  *   learn.
  * - **slider-heavy** — golden bends that slide rather than turn.
  * - **switch-heavy** — doors, sockets, and §11.1's traps.
@@ -119,7 +118,7 @@ export type LightbeamDials = {
    */
   crossings: number
   /**
-   * How many of the route's bends turn the beam **diagonally** — the cut mirrors (§11.8).
+   * How many of the route's bends turn the beam **diagonally** — the cut mirrors.
    *
    * One piece doing more rather than another piece. The bend would have carried a mirror anyway; what changes
    * is that its answer is a half-step and its stop set reaches 67.5° the other way. `cutBendSlots` has the one
@@ -171,14 +170,14 @@ export type LightbeamDials = {
 /** The dials that shape how the maze around the route is authored. */
 export type AuthoringDials = {
   /**
-   * **0..1, the share of a board's mirrors that are the player's to tap** (§11.15's closing note).
+   * **0..1, the share of a board's mirrors that are the player's to tap**.
    *
    * The load-bearing one, because it chooses the architecture rather than a quantity. A **given** costs a
    * cell and reads as scenery: it contributes nothing to the configuration space, and a branch may pass
    * through it freely, because a fixed face keeps `(cell, direction)` determining the future. A **tappable**
    * mirror is the opposite on all three counts, and every branch touching one owes the recursion.
    *
-   * So it is a continuous dial between the two designs §11.15 weighs — low and the board fills with scenery
+   * So it is a continuous dial between two designs — low and the board fills with scenery
    * while uniqueness is nearly free, high and the board stays dense and the recursion does real work. The
    * floor of `MIN_TAPPABLE` holds whatever the weight says.
    */
@@ -193,7 +192,7 @@ export type AuthoringDials = {
    */
   traps: number
   /**
-   * **Which modes this board is built to** (design doc §11.18). Combinable, and they replace the goal pool:
+   * **Which modes this board is built to.** Combinable, and they replace the goal pool:
    * a mode is what gives a board its flavour, which is the job §7's goals were doing.
    *
    * Recorded on the result rather than logged, for the reason §7.2 gives about goals — a fallback that fires
@@ -218,7 +217,7 @@ export type AuthoringDials = {
    */
   decoys: boolean
   /**
-   * **The most stops a mirror on the route may offer** — its fork in the maze (§11.8 rule 1).
+   * **The most stops a mirror on the route may offer** — its fork in the maze.
    *
    * The sibling of `slidingStops`, one axis over: two asks "which of these two", three asks "which of these
    * three", and it costs 1.5x rather than 2x because it is the same piece doing more. Two is what the family
@@ -274,7 +273,7 @@ export type LightbeamOptions = Partial<LightbeamDials> & {
    *
    * Off unless asked for, and it costs an optional call per rejection. It reports the gate rather than a
    * diagnosis: `notUnique` means a second route existed, not why the draft allowed one. Any comparison
-   * between two sets of dials needs this number first, or it is a comparison of impressions (§11.14).
+   * between two sets of dials needs this number first, or it is a comparison of impressions.
    */
   reject?: (gate: LightbeamGate) => void
 }
@@ -313,7 +312,7 @@ export type LightbeamPuzzle = LightbeamPuzzleData & {
   /** Carried so hints stay inside the same ladder the board was accepted under. */
   techniqueCap: TechniqueId
   /**
-   * The modes this board was built to, in canonical order (§11.18).
+   * The modes this board was built to, in canonical order.
    *
    * Carried as data rather than logged, for the reason §7 gave about its goals: a fallback that fires
    * silently makes the whole pool decorative while every measurement still looks fine. A spec can assert what
@@ -363,7 +362,7 @@ const clonePartial = (state: PartialRoute): PartialRoute => ({
  * The cells a leg would cover, or undefined if it cannot be laid.
  *
  * Pure, and that is the point: the search has to ask whether a leg fits before committing to it, which is
- * the whole difference between this builder and the one §11.14 measured. A cell already on the route is a
+ * the whole difference between this builder and a route-then-obstruct one. A cell already on the route is a
  * **crossing** when the beam runs through it on a different axis and a **retrace** when it runs through it
  * on the same one — `axisOf` is that distinction, and a retrace is never allowed. A bend cell may not be
  * crossed at all, because the first pass would have turned there.
@@ -429,7 +428,7 @@ const commit = (state: PartialRoute, steps: LegStep[], direction: Direction) => 
  * (§5.2), and a diagonal leg can only be closed by a half-step bend, which is why cut bends come in
  * consecutive pairs (`cutBendSlots`).
  *
- * What is new is that it **backtracks**. §11.14 measured 92–97% of all generation work as a route builder
+ * What is new is that it **backtracks**: 92–97% of all generation work was once a route builder
  * being asked blind for a path it cannot lay, and named it the honest optimisation target. So each leg is
  * tested before it is taken (`legSteps`), each bend cell is checked for room (`mirrorMayStand`), and a dead
  * end costs one search node instead of one whole draft.
@@ -522,7 +521,7 @@ const buildGoldenPath = (
 /**
  * The pair a bend must offer at minimum: the answer, and the one partner that keeps a quarter turn.
  *
- * §11.8 rule 2, and `cutStops` is where the four pairs are derived. **A stop set has to keep a quarter turn**
+ * The mirror law, and `cutStops` is where the four pairs are derived. **A stop set has to keep a quarter turn**
  * — the constraint that killed three earlier drafts, since every other piece and the route itself depend on a
  * mirror cell being able to turn light 90° — and a half-step answer therefore brings its aligned partner in
  * with it. A diagonal answer satisfies the rule on its own, so it takes the other diagonal.
@@ -531,10 +530,10 @@ const stopsFor = (angle: MirrorAngle): readonly MirrorAngle[] | undefined =>
   isHalfStep(angle) ? cutStops(angle) : TURN_ANGLES
 
 /**
- * The authored stop list for a mirror on the route — the fork the player meets there (§11.8 rule 1).
+ * The authored stop list for a mirror on the route — the fork the player meets there.
  *
  * `stopsFor` gives the two the geometry demands; anything beyond that is drawn **per piece**, so no two
- * mirrors on a board need offer the same fork. That variety is the point of rule 1 and it is what §11.13
+ * mirrors on a board need offer the same fork. That variety is the point of rule 1 and it is what the tick
  * measured: at three stops a wizard board's nine mirrors offered 23 different forks across 40 boards rather
  * than 5, on the same piece count. One piece doing more, which is rule 8's way of spending the cost.
  *
@@ -721,17 +720,15 @@ const MAX_CORRIDOR_DEPTH = 12
 /**
  * Walks a corridor and answers the only question that matters: **does every continuation of it die?**
  *
- * This is §11.15's sufficient rule, and it replaces phase 1's blanket refusal to enter a tappable cell.
  * The rule and the reason:
  *
  * > While authoring a branch, if it enters a cell any tappable piece can occupy, **recurse**: author every
  * > stop of that piece and require every continuation to die as well.
  *
  * Because a branch entering a tappable cell is **one corridor per stop of that piece** — `(cell, direction)`
- * determines the future only where the cell's content is fixed. §11.15's counterexample board is two
- * branches that each die on their own and combine into a second, shorter route, and it is exactly this that
- * catches it: authoring A's wrong stop walks into B's cell, fans out over B's two stops, and finds that one
- * of them reaches the shrine.
+ * determines the future only where the cell's content is fixed. The board that forces this is two branches
+ * that each die on their own and combine into a second, shorter route: authoring A's wrong stop walks into
+ * B's cell, fans out over B's two stops, and finds one of them reaches the shrine.
  *
  * Four endings are free — off the frame, into stone, into the disc, and retracing a line this corridor has
  * already travelled, which can reach nothing new. Two are fatal: the shrine, and any `(cell, direction)`
@@ -814,7 +811,7 @@ const corridorDies = (
 
     const here = resolveCell(board.occupancy, board.movable, decided, key, { pieces: board.wired, fired: lit })
     if (here.kind === "undecided") {
-      // §11.15's sufficient rule. Every state of the piece, including the ones that take a sliding piece
+      // The sufficient rule. Every state of the piece, including the ones that take a sliding piece
       // somewhere else entirely and leave this cell empty — that is a future too.
       const everyStateDies = here.states.every(state => {
         const after = afterState(board.movable, here.piece, state, at, travel)
@@ -852,7 +849,7 @@ const corridorDies = (
  * The one thing this knows that `corridorDies` deliberately does not: for the light to have reached this
  * bend at all, every bend upstream is at its golden angle. So a stop that sends the beam **back down its own
  * line** needs nothing — `reflect` is its own inverse in the direction, so the light retraces every leg it
- * has flown, off mirrors that must each still be golden, and the disc swallows it. §11.5's retracing
+ * has flown, off mirrors that must each still be golden, and the disc swallows it. The retracing
  * excursion, arriving as a wrong answer instead of a failed idea. The recursion cannot use that argument
  * (it has no notion of "upstream"), which is why it lives here and not there.
  */
@@ -887,7 +884,7 @@ export type Reach = {
   forks: number
   /**
    * Fan-outs met by a beam that has **already deviated** — a branch walking into a piece it has not been
-   * through. This is reuse in §11.15's sense, and the number the recursion exists for: zero means the pair
+   * through. This is reuse, and the number the recursion exists for: zero means the pair
    * invariant would have been sufficient and the recursion had no work to do.
    *
    * Counted only when a solution is supplied, because "has deviated" means "has taken a stop that is not the
@@ -903,7 +900,7 @@ export type Reach = {
  * Walks the **reachable deviation tree** — every future the light can have, fanning out only where it meets
  * a piece whose state it has not already been through.
  *
- * This is §11.15's proposed replacement for `routeIsUnique`, and the claim phase 2 exists to test: that the
+ * The replacement for `routeIsUnique`, and the claim phase 2 exists to test: that the
  * tree is cheaper than the product. `routeIsUnique` enumerates every configuration and traces each one,
  * which is 37 350 walks on a wizard board; here, **once a beam dies the settings downstream of it cannot
  * matter**, so they are never enumerated. What is walked is the set of *distinguishable* futures.
@@ -1208,7 +1205,7 @@ const planBranchMirrors = (
 /**
  * Wall-heavy's own sentence: the two cells a diagonal step squeezes past.
  *
- * §11.8 rule 4 says a diagonal step resolves only the cell it lands in, never the two it slips between — and
+ * A diagonal step resolves only the cell it lands in, never the two it slips between — and
  * the design doc's answer to "how does the player learn that" was to draw walls with rounded corners and add
  * no rules text. This makes the fact **visible on the board it matters on**: stone in both corners, with the
  * winning beam going straight through the gap. Nothing is asked of the player; the beam simply does it in
@@ -1584,7 +1581,7 @@ type Draft = {
  * with the golden path would have the golden path's own future and deliver the light — including from
  * *upstream* of where it left, which is why the test is the pair rather than "does it reach the shrine".
  * And a branch entering a tappable cell has as many futures as that piece has stops, so `corridorDies`
- * recurses over every one of them and requires each to die — §11.15's sufficient rule, and what makes
+ * recurses over every one of them and requires each to die — the sufficient rule, and what makes
  * "the future is determined" true again everywhere.
  *
  * Stone is authored rather than pruned to a fixpoint, so `thinWalls` does not run. Note the reason, because
@@ -1954,8 +1951,8 @@ const attemptAuthored = (
     return undefined
   }
 
-  // The uniqueness gate is the reachable deviation tree rather than the walk over the whole product (§11.15,
-  // measured in §11.17). It answers the same question — how many winning *routes* are there — and stops
+  // The uniqueness gate is the reachable deviation tree rather than the walk over the whole product.
+  // It answers the same question — how many winning *routes* are there — and stops
   // exploring a beam the moment it dies, so the settings downstream of a dead beam are never visited.
   // `routeIsUnique` stays the fallback for a board the tree declines to reason about.
   let reach = reachableDeviations(puzzle)

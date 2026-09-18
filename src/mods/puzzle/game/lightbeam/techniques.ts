@@ -114,7 +114,7 @@ export const createLightbeamBoard = (puzzle: LightbeamPuzzleData): LightbeamBoar
  *
  * Compares the whole authored stop list, not a bit about it: two mirrors are the same occupant only if they
  * stand at the same angle *and* offer the same fork. Strictly more discriminating than the `cut` boolean it
- * replaced (§11.13), so nothing the engine concluded before can stop holding.
+ * replaced, so nothing the engine concluded before can stop holding.
  */
 const sameStops = (a: readonly number[], b: readonly number[]): boolean =>
   a.length === b.length && a.every((angle, index) => angle === b[index])
@@ -237,7 +237,7 @@ const DEATHS: ReadonlySet<BeamWalk["end"]> = new Set(["absorbed", "escapes", "lo
  * out of — and telling the player it "runs into stone with nothing left to save it" sends them looking for
  * a wall that is not there. Measured on the shipped tiers: the commonest death on a starter board after the
  * frame, 13 boards in 40, so it is the gentlest tier that was being told the wrong thing. Found while
- * routing diagonally (§11.12), where a cut mirror's other stop makes it a *designed* wrong answer.
+ * routing diagonally, where a cut mirror's other stop makes it a *designed* wrong answer.
  */
 const deathVariant = (puzzle: LightbeamPuzzleData, walk: BeamWalk): string | undefined => {
   if (walk.end === "escapes") return "edge"
@@ -272,7 +272,7 @@ const entryRun = (board: LightbeamBoard): LightbeamStep[] => {
  * firing and this rung dying. A backward run that meets an unsettled piece comes back `unknown`, which is
  * not a death, so every extra candidate direction is another way for "exactly one survives" to fail. Only a
  * half-step stop can turn square light diagonal, so on a board with none there are still four candidates —
- * which is why every board the generator makes today deduces exactly as it did before §11.8.
+ * which is why every board the generator makes today deduces exactly as it did before the cut mirror.
  */
 const exitRun = (board: LightbeamBoard): LightbeamStep[] => {
   const feasible = travelledDirections(board.puzzle)

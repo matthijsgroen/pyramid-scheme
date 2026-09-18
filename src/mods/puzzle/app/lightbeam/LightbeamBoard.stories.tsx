@@ -353,11 +353,11 @@ export const WithHint: Story = {
 }
 
 // ---------------------------------------------------------------------------------------------------
-// The diagonal-cut mirror (design doc §11.8). Step 1 was the drawing, ahead of any logic; step 2 is the
+// The diagonal-cut mirror. Step 1 was the drawing, ahead of any logic; step 2 is the
 // eight-direction walk, and it has landed — so every frame below is a real trace of a real configuration
 // with nothing held back, which is what the two frames drawn first could only be by coincidence.
 //
-// Two of these stories answered §11.8's drawing questions and are kept because those answers still have
+// Two of these stories answered the drawing questions and are kept because those answers still have
 // to hold once light actually goes diagonally. The third is step 2's own question, and it is the one the
 // handoff into step 2 flagged as cheap to look at and expensive to guess.
 // ---------------------------------------------------------------------------------------------------
@@ -388,7 +388,7 @@ const stopSets: LightbeamPuzzleData = {
   ],
 }
 
-/** A generated wizard board, cut mirrors swapped in for four of its eight turn mirrors (§11.8 rule 8). */
+/** A generated wizard board, cut mirrors swapped in for four of its eight turn mirrors. */
 const cutWizard = withCuts(wizard, { 0: [1, 6], 3: [2, 6, 7], 8: [2, 7], 9: [1, 3, 6] })
 /** The same swap on the board that also carries a door and its sockets — the busiest frame the family has. */
 const cutDoors = withCuts(wizardDoors, { 0: [1, 6], 2: [1, 6], 7: [2, 7], 8: [2, 7] })
@@ -400,7 +400,7 @@ const cutDoors = withCuts(wizardDoors, { 0: [1, 6], 2: [1, 6], 7: [2, 7], 8: [2,
  * whole width of the board to a shrine in the right-hand wall — a shrine no square beam on this board
  * could have reached — and its steep stop is the ordinary quarter turn, straight down off the frame.
  *
- * Stone hugs the run in three places, two cells at a time, so §11.8 rule 4 is visible rather than
+ * Stone hugs the run in three places, two cells at a time, so the diagonal-step rule is visible rather than
  * described: **a diagonal step resolves only the cell it lands in.** The light goes between the corners.
  */
 const diagonalRun: LightbeamPuzzleData = {
@@ -466,11 +466,9 @@ const Frame: FC<{ puzzle: LightbeamPuzzleData; states: readonly number[]; captio
  * kind of piece before its glyph is even read.
  *
  * The left frame also carries the tightest possible form of the *other* question: columns 1 and 3 are both
- * sitting at **45°**, the same angle, and must still be told apart. ~~Nothing but the glyph can be doing
- * that work.~~ **That is no longer what does it** (§11.13): there is one mirror glyph now, and what separates
- * these two cells is the **tick** — column 1's other stop is at 135° and column 3's is at 157.5°, so the
- * marks sit in different places. Strictly more than the old hollow plate said, on the same cell: not "this
- * is a different kind of piece" but "this one's other option is *there*".
+ * sitting at **45°**, the same angle, and must still be told apart. The **tick** is what separates them:
+ * column 1's other stop is at 135° and column 3's is at 157.5°, so the marks sit in different places —
+ * not "this is a different kind of piece" but "this one's other option is *there*".
  */
 export const CutMirrorStops: Story = {
   args: { puzzle: stopSets, states: [0, 0, 0], onCycle: () => {} },
@@ -483,30 +481,17 @@ export const CutMirrorStops: Story = {
 }
 
 /**
- * **~~Question 2: does a cut mirror read as a different object?~~ — retired, and replaced by the question
- * that drawing the fork creates instead.**
+ * **Does a full board read, or is it a field of marks?** Every mirror carries at least one tick, and a
+ * wizard grid holds nine turn mirrors — nine or more extra strokes on a 9-wide board, against §9's bar that
+ * a board is read, not decoded. If a dense board turns to noise the answer is a quieter or shorter tick;
+ * drawing it only on unusual pieces keeps the hard bare-against-one-tick reading.
  *
- * This frame used to ask whether solid bar against hollow plate could tell two kinds of mirror apart on one
- * cell. It could, and it does not matter any more: §11.13 replaced the one bit with a tick at each stop a
- * mirror is not in, so there is one glyph and no kinds. What the retirement *creates* is the opposite worry,
- * and this is the right board to ask it on:
+ * Both boards are generated at the size the modal gives them, with every piece of furniture the family has.
+ * Four of the eight turn mirrors are retrofitted to three- and two-stop lists so forks differ in size as
+ * well as angle.
  *
- * **Every mirror now carries at least one tick, so does a full board read, or is it a field of marks?** A
- * wizard grid holds nine turn mirrors; before, eight of them were a bare bar. Now every one of them says
- * where else it goes, which is nine or more extra strokes on a 9-wide board — and §9's bar is that a board
- * is read, not decoded. If a dense board turns to noise, the answer is not to draw the tick only on unusual
- * pieces (that is the old bit in a new coat, and it keeps the hard bare-against-one-tick reading) but to
- * make the tick quieter or shorter.
- *
- * Both boards are generated, at the size the modal gives them, with every piece of furniture the family has
- * on top: dashed tracks, ghost stops, sliding walls, sockets, wires, the two-pass beam. Four of the eight
- * turn mirrors are retrofitted to three- and two-stop lists so the forks differ in **size** as well as in
- * angle, which is what the shipped generator does not yet do (§11.13 point 2) and what this has to survive
- * before it does.
- *
- * The one thing worth keeping from the old question: the beam crosses a mirror's cell through its centre,
- * and the ticks sit out at the cell's edge where the beam is not — so amber and sky still do not fight,
- * which is §9's "nothing but light is drawn amber" paying out again.
+ * The beam crosses a mirror's cell through its centre and the ticks sit at the cell's edge where it is not,
+ * so amber and sky do not fight.
  */
 export const CutMirrorDensity: Story = {
   args: { puzzle: cutWizard, states: cutWizard.initial, onCycle: () => {} },
@@ -526,7 +511,7 @@ export const CutMirrorDensity: Story = {
  * Left, the mechanic at the size it ships at. The disc shines along the bottom row into a cut mirror; its
  * shallow stop carries the light up-right the whole width of a 9-wide board — 35.3px a cell — to a shrine
  * no square beam here could reach, and its steep stop is the ordinary quarter turn, straight down off the
- * frame. Stone hugs the run in three places, two cells at a time, which is §11.8 rule 4 made visible
+ * frame. Stone hugs the run in three places, two cells at a time, which is the diagonal-step rule made visible
  * instead of written down: **a diagonal step resolves only the cell it lands in**, and the light goes
  * between the corners. Nothing in the walk implements that — it is what not implementing it looks like.
  *
@@ -553,8 +538,7 @@ export const DiagonalBeam: Story = {
 }
 
 /**
- * The first boards a player will actually be handed with a cut mirror on them (§11.8 rule 10 step 4, and
- * §11.12): master and wizard now route **diagonally on purpose**, so the winning beam leaves the rows and
+ * The first boards a player will actually be handed with a cut mirror on them: master and wizard route **diagonally on purpose**, so the winning beam leaves the rows and
  * columns and the piece's other stop is the quarter turn the board would have had.
  */
 const diagonalMaster = board("master", 10)
@@ -606,10 +590,10 @@ const diagonalDeath = (puzzle: LightbeamPuzzle): number[] => {
  *
  * **The marker now sits at the cell centre for a diagonal end, and both markers take it.** An absorbed beam
  * used to be dotted where it met the obstacle's face, which for a diagonal entry is the cell **corner** —
- * the one point §11.8 rule 4 gives the opposite meaning to, since diagonal light slips *between* two corners
+ * the one point the diagonal-step rule gives the opposite meaning to, since diagonal light slips *between* two corners
  * everywhere else on the board, and on a 9-wide grid it lands in a four-cell junction belonging to none of
  * them. The centre says the one thing the picture has to say: the light got in and stopped there. The escape
- * marker had the same question open since §11.10 and takes the same answer, four lines apart in `BeamLayer`.
+ * marker has the same question and takes the same answer, four lines apart in `BeamLayer`.
  *
  * The next two frames are the cases that were only hypothetical while no board routed diagonally: a wrong
  * setting that leaves the grid on a diagonal, and one that is swallowed by stone on a diagonal.

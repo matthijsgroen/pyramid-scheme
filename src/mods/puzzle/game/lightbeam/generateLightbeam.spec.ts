@@ -106,9 +106,9 @@ describe.each(difficulties)("at %s", difficulty => {
    * golden path, and none enters a cell a tappable piece occupies.
    *
    * The pair rather than "does it reach the shrine", because a branch rejoining *upstream* of where it left
-   * also delivers the light (design doc §11.15). And the tappable half is what phase 1 buys its proof with:
+   * also delivers the light. And the tappable half is what phase 1 buys its proof with:
    * a branch entering a tappable cell is one corridor **per stop of that piece**, so authoring covers only
-   * the stop it was traced against — which is exactly the two-branches-combine counterexample §11.15 found.
+   * the stop it was traced against — which is exactly the two-branches-combine counterexample.
    *
    * Reuse itself is allowed and expected — that is what `corridorDies` recurses for. What may never happen is
    * the **join**, and the retracing stop is the one case that looks like one and is not: it retraces through
@@ -153,7 +153,7 @@ describe.each(difficulties)("at %s", difficulty => {
    * cell a tappable piece occupies, and the beam dies anyway once it gets there. They are load-bearing for
    * phase 1's no-reuse invariant rather than for the answer, which is the real reason `thinWalls` must not
    * run here: it re-checks uniqueness and the ladder, so it would strip exactly the stone that keeps
-   * branches away from tappable cells and hand phase 2's recursion §11.15's hazard.
+   * branches away from tappable cells and hand phase 2's recursion the same hazard.
    */
   it("carries no wall that stops nothing", () => {
     // Every wall is placed because a corridor had nowhere else to end, so some reachable beam must arrive at it.
@@ -173,7 +173,7 @@ describe.each(difficulties)("at %s", difficulty => {
       expect(reach?.complete).toBe(true)
 
       // Wall-heavy's corner pairs are the one stone that is there to be *read* rather than to stop something:
-      // two walls either side of a diagonal step, with the winning beam going through the gap (§11.8 rule 4).
+      // two walls either side of a diagonal step, with the winning beam going through the gap.
       const path = traceBeam(board, board.solution).path
       const cornerSlip = new Set<string>()
       for (let step = 1; step < path.length; step++) {
@@ -298,7 +298,7 @@ describe("dials past the shipped tiers", () => {
 })
 
 /**
- * §11.15's counterexample board, transcribed from the design doc.
+ * The counterexample board: two branches that die alone and combine into a shorter route.
  *
  * **This is the regression test the whole recursion exists for.** It is a board where every single-piece
  * deviation from the answer dies *and* satisfies the pair invariant — no branch shares a `(cell, direction)`
@@ -325,12 +325,12 @@ const COUNTEREXAMPLE: LightbeamPuzzleData = {
 }
 const COUNTEREXAMPLE_ANSWER = [1, 0, 0]
 
-describe("§11.15's counterexample", () => {
+describe("the two-branches-combine counterexample", () => {
   it("is a board whose answer works", () => {
     expect(isLit(COUNTEREXAMPLE, COUNTEREXAMPLE_ANSWER)).toBe(true)
   })
 
-  /** The half of §11.15 that is right: the pair is a genuine condition, and this board meets it. */
+  /** The half that is right: the pair is a genuine condition, and this board meets it. */
   it("satisfies the pair invariant — every single-piece deviation dies and none rejoins", () => {
     const goldenSegments = new Set(
       traceBeam(COUNTEREXAMPLE, COUNTEREXAMPLE_ANSWER).path.map(segment => segmentKey(segment.at, segment.enter))
@@ -415,7 +415,7 @@ describe("branches that turn", () => {
     }
   })
 
-  /** And it is cheaper, which is the claim §11.15 makes for it. */
+  /** And it is cheaper, which is the claim made for it. */
   it("costs less than the product it replaces", () => {
     for (const board of boards) {
       const reach = reachableDeviations(board, board.solution)
@@ -525,12 +525,12 @@ describe("branch depth against the technique cap", () => {
 })
 
 /**
- * Wall-heavy, the first of the three modes that replace the goal pool (§11.18).
+ * Wall-heavy, the first of the three modes that replace the goal pool.
  *
  * Two things it does, and they are the same idea twice: stone is more legible than the frame. A branch closed
  * in stone says "it hit that"; one that leaves the board says only "it went away". And on a diagonal golden
  * leg a **pair** of walls goes down either side of the step, so the winning beam is seen to slip between two
- * corners — §11.8 rule 4 taught by the board instead of by rules text.
+ * corners — the diagonal-step rule taught by the board instead of by rules text.
  */
 describe("wall-heavy", () => {
   const DIALS: LightbeamOptions & { size: number } = {

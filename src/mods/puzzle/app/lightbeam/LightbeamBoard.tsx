@@ -106,43 +106,30 @@ const glyphTurn = (angle: MirrorAngle): number => {
  * A mirror: the line it sits on, drawn as the polished edge it is — **and a tick at each stop it is not in**.
  *
  * One canonical line, turned into place, rather than a glyph per angle — so changing setting is a turn the
- * eye can follow instead of a glyph that swaps between frames. Which setting a piece is in is the single
- * thing the player is deciding, and watching it turn is what says the tap landed on the piece they meant.
+ * eye can follow. Which setting a piece is in is the single thing the player is deciding, and watching it
+ * turn is what says the tap landed on the piece they meant.
  *
- * **The ticks are the fork, and they are why there is one mirror glyph rather than two** (§11.13). A cut
- * mirror used to be drawn as a different object — a hollow plate against the ordinary mirror's solid bar —
- * because §11.9 measured that the 22.5° between two stop sets can never be read off a drawn angle. True,
- * and it was answered with one bit: *this list is the default pair, or it is not*. That bit says nothing
- * once the lists vary, which is what §11.8 rule 1 has always asked for. A tick at each unoccupied stop says
- * the whole thing instead — **the bar is where it stands, the ticks are where else it goes** — and it says
- * it inside one cell, which is the comparison §11.9 found there was nowhere to make.
+ * **The ticks are the fork**, which is why there is one mirror glyph and not two: the bar is where it
+ * stands, the ticks are where else it goes, said inside one cell. (Rejected: a second glyph for cut
+ * mirrors — one bit cannot carry a fork once the stop lists vary.)
  *
- * Three things the prototype settled rather than argued (§11.13):
- *
- * - **The ticks are the alternatives, never the current stop.** A tick at the angle the bar is already on
- *   is ink for a fact told twice, and it lies exactly under the bar where it cannot be seen anyway.
- * - **A ring is what does not work.** A mirror is a line across the whole cell, so it runs through the
- *   annulus any ring would occupy and occludes the very marks that annotate it. Rule 5's own suggestion —
- *   "a ring in as many segments" — is unbuildable, and pips stop being countable past three.
- * - **Every mirror gets its ticks, ordinary ones included.** The hard reading is bare-against-one-tick and
- *   the easy one is one-against-three; drawing the tick only where a piece is unusual would keep the hard
- *   reading and reintroduce the default the whole change removes. With one tick as the baseline the eye
- *   calibrates on, a bigger fork is the loud comparison rather than the quiet one.
+ * - **The ticks are the alternatives, never the current stop** — a tick under the bar is ink for a fact
+ *   told twice, and cannot be seen anyway.
+ * - **A ring does not work.** A mirror is a line across the whole cell, so it runs through the annulus and
+ *   occludes the marks that annotate it; pips stop being countable past three.
+ * - **Every mirror gets its ticks, ordinary ones included.** One tick is the baseline the eye calibrates
+ *   on, so a bigger fork is the loud comparison. Ticking only unusual pieces keeps the hard
+ *   bare-against-one-tick reading.
  *
  * A stop's angle folds to one bearing in [0°, 180°) because a mirror line is the same line half a turn
- * later — otherwise one stop would draw two ticks and the fork would read at twice its size.
+ * later — otherwise one stop draws two ticks and the fork reads at twice its size.
  *
- * **The tick lies across its bearing rather than along it, and that is the fix for the one thing the
- * prototype missed.** Drawn as a radial spoke it was collinear with the beam whenever a stop's line
- * happened to be the line the beam leaves on — which is not rare, since a beam travels one of eight
- * bearings and a stop is one of eight mirror lines — and the beam is drawn over the pieces with
- * `mix-blend-screen`, so the tick came out cream. That breaks §9's "nothing but light is drawn amber" and
- * costs the mark its meaning at the same time. A tangential dash cannot be collinear with anything radial:
- * the beam crosses it square, brightens the middle, and the ends stay sky.
- *
- * It also cannot be hidden by the bar. The bar is a diameter, so it meets the rim at its own bearing and
- * that bearing is the one stop no tick is ever drawn for — which is why candidate A's occlusion (a full
- * ring crossed by the bar) does not apply to arcs placed only at the stops the piece is not in.
+ * **The tick lies across its bearing, never along it.** A radial spoke is collinear with the beam whenever
+ * a stop's line is the line the beam leaves on — not rare, with eight bearings and eight mirror lines — and
+ * the beam draws over pieces with `mix-blend-screen`, so the tick comes out cream and breaks §9's "nothing
+ * but light is drawn amber". A tangential dash cannot be collinear with anything radial: the beam crosses
+ * it square, brightens the middle, and the ends stay sky. It also cannot be hidden by the bar, whose
+ * bearing is the one stop no tick is ever drawn for.
  */
 const Mirror: FC<{ angle: MirrorAngle; stops: readonly MirrorAngle[]; movable: boolean }> = ({
   angle,
@@ -396,14 +383,14 @@ const sidePoint = (at: CellRef, direction: Direction): [number, number] => {
 /**
  * Where to mark the end of the beam: the face it meets, or the cell **centre** when it ends on a diagonal.
  *
- * `sidePoint` is a cell corner for a diagonal direction, and a corner is the one point §11.8 rule 4 gives
+ * `sidePoint` is a cell corner for a diagonal direction, and a corner is the one point the diagonal-step rule gives
  * the opposite meaning to everywhere else on the board — diagonal light slips *between* two corners rather
  * than stopping at one, so a dot on a corner says "it got through" on a board whose whole point is that it
  * did not. On a 9-wide grid it also lands in a four-cell junction and stops belonging to any of them.
  *
  * The centre is unambiguous and it is where a diagonal beam visibly ends anyway: the polyline already runs
- * into the middle of the cell and stops there. Both markers take it, which closes the question §11.10 left
- * open for the escape marker and §11.11 left open for the absorbed one — one answer, four lines apart.
+ * into the middle of the cell and stops there. Both markers take it, one answer for the escape
+ * marker and the absorbed one, four lines apart.
  */
 const endPoint = (at: CellRef, direction: Direction): [number, number] =>
   direction % 2 === 1 ? [at.col + 0.5, at.row + 0.5] : sidePoint(at, direction)
@@ -628,7 +615,7 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
   // the drawn beam is never one of ("effects land ahead of the light by construction"). `traceBeam` has
   // always fired the wirings as it walks; only the pieces were still being drawn from the raw states, and it
   // showed as a beam running straight through a brick on most wizard boards. Found while looking at a
-  // diagonal end marker (§11.12), which is why a mirror story is where it turned up.
+  // diagonal end marker, which is why a mirror story is where it turned up.
   const drawn = firedConfig(puzzle, states, firedWirings(puzzle, states))
   const grid = viewGrid(puzzle, drawn)
   const walk = traceBeam(puzzle, states)

@@ -71,7 +71,7 @@ describe.each(difficulties)("at %s", tier => {
 
   /**
    * The reason a board is expensive should be the board, not the search. Route-then-obstruct pays 70 to 356
-   * discarded drafts a board at the top three tiers (§11.14); this construction pays a handful.
+   * discarded drafts a board at the top three tiers; this construction pays a handful.
    */
   it("costs a handful of attempts a board, not hundreds", () => {
     const { size, ...options } = LIGHTBEAM_CONFIG[tier]
@@ -86,7 +86,7 @@ describe.each(difficulties)("at %s", tier => {
         },
       })
     expect(rejects / 3).toBeLessThan(10)
-    // The route builder never fails: it backtracks instead of guessing (§11.16).
+    // The route builder never fails: it backtracks instead of guessing.
     expect(gates.get("noRoute") ?? 0).toBe(0)
     // And uniqueness is a property of the construction, not something the gate has to hunt for.
     expect(gates.get("notUnique") ?? 0).toBeLessThanOrEqual(3)
@@ -118,7 +118,7 @@ describe("the tier ramp", () => {
   /**
    * Non-decreasing rather than strictly growing, and expert is why: its addition is the **diagonal cut**, which
    * is vocabulary rather than quantity — it swaps a mirror's answer for a half-step rather than adding a piece
-   * (§11.8 rule 8). It shares junior's route length, so the two sit close on this column by design. What must
+   * It shares junior's route length, so the two sit close on this column by design. What must
    * never happen is a tier getting *smaller*, which is the mistake this has caught twice.
    */
   it("never shrinks the piece count", () => {
@@ -140,7 +140,7 @@ describe("the tier ramp", () => {
 })
 
 /**
- * The three constraints measurement imposed on this table (§11.17, §11.18), asserted so a later tuning pass
+ * The three constraints measurement imposed on this table, asserted so a later tuning pass
  * cannot quietly break them.
  */
 describe("the constraints the table has to respect", () => {

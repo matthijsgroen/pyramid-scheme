@@ -16,7 +16,7 @@
  * ```
  *
  * **An index rather than eight names, because the mirror law is arithmetic**: a mirror standing at
- * `angle` sends a beam travelling `travel` out along `angle - travel` (design doc §11.8 rule 6). Eight
+ * `angle` sends a beam travelling `travel` out along `angle - travel`. Eight
  * names buy nothing and leave that unwritable. `DIR` is here for the handful of places — authoring a
  * board, reading a test back — where a name says more than a number.
  *
@@ -38,7 +38,7 @@ export const DIR = {
 
 export const DIRECTIONS: readonly Direction[] = [0, 1, 2, 3, 4, 5, 6, 7]
 
-/** The four the family had before §11.8 — and still the only ones a board without a cut mirror sees. */
+/** The four ordinary mirror angles — the only ones a board without a cut mirror sees. */
 export const SQUARE_DIRECTIONS: readonly Direction[] = [DIR.right, DIR.up, DIR.left, DIR.down]
 
 /** Directions and stops both live modulo eight, and both are counted from the same axis. */
@@ -52,7 +52,7 @@ export type CellRef = { row: number; col: number }
  *
  * **This is the whole of what a mirror is.** One number says what it does to light, and the walk, the
  * drawing and the deduction all read that one number — there is no second representation to keep in
- * step. It replaces the `"/" | "\\"` face the family had until §11.8: two stops of a cut mirror are 67.5°
+ * step. Two stops of a cut mirror are 67.5°
  * apart, which no pair of diagonals can name.
  *
  * Named for the angle rather than the stop, because a sliding piece's `stops` are cells and these are
@@ -60,7 +60,7 @@ export type CellRef = { row: number; col: number }
  */
 export type MirrorAngle = number
 
-/** The two diagonals, as the angles they are. Every board before §11.8 is written out of these two. */
+/** The two diagonals, as the angles they are. A board without a cut mirror is written out of these two. */
 export const SLASH: MirrorAngle = 2
 export const BACKSLASH: MirrorAngle = 6
 
@@ -69,15 +69,15 @@ export const TURN_ANGLES: readonly MirrorAngle[] = [SLASH, BACKSLASH]
 
 /**
  * A half-step stop — an odd angle — is the only thing that turns square light diagonal, or diagonal
- * light square (§11.8 rule 6). A mirror lying flat is even, and keeps the beam's parity like any other.
+ * light square. A mirror lying flat is even, and keeps the beam's parity like any other.
  */
 export const isHalfStep = (angle: MirrorAngle): boolean => angle % 2 === 1
 
 /**
  * Whether a set of stops leaves the two diagonals — a **cut mirror** in the design doc's vocabulary
- * (§11.8), which is a description of the list rather than a kind of piece.
+ * which is a description of the list rather than a kind of piece.
  *
- * **Nothing in the drawing reads this any more** (§11.13). It used to pick the glyph: an ordinary mirror
+ * **Nothing in the drawing reads this.** It once picked the glyph: an ordinary mirror
  * was a solid bar and anything else a hollow plate, one bit saying "this list is the default pair or it is
  * not". That bit only carried information while there were two flavours to tell apart, and rule 1 asks for
  * many — so the board draws the stops themselves now, and this is left as what it always really was: a
@@ -90,7 +90,7 @@ export const isCut = (angles: readonly MirrorAngle[]): boolean =>
  * What a piece does to the beam when it stands in its way — and, for the drawing, what else it could do.
  *
  * `angle` is the whole of the physics: `reflect` reads it and nothing else. `stops` is the piece's authored
- * list, which the light cannot tell and the player must be able to (§11.13). It rides here because a
+ * list, which the light cannot tell and the player must be able to. It rides here because a
  * `Blocker` comes out of a flattened `CellContent[][]` — by the time anything draws a cell, the
  * `MovablePiece` that put it there is gone, so a fact about the piece has to travel with the occupant or be
  * lost.
@@ -214,7 +214,7 @@ const mirrorAngles = (puzzle: LightbeamPuzzleData): MirrorAngle[] => [
  *
  * Reflection preserves a beam's parity unless the mirror stands at a half-step, so a board with nothing
  * off the diagonals can only ever carry light the four square ways, whatever the walk knows how to do.
- * That is what keeps the backward search over shrine entries (`exitRun`) as tight as it was before §11.8
+ * That is what keeps the backward search over shrine entries (`exitRun`) as tight as before the cut mirror
  * instead of quietly weakening every board in the family: eight candidates on a board that can use them,
  * the four the disc shines along on a board that cannot.
  *
@@ -256,7 +256,7 @@ export const opposite = (direction: Direction): Direction => mod8(direction + 4)
 
 /**
  * Where a mirror sends a beam: reflection across its line, which in eighth-turns is one subtraction
- * (§11.8 rule 6). A beam travelling at 45·`travel`° leaves a mirror lying at 22.5·`angle`° along
+ * A beam travelling at 45·`travel`° leaves a mirror lying at 22.5·`angle`° along
  * 2·22.5·`angle` − 45·`travel` degrees, and every one of those is a multiple of 45° again.
  *
  * Three things fall out of the arithmetic rather than having to be written:
@@ -264,7 +264,7 @@ export const opposite = (direction: Direction): Direction => mod8(direction + 4)
  * - **An even angle keeps the beam square and an odd one flips it diagonal**, which is the whole of what
  *   a cut mirror buys and the whole of what `isHalfStep` names.
  * - **A mirror lying along the beam passes it** — its line is the beam's own line when `angle` is twice
- *   `travel`, and `2·travel - travel` is `travel` again. That is §11.8 rule 3's "get out of the way" verb,
+ *   `travel`, and `2·travel - travel` is `travel` again. That is the "get out of the way" verb,
  *   direction-dependent exactly as the rule says, and it costs no code at all.
  * - **It is still its own inverse in `travel`**, which is what lets the backward walk reuse it untouched.
  */
@@ -317,7 +317,7 @@ type Resolver = (at: CellRef) => CellContent
 /**
  * Walks the beam forward from a cell, in a direction, over whatever the resolver says is there.
  *
- * **A diagonal step resolves only the cell it lands in**, never the two it squeezes past (§11.8 rule 4).
+ * **A diagonal step resolves only the cell it lands in**, never the two it squeezes past.
  * That is the naive reading of `stepCell`, and it is also the decided design: light slips through the gap
  * between two corners, and the wall glyph is drawn with rounded corners so the gap is visible rather than
  * being a rule to learn. There is nothing here to implement — the point is that nothing was added.

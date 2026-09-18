@@ -30,7 +30,7 @@ import {
 // route can take, the spacing two tappable pieces need, and the rules about where a board may open.
 //
 // It is split from `generateLightbeam.ts` because these are facts about the family rather than decisions of
-// the generator — the mirror law, §11.8 rule 2's stop sets, §5.2's crossings, §5's opening rules. The
+// the generator — the mirror law, its stop sets, §5.2's crossings, §5's opening rules. The
 // generator reads them; nothing here knows how a board gets authored.
 // The shortest a route leg may be, which is what stops two consecutive bend mirrors touching. A diagonal
 // leg of two puts them two diagonal steps apart, so they do not touch at a corner either — the reason the
@@ -42,12 +42,12 @@ export const MIN_LEG = 2
  * The mirror that turns a beam from `enter` to `exit`: `reflect` is `angle - travel`, so the angle wanted
  * is simply `enter + exit`. Two of the eight are not turns at all, and two more are forbidden by rule 2.
  *
- * - **`exit === enter`** wants the mirror lying along the beam, which passes it (§11.8 rule 3) rather than
+ * - **`exit === enter`** wants the mirror lying along the beam, which passes it rather than
  *   bending it, so it is not a bend.
  * - **`exit === opposite(enter)`** wants the mirror square across the beam, which sends it straight back
  *   the way it came. A route cannot be laid along a retroreflection.
  * - **A flat (0) or upright (4) angle offers square light no quarter turn at all** — it passes a beam
- *   running along it and retroreflects one meeting it head-on — so §11.8 rule 2 forbids any stop set
+ *   running along it and retroreflects one meeting it head-on — so the mirror law forbids any stop set
  *   containing one, and a bend that wants one is a bend this generator may not place.
  *
  * What is left is the quarter turn off a diagonal, which is every square route the family has ever built,
@@ -62,14 +62,14 @@ export const angleFor = (enter: Direction, exit: Direction): MirrorAngle | undef
 }
 
 /**
- * The stop set for a cut mirror, read off the half-step angle the route bends at (§11.8 rule 2).
+ * The stop set for a cut mirror, read off the half-step angle the route bends at.
  *
  * **Rule 2's four pairs are one fact, and it is this one.** A stop set has to keep a quarter turn — the
  * constraint that killed three earlier drafts, since every other piece and the route itself depend on a
  * mirror cell being able to turn light 90° — and it has to reach the diagonal. That leaves exactly one
  * partner for a half-step angle: the diagonal three eighth-turns away, which is 67.5° as lines and the
  * only one of `angle ± 3` that is a diagonal at all. Over the four half-steps it gives `{22.5°, 135°}`,
- * `{67.5°, 135°}`, `{45°, 112.5°}` and `{45°, 157.5°}` — §11.11's four pairs, derived rather than
+ * `{67.5°, 135°}`, `{45°, 112.5°}` and `{45°, 157.5°}` — four pairs, derived rather than
  * tabulated.
  *
  * So the piece asks "gently across, or hard round", and which of the two the route takes is the whole of
@@ -92,7 +92,7 @@ export const cutStops = (angle: MirrorAngle): readonly MirrorAngle[] | undefined
  * of the square, one back into it — except for a single one at the very last bend, whose diagonal leg is
  * the run into the frame and needs no closing.
  *
- * That is §11.5's parity invariant arriving as a construction rather than a warning: the number of
+ * That is the parity invariant arriving as a construction rather than a warning: the number of
  * half-step crossings is even for a shrine entered square and odd for one entered diagonally, so an odd
  * dial spends its odd cut on the final bend and there is nowhere else for it to go.
  */
@@ -201,7 +201,7 @@ export const axisOf = (direction: Direction): number => direction % 4
 export const trackRuns = (at: CellRef, across: Direction, length: number): CellRef[][] => {
   // `across` is always a square direction: everything that asks for a track — a sliding mirror at a bend, a
   // sliding wall on a straight, a door's open stop — is drawn from a square leg on purpose, so the run this
-  // builds is a row or a column and the spec that asserts as much stays true (§9, and §11.12).
+  // builds is a row or a column and the spec that asserts as much stays true (§9).
   const [forward] = perpendicular(across)
   const back = opposite(forward)
   return Array.from({ length }, (_, ahead) => {
@@ -262,7 +262,7 @@ const pathSignature = (puzzle: LightbeamPuzzleData, config: readonly number[]): 
  * is the property the player actually solves for, so that is the one checked.
  *
  * **Generation does not use this as its gate** — `reachableDeviations` answers the same question by walking
- * only the futures the light can actually have, which is 13x to 836x cheaper (§11.17). This stays as the
+ * only the futures the light can actually have, which is 13x to 836x cheaper. This stays as the
  * independent second opinion: the two are asserted to agree, and it is the fallback if the tree ever gives
  * up on a board.
  */

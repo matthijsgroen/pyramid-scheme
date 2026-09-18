@@ -58,7 +58,7 @@ describe("geometry", () => {
   })
 
   /**
-   * The two stop sets §11.8 rule 2 settles on, checked against the table it is written out in: a beam
+   * The two stop sets the mirror law settles on, checked against the table it is written out in: a beam
    * arriving rightward leaves `{22.5°, 135°}` up-right or down, and `{45°, 157.5°}` up or down-right.
    * Each set keeps one quarter turn, which is the constraint that killed three earlier drafts, and
    * reaches one diagonal, which is the whole point of the piece.
@@ -79,7 +79,7 @@ describe("geometry", () => {
       for (const travel of DIRECTIONS) expect(reflect(angle, travel) % 2 !== travel % 2).toBe(isHalfStep(angle))
   })
 
-  // §11.8 rule 3, and it costs no code: the sliding wall's "get out of the way" verb in one cell. A
+  // A stop lying flat along the run passes the beam, and it costs no code: the sliding wall's "get out of the way" verb in one cell. A
   // mirror lies along the beam when its line is the beam's own — an angle of twice the direction, since
   // stops are counted in half the steps directions are.
   it("passes a beam straight through a mirror lying along it", () => {
@@ -160,7 +160,7 @@ describe("traceBeam", () => {
 })
 
 // ---------------------------------------------------------------------------------------------------
-// Eight directions and the cut mirror (design doc §11.8, step 2 of its build order). The walk did not
+// Eight directions and the cut mirror. The walk did not
 // grow a second case for any of this: `reflect` is one subtraction modulo eight, `stepCell` reads a step
 // off a table of eight, and everything below is what those two changes already do.
 // ---------------------------------------------------------------------------------------------------
@@ -202,7 +202,7 @@ describe("a cut mirror on the board", () => {
   })
 
   /**
-   * §11.8 rule 4: **a diagonal step resolves only the cell it lands in.** Stone at both cells the step
+   * **A diagonal step resolves only the cell it lands in.** Stone at both cells the step
    * squeezes past does not stop it — the light slips through the corner, which is why the wall glyph is
    * drawn with rounded corners rather than the rule being written down anywhere.
    */
@@ -225,7 +225,7 @@ describe("a cut mirror on the board", () => {
   })
 
   /**
-   * §11.8 rule 3, on a board: a stop lying flat along the run the beam is on passes it, which is the
+   * On a board: a stop lying flat along the run the beam is on passes it, which is the
    * sliding wall's "get out of the way" verb in one cell instead of three. The other stop of the same
    * piece is an ordinary quarter turn, so this is one piece asking "through, or aside?".
    */
@@ -245,7 +245,7 @@ describe("a cut mirror on the board", () => {
    * Which directions the board can even carry light in, which `exitRun` searches over. Reflection only
    * changes a beam between square and diagonal at a half-step stop, so a board with none is still a
    * four-direction board however many the walk knows — and the backward search over shrine entries stays
-   * exactly as tight as it was before §11.8 instead of quietly weakening every board in the family.
+   * exactly as tight as before the cut mirror instead of quietly weakening every board in the family.
    */
   it("counts eight ways for the beam to travel, and four when nothing can flip it", () => {
     expect(travelledDirections(board)).toEqual([DIR.right, DIR.up, DIR.left, DIR.down])
