@@ -25,7 +25,7 @@ import type { FamilyPriorityFor } from "./slots"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { validateRewardCounts, type WorldValidator } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
-import { TABLEAUS_PER_FLOOR } from "../data/tableaus"
+import { TOMB_ROOMS_PER_FLOOR } from "./data"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
 
@@ -161,7 +161,7 @@ const buildSiteConfigs = (
 // the floor's treasure absent. See docs/game-design/keys-and-locks-solver.md.
 export type TombTreasureResolver = (tombId: string, index: number) => TreasureReward | undefined
 
-// A tomb is structurally the same as a pyramid interior (pyramid-interior-design.md §8) —
+// A tomb is structurally the same as a pyramid interior (pyramid-interior-design.md) —
 // one treasure per floor, self-gating its own next floor's shortcut ("the treasure IS the
 // key"). Built by authoring one FloorConstraint per floor and handing them to buildSite()'s
 // authored-floors branch, the exact same mechanism pyramids' own authored floors[] use —
@@ -195,7 +195,7 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
     // Every floor is authored explicitly — its own mainEndReward defaults to "tombTreasure"
     // (the perk-stream's next id) unless an authored entry overrides it, and every floor gets a
     // ward-gated section keyed by that same key so EVERY treasure gates an (optional) pocket
-    // (§E, docs/game-design/keys-and-locks-solver.md — no demand-less keys): a non-last floor gets a
+    // (docs/game-design/keys-and-locks-solver.md — no demand-less keys): a non-last floor gets a
     // ward-path shortcut (walk once to earn the key, later re-entry skips straight past via the
     // shortcut instead of re-solving its tableau), the last floor (no next floor to skip to) gets
     // a ward-chest loot pocket instead — the loot solver fills it (mosaic/junk, tier-matched; the
@@ -203,7 +203,7 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
     //
     // The crocodile capstone (and its extra main-path room) is AUTHORED per floor in the tomb spec
     // via `nodes: [{ where: "last", encounter: "capstone" }]` + `pathPuzzles: 2` — no hardcoded
-    // tier/position rule here (§G, docs/mods/ARCHITECTURE.md ("Authoring: node selectors")). `nodes` + `pathPuzzles` pass
+    // tier/position rule here (docs/mods/ARCHITECTURE.md ("Authoring: node selectors")). `nodes` + `pathPuzzles` pass
     // straight through to buildSite, which resolves selectors → per-node families. A starter tomb
     // may author a capstone too; it just resolves to none (crocodile's family minTier is junior).
     //
@@ -218,7 +218,7 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
         ? [wardChest({ tomb: tomb.id, index: i, puzzles: 0 })]
         : [wardPath({ tomb: tomb.id, index: i, puzzles: 0 })]
       return {
-        pathPuzzles: authored?.pathPuzzles ?? TABLEAUS_PER_FLOOR[difficulty],
+        pathPuzzles: authored?.pathPuzzles ?? TOMB_ROOMS_PER_FLOOR[difficulty],
         difficulty,
         encounter,
         mainEndReward: authored?.mainEndReward ?? "tombTreasure",
@@ -304,7 +304,7 @@ export const buildConfigs = (
   if (allocateEncounter) assignEncounters(allConfigs, allocateEncounter, familyCapacityFor, isTrapFamily)
 
   // Phase 3.55: dress each node for the PLACE it turned out to be. The roles above are what a wing is
-  // (journeys.md §2), so they also decide its furniture: a trade wing shows amphorae and a tally board,
+  // (journeys.md), so they also decide its furniture: a trade wing shows amphorae and a tally board,
   // a funerary one a coffin and a stela. Runs after roles are written and before serialization.
   dressByRole(allConfigs)
 
@@ -342,7 +342,7 @@ export const buildConfigs = (
   const isCurrencyReward = (r: TreasureReward) => currencies.some(c => c.bucketForReward?.(r) !== undefined)
   validateRewardCounts(allConfigs, expectedCurrencyRewards, isCurrencyReward)
   // Secondary-tomb discovery + ward-key ordering need no separate post-build validator
-  // (§E): the worklist reachability model (placeFragments above) already guarantees both — it
+  //: the worklist reachability model (placeFragments above) already guarantees both — it
   // hard-fails if any lock stays blocking. See validate.ts's note + docs/game-design/keys-and-locks-solver.md.
 
   return allConfigs

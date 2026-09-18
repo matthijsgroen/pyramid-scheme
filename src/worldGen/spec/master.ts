@@ -1,6 +1,6 @@
 import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
 import type { Rule, PathEntry, SideSectionConstraint } from "../dsl"
-import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
+import { TOMB_ROOMS_PER_FLOOR } from "../data"
 
 // Own-tomb HOLDBACK chests: gated on master's own SECONDARY tomb keys, since most master symbols
 // first needed on a later tableau run turn out to belong to master_treasure_tomb_b, not the
@@ -148,16 +148,16 @@ export const masterRules: Rule[] = [
   // for a dress without asking for the puzzles that wear it is how a trade pyramid ends up looking
   // like a waterworks.
 
-  // **The tomb journeys ask for the place their story is already set in** (docs/game-design/journeys.md §9).
+  // **The tomb journeys ask for the place their story is already set in** (docs/game-design/journeys.md).
   // Four families have a funerary face — balance scale weighs a heart against the feather, constellation
   // paints a ceiling, hidato opens sealed chambers, and sudoku's default already IS a wall of cut signs.
   //
   // **`puzzle` rides along on purpose, and it is what makes this safe.** A role list is a union, so the pool
   // stays every family and the draw does not change at all — what changes is that the four which can dress
   // now do. Restricting to the four instead would be 12 to 13 turns each across their 47 to 53 sections, far past the 6.3 repeats-per-family the
-  // least varied journey in the game already ships (§11), so a tomb would be the same four boards over and
+  // least varied journey in the game already ships, so a tomb would be the same four boards over and
   // over. The share that comes out dressed is therefore the pool's natural rate rather than a chosen one;
-  // weighting a preferred role is designed and unbuilt (§11).
+  // weighting a preferred role is designed and unbuilt.
   //
   // **The Book of the Dead asks for the narrow place first.** Its story names the judgement, and only the
   // balance scale draws that scene — so `judgement` leads and the scale turns up wearing the scales, while
@@ -195,29 +195,29 @@ export const masterRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],
@@ -231,7 +231,7 @@ export const masterRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. The tomb-treasure mod places the
         // wizard_treasure_tomb_c map-piece copy here (resolveShopStock); one of the 4 wizard-journey
@@ -240,22 +240,22 @@ export const masterRules: Rule[] = [
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],

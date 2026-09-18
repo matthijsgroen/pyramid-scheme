@@ -75,10 +75,11 @@ Two `no-restricted-imports` rules in `eslint.config.js`: core (`src/app`, `src/u
 design: the aggregates a mod registers itself through (`registeredMods`, `allFamilyMeta`,
 `registerModApps`, `allCurrencyDistributions`), and `@/mods/core/`.
 
-Both are warnings; `yarn lint` pins the total with `--max-warnings`, so the backlog only shrinks.
-Flip to `error` and drop the pin at zero. Fix a hit by inverting the dependency — the fact moves to
-the owning mod, core reads it back through a registry — never by widening the allowlist. A core spec
-counts: importing a mod breaks the toggle-off gate as surely as production code.
+Both are **errors**: the backlog is at zero, so a new hit fails the build. Fix one by inverting the
+dependency — the fact moves to the owning mod, core reads it back through a registry — never by
+widening the allowlist. A core spec counts: importing a mod breaks the toggle-off gate as surely as
+production code. (`yarn lint`'s remaining `--max-warnings` pin is the react-compiler backlog, a
+separate thing.)
 
 The sibling rule stands at **0**. It briefly stood at 1, when `TombPuzzle` moved out of core and its
 read of puzzle's `usePuzzleProgress` lost core to hide behind. Retiring the scribes-eye perk settled

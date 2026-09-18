@@ -41,10 +41,7 @@ const mockTreasureTombJourney: JourneyCardJourney = {
   piecesRequired: 4,
   difficultyLabel: "Starter",
   levelSettings: {
-    symbolCount: 2,
     numberRange: [1, 10],
-    operators: ["+", "-", "*"],
-    compareAmount: 0,
   },
 }
 
@@ -70,7 +67,7 @@ type Story = StoryObj<typeof meta>
 export const PyramidJourney: Story = {}
 export const TreasureTombJourney: Story = { args: { journey: mockTreasureTombJourney } }
 export const WithProgress: Story = { args: { progressLevelNr: 2 } }
-export const Completed: Story = { args: { completionCount: 3, hasMapPiece: true } }
+export const Completed: Story = { args: { completionCount: 3, mark: "📜" } }
 export const WithDetails: Story = { args: { showDetails: true } }
 export const Disabled: Story = { args: { disabled: true } }
 export const WithAnimation: Story = { args: { index: 2, showAnimation: true } }

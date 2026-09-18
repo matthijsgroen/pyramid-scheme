@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, afterEach } from "vitest"
 import { render, screen, fireEvent, cleanup } from "@testing-library/react"
 import { type FC, useState } from "react"
-import { allItems } from "@/data/inventory"
+import { allItems } from "@/mods/hieroglyph/game/symbolCatalogue"
 import type { CollectionSectionProps } from "@/app/pages/collectionSectionRegistry"
 
 afterEach(cleanup)

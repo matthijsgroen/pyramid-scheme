@@ -1,6 +1,6 @@
 import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
 import type { Rule, PathEntry } from "../dsl"
-import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
+import { TOMB_ROOMS_PER_FLOOR } from "../data"
 
 // Expert's open side/hidden paths, as reusable arrays so a per-pyramid override can restate them
 // and ADD to them (pyramid-level sidePaths REPLACES the tier's, it doesn't merge).
@@ -152,16 +152,16 @@ export const expertRules: Rule[] = [
   // dress without asking for the puzzles that wear it is how a trade pyramid ends up looking like a
   // waterworks.
 
-  // **The tomb journeys ask for the place their story is already set in** (docs/game-design/journeys.md §9).
+  // **The tomb journeys ask for the place their story is already set in** (docs/game-design/journeys.md).
   // Four families have a funerary face — balance scale weighs a heart against the feather, constellation
   // paints a ceiling, hidato opens sealed chambers, and sudoku's default already IS a wall of cut signs.
   //
   // **`puzzle` rides along on purpose, and it is what makes this safe.** A role list is a union, so the pool
   // stays every family and the draw does not change at all — what changes is that the four which can dress
   // now do. Restricting to the four instead would be 9.3 turns each across its 37 sections, far past the 6.3 repeats-per-family the
-  // least varied journey in the game already ships (§11), so a tomb would be the same four boards over and
+  // least varied journey in the game already ships, so a tomb would be the same four boards over and
   // over. The share that comes out dressed is therefore the pool's natural rate rather than a chosen one;
-  // weighting a preferred role is designed and unbuilt (§11).
+  // weighting a preferred role is designed and unbuilt.
   // **The Nile Delta Expedition is OVERGROWN, and it gets worse the further in you go.** Its own
   // description is the brief: a journey through the fertile delta and the river's annual flood. A
   // condition is authored per SITE and carried onto every floor of it (see dsl.ts), so green forcing
@@ -212,7 +212,7 @@ export const expertRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
@@ -220,18 +220,18 @@ export const expertRules: Rule[] = [
       // A side path opting into the same hieroglyph-fragment assignment pyramids use.
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         sideSections: [{ pathPuzzles: 1, endReward: "fragmentSlot" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],
@@ -245,24 +245,24 @@ export const expertRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],

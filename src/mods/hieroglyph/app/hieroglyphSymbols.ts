@@ -1,4 +1,4 @@
-import { allItems } from "@/data/inventory"
+import { allItems } from "@/mods/hieroglyph/game/symbolCatalogue"
 
 // id → glyph, for anywhere this mod needs to SHOW a hieroglyph it only holds the id of (the
 // Collection hunt bar, the compass target label seam). Shared so the two don't drift.

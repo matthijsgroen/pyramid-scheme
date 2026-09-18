@@ -3,7 +3,7 @@ import { use, useEffect, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { journeys as allJourneys, type PyramidJourney } from "@/data/journeys"
 import { useJourneys, type CombinedJourneyState } from "../state/useJourneys"
-import { useTombTreasureProgress } from "@/mods/tombTreasure/app/useTombTreasureProgress"
+import { useMergedJourneyContributions } from "@/app/pages/journeyContributions"
 import { FezContext } from "../fez/context"
 
 export const ExpeditionCompletionOverlay: FC<{
@@ -14,7 +14,7 @@ export const ExpeditionCompletionOverlay: FC<{
 }> = ({ onJourneyComplete, onStartJourney, newPyramidJourneyId, activeJourney }) => {
   const { t } = useTranslation("common")
   const { getJourney } = useJourneys()
-  const { hasMapPiece } = useTombTreasureProgress()
+  const { lock } = useMergedJourneyContributions()
   const journey = activeJourney.journey as PyramidJourney
   const { showConversation } = use(FezContext)
 
@@ -24,14 +24,15 @@ export const ExpeditionCompletionOverlay: FC<{
 
   const newPyramidJourneyName = useJourneyTranslation(newPyramidJourneyId ?? "id")?.name
 
+  // The tier's tomb, announced the run its lock comes open — asking the lock itself, so a tomb
+  // whose pieces are shared with a sibling tomb is judged on what it actually needs.
   const tombJourney = allJourneys.find(j => j.type === "treasure_tomb" && j.difficulty === journey.difficulty)
-  const pyramidJourneysForDifficulty = allJourneys.filter(
-    j => j.type === "pyramid" && j.difficulty === journey.difficulty
-  )
-  const allMapPiecesFound = pyramidJourneysForDifficulty.every(j => hasMapPiece(j.id))
+  const tombLock = tombJourney ? lock(tombJourney.id) : undefined
   const tombState = tombJourney ? getJourney(tombJourney.id) : undefined
   const newTombJourneyId =
-    allMapPiecesFound && tombJourney && (tombState?.completionCount ?? 0) === 0 ? tombJourney.id : undefined
+    tombJourney && tombLock && tombLock.found >= tombLock.required && (tombState?.completionCount ?? 0) === 0
+      ? tombJourney.id
+      : undefined
   const newTombJourneyName = useJourneyTranslation(newTombJourneyId ?? "id")?.name
 
   return (

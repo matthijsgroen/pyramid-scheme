@@ -1,12 +1,12 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import { difficultyMaterialFlat } from "@/ui/tokens/difficultyColors"
-import type { TableauLevel } from "@/data/tableaus"
+import type { TableauLevel } from "@/mods/hieroglyph/game/tableaus"
 import type { Formula as FormulaType } from "@/game/formulas/formulas"
 import clsx from "clsx"
 import type { FC } from "react"
 import { Formula } from "@/ui/molecules/Formula"
 import type { FilledTileState } from "@/ui/molecules/FormulaPart"
-import type { HieroglyphSymbolResolver } from "@/data/resolveHieroglyphSymbol"
+import type { HieroglyphSymbolResolver } from "@/ui/molecules/FormulaPart"
 
 export type OrderedFormula = { formula: FormulaType; index: number }
 

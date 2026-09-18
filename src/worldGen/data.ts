@@ -3,6 +3,17 @@ import { PYRAMID_STRUCTURES, TOMB_STRUCTURES } from "../data/journeyStructure"
 
 export const WORLD_SEED = 42_195_837
 
+// Main-path puzzle rooms on a tomb floor, per tier — authored structure, counted before the floor's
+// own capstone, so a tomb floor's authored `pathPuzzles` is this + 1. Whichever mod dresses those
+// rooms has to have content for every one of them, and fails the build if it doesn't.
+export const TOMB_ROOMS_PER_FLOOR: Record<Tier, number> = {
+  starter: 2,
+  junior: 3,
+  expert: 4,
+  master: 5,
+  wizard: 6,
+}
+
 // pathPuzzles is worldGen-only; merged with PYRAMID_STRUCTURES (single source of truth for id/tier/levelCount).
 // Each entry is the puzzle-count progression across the journey's pyramids, first to last —
 // explicit and authored, no implicit scaling applied anywhere else.

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { generateTableaus } from "./tableaus"
-import { allItems } from "./inventory"
+import { allItems } from "./symbolCatalogue"
 
 describe("inventory", () => {
   const tableaus = generateTableaus()

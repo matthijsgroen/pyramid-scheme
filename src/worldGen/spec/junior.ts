@@ -1,6 +1,6 @@
 import { tier, journey, tomb, sidePath, wardWing, wardChest } from "../dsl"
 import type { Rule } from "../dsl"
-import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
+import { TOMB_ROOMS_PER_FLOOR } from "../data"
 
 // Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
 // journey (where the auto tier-unlock gate already sits). Each is a bonus floor gated by a later
@@ -98,14 +98,14 @@ export const juniorRules: Rule[] = [
   // the second word buys is the dressing. `light` is FIRST because the skin resolver takes the first role a
   // family has a face for, and every family here answers `sky` with its default: sky-first would win that
   // search and cancel the narrower place. Neither has a `light` face yet
-  // (docs/game-design/journeys.md §9), so today this is intent rather than pixels — and the day a beacon
+  // (docs/game-design/journeys.md), so today this is intent rather than pixels — and the day a beacon
   // ships, this pyramid wears it without being re-authored.
   journey("junior_4").pyramid("1-5", { encounter: ["light", "sky"], theme: "night" }),
 
   // **The ibis migration is a marsh and a flood, so it draws only from water.** The one journey in the game
   // that can be restricted outright rather than merely preferred: the `water` pool is five families and
   // every one of them dresses for it, and seventeen sections over five is 3.4 turns each — inside the 5.7
-  // the least varied journey already ships (docs/game-design/journeys.md §10).
+  // the least varied journey already ships (docs/game-design/journeys.md).
   //
   // Restricting rather than preferring is the whole point here. `["water", "puzzle"]` would re-admit every
   // family and leave three rooms in five undressed; a marsh should not have a room in it that is not wet.
@@ -138,14 +138,14 @@ export const juniorRules: Rule[] = [
     levelCount: 6,
     sealed: true, // linear tomb — no shortcut around a tableau room
     // Every floor's treasure IS a ward key, and from junior on each one is guarded by a crocodile
-    // capstone — authored per floor via a node selector (§G), not a core rule. `pathPuzzles` is one
+    // capstone — authored per floor via a node selector, not a core rule. `pathPuzzles` is one
     // ABOVE the tier's tableau count so the capstone is an EXTRA room: the selector overrides the
     // last room's family, so without the +1 the crocodile would eat a tableau and leave the floor
-    // short of the `floors × TABLEAUS_PER_FLOOR` story grid tableaus.ts sizes for.
+    // short of the `floors × TOMB_ROOMS_PER_FLOOR` story grid tableaus.ts sizes for.
     floors: [
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.junior + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods (currency pieces + consumables).
         // Empty until resolveShopStock + the consumable fill land; the shop mods own its content.
@@ -153,29 +153,29 @@ export const juniorRules: Rule[] = [
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.junior + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       // A tomb is designed exactly like a pyramid — a side path with a mosaic reward.
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.junior + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         sideSections: [sidePath({ puzzles: 1, endReward: "mosaicPiece" })],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.junior + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.junior + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.junior + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],

@@ -1,15 +1,13 @@
 import { useMemo, type FC } from "react"
-import { useJourneys, type CombinedJourneyState } from "../state/useJourneys"
+import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
-import { useTableauTranslations } from "@/app/translations/useTableauTranslations"
+import { useTableauTranslations } from "./useTableauTranslations"
 import { generateNewSeed, mulberry32 } from "@/game/random"
-import {
-  buildTombCalculationSettings,
-  generateRewardCalculation,
-} from "@/mods/hieroglyph/game/generateRewardCalculation"
-import { useHieroglyphProgress } from "@/mods/hieroglyph/app/useHieroglyphProgress"
-import { getInventoryItemById } from "@/data/inventory"
-import { getItemFirstLevel } from "@/data/itemLevelLookup"
+import { buildTombCalculationSettings, generateRewardCalculation } from "../game/generateRewardCalculation"
+import { tombFormulaFor } from "../game/tombFormula"
+import { useHieroglyphProgress } from "./useHieroglyphProgress"
+import { getInventoryItemById } from "../game/symbolCatalogue"
+import { getItemFirstLevel } from "../game/itemLevelLookup"
 import { HieroglyphTile } from "@/ui/molecules/HieroglyphTile"
 import { difficultyCompare } from "@/data/difficultyLevels"
 
@@ -29,10 +27,11 @@ export const TableauInventory: FC<{ journeyInfo: CombinedJourneyState }> = ({ jo
   const calculation = useMemo(() => {
     const random = mulberry32(seed)
     if (!journey || !tableau) return null
-    return generateRewardCalculation(buildTombCalculationSettings(journey.levelSettings, tableau), random)
+    return generateRewardCalculation(buildTombCalculationSettings(tombFormulaFor(journey.id), tableau), random)
   }, [journey, seed, tableau])
 
-  if (!journey || !calculation) {
+  // Only a tomb run that is actually under way has a next tableau to preview.
+  if (!journey || !calculation || !journeyInfo.inProgress) {
     return null
   }
 

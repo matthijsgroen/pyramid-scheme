@@ -9,7 +9,7 @@ import { describe, expect, it } from "vitest"
  *
  * A ratchet, not a ban. Lower the number as citations are converted to a file path; never raise it.
  */
-const CITATIONS_ALLOWED = 559
+const CITATIONS_ALLOWED = 532
 
 const COMMENT = /^\s*(\/\/|\*|\/\*)/
 

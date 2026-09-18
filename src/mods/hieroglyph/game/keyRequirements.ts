@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { getTableauLevel } from "@/data/tableaus"
+import { getTableauLevel } from "@/mods/hieroglyph/game/tableaus"
 import type { FamilyKeyRequirementResolver } from "@/game/families/familyMeta"
 
 // The only place that knows a tableau room's completion precondition is "hold enough

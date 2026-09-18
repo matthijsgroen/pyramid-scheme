@@ -1,38 +1,14 @@
 import { useEffect, useState, type FC, use } from "react"
 import { useTranslation } from "react-i18next"
 import { LevelCompletedOverlay } from "./LevelCompletedOverlay"
-import { LootPopup } from "@/ui/atoms/LootPopup"
-import type { CombinedJourneyState } from "@/app/state/useJourneys"
-import { useLootDetermination } from "./useLootDetermination"
 import { FezContext } from "../fez/context"
-import { useTimeout } from "@/support/useTimeout"
 
-type LevelCompletionHandlerProps = {
-  onCompletionFinished: () => void
-  activeJourney: CombinedJourneyState
-  skipLoot?: boolean
-}
-
-export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
-  onCompletionFinished,
-  activeJourney,
-  skipLoot = false,
-}) => {
+// The exterior level's completion beat: Fez says his line over the completed-level overlay, and the
+// next click (or the overlay's own end) hands control back to the expedition flow.
+export const LevelCompletionHandler: FC<{ onCompletionFinished: () => void }> = ({ onCompletionFinished }) => {
   const { t } = useTranslation("common")
-  // This component is only mounted once the level is already complete (PyramidExpedition renders it
-  // behind `levelCompleted`), so the sequence starts in the overlay phase rather than starting hidden
-  // and having an effect immediately advance it. That effect cost a render pass and showed one blank
-  // frame before the overlay appeared; there was never a path back to "hidden".
-  const [showOverlay, setShowOverlay] = useState(true)
   const [showFez, setShowFez] = useState(true)
-  const [showLoot, setShowLoot] = useState(false)
-  const [completionPhase, setCompletionPhase] = useState<"overlay" | "loot" | "finished">("overlay")
-  const [scheduleTimer, cancelTimer] = useTimeout()
-
-  // Use the loot determination hook
-  const { loot: rawLoot, collectLoot } = useLootDetermination(activeJourney)
-  const loot = skipLoot ? null : rawLoot
-
+  const [finished, setFinished] = useState(false)
   const { showConversation } = use(FezContext)
 
   useEffect(() => {
@@ -43,87 +19,20 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
     }
   }, [showFez, showConversation])
 
-  // Separate effect for handling the timer when in overlay phase
-  useEffect(() => {
-    if (completionPhase === "overlay" && !showFez && !skipLoot) {
-      scheduleTimer(2000, () => {
-        if (loot) {
-          setCompletionPhase("loot")
-          setShowOverlay(false)
-          setShowLoot(true)
-        } else {
-          setCompletionPhase("finished")
-          onCompletionFinished()
-        }
-      })
-      return cancelTimer
-    }
-  }, [completionPhase, loot, onCompletionFinished, showFez, skipLoot, scheduleTimer, cancelTimer])
-
-  useEffect(() => {
-    if (loot?.itemId === "mapPiece") {
-      const timeout = setTimeout(() => {
-        // Show the map piece conversation
-        showConversation("mapPiece")
-      }, 150) // Delay for 150ms before showing conversation
-
-      return () => clearTimeout(timeout)
-    }
-  }, [loot, showConversation])
-
-  const handleLootDismiss = () => {
-    setShowLoot(false)
-    setCompletionPhase("finished")
-    collectLoot()
-    scheduleTimer(300, onCompletionFinished)
-  }
-
-  const handleOverlayClick = () => {
-    if (completionPhase === "overlay" && !loot) {
-      // If there's no loot, allow clicking to continue immediately
-      setCompletionPhase("finished")
-      onCompletionFinished()
-    }
+  const finish = () => {
+    if (finished) return
+    setFinished(true)
+    onCompletionFinished()
   }
 
   return (
-    <>
-      {/* Level Completed Overlay */}
-      {showOverlay && (
-        <div onClick={handleOverlayClick} className="pointer-events-auto absolute inset-0 z-40 cursor-pointer">
-          <LevelCompletedOverlay
-            onComplete={
-              skipLoot
-                ? () => {
-                    setCompletionPhase("finished")
-                    onCompletionFinished()
-                  }
-                : undefined
-            }
-          />
-          {!loot && completionPhase === "overlay" && (
-            <div className="absolute bottom-8 left-1/2 z-50 -translate-x-1/2 transform">
-              <p className="animate-pulse text-sm font-medium text-white">{t("loot.clickToContinue")}</p>
-            </div>
-          )}
+    <div onClick={finish} className="pointer-events-auto absolute inset-0 z-40 cursor-pointer">
+      <LevelCompletedOverlay onComplete={finish} />
+      {!finished && (
+        <div className="absolute bottom-8 left-1/2 z-50 -translate-x-1/2 transform">
+          <p className="animate-pulse text-sm font-medium text-white">{t("loot.clickToContinue")}</p>
         </div>
       )}
-
-      {/* Loot Popup */}
-      {loot && (
-        <>
-          <LootPopup
-            isOpen={showLoot}
-            itemName={loot.itemName}
-            itemDescription={loot.itemDescription}
-            itemComponent={loot.itemComponent}
-            rarity={loot.rarity || "common"}
-            onDismiss={handleLootDismiss}
-            youFoundLabel={t("loot.youFound")}
-            clickToContinueLabel={t("loot.clickToContinue")}
-          />
-        </>
-      )}
-    </>
+    </div>
   )
 }

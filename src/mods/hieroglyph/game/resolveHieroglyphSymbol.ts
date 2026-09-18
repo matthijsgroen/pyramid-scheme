@@ -1,9 +1,8 @@
 import type { Difficulty } from "@/data/difficultyLevels"
-import { getInventoryItemById } from "@/data/inventory"
-import { getItemFirstLevel } from "@/data/itemLevelLookup"
+import { getInventoryItemById } from "./symbolCatalogue"
+import { getItemFirstLevel } from "./itemLevelLookup"
 
-export type HieroglyphSymbolResolver = (symbolId: string) => { symbol?: string; difficulty: Difficulty }
-
+// A symbol id as the formula tiles need it: the glyph to draw, and the difficulty that colours it.
 export const resolveHieroglyphSymbol = (symbolId: string, fallbackDifficulty: Difficulty) => ({
   symbol: getInventoryItemById(symbolId)?.symbol,
   difficulty: getItemFirstLevel(symbolId) ?? fallbackDifficulty,
