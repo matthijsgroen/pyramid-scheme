@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- A save from before cells were named by what they are (rather than where the carve put them) no
+  longer takes the launch down. It has no coordinate archive to translate, which the re-keying read
+  as a broken save instead of as nothing to do.
+
 - A tomb is announced as newly open when its own map is complete. It used to be announced once every
   pyramid of that tier had given up its piece, which is not the same count for a tier that holds
   more than one tomb — so a second tomb could be announced early, or the first announced late.
