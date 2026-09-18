@@ -36,7 +36,8 @@ no longer existed — §11.8 alone cited 47 times — and every one of them read
 Name the file and say the claim. If the claim is too long to say, that is the signal it belongs in
 the doc and not in the comment.
 
-`src/designDocReferences.spec.ts` ratchets the remaining ones down.
+`yarn betterer` ratchets the remaining ones down, per file and per occurrence (`.betterer.results`).
+Fix one, run `yarn betterer:update`, and the number can only go back up by failing the build.
 
 ---
 
