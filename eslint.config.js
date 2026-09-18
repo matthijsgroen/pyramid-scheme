@@ -11,6 +11,10 @@ import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended"
 import tailwind from "eslint-plugin-tailwindcss"
 import { join } from "node:path"
 
+// Every mod folder under src/mods/, for the sibling-import rule below. `core` is not in the list: it
+// is the engine, and the rule exempts it as an import target rather than restricting it as a source.
+const MODS = ["puzzle", "mosaic", "hieroglyph", "trap", "shop", "tombTreasure"]
+
 export default tseslint.config(
   [
     globalIgnores(["dist", "storybook-static", ".yarn", "node_modules", ".claude"]),
@@ -70,6 +74,28 @@ export default tseslint.config(
         ],
       },
     },
+    // **A mod names no other mod.** A mod is one standalone mechanic (docs/mods/TARGET.md), so reaching
+    // into a sibling's internals makes the two removable only together. `core` is exempt as the target:
+    // it is the engine every mod is built on, not a mod.
+    //
+    // ponytail: warn-level backlog, same pin as above.
+    ...MODS.map(mod => ({
+      files: [`src/mods/${mod}/**/*.{ts,tsx}`],
+      rules: {
+        "@typescript-eslint/no-restricted-imports": [
+          "warn",
+          {
+            patterns: [
+              {
+                group: ["@/mods/*/**", "!@/mods/core/**", `!@/mods/${mod}/**`],
+                message:
+                  "A mod must not name another mod (docs/mods/TARGET.md). Go through a registry seam, or move the fact to whichever mod owns it.",
+              },
+            ],
+          },
+        ],
+      },
+    })),
     {
       files: ["**/*.{ts,tsx}"],
       extends: [tailwind.configs.recommended],

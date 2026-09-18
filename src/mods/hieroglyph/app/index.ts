@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
@@ -14,6 +15,8 @@ import { hieroglyphFragmentSchema } from "./rewardSchema"
 import { HIEROGLYPH_SYMBOLS } from "./hieroglyphSymbols"
 import "./plugin"
 import "./collection"
+import { registerDevGrants } from "@/app/dev/devActionContributions"
+import { HIEROGLYPH_REQUIRED } from "../game/hieroglyphData"
 
 // hieroglyph's app entrypoint (side-effect): the tableau family plugin + the Collection section
 // (both self-gated in their own files), plus the gated reward/detector registrations:
@@ -62,4 +65,22 @@ if (isModEnabled("hieroglyph")) {
   // reads as unlocked content on the travel screen — same seam the tomb-treasure mod uses for ward
   // keys. Core never learns these are hieroglyphs; a tableau node just exposes them as requiredKeyIds.
   registerHeldKeysProvider(() => useHieroglyphProgress().completedHieroglyphKeys)
+
+  // The cheat menu's hieroglyph grant (§dev): completing every hieroglyph is what makes a late tomb's
+  // tableau rooms solvable on arrival — without it, jumping there hits a wall of unfillable formulas.
+  registerDevGrants(() => {
+    const { addFragment } = useHieroglyphProgress()
+    return useMemo(
+      () => [
+        {
+          label: "All hieroglyphs",
+          grant: () => {
+            for (const [hieroglyphId, required] of Object.entries(HIEROGLYPH_REQUIRED))
+              for (let piece = 0; piece < required; piece++) addFragment(hieroglyphId, piece)
+          },
+        },
+      ],
+      [addFragment]
+    )
+  })
 }

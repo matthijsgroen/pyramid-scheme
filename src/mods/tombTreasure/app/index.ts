@@ -11,6 +11,9 @@ import { useTombTreasureProgress } from "./useTombTreasureProgress"
 import { registerTombTreasureRewardDisplay } from "./rewardDisplay"
 import { TombTreasureCollectionSection } from "./TombTreasureCollectionSection"
 import { mapPieceSchema, tombKeySchema } from "./rewardSchemas"
+import { registerDevGrants } from "@/app/dev/devActionContributions"
+import { TOMB_PERK_IDS } from "@/data/treasurePerks"
+import { piecesRequiredFor } from "../game/piecesRequired"
 
 // tomb-treasure's app entrypoint (side-effect): the reward display handlers, reward schemas, the
 // claim effects (map piece → count + mark the pyramid journey's chest opened; tomb key → grant the
@@ -63,4 +66,36 @@ if (isModEnabled("tomb-treasure")) {
   // treasures are the most valuable collectibles (ward keys + their perks). "Collected" = own the
   // tombKey; drops out of the Collection screen when the mod is off.
   registerCollectionSection({ id: "tomb-treasure", order: 10, Component: TombTreasureCollectionSection })
+
+  // The cheat menu's tomb grants (§dev). Both stay here because both are this mod's state: core
+  // composes them into "Unlock everything" without learning what a ward key or a map piece is.
+  registerDevGrants(() => {
+    const { addTombKey, collectMapPiece, mapPieceCount, discoverTomb } = useTombTreasureProgress()
+    return useMemo(
+      () => [
+        {
+          // Every tomb treasure at once: simultaneously every ward key (so gated pockets open), every
+          // tier unlock (TIER_UNLOCK_PERK_IDS is a subset of these), and every perk — including the
+          // compass and corridor detector, which is what makes hidden loot findable while testing.
+          label: "All treasures + keys",
+          grant: () => {
+            for (const perkIds of Object.values(TOMB_PERK_IDS)) for (const id of perkIds) addTombKey(id)
+          },
+        },
+        {
+          // Tombs are entered on a map-piece threshold, not a key, so they need their own grant. Tops
+          // each tomb up to its own requirement and reveals it on the travel screen.
+          label: "All map pieces",
+          grant: () => {
+            for (const tombId of Object.keys(TOMB_PERK_IDS)) {
+              const missing = piecesRequiredFor(tombId) - mapPieceCount(tombId)
+              for (let i = 0; i < missing; i++) collectMapPiece(tombId)
+              discoverTomb(tombId)
+            }
+          },
+        },
+      ],
+      [addTombKey, collectMapPiece, mapPieceCount, discoverTomb]
+    )
+  })
 }

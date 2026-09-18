@@ -76,12 +76,20 @@ importing `@/mods/<name>/` — `src/app/`, `src/ui/`, `src/game/`, `src/data/` a
 registers itself through (`registeredMods`, `allFamilyMeta`, `registerModApps`,
 `allCurrencyDistributions`) and `@/mods/core/`, which is the engine rather than a mod.
 
-It is a **warning**, because 20 real hits predate it — `hieroglyph` and `tombTreasure`
-hold most of them, read straight from `TombPuzzle`, `useDevActions`, `Travel` and
-`TableauInventory`. `yarn lint` runs with `--max-warnings` pinned at the current total,
+It is a **warning**, because 11 real hits predate it — `hieroglyph` and `tombTreasure`
+hold most of them, read straight from `Travel`, `TableauInventory`, `inventoryLootLogic` and three
+core specs. `yarn lint` runs with `--max-warnings` pinned at the current total,
 so the backlog can only shrink: a new violation fails the run, and clearing one means
 lowering the pin in the same commit. Flip the rule to `error` and drop the pin once it
 reaches zero.
+
+A second rule holds the sibling boundary: a file under `src/mods/<A>/` may not import
+`@/mods/<B>/`, because a mod that names a sibling is only removable together with it. That one
+stands at **1** — `hieroglyph/app/TombPuzzle.tsx` reads `usePuzzleProgress` for the scribes-eye
+level, which `puzzle/app/index.ts` declares puzzle-owned while the only thing that renders it is
+hieroglyph's tableau. It surfaced when `TombPuzzle` moved out of core: the dependency was always
+there, just hidden behind core as an intermediary. Whether scribes-eye belongs to puzzle, to
+hieroglyph, or behind a perk-level seam is an open question, not a mechanical fix.
 
 A hit is fixed by **inverting the dependency** — the fact moves into the owning mod and
 core reads it back through a registry — not by widening the rule's allowlist. A core
