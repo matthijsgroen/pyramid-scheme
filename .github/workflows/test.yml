@@ -127,5 +127,7 @@ jobs:
         run: yarn lint
       - name: Run tests
         run: yarn test
+      - name: Check the ratcheted guards
+        run: yarn betterer
       - name: yarn build
         run: yarn build # Checks if build can be produced without issues
