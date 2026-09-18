@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { generateNewSeed, mulberry32 } from "@/game/random"
-import { journeys, type TreasureTombJourney } from "@/data/journeys"
+import { type Journey, journeys } from "@/data/journeys"
 import { hashString } from "@/support/hashString"
 import { tombFormulaFor } from "../game/tombFormula"
 import { generateRewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
@@ -12,7 +12,7 @@ import { resolveHieroglyphSymbol } from "@/mods/hieroglyph/game/resolveHieroglyp
 
 type TombLevelArgs = {
   tableauNr: number
-  journey: TreasureTombJourney
+  journey: Journey
   filled: number
 }
 
@@ -24,7 +24,7 @@ const fillPositions = (keys: string[], value: number) => {
   return result
 }
 
-const tombJourneys = journeys.filter(j => j.type === "treasure_tomb")
+const tombJourneys = journeys.filter(j => j.exterior === "tomb")
 // Mod-side though the component is core's: it names hieroglyph, and a story ships in build-storybook.
 const meta = {
   title: "Hieroglyph/TombTableau",
@@ -64,7 +64,7 @@ const meta = {
           acc[j.id] = j
           return acc
         },
-        {} as Record<string, TreasureTombJourney>
+        {} as Record<string, Journey>
       ),
       options: tombJourneys.map(j => j.id),
     },

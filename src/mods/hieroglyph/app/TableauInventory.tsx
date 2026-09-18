@@ -1,6 +1,6 @@
 import { useMemo, type FC } from "react"
 import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
-import { journeys, type TreasureTombJourney } from "@/data/journeys"
+import { journeys } from "@/data/journeys"
 import { useTableauTranslations } from "./useTableauTranslations"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import { buildTombCalculationSettings, generateRewardCalculation } from "../game/generateRewardCalculation"
@@ -12,9 +12,7 @@ import { HieroglyphTile } from "@/ui/molecules/HieroglyphTile"
 import { difficultyCompare } from "@/data/difficultyLevels"
 
 export const TableauInventory: FC<{ journeyInfo: CombinedJourneyState }> = ({ journeyInfo }) => {
-  const journey = journeys.find(
-    (j): j is TreasureTombJourney => j.id === journeyInfo.journeyId && j.type === "treasure_tomb"
-  )
+  const journey = journeys.find(j => j.id === journeyInfo.journeyId && j.exterior === "tomb")
   const { getJourney } = useJourneys()
   const tableaux = useTableauTranslations()
   const { hieroglyphProgress } = useHieroglyphProgress()

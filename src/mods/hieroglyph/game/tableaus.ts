@@ -5,10 +5,9 @@
  */
 
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
-import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { allItems } from "./symbolCatalogue"
 import { objectsForStories } from "./objectsForStories"
-import { TOMB_ROOMS_PER_FLOOR } from "@/worldGen/data"
+import { TOMB_JOURNEYS, TOMB_ROOMS_PER_FLOOR } from "@/worldGen/data"
 import { tombFormulaFor } from "./tombFormula"
 
 export type TableauLevel = {
@@ -83,7 +82,13 @@ function getTableauDescription(
   return tableauSymbols.map(symbol => allItems.find(item => item.id === symbol)?.name).join(", ") || "Unknown symbols."
 }
 
-const tombJourneys = journeys.filter((j): j is TreasureTombJourney => j.type === "treasure_tomb")
+// Every tomb with its FLOOR count and tier, straight off the table world-gen builds from. The
+// journey's own levelCount is its map nodes (one, for a tomb's single site), a different number.
+const tombJourneys = TOMB_JOURNEYS.map(tomb => ({
+  id: tomb.id,
+  difficulty: tomb.tier as Difficulty,
+  levelCount: tomb.levelCount,
+}))
 
 // N tableau rooms per REAL tomb floor (pyramid-interior-design.md). A tier's tomb may be split
 // across several journeys once one tomb grew too large for a single exploration; every floor of

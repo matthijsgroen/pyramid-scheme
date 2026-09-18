@@ -5,14 +5,14 @@ import { journeys as allJourneys } from "@/data/journeys"
 
 // completeJourney checks against knownJourneyIds (the real journey list), so we
 // need a real journey ID — use the first pyramid entry from the data.
-const REAL_ID = allJourneys.find(j => j.type === "pyramid")!.id
-const REAL_LEVEL_COUNT = allJourneys.find(j => j.type === "pyramid")!.levelCount
+const REAL_ID = allJourneys.find(j => j.exterior === "pyramid")!.id
+const REAL_LEVEL_COUNT = allJourneys.find(j => j.exterior === "pyramid")!.levelCount
 
 // Minimal journey stub — only fields createJourneysV3Api reads
 const makeJourneyData = (id: string, levelCount = REAL_LEVEL_COUNT): TranslatedJourney =>
   ({
     id,
-    type: "pyramid",
+    exterior: "pyramid",
     difficulty: "starter",
     levelCount,
     journeyLength: "short",
@@ -369,10 +369,10 @@ describe("floor exploration tracking", () => {
   })
 
   it("ignores floors filed under a level the journey has no node for", () => {
-    // A tomb re-enters level 1 from every node (exteriorLevelCount), so entries its earlier runs left
-    // under higher levels can never be revisited or re-recorded — counting them kept the journey card
-    // pulsing at a tomb with nothing left in it.
-    const tomb = { ...makeJourneyData(REAL_ID), type: "treasure_tomb", levelCount: 3 } as TranslatedJourney
+    // A journey has one node per site, so a tomb (one site) has one: a save filed under a higher
+    // level can never be revisited or re-recorded, and counting it kept the card pulsing over
+    // nothing left to go back to.
+    const tomb = { ...makeJourneyData(REAL_ID), exterior: "tomb", levelCount: 1 } as TranslatedJourney
     const state = [
       makeStoredJourney({
         floorExploration: { "1:0": { open: false, keySets: [] }, "3:0": { open: true, keySets: [] } },

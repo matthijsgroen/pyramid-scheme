@@ -4,7 +4,7 @@ import { JourneyCard, type JourneyCardJourney } from "./JourneyCard"
 const mockPyramidJourney: JourneyCardJourney = {
   id: "starter_1",
   name: "Dawn at the Sphinx",
-  type: "pyramid",
+  exterior: "pyramid",
   description:
     "Begin your adventure with the Great Sphinx as the morning sun illuminates its ancient face. A gentle introduction to the mysteries of Egypt.",
   difficulty: "starter",
@@ -17,31 +17,24 @@ const mockPyramidJourney: JourneyCardJourney = {
     startFloorCount: 3,
     startNumberRange: [1, 3],
   },
-  rewards: {
-    mapPiece: {
-      startChance: 0.67,
-      chanceIncrease: 0.2,
-    },
-    completed: {
-      pieces: [1, 2],
-    },
-  },
   difficultyLabel: "Starter",
 }
 
 const mockTreasureTombJourney: JourneyCardJourney = {
   id: "starter_treasure_tomb",
   name: "Forgotten Merchant's Cache",
-  type: "treasure_tomb",
+  exterior: "tomb",
   description:
     "Discover a small underground chamber where an ancient merchant hid his precious goods. A perfect introduction to treasure hunting.",
   difficulty: "starter",
   journeyLength: "short",
   levelCount: 4,
-  piecesRequired: 4,
+  entryLock: { count: 4 },
+  background: { time: "night" },
   difficultyLabel: "Starter",
   levelSettings: {
-    numberRange: [1, 10],
+    startFloorCount: 3,
+    startNumberRange: [1, 10],
   },
 }
 

@@ -5,7 +5,7 @@ import { completeCell, getCell } from "../../game/gridNavigation"
 import type { FloorGrid, TreasureReward } from "../../game/siteTypes"
 import { generatedWorldConfigs } from "../../data/generatedWorld"
 import { journeys } from "../../data/journeys"
-import type { PyramidJourney, TreasureTombJourney } from "../../data/journeys"
+import type { Journey } from "../../data/journeys"
 import { SiteMapView } from "./SiteMapView"
 import { ExplorerDot } from "./ExplorerDot"
 import { encodeEdge, decodeEdge } from "./edgeId"
@@ -17,18 +17,18 @@ import type { FloorConfig } from "../../game/siteTypes"
 type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
 const TIERS: Tier[] = ["starter", "junior", "expert", "master", "wizard"]
 
-const pyramidJourneys = journeys.filter((j): j is PyramidJourney => j.type === "pyramid")
-const tombJourneys = journeys.filter((j): j is TreasureTombJourney => j.type === "treasure_tomb")
+const pyramidJourneys = journeys.filter(j => j.exterior === "pyramid")
+const tombJourneys = journeys.filter(j => j.exterior === "tomb")
 
 // { starter: [journey1, journey2, ...], junior: [...], ... }
-const byTier: Record<Tier, PyramidJourney[]> = Object.fromEntries(
+const byTier: Record<Tier, Journey[]> = Object.fromEntries(
   TIERS.map(tier => [tier, pyramidJourneys.filter(j => j.difficulty === tier)])
-) as Record<Tier, PyramidJourney[]>
+) as Record<Tier, Journey[]>
 
 // Tomb IDs start with their tier name (e.g. "expert_treasure_tomb")
-const tombsByTier: Record<Tier, TreasureTombJourney[]> = Object.fromEntries(
+const tombsByTier: Record<Tier, Journey[]> = Object.fromEntries(
   TIERS.map(tier => [tier, tombJourneys.filter(j => j.id.startsWith(`${tier}_`))])
-) as Record<Tier, TreasureTombJourney[]>
+) as Record<Tier, Journey[]>
 
 const DEFAULT_SEED = 42_195_837
 

@@ -61,7 +61,7 @@ type Props = {
   levelCount: number
   levelNr: number // 1-based; levelNr-1 = sites completed in current run
   journeyLength: "short" | "medium" | "long"
-  type: "pyramid" | "treasure_tomb"
+  exterior: "pyramid" | "tomb"
   nudge?: boolean
   // 1-based levelNrs of completed nodes that still hold reachable, unexplored content — pinged so a
   // player with a fresh ward key sees which pyramid to re-enter.
@@ -76,14 +76,14 @@ export const JourneyPathView: FC<Props> = ({
   levelCount,
   levelNr,
   journeyLength,
-  type,
+  exterior,
   nudge = false,
   unexploredNodes,
 }) => {
   const path = PATHS[journeyLength]
   const nodes = inJourney ? getNodePositions(path, levelCount) : []
   const currentIdx = levelNr - 1 // 0-based index of the next site to play
-  const isPyramid = type === "pyramid"
+  const isPyramid = exterior === "pyramid"
 
   return (
     <button

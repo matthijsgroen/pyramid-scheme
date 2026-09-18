@@ -11,21 +11,24 @@ import { PYRAMID_STRUCTURES, TOMB_STRUCTURES } from "./journeyStructure"
  * - long: 7-10 levels
  */
 
-export type Journey = PyramidJourney | TreasureTombJourney
-
-export type PyramidJourney = {
+export type Journey = {
   id: string
   name: string
-  type: "pyramid"
   description: string
-  difficulty: "starter" | "junior" | "expert" | "master" | "wizard"
+  // Which exterior this journey wears. Art and copy only: a tomb's interior is a pyramid interior,
+  // takes the same authoring, and is entered through the same expedition flow.
+  exterior: "pyramid" | "tomb"
+  difficulty: Difficulty
   journeyLength: "short" | "medium" | "long"
+  // Nodes on the journey's map, one per generated site — not authored, so the map can never draw a
+  // node the world has no site for.
   levelCount: number
   background: {
     time: DayNightCycleStep
     timeStepSize?: number
     showNile?: boolean
   }
+  // The cross-sum board each of this journey's sites is entered through.
   levelSettings: {
     startFloorCount: number
     endFloorCount?: number
@@ -37,61 +40,26 @@ export type PyramidJourney = {
     useMultiplesOf?: [min: number, max: number]
     endNumberRange?: [min: number, max: number]
   }
-  rewards: {
-    mapPiece: {
-      startChance: number
-      chanceIncrease: number
-    }
-    completed: {
-      pieces: [min: number, max: number]
-    }
-  }
+  // How much of some currency must be held before this journey can be entered. Whichever mod owns
+  // that currency says which one it is and reports the progress (app/pages/journeyContributions.ts);
+  // core only knows a count has to be reached.
+  entryLock?: { count: number }
   siteConfigs?: SiteConfig[]
 }
 
-export type TreasureTombJourney = {
-  id: string
-  name: string
-  type: "treasure_tomb"
-  description: string
-  difficulty: Difficulty
-  journeyLength: "short" | "medium" | "long"
-  levelCount: number
-  piecesRequired: number
-  siteConfigs?: SiteConfig[]
-  // Optional exterior board shown before entering the tomb interior. When absent, the expedition
-  // synthesizes a modest default from the tomb's difficulty (see PyramidExpedition). Author here to
-  // give a tomb a bespoke exterior later.
-  background?: PyramidJourney["background"]
-  // The number range the tomb's exterior board is generated from.
-  levelSettings: {
-    numberRange: [min: number, max: number]
-  }
-}
+// A journey as journeys.ts writes it: everything except what the generated world decides.
+type AuthoredJourney = Omit<Journey, "levelCount" | "siteConfigs">
 
-/**
- * How many exterior levels a journey has NODES for — what the map draws, and the only level numbers a
- * journey ever addresses.
- *
- * A tomb is ONE persistent multi-floor site (pyramid-interior-design.md), played as a single
- * exterior level however many floors its `levelCount` counts: every node on a tomb's map re-enters
- * level 1. Anything filed under a higher level for a tomb is from a visit the journey can no longer
- * return to, and reading it back would light a node that is not there.
- */
-export const exteriorLevelCount = (journey: Pick<Journey, "type" | "levelCount"> | null | undefined): number =>
-  !journey || journey.type === "treasure_tomb" ? 1 : journey.levelCount
-
-export const journeys: Journey[] = [
+const authoredJourneys: AuthoredJourney[] = [
   // Starter Difficulty Journeys
   {
     id: "starter_1",
     name: "Dawn at the Sphinx",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Begin your adventure with the Great Sphinx as the morning sun illuminates its ancient face. A gentle introduction to the mysteries of Egypt.",
     difficulty: "starter",
     journeyLength: "short",
-    levelCount: 3,
     background: {
       time: "morning",
     },
@@ -101,25 +69,15 @@ export const journeys: Journey[] = [
       blocksOpen: [0.5, 1],
       startNumberRange: [1, 3],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0,
-        chanceIncrease: 1,
-      },
-      completed: {
-        pieces: [1, 2],
-      },
-    },
   },
   {
     id: "starter_2",
     name: "Papyrus Merchant's Route",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Follow the trade routes of ancient papyrus merchants along the peaceful banks of the Nile. Discover the secrets of Egyptian commerce.",
     difficulty: "starter",
     journeyLength: "short",
-    levelCount: 4,
     background: {
       time: "afternoon",
       showNile: true,
@@ -131,25 +89,15 @@ export const journeys: Journey[] = [
       startNumberRange: [1, 3],
       endNumberRange: [2, 4],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.4,
-        chanceIncrease: 0.2,
-      },
-      completed: {
-        pieces: [1, 2],
-      },
-    },
   },
   {
     id: "starter_3",
     name: "Temple of Bastet",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Visit the sacred temple of the cat goddess Bastet, where faithful worshippers bring offerings and seek protection from evil spirits.",
     difficulty: "starter",
     journeyLength: "medium",
-    levelCount: 5,
     background: {
       time: "evening",
     },
@@ -160,25 +108,15 @@ export const journeys: Journey[] = [
       startNumberRange: [1, 4],
       endNumberRange: [1, 5],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.5,
-        chanceIncrease: 0.25,
-      },
-      completed: {
-        pieces: [2, 2],
-      },
-    },
   },
   {
     id: "starter_4",
     name: "Scribe's Academy",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Learn the art of hieroglyphic writing in the prestigious scribe's academy, where knowledge is more valuable than gold.",
     difficulty: "starter",
     journeyLength: "medium",
-    levelCount: 5,
     background: {
       time: "night",
     },
@@ -188,30 +126,22 @@ export const journeys: Journey[] = [
       endNumberRange: [2, 9],
       useMultiplesOf: [2, 3],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.29,
-        chanceIncrease: 0.12,
-      },
-      completed: {
-        pieces: [2, 2],
-      },
-    },
   },
 
   // Starter Treasure Tomb Journey
   {
     id: "starter_treasure_tomb",
     name: "Forgotten Merchant's Cache",
-    type: "treasure_tomb",
+    exterior: "tomb",
     description:
       "Discover a small underground chamber where an ancient merchant hid his precious goods. A perfect introduction to treasure hunting.",
     difficulty: "starter",
     journeyLength: "short",
-    levelCount: 2,
-    piecesRequired: 4,
+    entryLock: { count: 4 },
+    background: { time: "night" },
     levelSettings: {
-      numberRange: [1, 6],
+      startFloorCount: 3,
+      startNumberRange: [1, 6],
     },
   },
 
@@ -219,12 +149,11 @@ export const journeys: Journey[] = [
   {
     id: "junior_1",
     name: "Sacred Ibis Migration",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Follow the sacred ibis birds on their annual migration along the Nile. Learn the patterns that ancient Egyptians used to predict the flood.",
     difficulty: "junior",
     journeyLength: "short",
-    levelCount: 3,
     background: {
       time: "morning",
       showNile: true,
@@ -236,25 +165,15 @@ export const journeys: Journey[] = [
       endNumberRange: [2, 8],
       blocksOpen: [0.5, 0.5],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.2,
-        chanceIncrease: 0.18,
-      },
-      completed: {
-        pieces: [2, 3],
-      },
-    },
   },
   {
     id: "junior_2",
     name: "Valley of the Artisans",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Explore the village where skilled craftsmen created treasures for the pharaohs. Master the ancient techniques of metalwork and jewelry.",
     difficulty: "junior",
     journeyLength: "medium",
-    levelCount: 6,
     background: {
       time: "afternoon",
     },
@@ -266,25 +185,15 @@ export const journeys: Journey[] = [
       useMultiplesOf: [2, 5],
       blocksOpen: [0.8, 0.5],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.33,
-        chanceIncrease: 0.15,
-      },
-      completed: {
-        pieces: [3, 3],
-      },
-    },
   },
   {
     id: "junior_3",
     name: "Temple of Thoth",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Enter the temple of Thoth, god of wisdom and writing. Solve mathematical puzzles that test your understanding of ancient Egyptian numbers.",
     difficulty: "junior",
     journeyLength: "long",
-    levelCount: 8,
     background: {
       time: "evening",
     },
@@ -294,25 +203,15 @@ export const journeys: Journey[] = [
       startNumberRange: [2, 6],
       endNumberRange: [4, 10],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.33,
-        chanceIncrease: 0.15,
-      },
-      completed: {
-        pieces: [3, 4],
-      },
-    },
   },
   {
     id: "junior_4",
     name: "Lighthouse of Alexandria",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Climb the legendary lighthouse of Alexandria, one of the Seven Wonders. Navigate the mathematical principles that made this marvel possible.",
     difficulty: "junior",
     journeyLength: "medium",
-    levelCount: 5,
     background: {
       time: "night",
       showNile: true,
@@ -323,30 +222,22 @@ export const journeys: Journey[] = [
       startNumberRange: [2, 10],
       endNumberRange: [5, 20],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.3,
-        chanceIncrease: 0.18,
-      },
-      completed: {
-        pieces: [3, 3],
-      },
-    },
   },
 
   // Junior Treasure Tomb Journey
   {
     id: "junior_treasure_tomb",
     name: "Noble's Hidden Vault",
-    type: "treasure_tomb",
+    exterior: "tomb",
     description:
       "Explore the secret vault of a wealthy Egyptian noble, filled with golden artifacts and precious gemstones hidden from grave robbers.",
     difficulty: "junior",
     journeyLength: "medium",
-    levelCount: 3,
-    piecesRequired: 4,
+    entryLock: { count: 4 },
+    background: { time: "night" },
     levelSettings: {
-      numberRange: [1, 10],
+      startFloorCount: 3,
+      startNumberRange: [1, 10],
     },
   },
 
@@ -354,12 +245,11 @@ export const journeys: Journey[] = [
   {
     id: "expert_1",
     name: "Valley of the Kings",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Explore the royal necropolis where pharaohs rest for eternity. Navigate through elaborate tomb chambers filled with ancient puzzles.",
     difficulty: "expert",
     journeyLength: "short",
-    levelCount: 4,
     background: {
       time: "morning",
     },
@@ -371,25 +261,15 @@ export const journeys: Journey[] = [
       startNumberRange: [2, 7],
       endNumberRange: [4, 12],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.5,
-        chanceIncrease: 0.25,
-      },
-      completed: {
-        pieces: [3, 4],
-      },
-    },
   },
   {
     id: "expert_2",
     name: "Karnak Temple Complex",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Venture through the vast temple complex of Karnak, dedicated to Amun-Ra. Solve the riddles left by high priests across centuries.",
     difficulty: "expert",
     journeyLength: "medium",
-    levelCount: 6,
     background: {
       time: "afternoon",
       timeStepSize: 2,
@@ -403,25 +283,15 @@ export const journeys: Journey[] = [
       endNumberRange: [4, 16],
       useMultiplesOf: [3, 7],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.33,
-        chanceIncrease: 0.15,
-      },
-      completed: {
-        pieces: [4, 4],
-      },
-    },
   },
   {
     id: "expert_3",
     name: "Nile Delta Expedition",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Journey through the fertile Nile Delta, encountering crocodile gods and solving the mysteries of the river's annual flood.",
     difficulty: "expert",
     journeyLength: "long",
-    levelCount: 9,
     background: {
       time: "evening",
       timeStepSize: 1,
@@ -435,25 +305,15 @@ export const journeys: Journey[] = [
       startNumberRange: [3, 8],
       endNumberRange: [5, 15],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.22,
-        chanceIncrease: 0.1,
-      },
-      completed: {
-        pieces: [4, 5],
-      },
-    },
   },
   {
     id: "expert_4",
     name: "Pyramid of Djoser",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Ascend the step pyramid of Djoser, the first pyramid ever built. Face the challenges that have protected this monument for millennia.",
     difficulty: "expert",
     journeyLength: "medium",
-    levelCount: 7,
     background: {
       time: "night",
     },
@@ -464,44 +324,37 @@ export const journeys: Journey[] = [
       startNumberRange: [3, 8],
       endNumberRange: [5, 15],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.1,
-        chanceIncrease: 0.15,
-      },
-      completed: {
-        pieces: [4, 4],
-      },
-    },
   },
 
   // Expert Treasure Tomb Journeys
   {
     id: "expert_treasure_tomb",
     name: "High Priest's Treasury",
-    type: "treasure_tomb",
+    exterior: "tomb",
     description:
       "Infiltrate the elaborate underground treasury of a powerful high priest, where sacred relics and divine artifacts await the worthy.",
     difficulty: "expert",
     journeyLength: "short",
-    levelCount: 4,
-    piecesRequired: 4,
+    entryLock: { count: 4 },
+    background: { time: "night" },
     levelSettings: {
-      numberRange: [1, 10],
+      startFloorCount: 4,
+      startNumberRange: [1, 10],
     },
   },
   {
     id: "expert_treasure_tomb_b",
     name: "Inner Sanctum",
-    type: "treasure_tomb",
+    exterior: "tomb",
     description:
       "Breach the sealed inner sanctum where only the highest priests dared tread, guarding the most sacred artifacts of the temple.",
     difficulty: "expert",
     journeyLength: "short",
-    levelCount: 4,
-    piecesRequired: 3,
+    entryLock: { count: 3 },
+    background: { time: "night" },
     levelSettings: {
-      numberRange: [2, 12],
+      startFloorCount: 4,
+      startNumberRange: [2, 12],
     },
   },
 
@@ -509,12 +362,11 @@ export const journeys: Journey[] = [
   {
     id: "master_1",
     name: "Great Pyramid of Giza",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Enter the most magnificent pyramid ever built. Face the ultimate test as you navigate the Grand Gallery and reach the King's Chamber.",
     difficulty: "master",
     journeyLength: "short",
-    levelCount: 4,
     background: {
       time: "morning",
     },
@@ -525,25 +377,15 @@ export const journeys: Journey[] = [
       startNumberRange: [4, 10],
       endNumberRange: [7, 18],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.1,
-        chanceIncrease: 0.25,
-      },
-      completed: {
-        pieces: [4, 5],
-      },
-    },
   },
   {
     id: "master_2",
     name: "Book of the Dead",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Unravel the mysteries of the afterlife by collecting and deciphering the sacred texts that guide souls through the underworld.",
     difficulty: "master",
     journeyLength: "long",
-    levelCount: 9,
     background: {
       time: "evening",
       timeStepSize: 1,
@@ -555,25 +397,15 @@ export const journeys: Journey[] = [
       startNumberRange: [4, 10],
       endNumberRange: [8, 20],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.13,
-        chanceIncrease: 0.15,
-      },
-      completed: {
-        pieces: [5, 6],
-      },
-    },
   },
   {
     id: "master_3",
     name: "Curse of the Pharaohs",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Break the ancient curse that has plagued tomb raiders for centuries. Face supernatural challenges and divine retribution.",
     difficulty: "master",
     journeyLength: "long",
-    levelCount: 8,
     background: {
       time: "night",
     },
@@ -584,25 +416,15 @@ export const journeys: Journey[] = [
       startNumberRange: [5, 12],
       endNumberRange: [8, 22],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.15,
-        chanceIncrease: 0.12,
-      },
-      completed: {
-        pieces: [5, 6],
-      },
-    },
   },
   {
     id: "master_4",
     name: "Tomb of Nefertari",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Enter the most beautifully decorated tomb in the Valley of the Queens. Solve puzzles based on the stunning wall paintings and hieroglyphs.",
     difficulty: "master",
     journeyLength: "medium",
-    levelCount: 5,
     background: {
       time: "night",
       timeStepSize: 1,
@@ -614,44 +436,37 @@ export const journeys: Journey[] = [
       startNumberRange: [5, 12],
       endNumberRange: [9, 20],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.1,
-        chanceIncrease: 0.18,
-      },
-      completed: {
-        pieces: [5, 5],
-      },
-    },
   },
 
   // Master Treasure Tomb Journeys
   {
     id: "master_treasure_tomb",
     name: "Hall of Ma'at",
-    type: "treasure_tomb",
+    exterior: "tomb",
     description:
       "Enter the hall where the goddess Ma'at weighs the hearts of the dead. Prove your worth through perfect balance and divine justice.",
     difficulty: "master",
     journeyLength: "medium",
-    levelCount: 5,
-    piecesRequired: 4,
+    entryLock: { count: 4 },
+    background: { time: "night" },
     levelSettings: {
-      numberRange: [1, 10],
+      startFloorCount: 4,
+      startNumberRange: [1, 10],
     },
   },
   {
     id: "master_treasure_tomb_b",
     name: "Hall of Osiris",
-    type: "treasure_tomb",
+    exterior: "tomb",
     description:
       "Descend into the deeper hall ruled by Osiris, lord of the underworld. Face the mysteries of death and rebirth to claim his ancient relics.",
     difficulty: "master",
     journeyLength: "medium",
-    levelCount: 5,
-    piecesRequired: 3,
+    entryLock: { count: 3 },
+    background: { time: "night" },
     levelSettings: {
-      numberRange: [1, 12],
+      startFloorCount: 4,
+      startNumberRange: [1, 12],
     },
   },
 
@@ -659,12 +474,11 @@ export const journeys: Journey[] = [
   {
     id: "wizard_1",
     name: "Ra's Solar Journey",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Accompany Ra on his perilous nightly journey through the underworld, battling the serpent Apep and ensuring the sun rises again.",
     difficulty: "wizard",
     journeyLength: "long",
-    levelCount: 9,
     background: {
       time: "night",
       timeStepSize: 1,
@@ -679,25 +493,15 @@ export const journeys: Journey[] = [
       startNumberRange: [6, 15],
       endNumberRange: [10, 25],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.01,
-        chanceIncrease: 0.05,
-      },
-      completed: {
-        pieces: [6, 7],
-      },
-    },
   },
   {
     id: "wizard_2",
     name: "Secrets of the Sphinx",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Unlock the deepest mysteries hidden within the Great Sphinx. Face riddles that have challenged the greatest minds for millennia.",
     difficulty: "wizard",
     journeyLength: "long",
-    levelCount: 11,
     background: {
       time: "afternoon",
       timeStepSize: 1,
@@ -712,25 +516,15 @@ export const journeys: Journey[] = [
       startNumberRange: [7, 16],
       endNumberRange: [12, 28],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.1,
-        chanceIncrease: 0.05,
-      },
-      completed: {
-        pieces: [6, 7],
-      },
-    },
   },
   {
     id: "wizard_3",
     name: "Chamber of Ma'at",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Enter the cosmic chamber where Ma'at weighs the hearts of the dead. Balance divine mathematics in the realm of perfect justice.",
     difficulty: "wizard",
     journeyLength: "long",
-    levelCount: 10,
     background: {
       time: "evening",
       timeStepSize: 1,
@@ -743,25 +537,15 @@ export const journeys: Journey[] = [
       startNumberRange: [1, 9],
       endNumberRange: [3, 14],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.05,
-        chanceIncrease: 0.05,
-      },
-      completed: {
-        pieces: [6, 7],
-      },
-    },
   },
   {
     id: "wizard_4",
     name: "Eternal Pyramid",
-    type: "pyramid",
+    exterior: "pyramid",
     description:
       "Ascend the mythical Eternal Pyramid that exists beyond time and space. Master the ultimate mathematical mysteries of creation itself.",
     difficulty: "wizard",
     journeyLength: "long",
-    levelCount: 8,
     background: {
       time: "night",
       timeStepSize: 1,
@@ -775,71 +559,67 @@ export const journeys: Journey[] = [
       startNumberRange: [10, 20],
       endNumberRange: [4, 19],
     },
-    rewards: {
-      mapPiece: {
-        startChance: 0.1,
-        chanceIncrease: 0.1,
-      },
-      completed: {
-        pieces: [6, 7],
-      },
-    },
   },
 
   // Wizard Treasure Tomb Journeys
   {
     id: "wizard_treasure_tomb",
     name: "Vault of the Gods",
-    type: "treasure_tomb",
+    exterior: "tomb",
     description:
       "Enter the mythical treasure vault where the gods themselves stored their most precious artifacts. Only the most skilled adventurers dare attempt this ultimate treasure hunt.",
     difficulty: "wizard",
     journeyLength: "medium",
-    levelCount: 6,
-    piecesRequired: 4,
+    entryLock: { count: 4 },
+    background: { time: "night" },
     levelSettings: {
-      numberRange: [1, 15],
+      startFloorCount: 5,
+      startNumberRange: [1, 15],
     },
   },
   {
     id: "wizard_treasure_tomb_b",
     name: "Realm of Cosmic Forces",
-    type: "treasure_tomb",
+    exterior: "tomb",
     description:
       "Venture deeper into the divine realm where cosmic forces of life, death, chaos, and wind manifest as ancient relics of immeasurable power.",
     difficulty: "wizard",
     journeyLength: "medium",
-    levelCount: 6,
-    piecesRequired: 3,
+    entryLock: { count: 3 },
+    background: { time: "night" },
     levelSettings: {
-      numberRange: [2, 18],
+      startFloorCount: 5,
+      startNumberRange: [2, 18],
     },
   },
   {
     id: "wizard_treasure_tomb_c",
     name: "Throne of Eternity",
-    type: "treasure_tomb",
+    exterior: "tomb",
     description:
       "Reach the innermost sanctum of the divine realm — the Throne of Eternity where the gods themselves rest. Only the greatest mathematicians of all time have stood here.",
     difficulty: "wizard",
     journeyLength: "medium",
-    levelCount: 6,
-    piecesRequired: 2,
+    entryLock: { count: 2 },
+    background: { time: "night" },
     levelSettings: {
-      numberRange: [3, 20],
+      startFloorCount: 5,
+      startNumberRange: [3, 20],
     },
   },
 ]
 
-// Apply generated site configs + enforce levelCounts from journeyStructure (single source of truth)
+// Every journey is declared in journeyStructure.ts too, which is what world-gen builds from; a
+// journey missing there would generate no sites at all. Its levelCount is world-gen's own input (a
+// pyramid journey's site count, a tomb's floors within its one site), so the map takes its node
+// count from the generated world instead, and cannot draw a node with no site behind it.
 const allStructures = [...PYRAMID_STRUCTURES, ...TOMB_STRUCTURES]
-for (const journey of journeys) {
+
+export const journeys: Journey[] = authoredJourneys.map(journey => {
   const structure = allStructures.find(s => s.id === journey.id)
   if (!structure) throw new Error(`Journey "${journey.id}" not found in journeyStructure — update journeyStructure.ts`)
-  journey.levelCount = structure.levelCount
   const config = generatedWorldConfigs[journey.id]
-  if (config) {
-    if (journey.type === "pyramid") (journey as PyramidJourney).siteConfigs = config
-    else (journey as TreasureTombJourney).siteConfigs = config
-  }
-}
+  // No config means the world has not been generated (yarn generate-world); fall back to world-gen's
+  // own input so the screens still have something to draw.
+  return { ...journey, levelCount: config?.length ?? structure.levelCount, siteConfigs: config }
+})

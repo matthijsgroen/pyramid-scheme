@@ -16,7 +16,7 @@ vi.mock("react-i18next", () => ({
 
 // Long enough that levels 1–3 all exist — past `levelCount` the screen shows the completion
 // overlay instead of a board.
-const journeyData = allJourneys.find(j => j.type === "pyramid" && j.levelCount >= 4)!
+const journeyData = allJourneys.find(j => j.exterior === "pyramid" && j.levelCount >= 4)!
 
 const makeActiveJourney = (levelNr: number): CombinedJourneyState => ({
   journeyId: journeyData.id,

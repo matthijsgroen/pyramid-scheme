@@ -29,7 +29,7 @@ export const MAP_PIECE_CURRENCY_META: CurrencyMeta = {
   displayName: "currency.mapPiece",
   icon: "📜",
   kind: "capped",
-  total: REAL_JOURNEYS.filter(j => j.type === "treasure_tomb").length,
+  total: REAL_JOURNEYS.filter(j => j.entryLock).length,
 }
 
 export const MAP_PIECE_CURRENCY: CurrencyDistribution = {
@@ -46,7 +46,7 @@ export const MAP_PIECE_CURRENCY: CurrencyDistribution = {
     const tomb = TOMB_JOURNEYS.find(j => j.id === tombId)
     const real = REAL_JOURNEYS.find(rj => rj.id === tombId)
     const tier = (tomb?.tier ?? "starter") as Tier
-    const totalRequired = real?.type === "treasure_tomb" ? real.piecesRequired : 0
+    const totalRequired = real?.entryLock?.count ?? 0
     return { bucket, instanceId: tombId, tier, preferredWardKeys: [], required: totalRequired, totalRequired }
   },
   // Prefer a slot explicitly tagged for this tomb's map piece (the pyramid's authored map-piece
