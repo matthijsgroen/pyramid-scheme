@@ -17,7 +17,8 @@ type JourneyCardProps = {
   showAnimation: boolean
   completionCount?: number
   progressLevelNr?: number
-  hasMapPiece?: boolean
+  /** A glyph marking something of a mod's the player already found here. */
+  mark?: string
   // Corridor detector L4 (§7.2): this pyramid still hides corridors the player hasn't noticed.
   hasUnexploredCorridors?: boolean
   // A completed journey still holds reachable, unexplored content — a skipped side path, or a ward
@@ -39,7 +40,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
   showDetails = false,
   completionCount = 0,
   disabled = false,
-  hasMapPiece = false,
+  mark,
   hasUnexploredCorridors = false,
   hasReachableUnexplored = false,
   lang,
@@ -121,7 +122,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
               {Math.min(Math.max(Math.round(((progressLevelNr - 1) / journey.levelCount) * 100), 0), 100)}%
             </span>
           )}
-          {(completionCount > 0 || hasMapPiece || hasUnexploredCorridors || hasReachableUnexplored) && (
+          {(completionCount > 0 || mark || hasUnexploredCorridors || hasReachableUnexplored) && (
             <span className="ml-auto inline-flex items-center font-bold text-amber-800">
               {hasReachableUnexplored && (
                 <span
@@ -137,8 +138,8 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
                   👁
                 </span>
               )}
-              {hasMapPiece && (
-                <span className="ml-1 inline-flex items-center bg-green-800 bg-clip-text text-transparent">📜</span>
+              {mark && (
+                <span className="ml-1 inline-flex items-center bg-green-800 bg-clip-text text-transparent">{mark}</span>
               )}{" "}
               {completionCount > 0 && (
                 <span className="inline-flex size-5 scale-75 items-center justify-center rounded-full bg-green-800 p-0.5 text-xs text-white">

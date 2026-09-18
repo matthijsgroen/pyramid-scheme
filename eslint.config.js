@@ -47,11 +47,11 @@ export default tseslint.config(
       },
     },
     {
-      // Core names no mod (docs/mods/TARGET.md). ponytail: warn-level backlog, pinned by --max-warnings.
+      // Core names no mod (docs/mods/TARGET.md). At zero, so it is an error: a new one fails the build.
       files: ["src/app/**/*.{ts,tsx}", "src/ui/**/*.{ts,tsx}", "src/{game,data,worldGen}/**/*.{ts,tsx}"],
       rules: {
         "@typescript-eslint/no-restricted-imports": [
-          "warn",
+          "error",
           {
             patterns: [
               {
@@ -69,7 +69,7 @@ export default tseslint.config(
       files: [`src/mods/${mod}/**/*.{ts,tsx}`],
       rules: {
         "@typescript-eslint/no-restricted-imports": [
-          "warn",
+          "error",
           {
             patterns: [
               {

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- A tomb is announced as newly open when its own map is complete. It used to be announced once every
+  pyramid of that tier had given up its piece, which is not the same count for a tier that holds
+  more than one tomb — so a second tomb could be announced early, or the first announced late.
+
 ### Removed
 
 - The Scribe's Eye is gone. It gave a tableau room a row of boxes to jot your own guesses in, and three tomb treasures granted it; those treasures are still ward keys, they simply carry no bonus now.
