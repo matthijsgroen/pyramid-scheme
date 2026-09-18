@@ -3,6 +3,7 @@ import { PyramidExpedition } from "@/app/PyramidExpedition"
 import { Base } from "@/app/Base"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useCarveIndependentBackfill } from "@/app/SiteMap/useCarveIndependentBackfill"
+import { useFloorExplorationBackfill } from "@/app/SiteMap/useFloorExplorationBackfill"
 import { FezCompanion } from "./app/fez/FezCompanion"
 import { DevelopModeProvider } from "./contexts/DevelopMode"
 import PWABadge from "./PWABadge"
@@ -14,6 +15,9 @@ function App() {
   const { activeJourneyId, getJourney, completeLevel, completeJourney, startJourney } = journeys
   // One-time, and it must happen in the release BEFORE any floor is reshaped — see the hook.
   useCarveIndependentBackfill(journeys)
+  // Also one-time: floor summaries a save kept from a visit it never finished light pyramids that
+  // hold nothing, and the walk they provoke is the very thing they are meant to be deciding.
+  useFloorExplorationBackfill(journeys)
 
   const journeyInfo = activeJourneyId ? getJourney(activeJourneyId) : null
 

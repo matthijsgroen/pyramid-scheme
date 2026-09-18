@@ -12,7 +12,7 @@ const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
 
 /** The floors of one journey, assembled exactly as the runtime assembles them (see useAssembledFloor
  * and PyramidExpedition, which together decide the seed and the level index). */
-const assemblerFor = (journeyId: string): AssembleFor => {
+export const assemblerFor = (journeyId: string): AssembleFor => {
   const journey = journeyData.find(entry => entry.id === journeyId)
   const siteSeed = persistentInteriorSeed(journeyId)
   return (levelNr, floorIndex) => {

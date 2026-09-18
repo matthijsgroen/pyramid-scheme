@@ -16,12 +16,19 @@ type RecorderArgs = {
 // classification (loot nodes / key-gated nodes / fogged corridors, keys-and-gates only, no mod names)
 // lives in floorExploration.ts and is unit-tested there.
 //
-// Written when the player LEAVES the floor (switches floor or exits the interior), from a ref in the
-// cleanup — NOT reactively on every grid change. A reactive write fed a render loop: writing
-// re-rendered the screen, the grid recomputed (getExploredSections returns a fresh object each
-// render, so useAssembledFloor rebuilds), and the effect could re-fire while the exit chamber was
-// mid-reveal, pegging the CPU (flicker, input starvation). Recording on-leave captures the floor's
-// final state — exactly what "still stuff to find" means — and can never re-enter render.
+// Written twice per visit: once as the player ARRIVES on the floor, and once when they LEAVE it
+// (switch floor, or exit the interior) from a ref in the cleanup — NOT reactively on every grid
+// change. A reactive write fed a render loop: writing re-rendered the screen, the grid recomputed
+// (getExploredSections returns a fresh object each render, so useAssembledFloor rebuilds), and the
+// effect could re-fire while the exit chamber was mid-reveal, pegging the CPU (flicker, input
+// starvation). Two fixed points per visit carry no such risk.
+//
+// THE ARRIVAL STAMP IS WHAT KEEPS THE MARKER HONEST. On-leave alone is a snapshot that outlives
+// whatever produced it: a visit that never ends — the app killed, the tab closed, a cleanup that
+// never runs — leaves the previous visit's summary standing for good, and the pyramid goes on
+// pulsing over a floor whose gates the player has since opened and emptied. The grid on arrival is
+// the restored floor, which is precisely what the player is about to look at, so stamping it makes
+// the map and the marker agree by construction, for every floor ever walked into.
 export const useFloorExplorationRecorder = ({
   journeys,
   journeyId,
@@ -47,6 +54,17 @@ export const useFloorExplorationRecorder = ({
   const recordExploration = useRef<(floor: number, open: boolean, keySets: string[][]) => void>(() => {})
   recordExploration.current = (floor, open, keySets) =>
     journeys.registerFloorExploration(journeyId, levelNr, floor, open, keySets)
+  // One stamp per arrival, held to that by the floor it was made for: the effect re-runs on every
+  // grid change (a fresh `exploredCells` object each render rebuilds it), and writing each time is
+  // the render loop this hook exists to avoid.
+  const stampedFloor = useRef<string>(undefined)
+  useEffect(() => {
+    if (!floorExploration) return
+    const arrival = `${journeyId}:${currentFloor}`
+    if (stampedFloor.current === arrival) return
+    stampedFloor.current = arrival
+    recordExploration.current(currentFloor, floorExploration.open, floorExploration.keySets)
+  }, [journeyId, currentFloor, floorExploration])
   useEffect(() => {
     const floor = currentFloor
     return () => {
