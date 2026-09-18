@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- A pyramid you have already emptied no longer keeps pulsing on the map. The "still something here"
+  mark was only ever rewritten on your way out of a floor, so a visit that never ended — the app
+  closed, the tab gone — left the previous visit's verdict standing forever, promising a ward door
+  you had since opened and looted. It is now also written the moment you walk in.
+
 ## 0.44.0 - 2026-09-18
 
 ### Changed
