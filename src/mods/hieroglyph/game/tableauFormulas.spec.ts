@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest"
-import { generateTableaus } from "./tableaus"
-import { difficulties } from "./difficultyLevels"
-import { journeys, type TreasureTombJourney } from "./journeys"
+import { generateTableaus } from "@/data/tableaus"
+import { difficulties } from "@/data/difficultyLevels"
+import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import { hashString } from "@/support/hashString"
-import { generateRewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
+import { generateRewardCalculation } from "./generateRewardCalculation"
 
 describe("Tableau System", () => {
   // Generate tableaux once for all tests
