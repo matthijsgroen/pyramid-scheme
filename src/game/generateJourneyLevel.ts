@@ -1,4 +1,5 @@
-import { type PyramidJourney } from "@/data/journeys"
+import type { Journey } from "@/data/journeys"
+import {} from "@/data/journeys"
 import { generateLevel } from "@/game/generateLevel"
 import type { PyramidLevel, PyramidLevelSettings } from "@/game/types"
 
@@ -23,11 +24,7 @@ const scaleInt = (numbers: [startNumber: number, endNumber: number], progress: n
 const scaleNumber = (numbers: [startNumber: number, endNumber: number], progress: number): number =>
   numbers[0] + (numbers[1] - numbers[0]) * progress
 
-export const generateJourneyLevel = (
-  journey: PyramidJourney,
-  levelNr: number,
-  random = Math.random
-): PyramidLevel | null => {
+export const generateJourneyLevel = (journey: Journey, levelNr: number, random = Math.random): PyramidLevel | null => {
   if (levelNr > journey.levelCount) {
     return null
   }

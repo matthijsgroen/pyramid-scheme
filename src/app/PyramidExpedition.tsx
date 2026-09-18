@@ -16,9 +16,7 @@ import { getLevelWidth } from "@/game/state"
 import { dayNightCycleDayTime, dayNightCycleStep } from "@/ui/atoms/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
 import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
-import { type PyramidJourney } from "@/data/journeys"
-import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
-import type { Difficulty } from "@/data/difficultyLevels"
+import type { Journey } from "@/data/journeys"
 import { FezContext } from "./fez/context"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import type { PyramidLevel } from "@/game/types"
@@ -28,39 +26,9 @@ import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { Header } from "@/ui/atoms/Header"
 import { ActionButton } from "@/ui/atoms/ActionButton"
 
-const generateExpeditionLevel = (journey: PyramidJourney, baseSeed: number, levelNr: number): PyramidLevel | null => {
+const generateExpeditionLevel = (journey: Journey, baseSeed: number, levelNr: number): PyramidLevel | null => {
   const random = mulberry32(generateNewSeed(baseSeed, levelNr))
   return generateJourneyLevel(journey, levelNr, random)
-}
-
-// Modest default exterior board size per difficulty — used only when a tomb authors no exterior.
-const DEFAULT_TOMB_EXTERIOR_FLOORS: Record<Difficulty, number> = {
-  starter: 3,
-  junior: 3,
-  expert: 4,
-  master: 4,
-  wizard: 5,
-}
-
-// A tomb runs through the same expedition flow as a pyramid: an exterior cross-sum board, then the
-// interior site map. A tomb carries no exterior generation params of its own, so we present it as a
-// single-level PyramidJourney — one exterior board whose interior is the tomb's persistent
-// multi-floor site (siteConfigs[0]). The default board is synthesized from the tomb's difficulty;
-// a tomb may author its own `background` to override. Tuning the exterior further is future work.
-const asExteriorJourney = (journey: TranslatedJourney): PyramidJourney => {
-  if (journey.type === "pyramid") return journey
-  return {
-    ...(journey as unknown as PyramidJourney),
-    type: "pyramid",
-    levelCount: 1,
-    background: journey.background ?? { time: "night" },
-    levelSettings: {
-      startFloorCount: DEFAULT_TOMB_EXTERIOR_FLOORS[journey.difficulty],
-      startNumberRange: journey.levelSettings.numberRange,
-    },
-    rewards: { mapPiece: { startChance: 0, chanceIncrease: 0 }, completed: { pieces: [0, 0] } },
-    siteConfigs: journey.siteConfigs,
-  }
 }
 
 export const PyramidExpedition: FC<{
@@ -71,16 +39,16 @@ export const PyramidExpedition: FC<{
   onStartJourney?: (journeyId: string) => void
   onClose?: () => void
 }> = ({ activeJourney, onLevelComplete: onNextLevel, onJourneyComplete, onStartJourney, onClose }) => {
-  const isTomb = activeJourney.journey.type === "treasure_tomb"
+  const isTomb = activeJourney.journey.exterior === "tomb"
   // Both site types render through this one flow; a tomb is adapted into a single-level exterior
   // journey whose interior is its multi-floor site.
-  const pyramidJourney = asExteriorJourney(activeJourney.journey)
+  const journey = activeJourney.journey
   const { t } = useTranslation("common")
   const { isDevelopMode } = use(DevelopContext)
   const { setInteriorLevel } = useJourneys()
   // Ward/tomb keys held right now — what decides whether the next tier is open (journeyAvailability).
   const heldKeys = useMergedHeldKeys()
-  const hasInterior = !!pyramidJourney.siteConfigs?.length
+  const hasInterior = !!journey.siteConfigs?.length
   const flow = useExpeditionFlow({
     journeyId: activeJourney.journeyId,
     levelNr: activeJourney.levelNr,
@@ -97,13 +65,9 @@ export const PyramidExpedition: FC<{
   const { entering } = useEntranceAnimation(!showingInterior)
   const { scrollContainerRef, currentLevelRef, nextLevelRef, futureLevelRef } = useLevelParallax(startNextLevel)
 
-  const levelContent = generateExpeditionLevel(pyramidJourney, activeJourney.randomSeed, activeJourney.levelNr)
-  const nextLevelContent = generateExpeditionLevel(pyramidJourney, activeJourney.randomSeed, activeJourney.levelNr + 1)
-  const nextNextLevelContent = generateExpeditionLevel(
-    pyramidJourney,
-    activeJourney.randomSeed,
-    activeJourney.levelNr + 2
-  )
+  const levelContent = generateExpeditionLevel(journey, activeJourney.randomSeed, activeJourney.levelNr)
+  const nextLevelContent = generateExpeditionLevel(journey, activeJourney.randomSeed, activeJourney.levelNr + 1)
+  const nextNextLevelContent = generateExpeditionLevel(journey, activeJourney.randomSeed, activeJourney.levelNr + 2)
 
   const width = levelContent ? getLevelWidth(levelContent.pyramid.floorCount) : 0
 
@@ -122,7 +86,7 @@ export const PyramidExpedition: FC<{
 
   useExpeditionIntro({ isTomb, hasBlockedBlocks, showConversation })
 
-  const expeditionCompleted = activeJourney.levelNr > pyramidJourney.levelCount
+  const expeditionCompleted = activeJourney.levelNr > journey.levelCount
 
   // A site whose exterior this journey has already solved shows the answer instead of asking for it
   // again: the pyramid is the way in, and a revisit is about the interior. Only ever a site with a
@@ -133,22 +97,18 @@ export const PyramidExpedition: FC<{
   // Check if a new pyramid journey is unlocked (first time completing this journey)
   const nextPyramidJourneyId =
     activeJourney.completionCount === 0 ? getNextUnlockedPyramidJourneyId(activeJourney.journeyId, heldKeys) : undefined
-  const dayTime = dayNightCycleDayTime(
-    activeJourney.levelNr,
-    pyramidJourney.background.time,
-    pyramidJourney.background.timeStepSize
-  )
+  const dayTime = dayNightCycleDayTime(activeJourney.levelNr, journey.background.time, journey.background.timeStepSize)
   const textColor =
-    dayNightCycleStep(activeJourney.levelNr, pyramidJourney.background.time, pyramidJourney.background.timeStepSize) < 6
+    dayNightCycleStep(activeJourney.levelNr, journey.background.time, journey.background.timeStepSize) < 6
       ? "text-black"
       : "text-white"
 
   return (
     <DesertBackdrop
       levelNr={activeJourney.levelNr}
-      start={pyramidJourney.background.time}
-      timeStepSize={pyramidJourney.background.timeStepSize}
-      showNile={pyramidJourney.background.showNile}
+      start={journey.background.time}
+      timeStepSize={journey.background.timeStepSize}
+      showNile={journey.background.showNile}
     >
       <div className="flex size-full flex-col">
         <div className="flex-shrink-0 bg-gradient-to-t from-transparent via-transparent to-black/30 backdrop-blur-sm">
@@ -159,7 +119,7 @@ export const PyramidExpedition: FC<{
             <h1 className="pointer-events-none mt-0 inline-block  text-center font-pyramid font-bold lg:text-2xl">
               {expeditionCompleted
                 ? t("ui.expeditionCompleted")
-                : t("ui.expedition") + ` ${t("ui.level")} ${activeJourney.levelNr}/${pyramidJourney.levelCount}`}
+                : t("ui.expedition") + ` ${t("ui.level")} ${activeJourney.levelNr}/${journey.levelCount}`}
             </h1>
             <span>{isDevelopMode && <DeveloperButton onClick={flow.completeLevel} label="Complete Level" />}</span>
           </Header>
@@ -276,12 +236,12 @@ export const PyramidExpedition: FC<{
       {levelContent && levelCompleted && <LevelCompletionHandler onCompletionFinished={flow.completionFinished} />}
 
       {/* Interior: shown after pyramid is solved for V3 journeys */}
-      {showingInterior && pyramidJourney.siteConfigs && (
+      {showingInterior && journey.siteConfigs && (
         <div className="absolute inset-0 z-30 bg-stone-950">
           <SiteMapScreen
             key={`${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.completionCount}`}
             journeyId={activeJourney.journeyId}
-            siteConfig={pyramidJourney.siteConfigs[activeJourney.levelNr - 1] ?? pyramidJourney.siteConfigs[0]}
+            siteConfig={journey.siteConfigs[activeJourney.levelNr - 1] ?? journey.siteConfigs[0]}
             levelIndex={activeJourney.levelNr - 1}
             seed={activeJourney.randomSeed + activeJourney.levelNr}
             onSiteComplete={flow.interiorComplete}

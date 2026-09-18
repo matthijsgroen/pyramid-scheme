@@ -10,8 +10,8 @@ const completed =
   (id: string) =>
     ids.includes(id)
 
-const starterPyramids = journeys.filter(j => j.type === "pyramid" && j.difficulty === "starter").map(j => j.id)
-const juniorPyramids = journeys.filter(j => j.type === "pyramid" && j.difficulty === "junior").map(j => j.id)
+const starterPyramids = journeys.filter(j => !j.entryLock && j.difficulty === "starter").map(j => j.id)
+const juniorPyramids = journeys.filter(j => !j.entryLock && j.difficulty === "junior").map(j => j.id)
 
 describe(isTierUnlocked, () => {
   it("lets the player start the game — the first tier has no entry key", () => {

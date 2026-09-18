@@ -2,7 +2,7 @@
 import { useState } from "react"
 import { describe, expect, it, vi } from "vitest"
 import { renderHook, act } from "@testing-library/react"
-import { journeys, type TreasureTombJourney } from "@/data/journeys"
+import { journeys } from "@/data/journeys"
 
 vi.mock("@/support/useGameStorage", () => ({
   useGameStorage: <T>(_key: string, initialValue: T | (() => T)) => {
@@ -19,14 +19,14 @@ vi.mock("@/support/useGameStorage", () => ({
 
 const { useTombTreasureProgress } = await import("./useTombTreasureProgress")
 
-const tomb = journeys.find((j): j is TreasureTombJourney => j.id === "expert_treasure_tomb_b")!
+const tomb = journeys.find(j => j.id === "expert_treasure_tomb_b")!
 
 // The map-piece reward popup shows "n of m pieces gathered", so `required` has to be the tomb's own
 // authored threshold rather than a hardcoded number — tombs need between 2 and 4 pieces.
 describe("mapPieceProgress", () => {
   it("reads required from the tomb's own piecesRequired and starts at zero found", () => {
     const { result } = renderHook(() => useTombTreasureProgress())
-    expect(result.current.mapPieceProgress(tomb.id)).toEqual({ found: 0, required: tomb.piecesRequired })
+    expect(result.current.mapPieceProgress(tomb.id)).toEqual({ found: 0, required: tomb.entryLock!.count })
   })
 
   it("counts up as pieces are collected", async () => {

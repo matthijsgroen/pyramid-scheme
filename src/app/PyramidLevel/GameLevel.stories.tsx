@@ -2,17 +2,17 @@ import { DesertBackdrop } from "@/ui/atoms/DesertBackdrop"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { PyramidDisplay } from "./PyramidDisplay"
 import { generateNewSeed, mulberry32 } from "@/game/random"
-import { journeys, type PyramidJourney } from "@/data/journeys"
+import { journeys, type Journey } from "@/data/journeys"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
 import { hashString } from "@/support/hashString"
 import { dayNightCycleDayTime } from "@/ui/atoms/backdropSelection"
 
 type PyramidLevelArgs = {
   levelNr: number
-  journey: PyramidJourney
+  journey: Journey
 }
 
-const pyramidJourneys = journeys.filter(j => j.type === "pyramid")
+const pyramidJourneys = journeys.filter(j => j.exterior === "pyramid")
 const meta = {
   parameters: {
     layout: "fullscreen",
@@ -46,7 +46,7 @@ const meta = {
           acc[j.id] = j
           return acc
         },
-        {} as Record<string, PyramidJourney>
+        {} as Record<string, Journey>
       ),
       options: pyramidJourneys.map(j => j.id),
     },

@@ -6,7 +6,6 @@ import { JourneyCard } from "@/ui/organisms/JourneyCard"
 import { LockedJourneyCard } from "@/ui/organisms/LockedJourneyCard"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { useJourneys } from "@/app/state/useJourneys"
-import { exteriorLevelCount } from "@/data/journeys"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
@@ -68,12 +67,8 @@ export const TravelPage: FC<{
   }, [showJourneySelection, showConversation])
 
   const journey = activeJourneyInfo?.journey ?? selectedJourney
-  // A tomb is played as a SINGLE-level exterior journey (its multi-floor interior is one site), so
-  // its effective exterior level count is always 1 — regardless of the raw multi-floor `levelCount`
-  // (2–5). Re-entry must resume a tomb at level 1: resuming at its raw levelCount (where a completed
-  // tomb's stored levelNr sits) makes the expedition read `levelNr > 1` as "already complete" and
-  // immediately end the journey, blocking re-entry (PyramidExpedition's expeditionCompleted guard).
-  const effectiveLevelCount = exteriorLevelCount(journey)
+  // Nodes on this journey's map: one per site, so a tomb (one site, however many floors) has one.
+  const effectiveLevelCount = journey?.levelCount ?? 1
   // Revisit/explore: a completed journey (completionCount > 0). Every pyramid stays a pickable node
   // even while one is open, so drive the path view past the last level regardless of stored levelNr.
   const revisiting = !!journey && (activeJourneyInfo?.completionCount ?? 0) > 0
@@ -115,7 +110,7 @@ export const TravelPage: FC<{
     if (!journey) return
     // A tomb has a single exterior level; every "node" re-enters that one site (see effectiveLevelCount).
     // Awaited — see handleMapClick.
-    await visitLevel(journey.id, journey.type === "treasure_tomb" ? 1 : levelNr)
+    await visitLevel(journey.id, levelNr)
     startGame()
   }
 
@@ -138,7 +133,7 @@ export const TravelPage: FC<{
   const availableJourneyIds = useMemo(
     () =>
       isDevelopMode
-        ? new Set(journeys.filter(j => j.type === "pyramid").map(j => j.id))
+        ? new Set(journeys.filter(j => !j.entryLock).map(j => j.id))
         : availablePyramidJourneyIds(journeys, heldKeys, id => (getJourney(id)?.completionCount ?? 0) > 0),
     [journeys, heldKeys, getJourney, isDevelopMode]
   )
@@ -213,10 +208,10 @@ export const TravelPage: FC<{
                 levelCount={effectiveLevelCount}
                 levelNr={pathLevelNr}
                 journeyLength={journey?.journeyLength ?? "long"}
-                type={journey?.type ?? "pyramid"}
+                exterior={journey?.exterior ?? "pyramid"}
                 label={
                   revisiting
-                    ? journey?.type === "treasure_tomb"
+                    ? journey?.exterior === "tomb"
                       ? t("ui.revisitTomb")
                       : t("ui.revisitExpedition")
                     : activeJourneyInfo?.inProgress
@@ -246,7 +241,7 @@ export const TravelPage: FC<{
                   {t("ui.or")}{" "}
                   <button
                     onClick={() => {
-                      if (activeJourneyInfo.journey.type === "treasure_tomb") {
+                      if (activeJourneyInfo.journey.exterior === "tomb") {
                         handleInterruptExpedition()
                         return
                       }
@@ -279,7 +274,7 @@ export const TravelPage: FC<{
             </div>
             <div className="grid grid-cols-1 gap-4 px-6 pb-safe-bottom xl:grid-cols-2">
               {journeys.map((journey, index) => {
-                if (journey.type === "pyramid" && !availableJourneyIds.has(journey.id)) {
+                if (!journey.entryLock && !availableJourneyIds.has(journey.id)) {
                   // Skip pyramid journeys the player cannot pick yet
                   return null
                 }

@@ -54,7 +54,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
     night: "🌙",
   }
 
-  const isTreasureTomb = journey.type === "treasure_tomb"
+  const isTreasureTomb = journey.exterior === "tomb"
 
   return (
     <button
@@ -104,7 +104,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
             })}
             lang={lang}
           >
-            {journey.type === "pyramid" && timeEmojis[journey.background.time]} {journey.name}
+            {journey.exterior === "pyramid" && timeEmojis[journey.background.time]} {journey.name}
           </span>
           <div className="clear-both"></div>
         </div>
@@ -116,7 +116,9 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
             "text-amber-700": !disabled && !isTreasureTomb,
           })}
         >
-          {progressLevelNr > 0 && (
+          {/* How far along the journey's nodes the player is. A journey of one node (a tomb, whose
+              single site holds all its floors) has nowhere to be along, so it says nothing. */}
+          {progressLevelNr > 0 && journey.levelCount > 1 && (
             <span className="flex-shrink-0 font-bold">
               {labels.progressLevel}:{" "}
               {Math.min(Math.max(Math.round(((progressLevelNr - 1) / journey.levelCount) * 100), 0), 100)}%

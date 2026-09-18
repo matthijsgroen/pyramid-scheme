@@ -23,27 +23,25 @@ function App() {
     <DevelopModeProvider>
       <FezCompanion>
         {!inGame && <Base startGame={() => setInGame(true)} />}
-        {inGame &&
-          journeyInfo &&
-          (journeyInfo.journey.type === "pyramid" || journeyInfo.journey.type === "treasure_tomb") && (
-            <PyramidExpedition
-              key={activeJourneyId}
-              activeJourney={journeyInfo}
-              runNr={runNr}
-              onLevelComplete={completeLevel}
-              onJourneyComplete={() => {
-                completeJourney()
-                setInGame(false)
-              }}
-              onStartJourney={journeyId => {
-                const journey = allJourneys.find(j => j.id === journeyId)
-                if (!journey) return
-                completeJourney()
-                startJourney(journey)
-              }}
-              onClose={() => setInGame(false)}
-            />
-          )}
+        {inGame && journeyInfo && journeyInfo.journey && (
+          <PyramidExpedition
+            key={activeJourneyId}
+            activeJourney={journeyInfo}
+            runNr={runNr}
+            onLevelComplete={completeLevel}
+            onJourneyComplete={() => {
+              completeJourney()
+              setInGame(false)
+            }}
+            onStartJourney={journeyId => {
+              const journey = allJourneys.find(j => j.id === journeyId)
+              if (!journey) return
+              completeJourney()
+              startJourney(journey)
+            }}
+            onClose={() => setInGame(false)}
+          />
+        )}
         <PWABadge />
       </FezCompanion>
     </DevelopModeProvider>

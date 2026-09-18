@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
-import { exteriorLevelCount, journeys as journeyData, type Journey } from "@/data/journeys"
+import { journeys as journeyData, type Journey } from "@/data/journeys"
 import { generateNewSeed } from "@/game/random"
 import { persistentInteriorSeed } from "@/game/siteSeed"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
@@ -171,8 +171,7 @@ export const createJourneysV3Api = ({
   // Sites with an interior are persistent, revisitable places: the random seed must stay stable
   // across replays so a previously explored layout still matches on return. Tombs are one such
   // site — a single multi-floor place explored incrementally, never a reshuffled replay.
-  const isPersistentInterior = (journey: Journey) =>
-    (journey.type === "pyramid" || journey.type === "treasure_tomb") && !!journey.siteConfigs?.length
+  const isPersistentInterior = (journey: Journey) => !!journey.siteConfigs?.length
 
   const getJourney = (journeyId: string): CombinedJourneyState | undefined => {
     const journeyState = journeys.find(j => j.journeyId === journeyId)
@@ -509,7 +508,7 @@ export const createJourneysV3Api = ({
     // Only levels this journey still has a node for. A tomb's earliest runs filed floors under the
     // levels its exterior used to count, and it now re-enters level 1 from every node: those entries
     // are unreachable, and counting them left the journey card pulsing at a tomb with nothing left.
-    const nodes = exteriorLevelCount(journeyData.find(info => info.id === journeyId))
+    const nodes = journeyData.find(info => info.id === journeyId)?.levelCount ?? 1
     for (const [key, entry] of Object.entries(j.floorExploration)) {
       const level = Number(key.split(":")[0])
       if (level > nodes) continue

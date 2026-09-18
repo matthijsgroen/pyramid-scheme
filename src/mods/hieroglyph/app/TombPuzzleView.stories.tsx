@@ -17,7 +17,7 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const journey = journeys.find(j => j.type === "treasure_tomb")!
+const journey = journeys.find(j => j.exterior === "tomb")!
 const seed = generateNewSeed(hashString(journey.id), 1)
 
 export const InProgress: Story = {

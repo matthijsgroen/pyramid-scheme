@@ -28,7 +28,8 @@ export const availablePyramidJourneyIds = (
   const available = new Set<string>()
   const previousInTier = new Map<Difficulty, Journey>()
   for (const journey of journeys) {
-    if (journey.type !== "pyramid") continue
+    // An entry-locked journey is governed by its lock, not by the tier ladder.
+    if (journey.entryLock) continue
     const previous = previousInTier.get(journey.difficulty)
     previousInTier.set(journey.difficulty, journey)
     if (!isTierUnlocked(journey.difficulty, heldKeys)) continue
@@ -47,6 +48,6 @@ export const nextPyramidJourneyId = (
   const index = journeys.findIndex(j => j.id === journeyId)
   if (index === -1) return undefined
   const next = journeys[index + 1]
-  if (!next || next.type !== "pyramid") return undefined
+  if (!next || next.entryLock) return undefined
   return isTierUnlocked(next.difficulty, heldKeys) ? next.id : undefined
 }
