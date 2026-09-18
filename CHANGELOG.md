@@ -7,24 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.44.0 - 2026-09-18
+
 ### Changed
 
 - A tomb's card no longer shows a progress percentage. It was counting the tomb's floors as if they
   were stops on a journey, which they are not — a tomb is one place you keep going back into.
+
+### Removed
+
+- The Scribe's Eye is gone. It gave a tableau room a row of boxes to jot your own guesses in, and three tomb treasures granted it; those treasures are still ward keys, they simply carry no bonus now.
 
 ### Fixed
 
 - A save from before cells were named by what they are (rather than where the carve put them) no
   longer takes the launch down. It has no coordinate archive to translate, which the re-keying read
   as a broken save instead of as nothing to do.
-
 - A tomb is announced as newly open when its own map is complete. It used to be announced once every
   pyramid of that tier had given up its piece, which is not the same count for a tier that holds
   more than one tomb — so a second tomb could be announced early, or the first announced late.
-
-### Removed
-
-- The Scribe's Eye is gone. It gave a tableau room a row of boxes to jot your own guesses in, and three tomb treasures granted it; those treasures are still ward keys, they simply carry no bonus now.
 
 ## 0.43.11 - 2026-09-17
 
