@@ -8,6 +8,10 @@ conversations (`public/locales/*/fez.json`) and one-time flags in game storage;
 mechanic tutorials use a lightweight modal/banner, not Fez (Fez stays for
 narrative moments).
 
+The copy that ships in the meantime is audited in [story/shipped-copy.md](story/shipped-copy.md) — 37 of
+Fez's 59 lines predate the explorer, and rewriting them is a different fix from the one below rather than a
+substitute for it.
+
 ## Not yet built — first-encounter tutorials
 
 One-shot flags in `useProgression` (or a `useTutorials` slice), `seenTutorials:
