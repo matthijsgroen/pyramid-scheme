@@ -24,17 +24,12 @@ export type ScatterKind = "sand" | "rubbleSpill" | "mat"
  * `mat` also appears in the ranks' authored `decorations` pools, and a room that rolls one is dressed
  * with it — a mat is flat wherever it lies, so the same file serves both layers.
  *
- * Broken brick is TWO OBJECTS and they are now two names: `rubbleSpill` here, flat enough to walk
- * through, and `rubblePile` in the pools, knee-high in the corner of a chamber where nobody walks. They
- * shared the name `rubble` for a long time and a `STANDING_VARIANT` lookup told them apart, which went
- * wrong in three separate places — the census called a painted pile a placeholder, an import put the
- * nobleman's plaster fall in the spill's file so 24 rooms drew nothing, and the prop sheet staged the
- * spill where a room draws the pile. Two names cost a rename; one name cost three bugs.
+ * Broken brick is two objects under two names: `rubbleSpill` here, flat enough to walk through, and
+ * `rubblePile` in the pools, knee-high in a corner where nobody walks. One name for both cost three
+ * separate bugs.
  *
- * RENAMING A KIND IS CHEAP, which is the other thing that took a while to see. `pickDressing` is
- * `pool[hash(...) % pool.length]`, so what moves every room's prop is a change of LENGTH — adding or
- * dropping a name. Renaming one in place keeps the length and the index: regenerating the world after
- * this changed 698 pool entries and not one placement.
+ * **Renaming a kind is cheap.** `pickDressing` is `pool[hash(...) % pool.length]`, so only a change of
+ * LENGTH moves placements — a rename keeps the index. 698 pool entries renamed moved no room's prop.
  */
 
 export const FLOOR_KINDS: ReadonlySet<string> = new Set<ScatterKind>(["sand", "rubbleSpill", "mat"])
@@ -81,20 +76,13 @@ const runThrough = (grid: FloorGrid, row: number, col: number, dr: number, dc: n
  * the room it blew into rather than anything the art had to guess. `tile-art-brief` §4 asks for "a fan of
  * sand through a breach", which was never a cell-sized object in the first place.
  *
- * A DRIFT IS SIZED TO THE RUN IT LANDS IN, and that is not a refinement — it is what makes the clip
- * read as a clip. A square drift of two or three cells dropped in a one-cell passage has EVERY edge cut
- * by a wall, so nothing of the sand's own shape survives and the corridor just comes out a different
- * colour, hard-edged, like a floor tile someone swapped. The fix is the thing real drifts do: run LONG
- * along the passage, where the art tapers and shows its own edge, and overflow ACROSS it, where the wall
- * does the cutting. In a chamber both runs are wide and the same rule leaves it tapered on the long axis
- * and cut on the short one.
+ * **A drift is sized to the run it lands in**, which is what makes the clip read as a clip: a square
+ * drift in a one-cell passage has every edge cut by a wall, so none of the sand's own shape survives and
+ * the corridor just comes out a different colour. It runs LONG along the passage, where the art tapers
+ * and shows its edge, and overflows ACROSS it, where the wall does the cutting.
  *
- * It also collapses the art to ONE file. Sand has its own colour — it is sand, not the rank's stone in
- * another shade — so it is the same sand in all five tombs and lives in `tiles/default/`, the way the
- * explorer does: one person walks all five, and one desert blows into all five.
- *
- * THE GODS GET NONE. §4 gives the last rank "no sand at all — a clean seam", and that is the only
- * per-rank difference sand has once its colour stops being one.
+ * One file for the art: sand has its own colour in all five tombs, so it lives in `tiles/default/` like
+ * the explorer. The gods' rank gets none — a clean seam — which is sand's only per-rank difference.
  */
 export const driftsFor = (grid: FloorGrid, tier: Difficulty): Drift[] => {
   if (tier === "wizard") return []
@@ -130,11 +118,9 @@ export const driftsFor = (grid: FloorGrid, tier: Difficulty): Drift[] => {
  *
  * GROUND is what blows in and falls: sand and rubble, along the passages, where nobody swept.
  *
- * Both halves were got wrong before, and the same blind spot did it twice. A claimed cell is
- * `type: "empty"` in the grid — the claim is a render-time fact — so walking `grid.cells` and taking
- * only rooms and corridors cannot see a chamber's floor at all. Measured over the generated world:
- * 1475 chambers of 8.78 cells apiece, and 8% of them had any scatter on them, all of it on the one
- * owner cell. Hence a pass that walks the CHAMBERS rather than the cells.
+ * A claimed cell is `type: "empty"` in the grid — the claim is a render-time fact — so walking
+ * `grid.cells` for rooms and corridors cannot see a chamber's floor at all, which leaves 1475 chambers
+ * of 8.78 cells apiece scattered only on their owner cell. Hence a pass over CHAMBERS, not cells.
  */
 // SAND IS NOT HERE, and that is the point of `driftsFor` below: a drift does not fit in a cell.
 const GROUND_KINDS: readonly ScatterKind[] = ["rubbleSpill"]

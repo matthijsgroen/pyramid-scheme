@@ -26,22 +26,8 @@ export const TombTableau: FC<{
   filledState: FilledTileState
   resolveTile: HieroglyphSymbolResolver
   hintFormulas: OrderedFormula[]
-  annotations: Record<string, string>
   onTileClick?: (symbolId: string, position: string) => void
-  onAnnotationChange?: (symbolId: string, value: string) => void
-  scribesEyeSlots?: number // 0/undefined = off; Infinity = unlimited
-}> = ({
-  difficulty,
-  tableau,
-  calculation,
-  filledState,
-  resolveTile,
-  hintFormulas,
-  annotations,
-  onTileClick,
-  onAnnotationChange,
-  scribesEyeSlots = 0,
-}) => (
+}> = ({ difficulty, tableau, calculation, filledState, resolveTile, hintFormulas, onTileClick }) => (
   <div
     className={clsx(
       "relative z-20 flex w-full max-w-md flex-col gap-4 rounded-lg border-t-4 p-4 text-slate-600 shadow-lg",
@@ -77,26 +63,5 @@ export const TombTableau: FC<{
         />
       </span>
     </div>
-    {scribesEyeSlots > 0 && (
-      <div className="border-t border-black/20 pt-2">
-        <p className="mb-1 text-xs opacity-60">📜 Notes</p>
-        <div className="flex flex-wrap gap-2">
-          {Object.entries(calculation.symbolMapping)
-            .slice(0, scribesEyeSlots === Infinity ? undefined : scribesEyeSlots)
-            .map(([, symbolId]) => (
-              <label key={symbolId} className="flex items-center gap-1 text-sm">
-                <span className="font-bold">{symbolId.slice(0, 3)}</span>
-                <input
-                  type="text"
-                  value={annotations[symbolId] ?? ""}
-                  onChange={e => onAnnotationChange?.(symbolId, e.target.value)}
-                  className="w-10 rounded border border-black/30 bg-white/50 px-1 text-center text-xs"
-                  maxLength={4}
-                />
-              </label>
-            ))}
-        </div>
-      </div>
-    )}
   </div>
 )

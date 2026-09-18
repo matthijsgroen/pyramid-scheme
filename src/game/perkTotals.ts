@@ -10,7 +10,7 @@
 // this layer stays pure so the folds are testable with no React and no registry.
 export type PerkLike = { type: string; level?: number }
 
-// A TIERED perk (compass, consumable-detector, scribes-eye, detection) states the level it grants;
+// A TIERED perk (compass, consumable-detector, detection) states the level it grants;
 // holding several means the best one wins, so re-earning a lower tier can never demote you.
 export const perkLevel = (perks: readonly PerkLike[], type: string, cap: number): number =>
   Math.min(

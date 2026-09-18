@@ -7,7 +7,7 @@ import {
   type RewardCalculation,
 } from "@/mods/hieroglyph/game/generateRewardCalculation"
 import type { Operation } from "@/game/formulas/formulas"
-import { TombPuzzle } from "@/app/TombLevel/TombPuzzle"
+import { TombPuzzle } from "./TombPuzzle"
 import { getTableauLevel, TABLEAUS_PER_FLOOR, type TableauLevel } from "@/data/tableaus"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { useTableauTranslations } from "@/app/translations/useTableauTranslations"

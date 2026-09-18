@@ -75,18 +75,8 @@ export const Playable: Story = {
   },
 }
 
-// ---------------------------------------------------------------------------------------------------
-// Switch nodes (design doc §11.1) — the drawing, prototyped ahead of the logic.
-//
-// The doc's own warning is that the wire layer, not the reasoning, is what kills this mechanic: the board
-// already carries cells, a beam, glyphs, movable rings, dashed ghost tracks and end markers at 35px a
-// cell. So these boards are hand-authored to ask one question — can you follow a wire with a finger
-// across a board that is already this busy — and nothing about firing is implemented yet.
-//
-// That is what keeps them honest. A node fires when the light crosses it, and in every pair below the
-// piece the wire drives is ALREADY in the state the node would drive it to, so each frame is a real trace
-// of a real configuration. What is missing is only the transition between them.
-// ---------------------------------------------------------------------------------------------------
+// Switch nodes. These boards are hand-authored to ask one question: can you follow a wire with a finger
+// across a board that is already this busy.
 
 /** The door. A wall stands on the route, and the socket that clears it is upstream of the wall. */
 const doorBoard: LightbeamPuzzleData = {
@@ -217,20 +207,11 @@ export const NodeTrap: Story = {
 }
 
 /**
- * Wizard density with two wires over it, at the 318px the encounter modal actually gives the board — the
- * frame that decides whether the mechanic can be drawn at all. Three boards, and each answers one thing:
+ * Wizard density with two wires over it, at the 318px the encounter modal gives the board. Dark, then
+ * carrying with the wires crossing, then carrying with them apart.
  *
- * 1. **Dark.** Two wires as scenery over ten pieces and their ghost tracks. Both are followable, and
- *    neither competes with the beam.
- * 2. **Carrying, wires crossing.** Both sockets lit, and the two wires meet at a shared corner near the
- *    middle of the board.
- * 3. **Carrying, wires apart.** The same board with one socket moved so they never touch.
- *
- * The first cut of this story concluded that 2 was unreadable and that wire separation therefore had to be
- * a generation gate beside `piecesAreSpaced`. **Giving each socket its own colour made that wrong.** The
- * ambiguity at a crossing was never geometric — it was that both wires were the same green, so where they
- * met there was nothing to tell them apart. Two colours and the crossing reads fine, which leaves
- * separation a nicety rather than a constraint, and leaves the generator one fewer thing to fit.
+ * A crossing was unreadable while both wires were the same green; a colour each is what fixed it, which
+ * left wire separation a nicety rather than a generation gate beside `piecesAreSpaced`.
  */
 export const NodeDensity: Story = {
   args: { puzzle: wizardWired, states: [...wizard.solution], onCycle: () => {} },
@@ -272,10 +253,7 @@ export const NodeFanning: Story = {
 }
 
 /**
- * A **generated** wizard board with a door on it — no longer hand-authored, and no longer a picture of a
- * mechanic that does not run. The sockets fire, the doors open, and the beam drawn here is the real trace.
- *
- * Left: as it opens. Right: answered. Every wizard board carries a door now, and its wiring names two
+ * A generated wizard board with a door on it. Left as it opens, right answered. Its wiring names two
  * sockets, so the light has to be routed through both before the stone will shift.
  */
 export const NodeGenerated: Story = {
@@ -308,14 +286,8 @@ export const NodePlayable: Story = {
 }
 
 /**
- * A route that crosses itself, which the family forbade until it turned out the objection did not hold.
- *
- * The crossed square is the one square on the board provably empty — anything standing there would have
- * turned the first pass — and it is the only place the beam arrives from two directions at once. Nothing in
- * the renderer needed changing for it: the beam was always drawn one polyline per `(cell, direction)`
- * segment, so a crossed square draws as a cross without being asked.
- *
- * Left as it opens, right answered.
+ * A route that crosses itself. The crossed square is the one square on the board provably empty — anything
+ * standing there would have turned the first pass. Left as it opens, right answered.
  */
 export const CrossedBeams: Story = {
   args: { puzzle: wizardCrossing, states: wizardCrossing.initial, onCycle: () => {} },
@@ -352,15 +324,7 @@ export const WithHint: Story = {
   },
 }
 
-// ---------------------------------------------------------------------------------------------------
-// The diagonal-cut mirror (design doc §11.8). Step 1 was the drawing, ahead of any logic; step 2 is the
-// eight-direction walk, and it has landed — so every frame below is a real trace of a real configuration
-// with nothing held back, which is what the two frames drawn first could only be by coincidence.
-//
-// Two of these stories answered §11.8's drawing questions and are kept because those answers still have
-// to hold once light actually goes diagonally. The third is step 2's own question, and it is the one the
-// handoff into step 2 flagged as cheap to look at and expensive to guess.
-// ---------------------------------------------------------------------------------------------------
+// The diagonal-cut mirror. Every frame below is a real trace of a real configuration.
 
 /** Puts authored stops on named turn mirrors, leaving everything else exactly as the generator built it. */
 const withCuts = <T extends LightbeamPuzzleData>(puzzle: T, cuts: Record<number, readonly MirrorAngle[]>): T => ({
@@ -388,20 +352,15 @@ const stopSets: LightbeamPuzzleData = {
   ],
 }
 
-/** A generated wizard board, cut mirrors swapped in for four of its eight turn mirrors (§11.8 rule 8). */
+/** A generated wizard board, cut mirrors swapped in for four of its eight turn mirrors. */
 const cutWizard = withCuts(wizard, { 0: [1, 6], 3: [2, 6, 7], 8: [2, 7], 9: [1, 3, 6] })
 /** The same swap on the board that also carries a door and its sockets — the busiest frame the family has. */
 const cutDoors = withCuts(wizardDoors, { 0: [1, 6], 2: [1, 6], 7: [2, 7], 8: [2, 7] })
 
 /**
- * The mechanic at the size it ships at: a 9-wide board, 35.3px a cell, with a six-step diagonal run.
- *
- * The disc shines along the bottom row into a cut mirror. Its shallow stop sends the light up-right the
- * whole width of the board to a shrine in the right-hand wall — a shrine no square beam on this board
- * could have reached — and its steep stop is the ordinary quarter turn, straight down off the frame.
- *
- * Stone hugs the run in three places, two cells at a time, so §11.8 rule 4 is visible rather than
- * described: **a diagonal step resolves only the cell it lands in.** The light goes between the corners.
+ * A six-step diagonal run at the size the family ships at. The disc shines along the bottom row into a cut
+ * mirror whose shallow stop carries the light up-right to a shrine no square beam here could reach. Stone
+ * hugs the run in three places, two cells at a time, so the light is seen going between the corners.
  */
 const diagonalRun: LightbeamPuzzleData = {
   size: 9,
@@ -419,13 +378,9 @@ const diagonalRun: LightbeamPuzzleData = {
 }
 
 /**
- * A generated wizard board with a door on it, every turn mirror swapped for a cut one, in a configuration
- * that lights the shrine with a beam that goes diagonally **across a wire's rivet**.
- *
- * Found by search rather than authored: over 40 generated wizard boards there are 104 lit configurations
- * where a diagonal beam's corner lands exactly on a rivet, on 2 of the 40 boards — common enough that it
- * had to be looked at, which is why this frame exists. Uniqueness is gone once every mirror is cut, so
- * this is a picture of the geometry rather than a puzzle.
+ * A generated wizard board with every turn mirror swapped for a cut one, lit by a beam that goes diagonally
+ * across a wire's rivet — found by search, and common enough on real boards to be worth a frame.
+ * Uniqueness is gone once every mirror is cut, so this is a picture of the geometry rather than a puzzle.
  */
 const cutRivet = withCuts(board("wizard", 12), {
   0: [2, 7],
@@ -452,25 +407,13 @@ const Frame: FC<{ puzzle: LightbeamPuzzleData; states: readonly number[]; captio
 )
 
 /**
- * **Question 1: do the two stops of one cut mirror read as a pair?** Left is every piece on its first
- * stop, right on its second — so each column is one piece turning, and the three columns are, in order:
+ * Do the two stops of one cut mirror read as a pair? Left is every piece on its first stop, right on its
+ * second, so each column is one piece turning: an ordinary turn mirror 90° apart as the control, then two
+ * cut mirrors 67.5° apart. Two thirds of a right angle is plenty — what it costs is the *feel* of the turn,
+ * which is the tell that this is a different kind of piece.
  *
- * 1. Today's turn mirror, `/` then `\`. **90° apart**, and the control.
- * 2. A cut mirror stopping at `{22.5°, 135°}`. **67.5° apart.**
- * 3. A cut mirror stopping at `{45°, 157.5°}`. **67.5° apart.**
- *
- * Two thirds of a right angle turns out to be plenty: the shallow stop lies along the row and the steep
- * one across it, and no amount of squinting makes either look like the other. What the 22.5° short of a
- * quarter turn costs is not legibility but the *feel* of the turn — the control snaps between two
- * diagonals, and a cut mirror lands somewhere in between them, which is the tell that it is a different
- * kind of piece before its glyph is even read.
- *
- * The left frame also carries the tightest possible form of the *other* question: columns 1 and 3 are both
- * sitting at **45°**, the same angle, and must still be told apart. ~~Nothing but the glyph can be doing
- * that work.~~ **That is no longer what does it** (§11.13): there is one mirror glyph now, and what separates
- * these two cells is the **tick** — column 1's other stop is at 135° and column 3's is at 157.5°, so the
- * marks sit in different places. Strictly more than the old hollow plate said, on the same cell: not "this
- * is a different kind of piece" but "this one's other option is *there*".
+ * Columns 1 and 3 in the left frame are both at 45° and must still be told apart. The ticks do it: their
+ * other stops are at 135° and 157.5°, so the marks sit in different places.
  */
 export const CutMirrorStops: Story = {
   args: { puzzle: stopSets, states: [0, 0, 0], onCycle: () => {} },
@@ -483,30 +426,9 @@ export const CutMirrorStops: Story = {
 }
 
 /**
- * **~~Question 2: does a cut mirror read as a different object?~~ — retired, and replaced by the question
- * that drawing the fork creates instead.**
- *
- * This frame used to ask whether solid bar against hollow plate could tell two kinds of mirror apart on one
- * cell. It could, and it does not matter any more: §11.13 replaced the one bit with a tick at each stop a
- * mirror is not in, so there is one glyph and no kinds. What the retirement *creates* is the opposite worry,
- * and this is the right board to ask it on:
- *
- * **Every mirror now carries at least one tick, so does a full board read, or is it a field of marks?** A
- * wizard grid holds nine turn mirrors; before, eight of them were a bare bar. Now every one of them says
- * where else it goes, which is nine or more extra strokes on a 9-wide board — and §9's bar is that a board
- * is read, not decoded. If a dense board turns to noise, the answer is not to draw the tick only on unusual
- * pieces (that is the old bit in a new coat, and it keeps the hard bare-against-one-tick reading) but to
- * make the tick quieter or shorter.
- *
- * Both boards are generated, at the size the modal gives them, with every piece of furniture the family has
- * on top: dashed tracks, ghost stops, sliding walls, sockets, wires, the two-pass beam. Four of the eight
- * turn mirrors are retrofitted to three- and two-stop lists so the forks differ in **size** as well as in
- * angle, which is what the shipped generator does not yet do (§11.13 point 2) and what this has to survive
- * before it does.
- *
- * The one thing worth keeping from the old question: the beam crosses a mirror's cell through its centre,
- * and the ticks sit out at the cell's edge where the beam is not — so amber and sky still do not fight,
- * which is §9's "nothing but light is drawn amber" paying out again.
+ * Does a full board read, or is it a field of marks? Every mirror carries at least one tick, and a wizard
+ * grid holds nine of them. Both boards are generated at the size the modal gives them; four of the eight
+ * turn mirrors are retrofitted to three- and two-stop lists so forks differ in size as well as angle.
  */
 export const CutMirrorDensity: Story = {
   args: { puzzle: cutWizard, states: cutWizard.initial, onCycle: () => {} },
@@ -521,25 +443,11 @@ export const CutMirrorDensity: Story = {
 }
 
 /**
- * **Step 2's question: does a diagonal beam read as light, and does the corner it turns read as a gap?**
+ * Does a diagonal beam read as light, and does the corner it turns read as a gap?
  *
- * Left, the mechanic at the size it ships at. The disc shines along the bottom row into a cut mirror; its
- * shallow stop carries the light up-right the whole width of a 9-wide board — 35.3px a cell — to a shrine
- * no square beam here could reach, and its steep stop is the ordinary quarter turn, straight down off the
- * frame. Stone hugs the run in three places, two cells at a time, which is §11.8 rule 4 made visible
- * instead of written down: **a diagonal step resolves only the cell it lands in**, and the light goes
- * between the corners. Nothing in the walk implements that — it is what not implementing it looks like.
- *
- * Right, the one thing the handoff into step 2 said was cheap to look at and expensive to guess. §11.2
- * rule 1 keeps wires out of the beam's lane by giving the beam cell centres and edge midpoints and the
- * wire the grid lines; a diagonal beam turns at cell **corners**, which are on the wire's side of that
- * line, and the rivets are drawn at corners too. So the endpoints can coincide — and they do, often
- * enough that guessing was not an option: over 40 generated wizard boards with every mirror cut, 104 lit
- * configurations put a beam corner exactly on a rivet, spread over 2 boards. This is one of them, found by
- * search: the beam's corner in the cell above the right-hand door lands on that door's rivet.
- *
- * Uniqueness is gone on the right-hand board once every mirror is cut, so it is a picture of the geometry
- * rather than a puzzle. That is the whole point of the frame.
+ * Left, the run at the size it ships at, with stone hugging it in three places so the light is seen going
+ * between the corners. Right, a beam corner landing exactly on a wire's rivet — a diagonal beam turns at
+ * cell corners and rivets are drawn at corners, so the endpoints can coincide, and on real boards they do.
  */
 export const DiagonalBeam: Story = {
   args: { puzzle: diagonalRun, states: [0], onCycle: () => {} },
@@ -553,8 +461,7 @@ export const DiagonalBeam: Story = {
 }
 
 /**
- * The first boards a player will actually be handed with a cut mirror on them (§11.8 rule 10 step 4, and
- * §11.12): master and wizard now route **diagonally on purpose**, so the winning beam leaves the rows and
+ * The first boards a player will actually be handed with a cut mirror on them: master and wizard route **diagonally on purpose**, so the winning beam leaves the rows and
  * columns and the piece's other stop is the quarter turn the board would have had.
  */
 const diagonalMaster = board("master", 10)
@@ -596,30 +503,14 @@ const diagonalDeath = (puzzle: LightbeamPuzzle): number[] => {
 }
 
 /**
- * **The mechanic as a player meets it, and the two drawing questions step 4 had to close.**
+ * The mechanic as a player meets it: the route itself is the diagonal, so the last leg runs corner to
+ * corner into a shrine set in the frame and the piece's other stop is the plain quarter turn.
  *
- * The route itself is the diagonal now. A cut mirror's answer is its half-step stop, so the last leg runs
- * corner to corner into a shrine set in the frame, and the piece's *other* stop is the plain quarter turn —
- * the exact inverse of the swap-in these frames used to show, where the answer was square and the wrong
- * setting was the diagonal. What a player has to read is therefore a beam that leaves the rows and columns,
- * which is the whole of what §6.4 assigns to master.
+ * A diagonal end is marked at the cell centre rather than the face it meets, because for a diagonal entry
+ * that face is a corner — the one point that means "it got through" everywhere else on the board.
  *
- * **The marker now sits at the cell centre for a diagonal end, and both markers take it.** An absorbed beam
- * used to be dotted where it met the obstacle's face, which for a diagonal entry is the cell **corner** —
- * the one point §11.8 rule 4 gives the opposite meaning to, since diagonal light slips *between* two corners
- * everywhere else on the board, and on a 9-wide grid it lands in a four-cell junction belonging to none of
- * them. The centre says the one thing the picture has to say: the light got in and stopped there. The escape
- * marker had the same question open since §11.10 and takes the same answer, four lines apart in `BeamLayer`.
- *
- * The next two frames are the cases that were only hypothetical while no board routed diagonally: a wrong
- * setting that leaves the grid on a diagonal, and one that is swallowed by stone on a diagonal.
- *
- * **And the last is the crossing this widened.** `axisOf` used to answer `"h" | "v"`, so a crossing was a
- * right angle by construction; there are four axes now, and a row crossed by a diagonal forces exactly what
- * a row crossed by a column does — nothing can stand there, or the first pass would have turned. Measured
- * over 200 generated boards: 9 crossings at master and 13 at wizard now meet at 45° rather than 90°. It
- * draws as an X leaning over, and it still reads as one square the beam goes through twice, because a beam
- * polyline bends only at cell centres and both passes bend at the same point.
+ * Then the two diagonal deaths, off the grid and into stone, and last a crossing that meets at 45° rather
+ * than 90°. It still reads as one square the beam goes through twice: both passes bend at the same centre.
  */
 export const DiagonalRoute: Story = {
   args: { puzzle: diagonalMaster, states: diagonalMaster.solution, onCycle: () => {} },

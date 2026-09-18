@@ -72,7 +72,7 @@ describe("trap perks derived from the treasures held", () => {
 
   it("ignores perks it does not own", () => {
     earned = [
-      { type: "scribes-eye", level: 3 },
+      { type: "compass", level: 3 },
       { type: "detection", level: 4 },
     ]
     const { result } = renderHook(() => useTrapProgress())

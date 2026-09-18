@@ -35,11 +35,8 @@ describe("LightbeamBoard", () => {
    * A cut mirror standing at an aligned stop draws on exactly the diagonal an ordinary mirror at that stop
    * does, so it is only ever a different *object*, never a mirror lying about which way it sends the light.
    *
-   * This used to guard a coincidence: the walk had four directions and reflected off a separate `face`
-   * field, so a stop set and the faces beside it had to be authored in step or a story frame would draw
-   * one thing and trace another. That field is gone — the walk reflects off the same angle the glyph is
-   * turned to (§11.8 rule 6) — so the disagreement can no longer be typed, and what is left to check is
-   * that the *drawing* does not treat a cut mirror's angles as a different scale from an ordinary one's.
+   * What this checks is that the drawing does not treat a cut mirror's angles as a different scale from
+   * an ordinary one's.
    */
   it.each([
     { state: 0, stops: [2, 7], drawn: "45°" },
@@ -126,7 +123,7 @@ describe("LightbeamBoard", () => {
   })
 
   // -------------------------------------------------------------------------------------------------
-  // The fork, drawn (design doc §11.13). One mirror glyph, and a tick at each stop the piece is NOT in —
+  // The fork, drawn. One mirror glyph, and a tick at each stop the piece is NOT in —
   // which is what replaced the `cut` boolean and the hollow plate it picked.
   // -------------------------------------------------------------------------------------------------
 
@@ -150,7 +147,7 @@ describe("LightbeamBoard", () => {
   })
 
   /**
-   * The tick lies **across** its bearing, not along it — the one thing the prototype missed (§11.13). A
+   * The tick lies **across** its bearing, not along it. A
    * radial tick is collinear with the beam whenever a stop's line is the line the beam leaves on, and the
    * beam is drawn over the pieces with `mix-blend-screen`, so it came out cream: the mark loses its meaning
    * and §9's "nothing but light is drawn amber" breaks in the same stroke.
@@ -175,7 +172,7 @@ describe("LightbeamBoard", () => {
 
   /**
    * Two mirrors at the same angle with different forks have to be *distinguishable*, and this is the case
-   * §11.9 said the drawn angle could never carry: `[45°, 135°]` and `[45°, 157.5°]` both sitting at 45°.
+   * the drawn angle cannot carry: `[45°, 135°]` and `[45°, 157.5°]` both sitting at 45°.
    * The bars are identical by construction — that is asserted above — so the ticks are the whole of it.
    */
   it("tells two mirrors at the same angle apart by where their other stops are", () => {

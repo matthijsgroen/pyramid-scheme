@@ -13,6 +13,13 @@ Classify by what the component **renders** from `src/ui`, not by visual complexi
 
 Every component in `src/ui/` — atom, molecule, or organism — must have a matching `*.stories.tsx` file living in the same tier folder next to it. This applies to existing components as well as new ones; there is no exemption for "it's just a wrapper."
 
+**One exemption: the mod boundary.** A story ships in `yarn build-storybook`, so one naming a mod
+breaks removability (`docs/mods/ARCHITECTURE.md` invariant 1). Where the only honest fixture is a
+mod's, the story moves to that mod and the core component keeps none — say in the story why. Reach
+for a core-typed fixture first.
+
+---
+
 ## Titles
 
 Stories carry **no `title`** — `.storybook/main.ts` derives it from the file's location (`src/ui/atoms/Chest.stories.tsx` → `UI/Atoms/Chest`), so moving a component to another tier moves its story with it. The exception is `src/mods/`, where a story sets `title: "<Mod>/<Component>"`; the config prepends `Mods/`, so don't repeat it.

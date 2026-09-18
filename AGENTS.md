@@ -94,12 +94,17 @@ yarn test         # Run all tests (Vitest)
 yarn test <file>  # Run a single test file
 yarn verify-world # Build every board in the world — on demand, ~11 min (docs/instructions/testing.md)
 yarn check-types  # TypeScript type checking
-yarn lint         # ESLint (includes Tailwind class order)
+yarn lint         # ESLint (Tailwind class order; --max-warnings pins the warn backlog)
 yarn build        # Production build
 yarn storybook    # Component docs at http://localhost:6006
 ```
 
 Always run `yarn check-types` and `yarn lint` before considering a change complete.
+
+`yarn lint` runs with **`--max-warnings`** pinned at the current warning count, so a rule kept at
+`warn` while its backlog is worked through still cannot grow: one new warning fails the run. Clearing
+warnings means lowering the number in the same commit — never raising it to make a push go through.
+The backlogs are marked `ponytail:` in `eslint.config.js`.
 
 Fix formatting with **`yarn lint --fix`**, not with a bare `npx prettier --write`. Prettier runs inside
 ESLint here (`prettier/prettier`), so it uses the repository's own pinned version; `npx` may resolve a

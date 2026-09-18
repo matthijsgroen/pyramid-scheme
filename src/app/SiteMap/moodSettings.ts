@@ -34,24 +34,18 @@ export type Mood = {
    * huge and slow. `seconds` is one crossing; `size` is the radius the field is written around, in screen
    * pixels — each mote takes its own fraction of it and most take less than one (MapMood).
    *
-   * COUNT IS PER SCREEN, not per floor. The air is drawn in an HTML layer over the map's window rather
-   * than inside the map (MapMood), so these are the motes a player SEES — where the old numbers were
-   * spread across a floor of which some 8% was on a phone at a time, and two specks reached the screen.
+   * **Count is per screen**, not per floor: the air is an HTML layer over the map's window (MapMood), so
+   * these are the motes a player sees.
    *
-   * DUST IS SPECKS, AND THERE ARE A LOT OF THEM. The first numbers here were a dozen motes two to five
-   * pixels across crossing the screen over a quarter of a minute, and at that size and that pace the eye
-   * does not read them as air at all: they are a handful of circles sitting on the stone. Real dust is
-   * mostly under two pixels and everywhere at once, so the sizes came down by half and the counts went up
-   * more than three-fold — the same ink spread over far more of it. It costs about what the dozen did: the
-   * specks ride paired on one element (`SPECKS` in MapMood), so a count here is a number of SPECKS and
-   * very nearly half a number of nodes.
+   * **Dust is specks and there are a lot of them** — mostly under two pixels, everywhere at once. A dozen
+   * motes of two to five pixels reads as circles sitting on the stone, not as air. Specks ride paired on
+   * one element (`SPECKS` in MapMood), so a count here is very nearly half a number of nodes.
    *
-   * PACE IS `seconds`, NOT DISTANCE. A crossing is roughly two thirds of what it was, because a mote
-   * restarts where it began rather than wrapping round and a field that crosses much more than a phone's
-   * width spends half its time off the left-hand edge (MapMood).
+   * **Pace is `seconds`, not distance.** A mote restarts where it began rather than wrapping, so a field
+   * crossing much more than a phone's width spends half its time off the left edge.
    *
-   * FOG IS THE EXCEPTION AND STAYS ONE. It is the same mechanism with the numbers at the other end — a
-   * few huge soft ones, barely moving — and it is meant to be a wash you see through, not weather. */
+   * **Fog is the exception**: the same mechanism at the other end, a few huge soft ones barely moving —
+   * a wash you see through, not weather. */
   drift?: { count: number; size: number; fill: string; opacity: number; seconds: number }
   /** How many scarabs are about. They scurry on lit floor, never through wall. */
   life?: number
@@ -125,15 +119,9 @@ const CONDITION_MOOD: Record<
   // CHAMBERS only, because a plant that size in a passage is something the player would have to walk
   // through.
   //
-  // A DENSITY PER CELL, NOT A COUNT, and that is the correction the map asked for. Nine tufts and five
-  // roots sounds like a lot and is a flat number for a whole floor however big it is — so the entrance
-  // floors, the ones you actually walk, got one sprite every four to eleven ROOMS while a five-room vault
-  // at the top of the same pyramid was choked with them. At 0.2 the first pyramid of the expedition had
-  // two tufts and one root across thirty-four rooms, and no plant at all.
-  //
-  // At 1 it is ONE PER CELL: every joint, every band, every chamber floor. That is what "overgrown"
-  // should mean at full strength, and the amount an author writes is then a real fraction of it. If it
-  // proves too much the number to move is here, not the scale underneath it.
+  // A DENSITY PER CELL, not a count: a flat number per floor gives the entrance floors one sprite every
+  // four to eleven rooms while a five-room vault at the top is choked. At 1 it is one per cell — every
+  // joint, every band, every chamber floor — so what an author writes is a real fraction of "overgrown".
   overgrown: { tint: { fill: "#4d7a2e", opacity: 0.18 }, growth: 1, wall: 1, plant: 1 },
   // Standing water: cooler, darker, and what grows in it grows at the edges. No PLANTS — water does not
   // put a shrub in the middle of a chamber — but it does stain a wall, which is what the brief calls a

@@ -3,7 +3,7 @@ import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
-import { useCelebration } from "@/mods/core/app/useCelebration"
+import { useCelebration } from "../useCelebration"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import {
   canUndoConstellation,

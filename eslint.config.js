@@ -11,6 +11,8 @@ import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended"
 import tailwind from "eslint-plugin-tailwindcss"
 import { join } from "node:path"
 
+const MODS = ["puzzle", "mosaic", "hieroglyph", "trap", "shop", "tombTreasure"]
+
 export default tseslint.config(
   [
     globalIgnores(["dist", "storybook-static", ".yarn", "node_modules", ".claude"]),
@@ -44,6 +46,42 @@ export default tseslint.config(
         ],
       },
     },
+    {
+      // Core names no mod (docs/mods/TARGET.md). ponytail: warn-level backlog, pinned by --max-warnings.
+      files: ["src/app/**/*.{ts,tsx}", "src/ui/**/*.{ts,tsx}", "src/{game,data,worldGen}/**/*.{ts,tsx}"],
+      rules: {
+        "@typescript-eslint/no-restricted-imports": [
+          "warn",
+          {
+            patterns: [
+              {
+                group: ["@/mods/*/**", "!@/mods/core/**"],
+                message:
+                  "Core must not name a mod (docs/mods/TARGET.md). Move the fact into the owning mod and read it back through a registry.",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    // A mod names no other mod (docs/mods/TARGET.md); core is the engine, not a sibling.
+    ...MODS.map(mod => ({
+      files: [`src/mods/${mod}/**/*.{ts,tsx}`],
+      rules: {
+        "@typescript-eslint/no-restricted-imports": [
+          "warn",
+          {
+            patterns: [
+              {
+                group: ["@/mods/*/**", "!@/mods/core/**", `!@/mods/${mod}/**`],
+                message:
+                  "A mod must not name another mod (docs/mods/TARGET.md). Go through a registry seam, or move the fact to whichever mod owns it.",
+              },
+            ],
+          },
+        ],
+      },
+    })),
     {
       files: ["**/*.{ts,tsx}"],
       extends: [tailwind.configs.recommended],

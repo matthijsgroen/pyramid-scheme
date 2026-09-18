@@ -152,7 +152,7 @@ const seedRegions = (size: number, stars: readonly number[], quota: number, rand
  * diagonal neighbour at distance two is `(1,1)`, which touches. Nearest-by-walking-distance therefore picks
  * an ALIGNED partner whenever one exists, and on a board this dense one always does. Every region's pair
  * came out on a shared line, which is a pattern a player reads off the board long before they read the
- * rules (design doc §11.6).
+ * rules.
  *
  * So an aligned partner is charged two squares of extra distance. That is enough to lose to the knight-shaped
  * neighbour at `(1,2)` — the nearest partner that shares neither row nor column — and not enough to reach
