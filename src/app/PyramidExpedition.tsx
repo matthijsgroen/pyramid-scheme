@@ -273,13 +273,7 @@ export const PyramidExpedition: FC<{
       </div>
 
       {/* Level Completion Handler */}
-      {levelContent && levelCompleted && (
-        <LevelCompletionHandler
-          onCompletionFinished={flow.completionFinished}
-          activeJourney={activeJourney}
-          skipLoot={!!pyramidJourney.siteConfigs?.length}
-        />
-      )}
+      {levelContent && levelCompleted && <LevelCompletionHandler onCompletionFinished={flow.completionFinished} />}
 
       {/* Interior: shown after pyramid is solved for V3 journeys */}
       {showingInterior && pyramidJourney.siteConfigs && (
