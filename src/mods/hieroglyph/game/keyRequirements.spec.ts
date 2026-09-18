@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { tableauLevels } from "@/data/tableaus"
+import { tableauLevels } from "@/mods/hieroglyph/game/tableaus"
 import { resolveTableauKeyRequirements } from "./keyRequirements"
 
 // The authored tableau data is indexed by tombJourneyId + runNumber, then by floor (levelNr - 1

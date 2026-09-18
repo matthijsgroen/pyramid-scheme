@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest"
 import "./plugin" // side-effect: registers the "tableau" family
 import { getFamilyPlugin, type FamilyContext } from "@/app/families/familyRegistry"
-import { getTableauLevel } from "@/data/tableaus"
+import { getTableauLevel } from "@/mods/hieroglyph/game/tableaus"
 
 // Regression guard for the play-vs-authored tableau disconnect: the tableau the player SOLVES
 // (this family's generate) must use exactly the symbols world-gen placed fragments for — the

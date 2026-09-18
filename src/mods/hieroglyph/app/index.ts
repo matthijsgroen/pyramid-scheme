@@ -7,12 +7,14 @@ import { registerPerkContribution } from "@/app/SiteMap/perkContributions"
 import { registerDetectorLevel } from "@/app/SiteMap/detectorLevels"
 import { registerCompassTarget, registerCompassTargetLabel } from "@/app/SiteMap/compassTarget"
 import { registerHeldKeysProvider } from "@/app/SiteMap/keyProviders"
+import { registerJourneyCardSlot } from "@/app/pages/journeyCardSlots"
 import { isModEnabled } from "@/mods/registeredMods"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
 import { useHieroglyphCompassScanner } from "./compassScanner"
 import { registerHieroglyphRewardDisplay } from "./rewardDisplay"
 import { hieroglyphFragmentSchema } from "./rewardSchema"
 import { HIEROGLYPH_SYMBOLS } from "./hieroglyphSymbols"
+import { TableauInventory } from "./TableauInventory"
 import "./plugin"
 import "./collection"
 import { registerDevGrants } from "@/app/dev/devActionContributions"
@@ -44,6 +46,8 @@ if (isModEnabled("hieroglyph")) {
       },
     }
   })
+  // What the tomb's next tableau will ask for, shown on its travel-screen card.
+  registerJourneyCardSlot({ id: "hieroglyph:tableau-inventory", Component: TableauInventory })
   registerCompassScanner(useHieroglyphCompassScanner)
   // The compass perk (fragment detector) is hieroglyph-owned: describe it, and expose its derived
   // level to the merged detector-level accessor (§7.4).

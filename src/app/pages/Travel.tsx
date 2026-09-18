@@ -18,7 +18,8 @@ import { DevPanel } from "@/ui/molecules/DevPanel"
 import { useDevActions } from "@/app/dev/useDevActions"
 import { PuzzleLab } from "@/app/dev/PuzzleLab"
 
-import { TableauInventory } from "./TableauInventory"
+import { journeyCardSlots } from "./journeyCardSlots"
+import "@/mods/registerModApps" // populate the journey-card slot registry, as Collection does for its sections
 import { availablePyramidJourneyIds } from "./journeyAvailability"
 import { useTombTreasureProgress } from "@/mods/tombTreasure/app/useTombTreasureProgress"
 
@@ -337,9 +338,9 @@ export const TravelPage: FC<{
                     }}
                     onClick={() => handleJourneySelect(journey)}
                   >
-                    {journey.type === "treasure_tomb" && journeyInfo?.inProgress ? (
-                      <TableauInventory journeyInfo={journeyInfo} />
-                    ) : null}
+                    {journeyInfo
+                      ? journeyCardSlots().map(({ id, Component }) => <Component key={id} journeyInfo={journeyInfo} />)
+                      : null}
                   </JourneyCard>
                 )
               })}

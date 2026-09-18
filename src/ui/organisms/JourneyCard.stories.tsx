@@ -41,10 +41,7 @@ const mockTreasureTombJourney: JourneyCardJourney = {
   piecesRequired: 4,
   difficultyLabel: "Starter",
   levelSettings: {
-    symbolCount: 2,
     numberRange: [1, 10],
-    operators: ["+", "-", "*"],
-    compareAmount: 0,
   },
 }
 

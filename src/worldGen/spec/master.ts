@@ -1,6 +1,6 @@
 import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
 import type { Rule, PathEntry, SideSectionConstraint } from "../dsl"
-import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
+import { TOMB_ROOMS_PER_FLOOR } from "../data"
 
 // Own-tomb HOLDBACK chests: gated on master's own SECONDARY tomb keys, since most master symbols
 // first needed on a later tableau run turn out to belong to master_treasure_tomb_b, not the
@@ -195,29 +195,29 @@ export const masterRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],
@@ -231,7 +231,7 @@ export const masterRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. The tomb-treasure mod places the
         // wizard_treasure_tomb_c map-piece copy here (resolveShopStock); one of the 4 wizard-journey
@@ -240,22 +240,22 @@ export const masterRules: Rule[] = [
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],

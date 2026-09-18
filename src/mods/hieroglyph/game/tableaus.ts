@@ -4,10 +4,12 @@
  * Symbols are assigned progressively - each tomb gets new symbols plus access to previous tomb symbols.
  */
 
-import { difficulties, type Difficulty } from "./difficultyLevels"
-import { journeys, type TreasureTombJourney } from "./journeys"
-import { allItems } from "./inventory"
+import { difficulties, type Difficulty } from "@/data/difficultyLevels"
+import { journeys, type TreasureTombJourney } from "@/data/journeys"
+import { allItems } from "./symbolCatalogue"
 import { objectsForStories } from "./objectsForStories"
+import { TOMB_ROOMS_PER_FLOOR } from "@/worldGen/data"
+import { tombFormulaFor } from "./tombFormula"
 
 export type TableauLevel = {
   id: string
@@ -87,8 +89,8 @@ const tombJourneys = journeys.filter((j): j is TreasureTombJourney => j.type ===
 // across several journeys once one tomb grew too large for a single exploration (§5); every floor of
 // every tomb presents `TABLEAUS_PER_FLOOR[tier]` sequential tableau rooms.
 //
-// The authored story grid (objectsForStories / tableaus.json) is sized exactly
-// `<global floors in tier> × <rooms per floor>` and keyed under the tier's PRIMARY tomb id. So a
+// The authored story grid (objectsForStories / tableaus.json) covers
+// `<global floors in tier> × <rooms per floor>` and is keyed under the tier's PRIMARY tomb id. So a
 // tableau's required symbols ARE the objects its authored story is about, matched by construction —
 // no shuffled-pool slice that could drift (an earlier remap once made a "Fish for the Market"
 // tableau require Ankh + Ra). `sourceRun` is the global 1-based floor index across every tomb of the
@@ -96,24 +98,9 @@ const tombJourneys = journeys.filter((j): j is TreasureTombJourney => j.type ===
 // the player see. storySource records which (primaryTombId, run, room) triple each real (floor,room)
 // maps to, so the lookup finds the existing story instead of falling back to placeholder text.
 
-// Rooms per tomb floor, per tier — derived from the authored grid (max `_level<n>` under the tier's
-// primary tomb) so it can never drift from what tableaus.json authors.
-export const TABLEAUS_PER_FLOOR: Record<Difficulty, number> = (() => {
-  const result = {} as Record<Difficulty, number>
-  for (const difficulty of difficulties) {
-    const primary = tombJourneys.find(j => j.difficulty === difficulty)
-    if (!primary) throw new Error(`tableaus.ts: no tomb journey for difficulty "${difficulty}"`)
-    let max = 0
-    const prefix = `${primary.id}.run`
-    for (const key of Object.keys(objectsForStories)) {
-      if (!key.startsWith(prefix)) continue
-      const m = key.match(/_level(\d+)$/)
-      if (m) max = Math.max(max, Number(m[1]))
-    }
-    result[difficulty] = max
-  }
-  return result
-})()
+// A story per authored tomb room: generation walks every (floor, room) the world authors and throws
+// on the first one the grid has no entry for, so a short grid fails the build.
+export const TABLEAUS_PER_FLOOR = TOMB_ROOMS_PER_FLOOR
 
 const nameToId: Record<string, string> = {}
 for (const item of allItems) nameToId[item.name] = item.id
@@ -254,7 +241,7 @@ export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
         tableaus.push({
           id: `tab_${tomb.id}_r${floor}_l${room}`,
           levelNr: room,
-          symbolCount: tomb.levelSettings.symbolCount,
+          symbolCount: tombFormulaFor(tomb.id).symbolCount,
           inventoryIds: tableauSymbols,
           tombJourneyId: tomb.id,
           runNumber: floor,

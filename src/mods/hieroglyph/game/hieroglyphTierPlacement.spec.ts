@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import { TOMB_SYMBOLS } from "@/data/tableaus"
+import { TOMB_SYMBOLS } from "@/mods/hieroglyph/game/tableaus"
 import { EXPECTED_HIEROGLYPH_FRAGMENTS } from "./hieroglyphCurrency"
 import type { SiteConfig } from "@/worldGen/types"
 import type { Difficulty } from "@/data/difficultyLevels"

@@ -35,8 +35,7 @@ export const ShopCollectionSection: FC<CollectionSectionProps> = ({ selectedItem
               onSelect({
                 id: item.id,
                 symbol: item.symbol,
-                // Sellables aren't hieroglyphs, so the detail panel can't derive a difficulty from
-                // the id — carry the tier's difficulty on the emitted item (as tomb treasures do).
+                // The detail panel shows whatever difficulty the item carries, so the tier's is it.
                 difficulty: difficultyByMaterialTier[item.tier],
                 name: t(`${item.id}.name`, { ns: "sellables" }),
                 description: t(`${item.id}.description`, { ns: "sellables" }),

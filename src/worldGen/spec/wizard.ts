@@ -1,6 +1,6 @@
 import { tier, tomb, journey, wardChest, wardWing } from "../dsl"
 import type { Rule, SideSectionConstraint } from "../dsl"
-import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
+import { TOMB_ROOMS_PER_FLOOR } from "../data"
 
 // The ceiling saturates every mechanic, including a key chain (a red floor-key gates a room
 // holding a green-gated vault). Kept to two levels: the maze assembler flattens deeper nesting
@@ -185,24 +185,24 @@ export const wizardRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.wizard + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.wizard + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.wizard + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.wizard + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],
@@ -216,24 +216,24 @@ export const wizardRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.wizard + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.wizard + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.wizard + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.wizard + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],
@@ -247,24 +247,24 @@ export const wizardRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.wizard + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.wizard + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.wizard + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.wizard + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],

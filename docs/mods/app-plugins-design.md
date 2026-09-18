@@ -73,6 +73,7 @@ array entry), and its `registerModApps` import. Core is untouched.
 | collection section | a section `Component`               | all sections on the Collection screen                    |
 | screen             | `{ id, navLabel, icon, Component }` | the nav + routes iterate registered screens              |
 | HUD widget         | a HUD `Component` (+ order)         | the site-map HUD row renders registered widgets in order |
+| journey-card slot  | a `Component` taking the journey state | every travel-screen journey card renders each slot, which shows nothing for a journey it has nothing for |
 | reward effect      | the effect for a reward `type`      | dispatched when that reward is claimed (mod-populated)   |
 
 Screens and HUD widgets are plain React components: each uses its own hooks

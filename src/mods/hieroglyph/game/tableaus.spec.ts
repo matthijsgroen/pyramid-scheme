@@ -1,9 +1,10 @@
 import { describe, it, expect } from "vitest"
 import { generateTableaus, type TableauLevel, tableauLevels, TOMB_SYMBOLS, TABLEAUS_PER_FLOOR } from "./tableaus"
-import tableausTranslations from "../../public/locales/en/tableaus.json"
-import { egyptianAnimals, egyptianArtifacts, egyptianDeities, egyptianProfessions } from "./inventory"
-import { journeys, type TreasureTombJourney } from "./journeys"
-import type { Difficulty } from "./difficultyLevels"
+import tableausTranslations from "../../../../public/locales/en/tableaus.json"
+import { egyptianAnimals, egyptianArtifacts, egyptianDeities, egyptianProfessions } from "./symbolCatalogue"
+import { journeys, type TreasureTombJourney } from "@/data/journeys"
+import { tombFormulaFor } from "./tombFormula"
+import type { Difficulty } from "@/data/difficultyLevels"
 
 const tombJourneys = journeys.filter((j): j is TreasureTombJourney => j.type === "treasure_tomb")
 
@@ -50,7 +51,7 @@ describe("Tableau System", () => {
     it("should have correct symbol counts per tomb", () => {
       for (const tomb of tombJourneys) {
         const tombTableaux = tableauLevels.filter(t => t.tombJourneyId === tomb.id)
-        tombTableaux.forEach(tableau => expect(tableau.symbolCount).toBe(tomb.levelSettings.symbolCount))
+        tombTableaux.forEach(tableau => expect(tableau.symbolCount).toBe(tombFormulaFor(tomb.id).symbolCount))
       }
     })
 

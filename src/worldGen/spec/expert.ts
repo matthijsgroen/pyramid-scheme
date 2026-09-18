@@ -1,6 +1,6 @@
 import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
 import type { Rule, PathEntry } from "../dsl"
-import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
+import { TOMB_ROOMS_PER_FLOOR } from "../data"
 
 // Expert's open side/hidden paths, as reusable arrays so a per-pyramid override can restate them
 // and ADD to them (pyramid-level sidePaths REPLACES the tier's, it doesn't merge).
@@ -212,7 +212,7 @@ export const expertRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
@@ -220,18 +220,18 @@ export const expertRules: Rule[] = [
       // A side path opting into the same hieroglyph-fragment assignment pyramids use.
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         sideSections: [{ pathPuzzles: 1, endReward: "fragmentSlot" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],
@@ -245,24 +245,24 @@ export const expertRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],

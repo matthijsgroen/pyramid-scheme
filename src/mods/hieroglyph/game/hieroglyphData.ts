@@ -1,4 +1,4 @@
-import { TOMB_SYMBOLS, tableauLevels } from "@/data/tableaus"
+import { TOMB_SYMBOLS, tableauLevels } from "@/mods/hieroglyph/game/tableaus"
 import { TOMB_JOURNEYS } from "@/worldGen/data"
 import type { Tier } from "@/worldGen/types"
 

@@ -1,6 +1,6 @@
 import { tier, journey, tomb, sidePath, wardWing, wardChest } from "../dsl"
 import type { Rule } from "../dsl"
-import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
+import { TOMB_ROOMS_PER_FLOOR } from "../data"
 
 // Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
 // journey (where the auto tier-unlock gate already sits). Each is a bonus floor gated by a later
@@ -141,11 +141,11 @@ export const juniorRules: Rule[] = [
     // capstone — authored per floor via a node selector (§G), not a core rule. `pathPuzzles` is one
     // ABOVE the tier's tableau count so the capstone is an EXTRA room: the selector overrides the
     // last room's family, so without the +1 the crocodile would eat a tableau and leave the floor
-    // short of the `floors × TABLEAUS_PER_FLOOR` story grid tableaus.ts sizes for.
+    // short of the `floors × TOMB_ROOMS_PER_FLOOR` story grid tableaus.ts sizes for.
     floors: [
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.junior + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods (currency pieces + consumables).
         // Empty until resolveShopStock + the consumable fill land; the shop mods own its content.
@@ -153,29 +153,29 @@ export const juniorRules: Rule[] = [
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.junior + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       // A tomb is designed exactly like a pyramid — a side path with a mosaic reward.
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.junior + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
         sideSections: [sidePath({ puzzles: 1, endReward: "mosaicPiece" })],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.junior + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.junior + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.junior + 1,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],

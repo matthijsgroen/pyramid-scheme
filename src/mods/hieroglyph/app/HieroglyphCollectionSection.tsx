@@ -1,8 +1,8 @@
 import type { FC } from "react"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import { useInventoryCategory } from "@/app/translations/useInventoryTranslations"
-import { getItemFirstLevel } from "@/data/itemLevelLookup"
+import { useInventoryCategory } from "@/mods/hieroglyph/app/useInventoryTranslations"
+import { getItemFirstLevel } from "../game/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
 import { HIEROGLYPH_SYMBOLS } from "./hieroglyphSymbols"
@@ -57,7 +57,7 @@ const CategoryGridSection: FC<{
               difficulty={itemLevel}
               progress={{ found: fragmentsFound, required }}
               selected={selectedItem?.id === item.id}
-              onClick={() => onSelect(item)}
+              onClick={() => onSelect({ ...item, difficulty: itemLevel })}
             />
           )
         })}

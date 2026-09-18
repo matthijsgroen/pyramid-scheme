@@ -1,5 +1,5 @@
-import { TOMB_SYMBOLS } from "@/data/tableaus"
-import { difficulties, type Difficulty } from "./difficultyLevels"
+import { TOMB_SYMBOLS } from "@/mods/hieroglyph/game/tableaus"
+import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 
 /**
  * Get the first (lowest) level where a tableau symbol appears.

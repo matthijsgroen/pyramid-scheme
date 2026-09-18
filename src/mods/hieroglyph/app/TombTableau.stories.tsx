@@ -2,12 +2,13 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { hashString } from "@/support/hashString"
+import { tombFormulaFor } from "../game/tombFormula"
 import { generateRewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
 import { useMemo } from "react"
-import { TombTableau } from "@/ui/organisms/TombTableau"
+import { TombTableau } from "@/mods/hieroglyph/app/TombTableau"
 import { createPositionOverview } from "@/mods/hieroglyph/game/filledPositions"
-import { useTableauTranslations } from "@/app/translations/useTableauTranslations"
-import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
+import { useTableauTranslations } from "@/mods/hieroglyph/app/useTableauTranslations"
+import { resolveHieroglyphSymbol } from "@/mods/hieroglyph/game/resolveHieroglyphSymbol"
 
 type TombLevelArgs = {
   tableauNr: number
@@ -83,12 +84,12 @@ const meta = {
       const settings = {
         amountSymbols: tableau.symbolCount,
         hieroglyphIds: tableau.inventoryIds,
-        numberRange: journey.levelSettings.numberRange,
-        operations: journey.levelSettings.operators,
+        numberRange: tombFormulaFor(journey.id).numberRange,
+        operations: tombFormulaFor(journey.id).operators,
       }
       const calc = generateRewardCalculation(settings, random)
       return calc
-    }, [seed, tableau, journey.levelSettings])
+    }, [seed, tableau, journey.id])
     if (!tableau) {
       return <p>No tableau</p>
     }

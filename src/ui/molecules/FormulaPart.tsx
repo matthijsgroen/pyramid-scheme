@@ -1,6 +1,6 @@
 import type { FC } from "react"
+import type { Difficulty } from "@/data/difficultyLevels"
 import { HieroglyphTile } from "./HieroglyphTile"
-import type { HieroglyphSymbolResolver } from "@/data/resolveHieroglyphSymbol"
 import type { Formula, Operation } from "@/game/formulas/formulas"
 import { revealText } from "@/support/revealText"
 
@@ -86,6 +86,10 @@ const operationMap = {
   "*": "⨉",
   "/": "÷",
 }
+
+// How a symbol id becomes something to draw: the glyph to show, and the difficulty that colours it.
+// Supplied by whoever owns the symbols — this component only reads the answer.
+export type HieroglyphSymbolResolver = (symbolId: string) => { symbol?: string; difficulty: Difficulty }
 
 export const FormulaPart: FC<FormulaPartProps> = props => {
   const { formula, parentPrecedence = 0, showResult = false } = props
