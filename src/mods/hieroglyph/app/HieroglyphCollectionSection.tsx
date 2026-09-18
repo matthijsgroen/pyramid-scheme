@@ -1,8 +1,8 @@
 import type { FC } from "react"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import { useInventoryCategory } from "@/app/translations/useInventoryTranslations"
-import { getItemFirstLevel } from "@/data/itemLevelLookup"
+import { useInventoryCategory } from "@/mods/hieroglyph/app/useInventoryTranslations"
+import { getItemFirstLevel } from "../game/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
 import { HIEROGLYPH_SYMBOLS } from "./hieroglyphSymbols"
@@ -57,7 +57,7 @@ const CategoryGridSection: FC<{
               difficulty={itemLevel}
               progress={{ found: fragmentsFound, required }}
               selected={selectedItem?.id === item.id}
-              onClick={() => onSelect(item)}
+              onClick={() => onSelect({ ...item, difficulty: itemLevel })}
             />
           )
         })}
@@ -66,7 +66,7 @@ const CategoryGridSection: FC<{
   )
 }
 
-// The hunt bar (§3C): the Collection is the compass's target picker. Shown only when the compass is
+// The hunt bar: the Collection is the compass's target picker. Shown only when the compass is
 // unlocked (compassLevel > 0) — with the mod off there's no fragment section at all, so the whole
 // affordance is absent. Selecting an uncollected hieroglyph offers "hunt it"; the active target
 // shows with a way to stop.

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/atoms/Page"
 import { JourneyPathView } from "@/ui/atoms/JourneyPathView"
 import { JourneyCard } from "@/ui/organisms/JourneyCard"
-import { MapPiecePlaceholder } from "@/ui/organisms/MapPiecePlaceholder"
+import { LockedJourneyCard } from "@/ui/organisms/LockedJourneyCard"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { useJourneys } from "@/app/state/useJourneys"
 import { exteriorLevelCount } from "@/data/journeys"
@@ -18,9 +18,10 @@ import { DevPanel } from "@/ui/molecules/DevPanel"
 import { useDevActions } from "@/app/dev/useDevActions"
 import { PuzzleLab } from "@/app/dev/PuzzleLab"
 
-import { TableauInventory } from "./TableauInventory"
+import { journeyCardSlots } from "./journeyCardSlots"
+import "@/mods/registerModApps" // populate the journey-card slot registry, as Collection does for its sections
 import { availablePyramidJourneyIds } from "./journeyAvailability"
-import { useTombTreasureProgress } from "@/mods/tombTreasure/app/useTombTreasureProgress"
+import { useMergedJourneyContributions } from "./journeyContributions"
 
 export const TravelPage: FC<{
   startGame: () => void
@@ -45,9 +46,11 @@ export const TravelPage: FC<{
   // A completed journey (completionCount > 0) is in revisit/explore mode: selecting it from the grid
   // lands on the map (not the game) so the player picks which pyramid to re-enter.
   const isRevisit = (journeyId: string) => (getJourney(journeyId)?.completionCount ?? 0) > 0
-  // Corridor detector L4 (§7.2): only the top detector level surfaces the world-wide marker.
+  // Corridor detector L4: only the top detector level surfaces the world-wide marker.
   const corridorDetectorLevel = useMergedDetectorLevels().corridor
-  const { isTombDiscovered, mapPieceCount, hasMapPiece: hasFoundMapPiece } = useTombTreasureProgress()
+  // What the mods say about each journey: still locked (and how far along), not on the map yet, or
+  // holding something of theirs the player already found.
+  const journeyFacts = useMergedJourneyContributions()
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] = useState<TranslatedJourney | null>(null)
   const [showInterruptModal, setShowInterruptModal] = useState(false)
@@ -145,15 +148,11 @@ export const TravelPage: FC<{
     [journeys, availableJourneyIds]
   )
 
-  const hasPendingMapPieceProgress = useMemo(() => {
-    return journeys
-      .filter(j => j.type === "treasure_tomb" && isTombDiscovered(j.id))
-      .some(j => {
-        const found = mapPieceCount(j.id)
-        const needed = j.type === "treasure_tomb" ? j.piecesRequired : 4
-        return found > 0 && found < needed
-      })
-  }, [journeys, isTombDiscovered, mapPieceCount])
+  // A lock the player has started but not finished is worth a nudge back onto the map.
+  const hasPendingLockProgress = journeys.some(j => {
+    const lock = journeyFacts.lock(j.id)
+    return !!lock && lock.found > 0 && lock.found < lock.required
+  })
 
   // Pyramids of the currently-shown journey that still hold unvisited content. Not gated on
   // `revisiting`: a pyramid you finished mid-journey is a completed node too, so its dot shows as
@@ -224,7 +223,7 @@ export const TravelPage: FC<{
                       ? t("ui.continueExpedition")
                       : t("ui.planExpedition")
                 }
-                nudge={!journey && hasPendingMapPieceProgress}
+                nudge={!journey && hasPendingLockProgress}
                 unexploredNodes={mapUnexploredNodes}
               />
               {revisiting && (
@@ -284,37 +283,25 @@ export const TravelPage: FC<{
                   // Skip pyramid journeys the player cannot pick yet
                   return null
                 }
-                if (
-                  journey.type === "treasure_tomb" &&
-                  (!isTombDiscovered(journey.id) || mapPieceCount(journey.id) === 0)
-                ) {
+                if (journeyFacts.hidden(journey.id)) {
                   return null
                 }
                 const journeyInfo = getJourney(journey.id)
                 const completionCount = journeyInfo?.completionCount ?? 0
-                const hasMapPiece = hasFoundMapPiece(journey.id)
+                const mark = journeyFacts.mark(journey.id)
                 const progressLevelNr = journeyInfo?.levelNr ?? 0
+                const lock = journeyFacts.lock(journey.id)
 
-                if (journey.type === "treasure_tomb") {
-                  const piecesFound = mapPieceCount(journey.id)
-                  const piecesNeeded = journey.piecesRequired
-
-                  if (piecesFound < piecesNeeded) {
-                    return (
-                      <MapPiecePlaceholder
-                        key={journey.id}
-                        piecesFound={piecesFound}
-                        piecesNeeded={piecesNeeded}
-                        mapHint={journey.mapHint}
-                        labels={{
-                          treasureTomb: t("ui.treasureTomb"),
-                          requiresMapPieces: t("ui.requiresMapPieces"),
-                          mapPieces: t("ui.mapPieces"),
-                          completeExpeditionsToUnlock: t("ui.completeExpeditionsToUnlock"),
-                        }}
-                      />
-                    )
-                  }
+                if (lock && lock.found < lock.required) {
+                  return (
+                    <LockedJourneyCard
+                      key={journey.id}
+                      found={lock.found}
+                      required={lock.required}
+                      hint={journey.mapHint}
+                      labels={lock.labels}
+                    />
+                  )
                 }
                 return (
                   <JourneyCard
@@ -326,7 +313,7 @@ export const TravelPage: FC<{
                     progressLevelNr={journeyInfo?.inProgress ? progressLevelNr : undefined}
                     index={index}
                     showAnimation={showJourneySelection}
-                    hasMapPiece={hasMapPiece}
+                    mark={mark}
                     hasUnexploredCorridors={
                       corridorDetectorLevel >= 4 && getOutstandingHiddenCorridorCount(journey.id) > 0
                     }
@@ -337,9 +324,9 @@ export const TravelPage: FC<{
                     }}
                     onClick={() => handleJourneySelect(journey)}
                   >
-                    {journey.type === "treasure_tomb" && journeyInfo?.inProgress ? (
-                      <TableauInventory journeyInfo={journeyInfo} />
-                    ) : null}
+                    {journeyInfo
+                      ? journeyCardSlots().map(({ id, Component }) => <Component key={id} journeyInfo={journeyInfo} />)
+                      : null}
                   </JourneyCard>
                 )
               })}

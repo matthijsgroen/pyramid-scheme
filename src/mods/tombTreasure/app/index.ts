@@ -1,9 +1,11 @@
 import { useMemo } from "react"
+import { useTranslation } from "react-i18next"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { registerHeldKeysProvider, registerKeyDisplay } from "@/app/SiteMap/keyProviders"
 import { registerEarnedPerks } from "@/app/SiteMap/perkContributions"
 import { registerCollectionSection } from "@/app/pages/collectionSectionRegistry"
+import { registerJourneyContribution } from "@/app/pages/journeyContributions"
 import { isModEnabled } from "@/mods/registeredMods"
 import { TREASURE_PERKS } from "../game/treasurePerks"
 import { treasureDisplayByKeyId } from "../game/treasures"
@@ -13,7 +15,7 @@ import { TombTreasureCollectionSection } from "./TombTreasureCollectionSection"
 import { mapPieceSchema, tombKeySchema } from "./rewardSchemas"
 import { registerDevGrants } from "@/app/dev/devActionContributions"
 import { TOMB_PERK_IDS } from "@/data/treasurePerks"
-import { piecesRequiredFor } from "../game/piecesRequired"
+import { piecesRequiredFor, TOMB_PIECES_REQUIRED } from "../game/piecesRequired"
 
 // tomb-treasure's app entrypoint (side-effect): the reward display handlers, reward schemas, the
 // claim effects (map piece → count + mark the pyramid journey's chest opened; tomb key → grant the
@@ -68,6 +70,31 @@ if (isModEnabled("tomb-treasure")) {
   registerCollectionSection({ id: "tomb-treasure", order: 10, Component: TombTreasureCollectionSection })
 
   // The cheat menu's tomb grants — this mod's state, so this mod hands them out.
+  // A tomb is a journey locked with map pieces: off the map until its first piece, a locked card
+  // until it has enough, and each pyramid whose map-piece chest is open carries the mark.
+  registerJourneyContribution(() => {
+    const { isTombDiscovered, mapPieceCount, hasMapPiece } = useTombTreasureProgress()
+    const { t } = useTranslation("common")
+    return {
+      hidden: journeyId =>
+        journeyId in TOMB_PIECES_REQUIRED && (!isTombDiscovered(journeyId) || mapPieceCount(journeyId) === 0),
+      lock: journeyId =>
+        journeyId in TOMB_PIECES_REQUIRED
+          ? {
+              found: mapPieceCount(journeyId),
+              required: piecesRequiredFor(journeyId),
+              labels: {
+                title: t("ui.treasureTomb"),
+                requires: t("ui.requiresMapPieces"),
+                unit: t("ui.mapPieces"),
+                howToUnlock: t("ui.completeExpeditionsToUnlock"),
+              },
+            }
+          : undefined,
+      mark: journeyId => (hasMapPiece(journeyId) ? "📜" : undefined),
+    }
+  })
+
   registerDevGrants(() => {
     const { addTombKey, collectMapPiece, mapPieceCount, discoverTomb } = useTombTreasureProgress()
     return useMemo(

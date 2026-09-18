@@ -1,7 +1,7 @@
 import type { FC } from "react"
 import { FormulaPart, type FilledTileState } from "./FormulaPart"
 import type { Formula as FormulaType } from "@/game/formulas/formulas"
-import type { HieroglyphSymbolResolver } from "@/data/resolveHieroglyphSymbol"
+import type { HieroglyphSymbolResolver } from "@/ui/molecules/FormulaPart"
 
 export const Formula: FC<{
   formula: FormulaType

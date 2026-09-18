@@ -41,7 +41,7 @@ export type CalcEscalation = { position: number; total: number }
 // whole descent instead of every tableau asking the same shape of sum. `progress` runs 0 (first room)
 // → 1 (last): the first room uses one operator and the base range, the last uses all authored
 // operators and a range widened by the base span. Omit `escalation` (or a single-room tomb) for
-// neutral, full-operator settings — used by the vestigial inventory previews, which have no position.
+// neutral, full-operator settings, which is what a preview with no room position gets.
 export const buildTombCalculationSettings = (
   levelSettings: TombLevelSettings,
   tableau: TombTableauSettings,

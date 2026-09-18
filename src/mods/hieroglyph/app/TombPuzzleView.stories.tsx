@@ -2,10 +2,11 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import { journeys } from "@/data/journeys"
 import { hashString } from "@/support/hashString"
+import { tombFormulaFor } from "../game/tombFormula"
 import { generateRewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
-import { useTableauTranslations } from "@/app/translations/useTableauTranslations"
-import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
-import { TombPuzzleView } from "@/ui/organisms/TombPuzzleView"
+import { useTableauTranslations } from "@/mods/hieroglyph/app/useTableauTranslations"
+import { resolveHieroglyphSymbol } from "@/mods/hieroglyph/game/resolveHieroglyphSymbol"
+import { TombPuzzleView } from "@/mods/hieroglyph/app/TombPuzzleView"
 
 // Mod-side though the component is core's: it names hieroglyph, and a story ships in build-storybook.
 const meta = {
@@ -27,8 +28,8 @@ export const InProgress: Story = {
       {
         amountSymbols: tableau.symbolCount,
         hieroglyphIds: tableau.inventoryIds,
-        numberRange: journey.levelSettings.numberRange,
-        operations: journey.levelSettings.operators,
+        numberRange: tombFormulaFor(journey.id).numberRange,
+        operations: tombFormulaFor(journey.id).operators,
       },
       mulberry32(seed)
     )

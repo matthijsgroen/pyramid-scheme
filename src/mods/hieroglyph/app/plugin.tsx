@@ -8,9 +8,10 @@ import {
 } from "@/mods/hieroglyph/game/generateRewardCalculation"
 import type { Operation } from "@/game/formulas/formulas"
 import { TombPuzzle } from "./TombPuzzle"
-import { getTableauLevel, TABLEAUS_PER_FLOOR, type TableauLevel } from "@/data/tableaus"
+import { getTableauLevel, TABLEAUS_PER_FLOOR, type TableauLevel } from "../game/tableaus"
+import { tombFormulaFor } from "../game/tombFormula"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
-import { useTableauTranslations } from "@/app/translations/useTableauTranslations"
+import { useTableauTranslations } from "@/mods/hieroglyph/app/useTableauTranslations"
 import { tableauEncounterArgsSchema } from "@/mods/hieroglyph/game/keyRequirements"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { TABLEAU_META } from "@/mods/hieroglyph/game/meta"
@@ -80,13 +81,11 @@ if (isModEnabled("hieroglyph"))
     meta: TABLEAU_META,
     generate: (seed, ctx): RewardCalculation => {
       const random = mulberry32(seed)
-      // Resolve the AUTHORED tableau for this tomb floor so the puzzle the player solves uses
-      // exactly the symbols world-gen guaranteed reachable fragments for (keyRequirements.ts, via
-      // the shared getTableauLevel) and that the inventory preview shows (TableauInventory). The
-      // floor's `{ runNr }` rides ctx.encounterArgs (same zod schema the world-gen resolver uses);
-      // levelNr is its structural pathIndex+1. This is the fix for the play-vs-authored disconnect:
-      // the puzzle used to draw random symbols from the whole tier pool, so it could demand a
-      // hieroglyph whose fragments were never placed reachable for that floor (unsolvable at 0/N).
+      // Resolve the AUTHORED tableau for this tomb floor, so the puzzle asks for exactly the
+      // symbols world-gen placed reachable fragments for (keyRequirements.ts, through the shared
+      // getTableauLevel) — anything else can be unsolvable at 0/N. The floor's `{ runNr }` rides
+      // ctx.encounterArgs on the same schema the world-gen resolver reads; levelNr is its
+      // structural pathIndex+1.
       const parsed = tableauEncounterArgsSchema.safeParse(ctx.encounterArgs)
       const journey = journeys.find(
         (j): j is TreasureTombJourney => j.id === ctx.journeyId && j.type === "treasure_tomb"
@@ -103,7 +102,7 @@ if (isModEnabled("hieroglyph"))
             total: journey.levelCount * roomsPerFloor,
           }
           return generateRewardCalculation(
-            buildTombCalculationSettings(journey.levelSettings, tableau, escalation),
+            buildTombCalculationSettings(tombFormulaFor(ctx.journeyId), tableau, escalation),
             random
           )
         }

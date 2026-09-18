@@ -1,12 +1,12 @@
 import type { FC, FormEvent } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { TableauLevel } from "@/data/tableaus"
-import type { HieroglyphSymbolResolver } from "@/data/resolveHieroglyphSymbol"
+import type { TableauLevel } from "@/mods/hieroglyph/game/tableaus"
+import type { HieroglyphSymbolResolver } from "@/ui/molecules/FormulaPart"
 import type { ChestState } from "@/ui/atoms/Chest"
 import { TombDoor } from "@/ui/atoms/TombDoor"
 import { TombLockPanel } from "@/ui/molecules/TombLockPanel"
 import { HieroglyphInventoryStrip, type InventoryStripItem } from "@/ui/molecules/HieroglyphInventoryStrip"
-import { TombTableau, type OrderedFormula, type TableauCalculation } from "@/ui/organisms/TombTableau"
+import { TombTableau, type OrderedFormula, type TableauCalculation } from "@/mods/hieroglyph/app/TombTableau"
 import type { FilledTileState } from "@/ui/molecules/FormulaPart"
 
 export const TombPuzzleView: FC<{

@@ -3,7 +3,6 @@ import { use, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/atoms/Page"
 import { HieroglyphTile } from "@/ui/molecules/HieroglyphTile"
-import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { FezContext } from "../fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
@@ -19,8 +18,8 @@ const DetailPanel: FC<{
   onAdd?: () => void
 }> = ({ item, debug = false, onAdd }) => {
   const { t } = useTranslation("common")
-  // A section may hand its item a known difficulty (mod-owned content); otherwise derive from the id.
-  const difficulty = item ? (item.difficulty ?? getItemFirstLevel(item.id)) : null
+  // The difficulty comes from the section that owns the item; core resolves no mod content itself.
+  const difficulty = item?.difficulty ?? null
 
   return (
     <div className="sticky bottom-0 min-h-fit rounded-lg bg-white/70 p-4 shadow-lg backdrop-blur-sm">

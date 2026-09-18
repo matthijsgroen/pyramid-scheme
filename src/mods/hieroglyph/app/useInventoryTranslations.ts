@@ -1,5 +1,10 @@
 import { useTranslation } from "react-i18next"
-import { egyptianDeities, egyptianProfessions, egyptianAnimals, egyptianArtifacts } from "@/data/inventory"
+import {
+  egyptianDeities,
+  egyptianProfessions,
+  egyptianAnimals,
+  egyptianArtifacts,
+} from "@/mods/hieroglyph/game/symbolCatalogue"
 
 // Hook to get translated inventory item
 export const useInventoryItem = () => {

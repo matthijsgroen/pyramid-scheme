@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import { TOMB_SYMBOLS } from "@/data/tableaus"
+import { TOMB_SYMBOLS } from "@/mods/hieroglyph/game/tableaus"
 import { HIEROGLYPH_CURRENCY } from "./hieroglyphCurrency"
 import type { SiteConfig } from "@/worldGen/types"
 

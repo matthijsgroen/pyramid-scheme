@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { MapPiecePlaceholder } from "./MapPiecePlaceholder"
+import { LockedJourneyCard } from "./LockedJourneyCard"
 
 const meta = {
-  component: MapPiecePlaceholder,
+  component: LockedJourneyCard,
   parameters: {
     layout: "centered",
   },
   argTypes: {
-    piecesFound: {
+    found: {
       control: { type: "range", min: 0, max: 5, step: 1 },
     },
-    piecesNeeded: {
+    required: {
       control: { type: "range", min: 1, max: 5, step: 1 },
     },
     showAnimation: {
@@ -22,23 +22,23 @@ const meta = {
   },
   args: {
     // The shipped hint for the second expert tomb (public/locales/en/journeys.json)
-    mapHint: "Corridors run past the temple vaults to a sealed door — only the highest priests ever passed it.",
+    hint: "Corridors run past the temple vaults to a sealed door — only the highest priests ever passed it.",
     labels: {
-      treasureTomb: "Treasure Location",
-      requiresMapPieces: "Requires map pieces",
-      mapPieces: "map pieces",
-      completeExpeditionsToUnlock: "Complete expeditions to unlock",
+      title: "Treasure Location",
+      requires: "Requires map pieces",
+      unit: "map pieces",
+      howToUnlock: "Complete expeditions to unlock",
     },
   },
-} satisfies Meta<typeof MapPiecePlaceholder>
+} satisfies Meta<typeof LockedJourneyCard>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const NoProgress: Story = {
   args: {
-    piecesFound: 0,
-    piecesNeeded: 3,
+    found: 0,
+    required: 3,
     showAnimation: false,
     index: 0,
   },
@@ -46,8 +46,8 @@ export const NoProgress: Story = {
 
 export const PartialProgress: Story = {
   args: {
-    piecesFound: 1,
-    piecesNeeded: 3,
+    found: 1,
+    required: 3,
     showAnimation: false,
     index: 0,
   },
@@ -55,8 +55,8 @@ export const PartialProgress: Story = {
 
 export const AlmostComplete: Story = {
   args: {
-    piecesFound: 2,
-    piecesNeeded: 3,
+    found: 2,
+    required: 3,
     showAnimation: false,
     index: 0,
   },
@@ -64,8 +64,8 @@ export const AlmostComplete: Story = {
 
 export const FourPieces: Story = {
   args: {
-    piecesFound: 1,
-    piecesNeeded: 4,
+    found: 1,
+    required: 4,
     showAnimation: false,
     index: 0,
   },
@@ -73,8 +73,8 @@ export const FourPieces: Story = {
 
 export const WithAnimation: Story = {
   args: {
-    piecesFound: 1,
-    piecesNeeded: 3,
+    found: 1,
+    required: 3,
     showAnimation: true,
     index: 1,
   },
@@ -83,9 +83,9 @@ export const WithAnimation: Story = {
 // A tomb with no hint of its own falls back to the plain "requires map pieces" line
 export const WithoutHint: Story = {
   args: {
-    piecesFound: 1,
-    piecesNeeded: 3,
-    mapHint: undefined,
+    found: 1,
+    required: 3,
+    hint: undefined,
     showAnimation: false,
     index: 0,
   },

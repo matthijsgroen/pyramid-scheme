@@ -3,7 +3,6 @@ import type { Difficulty } from "./difficultyLevels"
 import type { SiteConfig } from "@/game/siteTypes"
 import { generatedWorldConfigs } from "./generatedWorld"
 import { PYRAMID_STRUCTURES, TOMB_STRUCTURES } from "./journeyStructure"
-import type { Operation } from "@/game/formulas/formulas"
 
 /**
  * JourneyLength:
@@ -64,13 +63,9 @@ export type TreasureTombJourney = {
   // synthesizes a modest default from the tomb's difficulty (see PyramidExpedition). Author here to
   // give a tomb a bespoke exterior later.
   background?: PyramidJourney["background"]
+  // The number range the tomb's exterior board is generated from.
   levelSettings: {
-    symbolCount: number
     numberRange: [min: number, max: number]
-    operators: Operation[]
-    compareOperators?: Operation[]
-    compareAmount: number
-    maxMultiplyOperandResult?: number
   }
 }
 
@@ -78,7 +73,7 @@ export type TreasureTombJourney = {
  * How many exterior levels a journey has NODES for — what the map draws, and the only level numbers a
  * journey ever addresses.
  *
- * A tomb is ONE persistent multi-floor site (pyramid-interior-design.md §8), played as a single
+ * A tomb is ONE persistent multi-floor site (pyramid-interior-design.md), played as a single
  * exterior level however many floors its `levelCount` counts: every node on a tomb's map re-enters
  * level 1. Anything filed under a higher level for a tomb is from a visit the journey can no longer
  * return to, and reading it back would light a node that is not there.
@@ -216,10 +211,7 @@ export const journeys: Journey[] = [
     levelCount: 2,
     piecesRequired: 4,
     levelSettings: {
-      symbolCount: 2,
       numberRange: [1, 6],
-      operators: ["+"],
-      compareAmount: 0,
     },
   },
 
@@ -354,10 +346,7 @@ export const journeys: Journey[] = [
     levelCount: 3,
     piecesRequired: 4,
     levelSettings: {
-      symbolCount: 3,
       numberRange: [1, 10],
-      operators: ["+", "-"],
-      compareAmount: 2,
     },
   },
 
@@ -498,11 +487,7 @@ export const journeys: Journey[] = [
     levelCount: 4,
     piecesRequired: 4,
     levelSettings: {
-      symbolCount: 4,
       numberRange: [1, 10],
-      operators: ["+", "-", "*"],
-      compareAmount: 3,
-      maxMultiplyOperandResult: 5,
     },
   },
   {
@@ -516,11 +501,7 @@ export const journeys: Journey[] = [
     levelCount: 4,
     piecesRequired: 3,
     levelSettings: {
-      symbolCount: 4,
       numberRange: [2, 12],
-      operators: ["+", "-", "*"],
-      compareAmount: 4,
-      maxMultiplyOperandResult: 6,
     },
   },
 
@@ -656,12 +637,7 @@ export const journeys: Journey[] = [
     levelCount: 5,
     piecesRequired: 4,
     levelSettings: {
-      symbolCount: 4,
       numberRange: [1, 10],
-      operators: ["+", "-", "*", "/"],
-      compareOperators: ["+", "-", "*"],
-      compareAmount: 4,
-      maxMultiplyOperandResult: 10,
     },
   },
   {
@@ -675,12 +651,7 @@ export const journeys: Journey[] = [
     levelCount: 5,
     piecesRequired: 3,
     levelSettings: {
-      symbolCount: 5,
       numberRange: [1, 12],
-      operators: ["+", "-", "*", "/"],
-      compareOperators: ["+", "-", "*"],
-      compareAmount: 5,
-      maxMultiplyOperandResult: 10,
     },
   },
 
@@ -827,12 +798,7 @@ export const journeys: Journey[] = [
     levelCount: 6,
     piecesRequired: 4,
     levelSettings: {
-      symbolCount: 5,
       numberRange: [1, 15],
-      operators: ["+", "-", "*", "/"],
-      compareOperators: ["+", "-", "*"],
-      compareAmount: 5,
-      maxMultiplyOperandResult: 12,
     },
   },
   {
@@ -846,12 +812,7 @@ export const journeys: Journey[] = [
     levelCount: 6,
     piecesRequired: 3,
     levelSettings: {
-      symbolCount: 5,
       numberRange: [2, 18],
-      operators: ["+", "-", "*", "/"],
-      compareOperators: ["+", "-", "*"],
-      compareAmount: 5,
-      maxMultiplyOperandResult: 14,
     },
   },
   {
@@ -865,12 +826,7 @@ export const journeys: Journey[] = [
     levelCount: 6,
     piecesRequired: 2,
     levelSettings: {
-      symbolCount: 5,
       numberRange: [3, 20],
-      operators: ["+", "-", "*", "/"],
-      compareOperators: ["+", "-", "*"],
-      compareAmount: 6,
-      maxMultiplyOperandResult: 15,
     },
   },
 ]
