@@ -6,7 +6,6 @@ import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
 import { revealText } from "@/support/revealText"
 import { useHieroglyphProgress } from "@/mods/hieroglyph/app/useHieroglyphProgress"
-import { usePuzzleProgress } from "@/mods/puzzle/app/usePuzzleProgress"
 import {
   createTableauPuzzleState,
   isTableauPuzzleCompleted,
@@ -37,9 +36,6 @@ export const TombPuzzle: FC<{
     const { found, required } = hieroglyphProgress(symbolId)
     return found >= required
   }
-  const { scribesEyeLevel } = usePuzzleProgress()
-  const scribesEyeSlots = scribesEyeLevel === 3 ? Infinity : scribesEyeLevel
-
   // Domain state: which tiles are filled, and the placed-count per symbol
   const [state, setState] = useState(createTableauPuzzleState)
   const { filledPositions, symbolCounts } = state
@@ -48,7 +44,6 @@ export const TombPuzzle: FC<{
   const [lockCode, setLockCode] = useState("")
   const [lockState, setLockState] = useState<"empty" | "error" | "open">("empty")
   const [isProcessingCompletion, setIsProcessingCompletion] = useState(false)
-  const [annotations, setAnnotations] = useState<Record<string, string>>({})
   const lockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(
     () => () => {
@@ -87,10 +82,6 @@ export const TombPuzzle: FC<{
     const random = mulberry32(hashString(tableau.name))
     return shuffle(ordered, random)
   }, [calculation.hintFormulas, difficulty, tableau.name])
-
-  const handleAnnotationChange = (symbolId: string, value: string) => {
-    setAnnotations(prev => ({ ...prev, [symbolId]: value }))
-  }
 
   const handleTileClick = (symbolId: string, position: string) => {
     // Don't allow removal if puzzle is completed
@@ -182,10 +173,7 @@ export const TombPuzzle: FC<{
       filledState={{ filledPositions, symbolCounts }}
       resolveTile={resolveTile}
       hintFormulas={hintFormulas}
-      annotations={annotations}
       onTileClick={handleTileClick}
-      onAnnotationChange={handleAnnotationChange}
-      scribesEyeSlots={scribesEyeSlots}
       isPuzzleCompleted={isPuzzleCompleted}
       lockState={lockState}
       lockValue={lockCode}

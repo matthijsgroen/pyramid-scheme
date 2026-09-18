@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Removed
+
+- The Scribe's Eye is gone. It gave a tableau room a row of boxes to jot your own guesses in, and
+  three tomb treasures granted it; those treasures are still ward keys, they simply carry no bonus
+  now.
+
 ## 0.43.11 - 2026-09-17
 
 ### Changed

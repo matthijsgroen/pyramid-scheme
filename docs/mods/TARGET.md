@@ -80,6 +80,10 @@ Flip to `error` and drop the pin at zero. Fix a hit by inverting the dependency 
 the owning mod, core reads it back through a registry — never by widening the allowlist. A core spec
 counts: importing a mod breaks the toggle-off gate as surely as production code.
 
+The sibling rule stands at **0**. It briefly stood at 1, when `TombPuzzle` moved out of core and its
+read of puzzle's `usePuzzleProgress` lost core to hide behind. Retiring the scribes-eye perk settled
+the ownership by removing the thing owned.
+
 Placement is a separate question the rules cannot see: a file under `mods/core/` that only one mod
 imports belongs to that mod whichever way the arrows point. `useCelebration` moved to
 `mods/puzzle/app/` on that ground. Still shared, so staying: `PuzzleFamilyShell`,

@@ -13,7 +13,6 @@ export type TreasurePerk =
   | { type: "trap-insight" }
   | { type: "armor" }
   | { type: "consumable-detector"; level: 1 | 2 | 3 }
-  | { type: "scribes-eye"; level: 1 | 2 | 3 }
   | { type: "detection"; level: 1 | 2 | 3 | 4 }
 
 export const TREASURE_PERKS: Record<string, TreasurePerk> = {
@@ -52,7 +51,7 @@ export const TREASURE_PERKS: Record<string, TreasurePerk> = {
 
   // Master B (5 floors)
   master_b_1: { type: "consumable-detector", level: 2 },
-  master_b_2: { type: "scribes-eye", level: 1 },
+  master_b_2: { type: "none" },
   master_b_3: { type: "compass", level: 3 },
   master_b_4: { type: "max-health" },
   master_b_5: { type: "detection", level: 1 },
@@ -67,11 +66,11 @@ export const TREASURE_PERKS: Record<string, TreasurePerk> = {
   wizard_b_1: { type: "consumable-detector", level: 3 },
   wizard_b_2: { type: "location-key", tombId: "wizard_treasure_tomb_c" },
   wizard_b_3: { type: "detection", level: 3 },
-  wizard_b_4: { type: "scribes-eye", level: 2 },
+  wizard_b_4: { type: "none" },
 
   // Wizard C (4 floors)
   wizard_c_1: { type: "none" },
-  wizard_c_2: { type: "scribes-eye", level: 3 },
+  wizard_c_2: { type: "none" },
   wizard_c_3: { type: "max-health" },
   wizard_c_4: { type: "detection", level: 4 },
 }
