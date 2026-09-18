@@ -4,7 +4,7 @@ import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { hashString } from "@/support/hashString"
 import { generateRewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
 import { useMemo } from "react"
-import { TombTableau } from "./TombTableau"
+import { TombTableau } from "@/ui/organisms/TombTableau"
 import { createPositionOverview } from "@/mods/hieroglyph/game/filledPositions"
 import { useTableauTranslations } from "@/app/translations/useTableauTranslations"
 import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
@@ -24,7 +24,12 @@ const fillPositions = (keys: string[], value: number) => {
 }
 
 const tombJourneys = journeys.filter(j => j.type === "treasure_tomb")
+// It lives on the MOD side though the component is core's, because it names hieroglyph: core may not
+// import a mod (ARCHITECTURE.md, invariant 1 — a mod is removable), and a story is part of
+// `yarn build-storybook`. Same reasoning as `SumpleteEncounter.stories.tsx`, moved in #271. The
+// component itself stays in `src/ui/` and names nothing: only the fixture is hieroglyph's.
 const meta = {
+  title: "Hieroglyph/TombTableau",
   parameters: {
     layout: "centered",
     backgrounds: {

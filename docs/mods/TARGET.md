@@ -76,7 +76,7 @@ importing `@/mods/<name>/` — `src/app/`, `src/ui/`, `src/game/`, `src/data/` a
 registers itself through (`registeredMods`, `allFamilyMeta`, `registerModApps`,
 `allCurrencyDistributions`) and `@/mods/core/`, which is the engine rather than a mod.
 
-It is a **warning**, because 24 real hits predate it — `hieroglyph` and `tombTreasure`
+It is a **warning**, because 20 real hits predate it — `hieroglyph` and `tombTreasure`
 hold most of them, read straight from `TombPuzzle`, `useDevActions`, `Travel` and
 `TableauInventory`. `yarn lint` runs with `--max-warnings` pinned at the current total,
 so the backlog can only shrink: a new violation fails the run, and clearing one means

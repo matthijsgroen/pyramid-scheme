@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --port 9164",
     "build": "tsc -b && vite build",
-    "lint": "eslint . --max-warnings 43",
+    "lint": "eslint . --max-warnings 39",
     "test": "vitest",
     "preview": "vite preview",
     "check-types": "tsc -b",
