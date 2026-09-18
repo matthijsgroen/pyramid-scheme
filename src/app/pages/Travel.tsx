@@ -16,6 +16,7 @@ import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { DevPanel } from "@/ui/molecules/DevPanel"
 import { useDevActions } from "@/app/dev/useDevActions"
 import { PuzzleLab } from "@/app/dev/PuzzleLab"
+import { SaveTransfer } from "@/app/dev/SaveTransfer"
 
 import { journeyCardSlots } from "./journeyCardSlots"
 import "@/mods/registerModApps" // populate the journey-card slot registry, as Collection does for its sections
@@ -184,6 +185,7 @@ export const TravelPage: FC<{
                 </div>
               )}
               <DevPanel title="Playtesting tools (every journey is pickable in develop mode)" actions={devActions} />
+              <SaveTransfer />
               <PuzzleLab />
             </>
           )}

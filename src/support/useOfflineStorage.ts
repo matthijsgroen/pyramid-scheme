@@ -9,6 +9,7 @@ type Store = {
   setItem: <T>(key: string, value: T) => Promise<T | null>
   removeItem: (key: string) => Promise<void>
   clear: () => Promise<void>
+  keys: () => Promise<string[]>
   subscribe: <T>(key: string, callback: (value: T) => void) => VoidFunction
   /** The newest value written or read for a key, shared by every hook instance on it. A functional
    * update has to compute from this rather than from one instance's own copy: the same key is read
@@ -63,6 +64,7 @@ const getStore = (storeName: string): Store => {
         newest.clear()
         await forage.clear()
       },
+      keys: () => forage.keys(),
       latest: <T>(key: string) => ({ has: newest.has(key), value: newest.get(key) as T | undefined }),
       remember: <T>(key: string, value: T) => {
         newest.set(key, value)
@@ -90,6 +92,22 @@ const getStore = (storeName: string): Store => {
 export const clearOfflineStore = (storeName = "defaultStore"): Promise<void> => {
   const store = getStore(storeName)
   return store.clear()
+}
+
+// Every key and value in a store, for carrying a save between devices (src/app/dev/SaveTransfer.tsx).
+export const readOfflineStore = async (storeName = "defaultStore"): Promise<Record<string, unknown>> => {
+  const store = getStore(storeName)
+  const entries = await Promise.all((await store.keys()).map(async key => [key, await store.getItem(key)] as const))
+  return Object.fromEntries(entries)
+}
+
+// Replace a store's whole contents. The in-memory newest-value cache goes with it, but hooks already
+// mounted keep the state they last rendered — so reload the page after this rather than trusting the
+// screen in front of you.
+export const writeOfflineStore = async (data: Record<string, unknown>, storeName = "defaultStore"): Promise<void> => {
+  const store = getStore(storeName)
+  await store.clear()
+  for (const [key, value] of Object.entries(data)) await store.setItem(key, value)
 }
 
 export const useOfflineStorage = <T>(
