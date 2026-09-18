@@ -49,9 +49,6 @@ import {
   type RouteCell,
 } from "./lightbeamGeometry"
 
-// Re-exported because they are part of this module's contract to the rest of the family: `routeIsUnique` is
-// the independent second opinion on the gate below, and `resistsGreedyPlay` is what a spec asserts a board
-// against. Where they live is an implementation detail of this file.
 export { resistsGreedyPlay, routeIsUnique } from "./lightbeamGeometry"
 import { solveLightbeamByTechniques, TECHNIQUES, type TechniqueId } from "./techniques"
 import type { Grade } from "@/game/families/familyMeta"
@@ -59,49 +56,21 @@ import type { Grade } from "@/game/families/familyMeta"
 /** A board an attempt produced, before the modes it was drawn to are recorded on it. */
 type GeneratedBoard = Omit<LightbeamPuzzle, "modes">
 
-// Generation: **the maze is authored**, per docs/game-design/puzzles/lightbeam.md §5.
+// Generation, per docs/game-design/puzzles/lightbeam.md: the maze is authored. Lay a golden path from disc
+// to shrine, then for every stop a mirror is *not* set to, author the corridor that stop's light runs down
+// and make it die — at the frame, in stone, in the disc, or on a trap's own stone. Uniqueness is a property
+// of the construction, not a verdict a gate reaches.
 //
-// Lay a golden path from disc to shrine, then for every stop a mirror is *not* set to, author the corridor
-// that stop's light runs down and make it die — at the frame, in stone, in the disc, or on a trap's own
-// stone. Uniqueness is therefore a property of the construction rather than a verdict a gate reaches: take
-// any configuration, let `k` be the first bend not at its golden angle, and the beam reaches `k` along the
-// golden path and leaves down a corridor built to kill it.
-//
-// Two conditions carry that argument:
-//
-//  - A branch may share no `(cell, direction)` pair with the golden path. Sharing a *cell* while travelling
-//    differently is not a join; rejoining **upstream** of where it left is, which is why the test is the pair
-//    rather than "does it reach the shrine".
-//  - A branch entering a cell a tappable piece can occupy is **one corridor per state of that piece**, so
-//    `corridorDies` recurses over every one of them and requires each to die. Without that the invariant is
-//    necessary but not sufficient — a 5x5 board proves it.
-//
-// The route builder **backtracks** rather than guessing, so a draft costs about one attempt.
-//
-// A tier's character comes from its **modes** rather than from turning two dials hard, and the
-// load-bearing knob is `interactive`: a given costs a cell, contributes nothing to the configuration space
-// and authors no corridor, so one share thins a board on all three counts at once.
+// Two conditions carry that argument, and both are asserted below: a branch may share no `(cell, direction)`
+// pair with the golden path, and a branch entering a cell a tappable piece can occupy is one corridor per
+// state of that piece, each of which must die.
 
-/**
- * What kind of board this is, as against how hard it is — the modes that replace §7's goal pool.
- *
- * - **wall-heavy** — stone rather than the frame closes a branch, and a diagonal golden leg gets a *pair* of
- *   walls the beam visibly passes between: the corner slip used as a feature rather than a rule to
- *   learn.
- * - **slider-heavy** — golden bends that slide rather than turn.
- * - **switch-heavy** — doors, sockets, and §11.1's traps.
- */
+/** What kind of board this is, as against how hard it is. */
 export const LIGHTBEAM_MODES = ["wallHeavy", "sliderHeavy", "switchHeavy"] as const
 
 export type LightbeamMode = (typeof LIGHTBEAM_MODES)[number]
 
-/**
- * The floor on tappable pieces, whatever `interactive` says.
- *
- * Three, which is where §5's opening rules already put the family: two binary pieces make four
- * configurations and every dark one is a tap from done or solved by tapping both, so `openingIsHonest`
- * refuses the lot. It is also why a starter board carries three bends rather than two.
- */
+/** The floor on tappable pieces, whatever `interactive` says: `openingIsHonest` refuses any board under it. */
 const MIN_TAPPABLE = 3
 
 /** Every dial that shapes a board. A tier sets these; `LIGHTBEAM_CONFIG` is where. */
@@ -109,172 +78,72 @@ export type LightbeamDials = {
   /** How many times the route bends between sun-disc and shrine. */
   turns: number
   /**
-   * How many times the winning beam must fold back through its own line.
-   *
-   * A crossed square is the one square on the board that is provably empty — anything standing there would
-   * have turned the first pass — and it is the only place the beam is drawn arriving from two directions. It
-   * costs no piece at all: what it buys is a longer, more folded route on the same grid, which is this
-   * family's only way of asking for more without asking for more room (§5.2).
+   * How many times the winning beam must fold back through its own line. A crossed square is provably
+   * empty — anything standing there would have turned the first pass — and it costs no piece.
    */
   crossings: number
-  /**
-   * How many of the route's bends turn the beam **diagonally** — the cut mirrors.
-   *
-   * One piece doing more rather than another piece. The bend would have carried a mirror anyway; what changes
-   * is that its answer is a half-step and its stop set reaches 67.5° the other way. `cutBendSlots` has the one
-   * pattern the geometry allows, because only a half-step bend can *close* a diagonal leg.
-   */
+  /** How many of the route's bends turn the beam diagonally — the cut mirrors. */
   cutMirrors: number
-  /**
-   * How long a sliding piece's track is — how many stops it cycles through.
-   *
-   * Two stops asks "in the way or out of it"; three asks *which* stop, which is a different question and a
-   * harder one. It is also what keeps a board off a single parity: on an all-two-state board every piece is
-   * one tap from its answer or none, and a player who spots that never has to look at the board again.
-   */
+  /** How long a sliding piece's track is. Two asks "in the way or out of it"; three asks *which* stop. */
   slidingStops: number
   /**
-   * **How many sliding walls stand on the route's own line** — stone resting in the beam's way that the player
-   * slides aside (§2's sliding wall, as a piece a thumb owns rather than one a socket drives).
-   *
-   * The one piece in the family whose move is *clearing* a path rather than bending one, so it asks the only
-   * question the rest cannot: not "which way does the light turn" but "does the light get through at all". Its
-   * wrong stop absorbs the golden beam where it stands, so there is no corridor to author — the beam dies in
-   * the piece itself, which is also why it settles on `deadEnd` and suits the tiers still learning to read
-   * where the light died.
-   *
-   * **Two stops, always.** A third stop is a second cell off the beam's line, and a wall standing anywhere off
-   * that line blocks nothing — so the board would have two winning configurations.
+   * How many sliding walls stand on the route's own line: stone in the beam's way that the player slides
+   * aside. Always two stops — a third is a second cell off the line, and would be a second winning answer.
    */
   slidingWalls: number
-  /**
-   * Doors: stone across the route that no tap can shift, opened only by the light reaching a socket upstream
-   * of it (§11.1, §11.2). Switch-heavy only.
-   */
+  /** Stone across the route that no tap can shift, opened by the light reaching a socket upstream of it. */
   doors: number
-  /**
-   * How many sockets a door's wiring names. One is a plain door; two is an and-wiring, and the piece does not
-   * budge until the light has been through both — a routing demand rather than a setting to rule out.
-   */
+  /** How many sockets a door's wiring names. One is a plain door; two is an and-wiring. */
   doorNodes: number
-  /**
-   * Refuse boards that a run of getting-warmer taps solves (`resistsGreedyPlay`).
-   *
-   * Off at starter on purpose: a three-piece board is meant to yield to fiddling, and that is what makes it a
-   * gentle first board rather than an empty one. From junior up it is on, because a board whose ladder is
-   * never needed is a board without a ladder.
-   */
+  /** Refuse boards that a run of getting-warmer taps solves. Off at starter, where fiddling is the point. */
   fiddleProof: boolean
 } & AuthoringDials
 
 /** The dials that shape how the maze around the route is authored. */
 export type AuthoringDials = {
   /**
-   * **0..1, the share of a board's mirrors that are the player's to tap**.
-   *
-   * The load-bearing one, because it chooses the architecture rather than a quantity. A **given** costs a
-   * cell and reads as scenery: it contributes nothing to the configuration space, and a branch may pass
-   * through it freely, because a fixed face keeps `(cell, direction)` determining the future. A **tappable**
-   * mirror is the opposite on all three counts, and every branch touching one owes the recursion.
-   *
-   * So it is a continuous dial between two designs — low and the board fills with scenery
-   * while uniqueness is nearly free, high and the board stays dense and the recursion does real work. The
-   * floor of `MIN_TAPPABLE` holds whatever the weight says.
+   * 0..1, the share of a board's mirrors that are the player's to tap. A given costs a cell and reads as
+   * scenery; a tappable mirror adds configuration space and owes every branch that touches it a corridor.
    */
   interactive: number
   /**
-   * **How many traps to author** — a socket the light must be kept away from, whose stone lands *in front of*
-   * the beam rather than out of its way (§11.1). Switch-heavy only, and it needs `branchDepth` at least 1,
-   * because a trap corridor has to be able to turn to reach the shrine.
-   *
-   * With a trap on a board that also has a door, sockets stop being a list to tick off: some have to be
-   * reached, some have to be dodged, and only the reasoning tells them apart.
+   * How many traps to author — a socket the light must be kept *away* from, whose stone lands in front of the
+   * beam. Switch-heavy only, and it needs `branchDepth` at least 1 so a trap corridor can turn.
    */
   traps: number
-  /**
-   * **Which modes this board is built to.** Combinable, and they replace the goal pool:
-   * a mode is what gives a board its flavour, which is the job §7's goals were doing.
-   *
-   * Recorded on the result rather than logged, for the reason §7.2 gives about goals — a fallback that fires
-   * silently would make the whole pool decorative while every measurement still looked fine.
-   */
+  /** Which modes this board is built to. Combinable, and recorded on the result rather than logged. */
   modes: readonly LightbeamMode[]
   /**
-   * **How many golden bends slide rather than turn**, when slider-heavy is on.
-   *
-   * The cheapest fork in the family. A turn mirror's wrong setting sends the light somewhere that has to be
-   * closed; a slider's wrong setting is *"as if the piece were not there"*, so the branch is the beam's own
-   * line carrying straight on and there is no corridor to author. It also asks a different question — not
-   * "which way round" but "is it in the way", and with a three-cell track, "which cell".
+   * How many golden bends slide rather than turn. The cheapest fork in the family: a slider's wrong setting
+   * is "as if the piece were not there", so the branch is the beam carrying straight on, with no corridor.
    */
   sliders: number
-  /**
-   * **Whether a board may carry a piece the light can never reach** — a decoy in §6's sense.
-   *
-   * A piece to rule out is real vocabulary and `neverReached` is the rung that frees it, so a tier may want one.
-   * Off by default, because a decoy arriving by accident on a tier that asked for a *shadow* is a dial quietly
-   * not doing its job — see `dropUnreachable`.
-   */
+  /** Whether a board may carry a piece the light can never reach. Off by default — see `dropUnreachable`. */
   decoys: boolean
   /**
-   * **The most stops a mirror on the route may offer** — its fork in the maze.
-   *
-   * The sibling of `slidingStops`, one axis over: two asks "which of these two", three asks "which of these
-   * three", and it costs 1.5x rather than 2x because it is the same piece doing more. Two is what the family
-   * shipped for its whole life and is a baseline rather than a floor the code needs.
-   *
-   * Only the route's mirrors take it. A decoy off the beam's line keeps the pair, because a bigger fork on a
+   * The most stops a mirror on the route may offer. Only the route's mirrors take it: a bigger fork on a
    * piece the light never reaches buys configuration space and no reasoning.
    */
   forkSize: number
   /**
-   * **Turns per authored branch.** 0 is a straight run to stone or the frame.
-   *
-   * A branch that turns needs a mirror at the bend, and that mirror is off the golden path by construction —
-   * so the winning beam never touches it, and it is a **decoy** in §6's vocabulary. Where the branch it turns
-   * is one the light takes under a wrong setting, it is a **shadow**: something movable standing in the wrong
-   * ray, so the light does not visibly die there, it disappears into a piece nobody has settled. That is what
-   * §6.1 measured as the only thing that makes the technique cap bite, and here it falls out of the
-   * construction rather than being scattered on top of it.
+   * Turns per authored branch; 0 is a straight run to stone or the frame. A branch that turns needs a mirror
+   * off the golden path — a decoy, or a shadow where the branch is one a wrong setting takes.
    */
   branchDepth: number
 }
 
 export type LightbeamOptions = Partial<LightbeamDials> & {
-  /** The strongest deduction a board may demand (§6). */
+  /** The strongest deduction a board may demand. */
   techniqueCap?: TechniqueId
-  /**
-   * The modes this tier may draw, and how many to draw a board.
-   *
-   * The shape §7's goal pool had, and for the reason §7 gives: without it every board is the AVERAGE board
-   * for its tier, and a wizard grid is every dial turned a little, every single time. A pool gives boards
-   * character rather than mean settings. `modes` is what a board ends up with — drawn from here when a pool
-   * is given, taken verbatim when it is not.
-   */
+  /** The modes this tier may draw, and how many to draw a board. Without a pool, every board is the mean. */
   modePool?: readonly LightbeamMode[]
   modeCount?: number
   /**
-   * **The dial sets a board may be drawn to, one per board, off the seed** — what `modePool` is for modes, for
-   * everything else.
-   *
-   * Without it a tier is one recipe: every junior board carried six turn mirrors and exactly one three-stop
-   * slider, because that is what its dials said and dials do not vary. A pool of flavours makes the tier the
-   * range and the board the sample, so the vocabulary §2 lists arrives a piece at a time — one board asks
-   * "which way round", the next "is it in the way", the next "what opens that door" — and the player meets each
-   * mechanic on a board built around it rather than all of them averaged together.
-   *
-   * A flavour is merged **over** the tier's own dials, and it may set `modes` like any other dial. Drawn off
-   * the seed rather than the attempt counter, for `modePool`'s reason: every attempt at a board must be the
-   * same board.
+   * The dial sets a board may be drawn to, one per board — what `modePool` is for modes, for everything else,
+   * so a tier is a range rather than one recipe. Merged over the tier's dials, and drawn off the seed.
    */
   flavours?: readonly Partial<LightbeamDials>[]
-  /**
-   * Diagnostics: called with the name of the gate that threw a draft away, once per rejected attempt.
-   *
-   * Off unless asked for, and it costs an optional call per rejection. It reports the gate rather than a
-   * diagnosis: `notUnique` means a second route existed, not why the draft allowed one. Any comparison
-   * between two sets of dials needs this number first, or it is a comparison of impressions.
-   */
+  /** Diagnostics: the gate that threw a draft away, once per rejected attempt. */
   reject?: (gate: LightbeamGate) => void
 }
 
@@ -293,7 +162,7 @@ export type LightbeamGate =
   | "noDoor"
   /** No wrong setting could be routed to the shrine, so there was nothing to trap. */
   | "noTrap"
-  /** The trap was decoration — the board stayed a puzzle without it (§11.1). */
+  /** The trap was decoration — the board stayed a puzzle without it. */
   | "trapIdle"
   | "piecesTouch"
   | "answerDark"
@@ -359,13 +228,9 @@ const clonePartial = (state: PartialRoute): PartialRoute => ({
 })
 
 /**
- * The cells a leg would cover, or undefined if it cannot be laid.
- *
- * Pure, and that is the point: the search has to ask whether a leg fits before committing to it, which is
- * the whole difference between this builder and a route-then-obstruct one. A cell already on the route is a
- * **crossing** when the beam runs through it on a different axis and a **retrace** when it runs through it
- * on the same one — `axisOf` is that distinction, and a retrace is never allowed. A bend cell may not be
- * crossed at all, because the first pass would have turned there.
+ * The cells a leg would cover, or undefined if it cannot be laid — pure, so the search can ask before it
+ * commits. A cell already on the route is a crossing on a different axis and a retrace on the same one,
+ * which is never allowed; a bend cell may not be crossed at all, as the first pass would have turned there.
  */
 const legSteps = (
   size: number,
@@ -421,17 +286,12 @@ const commit = (state: PartialRoute, steps: LegStep[], direction: Direction) => 
 }
 
 /**
- * Lays the golden path, by searching rather than by guessing.
+ * Lays the golden path: bends carrying one mirror each, the final leg running to the frame so the shrine
+ * sits in the wall. A crossing must be on a different axis, and a diagonal leg can only be closed by a
+ * half-step bend.
  *
- * Same shape of route as §5 step 1 — bends carrying one mirror each, the final leg running to the frame so
- * the shrine sits in the wall — and the same two facts about it: a crossing must be a different axis
- * (§5.2), and a diagonal leg can only be closed by a half-step bend, which is why cut bends come in
- * consecutive pairs (`cutBendSlots`).
- *
- * What is new is that it **backtracks**: 92–97% of all generation work was once a route builder
- * being asked blind for a path it cannot lay, and named it the honest optimisation target. So each leg is
- * tested before it is taken (`legSteps`), each bend cell is checked for room (`mirrorMayStand`), and a dead
- * end costs one search node instead of one whole draft.
+ * It backtracks rather than guesses — each leg is tested before it is taken and each bend cell checked for
+ * room, so a dead end costs one search node instead of a whole draft.
  */
 const buildGoldenPath = (
   size: number,
@@ -519,29 +379,18 @@ const buildGoldenPath = (
 }
 
 /**
- * The pair a bend must offer at minimum: the answer, and the one partner that keeps a quarter turn.
- *
- * The mirror law, and `cutStops` is where the four pairs are derived. **A stop set has to keep a quarter turn**
- * — the constraint that killed three earlier drafts, since every other piece and the route itself depend on a
- * mirror cell being able to turn light 90° — and a half-step answer therefore brings its aligned partner in
- * with it. A diagonal answer satisfies the rule on its own, so it takes the other diagonal.
+ * The pair a bend must offer at minimum: the answer, and the one partner that keeps a quarter turn. A
+ * half-step answer brings its aligned partner in with it; a diagonal answer takes the other diagonal.
  */
 const stopsFor = (angle: MirrorAngle): readonly MirrorAngle[] | undefined =>
   isHalfStep(angle) ? cutStops(angle) : TURN_ANGLES
 
 /**
- * The authored stop list for a mirror on the route — the fork the player meets there.
+ * The authored stop list for a mirror on the route. `stopsFor` gives the two the geometry demands; extras
+ * are drawn per piece, so no two mirrors need offer the same fork.
  *
- * `stopsFor` gives the two the geometry demands; anything beyond that is drawn **per piece**, so no two
- * mirrors on a board need offer the same fork. That variety is the point of rule 1 and it is what the tick
- * measured: at three stops a wizard board's nine mirrors offered 23 different forks across 40 boards rather
- * than 5, on the same piece count. One piece doing more, which is rule 8's way of spending the cost.
- *
- * Note what is *not* excluded from the extras. A stop lying along the beam passes the light straight through
- * (rule 3's edge-on stop) and a stop square across it sends the beam back down its own line; neither can be
- * the answer, because neither bends anything, but as **wrong** settings they are two more sentences the board
- * can say — and the second needs no stone at all. Every extra stop is one more corridor to author, which is
- * where the cost lands.
+ * Stops that bend nothing are deliberately not excluded: they cannot be the answer, but as wrong settings
+ * they are two more sentences the board can say. Every extra stop is one more corridor to author.
  */
 const forkFor = (angle: MirrorAngle, forkSize: number, random: () => number): readonly MirrorAngle[] | undefined => {
   const base = stopsFor(angle)
@@ -590,15 +439,8 @@ type Authoring = {
 }
 
 /**
- * Which pieces could stand in a cell, and in which of their states.
- *
- * **A sliding piece's absence from a cell is itself information**, and that is the whole reason this exists.
- * A turn mirror is in its one cell whatever state it is in, so the cell is always occupied and only the angle
- * varies. A sliding piece is in a given cell in exactly one state and *out of it* in all the others — so
- * "there is nothing here" is a fact about that piece's setting, and a beam crossing the cell has learned it.
- *
- * Both walks in this file resolve cells through this, so there is one model of what a board contains rather
- * than two that can drift.
+ * Which pieces could stand in a cell, and in which of their states. A sliding piece is in a given cell in
+ * one state and out of it in the others, so "there is nothing here" is itself a fact about its setting.
  */
 type Occupancy = Map<string, { piece: number; here: ReadonlySet<number> }[]>
 
@@ -690,12 +532,8 @@ const resolveCell = (
 }
 
 /**
- * What one state of one piece does to a beam entering `at` travelling `travel`.
- *
- * Three outcomes, and the first is the one a mirrors-only board never had: the state may put the piece
- * **somewhere else**, which leaves this cell empty and the beam carrying straight on. That is what makes a
- * slider the cheapest fork in the family — its wrong setting is usually "as if the piece were not there", so
- * the branch is the beam's own line continuing and there is no corridor to author at all.
+ * What one state of one piece does to a beam entering `at` travelling `travel`. The state may put the piece
+ * somewhere else entirely, which leaves the cell empty and the beam carrying straight on.
  */
 const afterState = (
   movable: readonly MovablePiece[],
@@ -718,32 +556,16 @@ const afterState = (
 const MAX_CORRIDOR_DEPTH = 12
 
 /**
- * Walks a corridor and answers the only question that matters: **does every continuation of it die?**
+ * Walks a corridor and answers the only question that matters: does every continuation of it die?
  *
- * The rule and the reason:
+ * A branch entering a cell a tappable piece can occupy is one corridor per stop of that piece, so it
+ * recurses over all of them. Four endings are free — off the frame, into stone, into the disc, and retracing
+ * a line this corridor has already travelled. Two are fatal: the shrine, and any `(cell, direction)` pair
+ * the golden path owns, which is a join. A fatal ending is cut short with stone at the first cell of the
+ * run that can hold it, nearest the mirror, where a wall reads as a dead end.
  *
- * > While authoring a branch, if it enters a cell any tappable piece can occupy, **recurse**: author every
- * > stop of that piece and require every continuation to die as well.
- *
- * Because a branch entering a tappable cell is **one corridor per stop of that piece** — `(cell, direction)`
- * determines the future only where the cell's content is fixed. The board that forces this is two branches
- * that each die on their own and combine into a second, shorter route: authoring A's wrong stop walks into
- * B's cell, fans out over B's two stops, and finds one of them reaches the shrine.
- *
- * Four endings are free — off the frame, into stone, into the disc, and retracing a line this corridor has
- * already travelled, which can reach nothing new. Two are fatal: the shrine, and any `(cell, direction)`
- * pair the golden path owns (a join, including one *upstream* of where the branch left). A fatal ending is
- * cut short with stone at the first cell of the current run that can hold it — nearest the mirror, because a
- * wall right there is the most legible dead end and anything further along is a longer story for the same
- * conclusion.
- *
- * **The recursion is deliberately conservative.** It carries no knowledge that the bends upstream of the
- * branch must be at their golden angles for the light to have arrived at all, so a corridor that re-enters an
- * upstream mirror is checked against *every* stop of it rather than the one that is actually possible. That
- * over-checks and never under-checks, which is the right direction for a proof.
- *
- * Stone is placed as it goes: a wall only kills a beam *earlier*, so adding one can never revive a
- * continuation that had already died.
+ * The recursion over-checks and never under-checks: it carries no knowledge of which upstream stops the
+ * light must have come through, so it checks every one of them.
  */
 const corridorDies = (
   board: Authoring,
@@ -843,14 +665,9 @@ const corridorDies = (
 }
 
 /**
- * Authors one branch off a golden bend.
- *
- * The one thing this knows that `corridorDies` deliberately does not: for the light to have reached this
- * bend at all, every bend upstream is at its golden angle. So a stop that sends the beam **back down its own
- * line** needs nothing — `reflect` is its own inverse in the direction, so the light retraces every leg it
- * has flown, off mirrors that must each still be golden, and the disc swallows it. The retracing
- * excursion, arriving as a wrong answer instead of a failed idea. The recursion cannot use that argument
- * (it has no notion of "upstream"), which is why it lives here and not there.
+ * Authors one branch off a golden bend. The one thing this knows that `corridorDies` does not: for the light
+ * to have reached this bend, every bend upstream is golden — so a stop sending the beam back down its own
+ * line needs nothing, since it retraces every leg it flew and the disc swallows it.
  */
 const closeBranch = (board: Authoring, from: CellRef, enter: Direction, stop: MirrorAngle): boolean => {
   const direction = reflect(stop, enter)
@@ -882,13 +699,8 @@ export type Reach = {
   /** Times the tree branched — the beam met a piece it had not been through and fanned out over its stops. */
   forks: number
   /**
-   * Fan-outs met by a beam that has **already deviated** — a branch walking into a piece it has not been
-   * through. This is reuse, and the number the recursion exists for: zero means the pair
-   * invariant would have been sufficient and the recursion had no work to do.
-   *
-   * Counted only when a solution is supplied, because "has deviated" means "has taken a stop that is not the
-   * answer", and nothing else on the board knows which stop that is. A fan-out on the golden path itself is
-   * not reuse, however many pieces the route carries — an easy thing to measure by accident.
+   * Fan-outs met by a beam that has already deviated — the number the recursion exists for; zero means the
+   * pair invariant alone would have sufficed. Counted only when a solution says which stop is the answer.
    */
   reuseForks: number
   /** False when the guard cut the exploration short, in which case nothing may be concluded. */
@@ -896,19 +708,12 @@ export type Reach = {
 }
 
 /**
- * Walks the **reachable deviation tree** — every future the light can have, fanning out only where it meets
- * a piece whose state it has not already been through.
+ * Walks the reachable deviation tree — every future the light can have, fanning out only where it meets a
+ * piece whose state it has not been through. Far cheaper than the product, because once a beam dies the
+ * settings downstream of it cannot matter, and it asks how many winning *routes* there are.
  *
- * Cheaper than the product: `routeIsUnique` traces every configuration, 37 350 walks on a wizard board,
- * where **once a beam dies the settings downstream of it cannot matter** and are never enumerated.
- *
- * It is a different question from "how many configurations light the shrine" and the same question as "how
- * many winning routes are there", which is the property §5 gate 5 actually wants: a decoy's free setting
- * multiplies configurations without adding a route, and this never asks about it.
- *
- * Returns undefined for a board this cannot reason about — a sliding piece, whose absence from a cell is
- * itself information, or a socket, which changes the board mid-walk. Both arrive in later phases, and
- * pretending to handle them would be worse than declining: the caller falls back to `routeIsUnique`.
+ * Undefined for a board it cannot reason about — a sliding piece, whose absence from a cell is itself
+ * information, or a socket, which changes the board mid-walk. The caller falls back to `routeIsUnique`.
  */
 export const reachableDeviations = (
   puzzle: LightbeamPuzzleData,
@@ -1049,15 +854,8 @@ export const reachableDeviations = (
 }
 
 /**
- * Drops stone that nothing reaches.
- *
- * `corridorDies` places stone as it walks, and a sibling continuation forced to close earlier can leave a
- * wall further along that no beam will ever arrive at. That is scenery, and §5.1 rules it out: a wall the
- * player cannot spend hides which obstacles the deduction turns on.
- *
- * Safe as a single pass, because a wall no beam reaches cannot be on any beam's path — so removing it changes
- * no path, and the set of reachable beams is the same before and after. Declines to prune at all if the
- * exploration was cut short, rather than guessing.
+ * Drops stone that nothing reaches — scenery, which hides which obstacles the deduction turns on. Safe as a
+ * single pass: a wall no beam reaches is on no beam's path. Declines to prune if exploration was cut short.
  */
 const pruneStone = (board: Authoring, route: Route, movable: MovablePiece[]): Set<string> => {
   const fixed: FixedPiece[] = [
@@ -1083,15 +881,8 @@ const pruneStone = (board: Authoring, route: Route, movable: MovablePiece[]): Se
 }
 
 /**
- * A track for a piece sliding across the beam at a golden bend, or undefined if none fits.
- *
- * Contiguous and collinear, because that is what reads as a track — a gap between stops says the thing
- * teleports rather than slides. Every cell but the bend itself has to be free: off the golden path, since a
- * mirror parked there in a wrong state would bend the winning beam, and clear of other tappable pieces'
- * shoulders.
- *
- * Square legs only. A piece sliding across a diagonal beam would draw its ghosts on a diagonal, and §9 has
- * not settled what that reads as.
+ * A track for a piece sliding across the beam at a golden bend, or undefined if none fits. Every cell but
+ * the bend has to be off the golden path and clear of other tappable pieces' shoulders. Square legs only.
  */
 const fittingTrack = (
   board: Authoring,
@@ -1143,15 +934,8 @@ const mirrorFits = (
 }
 
 /**
- * Plans the mirrors a branch turns at, before any branch is closed.
- *
- * **Geometry only — it does not ask whether anything dies.** That question cannot be answered until the whole
- * piece list exists, because a corridor closed against a half-built board was checked against the wrong set of
- * tappable cells, and a branch mirror placed for one branch is a cell every other branch may now meet. So this
- * lays the shape and `corridorDies` passes judgement afterwards.
- *
- * A turn is only offered `MIN_LEG` cells out or further, which keeps the branch mirror off the shoulder of the
- * very piece whose wrong setting aimed the light at it.
+ * Plans the mirrors a branch turns at. Geometry only: whether anything dies cannot be answered until the
+ * whole piece list exists, so this lays the shape and `corridorDies` judges it afterwards.
  */
 const planBranchMirrors = (
   size: number,
@@ -1200,16 +984,9 @@ const planBranchMirrors = (
 }
 
 /**
- * Wall-heavy's own sentence: the two cells a diagonal step squeezes past.
- *
- * A diagonal step resolves only the cell it lands in, never the two it slips between — and
- * the design doc's answer to "how does the player learn that" was to draw walls with rounded corners and add
- * no rules text. This makes the fact **visible on the board it matters on**: stone in both corners, with the
- * winning beam going straight through the gap. Nothing is asked of the player; the beam simply does it in
- * front of them.
- *
- * It cannot bend the golden beam — that is exactly what rule 4 guarantees — so the only thing to check is that
- * the stone is not standing where something else already is.
+ * Stone in both cells a diagonal step squeezes past, so the beam is seen slipping through the gap rather
+ * than the player being told it can. It cannot bend the golden beam, so the only check is that the cells are
+ * free.
  */
 const cornerSlipWalls = (board: Authoring, route: Route): CellRef[] => {
   const found: CellRef[] = []
@@ -1239,18 +1016,11 @@ const cornerSlipWalls = (board: Authoring, route: Route): CellRef[] => {
 type TrapRoute = { mirrors: BranchMirror[]; cells: { at: CellRef; travel: Direction }[] }
 
 /**
- * Authors a corridor from a wrong setting **to the shrine**, which is the step §11.1 could not take.
+ * Authors a corridor from a wrong setting to the shrine, which is what a trap needs: the trap has to be the
+ * only reason that setting fails, so it must otherwise be a genuine second route.
  *
- * §11.1 worked out what a trap needs and then said the supply was the problem: the trap has to be the *only*
- * reason a wrong setting fails, so that setting must otherwise reach the shrine — a would-be second route —
- * and route-then-obstruct is built to reject exactly those. "Fishing in a pond stocked against you."
- *
- * **An authoring generator does not fish.** It builds the branch to reach the shrine and then puts the door on
- * it. This is that search: from the wrong stop's own ray, try to land on the shrine within `depth` turns,
- * placing a mirror at each. Depth-first over shuffled candidates, so it either finds one quickly or gives up.
- *
- * The mirrors it places are the same kind `planBranchMirrors` places — off the golden path, so the winning beam
- * never touches them.
+ * From the wrong stop's own ray, try to land on the shrine within `depth` turns, placing a mirror at each,
+ * depth-first over shuffled candidates. The mirrors are off the golden path, as `planBranchMirrors`.
  */
 const routeToShrine = (
   board: Authoring,
@@ -1321,17 +1091,9 @@ const routeToShrine = (
 }
 
 /**
- * Sliding walls the player owns: stone resting **in** the beam's way on a straight stretch, one cell aside
- * from where it belongs (§2's sliding wall).
- *
- * The whole of the piece is that its move clears a path rather than bending one, so it is the one thing on the
- * board that asks whether the light gets through at all. There is no corridor to author for its wrong stop:
- * the stone is standing on the golden line, so the beam is absorbed in the piece itself, and the deviation
- * closes where it started.
- *
- * Two stops, and the track is the same `fittingTrack` a sliding mirror uses — which is also what keeps the
- * vacated cell off every other piece's shoulders. A third stop would be a second cell off the beam's line, and
- * stone off that line blocks nothing, so the board would have two answers.
+ * Sliding walls the player owns: stone resting in the beam's way on a straight stretch, one cell aside from
+ * where it belongs. There is no corridor to author for the wrong stop — the beam is absorbed in the piece
+ * itself. Two stops only: a third is a second cell off the beam's line, where stone blocks nothing.
  */
 const placeSlidingWalls = (
   board: Authoring,
@@ -1379,20 +1141,11 @@ const placeSlidingWalls = (
 }
 
 /**
- * Doors, and the sockets that open them (§11.1, §11.2).
+ * Doors, and the sockets that open them. The order is structural rather than checked: sockets come from
+ * route cells strictly before the earliest door, so the effect always lands ahead of the light.
  *
- * A door is stone across the route that **no tap can shift** — that is the whole point, because a door the
- * player could open would make the socket decoration. The light is the only thing that opens it, and it does so
- * by crossing a socket further back along its own route.
- *
- * The order is structural rather than checked: sockets come from route cells strictly *before* the earliest
- * door, so the effect always lands ahead of the light and the drawn beam is never a picture of something that
- * has stopped being true. Two doors against one socket is fan-out; one door naming two sockets is an
- * and-wiring, and the piece does not budge until the light has been through both.
- *
- * What this adds to the authored construction is a rung nothing else buys: **order** — "the light has to get
- * through here, this door is shut, so it must reach that socket first" — seeded from the middle of the board,
- * which is where a long route is thinnest.
+ * What this buys is a rung nothing else does — order: this door is shut, so the light must reach that
+ * socket first.
  */
 const placeDoors = (
   board: Authoring,
@@ -1481,27 +1234,11 @@ const placeDoors = (
 }
 
 /**
- * Places a trap on a corridor that would otherwise reach the shrine (§11.1's recipe, steps 2 and 3).
+ * Places a trap on a corridor that `routeToShrine` left reaching the shrine: a socket on it, and a driven
+ * wall further along. The wrong setting's own light drops the stone in front of itself.
  *
- * > 1. Build the route, and deliberately leave one piece's wrong setting un-walled.
- * > 2. Trace it. Keep going only if that wrong setting reaches the shrine — a genuine second route.
- * > 3. Put the socket on that second route and the stone further along it.
- *
- * `routeToShrine` has done step 1 and 2 by *construction* rather than by search. This does step 3: a socket on
- * the corridor, and a driven wall that lands further along it. The wrong setting's own light crosses the socket,
- * which drops the stone in front of it, and the setting dies of its own doing.
- *
- * **Uniqueness is then restored by the trap**, which is what makes it load-bearing rather than decoration.
- * A socket placed on an already-dead ray gives 23 traps across 120 boards that could each be removed with
- * the board still a puzzle.
- *
- * Two placement rules carry it:
- *
- * - **The socket must be off the golden path.** If the winning beam crossed it, the stone would drop on the
- *   trap corridor while the winning beam was still flying — harmless to the answer, but it would also mean the
- *   player opens the trap by solving, which is the checklist problem §11.1 opens with.
- * - **The wall's resting cell must be somewhere it does nothing**, off the golden path and off the corridor, or
- *   it would be blocking something before it was ever fired.
+ * The socket must be off the golden path, or the player opens the trap by solving; the wall's resting cell
+ * must be off both path and corridor, or it blocks something before it ever fires.
  */
 const placeTrap = (
   board: Authoring,
@@ -1820,17 +1557,11 @@ const authorBranches = (
 }
 
 /**
- * Drops the pieces no play can ever involve.
+ * Drops the pieces no play can ever involve. A branch mirror is meant to be a shadow — something standing in
+ * a wrong ray — and one no beam can reach under any setting is a decoy the dial did not ask for.
  *
- * A branch mirror is meant to be a **shadow** — something standing in a wrong ray, so the light disappears into
- * a piece nobody has settled rather than visibly dying (§6.1). Sometimes it lands where no beam can arrive under
- * any setting, and is then a **decoy**: still fair, since `neverReached` frees it, but not what the dial
- * asked for — 15% of starter's off-route mirrors.
- *
- * Safe to remove: a piece no beam reaches is on no beam's path, so no path changes. Done before the opening
- * is drawn, because piece count is what `openingIsHonest` and `resistsGreedyPlay` reason about. A tier that
- * wants decoys keeps them (`decoys`); what is unwanted is one arriving by accident on a tier that asked for
- * a shadow.
+ * Safe: a piece no beam reaches is on no beam's path. Done before the opening is drawn, because piece count
+ * is what `openingIsHonest` and `resistsGreedyPlay` reason about.
  */
 const dropUnreachable = (
   puzzle: LightbeamPuzzleData,
@@ -2005,23 +1736,8 @@ const attemptAuthored = (
 }
 
 /**
- * Builds a board (design doc §5). Deterministic in `(size, seed, options)`, which is the whole of what a
- * player's board is derived from — nothing about a puzzle is persisted.
- *
- * `LIGHTBEAM_CONFIG` holds the dials each tier is authored to. The board comes back carrying the modes it was
- * built to, so a spec can assert what a tier actually delivered rather than what it asked for (§7.2).
- *
- * Throws rather than returning an undeducible board. The dials can be set past what a grid will hold — a trap
- * on a `deadEnd` cap, a route with more bends than the frame allows — and generation refusing is the honest
- * answer to that, because the alternative is silently shipping an easier board than the tier claims.
- */
-/**
- * Re-checks the ladder on a finished board, and reports what it demanded
- * (`docs/instructions/puzzle-screens.md` §6.1).
- *
- * Unlike families that keep a nearest miss, this one **throws** rather than ship a board it would not
- * stand behind, so a board coming back is already the acceptance. The gates it cannot re-derive from the
- * shipped board are ones that board passed by construction.
+ * Re-checks the ladder on a finished board and reports what it demanded. Generation throws rather than ship
+ * a board it would not stand behind, so a board coming back here is already the acceptance.
  */
 export const gradeLightbeam = (board: LightbeamPuzzle, options: LightbeamOptions = {}): Grade | null => {
   const { techniqueCap = "deadEnd" } = options
@@ -2030,6 +1746,10 @@ export const gradeLightbeam = (board: LightbeamPuzzle, options: LightbeamOptions
   return { steps: steps.length, deepest: TECHNIQUES.filter(technique => used.has(technique)).pop() }
 }
 
+/**
+ * Builds a board. Deterministic in `(size, seed, options)`, which is the whole of what a player's board is
+ * derived from. Throws rather than return an undeducible board: the dials can be set past what a grid holds.
+ */
 export const generateLightbeam = (
   size: number,
   seed: number,

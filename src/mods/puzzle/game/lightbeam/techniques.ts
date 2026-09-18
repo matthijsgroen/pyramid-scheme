@@ -1,15 +1,9 @@
-// The deduction system behind both generation and hints, per docs/game-design/puzzles/lightbeam.md §4.
+// The deduction system behind both generation and hints, per docs/game-design/puzzles/lightbeam.md. Every
+// board that ships was settled by this ladder, and every hint is one of these reasons rather than a peek.
 //
-// A beam puzzle's natural solving mode is trial — flip a mirror, look, flip another — and that is not
-// deduction. This ladder is what makes the family admissible: every board that ships was settled by it,
-// so every board can be reasoned to the end, and every hint is one of these reasons rather than a peek
-// at the answer.
-//
-// Ordered by how well a reason explains itself, not by strength. `onlySurvivor` subsumes `deadEnd` and
-// `feedsExit` outright — a solver could be the runs plus that one technique — and it is ranked last
-// anyway, because its reason is "I tried the alternatives and they all failed", which teaches nothing.
-// `deadEnd`'s reason is a sentence a child repeats back and checks by eye: face it that way and the
-// light dies in the wall.
+// Ordered by how well a reason explains itself, not by strength: `onlySurvivor` subsumes `deadEnd` and
+// `feedsExit` outright and is still ranked last, because "I tried the alternatives and they all failed"
+// teaches nothing.
 import {
   cellKey,
   eachConfig,
@@ -86,12 +80,8 @@ export type LightbeamBoard = {
   /** Wirings proven never to fire, so what they would have moved is known to be resting. Also monotone. */
   dead: Set<number>
   /**
-   * The last enumeration of the winning configurations, and the candidate set it was taken over.
-   *
-   * The three exhaustive rungs all ask the same question of the same board, and the ladder loops to a
-   * fixpoint, so a wizard board was enumerating its whole configuration space a dozen times over to get one
-   * set of answers. Keyed on what the survey actually depends on, so it is reused within a pass and thrown
-   * away the moment a deduction narrows a piece.
+   * The last enumeration of the winning configurations, keyed on what it depends on — the three exhaustive
+   * rungs ask the same question of the same board, and the ladder loops to a fixpoint.
    */
   survey?: { key: string; value: Survey | undefined }
 }
@@ -109,13 +99,7 @@ export const createLightbeamBoard = (puzzle: LightbeamPuzzleData): LightbeamBoar
   dead: new Set(),
 })
 
-/**
- * Whether two occupants are the same thing, which is what decides a cell is resolved rather than `unknown`.
- *
- * Compares the whole authored stop list, not a bit about it: two mirrors are the same occupant only if they
- * stand at the same angle *and* offer the same fork. Strictly more discriminating than the `cut` boolean it
- * replaced, so nothing the engine concluded before can stop holding.
- */
+/** Whether two occupants are the same thing — the same angle *and* the same fork — so the cell is resolved. */
 const sameStops = (a: readonly number[], b: readonly number[]): boolean =>
   a.length === b.length && a.every((angle, index) => angle === b[index])
 
@@ -124,13 +108,8 @@ const sameBlocker = (a: Blocker, b: Blocker): boolean =>
   (a.kind !== "mirror" || b.kind !== "mirror" || (a.angle === b.angle && sameStops(a.stops, b.stops)))
 
 /**
- * The board as the deduction currently knows it. A cell is `unknown` whenever a movable piece could be
- * standing there and could also not be, or could be there facing either way — and that is the whole
- * engine: every walk stops at the first unknown, and each technique below asks a different question
- * about what it stopped on.
- *
- * A piece is only resolved when every state it could still be in puts the same thing in the same cell,
- * which for a settled piece is always, and for a two-faced mirror is never.
+ * The board as the deduction currently knows it. A cell is `unknown` unless every state a piece could still
+ * be in puts the same thing there; every walk stops at the first unknown, and that is the whole engine.
  */
 const knownGrid = (board: LightbeamBoard, pin?: { piece: number; state: number }): CellContent[][] => {
   const { puzzle } = board
@@ -184,16 +163,8 @@ const knownGrid = (board: LightbeamBoard, pin?: { piece: number; state: number }
 }
 
 /**
- * The forward walk as the deduction knows it — and it fires sockets as it goes, the way a real beam does.
- *
- * Without this the walk reads one static grid, so a piece a socket *might* move stays `unknown` at both its
- * cells and the walk simply stalls on it. That is sound but blind, and it is blind to the only thing that
- * makes a socket a decision rather than a chore: a socket the light should be kept AWAY from. Its stone
- * lands on the route, so the walk has to be able to arrive there and die, and it can only do that if
- * crossing the socket moves the stone mid-walk.
- *
- * Sound under a hypothetical pin, too. `deadEnd` asks "suppose this piece is set that way" — and under that
- * supposition the beam does cross the socket, so the wiring does fire, so the death it walks into is real.
+ * The forward walk as the deduction knows it, firing sockets as it goes the way a real beam does. Against a
+ * static grid it would stall on every piece a socket might move, and never arrive at a trap's stone at all.
  */
 const knownForward = (board: LightbeamBoard, pin?: { piece: number; state: number }): BeamWalk => {
   const { puzzle } = board
@@ -230,14 +201,8 @@ export const lightbeamSettled = (board: LightbeamBoard): boolean => knownForward
 const DEATHS: ReadonlySet<BeamWalk["end"]> = new Set(["absorbed", "escapes", "loops"] as const)
 
 /**
- * How a state died, which is the difference between four quite different sentences to the player.
- *
- * **The disc is not stone.** A mirror can send the beam straight back down its own line — `reflect` is its
- * own inverse in the direction, so it retraces every leg it has flown and is swallowed by the disc it came
- * out of — and telling the player it "runs into stone with nothing left to save it" sends them looking for
- * a wall that is not there. Measured on the shipped tiers: the commonest death on a starter board after the
- * frame, 13 boards in 40, so it is the gentlest tier that was being told the wrong thing. Found while
- * routing diagonally, where a cut mirror's other stop makes it a *designed* wrong answer.
+ * How a state died — four different sentences to the player. The disc is not stone: a beam sent back down
+ * its own line is swallowed where it came from, and calling that a wall sends the player hunting for one.
  */
 const deathVariant = (puzzle: LightbeamPuzzleData, walk: BeamWalk): string | undefined => {
   if (walk.end === "escapes") return "edge"
@@ -249,10 +214,7 @@ const deathVariant = (puzzle: LightbeamPuzzleData, walk: BeamWalk): string | und
 const freshSegments = (board: LightbeamBoard, walk: BeamWalk): BeamSegment[] =>
   walk.path.filter(segment => !board.forced.has(forcedKey(segment)))
 
-// ---------------------------------------------------------------------------------------------------
-// T0 / T1 — the facts. Neither rules anything out; both hand the eliminations below something to work
-// against, and both are worth saying out loud to a player staring at a fresh board.
-// ---------------------------------------------------------------------------------------------------
+// T0 / T1 — the facts. Neither rules anything out; both hand the eliminations below something to work with.
 
 /** Where the light must go before it meets anything the player can change. */
 const entryRun = (board: LightbeamBoard): LightbeamStep[] => {
@@ -264,15 +226,9 @@ const entryRun = (board: LightbeamBoard): LightbeamStep[] => {
 }
 
 /**
- * Which side the shrine can be lit from, traced backwards. A direction whose backward run leaves the
- * grid or dies in a wall is a direction nothing could have delivered the light from; when only one is
- * left, the stretch behind the shrine is settled too.
- *
- * Searched over `travelledDirections` rather than all eight, and that is the difference between this rung
- * firing and this rung dying. A backward run that meets an unsettled piece comes back `unknown`, which is
- * not a death, so every extra candidate direction is another way for "exactly one survives" to fail. Only a
- * half-step stop can turn square light diagonal, so on a board with none there are still four candidates —
- * which is why every board the generator makes today deduces exactly as it did before the cut mirror.
+ * Which side the shrine can be lit from, traced backwards; when only one survives, the stretch behind it is
+ * settled too. Searched over `travelledDirections` rather than all eight — every candidate a board cannot
+ * actually carry is another way for "exactly one survives" to fail.
  */
 const exitRun = (board: LightbeamBoard): LightbeamStep[] => {
   const feasible = travelledDirections(board.puzzle)
@@ -289,17 +245,9 @@ const exitRun = (board: LightbeamBoard): LightbeamStep[] => {
 }
 
 /**
- * The ordering fact, and the only one in the catalogue (design doc §11.1).
- *
- * Every other rung concludes either "these cells carry the beam" or "that setting is impossible". This one
- * concludes **"the light has to get through there, that door is shut, so it must reach this socket first"**
- * — a statement about order, which nothing else in the game trains.
- *
- * It reads off `forced`, the segments already proven to carry the beam whatever the player does, so it
- * needs no enumeration and its reason is local: you can put a finger on the socket the run crosses and
- * follow the wire to the thing that moves. Firing is monotone — a door once opened stays open — so it
- * folds into the fixpoint loop exactly as the forced set does, and it is what lets the runs start growing
- * again from a stretch they had stalled on.
+ * The only ordering fact in the catalogue: the light has to get through there, that door is shut, so it must
+ * reach this socket first. Read off `forced`, so it needs no enumeration, and firing is monotone — a door
+ * once opened stays open — so it folds into the fixpoint loop as the forced set does.
  */
 const wiringFires = (board: LightbeamBoard): LightbeamStep[] => {
   const { puzzle } = board
@@ -322,13 +270,9 @@ const wiringFires = (board: LightbeamBoard): LightbeamStep[] => {
   return steps
 }
 
-// ---------------------------------------------------------------------------------------------------
-// T2 / T3 — the local eliminations. Both pin one piece to one state and walk, from the sun for T2 and
-// from the shrine for T3. A state whose walk dies is a state the puzzle cannot be in.
-//
-// Both only speak when at least one state survives: if every state of a piece dies the board is broken,
-// and blaming the piece would be a nonsense reason rather than a deduction.
-// ---------------------------------------------------------------------------------------------------
+// T2 / T3 — the local eliminations. Both pin one piece to one state and walk, from the sun for T2 and from
+// the shrine for T3; a state whose walk dies is one the puzzle cannot be in. Both stay silent when every
+// state dies, which is a broken board rather than a deduction.
 
 const pinnedEliminations = (
   board: LightbeamBoard,
@@ -365,17 +309,10 @@ const feedsExit = (board: LightbeamBoard): LightbeamStep[] => {
   return pinnedEliminations(board, "feedsExit", pin => knownBackward(board, entry, pin))
 }
 
-// ---------------------------------------------------------------------------------------------------
-// T4 / T5 — the exhaustive pair. The configuration space is the product of the pieces' state counts, so
-// at nine pieces it is under 20 000 walks of at most 49 cells: this family can afford to enumerate,
-// which none of the arithmetic families can (§5).
-//
-// Both reason over the winning configurations only. That is not peeking: "the shrine can be lit" is the
-// premise of the puzzle, and the player has it too.
-// ---------------------------------------------------------------------------------------------------
+// T4 / T5 — the exhaustive pair. The configuration space is small enough to walk whole, and both reason
+// over the winning configurations only, which is the premise of the puzzle rather than a peek at it.
 
-// Far above any tier's real space (a 7x7 wizard board tops out near 20 000); the cap is the guard
-// against a malformed board, not a budget.
+// Far above any tier's real space: a guard against a malformed board, not a budget.
 const MAX_ENUMERATION = 200_000
 
 type Survey = {
@@ -429,17 +366,8 @@ const enumerateWinners = (board: LightbeamBoard): Survey | undefined => {
 }
 
 /**
- * The socket to steer clear of.
- *
- * A wiring that fires in no answer at all is a wiring the light must be kept away from — its stone belongs
- * where it rests, and the run can be walked straight past it. Without this rung a board carrying such a
- * socket can never settle: the stone it might drop sits `unknown` across the route for ever, and the entry
- * run stalls on a square nothing will ever occupy.
- *
- * The reason is the same shape as `neverReached`, which is why it sits beside it: _"whatever you do, the
- * light never gets to that socket — so what it would have moved stays put."_ The difference is what it is
- * about. `neverReached` frees a piece the player may stop worrying about; this one settles a piece the
- * player never had, and tells them the socket is a place to avoid rather than a place to reach.
+ * The socket to steer clear of: a wiring firing in no answer at all is one the light must be kept away
+ * from, so its stone stays where it rests. Without this the stone sits `unknown` across the route for ever.
  */
 const wiringDead = (board: LightbeamBoard): LightbeamStep[] => {
   const wirings = board.puzzle.wirings ?? []
@@ -454,10 +382,7 @@ const wiringDead = (board: LightbeamBoard): LightbeamStep[] => {
   return steps
 }
 
-/**
- * The decoys. This is the family's own skill — the catalogue names "elimination of irrelevant pieces"
- * — and the only conclusion in any family that reads "this piece does not matter".
- */
+/** The decoys: the only conclusion in any family that reads "this piece does not matter". */
 const neverReached = (board: LightbeamBoard): LightbeamStep[] => {
   const survey = surveyWinners(board)
   if (!survey) return []
