@@ -2,7 +2,7 @@
 import { describe, it, expect, vi } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import localForage from "localforage"
-import { useOfflineStorage } from "./useOfflineStorage"
+import { readOfflineStore, useOfflineStorage, writeOfflineStore } from "./useOfflineStorage"
 
 // The hook builds one localForage instance per store name, lazily. Intercepting that first
 // construction for an unused store name gives a real backing store with a counted `getItem`.
@@ -259,5 +259,41 @@ describe("useOfflineStorage — a read that lands after the component is gone", 
 
     expect(first.current[0]).toBe("written after the second went away")
     expect(second.current[0]).toBe("seed")
+  })
+})
+
+// Carrying a save between devices: what comes out has to be what goes back in, keys and values
+// both, and the device being written to keeps nothing of its own.
+describe("reading and writing a whole store", () => {
+  it("round-trips every key, and replaces what was there", async () => {
+    const store = "transfer-test"
+    await writeOfflineStore(
+      { "pyramid-scheme-progression": { level: 3 }, "pyramid-scheme-mod-trap": { health: 5 } },
+      store
+    )
+
+    const exported = await readOfflineStore(store)
+    expect(exported).toEqual({
+      "pyramid-scheme-progression": { level: 3 },
+      "pyramid-scheme-mod-trap": { health: 5 },
+    })
+
+    // The receiving device had a save of its own; replacing leaves none of it.
+    await writeOfflineStore({ "pyramid-scheme-elsewhere": true }, store)
+    await writeOfflineStore(exported, store)
+    expect(await readOfflineStore(store)).toEqual(exported)
+  })
+
+  it("survives a round trip through JSON, which is how it travels", async () => {
+    const store = "transfer-json-test"
+    const save = {
+      "pyramid-scheme-journeys": [{ id: "starter_1", levelNr: 2, floorExploration: { "1:0": { open: true } } }],
+    }
+    await writeOfflineStore(save, store)
+
+    const text = JSON.stringify(await readOfflineStore(store))
+    await writeOfflineStore(JSON.parse(text), store)
+
+    expect(await readOfflineStore(store)).toEqual(save)
   })
 })

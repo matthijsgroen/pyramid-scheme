@@ -159,6 +159,16 @@ describe("translating a save written in coordinates", () => {
     expect(Object.keys(migrated)).toEqual([`3:${room.section}`])
   })
 
+  it("re-keys a save written before the coordinate archive existed, instead of crashing the launch", () => {
+    // Every save with an old cellKeyVersion comes through here, including ones from before
+    // exploredSections was written at all. Nothing to translate is not the same as nothing to do.
+    const migrated = migrateJourneyToCarveIndependent({ levelNr: 1 }, () => null)
+
+    expect(migrated.exploredCells).toEqual({})
+    expect(migrated.positionKey).toBeNull()
+    expect(migrated.disabledTraps).toEqual([])
+  })
+
   it("re-keys a whole save — position, traps, stock and consumables along with the rooms", () => {
     const grid = floorOf(3, 0)
     const room = someRoom(grid)

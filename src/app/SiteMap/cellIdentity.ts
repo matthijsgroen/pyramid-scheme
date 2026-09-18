@@ -216,7 +216,10 @@ export type CarveIndependentState = {
 
 type Migratable = {
   levelNr: number
-  exploredSections: Record<string, string[]>
+  /** The coordinate archive to translate. Absent in a save written before there was one, which still
+   * comes through here on its cellKeyVersion: there is nothing to translate, so it re-keys to empty
+   * rather than taking the launch down with it. */
+  exploredSections?: Record<string, string[]>
   position?: string | null
   disabledTraps?: string[]
   skippedConsumables?: string[]
@@ -262,7 +265,7 @@ export const migrateJourneyToCarveIndependent = (
     return grids.get(key) ?? null
   }
 
-  const floors = floorsIn(stored.exploredSections)
+  const floors = floorsIn(stored.exploredSections ?? {})
   const levels = [...new Set(floors.map(([levelNr]) => levelNr))]
   const translate = (edgeIds: readonly string[] | undefined): string[] => [
     ...new Set((edgeIds ?? []).flatMap(edgeId => addressesForEdge(edgeId, levels, cached))),
@@ -311,7 +314,7 @@ export const migrateJourneyToCarveIndependent = (
   const positionGrid = stored.position ? cached(stored.levelNr, positionFloor) : null
 
   return {
-    exploredCells: migrateExploredToCells(stored.exploredSections, cached),
+    exploredCells: migrateExploredToCells(stored.exploredSections ?? {}, cached),
     positionKey: positionGrid ? cellAddress(positionGrid, positionFloor, pr, pc) : null,
     disabledTraps: translate(stored.disabledTraps),
     skippedConsumables: translate(stored.skippedConsumables),
