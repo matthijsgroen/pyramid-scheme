@@ -85,11 +85,10 @@ reaches zero.
 
 A second rule holds the sibling boundary: a file under `src/mods/<A>/` may not import
 `@/mods/<B>/`, because a mod that names a sibling is only removable together with it. That one
-stands at **1** — `hieroglyph/app/TombPuzzle.tsx` reads `usePuzzleProgress` for the scribes-eye
-level, which `puzzle/app/index.ts` declares puzzle-owned while the only thing that renders it is
-hieroglyph's tableau. It surfaced when `TombPuzzle` moved out of core: the dependency was always
-there, just hidden behind core as an intermediary. Whether scribes-eye belongs to puzzle, to
-hieroglyph, or behind a perk-level seam is an open question, not a mechanical fix.
+stands at **0**. It briefly stood at 1, when `TombPuzzle` moved out of core and its read of
+puzzle's `usePuzzleProgress` stopped having core to hide behind — the scribes-eye perk, declared
+puzzle-owned while the only thing rendering it was hieroglyph's tableau. The perk was retired
+rather than rehomed, which settled the ownership by removing the thing owned.
 
 A hit is fixed by **inverting the dependency** — the fact moves into the owning mod and
 core reads it back through a registry — not by widening the rule's allowlist. A core

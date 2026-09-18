@@ -177,7 +177,7 @@ the Collection's bonus label: `describe(perk)` returns the first owner's transla
 label (undefined if none). Payload is an open descriptor `{ type, level? }` — each mod
 coins its own perk ids, no shared union. Perk MEANING lives with its owner: trap owns
 max-health / armor / trap-insight / pack-mule / consumable-detector (`useTrapProgress`),
-hieroglyph owns compass, puzzle owns scribes-eye (`usePuzzleProgress`), core owns only
+hieroglyph owns compass, core owns only
 corridor-detection (`mods/core/app/index.ts`). Detector levels read
 through a parallel merged accessor `useMergedDetectorLevels()`
 (`src/app/SiteMap/detectorLevels.ts`: compass←hieroglyph, supplies←trap, corridor←core)

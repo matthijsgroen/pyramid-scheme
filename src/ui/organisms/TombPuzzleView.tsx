@@ -16,10 +16,7 @@ export const TombPuzzleView: FC<{
   filledState: FilledTileState
   resolveTile: HieroglyphSymbolResolver
   hintFormulas: OrderedFormula[]
-  annotations: Record<string, string>
   onTileClick?: (symbolId: string, position: string) => void
-  onAnnotationChange?: (symbolId: string, value: string) => void
-  scribesEyeSlots?: number
   isPuzzleCompleted: boolean
   lockState: ChestState
   lockValue: string
@@ -37,10 +34,7 @@ export const TombPuzzleView: FC<{
   filledState,
   resolveTile,
   hintFormulas,
-  annotations,
   onTileClick,
-  onAnnotationChange,
-  scribesEyeSlots,
   isPuzzleCompleted,
   lockState,
   lockValue,
@@ -82,10 +76,7 @@ export const TombPuzzleView: FC<{
           filledState={filledState}
           resolveTile={resolveTile}
           hintFormulas={hintFormulas}
-          annotations={annotations}
           onTileClick={onTileClick}
-          onAnnotationChange={onAnnotationChange}
-          scribesEyeSlots={scribesEyeSlots}
         />
         {!isPuzzleCompleted && (
           <HieroglyphInventoryStrip title={inventoryTitle} items={inventoryItems} onItemClick={onInventoryItemClick} />

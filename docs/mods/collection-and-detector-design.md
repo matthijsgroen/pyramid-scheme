@@ -143,8 +143,7 @@ The "detectors" are NOT one mechanic. Three distinct effects, do not conflate:
 | **compass** (hieroglyph fragments) | active target mode | **hieroglyph** | `detectorScanners` (hieroglyph registers the scanner) | precision **narrows inward** with level        |
 | **supplies** (consumables)         | active target mode | **trap**       | `useDetector` reads skipped-consumable chests         | precision **narrows inward** (same as compass) |
 
-`max-health`/`armor`/`trap-insight`/`pack-mule` (trap) and `scribes-eye` (puzzle) are
-the non-detector perks. Detection is the only detector core owns — because a hidden
+`max-health`/`armor`/`trap-insight`/`pack-mule` (trap) are the non-detector perks. Detection is the only detector core owns — because a hidden
 corridor is core map structure; compass/supplies serve a mod's gameplay (fragments /
 consumables) so they belong to that mod.
 
@@ -215,7 +214,6 @@ written on claim, so holding the treasure _is_ holding the perk:
 | --------------------------------- | ----------------------------------------------------------------- |
 | trap `useTrapProgress`            | max-health, armor, trap-insight, pack-mule, **supplies-detector** |
 | hieroglyph progress hook          | **compass**                                                       |
-| puzzle progress hook              | scribes-eye                                                       |
 | core `mods/core/app/index.ts`     | **corridor-detector**                                             |
 
 The `DetectorPanel` (core UI) reads its three levels from a **merged detector-level
@@ -262,7 +260,7 @@ Collection treasure sections show all-empty). Unify:
   own perk-id strings. No shared union. Boot/test **assertion**: every stat-perk type in
   `TREASURE_PERKS` has a registered `grant` (guards the silent-no-op typo risk).
 - **Perk state homes** (§7.4 table): trap owns max-health/armor/trap-insight/pack-mule/
-  supplies-detector; hieroglyph owns compass; puzzle owns scribes-eye; core owns
+  supplies-detector; hieroglyph owns compass; core owns
   corridor-detector only. Resolves the `maxHealth` duplication (trap's copy becomes the
   single source).
 - **Detector ownership**: corridor=core, compass=hieroglyph, supplies=trap. `DetectorPanel`
@@ -290,7 +288,6 @@ value, `toLevel` = `max(cur, grantedLevel)`.
 | supplies-detector | trap       | `consumableDetectorLevel` | 3   | toLevel | supplies detector                                                                   |
 | compass           | hieroglyph | `compassLevel`            | 3   | toLevel | fragment compass                                                                    |
 | corridor-detector | core       | `detectionLevel`          | 4   | toLevel | hidden-corridor reveal                                                              |
-| scribes-eye       | puzzle     | `scribesEyeLevel`         | 3   | toLevel | tableau hint slots; `TombPuzzle`/`TombTableau`                                      |
 
 Non-perk `TREASURE_PERKS` types (`tier-unlock`/`location-key`/`none`) are NOT granted via the
 seam — `addTombKey` + discovery handle them; tomb-treasure `describe`s their Collection line itself.

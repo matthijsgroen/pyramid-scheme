@@ -45,7 +45,6 @@ export const InProgress: Story = {
         filledState={{ symbolCounts: {}, filledPositions: {} }}
         resolveTile={resolveTile}
         hintFormulas={calculation.hintFormulas.map((f, i) => ({ formula: f, index: i }))}
-        annotations={{}}
         isPuzzleCompleted={false}
         lockState="empty"
         lockValue=""
