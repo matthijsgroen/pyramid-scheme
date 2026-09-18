@@ -45,6 +45,32 @@ export default tseslint.config(
       },
     },
     {
+      // **Core names no mod** (docs/mods/TARGET.md): core owns mechanisms, a mod owns meaning, so a
+      // core file reaching into `@/mods/<name>/` is core knowing a mechanic it must be able to build
+      // without. The seams that stay open are the aggregates a mod registers itself through —
+      // `registeredMods`, `allFamilyMeta`, `registerModApps` — and `@/mods/core/`, which is the
+      // engine rather than a mod.
+      //
+      // ponytail: warn-level backlog. Every hit is a real one, and each is inverted by moving the
+      // fact into the owning mod and reading it back through a registry, not by widening this rule.
+      // `yarn lint`'s --max-warnings pins the count so the backlog can only shrink.
+      files: ["src/app/**/*.{ts,tsx}", "src/ui/**/*.{ts,tsx}", "src/{game,data,worldGen}/**/*.{ts,tsx}"],
+      rules: {
+        "@typescript-eslint/no-restricted-imports": [
+          "warn",
+          {
+            patterns: [
+              {
+                group: ["@/mods/*/**", "!@/mods/core/**"],
+                message:
+                  "Core must not name a mod (docs/mods/TARGET.md). Move the fact into the owning mod and read it back through a registry.",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
       files: ["**/*.{ts,tsx}"],
       extends: [tailwind.configs.recommended],
       settings: {

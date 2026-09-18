@@ -67,3 +67,32 @@ Core owns _mechanisms_; mods own _meaning_.
 Vertical slices — one mod fully to target at a time, each ending in a toggle-off
 proof — not a horizontal "make all of core generic first" rewrite (that shape has
 no unfakeable checkpoint). Per-slice steps live in `docs/mods/SLICE-CHECKLIST.md`.
+
+## How the boundary is held while it is still being built
+
+`@typescript-eslint/no-restricted-imports` in `eslint.config.js` reports a core file
+importing `@/mods/<name>/` — `src/app/`, `src/ui/`, `src/game/`, `src/data/` and
+`src/worldGen/`. Two seams stay open by design: the top-level aggregates a mod
+registers itself through (`registeredMods`, `allFamilyMeta`, `registerModApps`,
+`allCurrencyDistributions`) and `@/mods/core/`, which is the engine rather than a mod.
+
+It is a **warning**, because 24 real hits predate it — `hieroglyph` and `tombTreasure`
+hold most of them, read straight from `TombPuzzle`, `useDevActions`, `Travel` and
+`TableauInventory`. `yarn lint` runs with `--max-warnings` pinned at the current total,
+so the backlog can only shrink: a new violation fails the run, and clearing one means
+lowering the pin in the same commit. Flip the rule to `error` and drop the pin once it
+reaches zero.
+
+A hit is fixed by **inverting the dependency** — the fact moves into the owning mod and
+core reads it back through a registry — not by widening the rule's allowlist. A core
+_spec_ counts too: a spec that imports a mod breaks the toggle-off gate as surely as
+production code does.
+
+Placement is a separate question the rule cannot see: a file under `mods/core/` that
+only one mod ever imports belongs to that mod, whichever way the imports point.
+`useCelebration` moved to `mods/puzzle/app/` on exactly that ground. Still in core and
+genuinely shared, so staying: `PuzzleFamilyShell` (puzzle, hieroglyph, trap),
+`useHintAvailability` (puzzle, trap) and `puzzleState` (puzzle, and core's own
+`SiteMapScreen`/`useEncounter`). `keyGate` and `treasureChest` are families core
+registers itself — making either a mod is a slice with its own toggle-off proof
+(`SLICE-CHECKLIST.md`), not a file move.
