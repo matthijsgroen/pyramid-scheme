@@ -9,7 +9,7 @@ const meta = {
       control: "select",
       options: ["short", "medium", "long"],
     },
-    type: {
+    exterior: {
       control: "select",
       options: ["pyramid", "treasure_tomb"],
     },
@@ -26,7 +26,7 @@ export const Pyramid: Story = {
     levelCount: 5,
     levelNr: 3,
     journeyLength: "medium",
-    type: "pyramid",
+    exterior: "pyramid",
     onClick: () => console.log("Journey path clicked"),
   },
 }
@@ -38,7 +38,7 @@ export const TreasureTomb: Story = {
     levelCount: 4,
     levelNr: 2,
     journeyLength: "long",
-    type: "treasure_tomb",
+    exterior: "tomb",
     onClick: () => console.log("Journey path clicked"),
   },
 }
@@ -50,7 +50,7 @@ export const NotStarted: Story = {
     levelCount: 5,
     levelNr: 1,
     journeyLength: "short",
-    type: "pyramid",
+    exterior: "pyramid",
     onClick: () => console.log("Journey path clicked"),
   },
 }
@@ -62,7 +62,7 @@ export const WithNudge: Story = {
     levelCount: 5,
     levelNr: 1,
     journeyLength: "short",
-    type: "pyramid",
+    exterior: "pyramid",
     nudge: true,
     onClick: () => console.log("Journey path clicked"),
   },

@@ -14,7 +14,7 @@ const renderView = (unexploredNodes?: ReadonlySet<number>) =>
       levelCount={3}
       levelNr={2} // currentIdx = 1 → node index 0 completed, node 1 current, node 2 future
       journeyLength="long"
-      type="pyramid"
+      exterior="pyramid"
       unexploredNodes={unexploredNodes}
     />
   )

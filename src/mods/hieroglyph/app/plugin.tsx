@@ -9,8 +9,9 @@ import {
 import type { Operation } from "@/game/formulas/formulas"
 import { TombPuzzle } from "./TombPuzzle"
 import { getTableauLevel, TABLEAUS_PER_FLOOR, type TableauLevel } from "../game/tableaus"
+import { TOMB_JOURNEYS } from "@/worldGen/data"
 import { tombFormulaFor } from "../game/tombFormula"
-import { journeys, type TreasureTombJourney } from "@/data/journeys"
+import { journeys } from "@/data/journeys"
 import { useTableauTranslations } from "@/mods/hieroglyph/app/useTableauTranslations"
 import { tableauEncounterArgsSchema } from "@/mods/hieroglyph/game/keyRequirements"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
@@ -87,9 +88,7 @@ if (isModEnabled("hieroglyph"))
       // ctx.encounterArgs on the same schema the world-gen resolver reads; levelNr is its
       // structural pathIndex+1.
       const parsed = tableauEncounterArgsSchema.safeParse(ctx.encounterArgs)
-      const journey = journeys.find(
-        (j): j is TreasureTombJourney => j.id === ctx.journeyId && j.type === "treasure_tomb"
-      )
+      const journey = journeys.find(j => j.id === ctx.journeyId && j.exterior === "tomb")
       if (parsed.success && journey) {
         const levelNr = (ctx.pathIndex ?? 0) + 1
         const tableau = getTableauLevel(ctx.journeyId, parsed.data.runNr, levelNr)
@@ -99,7 +98,7 @@ if (isModEnabled("hieroglyph"))
           const roomsPerFloor = TABLEAUS_PER_FLOOR[journey.difficulty]
           const escalation = {
             position: (parsed.data.runNr - 1) * roomsPerFloor + levelNr,
-            total: journey.levelCount * roomsPerFloor,
+            total: (TOMB_JOURNEYS.find(t => t.id === ctx.journeyId)?.levelCount ?? 1) * roomsPerFloor,
           }
           return generateRewardCalculation(
             buildTombCalculationSettings(tombFormulaFor(ctx.journeyId), tableau, escalation),

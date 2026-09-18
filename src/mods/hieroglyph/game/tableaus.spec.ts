@@ -2,11 +2,17 @@ import { describe, it, expect } from "vitest"
 import { generateTableaus, type TableauLevel, tableauLevels, TOMB_SYMBOLS, TABLEAUS_PER_FLOOR } from "./tableaus"
 import tableausTranslations from "../../../../public/locales/en/tableaus.json"
 import { egyptianAnimals, egyptianArtifacts, egyptianDeities, egyptianProfessions } from "./symbolCatalogue"
-import { journeys, type TreasureTombJourney } from "@/data/journeys"
+import { TOMB_JOURNEYS } from "@/worldGen/data"
 import { tombFormulaFor } from "./tombFormula"
 import type { Difficulty } from "@/data/difficultyLevels"
 
-const tombJourneys = journeys.filter((j): j is TreasureTombJourney => j.type === "treasure_tomb")
+// Tombs with their FLOOR counts, off the table world-gen builds from — a tomb journey's own
+// levelCount is its single map node.
+const tombJourneys = TOMB_JOURNEYS.map(tomb => ({
+  id: tomb.id,
+  difficulty: tomb.tier as Difficulty,
+  levelCount: tomb.levelCount,
+}))
 
 describe("Tableau System", () => {
   // N tableau rooms per tomb floor (pyramid-interior-design.md) — a tier's tomb may be split
@@ -56,7 +62,7 @@ describe("Tableau System", () => {
     })
 
     it("secondary tombs of the same tier get independent symbol allocations, not a copy of the primary", () => {
-      const byTier = new Map<Difficulty, TreasureTombJourney[]>()
+      const byTier = new Map<Difficulty, (typeof tombJourneys)[number][]>()
       for (const tomb of tombJourneys) byTier.set(tomb.difficulty, [...(byTier.get(tomb.difficulty) ?? []), tomb])
       for (const [, tombs] of byTier) {
         if (tombs.length < 2) continue

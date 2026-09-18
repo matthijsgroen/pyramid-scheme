@@ -209,7 +209,7 @@ describe("the room slot, across the whole authored world", () => {
       for (const section of sections) if (!withRoom.has(section)) roomless.push(`${journeyId} L${levelNr} ${section}`)
     }
 
-    expect(slots).toBeGreaterThan(5000)
+    expect(slots).toBeGreaterThan(3500)
     expect(collisions).toEqual([])
     expect(roomless).toEqual([])
   }, 120_000)

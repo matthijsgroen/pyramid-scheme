@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- A tomb's card no longer shows a progress percentage. It was counting the tomb's floors as if they
+  were stops on a journey, which they are not — a tomb is one place you keep going back into.
+
 ### Fixed
 
 - A tomb is announced as newly open when its own map is complete. It used to be announced once every

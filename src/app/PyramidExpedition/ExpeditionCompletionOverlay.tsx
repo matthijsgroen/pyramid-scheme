@@ -1,7 +1,7 @@
 import { useJourneyTranslation } from "@/app/translations/useJourneyTranslations"
 import { use, useEffect, type FC } from "react"
 import { useTranslation } from "react-i18next"
-import { journeys as allJourneys, type PyramidJourney } from "@/data/journeys"
+import { journeys as allJourneys, type Journey } from "@/data/journeys"
 import { useJourneys, type CombinedJourneyState } from "../state/useJourneys"
 import { useMergedJourneyContributions } from "@/app/pages/journeyContributions"
 import { FezContext } from "../fez/context"
@@ -15,7 +15,7 @@ export const ExpeditionCompletionOverlay: FC<{
   const { t } = useTranslation("common")
   const { getJourney } = useJourneys()
   const { lock } = useMergedJourneyContributions()
-  const journey = activeJourney.journey as PyramidJourney
+  const journey = activeJourney.journey as Journey
   const { showConversation } = use(FezContext)
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export const ExpeditionCompletionOverlay: FC<{
 
   // The tier's tomb, announced the run its lock comes open — asking the lock itself, so a tomb
   // whose pieces are shared with a sibling tomb is judged on what it actually needs.
-  const tombJourney = allJourneys.find(j => j.type === "treasure_tomb" && j.difficulty === journey.difficulty)
+  const tombJourney = allJourneys.find(j => j.exterior === "tomb" && j.difficulty === journey.difficulty)
   const tombLock = tombJourney ? lock(tombJourney.id) : undefined
   const tombState = tombJourney ? getJourney(tombJourney.id) : undefined
   const newTombJourneyId =

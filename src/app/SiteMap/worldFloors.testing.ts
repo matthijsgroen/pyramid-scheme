@@ -20,10 +20,10 @@ export type Floor = {
 export const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
   getFamilyPlugin(familyId)?.meta.resolveKeyRequirements?.(ctx)
 
-// Every floor a player can be sent into, at the exact seed the runtime will use.
-// Mirrors PyramidExpedition: one site per level number (1-based), falling back to the first
-// site config when a journey has more levels than site configs, and SiteMapScreen's own
-// per-floor seed offset.
+// Every floor a player can be sent into, at the exact seed the runtime will use. Mirrors
+// PyramidExpedition (one site per level number, 1-based) and SiteMapScreen's own per-floor seed
+// offset. A journey has exactly one node per site, so every level number here is one a player can
+// actually be sent to.
 export const allFloors = (): Floor[] => {
   const floors: Floor[] = []
   for (const journey of journeys) {
@@ -32,7 +32,7 @@ export const allFloors = (): Floor[] => {
     const siteSeed = persistentInteriorSeed(journey.id)
     for (let levelNr = 1; levelNr <= journey.levelCount; levelNr++) {
       const levelIndex = levelNr - 1
-      const site = siteConfigs[levelIndex] ?? siteConfigs[0]
+      const site = siteConfigs[levelIndex]
       site.forEach((config, floorIndex) => {
         floors.push({
           label: `${journey.id} level ${levelNr} floor ${floorIndex}`,
