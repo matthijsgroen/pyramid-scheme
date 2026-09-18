@@ -74,16 +74,12 @@ const defaultResolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
 // be re-shaped end to end while every hash held still, and a run would restore its explored cells
 // onto a maze that no longer exists. See docs/game-design/world-spec-stability.md.
 //
-// `isolated` is why an encounter is not in here directly. The assembler reads a section's encounter
-// for exactly one layout decision — a trap gets cut off from stray tree edges, the same treatment a
-// gate gets — so the hash records that decision rather than the encounter behind it. Swapping a
-// section from one puzzle family to another is then invisible to a save, which is the point: a
-// pyramid's encounters are authored per pyramid and re-authored often.
-// The hash as it was computed before `isolated` replaced `sealed`/`encounter` above. Assembled onto
-// every cell as `legacySectionHash` purely so a save written under the old scheme keeps matching its
-// own cells: without it, every section in the world would rehash at once, and since a looted room is
-// remembered only by its explored-cell entry, every chest would come back unlooted. Delete both of
-// these once no live save predates the change.
+// `isolated` is why an encounter is not in here directly: the assembler reads a section's encounter for
+// exactly one layout decision — cutting a trap off from stray tree edges — so the hash records that
+// decision, not the encounter. Swapping a section to another puzzle family is then invisible to a save.
+//
+// `legacySectionHash` is the same hash without that substitution, carried on every cell so a save written
+// under the old scheme keeps matching its own cells. Delete both once no live save predates it.
 const computeLegacyMainSectionHash = (config: FloorConfig): string =>
   String(
     hashString(
@@ -589,21 +585,15 @@ export const assembleFloor = (
 
   const nid = (r: number, c: number) => `${siteId}-${r}-${c}`
 
-  // Attempts 0..RECOVERY_ATTEMPT-1 are FROZEN: same starting N, same growth cadence, same
-  // chain lengths, same per-attempt seed as before the recovery phase existed. A pyramid/tomb
-  // interior is a persistent, revisitable place whose stored exploredSections and position are
-  // keyed to its layout (useJourneys' isPersistentInterior), so re-sizing a floor that already
-  // assembles would silently invalidate a player's progress on it.
+  // Attempts 0..RECOVERY_ATTEMPT-1 are FROZEN. A pyramid interior is persistent and revisitable, its
+  // stored exploredSections keyed to its layout, so re-sizing a floor that already assembles would
+  // silently invalidate progress on it.
   //
-  // Only a floor that has exhausted the original budget — one nobody can currently enter at
-  // all, so there is no progress to protect — enters recovery. There, each attempt sizes the
-  // grid to what the carve genuinely needs (`carvedCells`, the figure the original sizing
-  // should always have used) while winding `chainPacking` down from `packing` to 0, so the
-  // floor is retried across the whole spectrum from "every side path as windy as authored" to
-  // "every side path at its bare content length". The last attempt is therefore the most
-  // permissive shape this config can take, which is what makes the phase converge instead of
-  // just rerolling the same too-tight puzzle. Cosmetically shorter side paths on a floor that
-  // was previously unreachable is a plain win.
+  // Only a floor that has exhausted the budget — one nobody can enter, so there is no progress to
+  // protect — enters recovery. Each attempt then sizes the grid to what the carve needs (`carvedCells`)
+  // while winding `chainPacking` from `packing` down to 0, so the last attempt is the most permissive
+  // shape this config can take. That is what makes the phase converge rather than reroll the same
+  // too-tight puzzle.
   for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
     if (attempt >= RECOVERY_ATTEMPT) {
       const steps = Math.max(1, ASSEMBLY_ATTEMPTS - RECOVERY_ATTEMPT - 1)
@@ -1075,22 +1065,14 @@ export const assembleFloor = (
     const posKey = (r: number, c: number) => `${r},${c}`
 
     // ── Gate isolation ──────────────────────────────────────────────────────────
-    // `passages` is a spanning tree over the *entire* node lattice, built once before
-    // any section exists — most of its edges never get walked by main-path/section/
-    // sub-section construction, but any two used cells that happen to be tree-adjacent
-    // still read as a real door once dirs get computed below (see the two loops after
-    // `cells2D` is allocated). For plain content that's a harmless bonus: a stray
-    // loop or shortcut nobody planned but nobody minds either. For gated content it's
-    // a softlock/bypass — a section only exists behind its gate because the gate is
-    // its *only* legitimate entrance, so it must never gain a "free" extra door from
-    // a leftover tree edge. Trapped content gets the same treatment even without a
-    // gate: a stray door would let a player step past a trap cell for free.
-    // `intendedEdgeKeys` records the edges each chain actually walked (main path, and
-    // each section's/sub-section's attach point through its own cells in order);
-    // `gatedCellKeys` marks every cell behind a gate or trap, including a gated/trapped
-    // section's plain sub-sections (still behind the same outer gate/trap) and a plain
-    // section's own gated/trapped sub-section. A door is allowed if it's an intended
-    // edge, or if neither endpoint is gated/trapped content.
+    // `passages` spans the entire node lattice, so two used cells that happen to be tree-adjacent read
+    // as a real door even though no chain walked that edge. Harmless for plain content; for gated
+    // content it is a bypass, since a gate is a section's only legitimate entrance. Traps get the same
+    // treatment — a stray door steps past the trap cell for free.
+    //
+    // `intendedEdgeKeys` holds the edges each chain actually walked; `gatedCellKeys` every cell behind a
+    // gate or trap, sub-sections included. A door is allowed if it is intended, or if neither endpoint
+    // is gated.
     const gatedCellKeys = new Set<string>()
     const intendedEdgeKeys = new Set<string>()
     const markChain = (attachedAt: [number, number], chainCells: Array<[number, number]>) => {
@@ -1620,24 +1602,17 @@ export const assembleFloor = (
       pool?.length ? pool[hashString(`${siteId}:${salt}:${pk}`) % pool.length] : undefined
 
     /**
-     * A ROOM SERVES ONE PURPOSE, and what hangs on its wall agrees with what stands in it.
+     * A room serves one purpose: what hangs on its wall agrees with what stands in it, so a player can
+     * say "this is the storeroom", "this is where they prayed".
      *
-     * The two were drawn independently before, with different salts specifically so they would not
-     * correlate. That bought variety and cost meaning: a wing whose pool spans two places could stand a
-     * sarcophagus under a tally board, and a floor of such rooms reads as furniture distributed rather
-     * than as somewhere anyone lived. What a player should be able to say walking in is "this is the
-     * storeroom", "this is where they sold", "this is where they washed", "this is where they prayed".
+     * **The prop leads** — it is the room's statement and the wall item follows. Narrowing both pools by
+     * a shared purpose instead lets the thin wall catalogue decide which props exist at all: the
+     * merchant hangs only a goods niche and a tally board, which would delete his statue, shrine, basin,
+     * hanging and brazier from the rank.
      *
-     * THE PROP LEADS. It is the room's statement; the wall item follows it. Narrowing both pools by a
-     * shared purpose instead — the first attempt — let the WALL pool decide which props could exist at
-     * all, and the catalogue is far too thin for that: the merchant hangs only a goods niche and a tally
-     * board, which speak trade, so his statue, shrine, basin, hanging and brazier all disappeared from
-     * the rank. Five kinds of furniture deleted by two wall items is the tail wagging the dog.
-     *
-     * Where the wall pool has nothing to say about the prop's purpose, it simply draws as before. A room
-     * that says nothing is the cheaper mistake: forcing the wall to speak whenever the prop is universal
-     * was measured at taking floors where ONE wall item fills three quarters of the rooms from 19 to 27
-     * of 97, and a floor repeating one furnished corner reads worse than a floor with plain rooms on it.
+     * Where the wall pool has nothing to say about the prop's purpose it draws freely. Forcing it to
+     * speak for a universal prop takes floors where one wall item fills three quarters of the rooms from
+     * 19 to 27 of 97, and a floor repeating one furnished corner reads worse than one with plain rooms.
      */
     const wallSuiting = (pool: WallDecorationKind[], prop: DecorationKind | undefined) => {
       const purposes = prop ? rolesOfProp(prop) : undefined
@@ -1656,33 +1631,20 @@ export const assembleFloor = (
     const dressedPositions = [...new Set([...forkPositions, ...endpointPositions])]
 
     /**
-     * A DEDICATED FLOOR SHOWS ITS GOD AT LEAST ONCE — a guaranteed count, not a raised probability.
+     * A dedicated floor shows its god at least once — a guaranteed count, not a raised probability.
      *
-     * A patron reaches the map through five kinds and no others (`patronTileUrl`), so on a pyramid that
-     * names a god every room drawing something else is a room where the dedication is invisible. The
-     * obvious fix is to weight those kinds in the pool, and it was built and measured first: it does
-     * not work. Weighting multiplies a share, and the share is tiny — the whole nobleman rank holds
-     * eight statue rooms, because only forks and dead ends dress at all — so tripling it moved his
-     * Thoth statue from one room to two while costing `master/niche` forty-five rooms and inventing
-     * four new patron pairings nobody had painted. It raised the art debt from 137 rooms owed to 215.
+     * Weighting the five patron kinds in the pool does not work: the share is tiny (the nobleman rank
+     * holds eight statue rooms, since only forks and dead ends dress at all), so tripling it moves one
+     * statue to two while costing `master/niche` forty-five rooms and inventing four unpainted pairings
+     * — art debt from 137 rooms owed to 215. A floor is the right unit and a count the right instrument.
      *
-     * A floor is the right unit and a count is the right instrument. One room per floor is taken and
-     * given to the god, so a dedicated site shows him once wherever you are in it, and the cost is
-     * exactly one room per floor rather than a shifted distribution across every rank.
+     * The god takes **the biggest** eligible room, ranked by the floor it draws (`canClaimVoid`: the free
+     * part of its own 3x3), hash breaking ties only. A dedication the player walks past in a cupboard
+     * while the hall next door holds jars is not a dedication. Size earns its keep twice — the biggest
+     * room is likeliest to have the two spare cells `companionProps` needs for a second statue, and a
+     * pair flanking a wall reads as a shrine where one in a corner reads as furniture.
      *
-     * WHICH room is THE BIGGEST ONE, and that is the whole point of a temple. A god given a random
-     * eligible room lands in a side pocket as often as not, and a dedication the player walks past in a
-     * cupboard while the hall next door holds jars is not a dedication. So the eligible rooms are ranked
-     * by how much floor they will draw — the free cells around them, which is the footprint the renderer
-     * claims (`canClaimVoid`: a room takes the free part of its own 3x3) — and the god takes the largest.
-     * Hash only breaks ties, so the choice stays stable and spread between floors of the same size.
-     *
-     * Size earns its keep twice: the biggest room is also the one most likely to have two spare cells,
-     * which is what `companionProps` needs before it can stand the god's SECOND statue beside the first.
-     * A pair flanking a wall reads as a shrine; one statue in a corner reads as furniture.
-     *
-     * Only rooms whose own pool can carry a patron are eligible — a section that never offered a statue
-     * is not made to.
+     * Only rooms whose own pool can carry a patron are eligible.
      */
     const patronRooms = new Set<string>()
     if (config.patron !== undefined && PATRON_PER_FLOOR > 0) {

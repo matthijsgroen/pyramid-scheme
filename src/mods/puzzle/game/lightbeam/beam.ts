@@ -15,10 +15,8 @@
  *             3 up-left    7 down-right
  * ```
  *
- * **An index rather than eight names, because the mirror law is arithmetic**: a mirror standing at
- * `angle` sends a beam travelling `travel` out along `angle - travel`. Eight
- * names buy nothing and leave that unwritable. `DIR` is here for the handful of places — authoring a
- * board, reading a test back — where a name says more than a number.
+ * **An index rather than eight names, because the mirror law is arithmetic**: a mirror at `angle` sends a
+ * beam travelling `travel` out along `angle - travel`. `DIR` names them where a name reads better.
  *
  * Even directions are square and odd ones diagonal, which is the parity a mirror either keeps or flips.
  */
@@ -95,12 +93,9 @@ export const isCut = (angles: readonly MirrorAngle[]): boolean =>
  * `MovablePiece` that put it there is gone, so a fact about the piece has to travel with the occupant or be
  * lost.
  *
- * It replaced a `cut: boolean`, and that field is worth remembering as a shape not to repeat: a rendering
- * hint smuggled through a physics value, and one that meant two different things depending on which branch
- * built it — the piece's list where `pieceOccupant` passed `angles`, the current angle alone where
- * `configGrid` fell back to the default below. A fixed mirror authored off the diagonals therefore drew as
- * a different species for no reason anyone had chosen. A single-element list says the honest thing instead:
- * this mirror has one position and no fork.
+ * A list rather than a `cut: boolean` — a rendering hint smuggled through a physics value means a fixed
+ * mirror authored off the diagonals draws as a different species. A single-element list says the honest
+ * thing: this mirror has one position and no fork.
  */
 export type Blocker = { kind: "mirror"; angle: MirrorAngle; stops: readonly MirrorAngle[] } | { kind: "wall" }
 
@@ -322,17 +317,12 @@ type Resolver = (at: CellRef) => CellContent
  * between two corners, and the wall glyph is drawn with rounded corners so the gap is visible rather than
  * being a rule to learn. There is nothing here to implement — the point is that nothing was added.
  *
- * Loop detection is what keeps this walk total, but on this family's pieces it is a guard rather than a
- * game state: whatever angle a mirror stands at, `reflect` is a bijection in the beam's direction, so
- * `(cell, direction)` has exactly one predecessor and the disc's first state has none. A beam from the
- * disc therefore walks a path and can never join a ring — a ring of mirrors is only reachable by starting
- * inside it (beam.spec.ts proves both halves).
+ * Loop detection keeps the walk total, but is a guard rather than a game state: `reflect` is a bijection
+ * in the beam's direction, so `(cell, direction)` has one predecessor and the disc's first state has none.
+ * A beam from the disc walks a path and can never join a ring (beam.spec.ts proves both halves).
  *
- * Eight directions do not weaken that, and they were the case it was written for. What they add is
- * **retroreflection**: a beam meeting a mirror square on its back — `angle - travel === travel + 4` —
- * comes straight back down its own line. Injectivity survives (the keys are `(cell, direction)`, and the
- * return trip travels the other way), so the beam retraces to the disc and is absorbed there, which is
- * both what the guard allows and what light does.
+ * **Retroreflection** survives that: a beam meeting a mirror square on its back — `angle - travel ===
+ * travel + 4` — returns down its own line, travelling the other way, and is absorbed at the disc.
  */
 export const walkForward = (
   size: number,

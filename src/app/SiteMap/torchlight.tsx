@@ -15,56 +15,36 @@ import { LIT_STRENGTH, litPlaceCells } from "./lighting"
 // ─── Torchlight on the place the player is standing ─────────────────────────────
 
 /**
- * The room or corridor cell the explorer is in, washed warm — the same torch that pools at their feet
- * reaching the walls around them.
+ * The room or corridor cell the explorer is in, washed warm.
  *
- * A CHAMBER lights whole: a torch carried into a small room lights the room, and lighting one cell of it
- * would draw a square of light on a floor with no edge to justify it. A corridor lights only the cell
- * stood in, because a corridor has no extent to fill.
+ * A chamber lights whole — lighting one cell of it would draw a square of light with no edge to justify
+ * it — and a corridor lights only the cell stood in, having no extent to fill. It stops AT the place: no
+ * bleed onto whatever sits next to it, which grid adjacency would light through a wall.
  *
- * Screen-blended and weak on purpose. This sits under the player for the whole game, so it has to read as
- * the stone being lit rather than as a coloured overlay on top of it — and it must never compete with the
- * state washes that tell the player what is explored.
+ * Weak on purpose. The pool at the explorer's feet does the close light, so a strong wash here is the same
+ * light drawn twice and reads as a bright tile. It must still clear an UNVISITED room, since `completed`
+ * washes a visited one 20% darker: on starter stone, 102 against an unvisited 96 and a visited 77.
  */
-// Weak, flat across the place, and it stops AT the place — no bleed onto what happens to sit next to it.
-// Spilling onto neighbours used grid adjacency rather than connectivity, so a corridor with a wall between
-// it and the room lit up anyway; and the map already tells the player what is reachable.
-// The pool at the explorer's feet already does the close light;
-// this only has to say which room they are in, so a strong wash under the player was the same light drawn
-// twice and read as a bright tile rather than a lit room. It still has to clear an UNVISITED room, since
-// `completed` washes a visited one 20% darker and standing somewhere must not be dimmer than never having
-// been there — on starter stone that puts the place at 102 against an unvisited 96 and a visited 77.
 
 /**
- * What a torch lays on the stone around it — the CLIP says where light can land, this says how much of it
- * lands where, and the second half is the one that was missing.
+ * How much light lands where — the clip says where it can land at all.
  *
- * A FLAT FILL IS NOT LIGHT. The lit place was one opacity across its whole shape, so a lit room was a
- * rectangle of floor raised by a fixed amount: no falloff, no centre, nothing to say where the flame was.
- * That reads as a highlight laid over a floorplan, and it is most of what "dull" meant — the only part of
- * the map that looked like light was the torch's own pool, which is the one thing on it drawn as a
- * gradient. Same shape, same clip, same single element and single paint: the fill is now a gradient about
- * the cell the explorer is standing in, so the light has a source.
+ * A gradient about the cell the explorer stands in, so the light has a source. A flat fill is a highlight
+ * laid over a floorplan: no falloff, no centre, nothing saying where the flame is.
  *
- * IT NEVER FALLS TO NOTHING, because the place is lit by rule — a torch carried along a passage lights the
- * passage as far as the next turn, however long that is (`litPlaceCells`). The far end of a long run
- * drops to a bit under half of what the near end gets, which is a corridor receding; taking it to zero
- * would be a torch that stops working at a distance the level design has already promised.
+ * It never falls to nothing, because the place is lit by rule — a passage lights as far as its next turn,
+ * however long (`litPlaceCells`). The far end of a long run keeps a bit under half the near end's light;
+ * zero would be a torch that stops at a distance the level design already promised.
  *
- * LIGHT SCALES THE STONE UP; IT DOES NOT ADD WHITE TO IT. That is the whole of the colour below, and it
- * is the same argument the night makes (`tileMaterials.ts`) read the other way round. A `screen` blend ADDS
- * light, and adding lifts the darks far more than the lights: the joints came up with the slabs and the
- * masonry flattened out. Measured on the starter floor, the lamp left **23% of the art's own texture** and
- * put the lit floor 20 L* ABOVE the stone it is cut from — a bleached cream room, where the unlit half of
- * the same map kept its grain. `color-dodge` DIVIDES instead (`backdrop / (1 − blend)`), which is a scale:
- * the art's ratios come through it, so the stone stays stone. Same measurement, same brightness: **102%**.
+ * **Light scales the stone up, it does not add white to it.** `screen` ADDS, and adding lifts darks more
+ * than lights, so joints come up with slabs and the masonry flattens: the lamp leaves 23% of the art's
+ * texture and puts the floor 20 L* above the stone it is cut from. `color-dodge` DIVIDES
+ * (`backdrop / (1 − blend)`), a scale, so the art's ratios survive at the same 102% brightness.
  *
- * WHICH IS WHY THESE STOPS ARE NOT WHITE-HOT. Under a dodge, any channel at 255 divides by zero and blows
- * that channel out — a near-white lamp turns the floor to paper, and a saturated one to neon (a 255-red
- * torch measured chroma 39 against the art's 9). A warm-leaning near-neutral is a finite scale per channel,
- * and because red is scaled a little harder than blue it comes out WARM without any of the light being
- * orange: chroma 22 on a floor painted at 9. The alpha ramp is the falloff, and only the falloff — one
- * flame, less of it further off.
+ * **Hence no white-hot stops.** Under a dodge any channel at 255 divides by zero and blows out — a
+ * near-white lamp turns the floor to paper, a saturated one to neon (a 255-red torch measures chroma 39
+ * against the art's 9). A warm-leaning near-neutral is a finite per-channel scale, and scaling red a
+ * little harder than blue reads warm without the light being orange: chroma 22 on floor painted at 9.
  */
 const TORCH_CORE = "rgba(160,150,134,1)"
 const TORCH_MID = "rgba(160,150,134,0.78)"
@@ -77,19 +57,13 @@ const TORCH_MIN_REACH = CELL * 2.2
 
 /** How far the light's own edge is softened (`ClipLayer`'s `feather`).
  *
- * THE EDGE WAS THE DEFECT, NOT THE LIGHT. The place is lit by rule — a room lights whole, a passage as far
- * as its next turn — and the rule is drawn as a union of cell squares, so the lamp ended on a STAIRCASE OF
- * RIGHT ANGLES: a straight vertical cut down a corridor's flanks, a step at every turn. Nothing in the
- * picture accounts for such a line. Hard-edged light means an opaque thing casting it, and there is none
- * here, so the eye reads the bright part as a tile that has been coloured in rather than as ground a lamp
- * is falling on. It is why a lit room could be dimmer AND flatter-looking than the dark one beside it while
- * every value in it was correct.
+ * The lit place is a union of cell squares, so unfeathered it ends on a staircase of right angles. Nothing
+ * in the picture accounts for such a line — hard-edged light means an opaque thing casting it — so the eye
+ * reads the bright part as a coloured-in tile rather than as ground a lamp falls on.
  *
- * Half a wall band. Small enough that the place is still the place — the light does not creep into the
- * next room, and what it does reach past its own cells is the band of wall standing around them, which is
- * the one surface a lamp in the middle of a room is certainly lighting. Large enough that no straight run
- * of the cut survives it: at this radius the falloff spans about a fifth of a cell, so the corner of a
- * chamber rounds off and the flank of a corridor stops being a ruled line. */
+ * Half a wall band. Small enough that the light does not creep into the next room, and what it reaches past
+ * its own cells is the band of wall around them, which a lamp in the middle of a room certainly lights.
+ * Large enough that no straight run of the cut survives: the falloff spans about a fifth of a cell. */
 const TORCH_FEATHER = WALL_H / 2
 
 /** A pool of torchlight cut to a place: brightest at the flame, falling away to the edges of whatever the
@@ -114,19 +88,13 @@ const torchFill = (box: { x: number; y: number; w: number; h: number }, at: read
 }
 
 /**
- * How far each pass of the light lifts the place it falls on. THE LIGHT FALLS IN THE SAME TWO PASSES THE
- * SHADE DOES (FloorShade), and it has to, or the second wash simply takes the lamp back.
+ * How far each pass of the light lifts what it falls on. It falls in the same two passes the shade does
+ * (FloorShade), and must, or the second wash takes the lamp back: the shade's second pass lays a quarter
+ * of the tier's night over everything, which without a matching light pass leaves the explorer at 65
+ * against a floor at 89 — a hero darker than the ground under their feet.
  *
- * The full pass lands on the floor under the click markers. The second lands after the shade's own second
- * pass, over the furniture and the player standing in the room — and without it they were the only things
- * on the map that the lamp never reached: the shade's second pass put a quarter of the tier's night back
- * over everything the first pass had lit, which on starter stone took the lit floor from 114 down to 89
- * and the explorer to 65 — a hero DARKER than the ground under their own feet.
- *
- * The two together are what give the map a top end at all. Before them nothing on the map was bright: the
- * lit floor came out at 89–106 of 255, which on four of the five ranks is DIMMER than the bare slab art
- * the tier is cut from. The light was only ever less dark. It now lands at 125–137 against an unlit 43–67,
- * so a lit room reads brighter than the stone rather than a shade less black than the rest of it.
+ * The two together give the map its top end: a lit room lands at 125–137 against an unlit 43–67, so it
+ * reads brighter than the stone rather than a shade less black than the rest of it.
  */
 
 /** How long a place takes to come up, and to go out: the two have to agree, because both are drawn
@@ -259,25 +227,17 @@ export const LitPlaces = ({
 }
 
 /**
- * The tier's own night, lying over the whole floor.
+ * The tier's own night, lying over the whole floor. It is what gives the map a value range: without it
+ * slab, wall face and void land in one narrow band and the light has nothing to be bright against.
  *
- * WITHOUT IT THE MAP HAS NO VALUE RANGE: every explored cell was drawn at full brightness whether
- * anything lit it or not, so slab, wall face and void all landed within one narrow band and the
- * picture read as a floorplan rather than as a place. The light that was there — the lit place, a
- * torch's pool — had nothing to be bright AGAINST.
+ * A flat wash, not a `multiply`: alpha over the top lifts the blacks instead of crushing them, keeping the
+ * layout readable when the player pulls back, and it is one composited box rather than a second full-map
+ * blend group (`docs/instructions/map-rendering.md`).
  *
- * A flat wash rather than a `multiply` blend, and both halves of that are deliberate. Alpha over the
- * top lifts the blacks instead of crushing them, which is what keeps the layout readable when the
- * player pulls back to look at the floor as a map; and it is one composited box rather than a second
- * full-map blend group, which `docs/instructions/map-rendering.md` asks for.
- *
- * IT FALLS IN TWO PASSES, because the map has one layer that must not go dark with the rest of it.
- * The full pass lies under the click markers — the markers are what the player reads the floor BY, and
- * washing them with everything else costs them most of their contrast against the stone (a measured
- * 3.8 down to 2.2). The second, lighter pass lies over everything, so that the furniture standing on
- * the floor is seated in the same dark it stands in rather than cut out of it, and the markers pay a
- * quarter of the wash instead of all of it — which, because the floor under them took both passes,
- * leaves them further clear of it than before the shade existed at all.
+ * It falls in two passes, because the click markers must not go dark with the rest. The full pass lies
+ * under them — washing them with everything else costs most of their contrast against the stone, 3.8 down
+ * to 2.2. The lighter second pass lies over everything, so furniture is seated in the dark it stands in
+ * and the markers pay a quarter of the wash instead of all of it.
  */
 export const FloorShade = ({ tier, strength = 1 }: { tier: Difficulty; strength?: number }) => (
   <div

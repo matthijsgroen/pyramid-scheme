@@ -742,9 +742,8 @@ const MAX_CORRIDOR_DEPTH = 12
  * upstream mirror is checked against *every* stop of it rather than the one that is actually possible. That
  * over-checks and never under-checks, which is the right direction for a proof.
  *
- * Stone is placed as it goes rather than after a dry run. A wall only ever kills a beam *earlier*, so adding
- * one can never revive a continuation that had already died — and `pruneStone` afterwards removes any that
- * a sibling's stone later made unreachable.
+ * Stone is placed as it goes: a wall only kills a beam *earlier*, so adding one can never revive a
+ * continuation that had already died.
  */
 const corridorDies = (
   board: Authoring,
@@ -900,10 +899,8 @@ export type Reach = {
  * Walks the **reachable deviation tree** — every future the light can have, fanning out only where it meets
  * a piece whose state it has not already been through.
  *
- * The replacement for `routeIsUnique`, and the claim phase 2 exists to test: that the
- * tree is cheaper than the product. `routeIsUnique` enumerates every configuration and traces each one,
- * which is 37 350 walks on a wizard board; here, **once a beam dies the settings downstream of it cannot
- * matter**, so they are never enumerated. What is walked is the set of *distinguishable* futures.
+ * Cheaper than the product: `routeIsUnique` traces every configuration, 37 350 walks on a wizard board,
+ * where **once a beam dies the settings downstream of it cannot matter** and are never enumerated.
  *
  * It is a different question from "how many configurations light the shrine" and the same question as "how
  * many winning routes are there", which is the property §5 gate 5 actually wants: a decoy's free setting
@@ -1494,9 +1491,9 @@ const placeDoors = (
  * the corridor, and a driven wall that lands further along it. The wrong setting's own light crosses the socket,
  * which drops the stone in front of it, and the setting dies of its own doing.
  *
- * **Uniqueness is then restored by the trap**, which is what makes it load-bearing by construction rather than
- * decoration — the failure §11.1 measured, where a socket placed on an already-dead ray produced 23 traps
- * across 120 boards and every one of them could be removed with the board still a puzzle.
+ * **Uniqueness is then restored by the trap**, which is what makes it load-bearing rather than decoration.
+ * A socket placed on an already-dead ray gives 23 traps across 120 boards that could each be removed with
+ * the board still a puzzle.
  *
  * Two placement rules carry it:
  *
@@ -1568,26 +1565,11 @@ type Draft = {
 
 /**
  * Turns a golden path into a board: a tappable mirror at every bend, and a closed corridor for every stop
- * none of them is set to.
+ * none of them is set to. The uniqueness argument this establishes is stated at the top of this file.
  *
- * **Why the result is unique, which is the property phase 1 exists to test.** Take any configuration and
- * let `k` be the first bend, in beam order, not standing at its golden angle. Every bend before `k` is
- * golden and every golden cell between them is empty, so the beam reaches `k` along the golden path
- * travelling `bends[k].enter` — exactly the direction the corridors at `k` were authored against. It
- * therefore leaves down one of them and dies: at the frame, in stone, or in the disc. So no configuration
- * with a wrong bend lights the shrine, the all-golden one does, and the winning path is the golden path.
- *
- * The argument needs both halves of the corridor rule to hold. A branch sharing a `(cell, direction)` pair
- * with the golden path would have the golden path's own future and deliver the light — including from
- * *upstream* of where it left, which is why the test is the pair rather than "does it reach the shrine".
- * And a branch entering a tappable cell has as many futures as that piece has stops, so `corridorDies`
- * recurses over every one of them and requires each to die — the sufficient rule, and what makes
- * "the future is determined" true again everywhere.
- *
- * Stone is authored rather than pruned to a fixpoint, so `thinWalls` does not run. Note the reason, because
- * measuring it corrected the plan: `thinWalls` re-checks uniqueness and the ladder, and most authored stone
- * is load-bearing for neither — it is holding a branch out of territory the recursion would otherwise have to
- * clear. `pruneStone` is the only trimming that happens, and it removes what nothing reaches.
+ * Stone is authored rather than pruned to a fixpoint, so `thinWalls` does not run: it re-checks uniqueness
+ * and the ladder, and most authored stone is load-bearing for neither — it holds a branch out of territory
+ * the recursion would otherwise have to clear. `pruneStone` removes only what nothing reaches.
  */
 const authorBranches = (
   size: number,
@@ -1842,15 +1824,12 @@ const authorBranches = (
  *
  * A branch mirror is meant to be a **shadow** — something standing in a wrong ray, so the light disappears into
  * a piece nobody has settled rather than visibly dying (§6.1). Sometimes it lands where no beam can arrive under
- * any setting, and then it is a **decoy** instead: still fair, because `neverReached` is exactly the rung that
- * frees it, but not what the dial asked for. Measured before this existed: 15% of starter's off-route mirrors.
+ * any setting, and is then a **decoy**: still fair, since `neverReached` frees it, but not what the dial
+ * asked for — 15% of starter's off-route mirrors.
  *
- * Safe to remove, and that is the whole argument: a piece no beam reaches cannot be on any beam's path, so no
- * path changes and uniqueness is untouched. Done before the opening is drawn, because how many pieces a board
- * carries is what `openingIsHonest` and `resistsGreedyPlay` reason about.
- *
- * A tier that *wants* decoys keeps them (`decoys`), because a piece to rule out is real vocabulary — it is what
- * `sortTheWheat` used to add on purpose. What is not wanted is one arriving by accident on a tier that asked for
+ * Safe to remove: a piece no beam reaches is on no beam's path, so no path changes. Done before the opening
+ * is drawn, because piece count is what `openingIsHonest` and `resistsGreedyPlay` reason about. A tier that
+ * wants decoys keeps them (`decoys`); what is unwanted is one arriving by accident on a tier that asked for
  * a shadow.
  */
 const dropUnreachable = (
@@ -2040,11 +2019,9 @@ const attemptAuthored = (
  * Re-checks the ladder on a finished board, and reports what it demanded
  * (`docs/instructions/puzzle-screens.md` §6.1).
  *
- * Unlike the families that keep a nearest miss, this one **throws** rather than shipping a board it
- * would not stand behind — so a board coming back at all is already the acceptance, and the offline
- * pass grades to confirm the ladder still settles it and to record what it turned on. The gates it
- * cannot re-derive from the shipped board (whether the trap was the thing that closed the second
- * route) are ones the board has passed by construction, since it was returned rather than rejected.
+ * Unlike families that keep a nearest miss, this one **throws** rather than ship a board it would not
+ * stand behind, so a board coming back is already the acceptance. The gates it cannot re-derive from the
+ * shipped board are ones that board passed by construction.
  */
 export const gradeLightbeam = (board: LightbeamPuzzle, options: LightbeamOptions = {}): Grade | null => {
   const { techniqueCap = "deadEnd" } = options
