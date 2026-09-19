@@ -59,7 +59,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/app/state/useJourneys.spec.ts:886418581": [
       [274, 54, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/app/state/useJourneys.ts:423038310": [
+    "src/app/state/useJourneys.ts:685339468": [
       [49, 24, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/app/state/useProgression.ts:3396314902": [
