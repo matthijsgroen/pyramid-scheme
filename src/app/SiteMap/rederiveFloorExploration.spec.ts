@@ -50,7 +50,7 @@ describe("rederiveFloorExploration", () => {
   })
 
   it("keeps a claim the floor does support", () => {
-    const stored = { floorExploration: { "1:0": { open: false, keySets: [] } }, exploredCells: {} }
+    const stored = { floorExploration: { "1:0": { open: true, keySets: [] } }, exploredCells: {} }
 
     expect(rederiveFloorExploration(stored, assembles)).toEqual({ "1:0": { open: true, keySets: [] } })
   })
@@ -59,11 +59,30 @@ describe("rederiveFloorExploration", () => {
     // The same corridor, walked on level 2. Level 1's floor has never been touched, so its own entry
     // must still say there is something there.
     const stored = {
-      floorExploration: { "1:0": { open: false, keySets: [] } },
+      floorExploration: { "1:0": { open: true, keySets: [] } },
       exploredCells: { "2:main": ["0/entrance", "0/~1"] },
     }
 
     expect(rederiveFloorExploration(stored, assembles)).toEqual({ "1:0": { open: true, keySets: [] } })
+  })
+
+  it("never adds a claim the stored summary did not make", () => {
+    // The floor has a fogged corridor and the save names nothing, so reading it fresh says there is
+    // something here — but the stored summary says otherwise, and it was written with the floor as the
+    // player actually walked it. A corridor is filed under a carve-bound `~ordinal`, so a re-carve
+    // unfiles it and the restore shows fog the player long ago cleared. The stored answer wins.
+    const stored = { floorExploration: { "1:0": { open: false, keySets: [] } }, exploredCells: {} }
+
+    expect(rederiveFloorExploration(stored, assembles)).toEqual({ "1:0": { open: false, keySets: [] } })
+  })
+
+  it("keeps a key bundle the floor still shows, and drops one it does not", () => {
+    const stored = {
+      floorExploration: { "1:0": { open: false, keySets: [["ward_a_1"], ["ward_a_2"]] } },
+      exploredCells: {},
+    }
+    // The bare floor bears out neither bundle — it has no gate on it at all — so both go.
+    expect(rederiveFloorExploration(stored, assembles)).toEqual({ "1:0": { open: false, keySets: [] } })
   })
 
   it("forgets a floor that no longer assembles, rather than keeping an unanswerable claim", () => {

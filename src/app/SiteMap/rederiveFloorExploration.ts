@@ -21,10 +21,20 @@ type Rederivable = {
  * map, and a pyramid lit over a ward door the player has already opened and emptied sends them back
  * for nothing. Healing it on the next visit is no cure: the trip IS the damage.
  *
- * So it is re-derived without going there. `exploredCells` is the record of what the player has
- * actually opened and walked, and it is written as they go, never in one lump at the end — so
- * restoring a floor from it and reading the result gives the same answer a visit would, one launch
- * earlier and with no journey.
+ * So it is re-derived without going there, from `exploredCells` — the record of what the player has
+ * opened and walked, written as they go rather than in one lump at the end.
+ *
+ * **IT MAY ONLY EVER TAKE A CLAIM AWAY, NEVER ADD ONE.** A restored floor is not the floor the player
+ * walked: a corridor is named by `~ordinal`, which is bound to the carve, so re-carving a floor
+ * silently unfiles every corridor on it. The high-water mark is what covers that — but it reaches only
+ * as far as the furthest named ROOM, and the exit portal is never marked explored, so the stretch of
+ * corridor between the last room and the way out comes back fogged on every floor the player has
+ * finished. Believing that fog would light nearly every pyramid they have already walked out of,
+ * which is the very complaint this is meant to answer, arriving from the other side.
+ *
+ * So a recomputed summary is used only where it is SMALLER than the stored one. A claim that has
+ * genuinely been spent disappears, which is the fix; a claim the restore cannot see stays until the
+ * player next walks in and the arrival stamp settles it with a floor in front of it.
  *
  * Only the floors the save already names are assembled; nothing sweeps the world. A floor the save
  * names that no longer assembles (its site is gone, or shorter than it was) drops its entry rather
@@ -69,7 +79,20 @@ export const rederiveFloorExploration = (
     const revealed = new Set(
       (stored.foundHiddenCorridors ?? []).filter(e => e.startsWith(prefix)).map(e => e.slice(prefix.length))
     )
-    result[key] = computeFloorExploration(applyExplored(reveal(grid, revealed), floor, cells))
+    const found = computeFloorExploration(applyExplored(reveal(grid, revealed), floor, cells))
+    result[key] = onlySmaller(stored.floorExploration![key], found)
   }
   return result
+}
+
+const bundle = (keys: readonly string[]) => [...keys].sort().join(",")
+
+/** The stored claim, minus whatever the floor no longer bears out. What the floor shows and the stored
+ * claim does not is dropped on the floor's account, not the claim's — see the note above. */
+const onlySmaller = (stored: FloorExploration, found: FloorExploration): FloorExploration => {
+  const standing = new Set((found.keySets ?? []).map(bundle))
+  return {
+    open: (stored.open ?? false) && found.open,
+    keySets: (stored.keySets ?? []).filter(ks => standing.has(bundle(ks))),
+  }
 }

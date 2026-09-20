@@ -15,9 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   you had since opened and looted. Every mark your save holds is now recomputed from the floors
   themselves on the next launch, so the wrong ones are gone before you are asked to walk anywhere,
   and a floor is marked again the moment you walk in rather than only on the way out.
-- Pyramids that really do still hold something now say so. Marks written before a floor was
-  re-authored were claiming it was finished, and quietly hid corridors and rooms you have never
-  been down.
+  The recompute can only ever take a mark away, never add one, so nothing starts pulsing that was
+  not pulsing before.
 
 ## 0.44.0 - 2026-09-18
 
