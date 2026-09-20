@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and a floor is marked again the moment you walk in rather than only on the way out.
   The recompute can only ever take a mark away, never add one, so nothing starts pulsing that was
   not pulsing before.
+- The way out of a site is remembered as somewhere you have been. It was the one cell the game never
+  wrote down, so on a floor you had walked to its end the stretch of corridor between the last room
+  and the door came back dark, and the map went on offering you ground you had already covered.
 
 ## 0.44.0 - 2026-09-18
 
