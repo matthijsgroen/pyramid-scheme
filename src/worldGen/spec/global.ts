@@ -19,7 +19,7 @@ export const GLOBAL_DEFAULTS = {
   /** corridorStraightness applied on a windyChance hit. */
   windyStraightness: 0.35,
   /** packing applied on a packingChance hit. */
-  packingWhenHit: 1.6,
+  packingWhenHit: 0.16,
   /** Integer weights for consumable-type selection in chest rewards. */
   consumableRates: { bandage: 3, oil: 1, trapTool: 1 },
 }

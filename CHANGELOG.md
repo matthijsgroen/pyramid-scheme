@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed walking when going to a deeper floor.
 - Fixed pyramids pulsing on the map with nothing left in them.
 - The way out of a site now counts as explored, so the corridor to it stays lit.
+- Pyramid floors now lay out the same on every browser, so a save carried between devices lands on the maze it was written against.
+
+### Changed
+
+- Pyramid corridors are much shorter. The walk from one puzzle to the next is about half what it was, and a starter floor a third.
 
 ## 0.44.0 - 2026-09-18
 
