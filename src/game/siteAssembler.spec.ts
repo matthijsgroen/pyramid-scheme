@@ -931,10 +931,10 @@ describe(assembleFloor, () => {
       [2, 4],
     ])
     expect([pyramid.grid.rows, pyramid.grid.cols, pyramid.grid.entrancePos, pyramid.grid.exitPos]).toEqual([
-      15,
-      15,
+      13,
+      13,
       [12, 0],
-      [8, 8],
+      [10, 10],
     ])
   })
 
@@ -1187,5 +1187,74 @@ describe("section hashes across re-authored encounters", () => {
     const sealed = configWith("sumplete")
     sealed.sideSections![0] = { ...sealed.sideSections![0], sealed: true }
     expect(hashesOf(sealed)).not.toEqual(hashesOf(configWith("sumplete")))
+  })
+})
+
+/**
+ * A seed has to mean the same MAZE on every engine, for the same reason it has to mean the same board
+ * (generateStarBattle.spec.ts): a comparator that draws from the seeded stream leaves the result to
+ * the engine's sort. V8 sorts with TimSort, JavaScriptCore with a merge sort, and the two orders
+ * differ — measured on the same seeded stream and the same draw count, V8 12.4 and Chrome 153 already
+ * disagree. A floor that carves one way in the tests and another on the phone is a save restored
+ * against a maze that was never there.
+ */
+describe("a floor does not depend on the engine's sort", () => {
+  // A perfectly legal sort, just not this engine's. Stable, correct, different comparison order.
+  const mergeSort = function <T>(this: T[], compare?: (a: T, b: T) => number): T[] {
+    const cmp = compare ?? ((a: T, b: T) => (String(a) < String(b) ? -1 : 1))
+    const sorted = (items: T[]): T[] => {
+      if (items.length < 2) return items
+      const mid = items.length >> 1
+      const left = sorted(items.slice(0, mid))
+      const right = sorted(items.slice(mid))
+      const out: T[] = []
+      let i = 0
+      let j = 0
+      while (i < left.length && j < right.length) out.push(cmp(left[i], right[j]) <= 0 ? left[i++] : right[j++])
+      return out.concat(left.slice(i), right.slice(j))
+    }
+    const result = sorted([...this])
+    for (let index = 0; index < result.length; index++) this[index] = result[index]
+    return this
+  }
+
+  const underMergeSort = <T>(run: () => T): T => {
+    const original = Array.prototype.sort
+    Array.prototype.sort = mergeSort as typeof Array.prototype.sort
+    try {
+      return run()
+    } finally {
+      Array.prototype.sort = original
+    }
+  }
+
+  // Every shuffle in the assembler is on a side-section list, a branch-candidate list or a hub slice,
+  // so a floor with one section and no forks would carve identically however it sorted.
+  const branchingConfig = (): FloorConfig => ({
+    pathPuzzles: 3,
+    difficulty: "expert",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [
+      { pathPuzzles: 2, difficulty: "expert", end: "treasure" },
+      { pathPuzzles: 1, difficulty: "expert", end: "treasure", gate: { type: "floor-key" } },
+      { pathPuzzles: 2, difficulty: "junior", end: "treasure" },
+      { pathPuzzles: 1, difficulty: "expert", end: "treasure", hidden: true },
+      { pathPuzzles: 3, difficulty: "master", end: "treasure" },
+    ],
+  })
+
+  const wallsOf = (seed: number, sort: <T>(run: () => T) => T): string => {
+    const result = sort(() => assembleFloor("site-portable", branchingConfig(), seed))
+    if (!result.success) throw new Error(`assembly failed: ${JSON.stringify(result.reasons)}`)
+    return JSON.stringify(
+      result.grid.cells.map(row =>
+        row.map(c => (c.type === "empty" ? "." : `${c.type[0]}${[...c.dirs].sort().join("")}${c.sectionAddress ?? ""}`))
+      )
+    )
+  }
+
+  it.each([1, 7, 42, 1234, 175768595654520])("carves the same walls at seed %i", seed => {
+    expect(wallsOf(seed, underMergeSort)).toBe(wallsOf(seed, run => run()))
   })
 })

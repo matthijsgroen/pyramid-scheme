@@ -1,4 +1,4 @@
-import { mulberry32 } from "./random"
+import { mulberry32, shuffle } from "./random"
 import { hashString } from "@/support/hashString"
 import type {
   AssemblerResult,
@@ -377,7 +377,7 @@ const extendPath = (
             .map(n => ({ n, score: scorer(n[0], n[1]) + rand() * 3 }))
             .sort((a, b) => b.score - a.score)
             .map(({ n }) => n)
-        : free.sort(() => rand() - 0.5)
+        : shuffle(free, rand)
     for (const [nr, nc] of nbrs) {
       tempUsed.add(`${nr},${nc}`)
       result.push([nr, nc])
@@ -731,7 +731,10 @@ export const assembleFloor = (
     // Group size scales with how many sections there are; low counts stay ungrouped
     // (today's behavior, one fork per section).
     const hubGroupSize = sideSections.length >= 5 ? 3 : sideSections.length >= 2 ? 2 : 1
-    const sectionOrder = sideSections.map((_, i) => i).sort(() => rand() - 0.5)
+    const sectionOrder = shuffle(
+      sideSections.map((_, i) => i),
+      rand
+    )
     const hubGroups: number[][] = []
     for (let i = 0; i < sectionOrder.length; i += hubGroupSize) {
       hubGroups.push(sectionOrder.slice(i, i + hubGroupSize))
@@ -749,7 +752,10 @@ export const assembleFloor = (
       const end = Math.floor(((bi + 1) * mainZoneCandidates.length) / hubGroups.length)
       return scoreCandidates(mainZoneCandidates.slice(start, end))
     })
-    const sliceOrder = hubGroups.map((_, i) => i).sort(() => rand() - 0.5)
+    const sliceOrder = shuffle(
+      hubGroups.map((_, i) => i),
+      rand
+    )
     const shuffledMainZoneCandidates = scoreCandidates(mainZoneCandidates)
 
     outer: for (const [groupIdx, group] of hubGroups.entries()) {
@@ -771,9 +777,10 @@ export const assembleFloor = (
         for (const {
           pathCell: [pcr, pcc],
         } of candidateSources) {
-          let freeAdj = neighbors(pcr, pcc)
-            .filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`))
-            .sort(() => rand() - 0.5)
+          let freeAdj = shuffle(
+            neighbors(pcr, pcc).filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`)),
+            rand
+          )
 
           // No natural passage to branch into — carve a brand-new one into a plain
           // grid-adjacent unused cell instead of giving up on this candidate. A deliberate
@@ -783,8 +790,8 @@ export const assembleFloor = (
           // ones. Not just for repeat-hub cells (see rawFreeNeighbors above for why this
           // needs to work for the first branch off a spot too, not only subsequent ones).
           if (freeAdj.length === 0) {
-            const carveCandidates = DIRS2.map(([dr, dc]): [number, number] => [pcr + dr, pcc + dc])
-              .filter(
+            const carveCandidates = shuffle(
+              DIRS2.map(([dr, dc]): [number, number] => [pcr + dr, pcc + dc]).filter(
                 ([nr, nc]) =>
                   nr >= 0 &&
                   nr < N &&
@@ -792,8 +799,9 @@ export const assembleFloor = (
                   nc < N &&
                   !usedCells.has(`${nr},${nc}`) &&
                   !passages.has(pkey(pcr, pcc, nr, nc))
-              )
-              .sort(() => rand() - 0.5)
+              ),
+              rand
+            )
             if (carveCandidates.length > 0) {
               passages.add(pkey(pcr, pcc, carveCandidates[0][0], carveCandidates[0][1]))
               freeAdj = [carveCandidates[0]]
@@ -871,14 +879,16 @@ export const assembleFloor = (
           ([dr, dc]) =>
             pr + dr >= 0 && pr + dr < N && pc + dc >= 0 && pc + dc < N && !usedCells.has(`${pr + dr},${pc + dc}`)
         )
-      const subBranchCandidates = group.cells
-        .slice(0, -1)
-        .filter(
-          ([pr, pc]) =>
-            neighbors(pr, pc).some(([ar, ac]) => !usedCells.has(`${ar},${ac}`)) ||
-            (attempt >= RECOVERY_ATTEMPT && hasCarveableNeighbor(pr, pc))
-        )
-        .sort(() => rand() - 0.5)
+      const subBranchCandidates = shuffle(
+        group.cells
+          .slice(0, -1)
+          .filter(
+            ([pr, pc]) =>
+              neighbors(pr, pc).some(([ar, ac]) => !usedCells.has(`${ar},${ac}`)) ||
+              (attempt >= RECOVERY_ATTEMPT && hasCarveableNeighbor(pr, pc))
+          ),
+        rand
+      )
 
       const placedSubs: Array<{
         idx: number
@@ -892,9 +902,10 @@ export const assembleFloor = (
         let placed = false
 
         for (const [pcr, pcc] of subBranchCandidates) {
-          let freeAdj = neighbors(pcr, pcc)
-            .filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`))
-            .sort(() => rand() - 0.5)
+          let freeAdj = shuffle(
+            neighbors(pcr, pcc).filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`)),
+            rand
+          )
 
           // In recovery, carve a brand-new passage out of the parent chain rather than give up
           // on this candidate — the same departure from "perfect maze" the top-level branch loop
@@ -904,8 +915,8 @@ export const assembleFloor = (
           // with plenty of grid still empty one wall away. Kept to recovery so the frozen
           // attempts stay byte-identical.
           if (freeAdj.length === 0 && attempt >= RECOVERY_ATTEMPT) {
-            const carveCandidates = DIRS2.map(([dr, dc]): [number, number] => [pcr + dr, pcc + dc])
-              .filter(
+            const carveCandidates = shuffle(
+              DIRS2.map(([dr, dc]): [number, number] => [pcr + dr, pcc + dc]).filter(
                 ([nr, nc]) =>
                   nr >= 0 &&
                   nr < N &&
@@ -913,8 +924,9 @@ export const assembleFloor = (
                   nc < N &&
                   !usedCells.has(`${nr},${nc}`) &&
                   !passages.has(pkey(pcr, pcc, nr, nc))
-              )
-              .sort(() => rand() - 0.5)
+              ),
+              rand
+            )
             if (carveCandidates.length > 0) {
               passages.add(pkey(pcr, pcc, carveCandidates[0][0], carveCandidates[0][1]))
               freeAdj = [carveCandidates[0]]
@@ -1000,8 +1012,8 @@ export const assembleFloor = (
     const gatedTreasureIdxs = gatedFloorKeyIdxs.filter(i => sideSections[i].end !== "staircase")
     const gatedStaircaseIdxs = gatedFloorKeyIdxs.filter(i => sideSections[i].end === "staircase")
     const chain = [
-      ...[...gatedTreasureIdxs].sort(() => rand() - 0.5),
-      ...[...gatedStaircaseIdxs].sort(() => rand() - 0.5),
+      ...shuffle(gatedTreasureIdxs, rand),
+      ...shuffle(gatedStaircaseIdxs, rand),
     ]
 
     const keyNodeIdMap = new Map<number, string>() // gated section idx → key node id
