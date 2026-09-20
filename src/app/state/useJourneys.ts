@@ -7,7 +7,7 @@ import { useJourneyTranslations, type TranslatedJourney } from "@/app/translatio
 import { hashString } from "@/support/hashString"
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import { keyOfAddress, sectionOfAddress, type CarveIndependentState } from "@/app/SiteMap/cellIdentity"
-import type { FloorExploration } from "@/app/SiteMap/floorExploration"
+import type { RepairedExploration } from "@/app/SiteMap/repairFloorExploration"
 
 /** Bumped whenever a stored cell key changes shape. 2 named cells by their authored slot and floor
  * rather than by their step along the carved walk. 3 named their SECTION by its authoring address
@@ -94,7 +94,7 @@ export type JourneyAPI = {
   setCarveIndependentState: (journeyId: string, state: CarveIndependentState) => void
   /** Saves whose floor summaries predate the current derivation — see useFloorExplorationBackfill. */
   journeysNeedingFloorRederive: () => StoredJourneyStateV3[]
-  setFloorExploration: (journeyId: string, floorExploration: Record<string, FloorExploration>) => void
+  setRepairedExploration: (journeyId: string, repaired: RepairedExploration) => void
   /** This level's exploration, by section: the cell keys the map restores from. */
   getExploredCells: (journeyId: string) => Record<string, string[]>
   updatePosition: (journeyId: string, address: string, nodeId: string) => void
@@ -347,10 +347,12 @@ export const createJourneysV3Api = ({
   const journeysNeedingFloorRederive = () =>
     journeys.filter(j => j.floorExplorationVersion !== FLOOR_EXPLORATION_VERSION)
 
-  const setFloorExploration = (journeyId: string, floorExploration: Record<string, FloorExploration>) => {
+  // Both halves land together: the summary is read off the mended record, so storing one without the
+  // other would leave the map drawing a different floor than the marker is describing.
+  const setRepairedExploration = (journeyId: string, repaired: RepairedExploration) => {
     setJourneys(prev =>
       prev.map(j =>
-        j.journeyId === journeyId ? { ...j, floorExploration, floorExplorationVersion: FLOOR_EXPLORATION_VERSION } : j
+        j.journeyId === journeyId ? { ...j, ...repaired, floorExplorationVersion: FLOOR_EXPLORATION_VERSION } : j
       )
     )
   }
@@ -573,6 +575,6 @@ export const createJourneysV3Api = ({
     registerFloorExploration,
     getUnexploredLevels,
     journeysNeedingFloorRederive,
-    setFloorExploration,
+    setRepairedExploration,
   }
 }

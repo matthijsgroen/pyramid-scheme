@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { assemblerFor } from "./useCarveIndependentBackfill"
-import { rederiveFloorExploration } from "./rederiveFloorExploration"
+import { repairFloorExploration } from "./repairFloorExploration"
 
 /**
- * Recomputes a save's stored floor summaries from the floors themselves, once, on the first launch
- * that has this code (`floorExplorationVersion`).
+ * Mends a save's exploration record and recomputes its floor summaries from it, once, on the first
+ * launch that has this code (`floorExplorationVersion`).
  *
  * IT MUST NOT WAIT FOR A VISIT. The summary is what lights a pyramid on the map, and a summary left
  * over from a visit that never finished lights one the player has already emptied. Correcting it when
@@ -23,7 +23,7 @@ export const useFloorExplorationBackfill = (journeys: JourneyAPI) => {
     if (!outstanding.length) return
     done.current = true
     for (const stored of outstanding) {
-      journeys.setFloorExploration(stored.journeyId, rederiveFloorExploration(stored, assemblerFor(stored.journeyId)))
+      journeys.setRepairedExploration(stored.journeyId, repairFloorExploration(stored, assemblerFor(stored.journeyId)))
     }
   }, [journeys])
 }
