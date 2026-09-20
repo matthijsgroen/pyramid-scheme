@@ -9,20 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- A pyramid you have already emptied no longer keeps pulsing on the map. The "still something here"
-  mark was only ever rewritten on your way out of a floor, so a visit that never ended — the app
-  closed, the tab gone — left the previous visit's verdict standing forever, promising a ward door
-  you had since opened and looted. Every mark your save holds is now recomputed from the floors
-  themselves on the next launch, so the wrong ones are gone before you are asked to walk anywhere,
-  and a floor is marked again the moment you walk in rather than only on the way out.
-  The pass mends the exploration record before it reads it, so what you get back is the right answer
-  rather than a cautious one: marks over ground you have cleared go, and a pyramid that really does
-  still hold something behind a door you can now open says so.
-- Arriving on a deeper floor gives you somewhere to walk again. The corridor arrows never came
-  back after a staircase, leaving only the rooms themselves clickable.
-- The way out of a site is remembered as somewhere you have been. It was the one cell the game never
-  wrote down, so on a floor you had walked to its end the stretch of corridor between the last room
-  and the door came back dark, and the map went on offering you ground you had already covered.
+- Fixed walking when going to a deeper floor.
+- Fixed pyramids pulsing on the map with nothing left in them.
+- The way out of a site now counts as explored, so the corridor to it stays lit.
 
 ## 0.44.0 - 2026-09-18
 
