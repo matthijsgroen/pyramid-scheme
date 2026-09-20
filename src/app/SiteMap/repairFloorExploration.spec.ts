@@ -44,6 +44,25 @@ const floor: FloorGrid = {
 const assembles: AssembleFor = () => floor
 const assemblesNothing: AssembleFor = () => null
 
+// The same chain with a room standing between the doorway and the way out, which is what a save can
+// still name after a re-carve — and so what says whether the player came as far as the door.
+const room: GridCell = {
+  type: "room",
+  roomType: "encounter",
+  dirs: new Set(["e", "w"]),
+  state: "completed",
+  sectionAddress: "main",
+  ordinal: "1",
+  pathIndex: 0,
+}
+const withRoom: FloorGrid = {
+  ...floor,
+  cells: [[entrance, room, { ...corridor, ordinal: "2" }, { ...exitRoom, ordinal: "3" }]],
+  cols: 4,
+  exitPos: [0, 3],
+}
+const assemblesWithRoom: AssembleFor = () => withRoom
+
 /** A journey standing on level 2, so level 1 has been finished and walked out of. */
 const onLevel2 = { levelNr: 2, completionCount: 0 }
 /** A journey standing on level 1 and not finished, so nothing has been walked out of yet. */
@@ -73,6 +92,34 @@ describe("repairFloorExploration", () => {
     // The corridor sits between the doorway and the door, so the mark now brings it back: nothing to
     // report on a floor that was walked to its end.
     expect(repaired.floorExploration).toEqual({ "1:0": { open: false, keySets: [] } })
+  })
+
+  // Finishing a level means ONE of its exits was used, and most sites carry one on every floor. The
+  // last room before a door is what says the player came to that one.
+  it("writes down a way out only where the room before it was walked", () => {
+    const repaired = repairFloorExploration(
+      {
+        ...onLevel2,
+        floorExploration: { "1:0": { open: false, keySets: [] } },
+        exploredCells: { "1:main": ["0/entrance", "0/p0"] },
+      },
+      assemblesWithRoom
+    )
+
+    expect(repaired.exploredCells["1:main"]).toContain("0/exit")
+  })
+
+  it("leaves a way out alone on a floor the player never walked to the end of", () => {
+    const repaired = repairFloorExploration(
+      {
+        ...onLevel2,
+        floorExploration: { "1:0": { open: false, keySets: [] } },
+        exploredCells: { "1:main": ["0/entrance"] },
+      },
+      assemblesWithRoom
+    )
+
+    expect(repaired.exploredCells["1:main"]).not.toContain("0/exit")
   })
 
   it("leaves the way out unwritten on a level the player has not finished", () => {

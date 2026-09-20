@@ -1,7 +1,7 @@
 import { computeFloorExploration, type FloorExploration } from "./floorExploration"
 import { applyExplored } from "./useAssembledFloor"
 import type { FloorGrid } from "@/game/siteTypes"
-import { cellKey, cellSlot, type AssembleFor } from "./cellIdentity"
+import { cellKey, cellSlot, walkPosition, type AssembleFor } from "./cellIdentity"
 
 type Repairable = {
   /** Keyed `${levelNr}:${floorIndex}` — the summaries to re-derive. */
@@ -49,11 +49,13 @@ export const repairFloorExploration = (stored: Repairable, assembleFor: Assemble
 
     if (stored.completionCount > 0 || levelNr < stored.levelNr) {
       const exit = exitOf(grid, floor)
-      if (exit) {
-        const section = `${prefix}${exit.section}`
-        const held = exploredCells[section] ?? []
-        if (!held.includes(exit.key)) exploredCells[section] = [...held, exit.key]
-      }
+      const section = exit && `${prefix}${exit.section}`
+      const held = (section && exploredCells[section]) || []
+      // A finished level was left through AN exit, but most sites carry one on every floor and only
+      // one of them was used. What says this is the one: the last room before it was walked. Without
+      // that, a floor the player only passed through would have its tail marked walked as well.
+      if (exit && section && !held.includes(exit.key) && (!exit.lastRoomKey || held.includes(exit.lastRoomKey)))
+        exploredCells[section] = [...held, exit.key]
     }
 
     const cells: Record<string, string[]> = {}
@@ -68,19 +70,46 @@ export const repairFloorExploration = (stored: Repairable, assembleFor: Assemble
   return { exploredCells, floorExploration }
 }
 
-/** The way out of this floor, if it has one — a staircase floor does not, and its stairs are recorded
- * as the player uses them, so its mark already reaches the end of the chain. */
-const exitOf = (grid: FloorGrid, floor: number): { section: string; key: string } | null => {
+type Exit = { section: string; key: string; lastRoomKey: string | null }
+
+/** The way out of this floor, with the last authored room standing before it on the same chain — the
+ * evidence that the player came this way. Null when the floor has no exit of its own. */
+const exitOf = (grid: FloorGrid, floor: number): Exit | null => {
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       if (cellSlot(grid, r, c) !== "exit") continue
       const cell = grid.cells[r][c]
       const key = cellKey(grid, floor, r, c)
-      if (cell.type === "empty" || !key || cell.sectionAddress === undefined) continue
-      return { section: cell.sectionAddress, key }
+      if (cell.type === "empty" || !key || cell.sectionAddress === undefined || !cell.ordinal) continue
+      return {
+        section: cell.sectionAddress,
+        key,
+        lastRoomKey: lastRoomBefore(grid, floor, cell.sectionAddress, cell.ordinal),
+      }
     }
   }
   return null
+}
+
+/** The furthest room along a section's chain that stands before `ordinal`. Corridors are skipped: they
+ * carry no authored slot, so a save cannot say whether one was walked once the floor has moved. */
+const lastRoomBefore = (grid: FloorGrid, floor: number, section: string, ordinal: string): string | null => {
+  const limit = walkPosition(ordinal)
+  let bestAt = -Infinity
+  let best: string | null = null
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type === "empty" || cell.sectionAddress !== section || !cell.ordinal) continue
+      const slot = cellSlot(grid, r, c)
+      if (!slot || slot === "exit" || slot === "entrance" || slot.startsWith("stair:")) continue
+      const at = walkPosition(cell.ordinal)
+      if (at >= limit || at <= bestAt) continue
+      bestAt = at
+      best = cellKey(grid, floor, r, c)
+    }
+  }
+  return best
 }
 
 /** The same floor with the sections the detector has found no longer hidden — what the map draws once
