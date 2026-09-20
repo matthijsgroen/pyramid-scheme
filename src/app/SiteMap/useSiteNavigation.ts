@@ -65,12 +65,12 @@ export const useSiteNavigation = ({
       const address = cellAddress(grid, currentFloor, row, col) ?? edgeId
       const goHere = () => journeys.updatePosition(journeyId, address, edgeId)
 
-      // A staircase carries the player between floors regardless of the cell's state — handled
-      // BEFORE the completed-cell block below. The entrance stairhead you arrive on (and any
-      // up-staircase after its first use) is marked "completed", so without this the completed
-      // block would just reposition the player and swallow the click, blocking back-travel down a
-      // staircase. The walk to the stairhead runs first; the floor only changes once the explorer
-      // has actually reached the stairs.
+      // A portal takes the player somewhere whatever state its cell is in, so both kinds are answered
+      // BEFORE the completed-cell block below, which would otherwise just reposition and swallow the
+      // click. A stairhead is "completed" from the moment it is arrived on, and the way out is
+      // completed as soon as it is written down — see the exit case just below.
+      //
+      // The walk runs first either way; nothing happens until the explorer has actually got there.
       if (cell.type === "room" && cell.roomType === "portal" && cell.stairId) {
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
@@ -79,6 +79,23 @@ export const useSiteNavigation = ({
           const peer = stairPeerPosition(journeyId, siteConfig, seed, stairId, currentFloor)
           if (peer) journeys.updatePosition(journeyId, peer.address, encodeEdge(peer.floor, peer.pos[0], peer.pos[1]))
         })
+        return
+      }
+
+      // The way out: a portal that is neither a staircase nor this floor's own entrance. Written down
+      // like any other cell the player walks onto — it is the last slot along its chain, so it carries
+      // the section's high-water mark, and without it every corridor past the last room comes back
+      // fogged after a re-carve. Written on the way IN, since arriving only ASKS about leaving and the
+      // player may say no; a write during the teardown after a yes is the fragile window that made the
+      // marker wrong to begin with.
+      if (
+        cell.type === "room" &&
+        cell.roomType === "portal" &&
+        (row !== grid.entrancePos[0] || col !== grid.entrancePos[1])
+      ) {
+        journeys.markCellExplored(sectionHash, edgeId, address)
+        goHere()
+        scheduleArrival(walkDelay(row, col), onExitReached)
         return
       }
 
@@ -124,18 +141,10 @@ export const useSiteNavigation = ({
         goHere()
         scheduleArrival(walkDelay(row, col), () => onEncounter([row, col], true))
       } else if (cell.roomType === "portal") {
-        // Staircase portals (with a stairId) are handled by the early teleport guard above; here a
-        // portal is either this floor's own entrance (reposition only) or a real exit (leave the site).
-        //
-        // Both are written down. The exit is the last slot along its chain, so it carries the
-        // section's high-water mark — leave it unwritten and every corridor past the last room comes
-        // back fogged after a re-carve. Written on the way IN, since arriving only ASKS about leaving
-        // and the player may say no, and a write during the teardown after a yes is the fragile
-        // window that made the marker wrong to begin with.
+        // Staircases and the way out are answered by the guards above; what is left is this floor's
+        // own entrance, which is only ever walked back onto.
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
-        if (row !== grid.entrancePos[0] || col !== grid.entrancePos[1])
-          scheduleArrival(walkDelay(row, col), onExitReached)
       }
     },
     [

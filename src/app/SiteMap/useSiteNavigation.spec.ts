@@ -181,6 +181,18 @@ describe("useSiteNavigation", () => {
     expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", EXIT_AT_1)
   })
 
+  // Writing the exit down completes it, and a completed cell is otherwise only walked to. The way out
+  // has to keep working on every later visit — backing out of the prompt, or re-entering a pyramid
+  // already finished — so it is answered before the completed-cell case, as a staircase is.
+  it("still asks about leaving at a way out already walked", () => {
+    const { hook, onExitReached } = setup([entrance, { ...exitRoom, state: "completed" }])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(onExitReached).toHaveBeenCalled()
+  })
+
   it("repositions the player on a completed room without reopening it", () => {
     const { hook, journeys, onEncounter } = setup([entrance, { ...puzzleRoom, state: "completed" }])
 
