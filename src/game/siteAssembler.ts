@@ -1,4 +1,4 @@
-import { mulberry32 } from "./random"
+import { mulberry32, shuffle } from "./random"
 import { hashString } from "@/support/hashString"
 import type {
   AssemblerResult,
@@ -241,7 +241,7 @@ const DEFAULT_STRAIGHT_BIAS = 0.65
 // loop in assembleFloor). 1 = today's default footprint; <1 packs the floor (and its
 // winding corridors) tighter, >1 gives it more breathing room. Overridable per floor via
 // FloorConfig.packing.
-const DEFAULT_PACKING = 1
+const DEFAULT_PACKING = 0.1
 
 // Maze carving is a per-attempt gamble (each attempt reshuffles branch points and section
 // order), so assembleFloor retries. The first RECOVERY_ATTEMPT attempts run at the original
@@ -250,6 +250,19 @@ const DEFAULT_PACKING = 1
 // at attempt 37, so the tail of the budget is headroom rather than something floors rely on.
 // See the retry loop in assembleFloor for why the first stretch is deliberately frozen.
 const RECOVERY_ATTEMPT = 30
+// Attempts spent at one packing before asking for more room, and how much more. Four rerolls is
+// enough for a floor that only needed shuffle luck; seven rungs of 1.5x carry the tightest default
+// past 1, so no floor is stuck at a wish its sections cannot fit.
+const ATTEMPTS_PER_RUNG = 4
+// Every other rung widens; the ones between just grow the grid. More room is the cheaper rescue —
+// it costs the player nothing — and a longer main path is what re-couples a floor's walk to how much
+// side content hangs off it, which is the very thing `targetDistance` exists to prevent.
+const ATTEMPTS_PER_WIDEN = 8
+const PACKING_WIDEN = 2
+// The roomiest a widening will ever ask for. Past it the retry goes back to growing the grid, which
+// is the lever that suits a floor whose sections already have room to wander: compounding the wish
+// instead carves a walk hundreds of cells long for a floor holding three puzzles.
+const PACKING_CEILING = 1
 const ASSEMBLY_ATTEMPTS = 60
 
 /** The five kinds a god can be DEPICTED on, as `tileAssets.ts`'s resolver reads them: a patron reaches
@@ -377,7 +390,7 @@ const extendPath = (
             .map(n => ({ n, score: scorer(n[0], n[1]) + rand() * 3 }))
             .sort((a, b) => b.score - a.score)
             .map(({ n }) => n)
-        : free.sort(() => rand() - 0.5)
+        : shuffle(free, rand)
     for (const [nr, nc] of nbrs) {
       tempUsed.add(`${nr},${nc}`)
       result.push([nr, nc])
@@ -521,8 +534,10 @@ export const assembleFloor = (
   // shouldn't get a longer main path than one with none, just because minCells is bigger.
   // See buildMaze's own comment for the fallback when a grid is too small to reach the
   // target.
-  const packing = config.packing ?? DEFAULT_PACKING
-  const targetDistance = Math.max(1, Math.round(mainPathCells * (1 + 5 * packing)))
+  const distanceFor = (p: number) => Math.max(1, Math.round(mainPathCells * (1 + 5 * p)))
+  // The authored wish is where the retry STARTS, not what it is held to: see the widening in the loop.
+  let packing = config.packing ?? DEFAULT_PACKING
+  let targetDistance = distanceFor(packing)
 
   // Same `packing` scaling applied to every section/sub-section chain — a gated path used
   // to be *exactly* `pathPuzzles + gate + end` cells long, deaf to both `packing` and
@@ -580,7 +595,7 @@ export const assembleFloor = (
       n += 2
     return n
   }
-  const startingN = deriveN(minCells)
+  let startingN = deriveN(minCells)
   let N = startingN
 
   const nid = (r: number, c: number) => `${siteId}-${r}-${c}`
@@ -596,10 +611,29 @@ export const assembleFloor = (
   // too-tight puzzle.
   for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
     if (attempt >= RECOVERY_ATTEMPT) {
+      // Recovery asks for the roomiest wish outright. Winding the CHAINS down is its lever, and on a
+      // floor already carved as tight as it goes there is nothing left to wind: without this, a tight
+      // floor spends the whole phase re-rolling the same starved shape.
+      if (packing < PACKING_CEILING) {
+        packing = PACKING_CEILING
+        targetDistance = distanceFor(packing)
+      }
       const steps = Math.max(1, ASSEMBLY_ATTEMPTS - RECOVERY_ATTEMPT - 1)
       chainPacking = (packing * (steps - (attempt - RECOVERY_ATTEMPT))) / steps
       N = Math.max(startingN, deriveN(carvedCells()))
-    } else if (attempt > 0 && attempt % 4 === 0) N += 2
+    } else if (attempt > 0 && attempt % ATTEMPTS_PER_RUNG === 0) {
+      // Growing the grid cannot rescue a floor starved by its own packing: the main path is carved to
+      // `targetDistance` however much room surrounds it, so branches that have nowhere to hang still
+      // have nowhere to hang. Widening the wish is the lever that moves, and the grid follows it
+      // through `deriveN` — up to the ceiling, past which the grid is the lever again.
+      if (attempt % ATTEMPTS_PER_WIDEN === 0 && packing < PACKING_CEILING) {
+        packing = Math.min(packing * PACKING_WIDEN, PACKING_CEILING)
+        targetDistance = distanceFor(packing)
+        chainPacking = packing
+        startingN = Math.max(N, deriveN(minCells))
+        N = startingN
+      } else N += 2
+    }
 
     const rand = mulberry32(seed + attempt * 7919)
     const pkey = makePkey(N)
@@ -731,7 +765,10 @@ export const assembleFloor = (
     // Group size scales with how many sections there are; low counts stay ungrouped
     // (today's behavior, one fork per section).
     const hubGroupSize = sideSections.length >= 5 ? 3 : sideSections.length >= 2 ? 2 : 1
-    const sectionOrder = sideSections.map((_, i) => i).sort(() => rand() - 0.5)
+    const sectionOrder = shuffle(
+      sideSections.map((_, i) => i),
+      rand
+    )
     const hubGroups: number[][] = []
     for (let i = 0; i < sectionOrder.length; i += hubGroupSize) {
       hubGroups.push(sectionOrder.slice(i, i + hubGroupSize))
@@ -749,7 +786,10 @@ export const assembleFloor = (
       const end = Math.floor(((bi + 1) * mainZoneCandidates.length) / hubGroups.length)
       return scoreCandidates(mainZoneCandidates.slice(start, end))
     })
-    const sliceOrder = hubGroups.map((_, i) => i).sort(() => rand() - 0.5)
+    const sliceOrder = shuffle(
+      hubGroups.map((_, i) => i),
+      rand
+    )
     const shuffledMainZoneCandidates = scoreCandidates(mainZoneCandidates)
 
     outer: for (const [groupIdx, group] of hubGroups.entries()) {
@@ -771,9 +811,10 @@ export const assembleFloor = (
         for (const {
           pathCell: [pcr, pcc],
         } of candidateSources) {
-          let freeAdj = neighbors(pcr, pcc)
-            .filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`))
-            .sort(() => rand() - 0.5)
+          let freeAdj = shuffle(
+            neighbors(pcr, pcc).filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`)),
+            rand
+          )
 
           // No natural passage to branch into — carve a brand-new one into a plain
           // grid-adjacent unused cell instead of giving up on this candidate. A deliberate
@@ -783,8 +824,8 @@ export const assembleFloor = (
           // ones. Not just for repeat-hub cells (see rawFreeNeighbors above for why this
           // needs to work for the first branch off a spot too, not only subsequent ones).
           if (freeAdj.length === 0) {
-            const carveCandidates = DIRS2.map(([dr, dc]): [number, number] => [pcr + dr, pcc + dc])
-              .filter(
+            const carveCandidates = shuffle(
+              DIRS2.map(([dr, dc]): [number, number] => [pcr + dr, pcc + dc]).filter(
                 ([nr, nc]) =>
                   nr >= 0 &&
                   nr < N &&
@@ -792,8 +833,9 @@ export const assembleFloor = (
                   nc < N &&
                   !usedCells.has(`${nr},${nc}`) &&
                   !passages.has(pkey(pcr, pcc, nr, nc))
-              )
-              .sort(() => rand() - 0.5)
+              ),
+              rand
+            )
             if (carveCandidates.length > 0) {
               passages.add(pkey(pcr, pcc, carveCandidates[0][0], carveCandidates[0][1]))
               freeAdj = [carveCandidates[0]]
@@ -871,14 +913,16 @@ export const assembleFloor = (
           ([dr, dc]) =>
             pr + dr >= 0 && pr + dr < N && pc + dc >= 0 && pc + dc < N && !usedCells.has(`${pr + dr},${pc + dc}`)
         )
-      const subBranchCandidates = group.cells
-        .slice(0, -1)
-        .filter(
-          ([pr, pc]) =>
-            neighbors(pr, pc).some(([ar, ac]) => !usedCells.has(`${ar},${ac}`)) ||
-            (attempt >= RECOVERY_ATTEMPT && hasCarveableNeighbor(pr, pc))
-        )
-        .sort(() => rand() - 0.5)
+      const subBranchCandidates = shuffle(
+        group.cells
+          .slice(0, -1)
+          .filter(
+            ([pr, pc]) =>
+              neighbors(pr, pc).some(([ar, ac]) => !usedCells.has(`${ar},${ac}`)) ||
+              (attempt >= RECOVERY_ATTEMPT && hasCarveableNeighbor(pr, pc))
+          ),
+        rand
+      )
 
       const placedSubs: Array<{
         idx: number
@@ -892,9 +936,10 @@ export const assembleFloor = (
         let placed = false
 
         for (const [pcr, pcc] of subBranchCandidates) {
-          let freeAdj = neighbors(pcr, pcc)
-            .filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`))
-            .sort(() => rand() - 0.5)
+          let freeAdj = shuffle(
+            neighbors(pcr, pcc).filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`)),
+            rand
+          )
 
           // In recovery, carve a brand-new passage out of the parent chain rather than give up
           // on this candidate — the same departure from "perfect maze" the top-level branch loop
@@ -904,8 +949,8 @@ export const assembleFloor = (
           // with plenty of grid still empty one wall away. Kept to recovery so the frozen
           // attempts stay byte-identical.
           if (freeAdj.length === 0 && attempt >= RECOVERY_ATTEMPT) {
-            const carveCandidates = DIRS2.map(([dr, dc]): [number, number] => [pcr + dr, pcc + dc])
-              .filter(
+            const carveCandidates = shuffle(
+              DIRS2.map(([dr, dc]): [number, number] => [pcr + dr, pcc + dc]).filter(
                 ([nr, nc]) =>
                   nr >= 0 &&
                   nr < N &&
@@ -913,8 +958,9 @@ export const assembleFloor = (
                   nc < N &&
                   !usedCells.has(`${nr},${nc}`) &&
                   !passages.has(pkey(pcr, pcc, nr, nc))
-              )
-              .sort(() => rand() - 0.5)
+              ),
+              rand
+            )
             if (carveCandidates.length > 0) {
               passages.add(pkey(pcr, pcc, carveCandidates[0][0], carveCandidates[0][1]))
               freeAdj = [carveCandidates[0]]
@@ -999,10 +1045,7 @@ export const assembleFloor = (
     // successor) — never a rewarded section's own room.
     const gatedTreasureIdxs = gatedFloorKeyIdxs.filter(i => sideSections[i].end !== "staircase")
     const gatedStaircaseIdxs = gatedFloorKeyIdxs.filter(i => sideSections[i].end === "staircase")
-    const chain = [
-      ...[...gatedTreasureIdxs].sort(() => rand() - 0.5),
-      ...[...gatedStaircaseIdxs].sort(() => rand() - 0.5),
-    ]
+    const chain = [...shuffle(gatedTreasureIdxs, rand), ...shuffle(gatedStaircaseIdxs, rand)]
 
     const keyNodeIdMap = new Map<number, string>() // gated section idx → key node id
     const chainKeyColorMap = new Map<number, KeyColor[]>() // host section idx → key color(s) its end room holds

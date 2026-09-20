@@ -1029,3 +1029,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     ]
   }`
 };
+
+exports[`a seeded shuffle draws once per element, never inside a comparator`] = {
+  value: `{}`
+};

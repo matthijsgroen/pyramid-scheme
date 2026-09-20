@@ -83,20 +83,19 @@ describe("useAssembledFloor — hidden junctions", () => {
     // straight corridor — completeCell treats it as an ordinary passthrough and marks it
     // "visible" while auto-revealing past it, rather than stopping there. Completing the
     // predecessor (not the gateway itself) reproduces that real play sequence.
-    const { predecessorPos } = findGatewayToHidden(grid)
+    const { gatewayPos, predecessorPos } = findGatewayToHidden(grid)
     const exploredSections = exploredAt(grid, predecessorPos)
 
     const { result } = renderHook(() =>
       useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 1, new Set())
     )
 
-    expect(result.current.hiddenJunctions.size).toBeGreaterThan(0)
-    for (const key of result.current.hiddenJunctions) {
-      const [r, c] = key.split(",").map(Number)
-      const cell = result.current.grid?.cells[r]?.[c]
-      if (cell?.type === "empty") throw new Error(`expected a real cell at ${key}`)
-      expect(cell?.state).toBe("reachable")
-    }
+    // The gateway the player is standing beside, not whichever junction comes first in the set: a
+    // hidden stretch can touch the rest of the maze at both ends, and the far one is still fogged.
+    expect(result.current.hiddenJunctions).toContain(`${gatewayPos[0]},${gatewayPos[1]}`)
+    const gateway = result.current.grid?.cells[gatewayPos[0]]?.[gatewayPos[1]]
+    if (gateway?.type === "empty") throw new Error("expected a real cell at the gateway")
+    expect(gateway?.state).toBe("reachable")
 
     // Each junction maps to the hidden section it borders — the data the "found = noticed" mark
     // reads (SiteMapScreen calls markCorridorFound on these hashes when the player stands here).
@@ -140,17 +139,19 @@ describe("useAssembledFloor — hidden junctions", () => {
     const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
     if (!assembled.success) throw new Error("assembly failed")
     const grid = assembled.grid
-    const { predecessorPos } = findGatewayToHidden(grid)
+    const { gatewayPos, predecessorPos } = findGatewayToHidden(grid)
     const exploredSections = exploredAt(grid, predecessorPos)
 
     const { result } = renderHook(() =>
       useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 0, new Set())
     )
 
-    const [r, c] = [...result.current.hiddenJunctions][0].split(",").map(Number)
-    const cell = result.current.grid?.cells[r]?.[c]
-    if (cell?.type === "empty") throw new Error(`expected a real cell at ${r},${c}`)
-    expect(cell?.state).toBe("visible")
+    // Whether the cascade leaves it seen or walked is the carve's business. What must not happen is
+    // the stop: "reachable" is the state that puts a step under the player's finger, and without a
+    // detector there is nothing here to step to.
+    const gateway = result.current.grid?.cells[gatewayPos[0]]?.[gatewayPos[1]]
+    if (gateway?.type === "empty") throw new Error("expected a real cell at the gateway")
+    expect(gateway?.state).not.toBe("reachable")
   })
 })
 
