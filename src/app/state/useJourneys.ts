@@ -7,12 +7,19 @@ import { useJourneyTranslations, type TranslatedJourney } from "@/app/translatio
 import { hashString } from "@/support/hashString"
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import { keyOfAddress, sectionOfAddress, type CarveIndependentState } from "@/app/SiteMap/cellIdentity"
+import type { RepairedExploration } from "@/app/SiteMap/repairFloorExploration"
 
 /** Bumped whenever a stored cell key changes shape. 2 named cells by their authored slot and floor
  * rather than by their step along the carved walk. 3 named their SECTION by its authoring address
  * (`main`, `s0`, `s0.1`) rather than by a structural hash, which moved whenever the floor's own carve
  * knobs were retuned. See migrateJourneyToCarveIndependent. */
 export const CELL_KEY_VERSION = 3
+
+/** Bumped whenever stored floor summaries have to be re-derived from the floors themselves — because
+ * the way they are computed changed, or because a release wrote wrong ones. 1 clears the summaries a
+ * save kept from a visit it never finished, which went on lighting emptied pyramids on the map. See
+ * rederiveFloorExploration. */
+export const FLOOR_EXPLORATION_VERSION = 1
 
 export type StoredJourneyStateV3 = {
   journeyId: string
@@ -53,6 +60,9 @@ export type StoredJourneyStateV3 = {
   // screen re-checks against the CURRENTLY-held keys — a newly-earned key lights a pyramid the player
   // already left, no re-assembly. Keys are opaque ids (mod-owned); this names no mod.
   floorExploration?: Record<string, { open: boolean; keySets: string[][] }>
+  /** Which derivation of `floorExploration` is stored, so wrong summaries are recomputed from the
+   *  floors rather than waiting for a visit that the wrong summary is itself provoking. */
+  floorExplorationVersion?: number
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
@@ -82,6 +92,9 @@ export type JourneyAPI = {
   /** Saves whose per-cell collections predate the current key format — see useCarveIndependentBackfill. */
   journeysNeedingReKey: () => StoredJourneyStateV3[]
   setCarveIndependentState: (journeyId: string, state: CarveIndependentState) => void
+  /** Saves whose floor summaries predate the current derivation — see useFloorExplorationBackfill. */
+  journeysNeedingFloorRederive: () => StoredJourneyStateV3[]
+  setRepairedExploration: (journeyId: string, repaired: RepairedExploration) => void
   /** This level's exploration, by section: the cell keys the map restores from. */
   getExploredCells: (journeyId: string) => Record<string, string[]>
   updatePosition: (journeyId: string, address: string, nodeId: string) => void
@@ -329,6 +342,21 @@ export const createJourneysV3Api = ({
     )
   }
 
+  // Stamped on every journey, exploration or not, for the same reason the re-key is: the stamp is
+  // then an exact record of which saves have been through this release.
+  const journeysNeedingFloorRederive = () =>
+    journeys.filter(j => j.floorExplorationVersion !== FLOOR_EXPLORATION_VERSION)
+
+  // Both halves land together: the summary is read off the mended record, so storing one without the
+  // other would leave the map drawing a different floor than the marker is describing.
+  const setRepairedExploration = (journeyId: string, repaired: RepairedExploration) => {
+    setJourneys(prev =>
+      prev.map(j =>
+        j.journeyId === journeyId ? { ...j, ...repaired, floorExplorationVersion: FLOOR_EXPLORATION_VERSION } : j
+      )
+    )
+  }
+
   const getExploredCells = (journeyId: string): Record<string, string[]> => {
     const j = journeys.find(j => j.journeyId === journeyId)
     if (!j) return {}
@@ -546,5 +574,7 @@ export const createJourneysV3Api = ({
     getOutstandingHiddenCorridorCount,
     registerFloorExploration,
     getUnexploredLevels,
+    journeysNeedingFloorRederive,
+    setRepairedExploration,
   }
 }

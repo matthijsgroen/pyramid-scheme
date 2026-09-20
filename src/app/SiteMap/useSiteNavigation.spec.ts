@@ -69,6 +69,7 @@ const gate = (state: CellState = "reachable"): GridCell => ({
 const CORRIDOR_AT_1 = `${SECTION}#0/~1`
 const PUZZLE_AT_1 = `${SECTION}#0/p0`
 const GATE_AT_2 = `${SECTION}#0/xkey-gate`
+const EXIT_AT_1 = `${SECTION}#0/exit`
 
 const gridOf = (cells: GridCell[]): FloorGrid => ({
   cells: [cells],
@@ -164,6 +165,29 @@ describe("useSiteNavigation", () => {
     act(() => hook.result.current.onCellClick(0, 1))
     expect(onExitReached).not.toHaveBeenCalled()
 
+    arrive()
+
+    expect(onExitReached).toHaveBeenCalled()
+  })
+
+  // The way out is a cell the player stood on, and the save has to say so. It is the last slot along
+  // its chain, so it carries the section's high-water mark with it: without it, every corridor between
+  // the last room and the door sits past the mark and comes back fogged on a floor walked to its end.
+  it("marks the way out explored, so the walk to it survives a re-carve", () => {
+    const { hook, journeys } = setup([entrance, exitRoom])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", EXIT_AT_1)
+  })
+
+  // Writing the exit down completes it, and a completed cell is otherwise only walked to. The way out
+  // has to keep working on every later visit — backing out of the prompt, or re-entering a pyramid
+  // already finished — so it is answered before the completed-cell case, as a staircase is.
+  it("still asks about leaving at a way out already walked", () => {
+    const { hook, onExitReached } = setup([entrance, { ...exitRoom, state: "completed" }])
+
+    act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
     expect(onExitReached).toHaveBeenCalled()
