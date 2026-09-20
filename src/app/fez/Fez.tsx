@@ -5,11 +5,11 @@ import fezCocktail from "@/assets/cocktail-fez-250.png"
 import clsx from "clsx"
 import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
-import { arrivalLineKeys } from "./arrivalConversation"
+import { arrivalLines, type Speaker } from "./arrivalConversation"
 
 type Pose = "default" | "pointUp" | "glassesPoint" | "cocktail"
 
-type PoseChat = [pose: Pose, translationKey: string]
+type PoseChat = [pose: Pose, translationKey: string, speaker?: Speaker]
 
 const pose = (...args: (Pose | string[])[]): PoseChat[] => {
   let currentPose: Pose = "default"
@@ -63,6 +63,15 @@ const conversations: Record<string, PoseChat[]> = {
 
 const NOT_FOUND = pose("default", ["not-found"])
 
+const PORTRAITS: Partial<Record<Speaker, Partial<Record<Pose, { src: string; alt: string }>>>> = {
+  fez: {
+    default: { src: fez, alt: "Happy companion lizard wearing a fez" },
+    pointUp: { src: fezPoint, alt: "Happy companion lizard wearing a fez" },
+    glassesPoint: { src: fezGlassesPoint, alt: "Happy companion lizard wearing a fez and glasses" },
+    cocktail: { src: fezCocktail, alt: "Happy companion lizard wearing a fez and holding a cocktail" },
+  },
+}
+
 const ARRIVAL = /^arrival\.(.+)$/
 
 /**
@@ -75,8 +84,8 @@ const linesFor = (conversation: string, hasLine: (key: string) => boolean): Pose
   const table = conversations[conversation]
   if (table) return table
   const journeyId = ARRIVAL.exec(conversation)?.[1]
-  const keys = journeyId ? arrivalLineKeys(journeyId, hasLine) : []
-  return keys.length > 0 ? pose(keys) : NOT_FOUND
+  const spoken = journeyId ? arrivalLines(journeyId, hasLine) : []
+  return spoken.length > 0 ? spoken.map(line => ["default", line.key, line.speaker] as PoseChat) : NOT_FOUND
 }
 
 export const Fez: FC<{
@@ -135,53 +144,29 @@ export const Fez: FC<{
     }
   }
 
-  const pose = messages[messageIndex - 1]?.[0] || "default"
+  const current = messages[messageIndex - 1]
+  const pose = current?.[0] || "default"
+  const speaker: Speaker = current?.[2] ?? "fez"
+  const portrait = PORTRAITS[speaker]?.[pose]
 
   return (
     <div className="fixed inset-0 z-10 bg-black/10" onClick={onNextMessage}>
-      <div className="pointer-events-none fixed bottom-0 left-0 pr-6">
+      <div
+        className={clsx("pointer-events-none fixed bottom-0", speaker === "explorer" ? "right-0 pl-6" : "left-0 pr-6")}
+      >
         <div
           className={clsx(
-            "mb-2 ml-15 max-w-xs origin-bottom-left rounded border border-black bg-white p-3 text-black shadow-lg transition-all duration-300",
+            "mb-2 max-w-xs rounded border border-black bg-white p-3 text-black shadow-lg transition-all duration-300",
+            speaker === "explorer" ? "mr-15 origin-bottom-right" : "ml-15 origin-bottom-left",
             showMessage ? "rotate-0 opacity-100" : "rotate-12 opacity-0"
           )}
         >
-          {t(messages[messageIndex - 1]?.[1])}
+          {t(current?.[1])}
         </div>
-        {pose === "default" && (
+        {portrait && (
           <img
-            src={fez}
-            alt="Happy companion lizard wearing a fez"
-            className={clsx(
-              "-mb-15 w-50 animate-subtle-bounce transition-transform duration-300",
-              visible ? "translate-y-0" : "translate-y-1/1"
-            )}
-          />
-        )}
-        {pose === "pointUp" && (
-          <img
-            src={fezPoint}
-            alt="Happy companion lizard wearing a fez"
-            className={clsx(
-              "-mb-15 w-50 animate-subtle-bounce transition-transform duration-300",
-              visible ? "translate-y-0" : "translate-y-1/1"
-            )}
-          />
-        )}
-        {pose === "glassesPoint" && (
-          <img
-            src={fezGlassesPoint}
-            alt="Happy companion lizard wearing a fez and glasses"
-            className={clsx(
-              "-mb-15 w-50 animate-subtle-bounce transition-transform duration-300",
-              visible ? "translate-y-0" : "translate-y-1/1"
-            )}
-          />
-        )}
-        {pose === "cocktail" && (
-          <img
-            src={fezCocktail}
-            alt="Happy companion lizard wearing a fez and holding a cocktail"
+            src={portrait.src}
+            alt={portrait.alt}
             className={clsx(
               "-mb-15 w-50 animate-subtle-bounce transition-transform duration-300",
               visible ? "translate-y-0" : "translate-y-1/1"
