@@ -72,6 +72,70 @@ And Pile B gets cheaper as the exploration migration lands, so there is no rush 
 
 ---
 
+## The story as its own mod
+
+Earlier this document said an arc is not a mod, because mod boundaries keep technology from entangling and
+are not containers for features. That still holds — and **a story mod is right anyway**, because the story
+needs machinery of its own and machinery is exactly what a mod is for.
+
+The split: **the mod owns the mechanisms, the arcs stay data.**
+
+### What the mod would own
+
+`ModDescriptor` (`src/mods/modDescriptor.ts`) already has a slot for everything on this list:
+
+| It owns                                          | Registered as                                          |
+| ------------------------------------------------ | -------------------------------------------------------- |
+| Four encounter families — conversation, reading, offering, found object | `families` (game-side meta) + `registerModApps` (the React components) |
+| Story currencies — a seal, a rite token          | `currencyDistributions`, which the reachability worklist already consumes |
+| Their collection-screen presence                 | `currencyMeta`                                          |
+| Beat state — which beats have fired              | app-side storage, the way the shop owns its own          |
+| A waypoint scanner pointing at story props       | `registerCompassScanner`, as the hieroglyph mod does     |
+
+**Toggle-off is the acceptance gate** (`docs/mods/TARGET.md`): remove it from `REGISTERED_MODS` and
+`yarn generate-world` plus the app must still build, just without a story. That is a real and useful
+property here — it proves no story beat is load-bearing for a puzzle, which is the thing `puzzle-screens`
+§5 keeps insisting on.
+
+### What stays outside it
+
+The arcs themselves — premise, cast, places, beats, the chain — are **data and prose**. They are what
+`story/*.md` describes and what the locales carry. A different arc is a different file, not a different
+mod.
+
+And two things belong to core rather than to the story mod, because the game needs them with no story at
+all:
+
+- **A conversation keyed to the journey entered.** Every arrival beat needs it and so would any tutorial
+  rewrite. Core.
+- **Beats exempt from the tutorials toggle.** A player who turns tutorials off should lose tutorials.
+  Core.
+
+### What still stands in the way
+
+Nothing blocks *writing* the story — it is written. What blocks **running** it:
+
+| #   | Blocker                                                       | Whose            | Size |
+| --- | ------------------------------------------------------------- | ---------------- | ---- |
+| 1   | No conversation is keyed to a journey — all 20 fire `pyramidIntro` | **core**    | S    |
+| 2   | `shouldSkipConversation` would hide the plot with the tutorials | **core**      | XS   |
+| 3   | A conversation has one speaker; the script is a two-hander    | **core**         | S    |
+| 4   | No portrait surface in a conversation                         | **core** + art   | S    |
+| 5   | The four encounter families do not exist                      | **story mod**    | M    |
+| 6   | Reading — resolve a line against held glyphs                  | **story mod**, touches the hieroglyph mod | M |
+| 7   | `CompassResult` still names `hieroglyphId`                    | **core**         | S    |
+
+**1 through 4 are core work and they are the gate.** They are also small, and 1–3 are worth doing whether
+or not a story mod ever exists, because they are what a two-voice tutorial rewrite needs as well.
+
+**5 and 6 are the mod**, and 6 is the one with teeth: it must know which glyphs the player holds and render
+a line as legible or not. That is the ending's mechanism and the casual-mobile review's ninth item arriving
+as a consequence rather than as a project.
+
+Nothing on this list is Pile B. The corridor work is independent of all of it.
+
+---
+
 ## What the full script needs authored
 
 All five acts are written (`script-act-1.md` … `script-act-5.md`, 208 source lines). This is what they ask
