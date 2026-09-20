@@ -37,7 +37,7 @@ const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
  * A section the save no longer matches at all gets no mark and stays fogged, which is the reset it
  * should be.
  */
-const applyExplored = (grid: FloorGrid, floor: number, exploredCells: Record<string, string[]>): FloorGrid => {
+export const applyExplored = (grid: FloorGrid, floor: number, exploredCells: Record<string, string[]>): FloorGrid => {
   // Filed by the section's AUTHORING address, so re-authoring what is inside a section no longer makes
   // it a different section. There is no older address format to fall back to: a save still holding the
   // structural hashes is re-keyed from the coordinate archive before it is ever read (cellKeyVersion).

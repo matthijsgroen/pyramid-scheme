@@ -16,12 +16,12 @@ type RecorderArgs = {
 // classification (loot nodes / key-gated nodes / fogged corridors, keys-and-gates only, no mod names)
 // lives in floorExploration.ts and is unit-tested there.
 //
-// Written when the player LEAVES the floor (switches floor or exits the interior), from a ref in the
-// cleanup — NOT reactively on every grid change. A reactive write fed a render loop: writing
-// re-rendered the screen, the grid recomputed (getExploredSections returns a fresh object each
-// render, so useAssembledFloor rebuilds), and the effect could re-fire while the exit chamber was
-// mid-reveal, pegging the CPU (flicker, input starvation). Recording on-leave captures the floor's
-// final state — exactly what "still stuff to find" means — and can never re-enter render.
+// Written twice per visit — on arrival and on leave — never reactively: a write re-renders the
+// screen, which rebuilds the grid, which re-fires the effect, and that loop pegged the CPU.
+//
+// On-leave alone is a snapshot that outlives what it describes when a visit never ends (app killed,
+// tab closed), so an emptied pyramid keeps pulsing. Arrival reads the restored floor, which is what
+// the player is about to look at.
 export const useFloorExplorationRecorder = ({
   journeys,
   journeyId,
@@ -47,6 +47,17 @@ export const useFloorExplorationRecorder = ({
   const recordExploration = useRef<(floor: number, open: boolean, keySets: string[][]) => void>(() => {})
   recordExploration.current = (floor, open, keySets) =>
     journeys.registerFloorExploration(journeyId, levelNr, floor, open, keySets)
+  // One stamp per arrival, held to that by the floor it was made for: the effect re-runs on every
+  // grid change (a fresh `exploredCells` object each render rebuilds it), and writing each time is
+  // the render loop this hook exists to avoid.
+  const stampedFloor = useRef<string>(undefined)
+  useEffect(() => {
+    if (!floorExploration) return
+    const arrival = `${journeyId}:${currentFloor}`
+    if (stampedFloor.current === arrival) return
+    stampedFloor.current = arrival
+    recordExploration.current(currentFloor, floorExploration.open, floorExploration.keySets)
+  }, [journeyId, currentFloor, floorExploration])
   useEffect(() => {
     const floor = currentFloor
     return () => {

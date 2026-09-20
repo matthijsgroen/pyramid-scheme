@@ -32,7 +32,23 @@ const fakeJourneys = () => {
 }
 
 describe("useFloorExplorationRecorder", () => {
-  it("writes nothing while the player is still on the floor, so a write can't re-enter render", () => {
+  it("stamps the floor the player arrives on, so its summary is never older than this visit", () => {
+    const { api, registerFloorExploration } = fakeJourneys()
+
+    renderHook(() =>
+      useFloorExplorationRecorder({
+        journeys: api,
+        journeyId: "j1",
+        levelNr: 3,
+        currentFloor: 0,
+        grid: exploredGrid,
+      })
+    )
+
+    expect(registerFloorExploration).toHaveBeenCalledWith("j1", 3, 0, false, [])
+  })
+
+  it("stamps an arrival once, so a write can't re-enter render", () => {
     const { api, registerFloorExploration } = fakeJourneys()
 
     const { rerender } = renderHook(() =>
@@ -46,7 +62,7 @@ describe("useFloorExplorationRecorder", () => {
     )
     rerender()
 
-    expect(registerFloorExploration).not.toHaveBeenCalled()
+    expect(registerFloorExploration).toHaveBeenCalledTimes(1)
   })
 
   it("records the floor's final state when the player leaves the interior", () => {
@@ -82,8 +98,8 @@ describe("useFloorExplorationRecorder", () => {
 
     rerender({ currentFloor: 1 })
 
-    expect(registerFloorExploration).toHaveBeenCalledTimes(1)
     expect(registerFloorExploration.mock.calls[0][2]).toBe(0)
+    expect(registerFloorExploration.mock.calls[1][2]).toBe(0)
   })
 
   it("records the summary of the floor being left, not the fog of the one being entered", () => {

@@ -74,7 +74,13 @@ export const ExplorerDot = ({ grid, pos, segmentDuration = 180, color = "#ffd060
     const isFirstRun = !mountedRef.current
     mountedRef.current = true
 
-    if (from[0] === pos[0] && from[1] === pos[1]) return
+    // Standing where it already stands. On a REMOUNT that is still an arrival and has to be announced:
+    // a new floor keys this component, so the dot begins life at its destination, and the map offers
+    // nowhere to walk until it hears the dot has got there.
+    if (from[0] === pos[0] && from[1] === pos[1]) {
+      if (isFirstRun) onArriveRef.current?.()
+      return
+    }
     setFacing(facingOf(pos[1] - from[1], pos[0] - from[0]))
 
     if (isFirstRun) {
