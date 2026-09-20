@@ -12,8 +12,7 @@ describe(arrivalConversationId, () => {
   })
 
   it("names the journey's own arrival once it is in the script", () => {
-    for (const journeyId of JOURNEYS_WITH_ARRIVAL)
-      expect(arrivalConversationId(journeyId)).toBe(`arrival.${journeyId}`)
+    for (const journeyId of JOURNEYS_WITH_ARRIVAL) expect(arrivalConversationId(journeyId)).toBe(`arrival.${journeyId}`)
   })
 })
 
