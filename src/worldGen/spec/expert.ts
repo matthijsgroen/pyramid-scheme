@@ -194,12 +194,12 @@ export const expertRules: Rule[] = [
   // replaces the tier's sidePaths rather than merging.
   journey("expert_4").pyramid(2, {
     keyColors: 2,
-    packing: 2,
+    packing: 0.2,
     sidePaths: [...EXPERT_SIDE_PATHS, FLOOR_KEY_PATH],
   }),
   journey("expert_4").pyramid(4, {
     keyColors: 2,
-    packing: 2,
+    packing: 0.2,
     sidePaths: [...EXPERT_SIDE_PATHS, FLOOR_KEY_PATH],
   }),
 

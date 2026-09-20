@@ -169,21 +169,24 @@ describe("a prop stands against a wall", () => {
     const ends = tally.get("encounter")!
     const portals = tally.get("portal")!
     expect(ends.props).toBeGreaterThan(0)
-    // 0.3% and 1.1% measured. A room whose only spare cell has floor above it still gets its prop — a
+    // 6.6% and 1.1% measured. A room whose only spare cell has floor above it still gets its prop — a
     // prop is better than a bare chamber, and one leaning statue is cheaper than a second claim rule.
-    expect(ends.open / ends.props).toBeLessThan(0.02)
+    // The end rooms rose from 0.3% when the corridors were compacted: the preference is unchanged, but
+    // a floor carved to a third of its old footprint has correspondingly less stone to lean on.
+    expect(ends.open / ends.props).toBeLessThan(0.08)
     expect(portals.open / portals.props).toBeLessThan(0.05)
   }, 30000)
 
   it("still leans most of a junction's props on stone, though it has less to lean on", () => {
     const f = openBehindByOwner().get("fork")!
     expect(f.props).toBeGreaterThan(0)
-    // 24.4% measured, up from 14.9% when furniture was allowed to stand OUTSIDE the grid: an
-    // out-of-bounds cell reads as void, so it always looked like it had wall behind it, and the
-    // preference was being satisfied by props in the map's margin. Keeping them on the floor is worth
-    // the difference. Bounded here so a placement change that gave up on the preference altogether
-    // still shows as a failure rather than as art.
-    expect(f.open / f.props).toBeLessThan(0.3)
+    // 37% measured. It was 24.4% before the corridors were compacted and 14.9% before furniture was
+    // kept inside the grid at all — an out-of-bounds cell reads as void, so it always looked like it
+    // had wall behind it, and the preference was being satisfied by props in the map's margin. A
+    // junction has the least stone of any room to begin with, and a compact floor leaves it less
+    // still. Bounded here so a placement change that gave up on the preference altogether shows as a
+    // failure rather than as art.
+    expect(f.open / f.props).toBeLessThan(0.4)
   }, 30000)
 })
 

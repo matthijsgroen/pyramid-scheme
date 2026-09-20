@@ -600,8 +600,7 @@ describe(assembleFloor, () => {
     }
 
     const config = (): FloorConfig => ({
-      // 0 main-path puzzles, so every "puzzle" room found below unambiguously belongs to
-      // the sealed side section rather than the main path.
+      // 0 main-path puzzles, so a puzzle room in s0 below is one of the sealed section own rooms.
       pathPuzzles: 0,
       difficulty: "starter",
       end: "treasure",
@@ -620,7 +619,9 @@ describe(assembleFloor, () => {
       for (let r = 0; r < grid.rows; r++)
         for (let c = 0; c < grid.cols; c++) {
           const cell = grid.cells[r][c]
-          if (cell.type === "room" && isPuzzleRoom(cell)) puzzles.push([r, c])
+          // s0 is the sealed section. s1 carries a puzzle too, and an unsealed section is allowed
+          // the back door this test exists to forbid, so blocking one of ITS rooms proves nothing.
+          if (cell.type === "room" && isPuzzleRoom(cell) && cell.sectionAddress === "s0") puzzles.push([r, c])
         }
       if (puzzles.length === 0) continue
 
@@ -925,16 +926,16 @@ describe(assembleFloor, () => {
     const pyramid = assembleFloor("site-1", firstPyramid(), 7)
     if (!basic.success || !pyramid.success) throw new Error("assembly failed")
     expect([basic.grid.rows, basic.grid.cols, basic.grid.entrancePos, basic.grid.exitPos]).toEqual([
-      13,
-      13,
-      [0, 2],
-      [2, 4],
+      7,
+      7,
+      [6, 6],
+      [0, 0],
     ])
     expect([pyramid.grid.rows, pyramid.grid.cols, pyramid.grid.entrancePos, pyramid.grid.exitPos]).toEqual([
-      13,
-      13,
-      [12, 0],
-      [10, 10],
+      7,
+      7,
+      [0, 0],
+      [6, 4],
     ])
   })
 
@@ -1257,4 +1258,91 @@ describe("a floor does not depend on the engine's sort", () => {
   it.each([1, 7, 42, 1234, 175768595654520])("carves the same walls at seed %i", seed => {
     expect(wallsOf(seed, underMergeSort)).toBe(wallsOf(seed, run => run()))
   })
+})
+
+/**
+ * `packing` is a wish, not a contract. It asks for the shortest walk the author can get away with, and
+ * the tightest wish is the one a maze is most likely to be unable to grant: at `packing: 0.1` a floor
+ * with eight side sections has nowhere to hang them. The retry loop's other lever — growing the grid —
+ * cannot help, because the main path's target length is what is starving the branches, so a floor that
+ * fails at its authored packing fails at it sixty times over.
+ *
+ * So the retry widens the wish. Each rung asks for a little more room, and a floor settles at the
+ * first one that carves — which is what makes one low default safe for the whole world instead of
+ * every floor paying for the tightest one.
+ */
+describe("a floor too tight to carve widens until it does", () => {
+  const eightSections = (packing: number): FloorConfig => ({
+    pathPuzzles: 3,
+    difficulty: "expert",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    packing,
+    sideSections: Array.from({ length: 8 }, () => ({
+      pathPuzzles: 2,
+      difficulty: "expert" as const,
+      end: "treasure" as const,
+    })),
+  })
+
+  it("carves all 40 seeds at a packing most of them cannot honour", () => {
+    const failed: number[] = []
+    for (let seed = 0; seed < 40; seed++)
+      if (!assembleFloor(`site-tight-${seed}`, eightSections(0.1), seed).success) failed.push(seed)
+
+    expect(failed, `${failed.length} of 40 seeds could not carve`).toEqual([])
+  }, 60_000)
+
+  it.each([0, 1, 2, 3, 4])(
+    "never widens past the roomiest wish, at seed %i",
+    seed => {
+      // Unbounded, the widening compounds: an eight-section floor asking for 0.1 reached a packing of
+      // 17 and carved a 321x321 grid for three puzzles. The ceiling is what keeps a rescue from
+      // costing more than the wish the author refused in the first place.
+      const walk = (packing: number) => {
+        const result = assembleFloor(`site-walk-${seed}`, eightSections(packing), seed)
+        if (!result.success) throw new Error(`assembly failed at packing ${packing}, seed ${seed}`)
+        return graphDistance(result.grid, result.grid.entrancePos, result.grid.exitPos)
+      }
+
+      expect(walk(0.1)).toBeLessThanOrEqual(walk(1))
+    },
+    60_000
+  )
+})
+
+/**
+ * The walk between two puzzles is dead time, and for a long while the default was to carve six times
+ * more corridor than a floor's content needed. The default is now the shortest wish the widening
+ * above makes safe to hold world-wide: floors that cannot honour it widen on their own, so the rest
+ * no longer pay for them.
+ */
+describe("a floor that authors no packing gets the short walk", () => {
+  const plain = (packing?: number): FloorConfig => ({
+    pathPuzzles: 3,
+    difficulty: "expert",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    ...(packing === undefined ? {} : { packing }),
+    sideSections: [
+      { pathPuzzles: 2, difficulty: "expert", end: "treasure" },
+      { pathPuzzles: 1, difficulty: "expert", end: "treasure" },
+    ],
+  })
+
+  const walk = (config: FloorConfig, seed: number) => {
+    const result = assembleFloor(`site-default-${seed}`, config, seed)
+    if (!result.success) throw new Error("assembly failed")
+    return graphDistance(result.grid, result.grid.entrancePos, result.grid.exitPos)
+  }
+
+  it.each([1, 2, 3, 4, 5])(
+    "at seed %i walks under a third of six-times-content",
+    seed => {
+      // Per seed, not across them: one maze can be twenty times another at the same packing, so a
+      // comparison that mixes seeds says nothing about the packing at all.
+      expect(walk(plain(), seed) * 3).toBeLessThan(walk(plain(1), seed))
+    },
+    30_000
+  )
 })

@@ -241,7 +241,7 @@ const DEFAULT_STRAIGHT_BIAS = 0.65
 // loop in assembleFloor). 1 = today's default footprint; <1 packs the floor (and its
 // winding corridors) tighter, >1 gives it more breathing room. Overridable per floor via
 // FloorConfig.packing.
-const DEFAULT_PACKING = 1
+const DEFAULT_PACKING = 0.1
 
 // Maze carving is a per-attempt gamble (each attempt reshuffles branch points and section
 // order), so assembleFloor retries. The first RECOVERY_ATTEMPT attempts run at the original
@@ -250,6 +250,19 @@ const DEFAULT_PACKING = 1
 // at attempt 37, so the tail of the budget is headroom rather than something floors rely on.
 // See the retry loop in assembleFloor for why the first stretch is deliberately frozen.
 const RECOVERY_ATTEMPT = 30
+// Attempts spent at one packing before asking for more room, and how much more. Four rerolls is
+// enough for a floor that only needed shuffle luck; seven rungs of 1.5x carry the tightest default
+// past 1, so no floor is stuck at a wish its sections cannot fit.
+const ATTEMPTS_PER_RUNG = 4
+// Every other rung widens; the ones between just grow the grid. More room is the cheaper rescue —
+// it costs the player nothing — and a longer main path is what re-couples a floor's walk to how much
+// side content hangs off it, which is the very thing `targetDistance` exists to prevent.
+const ATTEMPTS_PER_WIDEN = 8
+const PACKING_WIDEN = 2
+// The roomiest a widening will ever ask for. Past it the retry goes back to growing the grid, which
+// is the lever that suits a floor whose sections already have room to wander: compounding the wish
+// instead carves a walk hundreds of cells long for a floor holding three puzzles.
+const PACKING_CEILING = 1
 const ASSEMBLY_ATTEMPTS = 60
 
 /** The five kinds a god can be DEPICTED on, as `tileAssets.ts`'s resolver reads them: a patron reaches
@@ -521,8 +534,10 @@ export const assembleFloor = (
   // shouldn't get a longer main path than one with none, just because minCells is bigger.
   // See buildMaze's own comment for the fallback when a grid is too small to reach the
   // target.
-  const packing = config.packing ?? DEFAULT_PACKING
-  const targetDistance = Math.max(1, Math.round(mainPathCells * (1 + 5 * packing)))
+  const distanceFor = (p: number) => Math.max(1, Math.round(mainPathCells * (1 + 5 * p)))
+  // The authored wish is where the retry STARTS, not what it is held to: see the widening in the loop.
+  let packing = config.packing ?? DEFAULT_PACKING
+  let targetDistance = distanceFor(packing)
 
   // Same `packing` scaling applied to every section/sub-section chain — a gated path used
   // to be *exactly* `pathPuzzles + gate + end` cells long, deaf to both `packing` and
@@ -580,7 +595,7 @@ export const assembleFloor = (
       n += 2
     return n
   }
-  const startingN = deriveN(minCells)
+  let startingN = deriveN(minCells)
   let N = startingN
 
   const nid = (r: number, c: number) => `${siteId}-${r}-${c}`
@@ -596,10 +611,29 @@ export const assembleFloor = (
   // too-tight puzzle.
   for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
     if (attempt >= RECOVERY_ATTEMPT) {
+      // Recovery asks for the roomiest wish outright. Winding the CHAINS down is its lever, and on a
+      // floor already carved as tight as it goes there is nothing left to wind: without this, a tight
+      // floor spends the whole phase re-rolling the same starved shape.
+      if (packing < PACKING_CEILING) {
+        packing = PACKING_CEILING
+        targetDistance = distanceFor(packing)
+      }
       const steps = Math.max(1, ASSEMBLY_ATTEMPTS - RECOVERY_ATTEMPT - 1)
       chainPacking = (packing * (steps - (attempt - RECOVERY_ATTEMPT))) / steps
       N = Math.max(startingN, deriveN(carvedCells()))
-    } else if (attempt > 0 && attempt % 4 === 0) N += 2
+    } else if (attempt > 0 && attempt % ATTEMPTS_PER_RUNG === 0) {
+      // Growing the grid cannot rescue a floor starved by its own packing: the main path is carved to
+      // `targetDistance` however much room surrounds it, so branches that have nowhere to hang still
+      // have nowhere to hang. Widening the wish is the lever that moves, and the grid follows it
+      // through `deriveN` — up to the ceiling, past which the grid is the lever again.
+      if (attempt % ATTEMPTS_PER_WIDEN === 0 && packing < PACKING_CEILING) {
+        packing = Math.min(packing * PACKING_WIDEN, PACKING_CEILING)
+        targetDistance = distanceFor(packing)
+        chainPacking = packing
+        startingN = Math.max(N, deriveN(minCells))
+        N = startingN
+      } else N += 2
+    }
 
     const rand = mulberry32(seed + attempt * 7919)
     const pkey = makePkey(N)
@@ -1011,10 +1045,7 @@ export const assembleFloor = (
     // successor) — never a rewarded section's own room.
     const gatedTreasureIdxs = gatedFloorKeyIdxs.filter(i => sideSections[i].end !== "staircase")
     const gatedStaircaseIdxs = gatedFloorKeyIdxs.filter(i => sideSections[i].end === "staircase")
-    const chain = [
-      ...shuffle(gatedTreasureIdxs, rand),
-      ...shuffle(gatedStaircaseIdxs, rand),
-    ]
+    const chain = [...shuffle(gatedTreasureIdxs, rand), ...shuffle(gatedStaircaseIdxs, rand)]
 
     const keyNodeIdMap = new Map<number, string>() // gated section idx → key node id
     const chainKeyColorMap = new Map<number, KeyColor[]>() // host section idx → key color(s) its end room holds
