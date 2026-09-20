@@ -7,13 +7,9 @@ import { repairFloorExploration } from "./repairFloorExploration"
  * Mends a save's exploration record and recomputes its floor summaries from it, once, on the first
  * launch that has this code (`floorExplorationVersion`).
  *
- * IT MUST NOT WAIT FOR A VISIT. The summary is what lights a pyramid on the map, and a summary left
- * over from a visit that never finished lights one the player has already emptied. Correcting it when
- * they next walk in is no correction at all: the walk is the cost the wrong summary imposed, and the
- * marker exists precisely to decide whether that walk is worth making.
+ * It must not wait for a visit: the marker exists to decide whether that visit is worth making.
  *
- * Only the floors the save already names are assembled — a handful of milliseconds each, once ever,
- * after mount so it never blocks first paint. A save that has been into four floors carves four.
+ * Only the floors the save already names are assembled, after mount, so it never blocks first paint.
  */
 export const useFloorExplorationBackfill = (journeys: JourneyAPI) => {
   const done = useRef(false)

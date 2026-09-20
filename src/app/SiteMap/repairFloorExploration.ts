@@ -22,40 +22,17 @@ export type RepairedExploration = {
 }
 
 /**
- * A save's floor summaries, put right without sending the player to look.
+ * A save's floor summaries, put right without sending the player to look — the trip is the cost a
+ * wrong summary imposes, so healing one on arrival heals nothing.
  *
- * THE SUMMARY IS A SNAPSHOT, AND A SNAPSHOT CAN OUTLIVE WHAT IT DESCRIBES. It is written when the
- * player arrives on a floor and again when they leave, so a visit that never ends — the app killed,
- * the tab closed — leaves the previous verdict standing. That verdict is what lights a pyramid on the
- * map, and a pyramid lit over a ward door the player has already opened and emptied sends them back
- * for nothing. Healing it on the next visit is no cure: the trip IS the damage.
+ * The record is mended before it is read. A corridor is filed under its carve-bound `~ordinal`, so a
+ * re-carve unfiles it and only the section's high-water mark brings it back — and that mark reaches
+ * no further than the furthest named ROOM. Saves written before the exit was recorded are missing
+ * that slot, which is the last along the chain, so every corridor past the last room comes back
+ * fogged. A FINISHED level was left through its exit, so the slot is known rather than guessed.
  *
- * So the floor is read here instead, from `exploredCells` — the record of what the player has opened
- * and walked, written as they go rather than in one lump at the end.
- *
- * THE RECORD IS MENDED FIRST, because a summary read off a floor that is missing something is just a
- * different wrong answer. One thing is missing from every save written before the way out was recorded
- * (useSiteNavigation): the exit slot. It is the last slot along its chain, and the furthest named ROOM
- * is what sets a section's high-water mark — the only thing that brings a corridor back once a floor
- * is re-carved, since a corridor is filed under its carve-bound `~ordinal`. Without the door, every
- * corridor between the last room and it sits past the mark and comes back fogged, on every floor the
- * player walked to its end.
- *
- * That fact is recoverable rather than lost: a level the player has FINISHED was left through its
- * exit, because finishing the interior is what walking into the exit chamber leads to (useSiteExit,
- * then `interiorComplete`). So the exit is written down for those levels and the mark reaches the door
- * again — which is a repair of the exploration itself, not a correction applied to the summary, so the
- * map draws the same floor the marker is describing.
- *
- * Only the floors the save already names are assembled; nothing sweeps the world. A floor the save
- * names that no longer assembles (its site is gone, or shorter than it was) drops its entry rather
- * than keeping a claim nothing can check.
- *
- * Hidden sections are not masked out here the way the live map masks them, because they need not be:
- * `computeFloorExploration` skips a hidden cell, and the route walk refuses to pass through one, so an
- * unfound corridor and everything behind it stay the 👁 marker's business either way. A section the
- * detector HAS turned up is a different matter — the map shows it, so it is un-hidden here too, or
- * what the player can already see would go unclaimed.
+ * Hidden sections need no masking: `computeFloorExploration` skips a hidden cell and the route walk
+ * will not pass through one. A section the detector has found is un-hidden, because the map draws it.
  */
 export const repairFloorExploration = (stored: Repairable, assembleFor: AssembleFor): RepairedExploration => {
   const exploredCells: Record<string, string[]> = Object.fromEntries(

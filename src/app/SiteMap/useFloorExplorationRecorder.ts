@@ -16,19 +16,12 @@ type RecorderArgs = {
 // classification (loot nodes / key-gated nodes / fogged corridors, keys-and-gates only, no mod names)
 // lives in floorExploration.ts and is unit-tested there.
 //
-// Written twice per visit: once as the player ARRIVES on the floor, and once when they LEAVE it
-// (switch floor, or exit the interior) from a ref in the cleanup — NOT reactively on every grid
-// change. A reactive write fed a render loop: writing re-rendered the screen, the grid recomputed
-// (getExploredSections returns a fresh object each render, so useAssembledFloor rebuilds), and the
-// effect could re-fire while the exit chamber was mid-reveal, pegging the CPU (flicker, input
-// starvation). Two fixed points per visit carry no such risk.
+// Written twice per visit — on arrival and on leave — never reactively: a write re-renders the
+// screen, which rebuilds the grid, which re-fires the effect, and that loop pegged the CPU.
 //
-// THE ARRIVAL STAMP IS WHAT KEEPS THE MARKER HONEST. On-leave alone is a snapshot that outlives
-// whatever produced it: a visit that never ends — the app killed, the tab closed, a cleanup that
-// never runs — leaves the previous visit's summary standing for good, and the pyramid goes on
-// pulsing over a floor whose gates the player has since opened and emptied. The grid on arrival is
-// the restored floor, which is precisely what the player is about to look at, so stamping it makes
-// the map and the marker agree by construction, for every floor ever walked into.
+// On-leave alone is a snapshot that outlives what it describes when a visit never ends (app killed,
+// tab closed), so an emptied pyramid keeps pulsing. Arrival reads the restored floor, which is what
+// the player is about to look at.
 export const useFloorExplorationRecorder = ({
   journeys,
   journeyId,
