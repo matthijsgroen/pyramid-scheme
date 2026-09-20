@@ -23,12 +23,19 @@ export const FezCompanion: React.FC<{
       showConversation: (
         conversationId: string,
         onComplete?: (result: FezConversationResult) => void,
-        options?: { forceReplay?: boolean }
+        options?: { forceReplay?: boolean; story?: boolean }
       ) => {
         if (!loaded) {
           return onComplete?.("not-loaded")
         }
-        if (shouldSkipConversation(!!conversations[conversationId], tutorialsEnabled, options?.forceReplay)) {
+        if (
+          shouldSkipConversation({
+            alreadySeen: !!conversations[conversationId],
+            tutorialsEnabled,
+            forceReplay: options?.forceReplay,
+            story: options?.story,
+          })
+        ) {
           return onComplete?.("seen-earlier")
         }
         const entry = {

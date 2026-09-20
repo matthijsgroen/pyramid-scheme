@@ -6,7 +6,7 @@ export const FezContext = createContext<{
   showConversation: (
     conversationId: string,
     onComplete?: (result: FezConversationResult) => void,
-    options?: { forceReplay?: boolean }
+    options?: { forceReplay?: boolean; story?: boolean }
   ) => void
 }>({
   showConversation: () => {

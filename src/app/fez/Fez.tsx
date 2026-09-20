@@ -5,6 +5,7 @@ import fezCocktail from "@/assets/cocktail-fez-250.png"
 import clsx from "clsx"
 import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
+import { arrivalLineKeys } from "./arrivalConversation"
 
 type Pose = "default" | "pointUp" | "glassesPoint" | "cocktail"
 
@@ -62,16 +63,32 @@ const conversations: Record<string, PoseChat[]> = {
 
 const NOT_FOUND = pose("default", ["not-found"])
 
+const ARRIVAL = /^arrival\.(.+)$/
+
+/**
+ * The lines a conversation id plays.
+ *
+ * A journey's arrival is not in the table above: there are twenty of them, they are authored as
+ * translations alone, and a new one should cost a key rather than a code change.
+ */
+const linesFor = (conversation: string, hasLine: (key: string) => boolean): PoseChat[] => {
+  const table = conversations[conversation]
+  if (table) return table
+  const journeyId = ARRIVAL.exec(conversation)?.[1]
+  const keys = journeyId ? arrivalLineKeys(journeyId, hasLine) : []
+  return keys.length > 0 ? pose(keys) : NOT_FOUND
+}
+
 export const Fez: FC<{
   conversation: string
   onComplete: (result: "complete" | "skipped") => void
 }> = ({ conversation, onComplete }) => {
-  const { t } = useTranslation("fez")
+  const { t, i18n } = useTranslation("fez")
   const [visible, setVisible] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
   const [messageIndex, setMessageIndex] = useState(0)
 
-  const messages = conversations[conversation] || NOT_FOUND
+  const messages = linesFor(conversation, key => i18n?.exists?.(key, { ns: "fez" }) === true)
 
   useEffect(() => {
     const timer = setTimeout(() => {

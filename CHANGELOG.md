@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Turning tutorials off no longer silences the story — only the teaching.
+
 ### Fixed
 
 - Fixed walking when going to a deeper floor.

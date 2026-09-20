@@ -3,18 +3,26 @@ import { shouldSkipConversation } from "./shouldSkipConversation"
 
 describe(shouldSkipConversation, () => {
   it("shows an unseen conversation when tutorials are enabled", () => {
-    expect(shouldSkipConversation(false, true, undefined)).toBe(false)
+    expect(shouldSkipConversation({ alreadySeen: false, tutorialsEnabled: true })).toBe(false)
   })
 
   it("skips an already-seen conversation", () => {
-    expect(shouldSkipConversation(true, true, undefined)).toBe(true)
+    expect(shouldSkipConversation({ alreadySeen: true, tutorialsEnabled: true })).toBe(true)
   })
 
   it("skips a new conversation when tutorials are disabled", () => {
-    expect(shouldSkipConversation(false, false, undefined)).toBe(true)
+    expect(shouldSkipConversation({ alreadySeen: false, tutorialsEnabled: false })).toBe(true)
   })
 
   it("still shows the conversation on an explicit replay, even with tutorials disabled", () => {
-    expect(shouldSkipConversation(true, false, true)).toBe(false)
+    expect(shouldSkipConversation({ alreadySeen: true, tutorialsEnabled: false, forceReplay: true })).toBe(false)
+  })
+
+  it("plays a story beat with tutorials turned off", () => {
+    expect(shouldSkipConversation({ alreadySeen: false, tutorialsEnabled: false, story: true })).toBe(false)
+  })
+
+  it("does not repeat a story beat that has been seen", () => {
+    expect(shouldSkipConversation({ alreadySeen: true, tutorialsEnabled: true, story: true })).toBe(true)
   })
 })
