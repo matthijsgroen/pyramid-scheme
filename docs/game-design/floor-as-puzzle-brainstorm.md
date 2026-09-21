@@ -167,6 +167,61 @@ rather than what you open.
 
 ---
 
+## Laddering across the tiers
+
+The catalogue is wide enough to climb the tier ladder rather than to pick one mechanic, and the
+rungs already exist — §7 gives every tier a debut of its own, so a floor layer arrives beside the
+structure it needs instead of on a ladder invented for it.
+
+| Tier | What the tier already debuts | The layer that fits it | Tier |
+| ---- | ---------------------------- | ---------------------- | ---- |
+| Starter | a line, no fork | **none** | — |
+| Junior | the first fork | B2/B3 — the fork becomes a choice made by solving | free |
+| Expert | seals, and a second floor | E3 sequence door; A1 ramps | free / carve |
+| Master | many forks, dormant content | A3 two walkable shapes; D1 fewer keys than locks; A4 shafts | carve / rooms |
+| Wizard | every mechanic at once | composition, not a new layer — a ramp that drops past a glyph still needed, a fourth glyph behind a ward gate | — |
+
+**Starter gets nothing, and that is the finding.** A floor with no fork has no route to choose, so
+every layer here is inert on it. Starter's play stays in the rooms.
+
+**Expert is where the sequence door belongs** for a reason beyond having somewhere to put it: expert
+debuts the seal, a lock whose key lies on the floor. A sequence door is a lock whose key *is* the
+floor. The tier teaches one and then generalises it.
+
+**The ladder and the build order coincide.** Junior's layer is free and Expert's is half free, so
+climbing the tiers from the bottom also spends the cheapest tiers first — nothing needs
+regenerating until the ladder reaches ramps.
+
+## Keeping it from repeating
+
+Two different kinds of sameness, and only one of them is about how many layers there are.
+
+**Between sites — a budget, not a probability.** §9 authors ward mix and fragment spread as
+authorable counts, and this belongs in the same vocabulary: how many sites per journey carry a
+layer, with a cap per journey and a cap per tier. The rule worth holding is **one layer per site,
+never per floor** — a site is the flooded one, or the one with the sequence door, not a sampler of
+everything the tier has unlocked.
+
+The dispatch has room for it. Six floors in the world carry a `condition` today, all of them
+`overgrown`; `flooded` is authored nowhere. Whatever density the budget lands on, it is growing into
+empty space rather than competing with existing authoring.
+
+**Within one layer — knobs, the way a family has knobs.** Twelve sequence doors of four glyphs each
+are one door twelve times. §3.1 gives every puzzle family its knobs for exactly this, and a layer
+needs the same:
+
+- **E3** — glyph count · whether the door gives the order or a frieze implies it · whether one glyph
+  sits behind a gate · how far the reset tile is from the door.
+- **A1** — where the landing points, which is also where its difficulty lives.
+- **A3** — which of the two shapes is the generous one, and whether the lever is on the wet side.
+- **B2** — how far apart the two goals sit; two shrines a mirror apart is a different puzzle from two
+  at opposite corners.
+
+**`patron` is the third variation axis and costs nothing**, because it is already free and already
+drawn. The same sequence door reads differently as Thoth's glyph order than as Sobek's. Patron is on
+68 floors today and 23 of those are `maat`, so there is spread to gain before a single new mechanic
+is needed.
+
 ## Tensions to settle before any of this is designed
 
 - **Uniqueness.** §3.3 makes the verifier required infrastructure and forbids rejecting a
