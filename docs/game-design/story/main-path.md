@@ -124,11 +124,76 @@ times over — the strongest practical argument for keeping story items drawn.
 Sphinx inscription is the only new _place_, and it dresses a room rather than carving one — unless it is
 put behind a hidden corridor, which is a choice rather than a requirement.
 
-## What the inscription says — candidates
+## What the inscription says — a name (decided)
 
-Everything above is a delivery system for one sentence. These are real texts, but **every one is a
-translation and wordings differ by translator** — and for a game two children read in two languages they
-would be adapted anyway. Treat these as the sense, not as something to carve.
+**The reaction carries the ending, not the sentence.** Whatever is written there, the beat the player
+actually receives is Fez and the explorer responding to it — and those are authored lines a translator can
+make land in their own language. Leaning the finale on the exact wording of a translated aphorism puts the
+weight on the one thing translation is worst at carrying.
+
+So the inscription only has to be **readable at last**. It does not have to be profound.
+
+Which points at the smallest possible ending: **it is a name.**
+
+A name is translation-proof by construction — the one thing the player reads is the one thing that cannot
+be mistranslated. `Cartouche` is already in the glyph catalogue, and a cartouche exists in Egyptian writing
+precisely because a name surviving _was_ surviving: say the name of the dead and they live again. That is
+the belief, not a device borrowed to serve one.
+
+It also pays off what Act II already spent itself on — Henut's name misspelled on her own wall, Ipi's
+ledger having it right, and her _"Now it will still be my name in a thousand years." / "It is the only
+thing that does."_
+
+### The beat
+
+> **Fez:** What does it say?
+>
+> **Explorer:** A name.
+>
+> **Fez:** Whose?
+>
+> **Explorer:** …
+>
+> **Fez:** Never heard of them.
+>
+> **Explorer:** No. Nobody has. Not for a very long time.
+
+Five lines a translator can carry, and the feeling is _somebody was forgotten and now is not_ — which needs
+no wordplay, no metaphor and no Egyptology.
+
+**It makes the Act I hook read better in hindsight.** _"Someone could, once."_ was always about literacy
+being lost rather than information. Ending on a name makes the loss a person.
+
+**And it is the smallest ending available.** No pronouncement, no thesis, no moral about what the player
+collected. Fifty hours to say one name out loud, which is funnier and sadder than anything grand, and it is
+the register `cast.md` already commits to.
+
+### What reading needs from the glyphs
+
+A line is stored as a sequence of glyph ids and rendered per glyph: held, and the word shows; not held, and
+an inert mark does. The wall never changes — the player does.
+
+The catalogue is 58 nouns in four groups (`symbolCatalogue.ts`): 15 gods, 15 professions, 15 animals, 13
+artifacts. **That vocabulary can write who did what, and cannot write the tomb-autobiography formula** —
+bread, water and clothes are not in it, and only the boat is (`Solar Barque`). Which is what ruled candidate
+A out, and what a name sidesteps entirely.
+
+**A line costs almost nothing to translate**, because it is assembled from glyph names that are already
+translated: ids plus one connective template, rather than a sentence per locale.
+
+### Still open
+
+1. **Whose name?** The Sphinx's builder is the safe answer. The earlier explorer from `script-act-5.md` is
+   the sharp one, and probably a twist too many.
+2. **How many lines before it?** The four-line, one-per-act shape still works with a noun vocabulary —
+   builders, then administrators, then the king, then the name — and it mirrors the tomb ladder the player
+   climbed. Whether the ending wants that run-up or wants to be one line is undecided.
+
+## Alternatives considered
+
+Kept because the reasoning is worth having, not because any of them is still in the running. All six are
+real texts, all are translations, and **each would have been translated again, loosely, a dozen times** —
+which is the argument that retired them.
 
 ### A. The tomb autobiography formula — Old Kingdom
 
@@ -224,7 +289,5 @@ nouns over beautiful images — the opposite of how a closing line would usually
    Acts III–IV exactly, which suggests it _is_ the spine's middle rather than a side thread.
 4. **Which four treasures carry the tier-unlock keys, and do they want renaming?** They are already the
    four things that vouch for you; nothing says so.
-5. **What does the inscription say?** Six candidates above, with A (the tomb autobiography formula) the
-   only one that both reframes the collecting and arrives as four lines across four acts. Undecided.
-6. **If it is A, are the four lines found or earned?** One per act as the player’s reading improves is the
-   tidy version; one per tomb ghost, each reciting their own, is the warmer one.
+5. **Whose name is on the Sphinx?** The ending is a name — see above. Which one is open.
+6. **Does the ending want a run-up?** Four lines across four acts still works with a noun vocabulary.

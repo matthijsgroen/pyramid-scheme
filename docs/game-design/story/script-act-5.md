@@ -1,12 +1,13 @@
 # Act V — wizard · announced, and read
 
-Source copy, English only. Voice and rules: `cast.md`. 47 source lines.
+Source copy, English only. Voice and rules: `cast.md`. 46 source lines.
 
 **The act's job.** The loop closes. `starter_1` was Dawn at the Sphinx; `wizard_2` is Secrets of the
 Sphinx, and the finale is the inscription from the first minute, read.
 
-**Assumes inscription candidate A** (`main-path.md`) — the tomb autobiography formula, arriving a line per
-act. If a different candidate wins, the beats stay and the words change.
+**The inscription is a name** (`main-path.md`). The reaction carries the ending, not the sentence — which
+is why the beat below is five short lines a translator can land, and why the one thing the player reads is
+the one thing that cannot be mistranslated.
 
 **Fez's bond note: he stops pricing things.** The decided arc from Part 3 §3.4 lands here.
 
@@ -36,20 +37,24 @@ act. If a different candidate wins, the beats stay and the words change.
 
 _(a pause the game should hold)_
 
-> **Explorer:** _I gave bread to the hungry._
+> **Explorer:** A name.
 >
-> **Explorer:** _Water to the thirsty._
+> **Fez:** Whose?
 >
-> **Explorer:** _Clothes to the naked._
+> **Explorer:** …
 >
-> **Explorer:** _And a boat to him who had none._
+> **Fez:** Never heard of them.
 >
-> **Fez:** That is it? That is the whole of it?
->
-> **Explorer:** That is the whole of it.
->
-> **Fez:** We have walked the length of this country. Through everything. For a list of four things
-> somebody gave away.
+> **Explorer:** No. Nobody has. Not for a very long time.
+
+**This is the whole ending.** Not a pronouncement and not a moral about what the player collected — fifty
+hours to say one name out loud. It makes Act I's _"Someone could, once."_ retroactively about a person
+rather than about information, and it is the only version where the text at the centre of the finale
+cannot be weakened by a translator having a bad day.
+
+Fez's own turn stays where it was, a beat later:
+
+> **Fez:** We have walked the length of this country. Through everything. For a name.
 >
 > **Explorer:** It is on every wall we passed.
 >
@@ -155,11 +160,12 @@ true."_
 
 ## Open
 
-1. **Does the pause at the Sphinx need a mechanism?** Four lines arriving one after another with nothing in
-   between is the whole ending, and the game has no way to hold a beat.
+1. **Does the pause need a mechanism?** The silence after _"Whose?"_ is doing the work, and the game has no
+   way to hold a beat.
 2. **Is the predecessor's notebook too neat?** Four lines that explain the forgery, the fake's quality and
    why they left. It could be three.
-3. **"I have been selling the walls"** is Fez's turn, and it happens at `wizard_2` rather than at the mural.
+3. **"I have been selling the walls"** is Fez's turn and it lands at `wizard_2` rather than at the mural.
    That may be the right place or three journeys early.
-4. **Nothing here is gated on the offering arc being built.** If it is not, the priest's rite and the
+4. **Whose name?** The Sphinx's builder is safe; the earlier explorer is sharp and probably a twist too many.
+5. **Nothing here is gated on the offering arc being built.** If it is not, the priest's rite and the
    refusal drop out and Act V still ends.
