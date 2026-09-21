@@ -34,7 +34,7 @@ const board = (difficulty: Difficulty, seed: number) => generateEclipse(seed, EC
 const Playable: FC<{ difficulty: Difficulty; seed: number }> = ({ difficulty, seed }) => {
   const [puzzle] = useState(() => board(difficulty, seed))
   const [state, setState] = useState(() => createEclipseState(puzzle))
-  const step = nextEclipseStep(puzzle, [...state.marks], techniquesUpTo(puzzle.techniqueCap))
+  const step = nextEclipseStep(puzzle, [...state.marks], techniquesUpTo(puzzle.techniqueCap, puzzle.variant))
   return (
     <div className="flex flex-col items-center gap-3">
       <EclipseBoard

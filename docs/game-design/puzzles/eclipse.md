@@ -200,6 +200,31 @@ wizard 13–20 signs and 57–62 steps at 340–840ms.
 The starter tier caps below counting on purpose: signs and the no-three rule alone
 make a 4×4 that teaches itself, which is P5's wordless first encounter.
 
+### 5.1 Variants — the same tier, a different board to read
+
+A tier ships one of several **variants**, drawn from the seed before any board is built, so a room at the
+same tier is not the same reading twice. A variant takes rungs off the LADDER and never off the board: the
+answer obeys all three grid rules whichever one is drawn, and conflicts are reported against all three.
+
+| Variant    | The board                                 | What it takes off the ladder     |
+| ---------- | ----------------------------------------- | -------------------------------- |
+| `mixed`    | Signs and the copy rule both carry a share | —                                |
+| `signless` | No signs at all                           | `sign`, `signPair`, `linePairing` |
+| `copyFree` | Signs, and no step reads line against line | `noCopy`                         |
+
+**A tier lists the variants its dials survive**, because the dials are written against the rungs the tier
+has: `copyFree` appears only from expert, since below it `noCopy` is above the cap already and the variant
+would be `mixed` under another name. A tier's required rungs are filtered to what its variant left standing
+— a signless expert board owes its quota in `noCopy`, a copy-free one in `linePairing` — and every listed
+variant keeps at least one, which the spec checks.
+
+**Signless boards pay for their signs in givens.** With nothing to read between squares, thinning has to
+stop while the grid rules alone still settle the board: measured, 6–9 givens of 16 at starter and 13–18 of
+64 at wizard, against nought to one for the other two, at 23–46 steps rather than 30–57. They are also the
+cheapest to draw. Copy-free boards go the other way — they keep more signs (14–21 at wizard against 12–15)
+and cost about three times a `mixed` draw at master, because the tier's own rungs fire less often on a board
+the signs already settle.
+
 ## 6. Controls
 
 **One tap per square, cycling empty → sun → moon → empty.** No palette and no pencil:
@@ -219,7 +244,8 @@ first tap.
 ## 7. Hints
 
 One per rung, keyed by technique and reading, rendered from a template
-(`puzzle-screens.md` §4). The hint **names the move, never the answer**, and it
+(`puzzle-screens.md` §4). A hint stays inside the ladder the board was
+ACCEPTED under, which is its tier cap minus whatever its variant took off (§5.1). The hint **names the move, never the answer**, and it
 points at the squares and the sign it reasons from — so "these two must match" has
 something to point to.
 
@@ -287,6 +313,8 @@ Beyond the shared screen bar:
   blinking off with every tap elsewhere.
 - **Givens are visibly part of the board** rather than part of the answer, and
   refuse a tap.
+- **The rules list drops the signs line on a signless board** (§5.1). A rule with nothing on the
+  board to point at reads as a rule the player has missed.
 
 ## 9. Theming
 

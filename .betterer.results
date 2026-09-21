@@ -39,8 +39,8 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/app/SiteMap/useFoundCorridors.ts:3576740506": [
       [3, 58, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/app/dev/PuzzleLab.tsx:751463273": [
-      [97, 80, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/app/dev/PuzzleLab.tsx:2558010178": [
+      [99, 80, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/app/dev/puzzleLabOptions.ts:2902395629": [
       [35, 61, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
@@ -65,7 +65,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/app/state/useProgression.ts:3396314902": [
       [5, 62, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/data/puzzleSeeds.ts:2485821932": [
+    "src/data/puzzleSeeds.ts:2130103940": [
       [4, 58, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/game/dressingTags.ts:3750709169": [
@@ -248,20 +248,20 @@ exports[`design doc references name a file, not a paragraph`] = {
       [94, 40, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [154, 74, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/app/eclipse/EclipsePuzzle.spec.tsx:4207998101": [
-      [99, 68, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/mods/puzzle/app/eclipse/EclipsePuzzle.spec.tsx:2020680127": [
+      [105, 68, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/app/eclipse/EclipsePuzzle.tsx:1190288517": [
+    "src/mods/puzzle/app/eclipse/EclipsePuzzle.tsx:3687625427": [
       [50, 58, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [65, 75, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/app/eclipse/EclipseRules.tsx:902346659": [
+    "src/mods/puzzle/app/eclipse/EclipseRules.tsx:77760187": [
       [4, 40, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/puzzle/app/eclipse/celebration.spec.tsx:1524006317": [
       [40, 91, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/app/eclipse/eclipseHint.ts:1356507935": [
+    "src/mods/puzzle/app/eclipse/eclipseHint.ts:1478915302": [
       [25, 26, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/puzzle/app/faceFor.ts:1376316899": [
@@ -593,11 +593,11 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/mods/puzzle/game/constellation/techniques.ts:2315654989": [
       [2, 104, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/game/eclipse/eclipseConfig.ts:1372650634": [
+    "src/mods/puzzle/game/eclipse/eclipseConfig.ts:3141337121": [
       [3, 58, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/game/eclipse/generateEclipse.ts:2878004789": [
-      [159, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/mods/puzzle/game/eclipse/generateEclipse.ts:2701298299": [
+      [191, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/puzzle/game/eclipse/meta.ts:2814509516": [
       [18, 68, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]

@@ -63,11 +63,16 @@ describe("EclipsePuzzle", () => {
     // The star's own outline. A skin is only ever pixels, so what a skin test can check is which glyph the
     // board drew for the same logical mark.
     const stars = (root: HTMLElement) => root.querySelectorAll('path[d^="M 0 -42"]').length
+    // Every mark the board drew, counted per pair: sun and crescent by default, star and dark sky at night.
+    const marks = (root: HTMLElement) =>
+      stars(root) +
+      root.querySelectorAll('circle[class*="stroke-indigo-300"], circle[class*="fill-amber-300"]').length +
+      root.querySelectorAll('path[d^="M 14 -34"]').length
     const board = (theme?: string) => {
       const { container } = render(
         <EclipsePuzzle puzzle={puzzle} difficulty="starter" theme={theme} onSolved={() => {}} onCancel={() => {}} />
       )
-      act(() => cellsIn(container)[0].click()) // one tap = one mark = one glyph to look at
+      act(() => cellsIn(container)[0].click())
       return container
     }
 
@@ -76,7 +81,8 @@ describe("EclipsePuzzle", () => {
       const night = board("night")
       // Same board either way: a skin never changes what the puzzle is, only what it looks like.
       expect(cellsIn(night).length).toBe(cellsIn(plain).length)
-      expect(stars(night)).toBe(1)
+      expect(marks(night)).toBe(marks(plain))
+      expect(stars(night)).toBeGreaterThan(0)
       expect(stars(plain)).toBe(0)
     })
 

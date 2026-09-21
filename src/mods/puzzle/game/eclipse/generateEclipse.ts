@@ -7,6 +7,27 @@ export type EclipsePuzzleWithAnswer = EclipsePuzzle & {
   solution: readonly Mark[]
   /** Carried so hints stay inside the same ladder the board was accepted under. */
   techniqueCap: EclipseTechniqueId
+  /** Which content variant it was drawn as, so grading rebuilds the ladder it was accepted under. */
+  variant: EclipseVariant
+}
+
+/**
+ * The shapes a board comes in — the same rules and the same tier, a different thing to read
+ * (docs/game-design/puzzles/eclipse.md, "Variants").
+ *
+ * - `mixed` — signs and the copy rule both carry their share.
+ * - `signless` — no signs on the board at all, so the grid rules settle it on their own.
+ * - `copyFree` — signs are there, and no step of the solve reads one line against another. The copy rule
+ *   still holds; the board just never makes the player check it.
+ */
+export type EclipseVariant = "mixed" | "signless" | "copyFree"
+
+// What a variant takes off the LADDER. The answer obeys every rule either way — this is only what the
+// solve may lean on, which is what generation thins against.
+const WITHOUT: Record<EclipseVariant, EclipseTechniqueId[]> = {
+  mixed: [],
+  signless: ["sign", "signPair", "linePairing"],
+  copyFree: ["noCopy"],
 }
 
 export type EclipseOptions = {
@@ -26,6 +47,14 @@ export type EclipseOptions = {
    * moment of thought in the middle, which is exactly how the top tier read before this existed.
    */
   requiresCount?: number
+  /**
+   * The variants this tier may ship, one drawn per seed. Unset means `mixed` only.
+   *
+   * Listed per TIER, because a variant takes rungs off the ladder while the tier's dials stay written
+   * against the rungs it has: a starter board with no signs is capped below counting and would ship as a
+   * grid of givens, so starter does not offer one.
+   */
+  variants?: EclipseVariant[]
 }
 
 // A tier that insists on a rung throws boards away, so the ceiling sits well above the one or two draws
@@ -37,8 +66,8 @@ const MAX_ATTEMPTS = 60
 // (a top-tier board with its rung quota to meet is already most of a second to draw).
 const MAX_SWEEPS = 1
 
-export const techniquesUpTo = (cap: EclipseTechniqueId): EclipseTechniqueId[] =>
-  ECLIPSE_TECHNIQUES.filter(id => techniqueRank(id) <= techniqueRank(cap))
+export const techniquesUpTo = (cap: EclipseTechniqueId, variant: EclipseVariant = "mixed"): EclipseTechniqueId[] =>
+  ECLIPSE_TECHNIQUES.filter(id => techniqueRank(id) <= techniqueRank(cap) && !WITHOUT[variant].includes(id))
 
 const rows = (size: number) =>
   Array.from({ length: size }, (_unused, row) => Array.from({ length: size }, (_u, col) => cellAt(size, row, col)))
@@ -112,10 +141,13 @@ const thin = (
   size: number,
   solution: readonly Mark[],
   allowed: EclipseTechniqueId[],
+  variant: EclipseVariant,
   random: () => number
 ): EclipsePuzzle => {
   let given: (Mark | undefined)[] = [...solution]
-  let links = allLinks(size, solution)
+  // A signless board never writes them down, so the sign pass below has nothing to take off and the given
+  // pass has to stop while the grid rules alone still settle it.
+  let links = variant === "signless" ? [] : allLinks(size, solution)
   // **Givens go first, and the order is the whole difference between this family and a filled-in grid.**
   // Thin the signs first and every one of them comes off: a board that still has most of its answer written
   // in it needs no signs at all, so the loop strips them and ships a board with none. Empty the cells first
@@ -165,10 +197,21 @@ const meetsDemand = (
  * cannot be read off the fact that one came back.
  */
 export const gradeEclipse = (board: EclipsePuzzleWithAnswer, options: EclipseOptions): Grade | null => {
-  const { techniqueCap, requires = [], requiresCount = 1 } = options
-  const result = settles(board, techniquesUpTo(techniqueCap), board.solution)
-  if (!result || !meetsDemand(result.steps, requires, requiresCount)) return null
+  const { techniqueCap, requiresCount = 1 } = options
+  const allowed = techniquesUpTo(techniqueCap, board.variant)
+  const result = settles(board, allowed, board.solution)
+  if (!result || !meetsDemand(result.steps, demandsOf(options, allowed), requiresCount)) return null
   return { steps: result.steps.length, deepest: result.deepest }
+}
+
+// A tier's required rungs, minus the ones its variant took off the ladder — a signless board cannot be
+// asked to spend `linePairing`. Every listed variant keeps at least one of them, which the spec checks.
+const demandsOf = ({ requires = [] }: EclipseOptions, allowed: EclipseTechniqueId[]) =>
+  requires.filter(id => allowed.includes(id))
+
+const pickVariant = (options: EclipseOptions, random: () => number): EclipseVariant => {
+  const variants = options.variants ?? ["mixed"]
+  return variants[Math.floor(random() * variants.length)]
 }
 
 export const generateEclipse = (
@@ -178,17 +221,20 @@ export const generateEclipse = (
   // single attempt instead of the full search must not file the board under a different bucket.
   attempts: number = MAX_ATTEMPTS
 ): EclipsePuzzleWithAnswer => {
-  const { size, techniqueCap, requires = [], requiresCount = 1 } = options
-  const allowed = techniquesUpTo(techniqueCap)
+  const { size, techniqueCap, requiresCount = 1 } = options
   const random = mulberry32(seed)
+  // Drawn once, before any board: a seed is one board, and the variant is part of which board it is.
+  const variant = pickVariant(options, random)
+  const allowed = techniquesUpTo(techniqueCap, variant)
+  const requires = demandsOf(options, allowed)
   let fallback: { board: EclipsePuzzleWithAnswer; demanded: number } | undefined
   for (let attempt = 0; attempt < attempts; attempt++) {
     const solution = solutionGrid(size, random)
     if (!solution) continue
-    const puzzle = thin(size, solution, allowed, random)
+    const puzzle = thin(size, solution, allowed, variant, random)
     const result = settles(puzzle, allowed, solution)
     if (!result) continue
-    const board = { ...puzzle, solution, techniqueCap }
+    const board = { ...puzzle, solution, techniqueCap, variant }
     // A board that never needed the tier's own rung teaches the tier below it, so it is only kept if
     // nothing better turns up.
     if (meetsDemand(result.steps, requires, requiresCount)) return board
@@ -196,7 +242,7 @@ export const generateEclipse = (
     // The nearest miss is the fallback, so a tier that cannot hit its quota still ships its hardest draw.
     if (!fallback || demanded > fallback.demanded) fallback = { board, demanded }
   }
-  if (!fallback) throw new Error(`eclipse: no board for size ${size} at ${techniqueCap}`)
+  if (!fallback) throw new Error(`eclipse: no board for size ${size} at ${techniqueCap} (${variant})`)
   return fallback.board
 }
 
