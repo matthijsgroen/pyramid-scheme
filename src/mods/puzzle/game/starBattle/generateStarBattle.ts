@@ -84,6 +84,15 @@ export type StarBattleOptions = {
    * board `spanning` fires at step fifteen.
    */
   firstStarAfter?: number
+  /**
+   * The most steps a board may have that place TWO stars at once.
+   *
+   * A line down to three free squares owing two stars has one filling — both ends — so a whole pair lands
+   * on a move nobody had to think about, and a board full of those reads as bookkeeping however hard its
+   * opening was. Playtesting counted four to seven a board at junior and two to five higher up. Only
+   * meaningful at two stars a group: at one star no step can place a pair.
+   */
+  mostPairsAtOnce?: number
 }
 
 /**
@@ -363,11 +372,16 @@ const meetsShape = (
   steps: readonly { technique: StarBattleTechniqueId; decisions: readonly { mark: string }[] }[],
   options: StarBattleOptions
 ) => {
-  const { requires = [], requiresCount = 1, firstStarAfter = 0 } = options
+  const { requires = [], requiresCount = 1, firstStarAfter = 0, mostPairsAtOnce } = options
   if (!meetsMapShape(puzzle, options)) return false
   if (!meetsDemand(steps, requires, requiresCount)) return false
-  return firstStarStep(steps) >= firstStarAfter
+  if (firstStarStep(steps) < firstStarAfter) return false
+  return mostPairsAtOnce === undefined || pairsAtOnce(steps) <= mostPairsAtOnce
 }
+
+/** Steps that hand over a whole pair — the move a player makes without thinking. */
+const pairsAtOnce = (steps: readonly { decisions: readonly { mark: string }[] }[]) =>
+  steps.filter(step => step.decisions.filter(decision => decision.mark === "star").length > 1).length
 
 // The half of the gate that reads the MAP alone, so the loop can throw a draw away before paying for a
 // solve — and with `wouldStrand` in the ladder a solve is the expensive part of a draw by two orders.

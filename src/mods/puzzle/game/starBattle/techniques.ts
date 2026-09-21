@@ -17,6 +17,7 @@ export const STAR_BATTLE_TECHNIQUES = [
   "groupFull",
   "groupTight",
   "onlyWay",
+  "everyWay",
   "regionLine",
   "lineRegion",
   "spanning",
@@ -193,6 +194,52 @@ const onlyWaySteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[] 
     ]
   })
 
+/**
+ * The most free squares a group may hold for its arrangements to be a reason rather than a search.
+ *
+ * Six is where a player can still see the arrangements without listing them. Past that, "every way of
+ * filling this region agrees about this square" is what a SOLVER does — the reading eclipse built, measured
+ * and cut for exactly that (docs/game-design/puzzles/eclipse.md, on what was measured and taken out), and
+ * the bound is what keeps this side of that line.
+ */
+const MOST_FREE_TO_READ = 6
+
+/**
+ * A square every legal arrangement of a group's stars uses.
+ *
+ * **Found by playing a wizard board, not by the solver.** A four-square hook owing two stars has two
+ * placements and both use the same corner, so the star goes down on move one — and the ladder could not see
+ * it, because `onlyWay` only fires when there is exactly ONE arrangement. The board read as fourteen steps
+ * of elimination before its first star; a player places one immediately.
+ *
+ * **Inert at one star**, and provably: each arrangement is then a single distinct square, so several
+ * arrangements can never agree, and the case where there is one belongs to `groupTight`.
+ *
+ * The negative half of the same reading — a square NO arrangement uses — is `wouldStrand` already, said in
+ * a sentence that needs no arrangements at all.
+ */
+const everyWaySteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[] =>
+  countingGroups(puzzle).flatMap(({ kind, cells }) => {
+    const owed = owedBy(puzzle, marks, cells)
+    const free = freeIn(puzzle, marks, cells)
+    if (owed <= 1 || free.length <= owed || free.length > MOST_FREE_TO_READ) return []
+    const ways = packings(puzzle, marks, free, owed)
+    // One way is `onlyWay`'s plainer sentence, and none is a board already broken.
+    if (ways.length <= 1) return []
+    const always = free.filter(cell => ways.every(way => way.includes(cell)))
+    return always.length
+      ? [
+          {
+            technique: "everyWay" as const,
+            variant: kind,
+            count: owed,
+            cells,
+            decisions: always.map(cell => ({ cell, mark: "star" as const })),
+          },
+        ]
+      : []
+  })
+
 /** Rows and columns, each with the word its sentence uses. Never mixed — see `spanningSteps`. */
 const lineKinds = (puzzle: StarBattlePuzzle) => [
   { kind: "row", lines: rows(puzzle.size) },
@@ -351,6 +398,7 @@ const IMPLEMENTATIONS: Record<StarBattleTechniqueId, (puzzle: StarBattlePuzzle, 
   groupFull: groupFullSteps,
   groupTight: groupTightSteps,
   onlyWay: onlyWaySteps,
+  everyWay: everyWaySteps,
   regionLine: regionLineSteps,
   lineRegion: lineRegionSteps,
   spanning: spanningSteps,

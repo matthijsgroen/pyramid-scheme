@@ -224,18 +224,22 @@ describe("a board does not depend on the engine's sort", () => {
   }
 
   // Generating a wizard board twice — once through a merge sort written in TypeScript rather than the
-  // engine's own — runs to about three seconds here and past the five-second default on a CI runner.
+  // engine's own — runs to about three seconds here and past the five-second default on a CI runner. A
+  // listed seed is drawn in one attempt, which is both what play does and the board a room is dealt; a
+  // tier with no list left to draw from falls back to the attempt loop.
   it.each(["junior", "expert", "master", "wizard"] as const)(
     "builds the same twin stars board at %s",
     tier => {
       const options = TWIN_STARS_CONFIG[tier]
-      const ours = generateStarBattle(12345, options)
-      const theirs = underMergeSort(() => generateStarBattle(12345, options))
+      const listed = puzzleSeeds[configHash(options)] ?? []
+      const [seed, attempts] = listed.length ? [listed[0], 1] : [12345, undefined]
+      const ours = generateStarBattle(seed, options, attempts)
+      const theirs = underMergeSort(() => generateStarBattle(seed, options, attempts))
 
       expect(theirs.regions).toEqual(ours.regions)
       expect(theirs.solution).toEqual(ours.solution)
     },
-    30_000
+    60_000
   )
 
   it("builds every listed board of a tier under either sort, which is what the list promises", () => {

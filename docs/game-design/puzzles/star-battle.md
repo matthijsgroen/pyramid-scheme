@@ -86,10 +86,11 @@ always says "I counted the whole board" teaches nothing.
 | **T1** | `groupFull`  | A row, column or region already holds its stars                 | "This region has its ⭐, so the rest is dark"            |
 | **T2** | `groupTight` | A group owes as many stars as it has squares left               | "One ⭐ owed and one square left"                        |
 | **T3** | `onlyWay`    | A group's stars fit in its free squares exactly one way         | "Only one way to fit 2 ⭐ in this region"                |
-| **T4** | `regionLine` | A region's free squares all sit in one row or column            | "This region's ⭐ has to come from that row"             |
-| **T5** | `lineRegion` | A row or column's free squares all sit inside one region        | "That row's ⭐ is this region's, so the region is spent" |
-| **T6** | `spanning`   | Two regions whose free squares fit in two rows (or two columns) | "These two regions fill those two rows between them"     |
-| **T7** | `wouldStrand` | A star in this square would leave some group with nowhere to stand | "A ⭐ here leaves the marked region nowhere to stand"  |
+| **T4** | `everyWay`   | Every legal arrangement of a group’s stars uses one square      | "Wherever this region’s 2 ⭐ go, one is always here"        |
+| **T5** | `regionLine` | A region's free squares all sit in one row or column            | "This region's ⭐ has to come from that row"             |
+| **T6** | `lineRegion` | A row or column's free squares all sit inside one region        | "That row's ⭐ is this region's, so the region is spent" |
+| **T7** | `spanning`   | Two regions whose free squares fit in two rows (or two columns) | "These two regions fill those two rows between them"     |
+| **T8** | `wouldStrand` | A star in this square would leave some group with nowhere to stand | "A ⭐ here leaves the marked region nowhere to stand"  |
 
 **T0 is propagation, not a step.** Placing a star rules out its eight neighbours, and no board asks the
 player to work that out — it is the rule made visible. It is a rung so that a hint has something to say on
@@ -124,7 +125,21 @@ a line, say which owes the other. The pair is not symmetric in practice — a re
 squeezed into one line is common, a line squeezed into one region needs the rest of the
 line already dark, so T5 arrives later in a solve.
 
-**T7 is a hypothesis about ONE square, refuted by ONE group.** Everything below it needs a group already
+**T4 is the reading a player made and the solver could not.** `onlyWay` fires only when a group has
+exactly ONE arrangement; this one fires when several arrangements agree about a square — a four-square hook
+owing two stars has two placements and both use the same corner, so the star goes down on move one. A wizard
+board that the ladder rated as fourteen steps of elimination before its first star was opened by a player on
+move one, and the gap was this rung. Its negative half — a square NO arrangement uses — needs no
+arrangements at all: that is T8 saying a star there would strand the group.
+
+**It is bounded to six free squares, and the bound is the point.** Past that, "every way of filling this
+region agrees about this square" is what a solver does rather than something a player checks, which is the
+enumeration rung eclipse built, measured and cut (its §3.4). Six is what a person can see without listing.
+
+**Inert at one star**, and provably: each arrangement is then a single distinct square, so two arrangements
+can never agree, and the case where there is one belongs to `groupTight`.
+
+**T8 is a hypothesis about ONE square, refuted by ONE group.** Everything below it needs a group already
 narrow enough to count from, so a map with no narrow group anywhere gives the ladder nothing to start on.
 This rung needs none: it tries a star, follows only what that star forces outright — the squares it touches,
 and the rest of any group it fills — and if some row, column or region is left owing more stars than it has
@@ -627,12 +642,12 @@ stays what §3.3 says it is: a guard, not a rung.
   a board whose main gesture is a drag along a row. Measured on the real screen, not
   computed. 10×10 is a tablet question if it is ever a question.
 
-| Tier   | Spread | Smallest region | Line regions | First star after | Cap           | Requires          | Steps |
-| ------ | ------ | --------------- | ------------ | ---------------- | ------------- | ----------------- | ----- |
-| junior | n³     | 3               | allowed      | —                | `onlyWay`     | `onlyWay` ×3      | 27–30 |
-| expert | n³     | 5               | refused      | step 2           | `spanning`    | region rungs ×2   | 28–32 |
-| master | n³     | 5               | refused      | step 6           | `wouldStrand` | `wouldStrand` ×4  | 31–55 |
-| wizard | n²     | 5               | refused      | step 12          | `wouldStrand` | `wouldStrand` ×10 | 36–52 |
+| Tier   | Spread | Smallest region | Line regions | First star after | Pairs at once | Cap           | Requires         | Steps |
+| ------ | ------ | --------------- | ------------ | ---------------- | ------------- | ------------- | ---------------- | ----- |
+| junior | n³     | 3               | allowed      | —                | —             | `onlyWay`     | `onlyWay` ×3     | 27–30 |
+| expert | n³     | 5               | refused      | —                | 3             | `spanning`    | region rungs ×2  | 31–36 |
+| master | n³     | 5               | refused      | step 5           | 2             | `wouldStrand` | `wouldStrand` ×4 | 35–47 |
+| wizard | n³     | 5               | refused      | step 6           | 2             | `wouldStrand` | `wouldStrand` ×8 | 38–47 |
 
 **The smallest allowed region is the knob that matters, and playtesting is what found it.** A
 region of three squares can only be a straight line — an L cannot hold two stars that do not
@@ -648,6 +663,15 @@ so everything after the gifts is counting. Every tier above it draws no gift at 
 
 The ramp is the smallest region first, then the spread, then the rung — and unlike star
 battle's own top two tiers, no two of these rest on the requirement alone.
+
+**A third gift was counted only once a player said so: the pair that lands on one move.** A line down to
+three free squares owing two stars has one filling, so both ends are stars and two of the board's sixteen go
+down without a thought. Counted: four to seven a board at junior, two to five above it. `mostPairsAtOnce`
+caps it, at two for the top tiers.
+
+**The tighter spread had to go.** With the gates doing the work, n² put master and wizard out of reach of
+their own gates — every draw fell back to a nearest miss — so every tier above junior now shares junior's
+spread and differs in what it asks. The spread was never the difficulty; it was the search budget.
 
 **The gifts were only half of it, and the other half is when the first star lands.** Every tier here — gift-free ones included — placed its first pair on step 0, 1 or 2 and settled in 27–31 steps, which is a board that opens itself. From expert up no region may sit inside one line either, and from master up the board has to be argued open with T7 before it gives a star away. That is what moved master and wizard from twenty-eight steps to forty-odd, of which nine to twenty-one are the hypothesis rung. It also made them CHEAPER to draw — master fell from 339ms to about 55ms, because a ladder that can open a board without a gift can keep the maps that have none.
 
