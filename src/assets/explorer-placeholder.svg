@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 250" width="220" height="250">
+  <title>Explorer (placeholder)</title>
+  <g stroke="#2b3036" stroke-width="7" stroke-linejoin="round" stroke-linecap="round">
+    <!-- shoulders: cream shirt under an olive vest -->
+    <path d="M44 250v-30c0-26 30-40 66-40s66 14 66 40v30" fill="#efe6d2" />
+    <path d="M44 250v-30c0-20 18-33 42-38v68zM176 250v-30c0-20-18-33-42-38v68z" fill="#7d8a5c" />
+    <path d="M62 206h12v14H62zM146 206h12v14h-12z" fill="#6c784f" />
+    <!-- neckerchief: the one thing both characters share -->
+    <path d="M84 178h52l-26 34z" fill="#c8452f" />
+    <!-- head -->
+    <circle cx="110" cy="122" r="46" fill="#d9a371" />
+    <!-- hat: crown, then a brim that reads wide -->
+    <path d="M70 104c0-34 14-50 40-50s40 16 40 50z" fill="#8a5f3c" />
+    <path d="M38 104h144" stroke-width="14" stroke="#7a5535" stroke-linecap="round" />
+    <path d="M70 96h80" stroke-width="7" stroke="#6b4a2e" />
+  </g>
+</svg>

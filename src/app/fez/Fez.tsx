@@ -2,6 +2,8 @@ import fez from "@/assets/fez-250.png"
 import fezPoint from "@/assets/point-fez-250.png"
 import fezGlassesPoint from "@/assets/glasses-point-fez-250.png"
 import fezCocktail from "@/assets/cocktail-fez-250.png"
+// Placeholder until the explorer is drawn — see docs/game-design/story/character-art-prompts.md.
+import explorerPlaceholder from "@/assets/explorer-placeholder.svg"
 import clsx from "clsx"
 import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
@@ -25,8 +27,7 @@ const pose = (...args: (Pose | string[])[]): PoseChat[] => {
 }
 
 const conversations: Record<string, PoseChat[]> = {
-  // He states why he's along before the call to action: he's in it for the trade, which is what
-  // the stall pays off later (docs/game-design/story-and-time-brainstorm.md §3.4).
+  // He states why he's along before the call to action, so the stall pays it off later.
   welcome: pose(["welcome", "welcome2", "welcomeTrade", "welcome3"]),
   chooseExpedition: pose(["chooseExpedition"]),
   pyramidIntro: pose(["pyramidIntro", "pyramidIntro2"], "pointUp", ["pyramidIntro3"]),
@@ -50,9 +51,8 @@ const conversations: Record<string, PoseChat[]> = {
   // The first stall the player ever reaches: he owns up to it being his and pitches the counter.
   // Closes on the same practical line as every later visit, so the rules live in one string.
   shopFirstVisit: pose("cocktail", ["shopFirstVisit", "shopFirstVisit2", "shopArrival2"]),
-  // One per finished mosaic register, plus the finale for the whole window. Each stands alone:
-  // registers can be completed in any order, so no beat may lean on another (see
-  // docs/game-design/story-and-time-brainstorm.md §3.4).
+  // One per finished mosaic register, plus the finale. Registers complete in any order, so no beat
+  // may lean on another.
   mosaicStarter: pose(["mosaicStarter", "mosaicStarter2"], "pointUp", ["mosaicStarter3"]),
   mosaicJunior: pose("glassesPoint", ["mosaicJunior"], "default", ["mosaicJunior2", "mosaicJunior3"]),
   mosaicExpert: pose("pointUp", ["mosaicExpert"], "default", ["mosaicExpert2", "mosaicExpert3"]),
@@ -69,6 +69,9 @@ const PORTRAITS: Partial<Record<Speaker, Partial<Record<Pose, { src: string; alt
     pointUp: { src: fezPoint, alt: "Happy companion lizard wearing a fez" },
     glassesPoint: { src: fezGlassesPoint, alt: "Happy companion lizard wearing a fez and glasses" },
     cocktail: { src: fezCocktail, alt: "Happy companion lizard wearing a fez and holding a cocktail" },
+  },
+  explorer: {
+    default: { src: explorerPlaceholder, alt: "The explorer, in a wide brown hat and olive vest" },
   },
 }
 

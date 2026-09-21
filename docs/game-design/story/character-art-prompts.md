@@ -96,7 +96,14 @@ as much as a writing one.
 > a stone, an open notebook face down, and a hat very like the explorer's, left behind. No figure, no
 > remains, no blood. The scene should read as somebody who left in a hurry and meant to come back.
 
-## 3. What is not here
+## 3. The placeholder in the meantime
+
+`src/assets/explorer-placeholder.svg` stands in until §1 is drawn: a flat bust in the right palette — brim,
+neckerchief, olive vest over cream — with no face. It is deliberately unfinished, and a featureless face
+cannot accidentally commit to a read the character is not supposed to have. Replace it with
+`explorer-250.png` and delete it.
+
+## 4. What is not here
 
 **The bust crops.** They are crops of the files above, not new generations — the expressive part is head and
 shoulders and that is a cut, not a drawing.
