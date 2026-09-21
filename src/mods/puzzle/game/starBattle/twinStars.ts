@@ -65,6 +65,17 @@ export const TWIN_STARS_META: FamilyMeta = {
  * eight regions already answered — which reads as a junior board however hard the solver had to work for
  * the rest. Raising the floor to five removes them: 0.0–0.1 a board.
  *
+ * **It was not enough, and the measurement that says so is the same one star battle's top tiers were
+ * rebuilt on.** Every tier here placed its first star on step 0, 1 or 2 and settled in 27–31 steps: a board
+ * whose opening is handed over is an easy board however tight its regions are. From expert up, no region
+ * may sit inside one line; from master up the board must be argued open with `wouldStrand`, and the first
+ * star may not land until the player has eliminated for several steps. Measured: master 31–49 steps with
+ * the first star at step 8–20, wizard 38–46 at step 12–17, against 27–31 at step 0–2 before.
+ *
+ * **The harder rung makes the boards CHEAPER to draw**, which is the opposite of what the tiers cost
+ * before: master fell from 609ms to about 55ms, because a ladder that can open a board without a gift can
+ * also keep the maps that have none.
+ *
  * Measured over eight boards a tier, none falling back to a nearest miss.
  */
 export const TWIN_STARS_CONFIG: Record<Difficulty, StarBattleOptions> = {
@@ -92,38 +103,44 @@ export const TWIN_STARS_CONFIG: Record<Difficulty, StarBattleOptions> = {
     requires: ["onlyWay"],
     requiresCount: 3,
   },
-  // The gifts go away and the region boundary starts meaning something: a region squeezed into one line
-  // spends that line's pair, twice a board. 34ms.
+  // The gifts go away twice over: no region small enough to read on sight, and none sitting inside a single
+  // line either, so the region boundary has to be argued rather than spotted. Two eliminations before the
+  // first pair lands. 28–32 steps at about 500ms.
   expert: {
     size: 8,
     quota: 2,
     regionSpread: 3,
     minRegion: 5,
-    techniqueCap: "regionLine",
-    requires: ["regionLine"],
+    noLineRegions: true,
+    techniqueCap: "spanning",
+    requires: ["regionLine", "spanning"],
     requiresCount: 2,
+    firstStarAfter: 2,
   },
-  // The converse reading, which needs the rest of a line already emptied, spent twice. Shares expert's
-  // spread: at n² this tier costs three times as much to draw and comes out no harder, so the separation
-  // from expert is the rung rather than the shape of the map. 609ms.
+  // The hypothesis arrives, and with it an opening the board makes the player earn. This is where the
+  // family stops being a counting exercise: 31–49 steps, of which nine to twenty-one are the new rung.
   master: {
     size: 8,
     quota: 2,
     regionSpread: 3,
     minRegion: 5,
-    techniqueCap: "lineRegion",
-    requires: ["lineRegion"],
-    requiresCount: 2,
+    noLineRegions: true,
+    techniqueCap: "wouldStrand",
+    requires: ["wouldStrand"],
+    requiresCount: 4,
+    firstStarAfter: 6,
   },
-  // The top rung, twice, and the only tier drawn at the tighter spread — so no region is small enough to
-  // read on sight and the reasoning has to span two groups. 898ms.
+  // The same reasoning at the tighter spread and much more of it, on a board that may not give up a star
+  // for a dozen steps. The grid cannot grow (see above), so the top tier is bought with the opening.
   wizard: {
     size: 8,
     quota: 2,
     regionSpread: 2,
     minRegion: 5,
-    techniqueCap: "spanning",
-    requires: ["spanning"],
-    requiresCount: 2,
+    noLineRegions: true,
+    techniqueCap: "wouldStrand",
+    requires: ["wouldStrand"],
+    requiresCount: 10,
+    firstStarAfter: 12,
   },
 }

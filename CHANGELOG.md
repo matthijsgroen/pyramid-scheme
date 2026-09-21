@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Pyramid corridors are much shorter. The walk from one puzzle to the next is about half what it was, and a starter floor a third.
 - Eclipse boards now come in three kinds: with signs, without signs, and ones that never make you compare two lines.
-- Star battle boards no longer hand you a star to start with, and the hard ones ask you to rule squares out first.
+- Star battle and twin stars boards no longer hand you a star to start with, and the hard ones ask you to rule squares out first.
 
 ## 0.44.0 - 2026-09-18
 

@@ -109,7 +109,9 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
     for (let region = 0; region < options.size; region++) expect(contiguous(board, region)).toBe(true)
   })
 
-  it("is seeded: the same seed draws the same sky, a different one draws another", () => {
+  // Three full draws off the seed list, at a tier whose gates throw most maps away — seconds, not the
+  // 5ms a tier without them took.
+  it("is seeded: the same seed draws the same sky, a different one draws another", { timeout: 60_000 }, () => {
     const options = config.expert
     expect(generateStarBattle(11, options)).toEqual(generateStarBattle(11, options))
     expect(generateStarBattle(11, options)).not.toEqual(generateStarBattle(12, options))

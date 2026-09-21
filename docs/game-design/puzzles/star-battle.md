@@ -627,12 +627,12 @@ stays what §3.3 says it is: a guard, not a rung.
   a board whose main gesture is a drag along a row. Measured on the real screen, not
   computed. 10×10 is a tablet question if it is ever a question.
 
-| Tier   | Spread | Smallest region | Cap          | Requires        | Gift regions | Cost  |
-| ------ | ------ | --------------- | ------------ | --------------- | ------------ | ----- |
-| junior | n³     | 3               | `onlyWay`    | `onlyWay` ×3    | **2.4 of 8** | 14ms  |
-| expert | n³     | 5               | `regionLine` | `regionLine` ×2 | 0.1          | 39ms  |
-| master | n²     | 5               | `lineRegion` | `lineRegion` ×2 | 0.0          | 339ms |
-| wizard | n²     | 5               | `spanning`   | `spanning` ×2   | 0.0          | 115ms |
+| Tier   | Spread | Smallest region | Line regions | First star after | Cap           | Requires          | Steps |
+| ------ | ------ | --------------- | ------------ | ---------------- | ------------- | ----------------- | ----- |
+| junior | n³     | 3               | allowed      | —                | `onlyWay`     | `onlyWay` ×3      | 27–30 |
+| expert | n³     | 5               | refused      | step 2           | `spanning`    | region rungs ×2   | 28–32 |
+| master | n³     | 5               | refused      | step 6           | `wouldStrand` | `wouldStrand` ×4  | 31–55 |
+| wizard | n²     | 5               | refused      | step 12          | `wouldStrand` | `wouldStrand` ×10 | 36–52 |
 
 **The smallest allowed region is the knob that matters, and playtesting is what found it.** A
 region of three squares can only be a straight line — an L cannot hold two stars that do not
@@ -648,6 +648,8 @@ so everything after the gifts is counting. Every tier above it draws no gift at 
 
 The ramp is the smallest region first, then the spread, then the rung — and unlike star
 battle's own top two tiers, no two of these rest on the requirement alone.
+
+**The gifts were only half of it, and the other half is when the first star lands.** Every tier here — gift-free ones included — placed its first pair on step 0, 1 or 2 and settled in 27–31 steps, which is a board that opens itself. From expert up no region may sit inside one line either, and from master up the board has to be argued open with T7 before it gives a star away. That is what moved master and wizard from twenty-eight steps to forty-odd, of which nine to twenty-one are the hypothesis rung. It also made them CHEAPER to draw — master fell from 339ms to about 55ms, because a ladder that can open a board without a gift can keep the maps that have none.
 
 **Every board opens on `regionLine`** — measured, all twelve seeds at all three tiers — and
 the shape of the opening is worth stating because it is not the one the one-star family has.
