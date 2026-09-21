@@ -20,6 +20,7 @@ export const STAR_BATTLE_TECHNIQUES = [
   "regionLine",
   "lineRegion",
   "spanning",
+  "wouldStrand",
 ] as const
 
 export type StarBattleTechniqueId = (typeof STAR_BATTLE_TECHNIQUES)[number]
@@ -300,6 +301,51 @@ const spanningSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[]
   ]
 }
 
+/**
+ * A square where a star would leave some group nowhere to stand.
+ *
+ * **The rung that makes a board without a gift possible.** Every rung above it needs a group already narrow
+ * enough to count, which is why a map whose regions are all wide settles nothing: the LinkedIn Queens board
+ * measured in docs/game-design/puzzles/star-battle.md gives the rest of this ladder ZERO moves, and
+ * this one alone carries it.
+ *
+ * It is a hypothesis about ONE square, and what refutes it is ONE group the player can look at — the same
+ * bargain eclipse's top rung makes. Only the star's NECESSARY consequences are followed: the squares it
+ * touches, and the rest of any group it fills. No chain, no second guess.
+ */
+const wouldStrandSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[] => {
+  const groups = countingGroups(puzzle)
+  // **The first square it finds, not every one.** This rung trials a star in every free square against every
+  // group, and generation runs it over thousands of maps that will be thrown away — the sweep that collects
+  // all of them costs a hundredfold and only ever has its first entry read.
+  for (const [cell, mark] of marks.entries()) {
+    if (mark) continue
+    const trial: Marks = [...marks]
+    trial[cell] = "star"
+    for (const at of neighboursOf(puzzle.size, cell)) if (!trial[at]) trial[at] = "dark"
+    // A group the star completes has nothing left to give — the same reading `groupFull` makes out loud.
+    for (const { cells } of groups)
+      if (cells.includes(cell) && owedBy(puzzle, trial, cells) === 0)
+        for (const at of cells) if (!trial[at]) trial[at] = "dark"
+    const stranded = groups.find(
+      ({ cells }) =>
+        owedBy(puzzle, trial, cells) > 0 && freeIn(puzzle, trial, cells).length < owedBy(puzzle, trial, cells)
+    )
+    if (stranded)
+      return [
+        {
+          technique: "wouldStrand" as const,
+          variant: stranded.kind,
+          count: owedBy(puzzle, marks, stranded.cells),
+          // The evidence is the group left with nowhere to go, so the hint has something to point at.
+          cells: stranded.cells,
+          decisions: darken([cell]),
+        },
+      ]
+  }
+  return []
+}
+
 const IMPLEMENTATIONS: Record<StarBattleTechniqueId, (puzzle: StarBattlePuzzle, marks: Marks) => StarBattleStep[]> = {
   touch: touchSteps,
   groupFull: groupFullSteps,
@@ -308,6 +354,7 @@ const IMPLEMENTATIONS: Record<StarBattleTechniqueId, (puzzle: StarBattlePuzzle, 
   regionLine: regionLineSteps,
   lineRegion: lineRegionSteps,
   spanning: spanningSteps,
+  wouldStrand: wouldStrandSteps,
 }
 
 /**

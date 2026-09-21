@@ -128,6 +128,41 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
   })
 
   /**
+   * The two gates that took this family's gifts away (docs/game-design/puzzles/star-battle.md, "The three gates").
+   *
+   * A region inside one row spends that row before the player has read anything, and a board whose first
+   * star lands on step 0 opened itself. Both were true of every 8×8 this generator kept until the tiers
+   * asked otherwise.
+   */
+  it.each(tiers.filter(tier => config[tier].noLineRegions))(
+    "draws every %s region across two rows and two columns",
+    { timeout: 60_000 },
+    tier => {
+      const board = boardAt(config, tier)
+      for (let region = 0; region < board.size; region++) {
+        const cells = board.regions.flatMap((at, cell) => (at === region ? [cell] : []))
+        expect(
+          new Set(cells.map(cell => Math.floor(cell / board.size))).size,
+          `${tier} region ${region}`
+        ).toBeGreaterThan(1)
+        expect(new Set(cells.map(cell => cell % board.size)).size, `${tier} region ${region}`).toBeGreaterThan(1)
+      }
+    }
+  )
+
+  it.each(tiers.filter(tier => config[tier].firstStarAfter))(
+    "makes a %s board eliminate before it hands over a star",
+    { timeout: 60_000 },
+    tier => {
+      const options = config[tier]
+      const board = boardAt(config, tier)
+      const { steps } = solveStarBattleByTechniques(board, techniquesUpTo(options.techniqueCap))
+      const first = steps.findIndex(step => step.decisions.some(decision => decision.mark === "star"))
+      expect(first, tier).toBeGreaterThanOrEqual(options.firstStarAfter!)
+    }
+  )
+
+  /**
    * The region map is the whole clue, at every tier.
    *
    * A board carries no givens and no hatching — nothing but where the boundaries run — which is what the

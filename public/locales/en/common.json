@@ -614,6 +614,9 @@
         "spanning.toCols": "The marked regions fill those {{count}} columns between them.",
         "spanning.fromRows": "The marked rows can only take their {{count}} {{token}} from those regions.",
         "spanning.fromCols": "The marked columns can only take their {{count}} {{token}} from those regions.",
+        "wouldStrand.row": "A {{token}} here would leave the marked row nowhere to stand.",
+        "wouldStrand.col": "A {{token}} here would leave the marked column nowhere to stand.",
+        "wouldStrand.region": "A {{token}} here would leave the marked region nowhere to stand.",
         "action": {
           "ruleOut_one": "Rule out the hatched square.",
           "ruleOut_other": "Rule out the hatched squares.",
@@ -654,6 +657,9 @@
         "spanning.toCols": "The marked holdings fill those {{count}} columns between them.",
         "spanning.fromRows": "The marked rows can only take their {{count}} {{token}} from those holdings.",
         "spanning.fromCols": "The marked columns can only take their {{count}} {{token}} from those holdings.",
+        "wouldStrand.row": "A {{token}} here would leave the marked row nowhere to build.",
+        "wouldStrand.col": "A {{token}} here would leave the marked column nowhere to build.",
+        "wouldStrand.region": "A {{token}} here would leave the marked holding nowhere to build.",
         "action": {
           "ruleOut_one": "Rule out the hatched plot.",
           "ruleOut_other": "Rule out the hatched plots.",

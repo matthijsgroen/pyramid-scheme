@@ -614,6 +614,9 @@
         "spanning.toCols": "De gemarkeerde gebieden vullen samen die {{count}} kolommen.",
         "spanning.fromRows": "De gemarkeerde rijen kunnen hun {{count}} {{token}} alleen uit die gebieden halen.",
         "spanning.fromCols": "De gemarkeerde kolommen kunnen hun {{count}} {{token}} alleen uit die gebieden halen.",
+        "wouldStrand.row": "Met een {{token}} hier houdt de gemarkeerde rij geen plek meer over.",
+        "wouldStrand.col": "Met een {{token}} hier houdt de gemarkeerde kolom geen plek meer over.",
+        "wouldStrand.region": "Met een {{token}} hier houdt het gemarkeerde gebied geen plek meer over.",
         "action": {
           "ruleOut_one": "Streep het gearceerde vakje af.",
           "ruleOut_other": "Streep de gearceerde vakjes af.",
@@ -654,6 +657,9 @@
         "spanning.toCols": "De gemarkeerde stukken land vullen samen die {{count}} kolommen.",
         "spanning.fromRows": "De gemarkeerde rijen kunnen hun {{count}} {{token}} alleen van die stukken land halen.",
         "spanning.fromCols": "De gemarkeerde kolommen kunnen hun {{count}} {{token}} alleen van die stukken land halen.",
+        "wouldStrand.row": "Met een {{token}} hier houdt de gemarkeerde rij geen plek meer over om te bouwen.",
+        "wouldStrand.col": "Met een {{token}} hier houdt de gemarkeerde kolom geen plek meer over om te bouwen.",
+        "wouldStrand.region": "Met een {{token}} hier houdt het gemarkeerde stuk land geen plek meer over om te bouwen.",
         "action": {
           "ruleOut_one": "Streep de gearceerde akker af.",
           "ruleOut_other": "Streep de gearceerde akkers af.",

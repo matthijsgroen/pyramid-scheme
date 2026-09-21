@@ -79,6 +79,23 @@ describe("star battle techniques", () => {
     const puzzle = bands(6)
     expect(nextStarBattleStep(puzzle, empty(puzzle))).toBeUndefined()
   })
+
+  it("rules out a square whose star would leave a group nowhere to stand", () => {
+    const puzzle = bands(4)
+    const marks = empty(puzzle)
+    // Row 1 is down to squares 4, 5 and 6 — and all three touch square 1.
+    marks[cellAt(4, 1, 3)] = "dark"
+    const step = nextStarBattleStep(puzzle, marks, ["wouldStrand"])
+    expect(step?.technique).toBe("wouldStrand")
+    expect(step?.decisions).toEqual([{ cell: cellAt(4, 0, 1), mark: "dark" }])
+    // The evidence is the group left with nowhere to go, so the hint has a row to point at.
+    expect(step?.cells).toEqual([4, 5, 6, 7])
+  })
+
+  it("leaves a square alone when every group still has room around it", () => {
+    const puzzle = bands(6)
+    expect(nextStarBattleStep(puzzle, empty(puzzle), ["wouldStrand"])).toBeUndefined()
+  })
 })
 
 describe("the ladder", () => {
