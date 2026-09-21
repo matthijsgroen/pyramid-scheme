@@ -79,7 +79,7 @@ vocabulary can be grown before anything reads it.
 | `overgrown` | C1 roots over the inscriptions — the layout must be deduced | free |
 | `sand-choked` *(new)* | A1 ramps; sand is what a one-way slide is made of | carve |
 | `collapsed` *(new)* | A2 bars liftable only from behind, A5 corridors closing as you pass | rooms / carve |
-| `undisturbed` *(new)* | B-class door puzzles — nothing has broken in, so the builders' own choices still stand | free |
+| `undisturbed` *(new)* | B-class door puzzles and E3's sequence door — nothing has broken in, so the builders' own locks still stand | free |
 
 ---
 
@@ -133,6 +133,27 @@ every extra lock is new ground.
 | - | ---- | -------- | ---- | ----- |
 | E1 | **Visit-order floor.** Rooms carry the numbers or nodes; the floor is a hidato walked rather than tapped. | hidato, constellation | free | M |
 | E2 | **Push the blocking stone** through the corridors to clear a path. | the rushHour family, though not its navigation | rooms | L |
+| E3 | **Sequence door.** A door carries four glyphs; the same glyphs lie out in the corridors, and it opens when they are crossed in its order. A reset tile by the entrance clears a broken sequence, so a wrong step costs the walk back. | gates, the hieroglyph vocabulary | free | M |
+
+**E3 is cheap where it looks expensive.** Gate *presence* is structural; which key opens a gate is
+free. So the sequence is a currency — `gate: { type: "sequence" }` beside `floor-key` and
+`tomb-key` — and no room, wall or chest moves to add one. The keys-and-locks solver asks it the
+question it already asks of a floor-key: is the opener reachable, upstream, on this floor? Four
+tiles instead of one chest, same answer.
+
+**It constrains where a glyph may lie.** If crossing a glyph out of order breaks the sequence, every
+glyph tile has to be avoidable — one sitting on the only corridor to somewhere else makes the door
+unopenable except by luck. Two placements satisfy that: a dead-end spur, or a cell with a bypass
+loop. Stray maze loops are exactly such a bypass, and this is the one place on this page that wants
+what `sealed` exists to suppress.
+
+**It is the layer the other layers modify.** A ramp can drop the player past a glyph still needed
+(A1); a flood can put one under water (A3); a ward gate on the fourth glyph makes the door wait on a
+treasure from another site (F). Nothing else here composes with all of them.
+
+**Shared verb with E1, different deduction.** E1 has the player work the order out from the board;
+E3 gives the order and makes reaching it the problem. §4.23's rule tolerates a shared verb and not a
+shared deduction, so both can stand.
 
 ## F. Metroidvania, once A exists
 
@@ -156,6 +177,11 @@ rather than what you open.
   directed.
 - **The walk.** Ramps shorten the walk out, which is the direction the floor layout is already being
   pulled. A5 and A6 pull the other way — they add walking to punish a bad order.
+- **A broken sequence must be visible.** E3's door showing which glyphs have been crossed is not
+  decoration — without it a player cannot tell they are broken, and the reset tile is a mystery
+  rather than a remedy.
+- **E3 adds no arithmetic.** Fine for a lock, which is not a puzzle family and answers to no
+  curriculum slot. Not fine if it displaces a puzzle room: the floor would get longer and teach less.
 - **Where the puzzle actually lives in A1.** A ramp that never strands is a convenience. It becomes a
   puzzle only through *where landings point*: aim each at the mouth of a branch not yet taken and
   clearing a floor in one pass turns into a route-ordering problem. Landings at the entrance are
