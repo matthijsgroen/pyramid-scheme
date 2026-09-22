@@ -219,6 +219,13 @@ The place this bites is `PyramidSelector` — `number | "first" | "last" | "midd
 `first` and `last` stop carrying is **when**. Authoring that used position to pace — the gentle
 pyramid first, the map piece last — keeps naming the same pyramid and stops meaning the same thing.
 
+`PathPuzzlesRange {start, end}` is the same thing one step further in, and it is live world data
+rather than a hypothetical: it interpolates linearly from a journey's first pyramid to its last, and
+`PYRAMID_PATH_PUZZLES` is written as ranges. Under free order it still interpolates — the pyramids
+still get 4, 5, 6, 7 — but the ramp becomes a spread, because the player may meet the 7 first. Worth
+taking rather than fighting: a spread the player can read off the map before entering is a choice.
+The authoring-side statement of this lives in `../game-design/worldgen-dsl-redesign.md`.
+
 One consequence to decide deliberately rather than discover: a wizard journey's levels escalate, and
 free order lets a player meet the hardest first.
 

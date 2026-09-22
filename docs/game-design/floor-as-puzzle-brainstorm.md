@@ -235,6 +235,14 @@ player can strand them; the flip is the diegetic remedy, and persistence already
 player at the entrance. Space is the two floors, time is the flip — which is what makes the site read
 as one object rather than two floors that happen to be stacked.
 
+**The reset is a _turn_, never a _restart_.** The hourglass going over is the sun coming round
+again — the world working, not the game offering another go. The distinction survives only if the
+word does, and it will be a UI string somebody writes without thinking.
+
+**What runs in is the desert, not a clock.** Egypt measured hours with water. Sand filling a chamber
+is what happens to every one of these places; this is the one where it is mechanical. The hourglass
+is the image the site makes, not an object anybody in it would recognise.
+
 **It is Ra's night voyage, and it belongs to wizard_1.** The sun going under the world at nightfall,
 twelve hours in the dark with things in the way, and coming up the other side — climb, pull the
 lever, descend into the dark, trace a path while what is behind you closes. Turning the hourglass
