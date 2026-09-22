@@ -167,6 +167,64 @@ rather than what you open.
 
 ---
 
+## G. Wizard — the scope outgrows the floor
+
+Wizard's identity is not another mechanic, it is a larger board. Expert plays a floor, master plays
+a site, and these two play the journey and the site-as-one-object. Cosmic is the right register for
+it: the material is cosmic dust, the stuff constellations are made from, and putting it back is
+restoring a balance rather than opening a door.
+
+| # | Idea | Leans on | Tier | Build |
+| - | ---- | -------- | ---- | ----- |
+| G1 | **The choked pyramid.** One pyramid in the journey is wholly buried in cosmic dust. Handles in its sibling pyramids clear it one path at a time. | the `hidden` mask, gates as currency consumers, `getUnexploredLevels` | rooms | L |
+| G2 | **The hourglass.** The upper floor is choked; a lever there sends the player down to a floor walked as a hidato, sand falling in behind them, and the path they trace below decides which corridors open above. | hidato, the stair pairing, `floorExploration`'s shape | rooms | L |
+
+### G1 — a currency whose scope is the journey
+
+The return half already ships. `getUnexploredLevels(journeyId, heldKeys)` answers "which of this
+journey's pyramids still hold something I can now reach", drives the travel screen's pulse, and
+names no mod — its keys are opaque ids. A dust currency is another such id, so the come-back loop
+needs nothing new.
+
+What is new is the **scope**. Every currency today is either positional (a key in a place) or spread
+across the world; this one is spread across *one journey's siblings* and consumed in *one* of them.
+§E's split between positional keys and spread currencies is the vocabulary for saying so.
+
+**Free forward travel is the enabler, and it is a progression change.** A journey holds one
+`levelNr` cursor: revisiting an earlier pyramid already works, reaching a later one out of order
+does not. Without that change the choked pyramid is only a later level with dust drawn on it.
+
+**Restoring, not unlocking.** The handles clear paths in a pyramid the player has already seen
+buried, which is why this reads as balance rather than as a key. It wants the choked pyramid to be
+visitable while useless — an entrance and a wall of dust — not hidden until finished.
+
+### G2 — the puzzle's output is a map
+
+Every other idea on this page gates a map. This one **authors** one: the trail walked below is the
+corridor layout above. That is the strongest form of "the floor is a puzzle" here, and it gives A5 a
+purpose — sand closing behind you stops being a punishment and becomes the mechanism. The trail is
+the answer.
+
+**Seeing the choked floor first is the information channel.** The player climbs to the blocked floor,
+reads which corridors are buried, then descends to decide where to put the sand. Reversed, it is
+guesswork. So the upper floor must be enterable-and-useless rather than hidden, the same property G1
+wants of its pyramid.
+
+**The coupling is by authoring address, not by coordinate.** Floors carve independently and share no
+grid, so "the sand from this cell lands in that one" cannot be geometric. Filling the section below
+frees a named section above — authored, and the same keying a save already uses
+(`${levelNr}:${sectionAddress}`).
+
+**Turning the hourglass is the reset, and re-entry is the cheapest form of it.** Sand behind the
+player can strand them; the flip is the diegetic remedy, and persistence already reseats a returning
+player at the entrance. Space is the two floors, time is the flip — which is what makes the site read
+as one object rather than two floors that happen to be stacked.
+
+**Up rather than down.** The stair pairing that links floors is direction-agnostic; what calls a
+transition a descent is presentation.
+
+---
+
 ## Laddering across the tiers
 
 The catalogue is wide enough to climb the tier ladder rather than to pick one mechanic, and the
@@ -179,7 +237,7 @@ structure it needs instead of on a ladder invented for it.
 | Junior | the first fork | B2/B3 — the fork becomes a choice made by solving | free |
 | Expert | seals, and a second floor | E3 sequence door; A1 ramps | free / carve |
 | Master | many forks, dormant content | A3 two walkable shapes; D1 fewer keys than locks; A4 shafts | carve / rooms |
-| Wizard | every mechanic at once | composition, not a new layer — a ramp that drops past a glyph still needed, a fourth glyph behind a ward gate | — |
+| Wizard | every mechanic at once | the scope grows past the floor — G1 the choked pyramid, G2 the hourglass; and composition, a ramp dropping past a glyph still needed, a fourth glyph behind a ward gate | rooms |
 
 **Starter gets nothing, and that is the finding.** A floor with no fork has no route to choose, so
 every layer here is inert on it. Starter's play stays in the rooms.
@@ -237,6 +295,10 @@ is needed.
   rather than a remedy.
 - **E3 adds no arithmetic.** Fine for a lock, which is not a puzzle family and answers to no
   curriculum slot. Not fine if it displaces a puzzle room: the floor would get longer and teach less.
+- **G2 needs a sand state a save can hold**, shaped like `floorExploration` but authoritative rather
+  than a summary: a half-turned hourglass is a real position in the world, not a snapshot of one.
+- **G1 asks whether a pyramid may be useless.** A site that can be entered and offers nothing until
+  its siblings are worked is new — everything today either withholds content or gives it.
 - **Where the puzzle actually lives in A1.** A ramp that never strands is a convenience. It becomes a
   puzzle only through *where landings point*: aim each at the mouth of a branch not yet taken and
   clearing a floor in one pass turns into a route-ordering problem. Landings at the entrance are
