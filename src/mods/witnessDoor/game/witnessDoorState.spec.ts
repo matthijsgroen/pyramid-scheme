@@ -29,18 +29,18 @@ describe("a witness door's state", () => {
   it("is a route and not an answer until a shrine is named", () => {
     const routed = routeTo(createWitnessDoorState(board), "east")
     expect(litWitnessShrine(board, routed)).toBe("east")
-    expect(isWitnessDoorSolved(board, routed, routed.chosen)).toBe(false)
+    expect(isWitnessDoorSolved(board, routed)).toBe(false)
   })
 
   it("is solved when the light reaches the shrine the player named", () => {
     const state = routeTo(chooseWitnessShrine(createWitnessDoorState(board), "east"), "east")
-    expect(isWitnessDoorSolved(board, state, state.chosen)).toBe(true)
+    expect(isWitnessDoorSolved(board, state)).toBe(true)
   })
 
   it("is not solved by routing to the other shrine", () => {
     const state = routeTo(chooseWitnessShrine(createWitnessDoorState(board), "east"), "north")
     expect(litWitnessShrine(board, state)).toBe("north")
-    expect(isWitnessDoorSolved(board, state, state.chosen)).toBe(false)
+    expect(isWitnessDoorSolved(board, state)).toBe(false)
   })
 
   it("puts a mirror back where it was on a second tap", () => {

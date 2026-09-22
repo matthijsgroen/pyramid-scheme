@@ -33,14 +33,8 @@ export const litWitnessShrine = (board: WitnessBoard, state: WitnessDoorState): 
   traceWitnessBeam(board, state.angles).shrine
 
 /**
- * Solved when the light reaches the shrine the door is named for — reaching the other one is a route, not
- * an answer.
- *
- * `named` is passed in rather than read off the state because a door outlives one board: the key it minted
- * says which shrine it was opened for long after the in-progress board has been dropped.
+ * Solved when the light reaches the shrine the player named — reaching the other one is a route, not an
+ * answer, and a board with no shrine named is not an answer to anything.
  */
-export const isWitnessDoorSolved = (
-  board: WitnessBoard,
-  state: WitnessDoorState,
-  named: WitnessShrine | undefined
-): boolean => named !== undefined && litWitnessShrine(board, state) === named
+export const isWitnessDoorSolved = (board: WitnessBoard, state: WitnessDoorState): boolean =>
+  state.chosen !== undefined && litWitnessShrine(board, state) === state.chosen

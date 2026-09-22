@@ -202,7 +202,7 @@ export const WitnessDoorPuzzle: FC<Props> = ({ board, site, onSolved, onMint, on
   const [state, setState] = usePuzzleState(() => createWitnessDoorState(board))
 
   const chosen = state.chosen
-  const solved = isWitnessDoorSolved(board, state, chosen)
+  const solved = isWitnessDoorSolved(board, state)
 
   // The key is handed over the moment the light lands, not when the banner is dismissed: the player may
   // back out of a solved board, and the branch they opened stays open.
