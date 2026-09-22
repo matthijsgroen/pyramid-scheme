@@ -183,8 +183,9 @@ translated: ids plus one connective template, rather than a sentence per locale.
 
 ### Still open
 
-1. **Whose name?** The Sphinx's builder is the safe answer. The earlier explorer from `script-act-5.md` is
-   the sharp one, and probably a twist too many.
+1. ~~**Whose name?**~~ **Decided: Fez's.** He has been here the whole time and forgot it (`cast.md`).
+   Forgetting a name and names-being-survival are the same idea, so the thesis and the comic lead are one
+   thread — and the belief costs somebody the player knows rather than a stranger on a wall.
 2. **How many lines before it?** The four-line, one-per-act shape still works with a noun vocabulary —
    builders, then administrators, then the king, then the name — and it mirrors the tomb ladder the player
    climbed. Whether the ending wants that run-up or wants to be one line is undecided.

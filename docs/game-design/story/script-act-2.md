@@ -1,6 +1,6 @@
 # Act II — junior · what real looks like
 
-Source copy, English only. Voice and rules: `cast.md`. 38 source lines.
+Source copy, English only. Voice and rules: `cast.md`. 41 source lines.
 
 **The act's job.** The player handles imitations for a whole tier without being told that is what they are,
 so that Act IV's forgery is earned rather than sprung. And reading pays off for the first time — which is
@@ -108,6 +108,15 @@ hieroglyphs do anything outside a tableau, and the mechanism the ending runs on.
 
 > **Henut:** If you are going on — and you clearly are — there is a priest at Karnak who owes the dead a
 > service he never performed. He will be insufferable about it. Priests are.
+>
+> **Henut:** …Have we met?
+>
+> **Fez:** I would remember.
+>
+> **Henut:** Yes. So would I.
+
+**The act's tell** (`cast.md`): she almost places him and lets it go. It reads as a vain woman assuming
+everyone has met her.
 
 ## The bond beat
 

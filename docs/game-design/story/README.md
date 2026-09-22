@@ -14,7 +14,7 @@ An arc is only as built as its least-built row, and its Impact row is only trust
 almost entirely from journey names, tombs and treasures that already exist, ending where the game began.
 
 **The script** is complete: [Act I](script-act-1.md) · [II](script-act-2.md) · [III](script-act-3.md) ·
-[IV](script-act-4.md) · [V](script-act-5.md) — 212 source lines, five ghosts, and an ending that is the
+[IV](script-act-4.md) · [V](script-act-5.md) — 223 source lines, five ghosts, and an ending that is the
 inscription from the game's first minute, read.
 
 [**Shipped copy**](shipped-copy.md) audits the 59 lines already in `fez.json`: 22 written for the

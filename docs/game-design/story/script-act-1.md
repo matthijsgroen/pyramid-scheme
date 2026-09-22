@@ -11,7 +11,7 @@ lightly. The travel-card blurbs are marketing prose and are not the model.
 the explorer carries no pronoun, no name and no gendered self-description — every line below is present
 tense, a question, or about the world rather than about themselves.
 
-43 source lines.
+48 source lines.
 
 ---
 
@@ -29,6 +29,12 @@ player must not know that.
 > **Explorer:** No.
 >
 > **Fez:** Someone could, once.
+>
+> **Fez:** The base was painted, you know. All of it. Blue and gold, to about here.
+>
+> **Explorer:** How do you know that?
+>
+> **Fez:** …Somebody told me. Come on.
 
 ## `starter_2` — Papyrus Merchant's Route · the paper trail
 
@@ -111,6 +117,10 @@ room and the room is a hole in the ground.
 >
 > **Ipi:** Of course she has a name. I wrote it down.
 >
+> **Explorer:** Why does that matter, if she is not here to hear it?
+>
+> **Ipi:** Because a thing written down is a thing that happened. Rub out a man's name and he never did.
+>
 > **Ipi:** Tell her Ipi sent you. That should spoil her afternoon.
 >
 > **Fez:** He'd have had cats, a man like this. Everyone did. Charming animals.
@@ -130,6 +140,13 @@ room and the room is a hole in the ground.
 > **Explorer:** You like that he's owed money.
 >
 > **Fez:** I like that he wrote it down.
+
+**Ipi teaches the ending.** _"A thing written down is a thing that happened"_ is the belief the finale
+stands on (`what-the-player-knows.md`), said four acts early by a bookkeeper for whom it is not a belief
+at all but a professional fact. The explorer quotes it back at the Sphinx.
+
+**And Fez knows too much about the Sphinx** — the first of one tell an act (`cast.md`). It reads as a
+merchant showing off, and it is not.
 
 **He names her, and that is the point of him.** _Of course she has a name. I wrote it down._ — the debt,
 the parentage and the year, from memory, three thousand years on. It pays off in Act II, where the tomb

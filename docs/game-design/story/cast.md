@@ -81,40 +81,52 @@ which is both funnier and kinder, and keeps the pair from souring.
 - Never refers to the explorer by name or pronoun.
 - Never claims scholarship he has not got.
 
-**Arc.** Prices everything → uneasy about what he has been pricing → will not name a price at all.
+**Arc.** Prices everything → uneasy about what he has been pricing → will not name a price at all. And,
+underneath it and unknown to him, forgotten → named.
 
-### How old is Fez? — open, and it decides the ending
+### How old is Fez? — ancient, and he does not know it (decided)
 
-A talking lizard in a fez walks through an otherwise ordinary Egypt and **nothing explains him.** That is
-currently fine — he is the whimsy, and asking would spoil it — but it is also an unused door.
+A talking lizard in a fez walks through an otherwise ordinary Egypt, and nothing explained him. He has been
+here the whole time, he has forgotten his own name, and **the name on the Sphinx is his.**
 
-**Forgetting a name and names-being-survival are the same idea.** The game's thesis and its comic lead
-could be one thread rather than two, and that is the argument for opening the door at all.
+**Forgetting a name and names-being-survival are the same idea**, which is the whole reason to open this
+door: the game's thesis and its comic lead become one thread instead of two. And it solves the teaching
+problem in `what-the-player-knows.md` by making the belief cost somebody the player has spent fifty hours
+with, rather than a stranger on a wall.
 
-| Option                                                                                               | What it buys                                                                                                               | What it costs                                                                                                                                                         |
-| ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1. He is what he appears.** A merchant, `now`                                                      | nothing changes; lowest risk                                                                                               | the ending's name is a stranger's, so the belief has to carry it alone                                                                                                |
-| **2. He is ancient and does not know it.** Tells across the acts; the dead keep half-recognising him | explains him at last, and costs only lines. **The payoff stays undecided** — the door is open, not walked through          | a thread the game must eventually answer, or it reads as a loose end                                                                                                  |
-| **3. He is cursed, forgot his own name, and the Sphinx says it**                                     | the largest payoff available: the player learns what a name is worth by watching it cost someone they like for fifty hours | makes Fez the **subject** of the arc, which `story-and-time-brainstorm.md` decided against — Anubis is the reason it matters, Fez is the reason to come back tomorrow |
+#### The register, and it is the part that can go wrong
 
-**2 is the cheap, reversible move**, and it is the one I would take now: plant the tells, decide the payoff
-later. It costs a line or two an act and forecloses nothing.
+**No curse-lifting.** Nothing is broken and mended, nobody is redeemed, and he does not weep. He gets his
+name back and is faintly unimpressed by it, because that is funnier and because it is who he is.
 
-**The ghosts are the natural noticers**, which gives them a third job at no cost. They already settle their
-accounts and correct his Egyptology; half-recognising him is the same scene with one more line in it:
+**He is never the subject.** `story-and-time-brainstorm.md` settled that Anubis is why it matters and Fez
+is why you come back tomorrow, and that holds. The mural stays the frame; the name is a small personal
+thing inside it. What changes is one line already written — _"That's his record of us"_ — which turns out
+to include him in a way he did not mean.
 
-> **Henut:** Have we met?
->
-> **Fez:** I would remember.
->
-> **Henut:** …Yes. So would I.
+**No explanation is owed.** Why he is a lizard, what he did, who cursed him: unanswered, on purpose. A
+whimsical adventure can afford a mystery it never opens, and opening this one would need the fiction the
+tone rules exist to keep out.
 
-If 3 is ever taken, three things already written turn out to have been about him: _"I have been selling the
-walls"_, the mural being **his record of us**, and — the sharpest — Act I's _"Someone could, once."_
+#### The tells, one an act
 
-**What 3 must not become**, if it is taken: a curse-lifting. This is a whimsical adventure and the tone
-rules hold. He is not redeemed, nothing is broken and mended; he simply gets his name back, and the joke is
-that he is unimpressed by it.
+They cost a line each and none of them is a hint. Each reads as a joke on first pass.
+
+| Act | The tell                                                                                 |
+| --- | ---------------------------------------------------------------------------------------- |
+| I   | He knows something about the Sphinx he has no business knowing, and moves on             |
+| II  | Henut half-recognises him — _"Have we met?" / "I would remember." / "…Yes. So would I."_ |
+| III | The priest is unsurprised by him, and never asks what he is                              |
+| IV  | The pharaoh knows exactly what he is and is too delighted about the seal to say          |
+| V   | The name                                                                                 |
+
+**The dead are the noticers**, which gives every ghost a third job at no cost: they settle their accounts,
+they correct his Egyptology, and they keep almost placing him.
+
+#### What his name must be
+
+**Ordinary.** Not a god, not a king, not a joke — a plain ancient name of the kind Ipi and Henut have, so
+that the weight is on it having been forgotten rather than on it being grand.
 
 ---
 

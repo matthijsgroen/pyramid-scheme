@@ -1,6 +1,6 @@
 # Act V — wizard · announced, and read
 
-Source copy, English only. Voice and rules: `cast.md`. 46 source lines.
+Source copy, English only. Voice and rules: `cast.md`. 49 source lines.
 
 **The act's job.** The loop closes. `starter_1` was Dawn at the Sphinx; `wizard_2` is Secrets of the
 Sphinx, and the finale is the inscription from the first minute, read.
@@ -41,16 +41,31 @@ _(a pause the game should hold)_
 >
 > **Fez:** Whose?
 >
-> **Explorer:** …
+> **Explorer:** Yours.
 >
-> **Fez:** Never heard of them.
+> **Fez:** …
 >
-> **Explorer:** No. Nobody has. Not for a very long time.
+> **Fez:** Are you sure?
+>
+> **Explorer:** It is written down.
+
+_(let that sit)_
+
+> **Fez:** Huh.
+>
+> **Fez:** Well. That explains the fez.
 
 **This is the whole ending.** Not a pronouncement and not a moral about what the player collected — fifty
-hours to say one name out loud. It makes Act I's _"Someone could, once."_ retroactively about a person
-rather than about information, and it is the only version where the text at the centre of the finale
-cannot be weakened by a translator having a bad day.
+hours to say one name out loud, and it is his.
+
+_"It is written down"_ is Ipi's, from the first tomb in the game: _"a thing written down is a thing that
+happened. Rub out a man's name and he never did."_ The explorer is not consoling him, they are quoting a
+bookkeeper, and that is why it lands without anybody explaining it.
+
+**He is unimpressed, and that is the rule** (`cast.md`). No curse lifts, nothing mends, he does not weep —
+he makes a joke and the game ends. It also makes Act I's _"Someone could, once."_ retroactively about a
+person rather than about information, and the finale's _"That's his record of us"_ include him in a way he
+did not mean.
 
 Fez's own turn stays where it was, a beat later:
 
@@ -166,6 +181,7 @@ true."_
    why they left. It could be three.
 3. **"I have been selling the walls"** is Fez's turn and it lands at `wizard_2` rather than at the mural.
    That may be the right place or three journeys early.
-4. **Whose name?** The Sphinx's builder is safe; the earlier explorer is sharp and probably a twist too many.
+4. **What is the name?** It must be ordinary — a plain ancient name like Ipi's or Henut's, so the weight
+   is on it having been forgotten rather than on it being grand.
 5. **Nothing here is gated on the offering arc being built.** If it is not, the priest's rite and the
    refusal drop out and Act V still ends.
