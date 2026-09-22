@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 import { ownedKeysChanged } from "@/app/families/ownedKeySources"
 import { primeModState, readModState, useModState } from "@/app/state/useModState"
 
@@ -13,19 +13,27 @@ type MintedShrines = { minted: string[] }
 const MOD_ID = "witnessDoor"
 const INITIAL: MintedShrines = { minted: [] }
 
-/** Hands the key of a shrine the light has reached to the gates that ask for it. */
-export const useMintShrine = (): ((keyId: string) => void) => {
-  const [, setState] = useModState<MintedShrines>(MOD_ID, INITIAL)
-  return useCallback(
+/** The keys minted so far, and how a shrine the light has reached adds to them. */
+export const useMintedShrines = (): { minted: ReadonlySet<string>; mint: (keyId: string) => void } => {
+  const [state, setState] = useModState<MintedShrines>(MOD_ID, INITIAL)
+  // The hook's own copy of the slice lands a beat after mount, and the store's cache is already right.
+  // A board that asked one render too early would offer a choice this door has already made.
+  const minted = useMemo(() => new Set([...state.minted, ...mintedShrineKeys()]), [state.minted])
+  const mint = useCallback(
     (keyId: string) => {
+      // A board is re-mounted every time its room is opened, and a solved one mints again on sight.
+      // Without this the write, the announcement and the re-render it causes all still happen, and
+      // that cycle ends only because `mint` happens to keep its identity across them.
+      if (minted.has(keyId)) return
       // The screen is told only once the write has landed in the store, which is what the key source
       // below reads — announced any earlier, the gate would re-read the slice without the new key in it.
       void setState(prev => (prev.minted.includes(keyId) ? prev : { minted: [...prev.minted, keyId] }))
         .then(ownedKeysChanged)
         .catch(() => {})
     },
-    [setState]
+    [minted, setState]
   )
+  return { minted, mint }
 }
 
 /** The same slice, read outside React — what the owned-key source answers with. */

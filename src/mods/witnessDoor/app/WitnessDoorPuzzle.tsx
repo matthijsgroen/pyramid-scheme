@@ -1,4 +1,4 @@
-import { useCallback, useEffect, type FC, type ReactNode } from "react"
+import { useCallback, useEffect, useMemo, type FC, type ReactNode } from "react"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
@@ -29,6 +29,8 @@ type Props = {
   onSolved: () => void
   /** The key the named shrine hands over, once the light reaches it. */
   onMint: (keyId: string) => void
+  /** Every witness key the player holds — this door reads its own back to know it has already opened. */
+  minted?: ReadonlySet<string>
   /** Omitted where there is nowhere to go back to — a story, a spec exercising only the minting. */
   onCancel?: () => void
 }
@@ -129,6 +131,9 @@ const BeamLayer: FC<{ size: number; path: readonly WitnessSegment[] }> = ({ size
  * (docs/instructions/puzzle-screens.md), so the target has to grow. Lightbeam grows its by refusing any
  * board whose pieces touch; this family cannot — both branches of one fork share a small grid, and 87% of
  * starter drafts hold a touching pair — so it grows only into the space a board actually leaves free.
+ *
+ * Only the four square neighbours are asked. Two diagonal mirrors still overlap, in the 5px square at the
+ * corner they share — a place a thumb aimed at either one does not land.
  */
 const tapInset = (mirrorCells: ReadonlySet<string>, at: CellRef): string =>
   (
@@ -152,7 +157,9 @@ const WitnessDoorBoard: FC<{
   const mirrorAt = new Map(mirrors.map((at, index) => [cellKey(at), index]))
   const mirrorCells = new Set(mirrorAt.keys())
   return (
-    <div className="relative aspect-square w-full max-w-[min(56vh,26rem)] select-none">
+    // `isolate`, so the layering below is this board's own rather than whatever stacking context an
+    // ancestor happens to have opened.
+    <div className="relative isolate aspect-square w-full max-w-[min(56vh,26rem)] select-none">
       <div
         className="grid size-full gap-px"
         style={{
@@ -192,12 +199,20 @@ const WitnessDoorBoard: FC<{
  * The room where solving is choosing: one beam, two shrines, and the shrine the player names is the branch
  * of the floor's fork they open. Reaching the other one lights it and settles nothing.
  */
-export const WitnessDoorPuzzle: FC<Props> = ({ board, site, onSolved, onMint, onCancel }) => {
+export const WitnessDoorPuzzle: FC<Props> = ({ board, site, minted, onSolved, onMint, onCancel }) => {
   const { t } = useTranslation("common")
   const [state, setState] = usePuzzleState(() => createWitnessDoorState(board))
 
-  const solved = isWitnessDoorSolved(board, state)
-  const chosen = state.chosen
+  /**
+   * The shrine this door has ALREADY been opened for, read off the key it minted.
+   *
+   * The key is what the door is remembered by, not the board: the in-progress board lives in one slot
+   * shared by every room, so opening another puzzle drops it, and a door with the choice open again would
+   * mint the other shrine's key too — one door, both branches of the fork it exists to choose between.
+   */
+  const opened = useMemo(() => WITNESS_SHRINES.find(shrine => minted?.has(witnessKeyId(site, shrine))), [minted, site])
+  const chosen = state.chosen ?? opened
+  const solved = isWitnessDoorSolved(board, state, chosen)
 
   // The key is handed over the moment the light lands, not when the banner is dismissed: the player may
   // back out of a solved board, and the branch they opened stays open.
@@ -213,19 +228,13 @@ export const WitnessDoorPuzzle: FC<Props> = ({ board, site, onSolved, onMint, on
     [solved, setState]
   )
 
-  /**
-   * Naming a shrine, which a solved board no longer allows.
-   *
-   * A minted key is not handed back, and a player who backs out of a solved board and walks in again finds it
-   * as they left it. Were the choice still open there, naming the other shrine would un-solve the board and
-   * let them route to that one too — one door, both branches of the fork.
-   */
+  /** Naming a shrine, which a door that has already handed one out no longer allows. */
   const choose = useCallback(
     (shrine: (typeof WITNESS_SHRINES)[number]) => {
-      if (solved) return
+      if (solved || opened) return
       setState(prev => chooseWitnessShrine(prev, shrine))
     },
-    [solved, setState]
+    [solved, opened, setState]
   )
 
   return (
@@ -233,7 +242,9 @@ export const WitnessDoorPuzzle: FC<Props> = ({ board, site, onSolved, onMint, on
       onSolved={onSolved}
       onCancel={onCancel ?? (() => {})}
       solved={solved}
-      onReset={() => setState(createWitnessDoorState(board))}
+      // The board is inert while the shell is finishing, but a reset is a move like any other: it would
+      // throw away the route the light is standing on.
+      onReset={() => !solved && setState(createWitnessDoorState(board))}
       title={t("witnessDoor.name")}
       goal={t("witnessDoor.goal")}
       rules={

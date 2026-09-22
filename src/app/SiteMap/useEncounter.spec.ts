@@ -27,6 +27,7 @@ const setup = (cells: GridCell[], floorDifficulty: Difficulty = "starter") => {
     useEncounter({
       journeys,
       journeyId: "j1",
+      levelNr: 1,
       currentFloor: 0,
       difficulty: floorDifficulty,
       grid: gridOf(cells),

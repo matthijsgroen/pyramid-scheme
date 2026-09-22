@@ -34,23 +34,23 @@ const applySolution = (placement: readonly MirrorPlacement[]) => {
 
 describe("WitnessDoorPuzzle", () => {
   it("offers both shrines as goals", () => {
-    render(<WitnessDoorPuzzle board={board} site="junior_2#2" onSolved={vi.fn()} onMint={vi.fn()} />)
+    render(<WitnessDoorPuzzle board={board} site="junior_2#3#2" onSolved={vi.fn()} onMint={vi.fn()} />)
     expect(screen.getByRole("button", { name: /east/i })).toBeDefined()
     expect(screen.getByRole("button", { name: /north/i })).toBeDefined()
   })
 
   it("mints only the chosen shrine's key when that shrine's solution is given", () => {
     const onMint = vi.fn()
-    render(<WitnessDoorPuzzle board={board} site="junior_2#2" onSolved={vi.fn()} onMint={onMint} />)
+    render(<WitnessDoorPuzzle board={board} site="junior_2#3#2" onSolved={vi.fn()} onMint={onMint} />)
     act(() => screen.getByRole("button", { name: /east/i }).click())
     applySolution(solutionsFor(board, "east")[0])
-    expect(onMint).toHaveBeenCalledWith("witness:junior_2#2:east")
-    expect(onMint).not.toHaveBeenCalledWith("witness:junior_2#2:north")
+    expect(onMint).toHaveBeenCalledWith("witness:junior_2#3#2:east")
+    expect(onMint).not.toHaveBeenCalledWith("witness:junior_2#3#2:north")
   })
 
   it("does not mint when the beam lands on the other shrine", () => {
     const onMint = vi.fn()
-    render(<WitnessDoorPuzzle board={board} site="junior_2#2" onSolved={vi.fn()} onMint={onMint} />)
+    render(<WitnessDoorPuzzle board={board} site="junior_2#3#2" onSolved={vi.fn()} onMint={onMint} />)
     act(() => screen.getByRole("button", { name: /east/i }).click())
     applySolution(solutionsFor(board, "north")[0])
     expect(onMint).not.toHaveBeenCalled()
@@ -58,7 +58,7 @@ describe("WitnessDoorPuzzle", () => {
 
   it("mints nothing while no shrine has been named, however the light is routed", () => {
     const onMint = vi.fn()
-    render(<WitnessDoorPuzzle board={board} site="junior_2#2" onSolved={vi.fn()} onMint={onMint} />)
+    render(<WitnessDoorPuzzle board={board} site="junior_2#3#2" onSolved={vi.fn()} onMint={onMint} />)
     applySolution(solutionsFor(board, "east")[0])
     expect(onMint).not.toHaveBeenCalled()
   })
@@ -69,12 +69,32 @@ describe("WitnessDoorPuzzle", () => {
 describe("a door that has already opened", () => {
   it("refuses to be named for the other shrine", () => {
     const onMint = vi.fn()
-    render(<WitnessDoorPuzzle board={board} site="junior_2#2" onSolved={vi.fn()} onMint={onMint} />)
+    render(<WitnessDoorPuzzle board={board} site="junior_2#3#2" onSolved={vi.fn()} onMint={onMint} />)
     act(() => screen.getByRole("button", { name: /east/i }).click())
     applySolution(solutionsFor(board, "east")[0])
     act(() => screen.getByRole("button", { name: /north/i }).click())
     expect(screen.getByRole("button", { name: /east/i }).getAttribute("aria-pressed")).toBe("true")
     expect(screen.getByRole("button", { name: /north/i }).getAttribute("aria-pressed")).toBe("false")
-    expect(onMint).not.toHaveBeenCalledWith("witness:junior_2#2:north")
+    expect(onMint).not.toHaveBeenCalledWith("witness:junior_2#3#2:north")
+  })
+})
+
+// The in-progress board lives in one slot shared by every room, so opening another puzzle drops it and this
+// door comes back blank. The key it minted is what remembers which shrine it was opened for.
+describe("a door whose board has been dropped", () => {
+  const minted = new Set(["witness:junior_2#3#2:east"])
+
+  it("is still named for the shrine its key belongs to", () => {
+    render(<WitnessDoorPuzzle board={board} site="junior_2#3#2" minted={minted} onSolved={vi.fn()} onMint={vi.fn()} />)
+    expect(screen.getByRole("button", { name: /east/i }).getAttribute("aria-pressed")).toBe("true")
+  })
+
+  it("refuses to be named for the other one", () => {
+    const onMint = vi.fn()
+    render(<WitnessDoorPuzzle board={board} site="junior_2#3#2" minted={minted} onSolved={vi.fn()} onMint={onMint} />)
+    act(() => screen.getByRole("button", { name: /north/i }).click())
+    expect(screen.getByRole("button", { name: /north/i }).getAttribute("aria-pressed")).toBe("false")
+    applySolution(solutionsFor(board, "north")[0])
+    expect(onMint).not.toHaveBeenCalledWith("witness:junior_2#3#2:north")
   })
 })

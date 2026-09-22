@@ -12,6 +12,8 @@ import { useClearPuzzleState } from "@/mods/core/app/puzzleState"
 type EncounterArgs = {
   journeys: JourneyAPI
   journeyId: string
+  /** Which level of the journey this is (1-based) — see FamilyContext.levelNr. */
+  levelNr: number
   currentFloor: number
   difficulty: Difficulty
   grid: FloorGrid | null
@@ -40,6 +42,7 @@ export type Encounter = {
 export const useEncounter = ({
   journeys,
   journeyId,
+  levelNr,
   currentFloor,
   difficulty,
   grid,
@@ -65,6 +68,7 @@ export const useEncounter = ({
     const edgeId = encodeEdge(currentFloor, row, col)
     return {
       journeyId,
+      levelNr,
       edgeId,
       // What a family files this room's state under. The coordinate above says where the room is drawn
       // right now; this says which room it IS, and keeps saying it after the floor is carved again.
@@ -88,7 +92,7 @@ export const useEncounter = ({
       keyColor: cell?.type === "room" ? cell.keyColor : undefined,
       ownedKeys,
     }
-  }, [active, grid, currentFloor, journeyId, difficulty, ownedKeys])
+  }, [active, grid, currentFloor, journeyId, levelNr, difficulty, ownedKeys])
 
   const puzzle = useMemo(() => {
     if (!family || !ctx) return null

@@ -164,6 +164,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const encounter = useEncounter({
     journeys,
     journeyId,
+    levelNr: levelIndex + 1,
     currentFloor,
     difficulty: floorConfig.difficulty,
     grid,

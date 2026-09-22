@@ -9,7 +9,7 @@ const meta = {
     layout: "centered",
     backgrounds: { default: "dungeon", values: [{ name: "dungeon", value: "#110d08" }] },
   },
-  args: { site: "junior_2#2", onSolved: () => {}, onCancel: () => {}, onMint: () => {} },
+  args: { site: "junior_2#3#2", onSolved: () => {}, onCancel: () => {}, onMint: () => {} },
 } satisfies Meta<typeof WitnessDoorPuzzle>
 
 export default meta

@@ -1019,14 +1019,7 @@
       }
     },
     "events": {
-      "default": [
-        "the fire",
-        "the water carrying",
-        "the baking",
-        "the boat trip",
-        "the ox driving",
-        "the night watch"
-      ],
+      "default": ["the fire", "the water carrying", "the baking", "the boat trip", "the ox driving", "the night watch"],
       "funerary": [
         "the plastering",
         "the grid drawing",

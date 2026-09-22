@@ -1019,14 +1019,7 @@
       }
     },
     "events": {
-      "default": [
-        "het vuur",
-        "het water halen",
-        "het bakken",
-        "de boottocht",
-        "het ossen drijven",
-        "de nachtwake"
-      ],
+      "default": ["het vuur", "het water halen", "het bakken", "de boottocht", "het ossen drijven", "de nachtwake"],
       "funerary": [
         "het pleisteren",
         "het uitzetten van het raster",

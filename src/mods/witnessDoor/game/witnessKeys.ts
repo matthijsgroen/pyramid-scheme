@@ -10,10 +10,12 @@ export const WITNESS_SHRINES: readonly WitnessShrine[] = ["east", "north"]
 export const witnessKeyId = (site: string, shrine: WitnessShrine): string => `witness:${site}:${shrine}`
 
 /**
- * The floor a witness door and the fork it opens both stand on — what its keys are filed under, and what
- * an author writes into the gate that consumes one.
+ * The door's own address — what its keys are filed under, and what an author writes into the gate that
+ * consumes one.
  *
- * The level is deliberately not part of it: a tomb re-enters one authored site every level, and an
- * authored key id has to name the door once rather than once per visit.
+ * All three parts earn their place: a journey authors one site per level, so two pyramids of one journey
+ * can each hold a door at the same floor index, and an id missing the level would have the second door's
+ * fork already open before its board was touched.
  */
-export const witnessSite = (journeyId: string, floorIndex: number): string => `${journeyId}#${floorIndex}`
+export const witnessSite = (journeyId: string, levelNr: number, floorIndex: number): string =>
+  `${journeyId}#${levelNr}#${floorIndex}`

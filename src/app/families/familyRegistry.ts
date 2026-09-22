@@ -15,6 +15,10 @@ export type { FamilyMeta }
 export type FamilyContext = {
   // This room's own identity, for families that act on journeys/progression directly.
   journeyId: string
+  /** Which level of the journey this site is, 1-based. A journey authors one site per level, so the
+   * journey alone does not name a pyramid — two of them can hold the same floor index. A family that
+   * mints something identified by WHERE it stands needs this as well as the floor. */
+  levelNr: number
   /** Where this room is drawn in the carve that is on screen — for anything about the here and now. */
   edgeId: string
   /** WHICH ROOM THIS IS, as `${sectionHash}#${floor}/${slot}` (cellIdentity.ts). A family

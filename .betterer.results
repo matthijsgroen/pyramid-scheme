@@ -33,14 +33,14 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/app/SiteMap/useCorridorDetection.ts:837024504": [
       [27, 40, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/app/SiteMap/useEncounter.ts:1551849470": [
-      [81, 86, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/app/SiteMap/useEncounter.ts:3139063710": [
+      [85, 86, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/app/SiteMap/useFoundCorridors.ts:3576740506": [
       [3, 58, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/app/dev/PuzzleLab.tsx:751463273": [
-      [97, 80, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/app/dev/PuzzleLab.tsx:2591656654": [
+      [98, 80, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/app/dev/puzzleLabOptions.ts:88559404": [
       [38, 61, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]

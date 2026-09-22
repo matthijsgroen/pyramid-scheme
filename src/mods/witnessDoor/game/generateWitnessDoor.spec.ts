@@ -7,7 +7,7 @@ import {
   type WitnessGate,
 } from "./generateWitnessDoor"
 import { BACKSLASH, DIR, SLASH } from "@/mods/core/game/beam/physics"
-import { witnessKeyId, WITNESS_SHRINES } from "./witnessKeys"
+import { witnessKeyId, witnessSite, WITNESS_SHRINES } from "./witnessKeys"
 import { difficulties } from "@/data/difficultyLevels"
 
 const SEEDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -16,8 +16,16 @@ const turned = (angle: number): number => (angle === SLASH ? BACKSLASH : SLASH)
 
 describe("witnessKeyId", () => {
   it("names a key per site and shrine", () => {
-    expect(witnessKeyId("junior_2#2", "east")).toBe("witness:junior_2#2:east")
-    expect(witnessKeyId("junior_2#2", "north")).toBe("witness:junior_2#2:north")
+    expect(witnessKeyId("junior_2#3#2", "east")).toBe("witness:junior_2#3#2:east")
+    expect(witnessKeyId("junior_2#3#2", "north")).toBe("witness:junior_2#3#2:north")
+  })
+
+  // A journey authors one site per level, so the journey alone does not name a pyramid: two of them can
+  // hold a door at the same floor index, and a shared id would open the second one's fork before its board
+  // was touched.
+  it("names a door by journey, level and floor, so two pyramids of one journey never share one", () => {
+    expect(witnessSite("junior_2", 3, 2)).toBe("junior_2#3#2")
+    expect(witnessSite("junior_2", 4, 2)).not.toBe(witnessSite("junior_2", 3, 2))
   })
 })
 

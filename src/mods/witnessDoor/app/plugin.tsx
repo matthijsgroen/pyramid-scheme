@@ -6,17 +6,18 @@ import { isModEnabled } from "@/mods/registeredMods"
 import { generateWitnessDoor, type WitnessBoard } from "../game/generateWitnessDoor"
 import { WITNESS_DOOR_META } from "../game/meta"
 import { witnessSite } from "../game/witnessKeys"
-import { loadMintedShrines, mintedShrineKeys, useMintShrine } from "./mintedShrines"
+import { loadMintedShrines, mintedShrineKeys, useMintedShrines } from "./mintedShrines"
 import { WitnessDoorPuzzle } from "./WitnessDoorPuzzle"
 
 const WitnessDoorComponent: FamilyPlugin<WitnessBoard>["Component"] = ({ puzzle, ctx, onSolved, onCancel }) => {
-  const mint = useMintShrine()
+  const { minted, mint } = useMintedShrines()
   return (
     <WitnessDoorPuzzle
       board={puzzle}
-      // The floor this door stands on, read off the coordinate the room was opened at — the same floor the
-      // gate that consumes its keys was authored against.
-      site={witnessSite(ctx.journeyId, decodeEdge(ctx.edgeId)[0])}
+      // Which door this is: the journey, the level whose site it belongs to, and the floor it stands on,
+      // read off the coordinate the room was opened at.
+      site={witnessSite(ctx.journeyId, ctx.levelNr, decodeEdge(ctx.edgeId)[0])}
+      minted={minted}
       onSolved={onSolved}
       onCancel={onCancel}
       onMint={mint}
@@ -33,7 +34,7 @@ if (isModEnabled("witnessDoor")) {
       generateWitnessDoor(seed, ctx.difficulty ?? WITNESS_DOOR_META.minTier ?? "starter"),
     Component: WitnessDoorComponent,
   })
-  // Every shrine this player has opened. The ids name their own site, so the floor is not filtered on
+  // Every shrine this player has opened. The ids name their own door, so the floor is not filtered on
   // here: a gate elsewhere asks for a different id and is unmoved by these.
   registerOwnedKeySource("witnessDoor", mintedShrineKeys)
   loadMintedShrines()
