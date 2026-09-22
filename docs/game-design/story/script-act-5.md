@@ -1,6 +1,6 @@
 # Act V — wizard · announced, and read
 
-Source copy, English only. Voice and rules: `cast.md`. 49 source lines.
+Source copy, English only. Voice and rules: `cast.md`. 60 source lines.
 
 **The act's job.** The loop closes. `starter_1` was Dawn at the Sphinx; `wizard_2` is Secrets of the
 Sphinx, and the finale is the inscription from the first minute, read.
@@ -13,17 +13,67 @@ the one thing that cannot be mistranslated.
 
 ---
 
-## `wizard_1` — Ra's Solar Journey
+## `wizard_1` — Ra's Solar Journey · the hourglass
 
-`story.arrival.wizard_1.*`
+`story.arrival.wizard_1.*` — **place beat.** One pyramid inside this journey is the hourglass
+(`docs/mods/floor-topology-design.md`): climb to a choked upper floor, pull the lever, descend, and trace a
+path below while sand falls in behind. The site and the story are the same object, so this beat says what
+the place is and lets the mechanic read itself.
 
 > **Fez:** The sun goes under the world at night and comes up the other side. That is the whole belief.
 >
-> **Fez:** Twelve hours of it, in the dark, with things in the way.
+> **Fez:** Twelve hours in the dark, with things in the way, and somebody has to carry it through.
 >
 > **Explorer:** That is what we have been doing.
 >
 > **Fez:** I had been trying not to say so.
+>
+> **Explorer:** The sand is still coming in.
+>
+> **Fez:** It has been coming in for three thousand years. It does not stop, it just goes round.
+>
+> **Fez:** Fills up, turns over, starts again. Same as the sun.
+
+**The last line is the one to protect.** Turning the hourglass over is the sun coming round, not a retry —
+which is what makes the reset read as the world working rather than as the game giving the player another
+go. If the mechanic ever needs a word for its reset, it is _turn_, never _restart_.
+
+**It is the desert, not a timepiece.** Egypt measured hours with water, not sand. What runs here is the
+desert getting in, which is true of every one of these sites and only mechanical in this one.
+
+## The choked pyramid · nothing, yet
+
+`story.arrival.<the choked one>.*` — **place beat**, and the only one in the game whose job is to say there
+is nothing here.
+
+The dust covers the spine, not merely the side paths, so a player walks in, sees it, and walks out
+(`docs/mods/floor-topology-design.md`). **Being able to see the thing you cannot yet do is the mechanic**,
+so the beat must not apologise for it or explain how to fix it — either would turn a deliberate wall into a
+tutorial about a wall.
+
+> **Fez:** …Ah.
+>
+> **Explorer:** It is full.
+>
+> **Fez:** Floor to ceiling, and all the way in by the look of it.
+>
+> **Explorer:** Full of what?
+>
+> **Fez:** Sky. What the stars are made of, when enough of it comes down.
+>
+> **Fez:** Nothing for us today, then.
+>
+> **Explorer:** It is not going anywhere.
+>
+> **Fez:** No. Neither is it.
+
+**Why the explorer gets the last word.** _"It is not going anywhere"_ is the line that stops this reading as
+a dead end, and it has to come from the one who is not disappointed. Fez wanted to sell something; they
+came to see something, and they have.
+
+**What it must not say:** that the handles are in the sibling pyramids, that the dust can be cleared, or
+that clearing it is balance restored. All three belong to the beat that fires when a path actually opens —
+one line, no more (`what-the-player-knows.md`: a belief stated in order to be used later reads as a lesson).
 
 ## `wizard_2` — Secrets of the Sphinx
 

@@ -500,10 +500,16 @@ several: `wizard_3` and `wizard_4` hold six each, `wizard_1` holds four. **The o
 unchanged**, and arrival beats are keyed per journey rather than per pyramid, so all twenty stay ordered.
 
 What free order does reach is anything addressed by **pyramid index inside a journey** — the DSL's
-`PyramidSelector`. An arc that places something at "the third pyramid of this journey" is pacing a player
-by an index the engine treats as an address, and in a free-order journey that pacing evaporates. Nothing in
-this story does that today; the rule if one ever does is that design's own: **pacing that matters is
-expressed as a key, or it does not exist.**
+`PyramidSelector` (`number | "first" | "last" | "middle" | "N-M" | "last-N"`), and the exposure is wider
+than this story: **the whole world is authored with it.**
+
+Put precisely, in the topology session's words: every selector stays a valid **address**; what `first` and
+`last` stop carrying is **when**. Authoring that used position to pace — the gentle pyramid first, the map
+piece last — keeps naming the same pyramid and quietly stops meaning the same thing. Only in free-order
+journeys, so only at wizard.
+
+Nothing in this story paces by index today. The rule if anything ever does is that design's own: **pacing
+that matters is expressed as a key, or it does not exist.**
 
 **The rule that falls out: a beat may only assume what its rail guarantees.** A link-completion beat may
 never say "as you now know", because the player may have finished another thread's second link first. This
@@ -563,7 +569,14 @@ because **the ordering moved into the queue**. What is left:
   reason about one at a time.
 
 Free-order journeys (`docs/mods/floor-topology-design.md`) then cost the story nothing anywhere, rather
-than costing it a wizard exception.
+than costing it a wizard exception — and would keep costing nothing if free order ever widened to other
+tiers or across journeys, because the queue absorbs it. Only anchored beats would want re-checking.
+
+**One place the two designs could meet rather than merely coexist.** Cosmic dust's come-back loop is what
+keeps `getUnexploredLevels` reporting anything in a free-order wizard journey. If a thread beat ever fires
+on **returning** to a pyramid rather than arriving at one, that pulse is what it would ride — the only
+point where that mechanic could carry a beat instead of permitting one. One line from Fez when a sibling
+handle clears a path, and nothing more.
 
 #### What it implies for the script as written
 
