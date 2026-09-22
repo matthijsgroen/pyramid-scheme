@@ -6,8 +6,8 @@ import { WITNESS_DOOR_META } from "./game/meta"
 // by removing it from src/mods/registeredMods.ts's REGISTERED_MODS list.
 //
 // Game-side only (no React) — the descriptor must never pull in app/UI. The witness-door SCREEN
-// and its key minting are wired app-side (src/mods/witnessDoor/app/plugin.tsx), gated on this
-// mod being enabled.
+// and its key minting will be wired app-side (src/mods/witnessDoor/app/), gated on this mod being
+// enabled.
 export const witnessDoorMod: ModDescriptor = {
   id: "witnessDoor",
   families: [WITNESS_DOOR_META],
