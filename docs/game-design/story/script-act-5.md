@@ -1,6 +1,6 @@
 # Act V — wizard · announced, and read
 
-Source copy, English only. Voice and rules: `cast.md`. 60 source lines.
+Source copy, English only. Voice and rules: `cast.md`. 63 source lines.
 
 **The act's job.** The loop closes. `starter_1` was Dawn at the Sphinx; `wizard_2` is Secrets of the
 Sphinx, and the finale is the inscription from the first minute, read.
@@ -71,9 +71,30 @@ tutorial about a wall.
 a dead end, and it has to come from the one who is not disappointed. Fez wanted to sell something; they
 came to see something, and they have.
 
+**It is the same move the Sphinx makes, at the scale of a journey.** The choked pyramid cannot be finished
+until its siblings hand over the handles, so **it is necessarily the last pyramid completed in its
+journey** — and the player meets it first, with nothing to do. A first sight of the ending, unreadable.
+That is the game's opening beat happening again, one tier down, and neither version says so.
+
+Which is why the line stays understated. The structure carries it; the dialogue must not explain it.
+
+**And it hands a free-order journey its finale back.** Without dust, any pyramid could be the one a player
+finishes on, so a journey has no ending to write to. With it there is exactly one authored place where a
+journey ends — **the only point in a free-order journey a beat can count on.**
+
+> **Fez:** …It moved.
+>
+> **Explorer:** The whole way through.
+>
+> **Fez:** Somebody put this back. And I do not think it was us, exactly.
+
+One beat, at the clearing, and nothing more. It is the only place the dust's come-back loop carries a beat
+rather than merely permitting one, and it is where a **thread** beat can safely be scheduled if the queue
+wants a place with a guaranteed end.
+
 **What it must not say:** that the handles are in the sibling pyramids, that the dust can be cleared, or
-that clearing it is balance restored. All three belong to the beat that fires when a path actually opens —
-one line, no more (`what-the-player-knows.md`: a belief stated in order to be used later reads as a lesson).
+that clearing it is balance restored. All three belong here, at the clearing — not at the arrival
+(`what-the-player-knows.md`: a belief stated in order to be used later reads as a lesson).
 
 ## `wizard_2` — Secrets of the Sphinx
 
