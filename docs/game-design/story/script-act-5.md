@@ -92,6 +92,20 @@ One beat, at the clearing, and nothing more. It is the only place the dust's com
 rather than merely permitting one, and it is where a **thread** beat can safely be scheduled if the queue
 wants a place with a guaranteed end.
 
+**Steep and choked are different tenses, not different intensities.** Once a journey's pyramids are open at
+once and the map shows which are hard, a choked pyramid must not read as merely a very hard one — a player
+who steels themselves for it and finds nothing to do feels cheated rather than intrigued.
+
+| Node   | Says                      | About     |
+| ------ | ------------------------- | --------- |
+| steep  | this will take some doing | **you**   |
+| choked | this is not open yet      | the world |
+
+The beat above already sits on the right side of that: _"Nothing for us today, then." / "It is not going
+anywhere."_ is a **promise**, not a difficulty warning, and nobody in it is daunted. The map node has to
+make the same distinction in pixels, and it is much cheaper to get right before there are two of them than
+after.
+
 **What it must not say:** that the handles are in the sibling pyramids, that the dust can be cleared, or
 that clearing it is balance restored. All three belong here, at the clearing — not at the arrival
 (`what-the-player-knows.md`: a belief stated in order to be used later reads as a lesson).
