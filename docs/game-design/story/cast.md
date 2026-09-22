@@ -83,6 +83,39 @@ which is both funnier and kinder, and keeps the pair from souring.
 
 **Arc.** Prices everything → uneasy about what he has been pricing → will not name a price at all.
 
+### How old is Fez? — open, and it decides the ending
+
+A talking lizard in a fez walks through an otherwise ordinary Egypt and **nothing explains him.** That is
+currently fine — he is the whimsy, and asking would spoil it — but it is also an unused door.
+
+**Forgetting a name and names-being-survival are the same idea.** The game's thesis and its comic lead
+could be one thread rather than two, and that is the argument for opening the door at all.
+
+| Option                                                                                               | What it buys                                                                                                               | What it costs                                                                                                                                                         |
+| ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1. He is what he appears.** A merchant, `now`                                                      | nothing changes; lowest risk                                                                                               | the ending's name is a stranger's, so the belief has to carry it alone                                                                                                |
+| **2. He is ancient and does not know it.** Tells across the acts; the dead keep half-recognising him | explains him at last, and costs only lines. **The payoff stays undecided** — the door is open, not walked through          | a thread the game must eventually answer, or it reads as a loose end                                                                                                  |
+| **3. He is cursed, forgot his own name, and the Sphinx says it**                                     | the largest payoff available: the player learns what a name is worth by watching it cost someone they like for fifty hours | makes Fez the **subject** of the arc, which `story-and-time-brainstorm.md` decided against — Anubis is the reason it matters, Fez is the reason to come back tomorrow |
+
+**2 is the cheap, reversible move**, and it is the one I would take now: plant the tells, decide the payoff
+later. It costs a line or two an act and forecloses nothing.
+
+**The ghosts are the natural noticers**, which gives them a third job at no cost. They already settle their
+accounts and correct his Egyptology; half-recognising him is the same scene with one more line in it:
+
+> **Henut:** Have we met?
+>
+> **Fez:** I would remember.
+>
+> **Henut:** …Yes. So would I.
+
+If 3 is ever taken, three things already written turn out to have been about him: _"I have been selling the
+walls"_, the mural being **his record of us**, and — the sharpest — Act I's _"Someone could, once."_
+
+**What 3 must not become**, if it is taken: a curse-lifting. This is a whimsical adventure and the tone
+rules hold. He is not redeemed, nothing is broken and mended; he simply gets his name back, and the joke is
+that he is unimpressed by it.
+
 ---
 
 ## The explorer

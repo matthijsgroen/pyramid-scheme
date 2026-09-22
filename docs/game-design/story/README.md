@@ -30,6 +30,10 @@ story decision is in the way. Six items are pickable today.
 where each of the casual-mobile review's twelve items now stands — including the six this pass does not
 touch.
 
+[**What the player knows**](what-the-player-knows.md) is every belief about Egypt the story leans on, and
+where the game teaches it — with the rule that a beat depending on something untaught is a private joke,
+not a payoff.
+
 **Reading the columns.** _Structure_ is the expensive one: a re-carved floor invalidates saved exploration
 and has to ship with a migration. _Systems_ is where a cheap arc and a costly one diverge — a new currency
 is supported and small, a change to `isTierUnlocked` is neither. _Content_ decides whether an arc is a
