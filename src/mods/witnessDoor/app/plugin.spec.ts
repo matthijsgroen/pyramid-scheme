@@ -6,7 +6,7 @@ import { resolveFamilyByIdOrTag, type FamilyContext } from "@/app/families/famil
 import { ownedKeysFromSources, subscribeOwnedKeys } from "@/app/families/ownedKeySources"
 import { traceWitnessBeam, type WitnessBoard } from "../game/generateWitnessDoor"
 import { witnessKeyId, witnessSite, WITNESS_SHRINES } from "../game/witnessKeys"
-import { useMintedShrines } from "./mintedShrines"
+import { useMintShrine } from "./mintedShrines"
 import "./plugin"
 
 const roomCtx: FamilyContext = {
@@ -51,7 +51,7 @@ describe("the shrines it has minted", () => {
    */
   it("wakes the map, and is in the union by the time it does", async () => {
     const site = witnessSite("junior_2", 3, 2)
-    const { result } = renderHook(() => useMintedShrines())
+    const { result } = renderHook(() => useMintShrine())
     // The plugin's own load announces itself as well; let that land before listening, or its wake
     // would stand in for the one this test is about.
     await act(async () => {
@@ -62,7 +62,7 @@ describe("the shrines it has minted", () => {
       sawTheKey.push(ownedKeysFromSources(floorCtx).has(witnessKeyId(site, "east")))
     )
     await act(async () => {
-      result.current.mint(witnessKeyId(site, "east"))
+      result.current(witnessKeyId(site, "east"))
     })
     unsubscribe()
     expect(sawTheKey).toContain(true)
@@ -72,11 +72,11 @@ describe("the shrines it has minted", () => {
   // revision bump per visit, and the re-render each bump causes would feed the next one.
   it("is not minted a second time", async () => {
     const site = witnessSite("junior_2", 3, 2)
-    const { result } = renderHook(() => useMintedShrines())
+    const { result } = renderHook(() => useMintShrine())
     const woken = vi.fn()
     const unsubscribe = subscribeOwnedKeys(woken)
     await act(async () => {
-      result.current.mint(witnessKeyId(site, "east"))
+      result.current(witnessKeyId(site, "east"))
     })
     unsubscribe()
     expect(woken).not.toHaveBeenCalled()
@@ -89,5 +89,19 @@ describe("the shrines it has minted", () => {
     // The same journey's OTHER pyramid, and another floor of this one, mint their own ids.
     expect(owned.has(witnessKeyId(witnessSite("junior_2", 4, 2), "east"))).toBe(false)
     expect(owned.has(witnessKeyId(witnessSite("junior_2", 3, 3), "east"))).toBe(false)
+  })
+})
+
+// Keys accumulate: a returning player names the other shrine and opens the other branch too. The union
+// has to carry both, or whatever the first branch was not walked to stays out of reach for good.
+describe("a door opened both ways over two visits", () => {
+  it("hands over both its keys", async () => {
+    const site = witnessSite("junior_2", 3, 2)
+    const { result } = renderHook(() => useMintShrine())
+    await act(async () => {
+      result.current(witnessKeyId(site, "north"))
+    })
+    const owned = ownedKeysFromSources(floorCtx)
+    expect(WITNESS_SHRINES.every(shrine => owned.has(witnessKeyId(site, shrine)))).toBe(true)
   })
 })

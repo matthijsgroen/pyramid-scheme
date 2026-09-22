@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, type FC, type ReactNode } from "react"
+import { useCallback, useEffect, type FC, type ReactNode } from "react"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
@@ -29,8 +29,6 @@ type Props = {
   onSolved: () => void
   /** The key the named shrine hands over, once the light reaches it. */
   onMint: (keyId: string) => void
-  /** Every witness key the player holds — this door reads its own back to know it has already opened. */
-  minted?: ReadonlySet<string>
   /** Omitted where there is nowhere to go back to — a story, a spec exercising only the minting. */
   onCancel?: () => void
 }
@@ -199,19 +197,11 @@ const WitnessDoorBoard: FC<{
  * The room where solving is choosing: one beam, two shrines, and the shrine the player names is the branch
  * of the floor's fork they open. Reaching the other one lights it and settles nothing.
  */
-export const WitnessDoorPuzzle: FC<Props> = ({ board, site, minted, onSolved, onMint, onCancel }) => {
+export const WitnessDoorPuzzle: FC<Props> = ({ board, site, onSolved, onMint, onCancel }) => {
   const { t } = useTranslation("common")
   const [state, setState] = usePuzzleState(() => createWitnessDoorState(board))
 
-  /**
-   * The shrine this door has ALREADY been opened for, read off the key it minted.
-   *
-   * The key is what the door is remembered by, not the board: the in-progress board lives in one slot
-   * shared by every room, so opening another puzzle drops it, and a door with the choice open again would
-   * mint the other shrine's key too — one door, both branches of the fork it exists to choose between.
-   */
-  const opened = useMemo(() => WITNESS_SHRINES.find(shrine => minted?.has(witnessKeyId(site, shrine))), [minted, site])
-  const chosen = state.chosen ?? opened
+  const chosen = state.chosen
   const solved = isWitnessDoorSolved(board, state, chosen)
 
   // The key is handed over the moment the light lands, not when the banner is dismissed: the player may
@@ -228,13 +218,19 @@ export const WitnessDoorPuzzle: FC<Props> = ({ board, site, minted, onSolved, on
     [solved, setState]
   )
 
-  /** Naming a shrine, which a door that has already handed one out no longer allows. */
+  /**
+   * Naming a shrine, which a lit board no longer allows.
+   *
+   * The choice binds THIS VISIT, not the door: keys accumulate, so a player who walks back in may name
+   * the other shrine and open the other branch too — the cost of a choice is a walk, never lost content.
+   * What the freeze buys is that one visit hands over one key, so the walk is actually paid.
+   */
   const choose = useCallback(
     (shrine: (typeof WITNESS_SHRINES)[number]) => {
-      if (solved || opened) return
+      if (solved) return
       setState(prev => chooseWitnessShrine(prev, shrine))
     },
-    [solved, opened, setState]
+    [solved, setState]
   )
 
   return (
@@ -242,9 +238,7 @@ export const WitnessDoorPuzzle: FC<Props> = ({ board, site, minted, onSolved, on
       onSolved={onSolved}
       onCancel={onCancel ?? (() => {})}
       solved={solved}
-      // The board is inert while the shell is finishing, but a reset is a move like any other: it would
-      // throw away the route the light is standing on.
-      onReset={() => !solved && setState(createWitnessDoorState(board))}
+      onReset={() => setState(createWitnessDoorState(board))}
       title={t("witnessDoor.name")}
       goal={t("witnessDoor.goal")}
       rules={

@@ -6,18 +6,17 @@ import { isModEnabled } from "@/mods/registeredMods"
 import { generateWitnessDoor, type WitnessBoard } from "../game/generateWitnessDoor"
 import { WITNESS_DOOR_META } from "../game/meta"
 import { witnessSite } from "../game/witnessKeys"
-import { loadMintedShrines, mintedShrineKeys, useMintedShrines } from "./mintedShrines"
+import { loadMintedShrines, mintedShrineKeys, useMintShrine } from "./mintedShrines"
 import { WitnessDoorPuzzle } from "./WitnessDoorPuzzle"
 
 const WitnessDoorComponent: FamilyPlugin<WitnessBoard>["Component"] = ({ puzzle, ctx, onSolved, onCancel }) => {
-  const { minted, mint } = useMintedShrines()
+  const mint = useMintShrine()
   return (
     <WitnessDoorPuzzle
       board={puzzle}
       // Which door this is: the journey, the level whose site it belongs to, and the floor it stands on,
       // read off the coordinate the room was opened at.
       site={witnessSite(ctx.journeyId, ctx.levelNr, decodeEdge(ctx.edgeId)[0])}
-      minted={minted}
       onSolved={onSolved}
       onCancel={onCancel}
       onMint={mint}

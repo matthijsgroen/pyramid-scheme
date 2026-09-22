@@ -64,9 +64,9 @@ describe("WitnessDoorPuzzle", () => {
   })
 })
 
-// A player may back out of a solved board and walk in again, and the key stays minted. If the choice were
-// still open there, naming the other shrine would let one door open both branches of the fork.
-describe("a door that has already opened", () => {
+// One visit hands over one key: a lit board is frozen, so opening the other branch costs another walk
+// to this room rather than a second tap in this one.
+describe("a board the light has already reached", () => {
   it("refuses to be named for the other shrine", () => {
     const onMint = vi.fn()
     render(<WitnessDoorPuzzle board={board} site="junior_2#3#2" onSolved={vi.fn()} onMint={onMint} />)
@@ -79,22 +79,26 @@ describe("a door that has already opened", () => {
   })
 })
 
-// The in-progress board lives in one slot shared by every room, so opening another puzzle drops it and this
-// door comes back blank. The key it minted is what remembers which shrine it was opened for.
-describe("a door whose board has been dropped", () => {
-  const minted = new Set(["witness:junior_2#3#2:east"])
-
-  it("is still named for the shrine its key belongs to", () => {
-    render(<WitnessDoorPuzzle board={board} site="junior_2#3#2" minted={minted} onSolved={vi.fn()} onMint={vi.fn()} />)
-    expect(screen.getByRole("button", { name: /east/i }).getAttribute("aria-pressed")).toBe("true")
-  })
-
-  it("refuses to be named for the other one", () => {
+/**
+ * Keys accumulate, so the choice binds a visit and not the world.
+ *
+ * A door that could only ever be solved one way would strand whatever the other branch holds — and the
+ * floor this family was built for ends both branches in a piece of the same register, so one of them
+ * would become unobtainable. The cost of the choice is the walk back, never lost content.
+ */
+describe("a player who walks back in", () => {
+  it("opens the other branch, and holds both keys", () => {
     const onMint = vi.fn()
-    render(<WitnessDoorPuzzle board={board} site="junior_2#3#2" minted={minted} onSolved={vi.fn()} onMint={onMint} />)
+    const first = render(<WitnessDoorPuzzle board={board} site="junior_2#3#2" onSolved={vi.fn()} onMint={onMint} />)
+    act(() => screen.getByRole("button", { name: /east/i }).click())
+    applySolution(solutionsFor(board, "east")[0])
+    expect(onMint).toHaveBeenCalledWith("witness:junior_2#3#2:east")
+    first.unmount()
+
+    render(<WitnessDoorPuzzle board={board} site="junior_2#3#2" onSolved={vi.fn()} onMint={onMint} />)
     act(() => screen.getByRole("button", { name: /north/i }).click())
-    expect(screen.getByRole("button", { name: /north/i }).getAttribute("aria-pressed")).toBe("false")
+    expect(screen.getByRole("button", { name: /north/i }).getAttribute("aria-pressed")).toBe("true")
     applySolution(solutionsFor(board, "north")[0])
-    expect(onMint).not.toHaveBeenCalledWith("witness:junior_2#3#2:north")
+    expect(onMint).toHaveBeenCalledWith("witness:junior_2#3#2:north")
   })
 })

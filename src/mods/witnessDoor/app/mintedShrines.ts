@@ -13,17 +13,17 @@ type MintedShrines = { minted: string[] }
 const MOD_ID = "witnessDoor"
 const INITIAL: MintedShrines = { minted: [] }
 
-/** The keys minted so far, and how a shrine the light has reached adds to them. */
-export const useMintedShrines = (): { minted: ReadonlySet<string>; mint: (keyId: string) => void } => {
+/** How a shrine the light has reached hands its key to the gates that ask for it. */
+export const useMintShrine = (): ((keyId: string) => void) => {
   const [state, setState] = useModState<MintedShrines>(MOD_ID, INITIAL)
-  // The hook's own copy of the slice lands a beat after mount, and the store's cache is already right.
-  // A board that asked one render too early would offer a choice this door has already made.
+  // The store's cache as well as the hook's own copy, which lands a beat after mount — the guard below
+  // runs on the first render, which is the one where that copy is still empty.
   const minted = useMemo(() => new Set([...state.minted, ...mintedShrineKeys()]), [state.minted])
   const mint = useCallback(
     (keyId: string) => {
-      // A board is re-mounted every time its room is opened, and a solved one mints again on sight.
-      // Without this the write, the announcement and the re-render it causes all still happen, and
-      // that cycle ends only because `mint` happens to keep its identity across them.
+      // A board is re-mounted every time its room is opened, and one that opens already lit mints on
+      // sight. Without this the write, the announcement and the re-render it causes all still happen,
+      // and that cycle ends only because `mint` happens to keep its identity across them.
       if (minted.has(keyId)) return
       // The screen is told only once the write has landed in the store, which is what the key source
       // below reads — announced any earlier, the gate would re-read the slice without the new key in it.
@@ -33,7 +33,7 @@ export const useMintedShrines = (): { minted: ReadonlySet<string>; mint: (keyId:
     },
     [minted, setState]
   )
-  return { minted, mint }
+  return mint
 }
 
 /** The same slice, read outside React — what the owned-key source answers with. */
