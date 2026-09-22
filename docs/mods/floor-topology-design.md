@@ -233,6 +233,12 @@ per pyramid is already positioned and already carries state, so this is a prop a
 than a screen. The authoring-side statement of all this lives in
 `../game-design/worldgen-dsl-redesign.md`.
 
+**Steep and choked are different tenses, not different intensities.** A steep pyramid says _this
+will take some doing_, and it is about the player; a choked one says _this is not open yet_, and it
+is about the world. Drawn as one severity scale they collapse, and a player reads the choked node as
+"very hard", picks it deliberately and finds a wall. The two need distinct reads on the node — cheap
+to settle before the art exists, annoying to retrofit after.
+
 One consequence to decide deliberately rather than discover: a wizard journey's levels escalate, and
 free order lets a player meet the hardest first.
 
