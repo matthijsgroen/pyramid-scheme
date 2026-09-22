@@ -511,6 +511,72 @@ It also dissolves §2.4's objection that no premise holds 29 beats. It does not 
 carrying 5 acts** is ordinary structure, and because the scenes are ordered, scene N may refer to what was
 found in scene N−1.
 
+### Three kinds of beat, and only one of them is ordered
+
+The rails above describe where a beat can fire. This describes what a beat **is**, and it is the thing that
+makes a story survive a player exploring in any order they like.
+
+| Kind         | Fires                             | About                      | Order                              |
+| ------------ | --------------------------------- | -------------------------- | ---------------------------------- |
+| **Place**    | on first arriving somewhere       | what this place is         | none — any order, always true      |
+| **Thread**   | at **any** unspent story node     | the plot                   | **strictly ordered, from a queue** |
+| **Anchored** | only at one place, and only there | a thing that is that place | wherever its place sits            |
+
+**A story node is a slot, not a beat.** Touching one pops the next unplayed thread beat off the queue.
+
+**So the story is always told in order — only the places it is told in vary.** That is the property the
+whole model exists for, and it is what lets a thread beat assume every thread beat before it. A five-act
+plot stays writable against a player who explores however they like.
+
+#### Why the split rather than one queue
+
+A pure queue — every node just plays "the next thing" — solves ordering completely and throws away the
+best property the world has: **the journey names already tell the story.** `junior_2` Valley of the
+Artisans is where the copies were made; `master_3` Curse of the Pharaohs is where somebody was here first.
+If a node pops whatever is next, arriving at the Artisans can hand the player the Sphinx, and the names
+stop carrying anything.
+
+Place beats keep that. Thread beats carry the plot. Neither has to compromise.
+
+#### The writing rules that follow
+
+**A thread beat may not mention where it is.** No "as you can see here", no naming the room. It will play
+somewhere its author did not choose, and that is the price of it being able to assume everything before it.
+
+**A place beat may not advance anything.** It says what this place is and stops. It can be missed entirely
+— a player may never visit `junior_1` — so nothing may depend on it.
+
+**Anchored is for when the place IS the content**, and it should be rare. The Sphinx inscription, the
+priest's altar, a ghost in its own tomb. An anchored beat is the only kind that can be gated on a place,
+and every one of them is a constraint on how freely a tier can be explored.
+
+#### What it does to the rails
+
+The ordered/unordered distinction mostly dissolves. Arrival stops needing to be an ordered rail at all,
+because **the ordering moved into the queue**. What is left:
+
+- **Thread beats** are ordered by construction, wherever they fire. A beat may assume every thread beat
+  before it, always — which is what makes a five-act plot writable against free exploration.
+- **Anchored beats** are the only ones that still care about rails, and the count is small enough to
+  reason about one at a time.
+
+Free-order journeys (`docs/mods/floor-topology-design.md`) then cost the story nothing anywhere, rather
+than costing it a wizard exception.
+
+#### What it implies for the script as written
+
+The five acts are currently written place-bound: some lines are about where they are, and some are plot
+that happens to be there. Splitting them is a pass over 223 lines, not a rewrite — most lines already fall
+clearly on one side.
+
+The rough shape: **arrivals are mostly place**, the tomb scenes are mostly **anchored** (a ghost is its
+tomb), and the hook, the ask, the refusal and the ending are **anchored** too. What becomes **thread** is
+the connective tissue — Fez noticing, the bond beats, the inscription lines arriving one per act, and the
+tells that he is older than he says.
+
+That last one benefits most: a tell that fires from a queue lands wherever the player happens to be, which
+is exactly how a tell should work.
+
 ## 4.2 What a quest is, in this world's terms
 
 Four parts, and three of them already exist.
