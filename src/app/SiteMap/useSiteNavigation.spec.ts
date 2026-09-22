@@ -3,7 +3,25 @@ import { renderHook, act } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type { CellState, FloorGrid, GridCell, SiteConfig } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
+import { registerFamily } from "@/app/families/familyRegistry"
 import { useSiteNavigation } from "./useSiteNavigation"
+
+// A family that keeps its rooms open (FamilyMeta.reEnterable) — declared here as a stub, because which
+// families those are is theirs to say and core's only to read.
+const RETURNABLE_FAMILY = "stays-open"
+registerFamily({
+  meta: {
+    id: RETURNABLE_FAMILY,
+    ownerMod: "test",
+    tags: ["puzzle"],
+    icon: "",
+    color: "",
+    rewardPriority: 0,
+    reEnterable: true,
+  },
+  generate: () => null,
+  Component: () => null,
+})
 
 // Every cell carries the section and the ordinal the assembler gives it, because that is what a write
 // is filed under now — `${sectionHash}#${floor}/${slot}` for a room, `~${ordinal}` for a corridor
@@ -201,6 +219,17 @@ describe("useSiteNavigation", () => {
 
     expect(journeys.updatePosition).toHaveBeenCalledWith("j1", PUZZLE_AT_1, "0:0,1")
     expect(onEncounter).not.toHaveBeenCalled()
+  })
+
+  // The sibling of the two reopen cases below, and the one a whole mechanic rests on: a door that hands
+  // over one of the two keys it holds is a door the player has to be able to walk back into.
+  it("reopens a completed room whose family says it stays re-enterable", () => {
+    const { hook, onEncounter } = setup([entrance, { ...puzzleRoom, family: RETURNABLE_FAMILY, state: "completed" }])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
   })
 
   it("reopens a completed chest whose consumable was left behind, once the player is back at it", () => {

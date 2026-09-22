@@ -1,5 +1,6 @@
 import { useCallback } from "react"
 import { cellAddress } from "./cellIdentity"
+import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { findPath, getCell } from "@/game/gridNavigation"
 import type { FloorGrid, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
@@ -99,15 +100,20 @@ export const useSiteNavigation = ({
         return
       }
 
-      // Completed cells just reposition the player, except a shop with unbought stock or an
-      // unfitted consumable, which reopen.
+      // Completed cells just reposition the player, except three that reopen: a room whose family
+      // says it stays re-enterable, a shop with unbought stock, and an unfitted consumable.
       if (cell.state === "completed") {
         const alreadyStandingHere = explorerPos[0] === row && explorerPos[1] === col
         goHere()
+        // A family that hands over one of several things it holds, one per visit (FamilyMeta.reEnterable).
+        // Read off the registry, so core learns which rooms those are without naming any of them — and an
+        // unregistered family answers "no", which is what a toggled-off mod's leftover rooms need.
+        const familyStaysOpen =
+          cell.type === "room" && !!cell.family && !!getFamilyPlugin(cell.family)?.meta.reEnterable
         const shopHasUnclaimedStock =
           cell.type === "room" &&
           !!cell.stock?.some((item, j) => item && !journeys.getPurchasedShopSlots(journeyId).has(`${address}!${j}`))
-        if (shopHasUnclaimedStock) {
+        if (familyStaysOpen || shopHasUnclaimedStock) {
           scheduleArrival(walkDelay(row, col), () => onEncounter([row, col], !alreadyStandingHere))
           return
         }

@@ -29,6 +29,16 @@ export type FamilyMeta = {
   // fragment) — explicit DSL authoring or a system that targets it directly, never this
   // generic pool, even though a shop has real capacity (several stock slots).
   rewardPriority: number
+  /**
+   * A finished room of this family is walked back INTO, rather than only repositioned on like every
+   * other completed cell (src/app/SiteMap/useSiteNavigation.ts).
+   *
+   * For a family whose room hands over one of several things it holds, one per visit: the witness door
+   * mints the key of the shrine it was opened for, and without a second visit its other branch would
+   * hold content nothing could ever reach. The cost of the choice is the walk back, not the content.
+   * The board starts fresh, because an unfinished board is dropped when its room resolves.
+   */
+  reEnterable?: boolean
   // How many reward slots a node of this family exposes. Default 1 (an ordinary node bears one
   // reward, like a chest or a puzzle-chain position). A shop is the one family that overrides it
   // (6): its node carries a `rewards[]` stock array of this length, filled by the mods that place

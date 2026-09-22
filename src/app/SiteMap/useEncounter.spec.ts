@@ -139,6 +139,18 @@ describe("useEncounter", () => {
     expect(hook.result.current.ctx?.difficulty).toBe("wizard")
   })
 
+  // A room its family keeps re-enterable is solved again on every visit, and the loot it held was
+  // handed over on the visit that finished it.
+  it("offers no second helping of loot in a room already finished", () => {
+    const { hook, onReward } = setup([
+      { ...emptyRoom, state: "completed", reward: { type: "consumable", itemId: "bandage" } },
+    ])
+
+    act(() => hook.result.current.open([0, 0], true))
+
+    expect(onReward).not.toHaveBeenCalled()
+  })
+
   it("offers nothing for an empty room, while still marking it explored", () => {
     const { hook, journeys, onReward } = setup([emptyRoom])
 
