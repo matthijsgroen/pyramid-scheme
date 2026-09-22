@@ -1,4 +1,4 @@
-import type { Tier, TreasureReward } from "./types"
+import type { Tier, TreasureReward, SubSection } from "./types"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import type { RewardHint, RewardSpec, GateSpec } from "./dsl"
 
@@ -46,13 +46,13 @@ export const specToReward = (spec: RewardSpec, tier: Tier): TreasureReward => {
   return spec as TreasureReward
 }
 
-// Translates a GateSpec to the runtime GateConfig form (undefined = no gate)
-export const specToGate = (
-  spec: GateSpec | undefined
-): { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string } | undefined => {
+// Translates a GateSpec to the runtime SubSection["gate"] form (undefined = no gate). The
+// floor-key branch spreads `spec` rather than rebuilding it field-by-field, so an authored
+// `keyId`/`ownerMod` (or any later field) rides along without this function needing to know it exists.
+export const specToGate = (spec: GateSpec | undefined): SubSection["gate"] => {
   if (spec == null) return undefined
   if (typeof spec === "string") return spec === "floor-key" ? { type: "floor-key", color: "blue" } : undefined
-  if (spec.type === "floor-key") return { type: "floor-key", color: spec.color ?? "blue" }
+  if (spec.type === "floor-key") return { ...spec, color: spec.color ?? "blue" }
   const wardKeyId = TOMB_PERK_IDS[spec.tombId]?.[spec.index]
   if (!wardKeyId) return undefined
   return { type: "tomb-key", wardKeyId }

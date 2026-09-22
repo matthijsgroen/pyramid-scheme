@@ -40,18 +40,20 @@ const serializeReward = (r: TreasureReward): string => {
 const serializePuzzleRewards = (rewards: (TreasureReward | undefined)[]): string =>
   `[${rewards.map(r => (r ? serializeReward(r) : "undefined")).join(", ")}]`
 
+// Emits every field the gate object carries (whatever they are) rather than a fixed field
+// list — so an authored keyId/ownerMod, or any later field, survives the bake without this
+// function needing to name it.
+const serializeGate = (g: NonNullable<SideSection["gate"]>): string =>
+  `{ ${Object.entries(g)
+    .filter(([, v]) => v !== undefined)
+    .map(([k, v]) => `${k}: ${serializeValue(v)}`)
+    .join(", ")} }`
+
 const serializeSideSection = (s: SideSection): string => {
   const endStr = typeof s.end === "object" ? `{ stairId: "${s.end.stairId}" }` : `"${s.end}"`
   const parts = [`pathPuzzles: ${s.pathPuzzles}`, `difficulty: "${s.difficulty}"`, `end: ${endStr}`]
   if (s.label !== undefined) parts.unshift(`label: ${JSON.stringify(s.label)}`)
-  if (s.gate)
-    parts.push(
-      s.gate.type === "tomb-key"
-        ? `gate: { type: "tomb-key", wardKeyId: "${s.gate.wardKeyId}" }`
-        : s.gate.color
-          ? `gate: { type: "floor-key", color: "${s.gate.color}" }`
-          : `gate: { type: "floor-key" }`
-    )
+  if (s.gate) parts.push(`gate: ${serializeGate(s.gate)}`)
   if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward)}`)
   if (s.rewards?.length) parts.push(`rewards: ${serializePuzzleRewards(s.rewards)}`)
   if (s.hidden) parts.push(`hidden: true`)

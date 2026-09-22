@@ -100,6 +100,28 @@ describe(validateSite, () => {
     }
   })
 
+  it("keyBeforeGate: passes an authored gate with no on-floor key chest", () => {
+    // entrance -e- gate(requiredKeyId="witness:east", keyIsAuthored) -e- exit, no chest anywhere
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [
+          0,
+          1,
+          room("gate", ["w", "e"], {
+            requiredKeyId: "witness:east",
+            gateVariant: "floor-key",
+            keyIsAuthored: true,
+          }),
+        ],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(validateSite(grid)).toEqual({ valid: true })
+  })
+
   it("keyBeforeGate: fails when key node is behind the gate it unlocks", () => {
     // entrance -e- gate(requiredKeyId="key-chest") -e- key-chest(tombKey keyId="key-chest") -e- exit
     const grid = buildGrid(

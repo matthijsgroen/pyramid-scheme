@@ -1378,3 +1378,15 @@ describe("an authored floor-key id", () => {
     expect(hostedKeys).toHaveLength(0)
   })
 })
+
+describe("a floor-key gate with no authored keyId", () => {
+  it("stamps keyIsAuthored on none of its gate rooms", () => {
+    const result = assembleFloor("site-1", firstPyramid(), 42)
+    if (!result.success) throw new Error("assembly failed")
+    const floorKeyGates = result.grid.cells
+      .flat()
+      .filter((c): c is RoomCell => c.type === "room" && c.gateVariant === "floor-key")
+    expect(floorKeyGates.length).toBeGreaterThan(0)
+    expect(floorKeyGates.every(c => c.keyIsAuthored === undefined)).toBe(true)
+  })
+})

@@ -994,10 +994,10 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/worldGen/rewards.spec.ts:1498645": [
       [98, 62, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/rewards.ts:805742016": [
+    "src/worldGen/rewards.ts:829040185": [
       [71, 49, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/serializer.ts:973063543": [
+    "src/worldGen/serializer.ts:1030659888": [
       [26, 67, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/worldGen/sideSections.ts:1711856813": [
