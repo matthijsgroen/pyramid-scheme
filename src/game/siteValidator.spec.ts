@@ -363,6 +363,24 @@ describe(reachableFrom, () => {
     expect(reachable.has("0,2")).toBe(false)
     expect(blockedRequirements).toEqual(new Set(["witness:east"]))
   })
+
+  // The plural form is the same rule. No family asks for several authored keys at once today; the one
+  // that does must not have to rediscover why the singular branch skips the report.
+  it("an authored room asking for SEVERAL keys is reported no differently", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyIds: ["witness:east", "witness:north"], keyIsAuthored: true })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const blockedRequirements = new Set<string>()
+    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    expect(reachable.has("0,2")).toBe(false)
+    expect(blockedRequirements.size).toBe(0)
+  })
 })
 
 // ─── validateJourney ──────────────────────────────────────────────────────────

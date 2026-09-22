@@ -57,7 +57,10 @@ export const reachableFrom = (
         continue
       }
       if (ncell.type === "room" && ncell.requiredKeyIds?.some(id => !ownedKeys.has(id))) {
-        for (const id of ncell.requiredKeyIds) if (!ownedKeys.has(id)) blockedRequirements?.add(id)
+        // Authored keys are none of this solver's business here either — the single-key branch above
+        // says why. No family asks for several of them today; the day one does, it reads the same.
+        if (!ncell.keyIsAuthored)
+          for (const id of ncell.requiredKeyIds) if (!ownedKeys.has(id)) blockedRequirements?.add(id)
         continue
       }
 
