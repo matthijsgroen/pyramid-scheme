@@ -88,6 +88,10 @@ A room dresses out of **two** things it is told, and they answer different quest
 | `ctx.role`   | `encounter: "trade"` | **Which place is this?** The pool the room was drawn from.         |
 | `ctx.theme`  | `theme: "night"`     | **What is it like right now?** The hour and the weather, per site. |
 
+A third thing arrives that is not authored at all: `ctx.address`, which is simply **which room this
+is**. It decides nothing where either of the two above spoke, and everything where neither did — see
+"A room nobody dressed" below.
+
 - The family component emits **logical state** (`"empty" | "kept" | "struck"`,
   glyph index, clue). It hardcodes no color, texture, or glyph.
 - A skin maps logical state to classes/sprites. Every family ships **one default
@@ -119,6 +123,18 @@ and the lab's picker reads that list.
 
 **Naming either can never break a room.** Both are opaque to core and to every other family, so a site
 may ask for anything and a family that has never heard of it draws its default.
+
+**A room nobody dressed draws a face anyway — one in three.** Where the role names no face and the
+theme names no skin, `faceFor` rolls on the room's own address and picks from the faces the family has.
+A face is a PLACE, and places do not only exist where a journey asked for one: a family carrying a
+scriptorium that no journey ever authors a `scribe` room for would otherwise draw its plain board for
+the whole game. The roll is on the address rather than on the board or the clock, so the same room is
+the same place on every device and after every reload, and nothing a journey authored is ever overruled
+— the roll is only reached where nothing was said at all.
+
+The knob is `ONE_IN` in `faceFor.ts`. Raising it is how a face that turns out to read badly out of
+context gets rarer; a face that should never appear unasked belongs behind a role instead, which is the
+stronger statement and the one an author can see.
 
 ## 3. Controls — two slots from the shell, the rest from the input surface
 

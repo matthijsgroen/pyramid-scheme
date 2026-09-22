@@ -28,11 +28,13 @@ type Props = {
   role?: string | string[]
   /** The hour its site authored. */
   theme?: string
+  /** Which room this is, so an undressed one still draws a face of its own (faceFor.ts). */
+  room?: string
   onSolved: () => void
   onCancel: () => void
 }
 
-export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSolved, onCancel }) => {
+export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   // The board's own shape, so a role with several places picks the same one for this room every time and a
   // different one for the room next door (`skins.ts`).
@@ -40,7 +42,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, on
     (hash, value) => (hash * 31 + value) | 0,
     7
   )
-  const skin = skinFor(role, theme, shape)
+  const skin = skinFor(role, theme, shape, room)
   const [state, setState] = usePuzzleState(() => createCanistersState(puzzle))
 
   const solved = isCanistersSolved(puzzle, state)
