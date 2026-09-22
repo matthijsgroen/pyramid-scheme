@@ -196,8 +196,22 @@ across the world; this one is spread across _one journey's siblings_ and consume
 does not. Without that change the choked pyramid is only a later level with dust drawn on it.
 
 **Restoring, not unlocking.** The handles clear paths in a pyramid the player has already seen
-buried, which is why this reads as balance rather than as a key. It wants the choked pyramid to be
-visitable while useless — an entrance and a wall of dust — not hidden until finished.
+buried, which is why this reads as balance rather than as a key.
+
+**The dust takes the spine too.** The choked pyramid is entered and gives nothing until its siblings
+are worked — not a pyramid with buried branches, a pyramid with nothing reachable. This is the one
+place in the game a site is not completable on arrival, and it is safe for the reason
+`../mods/floor-topology-design.md` gives: the opener lies outside the site and leaving is always
+available, so the player is never stuck, only sent elsewhere.
+
+**Balance is ma'at, and the tier already says so.** wizard_3 is the Chamber of Ma'at, and ma'at is
+truth and order — the way things are supposed to be, and what the mural's finale weighs. A pyramid
+choked with cosmic dust is a place fallen out of the sky's order, and the handles put it back. The
+meaning is the journey's own name rather than fiction imported for a mechanic.
+
+**Free order is per journey, not per tier.** The handles clear a pyramid among its own journey's
+siblings; journeys stay reachable as they always were, and tiers still gate on tomb tableaus. That
+is why the currency's scope is the journey (P5).
 
 ### G2 — the puzzle's output is a map
 
@@ -220,6 +234,13 @@ frees a named section above — authored, and the same keying a save already use
 player can strand them; the flip is the diegetic remedy, and persistence already reseats a returning
 player at the entrance. Space is the two floors, time is the flip — which is what makes the site read
 as one object rather than two floors that happen to be stacked.
+
+**It is Ra's night voyage, and it belongs to wizard_1.** The sun going under the world at nightfall,
+twelve hours in the dark with things in the way, and coming up the other side — climb, pull the
+lever, descend into the dark, trace a path while what is behind you closes. Turning the hourglass
+over is the sun coming round again, which is why the reset reads as the world working rather than as
+a retry button. The site is one of wizard_1's own pyramids, so the story and the mechanic are the
+same object.
 
 **Up rather than down.** The stair pairing that links floors is direction-agnostic; what calls a
 transition a descent is presentation.

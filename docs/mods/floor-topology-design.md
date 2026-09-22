@@ -66,6 +66,11 @@ For each blocker, one of these holds, and both are questions the solver already 
 
 A blocker on the main path is allowed. Being stuck is what is forbidden.
 
+The worked example is cosmic dust's choked pyramid: it is entered and gives nothing at all until its
+siblings are worked — the one site in the game not completable on arrival. It satisfies the second
+clause, not the first. The opener is in the journey's other pyramids, and leaving is always
+available, so the player is never stuck, only sent elsewhere.
+
 ### Two bracket runs, one BFS
 
 Passability today is a function of `(grid, ownedKeys)`, and keys only accumulate — which is what
@@ -166,6 +171,25 @@ without dust, a free-order wizard journey has nothing left to come back for, bec
 This is **core progression, authored per journey** — not something the dust mod owns. With dust
 unregistered, a free-order journey is simply a more open journey.
 
+**It opens one level of the ladder and no other.** Tiers gate on tomb tableaus; a tomb gates on its
+`piecesRequired` map pieces; a journey unlocks the next one in its tier by being completed. Free
+order changes none of those. It reaches the level underneath them: the pyramids **inside** one
+journey. That is also why the dust currency's scope is the journey — the handles clear a pyramid
+among its own siblings, never across journeys.
+
+Only the tomb-treasure mod's `journeyEntryLock` and `tierUnlockBucket` are visible to the solver;
+journey-to-journey progression is app-side and outside its scope, the same way pyramid order is.
+
+**"Journey complete" has to be restated.** A cursor passing `levelCount` means _last pyramid done_
+and _all pyramids done_ at once, so the two readings are indistinguishable today. Once `levelNr`
+becomes a set, they come apart, and the unlock condition must say `completed.size === levelCount`
+explicitly — otherwise a free-order journey unlocks its successor off whichever pyramid the player
+happened to finish last. The migration that buys free order carries this predicate with it.
+
+**The choked pyramid is always its journey's last.** It cannot be finished until its siblings hand
+over the handles, so a free-order journey still has a definite ending, and dust is what guarantees
+it.
+
 What it costs:
 
 - `levelNr` stops being a cursor and becomes a set of unlocked levels. A save migration —
@@ -189,6 +213,11 @@ see, and in a free-order journey that convention evaporates.
 The authoring rule that follows: **in a free-order journey, pacing that matters is expressed as a
 key, or it does not exist.** Which is what cosmic dust is for — it gives back, in a form the solver
 can read, the sequencing free order removes.
+
+The place this bites is `PyramidSelector` — `number | "first" | "last" | "middle" | "n-m" |
+"last-n"`, which the whole world is authored with. Every selector stays a valid **address**; what
+`first` and `last` stop carrying is **when**. Authoring that used position to pace — the gentle
+pyramid first, the map piece last — keeps naming the same pyramid and stops meaning the same thing.
 
 One consequence to decide deliberately rather than discover: a wizard journey's levels escalate, and
 free order lets a player meet the hardest first.
