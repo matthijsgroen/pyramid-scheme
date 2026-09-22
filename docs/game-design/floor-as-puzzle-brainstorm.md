@@ -3,7 +3,8 @@
 Status: **exploration — nothing decided, nothing scheduled.** An inventory of ways a pyramid floor
 could itself be played, sorted by what each would cost a run in progress.
 Companion to `pyramid-interior-design.md` (the floor system, §6–§7), `world-spec-stability.md` (the
-cost tiers this page sorts by), `PUZZLE_FAMILIES.md` (which families can carry a door).
+cost tiers this page sorts by), `PUZZLE_FAMILIES.md` (which families can carry a door), and
+`../mods/floor-topology-design.md` (how these become mods that can be taken back out).
 
 ---
 
@@ -21,11 +22,11 @@ with nothing to decide. This page collects what could make the floor itself the 
 `worldFloorAssembly.spec.ts` sweeps every floor in the world to hold the line. Three tiers follow,
 and every idea below is tagged with one:
 
-| Tier | What it means | What a run loses |
-| ---- | ------------- | ---------------- |
-| **free** | Content-side. Encounter, reward, gate key, drawing. Walls do not move. | nothing |
-| **carve** | Walls move, no room is added or removed. | nothing — corridors relight to each section's high-water mark |
-| **rooms** | The authoring adds, removes or replaces a room. | those rooms, and any chest in them, come back unexplored |
+| Tier      | What it means                                                          | What a run loses                                              |
+| --------- | ---------------------------------------------------------------------- | ------------------------------------------------------------- |
+| **free**  | Content-side. Encounter, reward, gate key, drawing. Walls do not move. | nothing                                                       |
+| **carve** | Walls move, no room is added or removed.                               | nothing — corridors relight to each section's high-water mark |
+| **rooms** | The authoring adds, removes or replaces a room.                        | those rooms, and any chest in them, come back unexplored      |
 
 The tier is the honest price tag. It is not the build cost — **S/M/L** is that, and the two are
 independent: the cheapest idea to build can be the one that costs a player the most.
@@ -73,69 +74,69 @@ condition-dispatch can ship on its own and never be regenerated.
 `ConditionKind` is `overgrown | flooded` today. Adding a kind is free while it only draws, so the
 vocabulary can be grown before anything reads it.
 
-| Kind | Layer it would dispatch | Tier |
-| ---- | ----------------------- | ---- |
-| `flooded` | A3 two walkable shapes; corridors below the waterline closed until drained | carve |
-| `overgrown` | C1 roots over the inscriptions — the layout must be deduced | free |
-| `sand-choked` *(new)* | A1 ramps; sand is what a one-way slide is made of | carve |
-| `collapsed` *(new)* | A2 bars liftable only from behind, A5 corridors closing as you pass | rooms / carve |
-| `undisturbed` *(new)* | B-class door puzzles and E3's sequence door — nothing has broken in, so the builders' own locks still stand | free |
+| Kind                  | Layer it would dispatch                                                                                     | Tier          |
+| --------------------- | ----------------------------------------------------------------------------------------------------------- | ------------- |
+| `flooded`             | A3 two walkable shapes; corridors below the waterline closed until drained                                  | carve         |
+| `overgrown`           | C1 roots over the inscriptions — the layout must be deduced                                                 | free          |
+| `sand-choked` _(new)_ | A1 ramps; sand is what a one-way slide is made of                                                           | carve         |
+| `collapsed` _(new)_   | A2 bars liftable only from behind, A5 corridors closing as you pass                                         | rooms / carve |
+| `undisturbed` _(new)_ | B-class door puzzles and E3's sequence door — nothing has broken in, so the builders' own locks still stand | free          |
 
 ---
 
 ## A. Geometry — the floor is shaped against you
 
-| # | Idea | Leans on | Tier | Build |
-| - | ---- | -------- | ---- | ----- |
-| A1 | **One-way ramp.** A real corridor, passable downhill only, landing at an authored room upstream. Seen on arrival, not from the map. | maze carving, `sealed`, the `hidden` mask for the unmask-on-arrival | carve | M |
-| A2 | **Bar lifted from behind.** A door that opens only from its far side, then stays open forever. | gates, and persistence already remembering open gates | rooms | S |
-| A3 | **Two walkable shapes.** A lever floods or drains; the same map has a wet route and a dry one. | cell masking | carve | M |
-| A4 | **Shaft between distant floors.** Floor 3 reconnects to floor 1, so deep floors stop demanding the full climb. | `end:{stairId}` / `entrance:{stairId}` already pair sections by id | rooms | S |
-| A5 | **Collapse behind you.** Corridors close as you pass, for this visit only. | masking | carve | M |
-| A6 | **Rising sand.** Corridors close in a fixed, knowable order during a visit — a timer wearing geometry's clothes. | masking | carve | M |
-| A7 | **Rotating hub.** A chamber that turns to face different branches. | nothing | rooms | L |
+| #   | Idea                                                                                                                                | Leans on                                                            | Tier  | Build |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ----- | ----- |
+| A1  | **One-way ramp.** A real corridor, passable downhill only, landing at an authored room upstream. Seen on arrival, not from the map. | maze carving, `sealed`, the `hidden` mask for the unmask-on-arrival | carve | M     |
+| A2  | **Bar lifted from behind.** A door that opens only from its far side, then stays open forever.                                      | gates, and persistence already remembering open gates               | rooms | S     |
+| A3  | **Two walkable shapes.** A lever floods or drains; the same map has a wet route and a dry one.                                      | cell masking                                                        | carve | M     |
+| A4  | **Shaft between distant floors.** Floor 3 reconnects to floor 1, so deep floors stop demanding the full climb.                      | `end:{stairId}` / `entrance:{stairId}` already pair sections by id  | rooms | S     |
+| A5  | **Collapse behind you.** Corridors close as you pass, for this visit only.                                                          | masking                                                             | carve | M     |
+| A6  | **Rising sand.** Corridors close in a fixed, knowable order during a visit — a timer wearing geometry's clothes.                    | masking                                                             | carve | M     |
+| A7  | **Rotating hub.** A chamber that turns to face different branches.                                                                  | nothing                                                             | rooms | L     |
 
 ## B. The fork becomes the puzzle
 
-| # | Idea | Leans on | Tier | Build |
-| - | ---- | -------- | ---- | ----- |
-| B1 | **Two declared solutions, two doors.** One board with exactly two legal answers, each opening its own corridor. | lightbeam, the uniqueness verifier with a swapped accept predicate (`count == 2`, and the two must differ in the door-bearing feature) | free | M |
-| B2 | **One board, two goals.** "Route the beam to the east shrine" *or* "to the north" — each goal uniquely solvable, so §3.3 is untouched and the verifier needs no change. | lightbeam as-is | free | S |
-| B3 | **Risk fork.** The easy target opens the short branch, the hard one opens the rich branch. | per-family difficulty knobs | free | S |
-| B4 | **Flip without re-solving.** Once the board is solved, returning lets the player switch which door stands open. Without this, B1/B2's second door is a chore — the player already knows the answer. | — | free | S |
-| B5 | **The same board at two forks.** Solve it once and both forks are understood; the floor reads as one object rather than a corridor with rooms on it. | — | free | S |
+| #   | Idea                                                                                                                                                                                                | Leans on                                                                                                                               | Tier | Build |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ---- | ----- |
+| B1  | **Two declared solutions, two doors.** One board with exactly two legal answers, each opening its own corridor.                                                                                     | lightbeam, the uniqueness verifier with a swapped accept predicate (`count == 2`, and the two must differ in the door-bearing feature) | free | M     |
+| B2  | **One board, two goals.** "Route the beam to the east shrine" _or_ "to the north" — each goal uniquely solvable, so §3.3 is untouched and the verifier needs no change.                             | lightbeam as-is                                                                                                                        | free | S     |
+| B3  | **Risk fork.** The easy target opens the short branch, the hard one opens the rich branch.                                                                                                          | per-family difficulty knobs                                                                                                            | free | S     |
+| B4  | **Flip without re-solving.** Once the board is solved, returning lets the player switch which door stands open. Without this, B1/B2's second door is a chore — the player already knows the answer. | —                                                                                                                                      | free | S     |
+| B5  | **The same board at two forks.** Solve it once and both forks are understood; the floor reads as one object rather than a corridor with rooms on it.                                                | —                                                                                                                                      | free | S     |
 
-Which families can carry a door at all: the answer has to *point somewhere*. Lightbeam's beam lands
+Which families can carry a door at all: the answer has to _point somewhere_. Lightbeam's beam lands
 on a shrine, canal's channel leaves by an edge, a loop family encloses one alcove or the other.
 Most families have no such feature and simply never carry one.
 
 ## C. Knowledge is the obstacle
 
-| # | Idea | Leans on | Tier | Build |
-| - | ---- | -------- | ---- | ----- |
-| C1 | **Deduce the layout.** Inscriptions say where things lie — "two chambers east of the second fork" — and the map fills in from reasoning rather than walking. The most archaeologist-shaped idea here, and it moves no wall. | exploration masking | carve | M |
-| C2 | **The frieze names the true door.** The others loop back. Stray maze loops become content instead of the defect `sealed` exists to suppress. | the maze already makes loops | free | S |
-| C3 | **Detectors reveal shape, not corridors.** Extends the detector from "a passage is here" to "the floor is this shape". | detector/perk system | free | S |
+| #   | Idea                                                                                                                                                                                                                        | Leans on                     | Tier  | Build |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ----- | ----- |
+| C1  | **Deduce the layout.** Inscriptions say where things lie — "two chambers east of the second fork" — and the map fills in from reasoning rather than walking. The most archaeologist-shaped idea here, and it moves no wall. | exploration masking          | carve | M     |
+| C2  | **The frieze names the true door.** The others loop back. Stray maze loops become content instead of the defect `sealed` exists to suppress.                                                                                | the maze already makes loops | free  | S     |
+| C3  | **Detectors reveal shape, not corridors.** Extends the detector from "a passage is here" to "the floor is this shape".                                                                                                      | detector/perk system         | free  | S     |
 
 ## D. Spend and choose
 
-| # | Idea | Leans on | Tier | Build |
-| - | ---- | -------- | ---- | ----- |
-| D1 | **Fewer keys than locks.** Two floor keys, three sealed doors: pick two now, a revisit settles the rest. | `floorKeys.ts`, coloured `floor-key` gates | rooms | S |
-| D2 | **A lever elsewhere opens a door here.** Solving A reconfigures B. | — | carve | M |
+| #   | Idea                                                                                                     | Leans on                                   | Tier  | Build |
+| --- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------ | ----- | ----- |
+| D1  | **Fewer keys than locks.** Two floor keys, three sealed doors: pick two now, a revisit settles the rest. | `floorKeys.ts`, coloured `floor-key` gates | rooms | S     |
+| D2  | **A lever elsewhere opens a door here.** Solving A reconfigures B.                                       | —                                          | carve | M     |
 
 D1's tier is the trap: a `floor-key` gate makes the assembler grow a section to host its key, so
 every extra lock is new ground.
 
 ## E. The whole floor as one board
 
-| # | Idea | Leans on | Tier | Build |
-| - | ---- | -------- | ---- | ----- |
-| E1 | **Visit-order floor.** Rooms carry the numbers or nodes; the floor is a hidato walked rather than tapped. | hidato, constellation | free | M |
-| E2 | **Push the blocking stone** through the corridors to clear a path. | the rushHour family, though not its navigation | rooms | L |
-| E3 | **Sequence door.** A door carries four glyphs; the same glyphs lie out in the corridors, and it opens when they are crossed in its order. A reset tile by the entrance clears a broken sequence, so a wrong step costs the walk back. | gates, the hieroglyph vocabulary | free | M |
+| #   | Idea                                                                                                                                                                                                                                  | Leans on                                       | Tier  | Build |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ----- | ----- |
+| E1  | **Visit-order floor.** Rooms carry the numbers or nodes; the floor is a hidato walked rather than tapped.                                                                                                                             | hidato, constellation                          | free  | M     |
+| E2  | **Push the blocking stone** through the corridors to clear a path.                                                                                                                                                                    | the rushHour family, though not its navigation | rooms | L     |
+| E3  | **Sequence door.** A door carries four glyphs; the same glyphs lie out in the corridors, and it opens when they are crossed in its order. A reset tile by the entrance clears a broken sequence, so a wrong step costs the walk back. | gates, the hieroglyph vocabulary               | free  | M     |
 
-**E3 is cheap where it looks expensive.** Gate *presence* is structural; which key opens a gate is
+**E3 is cheap where it looks expensive.** Gate _presence_ is structural; which key opens a gate is
 free. So the sequence is a currency — `gate: { type: "sequence" }` beside `floor-key` and
 `tomb-key` — and no room, wall or chest moves to add one. The keys-and-locks solver asks it the
 question it already asks of a floor-key: is the opener reachable, upstream, on this floor? Four
@@ -161,9 +162,9 @@ Ward gates are already the locks, tomb treasures already the abilities, persiste
 come-back-to-old-rooms loop. The half that is missing is an ability that changes **how you move**
 rather than what you open.
 
-| # | Idea | Leans on | Tier | Build |
-| - | ---- | -------- | ---- | ----- |
-| F1 | **Rope.** Climb a one-way ramp backwards; floors walked long ago re-route on the next visit. | the perk system | free | S, after A1 |
+| #   | Idea                                                                                         | Leans on        | Tier | Build       |
+| --- | -------------------------------------------------------------------------------------------- | --------------- | ---- | ----------- |
+| F1  | **Rope.** Climb a one-way ramp backwards; floors walked long ago re-route on the next visit. | the perk system | free | S, after A1 |
 
 ---
 
@@ -174,10 +175,10 @@ a site, and these two play the journey and the site-as-one-object. Cosmic is the
 it: the material is cosmic dust, the stuff constellations are made from, and putting it back is
 restoring a balance rather than opening a door.
 
-| # | Idea | Leans on | Tier | Build |
-| - | ---- | -------- | ---- | ----- |
-| G1 | **The choked pyramid.** One pyramid in the journey is wholly buried in cosmic dust. Handles in its sibling pyramids clear it one path at a time. | the `hidden` mask, gates as currency consumers, `getUnexploredLevels` | rooms | L |
-| G2 | **The hourglass.** The upper floor is choked; a lever there sends the player down to a floor walked as a hidato, sand falling in behind them, and the path they trace below decides which corridors open above. | hidato, the stair pairing, `floorExploration`'s shape | rooms | L |
+| #   | Idea                                                                                                                                                                                                            | Leans on                                                              | Tier  | Build |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ----- | ----- |
+| G1  | **The choked pyramid.** One pyramid in the journey is wholly buried in cosmic dust. Handles in its sibling pyramids clear it one path at a time.                                                                | the `hidden` mask, gates as currency consumers, `getUnexploredLevels` | rooms | L     |
+| G2  | **The hourglass.** The upper floor is choked; a lever there sends the player down to a floor walked as a hidato, sand falling in behind them, and the path they trace below decides which corridors open above. | hidato, the stair pairing, `floorExploration`'s shape                 | rooms | L     |
 
 ### G1 — a currency whose scope is the journey
 
@@ -187,7 +188,7 @@ names no mod — its keys are opaque ids. A dust currency is another such id, so
 needs nothing new.
 
 What is new is the **scope**. Every currency today is either positional (a key in a place) or spread
-across the world; this one is spread across *one journey's siblings* and consumed in *one* of them.
+across the world; this one is spread across _one journey's siblings_ and consumed in _one_ of them.
 §E's split between positional keys and spread currencies is the vocabulary for saying so.
 
 **Free forward travel is the enabler, and it is a progression change.** A journey holds one
@@ -231,19 +232,19 @@ The catalogue is wide enough to climb the tier ladder rather than to pick one me
 rungs already exist — §7 gives every tier a debut of its own, so a floor layer arrives beside the
 structure it needs instead of on a ladder invented for it.
 
-| Tier | What the tier already debuts | The layer that fits it | Tier |
-| ---- | ---------------------------- | ---------------------- | ---- |
-| Starter | a line, no fork | **none** | — |
-| Junior | the first fork | B2/B3 — the fork becomes a choice made by solving | free |
-| Expert | seals, and a second floor | E3 sequence door; A1 ramps | free / carve |
-| Master | many forks, dormant content | A3 two walkable shapes; D1 fewer keys than locks; A4 shafts | carve / rooms |
-| Wizard | every mechanic at once | the scope grows past the floor — G1 the choked pyramid, G2 the hourglass; and composition, a ramp dropping past a glyph still needed, a fourth glyph behind a ward gate | rooms |
+| Tier    | What the tier already debuts | The layer that fits it                                                                                                                                                  | Tier          |
+| ------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| Starter | a line, no fork              | **none**                                                                                                                                                                | —             |
+| Junior  | the first fork               | B2/B3 — the fork becomes a choice made by solving                                                                                                                       | free          |
+| Expert  | seals, and a second floor    | E3 sequence door; A1 ramps                                                                                                                                              | free / carve  |
+| Master  | many forks, dormant content  | A3 two walkable shapes; D1 fewer keys than locks; A4 shafts                                                                                                             | carve / rooms |
+| Wizard  | every mechanic at once       | the scope grows past the floor — G1 the choked pyramid, G2 the hourglass; and composition, a ramp dropping past a glyph still needed, a fourth glyph behind a ward gate | rooms         |
 
 **Starter gets nothing, and that is the finding.** A floor with no fork has no route to choose, so
 every layer here is inert on it. Starter's play stays in the rooms.
 
 **Expert is where the sequence door belongs** for a reason beyond having somewhere to put it: expert
-debuts the seal, a lock whose key lies on the floor. A sequence door is a lock whose key *is* the
+debuts the seal, a lock whose key lies on the floor. A sequence door is a lock whose key _is_ the
 floor. The tier teaches one and then generalises it.
 
 **The ladder and the build order coincide.** Junior's layer is free and Expert's is half free, so
@@ -300,7 +301,7 @@ is needed.
 - **G1 asks whether a pyramid may be useless.** A site that can be entered and offers nothing until
   its siblings are worked is new — everything today either withholds content or gives it.
 - **Where the puzzle actually lives in A1.** A ramp that never strands is a convenience. It becomes a
-  puzzle only through *where landings point*: aim each at the mouth of a branch not yet taken and
+  puzzle only through _where landings point_: aim each at the mouth of a branch not yet taken and
   clearing a floor in one pass turns into a route-ordering problem. Landings at the entrance are
   faster exits and nothing more.
 
