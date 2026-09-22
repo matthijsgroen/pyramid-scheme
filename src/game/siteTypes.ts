@@ -165,6 +165,10 @@ export type RoomCell = {
   // interprets what an id means.
   requiredKeyIds?: string[]
   gateVariant?: GateVariant
+  /** True when requiredKeyId is an authored id (SubSection["gate"].keyId), not one the assembler's
+   * own key-host chain assigned — the key comes from elsewhere, so validateSite expects no on-floor
+   * tombKey for it. Written down rather than inferred, same reasoning as RoomCell.patronRoom. */
+  keyIsAuthored?: boolean
   keyColor?: KeyColor
   keyColors?: KeyColor[]
   // This room's position among its own section's puzzle rooms (0-based, path order) —
@@ -242,7 +246,18 @@ export type FloorGrid = {
   readonly staircases: Record<string, readonly [number, number]>
 }
 
-export type GateConfig = { type: "floor-key"; color?: KeyColor } | { type: "tomb-key"; wardKeyId: string }
+export type GateConfig =
+  | {
+      type: "floor-key"
+      color?: KeyColor
+      /** The key this gate wants, authored explicitly instead of drawn from the floor's key-color
+       * rotation — the assembler grows no host chest for it. Mirrors worldGen/types.ts's
+       * SubSection["gate"].keyId. */
+      keyId?: string
+      /** Which mod mints that key; unread here. Mirrors worldGen/types.ts's SubSection["gate"].ownerMod. */
+      ownerMod?: string
+    }
+  | { type: "tomb-key"; wardKeyId: string }
 export type { Difficulty } from "@/data/difficultyLevels"
 import type { Difficulty } from "@/data/difficultyLevels"
 export type SubSection = {

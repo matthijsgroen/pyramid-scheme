@@ -111,13 +111,14 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
 
   const { keys: collectedKeys } = collectReachableKeys(grid, grid.entrancePos)
 
-  // All floor-key gates must have a collectible key
+  // All floor-key gates must have a collectible key — except an authored one, whose key comes
+  // from elsewhere (RoomCell.keyIsAuthored) rather than a chest this floor grows.
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
       if (cell.type !== "room") continue
 
-      if (cell.requiredKeyId && cell.gateVariant === "floor-key") {
+      if (cell.requiredKeyId && cell.gateVariant === "floor-key" && !cell.keyIsAuthored) {
         if (!collectedKeys.has(cell.requiredKeyId)) {
           const gatePos: Pos = [r, c]
           let keyPos: Pos = gatePos

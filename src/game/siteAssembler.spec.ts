@@ -1346,3 +1346,35 @@ describe("a floor that authors no packing gets the short walk", () => {
     30_000
   )
 })
+
+describe("an authored floor-key id", () => {
+  const config = (): FloorConfig => ({
+    pathPuzzles: 2,
+    difficulty: "junior",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [
+      {
+        pathPuzzles: 1,
+        difficulty: "junior",
+        end: "treasure",
+        endReward: { type: "mosaic", tier: "junior" },
+        gate: { type: "floor-key", keyId: "witness:east" },
+      },
+    ],
+  })
+
+  it("is used verbatim as the gate's requiredKeyId", () => {
+    const result = assembleFloor("site-witness", config(), 1234)
+    if (!result.success) throw new Error("assembly failed")
+    const gates = result.grid.cells.flat().filter(c => c.type === "room" && c.requiredKeyId)
+    expect(gates.map(g => (g as { requiredKeyId?: string }).requiredKeyId)).toContain("witness:east")
+  })
+
+  it("grows no key-host section for that gate", () => {
+    const result = assembleFloor("site-witness", config(), 1234)
+    if (!result.success) throw new Error("assembly failed")
+    const hostedKeys = result.grid.cells.flat().filter(c => c.type === "room" && c.reward?.type === "tombKey")
+    expect(hostedKeys).toHaveLength(0)
+  })
+})
