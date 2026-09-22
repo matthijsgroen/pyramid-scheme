@@ -494,14 +494,16 @@ they are not equally strong.
 `availablePyramidJourneyIds` (`src/app/pages/journeyAvailability.ts`), which skips non-pyramid journeys —
 which is exactly why tombs are not a sequence.
 
-**Wizard is the exception, if free-order journeys land.** `docs/mods/floor-topology-design.md` proposes
-that a wizard journey opens all four pyramids at once, which takes the arrival rail from twenty ordered
-beats to sixteen ordered and four unordered. A wizard arrival may assume every earlier tier and **may not
-assume another wizard arrival**.
+**Free order does not reach these rails.** `docs/mods/floor-topology-design.md` proposes that a wizard
+journey opens its pyramids all at once instead of walking them in `levelNr` order — and a journey holds
+several: `wizard_3` and `wizard_4` hold six each, `wizard_1` holds four. **The order of journeys is
+unchanged**, and arrival beats are keyed per journey rather than per pyramid, so all twenty stay ordered.
 
-That costs this story nothing, because the one wizard beat that must not fire early — the ending — is
-already gated on held glyphs rather than on order. Reading resolves when the player has the signs, which is
-that design's own rule (_pacing that matters is expressed as a key_) arrived at independently.
+What free order does reach is anything addressed by **pyramid index inside a journey** — the DSL's
+`PyramidSelector`. An arc that places something at "the third pyramid of this journey" is pacing a player
+by an index the engine treats as an address, and in a free-order journey that pacing evaporates. Nothing in
+this story does that today; the rule if one ever does is that design's own: **pacing that matters is
+expressed as a key, or it does not exist.**
 
 **The rule that falls out: a beat may only assume what its rail guarantees.** A link-completion beat may
 never say "as you now know", because the player may have finished another thread's second link first. This
