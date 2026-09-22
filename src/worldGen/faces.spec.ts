@@ -12,8 +12,9 @@ import type { SiteConfig, SubSection } from "@/game/siteTypes"
  * role/theme split exists to prevent, arriving silently.
  */
 
-/** Roles every board can serve, so a family need not answer for them. */
-const STRUCTURAL = new Set(["puzzle", "trap", "treasure", "gate", "shop", "capstone", "tomb-puzzle"])
+/** Roles every board can serve, so a family need not answer for them. `witnessDoor` joins
+ * `capstone`: a single-family role authored by id, so no face is owed for it either. */
+const STRUCTURAL = new Set(["puzzle", "trap", "treasure", "gate", "shop", "capstone", "tomb-puzzle", "witnessDoor"])
 
 /** The one ambience that exists. A theme is an hour, never a place (§2). */
 const AMBIENCES = new Set(["night"])

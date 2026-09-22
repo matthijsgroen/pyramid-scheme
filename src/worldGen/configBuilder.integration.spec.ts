@@ -17,6 +17,7 @@ import {
   MOD_SHOP_STOCK,
 } from "../mods/registeredMods"
 import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
+import { witnessKeyId, witnessSite } from "../mods/witnessDoor/game/witnessKeys"
 import {
   resolveKeyRequirements,
   familyPriorityFor,
@@ -109,6 +110,32 @@ describe("buildConfigs golden guard", () => {
     expect(second).toEqual(first)
   }, 90_000)
 })
+
+// The witness door's authored gate ids (src/worldGen/spec/junior.ts) are hand-written, because
+// src/worldGen/ (core) may not import a mod's own id helper — the same sanctioned exception this
+// file already takes to verify the real, complete world (see the ALL_CURRENCY_DISTRIBUTIONS
+// import above). Computing the expected ids here, from the mod's own witnessKeyId/witnessSite
+// rather than a copy-pasted literal, is what would catch a typo in that hand-authored string: the
+// validator suppresses its "gate has a collectible key" check for an authored id, and the
+// worldgen reachability walk only records an unmet one as a discovered lock, so nothing else
+// would ever fail on a misspelled id — the branch it gates would just stay dead forever.
+it("authors a witness door whose two branches want its two keys minted for that exact site", () => {
+  const site = buildRealConfigs().junior_2[1] // junior_2 pyramid 2 (levelNr 2)
+  const floor = site[0] // floor 0
+
+  expect(floor.encounter).toBe("witnessDoor")
+
+  const witnessSections = floor.sideSections.filter(
+    (s): s is typeof s & { gate: { type: "floor-key"; keyId: string; ownerMod?: string } } =>
+      s.gate?.type === "floor-key" && typeof s.gate.keyId === "string" && s.gate.keyId.startsWith("witness:")
+  )
+  const expectedSite = witnessSite("junior_2", 2, 0)
+  expect(witnessSections.map(s => s.gate.keyId)).toEqual([
+    witnessKeyId(expectedSite, "east"),
+    witnessKeyId(expectedSite, "north"),
+  ])
+  expect(witnessSections.map(s => s.gate.ownerMod)).toEqual(["witnessDoor", "witnessDoor"])
+}, 90_000)
 
 describe("tomb floor linking — ward-path shortcuts", () => {
   // Built in beforeAll (not the describe body) so it runs AFTER the top-level beforeAll sets

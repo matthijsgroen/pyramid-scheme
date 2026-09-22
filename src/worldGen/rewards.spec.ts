@@ -64,6 +64,22 @@ describe("specToGate", () => {
     expect(specToGate("tomb-key")).toBeUndefined()
   })
 
+  it("an authored keyId grows no default colour (its key comes from a room, not a chest)", () => {
+    expect(specToGate({ type: "floor-key", keyId: "witness:junior_2#2#0:east", ownerMod: "witnessDoor" })).toEqual({
+      type: "floor-key",
+      keyId: "witness:junior_2#2#0:east",
+      ownerMod: "witnessDoor",
+    })
+  })
+
+  it("an authored keyId keeps an explicit colour if one is still authored", () => {
+    expect(specToGate({ type: "floor-key", keyId: "witness:junior_2#2#0:east", color: "red" })).toEqual({
+      type: "floor-key",
+      keyId: "witness:junior_2#2#0:east",
+      color: "red",
+    })
+  })
+
   it("structured tombId+index resolves to runtime wardKeyId", () => {
     expect(specToGate({ type: "tomb-key", tombId: "expert_treasure_tomb", index: 1 })).toEqual({
       type: "tomb-key",

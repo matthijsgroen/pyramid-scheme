@@ -1,5 +1,5 @@
 import { tier, journey, tomb, sidePath, wardWing, wardChest } from "../dsl"
-import type { Rule } from "../dsl"
+import type { Rule, SideSectionConstraint } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
 
 // Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
@@ -39,6 +39,22 @@ const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 0, p
 // Ungated on purpose: a gate would put the spread back behind a single key.
 // (lootEconomyInvariants.spec.ts guards both the ≥1-of-each and the spread.)
 const oldWorkings = () => sidePath({ puzzles: 1, tier: "starter", endReward: "junk" })
+
+// junior_2 pyramid 2 (levelNr 2), floor 0 — the world's first witness door: a main-path shrine
+// puzzle mints one of two keys, each opening a different side branch. `src/worldGen/` (core) can't
+// import the witnessDoor mod's own id helper (mods stay one-way), so the id is hand-authored here
+// and pinned equal to the mod's `witnessKeyId(witnessSite(...))` output by
+// configBuilder.integration.spec.ts — the guard against a typo leaving a branch dead.
+const WITNESS_JUNIOR_2_P2_SITE = "junior_2#2#0"
+const witnessBranch = (shrine: "east" | "north"): SideSectionConstraint => ({
+  pathPuzzles: 1,
+  end: "treasure",
+  endReward: "junk",
+  // Shielded from this pyramid's own main-path `encounter: "witnessDoor"` override below — a
+  // gated branch is ordinary puzzle content, not a second shrine board.
+  encounter: "puzzle",
+  gate: { type: "floor-key", keyId: `witness:${WITNESS_JUNIOR_2_P2_SITE}:${shrine}`, ownerMod: "witnessDoor" },
+})
 
 export const juniorRules: Rule[] = [
   // a nobleman's wing: a painted ka-statue, sealed chests, an ablution basin, linen and lamps.
@@ -125,7 +141,31 @@ export const juniorRules: Rule[] = [
   journey("junior_1").pyramid(1, { sideSections: [holdChest(0), starterEcho()] }),
   journey("junior_1").pyramid(2, { sideSections: [holdChest(1), oldWorkings()] }),
   journey("junior_2").pyramid(1, { sideSections: [holdChest(0)] }),
-  journey("junior_2").pyramid(2, { sideSections: [holdChest(1), oldWorkings()] }),
+  // junior_2 pyramid 2: the witness door debut. One main-path room (the shrine board) replaces
+  // this pyramid's usual multi-room main path; its two branches want the shrine's two keys. The
+  // tier's own sidePaths/hiddenPaths are re-declared here verbatim (with the fragment path's own
+  // `encounter` pinned) rather than left to the tier default, because this pyramid's own
+  // `encounter: "witnessDoor"` would otherwise fall through onto their puzzle rooms too — a
+  // pyramid-wide role reaches every unlabelled room on it, side paths included (see the
+  // Lighthouse/ibis journeys above).
+  journey("junior_2").pyramid(2, {
+    pathPuzzles: 1,
+    encounter: "witnessDoor",
+    sidePaths: [
+      { density: "medium", pathPuzzles: 1, end: "fragment", encounter: "puzzle" },
+      { density: "low", pathPuzzles: 0, end: "mosaic", encounter: "puzzle" },
+    ],
+    hiddenPaths: [
+      { density: "low", pathPuzzles: 0, end: "mosaic", encounter: "puzzle" },
+      { density: "low", pathPuzzles: 2, end: "junk", encounter: "trap", chance: 0.4 },
+    ],
+    sideSections: [
+      { ...holdChest(1), encounter: "puzzle" },
+      { ...oldWorkings(), encounter: "puzzle" },
+      witnessBranch("east"),
+      witnessBranch("north"),
+    ],
+  }),
   journey("junior_3").pyramid(1, { sideSections: [holdChest(0)] }),
   journey("junior_3").pyramid(2, { sideSections: [holdChest(2), oldWorkings()] }),
   journey("junior_4").pyramid(1, { sideSections: [holdChest(0)] }),
