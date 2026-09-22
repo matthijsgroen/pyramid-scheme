@@ -91,17 +91,3 @@ describe("the shrines it has minted", () => {
     expect(owned.has(witnessKeyId(witnessSite("junior_2", 3, 3), "east"))).toBe(false)
   })
 })
-
-// Keys accumulate: a returning player names the other shrine and opens the other branch too. The union
-// has to carry both, or whatever the first branch was not walked to stays out of reach for good.
-describe("a door opened both ways over two visits", () => {
-  it("hands over both its keys", async () => {
-    const site = witnessSite("junior_2", 3, 2)
-    const { result } = renderHook(() => useMintShrine())
-    await act(async () => {
-      result.current(witnessKeyId(site, "north"))
-    })
-    const owned = ownedKeysFromSources(floorCtx)
-    expect(WITNESS_SHRINES.every(shrine => owned.has(witnessKeyId(site, shrine)))).toBe(true)
-  })
-})

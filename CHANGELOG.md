@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- A junior pyramid's fork now opens the branch matching which shrine you route the beam to.
+- A junior pyramid's fork now opens the branch matching which shrine you route the beam to, and walking back into the room opens the other one too.
 
 ### Fixed
 

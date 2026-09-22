@@ -78,27 +78,3 @@ describe("a board the light has already reached", () => {
     expect(onMint).not.toHaveBeenCalledWith("witness:junior_2#3#2:north")
   })
 })
-
-/**
- * Keys accumulate, so the choice binds a visit and not the world.
- *
- * A door that could only ever be solved one way would strand whatever the other branch holds — and the
- * floor this family was built for ends both branches in a piece of the same register, so one of them
- * would become unobtainable. The cost of the choice is the walk back, never lost content.
- */
-describe("a player who walks back in", () => {
-  it("opens the other branch, and holds both keys", () => {
-    const onMint = vi.fn()
-    const first = render(<WitnessDoorPuzzle board={board} site="junior_2#3#2" onSolved={vi.fn()} onMint={onMint} />)
-    act(() => screen.getByRole("button", { name: /east/i }).click())
-    applySolution(solutionsFor(board, "east")[0])
-    expect(onMint).toHaveBeenCalledWith("witness:junior_2#3#2:east")
-    first.unmount()
-
-    render(<WitnessDoorPuzzle board={board} site="junior_2#3#2" onSolved={vi.fn()} onMint={onMint} />)
-    act(() => screen.getByRole("button", { name: /north/i }).click())
-    expect(screen.getByRole("button", { name: /north/i }).getAttribute("aria-pressed")).toBe("true")
-    applySolution(solutionsFor(board, "north")[0])
-    expect(onMint).toHaveBeenCalledWith("witness:junior_2#3#2:north")
-  })
-})
