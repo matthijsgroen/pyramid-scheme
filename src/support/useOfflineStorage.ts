@@ -110,6 +110,28 @@ export const writeOfflineStore = async (data: Record<string, unknown>, storeName
   for (const [key, value] of Object.entries(data)) await store.setItem(key, value)
 }
 
+/**
+ * What a store holds for a key right now, without waiting — the same shared newest-value cache every
+ * hook on that key reads and writes, so a caller outside React sees a write the moment a hook makes it.
+ *
+ * Undefined until something has read or written the key; `primeOfflineValue` is how a caller that
+ * cannot wait for a hook to mount fills it.
+ */
+export const latestOfflineValue = <T>(key: string, storeName = "defaultStore"): T | undefined =>
+  getStore(storeName).latest<T>(key).value
+
+/** Loads a key into that cache. A value already cached is newer than the database and is left alone. */
+export const primeOfflineValue = async <T>(key: string, storeName = "defaultStore"): Promise<T | undefined> => {
+  const store = getStore(storeName)
+  if (!store.latest<T>(key).has) {
+    // A store with nowhere to persist (a node spec, a locked-down browser) simply has nothing to
+    // report, which is the same answer as a key that has never been written.
+    const value = await store.getItem<T>(key).catch(() => null)
+    if (value !== null && !store.latest<T>(key).has) store.remember<T>(key, value)
+  }
+  return store.latest<T>(key).value
+}
+
 export const useOfflineStorage = <T>(
   key: string,
   initialValue: T | (() => T),

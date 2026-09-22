@@ -1328,7 +1328,15 @@ export const assembleFloor = (
           tags: keyGate.tags,
           requiredKeyId: keyNodeId,
           gateVariant: "floor-key",
-          keyColor: floorKeyGate.color ?? "blue",
+          // The colour is the sign saying which CHEST on this floor holds the key. An authored key is
+          // minted by a room instead and grows no chest, so defaulting one here would put the door in the
+          // HUD key ring (src/game/floorKeys.ts) pointing at a chest that does not exist. An author who
+          // names a colour anyway still gets it.
+          ...(floorKeyGate.color
+            ? { keyColor: floorKeyGate.color }
+            : authoredKeyId
+              ? {}
+              : { keyColor: "blue" as const }),
           ...(authoredKeyId ? { keyIsAuthored: true } : {}),
         })
         contentStart = 1
@@ -1439,7 +1447,15 @@ export const assembleFloor = (
           tags: keyGate.tags,
           requiredKeyId: keyNodeId,
           gateVariant: "floor-key",
-          keyColor: floorKeyGate.color ?? "blue",
+          // The colour is the sign saying which CHEST on this floor holds the key. An authored key is
+          // minted by a room instead and grows no chest, so defaulting one here would put the door in the
+          // HUD key ring (src/game/floorKeys.ts) pointing at a chest that does not exist. An author who
+          // names a colour anyway still gets it.
+          ...(floorKeyGate.color
+            ? { keyColor: floorKeyGate.color }
+            : authoredKeyId
+              ? {}
+              : { keyColor: "blue" as const }),
           ...(authoredKeyId ? { keyIsAuthored: true } : {}),
         })
         contentStart = 1

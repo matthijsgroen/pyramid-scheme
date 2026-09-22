@@ -12,6 +12,7 @@ import "./puzzle/app"
 import "./trap/app"
 import "./shop/app"
 import "./tombTreasure/app"
+import "./witnessDoor/app"
 
 import { validatePlacedRewards } from "@/app/SiteMap/rewardSchemas"
 import { generatedWorldConfigs } from "@/data/generatedWorld"

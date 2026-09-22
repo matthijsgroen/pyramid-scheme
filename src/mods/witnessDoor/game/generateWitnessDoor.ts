@@ -26,6 +26,9 @@ import { WITNESS_SHRINES, type WitnessShrine } from "./witnessKeys"
 /** A mirror standing on a cell at an angle — one entry of the player's answer. */
 export type MirrorPlacement = { at: CellRef; angle: MirrorAngle }
 
+/** One cell of beam: the way in, and the way out where it leaves at all. What the room draws. */
+export type WitnessSegment = { at: CellRef; enter: Direction; exit?: Direction }
+
 export type WitnessGrid = {
   size: number
   /** Where the light comes from, and which way it leaves. The disc absorbs anything that hits it. */
@@ -51,28 +54,37 @@ export type WitnessGate = "noRoute" | "notUnique" | "noHonestOpening"
 export const traceWitnessBeam = (
   board: WitnessBoard,
   angles: readonly MirrorAngle[]
-): { shrine?: WitnessShrine; met: MirrorPlacement[] } => {
+): { shrine?: WitnessShrine; met: MirrorPlacement[]; path: WitnessSegment[] } => {
   const { size, sun, mirrors } = board.grid
   const mirrorAt = new Map(mirrors.map((at, index) => [cellKey(at), index]))
   const met: MirrorPlacement[] = []
+  const path: WitnessSegment[] = []
   let travel = sun.facing
   let at = stepCell(sun.at, travel)
   // One step per (cell, direction) the beam could be in. A guard against a hang, not a game state: a beam
   // leaving the disc can never join a ring, because reflection is reversible and the disc absorbs.
   for (let steps = 4 * size * size; steps > 0; steps--) {
-    if (!insideGrid(size, at)) return { met }
+    if (!insideGrid(size, at)) return { met, path }
+    const enter = travel
     const shrine = WITNESS_SHRINES.find(candidate => sameCell(board.shrines[candidate], at))
-    if (shrine) return { shrine, met }
-    if (sameCell(sun.at, at)) return { met }
+    if (shrine) {
+      path.push({ at, enter })
+      return { shrine, met, path }
+    }
+    if (sameCell(sun.at, at)) {
+      path.push({ at, enter })
+      return { met, path }
+    }
     const index = mirrorAt.get(cellKey(at))
     if (index !== undefined) {
       const angle = angles[index]
       met.push({ at: mirrors[index], angle })
       travel = reflect(angle, travel)
     }
+    path.push({ at, enter, exit: travel })
     at = stepCell(at, travel)
   }
-  return { met }
+  return { met, path }
 }
 
 /** The setting numbered `n`: bit per mirror, clear for `/` and set for `\\`. */

@@ -1019,7 +1019,14 @@
       }
     },
     "events": {
-      "default": ["the fire", "the water carrying", "the baking", "the boat trip", "the ox driving", "the night watch"],
+      "default": [
+        "the fire",
+        "the water carrying",
+        "the baking",
+        "the boat trip",
+        "the ox driving",
+        "the night watch"
+      ],
       "funerary": [
         "the plastering",
         "the grid drawing",
@@ -1065,6 +1072,20 @@
         "span_one": "First start to last finish is {{count}} hour.",
         "span_other": "First start to last finish is {{count}} hours."
       }
+    }
+  },
+  "witnessDoor": {
+    "name": "Witness Door",
+    "goal": "The light rests in the shrine you named, and the door beneath it stands open.",
+    "choose": "Which shrine are you opening?",
+    "shrine": {
+      "east": "Eastern shrine",
+      "north": "Northern shrine"
+    },
+    "rules": {
+      "shrines": "One disc of light, two shrines. The mirrors on the floor can carry the light to either one.",
+      "choice": "Say which shrine first. The light reaching the other one lights it and opens nothing.",
+      "tap": "Tap a mirror to turn it. Tapping it again puts it back."
     }
   }
 }

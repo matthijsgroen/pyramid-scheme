@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { assembleFloor } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
 import { validateSite } from "./siteValidator"
+import { floorKeyRing } from "./floorKeys"
 
 const DIR_MOVE: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 
@@ -1376,6 +1377,35 @@ describe("an authored floor-key id", () => {
     if (!result.success) throw new Error("assembly failed")
     const hostedKeys = result.grid.cells.flat().filter(c => c.type === "room" && c.reward?.type === "tombKey")
     expect(hostedKeys).toHaveLength(0)
+  })
+
+  // Colour is the sign pointing at the chest that holds the key, and there is no chest — a colour here
+  // would show in the floor's key ring (src/game/floorKeys.ts) as a key to go and find.
+  it("leaves the gate without a rotation colour", () => {
+    const result = assembleFloor("site-witness", config(), 1234)
+    if (!result.success) throw new Error("assembly failed")
+    const authored = result.grid.cells
+      .flat()
+      .filter((c): c is RoomCell => c.type === "room" && c.requiredKeyId === "witness:east")
+    expect(authored).toHaveLength(1)
+    expect(authored[0].keyColor).toBeUndefined()
+    // The ring reads doors the player has SEEN, so the gate has to be out of the fog to count at all.
+    const seen: FloorGrid = {
+      ...result.grid,
+      cells: result.grid.cells.map(row => row.map(c => (c === authored[0] ? { ...c, state: "visible" as const } : c))),
+    }
+    expect(floorKeyRing(seen, new Set()).needed).toEqual([])
+  })
+
+  it("still wears a colour the author named on it", () => {
+    const spec = config()
+    spec.sideSections![0].gate = { type: "floor-key", keyId: "witness:east", color: "green" }
+    const result = assembleFloor("site-witness", spec, 1234)
+    if (!result.success) throw new Error("assembly failed")
+    const authored = result.grid.cells
+      .flat()
+      .filter((c): c is RoomCell => c.type === "room" && c.requiredKeyId === "witness:east")
+    expect(authored[0].keyColor).toBe("green")
   })
 })
 

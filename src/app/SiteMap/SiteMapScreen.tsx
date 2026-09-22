@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from "react"
+import { useCallback, useMemo, useSyncExternalStore } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
-import { ownedKeysFromSources } from "@/app/families/ownedKeySources"
+import { ownedKeysFromSources, ownedKeysRevision, subscribeOwnedKeys } from "@/app/families/ownedKeySources"
 import { floorKeyRing } from "@/game/floorKeys"
 import { useCorridorDetection } from "@/app/SiteMap/useCorridorDetection"
 import { useFoundCorridors } from "@/app/SiteMap/useFoundCorridors"
@@ -125,9 +125,13 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   // global tombKeyIds, above) and any key a registered family minted on this floor. Gating
   // is soft, so this union is purely a "is this gate satisfied" read, for the gate family's
   // own precondition and the map's locked/unlocked gate coloring.
+  // A source answers out of its own mod's state, which moves while this screen stays mounted — a key
+  // minted on this very floor, or the mod's stored state landing. The revision is what says so.
+  const keysRevision = useSyncExternalStore(subscribeOwnedKeys, ownedKeysRevision)
   const mintedKeys = useMemo(
     () => ownedKeysFromSources({ journeyId, levelNr: levelIndex + 1, floorIndex: currentFloor }),
-    [journeyId, levelIndex, currentFloor]
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the revision is the registry's own "ask again"
+    [journeyId, levelIndex, currentFloor, keysRevision]
   )
   const ownedKeys = useMemo(
     () => new Set([...(grid ? getOwnedKeys(grid) : []), ...wardKeys, ...mintedKeys]),

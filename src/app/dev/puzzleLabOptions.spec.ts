@@ -37,6 +37,7 @@ describe(playableInLab, () => {
     expect(playableInLab(meta())).toBe(true)
     expect(playableInLab(meta({ tags: ["tomb-puzzle"] }))).toBe(true)
     expect(playableInLab(meta({ tags: ["capstone"] }))).toBe(true)
+    expect(playableInLab(meta({ tags: ["witnessDoor"] }))).toBe(true)
   })
 
   it("leaves out what is not a board at all", () => {
