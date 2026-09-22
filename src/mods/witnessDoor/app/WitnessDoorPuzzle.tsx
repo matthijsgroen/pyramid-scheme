@@ -245,6 +245,10 @@ export const WitnessDoorPuzzle: FC<Props> = ({ board, site, onSolved, onMint, on
         <ul className="list-disc space-y-1 pl-4">
           <li>{t("witnessDoor.rules.shrines")}</li>
           <li>{t("witnessDoor.rules.choice")}</li>
+          {/* Next to the rule it corrects, and phrased as the invitation it is: a player who reads the
+              line above as "the other branch is gone" plays the room as a trap and never comes back
+              for what the other shrine opens. Keys accumulate, so there is nothing to lose. */}
+          <li>{t("witnessDoor.rules.returning")}</li>
           <li>{t("witnessDoor.rules.tap")}</li>
         </ul>
       }

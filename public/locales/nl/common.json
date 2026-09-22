@@ -1077,7 +1077,8 @@
     },
     "rules": {
       "shrines": "Eén schijf licht, twee heiligdommen. De spiegels op de vloer kunnen het licht naar allebei brengen.",
-      "choice": "Noem eerst een heiligdom. Bereikt het licht het andere, dan licht dat op en opent er niets.",
+      "choice": "Noem eerst een heiligdom. Alleen het heiligdom dat je noemt opent zijn deur; bereikt het licht het andere, dan licht dat alleen maar op.",
+      "returning": "Kiezen kost je niets. Het andere heiligdom blijft — loop een andere keer weer binnen en open ook dat.",
       "tap": "Tik op een spiegel om hem te draaien. Nog een tik zet hem terug."
     }
   }

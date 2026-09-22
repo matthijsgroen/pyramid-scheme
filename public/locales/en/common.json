@@ -1077,7 +1077,8 @@
     },
     "rules": {
       "shrines": "One disc of light, two shrines. The mirrors on the floor can carry the light to either one.",
-      "choice": "Say which shrine first. The light reaching the other one lights it and opens nothing.",
+      "choice": "Say which shrine first. Only the shrine you name opens its door; the light reaching the other one simply lights it.",
+      "returning": "Nothing is lost by choosing. The other shrine keeps — walk back in another time and open that one too.",
       "tap": "Tap a mirror to turn it. Tapping it again puts it back."
     }
   }
