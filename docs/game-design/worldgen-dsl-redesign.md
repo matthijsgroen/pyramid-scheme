@@ -226,9 +226,16 @@ So authoring that uses position to pace — the gentle pyramid first, the map pi
 naming the same pyramid and quietly stops meaning the same thing. Pacing that matters is expressed
 as a key.
 
-The upside worth taking rather than fighting: a spread the player can _see_ before entering is a
-choice rather than a defect. Paths already carry authored difficulty, and a free-order journey is
-where a player reading it off the map picks their own next step.
+The upside is available but not free: a spread the player can _see_ before entering is a choice,
+and an unseen one is a coin flip. Nothing surfaces it today — `JourneyPathView` takes `levelCount`,
+`levelNr` and `unexploredNodes`, and no per-pyramid difficulty; `JourneyCard` shows the journey's
+tier, so every wizard pyramid reads "wizard". The data is in `generatedWorld.ts` and no screen
+spends it.
+
+So a free-order journey needs the read, and it is a prop and a fill rather than a screen — the node
+per pyramid is already positioned and already distinguishes state. It is also the strongest case for
+the standing position that difficulty is read off the floor rather than labelled, because it is the
+first time a player must choose between two difficulties before committing to either.
 
 ## Decoration layer — decisions
 

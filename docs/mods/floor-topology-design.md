@@ -222,9 +222,16 @@ pyramid first, the map piece last — keeps naming the same pyramid and stops me
 `PathPuzzlesRange {start, end}` is the same thing one step further in, and it is live world data
 rather than a hypothetical: it interpolates linearly from a journey's first pyramid to its last, and
 `PYRAMID_PATH_PUZZLES` is written as ranges. Under free order it still interpolates — the pyramids
-still get 4, 5, 6, 7 — but the ramp becomes a spread, because the player may meet the 7 first. Worth
-taking rather than fighting: a spread the player can read off the map before entering is a choice.
-The authoring-side statement of this lives in `../game-design/worldgen-dsl-redesign.md`.
+still get 4, 5, 6, 7 — but the ramp becomes a spread, because the player may meet the 7 first.
+
+**A free-order journey needs a difficulty read on the travel screen, and does not have one.**
+`JourneyPathView` takes `levelCount`, `levelNr` and `unexploredNodes`; `JourneyCard` shows the
+journey's tier, so every wizard pyramid reads "wizard". Without the read, free order is a coin flip
+rather than a choice, and a player who meets the hardest pyramid first has no way to tell an easier
+one was open. Dust guarantees the journey an ending; nothing yet guarantees it an on-ramp. The node
+per pyramid is already positioned and already carries state, so this is a prop and a fill rather
+than a screen. The authoring-side statement of all this lives in
+`../game-design/worldgen-dsl-redesign.md`.
 
 One consequence to decide deliberately rather than discover: a wizard journey's levels escalate, and
 free order lets a player meet the hardest first.
