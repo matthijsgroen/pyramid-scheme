@@ -96,6 +96,55 @@ describe("computeFloorExploration", () => {
     expect(computeFloorExploration(grid).keySets.some(ks => ks.length > widest)).toBe(true)
   })
 
+  /**
+   * A branch whose key is AUTHORED — minted by a room the player solves, never grown in a chest — is
+   * content the player can still come back for, so the floor has to keep saying so.
+   *
+   * It does, through `open` rather than through a bundle: a floor-key gate asks for nothing the player
+   * carries between sites, so what is behind it is available for the asking, one more walk away. A
+   * bundle instead would name a key the travel screen's held-keys union never carries, and the floor
+   * would go dark on the one branch the player still has to be sent back for.
+   */
+  const walkedUpTo = (grid: FloorGrid, held: ReadonlySet<string>): FloorGrid => {
+    const moves: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+    const stood = new Set<string>()
+    const work: [number, number][] = [[grid.entrancePos[0], grid.entrancePos[1]]]
+    while (work.length > 0) {
+      const [r, c] = work.pop()!
+      const cell = grid.cells[r]?.[c]
+      if (!cell || cell.type === "empty" || cell.hidden || stood.has(`${r},${c}`)) continue
+      stood.add(`${r},${c}`)
+      // The gate square is ground the player stands on; what is past it is not.
+      if (cell.type === "room" && cell.requiredKeyId && !held.has(cell.requiredKeyId)) continue
+      for (const dir of cell.dirs) {
+        const [dr, dc] = moves[dir]
+        work.push([r + dr, c + dc])
+      }
+    }
+    return {
+      ...grid,
+      cells: grid.cells.map((row, r) =>
+        row.map((cell, c) =>
+          cell.type !== "empty" && stood.has(`${r},${c}`) ? ({ ...cell, state: "completed" } as GridCell) : cell
+        )
+      ),
+    }
+  }
+
+  it("a floor whose authored-key branch is still shut keeps inviting the player back", () => {
+    const grid = assemble("junior_2", 1, 0)
+    const authored = grid.cells
+      .flat()
+      .filter((c): c is RoomCell => c.type === "room" && !!c.keyIsAuthored && !!c.requiredKeyId)
+      .map(c => c.requiredKeyId!)
+    expect(authored.length).toBe(2)
+
+    // One shrine opened, its branch walked to the end, everything else on the floor done.
+    expect(computeFloorExploration(walkedUpTo(grid, new Set([authored[0]]))).open).toBe(true)
+    // Both opened and both walked: nothing left, and the floor stops asking.
+    expect(computeFloorExploration(walkedUpTo(grid, new Set(authored))).open).toBe(false)
+  })
+
   it("shop and gate/trap nodes never produce content on their own (fill-order 0)", () => {
     // The shop family is priority 0; if it (or a gate/trap) leaked in, a bundle keyed to nothing
     // meaningful would appear. Assert every key we emit is a real key id (tomb key or hieroglyph),
