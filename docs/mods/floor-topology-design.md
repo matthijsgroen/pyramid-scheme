@@ -113,9 +113,30 @@ economy guard already uses. It drops with the mod, and core never learns what sa
 P1 is the one worth building for its own sake: it does not merely serve a mod, it **subsumes two
 special cases core currently hardcodes**. Core gets smaller.
 
-P2 is smaller than it looks. `reachableFrom` moves on the **source** cell's `dirs` and never checks
-for a reciprocal dir on the target, so the grid is already directed-capable — a one-way ramp is an
-asymmetric `dirs` pair, not a traversal change.
+**P1's mechanism already exists**, which is what makes it the cheap primitive rather than the
+expensive one. `useAssembledFloor` masks a hidden section by deleting the `dirs` that point into it
+and turning its cells `empty`, keyed on `revealedSections` — blocked-until, implemented as
+dirs-editing at assembly time. It already carries the knock-ons: it marks the junction, downgrades a
+room to a corridor when dir-removal leaves it a passthrough, and varies the junction's state by
+detector level. P1 generalises the **opener**, and a new opener inherits all of that.
+
+**P2 is a directed `dirs` pair, and every mover already honours it.** `reachableFrom`, `findPath`,
+`walkableFrom` and `completeCell` all move on the **source** cell's `dirs` and none check the target
+for a reciprocal — the solver and the runtime agree, so a one-way edge needs no traversal change
+anywhere.
+
+**P2's cost is art, not logic.** `roomClaims` reads an edge as open if _either_ side declares it —
+"a real way through, from either side" — which is what keeps a one-way corridor drawn at all, and
+also means its mouth is drawn open from below, offering a passage the player cannot take. The fix
+belongs in the drawing: a ramp should read as a ramp from above and as an opening too high to climb
+from below. Making `roomClaims` direction-aware instead would fight an intent that exists for the
+junction rooms that share a void cell.
+
+One accident in P2's favour: a one-way cell has `dirs.size === 1`, so `completeCell`'s straight-
+through test fails and the cell is marked reachable — a blind spot the player must click — rather
+than auto-revealed. That is the seen-on-arrival behaviour a ramp wants, for free. Less welcome:
+`renderAscii` has no glyph for a single-dir cell and falls through to `·`, so one-ways are
+unreadable in the ascii view the specs read. Worth extending with P2.
 
 Two-sidedness, following the currency precedent: a blocker needs a game-side reachability fact ("this
 opens on currency X") for world-gen and an app-side evaluator ("is this walkable now") for the
@@ -256,11 +277,3 @@ free order lets a player meet the hardest first.
 Which is the claim the architecture rests on: **past the sixth slice, the rest of the catalogue is
 authoring rather than engineering.** Six containers, six primitives, and every remaining mechanic
 becomes a DSL field on something already built.
-
----
-
-## To verify before P2 is designed
-
-Runtime navigation must agree with `reachableFrom` about direction. The solver moves on the source
-cell's `dirs`; if `gridNavigation.ts` requires a reciprocal dir, the player and the solver would
-disagree about a one-way edge in opposite directions.
