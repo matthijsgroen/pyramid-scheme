@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
+import { ownedKeysFromSources } from "@/app/families/ownedKeySources"
 import { floorKeyRing } from "@/game/floorKeys"
 import { useCorridorDetection } from "@/app/SiteMap/useCorridorDetection"
 import { useFoundCorridors } from "@/app/SiteMap/useFoundCorridors"
@@ -121,10 +122,17 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   // Keys the player already holds for THIS floor's gates: this floor's own completed
   // tomb-key treasures, union'd with ward keys owned entering the site (progression's
-  // global tombKeyIds, above). Gating is soft, so this union is purely a "is this gate
-  // satisfied" read, for the gate family's own precondition and the map's locked/unlocked
-  // gate coloring.
-  const ownedKeys = useMemo(() => (grid ? new Set([...getOwnedKeys(grid), ...wardKeys]) : wardKeys), [grid, wardKeys])
+  // global tombKeyIds, above) and any key a registered family minted on this floor. Gating
+  // is soft, so this union is purely a "is this gate satisfied" read, for the gate family's
+  // own precondition and the map's locked/unlocked gate coloring.
+  const mintedKeys = useMemo(
+    () => ownedKeysFromSources({ journeyId, levelNr: levelIndex + 1, floorIndex: currentFloor }),
+    [journeyId, levelIndex, currentFloor]
+  )
+  const ownedKeys = useMemo(
+    () => new Set([...(grid ? getOwnedKeys(grid) : []), ...wardKeys, ...mintedKeys]),
+    [grid, wardKeys, mintedKeys]
+  )
 
   // What the HUD key ring shows: this floor's coloured keys in hand, and the colours of doors the
   // player has already seen here and can't open yet (fogged ones stay secret — see floorKeys.ts).
