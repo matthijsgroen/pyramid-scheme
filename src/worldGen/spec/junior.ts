@@ -1,5 +1,5 @@
 import { tier, journey, tomb, sidePath, wardWing, wardChest } from "../dsl"
-import type { Rule, SideSectionConstraint } from "../dsl"
+import type { Rule, SideSectionConstraint, PathSettings } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
 
 // Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
@@ -40,6 +40,17 @@ const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 0, p
 // (lootEconomyInvariants.spec.ts guards both the ≥1-of-each and the spread.)
 const oldWorkings = () => sidePath({ puzzles: 1, tier: "starter", endReward: "junk" })
 
+// junior tier's own side-path settings (the tier() rule below) — named here so junior_2 pyramid
+// 2's floor 0 can re-declare them verbatim instead of drifting from a hand copy. That floor has
+// to author its own `.floor()` (for the witness door's `nodes` selector below), and buildSite.ts's
+// authored-floors branch reads a floor's OWN sidePaths/hiddenPaths rather than the pyramid's
+// tier-cascaded ones — so a floor authored via `.floor()` gets none of the tier default unless it
+// re-declares it, and declaring it from the same constant keeps the two from ever disagreeing.
+const JUNIOR_FRAGMENT_PATH: PathSettings = { pathPuzzles: 1, end: "fragment" }
+const JUNIOR_VISIBLE_MOSAIC_PATH: PathSettings = { pathPuzzles: 0, end: "mosaic" }
+const JUNIOR_HIDDEN_MOSAIC_PATH: PathSettings = { pathPuzzles: 0, end: "mosaic" }
+const JUNIOR_HIDDEN_TRAP_PATH: PathSettings = { pathPuzzles: 2, end: "junk", encounter: "trap", chance: 0.4 }
+
 // junior_2 pyramid 2 (levelNr 2), floor 0 — the world's first witness door: a main-path shrine
 // puzzle mints one of two keys, each opening a different side branch. `src/worldGen/` (core) can't
 // import the witnessDoor mod's own id helper (mods stay one-way), so the id is hand-authored here
@@ -50,9 +61,6 @@ const witnessBranch = (shrine: "east" | "north"): SideSectionConstraint => ({
   pathPuzzles: 1,
   end: "treasure",
   endReward: "junk",
-  // Shielded from this pyramid's own main-path `encounter: "witnessDoor"` override below — a
-  // gated branch is ordinary puzzle content, not a second shrine board.
-  encounter: "puzzle",
   gate: { type: "floor-key", keyId: `witness:${WITNESS_JUNIOR_2_P2_SITE}:${shrine}`, ownerMod: "witnessDoor" },
 })
 
@@ -82,19 +90,19 @@ export const juniorRules: Rule[] = [
   tier("junior")
     .set({})
     .sidePaths("medium")
-    .settings({ pathPuzzles: 1, end: "fragment" })
+    .settings(JUNIOR_FRAGMENT_PATH)
     // One VISIBLE mosaic per pyramid: the corridor detector isn't earned until the master tier, so
     // the hidden mosaic below is unreachable this early (junior_1 was all-hidden = 0 reachable). A
     // surplus visible end slot the capped pass fills. See starter tier default.
     .sidePaths("low")
-    .settings({ pathPuzzles: 0, end: "mosaic" })
+    .settings(JUNIOR_VISIBLE_MOSAIC_PATH)
     // One plain-loot hidden mosaic in every pyramid; a trapped one in only ~40% (chance),
     // so junior traps stay light and some hidden paths are just loot. The chance-gated path
     // holds junk loot (uncounted budget) — `chance` + mosaic would misreserve the cap.
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 0, end: "mosaic" })
+    .settings(JUNIOR_HIDDEN_MOSAIC_PATH)
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 2, end: "junk", encounter: "trap", chance: 0.4 }),
+    .settings(JUNIOR_HIDDEN_TRAP_PATH),
 
   // **The Lighthouse of Alexandria runs on sky.** Every main-path room in its five pyramids draws from the
   // `sky` pool rather than the general `puzzle` one — the beam family, the sun-and-moon grid and the star
@@ -141,31 +149,26 @@ export const juniorRules: Rule[] = [
   journey("junior_1").pyramid(1, { sideSections: [holdChest(0), starterEcho()] }),
   journey("junior_1").pyramid(2, { sideSections: [holdChest(1), oldWorkings()] }),
   journey("junior_2").pyramid(1, { sideSections: [holdChest(0)] }),
-  // junior_2 pyramid 2: the witness door debut. One main-path room (the shrine board) replaces
-  // this pyramid's usual multi-room main path; its two branches want the shrine's two keys. The
-  // tier's own sidePaths/hiddenPaths are re-declared here verbatim (with the fragment path's own
-  // `encounter` pinned) rather than left to the tier default, because this pyramid's own
-  // `encounter: "witnessDoor"` would otherwise fall through onto their puzzle rooms too — a
-  // pyramid-wide role reaches every unlabelled room on it, side paths included (see the
-  // Lighthouse/ibis journeys above).
-  journey("junior_2").pyramid(2, {
-    pathPuzzles: 1,
-    encounter: "witnessDoor",
-    sidePaths: [
-      { density: "medium", pathPuzzles: 1, end: "fragment", encounter: "puzzle" },
-      { density: "low", pathPuzzles: 0, end: "mosaic", encounter: "puzzle" },
-    ],
-    hiddenPaths: [
-      { density: "low", pathPuzzles: 0, end: "mosaic", encounter: "puzzle" },
-      { density: "low", pathPuzzles: 2, end: "junk", encounter: "trap", chance: 0.4 },
-    ],
-    sideSections: [
-      { ...holdChest(1), encounter: "puzzle" },
-      { ...oldWorkings(), encounter: "puzzle" },
-      witnessBranch("east"),
-      witnessBranch("north"),
-    ],
-  }),
+  // junior_2 pyramid 2: the witness door debut. The shrine board sits on the main path's first
+  // room, via a node selector — the same mechanism every capstone in this file already uses — so
+  // the rest of the main path keeps its usual length and draws from the ordinary pool untouched.
+  // The tier's own sidePaths/hiddenPaths are re-declared (from the shared JUNIOR_* constants
+  // above, not a hand copy) because this floor's own `.floor()` bypasses the pyramid-level
+  // tier cascade for them.
+  journey("junior_2")
+    .pyramid(2, {})
+    .floor(0, {
+      nodes: [{ where: "first", encounter: "witnessDoor" }],
+      sidePaths: [
+        { density: "medium", ...JUNIOR_FRAGMENT_PATH },
+        { density: "low", ...JUNIOR_VISIBLE_MOSAIC_PATH },
+      ],
+      hiddenPaths: [
+        { density: "low", ...JUNIOR_HIDDEN_MOSAIC_PATH },
+        { density: "low", ...JUNIOR_HIDDEN_TRAP_PATH },
+      ],
+      sideSections: [holdChest(1), oldWorkings(), witnessBranch("east"), witnessBranch("north")],
+    }),
   journey("junior_3").pyramid(1, { sideSections: [holdChest(0)] }),
   journey("junior_3").pyramid(2, { sideSections: [holdChest(2), oldWorkings()] }),
   journey("junior_4").pyramid(1, { sideSections: [holdChest(0)] }),

@@ -321,6 +321,48 @@ describe(reachableFrom, () => {
     expect(reachableFrom(grid, [0, 0], new Set(["hieroglyph:a"])).has("0,2")).toBe(false)
     expect(reachableFrom(grid, [0, 0], new Set(["k1", "hieroglyph:a"])).has("0,2")).toBe(true)
   })
+
+  // An authored key (RoomCell.keyIsAuthored) is minted by a room a player solves, not placed by
+  // the world-gen loot solver — reporting it in blockedRequirements would ask placeFragments'
+  // winnability guard to prove a fact only gameplay resolves (placeFragments.ts's final check
+  // throws on any non-empty discoveredLocks). These two cases pin both halves of the fix:
+  // traversal still treats the gate as a real, unopened door either way, but only an unauthored
+  // one is reported as a lock the placement worklist needs to satisfy.
+  it("an authored gate blocks the walk but is never reported as a discovered lock", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [
+          0,
+          1,
+          room("gate", ["w", "e"], { requiredKeyId: "witness:east", gateVariant: "floor-key", keyIsAuthored: true }),
+        ],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const blockedRequirements = new Set<string>()
+    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    expect(reachable.has("0,2")).toBe(false)
+    expect(blockedRequirements.size).toBe(0)
+  })
+
+  it("the same gate without keyIsAuthored blocks the walk AND is reported as a discovered lock", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "witness:east", gateVariant: "floor-key" })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const blockedRequirements = new Set<string>()
+    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    expect(reachable.has("0,2")).toBe(false)
+    expect(blockedRequirements).toEqual(new Set(["witness:east"]))
+  })
 })
 
 // ─── validateJourney ──────────────────────────────────────────────────────────
