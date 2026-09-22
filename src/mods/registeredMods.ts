@@ -94,3 +94,7 @@ export const MOD_RESERVED_TREASURE_INDICES: ((tombId: string) => number[]) | und
 // Is a mod enabled? The single toggle point the app side consults (Base.tsx, registerCurrencies)
 // so a mod's screen + currency-meta drop out together when it leaves REGISTERED_MODS.
 export const isModEnabled = (id: string): boolean => REGISTERED_MODS.some(m => m.id === id)
+
+// The registered ids as a set, for buildConfigs' mod-owned-authoring drop (docs/mods/floor-topology-design.md).
+// Injected into buildConfigs by scripts/generateWorld.ts.
+export const REGISTERED_MOD_IDS: ReadonlySet<string> = new Set(REGISTERED_MODS.map(m => m.id))

@@ -15,6 +15,7 @@ import { wardPath, wardChest } from "./dsl"
 import { specToReward } from "./rewards"
 import { buildSite } from "./buildSite"
 import { assignEncounters, type EncounterAllocator, type FamilyCapacityFor, type IsTrapFamily } from "./placeEncounters"
+import { dropUnownedAuthoring } from "./modOwnedAuthoring"
 import { dressByRole } from "./dressingRoles"
 import { placeShopStock, type ShopStockAssignment } from "./shopStock"
 import { placeFragments } from "./placeFragments"
@@ -258,6 +259,11 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
   return configs
 }
 
+// Stands in for "every mod is registered" when a caller doesn't pass `registeredModIds` at all —
+// so existing callers/specs keep dropping nothing and stay byte-identical. Only ever consulted via
+// `.has()`, so it names no mod.
+const DROP_NOTHING: ReadonlySet<string> = { has: () => true } as unknown as ReadonlySet<string>
+
 // ── Main entry point ──────────────────────────────────────────────────────────
 
 // `resolveKeyRequirements`/`currencies` default to a no-op resolver and no currencies —
@@ -284,7 +290,12 @@ export const buildConfigs = (
   reservedTreasureIndices?: (tombId: string) => number[],
   // Whether a resolved encounter is a trap — gen records that as `sealed` so the encounter itself
   // stays structurally inert. Injected from src/mods (allFamilyMeta.familyIsTrap).
-  isTrapFamily?: IsTrapFamily
+  isTrapFamily?: IsTrapFamily,
+  // Which mods are registered — gates authored owner-tagged (SideSection["gate"].ownerMod) drop
+  // when their mod isn't in here (docs/mods/floor-topology-design.md). Defaults to dropping
+  // nothing, so a caller that doesn't pass this (existing callers, specs) is unaffected;
+  // scripts/generateWorld.ts injects the real registered set.
+  registeredModIds: ReadonlySet<string> = DROP_NOTHING
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -295,7 +306,16 @@ export const buildConfigs = (
   // Phase 3: Build tomb site configs
   const tombConfigs = buildTombConfigs(resolveTombTreasure)
 
-  const allConfigs = { ...pyramidConfigs, ...tombConfigs }
+  const builtConfigs = { ...pyramidConfigs, ...tombConfigs }
+
+  // Phase 3.1: drop mod-owned authoring whose mod isn't registered, before anything downstream
+  // treats a gate as real.
+  const allConfigs: Record<string, SiteConfig[]> = Object.fromEntries(
+    Object.entries(builtConfigs).map(([journeyId, pyramids]) => [
+      journeyId,
+      pyramids.map(floors => floors.map(floor => dropUnownedAuthoring(floor, registeredModIds))),
+    ])
+  )
 
   // Phase 3.5: Resolve authored encounter ROLES (family tags) → concrete families, baked in.
   // Runs before slot collection (rewardPriority derives from the chosen family) and serialization.
