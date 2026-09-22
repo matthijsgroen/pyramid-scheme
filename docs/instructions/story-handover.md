@@ -69,6 +69,11 @@ The mod owns the mechanisms; the arcs stay data. `ModDescriptor` already has a s
 - **Prettier reflows markdown table columns**, so an exact-match replacement on a table row silently
   matches nothing and still exits clean. Edit tables by line index and verify.
 
+## One correction to carry forward
+
+Commit messages and CHANGELOG entries are **one line** (`feedback-short-commit-messages`, 2026-09-20).
+The commits on both branches have multi-paragraph bodies written before that landed — do not copy them.
+
 ## The other session
 
 `sundowner-jasper-df` is designing floor mechanics. The thread is closed and both sides are recorded. The
