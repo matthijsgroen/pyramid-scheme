@@ -1,18 +1,18 @@
 import { describe, it, expect } from "vitest"
 import {
-  BACKSLASH,
   generateWitnessDoor,
-  RIGHT,
-  SLASH,
   solutionsFor,
   traceWitnessBeam,
   type WitnessBoard,
   type WitnessGate,
 } from "./generateWitnessDoor"
+import { BACKSLASH, DIR, SLASH } from "@/mods/core/game/beam/physics"
 import { witnessKeyId, WITNESS_SHRINES } from "./witnessKeys"
 import { difficulties } from "@/data/difficultyLevels"
 
 const SEEDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+const turned = (angle: number): number => (angle === SLASH ? BACKSLASH : SLASH)
 
 describe("witnessKeyId", () => {
   it("names a key per site and shrine", () => {
@@ -82,10 +82,30 @@ describe("generateWitnessDoor", () => {
       const board = generateWitnessDoor(seed, "junior")
       expect(traceWitnessBeam(board, board.grid.initial).shrine).toBeUndefined()
       board.grid.initial.forEach((angle, index) => {
-        const turned = [...board.grid.initial]
-        turned[index] = angle === SLASH ? BACKSLASH : SLASH
-        expect(traceWitnessBeam(board, turned).shrine).toBeUndefined()
+        const one = [...board.grid.initial]
+        one[index] = turned(angle)
+        expect(traceWitnessBeam(board, one).shrine).toBeUndefined()
       })
+    }
+  })
+
+  it("never opens one turn of every mirror away from a shrine", () => {
+    for (const seed of SEEDS) {
+      const board = generateWitnessDoor(seed, "junior")
+      expect(traceWitnessBeam(board, board.grid.initial.map(turned)).shrine).toBeUndefined()
+    }
+  })
+
+  it("lights the shrine when its solution is laid over the opening", () => {
+    for (const seed of SEEDS) {
+      const board = generateWitnessDoor(seed, "junior")
+      for (const shrine of WITNESS_SHRINES) {
+        const angles = [...board.grid.initial]
+        for (const mirror of solutionsFor(board, shrine)[0])
+          angles[board.grid.mirrors.findIndex(at => at.row === mirror.at.row && at.col === mirror.at.col)] =
+            mirror.angle
+        expect(traceWitnessBeam(board, angles).shrine).toBe(shrine)
+      }
     }
   })
 
@@ -103,7 +123,7 @@ describe("traceWitnessBeam", () => {
   const board: WitnessBoard = {
     grid: {
       size: 5,
-      sun: { at: { row: 2, col: 0 }, facing: RIGHT },
+      sun: { at: { row: 2, col: 0 }, facing: DIR.right },
       mirrors: [{ row: 2, col: 2 }],
       initial: [SLASH],
     },
@@ -131,7 +151,7 @@ describe("solutionsFor", () => {
   const withFreeMirror: WitnessBoard = {
     grid: {
       size: 5,
-      sun: { at: { row: 2, col: 0 }, facing: RIGHT },
+      sun: { at: { row: 2, col: 0 }, facing: DIR.right },
       mirrors: [
         { row: 2, col: 2 },
         { row: 4, col: 4 },
@@ -158,7 +178,7 @@ describe("solutionsFor", () => {
     const twoWays: WitnessBoard = {
       grid: {
         size: 5,
-        sun: { at: { row: 2, col: 0 }, facing: RIGHT },
+        sun: { at: { row: 2, col: 0 }, facing: DIR.right },
         mirrors: [
           { row: 0, col: 2 },
           { row: 0, col: 4 },

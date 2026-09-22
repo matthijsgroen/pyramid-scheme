@@ -1,30 +1,27 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import { mulberry32, shuffle } from "@/game/random"
+import {
+  angleFor,
+  axisOf,
+  cellKey,
+  DIR,
+  insideGrid,
+  MIN_LEG,
+  perpendicular,
+  reflect,
+  sameCell,
+  SLASH,
+  stepCell,
+  stepsToEdge,
+  TURN_ANGLES,
+  type CellRef,
+  type Direction,
+  type MirrorAngle,
+} from "@/mods/core/game/beam/physics"
 import { WITNESS_SHRINES, type WitnessShrine } from "./witnessKeys"
 
 // One board, two shrines: which shrine the player routes the beam to is which branch of the floor's fork
-// they open, so the board owes each shrine exactly one route. The directions and mirror angles are the
-// lightbeam board's vocabulary; the physics stands here rather than being imported because a mod may not
-// name a sibling mod (docs/mods/TARGET.md), and because a witness beam has two terminals where a lightbeam
-// beam has one.
-
-/** A direction of travel, indexed anticlockwise from rightward, as on a lightbeam board. */
-export type Direction = number
-
-export const RIGHT: Direction = 0
-export const UP: Direction = 2
-export const LEFT: Direction = 4
-export const DOWN: Direction = 6
-
-export type CellRef = { row: number; col: number }
-
-/** Where a mirror's line lies, in eighth-turns anticlockwise from the row: 2 is `/`, 6 is `\`. */
-export type MirrorAngle = number
-
-export const SLASH: MirrorAngle = 2
-export const BACKSLASH: MirrorAngle = 6
-
-const TURN_ANGLES: readonly MirrorAngle[] = [SLASH, BACKSLASH]
+// they open, so the board owes each shrine exactly one route.
 
 /** A mirror standing on a cell at an angle — one entry of the player's answer. */
 export type MirrorPlacement = { at: CellRef; angle: MirrorAngle }
@@ -46,46 +43,6 @@ export type WitnessBoard = {
 
 /** The gates a draft board can die at. */
 export type WitnessGate = "noRoute" | "notUnique" | "noHonestOpening"
-
-const mod8 = (n: number): number => ((n % 8) + 8) % 8
-
-/** One cell along, per direction. No mirror here flips the beam's parity, so it only ever runs square. */
-const STEPS: Record<Direction, CellRef> = {
-  [RIGHT]: { row: 0, col: 1 },
-  [UP]: { row: -1, col: 0 },
-  [LEFT]: { row: 0, col: -1 },
-  [DOWN]: { row: 1, col: 0 },
-}
-
-const stepCell = (at: CellRef, direction: Direction): CellRef => ({
-  row: at.row + STEPS[direction].row,
-  col: at.col + STEPS[direction].col,
-})
-
-/** Where a mirror sends a beam: reflection across its line, which in eighth-turns is one subtraction. */
-const reflect = (angle: MirrorAngle, travel: Direction): Direction => mod8(angle - travel)
-
-/** The mirror that turns a beam travelling `enter` into one travelling `exit`. */
-const angleFor = (enter: Direction, exit: Direction): MirrorAngle => mod8(enter + exit)
-
-/** The two ways a beam may turn: the quarter turns either side of it. */
-const perpendicular = (direction: Direction): Direction[] => [mod8(direction + 2), mod8(direction + 6)]
-
-/** Which line a beam runs along — 0 across the board, 2 up it. */
-const axisOf = (direction: Direction): number => direction % 4
-
-const insideGrid = (size: number, at: CellRef): boolean => at.row >= 0 && at.col >= 0 && at.row < size && at.col < size
-
-const cellKey = (at: CellRef): string => `${at.row},${at.col}`
-
-const sameCell = (a: CellRef, b: CellRef): boolean => a.row === b.row && a.col === b.col
-
-/** How many cells of the board lie ahead of `at` in `direction`. */
-const stepsToEdge = (size: number, at: CellRef, direction: Direction): number => {
-  let ahead = 0
-  for (let cell = stepCell(at, direction); insideGrid(size, cell); cell = stepCell(cell, direction)) ahead++
-  return ahead
-}
 
 /**
  * Where the light goes, and which mirrors it turns at on the way. The whole of the board's physics: the
@@ -118,9 +75,13 @@ export const traceWitnessBeam = (
   return { met }
 }
 
+/** The setting numbered `n`: bit per mirror, clear for `/` and set for `\\`. */
+const settingFor = (count: number, n: number): MirrorAngle[] =>
+  Array.from({ length: count }, (_, index) => TURN_ANGLES[(n >> index) & 1])
+
 /** Every setting of the board's mirrors, in odometer order. */
 const eachSetting = (count: number, visit: (angles: MirrorAngle[]) => void): void => {
-  for (let n = 0; n < 2 ** count; n++) visit(Array.from({ length: count }, (_, index) => TURN_ANGLES[(n >> index) & 1]))
+  for (let n = 0; n < 2 ** count; n++) visit(settingFor(count, n))
 }
 
 const placementKey = (placement: readonly MirrorPlacement[]): string =>
@@ -142,24 +103,23 @@ export const solutionsFor = (board: WitnessBoard, shrine: WitnessShrine): Mirror
   return [...routes.values()]
 }
 
-/** How big a board is, and how far past the fork each branch runs, per tier. */
+/**
+ * How big a board is, and how far past the fork each branch runs, per tier. Never fewer than two bends: a
+ * branch that turns once pins only two mirrors, and a two-mirror answer has no opening that survives
+ * `honestOpenings` — turning every mirror of it lands on the answer.
+ */
 const WITNESS_CONFIG: Record<Difficulty, { size: number; bendsAfterFork: number }> = {
-  starter: { size: 7, bendsAfterFork: 1 },
+  starter: { size: 6, bendsAfterFork: 2 },
   junior: { size: 7, bendsAfterFork: 2 },
   expert: { size: 8, bendsAfterFork: 2 },
   master: { size: 9, bendsAfterFork: 3 },
   wizard: { size: 9, bendsAfterFork: 4 },
 }
 
-/** The shortest a leg may be, so no two mirrors on one line sit side by side. */
-const MIN_LEG = 2
-
 const MAX_ATTEMPTS = 400
 
-const OPENING_DRAWS = 16
-
 /** The shrine each branch runs to sits on that edge of the board, which is what names it. */
-const FINAL_DIRECTION: Record<WitnessShrine, Direction> = { east: RIGHT, north: UP }
+const FINAL_DIRECTION: Record<WitnessShrine, Direction> = { east: DIR.right, north: DIR.up }
 
 /** What the board already holds, so a branch drawn later neither stands on nor crosses it. */
 type Occupied = {
@@ -225,13 +185,9 @@ const drawBranch = (
       if (leg.slice(0, -1).some(cell => !crossable(cell, placed))) continue
       if (!standable(bendAt, path, placed)) continue
       for (const exit of shuffle(perpendicular(travel), random)) {
-        const found = walk(
-          bendAt,
-          exit,
-          left - 1,
-          [...path, ...leg],
-          [...placed, { at: bendAt, angle: angleFor(travel, exit) }]
-        )
+        const angle = angleFor(travel, exit)
+        if (angle === undefined) continue
+        const found = walk(bendAt, exit, left - 1, [...path, ...leg], [...placed, { at: bendAt, angle }])
         if (found) return found
       }
     }
@@ -247,8 +203,8 @@ const drawSun = (size: number, random: () => number): { at: CellRef; facing: Dir
   // Both edges it may sit on leave the east and north edges ahead of the beam, so either shrine is
   // reachable from the fork.
   return random() < 0.5
-    ? { at: { row: size - 1, col: along }, facing: UP }
-    : { at: { row: along, col: 0 }, facing: RIGHT }
+    ? { at: { row: size - 1, col: along }, facing: DIR.up }
+    : { at: { row: along, col: 0 }, facing: DIR.right }
 }
 
 /** How many bends a branch needs: each one flips the beam between across-the-board and up it. */
@@ -257,14 +213,23 @@ const bendsFor = (wanted: number, leaving: Direction, finalDir: Direction): numb
   return wanted % 2 === odd ? wanted : wanted + 1
 }
 
-/** The board opens dark, and no single turn of one mirror finishes it: a shrine has to be routed to. */
-const openingIsHonest = (board: WitnessBoard, initial: readonly MirrorAngle[]): boolean => {
-  if (traceWitnessBeam(board, initial).shrine) return false
-  return !initial.some((angle, index) => {
-    const turned = [...initial]
-    turned[index] = angle === SLASH ? BACKSLASH : SLASH
-    return traceWitnessBeam(board, turned).shrine !== undefined
-  })
+/**
+ * The settings a board may open in: dark, and dark still after one mirror is turned, and after every mirror
+ * is. Without that last clause "turn everything once" is a solution the player reaches by fiddling — the
+ * exploit `openingIsHonest` guards in the lightbeam family.
+ */
+const honestOpenings = (board: WitnessBoard): number[] => {
+  const count = board.grid.mirrors.length
+  const lit: boolean[] = []
+  eachSetting(count, angles => lit.push(traceWitnessBeam(board, angles).shrine !== undefined))
+  const every = 2 ** count - 1
+  return lit.flatMap((isLit, setting) =>
+    isLit ||
+    lit[setting ^ every] ||
+    Array.from({ length: count }, (_, mirror) => setting ^ (1 << mirror)).some(one => lit[one])
+      ? []
+      : [setting]
+  )
 }
 
 const byReadingOrder = (a: CellRef, b: CellRef): number => a.row - b.row || a.col - b.col
@@ -329,12 +294,13 @@ const attemptBoard = (
     return undefined
   }
 
-  for (let draw = 0; draw < OPENING_DRAWS; draw++) {
-    const initial = mirrors.map(() => (random() < 0.5 ? SLASH : BACKSLASH))
-    if (openingIsHonest(board, initial)) return { ...board, grid: { ...board.grid, initial } }
+  const openings = honestOpenings(board)
+  if (!openings.length) {
+    reject?.("noHonestOpening")
+    return undefined
   }
-  reject?.("noHonestOpening")
-  return undefined
+  const opening = openings[Math.floor(random() * openings.length)]
+  return { ...board, grid: { ...board.grid, initial: settingFor(mirrors.length, opening) } }
 }
 
 /**
