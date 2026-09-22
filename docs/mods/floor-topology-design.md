@@ -149,18 +149,28 @@ runtime. The descriptor stays React-free; the evaluator registers through `regis
 One mod per mechanic, so a mechanic that needs tuning leaves without touching its neighbours. Each
 slice buys at most one primitive, and buys it because that mod needs it — never ahead of one.
 
-| Order | Mod            | Buys    | Tier it lands at | Toggle-off looks like                   |
-| ----- | -------------- | ------- | ---------------- | --------------------------------------- |
-| 1     | `witnessDoor`  | nothing | junior           | both corridors open, an ordinary puzzle |
-| 2     | `sequenceLock` | P3      | expert           | door unlocked, no glyph tiles           |
-| 3     | `sandSlide`    | P2      | expert           | ramp corridors absent, floor re-carves  |
-| 4     | `waterline`    | P1      | master           | floor permanently drained               |
-| 5     | `cosmicDust`   | P5      | wizard           | pyramid not choked, handles inert       |
-| 6     | `hourglass`    | P4, P6  | wizard           | upper floor clear, lower floor ordinary |
+| Order | Mod            | Buys                                         | Tier it lands at | Toggle-off looks like                   |
+| ----- | -------------- | -------------------------------------------- | ---------------- | --------------------------------------- |
+| 1     | `witnessDoor`  | a runtime-minted key (no topology primitive) | junior           | both corridors open, an ordinary puzzle |
+| 2     | `sequenceLock` | P3                                           | expert           | door unlocked, no glyph tiles           |
+| 3     | `sandSlide`    | P2                                           | expert           | ramp corridors absent, floor re-carves  |
+| 4     | `waterline`    | P1                                           | master           | floor permanently drained               |
+| 5     | `cosmicDust`   | P5                                           | wizard           | pyramid not choked, handles inert       |
+| 6     | `hourglass`    | P4, P6                                       | wizard           | upper floor clear, lower floor ordinary |
 
-`witnessDoor` buys nothing, which is why it goes first: gates already open on a registered currency
-and `gate.wardKeyId` is already free to change, so it proves a floor mechanic can be a mod against
-the descriptor as it stands. The smallest slice that still has a real acceptance gate.
+`witnessDoor` goes first because it needs no topology primitive at all — its fork is two ordinary
+gates, and the choice is which one opens. It does buy one small thing, named here rather than
+discovered during the build: **a key the player mints at runtime**. `getOwnedKeys` derives a floor's
+keys from completed cells' authored rewards, and a key handed out by a family on solve has no such
+cell, so owned keys grow a registry of contributors — unioned where `SiteMapScreen` already unions
+ward keys.
+
+It also settles how a mod names a key at all. A `floor-key` gate takes its id from the assembler's
+rotation and makes the floor grow a section to host that key's chest, which is wrong when the key
+comes from a room. So the gate gains an authored `keyId` and an `ownerMod` beside it: naming an id
+means the **author** owns the key's provenance, so no host is grown, and naming an owner is what
+lets the gate drop when that mod is not registered. Both are opaque strings; core still names no
+mod.
 
 `hourglass` is last because P4 is the only new dispatch shape in the set and P6 the only new state
 shape.
