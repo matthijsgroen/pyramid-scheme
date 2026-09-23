@@ -338,10 +338,12 @@ export type FloorConfig = {
    * own `exits` (RoomCell.exits.gateKeyId). A floor whose carve gives no junction two such ways out
    * has no switch to author, and the build fails rather than dropping it.
    *
-   * `keyId` is the stem of the key each of those gates wants; the gate on the way out heading `d`
-   * asks for `${keyId}:${d}`. One authored stem rather than one id per way out, because the author
-   * cannot know which ways out there will be. Opaque to core — the id names no mod and nothing here
-   * mints it; whatever fills the switch does. */
+   * `keyId` is the stem of the key each of those gates wants; the gate is named by the SECTION it
+   * stands at — `${keyId}:${sectionAddress}`, the main path onward being `main` — so that a re-carve
+   * moving a branch cannot make a key kept from the old layout fit a door it was never solved for.
+   * One authored stem rather than one id per way out, because the author cannot know which ways out
+   * there will be. Opaque to core — the id names no mod and nothing here mints it; whatever fills the
+   * switch does, reading the ids off the room's own `exits`. */
   switchFork?: { encounter: string | string[]; keyId: string }
   /** Per-node encounter override for the main path: 0-based room index → family/tag, resolved from
    * authored `nodes` selectors (e.g. the last room → "capstone"/crocodile). Room k uses

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { findEmptyChests, validateRewardCounts } from "./validate"
+import { findEmptyChests, validateRewardCounts, validateSwitchForkKeys } from "./validate"
 import { WORLD_TARGETS } from "./worldSpec"
 import { PYRAMID_JOURNEYS } from "./data"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
@@ -182,5 +182,21 @@ describe("findEmptyChests", () => {
 
   it("leaves puzzle rooms alone — a puzzle without loot is an ordinary room", () => {
     expect(found([{ tags: ["puzzle"] }])).toEqual([])
+  })
+})
+
+describe(validateSwitchForkKeys, () => {
+  const withSwitch = (keyId: string) => floor({ switchFork: { encounter: "witnessDoor", keyId } })
+
+  it("passes a world whose switches each name their own stem", () => {
+    expect(() => validateSwitchForkKeys({ j1: [[withSwitch("a"), withSwitch("b")], [withSwitch("c")]] })).not.toThrow()
+  })
+
+  it("names both floors when two share a stem, because a key from one would open the other", () => {
+    expect(() => validateSwitchForkKeys({ j1: [[withSwitch("a")], [withSwitch("a")]] })).toThrow(/j1#0#0 and j1#1#0/)
+  })
+
+  it("says nothing about floors that author no switch at all", () => {
+    expect(() => validateSwitchForkKeys({ j1: [[floor(), floor()]] })).not.toThrow()
   })
 })

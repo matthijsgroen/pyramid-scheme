@@ -82,6 +82,54 @@ describe("generateFile — a switch fork survives the bake", () => {
   })
 
   it("emits the encounter standing in it and the stem its gates key on", () => {
-    expect(output).toContain('switchFork: { encounter: "witnessDoor", keyId: "witness:test" }')
+    expect(output).toContain(`switchFork: { encounter: "witnessDoor", keyId: "witness:test" }`)
+  })
+
+  // A key id is a mod's own free-form string, and the bake writes TypeScript source: one unescaped
+  // quote in one of them and the generated file does not parse.
+  it("escapes a stem carrying the characters that would break the file", () => {
+    const quoted = generateFile({
+      test_journey: [
+        [
+          {
+            pathPuzzles: 1,
+            difficulty: "junior",
+            end: "treasure",
+            exitOrStaircase: "exit",
+            sideSections: [],
+            switchFork: { encounter: "witnessDoor", keyId: String.raw`a"b\\c` },
+          },
+        ],
+      ],
+    })
+
+    expect(quoted).toContain(String.raw`keyId: "a\"b\\\\c"`)
+  })
+
+  // A side path's gate carries an authored key id of the same free-form kind, through the same
+  // quoting.
+  it("escapes an authored gate key id too", () => {
+    const quoted = generateFile({
+      test_journey: [
+        [
+          {
+            pathPuzzles: 1,
+            difficulty: "junior",
+            end: "treasure",
+            exitOrStaircase: "exit",
+            sideSections: [
+              {
+                pathPuzzles: 0,
+                difficulty: "junior",
+                end: "treasure",
+                gate: { type: "floor-key", keyId: String.raw`a"b` },
+              },
+            ],
+          },
+        ],
+      ],
+    })
+
+    expect(quoted).toContain(String.raw`keyId: "a\"b"`)
   })
 })

@@ -1634,13 +1634,43 @@ describe("a switch fork", () => {
     for (const { exit, beyond } of gated) {
       expect(beyond?.type).toBe("room")
       expect(beyond?.type === "room" && beyond.gateVariant).toBe("floor-key")
-      expect(beyond?.type === "room" && beyond.requiredKeyId).toBe(`${SWITCH_KEY}:${exit.dir}`)
+      // Named for the path it stands at, which is what the save names a room by too.
+      expect(beyond?.type === "room" && beyond.requiredKeyId).toBe(
+        beyond?.type === "room" ? `${SWITCH_KEY}:${beyond.sectionAddress}` : undefined
+      )
+      expect(exit.gateKeyId).toBe(beyond?.type === "room" ? beyond.requiredKeyId : undefined)
       // The key comes from whatever stands in the switch, so the floor grows no chest holding it.
       expect(beyond?.type === "room" && beyond.keyIsAuthored).toBe(true)
     }
     // The opener comes before the blockers: the way BACK is never one of the ways it closed, so the
     // player reaches the switch without needing a key the switch itself hands out.
     expect(reachesWithoutGates(grid, grid.entrancePos, [at.r, at.c])).toBe(true)
+  })
+
+  // THE KEY MUST NOT CARRY THE CARVE. The one a player is holding outlives the layout it was minted
+  // on, so if its id named the compass, a re-carve that swung a branch to another quarter would stand
+  // the new door in that quarter open for free. Proven by finding the same id on two different
+  // compass points, which is exactly what a compass-named id can never do.
+  it("names a gate for the path it stands at, so the same key never follows the compass", () => {
+    const dirsPerKeyId = new Map<string, Set<Direction>>()
+    for (let seed = 0; seed < 60; seed++) {
+      const result = assembleFloor(
+        "site-switch-stable",
+        switchConfig({ encounter: "sumplete", keyId: SWITCH_KEY }),
+        seed
+      )
+      if (!result.success) continue
+      const at = findRoom(result.grid, cell => cell.roomType === "fork" && cell.family !== undefined)
+      for (const exit of at?.cell.exits ?? []) {
+        if (exit.gateKeyId === undefined) continue
+        const dirs = dirsPerKeyId.get(exit.gateKeyId) ?? new Set<Direction>()
+        dirs.add(exit.dir)
+        dirsPerKeyId.set(exit.gateKeyId, dirs)
+      }
+    }
+
+    expect(dirsPerKeyId.size).toBeGreaterThan(0)
+    expect([...dirsPerKeyId.values()].some(dirs => dirs.size > 1)).toBe(true)
   })
 
   // A ward's door already owns that boundary and a second door on it reads as two doors; a gate

@@ -12,8 +12,11 @@ export type ModExports = Record<string, unknown>
 // Serialization
 // ---------------------------------------------------------------------------
 
+// Every string reaches the baked file through JSON.stringify rather than through a quoted template:
+// family ids, key ids and labels are free-form and a mod's own to choose, and one quote or backslash
+// in one of them would write TypeScript that does not parse.
 const serializeEncounter = (encounter: string | string[]): string =>
-  Array.isArray(encounter) ? `[${encounter.map(e => `"${e}"`).join(", ")}]` : `"${encounter}"`
+  Array.isArray(encounter) ? `[${encounter.map(e => JSON.stringify(e)).join(", ")}]` : JSON.stringify(encounter)
 
 // Per-node encounter overrides: `{ 1: "crocodile" }` — ascending index order for stable output.
 const serializeEncountersByIndex = (m: Record<number, string | string[]>): string =>
@@ -28,7 +31,7 @@ const serializeEncountersByIndex = (m: Record<number, string | string[]>): strin
 // Reward payloads are flat scalars (type + amount/itemId/hieroglyphId/pieceIndex/…). fragmentSlot
 // is the placement sentinel; any hieroglyph pieceIndex is already stamped by the hieroglyph
 // finalize pass (scripts/generateWorld.ts) before we get here.
-const serializeValue = (v: unknown): string => (typeof v === "string" ? `"${v}"` : `${v}`)
+const serializeValue = (v: unknown): string => (typeof v === "string" ? JSON.stringify(v) : `${v}`)
 const serializeReward = (r: TreasureReward): string => {
   if (r.type === "fragmentSlot")
     throw new Error("fragmentSlot reached serializer — placement must fill or clear every slot first")

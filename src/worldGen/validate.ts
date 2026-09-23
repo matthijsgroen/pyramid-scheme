@@ -94,6 +94,29 @@ export const validateRewardCounts = (
     throw new Error(`[worldSpec] Expected ${expectedCurrencyRewards} gating-currency rewards, got ${currencyRewards}`)
 }
 
+// A switch fork's gates are all named from its authored stem, and a key the player is holding is the
+// PLAYER's — not the floor's that minted it. So two floors authored with one stem share their gate
+// ids, and a key taken from the first stands the second's doors open on arrival. Nothing on a single
+// floor can see that, which is why it is asked of the whole world at once, here.
+export const validateSwitchForkKeys = (configs: Record<string, SiteConfig[]>): void => {
+  const stemOwner = new Map<string, string>()
+  const clashes: string[] = []
+  for (const [siteId, siteConfigs] of Object.entries(configs)) {
+    siteConfigs.forEach((floors, levelIndex) =>
+      floors.forEach((floor, fi) => {
+        const stem = floor.switchFork?.keyId
+        if (stem === undefined) return
+        const where = `${siteId}#${levelIndex}#${fi}`
+        const owner = stemOwner.get(stem)
+        if (owner === undefined) stemOwner.set(stem, where)
+        else clashes.push(`"${stem}" on ${owner} and ${where}`)
+      })
+    )
+  }
+  if (clashes.length > 0)
+    throw new Error(`[worldSpec] switch fork key ids must name one floor each: ${clashes.join("; ")}`)
+}
+
 // NOTE: the old `validateDiscovery` post-build check (secondary-tomb discovery + ward-key
 // ordering) was retired in §E — the worklist reachability model (src/worldGen/reachability.ts +
 // placeFragments.ts) already subsumes and strengthens it: secondary-tomb enterability is

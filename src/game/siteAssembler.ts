@@ -1647,7 +1647,14 @@ export const assembleFloor = (
       })
 
       for (const { dir, neighborKey } of closableExits(switchPos)) {
-        const gateKeyId = `${config.switchFork.keyId}:${dir}`
+        // A GATE IS NAMED BY THE BRANCH IT STANDS AT, NEVER BY WHERE THE COMPASS POINTS — the same
+        // reason the board above is hashed from the authoring and the save slot is a section address.
+        // A compass name persists the carve into an id, and the failure that costs is not the key that
+        // stops fitting: it is a key kept from an earlier layout still fitting after a re-carve has
+        // swung that branch round to another quarter, opening a door nothing was solved for. The main
+        // path onward answers to MAIN_SECTION_ADDRESS, which no side path can be given (see
+        // sectionAddresses). Whatever needs the compass reads it off `exits[].dir`.
+        const gateKeyId = `${config.switchFork.keyId}:${cellSectionAddress.get(neighborKey) ?? MAIN_SECTION_ADDRESS}`
         switchGateKeyByDir.set(dir, gateKeyId)
         roomSpecs.set(neighborKey, {
           roomType: "encounter",

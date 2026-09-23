@@ -24,7 +24,7 @@ import type { ReachabilitySupport } from "./reachability"
 import type { Distribution } from "./slotAllocator"
 import type { FamilyPriorityFor } from "./slots"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
-import { validateRewardCounts, type WorldValidator } from "./validate"
+import { validateRewardCounts, validateSwitchForkKeys, type WorldValidator } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
 import { TOMB_ROOMS_PER_FLOOR } from "./data"
 
@@ -360,6 +360,7 @@ export const buildConfigs = (
   const expectedCurrencyRewards = currencies.reduce((sum, c) => sum + (c.expectedTotal?.() ?? 0), 0)
   const isCurrencyReward = (r: TreasureReward) => currencies.some(c => c.bucketForReward?.(r) !== undefined)
   validateRewardCounts(allConfigs, expectedCurrencyRewards, isCurrencyReward)
+  validateSwitchForkKeys(allConfigs)
   // Secondary-tomb discovery + ward-key ordering need no separate post-build validator
   //: the worklist reachability model (placeFragments above) already guarantees both — it
   // hard-fails if any lock stays blocking. See validate.ts's note + docs/game-design/keys-and-locks-solver.md.

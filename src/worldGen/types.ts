@@ -104,7 +104,8 @@ export type FloorConfig = {
   condition?: SiteCondition
   /** A SWITCH: one junction of this floor also holds this encounter and closes the ways out nothing
    * else owns, so what stands in the fork decides which one opens. `keyId` is the stem each of those
-   * gates keys on. Mirrors game/siteTypes.ts's FloorConfig.switchFork. */
+   * gates keys on, and must be unique across the world's floors. Mirrors game/siteTypes.ts's
+   * FloorConfig.switchFork. */
   switchFork?: { encounter: string | string[]; keyId: string }
 }
 
