@@ -70,6 +70,32 @@ waiting for a rope — are the same feature authored twice, which is the sign th
 crack in a wall waiting for a hammer is a gate whose `gated by` names an item rather than a key, and
 the keys-and-locks machinery already answers that.
 
+### A feature claims what it uses, and a claim is exclusive
+
+**No two features share a corridor, a room or a section.** A corridor claimed as a flooded stretch
+cannot also be a sand barrier waiting on a switch from another pyramid, and the builder refuses the
+pair rather than choosing between them.
+
+The reason is not tidiness. Two features on one passage means two openers on one barrier, and a
+player looking at it cannot tell which thing they are looking at — or which of the two they have just
+satisfied. The floor stops being readable before it stops being solvable.
+
+So placement is an allocation: each feature claims the elements it occupies, claimed elements leave
+the pool, and what is left is what the next feature may have. `slotAllocator` already does exactly
+this for loot — footprint, eligibility, and removal of what is taken — one level up from the floor
+elements a feature wants.
+
+Order follows from wishes and constraints, and needs no rule of its own:
+
+1. **Pinned features claim first.** They named a place; that is what pinning means.
+2. **Woven features then claim what remains**, in registry order, the way the dynamic loot
+   distributions already resolve a contested slot deterministically.
+3. **A wish with nothing left to claim is reported.** A constraint with nothing left to claim stops
+   the build, and names the feature that took the ground it wanted.
+
+That last line is the one worth keeping: when two authored intentions collide, the author hears which
+one won and why, rather than finding a floor missing something they asked for.
+
 ### Why this does not break Rule 2
 
 `TARGET.md` says core never invents topology to hit a per-mod target. A woven feature is not core
@@ -382,8 +408,6 @@ becomes a feature composed from vocabulary that already exists.
 
 ## Open
 
-- **Two features wanting the same room.** Nothing says who wins, or whether the builder should refuse
-  the pair outright rather than pick.
 - **A feature that eats capacity.** A feature taking a side path takes a loot slot with it, and the
   economy's supply count does not know. Whether a feature declares what it consumes, or the economy
   reads the floor after features land, is undecided.
