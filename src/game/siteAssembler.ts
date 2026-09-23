@@ -1240,7 +1240,10 @@ export const assembleFloor = (
     const forkPositions = new Set(sectionGroups.map(g => posKey(g.attachedAt[0], g.attachedAt[1])))
     // A fork always sits ON the main path (attachedAt is always a mainPath cell — see the
     // candidateSources above), so this is how a fork tells its two main-path neighbours from
-    // everything else it opens onto.
+    // everything else it opens onto. The INDEX, not mere membership: `passages` spans the whole
+    // lattice, so two main-path cells far apart along the walk can be tree-adjacent through an edge
+    // no chain walked (see "Gate isolation" below), and plain membership would read that stray door
+    // as the path continuing.
     const mainPathIndexByKey = new Map(mainPath.map(([r, c], i) => [posKey(r, c), i]))
 
     // Main path nodes — spread across the full path per contentIndices/goalIndex above;
@@ -1296,9 +1299,36 @@ export const assembleFloor = (
       }
     }
 
-    // Corridor cells that are branch junctions become fork nodes too
+    // Corridor cells that are branch junctions become fork nodes too. A junction that already holds a
+    // main-path room stays that room: the carve is free to hang a side section off the entrance, off a
+    // puzzle or off the goal chest, and none of those is a place the player chooses a way out from.
     for (const pk of forkPositions) {
       if (!roomSpecs.has(pk)) roomSpecs.set(pk, { roomType: "fork" })
+    }
+
+    // A SWITCH: a junction that also holds an encounter. The two identities are not exclusive — the
+    // room keeps `roomType: "fork"`, so its footprint, its exits and the junction geometry are a fork's,
+    // and it gains the encounter's own fields on top. The first bare junction takes it, in the order the
+    // sections were attached, since the author names what stands in the switch and not where it is.
+    //
+    // It takes no `pathIndex`: a switch is not the k-th room of the main chain, it is the one room of
+    // its kind on the floor, so a save names it by what fills it the way a section's chest or gate is
+    // named (cellIdentity.ts). `boardIndex` and `requiredKeyIds` are both addressed by chain position,
+    // so a switch has neither.
+    if (config.switchFork) {
+      const switchAt = [...forkPositions].find(pk => roomSpecs.get(pk)?.roomType === "fork")
+      if (switchAt) {
+        const family = resolveEncounter(config.switchFork.encounter, "puzzle")
+        roomSpecs.set(switchAt, {
+          ...roomSpecs.get(switchAt)!,
+          family: family.familyId,
+          tags: family.tags,
+          ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
+          difficulty: config.difficulty,
+          ...(config.theme !== undefined ? { theme: config.theme } : {}),
+          ...(config.role !== undefined ? { role: config.role } : {}),
+        })
+      }
     }
 
     // Exit / stairhead

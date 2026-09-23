@@ -63,6 +63,16 @@ const exitRoom: GridCell = {
   sectionAddress: SECTION,
   ordinal: "2",
 }
+const bareFork: GridCell = {
+  type: "room",
+  roomType: "fork",
+  dirs: new Set(["w", "e"]),
+  state: "reachable",
+  sectionHash: SECTION,
+  sectionAddress: SECTION,
+  ordinal: "1",
+}
+const switchFork: GridCell = { ...bareFork, family: "sumplete", tags: ["puzzle"] }
 const fogged: GridCell = {
   type: "corridor",
   dirs: new Set(["w"]),
@@ -160,6 +170,27 @@ describe("useSiteNavigation", () => {
     act(() => hook.result.current.onCellClick(0, 1))
     expect(onEncounter).not.toHaveBeenCalled()
 
+    arrive()
+
+    expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
+  })
+
+  it("walks through a bare junction without opening anything", () => {
+    const { hook, journeys, onEncounter } = setup([entrance, bareFork])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", CORRIDOR_AT_1)
+    expect(onEncounter).not.toHaveBeenCalled()
+  })
+
+  // A switch is a junction with a puzzle standing in it: what the room HOLDS decides what arriving
+  // does, not what type of room it is.
+  it("opens the encounter of a junction that carries one", () => {
+    const { hook, onEncounter } = setup([entrance, switchFork])
+
+    act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
     expect(onEncounter).toHaveBeenCalledWith([0, 1], true)

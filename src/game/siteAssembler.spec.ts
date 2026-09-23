@@ -1467,3 +1467,75 @@ describe("fork exits", () => {
     expect(expected.filter(e => e.kind === "side").length).toBe(1)
   })
 })
+
+describe("a switch fork", () => {
+  const switchConfig = (switchFork?: FloorConfig["switchFork"]): FloorConfig => ({
+    pathPuzzles: 2,
+    difficulty: "junior",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    theme: "dusk",
+    role: "puzzle",
+    sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure" }],
+    ...(switchFork ? { switchFork } : {}),
+  })
+
+  const assembleWithSwitch = (switchFork?: FloorConfig["switchFork"]) => {
+    for (let seed = 0; seed < 60; seed++) {
+      const result = assembleFloor(`site-switch-${seed}`, switchConfig(switchFork), seed)
+      if (!result.success) continue
+      const fork = findRoom(result.grid, cell => cell.roomType === "fork")
+      if (fork) return { ...fork, grid: result.grid }
+    }
+    throw new Error("no seed produced a fork room")
+  }
+
+  it("is both a fork and its encounter", () => {
+    const { cell } = assembleWithSwitch({ encounter: "sumplete" })
+    expect(cell.roomType).toBe("fork")
+    expect(cell.family).toBe("sumplete")
+    expect(cell.tags).toContain("puzzle")
+  })
+
+  it("keeps the exits the puzzle standing in it has to choose between", () => {
+    const { cell } = assembleWithSwitch({ encounter: "sumplete" })
+    expect(cell.exits?.length).toBe(cell.dirs.size)
+    expect(cell.exits?.length).toBeGreaterThan(1)
+  })
+
+  it("wears the floor's own tier, skin and role, like any other encounter room", () => {
+    const { cell } = assembleWithSwitch({ encounter: "sumplete" })
+    expect(cell.difficulty).toBe("junior")
+    expect(cell.theme).toBe("dusk")
+    expect(cell.role).toBe("puzzle")
+  })
+
+  it("is the only fork that gains one", () => {
+    const { grid } = assembleWithSwitch({ encounter: "sumplete" })
+    const switches = grid.cells
+      .flat()
+      .filter(cell => cell.type === "room" && cell.roomType === "fork" && cell.family !== undefined)
+    expect(switches.length).toBe(1)
+  })
+
+  it("leaves every fork bare on a floor that authors none", () => {
+    const { grid } = assembleWithSwitch()
+    const withFamily = grid.cells
+      .flat()
+      .filter(cell => cell.type === "room" && cell.roomType === "fork" && cell.family !== undefined)
+    expect(withFamily).toEqual([])
+  })
+
+  it("never takes a junction that already holds a main-path room", () => {
+    for (let seed = 0; seed < 30; seed++) {
+      const authored = assembleFloor(`site-switch-steal-${seed}`, switchConfig({ encounter: "sumplete" }), seed)
+      const bare = assembleFloor(`site-switch-steal-${seed}`, switchConfig(), seed)
+      if (!authored.success || !bare.success) continue
+      // Every room the bare floor holds is still that room on the authored one: a switch is written
+      // onto a junction that was nothing else, never over the entrance, a puzzle or the goal chest.
+      const rooms = (grid: FloorGrid) =>
+        grid.cells.flat().map(cell => (cell.type === "room" && cell.roomType !== "fork" ? cell.family : null))
+      expect(rooms(authored.grid)).toEqual(rooms(bare.grid))
+    }
+  })
+})

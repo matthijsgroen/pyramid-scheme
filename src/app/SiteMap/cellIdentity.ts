@@ -22,10 +22,12 @@ import { decodeEdge } from "./edgeId"
  * sections hold at least one. Re-carved at two different seeds, four floors across four tiers and a
  * tomb kept every slot.
  *
- * Corridors and forks have no slot, because they have no authored identity — how many corridor cells
- * there are and where the chain turns IS the carve. They are addressed by `~${ordinal}`, which resolves
- * inside one carve and deliberately resolves to nothing after the floor moves. Their fog comes back by
- * the high-water mark instead (`applyExplored` in useAssembledFloor).
+ * Corridors and bare forks have no slot, because they have no authored identity — how many corridor
+ * cells there are and where the chain turns IS the carve. They are addressed by `~${ordinal}`, which
+ * resolves inside one carve and deliberately resolves to nothing after the floor moves. Their fog comes
+ * back by the high-water mark instead (`applyExplored` in useAssembledFloor). A fork carrying an
+ * encounter — a switch — does have one: the encounter was authored onto the floor, and its progress has
+ * to survive the junction moving to another cell.
  *
  * The section is named by its AUTHORING ADDRESS — `main`, `s0`, `s0.1` — and not by the structural hash
  * that used to key exploration. The hash covers the floor's own carve knobs (`packing`,
@@ -41,7 +43,8 @@ import { decodeEdge } from "./edgeId"
  */
 export const cellSlot = (grid: FloorGrid, row: number, col: number): string | null => {
   const cell = grid.cells[row]?.[col]
-  if (!cell || cell.type !== "room" || cell.roomType === "fork") return null
+  if (!cell || cell.type !== "room") return null
+  if (cell.roomType === "fork" && cell.family === undefined) return null
   if (cell.roomType === "portal") {
     if (cell.stairId) return `stair:${cell.stairId}`
     return row === grid.entrancePos[0] && col === grid.entrancePos[1] ? "entrance" : "exit"

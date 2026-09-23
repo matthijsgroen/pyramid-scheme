@@ -15,7 +15,11 @@ export const shapeKindFor = (
   tags: string[] | undefined,
   stairId: string | undefined
 ): ShapeKind => {
-  if (roomType === "fork") return "fork"
+  // A junction draws as a junction only while it is nothing else. A switch — a fork with an encounter
+  // standing in it — is read by its family's tags below, so the player sees there is something here to
+  // do before walking onto it, and so finishing it earns the completed badge a bare fork never wears.
+  // The room's FOOTPRINT is still a fork's (`canClaimVoid` asks the type, not this).
+  if (roomType === "fork" && !tags?.length) return "fork"
   if (roomType === "portal") {
     if (stairId) return "stairhead"
     return r === grid.entrancePos[0] && c === grid.entrancePos[1] ? "entrance" : "exit"

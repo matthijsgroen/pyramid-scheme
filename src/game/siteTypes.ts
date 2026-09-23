@@ -325,6 +325,13 @@ export type FloorConfig = {
   rewards?: (TreasureReward | undefined)[]
   /** Default family/tag(s) for this floor's main-path encounter rooms. An array means "any of these". */
   encounter?: string | string[]
+  /** A SWITCH: one of this floor's junction rooms also holds this encounter, so the player stands in
+   * the fork and what is in it decides which of its ways out opens. Family/tag(s) like `encounter`.
+   *
+   * The author names what stands there and not which fork it is — where the junctions fall is the
+   * carve's choice, so a cell is not something an author can point at. A floor whose carve produced no
+   * bare junction simply has no switch; the assembler invents no fork to hold one. */
+  switchFork?: { encounter: string | string[] }
   /** Per-node encounter override for the main path: 0-based room index → family/tag, resolved from
    * authored `nodes` selectors (e.g. the last room → "capstone"/crocodile). Room k uses
    * `encountersByIndex[k] ?? encounter`; baked to concrete family ids by the gen-time encounter
