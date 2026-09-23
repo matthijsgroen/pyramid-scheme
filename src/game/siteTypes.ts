@@ -218,6 +218,11 @@ export type RoomCell = {
    * a fact about that room, not something to re-derive from what it happens to be wearing.
    */
   patronRoom?: boolean
+  /** A fork room's own ways out, each with what lies down it: `main` continues the main path,
+   * `side` reaches an attached section, `ward` is a side gated by a tomb-key, and `fork` leads
+   * straight to another fork room. Read off the neighbour node two grid cells away (NODE_STEP in
+   * siteAssembler.ts) in each of the cell's own `dirs`. Unset off fork rooms — nothing needs it yet. */
+  exits?: { dir: Direction; kind: "main" | "side" | "ward" | "fork" }[]
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 

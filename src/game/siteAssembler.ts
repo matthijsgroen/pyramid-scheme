@@ -1238,6 +1238,10 @@ export const assembleFloor = (
 
     // Collect branch junction cells (become fork nodes)
     const forkPositions = new Set(sectionGroups.map(g => posKey(g.attachedAt[0], g.attachedAt[1])))
+    // A fork always sits ON the main path (attachedAt is always a mainPath cell — see the
+    // candidateSources above), so this is how a fork tells its two main-path neighbours from
+    // everything else it opens onto.
+    const mainPathIndexByKey = new Map(mainPath.map(([r, c], i) => [posKey(r, c), i]))
 
     // Main path nodes — spread across the full path per contentIndices/goalIndex above;
     // everything else along mainPath is left unassigned and falls through to plain corridor.
@@ -1550,17 +1554,34 @@ export const assembleFloor = (
     // Fill used cells with corridor or room
     for (const cellKey of usedCells) {
       const [r, c] = cellKey.split(",").map(Number)
-      // Compute dirs from passages — nodes are two cells apart (see NODE_STEP above)
+      const spec = roomSpecs.get(cellKey)
+      // Compute dirs from passages — nodes are two cells apart (see NODE_STEP above). A fork
+      // also names what each of its own dirs leads to (RoomCell.exits) — main path continuing,
+      // an attached side section, that side's own tomb-key gate ("ward"), or straight into
+      // another fork — read off the neighbour node's own kind, not inferred from this cell.
       const dirs = new Set<Direction>()
+      const exits: RoomCell["exits"] = spec?.roomType === "fork" ? [] : undefined
       for (const [dr, dc, d] of CONNECTOR_DIRS) {
         const nr = r + dr,
           nc = c + dc
         if (nr >= 0 && nr < N && nc >= 0 && nc < N && usedCells.has(`${nr},${nc}`) && edgeAllowed(r, c, nr, nc)) {
           dirs.add(d)
+          if (exits) {
+            const neighborKey = posKey(nr, nc)
+            const neighborMi = mainPathIndexByKey.get(neighborKey)
+            const mi = mainPathIndexByKey.get(cellKey)
+            const kind: "main" | "side" | "ward" | "fork" = forkPositions.has(neighborKey)
+              ? "fork"
+              : roomSpecs.get(neighborKey)?.gateVariant === "tomb-key"
+                ? "ward"
+                : mi !== undefined && neighborMi !== undefined && Math.abs(mi - neighborMi) === 1
+                  ? "main"
+                  : "side"
+            exits.push({ dir: d, kind })
+          }
         }
       }
 
-      const spec = roomSpecs.get(cellKey)
       const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
       const sectionAddress = cellSectionAddress.get(cellKey) ?? MAIN_SECTION_ADDRESS
       const legacySectionHash = cellLegacySectionHash.get(cellKey) ?? legacyMainSectionHash
@@ -1584,6 +1605,7 @@ export const assembleFloor = (
           ...(cellOrdinal.get(cellKey) ? { ordinal: cellOrdinal.get(cellKey) } : {}),
           ...(hidden ? { hidden } : {}),
           ...spec,
+          ...(exits ? { exits } : {}),
         }
         cells2D[r][c] = roomCell
       } else {
