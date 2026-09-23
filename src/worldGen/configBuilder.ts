@@ -15,6 +15,7 @@ import { wardPath, wardChest } from "./dsl"
 import { specToReward } from "./rewards"
 import { buildSite } from "./buildSite"
 import { assignEncounters, type EncounterAllocator, type FamilyCapacityFor, type IsTrapFamily } from "./placeEncounters"
+import { dropUnownedAuthoring } from "./modOwnedAuthoring"
 import { dressByRole } from "./dressingRoles"
 import { placeShopStock, type ShopStockAssignment } from "./shopStock"
 import { placeFragments } from "./placeFragments"
@@ -284,7 +285,13 @@ export const buildConfigs = (
   reservedTreasureIndices?: (tombId: string) => number[],
   // Whether a resolved encounter is a trap — gen records that as `sealed` so the encounter itself
   // stays structurally inert. Injected from src/mods (allFamilyMeta.familyIsTrap).
-  isTrapFamily?: IsTrapFamily
+  isTrapFamily?: IsTrapFamily,
+  // Which mods are registered — gates authored owner-tagged (SideSection["gate"].ownerMod) drop
+  // when their mod isn't in here, before Phase 4's worklist can hard-fail on a lock nothing claims
+  // (placeFragments.ts's winnability guard, for a gating mod toggled off with its gate still
+  // authored). Absent ⇒ drop nothing, so a caller that doesn't pass this (existing callers, specs)
+  // is unaffected; scripts/generateWorld.ts injects the real registered set.
+  registeredModIds?: ReadonlySet<string>
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -295,7 +302,19 @@ export const buildConfigs = (
   // Phase 3: Build tomb site configs
   const tombConfigs = buildTombConfigs(resolveTombTreasure)
 
-  const allConfigs = { ...pyramidConfigs, ...tombConfigs }
+  const builtConfigs = { ...pyramidConfigs, ...tombConfigs }
+
+  // Phase 3.1: drop mod-owned authoring whose mod isn't registered, before Phase 4's worklist can
+  // hard-fail on a lock nothing claims (placeFragments.ts's winnability guard). No registered set ⇒
+  // drop nothing.
+  const allConfigs: Record<string, SiteConfig[]> = registeredModIds
+    ? Object.fromEntries(
+        Object.entries(builtConfigs).map(([journeyId, pyramids]) => [
+          journeyId,
+          pyramids.map(floors => floors.map(floor => dropUnownedAuthoring(floor, registeredModIds))),
+        ])
+      )
+    : builtConfigs
 
   // Phase 3.5: Resolve authored encounter ROLES (family tags) → concrete families, baked in.
   // Runs before slot collection (rewardPriority derives from the chosen family) and serialization.

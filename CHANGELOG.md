@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- A junior pyramid's fork now opens the branch matching which shrine you route the beam to, and walking back into the room opens the other one too.
+
 ### Fixed
 
 - Fixed walking when going to a deeper floor.

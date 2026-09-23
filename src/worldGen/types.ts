@@ -20,7 +20,19 @@ export type SubSection = {
   pathPuzzles: number
   difficulty: Difficulty
   end: "treasure" | "staircase" | { stairId: string }
-  gate?: { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string }
+  gate?:
+    | {
+        type: "floor-key"
+        color?: string
+        /** The key this gate wants, named by the author. Naming one means the AUTHOR owns where the key
+         * comes from — a family that mints it, not a chest — so the floor grows no host section for it.
+         * Opaque to core: it is a string, and nothing here knows what minted it. */
+        keyId?: string
+        /** Which mod mints that key. A gate naming one drops when that mod is not registered, so the
+         * branch it guarded is simply open. Core compares it against the registered ids and names no mod. */
+        ownerMod?: string
+      }
+    | { type: "tomb-key"; wardKeyId: string }
   endReward?: TreasureReward
   rewards?: (TreasureReward | undefined)[]
   hidden?: boolean

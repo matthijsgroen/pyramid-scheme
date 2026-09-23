@@ -12,13 +12,22 @@ import { hieroglyphMod } from "./hieroglyph"
 import { trapMod } from "./trap"
 import { shopMod } from "./shop"
 import { tombTreasureMod } from "./tombTreasure"
+import { witnessDoorMod } from "./witnessDoor"
 
 // The registered mods, in one list. A mod is "on" iff it appears here; toggle a mod off (for a
 // demo, or while proving a boundary is real) by removing its entry. See docs/mods/TARGET.md —
 // toggle-off is the acceptance gate: with a mod removed, `yarn generate-world` + the app must
 // still build, just without that mechanic. src/worldGen/ can't import this file directly
 // (core is mod-agnostic); scripts/generateWorld.ts injects the aggregated contributions.
-export const REGISTERED_MODS: ModDescriptor[] = [puzzleMod, mosaicMod, hieroglyphMod, trapMod, shopMod, tombTreasureMod]
+export const REGISTERED_MODS: ModDescriptor[] = [
+  puzzleMod,
+  mosaicMod,
+  hieroglyphMod,
+  trapMod,
+  shopMod,
+  tombTreasureMod,
+  witnessDoorMod,
+]
 
 // Every capped-filler currency any registered mod contributes, flattened for the world-gen
 // phase-3 placement pass. Empty for a mod set that registers none.
@@ -85,3 +94,7 @@ export const MOD_RESERVED_TREASURE_INDICES: ((tombId: string) => number[]) | und
 // Is a mod enabled? The single toggle point the app side consults (Base.tsx, registerCurrencies)
 // so a mod's screen + currency-meta drop out together when it leaves REGISTERED_MODS.
 export const isModEnabled = (id: string): boolean => REGISTERED_MODS.some(m => m.id === id)
+
+// The registered ids as a set, for buildConfigs' mod-owned-authoring drop (docs/mods/floor-topology-design.md).
+// Injected into buildConfigs by scripts/generateWorld.ts.
+export const REGISTERED_MOD_IDS: ReadonlySet<string> = new Set(REGISTERED_MODS.map(m => m.id))

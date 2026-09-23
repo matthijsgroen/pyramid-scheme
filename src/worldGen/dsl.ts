@@ -35,9 +35,14 @@ export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyph" | "junk"
 // Structured reward — carries specific IDs; string form is a shorthand resolved by tier context
 export type RewardSpec = RewardHint | { type: "mapPiece"; tombId: string } | { type: "tombKey"; keyId: string }
-// Structured gate — tomb-key references a perk by tomb journey ID + zero-based index
+// Structured gate — tomb-key references a perk by tomb journey ID + zero-based index. A floor-key's
+// `keyId`/`ownerMod` name an authored key instead of the floor's own rotation — see
+// worldGen/types.ts's SubSection["gate"] for what naming one changes.
 export type GateSpec =
-  GateType | null | { type: "tomb-key"; tombId: string; index: number } | { type: "floor-key"; color?: KeyColor }
+  | GateType
+  | null
+  | { type: "tomb-key"; tombId: string; index: number }
+  | { type: "floor-key"; color?: KeyColor; keyId?: string; ownerMod?: string }
 
 export type Theme = string // e.g. "desert", "underwater" — visual hint to renderer
 

@@ -12,6 +12,8 @@ import { useClearPuzzleState } from "@/mods/core/app/puzzleState"
 type EncounterArgs = {
   journeys: JourneyAPI
   journeyId: string
+  /** Which level of the journey this is (1-based) — see FamilyContext.levelNr. */
+  levelNr: number
   currentFloor: number
   difficulty: Difficulty
   grid: FloorGrid | null
@@ -40,6 +42,7 @@ export type Encounter = {
 export const useEncounter = ({
   journeys,
   journeyId,
+  levelNr,
   currentFloor,
   difficulty,
   grid,
@@ -65,6 +68,7 @@ export const useEncounter = ({
     const edgeId = encodeEdge(currentFloor, row, col)
     return {
       journeyId,
+      levelNr,
       edgeId,
       // What a family files this room's state under. The coordinate above says where the room is drawn
       // right now; this says which room it IS, and keeps saying it after the floor is carved again.
@@ -88,7 +92,7 @@ export const useEncounter = ({
       keyColor: cell?.type === "room" ? cell.keyColor : undefined,
       ownedKeys,
     }
-  }, [active, grid, currentFloor, journeyId, difficulty, ownedKeys])
+  }, [active, grid, currentFloor, journeyId, levelNr, difficulty, ownedKeys])
 
   const puzzle = useMemo(() => {
     if (!family || !ctx) return null
@@ -135,10 +139,15 @@ export const useEncounter = ({
       const sectionHash = cell && cell.type !== "empty" ? (cell.sectionHash ?? "") : ""
       const address = (grid && cellAddress(grid, currentFloor, row, col)) || edgeId
       journeys.markCellExplored(sectionHash, edgeId, address)
-      // A resolved room is never reopened, so its moves have nothing left to say.
+      // The board is finished, so the moves that made it have nothing left to say — and a room its
+      // family keeps re-enterable (FamilyMeta.reEnterable) gets a fresh board on the next visit rather
+      // than the solved one it was left on.
       clearPuzzleState()
       setActive(null)
 
+      // Loot is what the room held, not what solving it pays — a room walked back into has already
+      // handed it over, and was marked explored on the visit that did.
+      if (cell?.type === "room" && cell.state === "completed") return
       const reward = cell?.type === "room" ? cell.reward : undefined
       if (!reward) return
       // A key-host chest wears the colour(s) of the doors its key opens; carry that into the popup so

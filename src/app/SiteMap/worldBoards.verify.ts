@@ -35,6 +35,7 @@ describe("every room in the world builds the board its tap asks for", () => {
             // The context useEncounter hands a family, built from the same cell.
             family.generate(hashString(floor.journeyId + edgeId), {
               journeyId: floor.journeyId,
+              levelNr: floor.levelIndex + 1,
               edgeId,
               address: cellAddress(result.grid, floor.floorIndex, r, c) ?? edgeId,
               sectionHash: cell.sectionHash ?? "",

@@ -11,7 +11,7 @@ import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended"
 import tailwind from "eslint-plugin-tailwindcss"
 import { join } from "node:path"
 
-const MODS = ["puzzle", "mosaic", "hieroglyph", "trap", "shop", "tombTreasure"]
+const MODS = ["puzzle", "mosaic", "hieroglyph", "trap", "shop", "tombTreasure", "witnessDoor"]
 
 export default tseslint.config(
   [

@@ -41,6 +41,7 @@ import {
   MOD_TOMB_TREASURE_RESOLVER,
   MOD_SHOP_STOCK,
   MOD_RESERVED_TREASURE_INDICES,
+  REGISTERED_MOD_IDS,
 } from "../src/mods/registeredMods"
 
 // The share of loot-eligible slots deliberately left empty so found loot stays meaningful (no
@@ -77,7 +78,8 @@ const configs = buildConfigs(
   familyCapacityFor,
   MOD_SHOP_STOCK,
   MOD_RESERVED_TREASURE_INDICES,
-  familyIsTrap
+  familyIsTrap,
+  REGISTERED_MOD_IDS
 )
 // Hieroglyph finalize (mod-owned, §D): stamp each fragment's pieceIndex — hieroglyph-specific
 // logic the core serializer no longer owns. Every symbol's full required count is guaranteed

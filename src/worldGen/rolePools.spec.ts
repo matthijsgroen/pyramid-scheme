@@ -23,8 +23,18 @@ import type { SiteConfig, SubSection } from "@/game/siteTypes"
  */
 const MIN_POOL = 4
 
-/** Roles every board can serve — not a themed pool, so a thin one is not a variety problem. */
-const STRUCTURAL_ROLES = new Set(["puzzle", "trap", "treasure", "gate", "shop", "capstone", "tomb-puzzle"])
+/** Roles every board can serve — not a themed pool, so a thin one is not a variety problem.
+ * `witnessDoor` joins `capstone` here: a single-family role authored by id, never a variety pool. */
+const STRUCTURAL_ROLES = new Set([
+  "puzzle",
+  "trap",
+  "treasure",
+  "gate",
+  "shop",
+  "capstone",
+  "tomb-puzzle",
+  "witnessDoor",
+])
 
 const sectionsOf = (section: SubSection & { sideSections?: SubSection[] }): SubSection[] => [
   section,

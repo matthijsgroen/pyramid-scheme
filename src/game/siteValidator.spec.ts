@@ -100,6 +100,28 @@ describe(validateSite, () => {
     }
   })
 
+  it("keyBeforeGate: passes an authored gate with no on-floor key chest", () => {
+    // entrance -e- gate(requiredKeyId="witness:east", keyIsAuthored) -e- exit, no chest anywhere
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [
+          0,
+          1,
+          room("gate", ["w", "e"], {
+            requiredKeyId: "witness:east",
+            gateVariant: "floor-key",
+            keyIsAuthored: true,
+          }),
+        ],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(validateSite(grid)).toEqual({ valid: true })
+  })
+
   it("keyBeforeGate: fails when key node is behind the gate it unlocks", () => {
     // entrance -e- gate(requiredKeyId="key-chest") -e- key-chest(tombKey keyId="key-chest") -e- exit
     const grid = buildGrid(
@@ -298,6 +320,66 @@ describe(reachableFrom, () => {
     expect(reachableFrom(grid, [0, 0], new Set(["k1"])).has("0,2")).toBe(false)
     expect(reachableFrom(grid, [0, 0], new Set(["hieroglyph:a"])).has("0,2")).toBe(false)
     expect(reachableFrom(grid, [0, 0], new Set(["k1", "hieroglyph:a"])).has("0,2")).toBe(true)
+  })
+
+  // An authored key (RoomCell.keyIsAuthored) is minted by a room a player solves, not placed by
+  // the world-gen loot solver — reporting it in blockedRequirements would ask placeFragments'
+  // winnability guard to prove a fact only gameplay resolves (placeFragments.ts's final check
+  // throws on any non-empty discoveredLocks). These two cases pin both halves of the fix:
+  // traversal still treats the gate as a real, unopened door either way, but only an unauthored
+  // one is reported as a lock the placement worklist needs to satisfy.
+  it("an authored gate blocks the walk but is never reported as a discovered lock", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [
+          0,
+          1,
+          room("gate", ["w", "e"], { requiredKeyId: "witness:east", gateVariant: "floor-key", keyIsAuthored: true }),
+        ],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const blockedRequirements = new Set<string>()
+    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    expect(reachable.has("0,2")).toBe(false)
+    expect(blockedRequirements.size).toBe(0)
+  })
+
+  it("the same gate without keyIsAuthored blocks the walk AND is reported as a discovered lock", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "witness:east", gateVariant: "floor-key" })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const blockedRequirements = new Set<string>()
+    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    expect(reachable.has("0,2")).toBe(false)
+    expect(blockedRequirements).toEqual(new Set(["witness:east"]))
+  })
+
+  // The plural form is the same rule. No family asks for several authored keys at once today; the one
+  // that does must not have to rediscover why the singular branch skips the report.
+  it("an authored room asking for SEVERAL keys is reported no differently", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyIds: ["witness:east", "witness:north"], keyIsAuthored: true })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const blockedRequirements = new Set<string>()
+    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    expect(reachable.has("0,2")).toBe(false)
+    expect(blockedRequirements.size).toBe(0)
   })
 })
 

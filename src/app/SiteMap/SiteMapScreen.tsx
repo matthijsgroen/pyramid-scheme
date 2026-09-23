@@ -1,6 +1,7 @@
-import { useCallback, useMemo } from "react"
+import { useCallback, useMemo, useSyncExternalStore } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
+import { ownedKeysFromSources, ownedKeysRevision, subscribeOwnedKeys } from "@/app/families/ownedKeySources"
 import { floorKeyRing } from "@/game/floorKeys"
 import { useCorridorDetection } from "@/app/SiteMap/useCorridorDetection"
 import { useFoundCorridors } from "@/app/SiteMap/useFoundCorridors"
@@ -121,10 +122,21 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   // Keys the player already holds for THIS floor's gates: this floor's own completed
   // tomb-key treasures, union'd with ward keys owned entering the site (progression's
-  // global tombKeyIds, above). Gating is soft, so this union is purely a "is this gate
-  // satisfied" read, for the gate family's own precondition and the map's locked/unlocked
-  // gate coloring.
-  const ownedKeys = useMemo(() => (grid ? new Set([...getOwnedKeys(grid), ...wardKeys]) : wardKeys), [grid, wardKeys])
+  // global tombKeyIds, above) and any key a registered family minted on this floor. Gating
+  // is soft, so this union is purely a "is this gate satisfied" read, for the gate family's
+  // own precondition and the map's locked/unlocked gate coloring.
+  // A source answers out of its own mod's state, which moves while this screen stays mounted — a key
+  // minted on this very floor, or the mod's stored state landing. The revision is what says so.
+  const keysRevision = useSyncExternalStore(subscribeOwnedKeys, ownedKeysRevision)
+  const mintedKeys = useMemo(
+    () => ownedKeysFromSources({ journeyId, levelNr: levelIndex + 1, floorIndex: currentFloor }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the revision is the registry's own "ask again"
+    [journeyId, levelIndex, currentFloor, keysRevision]
+  )
+  const ownedKeys = useMemo(
+    () => new Set([...(grid ? getOwnedKeys(grid) : []), ...wardKeys, ...mintedKeys]),
+    [grid, wardKeys, mintedKeys]
+  )
 
   // What the HUD key ring shows: this floor's coloured keys in hand, and the colours of doors the
   // player has already seen here and can't open yet (fogged ones stay secret — see floorKeys.ts).
@@ -152,6 +164,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const encounter = useEncounter({
     journeys,
     journeyId,
+    levelNr: levelIndex + 1,
     currentFloor,
     difficulty: floorConfig.difficulty,
     grid,

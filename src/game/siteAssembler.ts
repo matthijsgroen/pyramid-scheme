@@ -437,6 +437,11 @@ export type AssembleFloorKeyRequirements = {
   resolveBoardIndex?: ResolveBoardIndex
 }
 
+// A floor-key gate whose keyId is authored gets its key from wherever the author names (a
+// family, a room reward) rather than this floor's own rotation — so it needs no host chest
+// grown for it and takes no part in the key-host chain below.
+const needsFloorKeyHost = (s: SubSection): boolean => s.gate?.type === "floor-key" && !s.gate.keyId
+
 export const assembleFloor = (
   siteId: string,
   config: FloorConfig,
@@ -470,7 +475,7 @@ export const assembleFloor = (
   // lacks a gate — see docs/game-design/keys-and-locks-solver.md, "Slots have capacity").
   // Gate/ungated checks use only visible sections so hidden sections don't satisfy key-holder requirements.
   const visibleSections = config.sideSections.filter(s => !s.hidden)
-  const hasGatedFloorKey = visibleSections.some(s => s.gate?.type === "floor-key")
+  const hasGatedFloorKey = visibleSections.some(needsFloorKeyHost)
   const hasFreeUngatedHost = visibleSections.some(s => !s.gate && !s.endReward)
 
   // Hidden sections are included in maze generation (tagged hidden:true on cells) but masked by useAssembledFloor
@@ -482,7 +487,7 @@ export const assembleFloor = (
 
   const hiddenSectionIdxs = new Set(allSections.map((s, i) => (s.hidden ? i : -1)).filter(i => i >= 0))
 
-  const gatedFloorKeyIdxs = sideSections.map((_, i) => i).filter(i => sideSections[i].gate?.type === "floor-key")
+  const gatedFloorKeyIdxs = sideSections.map((_, i) => i).filter(i => needsFloorKeyHost(sideSections[i]))
   const ungatedIdxs = sideSections.map((_, i) => i).filter(i => !sideSections[i].gate && !sideSections[i].endReward)
 
   // The auto-injection above guarantees a free host whenever one's needed — this is a
@@ -891,12 +896,12 @@ export const assembleFloor = (
       let subSects = parentSection.sideSections
       // Same "free host, not just ungated" reasoning as the top-level side sections above —
       // a sub-section already carrying its own endReward isn't free capacity for a key.
-      const anySubGatedFloorKey = subSects.some(s => s.gate?.type === "floor-key")
+      const anySubGatedFloorKey = subSects.some(needsFloorKeyHost)
       const anySubFreeUngated = subSects.some(s => !s.gate && !s.endReward)
       if (anySubGatedFloorKey && !anySubFreeUngated)
         subSects = [...subSects, { pathPuzzles: 0, difficulty: "starter" as const, end: "treasure" as const }]
 
-      const subGatedIdxs = subSects.map((_, i) => i).filter(i => subSects[i].gate?.type === "floor-key")
+      const subGatedIdxs = subSects.map((_, i) => i).filter(i => needsFloorKeyHost(subSects[i]))
       const subUngatedIdxs = subSects.map((_, i) => i).filter(i => !subSects[i].gate && !subSects[i].endReward)
 
       // Same reasoning as the top-level check above — this is config-derived, not
@@ -1019,13 +1024,17 @@ export const assembleFloor = (
       const subKeyHostIdxs = new Set(subKeyHostColorsMap.keys())
 
       for (const { idx, cells, attachedAt } of placedSubs) {
+        const subGate = subSects[idx].gate
+        // An authored keyId is used verbatim; only an unauthored gate takes the id the
+        // key-host distribution above assigned it.
+        const authoredSubKeyId = subGate?.type === "floor-key" ? subGate.keyId : undefined
         subSectionGroups.push({
           subSection: subSects[idx],
           cells,
           attachedAt,
           parentSectionIdx: group.sectionIdx,
           subSectionIdx: idx,
-          keyNodeId: subKeyNodeIdMap.get(idx),
+          keyNodeId: authoredSubKeyId ?? subKeyNodeIdMap.get(idx),
           isKeyHost: subKeyHostIdxs.has(idx),
           keyHostColor: subKeyHostColorsMap.get(idx)?.[0],
           keyHostColors: subKeyHostColorsMap.get(idx),
@@ -1302,7 +1311,10 @@ export const assembleFloor = (
       const section = sideSections[sectionIdx]
       const isFloorKeyGate = section.gate?.type === "floor-key"
       const isTombKeyGate = section.gate?.type === "tomb-key"
-      const keyNodeId = isFloorKeyGate ? keyNodeIdMap.get(sectionIdx) : undefined
+      // An authored keyId is used verbatim; only an unauthored gate looks up the id the
+      // key-host chain above assigned it.
+      const authoredKeyId = isFloorKeyGate ? (section.gate as { keyId?: string }).keyId : undefined
+      const keyNodeId = isFloorKeyGate ? (authoredKeyId ?? keyNodeIdMap.get(sectionIdx)) : undefined
 
       let contentStart = 0
 
@@ -1316,7 +1328,16 @@ export const assembleFloor = (
           tags: keyGate.tags,
           requiredKeyId: keyNodeId,
           gateVariant: "floor-key",
-          keyColor: floorKeyGate.color ?? "blue",
+          // The colour is the sign saying which CHEST on this floor holds the key. An authored key is
+          // minted by a room instead and grows no chest, so defaulting one here would put the door in the
+          // HUD key ring (src/game/floorKeys.ts) pointing at a chest that does not exist. An author who
+          // names a colour anyway still gets it.
+          ...(floorKeyGate.color
+            ? { keyColor: floorKeyGate.color }
+            : authoredKeyId
+              ? {}
+              : { keyColor: "blue" as const }),
+          ...(authoredKeyId ? { keyIsAuthored: true } : {}),
         })
         contentStart = 1
       } else if (isTombKeyGate) {
@@ -1414,6 +1435,7 @@ export const assembleFloor = (
     } of subSectionGroups) {
       const isFloorKeyGate = subSection.gate?.type === "floor-key"
       const isTombKeyGate = subSection.gate?.type === "tomb-key"
+      const authoredKeyId = isFloorKeyGate ? (subSection.gate as { keyId?: string }).keyId : undefined
       let contentStart = 0
 
       if (isFloorKeyGate && keyNodeId) {
@@ -1425,7 +1447,16 @@ export const assembleFloor = (
           tags: keyGate.tags,
           requiredKeyId: keyNodeId,
           gateVariant: "floor-key",
-          keyColor: floorKeyGate.color ?? "blue",
+          // The colour is the sign saying which CHEST on this floor holds the key. An authored key is
+          // minted by a room instead and grows no chest, so defaulting one here would put the door in the
+          // HUD key ring (src/game/floorKeys.ts) pointing at a chest that does not exist. An author who
+          // names a colour anyway still gets it.
+          ...(floorKeyGate.color
+            ? { keyColor: floorKeyGate.color }
+            : authoredKeyId
+              ? {}
+              : { keyColor: "blue" as const }),
+          ...(authoredKeyId ? { keyIsAuthored: true } : {}),
         })
         contentStart = 1
       } else if (isTombKeyGate) {

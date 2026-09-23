@@ -17,6 +17,7 @@ import {
   MOD_SHOP_STOCK,
 } from "../mods/registeredMods"
 import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
+import { witnessKeyId, witnessSite } from "../mods/witnessDoor/game/witnessKeys"
 import {
   resolveKeyRequirements,
   familyPriorityFor,
@@ -109,6 +110,24 @@ describe("buildConfigs golden guard", () => {
     expect(second).toEqual(first)
   }, 90_000)
 })
+
+it("authors a witness door whose two authored gate ids match the mod's own witnessKeyId, catching a hand-copied typo", () => {
+  const site = buildRealConfigs().junior_2[1] // junior_2 pyramid 2 (levelNr 2)
+  const floor = site[0] // floor 0
+
+  expect(floor.encountersByIndex?.[0]).toBe("witnessDoor")
+
+  const witnessSections = floor.sideSections.filter(
+    (s): s is typeof s & { gate: { type: "floor-key"; keyId: string; ownerMod?: string } } =>
+      s.gate?.type === "floor-key" && typeof s.gate.keyId === "string" && s.gate.keyId.startsWith("witness:")
+  )
+  const expectedSite = witnessSite("junior_2", 2, 0)
+  expect(witnessSections.map(s => s.gate.keyId)).toEqual([
+    witnessKeyId(expectedSite, "east"),
+    witnessKeyId(expectedSite, "north"),
+  ])
+  expect(witnessSections.map(s => s.gate.ownerMod)).toEqual(["witnessDoor", "witnessDoor"])
+}, 90_000)
 
 describe("tomb floor linking — ward-path shortcuts", () => {
   // Built in beforeAll (not the describe body) so it runs AFTER the top-level beforeAll sets

@@ -4,7 +4,6 @@ import {
   cellKey,
   DIR,
   DIRECTIONS,
-  directionStep,
   eachConfig,
   insideGrid,
   isLit,
@@ -25,16 +24,9 @@ import {
   type MirrorAngle,
   type MovablePiece,
 } from "./beam"
+import { perpendicular } from "@/mods/core/game/beam/physics"
 
-/** The shortest a route leg may be: two keeps consecutive bend mirrors from touching, corners included. */
-export const MIN_LEG = 2
-
-/** The mirror that turns a beam from `enter` to `exit`, where one exists. */
-export const angleFor = (enter: Direction, exit: Direction): MirrorAngle | undefined => {
-  if (exit === enter || exit === opposite(enter)) return undefined
-  const angle = mod8(enter + exit)
-  return angle === 0 || angle === 4 ? undefined : angle
-}
+export { MIN_LEG, angleFor, axisOf, perpendicular, stepsToEdge } from "@/mods/core/game/beam/physics"
 
 /** The stop set for a cut mirror, read off the half-step angle the route bends at. */
 export const cutStops = (angle: MirrorAngle): readonly MirrorAngle[] | undefined => {
@@ -73,19 +65,6 @@ export const halfStepTurns = (direction: Direction): Direction[] =>
 
 export const runsDiagonally = (direction: Direction): boolean => direction % 2 === 1
 
-/** The two ways a track may run across a beam — the quarter turns either side of it. */
-export const perpendicular = (direction: Direction): Direction[] => {
-  const axis = direction % 4
-  return [mod8(axis + 2), mod8(axis + 6)]
-}
-
-export const stepsToEdge = (size: number, at: CellRef, direction: Direction): number => {
-  const step = directionStep(direction)
-  const rows = step.row < 0 ? at.row : step.row > 0 ? size - 1 - at.row : Number.POSITIVE_INFINITY
-  const cols = step.col < 0 ? at.col : step.col > 0 ? size - 1 - at.col : Number.POSITIVE_INFINITY
-  return Math.min(rows, cols)
-}
-
 export type RouteCell = { at: CellRef; enter: Direction; exit?: Direction }
 
 export type Route = {
@@ -106,9 +85,6 @@ export const pickSun = (size: number, random: () => number): { at: CellRef; faci
   if (side === 2) return { at: { row: along, col: 0 }, facing: DIR.right }
   return { at: { row: along, col: size - 1 }, facing: DIR.left }
 }
-
-/** Which of the four lines a beam runs along — the row, the column, and the two diagonals. */
-export const axisOf = (direction: Direction): number => direction % 4
 
 /** Every contiguous run of `length` cells that crosses the beam and contains `at` — the tracks on offer. */
 export const trackRuns = (at: CellRef, across: Direction, length: number): CellRef[][] => {

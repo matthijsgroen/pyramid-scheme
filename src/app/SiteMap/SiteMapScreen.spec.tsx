@@ -4,6 +4,7 @@ import { describe, expect, it, vi, beforeEach, afterEach } from "vitest"
 import type { FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
 import { CELL, cellCenter } from "./mapScale"
 import { clearGameData } from "@/support/useGameStorage"
+import { ownedKeysChanged, registerOwnedKeySource, __resetOwnedKeySources } from "@/app/families/ownedKeySources"
 
 // Keys are enough to tell the buttons apart; none of these assertions read copy. Interpolated data
 // is appended so a label built from a nested lookup (the key ring's "<colour> key — in hand") still
@@ -164,6 +165,33 @@ describe(SiteMapScreen, () => {
 
       expect(getByTitle(/keys\.heldTitle.*keys\.blue/)).toBeTruthy()
       expect(getByTitle(/keys\.neededTitle.*keys\.red/)).toBeTruthy()
+    })
+
+    /**
+     * The one thing a registry of plain functions cannot do by itself: say that its answer has moved.
+     *
+     * A key minted on the floor the player is STANDING ON — which is the only floor a family-minted key is
+     * ever used — changes nothing this screen renders from, so the union has to be re-read on the registry's
+     * word rather than on a prop. Without that, the door stays shut until the site is left and re-entered.
+     */
+    it("opens the door it belongs to while the floor stays open, with no prop changing", async () => {
+      const minted = new Set<string>()
+      registerOwnedKeySource("spec", () => minted)
+      try {
+        grid = gridOf([keyChest, redDoor])
+        const { queryByTitle } = await renderScreen()
+        expect(queryByTitle(/keys\.neededTitle.*keys\.red/)).not.toBeNull()
+
+        minted.add("test-site-0-9")
+        await act(async () => {
+          ownedKeysChanged()
+        })
+
+        expect(queryByTitle(/keys\.neededTitle.*keys\.red/)).toBeNull()
+      } finally {
+        // A registry singleton outlives the test; a source left behind would satisfy the next one's door.
+        __resetOwnedKeySources()
+      }
     })
 
     it("shows nothing on a floor with no keys and no doors", async () => {

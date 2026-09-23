@@ -49,11 +49,18 @@ export const reachableFrom = (
       // tableau's several, one per hieroglyph it needs complete), not just rooms tagged
       // "gate".
       if (ncell.type === "room" && ncell.requiredKeyId && !ownedKeys.has(ncell.requiredKeyId)) {
-        blockedRequirements?.add(ncell.requiredKeyId)
+        // An authored key (RoomCell.keyIsAuthored) is minted by a room a player solves, never
+        // placed by the world-gen loot solver — reporting it as a discovered lock would ask
+        // placeFragments' winnability guard to prove a fact only gameplay resolves. The door
+        // still blocks this walk (a real, unopened gate); it just isn't this solver's problem.
+        if (!ncell.keyIsAuthored) blockedRequirements?.add(ncell.requiredKeyId)
         continue
       }
       if (ncell.type === "room" && ncell.requiredKeyIds?.some(id => !ownedKeys.has(id))) {
-        for (const id of ncell.requiredKeyIds) if (!ownedKeys.has(id)) blockedRequirements?.add(id)
+        // Authored keys are none of this solver's business here either — the single-key branch above
+        // says why. No family asks for several of them today; the day one does, it reads the same.
+        if (!ncell.keyIsAuthored)
+          for (const id of ncell.requiredKeyIds) if (!ownedKeys.has(id)) blockedRequirements?.add(id)
         continue
       }
 
@@ -111,13 +118,14 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
 
   const { keys: collectedKeys } = collectReachableKeys(grid, grid.entrancePos)
 
-  // All floor-key gates must have a collectible key
+  // All floor-key gates must have a collectible key — except an authored one, whose key comes
+  // from elsewhere (RoomCell.keyIsAuthored) rather than a chest this floor grows.
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
       if (cell.type !== "room") continue
 
-      if (cell.requiredKeyId && cell.gateVariant === "floor-key") {
+      if (cell.requiredKeyId && cell.gateVariant === "floor-key" && !cell.keyIsAuthored) {
         if (!collectedKeys.has(cell.requiredKeyId)) {
           const gatePos: Pos = [r, c]
           let keyPos: Pos = gatePos
