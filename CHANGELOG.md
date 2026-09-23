@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed pyramids pulsing on the map with nothing left in them.
 - The way out of a site now counts as explored, so the corridor to it stays lit.
 - Pyramid floors now lay out the same on every browser, so a save carried between devices lands on the maze it was written against.
+- Fixed a black screen when starting an expedition right after the game loads.
 
 ### Changed
 
