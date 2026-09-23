@@ -214,6 +214,38 @@ the section is enterable by someone who never discovered it, and hiding it bough
 The same reasoning stops a switch gating a hidden branch: a gate the player can see is a statement
 that something is there. A hidden section is a statement that nothing is, until they find otherwise.
 
+### What holds each rule
+
+A rule with no check and no marker is indistinguishable from a rule that is enforced, which is how a
+collection became uncompletable while every check stayed green. So each rule here names what holds
+it, or says plainly that nothing does.
+
+| Rule                                                            | Held by                                                                    |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| A floor-key gate has a collectible key                          | `keyAfterGate`                                                             |
+| A fork's branches are not all bland                             | `allBlandFork`                                                             |
+| Map pieces present, unique, reachable behind their seal         | the three `mapPiece*` reasons                                              |
+| Mosaic pieces present, unique, reachable                        | the three `mosaic*` reasons                                                |
+| A section has a name a save can file it under                   | `unusableSectionAddress`                                                   |
+| No two rooms of a section answer to one slot                    | `duplicateCellSlot`                                                        |
+| A switch found two ways left to close                           | `switchForkWithoutGates`                                                   |
+| Switch key stems are unique across floors                       | `validateSwitchForkKeys`                                                   |
+| Rewards counted, no chest left empty, the shop economy balances | `validateRewardCounts`, `findEmptyChests`, the shop mod's `worldValidator` |
+| No boundary is gated twice                                      | **nothing yet**                                                            |
+| A switch's gates are reachable only through the switch          | **nothing yet**                                                            |
+| A switch's family is re-enterable                               | **nothing yet**                                                            |
+| A switch never gates a hidden branch                            | **nothing yet**                                                            |
+| A room's exits do not outlive its directions through masking    | **nothing yet**                                                            |
+| A hidden way out stays one-way under any tool                   | **nothing yet**, and no tool exists to break it                            |
+| An authored gate's key is minted by whoever owns it             | **nothing yet**                                                            |
+| Every collection's target count is reachable                    | **nothing yet**                                                            |
+
+The last two are the ones that bite hardest and neither is floor-shaped. A misspelled key id leaves
+its branch unreachable for ever and no check notices, because the validator skips authored keys and
+the solver only records a lock it discovered. And reachability answers "can this be got to", never
+"is there enough of it" — which is the whole distance between a green build and a game that can be
+finished.
+
 ### Per-visit state is the mod's problem
 
 Leaving is always available, and re-entry returns the player to the position they left at. So

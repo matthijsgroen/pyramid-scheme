@@ -159,17 +159,31 @@ git commit -m "feat(world): gate a switch fork's own ways out"
 
 **Files:**
 
-- Modify: `src/game/siteValidator.ts`
-- Test: `src/game/siteValidator.spec.ts`
+- Modify: `src/game/siteValidator.ts`, `src/game/siteAssembler.ts` (rule 4, placement-side), `src/app/SiteMap/useAssembledFloor.ts` (rule 5, masking)
+- Test: `src/game/siteValidator.spec.ts`, `src/game/siteAssembler.spec.ts`, `src/app/SiteMap/useAssembledFloor.spec.ts`
 
-Two checks, both of which the spec states and neither of which is enforced today:
+Five rules the spec states and nothing enforces. The design doc's "What holds each rule" table is the
+register; these are the floor-shaped entries on it, and this task is what lets them stop saying
+"nothing yet".
 
 1. **No boundary is gated twice.** Two gates on one room-to-corridor boundary is the readability failure the exclusive-claim rule exists to prevent.
 2. **A switch's gates are reachable only through the switch.** The opener must come before the blocker; at a fork that is true by construction, and the check is what keeps it true when something else moves.
+3. **A switch's family is re-enterable.** Not a preference. Keys accumulate and the cost of a choice is a walk, so a switch whose family cannot be re-entered strands a player who spent their choice on a side branch behind the gate on the main path onward. `FamilyMeta.reEnterable` already exists; nothing requires a switch to have it.
+4. **A switch never gates a hidden branch.** A gate the player can see says something is there; a hidden section says nothing is, until they find otherwise. Placement-side, so the spoiler never exists rather than being cleaned up afterwards.
+5. **A room's exits do not outlive its directions through masking.** `maskHiddenCells` prunes `dirs` and carries `exits` through untouched, so even an ungated exit toward a hidden branch has the board drawing a door the player has not found. Measured: the switch gated the hidden section's first node in 40 of 40 seeds before rule 4 existed.
+
+Rules 4 and 5 are two halves of one guarantee — one stops it being chosen, the other stops it being
+drawn — and both are needed, because a floor can hide a section that was already gated.
+
+**Not in this task**, because neither is floor-shaped and both want the whole world in view: that an
+authored gate's key is actually minted by whoever owns it, and that every collection's target count is
+reachable. They get their own slice, and it comes next rather than last — the second is what a person
+counting by hand had to catch once already.
 
 - [ ] **Step 1: Write the failing tests**
 
-One case per check, built by hand rather than generated, so each fails for its own reason.
+One case per rule, built by hand rather than generated, so each fails for its own reason and a single
+mistake cannot make several of them pass together.
 
 - [ ] **Step 2: Run them and watch them fail**
 
