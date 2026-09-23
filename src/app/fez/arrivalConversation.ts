@@ -9,7 +9,12 @@ export type SpokenLine = { speaker: Speaker; key: string }
  * Declared here rather than discovered from the translations because a beat is a fact about the
  * script, not about the language in front of the player — an untranslated journey still has one.
  */
-export const JOURNEYS_WITH_ARRIVAL: ReadonlySet<string> = new Set<string>([])
+export const JOURNEYS_WITH_ARRIVAL: ReadonlySet<string> = new Set<string>([
+  "starter_1",
+  "starter_2",
+  "starter_3",
+  "starter_4",
+])
 
 /** Whether a translation key has a line behind it. */
 export type HasLine = (key: string) => boolean
@@ -32,9 +37,10 @@ export const arrivalConversationId = (journeyId: string): string =>
 export const arrivalLines = (journeyId: string, hasLine: HasLine): SpokenLine[] => {
   const lines: SpokenLine[] = []
   for (let line = 1; ; line++) {
-    const spoken = SPEAKERS.map(speaker => ({ speaker, key: `arrival.${journeyId}.${line}.${speaker}` })).find(
-      candidate => hasLine(candidate.key)
-    )
+    const spoken = SPEAKERS.map(speaker => ({
+      speaker,
+      key: `arrival.${journeyId}.${line}.${speaker}`,
+    })).find(candidate => hasLine(candidate.key))
     if (!spoken) return lines
     lines.push(spoken)
   }

@@ -72,5 +72,40 @@
   "shopFirstVisit2": "Alles op deze toonbank heb ik ergens vandaan gedragen. Die daar komt van twee graven terug.",
 
   "shopArrival": "Ah, mijn kraam! Even uitstallen wat ik onderweg heb opgepikt.",
-  "shopArrival2": "Zeldzame vondsten kosten het meest, maar ik heb ook alledaagse spullen — en ik betaal je voor snuisterijen die je meedraagt."
+  "shopArrival2": "Zeldzame vondsten kosten het meest, maar ik heb ook alledaagse spullen — en ik betaal je voor snuisterijen die je meedraagt.",
+  "arrival": {
+    "starter_1": {
+      "1": { "fez": "Er staat schrift op. Onderaan, waar het zand steeds wegwaait." },
+      "2": { "explorer": "Kun jij het lezen?" },
+      "3": { "fez": "Nee. Jij?" },
+      "4": { "explorer": "Nee." },
+      "5": { "fez": "Iemand kon het ooit." },
+      "6": { "fez": "De sokkel was beschilderd, weet je. Helemaal. Blauw en goud, tot ongeveer hier." },
+      "7": { "explorer": "Hoe weet jij dat?" },
+      "8": { "fez": "…Dat heeft iemand me verteld. Kom mee." }
+    },
+    "starter_2": {
+      "1": { "fez": "Hier snap ik tenminste iets van. Alles wat ooit de Nijl op ging, kwam hier eerst langs." },
+      "2": { "fez": "En handelaren schrijven alles op. Wie wat kocht, wie wie iets schuldig was, wie te laat was." },
+      "3": { "explorer": "Wie te laat was?" },
+      "4": { "fez": "Vooral wie te laat was." },
+      "5": { "fez": "Drieduizend jaar, en de bonnetjes hebben de waar overleefd. Typisch." }
+    },
+    "starter_3": {
+      "1": { "fez": "Mensen kwamen hier om bescherming vragen, en bescherming betekende een deur die dicht blijft." },
+      "2": { "explorer": "Dicht voor wie?" },
+      "3": { "fez": "Voor iedereen die niet netjes vroeg. Voor ons, vooral." },
+      "4": { "fez": "Alles wat in dit land verzegeld is, is verzegeld door iemand die het meende." },
+      "5": { "fez": "En de katten! Ze hielden hier katten, weet je. Aanbeden werden ze. Ze konden er niets aan doen." }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Hier werden ze opgeleid. Teken voor teken, op gebroken potscherven — papyrus was veel te duur om aan kinderen te verspillen."
+      },
+      "2": { "explorer": "Ze oefenden op afval?" },
+      "3": { "fez": "Ze oefenden op wat er was. Leer er genoeg van en een muur is geen versiering meer." },
+      "4": { "explorer": "Ik wil die Sfinx nog eens bekijken." },
+      "5": { "fez": "Nog niet. Straks." }
+    }
+  }
 }

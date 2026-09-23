@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Turning tutorials off no longer silences the story — only the teaching.
 - Fez has someone to talk to: a conversation can carry two speakers, and the explorer answers from the other side of the screen.
+- Fez and the explorer now have something of their own to say at each of the four starter sites.
 
 ### Fixed
 

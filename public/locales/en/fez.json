@@ -75,5 +75,40 @@
   "shopFirstVisit2": "Everything on this counter I carried out of somewhere. That one came from two tombs back.",
 
   "shopArrival": "Ah, my stall! Let me lay out what I've picked up along the way.",
-  "shopArrival2": "Rare finds cost the most, but I've also got everyday supplies — and I'll pay you for any trinkets you're carrying."
+  "shopArrival2": "Rare finds cost the most, but I've also got everyday supplies — and I'll pay you for any trinkets you're carrying.",
+  "arrival": {
+    "starter_1": {
+      "1": { "fez": "There's writing on it. Down at the base, where the sand keeps shifting off." },
+      "2": { "explorer": "Can you read it?" },
+      "3": { "fez": "No. Can you?" },
+      "4": { "explorer": "No." },
+      "5": { "fez": "Someone could, once." },
+      "6": { "fez": "The base was painted, you know. All of it. Blue and gold, to about here." },
+      "7": { "explorer": "How do you know that?" },
+      "8": { "fez": "…Somebody told me. Come on." }
+    },
+    "starter_2": {
+      "1": { "fez": "Now this I understand. Everything that ever went up the Nile came past here first." },
+      "2": { "fez": "And merchants write it all down. Who bought what, who owed whom, who was late." },
+      "3": { "explorer": "Who was late?" },
+      "4": { "fez": "Especially who was late." },
+      "5": { "fez": "Three thousand years, and the receipts outlived the goods. Typical." }
+    },
+    "starter_3": {
+      "1": { "fez": "People came here to ask for protection, and protection meant a door that stays shut." },
+      "2": { "explorer": "Shut to who?" },
+      "3": { "fez": "Anyone who didn't ask nicely. Us, mainly." },
+      "4": { "fez": "Every sealed thing in this country was sealed by someone who meant it." },
+      "5": { "fez": "And the cats! They kept cats here, you know. Adored them. Couldn't help themselves." }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "This is where they were taught. Sign by sign, on broken pottery — papyrus was far too dear to waste on children."
+      },
+      "2": { "explorer": "They practised on rubbish?" },
+      "3": { "fez": "They practised on what there was. Learn enough of these and a wall stops being decoration." },
+      "4": { "explorer": "I want another look at that Sphinx." },
+      "5": { "fez": "Not yet. Soon." }
+    }
+  }
 }
