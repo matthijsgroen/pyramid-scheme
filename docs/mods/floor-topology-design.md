@@ -24,10 +24,68 @@ Core gets a directed edge. `sandSlide` knows it is sand.
 
 ---
 
+## What an author writes
+
+**An author provides wishes and constraints. The map builder makes the best of them.**
+
+Nobody hand-designs a floor. An author says what should be true of a place — how long the walk is,
+how much it sprawls, what fills its rooms — and the builder carves something that satisfies it. A
+topology feature is the same kind of statement, and it joins the same sentence: this tier's floors
+sprawl, hold these puzzle families, and have flooded corridors in them.
+
+**Specificity is the dial, and it decides whether a statement is a wish or a constraint.** A feature
+named at a broad scope with an intensity is a wish: the builder places as many as fit and reports
+what landed. A feature pinned to one floor is a constraint: it lands there or the build stops. That
+is the same cascade every other authored value already rides — a tier's default, overridden at a
+journey, overridden at a pyramid — so a feature needs no placement mechanism of its own.
+
+A slide or a fork is usually worth pinning; "some of this tier's corridors are flooded" is not, and
+pinning each one would be an author doing the builder's job.
+
+## Features, and who owns them
+
+**A mod registers topology features by name — `LightSwitchFork`, `FloodedCorridor`, `SandSlide`.
+Registering one makes that mod its owner. Authoring names the feature and nothing else.**
+
+Ownership stops being something an author writes down. The registry maps a feature's name to the mod
+that registered it, so core knows who owns a piece of authored structure by looking it up. Toggle
+that mod off and the feature drops, taking everything it placed with it.
+
+A feature is the authored unit. The catalogue in `../game-design/floor-as-puzzle-brainstorm.md` is
+the feature list — the one-way ramp, the waterline, the sequence door, the choked pyramid — and what
+this page once called primitives is the vocabulary those features are built from, not something a mod
+ships on its own.
+
+### The four slots
+
+| Slot         | What it says                    | `LightSwitchFork`                        | `SandSlide`                                     | `Pump`                                                 |
+| ------------ | ------------------------------- | ---------------------------------------- | ----------------------------------------------- | ------------------------------------------------------ |
+| **needs**    | what the floor must provide     | a room with 2+ exits to gate             | a deep room and an upstream one                 | two sections on a floor                                |
+| **places**   | geometry and controls           | an encounter, and a gate per exit        | a directed link                                 | a control room, and a mask over one section            |
+| **binds**    | control to geometry             | solved toward north opens the north gate | —                                               | used, and the mask moves from one section to the other |
+| **gated by** | a currency the player must hold | —                                        | `rope`, for the variant that is the only way in | —                                                      |
+
+Two slides that look identical and differ only in `gated by` — one a shortcut, one an entrance
+waiting for a rope — are the same feature authored twice, which is the sign the shape is right. A
+crack in a wall waiting for a hammer is a gate whose `gated by` names an item rather than a key, and
+the keys-and-locks machinery already answers that.
+
+### Why this does not break Rule 2
+
+`TARGET.md` says core never invents topology to hit a per-mod target. A woven feature is not core
+inventing: the author asked for it by name, and the builder is filling an authored request. The
+precedent is already in the DSL — `sidePaths` and `hiddenPaths` name an intensity and let the builder
+choose how many and where. What stays forbidden is unchanged: no auto-distributor, and no structure
+conjured to satisfy a mod's own numbers.
+
+**A constraint that cannot be met stops the build**, naming the feature and the floor, the way a chest
+holding nothing already does. **A wish that cannot be met is reported, not fatal** — that is the
+difference the two words carry.
+
 ## Mod-owned authoring
 
-**Authored structure may carry an owning mod id. Untagged authoring is core's; tagged authoring
-drops when that mod is not registered.**
+**Structure placed by a feature belongs to that feature's mod. Untagged authoring is core's; owned
+authoring drops when its mod is not registered.**
 
 One rule, and both degradation modes fall out of it rather than needing separate machinery:
 
@@ -99,7 +157,10 @@ economy guard already uses. It drops with the mod, and core never learns what sa
 
 ---
 
-## The primitives core grows
+## The vocabulary features are built from
+
+These are core's, not any mod's. A feature composes them; none of them is a thing a mod ships on its
+own, and none is built before a feature needs it.
 
 |     | Primitive                                                                                   | Generalises                                                                | Serves                                  |
 | --- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | --------------------------------------- |
@@ -146,31 +207,38 @@ runtime. The descriptor stays React-free; the evaluator registers through `regis
 
 ## The slices
 
-One mod per mechanic, so a mechanic that needs tuning leaves without touching its neighbours. Each
-slice buys at most one primitive, and buys it because that mod needs it — never ahead of one.
+One feature per slice, so a feature that needs tuning leaves without touching its neighbours. Each
+slice buys at most one primitive, and buys it because that feature needs it — never ahead of one. A
+mod may end up owning several features; what a slice delivers is one feature, registered and
+authored.
 
-| Order | Mod            | Buys                                         | Tier it lands at | Toggle-off looks like                   |
-| ----- | -------------- | -------------------------------------------- | ---------------- | --------------------------------------- |
-| 1     | `witnessDoor`  | a runtime-minted key (no topology primitive) | junior           | both corridors open, an ordinary puzzle |
-| 2     | `sequenceLock` | P3                                           | expert           | door unlocked, no glyph tiles           |
-| 3     | `sandSlide`    | P2                                           | expert           | ramp corridors absent, floor re-carves  |
-| 4     | `waterline`    | P1                                           | master           | floor permanently drained               |
-| 5     | `cosmicDust`   | P5                                           | wizard           | pyramid not choked, handles inert       |
-| 6     | `hourglass`    | P4, P6                                       | wizard           | upper floor clear, lower floor ordinary |
+| Order | Feature           | Buys                                         | Tier it lands at | Toggle-off looks like                   |
+| ----- | ----------------- | -------------------------------------------- | ---------------- | --------------------------------------- |
+| 1     | `LightSwitchFork` | a runtime-minted key (no topology primitive) | junior           | both corridors open, an ordinary puzzle |
+| 2     | `sequenceLock`    | P3                                           | expert           | door unlocked, no glyph tiles           |
+| 3     | `sandSlide`       | P2                                           | expert           | ramp corridors absent, floor re-carves  |
+| 4     | `waterline`       | P1                                           | master           | floor permanently drained               |
+| 5     | `cosmicDust`      | P5                                           | wizard           | pyramid not choked, handles inert       |
+| 6     | `hourglass`       | P4, P6                                       | wizard           | upper floor clear, lower floor ordinary |
 
-`witnessDoor` goes first because it needs no topology primitive at all — its fork is two ordinary
-gates, and the choice is which one opens. It does buy one small thing, named here rather than
-discovered during the build: **a key the player mints at runtime**. `getOwnedKeys` derives a floor's
-keys from completed cells' authored rewards, and a key handed out by a family on solve has no such
-cell, so owned keys grow a registry of contributors — unioned where `SiteMapScreen` already unions
-ward keys.
+`LightSwitchFork` goes first because it needs no topology primitive at all — its fork is two ordinary
+gates, and the choice is which one opens. It does buy one small thing: **a key the player mints at
+runtime**. `getOwnedKeys` derives a floor's keys from completed cells' authored rewards, and a key
+handed out by a family on solve has no such cell, so owned keys grow a registry of contributors —
+unioned where `SiteMapScreen` already unions ward keys.
 
-It also settles how a mod names a key at all. A `floor-key` gate takes its id from the assembler's
-rotation and makes the floor grow a section to host that key's chest, which is wrong when the key
-comes from a room. So the gate gains an authored `keyId` and an `ownerMod` beside it: naming an id
-means the **author** owns the key's provenance, so no host is grown, and naming an owner is what
-lets the gate drop when that mod is not registered. Both are opaque strings; core still names no
-mod.
+It also settles how a feature names a key at all. A `floor-key` gate takes its id from the
+assembler's rotation and makes the floor grow a section to host that key's chest, which is wrong when
+the key comes from a room. So the gate gains an authored `keyId`: naming an id means the **author**
+owns the key's provenance, so no host is grown. The owner is looked up from the feature registry
+rather than written beside it, and both are opaque to core.
+
+**The fork's targets are the room's own doors.** A switch room knows which of its exits it gates, so
+the board draws those doors at those compass points rather than abstract targets, and routing the
+beam north visibly opens the north corridor. That is what makes the choice legible: the board is a
+diagram of the room the player is standing in. It also means the light-beam puzzle is one family
+playing two roles — a corridor puzzle when it bars the way, a switch when it drives doors — with the
+role supplying the configuration rather than a second family existing.
 
 `hourglass` is last because P4 is the only new dispatch shape in the set and P6 the only new state
 shape.
@@ -275,7 +343,31 @@ free order lets a player meet the hardest first.
 
 ---
 
-## Not mods
+## The world must validate as solvable
+
+Reachability proves that each reward **can be got to**. It does not prove the game can be
+**finished**, and those are different claims. A register that needs 44 pieces and a world holding
+exactly 44, one of them behind a door that opens only one way, passes every reachability check and
+cannot be completed. That is not hypothetical: it is what the first feature's build produced, and
+what caught it was a person counting, not the build.
+
+So the build asserts solvability, not only reachability:
+
+- every collection the game asks a player to finish — a mosaic register, a hieroglyph, a tomb's
+  `piecesRequired` — has **at least its target count reachable**, counted against the placements the
+  solver can actually get to rather than against the world's totals;
+- every lock has an opener a player can hold before they meet it;
+- no feature makes a currency less obtainable than the demand for it.
+
+**The count belongs to whoever owns the currency, not to core.** Core supplies which placements are
+reachable; the mod asserts that enough of its own are, through the `worldValidator` the descriptor
+already carries for the shop's economy guard. Core never learns what a register is, and the check
+drops with its mod like everything else.
+
+The cheap version of this check is a sum, and the cheap version is what would have caught the
+failure above.
+
+## Not features
 
 - **Free-order journeys** — core progression, authored per journey.
 - **Keys under locks** — `floorKeys.ts` already does it. Authoring.
@@ -285,5 +377,16 @@ free order lets a player meet the hardest first.
   P2, collapse and rising sand ride P1 with P3, visit-order floors ride P4.
 
 Which is the claim the architecture rests on: **past the sixth slice, the rest of the catalogue is
-authoring rather than engineering.** Six containers, six primitives, and every remaining mechanic
-becomes a DSL field on something already built.
+authoring rather than engineering.** Six features, six primitives, and every remaining mechanic
+becomes a feature composed from vocabulary that already exists.
+
+## Open
+
+- **Two features wanting the same room.** Nothing says who wins, or whether the builder should refuse
+  the pair outright rather than pick.
+- **A feature that eats capacity.** A feature taking a side path takes a loot slot with it, and the
+  economy's supply count does not know. Whether a feature declares what it consumes, or the economy
+  reads the floor after features land, is undecided.
+- **`needs` above floor scope.** The hourglass spans two floors and cosmic dust spans sibling
+  pyramids, so their requirements are not statements about one floor. The slot's vocabulary covers a
+  floor today.
