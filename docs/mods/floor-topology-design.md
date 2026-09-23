@@ -302,9 +302,17 @@ throughout, in its route search, its uniqueness check, its greedy-resistance mea
 rung that is also the hint source. A switch board is a fork with one branch per door, which is a
 different construction rather than the same one with a number changed.
 
-The switch role also generates live rather than from the baked seed list, and has no choice: a
-compass direction is an outcome of the carve, so no offline pass can know which doors a board must
-answer to.
+**The switch role stays seeded, because a fork has only four shapes.** A compass direction is an
+outcome of the carve, so at first glance no offline pass can know which doors a board must answer —
+but up to rotation there are only four ways a fork can be shaped: two exits adjacent, two opposite,
+three, or four. Bake a set per shape per difficulty and every fork in the game is covered.
+
+So the bucket key gains the fork's shape and nothing else, and the **rotation stays out of it** —
+the board is turned to face the fork's real exits when it is opened. Turning it is a symmetry rather
+than a regeneration: a quarter turn is an even step in the direction encoding, the sun and the
+mirrors turn with the targets, and the beam behaves identically. That keeps the offline verification
+the seed list exists for, which live generation would have traded away for a rejection rate in the
+player's session.
 
 `hourglass` is last because P4 is the only new dispatch shape in the set and P6 the only new state
 shape.
