@@ -153,6 +153,48 @@ describe("useAssembledFloor — hidden junctions", () => {
     if (gateway?.type === "empty") throw new Error("expected a real cell at the gateway")
     expect(gateway?.state).not.toBe("reachable")
   })
+
+  /**
+   * A switch stands on the junction a hidden section hangs off, and masking rebuilds a room that comes
+   * out a passthrough as a corridor — which would shed its family, its tags and its exits, and leave its
+   * solved state nothing to come back to (a corridor has no slot).
+   */
+  it("brings a switch through masking whole, on a floor whose only branch is hidden", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "expert",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      switchFork: { encounter: "sumplete" },
+      // One section, so the floor has exactly one junction and the switch can only stand on it.
+      sideSections: [
+        { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true, endReward: { type: "mosaicPiece" } },
+      ],
+    }
+    const seed = [0, 1, 2, 3, 4, 5, 6, 7].find(s => {
+      const built = assembleFloor(JOURNEY_ID, config, s)
+      return built.success && built.grid.cells.flat().some(c => c.type === "room" && c.roomType === "fork" && c.family)
+    })
+    if (seed === undefined) throw new Error("no seed carved a switch onto the hidden section's junction")
+    const assembled = assembleFloor(JOURNEY_ID, config, seed)
+    if (!assembled.success) throw new Error("assembly failed")
+    const [r, c] = assembled.grid.cells.flatMap((row, rr) =>
+      row.flatMap((cell, cc) => (cell.type === "room" && cell.roomType === "fork" && cell.family ? [[rr, cc]] : []))
+    )[0]
+
+    const { result } = renderHook(() => useAssembledFloor(JOURNEY_ID, config, seed, 0, {}, null, 0, new Set()))
+
+    // The premise: masking really did take cells off this floor, so the switch came through a mask
+    // rather than through a grid nothing happened to.
+    const drawn = (g: FloorGrid) => g.cells.flat().filter(cell => cell.type !== "empty").length
+    expect(drawn(result.current.grid!)).toBeLessThan(drawn(assembled.grid))
+
+    const masked = result.current.grid?.cells[r]?.[c]
+    expect(masked?.type).toBe("room")
+    expect(masked?.type === "room" && masked.family).toBe("sumplete")
+    expect(masked?.type === "room" && masked.exits?.length).toBeGreaterThan(0)
+    expect(cellSlot(result.current.grid!, r, c)).toBe("xsumplete")
+  })
 })
 
 describe("useAssembledFloor — restoring a saved position", () => {

@@ -1,8 +1,15 @@
 import type { FloorGrid } from "@/game/siteTypes"
+import { cellSlot } from "@/game/cellSlot"
 import { decodeEdge } from "./edgeId"
+
+export { cellSlot }
 
 /**
  * WHAT A SAVE CALLS A CELL, once the carve is free to move.
+ *
+ * Which room of its section a cell is, is `cellSlot` in the domain (`@/game/cellSlot`) — the assembler
+ * checks its own floors against the same rule. Re-exported here because a save spends the full address
+ * and the slot in the same breath.
  *
  * A coordinate is an accident of the carve, and so — this is the part that took measuring — is the
  * ordinal. A cell's `ordinal` is its step along the CARVED walk, and how many steps that walk takes is
@@ -22,12 +29,9 @@ import { decodeEdge } from "./edgeId"
  * sections hold at least one. Re-carved at two different seeds, four floors across four tiers and a
  * tomb kept every slot.
  *
- * Corridors and bare forks have no slot, because they have no authored identity — how many corridor
- * cells there are and where the chain turns IS the carve. They are addressed by `~${ordinal}`, which
- * resolves inside one carve and deliberately resolves to nothing after the floor moves. Their fog comes
- * back by the high-water mark instead (`applyExplored` in useAssembledFloor). A fork carrying an
- * encounter — a switch — does have one: the encounter was authored onto the floor, and its progress has
- * to survive the junction moving to another cell.
+ * Cells with no slot — corridors and bare forks — are addressed by `~${ordinal}`, which resolves inside
+ * one carve and deliberately resolves to nothing after the floor moves. Their fog comes back by the
+ * high-water mark instead (`applyExplored` in useAssembledFloor).
  *
  * The section is named by its AUTHORING ADDRESS — `main`, `s0`, `s0.1` — and not by the structural hash
  * that used to key exploration. The hash covers the floor's own carve knobs (`packing`,
@@ -41,21 +45,6 @@ import { decodeEdge } from "./edgeId"
  * every floor of every tomb shares one with all the others. Without it, walking a tomb's ground floor
  * would loot the floors above.
  */
-export const cellSlot = (grid: FloorGrid, row: number, col: number): string | null => {
-  const cell = grid.cells[row]?.[col]
-  if (!cell || cell.type !== "room") return null
-  if (cell.roomType === "fork" && cell.family === undefined) return null
-  if (cell.roomType === "portal") {
-    if (cell.stairId) return `stair:${cell.stairId}`
-    return row === grid.entrancePos[0] && col === grid.entrancePos[1] ? "entrance" : "exit"
-  }
-  // A room the chain authored by position is named by that position; the ones a section gets exactly
-  // one of — its terminal chest or shop, its gate — are named by what fills them.
-  return cell.pathIndex !== undefined ? `p${cell.pathIndex}` : `x${cell.family ?? "?"}`
-}
-
-/** The full name of a cell: which section, which floor, and which slot of it. Null only for a cell
- * that is not there at all. */
 export const cellAddress = (grid: FloorGrid, floor: number, row: number, col: number): string | null => {
   const cell = grid.cells[row]?.[col]
   if (!cell || cell.type === "empty") return null

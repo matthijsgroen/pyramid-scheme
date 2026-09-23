@@ -138,7 +138,15 @@ const maskHiddenCells = (
           // Downgrade room → corridor if hidden dir removal leaves it as a passthrough corner. It is
           // still the same cell, so everything that NAMES it comes along: without the address and the
           // ordinal, a player standing on a downgraded room has nowhere to be written down.
-          if (cell.type === "room" && newDirs.size <= 2) {
+          //
+          // NEVER A ROOM THAT HOLDS SOMETHING. Rebuilt as a corridor it would shed its family, its tags
+          // and its exits, and a corridor has no slot, so a switch's puzzle would vanish and its solved
+          // state would have nowhere to come back to. What reaches this today is only corridors: nodes
+          // sit two cells apart, so a room's grid neighbours are all connector cells, and a connector is
+          // hidden only when both the nodes it joins are — measured over the baked world, 2044 hidden
+          // cells and not one visible room beside any of them. The guard is what keeps that true if the
+          // masking ever widens.
+          if (cell.type === "room" && newDirs.size <= 2 && cell.family === undefined) {
             return {
               type: "corridor",
               dirs: newDirs as ReadonlySet<Direction>,

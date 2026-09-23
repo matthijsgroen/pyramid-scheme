@@ -1527,15 +1527,48 @@ describe("a switch fork", () => {
   })
 
   it("never takes a junction that already holds a main-path room", () => {
+    let compared = 0
     for (let seed = 0; seed < 30; seed++) {
       const authored = assembleFloor(`site-switch-steal-${seed}`, switchConfig({ encounter: "sumplete" }), seed)
       const bare = assembleFloor(`site-switch-steal-${seed}`, switchConfig(), seed)
       if (!authored.success || !bare.success) continue
+      compared++
       // Every room the bare floor holds is still that room on the authored one: a switch is written
       // onto a junction that was nothing else, never over the entrance, a puzzle or the goal chest.
       const rooms = (grid: FloorGrid) =>
         grid.cells.flat().map(cell => (cell.type === "room" && cell.roomType !== "fork" ? cell.family : null))
       expect(rooms(authored.grid)).toEqual(rooms(bare.grid))
     }
+    // A loop that skipped every seed would pass having compared nothing.
+    expect(compared).toBeGreaterThan(0)
+  })
+
+  // Half-finished puzzle state is filed under the room's address and its board index. The address is
+  // carve-independent because a switch has a slot, so the board must be too — otherwise the player
+  // comes back to a different puzzle on the room they left.
+  it("deals itself the same board wherever the next carve puts it", () => {
+    const config = switchConfig({ encounter: "sumplete" })
+    const at = (seed: number) => {
+      const result = assembleFloor("site-switch-board", config, seed)
+      if (!result.success) return null
+      return findRoom(result.grid, cell => cell.roomType === "fork" && cell.family !== undefined)
+    }
+    const first = at(7)
+    const second = at(8)
+    if (!first || !second) throw new Error("both seeds must carve a switch")
+
+    expect(first.cell.boardIndex).toBeDefined()
+    expect(second.cell.boardIndex).toBe(first.cell.boardIndex)
+    // And the junction really did move, or the board was never asked to stand still.
+    expect([second.r, second.c]).not.toEqual([first.r, first.c])
+  })
+
+  // Two rooms of one section answering to the same name would share one save entry.
+  it("refuses a floor whose switch wears the name its section's chest already has", () => {
+    // The same seed the board case proves carves a switch, and this floor's main path ends in a chest.
+    const result = assembleFloor("site-switch-board", switchConfig({ encounter: "treasure-chest" }), 7)
+
+    expect(result.success).toBe(false)
+    expect(result.success === false && result.reasons.map(r => r.type)).toContain("duplicateCellSlot")
   })
 })

@@ -15,6 +15,7 @@ import type {
   WallDecorationKind,
   Difficulty,
 } from "./siteTypes"
+import { cellSlot } from "./cellSlot"
 import { footprintSize } from "./roomFootprint"
 import type { ResolveBoardIndex } from "./seeds/boardIndex"
 import { validateSite } from "./siteValidator"
@@ -1313,8 +1314,7 @@ export const assembleFloor = (
     //
     // It takes no `pathIndex`: a switch is not the k-th room of the main chain, it is the one room of
     // its kind on the floor, so a save names it by what fills it the way a section's chest or gate is
-    // named (cellIdentity.ts). `boardIndex` and `requiredKeyIds` are both addressed by chain position,
-    // so a switch has neither.
+    // named (cellSlot.ts). `requiredKeyIds` is addressed by chain position, so a switch takes none.
     if (config.switchFork) {
       const switchAt = [...forkPositions].find(pk => roomSpecs.get(pk)?.roomType === "fork")
       if (switchAt) {
@@ -1323,6 +1323,12 @@ export const assembleFloor = (
           ...roomSpecs.get(switchAt)!,
           family: family.familyId,
           tags: family.tags,
+          // THE BOARD HAS TO STAND STILL WHILE THE JUNCTION MOVES. Having no chain position, a switch
+          // gets no entry from the world's board dealer, and `generatePuzzle` then falls back to a seed
+          // hashed from the cell's COORDINATE — which the next carve changes, under a save slot that
+          // does not, so a half-solved switch would come back on a different board. Hashed from what the
+          // floor was AUTHORED from instead, which is the one thing the carve cannot touch.
+          boardIndex: hashString(`${floorRef.journeyId}|${floorRef.floorIndex}|switchFork|${family.familyId}`),
           ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
           difficulty: config.difficulty,
           ...(config.theme !== undefined ? { theme: config.theme } : {}),
@@ -1895,6 +1901,23 @@ export const assembleFloor = (
       exitPos: [exR, exC],
       siteId,
       staircases,
+    }
+
+    // Two rooms of one section that a save cannot tell apart is a data-loss bug, not a layout one —
+    // the same reason section addresses are checked before anything is carved. So it fails the floor
+    // outright instead of re-carving: the collision is in the AUTHORING (two rooms of a section named
+    // by the same family, no chain position between them), and every seed produces it.
+    const slotsSeen = new Set<string>()
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const slot = cellSlot(grid, r, c)
+        if (!slot) continue
+        const cell = cells2D[r][c]
+        const section = (cell.type !== "empty" && cell.sectionAddress) || MAIN_SECTION_ADDRESS
+        const named = `${section}/${slot}`
+        if (slotsSeen.has(named)) return { success: false, reasons: [{ type: "duplicateCellSlot", slot: named }] }
+        slotsSeen.add(named)
+      }
     }
 
     const v = validateSite(grid)

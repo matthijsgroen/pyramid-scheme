@@ -374,6 +374,9 @@ export type AssemblerReason =
   /** A section cannot be given a name a save could file it under: an authored `label` repeated, one
    * shaped like the positional addresses, or one carrying an address separator. See SubSection.label. */
   | { type: "unusableSectionAddress"; address: string }
+  /** Two rooms of one section answer to the same name, so a save cannot tell them apart — a switch
+   * authored with the family that already fills its section's chest, shop or gate. See cellSlot.ts. */
+  | { type: "duplicateCellSlot"; slot: string }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
 
