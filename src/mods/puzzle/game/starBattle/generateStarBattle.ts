@@ -1,6 +1,6 @@
 import type { Grade } from "@/game/families/familyMeta"
 import { mulberry32, shuffle } from "@/game/random"
-import { cellAt, colOf, neighboursOf, rowOf, type StarBattlePuzzle } from "./starBattle"
+import { cellAt, colOf, neighboursOf, regionCells, rowOf, type StarBattlePuzzle } from "./starBattle"
 import {
   solveStarBattleByTechniques,
   STAR_BATTLE_TECHNIQUES,
@@ -65,6 +65,34 @@ export type StarBattleOptions = {
   requires?: StarBattleTechniqueId[]
   /** How many times a required rung has to fire. One is not a tier. */
   requiresCount?: number
+  /**
+   * Refuse a map with a region that sits inside one row or one column.
+   *
+   * **The gift this family could not see it was giving.** Such a region spends its line before the player
+   * has read anything — `regionLine` fires on the opening move — and every board this generator kept had
+   * two or three of them, because the rest of the ladder needs a narrow group to start counting from. The
+   * LinkedIn Queens board measured in the design doc has none, which is why the ladder without
+   * `wouldStrand` made no move on it at all.
+   */
+  noLineRegions?: boolean
+  /**
+   * The earliest step at which the first star may land.
+   *
+   * **A board that opens with a star had its opening handed over**: five of eight measured 8×8 boards
+   * placed one on step 0 or 1. The Queens board eliminates for six steps first, and that opening is what
+   * this buys. Requiring a rung cannot buy it — a tier's rung may fire anywhere in the solve, and on that
+   * board `spanning` fires at step fifteen.
+   */
+  firstStarAfter?: number
+  /**
+   * The most steps a board may have that place TWO stars at once.
+   *
+   * A line down to three free squares owing two stars has one filling — both ends — so a whole pair lands
+   * on a move nobody had to think about, and a board full of those reads as bookkeeping however hard its
+   * opening was. Playtesting counted four to seven a board at junior and two to five higher up. Only
+   * meaningful at two stars a group: at one star no step can place a pair.
+   */
+  mostPairsAtOnce?: number
 }
 
 /**
@@ -325,6 +353,41 @@ const meetsDemand = (
   requiresCount: number
 ) => !requires.length || demandedRungs(steps, requires) >= requiresCount
 
+/** Whether every region touches more than one row and more than one column. */
+const noRegionOnALine = (puzzle: StarBattlePuzzle) =>
+  regionCells(puzzle).every(
+    cells =>
+      new Set(cells.map(cell => rowOf(puzzle.size, cell))).size > 1 &&
+      new Set(cells.map(cell => colOf(puzzle.size, cell))).size > 1
+  )
+
+/** How long the board makes the player eliminate before the first star lands. */
+const firstStarStep = (steps: readonly { decisions: readonly { mark: string }[] }[]) =>
+  steps.findIndex(step => step.decisions.some(decision => decision.mark === "star"))
+
+// Every gate a board is kept on beyond "the ladder settles it", in one place so the loop and `grade` cannot
+// come to disagree — an offline seed pass filtering by `grade` has to admit exactly what the loop keeps.
+const meetsShape = (
+  puzzle: StarBattlePuzzle,
+  steps: readonly { technique: StarBattleTechniqueId; decisions: readonly { mark: string }[] }[],
+  options: StarBattleOptions
+) => {
+  const { requires = [], requiresCount = 1, firstStarAfter = 0, mostPairsAtOnce } = options
+  if (!meetsMapShape(puzzle, options)) return false
+  if (!meetsDemand(steps, requires, requiresCount)) return false
+  if (firstStarStep(steps) < firstStarAfter) return false
+  return mostPairsAtOnce === undefined || pairsAtOnce(steps) <= mostPairsAtOnce
+}
+
+/** Steps that hand over a whole pair — the move a player makes without thinking. */
+const pairsAtOnce = (steps: readonly { decisions: readonly { mark: string }[] }[]) =>
+  steps.filter(step => step.decisions.filter(decision => decision.mark === "star").length > 1).length
+
+// The half of the gate that reads the MAP alone, so the loop can throw a draw away before paying for a
+// solve — and with `wouldStrand` in the ladder a solve is the expensive part of a draw by two orders.
+const meetsMapShape = (puzzle: StarBattlePuzzle, { noLineRegions }: StarBattleOptions) =>
+  !noLineRegions || noRegionOnALine(puzzle)
+
 /**
  * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
  * (`docs/instructions/puzzle-screens.md` §6.1).
@@ -335,9 +398,8 @@ const meetsDemand = (
  * cannot be read off the fact that one came back.
  */
 export const gradeStarBattle = (board: StarBattlePuzzleWithAnswer, options: StarBattleOptions): Grade | null => {
-  const { techniqueCap, requires = [], requiresCount = 1 } = options
-  const result = settles(board, techniquesUpTo(techniqueCap), board.solution)
-  if (!result || !meetsDemand(result.steps, requires, requiresCount)) return null
+  const result = settles(board, techniquesUpTo(options.techniqueCap), board.solution)
+  if (!result || !meetsShape(board, result.steps, options)) return null
   return { steps: result.steps.length, deepest: result.deepest }
 }
 
@@ -348,7 +410,7 @@ export const generateStarBattle = (
   // single attempt instead of the full search must not file the board under a different bucket.
   attempts: number = MAX_ATTEMPTS
 ): StarBattlePuzzleWithAnswer => {
-  const { size, quota, regionSpread, techniqueCap, requires = [], requiresCount = 1 } = options
+  const { size, quota, regionSpread, techniqueCap, requires = [] } = options
   const allowed = techniquesUpTo(techniqueCap)
   const random = mulberry32(seed)
   // Two stars that may not touch need three squares; one star needs the one it stands on. A tier may ask
@@ -364,12 +426,13 @@ export const generateStarBattle = (
     if (!regions) continue
     const solution = Array.from({ length: size * size }, (_unused, cell) => stars.includes(cell))
     const puzzle = { size, quota, regions }
+    if (!meetsMapShape(puzzle, options)) continue
     const result = settles(puzzle, allowed, solution)
     if (!result) continue
     const board = { ...puzzle, solution, techniqueCap }
     // A board that never needed the tier's own rung teaches the tier below it, so it is only kept if
     // nothing better turns up.
-    if (meetsDemand(result.steps, requires, requiresCount)) return board
+    if (meetsShape(puzzle, result.steps, options)) return board
     const demanded = demandedRungs(result.steps, requires)
     // The nearest miss is the fallback, so a tier that cannot hit its quota still ships its hardest draw.
     if (!fallback || demanded > fallback.demanded) fallback = { board, demanded }

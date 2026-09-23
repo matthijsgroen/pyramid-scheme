@@ -16,9 +16,29 @@ export type SudokuPuzzle = SudokuPuzzleData & {
   techniqueCap: DemandId
 }
 
+/**
+ * The shapes a board of givens comes in — the same rules, the same ladder, a different thing to look at
+ * (docs/game-design/puzzles/sudoku.md, "Variants").
+ *
+ * - `plain` — the dig takes squares out one at a time, wherever they will come out.
+ * - `hiddenDigit` — one of the six values is not shown ANYWHERE. Five is the floor, not a choice: two
+ *   values missing from the givens means swapping those two everywhere is a second answer to the same
+ *   board, so this variant is as far as the idea goes.
+ * - `mirrored` — the squares that ship read the same left to right, so the board wears a pattern.
+ */
+export type SudokuVariant = "plain" | "hiddenDigit" | "mirrored"
+
 export type SudokuOptions = {
   /** The strongest deduction a board may demand (design doc §5). */
   techniqueCap?: DemandId
+  /**
+   * The shapes this tier may ship, one drawn per seed. Unset means `plain` only.
+   *
+   * Listed per TIER because a variant is a constraint on the DIG, not on the ladder: the board that
+   * comes out is settled by the same reasons as any other, so nothing else in the family has to know
+   * which shape it was dug as.
+   */
+  variants?: SudokuVariant[]
   /**
    * The fewest squares that ship filled in (design doc §5.1). A FLOOR on the digging rather than a
    * quota: squares come out one at a time for as long as the ladder still reaches the end unaided,
@@ -113,6 +133,15 @@ export const gradeSudoku = (board: SudokuPuzzle, options: SudokuOptions = {}): G
   return { steps: result.steps.length, deepest: result.deepest }
 }
 
+const pickVariant = (options: SudokuOptions, random: () => number): SudokuVariant => {
+  const variants = options.variants ?? ["plain"]
+  return variants[Math.floor(random() * variants.length)]
+}
+
+/** The squares one removal takes out: its mirror goes with it, or it goes alone. */
+const removalGroup = (cell: SudokuCellRef, variant: SudokuVariant): SudokuCellRef[] =>
+  variant === "mirrored" ? [cell, { row: cell.row, col: SUDOKU_SIZE - 1 - cell.col }] : [cell]
+
 export const generateSudoku = (
   seed: number,
   options: SudokuOptions = {},
@@ -121,6 +150,9 @@ export const generateSudoku = (
   attempts: number = MAX_ATTEMPTS
 ): SudokuPuzzle => {
   const { techniqueCap: cap = "boxLine", minGivens = 0, demands } = options
+  // Drawn once, before any board: a seed is one board, and the shape of its givens is part of which
+  // board it is.
+  const variant = pickVariant(options, mulberry32(seed))
   const allowed = techniquesFor(cap)
   const below = demands ? techniquesBelow(demands) : []
   const shape = { size: SUDOKU_SIZE, boxWidth: SUDOKU_BOX_WIDTH, boxHeight: SUDOKU_BOX_HEIGHT }
@@ -140,15 +172,25 @@ export const generateSudoku = (
     // 6x6 that needs more than a single — the grid is too small for the harder reasons to be forced
     // by accident (design doc §3.1).
     let givens: (number | undefined)[][] = solution.map(row => [...row])
+    // The hidden value goes before anything else, and the whole attempt stands or falls on it: a board
+    // the ladder cannot finish without that value shown is not one more square away from working.
+    if (variant === "hiddenDigit") {
+      const hidden = 1 + Math.floor(random() * SUDOKU_SIZE)
+      givens = givens.map(row => row.map(value => (value === hidden ? undefined : value)))
+      if (!settles(givens, allowed)) continue
+    }
+    // A mirrored dig spends two squares a removal, so it stops a pair early rather than stepping over
+    // the floor its tier was given.
+    const perRemoval = variant === "mirrored" ? 2 : 1
     let striving = below.length > 0
     for (;;) {
-      if (filledCount(givens) <= minGivens) break
+      if (filledCount(givens) - perRemoval < minGivens) break
       let breaker: (number | undefined)[][] | undefined
       let ordinary: (number | undefined)[][] | undefined
       let looked = 0
       for (const cell of shuffle(filledCells(givens), random)) {
         const trial = givens.map(row => [...row])
-        trial[cell.row][cell.col] = undefined
+        for (const taken of removalGroup(cell, variant)) trial[taken.row][taken.col] = undefined
         if (!striving) {
           if (settles(trial, allowed)) {
             ordinary = trial

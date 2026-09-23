@@ -29,6 +29,8 @@ type Props = {
   role?: string | string[]
   /** The hour its site authored. */
   theme?: string
+  /** Which room this is, so an undressed one still draws a face of its own (faceFor.ts). */
+  room?: string
   onSolved: () => void
   onCancel: () => void
 }
@@ -37,9 +39,9 @@ type Props = {
 const symbolise = (params: { glyph?: string }, symbol: (glyph: string) => string) =>
   params.glyph === undefined ? params : { ...params, glyph: symbol(params.glyph) }
 
-export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSolved, onCancel }) => {
+export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
-  const skin = skinFor(role, theme)
+  const skin = skinFor(role, theme, 0, room)
   const { glyphs, scales, maxValue, solution, techniqueCap } = puzzle
   const [state, setState] = usePuzzleState(() => createBalanceState(glyphs))
 

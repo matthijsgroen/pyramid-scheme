@@ -44,6 +44,10 @@ Fill first, then take away everything the board turns out not to need:
    the tier's own technique ladder still finishes the board without it.
 3. Stop at the tier's floor of given squares, or where nothing more can come out.
 
+The shape the tier drew for this seed (§5.5) says what one removal costs: a square on
+its own, a square and its mirror together, or — before any of it — every square holding
+one value, which the ladder has to survive or the attempt is abandoned.
+
 Every intermediate board is settled by deduction, so the one that ships is too —
 and that settles uniqueness with it, since every step along the way was forced. No
 separate solution counter has to run.
@@ -102,15 +106,16 @@ are different sentences.
 
 ## 5. Difficulty knobs
 
-The grid never moves, so two dials are left and they answer different questions.
+The grid never moves, so two dials are left and they answer different questions — and
+a third setting that is not about difficulty at all (§5.5).
 
-| Tier    | Cap            | Demands        | Given floor | What the tier is                                         |
-| ------- | -------------- | -------------- | ----------- | -------------------------------------------------------- |
-| starter | `nakedSingle`  | —              | 16          | what is left in this square, with nearly half given      |
-| junior  | `hiddenSingle` | `hiddenSingle` | 14          | the value's only home in a row, column or chamber        |
-| expert  | `hiddenSingle` | `hiddenSingle` | 12          | the same rung against less of the answer                 |
-| master  | `hiddenSingle` | `hiddenSingle` | 0           | dug as far as the singles reach — about ten squares left |
-| wizard  | `boxLine`      | `boxLine`      | 0           | the board that needs a chamber against its lines         |
+| Tier    | Cap            | Demands        | Given floor | Shapes | What the tier is                                         |
+| ------- | -------------- | -------------- | ----------- | ------ | -------------------------------------------------------- |
+| starter | `nakedSingle`  | —              | 16          | plain  | what is left in this square, with nearly half given      |
+| junior  | `hiddenSingle` | `hiddenSingle` | 14          | all    | the value's only home in a row, column or chamber        |
+| expert  | `hiddenSingle` | `hiddenSingle` | 12          | all    | the same rung against less of the answer                 |
+| master  | `hiddenSingle` | `hiddenSingle` | 0           | all    | dug as far as the singles reach — about ten squares left |
+| wizard  | `boxLine`      | `boxLine`      | 0           | all    | the board that needs a chamber against its lines         |
 
 Measured over 30 seeds a tier: 16 / 14 / 12 / 10.2 / 10.3 given squares, 20 / 22 /
 24 / 26 / 28 forced steps, and 2ms / 64ms / 26ms / 24ms / 1448ms to generate.
@@ -150,6 +155,45 @@ grid, not an oversight: this family is authored at one size because the upright
 chambers are the shape it exists to show, and the catalogue records the consequence
 (`PUZZLE_FAMILIES.md` §4.8). A tier ladder that pretended otherwise would be a table
 of dials with nothing behind them.
+
+### 5.5 Variants: the same tier, a different set of squares to look at
+
+A variant is a constraint on the DIG, never on the ladder. Whatever shape a board's
+givens come in, it is settled by the same reasons at the same cap — so a variant is
+free everywhere else in the family: nothing in the solver, the hints or the screen
+has to know which shape it was dug as.
+
+| Variant       | What the player sees                                          |
+| ------------- | ------------------------------------------------------------- |
+| `plain`       | squares came out wherever they would come out                  |
+| `hiddenDigit` | one of the six values is not shown anywhere on the board       |
+| `mirrored`    | the squares that ship read the same left to right              |
+
+One is drawn per seed from the tier's list — a room never names a shape, the same
+way it never names a tier's dials. `starter` lists none: a first encounter teaches
+what a grid of givens means, and a value missing from all of them is a second thing
+to work out before the first has landed. Every other tier lists all three.
+
+Measured over 10 seeds a tier, each shape drawn on its own:
+
+| Tier   | `plain`         | `hiddenDigit`   | `mirrored`      |
+| ------ | --------------- | --------------- | --------------- |
+| junior | 14.0 g, 52ms    | 14.0 g, 17ms    | 14.0 g, 63ms    |
+| expert | 12.0 g, 18ms    | 12.0 g, 16ms    | 12.4 g, 40ms    |
+| master | 9.8 g, 22ms     | 10.3 g, 15ms    | 12.0 g, 45ms    |
+| wizard | 10.1 g, 875ms   | 10.6 g, 975ms   | 12.4 g, 607ms   |
+
+A mirrored board keeps more squares, and the reason is the pairing: a removal has to
+be affordable twice over, so the dig runs out of legal pairs before it runs out of
+squares. That is a real difference at `master` and `wizard`, where the floor is zero
+and the dig is what decides how much is handed over — a mirrored top-tier board is
+the gentlest board its tier ships, and it still has to demand the tier's own rung to
+grade at all.
+
+The rung is what gets rarer, not the board: at `wizard`, 6 of 10 plain seeds landed
+the chamber-line rung against 3 hidden-digit and 1 mirrored. That is the offline seed
+pass's problem rather than the player's — it lists what grades — and the pass fills
+the tier's buckets inside its ordinary budget.
 
 ## 6. Notes and undo
 
@@ -336,6 +380,11 @@ counts forced steps, which is what a solver can count and not what a person take
 
 One line each, so nothing here is rebuilt on the strength of the idea alone.
 
+- **A board showing only one value, or none** — not hard, impossible. Nothing in the
+  rules names the six values; they are interchangeable marks. Hide two of them from the
+  givens and swapping those two everywhere in the answer is a second answer to the same
+  board, so five shown values is the floor and `hiddenDigit` (§5.5) is as far as the idea
+  reaches. A single given square has 120 answers.
 - **Subset rungs** — naked and hidden pairs, both triples, x-wing: built, measured, and
   not one of them ever fired. A group only six squares wide leaves a pair one step
   behind a single that fires first, so every board they might have decided was already

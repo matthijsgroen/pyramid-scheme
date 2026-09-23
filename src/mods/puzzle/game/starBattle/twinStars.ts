@@ -65,7 +65,20 @@ export const TWIN_STARS_META: FamilyMeta = {
  * eight regions already answered — which reads as a junior board however hard the solver had to work for
  * the rest. Raising the floor to five removes them: 0.0–0.1 a board.
  *
- * Measured over eight boards a tier, none falling back to a nearest miss.
+ * **It was not enough, and the measurement that says so is the same one star battle's top tiers were
+ * rebuilt on.** Every tier here placed its first star on step 0, 1 or 2 and settled in 27–31 steps: a board
+ * whose opening is handed over is an easy board however tight its regions are. From expert up, no region
+ * may sit inside one line; from master up the board must be argued open with `wouldStrand`, and the first
+ * star may not land until the player has eliminated for several steps. Measured: master 38–42 steps with
+ * the first star at step 5–7, wizard 37–42 at step 6–7, against 27–31 at step 0–2 before.
+ *
+ * **`mostPairsAtOnce` is the third gate, and playtesting named it.** A line down to three free squares
+ * owing two stars has one filling — both ends — so a whole pair lands on a move nobody had to think about.
+ * Counted: four to seven a board at junior, two to five above it. Two is what the top tiers allow.
+ *
+ * **What these tiers cannot buy is the tighter spread.** At n² the gates put the tier out of reach of
+ * itself — every draw fell back to a nearest miss — so master and wizard share junior's spread and differ
+ * in what they ask instead. Measured over four boards a tier at 0.6s (expert) to 7s (wizard) a draw.
  */
 export const TWIN_STARS_CONFIG: Record<Difficulty, StarBattleOptions> = {
   // Unreachable — the allocator never draws this family below its minTier. Present because the tier table
@@ -92,38 +105,47 @@ export const TWIN_STARS_CONFIG: Record<Difficulty, StarBattleOptions> = {
     requires: ["onlyWay"],
     requiresCount: 3,
   },
-  // The gifts go away and the region boundary starts meaning something: a region squeezed into one line
-  // spends that line's pair, twice a board. 34ms.
+  // The gifts go away twice over: no region small enough to read on sight, and none sitting inside a single
+  // line either, so the region boundary has to be argued rather than spotted. At most three of its pairs may
+  // land on a counting move. 28–33 steps at about 600ms.
   expert: {
     size: 8,
     quota: 2,
     regionSpread: 3,
     minRegion: 5,
-    techniqueCap: "regionLine",
-    requires: ["regionLine"],
+    noLineRegions: true,
+    techniqueCap: "spanning",
+    requires: ["regionLine", "spanning"],
     requiresCount: 2,
+    mostPairsAtOnce: 3,
   },
-  // The converse reading, which needs the rest of a line already emptied, spent twice. Shares expert's
-  // spread: at n² this tier costs three times as much to draw and comes out no harder, so the separation
-  // from expert is the rung rather than the shape of the map. 609ms.
+  // The hypothesis arrives, and with it an opening the board makes the player earn — five eliminations
+  // before the first star, and at most two pairs handed over by counting in the whole solve. 38–42 steps.
   master: {
     size: 8,
     quota: 2,
     regionSpread: 3,
     minRegion: 5,
-    techniqueCap: "lineRegion",
-    requires: ["lineRegion"],
-    requiresCount: 2,
+    noLineRegions: true,
+    techniqueCap: "wouldStrand",
+    requires: ["wouldStrand"],
+    requiresCount: 4,
+    firstStarAfter: 5,
+    mostPairsAtOnce: 2,
   },
-  // The top rung, twice, and the only tier drawn at the tighter spread — so no region is small enough to
-  // read on sight and the reasoning has to span two groups. 898ms.
+  // Twice the hypothesis and a step longer an opening. **The spread is the same as master's**: with the
+  // gates doing the work, the tighter spread only made boards rarer without making them harder, and at
+  // quota 2 it put the tier out of reach of its own gates. 37–42 steps at about 7s a draw.
   wizard: {
     size: 8,
     quota: 2,
-    regionSpread: 2,
+    regionSpread: 3,
     minRegion: 5,
-    techniqueCap: "spanning",
-    requires: ["spanning"],
-    requiresCount: 2,
+    noLineRegions: true,
+    techniqueCap: "wouldStrand",
+    requires: ["wouldStrand"],
+    requiresCount: 8,
+    firstStarAfter: 6,
+    mostPairsAtOnce: 2,
   },
 }

@@ -114,6 +114,15 @@ describe("SudokuPuzzle", () => {
     expect(register.container.textContent).toContain("sudoku.hint.papyrus.")
   })
 
+  it("lets the room it is standing in name the place, where nothing else did", () => {
+    // The address reaches the skin, so a room no journey dressed still opens as the place its own
+    // address drew (faceFor.ts). `a1b2c3#2/1` is one that draws the register.
+    const { container } = render(
+      <SudokuPuzzle puzzle={board()} difficulty="expert" room="a1b2c3#2/1" onSolved={() => {}} onCancel={() => {}} />
+    )
+    expect(container.textContent).toContain("sudoku.name.papyrus")
+  })
+
   /**
    * Picking a value shows the player where else it stands — the question they are actually asking when
    * they tap a square that already holds something.

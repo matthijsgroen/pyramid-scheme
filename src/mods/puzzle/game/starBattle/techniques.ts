@@ -17,9 +17,11 @@ export const STAR_BATTLE_TECHNIQUES = [
   "groupFull",
   "groupTight",
   "onlyWay",
+  "everyWay",
   "regionLine",
   "lineRegion",
   "spanning",
+  "wouldStrand",
 ] as const
 
 export type StarBattleTechniqueId = (typeof STAR_BATTLE_TECHNIQUES)[number]
@@ -192,6 +194,52 @@ const onlyWaySteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[] 
     ]
   })
 
+/**
+ * The most free squares a group may hold for its arrangements to be a reason rather than a search.
+ *
+ * Six is where a player can still see the arrangements without listing them. Past that, "every way of
+ * filling this region agrees about this square" is what a SOLVER does — the reading eclipse built, measured
+ * and cut for exactly that (docs/game-design/puzzles/eclipse.md, on what was measured and taken out), and
+ * the bound is what keeps this side of that line.
+ */
+const MOST_FREE_TO_READ = 6
+
+/**
+ * A square every legal arrangement of a group's stars uses.
+ *
+ * **Found by playing a wizard board, not by the solver.** A four-square hook owing two stars has two
+ * placements and both use the same corner, so the star goes down on move one — and the ladder could not see
+ * it, because `onlyWay` only fires when there is exactly ONE arrangement. The board read as fourteen steps
+ * of elimination before its first star; a player places one immediately.
+ *
+ * **Inert at one star**, and provably: each arrangement is then a single distinct square, so several
+ * arrangements can never agree, and the case where there is one belongs to `groupTight`.
+ *
+ * The negative half of the same reading — a square NO arrangement uses — is `wouldStrand` already, said in
+ * a sentence that needs no arrangements at all.
+ */
+const everyWaySteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[] =>
+  countingGroups(puzzle).flatMap(({ kind, cells }) => {
+    const owed = owedBy(puzzle, marks, cells)
+    const free = freeIn(puzzle, marks, cells)
+    if (owed <= 1 || free.length <= owed || free.length > MOST_FREE_TO_READ) return []
+    const ways = packings(puzzle, marks, free, owed)
+    // One way is `onlyWay`'s plainer sentence, and none is a board already broken.
+    if (ways.length <= 1) return []
+    const always = free.filter(cell => ways.every(way => way.includes(cell)))
+    return always.length
+      ? [
+          {
+            technique: "everyWay" as const,
+            variant: kind,
+            count: owed,
+            cells,
+            decisions: always.map(cell => ({ cell, mark: "star" as const })),
+          },
+        ]
+      : []
+  })
+
 /** Rows and columns, each with the word its sentence uses. Never mixed — see `spanningSteps`. */
 const lineKinds = (puzzle: StarBattlePuzzle) => [
   { kind: "row", lines: rows(puzzle.size) },
@@ -300,14 +348,61 @@ const spanningSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[]
   ]
 }
 
+/**
+ * A square where a star would leave some group nowhere to stand.
+ *
+ * **The rung that makes a board without a gift possible.** Every rung above it needs a group already narrow
+ * enough to count, which is why a map whose regions are all wide settles nothing: the LinkedIn Queens board
+ * measured in docs/game-design/puzzles/star-battle.md gives the rest of this ladder ZERO moves, and
+ * this one alone carries it.
+ *
+ * It is a hypothesis about ONE square, and what refutes it is ONE group the player can look at — the same
+ * bargain eclipse's top rung makes. Only the star's NECESSARY consequences are followed: the squares it
+ * touches, and the rest of any group it fills. No chain, no second guess.
+ */
+const wouldStrandSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[] => {
+  const groups = countingGroups(puzzle)
+  // **The first square it finds, not every one.** This rung trials a star in every free square against every
+  // group, and generation runs it over thousands of maps that will be thrown away — the sweep that collects
+  // all of them costs a hundredfold and only ever has its first entry read.
+  for (const [cell, mark] of marks.entries()) {
+    if (mark) continue
+    const trial: Marks = [...marks]
+    trial[cell] = "star"
+    for (const at of neighboursOf(puzzle.size, cell)) if (!trial[at]) trial[at] = "dark"
+    // A group the star completes has nothing left to give — the same reading `groupFull` makes out loud.
+    for (const { cells } of groups)
+      if (cells.includes(cell) && owedBy(puzzle, trial, cells) === 0)
+        for (const at of cells) if (!trial[at]) trial[at] = "dark"
+    const stranded = groups.find(
+      ({ cells }) =>
+        owedBy(puzzle, trial, cells) > 0 && freeIn(puzzle, trial, cells).length < owedBy(puzzle, trial, cells)
+    )
+    if (stranded)
+      return [
+        {
+          technique: "wouldStrand" as const,
+          variant: stranded.kind,
+          count: owedBy(puzzle, marks, stranded.cells),
+          // The evidence is the group left with nowhere to go, so the hint has something to point at.
+          cells: stranded.cells,
+          decisions: darken([cell]),
+        },
+      ]
+  }
+  return []
+}
+
 const IMPLEMENTATIONS: Record<StarBattleTechniqueId, (puzzle: StarBattlePuzzle, marks: Marks) => StarBattleStep[]> = {
   touch: touchSteps,
   groupFull: groupFullSteps,
   groupTight: groupTightSteps,
   onlyWay: onlyWaySteps,
+  everyWay: everyWaySteps,
   regionLine: regionLineSteps,
   lineRegion: lineRegionSteps,
   spanning: spanningSteps,
+  wouldStrand: wouldStrandSteps,
 }
 
 /**
