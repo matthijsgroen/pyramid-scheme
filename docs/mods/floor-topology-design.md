@@ -201,6 +201,19 @@ Rather than model the states in between, bracket them:
 
 Non-monotonic state never enters the solver. The two runs bound it.
 
+### A hidden way out stays one-way
+
+A hidden section may end in a one-way that spills into an open corridor. The player finds the section
+by its proper entrance, walks it, and comes out somewhere visible — that is a good shape, and the
+emergence is part of the reward for having found it.
+
+**What no tool may do is make that one-way passable in reverse.** A rope that turns a slide into a
+climb, or anything else that reverses a passage, refuses the ones whose far side is hidden. Otherwise
+the section is enterable by someone who never discovered it, and hiding it bought nothing.
+
+The same reasoning stops a switch gating a hidden branch: a gate the player can see is a statement
+that something is there. A hidden section is a statement that nothing is, until they find otherwise.
+
 ### Per-visit state is the mod's problem
 
 Leaving is always available, and re-entry returns the player to the position they left at. So
