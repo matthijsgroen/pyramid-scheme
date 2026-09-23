@@ -12,6 +12,7 @@ const HidatoComponent: FamilyPlugin<HidatoPuzzle>["Component"] = ({ puzzle, ctx,
     difficulty={ctx.difficulty}
     role={ctx.role}
     theme={ctx.theme}
+    room={ctx.address}
     onSolved={onSolved}
     onCancel={onCancel}
   />

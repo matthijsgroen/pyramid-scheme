@@ -156,5 +156,13 @@ const SKINS: Record<string, CanistersSkin> = {
  * The map itself lives on this family's `FamilyMeta`, where world-gen can read it too
  * (`docs/instructions/puzzle-screens.md` §2).
  */
-export const skinFor = (role: string | string[] | undefined, theme: string | undefined, board = 0): CanistersSkin =>
-  withAmbience(SKINS[faceFor(CANISTERS_META.faces, role, theme, Object.keys(SKINS), board)] ?? SKINS.default, theme)
+export const skinFor = (
+  role: string | string[] | undefined,
+  theme: string | undefined,
+  board = 0,
+  room?: string
+): CanistersSkin =>
+  withAmbience(
+    SKINS[faceFor(CANISTERS_META.faces, role, theme, Object.keys(SKINS), board, room)] ?? SKINS.default,
+    theme
+  )

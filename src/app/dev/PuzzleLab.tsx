@@ -18,10 +18,11 @@ const selectClass = "rounded-md border border-red-400 bg-stone-900 px-2 py-1 tex
  */
 const benchNotes = (puzzle: unknown): string[] => {
   if (typeof puzzle !== "object" || puzzle === null) return []
-  const { goals, modes, techniqueCap, size, movable, fixed } = puzzle as {
+  const { goals, modes, techniqueCap, variant, size, movable, fixed } = puzzle as {
     goals?: unknown
     modes?: unknown
     techniqueCap?: unknown
+    variant?: unknown
     size?: unknown
     movable?: unknown
     fixed?: unknown
@@ -29,6 +30,7 @@ const benchNotes = (puzzle: unknown): string[] => {
   return [
     typeof size === "number" ? `${size}×${size}` : undefined,
     typeof techniqueCap === "string" ? `cap ${techniqueCap}` : undefined,
+    typeof variant === "string" ? variant : undefined,
     Array.isArray(movable) ? `${movable.length} pieces` : undefined,
     Array.isArray(fixed) ? `${fixed.length} fixed` : undefined,
     // A generator that records modes rather than goals says so — they are what replaces them.

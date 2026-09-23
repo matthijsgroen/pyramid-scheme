@@ -90,6 +90,7 @@ A component in `src/app/` or `src/mods/*/app/` owns the state and effects of **o
 
 ```bash
 yarn dev          # Dev server at http://localhost:9164
+yarn verify       # The whole gate, in the one order that works: lint --fix, types, tests, betterer
 yarn test         # Run all tests (Vitest)
 yarn test <file>  # Run a single test file
 yarn verify-world # Build every board in the world — on demand, ~11 min (docs/instructions/testing.md)
@@ -101,7 +102,10 @@ yarn build        # Production build
 yarn storybook    # Component docs at http://localhost:6006
 ```
 
-Always run `yarn check-types` and `yarn lint` before considering a change complete.
+Run `yarn verify` before considering a change complete. The ORDER is the reason it exists: `lint --fix`
+reformats files, and `.betterer.results` records a content hash per file, so a betterer run made before
+the formatting records hashes the formatting then invalidates — green locally, `Unexpected changes
+detected while running in CI mode` on the build machine.
 
 `yarn betterer` holds the backlogs that a lint rule cannot express, in `.betterer.ts`. Each guard
 reports one issue per occurrence per file and `.betterer.results` records them, so a new occurrence

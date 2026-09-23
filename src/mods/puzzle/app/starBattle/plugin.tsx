@@ -18,6 +18,7 @@ const StarBattleComponent: FamilyPlugin<StarBattlePuzzleWithAnswer>["Component"]
     difficulty={ctx.difficulty}
     role={ctx.role}
     theme={ctx.theme}
+    room={ctx.address}
     onSolved={onSolved}
     onCancel={onCancel}
   />

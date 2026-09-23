@@ -156,8 +156,13 @@ export const useOfflineStorage = <T>(
     let cancelled = false
     loadPromiseRef.current = store
       .getItem<T>(key)
-      .then(value => {
+      .then(read => {
         if (cancelled || stateVersionRef.current !== readAtVersion) return
+        // A write issued after this read started has not landed or been announced yet, but the
+        // store already holds it: the read is older, and remembering it would hand every next
+        // functional update a value that silently drops that write.
+        const shared = store.latest<T>(key)
+        const value = shared.has ? (shared.value as T) : read
         if (value !== null) {
           store.remember<T>(key, value)
           localStateRef.current = value

@@ -12,6 +12,7 @@ const ProcessionComponent: FamilyPlugin<ProcessionPuzzleData>["Component"] = ({ 
     difficulty={ctx.difficulty}
     role={ctx.role}
     theme={ctx.theme}
+    room={ctx.address}
     onSolved={onSolved}
     onCancel={onCancel}
   />

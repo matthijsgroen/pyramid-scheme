@@ -109,7 +109,9 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
     for (let region = 0; region < options.size; region++) expect(contiguous(board, region)).toBe(true)
   })
 
-  it("is seeded: the same seed draws the same sky, a different one draws another", () => {
+  // Three full draws off the seed list, at a tier whose gates throw most maps away — seconds, not the
+  // 5ms a tier without them took.
+  it("is seeded: the same seed draws the same sky, a different one draws another", { timeout: 60_000 }, () => {
     const options = config.expert
     expect(generateStarBattle(11, options)).toEqual(generateStarBattle(11, options))
     expect(generateStarBattle(11, options)).not.toEqual(generateStarBattle(12, options))
@@ -126,6 +128,41 @@ describe.each(FAMILIES)("generateStarBattle for $name", ({ config, tiers }) => {
   it.each(tiers.filter(tier => config[tier].requires))("spends its own rung at %s", { timeout: 60_000 }, tier => {
     expect(gradeStarBattle(boardAt(config, tier), config[tier])).not.toBeNull()
   })
+
+  /**
+   * The two gates that took this family's gifts away (docs/game-design/puzzles/star-battle.md, "The three gates").
+   *
+   * A region inside one row spends that row before the player has read anything, and a board whose first
+   * star lands on step 0 opened itself. Both were true of every 8×8 this generator kept until the tiers
+   * asked otherwise.
+   */
+  it.each(tiers.filter(tier => config[tier].noLineRegions))(
+    "draws every %s region across two rows and two columns",
+    { timeout: 60_000 },
+    tier => {
+      const board = boardAt(config, tier)
+      for (let region = 0; region < board.size; region++) {
+        const cells = board.regions.flatMap((at, cell) => (at === region ? [cell] : []))
+        expect(
+          new Set(cells.map(cell => Math.floor(cell / board.size))).size,
+          `${tier} region ${region}`
+        ).toBeGreaterThan(1)
+        expect(new Set(cells.map(cell => cell % board.size)).size, `${tier} region ${region}`).toBeGreaterThan(1)
+      }
+    }
+  )
+
+  it.each(tiers.filter(tier => config[tier].firstStarAfter))(
+    "makes a %s board eliminate before it hands over a star",
+    { timeout: 60_000 },
+    tier => {
+      const options = config[tier]
+      const board = boardAt(config, tier)
+      const { steps } = solveStarBattleByTechniques(board, techniquesUpTo(options.techniqueCap))
+      const first = steps.findIndex(step => step.decisions.some(decision => decision.mark === "star"))
+      expect(first, tier).toBeGreaterThanOrEqual(options.firstStarAfter!)
+    }
+  )
 
   /**
    * The region map is the whole clue, at every tier.
@@ -187,18 +224,22 @@ describe("a board does not depend on the engine's sort", () => {
   }
 
   // Generating a wizard board twice — once through a merge sort written in TypeScript rather than the
-  // engine's own — runs to about three seconds here and past the five-second default on a CI runner.
+  // engine's own — runs to about three seconds here and past the five-second default on a CI runner. A
+  // listed seed is drawn in one attempt, which is both what play does and the board a room is dealt; a
+  // tier with no list left to draw from falls back to the attempt loop.
   it.each(["junior", "expert", "master", "wizard"] as const)(
     "builds the same twin stars board at %s",
     tier => {
       const options = TWIN_STARS_CONFIG[tier]
-      const ours = generateStarBattle(12345, options)
-      const theirs = underMergeSort(() => generateStarBattle(12345, options))
+      const listed = puzzleSeeds[configHash(options)] ?? []
+      const [seed, attempts] = listed.length ? [listed[0], 1] : [12345, undefined]
+      const ours = generateStarBattle(seed, options, attempts)
+      const theirs = underMergeSort(() => generateStarBattle(seed, options, attempts))
 
       expect(theirs.regions).toEqual(ours.regions)
       expect(theirs.solution).toEqual(ours.solution)
     },
-    30_000
+    60_000
   )
 
   it("builds every listed board of a tier under either sort, which is what the list promises", () => {
