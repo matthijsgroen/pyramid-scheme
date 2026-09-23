@@ -70,6 +70,36 @@ waiting for a rope — are the same feature authored twice, which is the sign th
 crack in a wall waiting for a hammer is a gate whose `gated by` names an item rather than a key, and
 the keys-and-locks machinery already answers that.
 
+### A fork knows its exits, and a switch is a fork that carries an encounter
+
+A fork is already the place where ways diverge, so it is the only node that knows, by construction,
+what leaving it in each direction means. Give it that knowledge explicitly — **each exit has a
+direction and a kind: a ward gate, the main path onward, a side path, or another fork** — and a
+switch needs no geometry of its own. It is a fork with an encounter in it, reading the exits it
+already has.
+
+This is what makes the board a diagram of the room. The player stands in the fork, the board draws
+the fork's own ways out at their own compass points, and routing the beam to one opens that way.
+
+**The builder places the gates, not the author.** It knows which boundaries are already spoken for,
+and it knows the control must be reachable before what it controls — which a fork satisfies by
+standing in it. Two exits are not available to gate:
+
+- **an exit toward an existing ward gate**, because that boundary is already owned; and
+- **an exit toward another fork**, because a gate there cuts one open space in two and reads as a
+  wall drawn through the middle of a room.
+
+What is left — the main path onward, and side paths — is where the gates go. Gating the main path is
+allowed here for the reason the invariants already give: the opener is reachable before the blocker,
+and at a fork it is the room the player is standing in.
+
+### The unit of a claim is a room-to-corridor boundary
+
+A gate occupies a boundary rather than a cell, which is what lets two features be told apart on a
+floor: a claimed boundary leaves the pool, and a feature that wanted it is told which feature has it.
+The fork above is the worked example — it claims the boundaries it gates, and cannot claim the one a
+ward gate already holds.
+
 ### A feature claims what it uses, and a claim is exclusive
 
 **No two features share a corridor, a room or a section.** A corridor claimed as a flooded stretch
@@ -262,9 +292,19 @@ rather than written beside it, and both are opaque to core.
 **The fork's targets are the room's own doors.** A switch room knows which of its exits it gates, so
 the board draws those doors at those compass points rather than abstract targets, and routing the
 beam north visibly opens the north corridor. That is what makes the choice legible: the board is a
-diagram of the room the player is standing in. It also means the light-beam puzzle is one family
-playing two roles — a corridor puzzle when it bars the way, a switch when it drives doors — with the
-role supplying the configuration rather than a second family existing.
+diagram of the room the player is standing in.
+
+**The light-beam puzzle plays two roles, sharing everything but the generator.** A corridor puzzle
+when it bars the way, a switch when it drives doors: one family, one visual language, one board, one
+set of mirrors, one rules voice. What the switch role does not share is board generation, and the
+reason is structural rather than a preference — the corridor generator reasons about _the_ shrine
+throughout, in its route search, its uniqueness check, its greedy-resistance measure and a technique
+rung that is also the hint source. A switch board is a fork with one branch per door, which is a
+different construction rather than the same one with a number changed.
+
+The switch role also generates live rather than from the baked seed list, and has no choice: a
+compass direction is an outcome of the carve, so no offline pass can know which doors a board must
+answer to.
 
 `hourglass` is last because P4 is the only new dispatch shape in the set and P6 the only new state
 shape.
