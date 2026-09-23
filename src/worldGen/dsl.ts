@@ -152,6 +152,16 @@ export type FloorConstraint<TExtra extends string = never> = {
    * puzzle chain (e.g. `{ where: "last", encounter: "capstone" }` for the crocodile capstone). See
    * NodeSelector. Replaces the old hardcoded last-main-puzzle special case. */
   nodes?: NodeSelector[]
+  /** A SWITCH FORK: one of this floor's junctions holds `encounter`, and the builder closes the ways
+   * out of it that nothing else owns — so the player stands in the fork and what is in it decides
+   * which way opens.
+   *
+   * The author names what stands there, never which junction (the carve chooses where they fall) and
+   * never which ways out (the builder chooses, and reports them back on the room). `keyId` is the
+   * STEM of the keys those gates want — one per way out, `${keyId}:${dir}` — because how many ways
+   * out there are is not something the authoring can know. Opaque here, like every other authored key
+   * id: whatever fills the switch mints them. */
+  switchFork?: { encounter: string | string[]; keyId: string }
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */

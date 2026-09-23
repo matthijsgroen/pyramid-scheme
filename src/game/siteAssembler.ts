@@ -266,6 +266,10 @@ const PACKING_WIDEN = 2
 const PACKING_CEILING = 1
 const ASSEMBLY_ATTEMPTS = 60
 
+// A switch fork is a CHOICE of way out, so one gate is not a switch — the player would be told to
+// solve a puzzle to open the only door they could already see was shut.
+const SWITCH_MIN_GATES = 2
+
 /** The five kinds a god can be DEPICTED on, as `tileAssets.ts`'s resolver reads them: a patron reaches
  * the map through these and nothing else. Copied rather than imported for the reason `artCensus.ts`
  * gives — that module pulls in the app's PNG imports. */
@@ -615,6 +619,10 @@ export const assembleFloor = (
   // while winding `chainPacking` from `packing` down to 0, so the last attempt is the most permissive
   // shape this config can take. That is what makes the phase converge rather than reroll the same
   // too-tight puzzle.
+
+  // Whether any attempt got as far as a carve that could hold no switch, so the failure can say so
+  // rather than blaming the maze.
+  let switchForkWithoutGates = false
   for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
     if (attempt >= RECOVERY_ATTEMPT) {
       // Recovery asks for the roomiest wish outright. Winding the CHAINS down is its lever, and on a
@@ -1247,6 +1255,30 @@ export const assembleFloor = (
     // as the path continuing.
     const mainPathIndexByKey = new Map(mainPath.map(([r, c], i) => [posKey(r, c), i]))
 
+    // What lies one node away, read off the NEIGHBOUR's own kind rather than inferred from this cell.
+    const exitKindOf = (cellKey: string, neighborKey: string): "main" | "side" | "ward" | "fork" => {
+      if (forkPositions.has(neighborKey)) return "fork"
+      if (roomSpecs.get(neighborKey)?.gateVariant === "tomb-key") return "ward"
+      const mi = mainPathIndexByKey.get(cellKey)
+      const neighborMi = mainPathIndexByKey.get(neighborKey)
+      return mi !== undefined && neighborMi !== undefined && Math.abs(mi - neighborMi) === 1 ? "main" : "side"
+    }
+
+    // Every way out of one node — the passages it actually has, to the node two cells away (NODE_STEP
+    // above).
+    const nodeExitsOf = (cellKey: string) => {
+      const [r, c] = cellKey.split(",").map(Number)
+      const out: { dir: Direction; neighborKey: string }[] = []
+      for (const [dr, dc, d] of CONNECTOR_DIRS) {
+        const nr = r + dr,
+          nc = c + dc
+        if (nr < 0 || nr >= N || nc < 0 || nc >= N) continue
+        if (!usedCells.has(`${nr},${nc}`) || !edgeAllowed(r, c, nr, nc)) continue
+        out.push({ dir: d, neighborKey: posKey(nr, nc) })
+      }
+      return out
+    }
+
     // Main path nodes — spread across the full path per contentIndices/goalIndex above;
     // everything else along mainPath is left unassigned and falls through to plain corridor.
     // The goal-room fallback here is defensive only: every real config sets mainEndReward
@@ -1305,36 +1337,6 @@ export const assembleFloor = (
     // puzzle or off the goal chest, and none of those is a place the player chooses a way out from.
     for (const pk of forkPositions) {
       if (!roomSpecs.has(pk)) roomSpecs.set(pk, { roomType: "fork" })
-    }
-
-    // A SWITCH: a junction that also holds an encounter. The two identities are not exclusive — the
-    // room keeps `roomType: "fork"`, so its footprint, its exits and the junction geometry are a fork's,
-    // and it gains the encounter's own fields on top. The first bare junction takes it, in the order the
-    // sections were attached, since the author names what stands in the switch and not where it is.
-    //
-    // It takes no `pathIndex`: a switch is not the k-th room of the main chain, it is the one room of
-    // its kind on the floor, so a save names it by what fills it the way a section's chest or gate is
-    // named (cellSlot.ts). `requiredKeyIds` is addressed by chain position, so a switch takes none.
-    if (config.switchFork) {
-      const switchAt = [...forkPositions].find(pk => roomSpecs.get(pk)?.roomType === "fork")
-      if (switchAt) {
-        const family = resolveEncounter(config.switchFork.encounter, "puzzle")
-        roomSpecs.set(switchAt, {
-          ...roomSpecs.get(switchAt)!,
-          family: family.familyId,
-          tags: family.tags,
-          // THE BOARD HAS TO STAND STILL WHILE THE JUNCTION MOVES. Having no chain position, a switch
-          // gets no entry from the world's board dealer, and `generatePuzzle` then falls back to a seed
-          // hashed from the cell's COORDINATE — which the next carve changes, under a save slot that
-          // does not, so a half-solved switch would come back on a different board. Hashed from what the
-          // floor was AUTHORED from instead, which is the one thing the carve cannot touch.
-          boardIndex: hashString(`${floorRef.journeyId}|${floorRef.floorIndex}|switchFork|${family.familyId}`),
-          ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
-          difficulty: config.difficulty,
-          ...(config.theme !== undefined ? { theme: config.theme } : {}),
-          ...(config.role !== undefined ? { role: config.role } : {}),
-        })
-      }
     }
 
     // Exit / stairhead
@@ -1582,6 +1584,84 @@ export const assembleFloor = (
       }
     }
 
+    // A SWITCH: a junction that also holds an encounter, and closes its own ways out so that what
+    // stands in it decides which one opens. The two identities are not exclusive — the room keeps
+    // `roomType: "fork"`, so its footprint, its exits and the junction geometry are a fork's, and it
+    // gains the encounter's own fields on top.
+    //
+    // Written last, after every other room this floor holds, because which junction can be a switch is
+    // a question about what already stands around it — and the answer is what the author cannot give:
+    // where the junctions fall is the carve's choice, so the builder picks the fork and the ways out,
+    // and reports them back on the room's own `exits`.
+    //
+    // It takes no `pathIndex`: a switch is not the k-th room of the main chain, it is the one room of
+    // its kind on the floor, so a save names it by what fills it the way a section's chest or gate is
+    // named (cellSlot.ts). `requiredKeyIds` is addressed by chain position, so a switch takes none.
+    let switchPos: string | undefined
+    const switchGateKeyByDir = new Map<Direction, string>()
+    if (config.switchFork) {
+      // WHICH WAYS OUT THE SWITCH MAY CLOSE. Of the main path, only the way ONWARD: closing the way
+      // back would shut the player in with the switch. And of the rest, only the ways out that nothing
+      // already stands beyond — which is one rule and covers the two the floor cannot have. A ward's
+      // own door already claims that boundary, and a second door on one boundary is two doors in one
+      // doorway; a junction beyond a way out is one open space, and a gate would draw a wall through
+      // the middle of it. Both of those are rooms by the time this runs, and so is a side path's own
+      // gate and any room the carve hung right beside the junction. What is left — the main path
+      // onward and the side paths off this junction — is where the gates go.
+      const closableExits = (pk: string) => {
+        const onward = (mainPathIndexByKey.get(pk) ?? -1) + 1
+        return nodeExitsOf(pk).filter(({ neighborKey }) => {
+          const neighborMi = mainPathIndexByKey.get(neighborKey)
+          if (neighborMi !== undefined && neighborMi !== onward) return false
+          return !roomSpecs.has(neighborKey)
+        })
+      }
+      switchPos = [...forkPositions].find(
+        pk => roomSpecs.get(pk)?.roomType === "fork" && closableExits(pk).length >= SWITCH_MIN_GATES
+      )
+      // A switch with one way out left to close decides nothing, and one silently dropped is an
+      // authored feature missing from the world. Both are the same answer: this carve has no switch in
+      // it, so take another.
+      if (switchPos === undefined) {
+        switchForkWithoutGates = true
+        continue
+      }
+
+      const family = resolveEncounter(config.switchFork.encounter, "puzzle")
+      roomSpecs.set(switchPos, {
+        ...roomSpecs.get(switchPos)!,
+        family: family.familyId,
+        tags: family.tags,
+        // THE BOARD HAS TO STAND STILL WHILE THE JUNCTION MOVES. Having no chain position, a switch
+        // gets no entry from the world's board dealer, and `generatePuzzle` then falls back to a seed
+        // hashed from the cell's COORDINATE — which the next carve changes, under a save slot that
+        // does not, so a half-solved switch would come back on a different board. Hashed from what the
+        // floor was AUTHORED from instead, which is the one thing the carve cannot touch.
+        boardIndex: hashString(`${floorRef.journeyId}|${floorRef.floorIndex}|switchFork|${family.familyId}`),
+        ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
+        difficulty: config.difficulty,
+        ...(config.theme !== undefined ? { theme: config.theme } : {}),
+        ...(config.condition !== undefined ? { condition: config.condition } : {}),
+        ...(config.patron !== undefined ? { patron: config.patron } : {}),
+        ...(config.role !== undefined ? { role: config.role } : {}),
+      })
+
+      for (const { dir, neighborKey } of closableExits(switchPos)) {
+        const gateKeyId = `${config.switchFork.keyId}:${dir}`
+        switchGateKeyByDir.set(dir, gateKeyId)
+        roomSpecs.set(neighborKey, {
+          roomType: "encounter",
+          family: keyGate.familyId,
+          tags: keyGate.tags,
+          requiredKeyId: gateKeyId,
+          gateVariant: "floor-key",
+          // Minted by whatever stands in the switch, so this floor grows no chest holding it and the
+          // door wears no colour pointing at one (see the floor-key gate written per section above).
+          keyIsAuthored: true,
+        })
+      }
+    }
+
     // Build 2D grid
     const cells2D: GridCell[][] = Array.from({ length: N }, () =>
       Array.from({ length: N }, (): GridCell => ({ type: "empty" }))
@@ -1594,7 +1674,7 @@ export const assembleFloor = (
       // Compute dirs from passages — nodes are two cells apart (see NODE_STEP above). A fork
       // also names what each of its own dirs leads to (RoomCell.exits) — main path continuing,
       // an attached side section, that side's own tomb-key gate ("ward"), or straight into
-      // another fork — read off the neighbour node's own kind, not inferred from this cell.
+      // another fork — plus, on a switch, the key each way out it closed now wants.
       const dirs = new Set<Direction>()
       const exits: RoomCell["exits"] = spec?.roomType === "fork" ? [] : undefined
       for (const [dr, dc, d] of CONNECTOR_DIRS) {
@@ -1603,17 +1683,8 @@ export const assembleFloor = (
         if (nr >= 0 && nr < N && nc >= 0 && nc < N && usedCells.has(`${nr},${nc}`) && edgeAllowed(r, c, nr, nc)) {
           dirs.add(d)
           if (exits) {
-            const neighborKey = posKey(nr, nc)
-            const neighborMi = mainPathIndexByKey.get(neighborKey)
-            const mi = mainPathIndexByKey.get(cellKey)
-            const kind: "main" | "side" | "ward" | "fork" = forkPositions.has(neighborKey)
-              ? "fork"
-              : roomSpecs.get(neighborKey)?.gateVariant === "tomb-key"
-                ? "ward"
-                : mi !== undefined && neighborMi !== undefined && Math.abs(mi - neighborMi) === 1
-                  ? "main"
-                  : "side"
-            exits.push({ dir: d, kind })
+            const gateKeyId = cellKey === switchPos ? switchGateKeyByDir.get(d) : undefined
+            exits.push({ dir: d, kind: exitKindOf(cellKey, posKey(nr, nc)), ...(gateKeyId ? { gateKeyId } : {}) })
           }
         }
       }
@@ -1926,6 +1997,11 @@ export const assembleFloor = (
 
   return {
     success: false,
-    reasons: [{ type: "layoutNotFound" }],
+    // The switch reason first where it ever applied: a floor no carve could give a switch two ways out
+    // to close is an authoring mistake, and "no layout" alone would send the reader after the maze.
+    reasons: [
+      ...(switchForkWithoutGates ? [{ type: "switchForkWithoutGates" } as const] : []),
+      { type: "layoutNotFound" } as const,
+    ],
   }
 }

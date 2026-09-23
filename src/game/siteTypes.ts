@@ -221,8 +221,12 @@ export type RoomCell = {
   /** A fork room's own ways out, each with what lies down it: `main` continues the main path,
    * `side` reaches an attached section, `ward` is a side gated by a tomb-key, and `fork` leads
    * straight to another fork room. Read off the neighbour node two grid cells away (NODE_STEP in
-   * siteAssembler.ts) in each of the cell's own `dirs`. Unset off fork rooms — nothing needs it yet. */
-  exits?: { dir: Direction; kind: "main" | "side" | "ward" | "fork" }[]
+   * siteAssembler.ts) in each of the cell's own `dirs`. Unset off fork rooms — nothing needs it yet.
+   *
+   * `gateKeyId` is set on the ways out a SWITCH closed, and is how the builder reports which ones it
+   * chose: whatever stands in the switch reads them off the room it is in rather than guessing the
+   * floor's shape. The id is opaque — core neither mints nor interprets it. */
+  exits?: { dir: Direction; kind: "main" | "side" | "ward" | "fork"; gateKeyId?: string }[]
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 
@@ -329,9 +333,16 @@ export type FloorConfig = {
    * the fork and what is in it decides which of its ways out opens. Family/tag(s) like `encounter`.
    *
    * The author names what stands there and not which fork it is — where the junctions fall is the
-   * carve's choice, so a cell is not something an author can point at. A floor whose carve produced no
-   * bare junction simply has no switch; the assembler invents no fork to hold one. */
-  switchFork?: { encounter: string | string[] }
+   * carve's choice, so a cell is not something an author can point at. Nor which ways out are closed:
+   * the builder gates every one that nothing else already owns and reports them back on the room's
+   * own `exits` (RoomCell.exits.gateKeyId). A floor whose carve gives no junction two such ways out
+   * has no switch to author, and the build fails rather than dropping it.
+   *
+   * `keyId` is the stem of the key each of those gates wants; the gate on the way out heading `d`
+   * asks for `${keyId}:${d}`. One authored stem rather than one id per way out, because the author
+   * cannot know which ways out there will be. Opaque to core — the id names no mod and nothing here
+   * mints it; whatever fills the switch does. */
+  switchFork?: { encounter: string | string[]; keyId: string }
   /** Per-node encounter override for the main path: 0-based room index → family/tag, resolved from
    * authored `nodes` selectors (e.g. the last room → "capstone"/crocodile). Room k uses
    * `encountersByIndex[k] ?? encounter`; baked to concrete family ids by the gen-time encounter
@@ -377,6 +388,9 @@ export type AssemblerReason =
   /** Two rooms of one section answer to the same name, so a save cannot tell them apart — a switch
    * authored with the family that already fills its section's chest, shop or gate. See cellSlot.ts. */
   | { type: "duplicateCellSlot"; slot: string }
+  /** An authored switch fork found no junction with two ways out left to close, so what stands in it
+   * would decide nothing. See FloorConfig.switchFork. */
+  | { type: "switchForkWithoutGates" }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
 

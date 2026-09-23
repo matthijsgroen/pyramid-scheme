@@ -71,39 +71,61 @@ const serializeSideSection = (s: SideSection): string => {
   return `{ ${parts.join(", ")} }`
 }
 
+// Emits every field the object carries rather than a fixed list, the way `serializeGate` does, so a
+// field added to a switch later rides along without this function naming it.
+const serializeObject = (o: object): string =>
+  `{ ${Object.entries(o)
+    .filter(([, v]) => v !== undefined)
+    .map(([k, v]) => `${k}: ${typeof v === "string" || Array.isArray(v) ? serializeEncounter(v) : serializeValue(v)}`)
+    .join(", ")} }`
+
+/**
+ * ONE EMITTER PER FloorConfig FIELD, and the type is what makes that exhaustive: a field added to
+ * FloorConfig with no emitter here fails the build, instead of the floor being baked without it.
+ *
+ * A whitelist could not say that. Authoring silently absent from `src/data/generatedWorld.ts` — no
+ * type error, no failing test, the world simply built without the feature — is the failure this shape
+ * exists to make impossible.
+ *
+ * Key order is emission order. A `null` return omits the line: an empty pool or a false flag is not
+ * worth a field in the baked world.
+ */
+const floorFieldEmitters: {
+  [K in keyof Required<FloorConfig>]: (value: NonNullable<FloorConfig[K]>) => string | null
+} = {
+  pathPuzzles: v => `pathPuzzles: ${v}`,
+  difficulty: v => `difficulty: "${v}"`,
+  end: () => `end: "treasure"`,
+  exitOrStaircase: v =>
+    typeof v === "object" ? `exitOrStaircase: { stairId: "${v.stairId}" }` : `exitOrStaircase: "${v}"`,
+  sideSections: v =>
+    `sideSections: ${v.length === 0 ? "[]" : `[\n${v.map(s => `      ${serializeSideSection(s)}`).join(",\n")},\n    ]`}`,
+  entrance: v => `entrance: ${typeof v === "object" ? `{ stairId: "${v.stairId}" }` : `"${v}"`}`,
+  encounter: v => `encounter: ${serializeEncounter(v)}`,
+  encounterArgs: v => `encounterArgs: ${JSON.stringify(v)}`,
+  theme: v => `theme: ${JSON.stringify(v)}`,
+  decorations: v => (v.length ? `decorations: ${JSON.stringify(v)}` : null),
+  condition: v => `condition: ${JSON.stringify(v)}`,
+  patron: v => `patron: ${JSON.stringify(v)}`,
+  wallDecorations: v => (v.length ? `wallDecorations: ${JSON.stringify(v)}` : null),
+  role: v => `role: ${serializeEncounter(v)}`,
+  encountersByIndex: v => (Object.keys(v).length ? `encountersByIndex: ${serializeEncountersByIndex(v)}` : null),
+  corridorStraightness: v => `corridorStraightness: ${v}`,
+  packing: v => `packing: ${v}`,
+  sealed: v => (v ? `sealed: true` : null),
+  mainEndReward: v => `mainEndReward: ${serializeReward(v)}`,
+  rewards: v => (v.length ? `rewards: ${serializePuzzleRewards(v)}` : null),
+  switchFork: v => `switchFork: ${serializeObject(v)}`,
+}
+
 const serializeFloor = (c: FloorConfig): string => {
-  const sideSectionsStr =
-    c.sideSections.length === 0
-      ? "[]"
-      : `[\n${c.sideSections.map(s => `      ${serializeSideSection(s)}`).join(",\n")},\n    ]`
-  const lines: string[] = [
-    `    pathPuzzles: ${c.pathPuzzles},`,
-    `    difficulty: "${c.difficulty}",`,
-    `    end: "treasure",`,
-    typeof c.exitOrStaircase === "object"
-      ? `    exitOrStaircase: { stairId: "${c.exitOrStaircase.stairId}" },`
-      : `    exitOrStaircase: "${c.exitOrStaircase}",`,
-    `    sideSections: ${sideSectionsStr},`,
-  ]
-  if (c.entrance) {
-    const val = typeof c.entrance === "object" ? `{ stairId: "${c.entrance.stairId}" }` : `"${c.entrance}"`
-    lines.push(`    entrance: ${val},`)
+  const lines: string[] = []
+  for (const key of Object.keys(floorFieldEmitters) as (keyof FloorConfig)[]) {
+    const value = c[key]
+    if (value === undefined) continue
+    const line = (floorFieldEmitters[key] as (v: unknown) => string | null)(value)
+    if (line !== null) lines.push(`    ${line},`)
   }
-  if (c.encounter) lines.push(`    encounter: ${serializeEncounter(c.encounter)},`)
-  if (c.encounterArgs !== undefined) lines.push(`    encounterArgs: ${JSON.stringify(c.encounterArgs)},`)
-  if (c.theme) lines.push(`    theme: ${JSON.stringify(c.theme)},`)
-  if (c.decorations?.length) lines.push(`    decorations: ${JSON.stringify(c.decorations)},`)
-  if (c.condition) lines.push(`    condition: ${JSON.stringify(c.condition)},`)
-  if (c.patron) lines.push(`    patron: ${JSON.stringify(c.patron)},`)
-  if (c.wallDecorations?.length) lines.push(`    wallDecorations: ${JSON.stringify(c.wallDecorations)},`)
-  if (c.role) lines.push(`    role: ${serializeEncounter(c.role)},`)
-  if (c.encountersByIndex && Object.keys(c.encountersByIndex).length)
-    lines.push(`    encountersByIndex: ${serializeEncountersByIndex(c.encountersByIndex)},`)
-  if (c.corridorStraightness !== undefined) lines.push(`    corridorStraightness: ${c.corridorStraightness},`)
-  if (c.packing !== undefined) lines.push(`    packing: ${c.packing},`)
-  if (c.sealed) lines.push(`    sealed: true,`)
-  if (c.mainEndReward) lines.push(`    mainEndReward: ${serializeReward(c.mainEndReward)},`)
-  if (c.rewards?.length) lines.push(`    rewards: ${serializePuzzleRewards(c.rewards)},`)
   return `  {\n${lines.join("\n")}\n  }`
 }
 

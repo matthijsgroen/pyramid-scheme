@@ -218,3 +218,26 @@ describe("a site theme handed down", () => {
     })
   })
 })
+
+// The authoring side of the same seam: a floor constraint's switch has to reach the FloorConfig the
+// serializer then bakes, or the feature is dropped between two files that both compile.
+describe("an authored switch fork", () => {
+  it("reaches the built floor config", () => {
+    const { floors } = buildSite({
+      journeyId: "j1",
+      tier: "junior",
+      pyramidIndex: 0,
+      levelCount: 1,
+      pathPuzzles: 2,
+      constraint: { floors: [{ switchFork: { encounter: "witnessDoor", keyId: "witness:test" } }] },
+      difficulty: "junior",
+      hasMapPieceBranch: false,
+      hasWardGate: false,
+      nextTier: null,
+      resolveReward: () => undefined,
+      resolveMainEndReward: () => ({ type: "mosaicPiece" }),
+    })
+
+    expect(floors[0].switchFork).toEqual({ encounter: "witnessDoor", keyId: "witness:test" })
+  })
+})

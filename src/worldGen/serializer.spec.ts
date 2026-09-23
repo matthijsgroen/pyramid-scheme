@@ -62,3 +62,26 @@ describe("generateFile — serializeSideSection field coverage", () => {
     expect(output).toContain('theme: "day"')
   })
 })
+
+// A switch is authored on the floor and read back out of the baked file; a field the serializer does
+// not emit is a feature the world was built without, with nothing failing to say so.
+describe("generateFile — a switch fork survives the bake", () => {
+  const output = generateFile({
+    test_journey: [
+      [
+        {
+          pathPuzzles: 1,
+          difficulty: "junior",
+          end: "treasure",
+          exitOrStaircase: "exit",
+          sideSections: [],
+          switchFork: { encounter: "witnessDoor", keyId: "witness:test" },
+        },
+      ],
+    ],
+  })
+
+  it("emits the encounter standing in it and the stem its gates key on", () => {
+    expect(output).toContain('switchFork: { encounter: "witnessDoor", keyId: "witness:test" }')
+  })
+})

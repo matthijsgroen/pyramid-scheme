@@ -92,6 +92,7 @@ export type BuildFloorOptions = {
   mainEndReward?: TreasureReward
   encounter?: FloorConfig["encounter"]
   encountersByIndex?: FloorConfig["encountersByIndex"]
+  switchFork?: FloorConfig["switchFork"]
   corridorStraightness?: number
   packing?: number
   sealed?: boolean
@@ -127,6 +128,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.sealed ? { sealed: true } : {}),
   ...(opts.encounterArgs !== undefined ? { encounterArgs: opts.encounterArgs } : {}),
   ...(opts.theme !== undefined ? { theme: opts.theme } : {}),
+  ...(opts.switchFork ? { switchFork: opts.switchFork } : {}),
 })
 
 // Sequentially links floors[fi] → floors[fi+1] via a stairhead: floor fi's exitOrStaircase
@@ -268,6 +270,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           encounter: fc.encounter ?? constraint.encounter,
           // Resolve this floor's authored `nodes` selectors → per-node encounter overrides (§G).
           encountersByIndex: resolveNodeSelectors(fc.nodes, floorPP),
+          switchFork: fc.switchFork,
           corridorStraightness: floorStraightness,
           packing: floorPacking,
           sealed: floorSealed,

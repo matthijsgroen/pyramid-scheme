@@ -165,7 +165,7 @@ describe("useAssembledFloor — hidden junctions", () => {
       difficulty: "expert",
       end: "treasure",
       exitOrStaircase: "exit",
-      switchFork: { encounter: "sumplete" },
+      switchFork: { encounter: "sumplete", keyId: "switch:test" },
       // One section, so the floor has exactly one junction and the switch can only stand on it.
       sideSections: [
         { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true, endReward: { type: "mosaicPiece" } },

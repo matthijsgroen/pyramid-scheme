@@ -1469,6 +1469,7 @@ describe("fork exits", () => {
 })
 
 describe("a switch fork", () => {
+  const SWITCH_KEY = "switch:test"
   const switchConfig = (switchFork?: FloorConfig["switchFork"]): FloorConfig => ({
     pathPuzzles: 2,
     difficulty: "junior",
@@ -1491,27 +1492,27 @@ describe("a switch fork", () => {
   }
 
   it("is both a fork and its encounter", () => {
-    const { cell } = assembleWithSwitch({ encounter: "sumplete" })
+    const { cell } = assembleWithSwitch({ encounter: "sumplete", keyId: SWITCH_KEY })
     expect(cell.roomType).toBe("fork")
     expect(cell.family).toBe("sumplete")
     expect(cell.tags).toContain("puzzle")
   })
 
   it("keeps the exits the puzzle standing in it has to choose between", () => {
-    const { cell } = assembleWithSwitch({ encounter: "sumplete" })
+    const { cell } = assembleWithSwitch({ encounter: "sumplete", keyId: SWITCH_KEY })
     expect(cell.exits?.length).toBe(cell.dirs.size)
     expect(cell.exits?.length).toBeGreaterThan(1)
   })
 
   it("wears the floor's own tier, skin and role, like any other encounter room", () => {
-    const { cell } = assembleWithSwitch({ encounter: "sumplete" })
+    const { cell } = assembleWithSwitch({ encounter: "sumplete", keyId: SWITCH_KEY })
     expect(cell.difficulty).toBe("junior")
     expect(cell.theme).toBe("dusk")
     expect(cell.role).toBe("puzzle")
   })
 
   it("is the only fork that gains one", () => {
-    const { grid } = assembleWithSwitch({ encounter: "sumplete" })
+    const { grid } = assembleWithSwitch({ encounter: "sumplete", keyId: SWITCH_KEY })
     const switches = grid.cells
       .flat()
       .filter(cell => cell.type === "room" && cell.roomType === "fork" && cell.family !== undefined)
@@ -1529,14 +1530,27 @@ describe("a switch fork", () => {
   it("never takes a junction that already holds a main-path room", () => {
     let compared = 0
     for (let seed = 0; seed < 30; seed++) {
-      const authored = assembleFloor(`site-switch-steal-${seed}`, switchConfig({ encounter: "sumplete" }), seed)
+      const authored = assembleFloor(
+        `site-switch-steal-${seed}`,
+        switchConfig({ encounter: "sumplete", keyId: SWITCH_KEY }),
+        seed
+      )
       const bare = assembleFloor(`site-switch-steal-${seed}`, switchConfig(), seed)
       if (!authored.success || !bare.success) continue
       compared++
-      // Every room the bare floor holds is still that room on the authored one: a switch is written
-      // onto a junction that was nothing else, never over the entrance, a puzzle or the goal chest.
+      // Every room the bare floor holds is still there on the authored one: a switch is written onto a
+      // junction that was nothing else, never over the entrance, a puzzle or the goal chest. Counted
+      // rather than compared cell by cell, because asking for a switch can cost the floor a carve
+      // attempt and the maze is then a different maze. Its own gates are what it adds, so they sit out.
       const rooms = (grid: FloorGrid) =>
-        grid.cells.flat().map(cell => (cell.type === "room" && cell.roomType !== "fork" ? cell.family : null))
+        grid.cells
+          .flat()
+          .flatMap(cell =>
+            cell.type === "room" && cell.roomType !== "fork" && cell.gateVariant === undefined
+              ? [cell.family ?? cell.roomType]
+              : []
+          )
+          .sort()
       expect(rooms(authored.grid)).toEqual(rooms(bare.grid))
     }
     // A loop that skipped every seed would pass having compared nothing.
@@ -1547,7 +1561,7 @@ describe("a switch fork", () => {
   // carve-independent because a switch has a slot, so the board must be too — otherwise the player
   // comes back to a different puzzle on the room they left.
   it("deals itself the same board wherever the next carve puts it", () => {
-    const config = switchConfig({ encounter: "sumplete" })
+    const config = switchConfig({ encounter: "sumplete", keyId: SWITCH_KEY })
     const at = (seed: number) => {
       const result = assembleFloor("site-switch-board", config, seed)
       if (!result.success) return null
@@ -1563,10 +1577,119 @@ describe("a switch fork", () => {
     expect([second.r, second.c]).not.toEqual([first.r, first.c])
   })
 
+  // Walks the grid the way a player without a single key does: through open cells, never into a gate.
+  const reachesWithoutGates = (grid: FloorGrid, from: readonly [number, number], to: readonly [number, number]) => {
+    const seen = new Set([`${from[0]},${from[1]}`])
+    const queue: [number, number][] = [[from[0], from[1]]]
+    while (queue.length > 0) {
+      const [r, c] = queue.shift()!
+      if (r === to[0] && c === to[1]) return true
+      const cell = grid.cells[r]?.[c]
+      if (!cell || cell.type === "empty") continue
+      if (cell.type === "room" && cell.requiredKeyId !== undefined) continue
+      for (const dir of cell.dirs) {
+        const [dr, dc] = DIR_MOVE[dir]
+        if (seen.has(`${r + dr},${c + dc}`)) continue
+        seen.add(`${r + dr},${c + dc}`)
+        queue.push([r + dr, c + dc])
+      }
+    }
+    return false
+  }
+
+  // What the builder closed, and what it reported closing, have to be the same set — whatever stands
+  // in the switch reads the exits and would otherwise mint keys for doors that are not there.
+  const gatedExitsOf = (grid: FloorGrid, at: { r: number; c: number; cell: RoomCell }) =>
+    (at.cell.exits ?? [])
+      .filter(exit => exit.gateKeyId !== undefined)
+      .map(exit => {
+        const [dr, dc] = DIR_MOVE[exit.dir]
+        const beyond = grid.cells[at.r + dr * 2]?.[at.c + dc * 2]
+        return { exit, beyond }
+      })
+
+  // A floor with ward-gated branches and enough of them to put two junctions side by side, so the
+  // ways out a switch may not close turn up at all.
+  const wardedSwitchConfig = (): FloorConfig => ({
+    pathPuzzles: 2,
+    difficulty: "junior",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [
+      { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
+      { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "junior", end: "treasure", gate: { type: "tomb-key", wardKeyId: "ward:a" } },
+      { pathPuzzles: 0, difficulty: "junior", end: "treasure", gate: { type: "tomb-key", wardKeyId: "ward:b" } },
+    ],
+    switchFork: { encounter: "sumplete", keyId: SWITCH_KEY },
+  })
+
+  it("closes at least two of its ways out, on keys the author's own stem names", () => {
+    const { grid } = assembleWithSwitch({ encounter: "sumplete", keyId: SWITCH_KEY })
+    const at = findRoom(grid, cell => cell.roomType === "fork" && cell.family !== undefined)
+    if (!at) throw new Error("no switch was carved")
+    const gated = gatedExitsOf(grid, at)
+
+    expect(gated.length).toBeGreaterThanOrEqual(2)
+    for (const { exit, beyond } of gated) {
+      expect(beyond?.type).toBe("room")
+      expect(beyond?.type === "room" && beyond.gateVariant).toBe("floor-key")
+      expect(beyond?.type === "room" && beyond.requiredKeyId).toBe(`${SWITCH_KEY}:${exit.dir}`)
+      // The key comes from whatever stands in the switch, so the floor grows no chest holding it.
+      expect(beyond?.type === "room" && beyond.keyIsAuthored).toBe(true)
+    }
+    // The opener comes before the blockers: the way BACK is never one of the ways it closed, so the
+    // player reaches the switch without needing a key the switch itself hands out.
+    expect(reachesWithoutGates(grid, grid.entrancePos, [at.r, at.c])).toBe(true)
+  })
+
+  // A ward's door already owns that boundary and a second door on it reads as two doors; a gate
+  // between two junctions draws a wall through the middle of one open space.
+  it("leaves the ways out something else already owns alone", () => {
+    const seen = { ward: 0, fork: 0 }
+    for (let seed = 0; seed < 120; seed++) {
+      const result = assembleFloor(`site-switch-owned-${seed}`, wardedSwitchConfig(), seed)
+      if (!result.success) continue
+      const at = findRoom(result.grid, cell => cell.roomType === "fork" && cell.family !== undefined)
+      if (!at) continue
+      for (const exit of at.cell.exits ?? []) {
+        if (exit.kind !== "ward" && exit.kind !== "fork") continue
+        seen[exit.kind]++
+        expect(exit.gateKeyId).toBeUndefined()
+      }
+    }
+    // Both kinds have to actually occur, or the case was never put to the test.
+    expect(seen.ward).toBeGreaterThan(0)
+    expect(seen.fork).toBeGreaterThan(0)
+  })
+
+  it("refuses a floor where no junction has two ways out left to close", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "junior",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      // The one branch off the main path is a ward's, so the only junction owns one way out it could
+      // close — the main path onward — and a switch that decides nothing is an authoring mistake.
+      sideSections: [
+        { pathPuzzles: 0, difficulty: "junior", end: "treasure", gate: { type: "tomb-key", wardKeyId: "ward:k" } },
+      ],
+      switchFork: { encounter: "sumplete", keyId: SWITCH_KEY },
+    }
+    const result = assembleFloor("site-switch-alone", config, 3)
+
+    expect(result.success).toBe(false)
+    expect(result.success === false && result.reasons.map(r => r.type)).toContain("switchForkWithoutGates")
+  })
+
   // Two rooms of one section answering to the same name would share one save entry.
   it("refuses a floor whose switch wears the name its section's chest already has", () => {
     // The same seed the board case proves carves a switch, and this floor's main path ends in a chest.
-    const result = assembleFloor("site-switch-board", switchConfig({ encounter: "treasure-chest" }), 7)
+    const result = assembleFloor(
+      "site-switch-board",
+      switchConfig({ encounter: "treasure-chest", keyId: SWITCH_KEY }),
+      7
+    )
 
     expect(result.success).toBe(false)
     expect(result.success === false && result.reasons.map(r => r.type)).toContain("duplicateCellSlot")
