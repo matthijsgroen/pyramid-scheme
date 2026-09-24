@@ -7,6 +7,11 @@ the large explorer artwork, every time, or the set drifts.
 Same loop as [starter-art-prompts.md](../starter-art-prompts.md): one file at a time, both of us look, the
 accepted file becomes the reference for the next.
 
+**`yarn repaint`** lists what is still owed here, tiles included, and **`yarn repaint <key>`** — `ipi`,
+`point-explorer` — puts that entry's prompt on the clipboard with §0 already folded into it and reveals its
+references in the Finder. An entry whose file exists is not owed and drops off the list. The paste is yours;
+everything before it is prepared.
+
 ## 0. The house style, stated once
 
 Every prompt below assumes this preamble. Paste it in front of each one.
