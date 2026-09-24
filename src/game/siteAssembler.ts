@@ -20,6 +20,7 @@ import { footprintSize } from "./roomFootprint"
 import type { ResolveBoardIndex } from "./seeds/boardIndex"
 import { validateSite } from "./siteValidator"
 import { rolesOfProp, rolesOfWallItem } from "./dressingTags"
+import type { FamilyMeta } from "./families/familyMeta"
 
 // Resolves an authored `encounter` (exact family id, or tag(s)) to a concrete family id
 // plus that family's own tags. Injected by the caller so this domain module never needs
@@ -30,6 +31,18 @@ import { rolesOfProp, rolesOfWallItem } from "./dressingTags"
 // the resolver that knows the registry answers, and this module only asks.
 export type EncounterResolution = { familyId: string; tags: string[]; reEnterable?: boolean }
 export type ResolveEncounter = (encounter: string | string[] | undefined, defaultTag: string) => EncounterResolution
+
+// The one place a resolved FamilyMeta becomes an EncounterResolution — shared by
+// familyRegistry.ts's app-layer resolveEncounter and allFamilyMeta.ts's world-gen-reachable
+// resolveEncounterMeta, so a field neither can read without the other (rewardPriority's
+// siblings, reEnterable before it) is added once instead of copied into two lookup functions.
+// `fallback` is the pre-resolution id/tag query, echoed back (id-joined if an array) when no
+// family matched — an unauthored or mod-disabled encounter falls through to the runtime's own
+// family-absence handling rather than resolving to nothing.
+export const encounterFromMeta = (meta: FamilyMeta | undefined, fallback: string | string[]): EncounterResolution => {
+  if (!meta) return { familyId: Array.isArray(fallback) ? fallback.join("+") : fallback, tags: [] }
+  return { familyId: meta.id, tags: meta.tags, ...(meta.reEnterable ? { reEnterable: true } : {}) }
+}
 
 // Resolves a main-path puzzle room's own completion precondition (e.g. a tableau's
 // hieroglyph requirement) to opaque key ids — same idea as ResolveEncounter, injected so

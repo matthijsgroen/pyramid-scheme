@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { assembleFloor, defaultResolveEncounter } from "./siteAssembler"
+import { assembleFloor, defaultResolveEncounter, encounterFromMeta } from "./siteAssembler"
 import type { ResolveEncounter } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
 import { validateSite } from "./siteValidator"
@@ -1795,5 +1795,29 @@ describe("a switch fork", () => {
     }
     // A loop that carved no switch would pass having looked at nothing.
     expect(carved).toBeGreaterThan(0)
+  })
+})
+
+describe(encounterFromMeta, () => {
+  const meta = { id: "sumplete", ownerMod: "puzzle", tags: ["puzzle"], icon: "?", color: "gray", rewardPriority: 60 }
+
+  it("carries the resolved family's id and tags", () => {
+    expect(encounterFromMeta(meta, "puzzle")).toEqual({ familyId: "sumplete", tags: ["puzzle"] })
+  })
+
+  it("sets reEnterable only when the meta claims it", () => {
+    expect(encounterFromMeta({ ...meta, reEnterable: true }, "puzzle")).toEqual({
+      familyId: "sumplete",
+      tags: ["puzzle"],
+      reEnterable: true,
+    })
+  })
+
+  it("falls back to the query id/tag with no tags when no family matched", () => {
+    expect(encounterFromMeta(undefined, "puzzle")).toEqual({ familyId: "puzzle", tags: [] })
+  })
+
+  it("joins an array fallback so an AND-query still resolves to one id", () => {
+    expect(encounterFromMeta(undefined, ["sky", "light"])).toEqual({ familyId: "sky+light", tags: [] })
   })
 })

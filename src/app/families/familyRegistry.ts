@@ -1,7 +1,7 @@
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { GateVariant, KeyColor, TreasureReward } from "@/game/siteTypes"
-import type { ResolveEncounter } from "@/game/siteAssembler"
+import { encounterFromMeta, type ResolveEncounter } from "@/game/siteAssembler"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ProgressionAPI } from "@/app/state/useProgression"
 import type { JourneyAPI } from "@/app/state/useJourneys"
@@ -105,12 +105,5 @@ export const resolveFamilyByIdOrTag = (idOrTag: string | string[]): FamilyPlugin
 // an authored `encounter` id/tag actually reaches a family's real id and tags.
 export const resolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
   const query = encounter ?? defaultTag
-  const plugin = resolveFamilyByIdOrTag(query)
-  if (plugin)
-    return {
-      familyId: plugin.meta.id,
-      tags: plugin.meta.tags,
-      ...(plugin.meta.reEnterable ? { reEnterable: true } : {}),
-    }
-  return { familyId: Array.isArray(query) ? query.join("+") : query, tags: [] }
+  return encounterFromMeta(resolveFamilyByIdOrTag(query)?.meta, query)
 }
