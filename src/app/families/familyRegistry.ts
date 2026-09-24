@@ -106,6 +106,11 @@ export const resolveFamilyByIdOrTag = (idOrTag: string | string[]): FamilyPlugin
 export const resolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
   const query = encounter ?? defaultTag
   const plugin = resolveFamilyByIdOrTag(query)
-  if (plugin) return { familyId: plugin.meta.id, tags: plugin.meta.tags }
+  if (plugin)
+    return {
+      familyId: plugin.meta.id,
+      tags: plugin.meta.tags,
+      ...(plugin.meta.reEnterable ? { reEnterable: true } : {}),
+    }
   return { familyId: Array.isArray(query) ? query.join("+") : query, tags: [] }
 }

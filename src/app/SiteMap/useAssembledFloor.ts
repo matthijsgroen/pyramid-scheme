@@ -79,7 +79,11 @@ const DIR_MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], 
 // With detectionLevel >= 1: junction cells that were completed stay reachable so the
 // player can always navigate back and trigger the reveal.
 // revealedSections: authoring addresses whose hidden sections have been revealed by the player.
-const maskHiddenCells = (
+//
+// Exported for its own spec: a carved floor never stands a visible ROOM beside a hidden cell (nodes sit
+// two apart and the connector between a visible node and a hidden one stays visible), so what this does
+// to a room is only reachable by handing it one.
+export const maskHiddenCells = (
   grid: FloorGrid,
   detectionLevel: number,
   revealedSections: ReadonlySet<string>
@@ -159,7 +163,11 @@ const maskHiddenCells = (
               hidden: cell.hidden,
             }
           }
-          return { ...cell, dirs: newDirs as ReadonlySet<Direction>, state }
+          // A fork's `exits` name the same ways out its `dirs` do, so they are pruned together. Left
+          // whole, a fork would still name a way out toward a branch the player has not found — and the
+          // board a switch draws is a diagram of the room, so it would draw a door into nothing.
+          const exits = cell.type === "room" ? cell.exits?.filter(exit => newDirs.has(exit.dir)) : undefined
+          return { ...cell, dirs: newDirs as ReadonlySet<Direction>, state, ...(exits ? { exits } : {}) }
         }
       }
 

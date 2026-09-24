@@ -378,6 +378,14 @@ export type ValidationReason =
   | { type: "mosaicMissing" }
   | { type: "mosaicNotReachable" }
   | { type: "mosaicDuplicate"; siteId: string }
+  /** Two different openers stand in one room-to-corridor boundary — a gate room's own key and a fork's
+   * exit closed toward it, or two forks closing the same way out. A player meeting it cannot tell which
+   * door they are looking at, nor which of the two they have just satisfied. */
+  | { type: "boundaryGatedTwice"; pos: readonly [number, number]; keyIds: string[] }
+  /** A gate a switch closed can be walked up to without passing through the switch, so the blocker is
+   * met before its opener. At a fork the opener is the room the player stands in, so this holds by
+   * construction; the check is what keeps it true when something else moves. */
+  | { type: "switchGateNotBehindSwitch"; switchPos: readonly [number, number]; gatePos: readonly [number, number] }
 
 export type ValidationResult = { valid: true } | { valid: false; reasons: ValidationReason[] }
 export type AssemblerReason =
@@ -393,6 +401,10 @@ export type AssemblerReason =
   /** An authored switch fork found no junction with two ways out left to close, so what stands in it
    * would decide nothing. See FloorConfig.switchFork. */
   | { type: "switchForkWithoutGates" }
+  /** A switch was authored with a family whose room closes behind the player. Its gates open one way
+   * out and leave the others shut, and keys accumulate, so the cost of the choice is a walk back to
+   * spend it again — which a room that cannot be re-entered never offers. See FamilyMeta.reEnterable. */
+  | { type: "switchFamilyNotReEnterable"; family: string }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
 

@@ -287,6 +287,74 @@ describe(validateSite, () => {
       expect(result.reasons.some(r => r.type === "mosaicNotReachable")).toBe(true)
     }
   })
+
+  // Two openers on one barrier and the player cannot tell which door they are looking at, nor which of
+  // the two they have just satisfied. The floor stops being readable before it stops being solvable.
+  it("boundaryGatedTwice: fails when a switch closes a way out a ward's door already owns", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [
+          0,
+          1,
+          room("fork", ["w", "e"], {
+            exits: [
+              { dir: "w", kind: "main" },
+              { dir: "e", kind: "side", gateKeyId: "switch:test:s0" },
+            ],
+          }),
+        ],
+        [0, 2, room("gate", ["w", "e"], { requiredKeyId: "ward:x", gateVariant: "tomb-key" })],
+        [0, 3, room("treasure", ["w"], { reward: { type: "mosaicPiece" } })],
+      ],
+      [0, 0],
+      [0, 3]
+    )
+    expect(validateSite(grid)).toEqual({
+      valid: false,
+      reasons: [{ type: "boundaryGatedTwice", pos: [0, 2], keyIds: ["switch:test:s0", "ward:x"] }],
+    })
+  })
+
+  // The opener has to come before the blocker. A fork gives that for nothing — the player is standing in
+  // it — right up until a corridor reaches round the back of the door it closed.
+  it("switchGateNotBehindSwitch: fails when a corridor reaches a switch's gate around the switch", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, corridor(["w", "e", "s"])],
+        [
+          0,
+          2,
+          room("fork", ["w", "e"], {
+            exits: [
+              { dir: "w", kind: "main" },
+              { dir: "e", kind: "side", gateKeyId: "switch:test:s0" },
+            ],
+          }),
+        ],
+        [
+          0,
+          3,
+          room("gate", ["w", "e"], {
+            requiredKeyId: "switch:test:s0",
+            gateVariant: "floor-key",
+            keyIsAuthored: true,
+          }),
+        ],
+        [0, 4, room("treasure", ["w"], { reward: { type: "mosaicPiece" } })],
+        [1, 1, corridor(["n", "e"])],
+        [1, 2, corridor(["w", "e"])],
+        [1, 3, corridor(["w", "n"])],
+      ],
+      [0, 0],
+      [0, 4]
+    )
+    expect(validateSite(grid)).toEqual({
+      valid: false,
+      reasons: [{ type: "switchGateNotBehindSwitch", switchPos: [0, 2], gatePos: [0, 3] }],
+    })
+  })
 })
 
 // ─── reachableFrom: requiredKeyIds (a tableau needing several hieroglyphs complete) ───────

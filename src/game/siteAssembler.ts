@@ -25,7 +25,10 @@ import { rolesOfProp, rolesOfWallItem } from "./dressingTags"
 // plus that family's own tags. Injected by the caller so this domain module never needs
 // to know which families/mods actually exist — see resolveEncounter in
 // src/app/families/familyRegistry.ts for the real (registry-backed) implementation.
-export type EncounterResolution = { familyId: string; tags: string[] }
+// `reEnterable` mirrors the resolved family's own FamilyMeta.reEnterable — whether a finished room of
+// it is walked back INTO. Carried here because a switch needs it and core may not read a mod's meta:
+// the resolver that knows the registry answers, and this module only asks.
+export type EncounterResolution = { familyId: string; tags: string[]; reEnterable?: boolean }
 export type ResolveEncounter = (encounter: string | string[] | undefined, defaultTag: string) => EncounterResolution
 
 // Resolves a main-path puzzle room's own completion precondition (e.g. a tableau's
@@ -55,7 +58,7 @@ const DEFAULT_FAMILY_TAGS: Record<string, string[]> = {
 }
 // Fallback for callers that don't inject the real family registry (tests, stories) —
 // production always passes familyRegistry.ts's resolveEncounter.
-const defaultResolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
+export const defaultResolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
   const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
   const familyId = DEFAULT_TAG_FAMILIES[value] ?? value
   return { familyId, tags: DEFAULT_FAMILY_TAGS[familyId] ?? [] }
@@ -471,6 +474,17 @@ export const assembleFloor = (
   const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
   const fezShop = resolveEncounter("fez-shop", "fez-shop")
   const keyGate = resolveEncounter("key-gate", "key-gate")
+
+  // A SWITCH'S ROOM HAS TO STAY OPEN. It opens one of its ways out and leaves the others shut, and keys
+  // accumulate — so a player who spent the choice on a side branch pays for the main path onward with a
+  // walk back to the switch, not with the run. A family whose room closes behind the player has no walk
+  // back to offer, and leaves them at a door they can never open. Asked here rather than re-carved: no
+  // seed changes which family was authored.
+  if (config.switchFork) {
+    const switchFamily = resolveEncounter(config.switchFork.encounter, "puzzle")
+    if (!switchFamily.reEnterable)
+      return { success: false, reasons: [{ type: "switchFamilyNotReEnterable", family: switchFamily.familyId }] }
+  }
 
   // A floor-key gate's key host is a purely local, structural requirement — every floor-key
   // gate on this floor needs exactly one key SOMEWHERE on this same floor, decided here,
@@ -1608,11 +1622,16 @@ export const assembleFloor = (
       // the middle of it. Both of those are rooms by the time this runs, and so is a side path's own
       // gate and any room the carve hung right beside the junction. What is left — the main path
       // onward and the side paths off this junction — is where the gates go.
+      //
+      // Nor a way out into a HIDDEN section: a gate the player can see is a statement that something is
+      // there, and a hidden section is the statement that nothing is until they find otherwise. Refused
+      // at placement, so the spoiler never exists rather than being swept up afterwards.
       const closableExits = (pk: string) => {
         const onward = (mainPathIndexByKey.get(pk) ?? -1) + 1
         return nodeExitsOf(pk).filter(({ neighborKey }) => {
           const neighborMi = mainPathIndexByKey.get(neighborKey)
           if (neighborMi !== undefined && neighborMi !== onward) return false
+          if (hiddenCellPositions.has(neighborKey)) return false
           return !roomSpecs.has(neighborKey)
         })
       }

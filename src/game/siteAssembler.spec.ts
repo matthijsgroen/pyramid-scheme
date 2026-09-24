@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { assembleFloor } from "./siteAssembler"
+import { assembleFloor, defaultResolveEncounter } from "./siteAssembler"
+import type { ResolveEncounter } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
 import { validateSite } from "./siteValidator"
 import { floorKeyRing } from "./floorKeys"
@@ -1470,6 +1471,13 @@ describe("fork exits", () => {
 
 describe("a switch fork", () => {
   const SWITCH_KEY = "switch:test"
+  // Whether a finished room is walked back into is the registry's answer, off FamilyMeta.reEnterable,
+  // and these specs assemble without the registry. A switch needs a family that offers the walk back,
+  // so the stub grants it and each spec below stays about the one thing it names.
+  const reEnterableFamilies: ResolveEncounter = (encounter, defaultTag) => ({
+    ...defaultResolveEncounter(encounter, defaultTag),
+    reEnterable: true,
+  })
   const switchConfig = (switchFork?: FloorConfig["switchFork"]): FloorConfig => ({
     pathPuzzles: 2,
     difficulty: "junior",
@@ -1483,7 +1491,7 @@ describe("a switch fork", () => {
 
   const assembleWithSwitch = (switchFork?: FloorConfig["switchFork"]) => {
     for (let seed = 0; seed < 60; seed++) {
-      const result = assembleFloor(`site-switch-${seed}`, switchConfig(switchFork), seed)
+      const result = assembleFloor(`site-switch-${seed}`, switchConfig(switchFork), seed, reEnterableFamilies)
       if (!result.success) continue
       const fork = findRoom(result.grid, cell => cell.roomType === "fork")
       if (fork) return { ...fork, grid: result.grid }
@@ -1533,9 +1541,10 @@ describe("a switch fork", () => {
       const authored = assembleFloor(
         `site-switch-steal-${seed}`,
         switchConfig({ encounter: "sumplete", keyId: SWITCH_KEY }),
-        seed
+        seed,
+        reEnterableFamilies
       )
-      const bare = assembleFloor(`site-switch-steal-${seed}`, switchConfig(), seed)
+      const bare = assembleFloor(`site-switch-steal-${seed}`, switchConfig(), seed, reEnterableFamilies)
       if (!authored.success || !bare.success) continue
       compared++
       // Every room the bare floor holds is still there on the authored one: a switch is written onto a
@@ -1563,7 +1572,7 @@ describe("a switch fork", () => {
   it("deals itself the same board wherever the next carve puts it", () => {
     const config = switchConfig({ encounter: "sumplete", keyId: SWITCH_KEY })
     const at = (seed: number) => {
-      const result = assembleFloor("site-switch-board", config, seed)
+      const result = assembleFloor("site-switch-board", config, seed, reEnterableFamilies)
       if (!result.success) return null
       return findRoom(result.grid, cell => cell.roomType === "fork" && cell.family !== undefined)
     }
@@ -1657,7 +1666,8 @@ describe("a switch fork", () => {
       const result = assembleFloor(
         "site-switch-stable",
         switchConfig({ encounter: "sumplete", keyId: SWITCH_KEY }),
-        seed
+        seed,
+        reEnterableFamilies
       )
       if (!result.success) continue
       const at = findRoom(result.grid, cell => cell.roomType === "fork" && cell.family !== undefined)
@@ -1678,7 +1688,7 @@ describe("a switch fork", () => {
   it("leaves the ways out something else already owns alone", () => {
     const seen = { ward: 0, fork: 0 }
     for (let seed = 0; seed < 120; seed++) {
-      const result = assembleFloor(`site-switch-owned-${seed}`, wardedSwitchConfig(), seed)
+      const result = assembleFloor(`site-switch-owned-${seed}`, wardedSwitchConfig(), seed, reEnterableFamilies)
       if (!result.success) continue
       const at = findRoom(result.grid, cell => cell.roomType === "fork" && cell.family !== undefined)
       if (!at) continue
@@ -1706,7 +1716,7 @@ describe("a switch fork", () => {
       ],
       switchFork: { encounter: "sumplete", keyId: SWITCH_KEY },
     }
-    const result = assembleFloor("site-switch-alone", config, 3)
+    const result = assembleFloor("site-switch-alone", config, 3, reEnterableFamilies)
 
     expect(result.success).toBe(false)
     expect(result.success === false && result.reasons.map(r => r.type)).toContain("switchForkWithoutGates")
@@ -1718,10 +1728,58 @@ describe("a switch fork", () => {
     const result = assembleFloor(
       "site-switch-board",
       switchConfig({ encounter: "treasure-chest", keyId: SWITCH_KEY }),
-      7
+      7,
+      reEnterableFamilies
     )
 
     expect(result.success).toBe(false)
     expect(result.success === false && result.reasons.map(r => r.type)).toContain("duplicateCellSlot")
+  })
+
+  // A switch opens one way out and leaves the others shut. Keys accumulate, so spending the choice on a
+  // side branch costs a walk back to the switch and a second choice — unless its room shut behind the
+  // player, and then the main path onward is a door they can never open.
+  it("refuses a switch whose room cannot be walked back into", () => {
+    const result = assembleFloor("site-switch-oneshot", switchConfig({ encounter: "sumplete", keyId: SWITCH_KEY }), 0)
+
+    expect(result.success).toBe(false)
+    expect(result.success === false && result.reasons).toEqual([
+      { type: "switchFamilyNotReEnterable", family: "sumplete" },
+    ])
+  })
+
+  // A gate the player can see says something is there; a hidden section says nothing is, until they
+  // find otherwise. So the two may never meet, and the way this is proven is by the switch standing on a
+  // floor that HAS a hidden branch and closing some other way out instead.
+  it("never closes a way out into a hidden branch", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "junior",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      // Two visible branches for the switch to choose among, and one hidden one it must leave alone.
+      sideSections: [
+        { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
+        { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
+        { pathPuzzles: 1, difficulty: "starter", end: "treasure", hidden: true },
+      ],
+      switchFork: { encounter: "sumplete", keyId: SWITCH_KEY },
+    }
+    let carved = 0
+    for (let seed = 0; seed < 40; seed++) {
+      const result = assembleFloor(`site-switch-hidden-${seed}`, config, seed, reEnterableFamilies)
+      if (!result.success) continue
+      const at = findRoom(result.grid, cell => cell.roomType === "fork" && cell.family !== undefined)
+      if (!at) continue
+      carved++
+      for (const exit of at.cell.exits ?? []) {
+        if (exit.gateKeyId === undefined) continue
+        const [dr, dc] = DIR_MOVE[exit.dir]
+        const beyond = result.grid.cells[at.r + dr * 2]?.[at.c + dc * 2]
+        expect(beyond?.type !== "empty" && beyond?.hidden).toBeUndefined()
+      }
+    }
+    // A loop that carved no switch would pass having looked at nothing.
+    expect(carved).toBeGreaterThan(0)
   })
 })

@@ -3,11 +3,12 @@ import { renderHook } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "@/game/siteAssembler"
 import type { FloorGrid, FloorConfig, CorridorCell, RoomCell } from "@/game/siteTypes"
-import { useAssembledFloor } from "./useAssembledFloor"
+import { maskHiddenCells, useAssembledFloor } from "./useAssembledFloor"
 import { cellAddress, cellKey, cellSlot, walkPosition } from "./cellIdentity"
 // useAssembledFloor resolves families through the real registry — populate it, same as
 // SiteMapScreen.tsx does, so resolution doesn't silently fall back to untagged rooms.
 import "@/mods/registerModApps"
+import { resolveEncounter } from "@/app/families/familyRegistry"
 
 /** The save a player standing on this cell would hold: the cell written down under its own key, the
  * way `markCellExplored` writes it as they walk (cellIdentity.ts). */
@@ -155,28 +156,29 @@ describe("useAssembledFloor — hidden junctions", () => {
   })
 
   /**
-   * A switch stands on the junction a hidden section hangs off, and masking rebuilds a room that comes
-   * out a passthrough as a corridor — which would shed its family, its tags and its exits, and leave its
-   * solved state nothing to come back to (a corridor has no slot).
+   * Masking rebuilds a room that comes out a passthrough as a corridor — which would shed a switch's
+   * family, its tags and its exits, and leave its solved state nothing to come back to (a corridor has
+   * no slot). So a floor that loses cells to masking has to hand the switch back whole.
    */
-  it("brings a switch through masking whole, on a floor whose only branch is hidden", () => {
+  it("brings a switch through masking whole, on a floor that hides a branch", () => {
     const config: FloorConfig = {
       pathPuzzles: 2,
       difficulty: "expert",
       end: "treasure",
       exitOrStaircase: "exit",
-      switchFork: { encounter: "sumplete", keyId: "switch:test" },
-      // One section, so the floor has exactly one junction and the switch can only stand on it.
+      // A family whose room is walked back into, which is what a switch asks of the one standing in it.
+      switchFork: { encounter: "witnessDoor", keyId: "switch:test" },
       sideSections: [
         { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true, endReward: { type: "mosaicPiece" } },
+        { pathPuzzles: 1, difficulty: "expert", end: "treasure" },
       ],
     }
     const seed = [0, 1, 2, 3, 4, 5, 6, 7].find(s => {
-      const built = assembleFloor(JOURNEY_ID, config, s)
+      const built = assembleFloor(JOURNEY_ID, config, s, resolveEncounter)
       return built.success && built.grid.cells.flat().some(c => c.type === "room" && c.roomType === "fork" && c.family)
     })
-    if (seed === undefined) throw new Error("no seed carved a switch onto the hidden section's junction")
-    const assembled = assembleFloor(JOURNEY_ID, config, seed)
+    if (seed === undefined) throw new Error("no seed carved a switch onto this floor")
+    const assembled = assembleFloor(JOURNEY_ID, config, seed, resolveEncounter)
     if (!assembled.success) throw new Error("assembly failed")
     const [r, c] = assembled.grid.cells.flatMap((row, rr) =>
       row.flatMap((cell, cc) => (cell.type === "room" && cell.roomType === "fork" && cell.family ? [[rr, cc]] : []))
@@ -191,9 +193,53 @@ describe("useAssembledFloor — hidden junctions", () => {
 
     const masked = result.current.grid?.cells[r]?.[c]
     expect(masked?.type).toBe("room")
-    expect(masked?.type === "room" && masked.family).toBe("sumplete")
+    expect(masked?.type === "room" && masked.family).toBe("witnessDoor")
     expect(masked?.type === "room" && masked.exits?.length).toBeGreaterThan(0)
-    expect(cellSlot(result.current.grid!, r, c)).toBe("xsumplete")
+    expect(cellSlot(result.current.grid!, r, c)).toBe("xwitnessDoor")
+  })
+})
+
+describe(maskHiddenCells, () => {
+  // A gate the player can see says something is there, and a way out drawn on the board says the same.
+  // So a fork's exits go when its dirs go: a switch's board is a diagram of the room it stands in, and
+  // an exit that outlived its direction has it draw a door into a branch nobody has found.
+  it("takes a fork's exit away with the direction it named", () => {
+    const fork: RoomCell = {
+      type: "room",
+      roomType: "fork",
+      dirs: new Set(["w", "e", "s"]),
+      state: "reachable",
+      family: "witnessDoor",
+      sectionAddress: "main",
+      exits: [
+        { dir: "w", kind: "main" },
+        { dir: "e", kind: "main" },
+        { dir: "s", kind: "side" },
+      ],
+    }
+    const empty = { type: "empty" } as const
+    const grid: FloorGrid = {
+      rows: 2,
+      cols: 3,
+      entrancePos: [0, 0],
+      exitPos: [0, 2],
+      siteId: "mask-exits",
+      staircases: {},
+      cells: [
+        [{ type: "corridor", dirs: new Set(["e"]), state: "reachable", sectionAddress: "main" }, fork, empty],
+        [
+          empty,
+          { type: "corridor", dirs: new Set(["n"]), state: "reachable", sectionAddress: "s0", hidden: true },
+          empty,
+        ],
+      ],
+    }
+
+    const { masked } = maskHiddenCells(grid, 0, new Set())
+
+    const after = masked.cells[0][1]
+    expect(after.type === "room" && [...after.dirs]).toEqual(["w", "e"])
+    expect(after.type === "room" && after.exits?.map(exit => exit.dir)).toEqual(["w", "e"])
   })
 })
 
