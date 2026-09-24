@@ -247,14 +247,27 @@ a spec. Six rows below are that second kind, and say so.
 | A switch never gates a hidden branch                            | `closableExits`, which skips a hidden neighbour — a guard, not yet reached by an authored floor |
 | An exit is pruned when the node it leads to is hidden           | `maskHiddenCells`, which checks the hidden set two cells out, not `dirs` — fires on every floor, switch or not: prunes 76 exits across 61 of 206 authored floors |
 | A hidden way out stays one-way under any tool                   | **nothing yet**, and no tool exists to break it                            |
-| An authored gate's key is minted by whoever owns it             | **nothing yet**                                                            |
-| Every collection's target count is reachable                    | **nothing yet**                                                            |
+| An authored gate's key is minted by whoever owns it             | for a switch fork, unrepresentable — the assembler writes gate and key from one expression. For a hand-authored gate, **nothing generic**: the two the world has are pinned by name in `configBuilder.integration.spec.ts` |
+| Every collection's target count is reachable                    | the mosaic mod's `worldValidator`, per register, over the permissive walk   |
 
-The last two are the ones that bite hardest and neither is floor-shaped. A misspelled key id leaves
-its branch unreachable for ever and no check notices, because the validator skips authored keys and
-the solver only records a lock it discovered. And reachability answers "can this be got to", never
-"is there enough of it" — which is the whole distance between a green build and a game that can be
-finished.
+A misspelled key id is the one that still bites, and it is not floor-shaped: it leaves its branch
+unreachable for ever and no check notices, because the validator skips authored keys and the solver
+only records a lock it discovered. The generic check — the owning mod asked whether it mints the id
+the gate names — waits for a consumer. Every hand-authored gate the world has is the witness door's,
+already pinned by name, and a switch fork cannot disagree with itself. `sequenceLock` is the first
+feature to author a door key by hand, and the check lands with it.
+
+The collection rule is held now, and the bracket it is held in is the permissive one — a collection
+is loot, not a lock, so a piece counts if it is reachable at _any_ point in time. A hidden pocket
+counts, and so does a branch behind an authored key, because solving the room that mints that key is
+how the player gets there. Locks keep the stricter bracket: an opener must be reachable _before_ its
+blocker, which the placement worklist already enforces.
+
+The count is asked per bucket and never as one world total. Mosaic is not 252 pieces; it is a set
+per difficulty tier, and a global sum would pass while junior ran short and wizard ran over.
+`placeFragments` walks the finished world once more with authored doors standing open and hands
+every reward it finds to each world validator; mosaic counts its own glass in there against
+`MOSAIC_STEPS_BY_TIER` and names the register and the shortfall when one comes up short.
 
 ### Per-visit state is the mod's problem
 
@@ -504,7 +517,11 @@ already carries for the shop's economy guard. Core never learns what a register 
 drops with its mod like everything else.
 
 The cheap version of this check is a sum, and the cheap version is what would have caught the
-failure above.
+failure above. It is a sum **per bucket**: mosaic's target is a set per difficulty tier, so one
+world total would pass while a single panel ran short. It is built, for the one collection that is
+loot rather than a lock — the mosaic mod's `worldValidator`, counting its own glass in the finished
+world's permissive walk. A hieroglyph and a tomb's `piecesRequired` are locks, and the placement
+worklist already holds them to the stricter reading.
 
 ## Not features
 

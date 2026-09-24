@@ -107,12 +107,31 @@ per-family facts rather than per-room ones.
    authored that way is silently inert. Pre-existing and field-agnostic; every shipped spec file
    happens to use the chain that works.
 
-2. **The solvability slice.** Two rules in the design doc's register are still held by nothing, and
-   both are world-shaped: that an authored gate's key is actually minted by whoever owns it, and that
-   every collection's target count is _reachable_. Reachability answers "can this be got to", never
-   "is there enough of it" — and that gap is what let a junior mosaic piece become unobtainable while
-   every check stayed green. The cheap version is a sum. Do this before more features land, not after.
-3. **Lightbeam's switch role** — one family, two roles, sharing everything but the generator. The
+2. **The solvability slice.** Reachability answers "can this be got to", never "is there enough of
+   it" — and that gap is what let a junior mosaic piece become unobtainable while every check stayed
+   green. The cheap version is a sum, and the owner settled what the sum counts:
+
+   - **A collection is loot, not a lock.** A piece counts if it is reachable at _any_ point in time,
+     so a hidden pocket counts and so does a branch behind an authored key. That is the design doc's
+     permissive bracket, and it is the right question for a register: _is every piece ever
+     obtainable?_
+   - **A lock is the stricter case and is already held** — an opener must be reachable _before_ its
+     blocker.
+   - **A collection's target is per bucket, never one total.** Mosaic is not 252 pieces; it is a set
+     per difficulty tier. A global sum would pass while junior ran short and wizard ran over.
+
+   Measured on the shipped world before building: 252 placed against a target of 252 — **zero slack**,
+   so any unreachable piece breaks the register — with 53 in hidden pockets and 2 behind the witness
+   door's gates. Mosaic is the only capped currency, so it is the only customer.
+
+   **The register's other unheld rule — that an authored gate's key is minted by whoever owns it —
+   waits for a consumer.** It guards two gates in the whole world, both the witness door's, both
+   already pinned by hand at `configBuilder.integration.spec.ts:125`, and the ruling above deletes
+   that shape: once a switch fork mints its own gates, the assembler writes gate and key from one
+   expression and a mismatch is unrepresentable rather than unchecked. `sequenceLock` is the first
+   feature to author a door key by hand. It lands there.
+
+3. **`lightbeamSwitch`** — the lightbeam mod's second family, sharing everything but the generator. The
    corridor generator reasons about _the_ shrine throughout its route search, uniqueness check and
    technique ladder, so a switch board is a different construction rather than the same one with a
    number changed. Seeded by fork shape and rotated to fit, because there are only four fork shapes up
