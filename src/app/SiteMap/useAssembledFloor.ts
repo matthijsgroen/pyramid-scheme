@@ -79,11 +79,7 @@ const DIR_MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], 
 // With detectionLevel >= 1: junction cells that were completed stay reachable so the
 // player can always navigate back and trigger the reveal.
 // revealedSections: authoring addresses whose hidden sections have been revealed by the player.
-//
-// Exported for its own spec: a carved floor never stands a visible ROOM beside a hidden cell (nodes sit
-// two apart and the connector between a visible node and a hidden one stays visible), so what this does
-// to a room is only reachable by handing it one.
-export const maskHiddenCells = (
+const maskHiddenCells = (
   grid: FloorGrid,
   detectionLevel: number,
   revealedSections: ReadonlySet<string>
@@ -115,6 +111,14 @@ export const maskHiddenCells = (
     return { masked: grid, hiddenJunctions: new Set(), hiddenSections: new Set(), junctionSections }
 
   const junctions = new Set<string>()
+  // An exit's node sits two grid cells out, past its own connector — and that connector stays visible
+  // even when the node beyond it is hidden (a connector is hidden only when both the nodes it joins
+  // are). So a fork's own `dirs` never lose that direction here, and an exit is pruned by checking the
+  // hidden set directly rather than by whether `dirs` moved.
+  const leadsToHidden = (r: number, c: number, dir: Direction): boolean => {
+    const [dr, dc] = DIR_MOVES[dir]
+    return hiddenPos.has(`${r + dr * 2},${c + dc * 2}`)
+  }
   const newCells: GridCell[][] = grid.cells.map((row, r) =>
     row.map((cell, c): GridCell => {
       if (hiddenPos.has(`${r},${c}`)) return { type: "empty" }
@@ -129,16 +133,30 @@ export const maskHiddenCells = (
             if (neighborSection) borderedSections.add(neighborSection)
           }
         }
-        if (newDirs.size !== cell.dirs.size) {
+        const dirsChanged = newDirs.size !== cell.dirs.size
+
+        // A gate the player can see says something is there, and a way out drawn on the board says the
+        // same — so a fork's `exits` are pruned whenever the node one leads to is hidden, whether or not
+        // this cell's own `dirs` moved. Left whole, the board would draw a door into a branch nobody has
+        // found.
+        const exits = cell.type === "room" ? cell.exits?.filter(exit => !leadsToHidden(r, c, exit.dir)) : undefined
+        const exitsChanged = cell.type === "room" && exits !== undefined && exits.length !== (cell.exits?.length ?? 0)
+
+        if (dirsChanged) {
           junctions.add(`${r},${c}`)
           if (borderedSections.size > 0) junctionSections.set(`${r},${c}`, borderedSections)
+        }
+
+        if (dirsChanged || exitsChanged) {
           // With detector: force the junction reachable, whether the player is walking up to
           // it for the first time ("visible" — completeCell treated it as a plain passthrough
           // on the unmasked graph, since it had no idea one side led to a hidden dead end) or
           // returning to it later ("completed"). Without a detector, leave the state alone —
           // the player glides straight through the hidden gap, seeing nothing unusual.
           const state =
-            detectionLevel >= 1 && (cell.state === "completed" || cell.state === "visible") ? "reachable" : cell.state
+            dirsChanged && detectionLevel >= 1 && (cell.state === "completed" || cell.state === "visible")
+              ? "reachable"
+              : cell.state
           // Downgrade room → corridor if hidden dir removal leaves it as a passthrough corner. It is
           // still the same cell, so everything that NAMES it comes along: without the address and the
           // ordinal, a player standing on a downgraded room has nowhere to be written down.
@@ -150,7 +168,7 @@ export const maskHiddenCells = (
           // hidden only when both the nodes it joins are — measured over the baked world, 2044 hidden
           // cells and not one visible room beside any of them. The guard is what keeps that true if the
           // masking ever widens.
-          if (cell.type === "room" && newDirs.size <= 2 && cell.family === undefined) {
+          if (cell.type === "room" && dirsChanged && newDirs.size <= 2 && cell.family === undefined) {
             return {
               type: "corridor",
               dirs: newDirs as ReadonlySet<Direction>,
@@ -163,10 +181,6 @@ export const maskHiddenCells = (
               hidden: cell.hidden,
             }
           }
-          // A fork's `exits` name the same ways out its `dirs` do, so they are pruned together. Left
-          // whole, a fork would still name a way out toward a branch the player has not found — and the
-          // board a switch draws is a diagram of the room, so it would draw a door into nothing.
-          const exits = cell.type === "room" ? cell.exits?.filter(exit => newDirs.has(exit.dir)) : undefined
           return { ...cell, dirs: newDirs as ReadonlySet<Direction>, state, ...(exits ? { exits } : {}) }
         }
       }

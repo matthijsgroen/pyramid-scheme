@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "@/game/siteAssembler"
 import type { FloorGrid, FloorConfig, CorridorCell, RoomCell } from "@/game/siteTypes"
-import { maskHiddenCells, useAssembledFloor } from "./useAssembledFloor"
+import { useAssembledFloor } from "./useAssembledFloor"
 import { cellAddress, cellKey, cellSlot, walkPosition } from "./cellIdentity"
 // useAssembledFloor resolves families through the real registry — populate it, same as
 // SiteMapScreen.tsx does, so resolution doesn't silently fall back to untagged rooms.
@@ -197,49 +197,59 @@ describe("useAssembledFloor — hidden junctions", () => {
     expect(masked?.type === "room" && masked.exits?.length).toBeGreaterThan(0)
     expect(cellSlot(result.current.grid!, r, c)).toBe("xwitnessDoor")
   })
-})
 
-describe(maskHiddenCells, () => {
   // A gate the player can see says something is there, and a way out drawn on the board says the same.
-  // So a fork's exits go when its dirs go: a switch's board is a diagram of the room it stands in, and
-  // an exit that outlived its direction has it draw a door into a branch nobody has found.
-  it("takes a fork's exit away with the direction it named", () => {
-    const fork: RoomCell = {
-      type: "room",
-      roomType: "fork",
-      dirs: new Set(["w", "e", "s"]),
-      state: "reachable",
-      family: "witnessDoor",
-      sectionAddress: "main",
-      exits: [
-        { dir: "w", kind: "main" },
-        { dir: "e", kind: "main" },
-        { dir: "s", kind: "side" },
+  // So an exit is pruned whenever the node it leads to is hidden — proven on a real carve rather than a
+  // hand-built grid, because a fork never actually stands directly beside a hidden cell (nodes sit two
+  // cells apart; the connector between a visible fork and a hidden node stays visible, so the fork's own
+  // `dirs` never move here). The exit still has to go, or the board draws a door into a branch nobody
+  // has found.
+  it("prunes a fork's exit toward a branch that hides, leaving its other exits and its own dirs alone", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "expert",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      switchFork: { encounter: "witnessDoor", keyId: "switch:hides" },
+      sideSections: [
+        { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true, endReward: { type: "mosaicPiece" } },
+        { pathPuzzles: 1, difficulty: "expert", end: "treasure" },
       ],
     }
-    const empty = { type: "empty" } as const
-    const grid: FloorGrid = {
-      rows: 2,
-      cols: 3,
-      entrancePos: [0, 0],
-      exitPos: [0, 2],
-      siteId: "mask-exits",
-      staircases: {},
-      cells: [
-        [{ type: "corridor", dirs: new Set(["e"]), state: "reachable", sectionAddress: "main" }, fork, empty],
-        [
-          empty,
-          { type: "corridor", dirs: new Set(["n"]), state: "reachable", sectionAddress: "s0", hidden: true },
-          empty,
-        ],
-      ],
+    const findFork = (grid: FloorGrid) =>
+      grid.cells
+        .flatMap((row, r) =>
+          row.flatMap((cell, c) =>
+            cell.type === "room" && cell.roomType === "fork" && cell.family ? [{ r, c, cell }] : []
+          )
+        )
+        .at(0)
+    const leadsToHidden = (grid: FloorGrid, r: number, c: number, dir: string) => {
+      const [dr, dc] = DIR_MOVE[dir]
+      const beyond = grid.cells[r + dr * 2]?.[c + dc * 2]
+      return beyond !== undefined && beyond.type !== "empty" && !!beyond.hidden
     }
+    const seed = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].find(s => {
+      const built = assembleFloor(JOURNEY_ID, config, s, resolveEncounter)
+      if (!built.success) return false
+      const fork = findFork(built.grid)
+      return fork !== undefined && fork.cell.exits?.some(exit => leadsToHidden(built.grid, fork.r, fork.c, exit.dir))
+    })
+    if (seed === undefined) throw new Error("no seed carved a switch beside a hidden branch")
 
-    const { masked } = maskHiddenCells(grid, 0, new Set())
+    const raw = assembleFloor(JOURNEY_ID, config, seed, resolveEncounter)
+    if (!raw.success) throw new Error("assembly failed")
+    const rawFork = findFork(raw.grid)
+    if (!rawFork) throw new Error("no switch was carved")
+    const { r, c, cell: rawCell } = rawFork
 
-    const after = masked.cells[0][1]
-    expect(after.type === "room" && [...after.dirs]).toEqual(["w", "e"])
-    expect(after.type === "room" && after.exits?.map(exit => exit.dir)).toEqual(["w", "e"])
+    const { result } = renderHook(() => useAssembledFloor(JOURNEY_ID, config, seed, 0, {}, null, 0, new Set()))
+    const masked = result.current.grid?.cells[r]?.[c]
+    if (masked?.type !== "room") throw new Error("expected the fork to survive masking as a room")
+
+    expect([...masked.dirs].sort()).toEqual([...rawCell.dirs].sort())
+    expect(masked.exits?.length).toBe((rawCell.exits?.length ?? 0) - 1)
+    expect(masked.exits?.some(exit => leadsToHidden(raw.grid, r, c, exit.dir))).toBe(false)
   })
 })
 
