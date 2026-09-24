@@ -15,10 +15,19 @@ Every prompt below assumes this preamble. Paste it in front of each one.
 > detail. Flat colour fills with exactly one darker shade per colour for form — no gradients, no
 > airbrushing, no texture. Simple rounded shapes, friendly proportions, slightly oversized head. Full
 > figure, standing, facing the viewer, weight on one leg. Plain white background, no shadow on the ground,
-> no frame, no text. Centred with even margin. Square canvas.
+> no frame, no text. Upright 2:3 portrait canvas, the figure filling its height — head near the top edge,
+> feet on the bottom edge.
 
 The two characters already share a **red neckerchief**, which is the strongest link between them — keep it
 in both, exactly the same red.
+
+**The canvas is 250×375, and it is not negotiable.** Every companion sprite is that size — `fez-250.png`
+and its three poses — and `Fez.tsx` draws them 200px wide with the bottom 60px past the screen edge, so a
+figure that does not stand on the bottom of its own canvas floats. Aspect is the one thing that cannot be
+fixed after generation. Match `fez-250.png`'s head height too: same head, same scale, same two people.
+
+**Generate on white, then cut the background.** The sprites are RGBA with real transparency; white is only
+what an image model can give you. A file is not ready to import until its background is alpha.
 
 ## 1. The explorer — conversation portraits
 
