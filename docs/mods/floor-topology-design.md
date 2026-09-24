@@ -93,6 +93,12 @@ What is left — the main path onward, and side paths — is where the gates go.
 allowed here for the reason the invariants already give: the opener is reachable before the blocker,
 and at a fork it is the room the player is standing in.
 
+**No bound on how much of a floor sits behind one switch, and a switch may stand at any fork.** The
+tempting rule — keep the main path onward free, or cap the share held — protects a pacing the player
+cannot perceive. Standing in the fork they have walked none of it: the main path and a side path are
+two dark ways out, and how much lies behind either is exactly what they do not know. There is nothing
+to compare, so there is no unfairness in the comparison.
+
 ### The unit of a claim is a room-to-corridor boundary
 
 A gate occupies a boundary rather than a cell, which is what lets two features be told apart on a
@@ -343,13 +349,23 @@ the board draws those doors at those compass points rather than abstract targets
 beam north visibly opens the north corridor. That is what makes the choice legible: the board is a
 diagram of the room the player is standing in.
 
-**The light-beam puzzle plays two roles, sharing everything but the generator.** A corridor puzzle
-when it bars the way, a switch when it drives doors: one family, one visual language, one board, one
-set of mirrors, one rules voice. What the switch role does not share is board generation, and the
-reason is structural rather than a preference — the corridor generator reasons about _the_ shrine
-throughout, in its route search, its uniqueness check, its greedy-resistance measure and a technique
-rung that is also the hint source. A switch board is a fork with one branch per door, which is a
-different construction rather than the same one with a number changed.
+**The light-beam mod owns two families: `lightbeam` bars the way, `lightbeamSwitch` drives doors.**
+One visual language, one board, one set of mirrors, one rules voice, shared between them. What they
+do not share is board generation, and the reason is structural rather than a preference — the
+corridor generator reasons about _the_ shrine throughout, in its route search, its uniqueness check,
+its greedy-resistance measure and a technique rung that is also the hint source. A switch board is a
+fork with one branch per door, which is a different construction rather than the same one with a
+number changed.
+
+Two families rather than one family branching on where it stands, because the two facts that differ
+are family-shaped: `lightbeam` joins the generic puzzle pool and `lightbeamSwitch` must not, and
+`lightbeamSwitch` must be `reEnterable` while the corridor puzzle need not be. Both are read off
+`FamilyMeta`, so one family would have to make them per-room answers and teach every reader of that
+meta the difference.
+
+`lightbeamSwitch` is what the `witnessDoor` mod becomes. Its board already routes a beam to one of
+two shrines and mints that shrine's key; what it lacks is taking its shrines from the fork's own
+exits instead of a hardcoded east and north.
 
 **The switch role stays seeded, because a fork has only four shapes.** A compass direction is an
 outcome of the carve, so at first glance no offline pass can know which doors a board must answer —

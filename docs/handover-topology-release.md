@@ -70,19 +70,43 @@ this branch came from a field reaching one of two parallel seams and not the oth
 and no failing test. Collapsing the seam makes the divergence unrepresentable for every future field —
 which is worth more than fixing any one of them.
 
+## Answered by the owner
+
+**A switch may stand at any fork, and hold as much of the floor as the carve gives it.** No cap, and
+the main path onward is gateable like any other way out. The reason is the player's view: they have
+not walked past the fork, so they cannot tell the main path from a side path, nor how much lies
+behind either. There is no pacing to protect, because there is nothing to compare. The builder's
+current behaviour stands.
+
+**Fogging needs nothing.** Fog past a switch is unexplored ground, not a statement about the gates.
+
+**`witnessDoor` becomes `lightbeamSwitch`.** It is already a beam-and-mirrors switch board; what it
+lacks is reading the fork's real exits instead of hardcoded east and north. It moves into the
+lightbeam mod, and the work on this branch carries over rather than being rewritten.
+
+**The lightbeam mod owns two families, not one family with two roles.** `lightbeam` is the corridor
+puzzle and stays in the generic pool; `lightbeamSwitch` is the fork board, stays out of the pool and
+is `reEnterable`. They share the board, the mirrors and the rules voice, and not the generator —
+which was already the reason for splitting them. Two families keep pool membership and re-enterability
+per-family facts rather than per-room ones.
+
 ## Open questions the owner has not answered
 
-- **How much of a floor may sit behind one switch?** The builder gated the main path onward in every
-  measured seed where that exit was free, so a switch early in a floor can put every later puzzle, the
-  goal chest and the exit behind one puzzle's key. A pacing decision, not a correctness one.
-- **Fogging.** A switch fogs everything past it until solved, including the ways out it did not close.
-  The gates now say something narrower than the fog does.
-- **Does `witnessDoor` retire** when lightbeam gains the switch role, or linger as a second family?
-- **What "playtested" means** for a release carrying six mechanics.
+- **What "playtested" means** for a release carrying six mechanics. Parked until the sixth feature
+  lands.
 
 ## What comes next, in order
 
-1. **Task 5** — the authoring, proved in spec.
+1. **Task 5** — the authoring, proved in spec. Done: `src/worldGen/switchForkAuthoring.spec.ts` walks
+   a spec-local rule from the DSL through `constraintResolver`, `buildSite` and `assembleFloor` to the
+   gated exits, and each assertion was proved red by mutating the link it covers rather than argued.
+
+   **The trap for whoever un-reduces it.** Only the `.pyramid(n).floor(k, …)` chain is read. The
+   scope-level builders — `global().floor()`, `tier(t).floor()`, `journey(j).floor()` — emit rules
+   whose only consumer, `resolveFloorConstraint`, is called nowhere but its own spec. A `switchFork`
+   authored that way is silently inert. Pre-existing and field-agnostic; every shipped spec file
+   happens to use the chain that works.
+
 2. **The solvability slice.** Two rules in the design doc's register are still held by nothing, and
    both are world-shaped: that an authored gate's key is actually minted by whoever owns it, and that
    every collection's target count is _reachable_. Reachability answers "can this be got to", never
