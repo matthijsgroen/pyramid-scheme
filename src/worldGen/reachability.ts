@@ -102,6 +102,12 @@ export type SiteReachability = {
   // (keys-and-locks-solver.md, "Structure, then loot": the wish was always in the
   // structure, this is the walk noticing it isn't satisfiable yet).
   discoveredLocks: ReadonlySet<string>
+  // Every reward sitting in this site's reachable rooms, verbatim and un-bucketed — a room's own
+  // `reward` plus each piece of a shop's `stock`. `harvestedCounts` above answers "which locks does
+  // the walk now satisfy", so it only sees rewards some currency claims a bucket for; this answers
+  // "how much of a thing is out there at all", which is what a collection's target count is
+  // measured against. Core reads no reward type here — a consumer counts its own.
+  reachableRewards: readonly TreasureReward[]
 }
 
 // Reachable floor indices within one site, given already-held facts (plus any tombKey
@@ -123,7 +129,10 @@ export const reachableFloorsInSite = (
   // Real family resolution (reEnterable included) — a caller wanting an authored switchFork's
   // reEnterable check to answer correctly (rather than defaultResolveEncounter's blanket "no")
   // passes one in, built from src/mods/allFamilyMeta.ts's resolveEncounterMeta.
-  resolveEncounter: ResolveEncounter = defaultResolveEncounter
+  resolveEncounter: ResolveEncounter = defaultResolveEncounter,
+  // The permissive bracket (siteValidator.ts's `reachableFrom`): authored doors stand open, so the
+  // walk answers "is this ever obtainable" rather than "is it open right now".
+  authoredKeysHeld = false
 ): SiteReachability => {
   const siteId = `${ref.journeyId}:${ref.levelIndex}`
   const reachable = new Set<number>([0])
@@ -131,6 +140,7 @@ export const reachableFloorsInSite = (
   const harvestedCounts = new Map<string, number>()
   const harvest = (id: string) => harvestedCounts.set(id, (harvestedCounts.get(id) ?? 0) + 1)
   const discoveredLocks = new Set<string>()
+  const reachableRewards: TreasureReward[] = []
 
   for (let i = 0; i < site.length; i++) {
     if (!reachable.has(i)) continue
@@ -165,7 +175,7 @@ export const reachableFloorsInSite = (
       keys: expandedKeys,
       reachable: reachableHere,
       blockedRequirements,
-    } = collectReachableKeys(result.grid, result.grid.entrancePos, keys)
+    } = collectReachableKeys(result.grid, result.grid.entrancePos, keys, authoredKeysHeld)
     keys = expandedKeys
     for (const id of blockedRequirements) discoveredLocks.add(id)
 
@@ -176,10 +186,16 @@ export const reachableFloorsInSite = (
         // Every harvestable reward routes through the injected support — a mod maps its own
         // reward type to its own bucket (map piece → mapPiece:<tomb>, tomb key → its keyId,
         // hieroglyph fragment → hieroglyph:<id>). Core names none.
+        //
+        // A room's own reward and every piece of a shop's stock are both loot standing in a
+        // reachable room, so both land in `reachableRewards`. Only harvesting reads buckets;
+        // that list stays raw for whoever counts its own kind.
         if (cell.reward) {
           const bucket = support.bucketForReward?.(cell.reward)
           if (bucket) harvest(bucket)
+          reachableRewards.push(cell.reward)
         }
+        for (const stocked of cell.stock ?? []) if (stocked) reachableRewards.push(stocked)
       }
     }
 
@@ -196,7 +212,7 @@ export const reachableFloorsInSite = (
     }
   }
 
-  return { floors: reachable, harvestedCounts, discoveredLocks }
+  return { floors: reachable, harvestedCounts, discoveredLocks, reachableRewards }
 }
 
 // Global scope: a tier is unlocked when it has no unlock locks (e.g. the first tier), or when ANY
@@ -225,6 +241,10 @@ export type ReachabilityResult = {
   // tableau requirement, or a journey-scoped piecesRequired shortfall for a tomb whose tier
   // is unlocked but isn't enterable yet. The worklist's queue is seeded and grown from this.
   discoveredLocks: ReadonlySet<string>
+  // Every reward standing in the reachable area this call computed, across every journey — see
+  // SiteReachability.reachableRewards. A collection's target count is checked against this: a
+  // count of a kind, not a count of the locks it opens.
+  reachableRewards: readonly TreasureReward[]
 }
 
 const ALL_TIERS: Tier[] = ["starter", "junior", "expert", "master", "wizard"]
@@ -244,7 +264,9 @@ export const computeReachability = (
   // DIFFERENT resolveRequirements would return stale grids built under the old one.
   cache?: FloorAssemblyCache,
   support: ReachabilitySupport = noSupport,
-  resolveEncounter: ResolveEncounter = defaultResolveEncounter
+  resolveEncounter: ResolveEncounter = defaultResolveEncounter,
+  // The permissive bracket, passed down to every site's walk — see reachableFloorsInSite.
+  authoredKeysHeld = false
 ): ReachabilityResult => {
   const ownedFacts = deriveOwnedFacts(ownedCounts, support)
   const unlockedTiers = new Set(ALL_TIERS.filter(t => isTierUnlocked(t, ownedFacts, support)))
@@ -252,6 +274,7 @@ export const computeReachability = (
   const harvestedCounts = new Map<string, number>()
   const addHarvested = (id: string, count: number) => harvestedCounts.set(id, (harvestedCounts.get(id) ?? 0) + count)
   const discoveredLocks = new Set<string>()
+  const reachableRewards: TreasureReward[] = []
 
   for (const [journeyId, sites] of Object.entries(allConfigs)) {
     const meta = journeyMeta[journeyId]
@@ -276,13 +299,15 @@ export const computeReachability = (
         resolveRequirements,
         cache,
         support,
-        resolveEncounter
+        resolveEncounter,
+        authoredKeysHeld
       )
       for (const floorIndex of siteResult.floors) reachableFloors.add(floorKey({ ...ref, floorIndex }))
       for (const [id, count] of siteResult.harvestedCounts) addHarvested(id, count)
       for (const id of siteResult.discoveredLocks) discoveredLocks.add(id)
+      reachableRewards.push(...siteResult.reachableRewards)
     })
   }
 
-  return { reachableFloors, unlockedTiers, harvestedCounts, discoveredLocks }
+  return { reachableFloors, unlockedTiers, harvestedCounts, discoveredLocks, reachableRewards }
 }

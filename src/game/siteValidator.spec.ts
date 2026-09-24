@@ -449,6 +449,51 @@ describe(reachableFrom, () => {
     expect(reachable.has("0,2")).toBe(false)
     expect(blockedRequirements.size).toBe(0)
   })
+
+  it("authoredKeysHeld walks through an authored gate whose key nobody holds", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [
+          0,
+          1,
+          room("gate", ["w", "e"], { requiredKeyId: "witness:east", gateVariant: "floor-key", keyIsAuthored: true }),
+        ],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(reachableFrom(grid, [0, 0], new Set(), undefined, undefined, true).has("0,2")).toBe(true)
+  })
+
+  it("authoredKeysHeld walks through an authored gate asking for SEVERAL keys", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyIds: ["witness:east", "witness:north"], keyIsAuthored: true })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(reachableFrom(grid, [0, 0], new Set(), undefined, undefined, true).has("0,2")).toBe(true)
+  })
+
+  it("authoredKeysHeld leaves an UNAUTHORED gate shut, so it opens doors rather than all of them", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "tomb:ward", gateVariant: "floor-key" })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const blockedRequirements = new Set<string>()
+    expect(reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements, true).has("0,2")).toBe(false)
+    expect(blockedRequirements).toEqual(new Set(["tomb:ward"]))
+  })
 })
 
 // ─── validateJourney ──────────────────────────────────────────────────────────

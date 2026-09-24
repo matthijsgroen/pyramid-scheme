@@ -166,6 +166,27 @@ const switchForkSite = (): SiteConfig => [
     switchFork: { encounter: "sumplete", keyId: "switch:test" },
   },
 ]
+// The witness-door pattern: a side section whose gate names its own `keyId`, so the assembler
+// marks the door `keyIsAuthored` and grows no chest for it — a room the player solves mints that
+// key instead. The piece behind it is reachable at some point in time, never right now.
+const authoredGatedSite = (): SiteConfig => [
+  {
+    pathPuzzles: 1,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [
+      {
+        pathPuzzles: 0,
+        difficulty: "starter",
+        end: "treasure",
+        endReward: { type: "mosaicPiece", tier: "starter" },
+        gate: { type: "floor-key", keyId: "witness:east" },
+      },
+    ],
+  },
+]
+
 const reEnterableFamilies: ResolveEncounter = (encounter, defaultTag) => ({
   ...defaultResolveEncounter(encounter, defaultTag),
   reEnterable: true,
@@ -298,6 +319,93 @@ describe(reachableFloorsInSite, () => {
       testSupport()
     )
     expect(result.harvestedCounts.get(mapPieceBucket("locked_tomb"))).toBeUndefined()
+  })
+
+  it("lists every reward standing in the reachable area, whether or not a bucket claims it", () => {
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        mainEndReward: { type: "mapPiece", tombId: "some_tomb" },
+        rewards: [{ type: "mosaicPiece", tier: "starter" }],
+        sideSections: [],
+      },
+    ]
+    // No support injected: mosaic pieces feed no bucket at all, and the walk still sees them.
+    const result = reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, site, new Set())
+    expect(result.reachableRewards).toEqual(
+      expect.arrayContaining([
+        { type: "mapPiece", tombId: "some_tomb" },
+        { type: "mosaicPiece", tier: "starter" },
+      ])
+    )
+  })
+
+  it("lists a shop's stock, which the assembled room holds as `stock` rather than as its one reward", () => {
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [
+          {
+            pathPuzzles: 0,
+            difficulty: "starter",
+            end: "treasure",
+            encounter: "fez-shop",
+            rewards: [{ type: "mosaicPiece", tier: "starter" }, undefined],
+          },
+        ],
+      },
+    ]
+    const result = reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, site, new Set())
+    expect(result.reachableRewards).toEqual([{ type: "mosaicPiece", tier: "starter" }])
+  })
+
+  it("leaves out a reward behind a still-locked gate, so the list is reachable loot and not all loot", () => {
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 0,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [
+          {
+            pathPuzzles: 0,
+            difficulty: "starter",
+            end: "treasure",
+            endReward: { type: "mosaicPiece", tier: "starter" },
+            gate: { type: "tomb-key", wardKeyId: "never-supplied" },
+          },
+        ],
+      },
+    ]
+    const result = reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, site, new Set())
+    expect(result.reachableRewards).toEqual([])
+  })
+
+  it("counts a reward behind an authored-key door only once authoredKeysHeld asks for the permissive bracket", () => {
+    // An authored key is minted by a room the player solves, so the piece behind the door is
+    // obtainable — the bracket a collection is judged in — while the door is still shut to the
+    // stricter walk the lock placement uses.
+    const result = (authoredKeysHeld: boolean) =>
+      reachableFloorsInSite(
+        { journeyId: "j", levelIndex: 0 },
+        authoredGatedSite(),
+        new Set(),
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        authoredKeysHeld
+      ).reachableRewards
+
+    expect(result(false)).toEqual([])
+    expect(result(true)).toEqual([{ type: "mosaicPiece", tier: "starter" }])
   })
 
   it("throws on a switchFork whose reEnterable answer defaults to false (no resolver passed)", () => {
@@ -472,6 +580,25 @@ describe(computeReachability, () => {
     const journeyMeta = { journeyA: { tier: "starter" as const }, tomb: { tier: "starter" as const } }
     const result = computeReachability(allConfigs, journeyMeta, new Map(), undefined, undefined, testSupport())
     expect(result.harvestedCounts.get(mapPieceBucket("tomb"))).toBe(1)
+  })
+
+  it("aggregates reachableRewards across every journey, and the permissive bracket reaches the ones behind authored doors", () => {
+    const allConfigs: Record<string, SiteConfig[]> = { open: [ungatedTwoFloorSite()], authored: [authoredGatedSite()] }
+    const journeyMeta = { open: { tier: "starter" as const }, authored: { tier: "starter" as const } }
+    const glass = (authoredKeysHeld: boolean) =>
+      computeReachability(
+        allConfigs,
+        journeyMeta,
+        new Map(),
+        undefined,
+        undefined,
+        testSupport(),
+        undefined,
+        authoredKeysHeld
+      ).reachableRewards.filter(r => r.type === "mosaicPiece")
+
+    expect(glass(false)).toEqual([])
+    expect(glass(true)).toEqual([{ type: "mosaicPiece", tier: "starter" }])
   })
 
   it("throws on a switchFork floor when no resolveEncounter is passed, same as the direct call", () => {

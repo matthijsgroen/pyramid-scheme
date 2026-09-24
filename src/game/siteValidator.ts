@@ -14,12 +14,17 @@ const MOVES: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 
 // reachable frontier but not satisfied by `ownedKeys` — the worklist solver's own "discovered
 // lock" signal (docs/game-design/keys-and-locks-solver.md, "Structure, then loot": a wish
 // was always there in the structure, this is just the walk noticing it for the first time).
+// `authoredKeysHeld` switches the walk into the permissive bracket: a door whose key is minted
+// by a room the player solves (RoomCell.keyIsAuthored) stands open, because the question then
+// asked is whether what lies beyond is ever obtainable, not whether it is open right now. Off by
+// default, so the walk gates on held keys alone.
 export const reachableFrom = (
   grid: FloorGrid,
   startPos: Pos,
   ownedKeys: ReadonlySet<string> = new Set(),
   blockedPos?: Pos,
-  blockedRequirements?: Set<string>
+  blockedRequirements?: Set<string>,
+  authoredKeysHeld = false
 ): Set<string> => {
   const [sr, sc] = startPos
   const startKey = posKey(sr, sc)
@@ -48,7 +53,12 @@ export const reachableFrom = (
       // the signal — any encounter can carry a key requirement (a gate's only job; a
       // tableau's several, one per hieroglyph it needs complete), not just rooms tagged
       // "gate".
-      if (ncell.type === "room" && ncell.requiredKeyId && !ownedKeys.has(ncell.requiredKeyId)) {
+      //
+      // In the permissive bracket an authored door is walked through: solving the room that mints
+      // its key is how the player gets past it, so what lies beyond is obtainable.
+      const authoredDoorOpen = authoredKeysHeld && ncell.type === "room" && !!ncell.keyIsAuthored
+
+      if (!authoredDoorOpen && ncell.type === "room" && ncell.requiredKeyId && !ownedKeys.has(ncell.requiredKeyId)) {
         // An authored key (RoomCell.keyIsAuthored) is minted by a room a player solves, never
         // placed by the world-gen loot solver — reporting it as a discovered lock would ask
         // placeFragments' winnability guard to prove a fact only gameplay resolves. The door
@@ -56,7 +66,7 @@ export const reachableFrom = (
         if (!ncell.keyIsAuthored) blockedRequirements?.add(ncell.requiredKeyId)
         continue
       }
-      if (ncell.type === "room" && ncell.requiredKeyIds?.some(id => !ownedKeys.has(id))) {
+      if (!authoredDoorOpen && ncell.type === "room" && ncell.requiredKeyIds?.some(id => !ownedKeys.has(id))) {
         // Authored keys are none of this solver's business here either — the single-key branch above
         // says why. No family asks for several of them today; the day one does, it reads the same.
         if (!ncell.keyIsAuthored)
@@ -77,17 +87,20 @@ export const reachableFrom = (
 // ones (a room's own tombKey reward opening its own further gate — pyramid-interior-
 // design.md §8, "the treasure IS the key"). Exported for src/worldGen/reachability.ts's
 // coarse graph, which needs the same fixed point across a whole multi-floor site.
+// `authoredKeysHeld` passes straight to `reachableFrom` — see there for what the permissive
+// bracket opens.
 export const collectReachableKeys = (
   grid: FloorGrid,
   startPos: Pos,
-  initialKeys: ReadonlySet<string> = new Set()
+  initialKeys: ReadonlySet<string> = new Set(),
+  authoredKeysHeld = false
 ): { reachable: Set<string>; keys: Set<string>; blockedRequirements: Set<string> } => {
   const collectedKeys = new Set(initialKeys)
   // Fresh set per pass — only the FINAL (post-fixed-point) pass's blocked requirements are
   // genuine discovered locks; an earlier pass's block may have been resolved by a tombKey
   // this same floor's fixed point went on to collect.
   let blockedRequirements = new Set<string>()
-  let reachable = reachableFrom(grid, startPos, collectedKeys, undefined, blockedRequirements)
+  let reachable = reachableFrom(grid, startPos, collectedKeys, undefined, blockedRequirements, authoredKeysHeld)
   let changed = true
   while (changed) {
     changed = false
@@ -107,7 +120,7 @@ export const collectReachableKeys = (
     }
     if (changed) {
       blockedRequirements = new Set<string>()
-      reachable = reachableFrom(grid, startPos, collectedKeys, undefined, blockedRequirements)
+      reachable = reachableFrom(grid, startPos, collectedKeys, undefined, blockedRequirements, authoredKeysHeld)
     }
   }
   return { reachable, keys: collectedKeys, blockedRequirements }
