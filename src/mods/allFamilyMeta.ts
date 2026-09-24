@@ -45,17 +45,18 @@ export const familyCapacityFor = (encounter: string | string[] | undefined, defa
   return meta?.rewardCapacity ?? 1
 }
 
-// Resolve an authored `encounter` to its family id and tags, domain-layer only — the same answer
-// familyRegistry.ts gives the app, on the seam world-gen can actually import (the app registry pulls
-// in components, which the gen script cannot load). Lets gen assemble a floor exactly as a player
-// gets it, which is how it can warn about what a room ends up holding.
+// Resolve an authored `encounter` to its family id, tags and reEnterable flag, domain-layer only —
+// the same answer familyRegistry.ts gives the app, on the seam world-gen can actually import (the
+// app registry pulls in components, which the gen script cannot load). Lets gen assemble a floor
+// exactly as a player gets it, which is how it can warn about what a room ends up holding — a switch
+// included, since assembleFloor reads `reEnterable` off this same resolution.
 export const resolveEncounterMeta = (
   encounter: string | string[] | undefined,
   defaultTag: string
-): { familyId: string; tags: string[] } => {
+): { familyId: string; tags: string[]; reEnterable?: boolean } => {
   const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
   const meta = ALL_FAMILY_META.find(m => m.id === value) ?? ALL_FAMILY_META.find(m => m.tags.includes(value))
-  return { familyId: meta?.id ?? value, tags: meta?.tags ?? [] }
+  return { familyId: meta?.id ?? value, tags: meta?.tags ?? [], ...(meta?.reEnterable ? { reEnterable: true } : {}) }
 }
 
 // Whether the family an authored `encounter` resolves to is a trap — the one thing about an

@@ -57,7 +57,10 @@ const DEFAULT_FAMILY_TAGS: Record<string, string[]> = {
   "key-gate": ["gate"],
 }
 // Fallback for callers that don't inject the real family registry (tests, stories) —
-// production always passes familyRegistry.ts's resolveEncounter.
+// production always passes familyRegistry.ts's resolveEncounter. Never claims `reEnterable`: this
+// fallback's own catalogue holds no family that offers a walk back in, and it has no registry to ask
+// about any other id, so a switch resolved through it is refused rather than guessed open. A caller
+// that needs a real answer (world-gen's sweep, the runtime) injects a resolver that has one.
 export const defaultResolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
   const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
   const familyId = DEFAULT_TAG_FAMILIES[value] ?? value
