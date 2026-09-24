@@ -231,11 +231,11 @@ it, or says plainly that nothing does.
 | A switch found two ways left to close                           | `switchForkWithoutGates`                                                   |
 | Switch key stems are unique across floors                       | `validateSwitchForkKeys`                                                   |
 | Rewards counted, no chest left empty, the shop economy balances | `validateRewardCounts`, `findEmptyChests`, the shop mod's `worldValidator` |
-| No boundary is gated twice                                      | **nothing yet**                                                            |
-| A switch's gates are reachable only through the switch          | **nothing yet**                                                            |
-| A switch's family is re-enterable                               | **nothing yet**                                                            |
-| A switch never gates a hidden branch                            | **nothing yet**                                                            |
-| A room's exits do not outlive its directions through masking    | **nothing yet**                                                            |
+| No boundary is gated twice                                      | `boundaryGatedTwice`                                                       |
+| A switch's gates are reachable only through the switch          | `switchGateNotBehindSwitch`                                                |
+| A switch's family is re-enterable                               | `switchFamilyNotReEnterable`                                               |
+| A switch never gates a hidden branch                            | `closableExits`, which skips a hidden neighbour                            |
+| A room's exits do not outlive its directions through masking    | `maskHiddenCells`, which prunes `exits` with `dirs`                        |
 | A hidden way out stays one-way under any tool                   | **nothing yet**, and no tool exists to break it                            |
 | An authored gate's key is minted by whoever owns it             | **nothing yet**                                                            |
 | Every collection's target count is reachable                    | **nothing yet**                                                            |
