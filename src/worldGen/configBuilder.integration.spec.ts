@@ -15,6 +15,8 @@ import {
   MOD_REACHABILITY_SUPPORT,
   MOD_TOMB_TREASURE_RESOLVER,
   MOD_SHOP_STOCK,
+  MOD_RESERVED_TREASURE_INDICES,
+  REGISTERED_MOD_IDS,
 } from "../mods/registeredMods"
 import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
 import { witnessKeyId, witnessSite } from "../mods/witnessDoor/game/witnessKeys"
@@ -22,7 +24,9 @@ import {
   resolveKeyRequirements,
   familyPriorityFor,
   familyCapacityFor,
+  familyIsTrap,
   allocateEncounterSpread,
+  resolveEncounterMeta,
 } from "../mods/allFamilyMeta"
 
 // This is a structural golden guard (reward counts, determinism, tomb linking) — NOT an economy
@@ -36,6 +40,9 @@ afterAll(() => {
   delete process.env.SKIP_ECONOMY_GUARD
 })
 
+// Mirrors scripts/generateWorld.ts's own buildConfigs call arg-for-arg (EMPTY_FRACTION 0 included) —
+// a golden guard that invokes the builder differently from production guards a different thing
+// than it claims to.
 const buildRealConfigs = () =>
   buildConfigs(
     resolveKeyRequirements,
@@ -49,7 +56,11 @@ const buildRealConfigs = () =>
     MOD_REACHABILITY_SUPPORT,
     MOD_TOMB_TREASURE_RESOLVER,
     familyCapacityFor,
-    MOD_SHOP_STOCK
+    MOD_SHOP_STOCK,
+    MOD_RESERVED_TREASURE_INDICES,
+    familyIsTrap,
+    REGISTERED_MOD_IDS,
+    resolveEncounterMeta
   )
 
 // Golden guard for the world-builder refactor: buildRealConfigs() must keep
