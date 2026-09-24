@@ -112,9 +112,9 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/mods/allFamilyMeta.spec.ts:3990948290": [
       [18, 92, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/allFamilyMeta.ts:1157794260": [
-      [81, 35, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [155, 92, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/mods/allFamilyMeta.ts:3851037038": [
+      [83, 35, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [157, 92, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/core/app/PuzzleFamilyShell.tsx:264291991": [
       [38, 88, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -965,8 +965,8 @@ exports[`design doc references name a file, not a paragraph`] = {
       [192, 31, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [270, 93, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/configBuilder.integration.spec.ts:486425136": [
-      [156, 7, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/worldGen/configBuilder.integration.spec.ts:1243908862": [
+      [167, 7, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/worldGen/dressingRoles.ts:3720599829": [
       [4, 58, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
@@ -984,11 +984,11 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/worldGen/lootEconomyInvariants.spec.ts:3263630117": [
       [21, 13, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/placeFragments.ts:1656439338": [
-      [225, 37, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [225, 76, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/worldGen/placeFragments.ts:2470960184": [
+      [239, 37, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [239, 76, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/reachability.ts:889296373": [
+    "src/worldGen/reachability.ts:1082522108": [
       [108, 79, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/worldGen/rewards.spec.ts:64811309": [
