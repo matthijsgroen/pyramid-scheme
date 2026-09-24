@@ -8,7 +8,14 @@ const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_J
 // A post-build check over the whole grown world, contributed by a mod (e.g. the shop economy
 // guard) and injected into buildConfigs. Drops out with its mod, so core names no mod-specific
 // balance rule.
-export type WorldValidator = (configs: Record<string, SiteConfig[]>) => void
+//
+// `reachableRewards` is every reward a player can ever get to, from placeFragments' final
+// permissive walk — a mod counts its own kind in there to hold its collection's target count. A
+// validator that only reads the authored configs ignores the second argument.
+export type WorldValidator = (
+  configs: Record<string, SiteConfig[]>,
+  reachableRewards: readonly TreasureReward[]
+) => void
 
 // Throws if: a non-last floor is set to exit, a mapPiece references an unknown journey ID,
 // the total mapPiece count drifts from WORLD_TARGETS, or the count of placed gating-currency

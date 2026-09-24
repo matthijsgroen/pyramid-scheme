@@ -338,7 +338,7 @@ export const buildConfigs = (
 
   // Phase 4: Worklist-driven currency placement (docs/game-design/keys-and-locks-solver.md)
   // — assigns fragmentSlot positions per registered currency, fills the remainder with junk loot
-  placeFragments(
+  const reachableRewards = placeFragments(
     allConfigs,
     currencies,
     resolveKeyRequirements,
@@ -361,7 +361,10 @@ export const buildConfigs = (
   // the generic total below can only ever say the sum is off. Running mod validators first means
   // a real per-symbol shortfall surfaces with that detail instead of the coarser "expected N, got
   // M" from validateRewardCounts. They drop out with their mod, so core names none.
-  for (const validate of worldValidators) validate(allConfigs)
+  // `reachableRewards` is placeFragments' final permissive walk: every reward a player can ever
+  // get to, hidden pockets and authored-key doors included. A mod counts its own kind in there to
+  // hold its collection's target count; one that only reads the configs ignores it.
+  for (const validate of worldValidators) validate(allConfigs, reachableRewards)
 
   const expectedCurrencyRewards = currencies.reduce((sum, c) => sum + (c.expectedTotal?.() ?? 0), 0)
   const isCurrencyReward = (r: TreasureReward) => currencies.some(c => c.bucketForReward?.(r) !== undefined)

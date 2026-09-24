@@ -18,7 +18,8 @@ import {
   MOD_RESERVED_TREASURE_INDICES,
   REGISTERED_MOD_IDS,
 } from "../mods/registeredMods"
-import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
+import { MOSAIC_STEPS_BY_TIER, MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
+import { reachableMosaicCounts } from "../mods/mosaic/game/mosaicReachability"
 import { witnessKeyId, witnessSite } from "../mods/witnessDoor/game/witnessKeys"
 import {
   resolveKeyRequirements,
@@ -119,6 +120,39 @@ describe("buildConfigs golden guard", () => {
     const first = buildRealConfigs()
     const second = buildRealConfigs()
     expect(second).toEqual(first)
+  }, 90_000)
+
+  // Reachability answers "can this be got to"; a collection also has to be asked "is there enough
+  // of it", per register and never as one world total. The numbers are pinned rather than derived
+  // from the walk that produced them: 53 of the world's mosaic pieces sit in discovery-gated
+  // pockets and 2 behind the witness door's authored-key gates, so a walk that dropped either kind
+  // would come back short here while the world itself was fine.
+  it("every mosaic register's target count stands in reachable ground", () => {
+    let reachableRewards: readonly TreasureReward[] = []
+    buildConfigs(
+      resolveKeyRequirements,
+      ALL_CURRENCY_DISTRIBUTIONS,
+      CAPPED_CURRENCIES,
+      DYNAMIC_DISTRIBUTIONS,
+      [
+        ...MOD_WORLD_VALIDATORS,
+        (_configs, rewards) => {
+          reachableRewards = rewards
+        },
+      ],
+      familyPriorityFor,
+      0,
+      allocateEncounterSpread,
+      MOD_REACHABILITY_SUPPORT,
+      MOD_TOMB_TREASURE_RESOLVER,
+      familyCapacityFor,
+      MOD_SHOP_STOCK,
+      MOD_RESERVED_TREASURE_INDICES,
+      familyIsTrap,
+      REGISTERED_MOD_IDS,
+      resolveEncounterMeta
+    )
+    expect(reachableMosaicCounts(reachableRewards)).toEqual(MOSAIC_STEPS_BY_TIER)
   }, 90_000)
 })
 

@@ -46,11 +46,11 @@ const configWithFragments = (counts: Record<string, number>): Record<string, Sit
 describe("hieroglyphCoverageValidator", () => {
   it("passes when every symbol's placed count meets its requirement", () => {
     const validate = hieroglyphCoverageValidator({ ra: 2, bee: 1 })
-    expect(() => validate(configWithFragments({ ra: 2, bee: 1 }))).not.toThrow()
+    expect(() => validate(configWithFragments({ ra: 2, bee: 1 }), [])).not.toThrow()
   })
 
   it("throws naming the under-placed symbol and its shortfall", () => {
     const validate = hieroglyphCoverageValidator({ ra: 3, bee: 1 })
-    expect(() => validate(configWithFragments({ ra: 2, bee: 1 }))).toThrow(/ra: 2\/3/)
+    expect(() => validate(configWithFragments({ ra: 2, bee: 1 }), [])).toThrow(/ra: 2\/3/)
   })
 })
