@@ -26,8 +26,8 @@ and its three poses — and `Fez.tsx` draws them 200px wide with the bottom 60px
 figure that does not stand on the bottom of its own canvas floats. Aspect is the one thing that cannot be
 fixed after generation. Match `fez-250.png`'s head height too: same head, same scale, same two people.
 
-**Generate on white, then cut the background.** The sprites are RGBA with real transparency; white is only
-what an image model can give you. A file is not ready to import until its background is alpha.
+**Generate on white.** The sprites are RGBA with real transparency, and white is only what an image model
+can give you — §3 cuts it out on the way in.
 
 ## 1. The explorer — conversation portraits
 
@@ -107,14 +107,17 @@ as much as a writing one.
 
 ## 3. Cutting a generated file down to a sprite
 
-A model returns a JPEG on white at whatever size it likes; `src/assets/explorer-250.png` was made from one
-in three steps, and the next file wants the same three.
+```
+yarn import-portrait ~/Downloads/whatever-it-saved-as.jpeg --name=explorer
+```
 
-1. **Key the background from the edges, not by colour alone.** Flood-fill the near-white from the border so
-   a white highlight inside the figure keeps its pixels.
-2. **Crop to the figure, then pad back to 2:3** — centred horizontally, feet on the bottom edge.
-3. **Downsample to 250×375, averaging only the figure's own pixels.** Averaging the background in with them
-   is what leaves a pale halo along every outline.
+Keys the white out from the edges inward, trims to the figure, pads back to 2:3 with the feet on the bottom
+edge, resizes to 250×375, and writes `src/assets/<name>-250.png`. Flags: `--key=#ffffff`, `--tolerance=20`.
+
+Edges-inward is the part that matters and the reason this is not `import-tile`: a prop on magenta has no
+magenta of its own, but a person on white has white in their eyes, and keying by colour alone punches them
+out. Generate on white and let the script do the rest — it prints how much of its canvas the figure ended
+up filling, which is the number to compare against the last one in the set.
 
 ## 4. What is not here
 
