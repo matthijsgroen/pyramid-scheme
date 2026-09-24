@@ -105,12 +105,16 @@ as much as a writing one.
 > a stone, an open notebook face down, and a hat very like the explorer's, left behind. No figure, no
 > remains, no blood. The scene should read as somebody who left in a hurry and meant to come back.
 
-## 3. The placeholder in the meantime
+## 3. Cutting a generated file down to a sprite
 
-`src/assets/explorer-placeholder.svg` stands in until §1 is drawn: a flat bust in the right palette — brim,
-neckerchief, olive vest over cream — with no face. It is deliberately unfinished, and a featureless face
-cannot accidentally commit to a read the character is not supposed to have. Replace it with
-`explorer-250.png` and delete it.
+A model returns a JPEG on white at whatever size it likes; `src/assets/explorer-250.png` was made from one
+in three steps, and the next file wants the same three.
+
+1. **Key the background from the edges, not by colour alone.** Flood-fill the near-white from the border so
+   a white highlight inside the figure keeps its pixels.
+2. **Crop to the figure, then pad back to 2:3** — centred horizontally, feet on the bottom edge.
+3. **Downsample to 250×375, averaging only the figure's own pixels.** Averaging the background in with them
+   is what leaves a pale halo along every outline.
 
 ## 4. What is not here
 

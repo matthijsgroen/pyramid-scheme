@@ -2,8 +2,7 @@ import fez from "@/assets/fez-250.png"
 import fezPoint from "@/assets/point-fez-250.png"
 import fezGlassesPoint from "@/assets/glasses-point-fez-250.png"
 import fezCocktail from "@/assets/cocktail-fez-250.png"
-// Placeholder until the explorer is drawn — see docs/game-design/story/character-art-prompts.md.
-import explorerPlaceholder from "@/assets/explorer-placeholder.svg"
+import explorer from "@/assets/explorer-250.png"
 import clsx from "clsx"
 import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
@@ -71,7 +70,7 @@ const PORTRAITS: Partial<Record<Speaker, Partial<Record<Pose, { src: string; alt
     cocktail: { src: fezCocktail, alt: "Happy companion lizard wearing a fez and holding a cocktail" },
   },
   explorer: {
-    default: { src: explorerPlaceholder, alt: "The explorer, in a wide brown hat and olive vest" },
+    default: { src: explorer, alt: "The explorer, in a wide brown hat and olive vest" },
   },
 }
 
