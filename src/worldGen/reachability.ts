@@ -1,7 +1,7 @@
 import type { SiteConfig, Tier, TreasureReward } from "./types"
 import type { AssemblerResult, FloorConfig as GameFloorConfig } from "../game/siteTypes"
-import type { ResolveKeyRequirements } from "../game/siteAssembler"
-import { assembleFloor } from "../game/siteAssembler"
+import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssembler"
+import { assembleFloor, defaultResolveEncounter } from "../game/siteAssembler"
 import { collectReachableKeys } from "../game/siteValidator"
 import { hashString } from "../support/hashString"
 
@@ -119,7 +119,11 @@ export const reachableFloorsInSite = (
   seed: number = defaultSeedFor(ref),
   resolveRequirements: ResolveKeyRequirements = noKeyRequirements,
   cache?: FloorAssemblyCache,
-  support: ReachabilitySupport = noSupport
+  support: ReachabilitySupport = noSupport,
+  // Real family resolution (reEnterable included) — a caller wanting an authored switchFork's
+  // reEnterable check to answer correctly (rather than defaultResolveEncounter's blanket "no")
+  // passes one in, built from src/mods/allFamilyMeta.ts's resolveEncounterMeta.
+  resolveEncounter: ResolveEncounter = defaultResolveEncounter
 ): SiteReachability => {
   const siteId = `${ref.journeyId}:${ref.levelIndex}`
   const reachable = new Set<number>([0])
@@ -137,7 +141,7 @@ export const reachableFloorsInSite = (
     const cacheKey = `${siteId}#${i}#${seed + i}`
     let result = cache?.get(cacheKey)
     if (!result) {
-      result = assembleFloor(siteId, site[i] as GameFloorConfig, seed + i, undefined, {
+      result = assembleFloor(siteId, site[i] as GameFloorConfig, seed + i, resolveEncounter, {
         resolveKeyRequirements: resolveRequirements,
         floorRef: { journeyId: ref.journeyId, floorIndex: i },
       })
@@ -239,7 +243,8 @@ export const computeReachability = (
   // Assumed constant for the cache's whole lifetime — a cache reused across calls with a
   // DIFFERENT resolveRequirements would return stale grids built under the old one.
   cache?: FloorAssemblyCache,
-  support: ReachabilitySupport = noSupport
+  support: ReachabilitySupport = noSupport,
+  resolveEncounter: ResolveEncounter = defaultResolveEncounter
 ): ReachabilityResult => {
   const ownedFacts = deriveOwnedFacts(ownedCounts, support)
   const unlockedTiers = new Set(ALL_TIERS.filter(t => isTierUnlocked(t, ownedFacts, support)))
@@ -263,7 +268,16 @@ export const computeReachability = (
 
     sites.forEach((site, levelIndex) => {
       const ref: SiteRef = { journeyId, levelIndex }
-      const siteResult = reachableFloorsInSite(ref, site, ownedFacts, undefined, resolveRequirements, cache, support)
+      const siteResult = reachableFloorsInSite(
+        ref,
+        site,
+        ownedFacts,
+        undefined,
+        resolveRequirements,
+        cache,
+        support,
+        resolveEncounter
+      )
       for (const floorIndex of siteResult.floors) reachableFloors.add(floorKey({ ...ref, floorIndex }))
       for (const [id, count] of siteResult.harvestedCounts) addHarvested(id, count)
       for (const id of siteResult.discoveredLocks) discoveredLocks.add(id)

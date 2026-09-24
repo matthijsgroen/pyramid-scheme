@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest"
 import type { SiteConfig } from "./types"
+import type { ResolveEncounter } from "../game/siteAssembler"
+import { defaultResolveEncounter } from "../game/siteAssembler"
 import {
   computeReachability,
   floorKey,
@@ -150,6 +152,25 @@ const twoSiblingWingsSite = (): SiteConfig => [
   },
 ]
 
+// A floor carrying an authored switchFork — assembleFloor refuses this unconditionally unless
+// its resolver claims the switch family is reEnterable (siteAssembler.ts's own check), so this
+// exercises the resolveEncounter hand-off reachableFloorsInSite/computeReachability thread down
+// to assembleFloor, same as the resolveRequirements hand-off tested elsewhere in this file.
+const switchForkSite = (): SiteConfig => [
+  {
+    pathPuzzles: 2,
+    difficulty: "junior",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure" }],
+    switchFork: { encounter: "sumplete", keyId: "switch:test" },
+  },
+]
+const reEnterableFamilies: ResolveEncounter = (encounter, defaultTag) => ({
+  ...defaultResolveEncounter(encounter, defaultTag),
+  reEnterable: true,
+})
+
 describe(reachableFloorsInSite, () => {
   it("floor 0 is always reachable, no keys needed", () => {
     const site = gatedTwoFloorSite("some-key")
@@ -277,6 +298,26 @@ describe(reachableFloorsInSite, () => {
       testSupport()
     )
     expect(result.harvestedCounts.get(mapPieceBucket("locked_tomb"))).toBeUndefined()
+  })
+
+  it("throws on a switchFork whose reEnterable answer defaults to false (no resolver passed)", () => {
+    expect(() => reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, switchForkSite(), new Set())).toThrow(
+      /switchFamilyNotReEnterable/
+    )
+  })
+
+  it("assembles a switchFork floor once a resolver claiming reEnterable is passed through", () => {
+    const result = reachableFloorsInSite(
+      { journeyId: "j", levelIndex: 0 },
+      switchForkSite(),
+      new Set(),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      reEnterableFamilies
+    )
+    expect(result.floors.has(0)).toBe(true)
   })
 })
 
@@ -431,5 +472,28 @@ describe(computeReachability, () => {
     const journeyMeta = { journeyA: { tier: "starter" as const }, tomb: { tier: "starter" as const } }
     const result = computeReachability(allConfigs, journeyMeta, new Map(), undefined, undefined, testSupport())
     expect(result.harvestedCounts.get(mapPieceBucket("tomb"))).toBe(1)
+  })
+
+  it("throws on a switchFork floor when no resolveEncounter is passed, same as the direct call", () => {
+    const allConfigs: Record<string, SiteConfig[]> = { j: [switchForkSite()] }
+    const journeyMeta = { j: { tier: "starter" as const } }
+    expect(() => computeReachability(allConfigs, journeyMeta, new Map(), undefined, undefined, testSupport())).toThrow(
+      /switchFamilyNotReEnterable/
+    )
+  })
+
+  it("reaches a switchFork floor once resolveEncounter is threaded through, same as placeFragments injects it", () => {
+    const allConfigs: Record<string, SiteConfig[]> = { j: [switchForkSite()] }
+    const journeyMeta = { j: { tier: "starter" as const } }
+    const result = computeReachability(
+      allConfigs,
+      journeyMeta,
+      new Map(),
+      undefined,
+      undefined,
+      testSupport(),
+      reEnterableFamilies
+    )
+    expect(result.reachableFloors.has(floorKey({ journeyId: "j", levelIndex: 0, floorIndex: 0 }))).toBe(true)
   })
 })

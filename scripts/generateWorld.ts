@@ -79,7 +79,8 @@ const configs = buildConfigs(
   MOD_SHOP_STOCK,
   MOD_RESERVED_TREASURE_INDICES,
   familyIsTrap,
-  REGISTERED_MOD_IDS
+  REGISTERED_MOD_IDS,
+  resolveEncounterMeta
 )
 // Hieroglyph finalize (mod-owned, §D): stamp each fragment's pieceIndex — hieroglyph-specific
 // logic the core serializer no longer owns. Every symbol's full required count is guaranteed

@@ -23,7 +23,7 @@ import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
 import type { ReachabilitySupport } from "./reachability"
 import type { Distribution } from "./slotAllocator"
 import type { FamilyPriorityFor } from "./slots"
-import type { ResolveKeyRequirements } from "../game/siteAssembler"
+import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssembler"
 import { validateRewardCounts, validateSwitchForkKeys, type WorldValidator } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
 import { TOMB_ROOMS_PER_FLOOR } from "./data"
@@ -291,7 +291,12 @@ export const buildConfigs = (
   // (placeFragments.ts's winnability guard, for a gating mod toggled off with its gate still
   // authored). Absent ⇒ drop nothing, so a caller that doesn't pass this (existing callers, specs)
   // is unaffected; scripts/generateWorld.ts injects the real registered set.
-  registeredModIds?: ReadonlySet<string>
+  registeredModIds?: ReadonlySet<string>,
+  // Real family resolution (reEnterable included) for Phase 4's reachability walk — injected from
+  // src/mods/allFamilyMeta.ts (resolveEncounterMeta) by scripts/generateWorld.ts. Absent (existing
+  // callers, specs) leaves the reachability walk on its own default, which never claims
+  // reEnterable for anyone.
+  resolveEncounter?: ResolveEncounter
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -341,7 +346,8 @@ export const buildConfigs = (
     dynamicDistributions,
     familyPriorityFor,
     emptyFraction,
-    reachabilitySupport
+    reachabilitySupport,
+    resolveEncounter
   )
 
   // Phase 5+7: Validate all configs together — reward counts, staircase guardrail,

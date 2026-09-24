@@ -1,5 +1,5 @@
 import type { SiteConfig, Tier, TreasureReward } from "./types"
-import type { ResolveKeyRequirements } from "../game/siteAssembler"
+import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssembler"
 import {
   computeReachability,
   createFloorAssemblyCache,
@@ -126,7 +126,13 @@ export const placeFragments = (
   dynamicDistributions: readonly Distribution[] = [],
   familyPriorityFor?: FamilyPriorityFor,
   emptyFraction = 0,
-  reachabilitySupport: ReachabilitySupport = {}
+  reachabilitySupport: ReachabilitySupport = {},
+  // Real family resolution (reEnterable included) for the reachability walk's own assembleFloor
+  // calls — injected from src/mods/allFamilyMeta.ts (resolveEncounterMeta) by
+  // scripts/generateWorld.ts, the same way resolveRequirements already travels. Absent (tests,
+  // callers with no mods) falls back to reachability.ts's own default, which never claims
+  // reEnterable for anyone.
+  resolveEncounter?: ResolveEncounter
 ): void => {
   const slots = collectSlots(allConfigs, familyPriorityFor)
   const available = new Set(slots)
@@ -157,7 +163,15 @@ export const placeFragments = (
     tierUnlockBucket: reachabilitySupport.tierUnlockBucket,
   }
   const computeReach = () =>
-    computeReachability(allConfigs, journeyMeta, ownedCounts, resolveRequirements, assemblyCache, support)
+    computeReachability(
+      allConfigs,
+      journeyMeta,
+      ownedCounts,
+      resolveRequirements,
+      assemblyCache,
+      support,
+      resolveEncounter
+    )
 
   let reach = computeReach()
 
