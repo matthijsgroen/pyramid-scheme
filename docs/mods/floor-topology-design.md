@@ -222,7 +222,7 @@ it, or says plainly that nothing does.
 
 A check that runs on every floor is a different guarantee from a guard that only runs where a
 switch stands: no journey authors `switchFork` yet, so the second kind has never once fired outside
-a spec. Three rows below are that second kind, and say so.
+a spec. Six rows below are that second kind, and say so.
 
 | Rule                                                            | Held by                                                                    |
 | --------------------------------------------------------------- | -------------------------------------------------------------------------- |
@@ -232,14 +232,14 @@ a spec. Three rows below are that second kind, and say so.
 | Mosaic pieces present, unique, reachable                        | the three `mosaic*` reasons                                                |
 | A section has a name a save can file it under                   | `unusableSectionAddress`                                                   |
 | No two rooms of a section answer to one slot                    | `duplicateCellSlot`                                                        |
-| A switch found two ways left to close                           | `switchForkWithoutGates`                                                   |
-| Switch key stems are unique across floors                       | `validateSwitchForkKeys`                                                   |
+| A switch found two ways left to close                           | `switchForkWithoutGates`, which runs only off an authored `switchFork` — a guard, not yet reached by an authored floor |
+| Switch key stems are unique across floors                       | `validateSwitchForkKeys`, which runs only off an authored `switchFork` — a guard, not yet reached by an authored floor |
 | Rewards counted, no chest left empty, the shop economy balances | `validateRewardCounts`, `findEmptyChests`, the shop mod's `worldValidator` |
-| No boundary is gated twice                                      | `boundaryGatedTwice`                                                       |
-| A switch's gates are reachable only through the switch          | `switchGateNotBehindSwitch`                                                |
+| No boundary is gated twice                                      | `boundaryGatedTwice`, which fires only from `exit.gateKeyId`, set only by a switch — a guard, not yet reached by an authored floor |
+| A switch's gates are reachable only through the switch          | `switchGateNotBehindSwitch`, which fires only from `exit.gateKeyId`, set only by a switch — a guard, not yet reached by an authored floor |
 | A switch's family is re-enterable                               | `switchFamilyNotReEnterable` — a guard, not yet reached by an authored floor |
 | A switch never gates a hidden branch                            | `closableExits`, which skips a hidden neighbour — a guard, not yet reached by an authored floor |
-| An exit is pruned when the node it leads to is hidden           | `maskHiddenCells`, which checks the hidden set two cells out, not `dirs` — a guard, not yet reached by an authored floor |
+| An exit is pruned when the node it leads to is hidden           | `maskHiddenCells`, which checks the hidden set two cells out, not `dirs` — fires on every floor, switch or not: prunes 76 exits across 61 of 206 authored floors |
 | A hidden way out stays one-way under any tool                   | **nothing yet**, and no tool exists to break it                            |
 | An authored gate's key is minted by whoever owns it             | **nothing yet**                                                            |
 | Every collection's target count is reachable                    | **nothing yet**                                                            |
