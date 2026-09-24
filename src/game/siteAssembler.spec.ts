@@ -4,6 +4,10 @@ import type { ResolveEncounter } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
 import { validateSite } from "./siteValidator"
 import { floorKeyRing } from "./floorKeys"
+// The real registry, for the one spec that has to prove the refusal against a family that
+// genuinely lacks reEnterable rather than against the fallback resolver, which claims it for none.
+import "@/mods/registerModApps"
+import { resolveEncounter } from "@/app/families/familyRegistry"
 
 const DIR_MOVE: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 
@@ -1739,8 +1743,18 @@ describe("a switch fork", () => {
   // A switch opens one way out and leaves the others shut. Keys accumulate, so spending the choice on a
   // side branch costs a walk back to the switch and a second choice — unless its room shut behind the
   // player, and then the main path onward is a door they can never open.
+  //
+  // Against the real registry, not the fallback stub: the fallback never claims `reEnterable` for
+  // anyone, so it would refuse a switch whether or not this check still worked. Sumplete genuinely
+  // has no `reEnterable` in its own FamilyMeta, so the real registry's refusal is the one this spec
+  // names.
   it("refuses a switch whose room cannot be walked back into", () => {
-    const result = assembleFloor("site-switch-oneshot", switchConfig({ encounter: "sumplete", keyId: SWITCH_KEY }), 0)
+    const result = assembleFloor(
+      "site-switch-oneshot",
+      switchConfig({ encounter: "sumplete", keyId: SWITCH_KEY }),
+      0,
+      resolveEncounter
+    )
 
     expect(result.success).toBe(false)
     expect(result.success === false && result.reasons).toEqual([
