@@ -124,20 +124,44 @@ as much as a writing one.
 **References:** `src/assets/fez-250.png` for the drawing style, and `art/masters/characters/explorer.jpeg`
 for the hat — the anchor alone gave a generator a lizard in a fez and it drew the fez.
 
-> [preamble] **There is no figure in this picture**, so ignore every instruction above about a standing
-> figure and its pose. **Not translucent and not a ghost** — nothing here is blue-green or see-through.
+**What this picture has to say**, because every line of the prompt below is one of these and nothing else:
+
+1. **Somebody like you was here.** It is the only beat in the game carried by a picture instead of a line,
+   and it lands or fails on one object: a hat the player has been looking at all game, lying on the ground.
+   A fez there says something else entirely — see the note under the prompt.
+2. **He meant to come straight back.** A notebook laid face down keeps your place. That single gesture is
+   the difference between a camp that was abandoned and a camp that was left, and the second is the sad one.
+3. **And nobody has touched it since.** Undisturbed dust over everything, nothing scattered, nothing broken.
+   The two readings have to sit on top of each other: stepped away a minute ago, and a very long time ago.
+4. **It stands where a person stands.** This takes a character's place in a conversation, beside Fez, at the
+   same size as the four ghosts — so it is composed upright and compact, not as a landscape.
+
+> [preamble] **There is no figure in this picture** — ignore every instruction above about a standing figure
+> and its pose. **Nothing here is translucent or blue-green.** This is not a ghost; it is a place.
 >
-> A small abandoned camp on bare ground, drawn in the same style: a canvas bedroll rolled and tied, a
-> battered tin kettle, a coil of rope resting on a flat stone, a notebook lying FACE DOWN — spine up, pages
-> against the ground — and one hat left beside them.
+> A small camp that somebody walked away from, arranged as one tall compact group about two thirds as wide
+> as it is tall, resting on bare ground, so that it fills the same upright frame a standing person would.
 >
-> The hat is the explorer's own, taken from the second reference image: a soft brown felt bush hat, wide
-> flat brim, band around the crown, brown #685038. **It is not a fez** — no red, no cylindrical cap, no
-> tassel. That hat belongs to another character and must not appear.
+> In it: a canvas bedroll unrolled and laid flat, a battered tin kettle set on three stones, a coil of rope,
+> and a notebook lying FACE DOWN and open — spine upward, pages against the ground, the way somebody holds
+> their place when they mean to come straight back.
 >
-> No tent, no campfire, no figure, no remains, no blood. Every object whole and inside the frame with air
-> around it, nothing cropped by an edge. The scene should read as somebody who left in a hurry and meant to
-> come back.
+> Resting on top of the bedroll, and the most visible object in the picture, one wide-brimmed brown felt
+> bush hat. It is the explorer's own, from the second reference image: soft felt, broad flat brim, a band
+> around the crown, brown #685038. **It is not a fez** — no red, no cylindrical cap, no tassel. That hat
+> belongs to a different character and must not appear anywhere in this picture.
+>
+> Everything lies under a fine even layer of pale dust, undisturbed. Nothing is broken, torn or scattered.
+> It should read at once as though the owner stepped away a minute ago and as though nobody has touched any
+> of it in a very long time.
+>
+> No tent, no campfire, no flame, no smoke, no figure, no bones, no blood. Every object whole and inside the
+> frame with air around it, nothing cropped by an edge.
+
+**If the fez ever belongs here, it is a decision and not a return.** The first roll drew one, and it would
+be the loudest tell in the game — the ending is Fez's own name, and his hat in the predecessor's camp says
+it four tiers early, in a picture, where `cast.md` budgets one tell an act and asks each to read as a joke
+the first time. Putting it back means writing it into `cast.md` and the Act V script first.
 
 ## 3. Cutting a generated file down to a sprite
 
