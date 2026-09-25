@@ -44,7 +44,7 @@
     "leaveSiteCancel": "Stay inside",
     "enterSite": "Step inside",
     "prompt": {
-      "here": "See what's here",
+      "here": "Investigate",
       "stairs": "Take the stairs",
       "exit": "Leave this place"
     },
