@@ -76,7 +76,7 @@ describe("generateFile — a switch fork survives the bake", () => {
           exitOrStaircase: "exit",
           sideSections: [],
           forks: [{ exits: 2, count: 1 }],
-          switches: { encounter: "witnessDoor", min: 1, max: 1 },
+          switches: { encounter: "lightbeamSwitch", min: 1, max: 1 },
         },
       ],
     ],
@@ -84,7 +84,7 @@ describe("generateFile — a switch fork survives the bake", () => {
 
   it("emits the junctions the carve owes and the encounter that fills them", () => {
     expect(output).toContain(`forks: [{ exits: 2, count: 1 }]`)
-    expect(output).toContain(`switches: { encounter: "witnessDoor", min: 1, max: 1 }`)
+    expect(output).toContain(`switches: { encounter: "lightbeamSwitch", min: 1, max: 1 }`)
   })
 
   // An encounter is a mod's own free-form string, and the bake writes TypeScript source: one

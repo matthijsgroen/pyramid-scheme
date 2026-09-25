@@ -167,9 +167,9 @@ const switchSite = (): SiteConfig => [
     switches: { encounter: "sumplete", min: 1, max: 1 },
   },
 ]
-// The witness-door pattern: a side section whose gate names its own `keyId`, so the assembler
-// marks the door `keyIsAuthored` and grows no chest for it — a room the player solves mints that
-// key instead. The piece behind it is reachable at some point in time, never right now.
+// An authored-key gate: a side section whose gate names its own `keyId`, so the assembler marks the
+// door `keyIsAuthored` and grows no chest for it — a room the player works opens it instead. The
+// piece behind it is reachable at some point in time, never right now.
 const authoredGatedSite = (): SiteConfig => [
   {
     pathPuzzles: 1,
@@ -182,7 +182,7 @@ const authoredGatedSite = (): SiteConfig => [
         difficulty: "starter",
         end: "treasure",
         endReward: { type: "mosaicPiece", tier: "starter" },
-        gate: { type: "floor-key", keyId: "witness:east" },
+        gate: { type: "floor-key", keyId: "authored:east" },
       },
     ],
   },

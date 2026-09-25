@@ -113,7 +113,7 @@ describe(validateSite, () => {
   })
 
   it("keyBeforeGate: passes an authored gate with no on-floor key chest", () => {
-    // entrance -e- gate(requiredKeyId="witness:east", keyIsAuthored) -e- exit, no chest anywhere
+    // entrance -e- gate(requiredKeyId="authored:east", keyIsAuthored) -e- exit, no chest anywhere
     const grid = buildGrid(
       [
         [0, 0, room("puzzle", ["e"])],
@@ -121,7 +121,7 @@ describe(validateSite, () => {
           0,
           1,
           room("gate", ["w", "e"], {
-            requiredKeyId: "witness:east",
+            requiredKeyId: "authored:east",
             gateVariant: "floor-key",
             keyIsAuthored: true,
           }),
@@ -432,7 +432,7 @@ describe(reachableFrom, () => {
         [
           0,
           1,
-          room("gate", ["w", "e"], { requiredKeyId: "witness:east", gateVariant: "floor-key", keyIsAuthored: true }),
+          room("gate", ["w", "e"], { requiredKeyId: "authored:east", gateVariant: "floor-key", keyIsAuthored: true }),
         ],
         [0, 2, room("exit", ["w"])],
       ],
@@ -449,7 +449,7 @@ describe(reachableFrom, () => {
     const grid = buildGrid(
       [
         [0, 0, room("puzzle", ["e"])],
-        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "witness:east", gateVariant: "floor-key" })],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "authored:east", gateVariant: "floor-key" })],
         [0, 2, room("exit", ["w"])],
       ],
       [0, 0],
@@ -458,7 +458,7 @@ describe(reachableFrom, () => {
     const blockedRequirements = new Set<string>()
     const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
     expect(reachable.has("0,2")).toBe(false)
-    expect(blockedRequirements).toEqual(new Set(["witness:east"]))
+    expect(blockedRequirements).toEqual(new Set(["authored:east"]))
   })
 
   // The plural form is the same rule. No family asks for several authored keys at once today; the one
@@ -467,7 +467,7 @@ describe(reachableFrom, () => {
     const grid = buildGrid(
       [
         [0, 0, room("puzzle", ["e"])],
-        [0, 1, room("gate", ["w", "e"], { requiredKeyIds: ["witness:east", "witness:north"], keyIsAuthored: true })],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyIds: ["authored:east", "authored:north"], keyIsAuthored: true })],
         [0, 2, room("exit", ["w"])],
       ],
       [0, 0],
@@ -486,7 +486,7 @@ describe(reachableFrom, () => {
         [
           0,
           1,
-          room("gate", ["w", "e"], { requiredKeyId: "witness:east", gateVariant: "floor-key", keyIsAuthored: true }),
+          room("gate", ["w", "e"], { requiredKeyId: "authored:east", gateVariant: "floor-key", keyIsAuthored: true }),
         ],
         [0, 2, room("exit", ["w"])],
       ],
@@ -500,7 +500,7 @@ describe(reachableFrom, () => {
     const grid = buildGrid(
       [
         [0, 0, room("puzzle", ["e"])],
-        [0, 1, room("gate", ["w", "e"], { requiredKeyIds: ["witness:east", "witness:north"], keyIsAuthored: true })],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyIds: ["authored:east", "authored:north"], keyIsAuthored: true })],
         [0, 2, room("exit", ["w"])],
       ],
       [0, 0],

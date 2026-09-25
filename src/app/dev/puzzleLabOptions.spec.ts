@@ -37,12 +37,13 @@ describe(playableInLab, () => {
     expect(playableInLab(meta())).toBe(true)
     expect(playableInLab(meta({ tags: ["tomb-puzzle"] }))).toBe(true)
     expect(playableInLab(meta({ tags: ["capstone"] }))).toBe(true)
-    expect(playableInLab(meta({ tags: ["witnessDoor"] }))).toBe(true)
   })
 
-  it("leaves out what is not a board at all", () => {
+  it("leaves out what is not a board at all, and what needs the floor around it", () => {
     // A trap, a shop, a chest and a gate are rooms rather than puzzles: nothing on the bench's pickers
-    // (tier, theme, role, seed) means anything to them.
-    for (const tags of [["trap"], ["shop"], ["treasure"], ["gate"]]) expect(playableInLab(meta({ tags }))).toBe(false)
+    // (tier, theme, role, seed) means anything to them. A switch is a board, but its answer is which way
+    // out of its fork opens — and the bench has no fork.
+    for (const tags of [["trap"], ["shop"], ["treasure"], ["gate"], ["lightbeamSwitch"]])
+      expect(playableInLab(meta({ tags }))).toBe(false)
   })
 })

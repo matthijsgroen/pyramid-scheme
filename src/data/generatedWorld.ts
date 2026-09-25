@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1058538122
+export const worldContentHash = 725969274
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -2417,7 +2417,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            gate: { type: "floor-key", keyId: "witness:junior_2#2#0:east", ownerMod: "topology" },
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 2 }],
             encounter: "star-battle",
@@ -2444,7 +2443,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            gate: { type: "floor-key", keyId: "witness:junior_2#2#0:north", ownerMod: "topology" },
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 3 }],
             encounter: "balance-scale",
@@ -2609,9 +2607,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         wallDecorations: ["stela", "niche", "sconce"],
         role: "puzzle",
-        encountersByIndex: { 0: "witnessDoor", 1: "eclipse", 2: "futoshiki", 3: "sumplete" },
+        encountersByIndex: { 0: "eclipse", 1: "futoshiki", 2: "sumplete", 3: "constellation" },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art7", pieceIndex: 1 },
-        rewards: [undefined, { type: "money", amount: 1 }, { type: "money", amount: 1 }, { type: "money", amount: 2 }],
+        rewards: [
+          { type: "money", amount: 1 },
+          { type: "money", amount: 1 },
+          { type: "money", amount: 1 },
+          { type: "money", amount: 2 },
+        ],
+        forks: [{ exits: 2, count: 1 }],
+        switches: { encounter: "lightbeamSwitch", min: 1, max: 1 },
       },
     ],
     [
@@ -3466,7 +3471,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "money", amount: 2 },
           { type: "money", amount: 3 },
           { type: "money", amount: 3 },
-          { type: "money", amount: 3 },
+          undefined,
         ],
       },
     ],
@@ -6322,7 +6327,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "consumable", consumable: "bandage" },
           { type: "consumable", consumable: "bandage" },
           { type: "money", amount: 3 },
-          { type: "money", amount: 2 },
+          { type: "money", amount: 3 },
         ],
       },
       {
@@ -9623,7 +9628,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "master" },
-            rewards: [undefined, undefined],
+            rewards: [{ type: "money", amount: 1 }, undefined],
             encounter: "hidato",
             decorations: ["shelf", "jarRack", "offeringTable", "pillar"],
             wallDecorations: ["sconce", "niche"],

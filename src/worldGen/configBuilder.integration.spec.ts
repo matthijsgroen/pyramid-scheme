@@ -20,7 +20,6 @@ import {
 } from "../mods/registeredMods"
 import { MOSAIC_STEPS_BY_TIER, MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
 import { reachableMosaicCounts } from "../mods/mosaic/game/mosaicReachability"
-import { witnessKeyId, witnessSite } from "../mods/topology/game/witnessDoor/witnessKeys"
 import {
   resolveKeyRequirements,
   familyPriorityFor,
@@ -125,8 +124,8 @@ describe("buildConfigs golden guard", () => {
   // Reachability answers "can this be got to"; a collection also has to be asked "is there enough
   // of it", per register and never as one world total. The numbers are pinned rather than derived
   // from the walk that produced them: 53 of the world's mosaic pieces sit in discovery-gated
-  // pockets and 2 behind the witness door's authored-key gates, so a walk that dropped either kind
-  // would come back short here while the world itself was fine.
+  // pockets, so a walk that dropped that kind would come back short here while the world itself was
+  // fine.
   it("every mosaic register's target count stands in reachable ground", () => {
     let reachableRewards: readonly TreasureReward[] = []
     buildConfigs(
@@ -156,22 +155,20 @@ describe("buildConfigs golden guard", () => {
   }, 90_000)
 })
 
-it("authors a witness door whose two authored gate ids match the mod's own witnessKeyId, catching a hand-copied typo", () => {
-  const site = buildRealConfigs().junior_2[1] // junior_2 pyramid 2 (levelNr 2)
-  const floor = site[0] // floor 0
+// The world's one authored switch, read back out of a real build. Which ways out it shuts and what
+// it keys them with is the assembler's to decide, so what the builder owes is narrow: the junction
+// reaches the floor, the board that fills it reaches the floor, and no key is hung by hand beside
+// them — an authored gate here would shut a branch the switch cannot open.
+it("authors junior_2 pyramid 2's floor 0 as a switch fork, with no key hung by hand", () => {
+  const floor = buildRealConfigs().junior_2[1][0] // pyramid 2 (levelNr 2), floor 0
 
-  expect(floor.encountersByIndex?.[0]).toBe("witnessDoor")
+  expect(floor.forks).toEqual([{ exits: 2, count: 1 }])
+  expect(floor.switches).toEqual({ encounter: "lightbeamSwitch", min: 1, max: 1 })
 
-  const witnessSections = floor.sideSections.filter(
-    (s): s is typeof s & { gate: { type: "floor-key"; keyId: string; ownerMod?: string } } =>
-      s.gate?.type === "floor-key" && typeof s.gate.keyId === "string" && s.gate.keyId.startsWith("witness:")
+  const authoredKeys = floor.sideSections.filter(
+    section => section.gate?.type === "floor-key" && "keyId" in section.gate && section.gate.keyId !== undefined
   )
-  const expectedSite = witnessSite("junior_2", 2, 0)
-  expect(witnessSections.map(s => s.gate.keyId)).toEqual([
-    witnessKeyId(expectedSite, "east"),
-    witnessKeyId(expectedSite, "north"),
-  ])
-  expect(witnessSections.map(s => s.gate.ownerMod)).toEqual(["topology", "topology"])
+  expect(authoredKeys).toEqual([])
 }, 90_000)
 
 describe("tomb floor linking — ward-path shortcuts", () => {

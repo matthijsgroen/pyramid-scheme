@@ -1,5 +1,5 @@
 import { tier, journey, tomb, sidePath, wardWing, wardChest } from "../dsl"
-import type { Rule, SideSectionConstraint, PathSettings } from "../dsl"
+import type { Rule, PathSettings } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
 
 // Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
@@ -41,28 +41,26 @@ const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 0, p
 const oldWorkings = () => sidePath({ puzzles: 1, tier: "starter", endReward: "junk" })
 
 // junior tier's own side-path settings (the tier() rule below) — named here so junior_2 pyramid
-// 2's floor 0 can re-declare them verbatim instead of drifting from a hand copy. That floor has
-// to author its own `.floor()` (for the witness door's `nodes` selector below), and buildSite.ts's
-// authored-floors branch reads a floor's OWN sidePaths/hiddenPaths rather than the pyramid's
-// tier-cascaded ones — so a floor authored via `.floor()` gets none of the tier default unless it
-// re-declares it, and declaring it from the same constant keeps the two from ever disagreeing.
+// 2's floor 0 can re-declare them verbatim instead of drifting from a hand copy. That floor
+// authors its own `.floor()` (for the switch fork below), and buildSite.ts's authored-floors
+// branch reads a floor's OWN sidePaths/hiddenPaths rather than the pyramid's tier-cascaded ones —
+// so a floor authored via `.floor()` gets none of the tier default unless it re-declares it, and
+// declaring it from the same constant keeps the two from ever disagreeing.
 const JUNIOR_FRAGMENT_PATH: PathSettings = { pathPuzzles: 1, end: "fragment" }
 const JUNIOR_VISIBLE_MOSAIC_PATH: PathSettings = { pathPuzzles: 0, end: "mosaic" }
 const JUNIOR_HIDDEN_MOSAIC_PATH: PathSettings = { pathPuzzles: 0, end: "mosaic" }
 const JUNIOR_HIDDEN_TRAP_PATH: PathSettings = { pathPuzzles: 2, end: "junk", encounter: "trap", chance: 0.4 }
 
-// junior_2 pyramid 2 (levelNr 2), floor 0 — the world's first witness door: a main-path shrine
-// puzzle mints one of two keys, each opening a different side branch. `src/worldGen/` (core) can't
-// import the topology mod's own id helper (mods stay one-way), so the id is hand-authored here
-// and pinned equal to the mod's `witnessKeyId(witnessSite(...))` output by
-// configBuilder.integration.spec.ts — the guard against a typo leaving a branch dead.
-const WITNESS_JUNIOR_2_P2_SITE = "junior_2#2#0"
-const witnessBranch = (shrine: "east" | "north"): SideSectionConstraint => ({
-  pathPuzzles: 1,
-  end: "treasure",
-  endReward: "junk",
-  gate: { type: "floor-key", keyId: `witness:${WITNESS_JUNIOR_2_P2_SITE}:${shrine}`, ownerMod: "topology" },
-})
+// The junction junior_2 pyramid 2's floor 0 holds open, and the board that stands in it. Two ways
+// out is the junction a carve nearly always offers; three is rare and four is never carved
+// (game/forkShape.spec.ts), so asking for more would be asking for a floor that fails to build.
+// The builder picks which ways out to shut and keys them on the floor's own authoring address, so
+// nothing here names a key.
+const SWITCH_FORK = [{ exits: 2, count: 1 }]
+const SWITCH_BOARD = { encounter: "lightbeamSwitch", min: 1, max: 1 }
+
+// An ungated branch, so the junction has a way out worth closing and the switch decides something.
+const switchBranch = () => sidePath({ puzzles: 1, endReward: "junk" })
 
 export const juniorRules: Rule[] = [
   // a nobleman's wing: a painted ka-statue, sealed chests, an ablution basin, linen and lamps.
@@ -149,16 +147,17 @@ export const juniorRules: Rule[] = [
   journey("junior_1").pyramid(1, { sideSections: [holdChest(0), starterEcho()] }),
   journey("junior_1").pyramid(2, { sideSections: [holdChest(1), oldWorkings()] }),
   journey("junior_2").pyramid(1, { sideSections: [holdChest(0)] }),
-  // junior_2 pyramid 2: the witness door debut. The shrine board sits on the main path's first
-  // room, via a node selector — the same mechanism every capstone in this file already uses — so
-  // the rest of the main path keeps its usual length and draws from the ordinary pool untouched.
-  // The tier's own sidePaths/hiddenPaths are re-declared (from the shared JUNIOR_* constants
-  // above, not a hand copy) because this floor's own `.floor()` bypasses the pyramid-level
-  // tier cascade for them.
+  // junior_2 pyramid 2: the world's one switch fork. The mirror board stands in a junction the carve
+  // holds open, and the way out it routes its beam to is the one that stands open — the rest are
+  // shut until the player walks back in and sends the light another way. Every main-path room is
+  // left to the ordinary pool; what the junction chooses between is the branches below. The tier's
+  // own sidePaths/hiddenPaths are re-declared (from the shared JUNIOR_* constants above, not a hand
+  // copy) because this floor's own `.floor()` bypasses the pyramid-level tier cascade for them.
   journey("junior_2")
     .pyramid(2, {})
     .floor(0, {
-      nodes: [{ where: "first", encounter: "witnessDoor" }],
+      forks: SWITCH_FORK,
+      switches: SWITCH_BOARD,
       sidePaths: [
         { density: "medium", ...JUNIOR_FRAGMENT_PATH },
         { density: "low", ...JUNIOR_VISIBLE_MOSAIC_PATH },
@@ -167,7 +166,7 @@ export const juniorRules: Rule[] = [
         { density: "low", ...JUNIOR_HIDDEN_MOSAIC_PATH },
         { density: "low", ...JUNIOR_HIDDEN_TRAP_PATH },
       ],
-      sideSections: [holdChest(1), oldWorkings(), witnessBranch("east"), witnessBranch("north")],
+      sideSections: [holdChest(1), oldWorkings(), switchBranch(), switchBranch()],
     }),
   journey("junior_3").pyramid(1, { sideSections: [holdChest(0)] }),
   journey("junior_3").pyramid(2, { sideSections: [holdChest(2), oldWorkings()] }),

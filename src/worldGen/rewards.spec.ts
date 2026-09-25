@@ -65,17 +65,17 @@ describe("specToGate", () => {
   })
 
   it("an authored keyId grows no default colour (its key comes from a room, not a chest)", () => {
-    expect(specToGate({ type: "floor-key", keyId: "witness:junior_2#2#0:east", ownerMod: "witnessDoor" })).toEqual({
+    expect(specToGate({ type: "floor-key", keyId: "authored:junior_2#2#0:east", ownerMod: "topology" })).toEqual({
       type: "floor-key",
-      keyId: "witness:junior_2#2#0:east",
-      ownerMod: "witnessDoor",
+      keyId: "authored:junior_2#2#0:east",
+      ownerMod: "topology",
     })
   })
 
   it("an authored keyId keeps an explicit colour if one is still authored", () => {
-    expect(specToGate({ type: "floor-key", keyId: "witness:junior_2#2#0:east", color: "red" })).toEqual({
+    expect(specToGate({ type: "floor-key", keyId: "authored:junior_2#2#0:east", color: "red" })).toEqual({
       type: "floor-key",
-      keyId: "witness:junior_2#2#0:east",
+      keyId: "authored:junior_2#2#0:east",
       color: "red",
     })
   })

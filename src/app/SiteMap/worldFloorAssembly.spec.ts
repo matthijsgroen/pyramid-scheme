@@ -392,3 +392,59 @@ describe("a rank is dressed with what it is authored to hold", () => {
     expect(wrong.slice(0, 10)).toEqual([])
   }, 60_000)
 })
+
+// The one floor the world authors a switch onto (src/worldGen/spec/junior.ts). Nothing else would
+// notice it quietly carving a bare junction instead: the floor still assembles, still validates, and
+// simply hands the player an ordinary fork with no board in it and every way out standing open.
+describe("the switch junior_2 stands", () => {
+  // Written from the AUTHORING ADDRESS — journey, the level the floor was authored at, the floor
+  // index, the first switch on it — never read back off the grid, so a stem the pipeline invented
+  // some other way would not match.
+  const STEM = "switch:junior_2#1#0#0"
+  const juniorFloor = () => {
+    const floor = allFloors().find(f => f.journeyId === "junior_2" && f.levelIndex === 1 && f.floorIndex === 0)
+    if (!floor) throw new Error("junior_2 pyramid 2 floor 0 is not in the baked world")
+    return floor
+  }
+  const assembled = () => {
+    const floor = juniorFloor()
+    const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
+      resolveKeyRequirements,
+      floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
+    })
+    if (!result.success) throw new Error(`junior_2 floor 0 does not assemble: ${JSON.stringify(result.reasons)}`)
+    return result.grid
+  }
+  const switchRoom = (grid: FloorGrid) => {
+    for (let r = 0; r < grid.cells.length; r++)
+      for (let c = 0; c < grid.cells[r].length; c++) {
+        const cell = grid.cells[r][c]
+        if (cell.type === "room" && cell.roomType === "fork" && cell.family !== undefined) return { r, c, cell }
+      }
+    throw new Error("no fork on junior_2 floor 0 carries a board")
+  }
+
+  it("stands the mirror board in a junction the carve held open", () => {
+    expect(switchRoom(assembled()).cell.family).toBe("lightbeamSwitch")
+  })
+
+  it("shuts both its ways out, each on its own key over the floor's authoring address", () => {
+    const grid = assembled()
+    const { r, c, cell } = switchRoom(grid)
+    const move: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+    const shut = (cell.exits ?? []).filter(exit => exit.gateKeyId !== undefined)
+
+    expect(shut.length).toBe(2)
+    expect(new Set(shut.map(exit => exit.gateKeyId)).size).toBe(2)
+    for (const exit of shut) {
+      const [dr, dc] = move[exit.dir]
+      const beyond = grid.cells[r + dr * 2]?.[c + dc * 2]
+      expect(beyond?.type).toBe("room")
+      const address = beyond?.type === "room" ? beyond.sectionAddress : undefined
+      expect(address).toBeTruthy()
+      expect(exit.gateKeyId).toBe(`${STEM}:${address}`)
+      expect(beyond?.type === "room" && beyond.requiredKeyId).toBe(`${STEM}:${address}`)
+      expect(beyond?.type === "room" && beyond.gateVariant).toBe("floor-key")
+    }
+  })
+})

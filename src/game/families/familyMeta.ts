@@ -34,8 +34,8 @@ export type FamilyMeta = {
    * A finished room of this family is walked back INTO, rather than only repositioned on like every
    * other completed cell (src/app/SiteMap/useSiteNavigation.ts).
    *
-   * For a family whose room hands over one of several things it holds, one per visit: the witness door
-   * mints the key of the shrine it was opened for, and without a second visit its other branch would
+   * For a family whose room hands over one of several things it holds, one per visit: a switch leaves
+   * open the one way out it routes its beam to, and without a second visit the branches it shut would
    * hold content nothing could ever reach. The cost of the choice is the walk back, not the content.
    * The board starts fresh, unless the family also claims `stateIsTheMechanism` below.
    */

@@ -1,14 +1,13 @@
 import type { ModDescriptor } from "../modDescriptor"
 import { LIGHTBEAM_META } from "./game/lightbeam/meta"
 import { LIGHTBEAM_SWITCH_META } from "./game/lightbeamSwitch/meta"
-import { WITNESS_DOOR_META } from "./game/witnessDoor/meta"
 
 // The topology mod descriptor. Owns the families whose board decides where the player may WALK, rather
-// than only what they solve: lightbeam aims a corridor's beam, the lightbeam switch routes its beam to
-// one of the ways out of the fork it stands in and shuts the rest, and the witness door mints the key
-// that opens one branch of a fork. They are held here together so the fact that a room can re-shape a
-// floor stays in one mod, and nothing about it leaks into the general puzzle mod or into core. Minimal
-// by design (docs/mods/TARGET.md): only the fields this mod actually uses.
+// than only what they solve: lightbeam aims a corridor's beam, and the lightbeam switch routes its beam
+// to one of the ways out of the fork it stands in and shuts the rest. They are held here together so the
+// fact that a room can re-shape a floor stays in one mod, and nothing about it leaks into the general
+// puzzle mod or into core. Minimal by design (docs/mods/TARGET.md): only the fields this mod actually
+// uses.
 //
 // Each family keeps its own folder under game/ and app/, so a family joining the mod is a new folder and
 // one more entry in the list below.
@@ -18,5 +17,5 @@ import { WITNESS_DOOR_META } from "./game/witnessDoor/meta"
 // enabled. Toggle the mod off by removing it from src/mods/registeredMods.ts's REGISTERED_MODS list.
 export const topologyMod: ModDescriptor = {
   id: "topology",
-  families: [LIGHTBEAM_META, LIGHTBEAM_SWITCH_META, WITNESS_DOOR_META],
+  families: [LIGHTBEAM_META, LIGHTBEAM_SWITCH_META],
 }

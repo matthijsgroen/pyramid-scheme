@@ -241,18 +241,21 @@ describe("authored forks and switches", () => {
 
   it("reaches the built floor config", () => {
     const floors = built({
-      floors: [{ forks: [{ exits: 2, count: 1 }], switches: { encounter: "witnessDoor", min: 1, max: 1 } }],
+      floors: [{ forks: [{ exits: 2, count: 1 }], switches: { encounter: "lightbeamSwitch", min: 1, max: 1 } }],
     })
 
     expect(floors[0].forks).toEqual([{ exits: 2, count: 1 }])
-    expect(floors[0].switches).toEqual({ encounter: "witnessDoor", min: 1, max: 1 })
+    expect(floors[0].switches).toEqual({ encounter: "lightbeamSwitch", min: 1, max: 1 })
   })
 
   it("hands the site's own down to a floor that names none", () => {
-    const floors = built({ forks: [{ exits: 3, count: 2 }], switches: { encounter: "witnessDoor", min: 1, max: 2 } })
+    const floors = built({
+      forks: [{ exits: 3, count: 2 }],
+      switches: { encounter: "lightbeamSwitch", min: 1, max: 2 },
+    })
 
     expect(floors[0].forks).toEqual([{ exits: 3, count: 2 }])
-    expect(floors[0].switches).toEqual({ encounter: "witnessDoor", min: 1, max: 2 })
+    expect(floors[0].switches).toEqual({ encounter: "lightbeamSwitch", min: 1, max: 2 })
   })
 
   it("lets the floor's own win over the site's", () => {

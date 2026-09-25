@@ -20,7 +20,7 @@ const floor = {
       pathPuzzles: 1,
       difficulty: "junior" as const,
       end: "treasure" as const,
-      gate: { type: "floor-key" as const, keyId: "witness:junior_2#2:east", ownerMod: "topology" },
+      gate: { type: "floor-key" as const, keyId: "authored:junior_2#2:east", ownerMod: "topology" },
     },
     {
       pathPuzzles: 1,
@@ -66,7 +66,7 @@ const switchFloor = {
     { pathPuzzles: 1, difficulty: "starter" as const, end: "treasure" as const },
   ],
   forks: [{ exits: 2, count: 1 }],
-  switches: { encounter: "witnessDoor", min: 1, max: 1 },
+  switches: { encounter: "lightbeamSwitch", min: 1, max: 1 },
 }
 
 const stripped = () => dropUnownedAuthoring(switchFloor, new Set(), topologyOff) as GameFloorConfig
@@ -120,7 +120,7 @@ describe("a switch whose family's mod is toggled off", () => {
   // here, so finding neither above says the room is bare, not that the check looks in the wrong place.
   it("is the only reason that junction was ever anything else", () => {
     const { rooms, forks } = assembledRooms(switchFloor as GameFloorConfig, resolveEncounterMeta)
-    expect(inhabitedForks(forks).map(fork => fork.family)).toEqual(["witnessDoor"])
+    expect(inhabitedForks(forks).map(fork => fork.family)).toEqual(["lightbeamSwitch"])
     expect(shutWaysOut(rooms).length).toBeGreaterThanOrEqual(2)
   })
 
@@ -145,7 +145,7 @@ const dirsOf = (grid: FloorGrid) =>
 // floor invented to make the point: what a shipped floor's carve does under an unregistered mod is
 // the thing saves depend on.
 const FORKS = [{ exits: 2, count: 1 }]
-const SWITCHES = { encounter: "witnessDoor", min: 1, max: 1 }
+const SWITCHES = { encounter: "lightbeamSwitch", min: 1, max: 1 }
 
 type Carve = {
   label: string

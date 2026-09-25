@@ -18,9 +18,9 @@ describe("owned key sources", () => {
   })
 
   it("unions every registered source", () => {
-    registerOwnedKeySource("a", () => new Set(["witness:east"]))
-    registerOwnedKeySource("b", () => new Set(["witness:north"]))
-    expect([...ownedKeysFromSources(ctx)].sort()).toEqual(["witness:east", "witness:north"])
+    registerOwnedKeySource("a", () => new Set(["authored:east"]))
+    registerOwnedKeySource("b", () => new Set(["authored:north"]))
+    expect([...ownedKeysFromSources(ctx)].sort()).toEqual(["authored:east", "authored:north"])
   })
 
   it("passes the floor's context to each source", () => {
@@ -47,7 +47,7 @@ describe("the signal that a source would answer differently", () => {
   it("reaches every subscriber, including on a source registering late", () => {
     const told = vi.fn()
     subscribeOwnedKeys(told)
-    registerOwnedKeySource("late", () => new Set(["witness:east"]))
+    registerOwnedKeySource("late", () => new Set(["authored:east"]))
     expect(told).toHaveBeenCalled()
   })
 

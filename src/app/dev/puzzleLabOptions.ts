@@ -12,8 +12,8 @@ export const allowedDifficulties = (meta: FamilyMeta): Difficulty[] =>
 export const themesFor = (meta: FamilyMeta): string[] => meta.themes ?? [DEFAULT_THEME]
 
 /**
- * Which families the bench can play: the plain puzzle rooms, the two boards a tomb serves — a capstone
- * crocodile and a tableau — and the witness door.
+ * Which families the bench can play: the plain puzzle rooms and the two boards a tomb serves — a capstone
+ * crocodile and a tableau.
  *
  * The tomb pair are on the list because a family the bench cannot reach is a family nobody reviews: they were
  * playable only by walking a real tomb to the floor that serves them, which is why they are the two that have
@@ -24,10 +24,10 @@ export const themesFor = (meta: FamilyMeta): string[] => meta.themes ?? [DEFAULT
  * for a completed hieroglyph, so a tableau plays here only as far as the fragments already collected allow.
  * That is enough to look at the board and not enough to solve one cold.
  *
- * **A witness door on the bench mints real keys**, under the lab's own journey id. They open nothing: no
- * authored gate asks for a key filed under `puzzle-lab`.
+ * **A board whose answer is the floor's own shape is not on the list.** A switch decides which way out of
+ * its fork opens, and the bench has no fork around it for that answer to mean anything.
  */
-const BENCH_TAGS = ["puzzle", "tomb-puzzle", "capstone", "witnessDoor"]
+const BENCH_TAGS = ["puzzle", "tomb-puzzle", "capstone"]
 
 export const playableInLab = (meta: FamilyMeta): boolean => meta.tags.some(tag => BENCH_TAGS.includes(tag))
 

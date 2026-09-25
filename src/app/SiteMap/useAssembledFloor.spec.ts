@@ -168,7 +168,7 @@ describe("useAssembledFloor — hidden junctions", () => {
       exitOrStaircase: "exit",
       // A family whose room is walked back into, which is what a switch asks of the one standing in it.
       forks: [{ exits: 2, count: 1 }],
-      switches: { encounter: "witnessDoor", min: 1, max: 1 },
+      switches: { encounter: "lightbeamSwitch", min: 1, max: 1 },
       sideSections: [
         { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true, endReward: { type: "mosaicPiece" } },
         { pathPuzzles: 1, difficulty: "expert", end: "treasure" },
@@ -194,9 +194,9 @@ describe("useAssembledFloor — hidden junctions", () => {
 
     const masked = result.current.grid?.cells[r]?.[c]
     expect(masked?.type).toBe("room")
-    expect(masked?.type === "room" && masked.family).toBe("witnessDoor")
+    expect(masked?.type === "room" && masked.family).toBe("lightbeamSwitch")
     expect(masked?.type === "room" && masked.exits?.length).toBeGreaterThan(0)
-    expect(cellSlot(result.current.grid!, r, c)).toBe("xwitnessDoor")
+    expect(cellSlot(result.current.grid!, r, c)).toBe("xlightbeamSwitch")
   })
 
   // A gate the player can see says something is there, and a way out drawn on the board says the same.
@@ -212,7 +212,7 @@ describe("useAssembledFloor — hidden junctions", () => {
       end: "treasure",
       exitOrStaircase: "exit",
       forks: [{ exits: 2, count: 1 }],
-      switches: { encounter: "witnessDoor", min: 1, max: 1 },
+      switches: { encounter: "lightbeamSwitch", min: 1, max: 1 },
       sideSections: [
         { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true, endReward: { type: "mosaicPiece" } },
         { pathPuzzles: 1, difficulty: "expert", end: "treasure" },

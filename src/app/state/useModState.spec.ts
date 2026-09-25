@@ -27,12 +27,12 @@ describe("useModState", () => {
 // store. Same key, or it would answer for a slice nobody writes.
 describe("the same slice read outside React", () => {
   it("reads the key the hook writes", () => {
-    readModState("witnessDoor")
-    expect(latestGameValueMock).toHaveBeenCalledWith("pyramid-scheme-mod-witnessDoor")
+    readModState("topology")
+    expect(latestGameValueMock).toHaveBeenCalledWith("pyramid-scheme-mod-topology")
   })
 
   it("loads that key on request", async () => {
-    await primeModState("witnessDoor")
-    expect(primeGameValueMock).toHaveBeenCalledWith("pyramid-scheme-mod-witnessDoor")
+    await primeModState("topology")
+    expect(primeGameValueMock).toHaveBeenCalledWith("pyramid-scheme-mod-topology")
   })
 })

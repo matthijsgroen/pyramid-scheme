@@ -1365,20 +1365,20 @@ describe("an authored floor-key id", () => {
         difficulty: "junior",
         end: "treasure",
         endReward: { type: "mosaic", tier: "junior" },
-        gate: { type: "floor-key", keyId: "witness:east" },
+        gate: { type: "floor-key", keyId: "authored:east" },
       },
     ],
   })
 
   it("is used verbatim as the gate's requiredKeyId", () => {
-    const result = assembleFloor("site-witness", config(), 1234)
+    const result = assembleFloor("site-authored-key", config(), 1234)
     if (!result.success) throw new Error("assembly failed")
     const gates = result.grid.cells.flat().filter(c => c.type === "room" && c.requiredKeyId)
-    expect(gates.map(g => (g as { requiredKeyId?: string }).requiredKeyId)).toContain("witness:east")
+    expect(gates.map(g => (g as { requiredKeyId?: string }).requiredKeyId)).toContain("authored:east")
   })
 
   it("grows no key-host section for that gate", () => {
-    const result = assembleFloor("site-witness", config(), 1234)
+    const result = assembleFloor("site-authored-key", config(), 1234)
     if (!result.success) throw new Error("assembly failed")
     const hostedKeys = result.grid.cells.flat().filter(c => c.type === "room" && c.reward?.type === "tombKey")
     expect(hostedKeys).toHaveLength(0)
@@ -1387,11 +1387,11 @@ describe("an authored floor-key id", () => {
   // Colour is the sign pointing at the chest that holds the key, and there is no chest — a colour here
   // would show in the floor's key ring (src/game/floorKeys.ts) as a key to go and find.
   it("leaves the gate without a rotation colour", () => {
-    const result = assembleFloor("site-witness", config(), 1234)
+    const result = assembleFloor("site-authored-key", config(), 1234)
     if (!result.success) throw new Error("assembly failed")
     const authored = result.grid.cells
       .flat()
-      .filter((c): c is RoomCell => c.type === "room" && c.requiredKeyId === "witness:east")
+      .filter((c): c is RoomCell => c.type === "room" && c.requiredKeyId === "authored:east")
     expect(authored).toHaveLength(1)
     expect(authored[0].keyColor).toBeUndefined()
     // The ring reads doors the player has SEEN, so the gate has to be out of the fog to count at all.
@@ -1404,12 +1404,12 @@ describe("an authored floor-key id", () => {
 
   it("still wears a colour the author named on it", () => {
     const spec = config()
-    spec.sideSections![0].gate = { type: "floor-key", keyId: "witness:east", color: "green" }
-    const result = assembleFloor("site-witness", spec, 1234)
+    spec.sideSections![0].gate = { type: "floor-key", keyId: "authored:east", color: "green" }
+    const result = assembleFloor("site-authored-key", spec, 1234)
     if (!result.success) throw new Error("assembly failed")
     const authored = result.grid.cells
       .flat()
-      .filter((c): c is RoomCell => c.type === "room" && c.requiredKeyId === "witness:east")
+      .filter((c): c is RoomCell => c.type === "room" && c.requiredKeyId === "authored:east")
     expect(authored[0].keyColor).toBe("green")
   })
 })
