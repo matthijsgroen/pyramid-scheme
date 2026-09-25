@@ -14,6 +14,22 @@ export const JOURNEYS_WITH_ARRIVAL: ReadonlySet<string> = new Set<string>([
   "starter_2",
   "starter_3",
   "starter_4",
+  "junior_1",
+  "junior_2",
+  "junior_3",
+  "junior_4",
+  "expert_1",
+  "expert_2",
+  "expert_3",
+  "expert_4",
+  "master_1",
+  "master_2",
+  "master_3",
+  "master_4",
+  "wizard_1",
+  "wizard_2",
+  "wizard_3",
+  "wizard_4",
 ])
 
 /** Whether a translation key has a line behind it. */

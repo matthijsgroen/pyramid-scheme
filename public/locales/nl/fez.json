@@ -106,6 +106,132 @@
       "3": { "fez": "Ze oefenden op wat er was. Leer er genoeg van en een muur is geen versiering meer." },
       "4": { "explorer": "Ik wil die Sfinx nog eens bekijken." },
       "5": { "fez": "Nog niet. Straks." }
+    },
+
+    "junior_1": {
+      "1": { "fez": "Ze kwamen elk jaar terug met het hoogwater, bijna op de dag af." },
+      "2": { "fez": "Dus gingen mensen de dagen ertussen tellen. Daar komt de kalender vandaan — vogels." },
+      "3": { "explorer": "Vogels." },
+      "4": { "fez": "Vogels en papierwerk. Het is altijd vogels en papierwerk." }
+    },
+    "junior_2": {
+      "1": { "fez": "Hier maakten ze het allemaal. Niet de graven — de spullen die erin gingen." },
+      "2": { "fez": "Kijk naar de mallen. Dezelfde armband, veertig keer." },
+      "3": { "explorer": "Voor veertig mensen?" },
+      "4": {
+        "fez": "Voor iedereen die kon betalen. Een edelman wilde wat een koning had, voor een prijs die een edelman kon dragen."
+      }
+    },
+    "junior_3": {
+      "1": { "fez": "Thoth, deze. God van geheimen en magie, vrij zeker." },
+      "2": { "explorer": "Vrij." },
+      "3": { "fez": "Negentig procent. Enfin — de tekens die je verzamelt zijn van hem." }
+    },
+    "junior_4": {
+      "1": { "fez": "Ruim negentig meter hoog, en bovenin een vuur dat nooit uitging." },
+      "2": { "fez": "Zeelui vonden de kust van een dagreis ver. Daarvoor vonden ze hem door ertegenaan te varen." },
+      "3": { "explorer": "Hoe vind je hier iets zonder zoiets?" },
+      "4": { "fez": "Je vraagt het aan iemand die er geweest is. Dat is mijn hele vak." }
+    },
+
+    "expert_1": {
+      "1": {
+        "fez": "Ruim zestig graven uitgehakt in één vallei, en ze zijn stuk voor stuk al open voordat wij er waren."
+      },
+      "2": { "explorer": "Door wie?" },
+      "3": { "fez": "Mensen zoals wij, meestal. Eerder." },
+      "4": { "fez": "Wat maak jij ervan?" },
+      "5": { "explorer": "Dat we te laat zijn." }
+    },
+    "expert_2": {
+      "1": { "fez": "Amoen-Ra. De zon. Ieders favoriet, en je ziet waarom — kijk hoe groot het is." },
+      "2": { "explorer": "Twee namen." },
+      "3": { "fez": "Dezelfde god, denk ik. Bij de populaire deden ze er nog een naam bij." }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Het hele land is een streep groen aan weerszijden van één rivier, en hier waaiert het uit tot dit."
+      },
+      "2": { "fez": "Alles groeit. Alles bijt ook." },
+      "3": { "explorer": "Voor welke van die twee komen wij?" },
+      "4": { "fez": "Ik hoopte eigenlijk op geen van beide." }
+    },
+    "expert_4": {
+      "1": { "fez": "De eerste. Daarvoor gingen koningen onder een platte steen, net als iedereen." },
+      "2": { "fez": "Iemand stond hier en dacht: wat als we dat doen, maar zes keer, omhoog." },
+      "3": { "explorer": "Werkte het?" },
+      "4": { "fez": "Het staat er nog en hij niet. Ligt eraan wat je bedoelt." }
+    },
+
+    "master_1": {
+      "1": { "fez": "Twee miljoen blokken. Iemand heeft ze geteld." },
+      "2": { "explorer": "Iemand heeft ze geteld?" },
+      "3": { "fez": "Er telt altijd iemand. Dat vergeten mensen bij dit alles — het werd gerund door klerken." },
+      "4": { "fez": "Prachtig, hè. Ik moet er niet aan denken hoe de loonlijst eruitzag." }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Instructies. Meer is het niet — wat je moet zeggen, en in welke volgorde, zodat de reis goed verloopt."
+      },
+      "2": { "explorer": "Een handleiding." },
+      "3": { "fez": "Een handleiding voor dood zijn. Ze schreven werkelijk alles op, deze lui." },
+      "4": { "fez": "Wat, gezien waar wij naar zoeken, het eerste goede nieuws van de week is." }
+    },
+    "master_3": {
+      "1": { "fez": "Ah. Iemands kamp." },
+      "2": { "explorer": "Recent?" },
+      "3": { "fez": "Redelijk recent. Blikvoer en een nare hoest, zo te zien." },
+      "4": { "fez": "Ze zijn verder naar binnen gegaan en hebben hun spullen laten staan." },
+      "5": { "explorer": "Zijn ze teruggekomen om ze te halen?" },
+      "6": { "fez": "…Laten we doorlopen." }
+    },
+    "master_4": {
+      "1": {
+        "fez": "Dít is wat de anderen probeerden na te doen. Kijk naar die kleur — drieduizend jaar en het lijkt nog nat."
+      },
+      "2": { "explorer": "Henut zou razend zijn." },
+      "3": { "fez": "Henut zou aantekeningen maken." }
+    },
+
+    "wizard_1": {
+      "1": {
+        "fez": "De zon gaat 's nachts onder de wereld door en komt er aan de andere kant weer uit. Dat is het hele geloof."
+      },
+      "2": { "fez": "Twaalf uur in het donker, met van alles in de weg, en iemand moet hem erdoorheen dragen." },
+      "3": { "explorer": "Dat is wat wij aan het doen zijn." },
+      "4": { "fez": "Ik probeerde het niet hardop te zeggen." },
+      "5": { "explorer": "Het zand komt nog steeds binnen." },
+      "6": { "fez": "Het komt al drieduizend jaar binnen. Het houdt niet op, het gaat rond." },
+      "7": { "fez": "Loopt vol, kantelt, begint opnieuw. Net als de zon." }
+    },
+    "wizard_2": {
+      "1": { "fez": "Terug waar we begonnen. Hij heeft zich niet verroerd." },
+      "2": { "explorer": "Het schrift staat er nog." },
+      "3": { "fez": "Kun jij het lezen?" },
+      "4": { "explorer": "Een naam." },
+      "5": { "fez": "Van wie?" },
+      "6": { "explorer": "Van jou." },
+      "7": { "fez": "…" },
+      "8": { "fez": "Weet je het zeker?" },
+      "9": { "explorer": "Het is opgeschreven." },
+      "10": { "fez": "Huh." },
+      "11": { "fez": "Nou. Dat verklaart de fez." }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "De weegschaal. Hart aan de ene kant, veer aan de andere — dus een lekker zwaar hart wint, neem ik aan."
+      },
+      "2": { "explorer": "Welke kant gaat iets zwaars op?" },
+      "3": { "fez": "…Omlaag." },
+      "4": { "fez": "Oh." },
+      "5": { "fez": "Licht. Je wilt hem LICHT." }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "De deksteen gaat als laatste op, en hij gaat er in goud op, zodat het hele ding het eerste licht vangt."
+      },
+      "2": { "explorer": "Voor wie?" },
+      "3": { "fez": "Voor iedereen die kijkt. Dat was het punt — het was nooit voor de man die erin lag." }
     }
   }
 }

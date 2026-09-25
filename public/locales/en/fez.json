@@ -109,6 +109,120 @@
       "3": { "fez": "They practised on what there was. Learn enough of these and a wall stops being decoration." },
       "4": { "explorer": "I want another look at that Sphinx." },
       "5": { "fez": "Not yet. Soon." }
+    },
+
+    "junior_1": {
+      "1": { "fez": "They came back every year with the flood, near enough to the day." },
+      "2": { "fez": "So people started counting the days between. That is where the calendar comes from — birds." },
+      "3": { "explorer": "Birds." },
+      "4": { "fez": "Birds and paperwork. It is always birds and paperwork." }
+    },
+    "junior_2": {
+      "1": { "fez": "This is where they made it all. Not the tombs — the things that went in them." },
+      "2": { "fez": "Look at the moulds. Same bracelet, forty times." },
+      "3": { "explorer": "For forty people?" },
+      "4": { "fez": "For anyone who could pay. A noble wanted what a king had, at a price a noble could bear." }
+    },
+    "junior_3": {
+      "1": { "fez": "Thoth, this one. God of secrets and magic, I am fairly sure." },
+      "2": { "explorer": "Fairly." },
+      "3": { "fez": "Ninety per cent. Anyway — the signs you have been collecting are his." }
+    },
+    "junior_4": {
+      "1": { "fez": "Three hundred feet of it, and a fire at the top that never went out." },
+      "2": { "fez": "Sailors could find the coast from a day away. Before that they found it by hitting it." },
+      "3": { "explorer": "How do you find anything out here without one?" },
+      "4": { "fez": "You ask someone who has been. That is my entire profession." }
+    },
+
+    "expert_1": {
+      "1": { "fez": "Sixty-odd tombs cut into one valley, and every single one of them opened before we got here." },
+      "2": { "explorer": "By whom?" },
+      "3": { "fez": "People like us, mostly. Earlier." },
+      "4": { "fez": "What do you make of it?" },
+      "5": { "explorer": "That we are late." }
+    },
+    "expert_2": {
+      "1": { "fez": "Amun-Ra. The sun. Everybody's favourite, and you can see why — look at the size of the place." },
+      "2": { "explorer": "Two names." },
+      "3": { "fez": "Same god, I think. They doubled up on the popular ones." }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "The whole country is a line of green either side of one river, and then it opens out here into this."
+      },
+      "2": { "fez": "Everything grows. Everything also bites." },
+      "3": { "explorer": "Which of those are we here for?" },
+      "4": { "fez": "I was rather hoping neither." }
+    },
+    "expert_4": {
+      "1": { "fez": "The first one. Before this, kings went under a flat slab like everyone else." },
+      "2": { "fez": "Someone stood here and thought: what if we did that, but six times, upwards." },
+      "3": { "explorer": "Did it work?" },
+      "4": { "fez": "It is still standing and he is not. Depends what you mean." }
+    },
+
+    "master_1": {
+      "1": { "fez": "Two million blocks. Somebody counted." },
+      "2": { "explorer": "Somebody counted?" },
+      "3": { "fez": "Somebody always counts. That is the part people forget about all this — it was run by clerks." },
+      "4": { "fez": "Beautiful, isn't it. Hate to think what the payroll looked like." }
+    },
+    "master_2": {
+      "1": { "fez": "Instructions. That is all it is — what to say, in what order, so the journey goes properly." },
+      "2": { "explorer": "A manual." },
+      "3": { "fez": "A manual for being dead. They wrote everything down, this lot." },
+      "4": { "fez": "Which, given what we are looking for, is the first good news all week." }
+    },
+    "master_3": {
+      "1": { "fez": "Ah. Somebody's camp." },
+      "2": { "explorer": "Recent?" },
+      "3": { "fez": "Recent-ish. Tinned food and a bad cough, by the look of it." },
+      "4": { "fez": "They went in further than this and they did not take their kit with them." },
+      "5": { "explorer": "Did they come back for it?" },
+      "6": { "fez": "…Let us keep moving." }
+    },
+    "master_4": {
+      "1": {
+        "fez": "Now THIS is what the others were imitating. Look at the colour — three thousand years and it is still wet-looking."
+      },
+      "2": { "explorer": "Henut would be furious." },
+      "3": { "fez": "Henut would be taking notes." }
+    },
+
+    "wizard_1": {
+      "1": { "fez": "The sun goes under the world at night and comes up the other side. That is the whole belief." },
+      "2": { "fez": "Twelve hours in the dark, with things in the way, and somebody has to carry it through." },
+      "3": { "explorer": "That is what we have been doing." },
+      "4": { "fez": "I had been trying not to say so." },
+      "5": { "explorer": "The sand is still coming in." },
+      "6": { "fez": "It has been coming in for three thousand years. It does not stop, it just goes round." },
+      "7": { "fez": "Fills up, turns over, starts again. Same as the sun." }
+    },
+    "wizard_2": {
+      "1": { "fez": "Back where we started. It has not moved." },
+      "2": { "explorer": "The writing is still there." },
+      "3": { "fez": "Can you read it?" },
+      "4": { "explorer": "A name." },
+      "5": { "fez": "Whose?" },
+      "6": { "explorer": "Yours." },
+      "7": { "fez": "…" },
+      "8": { "fez": "Are you sure?" },
+      "9": { "explorer": "It is written down." },
+      "10": { "fez": "Huh." },
+      "11": { "fez": "Well. That explains the fez." }
+    },
+    "wizard_3": {
+      "1": { "fez": "The scale. Heart on one side, feather on the other — so a good heavy heart wins, presumably." },
+      "2": { "explorer": "Which way does a heavy thing go?" },
+      "3": { "fez": "…Down." },
+      "4": { "fez": "Oh." },
+      "5": { "fez": "Light. You want it LIGHT." }
+    },
+    "wizard_4": {
+      "1": { "fez": "The capstone goes on last and it goes on gold, so the whole thing catches first light." },
+      "2": { "explorer": "For whom?" },
+      "3": { "fez": "Anyone looking. That was the point — it was never for the man inside." }
     }
   }
 }
