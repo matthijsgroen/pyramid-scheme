@@ -160,6 +160,21 @@ shape rather than parameterised.
 fork carves with every way out open, and nothing stands in the room — exactly how an ungated fork
 already behaves. The slice table's "an ordinary puzzle" would have been new behaviour nothing builds.
 
+**Whether a fork's ways out may rejoin behind it is authored, and by default they may.**
+`forks: [{ exits: 2, count: 1, separate: true }]` demands a carve whose branches do not meet again
+out of sight; saying nothing accepts one where they do.
+
+It matters because it decides what a switch *means*. Where the ground behind two shut ways connects,
+opening either one eventually reaches both branches' content — the choice paces the floor rather than
+partitioning it, and what lies behind the door not chosen is still gettable without ever opening it.
+With `separate`, the choice really does divide the floor.
+
+Measured before deciding: of the authored floors that can host a switch, **95 already carve separate
+branches and 8 rejoin**, so the condition is cheap where it is wanted — the assembler simply takes
+another attempt. Default-off keeps every existing carve exactly as it is, at the cost that the
+meaningful reading has to be asked for each time, and forgetting it is invisible until somebody walks
+the floor. The dev journey should author it so a playtest exercises the partitioning version.
+
 **A switch may stand at any fork, and hold as much of the floor as the carve gives it.** No cap, and
 the main path onward is gateable like any other way out. The reason is the player's view: they have
 not walked past the fork, so they cannot tell the main path from a side path, nor how much lies
