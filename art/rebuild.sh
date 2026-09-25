@@ -1501,3 +1501,4 @@ yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer
 yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer
 yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer
 yarn import-portrait art/masters/characters/ghost-ipi.jpeg --name=ghost-ipi
+yarn import-portrait art/masters/characters/ghost-henut.jpeg --name=ghost-henut
