@@ -105,8 +105,8 @@ const SKINS: Record<string, ProcessionSkin> = {
   trade: cast("trade", ["𓎟", "𓏏", "𓏊", "𓊛", "𓂻", "𓏛"]),
 }
 
-export const skinFor = (role?: string | string[], theme?: string): ProcessionSkin =>
+export const skinFor = (role?: string | string[], theme?: string, room?: string): ProcessionSkin =>
   withAmbience(
-    SKINS[faceFor(PROCESSION_META.faces, role, theme, Object.keys(SKINS), undefined)] ?? SKINS.default,
+    SKINS[faceFor(PROCESSION_META.faces, role, theme, Object.keys(SKINS), undefined, room)] ?? SKINS.default,
     theme
   )

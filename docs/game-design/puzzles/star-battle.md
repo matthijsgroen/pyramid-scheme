@@ -86,9 +86,11 @@ always says "I counted the whole board" teaches nothing.
 | **T1** | `groupFull`  | A row, column or region already holds its stars                 | "This region has its ⭐, so the rest is dark"            |
 | **T2** | `groupTight` | A group owes as many stars as it has squares left               | "One ⭐ owed and one square left"                        |
 | **T3** | `onlyWay`    | A group's stars fit in its free squares exactly one way         | "Only one way to fit 2 ⭐ in this region"                |
-| **T4** | `regionLine` | A region's free squares all sit in one row or column            | "This region's ⭐ has to come from that row"             |
-| **T5** | `lineRegion` | A row or column's free squares all sit inside one region        | "That row's ⭐ is this region's, so the region is spent" |
-| **T6** | `spanning`   | Two regions whose free squares fit in two rows (or two columns) | "These two regions fill those two rows between them"     |
+| **T4** | `everyWay`   | Every legal arrangement of a group’s stars uses one square      | "Wherever this region’s 2 ⭐ go, one is always here"        |
+| **T5** | `regionLine` | A region's free squares all sit in one row or column            | "This region's ⭐ has to come from that row"             |
+| **T6** | `lineRegion` | A row or column's free squares all sit inside one region        | "That row's ⭐ is this region's, so the region is spent" |
+| **T7** | `spanning`   | Two regions whose free squares fit in two rows (or two columns) | "These two regions fill those two rows between them"     |
+| **T8** | `wouldStrand` | A star in this square would leave some group with nowhere to stand | "A ⭐ here leaves the marked region nowhere to stand"  |
 
 **T0 is propagation, not a step.** Placing a star rules out its eight neighbours, and no board asks the
 player to work that out — it is the rule made visible. It is a rung so that a hint has something to say on
@@ -122,6 +124,27 @@ boundary to mean anything. Both are one reading of the board: point at a region,
 a line, say which owes the other. The pair is not symmetric in practice — a region
 squeezed into one line is common, a line squeezed into one region needs the rest of the
 line already dark, so T5 arrives later in a solve.
+
+**T4 is the reading a player made and the solver could not.** `onlyWay` fires only when a group has
+exactly ONE arrangement; this one fires when several arrangements agree about a square — a four-square hook
+owing two stars has two placements and both use the same corner, so the star goes down on move one. A wizard
+board that the ladder rated as fourteen steps of elimination before its first star was opened by a player on
+move one, and the gap was this rung. Its negative half — a square NO arrangement uses — needs no
+arrangements at all: that is T8 saying a star there would strand the group.
+
+**It is bounded to six free squares, and the bound is the point.** Past that, "every way of filling this
+region agrees about this square" is what a solver does rather than something a player checks, which is the
+enumeration rung eclipse built, measured and cut (its §3.4). Six is what a person can see without listing.
+
+**Inert at one star**, and provably: each arrangement is then a single distinct square, so two arrangements
+can never agree, and the case where there is one belongs to `groupTight`.
+
+**T8 is a hypothesis about ONE square, refuted by ONE group.** Everything below it needs a group already
+narrow enough to count from, so a map with no narrow group anywhere gives the ladder nothing to start on.
+This rung needs none: it tries a star, follows only what that star forces outright — the squares it touches,
+and the rest of any group it fills — and if some row, column or region is left owing more stars than it has
+room for, the square is dark. No chain, no second guess, and the evidence is one group the player is looking
+at. It is the bargain eclipse's top rung makes (its §3.3), and it is the rung this family was missing.
 
 ### 3.1 T6 is the rung that may not survive its own sentence
 
@@ -205,6 +228,30 @@ lands when a group is down to its last one. That is the family in a sentence.
 predicted for it: an 8×8 settles in about twenty-five steps against eclipse's wizard 55–62.
 The earlier ~160 figure came from a probe counting rung firings rather than solver steps and
 is retracted. Whether twenty-five reflex steps is a wizard board is §10's first question.
+
+### 3.5 What a played board showed
+
+**A LinkedIn Queens board was transcribed and handed to this solver, and the ladder without T7 decided
+nothing at all — zero of its sixty-four squares.** Queens is this rule set exactly: one queen to every row,
+column and region, none touching. So the difference was never the rules, and it was not the grid size
+either. It is the map:
+
+| | That board | What this generator kept before T7 |
+| --- | --- | --- |
+| Region sizes | 3–15 | 1–22 |
+| One-square regions | none | nought to one |
+| Regions inside a single row or column | **none** | **two or three** |
+| First star lands at step | 6 | 0 or 1, on five boards of eight |
+
+A one-square region is a star handed over and a region inside one line spends that line before the player
+has read anything. Every board this family shipped had one or the other, **because the ladder could not
+build a board without one** — with a three-square floor and no line-bound region, the search found no
+solvable map at all in four hundred draws. The knob was never the region spread; the spread was downstream
+of a ladder with no opening move.
+
+With T7 in the ladder that same board settles in 28 steps, its first star at step 6, and `spanning` fires at
+steps 15 and 16 — the rung was there all along, but it had nothing to fire on until the eliminations opened
+it. **Requiring a rung cannot buy an opening**, which is what §5's `firstStarAfter` is for.
 
 ## 4. Generation
 
@@ -295,26 +342,46 @@ miss rather than nothing.
 - **Stars per line** — one at every tier of THIS family. Two is the classic hard Star
   Battle, and it ships as a family of its own rather than as a tier here (§11): a tier may
   ask for harder reasoning, but it may not change what the player is being asked to do.
+- **The three gates that take the gifts back** (§5.1) — a floor on region size, a ban on
+  regions that sit inside one line, and how long the board must be eliminated on before its
+  first star may land.
 
-| Tier    | Grid | Spread | Cap          | Requires        |
-| ------- | ---- | ------ | ------------ | --------------- |
-| starter | 5×5  | n³     | `groupTight` | —               |
-| junior  | 6×6  | n³     | `regionLine` | `regionLine` ×1 |
-| expert  | 7×7  | n²     | `lineRegion` | `regionLine` ×2 |
-| master  | 8×8  | n²     | `lineRegion` | `regionLine` ×3 |
-| wizard  | 8×8  | n²     | `spanning`   | `spanning` ×1   |
+| Tier    | Grid | Spread | Gates                       | Cap           | Requires         |
+| ------- | ---- | ------ | --------------------------- | ------------- | ---------------- |
+| starter | 5×5  | n³     | —                           | `groupTight`  | —                |
+| junior  | 6×6  | n³     | —                           | `regionLine`  | `regionLine` ×1  |
+| expert  | 6×6  | n²     | ≥3 squares, no line regions | `spanning`    | region rungs ×2  |
+| master  | 7×7  | n²     | + first star after step 3   | `wouldStrand` | `wouldStrand` ×2 |
+| wizard  | 8×8  | n²     | + first star after step 5   | `wouldStrand` | `wouldStrand` ×4 |
 
-**The ramp is spread first, then size, then the rung.** The two bottom tiers are drawn with
-a steep spread, so their boards open on a tiny region and settle by counting — the
-self-teaching first encounter, and the region boundary is a group rather than an argument.
-From expert up the spread tightens, which is what makes the region readings the board rather
-than a moment in it: those boards spend two to five of them.
+**The ramp is gifts first, then the rung, then size.** The two bottom tiers keep the steep
+spread, so their boards open on a tiny region and settle by counting — the self-teaching
+first encounter, and the region boundary is a group rather than an argument. Expert is the
+first tier with no gift in it. Master adds the hypothesis and an opening that has to be
+argued for; wizard spends the hypothesis twice as often on a board half again as wide.
 
-**The top two tiers share a grid and differ in the rung they must spend**, which is the
-weakest tier separation in the catalogue and is written down as the lab's starting point
-rather than a claim. If `spanning`'s sentence does not survive being read on a real board
-(§3.1), wizard becomes 9×9 with a `regionLine` quota — size is the knob that buys regions,
-and the ladder has nothing deeper to give.
+**Master is SMALLER than the tier below it used to be, and that is the point.** The
+difficulty is in the map's shape and the rung, not in the bookkeeping a wider grid buys —
+a 7×7 with no gift and three eliminations before the first star is a harder board than the
+8×8 that opened by handing one over. Measured: expert 16–19 steps, master 22–29, wizard
+26–36 with the first star landing between steps 5 and 12.
+
+### 5.1 The three gates
+
+- **`minRegion`** — the fewest squares a region may be grown to. At one star the arithmetic
+  floor is 1, and a one-square region is a star handed over.
+- **`noLineRegions`** — refuse a map holding a region that sits inside a single row or
+  column. Such a region spends its line on the opening move.
+- **`firstStarAfter`** — the earliest step at which the first star may land. Requiring a rung
+  cannot buy this: a tier's rung may fire anywhere in the solve, and on the measured Queens
+  board `spanning` fires at step fifteen while the board's opening is six eliminations
+  (§3.5).
+
+**The gates pull against the spread, and both are needed.** The spread is what makes region
+sizes uneven enough for a map to be solvable at all; the gates cut off its cheap end. Without
+`minRegion`, `noLineRegions` alone throws away nearly every draw — three of four seeds found
+no board in four thousand attempts. With both, the search settles and a wizard board costs
+about two seconds to draw offline, which is the seed pass's bill rather than the player's.
 
 ## 6. Controls
 
@@ -502,10 +569,10 @@ constellation draws between its sky and its basins, for the same reason.
 
 1. **Does `spanning`'s hint survive a real board?** §3.1. First thing to look at in the lab,
    because the tier table's top row depends on the answer.
-2. **Does the top tier play as a top tier?** An 8×8 settles in about twenty-five steps
-   against eclipse's wizard 55–62, and the counting rungs are most of them (§3.4). The board
-   may well come in UNDER its tier rather than over it, which is the opposite of the risk the
-   catalogue recorded. If it loses, wizard grows to 9×9.
+2. ~~**Does the top tier play as a top tier?**~~ — **answered, and the answer was no.** It
+   settled in twenty-five steps and handed over its first star on step 0 or 1. What was
+   missing was an opening move that needs no gift: T7, plus the three gates of §5.1. A wizard
+   board now runs 26–36 steps and eliminates for five before a star lands (§3.5).
 3. **Is the spread the right shape, or only a working one?** Sizes follow `(n + 1) ** spread`
    because two exponents were measured and one worked; nothing says a hand-picked set of
    target sizes would not do better, and "better" here means harder boards found at the same
@@ -575,12 +642,12 @@ stays what §3.3 says it is: a guard, not a rung.
   a board whose main gesture is a drag along a row. Measured on the real screen, not
   computed. 10×10 is a tablet question if it is ever a question.
 
-| Tier   | Spread | Smallest region | Cap          | Requires        | Gift regions | Cost  |
-| ------ | ------ | --------------- | ------------ | --------------- | ------------ | ----- |
-| junior | n³     | 3               | `onlyWay`    | `onlyWay` ×3    | **2.4 of 8** | 14ms  |
-| expert | n³     | 5               | `regionLine` | `regionLine` ×2 | 0.1          | 39ms  |
-| master | n²     | 5               | `lineRegion` | `lineRegion` ×2 | 0.0          | 339ms |
-| wizard | n²     | 5               | `spanning`   | `spanning` ×2   | 0.0          | 115ms |
+| Tier   | Spread | Smallest region | Line regions | First star after | Pairs at once | Cap           | Requires         | Steps |
+| ------ | ------ | --------------- | ------------ | ---------------- | ------------- | ------------- | ---------------- | ----- |
+| junior | n³     | 3               | allowed      | —                | —             | `onlyWay`     | `onlyWay` ×3     | 27–30 |
+| expert | n³     | 5               | refused      | —                | 3             | `spanning`    | region rungs ×2  | 31–36 |
+| master | n³     | 5               | refused      | step 5           | 2             | `wouldStrand` | `wouldStrand` ×4 | 35–47 |
+| wizard | n³     | 5               | refused      | step 6           | 2             | `wouldStrand` | `wouldStrand` ×8 | 38–47 |
 
 **The smallest allowed region is the knob that matters, and playtesting is what found it.** A
 region of three squares can only be a straight line — an L cannot hold two stars that do not
@@ -596,6 +663,17 @@ so everything after the gifts is counting. Every tier above it draws no gift at 
 
 The ramp is the smallest region first, then the spread, then the rung — and unlike star
 battle's own top two tiers, no two of these rest on the requirement alone.
+
+**A third gift was counted only once a player said so: the pair that lands on one move.** A line down to
+three free squares owing two stars has one filling, so both ends are stars and two of the board's sixteen go
+down without a thought. Counted: four to seven a board at junior, two to five above it. `mostPairsAtOnce`
+caps it, at two for the top tiers.
+
+**The tighter spread had to go.** With the gates doing the work, n² put master and wizard out of reach of
+their own gates — every draw fell back to a nearest miss — so every tier above junior now shares junior's
+spread and differs in what it asks. The spread was never the difficulty; it was the search budget.
+
+**The gifts were only half of it, and the other half is when the first star lands.** Every tier here — gift-free ones included — placed its first pair on step 0, 1 or 2 and settled in 27–31 steps, which is a board that opens itself. From expert up no region may sit inside one line either, and from master up the board has to be argued open with T7 before it gives a star away. That is what moved master and wizard from twenty-eight steps to forty-odd, of which nine to twenty-one are the hypothesis rung. It also made them CHEAPER to draw — master fell from 339ms to about 55ms, because a ladder that can open a board without a gift can keep the maps that have none.
 
 **Every board opens on `regionLine`** — measured, all twelve seeds at all three tiers — and
 the shape of the opening is worth stating because it is not the one the one-star family has.

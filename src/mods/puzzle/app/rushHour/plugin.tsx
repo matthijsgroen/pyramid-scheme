@@ -12,6 +12,7 @@ const RushHourComponent: FamilyPlugin<RushHourPuzzleData>["Component"] = ({ puzz
     difficulty={ctx.difficulty}
     role={ctx.role}
     theme={ctx.theme}
+    room={ctx.address}
     onSolved={onSolved}
     onCancel={onCancel}
   />

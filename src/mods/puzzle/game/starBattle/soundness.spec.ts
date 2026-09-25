@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest"
 import { mulberry32 } from "@/game/random"
 import type { Difficulty } from "@/data/difficultyLevels"
+import { puzzleSeeds } from "@/data/puzzleSeeds"
+import { configHash } from "@/game/seeds/configHash"
 import { cellAt, neighboursOf, type StarBattlePuzzle } from "./starBattle"
 import { STAR_BATTLE_CONFIG } from "./starBattleConfig"
 import { TWIN_STARS_CONFIG } from "./twinStars"
@@ -37,6 +39,16 @@ const AGREEMENT: { name: string; options: StarBattleOptions }[] = [
     options: TWIN_STARS_CONFIG[tier],
   })),
 ]
+
+/**
+ * The boards a tier ships, drawn the way play draws them.
+ *
+ * A listed seed graded on its FIRST attempt, so `attempts: 1` pays for one draw instead of the search
+ * loop — seconds to half a minute a board at the top tiers. What that loop costs is the generator's claim
+ * to answer; a rung reads the board it is handed and never asks what finding it took.
+ */
+const boards = (options: StarBattleOptions, count: number) =>
+  (puzzleSeeds[configHash(options)] ?? []).slice(0, count).map(seed => generateStarBattle(seed, options, 1))
 
 /** A state a player could actually be in: some of the answer's stars, and some correct dark marks. */
 const playerState = (board: StarBattlePuzzleWithAnswer, random: () => number): Marks => {
@@ -107,8 +119,10 @@ describe("star battle soundness", () => {
     { timeout: 60_000 },
     ({ options }) => {
       const random = mulberry32(7717)
-      for (const seed of [1, 2, 3]) {
-        const board = generateStarBattle(seed, options)
+      const drawn = boards(options, 3)
+      // A tier whose seed list went stale would check nothing at all, silently.
+      expect(drawn).not.toHaveLength(0)
+      for (const [seed, board] of drawn.entries()) {
         for (let round = 0; round < 40; round++) {
           const marks = playerState(board, random)
           const steps = applyStarBattleTechniques(board, marks)
@@ -132,17 +146,16 @@ describe("star battle soundness", () => {
    * is where its rule starts having boards. Its state space is what caps the rounds here, not its risk.
    */
   it.each([
-    { name: "star battle starter", options: STAR_BATTLE_CONFIG.starter, seeds: [1, 2, 3, 4], rounds: 25 },
-    { name: "star battle junior", options: STAR_BATTLE_CONFIG.junior, seeds: [1, 2, 3, 4], rounds: 25 },
+    { name: "star battle starter", options: STAR_BATTLE_CONFIG.starter, count: 4, rounds: 25 },
+    { name: "star battle junior", options: STAR_BATTLE_CONFIG.junior, count: 4, rounds: 25 },
     // Junior first: it is the tier `onlyWay` carries, and a rung that places two stars at once on an
     // argument about arrangements is the one this oracle is most worth pointing at.
-    { name: "twin stars junior", options: TWIN_STARS_CONFIG.junior, seeds: [1, 2], rounds: 12 },
-    { name: "twin stars expert", options: TWIN_STARS_CONFIG.expert, seeds: [1, 2], rounds: 12 },
-  ])("every rung is forced by the board it fired from at $name", { timeout: 120_000 }, ({ options, seeds, rounds }) => {
+    { name: "twin stars junior", options: TWIN_STARS_CONFIG.junior, count: 2, rounds: 12 },
+    { name: "twin stars expert", options: TWIN_STARS_CONFIG.expert, count: 2, rounds: 12 },
+  ])("every rung is forced by the board it fired from at $name", { timeout: 120_000 }, ({ options, count, rounds }) => {
     const random = mulberry32(4241)
     let checked = 0
-    for (const seed of seeds) {
-      const board = generateStarBattle(seed, options)
+    for (const [seed, board] of boards(options, count).entries()) {
       for (let round = 0; round < rounds; round++) {
         const marks = playerState(board, random)
         const ways = completions(board, marks, 60)

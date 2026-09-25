@@ -35,6 +35,7 @@
     "make-arch": "tsx scripts/makeArch.ts",
     "render-prop": "${BLENDER:-/Applications/Blender.app/Contents/MacOS/Blender} -b -P scripts/renderProp.py --",
     "repaint": "tsx scripts/repaintPrompt.ts",
+    "verify": "yarn lint --fix && yarn check-types && vitest run && yarn betterer",
     "betterer": "betterer --strict",
     "betterer:update": "betterer --update"
   },

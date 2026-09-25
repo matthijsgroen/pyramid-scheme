@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { cellAt, type StarBattlePuzzle } from "./starBattle"
+import { puzzleSeeds } from "@/data/puzzleSeeds"
+import { configHash } from "@/game/seeds/configHash"
 import { STAR_BATTLE_CONFIG } from "./starBattleConfig"
 import { TWIN_STARS_CONFIG } from "./twinStars"
 import { generateStarBattle, techniquesUpTo } from "./generateStarBattle"
@@ -79,6 +81,52 @@ describe("star battle techniques", () => {
     const puzzle = bands(6)
     expect(nextStarBattleStep(puzzle, empty(puzzle))).toBeUndefined()
   })
+
+  it("places the square every arrangement of a pair agrees on", () => {
+    // The hook a wizard board opened on: four squares owing two stars, two legal placements — `r5c3 + r6c5`
+    // and `r6c3 + r6c5` — and both use the same corner. `onlyWay` cannot see it: there are two ways, not one.
+    const hook = [cellAt(8, 4, 2), cellAt(8, 5, 2), cellAt(8, 5, 3), cellAt(8, 5, 4)]
+    const puzzle: StarBattlePuzzle = {
+      size: 8,
+      quota: 2,
+      // One region for the hook and one for everything else, so only the hook's own count is under test.
+      regions: Array.from({ length: 64 }, (_unused, cell) => (hook.includes(cell) ? 0 : 1)),
+    }
+    const marks = empty(puzzle)
+    expect(nextStarBattleStep(puzzle, marks, ["onlyWay"])).toBeUndefined()
+    const step = nextStarBattleStep(puzzle, marks, ["everyWay"])
+    expect(step?.variant).toBe("region")
+    expect(step?.decisions).toEqual([{ cell: cellAt(8, 5, 4), mark: "star" }])
+  })
+
+  it("says nothing about a group whose arrangements share no square", () => {
+    // The five at the top of that same board: four legal pairs that agree on nothing. Its middle square is
+    // dead, but that is `wouldStrand`'s sentence, not this one.
+    const five = [cellAt(8, 0, 3), cellAt(8, 0, 4), cellAt(8, 0, 5), cellAt(8, 1, 3), cellAt(8, 1, 5)]
+    const puzzle: StarBattlePuzzle = {
+      size: 8,
+      quota: 2,
+      regions: Array.from({ length: 64 }, (_unused, cell) => (five.includes(cell) ? 0 : 1)),
+    }
+    expect(nextStarBattleStep(puzzle, empty(puzzle), ["everyWay"])).toBeUndefined()
+  })
+
+  it("rules out a square whose star would leave a group nowhere to stand", () => {
+    const puzzle = bands(4)
+    const marks = empty(puzzle)
+    // Row 1 is down to squares 4, 5 and 6 — and all three touch square 1.
+    marks[cellAt(4, 1, 3)] = "dark"
+    const step = nextStarBattleStep(puzzle, marks, ["wouldStrand"])
+    expect(step?.technique).toBe("wouldStrand")
+    expect(step?.decisions).toEqual([{ cell: cellAt(4, 0, 1), mark: "dark" }])
+    // The evidence is the group left with nowhere to go, so the hint has a row to point at.
+    expect(step?.cells).toEqual([4, 5, 6, 7])
+  })
+
+  it("leaves a square alone when every group still has room around it", () => {
+    const puzzle = bands(6)
+    expect(nextStarBattleStep(puzzle, empty(puzzle), ["wouldStrand"])).toBeUndefined()
+  })
 })
 
 describe("the ladder", () => {
@@ -102,8 +150,12 @@ describe("the ladder", () => {
     for (const config of [STAR_BATTLE_CONFIG, TWIN_STARS_CONFIG]) {
       for (const tier of tiers) {
         const options = config[tier]
-        for (const seed of [1, 2, 3, 4, 5, 6]) {
-          const board = generateStarBattle(seed, options)
+        // The boards rooms are dealt, drawn the way play draws them. A tier whose gates throw most maps
+        // away costs seconds a board through the full attempt loop, and this asks for thirty of them.
+        const listed = puzzleSeeds[configHash(options)] ?? []
+        const seeds = listed.length ? listed.slice(0, 6) : [1, 2, 3]
+        for (const seed of seeds) {
+          const board = generateStarBattle(seed, options, listed.length ? 1 : undefined)
           const { steps } = solveStarBattleByTechniques(board, techniquesUpTo(options.techniqueCap))
           for (const step of steps) seen.add(step.technique)
         }

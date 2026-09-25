@@ -24,13 +24,15 @@ type Props = {
   role?: string | string[]
   /** The ambience its site authored, or a skin named outright. */
   theme?: string
+  /** Which room this is, so an undressed one still draws a face of its own (faceFor.ts). */
+  room?: string
   onSolved: () => void
   onCancel: () => void
 }
 
-export const ProcessionPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSolved, onCancel }) => {
+export const ProcessionPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
-  const skin = skinFor(role, theme)
+  const skin = skinFor(role, theme, room)
   /**
    * Where the bars stand, and nothing else.
    *

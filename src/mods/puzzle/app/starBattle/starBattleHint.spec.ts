@@ -70,6 +70,7 @@ describe("every reason the ladder can give is phrased in both locales", () => {
   // for a one-star board and another for a two-star one (game/starBattle/twinStars.ts), so both forms ship.
   const counted = [
     ...["row", "col", "region"].flatMap(group => [`groupFull.${group}`, `groupTight.${group}`, `onlyWay.${group}`]),
+    ...["row", "col", "region"].map(group => `everyWay.${group}`),
     ...["row", "col"].flatMap(line => [`regionLine.${line}`, `lineRegion.${line}`]),
   ]
 
@@ -78,6 +79,9 @@ describe("every reason the ladder can give is phrased in both locales", () => {
     "touch",
     ...counted.flatMap(key => [`${key}_one`, `${key}_other`]),
     ...["toRows", "toCols", "fromRows", "fromCols"].map(way => `spanning.${way}`),
+    // The hypothesis rung names the group it would strand, and a row, a column and a region are three
+    // different things to point at. It says no number, so it needs no plural.
+    ...["row", "col", "region"].map(group => `wouldStrand.${group}`),
   ]
 
   // Every hint but the mistake one ends with an imperative naming the squares it marked, so both of those

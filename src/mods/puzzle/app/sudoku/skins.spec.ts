@@ -14,10 +14,19 @@ describe("which place a sudoku room is", () => {
     expect(skinFor("funerary", undefined).name).toBe("default")
   })
 
-  it("keeps the carved chamber where nothing was said about the place", () => {
+  it("keeps the carved chamber where nothing was said and no room asked", () => {
     // `puzzle` is the tag every family carries, so it says nothing about which place a room is.
     expect(skinFor("puzzle", undefined).name).toBe("default")
     expect(skinFor(undefined, undefined).name).toBe("default")
+  })
+
+  it("lets a room nobody dressed be a register anyway", () => {
+    // One room in three, drawn on the room's own address (faceFor.ts) — so a face nobody authored a
+    // journey for is still somewhere in the world, and the same room is that place every time.
+    const rooms = ["a1b2c3#2/0", "a1b2c3#2/1", "a1b2c3#2/2", "a1b2c3#2/3", "a1b2c3#2/4", "a1b2c3#2/5"]
+    const drawn = rooms.map(room => skinFor("puzzle", undefined, 0, room).name)
+    expect(new Set(drawn)).toEqual(new Set(["default", "papyrus"]))
+    expect(skinFor("puzzle", undefined, 0, "a1b2c3#2/1").name).toBe("papyrus")
   })
 
   it("takes the first role it has a face for out of a list", () => {

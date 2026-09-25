@@ -142,6 +142,52 @@ describe("useOfflineStorage — the load effect", () => {
     })
     expect(fresh.result.current[0]).toEqual(["persisted", "newer", "after"])
   })
+
+  it("keeps a write in flight when an older initial read lands before it", async () => {
+    const storeName = `in-flight-${Math.random()}`
+    const backing = localForage.createInstance({ name: `${storeName}-backing` })
+    const reads: (() => void)[] = []
+    const writes: (() => void)[] = []
+    vi.spyOn(localForage, "createInstance").mockImplementationOnce(
+      () =>
+        ({
+          getItem: (k: string) => {
+            const snapshot = backing.getItem(k)
+            return new Promise(resolve => reads.push(() => resolve(snapshot)))
+          },
+          setItem: (k: string, v: unknown) => new Promise(resolve => writes.push(() => resolve(backing.setItem(k, v)))),
+          removeItem: (k: string) => backing.removeItem(k),
+          clear: () => backing.clear(),
+        }) as unknown as LocalForage
+    )
+    await backing.setItem("items", [])
+
+    const owner = renderHook(() => useOfflineStorage<string[]>("items", [], storeName))
+    await act(async () => {
+      reads.splice(0).forEach(release => release())
+      await Promise.resolve()
+    })
+    const late = renderHook(() => useOfflineStorage<string[]>("items", [], storeName))
+
+    let write!: Promise<string[]>
+    await act(async () => {
+      write = owner.result.current[1](prev => [...prev, "started"])
+      await Promise.resolve()
+      reads.splice(0).forEach(release => release())
+      await Promise.resolve()
+      writes.splice(0).forEach(release => release())
+      await write
+    })
+
+    let next!: Promise<string[]>
+    await act(async () => {
+      next = late.result.current[1](prev => [...prev, "next"])
+      await Promise.resolve()
+      writes.splice(0).forEach(release => release())
+      await next
+    })
+    expect(await backing.getItem("items")).toEqual(["started", "next"])
+  })
 })
 
 // The shape the app really has: one key read by many hooks at once. `useJourneys()` is not a

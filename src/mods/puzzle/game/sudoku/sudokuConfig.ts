@@ -11,26 +11,33 @@ import type { SudokuOptions } from "./generateSudoku"
 // A 6x6 has a low ceiling and this table is honest about it (design doc §5.4): what separates wizard
 // from master is not a new kind of reasoning, because there is no further kind this grid can force —
 // it is the same chamber-line reasoning with nothing handed over.
+//
+// `variants` is the fourth setting and the only one that is not about difficulty: the
+// same tier, a different set of squares to look at. One is drawn per seed, never authored by a room.
+const ALL_SHAPES: SudokuOptions["variants"] = ["plain", "hiddenDigit", "mirrored"]
+
 export const SUDOKU_CONFIG: Record<Difficulty, SudokuOptions> = {
   // Naked singles only, and a board handed nearly half of itself: what is left in this square, when
   // its row, its column and its chamber have taken everything else. The whole family in one sentence,
-  // with no scanning to do to reach it.
+  // with no scanning to do to reach it. It ships one shape of board and no others: a first encounter
+  // teaches what a full grid of givens means, and a value missing from all of them is a second thing to
+  // work out before the first one has landed.
   starter: { techniqueCap: "nakedSingle", minGivens: 16 },
   // The second reading of a square, and the one that makes this a puzzle rather than a subtraction:
   // a value can be forced into a square that could still hold three others, because there is nowhere
   // ELSE in the row, the column or the chamber for it to go.
-  junior: { techniqueCap: "hiddenSingle", minGivens: 14, demands: "hiddenSingle" },
+  junior: { techniqueCap: "hiddenSingle", minGivens: 14, demands: "hiddenSingle", variants: ALL_SHAPES },
   // The same rung against less of the answer. The reasoning is not what got harder — the board did,
   // and finding the one home takes a scan of the whole group rather than a glance at a nearly full one.
-  expert: { techniqueCap: "hiddenSingle", minGivens: 12, demands: "hiddenSingle" },
+  expert: { techniqueCap: "hiddenSingle", minGivens: 12, demands: "hiddenSingle", variants: ALL_SHAPES },
   // Dug as far as the singles reach: nothing is handed back, and the board stops where the reasoning
   // runs out rather than where a tier decided to be generous. About ten squares, and which ten is the
   // whole difficulty.
-  master: { techniqueCap: "hiddenSingle", minGivens: 0, demands: "hiddenSingle" },
+  master: { techniqueCap: "hiddenSingle", minGivens: 0, demands: "hiddenSingle", variants: ALL_SHAPES },
   // The chamber arguing with the lines that cross it: a value pinned to one row of a chamber is off
   // that row everywhere else, and a value pinned to one chamber along a row is off the rest of that
   // chamber. It is the only reason on this ladder that is about the CHAMBERS rather than about a
   // square, and about one dig in fifty produces a 6x6 that genuinely needs it — which is exactly what
   // makes it the top tier rather than a rung on the way up (design doc §5.4).
-  wizard: { techniqueCap: "boxLine", minGivens: 0, demands: "boxLine" },
+  wizard: { techniqueCap: "boxLine", minGivens: 0, demands: "boxLine", variants: ALL_SHAPES },
 }

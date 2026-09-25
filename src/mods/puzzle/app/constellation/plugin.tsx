@@ -16,6 +16,7 @@ const ConstellationComponent: FamilyPlugin<ConstellationPuzzleWithAnswer>["Compo
     puzzle={puzzle}
     difficulty={ctx.difficulty}
     theme={ctx.theme}
+    room={ctx.address}
     role={ctx.role}
     onSolved={onSolved}
     onCancel={onCancel}

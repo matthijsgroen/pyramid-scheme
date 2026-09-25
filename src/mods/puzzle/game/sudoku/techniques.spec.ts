@@ -15,7 +15,7 @@ import {
   type SudokuValues,
   type TechniqueId,
 } from "./techniques"
-import { generateSudoku, SUDOKU_BOX_HEIGHT, SUDOKU_BOX_WIDTH, SUDOKU_SIZE } from "./generateSudoku"
+import { generateSudoku, gradeSudoku, SUDOKU_BOX_HEIGHT, SUDOKU_BOX_WIDTH, SUDOKU_SIZE } from "./generateSudoku"
 import { SUDOKU_CONFIG } from "./sudokuConfig"
 import { DEMANDS, demandOf, techniquesFor } from "./demands"
 import { difficulties } from "@/data/difficultyLevels"
@@ -234,11 +234,18 @@ describe("nextSudokuStep", () => {
 describe("solveSudokuByTechniques", () => {
   it("respects the ladder it is given, and stalls rather than reaching past it", () => {
     // A board that needs the chamber-line rung is left standing by the singles alone, which is exactly
-    // what "this board demands boxLine" means (design doc §5.3).
-    const board = generateSudoku(4, SUDOKU_CONFIG.wizard)
-    expect(solveSudokuByTechniques(board, techniquesFor("boxLine")).settled).toBe(true)
-    expect(solveSudokuByTechniques(board, techniquesFor("hiddenSingle")).settled).toBe(false)
-  })
+    // what "this board demands boxLine" means. The rung is rare on a 6×6, so the board
+    // is the first seed that lands it rather than a seed written down here — which one that is moves
+    // with every dial the tier carries, the shape of its givens included.
+    let board
+    for (let seed = 1; !board && seed <= 40; seed++) {
+      const drawn = generateSudoku(seed, SUDOKU_CONFIG.wizard)
+      if (gradeSudoku(drawn, SUDOKU_CONFIG.wizard)) board = drawn
+    }
+    expect(board).toBeDefined()
+    expect(solveSudokuByTechniques(board!, techniquesFor("boxLine")).settled).toBe(true)
+    expect(solveSudokuByTechniques(board!, techniquesFor("hiddenSingle")).settled).toBe(false)
+  }, 120_000)
 
   it("leaves a board that needs a guess unsettled rather than guessing", () => {
     expect(solveSudokuByTechniques(puzzleOf(blankGrid(6))).settled).toBe(false)

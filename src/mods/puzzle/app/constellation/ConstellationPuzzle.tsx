@@ -24,16 +24,18 @@ type Props = {
   difficulty?: Difficulty
   /** The ambience the site authored, or a skin named outright (docs/game-design/puzzles/constellation.md §9). */
   theme?: string
+  /** Which room this is, so an undressed one still draws a face of its own (faceFor.ts). */
+  room?: string
   /** The role this room was allocated for — what decides which of this family’s places it is. */
   role?: string | string[]
   onSolved: () => void
   onCancel: () => void
 }
 
-export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role, onSolved, onCancel }) => {
+export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role, room, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   // Which place this room is. The goal and the rules are both worded from it, so they are resolved once.
-  const { name: skin } = skinFor(role, theme)
+  const { name: skin } = skinFor(role, theme, 0, room)
   const [state, setState] = usePuzzleState(() => createConstellationState(puzzle))
 
   /**
@@ -100,6 +102,7 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
           litStars={hintVisible ? hint?.stars : undefined}
           theme={theme}
           role={role}
+          room={room}
           celebrated={celebrated}
           onDrawLine={pair => {
             if (finished) return // the board is finishing; nothing may change under the celebration

@@ -26,6 +26,8 @@ type Props = {
   theme?: string
   /** The role this room was allocated for, which is what decides WHICH of this family's places it is. */
   role?: string | string[]
+  /** Which room this is, so an undressed one still draws a face of its own (faceFor.ts). */
+  room?: string
   /** Nodes that have had their turn in the completion run (see useCelebration). */
   celebrated?: ReadonlySet<number>
   onDrawLine: (pair: number) => void
@@ -162,11 +164,12 @@ export const ConstellationBoard: FC<Props> = ({
   litStars,
   theme,
   role,
+  room,
   celebrated,
   onDrawLine,
 }) => {
   const byStar = pairsByStar(puzzle)
-  const skin = skinFor(role, theme)
+  const skin = skinFor(role, theme, 0, room)
   const backdrop = useMemo(() => backdropStars(puzzle), [puzzle])
   // The gesture lives in a ref and the state only mirrors it for drawing. A release has to act on the
   // direction the finger was last pointing, and reading that from state would make the line depend on

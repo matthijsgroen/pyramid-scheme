@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest"
-import { generateSudoku, gradeSudoku, SUDOKU_BOX_HEIGHT, SUDOKU_BOX_WIDTH, SUDOKU_SIZE } from "./generateSudoku"
+import {
+  generateSudoku,
+  gradeSudoku,
+  SUDOKU_BOX_HEIGHT,
+  SUDOKU_BOX_WIDTH,
+  SUDOKU_SIZE,
+  type SudokuOptions,
+  type SudokuVariant,
+} from "./generateSudoku"
 import { SUDOKU_CONFIG } from "./sudokuConfig"
 import { techniquesBelow, techniquesFor } from "./demands"
 import { solveSudokuByTechniques, unitsOf } from "./techniques"
@@ -10,6 +18,9 @@ const SEEDS = [1, 2, 3, 4, 5, 6, 7, 8]
 
 const filled = (board: { givens: (number | undefined)[][] }) =>
   board.givens.flat().filter(value => value !== undefined).length
+
+/** A tier pinned to one shape of givens, so a claim about that shape is not waiting on a lucky seed. */
+const only = (variant: SudokuVariant, options: SudokuOptions): SudokuOptions => ({ ...options, variants: [variant] })
 
 /**
  * The first seed that lands the tier's own rung.
@@ -96,6 +107,65 @@ describe("generateSudoku", () => {
   it("is deterministic: the same seed and the same tier build the same board", () => {
     expect(generateSudoku(9, SUDOKU_CONFIG.expert)).toEqual(generateSudoku(9, SUDOKU_CONFIG.expert))
   })
+})
+
+describe("the shapes a board of givens comes in", () => {
+  const digitsShown = (board: { givens: (number | undefined)[][] }) => new Set(board.givens.flat().filter(Boolean))
+
+  const mirrorOf = (board: { givens: (number | undefined)[][] }) =>
+    board.givens.map(row => [...row].reverse().map(value => value !== undefined))
+
+  const shown = (board: { givens: (number | undefined)[][] }) =>
+    board.givens.map(row => row.map(value => value !== undefined))
+
+  it("keeps a hidden value off the board entirely, and still settles without it", () => {
+    const options = only("hiddenDigit", SUDOKU_CONFIG.master)
+    for (const seed of SEEDS) {
+      const board = generateSudoku(seed, options)
+      expect(digitsShown(board).size, `seed ${seed}`).toBe(SUDOKU_SIZE - 1)
+      expect(solveSudokuByTechniques(board, techniquesFor(board.techniqueCap)).settled, `seed ${seed}`).toBe(true)
+    }
+  }, 120_000)
+
+  /**
+   * Five is the floor and it is the rules talking, not the tier: the six values are
+   * interchangeable marks, so a board hiding two of them answers to the swap of those two as well as to
+   * its own answer. `hiddenDigit` is as far as the idea goes, and this is the guard that says so.
+   */
+  it("never hides two values, which would be a board with two answers", () => {
+    for (const difficulty of difficulties) {
+      const options = SUDOKU_CONFIG[difficulty]
+      for (const seed of SEEDS)
+        expect(digitsShown(generateSudoku(seed, options)).size, `${difficulty} seed ${seed}`).toBeGreaterThanOrEqual(
+          SUDOKU_SIZE - 1
+        )
+    }
+  }, 180_000)
+
+  it("hands a mirrored board squares that read the same left to right", () => {
+    const options = only("mirrored", SUDOKU_CONFIG.expert)
+    for (const seed of SEEDS) {
+      const board = generateSudoku(seed, options)
+      expect(shown(board), `seed ${seed}`).toEqual(mirrorOf(board))
+    }
+  }, 120_000)
+
+  it("draws the shape from the seed, so a tier listing three ships all three", () => {
+    const options = SUDOKU_CONFIG.master
+    const shapes = new Set(
+      Array.from({ length: 12 }, (_unused, index) => {
+        const board = generateSudoku(index + 1, options)
+        if (digitsShown(board).size === SUDOKU_SIZE - 1) return "hiddenDigit"
+        return JSON.stringify(shown(board)) === JSON.stringify(mirrorOf(board)) ? "mirrored" : "plain"
+      })
+    )
+    expect(shapes.size).toBeGreaterThan(1)
+  }, 120_000)
+
+  it("holds the tier's floor on a dig that spends two squares at a time", () => {
+    const options = only("mirrored", SUDOKU_CONFIG.junior)
+    for (const seed of SEEDS) expect(filled(generateSudoku(seed, options)), `seed ${seed}`).toBeGreaterThanOrEqual(14)
+  }, 120_000)
 })
 
 describe("what a tier is guaranteed to demand", () => {

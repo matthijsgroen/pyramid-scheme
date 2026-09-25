@@ -78,5 +78,10 @@ const SKINS: Record<string, BalanceSkin> = { default: scale, weighing }
  * The map itself lives on this family's `FamilyMeta`, where world-gen can read it too
  * (`docs/instructions/puzzle-screens.md` §2).
  */
-export const skinFor = (role: string | string[] | undefined, theme: string | undefined, board = 0): BalanceSkin =>
-  withAmbience(SKINS[faceFor(BALANCE_META.faces, role, theme, Object.keys(SKINS), board)] ?? SKINS.default, theme)
+export const skinFor = (
+  role: string | string[] | undefined,
+  theme: string | undefined,
+  board = 0,
+  room?: string
+): BalanceSkin =>
+  withAmbience(SKINS[faceFor(BALANCE_META.faces, role, theme, Object.keys(SKINS), board, room)] ?? SKINS.default, theme)

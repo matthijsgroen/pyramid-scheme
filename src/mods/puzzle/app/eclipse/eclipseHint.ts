@@ -66,7 +66,7 @@ export const buildEclipseHint = (
 
   // Inside the board's own ladder, but asked in the order a player would spot them: several reasons often
   // apply at once, and the one worth saying is the quickest to see rather than the weakest.
-  const allowed = techniquesUpTo(puzzle.techniqueCap)
+  const allowed = techniquesUpTo(puzzle.techniqueCap, puzzle.variant)
   const step = nextEclipseStep(
     puzzle,
     [...state.marks],
