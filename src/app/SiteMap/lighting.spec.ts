@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 import { buildRoomClaims } from "./roomClaims"
-import { beamShafts } from "./lighting"
+import { MAX_SHAFTS, beamShafts } from "./lighting"
 
 const empty: GridCell = { type: "empty" }
 
@@ -114,6 +114,23 @@ describe("where a shaft of daylight comes down", () => {
       const [row, col] = cell.split(",").map(Number)
       expect([row >= 0, col >= 0, row < grid.rows, col < grid.cols]).toEqual([true, true, true, true])
     }
+  })
+
+  it("breaks at most three roofs however many chambers a floor has", () => {
+    // Every chamber certain to beam, so only the cap can hold the count down.
+    const row = Array.from({ length: 8 }, () => chamber())
+    const grid = makeGrid([Array.from({ length: 8 }, () => corridor(["s"])), row])
+    expect(shaftsOf(grid, 1).length).toBeLessThanOrEqual(MAX_SHAFTS)
+  })
+
+  it("picks which rooms keep their shaft by the draw, not by where they sit on the floor", () => {
+    // Taking the first few in cell order would put every shaft in the top-left corner of every map.
+    const wide = (siteId: string) =>
+      makeGrid([Array.from({ length: 8 }, () => corridor(["s"])), Array.from({ length: 8 }, () => chamber())], siteId)
+    const columns = new Set(
+      Array.from({ length: 40 }, (_, i) => shaftsOf(wide(`site-${i}`), 1).map(cell => cell.split(",")[1])).flat()
+    )
+    expect(columns.size).toBeGreaterThan(MAX_SHAFTS)
   })
 
   it("beams the same rooms every render, and does not move them as the fog lifts", () => {

@@ -24,6 +24,11 @@ Corridors never get one: a shaft in a one-cell passage is something the player w
 beamed = rand(siteId, "beam", index) < mood.beam * (room has a statue ? STATUE_ODDS : 1)
 ```
 
+A shaft also leans left or right, seeded off its own cell: the sun is in one place but the holes are not,
+and a floor of shafts all leaning the same way reads as a rule. **At most `MAX_SHAFTS` = 3 to a floor** —
+the odds are a rate, so a thirty-room floor would otherwise break three times as many roofs as a ten-room
+one and the shaft would stop being the thing you notice about the room it is in.
+
 `mood.beam` is a new number on `Mood`, a probability per chamber, set per rank in `RANK_MOOD` and
 replaceable by an hour in `THEME_MOOD`. Deep ranks are sealed and take less of it than a merchant's cellar.
 A condition may raise it later; it does not in this slice.
@@ -95,6 +100,8 @@ testable without rendering, which is how `litPlaceCells` is already split from w
 - a fogged room draws none
 - a room holding a `statue` beams on a seed a bare room misses
 - one beam per room, never two
+- at most three on a floor, whatever the odds and however many chambers
+- which rooms keep theirs is decided by the draw, not by where they sit on the floor
 - the beamed room's cells are lit with no explorer on the floor
 - the same floor beams the same rooms every render
 

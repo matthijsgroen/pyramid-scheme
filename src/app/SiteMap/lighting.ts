@@ -67,6 +67,14 @@ export const BEAM_STRENGTH = 0.4
  * more but a rule the player would read off the map. */
 export const STATUE_ODDS = 2
 
+/** How many roofs may have given way on one floor.
+ *
+ * A SHAFT IS AN EVENT, and the per-chamber odds cannot say so on their own: they are a rate, so a floor
+ * with thirty rooms breaks three times as many roofs as a floor with ten and the thing that was meant to
+ * make you look up becomes the lighting. Three is the most a floor can carry and still have the first one
+ * mean something. */
+export const MAX_SHAFTS = 3
+
 /**
  * Which cell of which chamber a shaft of daylight comes down in — one per room at most, chambers only.
  *
@@ -89,12 +97,13 @@ export const beamShafts = (grid: FloorGrid, claims: RoomClaims, chance: number, 
     footprint.push(cell)
     footprints.set(owner, footprint)
   }
-  const shafts: string[] = []
+  const shafts: Array<{ cell: string; roll: number }> = []
   const owners = [...footprints.keys()].sort()
   owners.forEach((owner, index) => {
     const footprint = footprints.get(owner) ?? []
     const odds = footprint.some(cell => claims.decorationAt.get(cell) === "statue") ? STATUE_ODDS : 1
-    if (hashUnit(siteId, "beam", index) >= chance * odds) return
+    const roll = hashUnit(siteId, "beam", index)
+    if (roll >= chance * odds) return
     const [row, col] = owner.split(",").map(Number)
     const room = cellAt(grid, row, col)
     if (room.type === "empty" || room.state === "fogged") return
@@ -106,9 +115,17 @@ export const beamShafts = (grid: FloorGrid, claims: RoomClaims, chance: number, 
       return r >= 0 && c >= 0 && r < grid.rows && c < grid.cols
     })
     if (inside.length === 0) return
-    shafts.push(inside[Math.floor(hashUnit(siteId, "beam-cell", index) * inside.length)])
+    shafts.push({ cell: inside[Math.floor(hashUnit(siteId, "beam-cell", index) * inside.length)], roll })
   })
+  // A FEW, NEVER A ROOFLESS FLOOR. The odds are per chamber, so a big floor at a generous rank can break
+  // a dozen roofs and the shaft stops being the thing you notice about the room it is in. The cap keeps
+  // it an event: whichever rooms drew strongest get theirs, which is a fair way of choosing because the
+  // draw is what the odds already decided by — taking the first few in cell order would hand every shaft
+  // to the top-left corner of the map.
   return shafts
+    .sort((a, b) => a.roll - b.roll)
+    .slice(0, MAX_SHAFTS)
+    .map(({ cell }) => cell)
 }
 
 /**

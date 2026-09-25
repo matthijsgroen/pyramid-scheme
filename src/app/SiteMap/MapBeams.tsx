@@ -116,12 +116,23 @@ const CONE_FEATHER = 4
 const BEAM_MOTES = 4
 const MOTE_CLASS = "absolute rounded-full will-change-transform animate-map-drift motion-reduce:animate-none"
 
+/** Which way a shaft leans, as −1 or 1.
+ *
+ * A floor where every shaft leans the same way reads as a rule rather than as weather — the eye picks up
+ * the repeat long before it works out what the repeat is.
+ *
+ * SEEDED OFF THE CELL, not off the shaft's place in the list. There are only ever `MAX_SHAFTS` of them, so
+ * an index seed draws the same two or three leans on every floor in the game and a whole rank ends up
+ * leaning one way. The cell is the thing that actually differs. */
+const leanOf = (siteId: string, key: string) => (hashUnit(siteId, `beam-lean:${key}`, 0) < 0.5 ? -1 : 1)
+
 /** Where a shaft starts, where it lands, and how tall it is. It comes through the roof, at the top of the
- * stone the map draws above a cell, and crosses to a patch of floor `SLANT` of a cell away. */
-const shaftGeometry = (row: number, col: number) => {
+ * stone the map draws above a cell, and crosses to a patch of floor `SLANT` of a cell away, on whichever
+ * side `lean` puts it. */
+const shaftGeometry = (row: number, col: number, lean: number) => {
   const cx = cellLeft(col) + CELL / 2
   const top = cellTop(row) - WALL_H
-  return { cx, top, height: WALL_H + CELL * 0.85, footX: cx + CELL * SLANT }
+  return { cx, top, height: WALL_H + CELL * 0.85, footX: cx + CELL * SLANT * lean }
 }
 
 /**
@@ -133,8 +144,8 @@ const shaftGeometry = (row: number, col: number) => {
  * All the rays go in ONE clip: they share a gradient and a feather, and a clip per ray would be three
  * elements and three blurs a shaft for a picture the eye reads as one thing.
  */
-const rayRects = (row: number, col: number): Rect[] => {
-  const { cx, top, height, footX } = shaftGeometry(row, col)
+const rayRects = (row: number, col: number, lean: number): Rect[] => {
+  const { cx, top, height, footX } = shaftGeometry(row, col, lean)
   return Array.from({ length: RAYS }, (_, ray) => {
     // Where this ray sits across the slot, from −0.5 at one edge to +0.5 at the other.
     const across = (ray + 0.5) / RAYS - 0.5
@@ -209,9 +220,10 @@ export const BeamShafts = ({ shafts, siteId }: { shafts: readonly string[]; site
     <div aria-hidden="true" style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
       {shafts.map((key, shaft) => {
         const [row, col] = cellOf(key)
-        const rects = rayRects(row, col)
+        const lean = leanOf(siteId, key)
+        const rects = rayRects(row, col, lean)
         const box = boundsOf(rects)
-        const { top, height, footX } = shaftGeometry(row, col)
+        const { top, height, footX } = shaftGeometry(row, col, lean)
         return (
           <div key={key}>
             {/* The patch of sun on the paving, under the rays rather than over them: the dust in the air
