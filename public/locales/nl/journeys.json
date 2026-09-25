@@ -69,59 +69,59 @@
   },
   "master_1": {
     "name": "Grote Piramide van Gizeh",
-    "description": "Betreed de meest magnifieke piramide ooit gebouwd. Ga de ultieme test aan terwijl je door de Grote Galerij navigeert en de Koningskamer bereikt."
+    "description": "De Grote Piramide. Twintig jaar steen, en een heel dorp ernaast dat de ploegen voedde met brood en bier."
   },
   "master_2": {
     "name": "Boek der Doden",
-    "description": "Ontrafel de mysteries van het hiernamaals door het verzamelen en ontcijferen van de heilige teksten die zielen door de onderwereld leiden."
+    "description": "Geen boek maar een reeks spreuken, op bestelling gekopieerd. Bij de goedkope versies bleef er een gat open waar je naam hoorde."
   },
   "master_3": {
     "name": "Vloek van de Farao's",
-    "description": "Breek de oude vloek die grafrovers eeuwenlang heeft geplaagd. Ga bovennatuurlijke uitdagingen en goddelijke vergelding aan."
+    "description": "De beroemde vloek is in 1923 door kranten verzonnen. De Egyptenaren bewaakten hun graven met deuren en administratie."
   },
   "master_4": {
     "name": "Graf van Nefertari",
-    "description": "Betreed het meest prachtig gedecoreerde graf in de Vallei der Koninginnen. Los puzzels op gebaseerd op de verbluffende muurschilderingen en hiërogliefen."
+    "description": "Het graf van Nefertari, de best beschilderde kamer van Egypte. De kleuren werden uit steen gemalen — azuriet, malachiet, oker."
   },
   "master_treasure_tomb": {
     "name": "Farao's Geheime Schat",
-    "description": "Onthul de legendarische geheime schatkamer van een grote farao, verborgen onder het woestijnzand en beschermd door oude vloeken.",
+    "description": "De privéschat van een koning, daar waar de kaarten ophouden. Wat er met hem de grond in ging ligt er nog.",
     "mapHint": "Een koninklijke cartouche staat in de rand, en de route eindigt ver weg onder open zand."
   },
   "master_treasure_tomb_b": {
     "name": "Hal van Osiris",
-    "description": "Daal af in de diepere hal waar Osiris heerst, heer van de onderwereld. Doorsta de mysteries van dood en wedergeboorte om zijn oude relieken op te eisen.",
+    "description": "De zaal van Osiris. God van het hoogwater en het graan — wat hier de grond in gaat, wordt terugverwacht.",
     "mapHint": "Onder de koninklijke kamers blijft de kaart dalen, naar een hal getekend met de riten van de doden."
   },
   "wizard_1": {
     "name": "Ra's Zonnereis",
-    "description": "Vergezeld Ra op zijn gevaarlijke nachtelijke reis door de onderwereld, vecht tegen de slang Apep en zorg ervoor dat de zon weer opkomt."
+    "description": "Ra gaat bij zonsondergang onder de wereld door en heeft twaalf uur donker te gaan. Egypte schreef op wat er in elk uur gebeurt."
   },
   "wizard_2": {
     "name": "Geheimen van de Sfinx",
-    "description": "Ontgrendel de diepste mysteries verborgen in de Grote Sfinx. Ga raadsels aan die de grootste geesten millennia lang hebben uitgedaagd."
+    "description": "Terug naar de Sfinx, en het schrift aan zijn voeten. Je kunt er inmiddels heel wat meer van ontcijferen dan in het voorjaar."
   },
   "wizard_3": {
     "name": "Kamer van Ma'at",
-    "description": "Betreed de kosmische kamer waar Ma'at de harten van de doden weegt. Balanceer goddelijke wiskunde in het rijk van perfecte gerechtigheid."
+    "description": "De kamer van Ma'at. Zij is de orde der dingen, en haar ene struisvogelveer is waar al het andere tegen wordt afgewogen."
   },
   "wizard_4": {
     "name": "Eeuwige Piramide",
-    "description": "Beklim de mythische Eeuwige Piramide die bestaat buiten tijd en ruimte. Beheers de ultieme wiskundige mysteries van de schepping zelf."
+    "description": "De bekleding was gepolijste kalksteen, wit als zout, zo strak gelegd dat je hem van een dagreis ver zag blinken."
   },
   "wizard_treasure_tomb": {
     "name": "Kluis van de Goden",
-    "description": "Betreed de mythische schatkamer waar de goden zelf hun kostbaarste artefacten bewaarden. Alleen de meest vaardige avonturiers durven deze ultieme schattenjacht te proberen.",
+    "description": "Waar de tempel bewaarde wat van de goden was. Niemand werd hier aangekondigd zonder het juiste in zijn handen.",
     "mapHint": "Geen enkel baken op dit stukje hoort bij de wereld van mensen — wat het ook toont, goden legden het daar."
   },
   "wizard_treasure_tomb_b": {
     "name": "Rijk der Kosmische Krachten",
-    "description": "Waag je dieper in het goddelijke rijk waar kosmische krachten van leven, dood, chaos en wind zich manifesteren als oude relieken van onmetelijke macht.",
+    "description": "Sterrenkaarten over het plafond, geschilderd zodat de doden 's nachts het uur konden aflezen. Iemands touw hangt nog in de schacht.",
     "mapHint": "Voorbij de goddelijke kluis breken de lijnen uit in sterrenpaden, waar de krachten van leven en chaos als relieken bewaard worden."
   },
   "wizard_treasure_tomb_c": {
     "name": "Troon der Eeuwigheid",
-    "description": "Bereik het binnenste heiligdom van het goddelijke rijk — de Troon der Eeuwigheid waar de goden zelf rusten. Enkel de grootste wiskundigen aller tijden hebben hier gestaan.",
+    "description": "Eén zetel in het midden en tweeënveertig rechters eromheen, elk met een vraag waarop je geacht wordt nee te antwoorden.",
     "mapHint": "Alle sterrenpaden op dit fragment komen samen op één zetel, in het hart van het goddelijke rijk."
   }
 }
