@@ -338,24 +338,27 @@ authored.
 
 | Order | Feature           | Buys                                         | Tier it lands at | Toggle-off looks like                   |
 | ----- | ----------------- | -------------------------------------------- | ---------------- | --------------------------------------- |
-| 1     | `LightSwitchFork` | a runtime-minted key (no topology primitive) | junior           | both corridors open, an ordinary puzzle |
+| 1     | `LightSwitchFork` | nothing (no topology primitive, no key)      | junior           | a bare junction, every way out open     |
 | 2     | `sequenceLock`    | P3                                           | expert           | door unlocked, no glyph tiles           |
 | 3     | `sandSlide`       | P2                                           | expert           | ramp corridors absent, floor re-carves  |
 | 4     | `waterline`       | P1                                           | master           | floor permanently drained               |
 | 5     | `cosmicDust`      | P5                                           | wizard           | pyramid not choked, handles inert       |
 | 6     | `hourglass`       | P4, P6                                       | wizard           | upper floor clear, lower floor ordinary |
 
-`LightSwitchFork` goes first because it needs no topology primitive at all — its fork is two ordinary
-gates, and the choice is which one opens. It does buy one small thing: **a key the player mints at
-runtime**. `getOwnedKeys` derives a floor's keys from completed cells' authored rewards, and a key
-handed out by a family on solve has no such cell, so owned keys grow a registry of contributors —
-unioned where `SiteMapScreen` already unions ward keys.
+`LightSwitchFork` goes first because it needs no topology primitive at all, and it buys nothing
+either: **a fork's ways out are a function of the board standing in it.** Route the beam north and
+north is open while the rest are shut; come back and route it east, and east opens as north closes.
+One solve, one configuration.
 
-It also settles how a feature names a key at all. A `floor-key` gate takes its id from the
-assembler's rotation and makes the floor grow a section to host that key's chest, which is wrong when
-the key comes from a room. So the gate gains an authored `keyId`: naming an id means the **author**
-owns the key's provenance, so no host is grown. The owner is looked up from the feature registry
-rather than written beside it, and both are opaque to core.
+So there is no key anywhere in this feature — nothing minted, nothing held, nothing accumulated, and
+no id to keep unique across the world. The gate it draws has nothing to enter, because there is
+nothing to spend at it: the switch is already the thing that opens the way. A player cannot strand
+themselves either, since a door only changes while they stand in the fork, and walking away leaves
+the configuration as they set it. What the feature does need is that the switch room is
+**re-enterable**, which is what lets them change their mind.
+
+For the solver this is the permissive bracket and nothing new: every branch is reachable, because the
+player can always walk back and choose it.
 
 **The fork's targets are the room's own doors.** A switch room knows which of its exits it gates, so
 the board draws those doors at those compass points rather than abstract targets, and routing the

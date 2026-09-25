@@ -54,12 +54,27 @@ solving it.
 opens_; drawn into an ordinary room, a player would choose a shrine that opens nothing. It also kept
 the world byte-identical, which the tag would have reshuffled.
 
-**Keys accumulate; the cost of a choice is a walk.** A switch room is re-enterable, and that is an
-invariant rather than a preference — without it a player who spends their choice on a side branch is
-stranded behind the gate on the main path onward. This one was got wrong first: an implementer
-reported re-choosing as a "design hole", it was accepted, and a further fix was ordered to close it
-harder. It was the design. The reversal cost two rounds and made a junior mosaic piece briefly
-unobtainable.
+**There is no key. The state of the puzzle is the switch.** A fork's ways out are a function of the
+board standing in it: route the beam north and north is open and the rest are shut; come back, route
+it east, and east opens as north closes. One solve, one configuration. Nothing is minted, nothing is
+held, nothing accumulates.
+
+That is why the gate has nothing to enter, and it removes a whole layer rather than replacing it: no
+minted key, no owned-key source for a switch, no key id to derive or keep unique, and no question of
+a stale key fitting a door after a re-carve, because no key outlives the board.
+
+The switch room stays **re-enterable**, and that is still the invariant — it is what lets a player
+change their mind. They cannot strand themselves, because a door only ever changes while they are
+standing in the fork; walking away leaves the configuration as they set it.
+
+For the solver this is the permissive bracket and nothing new: every branch is reachable, because the
+player can always walk back and choose it.
+
+*The earlier reading — that a switch mints keys and keys accumulate, so each visit wins another door
+for good — is wrong and was built on before it was settled. It was already an expensive one: an
+implementer reported re-choosing as a design hole, it was accepted, a further fix was ordered to
+close it harder, and a junior mosaic piece was briefly unobtainable. The doors are state, not
+winnings.*
 
 **The beam-physics kernel lives in `mods/core`.** The two copies had already diverged in the commit
 that created them, and one divergence had dropped a gate clause that exists because the exploit was
