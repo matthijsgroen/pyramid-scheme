@@ -96,6 +96,16 @@ const offered = (container: HTMLElement): [HTMLElement, [number, number]][] =>
     .filter(el => el.style.cursor === "pointer")
     .map(el => [el, markerCell(el)])
 
+/** A room already finished OFFERS the way back in rather than taking it — walking onto the door leaves
+ * a prompt standing beside the explorer, and this is the tap that goes through. A room still unsolved
+ * opens on arrival and leaves none, so there is nothing to tap on the first visit. */
+const goIn = async (container: HTMLElement) => {
+  const prompt = container.querySelector<HTMLElement>("[data-map-prompt] button")
+  if (!prompt) return
+  fireEvent.click(prompt)
+  await settle()
+}
+
 /**
  * The walk in: tap whichever offered square is nearest the door, until the door itself is one of them.
  * A floor comes out of the fog as it is walked, so this is several taps, and none of them is a teleport.
@@ -111,7 +121,7 @@ const walkInto = async (container: HTMLElement) => {
       vi.advanceTimersByTime(2000)
     })
     await settle()
-    if (nearest[1][0] === DOOR_ROW && nearest[1][1] === DOOR_COL) return
+    if (nearest[1][0] === DOOR_ROW && nearest[1][1] === DOOR_COL) return goIn(container)
   }
   throw new Error("never arrived at the door")
 }

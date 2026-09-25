@@ -38,6 +38,7 @@ import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
 import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileVariants } from "./tileAssets"
 import { isLockedGate, nodeRadius, shapeKindFor } from "./nodeKinds"
+import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
 import { FloorShade, LitPlaces } from "./torchlight"
 import { LIT_STANDING_STRENGTH, SEATING_PASS, STANDING_RELIEF } from "./lighting"
@@ -88,6 +89,8 @@ type Props = {
   pendingCells?: ReadonlySet<string>
   /** Keys the player already holds — used only to color a gate as locked/unlocked on the map. */
   ownedKeys?: ReadonlySet<string>
+  /** The way in the explorer is standing at, drawn as a button beside him — see `useSiteNavigation`. */
+  prompt?: { label: string; at: readonly [number, number]; onTake: () => void } | null
   className?: string
 }
 
@@ -959,6 +962,7 @@ export const SiteMapView = ({
   currentFloor,
   pendingCells,
   ownedKeys,
+  prompt,
   className,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
@@ -1442,6 +1446,24 @@ export const SiteMapView = ({
                 higher (see `headroom`), so the furniture is lit to the top of its own headroom rather
                 than sawn off at the floor line. */}
               <LitPlaces grid={grid} claims={claims} at={explorerPos} strength={LIT_STANDING_STRENGTH} headroom />
+
+              {/* AFTER THE LIGHT AND THE SHADE, and last of everything: the prompt is a thing the player
+                  taps rather than a thing in the room, so neither pass may dim it and nothing standing
+                  may cover it. It also opts back into hit-testing, inside a layer that has none. */}
+              {prompt && (
+                <div
+                  data-map-prompt=""
+                  style={{
+                    position: "absolute",
+                    left: cellCenter(prompt.at[0], prompt.at[1]).cx,
+                    top: cellCenter(prompt.at[0], prompt.at[1]).cy - CELL * 0.7,
+                    transform: "translate(-50%, -100%)",
+                    pointerEvents: "auto",
+                  }}
+                >
+                  <MapActionPrompt label={prompt.label} onClick={prompt.onTake} />
+                </div>
+              )}
             </div>
           </div>
         </div>

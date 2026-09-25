@@ -67,6 +67,16 @@ const exitRoom: GridCell = {
   sectionAddress: SECTION,
   ordinal: "2",
 }
+const stairRoom: GridCell = {
+  type: "room",
+  roomType: "portal",
+  stairId: "s1",
+  dirs: new Set(["w"]),
+  state: "reachable",
+  sectionHash: SECTION,
+  sectionAddress: SECTION,
+  ordinal: "2",
+}
 const bareFork: GridCell = {
   type: "room",
   roomType: "fork",
@@ -132,7 +142,20 @@ const siteConfig: SiteConfig = [
   { pathPuzzles: 1, difficulty: "starter", end: "treasure", exitOrStaircase: "exit", sideSections: [] },
 ]
 
-const setup = (cells: GridCell[], skipped: string[] = []) => {
+// Two floors joined by one staircase, so the far side of `stairRoom` is a real cell to be moved to.
+const twoFloors: SiteConfig = [
+  { pathPuzzles: 1, difficulty: "starter", end: "treasure", exitOrStaircase: { stairId: "s1" }, sideSections: [] },
+  {
+    pathPuzzles: 1,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [],
+    entrance: { stairId: "s1" },
+  },
+]
+
+const setup = (cells: GridCell[], skipped: string[] = [], config: SiteConfig = siteConfig) => {
   const journeys = {
     markCellExplored: vi.fn(),
     updatePosition: vi.fn(),
@@ -146,7 +169,7 @@ const setup = (cells: GridCell[], skipped: string[] = []) => {
     useSiteNavigation({
       journeys,
       journeyId: "j1",
-      siteConfig,
+      siteConfig: config,
       seed: 1,
       currentFloor: 0,
       grid: gridOf(cells),
@@ -161,6 +184,13 @@ const setup = (cells: GridCell[], skipped: string[] = []) => {
 
 // Anything "on arrival" waits out the walk; the tests jump past it.
 const arrive = () => act(() => void vi.advanceTimersByTime(2000))
+
+/** The way in the explorer is standing at, or a failure naming what stands there instead. */
+const promptOf = (hook: ReturnType<typeof setup>["hook"]) => {
+  const prompt = hook.result.current.prompt
+  if (!prompt) throw new Error("the explorer is standing at no way in")
+  return prompt
+}
 
 describe("useSiteNavigation", () => {
   beforeEach(() => vi.useFakeTimers())
@@ -183,7 +213,7 @@ describe("useSiteNavigation", () => {
     expect(journeys.updatePosition).toHaveBeenCalledWith("j1", CORRIDOR_AT_1, "0:0,1")
   })
 
-  it("opens a room's encounter only once the explorer has walked there", () => {
+  it("opens an unsolved room's board on arrival, with nothing to tap first", () => {
     const { hook, onEncounter } = setup([entrance, puzzleRoom])
 
     act(() => hook.result.current.onCellClick(0, 1))
@@ -192,6 +222,7 @@ describe("useSiteNavigation", () => {
     arrive()
 
     expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
+    expect(hook.result.current.prompt).toBeNull()
   })
 
   it("walks through a bare junction without opening anything", () => {
@@ -240,15 +271,39 @@ describe("useSiteNavigation", () => {
     expect(onEncounter).not.toHaveBeenCalled()
   })
 
-  it("asks about leaving on arrival at an exit, not on the tap that started the walk", () => {
+  it("offers the way out on arrival rather than asking about leaving by itself", () => {
     const { hook, onExitReached } = setup([entrance, exitRoom])
 
     act(() => hook.result.current.onCellClick(0, 1))
-    expect(onExitReached).not.toHaveBeenCalled()
-
     arrive()
 
+    expect(promptOf(hook)).toMatchObject({ kind: "exit", at: [0, 1] })
+    expect(onExitReached).not.toHaveBeenCalled()
+  })
+
+  it("asks about leaving when the way out's prompt is taken", () => {
+    const { hook, onExitReached } = setup([entrance, exitRoom])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+    act(() => promptOf(hook).take())
+
     expect(onExitReached).toHaveBeenCalled()
+    expect(hook.result.current.prompt).toBeNull()
+  })
+
+  it("drops the way out's prompt when the player walks off it, leaving the site alone", () => {
+    const { hook, onExitReached } = setup([entrance, corridor, { ...exitRoom, dirs: new Set(["w"]) }])
+
+    act(() => hook.result.current.onCellClick(0, 2))
+    arrive()
+    expect(promptOf(hook).kind).toBe("exit")
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(hook.result.current.prompt).toBeNull()
+    expect(onExitReached).not.toHaveBeenCalled()
   })
 
   // The way out is a cell the player stood on, and the save has to say so. It is the last slot along
@@ -265,13 +320,53 @@ describe("useSiteNavigation", () => {
   // Writing the exit down completes it, and a completed cell is otherwise only walked to. The way out
   // has to keep working on every later visit — backing out of the prompt, or re-entering a pyramid
   // already finished — so it is answered before the completed-cell case, as a staircase is.
-  it("still asks about leaving at a way out already walked", () => {
+  it("still offers the way out at one already walked", () => {
     const { hook, onExitReached } = setup([entrance, { ...exitRoom, state: "completed" }])
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
+    expect(promptOf(hook).kind).toBe("exit")
+    act(() => promptOf(hook).take())
     expect(onExitReached).toHaveBeenCalled()
+  })
+
+  it("offers the stairs on arrival rather than taking the player off the floor", () => {
+    const { hook, journeys } = setup([entrance, stairRoom], [], twoFloors)
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(promptOf(hook)).toMatchObject({ kind: "stairs", at: [0, 1] })
+    // The one write is the walk onto the stairhead itself; a move to the peer floor would be a second.
+    expect(journeys.updatePosition).toHaveBeenCalledTimes(1)
+  })
+
+  it("moves to the peer floor when the stairs prompt is taken", () => {
+    const { hook, journeys } = setup([entrance, stairRoom], [], twoFloors)
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+    act(() => promptOf(hook).take())
+
+    const moves = vi.mocked(journeys.updatePosition).mock.calls
+    expect(moves).toHaveLength(2)
+    expect(moves[1][2]).toMatch(/^1:/)
+    expect(hook.result.current.prompt).toBeNull()
+  })
+
+  it("drops the stairs prompt when the player walks off the stairhead, staying on the floor", () => {
+    const { hook, journeys } = setup([entrance, corridor, { ...stairRoom, dirs: new Set(["w"]) }], [], twoFloors)
+
+    act(() => hook.result.current.onCellClick(0, 2))
+    arrive()
+    expect(promptOf(hook).kind).toBe("stairs")
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(hook.result.current.prompt).toBeNull()
+    expect(vi.mocked(journeys.updatePosition).mock.calls.every(call => call[2].startsWith("0:"))).toBe(true)
   })
 
   it("repositions the player on a completed room without reopening it", () => {
@@ -286,13 +381,35 @@ describe("useSiteNavigation", () => {
 
   // The sibling of the two reopen cases below, and the one a whole mechanic rests on: a door that hands
   // over one of the two keys it holds is a door the player has to be able to walk back into.
-  it("reopens a completed room whose family says it stays re-enterable", () => {
+  it("offers the way back into a completed room whose family says it stays re-enterable", () => {
     const { hook, onEncounter } = setup([entrance, { ...puzzleRoom, family: RETURNABLE_FAMILY, state: "completed" }])
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
+    expect(promptOf(hook)).toMatchObject({ kind: "room", at: [0, 1] })
+    expect(onEncounter).not.toHaveBeenCalled()
+
+    act(() => promptOf(hook).take())
     expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
+  })
+
+  it("drops a re-enterable room's prompt when the player walks off it, opening nothing", () => {
+    const { hook, onEncounter } = setup([
+      entrance,
+      corridor,
+      { ...puzzleRoom, family: RETURNABLE_FAMILY, state: "completed" },
+    ])
+
+    act(() => hook.result.current.onCellClick(0, 2))
+    arrive()
+    expect(promptOf(hook).kind).toBe("room")
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(hook.result.current.prompt).toBeNull()
+    expect(onEncounter).not.toHaveBeenCalled()
   })
 
   it("reopens a completed chest whose consumable was left behind, once the player is back at it", () => {
@@ -308,7 +425,7 @@ describe("useSiteNavigation", () => {
     expect(onSkippedConsumable).toHaveBeenCalledWith(reward, PUZZLE_AT_1)
   })
 
-  it("reopens a completed shop that still has unbought stock", () => {
+  it("offers the stall of a completed shop that still has unbought stock", () => {
     const { hook, onEncounter } = setup([
       entrance,
       { ...puzzleRoom, state: "completed", stock: [{ type: "consumable", itemId: "bandage" }] },
@@ -317,7 +434,11 @@ describe("useSiteNavigation", () => {
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
+    expect(promptOf(hook)).toMatchObject({ kind: "shop", at: [0, 1] })
+    expect(onEncounter).not.toHaveBeenCalled()
+
     // freshArrival: the player walked here from elsewhere, which is what a shop's stock reset reads.
+    act(() => promptOf(hook).take())
     expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
   })
 })

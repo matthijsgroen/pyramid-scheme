@@ -50,12 +50,14 @@ const settingOf = (angles: readonly MirrorAngle[]): number =>
 
 const turned = (angle: MirrorAngle): MirrorAngle => (angle === SLASH ? BACKSLASH : SLASH)
 
-// Building the sweep's boards is the whole cost of this file — a three-way master board takes about
-// 220ms and there are several dozen of them. Built once here so every test below reads the cache,
-// and the budget for it sits in one place instead of falling on whichever test happens to run first.
+// Building the sweep's boards and searching each one's routes is the whole cost of this file — a
+// three-way master board takes about 220ms to build and a route search sweeps every setting of it.
+// Both are done once here so every test below reads a cache, and the budget for them sits in one
+// place instead of falling on whichever test happens to ask first.
 beforeAll(() => {
   for (const shape of SHAPES)
-    for (const difficulty of TIERS) for (const seed of SEEDS) boardFor(shape, difficulty, seed)
+    for (const difficulty of TIERS)
+      for (const seed of SEEDS) routesOf(boardFor(shape, difficulty, seed))
 }, 120_000)
 
 const eachBoard = (visit: (board: LightbeamSwitchBoard, shape: ForkShape) => void): number => {

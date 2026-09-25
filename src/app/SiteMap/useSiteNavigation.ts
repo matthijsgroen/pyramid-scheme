@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import { cellAddress } from "./cellIdentity"
 import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { findPath, getCell } from "@/game/gridNavigation"
@@ -24,11 +24,26 @@ type NavigationArgs = {
   onExitReached: () => void
 }
 
-export type SiteNavigation = {
-  onCellClick: (row: number, col: number) => void
+/** Which way in the explorer is standing at — what the prompt beside him says, and nothing more. */
+export type ArrivalPromptKind = "room" | "shop" | "stairs" | "exit"
+
+export type ArrivalPrompt = {
+  kind: ArrivalPromptKind
+  /** The cell the prompt hangs over, which is the one the explorer has walked to. */
+  at: readonly [number, number]
+  /** Go in — this does what arriving used to do on its own. */
+  take: () => void
 }
 
-// What a tap on the map does: walk there, and act on what is there once the explorer arrives.
+export type SiteNavigation = {
+  onCellClick: (row: number, col: number) => void
+  /** The way in the explorer is standing at, or null when he is standing at none. */
+  prompt: ArrivalPrompt | null
+}
+
+// What a tap on the map does: walk there, and — for a room already finished, a shop, a staircase or the
+// way out — offer the way in rather than take it. Walking somewhere and going in are two acts, so the
+// walk ends with a prompt beside the explorer and the player decides.
 // Everything "on arrival" waits out the walk (ExplorerDot's own step duration is 120ms).
 export const useSiteNavigation = ({
   journeys,
@@ -43,6 +58,22 @@ export const useSiteNavigation = ({
   onExitReached,
 }: NavigationArgs): SiteNavigation => {
   const [scheduleArrival] = useTimeout()
+  const [prompt, setPrompt] = useState<ArrivalPrompt | null>(null)
+
+  // Hangs a way in beside the explorer. Taking it clears it first, so nothing offers a door the player
+  // has already gone through.
+  const offer = useCallback(
+    (kind: ArrivalPromptKind, row: number, col: number, goIn: () => void) =>
+      setPrompt({
+        kind,
+        at: [row, col],
+        take: () => {
+          setPrompt(null)
+          goIn()
+        },
+      }),
+    []
+  )
 
   const walkDelay = useCallback(
     (row: number, col: number) =>
@@ -58,6 +89,10 @@ export const useSiteNavigation = ({
       // A tap means "walk there", so somewhere with no walkable route is not somewhere a tap can send
       // the player: moving anyway is a teleport, and can shut them inside a pocket they cannot leave.
       if (findPath(grid, explorerPos, [row, col]).length === 0) return
+
+      // Leaving where you stood takes the way in you were standing at with you. A tap this guard block
+      // turned away moved nobody, so it leaves the standing offer alone.
+      setPrompt(null)
 
       const edgeId = encodeEdge(currentFloor, row, col)
       const sectionHash = cell.sectionHash ?? ""
@@ -76,10 +111,12 @@ export const useSiteNavigation = ({
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
         const stairId = cell.stairId
-        scheduleArrival(walkDelay(row, col), () => {
-          const peer = stairPeerPosition(journeyId, siteConfig, seed, stairId, currentFloor)
-          if (peer) journeys.updatePosition(journeyId, peer.address, encodeEdge(peer.floor, peer.pos[0], peer.pos[1]))
-        })
+        scheduleArrival(walkDelay(row, col), () =>
+          offer("stairs", row, col, () => {
+            const peer = stairPeerPosition(journeyId, siteConfig, seed, stairId, currentFloor)
+            if (peer) journeys.updatePosition(journeyId, peer.address, encodeEdge(peer.floor, peer.pos[0], peer.pos[1]))
+          })
+        )
         return
       }
 
@@ -96,7 +133,7 @@ export const useSiteNavigation = ({
       ) {
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
-        scheduleArrival(walkDelay(row, col), onExitReached)
+        scheduleArrival(walkDelay(row, col), () => offer("exit", row, col, onExitReached))
         return
       }
 
@@ -114,7 +151,10 @@ export const useSiteNavigation = ({
           cell.type === "room" &&
           !!cell.stock?.some((item, j) => item && !journeys.getPurchasedShopSlots(journeyId).has(`${address}!${j}`))
         if (familyStaysOpen || shopHasUnclaimedStock) {
-          scheduleArrival(walkDelay(row, col), () => onEncounter([row, col], !alreadyStandingHere))
+          const kind = familyStaysOpen ? "room" : "shop"
+          scheduleArrival(walkDelay(row, col), () =>
+            offer(kind, row, col, () => onEncounter([row, col], !alreadyStandingHere))
+          )
           return
         }
         if (
@@ -168,8 +208,9 @@ export const useSiteNavigation = ({
       onEncounter,
       onSkippedConsumable,
       onExitReached,
+      offer,
     ]
   )
 
-  return { onCellClick }
+  return { onCellClick, prompt }
 }

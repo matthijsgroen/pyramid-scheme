@@ -43,6 +43,12 @@
     "leaveSiteConfirm": "Step outside",
     "leaveSiteCancel": "Stay inside",
     "enterSite": "Step inside",
+    "goIn": {
+      "room": "Step back in",
+      "shop": "Visit the stall",
+      "stairs": "Take the stairs",
+      "exit": "Leave this place"
+    },
     "travel": "Travel",
     "chooseYourJourney": "Choose Your Journey",
     "backToMap": "Back to map",

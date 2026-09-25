@@ -43,6 +43,12 @@
     "leaveSiteConfirm": "Naar buiten",
     "leaveSiteCancel": "Binnen blijven",
     "enterSite": "Naar binnen",
+    "goIn": {
+      "room": "Weer naar binnen",
+      "shop": "Bezoek de kraam",
+      "stairs": "Neem de trap",
+      "exit": "Deze plek verlaten"
+    },
     "travel": "Reizen",
     "chooseYourJourney": "Kies je Reis",
     "backToMap": "Terug naar kaart",

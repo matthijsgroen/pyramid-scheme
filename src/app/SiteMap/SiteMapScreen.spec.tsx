@@ -65,13 +65,14 @@ const settle = async () => {
   })
 }
 
-// The exit room's own marker box, addressed by where SiteMapView puts it: a marker's box IS its cell.
-const exitCenter = cellCenter(0, 2)
-const exitNode = (container: HTMLElement) =>
-  Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
-    el =>
-      parseFloat(el.style.left) === exitCenter.cx - CELL / 2 && parseFloat(el.style.top) === exitCenter.cy - CELL / 2
+// A cell's own marker box, addressed by where SiteMapView puts it: a marker's box IS its cell.
+const nodeAt = (container: HTMLElement, col: number) => {
+  const { cx, cy } = cellCenter(0, col)
+  return Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
+    el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
   )!
+}
+const exitNode = (container: HTMLElement) => nodeAt(container, 2)
 
 describe(SiteMapScreen, () => {
   beforeEach(async () => {
@@ -108,11 +109,51 @@ describe(SiteMapScreen, () => {
     })
   }
 
-  it("asks before leaving, so walking into an off-screen exit doesn't end the expedition", async () => {
+  /** The button the walk leaves standing beside the explorer, or a failure saying there is none. */
+  const goInPrompt = (container: HTMLElement) => {
+    const prompt = container.querySelector<HTMLElement>("[data-map-prompt] button")
+    if (!prompt) throw new Error("the walk left no way in beside the explorer")
+    return prompt
+  }
+
+  const takeTheWayOut = async (container: HTMLElement) => {
+    await walkToExit(container)
+    fireEvent.click(goInPrompt(container))
+    await settle()
+  }
+
+  it("offers the way out beside the explorer, and asks nothing until it is taken", async () => {
     const onSiteComplete = vi.fn()
     const { container, queryByText } = await renderScreen(onSiteComplete)
 
     await walkToExit(container)
+
+    expect(goInPrompt(container).textContent).toBe("ui.goIn.exit")
+    // Beside the explorer, which is the cell he walked to — not wherever he set off from.
+    const hanging = container.querySelector<HTMLElement>("[data-map-prompt]")!
+    expect(parseFloat(hanging.style.left)).toBe(cellCenter(0, 2).cx)
+    expect(queryByText("ui.leaveSiteConfirm")).toBeNull()
+    expect(onSiteComplete).not.toHaveBeenCalled()
+  })
+
+  it("takes the prompt away when the player walks back off the exit", async () => {
+    const { container, queryByText } = await renderScreen()
+    await walkToExit(container)
+
+    fireEvent.click(nodeAt(container, 0))
+    await act(async () => {
+      vi.advanceTimersByTime(1000)
+    })
+
+    expect(container.querySelector("[data-map-prompt]")).toBeNull()
+    expect(queryByText("ui.leaveSiteConfirm")).toBeNull()
+  })
+
+  it("asks before leaving, so walking into an off-screen exit doesn't end the expedition", async () => {
+    const onSiteComplete = vi.fn()
+    const { container, queryByText } = await renderScreen(onSiteComplete)
+
+    await takeTheWayOut(container)
 
     expect(queryByText("ui.leaveSiteConfirm")).not.toBeNull()
     expect(onSiteComplete).not.toHaveBeenCalled()
@@ -121,7 +162,7 @@ describe(SiteMapScreen, () => {
   it("stays in the site when the player turns back at the exit", async () => {
     const onSiteComplete = vi.fn()
     const { container, getByText, queryByText } = await renderScreen(onSiteComplete)
-    await walkToExit(container)
+    await takeTheWayOut(container)
 
     fireEvent.click(getByText("ui.leaveSiteCancel"))
 
@@ -131,7 +172,7 @@ describe(SiteMapScreen, () => {
 
   it("leaves the site once the player confirms", async () => {
     const { container, getByText, queryByText } = await renderScreen()
-    await walkToExit(container)
+    await takeTheWayOut(container)
 
     fireEvent.click(getByText("ui.leaveSiteConfirm"))
 

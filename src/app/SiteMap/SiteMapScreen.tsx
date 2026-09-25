@@ -16,7 +16,7 @@ import { useFloorExplorationRecorder } from "./useFloorExplorationRecorder"
 import { useEncounter } from "./useEncounter"
 import { useRewardOffer } from "./useRewardOffer"
 import { useSiteExit } from "./useSiteExit"
-import { useSiteNavigation } from "./useSiteNavigation"
+import { useSiteNavigation, type ArrivalPromptKind } from "./useSiteNavigation"
 import { RewardFlow } from "./RewardFlow"
 import { EncounterModal } from "./EncounterModal"
 import { useApplyReward } from "./applyReward"
@@ -177,7 +177,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   const exit = useSiteExit()
 
-  const { onCellClick } = useSiteNavigation({
+  const { onCellClick, prompt } = useSiteNavigation({
     journeys,
     journeyId,
     siteConfig,
@@ -189,6 +189,15 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     onSkippedConsumable: rewardOffer.offerSkipped,
     onExitReached: exit.arrived,
   })
+
+  // What the prompt beside the explorer says, per kind of way in. Written out rather than looked up by
+  // a built key, so the locale guard can see every one of them.
+  const promptLabels: Record<ArrivalPromptKind, string> = {
+    room: t("ui.goIn.room"),
+    shop: t("ui.goIn.shop"),
+    stairs: t("ui.goIn.stairs"),
+    exit: t("ui.goIn.exit"),
+  }
 
   const ActiveEncounterComponent = encounter.family?.Component ?? null
 
@@ -208,6 +217,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           currentFloor={currentFloor}
           pendingCells={pendingConsumableCells}
           ownedKeys={ownedKeys}
+          prompt={prompt && { label: promptLabels[prompt.kind], at: prompt.at, onTake: prompt.take }}
           className="size-full"
         />
       </div>
