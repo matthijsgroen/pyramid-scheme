@@ -72,6 +72,37 @@ which is worth more than fixing any one of them.
 
 ## Answered by the owner
 
+**A floor authors the forks it must have. A mod authors what stands in them.** These are two
+separate statements at two separate scopes, and splitting them is what keeps a map stable when a mod
+is toggled off.
+
+```
+forks:    [{ exits: 2, count: 1 }]                       core, cascades tier → journey → pyramid → floor
+switches: { encounter: "lightbeamSwitch", min: 1, max: 1 }   mod-owned, same cascade
+```
+
+The floor is carved to satisfy the fork requirement, then the switches are placed into the forks it
+produced. Anything that cannot be satisfied stops the build — these are constraints, not wishes.
+
+**Why, measured rather than argued.** `switchFork` today does both jobs in one mod-owned field, and
+the assembler's carve loop rejects an attempt that offers no gateable fork. So authoring a switch
+changes which attempt is accepted: of the 97 authored floors that can host one, **68 carve
+differently** and only 29 are unchanged. Dropping that field with its mod would therefore redraw 70%
+of those floors and invalidate every save written against them. With the requirement authored in
+core the retry predicate is identical whether the mod is registered or not, so the walls stand and
+only the puzzle and its gates come and go.
+
+This is the design doc's own `needs`/`places` split finally reaching the authoring: `needs` is what
+the floor must provide and belongs to core; `places` is the encounter and its gates and belongs to
+the mod.
+
+**A switch's key stem is derived from the authoring address, never hand-written.**
+`switch:<journeyId>#<levelIndex>#<floorIndex>#<switch index>`, with the gate's own section address
+appended as before. A count cannot hand-author a name per switch, and deriving from the authoring
+satisfies the original ruling exactly — the danger was always a name the *carve* chooses, which a
+re-carve could hand to the wrong door. An authoring address cannot move under a re-carve. Uniqueness
+stops being something a check enforces and becomes something the id cannot violate.
+
 **There is a `topology` mod, and it is the home for every feature that changes where a player can
 walk.** It holds the lightbeam corridor puzzle and the fork switch together, and `sandSlide`,
 `waterline`, `sequenceLock`, `cosmicDust` and `hourglass` join it as they land. The two lightbeam
