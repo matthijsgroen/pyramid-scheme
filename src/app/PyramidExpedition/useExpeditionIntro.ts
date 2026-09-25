@@ -20,8 +20,14 @@ export const useExpeditionIntro = ({ journeyId, isTomb, hasBlockedBlocks, showCo
       showConversation("tombTutorial")
       return
     }
+    // Where we are, then how the board works — both, never one instead of the other. A journey's own
+    // arrival is a story beat and plays whatever the tutorials toggle says; `pyramidIntro` is teaching,
+    // plays once ever, and is the only thing that explains the arithmetic. Offering the arrival ALONE
+    // left that explanation firing on the one pyramid that has no arrival, which by then was the last
+    // journey in the game.
     const arrival = arrivalConversationId(journeyId)
-    showConversation(arrival, undefined, { story: arrival !== "pyramidIntro" })
+    if (arrival !== "pyramidIntro") showConversation(arrival, undefined, { story: true })
+    showConversation("pyramidIntro")
     if (hasBlockedBlocks) showConversation("pyramidBlockedBlocks")
   }, [isTomb, showConversation, hasBlockedBlocks, journeyId])
 }

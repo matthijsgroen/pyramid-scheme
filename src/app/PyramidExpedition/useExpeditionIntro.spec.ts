@@ -29,10 +29,21 @@ describe("useExpeditionIntro", () => {
     expect(render().map(s => s.id)).toEqual(["pyramidIntro"])
   })
 
-  it("plays the journey's own arrival where one is written", () => {
+  it("plays the journey's own arrival where one is written, and still teaches the board", () => {
     withBeat.add("starter_1")
 
-    expect(render().map(s => s.id)).toEqual(["arrival.starter_1"])
+    // Both, in that order: a beat about the place, then the one conversation that explains the
+    // arithmetic. Offered every visit; Fez plays the tutorial only the first time.
+    expect(render().map(s => s.id)).toEqual(["arrival.starter_1", "pyramidIntro"])
+  })
+
+  it("never lets a written arrival stand in for the board tutorial", () => {
+    // Every pyramid having a beat of its own once left pyramidIntro firing on the single journey
+    // that had none — which was the last one in the game.
+    for (const journeyId of ["starter_1", "junior_2", "wizard_4"]) {
+      withBeat.add(journeyId)
+      expect(render({ journeyId }).map(s => s.id)).toContain("pyramidIntro")
+    }
   })
 
   it("marks a journey's arrival as story, so turning tutorials off does not silence it", () => {
@@ -42,13 +53,14 @@ describe("useExpeditionIntro", () => {
   })
 
   it("leaves the shared intro a tutorial, to go quiet with the rest of them", () => {
-    expect(render()[0].story).toBe(false)
+    // Not marked story, however it is offered — that is what lets the tutorials toggle silence it.
+    expect(render().find(s => s.id === "pyramidIntro")?.story).toBeFalsy()
   })
 
   it("greets each journey with its own beat", () => {
     withBeat.add("junior_3")
 
-    expect(render({ journeyId: "junior_3" }).map(s => s.id)).toEqual(["arrival.junior_3"])
+    expect(render({ journeyId: "junior_3" }).map(s => s.id)).toEqual(["arrival.junior_3", "pyramidIntro"])
   })
 
   it("explains blocked blocks on a board that has them", () => {
