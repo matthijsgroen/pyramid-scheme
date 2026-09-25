@@ -17,7 +17,7 @@ import {
   undoHidato,
 } from "@/mods/puzzle/game/hidato/hidatoState"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
-import { useCelebration } from "../useCelebration"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { skinFor } from "./skins"
