@@ -56,8 +56,7 @@ const turned = (angle: MirrorAngle): MirrorAngle => (angle === SLASH ? BACKSLASH
 // place instead of falling on whichever test happens to ask first.
 beforeAll(() => {
   for (const shape of SHAPES)
-    for (const difficulty of TIERS)
-      for (const seed of SEEDS) routesOf(boardFor(shape, difficulty, seed))
+    for (const difficulty of TIERS) for (const seed of SEEDS) routesOf(boardFor(shape, difficulty, seed))
 }, 120_000)
 
 const eachBoard = (visit: (board: LightbeamSwitchBoard, shape: ForkShape) => void): number => {

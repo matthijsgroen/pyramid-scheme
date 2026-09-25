@@ -176,12 +176,19 @@ export const useSiteNavigation = ({
 
       if (cell.type !== "room") return
 
-      // WHAT A ROOM HOLDS DECIDES THIS, not what type it is: a switch is a junction with an encounter
-      // standing in it, and the junction opens no screen while the encounter does.
-      if (cell.roomType === "fork" && cell.family === undefined) {
+      // A JUNCTION IS WRITTEN DOWN BY STANDING IN IT, whether or not something stands in it too. That
+      // write is what shows the player the room and every way out of it, which is what a junction is
+      // for — and a way out a switch shut is a wall the reveal stops at, so its bars are seen and
+      // nothing behind them is. From here the cell reads completed, so every later visit is answered by
+      // the re-entry block above: a switch says its rooms stay re-enterable, and offers its board again.
+      //
+      // What a fork HOLDS decides only whether a screen opens on arrival: the junction opens none, the
+      // encounter standing in it does.
+      if (cell.roomType === "fork") {
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
-      } else if (cell.roomType === "encounter" || cell.roomType === "fork") {
+        if (cell.family !== undefined) scheduleArrival(walkDelay(row, col), () => onEncounter([row, col], true))
+      } else if (cell.roomType === "encounter") {
         // A GATE IS WALKED INTO LIKE ANY OTHER ROOM. Its bars are drawn across the FAR side of its own
         // square, on the sill where this rank's stone meets the pocket's (`SiteMapView`), so the square
         // itself is the ground you stand on to work the gate rather than the barrier — which is why

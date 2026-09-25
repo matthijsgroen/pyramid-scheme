@@ -124,6 +124,7 @@ const switchGate: GridCell = {
 
 // What each fixture is filed under once it is placed on the grid.
 const CORRIDOR_AT_1 = `${SECTION}#0/~1`
+const SWITCH_AT_1 = `${SECTION}#0/xsumplete`
 const PUZZLE_AT_1 = `${SECTION}#0/p0`
 const GATE_AT_2 = `${SECTION}#0/xkey-gate`
 const EXIT_AT_1 = `${SECTION}#0/exit`
@@ -243,6 +244,34 @@ describe("useSiteNavigation", () => {
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
+    expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
+  })
+
+  // Standing in a junction is what shows the player the junction — the room and the ways out of it —
+  // and that write is the only thing that does. A junction with something standing in it is still a
+  // junction, so it is written down the same way a bare one is.
+  it("writes down a junction that carries a switch, as it does a bare one", () => {
+    const { hook, journeys } = setup([entrance, switchRoom])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", SWITCH_AT_1)
+  })
+
+  // The consequence of that write: the room reads completed from the second visit on, so walking back
+  // into a switch is the re-entry offer — which is the one thing the mechanic cannot do without, since
+  // routing the beam elsewhere is how the branch not taken is opened.
+  it("offers the way back into a junction whose switch has already been stood in", () => {
+    const { hook, onEncounter } = setup([entrance, { ...bareFork, family: RETURNABLE_FAMILY, state: "completed" }])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(promptOf(hook)).toMatchObject({ kind: "room", at: [0, 1] })
+    expect(onEncounter).not.toHaveBeenCalled()
+
+    act(() => promptOf(hook).take())
     expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
   })
 

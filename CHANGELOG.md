@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- A fork with a mirror puzzle standing in it now shows you the junction and its ways out as soon as you walk in, like any other fork.
 - Fixed walking when going to a deeper floor.
 - Fixed pyramids pulsing on the map with nothing left in them.
 - The way out of a site now counts as explored, so the corridor to it stays lit.

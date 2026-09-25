@@ -17,6 +17,9 @@ import { buildRoomClaims } from "@/app/SiteMap/roomClaims"
 import { encodeEdge } from "@/app/SiteMap/edgeId"
 import { useAssembledFloor } from "@/app/SiteMap/useAssembledFloor"
 import { useOpenWaysOut } from "@/app/SiteMap/useOpenWaysOut"
+import { useEncounter } from "@/app/SiteMap/useEncounter"
+import { useSiteNavigation, type ArrivalPrompt } from "@/app/SiteMap/useSiteNavigation"
+import { PuzzleRoomContext } from "@/mods/core/app/puzzleState"
 import "@/mods/registerModApps"
 
 vi.mock("react-i18next", () => ({
@@ -56,6 +59,10 @@ const STEP: Record<WayOut, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1
 // in this file; every test below reads the same carve.
 let SEED = 0
 let STOOD_IN_THE_FORK: Record<string, string[]> = {}
+// The save of a player who has walked the floor as far as the junction and stopped one cell short of
+// it: every cell of the route written down, the junction itself not. Keyed for storage, level and all.
+let WALKED_UP_TO_THE_FORK: Record<string, string[]> = {}
+let STANDING_BEFORE_THE_FORK = ""
 
 beforeAll(() => {
   Element.prototype.scrollIntoView = () => {}
@@ -71,6 +78,22 @@ beforeAll(() => {
     if (!key) throw new Error("the carved fork has no key to file it under")
     SEED = seed
     STOOD_IN_THE_FORK = { [fork.cell.sectionAddress ?? ""]: [key] }
+
+    // The route in, walked on a lit floor so the dark is not what picks it, and cut short of the
+    // junction: the walk up to a junction is what the player has done before any of this matters.
+    const route = findPath(revealAll(result.grid), result.grid.entrancePos, fork.at)
+    if (route.length < 2) throw new Error("no route runs from the entrance to the carved fork")
+    WALKED_UP_TO_THE_FORK = {}
+    for (const [row, col] of route.slice(0, -1)) {
+      const cell = result.grid.cells[row][col]
+      const cellId = cellKey(result.grid, 0, row, col)
+      if (cell.type === "empty" || !cellId) throw new Error(`the cell at ${row},${col} has no key to walk it under`)
+      const section = `${LEVEL_NR}:${cell.sectionAddress ?? ""}`
+      WALKED_UP_TO_THE_FORK[section] = [...(WALKED_UP_TO_THE_FORK[section] ?? []), cellId]
+    }
+    const last = route[route.length - 2]
+    STANDING_BEFORE_THE_FORK = cellAddress(result.grid, 0, last[0], last[1]) ?? ""
+    if (!STANDING_BEFORE_THE_FORK) throw new Error("the cell before the fork has no address to stand at")
     return
   }
   throw new Error("no seed carved a switch fork with three shut ways out")
@@ -412,5 +435,217 @@ describe("a way out the switch has opened", () => {
     const walkable = walkableFrom(seen(), fork())
     expect(walkable.has(`${doorway[0]},${doorway[1]}`)).toBe(true)
     expect(walkable.has(`${beyond[0]},${beyond[1]}`)).toBe(true)
+  })
+})
+
+const NO_KEYS: ReadonlySet<string> = new Set()
+
+/** What the player is looking at while they walk: the floor, the way in beside them, the open board. */
+type Walked = { tap?: (row: number, col: number) => void; prompt?: ArrivalPrompt | null; boardOpen?: boolean }
+const walked: Walked = {}
+const reportWalk = (seen: Walked) => Object.assign(walked, seen)
+
+/**
+ * The floor as a player walks it: the map's own navigation moves the explorer and opens the rooms, and
+ * every write it makes lands in the journey's save — which is the only thing the floor is drawn back
+ * from. A harness that reaches for the grid instead would never see what a tap writes down.
+ */
+const Walking = () => {
+  const journeys = useJourneys()
+  const open = useOpenWaysOut(journeys, JOURNEY)
+  const explored = journeys.getExploredCells(JOURNEY)
+  const positionKey = journeys.getJourney(JOURNEY)?.positionKey
+  const { grid, explorerPos } = useAssembledFloor(
+    JOURNEY,
+    floorConfig,
+    SEED,
+    0,
+    explored,
+    positionKey,
+    0,
+    undefined,
+    LEVEL_NR - 1,
+    open
+  )
+  const encounter = useEncounter({
+    journeys,
+    journeyId: JOURNEY,
+    levelNr: LEVEL_NR,
+    currentFloor: 0,
+    difficulty: floorConfig.difficulty,
+    grid,
+    ownedKeys: NO_KEYS,
+    onReward: () => {},
+  })
+  const navigation = useSiteNavigation({
+    journeys,
+    journeyId: JOURNEY,
+    siteConfig: [floorConfig],
+    seed: SEED,
+    currentFloor: 0,
+    grid,
+    explorerPos,
+    onEncounter: encounter.open,
+    onSkippedConsumable: () => {},
+    onExitReached: () => {},
+  })
+  stand(explorerPos)
+  report({ grid, ...(encounter.ctx ? { ctx: encounter.ctx, board: encounter.puzzle as LightbeamSwitchBoard } : {}) })
+  reportWalk({ tap: navigation.onCellClick, prompt: navigation.prompt, boardOpen: encounter.isOpen })
+  const Component = encounter.family?.Component
+  if (!Component || !encounter.ctx || !encounter.isOpen) return null
+  const services = undefined as never
+  return (
+    <PuzzleRoomContext value={encounter.roomKey}>
+      <Component
+        puzzle={encounter.puzzle}
+        ctx={encounter.ctx}
+        journeys={journeys}
+        progression={services}
+        inventory={services}
+        applyReward={services}
+        onSolved={encounter.solved}
+        onCancel={encounter.cancel}
+      />
+    </PuzzleRoomContext>
+  )
+}
+
+/** The bearings out of the junction that stand shut, read off the floor the map has drawn rather than
+ * off an open board's context — this is asked while the board is shut. */
+const shutWaysOnTheMap = (): WayOut[] => {
+  const found = forkIn(seen())
+  if (!found) throw new Error("the switch is not standing in the floor the map drew")
+  const [row, col] = found.at
+  const ways = (found.cell.exits ?? [])
+    .filter(exit => {
+      if (!exit.gateKeyId) return false
+      const [dr, dc] = STEP[exit.dir]
+      const doorway = seen().cells[row + dr]?.[col + dc]
+      return doorway?.type === "room" && doorway.requiredKeyId === exit.gateKeyId
+    })
+    .map(exit => exit.dir)
+  expect(ways).toHaveLength(3)
+  return ways
+}
+
+/** The way out whose shrine the light is standing in, read off the glyph in that shrine's own cell. */
+const litShrine = (container: HTMLElement): WayOut | undefined =>
+  (["n", "e", "s", "w"] as WayOut[]).find(way => {
+    const shrine = container.querySelector(`[aria-label="lightbeamSwitch.way.${way}"] path`)
+    return shrine?.getAttribute("class")?.includes("fill-amber-200") ?? false
+  })
+
+describe("a junction a switch stands in", () => {
+  beforeEach(async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    await clearGameData()
+    await writeGameData({
+      storageVersions: { journeys: 3, inventory: 1, answers: 1 },
+      journeys: [
+        {
+          journeyId: JOURNEY,
+          levelNr: LEVEL_NR,
+          completionCount: 0,
+          active: true,
+          exploredSections: {},
+          exploredCells: WALKED_UP_TO_THE_FORK,
+          position: null,
+          positionKey: STANDING_BEFORE_THE_FORK,
+          interiorLevelNr: null,
+          cellKeyVersion: 3,
+        },
+      ],
+    })
+  })
+  afterEach(() => {
+    cleanup()
+    vi.useRealTimers()
+  })
+
+  /** The walk of a player who is standing next to the junction and taps it. */
+  const walkIntoTheFork = async () => {
+    const [row, col] = fork()
+    await act(async () => {
+      walked.tap?.(row, col)
+    })
+    await act(async () => {
+      vi.advanceTimersByTime(2000)
+    })
+    await settle()
+  }
+
+  const arriveBesideTheFork = async () => {
+    const rendered = render(<Walking />)
+    await settle()
+    // Without this the taps below would be aimed from wherever a stale save had left the explorer, and
+    // the junction's ways out could be lit by the route in rather than by standing in it.
+    expect(stateAt(fork())).toBe("reachable")
+    for (const way of shutWaysOnTheMap()) expect(stateAt(step(fork(), way, 1))).toBe("fogged")
+    return rendered
+  }
+
+  it("shows its ways out to the player standing in it, board or no board", async () => {
+    await arriveBesideTheFork()
+    await walkIntoTheFork()
+
+    for (const way of shutWaysOnTheMap()) expect(stateAt(step(fork(), way, 1))).not.toBe("fogged")
+  })
+
+  it("reveals nothing past a way out the switch shut", async () => {
+    await arriveBesideTheFork()
+    await walkIntoTheFork()
+
+    for (const way of shutWaysOnTheMap()) {
+      const doorway = step(fork(), way, 1)
+      const bars = at(doorway)
+      // The bars are the point — they are what says the way is shut — so they are lit, and the claim
+      // is about what stands BEHIND them. Asserted here as well, so a floor that revealed nothing at
+      // all could not pass this by having nothing to reveal.
+      expect(bars?.type === "room" && bars.tags?.includes("gate")).toBe(true)
+      expect(stateAt(doorway)).not.toBe("fogged")
+      expect(stateAt(step(fork(), way, 2))).toBe("fogged")
+    }
+  })
+
+  it("leaves the switch unsolved, with every way out still shut and the board still to be worked", async () => {
+    await arriveBesideTheFork()
+    await walkIntoTheFork()
+
+    expect(shutWaysOnTheMap()).toHaveLength(3)
+    expect(walked.boardOpen).toBe(true)
+  })
+
+  it("offers the board again on the next visit, standing the way the open way out leaves it", async () => {
+    const { container } = await arriveBesideTheFork()
+    await walkIntoTheFork()
+    const way = shutWaysOnTheMap()[0]
+    await routeTo(container, way)
+    expect(at(step(fork(), way, 1))?.type).toBe("corridor")
+
+    // Dismissing the solved board is what hands the room back to core, and what closes it.
+    await act(async () => {
+      vi.advanceTimersByTime(1000)
+    })
+    const banner = Array.from(document.querySelectorAll<HTMLElement>("button")).find(candidate =>
+      candidate.textContent?.includes("ui.puzzleCompleted")
+    )
+    if (!banner) throw new Error("the board never reported itself solved")
+    await act(async () => {
+      banner.click()
+    })
+    await settle()
+    expect(walked.boardOpen).toBe(false)
+
+    await walkIntoTheFork()
+    expect(walked.boardOpen).toBe(false)
+    expect(walked.prompt).toMatchObject({ kind: "room", at: fork() })
+
+    await act(async () => {
+      walked.prompt?.take()
+    })
+    await settle()
+    expect(walked.boardOpen).toBe(true)
+    expect(litShrine(container)).toBe(way)
   })
 })
