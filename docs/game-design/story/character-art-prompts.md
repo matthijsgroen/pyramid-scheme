@@ -77,10 +77,6 @@ prompts below is substituted with this:
 
 ### `point-explorer-250.png` — drawing attention
 
-**Re-roll:** the landed file is the pre-palette generation — skin #f0b890 where the character is #d89060,
-and tan trousers where the original is cream. It is the only file in the set whose explorer does not match
-the walking sprites.
-
 > [preamble] [palette] The same explorer, same clothing and equipment, pointing upward and slightly off-camera with
 > one index finger, looking where they point. Mouth open as if mid-sentence. Reference the supplied
 > explorer artwork.
