@@ -1,4 +1,4 @@
-import { useCallback, useEffect, type FC } from "react"
+import { useCallback, useEffect, useState, type FC } from "react"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
 import type { Direction as WayOut, RoomCell } from "@/game/siteTypes"
@@ -68,9 +68,13 @@ const DOOR_PLACE: Record<WayOut, string> = {
 export const LightbeamSwitchPuzzle: FC<Props> = ({ board, exits, openWayOut, onRoute, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const [state, setState] = usePuzzleState(() => createLightbeamSwitchState(board))
+  // Whether a mirror has been turned since the player walked in. A board walked back into stands on the
+  // routing that opened the way out standing open beside it, and that is a switch to throw again rather
+  // than a board already answered — only a routing landed in THIS visit settles the room.
+  const [turnedHere, setTurnedHere] = useState(false)
 
   const lit = litWayOut(board, state)
-  const solved = lit !== undefined
+  const settled = turnedHere && lit !== undefined
 
   // The doors move the moment the light lands, not when the banner is dismissed: a player may back out of
   // a solved board, and the way they opened stays open.
@@ -80,10 +84,11 @@ export const LightbeamSwitchPuzzle: FC<Props> = ({ board, exits, openWayOut, onR
 
   const turn = useCallback(
     (mirror: number) => {
-      if (solved) return // the door has swung; nothing may move under it
+      if (settled) return // the door has swung; nothing may move under it
+      setTurnedHere(true)
       setState(prev => turnSwitchMirror(prev, mirror))
     },
-    [solved, setState]
+    [settled, setState]
   )
 
   // What the doors say right now: the way the light is on, or — with the board still dark — the way this
@@ -95,7 +100,7 @@ export const LightbeamSwitchPuzzle: FC<Props> = ({ board, exits, openWayOut, onR
     <PuzzleFamilyShell
       onSolved={onSolved}
       onCancel={onCancel ?? (() => {})}
-      solved={solved}
+      solved={settled}
       onReset={() => setState(createLightbeamSwitchState(board))}
       title={t("lightbeamSwitch.name")}
       goal={t("lightbeamSwitch.goal")}

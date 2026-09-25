@@ -122,6 +122,9 @@ const mirrorButtons = (): HTMLElement[] =>
     candidate.className.includes("aspect-square")
   )
 
+/** How every mirror on the open board lies, read off the glyphs the player is looking at. */
+const mirrorAngles = (): string[] => mirrorButtons().map(cell => cell.querySelector("g")?.getAttribute("style") ?? "")
+
 const shrineButton = (shrine: string): HTMLElement => {
   const found = Array.from(document.querySelectorAll<HTMLElement>("button")).find(
     candidate => candidate.textContent === `witnessDoor.shrine.${shrine}`
@@ -236,5 +239,24 @@ describe("a witness door over two visits", () => {
 
     const owned = ownedKeysFromSources({ journeyId: JOURNEY, levelNr: LEVEL_NR, floorIndex: 0 })
     expect(WITNESS_SHRINES.every(shrine => owned.has(witnessKeyId(SITE, shrine)))).toBe(true)
+  })
+
+  it("deals a board back at its opening, with nothing named, after the visit that solved it", async () => {
+    const { container } = await renderSite()
+
+    await walkInto(container)
+    const opening = mirrorAngles()
+    await act(async () => {
+      fireEvent.click(shrineButton("east"))
+    })
+    await solveTowards("east")
+    const solved = mirrorAngles()
+    // Without this the comparison below could be two readings of nothing agreeing with each other.
+    expect(solved).not.toEqual(opening)
+    await leaveThroughTheBanner()
+
+    await walkInto(container)
+    expect(mirrorAngles()).toEqual(opening)
+    expect(shrineButton("east").getAttribute("aria-pressed")).toBe("false")
   })
 })

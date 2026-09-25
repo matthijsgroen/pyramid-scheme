@@ -146,10 +146,11 @@ export const useEncounter = ({
       const sectionHash = cell && cell.type !== "empty" ? (cell.sectionHash ?? "") : ""
       const address = (grid && cellAddress(grid, currentFloor, row, col)) || edgeId
       journeys.markCellExplored(sectionHash, edgeId, address)
-      // The board is finished, so the moves that made it have nothing left to say — and a room its
-      // family keeps re-enterable (FamilyMeta.reEnterable) gets a fresh board on the next visit rather
-      // than the solved one it was left on.
-      clearPuzzleState()
+      // The board is finished, so the moves that made it have nothing left to say, and a room walked back
+      // into gets a fresh one. Unless those moves ARE the mechanism (FamilyMeta.stateIsTheMechanism):
+      // there they say how the floor itself stands, and the room has to reopen on them.
+      const solvedFamily = cell?.type === "room" && cell.family ? getFamilyPlugin(cell.family) : undefined
+      if (!solvedFamily?.meta.stateIsTheMechanism) clearPuzzleState()
       setActive(null)
 
       // Loot is what the room held, not what solving it pays — a room walked back into has already

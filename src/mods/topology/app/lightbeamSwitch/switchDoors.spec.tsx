@@ -7,12 +7,14 @@ import { classifyForkShape } from "@/game/forkShape"
 import { assembleFloor } from "@/game/siteAssembler"
 import type { Direction as WayOut, FloorConfig, FloorGrid, RoomCell } from "@/game/siteTypes"
 import { clearGameData, writeGameData } from "@/support/useGameStorage"
-import { cellKey as beamCellKey } from "@/mods/core/game/beam/physics"
+import { cellKey as beamCellKey, type MirrorAngle } from "@/mods/core/game/beam/physics"
 import { routesTo } from "../../game/shrineBeam/shrineBeam"
 import type { LightbeamSwitchBoard } from "../../game/lightbeamSwitch/generateLightbeamSwitch"
 import { cellAddress, cellKey } from "@/app/SiteMap/cellIdentity"
 import { encodeEdge } from "@/app/SiteMap/edgeId"
 import { useAssembledFloor } from "@/app/SiteMap/useAssembledFloor"
+import { useEncounter } from "@/app/SiteMap/useEncounter"
+import { PuzzleRoomContext } from "@/mods/core/app/puzzleState"
 import { useOpenWaysOut } from "@/app/SiteMap/useOpenWaysOut"
 import "@/mods/registerModApps"
 
@@ -67,7 +69,7 @@ const { SEED, STOOD_IN_THE_FORK } = (() => {
 })()
 
 /** What the screen is looking at: the floor as the switch has left it, and the room's own board. */
-type Seen = { grid: FloorGrid | null; board?: LightbeamSwitchBoard; ctx?: FamilyContext }
+type Seen = { grid: FloorGrid | null; board?: LightbeamSwitchBoard; ctx?: FamilyContext; enter?: () => void }
 const latest: Seen = { grid: null }
 // Reported through a call rather than written to from the render: a component may not reach out and
 // assign to what lives around it, and a spec's harness is no exception.
@@ -120,6 +122,27 @@ const Room = ({ explored = {} }: { explored?: Record<string, string[]> }) => {
 const settle = async () => {
   await act(async () => {
     await Promise.resolve()
+  })
+}
+
+// The save of a player standing in this pyramid: a switch files its answer against the ACTIVE journey,
+// so without one nothing it decides is ever written down.
+const standingInThisPyramid = async () => {
+  await clearGameData()
+  await writeGameData({
+    storageVersions: { journeys: 3, inventory: 1, answers: 1 },
+    journeys: [
+      {
+        journeyId: JOURNEY,
+        levelNr: LEVEL_NR,
+        completionCount: 0,
+        active: true,
+        exploredSections: {},
+        position: null,
+        interiorLevelNr: null,
+        cellKeyVersion: 3,
+      },
+    ],
   })
 }
 
@@ -177,8 +200,8 @@ const doors = (places: Map<WayOut, [number, number]>): Record<string, "open" | "
 const mirrorCells = (container: HTMLElement) =>
   Array.from(container.querySelectorAll<HTMLElement>("button")).filter(el => el.className.includes("aspect-square"))
 
-/** Sends the light to one way out's shrine, the way a player does: one tap per mirror to turn. */
-const routeTo = async (container: HTMLElement, way: WayOut) => {
+/** The one route that lands the light on a way out's shrine, as the mirrors it turns. */
+const routeFor = (way: WayOut) => {
   const shrine = board().shrines.findIndex(candidate => candidate.canonicalDir === way)
   if (shrine === -1) throw new Error(`the board carries no shrine for the ${way} way out`)
   const routes = routesTo(
@@ -187,10 +210,26 @@ const routeTo = async (container: HTMLElement, way: WayOut) => {
     shrine
   )
   if (routes.length !== 1) throw new Error(`the ${way} shrine owes ${routes.length} routes, not one`)
-  const cells = mirrorCells(container)
+  return routes[0]
+}
+
+/** Which mirror of the board stands on a route's cell. */
+const mirrorAt = (at: Parameters<typeof beamCellKey>[0]): number =>
+  board().grid.mirrors.findIndex(candidate => beamCellKey(candidate) === beamCellKey(at))
+
+/** How the mirrors lie once the light has been sent to `way` from the setting the board opens in. */
+const angledFor = (way: WayOut): MirrorAngle[] => {
   const angles = [...board().grid.initial]
-  for (const { at, angle } of routes[0]) {
-    const mirror = board().grid.mirrors.findIndex(candidate => beamCellKey(candidate) === beamCellKey(at))
+  for (const { at, angle } of routeFor(way)) angles[mirrorAt(at)] = angle
+  return angles
+}
+
+/** Sends the light to one way out's shrine, the way a player does: one tap per mirror to turn. */
+const routeTo = async (container: HTMLElement, way: WayOut, from: readonly MirrorAngle[] = board().grid.initial) => {
+  const cells = mirrorCells(container)
+  const angles = [...from]
+  for (const { at, angle } of routeFor(way)) {
+    const mirror = mirrorAt(at)
     if (angles[mirror] === angle) continue
     await act(async () => {
       cells[mirror].click()
@@ -215,24 +254,7 @@ beforeAll(() => {
 
 describe("the ways out of a fork a switch stands in", () => {
   beforeEach(async () => {
-    await clearGameData()
-    // The save of a player standing in this pyramid: a switch files its answer against the ACTIVE
-    // journey, so without one nothing it decides is ever written down.
-    await writeGameData({
-      storageVersions: { journeys: 3, inventory: 1, answers: 1 },
-      journeys: [
-        {
-          journeyId: JOURNEY,
-          levelNr: LEVEL_NR,
-          completionCount: 0,
-          active: true,
-          exploredSections: {},
-          position: null,
-          interiorLevelNr: null,
-          cellKeyVersion: 3,
-        },
-      ],
-    })
+    await standingInThisPyramid()
   })
   afterEach(() => {
     cleanup()
@@ -331,5 +353,151 @@ describe("the ways out of a fork a switch stands in", () => {
     await routeTo(container, ways[1])
     expect(doors(places)[ways[1]]).toBe("open")
     expect(wallsOf(latest.grid)).toBe(carved)
+  })
+})
+
+const NO_KEYS: ReadonlySet<string> = new Set()
+const NOTHING_EXPLORED: Record<string, string[]> = {}
+
+/**
+ * The room as core opens it: useEncounter deals the board, names the slot its unfinished state is filed
+ * under, and decides what of that state a solve leaves behind. A harness that renders the family straight
+ * sees none of it, which is exactly where a board that disagreed with its own doors could hide.
+ */
+const Visited = () => {
+  const journeys = useJourneys()
+  const open = useOpenWaysOut(journeys, JOURNEY)
+  const { grid } = useAssembledFloor(
+    JOURNEY,
+    floorConfig,
+    SEED,
+    0,
+    NOTHING_EXPLORED,
+    null,
+    0,
+    undefined,
+    LEVEL_NR - 1,
+    open
+  )
+  const encounter = useEncounter({
+    journeys,
+    journeyId: JOURNEY,
+    levelNr: LEVEL_NR,
+    currentFloor: 0,
+    difficulty: floorConfig.difficulty,
+    grid,
+    ownedKeys: NO_KEYS,
+    onReward: () => {},
+  })
+  const fork = grid ? forkIn(grid) : undefined
+  report({
+    grid,
+    enter: fork ? () => encounter.open(fork.at, true) : undefined,
+    ...(encounter.ctx ? { ctx: encounter.ctx, board: encounter.puzzle as LightbeamSwitchBoard } : {}),
+  })
+  const Component = encounter.family?.Component
+  if (!Component || !encounter.ctx || !encounter.isOpen) return null
+  // The switch reads its board, its room and the journey; the rest of a family's props are core's other
+  // services and this room never asks for one.
+  const services = undefined as never
+  return (
+    <PuzzleRoomContext value={encounter.roomKey}>
+      <Component
+        puzzle={encounter.puzzle}
+        ctx={encounter.ctx}
+        journeys={journeys}
+        progression={services}
+        inventory={services}
+        applyReward={services}
+        onSolved={encounter.solved}
+        onCancel={encounter.cancel}
+      />
+    </PuzzleRoomContext>
+  )
+}
+
+/** How every mirror on the open board lies, read off the glyphs the player is looking at. */
+const mirrorAngles = (container: HTMLElement): string[] =>
+  mirrorCells(container).map(cell => cell.querySelector("g")?.getAttribute("style") ?? "")
+
+/** The way out whose shrine the light is standing in, read off the glyph in that shrine's own cell. */
+const litShrine = (container: HTMLElement): WayOut | undefined =>
+  [...wayOutIds().keys()].find(way => {
+    const shrine = container.querySelector(`[aria-label="lightbeamSwitch.way.${way}"] path`)
+    return shrine?.getAttribute("class")?.includes("fill-amber-200") ?? false
+  })
+
+describe("the board of a switch walked back into", () => {
+  beforeEach(async () => {
+    await standingInThisPyramid()
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+  })
+  afterEach(() => {
+    cleanup()
+    vi.useRealTimers()
+  })
+
+  const walkIn = async () => {
+    await act(async () => {
+      latest.enter?.()
+    })
+    await settle()
+    await settle()
+  }
+
+  /** Dismissing the solved board is what hands the room back to core, and what closes it. */
+  const leaveThroughTheBanner = async () => {
+    await act(async () => {
+      vi.advanceTimersByTime(1000)
+    })
+    const banner = Array.from(document.querySelectorAll<HTMLElement>("button")).find(candidate =>
+      candidate.textContent?.includes("ui.puzzleCompleted")
+    )
+    if (!banner) throw new Error("the board never reported itself solved")
+    await act(async () => {
+      banner.click()
+    })
+    await settle()
+    await settle()
+  }
+
+  it("lies the way it was left, with the shrine of the open way out lit", async () => {
+    const { container, rerender } = render(<Visited />)
+    await settle()
+    await walkIn()
+    const places = doorPlaces()
+    const ways = [...wayOutIds().keys()]
+    const dark = mirrorAngles(container)
+    await routeTo(container, ways[0])
+    const routed = mirrorAngles(container)
+    // Without this the comparison below could be two readings of nothing agreeing with each other.
+    expect(routed).not.toEqual(dark)
+    await leaveThroughTheBanner()
+    expect(doors(places)[ways[0]]).toBe("open")
+
+    rerender(<Visited key="walked back in" />)
+    await settle()
+    await walkIn()
+
+    expect(mirrorAngles(container)).toEqual(routed)
+    expect(litShrine(container)).toBe(ways[0])
+  })
+
+  it("takes a new routing, which opens that way out and shuts the one that stood open", async () => {
+    const { container, rerender } = render(<Visited />)
+    await settle()
+    await walkIn()
+    const places = doorPlaces()
+    const ways = [...wayOutIds().keys()]
+    await routeTo(container, ways[0])
+    await leaveThroughTheBanner()
+
+    rerender(<Visited key="walked back in" />)
+    await settle()
+    await walkIn()
+    await routeTo(container, ways[2], angledFor(ways[0]))
+
+    expect(litShrine(container)).toBe(ways[2])
+    expect(doors(places)).toEqual(Object.fromEntries(ways.map(way => [way, way === ways[2] ? "open" : "shut"])))
   })
 })

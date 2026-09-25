@@ -37,9 +37,18 @@ export type FamilyMeta = {
    * For a family whose room hands over one of several things it holds, one per visit: the witness door
    * mints the key of the shrine it was opened for, and without a second visit its other branch would
    * hold content nothing could ever reach. The cost of the choice is the walk back, not the content.
-   * The board starts fresh, because an unfinished board is dropped when its room resolves.
+   * The board starts fresh, unless the family also claims `stateIsTheMechanism` below.
    */
   reEnterable?: boolean
+  /**
+   * The board of this family IS the mechanism the room works, so what the player left it on outlives the
+   * solve and the room reopens on it.
+   *
+   * The switch standing in a fork is what this exists for: how its mirrors lie is which way out stands
+   * open, so a board offered dark would deny the door the player can see standing open beside it. Every
+   * other family's board is a question that has been answered, and its moves have nothing left to say.
+   */
+  stateIsTheMechanism?: boolean
   // How many reward slots a node of this family exposes. Default 1 (an ordinary node bears one
   // reward, like a chest or a puzzle-chain position). A shop is the one family that overrides it
   // (6): its node carries a `rewards[]` stock array of this length, filled by the mods that place

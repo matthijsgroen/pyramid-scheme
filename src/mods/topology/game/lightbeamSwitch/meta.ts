@@ -17,4 +17,7 @@ export const LIGHTBEAM_SWITCH_META: FamilyMeta = {
   // so a player who wants the branch they did not take walks back in and routes the beam there instead.
   // Without the walk back, the first solve would seal the rest of the fork for good.
   reEnterable: true,
+  // And the mirrors are not a solved question but the position of the switch itself: the way out standing
+  // open is the one they route the light to, so the room reopens on the configuration that opened it.
+  stateIsTheMechanism: true,
 }
