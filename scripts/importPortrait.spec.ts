@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { edgeBackground } from "./importPortrait"
+import { edgeBackground, seat } from "./importPortrait"
 
 const WHITE = { r: 255, g: 255, b: 255 }
 
@@ -50,5 +50,38 @@ describe("edgeBackground", () => {
 
   it("keeps a figure that runs off the edge of the canvas", () => {
     expect(grid(["###", "###"])).toEqual(["fff", "fff"])
+  })
+})
+
+describe("seat", () => {
+  const ratio = ({ canvasWidth, canvasHeight }: { canvasWidth: number; canvasHeight: number }) =>
+    +(canvasWidth / canvasHeight).toFixed(2)
+
+  it("gives a standing figure a canvas its height fills and its width does not", () => {
+    const canvas = seat({ width: 1206, height: 2382 })
+    expect(canvas.wide).toBe(false)
+    expect(ratio(canvas)).toBe(0.67)
+    expect(canvas.canvasWidth).toBeGreaterThan(1206)
+  })
+
+  it("fits a subject WIDER than it is tall by its width, so the air lands above it", () => {
+    // The abandoned camp: a pile on the ground, which no height-fitted 2:3 canvas can hold.
+    const canvas = seat({ width: 1565, height: 1792 })
+    expect(canvas.wide).toBe(true)
+    expect(ratio(canvas)).toBe(0.67)
+    expect(canvas.canvasWidth).toBeGreaterThanOrEqual(1565)
+    expect(canvas.canvasHeight).toBeGreaterThan(1792)
+  })
+
+  it("never crops: the canvas holds the whole subject either way", () => {
+    for (const figure of [
+      { width: 100, height: 3000 },
+      { width: 3000, height: 100 },
+      { width: 1000, height: 1000 },
+    ]) {
+      const { canvasWidth, canvasHeight } = seat(figure)
+      expect(canvasWidth).toBeGreaterThanOrEqual(figure.width)
+      expect(canvasHeight).toBeGreaterThanOrEqual(figure.height)
+    }
   })
 })

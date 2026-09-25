@@ -79,6 +79,22 @@ export const edgeBackground = ({
   return background
 }
 
+/**
+ * The 2:3 canvas a trimmed subject is padded back out to, and where it sits in it.
+ *
+ * Sized off whichever side runs out first: a standing person is tall and narrow, so height fills and width
+ * gets the air, but a camp lying on the ground is wider than it is tall and would not fit that canvas at
+ * all. Fitting it by width instead leaves the air ABOVE it — which is where the speech bubble is, and is
+ * what a thing on the ground should look like beside a character who is standing up. Either way it sits on
+ * the bottom edge, because that edge is the floor.
+ */
+export const seat = (figure: { width: number; height: number }) => {
+  const byHeight = Math.round(figure.height / FILL)
+  const wide = figure.width > Math.round((byHeight * WIDTH) / HEIGHT)
+  const canvasWidth = wide ? Math.round(figure.width / FILL) : Math.round((byHeight * WIDTH) / HEIGHT)
+  return { wide, canvasWidth, canvasHeight: wide ? Math.round((canvasWidth * HEIGHT) / WIDTH) : byHeight }
+}
+
 const bounds = (background: Uint8Array, width: number, height: number) => {
   let left = width
   let right = -1
@@ -122,16 +138,8 @@ const main = async (): Promise<void> => {
     process.exit(1)
   }
   const figure = { width: right - left + 1, height: bottom - top + 1 }
-  // Pad the trimmed figure back out to 2:3, centred across and standing on the bottom edge. Sized off
-  // the figure's HEIGHT: these are tall narrow people and the canvas never stops being 2:3, so height is
-  // what runs out first and width is what gets the air.
-  const canvasHeight = Math.round(figure.height / FILL)
-  const canvasWidth = Math.round((canvasHeight * WIDTH) / HEIGHT)
+  const { wide: tooWide, canvasWidth, canvasHeight } = seat(figure)
   const sides = canvasWidth - figure.width
-  if (sides < 0) {
-    console.error(`the figure in ${file} is too wide for a 2:3 canvas at this height — crop it first`)
-    process.exit(1)
-  }
 
   // Two passes, because sharp always extends AFTER it resizes: padding and resizing in one chain pads
   // the finished 250x375 and hands back a canvas the size of neither.
@@ -151,7 +159,11 @@ const main = async (): Promise<void> => {
   await sharp(padded).resize(WIDTH, HEIGHT).png().toFile(out)
 
   console.log(`${out}  figure ${figure.width}x${figure.height} of ${info.width}x${info.height}`)
-  console.log(`fills ${Math.round((figure.width / canvasWidth) * 100)}% of the width it ends up in`)
+  console.log(
+    `fills ${Math.round((figure.width / canvasWidth) * 100)}% of the width and ` +
+      `${Math.round((figure.height / canvasHeight) * 100)}% of the height it ends up in` +
+      (tooWide ? " (seated by width: wider than it is tall)" : "")
+  )
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

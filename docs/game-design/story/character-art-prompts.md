@@ -133,14 +133,16 @@ for the hat — the anchor alone gave a generator a lizard in a fez and it drew 
    the difference between a camp that was abandoned and a camp that was left, and the second is the sad one.
 3. **And nobody has touched it since.** Undisturbed dust over everything, nothing scattered, nothing broken.
    The two readings have to sit on top of each other: stepped away a minute ago, and a very long time ago.
-4. **It stands where a person stands.** This takes a character's place in a conversation, beside Fez, at the
-   same size as the four ghosts — so it is composed upright and compact, not as a landscape.
+4. **It stands where a person stands.** This takes a character's place in a conversation, beside Fez. A
+   pile on the ground is wider than a person, so `import-portrait` seats a wide subject by its width and
+   leaves the air above it, where the speech bubble goes. Compose it as one group with everything touching
+   or overlapping; a scene spread across the frame comes back small.
 
 > [preamble] **There is no figure in this picture** — ignore every instruction above about a standing figure
 > and its pose. **Nothing here is translucent or blue-green.** This is not a ghost; it is a place.
 >
-> A small camp that somebody walked away from, arranged as one tall compact group about two thirds as wide
-> as it is tall, resting on bare ground, so that it fills the same upright frame a standing person would.
+> A small camp that somebody walked away from, arranged as one compact group with the objects touching or
+> overlapping, resting on bare ground. Fill the frame with it; leave no object stranded on its own.
 >
 > In it: a canvas bedroll unrolled and laid flat, a battered tin kettle set on three stones, a coil of rope,
 > and a notebook lying FACE DOWN and open — spine upward, pages against the ground, the way somebody holds
