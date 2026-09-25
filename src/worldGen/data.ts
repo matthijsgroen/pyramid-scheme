@@ -53,3 +53,19 @@ export const TOMB_JOURNEYS: TombJourneyDef[] = TOMB_STRUCTURES.map(s => ({ ...s,
 // src/mods/hieroglyph/game/hieroglyphData.ts (docs/mods/TARGET.md rule 2). Core reachability
 // receives the gate threshold via injection; the serializer receives the required map via a
 // parameter. Neither imports it. FRAGMENT_HOST_TIERS was unused and was dropped.
+
+// ── Dev journey ───────────────────────────────────────────────────────────────
+
+// The playtesting journey: one site per floor-topology feature, so a mechanic can be walked from the
+// travel screen instead of ground up to. Declared here unconditionally; whether it is BUILT is
+// configBuilder's INCLUDE_DEV gate, so `src/data/generatedWorld.ts` holds it only in a dev build.
+//
+// Kept OUT of PYRAMID_JOURNEYS on purpose: several passes read that array's per-tier declaration
+// ORDER (the hieroglyph currency's tier-third ranking among them), so a journey appended to a real
+// tier's list would move real fragments about. Its own list is read by id lookups only.
+export const DEV_JOURNEY_ID = "dev_topology"
+
+// One site per feature, walked from the journey's own map — pick the feature, enter it, no descent.
+// `tier` is wizard so nothing auto-gates a way on to the next tier (there is none); the tier each
+// floor is actually BUILT at is its own authored difficulty (spec/dev.ts).
+export const DEV_JOURNEYS: JourneyDef[] = [{ id: DEV_JOURNEY_ID, tier: "wizard", levelCount: 6, pathPuzzles: 2 }]

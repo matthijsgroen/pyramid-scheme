@@ -123,5 +123,9 @@
     "name": "Troon der Eeuwigheid",
     "description": "Bereik het binnenste heiligdom van het goddelijke rijk — de Troon der Eeuwigheid waar de goden zelf rusten. Enkel de grootste wiskundigen aller tijden hebben hier gestaan.",
     "mapHint": "Alle sterrenpaden op dit fragment komen samen op één zetel, in het hart van het goddelijke rijk."
+  },
+  "dev_topology": {
+    "name": "Topology Proving Ground",
+    "description": "One site per floor-topology feature. Develop mode only."
   }
 }

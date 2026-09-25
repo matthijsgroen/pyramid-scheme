@@ -1,8 +1,9 @@
 import type { Difficulty, SiteConfig, Tier, TreasureReward } from "./types"
-import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
+import { DEV_JOURNEYS, PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
+import type { JourneyDef } from "./types"
 import { resolvePyramidConstraintWithProvenance } from "./constraintResolver"
 import type { Provenance } from "./constraintResolver"
-import { worldSpec } from "./worldSpec"
+import { devSpec, worldSpec } from "./worldSpec"
 import type {
   PyramidConstraint,
   FloorConstraint,
@@ -25,7 +26,8 @@ import type { Distribution } from "./slotAllocator"
 import type { FamilyPriorityFor } from "./slots"
 import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssembler"
 import { validateRewardCounts, type WorldValidator } from "./validate"
-import { PYRAMID_CAPABILITIES } from "./capabilities"
+import { capabilitiesFor } from "./capabilities"
+import { clearUncollectedSlots } from "./slots"
 import { TOMB_ROOMS_PER_FLOOR } from "./data"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
@@ -64,11 +66,18 @@ export type PyramidPlan = {
   provenance: Provenance
 }
 
-const buildPlan = (): PyramidPlan[] =>
-  PYRAMID_JOURNEYS.flatMap(j =>
+// The playtest journey is a BUILD-TIME opt-in: `INCLUDE_DEV=1 yarn generate-world` grows it, a plain
+// run does not, and the committed world is the plain run's. Read here rather than in data.ts because
+// this module is the generator's alone — data.ts is in the app bundle, where `process.env` is not a
+// thing. Same escape-hatch shape as the shop's SKIP_ECONOMY_GUARD, and for the same reason: an env
+// var, not a config knob anything ships with.
+const includeDev = (): boolean => !!process.env.INCLUDE_DEV
+
+const planFor = (journeys: readonly JourneyDef[], spec: typeof worldSpec): PyramidPlan[] =>
+  journeys.flatMap(j =>
     Array.from({ length: j.levelCount }, (_, i) => {
       const { constraint, provenance } = resolvePyramidConstraintWithProvenance(
-        worldSpec,
+        spec,
         j.id,
         j.tier as Tier,
         i,
@@ -93,6 +102,11 @@ const buildPlan = (): PyramidPlan[] =>
       }
     })
   )
+
+const buildPlan = (): PyramidPlan[] => [
+  ...planFor(PYRAMID_JOURNEYS, worldSpec),
+  ...planFor(includeDev() ? DEV_JOURNEYS : [], devSpec),
+]
 
 // ── Phase 4: Build SiteConfigs from plan ──────────────────────────────────────
 
@@ -129,7 +143,8 @@ const buildSiteConfigs = (
         pathPuzzles: pp,
         constraint,
         difficulty,
-        hasMapPieceBranch: PYRAMID_CAPABILITIES.emitMapPiece && i === mapPiecePyramid && tier !== "starter",
+        hasMapPieceBranch:
+          (capabilitiesFor(journeyId)?.emitMapPiece ?? false) && i === mapPiecePyramid && tier !== "starter",
         hasWardGate: i >= Math.ceil(levelCount / 2) && nextTier !== null,
         nextTier,
         reservedTreasureIndices,
@@ -322,6 +337,11 @@ export const buildConfigs = (
         ])
       )
     : builtConfigs
+
+  // Phase 3.2: a site outside the loot economy is never collected, so nothing downstream would fill
+  // or clear the placement sentinels on its path ends — and a surviving sentinel is refused by the
+  // serializer. Cleared here, which is what leaves such a site contributing no reward of any kind.
+  clearUncollectedSlots(allConfigs)
 
   // Phase 3.5: Resolve authored encounter ROLES (family tags) → concrete families, baked in.
   // Runs before slot collection (rewardPriority derives from the chosen family) and serialization.

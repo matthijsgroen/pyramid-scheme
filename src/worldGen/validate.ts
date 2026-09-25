@@ -2,6 +2,7 @@ import type { SiteConfig, TreasureReward, MapPieceReward } from "./types"
 import type { FloorGrid as AssembledFloor } from "@/game/siteTypes"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
+import { capabilitiesFor } from "./capabilities"
 
 const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
 
@@ -130,6 +131,9 @@ export const findEmptyChests = (
 ): EmptyChest[] => {
   const empties: EmptyChest[] = []
   for (const [journeyId, sites] of Object.entries(configs)) {
+    // A site outside the loot economy grows no reward slot at all (capabilities.ts), so every chest
+    // on it stands empty by design and there is no authoring slip to report.
+    if (capabilitiesFor(journeyId)?.emitFragmentSlots === false) continue
     sites.forEach((site, siteIdx) => {
       site.forEach((floor, floorIndex) => {
         const grid = assembleFloorAt(journeyId, floor, siteIdx + 1, floorIndex)
