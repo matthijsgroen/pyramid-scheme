@@ -221,5 +221,39 @@
       "2": { "explorer": "Voor wie?" },
       "3": { "fez": "Voor iedereen die kijkt. Dat was het punt — het was nooit voor de man die erin lag." }
     }
+  },
+
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Je liet op je wachten. Derde plank, de kruik met de schilfer eruit — die is van mij. De rest mag je hebben."
+      },
+      "2": { "fez": "…Zei die kruik nou iets?" },
+      "3": { "explorer": "De kruik zei: derde plank." },
+      "4": { "ipi": "Ik heb deze boeken veertig jaar bijgehouden. Ik laat ze niet in die staat achter." },
+      "5": {
+        "ipi": "Wil je verder? Dan is er een edelvrouw ten noorden van hier. Beschilderd gewelf, bijzonder ingenomen met zichzelf. Ze heeft het lapis nooit betaald."
+      },
+      "6": { "explorer": "Heeft ze een naam?" },
+      "7": {
+        "ipi": "Henut, dochter van Sennefer, van de westelijke landgoederen. Elf deben lapis, onbetaald, derde jaar."
+      },
+      "8": { "ipi": "Natuurlijk heeft ze een naam. Ik heb hem opgeschreven." },
+      "9": { "ipi": "Het zijn de Hori's die je de das omdoen. Hori de schipper, Hori de bakker, en die andere Hori." },
+      "10": { "explorer": "Hoeveel Hori's?" },
+      "11": { "ipi": "In één straat? Vier. Ik moest hun vaders er ook bij zetten." },
+      "12": { "explorer": "Waarom doet dat ertoe, als zij het niet meer kan horen?" },
+      "13": { "ipi": "Omdat wat opgeschreven is, gebeurd is. Veeg een mans naam uit en hij heeft nooit bestaan." },
+      "14": { "ipi": "Zeg maar dat Ipi je stuurt. Dat verpest haar middag wel." },
+      "15": { "fez": "Zo iemand had vast katten. Iedereen had katten. Charmante beesten." },
+      "16": { "ipi": "Ik had er vier, en geen van allen was charmant. Ze waren voor het graan." },
+      "17": { "ipi": "Weet jij wat één rat je kost, over een seizoen? Ik wel. Tot op de zak." },
+      "18": { "fez": "…Juist." },
+      "19": { "explorer": "Dat heeft hij ook opgeschreven." },
+      "20": { "ipi": "Natuurlijk heb ik dat opgeschreven." },
+      "21": { "fez": "Ik mag hem wel." },
+      "22": { "explorer": "Je mag het dat hij geld tegoed heeft." },
+      "23": { "fez": "Ik mag het dat hij het opschreef." }
+    }
   }
 }

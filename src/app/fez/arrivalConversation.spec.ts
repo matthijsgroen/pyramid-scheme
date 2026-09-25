@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest"
-import { arrivalConversationId, arrivalLines, JOURNEYS_WITH_ARRIVAL } from "./arrivalConversation"
+import { arrivalConversationId, spokenLines, JOURNEYS_WITH_ARRIVAL } from "./arrivalConversation"
 
 const lines = (...keys: string[]) => {
   const written = new Set(keys)
-  return arrivalLines("starter_1", key => written.has(key))
+  return spokenLines("arrival.starter_1", key => written.has(key))
 }
 
 describe(arrivalConversationId, () => {
@@ -16,7 +16,7 @@ describe(arrivalConversationId, () => {
   })
 })
 
-describe(arrivalLines, () => {
+describe(spokenLines, () => {
   it("reads who speaks from the key, so a discovered beat still knows", () => {
     expect(lines("arrival.starter_1.1.fez", "arrival.starter_1.2.explorer")).toEqual([
       { speaker: "fez", key: "arrival.starter_1.1.fez" },
@@ -40,6 +40,6 @@ describe(arrivalLines, () => {
   })
 
   it("has nothing to say about a journey with no beat", () => {
-    expect(arrivalLines("expert_2", () => false)).toEqual([])
+    expect(spokenLines("arrival.expert_2", () => false)).toEqual([])
   })
 })

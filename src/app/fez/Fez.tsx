@@ -1,16 +1,8 @@
-import fez from "@/assets/fez-250.png"
-import fezPoint from "@/assets/point-fez-250.png"
-import fezGlassesPoint from "@/assets/glasses-point-fez-250.png"
-import fezCocktail from "@/assets/cocktail-fez-250.png"
-import explorer from "@/assets/explorer-250.png"
-import explorerGrin from "@/assets/grin-explorer-250.png"
-import explorerPoint from "@/assets/point-explorer-250.png"
 import clsx from "clsx"
 import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
-import { arrivalLines, type Speaker } from "./arrivalConversation"
-
-type Pose = "default" | "pointUp" | "glassesPoint" | "cocktail"
+import { GHOSTS, spokenLines, type Speaker } from "./arrivalConversation"
+import { PORTRAITS, type Pose } from "./portraits"
 
 type PoseChat = [pose: Pose, translationKey: string, speaker?: Speaker]
 
@@ -66,35 +58,17 @@ const conversations: Record<string, PoseChat[]> = {
 
 const NOT_FOUND = pose("default", ["not-found"])
 
-const PORTRAITS: Partial<Record<Speaker, Partial<Record<Pose, { src: string; alt: string }>>>> = {
-  fez: {
-    default: { src: fez, alt: "Happy companion lizard wearing a fez" },
-    pointUp: { src: fezPoint, alt: "Happy companion lizard wearing a fez" },
-    glassesPoint: { src: fezGlassesPoint, alt: "Happy companion lizard wearing a fez and glasses" },
-    cocktail: { src: fezCocktail, alt: "Happy companion lizard wearing a fez and holding a cocktail" },
-  },
-  explorer: {
-    default: { src: explorer, alt: "The explorer, in a wide brown hat and olive vest" },
-    // No beat asks for either yet — every arrival line is `default`. What would ask is the reaction
-    // rail, which is the half of the script that watches how the board went rather than where we are.
-    pointUp: { src: explorerPoint, alt: "The explorer, pointing" },
-    glassesPoint: { src: explorerGrin, alt: "The explorer, in sunglasses, grinning" },
-  },
-}
-
-const ARRIVAL = /^arrival\.(.+)$/
-
 /**
  * The lines a conversation id plays.
  *
- * A journey's arrival is not in the table above: there are twenty of them, they are authored as
- * translations alone, and a new one should cost a key rather than a code change.
+ * A conversation not in the table above is read out of the translations instead — the arrivals and
+ * the tomb scenes are authored that way, because a new beat should cost a key rather than a code
+ * change. The table is what is left: the tutorials and the shipped one-voice beats.
  */
 const linesFor = (conversation: string, hasLine: (key: string) => boolean): PoseChat[] => {
   const table = conversations[conversation]
   if (table) return table
-  const journeyId = ARRIVAL.exec(conversation)?.[1]
-  const spoken = journeyId ? arrivalLines(journeyId, hasLine) : []
+  const spoken = spokenLines(conversation, hasLine)
   return spoken.length > 0 ? spoken.map(line => ["default", line.key, line.speaker] as PoseChat) : NOT_FOUND
 }
 
@@ -179,6 +153,9 @@ export const Fez: FC<{
             alt={portrait.alt}
             className={clsx(
               "-mb-15 w-50 animate-subtle-bounce transition-transform duration-300",
+              // The dead are see-through. Drawn opaque and faded here rather than painted
+              // translucent, so one sprite serves and the room shows through all of them equally.
+              GHOSTS.includes(speaker) && "opacity-70",
               visible ? "translate-y-0" : "translate-y-1/1"
             )}
           />

@@ -212,5 +212,37 @@
       "2": { "explorer": "For whom?" },
       "3": { "fez": "Anyone looking. That was the point — it was never for the man inside." }
     }
+  },
+
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Took your time. Third shelf, the jar with the chip out of it — that one's mine. The rest you may as well have."
+      },
+      "2": { "fez": "…Did the jar just say something?" },
+      "3": { "explorer": "The jar said the third shelf." },
+      "4": { "ipi": "I kept these accounts for forty years. I am not leaving them in that state." },
+      "5": {
+        "ipi": "You want to get on? Then there's a noblewoman north of here. Painted vault, very pleased with herself. She never paid for the lapis."
+      },
+      "6": { "explorer": "Does she have a name?" },
+      "7": { "ipi": "Henut, daughter of Sennefer, of the western estates. Eleven deben of lapis, unpaid, third year." },
+      "8": { "ipi": "Of course she has a name. I wrote it down." },
+      "9": { "ipi": "It is the Horis that finish you. Hori the boatman, Hori the baker, and the other Hori." },
+      "10": { "explorer": "How many Horis?" },
+      "11": { "ipi": "In one street? Four. I had to put their fathers in as well." },
+      "12": { "explorer": "Why does that matter, if she is not here to hear it?" },
+      "13": { "ipi": "Because a thing written down is a thing that happened. Rub out a man's name and he never did." },
+      "14": { "ipi": "Tell her Ipi sent you. That should spoil her afternoon." },
+      "15": { "fez": "He'd have had cats, a man like this. Everyone did. Charming animals." },
+      "16": { "ipi": "I had four, and not one of them was charming. They were for the grain." },
+      "17": { "ipi": "Do you know what a rat costs you, over a season? I do. To the sack." },
+      "18": { "fez": "…Right." },
+      "19": { "explorer": "He wrote that down too." },
+      "20": { "ipi": "Of course I wrote it down." },
+      "21": { "fez": "I like him." },
+      "22": { "explorer": "You like that he's owed money." },
+      "23": { "fez": "I like that he wrote it down." }
+    }
   }
 }

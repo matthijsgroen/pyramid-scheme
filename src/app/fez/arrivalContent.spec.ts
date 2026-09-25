@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
-import { JOURNEYS_WITH_ARRIVAL, type Speaker } from "./arrivalConversation"
+import { GHOSTS, JOURNEYS_WITH_ARRIVAL, type Speaker } from "./arrivalConversation"
+import { PORTRAITS } from "./portraits"
 
 /**
  * The arrivals as authored, checked against the two rules the player would otherwise find.
@@ -10,10 +11,17 @@ import { JOURNEYS_WITH_ARRIVAL, type Speaker } from "./arrivalConversation"
  * 1, 2, 4 plays two lines and drops the rest — on a screen, in a language nobody is reading, silently.
  * And a journey listed without keys behind it renders the not-found string where its beat should be.
  */
-const scenes = (locale: string): Record<string, Record<string, Record<string, string>>> =>
-  JSON.parse(readFileSync(join("public/locales", locale, "fez.json"), "utf8")).arrival
+/** Every authored scene in a locale, keyed by its conversation id — the arrivals and the tombs alike. */
+const scenes = (locale: string): Record<string, Record<string, Record<string, string>>> => {
+  const doc = JSON.parse(readFileSync(join("public/locales", locale, "fez.json"), "utf8"))
+  return Object.fromEntries(
+    ["arrival", "tomb"].flatMap(group =>
+      Object.entries(doc[group] ?? {}).map(([id, lines]) => [`${group}.${id}`, lines])
+    )
+  ) as Record<string, Record<string, Record<string, string>>>
+}
 
-const SPEAKERS: Speaker[] = ["fez", "explorer"]
+const SPEAKERS: Speaker[] = ["fez", "explorer", ...GHOSTS]
 const LOCALES = ["en", "nl"]
 
 describe("every authored arrival", () => {
@@ -52,12 +60,27 @@ describe("every authored arrival", () => {
 })
 
 describe("the declared list and the written scenes", () => {
+  const arrivals = () =>
+    Object.keys(scenes("en"))
+      .filter(id => id.startsWith("arrival."))
+      .map(id => id.slice("arrival.".length))
+
   it("names a journey only when there are lines behind it", () => {
-    const written = Object.keys(scenes("en"))
+    const written = arrivals()
     expect([...JOURNEYS_WITH_ARRIVAL].filter(journey => !written.includes(journey))).toEqual([])
   })
 
   it("declares every journey that has been written, or its beat never plays", () => {
-    expect(Object.keys(scenes("en")).filter(journey => !JOURNEYS_WITH_ARRIVAL.has(journey))).toEqual([])
+    expect(arrivals().filter(journey => !JOURNEYS_WITH_ARRIVAL.has(journey))).toEqual([])
+  })
+})
+
+describe("everyone who speaks", () => {
+  it("has a portrait drawn for them, or the bubble opens beside nobody", () => {
+    const missing = new Set<string>()
+    for (const lines of Object.values(scenes("en")))
+      for (const line of Object.values(lines))
+        for (const speaker of Object.keys(line)) if (!PORTRAITS[speaker as Speaker]?.default) missing.add(speaker)
+    expect([...missing]).toEqual([])
   })
 })
