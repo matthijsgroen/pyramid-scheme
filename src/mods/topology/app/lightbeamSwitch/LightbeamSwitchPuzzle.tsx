@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import type { Direction as WayOut, RoomCell } from "@/game/siteTypes"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
+import type { MirrorAngle } from "@/mods/core/game/beam/physics"
 import { Glyph } from "@/mods/topology/app/beamGlyphs"
 import { ShrineBeamBoard } from "@/mods/topology/app/shrineBeam/ShrineBeamBoard"
 import type { LightbeamSwitchBoard } from "../../game/lightbeamSwitch/generateLightbeamSwitch"
@@ -21,8 +22,11 @@ type Props = {
   exits: RoomCell["exits"]
   /** The way out standing open as the player walks in, from the last time this board was solved. */
   openWayOut?: WayOut
-  /** The light has landed: this way out opens now, and the fork's others shut. */
-  onRoute: (way: WayOut) => void
+  /**
+   * Where the light stands: that way out opens now and the fork's others shut, and `undefined` — the
+   * light reaching no shrine at all — shuts every one of them.
+   */
+  onRoute: (way: WayOut | undefined) => void
   onSolved: () => void
   /** Omitted where there is nowhere to go back to — a story, a spec exercising only the routing. */
   onCancel?: () => void
@@ -68,27 +72,35 @@ const DOOR_PLACE: Record<WayOut, string> = {
 export const LightbeamSwitchPuzzle: FC<Props> = ({ board, exits, openWayOut, onRoute, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const [state, setState] = usePuzzleState(() => createLightbeamSwitchState(board))
-  // Whether a mirror has been turned since the player walked in. A board walked back into stands on the
-  // routing that opened the way out standing open beside it, and that is a switch to throw again rather
-  // than a board already answered — only a routing landed in THIS visit settles the room.
-  const [turnedHere, setTurnedHere] = useState(false)
+  // How the board lay when the player last turned a mirror — the measure of whether that turn has LANDED,
+  // which a flag set by the tap is not. The board's state is saved, so it arrives a render behind the tap
+  // that changed it, and in that render the board on screen is still the one the player walked in on: for
+  // a switch walked back into that is the lit board that opened the way out standing open beside it.
+  const [turnedFrom, setTurnedFrom] = useState<readonly MirrorAngle[]>()
+  // A turn made in THIS visit is on the board. A board walked back into stands on the routing that opened
+  // the way out beside it, and that is a switch to throw again rather than a board already answered.
+  const turned = turnedFrom !== undefined && state.angles.some((angle, mirror) => angle !== turnedFrom[mirror])
 
   const lit = litWayOut(board, state)
-  const settled = turnedHere && lit !== undefined
+  const settled = turned && lit !== undefined
 
-  // The doors move the moment the light lands, not when the banner is dismissed: a player may back out of
-  // a solved board, and the way they opened stays open.
+  // The doors are the state of this board, so they follow the light: the way it lands on opens the moment
+  // it lands rather than when the banner is dismissed — a player may back out of a solved board and the
+  // way they opened stays open — and a light sent nowhere leaves the fork as the assembler left it, every
+  // way out shut. Only once a turn has landed, because a board still being read out of the save is dark
+  // too, and that darkness would shut the way out the player walked in to find standing open.
   useEffect(() => {
     if (lit !== undefined) onRoute(lit)
-  }, [lit, onRoute])
+    else if (turned) onRoute(undefined)
+  }, [lit, turned, onRoute])
 
   const turn = useCallback(
     (mirror: number) => {
       if (settled) return // the door has swung; nothing may move under it
-      setTurnedHere(true)
+      setTurnedFrom(state.angles)
       setState(prev => turnSwitchMirror(prev, mirror))
     },
-    [settled, setState]
+    [settled, state.angles, setState]
   )
 
   // What the doors say right now: the way the light is on, or — with the board still dark — the way this

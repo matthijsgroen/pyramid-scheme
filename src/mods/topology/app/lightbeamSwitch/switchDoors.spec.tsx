@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
+import type { ReactElement } from "react"
 import { act, cleanup, render } from "@testing-library/react"
 import { getFamilyPlugin, resolveEncounter, type FamilyContext } from "@/app/families/familyRegistry"
 import { useJourneys } from "@/app/state/useJourneys"
@@ -9,6 +10,7 @@ import type { Direction as WayOut, FloorConfig, FloorGrid, RoomCell } from "@/ga
 import { clearGameData, writeGameData } from "@/support/useGameStorage"
 import { cellKey as beamCellKey, type MirrorAngle } from "@/mods/core/game/beam/physics"
 import { routesTo } from "../../game/shrineBeam/shrineBeam"
+import { litWayOut, turnSwitchMirror } from "../../game/lightbeamSwitch/lightbeamSwitchState"
 import type { LightbeamSwitchBoard } from "../../game/lightbeamSwitch/generateLightbeamSwitch"
 import { cellAddress, cellKey } from "@/app/SiteMap/cellIdentity"
 import { encodeEdge } from "@/app/SiteMap/edgeId"
@@ -420,6 +422,12 @@ const Visited = () => {
 const mirrorAngles = (container: HTMLElement): string[] =>
   mirrorCells(container).map(cell => cell.querySelector("g")?.getAttribute("style") ?? "")
 
+/** The "puzzle completed" banner, if the shell is showing one. */
+const solvedBanner = (): HTMLElement | undefined =>
+  Array.from(document.querySelectorAll<HTMLElement>("button")).find(candidate =>
+    candidate.textContent?.includes("ui.puzzleCompleted")
+  )
+
 /** The way out whose shrine the light is standing in, read off the glyph in that shrine's own cell. */
 const litShrine = (container: HTMLElement): WayOut | undefined =>
   [...wayOutIds().keys()].find(way => {
@@ -450,9 +458,7 @@ describe("the board of a switch walked back into", () => {
     await act(async () => {
       vi.advanceTimersByTime(1000)
     })
-    const banner = Array.from(document.querySelectorAll<HTMLElement>("button")).find(candidate =>
-      candidate.textContent?.includes("ui.puzzleCompleted")
-    )
+    const banner = solvedBanner()
     if (!banner) throw new Error("the board never reported itself solved")
     await act(async () => {
       banner.click()
@@ -499,5 +505,74 @@ describe("the board of a switch walked back into", () => {
 
     expect(litShrine(container)).toBe(ways[2])
     expect(doors(places)).toEqual(Object.fromEntries(ways.map(way => [way, way === ways[2] ? "open" : "shut"])))
+  })
+
+  /** A switch that stands open, walked back into and broken: the board lies lit, and the first turn takes
+   * the light off the shrine it was resting on. */
+  const breakTheBeam = async (
+    container: HTMLElement,
+    rerender: (ui: ReactElement) => void,
+    way: WayOut
+  ): Promise<MirrorAngle[]> => {
+    await walkIn()
+    await routeTo(container, way)
+    await leaveThroughTheBanner()
+    rerender(<Visited key="walked back in" />)
+    await settle()
+    await walkIn()
+    if (litShrine(container) !== way) throw new Error("the board was not standing lit to be broken")
+    const lying = angledFor(way)
+    const mirror = board().grid.mirrors.findIndex(
+      (_, index) => litWayOut(board(), turnSwitchMirror({ angles: [...lying] }, index)) === undefined
+    )
+    if (mirror === -1) throw new Error("no single turn takes the light off every shrine")
+    await act(async () => {
+      mirrorCells(container)[mirror].click()
+    })
+    await settle()
+    if (litShrine(container) !== undefined) throw new Error("the turn left the light on a shrine after all")
+    return turnSwitchMirror({ angles: lying }, mirror).angles
+  }
+
+  it("is not reported solved once a turn leaves the light on no shrine", async () => {
+    const { container, rerender } = render(<Visited />)
+    await settle()
+    await breakTheBeam(container, rerender, [...wayOutIds().keys()][0])
+
+    await act(async () => {
+      vi.advanceTimersByTime(2000)
+    })
+    expect(solvedBanner()).toBeUndefined()
+  })
+
+  it("keeps its mirrors movable once a turn leaves the light on no shrine", async () => {
+    const { container, rerender } = render(<Visited />)
+    await settle()
+    const ways = [...wayOutIds().keys()]
+    const dark = await breakTheBeam(container, rerender, ways[0])
+
+    // Nothing on an unfinished board is out of use: the shell makes the board inert the moment it counts
+    // one finished, and that is what a player meets before any tap of theirs is refused.
+    expect(container.querySelector("[inert]")).toBeNull()
+    await routeTo(container, ways[2], dark)
+    expect(litShrine(container)).toBe(ways[2])
+  })
+
+  it("leaves every way out shut when the player closes a board left dark", async () => {
+    const { container, rerender } = render(<Visited />)
+    await settle()
+    const places = doorPlaces()
+    const ways = [...wayOutIds().keys()]
+    await breakTheBeam(container, rerender, ways[0])
+
+    const close = Array.from(container.querySelectorAll<HTMLElement>("button")).find(candidate =>
+      candidate.textContent?.includes("ui.backToMap")
+    )
+    if (!close) throw new Error("the board carries no way out of itself")
+    await act(async () => {
+      close.click()
+    })
+    await settle()
+    expect(doors(places)).toEqual(Object.fromEntries(ways.map(way => [way, "shut"])))
   })
 })

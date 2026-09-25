@@ -46,13 +46,19 @@ const LightbeamSwitchComponent: FamilyPlugin<LightbeamSwitchBoard>["Component"] 
     return id !== undefined && open.has(id)
   })
 
-  // What this visit has already told the floor. The board is re-rendered on every tap and reports the way
-  // the light stands on each time; without this the same answer would be written again and again, and each
+  // What this visit has already told the floor. The board is re-rendered on every tap and reports where
+  // the light stands each time; without this the same answer would be written again and again, and each
   // write re-renders the screen that is asking.
   const routed = useRef<WayOut | undefined>(openWayOut)
   const onRoute = useCallback(
-    (way: WayOut) => {
+    (way: WayOut | undefined) => {
       if (routed.current === way) return
+      // The light reaching no shrine decides nothing, so the fork stands as the assembler left it.
+      if (way === undefined) {
+        routed.current = undefined
+        journeys.shutWaysOut(address)
+        return
+      }
       const id = wayOutId(exits, way)
       if (id === undefined) return
       routed.current = way

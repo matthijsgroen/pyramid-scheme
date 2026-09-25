@@ -121,6 +121,8 @@ export type JourneyAPI = {
   /** The switch at `switchAddress` now leaves `wayOutId` open, and every other way out it shut stays
    * shut. Replaces that switch's previous answer rather than joining it — see openWaysOut. */
   setOpenWayOut: (switchAddress: string, wayOutId: string) => void
+  /** The switch at `switchAddress` leaves nothing open: every way out it shut is shut again. */
+  shutWaysOut: (switchAddress: string) => void
   /** The ways out standing open on this level, as the ids the assembler shut them with. */
   getOpenWaysOut: (journeyId: string) => ReadonlySet<string>
   registerHiddenCorridors: (sectionAddresses: string[]) => void
@@ -487,6 +489,21 @@ export const createJourneysV3Api = ({
     )
   }
 
+  // A board whose light reaches no shrine has decided nothing, and a fork that has decided nothing stands
+  // as the assembler left it: every way out shut.
+  const shutWaysOut = (switchAddress: string) => {
+    if (!activeJourneyId) return
+    const at = `${atLevel(switchAddress)}=`
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const open = j.openWaysOut ?? []
+        if (!open.some(entry => entry.startsWith(at))) return j
+        return { ...j, openWaysOut: open.filter(entry => !entry.startsWith(at)) }
+      })
+    )
+  }
+
   const getOpenWaysOut = (journeyId: string): ReadonlySet<string> =>
     new Set(
       [...forThisLevel(journeyId, journeys.find(j => j.journeyId === journeyId)?.openWaysOut)]
@@ -608,6 +625,7 @@ export const createJourneysV3Api = ({
     markShopSlotPurchased,
     getPurchasedShopSlots,
     setOpenWayOut,
+    shutWaysOut,
     getOpenWaysOut,
     registerHiddenCorridors,
     markCorridorFound,

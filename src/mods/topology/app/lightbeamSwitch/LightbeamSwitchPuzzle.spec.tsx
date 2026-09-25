@@ -155,9 +155,10 @@ describe("routing the light", () => {
         renderRoom(shape, undefined, onRoute)
         routeTowards(fork.board, index)
         expect(
-          onRoute.mock.calls.map(call => call[0]),
+          onRoute.mock.calls.map(call => call[0]).filter(way => way !== undefined),
           `${shape} ${shrine.canonicalDir}`
         ).toEqual([shrine.canonicalDir])
+        expect(onRoute.mock.calls.at(-1)?.[0], `${shape} ${shrine.canonicalDir}`).toBe(shrine.canonicalDir)
         expect(screen.getByLabelText(DOOR_OPEN(shrine.canonicalDir))).toBeDefined()
         for (const way of fork.ways.filter(other => other !== shrine.canonicalDir))
           expect(screen.getByLabelText(DOOR_SHUT(way))).toBeDefined()
@@ -168,13 +169,14 @@ describe("routing the light", () => {
     expect(routed).toBe(2 + 2 + 3)
   })
 
-  it("opens nothing while the light still reaches no shrine", () => {
-    const { onRoute } = renderRoom("adjacent")
+  it("shuts every way out while the light still reaches no shrine", () => {
+    const { fork, onRoute } = renderRoom("adjacent")
     const cells = mirrorCells()
     expect(cells.length).toBeGreaterThan(1)
     // The board opens in a setting no single turn can light (generateLightbeamSwitch's honest opening),
     // so one tap anywhere is a board that still decides nothing.
     act(() => cells[0].click())
-    expect(onRoute).not.toHaveBeenCalled()
+    expect(onRoute.mock.calls.map(call => call[0])).toEqual([undefined])
+    for (const way of fork.ways) expect(screen.getByLabelText(DOOR_SHUT(way))).toBeDefined()
   })
 })
