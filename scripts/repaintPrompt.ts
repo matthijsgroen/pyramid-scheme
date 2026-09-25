@@ -34,6 +34,10 @@ type Entry = {
   /** Where the finished file goes, and what turns the download into it. */
   out: string
   importedBy: string
+  /** Already on disk. Off the owed list, still fetchable by key — a landed file can need rolling again. */
+  drawn?: boolean
+  /** The generator return this was imported from, kept because it cannot be generated again. */
+  master?: string
 }
 
 /** Every `### n. \`tier/kind\` — title` block, with its attachment list and its first fenced block. */
@@ -76,11 +80,17 @@ const quoted = (block: string): string =>
  *
  * **Attachments are the anchor plus the last file in the set that exists**, which is the loop the document
  * asks for: one at a time, and the accepted file becomes the reference for the next.
+ *
+ * An entry whose file exists is marked `drawn` rather than dropped: it leaves the owed list, and
+ * `yarn repaint <key>` still hands it over. The explorer's three came back off-palette and had to be rolled
+ * again, which is not a state a queue should have no way to express.
  */
 const parseCharacters = (md: string): Entry[] => {
   const sections = md.split(/^## /m)
   const section = (n: string) => sections.find(s => s.startsWith(n)) ?? ""
   const preamble = quoted(section("0."))
+  // The measured fills, so "cream cargo trousers" stops being the generator's to interpret.
+  const palette = quoted(section("1.").split(/^### /m)[0])
   const ghostPreamble = quoted(section("2.").split(/^### /m)[0]).replace(/^\*\*Ghost preamble\*\*[^:]*:\s*/, "")
   const groups = [
     { group: "portrait", body: section("1.") },
@@ -104,22 +114,24 @@ const parseCharacters = (md: string): Entry[] => {
         prompt: quoted(block)
           .replace(/\[preamble \+ ghost preamble\]\s*/, `${preamble}\n\n${ghostPreamble}\n\n`)
           .replace(/\[preamble\]\s*/, `${preamble}\n\n`)
+          .replace(/\[palette\]\s*/, palette ? `${palette}\n\n` : "")
           .replace(/\*\*/g, "")
           .trim(),
         out,
-        importedBy: `yarn import-portrait <file> --name=${file}`,
+        master: join("art/masters/characters", `${file}.jpeg`),
+        importedBy: `yarn import-portrait art/masters/characters/${file}.jpeg --name=${file}`,
       })
     }
   let reference: string | undefined
-  const owed: Entry[] = []
+  const withReferences: Entry[] = []
   for (const entry of drawn) {
-    if (existsSync(entry.out)) {
-      reference = entry.out
-      continue
-    }
-    owed.push({ ...entry, attachments: [ANCHOR, ...(reference ? [reference] : [])] })
+    const landed = existsSync(entry.out)
+    withReferences.push({ ...entry, attachments: [ANCHOR, ...(reference ? [reference] : [])], drawn: landed })
+    // Hand over the MASTER where there is one: the sprite is 250px wide, and a reference that small is
+    // most of the detail gone before the generator sees it (art/README.md).
+    if (landed) reference = entry.master && existsSync(entry.master) ? entry.master : entry.out
   }
-  return owed
+  return withReferences
 }
 
 const entries = [...parse(readFileSync(QUEUE, "utf8")), ...parseCharacters(readFileSync(CHARACTERS, "utf8"))]
@@ -135,13 +147,14 @@ if (!wanted) {
   // for free, until the patron entries arrived: those are one section covering five ranks, because what
   // orders them is rooms rather than whose tomb they are. Working a rank at a time is how the ranks
   // actually get finished, and it is also how the material reference stays the same between pastes.
-  console.log(`${entries.length} prompts owed — \`yarn repaint <key>\` for one of:\n`)
+  const owed = entries.filter(e => !e.drawn)
+  console.log(`${owed.length} prompts owed — \`yarn repaint <key>\` for one of:\n`)
   const rank = (key: string) => {
     const at = TIERS.indexOf(key.split("/")[0])
     return at < 0 ? TIERS.length : at
   }
   let last = ""
-  for (const e of [...entries].sort((a, b) => rank(a.key) - rank(b.key))) {
+  for (const e of [...owed].sort((a, b) => rank(a.key) - rank(b.key))) {
     const tier = e.key.split("/")[0]
     if (tier !== last) console.log(`${last ? "\n" : ""}  ${tier}`)
     last = tier
@@ -174,7 +187,7 @@ if (!check) {
   execFileSync("pbcopy", { input: entry.prompt })
 }
 console.log(
-  `${entry.key} — ${
+  `${entry.key}${entry.drawn ? " (already drawn — this is a re-roll)" : ""} — ${
     check
       ? `${entry.prompt.split("\n").length} lines`
       : `prompt copied to the clipboard (${entry.prompt.split("\n").length} lines)`

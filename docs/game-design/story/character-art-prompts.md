@@ -36,8 +36,11 @@ can give you — §3 cuts it out on the way in.
 
 ## 1. The explorer — conversation portraits
 
-The large artwork is full-body at high resolution; these are the 250px companions to `fez-250.png`, drawn
-to sit at the same scale beside it. **Match the existing explorer exactly**: olive-green utility vest with
+The neutral and grinning poses ARE the original character artwork, imported — `art/masters/characters/`
+holds both, and `yarn import-portrait` is the whole of the work. Only what the original does not have needs
+drawing, which today is the pointing pose and any later one.
+
+**Match the existing explorer exactly**: olive-green utility vest with
 four flap pockets, cream rolled-sleeve shirt, red neckerchief, wide brown felt bush hat, cream cargo
 trousers, laced tan boots, coiled rope and small brown satchel on a shoulder strap, brass compass.
 
@@ -46,22 +49,35 @@ add stubble, eyelashes, jewellery, makeup or a waist. A player of any descriptio
 themselves standing next to this person — the explorer is a character anybody is glad to be beside, not a
 portrait of one kind of person.
 
+**The palette is named, not described.** Measured off the original artwork, which is also what the walking
+sprites on the site map were drawn from — so these are the values already in the game, and a portrait that
+misses them is a second explorer. Three rolls attached that artwork as a reference and repainted the fills
+anyway: skin came back \`#f0b890\` against its \`#d89060\`, a fifth brighter and a third less saturated, and
+the cream trousers came back tan. A generator copies a number and interprets a word. \`[palette]\` in the
+prompts below is substituted with this:
+
+> Use these exact flat colours: skin #d89060, shaded skin #c07850. Shirt and cargo trousers both cream
+> #f0e0b8. Utility vest olive #807850. Bush hat brown #685038. Neckerchief red #c83818, its shadow #a82020.
+> Boots khaki #988868. Satchel and belt leather #a88058. Hair dark brown #503028. Do not lighten,
+> desaturate or reinterpret any of these — they are the colours of the character as he already appears
+> elsewhere in the game.
+
 ### `explorer-250.png` — neutral, talking
 
-> [preamble] A young explorer in a wide brown bush hat and olive utility vest, standing relaxed and facing
+> [preamble] [palette] A young explorer in a wide brown bush hat and olive utility vest, standing relaxed and facing
 > the viewer, one hand resting at their side and the other holding a folded map. Calm, dry, pleasant
 > expression — mouth closed or barely smiling, eyebrows level. Not grinning. Reference the supplied
 > explorer artwork for every item of clothing and equipment.
 
 ### `grin-explorer-250.png` — the solve
 
-> [preamble] The same explorer, same clothing and equipment, now wearing dark sunglasses and grinning
+> [preamble] [palette] The same explorer, same clothing and equipment, now wearing dark sunglasses and grinning
 > broadly, head tilted very slightly. One thumb hooked in a vest pocket. Pleased rather than smug.
 > Reference the supplied explorer artwork.
 
 ### `point-explorer-250.png` — drawing attention
 
-> [preamble] The same explorer, same clothing and equipment, pointing upward and slightly off-camera with
+> [preamble] [palette] The same explorer, same clothing and equipment, pointing upward and slightly off-camera with
 > one index finger, looking where they point. Mouth open as if mid-sentence. Reference the supplied
 > explorer artwork.
 

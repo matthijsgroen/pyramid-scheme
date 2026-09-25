@@ -11,6 +11,7 @@ copies the game loads.
 art/masters/props/<tier>/<name>.webp   a prop's painted return, ~1334x2000
 art/masters/surfaces/<tier>-<slot>.webp  floor 2000x2000, wall-face 2000x240, threshold ~2000x900
 art/masters/tombWall/<tier>.webp       the tableau's whole-wall panel, 2000x2000
+art/masters/characters/<name>.jpeg     a conversation portrait's return, ~1686x2528
 art/rebuild.sh                 re-imports from the masters, with the flags each tile was imported with
 ```
 
