@@ -30,6 +30,10 @@ export type Mood = {
   growth?: { floor: number; wall: number; chamber: number; kind: ConditionKind }
   /** One colour laid over the whole map. The hour, and nothing else. */
   tint?: { fill: string; opacity: number }
+  /** How likely a chamber is to have a hole in its roof, per chamber — a shaft of daylight in it, and
+   * the room lit whether or not anyone is standing there (`MapBeams`). Placed at render time from the
+   * site's id, so no floor spec carries it. */
+  beam?: number
   /** Things carried on the air: dust, chaff, soot, sand, sparks — or fog, which is the same thing drawn
    * huge and slow. `seconds` is one crossing; `size` is the radius the field is written around, in screen
    * pixels — each mote takes its own fraction of it and most take less than one (MapMood).
@@ -53,17 +57,22 @@ export type Mood = {
 
 // The ranks, from the doc's mood table: a merchant's cellar is dusty and bright, a priest's wing is cold
 // and hazy with incense, the gods' vault is starlit. Scarabs belong to the lower ranks — vermin get into
-// a cellar and a noble's wing, and the deeper tombs are too sealed and too cold for them.
+// a cellar and a noble's wing, and the deeper tombs are too sealed and too cold for them. Daylight gets
+// in the same way and runs out the same way: a cellar is a room under a street and the gods' vault is
+// under the whole mountain, so a roof that has given way is common at the top of the world and rare at
+// the bottom of it.
 const RANK_MOOD: Record<Difficulty, Mood> = {
   starter: {
     tint: { fill: "#c8b48a", opacity: 0.06 },
     drift: { count: 34, size: 0.9, fill: "#e8dcc0", opacity: 0.6, seconds: 8 },
     life: 3,
+    beam: 0.34,
   },
   junior: {
     tint: { fill: "#c08840", opacity: 0.07 },
     drift: { count: 30, size: 0.8, fill: "#2a2018", opacity: 0.55, seconds: 10 },
     life: 2,
+    beam: 0.26,
   },
   expert: {
     // DUST, like every other rank, and cold and slow because the air down here is sealed. It was four
@@ -72,14 +81,17 @@ const RANK_MOOD: Record<Difficulty, Mood> = {
     // what the other four are and what this one is now, slower than any of them.
     tint: { fill: "#6a86a8", opacity: 0.09 },
     drift: { count: 30, size: 0.8, fill: "#93a8bd", opacity: 0.5, seconds: 18 },
+    beam: 0.16,
   },
   master: {
     tint: { fill: "#0b0a12", opacity: 0.12 },
     drift: { count: 28, size: 0.7, fill: "#ffdf9a", opacity: 0.65, seconds: 12 },
+    beam: 0.1,
   },
   wizard: {
     tint: { fill: "#26407a", opacity: 0.1 },
     drift: { count: 32, size: 1, fill: "#bfe4ff", opacity: 0.7, seconds: 14 },
+    beam: 0.06,
   },
 }
 

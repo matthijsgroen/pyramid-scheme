@@ -2,6 +2,7 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import { difficulties } from "@/data/difficultyLevels"
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
+import { hashUnit } from "@/support/hashString"
 import { DIR_MOVES, OPPOSITE_DIR, isCorridorCorner } from "./corridorRuns"
 import { nightAlpha } from "./tileMaterials"
 import type { RoomClaims } from "./roomClaims"
@@ -30,6 +31,72 @@ export const STANDING_RELIEF: Record<Difficulty, string> = Object.fromEntries(
 ) as Record<Difficulty, string>
 export const LIT_STRENGTH = 0.5
 export const LIT_STANDING_STRENGTH = 0.25
+
+/**
+ * How hard a shaft of daylight lifts the room it falls into.
+ *
+ * SOLVED AGAINST THE TORCH, not authored: a beamed room has to land on the top end a torch-lit room
+ * lands on, or the map gains a second brightness and stops having one. Composited off each rank's floor
+ * art through the operators the renderer uses — the night's wash, `color-dodge` at this alpha, the
+ * seating wash, the standing pass — and read as L*, the beamed floor lands at 51.7–54.1 against an unlit
+ * 23.7–23.9, which is where the torch already puts it to within a tenth.
+ *
+ * ONE NUMBER, NOT ONE PER RANK, because the solve came back the same on all five: 0.510, 0.512, 0.513,
+ * 0.510, 0.510. The night is already solved to land every rank's floor at L* 24, so a light asked for the
+ * same top end everywhere needs the same strength everywhere — and a rank that wanted its own would be a
+ * rank out of step with the others (docs/instructions/map-rendering.md).
+ *
+ * TWO LIGHTS IN ONE ROOM DO NOT STACK. `color-dodge` divides, so a beam and a torch drawn over each
+ * other multiply their scales: measured, that takes the starter floor to L* 79.6 against the 54.1 either
+ * light reaches alone — half again as bright as anywhere else on the map. So the beam's light hands over
+ * to the lamp instead of adding to it (`MapBeams`), and because the two are solved to the same top end
+ * the handover costs the room nothing; mid-crossfade, with both at half, it measures 56.8.
+ */
+export const BEAM_STRENGTH = 0.51
+
+/** How much likelier a chamber with a statue in it is to have the hole in its roof.
+ *
+ * A shaft that lands on a statue is the picture the feature exists for, and chance alone puts most of
+ * them on bare floor. DOUBLE AND NO MORE: at the top rank the chance is already a third, and three times
+ * it is over one — every statue on a merchant's floor under its own shaft, which is not a coincidence any
+ * more but a rule the player would read off the map. */
+export const STATUE_ODDS = 2
+
+/**
+ * Which cell of which chamber a shaft of daylight comes down in — one per room at most, chambers only.
+ *
+ * The candidates are the owners in `claims.claimedBy`: a room with a footprint, which is what makes it a
+ * place rather than a passage. A corridor never gets one — a shaft in a one-cell passage is something the
+ * player walks through.
+ *
+ * TWO DRAWS, not one. The first decides whether the roof gave way; the second picks which cell of the
+ * footprint it gave way over, so a wide chamber does not always light from its owner's corner.
+ *
+ * A fogged room draws none, so a beam lights a room already discovered and reveals nothing the fog holds
+ * back. The draw is indexed by the room's place in the floor's OWN list of chambers, which exploration
+ * never changes — indexing a list that grows moves everything in it (`MapMood`).
+ */
+export const beamShafts = (grid: FloorGrid, claims: RoomClaims, chance: number, siteId: string): string[] => {
+  if (chance <= 0) return []
+  const footprints = new Map<string, string[]>()
+  for (const [cell, owner] of claims.claimedBy) {
+    const footprint = footprints.get(owner) ?? [owner]
+    footprint.push(cell)
+    footprints.set(owner, footprint)
+  }
+  const shafts: string[] = []
+  const owners = [...footprints.keys()].sort()
+  owners.forEach((owner, index) => {
+    const footprint = footprints.get(owner) ?? []
+    const odds = footprint.some(cell => claims.decorationAt.get(cell) === "statue") ? STATUE_ODDS : 1
+    if (hashUnit(siteId, "beam", index) >= chance * odds) return
+    const [row, col] = owner.split(",").map(Number)
+    const room = cellAt(grid, row, col)
+    if (room.type === "empty" || room.state === "fogged") return
+    shafts.push(footprint[Math.floor(hashUnit(siteId, "beam-cell", index) * footprint.length)])
+  })
+  return shafts
+}
 
 /**
  * The PLACE the explorer is standing in — a whole chamber, or the stretch of corridor they are on.

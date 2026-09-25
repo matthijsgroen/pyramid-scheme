@@ -38,7 +38,7 @@ const MOTE_CLASS = "map-mote absolute rounded-full will-change-transform animate
  * of the field's placement comes from a handful of origins — at four the screen went visibly patchy. Two
  * specks a stone's throw apart is a pairing no eye picks out of a drifting field, and it still halves the
  * nodes. `drift.count` stays a number of SPECKS, because that is the number worth authoring. */
-const SPECKS = 2
+export const SPECKS = 2
 const SCARAB_CLASS = "map-scarab animate-map-scurry motion-reduce:animate-none"
 
 const rand = hashUnit

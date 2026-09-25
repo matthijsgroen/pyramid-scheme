@@ -1190,6 +1190,60 @@ describe("the light falls in the same two passes the shade does", () => {
   })
 })
 
+describe("a shaft of daylight falls into a room", () => {
+  // The default floor's chambers are under a roof that has given way: the rank's own chance is 0.34 and
+  // this floor's first two draws come in under it. Placement itself is `lighting.spec.ts`; what these
+  // freeze is what the map does with it.
+  const beamedRoom = () =>
+    makeGrid([
+      [empty, corridor("completed", false), empty],
+      [empty, chamber("completed"), empty],
+    ])
+
+  it("lights the room with nobody on the floor, so its statue reads from the doorway", () => {
+    const { container } = render(<SiteMapView grid={beamedRoom()} revealAllCells />)
+
+    expect(container.querySelector("[data-beam='lit']")).toBeTruthy()
+    expect(container.querySelector("[data-torch]")).toBeNull()
+  })
+
+  it("lights the chamber whole, not the one cell the shaft comes down in", () => {
+    // A square of light in the middle of a room reads as a coloured-in tile; what a room is lit by is a
+    // light that reaches its walls. `litPlaceCells` given any cell of a chamber returns the footprint.
+    const { container } = render(<SiteMapView grid={beamedRoom()} revealAllCells />)
+    const clip = clipOf(container.querySelector<HTMLElement>("[data-beam='lit']"))
+    const cells = [...clip.matchAll(new RegExp(`h${CELL}v${CELL}`, "g"))]
+
+    expect(clip).toContain(`M${cellLeft(1)} ${cellTop(1)}`)
+    expect(cells.length).toBeGreaterThan(1)
+  })
+
+  it("puts none in a floor of passages, which a player walks through rather than stands in", () => {
+    const corridors = makeGrid([[corridor("completed", false), corridor("completed", false)]])
+    const { container } = render(<SiteMapView grid={corridors} revealAllCells />)
+
+    expect(container.querySelectorAll("[data-beam]")).toHaveLength(0)
+  })
+
+  it("hands the room over to the lamp when the explorer walks in, instead of adding to it", () => {
+    // Both lights are solved to the same top end, and `color-dodge` multiplies: drawn over each other
+    // they take the floor half again as bright as anywhere else on the map. So the shaft's own light
+    // fades out on the same crossfade the lamp fades in on, and the room never changes value.
+    const { container } = render(<SiteMapView grid={beamedRoom()} explorerPos={[1, 1]} revealAllCells />)
+
+    expect(Number(container.querySelector<HTMLElement>("[data-beam='lit']")!.style.opacity)).toBe(0)
+    expect(Number(container.querySelector<HTMLElement>("[data-torch='lit']")!.style.opacity)).toBeGreaterThan(0)
+  })
+
+  it("stands the cone in front of what is standing in the room", () => {
+    const { container } = render(<SiteMapView grid={beamedRoom()} revealAllCells />)
+    const depthOf = (el: Element) => Array.from(container.querySelectorAll("*")).indexOf(el)
+    const standing = container.querySelector("[data-node-sprite]")!
+
+    expect(depthOf(container.querySelector("[data-beam-shaft]")!)).toBeGreaterThan(depthOf(standing))
+  })
+})
+
 describe("the explorer stands in the room", () => {
   const spriteIn = (container: HTMLElement) => container.querySelector<HTMLImageElement>("[data-explorer] img")
 
