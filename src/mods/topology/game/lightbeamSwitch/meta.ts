@@ -1,4 +1,10 @@
-import type { FamilyMeta } from "@/game/families/familyMeta"
+import { seedable, type FamilyMeta } from "@/game/families/familyMeta"
+import {
+  DEFAULT_SWITCH_TIER,
+  generateLightbeamSwitch,
+  gradeLightbeamSwitch,
+  resolveLightbeamSwitchOptions,
+} from "./generateLightbeamSwitch"
 
 export const LIGHTBEAM_SWITCH_META: FamilyMeta = {
   id: "lightbeamSwitch",
@@ -8,7 +14,7 @@ export const LIGHTBEAM_SWITCH_META: FamilyMeta = {
   // open. It is placed only where a floor authors it by id, in the junction its `switches` reserved,
   // the same way crocodile stays out of the pool with its own "capstone" tag.
   tags: ["lightbeamSwitch"],
-  minTier: "junior",
+  minTier: DEFAULT_SWITCH_TIER,
   icon: "🪞",
   color: "amber",
   // The fork it stands in is not a loot slot: what the room hands over is the floor's own shape.
@@ -24,4 +30,12 @@ export const LIGHTBEAM_SWITCH_META: FamilyMeta = {
   // And the mirrors are not a solved question but the position of the switch itself: the way out standing
   // open is the one they route the light to, so the room reopens on the configuration that opened it.
   stateIsTheMechanism: true,
+  // Boards come from the offline list, one bucket per (tier, fork shape). A fork has three shapes up to
+  // rotation and a board is turned to face the real fork when it opens, so the list stays finite however
+  // many junctions the carve hands over and whichever way they point.
+  seedable: seedable({
+    resolveOptions: resolveLightbeamSwitchOptions,
+    generate: (seed, { difficulty, shape }, attempts) => generateLightbeamSwitch(seed, difficulty, shape, attempts),
+    grade: gradeLightbeamSwitch,
+  }),
 }

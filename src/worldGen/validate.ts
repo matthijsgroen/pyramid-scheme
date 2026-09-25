@@ -1,4 +1,9 @@
 import type { SiteConfig, TreasureReward, MapPieceReward } from "./types"
+import type { Difficulty } from "@/data/difficultyLevels"
+import type { FamilyMeta } from "@/game/families/familyMeta"
+import { FORK_SHAPES, type ForkShape } from "@/game/forkShape"
+import { configHash } from "@/game/seeds/configHash"
+import { switchFamilies } from "@/game/seeds/enumerateConfigs"
 import type { FloorGrid as AssembledFloor } from "@/game/siteTypes"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
@@ -152,4 +157,58 @@ export const findEmptyChests = (
     })
   }
   return empties
+}
+
+/**
+ * A switch a site requiring baked boards authors at a shape and tier no seed list covers.
+ *
+ * The fallback that would otherwise cover it — searching on the player's device — is exactly what
+ * pre-seeding exists to stop, and it covers silently. So a site whose capabilities say its boards are
+ * baked (capabilities.ts's requireBakedBoards) makes this an authoring error with a floor named on it,
+ * and the playtest journey, which stands the mechanic at tiers nobody has baked yet, is excused by the
+ * same seam rather than by its id.
+ *
+ * All three shapes are owed, because which one a junction gets is the carve's choice rather than the
+ * author's.
+ */
+export type UnbakedSwitchBoard = {
+  journeyId: string
+  levelNr: number
+  floorIndex: number
+  familyId: string
+  difficulty: Difficulty
+  forkShape: ForkShape
+}
+
+export const findUnbakedSwitchBoards = (
+  configs: Record<string, SiteConfig[]>,
+  families: FamilyMeta[],
+  seeds: Record<string, number[]>
+): UnbakedSwitchBoard[] => {
+  const byId = new Map(families.map(family => [family.id, family]))
+  const missing: UnbakedSwitchBoard[] = []
+  for (const [journeyId, sites] of Object.entries(configs)) {
+    if (capabilitiesFor(journeyId)?.requireBakedBoards === false) continue
+    sites.forEach((site, siteIdx) =>
+      site.forEach((floor, floorIndex) => {
+        for (const familyId of switchFamilies(floor).families) {
+          const seedable = byId.get(familyId)?.seedable
+          if (!seedable) continue
+          for (const forkShape of FORK_SHAPES) {
+            const hash = configHash(seedable.resolveOptions({ difficulty: floor.difficulty, forkShape }))
+            if (seeds[hash]?.length) continue
+            missing.push({
+              journeyId,
+              levelNr: siteIdx + 1,
+              floorIndex,
+              familyId,
+              difficulty: floor.difficulty,
+              forkShape,
+            })
+          }
+        }
+      })
+    )
+  }
+  return missing
 }

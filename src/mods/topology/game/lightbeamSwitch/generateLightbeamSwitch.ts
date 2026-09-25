@@ -1,4 +1,5 @@
 import type { Difficulty } from "@/data/difficultyLevels"
+import type { FamilyGenerationCtx, Grade } from "@/game/families/familyMeta"
 import type { ForkShape } from "@/game/forkShape"
 import { mulberry32, shuffle } from "@/game/random"
 import type { Direction as WayOut } from "@/game/siteTypes"
@@ -280,19 +281,53 @@ const attemptBoard = (
  * Builds the board a switch fork stands on. Deterministic in `(seed, difficulty, shape)`, and throws rather
  * than ship a board that owes a way out more than one route — an ambiguous shrine would open a way the
  * player did not choose.
+ *
+ * `attempts` is how many drafts one seed may spend. A listed seed was proven to land on its first, so
+ * play time asks for one and pays no search; a seed nothing proved gets the full budget.
  */
 export const generateLightbeamSwitch = (
   seed: number,
   difficulty: Difficulty,
   shape: ForkShape,
+  attempts: number = MAX_ATTEMPTS,
   /** Diagnostics: the gate that threw a draft away, once per rejected attempt. */
   reject?: (gate: LightbeamSwitchGate) => void
 ): LightbeamSwitchBoard => {
   const ways = CANONICAL_WAYS_OUT[shape]
   const config = SWITCH_CONFIG[ways.length > 2 ? "three" : "two"][difficulty]
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+  for (let attempt = 0; attempt < attempts; attempt++) {
     const board = attemptBoard(config, ways, SUN_FACINGS[shape], mulberry32(seed * 7919 + attempt), reject)
     if (board) return board
   }
   throw new Error(`generateLightbeamSwitch: no board (seed=${seed}, difficulty=${difficulty}, shape=${shape})`)
 }
+
+/** The tier a board is built at when the room names none — the family's own debut, which meta.ts reads
+ * back as `minTier`, since a switch is never authored below it. */
+export const DEFAULT_SWITCH_TIER: Difficulty = "junior"
+
+/** The shape a board is built for where there is no fork to read one off: the playtesting bench, a story. */
+export const DEFAULT_FORK_SHAPE: ForkShape = "adjacent"
+
+/**
+ * The dials one switch board is built from, and so the key its seed list is filed under.
+ *
+ * The fork's SHAPE and nothing about its bearings: a board is generated canonical and turned at open time
+ * (rotateBoard.ts), so a bucket per compass layout would hold four copies of one board and put four times
+ * the offline search behind them for nothing.
+ */
+export const resolveLightbeamSwitchOptions = ({ difficulty, forkShape }: FamilyGenerationCtx) => ({
+  difficulty: difficulty ?? DEFAULT_SWITCH_TIER,
+  shape: forkShape ?? DEFAULT_FORK_SHAPE,
+})
+
+/**
+ * What an admitted board asks of the player: one angle per mirror.
+ *
+ * The generator keeps no near-miss draft — a board that owes a way out two routes, or that opens already
+ * lit, is thrown away — so its acceptance gate is the throw above, and re-running the routing sweep here
+ * would be a second copy of that gate rather than a check on it. What this states instead is the
+ * postcondition the throw cannot: a board owes its shape one shrine per way out.
+ */
+export const gradeLightbeamSwitch = (board: LightbeamSwitchBoard, { shape }: { shape: ForkShape }): Grade | null =>
+  board.shrines.length === CANONICAL_WAYS_OUT[shape].length ? { steps: board.grid.mirrors.length } : null

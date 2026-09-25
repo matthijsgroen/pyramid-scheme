@@ -1,11 +1,11 @@
 import { beforeAll, describe, expect, it } from "vitest"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { resolveEncounter } from "@/app/families/familyRegistry"
-import { classifyForkShape, type ForkShape } from "@/game/forkShape"
+import { classifyForkShape, FORK_SHAPES, type ForkShape } from "@/game/forkShape"
 import { assembleFloor } from "@/game/siteAssembler"
 import type { Direction as WayOut, FloorConfig, RoomCell } from "@/game/siteTypes"
 import type { CellRef } from "@/mods/core/game/beam/physics"
-import { generateLightbeamSwitch, type LightbeamSwitchBoard } from "../../game/lightbeamSwitch/generateLightbeamSwitch"
+import type { LightbeamSwitchBoard } from "../../game/lightbeamSwitch/generateLightbeamSwitch"
 import { QUARTER_TURNS, rotateBoard } from "../../game/lightbeamSwitch/rotateBoard"
 import { buildSwitchBoard } from "./plugin"
 
@@ -61,9 +61,11 @@ beforeAll(() => {
       carved.set(layoutKey(ways), { ways, exits: fork.exits, family: fork.family })
     }
   }
-  for (const shape of ["adjacent", "opposite", "three"] as ForkShape[])
+  // The same call the rooms below make, with no fork to face — so this is the shape's own board before
+  // any turn, whether it came off the baked list or was searched for.
+  for (const shape of FORK_SHAPES)
     for (const difficulty of TIERS)
-      canonical.set(`${shape}:${difficulty}`, generateLightbeamSwitch(SEED, difficulty, shape))
+      canonical.set(`${shape}:${difficulty}`, buildSwitchBoard(SEED, { difficulty, forkShape: shape }))
   for (const [layout, fork] of carved)
     for (const difficulty of TIERS)
       built.set(

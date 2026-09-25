@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "@/game/siteAssembler"
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
+import { classifyForkShape, type ForkShape } from "@/game/forkShape"
 import { configHash } from "@/game/seeds/configHash"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { hashString } from "@/support/hashString"
@@ -303,12 +304,16 @@ describe("no two rooms in the world serve the same board", () => {
   const boardOf = (
     familyId: string,
     difficulty: Difficulty | undefined,
+    forkShape: ForkShape | undefined,
     boardIndex: number | undefined,
     seed: number
   ): { bucket: string; board: string; listed: boolean } | null => {
     const seedable = getFamilyPlugin(familyId)?.meta.seedable
     if (!seedable) return null
-    const bucket = configHash(seedable.resolveOptions({ difficulty }))
+    // The same ctx useEncounter.ts hands the family, so a room whose bucket key reads more than the tier
+    // — a switch, keyed on its fork's shape too — is looked up in the list it really draws from rather
+    // than in one no room has.
+    const bucket = configHash(seedable.resolveOptions({ difficulty, forkShape }))
     const list = puzzleSeeds[bucket]
     if (!list?.length) return { bucket, board: `unlisted:${seed}`, listed: false }
     return { bucket, board: String(list[(boardIndex ?? seed) % list.length]), listed: true }
@@ -327,7 +332,8 @@ describe("no two rooms in the world serve the same board", () => {
           if (cell.type !== "room" || !cell.family) return []
           const difficulty = cell.difficulty ?? floor.config.difficulty
           const seed = hashString(floor.journeyId + encodeEdge(floor.floorIndex, r, c))
-          const board = boardOf(cell.family, difficulty, cell.boardIndex, seed)
+          const forkShape = classifyForkShape((cell.exits ?? []).filter(exit => exit.gateKeyId).map(exit => exit.dir))
+          const board = boardOf(cell.family, difficulty, forkShape, cell.boardIndex, seed)
           return board ? [{ ...board, dealt: cell.boardIndex !== undefined, label: ` / at ,` }] : []
         })
       )

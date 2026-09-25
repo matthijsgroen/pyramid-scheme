@@ -5,7 +5,8 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import type { ForkShape } from "@/game/forkShape"
 import type { Direction as WayOut, RoomCell } from "@/game/siteTypes"
 import { isModEnabled } from "@/mods/registeredMods"
-import { generateLightbeamSwitch, type LightbeamSwitchBoard } from "../../game/lightbeamSwitch/generateLightbeamSwitch"
+import { generatePuzzle } from "@/game/seeds/generatePuzzle"
+import { DEFAULT_FORK_SHAPE, type LightbeamSwitchBoard } from "../../game/lightbeamSwitch/generateLightbeamSwitch"
 import { LIGHTBEAM_SWITCH_META } from "../../game/lightbeamSwitch/meta"
 import { quarterTurnsToFace, rotateBoard } from "../../game/lightbeamSwitch/rotateBoard"
 import { shutWaysOut, wayOutId } from "../../game/lightbeamSwitch/waysOut"
@@ -19,15 +20,22 @@ import { LightbeamSwitchPuzzle } from "./LightbeamSwitchPuzzle"
  * the four compass layouts of one shape are one board turned four ways rather than four boards — which is
  * what lets a seed list hold one entry per shape instead of one per bearing.
  *
- * The room is only ever authored into a junction the assembler shut, so the fallbacks below are for a board
- * built outside one — the playtesting bench, a story — where there is no fork and nothing to face.
+ * `seed` reaches `generatePuzzle` as the index into that shape and tier's list, and as the seed to search
+ * from where no list covers them — the dev journey's expert, master and wizard switches, the playtesting
+ * bench, a story.
+ *
+ * The room is only ever authored into a junction the assembler shut, so the fallback shape below is for a
+ * board built outside one, where there is no fork and nothing to face.
  */
 export const buildSwitchBoard = (
   seed: number,
   ctx: { difficulty?: Difficulty; forkShape?: ForkShape; exits?: RoomCell["exits"] }
 ): LightbeamSwitchBoard => {
-  const shape = ctx.forkShape ?? "adjacent"
-  const board = generateLightbeamSwitch(seed, ctx.difficulty ?? LIGHTBEAM_SWITCH_META.minTier ?? "starter", shape)
+  const shape = ctx.forkShape ?? DEFAULT_FORK_SHAPE
+  const board = generatePuzzle<LightbeamSwitchBoard>(LIGHTBEAM_SWITCH_META, seed, {
+    difficulty: ctx.difficulty,
+    forkShape: shape,
+  })
   return rotateBoard(board, quarterTurnsToFace(shape, shutWaysOut(ctx.exits)) ?? 0)
 }
 

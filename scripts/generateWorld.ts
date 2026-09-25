@@ -19,7 +19,7 @@ import { fileURLToPath } from "url"
 import { buildConfigs } from "../src/worldGen/configBuilder"
 import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
-import { findEmptyChests } from "../src/worldGen/validate"
+import { findEmptyChests, findUnbakedSwitchBoards } from "../src/worldGen/validate"
 import { assembleFloor } from "../src/game/siteAssembler"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import {
@@ -29,7 +29,9 @@ import {
   familyIsTrap,
   allocateEncounterSpread,
   resolveEncounterMeta,
+  ALL_FAMILY_META,
 } from "../src/mods/allFamilyMeta"
+import { puzzleSeeds } from "../src/data/puzzleSeeds"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../src/mods/allCurrencyDistributions"
 import { HIEROGLYPH_REQUIRED } from "../src/mods/hieroglyph/game/hieroglyphData"
 import { assignFragmentPieceIndices, hieroglyphCoverage } from "../src/mods/hieroglyph/game/fragmentFinalize"
@@ -116,6 +118,23 @@ if (unassembled.length > 0) {
   console.error(`✗ ${unassembled.length} floor(s) cannot be carved at the seed the runtime hands them:`)
   for (const floor of unassembled.slice(0, 20)) console.error(`    ${floor}`)
   if (unassembled.length > 20) console.error(`    … and ${unassembled.length - 20} more`)
+  process.exit(1)
+}
+
+// A board the offline pass never proved would be searched for on the player's device instead, which is
+// the very thing the lists replaced — and it would happen quietly. So an authored switch whose shape and
+// tier no list covers stops the build with its floor named: bake the list (`yarn generate-seeds`), or do
+// not author the room. The playtest journey is excused by its capabilities, not by its id.
+const unbakedSwitches = findUnbakedSwitchBoards(configs, ALL_FAMILY_META, puzzleSeeds)
+if (unbakedSwitches.length > 0) {
+  console.error(`✗ ${unbakedSwitches.length} authored switch board(s) have no baked seed list:`)
+  for (const board of unbakedSwitches.slice(0, 20))
+    console.error(
+      `    ${board.journeyId} level ${board.levelNr} floor ${board.floorIndex}: ` +
+        `${board.familyId} at ${board.difficulty}, ${board.forkShape} fork`
+    )
+  if (unbakedSwitches.length > 20) console.error(`    … and ${unbakedSwitches.length - 20} more`)
+  console.error("  Run `yarn generate-seeds` to fill them.")
   process.exit(1)
 }
 

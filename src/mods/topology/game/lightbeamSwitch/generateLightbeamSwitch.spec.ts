@@ -1,11 +1,14 @@
 import { beforeAll, describe, expect, it } from "vitest"
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
-import type { ForkShape } from "@/game/forkShape"
+import { classifyForkShape, type ForkShape } from "@/game/forkShape"
+import { configHash } from "@/game/seeds/configHash"
+import type { Direction as WayOut } from "@/game/siteTypes"
 import { BACKSLASH, SLASH, type MirrorAngle } from "@/mods/core/game/beam/physics"
 import { honestOpenings, routesTo, traceBeam, type MirrorPlacement } from "../shrineBeam/shrineBeam"
 import {
   CANONICAL_WAYS_OUT,
   generateLightbeamSwitch,
+  resolveLightbeamSwitchOptions,
   type LightbeamSwitchBoard,
   type LightbeamSwitchGate,
 } from "./generateLightbeamSwitch"
@@ -25,7 +28,7 @@ const boardFor = (shape: ForkShape, difficulty: Difficulty, seed: number): Light
   const key = `${shape}:${difficulty}:${seed}`
   const known = cache.get(key)
   if (known) return known
-  const built = generateLightbeamSwitch(seed, difficulty, shape, gate => rejections.push(gate))
+  const built = generateLightbeamSwitch(seed, difficulty, shape, undefined, gate => rejections.push(gate))
   cache.set(key, built)
   return built
 }
@@ -196,5 +199,40 @@ describe("generateLightbeamSwitch", () => {
     expect(seen).toBe(BOARDS_PER_SWEEP)
     // A draft is thrown away per rejected attempt, so this counts the wasted attempts over the sweep.
     expect(rejections.length).toBeLessThan(BOARDS_PER_SWEEP * 120)
+  })
+})
+
+// Which offline list a room draws from, and the one thing that must stay out of the key: the compass.
+// A board is generated canonical and turned when the room opens (rotateBoard.ts), so a bucket per bearing
+// would hold four copies of one board and put four times the search behind them.
+describe("the bucket a switch board is filed under", () => {
+  const bucketOf = (difficulty: Difficulty, layout: string) => {
+    const shape = classifyForkShape([...layout] as WayOut[])
+    if (!shape) throw new Error(`the layout "${layout}" has no shape to file a board under`)
+    return configHash(resolveLightbeamSwitchOptions({ difficulty, forkShape: shape }))
+  }
+
+  it("is one bucket for two forks of the same shape pointing different ways", () => {
+    expect(bucketOf("junior", "en")).toBe(bucketOf("junior", "sw"))
+    expect(bucketOf("junior", "ns")).toBe(bucketOf("junior", "ew"))
+    expect(bucketOf("junior", "ens")).toBe(bucketOf("junior", "enw"))
+  })
+
+  // Every pair and every triple of the compass — the ten layouts a real carve makes
+  // (buildSwitchBoard.spec.ts asserts that against the assembler).
+  const CARVED_LAYOUTS = ["en", "ens", "enw", "es", "esw", "ew", "ns", "nsw", "nw", "sw"]
+
+  it("gives a tier three buckets, one per shape, over every layout a carve makes", () => {
+    let checked = 0
+    for (const difficulty of TIERS) {
+      expect(new Set(CARVED_LAYOUTS.map(layout => bucketOf(difficulty, layout))).size, difficulty).toBe(SHAPES.length)
+      checked++
+    }
+    expect(checked).toBe(TIERS.length)
+  })
+
+  it("parts the tiers, so a junior fork and a wizard fork of one shape never share a list", () => {
+    const buckets = TIERS.flatMap(difficulty => CARVED_LAYOUTS.map(layout => bucketOf(difficulty, layout)))
+    expect(new Set(buckets).size).toBe(TIERS.length * SHAPES.length)
   })
 })

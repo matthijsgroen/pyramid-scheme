@@ -214,3 +214,42 @@ describe("what the dev journey authors", () => {
     expect(failed).toEqual([])
   })
 })
+
+// THE RULING THE PLAYTEST JOURNEY IS THE EXCEPTION TO. A shipped site whose authored switch has no
+// baked board stops the build; this journey stands the mechanic at tiers nobody has baked yet, on
+// purpose, so its boards are searched for live instead. What excuses it is its capabilities
+// (capabilities.ts's requireBakedBoards), never its id.
+describe("the baked-board requirement on the dev journey", () => {
+  const unbakedOn = (configs: Record<string, SiteConfig[]>) =>
+    findUnbakedSwitchBoards(configs, ALL_FAMILY_META, puzzleSeeds)
+
+  // Said first, because everything below would pass just as well on a journey that authored no switch
+  // at an unbaked tier at all — and then the exemption would be excusing nothing.
+  it("is excusing something: the journey really does author switches no list covers", () => {
+    const shipped = { ...PYRAMID_CAPABILITIES, requireBakedBoards: true }
+    const asIfShipped = unbakedOn(withDev).concat(
+      // The same walk with the exemption withdrawn, which is the only way to see what it hides.
+      findUnbakedSwitchBoards({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] }, ALL_FAMILY_META, puzzleSeeds, () => shipped)
+    )
+    expect(asIfShipped.map(board => `${board.difficulty} ${board.forkShape}`).sort()).toEqual([
+      "expert adjacent",
+      "expert opposite",
+      "expert three",
+      "master adjacent",
+      "master opposite",
+      "master three",
+      "wizard adjacent",
+      "wizard opposite",
+      "wizard three",
+    ])
+  })
+
+  it("lets the world build anyway, with nothing reported against the dev journey", () => {
+    expect(unbakedOn(withDev)).toEqual([])
+  })
+
+  it("holds every other journey to the requirement, dev journey present or not", () => {
+    expect(unbakedOn(plain)).toEqual([])
+    expect(unbakedOn(withoutDev(withDev))).toEqual([])
+  })
+})

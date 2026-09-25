@@ -6,7 +6,9 @@ import type { Direction } from "./siteTypes"
  * the one left out. A structural fact about the fork, so whatever stands in it can be built for the
  * layout without being built for the compass.
  */
-export type ForkShape = "adjacent" | "opposite" | "three"
+export const FORK_SHAPES = ["adjacent", "opposite", "three"] as const
+
+export type ForkShape = (typeof FORK_SHAPES)[number]
 
 const FACING: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
 
