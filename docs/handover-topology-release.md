@@ -72,6 +72,36 @@ which is worth more than fixing any one of them.
 
 ## Answered by the owner
 
+**There is a `topology` mod, and it is the home for every feature that changes where a player can
+walk.** It holds the lightbeam corridor puzzle and the fork switch together, and `sandSlide`,
+`waterline`, `sequenceLock`, `cosmicDust` and `hourglass` join it as they land. The two lightbeam
+families live in one mod so that the board, the mirrors and the rules voice are shared by an
+ordinary intra-mod import rather than promoted into core — a sibling import is forbidden, so two
+mods would have forced the board into core to share it. `mods/puzzle` was the other candidate and
+loses on being a root mod: it has no toggle-off proof, and a switch living there would have an
+authored gate nothing could drop.
+
+`useCelebration.ts` moves to `mods/core/app/` with the move, and belongs there on its own merits:
+**a board finishing itself is part of the puzzle frame**, the same concept as `PuzzleFamilyShell`
+and `useHintAvailability`, which are already there. The tableau and the crocodile do not celebrate
+yet and should; both live in other mods, so core is the only place either could reach it from.
+Nothing puzzle-specific follows it.
+
+**A switch closes every way out that is available to it, and the board answers three fork shapes.**
+Measured by forcing a switch into all 206 authored floors: 109 offer no fork with two closable ways
+out, 92 give exactly two (68 adjacent, 24 opposite), 5 give three, and **none ever gives four**. So
+`four` is not built — it would be a board for a floor that does not exist. `three` is built despite
+being five floors, because the alternative was capping a switch at two gates and that would have
+changed what a switch means to save a generator.
+
+The three-door board is not the two-door one with a number changed: one mirror is one bit, so three
+doors need a small routing gadget of two mirrors at the fork, and the sun placement is solved per
+shape rather than parameterised.
+
+**Toggled off, a switch fork becomes a bare junction.** `switchFork` is stripped to `undefined`, the
+fork carves with every way out open, and nothing stands in the room — exactly how an ungated fork
+already behaves. The slice table's "an ordinary puzzle" would have been new behaviour nothing builds.
+
 **A switch may stand at any fork, and hold as much of the floor as the carve gives it.** No cap, and
 the main path onward is gateable like any other way out. The reason is the player's view: they have
 not walked past the fork, so they cannot tell the main path from a side path, nor how much lies
