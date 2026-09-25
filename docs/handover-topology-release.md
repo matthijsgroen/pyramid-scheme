@@ -168,9 +168,14 @@ current behaviour stands.
 
 **Fogging needs nothing.** Fog past a switch is unexplored ground, not a statement about the gates.
 
-**`witnessDoor` becomes `lightbeamSwitch`.** It is already a beam-and-mirrors switch board; what it
-lacks is reading the fork's real exits instead of hardcoded east and north. It moves into the
-lightbeam mod, and the work on this branch carries over rather than being rewritten.
+**`witnessDoor` becomes `lightbeamSwitch`, and then goes.** Its board already routes a beam to one of
+two shrines; what it lacks is taking its shrines from the fork's own exits instead of a hardcoded
+east and north. The work carries over into `lightbeamSwitch` rather than being rewritten, and once
+that family stands, every trace of `witnessDoor` is removed: the family, its folders, its locale
+strings, and the hand-authored gates and key ids in `junior_2`.
+
+That last part re-authors a shipped pyramid with `forks` and `switches`, which moves real world data —
+fine, and expected. See the note on what the byte-identical check is actually for.
 
 **The lightbeam mod owns two families, not one family with two roles.** `lightbeam` is the corridor
 puzzle and stays in the generic pool; `lightbeamSwitch` is the fork board, stays out of the pool and
@@ -238,6 +243,19 @@ controlling session. Split it that way.
 **"The world did not move" means the assembled-grid fingerprint**, not a byte-identical
 `generatedWorld.ts`. The stored file holds configs; the damage lives in the grids. A change that
 rewrote ~150 rooms passed the byte-identical check.
+
+**The world is allowed to move in this release, and saves are expected to be lost.** The reset is
+already the plan; moving rooms, retiring the witness door and re-authoring a pyramid are all fair.
+So the byte-identical check is not a rule about the world — it is a way of proving a claim, and which
+claim depends on the slice:
+
+- a slice that says it changes nothing — a refactor, a move, a new unreferenced module — is proved by
+  the file coming out identical, and a diff means the claim was wrong;
+- a slice that means to change the world is proved by **only the intended thing moving**, compared
+  before and after rather than argued.
+
+What stays forbidden is a slice moving the world without noticing, which is how ~150 rooms once got
+rewritten under a green check.
 
 **Measure before arguing.** The most valuable findings in this slice all came from someone assembling
 a few hundred floors and counting: a check that fired on zero of them, another that fired on 61 of
