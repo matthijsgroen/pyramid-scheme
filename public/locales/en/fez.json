@@ -199,19 +199,6 @@
       "6": { "fez": "It has been coming in for three thousand years. It does not stop, it just goes round." },
       "7": { "fez": "Fills up, turns over, starts again. Same as the sun." }
     },
-    "wizard_2": {
-      "1": { "fez": "Back where we started. It has not moved." },
-      "2": { "explorer": "The writing is still there." },
-      "3": { "fez": "Can you read it?" },
-      "4": { "explorer": "A name." },
-      "5": { "fez": "Whose?" },
-      "6": { "explorer": "Yours." },
-      "7": { "fez": "…" },
-      "8": { "fez": "Are you sure?" },
-      "9": { "explorer": "It is written down." },
-      "10": { "fez": "Huh." },
-      "11": { "fez": "Well. That explains the fez." }
-    },
     "wizard_3": {
       "1": { "fez": "The scale. Heart on one side, feather on the other — so a good heavy heart wins, presumably." },
       "2": { "explorer": "Which way does a heavy thing go?" },
