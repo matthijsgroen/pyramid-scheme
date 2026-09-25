@@ -36,6 +36,8 @@ type Entry = {
   importedBy: string
   /** Already on disk. Off the owed list, still fetchable by key — a landed file can need rolling again. */
   drawn?: boolean
+  /** Why the landed file is not good enough. Set by a `**Re-roll:**` line, and puts it BACK on the list. */
+  reroll?: string
   /** The generator return this was imported from, kept because it cannot be generated again. */
   master?: string
 }
@@ -84,6 +86,10 @@ const quoted = (block: string): string =>
  * An entry whose file exists is marked `drawn` rather than dropped: it leaves the owed list, and
  * `yarn repaint <key>` still hands it over. The explorer's three came back off-palette and had to be rolled
  * again, which is not a state a queue should have no way to express.
+ *
+ * A `**Re-roll:**` line puts a drawn entry BACK on the list with its reason beside it. Landing a file the
+ * set cannot keep otherwise looks exactly like landing a good one, and the only thing tracking the
+ * difference is whoever remembers — which is not a queue.
  */
 const parseCharacters = (md: string): Entry[] => {
   const sections = md.split(/^## /m)
@@ -105,8 +111,10 @@ const parseCharacters = (md: string): Entry[] => {
       const out = join("src/assets", `${file}-250.png`)
       // An entry may name its own references in backticks; most want the default pair.
       const named = [...block.matchAll(/`((?:art|src)\/[^`]+\.(?:jpe?g|png))`/g)].map(m => m[1])
+      const reroll = /\*\*Re-roll:\*\*\s*([^\n]+)/.exec(block)?.[1]?.trim()
       drawn.push({
         key: `${group}/${name}`,
+        reroll,
         title: (block.split("\n")[0] ?? file).trim(),
         // Filled in below when the entry names none: the newest file that exists BEFORE it in this order.
         attachments: named,
@@ -150,7 +158,7 @@ if (!wanted) {
   // for free, until the patron entries arrived: those are one section covering five ranks, because what
   // orders them is rooms rather than whose tomb they are. Working a rank at a time is how the ranks
   // actually get finished, and it is also how the material reference stays the same between pastes.
-  const owed = entries.filter(e => !e.drawn)
+  const owed = entries.filter(e => !e.drawn || e.reroll)
   console.log(`${owed.length} prompts owed — \`yarn repaint <key>\` for one of:\n`)
   const rank = (key: string) => {
     const at = TIERS.indexOf(key.split("/")[0])
@@ -164,7 +172,7 @@ if (!wanted) {
     // The heading repeats the key, and under a rank header printing it twice more is noise: the column
     // gives the name and the rest of the line says what the thing is.
     const what = e.title.replace(/`/g, "").replace(/^\S+\s+—\s+/, "")
-    console.log(`    ${(e.key.split("/")[1] ?? e.key).padEnd(22)} ${what}`)
+    console.log(`    ${(e.key.split("/")[1] ?? e.key).padEnd(22)} ${e.reroll ? `RE-ROLL: ${e.reroll}` : what}`)
   }
   process.exit(0)
 }

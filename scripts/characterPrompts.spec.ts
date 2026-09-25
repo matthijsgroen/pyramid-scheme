@@ -33,3 +33,13 @@ describe("the character art prompts", () => {
     expect(quotedLines(section("2.").split(/^### /m)[0]).join("\n")).toContain("Ghost preamble")
   })
 })
+
+describe("a landed file marked for re-rolling", () => {
+  it("states a reason on one line, which is what the queue prints beside it", () => {
+    for (const block of entries) {
+      const marked = /\*\*Re-roll:\*\*\s*([^\n]+)/.exec(block)
+      if (!marked) continue
+      expect(marked[1].trim().length).toBeGreaterThan(10)
+    }
+  })
+})
