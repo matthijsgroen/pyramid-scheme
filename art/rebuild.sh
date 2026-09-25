@@ -1503,3 +1503,4 @@ yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-exp
 yarn import-portrait art/masters/characters/ghost-ipi.jpeg --name=ghost-ipi
 yarn import-portrait art/masters/characters/ghost-henut.jpeg --name=ghost-henut
 yarn import-portrait art/masters/characters/ghost-priest.jpeg --name=ghost-priest
+yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-pharaoh
