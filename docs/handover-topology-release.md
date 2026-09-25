@@ -96,6 +96,18 @@ This is the design doc's own `needs`/`places` split finally reaching the authori
 the floor must provide and belongs to core; `places` is the encounter and its gates and belongs to
 the mod.
 
+**A switch's gate carries no encounter. The way is simply shut, or open.** It is drawn as a gate,
+the way a ward gate is, and it holds nothing to enter or tap. A door a player opens by tapping is a
+door the switch does not control, and the switch is already the thing that opens it. Nor does it need
+a node hosting its key: that node is the fork.
+
+Small, because the map already reads a gate off the cell's tags rather than off what stands in it —
+`nodeKinds` calls a cell a gate when its `tags` say so, and calls it blocked when it also has a
+`requiredKeyId` the player does not hold. Neither asks for a `family`. So the gate cell keeps
+`tags: ["gate"]`, `requiredKeyId` and `gateVariant`, and simply stops carrying a family: it draws as
+a ward gate does, it shuts the walk, and there is nothing behind it to open. A familyless fork is
+already walked onto rather than entered, so the behaviour has a precedent rather than needing one.
+
 **A switch's key stem is derived from the authoring address, never hand-written.**
 `switch:<journeyId>#<levelIndex>#<floorIndex>#<switch index>`, with the gate's own section address
 appended as before. A count cannot hand-author a name per switch, and deriving from the authoring
