@@ -103,6 +103,19 @@ describe("where a shaft of daylight comes down", () => {
     expect(landings.size).toBeGreaterThan(1)
   })
 
+  it("keeps the shaft on the floor when the room's footprint reaches off the grid", () => {
+    // A chamber against the edge claims the strip beyond it, and a shaft landing there drew its rays and
+    // its pool in the black beside the map.
+    const grid = makeGrid([
+      [corridor(["s"]), empty],
+      [chamber(), empty],
+    ])
+    for (const cell of beamShafts(grid, buildRoomClaims(grid), 1, grid.siteId)) {
+      const [row, col] = cell.split(",").map(Number)
+      expect([row >= 0, col >= 0, row < grid.rows, col < grid.cols]).toEqual([true, true, true, true])
+    }
+  })
+
   it("beams the same rooms every render, and does not move them as the fog lifts", () => {
     const lit = oneChamber()
     const fogged = makeGrid([

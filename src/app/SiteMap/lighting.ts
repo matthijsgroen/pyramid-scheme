@@ -35,24 +35,29 @@ export const LIT_STANDING_STRENGTH = 0.25
 /**
  * How hard a shaft of daylight lifts the room it falls into.
  *
- * SOLVED AGAINST THE TORCH, not authored: a beamed room has to land on the top end a torch-lit room
- * lands on, or the map gains a second brightness and stops having one. Composited off each rank's floor
- * art through the operators the renderer uses — the night's wash, `color-dodge` at this alpha, the
- * seating wash, the standing pass — and read as L*, the beamed floor lands at 51.7–54.1 against an unlit
- * 23.7–23.9, which is where the torch already puts it to within a tenth.
+ * DELIBERATELY SHORT OF THE TORCH, and that is the number's whole job. A shaft has to be the brightest
+ * thing in the room it falls in — light in the air is light that missed, and a chamber lifted to the top
+ * of the map's range leaves the shaft and its pool nothing to be bright against, which is a beam drawn as
+ * a smudge on a pale floor. So the room takes enough of the daylight to read from the doorway and no
+ * more, and the rest of the range is left for what the beam does on its way down (`MapBeams`).
  *
- * ONE NUMBER, NOT ONE PER RANK, because the solve came back the same on all five: 0.510, 0.512, 0.513,
- * 0.510, 0.510. The night is already solved to land every rank's floor at L* 24, so a light asked for the
- * same top end everywhere needs the same strength everywhere — and a rank that wanted its own would be a
- * rank out of step with the others (docs/instructions/map-rendering.md).
+ * Read off the RENDERED PAGE rather than modelled — a Storybook shot of a starter floor, sampled as mean
+ * L* over a patch of paving. Unlit floor 27.1, a beamed room's own floor 38.8, a ray in the air 44.8, the
+ * patch of sun it lands in 66.6. Twelve steps up from the night to say the room is lit, twenty-eight more
+ * to say where the light comes in. Composited off the art alone the same numbers come out several L*
+ * apart, because the page also carries the scatter, the sand drift and the second shade pass; what the
+ * player sees is what this is solved against.
  *
- * TWO LIGHTS IN ONE ROOM DO NOT STACK. `color-dodge` divides, so a beam and a torch drawn over each
- * other multiply their scales: measured, that takes the starter floor to L* 79.6 against the 54.1 either
- * light reaches alone — half again as bright as anywhere else on the map. So the beam's light hands over
- * to the lamp instead of adding to it (`MapBeams`), and because the two are solved to the same top end
- * the handover costs the room nothing; mid-crossfade, with both at half, it measures 56.8.
+ * ONE NUMBER, NOT ONE PER RANK. The night is already solved to land every rank's floor at the same L*, so
+ * a light asked for the same lift everywhere needs the same strength everywhere, and a rank that wanted
+ * its own would be a rank out of step with the others (docs/instructions/map-rendering.md).
+ *
+ * TWO LIGHTS IN ONE ROOM DO NOT STACK. `color-dodge` divides, so a beam and a torch drawn over each other
+ * multiply their scales and take the floor half again above anything else on the map. So the beam's light
+ * hands over to the lamp instead of adding to it (`MapBeams`) — and since the lamp is the brighter of the
+ * two, walking into a beamed room lifts it rather than dimming it.
  */
-export const BEAM_STRENGTH = 0.51
+export const BEAM_STRENGTH = 0.4
 
 /** How much likelier a chamber with a statue in it is to have the hole in its roof.
  *
@@ -93,7 +98,15 @@ export const beamShafts = (grid: FloorGrid, claims: RoomClaims, chance: number, 
     const [row, col] = owner.split(",").map(Number)
     const room = cellAt(grid, row, col)
     if (room.type === "empty" || room.state === "fogged") return
-    shafts.push(footprint[Math.floor(hashUnit(siteId, "beam-cell", index) * footprint.length)])
+    // ON THE FLOOR, not in the margin. A claim may reach outside the grid — an entrance room's footprint
+    // is mostly the strip beyond the edge — and a shaft landing there draws its rays and its pool in the
+    // black beside the map, which reads as a light leak off the edge of the world.
+    const inside = footprint.filter(cell => {
+      const [r, c] = cell.split(",").map(Number)
+      return r >= 0 && c >= 0 && r < grid.rows && c < grid.cols
+    })
+    if (inside.length === 0) return
+    shafts.push(inside[Math.floor(hashUnit(siteId, "beam-cell", index) * inside.length)])
   })
   return shafts
 }

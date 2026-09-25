@@ -1242,6 +1242,18 @@ describe("a shaft of daylight falls into a room", () => {
 
     expect(depthOf(container.querySelector("[data-beam-shaft]")!)).toBeGreaterThan(depthOf(standing))
   })
+
+  it("lands the rays in a patch of sun, under them rather than over them", () => {
+    const { container } = render(<SiteMapView grid={beamedRoom()} revealAllCells />)
+    const depthOf = (el: Element) => Array.from(container.querySelectorAll("*")).indexOf(el)
+
+    expect(container.querySelectorAll("[data-beam-pool]")).toHaveLength(
+      container.querySelectorAll("[data-beam-shaft]").length
+    )
+    expect(depthOf(container.querySelector("[data-beam-pool]")!)).toBeLessThan(
+      depthOf(container.querySelector("[data-beam-shaft]")!)
+    )
+  })
 })
 
 describe("the explorer stands in the room", () => {

@@ -40,7 +40,8 @@ lights a room already discovered and reveals nothing the map would otherwise hid
 | piece | how |
 |---|---|
 | the lit room | a static `LitPlace` at the shaft cell — it expands to the whole footprint already |
-| the cone | `ClipLayer`, a quad from a ceiling slot down to the floor, vertical gradient, feathered |
+| the rays | `ClipLayer`, three slanted quads from a hole in the roof down to the floor, feathered |
+| the pool | the patch of sun the rays land in, an ellipse, the brightest thing in the room |
 | the motes | the `box-shadow` `SPECKS` pairing from `MapMood`, drifting inside the cone only |
 
 The lit room is the existing component, not a new one: `litPlaceCells` given a room cell already returns
@@ -56,14 +57,16 @@ The cone is drawn over the standing layer — a shaft of dust is in front of a s
 
 ## Three numbers, and how they are chosen
 
-Per `docs/instructions/map-rendering.md`: measured off the art through the operators the renderer actually
-uses, read as L\*, chroma and hue. None of them is authored by eye, and a rank that moves alone has gone
-out of step with the others.
+Sampled off the RENDERED PAGE — a Storybook shot of a starter floor, mean L\* over a patch of paving —
+rather than modelled off the art, because the page also carries the scatter, the drift and the second shade
+pass, and what the player sees is what a light has to be solved against. The ladder: unlit floor 27.1, a
+beamed room 38.8, a ray in the air 44.8, the patch of sun it lands in 66.6.
 
-1. **`BEAM_STRENGTH`, per rank.** Solved so a beamed room lands at the same top end a torch-lit room lands
-   at today, and so **`BEAM_STRENGTH` together with `LIT_STRENGTH` still lands there** — `color-dodge`
-   divides, and two lights in one room stacked naively clip the floor to paper. Walking into a beamed room
-   is arriving somewhere already lit, not a flashbang.
+1. **`BEAM_STRENGTH`.** Solved DELIBERATELY SHORT of the torch. A shaft has to be the brightest thing in
+   the room it falls in, and a chamber lifted to the top of the range leaves it nothing to be bright
+   against — which is a beam drawn as a smudge on a pale floor. The room takes enough to read from the
+   doorway and no more; the rest of the range belongs to the rays and the pool. Two lights in one room
+   still do not stack: `color-dodge` divides, so the beam hands its room over to the lamp.
 2. **The daylight fill.** Cooler than `TORCH_CORE`, still not cold: light is warm or it is not light, and
    dust in the shaft scatters it warm anyway. Hold the blue channel back. **No 255 channel** — under a
    dodge that divides by zero and blows out.
@@ -86,6 +89,8 @@ testable without rendering, which is how `litPlaceCells` is already split from w
 ## What the tests freeze
 
 - a chamber gets `[data-beam]`, a corridor never does
+- a shaft stays on the grid even where the room's footprint reaches past the edge
+- every shaft lands in a pool, and the pool is drawn under the rays
 - `mood.beam: 0` draws none
 - a fogged room draws none
 - a room holding a `statue` beams on a seed a bare room misses

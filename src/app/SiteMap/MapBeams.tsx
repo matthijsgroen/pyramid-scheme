@@ -25,10 +25,9 @@ import { SPECKS } from "./MapMood"
  * NO CHANNEL AT 255: a dodge divides by `1−c`, so a maxed channel divides by zero and blows the floor to
  * paper.
  *
- * Measured on the art through the renderer's own operators, the beamed floor keeps more of the stone's
- * own colour than the torch leaves it: starter lands at C* 17.7 / 79° against the torch's 22.0 / 81° over
- * an unlit 6.6 / 75°, and on expert — where the torch cancels the blue outright, C* 5.5 down to 2.3 with
- * the hue flipped to 105° — the beam leaves it cold at 3.8 / 248°.
+ * Composited off the art through the renderer's own operators, a beamed floor keeps more of the stone's
+ * own hue than the torch leaves it — the torch drags starter ochre a couple of degrees and cancels
+ * expert's blue outright, where this holds both.
  */
 const BEAM_FILL: LightFill = [154, 149, 141]
 
@@ -40,30 +39,76 @@ const BEAM_FILL: LightFill = [154, 149, 141]
  * group of its own, which a `screen` or a second `color-dodge` would cost.
  *
  * Its value is held at 230, the ceiling the art's own highlights already sit at — brighter clips them
- * flat, and dust catching the sun is the brightest thing in the room. Measured over a beamed starter
- * floor at L* 54.1, the slot end lands at 61.3 and the foot at 55.9: about a quarter of the 30.3 the
- * beam itself is worth, so the shaft reads against the light it stands in and dies into the pool rather
- * than ending on it. */
+ * flat, and dust catching the sun is the brightest thing in the room.
+ *
+ * IT FADES ON THE WAY DOWN, but nowhere near to nothing. A ray that dies before it lands is a smear of
+ * floor with nothing overhead to have cast it, which is what a foot alpha of 0.03 drew; the ray has to
+ * survive all the way into the pool for the eye to follow it there. Sampled off the rendered page, a ray
+ * mid-air lands at L* 44.8 over a beamed floor of 38.8 — present, and well under the 66.6 of the patch it
+ * ends on, so the landing still wins. */
 const DUST = "230,223,211"
-const DUST_AT_SLOT = 0.2
-const DUST_AT_FLOOR = 0.05
+const DUST_AT_SLOT = 0.3
+const DUST_AT_FLOOR = 0.14
+
+/** The patch of floor the rays land on, and how far across it reaches.
+ *
+ * THE BRIGHTEST THING IN THE PICTURE, and it has to be: light in the air is light that MISSED, and a
+ * shaft whose middle outshines its own landing reads as an object lit from within. The volume thins on
+ * the way down (`DUST_AT_FLOOR`) and this takes over at the bottom of it — so the eye follows the
+ * rays down to where they end, which is the one place the beam touches the room. Sampled off the rendered
+ * page it lands at L* 66.6 against the room it sits in at 38.8 and an unlit floor at 27.1.
+ *
+ * An ellipse, not the parallelogram the geometry says: a hard-edged patch of sun on stone is a decal, and
+ * the light arrives through a ragged hole anyway. Wider than tall, because a slanted beam meets the floor
+ * at a glancing angle and the patch it makes is stretched along its travel. */
+const POOL = 0.52
+const POOL_W = 1.35
+const POOL_H = 0.55
 
 /** How wide the shaft is where it comes through and where it lands, as a share of the cell.
  *
- * A slot, not a skylight: the hole is a gap in the roofing slabs and the cone spreads on the way down.
- * The foot stops short of the cell's own edges, so the shaft stands IN the room rather than filling it —
- * what fills the room is the light, which is the lit place. */
-const SLOT_WIDTH = 0.26
-const FOOT_WIDTH = 0.92
+ * A slot, not a skylight: the hole is a gap in the roofing slabs and the light spreads on the way down.
+ * It spreads a long way — a beam that arrives no wider than it started is a bar, not daylight. */
+const SLOT_WIDTH = 0.52
+const FOOT_WIDTH = 1.3
+
+/** How far the foot lands from the slot, in cells.
+ *
+ * DAYLIGHT COMES IN AT AN ANGLE, and this is the whole difference between a shaft and a lit pillar. The
+ * sun is almost never straight overhead, so the light leaves the hole, crosses the room and lands off to
+ * one side — and it is the travel that reads as distance, which is what tells the eye the bright patch is
+ * on the FLOOR and the pale volume is in the AIR. Drawn straight down, the two share a centre line and
+ * fuse into one upright object standing on the paving.
+ */
+const SLANT = 0.8
+
+/** How many rays the slot is broken into.
+ *
+ * A gap in a roof is never one clean aperture: it is slabs with daylight between them, and what comes
+ * through is separated shafts that spread until they almost meet at the floor. One solid volume is the
+ * other failure of the upright cone — a filled shape reads as a solid, where slats with dark between them
+ * can only be light. Three, because two reads as an accident of the geometry and four is a comb. */
+const RAYS = 3
+
+/** How much of the slot, and of the landing, is ray rather than gap. Near the roof the slabs dominate;
+ * by the floor the rays have spread enough to nearly touch, which is what closes the pool into one patch
+ * of light with the slats still legible above it. */
+const SLOT_FILL = 0.78
+const FOOT_FILL = 0.82
 
 /** How many slices the cone is cut from. `ClipLayer` takes rectangles, so a sloping edge is a staircase —
- * at this count each step is 1.3 units against a feather of 9, which the blur takes out entirely. */
+ * at this count each step is about a unit, which `CONE_FEATHER` takes out entirely. */
 const CONE_SLICES = 14
 
-/** How far the cone's edge is softened. A third of a wall band — less than the light's own feather, which
- * has a whole room's cut to hide, and more than the 1.3 units a slice steps by, so the staircase goes and
- * the shaft keeps a shape. Dust has no edge. */
-const CONE_FEATHER = WALL_H / 3
+/** How far a ray's edge is softened.
+ *
+ * SMALLER THAN THE NARROWEST RAY, which is the constraint that sets it. A feather is a blur, and a blur
+ * wider than the shape it is softening does not soften that shape, it erases it: at a third of a wall
+ * band — nine units — against slats three units across at the slot, the top of every ray dissolved and
+ * what was left was a bright smear on the floor with nothing overhead to have cast it. Held under the
+ * slot's own slat width (`SLOT_WIDTH`/`SLOT_FILL` below put that at eight), so the narrow end survives
+ * while the staircase of the slices, which steps by about a unit, still goes. */
+const CONE_FEATHER = 4
 
 /** How many specks turn in one shaft. The air of the whole floor is `drift` (MapMood) and is drawn across
  * the SCREEN; these belong to the shaft, so they are in map space and move with it. A few, because what
@@ -71,19 +116,36 @@ const CONE_FEATHER = WALL_H / 3
 const BEAM_MOTES = 4
 const MOTE_CLASS = "absolute rounded-full will-change-transform animate-map-drift motion-reduce:animate-none"
 
-/** The quad from the ceiling slot down to the floor of the cell it lands in, as slices.
- *
- * It starts at the top of the wall band — the highest stone the map draws above a cell, and so the only
- * ceiling this projection has — and ends on the cell's own floor line. */
-const coneRects = (row: number, col: number): Rect[] => {
+/** Where a shaft starts, where it lands, and how tall it is. It comes through the roof, at the top of the
+ * stone the map draws above a cell, and crosses to a patch of floor `SLANT` of a cell away. */
+const shaftGeometry = (row: number, col: number) => {
   const cx = cellLeft(col) + CELL / 2
   const top = cellTop(row) - WALL_H
-  const height = CELL + WALL_H
-  return Array.from({ length: CONE_SLICES }, (_, i) => {
-    const t = (i + 0.5) / CONE_SLICES
-    const w = CELL * (SLOT_WIDTH + (FOOT_WIDTH - SLOT_WIDTH) * t)
-    return [cx - w / 2, top + (height * i) / CONE_SLICES, w, height / CONE_SLICES] as Rect
-  })
+  return { cx, top, height: WALL_H + CELL * 0.85, footX: cx + CELL * SLANT }
+}
+
+/**
+ * The rays, as slices: `RAYS` slanted quads from the hole in the roof down to the floor, each one
+ * spreading and drifting with the light's own angle.
+ *
+ * Slices because `ClipLayer` takes rectangles, so an edge that both slopes and leans is a staircase twice
+ * over — at this count each step is about a unit, which the feather takes out.
+ * All the rays go in ONE clip: they share a gradient and a feather, and a clip per ray would be three
+ * elements and three blurs a shaft for a picture the eye reads as one thing.
+ */
+const rayRects = (row: number, col: number): Rect[] => {
+  const { cx, top, height, footX } = shaftGeometry(row, col)
+  return Array.from({ length: RAYS }, (_, ray) => {
+    // Where this ray sits across the slot, from −0.5 at one edge to +0.5 at the other.
+    const across = (ray + 0.5) / RAYS - 0.5
+    return Array.from({ length: CONE_SLICES }, (_, i) => {
+      const t = (i + 0.5) / CONE_SLICES
+      const spread = CELL * (SLOT_WIDTH + (FOOT_WIDTH - SLOT_WIDTH) * t)
+      const centre = cx + (footX - cx) * t + across * spread
+      const w = (spread / RAYS) * (SLOT_FILL + (FOOT_FILL - SLOT_FILL) * t)
+      return [centre - w / 2, top + (height * i) / CONE_SLICES, w, height / CONE_SLICES] as Rect
+    })
+  }).flat()
 }
 
 const cellOf = (key: string): readonly [number, number] => {
@@ -146,10 +208,25 @@ export const BeamShafts = ({ shafts, siteId }: { shafts: readonly string[]; site
   return (
     <div aria-hidden="true" style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
       {shafts.map((key, shaft) => {
-        const rects = coneRects(...cellOf(key))
+        const [row, col] = cellOf(key)
+        const rects = rayRects(row, col)
         const box = boundsOf(rects)
+        const { top, height, footX } = shaftGeometry(row, col)
         return (
           <div key={key}>
+            {/* The patch of sun on the paving, under the rays rather than over them: the dust in the air
+                is between the eye and the floor, so what the rays cross they veil. */}
+            <div
+              data-beam-pool={key}
+              style={{
+                position: "absolute",
+                left: footX - (CELL * POOL_W) / 2,
+                top: top + height - (CELL * POOL_H) / 2,
+                width: CELL * POOL_W,
+                height: CELL * POOL_H,
+                background: `radial-gradient(closest-side, rgba(${DUST},${POOL}), rgba(${DUST},0))`,
+              }}
+            />
             <ClipLayer
               data-beam-shaft={key}
               rects={rects}
