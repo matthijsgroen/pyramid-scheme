@@ -24,18 +24,23 @@ built by another session — the two are independent except at wizard tier.
 | `docs/floor-as-puzzle-brainstorm` | PR #305, docs only. Body describes only its first commit and needs rewriting before merge.                                                                          |
 | `feat/witness-door`               | PR #307, draft, **not for merge**. A complete, reviewed slice-1 built before the design moved on. Superseded in shape, kept because most of its core work survives. |
 | `docs/node-actions`               | The node-actions design plus the revised topology design. No PR yet.                                                                                                |
-| `feat/switch-fork`                | Current work. Tasks 1–4 done and reviewed; Task 5 remains.                                                                                                          |
+| `feat/switch-fork`                | Current work, and where slice 1 landed. Merged `main` in for the storage fix (#308) that was wiping a journey just started.                                          |
 
 Nothing is merged. The owner merges to `main` only when the release is complete and playtested.
 
 ## What is built on `feat/switch-fork`
 
-A fork room knows its exits — each one's compass direction and what lies that way. A fork may carry an
-encounter. The builder, not the author, chooses which of that fork's ways out to gate, and five stated
-rules are enforced rather than merely written down.
+**The whole of slice 1, in the shipped world.** A fork room knows its exits — each one's compass
+direction and what lies that way — and a floor authors the forks it needs (`forks`) separately from
+what stands in them (`switches`). The builder chooses which ways out to shut and keys them from the
+floor's authoring address. `lightbeamSwitch` generates a board per fork shape, turned to face the
+real ways out, and the doors are a function of that board. junior_2 pyramid 2 floor 0 stands one.
 
-Task 5 remains: prove the authoring end to end **in spec**, not in the shipped world. That reduction
-is deliberate — see the rulings.
+Also here: the solvability slice (every mosaic register held to its reachable count, per tier), the
+`topology` mod holding the features that change where a player may walk, and a develop-only journey
+with a floor per topology feature, built only under `INCLUDE_DEV=1`.
+
+Gone: `witnessDoor` entirely, and the runtime owned-key registry it was the only user of.
 
 ## Decisions taken on the owner's behalf
 
@@ -50,9 +55,9 @@ silently unlocks a door is a soundness leak, not lost progress.
 switch needs no geometry of its own. This dissolved the hardest problem in the redesign rather than
 solving it.
 
-**The witness door's family must not join the generic puzzle pool.** Its output is _which branch
-opens_; drawn into an ordinary room, a player would choose a shrine that opens nothing. It also kept
-the world byte-identical, which the tag would have reshuffled.
+**A switch's family must not join the generic puzzle pool.** Its output is _which way out opens_;
+drawn into an ordinary room, a player would route a beam that opens nothing. `lightbeamSwitch` carries
+its own tag for that reason, the way the crocodile capstone does.
 
 **There is no key. The state of the puzzle is the switch.** A fork's ways out are a function of the
 board standing in it: route the beam north and north is open and the rest are shut; come back, route
@@ -205,48 +210,44 @@ per-family facts rather than per-room ones.
 
 ## What comes next, in order
 
-1. **Task 5** — the authoring, proved in spec. Done: `src/worldGen/switchForkAuthoring.spec.ts` walks
-   a spec-local rule from the DSL through `constraintResolver`, `buildSite` and `assembleFloor` to the
-   gated exits, and each assertion was proved red by mutating the link it covers rather than argued.
+**Slice 1, `LightSwitchFork`, is done and in the shipped world.** A junior pyramid stands one: junior_2,
+pyramid 2, floor 0. The authoring is `forks` plus `switches`, the board is generated per fork shape and
+turned to face the real ways out, and the doors are a function of the board with nothing minted or
+held. The witness door it grew out of is gone entirely, along with the runtime key registry it was the
+only user of. Seven findings came back from walking it and all seven are closed.
 
-   **The trap for whoever un-reduces it.** Only the `.pyramid(n).floor(k, …)` chain is read. The
-   scope-level builders — `global().floor()`, `tier(t).floor()`, `journey(j).floor()` — emit rules
-   whose only consumer, `resolveFloorConstraint`, is called nowhere but its own spec. A `switchFork`
-   authored that way is silently inert. Pre-existing and field-agnostic; every shipped spec file
-   happens to use the chain that works.
+The solvability slice is done too: every mosaic register is held to its reachable count, per tier, over
+a permissive final walk.
 
-2. **The solvability slice.** Reachability answers "can this be got to", never "is there enough of
-   it" — and that gap is what let a junior mosaic piece become unobtainable while every check stayed
-   green. The cheap version is a sum, and the owner settled what the sum counts:
+1. **The seed list.** Nothing declares offline demand for the switch's `{difficulty, forkShape}`
+   buckets, so a switch board is generated live in the player's session. It plays correctly, which is
+   why this has not bitten — but the ruling was that the switch role stays **seeded**, and right now
+   that ruling is quietly untrue with nothing able to notice. `enumerateConfigs.ts:83` and
+   `boardIndex.ts:84` both call `resolveOptions({ difficulty })` and never visit `switches`.
 
-   - **A collection is loot, not a lock.** A piece counts if it is reachable at _any_ point in time,
-     so a hidden pocket counts and so does a branch behind an authored key. That is the design doc's
-     permissive bracket, and it is the right question for a register: _is every piece ever
-     obtainable?_
-   - **A lock is the stricter case and is already held** — an opener must be reachable _before_ its
-     blocker.
-   - **A collection's target is per bucket, never one total.** Mosaic is not 252 pieces; it is a set
-     per difficulty tier. A global sum would pass while junior ran short and wizard ran over.
+2. **The way back, and the soft-lock behind it.** Undecided, and it gates what follows. A switch
+   controls every way out whose boundary is clear and whose neighbour is not another fork — but the
+   way the player arrived by is never in that set, so on **36 of 103 floors** a junction has a way out
+   the switch cannot shut and the player walks on without working the board. Letting it shut the way
+   back fixes that and opens a trap: shut it, take a staircase, come back, and the player stands on
+   the entrance side of a door only the fork can open. `explorerPos` falls back to the entrance when a
+   saved position belongs to another floor, so that is ordinary play rather than a corner. The design
+   doc's own answer is per-visit state — a switch's configuration discarded on leaving the site —
+   which costs the feel of a floor you have configured.
 
-   Measured on the shipped world before building: 252 placed against a target of 252 — **zero slack**,
-   so any unreachable piece breaks the register — with 53 in hidden pockets and 2 behind the witness
-   door's gates. Mosaic is the only capped currency, so it is the only customer.
+3. **Derive the board from the open door.** Decided, not built: the mirrors are computed from the way
+   out standing open — unique, because the generator allows one route per shrine — so nothing is
+   stored and `stateIsTheMechanism` goes with it. Waits on the way-back decision, which changes what
+   the default door is.
 
-   **The register's other unheld rule — that an authored gate's key is minted by whoever owns it —
-   waits for a consumer.** It guards two gates in the whole world, both the witness door's, both
-   already pinned by hand at `configBuilder.integration.spec.ts:125`, and the ruling above deletes
-   that shape: once a switch fork mints its own gates, the assembler writes gate and key from one
-   expression and a mismatch is unrepresentable rather than unchecked. `sequenceLock` is the first
-   feature to author a door key by hand. It lands there.
+4. **`sequenceLock`**, then the four features after it. It is the first to author a door key by hand,
+   so the register's last unheld rule — an authored gate's key is minted by whoever owns it — lands
+   with it.
 
-3. **`lightbeamSwitch`** — the lightbeam mod's second family, sharing everything but the generator. The
-   corridor generator reasons about _the_ shrine throughout its route search, uniqueness check and
-   technique ladder, so a switch board is a different construction rather than the same one with a
-   number changed. Seeded by fork shape and rotated to fit, because there are only four fork shapes up
-   to rotation.
-4. **The feature registry** — deferred while there was one feature and a guess. With all six coming it
-   is worth building, and with two real features to generalise from rather than one.
-5. **The remaining features**, then free-order journeys with cosmic dust, then the story layer.
+5. **The feature registry** — deferred while there was one feature and a guess. With a second real
+   feature to generalise from, it is worth building.
+
+6. **Free-order journeys with cosmic dust**, then the story layer.
 
 ## How this work goes best
 
