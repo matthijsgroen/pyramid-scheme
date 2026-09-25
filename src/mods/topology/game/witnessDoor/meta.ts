@@ -14,6 +14,8 @@ export const WITNESS_DOOR_META: FamilyMeta = {
   // Its reward is a key it mints itself, never a slot the generic loot pool may fill — the same
   // reason a gate carries 0.
   rewardPriority: 0,
+  // What the door asks for is a shrine — the choice it hands a key for on this visit.
+  invitation: "witnessDoor.invitation",
   // One visit mints one shrine's key, so the door has to stay open to the player who comes back for
   // the other one. Without this the branch not chosen is sealed for good, and the piece of the mosaic
   // behind it can never be collected.

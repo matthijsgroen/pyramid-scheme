@@ -43,9 +43,8 @@
     "leaveSiteConfirm": "Step outside",
     "leaveSiteCancel": "Stay inside",
     "enterSite": "Step inside",
-    "goIn": {
-      "room": "Step back in",
-      "shop": "Visit the stall",
+    "prompt": {
+      "here": "See what's here",
       "stairs": "Take the stairs",
       "exit": "Leave this place"
     },
@@ -161,6 +160,7 @@
   },
   "shop": {
     "title": "Fez's Stall",
+    "invitation": "Look over the stall",
     "buy": "Buy",
     "sell": "Sell",
     "soldOut": "Sold out",
@@ -1093,6 +1093,7 @@
   },
   "lightbeamSwitch": {
     "name": "The Turning Light",
+    "invitation": "Turn the mirrors",
     "goal": "The light rests in a shrine, and the way out beneath it stands open.",
     "rules": {
       "shrines": "One disc of light, and a shrine over every way out of this junction. The mirrors on the floor can carry the light to any of them.",
@@ -1106,6 +1107,7 @@
   },
   "witnessDoor": {
     "name": "Witness Door",
+    "invitation": "Open a shrine",
     "goal": "The light rests in the shrine you named, and the door beneath it stands open.",
     "choose": "Which shrine are you opening?",
     "shrine": {

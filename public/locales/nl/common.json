@@ -43,9 +43,8 @@
     "leaveSiteConfirm": "Naar buiten",
     "leaveSiteCancel": "Binnen blijven",
     "enterSite": "Naar binnen",
-    "goIn": {
-      "room": "Weer naar binnen",
-      "shop": "Bezoek de kraam",
+    "prompt": {
+      "here": "Kijk wat hier staat",
       "stairs": "Neem de trap",
       "exit": "Deze plek verlaten"
     },
@@ -161,6 +160,7 @@
   },
   "shop": {
     "title": "Fez's Kraam",
+    "invitation": "Bekijk de kraam",
     "buy": "Kopen",
     "sell": "Verkopen",
     "soldOut": "Uitverkocht",
@@ -1093,6 +1093,7 @@
   },
   "lightbeamSwitch": {
     "name": "Het Kerende Licht",
+    "invitation": "Draai de spiegels",
     "goal": "Het licht rust in een heiligdom, en de doorgang eronder staat open.",
     "rules": {
       "shrines": "Eén schijf licht, en een heiligdom boven elke doorgang van dit kruispunt. De spiegels op de vloer kunnen het licht naar elk ervan brengen.",
@@ -1106,6 +1107,7 @@
   },
   "witnessDoor": {
     "name": "Getuigenpoort",
+    "invitation": "Open een heiligdom",
     "goal": "Het licht rust in het heiligdom dat je noemde, en de deur eronder staat open.",
     "choose": "Welk heiligdom open je?",
     "shrine": {

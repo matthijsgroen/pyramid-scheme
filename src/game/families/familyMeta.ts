@@ -41,6 +41,15 @@ export type FamilyMeta = {
    */
   reEnterable?: boolean
   /**
+   * What the room ASKS OF THE PLAYER standing in it, as the i18n key of the prompt beside the explorer
+   * (src/app/SiteMap/SiteMapScreen.tsx): the switch asks for its mirrors to be turned, the stall to be
+   * looked over. The player is already in the room — the prompt opens what stands there and moves nobody
+   * — so the words are about working the thing, never about going in.
+   *
+   * A family that names none, or whose mod is switched off, gets a prompt honest for any room.
+   */
+  invitation?: string
+  /**
    * The board of this family IS the mechanism the room works, so what the player left it on outlives the
    * solve and the room reopens on it.
    *

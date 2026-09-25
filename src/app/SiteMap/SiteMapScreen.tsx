@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useSyncExternalStore } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
+import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { ownedKeysFromSources, ownedKeysRevision, subscribeOwnedKeys } from "@/app/families/ownedKeySources"
 import { floorKeyRing } from "@/game/floorKeys"
 import { useCorridorDetection } from "@/app/SiteMap/useCorridorDetection"
@@ -16,7 +17,7 @@ import { useFloorExplorationRecorder } from "./useFloorExplorationRecorder"
 import { useEncounter } from "./useEncounter"
 import { useRewardOffer } from "./useRewardOffer"
 import { useSiteExit } from "./useSiteExit"
-import { useSiteNavigation, type ArrivalPromptKind } from "./useSiteNavigation"
+import { useSiteNavigation, type ArrivalPrompt, type ArrivalPromptKind } from "./useSiteNavigation"
 import { RewardFlow } from "./RewardFlow"
 import { EncounterModal } from "./EncounterModal"
 import { useApplyReward } from "./applyReward"
@@ -190,13 +191,21 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     onExitReached: exit.arrived,
   })
 
-  // What the prompt beside the explorer says, per kind of way in. Written out rather than looked up by
-  // a built key, so the locale guard can see every one of them.
+  // What the prompt beside the explorer says when the floor itself is what is offered. Written out
+  // rather than looked up by a built key, so the locale guard can see every one of them. `here` is the
+  // room prompt for a family that names none of its own, and for a room left by a mod that is off: it
+  // claims nothing about what stands there or about having been there before.
   const promptLabels: Record<ArrivalPromptKind, string> = {
-    room: t("ui.goIn.room"),
-    shop: t("ui.goIn.shop"),
-    stairs: t("ui.goIn.stairs"),
-    exit: t("ui.goIn.exit"),
+    room: t("ui.prompt.here"),
+    stairs: t("ui.prompt.stairs"),
+    exit: t("ui.prompt.exit"),
+  }
+
+  // A room's own words come from the family standing in it (FamilyMeta.invitation), read through the
+  // registry so core names no mod and an unregistered one simply has nothing to say.
+  const promptLabel = (prompt: ArrivalPrompt): string => {
+    const invitation = prompt.familyId ? getFamilyPlugin(prompt.familyId)?.meta.invitation : undefined
+    return invitation ? t(invitation) : promptLabels[prompt.kind]
   }
 
   const ActiveEncounterComponent = encounter.family?.Component ?? null
@@ -217,7 +226,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           currentFloor={currentFloor}
           pendingCells={pendingConsumableCells}
           ownedKeys={ownedKeys}
-          prompt={prompt && { label: promptLabels[prompt.kind], at: prompt.at, onTake: prompt.take }}
+          prompt={prompt && { label: promptLabel(prompt), at: prompt.at, onTake: prompt.take }}
           className="size-full"
         />
       </div>

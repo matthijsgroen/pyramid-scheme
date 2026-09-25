@@ -5,6 +5,7 @@ import type { FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
 import { CELL, cellCenter } from "./mapScale"
 import { clearGameData } from "@/support/useGameStorage"
 import { ownedKeysChanged, registerOwnedKeySource, __resetOwnedKeySources } from "@/app/families/ownedKeySources"
+import { registerFamily } from "@/app/families/familyRegistry"
 
 // Keys are enough to tell the buttons apart; none of these assertions read copy. Interpolated data
 // is appended so a label built from a nested lookup (the key ring's "<colour> key — in hand") still
@@ -128,7 +129,7 @@ describe(SiteMapScreen, () => {
 
     await walkToExit(container)
 
-    expect(goInPrompt(container).textContent).toBe("ui.goIn.exit")
+    expect(goInPrompt(container).textContent).toBe("ui.prompt.exit")
     // Beside the explorer, which is the cell he walked to — not wherever he set off from.
     const hanging = container.querySelector<HTMLElement>("[data-map-prompt]")!
     expect(parseFloat(hanging.style.left)).toBe(cellCenter(0, 2).cx)
@@ -179,6 +180,65 @@ describe(SiteMapScreen, () => {
     // Confirming hands over to the exit transition, which completes the site when it finishes.
     expect(queryByText("ui.leaveSiteConfirm")).toBeNull()
     expect(container.querySelector(".animate-entrance-zoom")).not.toBeNull()
+  })
+
+  describe("what the prompt beside the explorer says", () => {
+    // A room the player stands in, whatever it holds: the state a fork is in from the moment it is
+    // walked into, which is before its board has ever been opened.
+    const roomOf = (cell: Partial<GridCell> & Pick<GridCell, "type">): GridCell =>
+      ({ roomType: "encounter", dirs: new Set(["w"]), state: "completed", ...cell }) as GridCell
+
+    const stallStocking = (family: string): GridCell =>
+      roomOf({ type: "room", family, tags: ["shop"], stock: [{ type: "consumable", itemId: "bandage" }] })
+
+    const QUIET_FAMILY = "spec-quiet"
+    registerFamily({
+      meta: {
+        id: QUIET_FAMILY,
+        ownerMod: "test",
+        tags: ["puzzle"],
+        icon: "",
+        color: "",
+        rewardPriority: 0,
+        reEnterable: true,
+      },
+      generate: () => null,
+      Component: () => null,
+    })
+
+    const promptAtCol1 = async (cell: GridCell) => {
+      grid = gridOf([entrance, cell])
+      const { container } = await renderScreen()
+      fireEvent.click(nodeAt(container, 1))
+      await act(async () => {
+        vi.advanceTimersByTime(1000)
+      })
+      return goInPrompt(container).textContent
+    }
+
+    it("asks a switch fork for its mirrors, on a board the player has never once opened", async () => {
+      expect(await promptAtCol1(roomOf({ type: "room", roomType: "fork", family: "lightbeamSwitch" }))).toBe(
+        "lightbeamSwitch.invitation"
+      )
+    })
+
+    it("asks the shop for a look over its stall", async () => {
+      expect(await promptAtCol1(stallStocking("fez-shop"))).toBe("shop.invitation")
+    })
+
+    it("says only what is true of any room when the family standing there names nothing", async () => {
+      expect(await promptAtCol1(roomOf({ type: "room", family: QUIET_FAMILY }))).toBe("ui.prompt.here")
+    })
+
+    it("says the same for a room left behind by a mod that is switched off", async () => {
+      expect(await promptAtCol1(stallStocking("family-of-an-unregistered-mod"))).toBe("ui.prompt.here")
+    })
+
+    it("still offers the stairs as the walk they are", async () => {
+      expect(await promptAtCol1(roomOf({ type: "room", roomType: "portal", stairId: "s1", state: "reachable" }))).toBe(
+        "ui.prompt.stairs"
+      )
+    })
   })
 
   describe("the floor key ring", () => {

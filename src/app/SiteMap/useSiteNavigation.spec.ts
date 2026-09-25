@@ -268,7 +268,7 @@ describe("useSiteNavigation", () => {
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
-    expect(promptOf(hook)).toMatchObject({ kind: "room", at: [0, 1] })
+    expect(promptOf(hook)).toMatchObject({ kind: "room", at: [0, 1], familyId: RETURNABLE_FAMILY })
     expect(onEncounter).not.toHaveBeenCalled()
 
     act(() => promptOf(hook).take())
@@ -463,7 +463,7 @@ describe("useSiteNavigation", () => {
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
-    expect(promptOf(hook)).toMatchObject({ kind: "shop", at: [0, 1] })
+    expect(promptOf(hook)).toMatchObject({ kind: "room", at: [0, 1], familyId: "sumplete" })
     expect(onEncounter).not.toHaveBeenCalled()
 
     // freshArrival: the player walked here from elsewhere, which is what a shop's stock reset reads.

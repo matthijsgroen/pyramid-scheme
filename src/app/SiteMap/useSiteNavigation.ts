@@ -24,14 +24,22 @@ type NavigationArgs = {
   onExitReached: () => void
 }
 
-/** Which way in the explorer is standing at — what the prompt beside him says, and nothing more. */
-export type ArrivalPromptKind = "room" | "shop" | "stairs" | "exit"
+/**
+ * What the explorer is standing at — what the prompt beside him says, and nothing more.
+ *
+ * `stairs` and `exit` take the player somewhere; `room` opens what stands in the room he is already in,
+ * whether that is a board or a stall, and moves nobody.
+ */
+export type ArrivalPromptKind = "room" | "stairs" | "exit"
 
 export type ArrivalPrompt = {
   kind: ArrivalPromptKind
   /** The cell the prompt hangs over, which is the one the explorer has walked to. */
   at: readonly [number, number]
-  /** Go in — this does what arriving used to do on its own. */
+  /** Whose room this is, so the family can name the prompt itself (FamilyMeta.invitation). Unset on a
+   * `room` whose cell names no family, and on the two kinds that are the floor's own. */
+  familyId?: string
+  /** Takes what is offered — this does what arriving used to do on its own. */
   take: () => void
 }
 
@@ -41,9 +49,9 @@ export type SiteNavigation = {
   prompt: ArrivalPrompt | null
 }
 
-// What a tap on the map does: walk there, and — for a room already finished, a shop, a staircase or the
-// way out — offer the way in rather than take it. Walking somewhere and going in are two acts, so the
-// walk ends with a prompt beside the explorer and the player decides.
+// What a tap on the map does: walk there, and — for a room that reopens, a shop, a staircase or the way
+// out — offer what is there rather than take it. Walking somewhere and acting on what you find are two
+// acts, so the walk ends with a prompt beside the explorer and the player decides.
 // Everything "on arrival" waits out the walk (ExplorerDot's own step duration is 120ms).
 export const useSiteNavigation = ({
   journeys,
@@ -60,16 +68,17 @@ export const useSiteNavigation = ({
   const [scheduleArrival] = useTimeout()
   const [prompt, setPrompt] = useState<ArrivalPrompt | null>(null)
 
-  // Hangs a way in beside the explorer. Taking it clears it first, so nothing offers a door the player
-  // has already gone through.
+  // Hangs an offer beside the explorer. Taking it clears it first, so nothing offers twice what the
+  // player has already taken.
   const offer = useCallback(
-    (kind: ArrivalPromptKind, row: number, col: number, goIn: () => void) =>
+    (kind: ArrivalPromptKind, row: number, col: number, accept: () => void, familyId?: string) =>
       setPrompt({
         kind,
         at: [row, col],
+        familyId,
         take: () => {
           setPrompt(null)
-          goIn()
+          accept()
         },
       }),
     []
@@ -148,9 +157,10 @@ export const useSiteNavigation = ({
           cell.type === "room" &&
           !!cell.stock?.some((item, j) => item && !journeys.getPurchasedShopSlots(journeyId).has(`${address}!${j}`))
         if (familyStaysOpen || shopHasUnclaimedStock) {
-          const kind = familyStaysOpen ? "room" : "shop"
+          // The family standing here names the prompt; a stall and a switch ask for different things.
+          const familyId = cell.type === "room" ? cell.family : undefined
           scheduleArrival(walkDelay(row, col), () =>
-            offer(kind, row, col, () => onEncounter([row, col], !alreadyStandingHere))
+            offer("room", row, col, () => onEncounter([row, col], !alreadyStandingHere), familyId)
           )
           return
         }
