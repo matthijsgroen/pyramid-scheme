@@ -44,6 +44,12 @@ describe("the topology mod", () => {
 // reads simply ships. So the check is over the source itself rather than over what it loads.
 const RETIRED = /witnessdoor|witness door|witness:/i
 
+// The app-side registry a family handed a key through. A mechanic that changes what a floor lets
+// through holds floor state instead — a switch's ways out live in StoredJourneyStateV3.openWaysOut
+// — so nothing mints, nothing registers, and a union over registered sources would be empty on every
+// floor: a seam no test could tell working from absent.
+const MINTED_KEYS = /ownedkeysource/i
+
 // Everything the shipped app is built out of. Docs are left out on purpose: a design note may still
 // tell the story of a mechanic that has been taken out.
 const SWEPT_TREES = ["src", "public"]
@@ -71,10 +77,13 @@ const filesUnder = (dir: string): string[] =>
 describe("the source the app is built from", () => {
   let swept: string[] = []
   let named: string[] = []
+  let minting: string[] = []
   // Reading every source and locale file is past the default per-test budget on a loaded machine.
   beforeAll(() => {
     swept = [...SWEPT_TREES.flatMap(filesUnder), ...SWEPT_FILES].filter(path => path !== GUARD)
-    named = swept.filter(path => RETIRED.test(readFileSync(path, "utf8")))
+    const text = new Map(swept.map(path => [path, readFileSync(path, "utf8")]))
+    named = swept.filter(path => RETIRED.test(text.get(path)!))
+    minting = swept.filter(path => MINTED_KEYS.test(text.get(path)!))
   }, 30_000)
 
   it("was swept at all (an empty sweep would pass without looking at anything)", () => {
@@ -85,5 +94,9 @@ describe("the source the app is built from", () => {
 
   it("names no shrine door: not a family, not a locale namespace, not a key id", () => {
     expect(named).toEqual([])
+  })
+
+  it("names no registry of minted keys", () => {
+    expect(minting, `a minted-key registry is named in:\n${minting.join("\n")}`).toEqual([])
   })
 })

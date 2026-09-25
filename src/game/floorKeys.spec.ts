@@ -42,6 +42,13 @@ describe(floorKeyRing, () => {
     expect(floorKeyRing(opened, new Set(["k1"]))).toEqual({ held: ["blue"], needed: [] })
   })
 
+  // Whether a door is still shut is a question about the keys in hand, not about the chests on the
+  // floor: the chest is the usual place a floor key comes from, and the ring asks the key ids.
+  it("leaves a door out of needed when its key is in hand and no chest here holds that key", () => {
+    const grid = gridOf([door("k9", "blue", "reachable")])
+    expect(floorKeyRing(grid, new Set(["k9"]))).toEqual({ held: [], needed: [] })
+  })
+
   it("lists every colour a multi-key chest carries", () => {
     const grid = gridOf([
       keyChest("k1", ["red", "green"], "completed"),

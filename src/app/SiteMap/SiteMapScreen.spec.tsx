@@ -1,11 +1,14 @@
 // @vitest-environment jsdom
 import { render, act, fireEvent, cleanup } from "@testing-library/react"
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest"
-import type { FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
+import { describe, expect, it, vi, beforeAll, beforeEach, afterEach } from "vitest"
+import type { FloorConfig, FloorGrid, GridCell, KeyColor, RoomCell, TombKeyReward } from "@/game/siteTypes"
 import { CELL, cellCenter } from "./mapScale"
 import { clearGameData } from "@/support/useGameStorage"
-import { ownedKeysChanged, registerOwnedKeySource, __resetOwnedKeySources } from "@/app/families/ownedKeySources"
-import { registerFamily } from "@/app/families/familyRegistry"
+import { registerFamily, resolveEncounter } from "@/app/families/familyRegistry"
+import { registerHeldKeysProvider } from "@/app/SiteMap/keyProviders"
+import { assembleFloor } from "@/game/siteAssembler"
+import { completeCell, revealAll } from "@/game/gridNavigation"
+import { allFloors, resolveKeyRequirements } from "./worldFloors.testing"
 
 // Keys are enough to tell the buttons apart; none of these assertions read copy. Interpolated data
 // is appended so a label built from a nested lookup (the key ring's "<colour> key — in hand") still
@@ -35,6 +38,8 @@ const gridOf = (cells: GridCell[]): FloorGrid => ({
 const walkableFloor = gridOf([entrance, corridor, exitRoom])
 // Swapped per test (the mock below reads it lazily), so a floor-key test can supply its own layout.
 let grid: FloorGrid = walkableFloor
+// Where the explorer stands when the screen mounts. A carved floor's entrance is not [0,0].
+let explorerPos: readonly [number, number] = [0, 0]
 
 vi.mock("./useAssembledFloor", async importOriginal => {
   const actual = await importOriginal<typeof import("./useAssembledFloor")>()
@@ -42,13 +47,63 @@ vi.mock("./useAssembledFloor", async importOriginal => {
     ...actual,
     useAssembledFloor: () => ({
       grid,
-      explorerPos: [0, 0] as readonly [number, number],
+      explorerPos,
       hiddenJunctions: new Set<string>(),
       hiddenSections: new Set<string>(),
       junctionSections: new Map<string, ReadonlySet<string>>(),
     }),
   }
 })
+
+// The keys a save carries into a site, the way the tomb-treasure mod hands them over.
+let heldWardKeys: ReadonlySet<string> = new Set()
+registerHeldKeysProvider(() => heldWardKeys)
+
+type CarvedKeys = {
+  grid: FloorGrid
+  chestAt: readonly [number, number]
+  doorAt: readonly [number, number]
+  doorColor: KeyColor
+  wardAt: readonly [number, number]
+  wardKeyId: string
+}
+
+// The first baked floor carrying all three at once: a chest whose tombKey reward opens a coloured
+// door standing on the same floor, and a ward gate wanting a key no chest here holds. Its colour is
+// required to be the only one of its hue on the floor, so a ring reading that colour can only be
+// reading this door.
+const carvedFloorWithKeys = (): CarvedKeys | null => {
+  for (const floor of allFloors()) {
+    const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
+      resolveKeyRequirements,
+      floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
+    })
+    if (!result.success) continue
+    const rooms: { cell: RoomCell; at: readonly [number, number] }[] = []
+    result.grid.cells.forEach((row, r) =>
+      row.forEach((cell, c) => {
+        if (cell.type === "room") rooms.push({ cell, at: [r, c] })
+      })
+    )
+    const chest = rooms.find(({ cell }) => cell.reward?.type === "tombKey" && !!cell.keyColor)
+    if (!chest) continue
+    const keyId = (chest.cell.reward as TombKeyReward).keyId
+    const door = rooms.find(({ cell }) => cell.gateVariant === "floor-key" && cell.requiredKeyId === keyId)
+    const ward = rooms.find(({ cell }) => cell.gateVariant === "tomb-key" && !!cell.requiredKeyId)
+    if (!door?.cell.keyColor || !ward?.cell.requiredKeyId) continue
+    const sameHue = rooms.filter(({ cell }) => cell.gateVariant === "floor-key" && cell.keyColor === door.cell.keyColor)
+    if (sameHue.length !== 1) continue
+    return {
+      grid: result.grid,
+      chestAt: chest.at,
+      doorAt: door.at,
+      doorColor: door.cell.keyColor,
+      wardAt: ward.at,
+      wardKeyId: ward.cell.requiredKeyId,
+    }
+  }
+  return null
+}
 
 const { SiteMapScreen } = await import("./SiteMapScreen")
 
@@ -67,8 +122,8 @@ const settle = async () => {
 }
 
 // A cell's own marker box, addressed by where SiteMapView puts it: a marker's box IS its cell.
-const nodeAt = (container: HTMLElement, col: number) => {
-  const { cx, cy } = cellCenter(0, col)
+const nodeAt = (container: HTMLElement, col: number, row = 0) => {
+  const { cx, cy } = cellCenter(row, col)
   return Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
     el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
   )!
@@ -78,6 +133,8 @@ const exitNode = (container: HTMLElement) => nodeAt(container, 2)
 describe(SiteMapScreen, () => {
   beforeEach(async () => {
     grid = walkableFloor
+    explorerPos = [0, 0]
+    heldWardKeys = new Set()
     // jsdom doesn't implement scrollTo; SiteMapView calls it to center on explorerPos.
     Element.prototype.scrollTo = vi.fn()
     await clearGameData()
@@ -268,37 +325,92 @@ describe(SiteMapScreen, () => {
       expect(getByTitle(/keys\.neededTitle.*keys\.red/)).toBeTruthy()
     })
 
-    /**
-     * The one thing a registry of plain functions cannot do by itself: say that its answer has moved.
-     *
-     * A key minted on the floor the player is STANDING ON — which is the only floor a family-minted key is
-     * ever used — changes nothing this screen renders from, so the union has to be re-read on the registry's
-     * word rather than on a prop. Without that, the door stays shut until the site is left and re-entered.
-     */
-    it("opens the door it belongs to while the floor stays open, with no prop changing", async () => {
-      const minted = new Set<string>()
-      registerOwnedKeySource("spec", () => minted)
-      try {
-        grid = gridOf([keyChest, redDoor])
-        const { queryByTitle } = await renderScreen()
-        expect(queryByTitle(/keys\.neededTitle.*keys\.red/)).not.toBeNull()
-
-        minted.add("test-site-0-9")
-        await act(async () => {
-          ownedKeysChanged()
-        })
-
-        expect(queryByTitle(/keys\.neededTitle.*keys\.red/)).toBeNull()
-      } finally {
-        // A registry singleton outlives the test; a source left behind would satisfy the next one's door.
-        __resetOwnedKeySources()
-      }
-    })
-
     it("shows nothing on a floor with no keys and no doors", async () => {
       const { queryByTitle } = await renderScreen()
 
       expect(queryByTitle(/keys\./)).toBeNull()
+    })
+  })
+
+  describe("the keys of a floor the world carved", () => {
+    let carved: CarvedKeys | null = null
+
+    beforeAll(() => {
+      carved = carvedFloorWithKeys()
+    }, 30_000)
+
+    // Every test below reads `carved`, so a sweep that matched nothing would leave them all skipping
+    // their own subject in silence.
+    it("has a baked floor holding a key chest, the door it opens and a ward gate", () => {
+      expect(carved).not.toBeNull()
+    })
+
+    const walkInto = async (container: HTMLElement, at: readonly [number, number]) => {
+      fireEvent.click(nodeAt(container, at[1], at[0]))
+      await act(async () => {
+        vi.advanceTimersByTime(60_000)
+      })
+    }
+
+    it("shows the door's colour as needed until its own chest is looted, then as held", async () => {
+      const { grid: floor, chestAt, doorColor } = carved!
+      grid = revealAll(floor)
+      const shut = await renderScreen()
+
+      expect(shut.queryByTitle(new RegExp(`keys\\.neededTitle.*keys\\.${doorColor}`))).not.toBeNull()
+      expect(shut.queryByTitle(new RegExp(`keys\\.heldTitle.*keys\\.${doorColor}`))).toBeNull()
+      cleanup()
+
+      grid = completeCell(revealAll(floor), chestAt[0], chestAt[1])
+      const looted = await renderScreen()
+
+      expect(looted.queryByTitle(new RegExp(`keys\\.heldTitle.*keys\\.${doorColor}`))).not.toBeNull()
+      expect(looted.queryByTitle(new RegExp(`keys\\.neededTitle.*keys\\.${doorColor}`))).toBeNull()
+    })
+
+    it("refuses the floor-key door until the chest holding its key is looted", async () => {
+      const { grid: floor, doorAt } = carved!
+      grid = revealAll(floor)
+      explorerPos = floor.entrancePos
+      const { container, queryByText } = await renderScreen()
+
+      await walkInto(container, doorAt)
+
+      expect(queryByText("gate.pass")).toBeNull()
+    })
+
+    it("passes the player through that door once the chest is looted", async () => {
+      const { grid: floor, chestAt, doorAt } = carved!
+      grid = completeCell(revealAll(floor), chestAt[0], chestAt[1])
+      explorerPos = floor.entrancePos
+      const { container, queryByText } = await renderScreen()
+
+      await walkInto(container, doorAt)
+
+      expect(queryByText("gate.pass")).not.toBeNull()
+    })
+
+    it("refuses a ward gate to a player carrying none of its key", async () => {
+      const { grid: floor, wardAt } = carved!
+      grid = revealAll(floor)
+      explorerPos = floor.entrancePos
+      const { container, queryByText } = await renderScreen()
+
+      await walkInto(container, wardAt)
+
+      expect(queryByText("gate.pass")).toBeNull()
+    })
+
+    it("passes the player through a ward gate whose key the save carried in", async () => {
+      const { grid: floor, wardAt, wardKeyId } = carved!
+      grid = revealAll(floor)
+      explorerPos = floor.entrancePos
+      heldWardKeys = new Set([wardKeyId])
+      const { container, queryByText } = await renderScreen()
+
+      await walkInto(container, wardAt)
+
+      expect(queryByText("gate.pass")).not.toBeNull()
     })
   })
 })
