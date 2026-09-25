@@ -29,7 +29,10 @@ import type { FamilyMeta } from "./families/familyMeta"
 // `reEnterable` mirrors the resolved family's own FamilyMeta.reEnterable — whether a finished room of
 // it is walked back INTO. Carried here because a switch needs it and core may not read a mod's meta:
 // the resolver that knows the registry answers, and this module only asks.
-export type EncounterResolution = { familyId: string; tags: string[]; reEnterable?: boolean }
+// `ownerMod` names the mod that contributed the resolved family, and is absent exactly when no family
+// answered the query — which is how a caller holding only this resolution tells a room whose mod left
+// the build from one a mod that is here still stands in.
+export type EncounterResolution = { familyId: string; tags: string[]; reEnterable?: boolean; ownerMod?: string }
 export type ResolveEncounter = (encounter: string | string[] | undefined, defaultTag: string) => EncounterResolution
 
 // The one place a resolved FamilyMeta becomes an EncounterResolution — shared by
@@ -41,7 +44,12 @@ export type ResolveEncounter = (encounter: string | string[] | undefined, defaul
 // family-absence handling rather than resolving to nothing.
 export const encounterFromMeta = (meta: FamilyMeta | undefined, fallback: string | string[]): EncounterResolution => {
   if (!meta) return { familyId: Array.isArray(fallback) ? fallback.join("+") : fallback, tags: [] }
-  return { familyId: meta.id, tags: meta.tags, ...(meta.reEnterable ? { reEnterable: true } : {}) }
+  return {
+    familyId: meta.id,
+    tags: meta.tags,
+    ownerMod: meta.ownerMod,
+    ...(meta.reEnterable ? { reEnterable: true } : {}),
+  }
 }
 
 // Resolves a main-path puzzle room's own completion precondition (e.g. a tableau's

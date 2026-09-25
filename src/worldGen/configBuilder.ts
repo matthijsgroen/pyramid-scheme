@@ -287,15 +287,16 @@ export const buildConfigs = (
   // stays structurally inert. Injected from src/mods (allFamilyMeta.familyIsTrap).
   isTrapFamily?: IsTrapFamily,
   // Which mods are registered — gates authored owner-tagged (SideSection["gate"].ownerMod) drop
-  // when their mod isn't in here, before Phase 4's worklist can hard-fail on a lock nothing claims
+  // when their mod isn't in here (a switch fork's owner comes off `resolveEncounter` instead, since
+  // it names its family and not a mod), before Phase 4's worklist can hard-fail on a lock nothing claims
   // (placeFragments.ts's winnability guard, for a gating mod toggled off with its gate still
   // authored). Absent ⇒ drop nothing, so a caller that doesn't pass this (existing callers, specs)
   // is unaffected; scripts/generateWorld.ts injects the real registered set.
   registeredModIds?: ReadonlySet<string>,
-  // Real family resolution (reEnterable included) for Phase 4's reachability walk — injected from
-  // src/mods/allFamilyMeta.ts (resolveEncounterMeta) by scripts/generateWorld.ts. Absent (existing
-  // callers, specs) leaves the reachability walk on its own default, which never claims
-  // reEnterable for anyone.
+  // Real family resolution (reEnterable and ownerMod included) for Phase 3.1's switch-fork drop and
+  // Phase 4's reachability walk — injected from src/mods/allFamilyMeta.ts (resolveEncounterMeta) by
+  // scripts/generateWorld.ts. Absent (existing callers, specs) leaves the reachability walk on its
+  // own default, which never claims reEnterable for anyone, and leaves every switch fork standing.
   resolveEncounter?: ResolveEncounter
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
@@ -310,13 +311,14 @@ export const buildConfigs = (
   const builtConfigs = { ...pyramidConfigs, ...tombConfigs }
 
   // Phase 3.1: drop mod-owned authoring whose mod isn't registered, before Phase 4's worklist can
-  // hard-fail on a lock nothing claims (placeFragments.ts's winnability guard). No registered set ⇒
-  // drop nothing.
+  // hard-fail on a lock nothing claims (placeFragments.ts's winnability guard) and before any floor
+  // is assembled with a switch whose family the build no longer holds. No registered set ⇒ drop
+  // nothing.
   const allConfigs: Record<string, SiteConfig[]> = registeredModIds
     ? Object.fromEntries(
         Object.entries(builtConfigs).map(([journeyId, pyramids]) => [
           journeyId,
-          pyramids.map(floors => floors.map(floor => dropUnownedAuthoring(floor, registeredModIds))),
+          pyramids.map(floors => floors.map(floor => dropUnownedAuthoring(floor, registeredModIds, resolveEncounter))),
         ])
       )
     : builtConfigs
