@@ -1,9 +1,10 @@
 import type { FloorGrid, RoomCell, RoomType } from "@/game/siteTypes"
+import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapScale"
 
-// What KIND of node a cell is, and whether its gate is shut: the two pure questions asked by both the
-// marker that draws it and the floor geometry that dresses the room around it (`roomClaims.ts`). Kept
-// apart from either so neither has to import the other.
+// What KIND of node a cell is, whether its gate is shut, and whether its family keeps it open: the
+// questions asked by both the marker that draws it and the floor geometry that dresses the room around
+// it (`roomClaims.ts`). Kept apart from either so neither has to import the other.
 
 export type ShapeKind = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
 
@@ -29,6 +30,16 @@ export const shapeKindFor = (
   if (tags?.includes("treasure") || tags?.includes("shop")) return "treasure"
   return "puzzle"
 }
+
+/** A room its family keeps open (FamilyMeta.reEnterable): there is always something left to come back
+ * for, so nothing the map draws may call it finished — no completed dim, no ✓ — however long ago the
+ * player first walked in. The cell's `state` is left alone: navigation, reachability and the
+ * high-water mark are all read off it.
+ *
+ * Read off the registry, so this names no family of its own, and an unregistered one answers "no" —
+ * the right answer for a room left standing by a mod that is switched off.
+ */
+export const staysOpen = (cell: RoomCell): boolean => !!cell.family && !!getFamilyPlugin(cell.family)?.meta.reEnterable
 
 // Gating is soft: a locked gate is still "reachable" (clickable), so `state` doesn't distinguish
 // locked from unlocked. This recovers that purely cosmetic distinction for the icon AND the floor

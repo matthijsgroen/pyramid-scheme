@@ -9,7 +9,7 @@ import type {
   WallDecorationKind,
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
-import { revealAll, walkableFrom } from "../../game/gridNavigation"
+import { isSealedWayOut, revealAll, walkableFrom } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
 import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
@@ -37,7 +37,7 @@ import { cellAt } from "@/game/roomFootprint"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
 import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileVariants } from "./tileAssets"
-import { isLockedGate, nodeRadius, shapeKindFor } from "./nodeKinds"
+import { isLockedGate, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
 import { FloorShade, LitPlaces } from "./torchlight"
@@ -228,8 +228,9 @@ const nodeSpritesFor = (
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
           // A reward left behind because the pack was full is still there to come back for: that chest
-          // stays full, and wears the `!` rather than the ✓.
-          ...(cell.state === "completed"
+          // stays full, and wears the `!` rather than the ✓. A chest whose family keeps its room open
+          // wears neither, and is not dimmed: the ✓ and the fade are the pair that say emptied.
+          ...(cell.state === "completed" && !staysOpen(cell)
             ? { badge: pendingCells?.has(`${r},${c}`) ? ("pending" as const) : ("taken" as const) }
             : {}),
         })
@@ -330,7 +331,10 @@ const nodeSpritesFor = (
           // The same two cells fade it: they are the only ones ever behind a gate, exactly as a doorway
           // fades for the two its arch spans.
           fadeAt: [`${r},${c}`, `${r + dr},${c + dc}`],
-          key: `gate:${r},${c}`,
+          // A WAY A SWITCH SHUT IS NOT A GATE HUNG IN A DOORWAY BUT A WALL, and a wall is painted with
+          // the rest of the stone rather than with the leaves that go on last: the arch over the opening
+          // covers it, the way it covers everything else standing on the floor.
+          key: `${isSealedWayOut(cell) ? "wall" : "gate"}:${r},${c}`,
           url,
           x: left,
           y: base - PROP_H,
@@ -1060,6 +1064,7 @@ export const SiteMapView = ({
   // band where an arch is — sorted by its floor line among the furniture it came out UNDER the doorway
   // it is fitted into, which put the gate's own head behind a beam. It fades for the two cells it spans
   // (`fadeAt`), exactly as a doorway does, so passing behind it never hides the player.
+  // A way a switch shut is keyed `wall:` instead and stays with the furniture — see nodeSpritesFor.
   const isGate = (s: StandingSprite) => s.key.startsWith("gate:")
   const gateSprites = standing.filter(isGate)
   const seated = standing.filter(s => !isGate(s))
@@ -1324,7 +1329,9 @@ export const SiteMapView = ({
 
                 // room cell
                 const state = cell.state
-                const isCompleted = state === "completed"
+                // Reached, and done with. A room its family keeps open is reached and never done with, so it
+                // is left out of everything below that says finished — the dim and the ✓ alike.
+                const isCompleted = state === "completed" && !staysOpen(cell)
                 // Only ever a pending-loot marker for a treasure room with a consumable reward — this
                 // guards against stale coordinates in pendingCells (e.g. left over from before a site
                 // was regenerated) painting the badge onto whatever room now occupies that cell.
@@ -1352,6 +1359,11 @@ export const SiteMapView = ({
                 // — so the vector has nothing left to say that the doorway does not say better.
                 const hasExit = shapeKind === "exit" && !!tileOrPlaceholder(cell.difficulty ?? tier, "exit")
                 const roomR = nodeRadius[shapeKind]
+                // A WAY A SWITCH SHUT IS A WALL, AND A WALL WEARS NO NODE. The bars standing in its doorway
+                // already say the way is closed; a gate marker on top of them offers a second reading — a
+                // door to walk up to and be told what it wants — which is the one thing this cell is not.
+                // Every other gate carries the family that renders it, and keeps its marker.
+                const sealedWay = isSealedWayOut(cell)
                 const locked = isLockedGate(cell, ownedKeys)
                 const displayState: CellState = locked && state === "reachable" ? "visible" : state
 
@@ -1370,10 +1382,10 @@ export const SiteMapView = ({
                       drawing the same shape whatever is on it; the tap is the cell's own box either way. */}
                     <g
                       opacity={
-                        isCompleted && !isPending && !isPortal
-                          ? 0.45
-                          : hasStair || hasExit
-                            ? 0
+                        sealedWay || hasStair || hasExit
+                          ? 0
+                          : isCompleted && !isPending && !isPortal
+                            ? 0.45
                             : hasChest
                               ? NODE_OVER_ART_OPACITY
                               : 1

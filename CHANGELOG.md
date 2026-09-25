@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - A fork with a mirror puzzle standing in it now shows you the junction and its ways out as soon as you walk in, like any other fork.
+- A room you can walk back into no longer wears the tick and the fade that mean you are finished with a room.
+- A way the mirrors have shut now reads as barred stone: no door marker standing on it, and the archway above it draws in front of the bars.
+- A mirror puzzle whose beam reaches no shrine is no longer called solved, and leaves every way out of its junction shut.
 - Fixed walking when going to a deeper floor.
 - Fixed pyramids pulsing on the map with nothing left in them.
 - The way out of a site now counts as explored, so the corridor to it stays lit.

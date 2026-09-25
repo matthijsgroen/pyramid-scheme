@@ -15,6 +15,7 @@ import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "
 import { authoredKindsFor } from "./authoredKinds"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
+import { registerFamily } from "@/app/families/familyRegistry"
 
 // Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
 // place of its own), so a change there can't silently break every position assumption in this file.
@@ -1926,5 +1927,190 @@ describe("nothing on the map is rasterised at the size of the map", () => {
     expect(Math.max(...areas) / mapPx).toBeLessThan(0.1)
     // And all of them together stay under the map, so no floor can be paid for many times over.
     expect(areas.reduce((a, b) => a + b, 0) / mapPx).toBeLessThan(1)
+  })
+})
+
+// ── What the map may call finished, and what it may not ───────────────────────
+
+// Which families keep their rooms open is theirs to say and the map's only to read, so both sides of
+// the question are stubbed here rather than borrowed from a mod.
+const STAYS_OPEN_FAMILY = "map-stays-open"
+const CLOSES_FAMILY = "map-closes"
+const stubFamily = (id: string, reEnterable?: true) =>
+  registerFamily({
+    meta: {
+      id,
+      ownerMod: "test",
+      tags: ["puzzle"],
+      icon: "",
+      color: "",
+      rewardPriority: 0,
+      ...(reEnterable ? { reEnterable } : {}),
+    },
+    generate: () => null,
+    Component: () => null,
+  })
+stubFamily(STAYS_OPEN_FAMILY, true)
+stubFamily(CLOSES_FAMILY)
+
+/** The node marker drawn on one cell — the `<g>` whose opacity is how far back it has been eased. */
+const markerAt = (container: HTMLElement, r: number, c: number) => {
+  const { cx, cy } = cellCenter(r, c)
+  const box = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
+    el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
+  )
+  return box?.querySelector<SVGGElement>("g[opacity]")?.getAttribute("opacity")
+}
+
+describe("a room the player can walk back into never says it is finished", () => {
+  const solvedRoom = (family: string): GridCell => ({
+    type: "room",
+    roomType: "encounter",
+    family,
+    dirs: new Set<Direction>(["s"]),
+    state: "completed",
+  })
+  const drawn = (family: string) => {
+    const { container } = render(<SiteMapView grid={makeGrid([[solvedRoom(family), empty]])} />)
+    return { opacity: markerAt(container, 0, 0), tick: container.textContent?.includes("✓") }
+  }
+
+  it("wears no ✓ and takes no dim, however long ago the player first walked in", () => {
+    expect(drawn(STAYS_OPEN_FAMILY)).toEqual({ opacity: "1", tick: false })
+  })
+
+  it("still dims and badges a solved room of a family that closes behind the player", () => {
+    expect(drawn(CLOSES_FAMILY)).toEqual({ opacity: "0.45", tick: true })
+  })
+
+  it("reads a room whose mod is switched off exactly as it always did", () => {
+    // Nothing answers for an unregistered family, and a leftover room is finished with: there is
+    // nothing left in it to come back for.
+    expect(drawn("no-mod-registers-this")).toEqual({ opacity: "0.45", tick: true })
+  })
+
+  it("leaves the chest in such a room full and unticked", () => {
+    const openChamber: GridCell = {
+      type: "room",
+      roomType: "encounter",
+      family: STAYS_OPEN_FAMILY,
+      tags: ["treasure"],
+      dirs: new Set<Direction>(["n"]),
+      state: "completed",
+    }
+    const grid = makeGrid([
+      [empty, corridor("completed", false), empty],
+      [empty, openChamber, empty],
+    ])
+    const { container } = render(<SiteMapView grid={grid} />)
+    expect(spriteMatching(container, "chestProp")[0]?.style.opacity).toBe("")
+    expect(Array.from(container.querySelectorAll("text")).filter(el => el.textContent === "✓")).toHaveLength(0)
+  })
+})
+
+// A way a switch shut holds nothing to enter and nothing ever opens it from outside (`isSealedWayOut`):
+// it is a wall the player can see. The bars in its doorway say that; a gate marker on top of them offers
+// a door to walk up to and be told what it wants, which is the one thing this cell is not.
+describe("a way a switch shut wears no node marker", () => {
+  const shutWay = (dirs: Direction[]): GridCell => ({
+    type: "room",
+    roomType: "encounter",
+    tags: ["gate"],
+    requiredKeyId: "switch:test#0#0#0:main",
+    dirs: new Set(dirs),
+    state: "reachable",
+  })
+  const wardGate = (dirs: Direction[]): GridCell => ({
+    type: "room",
+    roomType: "encounter",
+    family: "key-gate",
+    tags: ["gate"],
+    requiredKeyId: "ward:pin",
+    dirs: new Set(dirs),
+    state: "reachable",
+  })
+  const floorKeyDoor = (dirs: Direction[]): GridCell => ({
+    type: "room",
+    roomType: "encounter",
+    family: "key-gate",
+    tags: ["gate"],
+    requiredKeyId: "floor:red",
+    gateVariant: "floor-key",
+    keyColor: "red",
+    keyIsAuthored: true,
+    dirs: new Set(dirs),
+    state: "reachable",
+  })
+  // entrance corridor, the gate, and the pocket it shuts beyond it.
+  const gridWith = (gate: GridCell) => ({
+    ...makeGrid([[straightCorridor("completed", ["e"]), gate, straightCorridor("reachable", ["w"])]]),
+    entrancePos: [0, 0] as const,
+  })
+
+  it("draws no marker on it", () => {
+    const { container } = render(<SiteMapView grid={gridWith(shutWay(["w", "e"]))} revealAllCells />)
+    expect(markerAt(container, 0, 1)).toBe("0")
+  })
+
+  it("still stands the bars in its doorway", () => {
+    const { container } = render(<SiteMapView grid={gridWith(shutWay(["w", "e"]))} revealAllCells />)
+    expect(spriteMatching(container, "/gate")[0], "the shut way drew no bars at all").toBeDefined()
+  })
+
+  it("leaves a ward gate its marker", () => {
+    const { container } = render(<SiteMapView grid={gridWith(wardGate(["w", "e"]))} revealAllCells />)
+    expect(markerAt(container, 0, 1)).toBe("1")
+  })
+
+  it("leaves an authored floor-key door its marker", () => {
+    const { container } = render(<SiteMapView grid={gridWith(floorKeyDoor(["w", "e"]))} revealAllCells />)
+    expect(markerAt(container, 0, 1)).toBe("1")
+  })
+})
+
+// An arch is painted last, over everything, because that is what standing under one looks like. The bars
+// of a shut way out stand in the same band and were escaping it, landing on top of the stone.
+describe("the arch over a shut way out is drawn in front of its bars", () => {
+  // entrance corridor, the shut way, then the chamber it seals — the chamber's footprint is what makes
+  // the gap between the two a doorway with an arch in it.
+  const archedShutWay = () => {
+    const grid = makeGrid([
+      [empty, straightCorridor("reachable", ["s"]), empty],
+      [
+        empty,
+        {
+          type: "room",
+          roomType: "encounter",
+          tags: ["gate"],
+          requiredKeyId: "switch:test#0#0#0:main",
+          dirs: new Set<Direction>(["n", "s"]),
+          state: "reachable",
+        },
+        empty,
+      ],
+      [empty, chamber("completed"), empty],
+    ])
+    return { ...grid, entrancePos: [0, 1] as const }
+  }
+
+  const orderIn = (container: HTMLElement, part: string) =>
+    spritesIn(container).findIndex(el => urlOf(el).includes(part))
+
+  it("paints the bars first and the arch over them", () => {
+    const { container } = render(<SiteMapView grid={archedShutWay()} revealAllCells />)
+    const bars = orderIn(container, "/gate")
+    const arch = orderIn(container, "arch")
+    expect(bars, "the shut way drew no bars at all").toBeGreaterThanOrEqual(0)
+    expect(arch, "the doorway drew no arch at all").toBeGreaterThanOrEqual(0)
+    expect(arch).toBeGreaterThan(bars)
+  })
+
+  it("still paints an arch over an open way through last, and still fades it under the player", () => {
+    const { container } = render(<SiteMapView grid={doorwayGrid()} explorerPos={[2, 1]} />)
+    const arch = archesIn(container)[0]
+    const explorer = container.querySelector("[data-explorer]")!
+    expect(explorer.compareDocumentPosition(arch) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    const standing = render(<SiteMapView grid={doorwayGrid()} explorerPos={[1, 1]} />)
+    expect(Number(archesIn(standing.container)[0].style.opacity)).toBeLessThan(1)
   })
 })

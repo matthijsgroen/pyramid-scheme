@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react"
 import { cellAddress } from "./cellIdentity"
-import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { findPath, getCell } from "@/game/gridNavigation"
 import type { FloorGrid, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { encodeEdge } from "./edgeId"
+import { staysOpen } from "./nodeKinds"
 import { stairPeerPosition } from "./stairTravel"
 
 type NavigationArgs = {
@@ -142,11 +142,8 @@ export const useSiteNavigation = ({
       if (cell.state === "completed") {
         const alreadyStandingHere = explorerPos[0] === row && explorerPos[1] === col
         goHere()
-        // A family that hands over one of several things it holds, one per visit (FamilyMeta.reEnterable).
-        // Read off the registry, so core learns which rooms those are without naming any of them — and an
-        // unregistered family answers "no", which is what a toggled-off mod's leftover rooms need.
-        const familyStaysOpen =
-          cell.type === "room" && !!cell.family && !!getFamilyPlugin(cell.family)?.meta.reEnterable
+        // A family that hands over one of several things it holds, one per visit — see `staysOpen`.
+        const familyStaysOpen = cell.type === "room" && staysOpen(cell)
         const shopHasUnclaimedStock =
           cell.type === "room" &&
           !!cell.stock?.some((item, j) => item && !journeys.getPurchasedShopSlots(journeyId).has(`${address}!${j}`))
