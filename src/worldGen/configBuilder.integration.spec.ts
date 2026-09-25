@@ -20,7 +20,7 @@ import {
 } from "../mods/registeredMods"
 import { MOSAIC_STEPS_BY_TIER, MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
 import { reachableMosaicCounts } from "../mods/mosaic/game/mosaicReachability"
-import { witnessKeyId, witnessSite } from "../mods/witnessDoor/game/witnessKeys"
+import { witnessKeyId, witnessSite } from "../mods/topology/game/witnessDoor/witnessKeys"
 import {
   resolveKeyRequirements,
   familyPriorityFor,
@@ -171,7 +171,7 @@ it("authors a witness door whose two authored gate ids match the mod's own witne
     witnessKeyId(expectedSite, "east"),
     witnessKeyId(expectedSite, "north"),
   ])
-  expect(witnessSections.map(s => s.gate.ownerMod)).toEqual(["witnessDoor", "witnessDoor"])
+  expect(witnessSections.map(s => s.gate.ownerMod)).toEqual(["topology", "topology"])
 }, 90_000)
 
 describe("tomb floor linking — ward-path shortcuts", () => {

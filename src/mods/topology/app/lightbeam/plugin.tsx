@@ -2,8 +2,8 @@
 import { generatePuzzle } from "@/game/seeds/generatePuzzle"
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { LightbeamPuzzle as LightbeamGrid } from "@/mods/puzzle/game/lightbeam/generateLightbeam"
-import { LIGHTBEAM_META } from "@/mods/puzzle/game/lightbeam/meta"
+import type { LightbeamPuzzle as LightbeamGrid } from "@/mods/topology/game/lightbeam/generateLightbeam"
+import { LIGHTBEAM_META } from "@/mods/topology/game/lightbeam/meta"
 import { LightbeamPuzzle } from "./LightbeamPuzzle"
 import { isModEnabled } from "@/mods/registeredMods"
 
@@ -17,7 +17,7 @@ export const generateLightbeamFor = (
   variant?: string
 ): LightbeamGrid => generatePuzzle<LightbeamGrid>(LIGHTBEAM_META, seed, { difficulty, variant })
 
-if (isModEnabled("puzzle"))
+if (isModEnabled("topology"))
   registerFamily({
     meta: LIGHTBEAM_META,
     generate: (seed, ctx): LightbeamGrid => generatePuzzle<LightbeamGrid>(LIGHTBEAM_META, seed, ctx),

@@ -1,6 +1,6 @@
-import { cellKey, firedWirings, isLit, pieceCells, type BeamSegment } from "@/mods/puzzle/game/lightbeam/beam"
-import type { LightbeamPuzzle } from "@/mods/puzzle/game/lightbeam/generateLightbeam"
-import { solveLightbeamByTechniques, type LightbeamStep } from "@/mods/puzzle/game/lightbeam/techniques"
+import { cellKey, firedWirings, isLit, pieceCells, type BeamSegment } from "@/mods/topology/game/lightbeam/beam"
+import type { LightbeamPuzzle } from "@/mods/topology/game/lightbeam/generateLightbeam"
+import { solveLightbeamByTechniques, type LightbeamStep } from "@/mods/topology/game/lightbeam/techniques"
 
 export type LightbeamHint = {
   /** Translation key under `lightbeam.hint`. */

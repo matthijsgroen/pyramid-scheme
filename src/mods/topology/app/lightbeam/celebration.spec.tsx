@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import { beforeAll, describe, expect, it, vi } from "vitest"
 import { render, waitFor, within } from "@testing-library/react"
-import { DIR, TURN_ANGLES, traceBeam, type LightbeamPuzzleData } from "@/mods/puzzle/game/lightbeam/beam"
-import type { LightbeamPuzzle as LightbeamPuzzleBoard } from "@/mods/puzzle/game/lightbeam/generateLightbeam"
+import { DIR, TURN_ANGLES, traceBeam, type LightbeamPuzzleData } from "@/mods/topology/game/lightbeam/beam"
+import type { LightbeamPuzzle as LightbeamPuzzleBoard } from "@/mods/topology/game/lightbeam/generateLightbeam"
 import { LightbeamBoard } from "./LightbeamBoard"
 import { LightbeamPuzzle } from "./LightbeamPuzzle"
 

@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeAll } from "vitest"
 import { act } from "react"
 import { render, screen } from "@testing-library/react"
 import { WitnessDoorPuzzle } from "./WitnessDoorPuzzle"
-import { generateWitnessDoor, solutionsFor, type MirrorPlacement } from "../game/generateWitnessDoor"
+import { generateWitnessDoor, solutionsFor, type MirrorPlacement } from "../../game/witnessDoor/generateWitnessDoor"
 import { cellKey } from "@/mods/core/game/beam/physics"
 
 const board = generateWitnessDoor(1, "junior")

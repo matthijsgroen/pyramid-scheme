@@ -10,8 +10,8 @@ import { COL_PITCH, PAD, PAD_TOP, ROW_PITCH, SIDE_W, WALL_H } from "@/app/SiteMa
 import { clearGameData, writeGameData } from "@/support/useGameStorage"
 import { ownedKeysFromSources } from "@/app/families/ownedKeySources"
 import { cellKey } from "@/mods/core/game/beam/physics"
-import { generateWitnessDoor, solutionsFor } from "../game/generateWitnessDoor"
-import { witnessKeyId, witnessSite, WITNESS_SHRINES } from "../game/witnessKeys"
+import { generateWitnessDoor, solutionsFor } from "../../game/witnessDoor/generateWitnessDoor"
+import { witnessKeyId, witnessSite, WITNESS_SHRINES } from "../../game/witnessDoor/witnessKeys"
 
 // Keys are enough to tell the controls apart, and a shrine's key still says which shrine it is.
 vi.mock("react-i18next", () => ({

@@ -12,14 +12,14 @@ import {
   TURN_ANGLES,
   type LightbeamPuzzleData,
   type MirrorAngle,
-} from "@/mods/puzzle/game/lightbeam/beam"
+} from "@/mods/topology/game/lightbeam/beam"
 import {
   generateLightbeam,
   type LightbeamOptions,
   type LightbeamPuzzle,
-} from "@/mods/puzzle/game/lightbeam/generateLightbeam"
-import { LIGHTBEAM_CONFIG } from "@/mods/puzzle/game/lightbeam/lightbeamConfig"
-import { createLightbeamState, cycleLightbeamPiece } from "@/mods/puzzle/game/lightbeam/lightbeamState"
+} from "@/mods/topology/game/lightbeam/generateLightbeam"
+import { LIGHTBEAM_CONFIG } from "@/mods/topology/game/lightbeam/lightbeamConfig"
+import { createLightbeamState, cycleLightbeamPiece } from "@/mods/topology/game/lightbeam/lightbeamState"
 import { buildLightbeamHint } from "./lightbeamHint"
 import { LightbeamBoard } from "./LightbeamBoard"
 

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest"
 import { difficulties } from "@/data/difficultyLevels"
 import { generateLightbeamFor } from "./plugin"
-import { isLit } from "@/mods/puzzle/game/lightbeam/beam"
-import { solveLightbeamByTechniques } from "@/mods/puzzle/game/lightbeam/techniques"
+import { isLit } from "@/mods/topology/game/lightbeam/beam"
+import { solveLightbeamByTechniques } from "@/mods/topology/game/lightbeam/techniques"
 
 describe("the board real play gets", () => {
   it.each(difficulties)("builds a playable %s board through the plugin", { timeout: 120_000 }, tier => {

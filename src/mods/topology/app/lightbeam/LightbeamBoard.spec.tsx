@@ -7,7 +7,7 @@ import {
   TURN_ANGLES,
   type LightbeamPuzzleData,
   type MirrorAngle,
-} from "@/mods/puzzle/game/lightbeam/beam"
+} from "@/mods/topology/game/lightbeam/beam"
 import { LightbeamBoard } from "./LightbeamBoard"
 
 /**

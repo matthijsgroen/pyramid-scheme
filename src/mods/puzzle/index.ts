@@ -2,7 +2,6 @@ import type { ModDescriptor } from "../modDescriptor"
 import { SUMPLETE_META } from "./game/sumplete/meta"
 import { BALANCE_META } from "./game/balanceScale/meta"
 import { FUTOSHIKI_META } from "./game/futoshiki/meta"
-import { LIGHTBEAM_META } from "./game/lightbeam/meta"
 import { ECLIPSE_META } from "./game/eclipse/meta"
 import { CONSTELLATION_META } from "./game/constellation/meta"
 import { STAR_BATTLE_META } from "./game/starBattle/meta"
@@ -14,7 +13,7 @@ import { RUSH_HOUR_META } from "./game/rushHour/meta"
 import { PROCESSION_META } from "./game/procession/meta"
 
 // The puzzle mod descriptor. Owns the general math-puzzle families (sumplete, balance-scale, futoshiki,
-// lightbeam, eclipse, constellation, star battle, twin stars, hidato, sudoku). A root mod: it stays on in
+// eclipse, constellation, star battle, twin stars, hidato, sudoku). A root mod: it stays on in
 // production (turning it off leaves puzzle rooms with no family, so they only auto-resolve via
 // the family-absence pass-through — a degenerate world, not a playable one). It is a real REGISTERED_MODS entry anyway so its family
 // metadata flows through MOD_FAMILY_META like every other mod's — adding a new puzzle family is then a
@@ -33,7 +32,6 @@ export const puzzleMod: ModDescriptor = {
     SUMPLETE_META,
     BALANCE_META,
     FUTOSHIKI_META,
-    LIGHTBEAM_META,
     ECLIPSE_META,
     CONSTELLATION_META,
     STAR_BATTLE_META,

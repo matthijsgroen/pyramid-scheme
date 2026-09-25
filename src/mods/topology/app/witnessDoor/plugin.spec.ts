@@ -4,8 +4,8 @@ import { act, renderHook } from "@testing-library/react"
 import { primeModState } from "@/app/state/useModState"
 import { resolveFamilyByIdOrTag, type FamilyContext } from "@/app/families/familyRegistry"
 import { ownedKeysFromSources, subscribeOwnedKeys } from "@/app/families/ownedKeySources"
-import { traceWitnessBeam, type WitnessBoard } from "../game/generateWitnessDoor"
-import { witnessKeyId, witnessSite, WITNESS_SHRINES } from "../game/witnessKeys"
+import { traceWitnessBeam, type WitnessBoard } from "../../game/witnessDoor/generateWitnessDoor"
+import { witnessKeyId, witnessSite, WITNESS_SHRINES } from "../../game/witnessDoor/witnessKeys"
 import { useMintShrine } from "./mintedShrines"
 import "./plugin"
 
@@ -27,7 +27,7 @@ describe("the witness door family", () => {
   })
 
   // Its own tag, never "puzzle" — a room drawn from the generic pool would have no fork to open
-  // (src/mods/witnessDoor/index.spec.ts pins the pool itself).
+  // (src/mods/topology/index.spec.ts pins the pool itself).
   it("resolves by its own tag", () => {
     expect(resolveFamilyByIdOrTag(["witnessDoor"])?.meta.id).toBe("witnessDoor")
   })

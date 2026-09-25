@@ -12,7 +12,7 @@ import { hieroglyphMod } from "./hieroglyph"
 import { trapMod } from "./trap"
 import { shopMod } from "./shop"
 import { tombTreasureMod } from "./tombTreasure"
-import { witnessDoorMod } from "./witnessDoor"
+import { topologyMod } from "./topology"
 
 // The registered mods, in one list. A mod is "on" iff it appears here; toggle a mod off (for a
 // demo, or while proving a boundary is real) by removing its entry. See docs/mods/TARGET.md —
@@ -26,7 +26,7 @@ export const REGISTERED_MODS: ModDescriptor[] = [
   trapMod,
   shopMod,
   tombTreasureMod,
-  witnessDoorMod,
+  topologyMod,
 ]
 
 // Every capped-filler currency any registered mod contributes, flattened for the world-gen

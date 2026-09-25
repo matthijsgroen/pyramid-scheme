@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 628839308
+export const worldContentHash = 1058538122
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -2417,7 +2417,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            gate: { type: "floor-key", keyId: "witness:junior_2#2#0:east", ownerMod: "witnessDoor" },
+            gate: { type: "floor-key", keyId: "witness:junior_2#2#0:east", ownerMod: "topology" },
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 2 }],
             encounter: "star-battle",
@@ -2444,7 +2444,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            gate: { type: "floor-key", keyId: "witness:junior_2#2#0:north", ownerMod: "witnessDoor" },
+            gate: { type: "floor-key", keyId: "witness:junior_2#2#0:north", ownerMod: "topology" },
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 3 }],
             encounter: "balance-scale",

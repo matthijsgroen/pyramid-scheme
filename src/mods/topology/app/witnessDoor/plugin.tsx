@@ -3,9 +3,9 @@ import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry
 import { registerOwnedKeySource } from "@/app/families/ownedKeySources"
 import { decodeEdge } from "@/app/SiteMap/edgeId"
 import { isModEnabled } from "@/mods/registeredMods"
-import { generateWitnessDoor, type WitnessBoard } from "../game/generateWitnessDoor"
-import { WITNESS_DOOR_META } from "../game/meta"
-import { witnessSite } from "../game/witnessKeys"
+import { generateWitnessDoor, type WitnessBoard } from "../../game/witnessDoor/generateWitnessDoor"
+import { WITNESS_DOOR_META } from "../../game/witnessDoor/meta"
+import { witnessSite } from "../../game/witnessDoor/witnessKeys"
 import { loadMintedShrines, mintedShrineKeys, useMintShrine } from "./mintedShrines"
 import { WitnessDoorPuzzle } from "./WitnessDoorPuzzle"
 
@@ -24,7 +24,7 @@ const WitnessDoorComponent: FamilyPlugin<WitnessBoard>["Component"] = ({ puzzle,
   )
 }
 
-if (isModEnabled("witnessDoor")) {
+if (isModEnabled("topology")) {
   registerFamily({
     meta: WITNESS_DOOR_META,
     // A room outside the baked world (a story, the builder) carries no tier; the family's own floor is

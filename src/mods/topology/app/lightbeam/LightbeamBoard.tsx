@@ -20,7 +20,7 @@ import {
   type Direction,
   type LightbeamPuzzleData,
   type MirrorAngle,
-} from "@/mods/puzzle/game/lightbeam/beam"
+} from "@/mods/topology/game/lightbeam/beam"
 
 type Props = {
   puzzle: LightbeamPuzzleData

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { generateWitnessDoor } from "../game/generateWitnessDoor"
+import { generateWitnessDoor } from "../../game/witnessDoor/generateWitnessDoor"
 import { WitnessDoorPuzzle } from "./WitnessDoorPuzzle"
 
 const meta = {

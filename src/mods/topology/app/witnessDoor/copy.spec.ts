@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
-import en from "../../../../public/locales/en/common.json"
-import nl from "../../../../public/locales/nl/common.json"
+import en from "../../../../../public/locales/en/common.json"
+import nl from "../../../../../public/locales/nl/common.json"
 
 /**
  * The room says the same things in both languages, and one of those things is that choosing costs nothing.

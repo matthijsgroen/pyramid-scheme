@@ -11,7 +11,7 @@ const floor = {
       pathPuzzles: 1,
       difficulty: "junior" as const,
       end: "treasure" as const,
-      gate: { type: "floor-key" as const, keyId: "witness:junior_2#2:east", ownerMod: "witnessDoor" },
+      gate: { type: "floor-key" as const, keyId: "witness:junior_2#2:east", ownerMod: "topology" },
     },
     {
       pathPuzzles: 1,
@@ -29,7 +29,7 @@ describe("dropUnownedAuthoring", () => {
   })
 
   it("keeps a gate whose owning mod is registered", () => {
-    const kept = dropUnownedAuthoring(floor, new Set(["witnessDoor"]))
+    const kept = dropUnownedAuthoring(floor, new Set(["topology"]))
     expect(kept.sideSections[0].gate).toEqual(floor.sideSections[0].gate)
   })
 

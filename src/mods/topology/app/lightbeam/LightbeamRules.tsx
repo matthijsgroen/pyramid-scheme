@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import { useTranslation } from "react-i18next"
-import type { LightbeamPuzzleData } from "@/mods/puzzle/game/lightbeam/beam"
+import type { LightbeamPuzzleData } from "@/mods/topology/game/lightbeam/beam"
 
 // Read below the board, never in the way of it: the puzzle is solvable without ever reading this
 // (docs/instructions/puzzle-screens.md §1, PUZZLE_FAMILIES.md P2).

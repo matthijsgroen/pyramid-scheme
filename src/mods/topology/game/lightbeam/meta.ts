@@ -4,7 +4,7 @@ import { resolveLightbeamOptions } from "./lightbeamConfig"
 
 export const LIGHTBEAM_META: FamilyMeta = {
   id: "lightbeam",
-  ownerMod: "puzzle",
+  ownerMod: "topology",
   // `sky` is the wider narrative cluster (sun, stars, anything a lighthouse journey wants); `light` is
   // the narrower one this family shares with eclipse. A journey asks for whichever pool it means.
   tags: ["puzzle", "light", "sky"],

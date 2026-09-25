@@ -10,12 +10,14 @@ import { primeModState, readModState, useModState } from "@/app/state/useModStat
  */
 type MintedShrines = { minted: string[] }
 
-const MOD_ID = "witnessDoor"
+// The name of the persisted slice these ids live in. It is a save-file key, not a lookup: the shrines a
+// player has already opened are stored under it, so it is fixed by the saves in the field.
+const STATE_SLICE = "witnessDoor"
 const INITIAL: MintedShrines = { minted: [] }
 
 /** How a shrine the light has reached hands its key to the gates that ask for it. */
 export const useMintShrine = (): ((keyId: string) => void) => {
-  const [state, setState] = useModState<MintedShrines>(MOD_ID, INITIAL)
+  const [state, setState] = useModState<MintedShrines>(STATE_SLICE, INITIAL)
   // The store's cache as well as the hook's own copy, which lands a beat after mount — the guard below
   // runs on the first render, which is the one where that copy is still empty.
   const minted = useMemo(() => new Set([...state.minted, ...mintedShrineKeys()]), [state.minted])
@@ -38,9 +40,9 @@ export const useMintShrine = (): ((keyId: string) => void) => {
 
 /** The same slice, read outside React — what the owned-key source answers with. */
 export const mintedShrineKeys = (): ReadonlySet<string> =>
-  new Set(readModState<MintedShrines>(MOD_ID)?.minted ?? INITIAL.minted)
+  new Set(readModState<MintedShrines>(STATE_SLICE)?.minted ?? INITIAL.minted)
 
 /** Loads it, so a floor entered before any witness door has been opened this session still sees its keys. */
 export const loadMintedShrines = (): void => {
-  void primeModState<MintedShrines>(MOD_ID).then(ownedKeysChanged)
+  void primeModState<MintedShrines>(STATE_SLICE).then(ownedKeysChanged)
 }

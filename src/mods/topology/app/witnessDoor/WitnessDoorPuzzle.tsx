@@ -12,15 +12,15 @@ import {
   type Direction,
   type MirrorAngle,
 } from "@/mods/core/game/beam/physics"
-import { traceWitnessBeam, type WitnessBoard, type WitnessSegment } from "../game/generateWitnessDoor"
+import { traceWitnessBeam, type WitnessBoard, type WitnessSegment } from "../../game/witnessDoor/generateWitnessDoor"
 import {
   chooseWitnessShrine,
   createWitnessDoorState,
   isWitnessDoorSolved,
   turnWitnessMirror,
   type WitnessDoorState,
-} from "../game/witnessDoorState"
-import { witnessKeyId, WITNESS_SHRINES } from "../game/witnessKeys"
+} from "../../game/witnessDoor/witnessDoorState"
+import { witnessKeyId, WITNESS_SHRINES } from "../../game/witnessDoor/witnessKeys"
 
 type Props = {
   board: WitnessBoard

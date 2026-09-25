@@ -53,7 +53,7 @@ const JUNIOR_HIDDEN_TRAP_PATH: PathSettings = { pathPuzzles: 2, end: "junk", enc
 
 // junior_2 pyramid 2 (levelNr 2), floor 0 — the world's first witness door: a main-path shrine
 // puzzle mints one of two keys, each opening a different side branch. `src/worldGen/` (core) can't
-// import the witnessDoor mod's own id helper (mods stay one-way), so the id is hand-authored here
+// import the topology mod's own id helper (mods stay one-way), so the id is hand-authored here
 // and pinned equal to the mod's `witnessKeyId(witnessSite(...))` output by
 // configBuilder.integration.spec.ts — the guard against a typo leaving a branch dead.
 const WITNESS_JUNIOR_2_P2_SITE = "junior_2#2#0"
@@ -61,7 +61,7 @@ const witnessBranch = (shrine: "east" | "north"): SideSectionConstraint => ({
   pathPuzzles: 1,
   end: "treasure",
   endReward: "junk",
-  gate: { type: "floor-key", keyId: `witness:${WITNESS_JUNIOR_2_P2_SITE}:${shrine}`, ownerMod: "witnessDoor" },
+  gate: { type: "floor-key", keyId: `witness:${WITNESS_JUNIOR_2_P2_SITE}:${shrine}`, ownerMod: "topology" },
 })
 
 export const juniorRules: Rule[] = [
