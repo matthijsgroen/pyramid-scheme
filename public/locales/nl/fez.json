@@ -1,10 +1,9 @@
 {
   "not-found": "Sorry het gesprek dat je zoekt bestaat niet.",
-  "welcome": "Welkom bij Pyramid Scheme!",
-  "welcome2": "Verken de wonderen van het oude Egypte en ontdek haar geheimen.",
-  "welcomeTrade": "En ik ga mee voor de handel — die graven zitten vol met spullen die geld waard zijn.",
-  "welcome3": "Laten we beginnen met een expeditie plannen door op de kaart te klikken!",
-  "chooseExpedition": "Hier kun je je expeditie kiezen. Laten we beginnen met een korte reis.",
+  "welcome": "Egypte. En een kaart waar ik te veel voor heb betaald.",
+  "welcome2": "Ergens daarop staat een piramide die nog niet helemaal leeggehaald is.",
+  "welcome3": "De kaart dan. Kies een reis.",
+  "chooseExpedition": "Eerst een korte.",
   "pyramidIntro": "Kijk naar deze muren — zo veel getallen ontbreken!",
   "pyramidIntro2": "Het geheim: elk getal is de som van de twee eronder.",
   "pyramidIntro3": "Gebruik dat, en we ontdekken wat de oude bouwers hier verborgen hielden. Veel succes!",
@@ -75,14 +74,16 @@
   "shopArrival2": "Zeldzame vondsten kosten het meest, maar ik heb ook alledaagse spullen — en ik betaal je voor snuisterijen die je meedraagt.",
   "arrival": {
     "starter_1": {
-      "1": { "fez": "Er staat schrift op. Onderaan, waar het zand steeds wegwaait." },
-      "2": { "explorer": "Kun jij het lezen?" },
-      "3": { "fez": "Nee. Jij?" },
-      "4": { "explorer": "Nee." },
-      "5": { "fez": "Iemand kon het ooit." },
+      "1": { "explorer": "Er staat schrift op. Onderaan, waar het zand steeds wegwaait." },
+      "2": { "explorer": "Ik kan er geen woord van lezen." },
+      "3": { "fez": "Nee. Niemand kan dat." },
+      "4": { "fez": "Iemand kon het ooit." },
+      "5": { "explorer": "Waar kom jij vandaan?" },
       "6": { "fez": "De sokkel was beschilderd, weet je. Helemaal. Blauw en goud, tot ongeveer hier." },
       "7": { "explorer": "Hoe weet jij dat?" },
-      "8": { "fez": "…Dat heeft iemand me verteld. Kom mee." }
+      "8": { "fez": "…Dat heeft iemand me verteld." },
+      "9": { "fez": "Fez. Ik ga mee voor de handel — die graven zitten vol met spullen die geld waard zijn." },
+      "10": { "fez": "Kom mee." }
     },
     "starter_2": {
       "1": { "fez": "Hier snap ik tenminste iets van. Alles wat ooit de Nijl op ging, kwam hier eerst langs." },

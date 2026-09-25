@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Turning tutorials off no longer silences the story — only the teaching.
 - Fez has someone to talk to: a conversation can carry two speakers, and the explorer answers from the other side of the screen.
 - Every pyramid in the world now greets you in its own voice.
+- You start out alone, and meet Fez at the Sphinx.
 - The explorer has a face: the placeholder is gone and the drawn portrait stands opposite Fez.
 
 ### Fixed

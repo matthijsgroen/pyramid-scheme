@@ -1,10 +1,9 @@
 {
   "not-found": "Sorry the conversation you are looking for does not exist.",
-  "welcome": "Welcome to Pyramid Scheme!",
-  "welcome2": "Explore the wonders of ancient Egypt and uncover its secrets.",
-  "welcomeTrade": "And I'm along for the trade — those tombs are full of things worth selling.",
-  "welcome3": "Let's start planning an expedition by clicking on the map!",
-  "chooseExpedition": "Here you can choose your expedition. Let's start with a short journey.",
+  "welcome": "Egypt. And a map I paid too much for.",
+  "welcome2": "Somewhere on it is a pyramid nobody has finished emptying.",
+  "welcome3": "The map, then. Pick a journey.",
+  "chooseExpedition": "A short one first.",
 
   "pyramidIntro": "Look at these walls — so many numbers are missing!",
   "pyramidIntro2": "The secret: every number is the sum of the two below it.",
@@ -78,14 +77,16 @@
   "shopArrival2": "Rare finds cost the most, but I've also got everyday supplies — and I'll pay you for any trinkets you're carrying.",
   "arrival": {
     "starter_1": {
-      "1": { "fez": "There's writing on it. Down at the base, where the sand keeps shifting off." },
-      "2": { "explorer": "Can you read it?" },
-      "3": { "fez": "No. Can you?" },
-      "4": { "explorer": "No." },
-      "5": { "fez": "Someone could, once." },
+      "1": { "explorer": "There is writing on it. Down at the base, where the sand keeps shifting off." },
+      "2": { "explorer": "I cannot read a word of it." },
+      "3": { "fez": "No. Nobody can." },
+      "4": { "fez": "Someone could, once." },
+      "5": { "explorer": "Where did you come from?" },
       "6": { "fez": "The base was painted, you know. All of it. Blue and gold, to about here." },
       "7": { "explorer": "How do you know that?" },
-      "8": { "fez": "…Somebody told me. Come on." }
+      "8": { "fez": "…Somebody told me." },
+      "9": { "fez": "Fez. I'm along for the trade — those tombs are full of things worth selling." },
+      "10": { "fez": "Come on." }
     },
     "starter_2": {
       "1": { "fez": "Now this I understand. Everything that ever went up the Nile came past here first." },

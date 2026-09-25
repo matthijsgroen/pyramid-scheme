@@ -27,10 +27,12 @@ const pose = (...args: (Pose | string[])[]): PoseChat[] => {
   return result
 }
 
+/** Before the first pyramid the explorer is alone, so the map screen is theirs to carry. */
+const asExplorer = (chats: PoseChat[]): PoseChat[] => chats.map(([pose, key]) => [pose, key, "explorer"])
+
 const conversations: Record<string, PoseChat[]> = {
-  // He states why he's along before the call to action, so the stall pays it off later.
-  welcome: pose(["welcome", "welcome2", "welcomeTrade", "welcome3"]),
-  chooseExpedition: pose(["chooseExpedition"]),
+  welcome: asExplorer(pose(["welcome", "welcome2", "welcome3"])),
+  chooseExpedition: asExplorer(pose(["chooseExpedition"])),
   pyramidIntro: pose(["pyramidIntro", "pyramidIntro2"], "pointUp", ["pyramidIntro3"]),
   levelCompleted: pose("pointUp", ["levelCompleted"]),
   expeditionCompleted: pose("glassesPoint", ["expeditionCompleted", "expeditionCompleted2"]),
