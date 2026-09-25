@@ -162,6 +162,26 @@ const ForkShape = ({ state }: ShapeProps) => {
   return <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill="#1e160e" stroke={stroke} strokeWidth={1.5} />
 }
 
+/** A junction that carries a board: one way in that splits into two. The mechanic drawn literally, so
+ * it is read before the player walks onto it — bare arms rather than a room's body, because a junction
+ * is the space between rooms and there is no chamber here to draw walls around. It wears the puzzle
+ * palette (amber until it is solved, green once it answers) at a puzzle's size, so it stands among the
+ * other things there are to do rather than among the junctions. */
+const SwitchShape = ({ state }: ShapeProps) => {
+  const r = NODE_RADIUS_PUZZLE
+  const arm = r * 0.65
+  return (
+    <path
+      d={`M ${-arm},${-arm} L 0,0 L ${arm},${-arm} M 0,0 L 0,${r - 6}`}
+      fill="none"
+      stroke={puzzleIcon[state]}
+      strokeWidth={3}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  )
+}
+
 const GateNodeShape = ({ state, gateVariant, keyColor, difficulty }: ShapeProps) => {
   const r = NODE_RADIUS_LARGE
   const isTomb = gateVariant === "tomb-key"
@@ -325,6 +345,8 @@ export const NodeShape = ({
       return <TrapShape {...p} />
     case "fork":
       return <ForkShape {...p} />
+    case "switch":
+      return <SwitchShape {...p} />
     case "gate":
       return <GateNodeShape {...p} />
     case "treasure":

@@ -212,7 +212,7 @@ const nodeSpritesFor = (
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
       if (cell.type !== "room" || cell.state === "fogged") continue
-      const kind = shapeKindFor(grid, r, c, cell.roomType, cell.tags, cell.stairId)
+      const kind = shapeKindFor(grid, r, c, cell)
       const tier = cell.difficulty ?? floorTier
       const { cx, cy } = cellCenter(r, c)
       const footprint = clipCells(footprints.get(`${r},${c}`) ?? [`${r},${c}`])
@@ -1335,7 +1335,7 @@ export const SiteMapView = ({
                 // Only ever a pending-loot marker for a treasure room with a consumable reward — this
                 // guards against stale coordinates in pendingCells (e.g. left over from before a site
                 // was regenerated) painting the badge onto whatever room now occupies that cell.
-                const shapeKind = shapeKindFor(grid, r, c, cell.roomType, cell.tags, cell.stairId)
+                const shapeKind = shapeKindFor(grid, r, c, cell)
                 // Portals (entrance/stairhead/exit) are transitions, not tasks — they can't be
                 // "completed", so they never get the completed dim or the ✓ badge even though the
                 // entrance is always marked explored (useAssembledFloor) and used staircases complete.

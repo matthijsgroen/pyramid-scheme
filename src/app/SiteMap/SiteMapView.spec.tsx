@@ -1962,6 +1962,16 @@ const markerAt = (container: HTMLElement, r: number, c: number) => {
   return box?.querySelector<SVGGElement>("g[opacity]")?.getAttribute("opacity")
 }
 
+/** The shapes one cell's node marker is drawn out of, in order — a puzzle room has a body to put an
+ * icon inside, a junction is a small diamond, and a junction that divides is bare arms. */
+const markerShapesAt = (container: HTMLElement, r: number, c: number) => {
+  const { cx, cy } = cellCenter(r, c)
+  const box = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
+    el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
+  )
+  return Array.from(box?.querySelectorAll("g[opacity] > *") ?? []).map(el => el.tagName)
+}
+
 describe("a room the player can walk back into never says it is finished", () => {
   const solvedRoom = (family: string): GridCell => ({
     type: "room",
@@ -2005,6 +2015,70 @@ describe("a room the player can walk back into never says it is finished", () =>
     const { container } = render(<SiteMapView grid={grid} />)
     expect(spriteMatching(container, "chestProp")[0]?.style.opacity).toBe("")
     expect(Array.from(container.querySelectorAll("text")).filter(el => el.textContent === "✓")).toHaveLength(0)
+  })
+})
+
+describe("a junction that carries a board is drawn as one", () => {
+  const carrying = (family?: string) => (family ? { family, tags: ["puzzle"] } : {})
+  const junction = (family?: string): GridCell => ({
+    type: "room",
+    roomType: "fork",
+    ...carrying(family),
+    dirs: new Set<Direction>(["s"]),
+    state: "reachable",
+  })
+  const plainRoom = (family: string): GridCell => ({
+    type: "room",
+    roomType: "encounter",
+    ...carrying(family),
+    dirs: new Set<Direction>(["s"]),
+    state: "reachable",
+  })
+  const shapesOf = (cell: GridCell) => {
+    const { container } = render(<SiteMapView grid={makeGrid([[cell, empty]])} />)
+    return markerShapesAt(container, 0, 0)
+  }
+
+  it("draws bare arms rather than a puzzle room's body", () => {
+    expect(shapesOf(junction(CLOSES_FAMILY))).toEqual(["path"])
+  })
+
+  it("leaves a bare junction its own small diamond", () => {
+    expect(shapesOf(junction())).toEqual(["polygon"])
+  })
+
+  it("leaves an ordinary room carrying a board its puzzle body", () => {
+    expect(shapesOf(plainRoom(CLOSES_FAMILY))[0]).toBe("rect")
+  })
+
+  it("draws a junction whose mod is switched off as a bare junction", () => {
+    expect(shapesOf(junction("no-mod-registers-this"))).toEqual(["polygon"])
+  })
+})
+
+// A junction carrying a board is a room with something to do in it, so the map says finished about it
+// on exactly the terms it says finished about any other: its family's, and never the bare junction's
+// blanket exemption.
+describe("what the map may say about a finished junction", () => {
+  const solvedJunction = (family: string): GridCell => ({
+    type: "room",
+    roomType: "fork",
+    family,
+    tags: ["puzzle"],
+    dirs: new Set<Direction>(["s"]),
+    state: "completed",
+  })
+  const drawn = (family: string) => {
+    const { container } = render(<SiteMapView grid={makeGrid([[solvedJunction(family), empty]])} />)
+    return { opacity: markerAt(container, 0, 0), tick: container.textContent?.includes("✓") }
+  }
+
+  it("dims and badges one whose family closes behind the player", () => {
+    expect(drawn(CLOSES_FAMILY)).toEqual({ opacity: "0.45", tick: true })
+  })
+
+  it("says nothing of the sort about one the player can walk back into", () => {
+    expect(drawn(STAYS_OPEN_FAMILY)).toEqual({ opacity: "1", tick: false })
   })
 })
 

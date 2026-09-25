@@ -1,4 +1,4 @@
-import type { DecorationKind, Direction, FloorGrid, GridCell, RoomCell, RoomType } from "@/game/siteTypes"
+import type { DecorationKind, Direction, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
 import { cellAt, isClaimableNeighbor } from "@/game/roomFootprint"
 import { DIR_MOVES, OPPOSITE_DIR } from "./corridorRuns"
 import { buildTileRegions, type FloorAt, type Rect, type TileRegions } from "./tileRegions"
@@ -20,18 +20,12 @@ import type { Difficulty } from "@/data/difficultyLevels"
 // sprite-tile renderer needs to tile cleanly (see
 // docs/game-design/spritesheet-renderer-prep.md). Purely derived at render time from
 // the existing grid — no generation-side bookkeeping.
-const canClaimVoid = (
-  grid: FloorGrid,
-  r: number,
-  c: number,
-  roomType: RoomType,
-  tags: string[] | undefined,
-  stairId: string | undefined,
-  dirsSize: number
-): boolean => {
-  if (roomType === "fork") return true
-  const kind = shapeKindFor(grid, r, c, roomType, tags, stairId)
-  return (kind === "treasure" || kind === "stairhead" || kind === "exit") && dirsSize === 1
+const canClaimVoid = (grid: FloorGrid, r: number, c: number, cell: RoomCell): boolean => {
+  // EVERY junction absorbs the void around it, whatever stands in it — the footprint is the room type's
+  // and not the marker's, so a junction carrying a board is shaped like the junction it is.
+  if (cell.roomType === "fork") return true
+  const kind = shapeKindFor(grid, r, c, cell)
+  return (kind === "treasure" || kind === "stairhead" || kind === "exit") && cell.dirs.size === 1
 }
 
 const ORTHO_OFFSETS: ReadonlyArray<readonly [number, number]> = [
@@ -139,8 +133,7 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
-      if (cell.type !== "room" || !canClaimVoid(grid, r, c, cell.roomType, cell.tags, cell.stairId, cell.dirs.size))
-        continue
+      if (cell.type !== "room" || !canClaimVoid(grid, r, c, cell)) continue
       const ownerKey = `${r},${c}`
       const claimedThisOwner = new Set<string>()
       for (const [dr, dc] of ORTHO_OFFSETS) {

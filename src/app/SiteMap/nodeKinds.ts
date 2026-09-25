@@ -1,4 +1,4 @@
-import type { FloorGrid, RoomCell, RoomType } from "@/game/siteTypes"
+import type { FloorGrid, RoomCell } from "@/game/siteTypes"
 import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapScale"
 
@@ -6,28 +6,29 @@ import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapSc
 // questions asked by both the marker that draws it and the floor geometry that dresses the room around
 // it (`roomClaims.ts`). Kept apart from either so neither has to import the other.
 
-export type ShapeKind = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
+export type ShapeKind = "entrance" | "puzzle" | "trap" | "fork" | "switch" | "gate" | "treasure" | "stairhead" | "exit"
 
-export const shapeKindFor = (
-  grid: FloorGrid,
-  r: number,
-  c: number,
-  roomType: RoomType,
-  tags: string[] | undefined,
-  stairId: string | undefined
-): ShapeKind => {
-  // A junction draws as a junction only while it is nothing else. A switch — a fork with an encounter
-  // standing in it — is read by its family's tags below, so the player sees there is something here to
-  // do before walking onto it, and so finishing it earns the completed badge a bare fork never wears.
-  // The room's FOOTPRINT is still a fork's (`canClaimVoid` asks the type, not this).
-  if (roomType === "fork" && !tags?.length) return "fork"
-  if (roomType === "portal") {
-    if (stairId) return "stairhead"
+/** Everything a room's shape is read off and nothing else, so a caller holding a hand-built room can
+ * ask without building a whole cell around it. */
+export type ShapeCell = Pick<RoomCell, "roomType" | "tags" | "stairId" | "family">
+
+export const shapeKindFor = (grid: FloorGrid, r: number, c: number, cell: ShapeCell): ShapeKind => {
+  // A junction that carries a family DIVIDES rather than merely branching: it asks something of the
+  // player before a way on opens, so it wears a shape of its own instead of the shape of whatever
+  // stands in it, and a bare junction keeps the one that never earns a completed badge. Keyed on the
+  // family and not on any tag, so everything that comes to stand in a junction reads the same and core
+  // names none of them; an unregistered family is no family, so a junction a switched-off mod left
+  // behind is bare. The room's FOOTPRINT is still a fork's (`canClaimVoid` asks the type, not this).
+  if (cell.roomType === "fork") {
+    return cell.family !== undefined && getFamilyPlugin(cell.family) !== undefined ? "switch" : "fork"
+  }
+  if (cell.roomType === "portal") {
+    if (cell.stairId) return "stairhead"
     return r === grid.entrancePos[0] && c === grid.entrancePos[1] ? "entrance" : "exit"
   }
-  if (tags?.includes("gate")) return "gate"
-  if (tags?.includes("trap")) return "trap"
-  if (tags?.includes("treasure") || tags?.includes("shop")) return "treasure"
+  if (cell.tags?.includes("gate")) return "gate"
+  if (cell.tags?.includes("trap")) return "trap"
+  if (cell.tags?.includes("treasure") || cell.tags?.includes("shop")) return "treasure"
   return "puzzle"
 }
 
@@ -55,6 +56,9 @@ export const nodeRadius: Record<ShapeKind, number> = {
   puzzle: NODE_RADIUS_PUZZLE,
   trap: NODE_RADIUS_PUZZLE,
   fork: NODE_RADIUS_FORK,
+  // A junction with a board in it is somewhere to go, so it is sized like a room rather than like
+  // the dot a plain junction gets.
+  switch: NODE_RADIUS_PUZZLE,
   gate: NODE_RADIUS_LARGE,
   treasure: NODE_RADIUS_LARGE,
   stairhead: NODE_RADIUS_LARGE,
