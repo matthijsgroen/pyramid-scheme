@@ -1,6 +1,7 @@
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { GateVariant, KeyColor, TreasureReward } from "@/game/siteTypes"
+import type { GateVariant, KeyColor, RoomCell, TreasureReward } from "@/game/siteTypes"
+import type { ForkShape } from "@/game/forkShape"
 import { encounterFromMeta, type ResolveEncounter } from "@/game/siteAssembler"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ProgressionAPI } from "@/app/state/useProgression"
@@ -59,6 +60,13 @@ export type FamilyContext = {
   gateVariant?: GateVariant
   keyColor?: KeyColor
   ownedKeys?: ReadonlySet<string>
+  /** This room's own ways out when it is a fork (RoomCell.exits): each one's compass direction, what
+   * lies down it, and the key a switch closed it with. What a board standing in a fork draws its doors
+   * from, and where it reads the key to mint for the way out the player chose. Unset off fork rooms. */
+  exits?: RoomCell["exits"]
+  /** The shape those ways out make (src/game/forkShape.ts) — the layout a board is built FOR, where
+   * `exits` above is which doors this particular room has. Unset off fork rooms. */
+  forkShape?: ForkShape
 }
 
 type InventoryAPI = ReturnType<typeof useInventory>

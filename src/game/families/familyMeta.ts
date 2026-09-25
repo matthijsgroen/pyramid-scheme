@@ -1,4 +1,5 @@
 import type { Difficulty } from "@/data/difficultyLevels"
+import type { ForkShape } from "@/game/forkShape"
 
 // Ctx shape matches src/game/siteAssembler.ts's ResolveKeyRequirements (minus the familyId
 // dispatch param, already implied by which FamilyMeta this sits on) — kept as a local,
@@ -102,6 +103,13 @@ export type FamilyGenerationCtx = {
    * generatePuzzle, never `resolveOptions`'s result — the bucket key is the options, so which board a
    * room draws cannot change which list it draws from. */
   boardIndex?: number
+  /** The shape of the fork this room is, where it is one (src/game/forkShape.ts) — a generator that
+   * lays a board out per way out needs to know how many there are and how they sit.
+   *
+   * The SHAPE, never the room's own `exits`: those carry a per-room gate key each, and a bucket key
+   * built over them would be one bucket per room. There are three shapes, so there are three buckets.
+   * What the board is drawn ON belongs to the Component, which reads the exits off FamilyContext. */
+  forkShape?: ForkShape
 }
 
 // What solving an admitted board taught the offline pass. Reported by the CLI so a designer tuning a

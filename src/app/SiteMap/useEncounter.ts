@@ -3,6 +3,7 @@ import { cellAddress } from "./cellIdentity"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FloorGrid, KeyColor, TreasureReward } from "@/game/siteTypes"
 import { getCell } from "@/game/gridNavigation"
+import { classifyForkShape } from "@/game/forkShape"
 import { hashString } from "@/support/hashString"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { getFamilyPlugin, type FamilyContext, type FamilyPlugin } from "@/app/families/familyRegistry"
@@ -66,6 +67,7 @@ export const useEncounter = ({
     const cell = getCell(grid, row, col)
     const sectionHash = cell && cell.type !== "empty" ? (cell.sectionHash ?? "") : ""
     const edgeId = encodeEdge(currentFloor, row, col)
+    const exits = cell?.type === "room" ? cell.exits : undefined
     return {
       journeyId,
       levelNr,
@@ -90,6 +92,11 @@ export const useEncounter = ({
       requiredKeyId: cell?.type === "room" ? cell.requiredKeyId : undefined,
       gateVariant: cell?.type === "room" ? cell.gateVariant : undefined,
       keyColor: cell?.type === "room" ? cell.keyColor : undefined,
+      // A fork's ways out, and the shape they make. The family standing in a fork draws its doors from
+      // the exits themselves; its GENERATOR gets only the shape, because the exits name a key per room
+      // and a board is built for a layout, not for a room.
+      exits,
+      forkShape: classifyForkShape((exits ?? []).filter(exit => exit.gateKeyId).map(exit => exit.dir)),
       ownedKeys,
     }
   }, [active, grid, currentFloor, journeyId, levelNr, difficulty, ownedKeys])

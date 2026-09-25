@@ -63,6 +63,20 @@ registerFamily({
 })
 const stubRoom: GridCell = { ...emptyRoom, family: STUB_FAMILY }
 
+// A switch: the stub family standing in a fork whose north and south ways out it closed, with its east
+// one left open. Written out rather than carved, because what is under test here is what core carries
+// from the cell — src/game/forkShape.spec.ts is where real carves say which layouts exist.
+const forkRoom: GridCell = {
+  ...stubRoom,
+  roomType: "fork",
+  dirs: new Set(["n", "s", "e"]),
+  exits: [
+    { dir: "n", kind: "side", gateKeyId: "switch:test:sec-a" },
+    { dir: "s", kind: "side", gateKeyId: "switch:test:sec-b" },
+    { dir: "e", kind: "main" },
+  ],
+}
+
 // A family whose generator cannot build its board. There is one in the wild — see the crash this spec
 // was written for — and no reproduction of it, which is the whole reason the room has to be named.
 const BROKEN_FAMILY = "broken"
@@ -149,6 +163,34 @@ describe("useEncounter", () => {
     act(() => hook.result.current.open([0, 0], true))
 
     expect(onReward).not.toHaveBeenCalled()
+  })
+
+  // A board standing in a fork draws that fork's own doors, so it needs them; the generator that built
+  // it needs only their shape (src/game/forkShape.ts).
+  it("hands a fork's own ways out to the family standing in it", () => {
+    const { hook } = setup([forkRoom])
+
+    act(() => hook.result.current.open([0, 0], true))
+
+    expect(hook.result.current.ctx?.exits).toEqual(forkRoom.exits)
+  })
+
+  it("shapes a fork on the ways out a switch closed, not on the ones it left open", () => {
+    const { hook } = setup([forkRoom])
+
+    act(() => hook.result.current.open([0, 0], true))
+
+    // North and south are the gated pair; counting the open east way out would read as "three".
+    expect(hook.result.current.ctx?.forkShape).toBe("opposite")
+  })
+
+  it("leaves both unset in a room that is no fork", () => {
+    const { hook } = setup([stubRoom])
+
+    act(() => hook.result.current.open([0, 0], true))
+
+    expect(hook.result.current.ctx?.exits).toBeUndefined()
+    expect(hook.result.current.ctx?.forkShape).toBeUndefined()
   })
 
   it("offers nothing for an empty room, while still marking it explored", () => {
