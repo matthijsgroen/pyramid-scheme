@@ -44,9 +44,13 @@ const corridor: GridCell = {
   sectionAddress: SECTION,
   ordinal: "1",
 }
+// An ordinary room, and what makes it one is the family standing in it: every encounter the assembler
+// writes down names one, and a room naming none is a room with nothing to open.
 const puzzleRoom: GridCell = {
   type: "room",
   roomType: "encounter",
+  family: "sumplete",
+  tags: ["puzzle"],
   dirs: new Set(["w"]),
   state: "reachable",
   sectionHash: SECTION,
@@ -92,6 +96,21 @@ const gate = (state: CellState = "reachable"): GridCell => ({
   sectionAddress: SECTION,
   ordinal: "2",
 })
+
+// The way a switch shut: a gate by its tags and the key it wants, with nothing standing in it.
+const switchGate: GridCell = {
+  type: "room",
+  roomType: "encounter",
+  tags: ["gate"],
+  requiredKeyId: "switch:j1#0#0#0:sec",
+  gateVariant: "floor-key",
+  keyIsAuthored: true,
+  dirs: new Set(["w", "e"]),
+  state: "reachable",
+  sectionHash: SECTION,
+  sectionAddress: SECTION,
+  ordinal: "2",
+}
 
 // What each fixture is filed under once it is placed on the grid.
 const CORRIDOR_AT_1 = `${SECTION}#0/~1`
@@ -206,6 +225,20 @@ describe("useSiteNavigation", () => {
 
     arrive()
     expect(onEncounter).toHaveBeenCalledWith([0, 2], true)
+  })
+
+  // The switch is what opens this one, so there is nothing here to open and nothing to write down: a
+  // cell the save calls explored comes back with the floor revealed past it, which would make walking
+  // up to the door the thing that opens it.
+  it("walks up to a gate holding nothing without opening it or writing it down", () => {
+    const { hook, journeys, onEncounter } = setup([entrance, corridor, switchGate])
+
+    act(() => hook.result.current.onCellClick(0, 2))
+    arrive()
+
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", `${SECTION}#0/x?`, "0:0,2")
+    expect(journeys.markCellExplored).not.toHaveBeenCalled()
+    expect(onEncounter).not.toHaveBeenCalled()
   })
 
   it("asks about leaving on arrival at an exit, not on the tap that started the walk", () => {

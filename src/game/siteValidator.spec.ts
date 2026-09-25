@@ -38,6 +38,18 @@ const room = (
   ...opts,
 })
 
+// A way out a switch closed: a gate by its tags and its key, with no family and nothing to enter.
+const switchGate = (dirs: Direction[], keyId: string): RoomCell => ({
+  type: "room",
+  roomType: "encounter",
+  dirs: new Set(dirs),
+  state: "reachable",
+  tags: ["gate"],
+  requiredKeyId: keyId,
+  gateVariant: "floor-key",
+  keyIsAuthored: true,
+})
+
 const corridor = (dirs: Direction[], state: CellState = "reachable"): CorridorCell => ({
   type: "corridor",
   dirs: new Set(dirs),
@@ -175,6 +187,23 @@ describe(validateSite, () => {
     if (!result.valid) {
       expect(result.reasons.some(r => r.type === "allBlandFork")).toBe(true)
     }
+  })
+
+  // The way a switch shuts is a gate cell with nothing standing in it, and what a branch is worth is
+  // read off the tags a cell wears rather than off the family in it — so a branch ending at one is
+  // worth walking, exactly as a ward's door is.
+  it("noAllBlandFork: passes when a branch ends at a gate holding no encounter", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, switchGate(["n"], "switch:site#0#0#0:main")],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(validateSite(grid)).toEqual({ valid: true })
   })
 
   it("noAllBlandFork: fails when a fork leads only to a trap, same as only to puzzles", () => {

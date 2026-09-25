@@ -145,6 +145,37 @@ describe("computeFloorExploration", () => {
     expect(computeFloorExploration(walkedUpTo(grid, new Set(authored))).open).toBe(false)
   })
 
+  // What a node is worth coming back for is what it HOLDS — its family's loot and the keys it asks the
+  // player to carry in. The way a switch shut holds neither: it is a door, and the key that opens it is
+  // minted a few steps away on this same floor.
+  it("a gate a switch shut is nothing to come back for", () => {
+    const row: GridCell[] = [
+      { type: "room", roomType: "portal", dirs: new Set(["e"]), state: "completed" },
+      { type: "corridor", dirs: new Set(["w", "e"]), state: "completed" },
+      {
+        type: "room",
+        roomType: "encounter",
+        tags: ["gate"],
+        requiredKeyId: "switch:site#0#0#0:main",
+        gateVariant: "floor-key",
+        keyIsAuthored: true,
+        dirs: new Set(["w"]),
+        state: "reachable",
+      },
+    ]
+    const grid: FloorGrid = {
+      cells: [row],
+      rows: 1,
+      cols: row.length,
+      entrancePos: [0, 0],
+      exitPos: [0, 2],
+      siteId: "switch-gate",
+      staircases: {},
+    }
+
+    expect(computeFloorExploration(grid)).toEqual({ open: false, keySets: [] })
+  })
+
   it("shop and gate/trap nodes never produce content on their own (fill-order 0)", () => {
     // The shop family is priority 0; if it (or a gate/trap) leaked in, a bundle keyed to nothing
     // meaningful would appear. Assert every key we emit is a real key id (tomb key or hieroglyph),

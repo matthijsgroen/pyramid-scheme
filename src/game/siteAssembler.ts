@@ -2049,7 +2049,10 @@ export const assembleFloor = (
           ...wayOut,
           type: "room",
           roomType: "encounter",
-          family: keyGate.familyId,
+          // THE WAY IS SHUT, AND THAT IS THE WHOLE OF IT. A cell is drawn as a gate by its tags and
+          // read as locked by the key it wants, neither of which asks for a family — so this door
+          // wears a ward gate's bars and holds nothing to enter or tap. The switch is what opens it,
+          // and a door the player opens by tapping is a door the switch does not control.
           tags: keyGate.tags,
           requiredKeyId: gateKeyId,
           gateVariant: "floor-key",

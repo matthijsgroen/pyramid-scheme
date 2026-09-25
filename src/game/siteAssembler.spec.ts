@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest"
+import { beforeAll, describe, expect, it } from "vitest"
 import { assembleFloor, defaultResolveEncounter, encounterFromMeta } from "./siteAssembler"
 import type { ResolveEncounter } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
-import { validateSite } from "./siteValidator"
+import { reachableFrom, validateSite } from "./siteValidator"
 import { floorKeyRing } from "./floorKeys"
 // The real registry, for the one spec that has to prove the refusal against a family that
 // genuinely lacks reEnterable rather than against the fallback resolver, which claims it for none.
@@ -1661,6 +1661,40 @@ describe("a switch fork", () => {
     // The opener comes before the blockers: the way BACK is never one of the ways it closed, so the
     // player reaches the switch without needing a key the switch itself hands out.
     expect(reachesWithoutGates(grid, grid.entrancePos, [at.r, at.c])).toBe(true)
+  })
+
+  describe("the gate a switch closes", () => {
+    // One assembled floor for all three, because the carve is the cost here and none of them change
+    // it: the first seed that produces a switch, and at most the sixty `assembleWithSwitch` tries.
+    let grid: FloorGrid
+    let gates: { pos: readonly [number, number]; keyId: string }[]
+    beforeAll(() => {
+      const found = assembleWithSwitch(ONE_SWITCH)
+      grid = found.grid
+      gates = (found.cell.exits ?? []).flatMap(exit => {
+        if (exit.gateKeyId === undefined) return []
+        const [dr, dc] = DIR_MOVE[exit.dir]
+        return [{ pos: [found.r + dr * 2, found.c + dc * 2] as const, keyId: exit.gateKeyId }]
+      })
+      // Every assertion below is per gate, so a switch that closed nothing would prove nothing.
+      if (gates.length < 2) throw new Error(`a switch closed ${gates.length} ways out`)
+    })
+
+    it("holds nothing to enter, and is a gate by its tags alone", () => {
+      for (const { pos } of gates) {
+        const cell = grid.cells[pos[0]][pos[1]]
+        expect(cell.type === "room" && cell.family).toBeUndefined()
+        expect(cell.type === "room" && cell.tags).toEqual(["gate"])
+      }
+    })
+
+    it("shuts the walk until the key the switch mints is held", () => {
+      for (const { pos, keyId } of gates) {
+        const at = `${pos[0]},${pos[1]}`
+        expect(reachableFrom(grid, grid.entrancePos).has(at)).toBe(false)
+        expect(reachableFrom(grid, grid.entrancePos, new Set([keyId])).has(at)).toBe(true)
+      }
+    })
   })
 
   // THE KEY MUST NOT CARRY THE CARVE. The one a player is holding outlives the layout it was minted
