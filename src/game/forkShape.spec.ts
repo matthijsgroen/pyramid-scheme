@@ -20,7 +20,8 @@ const switchFloor: FloorConfig = {
     { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
     { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
   ],
-  switchFork: { encounter: "sumplete", keyId: "switch:fork-shape" },
+  forks: [{ exits: 2, count: 1 }],
+  switches: { encounter: "sumplete", min: 1, max: 1 },
 }
 
 // The layouts REAL CARVES produce, keyed by their directions in compass order: a hand-written direction
@@ -91,8 +92,8 @@ describe("classifyForkShape", () => {
     expect(classifyForkShape(["n", "e", "n"])).toBe("adjacent")
   })
 
-  // The assembler refuses a switch that closed fewer than two ways out ("switchForkWithoutGates"), so
-  // there is nothing for a board to be laid out between.
+  // A junction is only held for a switch when it has at least two ways out free to close, so there is
+  // nothing for a board to be laid out between.
   it("names no shape for fewer than two ways out", () => {
     expect(classifyForkShape([])).toBeUndefined()
     expect(classifyForkShape(["n"])).toBeUndefined()

@@ -214,7 +214,7 @@ export const useAssembledFloor = (
   const baseGrid = useMemo(() => {
     const result = assembleFloor(journeyId, floorConfig, seed + currentFloor, resolveEncounter, {
       resolveKeyRequirements,
-      floorRef: { journeyId, floorIndex: currentFloor },
+      floorRef: { journeyId, ...(levelIndex !== undefined ? { levelIndex } : {}), floorIndex: currentFloor },
       ...(levelIndex !== undefined
         ? { resolveBoardIndex: boardIndexesForFloor(journeyId, levelIndex, currentFloor) }
         : {}),

@@ -75,7 +75,7 @@ const serializeSideSection = (s: SideSection): string => {
 }
 
 // Emits every field the object carries rather than a fixed list, the way `serializeGate` does, so a
-// field added to a switch later rides along without this function naming it.
+// field added to a fork demand or a switch later rides along without this function naming it.
 const serializeObject = (o: object): string =>
   `{ ${Object.entries(o)
     .filter(([, v]) => v !== undefined)
@@ -118,7 +118,8 @@ const floorFieldEmitters: {
   sealed: v => (v ? `sealed: true` : null),
   mainEndReward: v => `mainEndReward: ${serializeReward(v)}`,
   rewards: v => (v.length ? `rewards: ${serializePuzzleRewards(v)}` : null),
-  switchFork: v => `switchFork: ${serializeObject(v)}`,
+  forks: v => (v.length ? `forks: [${v.map(serializeObject).join(", ")}]` : null),
+  switches: v => `switches: ${serializeObject(v)}`,
 }
 
 const serializeFloor = (c: FloorConfig): string => {

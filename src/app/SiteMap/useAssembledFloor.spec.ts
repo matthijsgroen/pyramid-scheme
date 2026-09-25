@@ -167,7 +167,8 @@ describe("useAssembledFloor — hidden junctions", () => {
       end: "treasure",
       exitOrStaircase: "exit",
       // A family whose room is walked back into, which is what a switch asks of the one standing in it.
-      switchFork: { encounter: "witnessDoor", keyId: "switch:test" },
+      forks: [{ exits: 2, count: 1 }],
+      switches: { encounter: "witnessDoor", min: 1, max: 1 },
       sideSections: [
         { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true, endReward: { type: "mosaicPiece" } },
         { pathPuzzles: 1, difficulty: "expert", end: "treasure" },
@@ -210,7 +211,8 @@ describe("useAssembledFloor — hidden junctions", () => {
       difficulty: "expert",
       end: "treasure",
       exitOrStaircase: "exit",
-      switchFork: { encounter: "witnessDoor", keyId: "switch:hides" },
+      forks: [{ exits: 2, count: 1 }],
+      switches: { encounter: "witnessDoor", min: 1, max: 1 },
       sideSections: [
         { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true, endReward: { type: "mosaicPiece" } },
         { pathPuzzles: 1, difficulty: "expert", end: "treasure" },

@@ -19,21 +19,25 @@ const dropIfUnowned = (registeredModIds: ReadonlySet<string>) => {
   return stripSideSection
 }
 
-// A switch fork names no owner of its own: its owner is whichever mod contributed the family that
-// stands in the fork, and only the injected resolver can name that. The resolver answers out of the
+// A switch names no owner of its own: its owner is whichever mod contributed the family that stands
+// in the junction, and only the injected resolver can name that. The resolver answers out of the
 // families the REGISTERED mods contribute, so an encounter it can put no owner to is one whose mod
-// left the build — the switch drops with it and the fork carves as the bare junction it would have
-// been, every way out open and nothing standing in it. Asked with the same "puzzle" default tag the
-// assembler's own switch guard uses, so the drop and that guard cannot disagree about which family a
-// switch stands on; an `encounter` listing several families resolves the way the assembler resolves
-// it, so the one the player would actually meet is the one whose ownership decides this. No resolver
-// ⇒ no owner can be named ⇒ nothing drops.
-const keepSwitchFork = (
-  switchFork: FloorConfig["switchFork"],
+// left the build — the switch drops with it and the junction stands bare, every way out open and
+// nothing in it. Asked with the same "puzzle" default tag the assembler's own switch guard uses, so
+// the drop and that guard cannot disagree about which family a switch stands on; an `encounter`
+// listing several families resolves the way the assembler resolves it, so the one the player would
+// actually meet is the one whose ownership decides this. No resolver ⇒ no owner can be named ⇒
+// nothing drops.
+//
+// `forks` is NOT touched. It is core's statement about the shape of the floor, and dropping it with
+// the switch would move walls under every save written against that floor for no reason but a mod
+// leaving the build.
+const keepSwitches = (
+  switches: FloorConfig["switches"],
   resolveEncounter: ResolveEncounter | undefined
-): FloorConfig["switchFork"] => {
-  if (!switchFork || !resolveEncounter) return switchFork
-  return resolveEncounter(switchFork.encounter, "puzzle").ownerMod === undefined ? undefined : switchFork
+): FloorConfig["switches"] => {
+  if (!switches || !resolveEncounter) return switches
+  return resolveEncounter(switches.encounter, "puzzle").ownerMod === undefined ? undefined : switches
 }
 
 // The resolver is passed explicitly even where there is none, so a caller that has one and forgets to
@@ -44,6 +48,6 @@ export const dropUnownedAuthoring = (
   resolveEncounter: ResolveEncounter | undefined
 ): FloorConfig => ({
   ...floor,
-  switchFork: keepSwitchFork(floor.switchFork, resolveEncounter),
+  switches: keepSwitches(floor.switches, resolveEncounter),
   sideSections: floor.sideSections.map(dropIfUnowned(registeredModIds)),
 })

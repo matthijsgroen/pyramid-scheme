@@ -92,7 +92,8 @@ export type BuildFloorOptions = {
   mainEndReward?: TreasureReward
   encounter?: FloorConfig["encounter"]
   encountersByIndex?: FloorConfig["encountersByIndex"]
-  switchFork?: FloorConfig["switchFork"]
+  forks?: FloorConfig["forks"]
+  switches?: FloorConfig["switches"]
   corridorStraightness?: number
   packing?: number
   sealed?: boolean
@@ -128,7 +129,8 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.sealed ? { sealed: true } : {}),
   ...(opts.encounterArgs !== undefined ? { encounterArgs: opts.encounterArgs } : {}),
   ...(opts.theme !== undefined ? { theme: opts.theme } : {}),
-  ...(opts.switchFork ? { switchFork: opts.switchFork } : {}),
+  ...(opts.forks ? { forks: opts.forks } : {}),
+  ...(opts.switches ? { switches: opts.switches } : {}),
 })
 
 // Sequentially links floors[fi] → floors[fi+1] via a stairhead: floor fi's exitOrStaircase
@@ -270,7 +272,9 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           encounter: fc.encounter ?? constraint.encounter,
           // Resolve this floor's authored `nodes` selectors → per-node encounter overrides (§G).
           encountersByIndex: resolveNodeSelectors(fc.nodes, floorPP),
-          switchFork: fc.switchFork,
+          // A floor's own junctions win; otherwise the site's, the way `encounter` and `theme` resolve.
+          forks: fc.forks ?? constraint.forks,
+          switches: fc.switches ?? constraint.switches,
           corridorStraightness: floorStraightness,
           packing: floorPacking,
           sealed: floorSealed,
@@ -318,6 +322,9 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             sideSections: [],
             mainEndReward: { type: "fragmentSlot" },
             encounter: constraint.encounter,
+            // The junctions the site asks every floor of it to carve, and what stands in them.
+            forks: constraint.forks,
+            switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
             // The SITE's condition, on every floor. It rides beside `theme` at each of these calls, and the
@@ -363,6 +370,9 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           sideSections,
           mainEndReward,
           encounter: constraint.encounter,
+          // The junctions the site asks every floor of it to carve, and what stands in them.
+          forks: constraint.forks,
+          switches: constraint.switches,
           encounterArgs: constraint.encounterArgs,
           theme: constraint.theme,
           condition: constraint.condition,
@@ -439,6 +449,9 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             mainEndReward: wing.endReward ? hintToReward(wing.endReward, wing.difficulty) : { type: "fragmentSlot" },
             // A wing is a floor of this pyramid, so it wears the pyramid's theme too.
             encounter: constraint.encounter,
+            // The junctions the site asks every floor of it to carve, and what stands in them.
+            forks: constraint.forks,
+            switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
             condition: constraint.condition,
@@ -505,6 +518,9 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sideSections,
     mainEndReward,
     encounter: constraint.encounter,
+    // The junctions the site asks every floor of it to carve, and what stands in them.
+    forks: constraint.forks,
+    switches: constraint.switches,
     encounterArgs: constraint.encounterArgs,
     theme: constraint.theme,
     condition: constraint.condition,

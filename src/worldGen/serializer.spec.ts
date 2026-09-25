@@ -75,19 +75,21 @@ describe("generateFile — a switch fork survives the bake", () => {
           end: "treasure",
           exitOrStaircase: "exit",
           sideSections: [],
-          switchFork: { encounter: "witnessDoor", keyId: "witness:test" },
+          forks: [{ exits: 2, count: 1 }],
+          switches: { encounter: "witnessDoor", min: 1, max: 1 },
         },
       ],
     ],
   })
 
-  it("emits the encounter standing in it and the stem its gates key on", () => {
-    expect(output).toContain(`switchFork: { encounter: "witnessDoor", keyId: "witness:test" }`)
+  it("emits the junctions the carve owes and the encounter that fills them", () => {
+    expect(output).toContain(`forks: [{ exits: 2, count: 1 }]`)
+    expect(output).toContain(`switches: { encounter: "witnessDoor", min: 1, max: 1 }`)
   })
 
-  // A key id is a mod's own free-form string, and the bake writes TypeScript source: one unescaped
-  // quote in one of them and the generated file does not parse.
-  it("escapes a stem carrying the characters that would break the file", () => {
+  // An encounter is a mod's own free-form string, and the bake writes TypeScript source: one
+  // unescaped quote in one of them and the generated file does not parse.
+  it("escapes an encounter carrying the characters that would break the file", () => {
     const quoted = generateFile({
       test_journey: [
         [
@@ -97,13 +99,13 @@ describe("generateFile — a switch fork survives the bake", () => {
             end: "treasure",
             exitOrStaircase: "exit",
             sideSections: [],
-            switchFork: { encounter: "witnessDoor", keyId: String.raw`a"b\\c` },
+            switches: { encounter: String.raw`a"b\\c`, min: 1, max: 1 },
           },
         ],
       ],
     })
 
-    expect(quoted).toContain(String.raw`keyId: "a\"b\\\\c"`)
+    expect(quoted).toContain(String.raw`encounter: "a\"b\\\\c"`)
   })
 
   // A side path's gate carries an authored key id of the same free-form kind, through the same

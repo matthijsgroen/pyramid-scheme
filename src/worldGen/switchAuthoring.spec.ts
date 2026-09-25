@@ -7,23 +7,26 @@ import { assembleFloor, defaultResolveEncounter } from "../game/siteAssembler"
 import type { ResolveEncounter } from "../game/siteAssembler"
 import type { Direction, FloorConfig as GameFloorConfig, FloorGrid, RoomCell } from "../game/siteTypes"
 
-// The stem a spec file would hand-author. Every key id this file expects is built from THIS
-// constant, never from the builder's own output, so a stem the pipeline invented would not match.
-const SWITCH_STEM = "spec:switch"
 const JOURNEY = "spec_switch_journey"
 const TIER = "junior"
 const LEVEL_COUNT = 4
 // 1-based, the way the DSL's pyramid selector is written.
 const PYRAMID = 2
+const FLOOR = 0
+// Built from the AUTHORING ADDRESS alone, never from the builder's own output, so a stem the
+// pipeline invented some other way would not match. This is the whole claim about the ids: they are
+// derivable by anyone holding the authoring, and nothing the carve chose gets into them.
+const SWITCH_STEM = `switch:${JOURNEY}#${PYRAMID - 1}#${FLOOR}#0`
 
 // Authored exactly as a world spec file authors a floor: a journey-pyramid rule with a chained
 // .floor(), which is the only shape whose FloorConstraint the pyramid pipeline reads back.
 const specRules: Rule[] = [
   journey(JOURNEY)
     .pyramid(PYRAMID, { difficulty: TIER })
-    .floor(0, {
+    .floor(FLOOR, {
       pathPuzzles: 2,
-      switchFork: { encounter: "sumplete", keyId: SWITCH_STEM },
+      forks: [{ exits: 2, count: 1 }],
+      switches: { encounter: "sumplete", min: 1, max: 1 },
       sideSections: [sidePath({ puzzles: 1 }), sidePath({ puzzles: 1 })],
     }),
 ]
@@ -71,7 +74,9 @@ const assembledSwitch = () => {
   // ever assigns values the stricter type accepts too — the same cast reachability.ts makes here.
   const floor = builtFloors()[0] as GameFloorConfig
   for (let seed = 0; seed < 60; seed++) {
-    const result = assembleFloor(`${JOURNEY}:${PYRAMID}`, floor, seed, reEnterableFamilies)
+    const result = assembleFloor(`${JOURNEY}:${PYRAMID}`, floor, seed, reEnterableFamilies, {
+      floorRef: { journeyId: JOURNEY, levelIndex: PYRAMID - 1, floorIndex: FLOOR },
+    })
     if (!result.success) continue
     const at = findSwitch(result.grid)
     if (at) return { ...at, grid: result.grid }
@@ -89,9 +94,10 @@ const gatedExitsOf = (grid: FloorGrid, at: { r: number; c: number; cell: RoomCel
       return { exit, beyond: grid.cells[at.r + dr * 2]?.[at.c + dc * 2] }
     })
 
-describe("a switch fork authored in the DSL", () => {
-  it("reaches the built floor config with the stem the rule named", () => {
-    expect(builtFloors()[0].switchFork).toEqual({ encounter: "sumplete", keyId: SWITCH_STEM })
+describe("forks and switches authored in the DSL", () => {
+  it("reach the built floor config as the rule wrote them", () => {
+    expect(builtFloors()[0].forks).toEqual([{ exits: 2, count: 1 }])
+    expect(builtFloors()[0].switches).toEqual({ encounter: "sumplete", min: 1, max: 1 })
   })
 
   it("stands the authored encounter in a fork room", () => {
@@ -106,7 +112,7 @@ describe("a switch fork authored in the DSL", () => {
     expect(gatedExitsOf(grid, at).length).toBeGreaterThanOrEqual(2)
   })
 
-  it("keys each closed way out on the authored stem and the section it reaches", () => {
+  it("keys each closed way out on the floor's authoring address and the section it reaches", () => {
     const { grid } = assembledSwitch()
     const at = findSwitch(grid)!
     const gated = gatedExitsOf(grid, at)
@@ -127,5 +133,26 @@ describe("a switch fork authored in the DSL", () => {
     const keyIds = gatedExitsOf(grid, at).map(({ exit }) => exit.gateKeyId)
     expect(new Set(keyIds).size).toBe(keyIds.length)
     expect(keyIds.length).toBeGreaterThanOrEqual(2)
+  })
+
+  // Two floors of one journey cannot be told apart by journey id and floor index alone, so the level
+  // the floor was authored at is in the stem — otherwise a key earned on one pyramid would stand the
+  // next pyramid's door open on arrival.
+  it("names the level the floor was authored at, so two levels never share a key", () => {
+    const floor = builtFloors()[0] as GameFloorConfig
+    const stemAt = (levelIndex: number) => {
+      for (let seed = 0; seed < 60; seed++) {
+        const result = assembleFloor(`${JOURNEY}:${levelIndex}`, floor, seed, reEnterableFamilies, {
+          floorRef: { journeyId: JOURNEY, levelIndex, floorIndex: FLOOR },
+        })
+        if (!result.success) continue
+        const keyId = findSwitch(result.grid)?.cell.exits?.find(exit => exit.gateKeyId !== undefined)?.gateKeyId
+        // The section the way out reaches is the last segment; the stem is everything before it.
+        if (keyId) return keyId.slice(0, keyId.lastIndexOf(":"))
+      }
+      throw new Error(`no seed carved the authored switch at level ${levelIndex}`)
+    }
+    expect(stemAt(0)).toBe(`switch:${JOURNEY}#0#${FLOOR}#0`)
+    expect(stemAt(1)).toBe(`switch:${JOURNEY}#1#${FLOOR}#0`)
   })
 })

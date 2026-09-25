@@ -329,22 +329,30 @@ export type FloorConfig = {
   rewards?: (TreasureReward | undefined)[]
   /** Default family/tag(s) for this floor's main-path encounter rooms. An array means "any of these". */
   encounter?: string | string[]
-  /** A SWITCH: one of this floor's junction rooms also holds this encounter, so the player stands in
-   * the fork and what is in it decides which of its ways out opens. Family/tag(s) like `encounter`.
+  /** WHAT THE CARVE MUST PROVIDE: `count` junctions, each with at least `exits` ways out free to be
+   * closed. A junction's free ways out are the main path ONWARD and the side paths hanging off it —
+   * never the way back (which would shut the player in with the junction), never one a ward door or
+   * another room already stands in, and never one into a hidden section. A carve offering fewer is
+   * re-carved, and a floor no carve can satisfy fails rather than losing the junction quietly.
    *
-   * The author names what stands there and not which fork it is — where the junctions fall is the
-   * carve's choice, so a cell is not something an author can point at. Nor which ways out are closed:
-   * the builder gates every one that nothing else already owns and reports them back on the room's
-   * own `exits` (RoomCell.exits.gateKeyId). A floor whose carve gives no junction two such ways out
-   * has no switch to author, and the build fails rather than dropping it.
+   * Structural, and it decides the floor's shape on its own: the same `forks` carves the same floor
+   * whether or not anything is ever stood in those junctions. */
+  forks?: { exits: number; count: number }[]
+  /** A SWITCH: an encounter standing in one of the junctions `forks` reserved, closing that
+   * junction's free ways out so that what the player meets there decides which one opens.
+   * Family/tag(s) like `encounter`. At least `min` and at most `max` of the reserved junctions get
+   * one, and a `min` beyond what `forks` reserves fails the floor.
    *
-   * `keyId` is the stem of the key each of those gates wants; the gate is named by the SECTION it
-   * stands at — `${keyId}:${sectionAddress}`, the main path onward being `main` — so that a re-carve
-   * moving a branch cannot make a key kept from the old layout fit a door it was never solved for.
-   * One authored stem rather than one id per way out, because the author cannot know which ways out
-   * there will be. Opaque to core — the id names no mod and nothing here mints it; whatever fills the
-   * switch does, reading the ids off the room's own `exits`. */
-  switchFork?: { encounter: string | string[]; keyId: string }
+   * The author names what stands there and nothing else — not which junction (where they fall is the
+   * carve's choice), not which ways out (the builder closes every free one and reports them back on
+   * the room's own `exits`, RoomCell.exits.gateKeyId), and not the key ids. Each gate wants
+   * `switch:<journeyId>#<levelIndex>#<floorIndex>#<n>:<sectionAddress>` — derived from where the
+   * floor was AUTHORED and which section that way out reaches, neither of which a re-carve can move,
+   * so a key kept from an earlier layout cannot come to fit a door it was never solved for.
+   *
+   * Opaque to core: the ids name no mod and nothing here mints them; whatever fills the switch does,
+   * reading them off the room's own `exits`. */
+  switches?: { encounter: string | string[]; min: number; max: number }
   /** Per-node encounter override for the main path: 0-based room index → family/tag, resolved from
    * authored `nodes` selectors (e.g. the last room → "capstone"/crocodile). Room k uses
    * `encountersByIndex[k] ?? encounter`; baked to concrete family ids by the gen-time encounter
@@ -398,9 +406,12 @@ export type AssemblerReason =
   /** Two rooms of one section answer to the same name, so a save cannot tell them apart — a switch
    * authored with the family that already fills its section's chest, shop or gate. See cellSlot.ts. */
   | { type: "duplicateCellSlot"; slot: string }
-  /** An authored switch fork found no junction with two ways out left to close, so what stands in it
-   * would decide nothing. See FloorConfig.switchFork. */
-  | { type: "switchForkWithoutGates" }
+  /** No carve offered as many junctions with `exits` ways out free to close as `forks` asked for —
+   * `carved` is the most any attempt managed. See FloorConfig.forks. */
+  | { type: "forksUnsatisfied"; exits: number; count: number; carved: number }
+  /** More switches are asked for than the floor's `forks` reserve junctions to hold them, which no
+   * carve can settle. See FloorConfig.switches. */
+  | { type: "switchesExceedForks"; min: number; forks: number }
   /** A switch was authored with a family whose room closes behind the player. Its gates open one way
    * out and leave the others shut, and keys accumulate, so the cost of the choice is a walk back to
    * spend it again — which a room that cannot be re-entered never offers. See FamilyMeta.reEnterable. */

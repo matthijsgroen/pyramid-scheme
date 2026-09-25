@@ -26,7 +26,7 @@ export const assemblerFor = (journeyId: string): AssembleFor => {
       resolveEncounter,
       {
         resolveKeyRequirements,
-        floorRef: { journeyId, floorIndex },
+        floorRef: { journeyId, levelIndex: levelNr - 1, floorIndex },
         resolveBoardIndex: boardIndexesForFloor(journeyId, levelNr - 1, floorIndex),
       }
     )

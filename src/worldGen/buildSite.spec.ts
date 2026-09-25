@@ -219,25 +219,48 @@ describe("a site theme handed down", () => {
   })
 })
 
-// The authoring side of the same seam: a floor constraint's switch has to reach the FloorConfig the
-// serializer then bakes, or the feature is dropped between two files that both compile.
-describe("an authored switch fork", () => {
-  it("reaches the built floor config", () => {
-    const { floors } = buildSite({
+// The authoring side of the same seam: a floor constraint's junctions and its switch have to reach
+// the FloorConfig the serializer then bakes, or the feature is dropped between two files that both
+// compile.
+describe("authored forks and switches", () => {
+  const built = (constraint: PyramidConstraint) =>
+    buildSite({
       journeyId: "j1",
       tier: "junior",
       pyramidIndex: 0,
       levelCount: 1,
       pathPuzzles: 2,
-      constraint: { floors: [{ switchFork: { encounter: "witnessDoor", keyId: "witness:test" } }] },
+      constraint,
       difficulty: "junior",
       hasMapPieceBranch: false,
       hasWardGate: false,
       nextTier: null,
       resolveReward: () => undefined,
       resolveMainEndReward: () => ({ type: "mosaicPiece" }),
+    }).floors
+
+  it("reaches the built floor config", () => {
+    const floors = built({
+      floors: [{ forks: [{ exits: 2, count: 1 }], switches: { encounter: "witnessDoor", min: 1, max: 1 } }],
     })
 
-    expect(floors[0].switchFork).toEqual({ encounter: "witnessDoor", keyId: "witness:test" })
+    expect(floors[0].forks).toEqual([{ exits: 2, count: 1 }])
+    expect(floors[0].switches).toEqual({ encounter: "witnessDoor", min: 1, max: 1 })
+  })
+
+  it("hands the site's own down to a floor that names none", () => {
+    const floors = built({ forks: [{ exits: 3, count: 2 }], switches: { encounter: "witnessDoor", min: 1, max: 2 } })
+
+    expect(floors[0].forks).toEqual([{ exits: 3, count: 2 }])
+    expect(floors[0].switches).toEqual({ encounter: "witnessDoor", min: 1, max: 2 })
+  })
+
+  it("lets the floor's own win over the site's", () => {
+    const floors = built({
+      forks: [{ exits: 3, count: 2 }],
+      floors: [{ forks: [{ exits: 2, count: 1 }] }],
+    })
+
+    expect(floors[0].forks).toEqual([{ exits: 2, count: 1 }])
   })
 })

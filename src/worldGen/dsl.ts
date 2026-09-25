@@ -152,19 +152,25 @@ export type FloorConstraint<TExtra extends string = never> = {
    * puzzle chain (e.g. `{ where: "last", encounter: "capstone" }` for the crocodile capstone). See
    * NodeSelector. Replaces the old hardcoded last-main-puzzle special case. */
   nodes?: NodeSelector[]
-  /** A SWITCH FORK: one of this floor's junctions holds `encounter`, and the builder closes the ways
-   * out of it that nothing else owns — so the player stands in the fork and what is in it decides
-   * which way opens.
+  /** WHAT THE CARVE MUST PROVIDE: `count` junctions with at least `exits` ways out free to be closed
+   * — the main path onward and the side paths off the junction, never the way back, never one
+   * something else already stands in, never one into a hidden branch. A carve offering fewer is
+   * re-carved and a floor no carve can satisfy fails the build.
    *
-   * The author names what stands there, never which junction (the carve chooses where they fall) and
-   * never which ways out (the builder chooses, and reports them back on the room). `keyId` is the
-   * STEM of the keys those gates want — one per way out, named by the section that way out reaches
-   * (`${keyId}:s0`, the main path onward being `${keyId}:main`) — because how many ways out there are
-   * is not something the authoring can know, and a name the carve chooses would let a key survive a
-   * re-carve into a door it does not belong to. Must be unique across the world's floors: a key is
-   * owned by the player, not by the floor that minted it. Opaque here, like every other authored key
-   * id: whatever fills the switch mints them. */
-  switchFork?: { encounter: string | string[]; keyId: string }
+   * Structural and owned by no mod: the same `forks` carves the same floor whether or not anything
+   * is ever stood in those junctions, which is what lets a switch's mod leave the build without
+   * moving a wall. */
+  forks?: { exits: number; count: number }[]
+  /** A SWITCH: `encounter` stands in a junction `forks` reserved and closes its free ways out, so the
+   * player stands in the fork and what is in it decides which way opens. Between `min` and `max` of
+   * the reserved junctions get one, and a `min` past what `forks` reserves fails the build.
+   *
+   * The author names what stands there and nothing else: not which junction (the carve chooses where
+   * they fall), not which ways out (the builder chooses, and reports them back on the room), and not
+   * the keys. Those are derived from the floor's own authoring address and the section each way out
+   * reaches, because how many ways out there are is not something the authoring can know and a name
+   * the carve chose would let a key survive a re-carve into a door it does not belong to. */
+  switches?: { encounter: string | string[]; min: number; max: number }
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
@@ -275,6 +281,12 @@ export type PyramidConstraint = {
    * "tableau" (or the "tomb-puzzle" tag) here so every floor's main-path rooms use it. An array is
    * "any of these". */
   encounter?: string | string[]
+  /** Junctions every floor of this site must carve, unless a floor names its own — see
+   * FloorConstraint.forks. Authored here, a whole climb is shaped in one line. */
+  forks?: { exits: number; count: number }[]
+  /** The switch every floor of this site stands in the junctions `forks` reserved, unless a floor
+   * names its own — see FloorConstraint.switches. */
+  switches?: { encounter: string | string[]; min: number; max: number }
   /**
    * Arguments handed to every encounter of this site that does not carry its own.
    *

@@ -126,7 +126,7 @@ export const reachableFloorsInSite = (
   resolveRequirements: ResolveKeyRequirements = noKeyRequirements,
   cache?: FloorAssemblyCache,
   support: ReachabilitySupport = noSupport,
-  // Real family resolution (reEnterable included) — a caller wanting an authored switchFork's
+  // Real family resolution (reEnterable included) — a caller wanting an authored switch's
   // reEnterable check to answer correctly (rather than defaultResolveEncounter's blanket "no")
   // passes one in, built from src/mods/allFamilyMeta.ts's resolveEncounterMeta.
   resolveEncounter: ResolveEncounter = defaultResolveEncounter,
@@ -153,7 +153,7 @@ export const reachableFloorsInSite = (
     if (!result) {
       result = assembleFloor(siteId, site[i] as GameFloorConfig, seed + i, resolveEncounter, {
         resolveKeyRequirements: resolveRequirements,
-        floorRef: { journeyId: ref.journeyId, floorIndex: i },
+        floorRef: { journeyId: ref.journeyId, levelIndex: ref.levelIndex, floorIndex: i },
       })
       cache?.set(cacheKey, result)
     }

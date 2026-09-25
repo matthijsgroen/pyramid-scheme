@@ -102,11 +102,13 @@ export type FloorConfig = {
    * and copied onto every floor, exactly as `condition` is. */
   patron?: Patron
   condition?: SiteCondition
-  /** A SWITCH: one junction of this floor also holds this encounter and closes the ways out nothing
-   * else owns, so what stands in the fork decides which one opens. `keyId` is the stem each of those
-   * gates keys on, and must be unique across the world's floors. Mirrors game/siteTypes.ts's
-   * FloorConfig.switchFork. */
-  switchFork?: { encounter: string | string[]; keyId: string }
+  /** How many junctions this floor's carve must offer, and how many ways out each must leave free to
+   * be closed — mirrors game/siteTypes.ts's FloorConfig.forks. */
+  forks?: { exits: number; count: number }[]
+  /** A SWITCH standing in one of the junctions `forks` reserved, closing that junction's free ways out
+   * so what the player meets there decides which one opens — mirrors game/siteTypes.ts's
+   * FloorConfig.switches. */
+  switches?: { encounter: string | string[]; min: number; max: number }
 }
 
 export type SiteConfig = FloorConfig[]

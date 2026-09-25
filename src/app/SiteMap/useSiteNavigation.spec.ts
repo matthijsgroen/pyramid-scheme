@@ -72,7 +72,7 @@ const bareFork: GridCell = {
   sectionAddress: SECTION,
   ordinal: "1",
 }
-const switchFork: GridCell = { ...bareFork, family: "sumplete", tags: ["puzzle"] }
+const switchRoom: GridCell = { ...bareFork, family: "sumplete", tags: ["puzzle"] }
 const fogged: GridCell = {
   type: "corridor",
   dirs: new Set(["w"]),
@@ -188,7 +188,7 @@ describe("useSiteNavigation", () => {
   // A switch is a junction with a puzzle standing in it: what the room HOLDS decides what arriving
   // does, not what type of room it is.
   it("opens the encounter of a junction that carries one", () => {
-    const { hook, onEncounter } = setup([entrance, switchFork])
+    const { hook, onEncounter } = setup([entrance, switchRoom])
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()

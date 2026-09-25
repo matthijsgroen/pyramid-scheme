@@ -152,18 +152,19 @@ const twoSiblingWingsSite = (): SiteConfig => [
   },
 ]
 
-// A floor carrying an authored switchFork — assembleFloor refuses this unconditionally unless
+// A floor carrying an authored switch — assembleFloor refuses this unconditionally unless
 // its resolver claims the switch family is reEnterable (siteAssembler.ts's own check), so this
 // exercises the resolveEncounter hand-off reachableFloorsInSite/computeReachability thread down
 // to assembleFloor, same as the resolveRequirements hand-off tested elsewhere in this file.
-const switchForkSite = (): SiteConfig => [
+const switchSite = (): SiteConfig => [
   {
     pathPuzzles: 2,
     difficulty: "junior",
     end: "treasure",
     exitOrStaircase: "exit",
     sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure" }],
-    switchFork: { encounter: "sumplete", keyId: "switch:test" },
+    forks: [{ exits: 2, count: 1 }],
+    switches: { encounter: "sumplete", min: 1, max: 1 },
   },
 ]
 // The witness-door pattern: a side section whose gate names its own `keyId`, so the assembler
@@ -408,16 +409,16 @@ describe(reachableFloorsInSite, () => {
     expect(result(true)).toEqual([{ type: "mosaicPiece", tier: "starter" }])
   })
 
-  it("throws on a switchFork whose reEnterable answer defaults to false (no resolver passed)", () => {
-    expect(() => reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, switchForkSite(), new Set())).toThrow(
+  it("throws on a switch whose reEnterable answer defaults to false (no resolver passed)", () => {
+    expect(() => reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, switchSite(), new Set())).toThrow(
       /switchFamilyNotReEnterable/
     )
   })
 
-  it("assembles a switchFork floor once a resolver claiming reEnterable is passed through", () => {
+  it("assembles a switch floor once a resolver claiming reEnterable is passed through", () => {
     const result = reachableFloorsInSite(
       { journeyId: "j", levelIndex: 0 },
-      switchForkSite(),
+      switchSite(),
       new Set(),
       undefined,
       undefined,
@@ -601,16 +602,16 @@ describe(computeReachability, () => {
     expect(glass(true)).toEqual([{ type: "mosaicPiece", tier: "starter" }])
   })
 
-  it("throws on a switchFork floor when no resolveEncounter is passed, same as the direct call", () => {
-    const allConfigs: Record<string, SiteConfig[]> = { j: [switchForkSite()] }
+  it("throws on a switch floor when no resolveEncounter is passed, same as the direct call", () => {
+    const allConfigs: Record<string, SiteConfig[]> = { j: [switchSite()] }
     const journeyMeta = { j: { tier: "starter" as const } }
     expect(() => computeReachability(allConfigs, journeyMeta, new Map(), undefined, undefined, testSupport())).toThrow(
       /switchFamilyNotReEnterable/
     )
   })
 
-  it("reaches a switchFork floor once resolveEncounter is threaded through, same as placeFragments injects it", () => {
-    const allConfigs: Record<string, SiteConfig[]> = { j: [switchForkSite()] }
+  it("reaches a switch floor once resolveEncounter is threaded through, same as placeFragments injects it", () => {
+    const allConfigs: Record<string, SiteConfig[]> = { j: [switchSite()] }
     const journeyMeta = { j: { tier: "starter" as const } }
     const result = computeReachability(
       allConfigs,
