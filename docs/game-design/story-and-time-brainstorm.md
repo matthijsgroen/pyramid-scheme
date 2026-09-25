@@ -568,6 +568,10 @@ because **the ordering moved into the queue**. What is left:
 - **Anchored beats** are the only ones that still care about rails, and the count is small enough to
   reason about one at a time.
 
+**Open: does the queue carry over a tier crossing, or flush?** A feel question rather than a structural
+one — carrying it over means a beat written for Act II can still fire in Act III to a player who rushed the
+tier, and flushing means a tier's unplayed beats are simply lost. Neither breaks the ordering guarantee.
+
 Free-order journeys (`docs/mods/floor-topology-design.md`) then cost the story nothing anywhere, rather
 than costing it a wizard exception — and would keep costing nothing if free order ever widened to other
 tiers or across journeys, because the queue absorbs it. Only anchored beats would want re-checking.
