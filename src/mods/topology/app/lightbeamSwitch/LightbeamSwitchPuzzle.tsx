@@ -1,0 +1,146 @@
+import { useCallback, useEffect, type FC } from "react"
+import clsx from "clsx"
+import { useTranslation } from "react-i18next"
+import type { Direction as WayOut, RoomCell } from "@/game/siteTypes"
+import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
+import { usePuzzleState } from "@/mods/core/app/puzzleState"
+import { Glyph } from "@/mods/topology/app/beamGlyphs"
+import { ShrineBeamBoard } from "@/mods/topology/app/shrineBeam/ShrineBeamBoard"
+import type { LightbeamSwitchBoard } from "../../game/lightbeamSwitch/generateLightbeamSwitch"
+import { shutWaysOut } from "../../game/lightbeamSwitch/waysOut"
+import {
+  createLightbeamSwitchState,
+  litWayOut,
+  turnSwitchMirror,
+} from "../../game/lightbeamSwitch/lightbeamSwitchState"
+
+type Props = {
+  /** Already turned to face this room, so a shrine's bearing is the bearing of the door it opens. */
+  board: LightbeamSwitchBoard
+  /** The fork's own ways out (RoomCell.exits) — the ones carrying a `gateKeyId` are what this decides. */
+  exits: RoomCell["exits"]
+  /** The way out standing open as the player walks in, from the last time this board was solved. */
+  openWayOut?: WayOut
+  /** The light has landed: this way out opens now, and the fork's others shut. */
+  onRoute: (way: WayOut) => void
+  onSolved: () => void
+  /** Omitted where there is nowhere to go back to — a story, a spec exercising only the routing. */
+  onCancel?: () => void
+}
+
+/**
+ * A doorway in the wall of the junction, drawn as the arch it is: barred while it is shut, and standing
+ * clear once the light is on the shrine above it.
+ */
+const Doorway: FC<{ open: boolean }> = ({ open }) => (
+  <Glyph>
+    <path
+      d="M18 96 L18 44 A32 32 0 0 1 82 44 L82 96 Z"
+      strokeWidth={7}
+      className={clsx(open ? "fill-stone-950 stroke-amber-300" : "fill-stone-800 stroke-stone-500")}
+    />
+    {!open && (
+      <g strokeWidth={7} strokeLinecap="round" className="stroke-stone-400">
+        <line x1={34} y1={30} x2={34} y2={96} />
+        <line x1={50} y1={24} x2={50} y2={96} />
+        <line x1={66} y1={30} x2={66} y2={96} />
+      </g>
+    )}
+  </Glyph>
+)
+
+/** Where each way out's door is drawn: outside the board, on the side of the room it leads out of. */
+const DOOR_PLACE: Record<WayOut, string> = {
+  n: "col-start-2 row-start-1",
+  e: "col-start-3 row-start-2",
+  s: "col-start-2 row-start-3",
+  w: "col-start-1 row-start-2",
+}
+
+/**
+ * The room where solving is choosing WHICH WAY ON: one beam, a shrine over every way out of the junction,
+ * and the way out the light rests on is the one that stands open while the rest are shut.
+ *
+ * There is nothing to name before routing, because the routing is the naming. And nothing is won here —
+ * the doors are the state of this board, so walking back in and sending the light elsewhere moves which
+ * one is open rather than adding a second.
+ */
+export const LightbeamSwitchPuzzle: FC<Props> = ({ board, exits, openWayOut, onRoute, onSolved, onCancel }) => {
+  const { t } = useTranslation("common")
+  const [state, setState] = usePuzzleState(() => createLightbeamSwitchState(board))
+
+  const lit = litWayOut(board, state)
+  const solved = lit !== undefined
+
+  // The doors move the moment the light lands, not when the banner is dismissed: a player may back out of
+  // a solved board, and the way they opened stays open.
+  useEffect(() => {
+    if (lit !== undefined) onRoute(lit)
+  }, [lit, onRoute])
+
+  const turn = useCallback(
+    (mirror: number) => {
+      if (solved) return // the door has swung; nothing may move under it
+      setState(prev => turnSwitchMirror(prev, mirror))
+    },
+    [solved, setState]
+  )
+
+  // What the doors say right now: the way the light is on, or — with the board still dark — the way this
+  // switch was left open on an earlier visit.
+  const standing = lit ?? openWayOut
+  const wayName = (way: WayOut) => t(`lightbeamSwitch.way.${way}`)
+
+  return (
+    <PuzzleFamilyShell
+      onSolved={onSolved}
+      onCancel={onCancel ?? (() => {})}
+      solved={solved}
+      onReset={() => setState(createLightbeamSwitchState(board))}
+      title={t("lightbeamSwitch.name")}
+      goal={t("lightbeamSwitch.goal")}
+      rules={
+        <ul className="list-disc space-y-1 pl-4">
+          <li>{t("lightbeamSwitch.rules.shrines")}</li>
+          <li>{t("lightbeamSwitch.rules.doors")}</li>
+          {/* Next to the rule it qualifies: a player who reads "the others shut" as "the rest are lost"
+              plays the junction as a trap and never comes back for the branch they did not take. */}
+          <li>{t("lightbeamSwitch.rules.returning")}</li>
+          <li>{t("lightbeamSwitch.rules.tap")}</li>
+        </ul>
+      }
+    >
+      {({ reportInput }) => (
+        <div
+          className="grid w-full max-w-[min(56vh,26rem)] items-center justify-items-center gap-1"
+          style={{ gridTemplateColumns: "12% minmax(0, 1fr) 12%", gridTemplateRows: "12% minmax(0, 1fr) 12%" }}
+        >
+          {shutWaysOut(exits).map(way => (
+            <div
+              key={way}
+              className={clsx("size-full", DOOR_PLACE[way])}
+              role="img"
+              aria-label={t(standing === way ? "lightbeamSwitch.doorOpen" : "lightbeamSwitch.doorShut", {
+                way: wayName(way),
+              })}
+            >
+              <Doorway open={standing === way} />
+            </div>
+          ))}
+          <div className="col-start-2 row-start-2 w-full">
+            <ShrineBeamBoard
+              grid={board.grid}
+              shrines={board.shrines.map(shrine => shrine.at)}
+              angles={state.angles}
+              shrineLabel={shrine => wayName(board.shrines[shrine].canonicalDir)}
+              onTurn={mirror => {
+                reportInput()
+                turn(mirror)
+              }}
+            />
+          </div>
+        </div>
+      )}
+    </PuzzleFamilyShell>
+  )
+}

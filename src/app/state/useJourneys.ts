@@ -47,6 +47,17 @@ export type StoredJourneyStateV3 = {
   disabledTraps?: string[] // cells where trapTool was spent to disarm the corridor
   skippedConsumables?: string[] // cells where inventory was full at collect time
   purchasedStock?: string[] // `${address}!${stockIndex}` of shop slots already bought
+  /** Which way out each switch on this site stands open at, as `${levelNr}:${switchAddress}=${wayOutId}`.
+   *
+   * A switch shuts every way out of the fork it stands in and its board reopens ONE of them, so this is
+   * the floor's own shape rather than anything the player carries: solving the board again replaces that
+   * switch's entry, and the way out it named before shuts with it. Exactly one entry per switch, which is
+   * why it is written keyed by the switch and not added to a list.
+   *
+   * Both halves are ids core already mints — the fork's cell address, and the id the assembler closed
+   * that way out with — so nothing here says what opened it or what the board was. A stale entry naming
+   * a way out this build no longer shuts simply matches nothing. */
+  openWaysOut?: string[]
   // Corridor detector (§7.2, found = noticed via proximity): both keyed `${levelNr}:${sectionAddress}`.
   // `known` = hidden corridors on floors the player has viewed; `found` = ones the detector stopped
   // them at. Outstanding (known \ found) drives the L3 pyramid + L4 travel "unexplored corridor" markers.
@@ -107,6 +118,11 @@ export type JourneyAPI = {
   getSkippedConsumables: (journeyId: string) => ReadonlySet<string>
   markShopSlotPurchased: (address: string, stockIndex: number) => void
   getPurchasedShopSlots: (journeyId: string) => ReadonlySet<string>
+  /** The switch at `switchAddress` now leaves `wayOutId` open, and every other way out it shut stays
+   * shut. Replaces that switch's previous answer rather than joining it — see openWaysOut. */
+  setOpenWayOut: (switchAddress: string, wayOutId: string) => void
+  /** The ways out standing open on this level, as the ids the assembler shut them with. */
+  getOpenWaysOut: (journeyId: string) => ReadonlySet<string>
   registerHiddenCorridors: (sectionAddresses: string[]) => void
   markCorridorFound: (sectionAddress: string) => void
   getFoundHiddenCorridors: (journeyId: string) => ReadonlySet<string>
@@ -455,6 +471,29 @@ export const createJourneysV3Api = ({
   const getPurchasedShopSlots = (journeyId: string): ReadonlySet<string> =>
     forThisLevel(journeyId, journeys.find(j => j.journeyId === journeyId)?.purchasedStock)
 
+  // A switch's answer, which is a REPLACEMENT and not an addition: the fork has one board and the board
+  // leaves one way out open, so the entry this switch wrote before goes when the next one lands.
+  const setOpenWayOut = (switchAddress: string, wayOutId: string) => {
+    if (!activeJourneyId) return
+    const at = `${atLevel(switchAddress)}=`
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const open = j.openWaysOut ?? []
+        const entry = `${at}${wayOutId}`
+        if (open.includes(entry) && open.filter(e => e.startsWith(at)).length === 1) return j
+        return { ...j, openWaysOut: [...open.filter(e => !e.startsWith(at)), entry] }
+      })
+    )
+  }
+
+  const getOpenWaysOut = (journeyId: string): ReadonlySet<string> =>
+    new Set(
+      [...forThisLevel(journeyId, journeys.find(j => j.journeyId === journeyId)?.openWaysOut)]
+        .filter(entry => entry.includes("="))
+        .map(entry => entry.slice(entry.indexOf("=") + 1))
+    )
+
   // Corridor detector: hidden sections become "known" the moment the player views the floor
   // holding them; keyed by levelNr like exploration so a multi-level pyramid keeps them apart.
   const registerHiddenCorridors = (sectionAddresses: string[]) => {
@@ -568,6 +607,8 @@ export const createJourneysV3Api = ({
     getSkippedConsumables,
     markShopSlotPurchased,
     getPurchasedShopSlots,
+    setOpenWayOut,
+    getOpenWaysOut,
     registerHiddenCorridors,
     markCorridorFound,
     getFoundHiddenCorridors,

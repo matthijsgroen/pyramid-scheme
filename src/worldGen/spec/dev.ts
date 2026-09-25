@@ -22,10 +22,10 @@ import { DEV_JOURNEY_ID } from "../data"
 // would be asking for floors that fail to build.
 const FORKS = [{ exits: 2, count: 1 }]
 
-// witnessDoor is the registered family that keeps its room open to a player who walks back, which is
-// exactly what a switch needs — a room that closes behind you leaves the player at a door they can
-// never open. This becomes `lightbeamSwitch` once that family is registered.
-const SWITCHES = { encounter: "witnessDoor", min: 1, max: 1 }
+// The switch board itself: it draws the fork's own ways out and leaves open the one it routes its beam
+// to. Re-enterable, which a switch has to be — a room that closed behind the player would leave them at
+// a door nothing can ever open again.
+const SWITCHES = { encounter: "lightbeamSwitch", min: 1, max: 1 }
 
 // Two ungated branches, so the junction has ways out worth closing and the switch decides something.
 // Their treasure ends stay empty: this journey contributes no loot.

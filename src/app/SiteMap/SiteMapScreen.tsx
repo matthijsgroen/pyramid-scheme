@@ -5,6 +5,7 @@ import { ownedKeysFromSources, ownedKeysRevision, subscribeOwnedKeys } from "@/a
 import { floorKeyRing } from "@/game/floorKeys"
 import { useCorridorDetection } from "@/app/SiteMap/useCorridorDetection"
 import { useFoundCorridors } from "@/app/SiteMap/useFoundCorridors"
+import { useOpenWaysOut } from "@/app/SiteMap/useOpenWaysOut"
 import { useDetectorBand } from "@/app/SiteMap/useDetectorBand"
 import type { SiteConfig } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
@@ -70,6 +71,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const floorConfig = siteConfig[currentFloor]
 
   const foundCorridors = useFoundCorridors(journeys, journeyId)
+  const openWaysOut = useOpenWaysOut(journeys, journeyId)
 
   const { grid, explorerPos, hiddenSections, junctionSections } = useAssembledFloor(
     journeyId,
@@ -80,7 +82,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     journeyState?.positionKey,
     detectorLevels.corridor,
     foundCorridors,
-    levelIndex
+    levelIndex,
+    openWaysOut
   )
 
   // Where a stored address sits on the floor the player is looking at. Only this floor is assembled,

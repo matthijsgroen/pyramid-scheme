@@ -73,6 +73,49 @@ export const applyExplored = (grid: FloorGrid, floor: number, exploredCells: Rec
   return result
 }
 
+/**
+ * The ways out a switch's board leaves open, put back the way the carve had them.
+ *
+ * A switch shuts every way out of its fork by overwriting the corridor node beyond it with a door, and
+ * the board standing in the fork reopens the one it routes its beam to. That door is the ONLY thing in
+ * the way: a node with something in it stops the walk from revealing past it, so the way out is opened
+ * by giving the cell back its corridor — the same cell, the same walls, the same section — rather than
+ * by marking the door passed.
+ *
+ * **Here, and before the save is applied.** Reachability spreads out of the cells a save calls explored
+ * (`completeCell`), so a way out reopened after that pass would be open with the dark still behind it
+ * until something else made the floor reveal again. Ahead of it, the floor reads exactly as one whose
+ * switch had never shut that way.
+ *
+ * Only a door with nothing standing in it is ever touched: a gate a family renders is opened by what
+ * the player does in it, and that is not this.
+ */
+const NONE_OPEN: ReadonlySet<string> = new Set()
+
+const openWaysOut = (grid: FloorGrid, open: ReadonlySet<string>): FloorGrid => {
+  if (open.size === 0) return grid
+  let opened = false
+  const cells = grid.cells.map(row =>
+    row.map((cell): GridCell => {
+      if (cell.type !== "room" || cell.family !== undefined) return cell
+      if (!cell.tags?.includes("gate") || !cell.requiredKeyId || !open.has(cell.requiredKeyId)) return cell
+      opened = true
+      return {
+        type: "corridor",
+        dirs: cell.dirs,
+        state: cell.state,
+        sectionAddress: cell.sectionAddress,
+        sectionHash: cell.sectionHash,
+        legacySectionHash: cell.legacySectionHash,
+        ordinal: cell.ordinal,
+        difficulty: cell.difficulty,
+        hidden: cell.hidden,
+      }
+    })
+  )
+  return opened ? { ...grid, cells } : grid
+}
+
 const DIR_MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 
 // Mask hidden cells: map to empty, strip dirs pointing into them from neighbours.
@@ -203,7 +246,9 @@ export const useAssembledFloor = (
   revealedSections?: ReadonlySet<string>,
   // Which level of the journey this floor belongs to, so its rooms can be dealt their boards
   // (src/game/seeds/boardIndex.ts). Unset outside the baked world — stories, specs, the builder.
-  levelIndex?: number
+  levelIndex?: number,
+  /** The ids of ways out the floor's switches currently leave open (see openWaysOut). */
+  openedWaysOut?: ReadonlySet<string>
 ): {
   grid: FloorGrid | null
   explorerPos: readonly [number, number]
@@ -222,23 +267,29 @@ export const useAssembledFloor = (
     return result.success ? result.grid : null
   }, [journeyId, floorConfig, seed, currentFloor, levelIndex])
 
+  // The carve as the floor's own switches have left it — what everything below reads as "the floor".
+  const carvedGrid = useMemo(
+    () => (baseGrid ? openWaysOut(baseGrid, openedWaysOut ?? NONE_OPEN) : null),
+    [baseGrid, openedWaysOut]
+  )
+
   // Standing in the doorway is having been there: the entrance reads explored whether or not the save
   // says so, so a floor is never entered onto a fogged cell.
   const effectiveExplored = useMemo(() => {
-    if (!baseGrid) return exploredCells
-    const [er, ec] = baseGrid.entrancePos
-    const entranceCell = baseGrid.cells[er][ec]
-    const key = cellKey(baseGrid, currentFloor, er, ec)
+    if (!carvedGrid) return exploredCells
+    const [er, ec] = carvedGrid.entrancePos
+    const entranceCell = carvedGrid.cells[er][ec]
+    const key = cellKey(carvedGrid, currentFloor, er, ec)
     if (entranceCell.type === "empty" || !key) return exploredCells
     const section = entranceCell.sectionAddress ?? ""
     const existing = exploredCells[section] ?? []
     if (existing.includes(key)) return exploredCells
     return { ...exploredCells, [section]: [...existing, key] }
-  }, [baseGrid, exploredCells, currentFloor])
+  }, [carvedGrid, exploredCells, currentFloor])
 
   const exploredGrid = useMemo(
-    () => (baseGrid ? applyExplored(baseGrid, currentFloor, effectiveExplored) : null),
-    [baseGrid, currentFloor, effectiveExplored]
+    () => (carvedGrid ? applyExplored(carvedGrid, currentFloor, effectiveExplored) : null),
+    [carvedGrid, currentFloor, effectiveExplored]
   )
 
   const { grid, hiddenJunctions, hiddenSections, junctionSections } = useMemo(() => {

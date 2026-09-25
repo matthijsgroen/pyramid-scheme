@@ -1067,6 +1067,19 @@
       }
     }
   },
+  "lightbeamSwitch": {
+    "name": "Het Kerende Licht",
+    "goal": "Het licht rust in een heiligdom, en de doorgang eronder staat open.",
+    "rules": {
+      "shrines": "Eén schijf licht, en een heiligdom boven elke doorgang van dit kruispunt. De spiegels op de vloer kunnen het licht naar elk ervan brengen.",
+      "doors": "De doorgang die het licht bereikt staat open, de andere zijn dicht. Eén route, één weg verder.",
+      "returning": "Kiezen kost je niets. Loop wanneer je wilt weer binnen en stuur het licht een andere kant op — die gaat open, en deze gaat dicht.",
+      "tap": "Tik op een spiegel om hem te draaien. Nog een tik zet hem terug."
+    },
+    "doorOpen": "{{way}} doorgang: open",
+    "doorShut": "{{way}} doorgang: dicht",
+    "way": { "n": "Noordelijke", "e": "Oostelijke", "s": "Zuidelijke", "w": "Westelijke" }
+  },
   "witnessDoor": {
     "name": "Getuigenpoort",
     "goal": "Het licht rust in het heiligdom dat je noemde, en de deur eronder staat open.",

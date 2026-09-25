@@ -2054,6 +2054,10 @@ export const assembleFloor = (
           // wears a ward gate's bars and holds nothing to enter or tap. The switch is what opens it,
           // and a door the player opens by tapping is a door the switch does not control.
           tags: keyGate.tags,
+          // NO KEY EVER SATISFIES THIS ONE, and nothing mints one. On a switch's door the id NAMES THE
+          // WAY OUT — which branch of which fork this is — so the board standing in the fork can say
+          // which way it left open (`useAssembledFloor`'s openWaysOut) and the rest stay shut. It keeps
+          // the field the ward gates use because everything that reads a door reads it there.
           requiredKeyId: gateKeyId,
           gateVariant: "floor-key",
           // Minted by whatever stands in the switch, so this floor grows no chest holding it and the

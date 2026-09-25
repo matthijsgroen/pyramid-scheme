@@ -225,7 +225,8 @@ export type RoomCell = {
    *
    * `gateKeyId` is set on the ways out a SWITCH closed, and is how the builder reports which ones it
    * chose: whatever stands in the switch reads them off the room it is in rather than guessing the
-   * floor's shape. The id is opaque — core neither mints nor interprets it. */
+   * floor's shape. It NAMES the way out and is not a key anything holds — the board in the fork opens
+   * one of these ids at a time, and no chest anywhere mints them. */
   exits?: { dir: Direction; kind: "main" | "side" | "ward" | "fork"; gateKeyId?: string }[]
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell

@@ -186,7 +186,7 @@ describe("what the dev journey authors", () => {
     expect(devFloors(withDev)).toHaveLength(6)
     for (const floor of devFloors(withDev)) {
       expect(floor.forks).toEqual([{ exits: 2, count: 1 }])
-      expect(floor.switches).toEqual({ encounter: "witnessDoor", min: 1, max: 1 })
+      expect(floor.switches).toEqual({ encounter: "lightbeamSwitch", min: 1, max: 1 })
     }
   })
 
