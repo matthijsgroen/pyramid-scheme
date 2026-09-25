@@ -103,11 +103,13 @@ const parseCharacters = (md: string): Entry[] => {
       if (!file) continue
       const name = file.replace(/^ghost-/, "")
       const out = join("src/assets", `${file}-250.png`)
+      // An entry may name its own references in backticks; most want the default pair.
+      const named = [...block.matchAll(/`((?:art|src)\/[^`]+\.(?:jpe?g|png))`/g)].map(m => m[1])
       drawn.push({
         key: `${group}/${name}`,
         title: (block.split("\n")[0] ?? file).trim(),
-        // Filled in below: an entry's reference is the newest file that exists BEFORE it in this order.
-        attachments: [],
+        // Filled in below when the entry names none: the newest file that exists BEFORE it in this order.
+        attachments: named,
         // The token is followed by the entry's own first sentence, so the break goes in with it: run
         // together, the preamble's last rule reads as part of the subject. Bold markers go — they are
         // for whoever reads the document, and the generator is handed plain text.
@@ -126,7 +128,8 @@ const parseCharacters = (md: string): Entry[] => {
   const withReferences: Entry[] = []
   for (const entry of drawn) {
     const landed = existsSync(entry.out)
-    withReferences.push({ ...entry, attachments: [ANCHOR, ...(reference ? [reference] : [])], drawn: landed })
+    const attachments = entry.attachments.length > 0 ? entry.attachments : [ANCHOR, ...(reference ? [reference] : [])]
+    withReferences.push({ ...entry, attachments, drawn: landed })
     // Hand over the MASTER where there is one: the sprite is 250px wide, and a reference that small is
     // most of the detail gone before the generator sees it (art/README.md).
     if (landed) reference = entry.master && existsSync(entry.master) ? entry.master : entry.out

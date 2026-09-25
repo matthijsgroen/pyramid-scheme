@@ -121,10 +121,23 @@ as much as a writing one.
 
 ### `ghost-other-250.png` — wizard, the one who came before
 
-> [preamble + ghost preamble] **Not translucent, not a ghost** — nobody is there. Instead: a small
-> abandoned camp, drawn in the same style. A rolled canvas bedroll, a battered tin kettle, a rope coiled on
-> a stone, an open notebook face down, and a hat very like the explorer's, left behind. No figure, no
-> remains, no blood. The scene should read as somebody who left in a hurry and meant to come back.
+**References:** `src/assets/fez-250.png` for the drawing style, and `art/masters/characters/explorer.jpeg`
+for the hat — the anchor alone gave a generator a lizard in a fez and it drew the fez.
+
+> [preamble] **There is no figure in this picture**, so ignore every instruction above about a standing
+> figure and its pose. **Not translucent and not a ghost** — nothing here is blue-green or see-through.
+>
+> A small abandoned camp on bare ground, drawn in the same style: a canvas bedroll rolled and tied, a
+> battered tin kettle, a coil of rope resting on a flat stone, a notebook lying FACE DOWN — spine up, pages
+> against the ground — and one hat left beside them.
+>
+> The hat is the explorer's own, taken from the second reference image: a soft brown felt bush hat, wide
+> flat brim, band around the crown, brown #685038. **It is not a fez** — no red, no cylindrical cap, no
+> tassel. That hat belongs to another character and must not appear.
+>
+> No tent, no campfire, no figure, no remains, no blood. Every object whole and inside the frame with air
+> around it, nothing cropped by an edge. The scene should read as somebody who left in a hurry and meant to
+> come back.
 
 ## 3. Cutting a generated file down to a sprite
 
