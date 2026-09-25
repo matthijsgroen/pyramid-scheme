@@ -110,6 +110,14 @@ years ago and he has not left off waiting for the rest of it.
 
 `story.tomb.expertB.*` — no ghost. The room does the talking.
 
+**And it can count on the priest.** This tomb is not auto-discovered: it needs a map piece to appear at all,
+and its location key is `expert_a_2`, the second-floor treasure of the treasury itself
+(`src/mods/tombTreasure/game/treasurePerks.ts`). So nobody reaches this room without having been inside his,
+which makes it the one tomb in the tier that may refer back to a scene the player is guaranteed to have had.
+
+**Which is also why the ask stays with him and not here.** The treasury is auto-discovered and this is not;
+an ask placed in an optional room is an arc the player can walk past.
+
 > **Fez:** Nobody has been in here. Not us, not the earlier lot, nobody.
 >
 > **Explorer:** How can you tell?
