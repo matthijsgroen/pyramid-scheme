@@ -141,11 +141,6 @@ export const useSiteNavigation = ({
       if (cell.roomType === "fork" && cell.family === undefined) {
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
-      } else if (cell.roomType === "encounter" && cell.family === undefined) {
-        // A SWITCH'S GATE: the way is shut, and there is nothing in it to open. It is walked up to like
-        // any other gate, and not written down — a cell the save calls explored is a cell the floor
-        // comes back with revealed past, which would make a tap the thing that opens the door.
-        goHere()
       } else if (cell.roomType === "encounter" || cell.roomType === "fork") {
         // A GATE IS WALKED INTO LIKE ANY OTHER ROOM. Its bars are drawn across the FAR side of its own
         // square, on the sill where this rank's stone meets the pocket's (`SiteMapView`), so the square

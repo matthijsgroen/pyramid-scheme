@@ -5,6 +5,23 @@ const opposite: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" 
 
 export const getCell = (grid: FloorGrid, r: number, c: number): GridCell | undefined => grid.cells[r]?.[c]
 
+/**
+ * A WAY OUT A SWITCH SHUT: a wall the player can see, not a door they walk up to.
+ *
+ * It wears a gate's bars and holds nothing to enter — no family renders it, and no key anything mints
+ * ever satisfies it. The board standing in the fork is the only thing that opens one, and it opens it
+ * by giving the cell back the corridor it was cut from. So the player may see it and read that the way
+ * is shut; they may not stand on it, pass it, or have anything beyond it revealed.
+ *
+ * Every other gate — a ward, an authored floor-key door — carries the family that renders it, and stays
+ * soft-gated: walked up to, tapped, and told what it wants.
+ */
+export const isSealedWayOut = (cell: GridCell | undefined): boolean =>
+  cell?.type === "room" &&
+  cell.family === undefined &&
+  cell.requiredKeyId !== undefined &&
+  (cell.tags?.includes("gate") ?? false)
+
 export const getOwnedKeys = (grid: FloorGrid): ReadonlySet<string> => {
   const keys = new Set<string>()
   for (const row of grid.cells)
@@ -77,10 +94,11 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
         }
       }
     } else if (neighbor.type === "room") {
-      // Gating is soft: a locked gate is still approachable and clickable, same as any
-      // other room — its own family shows "you don't have the key yet" and refuses to
-      // solve. Reachability past it (revealing what's beyond) only happens once it's
-      // actually completed, which "don't traverse through rooms" below already enforces.
+      // A room comes out of the fog so the player can see it, and the walk stops there: reachability
+      // past it only happens once it is completed, which "don't traverse through rooms" below
+      // enforces. That is as true of a shut way out, which is seen and never completed, as it is of a
+      // gate a family renders, where the family shows "you don't have the key yet" and refuses to
+      // solve — those stay approachable and clickable like any other room.
       if (neighbor.state === "fogged" || neighbor.state === "visible") {
         newCells[r][c] = { ...neighbor, state: "reachable" }
       }
@@ -119,7 +137,8 @@ export const findPath = (
       // player has actually walked — it can cut through a corridor never revealed yet.
       // Restricting to non-fogged cells keeps the animated path on ground the player has
       // genuinely seen, even if that means a longer route than the absolute shortest one.
-      if (!neighbor || neighbor.type === "empty" || neighbor.state === "fogged") continue
+      // A shut way out is a wall, so no route ends on it and none runs through it.
+      if (!neighbor || neighbor.type === "empty" || neighbor.state === "fogged" || isSealedWayOut(neighbor)) continue
       parent.set(nk, key(r, c))
       if (nr === tr && nc === tc) break outer
       queue.push([nr, nc])
@@ -161,7 +180,8 @@ export const walkableFrom = (grid: FloorGrid, from: readonly [number, number]): 
       const key = `${nr},${nc}`
       if (seen.has(key)) continue
       const neighbor = grid.cells[nr]?.[nc]
-      if (!neighbor || neighbor.type === "empty" || neighbor.state === "fogged") continue
+      // A shut way out is a wall: drawn, and standable on by nobody.
+      if (!neighbor || neighbor.type === "empty" || neighbor.state === "fogged" || isSealedWayOut(neighbor)) continue
       seen.add(key)
       queue.push([nr, nc])
     }

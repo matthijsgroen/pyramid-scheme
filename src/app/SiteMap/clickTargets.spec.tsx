@@ -3,12 +3,13 @@ import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
-import { completeCell, findPath } from "@/game/gridNavigation"
+import { completeCell, findPath, revealAll, walkableFrom } from "@/game/gridNavigation"
 import { offeredTargets } from "./clickTargets"
 import { buildRoomClaims } from "./roomClaims"
-import type { FloorGrid } from "@/game/siteTypes"
+import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
+import { DIR_MOVES } from "./corridorRuns"
 
 // jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
 Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
@@ -207,5 +208,58 @@ describe("the corridor detector's hint", () => {
 
     expect(junction?.querySelector("circle[stroke]")).toBeTruthy()
     expect(junction?.style.cursor).toBe("pointer")
+  })
+})
+
+// SOFT GATING, WHICH IS EVERY GATE BUT ONE. A ward and an authored floor-key door each carry the family
+// that renders them, so the player walks up, taps, and is told what it wants. Only a way out a switch
+// shut — bars with nothing behind them to enter — is a wall (`isSealedWayOut`), and narrowing the block
+// to that is the whole of the claim: pinned here against real gates off a real carve.
+describe("a gate the player can enter", () => {
+  const gatedFloor: FloorConfig = {
+    pathPuzzles: 2,
+    difficulty: "junior",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [
+      { pathPuzzles: 1, difficulty: "junior", end: "treasure", gate: { type: "tomb-key", wardKeyId: "ward:pin" } },
+      { pathPuzzles: 1, difficulty: "junior", end: "treasure", gate: { type: "floor-key", color: "red" } },
+    ],
+  }
+
+  const gatesOf = (grid: FloorGrid) =>
+    grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) =>
+        cell.type === "room" && cell.tags?.includes("gate") && cell.requiredKeyId
+          ? [{ at: [r, c] as [number, number], variant: cell.gateVariant, family: cell.family }]
+          : []
+      )
+    )
+
+  const carved = (() => {
+    for (let seed = 0; seed < 40; seed++) {
+      const result = assembleFloor("gate-pin", gatedFloor, seed)
+      if (result.success && gatesOf(result.grid).length === 2) return revealAll(result.grid)
+    }
+    throw new Error("no seed carved both a ward and a floor-key door")
+  })()
+
+  const gates = gatesOf(carved)
+
+  it("is a ward and an authored floor-key door, each with its own family standing in it", () => {
+    expect(gates.map(gate => gate.variant).sort()).toEqual(["floor-key", "tomb-key"])
+    expect(gates.every(gate => gate.family !== undefined)).toBe(true)
+  })
+
+  it.each([0, 1])("is walked up to and tapped from the passage outside it, gate %i", index => {
+    const gate = gates[index]
+    const cell = carved.cells[gate.at[0]][gate.at[1]]
+    if (cell.type === "empty") throw new Error("a gate stood on no cell at all")
+    const [dir] = [...cell.dirs]
+    const outside: [number, number] = [gate.at[0] + DIR_MOVES[dir][0], gate.at[1] + DIR_MOVES[dir][1]]
+
+    expect(walkableFrom(carved, outside).has(`${gate.at[0]},${gate.at[1]}`)).toBe(true)
+    expect(findPath(carved, outside, gate.at).length).toBeGreaterThan(0)
+    expect([...offeredTargets(carved, buildRoomClaims(carved), outside).values()]).toContainEqual(gate.at)
   })
 })

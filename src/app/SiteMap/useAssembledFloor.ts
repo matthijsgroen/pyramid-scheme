@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { assembleFloor } from "@/game/siteAssembler"
-import { completeCell } from "@/game/gridNavigation"
+import { completeCell, isSealedWayOut } from "@/game/gridNavigation"
 import type { Direction, FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
 import type { ResolveKeyRequirements } from "@/game/siteAssembler"
@@ -43,7 +43,11 @@ export const applyExplored = (grid: FloorGrid, floor: number, exploredCells: Rec
   // structural hashes is re-keyed from the coordinate archive before it is ever read (cellKeyVersion).
   const keysFor = (cell: GridCell): string[] | undefined =>
     cell.type === "empty" || cell.sectionAddress === undefined ? undefined : exploredCells[cell.sectionAddress]
+  // A save never calls a WALL explored. A way out a switch shut is not ground, so a key naming one is
+  // a leftover from a floor where it could still be walked onto — and honouring it would carry the
+  // section's high-water mark past the bars, which is the whole floor beyond them coming back lit.
   const named = (r: number, c: number): boolean => {
+    if (isSealedWayOut(grid.cells[r][c])) return false
     const key = cellKey(grid, floor, r, c)
     return key !== null && (keysFor(grid.cells[r][c])?.includes(key) ?? false)
   }
@@ -117,6 +121,71 @@ const openWaysOut = (grid: FloorGrid, open: ReadonlySet<string>): FloorGrid => {
 }
 
 const DIR_MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+
+/**
+ * The bars of a way out a switch left shut, stood in the doorway rather than a node further down it.
+ *
+ * The assembler cuts the door into the NODE beyond the fork, two cells out, because only even/even
+ * positions hold a node and that is the cell whose branch is being closed. Left there, the player
+ * reads a shut way out as a journey: open floor leading out of the junction, then a locked door at the
+ * end of it. It is not a journey — it is a wall, and a wall belongs where the player stands.
+ *
+ * So the gate moves one cell in, onto the connector between the fork and that node, and the node gets
+ * the corridor it was cut from. The connector's own walls, section and place along the walk come with
+ * it, so nothing about the carve moves: this rearranges which of two cells already on the floor wears
+ * the bars. Everything past the doorway — the node included — is then simply behind a gate the walk
+ * stops at, and stays dark without a rule of its own.
+ *
+ * Runs on the grid `openWaysOut` has already reopened, so a way out the board opened is a corridor by
+ * the time this looks and no door is stood in its doorway.
+ */
+const sealWaysOut = (grid: FloorGrid): FloorGrid => {
+  const moves: { doorway: [number, number]; node: [number, number] }[] = []
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      const fork = grid.cells[r][c]
+      if (fork.type !== "room") continue
+      for (const exit of fork.exits ?? []) {
+        if (!exit.gateKeyId) continue
+        const [dr, dc] = DIR_MOVES[exit.dir]
+        const node = grid.cells[r + dr * 2]?.[c + dc * 2]
+        const doorway = grid.cells[r + dr]?.[c + dc]
+        if (node?.type !== "room" || node.requiredKeyId !== exit.gateKeyId) continue
+        if (doorway?.type !== "corridor") continue
+        moves.push({ doorway: [r + dr, c + dc], node: [r + dr * 2, c + dc * 2] })
+      }
+    }
+  }
+  if (moves.length === 0) return grid
+
+  const cells = grid.cells.map(row => [...row])
+  for (const { doorway, node } of moves) {
+    const gate = cells[node[0]][node[1]]
+    const passage = cells[doorway[0]][doorway[1]]
+    if (gate.type !== "room" || passage.type !== "corridor") continue
+    cells[doorway[0]][doorway[1]] = {
+      ...passage,
+      type: "room",
+      roomType: "encounter",
+      tags: gate.tags,
+      requiredKeyId: gate.requiredKeyId,
+      gateVariant: gate.gateVariant,
+      keyIsAuthored: gate.keyIsAuthored,
+    }
+    cells[node[0]][node[1]] = {
+      type: "corridor",
+      dirs: gate.dirs,
+      state: gate.state,
+      sectionAddress: gate.sectionAddress,
+      sectionHash: gate.sectionHash,
+      legacySectionHash: gate.legacySectionHash,
+      ordinal: gate.ordinal,
+      difficulty: gate.difficulty,
+      hidden: gate.hidden,
+    }
+  }
+  return { ...grid, cells }
+}
 
 // Mask hidden cells: map to empty, strip dirs pointing into them from neighbours.
 // With detectionLevel >= 1: junction cells that were completed stay reachable so the
@@ -269,7 +338,7 @@ export const useAssembledFloor = (
 
   // The carve as the floor's own switches have left it — what everything below reads as "the floor".
   const carvedGrid = useMemo(
-    () => (baseGrid ? openWaysOut(baseGrid, openedWaysOut ?? NONE_OPEN) : null),
+    () => (baseGrid ? sealWaysOut(openWaysOut(baseGrid, openedWaysOut ?? NONE_OPEN)) : null),
     [baseGrid, openedWaysOut]
   )
 
@@ -317,8 +386,11 @@ export const useAssembledFloor = (
     // entrance. Resolving against the MASKED grid is what makes that check see the hidden case.
     const at = findByAddress(grid, currentFloor, positionKey)
     if (!at) return grid.entrancePos
+    // A shut way out is one more thing an address can name that is nowhere to stand. Nothing walks
+    // onto one, so a save that puts the player there is a save that strands them: no route the map
+    // will honour starts on a wall.
     const cell = grid.cells[at[0]][at[1]]
-    if (cell.type === "empty") return grid.entrancePos
+    if (cell.type === "empty" || isSealedWayOut(cell)) return grid.entrancePos
     return at
   }, [grid, positionKey, currentFloor])
 

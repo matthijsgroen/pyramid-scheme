@@ -227,16 +227,15 @@ describe("useSiteNavigation", () => {
     expect(onEncounter).toHaveBeenCalledWith([0, 2], true)
   })
 
-  // The switch is what opens this one, so there is nothing here to open and nothing to write down: a
-  // cell the save calls explored comes back with the floor revealed past it, which would make walking
-  // up to the door the thing that opens it.
-  it("walks up to a gate holding nothing without opening it or writing it down", () => {
+  // The switch is what opens this one, and there is nothing in it to enter: it is a wall the player
+  // can see. A tap on it moves nobody, opens nothing and is written down nowhere.
+  it("does not walk onto a gate holding nothing", () => {
     const { hook, journeys, onEncounter } = setup([entrance, corridor, switchGate])
 
     act(() => hook.result.current.onCellClick(0, 2))
     arrive()
 
-    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", `${SECTION}#0/x?`, "0:0,2")
+    expect(journeys.updatePosition).not.toHaveBeenCalled()
     expect(journeys.markCellExplored).not.toHaveBeenCalled()
     expect(onEncounter).not.toHaveBeenCalled()
   })

@@ -62,7 +62,8 @@ export const clickTargetAt = (
   if (cell.type === "corridor") return corridorOffer(cell, target, runTarget, ctx)
 
   // A room: soft-gated, so a locked gate is still a target — walking to it is how the player is told
-  // what it wants.
+  // what it wants. The exception answers itself through `canWalkTo`: a way out a switch shut is a wall
+  // the player can see, so it is on no walk of the floor and so on no offer either (`walkableFrom`).
   return (cell.state === "reachable" || cell.state === "completed") && ctx.canWalkTo(r, c) ? target : null
 }
 
