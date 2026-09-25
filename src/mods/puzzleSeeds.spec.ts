@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
+import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { worldLevelSites } from "@/data/worldLevels"
 import { demandLabel, enumerateConfigs, seedFloor } from "@/game/seeds/enumerateConfigs"
 import { generatePuzzle } from "@/game/seeds/generatePuzzle"
+import { findUnbakedSwitchBoards } from "@/worldGen/validate"
 import { ALL_FAMILY_META } from "@/mods/allFamilyMeta"
 
 // The guard on the shipped artifact (`docs/instructions/puzzle-screens.md` §6.1). A miss is never *wrong* — play
@@ -156,5 +158,33 @@ describe("the demand the world declares", () => {
       "lightbeamSwitch/junior opposite: 1",
       "lightbeamSwitch/junior three: 1",
     ])
+  })
+})
+
+// THE RULING THIS FILE'S LISTS EXIST FOR: a board's quality stops being bounded by what a phone can
+// find in the moment. Live generation is still the mechanism — it is the playtest journey's path and
+// the safety net — but for a SHIPPED authored switch it would silently give that ruling back, so
+// `yarn generate-world` stops and names the floor instead (scripts/generateWorld.ts).
+describe("the baked-board requirement on the shipped world", () => {
+  it("is met: every authored switch in the world as it ships has its list", () => {
+    expect(findUnbakedSwitchBoards(generatedWorldConfigs, ALL_FAMILY_META, puzzleSeeds)).toEqual([])
+  })
+
+  // Emptied one bucket at a time, so the check is shown firing on the real world rather than on a
+  // world invented to make it fire — and so a check that could only ever be met fails here.
+  it("names the floor and the shape when a bucket is emptied", () => {
+    const switchBuckets = demands.filter(demand => demand.familyId === "lightbeamSwitch")
+    expect(switchBuckets.length, "no switch bucket to empty").toBe(3)
+    for (const bucket of switchBuckets) {
+      const without = Object.fromEntries(Object.entries(puzzleSeeds).filter(([hash]) => hash !== bucket.hash))
+      expect(
+        findUnbakedSwitchBoards(generatedWorldConfigs, ALL_FAMILY_META, without).map(
+          board =>
+            `${board.journeyId} level ${board.levelNr} floor ${board.floorIndex}: ` +
+            `${board.familyId} at ${board.difficulty}, ${board.forkShape} fork`
+        ),
+        `emptying ${demandLabel(bucket)} went unreported`
+      ).toEqual([`junior_2 level 2 floor 0: lightbeamSwitch at junior, ${bucket.ctx.forkShape} fork`])
+    }
   })
 })

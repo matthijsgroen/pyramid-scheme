@@ -70,7 +70,9 @@ const sectionsOf = (section: SubSection & { sideSections?: SubSection[] }): SubS
  * of the two is what any carve of this floor produces (siteAssembler.ts). An array of encounters survives
  * baking where the authoring named a pool, so every candidate owes the boards.
  */
-export const switchFamilies = (floor: Pick<FloorConfig, "switches" | "forks">): { families: string[]; count: number } => {
+export const switchFamilies = (
+  floor: Pick<FloorConfig, "switches" | "forks">
+): { families: string[]; count: number } => {
   const switches = floor.switches
   if (!switches) return { families: [], count: 0 }
   const junctions = (floor.forks ?? []).reduce((sum, fork) => sum + fork.count, 0)

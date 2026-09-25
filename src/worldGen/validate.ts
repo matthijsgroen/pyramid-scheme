@@ -7,7 +7,7 @@ import { switchFamilies } from "@/game/seeds/enumerateConfigs"
 import type { FloorGrid as AssembledFloor } from "@/game/siteTypes"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
-import { capabilitiesFor } from "./capabilities"
+import { capabilitiesFor, type SiteCapabilities } from "./capabilities"
 
 const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
 
@@ -183,12 +183,15 @@ export type UnbakedSwitchBoard = {
 export const findUnbakedSwitchBoards = (
   configs: Record<string, SiteConfig[]>,
   families: FamilyMeta[],
-  seeds: Record<string, number[]>
+  seeds: Record<string, number[]>,
+  /** Injected so a caller can ask what a site WOULD owe under other capabilities — which is the only
+   * way to see that an exemption is excusing something rather than nothing. */
+  capabilities: (siteId: string) => SiteCapabilities | undefined = capabilitiesFor
 ): UnbakedSwitchBoard[] => {
   const byId = new Map(families.map(family => [family.id, family]))
   const missing: UnbakedSwitchBoard[] = []
   for (const [journeyId, sites] of Object.entries(configs)) {
-    if (capabilitiesFor(journeyId)?.requireBakedBoards === false) continue
+    if (capabilities(journeyId)?.requireBakedBoards === false) continue
     sites.forEach((site, siteIdx) =>
       site.forEach((floor, floorIndex) => {
         for (const familyId of switchFamilies(floor).families) {

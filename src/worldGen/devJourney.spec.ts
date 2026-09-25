@@ -1,7 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import { buildConfigs } from "./configBuilder"
 import { collectSlots } from "./slots"
-import { findEmptyChests } from "./validate"
+import { findEmptyChests, findUnbakedSwitchBoards } from "./validate"
+import { PYRAMID_CAPABILITIES } from "./capabilities"
+import { puzzleSeeds } from "../data/puzzleSeeds"
 import { DEV_JOURNEY_ID } from "./data"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
 import { assembleFloor } from "../game/siteAssembler"
@@ -29,6 +31,7 @@ import {
   familyIsTrap,
   allocateEncounterSpread,
   resolveEncounterMeta,
+  ALL_FAMILY_META,
 } from "../mods/allFamilyMeta"
 
 // Mirrors scripts/generateWorld.ts's own call arg-for-arg (EMPTY_FRACTION 0 included), economy guard
@@ -226,12 +229,14 @@ describe("the baked-board requirement on the dev journey", () => {
   // Said first, because everything below would pass just as well on a journey that authored no switch
   // at an unbaked tier at all — and then the exemption would be excusing nothing.
   it("is excusing something: the journey really does author switches no list covers", () => {
-    const shipped = { ...PYRAMID_CAPABILITIES, requireBakedBoards: true }
-    const asIfShipped = unbakedOn(withDev).concat(
-      // The same walk with the exemption withdrawn, which is the only way to see what it hides.
-      findUnbakedSwitchBoards({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] }, ALL_FAMILY_META, puzzleSeeds, () => shipped)
+    // The same walk with the exemption withdrawn, which is the only way to see what it hides.
+    const asIfShipped = findUnbakedSwitchBoards(
+      { [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] },
+      ALL_FAMILY_META,
+      puzzleSeeds,
+      () => PYRAMID_CAPABILITIES
     )
-    expect(asIfShipped.map(board => `${board.difficulty} ${board.forkShape}`).sort()).toEqual([
+    expect([...new Set(asIfShipped.map(board => `${board.difficulty} ${board.forkShape}`))].sort()).toEqual([
       "expert adjacent",
       "expert opposite",
       "expert three",

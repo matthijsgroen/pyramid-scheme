@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest"
-import { findEmptyChests, validateRewardCounts } from "./validate"
+import { findEmptyChests, findUnbakedSwitchBoards, validateRewardCounts } from "./validate"
+import { DEV_CAPABILITIES, PYRAMID_CAPABILITIES } from "./capabilities"
+import type { Difficulty } from "@/data/difficultyLevels"
+import type { FamilyMeta, FamilyOptions } from "@/game/families/familyMeta"
+import type { ForkShape } from "@/game/forkShape"
+import { configHash } from "@/game/seeds/configHash"
 import { WORLD_TARGETS } from "./worldSpec"
 import { PYRAMID_JOURNEYS } from "./data"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
@@ -182,5 +187,55 @@ describe("findEmptyChests", () => {
 
   it("leaves puzzle rooms alone — a puzzle without loot is an ordinary room", () => {
     expect(found([{ tags: ["puzzle"] }])).toEqual([])
+  })
+})
+
+describe("findUnbakedSwitchBoards", () => {
+  const seedable: FamilyMeta = {
+    id: "stub-switch",
+    ownerMod: "test",
+    tags: ["stub-switch"],
+    icon: "",
+    color: "",
+    rewardPriority: 0,
+    seedable: {
+      resolveOptions: ({ difficulty, forkShape }) => ({ difficulty, forkShape }) as unknown as FamilyOptions,
+      generate: () => null,
+      grade: () => null,
+    },
+  }
+  const bucket = (difficulty: Difficulty, forkShape: ForkShape) =>
+    configHash(seedable.seedable!.resolveOptions({ difficulty, forkShape }))
+
+  const switchFloor = (difficulty: Difficulty) =>
+    floor({ difficulty, forks: [{ exits: 2, count: 1 }], switches: { encounter: "stub-switch", min: 1, max: 1 } })
+
+  const shipped = PYRAMID_JOURNEYS[0].id
+
+  it("owes a shipped floor's switch all three shapes, and reports the ones no list covers", () => {
+    const seeds = { [bucket("junior", "adjacent")]: [1, 2] }
+    expect(
+      findUnbakedSwitchBoards({ [shipped]: [[switchFloor("junior")]] }, [seedable], seeds).map(
+        board => `${board.difficulty} ${board.forkShape}`
+      )
+    ).toEqual(["junior opposite", "junior three"])
+  })
+
+  it("reads the tier off the floor that authored the switch, not off the journey", () => {
+    expect(
+      findUnbakedSwitchBoards({ [shipped]: [[switchFloor("wizard")]] }, [seedable], {}).map(board => board.difficulty)
+    ).toEqual(["wizard", "wizard", "wizard"])
+  })
+
+  it("excuses a site whose capabilities say its boards are not baked", () => {
+    const configs = { [shipped]: [[switchFloor("junior")]] }
+    expect(findUnbakedSwitchBoards(configs, [seedable], {}, () => DEV_CAPABILITIES)).toEqual([])
+    expect(findUnbakedSwitchBoards(configs, [seedable], {}, () => PYRAMID_CAPABILITIES)).toHaveLength(3)
+  })
+
+  it("says nothing about a floor that authors no switch, or a family with no generator", () => {
+    expect(findUnbakedSwitchBoards({ [shipped]: [[floor()]] }, [seedable], {})).toEqual([])
+    const live: FamilyMeta = { ...seedable, seedable: undefined }
+    expect(findUnbakedSwitchBoards({ [shipped]: [[switchFloor("junior")]] }, [live], {})).toEqual([])
   })
 })
