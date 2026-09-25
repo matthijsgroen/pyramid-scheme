@@ -1,6 +1,6 @@
 # Act V — wizard · announced, and read
 
-Source copy, English only. Voice and rules: `cast.md`. 63 source lines.
+Source copy, English only. Voice and rules: `cast.md`. 65 source lines.
 
 **The act's job.** The loop closes. `starter_1` was Dawn at the Sphinx; `wizard_2` is Secrets of the
 Sphinx, and the finale is the inscription from the first minute, read.
@@ -138,6 +138,10 @@ _(let that sit)_
 
 > **Fez:** Huh.
 >
+> **Fez:** Hori.
+>
+> **Fez:** There was a Hori in every village in Egypt.
+>
 > **Fez:** Well. That explains the fez.
 
 **This is the whole ending.** Not a pronouncement and not a moral about what the player collected — fifty
@@ -266,7 +270,8 @@ true."_
    why they left. It could be three.
 3. **"I have been selling the walls"** is Fez's turn and it lands at `wizard_2` rather than at the mural.
    That may be the right place or three journeys early.
-4. **What is the name?** It must be ordinary — a plain ancient name like Ipi's or Henut's, so the weight
-   is on it having been forgotten rather than on it being grand.
+4. ~~**What is the name?**~~ **Decided: Hori** (`cast.md`). Commonest man's name of the period, one rung
+   below Ipi's and Henut's, and short enough to spell legibly in the inscription — which is where the player
+   reads it, since nobody in the scene says it out loud.
 5. **Nothing here is gated on the offering arc being built.** If it is not, the priest's rite and the
    refusal drop out and Act V still ends.

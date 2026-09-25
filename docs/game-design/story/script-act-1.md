@@ -11,7 +11,7 @@ lightly. The travel-card blurbs are marketing prose and are not the model.
 the explorer carries no pronoun, no name and no gendered self-description — every line below is present
 tense, a question, or about the world rather than about themselves.
 
-48 source lines.
+51 source lines.
 
 ---
 
@@ -116,6 +116,12 @@ room and the room is a hole in the ground.
 > **Ipi:** Henut, daughter of Sennefer, of the western estates. Eleven deben of lapis, unpaid, third year.
 >
 > **Ipi:** Of course she has a name. I wrote it down.
+>
+> **Ipi:** It is the Horis that finish you. Hori the boatman, Hori the baker, and the other Hori.
+>
+> **Explorer:** How many Horis?
+>
+> **Ipi:** In one street? Four. I had to put their fathers in as well.
 >
 > **Explorer:** Why does that matter, if she is not here to hear it?
 >

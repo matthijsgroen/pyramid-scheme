@@ -123,10 +123,29 @@ They cost a line each and none of them is a hint. Each reads as a joke on first 
 **The dead are the noticers**, which gives every ghost a third job at no cost: they settle their accounts,
 they correct his Egyptology, and they keep almost placing him.
 
-#### What his name must be
+#### His name is Hori (decided)
 
 **Ordinary.** Not a god, not a king, not a joke — a plain ancient name of the kind Ipi and Henut have, so
-that the weight is on it having been forgotten rather than on it being grand.
+that the weight is on it having been forgotten rather than on it being grand. Hori is the commonest man's
+name of the New Kingdom, and it sits below both of theirs: Ipi's is a bookkeeper's, Henut's a noblewoman's,
+and this one belongs to somebody nobody wrote down. Which is the point of it having been lost.
+
+**The player reads it; Fez says it.** The Act V exchange is _"A name." / "Whose?" / "Yours."_ — the word
+itself comes off the Sphinx, read by a player who has learned the signs, which is the ending's mechanism and
+the reason it has to be short enough to spell legibly at phone width. Then **he says it once, and deflates
+it himself**, because a modern player has no way to know that Hori is the most ordinary name in Egypt and
+the whole beat rests on it being ordinary.
+
+**And it is planted in Act I, in Ipi's ledger**, where three different Horis owe him money. By the time the
+Sphinx hands the name over, the player has already met it as the name of nobody in particular — which is
+how the game does everything else: plant it as a joke, pay it four acts later. The plant matters because
+the ending must not stop to explain itself; the tomb is optional content, so the Act V deflation is the
+belt to its braces.
+
+**Which means it is legible from the first minute.** The inscription is on the board in `starter_1`, and a
+player who comes back late enough to read it can find the name before Act V hands it over. That is a
+feature — it is the same move the choked pyramid makes — but it does mean the inscription artwork settles
+the ending, so it cannot be drawn as decorative squiggles.
 
 ---
 
