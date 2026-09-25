@@ -3,6 +3,8 @@ import fezPoint from "@/assets/point-fez-250.png"
 import fezGlassesPoint from "@/assets/glasses-point-fez-250.png"
 import fezCocktail from "@/assets/cocktail-fez-250.png"
 import explorer from "@/assets/explorer-250.png"
+import explorerGrin from "@/assets/grin-explorer-250.png"
+import explorerPoint from "@/assets/point-explorer-250.png"
 import clsx from "clsx"
 import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
@@ -71,6 +73,10 @@ const PORTRAITS: Partial<Record<Speaker, Partial<Record<Pose, { src: string; alt
   },
   explorer: {
     default: { src: explorer, alt: "The explorer, in a wide brown hat and olive vest" },
+    // No beat asks for either yet — every arrival line is `default`. What would ask is the reaction
+    // rail, which is the half of the script that watches how the board went rather than where we are.
+    pointUp: { src: explorerPoint, alt: "The explorer, pointing" },
+    glassesPoint: { src: explorerGrin, alt: "The explorer, in sunglasses, grinning" },
   },
 }
 
