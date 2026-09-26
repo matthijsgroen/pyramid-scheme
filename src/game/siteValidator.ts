@@ -129,7 +129,7 @@ export const collectReachableKeys = (
 // The room one of a fork's ways out leads to. A fork names its exits by compass point, and what stands
 // down one is the next ROOM along it, with the connector cells between them walked straight through —
 // nodes sit two cells apart on an assembled floor, and directly adjacent on a hand-built one.
-const nodeBeyond = (grid: FloorGrid, from: Pos, dir: string): Pos | undefined => {
+export const nodeBeyond = (grid: FloorGrid, from: Pos, dir: string): Pos | undefined => {
   const [dr, dc] = MOVES[dir]
   let [r, c] = [from[0] + dr, from[1] + dc]
   while (r >= 0 && r < grid.rows && c >= 0 && c < grid.cols) {
