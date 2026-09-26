@@ -1897,9 +1897,22 @@ export const assembleFloor = (
     // A connector inherits `hidden` only when both ends do, so a hidden section's own internal
     // corridors stay hidden together with it, while the single corridor linking a hidden section to its
     // (visible) attachment point stays visible — same as a normal doorway would.
-    const connectorBetween = (owner: string, other: string, dirs: Set<Direction>): CorridorCell => {
+    // `drop` marks the one caller (the WRITE THE CHOSEN DROPS pass below) whose two ends belong to
+    // DIFFERENT sections — everywhere else, `owner` and `other` are two steps of the same chain, so the
+    // bare sorted pair already names them uniquely within that chain's address. A drop's `other` is a
+    // step of the LANDING section instead, filed under the FROM section's address (see the comment on
+    // `sectionAddress` above) — so the bare pair is not an identity there, it is a coincidence: "upper"
+    // step 1 dropping onto "lower" step 0 sorts to the same "0|1" as upper's own ordinary connector
+    // between its steps 0 and 1. Qualifying `other` with the section it actually belongs to is what an
+    // ordinal needs to survive a re-carve AND stay unique — the pair alone cannot name a drop's
+    // connector, because its two ends were never steps of one chain to begin with.
+    const connectorBetween = (owner: string, other: string, dirs: Set<Direction>, drop = false): CorridorCell => {
       const ownerOrdinal = cellOrdinal.get(owner)
       const otherOrdinal = cellOrdinal.get(other)
+      const otherLabel =
+        drop && otherOrdinal !== undefined
+          ? `${cellSectionAddress.get(other) ?? MAIN_SECTION_ADDRESS}:${otherOrdinal}`
+          : otherOrdinal
       const tier = cellDifficulty.get(owner)
       return {
         type: "corridor",
@@ -1908,10 +1921,12 @@ export const assembleFloor = (
         sectionAddress: cellSectionAddress.get(owner) ?? MAIN_SECTION_ADDRESS,
         sectionHash: cellSectionHash.get(owner) ?? mainSectionHash,
         legacySectionHash: cellLegacySectionHash.get(owner) ?? legacyMainSectionHash,
-        // A CONNECTOR IS NAMED BY THE TWO CELLS IT JOINS, sorted so it does not matter which end the
-        // edge was walked from. Its own coordinate is the midpoint of wherever the carve put those
-        // two, so it cannot be the identity; the pair of ordinals can, and survives the move.
-        ...(ownerOrdinal && otherOrdinal ? { ordinal: [ownerOrdinal, otherOrdinal].sort().join("|") } : {}),
+        // A CONNECTOR IS NAMED BY THE TWO CELLS IT JOINS. An ordinary one sorts the pair so it does not
+        // matter which end the edge was walked from; a drop's is directional already (`owner` is always
+        // the FROM node, never the other way round), and its far end is qualified as above.
+        ...(ownerOrdinal && otherLabel
+          ? { ordinal: drop ? `${ownerOrdinal}|${otherLabel}` : [ownerOrdinal, otherLabel].sort().join("|") }
+          : {}),
         ...(tier ? { difficulty: tier } : {}),
         ...(hiddenCellPositions.has(owner) && hiddenCellPositions.has(other) ? { hidden: true } : {}),
       }
@@ -1947,7 +1962,7 @@ export const assembleFloor = (
       if (fromCell.type === "empty")
         throw new Error(`[siteAssembler] one-way from ${edge.from} landed on an uncarved cell`)
       cells2D[fr][fc] = { ...fromCell, dirs: new Set([...fromCell.dirs, edge.dir]) }
-      cells2D[mr][mc] = connectorBetween(edge.from, edge.to, new Set([edge.dir]))
+      cells2D[mr][mc] = connectorBetween(edge.from, edge.to, new Set([edge.dir]), true)
     }
 
     // Set entrance cell state to "reachable"

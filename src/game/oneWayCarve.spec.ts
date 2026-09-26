@@ -182,6 +182,41 @@ describe("a floor that authors a one-way", () => {
     expect(connector.difficulty).toBe("junior")
   })
 
+  it("never lets the drop's connector share its (sectionAddress, ordinal) with another cell", () => {
+    // (sectionAddress, ordinal) is the pair a save actually keys a corridor by once it has no room slot
+    // (cellIdentity.ts's fallback `~ordinal`, filed under the cell's own sectionAddress) — so the drop's
+    // connector claiming the same pair as any other cell is one save slot doing double duty. Checked
+    // against every OTHER cell on the floor, not just the drop's own two nodes: the connector is filed
+    // under its FROM section's address, and what it could collide with is that section's own ordinary
+    // corridors. Which step of `to` the carve happens to land the drop on is the carve's own luck, so
+    // this checks every seed that places the drop, not just the first.
+    let checked = 0
+    for (let seed = 0; seed < 60; seed++) {
+      const result = assembleFloor("spec:1", floorWithDrop(), seed, undefined, {
+        floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
+      })
+      if (!result.success) continue
+      checked++
+      const grid = result.grid
+      const [pair] = dropPairs(grid)
+      const [fr, fc] = pair.source.split(",").map(Number)
+      const [lr, lc] = pair.landing.split(",").map(Number)
+      const [mr, mc] = [(fr + lr) / 2, (fc + lc) / 2]
+      const connector = grid.cells[mr][mc]
+      if (connector.type === "empty" || connector.ordinal === undefined) throw new Error("the drop is not carved")
+      const identity = `${connector.sectionAddress}#${connector.ordinal}`
+      for (let r = 0; r < grid.rows; r++)
+        for (let c = 0; c < grid.cols; c++) {
+          if (r === mr && c === mc) continue
+          const cell = grid.cells[r][c]
+          if (cell.type === "empty" || cell.ordinal === undefined) continue
+          if (`${cell.sectionAddress}#${cell.ordinal}` === identity)
+            throw new Error(`seed ${seed}: "${identity}" is claimed by both the drop's connector and (${r},${c})`)
+        }
+    }
+    expect(checked).toBeGreaterThan(0)
+  })
+
   it("gives two authored drops two passages, never one connector written twice", () => {
     // Two demands that both fit the same cell pair would leave one connector holding the second and
     // the first gone with nothing reported — which is exactly what a structural field promises not to
