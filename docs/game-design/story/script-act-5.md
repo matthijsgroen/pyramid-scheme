@@ -114,6 +114,17 @@ that clearing it is balance restored. All three belong here, at the clearing —
 
 `story.arrival.wizard_2.*` — **the ending.** Everything in the game is a delivery system for this.
 
+**It gates on reading, not on the mosaic** (decided). The inscription is unreadable at `starter_1` and
+readable here _because of everything the middle taught the player_, so what opens it is the glyphs they
+hold — the `reading` encounter, which is the mechanism the whole game has been teaching. Gating it on the
+collection instead would invert the order this act is built on: the Sphinx says what gets weighed, **the
+mural is the player's answer to it**, and `mosaicFinale` is the last beat in the game. A record does not
+mind which order it was earned in; an answer does have to come after its question.
+
+**Which is also why this beat is not an arrival.** An arrival plays on walking in, so registering it would
+hand the last scene of the game to any wizard-tier player who wandered past. It is out of
+`JOURNEYS_WITH_ARRIVAL` until the reading encounter exists to gate it.
+
 > **Fez:** Back where we started. It has not moved.
 >
 > **Explorer:** The writing is still there.
