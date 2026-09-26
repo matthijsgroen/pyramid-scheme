@@ -42,6 +42,17 @@ with a floor per topology feature, built only under `INCLUDE_DEV=1`.
 
 Gone: `witnessDoor` entirely, and the runtime owned-key registry it was the only user of.
 
+**And the walk.** `lockWalk.ts` verifies a lock — regions, gates each owned by one or more
+mechanisms, mechanisms with states and transitions, one-ways, a way in and a way out — and answers
+the two questions: can it be solved at all, and does every state a player can reach still reach the
+way out. `floorLock.ts` compiles an assembled floor into that shape, and `findStrandingLocks` sweeps
+the built world with both, stopping the build on a floor a player could be stranded on.
+
+What it settled, which is why it went first: **junior_2 pyramid 2 floor 0 cannot strand a player.**
+Its way out sits behind the switch's own main door, so the board is not decoration — arrive and both
+ways are shut, and you leave by routing the beam. It is sound because the board can always be
+re-routed, which is the re-enterability invariant verified rather than argued.
+
 ## Decisions taken on the owner's behalf
 
 These are the ones that change how the code reads, with what each costs if wrong.
@@ -225,48 +236,104 @@ authored as locks** — 58 floor-key gates across the world, 56 of them in those
 the shallowest form of floor-as-puzzle there is. `mods/floor-topology-design.md` carries the whole
 design; it is the single source of truth.
 
-1. **The walk.** A verifier over the states a floor's mechanisms name: a state is _(the region the
-   player stands in, every mechanism's configuration, the floor keys held)_, a move is walking,
-   throwing a switch you stand at, or leaving the site and returning, and the two questions are
-   _can this be solved_ and _does every reachable state still reach the way out_. Held by nothing
-   today. It unblocks everything else, it settles the way back for the switch already shipped, and it
-   is buildable now without any of the rest.
+**The walk is built**, so the list below starts at what was item 2. Four things it learned that the
+next slice inherits:
 
-2. **One-ways (P2).** The carve placing a directed edge and the art drawing a passage that reads as
+- **Leaving the floor is a move only from the way out.** A save is `"floor:row,col"`, so re-entering
+  a site puts the player back where they stood; only a position on another floor falls back to the
+  entrance, and reaching another floor means reaching the staircase. A player sealed into a chamber
+  does not get to walk out of it by leaving. Getting this wrong in the permissive direction hides
+  exactly the traps the walk exists to find.
+- **The compiler seals what it cannot model.** A room carrying `requiredKeyIds` (a tableau wanting
+  several hieroglyphs) and a ward gate both compile to a door that never opens, because the container
+  must be sound with an off-floor key assumed shut. So **the first lock authored beside a tableau on
+  its main path will report `unsolvable`** — that is the rule working, not a bug, and it is the thing
+  most likely to surprise whoever authors lock number two.
+- **A guard holds the sweep's reach.** The build stops if the sweep walks zero locks while the configs
+  authored a switch, so the check cannot quietly stop reaching the floor it was written for.
+- **The state space has a flat ceiling** (`MAX_LOCK_STATES`). A container is a handful of regions and
+  mechanisms; anything near it is an authoring mistake, and failing loudly beats hanging the build.
+
+1. **One-ways (P2).** The carve placing a directed edge and the art drawing a passage that reads as
    unclimbable from below. The movers need nothing: `reachableFrom`, `findPath`, `walkableFrom` and
    `completeCell` all move on the source cell's `dirs` and none check the target for a reciprocal.
    Independent of the walk.
 
-3. **The mechanism vocabulary.** Regions, gates on any boundary, containers with ports, and the
+2. **The mechanism vocabulary.** Regions, gates on any boundary, containers with ports, and the
    builder laying a region tree into a carve. The substantial piece, and the one that pays for
-   everything after it. Wants the walk existing first, so a lock is verified as it is built rather
-   than afterwards.
+   everything after it. The walk now exists, so a lock is verified as it is built.
 
-4. **Handles.** A family with states and no generator. Small, and it turns the catalogue's "a lever
+   **Author locks; do not write a spec per puzzle.** A lock's soundness is a property of the container
+   between its own ports, so it is verified once by the build sweep rather than once per floor and
+   never by a hand-written test. `lockWalk.spec.ts` tests the walk itself — the moves, the owner fold,
+   the two questions, the ceiling — on small synthetic locks, and must not grow a case per authored
+   floor. The worked example currently sits on the wrong side of that line: `doubleBack` is a fixture
+   in that spec only because there is no `topologyLock({ … })` to place it on a floor with. **When the
+   vocabulary lands, move it into authoring and let the sweep walk it.**
+
+   That move also closes a defect this release has now hit twice: a design doc and a fixture are two
+   lists that must agree by hand. The worked example's second drop existed in the owner's design and
+   in neither list, and nothing could tell — which is how a floor that reads as sound was recorded as
+   a trap. Authored, there is one source.
+
+3. **Handles.** A family with states and no generator. Small, and it turns the catalogue's "a lever
    elsewhere opens a door here" into authoring.
 
-5. **Locks as content.** The owner's own `doubleBack` first — a fork whose right way starts open,
+4. **Locks as content.** The owner's own `doubleBack` first — a fork whose right way starts open,
    shut behind the player, with a drop landing _between_ two gates — then a ladder of them, then
    master and wizard re-authored off their key chains.
 
-6. **Derive the board from the open door.** Decided, not built: a switch's mirrors are computed from
+5. **Derive the board from the open door.** Decided, not built: a switch's mirrors are computed from
    the way out standing open, unique because the generator allows one route per shrine, so nothing is
-   stored and `stateIsTheMechanism` goes with it. Unblocked now the way back is settled.
+   stored and `stateIsTheMechanism` goes with it. Genuinely unblocked — the way back is settled, and
+   the floor it turns on is walked and sound.
 
-7. **`cosmicDust` and `hourglass`**, the two that genuinely need new primitives, then free-order
+6. **`cosmicDust` and `hourglass`**, the two that genuinely need new primitives, then free-order
    journeys, then the story layer.
 
-### Two decisions that want making before the vocabulary sets
+### The two decisions that were waiting are made
 
-Both are cheap now and awkward once floors are authored against the answer.
+Both are written into `mods/floor-topology-design.md`, which is where they belong; they are noted
+here because floors will be authored against them.
 
-- **May a gate answer to more than one mechanism?** A corridor both flooded and switch-gated is the
-  obvious case, and "drain it _and_ open the sluice" is the natural thing to reach for once floods
-  and switches share a floor. One owner is currently baked into the shape. If more than one, it also
-  needs settling whether that means _all_ of them agree or _any_.
-- **What is a mark made of?** A mechanism and its gates share one so a player can pair them.
-  `KeyColor` holds five values and coloured key doors spend from them — though retiring the key-heavy
-  floors gives most of them back. Glyphs suit the setting better than more colours.
+- **A gate may answer to more than one mechanism**, and `mode` says how they combine: `all` (the
+  default) opens it only while every owner opens it, `any` while one does. One owner stays the common
+  case. This is not the claim rule reopening — a multi-owner gate is one authored door naming both,
+  wearing the mark of each, rather than two features arriving at one boundary unaware of each other.
+  The compiler already leans on it: a boundary several key ids speak for folds `all`, which is what
+  `reachableFrom` has always done with `requiredKeyIds`.
+- **A mark is a glyph on a coloured ground.** The ground groups, the glyph says which one, and a
+  mechanism and every gate it owns wear the same pair. `KeyColor`'s five values are the grounds,
+  shared with key doors; the glyphs are the alphabet `sequenceLock`'s markers already want, bought
+  once for both. Two levers on one floor may be green and still be told apart.
+
+### What the walk left open
+
+None of these gives a wrong answer, and none fires on the world as it stands. They are all about how
+a failure reports itself, which is why they were parked rather than fixed — but the first is worth
+doing before anyone leans harder on the walk.
+
+- **A test held by wording rather than by the thing it guards.** The check that a switch's door agrees
+  with the key the switch names is proved by a test matching the word "misspelled" in an error string;
+  delete the comparison and a different throw still fires, just worded differently. Assert the
+  distinguishing phrase instead. This is the "could it ever fail" class, which this release keeps
+  producing.
+- **A throw names the journey, not the floor.** `floorLock` throws on a gated way out it cannot
+  resolve, but `grid.siteId` carries the bare journey id, so the build says which site and not which
+  level or floor. Worse, the throw escapes `findStrandingLocks` before the unassembled report prints,
+  so a doubly-broken world dies on a stack and prints neither list. Catching around the `floorLock`
+  call and pushing the message as a reported failure fixes both.
+- **A switch authored onto a ward boundary reports the wrong reason** — "borders no region the walk
+  can enter it from", when the truth is that ward doors are deliberately held out of the switch index.
+  The design already forbids the shape; the message should say so.
+- **The spec's independent witness no longer mirrors the compiler.** `floorLock.spec.ts` builds its
+  own region flood to check the compiler against, and its comment claims it makes the same split. It
+  no longer does — the compiler reads `requiredKeyIds` as well. Inert today, untrue as written.
+- **The sweep-reached-a-switch guard is world-wide and binary.** With N switch floors it fires only
+  when all N are missed. A per-floor pairing wants a stated exemption for a reserved junction that
+  carves no closable exit.
+- **Two adjacent door cells would produce two gates the walk can cross either way.** Pre-existing
+  shape, unreachable while assembled floors put their nodes two cells apart.
 
 ## How this work goes best
 
@@ -318,6 +385,13 @@ ask what the encounter was quietly doing.
 committed while its agent was still writing the specs that proved it, because a hand-back arrived and
 then the agent kept working on instructions sent after it started. The work was sound and the commit
 had to be completed by a second one. Wait for the notification, not the prose.
+
+**A design doc and a fixture are two lists that must agree by hand.** The worked example's second
+drop — the one that makes the floor sound — was in the owner's design and in neither list, and
+nothing could tell: the walk faithfully reported a trap in a floor that does not have one. The same
+shape as the two parallel resolvers, one size up. Where a design doc carries an example the code also
+carries, the two will drift; the fix is to make the code's copy the authored one and let the doc cite
+it, which is what item 2 above is for.
 
 **Verify a measurement before believing it.** Two of this session's measurements were wrong in ways
 that would have changed a decision: one compared cell _type_ where it should have compared `dirs`,
