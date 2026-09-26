@@ -69,9 +69,11 @@ export const StoryLogPage: FC = () => {
                 </button>
                 {showing && (
                   <ul className="flex flex-col gap-2 px-3 pb-3">
-                    {linesOf(scene.id).map(line => (
-                      <Said key={line.key} speaker={line.speaker} text={t(line.key, { ns: "fez" })} />
-                    ))}
+                    {scene.parts
+                      .flatMap(part => (played[part] ? linesOf(part) : []))
+                      .map(line => (
+                        <Said key={line.key} speaker={line.speaker} text={t(line.key, { ns: "fez" })} />
+                      ))}
                   </ul>
                 )}
               </li>

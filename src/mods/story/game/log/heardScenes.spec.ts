@@ -43,7 +43,8 @@ describe(heardScenes, () => {
   })
 
   it("knows about every scene that has been written, or the log quietly drops one", () => {
-    const listed = new Set(ALL_SCENES.map(scene => scene.id))
+    // Every part of every scene, since a scene told in two conversations still shows as one row.
+    const listed = new Set(ALL_SCENES.flatMap(scene => scene.parts))
 
     expect(Object.keys(authored()).filter(id => !listed.has(id))).toEqual([])
   })

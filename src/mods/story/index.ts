@@ -1,5 +1,6 @@
 import type { ModDescriptor } from "../modDescriptor"
 import { CONVERSATION_META } from "./game/conversation/meta"
+import { READING_META } from "./game/reading/meta"
 
 // The story mod. Owns the encounters a beat is told through; the beats themselves are translations
 // (`fez.json`), so writing one costs keys rather than code.
@@ -12,5 +13,5 @@ import { CONVERSATION_META } from "./game/conversation/meta"
 // Game-side only (no React) — the Component registers app-side via src/mods/story/app.
 export const storyMod: ModDescriptor = {
   id: "story",
-  families: [CONVERSATION_META],
+  families: [CONVERSATION_META, READING_META],
 }

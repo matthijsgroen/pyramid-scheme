@@ -269,21 +269,23 @@
       "6": {
         "henut": "Now. The wall. Third sign along — that is not my name. Some apprentice with a chisel and no supervision."
       },
-      "7": { "henut": "You have been learning your signs. I can tell. Fix it." },
-      "8": { "henut": "There. Now it will still be my name in a thousand years." },
-      "9": { "explorer": "Ipi spelled it correctly." },
-      "10": { "henut": "Ipi spelled everything correctly. It was his one redeeming feature." },
-      "11": { "fez": "Does it matter, down here?" },
-      "12": { "henut": "It is the only thing that does." },
-      "13": { "fez": "She had a whole wall of Thoth up there. God of secrets." },
-      "14": { "henut": "Thoth counts. Thoth writes down what you did and it stays written." },
-      "15": { "henut": "Secrets are what people call arithmetic when they cannot do it." },
-      "16": {
+      "7": { "henut": "You have been learning your signs. I can tell. Fix it." }
+    },
+    "juniorFixed": {
+      "1": { "henut": "There. Now it will still be my name in a thousand years." },
+      "2": { "explorer": "Ipi spelled it correctly." },
+      "3": { "henut": "Ipi spelled everything correctly. It was his one redeeming feature." },
+      "4": { "fez": "Does it matter, down here?" },
+      "5": { "henut": "It is the only thing that does." },
+      "6": { "fez": "She had a whole wall of Thoth up there. God of secrets." },
+      "7": { "henut": "Thoth counts. Thoth writes down what you did and it stays written." },
+      "8": { "henut": "Secrets are what people call arithmetic when they cannot do it." },
+      "9": {
         "henut": "If you are going on — and you clearly are — there is a priest at Karnak who owes the dead a service he never performed. He will be insufferable about it. Priests are."
       },
-      "17": { "henut": "…Have we met?" },
-      "18": { "fez": "I would remember." },
-      "19": { "henut": "Yes. So would I." }
+      "10": { "henut": "…Have we met?" },
+      "11": { "fez": "I would remember." },
+      "12": { "henut": "Yes. So would I." }
     },
     "expert": {
       "1": { "priest": "You are not the person I am expecting." },

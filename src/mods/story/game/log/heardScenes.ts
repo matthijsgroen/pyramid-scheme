@@ -4,13 +4,24 @@ import { sceneFor } from "@/mods/story/game/conversation/sceneFor"
 
 /** A scene in the log: where its lines live, and the journey it happened in. */
 export type Scene = {
-  /** The conversation id, which is also the translation prefix its lines sit under. */
+  /** The conversation id the save records, and the prefix this scene's first lines sit under. */
   id: string
   /** Names the row, through the `journeys` namespace — a beat is remembered as a place. */
   journeyId: string
+  /**
+   * Every conversation this scene is told in, in order.
+   *
+   * A scene interrupted by something the player DOES is two conversations — Henut asks for her wall
+   * to be put right, the player puts it right, and she carries on. It is still one scene, and the
+   * log shows it as one: two rows for one conversation would read as her saying it twice.
+   */
+  parts: string[]
 }
 
 const TIERS: JourneyTier[] = ["starter", "junior", "expert", "master", "wizard"]
+
+/** Scenes that carry on after the player has done something, keyed by the part that opens them. */
+const CONTINUES: Record<string, string[]> = { "tomb.junior": ["tomb.juniorFixed"] }
 
 /**
  * Every story scene, in the order the story tells them: a tier's four pyramids, then its tombs.
@@ -28,10 +39,10 @@ export const ALL_SCENES: Scene[] = TIERS.flatMap(tier => [
   ...[1, 2, 3, 4]
     .map(n => `${tier}_${n}`)
     .filter(journeyId => JOURNEYS_WITH_ARRIVAL.has(journeyId))
-    .map(journeyId => ({ id: `arrival.${journeyId}`, journeyId })),
+    .map(journeyId => ({ id: `arrival.${journeyId}`, journeyId, parts: [`arrival.${journeyId}`] })),
   ...TOMB_STRUCTURES.filter(tomb => tomb.tier === tier).flatMap(tomb => {
     const id = sceneFor(tomb.id)
-    return id ? [{ id, journeyId: tomb.id }] : []
+    return id ? [{ id, journeyId: tomb.id, parts: [id, ...(CONTINUES[id] ?? [])] }] : []
   }),
 ])
 

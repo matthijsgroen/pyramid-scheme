@@ -1097,6 +1097,12 @@
       "henut": "Henut",
       "priest": "De priester",
       "pharaoh": "De farao"
+    },
+    "wall": {
+      "wrong": "Iemand heeft het derde teken verkeerd gehakt. Al drieduizend jaar staat het er fout.",
+      "fixed": "Dat is haar naam weer.",
+      "pick": "Zet het juiste teken op zijn plaats.",
+      "cannot": "Je kent het teken dat hier hoort nog niet."
     }
   }
 }

@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 918887373
+export const worldContentHash = 451431729
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -18070,7 +18070,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   junior_treasure_tomb: [
     [
       {
-        pathPuzzles: 5,
+        pathPuzzles: 6,
         difficulty: "junior",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -18084,9 +18084,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "mosaicPiece", tier: "junior" },
               { type: "hieroglyphFragment", hieroglyphId: "d15", pieceIndex: 2 },
               { type: "consumable", consumable: "bandage" },
-              { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "oil" },
               { type: "consumable", consumable: "trapTool" },
+              { type: "consumable", consumable: "bandage" },
             ],
             encounter: "fez-shop",
             decorations: ["shelf", "jarRack", "pillar", "rubblePile", "mat"],
@@ -18136,10 +18136,17 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         patron: "anubis",
         wallDecorations: ["stela", "niche", "sconce"],
         role: "tomb-puzzle",
-        encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "conversation", 4: "crocodile" },
+        encountersByIndex: {
+          0: "tableau",
+          1: "tableau",
+          2: "tableau",
+          3: "conversation",
+          4: "reading",
+          5: "crocodile",
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "junior_a_1" },
-        rewards: [undefined, undefined, undefined, undefined, undefined],
+        rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
         pathPuzzles: 4,

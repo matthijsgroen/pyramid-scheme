@@ -280,21 +280,23 @@
       "6": {
         "henut": "Zo. De muur. Het derde teken — dat is mijn naam niet. Een of andere leerling met een beitel en geen toezicht."
       },
-      "7": { "henut": "Je hebt je tekens geleerd. Dat zie ik zo. Zet het recht." },
-      "8": { "henut": "Kijk. Nu is het over duizend jaar nog steeds mijn naam." },
-      "9": { "explorer": "Ipi spelde hem goed." },
-      "10": { "henut": "Ipi spelde alles goed. Dat was zijn enige verdienste." },
-      "11": { "fez": "Maakt het uit, hier beneden?" },
-      "12": { "henut": "Het is het enige wat uitmaakt." },
-      "13": { "fez": "Ze had daarboven een hele muur vol Thoth. God van geheimen." },
-      "14": { "henut": "Thoth telt. Thoth schrijft op wat je gedaan hebt, en het blijft staan." },
-      "15": { "henut": "Geheimen is hoe mensen rekenen noemen als ze het zelf niet kunnen." },
-      "16": {
+      "7": { "henut": "Je hebt je tekens geleerd. Dat zie ik zo. Zet het recht." }
+    },
+    "juniorFixed": {
+      "1": { "henut": "Kijk. Nu is het over duizend jaar nog steeds mijn naam." },
+      "2": { "explorer": "Ipi spelde hem goed." },
+      "3": { "henut": "Ipi spelde alles goed. Dat was zijn enige verdienste." },
+      "4": { "fez": "Maakt het uit, hier beneden?" },
+      "5": { "henut": "Het is het enige wat uitmaakt." },
+      "6": { "fez": "Ze had daarboven een hele muur vol Thoth. God van geheimen." },
+      "7": { "henut": "Thoth telt. Thoth schrijft op wat je gedaan hebt, en het blijft staan." },
+      "8": { "henut": "Geheimen is hoe mensen rekenen noemen als ze het zelf niet kunnen." },
+      "9": {
         "henut": "Als je verder trekt — en dat doe je duidelijk — dan is er een priester in Karnak die de doden een dienst schuldig is die hij nooit heeft verricht. Hij zal er onuitstaanbaar over doen. Priesters zijn zo."
       },
-      "17": { "henut": "…Kennen wij elkaar?" },
-      "18": { "fez": "Dat zou ik me herinneren." },
-      "19": { "henut": "Ja. Ik ook." }
+      "10": { "henut": "…Kennen wij elkaar?" },
+      "11": { "fez": "Dat zou ik me herinneren." },
+      "12": { "henut": "Ja. Ik ook." }
     },
     "expert": {
       "1": { "priest": "U bent niet degene die ik verwacht." },
