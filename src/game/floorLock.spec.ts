@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest"
 import { assembleFloor, defaultResolveEncounter } from "./siteAssembler"
 import type { ResolveEncounter } from "./siteAssembler"
-import type { FloorConfig, FloorGrid, GridCell } from "./siteTypes"
+import type { FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 import { walkLock } from "./lockWalk"
 import { floorLock } from "./floorLock"
+import { nodeBeyond } from "./siteValidator"
 
 const plainFloor = (): FloorConfig => ({
   pathPuzzles: 2,
@@ -59,6 +60,8 @@ const withFloorKey = (): FloorConfig => ({
 // everything else floods" the compiler makes, kept as a separate witness so a fixture-selection
 // predicate (and the strengthened assertion below) can check the compiler's OUTPUT against the
 // grid's own geometry instead of trusting whatever floorLock happens to produce, buggy or not.
+// The duplication is the point: sharing floorLock's own implementation would make the assertion
+// compare the compiler against itself and pass whatever it did.
 const posKey = (r: number, c: number) => `${r},${c}`
 const MOVES: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 const walkable = (cell: GridCell | undefined) =>
@@ -133,6 +136,32 @@ const assembled = (config: FloorConfig, wants: (grid: FloorGrid) => boolean = ()
   throw new Error("no seed carved the floor this spec needs")
 }
 
+const isAt = (pos: readonly [number, number], r: number, c: number) => pos[0] === r && pos[1] === c
+
+/** The first room a carve put where the test needs one; running out is a throw, never a silent pass. */
+const findRoom = (grid: FloorGrid, wants: (cell: RoomCell, r: number, c: number) => boolean): [number, number] => {
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type === "room" && wants(cell, r, c)) return [r, c]
+    }
+  throw new Error("no room on this carve is the one this spec needs")
+}
+
+/** A switch, one of the ways out it closed, and the key it names on that way out. */
+const aGatedWayOut = (grid: FloorGrid) => {
+  const switchAt = findRoom(grid, cell => (cell.exits ?? []).some(exit => exit.gateKeyId !== undefined))
+  const exit = (grid.cells[switchAt[0]][switchAt[1]] as RoomCell).exits!.find(e => e.gateKeyId !== undefined)!
+  return { switchAt, door: nodeBeyond(grid, switchAt, exit.dir)!, keyId: exit.gateKeyId! }
+}
+
+/** One room restated — how a fixture stands a barrier the carve itself would never author. */
+const rewrite = (grid: FloorGrid, [r, c]: readonly [number, number], patch: Partial<RoomCell>): FloorGrid => {
+  const cells = grid.cells.map(row => [...row])
+  cells[r][c] = { ...(cells[r][c] as RoomCell), ...patch }
+  return { ...grid, cells }
+}
+
 describe("floorLock", () => {
   it("has nothing to say about a floor with no switch on it", () => {
     expect(floorLock(assembled(plainFloor()))).toBeUndefined()
@@ -144,8 +173,11 @@ describe("floorLock", () => {
     expect(board.states.length).toBeGreaterThanOrEqual(3)
     expect(board.opens.unset).toEqual([])
     for (const state of board.states.filter(s => s !== "unset")) expect(board.opens[state].length).toBeGreaterThan(0)
-    // Re-solvable from every state into every other, which is what lets a player change their mind.
-    expect(board.transitions).toHaveLength(board.states.length * (board.states.length - 1))
+    // Re-solvable from every state into every other, which is what lets a player change their mind —
+    // but never back to "unset": a solved board routes to some way out, and "no way out" is not a
+    // move the game offers. So every state but the first is a target, from every other state.
+    expect(board.transitions).toHaveLength((board.states.length - 1) ** 2)
+    expect(board.transitions.some(transition => transition.to === "unset")).toBe(false)
   })
 
   it("declares every region it then refers to", () => {
@@ -192,7 +224,11 @@ describe("floorLock", () => {
     // collide, but the FULL set the naming bug is free to drop one of.
     for (const door of doors) {
       const wanted = neighbouringRegions(grid, regionOf, door.pos[0], door.pos[1])
-      const got = new Set(Object.values(lock.gates).filter(gate => gate.to === door.region).map(gate => gate.from))
+      const got = new Set(
+        Object.values(lock.gates)
+          .filter(gate => gate.to === door.region)
+          .map(gate => gate.from)
+      )
       expect(got).toEqual(wanted)
     }
   })
@@ -206,6 +242,122 @@ describe("floorLock", () => {
       expect(mechanism.transitions).toEqual([])
       expect(Object.values(mechanism.opens).flat()).toEqual([])
     }
+  })
+
+  it("makes a room asking for several keys a door as well, sealed by every one of them", () => {
+    const grid = assembled(switchFloor(), standsASwitch)
+    const at = findRoom(
+      grid,
+      (cell, r, c) =>
+        !cell.requiredKeyId &&
+        !(cell.exits ?? []).some(exit => exit.gateKeyId !== undefined) &&
+        cell.dirs.size > 1 &&
+        !isAt(grid.entrancePos, r, c) &&
+        !isAt(grid.exitPos, r, c)
+    )
+    // A tableau needing two hieroglyphs complete: the game refuses the step until both are held, and
+    // nothing on the floor mints either, so every boundary it stands in has to come out shut.
+    const lock = floorLock(rewrite(grid, at, { requiredKeyIds: ["hiero:a", "hiero:b"] }))!
+    const doorRegion = `door ${at[0]},${at[1]}`
+    expect(lock.regions).toContain(doorRegion)
+    const into = Object.values(lock.gates).filter(gate => gate.to === doorRegion)
+    expect(into.length).toBeGreaterThan(0)
+    for (const gate of into) expect(new Set(gate.owners)).toEqual(new Set(["sealed hiero:a", "sealed hiero:b"]))
+  })
+
+  it("seals a ward gate even when a chest on this floor mints the key it names", () => {
+    const grid = assembled(withFloorKey(), standsASwitch)
+    const minted = new Set(
+      grid.cells
+        .flat()
+        .flatMap(cell => (cell.type === "room" && cell.reward?.type === "tombKey" ? [cell.reward.keyId] : []))
+    )
+    const at = findRoom(grid, cell => !!cell.requiredKeyId && minted.has(cell.requiredKeyId))
+    const keyId = (grid.cells[at[0]][at[1]] as RoomCell).requiredKeyId!
+    // The container rule is categorical: a ward key is earned elsewhere, so the door is shut because
+    // it is a ward door — not because this floor happened to mint nothing that opens it.
+    const lock = floorLock(rewrite(grid, at, { gateVariant: "tomb-key" }))!
+    expect(lock.mechanisms[`key ${keyId}`]).toBeUndefined()
+    const into = Object.values(lock.gates).filter(gate => gate.to === `door ${at[0]},${at[1]}`)
+    expect(into.length).toBeGreaterThan(0)
+    for (const gate of into) expect(gate.owners).toEqual([`sealed ${keyId}`])
+  })
+
+  it("refuses a switch whose door does not carry the key the switch names", () => {
+    const grid = assembled(switchFloor(), standsASwitch)
+    const { door } = aGatedWayOut(grid)
+    expect(() => floorLock(rewrite(grid, door, { requiredKeyId: "misspelled" }))).toThrow(/misspelled/)
+  })
+
+  it("refuses a gated way out that leads to no room, which would read as an open corridor", () => {
+    const nowhere: FloorGrid = {
+      cells: [
+        [
+          {
+            type: "room",
+            roomType: "fork",
+            dirs: new Set(["e"]),
+            state: "fogged",
+            exits: [{ dir: "e", kind: "fork", gateKeyId: "spec:key" }],
+          } as RoomCell,
+          { type: "empty" },
+        ],
+      ],
+      rows: 1,
+      cols: 2,
+      entrancePos: [0, 0],
+      exitPos: [0, 0],
+      siteId: "spec:1",
+      staircases: {},
+    }
+    expect(() => floorLock(nowhere)).toThrow(/leads to no room/)
+  })
+
+  it("refuses a switch door standing no gate the walk can enter it by", () => {
+    const grid = assembled(switchFloor(), standsASwitch)
+    const { door } = aGatedWayOut(grid)
+    // A switch's own door authored as a ward is a contradiction: the board names a key the container
+    // rule says is never opened from this floor. Either way, no gate answers to the board.
+    expect(() => floorLock(rewrite(grid, door, { gateVariant: "tomb-key" }))).toThrow(/borders no region/)
+  })
+
+  it("opens only its own door, when a door elsewhere on the floor wants the same key", () => {
+    const grid = assembled(switchFloor(), standsASwitch)
+    const { switchAt, door, keyId } = aGatedWayOut(grid)
+    const elsewhere = findRoom(
+      grid,
+      (cell, r, c) =>
+        !cell.requiredKeyId &&
+        !(cell.exits ?? []).some(exit => exit.gateKeyId !== undefined) &&
+        cell.dirs.size > 1 &&
+        !isAt(door, r, c) &&
+        !isAt(grid.entrancePos, r, c) &&
+        !isAt(grid.exitPos, r, c)
+    )
+    const lock = floorLock(rewrite(grid, elsewhere, { requiredKeyId: keyId }))!
+    const board = lock.mechanisms[`switch ${switchAt[0]},${switchAt[1]}`]
+    const foreign = `door ${elsewhere[0]},${elsewhere[1]}`
+    for (const state of board.states)
+      expect(board.opens[state].map(gateId => lock.gates[gateId].to)).not.toContain(foreign)
+    // And the door the switch does not answer for is shut, not left open on a name that matched.
+    for (const gate of Object.values(lock.gates).filter(gate => gate.to === foreign))
+      expect(gate.owners).toEqual([`sealed ${keyId}`])
+  })
+
+  it("keeps one mechanism for a key two chests mint, with a move in each chest's region", () => {
+    const grid = assembled(withFloorKey(), standsASwitch)
+    const chest = findRoom(grid, cell => cell.reward?.type === "tombKey")
+    const reward = (grid.cells[chest[0]][chest[1]] as RoomCell).reward!
+    const second = findRoom(
+      grid,
+      (cell, r, c) => !cell.reward && !cell.requiredKeyId && !isAt(chest, r, c) && !isAt(grid.entrancePos, r, c)
+    )
+    const lock = floorLock(rewrite(grid, second, { reward }))!
+    const keys = Object.entries(lock.mechanisms).filter(([id]) => id.startsWith("key "))
+    expect(keys).toHaveLength(1)
+    const [, mechanism] = keys[0]
+    expect(mechanism.transitions).toHaveLength(2)
+    expect(new Set(mechanism.transitions.map(transition => transition.at)).size).toBe(2)
   })
 
   it("makes a floor key a mechanism thrown in the region its chest stands in", () => {

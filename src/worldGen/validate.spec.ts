@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest"
-import { findEmptyChests, findStrandingLocks, findUnbakedSwitchBoards, validateRewardCounts } from "./validate"
+import {
+  findEmptyChests,
+  findStrandingLocks,
+  findUnbakedSwitchBoards,
+  sweepMissedASwitch,
+  validateRewardCounts,
+} from "./validate"
 import { DEV_CAPABILITIES, PYRAMID_CAPABILITIES } from "./capabilities"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FamilyMeta, FamilyOptions } from "@/game/families/familyMeta"
@@ -291,17 +297,45 @@ describe("findStrandingLocks", () => {
 
   it("says nothing about a floor carrying no lock", () => {
     const plain = { spec: [[floor()]] } as Record<string, SiteConfig[]>
-    expect(findStrandingLocks(plain, (_journeyId, config) => carve(config))).toEqual([])
+    expect(findStrandingLocks(plain, (_journeyId, config) => carve(config))).toEqual({ walked: 0, stranding: [] })
   })
 
   it("reports the floor and the state when a lock leaves the way out unreachable", () => {
-    const stranding = findStrandingLocks(configs, (_journeyId, config) => sealTheWayOut(carve(config)))
+    const { stranding } = findStrandingLocks(configs, (_journeyId, config) => sealTheWayOut(carve(config)))
     expect(stranding).toHaveLength(1)
     expect(stranding[0]).toMatchObject({ journeyId: "spec", levelNr: 1, floorIndex: 0 })
-    expect(stranding[0].problem).toContain("way out")
+    // The exact message, because "way out" also matches the stranding one: the sweep could otherwise
+    // report the wrong kind of failure and stay green.
+    expect(stranding[0].problem).toBe("no sequence of moves reaches the way out")
+  })
+
+  it("counts the floors whose lock it actually walked", () => {
+    expect(findStrandingLocks(configs, (_journeyId, config) => carve(config)).walked).toBe(1)
   })
 
   it("skips a floor that will not carve, which the unassembled sweep already reports", () => {
-    expect(findStrandingLocks(configs, () => null)).toEqual([])
+    expect(findStrandingLocks(configs, () => null)).toEqual({ walked: 0, stranding: [] })
+  })
+
+  describe("sweepMissedASwitch", () => {
+    it("reports a world that authors a switch whose sweep walked no lock at all", () => {
+      expect(sweepMissedASwitch(configs, 0)).toBe(true)
+    })
+
+    it("says nothing once the sweep has walked a lock", () => {
+      expect(sweepMissedASwitch(configs, 1)).toBe(false)
+    })
+
+    it("says nothing about a world that authors no switch, which has no lock to walk", () => {
+      const plain = { spec: [[floor()]] } as Record<string, SiteConfig[]>
+      expect(sweepMissedASwitch(plain, 0)).toBe(false)
+    })
+
+    it("says nothing about a switch no junction was reserved for, which carves no gate", () => {
+      const unreserved = {
+        spec: [[floor({ switches: { encounter: "sumplete", min: 1, max: 1 } })]],
+      } as Record<string, SiteConfig[]>
+      expect(sweepMissedASwitch(unreserved, 0)).toBe(false)
+    })
   })
 })

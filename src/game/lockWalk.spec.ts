@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest"
-import { checkLockSpec, openGates, reachableStates, MAX_LOCK_STATES, walkLock, describeLockWalkFailure, type LockSpec } from "./lockWalk"
+import {
+  checkLockSpec,
+  openGates,
+  reachableStates,
+  MAX_LOCK_STATES,
+  walkLock,
+  describeLockWalkFailure,
+  type LockSpec,
+} from "./lockWalk"
 
 // A lock with one door and one key behind nothing: the smallest thing that reads.
 const oneDoor = (): LockSpec => ({
@@ -299,6 +307,18 @@ describe("walkLock", () => {
     const described = describeLockWalkFailure(result.failure)
     expect(described).toContain("leftLower")
     expect(described).toContain("Y at right")
+  })
+
+  it("says the lock is too large rather than walking it, and the message names the ceiling", () => {
+    const spec = oneDoor()
+    spec.mechanisms.key.states = Array.from({ length: MAX_LOCK_STATES }, (_, n) => `s${n}`)
+    spec.mechanisms.key.initial = "s0"
+    spec.mechanisms.key.opens = { s0: [] }
+    spec.mechanisms.key.transitions = []
+    const result = walkLock(spec)
+    if (result.sound) throw new Error("expected the ceiling to stop the walk")
+    expect(result.failure).toEqual({ type: "tooLarge" })
+    expect(describeLockWalkFailure(result.failure)).toBe(`the lock names more than ${MAX_LOCK_STATES} states`)
   })
 
   it("reports a malformed lock without walking it", () => {

@@ -228,6 +228,7 @@ export const findUnbakedSwitchBoards = (
  */
 export type StrandingLock = { journeyId: string; levelNr: number; floorIndex: number; problem: string }
 
+/** `walked` counts the floors that handed the walk a lock at all — see `sweepMissedASwitch`. */
 export const findStrandingLocks = (
   configs: Record<string, SiteConfig[]>,
   assembleFloorAt: (
@@ -236,8 +237,9 @@ export const findStrandingLocks = (
     levelNr: number,
     floorIndex: number
   ) => AssembledFloor | null
-): StrandingLock[] => {
+): { walked: number; stranding: StrandingLock[] } => {
   const stranding: StrandingLock[] = []
+  let walked = 0
   for (const [journeyId, sites] of Object.entries(configs))
     sites.forEach((site, siteIdx) =>
       site.forEach((floor, floorIndex) => {
@@ -245,6 +247,7 @@ export const findStrandingLocks = (
         if (!grid) return
         const lock = floorLock(grid)
         if (!lock) return
+        walked++
         const result = walkLock(lock)
         if (result.sound) return
         stranding.push({
@@ -255,5 +258,17 @@ export const findStrandingLocks = (
         })
       })
     )
-  return stranding
+  return { walked, stranding }
 }
+
+/**
+ * The sweep walked no lock at all on a world that authors a switch.
+ *
+ * Almost every floor hands `findStrandingLocks` nothing, because almost no floor stands a switch —
+ * so a sweep that reports no failure is indistinguishable from a sweep that never reached the one
+ * floor that has a lock on it. Either the wiring or the switch detection stopped reaching it, and the
+ * check would stay green for ever while proving nothing.
+ */
+export const sweepMissedASwitch = (configs: Record<string, SiteConfig[]>, walked: number): boolean =>
+  walked === 0 &&
+  Object.values(configs).some(sites => sites.some(site => site.some(floor => switchFamilies(floor).count > 0)))

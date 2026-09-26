@@ -19,7 +19,12 @@ import { fileURLToPath } from "url"
 import { buildConfigs } from "../src/worldGen/configBuilder"
 import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
-import { findEmptyChests, findStrandingLocks, findUnbakedSwitchBoards } from "../src/worldGen/validate"
+import {
+  findEmptyChests,
+  findStrandingLocks,
+  findUnbakedSwitchBoards,
+  sweepMissedASwitch,
+} from "../src/worldGen/validate"
 import { assembleFloor } from "../src/game/siteAssembler"
 import type { FloorGrid } from "../src/game/siteTypes"
 import type { FloorConfig } from "../src/worldGen/types"
@@ -96,8 +101,8 @@ assignFragmentPieceIndices(configs)
 // stops, and leaves the call to the author: add loot, or take the chest out. Assembles each floor at
 // the seed a player actually gets, because a spec cannot tell an empty chest from a floor-key host.
 // A floor that will not carve at its runtime seed renders "Site layout unavailable." for every
-// player, permanently — so the sweep that already visits each one at that exact seed reports it here
-// rather than reading a failure as a floor with no chests on it.
+// player, permanently — so a carve that fails is collected rather than read as a floor with no
+// chests on it, and reported below once every sweep has had its turn at it.
 //
 // One carve per floor, shared by every sweep that needs the grid rather than the spec.
 const unassembled: string[] = []
@@ -122,16 +127,6 @@ printStats(configs)
 const cov = hieroglyphCoverage(configs, HIEROGLYPH_REQUIRED)
 console.log(`  Hieroglyph fragments: ${cov.assigned}/${cov.target} placed (${cov.total} total)`)
 
-// Reported after the stats, so a run that stops here still shows what it built. Nothing is written:
-// an empty chest is a question for the author, and shipping a world that asks a player to open one
-// for nothing is not the answer.
-if (unassembled.length > 0) {
-  console.error(`✗ ${unassembled.length} floor(s) cannot be carved at the seed the runtime hands them:`)
-  for (const floor of unassembled.slice(0, 20)) console.error(`    ${floor}`)
-  if (unassembled.length > 20) console.error(`    … and ${unassembled.length - 20} more`)
-  process.exit(1)
-}
-
 // A board the offline pass never proved would be searched for on the player's device instead, which is
 // the very thing the lists replaced — and it would happen quietly. So an authored switch whose shape and
 // tier no list covers stops the build with its floor named: bake the list (`yarn generate-seeds`), or do
@@ -152,7 +147,27 @@ if (unbakedSwitches.length > 0) {
 // A floor whose lock can be put in a state it cannot be got out of is a floor a player can lose a run
 // on, and nothing in the assembler would notice: a switch shutting the way back is a legal carve. The
 // state it died in is printed because that is what a person walks by hand to confirm it.
-const stranding = findStrandingLocks(configs, assembleOnce)
+const { walked, stranding } = findStrandingLocks(configs, assembleOnce)
+
+// Reported once every sweep that carves a floor has had its turn, so it covers every assembly
+// attempted rather than only the chest sweep's. Nothing is written: a floor that will not carve at
+// its runtime seed renders "Site layout unavailable." for every player, permanently.
+if (unassembled.length > 0) {
+  console.error(`✗ ${unassembled.length} floor(s) cannot be carved at the seed the runtime hands them:`)
+  for (const floor of unassembled.slice(0, 20)) console.error(`    ${floor}`)
+  if (unassembled.length > 20) console.error(`    … and ${unassembled.length - 20} more`)
+  process.exit(1)
+}
+
+// A sweep that walks nothing reports nothing, and a world that authors a switch has a lock to walk.
+// Without this the day the wiring or the switch detection stops reaching that floor is the day the
+// check turns into decoration, and it would stay green while it did.
+if (sweepMissedASwitch(configs, walked)) {
+  console.error("✗ the world authors a switch, but the lock sweep walked no floor's lock at all.")
+  console.error("    Either the sweep is not reaching that floor, or floorLock no longer reads its switch.")
+  process.exit(1)
+}
+
 if (stranding.length > 0) {
   console.error(`✗ ${stranding.length} floor(s) hold a lock a player can be stranded in:`)
   for (const floor of stranding.slice(0, 20))
