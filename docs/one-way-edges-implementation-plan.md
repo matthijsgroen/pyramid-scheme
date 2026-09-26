@@ -29,6 +29,8 @@
 | `src/game/gridNavigation.ts`      | `renderAscii` draws a one-dir cell as the arrow it is               |
 | `src/game/siteTypes.ts`           | `FloorConfig.oneWays` — the authored demand                         |
 | `src/worldGen/types.ts`, `dsl.ts` | the same field reaching a built floor config                        |
+| `src/worldGen/buildSite.ts`       | carries it through every branch that builds a floor                 |
+| `src/worldGen/serializer.ts`      | emits it — `floorFieldEmitters` is exhaustive over `FloorConfig`    |
 | `src/game/siteAssembler.ts`       | satisfies the demand in the carve, or rejects the attempt           |
 | `src/game/floorLock.ts`           | reports directed edges as `LockSpec.oneWays`, so the walk sees them |
 | `src/worldGen/spec/dev.ts`        | the develop-only floor that stands one                              |
