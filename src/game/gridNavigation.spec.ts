@@ -299,8 +299,6 @@ describe(revealAll, () => {
 const corridor = (dirs: string[]): GridCell =>
   ({ type: "corridor", dirs: new Set(dirs), state: "visible" }) as unknown as GridCell
 
-const empty = (): GridCell => ({ type: "empty" }) as unknown as GridCell
-
 const gridOf = (cells: GridCell[][]): FloorGrid =>
   ({ rows: cells.length, cols: cells[0].length, cells, entrancePos: [0, 0], exitPos: [0, 0] }) as unknown as FloorGrid
 
@@ -310,9 +308,11 @@ describe("renderAscii", () => {
     expect(drawn.trim()).toBe("↓↑→←")
   })
 
-  it("still draws an ordinary corridor as a line, not an arrow", () => {
-    const drawn = renderAscii(gridOf([[corridor(["e", "w"]), empty(), corridor(["n", "s"])]]))
-    expect(drawn).not.toContain("→")
-    expect(drawn).not.toContain("↓")
+  it("draws an arrow only for a cell with exactly one way out", () => {
+    // A corridor with no ways out is the only other cell that reaches the arrow's guard: every two-
+    // and three-direction set is already claimed by the line and corner branches above it.
+    const drawn = renderAscii(gridOf([[corridor([]), corridor(["e", "w"])]]))
+    expect(drawn.trim()).toBe("·─")
+    expect(drawn).not.toContain("←")
   })
 })
