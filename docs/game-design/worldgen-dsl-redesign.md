@@ -209,6 +209,34 @@ Difficulty is already enum-only, chain-resolved (global → tier → journey →
 
 A separate idea surfaced during this design pass: controlling how difficulty _varies room-to-room_ within one path (e.g. "one hard puzzle, three easy ones"), possibly via a point-budget model (each tier costs points; a path gets a budget; the allocator fills the path's already-fixed room count with tiers whose costs sum near the budget). This is explicitly **parked**, not designed: it requires inventing a per-tier cost curve that doesn't exist anywhere in the game today (game-balance work, not DSL plumbing), and the concrete example is already covered without it by combining existing per-scope `difficulty` overrides (author a harder difficulty at one specific room-scope, easier at the rest). Revisit only if hand-authoring per-scope difficulty proves too tedious in practice.
 
+### Ordinals address a pyramid; they do not schedule one
+
+`PyramidSelector` (`number | "first" | "last" | "middle" | "n-m" | "last-n"`) and
+`PathPuzzlesRange {start, end}` both read position in a journey. They mean two different things, and
+only one of them survives a journey whose pyramids can be entered in any order (see
+`../mods/floor-topology-design.md`):
+
+- **As an address, an ordinal is exact and stays exact.** `pyramid("first", …)` names one pyramid,
+  and it names the same one however the player travels.
+- **As a schedule, an ordinal means nothing once order is free.** `first` and `last` stop carrying
+  _when_. A `PathPuzzlesRange` still interpolates — the pyramids still get 4, 5, 6, 7 — but the ramp
+  becomes a spread, because the player may meet the 7 first.
+
+So authoring that uses position to pace — the gentle pyramid first, the map piece last — keeps
+naming the same pyramid and quietly stops meaning the same thing. Pacing that matters is expressed
+as a key.
+
+The upside is available but not free: a spread the player can _see_ before entering is a choice,
+and an unseen one is a coin flip. Nothing surfaces it today — `JourneyPathView` takes `levelCount`,
+`levelNr` and `unexploredNodes`, and no per-pyramid difficulty; `JourneyCard` shows the journey's
+tier, so every wizard pyramid reads "wizard". The data is in `generatedWorld.ts` and no screen
+spends it.
+
+So a free-order journey needs the read, and it is a prop and a fill rather than a screen — the node
+per pyramid is already positioned and already distinguishes state. It is also the strongest case for
+the standing position that difficulty is read off the floor rather than labelled, because it is the
+first time a player must choose between two difficulties before committing to either.
+
 ## Decoration layer — decisions
 
 ### Superseded: the per-theme pool idea below is replaced by dressing rules
@@ -355,7 +383,7 @@ All four layers and the builder syntax are now designed. Implement in small pass
 | `SideIntensity` → `SampleRange` unification                     | Designed, not implemented                                    |
 | `keyDensity` literal override                                   | Designed, not implemented                                    |
 | `mosaicPathPuzzles` literal override                            | Designed, not implemented                                    |
-| `consumableRates` consistency fix                               | Shipped (`dsl.ts`, `spec/global.ts`)                          |
+| `consumableRates` consistency fix                               | Shipped (`dsl.ts`, `spec/global.ts`)                         |
 | Dead `PathPuzzlesPreset` removal                                | Identified, not implemented                                  |
 | `rank` / `rankPools` / solver-based fragment assignment         | Designed, not implemented                                    |
 | `puzzleFamily` weight-map + tag selection + non-tomb wiring fix | Designed, not implemented                                    |
