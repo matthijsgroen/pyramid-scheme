@@ -104,10 +104,13 @@ The drawing was never a floor. Its `in` and `out` are the ports of a **lock**: a
 container that a floor places.
 
 ```ts
-const doubleBack = topologyLock({ regions, gates, switches, oneWays, in: "entrance", out: "wayOut" }).floor(0, {
-  pathPuzzles: 4,
-  locks: [doubleBack, sandBypass],
-})
+const doubleBack = topologyLock({ regions, gates, switches, oneWays, in: "entrance", out: "wayOut" })
+```
+
+and a floor places it:
+
+```ts
+.floor(0, { pathPuzzles: 4, locks: [doubleBack, sandBypass] })
 ```
 
 The main path enters at `in` and leaves at `out`; ordinary content carries on around it. A floor with
