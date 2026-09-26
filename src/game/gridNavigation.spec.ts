@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { completeCell, findPath, getOwnedKeys, revealAll } from "./gridNavigation"
-import type { Direction, FloorGrid } from "./siteTypes"
+import { completeCell, findPath, getOwnedKeys, renderAscii, revealAll } from "./gridNavigation"
+import type { Direction, FloorGrid, GridCell } from "./siteTypes"
 
 // Simple 1×3 grid: [entrance room -e- corridor -e- exit room]
 const makeLinearGrid = (): FloorGrid => ({
@@ -293,5 +293,26 @@ describe(revealAll, () => {
         }
       }
     }
+  })
+})
+
+const corridor = (dirs: string[]): GridCell =>
+  ({ type: "corridor", dirs: new Set(dirs), state: "visible" }) as unknown as GridCell
+
+const empty = (): GridCell => ({ type: "empty" }) as unknown as GridCell
+
+const gridOf = (cells: GridCell[][]): FloorGrid =>
+  ({ rows: cells.length, cols: cells[0].length, cells, entrancePos: [0, 0], exitPos: [0, 0] }) as unknown as FloorGrid
+
+describe("renderAscii", () => {
+  it("draws a cell you may only leave one way as the arrow it is", () => {
+    const drawn = renderAscii(gridOf([[corridor(["s"]), corridor(["n"]), corridor(["e"]), corridor(["w"])]]))
+    expect(drawn.trim()).toBe("↓↑→←")
+  })
+
+  it("still draws an ordinary corridor as a line, not an arrow", () => {
+    const drawn = renderAscii(gridOf([[corridor(["e", "w"]), empty(), corridor(["n", "s"])]]))
+    expect(drawn).not.toContain("→")
+    expect(drawn).not.toContain("↓")
   })
 })
