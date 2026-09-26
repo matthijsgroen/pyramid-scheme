@@ -243,6 +243,103 @@
       "21": { "fez": "I like him." },
       "22": { "explorer": "You like that he's owed money." },
       "23": { "fez": "I like that he wrote it down." }
+    },
+    "junior": {
+      "1": { "henut": "Finally. You will have come about the lapis. I assume Ipi is still going on about the lapis." },
+      "2": { "explorer": "He is." },
+      "3": { "henut": "It was glass. Beautiful glass. He knew." },
+      "4": { "fez": "…Was the bracelet glass too?" },
+      "5": {
+        "henut": "Everything here is the best imitation money could buy, young man, and I chose every piece of it myself."
+      },
+      "6": {
+        "henut": "Now. The wall. Third sign along — that is not my name. Some apprentice with a chisel and no supervision."
+      },
+      "7": { "henut": "You have been learning your signs. I can tell. Fix it." },
+      "8": { "henut": "There. Now it will still be my name in a thousand years." },
+      "9": { "explorer": "Ipi spelled it correctly." },
+      "10": { "henut": "Ipi spelled everything correctly. It was his one redeeming feature." },
+      "11": { "fez": "Does it matter, down here?" },
+      "12": { "henut": "It is the only thing that does." },
+      "13": { "fez": "She had a whole wall of Thoth up there. God of secrets." },
+      "14": { "henut": "Thoth counts. Thoth writes down what you did and it stays written." },
+      "15": { "henut": "Secrets are what people call arithmetic when they cannot do it." },
+      "16": {
+        "henut": "If you are going on — and you clearly are — there is a priest at Karnak who owes the dead a service he never performed. He will be insufferable about it. Priests are."
+      },
+      "17": { "henut": "…Have we met?" },
+      "18": { "fez": "I would remember." },
+      "19": { "henut": "Yes. So would I." }
+    },
+    "expert": {
+      "1": { "priest": "You are not the person I am expecting." },
+      "2": { "explorer": "Who are you expecting?" },
+      "3": {
+        "priest": "Somebody with the seal. It was to be brought here, set down there, and spoken over. None of those three things has happened."
+      },
+      "4": { "fez": "…How long have you been waiting?" },
+      "5": { "priest": "I do not keep count. It would be unprofessional." },
+      "6": {
+        "priest": "A proper offering is a thing a king was buried holding. Not a copy. Not a likeness. The thing itself, with his mark on it."
+      },
+      "7": { "priest": "Bring that and you will be announced. Bring anything else and you will not." },
+      "8": { "explorer": "Announced to whom?" },
+      "9": { "priest": "You will know. Everybody does, eventually." },
+      "10": { "fez": "He is very taken with the sun, this one. All that Amun-Ra out front." },
+      "11": { "priest": "Amun is the hidden one. Ra is the one anybody can see." },
+      "12": { "priest": "They are the same god. That is not a coincidence, it is the entire idea." },
+      "13": { "fez": "…Right. Yes. I did know that." },
+      "14": { "explorer": "You did not." },
+      "15": { "fez": "I did not." }
+    },
+    "expertB": {
+      "1": { "fez": "Nobody has been in here. Not us, not the earlier lot, nobody." },
+      "2": { "explorer": "How can you tell?" },
+      "3": { "fez": "Because there is still something in it." }
+    },
+    "master": {
+      "1": { "pharaoh": "You may approach. You have approached. Very well." },
+      "2": { "fez": "Your majesty." },
+      "3": { "pharaoh": "Yes." },
+      "4": { "explorer": "We need your seal." },
+      "5": { "pharaoh": "So does everyone. Mine has been taken twice and returned never." },
+      "6": { "pharaoh": "The second time they left a copy. A COPY. In MY tomb. As though I would not look." },
+      "7": { "explorer": "Is the copy still here?" },
+      "8": {
+        "pharaoh": "Of course it is still here, it is worthless. It is on the shelf where the real one should be, being wrong."
+      },
+      "9": { "pharaoh": "Take it if you like. Take it to that priest. See how far it gets you." },
+      "10": { "fez": "…He is enjoying this." },
+      "11": { "pharaoh": "I am having the best week in nine hundred years." },
+      "12": { "fez": "Osiris on the wall there. Lord of the dead — grim business." },
+      "13": { "pharaoh": "He is GREEN, you ridiculous animal." },
+      "14": {
+        "pharaoh": "Green like a field in flood. He was killed and put back together and he comes back every single year."
+      },
+      "15": { "pharaoh": "Down here that is not grim, it is the entire point. Dead is not finished." }
+    },
+    "wizard": {
+      "1": { "priest": "Set it down. There. Yes." },
+      "2": { "priest": "…" },
+      "3": { "priest": "That is the first time I have done that. I had begun to think I had forgotten how." },
+      "4": { "explorer": "Had you?" },
+      "5": { "priest": "Completely. It came back." }
+    },
+    "wizardB": {
+      "1": { "fez": "Their rope. Still tied off." },
+      "2": { "explorer": "They got this far." },
+      "3": { "fez": "Further than this. And then they went back up it." },
+      "4": { "explorer": "There is a notebook." },
+      "5": { "fez": "What does it say?" },
+      "6": { "explorer": "Cannot read the writing. Came back for the seal. Made a better one instead." },
+      "7": { "explorer": "Nobody was fooled." },
+      "8": { "fez": "…They forged it because they could not read what it was for." },
+      "9": { "explorer": "And then they went home." }
+    },
+    "wizardC": {
+      "1": { "fez": "Stop a moment. Look at what we have been carrying up out of those pyramids." },
+      "2": { "explorer": "It is a picture." },
+      "3": { "fez": "It has been a picture the whole time." }
     }
   }
 }

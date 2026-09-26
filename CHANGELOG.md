@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every pyramid in the world now greets you in its own voice.
 - You start out alone, and meet Fez at the Sphinx.
 - The travel cards now say what is actually at each place, in Fez's voice.
-- Somebody is waiting in the first tomb, and he has been waiting a while.
+- Every tomb has somebody in it now, and they all want something.
 - The explorer has a face: the placeholder is gone and the drawn portrait stands opposite Fez.
 
 ### Fixed

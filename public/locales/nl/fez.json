@@ -254,6 +254,105 @@
       "21": { "fez": "Ik mag hem wel." },
       "22": { "explorer": "Je mag het dat hij geld tegoed heeft." },
       "23": { "fez": "Ik mag het dat hij het opschreef." }
+    },
+    "junior": {
+      "1": { "henut": "Eindelijk. Je komt zeker over het lapis. Ipi zeurt er vast nog steeds over." },
+      "2": { "explorer": "Dat klopt." },
+      "3": { "henut": "Het was glas. Prachtig glas. Dat wist hij best." },
+      "4": { "fez": "…Was die armband dan ook glas?" },
+      "5": {
+        "henut": "Alles hier is de beste imitatie die voor geld te krijgen was, jongeman, en ik heb elk stuk zelf uitgezocht."
+      },
+      "6": {
+        "henut": "Zo. De muur. Het derde teken — dat is mijn naam niet. Een of andere leerling met een beitel en geen toezicht."
+      },
+      "7": { "henut": "Je hebt je tekens geleerd. Dat zie ik zo. Zet het recht." },
+      "8": { "henut": "Kijk. Nu is het over duizend jaar nog steeds mijn naam." },
+      "9": { "explorer": "Ipi spelde hem goed." },
+      "10": { "henut": "Ipi spelde alles goed. Dat was zijn enige verdienste." },
+      "11": { "fez": "Maakt het uit, hier beneden?" },
+      "12": { "henut": "Het is het enige wat uitmaakt." },
+      "13": { "fez": "Ze had daarboven een hele muur vol Thoth. God van geheimen." },
+      "14": { "henut": "Thoth telt. Thoth schrijft op wat je gedaan hebt, en het blijft staan." },
+      "15": { "henut": "Geheimen is hoe mensen rekenen noemen als ze het zelf niet kunnen." },
+      "16": {
+        "henut": "Als je verder trekt — en dat doe je duidelijk — dan is er een priester in Karnak die de doden een dienst schuldig is die hij nooit heeft verricht. Hij zal er onuitstaanbaar over doen. Priesters zijn zo."
+      },
+      "17": { "henut": "…Kennen wij elkaar?" },
+      "18": { "fez": "Dat zou ik me herinneren." },
+      "19": { "henut": "Ja. Ik ook." }
+    },
+    "expert": {
+      "1": { "priest": "U bent niet degene die ik verwacht." },
+      "2": { "explorer": "Wie verwacht u dan?" },
+      "3": {
+        "priest": "Iemand met het zegel. Het moest hierheen gebracht worden, daar neergelegd, en uitgesproken. Geen van die drie dingen is gebeurd."
+      },
+      "4": { "fez": "…Hoe lang wacht u hier al?" },
+      "5": { "priest": "Ik houd het niet bij. Dat zou onprofessioneel zijn." },
+      "6": {
+        "priest": "Een behoorlijke offergave is iets waarmee een koning begraven is. Geen kopie. Geen gelijkenis. Het ding zelf, met zijn merk erop."
+      },
+      "7": { "priest": "Breng dat, en u wordt aangekondigd. Breng iets anders, en niet." },
+      "8": { "explorer": "Aangekondigd bij wie?" },
+      "9": { "priest": "Dat merkt u vanzelf. Iedereen merkt het, uiteindelijk." },
+      "10": { "fez": "Hij is erg gesteld op de zon, deze. Al die Amoen-Ra buiten." },
+      "11": { "priest": "Amoen is de verborgene. Ra is degene die iedereen kan zien." },
+      "12": { "priest": "Het is dezelfde god. Dat is geen toeval, dat is het hele idee." },
+      "13": { "fez": "…Juist. Ja. Dat wist ik wel." },
+      "14": { "explorer": "Dat wist je niet." },
+      "15": { "fez": "Dat wist ik niet." }
+    },
+    "expertB": {
+      "1": { "fez": "Hier is nog nooit iemand geweest. Wij niet, die lui van eerder niet, niemand." },
+      "2": { "explorer": "Hoe weet je dat?" },
+      "3": { "fez": "Omdat er nog iets in staat." }
+    },
+    "master": {
+      "1": { "pharaoh": "U mag naderen. U bent genaderd. Goed dan." },
+      "2": { "fez": "Majesteit." },
+      "3": { "pharaoh": "Ja." },
+      "4": { "explorer": "We hebben uw zegel nodig." },
+      "5": { "pharaoh": "Dat heeft iedereen nodig. Het mijne is tweemaal meegenomen en nooit teruggebracht." },
+      "6": {
+        "pharaoh": "De tweede keer lieten ze een kopie achter. Een KOPIE. In MIJN graf. Alsof ik niet zou kijken."
+      },
+      "7": { "explorer": "Is die kopie er nog?" },
+      "8": {
+        "pharaoh": "Natuurlijk is hij er nog, hij is waardeloos. Hij ligt op de plank waar het echte hoort te liggen, verkeerd te zijn."
+      },
+      "9": { "pharaoh": "Neem hem gerust mee. Breng hem naar die priester. Kijk hoe ver u daarmee komt." },
+      "10": { "fez": "…Hij geniet hiervan." },
+      "11": { "pharaoh": "Ik heb mijn beste week in negenhonderd jaar." },
+      "12": { "fez": "Osiris daar op de muur. Heer der doden — grimmige zaak." },
+      "13": { "pharaoh": "Hij is GROEN, belachelijk beest." },
+      "14": {
+        "pharaoh": "Groen als een akker onder water. Hij werd gedood en weer in elkaar gezet en hij komt elk jaar opnieuw terug."
+      },
+      "15": { "pharaoh": "Hier beneden is dat niet grimmig, dat is het hele punt. Dood is niet klaar." }
+    },
+    "wizard": {
+      "1": { "priest": "Zet het neer. Daar. Ja." },
+      "2": { "priest": "…" },
+      "3": { "priest": "Dat is de eerste keer dat ik dat doe. Ik begon te denken dat ik het verleerd was." },
+      "4": { "explorer": "Was dat zo?" },
+      "5": { "priest": "Volledig. Het kwam terug." }
+    },
+    "wizardB": {
+      "1": { "fez": "Hun touw. Nog steeds vastgeknoopt." },
+      "2": { "explorer": "Ze zijn tot hier gekomen." },
+      "3": { "fez": "Verder dan hier. En toen zijn ze er weer langs omhoog gegaan." },
+      "4": { "explorer": "Er ligt een notitieboek." },
+      "5": { "fez": "Wat staat erin?" },
+      "6": { "explorer": "Kan het schrift niet lezen. Teruggekomen voor het zegel. Toen maar een betere gemaakt." },
+      "7": { "explorer": "Niemand trapte erin." },
+      "8": { "fez": "…Ze hebben het vervalst omdat ze niet konden lezen waar het voor was." },
+      "9": { "explorer": "En toen zijn ze naar huis gegaan." }
+    },
+    "wizardC": {
+      "1": { "fez": "Even stilstaan. Kijk eens wat we allemaal uit die piramides omhoog hebben gedragen." },
+      "2": { "explorer": "Het is een afbeelding." },
+      "3": { "fez": "Het is de hele tijd al een afbeelding geweest." }
     }
   }
 }

@@ -144,9 +144,16 @@ export const juniorRules: Rule[] = [
     // short of the `floors × TOMB_ROOMS_PER_FLOOR` story grid tableaus.ts sizes for.
     floors: [
       {
+        // Somebody is waiting on this floor: a room of its own, two from the end. The tableaus keep
+        // positions 1..n (their authored content is keyed by position), the crocodile keeps the last
+        // room, and the beat sits between them — so it is passed on the way to the floor's treasure
+        // and cannot be skipped by taking the stairs.
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 2,
+        nodes: [
+          { where: "last", encounter: "capstone" },
+          { where: TOMB_ROOMS_PER_FLOOR.junior + 1, encounter: "conversation" },
+        ],
         // Fez shop — a 6-slot stock node, filled by the mods (currency pieces + consumables).
         // Empty until resolveShopStock + the consumable fill land; the shop mods own its content.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
