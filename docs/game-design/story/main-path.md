@@ -23,14 +23,37 @@ which is the one the ending is actually about.
 
 ## The ending was authored years ago
 
-`starter_1` is **Dawn at the Sphinx**. `wizard_2` is **Secrets of the Sphinx**. The first place the player
-visits and the second-to-last are the same place — so the world already contains the loop this game's
-structure is built on: old sites reopening once you are strong enough to come back.
+`starter_1` is **Dawn at the Sphinx**, and the ending happens there — in the first pyramid of the game,
+behind a ward gate the player has been walking past since hour one.
 
 So the ending is not a boss and not a new location. **It is the inscription from hour one, read.** The
 player stands where they started, in front of the thing they could not read, and now can — because of
 everything the middle taught them. `wizard_3` **Chamber of Ma'at** weighs it, `wizard_4` **Eternal Pyramid**
 closes it, and the mural completes as the record of who did it (Part 3 §3.3).
+
+### The same place, literally (decided)
+
+Two journeys named for the Sphinx were never the same site: separate journeys, separately generated, tiers
+apart on the map. And a player can revisit `starter_1` whenever they like — the game teaches exactly that —
+so a player who learns to read and goes back to the place they were promised writing would have found
+nothing there. A promise made in the first minute, answered somewhere else.
+
+**A ward gate closes it.** The inscription sits behind a `tomb-key` gate in `starter_1`'s first floor, keyed
+to `wizard_treasure_tomb` index 0 — `wizard_a_1`, which grants nothing else today and whose whole job
+becomes this. Sealed and visible in hour one; opened in hour fifty by a key from the Vault of the Gods.
+The machinery is the one `starter.ts` already uses for its tease chests, "visible early, openable only once
+you've progressed that far":
+
+```ts
+journey("starter_1")
+  .pyramid(1)
+  .floor(0, {
+    sideSections: [wardChest({ tomb: "wizard_treasure_tomb", index: 0, puzzles: 1, encounter: "reading" })],
+  })
+```
+
+**Unbuilt**: it waits on the `reading` encounter, which is what makes the room the ending rather than a
+chest. Until then `starter_1` has no gate and the ending has nowhere to play.
 
 That also makes the mosaic's out-of-order completion a non-problem: the picture is a record, and a record
 does not mind which order it was earned in.
@@ -109,13 +132,13 @@ floor's key is already one of the four that unlock wizard. The story is that the
 
 ## The gaps — everything that would actually have to be written
 
-| Gap                                                                       | Kind                    | Size                              |
-| ------------------------------------------------------------------------- | ----------------------- | --------------------------------- |
-| The Sphinx inscription: unreadable at `starter_1`, readable at `wizard_2` | place + 2 beats         | **the whole ending**, and 2 rooms |
-| Five tomb ghosts, one per tier, each pedantic about something different   | cast + ~15 source lines | the spine's voice                 |
-| The forgery at `master_3`                                                 | 1 non-currency prop     | the twist                         |
-| Arrival lines                                                             | copy                    | 20 source lines                   |
-| Act-break lines at each tomb                                              | copy                    | 9 source lines                    |
+| Gap                                                                              | Kind                    | Size                              |
+| -------------------------------------------------------------------------------- | ----------------------- | --------------------------------- |
+| The Sphinx inscription: unreadable at `starter_1`, readable behind its ward gate | place + 2 beats         | **the whole ending**, and 2 rooms |
+| Five tomb ghosts, one per tier, each pedantic about something different          | cast + ~15 source lines | the spine's voice                 |
+| The forgery at `master_3`                                                        | 1 non-currency prop     | the twist                         |
+| Arrival lines                                                                    | copy                    | 20 source lines                   |
+| Act-break lines at each tomb                                                     | copy                    | 9 source lines                    |
 
 Counts are **source** lines. The game is headed for most European languages, so each is paid for a dozen
 times over — the strongest practical argument for keeping story items drawn.
@@ -213,7 +236,7 @@ us. And I'd say it balances."_ The Sphinx says what gets weighed; the mural is t
 Fez reads the answer aloud. Three surfaces, already designed, joined by one sentence.
 
 **And it is a list of four**, which is a mechanism as well as a poem: four lines, one revealed per act as
-the player's reading improves, the last landing at `wizard_2` where the Sphinx loop closes. The inscription
+the player's reading improves, the last landing behind `starter_1`'s ward gate where the Sphinx loop closes. The inscription
 would then assemble the way everything else in this game does.
 
 ### B. The Instruction of Ptahhotep (~2400 BC, the oldest wisdom text there is)

@@ -110,20 +110,22 @@ after.
 that clearing it is balance restored. All three belong here, at the clearing — not at the arrival
 (`what-the-player-knows.md`: a belief stated in order to be used later reads as a lesson).
 
-## `wizard_2` — Secrets of the Sphinx
+## The Sphinx — `starter_1`, behind its ward gate
 
-`story.arrival.wizard_2.*` — **the ending.** Everything in the game is a delivery system for this.
+`story.reading.sphinx.*` — **the ending.** Everything in the game is a delivery system for this, and it
+plays in the FIRST pyramid of the game (`main-path.md`, "The same place, literally"): a ward gate keyed to
+`wizard_a_1`, sealed and visible from hour one, opened by a key out of the Vault of the Gods.
 
-**It gates on reading, not on the mosaic** (decided). The inscription is unreadable at `starter_1` and
+**It gates on reading and on the ward key, not on the mosaic** (decided). The inscription is unreadable at `starter_1` and
 readable here _because of everything the middle taught the player_, so what opens it is the glyphs they
 hold — the `reading` encounter, which is the mechanism the whole game has been teaching. Gating it on the
 collection instead would invert the order this act is built on: the Sphinx says what gets weighed, **the
 mural is the player's answer to it**, and `mosaicFinale` is the last beat in the game. A record does not
 mind which order it was earned in; an answer does have to come after its question.
 
-**Which is also why this beat is not an arrival.** An arrival plays on walking in, so registering it would
-hand the last scene of the game to any wizard-tier player who wandered past. It is out of
-`JOURNEYS_WITH_ARRIVAL` until the reading encounter exists to gate it.
+**Which is also why this beat is not an arrival.** An arrival plays on walking in, and `starter_1`'s
+arrival is the hook — the writing nobody can read. The ending is the room behind the gate, so it is a
+`reading` encounter and not a nineteenth entry in `JOURNEYS_WITH_ARRIVAL`.
 
 > **Fez:** Back where we started. It has not moved.
 >
@@ -174,6 +176,40 @@ Fez's own turn stays where it was, a beat later:
 > **Explorer:** It is on every wall we passed.
 >
 > **Fez:** …I know. I have been selling the walls.
+
+## `wizard_2` — Colossi of Memnon · the wrong name
+
+`story.arrival.wizard_2.*` — **the run-up**, one journey before the Sphinx gives Fez his back.
+
+Two true things, and both of them are the act in miniature. The seated colossi are Amenhotep III, with his
+cartouche cut into the throne; the Greeks decided the northern one was their own hero Memnon, and that name
+stuck for two thousand years because nobody read the one already there. And after an earthquake cracked it,
+the statue sounded a note at dawn every morning — until a Roman emperor repaired it, after which it never
+made a sound again.
+
+> **Fez:** Two of them, twenty metres up, and both of them Amenhotep.
+>
+> **Fez:** The Greeks took one look and decided it was a hero of theirs. Memnon. The name stuck for two
+> thousand years.
+>
+> **Explorer:** Whose name is on it?
+>
+> **Fez:** His own. Cut into the throne, where it has always been.
+>
+> **Fez:** Nobody read it.
+>
+> **Fez:** After the earthquake the northern one sang at dawn. A note, every morning, when the sun warmed
+> the crack.
+>
+> **Explorer:** And now?
+>
+> **Fez:** An emperor had it mended. It has not made a sound since.
+
+**_"His own. Nobody read it."_ is the act's tell**, and it costs nothing: Fez is talking about a statue. The
+player hears the shape of the ending one journey early, as a fact about somebody else.
+
+**The mending is the other half.** A thing that was fixed by someone who meant well and went quiet — which
+is the only sad note Act V gets, and it is spent on a rock rather than on a character.
 
 ## `wizard_3` — Chamber of Ma'at
 
