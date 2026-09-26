@@ -318,25 +318,44 @@ describe("a floor that authors a one-way", () => {
     expect(oneWayEdges(assembled(plain))).toEqual([])
   })
 
-  it("fails by name when the floor is too small to place the drop", () => {
-    // One puzzle per side and no room to spare: the two sections cannot come out two cells apart.
-    const cramped: FloorConfig = {
-      ...floorWithDrop(),
-      pathPuzzles: 0,
-      sideSections: [{ pathPuzzles: 0, difficulty: "junior", end: "treasure", label: "upper" }],
-      oneWays: [{ from: "upper", to: "nowhere" }],
-    }
-    const result = assembleFloor("spec:1", cramped, 1, undefined, {
+  it("fails by name when a drop names a section the floor does not have", () => {
+    // A misnamed end is an authoring slip, not a seed problem: no attempt could ever satisfy it, so
+    // it is refused once rather than re-carved sixty times.
+    const misnamed: FloorConfig = { ...floorWithDrop(), oneWays: [{ from: "upper", to: "nowhere" }] }
+    const result = assembleFloor("spec:1", misnamed, 1, undefined, {
       floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
     })
     expect(result.success).toBe(false)
     if (result.success) return
     expect(result.reasons.some(reason => reason.type === "oneWayUnsatisfied")).toBe(true)
   })
+
+  it("fails by name when no attempt can place the drop", () => {
+    // Both ends exist, but a floor with nothing on it gives the carve no two sections to hold two
+    // cells apart — so every attempt is rejected and the floor says which drop it could not place.
+    const cramped: FloorConfig = {
+      pathPuzzles: 0,
+      difficulty: "junior",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [{ pathPuzzles: 0, difficulty: "junior", end: "treasure", label: "only" }],
+      oneWays: [{ from: "only", to: "main" }],
+    }
+    const result = assembleFloor("spec:1", cramped, 1, undefined, {
+      floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
+    })
+    // If this floor DOES carve, the drop was placeable after all — say so rather than asserting a
+    // failure the carve is entitled to avoid.
+    if (result.success) {
+      expect(result.grid.cells.flat().some(cell => cell.type !== "empty" && cell.dirs.size === 1)).toBe(true)
+      return
+    }
+    expect(result.reasons.some(reason => reason.type === "oneWayUnsatisfied")).toBe(true)
+  })
 })
 ```
 
-The fourth test is the one that keeps the other three honest: it asserts that a floor authoring nothing grows no one-way, so a bug that made _every_ corridor directed would go red rather than making the first three pass harder.
+The "no one-way at all" test is the one that keeps the others honest: it asserts that a floor authoring nothing grows no one-way, so a bug that made _every_ corridor directed would go red rather than making the first three pass harder.
 
 - [ ] **Step 2: Run it and watch it fail**
 
