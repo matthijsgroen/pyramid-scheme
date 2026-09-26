@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "./siteAssembler"
-import { reachableFrom } from "./siteValidator"
 import type { Direction, FloorConfig, FloorGrid } from "./siteTypes"
 
 const floorWithDrop = (): FloorConfig => ({
@@ -114,7 +113,10 @@ describe("a floor that authors a one-way", () => {
     expect(result.reasons.some(reason => reason.type === "oneWayUnsatisfied")).toBe(true)
   })
 
-  it("never drops the player into a section the gate is meant to isolate", () => {
+  it("refuses a drop into a section a gate is meant to isolate", () => {
+    // A gate exists to be earned; a drop landing past it hands over what it guards. So this is not a
+    // seed problem — no attempt may ever satisfy it — and it is refused by name on every seed rather
+    // than carved by whichever one happens to land past the door.
     const gated: FloorConfig = {
       pathPuzzles: 2,
       difficulty: "junior",
@@ -125,28 +127,45 @@ describe("a floor that authors a one-way", () => {
       ],
       oneWays: [{ from: "main", to: "vault" }],
     }
-    for (let seed = 0; seed < 60; seed++) {
+    // Every seed, not the first that carves: the refusal is a property of the authoring, so no layout
+    // is entitled to satisfy it.
+    for (let seed = 0; seed < 20; seed++) {
       const result = assembleFloor("spec:1", gated, seed, undefined, {
         floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
       })
-      if (!result.success) continue
-      const grid = result.grid
-      const reached = reachableFrom(grid, grid.entrancePos)
-      // Rooms only, not the corridor cell standing right outside the locked door — that vestibule
-      // is `vault`-addressed (the connector's own address follows its lower-keyed endpoint, the gate
-      // room) but is reachable in every gated floor, one-way or not: a player may walk up to a locked
-      // door, they just may not open it. The gate room itself and everything past it are the content
-      // the gate protects, and are what this asserts against.
-      const vaultRooms = grid.cells.flatMap((row, r) =>
-        row.flatMap((cell, c) =>
-          cell.type === "room" && cell.sectionAddress === "vault" ? [`${r},${c}`] : []
-        )
-      )
-      expect(vaultRooms.length).toBeGreaterThan(0)
-      // Holding no key, the vault is behind its door and nothing in it is reached.
-      expect(vaultRooms.filter(key => reached.has(key))).toEqual([])
-      return
+      if (result.success) throw new Error(`seed ${seed} carved a drop into a gated section`)
+      expect(result.reasons.some(reason => reason.type === "oneWayUnsatisfied")).toBe(true)
     }
-    throw new Error("no seed carved the gated floor")
+  })
+
+  it("never hangs a drop off the exit, which has to stay a dead end", () => {
+    // `floorWithDrop` (upper→lower) never gives a candidate a reason to touch the exit — neither end
+    // is `main`, and the exit only ever carries `main`'s address. A one-way naming `main` does: the
+    // exit is one of `main`'s own node cells, and without the guard this fixture lands a candidate on
+    // it on roughly a quarter of seeds (checked while writing this test). So this checks every seed
+    // that carves, not just the first, against a fixture the guard actually has something to refuse.
+    const droppingIntoMain: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "junior",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [{ pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "upper" }],
+      oneWays: [{ from: "upper", to: "main" }],
+    }
+    let checked = 0
+    for (let seed = 0; seed < 60; seed++) {
+      const result = assembleFloor("spec:1", droppingIntoMain, seed, undefined, {
+        floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
+      })
+      if (!result.success) continue
+      checked++
+      const grid = result.grid
+      const exitKey = `${grid.exitPos[0]},${grid.exitPos[1]}`
+      for (const edge of oneWayEdges(grid)) {
+        expect(`${edge.from[0]},${edge.from[1]}`).not.toBe(exitKey)
+        expect(`${edge.to[0]},${edge.to[1]}`).not.toBe(exitKey)
+      }
+    }
+    expect(checked).toBeGreaterThan(0)
   })
 })

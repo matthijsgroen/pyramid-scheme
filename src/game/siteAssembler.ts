@@ -1709,19 +1709,28 @@ export const assembleFloor = (
     // same seed always drops the same pair. A demand with no such pair is this carve's own shortfall,
     // not the authoring's: another seed may still place it, so the attempt is re-carved rather than
     // refused.
+    const exitKey = posKey(exR, exC)
     const oneWayEdges: { from: string; to: string; dir: Direction }[] = []
     let oneWayShort: { from: string; to: string } | undefined
     for (const oneWay of config.oneWays ?? []) {
       const candidates: { from: string; to: string; dir: Direction }[] = []
       for (const fromKey of usedCells) {
         if (cellSectionAddress.get(fromKey) !== oneWay.from) continue
+        // The exit was forced to a true dead end just above (every passage off it dropped but the one
+        // to its predecessor) precisely so nothing reads as continuing past it. A drop hanging off it
+        // would add exactly the direction that was deleted to guarantee that.
+        if (fromKey === exitKey) continue
         const [r, c] = fromKey.split(",").map(Number)
         for (const [dr, dc, d] of CONNECTOR_DIRS) {
           const nr = r + dr,
             nc = c + dc
           if (nr < 0 || nr >= N || nc < 0 || nc >= N) continue
           const toKey = posKey(nr, nc)
+          if (toKey === exitKey) continue
           if (cellSectionAddress.get(toKey) !== oneWay.to) continue
+          // A drop may leave a gated section but never enter one: a gate is there to be earned, and a
+          // passage landing past it hands over what it guards.
+          if (gatedCellKeys.has(toKey) && !gatedCellKeys.has(fromKey)) continue
           // A drop goes where the maze never joined two cells — never across a boundary the gate
           // isolation deliberately suppressed, which is a way around a locked door wearing a drop's
           // clothes.
