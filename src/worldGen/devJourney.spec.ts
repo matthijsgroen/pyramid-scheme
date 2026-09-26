@@ -232,9 +232,9 @@ describe("what the dev journey authors", () => {
   // because this is the journey the exemption exists for.
   it("is the only journey whose capabilities let a drop stand on it", () => {
     expect(findUndrawnOneWays(withDev)).toEqual([])
-    expect(
-      findUndrawnOneWays({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] }, () => PYRAMID_CAPABILITIES)
-    ).toHaveLength(1)
+    expect(findUndrawnOneWays({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] }, () => PYRAMID_CAPABILITIES)).toHaveLength(
+      1
+    )
   })
 })
 

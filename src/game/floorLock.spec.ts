@@ -221,7 +221,9 @@ const sealTheWayIntoTheDrop = (grid: FloorGrid): FloorGrid | undefined => {
   const edges = oneWayEdges(grid)
   const at = (cell: [number, number]) => posKey(cell[0], cell[1])
   const pairs = edges.flatMap(into =>
-    edges.filter(outOf => at(outOf.to) === at(into.from)).map(outOf => ({ source: at(outOf.from), landing: at(into.to) }))
+    edges
+      .filter(outOf => at(outOf.to) === at(into.from))
+      .map(outOf => ({ source: at(outOf.from), landing: at(into.to) }))
   )
   for (const { source, landing } of pairs) {
     if (!open.has(source) || !open.has(landing)) continue

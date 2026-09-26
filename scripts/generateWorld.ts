@@ -152,9 +152,7 @@ const undrawnDrops = findUndrawnOneWays(configs)
 if (undrawnDrops.length > 0) {
   console.error(`✗ ${undrawnDrops.length} one-way drop(s) stand on floors that may not hold one:`)
   for (const drop of undrawnDrops.slice(0, 20))
-    console.error(
-      `    ${drop.journeyId} level ${drop.levelNr} floor ${drop.floorIndex}: ${drop.from} → ${drop.to}`
-    )
+    console.error(`    ${drop.journeyId} level ${drop.levelNr} floor ${drop.floorIndex}: ${drop.from} → ${drop.to}`)
   if (undrawnDrops.length > 20) console.error(`    … and ${undrawnDrops.length - 20} more`)
   console.error("  A drop is drawn from both sides today — author it on the develop journey until it is not.")
   process.exit(1)
