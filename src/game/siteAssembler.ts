@@ -1722,9 +1722,10 @@ export const assembleFloor = (
           if (nr < 0 || nr >= N || nc < 0 || nc >= N) continue
           const toKey = posKey(nr, nc)
           if (cellSectionAddress.get(toKey) !== oneWay.to) continue
-          // Already a real edge there (an ordinary two-way corridor will fill this same cell below) —
-          // not the empty gap a drop needs, so it's not a candidate.
-          if (edgeAllowed(r, c, nr, nc)) continue
+          // A drop goes where the maze never joined two cells — never across a boundary the gate
+          // isolation deliberately suppressed, which is a way around a locked door wearing a drop's
+          // clothes.
+          if (passages.has(pkey(r, c, nr, nc))) continue
           candidates.push({ from: fromKey, to: toKey, dir: d })
         }
       }

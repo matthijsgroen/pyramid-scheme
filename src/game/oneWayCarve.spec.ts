@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "./siteAssembler"
+import { reachableFrom } from "./siteValidator"
 import type { Direction, FloorConfig, FloorGrid } from "./siteTypes"
 
 const floorWithDrop = (): FloorConfig => ({
@@ -111,5 +112,41 @@ describe("a floor that authors a one-way", () => {
       return
     }
     expect(result.reasons.some(reason => reason.type === "oneWayUnsatisfied")).toBe(true)
+  })
+
+  it("never drops the player into a section the gate is meant to isolate", () => {
+    const gated: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "junior",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "vault", gate: { type: "floor-key" } },
+      ],
+      oneWays: [{ from: "main", to: "vault" }],
+    }
+    for (let seed = 0; seed < 60; seed++) {
+      const result = assembleFloor("spec:1", gated, seed, undefined, {
+        floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
+      })
+      if (!result.success) continue
+      const grid = result.grid
+      const reached = reachableFrom(grid, grid.entrancePos)
+      // Rooms only, not the corridor cell standing right outside the locked door — that vestibule
+      // is `vault`-addressed (the connector's own address follows its lower-keyed endpoint, the gate
+      // room) but is reachable in every gated floor, one-way or not: a player may walk up to a locked
+      // door, they just may not open it. The gate room itself and everything past it are the content
+      // the gate protects, and are what this asserts against.
+      const vaultRooms = grid.cells.flatMap((row, r) =>
+        row.flatMap((cell, c) =>
+          cell.type === "room" && cell.sectionAddress === "vault" ? [`${r},${c}`] : []
+        )
+      )
+      expect(vaultRooms.length).toBeGreaterThan(0)
+      // Holding no key, the vault is behind its door and nothing in it is reached.
+      expect(vaultRooms.filter(key => reached.has(key))).toEqual([])
+      return
+    }
+    throw new Error("no seed carved the gated floor")
   })
 })
