@@ -227,35 +227,41 @@ const doubleBack = (): LockSpec => ({
       transitions: [{ from: "start", to: "thrown", at: "s2Chamber" }],
     },
   },
-  oneWays: [{ from: "s1Chamber", to: "leftLower" }],
+  // Two drops, and the second is what keeps the floor sound. The first carries the player out of
+  // S1's chamber after S1 has shut the way they came; the second carries them off the left branch
+  // when they took the first one early, back to the fork where the board can be re-solved.
+  oneWays: [
+    { from: "s1Chamber", to: "leftLower" },
+    { from: "leftLower", to: "entrance" },
+  ],
   in: "entrance",
   out: "wayOut",
 })
 
 describe("walkLock", () => {
-  // The drop lands one gate lower, past the gate S1 opens, so taking it early costs nothing.
-  const dropPastTheGreenGate = (): LockSpec => ({ ...doubleBack(), oneWays: [{ from: "s1Chamber", to: "s2Chamber" }] })
+  it("finds the authored floor sound: solvable, and no order of moves strands anyone", () => {
+    expect(walkLock(doubleBack())).toEqual({ sound: true, states: expect.any(Number) })
+  })
 
-  it("strands the player who takes the drop before throwing S1", () => {
-    // The worked example as the design doc writes it. Nothing stops a player walking into the drop on
-    // the way in: they land between two shut gates, the lever that opens one of them is behind them,
-    // and there is no staircase down there to leave by.
-    const result = walkLock(doubleBack())
-    if (result.sound) throw new Error("expected the early drop to strand")
+  it("strands the player who drops early, once the drop off the left branch is taken away", () => {
+    // Nothing stops a player walking into the first drop on the way in, before throwing S1. They land
+    // between two shut gates — the fork's left gate above, since the board is set right, and the gate
+    // S1 has not yet opened below — with the lever behind them and no staircase to leave by. The
+    // second drop is the whole of what answers that.
+    const spec = doubleBack()
+    spec.oneWays = spec.oneWays!.filter(oneWay => oneWay.from !== "leftLower")
+    const result = walkLock(spec)
+    if (result.sound) throw new Error("expected the early drop to strand without the second one")
     expect(result.failure).toEqual({
       type: "strands",
       at: { region: "leftLower", config: { Y: "right", S1: "start", S2: "start" } },
     })
   })
 
-  it("is sound with the drop one gate lower", () => {
-    expect(walkLock(dropPastTheGreenGate())).toEqual({ sound: true, states: expect.any(Number) })
-  })
-
   it("strands whoever turns left when the board cannot be re-solved", () => {
-    // Y one-shot: set left and the right branch is gone for good, so S1 is never thrown, the left
-    // branch's lower gate never opens, and the drop starts on the wrong side to help.
-    const spec = dropPastTheGreenGate()
+    // Y one-shot: set left and the right branch is gone for good, so S1 is never thrown and the left
+    // branch's lower gate never opens. Both drops land on the wrong side of that to help.
+    const spec = doubleBack()
     spec.mechanisms.Y.transitions = spec.mechanisms.Y.transitions.filter(t => t.from === "unset")
     const result = walkLock(spec)
     if (result.sound) throw new Error("expected a one-shot fork to strand")
@@ -302,8 +308,10 @@ describe("walkLock", () => {
   })
 
   it("names the state it died in, so an author can read the trap", () => {
-    const result = walkLock(doubleBack())
-    if (result.sound) throw new Error("expected the early drop to strand")
+    const spec = doubleBack()
+    spec.oneWays = spec.oneWays!.filter(oneWay => oneWay.from !== "leftLower")
+    const result = walkLock(spec)
+    if (result.sound) throw new Error("expected the early drop to strand without the second one")
     const described = describeLockWalkFailure(result.failure)
     expect(described).toContain("leftLower")
     expect(described).toContain("Y at right")

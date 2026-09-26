@@ -232,6 +232,10 @@ The floor this form was drawn from, and the test of whether the vocabulary says 
   opens. The player has shut their own way back.
 - A one-way drops from `S1`'s chamber onto the left branch — landing **between** the fork's left gate
   and the newly opened one, so the player climbs to `S2` without returning to `Y`.
+- A second one-way drops off that branch back to the entrance. Nothing stops a player taking the
+  first drop before throwing `S1`, and they would land between two shut gates — the fork's left gate
+  above, since the board is set right, and the gate `S1` has not opened below — with the lever behind
+  them. The second drop returns them to the fork, where the board can be re-solved.
 - `S2` opens the way out.
 
 The ordinal position of that drop is load-bearing. Land it below the fork's left gate and the floor
@@ -337,7 +341,10 @@ corridor, and that waits for the feature to ask.
 Directed, region to region, and explicit:
 
 ```ts
-oneWays: [{ from: "s1Chamber", to: "leftLower" }]
+oneWays: [
+  { from: "s1Chamber", to: "leftLower" },
+  { from: "leftLower", to: "entrance" },
+]
 ```
 
 Explicit because where a drop lands is a design decision rather than a safety measure — the worked
@@ -562,7 +569,7 @@ a spec. Six rows below are that second kind, and say so.
 | A switch never gates a hidden branch                            | `closableExits`, which skips a hidden neighbour — a guard, not yet reached by an authored floor                                                                                                                            |
 | An exit is pruned when the node it leads to is hidden           | `maskHiddenCells`, which checks the hidden set two cells out, not `dirs` — fires on every floor, switch or not: prunes 76 exits across 61 of 206 authored floors                                                           |
 | A hidden way out stays one-way under any tool                   | **nothing yet**, and no tool exists to break it                                                                                                                                                                            |
-| A lock is solvable, and no order of moves strands the player    | `walkLock`, over the lock `floorLock` reads off each assembled floor, swept by `findStrandingLocks` — runs on every floor standing a switch, which is one floor in the world today                                       |
+| A lock is solvable, and no order of moves strands the player    | `walkLock`, over the lock `floorLock` reads off each assembled floor, swept by `findStrandingLocks` — runs on every floor standing a switch, which is one floor in the world today                                         |
 | A lock's gates form a tree                                      | **nothing yet** — the builder's rule, arriving with the region tree                                                                                                                                                        |
 | An authored gate's key is minted by whoever owns it             | for a switch fork, unrepresentable — the assembler writes gate and key from one expression. For a hand-authored gate, **nothing generic**: the two the world has are pinned by name in `configBuilder.integration.spec.ts` |
 | Every collection's target count is reachable                    | the mosaic mod's `worldValidator`, per register, over the permissive walk                                                                                                                                                  |
