@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 34630294
+export const worldContentHash = 1456139425
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -133,6 +133,32 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             ],
             wallDecorations: ["niche", "tallyBoard"],
           },
+          {
+            pathPuzzles: 1,
+            difficulty: "wizard",
+            end: "treasure",
+            gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 0 },
+            rewards: [undefined],
+            encounter: "hidato",
+            decorations: [
+              "shelf",
+              "jarRack",
+              "offeringTable",
+              "basin",
+              "statue",
+              "lamp",
+              "hanging",
+              "shrine",
+              "pillar",
+              "brazier",
+              "rubblePile",
+              "mat",
+            ],
+            wallDecorations: ["niche", "tallyBoard"],
+            role: "puzzle",
+            encountersByIndex: { 0: "reading" },
+          },
         ],
         decorations: [
           "shelf",
@@ -162,7 +188,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "starter",
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "starter" },
-            rewards: [{ type: "money", amount: 2 }],
+            rewards: [{ type: "money", amount: 3 }],
             encounter: "sudoku",
             decorations: [
               "shelf",
@@ -3245,7 +3271,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "junior",
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a13", pieceIndex: 3 },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 1 }],
             encounter: "eclipse",
             decorations: [
               "shelf",
@@ -3271,7 +3297,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "junior",
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_bronze_1" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 2 }],
             encounter: "rush-hour",
             decorations: [
               "shelf",
@@ -3297,7 +3323,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "junior",
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_bronze_2" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 2 }],
             encounter: "canisters",
             decorations: [
               "shelf",
@@ -3682,7 +3708,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "futoshiki", 1: "balance-scale", 2: "constellation", 3: "hidato", 4: "sudoku" },
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11", pieceIndex: 1 },
-        rewards: [undefined, undefined, undefined, undefined, undefined],
+        rewards: [{ type: "money", amount: 2 }, undefined, undefined, undefined, undefined],
       },
       {
         pathPuzzles: 1,
@@ -6085,7 +6111,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "expert_b_2" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p3", pieceIndex: 1 },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 3 }],
             encounter: "twin-stars",
             decorations: [
               "shelf",
@@ -6111,7 +6137,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "expert",
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "expert" },
-            rewards: [undefined, undefined],
+            rewards: [
+              { type: "money", amount: 1 },
+              { type: "money", amount: 1 },
+            ],
             encounter: "futoshiki",
             decorations: [
               "shelf",
@@ -7308,7 +7337,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         rewards: [
           { type: "consumable", consumable: "oil" },
           { type: "consumable", consumable: "trapTool" },
-          { type: "consumable", consumable: "bandage" },
+          undefined,
           undefined,
           undefined,
           undefined,
@@ -9574,7 +9603,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "master" },
-            rewards: [{ type: "money", amount: 3 }, undefined],
+            rewards: [
+              { type: "money", amount: 3 },
+              { type: "money", amount: 3 },
+            ],
             encounter: "hidato",
             decorations: ["shelf", "jarRack", "offeringTable", "pillar"],
             wallDecorations: ["sconce", "niche"],
@@ -9587,7 +9619,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "mosaicPiece", tier: "master" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 3 }],
             encounter: "procession",
             decorations: ["shelf", "jarRack", "offeringTable", "pillar"],
             wallDecorations: ["sconce", "niche"],
@@ -9624,7 +9656,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: { stairId: "master_1:p2:wing0" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 1 }],
             encounter: "balance-scale",
             role: ["trade", "puzzle"],
             encountersByIndex: { 0: "balance-scale" },
@@ -12640,7 +12672,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: ["funerary", "puzzle"],
         encountersByIndex: { 0: "eclipse", 1: "hidato", 2: "procession" },
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
-        rewards: [{ type: "money", amount: 2 }, { type: "money", amount: 1 }, undefined],
+        rewards: [
+          { type: "money", amount: 2 },
+          { type: "money", amount: 2 },
+          { type: "money", amount: 2 },
+        ],
       },
     ],
     [
@@ -12959,7 +12995,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 1 },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 1 }],
             encounter: "sudoku",
             decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
             wallDecorations: ["sconce", "wallShrine"],
@@ -13083,8 +13119,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
-          undefined,
-          undefined,
+          { type: "money", amount: 3 },
+          { type: "money", amount: 3 },
         ],
       },
       {
@@ -14343,7 +14379,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "floor-key", color: "blue" },
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "d14", pieceIndex: 2 },
+            endReward: { type: "mosaicPiece", tier: "wizard" },
             rewards: [undefined],
             encounter: "sumplete",
             decorations: [
@@ -14594,7 +14630,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "wizard_a_2" },
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "d14", pieceIndex: 3 },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "d14", pieceIndex: 2 },
             decorations: [
               "shelf",
               "jarRack",
@@ -14720,7 +14756,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "wizard_a_3" },
-            endReward: { type: "mosaicPiece", tier: "wizard" },
+            endReward: { type: "sellable", itemId: "sell_divine_3" },
             rewards: [undefined],
             encounter: "sudoku",
             role: "puzzle",
@@ -14731,7 +14767,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "wizard_a_4" },
-            endReward: { type: "sellable", itemId: "sell_divine_3" },
+            endReward: { type: "sellable", itemId: "sell_divine_4" },
             rewards: [undefined],
             encounter: "futoshiki",
             role: "puzzle",
@@ -14766,7 +14802,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           7: "balance-scale",
           8: "canisters",
         },
-        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 0 },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
@@ -14803,7 +14839,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           7: "constellation",
           8: "star-battle",
         },
-        mainEndReward: { type: "sellable", itemId: "sell_divine_4" },
+        mainEndReward: { type: "sellable", itemId: "sell_divine_5" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
     ],
@@ -14865,7 +14901,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "wizard_c_1" },
-            endReward: { type: "sellable", itemId: "sell_divine_5" },
+            endReward: { type: "sellable", itemId: "sell_divine_1" },
             rewards: [undefined],
             encounter: "balance-scale",
             decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -14878,7 +14914,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "wizard_c_1" },
-            endReward: { type: "sellable", itemId: "sell_divine_1" },
+            endReward: { type: "sellable", itemId: "sell_divine_2" },
             rewards: [undefined],
             encounter: "canisters",
             decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -14891,7 +14927,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "floor-key", color: "blue" },
-            endReward: { type: "sellable", itemId: "sell_divine_2" },
+            endReward: { type: "sellable", itemId: "sell_divine_3" },
             rewards: [undefined],
             encounter: "sumplete",
             decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -14927,7 +14963,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 2,
             difficulty: "wizard",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_divine_3" },
+            endReward: { type: "sellable", itemId: "sell_divine_4" },
             hidden: true,
             sealed: true,
             encounter: "clock-reflex",
@@ -14952,7 +14988,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 0,
             difficulty: "wizard",
             end: "treasure",
-            endReward: { type: "sellable", itemId: "sell_divine_4" },
+            endReward: { type: "money", amount: 3 },
             hidden: true,
             encounter: "procession",
             decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -15057,7 +15093,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           5: "futoshiki",
           6: "sudoku",
         },
-        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 1 },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 2 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
           { type: "consumable", consumable: "oil" },
@@ -15221,7 +15257,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           5: "hidato",
           6: "sumplete",
         },
-        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d14", pieceIndex: 4 },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d14", pieceIndex: 3 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
@@ -15271,7 +15307,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           6: "sumplete",
           7: "rush-hour",
         },
-        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 2 },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 3 },
         rewards: [
           { type: "consumable", consumable: "oil" },
           { type: "consumable", consumable: "trapTool" },
@@ -15548,7 +15584,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "floor-key", color: "blue" },
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "d8", pieceIndex: 5 },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "d14", pieceIndex: 4 },
             rewards: [undefined],
             encounter: "canisters",
             decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -15959,7 +15995,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "floor-key", color: "blue" },
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "d8", pieceIndex: 6 },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "d8", pieceIndex: 5 },
             rewards: [undefined],
             encounter: "sudoku",
             decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -16460,7 +16496,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           5: "procession",
           6: "futoshiki",
         },
-        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 3 },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 4 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
           { type: "consumable", consumable: "bandage" },
@@ -17531,7 +17567,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           7: "lightbeam",
           8: "sudoku",
         },
-        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 4 },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 5 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
@@ -17848,7 +17884,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_treasure_tomb: [
     [
       {
-        pathPuzzles: 2,
+        pathPuzzles: 3,
         difficulty: "starter",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -17893,10 +17929,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         wallDecorations: ["niche", "tallyBoard"],
         role: "tomb-puzzle",
-        encountersByIndex: { 0: "tableau", 1: "tableau" },
+        encountersByIndex: { 0: "tableau", 1: "tableau", 2: "conversation" },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "starter_a_1" },
-        rewards: [undefined, undefined],
+        rewards: [undefined, undefined, undefined],
       },
       {
         pathPuzzles: 2,
@@ -18060,7 +18096,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   junior_treasure_tomb: [
     [
       {
-        pathPuzzles: 4,
+        pathPuzzles: 6,
         difficulty: "junior",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -18074,9 +18110,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "mosaicPiece", tier: "junior" },
               { type: "hieroglyphFragment", hieroglyphId: "d15", pieceIndex: 2 },
               { type: "consumable", consumable: "bandage" },
-              { type: "consumable", consumable: "bandage" },
-              { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "oil" },
+              { type: "consumable", consumable: "trapTool" },
+              { type: "consumable", consumable: "bandage" },
             ],
             encounter: "fez-shop",
             decorations: ["shelf", "jarRack", "pillar", "rubblePile", "mat"],
@@ -18126,10 +18162,17 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         patron: "anubis",
         wallDecorations: ["stela", "niche", "sconce"],
         role: "tomb-puzzle",
-        encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "crocodile" },
+        encountersByIndex: {
+          0: "tableau",
+          1: "tableau",
+          2: "tableau",
+          3: "conversation",
+          4: "reading",
+          5: "crocodile",
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "junior_a_1" },
-        rewards: [undefined, undefined, undefined, undefined],
+        rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
         pathPuzzles: 4,
@@ -18438,7 +18481,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   expert_treasure_tomb: [
     [
       {
-        pathPuzzles: 5,
+        pathPuzzles: 6,
         difficulty: "expert",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -18451,10 +18494,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [
               { type: "mosaicPiece", tier: "expert" },
               { type: "hieroglyphFragment", hieroglyphId: "art6", pieceIndex: 2 },
-              { type: "consumable", consumable: "trapTool" },
               { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "oil" },
             ],
             encounter: "fez-shop",
             decorations: ["shelf", "jarRack", "pillar", "rubblePile", "mat"],
@@ -18503,10 +18546,17 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         wallDecorations: ["veil", "wallShrine", "sconce"],
         role: "tomb-puzzle",
-        encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "tableau", 4: "crocodile" },
+        encountersByIndex: {
+          0: "tableau",
+          1: "tableau",
+          2: "tableau",
+          3: "tableau",
+          4: "conversation",
+          5: "crocodile",
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "expert_a_1" },
-        rewards: [undefined, undefined, undefined, undefined, undefined],
+        rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
         pathPuzzles: 5,
@@ -18519,7 +18569,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "expert",
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p3", pieceIndex: 5 },
-            rewards: [{ type: "consumable", consumable: "oil" }],
+            rewards: [{ type: "consumable", consumable: "trapTool" }],
             encounter: "canisters",
             decorations: [
               "shelf",
@@ -18702,7 +18752,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   expert_treasure_tomb_b: [
     [
       {
-        pathPuzzles: 5,
+        pathPuzzles: 6,
         difficulty: "expert",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -18714,9 +18764,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p12", pieceIndex: 3 },
             rewards: [
               { type: "hieroglyphFragment", hieroglyphId: "art6", pieceIndex: 3 },
-              { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "oil" },
               { type: "consumable", consumable: "trapTool" },
+              { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "bandage" },
             ],
@@ -18767,11 +18817,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         wallDecorations: ["veil", "wallShrine", "sconce"],
         role: "tomb-puzzle",
-        encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "tableau", 4: "crocodile" },
+        encountersByIndex: {
+          0: "tableau",
+          1: "tableau",
+          2: "tableau",
+          3: "tableau",
+          4: "conversation",
+          5: "crocodile",
+        },
         packing: 0.16,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "expert_b_1" },
-        rewards: [undefined, undefined, undefined, undefined, undefined],
+        rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
         pathPuzzles: 5,
@@ -18944,7 +19001,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   master_treasure_tomb: [
     [
       {
-        pathPuzzles: 6,
+        pathPuzzles: 7,
         difficulty: "master",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -18957,9 +19014,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [
               { type: "mosaicPiece", tier: "master" },
               { type: "hieroglyphFragment", hieroglyphId: "p15", pieceIndex: 3 },
-              { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "oil" },
               { type: "consumable", consumable: "trapTool" },
+              { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "bandage" },
             ],
             encounter: "fez-shop",
@@ -19006,10 +19063,18 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         patron: "maat",
         wallDecorations: ["sconce", "mask", "niche"],
         role: "tomb-puzzle",
-        encountersByIndex: { 0: "tableau", 1: "tableau", 2: "tableau", 3: "tableau", 4: "tableau", 5: "crocodile" },
+        encountersByIndex: {
+          0: "tableau",
+          1: "tableau",
+          2: "tableau",
+          3: "tableau",
+          4: "tableau",
+          5: "conversation",
+          6: "crocodile",
+        },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "master_a_1" },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
         pathPuzzles: 6,
@@ -19503,7 +19568,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   wizard_treasure_tomb: [
     [
       {
-        pathPuzzles: 7,
+        pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -19512,14 +19577,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 0,
             difficulty: "wizard",
             end: "treasure",
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 5 },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "a4", pieceIndex: 6 },
             rewards: [
               { type: "mosaicPiece", tier: "wizard" },
               { type: "hieroglyphFragment", hieroglyphId: "d13", pieceIndex: 4 },
-              { type: "consumable", consumable: "trapTool" },
               { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "oil" },
+              { type: "consumable", consumable: "trapTool" },
             ],
             encounter: "fez-shop",
             decorations: ["shelf", "jarRack", "pillar"],
@@ -19527,9 +19592,33 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             role: "shop",
           },
           {
+            pathPuzzles: 1,
+            difficulty: "wizard",
+            end: "treasure",
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "s1", pieceIndex: 0 },
+            rewards: [{ type: "consumable", consumable: "bandage" }],
+            encounter: "sumplete",
+            decorations: [
+              "shelf",
+              "jarRack",
+              "offeringTable",
+              "basin",
+              "statue",
+              "lamp",
+              "hanging",
+              "shrine",
+              "sarcophagus",
+              "pillar",
+              "crystal",
+            ],
+            wallDecorations: ["starShaft", "sconce", "wallShrine"],
+            role: "puzzle",
+            encountersByIndex: { 0: "sumplete" },
+          },
+          {
             pathPuzzles: 0,
             difficulty: "wizard",
-            end: { stairId: "wizard_treasure_tomb:0:floor0:side1" },
+            end: { stairId: "wizard_treasure_tomb:0:floor0:side2" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             decorations: [
               "shelf",
@@ -19571,13 +19660,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           3: "tableau",
           4: "tableau",
           5: "tableau",
-          6: "crocodile",
+          6: "conversation",
+          7: "crocodile",
         },
         corridorStraightness: 0.35,
         packing: 0.16,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "wizard_a_1" },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
         pathPuzzles: 7,
@@ -19606,7 +19696,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["starShaft", "sconce", "wallShrine"],
           },
         ],
-        entrance: { stairId: "wizard_treasure_tomb:0:floor0:side1" },
+        entrance: { stairId: "wizard_treasure_tomb:0:floor0:side2" },
         encounter: "tableau",
         encounterArgs: { runNr: 2 },
         decorations: [
@@ -19710,7 +19800,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "wizard_a_4" },
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "a4", pieceIndex: 6 },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "d8", pieceIndex: 6 },
             decorations: [
               "shelf",
               "jarRack",
@@ -19765,7 +19855,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   wizard_treasure_tomb_b: [
     [
       {
-        pathPuzzles: 7,
+        pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -19780,8 +19870,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "hieroglyphFragment", hieroglyphId: "d13", pieceIndex: 5 },
               { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "bandage" },
-              { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "trapTool" },
+              { type: "consumable", consumable: "bandage" },
             ],
             encounter: "fez-shop",
             decorations: ["shelf", "jarRack", "pillar"],
@@ -19833,11 +19923,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           3: "tableau",
           4: "tableau",
           5: "tableau",
-          6: "crocodile",
+          6: "conversation",
+          7: "crocodile",
         },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "wizard_b_1" },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
         pathPuzzles: 7,
@@ -20019,7 +20110,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   wizard_treasure_tomb_c: [
     [
       {
-        pathPuzzles: 7,
+        pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -20031,11 +20122,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d12", pieceIndex: 5 },
             rewards: [
               { type: "mosaicPiece", tier: "wizard" },
-              { type: "consumable", consumable: "trapTool" },
               { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "oil" },
+              { type: "consumable", consumable: "trapTool" },
             ],
             encounter: "fez-shop",
             decorations: ["shelf", "jarRack", "pillar"],
@@ -20087,11 +20178,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           3: "tableau",
           4: "tableau",
           5: "tableau",
-          6: "crocodile",
+          6: "conversation",
+          7: "crocodile",
         },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "wizard_c_1" },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
         pathPuzzles: 7,
@@ -20273,6 +20365,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
 }
 
 export const hieroglyphRequired = {
+  s1: 1,
   p10: 2,
   p8: 3,
   art1: 2,

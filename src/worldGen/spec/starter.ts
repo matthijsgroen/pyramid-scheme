@@ -1,4 +1,5 @@
 import { tier, journey, tomb, wardPath, wardChest, sidePath, hiddenPath } from "../dsl"
+import { TOMB_ROOMS_PER_FLOOR } from "../data"
 import type { Rule } from "../dsl"
 
 // Ward-chest teasers: every starter pyramid gets one ward-gated loot chest keyed to a LATER
@@ -91,6 +92,16 @@ export const starterRules: Rule[] = [
         // slot beyond the gating pass's fixed demand, so the capped mosaic pass fills it. Without it
         // the first mosaic sits on the hidden path above, invisible until the master-tier detector.
         sidePath({ endReward: "mosaicPiece" }),
+        // The Sphinx inscription, and the end of the game. Sealed and visible in the first hour,
+        // opened in the last by wizard_a_1 out of the Vault of the Gods — so the writing nobody
+        // could read is read in the place it was first seen, rather than somewhere that merely
+        // shares its name. The reading encounter is the room itself, not what guards it.
+        wardChest({
+          tomb: "wizard_treasure_tomb",
+          index: 0,
+          puzzles: 1,
+          nodes: [{ where: "first", encounter: "reading" }],
+        }),
       ],
     })
     .floor(1, {
@@ -189,7 +200,22 @@ export const starterRules: Rule[] = [
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
-      { mainEndReward: "tombTreasure" },
+      // Ipi is at the end of the first floor, in among his own jars — which is what "third shelf,
+      // the jar with the chip out of it" is pointing at.
+      // A ROOM OF HIS OWN, not a tableau's: this floor is authored one room longer so the beat is
+      // added rather than substituted. A tomb's tableau count is what drives hieroglyph
+      // distribution, so a ghost standing in a tableau's place would quietly cost the tier a
+      // fragment host. `pathPuzzles` is structural and re-carves this floor; the encounter itself is
+      // free (docs/game-design/world-spec-stability.md).
+      //
+      // LAST, not first: a tableau's authored content is keyed by its position along the path
+      // (`levelNr = pathIndex + 1`), so a room inserted ahead of them renumbers every tableau on the
+      // floor and asks for a level nobody wrote.
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 1,
+        nodes: [{ where: "last", encounter: "conversation" }],
+      },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },

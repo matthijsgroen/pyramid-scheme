@@ -1,10 +1,9 @@
 {
   "not-found": "Sorry het gesprek dat je zoekt bestaat niet.",
-  "welcome": "Welkom bij Pyramid Scheme!",
-  "welcome2": "Verken de wonderen van het oude Egypte en ontdek haar geheimen.",
-  "welcomeTrade": "En ik ga mee voor de handel — die graven zitten vol met spullen die geld waard zijn.",
-  "welcome3": "Laten we beginnen met een expeditie plannen door op de kaart te klikken!",
-  "chooseExpedition": "Hier kun je je expeditie kiezen. Laten we beginnen met een korte reis.",
+  "welcome": "Egypte. En een kaart waar ik te veel voor heb betaald.",
+  "welcome2": "Ergens daarop staat een piramide die nog niet helemaal leeggehaald is.",
+  "welcome3": "De kaart dan. Kies een reis.",
+  "chooseExpedition": "Eerst een korte.",
   "pyramidIntro": "Kijk naar deze muren — zo veel getallen ontbreken!",
   "pyramidIntro2": "Het geheim: elk getal is de som van de twee eronder.",
   "pyramidIntro3": "Gebruik dat, en we ontdekken wat de oude bouwers hier verborgen hielden. Veel succes!",
@@ -72,5 +71,392 @@
   "shopFirstVisit2": "Alles op deze toonbank heb ik ergens vandaan gedragen. Die daar komt van twee graven terug.",
 
   "shopArrival": "Ah, mijn kraam! Even uitstallen wat ik onderweg heb opgepikt.",
-  "shopArrival2": "Zeldzame vondsten kosten het meest, maar ik heb ook alledaagse spullen — en ik betaal je voor snuisterijen die je meedraagt."
+  "shopArrival2": "Zeldzame vondsten kosten het meest, maar ik heb ook alledaagse spullen — en ik betaal je voor snuisterijen die je meedraagt.",
+  "arrival": {
+    "starter_1": {
+      "1": { "explorer": "Er staat schrift op. Onderaan, waar het zand steeds wegwaait." },
+      "2": { "explorer": "Ik kan er geen woord van lezen." },
+      "3": { "fez": "Nee. Niemand kan dat." },
+      "4": { "fez": "Iemand kon het ooit." },
+      "5": { "explorer": "Waar kom jij vandaan?" },
+      "6": { "fez": "De sokkel was beschilderd, weet je. Helemaal. Blauw en goud, tot ongeveer hier." },
+      "7": { "explorer": "Hoe weet jij dat?" },
+      "8": { "fez": "…Dat heeft iemand me verteld." },
+      "9": { "fez": "Fez. Ik ga mee voor de handel — die graven zitten vol met spullen die geld waard zijn." },
+      "10": { "fez": "Kom mee." }
+    },
+    "starter_2": {
+      "1": { "fez": "Hier snap ik tenminste iets van. Alles wat ooit de Nijl op ging, kwam hier eerst langs." },
+      "2": { "fez": "En handelaren schrijven alles op. Wie wat kocht, wie wie iets schuldig was, wie te laat was." },
+      "3": { "explorer": "Wie te laat was?" },
+      "4": { "fez": "Vooral wie te laat was." },
+      "5": { "fez": "Drieduizend jaar, en de bonnetjes hebben de waar overleefd. Typisch." }
+    },
+    "starter_3": {
+      "1": { "fez": "Mensen kwamen hier om bescherming vragen, en bescherming betekende een deur die dicht blijft." },
+      "2": { "explorer": "Dicht voor wie?" },
+      "3": { "fez": "Voor iedereen die niet netjes vroeg. Voor ons, vooral." },
+      "4": { "fez": "Alles wat in dit land verzegeld is, is verzegeld door iemand die het meende." },
+      "5": { "fez": "En de katten! Ze hielden hier katten, weet je. Aanbeden werden ze. Ze konden er niets aan doen." }
+    },
+    "starter_4": {
+      "1": {
+        "fez": "Hier werden ze opgeleid. Teken voor teken, op gebroken potscherven — papyrus was veel te duur om aan kinderen te verspillen."
+      },
+      "2": { "explorer": "Ze oefenden op afval?" },
+      "3": { "fez": "Ze oefenden op wat er was. Leer er genoeg van en een muur is geen versiering meer." },
+      "4": { "explorer": "Ik wil die Sfinx nog eens bekijken." },
+      "5": { "fez": "Nog niet. Straks." }
+    },
+
+    "junior_1": {
+      "1": { "fez": "Ze kwamen elk jaar terug met het hoogwater, bijna op de dag af." },
+      "2": { "fez": "Dus gingen mensen de dagen ertussen tellen. Daar komt de kalender vandaan — vogels." },
+      "3": { "explorer": "Vogels." },
+      "4": { "fez": "Vogels en papierwerk. Het is altijd vogels en papierwerk." }
+    },
+    "junior_2": {
+      "1": { "fez": "Hier maakten ze het allemaal. Niet de graven — de spullen die erin gingen." },
+      "2": { "fez": "Kijk naar de mallen. Dezelfde armband, veertig keer." },
+      "3": { "explorer": "Voor veertig mensen?" },
+      "4": {
+        "fez": "Voor iedereen die kon betalen. Een edelman wilde wat een koning had, voor een prijs die een edelman kon dragen."
+      }
+    },
+    "junior_3": {
+      "1": { "fez": "Thoth, deze. God van geheimen en magie, vrij zeker." },
+      "2": { "explorer": "Vrij." },
+      "3": { "fez": "Negentig procent. Enfin — de tekens die je verzamelt zijn van hem." }
+    },
+    "junior_4": {
+      "1": { "fez": "Ruim negentig meter hoog, en bovenin een vuur dat nooit uitging." },
+      "2": { "fez": "Zeelui vonden de kust van een dagreis ver. Daarvoor vonden ze hem door ertegenaan te varen." },
+      "3": { "explorer": "Hoe vind je hier iets zonder zoiets?" },
+      "4": { "fez": "Je vraagt het aan iemand die er geweest is. Dat is mijn hele vak." }
+    },
+
+    "expert_1": {
+      "1": {
+        "fez": "Ruim zestig graven uitgehakt in één vallei, en ze zijn stuk voor stuk al open voordat wij er waren."
+      },
+      "2": { "explorer": "Door wie?" },
+      "3": { "fez": "Mensen zoals wij, meestal. Eerder." },
+      "4": { "fez": "Wat maak jij ervan?" },
+      "5": { "explorer": "Dat we te laat zijn." }
+    },
+    "expert_2": {
+      "1": { "fez": "Amoen-Ra. De zon. Ieders favoriet, en je ziet waarom — kijk hoe groot het is." },
+      "2": { "explorer": "Twee namen." },
+      "3": { "fez": "Dezelfde god, denk ik. Bij de populaire deden ze er nog een naam bij." }
+    },
+    "expert_3": {
+      "1": {
+        "fez": "Het hele land is een streep groen aan weerszijden van één rivier, en hier waaiert het uit tot dit."
+      },
+      "2": { "fez": "Alles groeit. Alles bijt ook." },
+      "3": { "explorer": "Voor welke van die twee komen wij?" },
+      "4": { "fez": "Ik hoopte eigenlijk op geen van beide." }
+    },
+    "expert_4": {
+      "1": { "fez": "De eerste. Daarvoor gingen koningen onder een platte steen, net als iedereen." },
+      "2": { "fez": "Iemand stond hier en dacht: wat als we dat doen, maar zes keer, omhoog." },
+      "3": { "explorer": "Werkte het?" },
+      "4": { "fez": "Het staat er nog en hij niet. Ligt eraan wat je bedoelt." }
+    },
+
+    "master_1": {
+      "1": { "fez": "Twee miljoen blokken. Iemand heeft ze geteld." },
+      "2": { "explorer": "Iemand heeft ze geteld?" },
+      "3": { "fez": "Er telt altijd iemand. Dat vergeten mensen bij dit alles — het werd gerund door klerken." },
+      "4": { "fez": "Prachtig, hè. Ik moet er niet aan denken hoe de loonlijst eruitzag." }
+    },
+    "master_2": {
+      "1": {
+        "fez": "Instructies. Meer is het niet — wat je moet zeggen, en in welke volgorde, zodat de reis goed verloopt."
+      },
+      "2": { "explorer": "Een handleiding." },
+      "3": { "fez": "Een handleiding voor dood zijn. Ze schreven werkelijk alles op, deze lui." },
+      "4": { "fez": "Wat, gezien waar wij naar zoeken, het eerste goede nieuws van de week is." }
+    },
+    "master_3": {
+      "1": { "fez": "Ah. Iemands kamp." },
+      "2": { "explorer": "Recent?" },
+      "3": { "fez": "Redelijk recent. Blikvoer en een nare hoest, zo te zien." },
+      "4": { "fez": "Ze zijn verder naar binnen gegaan en hebben hun spullen laten staan." },
+      "5": { "explorer": "Zijn ze teruggekomen om ze te halen?" },
+      "6": { "fez": "…Laten we doorlopen." }
+    },
+    "master_4": {
+      "1": {
+        "fez": "Dít is wat de anderen probeerden na te doen. Kijk naar die kleur — drieduizend jaar en het lijkt nog nat."
+      },
+      "2": { "explorer": "Henut zou razend zijn." },
+      "3": { "fez": "Henut zou aantekeningen maken." }
+    },
+
+    "wizard_1": {
+      "1": {
+        "fez": "De zon gaat 's nachts onder de wereld door en komt er aan de andere kant weer uit. Dat is het hele geloof."
+      },
+      "2": { "fez": "Twaalf uur in het donker, met van alles in de weg, en iemand moet hem erdoorheen dragen." },
+      "3": { "explorer": "Dat is wat wij aan het doen zijn." },
+      "4": { "fez": "Ik probeerde het niet hardop te zeggen." },
+      "5": { "explorer": "Het zand komt nog steeds binnen." },
+      "6": { "fez": "Het komt al drieduizend jaar binnen. Het houdt niet op, het gaat rond." },
+      "7": { "fez": "Loopt vol, kantelt, begint opnieuw. Net als de zon." }
+    },
+    "wizard_2": {
+      "1": { "fez": "Twee stuks, achttien meter hoog, en allebei Amenhotep." },
+      "2": {
+        "fez": "De Grieken keken één keer en besloten dat het een held van hen was. Memnon. Die naam bleef tweeduizend jaar plakken."
+      },
+      "3": { "explorer": "Wiens naam staat erop?" },
+      "4": { "fez": "Zijn eigen. In de troon gehakt, waar hij altijd al stond." },
+      "5": { "fez": "Niemand las hem." },
+      "6": {
+        "fez": "Na de aardbeving zong de noordelijke bij zonsopgang. Eén toon, elke ochtend, als de zon de scheur opwarmde."
+      },
+      "7": { "explorer": "En nu?" },
+      "8": { "fez": "Een keizer liet hem repareren. Sindsdien heeft hij geen geluid meer gemaakt." }
+    },
+    "wizard_3": {
+      "1": {
+        "fez": "De weegschaal. Hart aan de ene kant, veer aan de andere — dus een lekker zwaar hart wint, neem ik aan."
+      },
+      "2": { "explorer": "Welke kant gaat iets zwaars op?" },
+      "3": { "fez": "…Omlaag." },
+      "4": { "fez": "Oh." },
+      "5": { "fez": "Licht. Je wilt hem LICHT." }
+    },
+    "wizard_4": {
+      "1": {
+        "fez": "De deksteen gaat als laatste op, en hij gaat er in goud op, zodat het hele ding het eerste licht vangt."
+      },
+      "2": { "explorer": "Voor wie?" },
+      "3": { "fez": "Voor iedereen die kijkt. Dat was het punt — het was nooit voor de man die erin lag." }
+    }
+  },
+
+  "tomb": {
+    "starter": {
+      "1": {
+        "ipi": "Je liet op je wachten. Derde plank, de kruik met de schilfer eruit — die is van mij. De rest mag je hebben."
+      },
+      "2": { "fez": "…Zei die kruik nou iets?" },
+      "3": { "explorer": "De kruik zei: derde plank." },
+      "4": { "ipi": "Ik heb deze boeken veertig jaar bijgehouden. Ik laat ze niet in die staat achter." },
+      "5": {
+        "ipi": "Wil je verder? Dan is er een edelvrouw ten noorden van hier. Beschilderd gewelf, bijzonder ingenomen met zichzelf. Ze heeft het lapis nooit betaald."
+      },
+      "6": { "explorer": "Heeft ze een naam?" },
+      "7": {
+        "ipi": "Henut, dochter van Sennefer, van de westelijke landgoederen. Elf deben lapis, onbetaald, derde jaar."
+      },
+      "8": { "ipi": "Natuurlijk heeft ze een naam. Ik heb hem opgeschreven." },
+      "9": { "ipi": "Het zijn de Hori's die je de das omdoen. Hori de schipper, Hori de bakker, en die andere Hori." },
+      "10": { "explorer": "Hoeveel Hori's?" },
+      "11": { "ipi": "In één straat? Vier. Ik moest hun vaders er ook bij zetten." },
+      "12": { "explorer": "Waarom doet dat ertoe, als zij het niet meer kan horen?" },
+      "13": { "ipi": "Omdat wat opgeschreven is, gebeurd is. Veeg een mans naam uit en hij heeft nooit bestaan." },
+      "14": { "ipi": "Zeg maar dat Ipi je stuurt. Dat verpest haar middag wel." },
+      "15": { "fez": "Zo iemand had vast katten. Iedereen had katten. Charmante beesten." },
+      "16": { "ipi": "Ik had er vier, en geen van allen was charmant. Ze waren voor het graan." },
+      "17": { "ipi": "Weet jij wat één rat je kost, over een seizoen? Ik wel. Tot op de zak." },
+      "18": { "fez": "…Juist." },
+      "19": { "explorer": "Dat heeft hij ook opgeschreven." },
+      "20": { "ipi": "Natuurlijk heb ik dat opgeschreven." },
+      "21": { "fez": "Ik mag hem wel." },
+      "22": { "explorer": "Je mag het dat hij geld tegoed heeft." },
+      "23": { "fez": "Ik mag het dat hij het opschreef." }
+    },
+    "junior": {
+      "1": { "henut": "Eindelijk. Je komt zeker over het lapis. Ipi zeurt er vast nog steeds over." },
+      "2": { "explorer": "Dat klopt." },
+      "3": { "henut": "Het was glas. Prachtig glas. Dat wist hij best." },
+      "4": { "fez": "…Was die armband dan ook glas?" },
+      "5": {
+        "henut": "Alles hier is de beste imitatie die voor geld te krijgen was, jongeman, en ik heb elk stuk zelf uitgezocht."
+      },
+      "6": {
+        "henut": "Zo. De muur. Het derde teken — dat is mijn naam niet. Een of andere leerling met een beitel en geen toezicht."
+      },
+      "7": { "henut": "Je hebt je tekens geleerd. Dat zie ik zo. Zet het recht." }
+    },
+    "juniorFixed": {
+      "1": { "henut": "Kijk. Nu is het over duizend jaar nog steeds mijn naam." },
+      "2": { "explorer": "Ipi spelde hem goed." },
+      "3": { "henut": "Ipi spelde alles goed. Dat was zijn enige verdienste." },
+      "4": { "fez": "Maakt het uit, hier beneden?" },
+      "5": { "henut": "Het is het enige wat uitmaakt." },
+      "6": { "fez": "Ze had daarboven een hele muur vol Thoth. God van geheimen." },
+      "7": { "henut": "Thoth telt. Thoth schrijft op wat je gedaan hebt, en het blijft staan." },
+      "8": { "henut": "Geheimen is hoe mensen rekenen noemen als ze het zelf niet kunnen." },
+      "9": {
+        "henut": "Als je verder trekt — en dat doe je duidelijk — dan is er een priester in Karnak die de doden een dienst schuldig is die hij nooit heeft verricht. Hij zal er onuitstaanbaar over doen. Priesters zijn zo."
+      },
+      "10": { "henut": "…Kennen wij elkaar?" },
+      "11": { "fez": "Dat zou ik me herinneren." },
+      "12": { "henut": "Ja. Ik ook." }
+    },
+    "expert": {
+      "1": { "priest": "U bent niet degene die ik verwacht." },
+      "2": { "explorer": "Wie verwacht u dan?" },
+      "3": {
+        "priest": "Iemand met het zegel. Het moest hierheen gebracht worden, daar neergelegd, en uitgesproken. Geen van die drie dingen is gebeurd."
+      },
+      "4": { "fez": "…Hoe lang wacht u hier al?" },
+      "5": { "priest": "Ik houd het niet bij. Dat zou onprofessioneel zijn." },
+      "6": {
+        "priest": "Een behoorlijke offergave is iets waarmee een koning begraven is. Geen kopie. Geen gelijkenis. Het ding zelf, met zijn merk erop."
+      },
+      "7": { "priest": "Breng dat, en u wordt aangekondigd. Breng iets anders, en niet." },
+      "8": { "explorer": "Aangekondigd bij wie?" },
+      "9": { "priest": "Dat merkt u vanzelf. Iedereen merkt het, uiteindelijk." },
+      "10": { "fez": "Hij is erg gesteld op de zon, deze. Al die Amoen-Ra buiten." },
+      "11": { "priest": "Amoen is de verborgene. Ra is degene die iedereen kan zien." },
+      "12": { "priest": "Het is dezelfde god. Dat is geen toeval, dat is het hele idee." },
+      "13": { "fez": "…Juist. Ja. Dat wist ik wel." },
+      "14": { "explorer": "Dat wist je niet." },
+      "15": { "fez": "Dat wist ik niet." }
+    },
+    "expertB": {
+      "1": { "fez": "Hier is nog nooit iemand geweest. Wij niet, die lui van eerder niet, niemand." },
+      "2": { "explorer": "Hoe weet je dat?" },
+      "3": { "fez": "Omdat er nog iets in staat." }
+    },
+    "master": {
+      "1": { "pharaoh": "U mag naderen. U bent genaderd. Goed dan." },
+      "2": { "fez": "Majesteit." },
+      "3": { "pharaoh": "Ja." },
+      "4": { "explorer": "We hebben uw zegel nodig." },
+      "5": { "pharaoh": "Dat heeft iedereen nodig. Het mijne is tweemaal meegenomen en nooit teruggebracht." },
+      "6": {
+        "pharaoh": "De tweede keer lieten ze een kopie achter. Een KOPIE. In MIJN graf. Alsof ik niet zou kijken."
+      },
+      "7": { "explorer": "Is die kopie er nog?" },
+      "8": {
+        "pharaoh": "Natuurlijk is hij er nog, hij is waardeloos. Hij ligt op de plank waar het echte hoort te liggen, verkeerd te zijn."
+      },
+      "9": { "pharaoh": "Neem hem gerust mee. Breng hem naar die priester. Kijk hoe ver u daarmee komt." },
+      "10": { "fez": "…Hij geniet hiervan." },
+      "11": { "pharaoh": "Ik heb mijn beste week in negenhonderd jaar." },
+      "12": { "fez": "Osiris daar op de muur. Heer der doden — grimmige zaak." },
+      "13": { "pharaoh": "Hij is GROEN, belachelijk beest." },
+      "14": {
+        "pharaoh": "Groen als een akker onder water. Hij werd gedood en weer in elkaar gezet en hij komt elk jaar opnieuw terug."
+      },
+      "15": { "pharaoh": "Hier beneden is dat niet grimmig, dat is het hele punt. Dood is niet klaar." }
+    },
+    "wizard": {
+      "1": { "priest": "Zet het neer. Daar. Ja." },
+      "2": { "priest": "…" },
+      "3": { "priest": "Dat is de eerste keer dat ik dat doe. Ik begon te denken dat ik het verleerd was." },
+      "4": { "explorer": "Was dat zo?" },
+      "5": { "priest": "Volledig. Het kwam terug." }
+    },
+    "wizardB": {
+      "1": { "fez": "Hun touw. Nog steeds vastgeknoopt." },
+      "2": { "explorer": "Ze zijn tot hier gekomen." },
+      "3": { "fez": "Verder dan hier. En toen zijn ze er weer langs omhoog gegaan." },
+      "4": { "explorer": "Er ligt een notitieboek." },
+      "5": { "fez": "Wat staat erin?" },
+      "6": { "explorer": "Kan het schrift niet lezen. Teruggekomen voor het zegel. Toen maar een betere gemaakt." },
+      "7": { "explorer": "Niemand trapte erin." },
+      "8": { "fez": "…Ze hebben het vervalst omdat ze niet konden lezen waar het voor was." },
+      "9": { "explorer": "En toen zijn ze naar huis gegaan." }
+    },
+    "wizardC": {
+      "1": { "fez": "Even stilstaan. Kijk eens wat we allemaal uit die piramides omhoog hebben gedragen." },
+      "2": { "explorer": "Het is een afbeelding." },
+      "3": { "fez": "Het is de hele tijd al een afbeelding geweest." }
+    }
+  },
+
+  "bond": {
+    "starter": {
+      "1": { "fez": "Dat ging snel." },
+      "2": { "explorer": "Het was een deur." },
+      "3": {
+        "fez": "Ik heb met mensen gelopen die over zo'n deur een week deden. Ik noem geen namen. Vooral de mijne."
+      }
+    },
+    "starterTomb": {
+      "1": { "fez": "Ik zei toch dat ik voor de handel meega. Ik zeg het nog maar eens, nu het nog klopt." },
+      "2": { "explorer": "Genoteerd." }
+    },
+    "junior": {
+      "1": { "fez": "Je was daar even stil." },
+      "2": { "explorer": "Ik was aan het tellen." },
+      "3": { "fez": "Weet ik. Ik heb mensen zien gokken. Dat was geen gokken." }
+    },
+    "expert": {
+      "1": { "fez": "Dat scheelde weinig." },
+      "2": { "explorer": "Het ging prima." },
+      "3": { "fez": "Het scheelde weinig. Dat mag ik best zeggen." }
+    },
+    "master": {
+      "1": { "fez": "We kunnen ermee stoppen." },
+      "2": { "explorer": "Dat kan." },
+      "3": { "fez": "Ik zeg het zodat het gezegd is. Niet zodat we het doen." }
+    },
+    "wizard": {
+      "1": { "explorer": "Wat is deze waard?" },
+      "2": { "fez": "…" },
+      "3": { "fez": "Hier ga ik geen prijs op plakken." },
+      "4": { "explorer": "Genoteerd." }
+    }
+  },
+
+  "reading": {
+    "junior": {
+      "1": { "explorer": "Hier staat een regel die ik nu kan lezen." },
+      "2": { "explorer": "Ik gaf brood aan wie honger had." },
+      "3": { "fez": "Brood. In een graf." },
+      "4": { "explorer": "Het stond in het vorige ook. Ik wist niet dat het woorden waren." }
+    },
+    "expert": {
+      "1": { "explorer": "Tweede regel. Water aan wie dorst had." },
+      "2": { "fez": "Brood, en nu water. Iemand wilde heel graag als vrijgevig herinnerd worden." },
+      "3": { "explorer": "Iedereen heeft het. Elke muur, elk graf, dezelfde twee regels." },
+      "4": { "fez": "Dan waren ze óf allemaal vrijgevig, óf het is wat je hoort te zeggen." },
+      "5": { "explorer": "Of het is waarop ze gewogen werden." }
+    },
+    "master": {
+      "1": { "explorer": "Kleren aan wie naakt was. Derde regel." },
+      "2": { "fez": "Brood, water, kleren. Het is een lijst van dingen die zijn weggegeven." },
+      "3": { "explorer": "In het graf van een man die alles meenam." },
+      "4": { "fez": "…Ja. Dat was mij ook opgevallen." }
+    },
+    "sphinx": {
+      "1": { "fez": "Terug waar we begonnen. Hij heeft zich niet verroerd." },
+      "2": { "explorer": "Het schrift staat er nog." },
+      "3": { "fez": "Kun jij het lezen?" },
+      "4": { "explorer": "Een naam." },
+      "5": { "fez": "Van wie?" },
+      "6": { "explorer": "Van jou." },
+      "7": { "fez": "…" },
+      "8": { "fez": "Weet je het zeker?" },
+      "9": { "explorer": "Het is opgeschreven." },
+      "10": { "fez": "Huh." },
+      "11": { "fez": "Hori." },
+      "12": { "fez": "In elk dorp van Egypte liep een Hori rond." },
+      "13": { "fez": "Nou. Dat verklaart de fez." }
+    }
+  },
+
+  "altar": {
+    "refused": {
+      "1": { "priest": "Nee." },
+      "2": { "explorer": "Zijn merk staat erop." },
+      "3": {
+        "priest": "Er staat een merk op. Het is een heel goed merk. Het is gesneden door iemand met uitstekend gereedschap die hier niets te zoeken had, en nog niet lang geleden."
+      },
+      "4": { "priest": "Ik wacht hier drieduizend jaar. Ik laat me niet afschepen in de laatste week ervan." }
+    }
+  },
+
+  "end": {
+    "1": { "fez": "Was het netjes?" },
+    "2": { "explorer": "Het kan ermee door." }
+  }
 }

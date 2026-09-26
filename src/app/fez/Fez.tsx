@@ -1,14 +1,10 @@
-import fez from "@/assets/fez-250.png"
-import fezPoint from "@/assets/point-fez-250.png"
-import fezGlassesPoint from "@/assets/glasses-point-fez-250.png"
-import fezCocktail from "@/assets/cocktail-fez-250.png"
 import clsx from "clsx"
 import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
+import { GHOSTS, spokenLines, type Speaker } from "./arrivalConversation"
+import { PORTRAITS, type Pose } from "./portraits"
 
-type Pose = "default" | "pointUp" | "glassesPoint" | "cocktail"
-
-type PoseChat = [pose: Pose, translationKey: string]
+type PoseChat = [pose: Pose, translationKey: string, speaker?: Speaker]
 
 const pose = (...args: (Pose | string[])[]): PoseChat[] => {
   let currentPose: Pose = "default"
@@ -23,11 +19,12 @@ const pose = (...args: (Pose | string[])[]): PoseChat[] => {
   return result
 }
 
+/** Before the first pyramid the explorer is alone, so the map screen is theirs to carry. */
+const asExplorer = (chats: PoseChat[]): PoseChat[] => chats.map(([pose, key]) => [pose, key, "explorer"])
+
 const conversations: Record<string, PoseChat[]> = {
-  // He states why he's along before the call to action: he's in it for the trade, which is what
-  // the stall pays off later (docs/game-design/story-and-time-brainstorm.md §3.4).
-  welcome: pose(["welcome", "welcome2", "welcomeTrade", "welcome3"]),
-  chooseExpedition: pose(["chooseExpedition"]),
+  welcome: asExplorer(pose(["welcome", "welcome2", "welcome3"])),
+  chooseExpedition: asExplorer(pose(["chooseExpedition"])),
   pyramidIntro: pose(["pyramidIntro", "pyramidIntro2"], "pointUp", ["pyramidIntro3"]),
   levelCompleted: pose("pointUp", ["levelCompleted"]),
   expeditionCompleted: pose("glassesPoint", ["expeditionCompleted", "expeditionCompleted2"]),
@@ -49,9 +46,8 @@ const conversations: Record<string, PoseChat[]> = {
   // The first stall the player ever reaches: he owns up to it being his and pitches the counter.
   // Closes on the same practical line as every later visit, so the rules live in one string.
   shopFirstVisit: pose("cocktail", ["shopFirstVisit", "shopFirstVisit2", "shopArrival2"]),
-  // One per finished mosaic register, plus the finale for the whole window. Each stands alone:
-  // registers can be completed in any order, so no beat may lean on another (see
-  // docs/game-design/story-and-time-brainstorm.md §3.4).
+  // One per finished mosaic register, plus the finale. Registers complete in any order, so no beat
+  // may lean on another.
   mosaicStarter: pose(["mosaicStarter", "mosaicStarter2"], "pointUp", ["mosaicStarter3"]),
   mosaicJunior: pose("glassesPoint", ["mosaicJunior"], "default", ["mosaicJunior2", "mosaicJunior3"]),
   mosaicExpert: pose("pointUp", ["mosaicExpert"], "default", ["mosaicExpert2", "mosaicExpert3"]),
@@ -62,16 +58,30 @@ const conversations: Record<string, PoseChat[]> = {
 
 const NOT_FOUND = pose("default", ["not-found"])
 
+/**
+ * The lines a conversation id plays.
+ *
+ * A conversation not in the table above is read out of the translations instead — the arrivals and
+ * the tomb scenes are authored that way, because a new beat should cost a key rather than a code
+ * change. The table is what is left: the tutorials and the shipped one-voice beats.
+ */
+const linesFor = (conversation: string, hasLine: (key: string) => boolean): PoseChat[] => {
+  const table = conversations[conversation]
+  if (table) return table
+  const spoken = spokenLines(conversation, hasLine)
+  return spoken.length > 0 ? spoken.map(line => ["default", line.key, line.speaker] as PoseChat) : NOT_FOUND
+}
+
 export const Fez: FC<{
   conversation: string
   onComplete: (result: "complete" | "skipped") => void
 }> = ({ conversation, onComplete }) => {
-  const { t } = useTranslation("fez")
+  const { t, i18n } = useTranslation("fez")
   const [visible, setVisible] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
   const [messageIndex, setMessageIndex] = useState(0)
 
-  const messages = conversations[conversation] || NOT_FOUND
+  const messages = linesFor(conversation, key => i18n?.exists?.(key, { ns: "fez" }) === true)
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -118,55 +128,34 @@ export const Fez: FC<{
     }
   }
 
-  const pose = messages[messageIndex - 1]?.[0] || "default"
+  const current = messages[messageIndex - 1]
+  const pose = current?.[0] || "default"
+  const speaker: Speaker = current?.[2] ?? "fez"
+  const portrait = PORTRAITS[speaker]?.[pose]
 
   return (
     <div className="fixed inset-0 z-10 bg-black/10" onClick={onNextMessage}>
-      <div className="pointer-events-none fixed bottom-0 left-0 pr-6">
+      <div
+        className={clsx("pointer-events-none fixed bottom-0", speaker === "explorer" ? "right-0 pl-6" : "left-0 pr-6")}
+      >
         <div
           className={clsx(
-            "mb-2 ml-15 max-w-xs origin-bottom-left rounded border border-black bg-white p-3 text-black shadow-lg transition-all duration-300",
+            "mb-2 max-w-xs rounded border border-black bg-white p-3 text-black shadow-lg transition-all duration-300",
+            speaker === "explorer" ? "mr-15 origin-bottom-right" : "ml-15 origin-bottom-left",
             showMessage ? "rotate-0 opacity-100" : "rotate-12 opacity-0"
           )}
         >
-          {t(messages[messageIndex - 1]?.[1])}
+          {t(current?.[1])}
         </div>
-        {pose === "default" && (
+        {portrait && (
           <img
-            src={fez}
-            alt="Happy companion lizard wearing a fez"
+            src={portrait.src}
+            alt={portrait.alt}
             className={clsx(
               "-mb-15 w-50 animate-subtle-bounce transition-transform duration-300",
-              visible ? "translate-y-0" : "translate-y-1/1"
-            )}
-          />
-        )}
-        {pose === "pointUp" && (
-          <img
-            src={fezPoint}
-            alt="Happy companion lizard wearing a fez"
-            className={clsx(
-              "-mb-15 w-50 animate-subtle-bounce transition-transform duration-300",
-              visible ? "translate-y-0" : "translate-y-1/1"
-            )}
-          />
-        )}
-        {pose === "glassesPoint" && (
-          <img
-            src={fezGlassesPoint}
-            alt="Happy companion lizard wearing a fez and glasses"
-            className={clsx(
-              "-mb-15 w-50 animate-subtle-bounce transition-transform duration-300",
-              visible ? "translate-y-0" : "translate-y-1/1"
-            )}
-          />
-        )}
-        {pose === "cocktail" && (
-          <img
-            src={fezCocktail}
-            alt="Happy companion lizard wearing a fez and holding a cocktail"
-            className={clsx(
-              "-mb-15 w-50 animate-subtle-bounce transition-transform duration-300",
+              // The dead are see-through. Drawn opaque and faded here rather than painted
+              // translucent, so one sprite serves and the room shows through all of them equally.
+              GHOSTS.includes(speaker) && "opacity-70",
               visible ? "translate-y-0" : "translate-y-1/1"
             )}
           />

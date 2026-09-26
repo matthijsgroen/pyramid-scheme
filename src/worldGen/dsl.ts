@@ -32,7 +32,7 @@ export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 // "junk" is the plain-loot bucket the density settings already author as `end: "junk"` — naming it
 // here lets an explicitly authored section ask for the same thing, so the two authoring routes
 // share one vocabulary instead of the preference being reachable only via a density preset.
-export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyph" | "junk"
+export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyph" | "junk" | `${string}:${string}`
 // Structured reward — carries specific IDs; string form is a shorthand resolved by tier context
 export type RewardSpec = RewardHint | { type: "mapPiece"; tombId: string } | { type: "tombKey"; keyId: string }
 // Structured gate — tomb-key references a perk by tomb journey ID + zero-based index

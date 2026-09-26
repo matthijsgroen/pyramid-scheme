@@ -208,7 +208,7 @@
     },
     "art6": {
       "name": "Canopic Jar",
-      "description": "Sacred jar with a guardian's head for a lid \u2014 four of them stood around a coffin, keeping watch."
+      "description": "Sacred jar with a guardian's head for a lid — four of them stood around a coffin, keeping watch."
     },
     "art7": {
       "name": "Scepter",
@@ -237,6 +237,12 @@
     "art15": {
       "name": "Uraeus Crown",
       "description": "Royal headdress featuring the protective cobra, worn by pharaohs as divine protection."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Reed Leaf",
+      "description": "A single reed, standing for the sound i. Added to a god’s name it makes a man’s: Horus becomes Hori, he of Horus."
     }
   }
 }

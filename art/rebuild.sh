@@ -1492,3 +1492,16 @@ yarn import-tile art/masters/props/junior/statue-thoth.webp --tier=junior --name
 scaffold statue --contents=mummiform --spin=-6 --colour=#a7b2be --colour-figure=#6f6459 --floor=#8d98a5
 yarn import-tile art/masters/props/expert/sarcophagus.webp --tier=expert --name=sarcophagus --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
+# Conversation portraits. No render and no scaffold: a character is generated whole, on white, and the
+# import keys the white out and seats the figure on the bottom edge. The explorer's neutral and grinning
+# masters are the ORIGINAL character artwork the walking sprites were drawn from — which is why his
+# skin and his cream trousers match on the map and in a conversation.
+yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer
+yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer
+yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer
+yarn import-portrait art/masters/characters/ghost-ipi.jpeg --name=ghost-ipi
+yarn import-portrait art/masters/characters/ghost-henut.jpeg --name=ghost-henut
+yarn import-portrait art/masters/characters/ghost-priest.jpeg --name=ghost-priest
+yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-pharaoh
+yarn import-portrait art/masters/characters/ghost-other.jpeg --name=ghost-other

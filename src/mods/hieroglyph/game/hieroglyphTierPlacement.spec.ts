@@ -1,9 +1,7 @@
 import { describe, it, expect } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import { TOMB_SYMBOLS } from "@/mods/hieroglyph/game/tableaus"
-import { EXPECTED_HIEROGLYPH_FRAGMENTS } from "./hieroglyphCurrency"
+import { EXPECTED_HIEROGLYPH_FRAGMENTS, TIER_BY_HIEROGLYPH } from "./hieroglyphCurrency"
 import type { SiteConfig } from "@/worldGen/types"
-import type { Difficulty } from "@/data/difficultyLevels"
 
 // Invariant guard for HIEROGLYPH_CURRENCY.rank's hard tier filter (hieroglyphCurrency.ts): a
 // hieroglyph fragment may only ever land in a slot whose OWN authored difficulty equals that
@@ -11,14 +9,6 @@ import type { Difficulty } from "@/data/difficultyLevels"
 // floor/ward pocket marked with that difficulty (slots.ts's own "tier is the slot's own
 // difficulty, not its journey's" rule). This walks the whole shipped world and would fail if a
 // future spec change (or a regression in the rank filter) let a fragment leak cross-tier again.
-
-const TIER_BY_HIEROGLYPH: Record<string, Difficulty> = (() => {
-  const result: Record<string, Difficulty> = {}
-  for (const [tier, ids] of Object.entries(TOMB_SYMBOLS) as [Difficulty, string[]][]) {
-    for (const id of ids) result[id] = tier
-  }
-  return result
-})()
 
 type Offender = { where: string; hieroglyphId: string; expectedTier: string; actualDifficulty: string }
 

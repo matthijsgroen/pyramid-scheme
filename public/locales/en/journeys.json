@@ -69,59 +69,59 @@
   },
   "master_1": {
     "name": "Great Pyramid of Giza",
-    "description": "Enter the most magnificent pyramid ever built. Face the ultimate test as you navigate the Grand Gallery and reach the King's Chamber."
+    "description": "The Great Pyramid. Twenty years of stone, and a whole town beside it feeding the crews on bread and beer."
   },
   "master_2": {
     "name": "Book of the Dead",
-    "description": "Unravel the mysteries of the afterlife by collecting and deciphering the sacred texts that guide souls through the underworld."
+    "description": "Not one book but a set of spells, copied to order. The cheaper ones left a blank where your name should go."
   },
   "master_3": {
     "name": "Curse of the Pharaohs",
-    "description": "Break the ancient curse that has plagued tomb raiders for centuries. Face supernatural challenges and divine retribution."
+    "description": "The famous curse was invented by newspapers in 1923. The Egyptians guarded their tombs with doors and paperwork."
   },
   "master_4": {
     "name": "Tomb of Nefertari",
-    "description": "Enter the most beautifully decorated tomb in the Valley of the Queens. Solve puzzles based on the stunning wall paintings and hieroglyphs."
+    "description": "Nefertari's tomb, the best-painted room in Egypt. The colours were ground from stone — azurite, malachite, ochre."
   },
   "master_treasure_tomb": {
     "name": "Pharaoh's Secret Hoard",
-    "description": "Uncover the legendary secret treasure chamber of a great pharaoh, hidden beneath the desert sands and protected by ancient curses.",
+    "description": "A king's private hoard, out where the maps give up. Whatever went into the ground with him is still down there.",
     "mapHint": "A royal cartouche marks one edge, and the route ends far out under open sand."
   },
   "master_treasure_tomb_b": {
     "name": "Hall of Osiris",
-    "description": "Descend into the deeper hall ruled by Osiris, lord of the underworld. Face the mysteries of death and rebirth to claim his ancient relics.",
+    "description": "Osiris's hall. God of the flood and the grain — whatever goes under the ground here is expected back.",
     "mapHint": "Below the royal chambers the map keeps descending, into a hall marked with the rites of the dead."
   },
   "wizard_1": {
     "name": "Ra's Solar Journey",
-    "description": "Accompany Ra on his perilous nightly journey through the underworld, battling the serpent Apep and ensuring the sun rises again."
+    "description": "Ra goes under the world at sunset and has twelve hours of dark to cross. Egypt wrote down what happens in each one."
   },
   "wizard_2": {
-    "name": "Secrets of the Sphinx",
-    "description": "Unlock the deepest mysteries hidden within the Great Sphinx. Face riddles that have challenged the greatest minds for millennia."
+    "name": "Colossi of Memnon",
+    "description": "Two seated giants of Amenhotep III. The Greeks decided they were somebody else, and that name stuck for two thousand years."
   },
   "wizard_3": {
     "name": "Chamber of Ma'at",
-    "description": "Enter the cosmic chamber where Ma'at weighs the hearts of the dead. Balance divine mathematics in the realm of perfect justice."
+    "description": "Ma'at's chamber. She is the order of things, and her single ostrich feather is what everything else gets measured against."
   },
   "wizard_4": {
     "name": "Eternal Pyramid",
-    "description": "Ascend the mythical Eternal Pyramid that exists beyond time and space. Master the ultimate mathematical mysteries of creation itself."
+    "description": "The casing was polished limestone, white as salt, dressed so exactly you could see it flash from a day's walk away."
   },
   "wizard_treasure_tomb": {
     "name": "Vault of the Gods",
-    "description": "Enter the mythical treasure vault where the gods themselves stored their most precious artifacts. Only the most skilled adventurers dare attempt this ultimate treasure hunt.",
+    "description": "Where the temple kept what belonged to the gods. Nobody was announced in here without the right thing in their hands.",
     "mapHint": "No landmark on this scrap belongs to the mortal world — whatever it charts, gods put it there."
   },
   "wizard_treasure_tomb_b": {
     "name": "Realm of Cosmic Forces",
-    "description": "Venture deeper into the divine realm where cosmic forces of life, death, chaos, and wind manifest as ancient relics of immeasurable power.",
+    "description": "Star charts across the ceiling, painted so the dead could tell the hour at night. Somebody's rope still hangs in the shaft.",
     "mapHint": "Past the divine vault the lines break into star-paths, where the forces of life and chaos are kept as relics."
   },
   "wizard_treasure_tomb_c": {
     "name": "Throne of Eternity",
-    "description": "Reach the innermost sanctum of the divine realm — the Throne of Eternity where the gods themselves rest. Only the greatest mathematicians of all time have stood here.",
+    "description": "One seat at the centre and forty-two judges around it, each one asking a question you are supposed to answer no to.",
     "mapHint": "Every star-path on this fragment converges on a single seat at the very heart of the divine realm."
   }
 }
