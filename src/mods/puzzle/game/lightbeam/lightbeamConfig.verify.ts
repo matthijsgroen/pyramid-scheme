@@ -6,7 +6,7 @@ import { solveLightbeamByTechniques } from "./techniques"
 import { FIXTURE, FIXTURE_SEEDS } from "./boards.fixture"
 import { lightbeamFixture } from "../../../../../scripts/puzzleBoards"
 
-// WHAT NEEDS THE GENERATOR, OR A SOLVE. `yarn verify-world` runs these; `vitest run` never sees a
+// WHAT NEEDS THE GENERATOR, OR A SOLVE. `yarn verify-content` runs these; `vitest run` never sees a
 // `.verify.ts`, which is the point of the extension.
 //
 // The line is what a test has to GET HOLD OF, not what it claims. A claim about a board — its answer

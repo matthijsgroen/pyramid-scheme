@@ -2,7 +2,12 @@ import path from "node:path"
 import { defineConfig } from "vitest/config"
 
 // The sweeps too expensive for `yarn test`. A `.verify.ts` matches no default include, so nothing
-// creeps back onto a test run's critical path. `yarn verify-world` runs them.
+// creeps back onto a test run's critical path. `yarn verify-content` runs them.
+//
+// **RUN AFTER AUTHORING, and not in CI.** This is the pass you make once you have changed a generator, a
+// seed list or the world spec — the things whose output these sweeps check. It is deliberately not a CI
+// job: a generator is worth re-checking when somebody changes one, not on every pull request, and putting
+// it on the critical path is how it ended up making the build red or green according to machine load.
 export default defineConfig({
   resolve: {
     alias: {
