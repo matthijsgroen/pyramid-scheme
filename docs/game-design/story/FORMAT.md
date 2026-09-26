@@ -151,6 +151,29 @@ Four rules keep them likable to everyone, and three of them are mechanical:
 what Fez notices about how the player _plays_ — a board solved unaided is not something dialogue can
 observe — but the friendship itself can now be written as conversation.
 
+### 5b. Nothing pays off on knowledge the game did not give
+
+**A beat may not need a fact the player was not taught.** The history in this script is real and a good
+deal of it is unfamiliar, so every fact a payoff rests on is established where it is used — in the same
+scene, in the card beside it, or by somebody correcting Fez out loud. A player who has never heard of
+Amenhotep III must get the whole of the Colossi beat; a player who has heard of him gets one extra smile
+from the journey being titled with the wrong name. That is the right split: **prior knowledge may sharpen a
+beat, never complete it.**
+
+The device already carries most of it. **Fez is wrong once a tier and the tier's ghost corrects him** — so
+Thoth turns out to be writing and counting rather than secrets, Amun and Ra turn out to be one god, Osiris
+turns out to be green because he comes back, and the feather turns out to want a LIGHTER heart. The
+correction is the teaching, and it is funny rather than didactic because somebody is being told off.
+
+The two the finale rests on are taught the same way and four acts early: **a thing written down is a thing
+that happened** is Ipi's, said by a bookkeeper for whom it is not a belief but a professional fact; and
+**Hori is the most ordinary name in Egypt** is Ipi's ledger complaining about four of them in one street.
+Neither is explained at the Sphinx, because by then neither has to be.
+
+**And the facts have to be true.** Eighteen metres, not twenty; the curse invented by newspapers in 1923;
+ostraca because papyrus was too dear for children. A game that teaches real things is only worth the licence
+if it gets them right.
+
 ### 6. The chain
 
 | lock | scope | demands | supplied by | placed at | status |
