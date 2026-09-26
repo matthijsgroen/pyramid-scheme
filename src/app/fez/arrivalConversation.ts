@@ -13,9 +13,6 @@ export type SpokenLine = { speaker: Speaker; key: string }
  * Declared here rather than discovered from the translations because a beat is a fact about the
  * script, not about the language in front of the player — an untranslated journey still has one.
  */
-// wizard_2 is missing on purpose. Its arrival IS the ending — the inscription from the first minute,
-// read — and an arrival plays on walking in, so the wizard tier opening would hand a player the last
-// scene of the game before they had got there. It goes back once something gates it.
 export const JOURNEYS_WITH_ARRIVAL: ReadonlySet<string> = new Set<string>([
   "starter_1",
   "starter_2",
@@ -34,6 +31,7 @@ export const JOURNEYS_WITH_ARRIVAL: ReadonlySet<string> = new Set<string>([
   "master_3",
   "master_4",
   "wizard_1",
+  "wizard_2",
   "wizard_3",
   "wizard_4",
 ])

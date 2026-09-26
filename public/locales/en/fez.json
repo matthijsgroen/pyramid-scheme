@@ -200,6 +200,20 @@
       "6": { "fez": "It has been coming in for three thousand years. It does not stop, it just goes round." },
       "7": { "fez": "Fills up, turns over, starts again. Same as the sun." }
     },
+    "wizard_2": {
+      "1": { "fez": "Two of them, twenty metres up, and both of them Amenhotep." },
+      "2": {
+        "fez": "The Greeks took one look and decided it was a hero of theirs. Memnon. The name stuck for two thousand years."
+      },
+      "3": { "explorer": "Whose name is on it?" },
+      "4": { "fez": "His own. Cut into the throne, where it has always been." },
+      "5": { "fez": "Nobody read it." },
+      "6": {
+        "fez": "After the earthquake the northern one sang at dawn. A note, every morning, when the sun warmed the crack."
+      },
+      "7": { "explorer": "And now?" },
+      "8": { "fez": "An emperor had it mended. It has not made a sound since." }
+    },
     "wizard_3": {
       "1": { "fez": "The scale. Heart on one side, feather on the other — so a good heavy heart wins, presumably." },
       "2": { "explorer": "Which way does a heavy thing go?" },

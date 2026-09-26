@@ -205,6 +205,20 @@
       "6": { "fez": "Het komt al drieduizend jaar binnen. Het houdt niet op, het gaat rond." },
       "7": { "fez": "Loopt vol, kantelt, begint opnieuw. Net als de zon." }
     },
+    "wizard_2": {
+      "1": { "fez": "Twee stuks, twintig meter hoog, en allebei Amenhotep." },
+      "2": {
+        "fez": "De Grieken keken één keer en besloten dat het een held van hen was. Memnon. Die naam bleef tweeduizend jaar plakken."
+      },
+      "3": { "explorer": "Wiens naam staat erop?" },
+      "4": { "fez": "Zijn eigen. In de troon gehakt, waar hij altijd al stond." },
+      "5": { "fez": "Niemand las hem." },
+      "6": {
+        "fez": "Na de aardbeving zong de noordelijke bij zonsopgang. Eén toon, elke ochtend, als de zon de scheur opwarmde."
+      },
+      "7": { "explorer": "En nu?" },
+      "8": { "fez": "Een keizer liet hem repareren. Sindsdien heeft hij geen geluid meer gemaakt." }
+    },
     "wizard_3": {
       "1": {
         "fez": "De weegschaal. Hart aan de ene kant, veer aan de andere — dus een lekker zwaar hart wint, neem ik aan."
