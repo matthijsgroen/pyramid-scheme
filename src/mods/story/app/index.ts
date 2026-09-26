@@ -1,3 +1,9 @@
 // story's app-side registration (side-effect). The mod owns encounters that are read rather than
-// solved; each plugin self-gates on the mod being enabled.
+// solved, plus the log of everything the player has been told.
+import { registerModScreen } from "@/app/pages/screenRegistry"
+import { isModEnabled } from "@/mods/registeredMods"
+import { StoryLogPage } from "./log/StoryLogPage"
 import "./conversation/plugin"
+
+// Gated on the mod: story off and there is no log, because there is nothing to log.
+if (isModEnabled("story")) registerModScreen({ id: "story", Component: StoryLogPage })

@@ -1084,5 +1084,19 @@
         "span_other": "Van de eerste start tot het laatste einde is {{count}} uur."
       }
     }
+  },
+  "story": {
+    "log": {
+      "title": "Wat ons verteld is",
+      "empty": "Nog niets. Fez gaat vast genoeg zeggen."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "Jij",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "De priester",
+      "pharaoh": "De farao"
+    }
   }
 }

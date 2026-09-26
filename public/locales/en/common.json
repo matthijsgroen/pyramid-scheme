@@ -1084,5 +1084,19 @@
         "span_other": "First start to last finish is {{count}} hours."
       }
     }
+  },
+  "story": {
+    "log": {
+      "title": "What we have been told",
+      "empty": "Nothing yet. Fez will have plenty to say."
+    },
+    "speaker": {
+      "fez": "Fez",
+      "explorer": "You",
+      "ipi": "Ipi",
+      "henut": "Henut",
+      "priest": "The priest",
+      "pharaoh": "The pharaoh"
+    }
   }
 }

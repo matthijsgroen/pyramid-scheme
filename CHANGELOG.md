@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Secrets of the Sphinx is now the Colossi of Memnon, a statue the world has been calling by the wrong name for two thousand years.
 - The explorer has a face: the placeholder is gone and the drawn portrait stands opposite Fez.
 
+- A story log: everything you have been told, to read back if you tapped through it.
+
 ### Fixed
 
 - Fixed walking when going to a deeper floor.
