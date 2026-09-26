@@ -8,6 +8,7 @@ import type { JourneyAPI } from "@/app/state/useJourneys"
 import { getFamilyPlugin, type FamilyContext, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { encodeEdge } from "./edgeId"
 import { useClearPuzzleState } from "@/mods/core/app/puzzleState"
+import { useMergedReactions, type SolveOutcome } from "@/app/reactions/reactionContributions"
 
 type EncounterArgs = {
   journeys: JourneyAPI
@@ -30,7 +31,7 @@ export type Encounter = {
   /** Names the open board, so its unfinished state is saved against this room and no other. */
   roomKey: string | undefined
   open: (pos: readonly [number, number], freshArrival: boolean) => void
-  solved: () => void
+  solved: (outcome?: SolveOutcome) => void
   cancel: () => void
 }
 
@@ -123,6 +124,7 @@ export const useEncounter = ({
   }, [family, ctx])
 
   const clearPuzzleState = useClearPuzzleState()
+  const react = useMergedReactions()
 
   // The one thing core does on any solved encounter, for every family alike: mark the room explored
   // and offer its reward, if it has one.
@@ -159,9 +161,18 @@ export const useEncounter = ({
     []
   )
   const cancel = useCallback(() => setActive(null), [])
-  const solved = useCallback(() => {
-    if (active) resolve(active.pos)
-  }, [active, resolve])
+  // Solving is also the one moment core can say HOW a room went, and the only place that has both
+  // halves: the family reports the outcome, the room supplies where it happened. Reported after the
+  // resolve so a listener that opens a conversation does not land on top of the reward popup.
+  const solved = useCallback(
+    (outcome?: SolveOutcome) => {
+      if (!active) return
+      resolve(active.pos)
+      if (family && ctx)
+        react({ kind: "solved", tags: family.meta.tags, ...outcome, tier: ctx.difficulty, journeyId: ctx.journeyId })
+    },
+    [active, resolve, family, ctx, react]
+  )
 
   // Family-absence pass-through: a room whose family isn't registered — e.g. a gating mod toggled
   // off with its encounter still authored — has no puzzle to render. Resolve it immediately (mark

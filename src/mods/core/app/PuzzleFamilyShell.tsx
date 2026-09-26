@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import { useTimeout } from "@/support/useTimeout"
 import { useVisibleElapsed } from "@/support/useVisibleElapsed"
 import { HINT_COOLDOWN_MS, useHintAvailability } from "./useHintAvailability"
+import type { SolveOutcome } from "@/app/reactions/reactionContributions"
 
 export type PuzzleShellApi = {
   /** Call when the board reaches its solved state. */
@@ -25,7 +26,7 @@ export type PuzzleShellApi = {
 type Control = { onPress: () => void; enabled: boolean }
 
 type Props = {
-  onSolved: () => void
+  onSolved: (outcome?: SolveOutcome) => void
   onCancel: () => void
   /** For families whose win state is derived from the board rather than raised as an event. */
   solved?: boolean
@@ -305,7 +306,9 @@ export const PuzzleFamilyShell = ({
       )}
       {solvedBanner && (
         <button
-          onClick={onSolved}
+          // Reported here because this is the only place that knows: a board finished without a
+          // hint is the one thing about HOW it was played that nobody downstream can reconstruct.
+          onClick={() => onSolved({ unaided: hintsUsed === 0 })}
           className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-stone-900/40"
         >
           <span className="flex flex-col items-center gap-1 rounded-lg bg-stone-900/90 px-6 py-4">

@@ -58,7 +58,10 @@ const KeyGateComponent: FamilyPlugin["Component"] = ({ puzzle, ctx, onSolved, on
       </p>
       <div className="flex flex-col items-center gap-3">
         {satisfied && (
-          <button onClick={onSolved} className="rounded bg-amber-700 px-6 py-2 text-amber-100 hover:bg-amber-600">
+          <button
+            onClick={() => onSolved()}
+            className="rounded bg-amber-700 px-6 py-2 text-amber-100 hover:bg-amber-600"
+          >
             {t("gate.pass")}
           </button>
         )}
