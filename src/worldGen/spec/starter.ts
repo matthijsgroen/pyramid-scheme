@@ -1,4 +1,5 @@
 import { tier, journey, tomb, wardPath, wardChest, sidePath, hiddenPath } from "../dsl"
+import { TOMB_ROOMS_PER_FLOOR } from "../data"
 import type { Rule } from "../dsl"
 
 // Ward-chest teasers: every starter pyramid gets one ward-gated loot chest keyed to a LATER
@@ -189,7 +190,22 @@ export const starterRules: Rule[] = [
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
-      { mainEndReward: "tombTreasure" },
+      // Ipi is at the end of the first floor, in among his own jars — which is what "third shelf,
+      // the jar with the chip out of it" is pointing at.
+      // A ROOM OF HIS OWN, not a tableau's: this floor is authored one room longer so the beat is
+      // added rather than substituted. A tomb's tableau count is what drives hieroglyph
+      // distribution, so a ghost standing in a tableau's place would quietly cost the tier a
+      // fragment host. `pathPuzzles` is structural and re-carves this floor; the encounter itself is
+      // free (docs/game-design/world-spec-stability.md).
+      //
+      // LAST, not first: a tableau's authored content is keyed by its position along the path
+      // (`levelNr = pathIndex + 1`), so a room inserted ahead of them renumbers every tableau on the
+      // floor and asks for a level nobody wrote.
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 1,
+        nodes: [{ where: "last", encounter: "conversation" }],
+      },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },

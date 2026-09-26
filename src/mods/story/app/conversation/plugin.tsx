@@ -4,14 +4,15 @@ import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry
 import { isModEnabled } from "@/mods/registeredMods"
 import { CONVERSATION_META } from "@/mods/story/game/conversation/meta"
 import { FezContext } from "@/app/fez/context"
+import { sceneFor } from "@/mods/story/game/conversation/sceneFor"
 
-/** What a conversation room is authored with: which scene plays when the player walks in. */
-export type ConversationArgs = { conversation: string }
+/** An authored override, for a journey that wants more than the one scene its tomb is named for. */
+export type ConversationArgs = { conversation?: string }
 
-const conversationOf = (encounterArgs: unknown): string =>
-  typeof encounterArgs === "object" && encounterArgs !== null && "conversation" in encounterArgs
-    ? String((encounterArgs as ConversationArgs).conversation)
-    : ""
+const sceneOf = (ctx: { journeyId: string; encounterArgs?: unknown }): string | undefined => {
+  const authored = ctx.encounterArgs as ConversationArgs | undefined
+  return authored?.conversation ?? sceneFor(ctx.journeyId)
+}
 
 // A beat standing in a room. The scene itself is translations — `tomb.starter.1.ipi` and the rest —
 // played through the companion overlay, so a ghost costs keys and a portrait rather than a screen.
@@ -22,7 +23,7 @@ const conversationOf = (encounterArgs: unknown): string =>
 // resolving would hand over rewards the room was never given.
 const ConversationComponent: FamilyPlugin["Component"] = ({ ctx, journeys, onCancel }) => {
   const fez = use(FezContext)
-  const conversation = conversationOf(ctx.encounterArgs)
+  const conversation = sceneOf(ctx)
 
   useEffect(() => {
     if (!conversation) return onCancel()

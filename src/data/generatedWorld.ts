@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 34630294
+export const worldContentHash = 440068018
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -17848,7 +17848,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_treasure_tomb: [
     [
       {
-        pathPuzzles: 2,
+        pathPuzzles: 3,
         difficulty: "starter",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -17893,10 +17893,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         wallDecorations: ["niche", "tallyBoard"],
         role: "tomb-puzzle",
-        encountersByIndex: { 0: "tableau", 1: "tableau" },
+        encountersByIndex: { 0: "tableau", 1: "tableau", 2: "conversation" },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "starter_a_1" },
-        rewards: [undefined, undefined],
+        rewards: [undefined, undefined, undefined],
       },
       {
         pathPuzzles: 2,
