@@ -426,6 +426,10 @@ export type AssemblerReason =
    * out and leave the others shut, and keys accumulate, so the cost of the choice is a walk back to
    * spend it again — which a room that cannot be re-entered never offers. See FamilyMeta.reEnterable. */
   | { type: "switchFamilyNotReEnterable"; family: string }
+  /** An authored one-way (FloorConfig.oneWays) never got its passage: `from` names a section this
+   * floor does not have, or every attempt ran out before it found the two sections a node apart with
+   * an empty cell between them. */
+  | { type: "oneWayUnsatisfied"; from: string; to: string }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
 

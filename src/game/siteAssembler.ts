@@ -494,6 +494,20 @@ export const assembleFloor = (
     return { success: false, reasons: [{ type: "unusableSectionAddress", address: addresses.duplicate }] }
   }
 
+  // An authored one-way naming a section this floor does not have is the same kind of mistake: which
+  // sections exist is fixed by the config, not by the seed, so a misnamed end is refused once here
+  // rather than blamed on sixty carves that could never have satisfied it either.
+  const knownSectionAddresses = new Set<string>([MAIN_SECTION_ADDRESS, ...addresses.of.values()])
+  const unusableOneWays = (config.oneWays ?? []).filter(
+    oneWay => !knownSectionAddresses.has(oneWay.from) || !knownSectionAddresses.has(oneWay.to)
+  )
+  if (unusableOneWays.length > 0) {
+    return {
+      success: false,
+      reasons: unusableOneWays.map(({ from, to }) => ({ type: "oneWayUnsatisfied" as const, from, to })),
+    }
+  }
+
   const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
   const fezShop = resolveEncounter("fez-shop", "fez-shop")
   const keyGate = resolveEncounter("key-gate", "key-gate")
@@ -673,6 +687,9 @@ export const assembleFloor = (
   // The closest any attempt came to the junctions `forks` asks for, so the failure can name the
   // shortfall rather than blaming the maze.
   let forkShortfall: { exits: number; count: number; carved: number } | undefined
+  // The first authored one-way no attempt ever managed to place, so a floor that never carves one
+  // says which drop it could not find room for.
+  let oneWayShortfall: { from: string; to: string } | undefined
   for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
     if (attempt >= RECOVERY_ATTEMPT) {
       // Recovery asks for the roomiest wish outright. Winding the CHAINS down is its lever, and on a
@@ -1685,6 +1702,51 @@ export const assembleFloor = (
     // A junction short is an authored feature this carve cannot hold, so take another carve.
     if (reservedForks.length < forkDemands.length) continue
 
+    // ONE-WAY DROPS. Each authored passage needs a node of `from` and a node of `to` exactly two cells
+    // apart on one axis (NODE_STEP above), with the cell between them not already an edge some chain
+    // walked — a pair the maze happened to place next to each other without ever meaning to join them.
+    // Picked here, off the same node set the grid below is built from, and sorted by position so the
+    // same seed always drops the same pair. A demand with no such pair is this carve's own shortfall,
+    // not the authoring's: another seed may still place it, so the attempt is re-carved rather than
+    // refused.
+    const oneWayEdges: { from: string; to: string; dir: Direction }[] = []
+    let oneWayShort: { from: string; to: string } | undefined
+    for (const oneWay of config.oneWays ?? []) {
+      const candidates: { from: string; to: string; dir: Direction }[] = []
+      for (const fromKey of usedCells) {
+        if (cellSectionAddress.get(fromKey) !== oneWay.from) continue
+        const [r, c] = fromKey.split(",").map(Number)
+        for (const [dr, dc, d] of CONNECTOR_DIRS) {
+          const nr = r + dr,
+            nc = c + dc
+          if (nr < 0 || nr >= N || nc < 0 || nc >= N) continue
+          const toKey = posKey(nr, nc)
+          if (cellSectionAddress.get(toKey) !== oneWay.to) continue
+          // Already a real edge there (an ordinary two-way corridor will fill this same cell below) —
+          // not the empty gap a drop needs, so it's not a candidate.
+          if (edgeAllowed(r, c, nr, nc)) continue
+          candidates.push({ from: fromKey, to: toKey, dir: d })
+        }
+      }
+      candidates.sort((a, b) => {
+        const [ar, ac] = a.from.split(",").map(Number)
+        const [br, bc] = b.from.split(",").map(Number)
+        const [atr, atc] = a.to.split(",").map(Number)
+        const [btr, btc] = b.to.split(",").map(Number)
+        return ar - br || ac - bc || atr - btr || atc - btc
+      })
+      const picked = candidates[0]
+      if (!picked) {
+        oneWayShort = { from: oneWay.from, to: oneWay.to }
+        break
+      }
+      oneWayEdges.push(picked)
+    }
+    if (oneWayShort) {
+      if (!oneWayShortfall) oneWayShortfall = oneWayShort
+      continue
+    }
+
     // Build 2D grid
     const cells2D: GridCell[][] = Array.from({ length: N }, () =>
       Array.from({ length: N }, (): GridCell => ({ type: "empty" }))
@@ -1791,6 +1853,27 @@ export const assembleFloor = (
           ...(connectorTier ? { difficulty: connectorTier } : {}),
           ...(hidden ? { hidden } : {}),
         }
+      }
+    }
+
+    // WRITE THE CHOSEN DROPS. The from-node gains the direction toward the connector; the connector
+    // gains ONLY that same direction; the to-node gains nothing. That asymmetry is the whole feature —
+    // the connector carrying no direction back is what stops a player standing in it from climbing back
+    // up, and the to-node carrying no direction down into it is what stops them entering from below.
+    for (const edge of oneWayEdges) {
+      const [fr, fc] = edge.from.split(",").map(Number)
+      const [tr, tc] = edge.to.split(",").map(Number)
+      const mr = (fr + tr) / 2,
+        mc = (fc + tc) / 2
+      const fromCell = cells2D[fr][fc]
+      if (fromCell.type === "empty")
+        throw new Error(`[siteAssembler] one-way from ${edge.from} landed on an uncarved cell`)
+      cells2D[fr][fc] = { ...fromCell, dirs: new Set([...fromCell.dirs, edge.dir]) }
+      cells2D[mr][mc] = {
+        type: "corridor",
+        dirs: new Set([edge.dir]),
+        state: "fogged",
+        sectionAddress: cellSectionAddress.get(edge.from) ?? MAIN_SECTION_ADDRESS,
       }
     }
 
@@ -2140,6 +2223,7 @@ export const assembleFloor = (
     // asks for is an authoring mistake, and "no layout" alone would send the reader after the maze.
     reasons: [
       ...(forkShortfall ? [{ type: "forksUnsatisfied", ...forkShortfall } as const] : []),
+      ...(oneWayShortfall ? [{ type: "oneWayUnsatisfied", ...oneWayShortfall } as const] : []),
       { type: "layoutNotFound" } as const,
     ],
   }
