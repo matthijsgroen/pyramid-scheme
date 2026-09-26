@@ -95,18 +95,44 @@ that makes a floor a puzzle is a gate that swings somewhere the player is not st
 
 ### A gate says what opens it
 
-A lock the player cannot read is not a puzzle, it is a wall they walk into twice. So a gate says
-which mechanism owns it, and the further that mechanism sits from the door, the more it has to say.
+A lock the player cannot read is not a puzzle, it is a wall they walk into twice. Four things carry
+that reading, and they answer different questions.
 
-**Paired by a mark.** A mechanism and its gates share one — the fork and its two doors orange, the
-lever and its pair green, the last lever and the way out blue. Floor keys already pair a key to a
-door by colour, so this is the existing vocabulary rather than a new one. What a mark is made of, a
-colour or a glyph or the patron gods' vocabulary, is not settled; only that a mechanism and its gates
-share it.
+**Shape says what kind.** A mechanism's silhouette names the mechanic: this is a lever that toggles
+two doors, that is a board that routes a beam, the other is a wheel that floods a floor. It is
+learned once and transfers to every instance of it the player ever meets, which is what turns a
+collection of one-off contraptions into mechanics a player gets good at. The map already works this
+way — a node's shape says puzzle, trap, gate, treasure, junction — so a mechanism kind earns a shape
+beside them.
 
-**Explained at the door, where a mark is not enough.** An order cannot be drawn in a colour, so a
-sequence lock's door carries an encounter showing the symbols and the order they are wanted in, the
-way a ward gate already tells the player which key it wants.
+**Colour says which one.** Within a floor, a mechanism and the gates it owns share a mark — the fork
+and its two doors orange, the lever and its pair green, the last lever and the way out blue. Floor
+keys already pair a key to a door by colour, so this is the existing vocabulary rather than a new
+one.
+
+There is a budget here, and it is small: `KeyColor` holds five values and a floor's coloured key
+doors already spend from them. A floor wanting three key colours and three marked mechanisms needs
+six distinguishable marks and has five. Either mechanisms draw from a separate vocabulary — glyphs
+suit the setting better than more colours — or a floor is capped in how many _paired_ things it may
+hold. A cap decided here is cheaper than one discovered by an author who cannot tell two levers
+apart.
+
+**Consequence confirms it.** The player can look anywhere they have explored, so throwing a switch is
+a thing they can watch. That makes a floor something to experiment with: flip, see what moved,
+understand. The camera may travel to the change and come back, and if it does, two things matter more
+than the going — it must return the player to where they were at the zoom they chose, because on a
+floor worth experimenting with they will throw a switch many times; and it must show nothing at all
+when the change lands in ground they have not explored. Panning into the fog would say something is
+there, which is the spoiler that already stops a switch gating a hidden branch. A flip that visibly
+does nothing, followed by finding out later, is honest.
+
+A mechanism owning many gates — a waterline draining a dozen corridors — has nowhere to travel to.
+That case wants the whole changed area framed at once rather than a tour of it, and being the harder
+case it is the one the interaction should be designed against.
+
+**Explained at the door, where none of that reaches.** An order cannot be drawn in a colour or
+learned by watching one flip, so a sequence lock's door carries an encounter showing the symbols and
+the order they are wanted in, the way a ward gate already tells the player which key it wants.
 
 **A gate encounter may read, never open.** A door the player opens by tapping is a door the mechanism
 does not control, which is the whole of what the gate was for; a door that explains itself when
@@ -602,9 +628,26 @@ authored.
 | 1     | `LightSwitchFork` | nothing (no topology primitive, no key) | junior           | a bare junction, every way out open     |
 | 2     | `sequenceLock`    | P3                                      | expert           | door unlocked, no glyph tiles           |
 | 3     | `sandSlide`       | P2                                      | expert           | ramp corridors absent, floor re-carves  |
-| 4     | `waterline`       | P1                                      | master           | floor permanently drained               |
+| 4     | `waterline`       | nothing                                 | master           | floor permanently drained               |
 | 5     | `cosmicDust`      | P5                                      | wizard           | pyramid not choked, handles inert       |
 | 6     | `hourglass`       | P4, P6                                  | wizard           | upper floor clear, lower floor ordinary |
+
+**Four of these six are the same feature wearing different clothes**, once a mechanism is a thing
+with states that owns gates. `LightSwitchFork` is a mechanism with a board. A lever elsewhere opening
+a door here is a mechanism with a handle. `waterline` is a mechanism with two states owning a set of
+gates — every corridor below the line — which is why it buys no primitive: a flood is blocked-until
+with a mechanism as the opener, and that is the thing being built. `sequenceLock` is a mechanism
+whose states are progress, and it buys P3 for its markers rather than for the lock.
+
+What stays genuinely separate is the pair that reaches past one floor: `cosmicDust` spans a journey's
+pyramids and `hourglass` spans two floors with per-visit state. That is a satisfying place for the
+boundary to fall — a floor's mechanisms are one vocabulary, and reaching beyond a floor is what costs
+a new one.
+
+Which moves the weight of the work off the features and onto the vocabulary. A lock is then twenty
+lines of authoring and a walk over its states, so a floor's difficulty is composed rather than built,
+and a mechanism hidden behind other mechanisms — a flood lever you have to earn — is authoring
+rather than a feature.
 
 `LightSwitchFork` goes first because it needs no topology primitive at all, and it buys nothing
 either: **a fork's ways out are a function of the board standing in it.** Route the beam north and
