@@ -156,4 +156,27 @@ describe("reachableStates", () => {
     expect(5 ** 12).toBeGreaterThan(MAX_LOCK_STATES)
     expect(reachableStates(spec)).toBe("tooLarge")
   })
+
+  it("offers the way back in only from the way out, never from a room in between", () => {
+    // entrance → hall → vault, with vault the way out. A player standing in the hall has no staircase
+    // to leave by, so their only way back to the entrance is the corridor they came along.
+    const spec: LockSpec = {
+      regions: ["entrance", "hall", "vault"],
+      gates: {
+        first: { from: "entrance", to: "hall", owners: ["open"] },
+        second: { from: "hall", to: "vault", owners: ["open"] },
+      },
+      mechanisms: {
+        open: { states: ["open"], initial: "open", opens: { open: ["first", "second"] }, transitions: [] },
+      },
+      in: "entrance",
+      out: "vault",
+    }
+    const found = reachableStates(spec)
+    if (found === "tooLarge") throw new Error("expected a walkable lock")
+    const edgesFrom = (region: string) =>
+      found.edges[found.order.findIndex(state => state.region === region)].map(n => found.order[n].region)
+    expect(edgesFrom("hall")).toEqual(["entrance", "vault"])
+    expect(edgesFrom("vault")).toEqual(["hall", "entrance"])
+  })
 })
