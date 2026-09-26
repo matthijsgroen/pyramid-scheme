@@ -461,3 +461,286 @@ against the tracer and misleads the next person. Everything needed to write a fr
   journey names and pick from the concrete versions rather than the pitches.
 - **For Part 1:** the Schedule Grid is the only mechanism that needs no new engine — one authored instance
   answers whether time-as-an-axis is actually fun before any tick machinery exists.
+
+---
+
+# Part 4 — quests: the story as locks and keys
+
+## 4.0 What this part is for
+
+Parts 2 and 3 put story at the **seams** — arrival, completion, reveal — and §2.6 argues, correctly, that
+narrative dropped mid-puzzle becomes the thing players tap through. This part is about the other place:
+the 5–20 minute site visit, where the player is exploring and the story currently says nothing.
+
+The hole, stated plainly: **exploration has no object.** Rooms are cleared and loot arrives. The player is
+never _looking for_ anything, so there is nothing for stakes to attach to. Fez's premise E (§3.4) gives a
+reason to come back tomorrow; it gives no reason to open this door rather than the one beside it.
+
+**Everything below is options and consequences.** Nothing here is decided.
+
+## 4.1 The rails, and what each one may say
+
+Ordering is the constraint that decides what a beat is allowed to assume. The world has three rails and
+they are not equally strong.
+
+| Rail                  | Count | Ordered?                                                              | What a beat on it may assume    |
+| --------------------- | ----- | --------------------------------------------------------------------- | ------------------------------- |
+| Pyramid arrival       | 20    | **Yes** — within a tier each opens when the previous one is completed | everything before it            |
+| Tier crossing         | 5     | **Yes** — possession of a tier-unlock treasure                        | everything in prior tiers       |
+| Tomb opening          | 9     | **No** — key-gated, never sequenced against each other                | only its own tier               |
+| An item found in situ | many  | **No**                                                                | nothing outside its own subject |
+
+4 pyramids + 1–3 tombs per tier, five tiers (`src/data/journeys.ts`). The pyramid chain is in
+`availablePyramidJourneyIds` (`src/app/pages/journeyAvailability.ts`), which skips non-pyramid journeys —
+which is exactly why tombs are not a sequence.
+
+**Free order does not reach these rails.** `docs/mods/floor-topology-design.md` proposes that a wizard
+journey opens its pyramids all at once instead of walking them in `levelNr` order — and a journey holds
+several: `wizard_3` and `wizard_4` hold six each, `wizard_1` holds four. **The order of journeys is
+unchanged**, and arrival beats are keyed per journey rather than per pyramid, so all twenty stay ordered.
+
+What free order does reach is anything addressed by **pyramid index inside a journey** — the DSL's
+`PyramidSelector` (`number | "first" | "last" | "middle" | "N-M" | "last-N"`), and the exposure is wider
+than this story: **the whole world is authored with it.**
+
+Put precisely, in the topology session's words: every selector stays a valid **address**; what `first` and
+`last` stop carrying is **when**. Authoring that used position to pace — the gentle pyramid first, the map
+piece last — keeps naming the same pyramid and quietly stops meaning the same thing. Only in free-order
+journeys, so only at wizard.
+
+Nothing in this story paces by index today. The rule if anything ever does is that design's own: **pacing
+that matters is expressed as a key, or it does not exist.**
+
+**The rule that falls out: a beat may only assume what its rail guarantees.** A link-completion beat may
+never say "as you now know", because the player may have finished another thread's second link first. This
+is cheap to hold while writing and expensive to retrofit afterwards.
+
+It also dissolves §2.4's objection that no premise holds 29 beats. It does not have to: **20 scenes
+carrying 5 acts** is ordinary structure, and because the scenes are ordered, scene N may refer to what was
+found in scene N−1.
+
+### Three kinds of beat, and only one of them is ordered
+
+The rails above describe where a beat can fire. This describes what a beat **is**, and it is the thing that
+makes a story survive a player exploring in any order they like.
+
+| Kind         | Fires                             | About                      | Order                              |
+| ------------ | --------------------------------- | -------------------------- | ---------------------------------- |
+| **Place**    | on first arriving somewhere       | what this place is         | none — any order, always true      |
+| **Thread**   | at **any** unspent story node     | the plot                   | **strictly ordered, from a queue** |
+| **Anchored** | only at one place, and only there | a thing that is that place | wherever its place sits            |
+
+**A story node is a slot, not a beat.** Touching one pops the next unplayed thread beat off the queue.
+
+**So the story is always told in order — only the places it is told in vary.** That is the property the
+whole model exists for, and it is what lets a thread beat assume every thread beat before it. A five-act
+plot stays writable against a player who explores however they like.
+
+#### Why the split rather than one queue
+
+A pure queue — every node just plays "the next thing" — solves ordering completely and throws away the
+best property the world has: **the journey names already tell the story.** `junior_2` Valley of the
+Artisans is where the copies were made; `master_3` Curse of the Pharaohs is where somebody was here first.
+If a node pops whatever is next, arriving at the Artisans can hand the player the Sphinx, and the names
+stop carrying anything.
+
+Place beats keep that. Thread beats carry the plot. Neither has to compromise.
+
+#### The writing rules that follow
+
+**A thread beat may not mention where it is.** No "as you can see here", no naming the room. It will play
+somewhere its author did not choose, and that is the price of it being able to assume everything before it.
+
+**A place beat may not advance anything.** It says what this place is and stops. It can be missed entirely
+— a player may never visit `junior_1` — so nothing may depend on it.
+
+**Anchored is for when the place IS the content**, and it should be rare. The Sphinx inscription, the
+priest's altar, a ghost in its own tomb. An anchored beat is the only kind that can be gated on a place,
+and every one of them is a constraint on how freely a tier can be explored.
+
+#### What it does to the rails
+
+The ordered/unordered distinction mostly dissolves. Arrival stops needing to be an ordered rail at all,
+because **the ordering moved into the queue**. What is left:
+
+- **Thread beats** are ordered by construction, wherever they fire. A beat may assume every thread beat
+  before it, always — which is what makes a five-act plot writable against free exploration.
+- **Anchored beats** are the only ones that still care about rails, and the count is small enough to
+  reason about one at a time.
+
+**Open: does the queue carry over a tier crossing, or flush?** A feel question rather than a structural
+one — carrying it over means a beat written for Act II can still fire in Act III to a player who rushed the
+tier, and flushing means a tier's unplayed beats are simply lost. Neither breaks the ordering guarantee.
+
+Free-order journeys (`docs/mods/floor-topology-design.md`) then cost the story nothing anywhere, rather
+than costing it a wizard exception — and would keep costing nothing if free order ever widened to other
+tiers or across journeys, because the queue absorbs it. Only anchored beats would want re-checking.
+
+**One place the two designs could meet rather than merely coexist.** Cosmic dust's come-back loop is what
+keeps `getUnexploredLevels` reporting anything in a free-order wizard journey. If a thread beat ever fires
+on **returning** to a pyramid rather than arriving at one, that pulse is what it would ride — the only
+point where that mechanic could carry a beat instead of permitting one. One line from Fez when a sibling
+handle clears a path, and nothing more.
+
+#### What it implies for the script as written
+
+The five acts are currently written place-bound: some lines are about where they are, and some are plot
+that happens to be there. Splitting them is a pass over 223 lines, not a rewrite — most lines already fall
+clearly on one side.
+
+The rough shape: **arrivals are mostly place**, the tomb scenes are mostly **anchored** (a ghost is its
+tomb), and the hook, the ask, the refusal and the ending are **anchored** too. What becomes **thread** is
+the connective tissue — Fez noticing, the bond beats, the inscription lines arriving one per act, and the
+tells that he is older than he says.
+
+That last one benefits most: a tell that fires from a queue lands wherever the player happens to be, which
+is exactly how a tell should work.
+
+## 4.2 What a quest is, in this world's terms
+
+Four parts, and three of them already exist.
+
+| Part           | Where it lives today                                                   |
+| -------------- | ---------------------------------------------------------------------- |
+| A chain        | the keys-and-locks solver — locks declare demand, currencies supply it |
+| An identity    | mod data, the way any mod owns its own currencies                      |
+| Beats          | Fez's conversation system, already keyed by moment                     |
+| **Visibility** | **nothing** — the player has no way to know what thread they are on    |
+
+Only visibility is new, and it is the part that balloons if it is allowed to.
+
+## 4.3 Main and side, mapped onto guarantees already made
+
+- **Main quest** — links whose keys gate progression. It inherits the solver's existing invariant
+  ("reaching Wizard must never be blocked") for free, because that is already proven.
+- **Side quest** — links gating a tier's ward-gated bonus content. The four tier-unlock treasures are each
+  already paired to one journey of the next tier, so this structure exists and is currently unnarrated.
+
+The consequence worth having: **a missed side link costs bonus content, never the ending.** Short threads
+fail gracefully by construction rather than by care.
+
+## 4.4 Option set A — how the player knows what thread they are on
+
+| Option                                                                                                | What it costs                   | What it costs the player                                                                             |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **A1 No log.** Thread state on the journey card, Fez at arrival, story items on the collection screen | copy and three small wirings    | a player who put the game down for a fortnight has to reconstruct where they were                    |
+| **A2 A quest log screen**                                                                             | a new screen, and its own state | turns an adventure into a checklist; the screen most likely to make a casual game feel like homework |
+| **A3 Log for the main chain only, sides invisible**                                                   | a smaller screen                | two grammars to learn; the player cannot tell which threads exist                                    |
+
+A1 keeps story at the seams, which is the one thing Part 2 got emphatically right. A2 is the only option
+that survives a **required** multi-quest gate (§4.5 B2) — if the gate can stop you, you must be able to
+read why.
+
+## 4.5 Option set B — how far the story is allowed to drive the gate
+
+Today `isTierUnlocked` is a possession check: hold any one of that tier's four treasures
+(`TIER_UNLOCK_PERK_IDS`, `src/data/treasurePerks.ts` — e.g. wizard opens on any of `master_a_1..4`). Four
+to find, one to pass; all four are wanted for that tier's ward-gated content.
+
+| Option                                                                                                | Effect on the invariant                                                                                                                                               | Other consequences                                                                                                                                                                                                                             |
+| ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **B1 The quest _produces_ the key.** The four tier-unlock treasures become the payoffs of four chains | **None.** The solver still proves "a tier-unlock treasure is reachable" — and proving that now _is_ proving the chain completable, since the treasure sits at its end | `isTierUnlocked` untouched, so the screen's copy and `worldGen/reachability.ts` cannot drift. "One to pass, four to complete" survives and stops being arbitrary. No log required. **Three of four stories go unseen on a first run.**         |
+| **B2 The quest is an extra lock.** Wizard requires chains X, Y and Z complete                         | **Enlarged.** The solver must prove three whole chains completable, not one treasure reachable                                                                        | The rule changes in two places, and `journeyAvailability.ts` records that a second, different rule there is what let the two drift apart before. Forces A2. Replaces the four-treasure design rather than extending it. Adds mandatory length. |
+| **B3 B1 everywhere, B2 at wizard only**                                                               | Enlarged for one gate                                                                                                                                                 | Smallest blast radius for a hard finale; still forces a log, and still needs the two rules kept in step for one tier                                                                                                                           |
+
+**The question underneath is whether the tier gate is a wall or a choice.** Four routes through it means
+replayability and no dead stop, at the price of a first-run player seeing one story out of four. Requiring
+three means every player sees them, at the price of a spine, a log, and a bigger proof.
+
+## 4.6 The fake item, and the one rule it cannot break
+
+A fake artefact — the offering is refused, the real one is down a hidden corridor — is a good twist and has
+exactly one hard constraint:
+
+**The fake must not be declared as a currency.** If it is, the solver counts it as supply, believes the
+lock satisfiable, and certifies a world that cannot be finished. The fake is plain loot wearing the
+costume; the real item is the currency.
+
+And the part that is design rather than plumbing: **the solver guarantees the real one is reachable. It
+guarantees nothing about the player knowing to look.** Reachability is not legibility. A refusal with no
+tell is a dead end, not a twist.
+
+| Option for the tell                                                            | Consequence                                                                              |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| **C1 The refusal speaks** — one beat fired at the offering, pointing somewhere | One new firing site; the smallest surface that can work                                  |
+| **C2 A detector** — the existing detector/perk system points at the real one   | Reuses a built system; spends a detector slot on a story beat                            |
+| **C3 Fez notices** — he priced the fake once and recognises it                 | No new surface at all, and it feeds his arc (§3.4); depends on the player talking to him |
+
+## 4.7 Placement: two routes, and the chain wants both
+
+| Route                                                     | Guarantees           | Gives up                                                                                           |
+| --------------------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------------- |
+| **Currency** — the mod registers a `CurrencyDistribution` | reachability, proven | the home drifts: a slot's placement preference is a soft tag, and preferences relax under pressure |
+| **Node selector** — `nodes: [{where, encounter}]`         | the exact node       | the solver is not choosing, so reachability is the author's problem                                |
+
+Locks are places in the story and want the node-selector route. Most keys want the currency route. The
+fake/real pair wants authoring, because the hidden corridor is the point of it.
+
+Two authoring facts that bound this (`world-spec-stability.md`):
+
+- **Gate presence is structural; which key opens it is not.** A story may re-key an existing gate for
+  free. Adding a gate re-carves the floor.
+- `sidePaths`, `hiddenPaths` and `wardPaths` are authored at pyramid level (`buildSite.ts`), so a hidden
+  corridor is expressible — but it comes from there, never from an encounter. An encounter may dress a
+  room; it may never carve one.
+
+## 4.8 Option set D — the shape of the chains
+
+| Option                                                                    | Consequence                                                                                                                                                                                                                  |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **D1 One spine**, three tiers deep (gods ← offering ← pharaoh)            | Strongest single arc; a player who misses a link loses the ending, and the payoff is three tiers away from the promise                                                                                                       |
+| **D2 Several short chains braided**                                       | Each fails gracefully; no single arc carries the game                                                                                                                                                                        |
+| **D3 Short complete chains in starter and junior, the spine from expert** | The early ones teach the grammar — find the thing, open the thing, get the beat — on something that resolves inside a tier, so that by master the player trusts it enough for a fake to land as a twist rather than as a bug |
+
+D3's argument is about where a new player is: a three-tier chain introduced at starter is a promise they
+cannot test, and starter is where they decide whether to stay.
+
+## 4.9 The constraint nobody has priced yet
+
+The property the casual-mobile review singled out as rare is that **a child who cannot read yet can play
+this**. P2 permits prose (Part 0), so a written story is in bounds — but a story delivered as text takes
+that property back one note at a time.
+
+This argues for story items being **drawn rather than written**: a marked-up map, a sketch of a room not
+yet reached, a scratched tally. `mapPiece` already exists as a loot kind and is the precedent. It also
+stops the item being flavour — a fragment that shows a sealed door two tiers up is a beat _and_ a thing to
+act on.
+
+Open either way: whether this is a hard rule for story loot, or a preference that yields where a written
+line is much better.
+
+## 4.10 Option set E — the first slice
+
+| Option                                                                                                  | What it would tell you                                                                                 |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **E1 One side quest, two links, one tier, no new UI** — beats through Fez, question on the journey card | whether a short chain with a whimsical payoff is fun at all. If it is not, no three-tier spine will be |
+| **E2 The wizard chain first**                                                                           | whether the finale lands — but it cannot be played without four tiers of progress                      |
+| **E3 Copy only** — journey arrival lines on the existing 20, no items, no locks                         | whether "why this area" alone changes anything, for the price of text                                  |
+
+## 4.11 Where an arc is written down
+
+An arc is designed in its own file under `docs/game-design/story/`, to the shape in
+[`story/FORMAT.md`](story/FORMAT.md): cast, props, places, beats and the lock/key chain, every row carrying
+a status so a file can be half-designed on purpose, and every place addressed in the DSL's own selector
+vocabulary so a designed row becomes an authored rule with no invention in between.
+
+The section that makes it a decision tool rather than a fiction file is **Impact** — structure, systems,
+content, payoff — and [`story/README.md`](story/README.md) collapses that to one row per arc, so two arcs
+can be compared before either is written. [`story/arc-offering-to-the-gods.md`](story/arc-offering-to-the-gods.md)
+works the pitched arc through it.
+
+## 4.12 Open questions (Part 4)
+
+1. **Wall or choice** — B1, B2 or B3. Everything else in this part is downstream of it.
+2. **Log or no log** — A1, A2, A3. Forced to A2 if B2.
+3. **Chain shape** — D1, D2 or D3, and how many chains in total.
+4. **Is story loot drawn or written** (§4.9), and is that a rule or a preference?
+5. **Does the player ever meet the predecessor?** A funny, fallible explorer who kept getting it wrong
+   fits the whimsical register better than a body at the end of a corridor, and "still down here
+   somewhere" is a turn that holds for five chapters — but a living character needs a scene, and a scene
+   is the one surface this game does not have.
+6. **How does a thread survive a fortnight away?** Whichever visibility option wins has to answer this,
+   because it is the actual failure mode of a months-long casual game.
+7. **Does any of this touch generation, or only copy?** E3 is reversible; a registered story currency
+   competes for loot slots with fragments, map pieces and treasures, and that is the economy the
+   authorship doom loop lives in.

@@ -355,7 +355,7 @@ All four layers and the builder syntax are now designed. Implement in small pass
 | `SideIntensity` → `SampleRange` unification                     | Designed, not implemented                                    |
 | `keyDensity` literal override                                   | Designed, not implemented                                    |
 | `mosaicPathPuzzles` literal override                            | Designed, not implemented                                    |
-| `consumableRates` consistency fix                               | Shipped (`dsl.ts`, `spec/global.ts`)                          |
+| `consumableRates` consistency fix                               | Shipped (`dsl.ts`, `spec/global.ts`)                         |
 | Dead `PathPuzzlesPreset` removal                                | Identified, not implemented                                  |
 | `rank` / `rankPools` / solver-based fragment assignment         | Designed, not implemented                                    |
 | `puzzleFamily` weight-map + tag selection + non-tomb wiring fix | Designed, not implemented                                    |

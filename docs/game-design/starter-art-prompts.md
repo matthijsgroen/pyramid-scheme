@@ -379,7 +379,7 @@ on the background.
 | `pillar`        | A rough timber prop holding up the ceiling, wooden wedges hammered in at its foot, the top out of frame, bark still on one side.                                                  |
 | `brazier`       | A shallow clay dish on three short legs holding cold grey ash and one unburnt stick. No flame, no glow.                                                                           |
 | `rubble`        | A spill of dry mortar, broken mudbricks and pottery sherds heaped on the ground, dust settling around it, one brick still whole.                                                  |
-| `pit`           | MODELLED — `prim_pit`, see below. Its old prompt asked for a ladder over the NEAR lip, which this projection does not draw. |
+| `pit`           | MODELLED — `prim_pit`, see below. Its old prompt asked for a ladder over the NEAR lip, which this projection does not draw.                                                       |
 | `mat`           | A rolled and partly unrolled reed mat, frayed at both ends, one corner curled up, the weave visible.                                                                              |
 
 ### `pit` is modelled, and what its repaint is asked for
