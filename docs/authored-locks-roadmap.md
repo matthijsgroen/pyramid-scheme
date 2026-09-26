@@ -178,7 +178,10 @@ Steps 1, 2, 3 and 4 are independent of each other. Only 5 and 6 are a chain.
 
 Step 1 is built: a floor authors `oneWays`, the carve places or refuses them, the walk is told about them, and the develop journey stands one. Five things it deliberately did not finish, and the first is a gate on step 2 rather than a suggestion.
 
-**Before the drawing capability is granted to any shipped site, fix the drop connector's ordinal.** A drop's connector takes the SOURCE section's address but an ordinal pairing a step of the source with a step of the landing, so a drop from `upper` step 1 into `lower` step 0 files under `upper#<floor>/~0|1` — the same save key as `upper`'s own connector between its steps 0 and 1, which exists on any chain of two or more cells. Two cells, one identity: `findByAddress` returns whichever comes first in row-major order, and the same number drives fog against the source section's high-water mark, so the connector un-fogs early or never. It reaches only the develop journey today because `standOneWayDrops` is false on every pyramid and tomb. Granting that capability without fixing this ships a save collision.
+**Fix the drop connector's ordinal before any shipped site stands a drop.** Saves reset for this
+release and the story work above it, so no migration is owed — which makes this cheap to change
+rather than optional. The collision is not a migration problem: it is wrong inside a single
+playthrough, from the first visit. A drop's connector takes the SOURCE section's address but an ordinal pairing a step of the source with a step of the landing, so a drop from `upper` step 1 into `lower` step 0 files under `upper#<floor>/~0|1` — the same save key as `upper`'s own connector between its steps 0 and 1, which exists on any chain of two or more cells. Two cells, one identity: `findByAddress` returns whichever comes first in row-major order, and the same number drives fog against the source section's high-water mark, so the connector un-fogs early or never. It reaches only the develop journey today because `standOneWayDrops` is false on every pyramid and tomb.
 
 The rest are smaller, and none can reach a player while the capability holds:
 

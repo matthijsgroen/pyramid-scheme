@@ -398,3 +398,12 @@ that would have changed a decision: one compared cell _type_ where it should hav
 and counted a gate being placed as a wall moving; another used a regex that silently matched nothing,
 so a check appeared not to fire when it had never been exercised. A measurement that confirms what
 you expected deserves the same scrutiny as one that surprises you.
+
+## Saves reset for this release
+
+The owner has ruled that all saves reset for the topology work and the story layer above it. So a
+save-format change inside this release owes no migration, and a slice that would otherwise need a
+double-write and a backfill can simply change the shape.
+
+What that does NOT excuse: an identity that is ambiguous **inside one playthrough**. A reset gives a
+player a clean save, not a correct one, and two cells sharing a key are wrong on the first visit.
