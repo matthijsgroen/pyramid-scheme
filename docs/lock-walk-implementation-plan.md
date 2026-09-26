@@ -354,7 +354,9 @@ git commit -m "feat: a gate's owners decide together whether it is open"
   - `MAX_LOCK_STATES: number`
   - `reachableStates(spec: LockSpec): { order: LockState[]; edges: number[][] } | "tooLarge"` — every state reachable from the start, in breadth-first order, with `edges[n]` the indices of the states one move from `order[n]`.
 
-The four moves, from the design doc: walk through an open gate either way; take a one-way out of this region; throw a mechanism that can be thrown from this region; or leave the site and walk back in, which puts the player at `in` with the floor exactly as they left it. That last one is not a nicety — it is the move that turns "shut your own way back and take a staircase" from an argument into a state.
+The four moves, from the design doc: walk through an open gate either way; take a one-way out of this region; throw a mechanism that can be thrown from this region; or leave the floor and come back, which puts the player at `in` with the floor exactly as they left it.
+
+**That last move is available from `out` and nowhere else, and the reason is in the save.** A journey's `position` is `"floor:row,col"`, so leaving the site and returning puts the player back where they stood; only a position belonging to _another_ floor falls back to this floor's entrance. Getting onto another floor means reaching the staircase, which is `out`. So a player sealed into a chamber does not get to walk out of it by leaving — and a player who shut their own way back after passing the staircase does. The move is what turns that second case from an argument into a state.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -387,7 +389,7 @@ describe("reachableStates", () => {
     expect(states(spec)).toEqual(["entrance|absent", "vault|absent"])
   })
 
-  it("lets the player leave and come back, which returns them to the way in", () => {
+  it("lets the player who reached the way out come back in at the entrance", () => {
     const spec = oneDoor()
     spec.mechanisms.key.transitions = []
     spec.oneWays = [{ from: "entrance", to: "vault" }]
@@ -434,9 +436,14 @@ const stateKey = (ids: readonly MechanismId[], state: LockState): string =>
   `${state.region}|${ids.map(id => `${id}=${state.config[id]}`).join(",")}`
 
 // THE FOUR MOVES. Walking through an open gate goes either way — a gate is a door, not a drop — while
-// a one-way goes one way, which is the whole of what P2 buys. Leaving the site and walking back in is
-// a move like any other: it costs nothing, it is always available, and it is what makes shutting your
-// own way back a state that can be reached rather than a risk to be argued about.
+// a one-way goes one way, which is the whole of what P2 buys.
+//
+// The fourth is leaving the floor and coming back, and it starts at the way out because that is what
+// the save makes true: a journey's position is "floor:row,col", so re-entering a site puts the player
+// back where they stood, and only a position belonging to another floor falls back to the entrance.
+// Reaching another floor means reaching the staircase. So this is the move that makes shutting your
+// own way back after passing the staircase a state rather than an argument, and it is NOT an escape
+// from a chamber a mechanism has sealed.
 const movesFrom = (spec: LockSpec, state: LockState): LockState[] => {
   const { region, config } = state
   const next: LockState[] = []
@@ -451,7 +458,7 @@ const movesFrom = (spec: LockSpec, state: LockState): LockState[] => {
     for (const transition of mechanism.transitions)
       if (transition.at === region && config[id] === transition.from)
         next.push({ region, config: { ...config, [id]: transition.to } })
-  if (region !== spec.in) next.push({ region: spec.in, config })
+  if (region === spec.out) next.push({ region: spec.in, config })
 
   return next
 }
@@ -524,7 +531,9 @@ git commit -m "feat: walk every state a lock's mechanisms can be put in"
 
 Two questions, both over the states Task 3 found. **Does any of them stand at `out`?** — the lock can be solved at all. **Does every one of them still reach `out`?** — no order of moves strands anybody. The second is the one that earns its keep, and it is answered by sweeping the move graph backwards from the states standing at `out`: whatever the sweep does not reach is a state the player can get into and not get out of.
 
-The worked example is the design doc's own `doubleBack`, and it is here in full because a lock that comes out sound proves nothing on its own. So it is walked four times: as written; with the drop taken away; with the board made one-shot; and with both. Only the last two go red, and that is the finding rather than a test detail — **the drop is not what keeps that floor sound, re-solving the board is.** With the fork re-solvable the player can always leave, walk back in and choose the other branch, so the drop buys the puzzle the author wanted rather than the soundness. Take re-solving away and the floor strands whoever turns left, which is the design doc's re-enterability invariant with a state attached to it.
+The worked example is the design doc's own `doubleBack`, and **as the doc writes it, the walk refuses it.** Nothing stops a player walking into the drop on the way in, before throwing `S1`: they land in `leftLower` with the fork's left gate shut above them (the board is set right, which is how they got to `S1`'s chamber at all), the green gate shut below them, the lever that opens it behind them, and no staircase down there to leave by. That is precisely the trap the second question exists to find — "not 'is there a drop from `s1Chamber`' but 'is there any sequence that paints the player into a corner'" — and it is worth more as the first test than any invented example would be.
+
+So the sound control is the same lock with the drop one gate lower, past the gate `S1` opens. That is the doc's own "different, easier puzzle", used here as a positive control rather than proposed as the fix: **which way the worked example should be repaired is a design decision, not this plan's.** The third test keeps the re-enterability invariant honest on top of it — make the board one-shot and the floor strands whoever turns left first.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -577,20 +586,29 @@ const doubleBack = (): LockSpec => ({
 })
 
 describe("walkLock", () => {
-  it("finds the worked example sound: solvable, and no order of moves strands anyone", () => {
-    expect(walkLock(doubleBack())).toEqual({ sound: true, states: expect.any(Number) })
+  // The drop lands one gate lower, past the gate S1 opens, so taking it early costs nothing.
+  const dropPastTheGreenGate = (): LockSpec => ({ ...doubleBack(), oneWays: [{ from: "s1Chamber", to: "s2Chamber" }] })
+
+  it("strands the player who takes the drop before throwing S1", () => {
+    // The worked example as the design doc writes it. Nothing stops a player walking into the drop on
+    // the way in: they land between two shut gates, the lever that opens one of them is behind them,
+    // and there is no staircase down there to leave by.
+    const result = walkLock(doubleBack())
+    if (result.sound) throw new Error("expected the early drop to strand")
+    expect(result.failure).toEqual({
+      type: "strands",
+      at: { region: "leftLower", config: { Y: "right", S1: "start", S2: "start" } },
+    })
   })
 
-  it("stays sound with the drop gone, because the board can be re-solved", () => {
-    const spec = doubleBack()
-    spec.oneWays = []
-    expect(walkLock(spec).sound).toBe(true)
+  it("is sound with the drop one gate lower", () => {
+    expect(walkLock(dropPastTheGreenGate())).toEqual({ sound: true, states: expect.any(Number) })
   })
 
-  it("strands whoever takes the left branch when the board cannot be re-solved", () => {
-    // Y one-shot: set left and the right branch is gone for good, so S1 is never thrown and the left
-    // branch's lower gate never opens. The drop does not help — it starts on the other side.
-    const spec = doubleBack()
+  it("strands whoever turns left when the board cannot be re-solved", () => {
+    // Y one-shot: set left and the right branch is gone for good, so S1 is never thrown, the left
+    // branch's lower gate never opens, and the drop starts on the wrong side to help.
+    const spec = dropPastTheGreenGate()
     spec.mechanisms.Y.transitions = spec.mechanisms.Y.transitions.filter(t => t.from === "unset")
     const result = walkLock(spec)
     if (result.sound) throw new Error("expected a one-shot fork to strand")
@@ -600,24 +618,17 @@ describe("walkLock", () => {
     })
   })
 
-  it("cannot be solved at all with the drop gone and the board one-shot", () => {
-    // Reaching S2 wants the fork set left; throwing S1 wants it set right. One board, one answer.
-    const spec = doubleBack()
-    spec.oneWays = []
-    spec.mechanisms.Y.transitions = spec.mechanisms.Y.transitions.filter(t => t.from === "unset")
-    expect(walkLock(spec)).toEqual({ sound: false, failure: { type: "unsolvable" } })
-  })
-
   it("calls a lock with no way through unsolvable rather than stranding", () => {
     const spec = oneDoor()
     // The key lies behind its own door.
     spec.mechanisms.key.transitions = [{ from: "absent", to: "held", at: "vault" }]
-    const result = walkLock(spec)
-    expect(result).toEqual({ sound: false, failure: { type: "unsolvable" } })
+    expect(walkLock(spec)).toEqual({ sound: false, failure: { type: "unsolvable" } })
   })
 
-  it("fails a switch that can shut the way it was entered by, because leaving returns the player to it", () => {
-    // One fork, one board, and the corridor the player arrived by among the ways out it can shut.
+  it("fails a switch that can shut the way it was entered by, because the staircase is past it", () => {
+    // One fork, one board, and the corridor the player arrived by among the ways out it can shut. The
+    // way out is past the fork, so the player can reach it, come back in at the entrance, and find the
+    // only door to the board shut.
     const spec: LockSpec = {
       regions: ["entrance", "fork", "wayOut"],
       gates: {
@@ -644,13 +655,11 @@ describe("walkLock", () => {
   })
 
   it("names the state it died in, so an author can read the trap", () => {
-    const spec = doubleBack()
-    spec.mechanisms.Y.transitions = spec.mechanisms.Y.transitions.filter(t => t.from === "unset")
-    const result = walkLock(spec)
-    if (result.sound) throw new Error("expected a one-shot fork to strand")
+    const result = walkLock(doubleBack())
+    if (result.sound) throw new Error("expected the early drop to strand")
     const described = describeLockWalkFailure(result.failure)
-    expect(described).toContain("entrance")
-    expect(described).toContain("Y at left")
+    expect(described).toContain("leftLower")
+    expect(described).toContain("Y at right")
   })
 
   it("reports a malformed lock without walking it", () => {
@@ -742,7 +751,7 @@ export const describeLockWalkFailure = (failure: LockWalkFailure): string => {
 - [ ] **Step 4: Run the tests and watch them pass**
 
 Run: `yarn test src/game/lockWalk.spec.ts`
-Expected: PASS, 23 tests. If the worked example comes out unsound, do not adjust the example to suit the code — walk it by hand against the doc and report which of the two is wrong.
+Expected: PASS, 22 tests. If the worked example comes out sound, or strands in a different state than the one named, do not adjust the example to suit the code — walk it by hand against the doc and report which of the two is wrong.
 
 - [ ] **Step 5: Types, lint, commit**
 
