@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { assembleFloor, defaultResolveEncounter } from "./siteAssembler"
 import type { ResolveEncounter } from "./siteAssembler"
-import type { FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
+import type { Direction, FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 import { walkLock } from "./lockWalk"
 import { floorLock } from "./floorLock"
 import { nodeBeyond } from "./siteValidator"
@@ -123,6 +123,43 @@ const wardDoorsShareABoundary = (grid: FloorGrid): boolean => {
   return besidesByDoor.some((set, i) => besidesByDoor.some((other, j) => i !== j && [...set].some(x => other.has(x))))
 }
 const wardsCollide = (grid: FloorGrid): boolean => standsASwitch(grid) && wardDoorsShareABoundary(grid)
+
+const OPPOSITE: Record<string, Direction> = { n: "s", s: "n", e: "w", w: "e" }
+
+// Every cell pair the grid joins in one direction and not the other, read off the raw grid — the
+// same witness src/game/oneWayCarve.spec.ts keeps under this name, duplicated here for the same
+// reason `regionsExcludingDoors` above is: asking floorLock itself whether a drop crosses regions
+// would check the compiler against its own output and pass whatever it produced, bug or not.
+const oneWayEdges = (grid: FloorGrid): { from: [number, number]; to: [number, number] }[] => {
+  const found: { from: [number, number]; to: [number, number] }[] = []
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type === "empty") continue
+      for (const dir of dirsOf(cell)) {
+        const [dr, dc] = MOVES[dir as string]
+        const [nr, nc] = [r + dr, c + dc]
+        const next = grid.cells[nr]?.[nc]
+        if (!next || next.type === "empty") continue
+        if (!dirsOf(next).has(OPPOSITE[dir as string])) found.push({ from: [r, c], to: [nr, nc] })
+      }
+    }
+  return found
+}
+
+// A seed where a drop's two endpoints land in different regions of the witness above — most carves
+// attach "upper" and "lower" to the same open hub the switch's own sideSections fork from, so the
+// drop lands inside one region (a move the walk needs no telling about) on most seeds; this is what
+// finds one where it genuinely spans two.
+const dropCrossesRegions = (grid: FloorGrid): boolean => {
+  if (!standsASwitch(grid)) return false
+  const regionOf = regionsExcludingDoors(grid)
+  return oneWayEdges(grid).some(({ from, to }) => {
+    const a = regionOf.get(posKey(from[0], from[1]))
+    const b = regionOf.get(posKey(to[0], to[1]))
+    return a !== undefined && b !== undefined && a !== b
+  })
+}
 
 // Which junction a carve offers is the seed's choice, so seeds are tried until one carves what the
 // test needs — and running out is a throw, never a silent skip.
@@ -382,11 +419,6 @@ describe("floorLock", () => {
       ],
       oneWays: [{ from: "upper", to: "lower" }],
     }
-    // "upper" and "lower" are two more ordinary branches off the same open hub the switch's own two
-    // sideSections fork from, so most carves already join them without the drop's help — that carve
-    // has nothing for this test to check. Filtered here for one where the drop is the only way across.
-    const dropCrossesRegions = (grid: FloorGrid): boolean =>
-      standsASwitch(grid) && (floorLock(grid)?.oneWays?.length ?? 0) > 0
     const lock = floorLock(assembled(withDrop, dropCrossesRegions))!
     expect(lock.oneWays?.length).toBeGreaterThan(0)
     for (const oneWay of lock.oneWays!) {

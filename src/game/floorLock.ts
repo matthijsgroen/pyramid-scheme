@@ -63,11 +63,13 @@ const regionsOf = (grid: FloorGrid): { ids: RegionId[]; of: Map<string, RegionId
   return { ids, of }
 }
 
-// A PASSAGE THE PLAYER MAY TAKE ONLY ONE WAY. The region flood follows each cell's own dirs, so the
-// ground past a drop is already a region of its own; without this the walk would believe nothing
-// reaches it and would refuse a floor that is perfectly sound. A pair whose two cells fall in the
-// same region is skipped: inside a region the player walks freely, so a drop between two of its own
-// cells is not a move the walk needs told about.
+// A PASSAGE THE PLAYER MAY TAKE ONLY ONE WAY. The ground past a drop is a region of its own only
+// when something else gates it off — an ungated section is already fully wired into the same maze
+// its neighbours are, and the drop merely adds a shortcut across ground the flood already joined,
+// so without this the walk would believe a genuinely gated pocket has no way in at all and would
+// refuse a floor that is perfectly sound. A pair whose two cells land in the same region is skipped:
+// inside one region the player already walks freely, so a drop between two of its own cells is
+// correctly reported as nothing for the walk to be told about.
 const oneWaysOf = (grid: FloorGrid, of: Map<string, RegionId>): { from: RegionId; to: RegionId }[] => {
   const found: { from: RegionId; to: RegionId }[] = []
   for (let r = 0; r < grid.rows; r++)
