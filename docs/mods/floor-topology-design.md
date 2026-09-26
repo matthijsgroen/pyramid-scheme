@@ -42,6 +42,13 @@ journey, overridden at a pyramid — so a feature needs no placement mechanism o
 A slide or a fork is usually worth pinning; "some of this tier's corridors are flooded" is not, and
 pinning each one would be an author doing the builder's job.
 
+**Beside the wish there is a second form, for a floor whose shape is the puzzle.** A wish, however
+tightly pinned, says what a floor should contain. It cannot say that reaching one switch depends on
+having thrown another, because that is a relation between places and a wish names no places. So an
+author may instead name a floor's regions, the gates between them and what owns each gate, and the
+builder carves to that. Both forms stay: the wish sprinkles a mechanic across a tier, and the
+authored lock set out below designs one floor.
+
 ## Features, and who owns them
 
 **A mod registers topology features by name — `LightSwitchFork`, `FloodedCorridor`, `SandSlide`.
@@ -62,7 +69,7 @@ ships on its own.
 | ------------ | ------------------------------- | ---------------------------------------- | ----------------------------------------------- | ------------------------------------------------------ |
 | **needs**    | what the floor must provide     | a room with 2+ exits to gate             | a deep room and an upstream one                 | two sections on a floor                                |
 | **places**   | geometry and controls           | an encounter, and a gate per exit        | a directed link                                 | a control room, and a mask over one section            |
-| **binds**    | control to geometry             | solved toward north opens the north gate | —                                               | used, and the mask moves from one section to the other |
+| **binds**    | which gates each state opens    | solved toward north opens the north gate | —                                               | used, and the mask moves from one section to the other |
 | **gated by** | a currency the player must hold | —                                        | `rope`, for the variant that is the only way in | —                                                      |
 
 Two slides that look identical and differ only in `gated by` — one a shortcut, one an entrance
@@ -70,20 +77,60 @@ waiting for a rope — are the same feature authored twice, which is the sign th
 crack in a wall waiting for a hammer is a gate whose `gated by` names an item rather than a key, and
 the keys-and-locks machinery already answers that.
 
+The slots are what a wish has to say for the builder to find it a home. An authored lock says the
+same things outright — the places, the gates, the mechanism and what each of its states opens — and
+leaves the builder only the carve.
+
+### The unit of a claim is a room-to-corridor boundary
+
+A gate occupies a boundary rather than a cell, which is what lets two features be told apart on a
+floor: a claimed boundary leaves the pool, and a feature that wanted it is told which feature has it.
+A boundary a ward gate already holds cannot be claimed, for the reason the allocation below gives:
+two openers on one barrier and the player cannot tell which thing they are looking at.
+
+**A gate sits on any boundary, and a mechanism owns it.** Nothing in a gate requires its owner to
+stand beside it. The common case is a mechanism in the room its gates lead out of — the fork below —
+because that is the shape a builder can find on a floor it is carving for other reasons. The case
+that makes a floor a puzzle is a gate that swings somewhere the player is not standing.
+
+### A gate says what opens it
+
+A lock the player cannot read is not a puzzle, it is a wall they walk into twice. So a gate says
+which mechanism owns it, and the further that mechanism sits from the door, the more it has to say.
+
+**Paired by a mark.** A mechanism and its gates share one — the fork and its two doors orange, the
+lever and its pair green, the last lever and the way out blue. Floor keys already pair a key to a
+door by colour, so this is the existing vocabulary rather than a new one. What a mark is made of, a
+colour or a glyph or the patron gods' vocabulary, is not settled; only that a mechanism and its gates
+share it.
+
+**Explained at the door, where a mark is not enough.** An order cannot be drawn in a colour, so a
+sequence lock's door carries an encounter showing the symbols and the order they are wanted in, the
+way a ward gate already tells the player which key it wants.
+
+**A gate encounter may read, never open.** A door the player opens by tapping is a door the mechanism
+does not control, which is the whole of what the gate was for; a door that explains itself when
+tapped takes nothing from the mechanism. That distinction belongs in the type that carries the
+encounter, because the two look identical from outside.
+
+A switch's own gates need no encounter at all — the board and its doors are in one room and the
+player sees both at once. The explaining is needed exactly where the mechanism is out of sight.
+
 ### A fork knows its exits, and a switch is a fork that carries an encounter
 
-A fork is already the place where ways diverge, so it is the only node that knows, by construction,
-what leaving it in each direction means. Give it that knowledge explicitly — **each exit has a
-direction and a kind: a ward gate, the main path onward, a side path, or another fork** — and a
-switch needs no geometry of its own. It is a fork with an encounter in it, reading the exits it
-already has.
+**This is the shape a wished-for switch takes, and the common case rather than the only one.** A fork
+is already the place where ways diverge, so it is the only node that knows, by construction, what
+leaving it in each direction means. Give it that knowledge explicitly — **each exit has a direction
+and a kind: a ward gate, the main path onward, a side path, or another fork** — and a switch the
+builder placed needs no geometry of its own. It is a fork with an encounter in it, reading the exits
+it already has.
 
 This is what makes the board a diagram of the room. The player stands in the fork, the board draws
 the fork's own ways out at their own compass points, and routing the beam to one opens that way.
 
-**The builder places the gates, not the author.** It knows which boundaries are already spoken for,
-and it knows the control must be reachable before what it controls — which a fork satisfies by
-standing in it. Two exits are not available to gate:
+**In the wish form the builder places the gates, not the author.** It knows which boundaries are
+already spoken for, and it knows the control must be reachable before what it controls — which a fork
+satisfies by standing in it. Two exits are not available to gate:
 
 - **an exit toward an existing ward gate**, because that boundary is already owned; and
 - **an exit toward another fork**, because a gate there cuts one open space in two and reads as a
@@ -93,18 +140,15 @@ What is left — the main path onward, and side paths — is where the gates go.
 allowed here for the reason the invariants already give: the opener is reachable before the blocker,
 and at a fork it is the room the player is standing in.
 
+The corridor the player arrived by is neither of those two, and whether a switch may shut it is not a
+rule the builder can carry: on one floor shutting it is the puzzle and on the next it is a trap. It
+is a per-floor fact, and the invariants say what establishes it.
+
 **No bound on how much of a floor sits behind one switch, and a switch may stand at any fork.** The
 tempting rule — keep the main path onward free, or cap the share held — protects a pacing the player
 cannot perceive. Standing in the fork they have walked none of it: the main path and a side path are
 two dark ways out, and how much lies behind either is exactly what they do not know. There is nothing
 to compare, so there is no unfairness in the comparison.
-
-### The unit of a claim is a room-to-corridor boundary
-
-A gate occupies a boundary rather than a cell, which is what lets two features be told apart on a
-floor: a claimed boundary leaves the pool, and a feature that wanted it is told which feature has it.
-The fork above is the worked example — it claims the boundaries it gates, and cannot claim the one a
-ward gate already holds.
 
 ### A feature claims what it uses, and a claim is exclusive
 
@@ -143,6 +187,167 @@ conjured to satisfy a mod's own numbers.
 **A constraint that cannot be met stops the build**, naming the feature and the floor, the way a chest
 holding nothing already does. **A wish that cannot be met is reported, not fatal** — that is the
 difference the two words carry.
+
+---
+
+## Authored locks
+
+An author names a floor's regions, the gates between them and the mechanisms that own those gates,
+and the builder carves something that satisfies it. The bargain is the wish's, struck over a finer
+vocabulary: the author decides the structure, the builder decides the shape.
+
+### The worked example
+
+The floor this form was drawn from, and the test of whether the vocabulary says enough:
+
+- A fork carries a beam board, `Y`, whose two ways out are both shut.
+- The right way leads, through a gate that **starts open**, to a lever `S1`.
+- Throwing `S1` swaps its two gates: the one behind the player closes, and one on the _left_ branch
+  opens. The player has shut their own way back.
+- A one-way drops from `S1`'s chamber onto the left branch — landing **between** the fork's left gate
+  and the newly opened one, so the player climbs to `S2` without returning to `Y`.
+- `S2` opens the way out.
+
+The ordinal position of that drop is load-bearing. Land it below the fork's left gate and the floor
+is a different, easier puzzle; land it above the green gate and the lock is bypassed entirely.
+
+### Regions
+
+A **region** is everywhere reachable without passing a gate — the partition the gates induce. Regions
+are named by the author, and naming them is naming the _puzzle's_ structure rather than the map's
+shape: `leftLower` means "past the fork's left gate, before the green one", not "the left-hand side".
+
+A region carries the content vocabulary a section already carries, so a region is a section the
+author has named:
+
+```ts
+regions: {
+  entrance:  { pathPuzzles: 1 },
+  s2Chamber: { sideSections: [holdChest(1)] },
+}
+```
+
+### Gates
+
+A gate names the two regions it joins, the mechanism that owns it, and whether it stands open when
+the player arrives:
+
+```ts
+gates: {
+  greenRight: { from: "rightLower", to: "s1Chamber", owner: "S1", startsOpen: true },
+}
+```
+
+`startsOpen` is authored, never defaulted. The worked example turns on it: the player walks through a
+door and then closes it behind them, which is only a move if the door began open. A default would
+make one of the two floors unwritable, and leave no sign which of them the author meant.
+
+### Switches, and mechanisms generally
+
+A **switch** is a control that owns gates. It stands in a region and names a family; whether that
+family is a board to solve or a lever to pull is the mod's business, and core never learns the
+difference:
+
+```ts
+switches: {
+  Y:  { in: "entrance",  encounter: "lightbeamSwitch" },
+  S1: { in: "s1Chamber", encounter: "handle" },
+}
+```
+
+A handle is therefore a family, not a flag, and the catalogue's "a lever elsewhere opens a door here"
+in `../game-design/floor-as-puzzle-brainstorm.md` is this with a lever in place of a board rather
+than a mechanism of its own. What a handle does when thrown — cycle its gates or toggle them, and
+what a single-gate handle means — is the topology mod's to settle, not core's.
+
+**A mechanism has states, a mapping from each state to which of its gates stand open, and transitions
+the player causes.** The mappings differ, and the difference is data:
+
+| Mechanism      | States              | Open at               | Transition       |
+| -------------- | ------------------- | --------------------- | ---------------- |
+| a beam board   | which shrine is lit | that shrine's gate    | solving it       |
+| a handle       | its positions       | that position's gate  | pulling it       |
+| `sequenceLock` | progress `0..N`     | its gate, only at `N` | crossing a glyph |
+
+A board opens one gate per state; a sequence opens its gate only in the last. So what the invariants
+ask a mechanism for is its own state-to-gates mapping, rather than assuming a state is which gate is
+open. That is a one-line difference to write and an assumption nobody could find later.
+
+**Markers are sketched, and bought with the feature that needs them.** A sequence wants named trigger
+points inside regions, finer than a region because regions are defined by the gates, and two glyphs
+in one gate-free area cannot be told apart by naming:
+
+```ts
+markers: { ibis: { in: "leftLower" }, jackal: { in: "entrance" } }
+```
+
+The sequence names them in the order it wants:
+
+```ts
+switches: { door: { encounter: "sequenceLock", sequence: ["ibis", "jackal"] } }
+```
+
+That a region is coarser than a marker turns out not to matter: inside a region the player walks
+freely, so the walk's move becomes _trigger any marker in any reachable region_, and order within a
+region is genuinely unconstrained on the real floor too. A reset tile is a marker whose transition
+goes to state `0`, needing no special case. A marker is P3 in authored form — the named point is a
+mod marker on a cell, and firing on being crossed is what P3 buys — so `sequenceLock` buys primitive
+and authoring together. What P3 does not cover is a marker an author wants in a room rather than a
+corridor, and that waits for the feature to ask.
+
+### One-ways
+
+Directed, region to region, and explicit:
+
+```ts
+oneWays: [{ from: "s1Chamber", to: "leftLower" }]
+```
+
+Explicit because where a drop lands is a design decision rather than a safety measure — the worked
+example is a different floor one gate lower. The walk catches a missing one; it does not place one.
+A one-way is P2, costed below.
+
+### Containers with ports
+
+A lock is not a floor. It is a named, reusable container with an `in` and an `out`:
+
+```ts
+const doubleBack = topologyLock({ regions, gates, switches, oneWays, in: "entrance", out: "wayOut" })
+```
+
+A floor places it, and ordinary content carries on around it:
+
+```ts
+.floor(0, { pathPuzzles: 4, locks: [doubleBack, sandBypass] })
+```
+
+The main path enters at `in` and leaves at `out`. A floor with three locks reads as three blocks
+rather than one tangle — for the author, and for the walk the invariants describe.
+
+### The rules that keep a lock buildable
+
+**The gates must form a tree. One-ways may add any edge on top.**
+
+Strip the one-ways from the worked example and the gate graph is a tree — which is the existing
+section model, a main path with sections hanging off it and gates on section boundaries, and a tree
+the carve lays out by construction. A cycle made of _gates_ would need a carve that closes a loop
+through locked boundaries, and it is rarely a puzzle in any case: a loop walkable both ways through
+two locks is a room with two doors. An authored gate cycle stops the build and names itself.
+
+**A container's soundness may not depend on anything outside itself.** That is what makes placing one
+anywhere safe, and it decides what each kind of lock may do inside a container:
+
+| Lock kind       | Inside a container                                                                |
+| --------------- | --------------------------------------------------------------------------------- |
+| Switch gate     | part of the lock; its position is state                                           |
+| Floor key       | allowed, and the key must be findable inside the container                        |
+| Ward (tomb) key | allowed as a bonus door, but the container must be sound with it assumed **shut** |
+| Hidden section  | allowed, but the container must be sound with it assumed **unfound**              |
+
+A ward gate opens on progress made elsewhere in the world, so a container depending on one could only
+ever be verified in context; assuming it shut keeps the proof local. A hidden pocket is never
+guaranteed either — it is structurally reachable and nothing says the player found it — which is the
+same reasoning that stops a switch gating a hidden branch.
 
 ## Mod-owned authoring
 
@@ -198,14 +403,67 @@ lets the fixed point terminate. A waterline lever, sand closing behind the playe
 hourglass are **non-monotonic**: same player, same keys, floor open at one moment and shut at
 another.
 
-Rather than model the states in between, bracket them:
+Where the states in between cannot be counted, bracket them:
 
 - **Most permissive** — every blocker assumed clearable. Answers _is every reward ever obtainable?_
   This is what placement and reachability already compute.
 - **Most restrictive** — every blocker at its worst: ramp absent, corridors flooded, dust in place,
   upper floor choked. Answers _is each blocker's opener still reachable?_
 
-Non-monotonic state never enters the solver. The two runs bound it.
+None of those three has a finite set of configurations to walk, so the two runs stand in for walking
+them and the state in between never enters the solver. **A mechanism that can name its own states
+gets the stronger treatment instead.**
+
+### The states a mechanism names are walked, not bracketed
+
+A mechanism declares its states, so for a lock there is nothing to bracket — the configurations are
+countable. Because the author names the regions too, nothing has to be derived.
+
+**A state** is _(the region the player stands in, every mechanism's configuration, the floor keys
+held)_.
+
+Floor keys belong in the state space rather than beside it: a key changes what is passable exactly as
+a switch position does. It differs only in being monotonic — once held, always held — which is what
+keeps the space small. A floor key is a lock whose mechanism is a chest and whose lever moves one
+way.
+
+**A move** is walking, into any region joined by an open gate or along a one-way leading out; or
+throwing a switch that stands in the region the player occupies; or leaving the site and coming back,
+which puts the player at `in` with every mechanism as they left it.
+
+**Two questions, breadth-first from the start state:**
+
+1. **Does any reachable state reach `out`?** The lock can be solved at all. An author who builds a
+   lock with no way through is told so in those words, rather than discovering it as missing loot.
+2. **Does _every_ reachable state reach `out`?** No order of moves strands anyone.
+
+The second earns its keep. It finds traps nobody would think to look for — not "is there a drop from
+`s1Chamber`" but "is there any sequence that paints the player into a corner", including sequences
+several moves long. A failure stops the build naming the state it died in: _"from `s1Chamber`, Y at
+neither, `greenRight` shut, nothing reaches `out`"_.
+
+That is strictly stronger than the permissive bracket over the same floor. The permissive run answers
+_is this reward ever obtainable_, which is no comfort to a player who cannot reach it by any legal
+sequence of moves; the walk answers whether such a sequence exists, and whether any sequence ends
+badly.
+
+**Soundness composes.** The question is asked of a container between its own ports, so the answer is
+a property of the container alone, and a floor built from sound locks is sound. A lock is verified
+once ever rather than once per floor that places it; three locks on a floor are three small checks
+rather than one check over their product; and the state space stays small however much a floor grows.
+
+**The way back is a per-floor fact.** Whether a switch may shut the corridor the player arrived by is
+not a rule to settle once: it is allowed where the floor stays winnable and refused where it does
+not. Both halves cost something real. Refusing it everywhere leaves **36 of 103 floors** with a
+junction whose way out the switch cannot shut, so the player walks on without working the board.
+Allowing it everywhere opens a trap: shut the way back, take a staircase, come back, and the player
+stands on the entrance side of a door only the fork can open — ordinary play, because a saved
+position belonging to another floor falls back to the entrance. Coming back is one of the moves, so
+that trap is a state the second question fails on rather than an argument to have.
+
+**The wish form is covered too.** A floor authored with `forks` and `switches` has regions as well;
+the carve makes them even though nobody named them, so the same walk covers it with no new
+authoring.
 
 ### A hidden way out stays one-way
 
@@ -230,25 +488,27 @@ A check that runs on every floor is a different guarantee from a guard that only
 switch stands: no journey authors `switchFork` yet, so the second kind has never once fired outside
 a spec. Six rows below are that second kind, and say so.
 
-| Rule                                                            | Held by                                                                    |
-| --------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| A floor-key gate has a collectible key                          | `keyAfterGate`                                                             |
-| A fork's branches are not all bland                             | `allBlandFork`                                                             |
-| Map pieces present, unique, reachable behind their seal         | the three `mapPiece*` reasons                                              |
-| Mosaic pieces present, unique, reachable                        | the three `mosaic*` reasons                                                |
-| A section has a name a save can file it under                   | `unusableSectionAddress`                                                   |
-| No two rooms of a section answer to one slot                    | `duplicateCellSlot`                                                        |
-| A switch found two ways left to close                           | `switchForkWithoutGates`, which runs only off an authored `switchFork` — a guard, not yet reached by an authored floor |
-| Switch key stems are unique across floors                       | `validateSwitchForkKeys`, which runs only off an authored `switchFork` — a guard, not yet reached by an authored floor |
-| Rewards counted, no chest left empty, the shop economy balances | `validateRewardCounts`, `findEmptyChests`, the shop mod's `worldValidator` |
-| No boundary is gated twice                                      | `boundaryGatedTwice`, which fires only from `exit.gateKeyId`, set only by a switch — a guard, not yet reached by an authored floor |
-| A switch's gates are reachable only through the switch          | `switchGateNotBehindSwitch`, which fires only from `exit.gateKeyId`, set only by a switch — a guard, not yet reached by an authored floor |
-| A switch's family is re-enterable                               | `switchFamilyNotReEnterable` — a guard, not yet reached by an authored floor |
-| A switch never gates a hidden branch                            | `closableExits`, which skips a hidden neighbour — a guard, not yet reached by an authored floor |
-| An exit is pruned when the node it leads to is hidden           | `maskHiddenCells`, which checks the hidden set two cells out, not `dirs` — fires on every floor, switch or not: prunes 76 exits across 61 of 206 authored floors |
-| A hidden way out stays one-way under any tool                   | **nothing yet**, and no tool exists to break it                            |
+| Rule                                                            | Held by                                                                                                                                                                                                                    |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A floor-key gate has a collectible key                          | `keyAfterGate`                                                                                                                                                                                                             |
+| A fork's branches are not all bland                             | `allBlandFork`                                                                                                                                                                                                             |
+| Map pieces present, unique, reachable behind their seal         | the three `mapPiece*` reasons                                                                                                                                                                                              |
+| Mosaic pieces present, unique, reachable                        | the three `mosaic*` reasons                                                                                                                                                                                                |
+| A section has a name a save can file it under                   | `unusableSectionAddress`                                                                                                                                                                                                   |
+| No two rooms of a section answer to one slot                    | `duplicateCellSlot`                                                                                                                                                                                                        |
+| A switch found two ways left to close                           | `switchForkWithoutGates`, which runs only off an authored `switchFork` — a guard, not yet reached by an authored floor                                                                                                     |
+| Switch key stems are unique across floors                       | `validateSwitchForkKeys`, which runs only off an authored `switchFork` — a guard, not yet reached by an authored floor                                                                                                     |
+| Rewards counted, no chest left empty, the shop economy balances | `validateRewardCounts`, `findEmptyChests`, the shop mod's `worldValidator`                                                                                                                                                 |
+| No boundary is gated twice                                      | `boundaryGatedTwice`, which fires only from `exit.gateKeyId`, set only by a switch — a guard, not yet reached by an authored floor                                                                                         |
+| A switch's gates are reachable only through the switch          | `switchGateNotBehindSwitch`, which fires only from `exit.gateKeyId`, set only by a switch — a guard, not yet reached by an authored floor                                                                                  |
+| A switch's family is re-enterable                               | `switchFamilyNotReEnterable` — a guard, not yet reached by an authored floor                                                                                                                                               |
+| A switch never gates a hidden branch                            | `closableExits`, which skips a hidden neighbour — a guard, not yet reached by an authored floor                                                                                                                            |
+| An exit is pruned when the node it leads to is hidden           | `maskHiddenCells`, which checks the hidden set two cells out, not `dirs` — fires on every floor, switch or not: prunes 76 exits across 61 of 206 authored floors                                                           |
+| A hidden way out stays one-way under any tool                   | **nothing yet**, and no tool exists to break it                                                                                                                                                                            |
+| A lock is solvable, and no order of moves strands the player    | **nothing yet** — the walk is designed, and no floor authors a lock                                                                                                                                                        |
+| A lock's gates form a tree                                      | **nothing yet**, for the same reason                                                                                                                                                                                       |
 | An authored gate's key is minted by whoever owns it             | for a switch fork, unrepresentable — the assembler writes gate and key from one expression. For a hand-authored gate, **nothing generic**: the two the world has are pinned by name in `configBuilder.integration.spec.ts` |
-| Every collection's target count is reachable                    | the mosaic mod's `worldValidator`, per register, over the permissive walk   |
+| Every collection's target count is reachable                    | the mosaic mod's `worldValidator`, per register, over the permissive walk                                                                                                                                                  |
 
 A misspelled key id is the one that still bites, and it is not floor-shaped: it leaves its branch
 unreachable for ever and no check notices, because the validator skips authored keys and the solver
@@ -274,7 +534,8 @@ every reward it finds to each world validator; mosaic counts its own glass in th
 Leaving is always available, and re-entry returns the player to the position they left at. So
 stranding is never about reaching the exit — it is about coming back to the same trap. A mod owning
 non-monotonic state either discards it on leave, or guarantees its opener is reachable from wherever
-it can strand a player.
+it can strand a player. Where the mechanism names its states, that guarantee is not an argument the
+mod makes: it is a state the second question fails on.
 
 `hourglass` proves its own flippability through `worldValidator`, the descriptor field the shop
 economy guard already uses. It drops with the mod, and core never learns what sand is.
@@ -286,14 +547,14 @@ economy guard already uses. It drops with the mod, and core never learns what sa
 These are core's, not any mod's. A feature composes them; none of them is a thing a mod ships on its
 own, and none is built before a feature needs it.
 
-|     | Primitive                                                                                   | Generalises                                                                | Serves                                  |
-| --- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | --------------------------------------- |
-| P1  | **Blocked-until, with a registered opener**                                                 | `hidden`+found and `gate`+key are two hardcoded instances of this one idea | flooding, collapse, dust, the hourglass |
-| P2  | **Authored edge between two addresses, optionally directed**                                | —                                                                          | ramps, back-bars, shafts                |
-| P3  | **Corridor cells carry mod markers**, fired on being crossed                                | only rooms carry anything                                                  | glyph tiles, sand trails                |
-| P4  | **Floor-scoped encounter** — the board is the floor, the moves are steps                    | room-sized boards                                                          | the hourglass, visit-order floors       |
-| P5  | **Currency scope** — journey, beside positional and world-spread                            | §E's positional-vs-spread split                                            | cosmic dust                             |
-| P6  | **Per-visit mod state with a lifecycle** — created on entering a site, discarded on leaving | mods own persistent state only                                             | the hourglass flip                      |
+|     | Primitive                                                                                   | Generalises                                                                | Serves                                                  |
+| --- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------- |
+| P1  | **Blocked-until, with a registered opener**                                                 | `hidden`+found and `gate`+key are two hardcoded instances of this one idea | flooding, collapse, dust, the hourglass                 |
+| P2  | **Authored edge between two addresses, optionally directed**                                | —                                                                          | ramps, back-bars, shafts                                |
+| P3  | **Corridor cells carry mod markers**, fired on being crossed                                | only rooms carry anything                                                  | glyph tiles, sand trails, a sequence's authored markers |
+| P4  | **Floor-scoped encounter** — the board is the floor, the moves are steps                    | room-sized boards                                                          | the hourglass, visit-order floors                       |
+| P5  | **Currency scope** — journey, beside positional and world-spread                            | §E's positional-vs-spread split                                            | cosmic dust                                             |
+| P6  | **Per-visit mod state with a lifecycle** — created on entering a site, discarded on leaving | mods own persistent state only                                             | the hourglass flip                                      |
 
 P1 is the one worth building for its own sake: it does not merely serve a mod, it **subsumes two
 special cases core currently hardcodes**. Core gets smaller.
@@ -336,14 +597,14 @@ slice buys at most one primitive, and buys it because that feature needs it — 
 mod may end up owning several features; what a slice delivers is one feature, registered and
 authored.
 
-| Order | Feature           | Buys                                         | Tier it lands at | Toggle-off looks like                   |
-| ----- | ----------------- | -------------------------------------------- | ---------------- | --------------------------------------- |
-| 1     | `LightSwitchFork` | nothing (no topology primitive, no key)      | junior           | a bare junction, every way out open     |
-| 2     | `sequenceLock`    | P3                                           | expert           | door unlocked, no glyph tiles           |
-| 3     | `sandSlide`       | P2                                           | expert           | ramp corridors absent, floor re-carves  |
-| 4     | `waterline`       | P1                                           | master           | floor permanently drained               |
-| 5     | `cosmicDust`      | P5                                           | wizard           | pyramid not choked, handles inert       |
-| 6     | `hourglass`       | P4, P6                                       | wizard           | upper floor clear, lower floor ordinary |
+| Order | Feature           | Buys                                    | Tier it lands at | Toggle-off looks like                   |
+| ----- | ----------------- | --------------------------------------- | ---------------- | --------------------------------------- |
+| 1     | `LightSwitchFork` | nothing (no topology primitive, no key) | junior           | a bare junction, every way out open     |
+| 2     | `sequenceLock`    | P3                                      | expert           | door unlocked, no glyph tiles           |
+| 3     | `sandSlide`       | P2                                      | expert           | ramp corridors absent, floor re-carves  |
+| 4     | `waterline`       | P1                                      | master           | floor permanently drained               |
+| 5     | `cosmicDust`      | P5                                      | wizard           | pyramid not choked, handles inert       |
+| 6     | `hourglass`       | P4, P6                                  | wizard           | upper floor clear, lower floor ordinary |
 
 `LightSwitchFork` goes first because it needs no topology primitive at all, and it buys nothing
 either: **a fork's ways out are a function of the board standing in it.** Route the beam north and
@@ -358,7 +619,8 @@ the configuration as they set it. What the feature does need is that the switch 
 **re-enterable**, which is what lets them change their mind.
 
 For the solver this is the permissive bracket and nothing new: every branch is reachable, because the
-player can always walk back and choose it.
+player can always walk back and choose it. That argument holds exactly as long as the way back is
+open, which is the fact the walk establishes floor by floor.
 
 **The fork's targets are the room's own doors.** A switch room knows which of its exits it gates, so
 the board draws those doors at those compass points rather than abstract targets, and routing the
@@ -511,7 +773,8 @@ So the build asserts solvability, not only reachability:
 - every collection the game asks a player to finish — a mosaic register, a hieroglyph, a tomb's
   `piecesRequired` — has **at least its target count reachable**, counted against the placements the
   solver can actually get to rather than against the world's totals;
-- every lock has an opener a player can hold before they meet it;
+- every lock has an opener a player can hold before they meet it, and every authored lock reaches its
+  `out` from every state a player can reach inside it;
 - no feature makes a currency less obtainable than the demand for it.
 
 **The count belongs to whoever owns the currency, not to core.** Core supplies which placements are
@@ -543,7 +806,16 @@ becomes a feature composed from vocabulary that already exists.
 
 - **A feature that eats capacity.** A feature taking a side path takes a loot slot with it, and the
   economy's supply count does not know. Whether a feature declares what it consumes, or the economy
-  reads the floor after features land, is undecided.
+  reads the floor after features land, is undecided. A lock's region tree is the same gap at a larger
+  size: a floor authoring three locks and a full set of paths may not fit, and nothing counts.
 - **`needs` above floor scope.** The hourglass spans two floors and cosmic dust spans sibling
   pyramids, so their requirements are not statements about one floor. The slot's vocabulary covers a
-  floor today.
+  floor today. A lock asks it from the other side: nothing says a region sits on one floor, and a
+  staircase inside a container would make it span two.
+- **Whether region names become save addresses.** They would be steadier than carve-derived section
+  addresses, which is a benefit rather than a cost — but it is a save-format question and wants its
+  own thought.
+- **What the container is called.** `topologyLock` collides with the catalogue's `sequenceLock`, and
+  "puzzle" is spoken for by the families. Something nearer `oldWorkings()` may sit better.
+- **How the builder lays a region tree into a carve.** That the tree shape matches the existing
+  section model is the whole of what is settled.
