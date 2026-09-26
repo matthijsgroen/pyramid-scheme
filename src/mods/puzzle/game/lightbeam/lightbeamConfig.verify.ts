@@ -19,15 +19,18 @@ import { lightbeamFixture } from "../../../../../scripts/puzzleBoards"
 
 describe("the boards the suite tests are the boards the generator makes", () => {
   /**
-   * The fixture, rebuilt and compared.
+   * The fixture, rebuilt and compared against the generator itself.
    *
    * WITHOUT THIS THE SPLIT IS A LIE: a stored board that has drifted from what the generator returns lets
-   * the whole spec pass while every board the game actually deals is broken. It also catches a field that
-   * stopped surviving JSON — the cast in `boards.fixture.ts` asserts a board is plain data, and this is
-   * where that assertion is paid for.
+   * the whole spec pass while every board the game actually deals is broken.
+   *
+   * **`toStrictEqual`, and never a comparison through JSON.** `JSON.stringify` writes `undefined` and
+   * `null` as the same text, so a stored board whose blanks had all turned into `null` compared EQUAL to
+   * the fresh one that still had them — the corruption and the check cancelled out. Strict equality is
+   * what tells `undefined` from `null`, which is the whole failure this guard exists to catch.
    */
   it("still matches, board for board", { timeout: 300_000 }, () => {
-    expect(JSON.parse(JSON.stringify(lightbeamFixture()))).toEqual(JSON.parse(JSON.stringify(FIXTURE)))
+    expect(FIXTURE).toStrictEqual(lightbeamFixture())
   })
 })
 

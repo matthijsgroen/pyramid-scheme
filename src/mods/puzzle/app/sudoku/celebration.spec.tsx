@@ -2,8 +2,8 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 import { render, waitFor, within } from "@testing-library/react"
 import { act } from "react"
-import { SUDOKU_CONFIG } from "@/mods/puzzle/game/sudoku/sudokuConfig"
-import { generateSudoku, type SudokuPuzzle as SudokuPuzzleData } from "@/mods/puzzle/game/sudoku/generateSudoku"
+import { type SudokuPuzzle as SudokuPuzzleData } from "@/mods/puzzle/game/sudoku/generateSudoku"
+import { FIXTURE } from "@/mods/puzzle/game/sudoku/boards.fixture"
 import { SudokuPuzzle } from "./SudokuPuzzle"
 import { skinFor } from "./skins"
 
@@ -70,7 +70,9 @@ const register = skinFor("scribe", undefined)
  * all under reduced motion.
  */
 describe("the completion run", () => {
-  const board = () => generateSudoku(1, SUDOKU_CONFIG.starter)
+  // A COPY PER CALL. The fixture is one shared object and a puzzle under test gets played, so handing the
+  // same board to two tests lets the first one's moves decide the second's.
+  const board = () => structuredClone(FIXTURE.starter[0])
 
   it("reads the values back before the banner arrives, then reports the solve", async () => {
     reducedMotion(false)
@@ -160,7 +162,9 @@ describe("the completion run", () => {
  * scroll is laid back out — the solved board is the reward and the banner sits over it, readable.
  */
 describe("the register filing itself", () => {
-  const board = () => generateSudoku(1, SUDOKU_CONFIG.starter)
+  // A COPY PER CALL. The fixture is one shared object and a puzzle under test gets played, so handing the
+  // same board to two tests lets the first one's moves decide the second's.
+  const board = () => structuredClone(FIXTURE.starter[0])
 
   /** Three chambers across and two down, each two columns wide and three rows tall. */
   const CHAMBERS = [

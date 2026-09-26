@@ -468,9 +468,9 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/mods/puzzle/app/sudoku/SudokuScrolls.tsx:2806339733": [
       [17, 16, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/app/sudoku/celebration.spec.tsx:3959899735": [
+    "src/mods/puzzle/app/sudoku/celebration.spec.tsx:2873016251": [
       [64, 93, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [153, 96, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+      [155, 96, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/puzzle/app/sudoku/skins.spec.ts:3468906449": [
       [12, 92, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -613,9 +613,6 @@ exports[`design doc references name a file, not a paragraph`] = {
       [10, 63, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [26, 24, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/game/futoshiki/generateFutoshiki.spec.ts:3913241052": [
-      [44, 19, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
-    ],
     "src/mods/puzzle/game/futoshiki/generateFutoshiki.ts:1570607302": [
       [18, 61, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [21, 57, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -625,15 +622,14 @@ exports[`design doc references name a file, not a paragraph`] = {
       [105, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [179, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
+    "src/mods/puzzle/game/futoshiki/generateFutoshiki.verify.ts:3913241052": [
+      [44, 19, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    ],
     "src/mods/puzzle/game/futoshiki/techniques.spec.ts:3441127085": [
       [346, 26, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/puzzle/game/futoshiki/techniques.ts:2298268224": [
       [0, 100, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
-    ],
-    "src/mods/puzzle/game/hidato/generateHidato.spec.ts:2759495740": [
-      [45, 67, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [66, 67, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/puzzle/game/hidato/generateHidato.ts:2601978459": [
       [13, 78, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -644,6 +640,10 @@ exports[`design doc references name a file, not a paragraph`] = {
       [99, 80, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [114, 94, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [132, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    ],
+    "src/mods/puzzle/game/hidato/generateHidato.verify.ts:2759495740": [
+      [45, 67, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [66, 67, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/puzzle/game/hidato/hex.ts:3331732576": [
       [6, 78, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -676,17 +676,6 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/mods/puzzle/game/lightbeam/beam.spec.ts:3679501924": [
       [399, 28, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/game/lightbeam/generateLightbeam.spec.ts:2568678460": [
-      [63, 69, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [354, 79, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [438, 34, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [479, 46, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [733, 91, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [1000, 41, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [1012, 5, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [1014, 22, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [1038, 26, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
-    ],
     "src/mods/puzzle/game/lightbeam/generateLightbeam.ts:2905664389": [
       [185, 56, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [309, 38, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -699,6 +688,17 @@ exports[`design doc references name a file, not a paragraph`] = {
       [1542, 18, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [1681, 87, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [1705, 5, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    ],
+    "src/mods/puzzle/game/lightbeam/generateLightbeam.verify.ts:2568678460": [
+      [63, 69, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [354, 79, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [438, 34, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [479, 46, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [733, 91, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [1000, 41, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [1012, 5, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [1014, 22, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [1038, 26, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/puzzle/game/lightbeam/lightbeamConfig.spec.ts:4088781805": [
       [60, 3, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -717,14 +717,14 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/mods/puzzle/game/lightbeam/techniques.ts:218894680": [
       [75, 60, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/game/procession/generateProcession.spec.ts:1219149689": [
-      [13, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
-    ],
     "src/mods/puzzle/game/procession/generateProcession.ts:3967726181": [
       [7, 95, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [17, 84, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [30, 68, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [127, 78, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    ],
+    "src/mods/puzzle/game/procession/generateProcession.verify.ts:1219149689": [
+      [13, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/puzzle/game/procession/meta.ts:3061941092": [
       [7, 72, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -751,16 +751,16 @@ exports[`design doc references name a file, not a paragraph`] = {
       [111, 93, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [228, 80, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/game/rushHour/generateRushHour.spec.ts:3641961645": [
-      [13, 85, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [46, 17, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
-    ],
     "src/mods/puzzle/game/rushHour/generateRushHour.ts:1306408721": [
       [6, 67, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [14, 46, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [28, 85, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [37, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [188, 65, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    ],
+    "src/mods/puzzle/game/rushHour/generateRushHour.verify.ts:3641961645": [
+      [13, 85, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [46, 17, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/puzzle/game/rushHour/meta.ts:4280993944": [
       [8, 3, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -782,9 +782,6 @@ exports[`design doc references name a file, not a paragraph`] = {
       [15, 50, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [76, 80, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/game/starBattle/generateStarBattle.spec.ts:2495438236": [
-      [170, 48, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
-    ],
     "src/mods/puzzle/game/starBattle/generateStarBattle.ts:441834420": [
       [28, 62, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [33, 72, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -792,6 +789,9 @@ exports[`design doc references name a file, not a paragraph`] = {
       [114, 78, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [338, 45, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [392, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    ],
+    "src/mods/puzzle/game/starBattle/generateStarBattle.verify.ts:2495438236": [
+      [170, 48, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/puzzle/game/starBattle/meta.ts:1926335560": [
       [8, 35, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -825,11 +825,6 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/mods/puzzle/game/sudoku/demands.ts:275604275": [
       [3, 74, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/game/sudoku/generateSudoku.spec.ts:2908026874": [
-      [64, 62, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [174, 35, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [221, 45, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
-    ],
     "src/mods/puzzle/game/sudoku/generateSudoku.ts:396606104": [
       [31, 61, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [42, 56, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -840,6 +835,11 @@ exports[`design doc references name a file, not a paragraph`] = {
       [122, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [172, 31, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [231, 61, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    ],
+    "src/mods/puzzle/game/sudoku/generateSudoku.verify.ts:2908026874": [
+      [64, 62, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [174, 35, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [221, 45, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/puzzle/game/sudoku/meta.spec.ts:3444996458": [
       [13, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
@@ -876,7 +876,7 @@ exports[`design doc references name a file, not a paragraph`] = {
       [118, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [135, 34, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzleSeeds.spec.ts:4035123351": [
+    "src/mods/puzzleSeeds.verify.ts:4035123351": [
       [7, 76, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [64, 83, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
