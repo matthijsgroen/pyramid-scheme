@@ -167,3 +167,68 @@ export const reachableStates = (spec: LockSpec): { order: LockState[]; edges: nu
 
   return { order, edges }
 }
+
+export type LockWalkFailure =
+  | { type: "malformed"; problem: string }
+  | { type: "tooLarge" }
+  | { type: "unsolvable" }
+  | { type: "strands"; at: LockState }
+
+export type LockWalkResult = { sound: true; states: number } | { sound: false; failure: LockWalkFailure }
+
+// TWO QUESTIONS OVER THE SAME STATES. Can the lock be solved at all — does any reachable state stand
+// at the way out; and does EVERY reachable state still reach it. The second is strictly stronger than
+// the permissive bracket over the same floor: that one answers whether a reward is ever obtainable,
+// which is no comfort to a player who cannot reach it by any legal sequence of moves.
+export const walkLock = (spec: LockSpec): LockWalkResult => {
+  const problem = checkLockSpec(spec)
+  if (problem) return { sound: false, failure: { type: "malformed", problem } }
+
+  const found = reachableStates(spec)
+  if (found === "tooLarge") return { sound: false, failure: { type: "tooLarge" } }
+  const { order, edges } = found
+
+  const backwards: number[][] = order.map(() => [])
+  edges.forEach((tos, from) => tos.forEach(to => backwards[to].push(from)))
+
+  // Sweep the moves backwards from every state standing at the way out; whatever it does not reach is
+  // a state the player can get into and not get out of.
+  const finishes = new Set<number>()
+  const queue: number[] = []
+  order.forEach((state, n) => {
+    if (state.region !== spec.out) return
+    finishes.add(n)
+    queue.push(n)
+  })
+  if (queue.length === 0) return { sound: false, failure: { type: "unsolvable" } }
+  for (let at = 0; at < queue.length; at++)
+    for (const from of backwards[queue[at]])
+      if (!finishes.has(from)) {
+        finishes.add(from)
+        queue.push(from)
+      }
+
+  // Discovery order is breadth-first order, so the first state that cannot finish is also the fewest
+  // moves from the start — the shortest trap to describe and the easiest to walk by hand.
+  const stranded = order.findIndex((_, n) => !finishes.has(n))
+  if (stranded >= 0) return { sound: false, failure: { type: "strands", at: order[stranded] } }
+
+  return { sound: true, states: order.length }
+}
+
+export const describeLockWalkFailure = (failure: LockWalkFailure): string => {
+  switch (failure.type) {
+    case "malformed":
+      return `the lock does not read: ${failure.problem}`
+    case "tooLarge":
+      return `the lock names more than ${MAX_LOCK_STATES} states`
+    case "unsolvable":
+      return "no sequence of moves reaches the way out"
+    case "strands": {
+      const config = Object.entries(failure.at.config)
+        .map(([id, state]) => `${id} at ${state}`)
+        .join(", ")
+      return `from ${failure.at.region}, ${config}, nothing reaches the way out`
+    }
+  }
+}
