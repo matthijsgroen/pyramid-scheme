@@ -171,3 +171,18 @@ container between its ports, verified once by the sweep.
 | 6. `doubleBack`  | blocked on 1, 3, 4, 5                                        |
 
 Steps 1, 2, 3 and 4 are independent of each other. Only 5 and 6 are a chain.
+
+---
+
+## What step 1 left for step 2
+
+Step 1 is built: a floor authors `oneWays`, the carve places or refuses them, the walk is told about them, and the develop journey stands one. Five things it deliberately did not finish, and the first is a gate on step 2 rather than a suggestion.
+
+**Before the drawing capability is granted to any shipped site, fix the drop connector's ordinal.** A drop's connector takes the SOURCE section's address but an ordinal pairing a step of the source with a step of the landing, so a drop from `upper` step 1 into `lower` step 0 files under `upper#<floor>/~0|1` — the same save key as `upper`'s own connector between its steps 0 and 1, which exists on any chain of two or more cells. Two cells, one identity: `findByAddress` returns whichever comes first in row-major order, and the same number drives fog against the source section's high-water mark, so the connector un-fogs early or never. It reaches only the develop journey today because `standOneWayDrops` is false on every pyramid and tomb. Granting that capability without fixing this ships a save collision.
+
+The rest are smaller, and none can reach a player while the capability holds:
+
+- **The gate table mints a two-way gate across a drop's first edge** when the drop leaves a cell that is itself a door. Traced: it cannot mask a verdict today, because the spurious edge only returns the player to the state they fell from and the landing is checked on its own. It is a second notion of the drop's edge living in the gate table, and it wants a reciprocity guard before that table gains another reader.
+- **`doorsToEnter` is not every door.** A room carrying `requiredKeyId`/`requiredKeyIds` from a family's own key requirements — a hieroglyph tableau, say — is a real barrier the walk respects, and nothing writes it into the map. A drop landing past one hands over ground behind a door the player has not earned. The switch-door walk already generalises: run the same "shut this node, see what the way in stops reaching" loop over every room with a key requirement. Until then the map's comment overclaims and should say so.
+- **`sealed` isolation is recorded as a door**, so a drop in or out of a sealed stretch is refused although nothing there is earned.
+- **One assertion in `oneWayCarve.spec.ts`** ("fails by name when no attempt can place the drop") checks for an `only`→`main` edge without filtering for one-wayness, so an ordinary attach passage satisfies it. Match its three siblings.
