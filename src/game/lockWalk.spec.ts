@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { checkLockSpec, openGates, type LockSpec } from "./lockWalk"
+import { checkLockSpec, openGates, reachableStates, MAX_LOCK_STATES, type LockSpec } from "./lockWalk"
 
 // A lock with one door and one key behind nothing: the smallest thing that reads.
 const oneDoor = (): LockSpec => ({
@@ -100,5 +100,60 @@ describe("openGates", () => {
     const spec = twoOwners("any")
     expect([...openGates(spec, { flood: "on", lever: "off" })]).toEqual(["sluice"])
     expect([...openGates(spec, { flood: "off", lever: "off" })]).toEqual([])
+  })
+
+  it("defaults a multi-owner gate to all, so one owner alone does not open it", () => {
+    const spec = twoOwners("all")
+    delete spec.gates.sluice.mode
+    expect([...openGates(spec, { flood: "on", lever: "off" })]).toEqual([])
+    expect([...openGates(spec, { flood: "on", lever: "on" })]).toEqual(["sluice"])
+  })
+})
+
+const states = (spec: LockSpec) => {
+  const found = reachableStates(spec)
+  if (found === "tooLarge") throw new Error("expected a walkable lock")
+  return found.order.map(state => `${state.region}|${Object.values(state.config).join(",")}`)
+}
+
+describe("reachableStates", () => {
+  it("walks from the way in, taking the key and then the door", () => {
+    expect(states(oneDoor())).toEqual(["entrance|absent", "entrance|held", "vault|held"])
+  })
+
+  it("never walks through a door no state opens", () => {
+    const spec = oneDoor()
+    spec.mechanisms.key.transitions = []
+    expect(states(spec)).toEqual(["entrance|absent"])
+  })
+
+  it("takes a one-way out of a region nothing else leaves", () => {
+    const spec = oneDoor()
+    spec.mechanisms.key.transitions = []
+    spec.oneWays = [{ from: "entrance", to: "vault" }]
+    expect(states(spec)).toEqual(["entrance|absent", "vault|absent"])
+  })
+
+  it("lets the player who reached the way out come back in at the entrance", () => {
+    const spec = oneDoor()
+    spec.mechanisms.key.transitions = []
+    spec.oneWays = [{ from: "entrance", to: "vault" }]
+    const found = reachableStates(spec)
+    if (found === "tooLarge") throw new Error("expected a walkable lock")
+    const fromVault = found.edges[1].map(n => found.order[n].region)
+    expect(fromVault).toContain("entrance")
+  })
+
+  it("refuses a lock naming more states than it will walk", () => {
+    const spec: LockSpec = { regions: ["entrance"], gates: {}, mechanisms: {}, in: "entrance", out: "entrance" }
+    for (let n = 0; n < 12; n++)
+      spec.mechanisms[`m${n}`] = {
+        states: ["a", "b", "c", "d", "e"],
+        initial: "a",
+        opens: {},
+        transitions: [{ from: "a", to: "b", at: "entrance" }],
+      }
+    expect(5 ** 12).toBeGreaterThan(MAX_LOCK_STATES)
+    expect(reachableStates(spec)).toBe("tooLarge")
   })
 })
