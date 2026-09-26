@@ -82,3 +82,15 @@ export const checkLockSpec = (spec: LockSpec): string | undefined => {
 
   return undefined
 }
+
+// WHETHER A DOOR STANDS OPEN IS ASKED OF ITS OWNERS, NEVER ASSUMED FROM A STATE. A board opens one
+// gate per state and a sequence opens its gate only in the last, so a state is not "which gate is
+// open" — it is a key into each owner's own mapping, folded by the gate's mode.
+export const openGates = (spec: LockSpec, config: LockConfig): Set<GateId> => {
+  const open = new Set<GateId>()
+  for (const [gateId, gate] of Object.entries(spec.gates)) {
+    const says = gate.owners.map(owner => (spec.mechanisms[owner].opens[config[owner]] ?? []).includes(gateId))
+    if (gate.mode === "any" ? says.some(Boolean) : says.every(Boolean)) open.add(gateId)
+  }
+  return open
+}
