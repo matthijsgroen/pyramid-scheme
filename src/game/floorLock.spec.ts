@@ -371,4 +371,33 @@ describe("floorLock", () => {
     expect(mechanism.transitions).toHaveLength(1)
     expect(lock.regions).toContain(mechanism.transitions[0].at)
   })
+
+  it("reports a one-way as a move the walk can take", () => {
+    const withDrop: FloorConfig = {
+      ...switchFloor(),
+      sideSections: [
+        ...switchFloor().sideSections,
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "upper" },
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "lower" },
+      ],
+      oneWays: [{ from: "upper", to: "lower" }],
+    }
+    // "upper" and "lower" are two more ordinary branches off the same open hub the switch's own two
+    // sideSections fork from, so most carves already join them without the drop's help — that carve
+    // has nothing for this test to check. Filtered here for one where the drop is the only way across.
+    const dropCrossesRegions = (grid: FloorGrid): boolean =>
+      standsASwitch(grid) && (floorLock(grid)?.oneWays?.length ?? 0) > 0
+    const lock = floorLock(assembled(withDrop, dropCrossesRegions))!
+    expect(lock.oneWays?.length).toBeGreaterThan(0)
+    for (const oneWay of lock.oneWays!) {
+      expect(lock.regions).toContain(oneWay.from)
+      expect(lock.regions).toContain(oneWay.to)
+      expect(oneWay.from).not.toBe(oneWay.to)
+    }
+  })
+
+  it("reports no one-ways for a floor that authors none", () => {
+    const lock = floorLock(assembled(switchFloor(), standsASwitch))!
+    expect(lock.oneWays ?? []).toEqual([])
+  })
 })

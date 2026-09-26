@@ -4,6 +4,7 @@ import { nodeBeyond } from "./siteValidator"
 
 type Pos = readonly [number, number]
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+const OPPOSITE: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
 const posKey = (r: number, c: number) => `${r},${c}`
 
 const walkable = (cell: GridCell | undefined): boolean =>
@@ -60,6 +61,30 @@ const regionsOf = (grid: FloorGrid): { ids: RegionId[]; of: Map<string, RegionId
     }
 
   return { ids, of }
+}
+
+// A PASSAGE THE PLAYER MAY TAKE ONLY ONE WAY. The region flood follows each cell's own dirs, so the
+// ground past a drop is already a region of its own; without this the walk would believe nothing
+// reaches it and would refuse a floor that is perfectly sound. A pair whose two cells fall in the
+// same region is skipped: inside a region the player walks freely, so a drop between two of its own
+// cells is not a move the walk needs told about.
+const oneWaysOf = (grid: FloorGrid, of: Map<string, RegionId>): { from: RegionId; to: RegionId }[] => {
+  const found: { from: RegionId; to: RegionId }[] = []
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      const fromRegion = of.get(posKey(r, c))
+      if (!fromRegion) continue
+      for (const dir of dirsOf(cell)) {
+        const [dr, dc] = MOVES[dir]
+        const [nr, nc] = [r + dr, c + dc]
+        const next = grid.cells[nr]?.[nc]
+        const toRegion = of.get(posKey(nr, nc))
+        if (!toRegion || toRegion === fromRegion) continue
+        if (!next || !dirsOf(next).has(OPPOSITE[dir])) found.push({ from: fromRegion, to: toRegion })
+      }
+    }
+  return found
 }
 
 /** One door's gates for one of the keys it names — the index a switch reads its own doors back out of. */
@@ -211,10 +236,13 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
     }
   for (const [gateId, gate] of Object.entries(gates)) gate.owners = [...ownersOf.get(gateId)!]
 
+  const oneWays = oneWaysOf(grid, of)
+
   return {
     regions: ids,
     gates,
     mechanisms,
+    ...(oneWays.length > 0 ? { oneWays } : {}),
     in: of.get(posKey(grid.entrancePos[0], grid.entrancePos[1]))!,
     out: of.get(posKey(grid.exitPos[0], grid.exitPos[1]))!,
   }
