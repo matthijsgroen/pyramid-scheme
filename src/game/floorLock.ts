@@ -94,7 +94,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
         const [dr, dc] = MOVES[dir]
         const beside = of.get(posKey(r + dr, c + dc))
         if (!beside || beside === doorRegion) continue
-        const gateId = `${keyId}|${beside}`
+        const gateId = `${keyId}|${doorRegion}|${beside}`
         gates[gateId] = { from: beside, to: doorRegion, owners: [] }
         gatesByKeyId.set(keyId, [...(gatesByKeyId.get(keyId) ?? []), gateId])
       }
