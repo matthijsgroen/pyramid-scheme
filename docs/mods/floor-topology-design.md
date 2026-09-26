@@ -375,7 +375,26 @@ ever be verified in context; assuming it shut keeps the proof local. A hidden po
 guaranteed either — it is structurally reachable and nothing says the player found it — which is the
 same reasoning that stops a switch gating a hidden branch.
 
-## Mod-owned authoring
+### A floor key orders a walk; a mechanism changes a floor
+
+A coloured floor key can say one thing: _this before that_. The key is found, then the door opens,
+and it stays open. That makes a walking order, and a walking order is the shallowest floor-as-puzzle
+there is — nothing about it can be got wrong, which is also why nothing had to check it.
+
+A mechanism says something strictly larger: the floor is in a state, and the player changes it. A
+door can shut again. A route can be spent. An order can be wrong and cost a walk. That is a language
+in which a floor can be a puzzle, and it is also a language in which a floor can be **broken**, which
+is what the walk over a mechanism's states is for.
+
+So where a floor leans on keys to be interesting, it is authoring the weaker form, and the master and
+wizard tiers lean hardest: **58 floor-key gates across the world, 56 of them at master and wizard**,
+including a key chain — a red door guarding a room that holds a green-gated vault — which is a
+dependency chain assembled from the only material keys offer, things you pick up and keep. Those are
+the floors to author as locks.
+
+A key remains the right thing where finding it _is_ the content: one key, one door, a pocket worth
+the walk. The walk counts held keys in its state alongside mechanism configurations, so the two
+coexist and a floor can be converted when someone gets to it rather than all at once.
 
 **Structure placed by a feature belongs to that feature's mod. Untagged authoring is core's; owned
 authoring drops when its mod is not registered.**
