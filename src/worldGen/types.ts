@@ -105,6 +105,9 @@ export type FloorConfig = {
   /** How many junctions this floor's carve must offer, and how many ways out each must leave free to
    * be closed — mirrors game/siteTypes.ts's FloorConfig.forks. */
   forks?: { exits: number; count: number }[]
+  /** A passage from one named section to another that the player may take only in that direction —
+   * mirrors game/siteTypes.ts's FloorConfig.oneWays. */
+  oneWays?: { from: string; to: string }[]
   /** A SWITCH standing in one of the junctions `forks` reserved, closing that junction's free ways out
    * so what the player meets there decides which one opens — mirrors game/siteTypes.ts's
    * FloorConfig.switches. */

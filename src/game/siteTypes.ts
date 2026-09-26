@@ -339,6 +339,15 @@ export type FloorConfig = {
    * Structural, and it decides the floor's shape on its own: the same `forks` carves the same floor
    * whether or not anything is ever stood in those junctions. */
   forks?: { exits: number; count: number }[]
+  /** WHAT THE CARVE MUST PROVIDE: a passage from one named section to another that the player may
+   * take only in that direction. Both ends name a section address — a `label` where a section has
+   * one, the positional `s0`/`s1.2` where it does not, and `main` for the main path.
+   *
+   * Structural, like `forks`: the two sections have to come out of the carve with node cells two
+   * apart, so an attempt that cannot place one is re-carved and a floor no attempt can satisfy fails
+   * rather than losing the passage quietly. Where a drop lands is a design decision, which is why it
+   * is authored rather than found — see docs/mods/floor-topology-design.md. */
+  oneWays?: { from: string; to: string }[]
   /** A SWITCH: an encounter standing in one of the junctions `forks` reserved, closing that
    * junction's free ways out so that what the player meets there decides which one opens.
    * Family/tag(s) like `encounter`. At least `min` and at most `max` of the reserved junctions get

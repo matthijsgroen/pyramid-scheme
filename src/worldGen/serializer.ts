@@ -119,6 +119,7 @@ const floorFieldEmitters: {
   mainEndReward: v => `mainEndReward: ${serializeReward(v)}`,
   rewards: v => (v.length ? `rewards: ${serializePuzzleRewards(v)}` : null),
   forks: v => (v.length ? `forks: [${v.map(serializeObject).join(", ")}]` : null),
+  oneWays: v => (v.length ? `oneWays: [${v.map(serializeObject).join(", ")}]` : null),
   switches: v => `switches: ${serializeObject(v)}`,
 }
 

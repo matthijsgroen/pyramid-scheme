@@ -161,6 +161,10 @@ export type FloorConstraint<TExtra extends string = never> = {
    * is ever stood in those junctions, which is what lets a switch's mod leave the build without
    * moving a wall. */
   forks?: { exits: number; count: number }[]
+  /** A passage from one named section to another that the player may take only in that direction.
+   * Both ends name a section address — a `label` where a section has one, the positional `s0`/`s1.2`
+   * where it does not, and `main` for the main path. Structural, like `forks`. */
+  oneWays?: { from: string; to: string }[]
   /** A SWITCH: `encounter` stands in a junction `forks` reserved and closes its free ways out, so the
    * player stands in the fork and what is in it decides which way opens. Between `min` and `max` of
    * the reserved junctions get one, and a `min` past what `forks` reserves fails the build.
@@ -284,6 +288,9 @@ export type PyramidConstraint = {
   /** Junctions every floor of this site must carve, unless a floor names its own — see
    * FloorConstraint.forks. Authored here, a whole climb is shaped in one line. */
   forks?: { exits: number; count: number }[]
+  /** One-way passages every floor of this site must carve, unless a floor names its own — see
+   * FloorConstraint.oneWays. Authored here, a whole climb is shaped in one line. */
+  oneWays?: { from: string; to: string }[]
   /** The switch every floor of this site stands in the junctions `forks` reserved, unless a floor
    * names its own — see FloorConstraint.switches. */
   switches?: { encounter: string | string[]; min: number; max: number }
