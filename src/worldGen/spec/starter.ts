@@ -92,6 +92,16 @@ export const starterRules: Rule[] = [
         // slot beyond the gating pass's fixed demand, so the capped mosaic pass fills it. Without it
         // the first mosaic sits on the hidden path above, invisible until the master-tier detector.
         sidePath({ endReward: "mosaicPiece" }),
+        // The Sphinx inscription, and the end of the game. Sealed and visible in the first hour,
+        // opened in the last by wizard_a_1 out of the Vault of the Gods — so the writing nobody
+        // could read is read in the place it was first seen, rather than somewhere that merely
+        // shares its name. The reading encounter is the room itself, not what guards it.
+        wardChest({
+          tomb: "wizard_treasure_tomb",
+          index: 0,
+          puzzles: 1,
+          nodes: [{ where: "first", encounter: "reading" }],
+        }),
       ],
     })
     .floor(1, {

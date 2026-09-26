@@ -187,7 +187,8 @@
       "animals": "🐾 Animals",
       "artifacts": "💎 Artifacts",
       "treasures": "💰 Treasures",
-      "junk": "🔷 Trinkets"
+      "junk": "🔷 Trinkets",
+      "signs": "✍️ Signs"
     },
     "treasureCategories": {
       "merchantCache": "💰 Merchant Cache",
@@ -1037,7 +1038,14 @@
       }
     },
     "events": {
-      "default": ["the fire", "the water carrying", "the baking", "the boat trip", "the ox driving", "the night watch"],
+      "default": [
+        "the fire",
+        "the water carrying",
+        "the baking",
+        "the boat trip",
+        "the ox driving",
+        "the night watch"
+      ],
       "funerary": [
         "the plastering",
         "the grid drawing",
@@ -1103,6 +1111,13 @@
       "fixed": "That is her name again.",
       "pick": "Put the right sign in its place.",
       "cannot": "You do not know the sign that belongs here. Not yet."
+    },
+    "sphinx": {
+      "wrong": "The writing at the base, where the sand keeps shifting off. Two signs still cut clean, and a space where the third was.",
+      "fixed": "That is the whole of it.",
+      "pick": "Put the sign you are carrying into the space.",
+      "cannot": "Two signs you know, and a space you cannot fill. Not yet.",
+      "gap": "The missing sign"
     }
   }
 }

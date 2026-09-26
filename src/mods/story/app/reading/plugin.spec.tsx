@@ -17,14 +17,14 @@ const { ReadingComponent } = await import("./plugin")
 const wall = wallFor("junior_treasure_tomb")!
 const symbols = { art5: "𓍷", a11: "𓅐", a7: "𓅬", a12: "𓅓" }
 
-const show = (ids: string[]) => {
+const show = (ids: string[], journeyId = "junior_treasure_tomb") => {
   held = new Set(ids.map(id => `hieroglyph:${id}`))
   const showConversation = vi.fn()
   const onCancel = vi.fn()
   render(
     <FezContext value={{ showConversation } as unknown as React.ContextType<typeof FezContext>}>
       <ReadingComponent
-        ctx={{ journeyId: "junior_treasure_tomb", edgeId: "e", address: "a", sectionHash: "s", freshArrival: true }}
+        ctx={{ journeyId, edgeId: "e", address: "a", sectionHash: "s", freshArrival: true }}
         puzzle={{}}
         progression={{} as never}
         journeys={{ markCellExplored: vi.fn() } as never}
@@ -72,5 +72,45 @@ describe("a wall with a sign cut wrong", () => {
     fireEvent.click(screen.getAllByRole("button").find(b => b.textContent === symbols.a7)!)
 
     expect(showConversation).not.toHaveBeenCalled()
+  })
+})
+
+describe("the Sphinx, with a sign the sand took", () => {
+  const sphinx = wallFor("starter_1")!
+  const gap = () => screen.getByLabelText("story.sphinx.gap")
+
+  it("shows the signs still cut, and a space where the last one was", () => {
+    show(["art5", "d3"], "starter_1")
+
+    expect(screen.getByText("𓍷")).toBeTruthy()
+    expect(screen.getByText("𓅃")).toBeTruthy()
+    expect(gap().textContent).toBe("")
+  })
+
+  it("offers no tray — the space takes what the player holds, not a choice", () => {
+    show(["art5", "d3", "a12", "a7"], "starter_1")
+
+    expect(screen.queryByText("𓅓")).toBeNull()
+  })
+
+  it("says plainly it cannot be read yet, and does nothing when the space is touched", () => {
+    const { showConversation } = show(["art5", "d3"], "starter_1")
+
+    expect(screen.getByText("story.sphinx.cannot")).toBeTruthy()
+    fireEvent.click(gap())
+
+    expect(showConversation).not.toHaveBeenCalled()
+  })
+
+  it("plays the ending once the reed leaf goes in", () => {
+    const { showConversation } = show(["art5", "d3", "s1"], "starter_1")
+
+    fireEvent.click(gap())
+
+    expect(showConversation).toHaveBeenCalledWith(sphinx.after, expect.any(Function), {
+      story: true,
+      forceReplay: true,
+    })
+    expect(screen.getByText("𓇋")).toBeTruthy()
   })
 })

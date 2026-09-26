@@ -187,7 +187,8 @@
       "animals": "🐾 Dieren",
       "artifacts": "💎 Artefacten",
       "treasures": "💰 Schatten",
-      "junk": "🔷 Snuisterijen"
+      "junk": "🔷 Snuisterijen",
+      "signs": "✍️ Tekens"
     },
     "treasureCategories": {
       "merchantCache": "💰 Handelaars Voorraad",
@@ -1037,7 +1038,14 @@
       }
     },
     "events": {
-      "default": ["het vuur", "het water halen", "het bakken", "de boottocht", "het ossen drijven", "de nachtwake"],
+      "default": [
+        "het vuur",
+        "het water halen",
+        "het bakken",
+        "de boottocht",
+        "het ossen drijven",
+        "de nachtwake"
+      ],
       "funerary": [
         "het pleisteren",
         "het uitzetten van het raster",
@@ -1103,6 +1111,13 @@
       "fixed": "Dat is haar naam weer.",
       "pick": "Zet het juiste teken op zijn plaats.",
       "cannot": "Je kent het teken dat hier hoort nog niet."
+    },
+    "sphinx": {
+      "wrong": "Het schrift onderaan, waar het zand steeds vanaf waait. Twee tekens nog scherp gehakt, en een lege plek waar het derde stond.",
+      "fixed": "Dat is het, in zijn geheel.",
+      "pick": "Zet het teken dat je bij je hebt in de lege plek.",
+      "cannot": "Twee tekens die je kent, en een plek die je niet kunt vullen. Nog niet.",
+      "gap": "Het ontbrekende teken"
     }
   }
 }

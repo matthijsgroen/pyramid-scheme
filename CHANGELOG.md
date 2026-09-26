@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A story log: everything you have been told, to read back if you tapped through it.
 - Henut's name is spelled wrong on her own wall, and you can put it right — if you know the sign.
 - The rest of the script is written in: the friendship beats, the inscription as it becomes readable, the priest refusing a fake, and the last thing anybody says.
+- The writing on the Sphinx can be read at last, back in the pyramid you started in, once the Vault of the Gods gives up its key and its last sign.
 
 ### Fixed
 

@@ -4,6 +4,7 @@ import {
   egyptianProfessions,
   egyptianAnimals,
   egyptianArtifacts,
+  egyptianSigns,
 } from "@/mods/hieroglyph/game/symbolCatalogue"
 
 // Hook to get translated inventory item
@@ -11,7 +12,13 @@ export const useInventoryItem = () => {
   const { t } = useTranslation("inventory")
 
   // Find the item in all collections
-  const allItems = [...egyptianDeities, ...egyptianProfessions, ...egyptianAnimals, ...egyptianArtifacts]
+  const allItems = [
+    ...egyptianDeities,
+    ...egyptianProfessions,
+    ...egyptianAnimals,
+    ...egyptianArtifacts,
+    ...egyptianSigns,
+  ]
 
   return (id: string) => {
     const item = allItems.find(item => item.id === id)
@@ -23,6 +30,7 @@ export const useInventoryItem = () => {
     // Determine the category based on ID prefix
     let category = ""
     if (id.startsWith("d")) category = "deities"
+    else if (id.startsWith("s")) category = "signs"
     else if (id.startsWith("p")) category = "professions"
     else if (id.startsWith("art")) category = "artifacts"
     else if (id.startsWith("a")) category = "animals"
@@ -37,7 +45,7 @@ export const useInventoryItem = () => {
 }
 
 // Function to get all items from a category with translations
-export const useInventoryCategory = (category: "deities" | "professions" | "animals" | "artifacts") => {
+export const useInventoryCategory = (category: "deities" | "professions" | "animals" | "artifacts" | "signs") => {
   const { t } = useTranslation("inventory")
 
   let items
@@ -53,6 +61,9 @@ export const useInventoryCategory = (category: "deities" | "professions" | "anim
       break
     case "artifacts":
       items = egyptianArtifacts
+      break
+    case "signs":
+      items = egyptianSigns
       break
   }
 

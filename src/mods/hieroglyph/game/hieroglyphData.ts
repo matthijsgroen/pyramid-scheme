@@ -25,8 +25,13 @@ const FRAGMENT_MATRIX: Record<Tier, Record<number, number> & { revisit: number }
 // once a single tomb got too large for exploration (pyramid-interior-design.md) — a symbol
 // may only ever appear in a secondary tomb's tableaus, so "first section" searches every tomb
 // of the tier, not just its primary (`${tier}_treasure_tomb`).
+// Signs granted whole rather than in fragments: one instance, authored into one chest, and no
+// tableau asks for them. They still need an entry here — completion is `found >= required`, so a
+// sign absent from this table can never complete — but the number is 1 and it never scales by tier.
+const WHOLE_SIGNS: Record<string, number> = { s1: 1 }
+
 export const HIEROGLYPH_REQUIRED: Record<string, number> = (() => {
-  const result: Record<string, number> = {}
+  const result: Record<string, number> = { ...WHOLE_SIGNS }
   for (const [tier, ids] of Object.entries(TOMB_SYMBOLS) as [Tier, string[]][]) {
     const tierTombIds = new Set(TOMB_JOURNEYS.filter(j => j.tier === tier).map(j => j.id))
     const tombLevels = tableauLevels.filter(t => tierTombIds.has(t.tombJourneyId))

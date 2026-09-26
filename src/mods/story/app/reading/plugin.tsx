@@ -11,17 +11,28 @@ import { FezContext } from "@/app/fez/context"
 
 const symbolOf = (id: string) => getInventoryItemById(id)?.symbol ?? "?"
 
+const SIGN_BOX = "flex size-14 items-center justify-center rounded border-2 text-3xl"
+
 /** A sign as cut into the wall: read if the player knows it, a shape if they do not. */
 const Sign: FC<{ id: string; known: boolean; wrong: boolean }> = ({ id, known, wrong }) => (
   <span
     className={clsx(
-      "flex size-14 items-center justify-center rounded border-2 text-3xl",
+      SIGN_BOX,
       wrong ? "border-rose-500 bg-rose-100 text-rose-900" : "border-amber-900/40 bg-amber-50 text-amber-950",
       !known && "opacity-40"
     )}
   >
     {symbolOf(id)}
   </span>
+)
+
+/** The slot the sand took: empty, and the place the player puts the sign they hold. */
+const Gap: FC<{ label: string; onPut: () => void }> = ({ label, onPut }) => (
+  <button
+    aria-label={label}
+    onClick={onPut}
+    className={clsx(SIGN_BOX, "border-dashed border-amber-200/50 bg-stone-800/60")}
+  />
 )
 
 type FC<P> = (props: P) => React.ReactElement | null
@@ -70,36 +81,45 @@ export const ReadingComponent: FamilyPlugin["Component"] = ({ ctx, journeys, onC
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-6 bg-stone-900 p-6 text-amber-100">
-      <p className="max-w-sm text-center text-sm">{t(fixed ? "story.wall.fixed" : "story.wall.wrong")}</p>
+      <p className="max-w-sm text-center text-sm">{t(`${wall.copy}.${fixed ? "fixed" : "wrong"}`)}</p>
 
       <div className="flex gap-2">
-        {wall.cut.map((id, at) => (
-          <Sign
-            key={`${id}-${at}`}
-            id={at === wall.wrongAt && fixed ? wall.answer : id}
-            known={known[at] || (at === wall.wrongAt && fixed)}
-            wrong={at === wall.wrongAt && !fixed}
-          />
-        ))}
+        {wall.cut.map((id, at) => {
+          const slot = at === wall.wrongAt
+          if (slot && wall.missing && !fixed)
+            return <Gap key={at} label={t(`${wall.copy}.gap`)} onPut={() => repairable && put(wall.answer)} />
+          return (
+            <Sign
+              key={`${id}-${at}`}
+              id={slot && fixed ? wall.answer : id}
+              known={known[at] || (slot && fixed)}
+              wrong={slot && !fixed}
+            />
+          )
+        })}
       </div>
 
       {!fixed && (
         <>
-          <p className="text-xs opacity-80">{t(repairable ? "story.wall.pick" : "story.wall.cannot")}</p>
-          <div className="flex max-h-48 flex-wrap justify-center gap-2 overflow-y-auto">
-            {owned.map(id => (
-              <button
-                key={id}
-                onClick={() => put(id)}
-                className={clsx(
-                  "size-12 rounded border border-amber-200/40 bg-stone-800 text-2xl",
-                  picked === id && "border-rose-400"
-                )}
-              >
-                {symbolOf(id)}
-              </button>
-            ))}
-          </div>
+          <p className="text-xs opacity-80">{t(`${wall.copy}.${repairable ? "pick" : "cannot"}`)}</p>
+          {/* A scoured slot takes the sign the player holds, so there is nothing to choose between
+              and no tray to show — see Wall.missing. */}
+          {!wall.missing && (
+            <div className="flex max-h-48 flex-wrap justify-center gap-2 overflow-y-auto">
+              {owned.map(id => (
+                <button
+                  key={id}
+                  onClick={() => put(id)}
+                  className={clsx(
+                    "size-12 rounded border border-amber-200/40 bg-stone-800 text-2xl",
+                    picked === id && "border-rose-400"
+                  )}
+                >
+                  {symbolOf(id)}
+                </button>
+              ))}
+            </div>
+          )}
         </>
       )}
 

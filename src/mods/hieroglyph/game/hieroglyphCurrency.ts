@@ -48,8 +48,11 @@ export const HIEROGLYPH_CURRENCY_META: CurrencyMeta = {
 // authored difficulty must equal this, not just its journey's — see slots.ts's own tier
 // comment), not a demand list; a hieroglyph never referenced by any authored tableau just
 // never gets discovered, and this table is never iterated to find that out.
-const TIER_BY_HIEROGLYPH: Record<string, Tier> = (() => {
-  const result: Record<string, Tier> = {}
+export const TIER_BY_HIEROGLYPH: Record<string, Tier> = (() => {
+  // A sign granted whole (hieroglyphData.ts's WHOLE_SIGNS) appears in no tableau, so TOMB_SYMBOLS
+  // never names it and it would have no tier to filter candidate slots by. Wizard: its one slot is
+  // authored in the Vault of the Gods, and the tier filter below is what keeps it there.
+  const result: Record<string, Tier> = { s1: "wizard" }
   for (const [tier, ids] of Object.entries(TOMB_SYMBOLS) as [Tier, string[]][]) {
     for (const id of ids) result[id] = tier
   }
@@ -216,8 +219,14 @@ export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
       const jitter = mulberry32(hashString(`${demand.instanceId}:${s.journeyId}:${s.ref.levelIndex}`))()
       return (wardMatch ? 2 : 0) + (prefMatch ? 2 : 0) + (foreignHost ? 1 : 0) + 0.15 * laterThird + 0.6 * jitter
     })
+    // A slot that names ONE hieroglyph (`hieroglyph:s1`) is reserved for it, not merely ranked
+    // towards it. Preference alone cannot express an authored home: the worklist drains buckets in
+    // discovery order and the completion pass runs last, so a symbol nothing locks on reaches its
+    // own slot to find another fragment already sitting in it. Bare `hieroglyph` stays open to all.
+    const claimedByAnother = (pref: string | undefined) =>
+      pref !== undefined && pref.startsWith(BUCKET_PREFIX) && pref !== demand.bucket
     return pipe<Slot>(
-      filterBy(s => s.tier === demand.tier),
+      filterBy(s => s.tier === demand.tier && !claimedByAnother(s.preference)),
       preferThenRelax(
         pipe(
           byPoolScore,

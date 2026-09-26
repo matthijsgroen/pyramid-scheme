@@ -195,7 +195,15 @@ export const wizardRules: Rule[] = [
           { where: TOMB_ROOMS_PER_FLOOR.wizard + 1, encounter: "conversation" },
         ],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
-        sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
+        // Beside it, the reed leaf: the one sign in the catalogue that spells rather than names, and
+        // the last thing the Sphinx wants. This floor's own treasure is wizard_a_1, the key to the
+        // gate it is read behind — so the Vault of the Gods hands over both halves of the ending.
+        // The preference is exact (`hieroglyph:s1`) and this is the only slot in the world carrying
+        // it; hieroglyphCurrency's tier filter plus that preference is what pins it here.
+        sideSections: [
+          { pathPuzzles: 0, encounter: "shop" },
+          { pathPuzzles: 1, endReward: "hieroglyph:s1" },
+        ],
       },
       {
         mainEndReward: "tombTreasure",
