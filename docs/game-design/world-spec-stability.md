@@ -14,7 +14,7 @@ For how progress survives a change at all — how a save names a cell, inventory
 
 Everything else about a room is content: which puzzle it serves, what its chest holds, which key opens the door beside it, what it looks like. None of that may move a wall, and none of it costs a player the floor.
 
-Two invariants follow, and `src/app/SiteMap/worldFloorAssembly.spec.ts` sweeps every authored floor in the world on every test run to hold them:
+Two invariants follow, and `src/app/SiteMap/worldFloorAssembly.verify.ts` sweeps every authored floor in the world to hold them. It runs under `yarn verify-content`, the pass you make AFTER AUTHORING — these invariants answer a change to the world spec, so they are checked when somebody makes one rather than on every test run (docs/instructions/testing.md):
 
 1. A setting that is not about the shape of the place moves nothing.
 2. A room's authored slot names the same room after the carve as before it. That is what a save holds — the section's address and the room's place in its chain — so a floor may be re-carved end to end at no cost, as long as the authoring behind it did not move.
@@ -95,7 +95,7 @@ The same sweep assembles every floor at the exact seed the runtime hands it, so 
     wizard_3 level 1 floor 2
 ```
 
-Such a floor renders "Site layout unavailable." for every player and never recovers, so nothing is written. Re-author it, or change a setting from the list above — a different `packing` or `corridorStraightness` re-carves it. `worldFloorAssembly.spec.ts` holds the same line against the artifact already in the repo.
+Such a floor renders "Site layout unavailable." for every player and never recovers, so nothing is written. Re-author it, or change a setting from the list above — a different `packing` or `corridorStraightness` re-carves it. `worldFloorAssembly.verify.ts` holds the same line against the artifact already in the repo.
 
 ---
 
@@ -110,6 +110,6 @@ Such a floor renders "Site layout unavailable." for every player and never recov
 - `cellSlot` / `cellAddress` in `src/app/SiteMap/cellIdentity.ts` — what a save actually holds.
 - `sideIsolated` / `subIsolated` / `mainIsolated`, same file — the isolation decision, named once and used by both the layout and the hash so the two cannot drift.
 - `assignSection` in `src/worldGen/placeEncounters.ts` — where gen writes `sealed` for a trap.
-- `worldFloorAssembly.spec.ts` — the sweep that keeps this page true.
+- `worldFloorAssembly.verify.ts` — the sweep that keeps this page true.
 
 A `legacySectionHash` rides along on every cell: the hash as it was computed before the encounter left the hash inputs. Both hashes now serve one purpose only — matching the coordinate archive while a save is re-keyed — and go with that archive when the reshape ships.

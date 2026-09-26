@@ -93,7 +93,7 @@ yarn dev          # Dev server at http://localhost:9164
 yarn verify       # The whole gate, in the one order that works: lint --fix, types, tests, betterer
 yarn test         # Run all tests (Vitest)
 yarn test <file>  # Run a single test file
-yarn verify-world # Build every board in the world — on demand, ~11 min (docs/instructions/testing.md)
+yarn verify-content # Generators, seeds and the world — after authoring, ~4 min (docs/instructions/testing.md)
 yarn check-types  # TypeScript type checking
 yarn lint         # ESLint (Tailwind class order; --max-warnings pins the warn backlog)
 yarn betterer     # The ratcheted guards — fails on a new occurrence, per file

@@ -40,7 +40,8 @@ import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileVariants } f
 import { isLockedGate, nodeRadius, shapeKindFor } from "./nodeKinds"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
 import { FloorShade, LitPlaces } from "./torchlight"
-import { LIT_STANDING_STRENGTH, SEATING_PASS, STANDING_RELIEF } from "./lighting"
+import { LIT_STANDING_STRENGTH, SEATING_PASS, STANDING_RELIEF, beamShafts, litPlaceCells } from "./lighting"
+import { BeamLight, BeamShafts } from "./MapBeams"
 import { TileLayers } from "./tileLayers"
 import { clickTargetAt } from "./clickTargets"
 import {
@@ -1100,6 +1101,13 @@ export const SiteMapView = ({
     () => [...claims.claimedBy.keys()].map(key => key.split(",").map(Number) as [number, number]),
     [claims]
   )
+  // Where a roof has given way, and what the explorer's own lamp is already lighting — a shaft hands over
+  // to the lamp where the two fall on the same room (see `BeamLight`).
+  const shafts = useMemo(() => beamShafts(grid, claims, mood.beam ?? 0, grid.siteId), [grid, claims, mood.beam])
+  const torchPlace = useMemo(
+    () => new Set(explorerPos ? litPlaceCells(grid, claims, explorerPos) : []),
+    [grid, claims, explorerPos]
+  )
   // What is strewn on this floor. A function of the floor's shape and its id, so it never moves.
   const scatter = useMemo(() => scatterFor(grid, claims), [grid, claims])
   const drifts = useMemo(() => driftsFor(grid, tier), [grid, tier])
@@ -1238,6 +1246,8 @@ export const SiteMapView = ({
               lamp burns in the shade, so it has to be laid over the shade rather than under it. */}
             <FloorShade tier={tier} />
             <LitPlaces grid={grid} claims={claims} at={explorerPos} />
+            {/* And the rooms daylight is already falling into, lamp or no lamp. */}
+            <BeamLight grid={grid} claims={claims} shafts={shafts} torchPlace={torchPlace} />
 
             {/* THE MARKERS: an icon per cell, each in a little `<svg>` of its own — a shape per kind, a
                 colour per state, key badges on the rim. Over the stone, under everything standing on it,
@@ -1442,6 +1452,11 @@ export const SiteMapView = ({
                 higher (see `headroom`), so the furniture is lit to the top of its own headroom rather
                 than sawn off at the floor line. */}
               <LitPlaces grid={grid} claims={claims} at={explorerPos} strength={LIT_STANDING_STRENGTH} headroom />
+              <BeamLight grid={grid} claims={claims} shafts={shafts} torchPlace={torchPlace} headroom />
+
+              {/* The cones last of all: a shaft of dust is between the eye and the room, so it stands in
+                front of the statue it falls on rather than behind it. */}
+              <BeamShafts shafts={shafts} siteId={grid.siteId} />
             </div>
           </div>
         </div>

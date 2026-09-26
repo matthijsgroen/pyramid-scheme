@@ -13,7 +13,7 @@ import { allFloors, resolveKeyRequirements } from "./worldFloors.testing"
  * every test stayed green.
  *
  * Not a test: eleven minutes in one `it()`, which one worker runs start to finish. Run it —
- * `yarn verify-world` — when world data, a floor spec, a seed list or a generator changes.
+ * `yarn verify-content` — when world data, a floor spec, a seed list or a generator changes.
  */
 describe("every room in the world builds the board its tap asks for", () => {
   const failures = (): string[] => {
