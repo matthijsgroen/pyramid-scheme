@@ -5,6 +5,8 @@ import { FORK_SHAPES, type ForkShape } from "@/game/forkShape"
 import { configHash } from "@/game/seeds/configHash"
 import { switchFamilies } from "@/game/seeds/enumerateConfigs"
 import type { FloorGrid as AssembledFloor } from "@/game/siteTypes"
+import { floorLock } from "@/game/floorLock"
+import { walkLock, describeLockWalkFailure } from "@/game/lockWalk"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
 import { capabilitiesFor, type SiteCapabilities } from "./capabilities"
@@ -214,4 +216,44 @@ export const findUnbakedSwitchBoards = (
     )
   }
   return missing
+}
+
+/**
+ * A floor whose lock the walk refuses: unsolvable, stranding, or not reading at all.
+ *
+ * Asked of the assembled floor rather than of the spec, because a lock is made of the gates a carve
+ * placed. It is asked AFTER the build rather than inside the assembler's retry loop on purpose: a
+ * reason there would quietly re-carve the floor and the author would never hear which arrangement was
+ * refused.
+ */
+export type StrandingLock = { journeyId: string; levelNr: number; floorIndex: number; problem: string }
+
+export const findStrandingLocks = (
+  configs: Record<string, SiteConfig[]>,
+  assembleFloorAt: (
+    journeyId: string,
+    floor: SiteConfig[number],
+    levelNr: number,
+    floorIndex: number
+  ) => AssembledFloor | null
+): StrandingLock[] => {
+  const stranding: StrandingLock[] = []
+  for (const [journeyId, sites] of Object.entries(configs))
+    sites.forEach((site, siteIdx) =>
+      site.forEach((floor, floorIndex) => {
+        const grid = assembleFloorAt(journeyId, floor, siteIdx + 1, floorIndex)
+        if (!grid) return
+        const lock = floorLock(grid)
+        if (!lock) return
+        const result = walkLock(lock)
+        if (result.sound) return
+        stranding.push({
+          journeyId,
+          levelNr: siteIdx + 1,
+          floorIndex,
+          problem: describeLockWalkFailure(result.failure),
+        })
+      })
+    )
+  return stranding
 }

@@ -19,8 +19,10 @@ import { fileURLToPath } from "url"
 import { buildConfigs } from "../src/worldGen/configBuilder"
 import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
-import { findEmptyChests, findUnbakedSwitchBoards } from "../src/worldGen/validate"
+import { findEmptyChests, findStrandingLocks, findUnbakedSwitchBoards } from "../src/worldGen/validate"
 import { assembleFloor } from "../src/game/siteAssembler"
+import type { FloorGrid } from "../src/game/siteTypes"
+import type { FloorConfig } from "../src/worldGen/types"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import {
   resolveKeyRequirements,
@@ -96,16 +98,25 @@ assignFragmentPieceIndices(configs)
 // A floor that will not carve at its runtime seed renders "Site layout unavailable." for every
 // player, permanently — so the sweep that already visits each one at that exact seed reports it here
 // rather than reading a failure as a floor with no chests on it.
+//
+// One carve per floor, shared by every sweep that needs the grid rather than the spec.
 const unassembled: string[] = []
-const emptyChests = findEmptyChests(configs, (journeyId, floor, levelNr, floorIndex) => {
-  const seed = floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
-  const result = assembleFloor(journeyId, floor, seed, resolveEncounterMeta, {
-    resolveKeyRequirements,
-    floorRef: { journeyId, floorIndex },
-  })
-  if (!result.success) unassembled.push(`${journeyId} level ${levelNr} floor ${floorIndex}`)
-  return result.success ? result.grid : null
-})
+const grids = new Map<string, FloorGrid | null>()
+const assembleOnce = (journeyId: string, floor: FloorConfig, levelNr: number, floorIndex: number) => {
+  const cacheKey = `${journeyId}#${levelNr}#${floorIndex}`
+  if (!grids.has(cacheKey)) {
+    const seed = floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
+    const result = assembleFloor(journeyId, floor, seed, resolveEncounterMeta, {
+      resolveKeyRequirements,
+      floorRef: { journeyId, floorIndex },
+    })
+    if (!result.success) unassembled.push(`${journeyId} level ${levelNr} floor ${floorIndex}`)
+    grids.set(cacheKey, result.success ? result.grid : null)
+  }
+  return grids.get(cacheKey)!
+}
+
+const emptyChests = findEmptyChests(configs, assembleOnce)
 
 printStats(configs)
 const cov = hieroglyphCoverage(configs, HIEROGLYPH_REQUIRED)
@@ -135,6 +146,18 @@ if (unbakedSwitches.length > 0) {
     )
   if (unbakedSwitches.length > 20) console.error(`    … and ${unbakedSwitches.length - 20} more`)
   console.error("  Run `yarn generate-seeds` to fill them.")
+  process.exit(1)
+}
+
+// A floor whose lock can be put in a state it cannot be got out of is a floor a player can lose a run
+// on, and nothing in the assembler would notice: a switch shutting the way back is a legal carve. The
+// state it died in is printed because that is what a person walks by hand to confirm it.
+const stranding = findStrandingLocks(configs, assembleOnce)
+if (stranding.length > 0) {
+  console.error(`✗ ${stranding.length} floor(s) hold a lock a player can be stranded in:`)
+  for (const floor of stranding.slice(0, 20))
+    console.error(`    ${floor.journeyId} level ${floor.levelNr} floor ${floor.floorIndex}: ${floor.problem}`)
+  if (stranding.length > 20) console.error(`    … and ${stranding.length - 20} more`)
   process.exit(1)
 }
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { findEmptyChests, findUnbakedSwitchBoards, validateRewardCounts } from "./validate"
+import { findEmptyChests, findStrandingLocks, findUnbakedSwitchBoards, validateRewardCounts } from "./validate"
 import { DEV_CAPABILITIES, PYRAMID_CAPABILITIES } from "./capabilities"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FamilyMeta, FamilyOptions } from "@/game/families/familyMeta"
@@ -9,6 +9,9 @@ import { WORLD_TARGETS } from "./worldSpec"
 import { PYRAMID_JOURNEYS } from "./data"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
 import type { FloorGrid, RoomCell } from "@/game/siteTypes"
+import { assembleFloor, defaultResolveEncounter } from "@/game/siteAssembler"
+import type { ResolveEncounter } from "@/game/siteAssembler"
+import type { FloorConfig as GameFloorConfig } from "@/game/siteTypes"
 
 const floor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
   pathPuzzles: 1,
@@ -237,5 +240,68 @@ describe("findUnbakedSwitchBoards", () => {
     expect(findUnbakedSwitchBoards({ [shipped]: [[floor()]] }, [seedable], {})).toEqual([])
     const live: FamilyMeta = { ...seedable, seedable: undefined }
     expect(findUnbakedSwitchBoards({ [shipped]: [[switchFloor("junior")]] }, [live], {})).toEqual([])
+  })
+})
+
+describe("findStrandingLocks", () => {
+  // See src/game/floorLock.spec.ts for why the walk back is stubbed: core assembles without the family
+  // registry, and a switch is refused outright unless its family offers it.
+  const reEnterableFamilies: ResolveEncounter = (encounter, defaultTag) => ({
+    ...defaultResolveEncounter(encounter, defaultTag),
+    reEnterable: true,
+  })
+
+  const switchFloor = () =>
+    floor({
+      pathPuzzles: 2,
+      difficulty: "junior",
+      forks: [{ exits: 2, count: 1 }],
+      switches: { encounter: "sumplete", min: 1, max: 1 },
+      sideSections: [
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure" },
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure" },
+      ],
+    })
+
+  // worldGen's FloorConfig is a slightly looser mirror of game/siteTypes.ts's, and authored data only
+  // ever assigns values the stricter type accepts too — the same cast reachability.ts makes.
+  const carve = (config: FloorConfig): FloorGrid | null => {
+    for (let seed = 0; seed < 60; seed++) {
+      const result = assembleFloor("spec:1", config as GameFloorConfig, seed, reEnterableFamilies, {
+        floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
+      })
+      if (result.success) return result.grid
+    }
+    return null
+  }
+
+  // A door nothing on the floor mints the key for, standing on the way out: the walk finds it sealed,
+  // so no state it can reach stands at the exit.
+  const sealTheWayOut = (grid: FloorGrid | null): FloorGrid | null => {
+    if (!grid) return null
+    const [r, c] = grid.exitPos
+    const cell = grid.cells[r][c]
+    if (cell.type !== "room") throw new Error("the way out is not a room")
+    const cells = grid.cells.map(row => [...row])
+    cells[r][c] = { ...cell, requiredKeyId: "nothing-mints-this", gateVariant: "floor-key", keyIsAuthored: true }
+    return { ...grid, cells }
+  }
+
+  const configs = { spec: [[switchFloor()]] } as Record<string, SiteConfig[]>
+
+  it("says nothing about a floor carrying no lock", () => {
+    const plain = { spec: [[floor()]] } as Record<string, SiteConfig[]>
+    expect(findStrandingLocks(plain, (_journeyId, config) => carve(config))).toEqual([])
+  })
+
+  it("reports the floor and the state when a lock leaves the way out unreachable", () => {
+    const stranding = findStrandingLocks(configs, (_journeyId, config) => sealTheWayOut(carve(config)))
+    expect(stranding).toHaveLength(1)
+    expect(stranding[0]).toMatchObject({ journeyId: "spec", levelNr: 1, floorIndex: 0 })
+    expect(stranding[0].problem).toContain("way out")
+  })
+
+  it("skips a floor that will not carve, which the unassembled sweep already reports", () => {
+    expect(findStrandingLocks(configs, () => null)).toEqual([])
   })
 })
