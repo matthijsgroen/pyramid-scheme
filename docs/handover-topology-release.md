@@ -225,20 +225,23 @@ a permissive final walk.
    that ruling is quietly untrue with nothing able to notice. `enumerateConfigs.ts:83` and
    `boardIndex.ts:84` both call `resolveOptions({ difficulty })` and never visit `switches`.
 
-2. **The way back, and the soft-lock behind it.** Undecided, and it gates what follows. A switch
-   controls every way out whose boundary is clear and whose neighbour is not another fork — but the
-   way the player arrived by is never in that set, so on **36 of 103 floors** a junction has a way out
-   the switch cannot shut and the player walks on without working the board. Letting it shut the way
-   back fixes that and opens a trap: shut it, take a staircase, come back, and the player stands on
-   the entrance side of a door only the fork can open. `explorerPos` falls back to the entrance when a
-   saved position belongs to another floor, so that is ordinary play rather than a corner. The design
-   doc's own answer is per-visit state — a switch's configuration discarded on leaving the site —
-   which costs the feel of a floor you have configured.
+2. **The way back.** Answered in `mods/floor-topology-design.md`, and no longer a rule to decide: a
+   switch may shut the corridor the player arrived by wherever the floor stays winnable, and the walk
+   over a mechanism's own states refuses it where it does not. That closes the measured gap — on **36
+   of 103 floors** a junction has a way out the switch cannot shut, so the player walks on without
+   working the board — and catches the trap that made it look undecidable: shut the way back, take a
+   staircase, come back, and `explorerPos` puts the player at the entrance, on the wrong side of a
+   door only the fork can open. Leaving and returning is one of the walk's moves, so that is a state
+   the second question fails on rather than an argument anyone has to make.
+
+   What remains is building the walk, and teaching the builder that the arrival corridor is
+   shuttable.
 
 3. **Derive the board from the open door.** Decided, not built: the mirrors are computed from the way
    out standing open — unique, because the generator allows one route per shrine — so nothing is
-   stored and `stateIsTheMechanism` goes with it. Waits on the way-back decision, which changes what
-   the default door is.
+   stored and `stateIsTheMechanism` goes with it. Unblocked now that the way back is settled; the
+   default configuration is the one that leaves the arrival corridor open, or all shut where the
+   switch does not own it.
 
 4. **`sequenceLock`**, then the four features after it. It is the first to author a door key by hand,
    so the register's last unheld rule — an authored gate's key is minted by whoever owns it — lands
