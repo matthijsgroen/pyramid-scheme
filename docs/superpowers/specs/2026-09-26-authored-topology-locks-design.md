@@ -82,6 +82,37 @@ opens a door here" — it is this, with a lever instead of a board.
 The existing ruling holds unchanged: **there is no key; the state of the switch is which of its gates
 stands open.** Nothing is minted, nothing is held.
 
+#### A switch is one shape of a general mechanism
+
+Stated generally so the verifier does not have to be rewritten for the next one: **a mechanism has
+states, a mapping from each state to which of its gates stand open, and transitions the player
+causes.**
+
+| Mechanism      | States              | Open at               | Transition       |
+| -------------- | ------------------- | --------------------- | ---------------- |
+| a beam board   | which shrine is lit | that shrine's gate    | solving it       |
+| a handle       | its positions       | that position's gate  | pulling it       |
+| `sequenceLock` | progress `0..N`     | its gate, only at `N` | crossing a glyph |
+
+The mappings differ — a board opens one gate per state, a sequence opens its gate only in the last —
+but that is data rather than a new mechanism. What matters today is only that the verifier asks a
+mechanism for its own state-to-gates mapping rather than assuming "a state is which gate is open".
+That is a one-line difference now and an unpicked assumption later.
+
+**Not built, and not to be built ahead of a feature that needs it:** a sequence also wants
+**markers** — named trigger points inside regions, finer than a region because regions are defined by
+the gates and two glyphs in one gate-free area cannot be separated by naming.
+
+```ts
+markers: { ibis: { in: "leftLower" }, jackal: { in: "entrance" } }
+switches: { door: { encounter: "sequenceLock", sequence: ["ibis", "jackal"] } }
+```
+
+That the region is coarser than the marker turns out not to matter: inside a region the player walks
+freely, so the verifier's move becomes _trigger any marker in any reachable region_, and order within
+a region is genuinely unconstrained on the real floor too. A reset tile is a marker whose transition
+goes to state `0`, needing no special case.
+
 ### One-ways
 
 Directed, region to region, and explicit:
@@ -115,6 +146,31 @@ and a floor places it:
 
 The main path enters at `in` and leaves at `out`; ordinary content carries on around it. A floor with
 three locks reads as three blocks rather than one tangle.
+
+## A gate says what opens it
+
+A lock the player cannot read is not a puzzle, it is a wall they walk into twice. So a gate has to
+say which mechanism owns it, and the further that mechanism sits from the door, the more it has to
+say.
+
+**Paired by a mark.** A mechanism and its gates share a colour or a glyph. The drawing this design
+came from already does it without remarking on it — the fork and its two doors orange, the lever and
+its pair green, the last lever and the way out blue. Floor keys already pair a key to a door by
+colour, so this is the existing vocabulary rather than a new one.
+
+**Explained at the door, where a mark is not enough.** A sequence lock's door cannot show an order in
+a colour, so it carries an encounter that shows the symbols and the order they are wanted in — the
+way a ward gate already tells the player which key it wants.
+
+That is compatible with the ruling that a switch's gate holds nothing to enter, because the two
+encounters do different jobs. What was forbidden is a door the player **opens** by tapping, since
+that is a door the mechanism does not control. A door that **explains itself** when tapped takes
+nothing away from the mechanism. The distinction is worth writing into whatever type carries it: a
+gate encounter may read, never open.
+
+It also falls out that a switch's own gates need no such encounter. The board and its doors are in
+one room; the player can see both at once. The explaining is needed exactly where the mechanism is
+out of sight, which is the case the generalisation above introduces.
 
 ## The rules that keep it buildable
 
@@ -193,6 +249,10 @@ though nobody named them. The same check covers `junior_2` with no new authoring
 
 - **The handle family's own behaviour** — whether throwing a handle cycles its gates or toggles them,
   and what a one-gate handle does. That is the topology mod's business, not core's.
+- **Markers, and `sequenceLock` itself.** Sketched above so the shape does not preclude them; bought
+  when that feature is built and not before.
+- **What a mark is** — a colour, a glyph, or the patron vocabulary. Only that a mechanism and its
+  gates share one.
 - **The builder's placement algorithm** for laying a region tree into a carve, beyond the observation
   that the tree shape matches the existing section model.
 - **A name.** `topologyLock` collides with the catalogue's `sequenceLock`, and "puzzle" is spoken for
