@@ -110,12 +110,12 @@ and its two doors orange, the lever and its pair green, the last lever and the w
 keys already pair a key to a door by colour, so this is the existing vocabulary rather than a new
 one.
 
-There is a budget here, and it is small: `KeyColor` holds five values and a floor's coloured key
-doors already spend from them. A floor wanting three key colours and three marked mechanisms needs
-six distinguishable marks and has five. Either mechanisms draw from a separate vocabulary — glyphs
-suit the setting better than more colours — or a floor is capped in how many _paired_ things it may
-hold. A cap decided here is cheaper than one discovered by an author who cannot tell two levers
-apart.
+**A mark is a glyph on a coloured ground.** The colour groups, the glyph says which one, and a
+mechanism and every gate it owns wear the same pair. `KeyColor`'s five values are the grounds, shared
+with the floor's key doors; the glyphs are the alphabet `sequenceLock`'s markers already want, bought
+once for both. Two levers on one floor may therefore both be green and still be told apart, and the
+cap a five-value budget would have forced never has to be decided. The cost is two things to read
+where one would do, which is why the ground carries the grouping a player looks for first.
 
 **Consequence confirms it.** The player can look anywhere they have explored, so throwing a switch is
 a thing they can watch. That makes a floor something to experiment with: flip, see what moved,
@@ -255,14 +255,25 @@ regions: {
 
 ### Gates
 
-A gate names the two regions it joins, the mechanism that owns it, and whether it stands open when
+A gate names the two regions it joins, the mechanisms that own it, and whether it stands open when
 the player arrives:
 
 ```ts
 gates: {
-  greenRight: { from: "rightLower", to: "s1Chamber", owner: "S1", startsOpen: true },
+  greenRight: { from: "rightLower", to: "s1Chamber", owners: ["S1"], startsOpen: true },
+  sluice:     { from: "deep", to: "vault", owners: ["waterline", "S1"], mode: "all" },
 }
 ```
+
+**A gate may answer to more than one mechanism, and `mode` says how they combine.** `all`, the
+default, stands it open only while every owner opens it — a corridor both flooded and switch-gated
+wants draining _and_ the sluice thrown. `any` stands it open while one of them does. One owner makes
+the question moot, and that stays the common case.
+
+This does not reopen the claim rule above. What that rule forbids is two features arriving at one
+boundary independently, each unaware of the other; a multi-owner gate is one authored door naming
+both, wearing the mark of each owner, so a player is told there are two things to satisfy rather than
+left to guess which of two doors they are looking at.
 
 `startsOpen` is authored, never defaulted. The worked example turns on it: the player walks through a
 door and then closes it behind them, which is only a move if the door began open. A default would
@@ -465,7 +476,8 @@ A mechanism declares its states, so for a lock there is nothing to bracket — t
 countable. Because the author names the regions too, nothing has to be derived.
 
 **A state** is _(the region the player stands in, every mechanism's configuration, the floor keys
-held)_.
+held)_. Whether a gate stands open in a state is the fold over its owners that `mode` names, read off
+each owner's own state-to-gates mapping.
 
 Floor keys belong in the state space rather than beside it: a key changes what is passable exactly as
 a switch position does. It differs only in being monotonic — once held, always held — which is what
