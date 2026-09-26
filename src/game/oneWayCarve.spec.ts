@@ -138,6 +138,62 @@ describe("a floor that authors a one-way", () => {
     }
   })
 
+  it("refuses a drop from one gated section into another", () => {
+    // Being past one door is not permission to skip a different one: a player who earned vaultA's key
+    // has earned nothing toward vaultB's, so this is refused by name the same way a drop into an
+    // ungated section's own gate is.
+    const twoVaults: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "junior",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "vaultA", gate: { type: "floor-key" } },
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "vaultB", gate: { type: "floor-key" } },
+      ],
+      oneWays: [{ from: "vaultA", to: "vaultB" }],
+    }
+    for (let seed = 0; seed < 20; seed++) {
+      const result = assembleFloor("spec:1", twoVaults, seed, undefined, {
+        floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
+      })
+      if (result.success) throw new Error(`seed ${seed} carved a drop between two gated sections`)
+      expect(result.reasons.some(reason => reason.type === "oneWayUnsatisfied")).toBe(true)
+    }
+  })
+
+  it("still allows a drop leaving a gated section for open ground", () => {
+    // The ruling refuses crossing INTO a gate the player hasn't earned — it never touches leaving one:
+    // a drop out of `vault` and into the (ungated) main path stays legal. `gatedGroupOf.get(toKey)` is
+    // `undefined` for an ungated `to`, so the map lookup's guard never fires regardless of `from`.
+    const leavingVault: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "junior",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "vault", gate: { type: "floor-key" } },
+      ],
+      oneWays: [{ from: "vault", to: "main" }],
+    }
+    let carved = false
+    for (let seed = 0; seed < 20; seed++) {
+      const result = assembleFloor("spec:1", leavingVault, seed, undefined, {
+        floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
+      })
+      if (!result.success) continue
+      carved = true
+      const edges = oneWayEdges(result.grid)
+      const addressAt = ([r, c]: [number, number]) => {
+        const cell = result.grid.cells[r][c]
+        return cell.type === "empty" ? undefined : cell.sectionAddress
+      }
+      expect(edges.some(edge => addressAt(edge.from) === "vault")).toBe(true)
+      break
+    }
+    expect(carved).toBe(true)
+  })
+
   it("never hangs a drop off the exit, which has to stay a dead end", () => {
     // `floorWithDrop` (upper→lower) never gives a candidate a reason to touch the exit — neither end
     // is `main`, and the exit only ever carries `main`'s address. A one-way naming `main` does: the

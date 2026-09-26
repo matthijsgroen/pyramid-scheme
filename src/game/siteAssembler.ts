@@ -1202,6 +1202,11 @@ export const assembleFloor = (
     // gate or trap, sub-sections included. A door is allowed if it is intended, or if neither endpoint
     // is gated.
     const gatedCellKeys = new Set<string>()
+    // WHICH isolated group a cell belongs to, not merely whether it is isolated — a one-way drop is
+    // allowed to run inside one gated group or leave it, but never to cross from one gate's isolation
+    // into a DIFFERENT one: being past one door earns nothing toward another. Populated in the exact
+    // same three places as `gatedCellKeys`, by the same positional id `s0`/`s0.1` addresses already use.
+    const gatedGroupOf = new Map<string, string>()
     const intendedEdgeKeys = new Set<string>()
     const markChain = (attachedAt: [number, number], chainCells: Array<[number, number]>) => {
       let [pr, pc] = attachedAt
@@ -1232,18 +1237,27 @@ export const assembleFloor = (
     const mainIsolated = Boolean(config.sealed)
 
     if (mainIsolated) {
-      for (const [r, c] of mainPath) gatedCellKeys.add(posKey(r, c))
+      for (const [r, c] of mainPath) {
+        gatedCellKeys.add(posKey(r, c))
+        gatedGroupOf.set(posKey(r, c), MAIN_SECTION_ADDRESS)
+      }
     }
     for (const group of sectionGroups) {
       markChain(group.attachedAt, group.cells)
       if (sideIsolated(group.sectionIdx)) {
-        for (const [r, c] of group.cells) gatedCellKeys.add(posKey(r, c))
+        for (const [r, c] of group.cells) {
+          gatedCellKeys.add(posKey(r, c))
+          gatedGroupOf.set(posKey(r, c), `s${group.sectionIdx}`)
+        }
       }
     }
     for (const sub of subSectionGroups) {
       markChain(sub.attachedAt, sub.cells)
       if (subIsolated(sub.parentSectionIdx, sub.subSection)) {
-        for (const [r, c] of sub.cells) gatedCellKeys.add(posKey(r, c))
+        for (const [r, c] of sub.cells) {
+          gatedCellKeys.add(posKey(r, c))
+          gatedGroupOf.set(posKey(r, c), `s${sub.parentSectionIdx}.${sub.subSectionIdx}`)
+        }
       }
     }
     const edgeAllowed = (r: number, c: number, nr: number, nc: number): boolean => {
@@ -1728,9 +1742,11 @@ export const assembleFloor = (
           const toKey = posKey(nr, nc)
           if (toKey === exitKey) continue
           if (cellSectionAddress.get(toKey) !== oneWay.to) continue
-          // A drop may leave a gated section but never enter one: a gate is there to be earned, and a
-          // passage landing past it hands over what it guards.
-          if (gatedCellKeys.has(toKey) && !gatedCellKeys.has(fromKey)) continue
+          // A drop may run inside a gated section or out of one, never into a gate the player has not
+          // earned. Which gate matters, not whether: being past one door is not permission to skip
+          // another.
+          const toGate = gatedGroupOf.get(toKey)
+          if (toGate !== undefined && toGate !== gatedGroupOf.get(fromKey)) continue
           // A drop goes where the maze never joined two cells — never across a boundary the gate
           // isolation deliberately suppressed, which is a way around a locked door wearing a drop's
           // clothes.
