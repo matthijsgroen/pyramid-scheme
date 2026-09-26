@@ -219,6 +219,36 @@ export const findUnbakedSwitchBoards = (
 }
 
 /**
+ * A one-way drop authored on a floor whose site may not stand one.
+ *
+ * The map draws the passage from both sides, so until it is drawn as a drop a player meeting one reads
+ * an ordinary corridor and falls. A playtest floor is excused by its capabilities
+ * (capabilities.ts's standOneWayDrops), never by its id — and a site nothing grants it to fails the
+ * build with its floor named rather than leaning on the author remembering.
+ */
+export type UndrawnOneWay = { journeyId: string; levelNr: number; floorIndex: number; from: string; to: string }
+
+export const findUndrawnOneWays = (
+  configs: Record<string, SiteConfig[]>,
+  /** Injected so a caller can ask what a site WOULD owe under other capabilities — which is the only
+   * way to see that an exemption is excusing something rather than nothing. */
+  capabilities: (siteId: string) => SiteCapabilities | undefined = capabilitiesFor
+): UndrawnOneWay[] => {
+  const found: UndrawnOneWay[] = []
+  for (const [journeyId, sites] of Object.entries(configs)) {
+    // Granted, never merely "not refused": a site nothing knows about is a site nothing cleared.
+    if (capabilities(journeyId)?.standOneWayDrops) continue
+    sites.forEach((site, siteIdx) =>
+      site.forEach((floor, floorIndex) => {
+        for (const oneWay of floor.oneWays ?? [])
+          found.push({ journeyId, levelNr: siteIdx + 1, floorIndex, from: oneWay.from, to: oneWay.to })
+      })
+    )
+  }
+  return found
+}
+
+/**
  * A floor whose lock the walk refuses: unsolvable, stranding, or not reading at all.
  *
  * Asked of the assembled floor rather than of the spec, because a lock is made of the gates a carve

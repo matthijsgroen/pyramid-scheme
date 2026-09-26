@@ -163,7 +163,10 @@ export type FloorConstraint<TExtra extends string = never> = {
   forks?: { exits: number; count: number }[]
   /** A passage from one named section to another that the player may take only in that direction.
    * Both ends name a section address — a `label` where a section has one, the positional `s0`/`s1.2`
-   * where it does not, and `main` for the main path. Structural, like `forks`. */
+   * where it does not, and `main` for the main path. Structural, like `forks`.
+   *
+   * Named ends rather than `forks`' counts: on a floor built with no side sections there is no address
+   * for either end, so the drop can only ever be refused where `forks` would still be satisfied. */
   oneWays?: { from: string; to: string }[]
   /** A SWITCH: `encounter` stands in a junction `forks` reserved and closes its free ways out, so the
    * player stands in the fork and what is in it decides which way opens. Between `min` and `max` of

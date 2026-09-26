@@ -687,8 +687,8 @@ export const assembleFloor = (
   // The closest any attempt came to the junctions `forks` asks for, so the failure can name the
   // shortfall rather than blaming the maze.
   let forkShortfall: { exits: number; count: number; carved: number } | undefined
-  // The first authored one-way no attempt ever managed to place, so a floor that never carves one
-  // says which drop it could not find room for.
+  // The first drop an attempt could not find room for, kept from the first attempt that came up short,
+  // so a floor no attempt ever satisfies says which drop it failed on rather than blaming the maze.
   let oneWayShortfall: { from: string; to: string } | undefined
   for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
     if (attempt >= RECOVERY_ATTEMPT) {
@@ -1202,11 +1202,18 @@ export const assembleFloor = (
     // gate or trap, sub-sections included. A door is allowed if it is intended, or if neither endpoint
     // is gated.
     const gatedCellKeys = new Set<string>()
-    // WHICH isolated group a cell belongs to, not merely whether it is isolated — a one-way drop is
-    // allowed to run inside one gated group or leave it, but never to cross from one gate's isolation
-    // into a DIFFERENT one: being past one door earns nothing toward another. Populated in the exact
-    // same three places as `gatedCellKeys`, by the same positional id `s0`/`s0.1` addresses already use.
-    const gatedGroupOf = new Map<string, string>()
+    // WHICH DOORS MUST BE EARNED TO STAND ON A CELL, not merely whether any must. A one-way drop may
+    // run inside what a door shuts off, or out of it, but never into ground shut by a door the cell it
+    // falls from does not already stand behind: being past one door earns nothing toward another.
+    //
+    // One notion covering every door on the floor: the authored gates and traps, written here in the
+    // same three places as `gatedCellKeys` by the positional ids `s0`/`s0.1` addresses already use,
+    // and the doors a reserved junction's switch mints, added once the carve is settled below.
+    const doorsToEnter = new Map<string, Set<string>>()
+    const needsDoor = (cellKey: string, door: string) =>
+      doorsToEnter.set(cellKey, (doorsToEnter.get(cellKey) ?? new Set()).add(door))
+    /** The doors between the way in and a cell — empty for ground the player reaches unimpeded. */
+    const standsBehind = (cellKey: string): ReadonlySet<string> => doorsToEnter.get(cellKey) ?? new Set()
     const intendedEdgeKeys = new Set<string>()
     const markChain = (attachedAt: [number, number], chainCells: Array<[number, number]>) => {
       let [pr, pc] = attachedAt
@@ -1239,7 +1246,7 @@ export const assembleFloor = (
     if (mainIsolated) {
       for (const [r, c] of mainPath) {
         gatedCellKeys.add(posKey(r, c))
-        gatedGroupOf.set(posKey(r, c), MAIN_SECTION_ADDRESS)
+        needsDoor(posKey(r, c), MAIN_SECTION_ADDRESS)
       }
     }
     for (const group of sectionGroups) {
@@ -1247,7 +1254,7 @@ export const assembleFloor = (
       if (sideIsolated(group.sectionIdx)) {
         for (const [r, c] of group.cells) {
           gatedCellKeys.add(posKey(r, c))
-          gatedGroupOf.set(posKey(r, c), `s${group.sectionIdx}`)
+          needsDoor(posKey(r, c), `s${group.sectionIdx}`)
         }
       }
     }
@@ -1256,7 +1263,11 @@ export const assembleFloor = (
       if (subIsolated(sub.parentSectionIdx, sub.subSection)) {
         for (const [r, c] of sub.cells) {
           gatedCellKeys.add(posKey(r, c))
-          gatedGroupOf.set(posKey(r, c), `s${sub.parentSectionIdx}.${sub.subSectionIdx}`)
+          // A sub-section stands behind its parent's door AND its own, each written only where it
+          // exists: a sub-section with no gate of its own is no further in than its parent is.
+          if (sideIsolated(sub.parentSectionIdx)) needsDoor(posKey(r, c), `s${sub.parentSectionIdx}`)
+          if (sub.subSection.gate || sub.subSection.sealed)
+            needsDoor(posKey(r, c), `s${sub.parentSectionIdx}.${sub.subSectionIdx}`)
         }
       }
     }
@@ -1716,6 +1727,32 @@ export const assembleFloor = (
     // A junction short is an authored feature this carve cannot hold, so take another carve.
     if (reservedForks.length < forkDemands.length) continue
 
+    // HOW MANY OF THE RESERVED JUNCTIONS END UP WITH A SWITCH IN THEM, which is also how many of them
+    // keep the doors closed below. Settled here because a drop may not land behind a door one of them
+    // is going to mint.
+    const switchesPlaced = config.switches ? Math.min(config.switches.max, reservedForks.length) : 0
+
+    // A SWITCH'S OWN DOORS ARE DOORS, and nothing authored them: `closeWaysOut` mints one per free way
+    // out once the carve is settled. Which ground each shuts off is settled here, so the drop rule
+    // below refuses a landing the player would otherwise reach without ever solving the board.
+    // Nothing but the drop rule reads them, so a floor authoring no drop is spared the walk.
+    const entranceKey = posKey(entR, entC)
+    for (let n = 0; (config.oneWays ?? []).length > 0 && n < switchesPlaced; n++)
+      for (const { neighborKey } of freeWaysOut(reservedForks[n])) {
+        // Behind a door means every way in passes through it — so it is what the way in stops reaching
+        // once that one node is shut. The drops being placed below are not ways in: a drop that let
+        // another drop past a door would be the same bypass one step removed.
+        const reached = new Set<string>([entranceKey])
+        const queue = [entranceKey]
+        for (let at = 0; at < queue.length; at++)
+          for (const { neighborKey: onward } of nodeExitsOf(queue[at])) {
+            if (onward === neighborKey || reached.has(onward)) continue
+            reached.add(onward)
+            queue.push(onward)
+          }
+        for (const cellKey of usedCells) if (!reached.has(cellKey)) needsDoor(cellKey, `door ${neighborKey}`)
+      }
+
     // ONE-WAY DROPS. Each authored passage needs a node of `from` and a node of `to` exactly two cells
     // apart on one axis (NODE_STEP above), with the cell between them not already an edge some chain
     // walked — a pair the maze happened to place next to each other without ever meaning to join them.
@@ -1726,6 +1763,10 @@ export const assembleFloor = (
     const exitKey = posKey(exR, exC)
     const oneWayEdges: { from: string; to: string; dir: Direction }[] = []
     let oneWayShort: { from: string; to: string } | undefined
+    // ONE CONNECTOR CARRIES ONE DROP. Two drops landing on the same pair of cells would write one
+    // connector twice and leave a passage the author asked for gone with nothing reported, so the
+    // second takes the next cell pair — or, with none left, is this carve's shortfall like any other.
+    const takenConnectors = new Set<string>()
     for (const oneWay of config.oneWays ?? []) {
       const candidates: { from: string; to: string; dir: Direction }[] = []
       for (const fromKey of usedCells) {
@@ -1734,6 +1775,7 @@ export const assembleFloor = (
         // to its predecessor) precisely so nothing reads as continuing past it. A drop hanging off it
         // would add exactly the direction that was deleted to guarantee that.
         if (fromKey === exitKey) continue
+        const fromDoors = standsBehind(fromKey)
         const [r, c] = fromKey.split(",").map(Number)
         for (const [dr, dc, d] of CONNECTOR_DIRS) {
           const nr = r + dr,
@@ -1742,15 +1784,19 @@ export const assembleFloor = (
           const toKey = posKey(nr, nc)
           if (toKey === exitKey) continue
           if (cellSectionAddress.get(toKey) !== oneWay.to) continue
-          // A drop may run inside a gated section or out of one, never into a gate the player has not
-          // earned. Which gate matters, not whether: being past one door is not permission to skip
-          // another.
-          const toGate = gatedGroupOf.get(toKey)
-          if (toGate !== undefined && toGate !== gatedGroupOf.get(fromKey)) continue
+          // A DROP MAY RUN INSIDE WHAT A DOOR SHUTS OFF, OR OUT OF IT, NEVER INTO GROUND SHUT BY A
+          // DOOR THE PLAYER HAS NOT EARNED BY STANDING WHERE THEY FALL FROM. A switch's doors count
+          // here exactly as an authored gate's do: both are asked of one map (`doorsToEnter`).
+          if ([...standsBehind(toKey)].some(door => !fromDoors.has(door))) continue
+          // A hidden section is the statement that nothing is there until the player finds otherwise,
+          // and the runtime empties its cells — so a visible drop into one leaves the source pointing
+          // at a stub, which is the spoiler `freeWaysOut` refuses for a gate. Out of one stays legal.
+          if (hiddenCellPositions.has(toKey)) continue
           // A drop goes where the maze never joined two cells — never across a boundary the gate
           // isolation deliberately suppressed, which is a way around a locked door wearing a drop's
           // clothes.
           if (passages.has(pkey(r, c, nr, nc))) continue
+          if (takenConnectors.has(pkey(r, c, nr, nc))) continue
           candidates.push({ from: fromKey, to: toKey, dir: d })
         }
       }
@@ -1766,6 +1812,9 @@ export const assembleFloor = (
         oneWayShort = { from: oneWay.from, to: oneWay.to }
         break
       }
+      const [pfr, pfc] = picked.from.split(",").map(Number)
+      const [ptr, ptc] = picked.to.split(",").map(Number)
+      takenConnectors.add(pkey(pfr, pfc, ptr, ptc))
       oneWayEdges.push(picked)
     }
     if (oneWayShort) {
@@ -1840,13 +1889,36 @@ export const assembleFloor = (
       }
     }
 
-    // Materialize the connector cell for every real edge between two used nodes — this
-    // is the plain 1-wide corridor cell physically between them (see NODE_STEP above).
-    // Each edge is only processed once (from its lower-keyed endpoint) since it's
-    // symmetric. A connector inherits `hidden` only when both endpoints do, so a hidden
-    // section's own internal corridors stay hidden together with it, while the single
-    // corridor linking a hidden section to its (visible) attachment point stays visible
-    // — same as a normal doorway would.
+    // THE PLAIN 1-WIDE CORRIDOR CELL PHYSICALLY BETWEEN TWO NODES (see NODE_STEP above), built the one
+    // way wherever one is built — a two-way passage and a drop alike — so a future CorridorCell field
+    // cannot go missing from one of them. `owner` is the node the connector answers to: its section,
+    // its hash and its tier, which for a drop is the node it falls FROM.
+    //
+    // A connector inherits `hidden` only when both ends do, so a hidden section's own internal
+    // corridors stay hidden together with it, while the single corridor linking a hidden section to its
+    // (visible) attachment point stays visible — same as a normal doorway would.
+    const connectorBetween = (owner: string, other: string, dirs: Set<Direction>): CorridorCell => {
+      const ownerOrdinal = cellOrdinal.get(owner)
+      const otherOrdinal = cellOrdinal.get(other)
+      const tier = cellDifficulty.get(owner)
+      return {
+        type: "corridor",
+        dirs,
+        state: "fogged",
+        sectionAddress: cellSectionAddress.get(owner) ?? MAIN_SECTION_ADDRESS,
+        sectionHash: cellSectionHash.get(owner) ?? mainSectionHash,
+        legacySectionHash: cellLegacySectionHash.get(owner) ?? legacyMainSectionHash,
+        // A CONNECTOR IS NAMED BY THE TWO CELLS IT JOINS, sorted so it does not matter which end the
+        // edge was walked from. Its own coordinate is the midpoint of wherever the carve put those
+        // two, so it cannot be the identity; the pair of ordinals can, and survives the move.
+        ...(ownerOrdinal && otherOrdinal ? { ordinal: [ownerOrdinal, otherOrdinal].sort().join("|") } : {}),
+        ...(tier ? { difficulty: tier } : {}),
+        ...(hiddenCellPositions.has(owner) && hiddenCellPositions.has(other) ? { hidden: true } : {}),
+      }
+    }
+
+    // Materialize the connector for every real edge between two used nodes. Each edge is only
+    // processed once (from its lower-keyed endpoint) since it's symmetric.
     for (const cellKey of usedCells) {
       const [r, c] = cellKey.split(",").map(Number)
       for (const [dr, dc, d] of CONNECTOR_DIRS) {
@@ -1858,27 +1930,7 @@ export const assembleFloor = (
         if (r * N + c > nr * N + nc) continue // process each edge once
         const mr = (r + nr) / 2,
           mc = (c + nc) / 2
-        const hidden = hiddenCellPositions.has(cellKey) && hiddenCellPositions.has(neighborKey) ? true : undefined
-        const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
-        const sectionAddress = cellSectionAddress.get(cellKey) ?? MAIN_SECTION_ADDRESS
-        const connectorTier = cellDifficulty.get(cellKey)
-        const endA = cellOrdinal.get(cellKey)
-        const endB = cellOrdinal.get(neighborKey)
-        const connectorOrdinal = endA && endB ? [endA, endB].sort().join("|") : undefined
-        cells2D[mr][mc] = {
-          type: "corridor",
-          dirs: new Set([d, OPPOSITE[d]]),
-          state: "fogged",
-          sectionAddress,
-          sectionHash,
-          legacySectionHash: cellLegacySectionHash.get(cellKey) ?? legacyMainSectionHash,
-          // A CONNECTOR IS NAMED BY THE TWO CELLS IT JOINS, sorted so it does not matter which end the
-          // edge was walked from. Its own coordinate is the midpoint of wherever the carve put those
-          // two, so it cannot be the identity; the pair of ordinals can, and survives the move.
-          ...(connectorOrdinal ? { ordinal: connectorOrdinal } : {}),
-          ...(connectorTier ? { difficulty: connectorTier } : {}),
-          ...(hidden ? { hidden } : {}),
-        }
+        cells2D[mr][mc] = connectorBetween(cellKey, neighborKey, new Set([d, OPPOSITE[d]]))
       }
     }
 
@@ -1895,12 +1947,7 @@ export const assembleFloor = (
       if (fromCell.type === "empty")
         throw new Error(`[siteAssembler] one-way from ${edge.from} landed on an uncarved cell`)
       cells2D[fr][fc] = { ...fromCell, dirs: new Set([...fromCell.dirs, edge.dir]) }
-      cells2D[mr][mc] = {
-        type: "corridor",
-        dirs: new Set([edge.dir]),
-        state: "fogged",
-        sectionAddress: cellSectionAddress.get(edge.from) ?? MAIN_SECTION_ADDRESS,
-      }
+      cells2D[mr][mc] = connectorBetween(edge.from, edge.to, new Set([edge.dir]))
     }
 
     // Set entrance cell state to "reachable"
@@ -2194,8 +2241,7 @@ export const assembleFloor = (
     if (!validateSite(grid).valid) continue
     const opened = reservedForks.map((pk, n) => closeWaysOut(n, pk))
     const closedValid = validateSite(grid).valid
-    const placed = config.switches ? Math.min(config.switches.max, reservedForks.length) : 0
-    for (let n = placed; n < opened.length; n++)
+    for (let n = switchesPlaced; n < opened.length; n++)
       for (const [pk, cell] of opened[n]) {
         const [r, c] = pk.split(",").map(Number)
         cells2D[r][c] = cell
@@ -2209,7 +2255,7 @@ export const assembleFloor = (
     // `requiredKeyIds`, addressed by chain position, is none of its business.
     if (config.switches) {
       const family = resolveEncounter(config.switches.encounter, "puzzle")
-      for (let n = 0; n < placed; n++) {
+      for (let n = 0; n < switchesPlaced; n++) {
         const [sr, sc] = reservedForks[n].split(",").map(Number)
         const junction = cells2D[sr][sc]
         if (junction.type !== "room") throw new Error(`[siteAssembler] reserved fork ${reservedForks[n]} is not a room`)

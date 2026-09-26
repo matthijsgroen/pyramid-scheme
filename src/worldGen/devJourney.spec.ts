@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import { buildConfigs } from "./configBuilder"
 import { collectSlots } from "./slots"
-import { findEmptyChests, findUnbakedSwitchBoards } from "./validate"
+import { findEmptyChests, findUnbakedSwitchBoards, findUndrawnOneWays } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
 import { puzzleSeeds } from "../data/puzzleSeeds"
 import { DEV_JOURNEY_ID } from "./data"
@@ -218,9 +218,23 @@ describe("what the dev journey authors", () => {
   })
 
   it("stands a one-way drop on the floor that was waiting for one", () => {
-    const floor = devFloors(withDev)[2]
+    // Pyramid 3's own floor, named as the site it is: the third entry of every floor the journey grew
+    // would move the day any dev site gains a second one.
+    const pyramid3 = withDev[DEV_JOURNEY_ID][2]
+    expect(pyramid3).toHaveLength(1)
+    const [floor] = pyramid3
     expect(floor.oneWays).toEqual([{ from: "ledge", to: "sink" }])
     expect(floor.sideSections.map(section => section.label)).toEqual(expect.arrayContaining(["ledge", "sink"]))
+  })
+
+  // The develop-only boundary is what keeps an undrawn drop off a floor a player will meet, and it is
+  // the capability that grants it — not the journey's id. Said here as well as on the guard itself,
+  // because this is the journey the exemption exists for.
+  it("is the only journey whose capabilities let a drop stand on it", () => {
+    expect(findUndrawnOneWays(withDev)).toEqual([])
+    expect(
+      findUndrawnOneWays({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] }, () => PYRAMID_CAPABILITIES)
+    ).toHaveLength(1)
   })
 })
 

@@ -26,9 +26,10 @@ const dirsOf = (cell: GridCell): ReadonlySet<Direction> =>
 // one small region instead of a gate that joins three places at once. Everything else walkable falls
 // into the components the doors leave behind.
 //
-// ponytail: the flood treats a passage as walkable from both sides, which is true of every floor the
-// world carves today. One-ways arrive with the directed-edge primitive, and regions then want the
-// strongly connected components rather than these.
+// A REGION IS GROUND THE PLAYER WALKS BOTH WAYS, so the flood crosses an edge only where the far cell
+// names the way back. A drop is a move BETWEEN regions and never part of one: a flood that followed it
+// would stamp the ground past it with the region it fell from, and the walk — which may step either
+// way across anything inside one region — would be told the player can climb back up.
 //
 // Hidden cells are left out: a hidden section is never a statement that the player found it, so a
 // floor has to be sound without one.
@@ -53,7 +54,8 @@ const regionsOf = (grid: FloorGrid): { ids: RegionId[]; of: Map<string, RegionId
           const [dr, dc] = MOVES[dir]
           const [nr, nc] = [qr + dr, qc + dc]
           const next = grid.cells[nr]?.[nc]
-          if (!walkable(next) || doorKeysOf(next).length > 0 || of.has(posKey(nr, nc))) continue
+          if (!next || !walkable(next) || !dirsOf(next).has(OPPOSITE[dir])) continue
+          if (doorKeysOf(next).length > 0 || of.has(posKey(nr, nc))) continue
           of.set(posKey(nr, nc), id)
           queue.push([nr, nc])
         }
@@ -67,9 +69,9 @@ const regionsOf = (grid: FloorGrid): { ids: RegionId[]; of: Map<string, RegionId
 // when something else gates it off — an ungated section is already fully wired into the same maze
 // its neighbours are, and the drop merely adds a shortcut across ground the flood already joined,
 // so without this the walk would believe a genuinely gated pocket has no way in at all and would
-// refuse a floor that is perfectly sound. A pair whose two cells land in the same region is skipped:
-// inside one region the player already walks freely, so a drop between two of its own cells is
-// correctly reported as nothing for the walk to be told about.
+// refuse a floor that is perfectly sound. A pair whose two cells land in the same region is skipped,
+// and the flood above is what makes that reading safe: a region is ground walked both ways, so two
+// cells sharing one are two cells the player already moves freely between.
 const oneWaysOf = (grid: FloorGrid, of: Map<string, RegionId>): { from: RegionId; to: RegionId }[] => {
   const found: { from: RegionId; to: RegionId }[] = []
   for (let r = 0; r < grid.rows; r++)

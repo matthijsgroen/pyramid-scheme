@@ -23,6 +23,7 @@ import {
   findEmptyChests,
   findStrandingLocks,
   findUnbakedSwitchBoards,
+  findUndrawnOneWays,
   sweepMissedASwitch,
 } from "../src/worldGen/validate"
 import { assembleFloor } from "../src/game/siteAssembler"
@@ -141,6 +142,21 @@ if (unbakedSwitches.length > 0) {
     )
   if (unbakedSwitches.length > 20) console.error(`    … and ${unbakedSwitches.length - 20} more`)
   console.error("  Run `yarn generate-seeds` to fill them.")
+  process.exit(1)
+}
+
+// A drop the map still paints from both sides is a corridor the player walks into and falls out of, so
+// it may stand only where meeting an undrawn mechanic is the point. The playtest journey is excused by
+// its capabilities, not by its id; everywhere else the build stops with the floor named.
+const undrawnDrops = findUndrawnOneWays(configs)
+if (undrawnDrops.length > 0) {
+  console.error(`✗ ${undrawnDrops.length} one-way drop(s) stand on floors that may not hold one:`)
+  for (const drop of undrawnDrops.slice(0, 20))
+    console.error(
+      `    ${drop.journeyId} level ${drop.levelNr} floor ${drop.floorIndex}: ${drop.from} → ${drop.to}`
+    )
+  if (undrawnDrops.length > 20) console.error(`    … and ${undrawnDrops.length - 20} more`)
+  console.error("  A drop is drawn from both sides today — author it on the develop journey until it is not.")
   process.exit(1)
 }
 

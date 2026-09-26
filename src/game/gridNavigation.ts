@@ -263,9 +263,9 @@ export const renderAscii = (grid: FloorGrid): string => {
           line += "┘"
           continue
         }
-        // A cell with one way out is a one-way's far side: you may leave it only in the direction it
-        // names, and the arrow says which. Without this it draws as an anonymous dot and a spec
-        // reading the map cannot tell a drop from a dead end.
+        // A cell with one way out may only be left in the direction it names, whether that is a dead
+        // end or the far side of a drop, and the arrow says which direction. Without this it draws as
+        // an anonymous dot and a spec reading the map cannot tell either from an open corridor.
         if (d.size === 1) {
           const [only] = d
           line += only === "n" ? "↑" : only === "s" ? "↓" : only === "e" ? "→" : "←"

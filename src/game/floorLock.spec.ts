@@ -161,6 +161,96 @@ const dropCrossesRegions = (grid: FloorGrid): boolean => {
   })
 }
 
+const withDrop = (): FloorConfig => ({
+  ...switchFloor(),
+  sideSections: [
+    ...switchFloor().sideSections,
+    { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "upper" },
+    { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "lower" },
+  ],
+  oneWays: [{ from: "upper", to: "lower" }],
+})
+
+// The cells the entrance reaches across passages open BOTH ways, never stepping on `shut` — a witness
+// of its own, so what the compiler's regions swallow is not checked against the compiler's own flood.
+const twoWayReach = (grid: FloorGrid, shut: string): Set<string> => {
+  const start = posKey(grid.entrancePos[0], grid.entrancePos[1])
+  const seen = new Set<string>()
+  if (start === shut) return seen
+  seen.add(start)
+  const queue = [start]
+  for (let at = 0; at < queue.length; at++) {
+    const [r, c] = queue[at].split(",").map(Number)
+    for (const dir of dirsOf(grid.cells[r][c])) {
+      const [dr, dc] = MOVES[dir as string]
+      const [nr, nc] = [r + dr, c + dc]
+      const next = grid.cells[nr]?.[nc]
+      if (!walkable(next) || !dirsOf(next!).has(OPPOSITE[dir as string])) continue
+      if (posKey(nr, nc) === shut || seen.has(posKey(nr, nc))) continue
+      seen.add(posKey(nr, nc))
+      queue.push(posKey(nr, nc))
+    }
+  }
+  return seen
+}
+
+// THE ONE SHAPE `oneWays` EXISTS TO REPORT: a drop whose landing ground has no other way in. One cell
+// on the ordinary way in is restated as a door nothing on the floor mints the key for, so what is left
+// past it is entered by the drop alone. Undefined on a carve where no single cell cuts it off.
+const sealTheWayIntoTheDrop = (grid: FloorGrid): FloorGrid | undefined => {
+  const open = twoWayReach(grid, "")
+  // A switch names its door by direction and the floor finds it by walking until the first room, so a
+  // barrier stood in the corridor between the two would make the switch gate the fixture's door.
+  const towardASwitchsDoor = new Set<string>()
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room") continue
+      for (const exit of cell.exits ?? []) {
+        if (exit.gateKeyId === undefined) continue
+        const [dr, dc] = MOVES[exit.dir as string]
+        let [wr, wc] = [r + dr, c + dc]
+        while (grid.cells[wr]?.[wc]?.type === "corridor") {
+          towardASwitchsDoor.add(posKey(wr, wc))
+          ;[wr, wc] = [wr + dr, wc + dc]
+        }
+      }
+    }
+  // A drop is two one-way edges in a row — node into connector, connector into node — so the pair
+  // this needs is the outer two, chained through the connector between them.
+  const edges = oneWayEdges(grid)
+  const at = (cell: [number, number]) => posKey(cell[0], cell[1])
+  const pairs = edges.flatMap(into =>
+    edges.filter(outOf => at(outOf.to) === at(into.from)).map(outOf => ({ source: at(outOf.from), landing: at(into.to) }))
+  )
+  for (const { source, landing } of pairs) {
+    if (!open.has(source) || !open.has(landing)) continue
+    for (const key of open) {
+      if (key === source || key === landing || towardASwitchsDoor.has(key)) continue
+      const [r, c] = key.split(",").map(Number)
+      const cell = grid.cells[r][c]
+      if (cell.type === "empty") continue
+      if (isAt(grid.entrancePos, r, c) || isAt(grid.exitPos, r, c)) continue
+      // Neither an existing door nor the switch itself: the fixture stands ONE new barrier, and a
+      // switch restated as a door would leave its own board answering for nothing.
+      if (cell.type === "room" && (cell.requiredKeyId || (cell.exits ?? []).some(e => e.gateKeyId))) continue
+      const cut = twoWayReach(grid, key)
+      if (!cut.has(source) || cut.has(landing)) continue
+      const cells = grid.cells.map(row => [...row])
+      cells[r][c] = {
+        ...cell,
+        type: "room",
+        roomType: "encounter",
+        requiredKeyId: "nothing-mints-this",
+        gateVariant: "floor-key",
+        keyIsAuthored: true,
+      }
+      return { ...grid, cells }
+    }
+  }
+  return undefined
+}
+
 // Which junction a carve offers is the seed's choice, so seeds are tried until one carves what the
 // test needs — and running out is a throw, never a silent skip.
 const assembled = (config: FloorConfig, wants: (grid: FloorGrid) => boolean = () => true): FloorGrid => {
@@ -410,22 +500,34 @@ describe("floorLock", () => {
   })
 
   it("reports a one-way as a move the walk can take", () => {
-    const withDrop: FloorConfig = {
-      ...switchFloor(),
-      sideSections: [
-        ...switchFloor().sideSections,
-        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "upper" },
-        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "lower" },
-      ],
-      oneWays: [{ from: "upper", to: "lower" }],
-    }
-    const lock = floorLock(assembled(withDrop, dropCrossesRegions))!
+    const lock = floorLock(assembled(withDrop(), dropCrossesRegions))!
     expect(lock.oneWays?.length).toBeGreaterThan(0)
     for (const oneWay of lock.oneWays!) {
       expect(lock.regions).toContain(oneWay.from)
       expect(lock.regions).toContain(oneWay.to)
       expect(oneWay.from).not.toBe(oneWay.to)
     }
+  })
+
+  // Every seed that carves the shape, not the first: which side of the drop the row-major scan meets
+  // first is the seed's choice, and a flood that crossed the drop would report the pocket on the seeds
+  // that met it first and swallow it on the rest.
+  it("reports a drop whose landing ground has no other way in, on every seed that carves one", () => {
+    let checked = 0
+    for (let seed = 0; seed < 60; seed++) {
+      const result = assembleFloor("spec:1", withDrop(), seed, reEnterableFamilies, {
+        floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
+      })
+      if (!result.success) continue
+      const sealed = sealTheWayIntoTheDrop(result.grid)
+      if (!sealed) continue
+      const lock = floorLock(sealed)
+      if (!lock) continue
+      checked++
+      expect(lock.oneWays ?? []).not.toEqual([])
+      for (const oneWay of lock.oneWays!) expect(oneWay.from).not.toBe(oneWay.to)
+    }
+    expect(checked).toBeGreaterThan(0)
   })
 
   it("reports no one-ways for a floor that authors none", () => {

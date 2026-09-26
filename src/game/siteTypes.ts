@@ -346,7 +346,11 @@ export type FloorConfig = {
    * Structural, like `forks`: the two sections have to come out of the carve with node cells two
    * apart, so an attempt that cannot place one is re-carved and a floor no attempt can satisfy fails
    * rather than losing the passage quietly. Where a drop lands is a design decision, which is why it
-   * is authored rather than found — see docs/mods/floor-topology-design.md. */
+   * is authored rather than found — see docs/mods/floor-topology-design.md.
+   *
+   * Named ends, unlike `forks`' counts: a floor whose side sections a rule strips or never grows has
+   * no address for either end to resolve to, and the drop is then refused outright rather than landing
+   * somewhere else. Author `oneWays` on a floor whose sections you also author. */
   oneWays?: { from: string; to: string }[]
   /** A SWITCH: an encounter standing in one of the junctions `forks` reserved, closing that
    * junction's free ways out so that what the player meets there decides which one opens.
