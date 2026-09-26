@@ -195,6 +195,55 @@ before translation starts rather than after.
 
 ---
 
+## Built, as of 2026-09-26
+
+On `story/journey-beats` (PR #304), playing in English and Dutch. What is written here as "ready now"
+below was the plan; this is what came of it.
+
+| Built                                        | Where it lives                                                                     |
+| -------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Journey-keyed arrivals, all 20 pyramids      | `arrivalConversation.ts` + `fez.json` `arrival.*` — 96 lines                       |
+| Two speakers, portraits, sides swapping      | `Fez.tsx`, `portraits.ts`                                                          |
+| Story beats exempt from the tutorials toggle | `shouldSkipConversation`                                                           |
+| The eight tomb scenes                        | `fez.json` `tomb.*` — 92 lines, five ghosts drawn and placed                       |
+| The rest of the script                       | `bond.*`, `reading.*`, `altar.refused`, `end` — 50 lines, authored, mostly unfired |
+| The story mod                                | `src/mods/story/` — `conversation` and `reading` families                          |
+| The story log                                | a mod screen; every scene heard, re-readable                                       |
+| The explorer and the five ghosts             | `art/masters/characters/`, imported by `yarn import-portrait`                      |
+
+**238 authored lines against this document's own count of 237.** The content is complete except for two
+beats that cannot be written yet (below).
+
+### Reading is ACTIVE (decided)
+
+The player picks the sign, rather than the line resolving because they happen to hold enough glyphs. The
+first one is Henut's wall: her name in a cartouche with a goose where an owl belongs, and the tray offers
+only hieroglyphs they have completed. **Holding the sign is the gate** — without it they can look, and are
+told plainly they cannot fix it yet. Never a fail state.
+
+The wall data is `src/mods/story/game/reading/walls.ts`, one entry per journey. The Sphinx wants the same
+encounter behind `starter_1`'s ward gate (`main-path.md`, "The same place, literally"), and
+`reading.junior/expert/master` — the formula on every tomb wall — are authored with no room yet.
+
+### Two placement rules the world enforces
+
+**Never put a story room ahead of a tableau.** A tableau's authored content is keyed by its position
+(`levelNr = pathIndex + 1`), so a room inserted in front renumbers them and world generation fails
+outright. **And never last from junior on** — that room is the crocodile capstone. Story rooms go
+second-to-last, and the floor is authored `+ 1` longer for each, so nothing is substituted: a ghost
+standing in a tableau's place costs the tier a fragment host. `placement.spec.ts` holds both.
+
+### What is left
+
+| Left                              | Blocked on                                                                |
+| --------------------------------- | ------------------------------------------------------------------------- |
+| The reaction rail                 | nothing — `PuzzleFamilyShell` already knows a board solved unaided        |
+| The Sphinx reading + ward gate    | nothing — the encounter exists; it needs authoring in `starter.ts`        |
+| The offering arc (`altar.*`)      | **wall-or-choice at the tier gate** (`story-and-time-brainstorm.md` §4.5) |
+| The choked pyramid's arrival      | the topology work — its journey id does not exist                         |
+| One Fez line at the dust clearing | the topology work                                                         |
+| The Sphinx inscription artwork    | nothing — it has to spell HORI legibly at phone width                     |
+
 ## Ready now
 
 ### 1. Journey-keyed arrival conversations — S
