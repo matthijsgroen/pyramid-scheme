@@ -37,7 +37,8 @@
     "repaint": "tsx scripts/repaintPrompt.ts",
     "verify": "yarn lint --fix && yarn check-types && vitest run && yarn betterer",
     "betterer": "betterer --strict",
-    "betterer:update": "betterer --update"
+    "betterer:update": "betterer --update",
+    "generate-boards": "tsx scripts/puzzleBoards.ts"
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --fix",
