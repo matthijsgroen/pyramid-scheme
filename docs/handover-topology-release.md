@@ -24,7 +24,7 @@ built by another session — the two are independent except at wizard tier.
 | `docs/floor-as-puzzle-brainstorm` | PR #305, docs only. Body describes only its first commit and needs rewriting before merge.                                                                          |
 | `feat/witness-door`               | PR #307, draft, **not for merge**. A complete, reviewed slice-1 built before the design moved on. Superseded in shape, kept because most of its core work survives. |
 | `docs/node-actions`               | The node-actions design plus the revised topology design. No PR yet.                                                                                                |
-| `feat/switch-fork`                | Current work, and where slice 1 landed. Merged `main` in for the storage fix (#308) that was wiping a journey just started.                                          |
+| `feat/switch-fork`                | Current work, and where slice 1 landed. Merged `main` in for the storage fix (#308) that was wiping a journey just started.                                         |
 
 Nothing is merged. The owner merges to `main` only when the release is complete and playtested.
 
@@ -53,7 +53,8 @@ silently unlocks a door is a soundness leak, not lost progress.
 
 **A switch is a fork that carries an encounter.** The fork already knows where its ways out go, so a
 switch needs no geometry of its own. This dissolved the hardest problem in the redesign rather than
-solving it.
+solving it. It is the shape a _wished-for_ switch takes; an authored lock puts a mechanism anywhere
+and gates any boundary, and the fork is the common case rather than the only one.
 
 **A switch's family must not join the generic puzzle pool.** Its output is _which way out opens_;
 drawn into an ordinary room, a player would route a beam that opens nothing. `lightbeamSwitch` carries
@@ -72,14 +73,15 @@ The switch room stays **re-enterable**, and that is still the invariant — it i
 change their mind. They cannot strand themselves, because a door only ever changes while they are
 standing in the fork; walking away leaves the configuration as they set it.
 
-For the solver this is the permissive bracket and nothing new: every branch is reachable, because the
-player can always walk back and choose it.
+For the solver this is the permissive bracket: every branch is reachable, because the player can walk
+back and choose it. That argument holds exactly as long as the way back is open, which is the fact
+the walk establishes floor by floor rather than the rule anyone assumes.
 
-*The earlier reading — that a switch mints keys and keys accumulate, so each visit wins another door
+_The earlier reading — that a switch mints keys and keys accumulate, so each visit wins another door
 for good — is wrong and was built on before it was settled. It was already an expensive one: an
 implementer reported re-choosing as a design hole, it was accepted, a further fix was ordered to
 close it harder, and a junior mosaic piece was briefly unobtainable. The doors are state, not
-winnings.*
+winnings._
 
 **The beam-physics kernel lives in `mods/core`.** The two copies had already diverged in the commit
 that created them, and one divergence had dropped a gate clause that exists because the exploit was
@@ -131,7 +133,7 @@ already walked onto rather than entered, so the behaviour has a precedent rather
 **A switch's key stem is derived from the authoring address, never hand-written.**
 `switch:<journeyId>#<levelIndex>#<floorIndex>#<switch index>`, with the gate's own section address
 appended as before. A count cannot hand-author a name per switch, and deriving from the authoring
-satisfies the original ruling exactly — the danger was always a name the *carve* chooses, which a
+satisfies the original ruling exactly — the danger was always a name the _carve_ chooses, which a
 re-carve could hand to the wrong door. An authoring address cannot move under a re-carve. Uniqueness
 stops being something a check enforces and becomes something the id cannot violate.
 
@@ -169,7 +171,7 @@ already behaves. The slice table's "an ordinary puzzle" would have been new beha
 `forks: [{ exits: 2, count: 1, separate: true }]` demands a carve whose branches do not meet again
 out of sight; saying nothing accepts one where they do.
 
-It matters because it decides what a switch *means*. Where the ground behind two shut ways connects,
+It matters because it decides what a switch _means_. Where the ground behind two shut ways connects,
 opening either one eventually reaches both branches' content — the choice paces the floor rather than
 partitioning it, and what lies behind the door not chosen is still gettable without ever opening it.
 With `separate`, the choice really does divide the floor.
@@ -210,47 +212,61 @@ per-family facts rather than per-room ones.
 
 ## What comes next, in order
 
-**Slice 1, `LightSwitchFork`, is done and in the shipped world.** A junior pyramid stands one: junior_2,
-pyramid 2, floor 0. The authoring is `forks` plus `switches`, the board is generated per fork shape and
-turned to face the real ways out, and the doors are a function of the board with nothing minted or
-held. The witness door it grew out of is gone entirely, along with the runtime key registry it was the
-only user of. Seven findings came back from walking it and all seven are closed.
+**The target has moved, and it is worth understanding why before reading the list.** Slice 1 proved
+the feature; the design conversation that followed turned the feature into a vocabulary. A mechanism
+is a thing with states that owns gates, and four of the six catalogue features are that with
+different clothes on — including `waterline`, which now buys no primitive at all. Only `cosmicDust`
+and `hourglass` stay separate, and both reach past a single floor, which is a satisfying place for
+the boundary to fall.
 
-The solvability slice is done too: every mosaic register is held to its reachable count, per tier, over
-a permissive final walk.
+So the weight of the release has moved off the features and onto the vocabulary. A lock becomes
+twenty lines of authoring and a walk over its states, and the real destination is **master and wizard
+authored as locks** — 58 floor-key gates across the world, 56 of them in those two tiers, all doing
+the shallowest form of floor-as-puzzle there is. `mods/floor-topology-design.md` carries the whole
+design; it is the single source of truth.
 
-1. **The seed list.** Nothing declares offline demand for the switch's `{difficulty, forkShape}`
-   buckets, so a switch board is generated live in the player's session. It plays correctly, which is
-   why this has not bitten — but the ruling was that the switch role stays **seeded**, and right now
-   that ruling is quietly untrue with nothing able to notice. `enumerateConfigs.ts:83` and
-   `boardIndex.ts:84` both call `resolveOptions({ difficulty })` and never visit `switches`.
+1. **The walk.** A verifier over the states a floor's mechanisms name: a state is _(the region the
+   player stands in, every mechanism's configuration, the floor keys held)_, a move is walking,
+   throwing a switch you stand at, or leaving the site and returning, and the two questions are
+   _can this be solved_ and _does every reachable state still reach the way out_. Held by nothing
+   today. It unblocks everything else, it settles the way back for the switch already shipped, and it
+   is buildable now without any of the rest.
 
-2. **The way back.** Answered in `mods/floor-topology-design.md`, and no longer a rule to decide: a
-   switch may shut the corridor the player arrived by wherever the floor stays winnable, and the walk
-   over a mechanism's own states refuses it where it does not. That closes the measured gap — on **36
-   of 103 floors** a junction has a way out the switch cannot shut, so the player walks on without
-   working the board — and catches the trap that made it look undecidable: shut the way back, take a
-   staircase, come back, and `explorerPos` puts the player at the entrance, on the wrong side of a
-   door only the fork can open. Leaving and returning is one of the walk's moves, so that is a state
-   the second question fails on rather than an argument anyone has to make.
+2. **One-ways (P2).** The carve placing a directed edge and the art drawing a passage that reads as
+   unclimbable from below. The movers need nothing: `reachableFrom`, `findPath`, `walkableFrom` and
+   `completeCell` all move on the source cell's `dirs` and none check the target for a reciprocal.
+   Independent of the walk.
 
-   What remains is building the walk, and teaching the builder that the arrival corridor is
-   shuttable.
+3. **The mechanism vocabulary.** Regions, gates on any boundary, containers with ports, and the
+   builder laying a region tree into a carve. The substantial piece, and the one that pays for
+   everything after it. Wants the walk existing first, so a lock is verified as it is built rather
+   than afterwards.
 
-3. **Derive the board from the open door.** Decided, not built: the mirrors are computed from the way
-   out standing open — unique, because the generator allows one route per shrine — so nothing is
-   stored and `stateIsTheMechanism` goes with it. Unblocked now that the way back is settled; the
-   default configuration is the one that leaves the arrival corridor open, or all shut where the
-   switch does not own it.
+4. **Handles.** A family with states and no generator. Small, and it turns the catalogue's "a lever
+   elsewhere opens a door here" into authoring.
 
-4. **`sequenceLock`**, then the four features after it. It is the first to author a door key by hand,
-   so the register's last unheld rule — an authored gate's key is minted by whoever owns it — lands
-   with it.
+5. **Locks as content.** The owner's own `doubleBack` first — a fork whose right way starts open,
+   shut behind the player, with a drop landing _between_ two gates — then a ladder of them, then
+   master and wizard re-authored off their key chains.
 
-5. **The feature registry** — deferred while there was one feature and a guess. With a second real
-   feature to generalise from, it is worth building.
+6. **Derive the board from the open door.** Decided, not built: a switch's mirrors are computed from
+   the way out standing open, unique because the generator allows one route per shrine, so nothing is
+   stored and `stateIsTheMechanism` goes with it. Unblocked now the way back is settled.
 
-6. **Free-order journeys with cosmic dust**, then the story layer.
+7. **`cosmicDust` and `hourglass`**, the two that genuinely need new primitives, then free-order
+   journeys, then the story layer.
+
+### Two decisions that want making before the vocabulary sets
+
+Both are cheap now and awkward once floors are authored against the answer.
+
+- **May a gate answer to more than one mechanism?** A corridor both flooded and switch-gated is the
+  obvious case, and "drain it _and_ open the sluice" is the natural thing to reach for once floods
+  and switches share a floor. One owner is currently baked into the shape. If more than one, it also
+  needs settling whether that means _all_ of them agree or _any_.
+- **What is a mark made of?** A mechanism and its gates share one so a player can pair them.
+  `KeyColor` holds five values and coloured key doors spend from them — though retiring the key-heavy
+  floors gives most of them back. Glyphs suit the setting better than more colours.
 
 ## How this work goes best
 
@@ -284,3 +300,27 @@ two of those were mine.
 **A test that cannot fail is the recurring defect here.** A loop that skips on failure and asserts
 nothing; a test deriving its expectation from the code it tests; a spec path that does not exist,
 which vitest skips silently while printing a pass. Ask of every new test what would make it go red.
+
+The sharper version, learned three times in one slice: ask whether the check could **ever** have
+failed, not whether it passes. A gate proved blocking against world-gen's walk while the player
+strolled through it, because those are different code paths. A mosaic guard stayed green when
+authored capacity moved, because it is goal-seeking. An exemption excused something that was never
+there. Each looked like coverage and was scenery.
+
+**Taking an encounter out of a room takes its guarantees with it.** Three playtest findings in this
+slice were the same shape. The block on a locked door was _the family refusing to solve_. A switch's
+configuration was _the family's board_. Seeing a junction's ways out was _marking a bare fork
+explored_. None was written down as the mechanism; each was a side effect of the room being one kind
+of thing, and each vanished silently when it became another. When a room stops carrying an encounter,
+ask what the encounter was quietly doing.
+
+**A subagent's report is not a completion signal if it was messaged mid-run.** One slice was
+committed while its agent was still writing the specs that proved it, because a hand-back arrived and
+then the agent kept working on instructions sent after it started. The work was sound and the commit
+had to be completed by a second one. Wait for the notification, not the prose.
+
+**Verify a measurement before believing it.** Two of this session's measurements were wrong in ways
+that would have changed a decision: one compared cell _type_ where it should have compared `dirs`,
+and counted a gate being placed as a wall moving; another used a regex that silently matched nothing,
+so a check appeared not to fire when it had never been exercised. A measurement that confirms what
+you expected deserves the same scrutiny as one that surprises you.
