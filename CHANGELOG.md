@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The explorer has a face: the placeholder is gone and the drawn portrait stands opposite Fez.
 
 - A story log: everything you have been told, to read back if you tapped through it.
+- The rest of the script is written in: the friendship beats, the inscription as it becomes readable, the priest refusing a fake, and the last thing anybody says.
 
 ### Fixed
 

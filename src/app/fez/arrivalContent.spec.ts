@@ -14,11 +14,12 @@ import { PORTRAITS } from "./portraits"
 /** Every authored scene in a locale, keyed by its conversation id — the arrivals and the tombs alike. */
 const scenes = (locale: string): Record<string, Record<string, Record<string, string>>> => {
   const doc = JSON.parse(readFileSync(join("public/locales", locale, "fez.json"), "utf8"))
-  return Object.fromEntries(
-    ["arrival", "tomb"].flatMap(group =>
-      Object.entries(doc[group] ?? {}).map(([id, lines]) => [`${group}.${id}`, lines])
-    )
-  ) as Record<string, Record<string, Record<string, string>>>
+  // Every group a beat can live in, plus "end", which is one scene rather than a group of them.
+  const entries = ["arrival", "tomb", "bond", "reading", "altar"].flatMap(group =>
+    Object.entries(doc[group] ?? {}).map(([id, lines]) => [`${group}.${id}`, lines] as [string, unknown])
+  )
+  if (doc.end) entries.push(["end", doc.end])
+  return Object.fromEntries(entries) as Record<string, Record<string, Record<string, string>>>
 }
 
 const SPEAKERS: Speaker[] = ["fez", "explorer", ...GHOSTS]

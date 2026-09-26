@@ -355,5 +355,91 @@
       "2": { "explorer": "It is a picture." },
       "3": { "fez": "It has been a picture the whole time." }
     }
+  },
+
+  "bond": {
+    "starter": {
+      "1": { "fez": "That was quick." },
+      "2": { "explorer": "It was a door." },
+      "3": { "fez": "I've walked with people who'd take a week over a door like that. Not naming names. Mostly me." }
+    },
+    "starterTomb": {
+      "1": { "fez": "I did say I came for the resale. I am saying it again, while it is still true." },
+      "2": { "explorer": "Noted." }
+    },
+    "junior": {
+      "1": { "fez": "You went quiet for a bit there." },
+      "2": { "explorer": "I was counting." },
+      "3": { "fez": "I know. I have seen people guess. That was not guessing." }
+    },
+    "expert": {
+      "1": { "fez": "That was close." },
+      "2": { "explorer": "It was fine." },
+      "3": { "fez": "It was close. I am allowed to say so." }
+    },
+    "master": {
+      "1": { "fez": "We could stop." },
+      "2": { "explorer": "We could." },
+      "3": { "fez": "I am saying it so it has been said. Not so we do it." }
+    },
+    "wizard": {
+      "1": { "explorer": "What is this one worth?" },
+      "2": { "fez": "…" },
+      "3": { "fez": "I am not going to price that." },
+      "4": { "explorer": "Noted." }
+    }
+  },
+
+  "reading": {
+    "junior": {
+      "1": { "explorer": "There is a line here I can read now." },
+      "2": { "explorer": "I gave bread to the hungry." },
+      "3": { "fez": "Bread. In a tomb." },
+      "4": { "explorer": "It is in the last one too. I did not know it was words." }
+    },
+    "expert": {
+      "1": { "explorer": "Second line. Water to the thirsty." },
+      "2": { "fez": "Bread, and now water. Somebody was very keen to be remembered as generous." },
+      "3": { "explorer": "Everybody has it. Every wall, every tomb, the same two lines." },
+      "4": { "fez": "Then either they were all generous, or it is the thing you are supposed to say." },
+      "5": { "explorer": "Or it is what they were measured on." }
+    },
+    "master": {
+      "1": { "explorer": "Clothes to the naked. Third line." },
+      "2": { "fez": "Bread, water, clothes. It is a list of things given away." },
+      "3": { "explorer": "In the tomb of a man who took everything with him." },
+      "4": { "fez": "…Yes. I had noticed that." }
+    },
+    "sphinx": {
+      "1": { "fez": "Back where we started. It has not moved." },
+      "2": { "explorer": "The writing is still there." },
+      "3": { "fez": "Can you read it?" },
+      "4": { "explorer": "A name." },
+      "5": { "fez": "Whose?" },
+      "6": { "explorer": "Yours." },
+      "7": { "fez": "…" },
+      "8": { "fez": "Are you sure?" },
+      "9": { "explorer": "It is written down." },
+      "10": { "fez": "Huh." },
+      "11": { "fez": "Hori." },
+      "12": { "fez": "There was a Hori in every village in Egypt." },
+      "13": { "fez": "Well. That explains the fez." }
+    }
+  },
+
+  "altar": {
+    "refused": {
+      "1": { "priest": "No." },
+      "2": { "explorer": "It has his mark on it." },
+      "3": {
+        "priest": "It has a mark. It is a very good mark. It was cut by somebody with excellent tools and no business here, and not long ago."
+      },
+      "4": { "priest": "I have been waiting three thousand years. I am not being fobbed off in the last week of it." }
+    }
+  },
+
+  "end": {
+    "1": { "fez": "Was it neat?" },
+    "2": { "explorer": "It'll do." }
   }
 }
