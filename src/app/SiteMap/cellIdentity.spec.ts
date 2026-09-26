@@ -8,6 +8,7 @@ import { boardIndexesForFloor } from "./boardIndexes"
 import {
   cellAddress,
   cellSlot,
+  isPlaceAddress,
   migrateExploredToCells,
   migrateJourneyToCarveIndependent,
   cellKeysForFloor,
@@ -113,6 +114,19 @@ describe("naming a cell", () => {
   it("puts the floor in the address, so two floors of one section never answer to each other", () => {
     const { row, col } = someRoom(grid)
     expect(cellAddress(grid, 0, row, col)).not.toBe(cellAddress(grid, 1, row, col))
+  })
+})
+
+describe("isPlaceAddress: whether an address names a place or a bend", () => {
+  const grid = floorOf(3, 0)
+
+  it("is true for a room's address", () => {
+    const room = someRoom(grid)
+    expect(isPlaceAddress(room.address)).toBe(true)
+  })
+
+  it("is false for a bare junction's carve-bound address", () => {
+    expect(isPlaceAddress("main#0/~4")).toBe(false)
   })
 })
 

@@ -6,7 +6,7 @@ import { persistentInteriorSeed } from "@/game/siteSeed"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { hashString } from "@/support/hashString"
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
-import { keyOfAddress, sectionOfAddress, type CarveIndependentState } from "@/app/SiteMap/cellIdentity"
+import { isPlaceAddress, keyOfAddress, sectionOfAddress, type CarveIndependentState } from "@/app/SiteMap/cellIdentity"
 import type { RepairedExploration } from "@/app/SiteMap/repairFloorExploration"
 
 /** Bumped whenever a stored cell key changes shape. 2 named cells by their authored slot and floor
@@ -39,7 +39,9 @@ export type StoredJourneyStateV3 = {
    *  re-derives them from `exploredSections` instead of throwing a run away. Absent = coordinates only. */
   cellKeyVersion?: number
   position: string | null // "floor:row,col" or null (entrance) — the archive; positionKey is what is read
-  /** Where the player stands, as a cell address (src/app/SiteMap/cellIdentity.ts). Null = entrance. */
+  /** The last authored place (src/game/cellSlot.ts) the player stood on, as a cell address
+   *  (src/app/SiteMap/cellIdentity.ts). A bend or bare fork carries no slot and never overwrites this —
+   *  walking one only, since entering, leaves it at null (entrance). */
   positionKey?: string | null
   interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
   // All three name cells by address — `${levelNr}:${sectionHash}#${floor}/${slot}` — so a
@@ -108,6 +110,8 @@ export type JourneyAPI = {
   setRepairedExploration: (journeyId: string, repaired: RepairedExploration) => void
   /** This level's exploration, by section: the cell keys the map restores from. */
   getExploredCells: (journeyId: string) => Record<string, string[]>
+  /** Records `address` as the player's position, unless it names a bend or bare fork — a cell with no
+   *  slot (src/game/cellSlot.ts) — in which case the previously recorded place is left standing. */
   updatePosition: (journeyId: string, address: string, nodeId: string) => void
   setInteriorLevel: (journeyId: string, levelNr: number | null) => void
   // Every one of these names a cell by its `${sectionHash}#${floor}/${slot}` address, which
@@ -387,8 +391,11 @@ export const createJourneysV3Api = ({
   }
 
   // Both are written: the address is what the map reads, the coordinate is the archive the backfill
-  // re-reads (see `exploredSections`), and both go stale together when the level changes.
+  // re-reads (see `exploredSections`), and both go stale together when the level changes. Only an
+  // address naming a place (src/game/cellSlot.ts) is recorded — a bend or bare fork has no authored
+  // name to resume at, so walking onto one leaves the last recorded place standing.
   const updatePosition = (journeyId: string, address: string, nodeId: string) => {
+    if (!isPlaceAddress(address)) return
     setJourneys(prev =>
       prev.map(j => (j.journeyId === journeyId ? { ...j, position: nodeId, positionKey: address } : j))
     )

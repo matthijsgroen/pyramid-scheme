@@ -98,6 +98,58 @@ describe("markCellExplored", () => {
   })
 })
 
+// ── updatePosition ────────────────────────────────────────────────────────────
+
+describe("updatePosition", () => {
+  const run = (steps: (api: ReturnType<typeof makeApi>) => void, initial: Partial<StoredJourneyStateV3> = {}) => {
+    let state = [makeStoredJourney(initial)]
+    const set = (updater: unknown) => {
+      state =
+        typeof updater === "function"
+          ? (updater as (p: StoredJourneyStateV3[]) => StoredJourneyStateV3[])(state)
+          : (updater as StoredJourneyStateV3[])
+    }
+    steps(createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }))
+    return { state }
+  }
+
+  it("walking onto a place records it", () => {
+    const { state } = run(api => api.updatePosition(REAL_ID, "sec#0/p2", "0:1,2"))
+    expect(state[0].positionKey).toBe("sec#0/p2")
+    expect(state[0].position).toBe("0:1,2")
+  })
+
+  it("leaves the recorded position at the last place, not the bend just walked onto", () => {
+    const { state } = run(
+      api => api.updatePosition(REAL_ID, "sec#0/~4", "0:1,3"),
+      { position: "0:1,2", positionKey: "sec#0/p2" }
+    )
+    expect(state[0].positionKey).toBe("sec#0/p2")
+    expect(state[0].position).toBe("0:1,2")
+  })
+
+  it("a player who has only stood on bends since entering resolves to the entrance (null)", () => {
+    const { state } = run(
+      api => {
+        api.updatePosition(REAL_ID, "sec#0/~1", "0:0,1")
+        api.updatePosition(REAL_ID, "sec#0/~2", "0:0,2")
+      },
+      { position: null, positionKey: null }
+    )
+    expect(state[0].positionKey).toBeNull()
+    expect(state[0].position).toBeNull()
+  })
+
+  it("keeps the raw archive and the address in step, even across an ignored bend", () => {
+    const { state } = run(api => {
+      api.updatePosition(REAL_ID, "sec#0/p2", "0:1,2")
+      api.updatePosition(REAL_ID, "sec#0/~5", "0:1,5")
+    })
+    expect(state[0].position).toBe("0:1,2")
+    expect(state[0].positionKey).toBe("sec#0/p2")
+  })
+})
+
 // ── completeJourney ───────────────────────────────────────────────────────────
 
 describe("completeJourney", () => {

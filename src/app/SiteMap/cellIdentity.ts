@@ -71,6 +71,14 @@ export const cellKey = (grid: FloorGrid, floor: number, row: number, col: number
 
 export const keyOfAddress = (address: string): string => address.split("#").slice(1).join("#")
 
+/** Whether an address names an authored place (`cellSlot` in `@/game/cellSlot`) rather than a corridor
+ * bend or a bare fork. A slotless cell's address carries its ordinal instead, marked `~` — the one shape
+ * no authored slot ever takes — so recognizing one costs nothing more than reading that mark back off. */
+export const isPlaceAddress = (address: string): boolean => {
+  const slot = address.split("/").pop()
+  return !!slot && !slot.startsWith("~")
+}
+
 /** Where an address sits in THIS carve, or null when nothing here answers to it — which is the right
  * answer for a `~ordinal` corridor after the floor has moved. */
 export const findByAddress = (grid: FloorGrid, floor: number, address: string): [row: number, col: number] | null => {
