@@ -405,7 +405,7 @@ git commit -m "feat: the carve places an authored one-way, or refuses the attemp
 - Consumes: the directed edges Task 3 writes.
 - Produces: `floorLock(grid)` fills `LockSpec.oneWays` with one entry per directed edge, `from` and `to` being the regions those cells fall in.
 
-**This task is not optional, and the reason is worth understanding.** `findStrandingLocks` walks every floor that produces a lock. The develop journey stands a switch on every floor, so the floor Task 5 authors **will** be walked. `regionsOf`'s flood already follows each cell's own `dirs`, so a one-way floods forward only — which is correct, and means the region behind a drop is a region of its own. But if the drop itself is not reported, the walk believes there is no way into that region at all and reports the floor as stranding or unsolvable. A correct floor would stop the build.
+**This task is not optional, and the reason is worth understanding.** `findStrandingLocks` walks every floor that produces a lock. The develop journey stands a switch on every floor, so the floor Task 5 authors **will** be walked. `regionsOf` partitions by keyed doors, so the ground past a drop is a region of its own **only when something else gates it**. Where it is, and the drop is not reported, the walk believes that pocket has no way in and calls a sound floor stranding or unsolvable — and a correct floor would stop the build. Where the target is ungated it is already wired into the same maze as its neighbours, the drop is a shortcut across ground the flood has joined anyway, and emitting nothing is the right answer.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -447,9 +447,10 @@ Expected: FAIL — `floorLock` never sets `oneWays`, so it is `undefined`.
 In `src/game/floorLock.ts`, after regions are computed and before the `LockSpec` is returned, walk the grid for cell pairs joined in one direction and not the other — the same shape as the spec's own `oneWayEdges` helper, using the `MOVES` table already in that file — and emit one `{ from, to }` per pair, using the region each cell belongs to. Skip a pair whose two cells fall in the same region: inside a region the player walks freely and a drop between two of its cells is not a move the walk needs to know about.
 
 ```ts
-// A PASSAGE THE PLAYER MAY TAKE ONLY ONE WAY. The region flood follows each cell's own dirs, so the
-// ground past a drop is already a region of its own; without this the walk would believe nothing
-// reaches it and would refuse a floor that is perfectly sound.
+// A PASSAGE THE PLAYER MAY TAKE ONLY ONE WAY. The ground past a drop is a region of its own only
+// when something else gates it off; without this the walk would believe a genuinely gated pocket has
+// no way in and would refuse a floor that is perfectly sound. A pair landing in one region is
+// skipped — inside a region the player already walks freely.
 ```
 
 - [ ] **Step 4: Run the tests and watch them pass**
@@ -479,6 +480,8 @@ git commit -m "feat: a floor's one-ways reach the walk"
 - Consumes: everything above.
 
 Pyramid 3 of the develop journey is already reserved for this — its comment reads "sandSlide. Waiting for the one-way drop that makes a walked corridor unwalkable back." That is the floor to author.
+
+**Expect the drop NOT to appear in that floor's lock, and do not treat it as a bug.** `ledge` and `sink` are both plain ungated side paths, so they are one region and a drop between them is correctly emitted as nothing. What this task proves is that the floor carves at its runtime seed and the build's lock sweep does not refuse it — not that a region crossing exists. A floor whose drop does show up in the lock needs a gate on the far side, which is roadmap step 5's business, not this one's.
 
 - [ ] **Step 1: Write the failing test**
 
