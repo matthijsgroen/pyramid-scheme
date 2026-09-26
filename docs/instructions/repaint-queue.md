@@ -2559,3 +2559,266 @@ Everything else at starter, junior and expert is drawn. These three are the whol
 master, and every one of them is a SINGLE room — which is why they sat unqueued while 62 rooms' worth of
 expert work went in ahead of them. They are here because "done up to expert" is not done with dummies
 still in it, not because any of them is urgent.
+
+## Overgrown — seven
+
+The condition's own pool. An overgrown floor draws THREE THINGS — a tuft in the paving joints, a root
+through the wall band, a plant standing on a chamber floor — and today each of those is one sprite, so
+every rank is overgrown with the same weed and nothing on the floor is any colour but green and stone.
+These seven turn each of the three into a pool the renderer draws from
+(docs/superpowers/specs/2026-09-26-overgrown-oasis-design.md).
+
+**They are FLAT, and that changes the prompt.** No mesh, no scaffold, no mask: the generator's own
+outline becomes the tile and the magenta is keyed out (`prop-pipeline.md` Step 0, "a FLAT wall item"). So
+none of these carries the "keep every edge" sentence — there is no reference silhouette to hold paint to.
+What they carry instead is the FRAME and the word FLAT, because a generator handed a plant with no
+geometry under it will light it, shade it and stand it in a scene.
+
+**One skin for every rank.** These import at `--tier=default` like the three they join: a merchant's
+cellar and a god's vault get the same greenery, which is what keeps seven tiles at seven and not
+thirty-five.
+
+**The reference is the family, not a scaffold.** Each entry attaches whichever of the three landed tiles
+it has to sit beside, so the new ones match their handling — same flat gouache, same weight of line, same
+green. A tile that arrives prettier than the three it joins is the failure to look for.
+
+**Saturation and brightness in the import lines are the ones its neighbours took, and are PLACEHOLDERS**
+until the return is measured against the floor it lies on with `yarn tile-stats` — same rule as every
+other block in this file.
+
+### `default/overgrown-palm` — a young date palm in a broken chamber
+
+**Attach:**
+
+1. `~/tile-previews/overgrown-plant-reference.png` — the plant it stands beside
+
+```
+A single plant, painted in flat matte gouache, no background, on pure magenta #FF00FF. Square, one unit by one, exactly as the reference. Do not re-compose it into a portrait.
+
+The object: a YOUNG DATE PALM that has seeded itself in a tomb chamber and grown up toward the hole in
+the roof. A single slender trunk, patterned with the diamond scars of old frond bases, leaning very
+slightly. Five or six arching fronds at the top, each one a long rib with stiff leaflets along both
+sides — draw the leaflets as a comb of short strokes, not as a feather. A few dry brown fronds hang down
+dead against the trunk under the green ones.
+
+It STANDS ON THE FLOOR and is seen from the front, the way a piece of furniture in this tomb is seen. Its
+base is at the bottom edge of the frame and its crown at the top; nothing is cut off by either edge. It
+is a tile about the size of a jar rack, so the whole plant reads at a glance: fewer, larger fronds beat
+many small ones.
+
+Green that has grown in the dark: a deep dusty green, not a garden green, with the fronds paler toward
+their tips and the trunk a grey-brown. The dead fronds are a dry ochre.
+
+Draw it square on and FLAT. No perspective, no scene, no floor under it, no pot, no wall behind it.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-palm.webp --tier=default --name=overgrown-palm --slot=growth \
+  --filter=smooth --saturation=3.2 --brightness=0.82
+```
+
+### `default/overgrown-ferns` — a clump of ferns on a chamber floor
+
+**Attach:**
+
+1. `~/tile-previews/overgrown-plant-reference.png` — the plant it stands beside
+
+```
+A single plant, painted in flat matte gouache, no background, on pure magenta #FF00FF. Square, one unit by one, exactly as the reference. Do not re-compose it into a portrait.
+
+The object: a CLUMP OF FERNS grown up out of a cracked tomb floor where water collects. Seven or eight
+fronds rising from one crown at the bottom, each arching outward and over — tall in the middle, shorter
+and more horizontal at the sides, so the clump is a fountain shape wider at the top than at its base.
+Each frond is a rib with rounded lobes along it, biggest at the middle of the frond and smaller toward
+the tip. One or two fronds are still curled at the tip in a tight crozier.
+
+It STANDS ON THE FLOOR and is seen from the front, the way a piece of furniture in this tomb is seen. Its
+crown is at the bottom edge of the frame; nothing is cut off by any edge.
+
+A deep cool green, darker and bluer than a palm, with the undersides of the lobes paler where a frond
+turns over. Nothing about it is dry — this is the plant that found the wet corner.
+
+Draw it square on and FLAT. No perspective, no scene, no floor under it, no pot, no wall behind it.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-ferns.webp --tier=default --name=overgrown-ferns --slot=growth \
+  --filter=smooth --saturation=3.2 --brightness=0.82
+```
+
+### `default/overgrown-flowers` — a spray of desert flowers in a joint
+
+**Attach:**
+
+1. `~/tile-previews/overgrown-reference.png` — the tuft it lies beside
+
+```
+A small spray of plants, painted in flat matte gouache, no background, on pure magenta #FF00FF. Square, one unit by one, exactly as the reference. Do not re-compose it into a portrait.
+
+The object: a SPRAY OF SMALL FLOWERS that has taken root in the joint between two paving slabs. A low
+cushion of narrow leaves with a dozen flower heads held just above it on thin stems. The flowers are
+simple five-petalled discs, each one no bigger than the leaves, and they face every which way rather than
+all at the viewer.
+
+THE FLOWERS ARE THE POINT AND THEY MUST CARRY COLOUR. Everything else on these floors is green or stone,
+so these are what stops a lush room being one hue: a warm dusty ROSE and a pale CREAM among them, a few
+buds still closed and deeper in tone. Keep the leaves a muted grey-green so the flower heads are the only
+saturated thing in the tile.
+
+It LIES ON THE PAVING and is seen from above, flat to the floor. It is a small thing, about a third of a
+floor slab, and it will be drawn small — so a few clear flower heads beat a dense mass of tiny ones.
+
+Draw it square on and FLAT. No perspective, no scene, no paving under it, no crack, no soil.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-flowers.webp --tier=default --name=overgrown-flowers --slot=growth \
+  --filter=smooth --saturation=2.6 --brightness=0.58
+```
+
+### `default/overgrown-scrub` — a dry tussock in a joint
+
+**Attach:**
+
+1. `~/tile-previews/overgrown-reference.png` — the tuft it lies beside
+
+```
+A small clump of grass, painted in flat matte gouache, no background, on pure magenta #FF00FF. Square, one unit by one, exactly as the reference. Do not re-compose it into a portrait.
+
+The object: a TUSSOCK OF DRY GRASS in a paving joint, the kind that lives on almost nothing. A spray of
+stiff narrow blades from one point, most of them standing and a few bent right over and broken. Half the
+clump is still green at the base and the rest has gone straw-pale toward the tips, so the tile carries
+both.
+
+It is the DRY one of this set. The floors it lies on already carry a green tuft and a green root; this is
+what a floor looks like where the light gets in but the water does not, and it should read as a different
+plant rather than as the same one drawn again.
+
+It LIES ON THE PAVING and is seen from above, flat to the floor. It is a small thing, about a third of a
+floor slab, and it will be drawn small — so keep the blades few and clear rather than fine and many.
+
+Draw it square on and FLAT. No perspective, no scene, no paving under it, no crack, no soil.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-scrub.webp --tier=default --name=overgrown-scrub --slot=growth \
+  --filter=smooth --saturation=2.6 --brightness=0.58
+```
+
+### `default/overgrown-fronds` — fallen fronds on the paving
+
+**Attach:**
+
+1. `~/tile-previews/overgrown-reference.png` — the tuft it lies beside
+
+```
+Fallen leaves, painted in flat matte gouache, no background, on pure magenta #FF00FF. Square, one unit by one, exactly as the reference. Do not re-compose it into a portrait.
+
+The object: TWO OR THREE DEAD PALM FRONDS that have dropped onto the paving and are lying where they
+fell. Each is a long rib with stiff leaflets along it, curled and split, one crossing another. They are
+not arranged: they lie at odd angles to each other, and one has broken across its middle.
+
+It is LITTER AND NOT A PLANT, which is what it contributes — a floor with only living things on it looks
+tended. These say something above has been shedding for years.
+
+Dry throughout: straw and pale ochre, going grey where a frond has lain longest, with no green left
+anywhere in them.
+
+It LIES ON THE PAVING and is seen from above, flat to the floor, filling more width than height. The
+arrangement need not match the reference.
+
+Draw it square on and FLAT. No perspective, no scene, no paving under them, no soil.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-fronds.webp --tier=default --name=overgrown-fronds --slot=growth \
+  --filter=smooth --saturation=2.6 --brightness=0.58
+```
+
+### `default/overgrown-creeper` — a creeper hanging down the wall band
+
+**Attach:**
+
+1. `~/tile-previews/overgrown-wall-reference.png` — the root it hangs beside
+
+```
+A hanging plant, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+
+The object: a CREEPER that has come in over the top of a wall and is hanging down the face of it. Two or
+three thin woody stems enter at the TOP EDGE of the frame and fall the whole height, with heart-shaped
+leaves alternating along them, largest near the top and smaller toward the trailing ends. A tendril or
+two curls away from the stem into the air.
+
+IT MUST REACH BOTH EDGES. It enters at the top edge and its ends pass out through the bottom edge — this
+is stretched down a wall band by the renderer, and a plant that stops inside the frame reads as a stain
+painted on the wall instead of something growing over it.
+
+A living mid-green, a little yellower than the root it hangs beside, with the woody stems grey-brown.
+
+Draw it square on and FLAT, seen straight on against the wall. No perspective, no scene, no bricks behind
+it, no wall.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-creeper.webp --tier=default --name=overgrown-creeper --slot=growthWall \
+  --filter=smooth --saturation=2.4 --brightness=0.85
+```
+
+### `default/overgrown-curtain` — a curtain of roots down the wall band
+
+**Attach:**
+
+1. `~/tile-previews/overgrown-wall-reference.png` — the root it hangs beside
+
+```
+Hanging roots, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square.
+
+The object: a CURTAIN OF AERIAL ROOTS let down the inside face of a wall by something growing above it.
+Many fine roots hanging close together and nearly straight, of several lengths, a few of them fused into
+thicker ropes where they have twisted together. No leaves anywhere: this is the plant's underside.
+
+IT MUST REACH BOTH EDGES. The roots enter at the TOP EDGE and hang out through the BOTTOM — this is
+stretched down a wall band by the renderer, and roots that stop inside the frame read as a stain painted
+on the wall.
+
+It is the DENSE one of this set, where the other wall tile is a single root forcing through brick: this
+one is a veil you would have to push through, and it should read as mass rather than as line.
+
+Pale grey-brown and dusty, barely green at all — these have never seen the light.
+
+Draw it square on and FLAT, seen straight on against the wall. No perspective, no scene, no bricks behind
+it, no wall.
+
+No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-curtain.webp --tier=default --name=overgrown-curtain --slot=growthWall \
+  --filter=smooth --saturation=2.4 --brightness=0.85
+```
