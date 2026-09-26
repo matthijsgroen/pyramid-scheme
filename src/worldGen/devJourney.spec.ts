@@ -216,6 +216,12 @@ describe("what the dev journey authors", () => {
     )
     expect(failed).toEqual([])
   })
+
+  it("stands a one-way drop on the floor that was waiting for one", () => {
+    const floor = devFloors(withDev)[2]
+    expect(floor.oneWays).toEqual([{ from: "ledge", to: "sink" }])
+    expect(floor.sideSections.map(section => section.label)).toEqual(expect.arrayContaining(["ledge", "sink"]))
+  })
 })
 
 // THE RULING THE PLAYTEST JOURNEY IS THE EXCEPTION TO. A shipped site whose authored switch has no

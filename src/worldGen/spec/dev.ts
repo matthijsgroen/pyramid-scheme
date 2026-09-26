@@ -47,8 +47,17 @@ export const devRules: Rule[] = [
   devSite(1, "junior"),
   // 2 — sequenceLock. Waiting for the family that only opens once its rooms are met in order.
   devSite(2, "junior"),
-  // 3 — sandSlide. Waiting for the one-way drop that makes a walked corridor unwalkable back.
-  devSite(3, "expert"),
+  // 3 — the one-way drop. The ledge's own way on is a fall into the sink, and the sink has no way
+  // back up it: the passage is drawn from both sides today, which is why this stands here and on no
+  // authored pyramid until it is drawn as a drop.
+  journey(DEV_JOURNEY_ID).pyramid(3, {
+    difficulty: "expert",
+    pathPuzzles: 2,
+    sideSections: [sidePath({ puzzles: 1, label: "ledge" }), sidePath({ puzzles: 1, label: "sink" })],
+    forks: FORKS,
+    switches: SWITCHES,
+    oneWays: [{ from: "ledge", to: "sink" }],
+  }),
   // 4 — waterline. Waiting for the level that closes the floor's lower rooms until it is dropped.
   devSite(4, "expert"),
   // 5 — cosmicDust. Waiting for the drift that re-lays which rooms a corridor connects.
