@@ -120,10 +120,10 @@ describe("updatePosition", () => {
   })
 
   it("leaves the recorded position at the last place, not the bend just walked onto", () => {
-    const { state } = run(
-      api => api.updatePosition(REAL_ID, "sec#0/~4", "0:1,3"),
-      { position: "0:1,2", positionKey: "sec#0/p2" }
-    )
+    const { state } = run(api => api.updatePosition(REAL_ID, "sec#0/~4", "0:1,3"), {
+      position: "0:1,2",
+      positionKey: "sec#0/p2",
+    })
     expect(state[0].positionKey).toBe("sec#0/p2")
     expect(state[0].position).toBe("0:1,2")
   })
