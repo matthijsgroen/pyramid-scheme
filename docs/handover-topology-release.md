@@ -407,3 +407,93 @@ double-write and a backfill can simply change the shape.
 
 What that does NOT excuse: an identity that is ambiguous **inside one playthrough**. A reset gives a
 player a clean save, not a correct one, and two cells sharing a key are wrong on the first visit.
+
+---
+
+# Session handover — the walk, one-ways, and what a drop is
+
+44 commits on `feat/switch-fork`, `85ee986..7f0577b1`. Nothing merged. Tree clean at handover.
+Full gate green throughout: `yarn test` 3571, `yarn lint` 0 errors, `betterer` unchanged,
+`generate-world` byte-identical.
+
+## What got built
+
+**The walk** (handover item 1, now done). `src/game/lockWalk.ts` verifies a lock — regions, gates with
+owners, mechanisms with states and transitions, one-ways, a way in and out — answering _can it be
+solved_ and _does every reachable state still reach the way out_. `src/game/floorLock.ts` compiles an
+assembled floor into that shape; `findStrandingLocks` sweeps the built world and stops the build.
+
+**It settled the shipped switch:** junior_2 pyramid 2 floor 0 cannot strand a player. Its way out sits
+behind the switch's own door, so the board is load-bearing, and it is sound because the board can
+always be re-routed — the re-enterability invariant, verified rather than argued.
+
+**One-way edges** (roadmap step 1). A floor authors `oneWays: [{ from, to }]` naming two sections; the
+carve places a directed passage or refuses the attempt. Four refusals, each of which cost a fix round
+to find: a drop goes where the maze never joined, never where gate isolation deliberately cut; never
+on the exit node; never into a gate the player has not earned; and an end naming no section is refused
+before any attempt rather than re-carved sixty times.
+
+**Half of step 2.** The reveal runs through a drop from the source; the landing sees the mouth and
+nothing past it; a refused movement marker stands a cell out, the same arrow at half strength with a
+bar across it. What remains of step 2 is the art.
+
+## In flight when this session ended
+
+**An art-prep agent** was still running: adding a zipline `--contents` to `prim_pit`, rendering three
+expert scaffolds, and writing `yarn repaint` entries. Its report lands at
+`.superpowers/sdd/one-way-edges-implementation-plan/art-prep-report.md`. **Check whether it committed
+before assuming anything** — `git log` is the truth. If it queued entries, the owner runs
+`yarn repaint <key>` and pastes by hand; the loop is manual on purpose.
+
+## What the owner decided
+
+- **A gate may answer to several mechanisms**, `owners` + `mode` of `all` (default) or `any`.
+- **A mark is a glyph on a coloured ground** — `KeyColor` grounds, the hieroglyph alphabet already
+  shipped as a webfont for the glyphs.
+- **All saves reset** for the topology work and the story layer above it. So a save-format change owes
+  no migration — but a reset gives a clean save, never a correct one, and an identity that is
+  ambiguous _within one playthrough_ is still a bug.
+- **A one-way is a place, not a sign.** Drawn as a fissure with a line over it; the rule is carried by
+  the movement markers, at the moment the player tries.
+- **What it does from each side** is now the contract in `mods/floor-topology-design.md`.
+- **Three drawings per rank**: horizontal is one asset mirrored, the two verticals each need their own,
+  because a vertical flip breaks the projection's up-facing-band rule.
+- **An ingredient is held to a higher bar than a floor** — its mistakes repeat everywhere it is used.
+  Do not trade ingredient quality for a shorter road to `doubleBack`; it is the first consumer, not
+  the point.
+
+## What is next
+
+1. **Step 4 — the handle, with marks.** The biggest piece needing nothing from the owner. Its state
+   model is what all 56 master and wizard gates get rebuilt on, so it is the highest-leverage
+   ingredient left. `key-gate` is the no-generator precedent; the part most likely to be
+   underestimated is persisted mechanism state — the shipped switch stores the CONSEQUENCE
+   (`openWaysOut`), not the state.
+2. **Step 2's art**, once the owner has run the repaint loop.
+3. **Step 5 — the lock container.** Still blocked on five design questions, listed in
+   `authored-locks-roadmap.md`. The region tree does NOT fit the existing section model: that tree is
+   two levels, single-parent, one gate per section at its entrance, always starting shut.
+
+## Things that will bite
+
+- **Stale IDE diagnostics, constantly.** They reported missing exports, unreachable code and unused
+  components that were all present and correct. `yarn check-types` is the truth; the diagnostics were
+  wrong every single time this session.
+- **`lint --fix` BEFORE `betterer`.** Betterer records a content hash per file, so formatting after it
+  invalidates the results and CI fails where local passed.
+- **`INCLUDE_DEV=1 yarn generate-world` writes the develop journey into `src/data/generatedWorld.ts`.**
+  Regenerate without it afterwards or the tree stays dirty with a world nobody ships.
+- **A subagent's "lint clean" is not evidence.** Several reported it while the repo gate was red.
+- Parked, and written up in `authored-locks-roadmap.md`: `doorsToEnter` is not every door (a room with
+  `requiredKeyIds` is a real barrier nothing records); the gate table mints a two-way gate across a
+  drop's first edge when the source is itself a door; `sealed` isolation is recorded as a door though
+  nothing there is earned; `walkPosition` returns NaN for a drop connector's ordinal.
+
+## How this session actually found things
+
+Four defects were green in a passing suite and were caught by looking, not by reading: the verifier
+could be fooled on exactly the floors it exists for; a drop could tunnel past a gate; a marker was
+hidden behind the player's boots with an invisible bar; and a "no floor under the gap" turned out to
+be fog at 0.75 opacity. **A measurement that confirms what you expected deserves the same scrutiny as
+one that surprises you** — one probe here was too coarse and had to be redone, and one conclusion
+about art legibility was retracted entirely because the marks had been drawn in the wrong place.
