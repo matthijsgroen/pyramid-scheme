@@ -2646,28 +2646,23 @@ THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no 
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
 
-**THE CAMERA IS 30° ABOVE THE FLOOR, AND EVERY TILE IN THIS GAME AGREES ON IT.** You are looking
-slightly DOWN on the plant, not at it from the side. What follows is not a mood, it is arithmetic:
+**LOOK DOWN ON IT FROM HIGH ABOVE — NEARLY OVERHEAD.** This is a plant growing out of a floor, and the
+floor is what the player is looking at. It is not furniture: a jar rack or a timber post in this game is
+drawn from a low camera and shows its front, and a plant is not drawn that way.
 
-- Anything facing UP is squashed to HALF its depth but keeps its full width. A crown of fronds spraying
-  outward is an up-facing thing: it reads as a wide, shallow ELLIPSE — about twice as wide as it is deep
-  — and you see the UPPER surfaces of the fronds that go away from you, not their profile.
-- Anything facing the VIEWER is barely foreshortened. A trunk keeps its height.
-- **THE LEAVES RADIATE IN EVERY DIRECTION, INCLUDING TOWARD YOU AND AWAY FROM YOU** — and that is where
-  the angle shows. A leaf pointing AWAY is drawn visibly SHORTER, at half the length it would have
-  sideways, and you see its UPPER surface. A leaf pointing TOWARD you is also shortened, and overlaps the
-  base of the plant, hiding part of it. Only the leaves reaching left and right keep their full length.
-  **A plant whose leaves all lie flat in the picture plane, spreading only left and right like a fan or a
-  pressed specimen, is the failure** — it is the commonest way this tile comes back wrong, and it reads
-  as a cut-out standing on the floor rather than a plant growing out of it.
-- **A plant with height still shows its top.** Drawn as a flat fan, symmetrical, seen edge-on, it reads
-  as a sticker standing on the floor — which is exactly what the last roll of this tile did, and it is
-  the one thing that makes a tile disagree with the room around it.
-- Verticals stay vertical and horizontals stay horizontal: an orthographic squash, never a vanishing
-  point. Nothing is drawn from three-quarter or from behind.
+- **The plant reads as a ROSETTE seen from above.** Its leaves radiate outward in a circle from the
+  centre, and you see the UPPER surface of every one of them.
+- **Anything vertical is very short in the picture.** A stem, a trunk, a crown held up on a stalk — all
+  of that is foreshortened almost to nothing and mostly hidden by the leaves above it. Do not draw a
+  tall plant standing up; draw the same plant from the top of a ladder.
+- **Leaves reaching toward the viewer and away from the viewer are SHORTER** than those reaching left
+  and right, and the ones reaching toward you overlap and hide the centre.
+- **A fan is the failure.** Leaves spreading only left and right, all lying in the picture plane, all at
+  full length, with the plant standing upright — that is a pressed specimen seen at eye level, and it is
+  what this tile keeps coming back as. It reads as a cut-out propped on the floor.
 
-Check it against a jar rack or a timber post in this game: you see the top of the rail, the elliptical top
-of the post. That is the angle.
+Squash the whole thing: the rosette is WIDER THAN IT IS DEEP, about two to one, because the floor itself
+is drawn squashed that way.
 
 **THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
 upper surfaces and the parts facing the viewer take the light; the undersides of the leaves, the far
