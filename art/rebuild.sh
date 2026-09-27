@@ -1520,3 +1520,5 @@ yarn import-tile art/masters/surfaces/overgrown-fronds.webp --tier=default --nam
 yarn drift-mask --out="$OBJ" --seed=moss --size=504 --peak=0.9 --lobes=4
 yarn import-tile art/masters/surfaces/overgrown-moss.webp --tier=default --name=overgrown-moss --slot=drift \
   --filter=smooth --mask="$OBJ" --brightness=0.7
+yarn import-tile art/masters/surfaces/overgrown-curtain.webp --tier=default --name=overgrown-curtain --slot=growthWall \
+  --filter=smooth --saturation=1.0 --brightness=0.92

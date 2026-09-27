@@ -414,3 +414,41 @@ Today **123 placeholder files** exist for the slots that already resolve, all ge
 **Draw the merchant first, end to end** — it is the rank the player meets, and it is the shortest way to find
 out whether the whole idiom holds: 4 surfaces + 15 props + 4 wall items + 6 scatter = **29 files**. Everything
 else in this document is that same list four more times, with better stone.
+
+## §9 Growth — what an overgrown floor is made of
+
+Ten tiles, all `--tier=default`: one skin for every rank, because a condition is a thing that has got
+into a site rather than a property of its masonry. Three slots and a ground.
+
+| slot | members |
+| --- | --- |
+| floor joints (`growth`, 22×22) | `overgrown` tuft · `-flowers` · `-scrub` · `-fronds` |
+| wall band (`growthWall`, 22×34) | `-wall` root · `-creeper` · `-curtain` |
+| chamber floor (`growth`; `canopy`, 110×110, for a tree) | `-plant` · `-palm` · `-ferns` |
+| the ground (`drift`) | `-moss` |
+
+**A plant is drawn from ABOVE, not from the side.** This is the rule the family cost the most rolls on.
+The 30° camera in §2 describes FURNITURE — a jar rack, a timber post, things with a front. A plant grows
+out of the floor and the floor is what the player is looking at, so a plant is drawn nearly overhead: a
+rosette whose leaves radiate in every direction, the ones pointing toward and away from the viewer
+foreshortened, nothing standing up out of the picture. An upright clump seen from the side reads as a
+cut-out propped on the paving, and is what every wrong roll of these had in common.
+
+**They carry their own light, and every other tile in this game does not.** A prop is matte and the
+renderer lights it. A plant is painted lit — from the FRONT and slightly above, never from a side, because
+the renderer turns and mirrors these sprites at random and a lit flank would land on the wrong side in
+half the cells. Front light survives the mirror.
+
+**They are painted with real contrast and real colour, and `tile-stats` objects.** The tool asks whether a
+tile sits inside the stone's own value band, which is the right question for a chest cut from that rock
+and the wrong one for something alive. Take its `p50` seriously — a plant belongs near its neighbours in
+lightness — and ignore its verdict on the span and the warmth. Flat, in-palette plants were tried first
+and are why this is written down.
+
+**Each bakes its own contact shadow**, as every prop does, or it reads as a sticker however well it is
+lit. Contact carries no direction, so it belongs in the tile where a highlight would not.
+
+**The ground is the quietest thing on the floor.** `-moss` lands under the paving it covers and under the
+plants that stand on it — measured, because as painted it came back brighter than both, and a ground
+cover that outshines its plants swallows them. It brings no stone of its own: the gaps between its
+cushions are keyed to holes the real floor shows through, so two grids of slabs never overlap.
