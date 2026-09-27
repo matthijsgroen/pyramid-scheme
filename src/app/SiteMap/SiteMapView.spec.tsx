@@ -69,7 +69,14 @@ const clipOf = (el: HTMLElement | null | undefined) => {
   return d.replace(/M(-?[\d.]+) (-?[\d.]+)/g, (_, x: string, y: string) => `M${Number(x) + dx} ${Number(y) + dy}`)
 }
 
-const spriteMatching = (root: HTMLElement, part: string) => spritesIn(root).filter(el => urlOf(el).includes(part))
+/** Sprites drawn from a tile whose name contains `part`.
+ *
+ * GROUND IS EXCLUDED. A mat of moss is `overgrown-moss.png`, so it matches a search for "overgrown"
+ * while being a different layer entirely — it lies under the growth rather than being some of it, and a
+ * test counting tufts in a cell was counting the mat they stand on. `data-ground` is what tells them
+ * apart (`GroundCover`). */
+const spriteMatching = (root: HTMLElement, part: string) =>
+  spritesIn(root).filter(el => urlOf(el).includes(part) && !el.hasAttribute("data-ground"))
 
 // ── Grid factory ──────────────────────────────────────────────────────────────
 
@@ -254,6 +261,40 @@ describe("what a condition grows on", () => {
     ])
     expect(run[0]).toBeGreaterThan(0)
     expect(run[1]).toBe(0)
+  })
+})
+
+describe("the ground an overgrown floor grows out of", () => {
+  const mossOn = (amount: number) => {
+    const wide = Array.from({ length: 12 }, () => corridor("completed", false))
+    const grid = {
+      ...makeGrid([wide, wide.map(() => empty)]),
+      ...(amount > 0 ? { condition: { kind: "overgrown" as const, amount } } : {}),
+    }
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} revealAllCells />)
+    return container.querySelectorAll('[data-ground="moss"]').length
+  }
+
+  it("lays no moss on a floor nothing has grown into", () => {
+    // Sand is weather and falls on any floor; moss is the condition's own ground and falls on no other.
+    expect(mossOn(0)).toBe(0)
+  })
+
+  it("lays more of it the further gone the floor is", () => {
+    expect(mossOn(1)).toBeGreaterThan(mossOn(0.2))
+  })
+
+  it("draws it under the things that grow on it, never over them", () => {
+    const wide = Array.from({ length: 12 }, () => corridor("completed", false))
+    const grid = {
+      ...makeGrid([wide, wide.map(() => empty)]),
+      condition: { kind: "overgrown" as const, amount: 1 },
+    }
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} revealAllCells />)
+    const order = Array.from(container.querySelectorAll("*"))
+    const lastGround = Math.max(...[...container.querySelectorAll('[data-ground="moss"]')].map(el => order.indexOf(el)))
+    const firstTuft = Math.min(...spriteMatching(container, "overgrown").map(el => order.indexOf(el)))
+    expect(lastGround).toBeLessThan(firstTuft)
   })
 })
 

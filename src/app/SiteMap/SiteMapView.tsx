@@ -11,7 +11,7 @@ import type {
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
-import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
+import { driftsFor, mossMatsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
@@ -32,11 +32,11 @@ import {
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
 import { stateWash, tierPalette } from "./tileMaterials"
 import { ClipLayer, OCCLUDER_FADE, Sprite } from "./htmlLayers"
-import { moodFor } from "./moodSettings"
+import { moodFor, growthTile } from "./moodSettings"
 import { cellAt } from "@/game/roomFootprint"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
-import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileVariants } from "./tileAssets"
+import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileVariants, sharedTileUrl } from "./tileAssets"
 import { isLockedGate, nodeRadius, shapeKindFor } from "./nodeKinds"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
 import { FloorShade, LitPlaces } from "./torchlight"
@@ -484,28 +484,32 @@ const Decoration = ({
   )
 }
 
-/** Blown sand, drawn over the floor and clipped to it.
+/** GROUND: blown sand, or a mat of moss, drawn over the floor and clipped to it.
  *
- * The one scatter kind that is not cell-sized. A drift has no silhouette of its own — it is the shape of
- * whatever stopped it — so it is drawn several cells across and cut to `walkable-floor`, and the wall
- * does the drawing. See `driftsFor` for why sand is one shared file rather than five.
+ * The scatter that is not cell-sized. Neither has a silhouette of its own — one is the shape of whatever
+ * stopped it, the other the shape of where the water sat — so both are drawn several cells across and cut
+ * to `walkable-floor`, and the wall does the drawing. See `driftsFor` for why sand is one shared file
+ * rather than five; the moss is shared for the same reason (`mossMatsFor`).
  *
  * No per-cell fog check, because a drift is not per-cell: it is washed by the DARKEST state it crosses,
  * so a drift reaching into an unlit passage cannot light it. That is the same sum `FloorScatter` does
  * with `brightness`, taken over a region instead of over a cell. */
-const SandDrifts = ({
+const GroundCover = ({
   grid,
   drifts,
-  tier,
+  url,
+  kind,
   floorRects,
 }: {
   grid: FloorGrid
   drifts: Drift[]
-  tier: Difficulty
+  /** The tile these are drawn from — one shared file, whichever ground this is. */
+  url: string | undefined
+  /** Which ground this is, for the tests that have to tell weather from condition. */
+  kind: "sand" | "moss"
   /** The walkable floor, as rectangles: what the wall does the drawing with. */
   floorRects: readonly Rect[]
 }) => {
-  const url = tileOrPlaceholder(tier, "sand")
   if (!url || floorRects.length === 0) return null
   return (
     <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
@@ -527,6 +531,7 @@ const SandDrifts = ({
           <Sprite
             key={i}
             url={url}
+            data-ground={kind}
             x={cx - dw / 2}
             y={cy - dh / 2}
             w={dw}
@@ -1150,6 +1155,11 @@ export const SiteMapView = ({
   // What is strewn on this floor. A function of the floor's shape and its id, so it never moves.
   const scatter = useMemo(() => scatterFor(grid, claims), [grid, claims])
   const drifts = useMemo(() => driftsFor(grid, tier), [grid, tier])
+  // The moss is the condition's own ground, so its coverage is the condition's own number.
+  const mossMats = useMemo(
+    () => (grid.condition?.kind === "overgrown" ? mossMatsFor(grid, grid.condition.amount) : []),
+    [grid]
+  )
   const archedGaps = useMemo(
     () =>
       new Map(doorways.map(({ row, col, tier: archTier }) => [`${cellLeft(col)},${cellTop(row) - WALL_H}`, archTier])),
@@ -1246,7 +1256,24 @@ export const SiteMapView = ({
             >
               <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
             </svg>
-            <SandDrifts grid={grid} drifts={drifts} tier={tier} floorRects={floorRects} />
+            <GroundCover
+              grid={grid}
+              drifts={drifts}
+              url={tileOrPlaceholder(tier, "sand")}
+              kind="sand"
+              floorRects={floorRects}
+            />
+            {/* THE GROUND THE GREEN GROWS OUT OF, over the sand and under everything that grows: a tuft
+                drawn straight onto bare paving reads as a sticker, and this is what it stands on. Shared
+                across the ranks like the growth itself — a condition is something that got into a site,
+                not a property of its masonry. */}
+            <GroundCover
+              grid={grid}
+              drifts={mossMats}
+              url={sharedTileUrl(growthTile("overgrown", "moss"))}
+              kind="moss"
+              floorRects={floorRects}
+            />
             <FloorScatter grid={grid} scatter={scatter} tier={tier} />
             <ArchShadows doorways={doorways} />
             <MapLife

@@ -109,6 +109,48 @@ export const driftsFor = (grid: FloorGrid, tier: Difficulty): Drift[] => {
   })
 }
 
+/** How much walkable floor one mat of moss is expected to account for, at full strength.
+ *
+ * FAR DENSER THAN SAND, which is 26 cells to a drift because weather is occasional. Moss is the GROUND
+ * on a floor the roof has been open on for years, and the point of it is that the plants standing on it
+ * have something to stand on — patches of it dotted about would leave most of them on bare stone, which
+ * is the problem it exists to fix. A mat covers about a third of the box it is drawn in (the drift mask
+ * is 34%), so at one mat per three cells a fully overgrown floor comes out mostly covered without any
+ * one mat being large enough to read as a painted rectangle.
+ */
+const CELLS_PER_MAT = 3
+
+/**
+ * Where the MOSS lies. Drifts by another name — same geometry, same clip to the walkable floor, and the
+ * same reason: a mat has no silhouette of its own and the room it grows in supplies one.
+ *
+ * SCALED BY THE CONDITION, because moss is the visible half of how long the roof has been open. At
+ * `amount` 1 it is most of the floor; at 0.2 it is a few damp corners, which is what an author writing
+ * a lightly overgrown floor is asking for.
+ */
+export const mossMatsFor = (grid: FloorGrid, amount: number): Drift[] => {
+  if (amount <= 0) return []
+  const walkable: string[] = []
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const type = grid.cells[r][c].type
+      if (type === "room" || type === "corridor") walkable.push(`${r},${c}`)
+    }
+  if (!walkable.length) return []
+  const n = Math.max(1, Math.round((walkable.length / CELLS_PER_MAT) * amount))
+  return Array.from({ length: n }, (_, i) => {
+    const [row, col] = walkable[Math.floor(hashUnit(grid.siteId, "moss-cell", i) * walkable.length)]
+      .split(",")
+      .map(Number)
+    // Squarer than a sand drift and smaller: a drift is a tongue blown along a run, a mat is a patch
+    // that spread from where the water sat. Varied per mat so two overlapping ones do not read as one
+    // shape stamped twice — the repeat is the only way a single texture gives itself away.
+    const w = 1.6 + hashUnit(grid.siteId, "moss-w", i) * 1.4
+    const h = 1.6 + hashUnit(grid.siteId, "moss-h", i) * 1.4
+    return { row, col, w, h }
+  })
+}
+
 /**
  * Two passes, because the two sorts of scatter are not the same thing and one pass gets both wrong.
  *
