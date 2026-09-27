@@ -233,8 +233,10 @@ export type RoomCell = {
    *
    * One record for every mechanism the floor has, so the walk (src/game/floorLock.ts) and the runtime
    * (src/game/mechanismDoors.ts) read the same list rather than each deriving one. A switch also
-   * reports its doors on `exits[].gateKeyId`, which is what its own board reads to know what to draw;
-   * this is the same doors said once more in the form a mechanism is asked for.
+   * reports its doors on `exits[].gateKeyId`: that is what its own board reads to know what to draw,
+   * and it is the account the walk matches a switch's doors by, so a key id colliding with another
+   * door's elsewhere on the floor cannot hand a board a door that is not its own. A lever, standing
+   * sections away from what it drives, names no direction and is matched by the key the room asks for.
    *
    * `restReachable` is a fact about the thing, not a convention: a board routes its light somewhere
    * every time it is solved and cannot be un-solved, while a lever can be thrown back. Assuming either

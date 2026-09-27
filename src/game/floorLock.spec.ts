@@ -5,6 +5,8 @@ import type { Direction, FloorConfig, FloorGrid, GridCell, RoomCell } from "./si
 import { walkLock } from "./lockWalk"
 import { floorLock } from "./floorLock"
 import { nodeBeyond } from "./siteValidator"
+import { floorWithHandle } from "./testSupport/handleFixtures"
+import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
 
 const plainFloor = (): FloorConfig => ({
   pathPuzzles: 2,
@@ -298,15 +300,31 @@ describe("floorLock", () => {
 
   it("names one mechanism per switch: unset until solved, then a state per way out", () => {
     const lock = floorLock(assembled(switchFloor(), standsASwitch))!
-    const board = Object.values(lock.mechanisms).find(mechanism => mechanism.states.includes("unset"))!
+    const board = Object.values(lock.mechanisms).find(mechanism => mechanism.states.includes(MECHANISM_AT_REST))!
     expect(board.states.length).toBeGreaterThanOrEqual(3)
-    expect(board.opens.unset).toEqual([])
-    for (const state of board.states.filter(s => s !== "unset")) expect(board.opens[state].length).toBeGreaterThan(0)
+    expect(board.opens[MECHANISM_AT_REST]).toEqual([])
+    for (const state of board.states.filter(s => s !== MECHANISM_AT_REST))
+      expect(board.opens[state].length).toBeGreaterThan(0)
     // Re-solvable from every state into every other, which is what lets a player change their mind —
     // but never back to "unset": a solved board routes to some way out, and "no way out" is not a
     // move the game offers. So every state but the first is a target, from every other state.
     expect(board.transitions).toHaveLength((board.states.length - 1) ** 2)
-    expect(board.transitions.some(transition => transition.to === "unset")).toBe(false)
+    expect(board.transitions.some(transition => transition.to === MECHANISM_AT_REST)).toBe(false)
+  })
+
+  it("compiles a handle into a mechanism with a rest position it can return to", () => {
+    const spec = floorLock(floorWithHandle({ in: "lever", drives: ["vault"] }).grid)!
+    const handle = Object.entries(spec.mechanisms).find(([id]) => id.startsWith("handle "))![1]
+    expect(handle.initial).toBe(MECHANISM_AT_REST)
+    expect(handle.opens[MECHANISM_AT_REST]).toEqual([])
+    expect(handle.transitions.some(transition => transition.to === MECHANISM_AT_REST)).toBe(true)
+  })
+
+  it("leaves a switch unable to return to the position that opens nothing", () => {
+    const spec = floorLock(assembled(switchFloor(), standsASwitch))!
+    const board = Object.entries(spec.mechanisms).find(([id]) => id.startsWith("switch "))![1]
+    expect(board.initial).toBe(MECHANISM_AT_REST)
+    expect(board.transitions.some(transition => transition.to === MECHANISM_AT_REST)).toBe(false)
   })
 
   it("declares every region it then refers to", () => {
@@ -321,14 +339,14 @@ describe("floorLock", () => {
 
   it("stands the switch in the region its doors lead out of, so the opener comes before the blocker", () => {
     const lock = floorLock(assembled(switchFloor(), standsASwitch))!
-    const board = Object.values(lock.mechanisms).find(mechanism => mechanism.states.includes("unset"))!
+    const board = Object.values(lock.mechanisms).find(mechanism => mechanism.states.includes(MECHANISM_AT_REST))!
     const at = new Set(board.transitions.map(transition => transition.at))
     expect(at.size).toBe(1)
     const [fork] = [...at]
     // Each way out it shuts is one door, and a door is a region joined to the fork it leads out of and
     // to whatever lies beyond it. So every state opens the gates of exactly one door, and one of them
     // starts in the fork the player is standing in.
-    for (const state of board.states.filter(s => s !== "unset")) {
+    for (const state of board.states.filter(s => s !== MECHANISM_AT_REST)) {
       expect(new Set(board.opens[state].map(gateId => lock.gates[gateId].to)).size).toBe(1)
       expect(board.opens[state].some(gateId => lock.gates[gateId].from === fork)).toBe(true)
     }

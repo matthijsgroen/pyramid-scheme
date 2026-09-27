@@ -1,6 +1,7 @@
-import type { Direction, FloorGrid, GridCell, TombKeyReward } from "./siteTypes"
+import type { Direction, FloorGrid, GridCell, MechanismRecord, TombKeyReward } from "./siteTypes"
 import type { LockSpec, Mechanism, GateId, MechanismId, RegionId } from "./lockWalk"
 import { nodeBeyond } from "./siteValidator"
+import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
 
 type Pos = readonly [number, number]
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
@@ -94,10 +95,38 @@ const oneWaysOf = (grid: FloorGrid, of: Map<string, RegionId>): { from: RegionId
 /** One door's gates for one of the keys it names — the index a switch reads its own doors back out of. */
 const doorKey = (doorRegion: RegionId, keyId: string) => `${doorRegion}|${keyId}`
 
+/** Which kind of thing stands at a mechanism, read off the stem of the key its own doors carry —
+ * `switch:…` for a beam board, `handle:…` for a lever. The floor names a gate by what closed it, so
+ * the compiled lock says what the player is working without the record carrying a second field. */
+const kindOf = (record: MechanismRecord): string => record.positions[0]?.gateKeyId.split(":")[0] ?? "mechanism"
+
 export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
-  // Every way out a switch closed, by the door it stands in front of. A switch names its gates on its
-  // own exits, which is the one place the floor writes down which door belongs to which board.
-  const doorsBySwitch = new Map<string, { at: Pos; keyId: string }[]>()
+  // EVERY MECHANISM ON THE FLOOR IS ONE RECORD ON THE CELL IT STANDS IN — which key each of its
+  // positions opens, and whether it can be put back to the position that opens nothing. The runtime
+  // (mechanismDoors.ts) reads that same list to decide which doors stand open, so a board and a lever
+  // reach the walk as one shape and neither derives its own.
+  const mechanismsAt = new Map<string, MechanismRecord>()
+  // Where the key each position names is actually carried. A mechanism says which key it opens; the
+  // floor says which room asks for it, and the two meet here rather than in either one's own scan.
+  const doorsByKeyId = new Map<string, Pos[]>()
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room") continue
+      if (cell.mechanism) mechanismsAt.set(posKey(r, c), cell.mechanism)
+      for (const keyId of doorKeysOf(cell)) doorsByKeyId.set(keyId, [...(doorsByKeyId.get(keyId) ?? []), [r, c]])
+    }
+
+  // A SWITCH ALSO REPORTS ITS DOORS BY DIRECTION, and the two accounts have to agree: its board reads
+  // `exits[].gateKeyId` to know which way out it is routing the light down, while the walk below reads
+  // the record. A way out naming a key the room beyond does not ask for is a branch shut for ever with
+  // nothing answering for it, and neither account on its own can see that.
+  //
+  // A mechanism that does name its doors by direction is then taken at its word below, so a key id
+  // that collides with another door's elsewhere on the floor cannot hand it a door that is not its
+  // own. A lever standing sections away from what it drives has no such account and is matched by the
+  // key the room asks for, which is the only one it has.
+  const exitDoorsAt = new Map<string, Map<string, Pos[]>>()
   for (let r = 0; r < grid.rows; r++)
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
@@ -112,13 +141,21 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
             `floorLock: on site ${grid.siteId}, the way ${exit.dir} out of ${r},${c} is gated by ` +
               `${exit.gateKeyId} but leads to no room`
           )
-        doorsBySwitch.set(posKey(r, c), [
-          ...(doorsBySwitch.get(posKey(r, c)) ?? []),
-          { at: door, keyId: exit.gateKeyId },
-        ])
+        const [dr, dc] = door
+        const beyond = grid.cells[dr][dc]
+        // The switch names the key, the door carries it, and nothing else on the floor compares the
+        // two: a misspelling would leave the branch shut for ever with no gate answering to the board.
+        if (beyond.type !== "room" || beyond.requiredKeyId !== exit.gateKeyId)
+          throw new Error(
+            `floorLock: on site ${grid.siteId}, the switch at ${posKey(r, c)} gates ${dr},${dc} with ` +
+              `${exit.gateKeyId}, but that room asks for ${(beyond.type === "room" && beyond.requiredKeyId) || "no key"}`
+          )
+        const named = exitDoorsAt.get(posKey(r, c)) ?? new Map<string, Pos[]>()
+        named.set(exit.gateKeyId, [...(named.get(exit.gateKeyId) ?? []), door])
+        exitDoorsAt.set(posKey(r, c), named)
       }
     }
-  if (doorsBySwitch.size === 0) return undefined
+  if (mechanismsAt.size === 0) return undefined
 
   const { ids, of } = regionsOf(grid)
   const gates: LockSpec["gates"] = {}
@@ -169,40 +206,45 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
       }
     }
 
-  // A switch: unset until it is solved, then one state per way out, and re-solvable from any state
-  // into any other — which is what lets a player change their mind, and the only reason the doors it
-  // shut are not a trap. Solving it routes to a way out, so no move puts it back to "unset".
-  for (const [switchPos, doors] of doorsBySwitch) {
-    const id = `switch ${switchPos}`
-    const byDoor = doors.map(({ at: [dr, dc], keyId }) => {
-      const cell = grid.cells[dr][dc]
-      // The switch names the key, the door carries it, and nothing else on the floor compares the
-      // two: a misspelling would leave the branch shut for ever with no gate answering to the board.
-      if (cell.type !== "room" || cell.requiredKeyId !== keyId)
+  // A MECHANISM: at rest until it is worked, then one state per key it opens, and re-workable from any
+  // state into any other — which is what lets a player change their mind, and the only reason the
+  // doors it shut are not a trap. Whether rest is among those targets is the record's own answer:
+  // a lever can be thrown back, while solving a beam board always routes the light to some way out,
+  // so a board never returns to opening nothing and the walk must not be handed the move.
+  for (const [at, record] of mechanismsAt) {
+    const id = `${kindOf(record)} ${at}`
+    const byPosition = record.positions.map(({ state, gateKeyId }) => {
+      const doors = exitDoorsAt.get(at)?.get(gateKeyId) ?? doorsByKeyId.get(gateKeyId) ?? []
+      if (doors.length === 0)
         throw new Error(
-          `floorLock: on site ${grid.siteId}, the switch at ${switchPos} gates ${dr},${dc} with ${keyId}, ` +
-            `but that room asks for ${(cell.type === "room" && cell.requiredKeyId) || "no key"}`
+          `floorLock: on site ${grid.siteId}, the mechanism at ${at} opens ${gateKeyId}, ` +
+            `which no room on this floor asks for`
         )
-      const found = gatesOfDoorKey.get(doorKey(of.get(posKey(dr, dc))!, keyId))
-      if (!found)
-        throw new Error(
-          `floorLock: on site ${grid.siteId}, the door at ${dr},${dc} gated by ${keyId} borders no region ` +
-            `the walk can enter it from`
-        )
-      return { gateIds: found, keyId }
+      const gateIds = doors.flatMap(([dr, dc]) => {
+        const found = gatesOfDoorKey.get(doorKey(of.get(posKey(dr, dc))!, gateKeyId))
+        if (!found)
+          throw new Error(
+            `floorLock: on site ${grid.siteId}, the door at ${dr},${dc} gated by ${gateKeyId} borders no region ` +
+              `the walk can enter it from`
+          )
+        return found
+      })
+      return { state, gateIds, keyId: gateKeyId }
     })
-    const states = ["unset", ...doors.map(({ at: [dr, dc] }) => `open ${dr},${dc}`)]
-    const opens: Record<string, GateId[]> = { unset: [] }
-    states.slice(1).forEach((state, n) => (opens[state] = byDoor[n].gateIds))
+    const states = [MECHANISM_AT_REST, ...byPosition.map(({ state }) => state)]
+    const opens: Record<string, GateId[]> = { [MECHANISM_AT_REST]: [] }
+    for (const { state, gateIds } of byPosition) opens[state] = gateIds
     mechanisms[id] = {
       states,
-      initial: "unset",
+      initial: MECHANISM_AT_REST,
       opens,
       transitions: states.flatMap(from =>
-        states.filter(to => to !== from && to !== "unset").map(to => ({ from, to, at: of.get(switchPos)! }))
+        states
+          .filter(to => to !== from && (record.restReachable || to !== MECHANISM_AT_REST))
+          .map(to => ({ from, to, at: of.get(at)! }))
       ),
     }
-    for (const { gateIds, keyId } of byDoor) for (const gateId of gateIds) claim(gateId, keyId, id)
+    for (const { gateIds, keyId } of byPosition) for (const gateId of gateIds) claim(gateId, keyId, id)
   }
 
   // A floor key: found once, held for good, and one mechanism however many chests mint it — two
