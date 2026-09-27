@@ -2600,6 +2600,57 @@ against this section once the rest are in.
 until the return is measured against the floor it lies on with `yarn tile-stats` — same rule as every
 other block in this file.
 
+### `default/overgrown-moss` — a mat of moss and grass over the paving
+
+**THIS ONE IS NOT LIKE THE OTHERS.** Every plant in this section is an object cut out of a magenta
+frame. Moss is not an object — it is a SURFACE, and it is made the way sand is
+(`scripts/driftMask.ts`): the generator paints a square, full-bleed TEXTURE with no shape and no
+background at all, and `yarn drift-mask` supplies the ragged edge afterwards. A drift is all edge, and
+an edge feathered into magenta keys out as a violet halo nothing can rescue.
+
+**Attach:** `~/tile-previews/moss-neighbours.png` — the floor this lies on and the sand drift that lies
+on it the same way. **MATCH THEIR HANDLING.** They are what this tile has to belong to; the plants are
+not, and neither is a photograph.
+
+```
+A seamless, full-bleed PAINTED TEXTURE of moss over stone paving. A SQUARE frame, one unit by one.
+
+**PAINT IT, DO NOT PHOTOGRAPH IT.** The first attempt came back as a photoreal moss macro — thousands of
+tiny specks, every one in focus — and beside the hand-painted floor it lies on it read as television
+static. Look at the two references: the paving is a few dozen soft slabs with a scuff or two, the sand is
+a handful of broad ripples. **That is the amount of detail this tile may contain.** Big simple shapes,
+visible brushwork, generous soft edges. If you can count the leaves you have drawn too many.
+
+**FILL THE ENTIRE FRAME, EDGE TO EDGE.** There is no background, no magenta, no object, no silhouette, no
+vignette, no border. Every pixel is surface. The frame IS the moss. Its outline is added later by machine.
+
+The subject: the floor of a stone chamber that daylight has been falling into for years. Broad soft
+cushions of moss spreading over the slabs, following the paving joints where the damp collects, with
+bare stone still showing between them. A few blades of grass — a dozen in the whole square, not a lawn.
+
+**PITCH IT MID-TONE, NOT DARK.** The last one was painted almost black and had to be brightened three and
+a half times to sit on the floor, which blew its stone to white. Paint it at the value it should
+actually be: a shade DARKER than the pale grey-brown paving in the reference, never darker than that.
+
+**AND KEEP IT QUIETER THAN THE PLANTS.** This tile's job is to stop a fern reading as a sticker on bare
+stone, and it can only do that by being the ground rather than another plant. Muted and low in chroma —
+the grey-green of moss in shade, closer to wet stone than to a leaf. No bright greens, no yellow-green,
+no sunlit highlights, no flowers, nothing standing up. A tile as vivid as the plants swallows them.
+
+Matte surfaces throughout: lit, never polished — no gloss, no shine, no wet highlights.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn drift-mask --out="$OBJ" --seed=moss --size=504 --peak=0.9 --lobes=4
+yarn import-tile art/masters/surfaces/overgrown-moss.webp --tier=default --name=overgrown-moss --slot=drift \
+  --filter=smooth --key=none --mask="$OBJ" --brightness=1.0
+```
+
+`--brightness` starts at 1 this time and is measured from there: a master painted at the right value
+needs no rescue, and the rescue is what wrecked the last one.
+
 ### `default/overgrown-curtain` — a curtain of roots down the wall band
 
 **Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
