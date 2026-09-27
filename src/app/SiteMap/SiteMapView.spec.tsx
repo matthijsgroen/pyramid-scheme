@@ -15,6 +15,9 @@ import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "
 import { authoredKindsFor } from "./authoredKinds"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
+import { GROWTH_POOLS, growthTile } from "./moodSettings"
+import { sharedTileUrl } from "./tileAssets"
+import { STANDING_RELIEF } from "./lighting"
 
 // Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
 // place of its own), so a change there can't silently break every position assumption in this file.
@@ -251,6 +254,56 @@ describe("what a condition grows on", () => {
     ])
     expect(run[0]).toBeGreaterThan(0)
     expect(run[1]).toBe(0)
+  })
+})
+
+describe("the pool a slot of growth is drawn from", () => {
+  /** A run of corridor wide enough that every member of a pool gets a turn. */
+  const overgrownFloor = () => {
+    const wide = Array.from({ length: 24 }, () => corridor("completed", false))
+    const grid = {
+      ...makeGrid([wide, wide.map(() => empty)]),
+      condition: { kind: "overgrown" as const, amount: 1 },
+    }
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
+    return spriteMatching(container, "overgrown").map(urlOf)
+  }
+
+  /** The tiles that actually exist for a slot, with every unpainted member resolved to the first. */
+  const painted = (members: readonly (string | null)[]) =>
+    new Set(members.map(member => sharedTileUrl(growthTile("overgrown", member)) ?? sharedTileUrl("overgrown")))
+
+  it("draws a member nobody has painted as the slot's own sprite, never as a missing file", () => {
+    // Six of the seven pool members land through `yarn repaint` after this ships, so the common case is a
+    // slot that is mostly its own drawing repeated. What must never happen is a url for a tile that is
+    // not there.
+    const every = new Set([...painted(GROWTH_POOLS.floor), ...painted(GROWTH_POOLS.wall)])
+    const drawn = overgrownFloor()
+    expect(drawn.length).toBeGreaterThan(0)
+    expect(drawn.every(url => every.has(url))).toBe(true)
+  })
+
+  it("gives every painted member of a slot a turn, so a floor is a mix and not one weed repeated", () => {
+    const drawn = new Set(overgrownFloor())
+    for (const url of painted(GROWTH_POOLS.floor)) expect(drawn).toContain(url)
+  })
+
+  it("draws the same members in the same cells every render", () => {
+    expect(overgrownFloor()).toEqual(overgrownFloor())
+  })
+
+  it("hands growth back the contrast the night takes out of it, as every other standing thing gets", () => {
+    // Per sprite and not on the layer: a filter rasterises its subtree as one layer, and the growth layer
+    // is the size of the map.
+    const wide = Array.from({ length: 6 }, () => corridor("completed", false))
+    const grid = {
+      ...makeGrid([wide, wide.map(() => empty)]),
+      condition: { kind: "overgrown" as const, amount: 1 },
+    }
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
+    const sprites = spriteMatching(container, "overgrown")
+    expect(sprites.length).toBeGreaterThan(0)
+    expect(sprites.every(el => el.style.filter === STANDING_RELIEF.starter)).toBe(true)
   })
 })
 

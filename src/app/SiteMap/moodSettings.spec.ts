@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { moodFor } from "./moodSettings"
+import { GROWTH_POOLS, growthTile, moodFor } from "./moodSettings"
 
 describe("the air a floor is drawn in", () => {
   it("gives every rank its own ambience, with nothing authored", () => {
@@ -65,5 +65,46 @@ describe("what a condition grows, and where", () => {
   it("floods less thickly than it grows over, and most where the water marks the wall", () => {
     const g = moodFor("expert", undefined, { kind: "flooded", amount: 1 }).growth
     expect(g!.wall).toBeGreaterThan(g!.floor)
+  })
+})
+
+describe("the light a condition brings with it", () => {
+  const overgrown = (amount: number) => moodFor("expert", undefined, { kind: "overgrown", amount })
+
+  it("lights a floor in proportion to what grows on it — the plant and the light are one number", () => {
+    // Nothing grows in the dark, so a floor thick with greenery is a floor whose roof let the sun in.
+    expect(overgrown(1).daylight).toBe(1)
+    expect(overgrown(0.4).daylight).toBe(0.4)
+  })
+
+  it("makes a roof likelier to have given way the further the place has gone", () => {
+    const sealed = moodFor("expert").beam!
+    expect(overgrown(0.4).beam!).toBeGreaterThan(sealed)
+    expect(overgrown(1).beam!).toBeGreaterThan(overgrown(0.4).beam!)
+  })
+
+  it("gives a flooded floor no daylight — a cellar fills through the ground, not through the roof", () => {
+    const flooded = moodFor("expert", undefined, { kind: "flooded", amount: 1 })
+    expect(flooded.daylight).toBe(0)
+    expect(flooded.beam).toBe(moodFor("expert").beam)
+  })
+
+  it("is not overgrown at all at amount zero: no growth, and not a scrap of extra light", () => {
+    expect(overgrown(0)).toEqual(moodFor("expert"))
+  })
+})
+
+describe("what may grow in a slot", () => {
+  it("offers each slot more than one plant, so a floor is a garden and not one weed repeated", () => {
+    for (const members of Object.values(GROWTH_POOLS)) expect(members.length).toBeGreaterThan(1)
+  })
+
+  it("names its members after the condition, and puts the slot's own drawing first as the fallback", () => {
+    // Every member nobody has painted resolves to the first (`MapGrowth`), which is what lets the
+    // renderer ship before the art.
+    expect(growthTile("overgrown", GROWTH_POOLS.floor[0])).toBe("overgrown")
+    expect(growthTile("overgrown", GROWTH_POOLS.wall[0])).toBe("overgrown-wall")
+    expect(growthTile("overgrown", GROWTH_POOLS.chamber[0])).toBe("overgrown-plant")
+    expect(growthTile("overgrown", "flowers")).toBe("overgrown-flowers")
   })
 })

@@ -34,6 +34,12 @@ export type Mood = {
    * the room lit whether or not anyone is standing there (`MapBeams`). Placed at render time from the
    * site's id, so no floor spec carries it. */
   beam?: number
+  /** How much light this floor has of its own, before anyone carries one in. 0 on an ordinary floor.
+   *
+   * A roof that failed far enough to let plants in let the daylight in first, so this is the condition's
+   * own `amount` read as light: it takes the night off the floor, raises `beam`, puts shafts in the
+   * passages and pulls the lamp back to match (lighting.ts). */
+  daylight?: number
   /** Things carried on the air: dust, chaff, soot, sand, sparks — or fog, which is the same thing drawn
    * huge and slow. `seconds` is one crossing; `size` is the radius the field is written around, in screen
    * pixels — each mote takes its own fraction of it and most take less than one (MapMood).
@@ -110,6 +116,32 @@ const THEME_MOOD: Record<string, Mood> = {
 }
 
 /**
+ * What may grow in each of the three slots, as members of the condition's own family: the bare kind, or
+ * `<kind>-<member>` — `overgrown-flowers` in a joint, `overgrown-creeper` down a band, `overgrown-palm`
+ * standing on a chamber floor. `MapGrowth` picks one per cell from the same seed that decides which cells
+ * grow at all.
+ *
+ * ONE DRAWING PER SLOT IS A FLOOR WEEDED WITH ONE WEED, told apart only by size, rotation and flip, and
+ * nothing on it any colour but green and stone. A pool is what makes a lush place read as a garden rather
+ * than as a wash, which is why the flowers matter out of proportion to their number: they are the only
+ * member that is not green.
+ *
+ * THE FIRST OF EACH IS THE SLOT'S FALLBACK — the drawing that exists — and every member nobody has
+ * painted resolves to it (`MapGrowth`). That is what lets the renderer ship before the art: the placement
+ * can be judged with one tile on disk, and each new one lands by dropping a PNG in
+ * (docs/instructions/repaint-queue.md).
+ */
+export const GROWTH_POOLS = {
+  floor: [null, "flowers", "scrub", "fronds"],
+  wall: ["wall", "creeper", "curtain"],
+  chamber: ["plant", "palm", "ferns"],
+} as const satisfies Record<"floor" | "wall" | "chamber", readonly (string | null)[]>
+
+/** The tile a pool member is drawn from: the condition's own name for the slot's fallback, and the
+ * family name for every other member. */
+export const growthTile = (kind: ConditionKind, member: string | null) => (member ? `${kind}-${member}` : kind)
+
+/**
  * What a condition does to the air, at full strength. Scaled by the site's own `amount` before use.
  *
  * A condition COMPOSES where an hour REPLACES, and the difference is the whole reason it is a separate
@@ -120,9 +152,9 @@ const THEME_MOOD: Record<string, Mood> = {
  */
 const CONDITION_MOOD: Record<
   ConditionKind,
-  { tint: { fill: string; opacity: number }; growth: number; wall: number; plant: number }
+  { tint: { fill: string; opacity: number }; growth: number; wall: number; plant: number; daylight: number }
 > = {
-  // Green forcing through the brick, and the light under it going green with it.
+  // Green forcing through the brick, and the sun that let it through in the first place.
   //
   // THREE PLACES, not one, and the split is what makes a condition read as growth rather than as litter.
   // `growth` is the tufts in the floor joints — many and small. `wall` is what comes THROUGH the brick,
@@ -134,11 +166,26 @@ const CONDITION_MOOD: Record<
   // A DENSITY PER CELL, not a count: a flat number per floor gives the entrance floors one sprite every
   // four to eleven rooms while a five-room vault at the top is choked. At 1 it is one per cell — every
   // joint, every band, every chamber floor — so what an author writes is a real fraction of "overgrown".
-  overgrown: { tint: { fill: "#4d7a2e", opacity: 0.18 }, growth: 1, wall: 1, plant: 1 },
+  //
+  // AND THE LIGHT IS THE SAME NUMBER as the plant: nothing grows in the dark, so a floor thick with
+  // greenery is a floor whose roof let the sun in (`daylight`, and lighting.ts for what it costs the
+  // night and the lamp).
+  //
+  // THE WASH IS WARM, AND IT HAS TO BE, because it lies over the light as well as the stone. Sampled off
+  // the rendered page, expert stone at full growth: a cold grass green left the patch of sun at hue 134 —
+  // a GREEN light, in a room this is meant to light with sun through leaves. An olive puts the sun at 123
+  // and the lamp at 112 against firelight's own 98, so daylight stays the cooler of the two without
+  // turning green, and the floor lands at 146 with chroma 8.
+  //
+  // A warmer wash also sits nearer the stone's own value and so turns its hue less at the same alpha: the
+  // extra 0.04 is what holds that chroma where it was when this was drawn over a floor with no light.
+  overgrown: { tint: { fill: "#6b8130", opacity: 0.22 }, growth: 1, wall: 1, plant: 1, daylight: 1 },
   // Standing water: cooler, darker, and what grows in it grows at the edges. No PLANTS — water does not
   // put a shrub in the middle of a chamber — but it does stain a wall, which is what the brief calls a
   // tide line, so the wall pass is where its own art will go.
-  flooded: { tint: { fill: "#2b4c5a", opacity: 0.22 }, growth: 0.55, wall: 0.8, plant: 0 },
+  // No daylight: a cellar fills with water through the ground, not through the roof, so a flooded floor
+  // is as dark as its rank has always been.
+  flooded: { tint: { fill: "#2b4c5a", opacity: 0.22 }, growth: 0.55, wall: 0.8, plant: 0, daylight: 0 },
 }
 
 /** Two tints laid over each other, as one. The overlay is drawn once, so a condition cannot simply add
@@ -161,6 +208,14 @@ const overlay = (
   return { fill: `#${hex}`, opacity }
 }
 
+/** How much likelier a roof is to have given way on a floor whose roofs have already given way enough to
+ * grow plants — at full strength, on top of the rank's own odds.
+ *
+ * The rank's number says how sealed the place is, and a condition is evidence against it: a merchant's
+ * cellar at 0.34 goes to one chamber in one, and the gods' vault at 0.06 to one in six. The cap is what
+ * keeps that an event rather than a roofless floor (`MAX_SHAFTS`). */
+const DAYLIGHT_BEAM_ODDS = 2
+
 /** The air on this floor: its rank's own, with whatever its authored hour replaces, and whatever has got
  * into the site laid over the result. An unknown theme name is not an error — a family may recognise a
  * skin the map has no weather for — and simply leaves the rank's ambience alone. */
@@ -170,9 +225,12 @@ export const moodFor = (tier: Difficulty, theme?: string, condition?: SiteCondit
   const amount = Math.max(0, Math.min(1, condition.amount))
   const spec = CONDITION_MOOD[condition.kind]
   if (!spec || amount === 0) return hour
+  const daylight = spec.daylight * amount
   return {
     ...hour,
     tint: overlay(hour.tint, { fill: spec.tint.fill, opacity: spec.tint.opacity * amount }),
+    daylight,
+    beam: hour.beam === undefined ? undefined : hour.beam * (1 + daylight * DAYLIGHT_BEAM_ODDS),
     // Densities out, not counts: the floor is what knows how many cells it has. Rounding, and the rule
     // that a root never rounds away, both moved to `MapGrowth` with them.
     growth: {

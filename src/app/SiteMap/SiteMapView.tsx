@@ -40,7 +40,15 @@ import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileVariants } f
 import { isLockedGate, nodeRadius, shapeKindFor } from "./nodeKinds"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
 import { FloorShade, LitPlaces } from "./torchlight"
-import { LIT_STANDING_STRENGTH, SEATING_PASS, STANDING_RELIEF, beamShafts, litPlaceCells } from "./lighting"
+import {
+  SEATING_PASS,
+  STANDING_RELIEF,
+  beamShafts,
+  floorNight,
+  lampStandingStrength,
+  lampStrength,
+  litPlaceCells,
+} from "./lighting"
 import { BeamLight, BeamShafts } from "./MapBeams"
 import { TileLayers } from "./tileLayers"
 import { clickTargetAt } from "./clickTargets"
@@ -1101,9 +1109,15 @@ export const SiteMapView = ({
     () => [...claims.claimedBy.keys()].map(key => key.split(",").map(Number) as [number, number]),
     [claims]
   )
+  // What light this floor has of its own: a roof that let the plants in let the sun in first, so the
+  // night over it comes off and the lamp comes down to match (lighting.ts).
+  const daylight = mood.daylight ?? 0
   // Where a roof has given way, and what the explorer's own lamp is already lighting — a shaft hands over
   // to the lamp where the two fall on the same room (see `BeamLight`).
-  const shafts = useMemo(() => beamShafts(grid, claims, mood.beam ?? 0, grid.siteId), [grid, claims, mood.beam])
+  const shafts = useMemo(
+    () => beamShafts(grid, claims, mood.beam ?? 0, grid.siteId, daylight),
+    [grid, claims, mood.beam, daylight]
+  )
   const torchPlace = useMemo(
     () => new Set(explorerPos ? litPlaceCells(grid, claims, explorerPos) : []),
     [grid, claims, explorerPos]
@@ -1224,6 +1238,7 @@ export const SiteMapView = ({
             <MapGrowth
               mood={mood}
               siteId={grid.siteId}
+              tier={tier}
               floorCells={floorCells}
               wallCells={wallBandCells}
               chamberCells={chamberFloorCells}
@@ -1244,10 +1259,10 @@ export const SiteMapView = ({
 
             {/* The dark, and then the light in it: the place the explorer is standing is the hole the
               lamp burns in the shade, so it has to be laid over the shade rather than under it. */}
-            <FloorShade tier={tier} />
-            <LitPlaces grid={grid} claims={claims} at={explorerPos} />
+            <FloorShade tier={tier} strength={floorNight(daylight)} />
+            <LitPlaces grid={grid} claims={claims} at={explorerPos} strength={lampStrength(daylight)} />
             {/* And the rooms daylight is already falling into, lamp or no lamp. */}
-            <BeamLight grid={grid} claims={claims} shafts={shafts} torchPlace={torchPlace} />
+            <BeamLight grid={grid} claims={claims} shafts={shafts} torchPlace={torchPlace} daylight={daylight} />
 
             {/* THE MARKERS: an icon per cell, each in a little `<svg>` of its own — a shape per kind, a
                 colour per state, key badges on the rim. Over the stone, under everything standing on it,
@@ -1443,7 +1458,7 @@ export const SiteMapView = ({
 
               {/* The shade's second pass — see FloorShade. Everything standing has to be in the dark
                 with the floor, or it reads as cut out and pasted on. */}
-              <FloorShade tier={tier} strength={SEATING_PASS} />
+              <FloorShade tier={tier} strength={SEATING_PASS * floorNight(daylight)} />
 
               {/* AND THE LIGHT'S SECOND PASS OVER IT, for the same reason read the other way round: what
                 stands in a lit room is standing in the light, and the wash above took a quarter of the
@@ -1451,12 +1466,25 @@ export const SiteMapView = ({
                 darker than the floor under their feet. Lighter than the first pass and reaching a band
                 higher (see `headroom`), so the furniture is lit to the top of its own headroom rather
                 than sawn off at the floor line. */}
-              <LitPlaces grid={grid} claims={claims} at={explorerPos} strength={LIT_STANDING_STRENGTH} headroom />
-              <BeamLight grid={grid} claims={claims} shafts={shafts} torchPlace={torchPlace} headroom />
+              <LitPlaces
+                grid={grid}
+                claims={claims}
+                at={explorerPos}
+                strength={lampStandingStrength(daylight)}
+                headroom
+              />
+              <BeamLight
+                grid={grid}
+                claims={claims}
+                shafts={shafts}
+                torchPlace={torchPlace}
+                daylight={daylight}
+                headroom
+              />
 
               {/* The cones last of all: a shaft of dust is between the eye and the room, so it stands in
                 front of the statue it falls on rather than behind it. */}
-              <BeamShafts shafts={shafts} siteId={grid.siteId} />
+              <BeamShafts grid={grid} claims={claims} shafts={shafts} siteId={grid.siteId} />
             </div>
           </div>
         </div>

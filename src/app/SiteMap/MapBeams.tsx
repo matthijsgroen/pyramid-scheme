@@ -6,7 +6,7 @@ import { boundsOf, rectsToPath, type Rect } from "./tileRegions"
 import { ClipLayer } from "./htmlLayers"
 import type { RoomClaims } from "./roomClaims"
 import { LightGroup, LitPlace, type LightFill } from "./torchlight"
-import { BEAM_STRENGTH, LIT_STANDING_STRENGTH, LIT_STRENGTH } from "./lighting"
+import { LIT_STANDING_STRENGTH, LIT_STRENGTH, shaftLean, shaftStrength } from "./lighting"
 import { SPECKS } from "./MapMood"
 
 // A HOLE IN A ROOF, AND WHAT COMES THROUGH IT. Where the shafts are is `beamShafts` in lighting.ts; this
@@ -116,16 +116,6 @@ const CONE_FEATHER = 4
 const BEAM_MOTES = 4
 const MOTE_CLASS = "absolute rounded-full will-change-transform animate-map-drift motion-reduce:animate-none"
 
-/** Which way a shaft leans, as −1 or 1.
- *
- * A floor where every shaft leans the same way reads as a rule rather than as weather — the eye picks up
- * the repeat long before it works out what the repeat is.
- *
- * SEEDED OFF THE CELL, not off the shaft's place in the list. There are only ever `MAX_SHAFTS` of them, so
- * an index seed draws the same two or three leans on every floor in the game and a whole rank ends up
- * leaning one way. The cell is the thing that actually differs. */
-const leanOf = (siteId: string, key: string) => (hashUnit(siteId, `beam-lean:${key}`, 0) < 0.5 ? -1 : 1)
-
 /** Where a shaft starts, where it lands, and how tall it is. It comes through the roof, at the top of the
  * stone the map draws above a cell, and crosses to a patch of floor `SLANT` of a cell away, on whichever
  * side `lean` puts it. */
@@ -181,6 +171,7 @@ export const BeamLight = ({
   claims,
   shafts,
   torchPlace,
+  daylight = 0,
   headroom = false,
 }: {
   grid: FloorGrid
@@ -188,9 +179,12 @@ export const BeamLight = ({
   shafts: readonly string[]
   /** The cells the explorer's own lamp is lighting. */
   torchPlace: ReadonlySet<string>
+  /** The floor's own daylight, which the shaft comes down with — see `shaftStrength`. */
+  daylight?: number
   headroom?: boolean
 }) => {
   if (shafts.length === 0) return null
+  const strength = shaftStrength(daylight)
   return (
     <LightGroup>
       {shafts.map(key => (
@@ -201,7 +195,7 @@ export const BeamLight = ({
           at={cellOf(key)}
           source="beam"
           fill={BEAM_FILL}
-          strength={headroom ? (BEAM_STRENGTH * LIT_STANDING_STRENGTH) / LIT_STRENGTH : BEAM_STRENGTH}
+          strength={headroom ? (strength * LIT_STANDING_STRENGTH) / LIT_STRENGTH : strength}
           headroom={headroom}
           leaving={torchPlace.has(key)}
         />
@@ -214,13 +208,23 @@ export const BeamLight = ({
  * The cones, and the dust turning in them. Over everything standing: a shaft of dust is in front of a
  * statue, not behind it.
  */
-export const BeamShafts = ({ shafts, siteId }: { shafts: readonly string[]; siteId: string }) => {
+export const BeamShafts = ({
+  grid,
+  claims,
+  shafts,
+  siteId,
+}: {
+  grid: FloorGrid
+  claims: RoomClaims
+  shafts: readonly string[]
+  siteId: string
+}) => {
   if (shafts.length === 0) return null
   return (
     <div aria-hidden="true" style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
       {shafts.map((key, shaft) => {
         const [row, col] = cellOf(key)
-        const lean = leanOf(siteId, key)
+        const lean = shaftLean(grid, claims, siteId, key)
         const rects = rayRects(row, col, lean)
         const box = boundsOf(rects)
         const { top, height, footX } = shaftGeometry(row, col, lean)

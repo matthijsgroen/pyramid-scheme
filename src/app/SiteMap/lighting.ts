@@ -75,21 +75,121 @@ export const STATUE_ODDS = 2
  * mean something. */
 export const MAX_SHAFTS = 3
 
+/** How many MORE a floor with daylight of its own may break, over the three its chambers already get.
+ *
+ * A SEPARATE ALLOWANCE RATHER THAN A BIGGER CAP, and the counts are why: a floor has ten to twenty
+ * chambers and hundreds of corridor cells, so one pool sorted by draw would hand every shaft on the floor
+ * to a passage and the rooms would go dark. The chambers keep the three they have always had, and a floor
+ * with daylight in it breaks up to three more roofs over its runs. */
+export const CORRIDOR_SHAFTS = 3
+
+/** How many of those this floor may have, at its own daylight. */
+const corridorShaftAllowance = (daylight: number) => Math.round(CORRIDOR_SHAFTS * daylight)
+
 /**
- * Which cell of which chamber a shaft of daylight comes down in — one per room at most, chambers only.
+ * WHAT A FLOOR'S OWN DAYLIGHT COSTS THE NIGHT AND THE LAMP.
  *
- * The candidates are the owners in `claims.claimedBy`: a room with a footprint, which is what makes it a
- * place rather than a passage. A corridor never gets one — a shaft in a one-cell passage is something the
- * player walks through.
+ * A floor is overgrown because its roof failed and nothing grows in the dark, so the plant and the light
+ * are the same number: the night comes off in proportion to the growth (`daylight` is the condition's own
+ * amount — moodSettings.ts) and the floor lifts toward what a lamp gives. The whole ladder has to move
+ * with it. Lifting the baseline alone leaves the lamp's room darker than the passage outside it; leaving
+ * the lamp alone takes a lit room past the patch of sun, which is the one thing that must stay brightest.
  *
- * TWO DRAWS, not one. The first decides whether the roof gave way; the second picks which cell of the
- * footprint it gave way over, so a wide chamber does not always light from its owner's corner.
+ * Solved on the RENDERED PAGE, expert stone, mean L* over a patch of paving — as slice one solved its own
+ * ladder, because the page carries the scatter, the drift, the green wash and the second shade pass and
+ * the art alone does not. The same floor, the same rank, the same distance from the flame:
  *
- * A fogged room draws none, so a beam lights a room already discovered and reveals nothing the fog holds
- * back. The draw is indexed by the room's place in the floor's OWN list of chambers, which exploration
- * never changes — indexing a list that grows moves everything in it (`MapMood`).
+ * |                     | no condition | fully overgrown |
+ * | ------------------- | ------------ | --------------- |
+ * | unlit paving        | 25.1         | 40.3            |
+ * | a beamed room       | 43.2         | 44.6            |
+ * | the lamp's own room | 56.6         | 56.0            |
+ * | the patch of sun    | 66.1         | 63.1            |
+ *
+ * THE LIT FLOOR LANDS WHERE IT ALWAYS DID, and the dark around it comes up to meet it. That is what "you
+ * have stopped needing the torch" looks like from inside the picture: the lamp is worth 31 L* on an
+ * ordinary floor and 16 on a floor grown through, and the shaft is still the brightest thing in either.
+ * `color-dodge` is a scale, not an addition, so the lamp left at full strength over a baseline lifted
+ * this far would be worth 40 and take the lit room past the patch of sun.
+ *
+ * EVERY FUNCTION HERE RETURNS TODAY'S VALUE AT 0, which is what keeps a floor with no condition on it
+ * exactly where slice one left it.
  */
-export const beamShafts = (grid: FloorGrid, claims: RoomClaims, chance: number, siteId: string): string[] => {
+const NIGHT_OFF = 0.55
+const LAMP_OFF = 0.69
+const lampLeft = (daylight: number) => 1 - LAMP_OFF * daylight
+
+/** How much of the tier's night this floor still carries — the strength both passes of `FloorShade` are
+ * drawn at. */
+export const floorNight = (daylight = 0) => 1 - NIGHT_OFF * daylight
+/** The lamp over the floor, and its lighter pass over what stands on the floor. */
+export const lampStrength = (daylight = 0) => LIT_STRENGTH * lampLeft(daylight)
+export const lampStandingStrength = (daylight = 0) => LIT_STANDING_STRENGTH * lampLeft(daylight)
+/** The shaft over the room it falls in. It comes down with the lamp, so the two still hand over to each
+ * other where they fall on the same room (`MapBeams`). */
+export const shaftStrength = (daylight = 0) => BEAM_STRENGTH * lampLeft(daylight)
+
+/** Every corridor cell of a floor, in a fixed order, with the draw that decides whether its roof gave
+ * way. Fogged cells are drawn for and then dropped, so lifting the fog never moves a shaft that is
+ * already there — the same reason chambers are indexed by the floor's own list and not by what is seen. */
+const corridorShafts = (
+  grid: FloorGrid,
+  claims: RoomClaims,
+  chance: number,
+  siteId: string,
+  allowance: number
+): string[] => {
+  if (allowance <= 0) return []
+  const rolled: Array<{ cell: string; roll: number }> = []
+  let index = 0
+  for (let row = 0; row < grid.rows; row++) {
+    for (let col = 0; col < grid.cols; col++) {
+      const cell = grid.cells[row][col]
+      if (cell.type !== "corridor") continue
+      const roll = hashUnit(siteId, "beam-run", index++)
+      if (cell.state === "fogged" || roll >= chance) continue
+      rolled.push({ cell: `${row},${col}`, roll })
+    }
+  }
+  // ONE TO A RUN. A shaft lights its whole run to the next turn (`litPlaceCells`), so a second one
+  // further along the same passage adds a cone and no light, and the two read as a rule rather than as a
+  // roof that happened to fail. Strongest draw first, then the run it lights is spoken for.
+  const taken = new Set<string>()
+  const shafts: string[] = []
+  for (const { cell } of rolled.sort((a, b) => a.roll - b.roll)) {
+    if (shafts.length >= allowance) break
+    if (taken.has(cell)) continue
+    shafts.push(cell)
+    const [row, col] = cell.split(",").map(Number)
+    for (const lit of litPlaceCells(grid, claims, [row, col])) taken.add(lit)
+  }
+  return shafts
+}
+
+/**
+ * Which cell a shaft of daylight comes down in — one per room at most, and on a floor with daylight of
+ * its own, in its passages too.
+ *
+ * The chamber candidates are the owners in `claims.claimedBy`: a room with a footprint, which is what
+ * makes it a place rather than a passage. A CORRIDOR GETS ONE ONLY WHERE THE FLOOR ALREADY HAS DAYLIGHT
+ * IN IT. On an ordinary floor a shaft in a one-cell passage is a thing the player walks through and the
+ * light is a room's, not a corridor's; on a floor whose roof has failed far enough to grow plants, the
+ * passages are most of what there is to light and a run lit to its next turn is the point of it.
+ *
+ * TWO DRAWS FOR A CHAMBER, not one. The first decides whether the roof gave way; the second picks which
+ * cell of the footprint it gave way over, so a wide chamber does not always light from its owner's corner.
+ *
+ * A fogged place draws none, so a beam lights somewhere already discovered and reveals nothing the fog
+ * holds back. The draw is indexed by the floor's OWN list of chambers and of corridor cells, which
+ * exploration never changes — indexing a list that grows moves everything in it (`MapMood`).
+ */
+export const beamShafts = (
+  grid: FloorGrid,
+  claims: RoomClaims,
+  chance: number,
+  siteId: string,
+  daylight = 0
+): string[] => {
   if (chance <= 0) return []
   const footprints = new Map<string, string[]>()
   for (const [cell, owner] of claims.claimedBy) {
@@ -122,10 +222,36 @@ export const beamShafts = (grid: FloorGrid, claims: RoomClaims, chance: number, 
   // it an event: whichever rooms drew strongest get theirs, which is a fair way of choosing because the
   // draw is what the odds already decided by — taking the first few in cell order would hand every shaft
   // to the top-left corner of the map.
-  return shafts
-    .sort((a, b) => a.roll - b.roll)
-    .slice(0, MAX_SHAFTS)
-    .map(({ cell }) => cell)
+  return [
+    ...shafts
+      .sort((a, b) => a.roll - b.roll)
+      .slice(0, MAX_SHAFTS)
+      .map(({ cell }) => cell),
+    ...corridorShafts(grid, claims, chance, siteId, corridorShaftAllowance(daylight)),
+  ]
+}
+
+/** How far a shaft leans, and which way, as a share of the slant it would take in a room (`MapBeams`).
+ *
+ * DAYLIGHT COMES IN AT AN ANGLE, and the travel from the hole to the patch of sun is what tells the eye
+ * the bright patch is on the floor and the pale volume is in the air. IT HAS TO HAVE SOMEWHERE TO LAND.
+ * A one-cell passage is rock on both flanks, and a pool thrown a cell sideways lands in the black beside
+ * the map — a light leak off the edge of the world, the same thing `beamShafts` refuses when a chamber's
+ * footprint reaches past the grid.
+ *
+ * So the lean goes to the side that has floor on it, takes the other side where only that one has, and
+ * where neither has is pulled in to what the cell itself can hold: the light comes down the passage
+ * rather than across it. Seeded off the CELL, not off the shaft's place in the list — there are only ever
+ * a handful of shafts, so an index seed draws the same two or three leans on every floor in the game. */
+export const PENNED_LEAN = 0.2
+export const shaftLean = (grid: FloorGrid, claims: RoomClaims, siteId: string, key: string): number => {
+  const [row, col] = key.split(",").map(Number)
+  const drawn = hashUnit(siteId, `beam-lean:${key}`, 0) < 0.5 ? -1 : 1
+  const ground = (side: number) =>
+    cellAt(grid, row, col + side).type !== "empty" || claims.claimedBy.has(`${row},${col + side}`)
+  if (ground(drawn)) return drawn
+  if (ground(-drawn)) return -drawn
+  return drawn * PENNED_LEAN
 }
 
 /**

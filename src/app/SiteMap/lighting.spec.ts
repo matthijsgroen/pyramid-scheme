@@ -1,7 +1,21 @@
 import { describe, expect, it } from "vitest"
 import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 import { buildRoomClaims } from "./roomClaims"
-import { MAX_SHAFTS, beamShafts } from "./lighting"
+import {
+  BEAM_STRENGTH,
+  CORRIDOR_SHAFTS,
+  LIT_STANDING_STRENGTH,
+  LIT_STRENGTH,
+  MAX_SHAFTS,
+  PENNED_LEAN,
+  beamShafts,
+  floorNight,
+  lampStandingStrength,
+  lampStrength,
+  litPlaceCells,
+  shaftLean,
+  shaftStrength,
+} from "./lighting"
 
 const empty: GridCell = { type: "empty" }
 
@@ -41,6 +55,24 @@ const oneChamber = (state: CellState = "completed", decoration?: DecorationKind,
   )
 
 const shaftsOf = (grid: FloorGrid, chance: number) => beamShafts(grid, buildRoomClaims(grid), chance, grid.siteId)
+
+const cellTypeAt = (grid: FloorGrid, key: string) => {
+  const [row, col] = key.split(",").map(Number)
+  return grid.cells[row]?.[col]?.type
+}
+const isCorridorCell = (grid: FloorGrid, key: string) => cellTypeAt(grid, key) === "corridor"
+const isRoomCell = (grid: FloorGrid, key: string) => cellTypeAt(grid, key) === "room"
+
+/** Two chambers at the foot of a passage long enough to hold several runs — the shape of a real floor,
+ * where the corridor cells outnumber the room ones many times over. */
+const longRun = (siteId = "run-test") =>
+  makeGrid(
+    [
+      Array.from({ length: 14 }, (_, i) => (i % 7 === 3 ? corridor(["n", "s", "e", "w"]) : corridor(["e", "w"]))),
+      Array.from({ length: 14 }, (_, i) => (i % 7 === 3 ? chamber() : empty)),
+    ],
+    siteId
+  )
 
 /** The one chamber's own cell and everything it claims — where a shaft of its own may land. */
 const footprintOf = (grid: FloorGrid) => {
@@ -133,6 +165,48 @@ describe("where a shaft of daylight comes down", () => {
     expect(columns.size).toBeGreaterThan(MAX_SHAFTS)
   })
 
+  it("never puts one in a passage on a floor with no daylight of its own", () => {
+    // A long run beside one chamber, every roof certain to fail: the passage still gets nothing, because
+    // a shaft in a one-cell corridor on an ordinary floor is a thing the player walks through.
+    const grid = longRun()
+    const rooms = new Set([...buildRoomClaims(grid).claimedBy.values()])
+    for (const cell of shaftsOf(grid, 1)) expect(rooms.has(cell) || isRoomCell(grid, cell)).toBe(true)
+  })
+
+  it("lights the passages of a floor whose roof has already failed enough to grow plants", () => {
+    const grid = longRun()
+    const ordinary = shaftsOf(grid, 1)
+    const overgrown = beamShafts(grid, buildRoomClaims(grid), 1, grid.siteId, 1)
+    expect(overgrown.length).toBeGreaterThan(ordinary.length)
+    expect(overgrown.filter(cell => isCorridorCell(grid, cell)).length).toBeGreaterThan(0)
+  })
+
+  it("leaves an ordinary floor's shafts exactly where they were, whatever a condition does elsewhere", () => {
+    // The chambers keep their own three, in their own cells and their own order: the daylight allowance
+    // is added after them and can never displace one.
+    const grid = longRun()
+    const ordinary = shaftsOf(grid, 1)
+    expect(beamShafts(grid, buildRoomClaims(grid), 1, grid.siteId, 1).slice(0, ordinary.length)).toEqual(ordinary)
+  })
+
+  it("breaks at most twice as many roofs on a floor thick with daylight", () => {
+    const grid = longRun()
+    const shafts = beamShafts(grid, buildRoomClaims(grid), 1, grid.siteId, 1)
+    expect(shafts.length).toBeLessThanOrEqual(MAX_SHAFTS + CORRIDOR_SHAFTS)
+  })
+
+  it("gives a run of passage one shaft and never a second, since one already lights it to the turn", () => {
+    const grid = longRun()
+    const claims = buildRoomClaims(grid)
+    const corridors = beamShafts(grid, claims, 1, grid.siteId, 1).filter(cell => isCorridorCell(grid, cell))
+    const lit = new Set<string>()
+    for (const cell of corridors) {
+      const [row, col] = cell.split(",").map(Number)
+      expect(lit.has(cell)).toBe(false)
+      for (const key of litPlaceCells(grid, claims, [row, col])) lit.add(key)
+    }
+  })
+
   it("beams the same rooms every render, and does not move them as the fog lifts", () => {
     const lit = oneChamber()
     const fogged = makeGrid([
@@ -143,5 +217,59 @@ describe("where a shaft of daylight comes down", () => {
     expect(shaftsOf(lit, 0.5)).toEqual(shaftsOf(lit, 0.5))
     // The same floor with one room still unseen: the rooms that do beam beam in the same cells.
     expect(shaftsOf(fogged, 0.5).every(cell => shaftsOf(lit, 0.5).includes(cell))).toBe(true)
+  })
+})
+
+describe("what a floor's own daylight costs the night and the lamp", () => {
+  it("leaves a floor with no condition on it exactly as slice one solved it", () => {
+    expect(floorNight()).toBe(1)
+    expect(lampStrength()).toBe(LIT_STRENGTH)
+    expect(lampStandingStrength()).toBe(LIT_STANDING_STRENGTH)
+    expect(shaftStrength()).toBe(BEAM_STRENGTH)
+  })
+
+  it("takes the night off the floor and the lamp back with it, together", () => {
+    // Both, or the picture breaks one way or the other: a lifted baseline under an untouched lamp takes
+    // the lit room past the patch of sun, and a pulled-back lamp over an untouched baseline makes a room
+    // darker to walk into than the passage outside it.
+    expect(floorNight(1)).toBeLessThan(floorNight(0.5))
+    expect(floorNight(0.5)).toBeLessThan(floorNight(0))
+    expect(lampStrength(1)).toBeLessThan(lampStrength(0.5))
+    expect(shaftStrength(1)).toBeLessThan(shaftStrength(0.5))
+  })
+
+  it("keeps some night and some lamp at full growth — a lit place still reads as lit", () => {
+    expect(floorNight(1)).toBeGreaterThan(0)
+    expect(lampStrength(1)).toBeGreaterThan(0)
+  })
+
+  it("brings the shaft down with the lamp, so the two still hand over rather than stacking", () => {
+    // `color-dodge` divides, so a shaft and a lamp drawn over each other multiply their scales. They are
+    // solved to the same top end at every amount, which is what lets the beam fade out as the lamp fades
+    // in without the room changing value.
+    const ratio = (d: number) => shaftStrength(d) / lampStrength(d)
+    expect(ratio(1)).toBeCloseTo(ratio(0), 10)
+  })
+})
+
+describe("which way a shaft leans", () => {
+  it("throws its patch of sun onto floor, never into the rock beside a one-cell passage", () => {
+    // A pool a cell out from a passage walled on both sides lands in the black beside the map, which
+    // reads as a light leak off the edge of the world.
+    const grid = makeGrid([
+      [empty, corridor(["n", "s"]), empty],
+      [empty, corridor(["n", "s"]), empty],
+    ])
+    expect(Math.abs(shaftLean(grid, buildRoomClaims(grid), grid.siteId, "0,1"))).toBe(PENNED_LEAN)
+  })
+
+  it("leans a whole cell where there is floor to land on", () => {
+    const grid = makeGrid([[corridor(["e", "w"]), corridor(["e", "w"]), corridor(["e", "w"])]])
+    expect(Math.abs(shaftLean(grid, buildRoomClaims(grid), grid.siteId, "0,1"))).toBe(1)
+  })
+
+  it("takes the other side when only that one is floor", () => {
+    const grid = makeGrid([[empty, corridor(["e"]), corridor(["w"])]])
+    expect(shaftLean(grid, buildRoomClaims(grid), grid.siteId, "0,1")).toBe(1)
   })
 })

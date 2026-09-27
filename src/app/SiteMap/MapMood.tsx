@@ -1,7 +1,11 @@
 import { hashUnit } from "@/support/hashString"
+import type { Difficulty } from "@/data/difficultyLevels"
+import type { ConditionKind } from "@/game/siteTypes"
 import type { Mood } from "./moodSettings"
+import { GROWTH_POOLS, growthTile } from "./moodSettings"
 import { CELL, WALL_FACE_H, cellCenter } from "./mapScale"
 import { sharedTileUrl } from "./tileAssets"
+import { STANDING_RELIEF } from "./lighting"
 import { Sprite } from "./htmlLayers"
 
 // The air, drawn in three layers over the stone: what is carried on it (drift), what lives in it (life),
@@ -65,6 +69,27 @@ const TUFT_OPACITY = 0.7
 const turned = (degrees: number, mirrored: boolean) =>
   `rotate(${degrees.toFixed(1)}deg)${mirrored ? " scaleX(-1)" : ""}`
 
+/**
+ * The drawings one slot may use, in the pool's own order, with every member that is not on disk resolved
+ * to the one that is (`GROWTH_POOLS`).
+ *
+ * FALLING BACK IS THE NORMAL CASE and not an error path: six of the seven members are painted after this
+ * ships, so a slot is mostly its own sprite repeated and the pool fills in as each tile lands, with no
+ * code change. Undefined where even the slot's own drawing is missing — a condition composed and seen as
+ * a wash before anything is painted at all.
+ */
+const pool = (kind: ConditionKind, members: readonly (string | null)[]): string[] | undefined => {
+  const fallback = sharedTileUrl(growthTile(kind, members[0]))
+  if (!fallback) return undefined
+  return members.map(member => sharedTileUrl(growthTile(kind, member)) ?? fallback)
+}
+
+/** Which member of a slot's pool this cell grew. Seeded off the cell's own place in the floor's fixed
+ * list, as its size and its jitter already are, so a member never moves and adding a tile to the pool is
+ * the only thing that reshuffles one. */
+const member = (urls: string[], siteId: string, salt: string, index: number) =>
+  urls[Math.floor(rand(siteId, salt, index) * urls.length)]
+
 type Props = {
   mood: Mood
   siteId: string
@@ -88,26 +113,31 @@ type Props = {
 /**
  * What is growing on the stone, drawn with the scarabs and under everything that stands on it.
  *
- * The same trick `MapLife` uses and for the same reason: ONE shared sprite in `tiles/default/`, placed
- * by index into the fixed floor-cell list, so a rank costs no files and a reveal cannot make anything
- * jump. Still rather than scurrying — a weed in a corner does not run — and nudged toward the top of its
- * cell, where the wall band is: what makes a vine read as a vine rather than as a plant in a pot is that
- * it came THROUGH the wall, and the band above a cell is the only wall the map draws.
+ * The same trick `MapLife` uses and for the same reason: SHARED sprites in `tiles/default/`, placed by
+ * index into the fixed floor-cell list, so a rank costs no files and a reveal cannot make anything jump.
+ * Still rather than scurrying — a weed in a corner does not run.
  *
- * Draws nothing until the sprite exists, which is deliberate: the condition can be authored, composed
- * and seen as a wash before a single file is painted.
+ * Each of the three slots draws from a POOL (`GROWTH_POOLS`), picked per cell off the same seed that
+ * decides which cells grow, so a floor is a mix of plants rather than one weed repeated.
+ *
+ * Draws nothing until a slot's own sprite exists, which is deliberate: the condition can be authored,
+ * composed and seen as a wash before a single file is painted.
  */
-export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCells = [], isLit }: Props) => {
+export const MapGrowth = ({
+  mood,
+  siteId,
+  tier,
+  floorCells,
+  wallCells = [],
+  chamberCells = [],
+  isLit,
+}: Props & { tier: Difficulty }) => {
   const g = mood.growth
   if (!g?.floor && !g?.wall && !g?.chamber) return null
-  // One sprite per PLACE, falling back to the plain one where the other two are not drawn yet. The
-  // fallback is deliberate: it lets the placement be judged — whether the roots sit in the right part of
-  // the band, whether a chamber plant is the right size — before anyone paints a root. Same argument as
-  // drawing the condition as a wash before any sprite existed at all.
-  const tuft = sharedTileUrl(g.kind)
+  const tuft = pool(g.kind, GROWTH_POOLS.floor)
   if (!tuft) return null
-  const root = sharedTileUrl(`${g.kind}-wall`) ?? tuft
-  const plant = sharedTileUrl(`${g.kind}-plant`) ?? tuft
+  const root = pool(g.kind, GROWTH_POOLS.wall) ?? tuft
+  const plant = pool(g.kind, GROWTH_POOLS.chamber) ?? tuft
   /**
    * WHICH cells grow, at a density of `per` — 1 being every one of them.
    *
@@ -152,8 +182,14 @@ export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCel
         return (
           <Sprite
             key={`tuft-${i}`}
-            url={tuft}
+            url={member(tuft, siteId, "growth-kind", i)}
             stretch={false}
+            // THE CONTRAST THE NIGHT TAKES OFF IT, handed back as it is to every other thing standing on
+            // this floor (`STANDING_RELIEF`). A wash dims and flattens in the same stroke, and growth was
+            // the one standing thing paying the second half of that — which is most of why a plant reads
+            // as pasted onto the paving rather than as growing out of it. Per sprite, never on the layer:
+            // a filter rasterises its subtree as one layer and this layer is the size of the map.
+            filter={STANDING_RELIEF[tier]}
             // THE PLAY IS WHAT THE SIZE LEAVES, so a tuft never crosses its own cell whatever size it
             // rolled. A fixed jitter was fine while these were specks and put the big ones over the wall
             // band the moment they were sized to be seen — which the spec above catches.
@@ -195,7 +231,8 @@ export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCel
         return (
           <Sprite
             key={`root-${i}`}
-            url={root}
+            url={member(root, siteId, "growth-wall-kind", i)}
+            filter={STANDING_RELIEF[tier]}
             x={cx - w / 2 + (rand(siteId, "growth-wall-x", i) - 0.5) * (CELL * 0.6)}
             y={cy - CELL / 2 - WALL_FACE_H}
             w={w}
@@ -220,8 +257,9 @@ export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCel
         return (
           <Sprite
             key={`plant-${i}`}
-            url={plant}
+            url={member(plant, siteId, "growth-plant-kind", i)}
             stretch={false}
+            filter={STANDING_RELIEF[tier]}
             x={cx - size / 2 + (rand(siteId, "growth-plant-x", i) - 0.5) * (CELL * 0.4)}
             y={cy + CELL / 2 - size}
             w={size}
