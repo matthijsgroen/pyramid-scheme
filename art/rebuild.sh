@@ -1503,3 +1503,5 @@ yarn import-tile art/masters/surfaces/overgrown-flowers.webp --tier=default --na
   --filter=smooth --saturation=1.0 --brightness=1.0
 yarn import-tile art/masters/surfaces/overgrown-ferns.webp --tier=default --name=overgrown-ferns --slot=growth \
   --filter=smooth --saturation=1.0 --brightness=1.25
+yarn import-tile art/masters/surfaces/overgrown-creeper.webp --tier=default --name=overgrown-creeper --slot=growthWall \
+  --filter=smooth --saturation=1.0 --brightness=1.25
