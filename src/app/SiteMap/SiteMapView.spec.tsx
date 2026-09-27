@@ -387,13 +387,27 @@ describe("SiteMapView — one-way drop, the barred arrow", () => {
     expect(container.querySelectorAll("[data-one-way-arrow]")).toHaveLength(0)
   })
 
-  it("is not its own click target — the tap it sits on still lands on the landing, not the mouth", () => {
+  it("is not its own click target — a tap on it does nothing, and the connector beside it takes no tap either", () => {
     const onClick = vi.fn()
     const { container } = render(<SiteMapView grid={dropGrid("reachable")} onCellClick={onClick} />)
     const arrow = container.querySelector("[data-one-way-arrow]")!
     fireEvent.click(arrow)
-    expect(onClick).toHaveBeenCalledWith(0, 2)
+    expect(onClick).not.toHaveBeenCalled()
     expect(findCell(container, 0, 1)?.style.cursor).not.toBe("pointer")
+  })
+
+  it("stands a full cell out from the landing, in the connector's own cell — the same distance a RunTargetArrow keeps from the player, not tucked against their feet", () => {
+    const { container } = render(<SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} />)
+    const arrow = container.querySelector<HTMLElement>("[data-one-way-arrow]")!
+    const left = parseFloat(arrow.style.left)
+    const top = parseFloat(arrow.style.top)
+    const width = parseFloat(arrow.style.width)
+    const height = parseFloat(arrow.style.height)
+    // The connector at (0,1) is one cell west of the landing at (0,2) — the arrow's box is centred
+    // there, not offset by some fraction of the landing's own cell.
+    const connector = cellCenter(0, 1)
+    expect(left + width / 2).toBeCloseTo(connector.cx)
+    expect(top + height / 2).toBeCloseTo(connector.cy)
   })
 })
 

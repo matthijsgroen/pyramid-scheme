@@ -901,32 +901,51 @@ const RunTargetArrow = ({ dir }: { dir: Direction }) => {
   )
 }
 
-const DIR_VECTOR: Record<Direction, [number, number]> = { n: [0, -1], s: [0, 1], e: [1, 0], w: [-1, 0] }
-
-// Set off toward the cell's own edge, past a room's icon, so it reads as pointing OUT of the room
-// rather than sitting on top of what is already drawn there.
-const ONE_WAY_ARROW_OFFSET = CELL * 0.42
-
 /** The way a one-way's landing names the drop that fell it there: the same arrow the game already
- * teaches for "you can walk this way", with a bar across it for "and not back". Not a target — a
- * statement standing on the room's own tap area, never a tap area of its own. */
-const BarredArrow = ({ dir }: { dir: Direction }) => {
+ * teaches for "you can walk this way", with a bar across it for "and not back". Stands in the
+ * connector's own cell — a full cell out from the room, the same distance every `RunTargetArrow`
+ * keeps from the player it belongs to — rather than on the room's own icon, where the explorer
+ * standing there would cover it. `DIR_MOVES` and `cellCenter` are the pair every other marker's
+ * position comes from, so this one is read off them too rather than a distance of its own.
+ *
+ * A standalone, absolutely-positioned `<svg>` rather than a child of the room's own `MarkerCell`:
+ * its box sits over the connector's cell, not the room's, and `pointerEvents: none` keeps it out
+ * of the tap layer entirely — a statement, never a target. */
+const OneWayLandingArrow = ({ row, col, dir }: { row: number; col: number; dir: Direction }) => {
+  const [dr, dc] = DIR_MOVES[dir]
+  const { cx, cy } = cellCenter(row + dr, col + dc)
   const r = MARKER_RADIUS * 1.2
-  const [dx, dy] = DIR_VECTOR[dir]
+  const box = r + 4
   return (
-    <g
+    <svg
+      aria-hidden="true"
       data-one-way-arrow=""
-      transform={`translate(${dx * ONE_WAY_ARROW_OFFSET}, ${dy * ONE_WAY_ARROW_OFFSET}) rotate(${DIR_ROTATION[dir]})`}
+      viewBox={`${-box} ${-box} ${box * 2} ${box * 2}`}
+      style={{
+        position: "absolute",
+        left: cx - box,
+        top: cy - box,
+        width: box * 2,
+        height: box * 2,
+        overflow: "visible",
+        pointerEvents: "none",
+      }}
     >
-      <polygon
-        points={`0,${-r} ${r},${r} ${-r},${r}`}
-        fill={MARKER_FILL}
-        stroke={MARKER_OUTLINE}
-        strokeWidth={2}
-        strokeLinejoin="round"
-      />
-      <line x1={-r} y1={0} x2={r} y2={0} stroke={MARKER_OUTLINE} strokeWidth={2.5} />
-    </g>
+      <g transform={`rotate(${DIR_ROTATION[dir]})`}>
+        <polygon
+          points={`0,${-r} ${r},${r} ${-r},${r}`}
+          fill={MARKER_FILL}
+          stroke={MARKER_OUTLINE}
+          strokeWidth={2}
+          strokeLinejoin="round"
+        />
+        {/* A dark bar alone reads as part of the outline it already sits inside — the same reason
+          the marker itself carries a ring rather than a bare shape: the pale halo under it is what
+          lets the bar stand off the gold fill instead of vanishing into its own edge. */}
+        <line x1={-r} y1={1} x2={r} y2={1} stroke="#fff6dd" strokeWidth={5} strokeLinecap="round" />
+        <line x1={-r} y1={1} x2={r} y2={1} stroke={MARKER_OUTLINE} strokeWidth={2.5} strokeLinecap="round" />
+      </g>
+    </svg>
   )
 }
 
@@ -1398,46 +1417,47 @@ export const SiteMapView = ({
                 const oneWayDir = oneWayMouthDir(grid, r, c)
 
                 return (
-                  <MarkerCell
-                    key={`${r},${c}`}
-                    cx={cx}
-                    cy={cy}
-                    onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
-                  >
-                    {/* A FLIGHT SAYS STAIRS BETTER THAN A MARKER DOES, so where one is drawn the marker
-                      goes out entirely rather than merely easing back the way a chest's does. The
-                      stair is the only node whose art IS the node — a chest stands BESIDE a treasure
-                      room's marker and still needs it to say which room — so this is the one place the
-                      vector can be spared. Opacity rather than a skipped render, which keeps every cell's
-                      drawing the same shape whatever is on it; the tap is the cell's own box either way. */}
-                    <g
-                      opacity={
-                        sealedWay || hasStair || hasExit
-                          ? 0
-                          : isCompleted && !isPending && !isPortal
-                            ? 0.45
-                            : hasChest
-                              ? NODE_OVER_ART_OPACITY
-                              : 1
-                      }
+                  <Fragment key={`${r},${c}`}>
+                    <MarkerCell
+                      cx={cx}
+                      cy={cy}
+                      onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
                     >
-                      <NodeShape
-                        type={shapeKind}
-                        state={displayState}
-                        gateVariant={cell.gateVariant}
-                        keyColor={cell.keyColor}
-                        keyColors={cell.keyColors}
-                        difficulty={wardKeyDifficulty(cell.requiredKeyId)}
-                      />
-                    </g>
-                    {/* A chest wears its own badge (`nodeSpritesFor`), because it stands over this one. */}
-                    {isCompleted &&
-                      !isPortal &&
-                      !hasChest &&
-                      shapeKind !== "fork" &&
-                      (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
-                    {oneWayDir && <BarredArrow dir={oneWayDir} />}
-                  </MarkerCell>
+                      {/* A FLIGHT SAYS STAIRS BETTER THAN A MARKER DOES, so where one is drawn the marker
+                        goes out entirely rather than merely easing back the way a chest's does. The
+                        stair is the only node whose art IS the node — a chest stands BESIDE a treasure
+                        room's marker and still needs it to say which room — so this is the one place the
+                        vector can be spared. Opacity rather than a skipped render, which keeps every cell's
+                        drawing the same shape whatever is on it; the tap is the cell's own box either way. */}
+                      <g
+                        opacity={
+                          sealedWay || hasStair || hasExit
+                            ? 0
+                            : isCompleted && !isPending && !isPortal
+                              ? 0.45
+                              : hasChest
+                                ? NODE_OVER_ART_OPACITY
+                                : 1
+                        }
+                      >
+                        <NodeShape
+                          type={shapeKind}
+                          state={displayState}
+                          gateVariant={cell.gateVariant}
+                          keyColor={cell.keyColor}
+                          keyColors={cell.keyColors}
+                          difficulty={wardKeyDifficulty(cell.requiredKeyId)}
+                        />
+                      </g>
+                      {/* A chest wears its own badge (`nodeSpritesFor`), because it stands over this one. */}
+                      {isCompleted &&
+                        !isPortal &&
+                        !hasChest &&
+                        shapeKind !== "fork" &&
+                        (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
+                    </MarkerCell>
+                    {oneWayDir && <OneWayLandingArrow row={r} col={c} dir={oneWayDir} />}
+                  </Fragment>
                 )
               })
             })}
