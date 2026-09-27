@@ -369,6 +369,21 @@ describe("mechanism positions", () => {
     const { api } = run(a => a.setMechanismState("s0#0/p1", "odd=label"))
     expect(api.getMechanismStates(REAL_ID).get("s0#0/p1")).toBe("odd=label")
   })
+
+  it("hands a level only its own positions, never another level's of the same journey", () => {
+    // The address a mechanism is stored under carries no level, so the `${levelNr}:` prefix is the
+    // only thing keeping two levels of one journey apart — and two levels of one journey both
+    // standing a lever is ordinary, not exotic.
+    const api = makeApi([
+      makeStoredJourney({ levelNr: 2, mechanismStates: { "1:lever#0/xhandle": "right", "2:gate#0/xhandle": "left" } }),
+    ])
+    expect([...api.getMechanismStates(REAL_ID)]).toEqual([["gate#0/xhandle", "left"]])
+  })
+
+  it("hands a level nothing when every stored position belongs to another level", () => {
+    const api = makeApi([makeStoredJourney({ levelNr: 2, mechanismStates: { "1:lever#0/xhandle": "right" } })])
+    expect(api.getMechanismStates(REAL_ID).size).toBe(0)
+  })
 })
 
 // ── corridor detector: known / found / outstanding (§7.2 P4) ────────────────────

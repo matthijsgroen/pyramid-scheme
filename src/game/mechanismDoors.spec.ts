@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { openDoorsFor } from "./mechanismDoors"
-import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
+import { MECHANISM_AT_REST } from "@/game/siteTypes"
 import { gridWithMechanism } from "./testSupport/mechanismFixtures"
 
 describe("openDoorsFor", () => {

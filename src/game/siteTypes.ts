@@ -285,9 +285,14 @@ export type FloorGrid = {
 export const HANDLE_SIDES = ["left", "right"] as const
 export type HandleSide = (typeof HANDLE_SIDES)[number]
 
-/** The position a mechanism sits in when it opens nothing. One name for it, in the save and in the
- * compiled lock alike — a lever thrown back here and a lever never touched are the same POSITION and a
- * different FACT, which is why one is stored and the other is absent.
+/** The position a beam board sits in when it opens nothing: no shrine lit, so every way out of its
+ * fork stands shut. One name for it, in the save and in the compiled lock alike — a board turned back
+ * off every shrine and a board never touched are the same POSITION and a different FACT, which is why
+ * one is stored and the other is absent.
+ *
+ * A board's position only. A lever has the two sides it hangs on and nothing between them
+ * (HANDLE_SIDES), and the side the author starts it on is a position like any other, so no lever ever
+ * stores this.
  *
  * Plain data written onto cells by the assembler, so it lives in the domain rather than beside the
  * save that stores it (src/app/state/useJourneys.ts re-exports it for app callers): the domain layer
@@ -419,9 +424,9 @@ export type FloorConfig = {
    * somewhere else. Author `oneWays` on a floor whose sections you also author. */
   oneWays?: { from: string; to: string }[]
   /** A LEVER STANDING IN ONE SECTION THAT OPENS A GATE ON OTHERS. `in` names the section the lever
-   * stands in; `drives` names the sections whose entrance gates it owns. Both are section addresses —
-   * a `label` where a section has one, the positional `s0`/`s1.2` where it does not, and `main` for
-   * the main path — the same vocabulary `oneWays` names its two ends with.
+   * stands in; `left` and `right` name the sections whose entrance gates each side of it owns. All
+   * are section addresses — a `label` where a section has one, the positional `s0`/`s1.2` where it
+   * does not, and `main` for the main path — the same vocabulary `oneWays` names its two ends with.
    *
    * Unlike `switches`, which stands an encounter in a junction and closes THAT junction's own ways out,
    * a handle reaches across the floor. That is the whole of what it buys, and it is what a fork cannot
@@ -523,9 +528,9 @@ export type AssemblerReason =
    * an empty cell between them. */
   | { type: "oneWayUnsatisfied"; from: string; to: string }
   /** An authored handle (FloorConfig.handles) names a section it cannot have, and `address` is the
-   * name that failed: `in` or a `drives` entry naming no section of this floor, a driven section that
-   * is the main path, the one the lever stands in, one already carrying a gate, or one a second handle
-   * drives too. Which sections exist and what each already carries is fixed by the config, so this is
+   * name that failed: `in` or a `left`/`right` entry naming no section of this floor, a driven
+   * section that is the main path, the one the lever stands in, one already carrying a gate, or one a
+   * second handle drives too. Which sections exist and what each already carries is fixed by the config, so this is
    * answered once rather than blamed on carves that could never have satisfied it. */
   | { type: "handleUnsatisfied"; handle: number; address: string }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }

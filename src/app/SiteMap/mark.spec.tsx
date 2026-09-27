@@ -13,7 +13,7 @@ const name = (glyph: number) => `U+${glyph.toString(16).toUpperCase()} ${String.
 
 describe("a mark", () => {
   /**
-   * The one that matters. The shipped subset carries 248 of the block's code points, so a sign picked
+   * The one that matters. The shipped subset carries 346 of the block's code points, so a sign picked
    * by eye off the Unicode chart draws as an empty box on every device with no hieroglyph font of its
    * own — green and passing on a range check, which is why the assertion is against the generated list.
    */

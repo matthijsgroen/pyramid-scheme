@@ -59,7 +59,8 @@ export type StoredJourneyStateV3 = {
    * The position, never the consequence. A mechanism whose current position opens nothing is a real
    * position and has an entry; absence means only that nobody has touched it, and the mechanism sits
    * at whatever its floor says it starts at. Storing which doors stood open instead cannot tell those
-   * two apart, so a lever thrown back to rest would spring forward again on the next load.
+   * two apart, so a mechanism put into a position that opens nothing would spring back to the one it
+   * starts in on the next load.
    *
    * A map, where the sibling fields above pack `address=value` into one string. Those hold SETS of
    * addresses; this holds a mapping, and storing a mapping as a mapping is both less code at every
