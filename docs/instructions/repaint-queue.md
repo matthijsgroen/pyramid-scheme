@@ -2634,9 +2634,28 @@ THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no 
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from. That is why it belongs in the tile when a highlight does not.
 
+**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is standing, tilted down.
+Give it a lit side and a shadow side against that: the upper surfaces and the parts facing the viewer
+take the lightest greens; the undersides of the fronds, the far side of the trunk and anything tucked
+behind another part fall away into shadow, and the change between them is gradual rather than a hard
+edge.
+
+STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so the tile has NO brighter flank —
+nothing is lighter on the left than on the right. That is deliberate and it is load-bearing: the renderer
+MIRRORS these sprites at random to keep a floor from repeating, and a plant lit from one side would have
+its lit flank on the wrong side of half the cells it lands in. Front light survives the mirror; side
+light does not.
+
+DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side. No specular dot, no shine, no wet look, no
+bright rim tracing the edge, and no cast shadow thrown onto anything.
+
+STAY INSIDE THE VALUE CLAMP WHILE YOU DO IT. The lit side is lighter, not bright: the whole tile still
+sits in that narrow range, because a plant painted with real contrast reads as cut out of another picture
+from the stone behind it.
+
 Draw it square on and FLAT. No perspective, no scene, no floor under it, no pot, no wall behind it.
 
-No highlights, no gloss, no rim light, no cast shadow, no reflections. Matte throughout, as if lit by one dull lamp — the soft dark where it touches is the one exception, and it is not a highlight.
+No gloss, no shine, no specular dots, no rim light, no cast shadow, no reflections. Matte paint throughout — a matte surface with a lit side, not a polished one.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2689,9 +2708,28 @@ THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no 
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from. That is why it belongs in the tile when a highlight does not.
 
+**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is standing, tilted down.
+Give it a lit side and a shadow side against that: the upper surfaces and the parts facing the viewer
+take the lightest greens; the undersides of the fronds, the far side of the trunk and anything tucked
+behind another part fall away into shadow, and the change between them is gradual rather than a hard
+edge.
+
+STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so the tile has NO brighter flank —
+nothing is lighter on the left than on the right. That is deliberate and it is load-bearing: the renderer
+MIRRORS these sprites at random to keep a floor from repeating, and a plant lit from one side would have
+its lit flank on the wrong side of half the cells it lands in. Front light survives the mirror; side
+light does not.
+
+DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side. No specular dot, no shine, no wet look, no
+bright rim tracing the edge, and no cast shadow thrown onto anything.
+
+STAY INSIDE THE VALUE CLAMP WHILE YOU DO IT. The lit side is lighter, not bright: the whole tile still
+sits in that narrow range, because a plant painted with real contrast reads as cut out of another picture
+from the stone behind it.
+
 Draw it square on and FLAT. No perspective, no scene, no floor under it, no pot, no wall behind it.
 
-No highlights, no gloss, no rim light, no cast shadow, no reflections. Matte throughout, as if lit by one dull lamp — the soft dark where it touches is the one exception, and it is not a highlight.
+No gloss, no shine, no specular dots, no rim light, no cast shadow, no reflections. Matte paint throughout — a matte surface with a lit side, not a polished one.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2893,10 +2931,29 @@ growing out of it.
 
 THIS IS CONTACT, NOT A CAST SHADOW: no direction, nothing thrown sideways onto the wall.
 
+**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is standing, tilted down.
+Give it a lit side and a shadow side against that: the upper surfaces and the parts facing the viewer
+take the lightest greens; the undersides of the fronds, the far side of the trunk and anything tucked
+behind another part fall away into shadow, and the change between them is gradual rather than a hard
+edge.
+
+STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so the tile has NO brighter flank —
+nothing is lighter on the left than on the right. That is deliberate and it is load-bearing: the renderer
+MIRRORS these sprites at random to keep a floor from repeating, and a plant lit from one side would have
+its lit flank on the wrong side of half the cells it lands in. Front light survives the mirror; side
+light does not.
+
+DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side. No specular dot, no shine, no wet look, no
+bright rim tracing the edge, and no cast shadow thrown onto anything.
+
+STAY INSIDE THE VALUE CLAMP WHILE YOU DO IT. The lit side is lighter, not bright: the whole tile still
+sits in that narrow range, because a plant painted with real contrast reads as cut out of another picture
+from the stone behind it.
+
 Draw it square on and FLAT, seen straight on against the wall. No perspective, no scene, no bricks behind
 it, no wall.
 
-No highlights, no gloss, no rim light, no cast shadow, no reflections. Matte throughout, as if lit by one dull lamp — the soft dark where it touches is the one exception, and it is not a highlight.
+No gloss, no shine, no specular dots, no rim light, no cast shadow, no reflections. Matte paint throughout — a matte surface with a lit side, not a polished one.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2948,10 +3005,29 @@ growing out of it.
 
 THIS IS CONTACT, NOT A CAST SHADOW: no direction, nothing thrown sideways onto the wall.
 
+**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is standing, tilted down.
+Give it a lit side and a shadow side against that: the upper surfaces and the parts facing the viewer
+take the lightest greens; the undersides of the fronds, the far side of the trunk and anything tucked
+behind another part fall away into shadow, and the change between them is gradual rather than a hard
+edge.
+
+STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so the tile has NO brighter flank —
+nothing is lighter on the left than on the right. That is deliberate and it is load-bearing: the renderer
+MIRRORS these sprites at random to keep a floor from repeating, and a plant lit from one side would have
+its lit flank on the wrong side of half the cells it lands in. Front light survives the mirror; side
+light does not.
+
+DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side. No specular dot, no shine, no wet look, no
+bright rim tracing the edge, and no cast shadow thrown onto anything.
+
+STAY INSIDE THE VALUE CLAMP WHILE YOU DO IT. The lit side is lighter, not bright: the whole tile still
+sits in that narrow range, because a plant painted with real contrast reads as cut out of another picture
+from the stone behind it.
+
 Draw it square on and FLAT, seen straight on against the wall. No perspective, no scene, no bricks behind
 it, no wall.
 
-No highlights, no gloss, no rim light, no cast shadow, no reflections. Matte throughout, as if lit by one dull lamp — the soft dark where it touches is the one exception, and it is not a highlight.
+No gloss, no shine, no specular dots, no rim light, no cast shadow, no reflections. Matte paint throughout — a matte surface with a lit side, not a polished one.
 ```
 
 Then, once the return is in `~/Downloads`:

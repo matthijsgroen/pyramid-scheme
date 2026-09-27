@@ -15,9 +15,10 @@ real shadow are not available and are not being chased.
 
 What IS worth taking from it, and what every decision in this document should be read against:
 
-- **WARM light.** Its sun is golden, not white, and the stone glows under it. Slice 1 solved the shaft as
-  daylight, cooler than the torch — on an overgrown floor that reading should be revisited, because the
-  light there is coming through leaves and off warm sandstone.
+- **WARM light, and a LOT of it.** Its sun is golden rather than white, the stone glows, and nothing in
+  the picture is struggling to be seen. Slice 1 solved the shaft as daylight cooler than the torch; on an
+  overgrown floor that reading is revisited, because the light there comes through leaves and off warm
+  sandstone — and because these floors are meant to be bright enough that the torch stops mattering.
 - **MASSED plants, not specimens.** Nothing in it is one plant standing alone; creeper runs the whole
   length of a ledge and flowers come in banks. Ours draws at most one sprite per cell, and the density is
   as much of the look as the drawing is.
@@ -33,15 +34,32 @@ the corridors — which are most of a floor — are a dark passage with a few sp
 
 ## One cause, two effects
 
-**A floor is overgrown because its roof failed.** That is the whole design: the light and the plants are
-the same fact seen twice, and `condition.amount` drives both.
+**A floor is overgrown because its roof failed, and nothing grows in the dark.** That is the whole
+design, and it runs in the direction that makes it a rule rather than a coincidence: **light is the
+PRECONDITION for growth, so the amount of plant and the amount of light are the same number.** A floor
+thick with greenery is a floor you could read without a torch — if it were not, the greenery would not be
+there.
+
+So `condition.amount` does not merely add shafts. **It lifts the whole floor.** An overgrown floor's
+night wash comes off in proportion to `amount`, so the unlit baseline rises toward what a lamp gives,
+and the shafts then sit on top of that as the brightest thing rather than as the only thing. At full
+strength the player should notice they have stopped needing the torch.
+
+`condition.amount` therefore drives three things:
 
 | `overgrown.amount` raises | today | on an overgrown floor |
 | --- | --- | --- |
+| **the floor's own brightness** | the rank's night, flat | **the night wash lifts with `amount`** |
 | `mood.beam` | the rank's own | scales up with `amount` |
 | where a shaft may fall | chambers only | **corridors too** |
 | `MAX_SHAFTS` | 3 a floor | up to about double |
 | growth density | scales with `amount` | unchanged in rule, richer in art |
+
+**The ladder has to be re-derived for these floors, not just extended.** Slice 1 solved an unlit floor at
+L\* 27 so that a lamp at 38 and a shaft at 67 had somewhere to be bright against. Lifting the baseline
+compresses that: if the floor sits at 45, a torch that only reaches 38 makes a room DARKER to walk into,
+which is absurd. So the torch and the shaft both move with the baseline, and the three are solved
+together against the same page measurements, with the shaft staying the brightest thing in every case.
 
 A corridor shaft lights its run to the next turn, because `litPlaceCells` already resolves a corridor
 cell to its run — that is what "corridors with lots of light" asks for, and the lighting code needs no new
