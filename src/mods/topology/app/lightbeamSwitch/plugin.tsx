@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components -- side-effect registration file */
 import { useCallback, useRef } from "react"
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
+import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { ForkShape } from "@/game/forkShape"
 import type { Direction as WayOut, RoomCell } from "@/game/siteTypes"
@@ -48,11 +49,8 @@ const LightbeamSwitchComponent: FamilyPlugin<LightbeamSwitchBoard>["Component"] 
 }) => {
   const exits = ctx.exits
   const address = ctx.address
-  const open = journeys.getOpenWaysOut(ctx.journeyId)
-  const openWayOut = shutWaysOut(exits).find(way => {
-    const id = wayOutId(exits, way)
-    return id !== undefined && open.has(id)
-  })
+  const state = journeys.getMechanismStates(ctx.journeyId).get(address)
+  const openWayOut = shutWaysOut(exits).find(way => wayOutId(exits, way) === state)
 
   // What this visit has already told the floor. The board is re-rendered on every tap and reports where
   // the light stands each time; without this the same answer would be written again and again, and each
@@ -64,13 +62,13 @@ const LightbeamSwitchComponent: FamilyPlugin<LightbeamSwitchBoard>["Component"] 
       // The light reaching no shrine decides nothing, so the fork stands as the assembler left it.
       if (way === undefined) {
         routed.current = undefined
-        journeys.shutWaysOut(address)
+        journeys.setMechanismState(address, MECHANISM_AT_REST)
         return
       }
       const id = wayOutId(exits, way)
       if (id === undefined) return
       routed.current = way
-      journeys.setOpenWayOut(address, id)
+      journeys.setMechanismState(address, id)
     },
     [exits, address, journeys]
   )

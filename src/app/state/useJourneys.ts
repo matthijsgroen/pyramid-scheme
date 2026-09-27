@@ -21,6 +21,11 @@ export const CELL_KEY_VERSION = 3
  * rederiveFloorExploration. */
 export const FLOOR_EXPLORATION_VERSION = 1
 
+/** The position a mechanism sits in when it opens nothing. One name for it, in the save and in the
+ * compiled lock alike — a lever thrown back here and a lever never touched are the same POSITION and a
+ * different FACT, which is why one is stored and the other is absent. */
+export const MECHANISM_AT_REST = "rest"
+
 export type StoredJourneyStateV3 = {
   journeyId: string
 
@@ -49,17 +54,25 @@ export type StoredJourneyStateV3 = {
   disabledTraps?: string[] // cells where trapTool was spent to disarm the corridor
   skippedConsumables?: string[] // cells where inventory was full at collect time
   purchasedStock?: string[] // `${address}!${stockIndex}` of shop slots already bought
-  /** Which way out each switch on this site stands open at, as `${levelNr}:${switchAddress}=${wayOutId}`.
+  /** Which POSITION each mechanism on this site stands in, keyed `${levelNr}:${mechanismAddress}`.
    *
-   * A switch shuts every way out of the fork it stands in and its board reopens ONE of them, so this is
-   * the floor's own shape rather than anything the player carries: solving the board again replaces that
-   * switch's entry, and the way out it named before shuts with it. Exactly one entry per switch, which is
-   * why it is written keyed by the switch and not added to a list.
+   * The position, never the consequence. A mechanism whose current position opens nothing is a real
+   * position and has an entry; absence means only that nobody has touched it, and the mechanism sits
+   * at whatever its floor says it starts at. Storing which doors stood open instead cannot tell those
+   * two apart, so a lever thrown back to rest would spring forward again on the next load.
    *
-   * Both halves are ids core already mints — the fork's cell address, and the id the assembler closed
-   * that way out with — so nothing here says what opened it or what the board was. A stale entry naming
-   * a way out this build no longer shuts simply matches nothing. */
-  openWaysOut?: string[]
+   * A map, where the sibling fields above pack `address=value` into one string. Those hold SETS of
+   * addresses; this holds a mapping, and storing a mapping as a mapping is both less code at every
+   * read and one fewer thing whose correctness rests elsewhere. What keeps a packed entry parseable
+   * is USABLE_LABEL in the assembler, which today admits only letters, digits, `_` and `-`; a map
+   * needs no separator between key and value, so it does not care what that regex admits tomorrow.
+   *
+   * Which doors that position opens is read off the floor (src/game/mechanismDoors.ts), because the
+   * mapping belongs to the grid and a save that carried it would go stale against a re-carve.
+   *
+   * The address is the mechanism's own cell address — authored, so a re-carve moves the cell and takes
+   * the entry with it. Exactly one entry per mechanism, which is what a map gives for free. */
+  mechanismStates?: Record<string, string>
   // Corridor detector (§7.2, found = noticed via proximity): both keyed `${levelNr}:${sectionAddress}`.
   // `known` = hidden corridors on floors the player has viewed; `found` = ones the detector stopped
   // them at. Outstanding (known \ found) drives the L3 pyramid + L4 travel "unexplored corridor" markers.
@@ -122,13 +135,11 @@ export type JourneyAPI = {
   getSkippedConsumables: (journeyId: string) => ReadonlySet<string>
   markShopSlotPurchased: (address: string, stockIndex: number) => void
   getPurchasedShopSlots: (journeyId: string) => ReadonlySet<string>
-  /** The switch at `switchAddress` now leaves `wayOutId` open, and every other way out it shut stays
-   * shut. Replaces that switch's previous answer rather than joining it — see openWaysOut. */
-  setOpenWayOut: (switchAddress: string, wayOutId: string) => void
-  /** The switch at `switchAddress` leaves nothing open: every way out it shut is shut again. */
-  shutWaysOut: (switchAddress: string) => void
-  /** The ways out standing open on this level, as the ids the assembler shut them with. */
-  getOpenWaysOut: (journeyId: string) => ReadonlySet<string>
+  /** The mechanism at `address` now stands at `stateId`, replacing whatever position it stood at before
+   * rather than joining it — see mechanismStates. */
+  setMechanismState: (address: string, stateId: string) => void
+  /** The position every mechanism on this level currently stands in, keyed by its cell address. */
+  getMechanismStates: (journeyId: string) => ReadonlyMap<string, string>
   registerHiddenCorridors: (sectionAddresses: string[]) => void
   markCorridorFound: (sectionAddress: string) => void
   getFoundHiddenCorridors: (journeyId: string) => ReadonlySet<string>
@@ -423,6 +434,22 @@ export const createJourneysV3Api = ({
     return new Set((entries ?? []).filter(e => e.startsWith(prefix)).map(e => e.slice(prefix.length)))
   }
 
+  // The map-shaped equivalent of forThisLevel, for a collection keyed by address rather than packed
+  // into `address=value` strings.
+  const forThisLevelMap = (
+    journeyId: string,
+    entries: Record<string, string> | undefined
+  ): ReadonlyMap<string, string> => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    if (!j) return new Map()
+    const prefix = `${j.levelNr}:`
+    return new Map(
+      Object.entries(entries ?? {})
+        .filter(([key]) => key.startsWith(prefix))
+        .map(([key, value]) => [key.slice(prefix.length), value])
+    )
+  }
+
   const markTrapDisabled = (address: string) => {
     if (!activeJourneyId) return
     const key = atLevel(address)
@@ -480,43 +507,20 @@ export const createJourneysV3Api = ({
   const getPurchasedShopSlots = (journeyId: string): ReadonlySet<string> =>
     forThisLevel(journeyId, journeys.find(j => j.journeyId === journeyId)?.purchasedStock)
 
-  // A switch's answer, which is a REPLACEMENT and not an addition: the fork has one board and the board
-  // leaves one way out open, so the entry this switch wrote before goes when the next one lands.
-  const setOpenWayOut = (switchAddress: string, wayOutId: string) => {
+  const setMechanismState = (address: string, stateId: string) => {
     if (!activeJourneyId) return
-    const at = `${atLevel(switchAddress)}=`
+    const at = atLevel(address)
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
-        const open = j.openWaysOut ?? []
-        const entry = `${at}${wayOutId}`
-        if (open.includes(entry) && open.filter(e => e.startsWith(at)).length === 1) return j
-        return { ...j, openWaysOut: [...open.filter(e => !e.startsWith(at)), entry] }
+        if (j.mechanismStates?.[at] === stateId) return j
+        return { ...j, mechanismStates: { ...(j.mechanismStates ?? {}), [at]: stateId } }
       })
     )
   }
 
-  // A board whose light reaches no shrine has decided nothing, and a fork that has decided nothing stands
-  // as the assembler left it: every way out shut.
-  const shutWaysOut = (switchAddress: string) => {
-    if (!activeJourneyId) return
-    const at = `${atLevel(switchAddress)}=`
-    setJourneys(prev =>
-      prev.map(j => {
-        if (j.journeyId !== activeJourneyId) return j
-        const open = j.openWaysOut ?? []
-        if (!open.some(entry => entry.startsWith(at))) return j
-        return { ...j, openWaysOut: open.filter(entry => !entry.startsWith(at)) }
-      })
-    )
-  }
-
-  const getOpenWaysOut = (journeyId: string): ReadonlySet<string> =>
-    new Set(
-      [...forThisLevel(journeyId, journeys.find(j => j.journeyId === journeyId)?.openWaysOut)]
-        .filter(entry => entry.includes("="))
-        .map(entry => entry.slice(entry.indexOf("=") + 1))
-    )
+  const getMechanismStates = (journeyId: string): ReadonlyMap<string, string> =>
+    forThisLevelMap(journeyId, journeys.find(j => j.journeyId === journeyId)?.mechanismStates)
 
   // Corridor detector: hidden sections become "known" the moment the player views the floor
   // holding them; keyed by levelNr like exploration so a multi-level pyramid keeps them apart.
@@ -631,9 +635,8 @@ export const createJourneysV3Api = ({
     getSkippedConsumables,
     markShopSlotPurchased,
     getPurchasedShopSlots,
-    setOpenWayOut,
-    shutWaysOut,
-    getOpenWaysOut,
+    setMechanismState,
+    getMechanismStates,
     registerHiddenCorridors,
     markCorridorFound,
     getFoundHiddenCorridors,

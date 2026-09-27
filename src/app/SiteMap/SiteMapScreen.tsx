@@ -5,7 +5,7 @@ import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { floorKeyRing } from "@/game/floorKeys"
 import { useCorridorDetection } from "@/app/SiteMap/useCorridorDetection"
 import { useFoundCorridors } from "@/app/SiteMap/useFoundCorridors"
-import { useOpenWaysOut } from "@/app/SiteMap/useOpenWaysOut"
+import { useMechanismStates } from "@/app/SiteMap/useMechanismStates"
 import { useDetectorBand } from "@/app/SiteMap/useDetectorBand"
 import type { SiteConfig } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
@@ -20,7 +20,7 @@ import { useSiteNavigation, type ArrivalPrompt, type ArrivalPromptKind } from ".
 import { RewardFlow } from "./RewardFlow"
 import { EncounterModal } from "./EncounterModal"
 import { useApplyReward } from "./applyReward"
-import { useJourneys } from "@/app/state/useJourneys"
+import { MECHANISM_AT_REST, useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
 import { useDetector } from "@/app/state/useDetector"
 import { useInventory } from "@/app/Inventory/useInventory"
@@ -71,7 +71,13 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const floorConfig = siteConfig[currentFloor]
 
   const foundCorridors = useFoundCorridors(journeys, journeyId)
-  const openWaysOut = useOpenWaysOut(journeys, journeyId)
+  const mechanismStates = useMechanismStates(journeys, journeyId)
+  // ponytail: a switch's position IS the key id of the way out it opens, so the set is the positions
+  // that are not rest. Task 2 replaces this with the grid-driven derivation that also serves a handle.
+  const openWaysOut = useMemo(
+    () => new Set([...mechanismStates.values()].filter(s => s !== MECHANISM_AT_REST)),
+    [mechanismStates]
+  )
 
   const { grid, explorerPos, hiddenSections, junctionSections } = useAssembledFloor(
     journeyId,

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest"
-import { createJourneysV3Api, type StoredJourneyStateV3 } from "./useJourneys"
+import { createJourneysV3Api, MECHANISM_AT_REST, type StoredJourneyStateV3 } from "./useJourneys"
 import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { journeys as allJourneys } from "@/data/journeys"
 
@@ -321,6 +321,53 @@ describe("markShopSlotPurchased / getPurchasedShopSlots", () => {
     api.markShopSlotPurchased("sec#0/p3", 0) // dedup
     api.markShopSlotPurchased("sec#0/p3", 2)
     expect(state[0].purchasedStock).toEqual(["1:sec#0/p3!0", "1:sec#0/p3!2"])
+  })
+})
+
+// ── setMechanismState / getMechanismStates ──────────────────────────────────────
+
+describe("mechanism positions", () => {
+  // The api captures `journeys` at creation, so reads must run against a freshly-built api over the
+  // latest state — mirrors how the hook rebuilds each render.
+  const run = (steps: (api: ReturnType<typeof makeApi>) => void) => {
+    let state = [makeStoredJourney()]
+    const set = (updater: unknown) => {
+      state =
+        typeof updater === "function"
+          ? (updater as (p: unknown) => StoredJourneyStateV3[])(state)
+          : (updater as StoredJourneyStateV3[])
+    }
+    steps(createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }))
+    return {
+      state,
+      api: createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }),
+    }
+  }
+
+  it("tells a mechanism put back to rest apart from one never touched", () => {
+    const untouched = run(() => {})
+    expect(untouched.api.getMechanismStates(REAL_ID).has("s0#0/p1")).toBe(false)
+
+    const routed = run(api => api.setMechanismState("s0#0/p1", "s1"))
+    expect(routed.api.getMechanismStates(REAL_ID).get("s0#0/p1")).toBe("s1")
+
+    const atRest = run(api => api.setMechanismState("s0#0/p1", MECHANISM_AT_REST))
+    const states = atRest.api.getMechanismStates(REAL_ID)
+    expect(states.get("s0#0/p1")).toBe(MECHANISM_AT_REST)
+    expect(states.has("s0#0/p1")).toBe(true)
+  })
+
+  it("keeps one position per mechanism, replacing rather than accumulating", () => {
+    const { state } = run(api => {
+      api.setMechanismState("s0#0/p1", "s1")
+      api.setMechanismState("s0#0/p1", "s2")
+    })
+    expect(state[0].mechanismStates).toEqual({ "1:s0#0/p1": "s2" })
+  })
+
+  it("stores a position value without interpreting it, whatever characters it carries", () => {
+    const { api } = run(a => a.setMechanismState("s0#0/p1", "odd=label"))
+    expect(api.getMechanismStates(REAL_ID).get("s0#0/p1")).toBe("odd=label")
   })
 })
 

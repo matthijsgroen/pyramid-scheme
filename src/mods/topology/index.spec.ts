@@ -45,7 +45,7 @@ describe("the topology mod", () => {
 const RETIRED = /witnessdoor|witness door|witness:/i
 
 // The app-side registry a family handed a key through. A mechanic that changes what a floor lets
-// through holds floor state instead — a switch's ways out live in StoredJourneyStateV3.openWaysOut
+// through holds floor state instead — a switch's position lives in StoredJourneyStateV3.mechanismStates
 // — so nothing mints, nothing registers, and a union over registered sources would be empty on every
 // floor: a seam no test could tell working from absent.
 const MINTED_KEYS = /ownedkeysource/i
