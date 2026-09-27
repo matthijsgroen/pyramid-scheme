@@ -152,11 +152,24 @@ const POSITIONAL_ADDRESS = /^(main|s\d+(\.\d+)?)$/
 const USABLE_LABEL = /^[A-Za-z0-9][A-Za-z0-9_-]*$/
 
 /**
+ * What hangs off a section, however deep it was authored.
+ *
+ * The type stops one level down because that is as deep as the carve goes, while the DSL nests
+ * without limit (worldGen/dsl.ts) and the serializer bakes whatever it is given — so a deeper level
+ * arrives here as data the type cannot see. Reading it is what lets the floor be refused by name
+ * instead of assembled with the deepest sections missing.
+ */
+const childSectionsOf = (section: SubSection): SubSection[] => (section as SideSection).sideSections ?? []
+
+/**
  * What each of a floor's sections is called: its authored `label` where it has one, else where it sits.
  *
  * Labelling is opt-in per path, because naming every one of them would be a tax on authoring for the
  * sake of the few that matter. An unlabelled section keeps the positional address and the hazard that
  * comes with it — insert a sidepath ahead of it and it shifts — which is exactly what a label buys off.
+ *
+ * Walks every authored level, not only the ones the carve reaches: a name is a save key wherever it
+ * sits, so one repeated three levels down would share progress exactly as one repeated at the top.
  *
  * Returns the duplicates instead of the addresses when two sections would answer to the same name: a
  * save cannot tell them apart, so their progress would be shared between two places.
@@ -176,14 +189,17 @@ const sectionAddresses = (
     of.set(positional, address)
     return address
   }
-  for (const [idx, side] of config.sideSections.entries()) {
-    if (claim(`s${idx}`, side.label) === null) return { ok: false, duplicate: side.label ?? `s${idx}` }
-    for (const [subIdx, sub] of (side.sideSections ?? []).entries()) {
-      if (claim(`s${idx}.${subIdx}`, sub.label) === null)
-        return { ok: false, duplicate: sub.label ?? `s${idx}.${subIdx}` }
+  const walk = (sections: SubSection[], prefix: string): string | null => {
+    for (const [idx, section] of sections.entries()) {
+      const positional = `${prefix}${idx}`
+      if (claim(positional, section.label) === null) return section.label ?? positional
+      const deeper = walk(childSectionsOf(section), `${positional}.`)
+      if (deeper !== null) return deeper
     }
+    return null
   }
-  return { ok: true, of }
+  const duplicate = walk(config.sideSections, "s")
+  return duplicate === null ? { ok: true, of } : { ok: false, duplicate }
 }
 
 // The floor-wide inputs to the carve itself: change either and every cell on the floor moves.

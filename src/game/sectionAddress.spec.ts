@@ -77,6 +77,19 @@ describe("what a floor calls its sections", () => {
     expect(result.success ? [] : result.reasons).toEqual([{ type: "unusableSectionAddress", address: "twice" }])
   })
 
+  // The carve reaches two levels down, but the authoring reaches further, and a name that deep is
+  // still a name a save would file cells under — so the check that refuses a repeat has to see it.
+  it("sees a name three levels down colliding with one at the top", () => {
+    const result = assembleFloor(
+      "test-journey",
+      floor([side({ label: "twice" }), side({ sideSections: [side({ sideSections: [side({ label: "twice" })] })] })]),
+      SEED
+    )
+
+    expect(result.success).toBe(false)
+    expect(result.success ? [] : result.reasons).toEqual([{ type: "unusableSectionAddress", address: "twice" }])
+  })
+
   it("refuses a name shaped like a position, which could collide with whoever lands on that index", () => {
     const result = assembleFloor("test-journey", floor([side(), side({ label: "s0" })]), SEED)
 
