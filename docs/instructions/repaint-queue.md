@@ -2582,6 +2582,15 @@ so the hole shows depth rather than reading as a flat black rectangle, the spoil
 Queued at expert only: the develop journey's drop stands on an expert floor, which is the one rank a
 drop can actually be seen on today. The other four ranks stay unqueued until this one has landed.
 
+**`dropNorth` stands its launch BESIDE the mouth, not across it, and it cost a roll to learn.** Anything
+raised at the near lip draws between the viewer and the opening — a block of height h with its back face
+on the lip draws its top at `h - k*d/2`, inside the mouth's own band for every h above zero, so no height
+clears it and the only free axis is x. What it was covering is the NEAR LIP LINE, the band's lower edge,
+which is the one line saying the dark shape is a hole in a floor rather than a recess in a wall; with it
+hidden the first roll came back as a slab of wall with an alcove cut in it — the exact failure the
+retired `pit` was killed for. Moved out past the mouth's own left edge the lip runs unbroken underneath,
+which is what `dropEast` and `dropSouth` have always had. Its prompt now names that rim outright.
+
 **Three renders, not four.** The two horizontal headings are one asset, `dropEast`, mirrored left-right
 for `dropWest` when the renderer picks it — that wiring is not part of this queue. The two vertical
 headings, `dropNorth` and `dropSouth`, each need their own: a vertical flip would swap which lip carries
@@ -2653,7 +2662,7 @@ yarn import-tile art/masters/props/expert/dropEast.webp --tier=expert --name=dro
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 ```
 
-### `expert/dropNorth` — a launch at the near lip, riding away
+### `expert/dropNorth` — a launch at the near corner, riding away
 
 **Attach:**
 
@@ -2669,12 +2678,15 @@ The object: a FISSURE torn across a passage floor, seen from above. The dark qua
 OPENING — a hole in the floor, not a wall, not a doorway and not a niche, and nothing stands inside it
 that a person could stand on. Just under its far rim two courses of rough CUT STONE show, the shaft's
 own lining, taking what little light reaches down; below those courses the shaft goes black and stays
-black, and nothing is drawn down there at all. At the edge of the opening NEAREST the viewer a short
-flight of two STEPS climbs onto a low stone BLOCK set against the rim, and a tall timber POST stands on
-that block. At the FAR edge a second timber POST stands on bare paving, barely knee high. A taut ROPE
-runs from the head of the tall post, across the opening, to the head of the short one. The loose blocks
-scattered at the opening's edge are broken basalt, shaken free where the floor gave way. There is no
-rim, no coping and no frame around the opening: the crack meets bare paving on every side.
+black, and nothing is drawn down there at all. THE OPENING'S LOWER RIM — its edge nearest the viewer —
+runs unbroken from one side of the crack to the other: nothing stands in front of it, nothing covers it,
+and it is the line that says this is a hole in a floor and not a recess in a wall. To the LEFT of the
+opening, clear of the crack's own width and set back toward the viewer, a short flight of two STEPS
+climbs onto a low stone BLOCK, and a tall timber POST stands on that block. At the FAR edge of the
+opening, furthest from the viewer, a second timber POST stands on bare paving, barely knee high. A taut
+ROPE runs from the head of the tall post, across the opening, to the head of the short one. The loose
+blocks scattered at the opening's edge are broken basalt, shaken free where the floor gave way. There is
+no rim, no coping and no frame around the opening: the crack meets bare paving on every side.
 
 Basalt worn dark and faintly polished where feet have crossed near it, with a thin crust of pale natron
 dust settled into the crack's edges and over the fallen blocks. The posts are old timber, split and

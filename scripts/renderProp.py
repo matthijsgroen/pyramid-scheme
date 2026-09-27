@@ -1453,9 +1453,22 @@ def _launch_crossing(w, d, heading):
             mark(box(going, step_y, h, x=px0 - going * (1.5 - i), y=(py0 + py1) / 2, z=h / 2), "body")
 
     if heading == "dropNorth":  # travel toward the far lip: the block stands at the NEAR one
+        # AND STANDS TO ONE SIDE OF THE MOUTH RATHER THAN ACROSS IT, which is the difference between a
+        # tile that reads and the one roll this concept lost. Anything raised at the NEAR lip draws
+        # between the viewer and the opening: a block of height h with its back face on the lip draws
+        # its top at h - k*d/2, which is inside the mouth's own band for every h above zero. There is no
+        # height at which it clears, so the only free axis is x.
+        #
+        # What it was breaking is not "part of the opening". It is the NEAR LIP LINE — the band's bottom
+        # edge, the one line that says this dark shape is a hole in the ground and not a recess in a
+        # wall. Hidden along half its width, with the spoil closing most of the rest, the first roll came
+        # back as a slab of wall with an alcove cut in it, which is the exact failure the retired `pit`
+        # was killed for. Moved out past `-w/2` the lip runs unbroken under the whole mouth, which is
+        # what `drop` and `dropSouth` have always had — east by standing its block beside the mouth,
+        # south by standing it beyond and above.
         py0, py1 = -d / 2 - 0.23, -d / 2 + 0.03
-        block(-0.32, 0.08, py0, py1, (py1 - py0) * 0.80)
-        head, foot = (-0.12, (py0 + py1) / 2), (0.34, d / 2 + 0.07)
+        block(-w / 2 - 0.33, -w / 2, py0, py1, (py1 - py0) * 0.80)
+        head, foot = (-w / 2 - 0.165, (py0 + py1) / 2), (0.34, d / 2 + 0.07)
     elif heading == "dropSouth":  # travel toward the viewer: the block stands at the FAR lip
         py0, py1 = d / 2 - 0.03, d / 2 + 0.23
         block(-0.32, 0.08, py0, py1, (py1 - py0) * 0.80)
