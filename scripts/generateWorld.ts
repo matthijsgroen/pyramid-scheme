@@ -23,6 +23,7 @@ import {
   findEmptyChests,
   findStrandingLocks,
   findUnbakedSwitchBoards,
+  findUndrawnHandles,
   findUndrawnOneWays,
   sweepMissedASwitch,
 } from "../src/worldGen/validate"
@@ -155,6 +156,22 @@ if (undrawnDrops.length > 0) {
     console.error(`    ${drop.journeyId} level ${drop.levelNr} floor ${drop.floorIndex}: ${drop.from} → ${drop.to}`)
   if (undrawnDrops.length > 20) console.error(`    … and ${undrawnDrops.length - 20} more`)
   console.error("  A drop is drawn from both sides today — author it on the develop journey until it is not.")
+  process.exit(1)
+}
+
+// A lever nothing paints is a room with nothing to see and a door nothing on the floor holds a key to,
+// so it may stand only where meeting an undrawn mechanic is the point — the same line the drop above
+// holds, and the playtest journey is excused by its capabilities rather than by its id.
+const undrawnHandles = findUndrawnHandles(configs)
+if (undrawnHandles.length > 0) {
+  console.error(`✗ ${undrawnHandles.length} handle(s) stand on floors that may not hold one:`)
+  for (const handle of undrawnHandles.slice(0, 20))
+    console.error(
+      `    ${handle.journeyId} level ${handle.levelNr} floor ${handle.floorIndex}: ` +
+        `${handle.in} → ${handle.drives.join(", ")}`
+    )
+  if (undrawnHandles.length > 20) console.error(`    … and ${undrawnHandles.length - 20} more`)
+  console.error("  A lever is undrawn today — author it on the develop journey until it is not.")
   process.exit(1)
 }
 

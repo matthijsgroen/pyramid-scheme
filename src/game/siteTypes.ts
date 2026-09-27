@@ -369,6 +369,24 @@ export type FloorConfig = {
    * no address for either end to resolve to, and the drop is then refused outright rather than landing
    * somewhere else. Author `oneWays` on a floor whose sections you also author. */
   oneWays?: { from: string; to: string }[]
+  /** A LEVER STANDING IN ONE SECTION THAT OPENS A GATE ON OTHERS. `in` names the section the lever
+   * stands in; `drives` names the sections whose entrance gates it owns. Both are section addresses —
+   * a `label` where a section has one, the positional `s0`/`s1.2` where it does not, and `main` for
+   * the main path — the same vocabulary `oneWays` names its two ends with.
+   *
+   * Unlike `switches`, which stands an encounter in a junction and closes THAT junction's own ways out,
+   * a handle reaches across the floor. That is the whole of what it buys, and it is what a fork cannot
+   * express: the catalogue's "a lever elsewhere opens a door here".
+   *
+   * Each driven section gets a gate keyed `handle:<journeyId>#<levelIndex>#<floorIndex>#<n>:<address>`,
+   * derived from where the floor was AUTHORED — neither end of which a re-carve can move, so a position
+   * kept from an earlier layout cannot come to fit a door it was never thrown for.
+   *
+   * The lever starts at rest and every gate it drives starts shut. A driven section may not be the main
+   * path (which has no entrance to gate), may not be the one the lever stands in (which would shut the
+   * lever in behind its own door), may not already carry an authored gate, and may not be driven by a
+   * second handle — each is refused by name before a wall is carved. */
+  handles?: { in: string; drives: string[] }[]
   /** A SWITCH: an encounter standing in one of the junctions `forks` reserved, closing that
    * junction's free ways out so that what the player meets there decides which one opens.
    * Family/tag(s) like `encounter`. At least `min` and at most `max` of the reserved junctions get
@@ -451,6 +469,12 @@ export type AssemblerReason =
    * floor does not have, or every attempt ran out before it found the two sections a node apart with
    * an empty cell between them. */
   | { type: "oneWayUnsatisfied"; from: string; to: string }
+  /** An authored handle (FloorConfig.handles) names a section it cannot have, and `address` is the
+   * name that failed: `in` or a `drives` entry naming no section of this floor, a driven section that
+   * is the main path, the one the lever stands in, one already carrying a gate, or one a second handle
+   * drives too. Which sections exist and what each already carries is fixed by the config, so this is
+   * answered once rather than blamed on carves that could never have satisfied it. */
+  | { type: "handleUnsatisfied"; handle: number; address: string }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
 

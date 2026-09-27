@@ -94,6 +94,7 @@ export type BuildFloorOptions = {
   encountersByIndex?: FloorConfig["encountersByIndex"]
   forks?: FloorConfig["forks"]
   oneWays?: FloorConfig["oneWays"]
+  handles?: FloorConfig["handles"]
   switches?: FloorConfig["switches"]
   corridorStraightness?: number
   packing?: number
@@ -132,6 +133,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.theme !== undefined ? { theme: opts.theme } : {}),
   ...(opts.forks ? { forks: opts.forks } : {}),
   ...(opts.oneWays ? { oneWays: opts.oneWays } : {}),
+  ...(opts.handles ? { handles: opts.handles } : {}),
   ...(opts.switches ? { switches: opts.switches } : {}),
 })
 
@@ -277,6 +279,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           // A floor's own junctions win; otherwise the site's, the way `encounter` and `theme` resolve.
           forks: fc.forks ?? constraint.forks,
           oneWays: fc.oneWays ?? constraint.oneWays,
+          handles: fc.handles ?? constraint.handles,
           switches: fc.switches ?? constraint.switches,
           corridorStraightness: floorStraightness,
           packing: floorPacking,
@@ -328,6 +331,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             // The junctions the site asks every floor of it to carve, and what stands in them.
             forks: constraint.forks,
             oneWays: constraint.oneWays,
+            handles: constraint.handles,
             switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
@@ -377,6 +381,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           // The junctions the site asks every floor of it to carve, and what stands in them.
           forks: constraint.forks,
           oneWays: constraint.oneWays,
+          handles: constraint.handles,
           switches: constraint.switches,
           encounterArgs: constraint.encounterArgs,
           theme: constraint.theme,
@@ -457,6 +462,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             // The junctions the site asks every floor of it to carve, and what stands in them.
             forks: constraint.forks,
             oneWays: constraint.oneWays,
+            handles: constraint.handles,
             switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
@@ -527,6 +533,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     // The junctions the site asks every floor of it to carve, and what stands in them.
     forks: constraint.forks,
     oneWays: constraint.oneWays,
+    handles: constraint.handles,
     switches: constraint.switches,
     encounterArgs: constraint.encounterArgs,
     theme: constraint.theme,

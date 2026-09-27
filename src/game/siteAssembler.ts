@@ -1,8 +1,10 @@
 import { mulberry32, shuffle } from "./random"
 import { hashString } from "@/support/hashString"
 import type {
+  AssemblerFailure,
   AssemblerResult,
   FloorConfig,
+  MechanismRecord,
   FloorGrid,
   GridCell,
   Direction,
@@ -473,9 +475,36 @@ export type AssembleFloorKeyRequirements = {
 // grown for it and takes no part in the key-host chain below.
 const needsFloorKeyHost = (s: SubSection): boolean => s.gate?.type === "floor-key" && !s.gate.keyId
 
+/** What a lever's room is drawn and filled by. Nothing but a name here: which family answers to it is
+ * the registry's, and the floor only says a lever stands in this room. */
+const HANDLE_FAMILY = "handle"
+
+/** The sections a handle drives carry its gate, so the rest of the carve meets an ordinary authored
+ * floor-key gate: the section is isolated behind it, no host chest is grown for a key nothing on this
+ * floor mints, and the gate room is written by the one place that writes gate rooms. */
+const withHandleGates = (
+  config: FloorConfig,
+  addressOf: ReadonlyMap<string, string>,
+  gateKeyByAddress: ReadonlyMap<string, string>
+): FloorConfig => ({
+  ...config,
+  sideSections: config.sideSections.map((side, idx) => {
+    const subSections = side.sideSections?.map((sub, subIdx) => {
+      const keyId = gateKeyByAddress.get(addressOf.get(`s${idx}.${subIdx}`) ?? "")
+      return keyId ? { ...sub, gate: { type: "floor-key" as const, keyId } } : sub
+    })
+    const keyId = gateKeyByAddress.get(addressOf.get(`s${idx}`) ?? "")
+    return {
+      ...side,
+      ...(subSections ? { sideSections: subSections } : {}),
+      ...(keyId ? { gate: { type: "floor-key" as const, keyId } } : {}),
+    }
+  }),
+})
+
 export const assembleFloor = (
   siteId: string,
-  config: FloorConfig,
+  authoredConfig: FloorConfig,
   seed: number,
   resolveEncounter: ResolveEncounter = defaultResolveEncounter,
   keyRequirements: AssembleFloorKeyRequirements = {}
@@ -489,7 +518,7 @@ export const assembleFloor = (
   // layout one, so it fails the floor loudly here rather than quietly sharing one player's progress
   // between two places. `yarn generate-world` and the floor sweep both build every floor, so an
   // authored label that collides cannot reach a player.
-  const addresses = sectionAddresses(config)
+  const addresses = sectionAddresses(authoredConfig)
   if (!addresses.ok) {
     return { success: false, reasons: [{ type: "unusableSectionAddress", address: addresses.duplicate }] }
   }
@@ -498,7 +527,7 @@ export const assembleFloor = (
   // sections exist is fixed by the config, not by the seed, so a misnamed end is refused once here
   // rather than blamed on sixty carves that could never have satisfied it either.
   const knownSectionAddresses = new Set<string>([MAIN_SECTION_ADDRESS, ...addresses.of.values()])
-  const unusableOneWays = (config.oneWays ?? []).filter(
+  const unusableOneWays = (authoredConfig.oneWays ?? []).filter(
     oneWay => !knownSectionAddresses.has(oneWay.from) || !knownSectionAddresses.has(oneWay.to)
   )
   if (unusableOneWays.length > 0) {
@@ -507,6 +536,84 @@ export const assembleFloor = (
       reasons: unusableOneWays.map(({ from, to }) => ({ type: "oneWayUnsatisfied" as const, from, to })),
     }
   }
+
+  // A HANDLE'S REACH IS AUTHORED, SO WHAT IT CANNOT REACH IS ANSWERED BEFORE A WALL IS CARVED — the
+  // same reasoning, and the same shape, as the one-way above: which sections exist and what each
+  // already carries is fixed by the config, so a lever naming one it cannot have is refused once, by
+  // the name that failed.
+  const sectionByAddress = new Map<string, SideSection | SubSection>()
+  for (const [idx, side] of authoredConfig.sideSections.entries()) {
+    sectionByAddress.set(addresses.of.get(`s${idx}`) ?? `s${idx}`, side)
+    for (const [subIdx, sub] of (side.sideSections ?? []).entries())
+      sectionByAddress.set(addresses.of.get(`s${idx}.${subIdx}`) ?? `s${idx}.${subIdx}`, sub)
+  }
+  // A GATE IS NAMED BY WHERE THE FLOOR WAS AUTHORED AND THE SECTION IT STANDS ON, NEVER BY THE CARVE.
+  // Same reasoning as a switch's `switch:` stem: a position kept from an earlier layout must not come
+  // to fit a door it was never thrown for, and an authoring address is what a re-carve cannot move.
+  const handleStem = (n: number) =>
+    `handle:${floorRef.journeyId}#${floorRef.levelIndex ?? 0}#${floorRef.floorIndex}#${n}`
+  const handleGateKeyByAddress = new Map<string, string>()
+  const leverByAddress = new Map<string, MechanismRecord>()
+  for (const [n, handle] of (authoredConfig.handles ?? []).entries()) {
+    const refuse = (address: string): AssemblerFailure => ({
+      success: false,
+      reasons: [{ type: "handleUnsatisfied", handle: n, address }],
+    })
+    // Two levers in one section would answer to the same name in a save (cellSlot.ts), which is the
+    // data-loss bug the address checks above exist for.
+    if (!knownSectionAddresses.has(handle.in) || leverByAddress.has(handle.in)) return refuse(handle.in)
+    const positions: MechanismRecord["positions"] = []
+    for (const driven of handle.drives) {
+      // The main path has no entrance to gate; the lever's own section would shut the lever in behind
+      // the door it opens; and a section already gated — by an author or by another handle — would
+      // lose one of the two doors without saying so.
+      if (
+        !sectionByAddress.has(driven) ||
+        driven === handle.in ||
+        sectionByAddress.get(driven)?.gate !== undefined ||
+        handleGateKeyByAddress.has(driven)
+      )
+        return refuse(driven)
+      const gateKeyId = `${handleStem(n)}:${driven}`
+      handleGateKeyByAddress.set(driven, gateKeyId)
+      positions.push({ state: driven, gateKeyId })
+    }
+    // A lever can be thrown back to where it started, which a beam board cannot: solving one always
+    // routes the light somewhere. So rest is a position the walk may count on having again.
+    leverByAddress.set(handle.in, { positions, restReachable: true })
+  }
+
+  // From here the floor is read with the handles' gates already on it, so every pass that sizes a
+  // chain, isolates a section or writes a gate room meets one gate rule rather than two.
+  const config =
+    handleGateKeyByAddress.size > 0
+      ? withHandleGates(authoredConfig, addresses.of, handleGateKeyByAddress)
+      : authoredConfig
+
+  // Which chains carry a lever, by the positional key the sizing passes below have to hand. A lever
+  // stands in a room of its own — it is not the k-th puzzle of the chain and takes no content slot —
+  // so a chain holding one is carved a room longer.
+  const leverAtPositional = new Set<string>()
+  for (const [positional, address] of addresses.of) if (leverByAddress.has(address)) leverAtPositional.add(positional)
+  if (leverByAddress.has(MAIN_SECTION_ADDRESS)) leverAtPositional.add(MAIN_SECTION_ADDRESS)
+  const leverRooms = (positional: string): number => (leverAtPositional.has(positional) ? 1 : 0)
+
+  // Every room a chain has to hold: its own content, its terminal room, its gate where it has one, and
+  // the lever where one stands in it.
+  const chainRooms = (section: SideSection | SubSection, positional: string): number =>
+    section.pathPuzzles + 1 + (section.gate ? 1 : 0) + leverRooms(positional)
+
+  // THE LEVER'S ROOM SAYS WHICH DOOR EACH POSITION OPENS, AND THE SAVE SAYS ONLY WHICH POSITION IT IS
+  // IN (mechanismDoors.ts). Keeping the mapping on the floor is what lets a re-carve move a door
+  // without a position kept from an earlier layout coming to fit one it was never thrown for. It takes
+  // no `pathIndex`: it is not the k-th room of its chain, so a save names it by what fills it, the way
+  // a section's chest or gate is named (cellSlot.ts).
+  const leverSpec = (positional: string) => ({
+    roomType: "encounter" as const,
+    family: HANDLE_FAMILY,
+    tags: [HANDLE_FAMILY],
+    mechanism: leverByAddress.get(addresses.of.get(positional) ?? positional)!,
+  })
 
   const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
   const fezShop = resolveEncounter("fez-shop", "fez-shop")
@@ -571,15 +678,19 @@ export const assembleFloor = (
   // kept separate from `minCells` below (which folds in every side-section's cost too) so
   // `packing`'s path-length target scales with what the *main path itself* needs, not with
   // how much unrelated side-section content happens to branch off it elsewhere.
-  const mainPathCells = 1 /* entrance */ + config.pathPuzzles + 1 /* goal */ + 1 /* exit/stairhead */
+  const mainPathCells =
+    1 /* entrance */ + config.pathPuzzles + 1 /* goal */ + 1 /* exit/stairhead */ + leverRooms(MAIN_SECTION_ADDRESS)
 
   // Minimum node count needed (real path nodes only — the connector cell between two
   // adjacent nodes lives at a separate, non-node grid position, see NODE_STEP above).
   const minCells =
     mainPathCells +
-    sideSections.reduce((sum, sec) => {
-      const secCells = sec.pathPuzzles + 1 + (sec.gate ? 1 : 0)
-      const subCells = (sec.sideSections ?? []).reduce((s2, sub) => s2 + sub.pathPuzzles + 1 + (sub.gate ? 1 : 0), 0)
+    sideSections.reduce((sum, sec, idx) => {
+      const secCells = chainRooms(sec, `s${idx}`)
+      const subCells = (sec.sideSections ?? []).reduce(
+        (s2, sub, subIdx) => s2 + chainRooms(sub, `s${idx}.${subIdx}`),
+        0
+      )
       return sum + secCells + subCells
     }, 0)
 
@@ -636,10 +747,10 @@ export const assembleFloor = (
   // wound the chains down to rather than leaving a shrunken floor rattling around a huge grid.
   const carvedCells = (): number =>
     mainPathCells +
-    sideSections.reduce((sum, sec) => {
-      const secCells = paddedChainLength(sec.pathPuzzles + 1 + (sec.gate ? 1 : 0))
+    sideSections.reduce((sum, sec, idx) => {
+      const secCells = paddedChainLength(chainRooms(sec, `s${idx}`))
       const subCells = (sec.sideSections ?? []).reduce(
-        (s2, sub) => s2 + paddedChainLength(sub.pathPuzzles + 1 + (sub.gate ? 1 : 0)),
+        (s2, sub, subIdx) => s2 + paddedChainLength(chainRooms(sub, `s${idx}.${subIdx}`)),
         0
       )
       return sum + secCells + subCells
@@ -741,14 +852,18 @@ export const assembleFloor = (
     // bare corridor behind the goal with nothing to do and nowhere to branch. Spreading
     // keeps something to find along the whole walk, and puts the goal last (closest to
     // the exit) so there's no unused tail behind it either.
-    const contentCount = config.pathPuzzles + 1 // + goal
+    const leverOnMain = leverRooms(MAIN_SECTION_ADDRESS) === 1
+    const contentCount = config.pathPuzzles + 1 /* goal */ + leverRooms(MAIN_SECTION_ADDRESS)
     if (mainPath.length < contentCount + 2) continue // need entrance + content + a distinct exit
 
     const contentIndices = spreadContentIndices(contentCount, 1, mainPath.length)
     const goalIndex = contentIndices[contentIndices.length - 1]
+    // A lever the main path holds takes the first content node: it opens what lies further on, so the
+    // walk has to reach it before the doors it owns are worth reaching.
+    const leverIndex = leverOnMain ? contentIndices[0] : -1
     // puzzleIndices[k] is the mainPath position of the k-th puzzle (0-based, path order) —
     // used to index into config.rewards[k] below.
-    const puzzleIndices = contentIndices.slice(0, -1)
+    const puzzleIndices = contentIndices.slice(leverOnMain ? 1 : 0, -1)
     const puzzleRole = new Map<number, number>()
     puzzleIndices.forEach((idx, k) => puzzleRole.set(idx, k))
 
@@ -879,7 +994,7 @@ export const assembleFloor = (
 
       for (const si of group) {
         const section = sideSections[si]
-        const needed = paddedChainLength(section.pathPuzzles + 1 + (section.gate ? 1 : 0))
+        const needed = paddedChainLength(chainRooms(section, `s${si}`))
         let placed = false
 
         // Try the shared hub first (if this group already has one), then this group's own
@@ -1013,7 +1128,7 @@ export const assembleFloor = (
 
       for (let si = 0; si < subSects.length; si++) {
         const sub = subSects[si]
-        const subNeeded = paddedChainLength(sub.pathPuzzles + 1 + (sub.gate ? 1 : 0))
+        const subNeeded = paddedChainLength(chainRooms(sub, `s${group.sectionIdx}.${si}`))
         let placed = false
 
         for (const [pcr, pcc] of subBranchCandidates) {
@@ -1392,6 +1507,8 @@ export const assembleFloor = (
           tags: treasureChest.tags,
           ...(config.mainEndReward ? { reward: config.mainEndReward } : {}),
         })
+      } else if (mi === leverIndex) {
+        roomSpecs.set(posKey(r, c), leverSpec(MAIN_SECTION_ADDRESS))
       } else if (puzzleRole.has(mi)) {
         const k = puzzleRole.get(mi)!
         // Per-node override (authored `nodes` selectors, e.g. the last room's capstone) if this
@@ -1485,6 +1602,15 @@ export const assembleFloor = (
           gateVariant: "tomb-key",
         })
         contentStart = 1
+      }
+
+      // A lever stands at the head of its section, past whatever gate guards the way in: the player
+      // reaches it before the chain's content, and throwing it is a walk back out rather than a room
+      // solved deeper in.
+      if (leverRooms(`s${sectionIdx}`) === 1) {
+        const [lr, lc] = cells[contentStart]
+        roomSpecs.set(posKey(lr, lc), leverSpec(`s${sectionIdx}`))
+        contentStart += 1
       }
 
       // Intermediate nodes within section (puzzles/traps) — spread across whatever room
@@ -1604,6 +1730,14 @@ export const assembleFloor = (
           gateVariant: "tomb-key",
         })
         contentStart = 1
+      }
+
+      // Same head position as a lever standing in a top-level section, and for the same reason.
+      const subPositional = `s${parentSectionIdx}.${subSectionIdx}`
+      if (leverRooms(subPositional) === 1) {
+        const [lr, lc] = cells[contentStart]
+        roomSpecs.set(posKey(lr, lc), leverSpec(subPositional))
+        contentStart += 1
       }
 
       // Spread across whatever room `paddedChainLength` gave this chain — same technique

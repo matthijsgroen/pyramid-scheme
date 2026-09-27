@@ -168,6 +168,15 @@ export type FloorConstraint<TExtra extends string = never> = {
    * Named ends rather than `forks`' counts: on a floor built with no side sections there is no address
    * for either end, so the drop can only ever be refused where `forks` would still be satisfied. */
   oneWays?: { from: string; to: string }[]
+  /** A LEVER standing in the section `in` names, opening the entrance gate of each section `drives`
+   * names. Section addresses, the same vocabulary `oneWays` uses for its two ends.
+   *
+   * What a fork cannot express: a switch decides which of ITS OWN ways out opens, while a handle
+   * reaches across the floor. The author names where the lever stands and what it opens, and nothing
+   * else — the gate ids are derived from the floor's own authoring address and the section each gate
+   * stands on, so a position kept from an earlier layout cannot come to fit a door it was never
+   * thrown for. */
+  handles?: { in: string; drives: string[] }[]
   /** A SWITCH: `encounter` stands in a junction `forks` reserved and closes its free ways out, so the
    * player stands in the fork and what is in it decides which way opens. Between `min` and `max` of
    * the reserved junctions get one, and a `min` past what `forks` reserves fails the build.
@@ -294,6 +303,9 @@ export type PyramidConstraint = {
   /** One-way passages every floor of this site must carve, unless a floor names its own — see
    * FloorConstraint.oneWays. Authored here, a whole climb is shaped in one line. */
   oneWays?: { from: string; to: string }[]
+  /** The levers every floor of this site stands, unless a floor names its own — see
+   * FloorConstraint.handles. */
+  handles?: { in: string; drives: string[] }[]
   /** The switch every floor of this site stands in the junctions `forks` reserved, unless a floor
    * names its own — see FloorConstraint.switches. */
   switches?: { encounter: string | string[]; min: number; max: number }

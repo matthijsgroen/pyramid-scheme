@@ -249,6 +249,33 @@ export const findUndrawnOneWays = (
 }
 
 /**
+ * A floor standing a handle the site it belongs to may not hold one on.
+ *
+ * Same line as the one-way drop above, and drawn for the same reason: the lever's room and the doors
+ * it owns are carved but not painted, so a player meeting one reads a room with nothing in it and a
+ * door nothing on the floor holds the key to. A playtest floor is excused by its capabilities
+ * (capabilities.ts's standHandles), never by its id.
+ */
+export type UndrawnHandle = { journeyId: string; levelNr: number; floorIndex: number; in: string; drives: string[] }
+
+export const findUndrawnHandles = (
+  configs: Record<string, SiteConfig[]>,
+  capabilities: (siteId: string) => SiteCapabilities | undefined = capabilitiesFor
+): UndrawnHandle[] => {
+  const found: UndrawnHandle[] = []
+  for (const [journeyId, sites] of Object.entries(configs)) {
+    if (capabilities(journeyId)?.standHandles) continue
+    sites.forEach((site, siteIdx) =>
+      site.forEach((floor, floorIndex) => {
+        for (const handle of floor.handles ?? [])
+          found.push({ journeyId, levelNr: siteIdx + 1, floorIndex, in: handle.in, drives: handle.drives })
+      })
+    )
+  }
+  return found
+}
+
+/**
  * A floor whose lock the walk refuses: unsolvable, stranding, or not reading at all.
  *
  * Asked of the assembled floor rather than of the spec, because a lock is made of the gates a carve

@@ -29,6 +29,15 @@ export type SiteCapabilities = {
    * an author's care is not what should be holding that line. Retires itself with the drawing.
    */
   standOneWayDrops: boolean
+  /**
+   * A handle (FloorConfig.handles) may stand on this site's floors.
+   *
+   * The lever is carved but not yet DRAWN: the map paints its room as an ordinary encounter and its
+   * gates as doors nothing on the floor holds a key to, so a player meeting one reads a dead end where
+   * a lever elsewhere is the answer. A playtest floor is where that is the point; a floor anyone else
+   * reaches may not hold one until the art lands. Retires itself with the drawing.
+   */
+  standHandles: boolean
 }
 
 export const PYRAMID_CAPABILITIES: SiteCapabilities = {
@@ -37,6 +46,7 @@ export const PYRAMID_CAPABILITIES: SiteCapabilities = {
   emitPerkStream: false,
   requireBakedBoards: true,
   standOneWayDrops: false,
+  standHandles: false,
 }
 
 export const TOMB_CAPABILITIES: SiteCapabilities = {
@@ -45,6 +55,7 @@ export const TOMB_CAPABILITIES: SiteCapabilities = {
   emitPerkStream: true,
   requireBakedBoards: true,
   standOneWayDrops: false,
+  standHandles: false,
 }
 
 // A dev site stands outside every reward economy. Nothing collects its path ends, so no chest on it
@@ -62,6 +73,8 @@ export const DEV_CAPABILITIES: SiteCapabilities = {
   // A playtest floor is where an undrawn mechanic is MEANT to be met: the drop stands here so someone
   // can walk it long before the map knows how to paint one.
   standOneWayDrops: true,
+  // And the lever with it, for the same reason.
+  standHandles: true,
 }
 
 export const capabilitiesFor = (siteId: string): SiteCapabilities | undefined => {
