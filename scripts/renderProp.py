@@ -1411,6 +1411,70 @@ def prim_rubbleheap():
     return join_all()
 
 
+def _launch_crossing(w, d, heading):
+    """The one-way's crossing, drawn the owner's way: a short flight of steps up onto a block at ONE lip,
+    a TALL post standing on that block, a SHORT post on bare paving at the opposite lip, and the line run
+    head to head between them. Sketched as a side elevation, 2026-09-27.
+
+    THE HEIGHT DIFFERENCE IS THE DIRECTION, and the steps are there to explain the height rather than to
+    be the cue themselves. High end, with the way up to it built: where you start. Low end: where you
+    land. Coming back means climbing the line to a head that is above you with nothing under it, which is
+    a thing a player can see rather than a rule they have to be told.
+
+    THE STAIR GOES AT THE SOURCE END AND NEVER AT BOTH. A flight at the landing reads as the way out,
+    which says nothing about why the way back is shut; a flight at each end says the crossing is a bridge.
+    Which lip carries it is exactly what differs between the three renders.
+
+    THE FLIGHT ALWAYS CLIMBS IN X, whichever lip the block sits at, and that is `prim_stair`'s finding
+    rather than a preference: a flight climbing AWAY from the viewer separates twice over, one climbing
+    TOWARD him very nearly cancels — at a rise of 0.075 against a going of 0.13 the treads would move
+    0.016 apart on the page and the steps would smear into the block. Run in x the rise is drawn honestly
+    and the profile is a stepped silhouette, which is the one arrangement this projection shows a stair's
+    side in at all.
+
+    WHAT THE SHEAR DOES TO THE SLOPE, stated because it cannot be fixed and should not be papered over.
+    Drawn height is z + k*y, so on the two Y headings the lips themselves are already k*d apart on the
+    page — 0.56 against a post-head difference of 0.37. The line therefore draws downhill on `dropSouth`
+    and uphill on `dropNorth`, whichever way the world slopes. The cue that survives both is the BLOCK'S
+    POSITION: steps and tall post at the top of the tile, or at the bottom. Height carries it on the
+    horizontal heading, where the two lips draw level and the slope is the whole of the difference."""
+    # A RISER IS THREE PIXELS, so the flight is two treads and no more and each one is given all the
+    # going it can have. What reads at 56 units is the stepped SILHOUETTE against the paving, not the
+    # shading on the treads — the same trade `prim_stair`'s parapets make.
+    plinth_h, rise, going, post = 0.24, 0.08, 0.17, 0.06
+    tall, short = 0.26, 0.14
+
+    def block(px0, px1, py0, py1, step_y):
+        mark(box(px1 - px0, py1 - py0, plinth_h, x=(px0 + px1) / 2, y=(py0 + py1) / 2, z=plinth_h / 2), "body")
+        # Two treads, the lower one furthest from the block. They overlap it in x by nothing — each is a
+        # separate stone and the gap between their drawn tops is the whole of what says "steps".
+        for i in (0, 1):
+            h = rise * (i + 1)
+            mark(box(going, step_y, h, x=px0 - going * (1.5 - i), y=(py0 + py1) / 2, z=h / 2), "body")
+
+    if heading == "dropNorth":  # travel toward the far lip: the block stands at the NEAR one
+        py0, py1 = -d / 2 - 0.23, -d / 2 + 0.03
+        block(-0.32, 0.08, py0, py1, (py1 - py0) * 0.80)
+        head, foot = (-0.12, (py0 + py1) / 2), (0.34, d / 2 + 0.07)
+    elif heading == "dropSouth":  # travel toward the viewer: the block stands at the FAR lip
+        py0, py1 = d / 2 - 0.03, d / 2 + 0.23
+        block(-0.32, 0.08, py0, py1, (py1 - py0) * 0.80)
+        head, foot = (-0.12, (py0 + py1) / 2), (0.34, -d / 2 - 0.07)
+    else:  # `drop` — travel to the right, mirrored in x for the other horizontal heading
+        px0, px1 = -w / 2 - 0.30, -w / 2 + 0.03
+        block(px0, px1, -0.23, 0.23, 0.38)
+        head, foot = ((px0 + px1) / 2 + 0.02, 0.0), (w / 2 + 0.07, 0.10)
+
+    hx, hy = head
+    fx, fy = foot
+    # TIMBER, so the two posts tell themselves apart from the block and the steps they stand among. A
+    # post in the rank's own stone beside a stone plinth is one mass, and at 56 units the whole crossing
+    # would read as masonry with a wire over it.
+    mark(box(post, post, tall, x=hx, y=hy, z=plinth_h + tall / 2), "timber")
+    mark(box(post, post, short, x=fx, y=fy, z=short / 2), "timber")
+    mark(strung((hx, hy, plinth_h + tall), (fx, fy, short)), nocast("body"))
+
+
 def _shaft_courses(d):
     """The top of a shaft wall, built as rough stone so a hole EMITS DEPTH instead of being a flat black
     rectangle — `prim_stair`'s `down` falloff (body, then deep, then the void) applied to a pit.
@@ -1498,10 +1562,11 @@ def prim_pit():
     CROSSING: a stake at the entry lip and a taut line running to the far lip, where there is nothing to
     hold. See the branch below for why direction costs two renders and not one.
 
-    `--contents=drop` / `dropNorth` / `dropSouth` ARE THOSE THREE OVER A SHAFT THAT SHOWS ITS STONE —
-    the same crossing, a mouth 0.14 deeper to draw it in, and `_shaft_courses` under the far lip. Kept
-    as separate values rather than folded into the three above so the flat-black reading and the one
-    with depth in it can be looked at side by side before a roll is spent on either."""
+    `--contents=drop` / `dropNorth` / `dropSouth` ARE THE ONES THAT SHIP, and they differ from the three
+    above in every part except the hole: a mouth 0.14 deeper, `_shaft_courses` showing cut stone under
+    the far lip before it falls to black, and `_launch_crossing` in place of the bare stake — steps up
+    onto a block at the source lip, a tall post on it, a short post on the paving opposite, and the line
+    run head to head. The three ziplines are kept only as the flat reading they were queued as."""
     w, d = 0.94, 0.66  # the opening
     k = 0.7  # the shear this set is drawn at; the shaft's visible height is a function of it
     contents = arg("contents")
@@ -1533,7 +1598,10 @@ def prim_pit():
         mark(tilt(box(sx, sy, 0.08, x=x, y=y + spoil_dy, z=0.04), yaw, "Z"), "body")
     if contents == "plain":
         return join_all()
-    zip_dir = {"drop": "zipline", "dropNorth": "ziplineNorth", "dropSouth": "ziplineSouth"}.get(contents, contents)
+    if courses:
+        _launch_crossing(w, d, contents)
+        return join_all()
+    zip_dir = contents
     if zip_dir in ("zipline", "ziplineNorth", "ziplineSouth"):
         # THE ZIPLINE, a one-way drop's own crossing — `docs/authored-locks-roadmap.md` ("A one-way is
         # a place, and the movement markers carry the rule") settles it as a place rather than a sign: a
@@ -1558,21 +1626,15 @@ def prim_pit():
         # ladder rope is why nothing here runs along bare -Y), and a zipline with no visible slope across
         # the frame reads as a post, not a line strung to somewhere.
         post_h = 0.34
-        # HOW FAR APART THE TWO ENDS STAND IN X is what the line's slope is made of, and on the two
-        # Y headings it is ALL of it: a run in y draws as height and nothing else, so a stake and a tie
-        # 0.44 apart across the frame gave a line very nearly upright, which reads as a second post. The
-        # deepened mouth makes that worse — more y to climb over the same x — so the drop variants take
-        # the wider spread and the three already-queued ziplines keep the geometry they were queued with.
-        spread = 0.40 if courses else 0.22
         if zip_dir == "zipline":
             stake_xy = (-w / 2 - 0.05, 0.0)
             tie_xy = (w / 2 + 0.02, 0.0)
         elif zip_dir == "ziplineNorth":
-            stake_xy = (-spread, -d / 2 - 0.05)
-            tie_xy = (spread, d / 2 + 0.02)
+            stake_xy = (-0.22, -d / 2 - 0.05)
+            tie_xy = (0.22, d / 2 + 0.02)
         else:  # ziplineSouth
-            stake_xy = (spread, d / 2 + 0.05)
-            tie_xy = (-spread, -d / 2 - 0.02)
+            stake_xy = (0.22, d / 2 + 0.05)
+            tie_xy = (-0.22, -d / 2 - 0.02)
         sx, sy = stake_xy
         tx, ty = tie_xy
         mark(box(0.06, 0.06, post_h, x=sx, y=sy, z=post_h / 2), "body")
@@ -1587,6 +1649,78 @@ def prim_pit():
         mark(box(0.05, 0.05, 0.10 + hv, x=sx * 0.25, y=rope_y, z=(0.10 - hv) / 2), NOCAST)
     for i in range(3):
         mark(box(0.55, 0.055, 0.055, y=rope_y, z=-0.09 - i * 0.15), NOCAST)
+    return join_all()
+
+
+def prim_lever():
+    """A floor lever a player throws: a stone block bedded in the paving, a bronze shoe, a timber post,
+    and an arm swung up off its pivot with a brass grip on the end.
+
+    IT DRAWS ITS POSITION, and that is the point of it. A handle is a BINARY toggle — `--contents=left`
+    and `--contents=right` are the same lever thrown to each side, some doors open at one end and some
+    at the other — so the state is a thing in the room rather than something only the map's marker
+    (`HandleShape`, `nodeShapes.tsx`) knows. Everything but the arm is identical between the two: same
+    block, same shoe, same post, same pivot, same height. Only the arm and its grip move.
+
+    THE THROW IS 52 DEGREES OFF VERTICAL, not the marker's 42, and the difference is the whole tile. The
+    two states are told apart by where the GRIP is, and the grip's horizontal travel between them is
+    `2 * arm * sin(swing)` — 0.42 of a unit at 32 degrees, 0.63 at 52, against a post 0.10 wide. At the
+    shallower angle the two grips sit close enough that the pair reads as one lever wobbling; at 52 the
+    grip is clear of the post's own width on each side and the silhouettes cross over. This is the
+    spikes' lesson one axis over: a lean has to move the visible END far enough to be a position, or
+    there is no cue in it.
+
+    LEFT AND RIGHT ARE TWO RENDERS, NOT ONE MIRRORED, and the reason is the LIGHT rather than the
+    geometry. A mirror in x IS a valid oblique view — `drawn = (x, z + k*y)` is symmetric in x, which is
+    why `dropEast` mirrors to `dropWest` for free. But the rig's sun comes over the viewer's left
+    shoulder, so a mirrored sprite arrives lit from the right and sits in a room beside props lit from
+    the left. On a hole that is nearly symmetric it goes unnoticed; on a post with one lit face and one
+    shaded one it is the most visible thing in the tile. Rendered separately, both keep the set's light.
+
+    THE ARM RUNS IN X, which is the only axis drawn honestly and the same choice `prim_sconce` made for
+    its bracket. Swung in y it would be a bar lying in depth, which images as drawn height and nothing
+    else: the lever would draw as a second post growing out of the first, a player would read a fence
+    rail, and the two states would be indistinguishable. Swung in x it is a diagonal across the frame,
+    which is both what a thrown lever looks like and the only axis a state can be legible on.
+
+    IT MUST NOT READ AS A TRAP. The same worry that killed the spiked one-way applies to anything in a
+    corridor that looks like a mechanism: this game's traps are rooms wearing a crimson badge with a
+    skull, and the thing a player must never think is "I should disarm that". So the vocabulary here is
+    deliberately the opposite of a weapon — no blade, no spring, no point, nothing red. A post, an arm
+    and a grip worn smooth by hands: an object whose only affordance is PULL.
+
+    THE GRIP IS A CROSS-BAR, not a ball. A sphere on the end of the arm is a finial, and at 56 units a
+    finial and a knob are the same four pixels; a bar run through the arm's end in x reads as something
+    a hand closes round, and it costs the silhouette a notch that says where the arm ends.
+
+    SEAT IT NORMALLY. Unlike a pit this stands on the floor and its footprint is a real one — import
+    with the rendered shadow under it, the way every other free-standing prop is."""
+    # The bedding block, broad enough that the whole prop is wider than it is a post: the object's aspect
+    # is what decides how tall it lands, and a bare post on a small pad came out as tall as the explorer.
+    mark(box(0.82, 0.40, 0.09, z=0.045), "body")
+    # The bronze shoe the post is stepped into, standing PROUD of the block rather than sunk in it — a
+    # recess level with the surface it cuts is not there at this size (`prim_market`'s channel).
+    mark(box(0.20, 0.18, 0.09, y=-0.02, z=0.12), "metal")
+    post_h = 0.44
+    mark(box(0.10, 0.10, post_h, y=-0.02, z=0.09 + post_h / 2), "timber")
+    pivot_z = 0.09 + post_h - 0.03
+    # The pivot boss, a cylinder lying along X so it draws as a disc rather than as a line, and the one
+    # part that says the arm turns rather than being nailed on.
+    boss = mark(cyl(0.055, 0.15, y=-0.02, z=pivot_z, verts=14), "metal")
+    boss.rotation_euler = (0, math.radians(90), 0)
+    # The arm, built upright at the origin and turned about Y so it leans over in X — `turn`'s pattern.
+    # Negative swings it to the viewer's left; see the docstring for where 52 comes from.
+    arm_len, swing = 0.40, 52.0 if arg("contents", "right") != "left" else -52.0
+    a = math.radians(swing)
+    ux, uz = math.sin(a), math.cos(a)
+    mark(
+        turn(box(0.06, 0.06, arm_len), swing, "Y", x=ux * arm_len / 2, y=-0.02, z=pivot_z + uz * arm_len / 2),
+        "metal",
+    )
+    # The grip, through the arm's end and along X for the reason in the docstring. It overlaps the arm
+    # rather than butting it: a hairline is a gap.
+    grip = mark(cyl(0.045, 0.16, x=ux * arm_len - 0.01, y=-0.02, z=pivot_z + uz * arm_len - 0.01, verts=16), "accent")
+    grip.rotation_euler = (0, math.radians(90), 0)
     return join_all()
 
 
@@ -2992,6 +3126,7 @@ PRIMITIVES.update(
         "rubblePile": prim_rubbleheap,
         "niche": prim_niche,
         "pit": prim_pit,
+        "lever": prim_lever,
         "spikes": prim_spikes,
         "stair": prim_stair,
         "gate": prim_gate,

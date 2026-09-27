@@ -2562,31 +2562,50 @@ still in it, not because any of them is urgent.
 
 ## One-way drop — expert, three directions
 
-The first art for a one-way: a passage the player falls down and cannot climb back. The owner settled it
-as a place, not a sign — a fissure across the passage with a line strung over it, anchored on one side
-only, so the reason you cannot go back is a thing you can see rather than a rule you were told
-(`docs/authored-locks-roadmap.md`, "A one-way is a place, and the movement markers carry the rule"). It
-is drawn on the connector cell's own floor square, at cell size, using `prim_pit` exactly as it already
-stands — the void shaft, its far wall, its spoil — with the ladder swapped for a stake and a rope where
-`--contents=zipline`/`ziplineNorth`/`ziplineSouth` ask for it. See `renderProp.py`'s `prim_pit` docstring
-for what each value builds.
+The first art for a one-way: a passage the player takes once and cannot come back up. The owner settled
+it as a place, not a sign (`docs/authored-locks-roadmap.md`, "A one-way is a place, and the movement
+markers carry the rule"), and then settled what the place looks like — a launch: a short flight of steps
+onto a block at one lip, a tall post standing on it, a short post on bare paving at the other lip, and a
+line run head to head between them. You climb up, take the line and ride down; coming back means
+climbing to a head that is above you with nothing under it.
+
+**The height difference is the direction, and the steps explain the height.** High end with the way up
+to it built = where you start; low end = where you land. Nothing to learn, which is the whole reason it
+beat the two concepts it was chosen over — a plug stone and a spiked one-way, neither of which carried
+direction at all.
+
+It is drawn on the connector cell's own floor square, at cell size, from `prim_pit`'s
+`--contents=drop`/`dropNorth`/`dropSouth`: the void shaft, two courses of cut stone under the far rim
+so the hole shows depth rather than reading as a flat black rectangle, the spoil, and the launch. See
+`renderProp.py`'s `prim_pit`, `_shaft_courses` and `_launch_crossing` for what each part is and why.
 
 Queued at expert only: the develop journey's drop stands on an expert floor, which is the one rank a
-drop can actually be seen on today. The other four ranks stay unqueued until this one has landed —
-fifteen tiles nobody has looked at yet is the failure this file exists to prevent.
+drop can actually be seen on today. The other four ranks stay unqueued until this one has landed.
 
 **Three renders, not four.** The two horizontal headings are one asset, `dropEast`, mirrored left-right
 for `dropWest` when the renderer picks it — that wiring is not part of this queue. The two vertical
 headings, `dropNorth` and `dropSouth`, each need their own: a vertical flip would swap which lip carries
 the void's up-facing top face, against this projection's own rule that a block shows an up-facing band
-on top and a viewer-facing face below it, never the reverse.
+on top and a viewer-facing face below it, never the reverse. Which lip carries the steps is exactly
+what differs between the three.
 
-**No `--seat` on any of the three**, the same as every pit before it: `make_shadow` flattens to z=0 and
-pushes toward the viewer, so a footprint under a hole is a second dark parallelogram lying in front of
-the first one and the tile reads as two holes. The stake still casts its own shadow in the hand-over
-render, which is what the prompt's shadow line is for.
+**`--seat` on all three**, which is the opposite of what this section said before and of what
+`prim_pit`'s own docstring still implies. `make_shadow` drops VOID and NOCAST faces before it flattens,
+so the hole casts nothing on its own while the spoil, the block and the posts — which do stand on the
+floor — cast normally. `art/rebuild.sh` already seats `starter/pit` and `expert/pit` this way. Without
+it the stonework round the mouth comes back with no footprint and reads as pasted on.
 
-### `expert/dropEast` — a fissure with a line run out to one side
+**`--colour-deep` is not optional at this rank.** The shaft's courses are painted with the `deep` part's
+default, a warm brown, which against expert's blue-grey basalt is a different material. `#5f6b77` is
+that rank's own stone in shade.
+
+**What is asked about the near rim, and why it is asked in words.** The lower edge of the opening —
+the paving's own broken edge, nearest the viewer — is the one edge that sells a hole, and the renderer
+cannot draw it: under this projection a down-facing face turns away from the camera, so the lip's
+underside is a back face and is never rendered. It is therefore the painter's job, and these three
+prompts ask for it outright.
+
+### `expert/dropEast` — a launch at the left lip, riding right
 
 **Attach:**
 
@@ -2598,34 +2617,43 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a FISSURE torn across a passage floor, seen from above. The black quadrilateral is the
-OPENING — the crack's own depth, and it is the darkest thing in the picture with no detail in it at all;
-it is not a wall, not a doorway and not a niche. Standing at the LEFT edge of the opening is a short
-timber POST, driven into the paving; from its top a taut ROPE runs right, across the opening, down to
-bare stone at the RIGHT edge, where it ends — there is nothing there to hold. The loose blocks scattered
-at the opening's edge are broken basalt, shaken free where the floor gave way. There is no rim, no
-coping and no frame around the opening: the crack meets bare paving on every side.
+The object: a FISSURE torn across a passage floor, seen from above. The dark quadrilateral is the
+OPENING — a hole in the floor, not a wall, not a doorway and not a niche, and nothing stands inside it
+that a person could stand on. Just under its far rim two courses of rough CUT STONE show, the shaft's
+own lining, taking what little light reaches down; below those courses the shaft goes black and stays
+black, and nothing is drawn down there at all. At the LEFT edge of the opening a short flight of two
+STEPS climbs onto a low stone BLOCK set against the rim, and a tall timber POST stands on that block.
+At the RIGHT edge a second timber POST stands on bare paving, barely knee high. A taut ROPE runs from
+the head of the tall post, across the opening and downhill, to the head of the short one. The loose
+blocks scattered at the opening's edge are broken basalt, shaken free where the floor gave way. There
+is no rim, no coping and no frame around the opening: the crack meets bare paving on every side.
 
 Basalt worn dark and faintly polished where feet have crossed near it, with a thin crust of pale natron
-dust settled into the crack's edges and over the fallen blocks. The post is old timber, split and grey.
-The rope is bleached hemp, pale against the dark stone.
+dust settled into the crack's edges and over the fallen blocks. The posts are old timber, split and
+grey. The rope is bleached hemp, pale against the dark stone.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
-The shadow at the post's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the broken
+paving along the lower rim of the opening nearest the viewer, the top of each course of stone in the
+shaft, the head of each post — and everything turned away from it falls into shadow. Keep that caught
+light on the EDGES of the stone; the opening itself stays the darkest thing in the picture, and no ledge,
+step or floor appears inside it.
 
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope, and none of it shines.
+The shadow at the posts' feet is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
 ```
 
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold pit --contents=zipline --colour=#a7b2be --floor=#8d98a5
+scaffold pit --contents=drop --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/expert/dropEast.webp --tier=expert --name=dropEast --slot=prop \
-  --filter=smooth --mask="$OBJ" --brightness=0.85
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 ```
 
-### `expert/dropNorth` — a fissure with a line run out to the far side
+### `expert/dropNorth` — a launch at the near lip, riding away
 
 **Attach:**
 
@@ -2637,34 +2665,43 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a FISSURE torn across a passage floor, seen from above. The black quadrilateral is the
-OPENING — the crack's own depth, and it is the darkest thing in the picture with no detail in it at all;
-it is not a wall, not a doorway and not a niche. Standing at the edge of the opening NEAREST the viewer
-is a short timber POST, driven into the paving; from its top a taut ROPE runs back and across the
-opening, down to bare stone at the FAR edge, where it ends — there is nothing there to hold. The loose
-blocks scattered at the opening's edge are broken basalt, shaken free where the floor gave way. There is
-no rim, no coping and no frame around the opening: the crack meets bare paving on every side.
+The object: a FISSURE torn across a passage floor, seen from above. The dark quadrilateral is the
+OPENING — a hole in the floor, not a wall, not a doorway and not a niche, and nothing stands inside it
+that a person could stand on. Just under its far rim two courses of rough CUT STONE show, the shaft's
+own lining, taking what little light reaches down; below those courses the shaft goes black and stays
+black, and nothing is drawn down there at all. At the edge of the opening NEAREST the viewer a short
+flight of two STEPS climbs onto a low stone BLOCK set against the rim, and a tall timber POST stands on
+that block. At the FAR edge a second timber POST stands on bare paving, barely knee high. A taut ROPE
+runs from the head of the tall post, across the opening, to the head of the short one. The loose blocks
+scattered at the opening's edge are broken basalt, shaken free where the floor gave way. There is no
+rim, no coping and no frame around the opening: the crack meets bare paving on every side.
 
 Basalt worn dark and faintly polished where feet have crossed near it, with a thin crust of pale natron
-dust settled into the crack's edges and over the fallen blocks. The post is old timber, split and grey.
-The rope is bleached hemp, pale against the dark stone.
+dust settled into the crack's edges and over the fallen blocks. The posts are old timber, split and
+grey. The rope is bleached hemp, pale against the dark stone.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
-The shadow at the post's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the broken
+paving along the lower rim of the opening nearest the viewer, the top of each course of stone in the
+shaft, the head of each post — and everything turned away from it falls into shadow. Keep that caught
+light on the EDGES of the stone; the opening itself stays the darkest thing in the picture, and no ledge,
+step or floor appears inside it.
 
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope, and none of it shines.
+The shadow at the posts' feet is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
 ```
 
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold pit --contents=ziplineNorth --colour=#a7b2be --floor=#8d98a5
+scaffold pit --contents=dropNorth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/expert/dropNorth.webp --tier=expert --name=dropNorth --slot=prop \
-  --filter=smooth --mask="$OBJ" --brightness=0.85
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 ```
 
-### `expert/dropSouth` — a fissure with a line run out to the near side
+### `expert/dropSouth` — a launch at the far lip, riding toward the viewer
 
 **Attach:**
 
@@ -2676,30 +2713,159 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a FISSURE torn across a passage floor, seen from above. The black quadrilateral is the
-OPENING — the crack's own depth, and it is the darkest thing in the picture with no detail in it at all;
-it is not a wall, not a doorway and not a niche. Standing at the FAR edge of the opening, furthest from
-the viewer, is a short timber POST, driven into the paving; from its top a taut ROPE runs forward and
-across the opening, down to bare stone at the edge NEAREST the viewer, where it ends — there is nothing
-there to hold. The loose blocks scattered at the opening's edge are broken basalt, shaken free where the
-floor gave way. There is no rim, no coping and no frame around the opening: the crack meets bare paving
-on every side.
+The object: a FISSURE torn across a passage floor, seen from above. The dark quadrilateral is the
+OPENING — a hole in the floor, not a wall, not a doorway and not a niche, and nothing stands inside it
+that a person could stand on. Just under its far rim two courses of rough CUT STONE show, the shaft's
+own lining, taking what little light reaches down; below those courses the shaft goes black and stays
+black, and nothing is drawn down there at all. At the FAR edge of the opening, furthest from the viewer,
+a short flight of two STEPS climbs onto a low stone BLOCK set against the rim, and a tall timber POST
+stands on that block. At the edge NEAREST the viewer a second timber POST stands on bare paving, barely
+knee high. A taut ROPE runs from the head of the tall post, across the opening and downhill, to the head
+of the short one. The loose blocks scattered at the opening's edge are broken basalt, shaken free where
+the floor gave way. There is no rim, no coping and no frame around the opening: the crack meets bare
+paving on every side.
 
 Basalt worn dark and faintly polished where feet have crossed near it, with a thin crust of pale natron
-dust settled into the crack's edges and over the fallen blocks. The post is old timber, split and grey.
-The rope is bleached hemp, pale against the dark stone.
+dust settled into the crack's edges and over the fallen blocks. The posts are old timber, split and
+grey. The rope is bleached hemp, pale against the dark stone.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
-The shadow at the post's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the broken
+paving along the lower rim of the opening nearest the viewer, the top of each course of stone in the
+shaft, the head of each post — and everything turned away from it falls into shadow. Keep that caught
+light on the EDGES of the stone; the opening itself stays the darkest thing in the picture, and no ledge,
+step or floor appears inside it.
 
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope, and none of it shines.
+The shadow at the posts' feet is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
 ```
 
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold pit --contents=ziplineSouth --colour=#a7b2be --floor=#8d98a5
+scaffold pit --contents=dropSouth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dropSouth --slot=prop \
-  --filter=smooth --mask="$OBJ" --brightness=0.85
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+```
+
+
+## The handle — expert, two tiles
+
+A lever a player throws, which opens a gate somewhere else on the floor. It has its own map marker
+already — a post with an arm swung off it, in the lever's own amber (`HandleShape`, `nodeShapes.tsx`) —
+and this is the furniture that makes the room read as a room with a mechanism in it rather than a room
+with a badge on it.
+
+**It is a BINARY toggle and it draws its own position.** `expert/leverLeft` and `expert/leverRight` are
+the same lever thrown to each side: some doors open at one end, some at the other. Everything but the
+arm is identical between them — same block, same shoe, same post, same pivot, same height — so a player
+reads one object in two states rather than two objects.
+
+**Two renders, not one mirrored, and the reason is measured.** A mirror in x is a valid oblique view
+under `drawn = (x, z + k*y)`, which is why `dropEast` mirrors to `dropWest` for free. It does not serve
+here for two reasons, the first of which is the bigger: this prop takes a `--spin`, and mirroring flips
+which way the block lies askew of the paving AND changes the arm's drawn slope — a mirrored `right`
+differs from a real `left` by 8% RMSE over the tile, which is plainly visible. Rendered at `--spin=0`
+the same comparison falls to 2%, and what is left is the LIGHT: the rig's sun comes over the viewer's
+left shoulder, so a mirrored tile arrives lit from the right. On a hole that goes unnoticed; on a post
+with one lit face and one shaded one, standing in the same room as its own other state, it does not.
+If a rank ever wants to spend one roll instead of two, `--spin=0` plus a runtime mirror is the trade,
+and the wrong-side light on one state is what it costs.
+
+**The throw is 52 degrees off vertical**, where the map marker's arm is at 42. The states are told apart
+by where the GRIP sits, and its travel between them is `2 * arm * sin(swing)`: 0.42 of a unit at 32
+degrees, 0.63 at 52, against a post 0.10 wide. At the shallower angle the two grips sit close enough
+that the pair reads as one lever wobbling.
+
+**Expert only**, matching the drops. Master and wizard are where the 56 floor-key gates live and they
+are queued when real floors there author levers, not before.
+
+**It must not read as a trap.** This game's traps are rooms wearing a crimson badge with a skull, and
+they are disarmed with a tool; a lever is not. So both prompts say outright that nothing about it is
+sharp or sprung, and the palette stays stone, timber and bronze with no red anywhere.
+
+### `expert/leverLeft` — the handle thrown to the left
+
+**Attach:**
+
+1. `~/tile-previews/leverLeft-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a floor LEVER, thrown over to the LEFT. A low stone BLOCK is bedded into the paving, lying
+askew of it. A bronze SHOE is set on the block, and a squared timber POST is stepped into that shoe.
+Through the post's head runs a bronze PIVOT, and off the pivot an ARM is swung over and down to the
+left; through the arm's end runs a brass GRIP, rubbed bright where hands have closed on it. Nothing
+about this object is sharp, pointed or sprung: it is a handle, and the only thing anyone does with it
+is pull.
+
+Dark basalt for the block, worn smooth on its top face where boots have stood on it, with pale natron
+dust in the joint where it meets the paving. The post is old timber, split and grey, dark against the
+stone. The shoe and the pivot are bronze gone dull and green-brown with age; the grip alone is worn back
+to bright metal.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the block's
+top face, the pivot, the grip — and everything turned away from it falls into shadow.
+
+The shadow at the block's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust, timber and bronze.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold lever --contents=left --spin=10 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/leverLeft.webp --tier=expert --name=leverLeft --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.9
+```
+
+### `expert/leverRight` — the same handle thrown to the right
+
+**Attach:**
+
+1. `~/tile-previews/leverRight-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a floor LEVER, thrown over to the RIGHT. A low stone BLOCK is bedded into the paving, lying
+askew of it. A bronze SHOE is set on the block, and a squared timber POST is stepped into that shoe.
+Through the post's head runs a bronze PIVOT, and off the pivot an ARM is swung over and up to the
+right; through the arm's end runs a brass GRIP, rubbed bright where hands have closed on it. Nothing
+about this object is sharp, pointed or sprung: it is a handle, and the only thing anyone does with it
+is pull.
+
+Dark basalt for the block, worn smooth on its top face where boots have stood on it, with pale natron
+dust in the joint where it meets the paving. The post is old timber, split and grey, dark against the
+stone. The shoe and the pivot are bronze gone dull and green-brown with age; the grip alone is worn back
+to bright metal.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the block's
+top face, the pivot, the grip — and everything turned away from it falls into shadow.
+
+The shadow at the block's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust, timber and bronze.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold lever --contents=right --spin=10 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/leverRight.webp --tier=expert --name=leverRight --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.9
 ```
