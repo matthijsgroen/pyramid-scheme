@@ -88,7 +88,7 @@ export const JourneyPathView: FC<Props> = ({
   return (
     <button
       onClick={onClick}
-      className={`group relative mt-8 flex aspect-square w-full overflow-hidden rounded-lg p-12 shadow-2xl transition-all duration-300 hover:scale-102 hover:shadow-xl ${
+      className={`group relative mt-8 flex w-full flex-col overflow-hidden rounded-lg shadow-2xl transition-all duration-300 hover:scale-102 hover:shadow-xl ${
         isPyramid ? "border-2 border-amber-800" : "border-2 border-stone-700"
       }`}
       style={
@@ -166,113 +166,117 @@ export const JourneyPathView: FC<Props> = ({
         </>
       )}
 
-      {/* Path + site nodes */}
-      {inJourney && (
-        <svg className="absolute inset-0 size-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-          {/* Node hover halo — plain CSS so it doesn't depend on Tailwind JIT picking up SVG hover
-              utilities, and pointer-events:all so the transparent-when-idle circle still captures. */}
-          <style>{`.jpv-node{fill:#fcd34d;opacity:0;pointer-events:all;cursor:pointer;transition:opacity .15s}.jpv-node:hover{opacity:.6}`}</style>
-          {/* Faint full path */}
-          <path
-            d={path}
-            stroke={isPyramid ? "rgba(107,114,128,0.35)" : "rgba(156,163,175,0.25)"}
-            strokeWidth="1.5"
-            fill="none"
-            strokeLinecap="round"
-          />
-          {/* Site nodes */}
-          {nodes.map((pos, i) => {
-            const isCompleted = i < currentIdx
-            const isCurrent = i === currentIdx
-            if (isCompleted) {
-              return (
-                <g key={i}>
-                  {/* Single hit-target + hover halo. pointer-events on the dot are disabled so the
-                      whole radius (center included) hovers this circle, not the dot on top of it. */}
-                  <circle
-                    cx={pos.x}
-                    cy={pos.y}
-                    r="9"
-                    onClick={
-                      onNodeClick
-                        ? e => {
-                            e.stopPropagation()
-                            e.nativeEvent.stopImmediatePropagation()
-                            onNodeClick(i + 1)
-                          }
-                        : undefined
-                    }
-                    className={onNodeClick ? "jpv-node" : "pointer-events-none fill-transparent"}
-                  />
-                  <circle
-                    cx={pos.x}
-                    cy={pos.y}
-                    r="3.5"
-                    fill="rgb(245,158,11)"
-                    stroke="rgb(180,83,9)"
-                    strokeWidth="0.8"
-                    className="pointer-events-none"
-                  />
-                  {/* Emerald pulse: this completed pyramid still holds unvisited content (a skipped
-                      chest/puzzle, or a ward path/tableau a key you now hold unlocks). Only completed
-                      nodes light — the pyramid you're currently in never does. */}
-                  {unexploredNodes?.has(i + 1) && (
-                    // SMIL animating r + opacity, not `animate-ping`: a CSS scale() transform on an
-                    // SVG element scales about the SVG origin (0,0), so the ring would drift toward
-                    // the corner instead of pulsing in place. Growing `r` expands from the fixed centre.
-                    <circle
-                      cx={pos.x}
-                      cy={pos.y}
-                      fill="none"
-                      stroke="rgb(16,185,129)"
-                      strokeWidth="1"
-                      className="pointer-events-none"
-                    >
-                      <animate attributeName="r" values="3.5;7" dur="1.1s" repeatCount="indefinite" />
-                      <animate attributeName="opacity" values="0.8;0" dur="1.1s" repeatCount="indefinite" />
-                    </circle>
-                  )}
-                </g>
-              )
-            }
-            if (isCurrent) {
-              return (
-                <g key={i} className="animate-pulse">
-                  <circle cx={pos.x} cy={pos.y} r="5.5" fill="rgba(251,191,36,0.25)" />
-                  <circle
-                    cx={pos.x}
-                    cy={pos.y}
-                    r="3.5"
-                    fill="rgb(251,191,36)"
-                    stroke="rgb(180,83,9)"
-                    strokeWidth="0.8"
-                  />
-                </g>
-              )
-            }
-            return (
-              <circle
-                key={i}
-                cx={pos.x}
-                cy={pos.y}
-                r="3"
-                fill={isPyramid ? "rgba(255,255,255,0.6)" : "rgba(180,170,160,0.25)"}
-                stroke={isPyramid ? "rgba(107,114,128,0.5)" : "rgba(156,163,175,0.4)"}
-                strokeWidth="0.8"
-              />
-            )
-          })}
-        </svg>
-      )}
-
-      {/* Label — pointer-events-none so node clicks/hovers underneath still reach the SVG circles */}
+      {/* Label. It is the button's own hit target: solid, and in flow above the map, so the site
+          nodes have nowhere to sit behind the words that name what a click here does. */}
       <span
-        className={`pointer-events-none relative z-10 text-2xl font-bold transition-colors duration-300 ${
+        className={`relative z-10 px-12 pt-12 pb-4 text-left text-2xl font-bold transition-colors duration-300 ${
           isPyramid ? "text-amber-900 group-hover:text-amber-800" : "text-amber-200 group-hover:text-amber-100"
         }`}
       >
         {isPyramid ? "🗺️" : "🏺"} {label}
       </span>
+
+      {/* The map: path + site nodes, in a box of its own below the label. Square, because the node
+          positions are authored in a square 0-100 space and a stretched box draws them as ellipses. */}
+      <div className="relative aspect-square w-full">
+        {inJourney && (
+          <svg className="absolute inset-0 size-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            {/* Node hover halo — plain CSS so it doesn't depend on Tailwind JIT picking up SVG hover
+              utilities, and pointer-events:all so the transparent-when-idle circle still captures. */}
+            <style>{`.jpv-node{fill:#fcd34d;opacity:0;pointer-events:all;cursor:pointer;transition:opacity .15s}.jpv-node:hover{opacity:.6}`}</style>
+            {/* Faint full path */}
+            <path
+              d={path}
+              stroke={isPyramid ? "rgba(107,114,128,0.35)" : "rgba(156,163,175,0.25)"}
+              strokeWidth="1.5"
+              fill="none"
+              strokeLinecap="round"
+            />
+            {/* Site nodes */}
+            {nodes.map((pos, i) => {
+              const isCompleted = i < currentIdx
+              const isCurrent = i === currentIdx
+              if (isCompleted) {
+                return (
+                  <g key={i}>
+                    {/* Single hit-target + hover halo. pointer-events on the dot are disabled so the
+                      whole radius (center included) hovers this circle, not the dot on top of it. */}
+                    <circle
+                      cx={pos.x}
+                      cy={pos.y}
+                      r="9"
+                      onClick={
+                        onNodeClick
+                          ? e => {
+                              e.stopPropagation()
+                              e.nativeEvent.stopImmediatePropagation()
+                              onNodeClick(i + 1)
+                            }
+                          : undefined
+                      }
+                      className={onNodeClick ? "jpv-node" : "pointer-events-none fill-transparent"}
+                    />
+                    <circle
+                      cx={pos.x}
+                      cy={pos.y}
+                      r="3.5"
+                      fill="rgb(245,158,11)"
+                      stroke="rgb(180,83,9)"
+                      strokeWidth="0.8"
+                      className="pointer-events-none"
+                    />
+                    {/* Emerald pulse: this completed pyramid still holds unvisited content (a skipped
+                      chest/puzzle, or a ward path/tableau a key you now hold unlocks). Only completed
+                      nodes light — the pyramid you're currently in never does. */}
+                    {unexploredNodes?.has(i + 1) && (
+                      // SMIL animating r + opacity, not `animate-ping`: a CSS scale() transform on an
+                      // SVG element scales about the SVG origin (0,0), so the ring would drift toward
+                      // the corner instead of pulsing in place. Growing `r` expands from the fixed centre.
+                      <circle
+                        cx={pos.x}
+                        cy={pos.y}
+                        fill="none"
+                        stroke="rgb(16,185,129)"
+                        strokeWidth="1"
+                        className="pointer-events-none"
+                      >
+                        <animate attributeName="r" values="3.5;7" dur="1.1s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" values="0.8;0" dur="1.1s" repeatCount="indefinite" />
+                      </circle>
+                    )}
+                  </g>
+                )
+              }
+              if (isCurrent) {
+                return (
+                  <g key={i} className="animate-pulse">
+                    <circle cx={pos.x} cy={pos.y} r="5.5" fill="rgba(251,191,36,0.25)" />
+                    <circle
+                      cx={pos.x}
+                      cy={pos.y}
+                      r="3.5"
+                      fill="rgb(251,191,36)"
+                      stroke="rgb(180,83,9)"
+                      strokeWidth="0.8"
+                    />
+                  </g>
+                )
+              }
+              return (
+                <circle
+                  key={i}
+                  cx={pos.x}
+                  cy={pos.y}
+                  r="3"
+                  fill={isPyramid ? "rgba(255,255,255,0.6)" : "rgba(180,170,160,0.25)"}
+                  stroke={isPyramid ? "rgba(107,114,128,0.5)" : "rgba(156,163,175,0.4)"}
+                  strokeWidth="0.8"
+                />
+              )
+            })}
+          </svg>
+        )}
+      </div>
 
       {/* Corner icon */}
       <div

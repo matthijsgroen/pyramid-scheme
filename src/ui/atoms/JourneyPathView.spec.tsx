@@ -38,3 +38,14 @@ describe("JourneyPathView unexplored-node marker", () => {
     expect(emeraldPulses(container)).toHaveLength(0)
   })
 })
+
+describe("JourneyPathView label", () => {
+  it("is not drawn over the map, so a click on it can never reach a site node", () => {
+    const { container, getByText } = renderView()
+    const label = getByText(/go/)
+    const map = container.querySelector("svg")!.parentElement!
+
+    expect(map.contains(label)).toBe(false)
+    expect(label.className).not.toContain("pointer-events-none")
+  })
+})
