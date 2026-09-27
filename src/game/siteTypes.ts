@@ -228,6 +228,18 @@ export type RoomCell = {
    * floor's shape. It NAMES the way out and is not a key anything holds — the board in the fork opens
    * one of these ids at a time, and no chest anywhere mints them. */
   exits?: { dir: Direction; kind: "main" | "side" | "ward" | "fork"; gateKeyId?: string }[]
+  /** THIS ROOM IS A MECHANISM: which gate key id each of its positions opens, and whether it can be
+   * put back to the position that opens nothing.
+   *
+   * One record for every mechanism the floor has, so the walk (src/game/floorLock.ts) and the runtime
+   * (src/game/mechanismDoors.ts) read the same list rather than each deriving one. A switch also
+   * reports its doors on `exits[].gateKeyId`, which is what its own board reads to know what to draw;
+   * this is the same doors said once more in the form a mechanism is asked for.
+   *
+   * `restReachable` is a fact about the thing, not a convention: a board routes its light somewhere
+   * every time it is solved and cannot be un-solved, while a lever can be thrown back. Assuming either
+   * for both gives the walk a transition the player does not have, or takes one they do. */
+  mechanism?: MechanismRecord
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 
@@ -256,6 +268,11 @@ export type FloorGrid = {
   readonly staircases: Record<string, readonly [number, number]>
 }
 
+export type MechanismRecord = {
+  /** One entry per position that opens something. The rest position opens nothing and is not listed. */
+  positions: { state: string; gateKeyId: string }[]
+  restReachable: boolean
+}
 export type GateConfig =
   | {
       type: "floor-key"

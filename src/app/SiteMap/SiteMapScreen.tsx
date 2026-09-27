@@ -20,7 +20,7 @@ import { useSiteNavigation, type ArrivalPrompt, type ArrivalPromptKind } from ".
 import { RewardFlow } from "./RewardFlow"
 import { EncounterModal } from "./EncounterModal"
 import { useApplyReward } from "./applyReward"
-import { MECHANISM_AT_REST, useJourneys } from "@/app/state/useJourneys"
+import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
 import { useDetector } from "@/app/state/useDetector"
 import { useInventory } from "@/app/Inventory/useInventory"
@@ -72,12 +72,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   const foundCorridors = useFoundCorridors(journeys, journeyId)
   const mechanismStates = useMechanismStates(journeys, journeyId)
-  // ponytail: a switch's position IS the key id of the way out it opens, so the set is the positions
-  // that are not rest. Task 2 replaces this with the grid-driven derivation that also serves a handle.
-  const openWaysOut = useMemo(
-    () => new Set([...mechanismStates.values()].filter(s => s !== MECHANISM_AT_REST)),
-    [mechanismStates]
-  )
 
   const { grid, explorerPos, hiddenSections, junctionSections } = useAssembledFloor(
     journeyId,
@@ -89,7 +83,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     detectorLevels.corridor,
     foundCorridors,
     levelIndex,
-    openWaysOut
+    mechanismStates
   )
 
   // Where a stored address sits on the floor the player is looking at. Only this floor is assembled,

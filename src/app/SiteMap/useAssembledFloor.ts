@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import { assembleFloor } from "@/game/siteAssembler"
+import { openDoorsFor } from "@/game/mechanismDoors"
 import { completeCell, isSealedWayOut } from "@/game/gridNavigation"
 import type { Direction, FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
@@ -94,7 +95,7 @@ export const applyExplored = (grid: FloorGrid, floor: number, exploredCells: Rec
  * Only a door with nothing standing in it is ever touched: a gate a family renders is opened by what
  * the player does in it, and that is not this.
  */
-const NONE_OPEN: ReadonlySet<string> = new Set()
+const NO_POSITIONS: ReadonlyMap<string, string> = new Map()
 
 const openWaysOut = (grid: FloorGrid, open: ReadonlySet<string>): FloorGrid => {
   if (open.size === 0) return grid
@@ -316,8 +317,10 @@ export const useAssembledFloor = (
   // Which level of the journey this floor belongs to, so its rooms can be dealt their boards
   // (src/game/seeds/boardIndex.ts). Unset outside the baked world — stories, specs, the builder.
   levelIndex?: number,
-  /** The ids of ways out the floor's switches currently leave open (see openWaysOut). */
-  openedWaysOut?: ReadonlySet<string>
+  /** Which position every mechanism on this floor is stored in, keyed by its cell address
+   * (see useMechanismStates) — read against the floor's own `mechanism` records to find what stands
+   * open (see openDoorsFor). */
+  mechanismPositions?: ReadonlyMap<string, string>
 ): {
   grid: FloorGrid | null
   explorerPos: readonly [number, number]
@@ -338,8 +341,11 @@ export const useAssembledFloor = (
 
   // The carve as the floor's own switches have left it — what everything below reads as "the floor".
   const carvedGrid = useMemo(
-    () => (baseGrid ? sealWaysOut(openWaysOut(baseGrid, openedWaysOut ?? NONE_OPEN)) : null),
-    [baseGrid, openedWaysOut]
+    () =>
+      baseGrid
+        ? sealWaysOut(openWaysOut(baseGrid, openDoorsFor(baseGrid, currentFloor, mechanismPositions ?? NO_POSITIONS)))
+        : null,
+    [baseGrid, currentFloor, mechanismPositions]
   )
 
   // Standing in the doorway is having been there: the entrance reads explored whether or not the save

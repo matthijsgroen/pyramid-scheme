@@ -2242,6 +2242,13 @@ export const assembleFloor = (
           const gateKeyId = gateKeyByDir.get(exit.dir)
           return gateKeyId ? { ...exit, gateKeyId } : exit
         }),
+        // The same doors, said once more in the form a mechanism is asked for. A board cannot be
+        // un-solved — solving it always routes the light to some shrine — so it never returns to rest
+        // of the player's choosing, and the walk must not be handed a move they do not have.
+        mechanism: {
+          positions: [...gateKeyByDir.values()].map(gateKeyId => ({ state: gateKeyId, gateKeyId })),
+          restReachable: false,
+        },
       }
       return overwritten
     }

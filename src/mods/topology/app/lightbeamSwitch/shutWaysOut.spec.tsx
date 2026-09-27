@@ -1,9 +1,8 @@
 // @vitest-environment jsdom
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
-import { useMemo } from "react"
 import { act, cleanup, render } from "@testing-library/react"
 import { getFamilyPlugin, resolveEncounter, type FamilyContext } from "@/app/families/familyRegistry"
-import { MECHANISM_AT_REST, useJourneys } from "@/app/state/useJourneys"
+import { useJourneys } from "@/app/state/useJourneys"
 import { classifyForkShape } from "@/game/forkShape"
 import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, findPath, revealAll, walkableFrom } from "@/game/gridNavigation"
@@ -107,12 +106,18 @@ const report = (seen: Seen) => Object.assign(latest, seen)
 const Room = ({ explored = {} }: { explored?: Record<string, string[]> }) => {
   const journeys = useJourneys()
   const mechanismStates = useMechanismStates(journeys, JOURNEY)
-  // ponytail: a switch's position IS the key id of the way out it opens, mirrors SiteMapScreen's stopgap.
-  const open = useMemo(
-    () => new Set([...mechanismStates.values()].filter(s => s !== MECHANISM_AT_REST)),
-    [mechanismStates]
+  const { grid } = useAssembledFloor(
+    JOURNEY,
+    floorConfig,
+    SEED,
+    0,
+    explored,
+    null,
+    0,
+    undefined,
+    LEVEL_NR - 1,
+    mechanismStates
   )
-  const { grid } = useAssembledFloor(JOURNEY, floorConfig, SEED, 0, explored, null, 0, undefined, LEVEL_NR - 1, open)
   const fork = grid ? forkIn(grid) : undefined
   const plugin = getFamilyPlugin("lightbeamSwitch")
   if (!grid || !fork || !plugin) {
@@ -239,11 +244,6 @@ const stand = (at: readonly [number, number]) => {
 const StandingAt = ({ address }: { address: string }) => {
   const journeys = useJourneys()
   const mechanismStates = useMechanismStates(journeys, JOURNEY)
-  // ponytail: a switch's position IS the key id of the way out it opens, mirrors SiteMapScreen's stopgap.
-  const open = useMemo(
-    () => new Set([...mechanismStates.values()].filter(s => s !== MECHANISM_AT_REST)),
-    [mechanismStates]
-  )
   const { grid, explorerPos } = useAssembledFloor(
     JOURNEY,
     floorConfig,
@@ -254,7 +254,7 @@ const StandingAt = ({ address }: { address: string }) => {
     0,
     undefined,
     LEVEL_NR - 1,
-    open
+    mechanismStates
   )
   report({ grid })
   stand(explorerPos)
@@ -464,11 +464,6 @@ const reportWalk = (seen: Walked) => Object.assign(walked, seen)
 const Walking = () => {
   const journeys = useJourneys()
   const mechanismStates = useMechanismStates(journeys, JOURNEY)
-  // ponytail: a switch's position IS the key id of the way out it opens, mirrors SiteMapScreen's stopgap.
-  const open = useMemo(
-    () => new Set([...mechanismStates.values()].filter(s => s !== MECHANISM_AT_REST)),
-    [mechanismStates]
-  )
   const explored = journeys.getExploredCells(JOURNEY)
   const positionKey = journeys.getJourney(JOURNEY)?.positionKey
   const { grid, explorerPos } = useAssembledFloor(
@@ -481,7 +476,7 @@ const Walking = () => {
     0,
     undefined,
     LEVEL_NR - 1,
-    open
+    mechanismStates
   )
   const encounter = useEncounter({
     journeys,
