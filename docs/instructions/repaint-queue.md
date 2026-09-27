@@ -2582,6 +2582,13 @@ so the hole shows depth rather than reading as a flat black rectangle, the spoil
 Queued at expert only: the develop journey's drop stands on an expert floor, which is the one rank a
 drop can actually be seen on today. The other four ranks stay unqueued until this one has landed.
 
+**`dropNorth`'s flight is climbed FRONTALLY**, away from the viewer, where `dropEast`'s is crossed from
+the side. That is the honest orientation for a heading whose player climbs and then travels into the
+picture, it is the arrangement this projection separates best (`prim_stair`: a flight rising as it
+recedes gains its own rise AND 0.7 of its going, twice over), and it is what gives north a silhouette
+east does not have — a stack of treads read head-on against east's stepped wedge. Without it the two
+tiles launch from the same corner and run their line the same way.
+
 **`dropNorth` stands its launch BESIDE the mouth, not across it, and it cost a roll to learn.** Anything
 raised at the near lip draws between the viewer and the opening — a block of height h with its back face
 on the lip draws its top at `h - k*d/2`, inside the mouth's own band for every h above zero, so no height
@@ -2681,8 +2688,8 @@ own lining, taking what little light reaches down; below those courses the shaft
 black, and nothing is drawn down there at all. THE OPENING'S LOWER RIM — its edge nearest the viewer —
 runs unbroken from one side of the crack to the other: nothing stands in front of it, nothing covers it,
 and it is the line that says this is a hole in a floor and not a recess in a wall. To the LEFT of the
-opening, clear of the crack's own width and set back toward the viewer, a short flight of two STEPS
-climbs onto a low stone BLOCK, and a tall timber POST stands on that block. At the FAR edge of the
+opening, clear of the crack's own width, a short flight of two STEPS climbs onto a low stone BLOCK, and
+a tall timber POST stands on that block. At the FAR edge of the
 opening, furthest from the viewer, a second timber POST stands on bare paving, barely knee high. A taut
 ROPE runs from the head of the tall post, across the opening, to the head of the short one. The loose
 blocks scattered at the opening's edge are broken basalt, shaken free where the floor gave way. There is
@@ -2729,9 +2736,11 @@ The object: a FISSURE torn across a passage floor, seen from above. The dark qua
 OPENING — a hole in the floor, not a wall, not a doorway and not a niche, and nothing stands inside it
 that a person could stand on. Just under its far rim two courses of rough CUT STONE show, the shaft's
 own lining, taking what little light reaches down; below those courses the shaft goes black and stays
-black, and nothing is drawn down there at all. At the FAR edge of the opening, furthest from the viewer,
-a short flight of two STEPS climbs onto a low stone BLOCK set against the rim, and a tall timber POST
-stands on that block. At the edge NEAREST the viewer a second timber POST stands on bare paving, barely
+black, and nothing is drawn down there at all. THE OPENING'S LOWER RIM — its edge nearest the viewer —
+runs unbroken from one side of the crack to the other: nothing stands in front of it, nothing covers it,
+and it is the line that says this is a hole in a floor and not a recess in a wall. At the FAR edge of the
+opening, furthest from the viewer, a short flight of two STEPS climbs onto a low stone BLOCK set against
+the rim, and a tall timber POST stands on that block. At the edge NEAREST the viewer a second timber POST stands on bare paving, barely
 knee high. A taut ROPE runs from the head of the tall post, across the opening and downhill, to the head
 of the short one. The loose blocks scattered at the opening's edge are broken basalt, shaken free where
 the floor gave way. There is no rim, no coping and no frame around the opening: the crack meets bare

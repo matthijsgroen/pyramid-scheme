@@ -1425,12 +1425,13 @@ def _launch_crossing(w, d, heading):
     which says nothing about why the way back is shut; a flight at each end says the crossing is a bridge.
     Which lip carries it is exactly what differs between the three renders.
 
-    THE FLIGHT ALWAYS CLIMBS IN X, whichever lip the block sits at, and that is `prim_stair`'s finding
-    rather than a preference: a flight climbing AWAY from the viewer separates twice over, one climbing
-    TOWARD him very nearly cancels — at a rise of 0.075 against a going of 0.13 the treads would move
-    0.016 apart on the page and the steps would smear into the block. Run in x the rise is drawn honestly
-    and the profile is a stepped silhouette, which is the one arrangement this projection shows a stair's
-    side in at all.
+    THE FLIGHT CLIMBS THE WAY THE PLAYER DOES, and the three headings are not alike. `dropNorth`'s is
+    climbed into the picture, so it runs in +Y and is read head-on, risers stacking toward the camera —
+    the arrangement `prim_stair` measures as separating TWICE over, each tread gaining its own rise and
+    0.7 of its going. `drop` crosses the frame and runs in X, where the rise is drawn honestly and the
+    profile is a stepped side view. The one direction never used is a flight climbing TOWARD the viewer:
+    at a rise of 0.08 against a going of 0.17 the treads move 0.04 apart on the page and the flight
+    smears into the block it climbs to.
 
     WHAT THE SHEAR DOES TO THE SLOPE, stated because it cannot be fixed and should not be papered over.
     Drawn height is z + k*y, so on the two Y headings the lips themselves are already k*d apart on the
@@ -1444,13 +1445,27 @@ def _launch_crossing(w, d, heading):
     plinth_h, rise, going, post = 0.24, 0.08, 0.17, 0.06
     tall, short = 0.26, 0.14
 
-    def block(px0, px1, py0, py1, step_y):
+    def block(px0, px1, py0, py1, step_y, frontal=False):
         mark(box(px1 - px0, py1 - py0, plinth_h, x=(px0 + px1) / 2, y=(py0 + py1) / 2, z=plinth_h / 2), "body")
-        # Two treads, the lower one furthest from the block. They overlap it in x by nothing — each is a
+        # Two treads, the lower one furthest from the block. They overlap it by nothing — each is a
         # separate stone and the gap between their drawn tops is the whole of what says "steps".
+        #
+        # FRONTAL climbs AWAY from the viewer instead of across the frame, for a heading whose player
+        # climbs into the picture. It is the arrangement this projection pays best: `prim_stair` measures
+        # that a flight rising as it recedes separates TWICE over — each tread gains its own rise and 0.7
+        # of its going — where the same flight climbing toward the viewer very nearly cancels and smears.
+        # Each tread is also a little wider than the one above it, so the flight fans out downward and
+        # the silhouette is a stair rather than the striped wall a head-on flight otherwise draws.
         for i in (0, 1):
             h = rise * (i + 1)
-            mark(box(going, step_y, h, x=px0 - going * (1.5 - i), y=(py0 + py1) / 2, z=h / 2), "body")
+            if frontal:
+                fan = (1 - i) * 0.035
+                mark(
+                    box(px1 - px0 + 2 * fan, going, h, x=(px0 + px1) / 2, y=py0 - going * (1.5 - i), z=h / 2),
+                    "body",
+                )
+            else:
+                mark(box(going, step_y, h, x=px0 - going * (1.5 - i), y=(py0 + py1) / 2, z=h / 2), "body")
 
     if heading == "dropNorth":  # travel toward the far lip: the block stands at the NEAR one
         # AND STANDS TO ONE SIDE OF THE MOUTH RATHER THAN ACROSS IT, which is the difference between a
@@ -1466,8 +1481,14 @@ def _launch_crossing(w, d, heading):
         # was killed for. Moved out past `-w/2` the lip runs unbroken under the whole mouth, which is
         # what `drop` and `dropSouth` have always had — east by standing its block beside the mouth,
         # south by standing it beyond and above.
+        #
+        # ITS FLIGHT IS THE ONE THAT CLIMBS FRONTALLY, and it is the heading that can afford to: the
+        # player climbs here and then travels AWAY from the viewer, so the risers face the camera and
+        # the stair is read head-on. It is also what gives north a silhouette `drop` does not have —
+        # without it the two tiles stand their launch at the same corner and run their line the same way,
+        # and only the height of the two ends tells them apart.
         py0, py1 = -d / 2 - 0.23, -d / 2 + 0.03
-        block(-w / 2 - 0.33, -w / 2, py0, py1, (py1 - py0) * 0.80)
+        block(-w / 2 - 0.33, -w / 2, py0, py1, (py1 - py0) * 0.80, frontal=True)
         head, foot = (-w / 2 - 0.165, (py0 + py1) / 2), (0.34, d / 2 + 0.07)
     elif heading == "dropSouth":  # travel toward the viewer: the block stands at the FAR lip
         py0, py1 = d / 2 - 0.03, d / 2 + 0.23
