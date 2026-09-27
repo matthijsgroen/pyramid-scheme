@@ -149,6 +149,31 @@ const rayRects = (row: number, col: number, lean: number): Rect[] => {
   }).flat()
 }
 
+/**
+ * The rays, cut to where light may actually land.
+ *
+ * GEOMETRY RATHER THAN A NESTED CLIP, because the obvious way is forbidden here: wrapping a beam in a
+ * clipped box means a box the size of the map, and a clipped layer is rasterised at its own size —
+ * `docs/instructions/map-rendering.md` records that as the thing that killed this renderer on a phone.
+ * Two lists of rectangles intersect in a few lines and cost nothing.
+ *
+ * What a beam is allowed to fall on is the FLOOR, plus the band of wall directly above the cell it comes
+ * through — that band is the roof it enters by, and cutting it away leaves a shaft that starts in mid
+ * air. Everything else is rock: a ray crossing onto it reads as a hole in the masonry.
+ */
+const clippedTo = (rays: readonly Rect[], allowed: readonly Rect[]): Rect[] => {
+  const out: Rect[] = []
+  for (const [rx, ry, rw, rh] of rays)
+    for (const [ax, ay, aw, ah] of allowed) {
+      const x = Math.max(rx, ax)
+      const y = Math.max(ry, ay)
+      const w = Math.min(rx + rw, ax + aw) - x
+      const h = Math.min(ry + rh, ay + ah) - y
+      if (w > 0 && h > 0) out.push([x, y, w, h])
+    }
+  return out
+}
+
 const cellOf = (key: string): readonly [number, number] => {
   const [row, col] = key.split(",").map(Number)
   return [row, col]
@@ -213,10 +238,13 @@ export const BeamShafts = ({
   claims,
   shafts,
   siteId,
+  floorRects,
 }: {
   grid: FloorGrid
   claims: RoomClaims
   shafts: readonly string[]
+  /** The walkable floor, as rectangles. The patch of sun is cut to it — see the pool below. */
+  floorRects: readonly Rect[]
   siteId: string
 }) => {
   if (shafts.length === 0) return null
@@ -225,24 +253,56 @@ export const BeamShafts = ({
       {shafts.map((key, shaft) => {
         const [row, col] = cellOf(key)
         const lean = shaftLean(grid, claims, siteId, key)
-        const rects = rayRects(row, col, lean)
+        // Where this beam may reach: the floor it can see, plus its own way in through the roof.
+        const band: Rect = [cellLeft(col), cellTop(row) - WALL_H, CELL, WALL_H]
+        const reach = boundsOf(rayRects(row, col, lean))
+        const allowed = [
+          band,
+          ...floorRects.filter(
+            ([fx, fy, fw, fh]) =>
+              fx < reach.x + reach.w && fx + fw > reach.x && fy < reach.y + reach.h && fy + fh > reach.y
+          ),
+        ]
+        const rects = clippedTo(rayRects(row, col, lean), allowed)
+        if (rects.length === 0) return null
         const box = boundsOf(rects)
         const { top, height, footX } = shaftGeometry(row, col, lean)
         return (
           <div key={key}>
-            {/* The patch of sun on the paving, under the rays rather than over them: the dust in the air
-                is between the eye and the floor, so what the rays cross they veil. */}
-            <div
-              data-beam-pool={key}
-              style={{
-                position: "absolute",
-                left: footX - (CELL * POOL_W) / 2,
-                top: top + height - (CELL * POOL_H) / 2,
-                width: CELL * POOL_W,
-                height: CELL * POOL_H,
-                background: `radial-gradient(closest-side, rgba(${DUST},${POOL}), rgba(${DUST},0))`,
-              }}
-            />
+            {(() => {
+              const px = footX - (CELL * POOL_W) / 2
+              const py = top + height - (CELL * POOL_H) / 2
+              const pw = CELL * POOL_W
+              const ph = CELL * POOL_H
+              // CUT TO THE FLOOR IT FALLS ON. The lean already picks a side with ground on it, but it
+              // checks ONE cell over and the pool reaches about one and a half: a shaft a cell in from a
+              // chamber's edge threw its patch of sun past the wall and onto the rock outside, which
+              // reads as a hole in the masonry rather than as light. The torch's pool is deliberately
+              // NOT clipped — a soft glow spilling onto stone beside a passage reads as haze off the
+              // flame — but this one is a hard bright ellipse, and a hard edge outside the room has
+              // nothing in the picture to have cast it.
+              //
+              // Only the rects it can actually reach, never the whole floor: a clipped layer is
+              // rasterised at its own size, which is the rule map-rendering.md sets for every clip here.
+              const near = floorRects.filter(
+                ([fx, fy, fw, fh]) => fx < px + pw && fx + fw > px && fy < py + ph && fy + fh > py
+              )
+              if (near.length === 0) return null
+              return (
+                <div
+                  data-beam-pool={key}
+                  style={{
+                    position: "absolute",
+                    left: px,
+                    top: py,
+                    width: pw,
+                    height: ph,
+                    background: `radial-gradient(closest-side, rgba(${DUST},${POOL}), rgba(${DUST},0))`,
+                    clipPath: `path("${rectsToPath(near, [px, py])}")`,
+                  }}
+                />
+              )
+            })()}
             <ClipLayer
               data-beam-shaft={key}
               rects={rects}

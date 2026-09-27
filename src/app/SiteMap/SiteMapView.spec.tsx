@@ -2,7 +2,7 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, approachCells } from "./SiteMapView"
-import { buildRoomClaims, tileRegionsFor } from "./roomClaims"
+import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
 import { grassMatsFor } from "./floorScatter"
 import { footprintPath } from "./tileRegions"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY } from "./nodeArt"
@@ -1409,6 +1409,46 @@ describe("a shaft of daylight falls into a room", () => {
     const standing = container.querySelector("[data-node-sprite]")!
 
     expect(depthOf(container.querySelector("[data-beam-shaft]")!)).toBeGreaterThan(depthOf(standing))
+  })
+
+  it("cuts the RAYS to the floor and their own way in, never across the rock beside it", () => {
+    // The rays were cut to their own geometry only, so a beam leaning toward a wall laid a wedge of
+    // light over the stone outside the room. A beam may fall on floor it can see, and on the band of
+    // wall it comes through — nothing else.
+    const { container } = render(<SiteMapView grid={beamedRoom()} revealAllCells />)
+    const rays = [...container.querySelectorAll<HTMLElement>("[data-beam-shaft]")]
+    expect(rays.length).toBeGreaterThan(0)
+    // Every square a beam may touch: the floor of the room it falls in, and the band of wall directly
+    // above that floor, which is the roof it comes through.
+    const floor = allFloorRects(regionsOf(beamedRoom()))
+    const allowed: Rect[] = floor.flatMap(([x, y, w, h]) => [[x, y, w, h] as Rect, [x, y - WALL_H, w, WALL_H] as Rect])
+    for (const ray of rays) {
+      // The element's box is the union of the pieces, so the pieces themselves are what to check, and
+      // they are the clip path on the child the feather paints into.
+      const cut = ray.querySelector<HTMLElement>("[style*='clip-path']") ?? ray
+      const { x: ox, y: oy } = boxOf(ray)
+      const pieces = [...cut.style.clipPath.matchAll(/M(-?[\d.]+) (-?[\d.]+)h(-?[\d.]+)v(-?[\d.]+)/g)].map(
+        m => [ox + Number(m[1]), oy + Number(m[2]), Number(m[3]), Number(m[4])] as Rect
+      )
+      expect(pieces.length).toBeGreaterThan(0)
+      for (const [px, py, pw, ph] of pieces) {
+        const held = allowed.some(
+          ([ax, ay, aw, ah]) =>
+            px >= ax - 0.01 && py >= ay - 0.01 && px + pw <= ax + aw + 0.01 && py + ph <= ay + ah + 0.01
+        )
+        expect(held).toBe(true)
+      }
+    }
+  })
+
+  it("cuts the patch of sun to the floor, so no light falls on the rock outside", () => {
+    // The lean picks a side with ground on it, but it looks ONE cell over and the pool reaches about one
+    // and a half: a shaft a cell in from a chamber's edge threw its sun past the wall onto the rock, and
+    // a hard bright ellipse out there has nothing in the picture to have cast it.
+    const { container } = render(<SiteMapView grid={beamedRoom()} revealAllCells />)
+    const pools = [...container.querySelectorAll<HTMLElement>("[data-beam-pool]")]
+    expect(pools.length).toBeGreaterThan(0)
+    for (const pool of pools) expect(pool.style.clipPath).toMatch(/^path\(/)
   })
 
   it("lands the rays in a patch of sun, under them rather than over them", () => {

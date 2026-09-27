@@ -1565,7 +1565,7 @@ export const SiteMapView = ({
 
               {/* The cones last of all: a shaft of dust is between the eye and the room, so it stands in
                 front of the statue it falls on rather than behind it. */}
-              <BeamShafts grid={grid} claims={claims} shafts={shafts} siteId={grid.siteId} />
+              <BeamShafts grid={grid} claims={claims} shafts={shafts} siteId={grid.siteId} floorRects={floorRects} />
             </div>
           </div>
         </div>
