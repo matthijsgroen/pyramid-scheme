@@ -15,6 +15,13 @@ import { DEV_JOURNEY_ID } from "../data"
  * reward — the journey's capability preset (capabilities.ts's DEV_CAPABILITIES) keeps its path ends
  * out of the loot solver entirely, and the generated world's per-currency and per-tier counts are
  * identical with it and without it. Authoring loot here would move real counts; don't.
+ *
+ * AND NOTHING HERE AUTHORS A PUZZLE. Every path on every one of these floors carries zero of them,
+ * main path and branches alike, so the mechanic is the first room past the entrance rather than
+ * something a playtester solves their way to. A bench whose mechanic is entered off the travel map
+ * is the whole point of the journey, and an ordinary puzzle in front of it is a toll paid on every
+ * run that teaches nothing about the feature being walked. The rooms that remain are the mechanism
+ * itself, the gates it drives, and each path's own empty end.
  */
 
 // What the carve must hold open on every floor. Two ways out is the junction a carve nearly always
@@ -28,15 +35,16 @@ const FORKS = [{ exits: 2, count: 1 }]
 const SWITCHES = { encounter: "lightbeamSwitch", min: 1, max: 1 }
 
 // Two ungated branches, so the junction has ways out worth closing and the switch decides something.
-// Their treasure ends stay empty: this journey contributes no loot.
-const branches = () => [sidePath({ puzzles: 1 }), sidePath({ puzzles: 1 })]
+// Bare ones: each is a corridor to an end that stays empty, because what a playtester walks down a
+// branch to see is whether the door opened, not what waits at the bottom of it.
+const branches = () => [sidePath({ puzzles: 0 }), sidePath({ puzzles: 0 })]
 
 // A switch stands on every floor devSite builds, so the one mechanic that is actually built is felt at
 // each of those difficulties rather than at a single one.
 const devSite = (pyramid: number, difficulty: Difficulty): Rule =>
   journey(DEV_JOURNEY_ID).pyramid(pyramid, {
     difficulty,
-    pathPuzzles: 2,
+    pathPuzzles: 0,
     sideSections: branches(),
     forks: FORKS,
     switches: SWITCHES,
@@ -52,8 +60,8 @@ export const devRules: Rule[] = [
   // authored pyramid until it is drawn as a drop.
   journey(DEV_JOURNEY_ID).pyramid(3, {
     difficulty: "expert",
-    pathPuzzles: 2,
-    sideSections: [sidePath({ puzzles: 1, label: "ledge" }), sidePath({ puzzles: 1, label: "sink" })],
+    pathPuzzles: 0,
+    sideSections: [sidePath({ puzzles: 0, label: "ledge" }), sidePath({ puzzles: 0, label: "sink" })],
     forks: FORKS,
     switches: SWITCHES,
     oneWays: [{ from: "ledge", to: "sink" }],
@@ -70,11 +78,11 @@ export const devRules: Rule[] = [
   // Nothing waits behind either door: this journey contributes no loot (see the file header).
   journey(DEV_JOURNEY_ID).pyramid(7, {
     difficulty: "expert",
-    pathPuzzles: 2,
+    pathPuzzles: 0,
     sideSections: [
-      sidePath({ puzzles: 1, label: "lever" }),
-      sidePath({ puzzles: 1, label: "vault" }),
-      sidePath({ puzzles: 1, label: "cellar" }),
+      sidePath({ puzzles: 0, label: "lever" }),
+      sidePath({ puzzles: 0, label: "vault" }),
+      sidePath({ puzzles: 0, label: "cellar" }),
     ],
     handles: [{ in: "lever", left: ["vault"], right: ["cellar"] }],
   }),
