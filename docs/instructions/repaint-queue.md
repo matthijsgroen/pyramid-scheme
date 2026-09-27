@@ -2600,61 +2600,6 @@ against this section once the rest are in.
 until the return is measured against the floor it lies on with `yarn tile-stats` — same rule as every
 other block in this file.
 
-### `default/overgrown-moss` — a mat of moss and grass over the paving
-
-**THIS ONE IS NOT LIKE THE OTHERS.** Every plant in this section is an object cut out of a magenta
-frame. Moss is not an object — it is a SURFACE, and it is made the way sand is
-(`scripts/driftMask.ts`): the generator paints a square, full-bleed TEXTURE with no shape and no
-background at all, and `yarn drift-mask` supplies the ragged edge afterwards. A drift is all edge, and
-an edge feathered into magenta keys out as a violet halo nothing can rescue — so there is no magenta
-here and no silhouette to get wrong.
-
-**Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
-COLOUR of growing things beside stone. Take nothing else.
-
-```
-A seamless, full-bleed TEXTURE of moss and low grass, a painted illustration with clear light and shade, matte surfaces. A SQUARE frame, one unit by one.
-
-**FILL THE ENTIRE FRAME, EDGE TO EDGE.** There is no background, no magenta, no object, no silhouette,
-no vignette, no border. Every pixel is moss. Do not centre a patch of moss in a frame — the frame IS the
-moss, the way a photograph of a lawn is all lawn. Its outline is added later by machine.
-
-The subject: the floor of a stone chamber that daylight has been falling into for years. A close mat of
-moss with low grass coming through it — fine blades a few at a time, not a meadow — and the odd paving
-joint showing through where the mat has not closed over. It is the ground the other plants in this
-family are growing out of.
-
-**IT MUST STAY UNDER THE PLANTS THAT STAND ON IT, AND THAT IS THE HARD PART.** This tile's job is to stop
-a fern reading as a sticker laid on bare stone, and it can only do that by being quieter than the fern.
-So:
-
-- **Keep it DARK and LOW IN CHROMA** — the deep, damp, almost-black green of moss in shade, closer to wet
-  stone than to a leaf. It should read as ground, not as foliage.
-- **No bright greens anywhere, no yellow-green, no sunlit highlights, no flowers, no standing plants.**
-  Those belong to the tiles that sit on top of this one. A tile that is as vivid as they are swallows
-  them, and we lose the plants instead of grounding them.
-- **Keep its value range narrow.** This is the one tile in the family that WANTS to be flat: variation
-  within it should be texture, not drama, so nothing in it competes for the eye.
-
-Fine detail throughout, at the scale of a thumb — this is drawn three cells across and the player sees it
-small, so texture beats incident. No large features, no rocks, no debris, no pattern that repeats
-visibly.
-
-Matte surfaces throughout: lit, never polished — no gloss, no shine, no wet highlights.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-yarn drift-mask --out="$OBJ" --seed=moss --size=504 --peak=0.9 --lobes=4
-yarn import-tile art/masters/surfaces/overgrown-moss.webp --tier=default --name=overgrown-moss --slot=drift \
-  --filter=smooth --key=none --mask="$OBJ" --brightness=1.0
-```
-
-A HIGHER `--peak` than sand's 0.5 and a lobe more, because a mat of moss spreads where it is damp
-rather than being blown into a tongue: rounder, fuller, still ragged. `--key=none` for the same reason
-sand takes it — there is no background to key.
-
 ### `default/overgrown-curtain` — a curtain of roots down the wall band
 
 **Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
