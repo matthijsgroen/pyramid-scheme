@@ -6,7 +6,8 @@ import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapSc
 // questions asked by both the marker that draws it and the floor geometry that dresses the room around
 // it (`roomClaims.ts`). Kept apart from either so neither has to import the other.
 
-export type ShapeKind = "entrance" | "puzzle" | "trap" | "fork" | "switch" | "gate" | "treasure" | "stairhead" | "exit"
+export type ShapeKind =
+  "entrance" | "puzzle" | "trap" | "fork" | "switch" | "handle" | "gate" | "treasure" | "stairhead" | "exit"
 
 /** Everything a room's shape is read off and nothing else, so a caller holding a hand-built room can
  * ask without building a whole cell around it. */
@@ -26,6 +27,9 @@ export const shapeKindFor = (grid: FloorGrid, r: number, c: number, cell: ShapeC
     if (cell.stairId) return "stairhead"
     return r === grid.entrancePos[0] && c === grid.entrancePos[1] ? "entrance" : "exit"
   }
+  // A handle stands as an ordinary "encounter" room, not a "fork" — it is a lever to pull, not a
+  // junction — so it reads off its tag rather than off the fork/family branch above.
+  if (cell.tags?.includes("handle")) return "handle"
   if (cell.tags?.includes("gate")) return "gate"
   if (cell.tags?.includes("trap")) return "trap"
   if (cell.tags?.includes("treasure") || cell.tags?.includes("shop")) return "treasure"
@@ -59,6 +63,8 @@ export const nodeRadius: Record<ShapeKind, number> = {
   // A junction with a board in it is somewhere to go, so it is sized like a room rather than like
   // the dot a plain junction gets.
   switch: NODE_RADIUS_PUZZLE,
+  // A lever is somewhere to go, so it is sized like a room rather than like a junction's dot.
+  handle: NODE_RADIUS_PUZZLE,
   gate: NODE_RADIUS_LARGE,
   treasure: NODE_RADIUS_LARGE,
   stairhead: NODE_RADIUS_LARGE,

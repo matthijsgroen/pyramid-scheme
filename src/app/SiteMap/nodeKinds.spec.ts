@@ -49,6 +49,12 @@ describe("what shape a room draws as", () => {
     expect(shapeKindFor(grid, 1, 1, { roomType: "encounter", family: BOARD_FAMILY, tags: ["puzzle"] })).toBe("puzzle")
   })
 
+  // A handle stands as an ordinary "encounter" room, not a "fork" — it is a lever to pull, not a
+  // junction — so it needs its own tag-driven branch rather than riding the fork/family one above.
+  it("calls a room standing a lever a handle, not a puzzle", () => {
+    expect(shapeKindFor(grid, 1, 1, { roomType: "encounter", tags: ["handle"], family: "handle" })).toBe("handle")
+  })
+
   // The way a switch shuts holds no encounter at all, and is drawn and read by nothing but its tags
   // and the key it wants.
   it("draws a gate that holds nothing as a gate, and reads it locked until its key is held", () => {

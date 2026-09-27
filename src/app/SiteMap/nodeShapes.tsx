@@ -182,6 +182,34 @@ const SwitchShape = ({ state }: ShapeProps) => {
   )
 }
 
+/** A handle stands as an ordinary "encounter" room (not a "fork" — see `shapeKindFor`), so it wears the
+ * same opaque, outlined backdrop the other rooms do rather than the switch's bare backdrop-less path;
+ * that backdrop alone already separates it from the switch at map zoom. The icon drawn on top is a
+ * lever: a mounted post with an arm swung off it and a grip on its end, literal rather than abstract so
+ * a player learns "this is a lever" on sight. */
+const HandleShape = ({ state }: ShapeProps) => {
+  const r = NODE_RADIUS_PUZZLE
+  const fill = handleFill[state]
+  const stroke = handleStroke[state]
+  return (
+    <>
+      <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={2} fill={fill} stroke={stroke} strokeWidth={1.5} />
+      {state !== "fogged" && (
+        <g stroke={handleIcon[state]} strokeLinecap="round">
+          {/* Base plate the post is mounted to */}
+          <rect x={-6} y={8} width={12} height={3} rx={1} fill={handleIcon[state]} stroke="none" />
+          {/* Upright post, pivot near its top */}
+          <line x1={0} y1={8} x2={0} y2={-2} strokeWidth={3} />
+          {/* Arm swung off the pivot, up and to the side */}
+          <line x1={0} y1={-2} x2={9} y2={-12} strokeWidth={3} />
+          {/* Grip at the arm's end */}
+          <circle cx={9} cy={-12} r={3} fill={handleIcon[state]} stroke="none" />
+        </g>
+      )}
+    </>
+  )
+}
+
 const GateNodeShape = ({ state, gateVariant, keyColor, difficulty }: ShapeProps) => {
   const r = NODE_RADIUS_LARGE
   const isTomb = gateVariant === "tomb-key"
@@ -347,6 +375,8 @@ export const NodeShape = ({
       return <ForkShape {...p} />
     case "switch":
       return <SwitchShape {...p} />
+    case "handle":
+      return <HandleShape {...p} />
     case "gate":
       return <GateNodeShape {...p} />
     case "treasure":
@@ -377,6 +407,27 @@ const puzzleIcon: Record<CellState, string> = {
   visible: "#d09030",
   reachable: "#90c060",
   completed: "#90c060",
+}
+
+// A lever's own bronze/brass cast — warm like the puzzle palette (it is still a room to solve), but a
+// distinct hue so a glance tells the two apart even before the shape does.
+const handleFill: Record<CellState, string> = {
+  fogged: "#1a1208",
+  visible: "#241a08",
+  reachable: "#221c08",
+  completed: "#221c08",
+}
+const handleStroke: Record<CellState, string> = {
+  fogged: "#2e2010",
+  visible: "#8a6a30",
+  reachable: "#c99a48",
+  completed: "#c99a48",
+}
+const handleIcon: Record<CellState, string> = {
+  fogged: "#2e2010",
+  visible: "#c2943c",
+  reachable: "#e8b860",
+  completed: "#e8b860",
 }
 
 const gateFill: Record<CellState, string> = {
