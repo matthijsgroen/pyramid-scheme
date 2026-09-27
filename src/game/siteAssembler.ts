@@ -486,21 +486,30 @@ const withHandleGates = (
   config: FloorConfig,
   addressOf: ReadonlyMap<string, string>,
   gateKeyByAddress: ReadonlyMap<string, string>
-): FloorConfig => ({
-  ...config,
-  sideSections: config.sideSections.map((side, idx) => {
-    const subSections = side.sideSections?.map((sub, subIdx) => {
-      const keyId = gateKeyByAddress.get(addressOf.get(`s${idx}.${subIdx}`) ?? "")
-      return keyId ? { ...sub, gate: { type: "floor-key" as const, keyId } } : sub
-    })
-    const keyId = gateKeyByAddress.get(addressOf.get(`s${idx}`) ?? "")
-    return {
-      ...side,
-      ...(subSections ? { sideSections: subSections } : {}),
-      ...(keyId ? { gate: { type: "floor-key" as const, keyId } } : {}),
-    }
-  }),
-})
+): FloorConfig => {
+  // Every authored section has an address (sectionAddresses claims one for each), and a missing one
+  // would silently skip a gate the lever is already carrying a position for.
+  const gateKeyAt = (positional: string): string | undefined => {
+    const address = addressOf.get(positional)
+    if (address === undefined) throw new Error(`[siteAssembler] section ${positional} has no address`)
+    return gateKeyByAddress.get(address)
+  }
+  return {
+    ...config,
+    sideSections: config.sideSections.map((side, idx) => {
+      const subSections = side.sideSections?.map((sub, subIdx) => {
+        const keyId = gateKeyAt(`s${idx}.${subIdx}`)
+        return keyId ? { ...sub, gate: { type: "floor-key" as const, keyId } } : sub
+      })
+      const keyId = gateKeyAt(`s${idx}`)
+      return {
+        ...side,
+        ...(subSections ? { sideSections: subSections } : {}),
+        ...(keyId ? { gate: { type: "floor-key" as const, keyId } } : {}),
+      }
+    }),
+  }
+}
 
 export const assembleFloor = (
   siteId: string,
@@ -597,6 +606,15 @@ export const assembleFloor = (
   for (const [positional, address] of addresses.of) if (leverByAddress.has(address)) leverAtPositional.add(positional)
   if (leverByAddress.has(MAIN_SECTION_ADDRESS)) leverAtPositional.add(MAIN_SECTION_ADDRESS)
   const leverRooms = (positional: string): number => (leverAtPositional.has(positional) ? 1 : 0)
+
+  // WHOSE GATE THIS IS DECIDES WHETHER ANYTHING STANDS IN IT. `openWaysOut` (useAssembledFloor) gives a
+  // cell back its corridor only where NOTHING stands in it — a gate a family renders is opened by what
+  // the player does in it — so a family on a lever's door would leave the lever unable ever to open it.
+  // A switch's own doors carry none for the same reason (see closeWaysOut).
+  const isHandleGate = (positional: string): boolean => {
+    const address = addresses.of.get(positional)
+    return address !== undefined && handleGateKeyByAddress.has(address)
+  }
 
   // Every room a chain has to hold: its own content, its terminal room, its gate where it has one, and
   // the lever where one stands in it.
@@ -1575,7 +1593,8 @@ export const assembleFloor = (
         const floorKeyGate = section.gate as { type: "floor-key"; color?: KeyColor }
         roomSpecs.set(posKey(gr, gc), {
           roomType: "encounter",
-          family: keyGate.familyId,
+          // A lever's door wears the bars and holds nothing to enter or tap — see `isHandleGate`.
+          ...(isHandleGate(`s${sectionIdx}`) ? {} : { family: keyGate.familyId }),
           tags: keyGate.tags,
           requiredKeyId: keyNodeId,
           gateVariant: "floor-key",
@@ -1703,7 +1722,8 @@ export const assembleFloor = (
         const floorKeyGate = subSection.gate as { type: "floor-key"; color?: KeyColor }
         roomSpecs.set(posKey(gr, gc), {
           roomType: "encounter",
-          family: keyGate.familyId,
+          // A lever's door wears the bars and holds nothing to enter or tap — see `isHandleGate`.
+          ...(isHandleGate(`s${parentSectionIdx}.${subSectionIdx}`) ? {} : { family: keyGate.familyId }),
           tags: keyGate.tags,
           requiredKeyId: keyNodeId,
           gateVariant: "floor-key",

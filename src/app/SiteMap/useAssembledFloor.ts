@@ -97,7 +97,7 @@ export const applyExplored = (grid: FloorGrid, floor: number, exploredCells: Rec
  */
 const NO_POSITIONS: ReadonlyMap<string, string> = new Map()
 
-const openWaysOut = (grid: FloorGrid, open: ReadonlySet<string>): FloorGrid => {
+export const openWaysOut = (grid: FloorGrid, open: ReadonlySet<string>): FloorGrid => {
   if (open.size === 0) return grid
   let opened = false
   const cells = grid.cells.map(row =>

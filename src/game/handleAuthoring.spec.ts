@@ -1,11 +1,34 @@
 import { describe, expect, it } from "vitest"
-import { floorWithHandle, nestedFloorWithHandle } from "./testSupport/handleFixtures"
-import type { FloorGrid, RoomCell } from "./siteTypes"
+import {
+  attemptFloor,
+  floorWithHandle,
+  handleFloorConfig,
+  nestedFloorWithHandle,
+  type Handle,
+} from "./testSupport/handleFixtures"
+import { openDoorsFor } from "./mechanismDoors"
+import { openWaysOut } from "@/app/SiteMap/useAssembledFloor"
+import { cellAddress } from "@/app/SiteMap/cellIdentity"
+import type { FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 
 const rooms = (grid: FloorGrid): RoomCell[] =>
   grid.cells.flatMap(row => row.filter((cell): cell is RoomCell => cell.type === "room"))
 
 const tagged = (grid: FloorGrid, tag: string) => rooms(grid).filter(room => room.tags?.includes(tag))
+
+const at = (grid: FloorGrid, match: (cell: GridCell) => boolean): [number, number] => {
+  for (let r = 0; r < grid.rows; r++) for (let c = 0; c < grid.cols; c++) if (match(grid.cells[r][c])) return [r, c]
+  throw new Error("no cell matched")
+}
+
+const cellOfSection = (grid: FloorGrid, section: string, tag: string) =>
+  at(grid, cell => cell.type === "room" && cell.sectionAddress === section && !!cell.tags?.includes(tag))
+
+const reasonsOf = (config: FloorConfig) => {
+  const result = attemptFloor(config)
+  expect(result.success).toBe(false)
+  return result.success ? [] : result.reasons
+}
 
 describe("a floor authoring a handle", () => {
   it("stands the lever in the named section and gates each driven section", () => {
@@ -32,12 +55,32 @@ describe("a floor authoring a handle", () => {
     expect(gates.map(gate => gate.sectionAddress).sort()).toEqual(["pocket", "vault"])
   })
 
-  it("mints no key and draws no puzzle on a gate the lever owns", () => {
+  it("mints no key, wears no colour and stands nothing in a gate the lever owns", () => {
     const { grid } = floorWithHandle({ in: "lever", drives: ["vault"] })
     const gate = tagged(grid, "gate")[0]
     expect(gate.keyIsAuthored).toBe(true)
     expect(gate.gateVariant).toBe("floor-key")
     expect(gate.keyColor).toBeUndefined()
+    // A family on the door would make it a room the player enters and taps, and `openWaysOut` skips
+    // every cell that has one — so the lever could never open it.
+    expect(gate.family).toBeUndefined()
+  })
+
+  it("opens the driven section's door, and only that one, when the lever stands at its position", () => {
+    const { grid } = floorWithHandle({ in: "lever", drives: ["vault", "pocket"] })
+    const [lr, lc] = at(grid, cell => cell.type === "room" && !!cell.tags?.includes("handle"))
+    const lever = cellAddress(grid, 0, lr, lc)!
+
+    const open = openWaysOut(grid, openDoorsFor(grid, 0, new Map([[lever, "vault"]])))
+    const [vr, vc] = cellOfSection(grid, "vault", "gate")
+    const [pr, pc] = cellOfSection(grid, "pocket", "gate")
+    expect(open.cells[vr][vc].type).toBe("corridor")
+    expect(open.cells[pr][pc].type).toBe("room")
+
+    // And the other way round, because a lever is thrown back: the same floor, the other position.
+    const other = openWaysOut(grid, openDoorsFor(grid, 0, new Map([[lever, "pocket"]])))
+    expect(other.cells[vr][vc].type).toBe("room")
+    expect(other.cells[pr][pc].type).toBe("corridor")
   })
 
   it("stands a lever on the main path without taking a puzzle room for it", () => {
@@ -59,15 +102,62 @@ describe("a floor authoring a handle", () => {
     expect(gate.requiredKeyId).toBe("handle:dev_topology#0#0#0:s0.1")
   })
 
-  it("fails the floor by name when a driven section has no address to resolve", () => {
-    expect(() => floorWithHandle({ in: "lever", drives: ["nowhere"] })).toThrow(/nowhere/)
+  it("carves two handles on one floor, whose four familyless doors a save still tells apart", () => {
+    // A door with no family is named `x?` in its section (cellSlot.ts), so four of them on one floor
+    // rest on each standing in a section of its own — which is what refusing a twice-driven section
+    // buys. A collision would fail the floor outright with `duplicateCellSlot`.
+    const { grid } = floorWithHandle(
+      { in: "lever", drives: ["vault", "pocket"] },
+      { in: "lever2", drives: ["vault2", "pocket2"] }
+    )
+    expect(tagged(grid, "handle")).toHaveLength(2)
+    expect(
+      tagged(grid, "gate")
+        .map(gate => gate.sectionAddress)
+        .sort()
+    ).toEqual(["pocket", "pocket2", "vault", "vault2"])
+  })
+})
+
+describe("a handle the floor cannot have, refused once before any carve", () => {
+  const withAuthoredGateOn = (config: FloorConfig, label: string): FloorConfig => ({
+    ...config,
+    sideSections: config.sideSections.map(section =>
+      section.label === label ? { ...section, gate: { type: "floor-key" as const, keyId: "authored:key" } } : section
+    ),
   })
 
-  it("fails the floor when the lever's own section has no address", () => {
-    expect(() => floorWithHandle({ in: "nowhere", drives: ["vault"] })).toThrow(/nowhere/)
+  const cases: [string, Handle[], string][] = [
+    ["a driven section the floor does not have", [{ in: "lever", drives: ["nowhere"] }], "nowhere"],
+    ["a lever standing in a section the floor does not have", [{ in: "nowhere", drives: ["vault"] }], "nowhere"],
+    ["a lever shut in behind the door it opens", [{ in: "lever", drives: ["lever"] }], "lever"],
+    ["the main path, which has no entrance to gate", [{ in: "lever", drives: ["main"] }], "main"],
+    [
+      "a second lever in a section that already stands one",
+      [
+        { in: "lever", drives: ["vault"] },
+        { in: "lever", drives: ["pocket"] },
+      ],
+      "lever",
+    ],
+    [
+      "a section a second handle already drives",
+      [
+        { in: "lever", drives: ["vault"] },
+        { in: "lever2", drives: ["vault"] },
+      ],
+      "vault",
+    ],
+  ]
+
+  it.each(cases)("names %s", (_what, handles, address) => {
+    expect(reasonsOf(handleFloorConfig(...handles))).toContainEqual(
+      expect.objectContaining({ type: "handleUnsatisfied", address })
+    )
   })
 
-  it("fails the floor when a lever would be shut in behind the gate it drives", () => {
-    expect(() => floorWithHandle({ in: "lever", drives: ["lever"] })).toThrow(/lever/)
+  it("names a section whose gate an author already wrote", () => {
+    const config = withAuthoredGateOn(handleFloorConfig({ in: "lever", drives: ["vault"] }), "vault")
+    expect(reasonsOf(config)).toContainEqual(expect.objectContaining({ type: "handleUnsatisfied", address: "vault" }))
   })
 })

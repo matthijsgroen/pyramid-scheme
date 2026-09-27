@@ -117,7 +117,13 @@ const assembleOnce = (journeyId: string, floor: FloorConfig, levelNr: number, fl
       resolveKeyRequirements,
       floorRef: { journeyId, floorIndex },
     })
-    if (!result.success) unassembled.push(`${journeyId} level ${levelNr} floor ${floorIndex}`)
+    // WITH WHY, NOT JUST WHERE. The assembler refuses an authoring it can never satisfy — a one-way
+    // or a handle naming a section the floor does not have, a switch asking for more junctions than
+    // `forks` reserves — and names it in the reason. Printed as a bare floor id, all of those reach
+    // the author as "cannot be carved", which reads as a seed problem and sends them looking at the
+    // wrong thing.
+    if (!result.success)
+      unassembled.push(`${journeyId} level ${levelNr} floor ${floorIndex}: ${JSON.stringify(result.reasons)}`)
     grids.set(cacheKey, result.success ? result.grid : null)
   }
   return grids.get(cacheKey)!
