@@ -514,6 +514,10 @@ export type AssemblerReason =
   /** A section cannot be given a name a save could file it under: an authored `label` repeated, one
    * shaped like the positional addresses, or one carrying an address separator. See SubSection.label. */
   | { type: "unusableSectionAddress"; address: string }
+  /** A section hangs below the two levels of side path the assembler carves, so it would be authored
+   * and baked but never built — the DSL nests without limit, the carve does not. `address` is the name
+   * the section answers to. See SideSection.sideSections. */
+  | { type: "sectionTooDeep"; address: string }
   /** Two rooms of one section answer to the same name, so a save cannot tell them apart — a switch
    * authored with the family that already fills its section's chest, shop or gate. See cellSlot.ts. */
   | { type: "duplicateCellSlot"; slot: string }

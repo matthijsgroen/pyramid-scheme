@@ -151,6 +151,10 @@ const POSITIONAL_ADDRESS = /^(main|s\d+(\.\d+)?)$/
  * label carrying either would produce a cell address that reads back as a different section or floor. */
 const USABLE_LABEL = /^[A-Za-z0-9][A-Za-z0-9_-]*$/
 
+/** How many levels of section the carve builds: the paths off the main one, and the paths off those.
+ * `sectionTooDeep` refuses anything hung below that, and seeds/boardIndex.ts stops at the same depth. */
+const CARVED_SECTION_DEPTH = 2
+
 /**
  * What hangs off a section, however deep it was authored.
  *
@@ -200,6 +204,22 @@ const sectionAddresses = (
   }
   const duplicate = walk(config.sideSections, "s")
   return duplicate === null ? { ok: true, of } : { ok: false, duplicate }
+}
+
+/** Every section authored below the depth the carve builds, by the name it answers to. */
+const sectionsTooDeep = (config: FloorConfig, addressOf: ReadonlyMap<string, string>): string[] => {
+  const below: string[] = []
+  const walk = (sections: SubSection[], prefix: string, depth: number): void => {
+    for (const [idx, section] of sections.entries()) {
+      const positional = `${prefix}${idx}`
+      if (depth > CARVED_SECTION_DEPTH) below.push(addressOf.get(positional) ?? positional)
+      // A section already named goes no deeper: its own children are refused along with it, and one
+      // name per branch says where the authoring left what the carve builds.
+      else walk(childSectionsOf(section), `${positional}.`, depth + 1)
+    }
+  }
+  walk(config.sideSections, "s", 1)
+  return below
 }
 
 // The floor-wide inputs to the carve itself: change either and every cell on the floor moves.
@@ -548,6 +568,15 @@ export const assembleFloor = (
   const addresses = sectionAddresses(authoredConfig)
   if (!addresses.ok) {
     return { success: false, reasons: [{ type: "unusableSectionAddress", address: addresses.duplicate }] }
+  }
+
+  // A section hung below the two levels the carve builds would be authored, serialized and then never
+  // exist — the gate, the reward and the rooms on it all quietly absent from the floor a player walks.
+  // How deep a config goes is fixed before a seed is chosen, so it is refused by name here rather than
+  // dropped, the same way a misnamed one-way is.
+  const tooDeep = sectionsTooDeep(authoredConfig, addresses.of)
+  if (tooDeep.length > 0) {
+    return { success: false, reasons: tooDeep.map(address => ({ type: "sectionTooDeep" as const, address })) }
   }
 
   // An authored one-way naming a section this floor does not have is the same kind of mistake: which

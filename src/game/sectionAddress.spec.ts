@@ -125,3 +125,37 @@ describe("what a label may be made of", () => {
     expect(addresses.has("Antechamber3")).toBe(true)
   })
 })
+
+describe("how deep a floor may be authored", () => {
+  // The DSL nests without limit and the assembler carves two levels, so a third would be authored,
+  // serialized, and then never built. It is refused here for the same reason a misnamed one-way is:
+  // how deep the config goes is fixed before a seed is chosen, so no carve could have saved it.
+  it("refuses a path hung deeper than the carve reaches, by where it sits", () => {
+    const result = assembleFloor(
+      "test-journey",
+      floor([side(), side({ sideSections: [side({ sideSections: [side()] })] })]),
+      SEED
+    )
+
+    expect(result.success).toBe(false)
+    expect(result.success ? [] : result.reasons).toEqual([{ type: "sectionTooDeep", address: "s1.0.0" }])
+  })
+
+  it("names a too-deep path by its label where it has one", () => {
+    const result = assembleFloor(
+      "test-journey",
+      floor([side({ sideSections: [side({ sideSections: [side({ label: "the-shaft" })] })] })]),
+      SEED
+    )
+
+    expect(result.success).toBe(false)
+    expect(result.success ? [] : result.reasons).toEqual([{ type: "sectionTooDeep", address: "the-shaft" }])
+  })
+
+  it("still carves the two levels it does reach", () => {
+    const addresses = addressesOf(floor([side({ sideSections: [side()] })]))
+
+    expect(addresses.has("s0")).toBe(true)
+    expect(addresses.has("s0.0")).toBe(true)
+  })
+})
