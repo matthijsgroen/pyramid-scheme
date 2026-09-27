@@ -31,6 +31,10 @@ Recorded here because tasks argue from them.
 
 **1. The position is stored; the open doors are derived.** The shipped switch stores `openWaysOut` — the consequence. That cannot represent a mechanism position which opens nothing, because absence of an entry already means "never touched". The moment any gate is authored to start open, a player who throws the lever to a rest position, reloads, and finds the door open again has had their move silently undone — inside one playthrough, on the first visit. `getOpenWaysOut` (`src/app/state/useJourneys.ts:514`) also discards the switch address entirely and returns a bare set of key ids, so a stored consequence cannot be read back as a position at all.
 
+**1a. This release is the last save break, so the stored shape is chosen to outlast it.** Two consequences, both owner-ruled. **One name for the rest position** — `MECHANISM_AT_REST = "rest"`, in the save and in the compiled lock alike; there is no second vocabulary. And **the positions are a map, not the packed `address=value` strings** the sibling fields use.
+
+The map's reason, stated accurately because the first version of it was overstated: the sibling fields hold *sets of addresses*, while this holds a *mapping*, and storing a mapping as a mapping is less code at every read and write. It is **not** that a packed entry would be ambiguous today — `USABLE_LABEL` (`siteAssembler.ts:148`, `/^[A-Za-z0-9][A-Za-z0-9_-]*$/`, enforced in `sectionAddresses` before any carve) admits no separator into an authored label, so a packed entry parses fine. The durability argument is narrower and survives: a packed format's correctness rests on a regex in another file continuing to forbid those characters, and a map's does not.
+
 **2. One record on the cell, `mechanism`, serves both the runtime and the walk.** `floorLock` today learns the switch from `exits[].gateKeyId`; a handle is not a fork and has no such exits. Rather than a second parallel route — the defect shape this branch has paid for three times — both mechanisms write one record, and `floorLock` and `useAssembledFloor` each read that one record.
 
 **3. Whether a mechanism can return to rest is data, not an assumption.** A beam board routes its light somewhere every time it is solved and cannot be un-solved; a lever can be thrown back. `floorLock`'s switch route deliberately excludes `unset` as a transition target. Unifying the two routes under a shared assumption would either add a false transition to the switch (a stricter walk, so a false build failure on the shipped junior_2 floor) or drop a real one from the handle (a permissive walk, which hides exactly the traps the walk exists to find). So the cell carries `restReachable`.
@@ -106,8 +110,17 @@ describe("mechanism positions", () => {
     act(() => result.current.setMechanismState("s0#0/p1", "s2"))
     expect([...result.current.getMechanismStates("dev_topology")]).toEqual([["s0#0/p1", "s2"]])
   })
+
+  it("stores a position value without interpreting it, whatever characters it carries", () => {
+    const { result } = renderHook(() => useJourneys(), { wrapper })
+    act(() => result.current.startJourney("dev_topology"))
+    act(() => result.current.setMechanismState("s0#0/p1", "odd=label"))
+    expect(result.current.getMechanismStates("dev_topology").get("s0#0/p1")).toBe("odd=label")
+  })
 })
 ```
+
+The third test holds that the storage layer does not interpret the value it is handed. It is a cheap regression guard against a future implementation that splits naively on a separator — **not** evidence for choosing a map over packed strings. Measured after the fact: it does not go red against the packed format either, because that reader split on the *first* `=` and so round-tripped a value containing one. There is in fact no behavioural difference between the two shapes to test: the key cannot carry a separator (`USABLE_LABEL`), and any value survives a first-`=` split. The map is a judgment about code clarity and about not resting on a regex in another file — it is not a correctness fix, and no test can pretend otherwise.
 
 The first test is the one that fails against consequence storage and passes against position storage — it is the whole reason for this task. Note it asserts `.has()` and not only `.get()`.
 
@@ -121,19 +134,24 @@ Expected: FAIL — `result.current.setMechanismState is not a function`.
 In `src/app/state/useJourneys.ts`, replace the `openWaysOut` field (line ~62) with:
 
 ```typescript
-    /** Which POSITION each mechanism on this site stands in, as `${levelNr}:${mechanismAddress}=${stateId}`.
+    /** Which POSITION each mechanism on this site stands in, keyed `${levelNr}:${mechanismAddress}`.
      *
      * The position, never the consequence. A mechanism whose current position opens nothing is a real
      * position and has an entry; absence means only that nobody has touched it, and the mechanism sits
      * at whatever its floor says it starts at. Storing which doors stood open instead cannot tell those
      * two apart, so a lever thrown back to rest would spring forward again on the next load.
      *
+     * A map rather than the packed `address=value` strings the fields above use, because the value here
+     * is authored rather than generated: a handle's positions are named after the sections it drives,
+     * and an authored label carrying the separator would make the entry ambiguous to parse. A map has no
+     * separator between key and value, so no authored string can ever collide with one.
+     *
      * Which doors that position opens is read off the floor (src/game/mechanismDoors.ts), because the
      * mapping belongs to the grid and a save that carried it would go stale against a re-carve.
      *
      * The address is the mechanism's own cell address — authored, so a re-carve moves the cell and takes
-     * the entry with it. Exactly one entry per mechanism, which is why it is keyed and not appended. */
-    mechanismStates?: string[]
+     * the entry with it. Exactly one entry per mechanism, which is what a map gives for free. */
+    mechanismStates?: Record<string, string>
 ```
 
 - [ ] **Step 4: Replace the setters and the reader**
@@ -141,32 +159,25 @@ In `src/app/state/useJourneys.ts`, replace the `openWaysOut` field (line ~62) wi
 Replace `setOpenWayOut` and `shutWaysOut` (lines ~485-512) with one setter, and `getOpenWaysOut` (~514-519) with a map reader:
 
 ```typescript
-/** The position a mechanism sits in when nothing has been done to it. Also what a lever thrown back
- * to its rest position is written as — the two are the same position and a DIFFERENT fact, which is
- * why one is stored and the other is absent. */
+/** The position a mechanism sits in when it opens nothing. One name for it, in the save and in the
+ * compiled lock alike — a lever thrown back here and a lever never touched are the same POSITION and a
+ * different FACT, which is why one is stored and the other is absent. */
 export const MECHANISM_AT_REST = "rest"
 
   const setMechanismState = (address: string, stateId: string) => {
     if (!activeJourneyId) return
-    const at = `${atLevel(address)}=`
+    const at = atLevel(address)
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
-        const stored = j.mechanismStates ?? []
-        const entry = `${at}${stateId}`
-        if (stored.includes(entry) && stored.filter(e => e.startsWith(at)).length === 1) return j
-        return { ...j, mechanismStates: [...stored.filter(e => !e.startsWith(at)), entry] }
+        if (j.mechanismStates?.[at] === stateId) return j
+        return { ...j, mechanismStates: { ...(j.mechanismStates ?? {}), [at]: stateId } }
       })
     )
   }
-
-  const getMechanismStates = (journeyId: string): ReadonlyMap<string, string> =>
-    new Map(
-      [...forThisLevel(journeyId, journeys.find(j => j.journeyId === journeyId)?.mechanismStates)]
-        .filter(entry => entry.includes("="))
-        .map(entry => [entry.slice(0, entry.indexOf("=")), entry.slice(entry.indexOf("=") + 1)])
-    )
 ```
+
+`getMechanismStates(journeyId): ReadonlyMap<string, string>` returns the entries for the current level with the `${levelNr}:` prefix stripped, keyed by the bare address. Follow whatever `forThisLevel` does for the sibling fields; if it only accepts arrays, add the map-shaped equivalent beside it rather than round-tripping through an array to reuse it.
 
 Export both from the hook's returned object and from its `JourneyAPI` type, alongside `MECHANISM_AT_REST`.
 
@@ -181,11 +192,11 @@ import type { JourneyAPI } from "@/app/state/useJourneys"
 /** The positions every mechanism on this journey stands in, stable by content so a re-render does not
  * re-carve the floor. Keyed by the mechanism's cell address. */
 export const useMechanismStates = (journeys: JourneyAPI, journeyId: string): ReadonlyMap<string, string> => {
-  const key = [...journeys.getMechanismStates(journeyId)]
-    .map(([at, state]) => `${at}=${state}`)
-    .sort()
-    .join(",")
-  return useMemo(() => new Map(key ? key.split(",").map(e => [e.slice(0, e.indexOf("=")), e.slice(e.indexOf("=") + 1)] as const) : []), [key])
+  const entries = [...journeys.getMechanismStates(journeyId)].sort(([a], [b]) => a.localeCompare(b))
+  // The memo key is JSON rather than joined strings: a position id is authored, so any separator
+  // chosen here could turn up inside a value and two different maps would memo to one key.
+  const key = JSON.stringify(entries)
+  return useMemo(() => new Map(JSON.parse(key) as [string, string][]), [key])
 }
 ```
 
@@ -545,10 +556,11 @@ it("compiles a handle into a mechanism with a rest position it can return to", (
   expect(handle.transitions.some(t => t.to === "rest")).toBe(true)
 })
 
-it("leaves a switch unable to return to its unset position", () => {
+it("leaves a switch unable to return to the position that opens nothing", () => {
   const spec = floorLock(shippedSwitchGrid())!
   const sw = Object.entries(spec.mechanisms).find(([id]) => id.startsWith("switch "))![1]
-  expect(sw.transitions.some(t => t.to === "unset")).toBe(false)
+  expect(sw.initial).toBe(MECHANISM_AT_REST)
+  expect(sw.transitions.some(t => t.to === MECHANISM_AT_REST)).toBe(false)
 })
 ```
 
@@ -561,23 +573,32 @@ Expected: FAIL — no mechanism id starts with `handle `.
 
 - [ ] **Step 3: Read mechanisms off the cell record**
 
-Replace the `doorsBySwitch` scan and the switch mechanism block (lines ~98-120 and ~172-206) with one scan over cells carrying `mechanism`. Keep the two existing throws verbatim — the "leads to no room" one and the "but that room asks for" one — they are what catch a key id that does not match its door. The states are `[rest, ...positions.map(p => p.state)]` with `rest` opening nothing; transitions run from every state to every other, **excluding `rest` as a target when `restReachable` is false**. The switch keeps `"unset"` as its rest id so its compiled spec is unchanged.
+Replace the `doorsBySwitch` scan and the switch mechanism block (lines ~98-120 and ~172-206) with one scan over cells carrying `mechanism`. Keep the two existing throws verbatim — the "leads to no room" one and the "but that room asks for" one — they are what catch a key id that does not match its door. The states are `[MECHANISM_AT_REST, ...positions.map(p => p.state)]` with rest opening nothing; transitions run from every state to every other, **excluding rest as a target when `restReachable` is false**.
+
+**Rename the switch's rest state from `"unset"` to `MECHANISM_AT_REST`.** One name for the position a mechanism sits in when it opens nothing, here and in the save (decision 1a). This is a deliberate label change to a shipped floor's compiled lock, and step 5 is written to let it through while still catching anything else.
 
 - [ ] **Step 4: Run the tests**
 
 Run: `yarn vitest run src/game/floorLock.spec.ts src/game/lockWalk.spec.ts`
 Expected: PASS.
 
-- [ ] **Step 5: Prove the shipped switch's lock is unchanged**
+- [ ] **Step 5: Prove nothing about the shipped switch moved except the rename**
 
-Before this task's edit, dump junior_2 pyramid 2 floor 0's compiled spec; after, dump it again and diff:
+Dump junior_2 pyramid 2 floor 0's compiled spec **before** this task's edit, apply the one intended rename to that baseline, then dump it again after and diff:
 
 ```bash
-yarn tsx -e 'import {floorLock} from "./src/game/floorLock"; /* assemble junior_2 p2 f0 */ console.log(JSON.stringify(floorLock(grid), null, 2))' > /tmp/lock-after.json
-diff /tmp/lock-before.json /tmp/lock-after.json
+# before the edit
+yarn tsx scripts/dumpFloorLock.ts junior_2 2 0 > /tmp/lock-before.json
+# the one change this task is allowed to make to a shipped floor
+sed 's/"unset"/"rest"/g' /tmp/lock-before.json > /tmp/lock-expected.json
+# after the edit
+yarn tsx scripts/dumpFloorLock.ts junior_2 2 0 > /tmp/lock-after.json
+diff /tmp/lock-expected.json /tmp/lock-after.json
 ```
 
-Expected: identical. This task refactors the switch's route and must not move it.
+Expected: no difference. Diffing against the renamed baseline rather than the raw one keeps the check sharp — it still fails on any change to the states, the gates, the owners or the transitions, and only the label it was told about gets through. A plain `diff` against the raw baseline would go noisy here, and a noisy check is one that stops being read.
+
+Write `scripts/dumpFloorLock.ts` as part of this step if it does not exist: it assembles the named journey/level/floor and prints `JSON.stringify(floorLock(grid), null, 2)` with object keys sorted, so the diff is stable.
 
 - [ ] **Step 6: Commit**
 

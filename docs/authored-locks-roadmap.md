@@ -283,3 +283,25 @@ a viewer-facing rectangle below.
 Because the drop is drawn on the connector's own 56x56 floor square rather than in the boundary gap,
 the east-west sliver problem raised earlier does not apply — orientation is which way the line runs
 across a full cell, not how much wall face there is to draw on.
+
+---
+
+## What waits on this road, and why it is worth the bar
+
+Told by the owner, 2026-09-27, and recorded because none of it is written down elsewhere.
+
+The story layer is not blocked on step 6 landing `doubleBack`. It waits on **the whole re-authoring of
+master and wizard** — the 58 floor-key gates, 56 of them in those two tiers — together with **the
+hourglass mechanic**, and on **a pyramid standing full of sand that clears a little at a time as other
+pyramids in the same journey are finished**.
+
+That last one is journey-scoped progress gating a site's interior, which is P5 in the design document's
+primitive table (`../mods/floor-topology-design.md`, "Currency scope — journey, beside positional and
+world-spread") reaching past a single floor the way `cosmicDust` and `hourglass` do. It is not costed in
+the six steps above; it arrives with them.
+
+So the chain is long: handle → container → `doubleBack` → master and wizard re-authored → hourglass →
+the sand pyramid → the story layer on top. **That is the main meat of the release**, and all of it stands
+on the ingredients this file lists. It is the concrete reason the bar at the top of this document — an
+ingredient is held higher than a floor — is not a slogan: a sloppy state model here is sloppy in all 56
+of those gates and in everything stacked above them.
