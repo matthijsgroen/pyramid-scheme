@@ -2609,18 +2609,6 @@ many small ones.
 
 Green that has grown in the dark: a deep dusty green, not a garden green, and the trunk a grey-brown.
 
-THE CROWN IS PALER THAN THE FOOT, and this is the one piece of light in the picture. A plant is lit from
-above wherever it stands, so the fronds at the top carry the lightest greens, the undersides and the
-inner fronds go darker, and the trunk is darkest where it meets the ground. Paint that as FORM — a value
-gradient down the whole plant — and not as a light source: no sun, no beam, no rim light, no bright edge
-on one side, no cast shadow. The map lights this tile itself, and a baked highlight would glow in a dark
-room.
-
-KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest frond
-and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
-lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
-the stone it stands on.
-
 NOTHING LIES AT ITS FOOT. No fallen fronds, no litter, no debris on the ground — those are their own tile
 (`default/overgrown-fronds`), and painted here they feather into the magenta and key out as pink specks,
 which is what happened on the first roll.
@@ -2632,7 +2620,7 @@ tile without one lies on the paving like a sticker however well the map lights i
 
 THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
-whichever way the light comes from. That is why it belongs in the tile when a highlight does not.
+whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
 
 **THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is standing, tilted down.
 Give it a lit side and a shadow side against that: the upper surfaces and the parts facing the viewer
@@ -2646,16 +2634,16 @@ MIRRORS these sprites at random to keep a floor from repeating, and a plant lit 
 its lit flank on the wrong side of half the cells it lands in. Front light survives the mirror; side
 light does not.
 
-DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side. No specular dot, no shine, no wet look, no
-bright rim tracing the edge, and no cast shadow thrown onto anything.
+DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side: no specular dot, no shine, no wet look, and
+no bright rim tracing the edge.
 
-STAY INSIDE THE VALUE CLAMP WHILE YOU DO IT. The lit side is lighter, not bright: the whole tile still
-sits in that narrow range, because a plant painted with real contrast reads as cut out of another picture
-from the stone behind it.
+KEEP IT ALL IN A NARROW VALUE RANGE. The lit side is lighter, not bright: nothing near white, nothing
+near black, and the lightest part and the darkest within about a third of the scale of each other. A
+plant painted with real contrast reads as cut out of another picture from the stone behind it.
 
 Draw it square on and FLAT. No perspective, no scene, no floor under it, no pot, no wall behind it.
 
-No gloss, no shine, no specular dots, no rim light, no cast shadow, no reflections. Matte paint throughout — a matte surface with a lit side, not a polished one.
+Matte gouache throughout: a surface with a lit side, never a polished one.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2686,16 +2674,6 @@ crown is at the bottom edge of the frame; nothing is cut off by any edge.
 A deep cool green, darker and bluer than a palm, with the undersides of the lobes paler where a frond
 turns over. Nothing about it is dry — this is the plant that found the wet corner.
 
-IT IS PALER AT THE TOP THAN AT THE BOTTOM, and that is the only light in the picture. Paint it as FORM
-— a value gradient over the whole plant — and never as a light source: no sun, no beam, no rim light, no
-bright edge on one side, no cast shadow. The map lights this tile itself, and a baked highlight would
-glow in a dark room.
-
-KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest part
-and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
-lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
-the stone it lies on.
-
 EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
 edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
 
@@ -2706,7 +2684,7 @@ tile without one lies on the paving like a sticker however well the map lights i
 
 THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
-whichever way the light comes from. That is why it belongs in the tile when a highlight does not.
+whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
 
 **THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is standing, tilted down.
 Give it a lit side and a shadow side against that: the upper surfaces and the parts facing the viewer
@@ -2720,16 +2698,16 @@ MIRRORS these sprites at random to keep a floor from repeating, and a plant lit 
 its lit flank on the wrong side of half the cells it lands in. Front light survives the mirror; side
 light does not.
 
-DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side. No specular dot, no shine, no wet look, no
-bright rim tracing the edge, and no cast shadow thrown onto anything.
+DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side: no specular dot, no shine, no wet look, and
+no bright rim tracing the edge.
 
-STAY INSIDE THE VALUE CLAMP WHILE YOU DO IT. The lit side is lighter, not bright: the whole tile still
-sits in that narrow range, because a plant painted with real contrast reads as cut out of another picture
-from the stone behind it.
+KEEP IT ALL IN A NARROW VALUE RANGE. The lit side is lighter, not bright: nothing near white, nothing
+near black, and the lightest part and the darkest within about a third of the scale of each other. A
+plant painted with real contrast reads as cut out of another picture from the stone behind it.
 
 Draw it square on and FLAT. No perspective, no scene, no floor under it, no pot, no wall behind it.
 
-No gloss, no shine, no specular dots, no rim light, no cast shadow, no reflections. Matte paint throughout — a matte surface with a lit side, not a polished one.
+Matte gouache throughout: a surface with a lit side, never a polished one.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2776,11 +2754,11 @@ sticker however well the map lights it.
 
 THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
-whichever way the light comes from. That is why it belongs in the tile when a highlight does not.
+whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
 
 Draw it square on and FLAT. No perspective, no scene, no paving under it, no crack, no soil.
 
-No highlights, no gloss, no rim light, no cast shadow, no reflections. Matte throughout, as if lit by one dull lamp — the soft dark where it touches is the one exception, and it is not a highlight.
+Matte gouache throughout, as if lit by one dull lamp.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2826,11 +2804,11 @@ sticker however well the map lights it.
 
 THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
-whichever way the light comes from. That is why it belongs in the tile when a highlight does not.
+whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
 
 Draw it square on and FLAT. No perspective, no scene, no paving under it, no crack, no soil.
 
-No highlights, no gloss, no rim light, no cast shadow, no reflections. Matte throughout, as if lit by one dull lamp — the soft dark where it touches is the one exception, and it is not a highlight.
+Matte gouache throughout, as if lit by one dull lamp.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2877,11 +2855,11 @@ sticker however well the map lights it.
 
 THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
-whichever way the light comes from. That is why it belongs in the tile when a highlight does not.
+whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
 
 Draw it square on and FLAT. No perspective, no scene, no paving under them, no soil.
 
-No highlights, no gloss, no rim light, no cast shadow, no reflections. Matte throughout, as if lit by one dull lamp — the soft dark where it touches is the one exception, and it is not a highlight.
+Matte gouache throughout, as if lit by one dull lamp.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2911,16 +2889,6 @@ painted on the wall instead of something growing over it.
 
 A living mid-green, a little yellower than the root it hangs beside, with the woody stems grey-brown.
 
-IT IS PALER AT THE TOP THAN AT THE BOTTOM, and that is the only light in the picture. Paint it as FORM
-— a value gradient over the whole plant — and never as a light source: no sun, no beam, no rim light, no
-bright edge on one side, no cast shadow. The map lights this tile itself, and a baked highlight would
-glow in a dark room.
-
-KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest part
-and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
-lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
-the stone it lies on.
-
 EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
 edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
 
@@ -2943,17 +2911,17 @@ MIRRORS these sprites at random to keep a floor from repeating, and a plant lit 
 its lit flank on the wrong side of half the cells it lands in. Front light survives the mirror; side
 light does not.
 
-DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side. No specular dot, no shine, no wet look, no
-bright rim tracing the edge, and no cast shadow thrown onto anything.
+DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side: no specular dot, no shine, no wet look, and
+no bright rim tracing the edge.
 
-STAY INSIDE THE VALUE CLAMP WHILE YOU DO IT. The lit side is lighter, not bright: the whole tile still
-sits in that narrow range, because a plant painted with real contrast reads as cut out of another picture
-from the stone behind it.
+KEEP IT ALL IN A NARROW VALUE RANGE. The lit side is lighter, not bright: nothing near white, nothing
+near black, and the lightest part and the darkest within about a third of the scale of each other. A
+plant painted with real contrast reads as cut out of another picture from the stone behind it.
 
 Draw it square on and FLAT, seen straight on against the wall. No perspective, no scene, no bricks behind
 it, no wall.
 
-No gloss, no shine, no specular dots, no rim light, no cast shadow, no reflections. Matte paint throughout — a matte surface with a lit side, not a polished one.
+Matte gouache throughout: a surface with a lit side, never a polished one.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2985,16 +2953,6 @@ one is a veil you would have to push through, and it should read as mass rather 
 
 Pale grey-brown and dusty, barely green at all — these have never seen the light.
 
-IT IS PALER AT THE TOP THAN AT THE BOTTOM, and that is the only light in the picture. Paint it as FORM
-— a value gradient over the whole plant — and never as a light source: no sun, no beam, no rim light, no
-bright edge on one side, no cast shadow. The map lights this tile itself, and a baked highlight would
-glow in a dark room.
-
-KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest part
-and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
-lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
-the stone it lies on.
-
 EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
 edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
 
@@ -3017,17 +2975,17 @@ MIRRORS these sprites at random to keep a floor from repeating, and a plant lit 
 its lit flank on the wrong side of half the cells it lands in. Front light survives the mirror; side
 light does not.
 
-DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side. No specular dot, no shine, no wet look, no
-bright rim tracing the edge, and no cast shadow thrown onto anything.
+DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side: no specular dot, no shine, no wet look, and
+no bright rim tracing the edge.
 
-STAY INSIDE THE VALUE CLAMP WHILE YOU DO IT. The lit side is lighter, not bright: the whole tile still
-sits in that narrow range, because a plant painted with real contrast reads as cut out of another picture
-from the stone behind it.
+KEEP IT ALL IN A NARROW VALUE RANGE. The lit side is lighter, not bright: nothing near white, nothing
+near black, and the lightest part and the darkest within about a third of the scale of each other. A
+plant painted with real contrast reads as cut out of another picture from the stone behind it.
 
 Draw it square on and FLAT, seen straight on against the wall. No perspective, no scene, no bricks behind
 it, no wall.
 
-No gloss, no shine, no specular dots, no rim light, no cast shadow, no reflections. Matte paint throughout — a matte surface with a lit side, not a polished one.
+Matte gouache throughout: a surface with a lit side, never a polished one.
 ```
 
 Then, once the return is in `~/Downloads`:
