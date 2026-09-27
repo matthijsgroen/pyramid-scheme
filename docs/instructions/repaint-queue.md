@@ -2582,6 +2582,20 @@ thirty-five.
 it has to sit beside, so the new ones match their handling — same flat gouache, same weight of line, same
 green. A tile that arrives prettier than the three it joins is the failure to look for.
 
+**`tile-stats` WILL CALL THESE TOO CONTRASTY, AND THAT IS ACCEPTED.** The tool asks whether a tile sits
+inside the stone's own value band — the right question for a chest or a statue, which are furniture cut
+from the same rock as the room. A PLANT IS NOT. It is alive, the stone is not, and on an overgrown floor
+it is the thing the eye is supposed to go to. So these seven are painted with real contrast and real
+saturation, they will read "too contrasty" and sometimes "too warm", and that is the tile doing its job.
+
+What the tool is still worth running for on these: the LIGHTNESS, which has to land near the tiles it
+stands beside, and the keying. Take its `p50` seriously and ignore its verdict on the span.
+
+An earlier pass told these prompts the opposite — a narrow value clamp, no highlights, all the light left
+to the renderer — and the flat, matte plants that came back are why the rule is written down here now.
+`overgrown-palm` landed under that older rule and is flatter than the six around it; it wants a re-roll
+against this section once the rest are in.
+
 **Saturation and brightness in the import lines are the ones its neighbours took, and are PLACEHOLDERS**
 until the return is measured against the floor it lies on with `yarn tile-stats` — same rule as every
 other block in this file.
@@ -2619,24 +2633,23 @@ THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no 
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
 
-**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is standing, tilted down.
-Give it a lit side and a shadow side against that: the upper surfaces and the parts facing the viewer
-take the lightest greens; the undersides of the fronds, the far side of the trunk and anything tucked
-behind another part fall away into shadow, and the change between them is gradual rather than a hard
-edge.
+**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
+upper surfaces and the parts facing the viewer take the light; the undersides of the leaves, the far
+side of the stem and anything tucked behind another part fall into shadow.
 
-STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so the tile has NO brighter flank —
-nothing is lighter on the left than on the right. That is deliberate and it is load-bearing: the renderer
-MIRRORS these sprites at random to keep a floor from repeating, and a plant lit from one side would have
-its lit flank on the wrong side of half the cells it lands in. Front light survives the mirror; side
-light does not.
+STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so there is NO brighter flank —
+nothing lighter on the left than on the right. That is load-bearing: the renderer turns and MIRRORS these
+sprites at random to keep a floor from repeating, and light from a side would land on the wrong flank in
+half the cells. Light from the front survives both.
 
-DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side: no specular dot, no shine, no wet look, and
-no bright rim tracing the edge.
+**MAKE THE LIGHT OBVIOUS.** This is the whole point of the tile: it should look like something the sun is
+falling on, not a diagram of a plant. Push the lit parts well clear of the shadowed ones — a real range
+from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
+to the viewer. A flat silhouette in one value is the failure.
 
-KEEP IT ALL IN A NARROW VALUE RANGE. The lit side is lighter, not bright: nothing near white, nothing
-near black, and the lightest part and the darkest within about a third of the scale of each other. A
-plant painted with real contrast reads as cut out of another picture from the stone behind it.
+**COLOUR IT PROPERLY.** Saturated, not muted: living green, and where there are flowers they are the most
+saturated thing in the picture. These plants are alive and the stone around them is not, and they are
+meant to be the thing your eye goes to on a floor of grey masonry.
 
 Draw it square on and FLAT. No perspective, no scene, no floor under it, no pot, no wall behind it.
 
@@ -2672,11 +2685,6 @@ saturated thing in the tile.
 It LIES ON THE PAVING and is seen from above, flat to the floor. It is a small thing, about a third of a
 floor slab, and it will be drawn small — so a few clear flower heads beat a dense mass of tiny ones.
 
-KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest part
-and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
-lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
-the stone it lies on.
-
 EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
 edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
 
@@ -2688,6 +2696,24 @@ sticker however well the map lights it.
 THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
+
+**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
+tops of the petals and leaves take the light; what lies under them, what is deeper in the clump, and the
+ground showing between them fall into shadow.
+
+STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so there is NO brighter flank —
+nothing lighter on the left than on the right. That is load-bearing: the renderer turns and MIRRORS these
+sprites at random to keep a floor from repeating, and light from a side would land on the wrong flank in
+half the cells. Light from the front survives both.
+
+**MAKE THE LIGHT OBVIOUS.** This is the whole point of the tile: it should look like something the sun is
+falling on, not a diagram of a plant. Push the lit parts well clear of the shadowed ones — a real range
+from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
+to the viewer. A flat silhouette in one value is the failure.
+
+**COLOUR IT PROPERLY.** Saturated, not muted: living green, and where there are flowers they are the most
+saturated thing in the picture. These plants are alive and the stone around them is not, and they are
+meant to be the thing your eye goes to on a floor of grey masonry.
 
 Draw it square on and FLAT. No perspective, no scene, no paving under it, no crack, no soil.
 
@@ -2722,11 +2748,6 @@ plant rather than as the same one drawn again.
 It LIES ON THE PAVING and is seen from above, flat to the floor. It is a small thing, about a third of a
 floor slab, and it will be drawn small — so keep the blades few and clear rather than fine and many.
 
-KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest part
-and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
-lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
-the stone it lies on.
-
 EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
 edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
 
@@ -2738,6 +2759,24 @@ sticker however well the map lights it.
 THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
+
+**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
+tops of the petals and leaves take the light; what lies under them, what is deeper in the clump, and the
+ground showing between them fall into shadow.
+
+STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so there is NO brighter flank —
+nothing lighter on the left than on the right. That is load-bearing: the renderer turns and MIRRORS these
+sprites at random to keep a floor from repeating, and light from a side would land on the wrong flank in
+half the cells. Light from the front survives both.
+
+**MAKE THE LIGHT OBVIOUS.** This is the whole point of the tile: it should look like something the sun is
+falling on, not a diagram of a plant. Push the lit parts well clear of the shadowed ones — a real range
+from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
+to the viewer. A flat silhouette in one value is the failure.
+
+**COLOUR IT PROPERLY.** Saturated, not muted: living green, and where there are flowers they are the most
+saturated thing in the picture. These plants are alive and the stone around them is not, and they are
+meant to be the thing your eye goes to on a floor of grey masonry.
 
 Draw it square on and FLAT. No perspective, no scene, no paving under it, no crack, no soil.
 
@@ -2773,11 +2812,6 @@ anywhere in them.
 It LIES ON THE PAVING and is seen from above, flat to the floor, filling more width than height. The
 arrangement need not match the reference.
 
-KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest part
-and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
-lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
-the stone it lies on.
-
 EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
 edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
 
@@ -2789,6 +2823,24 @@ sticker however well the map lights it.
 THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
+
+**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
+tops of the petals and leaves take the light; what lies under them, what is deeper in the clump, and the
+ground showing between them fall into shadow.
+
+STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so there is NO brighter flank —
+nothing lighter on the left than on the right. That is load-bearing: the renderer turns and MIRRORS these
+sprites at random to keep a floor from repeating, and light from a side would land on the wrong flank in
+half the cells. Light from the front survives both.
+
+**MAKE THE LIGHT OBVIOUS.** This is the whole point of the tile: it should look like something the sun is
+falling on, not a diagram of a plant. Push the lit parts well clear of the shadowed ones — a real range
+from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
+to the viewer. A flat silhouette in one value is the failure.
+
+**COLOUR IT PROPERLY.** Saturated, not muted: living green, and where there are flowers they are the most
+saturated thing in the picture. These plants are alive and the stone around them is not, and they are
+meant to be the thing your eye goes to on a floor of grey masonry.
 
 Draw it square on and FLAT. No perspective, no scene, no paving under them, no soil.
 
@@ -2832,24 +2884,23 @@ growing out of it.
 
 THIS IS CONTACT, NOT A CAST SHADOW: no direction, nothing thrown sideways onto the wall.
 
-**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is standing, tilted down.
-Give it a lit side and a shadow side against that: the upper surfaces and the parts facing the viewer
-take the lightest greens; the undersides of the fronds, the far side of the trunk and anything tucked
-behind another part fall away into shadow, and the change between them is gradual rather than a hard
-edge.
+**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
+upper surfaces and the parts facing the viewer take the light; the undersides of the leaves, the far
+side of the stem and anything tucked behind another part fall into shadow.
 
-STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so the tile has NO brighter flank —
-nothing is lighter on the left than on the right. That is deliberate and it is load-bearing: the renderer
-MIRRORS these sprites at random to keep a floor from repeating, and a plant lit from one side would have
-its lit flank on the wrong side of half the cells it lands in. Front light survives the mirror; side
-light does not.
+STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so there is NO brighter flank —
+nothing lighter on the left than on the right. That is load-bearing: the renderer turns and MIRRORS these
+sprites at random to keep a floor from repeating, and light from a side would land on the wrong flank in
+half the cells. Light from the front survives both.
 
-DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side: no specular dot, no shine, no wet look, and
-no bright rim tracing the edge.
+**MAKE THE LIGHT OBVIOUS.** This is the whole point of the tile: it should look like something the sun is
+falling on, not a diagram of a plant. Push the lit parts well clear of the shadowed ones — a real range
+from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
+to the viewer. A flat silhouette in one value is the failure.
 
-KEEP IT ALL IN A NARROW VALUE RANGE. The lit side is lighter, not bright: nothing near white, nothing
-near black, and the lightest part and the darkest within about a third of the scale of each other. A
-plant painted with real contrast reads as cut out of another picture from the stone behind it.
+**COLOUR IT PROPERLY.** Saturated, not muted: living green, and where there are flowers they are the most
+saturated thing in the picture. These plants are alive and the stone around them is not, and they are
+meant to be the thing your eye goes to on a floor of grey masonry.
 
 Draw it square on and FLAT, seen straight on against the wall. No perspective, no scene, no bricks behind
 it, no wall.
@@ -2896,24 +2947,23 @@ growing out of it.
 
 THIS IS CONTACT, NOT A CAST SHADOW: no direction, nothing thrown sideways onto the wall.
 
-**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is standing, tilted down.
-Give it a lit side and a shadow side against that: the upper surfaces and the parts facing the viewer
-take the lightest greens; the undersides of the fronds, the far side of the trunk and anything tucked
-behind another part fall away into shadow, and the change between them is gradual rather than a hard
-edge.
+**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
+upper surfaces and the parts facing the viewer take the light; the undersides of the leaves, the far
+side of the stem and anything tucked behind another part fall into shadow.
 
-STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so the tile has NO brighter flank —
-nothing is lighter on the left than on the right. That is deliberate and it is load-bearing: the renderer
-MIRRORS these sprites at random to keep a floor from repeating, and a plant lit from one side would have
-its lit flank on the wrong side of half the cells it lands in. Front light survives the mirror; side
-light does not.
+STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so there is NO brighter flank —
+nothing lighter on the left than on the right. That is load-bearing: the renderer turns and MIRRORS these
+sprites at random to keep a floor from repeating, and light from a side would land on the wrong flank in
+half the cells. Light from the front survives both.
 
-DIRECTIONAL, NOT GLOSSY. A matte leaf still has a lit side: no specular dot, no shine, no wet look, and
-no bright rim tracing the edge.
+**MAKE THE LIGHT OBVIOUS.** This is the whole point of the tile: it should look like something the sun is
+falling on, not a diagram of a plant. Push the lit parts well clear of the shadowed ones — a real range
+from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
+to the viewer. A flat silhouette in one value is the failure.
 
-KEEP IT ALL IN A NARROW VALUE RANGE. The lit side is lighter, not bright: nothing near white, nothing
-near black, and the lightest part and the darkest within about a third of the scale of each other. A
-plant painted with real contrast reads as cut out of another picture from the stone behind it.
+**COLOUR IT PROPERLY.** Saturated, not muted: living green, and where there are flowers they are the most
+saturated thing in the picture. These plants are alive and the stone around them is not, and they are
+meant to be the thing your eye goes to on a floor of grey masonry.
 
 Draw it square on and FLAT, seen straight on against the wall. No perspective, no scene, no bricks behind
 it, no wall.
