@@ -3,6 +3,7 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapScale"
 import type { ShapeKind } from "./nodeKinds"
+import { type Mark, MarkBadge } from "./mark"
 
 // WHAT A NODE MARKER LOOKS LIKE: a shape per kind, a colour per state, the badges on its rim. All of it
 // vector and all of it stateless — props in, SVG out — so the map's own file is left holding the floor
@@ -83,6 +84,9 @@ export type ShapeProps = {
   keyColors?: KeyColor[]
   // A ward (tomb-key) gate's tier, derived from its key id — tints the gate by difficulty.
   difficulty?: Difficulty
+  // Which mechanism this room belongs to (RoomCell.mark) — the lever and every gate it drives wear
+  // the same pair, and that is all that says which lever opens which door. Unset off both.
+  mark?: Mark
 }
 
 const PuzzleShape = ({ state }: ShapeProps) => {
@@ -187,7 +191,7 @@ const SwitchShape = ({ state }: ShapeProps) => {
  * that backdrop alone already separates it from the switch at map zoom. The icon drawn on top is a
  * lever: a mounted post with an arm swung off it and a grip on its end, literal rather than abstract so
  * a player learns "this is a lever" on sight. */
-const HandleShape = ({ state }: ShapeProps) => {
+const HandleShape = ({ state, mark }: ShapeProps) => {
   const r = NODE_RADIUS_PUZZLE
   const fill = handleFill[state]
   const stroke = handleStroke[state]
@@ -206,11 +210,12 @@ const HandleShape = ({ state }: ShapeProps) => {
           <circle cx={9} cy={-12} r={3} fill={handleIcon[state]} stroke="none" />
         </g>
       )}
+      {mark && <MarkBadge mark={mark} r={r} state={state} />}
     </>
   )
 }
 
-const GateNodeShape = ({ state, gateVariant, keyColor, difficulty }: ShapeProps) => {
+const GateNodeShape = ({ state, gateVariant, keyColor, difficulty, mark }: ShapeProps) => {
   const r = NODE_RADIUS_LARGE
   const isTomb = gateVariant === "tomb-key"
   const colorKey = state === "visible" ? "visible" : "reachable"
@@ -268,6 +273,7 @@ const GateNodeShape = ({ state, gateVariant, keyColor, difficulty }: ShapeProps)
       {state !== "fogged" && (
         <line x1={-r + 3} y1={-r / 3} x2={r - 3} y2={-r / 3} stroke={barColor} strokeWidth={1.5} />
       )}
+      {mark && <MarkBadge mark={mark} r={r} state={state} />}
     </>
   )
 }
@@ -362,8 +368,9 @@ export const NodeShape = ({
   keyColor,
   keyColors,
   difficulty,
+  mark,
 }: ShapeProps & { type: ShapeKind }) => {
-  const p = { state, gateVariant, keyColor, keyColors, difficulty }
+  const p = { state, gateVariant, keyColor, keyColors, difficulty, mark }
   switch (type) {
     case "entrance":
       return <EntranceShape {...p} />

@@ -117,6 +117,31 @@ describe("a floor authoring a handle", () => {
         .sort()
     ).toEqual(["pocket", "pocket2", "vault", "vault2"])
   })
+
+  it("puts one mark on the lever and the same one on every door it drives", () => {
+    const { grid } = floorWithHandle({ in: "lever", drives: ["vault", "pocket"] })
+    const mark = tagged(grid, "handle")[0].mark
+    expect(mark).toBeDefined()
+    expect(tagged(grid, "gate").map(gate => gate.mark)).toEqual([mark, mark])
+  })
+
+  it("gives the floor's second lever a mark that is not the first one's", () => {
+    const { grid } = floorWithHandle(
+      { in: "lever", drives: ["vault", "pocket"] },
+      { in: "lever2", drives: ["vault2", "pocket2"] }
+    )
+    const markOf = (section: string) => rooms(grid).find(room => room.mark && room.sectionAddress === section)?.mark
+    expect(markOf("lever")).not.toEqual(markOf("lever2"))
+    // And each lever's own doors wear its pair, not the other's.
+    expect([markOf("vault"), markOf("pocket")]).toEqual([markOf("lever"), markOf("lever")])
+    expect([markOf("vault2"), markOf("pocket2")]).toEqual([markOf("lever2"), markOf("lever2")])
+  })
+
+  it("leaves a mark off every room that is neither a lever nor a door it drives", () => {
+    const { grid } = floorWithHandle({ in: "lever", drives: ["vault"] })
+    const marked = rooms(grid).filter(room => room.mark !== undefined)
+    expect(marked.map(room => room.sectionAddress).sort()).toEqual(["lever", "vault"])
+  })
 })
 
 describe("a handle the floor cannot have, refused once before any carve", () => {

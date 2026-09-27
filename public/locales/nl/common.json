@@ -1110,6 +1110,6 @@
     "invitation": "Trek de hendel over",
     "goal": "De hendel staat op één stand, en de deur die daarbij hoort staat open.",
     "rest": "Rust",
-    "position": "Open de weg naar {{section}}"
+    "position": "Stand {{number}}"
   }
 }

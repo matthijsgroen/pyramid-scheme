@@ -16,6 +16,8 @@ import { authoredKindsFor } from "./authoredKinds"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
 import { registerFamily } from "@/app/families/familyRegistry"
+import { floorWithHandle } from "@/game/testSupport/handleFixtures"
+import { markFor } from "./mark"
 
 // Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
 // place of its own), so a change there can't silently break every position assumption in this file.
@@ -2240,5 +2242,25 @@ describe("the arch over a shut way out is drawn in front of its bars", () => {
     expect(explorer.compareDocumentPosition(arch) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     const standing = render(<SiteMapView grid={doorwayGrid()} explorerPos={[1, 1]} />)
     expect(Number(archesIn(standing.container)[0].style.opacity)).toBeLessThan(1)
+  })
+})
+
+// A MARK ON ONE END OF THE PAIR BUYS NOTHING. A lever's room keeps its marker, but a door it drives is
+// a way a switch shut (`isSealedWayOut`) and so is drawn as stone with its marker hidden — so the mark
+// has to ride the ART there, the same move the emptied-chest ✓ already makes (`NodeSprite.badge`).
+describe("a lever and the doors it drives", () => {
+  const handleGrid = floorWithHandle({ in: "lever", drives: ["vault", "pocket"] }).grid
+
+  const markGlyphsOnScreen = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll("text"))
+      .filter(text => /\p{Script=Egyptian_Hieroglyphs}/u.test(text.textContent ?? ""))
+      .filter(text => !text.closest('[opacity="0"]'))
+      .map(text => text.textContent)
+
+  it("wear the same mark, and every one of them is drawn where the player can see it", () => {
+    const { container } = render(<SiteMapView grid={handleGrid} revealAllCells />)
+    const glyph = String.fromCodePoint(markFor(0).glyph)
+
+    expect(markGlyphsOnScreen(container)).toEqual([glyph, glyph, glyph])
   })
 })

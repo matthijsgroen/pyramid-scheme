@@ -1,5 +1,6 @@
 import { mulberry32, shuffle } from "./random"
 import { hashString } from "@/support/hashString"
+import { type Mark, markFor } from "@/app/SiteMap/mark"
 import type {
   AssemblerFailure,
   AssemblerResult,
@@ -563,6 +564,9 @@ export const assembleFloor = (
     `handle:${floorRef.journeyId}#${floorRef.levelIndex ?? 0}#${floorRef.floorIndex}#${n}`
   const handleGateKeyByAddress = new Map<string, string>()
   const leverByAddress = new Map<string, MechanismRecord>()
+  // THE PAIR BOTH ENDS WEAR, by the gate key that already names one end: a lever's room is found again
+  // through the keys its own positions carry, so nothing has to re-derive which section a mark is for.
+  const markByHandleGateKey = new Map<string, Mark>()
   for (const [n, handle] of (authoredConfig.handles ?? []).entries()) {
     const refuse = (address: string): AssemblerFailure => ({
       success: false,
@@ -585,6 +589,7 @@ export const assembleFloor = (
         return refuse(driven)
       const gateKeyId = `${handleStem(n)}:${driven}`
       handleGateKeyByAddress.set(driven, gateKeyId)
+      markByHandleGateKey.set(gateKeyId, markFor(n))
       positions.push({ state: driven, gateKeyId })
     }
     // A lever can be thrown back to where it started, which a beam board cannot: solving one always
@@ -2460,6 +2465,22 @@ export const assembleFloor = (
       const switchedDuplicate = duplicateSlot()
       if (switchedDuplicate)
         return { success: false, reasons: [{ type: "duplicateCellSlot", slot: switchedDuplicate }] }
+    }
+
+    // WHICH LEVER DRIVES WHICH DOOR IS ONLY READABLE IF BOTH ENDS SAY SO, so the mark goes on the
+    // lever's room AND on every gate it owns — one pair per handle, worn twice. Written here, over the
+    // finished cells, because a gate room is carved by the ordinary gate pass and a lever's room by the
+    // lever pass, and neither of them knows about the other.
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const cell = cells2D[r][c]
+        if (cell.type !== "room") continue
+        // A lever is found by the keys its own positions carry, a door by the key it asks for. A
+        // switch's mechanism and an authored gate's key are not in the map, so they stay unmarked.
+        const key = cell.mechanism?.positions[0]?.gateKeyId ?? cell.requiredKeyId
+        const mark = key === undefined ? undefined : markByHandleGateKey.get(key)
+        if (mark) cells2D[r][c] = { ...cell, mark }
+      }
     }
 
     return { success: true, grid }

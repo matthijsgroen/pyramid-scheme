@@ -99,6 +99,8 @@ export const useEncounter = ({
       forkShape: classifyForkShape((exits ?? []).filter(exit => exit.gateKeyId).map(exit => exit.dir)),
       // A lever's room reads its own positions off the cell, the same way a fork reads its ways out.
       mechanism: cell?.type === "room" ? cell.mechanism : undefined,
+      // The pair this room's mechanism wears on the map, so the screen the player opens wears it too.
+      mark: cell?.type === "room" ? cell.mark : undefined,
       ownedKeys,
     }
   }, [active, grid, currentFloor, journeyId, levelNr, difficulty, ownedKeys])

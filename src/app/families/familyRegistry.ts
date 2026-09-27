@@ -2,6 +2,7 @@ import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { GateVariant, KeyColor, MechanismRecord, RoomCell, TreasureReward } from "@/game/siteTypes"
 import type { ForkShape } from "@/game/forkShape"
+import type { Mark } from "@/app/SiteMap/mark"
 import { encounterFromMeta, type ResolveEncounter } from "@/game/siteAssembler"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ProgressionAPI } from "@/app/state/useProgression"
@@ -70,6 +71,10 @@ export type FamilyContext = {
   /** THIS ROOM IS A MECHANISM (RoomCell.mechanism): its own positions and whether it can rest. A lever
    * reads this to know which buttons to draw; unset off mechanism rooms. */
   mechanism?: MechanismRecord
+  /** THE PAIR THIS ROOM'S MECHANISM WEARS (RoomCell.mark): a glyph on a coloured ground, the same one
+   * every gate it drives wears on the map. A lever puts it on its own buttons so the player can go and
+   * look for it; unset off mechanism rooms and the gates they own. */
+  mark?: Mark
 }
 
 type InventoryAPI = ReturnType<typeof useInventory>

@@ -4,6 +4,7 @@ import { assembleFloor } from "../../game/siteAssembler"
 import { generatedWorldConfigs } from "../../data/generatedWorld"
 import { completeCell } from "../../game/gridNavigation"
 import type { CellState, Direction, FloorConfig, FloorGrid, GridCell } from "../../game/siteTypes"
+import { floorWithHandle } from "../../game/testSupport/handleFixtures"
 import { SiteMapView } from "./SiteMapView"
 
 // A map SCROLLS: its root is an overflow-auto box that sizes to the floor inside it, so it only scrolls
@@ -376,5 +377,20 @@ export const SideStairsBothHands: Story = {
         staircases: {},
       }
     })(),
+  },
+}
+
+/**
+ * A LEVER AND THE TWO DOORS IT DRIVES, every cell revealed: the pairing this map has to make readable is
+ * the mark, so what this story is for is seeing that the lever's badge and both gates' badges are the
+ * same glyph on the same ground — and that the glyph is a GLYPH and not the empty box a code point the
+ * shipped font subset does not carry draws as.
+ *
+ * Two handles, because the case that matters is telling one lever's doors from another's.
+ */
+export const HandlesAndTheirDoors: Story = {
+  args: {
+    grid: floorWithHandle({ in: "lever", drives: ["vault", "pocket"] }, { in: "lever2", drives: ["vault2"] }).grid,
+    revealAllCells: true,
   },
 }

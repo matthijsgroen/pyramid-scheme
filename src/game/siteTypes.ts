@@ -1,3 +1,4 @@
+import type { Mark } from "@/app/SiteMap/mark"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
@@ -242,6 +243,10 @@ export type RoomCell = {
    * every time it is solved and cannot be un-solved, while a lever can be thrown back. Assuming either
    * for both gives the walk a transition the player does not have, or takes one they do. */
   mechanism?: MechanismRecord
+  /** WHICH MECHANISM THIS ROOM BELONGS TO, said in a glyph on a coloured ground (src/app/SiteMap/mark.tsx).
+   * A mechanism's room and every gate it owns carry the same pair, and that pairing is the only thing
+   * on the floor that says which lever drives which door. Unset everywhere else. */
+  mark?: Mark
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 

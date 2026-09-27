@@ -4,12 +4,14 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 import type { FamilyContext } from "@/app/families/familyRegistry"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
+import { markFor } from "@/app/SiteMap/mark"
 import type { MechanismRecord } from "@/game/siteTypes"
 import { HandleComponent } from "./HandleComponent"
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
-    t: (key: string, options?: { section?: string }) => (options?.section ? `${key}|${options.section}` : key),
+    t: (key: string, options?: Record<string, unknown>) =>
+      options ? `${key}|${Object.values(options).join(",")}` : key,
   }),
 }))
 
@@ -46,6 +48,7 @@ const ctxWith = ({
     sectionHash: "s0",
     freshArrival: true,
     mechanism: mechanismFor(positions),
+    mark: markFor(0),
   }
   return {
     ctx,
@@ -64,7 +67,7 @@ describe("HandleComponent", () => {
     const setMechanismState = vi.fn()
     render(<HandleComponent {...ctxWith({ positions: ["vault", "pocket"], setMechanismState })} />)
 
-    fireEvent.click(screen.getByRole("button", { name: /vault/i }))
+    fireEvent.click(screen.getByRole("button", { name: /position\|1/ }))
     expect(setMechanismState).toHaveBeenCalledWith("s0#0/p1", "vault")
 
     fireEvent.click(screen.getByRole("button", { name: /rest/i }))
@@ -74,7 +77,7 @@ describe("HandleComponent", () => {
   it("shows which position the lever already stands in", () => {
     render(<HandleComponent {...ctxWith({ positions: ["vault", "pocket"], current: "pocket" })} />)
 
-    expect(screen.getByRole("button", { name: /pocket/i }).getAttribute("aria-pressed")).toBe("true")
+    expect(screen.getByRole("button", { name: /position\|2/ }).getAttribute("aria-pressed")).toBe("true")
   })
 
   // Read with nothing ever thrown reads as "rest" (mechanismDoors.ts/floorLock.ts's own default), so a
@@ -83,6 +86,26 @@ describe("HandleComponent", () => {
     render(<HandleComponent {...ctxWith({ positions: ["vault", "pocket"] })} />)
 
     expect(screen.getByRole("button", { name: /rest/i }).getAttribute("aria-pressed")).toBe("true")
-    expect(screen.getByRole("button", { name: /vault/i }).getAttribute("aria-pressed")).toBe("false")
+    expect(screen.getByRole("button", { name: /position\|1/ }).getAttribute("aria-pressed")).toBe("false")
+  })
+
+  /**
+   * A driven section's authoring address is world-gen's vocabulary — "Open the way to s0.1" is a label
+   * for the author, not for the player. What tells the doors apart on screen is the mark, so no button
+   * may put an address on screen.
+   */
+  it("puts no section address on screen", () => {
+    const { container } = render(<HandleComponent {...ctxWith({ positions: ["vault", "s0.1"] })} />)
+
+    expect(container.textContent).not.toContain("vault")
+    expect(container.textContent).not.toContain("s0.1")
+  })
+
+  it("wears the lever's own mark on every position, the pair its doors wear on the map", () => {
+    render(<HandleComponent {...ctxWith({ positions: ["vault", "pocket"] })} />)
+
+    const glyph = String.fromCodePoint(markFor(0).glyph)
+    const worn = screen.getAllByRole("button").filter(button => button.textContent?.includes(glyph))
+    expect(worn).toHaveLength(2)
   })
 })

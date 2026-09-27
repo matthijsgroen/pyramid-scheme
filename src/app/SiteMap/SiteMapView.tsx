@@ -40,6 +40,7 @@ import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileVariants } f
 import { isLockedGate, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
+import { MarkArtBadge } from "./mark"
 import { FloorShade, LitPlaces } from "./torchlight"
 import { LIT_STANDING_STRENGTH, SEATING_PASS, STANDING_RELIEF } from "./lighting"
 import { TileLayers } from "./tileLayers"
@@ -339,6 +340,9 @@ const nodeSpritesFor = (
           x: left,
           y: base - PROP_H,
           mirrored: false,
+          // ON THE LEAF, NOT ON THE MARKER: a way a lever shut hides its marker entirely, so the pair
+          // its lever wears has to be worn by the stone the player is actually looking at.
+          ...(cell.mark ? { mark: cell.mark } : {}),
         })
       } else if (kind === "stairhead") {
         const goesUp = r === grid.entrancePos[0] && c === grid.entrancePos[1]
@@ -1075,6 +1079,10 @@ export const SiteMapView = ({
           {sprite.badge && (
             <NodeBadge kind={sprite.badge} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
           )}
+          {/* ON THE LEAF, for the same reason: a door a lever drives has no marker left to wear it. */}
+          {sprite.mark && (
+            <MarkArtBadge mark={sprite.mark} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
+          )}
         </Fragment>
       ),
     }))
@@ -1447,6 +1455,7 @@ export const SiteMapView = ({
                           keyColor={cell.keyColor}
                           keyColors={cell.keyColors}
                           difficulty={wardKeyDifficulty(cell.requiredKeyId)}
+                          mark={cell.mark}
                         />
                       </g>
                       {/* A chest wears its own badge (`nodeSpritesFor`), because it stands over this one. */}
