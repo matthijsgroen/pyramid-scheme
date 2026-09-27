@@ -1,4 +1,3 @@
-import type { DayNightCycleStep } from "@/ui/atoms/backdropSelection"
 import type { Difficulty } from "./difficultyLevels"
 import type { SiteConfig } from "@/game/siteTypes"
 import { generatedWorldConfigs } from "./generatedWorld"
@@ -11,6 +10,15 @@ import { DEV_JOURNEY_ID } from "@/worldGen/data"
  * - medium: 5-7 levels
  * - long: 7-10 levels
  */
+
+/**
+ * Which hour a journey's exterior is drawn at.
+ *
+ * The backdrop that paints it declares the same four steps for itself (`src/ui/atoms/backdropSelection.ts`):
+ * the design system imports nothing from `src/`, so the list a journey is AUTHORED against belongs here,
+ * beside the authoring. Structurally identical, so a journey's `time` passes straight to the backdrop.
+ */
+export type DayNightCycleStep = "morning" | "afternoon" | "evening" | "night"
 
 export type Journey = {
   id: string

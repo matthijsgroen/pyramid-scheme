@@ -13,6 +13,34 @@ import { join } from "node:path"
 
 const MODS = ["puzzle", "mosaic", "hieroglyph", "trap", "shop", "tombTreasure", "topology"]
 
+const DOMAIN = "src/{game,data,worldGen}/**/*.{ts,tsx}"
+
+const NO_MOD_NAMES = {
+  group: ["@/mods/*/**", "!@/mods/core/**"],
+  message:
+    "Core must not name a mod (docs/mods/TARGET.md). Move the fact into the owning mod and read it back through a registry.",
+}
+
+const DOMAIN_IS_PORTABLE = {
+  group: [
+    "@/app",
+    "@/app/**",
+    "@/ui",
+    "@/ui/**",
+    // Any path with an `app` or `ui` segment, so a relative hop out of the domain is caught too.
+    "**/app/**",
+    "**/ui/**",
+    "react",
+    "react/**",
+    "react-dom",
+    "react-dom/**",
+    "react-i18next",
+    "i18next",
+  ],
+  message:
+    "The domain layer is pure TypeScript and has to keep running in the world-generation CLI, so it names no React, no app/ and no ui/ (docs/instructions/architecture.md). Move what it needs down into src/game, src/data or src/worldGen — src/game/mark.ts is the precedent.",
+}
+
 export default tseslint.config(
   [
     globalIgnores(["dist", "storybook-static", ".yarn", "node_modules", ".claude"]),
@@ -48,20 +76,20 @@ export default tseslint.config(
     },
     {
       // Core names no mod (docs/mods/TARGET.md). At zero, so it is an error: a new one fails the build.
-      files: ["src/app/**/*.{ts,tsx}", "src/ui/**/*.{ts,tsx}", "src/{game,data,worldGen}/**/*.{ts,tsx}"],
+      files: ["src/app/**/*.{ts,tsx}", "src/ui/**/*.{ts,tsx}", DOMAIN],
       rules: {
-        "@typescript-eslint/no-restricted-imports": [
-          "error",
-          {
-            patterns: [
-              {
-                group: ["@/mods/*/**", "!@/mods/core/**"],
-                message:
-                  "Core must not name a mod (docs/mods/TARGET.md). Move the fact into the owning mod and read it back through a registry.",
-              },
-            ],
-          },
-        ],
+        "@typescript-eslint/no-restricted-imports": ["error", { patterns: [NO_MOD_NAMES] }],
+      },
+    },
+    {
+      // The domain layer stays portable (docs/instructions/architecture.md, AGENTS.md §8). A later block
+      // REPLACES the rule's options rather than adding to them, so the mod patterns are restated here.
+      // Specs are out: they run under vitest beside the app, and pulling a hook into one costs the CLI
+      // nothing. What ships in `yarn generate-world` is what this covers.
+      files: [DOMAIN],
+      ignores: ["src/{game,data,worldGen}/**/*.{spec,verify,stories}.{ts,tsx}"],
+      rules: {
+        "@typescript-eslint/no-restricted-imports": ["error", { patterns: [NO_MOD_NAMES, DOMAIN_IS_PORTABLE] }],
       },
     },
     // A mod names no other mod (docs/mods/TARGET.md); core is the engine, not a sibling.

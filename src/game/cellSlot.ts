@@ -17,7 +17,7 @@ import type { FloorGrid } from "./siteTypes"
  * It lives in the domain rather than beside the save that spends it, because the assembler checks its own
  * floors against it (`assembleFloor`): two rooms of one section answering to the same name is a data-loss
  * bug, and a rule written twice is a rule that can be changed once. The save's full address — section,
- * floor and slot — is built on top of this in `cellIdentity.ts`.
+ * floor and slot — is built on top of this in `cellAddress.ts`.
  */
 export const cellSlot = (grid: FloorGrid, row: number, col: number): string | null => {
   const cell = grid.cells[row]?.[col]

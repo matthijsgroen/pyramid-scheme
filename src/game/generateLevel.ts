@@ -1,4 +1,4 @@
-import { createFloorStartIndices, getFloorAndIndex } from "@/app/PyramidLevel/support"
+import { createFloorStartIndices, getFloorAndIndex } from "@/game/pyramidBlocks"
 import { getAnswers } from "@/game/state"
 import type { Pyramid, PyramidLevel, PyramidLevelSettings } from "@/game/types"
 

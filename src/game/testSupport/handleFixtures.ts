@@ -1,6 +1,6 @@
 import { assembleFloor } from "@/game/siteAssembler"
 import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
-import { cellAddress } from "@/app/SiteMap/cellIdentity"
+import { cellAddress } from "@/game/cellAddress"
 
 export type Handle = NonNullable<FloorConfig["handles"]>[number]
 

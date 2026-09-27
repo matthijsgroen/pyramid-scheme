@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react"
 import type { PyramidBlock } from "@/game/types"
-import { getFloorAndIndex } from "./support"
+import { getFloorAndIndex } from "@/game/pyramidBlocks"
 
 export const usePyramidNavigation = (
   floorStartIndices: number[],

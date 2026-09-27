@@ -1,5 +1,5 @@
 import type { FloorGrid } from "./siteTypes"
-import { cellAddress } from "@/app/SiteMap/cellIdentity"
+import { cellAddress } from "./cellAddress"
 
 // WHICH DOORS STAND OPEN IS ASKED OF EACH MECHANISM'S OWN MAPPING, NEVER STORED. The save holds the
 // position; the floor holds what that position opens. Keeping the mapping here rather than in the save
