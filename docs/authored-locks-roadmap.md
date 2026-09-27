@@ -224,3 +224,24 @@ down; the boundary gap above a cell is 56x28, the one beside it 14x56. A cell `(
 `((c + 1) * 70, 112 + r * 84)` relative to `[data-map]`. Deriving this from `CELL` alone gives the
 wrong answer and puts every mark in the wrong place — which happened once here, and produced a
 confident conclusion that had to be retracted.
+
+### A one-way is a place, and the movement markers carry the rule
+
+Decided by the owner after the spike. The drop is drawn as somewhere the player is, not as a sign
+about somewhere: a fissure across the passage with a line strung over it, anchored on the near side.
+The zipline reads, and it says why the way is one-way without a symbol to learn.
+
+**What says you cannot go back is the movement marker, at the moment you try.** Standing at the
+landing, the marker that would take the player back the way they fell is drawn struck through or
+disabled rather than left out. Absence teaches nothing — a missing arrow is indistinguishable from a
+wall — while a barred one says the way exists and is not yours.
+
+The machinery is already there and already holds the right opinion. `RunTargetArrow` draws a gold
+arrow pointing the first step out of the player's own cell, `ReachableDot` marks a corner, and both
+are "outlined and fully opaque, because they have to read on any floor the game has ... so the player
+learns a single shape rather than a per-tier one" (`SiteMapView.tsx`). A barred variant is that same
+shape with a bar across it, which is the cheapest thing that could work and the most consistent.
+
+One accident already in the feature's favour: a one-way's connector has a single `dirs` entry, so
+`isCorridorCorner` counts it as a corner rather than a straight-through, and it is already a click
+target the player must choose rather than ground they are walked across.
