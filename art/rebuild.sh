@@ -1512,3 +1512,15 @@ yarn import-tile art/masters/surfaces/overgrown-fronds.webp --tier=default --nam
 
 yarn import-tile art/masters/surfaces/overgrown-curtain.webp --tier=default --name=overgrown-curtain --slot=growthWall \
   --filter=smooth --saturation=1.0 --brightness=0.92
+
+# The GROUND the overgrown family grows out of. Keyed AND masked: the magenta between the clumps becomes
+# the hole the real floor shows through, and the mask trims the patch's extent. Keying runs first.
+#
+# GRASS RATHER THAN MOSS, and it is a legibility fix rather than a preference. A mat of moss was drawn
+# first and read as OOZE — a rounded pooled shape in a dark green is what a game paints when a floor is
+# dangerous to step in, and a covering half the floor wears must never say that. Grass cannot be taken
+# for a fluid because its edge is made of blades, which is also why its mask is nearly solid where sand's
+# tapers over half its radius: the tile supplies its own edge and a taper would only soften it.
+yarn drift-mask --out="$OBJ" --seed=grass --size=504 --peak=1 --core=0.92 --lobes=5 --blur=1
+yarn import-tile art/masters/surfaces/overgrown-grass.webp --tier=default --name=overgrown-grass --slot=drift \
+  --filter=smooth --mask="$OBJ" --brightness=0.7
