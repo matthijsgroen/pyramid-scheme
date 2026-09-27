@@ -1411,6 +1411,48 @@ def prim_rubbleheap():
     return join_all()
 
 
+def _shaft_courses(d):
+    """The top of a shaft wall, built as rough stone so a hole EMITS DEPTH instead of being a flat black
+    rectangle — `prim_stair`'s `down` falloff (body, then deep, then the void) applied to a pit.
+
+    A PIT HAS NO LIGHT IN IT, so depth cannot come from the lamp and has to be built as value. The
+    retired `pit` prop is the warning at one end — a dark rectangle with four stones at its lip, which
+    read as an alcove you could walk into — and a fully drawn interior is the warning at the other. What
+    goes between is TWO COURSES and no more: a lit one just under the far lip and a shaded one below it,
+    and then the black, which is where the eye stops.
+
+    THE COURSES STAND PROUD OF THE VOID WALL, each a little less than the one above, so every block
+    shows a sliver of up-facing top. That top face is the only surface in a hole the rig can light — the
+    shaft's own walls stand in the y-z plane and draw as lines — and it is what makes the stone read as
+    stone rather than as a paler rectangle inside a darker one.
+
+    THE BOTTOM EDGE IS RAGGED AND THE TOP EDGE IS NOT. Blocks of four different heights leave the
+    transition into the black broken, which is what stops the pair reading as a bar; the gap ABOVE them
+    is left straight and dark, because that is the far lip overhanging its own shaft.
+
+    NOTHING IS BUILT AT THE NEAR LIP, and it is not an omission. Under z + k*y an up-facing face draws
+    toward the viewer and a down-facing one away from him, so the underside of the near lip is a back
+    face and is never drawn; a lit sliver put there anyway would be a pale bar UNDER a dark band under a
+    pale bar, which is `prim_shelf`'s silhouette exactly and the reading this primitive already spends
+    four renders avoiding."""
+    face = d / 2 - 0.05  # the void wall's own front face; a course proud of the shaft starts here
+    # x, width, how far it stands proud, its top, and how far down it reaches. Two rows: the lit course
+    # under the lip and the shaded one below it, the second standing less proud than the first.
+    for x, bw, proud, top, drop, part in (
+        (-0.33, 0.28, 0.055, -0.030, 0.075, "deep"),
+        (-0.04, 0.24, 0.045, -0.025, 0.100, "deep"),
+        (0.22, 0.20, 0.060, -0.035, 0.065, "deep"),
+        (0.40, 0.14, 0.040, -0.025, 0.090, "deep"),
+        (-0.24, 0.34, 0.022, -0.115, 0.090, VOID),
+        (0.16, 0.30, 0.030, -0.105, 0.110, VOID),
+        (0.44, 0.13, 0.018, -0.125, 0.075, VOID),
+    ):
+        # Into the wall behind by 0.03 rather than butted against it: a hairline is a gap, and a course
+        # that merely touches the shaft leaves a line of floor colour along its own back edge.
+        front, back = face - proud, face + 0.03
+        mark(box(bw, back - front, drop, x=x, y=(front + back) / 2, z=top - drop / 2), part)
+
+
 def prim_pit():
     """A cellar shaft cut through the floor, a pole laid across its far lip and a rope ladder over it.
 
@@ -1454,25 +1496,44 @@ def prim_pit():
 
     `--contents=zipline` / `ziplineNorth` / `ziplineSouth` REPLACE THE LADDER WITH A ONE-WAY DROP'S OWN
     CROSSING: a stake at the entry lip and a taut line running to the far lip, where there is nothing to
-    hold. See the branch below for why direction costs two renders and not one."""
+    hold. See the branch below for why direction costs two renders and not one.
+
+    `--contents=drop` / `dropNorth` / `dropSouth` ARE THOSE THREE OVER A SHAFT THAT SHOWS ITS STONE —
+    the same crossing, a mouth 0.14 deeper to draw it in, and `_shaft_courses` under the far lip. Kept
+    as separate values rather than folded into the three above so the flat-black reading and the one
+    with depth in it can be looked at side by side before a roll is spent on either."""
     w, d = 0.94, 0.66  # the opening
     k = 0.7  # the shear this set is drawn at; the shaft's visible height is a function of it
+    contents = arg("contents")
+    # `drop*` is the zipline over a shaft that SHOWS ITS STONE, and it buys the depth with a mouth
+    # 0.14 deeper: the band is k*d tall and everything drawn inside it has to fit there, so at the
+    # ladder's own 0.66 the whole shaft is 17 pixels and three values in it are three pixels each.
+    # Only the unpainted variants take it — `plain` and the ladder keep the opening their masters were
+    # cut from.
+    courses = contents in ("drop", "dropNorth", "dropSouth")
+    if courses:
+        d = 0.80
     hv = k * d
     # The shaft: the far wall alone, exactly filling the drawn opening, and the only VOID part of any
     # primitive — everything else here is stone in the rank's own colour.
     mark(box(w, 0.05, hv, y=(d - 0.05) / 2, z=-hv / 2), VOID)
+    if courses:
+        _shaft_courses(d)
     # The spoil: what came out of the shaft, lying at its near edge and over the corners, so the mouth
     # has no straight side left. Drawn BELOW the hole, where this projection puts anything in front.
+    # Carried out with the near lip when the mouth is deepened, so it still lies on the paving in front
+    # of the opening rather than half inside it.
+    spoil_dy = 0.33 - d / 2
     for sx, sy, x, y, yaw in (
         (0.26, 0.13, -0.44, -0.40, -9),
         (0.22, 0.12, 0.44, -0.42, 13),
         (0.20, 0.12, -0.58, -0.16, 66),
         (0.18, 0.12, 0.57, -0.10, -58),
     ):
-        mark(tilt(box(sx, sy, 0.08, x=x, y=y, z=0.04), yaw, "Z"), "body")
-    if arg("contents") == "plain":
+        mark(tilt(box(sx, sy, 0.08, x=x, y=y + spoil_dy, z=0.04), yaw, "Z"), "body")
+    if contents == "plain":
         return join_all()
-    zip_dir = arg("contents")
+    zip_dir = {"drop": "zipline", "dropNorth": "ziplineNorth", "dropSouth": "ziplineSouth"}.get(contents, contents)
     if zip_dir in ("zipline", "ziplineNorth", "ziplineSouth"):
         # THE ZIPLINE, a one-way drop's own crossing — `docs/authored-locks-roadmap.md` ("A one-way is
         # a place, and the movement markers carry the rule") settles it as a place rather than a sign: a
@@ -1497,15 +1558,21 @@ def prim_pit():
         # ladder rope is why nothing here runs along bare -Y), and a zipline with no visible slope across
         # the frame reads as a post, not a line strung to somewhere.
         post_h = 0.34
+        # HOW FAR APART THE TWO ENDS STAND IN X is what the line's slope is made of, and on the two
+        # Y headings it is ALL of it: a run in y draws as height and nothing else, so a stake and a tie
+        # 0.44 apart across the frame gave a line very nearly upright, which reads as a second post. The
+        # deepened mouth makes that worse — more y to climb over the same x — so the drop variants take
+        # the wider spread and the three already-queued ziplines keep the geometry they were queued with.
+        spread = 0.40 if courses else 0.22
         if zip_dir == "zipline":
             stake_xy = (-w / 2 - 0.05, 0.0)
             tie_xy = (w / 2 + 0.02, 0.0)
         elif zip_dir == "ziplineNorth":
-            stake_xy = (-0.22, -d / 2 - 0.05)
-            tie_xy = (0.22, d / 2 + 0.02)
+            stake_xy = (-spread, -d / 2 - 0.05)
+            tie_xy = (spread, d / 2 + 0.02)
         else:  # ziplineSouth
-            stake_xy = (0.22, d / 2 + 0.05)
-            tie_xy = (-0.22, -d / 2 - 0.02)
+            stake_xy = (spread, d / 2 + 0.05)
+            tie_xy = (-spread, -d / 2 - 0.02)
         sx, sy = stake_xy
         tx, ty = tie_xy
         mark(box(0.06, 0.06, post_h, x=sx, y=sy, z=post_h / 2), "body")
@@ -1520,6 +1587,83 @@ def prim_pit():
         mark(box(0.05, 0.05, 0.10 + hv, x=sx * 0.25, y=rope_y, z=(0.10 - hv) / 2), NOCAST)
     for i in range(3):
         mark(box(0.55, 0.055, 0.055, y=rope_y, z=-0.09 - i * 0.15), NOCAST)
+    return join_all()
+
+
+def prim_spikes():
+    """A sprung one-way: a rank of angled blades standing out of a slot in the floor, passable along the
+    lean and refused against the points. `--contents=east` is the passage walked ACROSS, `north` and
+    `south` the passage walked up and down the page.
+
+    WHY IT EXISTS AT ALL, against the drop: it is the one shape tried so far that carries DIRECTION in
+    the tile. A plug stone and a zipline both read as "a way you take once" and neither says which way —
+    the rendering spike measured that and punted direction to the movement markers. A blade has a point
+    and a back, and a lean is a line at an angle, which is the cheapest thing this projection draws.
+
+    THE LEAN IS THE WHOLE ASSET, so each heading puts it on the axis that heading can afford:
+
+    - `east` leans in X, the only axis drawn honestly, and is mirrored in x for west. Its rank stands
+      ALONG the corridor rather than across it — see the arrangement below, which is where that trade
+      was paid for. `prim_gate`'s `-side` made the same one and its docstring is the argument: not a
+      truthful projection, the one drawing that still says what the object is.
+    - `north` and `south` run the rank in X, where a row is a row, and put the lean in Y, where it is
+      worth least: a blade tipped away from the viewer draws TALLER and shows its back, one tipped
+      toward him draws SHORTER and hangs over its own slot. That is the whole of the difference between
+      the two, and it is the reason they are two renders and not one flipped — a vertical flip would
+      also turn every up-facing top face downward, which this projection never draws.
+
+    THE SLOT RUNS IN X ON ALL THREE, which is not what a plan would draw and is what the projection
+    can. It is `deep` rather than VOID — the blades came out of it, so it is a slot with something in
+    it and not a hole in the floor, which is the other primitive.
+
+    THE BLADES ARE METAL AND THE ANCHORS ARE STONE. One flat colour would hand the repaint a comb of
+    identical prongs to guess at; `metal` puts the blades in dull bronze and the two anchor stones at
+    the rank's ends in the rank's own limestone, which is also what stops the row reaching the frame's
+    edges — `prim_stair`'s parapets, for the same reason."""
+    facing = arg("contents", "east")
+    h, r_base = 0.46, 0.075
+    # LEANING TOWARD THE VIEWER COSTS THE LIGHT, and that is why south is the one heading with its own
+    # angle. The rig is a steep sun (`add_light`), so a blade tipped away keeps a broad lit face and a
+    # blade tipped at the viewer turns that face downward: at the 45 the other two use, south rendered
+    # as four near-black diamonds, which at 56 units is a row of holes rather than a row of blades.
+    # 28 keeps enough of the light on them to still read as metal standing up out of the floor.
+    lean = {"south": 28.0}.get(facing, 45.0)
+
+    def blade(x, y, angle, axis, scale=1.0):
+        # A cone of four sides is a tapered blade, and turning it on its own centre before placing it is
+        # `turn`'s pattern: `cone` leaves the mesh centred, so the rotation is about the blade and not
+        # about the prop. Standing it back up after the tip goes over costs a cosine, less a little so
+        # the root stays down in the slot rather than balancing on the floor beside it.
+        stand = (h * scale / 2) * math.cos(math.radians(angle)) - 0.035
+        b = cone(r_base * scale, 0.004, h * scale, verts=4)
+        return mark(turn(b, angle, axis, x=x, y=y, z=stand), "metal")
+
+    # ONE ARRANGEMENT FOR ALL THREE, and only the lean's axis changes. The rank was first built the way
+    # the fiction wants it — spanning the passage, so in Y for a passage walked across — and that render
+    # is why it is not built that way now: four blades spread in depth draw stacked up the page at one x,
+    # the object comes out 28 units wide and 84 tall, and the rank reads as a single torn shape. Spread
+    # in X, which is the only axis drawn honestly, the same four read as four. What that costs is the
+    # plan: east's blades stand along the corridor rather than across it, a BED of spikes rather than a
+    # rank in a doorway. The bed is the reading that survives at 56 units.
+    # THE SLOT IS SET OFF-CENTRE ON THE TWO VERTICAL HEADINGS, and it is doing more work than the lean
+    # is. North puts it in front of the rank, so the blades stand clear above it; south puts it behind,
+    # so they hang down across it and break its line. That is a difference in the LAYOUT of the tile,
+    # which survives 56 units, where the lean itself is 0.13 of a unit in depth and very nearly does not.
+    slot_y = {"north": -0.12, "south": 0.12}.get(facing, 0.0)
+    mark(box(0.84, 0.11, 0.035, y=slot_y, z=0.018), "deep")
+    for i, (x, sc) in enumerate(((-0.30, 0.96), (-0.10, 1.0), (0.10, 0.92), (0.30, 0.98))):
+        # Turning about +Y tips a blade's tip toward +x; about +X it tips toward -y, which is toward the
+        # viewer — so south is the positive angle and north the negative one. A little y jitter on each,
+        # so the rank is a rank of driven blades and not a machined comb.
+        jitter = 0.03 if i % 2 else -0.03
+        if facing == "east":
+            blade(x, jitter, lean, "Y", sc)
+        else:
+            blade(x, slot_y + jitter, lean if facing == "south" else -lean, "X", sc)
+    # An anchor stone at each end, driven in beside the slot: it stops the rank reaching the frame's
+    # edges and gives the tile a silhouette that stands on the floor — `prim_stair`'s parapets.
+    for sx in (-1, 1):
+        mark(box(0.14, 0.19, 0.17, x=sx * 0.50, y=slot_y * 0.5, z=0.085), "body")
     return join_all()
 
 
@@ -2803,6 +2947,7 @@ PRIMITIVES.update(
         "rubblePile": prim_rubbleheap,
         "niche": prim_niche,
         "pit": prim_pit,
+        "spikes": prim_spikes,
         "stair": prim_stair,
         "gate": prim_gate,
         "exit": prim_exit,
