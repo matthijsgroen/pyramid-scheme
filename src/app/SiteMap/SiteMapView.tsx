@@ -931,18 +931,18 @@ const OneWayLandingArrow = ({ row, col, dir }: { row: number; col: number; dir: 
         pointerEvents: "none",
       }}
     >
+      {/* The arrow is the shape the player already knows, faded to half: a way they can see and
+        cannot take. The bar reads against that faded gold on its own, so it needs nothing under it. */}
       <g transform={`rotate(${DIR_ROTATION[dir]})`}>
         <polygon
           points={`0,${-r} ${r},${r} ${-r},${r}`}
           fill={MARKER_FILL}
+          fillOpacity={0.5}
           stroke={MARKER_OUTLINE}
+          strokeOpacity={0.5}
           strokeWidth={2}
           strokeLinejoin="round"
         />
-        {/* A dark bar alone reads as part of the outline it already sits inside — the same reason
-          the marker itself carries a ring rather than a bare shape: the pale halo under it is what
-          lets the bar stand off the gold fill instead of vanishing into its own edge. */}
-        <line x1={-r} y1={1} x2={r} y2={1} stroke="#fff6dd" strokeWidth={5} strokeLinecap="round" />
         <line x1={-r} y1={1} x2={r} y2={1} stroke={MARKER_OUTLINE} strokeWidth={2.5} strokeLinecap="round" />
       </g>
     </svg>
