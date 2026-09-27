@@ -5,6 +5,25 @@ Palms, flowers, and corridors with light in them.
 Slice 2 of the look pass. Slice 1 was the light shafts
 ([2026-09-25](2026-09-25-light-shafts-design.md)); this is what grows under them.
 
+## What it is aiming at
+
+A reference was handed over: a temple court in a 3D Egypt game — a palm leaning over a lily pond, creeper
+down every ledge, masses of pink flowers against a black granite statue, and warm sun coming in sideways
+through the columns. **We are not making that**, and the differences are not deficiencies: that is an
+eye-level 3D render and this is a near-top-down map at 56 pixels to a cell, so modelling, parallax and
+real shadow are not available and are not being chased.
+
+What IS worth taking from it, and what every decision in this document should be read against:
+
+- **WARM light.** Its sun is golden, not white, and the stone glows under it. Slice 1 solved the shaft as
+  daylight, cooler than the torch — on an overgrown floor that reading should be revisited, because the
+  light there is coming through leaves and off warm sandstone.
+- **MASSED plants, not specimens.** Nothing in it is one plant standing alone; creeper runs the whole
+  length of a ledge and flowers come in banks. Ours draws at most one sprite per cell, and the density is
+  as much of the look as the drawing is.
+- **Colour that is not green.** The pink flower banks are what stop it reading as a green wash, which is
+  the same job `overgrown-flowers` has here.
+
 ## What is wrong today
 
 An overgrown floor is **three sprites and a green wash**. One tuft in the joints, one root through the
@@ -48,6 +67,12 @@ grow. All `--tier=default`: one skin for every rank, as today.
 
 Seven new tiles. **Flowers carry more than their share**: they are the only colour that is not green or
 stone, and a lush place that is one hue is a wash rather than a garden.
+
+**Each tile bakes its own contact shadow.** A prop already does — a chest fills 100 of its 112 columns
+with one — and growth is the one standing thing on the floor that does not, which is why a plant reads as
+pasted on however well it is lit. Contact carries no direction, so it belongs in the tile where a
+highlight does not. The renderer half of the same problem is `STANDING_RELIEF`: the night wash dims and
+flattens together, props get that contrast handed back, and growth does not.
 
 **The renderer ships before the art.** `MapGrowth` already falls back to the plain tuft when a tile is
 missing — a deliberate property, so placement can be judged before anyone paints. The pools are declared
