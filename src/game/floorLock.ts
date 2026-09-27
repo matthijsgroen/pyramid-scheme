@@ -231,9 +231,9 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
     // THE STATE MACHINE IS THE RECORD'S, NEVER THIS FILE'S GUESS AT WHAT KIND OF THING IS STANDING
     // THERE. Which positions a mechanism has and whether it can be put back into the one it started in
     // are facts about the mechanism — a lever hangs left or right whether or not either side names a
-    // gate, and a solved beam board never returns to lighting nothing — so both are declared on the
-    // cell and read off it here. Re-workable from any state into any other otherwise, which is what
-    // lets a player change their mind and the only reason the doors it shut are not a trap.
+    // gate, and a beam board can be turned off every shrine again — so both are declared on the cell
+    // and read off it here. Re-workable from any state into any other otherwise, which is what lets a
+    // player change their mind and the only reason the doors it shut are not a trap.
     const { states, initial, returnsToInitial } = record
     const opens: Record<string, GateId[]> = Object.fromEntries(states.map(state => [state, [] as GateId[]]))
     for (const { state, gateIds } of byPosition) opens[state] = [...(opens[state] ?? []), ...gateIds]

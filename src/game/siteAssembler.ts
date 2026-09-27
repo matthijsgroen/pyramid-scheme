@@ -2421,13 +2421,13 @@ export const assembleFloor = (
           return gateKeyId ? { ...exit, gateKeyId } : exit
         }),
         // The same doors, said once more in the form a mechanism is asked for: a state per way out, and
-        // rest before it is solved. A board cannot be un-solved — solving it always routes the light to
-        // some shrine — so it never returns to rest of the player's choosing, and the walk must not be
-        // handed a move they do not have.
+        // rest before it is solved. A solved board can be put back to rest — the player walks in, turns
+        // a mirror off every shrine and leaves — and that shuts every way out of the fork, so the walk
+        // is handed that move and has to prove the floor survives it.
         mechanism: {
           states: [MECHANISM_AT_REST, ...gateKeyByDir.values()],
           initial: MECHANISM_AT_REST,
-          returnsToInitial: false,
+          returnsToInitial: true,
           positions: [...gateKeyByDir.values()].map(gateKeyId => ({ state: gateKeyId, gateKeyId })),
         },
       }

@@ -6,7 +6,7 @@ import { walkLock } from "./lockWalk"
 import { floorLock } from "./floorLock"
 import { nodeBeyond } from "./siteValidator"
 import { floorWithHandle } from "./testSupport/handleFixtures"
-import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
+import { MECHANISM_AT_REST } from "@/game/siteTypes"
 
 const plainFloor = (): FloorConfig => ({
   pathPuzzles: 2,
@@ -298,18 +298,17 @@ describe("floorLock", () => {
     expect(floorLock(assembled(plainFloor()))).toBeUndefined()
   })
 
-  it("names one mechanism per switch: unset until solved, then a state per way out", () => {
+  it("names one mechanism per switch: rest until solved, then a state per way out", () => {
     const lock = floorLock(assembled(switchFloor(), standsASwitch))!
     const board = Object.values(lock.mechanisms).find(mechanism => mechanism.states.includes(MECHANISM_AT_REST))!
     expect(board.states.length).toBeGreaterThanOrEqual(3)
     expect(board.opens[MECHANISM_AT_REST]).toEqual([])
     for (const state of board.states.filter(s => s !== MECHANISM_AT_REST))
       expect(board.opens[state].length).toBeGreaterThan(0)
-    // Re-solvable from every state into every other, which is what lets a player change their mind —
-    // but never back to "unset": a solved board routes to some way out, and "no way out" is not a
-    // move the game offers. So every state but the first is a target, from every other state.
-    expect(board.transitions).toHaveLength((board.states.length - 1) ** 2)
-    expect(board.transitions.some(transition => transition.to === MECHANISM_AT_REST)).toBe(false)
+    // Re-solvable from every state into every other, which is what lets a player change their mind,
+    // and back to "rest" as well: the board can be turned off every shrine again, so every state is a
+    // target from every other one.
+    expect(board.transitions).toHaveLength(board.states.length * (board.states.length - 1))
   })
 
   it("compiles a handle into two sides it can be thrown between either way, starting on the left", () => {
@@ -354,11 +353,12 @@ describe("floorLock", () => {
     expect(handle.opens.left.length).toBeGreaterThan(handle.opens.right.length)
   })
 
-  it("leaves a switch unable to return to the position that opens nothing", () => {
+  it("lets a switch be put back to the position that opens nothing, because a board can be left unlit", () => {
     const spec = floorLock(assembled(switchFloor(), standsASwitch))!
     const board = Object.entries(spec.mechanisms).find(([id]) => id.startsWith("switch "))![1]
     expect(board.initial).toBe(MECHANISM_AT_REST)
-    expect(board.transitions.some(transition => transition.to === MECHANISM_AT_REST)).toBe(false)
+    for (const from of board.states.filter(state => state !== MECHANISM_AT_REST))
+      expect(board.transitions).toContainEqual(expect.objectContaining({ from, to: MECHANISM_AT_REST }))
   })
 
   it("declares every region it then refers to", () => {
