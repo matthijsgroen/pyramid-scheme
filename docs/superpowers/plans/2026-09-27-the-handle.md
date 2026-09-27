@@ -883,7 +883,99 @@ git commit -m "feat: a lever and its doors wear the same glyph on the same groun
 
 ---
 
-### Task 8: A dev floor that stands a lever
+### Task 8: The lever is a toggle, not a selector
+
+**Added after Task 7, by owner decision.** *"For the lever, it should have 2 states. A lever pointing left, and a lever pointing right. So the switch is binary. Some things open, some close."*
+
+**Why this is a correction rather than a feature.** Tasks 2–5 built a *selector*: a rest position plus one position per driven door, where throwing the lever opens one door and closes the rest by omission. The design document's own worked example needs something a selector cannot say — *"Throwing `S1` swaps its two gates: the one behind the player closes, and one on the left branch opens"* (`docs/mods/floor-topology-design.md`, "The worked example"). A swap is two states that each open a **set** and close the other set. The design doc explicitly left this to the mod ("what a handle does when thrown — cycle its gates or toggle them … is the topology mod's to settle"), and it is now settled: **toggle.**
+
+Three consequences worth stating, because they make the change smaller than it looks:
+
+- **The data shape already supports it.** `openDoorsFor` loops every entry whose `state` matches and adds each `gateKeyId`, and `floorLock` builds `opens: Record<StateId, GateId[]>` — so one state opening several gates already works. What is missing is the authoring, the initial state, and the two-state semantics.
+- **It dissolves the ambiguity Task 1 exists to fix, rather than reopening it.** Task 1's argument was that "no saved position" cannot be told from "at rest". With two real named states and an explicit `initial`, absence means *the initial state* — itself a proper named state. The storage decision stands; it gets cleaner.
+- **It sidesteps a blocked question rather than hitting it.** A lever starting `left` means left's gates stand open on arrival, which is `startsOpen` in effect. But step 5's blocked question is about *carving* a gate that starts open; here the gate carves normally and the lever's initial position opens it at runtime. No carve change is needed and the owner does not have to answer that question yet.
+
+**Files:**
+- Modify: `src/game/siteTypes.ts` (`MechanismRecord`, `FloorConfig.handles`)
+- Modify: `src/game/mechanismDoors.ts` (+ spec), `src/game/siteAssembler.ts`, `src/game/floorLock.ts` (+ spec)
+- Modify: `src/mods/topology/app/handle/HandleComponent.tsx` (+ spec), `src/mods/topology/game/handle/meta.ts` if needed
+- Modify: `src/worldGen/{types,dsl,serializer,buildSite,validate}.ts`, `public/locales/{en,nl}/common.json`
+- Test: `src/game/handleAuthoring.spec.ts`, `src/game/testSupport/handleFixtures.ts`
+
+**Interfaces:**
+- Consumes: everything Tasks 1–7 produced.
+- Produces: `MechanismRecord = { positions: { state: string; gateKeyId: string }[]; initial: string }` — `restReachable` is **removed** (a toggle has no rest, and each state reaches the other). `FloorConfig.handles?: { in: string; left: string[]; right: string[]; starts?: "left" | "right" }[]`.
+
+- [ ] **Step 1: Write the failing tests**
+
+```typescript
+it("opens the left doors and shuts the right ones, then swaps when thrown", () => {
+  const { grid } = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"] })
+  const at = leverAddress(grid)
+  expect([...openDoorsFor(grid, 0, new Map())]).toEqual([gateKey("vault")])
+  expect([...openDoorsFor(grid, 0, new Map([[at, "right"]]))]).toEqual([gateKey("pocket")])
+})
+
+it("starts where the author says, not always on the left", () => {
+  const { grid } = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"], starts: "right" })
+  expect([...openDoorsFor(grid, 0, new Map())]).toEqual([gateKey("pocket")])
+})
+
+it("opens every door on the side it is thrown to", () => {
+  const { grid } = floorWithHandle({ in: "lever", left: ["vault", "pocket"], right: ["deep"] })
+  expect([...openDoorsFor(grid, 0, new Map())].sort()).toEqual([gateKey("pocket"), gateKey("vault")].sort())
+})
+```
+
+The first test is the one that matters: it asserts a door is open with **no stored position at all**, which is impossible under the old rest-opens-nothing model. It goes red against the current code.
+
+- [ ] **Step 2: Run them and watch them fail**
+
+Run: `yarn vitest run src/game/handleAuthoring.spec.ts src/game/mechanismDoors.spec.ts`
+Expected: FAIL — the first on an empty open-set where a door should stand open.
+
+- [ ] **Step 3: Give the record an initial state**
+
+In `src/game/siteTypes.ts`, replace `restReachable: boolean` with:
+
+```typescript
+  /** The position this mechanism stands in before anyone touches it. A save holding no entry for it means
+   * THIS state, not "nothing open" — which is what lets one side of a toggle stand open on arrival
+   * without the carve having to place an already-open gate. */
+  initial: string
+```
+
+- [ ] **Step 4: Fall back to it**
+
+In `src/game/mechanismDoors.ts`, `const state = positions.get(at) ?? cell.mechanism.initial`, and drop the `positions.size === 0` short-circuit — an empty map is now meaningful, not a reason to skip.
+
+- [ ] **Step 5: Author the two sides**
+
+`handles: [{ in, left, right, starts }]`. The assembler resolves both lists, gates every named section, and writes `positions` with one entry per driven section tagged `"left"` or `"right"`, plus `initial: starts ?? "left"`. Every refusal Task 3 added still applies to both lists, and a section named on **both** sides is a new refusal — it would be a door the lever can neither open nor close.
+
+- [ ] **Step 6: Two states in the walk**
+
+In `src/game/floorLock.ts`, a handle compiles to `states: ["left", "right"]`, `initial` from the record, `opens` folded per side, and transitions **both ways** (a toggle can always be thrown back). The switch keeps its own shape — it is not a toggle and `MECHANISM_AT_REST` stays its initial. Re-run the junior_2 identity check; this task must not move it.
+
+- [ ] **Step 7: A toggle, not a list**
+
+`HandleComponent` renders two states, not `positions.length + 1` buttons. Keep the marks from Task 7. Update both locale files; no raw authoring address may reach the screen (Task 7's assertion must still hold).
+
+- [ ] **Step 8: Run everything and prove the world did not move**
+
+Run: `yarn vitest run src/game src/app src/mods src/worldGen && yarn check-types && yarn lint --fix`
+Run: `yarn generate-world && git diff --stat src/data/generatedWorld.ts` — expected: no diff.
+
+- [ ] **Step 9: Commit**
+
+```bash
+git add -A
+git commit -m "feat: a lever is thrown one way or the other, and the doors swap with it"
+```
+
+---
+
+### Task 9: A dev floor that stands a lever
 
 **Files:**
 - Modify: `src/worldGen/spec/dev.ts`, `src/worldGen/data.ts:71`
@@ -952,7 +1044,7 @@ git commit -m "feat: the develop journey stands a lever that opens a door elsewh
 
 ---
 
-### Task 9: The lever prop
+### Task 10: The lever prop
 
 The owner runs the repaint loop by hand — this task queues it and stops.
 
