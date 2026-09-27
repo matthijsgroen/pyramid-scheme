@@ -2634,6 +2634,22 @@ THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no 
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
 
+**THE CAMERA IS 30° ABOVE THE FLOOR, AND EVERY TILE IN THIS GAME AGREES ON IT.** You are looking
+slightly DOWN on the plant, not at it from the side. What follows is not a mood, it is arithmetic:
+
+- Anything facing UP is squashed to HALF its depth but keeps its full width. A crown of fronds spraying
+  outward is an up-facing thing: it reads as a wide, shallow ELLIPSE — about twice as wide as it is deep
+  — and you see the UPPER surfaces of the fronds that go away from you, not their profile.
+- Anything facing the VIEWER is barely foreshortened. A trunk keeps its height.
+- **A plant with height still shows its top.** Drawn as a flat fan, symmetrical, seen edge-on, it reads
+  as a sticker standing on the floor — which is exactly what the last roll of this tile did, and it is
+  the one thing that makes a tile disagree with the room around it.
+- Verticals stay vertical and horizontals stay horizontal: an orthographic squash, never a vanishing
+  point. Nothing is drawn from three-quarter or from behind.
+
+Check it against a jar rack or a timber post in this game: you see the top of the rail, the elliptical top
+of the post. That is the angle.
+
 **THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
 upper surfaces and the parts facing the viewer take the light; the undersides of the leaves, the far
 side of the stem and anything tucked behind another part fall into shadow.
@@ -2718,6 +2734,14 @@ THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no 
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
 
+**THE CAMERA IS 30° ABOVE THE FLOOR, AND EVERY TILE IN THIS GAME AGREES ON IT.** This lies on the
+paving, so you are looking down its length at that angle, not straight down from overhead. What follows
+is arithmetic, not mood: anything facing UP is squashed to HALF its depth but keeps its full width, so a
+rosette lying on the stone reads as a wide, shallow ELLIPSE — about twice as wide as it is deep — never
+as a circle. Leaves reaching toward the viewer and away from the viewer are the ones that shorten; leaves
+reaching left and right keep their length. Verticals stay vertical: an orthographic squash, never a
+vanishing point.
+
 **THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
 tops of the petals and leaves take the light; what lies under them, what is deeper in the clump, and the
 ground showing between them fall into shadow.
@@ -2801,6 +2825,22 @@ tile without one lies on the paving like a sticker however well the map lights i
 THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
+
+**THE CAMERA IS 30° ABOVE THE FLOOR, AND EVERY TILE IN THIS GAME AGREES ON IT.** You are looking
+slightly DOWN on the plant, not at it from the side. What follows is not a mood, it is arithmetic:
+
+- Anything facing UP is squashed to HALF its depth but keeps its full width. A crown of fronds spraying
+  outward is an up-facing thing: it reads as a wide, shallow ELLIPSE — about twice as wide as it is deep
+  — and you see the UPPER surfaces of the fronds that go away from you, not their profile.
+- Anything facing the VIEWER is barely foreshortened. A trunk keeps its height.
+- **A plant with height still shows its top.** Drawn as a flat fan, symmetrical, seen edge-on, it reads
+  as a sticker standing on the floor — which is exactly what the last roll of this tile did, and it is
+  the one thing that makes a tile disagree with the room around it.
+- Verticals stay vertical and horizontals stay horizontal: an orthographic squash, never a vanishing
+  point. Nothing is drawn from three-quarter or from behind.
+
+Check it against a jar rack or a timber post in this game: you see the top of the rail, the elliptical top
+of the post. That is the angle.
 
 **THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
 upper surfaces and the parts facing the viewer take the light; the undersides of the leaves, the far
@@ -2970,6 +3010,22 @@ THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no 
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
 
+**THE CAMERA IS 30° ABOVE THE FLOOR, AND EVERY TILE IN THIS GAME AGREES ON IT.** You are looking
+slightly DOWN on the plant, not at it from the side. What follows is not a mood, it is arithmetic:
+
+- Anything facing UP is squashed to HALF its depth but keeps its full width. A crown of fronds spraying
+  outward is an up-facing thing: it reads as a wide, shallow ELLIPSE — about twice as wide as it is deep
+  — and you see the UPPER surfaces of the fronds that go away from you, not their profile.
+- Anything facing the VIEWER is barely foreshortened. A trunk keeps its height.
+- **A plant with height still shows its top.** Drawn as a flat fan, symmetrical, seen edge-on, it reads
+  as a sticker standing on the floor — which is exactly what the last roll of this tile did, and it is
+  the one thing that makes a tile disagree with the room around it.
+- Verticals stay vertical and horizontals stay horizontal: an orthographic squash, never a vanishing
+  point. Nothing is drawn from three-quarter or from behind.
+
+Check it against a jar rack or a timber post in this game: you see the top of the rail, the elliptical top
+of the post. That is the angle.
+
 **THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
 upper surfaces and the parts facing the viewer take the light; the undersides of the leaves, the far
 side of the stem and anything tucked behind another part fall into shadow.
@@ -3044,6 +3100,14 @@ sticker however well the map lights it.
 THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
+
+**THE CAMERA IS 30° ABOVE THE FLOOR, AND EVERY TILE IN THIS GAME AGREES ON IT.** This lies on the
+paving, so you are looking down its length at that angle, not straight down from overhead. What follows
+is arithmetic, not mood: anything facing UP is squashed to HALF its depth but keeps its full width, so a
+rosette lying on the stone reads as a wide, shallow ELLIPSE — about twice as wide as it is deep — never
+as a circle. Leaves reaching toward the viewer and away from the viewer are the ones that shorten; leaves
+reaching left and right keep their length. Verticals stay vertical: an orthographic squash, never a
+vanishing point.
 
 **THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
 tops of the petals and leaves take the light; what lies under them, what is deeper in the clump, and the
@@ -3120,6 +3184,14 @@ sticker however well the map lights it.
 THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
+
+**THE CAMERA IS 30° ABOVE THE FLOOR, AND EVERY TILE IN THIS GAME AGREES ON IT.** This lies on the
+paving, so you are looking down its length at that angle, not straight down from overhead. What follows
+is arithmetic, not mood: anything facing UP is squashed to HALF its depth but keeps its full width, so a
+rosette lying on the stone reads as a wide, shallow ELLIPSE — about twice as wide as it is deep — never
+as a circle. Leaves reaching toward the viewer and away from the viewer are the ones that shorten; leaves
+reaching left and right keep their length. Verticals stay vertical: an orthographic squash, never a
+vanishing point.
 
 **THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
 tops of the petals and leaves take the light; what lies under them, what is deeper in the clump, and the
