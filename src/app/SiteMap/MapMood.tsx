@@ -2,7 +2,7 @@ import { hashUnit } from "@/support/hashString"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { ConditionKind } from "@/game/siteTypes"
 import type { Mood } from "./moodSettings"
-import { GROWTH_POOLS, growthTile } from "./moodSettings"
+import { CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
 import { CELL, WALL_FACE_H, cellCenter } from "./mapScale"
 import { sharedTileUrl } from "./tileAssets"
 import { STANDING_RELIEF } from "./lighting"
@@ -87,8 +87,11 @@ const pool = (kind: ConditionKind, members: readonly (string | null)[]): string[
 /** Which member of a slot's pool this cell grew. Seeded off the cell's own place in the floor's fixed
  * list, as its size and its jitter already are, so a member never moves and adding a tile to the pool is
  * the only thing that reshuffles one. */
+const memberAt = (length: number, siteId: string, salt: string, index: number) =>
+  Math.floor(rand(siteId, salt, index) * length)
+
 const member = (urls: string[], siteId: string, salt: string, index: number) =>
-  urls[Math.floor(rand(siteId, salt, index) * urls.length)]
+  urls[memberAt(urls.length, siteId, salt, index)]
 
 type Props = {
   mood: Mood
@@ -253,11 +256,14 @@ export const MapGrowth = ({
       {grown(chamberCells, "growth-plant-cell", g.chamber).map(({ cell: [row, col], index: i }) => {
         if (!isLit(row, col)) return null
         const { cx, cy } = cellCenter(row, col)
-        const size = 30 + rand(siteId, "growth-plant-size", i) * 16
+        // The member is drawn FIRST, because how big this plant is depends on which plant it is.
+        const pick = memberAt(plant.length, siteId, "growth-plant-kind", i)
+        const scale = CHAMBER_SCALE[GROWTH_POOLS.chamber[pick] ?? ""] ?? 1
+        const size = (30 + rand(siteId, "growth-plant-size", i) * 16) * scale
         return (
           <Sprite
             key={`plant-${i}`}
-            url={member(plant, siteId, "growth-plant-kind", i)}
+            url={plant[pick]}
             stretch={false}
             filter={STANDING_RELIEF[tier]}
             x={cx - size / 2 + (rand(siteId, "growth-plant-x", i) - 0.5) * (CELL * 0.4)}

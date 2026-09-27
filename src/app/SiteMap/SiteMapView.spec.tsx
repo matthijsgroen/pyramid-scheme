@@ -15,7 +15,7 @@ import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "
 import { authoredKindsFor } from "./authoredKinds"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
-import { GROWTH_POOLS, growthTile } from "./moodSettings"
+import { CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
 import { sharedTileUrl } from "./tileAssets"
 import { STANDING_RELIEF } from "./lighting"
 
@@ -290,6 +290,35 @@ describe("the pool a slot of growth is drawn from", () => {
 
   it("draws the same members in the same cells every render", () => {
     expect(overgrownFloor()).toEqual(overgrownFloor())
+  })
+
+  it("hangs a root only where there is wall above it, never over a chamber's own floor", () => {
+    // EMPTY IS NOT SOLID. A chamber's claimed cells are `type: "empty"` in the grid, so the void test
+    // alone calls the open middle of a room a wall and hangs a root through it — which draws as a dead
+    // twig lying on the paving.
+    const room = {
+      ...makeGrid([
+        [empty, corridor("completed", false), empty],
+        [empty, chamber("completed"), empty],
+        [empty, empty, empty],
+      ]),
+      condition: { kind: "overgrown" as const, amount: 1 },
+    }
+    const { container } = render(<SiteMapView grid={room} onCellClick={() => {}} revealAllCells />)
+    const claims = buildRoomClaims(room)
+    const roots = spriteMatching(container, "overgrown-wall").map(boxOf)
+    for (const box of roots) {
+      const row = Math.round((box.y + box.h) / CELL)
+      const col = Math.round(box.x / CELL)
+      expect(claims.claimedBy.has(`${row - 1},${col}`)).toBe(false)
+    }
+  })
+
+  it("draws a palm bigger than the bush beside it, because a pool member is a different plant", () => {
+    // One size range for the whole pool drew palms and bushes alike at 30-46 units, so half the palms on
+    // a floor were smaller than the shrub next to them.
+    expect(CHAMBER_SCALE.palm).toBeGreaterThan(CHAMBER_SCALE.plant)
+    expect(CHAMBER_SCALE.ferns).toBeLessThan(CHAMBER_SCALE.plant)
   })
 
   it("hands growth back the contrast the night takes out of it, as every other standing thing gets", () => {

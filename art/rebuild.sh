@@ -1501,3 +1501,5 @@ yarn import-tile art/masters/surfaces/overgrown-palm.webp --tier=default --name=
   --filter=smooth --saturation=1.0 --brightness=1.0
 yarn import-tile art/masters/surfaces/overgrown-flowers.webp --tier=default --name=overgrown-flowers --slot=growth \
   --filter=smooth --saturation=1.0 --brightness=1.0
+yarn import-tile art/masters/surfaces/overgrown-ferns.webp --tier=default --name=overgrown-ferns --slot=growth \
+  --filter=smooth --saturation=1.0 --brightness=1.25

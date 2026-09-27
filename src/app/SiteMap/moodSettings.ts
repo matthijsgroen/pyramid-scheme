@@ -137,6 +137,26 @@ export const GROWTH_POOLS = {
   chamber: ["plant", "palm", "ferns"],
 } as const satisfies Record<"floor" | "wall" | "chamber", readonly (string | null)[]>
 
+/**
+ * How big a chamber plant is drawn, per pool member, as a multiple of the slot's own size.
+ *
+ * A POOL MEMBER IS A DIFFERENT PLANT, NOT A DIFFERENT PICTURE OF THE SAME ONE. Rolling one size range
+ * for the whole pool drew palms and bushes at the same 30–46 units, so half the palms on a floor were
+ * smaller than the shrub beside them — and a date palm that a man could not stand under reads as a
+ * seedling in a pot. The size belongs to the member for the same reason its drawing does.
+ *
+ * Only the chamber pool needs it: the floor joints are all small things by definition, and a wall root
+ * is stretched to the band rather than sized.
+ */
+export const CHAMBER_SCALE: Record<string, number> = {
+  // A tree. It is the tallest thing that grows in these rooms and should read as one.
+  palm: 1.45,
+  // The bulk of the pool, and the size the slot was tuned at.
+  plant: 1,
+  // Ferns keep low and spread, so they take a little less height than the bush.
+  ferns: 0.85,
+}
+
 /** The tile a pool member is drawn from: the condition's own name for the slot's fallback, and the
  * family name for every other member. */
 export const growthTile = (kind: ConditionKind, member: string | null) => (member ? `${kind}-${member}` : kind)

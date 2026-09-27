@@ -1096,12 +1096,18 @@ export const SiteMapView = ({
     for (let r = 0; r < grid.rows; r++) {
       for (let c = 0; c < grid.cols; c++) {
         if (grid.cells[r][c].type === "empty") continue
-        if (cellAt(grid, r - 1, c).type === "empty") cells.push([r, c])
+        if (cellAt(grid, r - 1, c).type !== "empty") continue
+        // EMPTY IS NOT THE SAME AS SOLID. A chamber's claimed cells are `type: "empty"` in the grid —
+        // the claim is a render-time fact — so the void test alone calls the open middle of a room a
+        // wall and hangs a root through it, which draws as a dead twig lying on the paving. It is the
+        // same blind spot `floorScatter` and `MapGrowth`'s chamber pass both record.
+        if (claims.claimedBy.has(`${r - 1},${c}`)) continue
+        cells.push([r, c])
       }
     }
     return cells
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the SHAPE of the floor, which a reveal never changes
-  }, [grid.rows, grid.cols, grid.siteId])
+  }, [grid.rows, grid.cols, grid.siteId, claims])
   // A chamber's own floor, for the big plants. Claimed cells are `type: "empty"` in the grid — the claim
   // is a render-time fact — so this cannot be read off `grid.cells`, which is the trap `floorScatter`
   // documents: walking the grid finds no chamber floor at all.
