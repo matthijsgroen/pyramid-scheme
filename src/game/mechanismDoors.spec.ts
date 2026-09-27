@@ -25,7 +25,7 @@ describe("openDoorsFor", () => {
         { state: "left", gateKeyId: "handle:dev#0#0#0:s1" },
         { state: "right", gateKeyId: "handle:dev#0#0#0:s2" },
       ],
-      "right"
+      { initial: "right" }
     )
     expect([...openDoorsFor(grid, 0, new Map())]).toEqual(["handle:dev#0#0#0:s2"])
   })

@@ -3,6 +3,7 @@ import { renderHook, act } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FloorGrid, GridCell } from "@/game/siteTypes"
+import { HANDLE_SIDES } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { registerFamily } from "@/app/families/familyRegistry"
 import { useEncounter } from "./useEncounter"
@@ -196,7 +197,12 @@ describe("useEncounter", () => {
   // A lever's room reads which positions it drives off its own cell, the same way a fork reads its
   // ways out — the family standing in it has no other way to learn what it stands over.
   it("hands a mechanism's own record to the family standing on it", () => {
-    const mechanism = { positions: [{ state: "left", gateKeyId: "handle:test:vault" }], initial: "left" }
+    const mechanism = {
+      states: [...HANDLE_SIDES],
+      initial: "left",
+      returnsToInitial: true,
+      positions: [{ state: "left", gateKeyId: "handle:test:vault" }],
+    }
     const { hook } = setup([{ ...stubRoom, mechanism }])
 
     act(() => hook.result.current.open([0, 0], true))

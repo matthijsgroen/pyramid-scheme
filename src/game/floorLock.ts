@@ -1,8 +1,6 @@
-import { HANDLE_SIDES } from "./siteTypes"
 import type { Direction, FloorGrid, GridCell, MechanismRecord, TombKeyReward } from "./siteTypes"
 import type { LockSpec, Mechanism, GateId, MechanismId, RegionId } from "./lockWalk"
 import { nodeBeyond } from "./siteValidator"
-import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
 
 type Pos = readonly [number, number]
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
@@ -97,18 +95,15 @@ const oneWaysOf = (grid: FloorGrid, of: Map<string, RegionId>): { from: RegionId
 const doorKey = (doorRegion: RegionId, keyId: string) => `${doorRegion}|${keyId}`
 
 /** Which kind of thing stands at a mechanism, read off the stem of the key its own doors carry —
- * `switch:…` for a beam board, `handle:…` for a lever. The floor names a gate by what closed it, so
- * the compiled lock says what the player is working without the record carrying a second field. */
+ * `switch:…` for a beam board, `handle:…` for a lever. Names the compiled mechanism and nothing else:
+ * what moves it offers is its own record's answer (MechanismRecord), never this stem's. */
 const kindOf = (record: MechanismRecord): string => record.positions[0]?.gateKeyId.split(":")[0] ?? "mechanism"
 
-/** What `kindOf` says of a lever. Its two sides are HANDLE_SIDES, the one list every layer reads. */
-const HANDLE_KIND = "handle"
-
 export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
-  // EVERY MECHANISM ON THE FLOOR IS ONE RECORD ON THE CELL IT STANDS IN — which key each of its
-  // positions opens, and which position it stands in until someone moves it. The runtime
-  // (mechanismDoors.ts) reads that same list to decide which doors stand open, so a board and a lever
-  // reach the walk as one shape and neither derives its own.
+  // EVERY MECHANISM ON THE FLOOR IS ONE RECORD ON THE CELL IT STANDS IN — its states, the one it
+  // starts in, whether it returns there, and which key each position opens. The runtime
+  // (mechanismDoors.ts) reads that same record to decide which doors stand open, so a board and a
+  // lever reach the walk as one shape and neither derives its own.
   const mechanismsAt = new Map<string, MechanismRecord>()
   // Where the key each position names is actually carried. A mechanism says which key it opens; the
   // floor says which room asks for it, and the two meet here rather than in either one's own scan.
@@ -233,22 +228,22 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
       })
       return { state, gateIds, keyId: gateKeyId }
     })
-    // A LEVER IS A TOGGLE AND A BOARD IS NOT, so each gets the state set it really has. A lever hangs
-    // left or right whatever it drives — both sides exist even where one names no gate — and is thrown
-    // between them for ever. A board starts at rest and, once solved, routes its light to one way out
-    // or another: rest is a state it leaves and never returns to, and handing the walk that move would
-    // let it plan an escape the player cannot make.
-    const toggle = kindOf(record) === HANDLE_KIND
-    const states = toggle ? [...HANDLE_SIDES] : [MECHANISM_AT_REST, ...byPosition.map(({ state }) => state)]
+    // THE STATE MACHINE IS THE RECORD'S, NEVER THIS FILE'S GUESS AT WHAT KIND OF THING IS STANDING
+    // THERE. Which positions a mechanism has and whether it can be put back into the one it started in
+    // are facts about the mechanism — a lever hangs left or right whether or not either side names a
+    // gate, and a solved beam board never returns to lighting nothing — so both are declared on the
+    // cell and read off it here. Re-workable from any state into any other otherwise, which is what
+    // lets a player change their mind and the only reason the doors it shut are not a trap.
+    const { states, initial, returnsToInitial } = record
     const opens: Record<string, GateId[]> = Object.fromEntries(states.map(state => [state, [] as GateId[]]))
     for (const { state, gateIds } of byPosition) opens[state] = [...(opens[state] ?? []), ...gateIds]
     mechanisms[id] = {
       states,
-      initial: record.initial,
+      initial,
       opens,
       transitions: states.flatMap(from =>
         states
-          .filter(to => to !== from && (toggle || to !== MECHANISM_AT_REST))
+          .filter(to => to !== from && (returnsToInitial || to !== initial))
           .map(to => ({ from, to, at: of.get(at)! }))
       ),
     }

@@ -4,7 +4,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 import type { FamilyContext } from "@/app/families/familyRegistry"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { markFor } from "@/game/mark"
-import type { MechanismRecord } from "@/game/siteTypes"
+import { HANDLE_SIDES, type MechanismRecord } from "@/game/siteTypes"
 import { HandleComponent } from "./HandleComponent"
 
 vi.mock("react-i18next", () => ({
@@ -21,8 +21,10 @@ const ADDRESS = "s0#0/p1"
 // One entry per driven section, each tagged with the side it opens on — the shape
 // src/game/siteAssembler.ts writes for a real lever. The gate ids are never read by the component.
 const mechanismFor = (driven: { side: string; section: string }[], initial: string): MechanismRecord => ({
-  positions: driven.map(({ side, section }) => ({ state: side, gateKeyId: `handle:test:${section}` })),
+  states: [...HANDLE_SIDES],
   initial,
+  returnsToInitial: true,
+  positions: driven.map(({ side, section }) => ({ state: side, gateKeyId: `handle:test:${section}` })),
 })
 
 const ctxWith = ({

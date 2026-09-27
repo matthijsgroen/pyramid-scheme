@@ -279,21 +279,48 @@ export type FloorGrid = {
 }
 
 /** THE TWO SIDES A LEVER HANGS ON, and the whole of its state vocabulary. The assembler tags each
- * gate with one, the walk compiles a lever into exactly these, the save stores one of them, and the
- * lever's screen draws one button per side — all four have to agree letter for letter, so they read
- * the same list. */
+ * gate with one, the record declares exactly these, the save stores one of them, and the lever's
+ * screen draws one button per side and asks the locale files for its name — all of which have to
+ * agree letter for letter, so they read the same list. */
 export const HANDLE_SIDES = ["left", "right"] as const
 export type HandleSide = (typeof HANDLE_SIDES)[number]
 
+/** The position a mechanism sits in when it opens nothing. One name for it, in the save and in the
+ * compiled lock alike — a lever thrown back here and a lever never touched are the same POSITION and a
+ * different FACT, which is why one is stored and the other is absent.
+ *
+ * Plain data written onto cells by the assembler, so it lives in the domain rather than beside the
+ * save that stores it (src/app/state/useJourneys.ts re-exports it for app callers): the domain layer
+ * holds no React, and `yarn generate-world` is a node CLI that reaches this file. Same reasoning as
+ * `Mark` in src/game/mark.ts. */
+export const MECHANISM_AT_REST = "rest"
+
+/**
+ * A MECHANISM'S WHOLE STATE MACHINE, said once on the cell it stands in: the positions it has, the one
+ * it starts in, whether it can be put back there, and which gate each position opens.
+ *
+ * The walk (src/game/floorLock.ts) and the runtime (src/game/mechanismDoors.ts) both read THIS rather
+ * than each deriving a shape from what kind of thing they think is standing there. Which moves a
+ * mechanism offers is a fact about the mechanism, not about its family: assuming a shape for a kind
+ * hands the walk a move the player does not have, or takes one they do.
+ */
 export type MechanismRecord = {
+  /** Every position this mechanism has, including ones that open nothing. Declared rather than derived
+   * from `positions`: a lever hangs left or right whether or not either side names a gate, so a walk
+   * that read the vocabulary off the gates would not know the door could be shut again. */
+  states: string[]
+  /** The position it stands in before anyone touches it. A save holding no entry for it means THIS
+   * state, not "nothing open" — which is what lets one side of a toggle stand open on arrival without
+   * the carve having to place an already-open gate. One of `states`. */
+  initial: string
+  /** Whether `initial` is a position the player can put it back into. True of a lever, which is thrown
+   * back and forth for ever; false of a beam board, which routes its light somewhere the first time it
+   * is solved and cannot be un-solved. */
+  returnsToInitial: boolean
   /** One entry per gate this mechanism drives, tagged with the position that opens it. Several entries
    * may share a position — a lever thrown left opens every gate its left side names — and a position
-   * that opens nothing is not listed. */
+   * that opens nothing simply has none. */
   positions: { state: string; gateKeyId: string }[]
-  /** The position this mechanism stands in before anyone touches it. A save holding no entry for it means
-   * THIS state, not "nothing open" — which is what lets one side of a toggle stand open on arrival
-   * without the carve having to place an already-open gate. */
-  initial: string
 }
 export type GateConfig =
   | {

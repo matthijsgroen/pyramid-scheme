@@ -28,11 +28,11 @@ Read against the fixture in `src/game/lockWalk.spec.ts`, which is the example in
 | six named regions                                           | sections can be named — `SubSection.label` gives a stable address          |
 | three levels of nesting, and branches that rejoin           | `SideSection.sideSections?: SubSection[]` is two levels, single-parent     |
 | gates whose two ends are both named regions                 | `SubSection.gate` belongs to a section: it joins that section to elsewhere |
-| `greenRight` starting open, then shutting behind the player | every authored gate starts shut, by construction                           |
-| gates owned by a mechanism, several states each opening one | only a fork's own exits, keyed off `exit.gateKeyId`                        |
-| two levers (`S1`, `S2`)                                     | no handle family; `key-gate` is the closest precedent                      |
-| two one-way drops                                           | nothing places a directed edge                                             |
-| a mark pairing each lever to the doors it drives            | colour reaches gates; no glyph is drawn on any cell                        |
+| `greenRight` starting open, then shutting behind the player | **done** for a gate a lever owns — `handles[].starts` hangs the lever on a side and that side's gates are open on arrival, the carve unchanged. A free-standing gate still starts shut |
+| gates owned by a mechanism, several states each opening one | **done, and each state opens a SET** — `MechanismRecord` declares `states`/`initial`/`returnsToInitial`, and `floorLock` compiles the machine straight off it |
+| two levers (`S1`, `S2`)                                     | **done** — `handle` is a family, `FloorConfig.handles` authors it, two on one floor are carved and told apart |
+| two one-way drops                                           | **done** — `FloorConfig.oneWays` carves a directed passage between two named sections; art is still a plain corridor, and only the develop journey may stand one |
+| a mark pairing each lever to the doors it drives            | **done** — `RoomCell.mark`, one glyph on one ground worn by the lever and every gate it owns |
 
 The walk itself needs nothing: `LockSpec.oneWays` and `movesFrom`'s one-way step already exist and
 are already consumed. What is missing is every way of _producing_ a lock.

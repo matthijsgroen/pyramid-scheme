@@ -38,11 +38,24 @@ describe("a floor authoring a handle", () => {
     expect(levers).toHaveLength(1)
     expect(levers[0].sectionAddress).toBe("lever")
     expect(levers[0].mechanism).toEqual({
+      states: ["left", "right"],
+      initial: "left",
+      returnsToInitial: true,
       positions: [
         { state: "left", gateKeyId: "handle:dev_topology#0#0#0:vault" },
         { state: "right", gateKeyId: "handle:dev_topology#0#0#0:pocket" },
       ],
-      initial: "left",
+    })
+  })
+
+  it("declares both sides on a lever whose far side names no section at all", () => {
+    const { grid } = floorWithHandle({ in: "lever", left: ["vault"], right: [] })
+    // The far side drives nothing, so nothing in `positions` names it — and the walk still has to know
+    // the door can be shut again, which is why the vocabulary is declared and not derived.
+    expect(tagged(grid, "handle")[0].mechanism).toMatchObject({
+      states: ["left", "right"],
+      returnsToInitial: true,
+      positions: [{ state: "left", gateKeyId: gateKey("vault") }],
     })
   })
 
@@ -199,6 +212,8 @@ describe("a handle the floor cannot have, refused once before any carve", () => 
     // A section on both sides is a door the lever can neither open nor close: whichever way it is
     // thrown, one side says open and the other says shut.
     ["a section standing on both sides at once", [{ in: "lever", left: ["vault"], right: ["vault"] }], "vault"],
+    // Named by the section the lever STANDS in, which is the only address such a handle has.
+    ["a lever driving nothing on either side", [{ in: "lever", left: [], right: [] }], "lever"],
     [
       "a lever standing in a section the floor does not have",
       [{ in: "nowhere", left: ["vault"], right: [] }],

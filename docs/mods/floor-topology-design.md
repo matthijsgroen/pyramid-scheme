@@ -279,9 +279,14 @@ boundary independently, each unaware of the other; a multi-owner gate is one aut
 both, wearing the mark of each owner, so a player is told there are two things to satisfy rather than
 left to guess which of two doors they are looking at.
 
-`startsOpen` is authored, never defaulted. The worked example turns on it: the player walks through a
-door and then closes it behind them, which is only a move if the door began open. A default would
+`startsOpen` is authored, never defaulted, and it is for a gate NO mechanism owns. A default would
 make one of the two floors unwritable, and leave no sign which of them the author meant.
+
+A gate a mechanism owns needs none of it. The worked example's door — the one the player walks
+through and then closes behind them — is one of `S1`'s own two gates, and it begins open because the
+lever begins on that side: `starts` names which side hangs first, the runtime asks the lever what its
+side opens, and the door is carved shut like any other. So a mechanism-owned gate that starts open
+costs the carve nothing, and only a free-standing gate has to be carved already open.
 
 ### Switches, and mechanisms generally
 
@@ -302,6 +307,11 @@ than a mechanism of its own. A handle is a TOGGLE: two sides, left and right, ea
 gates. Thrown to a side, every gate that side names stands open and every gate the other side names
 stands shut, and it can be thrown back and forth for ever. It hangs on one side from the moment the
 floor is carved, so those gates stand open before the player has touched anything.
+
+A single-gate handle is therefore a door the player opens and shuts at will: one side names it, the
+other names nothing, and both sides still exist so the walk knows it can be closed again. A handle
+naming nothing on either side is refused — a lever with no door on the end of it is a typo, not a
+floor. Both sides may name several gates; what one side opens, the other shuts.
 
 **A mechanism has states, a mapping from each state to which of its gates stand open, and transitions
 the player causes.** The mappings differ, and the difference is data:

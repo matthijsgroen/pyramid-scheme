@@ -2,7 +2,7 @@ import { assembleFloor } from "@/game/siteAssembler"
 import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { cellAddress } from "@/app/SiteMap/cellIdentity"
 
-export type Handle = { in: string; left: string[]; right: string[]; starts?: "left" | "right" }
+export type Handle = NonNullable<FloorConfig["handles"]>[number]
 
 /** Where these floors are authored, and so what their handles' gate key ids are derived from. */
 export const HANDLE_SITE_ID = "dev_topology:1"

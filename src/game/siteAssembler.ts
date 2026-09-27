@@ -18,14 +18,13 @@ import type {
   WallDecorationKind,
   Difficulty,
 } from "./siteTypes"
-import { HANDLE_SIDES } from "./siteTypes"
+import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
 import { cellSlot } from "./cellSlot"
 import { footprintSize } from "./roomFootprint"
 import type { ResolveBoardIndex } from "./seeds/boardIndex"
 import { validateSite } from "./siteValidator"
 import { rolesOfProp, rolesOfWallItem } from "./dressingTags"
 import type { FamilyMeta } from "./families/familyMeta"
-import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
 
 // Resolves an authored `encounter` (exact family id, or tag(s)) to a concrete family id
 // plus that family's own tags. Injected by the caller so this domain module never needs
@@ -575,8 +574,15 @@ export const assembleFloor = (
       reasons: [{ type: "handleUnsatisfied", handle: n, address }],
     })
     // Two levers in one section would answer to the same name in a save (cellSlot.ts), which is the
-    // data-loss bug the address checks above exist for.
-    if (!knownSectionAddresses.has(handle.in) || leverByAddress.has(handle.in)) return refuse(handle.in)
+    // data-loss bug the address checks above exist for. A lever naming no section on either side is
+    // refused by the same name: it drives nothing, so it is a room the player taps with no door on the
+    // end of it, and an authoring typo should say so here rather than reach the world as a floor.
+    if (
+      !knownSectionAddresses.has(handle.in) ||
+      leverByAddress.has(handle.in) ||
+      handle.left.length + handle.right.length === 0
+    )
+      return refuse(handle.in)
     const positions: MechanismRecord["positions"] = []
     // BOTH SIDES ARE READ THE SAME WAY AND INTO THE SAME INDEX, which is what makes a section named on
     // both sides refuse itself: the second naming finds the first one's gate already written, exactly
@@ -598,9 +604,16 @@ export const assembleFloor = (
         markByHandleGateKey.set(gateKeyId, markFor(n))
         positions.push({ state: side, gateKeyId })
       }
-    // The side it hangs on before anyone touches it, so those gates stand open on arrival without the
-    // carve having to place an already-open door (mechanismDoors.ts reads `initial` for exactly that).
-    leverByAddress.set(handle.in, { positions, initial: handle.starts ?? "left" })
+    // A LEVER DECLARES BOTH SIDES WHATEVER IT DRIVES, so the walk knows a door can be shut again even
+    // where the far side names no gate of its own. It hangs on `starts` before anyone touches it — so
+    // those gates stand open on arrival without the carve having to place an already-open door
+    // (mechanismDoors.ts reads `initial` for exactly that) — and can always be thrown back.
+    leverByAddress.set(handle.in, {
+      states: [...HANDLE_SIDES],
+      initial: handle.starts ?? HANDLE_SIDES[0],
+      returnsToInitial: true,
+      positions,
+    })
   }
 
   // From here the floor is read with the handles' gates already on it, so every pass that sizes a
@@ -2407,12 +2420,15 @@ export const assembleFloor = (
           const gateKeyId = gateKeyByDir.get(exit.dir)
           return gateKeyId ? { ...exit, gateKeyId } : exit
         }),
-        // The same doors, said once more in the form a mechanism is asked for. A board cannot be
-        // un-solved — solving it always routes the light to some shrine — so it never returns to rest
-        // of the player's choosing, and the walk must not be handed a move they do not have.
+        // The same doors, said once more in the form a mechanism is asked for: a state per way out, and
+        // rest before it is solved. A board cannot be un-solved — solving it always routes the light to
+        // some shrine — so it never returns to rest of the player's choosing, and the walk must not be
+        // handed a move they do not have.
         mechanism: {
-          positions: [...gateKeyByDir.values()].map(gateKeyId => ({ state: gateKeyId, gateKeyId })),
+          states: [MECHANISM_AT_REST, ...gateKeyByDir.values()],
           initial: MECHANISM_AT_REST,
+          returnsToInitial: false,
+          positions: [...gateKeyByDir.values()].map(gateKeyId => ({ state: gateKeyId, gateKeyId })),
         },
       }
       return overwritten

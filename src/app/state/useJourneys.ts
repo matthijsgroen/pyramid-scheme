@@ -21,10 +21,10 @@ export const CELL_KEY_VERSION = 3
  * rederiveFloorExploration. */
 export const FLOOR_EXPLORATION_VERSION = 1
 
-/** The position a mechanism sits in when it opens nothing. One name for it, in the save and in the
- * compiled lock alike — a lever thrown back here and a lever never touched are the same POSITION and a
- * different FACT, which is why one is stored and the other is absent. */
-export const MECHANISM_AT_REST = "rest"
+/** The position a mechanism sits in when it opens nothing — see src/game/siteTypes.ts, where it lives
+ * because the assembler writes it onto cells and the domain layer holds no React. Re-exported here so
+ * app callers reach it beside the save that stores it. */
+export { MECHANISM_AT_REST } from "@/game/siteTypes"
 
 export type StoredJourneyStateV3 = {
   journeyId: string

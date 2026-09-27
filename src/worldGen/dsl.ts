@@ -1,5 +1,5 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
-import type { DecorationKind, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
+import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { wardKeyDifficulty } from "../data/difficultyLevels"
 
@@ -178,7 +178,7 @@ export type FloorConstraint<TExtra extends string = never> = {
    * else — the gate ids are derived from the floor's own authoring address and the section each gate
    * stands on, so a position kept from an earlier layout cannot come to fit a door it was never
    * thrown for. */
-  handles?: { in: string; left: string[]; right: string[]; starts?: "left" | "right" }[]
+  handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
   /** A SWITCH: `encounter` stands in a junction `forks` reserved and closes its free ways out, so the
    * player stands in the fork and what is in it decides which way opens. Between `min` and `max` of
    * the reserved junctions get one, and a `min` past what `forks` reserves fails the build.
@@ -307,7 +307,7 @@ export type PyramidConstraint = {
   oneWays?: { from: string; to: string }[]
   /** The levers every floor of this site stands, unless a floor names its own — see
    * FloorConstraint.handles. */
-  handles?: { in: string; left: string[]; right: string[]; starts?: "left" | "right" }[]
+  handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
   /** The switch every floor of this site stands in the junctions `forks` reserved, unless a floor
    * names its own — see FloorConstraint.switches. */
   switches?: { encounter: string | string[]; min: number; max: number }

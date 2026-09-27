@@ -337,6 +337,15 @@ describe("floorLock", () => {
     }
   })
 
+  it("keeps both sides of a lever whose far side drives nothing, so its door can be shut again", () => {
+    const spec = floorLock(floorWithHandle({ in: "lever", left: ["vault"], right: [] }).grid)!
+    const handle = Object.entries(spec.mechanisms).find(([id]) => id.startsWith("handle "))![1]
+    expect(handle.states).toEqual(["left", "right"])
+    expect(handle.opens.right).toEqual([])
+    expect(handle.opens.left.length).toBeGreaterThan(0)
+    expect(handle.transitions.map(({ from, to }) => `${from}>${to}`).sort()).toEqual(["left>right", "right>left"])
+  })
+
   it("folds every section one side names into that side's open set", () => {
     const spec = floorLock(floorWithHandle({ in: "lever", left: ["vault", "pocket"], right: ["vault2"] }).grid)!
     const handle = Object.entries(spec.mechanisms).find(([id]) => id.startsWith("handle "))![1]

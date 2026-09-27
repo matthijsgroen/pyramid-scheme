@@ -1,5 +1,5 @@
 import type { Direction, FloorGrid, GridCell, MechanismRecord } from "@/game/siteTypes"
-import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
+import { MECHANISM_AT_REST } from "@/game/siteTypes"
 
 /**
  * A minimal 3x3 grid with one room carrying `mechanism`, addressed exactly by `address`.
@@ -11,8 +11,10 @@ import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
 export const gridWithMechanism = (
   address: string,
   positions: MechanismRecord["positions"],
-  initial: string = MECHANISM_AT_REST
+  machine: Partial<Omit<MechanismRecord, "positions">> = {}
 ): FloorGrid => {
+  const { initial = MECHANISM_AT_REST, returnsToInitial = false } = machine
+  const states = machine.states ?? [initial, ...positions.map(({ state }) => state).filter(s => s !== initial)]
   const [sectionAddress, rest] = address.split("#")
   const slot = rest.split("/")[1]
   const pathIndex = Number(slot.slice(1))
@@ -24,7 +26,7 @@ export const gridWithMechanism = (
     state: "fogged",
     sectionAddress,
     pathIndex,
-    mechanism: { positions, initial },
+    mechanism: { states, initial, returnsToInitial, positions },
   }
   const empty: GridCell = { type: "empty" }
 
