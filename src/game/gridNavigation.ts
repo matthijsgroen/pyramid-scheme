@@ -71,8 +71,12 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
 
     if (neighbor.type === "corridor") {
       // Straight-through: corridor continues in the same direction we arrived from, no branches.
-      // Anything else (corner, T-junction) is a blind spot the player must click to reveal.
-      const isStraight = fromDir !== null && neighbor.dirs.has(fromDir) && neighbor.dirs.size === 2
+      // Anything else (corner, T-junction) is a blind spot the player must click to reveal. A
+      // one-way connector's single direction is the arrival direction itself (never its opposite,
+      // which is what a real dead end carries instead), so it is a straight-through too: there is
+      // nowhere else it could lead, and no branch to click around.
+      const isStraight =
+        fromDir !== null && neighbor.dirs.has(fromDir) && (neighbor.dirs.size === 2 || neighbor.dirs.size === 1)
       if (isStraight) {
         if (neighbor.state === "fogged") {
           newCells[r][c] = { ...neighbor, state: "visible" }

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { completeCell, findPath, getOwnedKeys, renderAscii, revealAll } from "./gridNavigation"
-import type { Direction, FloorGrid, GridCell } from "./siteTypes"
+import { assembleFloor } from "./siteAssembler"
+import type { Direction, FloorConfig, FloorGrid, GridCell } from "./siteTypes"
 
 // Simple 1×3 grid: [entrance room -e- corridor -e- exit room]
 const makeLinearGrid = (): FloorGrid => ({
@@ -174,6 +175,47 @@ describe(completeCell, () => {
     const exit = twice.cells[0][2]
     expect(exit.type).toBe("room")
     if (exit.type === "room") expect(exit.state).toBe("reachable")
+  })
+
+  it("walks straight through a one-way connector instead of stopping there like a corner", () => {
+    // A floor authoring a drop (oneWays: [{ from: "upper", to: "lower" }]) carves the source cell's
+    // own direction toward the connector, the connector's single onward direction, and nothing
+    // pointing back — the asymmetry the feature is for. At seed 0 that lands the connector at
+    // (3,6) with dirs of just "n", the source at (4,6), and the landing at (2,6).
+    const config: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "junior",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "upper" },
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "lower" },
+      ],
+      oneWays: [{ from: "upper", to: "lower" }],
+    }
+    const result = assembleFloor("spike:1", config, 0, undefined, {
+      floorRef: { journeyId: "spike", levelIndex: 0, floorIndex: 0 },
+    })
+    if (!result.success) throw new Error("seed 0 no longer carves the authored drop")
+    const grid = result.grid
+
+    const connector = grid.cells[3][6]
+    const source = grid.cells[4][6]
+    const landing = grid.cells[2][6]
+    if (connector.type !== "corridor" || source.type !== "room" || landing.type !== "room")
+      throw new Error("the carve at seed 0 moved — re-read the coordinates before trusting this test")
+    expect([...connector.dirs]).toEqual(["n"])
+
+    // Completing the source is the whole player action: nobody taps the connector on its own, because
+    // it offers no branch to look around. Its own state comes out lit for free, the same as any other
+    // straight corridor, and the room past it is reachable in the same pass.
+    const updated = completeCell(grid, 4, 6)
+    const updatedConnector = updated.cells[3][6]
+    const updatedLanding = updated.cells[2][6]
+    expect(updatedConnector.type).toBe("corridor")
+    if (updatedConnector.type === "corridor") expect(updatedConnector.state).toBe("visible")
+    expect(updatedLanding.type).toBe("room")
+    if (updatedLanding.type === "room") expect(updatedLanding.state).toBe("reachable")
   })
 })
 
