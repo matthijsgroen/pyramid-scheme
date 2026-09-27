@@ -2600,60 +2600,6 @@ against this section once the rest are in.
 until the return is measured against the floor it lies on with `yarn tile-stats` — same rule as every
 other block in this file.
 
-### `default/overgrown-moss` — a mat of moss and grass over the paving
-
-**THIS ONE IS NOT LIKE THE OTHERS.** It is not an object and it is not a full floor: it is the MOSS
-ALONE, and the gaps between the moss are left EMPTY so the game's own paving shows through them. The
-ragged outline of the whole mat is added afterwards by `yarn drift-mask`.
-
-**Attach:** `~/tile-previews/moss-neighbours.png` — the floor this lies on and the sand drift that lies
-on it the same way. **MATCH THEIR HANDLING**: painted, broad, simplified. They are what this belongs to.
-
-```
-Patches of moss and a few blades of grass, painted in matte gouache, on pure magenta #FF00FF. A SQUARE frame, one unit by one.
-
-**DO NOT PAINT ANY STONE.** No slabs, no bricks, no paving, no joints, no floor, no ground of any kind.
-The game already has a floor and lays this over it; a tile that brings its own paving puts two grids of
-slabs at two different sizes on top of each other, which is what the last attempt did. Where there is no
-moss there is MAGENTA, and the magenta is removed — it becomes the hole the real floor shows through.
-
-**PAINT IT, DO NOT PHOTOGRAPH IT.** Look at the references: the paving is a few dozen soft slabs with a
-scuff or two, the sand is a handful of broad ripples. That is the amount of detail allowed. Big simple
-shapes, visible brushwork. An earlier attempt came back as a photoreal moss macro and read as television
-static beside the hand-painted floor.
-
-The subject: broad soft cushions of moss, the kind that creeps along the damp line between paving slabs —
-so they run in long wandering bands and pool where they meet, rather than sitting as round blobs. They
-should cover somewhere around half the square, spread right across it so no corner is bare and no corner
-is solid. A dozen blades of grass in the whole square, standing out of the moss. Nothing else.
-
-**THE EDGE OF THE MOSS MUST BE AN EDGE, NOT A FADE.** Where a cushion meets the magenta it stops with a
-definite painted edge — soft-cornered and irregular, but decided. Do not feather, blur or airbrush moss
-out into the background over a long gradient: the magenta is removed by colour, and a hundred pixels of
-half-moss half-magenta survives as a violet fringe that nothing downstream can repair.
-
-**PITCH IT MID-TONE AND QUIET.** A shade darker than the pale grey-brown paving in the reference, never
-darker than that — a previous one was painted nearly black and had to be brightened three and a half
-times, which blew its highlights to white. Muted and low in chroma: the grey-green of moss in shade,
-closer to wet stone than to a leaf. No bright greens, no yellow-green, no sunlit highlights, no flowers,
-nothing standing up but the few grass blades. This is the GROUND the other plants stand on, and a tile as
-vivid as they are swallows them.
-
-Matte throughout: lit, never polished — no gloss, no shine, no wet highlights.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-yarn drift-mask --out="$OBJ" --seed=moss --size=504 --peak=0.9 --lobes=4
-yarn import-tile art/masters/surfaces/overgrown-moss.webp --tier=default --name=overgrown-moss --slot=drift \
-  --filter=smooth --mask="$OBJ" --brightness=1.0
-```
-
-**No `--key=none` here, unlike sand.** Sand is a solid texture with nothing to remove; this one keys its
-magenta first so the gaps between the cushions become holes, and the mask then cuts the outline of the
-whole mat. Keying runs before the mask, so both apply.
-
 ### `default/overgrown-curtain` — a curtain of roots down the wall band
 
 **Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
