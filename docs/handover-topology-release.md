@@ -635,11 +635,44 @@ decision from the owner**. Anything requiring a ruling is in "Open, for the owne
 here.
 
 **Ground rules for all of them.** `yarn check-types` is the truth — IDE diagnostics in this repo are
-unreliable. Run `yarn lint --fix` before committing. Comments state current state, never history. Tests
+unreliable. Lint with `yarn eslint <paths>`: **`yarn lint --fix <path>` does NOT scope**, because
+the script is `eslint . --max-warnings 17` and the path is appended to the `.`, so it rewrites the repo. Comments state current state, never history. Tests
 carry intent in the name and assertion. `yarn generate-world` must stay byte-identical at
 `8b610d0e016ef60a1fa1526cc84bd910` unless a task says otherwise. Never `INCLUDE_DEV=1 yarn
 generate-world` — use `yarn validate-world`, which writes nothing, and note that a plain build omits the
 dev journey so a proof run without the flag can pass green while the thing under test is absent.
+
+## Queue status — 2026-09-28
+
+Worked from a controlling session that dispatched one implementer per item, reviewed each diff itself
+and ran the gates. Gate after items 1(part)/2/4/5: `yarn test` **3648 passed, 299 files, exit 0** (3647
+at handover, +1 for item 1's new collision test); `yarn lint` 0 errors, 17 warnings, which is the budget.
+
+| # | State | Commit |
+| - | ----- | ------ |
+| 1 | label check now recursive; the three-level refusal still in flight | `fcefc2c7` |
+| 2 | done | `15e383b2` |
+| 3 | not started | |
+| 4 | done | `523e6c6e` |
+| 5 | done | `e61fc9f8` |
+| 6 | in flight | |
+| 7 | not started | |
+| 8 | not started — last, by instruction | |
+
+**Working this queue with concurrent implementers in ONE worktree costs something the queue does not
+say.** An implementer running a broad `git add` or `git commit -a` commits whatever another one has
+staged at that instant. It happened here: 15 unrelated files were swept into the wrong commit, and it
+was recoverable only because the branch is unpushed. Every implementer brief must forbid `git add`,
+`git commit` and `git stash`, and the controlling session commits path-scoped. The same applies to the
+gates — `generate-world`, `validate-world` and `betterer` all read source, so running one while an
+implementer is mid-edit fingerprints a half-built change.
+
+**Item 2 was wider than its own description.** The real sweep found 4 violations, not the 2 named: a
+domain spec, and a TYPE-ONLY import in `src/data/journeys.ts` that a value-grep misses. Two holes stay
+open deliberately, both the owner's to rule on — the rule **excludes specs**, and two domain specs do
+still reach into `src/app` (`handleAuthoring.spec.ts` imports from a React hook module, the same smell
+as the CLI incident); and `src/mods/*/game/` is domain by every argument that applies to `src/game/`,
+but no doc names it, so extending the rule there would be deciding on the owner's behalf.
 
 ## 1. The builder decides quietly, twice — fix both
 
