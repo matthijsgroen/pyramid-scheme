@@ -625,3 +625,123 @@ Two renderer facts worth keeping: `renderProp.py`'s printed "lands at WxH" **was
 misled a whole sequence of decisions before being fixed to read the sheared mesh; and the renderer is
 **not bit-deterministic on curved geometry**, so a small nonzero AE with max channel difference 1-2 is
 noise rather than a diff.
+
+---
+
+# Work queue — pickable without the owner
+
+Ordered by value. Each is self-contained, has a stated success criterion, and needs **no design
+decision from the owner**. Anything requiring a ruling is in "Open, for the owner" above and is NOT
+here.
+
+**Ground rules for all of them.** `yarn check-types` is the truth — IDE diagnostics in this repo are
+unreliable. Run `yarn lint --fix` before committing. Comments state current state, never history. Tests
+carry intent in the name and assertion. `yarn generate-world` must stay byte-identical at
+`8b610d0e016ef60a1fa1526cc84bd910` unless a task says otherwise. Never `INCLUDE_DEV=1 yarn
+generate-world` — use `yarn validate-world`, which writes nothing, and note that a plain build omits the
+dev journey so a proof run without the flag can pass green while the thing under test is absent.
+
+## 1. The builder decides quietly, twice — fix both
+
+The governing rule is the owner's: **the builder may refuse, but it may never decide quietly.**
+`siteAssembler` already refuses a duplicate label, a misnamed one-way and an impossible lever by name
+before a wall is carved. These two break that:
+
+- **A three-level config assembles green and silently drops the third level.** `success: true`, an
+  authored level-3 gate carves no gate room, `validateSite` returns valid. The DSL and serializer are
+  already recursive (`worldGen/dsl.ts:131`, `sideSections.ts:36-80`, `serializer.ts:72-73`), so the
+  authoring path can produce a floor whose deepest level does not exist.
+- **The duplicate-label check cannot see level 3.** `sectionAddresses` (`siteAssembler.ts:164-186`) is a
+  doubly-nested loop, so a level-3 label colliding with a level-1 label passes — the save-key data-loss
+  bug that function exists to refuse.
+
+**Success:** a three-level config is refused BY NAME before any carve, with the same voice as the
+existing refusals; the label check sees every level. Do NOT make the carve three-level — that is a
+separate, much larger job (see 8). Refusing is the fix.
+
+`src/game/seeds/boardIndex.ts:48-50` already documents the limit and is worth reading first.
+
+## 2. Nothing enforces the domain-layer rule
+
+`docs/instructions/architecture.md` and AGENTS.md §8 forbid the domain layer importing `src/app/`,
+`src/ui/` or `react`. **Nothing lints it** — `eslint.config.js:49-104` only restricts mod↔mod imports.
+The class was introduced twice inside one ten-task plan and caught both times by a human-ish reviewer
+rather than by tooling; one of the two dragged React into a node CLI.
+
+Two violations remain, both React-free: `src/game/mechanismDoors.ts:2` → `@/app/SiteMap/cellIdentity`,
+`src/game/generateLevel.ts:1` → `@/app/PyramidLevel/support`.
+
+**Success:** an eslint rule that fails on a domain file importing `src/app/`, `src/ui/` or `react`, and
+the two violations resolved — either by moving what they need into the domain (see `src/game/mark.ts`,
+which was split out of `src/app/SiteMap/mark.tsx` for exactly this reason and carries the rationale in
+its doc comment) or by a narrowly-scoped, commented exemption. Prefer moving.
+
+## 3. A guard that can barely fail
+
+`sweepMissedASwitch` fires only when `walked === 0`, and `validate-world` never prints how many locks it
+walked. A regression taking the sweep from 8 locks to 1 would pass green. This is the branch's signature
+defect class, and it is already recorded as world-wide and binary in this document's earlier sections.
+
+**Success:** the sweep reports its count, and a regression in that count fails rather than passing.
+Today it is 1 lock on a plain build and 8 with `INCLUDE_DEV=1`. Decide deliberately whether the
+assertion belongs in a spec or in the build, and say which in the report.
+
+## 4. The `NodeShape` switch is not exhaustiveness-checked
+
+Proven by experiment: removing `case "handle"` compiles — no `default`, inferred return type — so a
+missing `ShapeKind` silently renders nothing. `check-types` only complained incidentally via
+`noUnusedLocals` on the orphaned component. By contrast `nodeRadius: Record<ShapeKind, number>` IS
+enforced (TS2741). Pre-existing and shared by every shape kind.
+
+**Success:** a missing case is a compile error. A `default: never` exhaustiveness guard is the usual
+shape. Verify by deleting a case and seeing `check-types` fail for the RIGHT reason.
+
+## 5. `generateEclipse` is bounded by a clock, not by work
+
+`src/mods/puzzle/game/eclipse/generateEclipse.spec.ts` "draws the same board for the same seed" times
+out at vitest's default 5000ms under load. In isolation the file runs 25 tests in 29.8s, so that one
+test sits on the line and loses the coin flip whenever the machine is busy. Reproduced twice.
+
+This project's own rule is **count work, never wall-clock**. Raising the timeout is the weaker fix and
+should be the fallback, not the first move.
+
+**Success:** the test cannot fail because the machine was busy, and still fails if determinism breaks.
+
+## 6. A click on the travel map silently moves the player
+
+Found by playing. The "continue expedition" button WRAPS the journey map, so a centre click lands on a
+level node and silently changes `levelNr`. A real trap for a player, not just for an agent.
+
+**Success:** clicking the button does what the button says; the map underneath does not receive it.
+
+## 7. The dev journey is a poor bench for the mechanics it exists to expose
+
+Reaching the lever on `dev_topology` pyramid 7 costs two solved main-path puzzles. Every topology
+playtest pays that toll, on a journey whose stated purpose is "so each mechanic can be entered straight
+off the travel map under develop mode".
+
+**Assumption, stated because it is the only judgement here:** lowering a dev site's puzzle count serves
+that purpose and changes nothing a player sees. **Do not author loot** — `src/worldGen/spec/dev.ts`'s
+header explains why, and the journey's per-currency counts must stay identical with and without it.
+
+**Success:** a mechanic on the dev journey is reachable in appreciably fewer moves, dev-journey reward
+and currency counts unchanged, `generate-world` byte-identical without `INCLUDE_DEV=1`.
+
+## 8. The assembler is a hand-unrolled two-level machine — collapse it
+
+~600 lines written twice: placement at `siteAssembler.ts:1028-1102` vs `:1110-1275`, room specs at
+`:1601-1718` vs `:1728-1850`, three parallel cell-metadata blocks at `:1435-1497`. `SubSectionGroup`
+carries `{parentSectionIdx, subSectionIdx}` — two ints rather than a path — and isolation is
+`sideIsolated(idx)` / `subIsolated(parentIdx, sub)`, a parent chain of exactly one link.
+
+**Biggest and riskiest. Take it last, and only with the others done.** It is NOT on step 5's critical
+path — the region layout is a new recursive pass — but it is worth doing on its own merits, and it is
+what would let the carve go three levels if that is ever wanted.
+
+**Success: byte-identical output across all 213 assembled floors**, held by the fingerprint rather than
+argued. Note the assembler INVENTS sub-sections the config never authored (`:1136-1137` appends a
+key-host sub-section), so `s2.1` exists on shipped floors with no authored counterpart — any
+generalisation has to account for assembler-owned children.
+
+Section hashes carry one parent index rather than a path, so touching them moves every hash in the
+world. **Free under this release's save reset**, but say so out loud if you rely on it.
