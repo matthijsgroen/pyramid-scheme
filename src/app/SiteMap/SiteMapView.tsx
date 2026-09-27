@@ -31,7 +31,7 @@ import {
 } from "./mapScale"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
 import { stateWash, tierPalette } from "./tileMaterials"
-import { ClipLayer, Sprite } from "./htmlLayers"
+import { ClipLayer, OCCLUDER_FADE, Sprite } from "./htmlLayers"
 import { moodFor } from "./moodSettings"
 import { cellAt } from "@/game/roomFootprint"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
@@ -748,8 +748,6 @@ const WallItems = ({ items, patron }: { items: readonly WallItem[]; patron?: Pat
 
 type Doorway = { row: number; col: number; tier: Difficulty }
 
-const ARCH_FADE = 0.35
-
 /** Every doorway on the floor: the way into a CHAMBER, held in a wall run that gives its jambs corners to
  * stand on. Both sides have to be drawn floor, so an unexplored way through carries no arch — an arch is a
  * thing you can see, and the fog is what you cannot. Exported for tests. */
@@ -826,7 +824,7 @@ const Archways = ({
           y={cellTop(row) - WALL_H - ARCH_RISE}
           w={ARCH_W}
           h={ARCH_H}
-          opacity={under ? ARCH_FADE : 1}
+          opacity={under ? OCCLUDER_FADE : 1}
         />
       )
     })}
@@ -1017,7 +1015,7 @@ export const SiteMapView = ({
             clipTo={footprintRects(sprite.footprint)}
             opacity={
               standingOn && sprite.fadeAt?.includes(standingOn)
-                ? ARCH_FADE
+                ? OCCLUDER_FADE
                 : sprite.badge === "taken"
                   ? LOOTED_OPACITY
                   : undefined
@@ -1112,8 +1110,15 @@ export const SiteMapView = ({
   // is a render-time fact — so this cannot be read off `grid.cells`, which is the trap `floorScatter`
   // documents: walking the grid finds no chamber floor at all.
   const chamberFloorCells = useMemo(
-    () => [...claims.claimedBy.keys()].map(key => key.split(",").map(Number) as [number, number]),
-    [claims]
+    () =>
+      [...claims.claimedBy.keys()]
+        .map(key => key.split(",").map(Number) as [number, number])
+        // A PLANT IS A THING IN THE ROOM, NOT A THING IN THE WAY. A claim is the footprint a room draws
+        // over, and most of it is void the player can never enter — but not all: on a real expert floor
+        // 22 of 101 claimed cells are walkable grid cells, so a fifth of the plants stood in the path
+        // and the explorer walked through a palm. Scenery goes where nobody can stand.
+        .filter(([row, col]) => cellAt(grid, row, col).type === "empty"),
+    [claims, grid]
   )
   // What light this floor has of its own: a roof that let the plants in let the sun in first, so the
   // night over it comes off and the lamp comes down to match (lighting.ts).
@@ -1454,6 +1459,28 @@ export const SiteMapView = ({
               )}
 
               <StandingLayer sprites={inFrontOfExplorer} />
+
+              {/* THE TALL PLANTS, over everything that walks. A palm is half again the height of the
+                  explorer, so drawing it under them would put a person in front of a tree — and it
+                  fades while they are behind it, the bargain an archway makes for the same reason.
+                  Nothing here is in anybody's way: a chamber plant only ever stands on a CLAIMED cell,
+                  which is `type: "empty"` in the grid and so is never walked on. */}
+              <MapGrowth
+                mood={mood}
+                siteId={grid.siteId}
+                tier={tier}
+                floorCells={floorCells}
+                chamberCells={chamberFloorCells}
+                canopy
+                explorerPos={explorerPos}
+                isLit={(r, c) => {
+                  const owner = claims.claimedBy.get(`${r},${c}`)
+                  if (!owner) return false
+                  const [or, oc] = owner.split(",").map(Number)
+                  const room = cellAt(grid, or, oc)
+                  return room.type !== "empty" && room.state !== "fogged"
+                }}
+              />
 
               {/* Last, so a doorway passes in FRONT of the player walking under it — see Archways. */}
               <Archways doorways={doorways} explorerPos={explorerPos} />

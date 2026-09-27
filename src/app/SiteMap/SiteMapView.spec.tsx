@@ -314,6 +314,29 @@ describe("the pool a slot of growth is drawn from", () => {
     }
   })
 
+  it("never stands a plant where the player walks", () => {
+    // A chamber plant goes on CLAIMED cells only, and a claimed cell is `type: "empty"` in the grid, so
+    // it is scenery the room owns rather than a square anybody steps on. The room's own cell — the one
+    // that IS walked — never grows one.
+    const room = {
+      ...makeGrid([
+        [empty, corridor("completed", false), empty],
+        [empty, chamber("completed"), empty],
+        [empty, empty, empty],
+      ]),
+      condition: { kind: "overgrown" as const, amount: 1 },
+    }
+    const { container } = render(<SiteMapView grid={room} onCellClick={() => {}} revealAllCells />)
+    const walkable = new Set<string>()
+    room.cells.forEach((row, r) => row.forEach((cell, c) => cell.type !== "empty" && walkable.add(`${r},${c}`)))
+    // Every plant's own cell, read back off where it was drawn.
+    for (const box of spriteMatching(container, "overgrown-plant").map(boxOf)) {
+      const row = Math.round((box.y + box.h - CELL / 2) / CELL)
+      const col = Math.round(box.x / CELL)
+      expect(walkable.has(`${row},${col}`)).toBe(false)
+    }
+  })
+
   it("draws a palm bigger than the bush beside it, because a pool member is a different plant", () => {
     // One size range for the whole pool drew palms and bushes alike at 30-46 units, so half the palms on
     // a floor were smaller than the shrub next to them.

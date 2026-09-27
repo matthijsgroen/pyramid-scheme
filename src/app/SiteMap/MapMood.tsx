@@ -2,11 +2,11 @@ import { hashUnit } from "@/support/hashString"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { ConditionKind } from "@/game/siteTypes"
 import type { Mood } from "./moodSettings"
-import { CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
+import { CANOPY_SCALE, CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
 import { CELL, WALL_FACE_H, cellCenter } from "./mapScale"
 import { sharedTileUrl } from "./tileAssets"
 import { STANDING_RELIEF } from "./lighting"
-import { Sprite } from "./htmlLayers"
+import { OCCLUDER_FADE, Sprite } from "./htmlLayers"
 
 // The air, drawn in three layers over the stone: what is carried on it (drift), what lives in it (life),
 // and what colour it is (tint). All of it CSS-animated rather than driven from React — a mote that
@@ -111,6 +111,20 @@ type Props = {
   chamberCells?: ReadonlyArray<readonly [number, number]>
   /** Whether the player has seen that cell yet. A scarab in the dark is simply not drawn. */
   isLit: (row: number, col: number) => boolean
+  /**
+   * Which half of the chamber plants to draw.
+   *
+   * A PLANT TALLER THAN A PERSON CANNOT BE DRAWN UNDER ONE. The growth layer sits below everything that
+   * stands, which is right for a tuft and wrong for a palm: the explorer would walk in front of a tree
+   * twice their height. So the tall members are drawn again, after the standing layer, and fade while
+   * the player is behind them — the same bargain an archway makes (`OCCLUDER_FADE`), for the same reason:
+   * a thing you can walk behind must not be a thing that hides you.
+   *
+   * The floor joints and the wall roots belong to the under pass only; nothing about them is tall.
+   */
+  canopy?: boolean
+  /** Where the player is, so a canopy plant standing in front of them can get out of the way. */
+  explorerPos?: readonly [number, number]
 }
 
 /**
@@ -134,6 +148,8 @@ export const MapGrowth = ({
   wallCells = [],
   chamberCells = [],
   isLit,
+  canopy = false,
+  explorerPos,
 }: Props & { tier: Difficulty }) => {
   const g = mood.growth
   if (!g?.floor && !g?.wall && !g?.chamber) return null
@@ -170,7 +186,7 @@ export const MapGrowth = ({
           are: a texture the floor has taken on, read as ground rather than as objects standing on it, and
           told apart at a glance from the roots through the band, which stay solid because a root coming
           through brick is the thing that is supposed to stop you. */}
-      {grown(floorCells, "growth-cell", g.floor).map(({ cell: [row, col], index: i }) => {
+      {(canopy ? [] : grown(floorCells, "growth-cell", g.floor)).map(({ cell: [row, col], index: i }) => {
         if (!isLit(row, col)) return null
         const { cx, cy } = cellCenter(row, col)
         // SIZED AGAINST THE SCATTER, which is the thing on this floor that already reads. A mat or a
@@ -227,7 +243,7 @@ export const MapGrowth = ({
 
           So it runs the part of the band that is BRICK, and the variance it used to carry in height lives
           in the width instead. */}
-      {grown(wallCells, "growth-wall-cell", g.wall).map(({ cell: [row, col], index: i }) => {
+      {(canopy ? [] : grown(wallCells, "growth-wall-cell", g.wall)).map(({ cell: [row, col], index: i }) => {
         if (!isLit(row, col)) return null
         const { cx, cy } = cellCenter(row, col)
         const w = 16 + rand(siteId, "growth-wall-w", i) * 18
@@ -256,10 +272,16 @@ export const MapGrowth = ({
       {grown(chamberCells, "growth-plant-cell", g.chamber).map(({ cell: [row, col], index: i }) => {
         if (!isLit(row, col)) return null
         const { cx, cy } = cellCenter(row, col)
-        // The member is drawn FIRST, because how big this plant is depends on which plant it is.
+        // The member is drawn FIRST, because how big this plant is depends on which plant it is — and
+        // whether it belongs to this pass at all.
         const pick = memberAt(plant.length, siteId, "growth-plant-kind", i)
         const scale = CHAMBER_SCALE[GROWTH_POOLS.chamber[pick] ?? ""] ?? 1
+        if (scale >= CANOPY_SCALE !== canopy) return null
         const size = (30 + rand(siteId, "growth-plant-size", i) * 16) * scale
+        // BEHIND IT MEANS ITS OWN CELL OR THE ONE BEYOND. A plant is bottom-anchored on its cell and
+        // reaches up over the cell north of it, so those are the two places a player disappears.
+        const behind =
+          canopy && !!explorerPos && explorerPos[1] === col && (explorerPos[0] === row || explorerPos[0] === row - 1)
         return (
           <Sprite
             key={`plant-${i}`}
@@ -270,6 +292,7 @@ export const MapGrowth = ({
             y={cy + CELL / 2 - size}
             w={size}
             h={size}
+            opacity={behind ? OCCLUDER_FADE : undefined}
             // Standing, so the same small lean the roots take rather than a turn.
             transform={turned(
               (rand(siteId, "growth-plant-rot", i) - 0.5) * 10,

@@ -148,9 +148,17 @@ export const GROWTH_POOLS = {
  * Only the chamber pool needs it: the floor joints are all small things by definition, and a wall root
  * is stretched to the band rather than sized.
  */
+/** At or above this, a plant is taller than the things that walk past it, so it is drawn over them and
+ * has to get out of the way — see `canopy` in `MapGrowth`. Below it, a plant is furniture-height and the
+ * explorer simply passes in front. */
+export const CANOPY_SCALE = 2
+
 export const CHAMBER_SCALE: Record<string, number> = {
-  // A tree. It is the tallest thing that grows in these rooms and should read as one.
-  palm: 1.45,
+  // A TREE, and the scale says so. At 1.45 a palm drew 43-66 units against a chest's 56 and the
+  // explorer's own 70, so the thing meant to be the tallest object in the room was the size of the
+  // furniture — a date palm nobody could stand under. Above 2 it clears both, and a plant that reaches
+  // past the top of its own cell is what makes a chamber read as grown through rather than decorated.
+  palm: 2.4,
   // The bulk of the pool, and the size the slot was tuned at.
   plant: 1,
   // Ferns keep low and spread, so they take a little less height than the bush.
