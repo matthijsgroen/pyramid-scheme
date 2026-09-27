@@ -4,11 +4,7 @@ import { cellAddress } from "@/app/SiteMap/cellIdentity"
 // WHICH DOORS STAND OPEN IS ASKED OF EACH MECHANISM'S OWN MAPPING, NEVER STORED. The save holds the
 // position; the floor holds what that position opens. Keeping the mapping here rather than in the save
 // is what lets a re-carve move a door without a stored entry coming to fit one it was never set for.
-export const openDoorsFor = (
-  grid: FloorGrid,
-  floor: number,
-  positions: ReadonlyMap<string, string>
-): Set<string> => {
+export const openDoorsFor = (grid: FloorGrid, floor: number, positions: ReadonlyMap<string, string>): Set<string> => {
   const open = new Set<string>()
   if (positions.size === 0) return open
   for (let r = 0; r < grid.rows; r++)
