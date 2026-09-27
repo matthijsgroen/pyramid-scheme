@@ -8,6 +8,13 @@ The destination is not one floor. It is master and wizard authored as locks — 
 of them in those two tiers — and `doubleBack` is the first one, chosen because the design has already
 reasoned it through.
 
+**Every step here is an ingredient, and an ingredient is held to a higher bar than a floor.** A floor's
+mistakes stay on that floor; a one-way that reads wrong is wrong on every floor that ever stands one,
+and a handle with a sloppy state model is sloppy in all 56 of those gates. That is why a slice here
+costs more than its one visible use looks worth: the cost is paid once and the use is paid back many
+times. Do not trade an ingredient's quality for a shorter road to `doubleBack` — it is the first
+consumer, not the point.
+
 Delete this file when step 6 lands.
 
 ---
