@@ -2586,57 +2586,6 @@ green. A tile that arrives prettier than the three it joins is the failure to lo
 until the return is measured against the floor it lies on with `yarn tile-stats` — same rule as every
 other block in this file.
 
-### `default/overgrown-palm` — a young date palm in a broken chamber
-
-**Attach:**
-
-1. `~/tile-previews/overgrown-plant-reference.png` — the plant it stands beside
-
-```
-A single plant, painted in flat matte gouache, no background, on pure magenta #FF00FF. Square, one unit by one, exactly as the reference. Do not re-compose it into a portrait.
-
-The object: a YOUNG DATE PALM that has seeded itself in a tomb chamber and grown up toward the hole in
-the roof. A single slender trunk, patterned with the diamond scars of old frond bases, leaning very
-slightly. Five or six arching fronds at the top, each one a long rib with stiff leaflets along both
-sides — draw the leaflets as a comb of short strokes, not as a feather. A few dead fronds hang down against the trunk under the green ones — DRY AND DUSTY, a grey-ochre going to
-straw, never orange or rust. They are the driest thing in the tile and must not become the brightest: the
-first roll came back with them a hot red-orange, which at tile size read as fruit.
-
-It STANDS ON THE FLOOR and is seen from the front, the way a piece of furniture in this tomb is seen. Its
-base is at the bottom edge of the frame and its crown at the top; nothing is cut off by either edge. It
-is a tile about the size of a jar rack, so the whole plant reads at a glance: fewer, larger fronds beat
-many small ones.
-
-Green that has grown in the dark: a deep dusty green, not a garden green, and the trunk a grey-brown.
-
-THE CROWN IS PALER THAN THE FOOT, and this is the one piece of light in the picture. A plant is lit from
-above wherever it stands, so the fronds at the top carry the lightest greens, the undersides and the
-inner fronds go darker, and the trunk is darkest where it meets the ground. Paint that as FORM — a value
-gradient down the whole plant — and not as a light source: no sun, no beam, no rim light, no bright edge
-on one side, no cast shadow. The map lights this tile itself, and a baked highlight would glow in a dark
-room.
-
-KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest frond
-and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
-lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
-the stone it stands on.
-
-NOTHING LIES AT ITS FOOT. No fallen fronds, no litter, no debris on the ground — those are their own tile
-(`default/overgrown-fronds`), and painted here they feather into the magenta and key out as pink specks,
-which is what happened on the first roll.
-
-Draw it square on and FLAT. No perspective, no scene, no floor under it, no pot, no wall behind it.
-
-No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-yarn import-tile art/masters/surfaces/overgrown-palm.webp --tier=default --name=overgrown-palm --slot=growth \
-  --filter=smooth --saturation=3.2 --brightness=0.82
-```
-
 ### `default/overgrown-ferns` — a clump of ferns on a chamber floor
 
 **Attach:**

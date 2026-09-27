@@ -1498,4 +1498,4 @@ yarn import-tile art/masters/props/expert/sarcophagus.webp --tier=expert --name=
 # Saturation and brightness measured against `overgrown-plant`, which is the one these stand beside:
 # it lands at p50 110 / +4 warmth, and these are solved to sit with it rather than to look good alone.
 yarn import-tile art/masters/surfaces/overgrown-palm.webp --tier=default --name=overgrown-palm --slot=growth \
-  --filter=smooth --saturation=2.2 --brightness=1.10
+  --filter=smooth --saturation=1.8 --brightness=0.88
