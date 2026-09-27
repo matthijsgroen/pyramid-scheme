@@ -124,32 +124,138 @@ save migration to get there. The switch's version looks like it already solved t
 stores the _consequence_ (open ways out), not the _state_ (which position). Generalising it is real
 app work and it belongs to whoever builds this step.
 
-### 5. The lock container, and the region tree in the carve
+### 5. Regions in the carve, and the lock that gates them
 
-**Ships:** `topologyLock({ regions, gates, switches, oneWays, in, out })` placed on a floor, carved to
-satisfy it.
+**Ships:** a floor authors a coarse layout of named regions and the connections between them; the
+topology mod puts gates and mechanisms on those connections.
 
-**This one is not ready to plan.** The design document lists "How the builder lays a region tree into
-a carve" as its own open question and says "that the tree shape matches the existing section model is
-the whole of what is settled" — and that turns out not to hold. The section tree is two levels deep,
-single-parent, with a gate belonging to a section rather than to a boundary between two named places,
-always starting shut. A region tree therefore does not sit beside `sideSections` the way `forks` does;
-it **replaces the shape of `sideSections`** for any floor that authors one, driving the section
-attachment at `siteAssembler.ts:757-1102` and the room-spec writing at `1147-1717`.
+**The five questions this step was blocked on are answered** (2026-09-27), and the shape they settled
+on is not the one the step was named for. Two things moved: a region turned out to belong to the
+floor rather than to the lock, and the rule that governs all of it is about who may decide.
 
-**The decisions that want making before this can be planned:**
+**THE BUILDER MAY REFUSE, BUT IT MAY NEVER DECIDE QUIETLY.** A floor whose puzzle is pointless is the
+author's mistake and ships. A floor the builder silently reshaped is a bug. `siteAssembler` already
+holds this line — it refuses a duplicate label, a misnamed one-way and an impossible lever by name,
+before a wall is carved — and everything below is an application of it.
 
-- Does a floor authoring a lock still author `sideSections`, or is the lock the whole floor's
-  structure with ordinary content hanging inside its regions?
-- How deep does the carve have to go? The two-level limit is in the type, not the algorithm — find
-  out which before assuming it is cheap.
-- What does `startsOpen` mean to a carve that places a gate cell before the content it guards?
-- Where does a gate between two _named_ regions attach, when today a gate is the first cell of the
-  section it belongs to?
-- A lock's gates must form a tree, and nothing checks it. That check lands here.
+#### A region is a named area in the plan, not a gate partition
 
-Settle those with the owner first. A plan written against them now would be inventing the interface
-in the plan document, which is where this branch's two most expensive mistakes came from.
+The design document defines a region as "everywhere reachable without passing a gate". **That
+definition is retired.** A region is a named area in a coarse layout; a gate is optional furniture on
+a connection between two of them, and two regions may be joined with no gate at all.
+
+The walk is unaffected and needs no reconciling: `floorLock` derives its own partition by flooding the
+ASSEMBLED grid and stopping at gates, so the author's regions and the walk's regions are different
+things that never have to agree.
+
+#### Regions are core. Gates and mechanisms are the mod.
+
+| Authoring                                     | Owner            |
+| --------------------------------------------- | ---------------- |
+| regions, their connections, their content appetite | core, structural |
+| gates, switches, one-ways                     | topology mod     |
+
+Not because of locks. **Four of the six catalogue features act on regions**: a lock gates the
+boundaries between them, `waterline` floods one from within, `cosmicDust` re-lays which corridors
+connect them, `sandSlide` blocks one. Regions belong to whoever owns the floor.
+
+This is the `forks`/`switches` split one size up, and it buys the same guarantee: **toggle the
+topology mod off and the identical walls carve with every door standing open.** Not "roughly the same
+amount of content" — the same floor.
+
+#### The lock is structure; the floor is content
+
+A lock names regions and their connections and says what each region will TAKE — a reward, puzzle
+rooms, nothing — without naming what. The floor authors its content as it always has. The builder
+matches appetite to content.
+
+This is what makes a container reusable, which the design document asked for and then contradicted by
+putting content inside regions: a lock with rooms baked in can be placed exactly once. It also makes
+the master and wizard conversion additive — add a lock, keep the content authoring already there —
+which is what "a floor can be converted when someone gets to it rather than all at once" requires.
+
+#### `startsOpen` is struck
+
+A gate stands open if and only if its owner's initial state opens it, which a binary lever already
+does. Every gate has an owner (`checkLockSpec` refuses one without), every owner has an initial
+state, and the carve never places an open gate — the cell carves shut and `openDoorsFor` opens it.
+The field is not built.
+
+#### No tree rule. Cycles are allowed, gated or not.
+
+The ban on gate cycles is dropped. A loop that bypasses the puzzle is a badly designed puzzle and
+that is the author's to own.
+
+**Known and accepted: the walk will not tell them.** `walkLock` asks whether a lock can be solved and
+whether any sequence strands the player; a bypassing loop answers well to both and ships green. The
+check that would catch it is in "What the walk still cannot see" below.
+
+#### What this costs, measured rather than assumed
+
+The roadmap previously said the two-level limit "is in the type, not the algorithm". **That is wrong.**
+Measured 2026-09-27:
+
+- The DSL and serializer are **already recursive**; the types are two lines; the save format costs
+  nothing, because nothing in `src/` parses a positional address back into indices.
+- The limit is in the **assembler**, which is a hand-unrolled two-level machine — about 600 lines
+  written twice (placement at `:1028-1102` vs `:1110-1275`, room specs at `:1601-1718` vs
+  `:1728-1850`, three parallel cell-metadata blocks at `:1435-1497`).
+- Section hashes carry one parent index rather than a path, so fixing them moves every hash in the
+  world. **Free under this release's save reset.**
+
+**The region layout is therefore a NEW core pass, written recursive with loops from the start**, and
+`sideSections` carve inside a region exactly as they do today. The 600-line de-duplication is not on
+this step's critical path; it is worth doing on its own merits and against byte-identical output.
+
+**Rejoining branches already ship** — 33 of 213 floors have cycles in the section graph — but
+`edgeAllowed` (`siteAssembler.ts:1429-1434`) drops any rejoin where either end is gated or sealed.
+Measured A/B over 200 seeds: ungated 411 rejoin links, sealed 0. A region layout is all gated regions,
+so the new pass must own this rather than inherit it, along with `doorsToEnter` (the authored version
+is structural where a switch's is already a real BFS) and fog restore (`applyExplored` remembers a
+section by a high-water mark along a linear chain; a region with rejoining branches has no single
+"how far along").
+
+#### Two live bugs to fix first — the builder deciding quietly
+
+Both found 2026-09-27 while measuring the above, both independent of this step, both exactly the class
+the rule at the top forbids:
+
+1. **A three-level config assembles successfully and silently drops the third level.** `success: true`,
+   an authored level-3 gate carves no gate room, `validateSite` returns valid. The DSL will build such
+   a config with no cast, so the authoring path can already produce a floor whose deepest level does
+   not exist.
+2. **The duplicate-label check cannot see level 3.** `sectionAddresses` (`siteAssembler.ts:164-186`) is
+   a doubly-nested loop, so a level-3 label colliding with a level-1 label passes — the save-key
+   data-loss bug that function exists to refuse.
+
+`src/game/seeds/boardIndex.ts:48-50` had already written half of this down: "Nesting stops one level
+down because that is as deep as the assembler carves — anything deeper is authored but never built."
+
+#### What the walk still cannot see
+
+Two checks, both designed and neither built. Both REPORT to the author rather than deciding anything,
+which is why they are allowed to exist. Both belong to verifying a lock standalone — the owner's
+ruling that a container is checked between its own ports, not by a floor-wide sweep.
+
+- **A region nothing can reach.** Two levers can deadlock, each behind the door the other opens.
+  `walkLock` calls it sound because nobody is stranded and the exit stays reachable. Measured: the
+  rule fires on **0 gates across 206 shipped floors** and flags 4 on a deliberately deadlocked control.
+  Phrase it over regions: _a region no reachable state stands in, every bounding gate of which is owned
+  solely by on-floor mechanisms_. The `sealed` escape hatch is load-bearing — it is what keeps
+  `junior_2` L2 F0's deliberately unreachable ward pocket legal.
+- **A gate nothing depends on.** Is there a reachable state where shutting it changes whether the exit
+  is reachable? A gate that never matters is decoration, and it is what a bypassing loop looks like
+  from outside.
+
+#### Still to settle before this can be planned
+
+- **`lockWalk` only knows how to shut a boundary.** A flooded region is one the player may not OCCUPY,
+  which is not the same as one whose doors are shut — a shut door leaves whoever is already inside
+  inside. Modelling a flood as "gates on every boundary" loses that difference. The extension is small
+  and well defined, but it is real and it is P1's ("blocked-until with a registered opener") natural
+  home, applied to a region rather than to a boundary.
+- What a region's content appetite vocabulary actually is, beyond "reward / puzzles / nothing".
+- Whether a region carries a main-path or side-path role, and what reads it.
 
 ### 6. `doubleBack`, authored
 

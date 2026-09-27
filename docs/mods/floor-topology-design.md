@@ -243,19 +243,36 @@ is a different, easier puzzle; land it above the green gate and the lock is bypa
 
 ### Regions
 
-A **region** is everywhere reachable without passing a gate — the partition the gates induce. Regions
-are named by the author, and naming them is naming the _puzzle's_ structure rather than the map's
-shape: `leftLower` means "past the fork's left gate, before the green one", not "the left-hand side".
+A **region is a named area in a floor's coarse layout.** Naming one names the _puzzle's_ structure
+rather than the map's shape: `leftLower` means "past the fork's left gate, before the green one", not
+"the left-hand side". Two regions may be joined with a gate on the connection, or with nothing at all.
 
-A region carries the content vocabulary a section already carries, so a region is a section the
-author has named:
+**A region belongs to the floor, not to the lock that gates it.** Four of the six catalogue features
+act on the same nouns: a lock gates the boundaries between regions, `waterline` floods one from
+within, `cosmicDust` re-lays which corridors connect them, `sandSlide` blocks one. So the layout —
+regions, their connections, what content each will take — is **core and structural**, and the gates,
+switches and one-ways placed on it are the **topology mod's**. That is the `forks`/`switches` split
+one size up, and it buys the same guarantee: with the mod off, the identical walls carve and every
+door stands open.
+
+**A region declares an appetite, not contents.** It says what it will take — a reward, puzzle rooms,
+nothing — and the floor authors the content as it always has; the builder matches them. A lock with
+rooms baked into its regions could be placed exactly once, which is the opposite of the reusable
+container this section describes. It is also what makes converting master and wizard additive: add a
+lock, keep the content authoring already there.
 
 ```ts
+// the lock: structure and appetite, no content
 regions: {
-  entrance:  { pathPuzzles: 1 },
-  s2Chamber: { sideSections: [holdChest(1)] },
+  entrance:  { takes: "puzzles" },
+  s2Chamber: { takes: "reward" },
 }
 ```
+
+**The walk does not read these.** `floorLock` derives its own partition by flooding the assembled
+grid and stopping at gates, so the author's regions and the walk's regions are different things and
+never have to agree. An earlier definition of a region as "everywhere reachable without passing a
+gate" made a gateless connection a contradiction in terms; it is retired.
 
 ### Gates
 
