@@ -2602,17 +2602,12 @@ other block in this file.
 
 ### `default/overgrown-ferns` — a clump of ferns on a chamber floor
 
-**Attach:**
-
-1. `~/tile-previews/lush-light-reference.png` — **the LIGHT and the COLOUR.** Not the subject, not the
-   style, not the projection: what to take from it is how the sun lands on leaves, how saturated living
-   green is beside stone, and how far a lit face sits from a shadowed one.
-2. `~/tile-previews/overgrown-plant-reference.png` — the plant it stands beside, **for SUBJECT AND SCALE ONLY.** It was painted
-   under an older rule that asked for flat, unlit tiles, and matching its handling is the one mistake
-   this entry keeps making. Take the framing and the size from it. Do not take the lighting.
+**Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
+COLOUR: how sun lands on a leaf, how saturated living green is beside stone, how far a lit face sits from
+a shadowed one. Take nothing else — not the subject, not the perspective, not the photographic detail.
 
 ```
-A single plant, painted in matte gouache, lit, no background, on pure magenta #FF00FF. Square, one unit by one, exactly as the SECOND reference. Do not re-compose it into a portrait.
+A single plant, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A SQUARE frame, one unit by one. Do not re-compose it into a portrait.
 
 The object: a CLUMP OF FERNS grown up out of a cracked tomb floor where water collects. Seven or eight
 fronds rising from one crown at the bottom, each arching outward and over — tall in the middle, shorter
@@ -2652,15 +2647,25 @@ falling on, not a diagram of a plant. Push the lit parts well clear of the shado
 from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
 to the viewer. A flat silhouette in one value is the failure.
 
-**COLOUR IT PROPERLY.** Saturated, not muted: living green, and where there are flowers they are the most
-saturated thing in the picture. These plants are alive and the stone around them is not, and they are
-meant to be the thing your eye goes to on a floor of grey masonry.
+**NAME THE COLOURS, BECAUSE "SATURATED" KEEPS COMING BACK GREY.** Four rolls of this family have
+returned the same washed sage and chalky pastel, and they are not what is wanted. The greens are WARM and
+deep — olive, moss, a yellow-green where the light strikes — and never the pale blue-grey sage of a dried
+herb. Where the light falls they go golden-green and almost yellow; in shadow they go deep and rich, not
+merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not tinted white.
+
+Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
+
+THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
+or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
+the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
+survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
+is the small contact one described above, and it sits ON the plant, not behind it.
 
 Draw it square on, in straight orthographic projection — no perspective, no vanishing point, no
 foreshortening. That is what "square on" governs: it says nothing about the light, which is meant to be
 plainly visible. No perspective, no scene, no floor under it, no pot, no wall behind it.
 
-Matte gouache throughout: a surface with a lit side, never a polished one.
+Matte surfaces throughout: lit, never polished — no gloss, no shine, no wet highlights.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2672,17 +2677,12 @@ yarn import-tile art/masters/surfaces/overgrown-ferns.webp --tier=default --name
 
 ### `default/overgrown-flowers` — a spray of desert flowers in a joint
 
-**Attach:**
-
-1. `~/tile-previews/lush-light-reference.png` — **the LIGHT and the COLOUR.** Not the subject, not the
-   style, not the projection: what to take from it is how the sun lands on leaves, how saturated living
-   green is beside stone, and how far a lit face sits from a shadowed one.
-2. `~/tile-previews/overgrown-reference.png` — the tuft it lies beside, **for SUBJECT AND SCALE ONLY.** It was painted
-   under an older rule that asked for flat, unlit tiles, and matching its handling is the one mistake
-   this entry keeps making. Take the framing and the size from it. Do not take the lighting.
+**Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
+COLOUR: how sun lands on a leaf, how saturated living green is beside stone, how far a lit face sits from
+a shadowed one. Take nothing else — not the subject, not the perspective, not the photographic detail.
 
 ```
-A small spray of plants, painted in matte gouache, lit, no background, on pure magenta #FF00FF. Square, one unit by one, exactly as the SECOND reference. Do not re-compose it into a portrait.
+A small spray of plants, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A SQUARE frame, one unit by one. Do not re-compose it into a portrait.
 
 The object: a SPRAY OF SMALL FLOWERS that has taken root in the joint between two paving slabs. A low
 cushion of narrow leaves with a dozen flower heads held just above it on thin stems. The flowers are
@@ -2723,15 +2723,25 @@ falling on, not a diagram of a plant. Push the lit parts well clear of the shado
 from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
 to the viewer. A flat silhouette in one value is the failure.
 
-**COLOUR IT PROPERLY.** Saturated, not muted: living green, and where there are flowers they are the most
-saturated thing in the picture. These plants are alive and the stone around them is not, and they are
-meant to be the thing your eye goes to on a floor of grey masonry.
+**NAME THE COLOURS, BECAUSE "SATURATED" KEEPS COMING BACK GREY.** Four rolls of this family have
+returned the same washed sage and chalky pastel, and they are not what is wanted. The greens are WARM and
+deep — olive, moss, a yellow-green where the light strikes — and never the pale blue-grey sage of a dried
+herb. Where the light falls they go golden-green and almost yellow; in shadow they go deep and rich, not
+merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not tinted white.
+
+Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
+
+THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
+or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
+the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
+survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
+is the small contact one described above, and it sits ON the plant, not behind it.
 
 Draw it square on, in straight orthographic projection — no perspective, no vanishing point, no
 foreshortening. That is what "square on" governs: it says nothing about the light, which is meant to be
 plainly visible. No perspective, no scene, no paving under it, no crack, no soil.
 
-Matte gouache throughout: a surface with a lit side, never a polished one.
+Matte surfaces throughout: lit, never polished — no gloss, no shine, no wet highlights.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2743,17 +2753,12 @@ yarn import-tile art/masters/surfaces/overgrown-flowers.webp --tier=default --na
 
 ### `default/overgrown-scrub` — a dry tussock in a joint
 
-**Attach:**
-
-1. `~/tile-previews/lush-light-reference.png` — **the LIGHT and the COLOUR.** Not the subject, not the
-   style, not the projection: what to take from it is how the sun lands on leaves, how saturated living
-   green is beside stone, and how far a lit face sits from a shadowed one.
-2. `~/tile-previews/overgrown-reference.png` — the tuft it lies beside, **for SUBJECT AND SCALE ONLY.** It was painted
-   under an older rule that asked for flat, unlit tiles, and matching its handling is the one mistake
-   this entry keeps making. Take the framing and the size from it. Do not take the lighting.
+**Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
+COLOUR: how sun lands on a leaf, how saturated living green is beside stone, how far a lit face sits from
+a shadowed one. Take nothing else — not the subject, not the perspective, not the photographic detail.
 
 ```
-A small clump of grass, painted in matte gouache, lit, no background, on pure magenta #FF00FF. Square, one unit by one, exactly as the SECOND reference. Do not re-compose it into a portrait.
+A small clump of grass, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A SQUARE frame, one unit by one. Do not re-compose it into a portrait.
 
 The object: a TUSSOCK OF DRY GRASS in a paving joint, the kind that lives on almost nothing. A spray of
 stiff narrow blades from one point, most of them standing and a few bent right over and broken. Half the
@@ -2793,15 +2798,25 @@ falling on, not a diagram of a plant. Push the lit parts well clear of the shado
 from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
 to the viewer. A flat silhouette in one value is the failure.
 
-**COLOUR IT PROPERLY.** Saturated, not muted: living green, and where there are flowers they are the most
-saturated thing in the picture. These plants are alive and the stone around them is not, and they are
-meant to be the thing your eye goes to on a floor of grey masonry.
+**NAME THE COLOURS, BECAUSE "SATURATED" KEEPS COMING BACK GREY.** Four rolls of this family have
+returned the same washed sage and chalky pastel, and they are not what is wanted. The greens are WARM and
+deep — olive, moss, a yellow-green where the light strikes — and never the pale blue-grey sage of a dried
+herb. Where the light falls they go golden-green and almost yellow; in shadow they go deep and rich, not
+merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not tinted white.
+
+Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
+
+THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
+or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
+the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
+survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
+is the small contact one described above, and it sits ON the plant, not behind it.
 
 Draw it square on, in straight orthographic projection — no perspective, no vanishing point, no
 foreshortening. That is what "square on" governs: it says nothing about the light, which is meant to be
 plainly visible. No perspective, no scene, no paving under it, no crack, no soil.
 
-Matte gouache throughout: a surface with a lit side, never a polished one.
+Matte surfaces throughout: lit, never polished — no gloss, no shine, no wet highlights.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2813,17 +2828,12 @@ yarn import-tile art/masters/surfaces/overgrown-scrub.webp --tier=default --name
 
 ### `default/overgrown-fronds` — fallen fronds on the paving
 
-**Attach:**
-
-1. `~/tile-previews/lush-light-reference.png` — **the LIGHT and the COLOUR.** Not the subject, not the
-   style, not the projection: what to take from it is how the sun lands on leaves, how saturated living
-   green is beside stone, and how far a lit face sits from a shadowed one.
-2. `~/tile-previews/overgrown-reference.png` — the tuft it lies beside, **for SUBJECT AND SCALE ONLY.** It was painted
-   under an older rule that asked for flat, unlit tiles, and matching its handling is the one mistake
-   this entry keeps making. Take the framing and the size from it. Do not take the lighting.
+**Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
+COLOUR: how sun lands on a leaf, how saturated living green is beside stone, how far a lit face sits from
+a shadowed one. Take nothing else — not the subject, not the perspective, not the photographic detail.
 
 ```
-Fallen leaves, painted in matte gouache, lit, no background, on pure magenta #FF00FF. Square, one unit by one, exactly as the SECOND reference. Do not re-compose it into a portrait.
+Fallen leaves, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A SQUARE frame, one unit by one. Do not re-compose it into a portrait.
 
 The object: TWO OR THREE DEAD PALM FRONDS that have dropped onto the paving and are lying where they
 fell. Each is a long rib with stiff leaflets along it, curled and split, one crossing another. They are
@@ -2864,15 +2874,25 @@ falling on, not a diagram of a plant. Push the lit parts well clear of the shado
 from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
 to the viewer. A flat silhouette in one value is the failure.
 
-**COLOUR IT PROPERLY.** Saturated, not muted: living green, and where there are flowers they are the most
-saturated thing in the picture. These plants are alive and the stone around them is not, and they are
-meant to be the thing your eye goes to on a floor of grey masonry.
+**NAME THE COLOURS, BECAUSE "SATURATED" KEEPS COMING BACK GREY.** Four rolls of this family have
+returned the same washed sage and chalky pastel, and they are not what is wanted. The greens are WARM and
+deep — olive, moss, a yellow-green where the light strikes — and never the pale blue-grey sage of a dried
+herb. Where the light falls they go golden-green and almost yellow; in shadow they go deep and rich, not
+merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not tinted white.
+
+Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
+
+THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
+or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
+the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
+survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
+is the small contact one described above, and it sits ON the plant, not behind it.
 
 Draw it square on, in straight orthographic projection — no perspective, no vanishing point, no
 foreshortening. That is what "square on" governs: it says nothing about the light, which is meant to be
 plainly visible. No perspective, no scene, no paving under them, no soil.
 
-Matte gouache throughout: a surface with a lit side, never a polished one.
+Matte surfaces throughout: lit, never polished — no gloss, no shine, no wet highlights.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2884,17 +2904,12 @@ yarn import-tile art/masters/surfaces/overgrown-fronds.webp --tier=default --nam
 
 ### `default/overgrown-creeper` — a creeper hanging down the wall band
 
-**Attach:**
-
-1. `~/tile-previews/lush-light-reference.png` — **the LIGHT and the COLOUR.** Not the subject, not the
-   style, not the projection: what to take from it is how the sun lands on leaves, how saturated living
-   green is beside stone, and how far a lit face sits from a shadowed one.
-2. `~/tile-previews/overgrown-wall-reference.png` — the root it hangs beside, **for SUBJECT AND SCALE ONLY.** It was painted
-   under an older rule that asked for flat, unlit tiles, and matching its handling is the one mistake
-   this entry keeps making. Take the framing and the size from it. Do not take the lighting.
+**Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
+COLOUR: how sun lands on a leaf, how saturated living green is beside stone, how far a lit face sits from
+a shadowed one. Take nothing else — not the subject, not the perspective, not the photographic detail.
 
 ```
-A hanging plant, painted in matte gouache, lit, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the SECOND reference. Do not re-compose it into a square.
+A hanging plant, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A PORTRAIT frame, two units wide by three tall. Do not re-compose it into a square.
 
 The object: a CREEPER that has come in over the top of a wall and is hanging down the face of it. Two or
 three thin woody stems enter at the TOP EDGE of the frame and fall the whole height, with heart-shaped
@@ -2931,16 +2946,26 @@ falling on, not a diagram of a plant. Push the lit parts well clear of the shado
 from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
 to the viewer. A flat silhouette in one value is the failure.
 
-**COLOUR IT PROPERLY.** Saturated, not muted: living green, and where there are flowers they are the most
-saturated thing in the picture. These plants are alive and the stone around them is not, and they are
-meant to be the thing your eye goes to on a floor of grey masonry.
+**NAME THE COLOURS, BECAUSE "SATURATED" KEEPS COMING BACK GREY.** Four rolls of this family have
+returned the same washed sage and chalky pastel, and they are not what is wanted. The greens are WARM and
+deep — olive, moss, a yellow-green where the light strikes — and never the pale blue-grey sage of a dried
+herb. Where the light falls they go golden-green and almost yellow; in shadow they go deep and rich, not
+merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not tinted white.
+
+Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
+
+THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
+or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
+the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
+survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
+is the small contact one described above, and it sits ON the plant, not behind it.
 
 Draw it square on against the wall, in straight orthographic projection — no perspective, no vanishing
 point. That governs the PROJECTION only, and says nothing about the light, which is meant to be plainly
 visible. No perspective, no scene, no bricks behind
 it, no wall.
 
-Matte gouache throughout: a surface with a lit side, never a polished one.
+Matte surfaces throughout: lit, never polished — no gloss, no shine, no wet highlights.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2952,17 +2977,12 @@ yarn import-tile art/masters/surfaces/overgrown-creeper.webp --tier=default --na
 
 ### `default/overgrown-curtain` — a curtain of roots down the wall band
 
-**Attach:**
-
-1. `~/tile-previews/lush-light-reference.png` — **the LIGHT and the COLOUR.** Not the subject, not the
-   style, not the projection: what to take from it is how the sun lands on leaves, how saturated living
-   green is beside stone, and how far a lit face sits from a shadowed one.
-2. `~/tile-previews/overgrown-wall-reference.png` — the root it hangs beside, **for SUBJECT AND SCALE ONLY.** It was painted
-   under an older rule that asked for flat, unlit tiles, and matching its handling is the one mistake
-   this entry keeps making. Take the framing and the size from it. Do not take the lighting.
+**Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
+COLOUR: how sun lands on a leaf, how saturated living green is beside stone, how far a lit face sits from
+a shadowed one. Take nothing else — not the subject, not the perspective, not the photographic detail.
 
 ```
-Hanging roots, painted in matte gouache, lit, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the SECOND reference. Do not re-compose it into a square.
+Hanging roots, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A PORTRAIT frame, two units wide by three tall. Do not re-compose it into a square.
 
 The object: a CURTAIN OF AERIAL ROOTS let down the inside face of a wall by something growing above it.
 Many fine roots hanging close together and nearly straight, of several lengths, a few of them fused into
@@ -3001,16 +3021,26 @@ falling on, not a diagram of a plant. Push the lit parts well clear of the shado
 from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
 to the viewer. A flat silhouette in one value is the failure.
 
-**COLOUR IT PROPERLY.** Saturated, not muted: living green, and where there are flowers they are the most
-saturated thing in the picture. These plants are alive and the stone around them is not, and they are
-meant to be the thing your eye goes to on a floor of grey masonry.
+**NAME THE COLOURS, BECAUSE "SATURATED" KEEPS COMING BACK GREY.** Four rolls of this family have
+returned the same washed sage and chalky pastel, and they are not what is wanted. The greens are WARM and
+deep — olive, moss, a yellow-green where the light strikes — and never the pale blue-grey sage of a dried
+herb. Where the light falls they go golden-green and almost yellow; in shadow they go deep and rich, not
+merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not tinted white.
+
+Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
+
+THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
+or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
+the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
+survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
+is the small contact one described above, and it sits ON the plant, not behind it.
 
 Draw it square on against the wall, in straight orthographic projection — no perspective, no vanishing
 point. That governs the PROJECTION only, and says nothing about the light, which is meant to be plainly
 visible. No perspective, no scene, no bricks behind
 it, no wall.
 
-Matte gouache throughout: a surface with a lit side, never a polished one.
+Matte surfaces throughout: lit, never polished — no gloss, no shine, no wet highlights.
 ```
 
 Then, once the return is in `~/Downloads`:
