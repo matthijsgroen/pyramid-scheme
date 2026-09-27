@@ -2598,16 +2598,32 @@ A single plant, painted in flat matte gouache, no background, on pure magenta #F
 The object: a YOUNG DATE PALM that has seeded itself in a tomb chamber and grown up toward the hole in
 the roof. A single slender trunk, patterned with the diamond scars of old frond bases, leaning very
 slightly. Five or six arching fronds at the top, each one a long rib with stiff leaflets along both
-sides — draw the leaflets as a comb of short strokes, not as a feather. A few dry brown fronds hang down
-dead against the trunk under the green ones.
+sides — draw the leaflets as a comb of short strokes, not as a feather. A few dead fronds hang down against the trunk under the green ones — DRY AND DUSTY, a grey-ochre going to
+straw, never orange or rust. They are the driest thing in the tile and must not become the brightest: the
+first roll came back with them a hot red-orange, which at tile size read as fruit.
 
 It STANDS ON THE FLOOR and is seen from the front, the way a piece of furniture in this tomb is seen. Its
 base is at the bottom edge of the frame and its crown at the top; nothing is cut off by either edge. It
 is a tile about the size of a jar rack, so the whole plant reads at a glance: fewer, larger fronds beat
 many small ones.
 
-Green that has grown in the dark: a deep dusty green, not a garden green, with the fronds paler toward
-their tips and the trunk a grey-brown. The dead fronds are a dry ochre.
+Green that has grown in the dark: a deep dusty green, not a garden green, and the trunk a grey-brown.
+
+THE CROWN IS PALER THAN THE FOOT, and this is the one piece of light in the picture. A plant is lit from
+above wherever it stands, so the fronds at the top carry the lightest greens, the undersides and the
+inner fronds go darker, and the trunk is darkest where it meets the ground. Paint that as FORM — a value
+gradient down the whole plant — and not as a light source: no sun, no beam, no rim light, no bright edge
+on one side, no cast shadow. The map lights this tile itself, and a baked highlight would glow in a dark
+room.
+
+KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest frond
+and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
+lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
+the stone it stands on.
+
+NOTHING LIES AT ITS FOOT. No fallen fronds, no litter, no debris on the ground — those are their own tile
+(`default/overgrown-fronds`), and painted here they feather into the magenta and key out as pink specks,
+which is what happened on the first roll.
 
 Draw it square on and FLAT. No perspective, no scene, no floor under it, no pot, no wall behind it.
 
@@ -2641,6 +2657,19 @@ crown is at the bottom edge of the frame; nothing is cut off by any edge.
 
 A deep cool green, darker and bluer than a palm, with the undersides of the lobes paler where a frond
 turns over. Nothing about it is dry — this is the plant that found the wet corner.
+
+IT IS PALER AT THE TOP THAN AT THE BOTTOM, and that is the only light in the picture. Paint it as FORM
+— a value gradient over the whole plant — and never as a light source: no sun, no beam, no rim light, no
+bright edge on one side, no cast shadow. The map lights this tile itself, and a baked highlight would
+glow in a dark room.
+
+KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest part
+and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
+lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
+the stone it lies on.
+
+EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
+edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
 
 Draw it square on and FLAT. No perspective, no scene, no floor under it, no pot, no wall behind it.
 
@@ -2676,6 +2705,14 @@ saturated thing in the tile.
 It LIES ON THE PAVING and is seen from above, flat to the floor. It is a small thing, about a third of a
 floor slab, and it will be drawn small — so a few clear flower heads beat a dense mass of tiny ones.
 
+KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest part
+and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
+lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
+the stone it lies on.
+
+EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
+edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
+
 Draw it square on and FLAT. No perspective, no scene, no paving under it, no crack, no soil.
 
 No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp.
@@ -2708,6 +2745,14 @@ plant rather than as the same one drawn again.
 
 It LIES ON THE PAVING and is seen from above, flat to the floor. It is a small thing, about a third of a
 floor slab, and it will be drawn small — so keep the blades few and clear rather than fine and many.
+
+KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest part
+and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
+lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
+the stone it lies on.
+
+EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
+edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
 
 Draw it square on and FLAT. No perspective, no scene, no paving under it, no crack, no soil.
 
@@ -2743,6 +2788,14 @@ anywhere in them.
 It LIES ON THE PAVING and is seen from above, flat to the floor, filling more width than height. The
 arrangement need not match the reference.
 
+KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest part
+and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
+lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
+the stone it lies on.
+
+EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
+edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
+
 Draw it square on and FLAT. No perspective, no scene, no paving under them, no soil.
 
 No highlights, no gloss, no rim light, no shadow, no reflections. Matte throughout, as if lit by one dull lamp.
@@ -2774,6 +2827,19 @@ is stretched down a wall band by the renderer, and a plant that stops inside the
 painted on the wall instead of something growing over it.
 
 A living mid-green, a little yellower than the root it hangs beside, with the woody stems grey-brown.
+
+IT IS PALER AT THE TOP THAN AT THE BOTTOM, and that is the only light in the picture. Paint it as FORM
+— a value gradient over the whole plant — and never as a light source: no sun, no beam, no rim light, no
+bright edge on one side, no cast shadow. The map lights this tile itself, and a baked highlight would
+glow in a dark room.
+
+KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest part
+and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
+lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
+the stone it lies on.
+
+EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
+edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
 
 Draw it square on and FLAT, seen straight on against the wall. No perspective, no scene, no bricks behind
 it, no wall.
@@ -2809,6 +2875,19 @@ It is the DENSE one of this set, where the other wall tile is a single root forc
 one is a veil you would have to push through, and it should read as mass rather than as line.
 
 Pale grey-brown and dusty, barely green at all — these have never seen the light.
+
+IT IS PALER AT THE TOP THAN AT THE BOTTOM, and that is the only light in the picture. Paint it as FORM
+— a value gradient over the whole plant — and never as a light source: no sun, no beam, no rim light, no
+bright edge on one side, no cast shadow. The map lights this tile itself, and a baked highlight would
+glow in a dark room.
+
+KEEP THE WHOLE TILE IN A NARROW VALUE RANGE. Nothing near white, nothing near black; the lightest part
+and the darkest should sit within about a third of the scale of each other. This is painted for a tomb
+lit by one dull lamp, and a tile with real contrast in it reads as cut out of a different picture from
+the stone it lies on.
+
+EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
+edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
 
 Draw it square on and FLAT, seen straight on against the wall. No perspective, no scene, no bricks behind
 it, no wall.
