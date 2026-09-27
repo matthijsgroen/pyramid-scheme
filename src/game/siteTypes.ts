@@ -240,11 +240,11 @@ export type RoomCell = {
    * sections away from what it drives, names no direction and is matched by the key the room asks for.
    *
    * A lever is a toggle: two positions, each opening a set of gates and shutting the other's, thrown
-   * back and forth for ever. A board is not: solving it routes the light somewhere and it cannot be
-   * un-solved, so it never returns to the position it started in. The walk (src/game/floorLock.ts)
-   * gives each the moves it really has, reading which it is off the stem of the keys its own gates
-   * carry — assuming either shape for both hands the walk a move the player does not have, or takes
-   * one they do. */
+   * back and forth for ever. A board has one position more than it has ways out — rest, which opens
+   * none — and it too is worked back and forth: the player walks back into a solved switch, turns a
+   * mirror off every shrine and leaves it lighting nothing. The walk (src/game/floorLock.ts) gives
+   * each the moves it really has by reading them off this record, never by assuming a shape for a
+   * kind — which hands the walk a move the player does not have, or takes one they do. */
   mechanism?: MechanismRecord
   /** WHICH MECHANISM THIS ROOM BELONGS TO, said in a glyph on a coloured ground (src/app/SiteMap/mark.tsx).
    * A mechanism's room and every gate it owns carry the same pair, and that pairing is the only thing
@@ -318,9 +318,13 @@ export type MechanismRecord = {
    * state, not "nothing open" — which is what lets one side of a toggle stand open on arrival without
    * the carve having to place an already-open gate. One of `states`. */
   initial: string
-  /** Whether `initial` is a position the player can put it back into. True of a lever, which is thrown
-   * back and forth for ever; false of a beam board, which routes its light somewhere the first time it
-   * is solved and cannot be un-solved. */
+  /** Whether `initial` is a position the player can put it back into. True of a lever, whose two sides
+   * are thrown back and forth for ever, and true of a beam board as well: walking back into a solved
+   * switch and turning a mirror off every shrine leaves it lighting nothing, which is where it began.
+   *
+   * Declared rather than assumed from what kind of thing is standing there. A mechanism that could not
+   * be put back would hand the walk a move the player has not got, and the day one is authored this is
+   * where it says so. */
   returnsToInitial: boolean
   /** One entry per gate this mechanism drives, tagged with the position that opens it. Several entries
    * may share a position — a lever thrown left opens every gate its left side names — and a position
