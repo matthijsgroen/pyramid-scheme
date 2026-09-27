@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { GateVariant, KeyColor, RoomCell, TreasureReward } from "@/game/siteTypes"
+import type { GateVariant, KeyColor, MechanismRecord, RoomCell, TreasureReward } from "@/game/siteTypes"
 import type { ForkShape } from "@/game/forkShape"
 import { encounterFromMeta, type ResolveEncounter } from "@/game/siteAssembler"
 import type { FamilyMeta } from "@/game/families/familyMeta"
@@ -67,6 +67,9 @@ export type FamilyContext = {
   /** The shape those ways out make (src/game/forkShape.ts) — the layout a board is built FOR, where
    * `exits` above is which doors this particular room has. Unset off fork rooms. */
   forkShape?: ForkShape
+  /** THIS ROOM IS A MECHANISM (RoomCell.mechanism): its own positions and whether it can rest. A lever
+   * reads this to know which buttons to draw; unset off mechanism rooms. */
+  mechanism?: MechanismRecord
 }
 
 type InventoryAPI = ReturnType<typeof useInventory>

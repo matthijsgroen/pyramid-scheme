@@ -97,6 +97,8 @@ export const useEncounter = ({
       // and a board is built for a layout, not for a room.
       exits,
       forkShape: classifyForkShape((exits ?? []).filter(exit => exit.gateKeyId).map(exit => exit.dir)),
+      // A lever's room reads its own positions off the cell, the same way a fork reads its ways out.
+      mechanism: cell?.type === "room" ? cell.mechanism : undefined,
       ownedKeys,
     }
   }, [active, grid, currentFloor, journeyId, levelNr, difficulty, ownedKeys])

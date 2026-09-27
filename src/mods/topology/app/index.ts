@@ -2,3 +2,4 @@
 // being enabled.
 import "./lightbeam/plugin"
 import "./lightbeamSwitch/plugin"
+import "./handle/plugin"

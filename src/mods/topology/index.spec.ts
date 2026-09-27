@@ -12,8 +12,8 @@ describe("the topology mod", () => {
   })
 
   it("contributes its families, each owned by itself", () => {
-    expect(topologyMod.families?.map(f => f.id)).toEqual(["lightbeam", "lightbeamSwitch"])
-    expect(topologyMod.families?.map(f => f.ownerMod)).toEqual(["topology", "topology"])
+    expect(topologyMod.families?.map(f => f.id)).toEqual(["lightbeam", "lightbeamSwitch", "handle"])
+    expect(topologyMod.families?.map(f => f.ownerMod)).toEqual(["topology", "topology", "topology"])
   })
 
   // A switch is a fork the player walks back into to change their mind; without this the branch they

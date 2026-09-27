@@ -1104,5 +1104,12 @@
     "doorOpen": "{{way}} way out: open",
     "doorShut": "{{way}} way out: shut",
     "way": { "n": "Northern", "e": "Eastern", "s": "Southern", "w": "Western" }
+  },
+  "handle": {
+    "name": "The Lever",
+    "invitation": "Throw the lever",
+    "goal": "The lever stands at one setting, and the door it answers for stands open.",
+    "rest": "Rest",
+    "position": "Open the way to {{section}}"
   }
 }

@@ -1104,5 +1104,12 @@
     "doorOpen": "{{way}} doorgang: open",
     "doorShut": "{{way}} doorgang: dicht",
     "way": { "n": "Noordelijke", "e": "Oostelijke", "s": "Zuidelijke", "w": "Westelijke" }
+  },
+  "handle": {
+    "name": "De Hendel",
+    "invitation": "Trek de hendel over",
+    "goal": "De hendel staat op één stand, en de deur die daarbij hoort staat open.",
+    "rest": "Rust",
+    "position": "Open de weg naar {{section}}"
   }
 }

@@ -193,6 +193,25 @@ describe("useEncounter", () => {
     expect(hook.result.current.ctx?.forkShape).toBeUndefined()
   })
 
+  // A lever's room reads which positions it drives off its own cell, the same way a fork reads its
+  // ways out — the family standing in it has no other way to learn what it stands over.
+  it("hands a mechanism's own record to the family standing on it", () => {
+    const mechanism = { positions: [{ state: "vault", gateKeyId: "handle:test:vault" }], restReachable: true }
+    const { hook } = setup([{ ...stubRoom, mechanism }])
+
+    act(() => hook.result.current.open([0, 0], true))
+
+    expect(hook.result.current.ctx?.mechanism).toEqual(mechanism)
+  })
+
+  it("leaves it unset off a room with no mechanism", () => {
+    const { hook } = setup([stubRoom])
+
+    act(() => hook.result.current.open([0, 0], true))
+
+    expect(hook.result.current.ctx?.mechanism).toBeUndefined()
+  })
+
   it("offers nothing for an empty room, while still marking it explored", () => {
     const { hook, journeys, onReward } = setup([emptyRoom])
 
