@@ -598,18 +598,19 @@ takes that de-duplication off the critical path.
 - **`lockWalk` only knows how to shut a boundary.** A flooded region is one the player may not OCCUPY,
   which is not the same as one whose doors are shut. P1's natural home, applied to a region.
 
-## Parked, not this branch's
+## Parked — all four now done, 2026-09-28
 
-- Two domain→app imports remain (`mechanismDoors` → `cellIdentity`, `generateLevel` →
-  `PyramidLevel/support`). React-free, but `architecture.md`'s rule is broken and **nothing lints it** —
-  the class was introduced twice in this plan and caught twice by review rather than tooling. An eslint
-  rule is the fix.
-- `generateEclipse` times out at vitest's default 5000ms under load; it passes in isolation at 29.8s
-  for 25 tests. Count work, not wall-clock.
-- `sweepMissedASwitch` fires only at `walked === 0`, so a regression taking the sweep from 8 locks to 1
-  would pass silently. Worth a floor-count assertion before step 5 leans harder on the sweep.
-- The travel map's "continue expedition" button WRAPS the journey map, so a centre click lands on a
-  level node and silently moves `levelNr`. Found by playing.
+Every item that sat here was picked up as a work-queue item and is committed on this branch.
+
+- The two domain→app imports, and the fact that **nothing linted the rule** — queue 2, `15e383b2`. The
+  real sweep found 4 violations, not the 2 listed here: a domain spec, and a type-only import a
+  value-grep cannot see.
+- `generateEclipse` timing out under load — queue 5, `e61fc9f8`. Fixed by counting work, not by
+  raising the timeout: the test now spends 2 draws where it spent a 60-attempt search.
+- The sweep that fired only at `walked === 0` — queue 3, `17276d95`. `sweepMissedASwitch` is gone,
+  subsumed by a derived build guard that names the floors it never walked, plus a spec pinning 1 and 8.
+- The travel map's "continue expedition" button — queue 6, `6d504d3e`. Confirmed in a real browser: the
+  dead centre of the button was a level node, and clicking it moved `levelNr` 3 → 2.
 
 ## The art, mid-flight
 
@@ -650,14 +651,25 @@ at handover, +1 for item 1's new collision test); `yarn lint` 0 errors, 17 warni
 
 | # | State | Commit |
 | - | ----- | ------ |
-| 1 | label check now recursive; the three-level refusal still in flight | `fcefc2c7` |
+| 1 | done — refuses a third level, and the label check sees every one | `fcefc2c7` + `a66327af` |
 | 2 | done | `15e383b2` |
-| 3 | not started | |
+| 3 | done — build guard is derived, spec pins 1 and 8 | `17276d95` |
 | 4 | done | `523e6c6e` |
 | 5 | done | `e61fc9f8` |
-| 6 | in flight | |
-| 7 | not started | |
-| 8 | not started — last, by instruction | |
+| 6 | done — browser-verified | `6d504d3e` |
+| 7 | done — side-path puzzles zeroed too, see below | `854a6365` |
+| 8 | in flight, last by instruction | |
+
+Gate with 1-7 in: `yarn test` **3659 passed / 299 files**, `check-types` clean, `lint` 0 errors /
+17 warnings, `betterer` **531 unchanged**, `generate-world` **8b610d0e016ef60a1fa1526cc84bd910**
+byte-identical, `validate-world` valid plain (`walked 1 of 1`) and with `INCLUDE_DEV=1`
+(`walked 8 of 8`).
+
+**Queue 7 took one judgement past the one it was granted, and it is reversible.** The item named the
+main path; the side-path puzzles were zeroed as well, which is what takes pyramid 7's lever from 12
+cell steps to 2 (worst case on the journey: 18 steps / 2 puzzles → 4 / 0). To give the branches a room
+of content back, set `puzzles: 0` to `puzzles: 1` in `branches()` and on pyramid 7's three sections;
+the puzzle toll stays zero either way.
 
 **Working this queue with concurrent implementers in ONE worktree costs something the queue does not
 say.** An implementer running a broad `git add` or `git commit -a` commits whatever another one has
@@ -675,6 +687,8 @@ as the CLI incident); and `src/mods/*/game/` is domain by every argument that ap
 but no doc names it, so extending the rule there would be deciding on the owner's behalf.
 
 ## 1. The builder decides quietly, twice — fix both
+
+**DONE** `fcefc2c7` + `a66327af`. Both refusals fire and were each watched failing; `CARVED_SECTION_DEPTH = 2` names the limit, and the third level is read through one documented cast in `childSectionsOf`.
 
 The governing rule is the owner's: **the builder may refuse, but it may never decide quietly.**
 `siteAssembler` already refuses a duplicate label, a misnamed one-way and an impossible lever by name
@@ -696,6 +710,8 @@ separate, much larger job (see 8). Refusing is the fix.
 
 ## 2. Nothing enforces the domain-layer rule
 
+**DONE** `15e383b2`. The sweep found 4 violations, not 2. Still open for the owner: the rule **excludes specs**, and two domain specs do reach into `src/app`; and `src/mods/*/game/` is domain by every argument that applies to `src/game/` but no doc names it.
+
 `docs/instructions/architecture.md` and AGENTS.md §8 forbid the domain layer importing `src/app/`,
 `src/ui/` or `react`. **Nothing lints it** — `eslint.config.js:49-104` only restricts mod↔mod imports.
 The class was introduced twice inside one ten-task plan and caught both times by a human-ish reviewer
@@ -711,6 +727,8 @@ its doc comment) or by a narrowly-scoped, commented exemption. Prefer moving.
 
 ## 3. A guard that can barely fail
 
+**DONE** `17276d95`. `sweepMissedASwitch` NO LONGER EXISTS — it is subsumed. The build now fails on `findUnwalkedLocks`, a derived list that names the floors it never walked and scales with authoring; `devJourney.spec.ts` pins 1 and 8, catching the case the build cannot see (authoring losing its mechanisms, where owed and walked fall together).
+
 `sweepMissedASwitch` fires only when `walked === 0`, and `validate-world` never prints how many locks it
 walked. A regression taking the sweep from 8 locks to 1 would pass green. This is the branch's signature
 defect class, and it is already recorded as world-wide and binary in this document's earlier sections.
@@ -721,6 +739,8 @@ assertion belongs in a spec or in the build, and say which in the report.
 
 ## 4. The `NodeShape` switch is not exhaustiveness-checked
 
+**DONE** `523e6c6e`. A `default: never` guard; verified by deleting a case and seeing TS2322 rather than the incidental `noUnusedLocals`.
+
 Proven by experiment: removing `case "handle"` compiles — no `default`, inferred return type — so a
 missing `ShapeKind` silently renders nothing. `check-types` only complained incidentally via
 `noUnusedLocals` on the orphaned component. By contrast `nodeRadius: Record<ShapeKind, number>` IS
@@ -730,6 +750,8 @@ enforced (TS2741). Pre-existing and shared by every shape kind.
 shape. Verify by deleting a case and seeing `check-types` fail for the RIGHT reason.
 
 ## 5. `generateEclipse` is bounded by a clock, not by work
+
+**DONE** `e61fc9f8`. No timeout was added. The test spends a counted 2 draws instead of a 60-attempt quota search: 1717ms → ~255ms, margin on the 5000ms default 2.9× → ~19×.
 
 `src/mods/puzzle/game/eclipse/generateEclipse.spec.ts` "draws the same board for the same seed" times
 out at vitest's default 5000ms under load. In isolation the file runs 25 tests in 29.8s, so that one
@@ -742,12 +764,16 @@ should be the fallback, not the first move.
 
 ## 6. A click on the travel map silently moves the player
 
+**DONE** `6d504d3e`. The label was `pointer-events-none` over a full-card SVG whose nodes are `r=9` in a stretched viewBox — an 80×80px invisible target on a 448px card. Label and map are now siblings in flow.
+
 Found by playing. The "continue expedition" button WRAPS the journey map, so a centre click lands on a
 level node and silently changes `levelNr`. A real trap for a player, not just for an agent.
 
 **Success:** clicking the button does what the button says; the map underneath does not receive it.
 
 ## 7. The dev journey is a poor bench for the mechanics it exists to expose
+
+**DONE** `854a6365`. Pyramid 7's lever: 2 puzzles / 12 cell steps → 0 / 2. Reward lines byte-identical with and without the dev journey.
 
 Reaching the lever on `dev_topology` pyramid 7 costs two solved main-path puzzles. Every topology
 playtest pays that toll, on a journey whose stated purpose is "so each mechanic can be entered straight
