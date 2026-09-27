@@ -31,6 +31,37 @@ export const getOwnedKeys = (grid: FloorGrid): ReadonlySet<string> => {
   return keys
 }
 
+const ALL_DIRS: Direction[] = ["n", "s", "e", "w"]
+
+/**
+ * The direction from (row,col) toward a ONE-WAY MOUTH standing next to it, if any: a corridor
+ * whose only direction points back at (row,col) rather than away from it — the shape a drop's
+ * connector takes seen from its landing, the end that names no direction of its own into it. A
+ * genuine dead end's single direction is the direction that led there, never the direction back,
+ * so it never matches this.
+ */
+export const oneWayMouthDir = (grid: FloorGrid, row: number, col: number): Direction | undefined => {
+  for (const dir of ALL_DIRS) {
+    const [dr, dc] = MOVES[dir]
+    const neighbor = getCell(grid, row + dr, col + dc)
+    if (neighbor?.type === "corridor" && neighbor.dirs.size === 1 && neighbor.dirs.has(opposite[dir])) return dir
+  }
+  return undefined
+}
+
+/** Brings a one-way mouth next to (row,col) out of the fog — and only that one cell, never what
+ * stands beyond it — the moment (row,col) itself is seen. Read off `grid`, the shape carved into
+ * it never changing mid-walk, but written into `cells`, this call's own running state. */
+const revealOneWayMouth = (cells: GridCell[][], grid: FloorGrid, row: number, col: number): void => {
+  const dir = oneWayMouthDir(grid, row, col)
+  if (!dir) return
+  const [dr, dc] = MOVES[dir]
+  const neighbor = cells[row + dr]?.[col + dc]
+  if (neighbor?.type === "corridor" && neighbor.state === "fogged") {
+    cells[row + dr][col + dc] = { ...neighbor, state: "visible" }
+  }
+}
+
 export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGrid => {
   // 1. Shallow-copy cells (immutable update)
   const newCells: GridCell[][] = grid.cells.map(r => [...r])
@@ -42,6 +73,7 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
   } else if (targetCell.type === "corridor") {
     newCells[row][col] = { ...targetCell, state: "completed" }
   }
+  revealOneWayMouth(newCells, grid, row, col)
 
   const updatedGrid = { ...grid, cells: newCells }
 
@@ -105,6 +137,7 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
       // solve — those stay approachable and clickable like any other room.
       if (neighbor.state === "fogged" || neighbor.state === "visible") {
         newCells[r][c] = { ...neighbor, state: "reachable" }
+        revealOneWayMouth(newCells, grid, r, c)
       }
       // Don't traverse through rooms
     }

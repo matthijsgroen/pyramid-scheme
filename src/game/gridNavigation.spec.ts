@@ -217,6 +217,46 @@ describe(completeCell, () => {
     expect(updatedLanding.type).toBe("room")
     if (updatedLanding.type === "room") expect(updatedLanding.state).toBe("reachable")
   })
+
+  it("shows a one-way's connector from the landing side, and reveals nothing past it", () => {
+    // Same drop as above, completed from the OTHER end this time: the landing names no direction
+    // back into the connector (a real dead end would), so the graph walk this function otherwise
+    // does can never reach it — a player standing right beside the mouth would see none of it.
+    const config: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "junior",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "upper" },
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "lower" },
+      ],
+      oneWays: [{ from: "upper", to: "lower" }],
+    }
+    const result = assembleFloor("spike:1", config, 0, undefined, {
+      floorRef: { journeyId: "spike", levelIndex: 0, floorIndex: 0 },
+    })
+    if (!result.success) throw new Error("seed 0 no longer carves the authored drop")
+    const grid = result.grid
+
+    const connector = grid.cells[3][6]
+    const source = grid.cells[4][6]
+    const landing = grid.cells[2][6]
+    if (connector.type !== "corridor" || source.type !== "room" || landing.type !== "room")
+      throw new Error("the carve at seed 0 moved — re-read the coordinates before trusting this test")
+    expect([...connector.dirs]).toEqual(["n"])
+
+    const updated = completeCell(grid, 2, 6)
+    const updatedConnector = updated.cells[3][6]
+    expect(updatedConnector.type).toBe("corridor")
+    if (updatedConnector.type === "corridor") expect(updatedConnector.state).toBe("visible")
+
+    // Past the mouth, still dark: the source is two cells from the landing, geometrically and on
+    // the graph both, so nothing reaches it from this side.
+    const updatedSource = updated.cells[4][6]
+    expect(updatedSource.type).toBe("room")
+    if (updatedSource.type === "room") expect(updatedSource.state).toBe("fogged")
+  })
 })
 
 describe(findPath, () => {
