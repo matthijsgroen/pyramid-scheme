@@ -2600,6 +2600,343 @@ against this section once the rest are in.
 until the return is measured against the floor it lies on with `yarn tile-stats` — same rule as every
 other block in this file.
 
+### `default/overgrown-palm` — a young date palm in a broken chamber
+
+**Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
+COLOUR: how sun lands on a leaf, how saturated living green is beside stone, how far a lit face sits from
+a shadowed one. Take nothing else — not the subject, not the perspective, not the photographic detail.
+
+```
+A single plant, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A SQUARE frame, one unit by one. Do not re-compose it into a portrait.
+
+The object: a YOUNG DATE PALM that has seeded itself in a tomb chamber and grown up toward the hole in
+the roof. A single slender trunk, patterned with the diamond scars of old frond bases, leaning very
+slightly. Five or six arching fronds at the top, each one a long rib with stiff leaflets along both
+sides — draw the leaflets as a comb of short strokes, not as a feather. A few dead fronds hang down
+against the trunk under the green ones, DRY AND DUSTY, a grey-ochre going to straw, never orange or rust.
+
+It STANDS ON THE FLOOR and is seen from the front, the way a piece of furniture in this tomb is seen. Its
+base is at the bottom edge of the frame and its crown at the top. It is a tile about the size of a jar
+rack, so the whole plant reads at a glance: fewer, larger fronds beat many small ones.
+
+NOTHING LIES AT ITS FOOT. No fallen fronds, no litter, no debris on the ground — those are their own tile
+(`default/overgrown-fronds`), and painted here they feather into the magenta and key out as pink specks.
+
+EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
+edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
+
+IT SITS ON THE GROUND, AND IT DARKENS WHERE IT TOUCHES. Pool a soft dark into the very bottom of the
+plant — the base of the trunk or crown, and the ground immediately around it — fading out within a
+fraction of the plant's own width. Every prop in this game bakes one of these into its bottom rows, and a
+tile without one lies on the paving like a sticker however well the map lights it.
+
+THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
+not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
+whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
+
+**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
+upper surfaces and the parts facing the viewer take the light; the undersides of the leaves, the far
+side of the stem and anything tucked behind another part fall into shadow.
+
+STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so there is NO brighter flank —
+nothing lighter on the left than on the right. That is load-bearing: the renderer turns and MIRRORS these
+sprites at random to keep a floor from repeating, and light from a side would land on the wrong flank in
+half the cells. Light from the front survives both.
+
+**MAKE THE LIGHT OBVIOUS.** This is the whole point of the tile: it should look like something the sun is
+falling on, not a diagram of a plant. Push the lit parts well clear of the shadowed ones — a real range
+from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
+to the viewer. A flat silhouette in one value is the failure.
+
+**NAME THE COLOURS, BECAUSE "SATURATED" KEEPS COMING BACK GREY.** Four rolls of this family have
+returned the same washed sage and chalky pastel, and they are not what is wanted. The greens are WARM and
+deep — olive, moss, a yellow-green where the light strikes — and never the pale blue-grey sage of a dried
+herb. Where the light falls they go golden-green and almost yellow; in shadow they go deep and rich, not
+merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not tinted white.
+
+Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
+
+THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
+or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
+the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
+survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
+is the small contact one described above, and it sits ON the plant, not behind it.
+
+Draw it square on, in straight orthographic projection — no perspective, no vanishing point, no
+foreshortening. That is what "square on" governs: it says nothing about the light, which is meant to be
+plainly visible. No perspective, no scene, no floor under it, no pot, no wall behind it.
+
+Matte surfaces throughout: lit, never polished — no gloss, no shine, no wet highlights.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-ferns.webp --tier=default --name=overgrown-ferns --slot=growth \
+  --filter=smooth --saturation=3.2 --brightness=0.82
+```
+
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-palm.webp --tier=default --name=overgrown-palm --slot=growth \
+  --filter=smooth --saturation=1.0 --brightness=1.0
+```
+
+### `default/overgrown` — a tuft of green in a paving joint
+
+**Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
+COLOUR: how sun lands on a leaf, how saturated living green is beside stone, how far a lit face sits from
+a shadowed one. Take nothing else — not the subject, not the perspective, not the photographic detail.
+
+```
+A small clump of leaves, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A SQUARE frame, one unit by one. Do not re-compose it into a portrait.
+
+The object: a TUFT OF LIVING GREEN forced up through the joint between two paving slabs — the commonest
+thing on an overgrown floor, and the one drawn most often. A low rosette of broad soft leaves, a dozen or
+so, splaying outward from one point, with two or three longer blades standing up out of the middle.
+
+THIS IS THE WETTEST AND GREENEST OF THE FLOOR TILES, and it is what the others are read against: the
+scrub beside it is dry, the fallen fronds are dead, and this is the one that is thriving. It replaces an
+older tile that was thin, dark and nearly colourless, so err toward lush.
+
+It LIES ON THE PAVING and is seen from above, flat to the floor. It is a small thing, about a third of a
+floor slab, and it will be drawn small and often — so keep the leaves few, broad and clear rather than
+fine and many.
+
+EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
+edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
+
+IT LIES ON THE PAVING, AND IT DARKENS WHERE IT TOUCHES. Put a thin soft dark directly beneath the mass,
+just under the leaves and stems where they meet the stone, fading out within a leaf's width. Every prop
+in this game bakes one of these into its bottom rows, and a tile without one lies on the paving like a
+sticker however well the map lights it.
+
+THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
+not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
+whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
+
+**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
+tops of the petals and leaves take the light; what lies under them, what is deeper in the clump, and the
+ground showing between them fall into shadow.
+
+STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so there is NO brighter flank —
+nothing lighter on the left than on the right. That is load-bearing: the renderer turns and MIRRORS these
+sprites at random to keep a floor from repeating, and light from a side would land on the wrong flank in
+half the cells. Light from the front survives both.
+
+**MAKE THE LIGHT OBVIOUS.** This is the whole point of the tile: it should look like something the sun is
+falling on, not a diagram of a plant. Push the lit parts well clear of the shadowed ones — a real range
+from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
+to the viewer. A flat silhouette in one value is the failure.
+
+**NAME THE COLOURS, BECAUSE "SATURATED" KEEPS COMING BACK GREY.** Four rolls of this family have
+returned the same washed sage and chalky pastel, and they are not what is wanted. The greens are WARM and
+deep — olive, moss, a yellow-green where the light strikes — and never the pale blue-grey sage of a dried
+herb. Where the light falls they go golden-green and almost yellow; in shadow they go deep and rich, not
+merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not tinted white.
+
+Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
+
+THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
+or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
+the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
+survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
+is the small contact one described above, and it sits ON the plant, not behind it.
+
+Draw it square on, in straight orthographic projection — no perspective, no vanishing point, no
+foreshortening. That is what "square on" governs: it says nothing about the light, which is meant to be
+plainly visible. No perspective, no scene, no paving under it, no crack, no soil.
+
+Matte surfaces throughout: lit, never polished — no gloss, no shine, no wet highlights.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-scrub.webp --tier=default --name=overgrown-scrub --slot=growth \
+  --filter=smooth --saturation=2.6 --brightness=0.58
+```
+
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown.webp --tier=default --name=overgrown --slot=growth \
+  --filter=smooth --saturation=1.0 --brightness=1.0
+```
+
+### `default/overgrown-plant` — a leafy plant standing in a chamber
+
+**Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
+COLOUR: how sun lands on a leaf, how saturated living green is beside stone, how far a lit face sits from
+a shadowed one. Take nothing else — not the subject, not the perspective, not the photographic detail.
+
+```
+A single plant, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A SQUARE frame, one unit by one. Do not re-compose it into a portrait.
+
+The object: a BROAD LEAFY PLANT that has taken over a corner of a tomb chamber — not a palm and not a
+fern, but something thick and bushy with big soft leaves, the kind that grows fast wherever light and
+water arrive together. A dense mound of overlapping leaves on short stems, widest across its middle,
+rising from a crown at the bottom.
+
+It is the BULK of the chamber pool: where the palm is tall and the ferns are fine, this is the one that
+fills a corner. It replaces an older tile that came back spiky and grey, closer to an agave than to
+anything lush.
+
+It STANDS ON THE FLOOR and is seen from the front, the way a piece of furniture in this tomb is seen. Its
+base is at the bottom edge of the frame; nothing is cut off by any edge.
+
+EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
+edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
+
+IT SITS ON THE GROUND, AND IT DARKENS WHERE IT TOUCHES. Pool a soft dark into the very bottom of the
+plant — the base of the trunk or crown, and the ground immediately around it — fading out within a
+fraction of the plant's own width. Every prop in this game bakes one of these into its bottom rows, and a
+tile without one lies on the paving like a sticker however well the map lights it.
+
+THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
+not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
+whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
+
+**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
+upper surfaces and the parts facing the viewer take the light; the undersides of the leaves, the far
+side of the stem and anything tucked behind another part fall into shadow.
+
+STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so there is NO brighter flank —
+nothing lighter on the left than on the right. That is load-bearing: the renderer turns and MIRRORS these
+sprites at random to keep a floor from repeating, and light from a side would land on the wrong flank in
+half the cells. Light from the front survives both.
+
+**MAKE THE LIGHT OBVIOUS.** This is the whole point of the tile: it should look like something the sun is
+falling on, not a diagram of a plant. Push the lit parts well clear of the shadowed ones — a real range
+from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
+to the viewer. A flat silhouette in one value is the failure.
+
+**NAME THE COLOURS, BECAUSE "SATURATED" KEEPS COMING BACK GREY.** Four rolls of this family have
+returned the same washed sage and chalky pastel, and they are not what is wanted. The greens are WARM and
+deep — olive, moss, a yellow-green where the light strikes — and never the pale blue-grey sage of a dried
+herb. Where the light falls they go golden-green and almost yellow; in shadow they go deep and rich, not
+merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not tinted white.
+
+Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
+
+THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
+or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
+the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
+survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
+is the small contact one described above, and it sits ON the plant, not behind it.
+
+Draw it square on, in straight orthographic projection — no perspective, no vanishing point, no
+foreshortening. That is what "square on" governs: it says nothing about the light, which is meant to be
+plainly visible. No perspective, no scene, no floor under it, no pot, no wall behind it.
+
+Matte surfaces throughout: lit, never polished — no gloss, no shine, no wet highlights.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-ferns.webp --tier=default --name=overgrown-ferns --slot=growth \
+  --filter=smooth --saturation=3.2 --brightness=0.82
+```
+
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name=overgrown-plant --slot=growth \
+  --filter=smooth --saturation=1.0 --brightness=1.0
+```
+
+### `default/overgrown-wall` — a root forcing through the wall band
+
+**Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
+COLOUR: how sun lands on a leaf, how saturated living green is beside stone, how far a lit face sits from
+a shadowed one. Take nothing else — not the subject, not the perspective, not the photographic detail.
+
+```
+A root and its leaves, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A PORTRAIT frame, two units wide by three tall. Do not re-compose it into a square.
+
+The object: a THICK ROOT that has forced its way through the brick and is hanging down the inside face of
+the wall. One main woody root entering at the TOP EDGE, splitting into two or three as it falls, with
+small leaves breaking out along its length and clustering where it has found the light.
+
+A ROOT THROUGH A WALL IS THE THING THAT SAYS A BUILDING IS LOSING, which is this tile's whole job — a
+weed in a joint is untidiness, this is structural. Make it look strong: woody, thick at the top where it
+comes through, not a trailing vine.
+
+IT MUST REACH BOTH EDGES. It enters at the top edge and its ends pass out through the bottom — this is
+stretched down a wall band by the renderer, and a plant that stops inside the frame reads as a stain
+painted on the wall instead of something growing through it.
+
+EVERY SHAPE HAS A CLEAN, SOLID EDGE. Do not feather, blur or fade anything into the background: a soft
+edge over the magenta keys out as a fringe of pink specks, and a flat tile has no mask to rescue it.
+
+IT SITS ON THE GROUND, AND IT DARKENS WHERE IT TOUCHES. Pool a soft dark into the very bottom of the
+plant — the base of the trunk or crown, and the ground immediately around it — fading out within a
+fraction of the plant's own width. Every prop in this game bakes one of these into its bottom rows, and a
+tile without one lies on the paving like a sticker however well the map lights it.
+
+THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no direction, and it does
+not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
+whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
+
+**THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
+upper surfaces and the parts facing the viewer take the light; the undersides of the leaves, the far
+side of the stem and anything tucked behind another part fall into shadow.
+
+STRAIGHT ON, AND NOT FROM ONE SIDE. The source is square in front, so there is NO brighter flank —
+nothing lighter on the left than on the right. That is load-bearing: the renderer turns and MIRRORS these
+sprites at random to keep a floor from repeating, and light from a side would land on the wrong flank in
+half the cells. Light from the front survives both.
+
+**MAKE THE LIGHT OBVIOUS.** This is the whole point of the tile: it should look like something the sun is
+falling on, not a diagram of a plant. Push the lit parts well clear of the shadowed ones — a real range
+from bright to dark within the tile — and let the brightest touches sit on the few surfaces most square
+to the viewer. A flat silhouette in one value is the failure.
+
+**NAME THE COLOURS, BECAUSE "SATURATED" KEEPS COMING BACK GREY.** Four rolls of this family have
+returned the same washed sage and chalky pastel, and they are not what is wanted. The greens are WARM and
+deep — olive, moss, a yellow-green where the light strikes — and never the pale blue-grey sage of a dried
+herb. Where the light falls they go golden-green and almost yellow; in shadow they go deep and rich, not
+merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not tinted white.
+
+Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
+
+THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
+or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
+the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
+survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
+is the small contact one described above, and it sits ON the plant, not behind it.
+
+Draw it square on, in straight orthographic projection — no perspective, no vanishing point, no
+foreshortening. That is what "square on" governs: it says nothing about the light, which is meant to be
+plainly visible. No perspective, no scene, no floor under it, no pot, no wall behind it.
+
+Matte surfaces throughout: lit, never polished — no gloss, no shine, no wet highlights.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-ferns.webp --tier=default --name=overgrown-ferns --slot=growth \
+  --filter=smooth --saturation=3.2 --brightness=0.82
+```
+
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/surfaces/overgrown-wall.webp --tier=default --name=overgrown-wall --slot=growthWall \
+  --filter=smooth --saturation=1.0 --brightness=1.0
+```
+
 ### `default/overgrown-ferns` — a clump of ferns on a chamber floor
 
 **Attach:** `~/tile-previews/lush-light-reference.png` — and ONLY this. Take from it the LIGHT and the
