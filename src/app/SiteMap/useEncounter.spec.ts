@@ -196,7 +196,7 @@ describe("useEncounter", () => {
   // A lever's room reads which positions it drives off its own cell, the same way a fork reads its
   // ways out — the family standing in it has no other way to learn what it stands over.
   it("hands a mechanism's own record to the family standing on it", () => {
-    const mechanism = { positions: [{ state: "vault", gateKeyId: "handle:test:vault" }], restReachable: true }
+    const mechanism = { positions: [{ state: "left", gateKeyId: "handle:test:vault" }], initial: "left" }
     const { hook } = setup([{ ...stubRoom, mechanism }])
 
     act(() => hook.result.current.open([0, 0], true))

@@ -2249,7 +2249,7 @@ describe("the arch over a shut way out is drawn in front of its bars", () => {
 // a way a switch shut (`isSealedWayOut`) and so is drawn as stone with its marker hidden — so the mark
 // has to ride the ART there, the same move the emptied-chest ✓ already makes (`NodeSprite.badge`).
 describe("a lever and the doors it drives", () => {
-  const handleGrid = floorWithHandle({ in: "lever", drives: ["vault", "pocket"] }).grid
+  const handleGrid = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"] }).grid
 
   const markGlyphsOnScreen = (container: HTMLElement) =>
     Array.from(container.querySelectorAll("text"))

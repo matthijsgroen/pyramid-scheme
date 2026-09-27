@@ -312,12 +312,37 @@ describe("floorLock", () => {
     expect(board.transitions.some(transition => transition.to === MECHANISM_AT_REST)).toBe(false)
   })
 
-  it("compiles a handle into a mechanism with a rest position it can return to", () => {
-    const spec = floorLock(floorWithHandle({ in: "lever", drives: ["vault"] }).grid)!
+  it("compiles a handle into two sides it can be thrown between either way, starting on the left", () => {
+    const spec = floorLock(floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"] }).grid)!
     const handle = Object.entries(spec.mechanisms).find(([id]) => id.startsWith("handle "))![1]
-    expect(handle.initial).toBe(MECHANISM_AT_REST)
-    expect(handle.opens[MECHANISM_AT_REST]).toEqual([])
-    expect(handle.transitions.some(transition => transition.to === MECHANISM_AT_REST)).toBe(true)
+    expect(handle.states).toEqual(["left", "right"])
+    expect(handle.initial).toBe("left")
+    expect(handle.opens.left).toHaveLength(handle.opens.right.length)
+    expect(handle.opens.left).not.toEqual(handle.opens.right)
+    expect(handle.transitions.map(({ from, to }) => `${from}>${to}`).sort()).toEqual(["left>right", "right>left"])
+  })
+
+  it("starts a handle on the side its record names, never on a rest position it has not got", () => {
+    const spec = floorLock(floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"], starts: "right" }).grid)!
+    const handle = Object.entries(spec.mechanisms).find(([id]) => id.startsWith("handle "))![1]
+    expect(handle.initial).toBe("right")
+    expect(handle.states).not.toContain(MECHANISM_AT_REST)
+  })
+
+  it("hands the walk a lever it can read, whichever side the author hangs it on", () => {
+    for (const starts of ["left", "right"] as const) {
+      const grid = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"], starts }).grid
+      const result = walkLock(floorLock(grid)!)
+      expect(result.sound || result.failure.type !== "malformed").toBe(true)
+    }
+  })
+
+  it("folds every section one side names into that side's open set", () => {
+    const spec = floorLock(floorWithHandle({ in: "lever", left: ["vault", "pocket"], right: ["vault2"] }).grid)!
+    const handle = Object.entries(spec.mechanisms).find(([id]) => id.startsWith("handle "))![1]
+    // Two doors on the left, one on the right — each door being one gate per region it touches, so the
+    // left set is the bigger one however many gates a single door came out as.
+    expect(handle.opens.left.length).toBeGreaterThan(handle.opens.right.length)
   })
 
   it("leaves a switch unable to return to the position that opens nothing", () => {

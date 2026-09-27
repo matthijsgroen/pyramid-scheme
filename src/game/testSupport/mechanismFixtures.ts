@@ -1,4 +1,5 @@
 import type { Direction, FloorGrid, GridCell, MechanismRecord } from "@/game/siteTypes"
+import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
 
 /**
  * A minimal 3x3 grid with one room carrying `mechanism`, addressed exactly by `address`.
@@ -7,7 +8,11 @@ import type { Direction, FloorGrid, GridCell, MechanismRecord } from "@/game/sit
  * chain room (see src/game/cellSlot.ts): the floor is read back by whoever calls `cellAddress`, so only
  * the section and the path index need to be carved into the cell itself.
  */
-export const gridWithMechanism = (address: string, positions: MechanismRecord["positions"]): FloorGrid => {
+export const gridWithMechanism = (
+  address: string,
+  positions: MechanismRecord["positions"],
+  initial: string = MECHANISM_AT_REST
+): FloorGrid => {
   const [sectionAddress, rest] = address.split("#")
   const slot = rest.split("/")[1]
   const pathIndex = Number(slot.slice(1))
@@ -19,7 +24,7 @@ export const gridWithMechanism = (address: string, positions: MechanismRecord["p
     state: "fogged",
     sectionAddress,
     pathIndex,
-    mechanism: { positions, restReachable: false },
+    mechanism: { positions, initial },
   }
   const empty: GridCell = { type: "empty" }
 

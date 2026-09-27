@@ -1,7 +1,8 @@
 import { assembleFloor } from "@/game/siteAssembler"
 import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
+import { cellAddress } from "@/app/SiteMap/cellIdentity"
 
-export type Handle = { in: string; drives: string[] }
+export type Handle = { in: string; left: string[]; right: string[]; starts?: "left" | "right" }
 
 /** Where these floors are authored, and so what their handles' gate key ids are derived from. */
 export const HANDLE_SITE_ID = "dev_topology:1"
@@ -61,3 +62,19 @@ export const floorWithHandle = (...handles: Handle[]) => carveFloor(handleFloorC
 
 /** The same, on a floor whose driven section has only a positional address to be named by. */
 export const nestedFloorWithHandle = (...handles: Handle[]) => carveFloor(nestedHandleFloorConfig(...handles))
+
+/** The gate key the n-th handle of one of these floors puts on the section it drives. */
+export const gateKey = (section: string, handle = 0) => `handle:dev_topology#0#0#${handle}:${section}`
+
+/** Where the n-th lever answers in a save — what `openDoorsFor` keys a stored position by. */
+export const leverAddress = (grid: FloorGrid, handle = 0): string => {
+  const stem = `handle:dev_topology#0#0#${handle}:`
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room" || !cell.mechanism?.positions[0]?.gateKeyId.startsWith(stem)) continue
+      const address = cellAddress(grid, 0, r, c)
+      if (address) return address
+    }
+  throw new Error(`no lever ${handle} on this floor`)
+}

@@ -256,7 +256,14 @@ export const findUndrawnOneWays = (
  * door nothing on the floor holds the key to. A playtest floor is excused by its capabilities
  * (capabilities.ts's standHandles), never by its id.
  */
-export type UndrawnHandle = { journeyId: string; levelNr: number; floorIndex: number; in: string; drives: string[] }
+export type UndrawnHandle = {
+  journeyId: string
+  levelNr: number
+  floorIndex: number
+  in: string
+  left: string[]
+  right: string[]
+}
 
 export const findUndrawnHandles = (
   configs: Record<string, SiteConfig[]>,
@@ -268,7 +275,14 @@ export const findUndrawnHandles = (
     sites.forEach((site, siteIdx) =>
       site.forEach((floor, floorIndex) => {
         for (const handle of floor.handles ?? [])
-          found.push({ journeyId, levelNr: siteIdx + 1, floorIndex, in: handle.in, drives: handle.drives })
+          found.push({
+            journeyId,
+            levelNr: siteIdx + 1,
+            floorIndex,
+            in: handle.in,
+            left: handle.left,
+            right: handle.right,
+          })
       })
     )
   }

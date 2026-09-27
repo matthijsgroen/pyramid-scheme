@@ -229,8 +229,8 @@ export type RoomCell = {
    * floor's shape. It NAMES the way out and is not a key anything holds — the board in the fork opens
    * one of these ids at a time, and no chest anywhere mints them. */
   exits?: { dir: Direction; kind: "main" | "side" | "ward" | "fork"; gateKeyId?: string }[]
-  /** THIS ROOM IS A MECHANISM: which gate key id each of its positions opens, and whether it can be
-   * put back to the position that opens nothing.
+  /** THIS ROOM IS A MECHANISM: which gate key id each of its positions opens, and which position it
+   * stands in until someone moves it.
    *
    * One record for every mechanism the floor has, so the walk (src/game/floorLock.ts) and the runtime
    * (src/game/mechanismDoors.ts) read the same list rather than each deriving one. A switch also
@@ -239,9 +239,12 @@ export type RoomCell = {
    * door's elsewhere on the floor cannot hand a board a door that is not its own. A lever, standing
    * sections away from what it drives, names no direction and is matched by the key the room asks for.
    *
-   * `restReachable` is a fact about the thing, not a convention: a board routes its light somewhere
-   * every time it is solved and cannot be un-solved, while a lever can be thrown back. Assuming either
-   * for both gives the walk a transition the player does not have, or takes one they do. */
+   * A lever is a toggle: two positions, each opening a set of gates and shutting the other's, thrown
+   * back and forth for ever. A board is not: solving it routes the light somewhere and it cannot be
+   * un-solved, so it never returns to the position it started in. The walk (src/game/floorLock.ts)
+   * gives each the moves it really has, reading which it is off the stem of the keys its own gates
+   * carry — assuming either shape for both hands the walk a move the player does not have, or takes
+   * one they do. */
   mechanism?: MechanismRecord
   /** WHICH MECHANISM THIS ROOM BELONGS TO, said in a glyph on a coloured ground (src/app/SiteMap/mark.tsx).
    * A mechanism's room and every gate it owns carry the same pair, and that pairing is the only thing
@@ -275,10 +278,22 @@ export type FloorGrid = {
   readonly staircases: Record<string, readonly [number, number]>
 }
 
+/** THE TWO SIDES A LEVER HANGS ON, and the whole of its state vocabulary. The assembler tags each
+ * gate with one, the walk compiles a lever into exactly these, the save stores one of them, and the
+ * lever's screen draws one button per side — all four have to agree letter for letter, so they read
+ * the same list. */
+export const HANDLE_SIDES = ["left", "right"] as const
+export type HandleSide = (typeof HANDLE_SIDES)[number]
+
 export type MechanismRecord = {
-  /** One entry per position that opens something. The rest position opens nothing and is not listed. */
+  /** One entry per gate this mechanism drives, tagged with the position that opens it. Several entries
+   * may share a position — a lever thrown left opens every gate its left side names — and a position
+   * that opens nothing is not listed. */
   positions: { state: string; gateKeyId: string }[]
-  restReachable: boolean
+  /** The position this mechanism stands in before anyone touches it. A save holding no entry for it means
+   * THIS state, not "nothing open" — which is what lets one side of a toggle stand open on arrival
+   * without the carve having to place an already-open gate. */
+  initial: string
 }
 export type GateConfig =
   | {
@@ -389,11 +404,15 @@ export type FloorConfig = {
    * derived from where the floor was AUTHORED — neither end of which a re-carve can move, so a position
    * kept from an earlier layout cannot come to fit a door it was never thrown for.
    *
-   * The lever starts at rest and every gate it drives starts shut. A driven section may not be the main
-   * path (which has no entrance to gate), may not be the one the lever stands in (which would shut the
-   * lever in behind its own door), may not already carry an authored gate, and may not be driven by a
-   * second handle — each is refused by name before a wall is carved. */
-  handles?: { in: string; drives: string[] }[]
+   * A lever has two positions and nothing between them: thrown to a side, it opens every section that
+   * side names and shuts every section the other side names. It starts on `starts` (left unless the
+   * author says otherwise), so those gates stand open the moment the player arrives.
+   *
+   * A driven section may not be the main path (which has no entrance to gate), may not be the one the
+   * lever stands in (which would shut the lever in behind its own door), may not already carry an
+   * authored gate, may not be driven by a second handle, and may not stand on both sides of one lever
+   * (a door it could neither open nor close) — each is refused by name before a wall is carved. */
+  handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
   /** A SWITCH: an encounter standing in one of the junctions `forks` reserved, closing that
    * junction's free ways out so that what the player meets there decides which one opens.
    * Family/tag(s) like `encounter`. At least `min` and at most `max` of the reserved junctions get

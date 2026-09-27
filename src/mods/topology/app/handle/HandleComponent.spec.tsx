@@ -3,7 +3,6 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 import type { FamilyContext } from "@/app/families/familyRegistry"
 import type { JourneyAPI } from "@/app/state/useJourneys"
-import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
 import { markFor } from "@/game/mark"
 import type { MechanismRecord } from "@/game/siteTypes"
 import { HandleComponent } from "./HandleComponent"
@@ -19,19 +18,24 @@ afterEach(cleanup)
 
 const ADDRESS = "s0#0/p1"
 
-// One driven position per name, each keyed by its own gate — the shape src/game/siteAssembler.ts (Task
-// 3) writes for a real lever. The gate ids are never read by the component; only `state` is.
-const mechanismFor = (positions: string[]): MechanismRecord => ({
-  positions: positions.map(state => ({ state, gateKeyId: `handle:test:${state}` })),
-  restReachable: true,
+// One entry per driven section, each tagged with the side it opens on — the shape
+// src/game/siteAssembler.ts writes for a real lever. The gate ids are never read by the component.
+const mechanismFor = (driven: { side: string; section: string }[], initial: string): MechanismRecord => ({
+  positions: driven.map(({ side, section }) => ({ state: side, gateKeyId: `handle:test:${section}` })),
+  initial,
 })
 
 const ctxWith = ({
-  positions,
+  driven = [
+    { side: "left", section: "vault" },
+    { side: "right", section: "pocket" },
+  ],
+  initial = "left",
   current,
   setMechanismState = vi.fn(),
 }: {
-  positions: string[]
+  driven?: { side: string; section: string }[]
+  initial?: string
   current?: string
   setMechanismState?: (address: string, stateId: string) => void
 }) => {
@@ -47,7 +51,7 @@ const ctxWith = ({
     address: ADDRESS,
     sectionHash: "s0",
     freshArrival: true,
-    mechanism: mechanismFor(positions),
+    mechanism: mechanismFor(driven, initial),
     mark: markFor(0),
   }
   return {
@@ -63,30 +67,50 @@ const ctxWith = ({
 }
 
 describe("HandleComponent", () => {
-  it("throws the lever to the position the player picks, and back to rest", () => {
+  it("offers two sides and nothing else, however many sections the lever drives", () => {
+    render(
+      <HandleComponent
+        {...ctxWith({
+          driven: [
+            { side: "left", section: "vault" },
+            { side: "left", section: "pocket" },
+            { side: "right", section: "deep" },
+          ],
+        })}
+      />
+    )
+    expect(screen.getAllByRole("button").map(button => button.textContent)).toEqual([
+      expect.stringContaining("handle.left"),
+      expect.stringContaining("handle.right"),
+      "ui.backToMap",
+    ])
+  })
+
+  it("throws the lever to the side the player picks, and back again", () => {
     const setMechanismState = vi.fn()
-    render(<HandleComponent {...ctxWith({ positions: ["vault", "pocket"], setMechanismState })} />)
+    render(<HandleComponent {...ctxWith({ setMechanismState })} />)
 
-    fireEvent.click(screen.getByRole("button", { name: /position\|1/ }))
-    expect(setMechanismState).toHaveBeenCalledWith("s0#0/p1", "vault")
+    fireEvent.click(screen.getByRole("button", { name: /handle\.right/ }))
+    expect(setMechanismState).toHaveBeenCalledWith("s0#0/p1", "right")
 
-    fireEvent.click(screen.getByRole("button", { name: /rest/i }))
-    expect(setMechanismState).toHaveBeenCalledWith("s0#0/p1", MECHANISM_AT_REST)
+    fireEvent.click(screen.getByRole("button", { name: /handle\.left/ }))
+    expect(setMechanismState).toHaveBeenCalledWith("s0#0/p1", "left")
   })
 
-  it("shows which position the lever already stands in", () => {
-    render(<HandleComponent {...ctxWith({ positions: ["vault", "pocket"], current: "pocket" })} />)
+  it("shows which side the lever already hangs on", () => {
+    render(<HandleComponent {...ctxWith({ current: "right" })} />)
 
-    expect(screen.getByRole("button", { name: /position\|2/ }).getAttribute("aria-pressed")).toBe("true")
+    expect(screen.getByRole("button", { name: /handle\.right/ }).getAttribute("aria-pressed")).toBe("true")
+    expect(screen.getByRole("button", { name: /handle\.left/ }).getAttribute("aria-pressed")).toBe("false")
   })
 
-  // Read with nothing ever thrown reads as "rest" (mechanismDoors.ts/floorLock.ts's own default), so a
-  // lever nobody has touched offers rest already pressed rather than no button pressed at all.
-  it("stands at rest until the player throws it, never at an unpicked position", () => {
-    render(<HandleComponent {...ctxWith({ positions: ["vault", "pocket"] })} />)
+  // A lever always hangs somewhere, so a save with nothing stored for it reads as the side the floor
+  // hung it on (mechanismDoors.ts's own default) — never as no side pressed at all.
+  it("hangs on its initial side until the player throws it, not on the left by habit", () => {
+    render(<HandleComponent {...ctxWith({ initial: "right" })} />)
 
-    expect(screen.getByRole("button", { name: /rest/i }).getAttribute("aria-pressed")).toBe("true")
-    expect(screen.getByRole("button", { name: /position\|1/ }).getAttribute("aria-pressed")).toBe("false")
+    expect(screen.getByRole("button", { name: /handle\.right/ }).getAttribute("aria-pressed")).toBe("true")
+    expect(screen.getByRole("button", { name: /handle\.left/ }).getAttribute("aria-pressed")).toBe("false")
   })
 
   /**
@@ -95,14 +119,23 @@ describe("HandleComponent", () => {
    * may put an address on screen.
    */
   it("puts no section address on screen", () => {
-    const { container } = render(<HandleComponent {...ctxWith({ positions: ["vault", "s0.1"] })} />)
+    const { container } = render(
+      <HandleComponent
+        {...ctxWith({
+          driven: [
+            { side: "left", section: "vault" },
+            { side: "right", section: "s0.1" },
+          ],
+        })}
+      />
+    )
 
     expect(container.textContent).not.toContain("vault")
     expect(container.textContent).not.toContain("s0.1")
   })
 
-  it("wears the lever's own mark on every position, the pair its doors wear on the map", () => {
-    render(<HandleComponent {...ctxWith({ positions: ["vault", "pocket"] })} />)
+  it("wears the lever's own mark on both sides, the pair its doors wear on the map", () => {
+    render(<HandleComponent {...ctxWith({})} />)
 
     const glyph = String.fromCodePoint(markFor(0).glyph)
     const worn = screen.getAllByRole("button").filter(button => button.textContent?.includes(glyph))

@@ -174,7 +174,7 @@ if (undrawnHandles.length > 0) {
   for (const handle of undrawnHandles.slice(0, 20))
     console.error(
       `    ${handle.journeyId} level ${handle.levelNr} floor ${handle.floorIndex}: ` +
-        `${handle.in} → ${handle.drives.join(", ")}`
+        `${handle.in} ← ${handle.left.join(", ")} | → ${handle.right.join(", ")}`
     )
   if (undrawnHandles.length > 20) console.error(`    … and ${undrawnHandles.length - 20} more`)
   console.error("  A lever is undrawn today — author it on the develop journey until it is not.")

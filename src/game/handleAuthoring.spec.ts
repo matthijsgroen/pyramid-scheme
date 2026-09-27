@@ -2,13 +2,14 @@ import { describe, expect, it } from "vitest"
 import {
   attemptFloor,
   floorWithHandle,
+  gateKey,
   handleFloorConfig,
+  leverAddress,
   nestedFloorWithHandle,
   type Handle,
 } from "./testSupport/handleFixtures"
 import { openDoorsFor } from "./mechanismDoors"
 import { openWaysOut } from "@/app/SiteMap/useAssembledFloor"
-import { cellAddress } from "@/app/SiteMap/cellIdentity"
 import type { FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 
 const rooms = (grid: FloorGrid): RoomCell[] =>
@@ -32,21 +33,41 @@ const reasonsOf = (config: FloorConfig) => {
 
 describe("a floor authoring a handle", () => {
   it("stands the lever in the named section and gates each driven section", () => {
-    const { grid } = floorWithHandle({ in: "lever", drives: ["vault", "pocket"] })
+    const { grid } = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"] })
     const levers = tagged(grid, "handle")
     expect(levers).toHaveLength(1)
     expect(levers[0].sectionAddress).toBe("lever")
     expect(levers[0].mechanism).toEqual({
       positions: [
-        { state: "vault", gateKeyId: "handle:dev_topology#0#0#0:vault" },
-        { state: "pocket", gateKeyId: "handle:dev_topology#0#0#0:pocket" },
+        { state: "left", gateKeyId: "handle:dev_topology#0#0#0:vault" },
+        { state: "right", gateKeyId: "handle:dev_topology#0#0#0:pocket" },
       ],
-      restReachable: true,
+      initial: "left",
     })
   })
 
+  it("opens the left doors and shuts the right ones, then swaps when thrown", () => {
+    const { grid } = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"] })
+    const lever = leverAddress(grid)
+    expect([...openDoorsFor(grid, 0, new Map())]).toEqual([gateKey("vault")])
+    expect([...openDoorsFor(grid, 0, new Map([[lever, "right"]]))]).toEqual([gateKey("pocket")])
+  })
+
+  it("starts where the author says, not always on the left", () => {
+    const { grid } = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"], starts: "right" })
+    expect(tagged(grid, "handle")[0].mechanism?.initial).toBe("right")
+    expect([...openDoorsFor(grid, 0, new Map())]).toEqual([gateKey("pocket")])
+  })
+
+  it("opens every door on the side it is thrown to", () => {
+    const { grid } = floorWithHandle({ in: "lever", left: ["vault", "pocket"], right: ["vault2"] })
+    expect([...openDoorsFor(grid, 0, new Map())].sort()).toEqual([gateKey("pocket"), gateKey("vault")].sort())
+    const lever = leverAddress(grid)
+    expect([...openDoorsFor(grid, 0, new Map([[lever, "right"]]))]).toEqual([gateKey("vault2")])
+  })
+
   it("puts each gate on the section it names, asking for that handle's own key", () => {
-    const { grid } = floorWithHandle({ in: "lever", drives: ["vault", "pocket"] })
+    const { grid } = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"] })
     const gates = tagged(grid, "gate")
     expect(gates.map(gate => gate.requiredKeyId).sort()).toEqual([
       "handle:dev_topology#0#0#0:pocket",
@@ -56,7 +77,7 @@ describe("a floor authoring a handle", () => {
   })
 
   it("mints no key, wears no colour and stands nothing in a gate the lever owns", () => {
-    const { grid } = floorWithHandle({ in: "lever", drives: ["vault"] })
+    const { grid } = floorWithHandle({ in: "lever", left: ["vault"], right: [] })
     const gate = tagged(grid, "gate")[0]
     expect(gate.keyIsAuthored).toBe(true)
     expect(gate.gateVariant).toBe("floor-key")
@@ -66,25 +87,24 @@ describe("a floor authoring a handle", () => {
     expect(gate.family).toBeUndefined()
   })
 
-  it("opens the driven section's door, and only that one, when the lever stands at its position", () => {
-    const { grid } = floorWithHandle({ in: "lever", drives: ["vault", "pocket"] })
-    const [lr, lc] = at(grid, cell => cell.type === "room" && !!cell.tags?.includes("handle"))
-    const lever = cellAddress(grid, 0, lr, lc)!
+  it("walks the floor through the door of the side it stands at, and the other way round when thrown", () => {
+    const { grid } = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"] })
+    const lever = leverAddress(grid)
 
-    const open = openWaysOut(grid, openDoorsFor(grid, 0, new Map([[lever, "vault"]])))
+    const open = openWaysOut(grid, openDoorsFor(grid, 0, new Map([[lever, "left"]])))
     const [vr, vc] = cellOfSection(grid, "vault", "gate")
     const [pr, pc] = cellOfSection(grid, "pocket", "gate")
     expect(open.cells[vr][vc].type).toBe("corridor")
     expect(open.cells[pr][pc].type).toBe("room")
 
-    // And the other way round, because a lever is thrown back: the same floor, the other position.
-    const other = openWaysOut(grid, openDoorsFor(grid, 0, new Map([[lever, "pocket"]])))
+    // And the other way round, because a lever is thrown back: the same floor, the other side.
+    const other = openWaysOut(grid, openDoorsFor(grid, 0, new Map([[lever, "right"]])))
     expect(other.cells[vr][vc].type).toBe("room")
     expect(other.cells[pr][pc].type).toBe("corridor")
   })
 
   it("stands a lever on the main path without taking a puzzle room for it", () => {
-    const { grid } = floorWithHandle({ in: "main", drives: ["vault"] })
+    const { grid } = floorWithHandle({ in: "main", left: ["vault"], right: [] })
     const levers = tagged(grid, "handle")
     expect(levers).toHaveLength(1)
     expect(levers[0].sectionAddress).toBe("main")
@@ -95,7 +115,7 @@ describe("a floor authoring a handle", () => {
   })
 
   it("names a sub-path by the positional address it has, having no label", () => {
-    const { grid } = nestedFloorWithHandle({ in: "s0.0", drives: ["s0.1"] })
+    const { grid } = nestedFloorWithHandle({ in: "s0.0", left: ["s0.1"], right: [] })
     expect(tagged(grid, "handle")[0].sectionAddress).toBe("s0.0")
     const gate = tagged(grid, "gate")[0]
     expect(gate.sectionAddress).toBe("s0.1")
@@ -107,8 +127,8 @@ describe("a floor authoring a handle", () => {
     // rest on each standing in a section of its own — which is what refusing a twice-driven section
     // buys. A collision would fail the floor outright with `duplicateCellSlot`.
     const { grid } = floorWithHandle(
-      { in: "lever", drives: ["vault", "pocket"] },
-      { in: "lever2", drives: ["vault2", "pocket2"] }
+      { in: "lever", left: ["vault"], right: ["pocket"] },
+      { in: "lever2", left: ["vault2"], right: ["pocket2"] }
     )
     expect(tagged(grid, "handle")).toHaveLength(2)
     expect(
@@ -119,7 +139,7 @@ describe("a floor authoring a handle", () => {
   })
 
   it("puts one mark on the lever and the same one on every door it drives", () => {
-    const { grid } = floorWithHandle({ in: "lever", drives: ["vault", "pocket"] })
+    const { grid } = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"] })
     const mark = tagged(grid, "handle")[0].mark
     expect(mark).toBeDefined()
     expect(tagged(grid, "gate").map(gate => gate.mark)).toEqual([mark, mark])
@@ -127,8 +147,8 @@ describe("a floor authoring a handle", () => {
 
   it("gives the floor's second lever a mark that is not the first one's", () => {
     const { grid } = floorWithHandle(
-      { in: "lever", drives: ["vault", "pocket"] },
-      { in: "lever2", drives: ["vault2", "pocket2"] }
+      { in: "lever", left: ["vault"], right: ["pocket"] },
+      { in: "lever2", left: ["vault2"], right: ["pocket2"] }
     )
     const markOf = (section: string) => rooms(grid).find(room => room.mark && room.sectionAddress === section)?.mark
     expect(markOf("lever")).not.toEqual(markOf("lever2"))
@@ -146,9 +166,9 @@ describe("a floor authoring a handle", () => {
    */
   it("stands every lever in an encounter room, never in a junction", () => {
     const grids = [
-      floorWithHandle({ in: "lever", drives: ["vault"] }).grid,
-      floorWithHandle({ in: "main", drives: ["vault"] }).grid,
-      nestedFloorWithHandle({ in: "s0.0", drives: ["s0.1"] }).grid,
+      floorWithHandle({ in: "lever", left: ["vault"], right: [] }).grid,
+      floorWithHandle({ in: "main", left: ["vault"], right: [] }).grid,
+      nestedFloorWithHandle({ in: "s0.0", left: ["s0.1"], right: [] }).grid,
     ]
     expect(grids.flatMap(grid => tagged(grid, "handle")).map(lever => lever.roomType)).toEqual([
       "encounter",
@@ -158,7 +178,7 @@ describe("a floor authoring a handle", () => {
   })
 
   it("leaves a mark off every room that is neither a lever nor a door it drives", () => {
-    const { grid } = floorWithHandle({ in: "lever", drives: ["vault"] })
+    const { grid } = floorWithHandle({ in: "lever", left: ["vault"], right: [] })
     const marked = rooms(grid).filter(room => room.mark !== undefined)
     expect(marked.map(room => room.sectionAddress).sort()).toEqual(["lever", "vault"])
   })
@@ -173,23 +193,32 @@ describe("a handle the floor cannot have, refused once before any carve", () => 
   })
 
   const cases: [string, Handle[], string][] = [
-    ["a driven section the floor does not have", [{ in: "lever", drives: ["nowhere"] }], "nowhere"],
-    ["a lever standing in a section the floor does not have", [{ in: "nowhere", drives: ["vault"] }], "nowhere"],
-    ["a lever shut in behind the door it opens", [{ in: "lever", drives: ["lever"] }], "lever"],
-    ["the main path, which has no entrance to gate", [{ in: "lever", drives: ["main"] }], "main"],
+    ["a driven section the floor does not have", [{ in: "lever", left: ["nowhere"], right: [] }], "nowhere"],
+    ["the same, named on the right", [{ in: "lever", left: ["vault"], right: ["nowhere"] }], "nowhere"],
+    ["a lever shut in behind a door on its right", [{ in: "lever", left: ["vault"], right: ["lever"] }], "lever"],
+    // A section on both sides is a door the lever can neither open nor close: whichever way it is
+    // thrown, one side says open and the other says shut.
+    ["a section standing on both sides at once", [{ in: "lever", left: ["vault"], right: ["vault"] }], "vault"],
+    [
+      "a lever standing in a section the floor does not have",
+      [{ in: "nowhere", left: ["vault"], right: [] }],
+      "nowhere",
+    ],
+    ["a lever shut in behind the door it opens", [{ in: "lever", left: ["lever"], right: [] }], "lever"],
+    ["the main path, which has no entrance to gate", [{ in: "lever", left: ["main"], right: [] }], "main"],
     [
       "a second lever in a section that already stands one",
       [
-        { in: "lever", drives: ["vault"] },
-        { in: "lever", drives: ["pocket"] },
+        { in: "lever", left: ["vault"], right: [] },
+        { in: "lever", left: ["pocket"], right: [] },
       ],
       "lever",
     ],
     [
       "a section a second handle already drives",
       [
-        { in: "lever", drives: ["vault"] },
-        { in: "lever2", drives: ["vault"] },
+        { in: "lever", left: ["vault"], right: [] },
+        { in: "lever2", left: ["vault"], right: [] },
       ],
       "vault",
     ],
@@ -202,7 +231,7 @@ describe("a handle the floor cannot have, refused once before any carve", () => 
   })
 
   it("names a section whose gate an author already wrote", () => {
-    const config = withAuthoredGateOn(handleFloorConfig({ in: "lever", drives: ["vault"] }), "vault")
+    const config = withAuthoredGateOn(handleFloorConfig({ in: "lever", left: ["vault"], right: [] }), "vault")
     expect(reasonsOf(config)).toContainEqual(expect.objectContaining({ type: "handleUnsatisfied", address: "vault" }))
   })
 })

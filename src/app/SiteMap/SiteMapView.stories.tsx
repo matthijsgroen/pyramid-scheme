@@ -390,7 +390,10 @@ export const SideStairsBothHands: Story = {
  */
 export const HandlesAndTheirDoors: Story = {
   args: {
-    grid: floorWithHandle({ in: "lever", drives: ["vault", "pocket"] }, { in: "lever2", drives: ["vault2"] }).grid,
+    grid: floorWithHandle(
+      { in: "lever", left: ["vault"], right: ["pocket"] },
+      { in: "lever2", left: ["vault2"], right: [] }
+    ).grid,
     revealAllCells: true,
   },
 }

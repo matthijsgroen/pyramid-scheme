@@ -1108,8 +1108,8 @@
   "handle": {
     "name": "De Hendel",
     "invitation": "Trek de hendel over",
-    "goal": "De hendel staat op één stand, en de deur die daarbij hoort staat open.",
-    "rest": "Rust",
-    "position": "Stand {{number}}"
+    "goal": "De hendel staat naar links of naar rechts. Wat de ene kant opent, sluit de andere.",
+    "left": "Naar links",
+    "right": "Naar rechts"
   }
 }

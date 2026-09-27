@@ -1,3 +1,4 @@
+import { HANDLE_SIDES } from "./siteTypes"
 import type { Direction, FloorGrid, GridCell, MechanismRecord, TombKeyReward } from "./siteTypes"
 import type { LockSpec, Mechanism, GateId, MechanismId, RegionId } from "./lockWalk"
 import { nodeBeyond } from "./siteValidator"
@@ -100,9 +101,12 @@ const doorKey = (doorRegion: RegionId, keyId: string) => `${doorRegion}|${keyId}
  * the compiled lock says what the player is working without the record carrying a second field. */
 const kindOf = (record: MechanismRecord): string => record.positions[0]?.gateKeyId.split(":")[0] ?? "mechanism"
 
+/** What `kindOf` says of a lever. Its two sides are HANDLE_SIDES, the one list every layer reads. */
+const HANDLE_KIND = "handle"
+
 export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
   // EVERY MECHANISM ON THE FLOOR IS ONE RECORD ON THE CELL IT STANDS IN — which key each of its
-  // positions opens, and whether it can be put back to the position that opens nothing. The runtime
+  // positions opens, and which position it stands in until someone moves it. The runtime
   // (mechanismDoors.ts) reads that same list to decide which doors stand open, so a board and a lever
   // reach the walk as one shape and neither derives its own.
   const mechanismsAt = new Map<string, MechanismRecord>()
@@ -206,11 +210,9 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
       }
     }
 
-  // A MECHANISM: at rest until it is worked, then one state per key it opens, and re-workable from any
-  // state into any other — which is what lets a player change their mind, and the only reason the
-  // doors it shut are not a trap. Whether rest is among those targets is the record's own answer:
-  // a lever can be thrown back, while solving a beam board always routes the light to some way out,
-  // so a board never returns to opening nothing and the walk must not be handed the move.
+  // A MECHANISM: the position it stands in until it is worked, then a state per set of gates it can
+  // open, and re-workable from any state into any other — which is what lets a player change their
+  // mind, and the only reason the doors it shut are not a trap.
   for (const [at, record] of mechanismsAt) {
     const id = `${kindOf(record)} ${at}`
     const byPosition = record.positions.map(({ state, gateKeyId }) => {
@@ -231,16 +233,22 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
       })
       return { state, gateIds, keyId: gateKeyId }
     })
-    const states = [MECHANISM_AT_REST, ...byPosition.map(({ state }) => state)]
-    const opens: Record<string, GateId[]> = { [MECHANISM_AT_REST]: [] }
-    for (const { state, gateIds } of byPosition) opens[state] = gateIds
+    // A LEVER IS A TOGGLE AND A BOARD IS NOT, so each gets the state set it really has. A lever hangs
+    // left or right whatever it drives — both sides exist even where one names no gate — and is thrown
+    // between them for ever. A board starts at rest and, once solved, routes its light to one way out
+    // or another: rest is a state it leaves and never returns to, and handing the walk that move would
+    // let it plan an escape the player cannot make.
+    const toggle = kindOf(record) === HANDLE_KIND
+    const states = toggle ? [...HANDLE_SIDES] : [MECHANISM_AT_REST, ...byPosition.map(({ state }) => state)]
+    const opens: Record<string, GateId[]> = Object.fromEntries(states.map(state => [state, [] as GateId[]]))
+    for (const { state, gateIds } of byPosition) opens[state] = [...(opens[state] ?? []), ...gateIds]
     mechanisms[id] = {
       states,
-      initial: MECHANISM_AT_REST,
+      initial: record.initial,
       opens,
       transitions: states.flatMap(from =>
         states
-          .filter(to => to !== from && (record.restReachable || to !== MECHANISM_AT_REST))
+          .filter(to => to !== from && (toggle || to !== MECHANISM_AT_REST))
           .map(to => ({ from, to, at: of.get(at)! }))
       ),
     }

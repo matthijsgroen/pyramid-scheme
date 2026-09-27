@@ -298,8 +298,10 @@ switches: {
 
 A handle is therefore a family, not a flag, and the catalogue's "a lever elsewhere opens a door here"
 in `../game-design/floor-as-puzzle-brainstorm.md` is this with a lever in place of a board rather
-than a mechanism of its own. What a handle does when thrown — cycle its gates or toggle them, and
-what a single-gate handle means — is the topology mod's to settle, not core's.
+than a mechanism of its own. A handle is a TOGGLE: two sides, left and right, each naming a set of
+gates. Thrown to a side, every gate that side names stands open and every gate the other side names
+stands shut, and it can be thrown back and forth for ever. It hangs on one side from the moment the
+floor is carved, so those gates stand open before the player has touched anything.
 
 **A mechanism has states, a mapping from each state to which of its gates stand open, and transitions
 the player causes.** The mappings differ, and the difference is data:
@@ -307,7 +309,7 @@ the player causes.** The mappings differ, and the difference is data:
 | Mechanism      | States              | Open at               | Transition       |
 | -------------- | ------------------- | --------------------- | ---------------- |
 | a beam board   | which shrine is lit | that shrine's gate    | solving it       |
-| a handle       | its positions       | that position's gate  | pulling it       |
+| a handle       | left or right       | that side's gates     | throwing it      |
 | `sequenceLock` | progress `0..N`     | its gate, only at `N` | crossing a glyph |
 
 A board opens one gate per state; a sequence opens its gate only in the last. So what the invariants

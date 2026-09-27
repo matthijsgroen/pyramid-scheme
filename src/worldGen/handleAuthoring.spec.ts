@@ -10,7 +10,7 @@ import { PYRAMID_JOURNEYS } from "./data"
 import type { SiteConfig } from "./types"
 
 const TIER = "junior"
-const HANDLE = [{ in: "lever", drives: ["vault"] }]
+const HANDLE = [{ in: "lever", left: ["vault"], right: [], starts: "right" as const }]
 const PATHS = () => [sidePath({ puzzles: 1, label: "lever" }), sidePath({ puzzles: 1, label: "vault" })]
 
 const builtFloors = (rules: Rule[], journeyId: string) =>
@@ -60,7 +60,9 @@ describe("a handle written out to the generated world", () => {
         handles: HANDLE,
       },
     ]
-    expect(generateFile({ test_journey: [config] })).toContain(`handles: [{ in: "lever", drives: ["vault"] }]`)
+    expect(generateFile({ test_journey: [config] })).toContain(
+      `handles: [{ in: "lever", left: ["vault"], right: [], starts: "right" }]`
+    )
   })
 })
 
@@ -77,7 +79,7 @@ describe("findUndrawnHandles", () => {
 
   it("names the floor a lever stands on, and the section it drives", () => {
     expect(findUndrawnHandles({ [shipped]: [[floor()], [floor(), floor(HANDLE)]] })).toEqual([
-      { journeyId: shipped, levelNr: 2, floorIndex: 1, in: "lever", drives: ["vault"] },
+      { journeyId: shipped, levelNr: 2, floorIndex: 1, in: "lever", left: ["vault"], right: [] },
     ])
   })
 

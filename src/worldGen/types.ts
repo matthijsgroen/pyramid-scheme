@@ -108,9 +108,9 @@ export type FloorConfig = {
   /** A passage from one named section to another that the player may take only in that direction —
    * mirrors game/siteTypes.ts's FloorConfig.oneWays. */
   oneWays?: { from: string; to: string }[]
-  /** A lever standing in one named section that opens the entrance gates of others — mirrors
-   * game/siteTypes.ts's FloorConfig.handles. */
-  handles?: { in: string; drives: string[] }[]
+  /** A lever standing in one named section, opening the entrance gates the side it hangs on names and
+   * shutting the other side's — mirrors game/siteTypes.ts's FloorConfig.handles. */
+  handles?: { in: string; left: string[]; right: string[]; starts?: "left" | "right" }[]
   /** A SWITCH standing in one of the junctions `forks` reserved, closing that junction's free ways out
    * so what the player meets there decides which one opens — mirrors game/siteTypes.ts's
    * FloorConfig.switches. */

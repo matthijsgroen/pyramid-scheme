@@ -18,12 +18,14 @@ import type {
   WallDecorationKind,
   Difficulty,
 } from "./siteTypes"
+import { HANDLE_SIDES } from "./siteTypes"
 import { cellSlot } from "./cellSlot"
 import { footprintSize } from "./roomFootprint"
 import type { ResolveBoardIndex } from "./seeds/boardIndex"
 import { validateSite } from "./siteValidator"
 import { rolesOfProp, rolesOfWallItem } from "./dressingTags"
 import type { FamilyMeta } from "./families/familyMeta"
+import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
 
 // Resolves an authored `encounter` (exact family id, or tag(s)) to a concrete family id
 // plus that family's own tags. Injected by the caller so this domain module never needs
@@ -576,25 +578,29 @@ export const assembleFloor = (
     // data-loss bug the address checks above exist for.
     if (!knownSectionAddresses.has(handle.in) || leverByAddress.has(handle.in)) return refuse(handle.in)
     const positions: MechanismRecord["positions"] = []
-    for (const driven of handle.drives) {
-      // The main path has no entrance to gate; the lever's own section would shut the lever in behind
-      // the door it opens; and a section already gated — by an author or by another handle — would
-      // lose one of the two doors without saying so.
-      if (
-        !sectionByAddress.has(driven) ||
-        driven === handle.in ||
-        sectionByAddress.get(driven)?.gate !== undefined ||
-        handleGateKeyByAddress.has(driven)
-      )
-        return refuse(driven)
-      const gateKeyId = `${handleStem(n)}:${driven}`
-      handleGateKeyByAddress.set(driven, gateKeyId)
-      markByHandleGateKey.set(gateKeyId, markFor(n))
-      positions.push({ state: driven, gateKeyId })
-    }
-    // A lever can be thrown back to where it started, which a beam board cannot: solving one always
-    // routes the light somewhere. So rest is a position the walk may count on having again.
-    leverByAddress.set(handle.in, { positions, restReachable: true })
+    // BOTH SIDES ARE READ THE SAME WAY AND INTO THE SAME INDEX, which is what makes a section named on
+    // both sides refuse itself: the second naming finds the first one's gate already written, exactly
+    // as a second handle driving it would. Such a door is one the lever could neither open nor close.
+    for (const side of HANDLE_SIDES)
+      for (const driven of handle[side]) {
+        // The main path has no entrance to gate; the lever's own section would shut the lever in behind
+        // the door it opens; and a section already gated — by an author or by another handle — would
+        // lose one of the two doors without saying so.
+        if (
+          !sectionByAddress.has(driven) ||
+          driven === handle.in ||
+          sectionByAddress.get(driven)?.gate !== undefined ||
+          handleGateKeyByAddress.has(driven)
+        )
+          return refuse(driven)
+        const gateKeyId = `${handleStem(n)}:${driven}`
+        handleGateKeyByAddress.set(driven, gateKeyId)
+        markByHandleGateKey.set(gateKeyId, markFor(n))
+        positions.push({ state: side, gateKeyId })
+      }
+    // The side it hangs on before anyone touches it, so those gates stand open on arrival without the
+    // carve having to place an already-open door (mechanismDoors.ts reads `initial` for exactly that).
+    leverByAddress.set(handle.in, { positions, initial: handle.starts ?? "left" })
   }
 
   // From here the floor is read with the handles' gates already on it, so every pass that sizes a
@@ -2406,7 +2412,7 @@ export const assembleFloor = (
         // of the player's choosing, and the walk must not be handed a move they do not have.
         mechanism: {
           positions: [...gateKeyByDir.values()].map(gateKeyId => ({ state: gateKeyId, gateKeyId })),
-          restReachable: false,
+          initial: MECHANISM_AT_REST,
         },
       }
       return overwritten
