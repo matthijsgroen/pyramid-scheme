@@ -497,3 +497,131 @@ hidden behind the player's boots with an invisible bar; and a "no floor under th
 be fog at 0.75 opacity. **A measurement that confirms what you expected deserves the same scrutiny as
 one that surprises you** — one probe here was too coarse and had to be redone, and one conclusion
 about art legibility was retracted entirely because the marks had been drawn in the wrong place.
+
+---
+
+# Session handover — the handle, and step 5 unblocked
+
+32 commits on `feat/switch-fork`, `398b79d4..5fb1bf6a`. Nothing merged, nothing pushed — the owner
+keeps the whole topology slice on one branch until the release is ready. Gate green at handover:
+`yarn test` 3647, `yarn lint` 0 errors, `betterer` 531 unchanged, `generate-world` byte-identical at
+`8b610d0e016ef60a1fa1526cc84bd910`.
+
+## What got built — step 4, the handle
+
+A floor authors `handles: [{ in, left: string[], right: string[], starts?: "left" | "right" }]`. A
+lever stands in the named section and gates the sections on each side; it is a **binary toggle** —
+thrown one way or the other, some doors opening as others close. It has a family with no generator, a
+node shape, and a mark pairing it to the doors it drives.
+
+**It has been played.** A develop-journey floor stands one (pyramid 7, `left: ["vault"],
+right: ["cellar"]`), the main-path puzzles were hand-solved to reach it, and all three claims were
+confirmed in a browser: throwing swaps which door is walkable; the position survives leaving the site
+AND a full browser reload; the lever's node is not hidden behind the player's marker.
+
+**The save stores the POSITION, not the consequence** — `mechanismStates: {"7:lever#0/xhandle":"right"}`,
+a map rather than the packed strings its siblings use. The shipped switch was converted onto the same
+storage first, so the risky half landed on content that already worked.
+
+**A mechanism carries its own state machine.** `MechanismRecord = { states, initial, returnsToInitial,
+positions }`, read identically by the walk (`floorLock`) and the runtime (`mechanismDoors`). `kindOf`
+is cosmetic again — it names the compiled id and branches on nothing, which is what lets a second
+toggle-shaped mod exist.
+
+## The soundness bug the final review found, and why it matters beyond this branch
+
+`siteAssembler` declared `returnsToInitial: false` on the lightbeam switch, under a comment saying a
+board cannot be un-solved. **False**, and the codebase said so three files over:
+`LightbeamSwitchPuzzle.tsx:93-94` does `else if (turned) onRoute(undefined)`, `plugin.tsx:63-66` turns
+that into `setMechanismState(address, MECHANISM_AT_REST)`, and `LightbeamSwitchPuzzle.spec.tsx:172`
+pins it. The room is `reEnterable` and `onCancel` lets a player leave mid-turn — so **re-enter a solved
+switch, turn one mirror off every shrine, walk out** is a durable save state with every way out of the
+fork shut, and `walkLock` never visited it.
+
+Not a regression; the pre-plan code did the same. But this branch promoted the gap into a named field
+all 56 gates will read. Fixed, and measured safe both ways: walked 1 lock plain / 8 with `INCLUDE_DEV`,
+0 stranding, flag false and true. `junior_2`'s compiled lock gains exactly two transitions and nothing
+else.
+
+**The lesson worth keeping: a walk that models fewer moves than the player has is the one defect that
+cannot be caught by playing the floor that has it.**
+
+## Step 5 is unblocked — all five questions answered
+
+Written into `docs/authored-locks-roadmap.md` §5, now answers rather than questions. The governing rule
+is the owner's: **the builder may refuse, but it may never decide quietly.**
+
+- **A region is a named area in the plan**, not "everywhere reachable without passing a gate". Two
+  regions may be joined with no gate. The walk keeps deriving its own partition from the assembled
+  grid, so the two never have to agree.
+- **Regions are CORE, gates and mechanisms are the MOD.** Not because of locks — four of six catalogue
+  features act on regions (a lock gates the boundaries, `waterline` floods one from within,
+  `cosmicDust` re-lays which corridors connect them, `sandSlide` blocks one). Toggle the mod off and
+  the identical walls carve with every door open.
+- **The lock is structure; the floor is content.** A region declares an appetite ("takes a reward",
+  "takes puzzles"); the floor authors counts; the builder matches. This is what makes a container
+  genuinely reusable and the master/wizard conversion additive.
+- **`startsOpen` is struck.** A gate opens iff its owner's initial state opens it — the binary lever
+  already does this, and the carve never places an open gate.
+- **No tree rule.** Cycles allowed, gated or not. A bypassing loop is a badly designed puzzle and that
+  is the author's.
+- **Every region must be reachable, and this one is REQUIRED** — once regions carry content, a region
+  no reachable state stands in is loot nobody can collect. It also closes a hole that predates locks:
+  `placeFragments` walks "with authored doors standing open", which is safe for a floor key and unsafe
+  for a mechanism-driven gate.
+
+## Fix these before step 5 builds on that code
+
+Both are the builder deciding quietly, both found while measuring, both cheap under the save reset:
+
+1. **A three-level config assembles green and silently drops the third level.** `success: true`, an
+   authored level-3 gate carves no gate room, `validateSite` returns valid. The DSL will build such a
+   config with no cast.
+2. **The duplicate-label check cannot see level 3.** `sectionAddresses` is a doubly-nested loop, so a
+   level-3 label colliding with a level-1 label passes — the save-key data-loss bug that function
+   exists to refuse.
+
+And the roadmap's old cost estimate was wrong: the two-level limit is in the **algorithm**, not the
+type. The DSL and serializer are already recursive, the save format costs nothing, and the limit is
+~600 lines of hand-unrolled assembler. **The region layout should be a new recursive core pass**, which
+takes that de-duplication off the critical path.
+
+## Open, for the owner
+
+- **Per-mechanism marks.** Both of a lever's buttons wear the same mark. Play-testing produced evidence
+  against it: on the real floor the two driven doors sit at opposite corners, so a throw is a guess
+  until you walk back and look. Contradicts the design doc as written, so it is the owner's — and
+  "before the 56 gates" is the right timing.
+- **Two checks designed, neither built** (both REPORT rather than decide, which is why they may exist):
+  a region nothing can reach — measured at 0 hits across 206 shipped floors, 4 on a deliberately
+  deadlocked control; and a gate nothing depends on.
+- **`lockWalk` only knows how to shut a boundary.** A flooded region is one the player may not OCCUPY,
+  which is not the same as one whose doors are shut. P1's natural home, applied to a region.
+
+## Parked, not this branch's
+
+- Two domain→app imports remain (`mechanismDoors` → `cellIdentity`, `generateLevel` →
+  `PyramidLevel/support`). React-free, but `architecture.md`'s rule is broken and **nothing lints it** —
+  the class was introduced twice in this plan and caught twice by review rather than tooling. An eslint
+  rule is the fix.
+- `generateEclipse` times out at vitest's default 5000ms under load; it passes in isolation at 29.8s
+  for 25 tests. Count work, not wall-clock.
+- `sweepMissedASwitch` fires only at `walked === 0`, so a regression taking the sweep from 8 locks to 1
+  would pass silently. Worth a floor-count assertion before step 5 leans harder on the sweep.
+- The travel map's "continue expedition" button WRAPS the journey map, so a centre click lands on a
+  level node and silently moves `levelNr`. Found by playing.
+
+## The art, mid-flight
+
+Five repaint keys are queued in `docs/instructions/repaint-queue.md`; `expert/dropEast` is painted and
+imported. Remaining: `expert/dropSouth`, `expert/dropNorth`, `expert/leverLeft`, `expert/leverRight`.
+
+Three rules for every hole this set ever gets, each bought with a wasted roll or the owner's eye, and
+now in `_launch_crossing`'s docstring: **nothing stands on the near lip line** (or it reads as a recess
+in a wall); **the mouth spans the passage** (or it reads as something you step around); **the launch
+stands at the source lip**. Where they conflict, the flight gives way.
+
+Two renderer facts worth keeping: `renderProp.py`'s printed "lands at WxH" **was an over-estimate** and
+misled a whole sequence of decisions before being fixed to read the sheared mesh; and the renderer is
+**not bit-deterministic on curved geometry**, so a small nonzero AE with max channel difference 1-2 is
+noise rather than a diff.
