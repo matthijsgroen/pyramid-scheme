@@ -658,9 +658,9 @@ at handover, +1 for item 1's new collision test); `yarn lint` 0 errors, 17 warni
 | 5 | done | `e61fc9f8` |
 | 6 | done — browser-verified | `6d504d3e` |
 | 7 | done — side-path puzzles zeroed too, see below | `854a6365` |
-| 8 | in flight, last by instruction | |
+| 8 | done — 2566 → 2404 lines, byte-identical | `7d289ccc` |
 
-Gate with 1-7 in: `yarn test` **3659 passed / 299 files**, `check-types` clean, `lint` 0 errors /
+Gate with ALL EIGHT in: `yarn test` **3659 passed / 299 files**, `check-types` clean, `lint` 0 errors /
 17 warnings, `betterer` **531 unchanged**, `generate-world` **8b610d0e016ef60a1fa1526cc84bd910**
 byte-identical, `validate-world` valid plain (`walked 1 of 1`) and with `INCLUDE_DEV=1`
 (`walked 8 of 8`).
@@ -787,6 +787,35 @@ header explains why, and the journey's per-currency counts must stay identical w
 and currency counts unchanged, `generate-world` byte-identical without `INCLUDE_DEV=1`.
 
 ## 8. The assembler is a hand-unrolled two-level machine — collapse it
+
+**DONE** `7d289ccc`. All four duplicated pairs collapsed — placement, cell metadata, room specs, and
+the key-host invention (which the queue did not list but is the same machine growing the assembler-owned
+child twice). `SubSectionGroup`'s two ints became a `Chain` record carrying a `positional` address, and
+`sideIsolated`/`subIsolated` became one `doorsShutting`, so the parent chain is a list rather than one
+hard-coded link. **2566 → 2404 lines.**
+
+**Byte-identical was held by fingerprint, and verified twice — once by the implementer, once
+independently by the controlling session** using a harness built from scratch: a canonical per-floor
+hash of every `assembleFloor` result at its runtime seed, run against the pre-refactor assembler swapped
+back in. Plain `b1c74daf50e85ff9961deac68dbc6fc0` (206 floors) and `INCLUDE_DEV=1`
+`7d2c50ae445895c1273bcbeae599e4cb` (213 floors), equal on both sides, per-floor and in total. This is a
+stronger check than `generatedWorld.ts`, which is the spec and only reaches the assembler indirectly.
+
+**NOTHING was relied on being free under the save reset.** The section hashes were deliberately NOT
+re-keyed on a path: `computeSideSectionHash` still receives `idx` and `parentIdx` verbatim. Re-keying
+stays available to whoever makes the carve three-level, and would cost a reset then.
+
+Two things it surfaced, for the owner:
+
+- **One deliberate behaviour generalisation, accepted rather than pinned back.** `hidden` now reads off
+  the section at BOTH levels; before, a sub-section's `hidden` was silently ignored. No config authors
+  it, shipped or dev, so all 213 floors are unchanged and it is a future-config difference only. It was
+  accepted because ignoring an authored field is itself the builder deciding quietly — the governing
+  rule this branch is built on. Say so if you want it pinned to top-level-only instead.
+- **A latent collision now readable, not changed.** A sub-section's default stair id is the floor-wide
+  constant `${siteId}:subsection`, where a top-level section gets `${siteId}:side<idx>`. Two
+  staircase-ended sub-sections on one floor with no authored `stairId` would collide. Pre-existing;
+  `Chain.defaultStairId` merely makes it visible.
 
 ~600 lines written twice: placement at `siteAssembler.ts:1028-1102` vs `:1110-1275`, room specs at
 `:1601-1718` vs `:1728-1850`, three parallel cell-metadata blocks at `:1435-1497`. `SubSectionGroup`
