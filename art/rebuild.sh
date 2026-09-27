@@ -554,7 +554,7 @@ rm -f "$LIGHT"
 # at, the map draws it lighter. The other two are solid and land where they were put. 76 darker than the
 # priest's slab before the fade, which is about 53 after it.
 yarn import-tile art/masters/surfaces/overgrown.webp --tier=default --name=overgrown --slot=growth \
-  --filter=smooth --saturation=2.6 --brightness=0.58
+  --filter=smooth --saturation=1.0 --brightness=1.0
 yarn import-tile art/masters/surfaces/overgrown-wall.webp --tier=default --name=overgrown-wall --slot=growthWall \
   --filter=smooth --saturation=2.4 --brightness=0.85
 yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name=overgrown-plant --slot=growth \
