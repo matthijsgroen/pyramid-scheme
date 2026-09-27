@@ -392,6 +392,12 @@ export const NodeShape = ({
       return <StairheadShape {...p} />
     case "exit":
       return <ExitShape {...p} />
+    default: {
+      // A ShapeKind with no case above would draw NOTHING on the map and say nothing about it. This
+      // makes the omission a compile error instead.
+      const unhandled: never = type
+      return unhandled
+    }
   }
 }
 
