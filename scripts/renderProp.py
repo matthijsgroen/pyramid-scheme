@@ -483,6 +483,19 @@ def turn(obj, degrees, axis="Y", x=0.0, y=0.0, z=0.0):
     return obj
 
 
+def strung(a, b, thickness=0.04):
+    """A thin taut bar from point A to point B, built at the origin and turned to point along it —
+    `turn`'s own two-step pattern (build at the origin, rotate, then place), extended from one named axis
+    to an arbitrary direction. `prim_pit`'s zipline needs a line that runs in both Y and Z at once, which
+    `turn`'s single-axis degrees cannot express."""
+    a, b = Vector(a), Vector(b)
+    span = b - a
+    bar = box(span.length, thickness, thickness)
+    bar.rotation_euler = span.to_track_quat("X", "Z").to_euler()
+    bar.location = a.lerp(b, 0.5)
+    return bar
+
+
 def prim_shelf():
     """Mudbrick shelving and what stands in it: `--contents=storage` is the merchant's pots and linen,
     `--contents=linen` the nobleman's linen press with a mirror case on the top course.
@@ -1437,7 +1450,11 @@ def prim_pit():
 
     NO FOOTPRINT. Import this with --shadow=0 and no --seat: `make_shadow` flattens the object to z=0
     and pushes it toward the viewer, so a pit's footprint is a second dark parallelogram lying in front
-    of the first one, and the tile reads as two holes. A hole casts nothing."""
+    of the first one, and the tile reads as two holes. A hole casts nothing.
+
+    `--contents=zipline` / `ziplineNorth` / `ziplineSouth` REPLACE THE LADDER WITH A ONE-WAY DROP'S OWN
+    CROSSING: a stake at the entry lip and a taut line running to the far lip, where there is nothing to
+    hold. See the branch below for why direction costs two renders and not one."""
     w, d = 0.94, 0.66  # the opening
     k = 0.7  # the shear this set is drawn at; the shaft's visible height is a function of it
     hv = k * d
@@ -1454,6 +1471,45 @@ def prim_pit():
     ):
         mark(tilt(box(sx, sy, 0.08, x=x, y=y, z=0.04), yaw, "Z"), "body")
     if arg("contents") == "plain":
+        return join_all()
+    zip_dir = arg("contents")
+    if zip_dir in ("zipline", "ziplineNorth", "ziplineSouth"):
+        # THE ZIPLINE, a one-way drop's own crossing — `docs/authored-locks-roadmap.md` ("A one-way is
+        # a place, and the movement markers carry the rule") settles it as a place rather than a sign: a
+        # stake driven into the paving at the entry lip, and a taut line running from it, over the
+        # opening, down to the far lip, where there is nothing to hold. Direction lives in which lip
+        # gets the stake, never in `--spin` — the mouth stays a parallelogram cut to the cell, same as
+        # every other pit.
+        #
+        # `zipline` runs the stake-to-tie line in X, so it is one asset the renderer mirrors left-right
+        # for the opposite horizontal heading. `ziplineNorth` and `ziplineSouth` run it in Y and are two
+        # separate renders rather than one flipped vertically — a vertical flip would swap which lip
+        # draws the far wall's up-facing top, against this projection's own rule that a block shows an
+        # up-facing band on top and a viewer-facing face below, never the reverse.
+        #
+        # Both ends stand on the solid paving just past the opening's edge, never over it — the stake
+        # so it casts a normal shadow, the tie so it never reaches for the ground below the near lip's
+        # own line, which this shear never draws. The line itself is free to cross the opening: it is
+        # the thing that CROSSES ITS EDGE, the same job the ladder did.
+        #
+        # Both ends also carry an X offset even where the heading is pure Y (`ziplineNorth`/`South`): a
+        # bar built with no X extent at all draws as a vertical stack under this shear (`prim_pit`'s own
+        # ladder rope is why nothing here runs along bare -Y), and a zipline with no visible slope across
+        # the frame reads as a post, not a line strung to somewhere.
+        post_h = 0.34
+        if zip_dir == "zipline":
+            stake_xy = (-w / 2 - 0.05, 0.0)
+            tie_xy = (w / 2 + 0.02, 0.0)
+        elif zip_dir == "ziplineNorth":
+            stake_xy = (-0.22, -d / 2 - 0.05)
+            tie_xy = (0.22, d / 2 + 0.02)
+        else:  # ziplineSouth
+            stake_xy = (0.22, d / 2 + 0.05)
+            tie_xy = (-0.22, -d / 2 - 0.02)
+        sx, sy = stake_xy
+        tx, ty = tie_xy
+        mark(box(0.06, 0.06, post_h, x=sx, y=sy, z=post_h / 2), "body")
+        mark(strung((sx, sy, post_h), (tx, ty, 0.015)), nocast("body"))
         return join_all()
     # The pole laid across the far lip, and the ladder over it. Coarse on purpose — at 56 units across
     # the opening a rope of 0.03 is two pixels and the ladder becomes a smudge.

@@ -2559,3 +2559,147 @@ Everything else at starter, junior and expert is drawn. These three are the whol
 master, and every one of them is a SINGLE room — which is why they sat unqueued while 62 rooms' worth of
 expert work went in ahead of them. They are here because "done up to expert" is not done with dummies
 still in it, not because any of them is urgent.
+
+## One-way drop — expert, three directions
+
+The first art for a one-way: a passage the player falls down and cannot climb back. The owner settled it
+as a place, not a sign — a fissure across the passage with a line strung over it, anchored on one side
+only, so the reason you cannot go back is a thing you can see rather than a rule you were told
+(`docs/authored-locks-roadmap.md`, "A one-way is a place, and the movement markers carry the rule"). It
+is drawn on the connector cell's own floor square, at cell size, using `prim_pit` exactly as it already
+stands — the void shaft, its far wall, its spoil — with the ladder swapped for a stake and a rope where
+`--contents=zipline`/`ziplineNorth`/`ziplineSouth` ask for it. See `renderProp.py`'s `prim_pit` docstring
+for what each value builds.
+
+Queued at expert only: the develop journey's drop stands on an expert floor, which is the one rank a
+drop can actually be seen on today. The other four ranks stay unqueued until this one has landed —
+fifteen tiles nobody has looked at yet is the failure this file exists to prevent.
+
+**Three renders, not four.** The two horizontal headings are one asset, `dropEast`, mirrored left-right
+for `dropWest` when the renderer picks it — that wiring is not part of this queue. The two vertical
+headings, `dropNorth` and `dropSouth`, each need their own: a vertical flip would swap which lip carries
+the void's up-facing top face, against this projection's own rule that a block shows an up-facing band
+on top and a viewer-facing face below it, never the reverse.
+
+**No `--seat` on any of the three**, the same as every pit before it: `make_shadow` flattens to z=0 and
+pushes toward the viewer, so a footprint under a hole is a second dark parallelogram lying in front of
+the first one and the tile reads as two holes. The stake still casts its own shadow in the hand-over
+render, which is what the prompt's shadow line is for.
+
+### `expert/dropEast` — a fissure with a line run out to one side
+
+**Attach:**
+
+1. `~/tile-previews/dropEast-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a FISSURE torn across a passage floor, seen from above. The black quadrilateral is the
+OPENING — the crack's own depth, and it is the darkest thing in the picture with no detail in it at all;
+it is not a wall, not a doorway and not a niche. Standing at the LEFT edge of the opening is a short
+timber POST, driven into the paving; from its top a taut ROPE runs right, across the opening, down to
+bare stone at the RIGHT edge, where it ends — there is nothing there to hold. The loose blocks scattered
+at the opening's edge are broken basalt, shaken free where the floor gave way. There is no rim, no
+coping and no frame around the opening: the crack meets bare paving on every side.
+
+Basalt worn dark and faintly polished where feet have crossed near it, with a thin crust of pale natron
+dust settled into the crack's edges and over the fallen blocks. The post is old timber, split and grey.
+The rope is bleached hemp, pale against the dark stone.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at the post's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope, and none of it shines.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold pit --contents=zipline --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/dropEast.webp --tier=expert --name=dropEast --slot=prop \
+  --filter=smooth --mask="$OBJ" --brightness=0.85
+```
+
+### `expert/dropNorth` — a fissure with a line run out to the far side
+
+**Attach:**
+
+1. `~/tile-previews/dropNorth-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a FISSURE torn across a passage floor, seen from above. The black quadrilateral is the
+OPENING — the crack's own depth, and it is the darkest thing in the picture with no detail in it at all;
+it is not a wall, not a doorway and not a niche. Standing at the edge of the opening NEAREST the viewer
+is a short timber POST, driven into the paving; from its top a taut ROPE runs back and across the
+opening, down to bare stone at the FAR edge, where it ends — there is nothing there to hold. The loose
+blocks scattered at the opening's edge are broken basalt, shaken free where the floor gave way. There is
+no rim, no coping and no frame around the opening: the crack meets bare paving on every side.
+
+Basalt worn dark and faintly polished where feet have crossed near it, with a thin crust of pale natron
+dust settled into the crack's edges and over the fallen blocks. The post is old timber, split and grey.
+The rope is bleached hemp, pale against the dark stone.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at the post's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope, and none of it shines.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold pit --contents=ziplineNorth --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/dropNorth.webp --tier=expert --name=dropNorth --slot=prop \
+  --filter=smooth --mask="$OBJ" --brightness=0.85
+```
+
+### `expert/dropSouth` — a fissure with a line run out to the near side
+
+**Attach:**
+
+1. `~/tile-previews/dropSouth-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a FISSURE torn across a passage floor, seen from above. The black quadrilateral is the
+OPENING — the crack's own depth, and it is the darkest thing in the picture with no detail in it at all;
+it is not a wall, not a doorway and not a niche. Standing at the FAR edge of the opening, furthest from
+the viewer, is a short timber POST, driven into the paving; from its top a taut ROPE runs forward and
+across the opening, down to bare stone at the edge NEAREST the viewer, where it ends — there is nothing
+there to hold. The loose blocks scattered at the opening's edge are broken basalt, shaken free where the
+floor gave way. There is no rim, no coping and no frame around the opening: the crack meets bare paving
+on every side.
+
+Basalt worn dark and faintly polished where feet have crossed near it, with a thin crust of pale natron
+dust settled into the crack's edges and over the fallen blocks. The post is old timber, split and grey.
+The rope is bleached hemp, pale against the dark stone.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at the post's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope, and none of it shines.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold pit --contents=ziplineSouth --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dropSouth --slot=prop \
+  --filter=smooth --mask="$OBJ" --brightness=0.85
+```
