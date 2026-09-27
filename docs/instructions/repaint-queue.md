@@ -2609,6 +2609,19 @@ a shadowed one. Take nothing else — not the subject, not the perspective, not 
 ```
 A single plant, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A SQUARE frame, one unit by one. Do not re-compose it into a portrait.
 
+
+**THREE RULES THAT DECIDE WHETHER THIS TILE IS USABLE AT ALL. Read them before anything else.**
+
+1. **NOTHING BUT THE PLANT.** No ground, no floor, no soil, no plinth, no earth under it, no scene — not
+   even a sliver at the bottom. The plant is cut out and dropped into the game on its own. A painted
+   ground survives as a hard BAR of colour across the bottom of the finished tile, and there is no flag
+   and no mask that removes it; the tile is simply thrown away.
+2. **THE BACKGROUND IS ONE FLAT MAGENTA, EVERYWHERE, UNTOUCHED.** Do not tint it, darken it, shade it, or
+   lay a disc or pool of shadow behind or beneath the plant. The magenta is removed by EXACT colour, so a
+   darkened magenta is not removed — it survives as a ring of dirty purple.
+3. **NO CAST SHADOW ANYWHERE.** The only dark permitted is the small contact one described further down,
+   and it sits ON the plant where it meets the ground, not on the ground itself.
+
 The object: a YOUNG DATE PALM that has seeded itself in a tomb chamber and grown up toward the hole in
 the roof. A single slender trunk, patterned with the diamond scars of old frond bases, leaning very
 slightly. Five or six arching fronds at the top, each one a long rib with stiff leaflets along both
@@ -2672,12 +2685,6 @@ merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not
 
 Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
 
-THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
-or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
-the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
-survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
-is the small contact one described above, and it sits ON the plant, not behind it.
-
 Draw it square on, in straight orthographic projection — no perspective, no vanishing point, no
 foreshortening. That is what "square on" governs: it says nothing about the light, which is meant to be
 plainly visible. No perspective, no scene, no floor under it, no pot, no wall behind it.
@@ -2709,6 +2716,19 @@ a shadowed one. Take nothing else — not the subject, not the perspective, not 
 
 ```
 A single plant, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A SQUARE frame, one unit by one. Do not re-compose it into a portrait.
+
+
+**THREE RULES THAT DECIDE WHETHER THIS TILE IS USABLE AT ALL. Read them before anything else.**
+
+1. **NOTHING BUT THE PLANT.** No ground, no floor, no soil, no plinth, no earth under it, no scene — not
+   even a sliver at the bottom. The plant is cut out and dropped into the game on its own. A painted
+   ground survives as a hard BAR of colour across the bottom of the finished tile, and there is no flag
+   and no mask that removes it; the tile is simply thrown away.
+2. **THE BACKGROUND IS ONE FLAT MAGENTA, EVERYWHERE, UNTOUCHED.** Do not tint it, darken it, shade it, or
+   lay a disc or pool of shadow behind or beneath the plant. The magenta is removed by EXACT colour, so a
+   darkened magenta is not removed — it survives as a ring of dirty purple.
+3. **NO CAST SHADOW ANYWHERE.** The only dark permitted is the small contact one described further down,
+   and it sits ON the plant where it meets the ground, not on the ground itself.
 
 The object: a BROAD LEAFY PLANT that has taken over a corner of a tomb chamber — not a palm and not a
 fern, but something thick and bushy with big soft leaves, the kind that grows fast wherever light and
@@ -2772,12 +2792,6 @@ merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not
 
 Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
 
-THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
-or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
-the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
-survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
-is the small contact one described above, and it sits ON the plant, not behind it.
-
 Draw it square on, in straight orthographic projection — no perspective, no vanishing point, no
 foreshortening. That is what "square on" governs: it says nothing about the light, which is meant to be
 plainly visible. No perspective, no scene, no floor under it, no pot, no wall behind it.
@@ -2809,6 +2823,19 @@ a shadowed one. Take nothing else — not the subject, not the perspective, not 
 
 ```
 A root and its leaves, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A PORTRAIT frame, two units wide by three tall. Do not re-compose it into a square.
+
+
+**THREE RULES THAT DECIDE WHETHER THIS TILE IS USABLE AT ALL. Read them before anything else.**
+
+1. **NOTHING BUT THE PLANT.** No ground, no floor, no soil, no plinth, no earth under it, no scene — not
+   even a sliver at the bottom. The plant is cut out and dropped into the game on its own. A painted
+   ground survives as a hard BAR of colour across the bottom of the finished tile, and there is no flag
+   and no mask that removes it; the tile is simply thrown away.
+2. **THE BACKGROUND IS ONE FLAT MAGENTA, EVERYWHERE, UNTOUCHED.** Do not tint it, darken it, shade it, or
+   lay a disc or pool of shadow behind or beneath the plant. The magenta is removed by EXACT colour, so a
+   darkened magenta is not removed — it survives as a ring of dirty purple.
+3. **NO CAST SHADOW ANYWHERE.** The only dark permitted is the small contact one described further down,
+   and it sits ON the plant where it meets the ground, not on the ground itself.
 
 The object: a THICK ROOT that has forced its way through the brick and is hanging down the inside face of
 the wall. One main woody root entering at the TOP EDGE, splitting into two or three as it falls, with
@@ -2856,12 +2883,6 @@ merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not
 
 Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
 
-THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
-or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
-the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
-survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
-is the small contact one described above, and it sits ON the plant, not behind it.
-
 Draw it square on, in straight orthographic projection — no perspective, no vanishing point, no
 foreshortening. That is what "square on" governs: it says nothing about the light, which is meant to be
 plainly visible. No perspective, no scene, no floor under it, no pot, no wall behind it.
@@ -2893,6 +2914,19 @@ a shadowed one. Take nothing else — not the subject, not the perspective, not 
 
 ```
 A single plant, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A SQUARE frame, one unit by one. Do not re-compose it into a portrait.
+
+
+**THREE RULES THAT DECIDE WHETHER THIS TILE IS USABLE AT ALL. Read them before anything else.**
+
+1. **NOTHING BUT THE PLANT.** No ground, no floor, no soil, no plinth, no earth under it, no scene — not
+   even a sliver at the bottom. The plant is cut out and dropped into the game on its own. A painted
+   ground survives as a hard BAR of colour across the bottom of the finished tile, and there is no flag
+   and no mask that removes it; the tile is simply thrown away.
+2. **THE BACKGROUND IS ONE FLAT MAGENTA, EVERYWHERE, UNTOUCHED.** Do not tint it, darken it, shade it, or
+   lay a disc or pool of shadow behind or beneath the plant. The magenta is removed by EXACT colour, so a
+   darkened magenta is not removed — it survives as a ring of dirty purple.
+3. **NO CAST SHADOW ANYWHERE.** The only dark permitted is the small contact one described further down,
+   and it sits ON the plant where it meets the ground, not on the ground itself.
 
 The object: a CLUMP OF FERNS grown up out of a cracked tomb floor where water collects. Seven or eight
 fronds rising from one crown at the bottom, each arching outward and over — tall in the middle, shorter
@@ -2956,12 +2990,6 @@ merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not
 
 Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
 
-THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
-or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
-the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
-survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
-is the small contact one described above, and it sits ON the plant, not behind it.
-
 Draw it square on, in straight orthographic projection — no perspective, no vanishing point, no
 foreshortening. That is what "square on" governs: it says nothing about the light, which is meant to be
 plainly visible. No perspective, no scene, no floor under it, no pot, no wall behind it.
@@ -2984,6 +3012,19 @@ a shadowed one. Take nothing else — not the subject, not the perspective, not 
 
 ```
 A small clump of grass, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A SQUARE frame, one unit by one. Do not re-compose it into a portrait.
+
+
+**THREE RULES THAT DECIDE WHETHER THIS TILE IS USABLE AT ALL. Read them before anything else.**
+
+1. **NOTHING BUT THE PLANT.** No ground, no floor, no soil, no plinth, no earth under it, no scene — not
+   even a sliver at the bottom. The plant is cut out and dropped into the game on its own. A painted
+   ground survives as a hard BAR of colour across the bottom of the finished tile, and there is no flag
+   and no mask that removes it; the tile is simply thrown away.
+2. **THE BACKGROUND IS ONE FLAT MAGENTA, EVERYWHERE, UNTOUCHED.** Do not tint it, darken it, shade it, or
+   lay a disc or pool of shadow behind or beneath the plant. The magenta is removed by EXACT colour, so a
+   darkened magenta is not removed — it survives as a ring of dirty purple.
+3. **NO CAST SHADOW ANYWHERE.** The only dark permitted is the small contact one described further down,
+   and it sits ON the plant where it meets the ground, not on the ground itself.
 
 The object: a TUSSOCK OF DRY GRASS in a paving joint, the kind that lives on almost nothing. A spray of
 stiff narrow blades from one point, most of them standing and a few bent right over and broken. Half the
@@ -3039,12 +3080,6 @@ merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not
 
 Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
 
-THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
-or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
-the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
-survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
-is the small contact one described above, and it sits ON the plant, not behind it.
-
 Draw it square on, in straight orthographic projection — no perspective, no vanishing point, no
 foreshortening. That is what "square on" governs: it says nothing about the light, which is meant to be
 plainly visible. No perspective, no scene, no paving under it, no crack, no soil.
@@ -3067,6 +3102,19 @@ a shadowed one. Take nothing else — not the subject, not the perspective, not 
 
 ```
 Fallen leaves, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A SQUARE frame, one unit by one. Do not re-compose it into a portrait.
+
+
+**THREE RULES THAT DECIDE WHETHER THIS TILE IS USABLE AT ALL. Read them before anything else.**
+
+1. **NOTHING BUT THE PLANT.** No ground, no floor, no soil, no plinth, no earth under it, no scene — not
+   even a sliver at the bottom. The plant is cut out and dropped into the game on its own. A painted
+   ground survives as a hard BAR of colour across the bottom of the finished tile, and there is no flag
+   and no mask that removes it; the tile is simply thrown away.
+2. **THE BACKGROUND IS ONE FLAT MAGENTA, EVERYWHERE, UNTOUCHED.** Do not tint it, darken it, shade it, or
+   lay a disc or pool of shadow behind or beneath the plant. The magenta is removed by EXACT colour, so a
+   darkened magenta is not removed — it survives as a ring of dirty purple.
+3. **NO CAST SHADOW ANYWHERE.** The only dark permitted is the small contact one described further down,
+   and it sits ON the plant where it meets the ground, not on the ground itself.
 
 The object: TWO OR THREE DEAD PALM FRONDS that have dropped onto the paving and are lying where they
 fell. Each is a long rib with stiff leaflets along it, curled and split, one crossing another. They are
@@ -3123,12 +3171,6 @@ merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not
 
 Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
 
-THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
-or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
-the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
-survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
-is the small contact one described above, and it sits ON the plant, not behind it.
-
 Draw it square on, in straight orthographic projection — no perspective, no vanishing point, no
 foreshortening. That is what "square on" governs: it says nothing about the light, which is meant to be
 plainly visible. No perspective, no scene, no paving under them, no soil.
@@ -3151,6 +3193,19 @@ a shadowed one. Take nothing else — not the subject, not the perspective, not 
 
 ```
 A hanging plant, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A PORTRAIT frame, two units wide by three tall. Do not re-compose it into a square.
+
+
+**THREE RULES THAT DECIDE WHETHER THIS TILE IS USABLE AT ALL. Read them before anything else.**
+
+1. **NOTHING BUT THE PLANT.** No ground, no floor, no soil, no plinth, no earth under it, no scene — not
+   even a sliver at the bottom. The plant is cut out and dropped into the game on its own. A painted
+   ground survives as a hard BAR of colour across the bottom of the finished tile, and there is no flag
+   and no mask that removes it; the tile is simply thrown away.
+2. **THE BACKGROUND IS ONE FLAT MAGENTA, EVERYWHERE, UNTOUCHED.** Do not tint it, darken it, shade it, or
+   lay a disc or pool of shadow behind or beneath the plant. The magenta is removed by EXACT colour, so a
+   darkened magenta is not removed — it survives as a ring of dirty purple.
+3. **NO CAST SHADOW ANYWHERE.** The only dark permitted is the small contact one described further down,
+   and it sits ON the plant where it meets the ground, not on the ground itself.
 
 The object: a CREEPER that has come in over the top of a wall and is hanging down the face of it. Two or
 three thin woody stems enter at the TOP EDGE of the frame and fall the whole height, with heart-shaped
@@ -3195,12 +3250,6 @@ merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not
 
 Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
 
-THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
-or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
-the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
-survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
-is the small contact one described above, and it sits ON the plant, not behind it.
-
 Draw it square on against the wall, in straight orthographic projection — no perspective, no vanishing
 point. That governs the PROJECTION only, and says nothing about the light, which is meant to be plainly
 visible. No perspective, no scene, no bricks behind
@@ -3224,6 +3273,19 @@ a shadowed one. Take nothing else — not the subject, not the perspective, not 
 
 ```
 Hanging roots, a painted illustration with clear light and shade, matte surfaces, no background, on pure magenta #FF00FF. A PORTRAIT frame, two units wide by three tall. Do not re-compose it into a square.
+
+
+**THREE RULES THAT DECIDE WHETHER THIS TILE IS USABLE AT ALL. Read them before anything else.**
+
+1. **NOTHING BUT THE PLANT.** No ground, no floor, no soil, no plinth, no earth under it, no scene — not
+   even a sliver at the bottom. The plant is cut out and dropped into the game on its own. A painted
+   ground survives as a hard BAR of colour across the bottom of the finished tile, and there is no flag
+   and no mask that removes it; the tile is simply thrown away.
+2. **THE BACKGROUND IS ONE FLAT MAGENTA, EVERYWHERE, UNTOUCHED.** Do not tint it, darken it, shade it, or
+   lay a disc or pool of shadow behind or beneath the plant. The magenta is removed by EXACT colour, so a
+   darkened magenta is not removed — it survives as a ring of dirty purple.
+3. **NO CAST SHADOW ANYWHERE.** The only dark permitted is the small contact one described further down,
+   and it sits ON the plant where it meets the ground, not on the ground itself.
 
 The object: a CURTAIN OF AERIAL ROOTS let down the inside face of a wall by something growing above it.
 Many fine roots hanging close together and nearly straight, of several lengths, a few of them fused into
@@ -3269,12 +3331,6 @@ herb. Where the light falls they go golden-green and almost yellow; in shadow th
 merely darker. Flowers are STRONG colour: hot rose, deep coral, clear cream, not tinted white.
 
 Think of a plant in full afternoon sun in a warm country, not a botanical plate and not a faded tapestry.
-
-THE BACKGROUND IS ONE FLAT MAGENTA AND NOTHING ELSE. Do not tint it, darken it, shade it, or lay a disc
-or a pool of shadow behind the plant. Every roll of this family has done it, and it is not a shadow once
-the tile is cut: the magenta is keyed out by exact colour, so a DARKENED magenta is not removed — it
-survives as a ring of dirty purple around the plant. The only dark that belongs anywhere near the ground
-is the small contact one described above, and it sits ON the plant, not behind it.
 
 Draw it square on against the wall, in straight orthographic projection — no perspective, no vanishing
 point. That governs the PROJECTION only, and says nothing about the light, which is meant to be plainly
