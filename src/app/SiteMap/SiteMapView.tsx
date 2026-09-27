@@ -9,7 +9,7 @@ import type {
   WallDecorationKind,
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
-import { isSealedWayOut, revealAll, walkableFrom } from "../../game/gridNavigation"
+import { isSealedWayOut, oneWayMouthDir, revealAll, walkableFrom } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
 import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
@@ -901,6 +901,35 @@ const RunTargetArrow = ({ dir }: { dir: Direction }) => {
   )
 }
 
+const DIR_VECTOR: Record<Direction, [number, number]> = { n: [0, -1], s: [0, 1], e: [1, 0], w: [-1, 0] }
+
+// Set off toward the cell's own edge, past a room's icon, so it reads as pointing OUT of the room
+// rather than sitting on top of what is already drawn there.
+const ONE_WAY_ARROW_OFFSET = CELL * 0.42
+
+/** The way a one-way's landing names the drop that fell it there: the same arrow the game already
+ * teaches for "you can walk this way", with a bar across it for "and not back". Not a target — a
+ * statement standing on the room's own tap area, never a tap area of its own. */
+const BarredArrow = ({ dir }: { dir: Direction }) => {
+  const r = MARKER_RADIUS * 1.2
+  const [dx, dy] = DIR_VECTOR[dir]
+  return (
+    <g
+      data-one-way-arrow=""
+      transform={`translate(${dx * ONE_WAY_ARROW_OFFSET}, ${dy * ONE_WAY_ARROW_OFFSET}) rotate(${DIR_ROTATION[dir]})`}
+    >
+      <polygon
+        points={`0,${-r} ${r},${r} ${-r},${r}`}
+        fill={MARKER_FILL}
+        stroke={MARKER_OUTLINE}
+        strokeWidth={2}
+        strokeLinejoin="round"
+      />
+      <line x1={-r} y1={0} x2={r} y2={0} stroke={MARKER_OUTLINE} strokeWidth={2.5} />
+    </g>
+  )
+}
+
 /** One cell's marker: the icon in a little `<svg>` of its own, in a box the size of the cell.
  *
  * THE BOX IS THE TAP TARGET, which is what the invisible disc inside the drawing used to be — a marker
@@ -1366,6 +1395,7 @@ export const SiteMapView = ({
                 const sealedWay = isSealedWayOut(cell)
                 const locked = isLockedGate(cell, ownedKeys)
                 const displayState: CellState = locked && state === "reachable" ? "visible" : state
+                const oneWayDir = oneWayMouthDir(grid, r, c)
 
                 return (
                   <MarkerCell
@@ -1406,6 +1436,7 @@ export const SiteMapView = ({
                       !hasChest &&
                       shapeKind !== "fork" &&
                       (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
+                    {oneWayDir && <BarredArrow dir={oneWayDir} />}
                   </MarkerCell>
                 )
               })

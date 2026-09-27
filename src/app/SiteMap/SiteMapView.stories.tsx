@@ -3,7 +3,7 @@ import { useState } from "react"
 import { assembleFloor } from "../../game/siteAssembler"
 import { generatedWorldConfigs } from "../../data/generatedWorld"
 import { completeCell } from "../../game/gridNavigation"
-import type { CellState, Direction, FloorGrid, GridCell } from "../../game/siteTypes"
+import type { CellState, Direction, FloorConfig, FloorGrid, GridCell } from "../../game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 
 // A map SCROLLS: its root is an overflow-auto box that sizes to the floor inside it, so it only scrolls
@@ -314,6 +314,39 @@ export const TreasureTakenAndNot: Story = {
       difficulty: "junior",
       staircases: {},
     },
+  },
+}
+
+// ─── One-way drop ──────────────────────────────────────────────────────────────
+// A floor authoring `oneWays` carves a source-connector-landing chain the player can only fall
+// down. Standing at the LANDING is the side with something new to show: the connector beside it
+// (invisible before this feature) and a barred arrow naming the way that dropped it there.
+const oneWayDropConfig: FloorConfig = {
+  pathPuzzles: 2,
+  difficulty: "junior",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  sideSections: [
+    { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "upper" },
+    { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "lower" },
+  ],
+  oneWays: [{ from: "upper", to: "lower" }],
+}
+
+const oneWayDropGrid = (): FloorGrid => {
+  const result = assembleFloor("story-oneway", oneWayDropConfig, 0, undefined, {
+    floorRef: { journeyId: "story-oneway", levelIndex: 0, floorIndex: 0 },
+  })
+  if (!result.success) throw new Error("seed 0 no longer carves the authored drop")
+  return result.grid
+}
+
+/** Standing at the landing (2,6): the connector at (3,6) is lit and the source beyond it is not,
+ * and the room itself wears a barred arrow pointing back down the way it fell. */
+export const OneWayDropLanding: Story = {
+  args: {
+    grid: completeCell(oneWayDropGrid(), 2, 6),
+    explorerPos: [2, 6],
   },
 }
 

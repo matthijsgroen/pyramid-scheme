@@ -357,6 +357,46 @@ describe("SiteMapView — room clickability", () => {
   })
 })
 
+describe("SiteMapView — one-way drop, the barred arrow", () => {
+  // source(0,0) --e--> connector(0,1), dirs {e} only --e--> landing(0,2), dirs {} — the shape a
+  // carved drop leaves: the landing names no direction back into the connector, so from its side
+  // this is the one room a barred arrow has anything to say about.
+  const dropGrid = (landingState: CellState): FloorGrid =>
+    makeGrid([
+      [
+        { type: "room", roomType: "encounter", family: "sumplete", dirs: new Set<Direction>(["e"]), state: "fogged" },
+        { type: "corridor", dirs: new Set<Direction>(["e"]), state: "visible" },
+        { type: "room", roomType: "encounter", family: "sumplete", dirs: new Set<Direction>(), state: landingState },
+      ],
+    ])
+
+  const findCell = (container: HTMLElement, r: number, c: number) => {
+    const { cx, cy } = cellCenter(r, c)
+    return Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
+      el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
+    )
+  }
+
+  it("draws a barred arrow at the landing, the mouth beside it seen and not the way itself", () => {
+    const { container } = render(<SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} />)
+    expect(container.querySelectorAll("[data-one-way-arrow]").length).toBeGreaterThan(0)
+  })
+
+  it("draws no barred arrow where no one-way mouth stands beside the room (control)", () => {
+    const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), empty]])} onCellClick={() => {}} />)
+    expect(container.querySelectorAll("[data-one-way-arrow]")).toHaveLength(0)
+  })
+
+  it("is not its own click target — the tap it sits on still lands on the landing, not the mouth", () => {
+    const onClick = vi.fn()
+    const { container } = render(<SiteMapView grid={dropGrid("reachable")} onCellClick={onClick} />)
+    const arrow = container.querySelector("[data-one-way-arrow]")!
+    fireEvent.click(arrow)
+    expect(onClick).toHaveBeenCalledWith(0, 2)
+    expect(findCell(container, 0, 1)?.style.cursor).not.toBe("pointer")
+  })
+})
+
 // Walls are cells, not edges (see tileRegions.ts), so "is there a wall here" is a question about
 // which region a CELL landed in — asserted on the region data rather than sniffed out of rendered SVG.
 const regionsOf = (grid: FloorGrid) => tileRegionsFor(grid, buildRoomClaims(grid))
