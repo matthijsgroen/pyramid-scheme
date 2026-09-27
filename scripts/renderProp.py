@@ -1606,11 +1606,12 @@ def prim_spikes():
       ALONG the corridor rather than across it — see the arrangement below, which is where that trade
       was paid for. `prim_gate`'s `-side` made the same one and its docstring is the argument: not a
       truthful projection, the one drawing that still says what the object is.
-    - `north` and `south` run the rank in X, where a row is a row, and put the lean in Y, where it is
-      worth least: a blade tipped away from the viewer draws TALLER and shows its back, one tipped
-      toward him draws SHORTER and hangs over its own slot. That is the whole of the difference between
-      the two, and it is the reason they are two renders and not one flipped — a vertical flip would
-      also turn every up-facing top face downward, which this projection never draws.
+    - `north` and `south` run the rank in X, where a row is a row, and lay the lean over in Y past the
+      angle at which a lean becomes a POSITION — see the 55-degree note on `lean`. North's points draw
+      at the top of the tile and south's at the bottom, which is a difference a player can read; at a
+      gentler angle both draw at the top and the two headings say nothing. They are two renders and not
+      one flipped: a vertical flip would turn every up-facing top face downward, which this projection
+      never draws.
 
     THE SLOT RUNS IN X ON ALL THREE, which is not what a plan would draw and is what the projection
     can. It is `deep` rather than VOID — the blades came out of it, so it is a slot with something in
@@ -1619,24 +1620,69 @@ def prim_spikes():
     THE BLADES ARE METAL AND THE ANCHORS ARE STONE. One flat colour would hand the repaint a comb of
     identical prongs to guess at; `metal` puts the blades in dull bronze and the two anchor stones at
     the rank's ends in the rank's own limestone, which is also what stops the row reaching the frame's
-    edges — `prim_stair`'s parapets, for the same reason."""
+    edges — `prim_stair`'s parapets, for the same reason.
+
+    `--contents=<heading>Tip` BUILDS EACH BLADE IN TWO PIECES — a stone shaft and a bronze point — and
+    it is aimed at the one thing the matte single-material rank cannot say. A cone 20 units tall reads
+    as a cone from either end, so nothing in it says which end is the business end; two materials put
+    four bright marks on the points alone, and WHERE THOSE MARKS SIT — bunched against the top edge of
+    the tile or against the bottom — is a position, which this projection draws reliably at any lean.
+    The lean itself is not: a blade tipped 28 degrees at the viewer and one tipped away have very
+    nearly the same silhouette under `z + k*y`, which is why a steeper angle bought nothing.
+
+    Pair it with `--gloss=accent` for the other half of the experiment. A specular hit encodes SURFACE
+    ORIENTATION rather than outline, so where it lands on a point and how it stretches differs between
+    a blade leaning at the viewer and one leaning away — the information the matte version is missing
+    by construction. It is a deliberate exception to the set's matte rule and the flag is not on by
+    default; see `gloss_parts`."""
     facing = arg("contents", "east")
+    # The two-piece blade is a suffix on the heading rather than a heading of its own: the rank, the
+    # slot, the anchors and the lean are all the same drawing, and only what a blade is MADE of changes.
+    tipped = facing.endswith("Tip")
+    if tipped:
+        facing = facing[: -len("Tip")]
     h, r_base = 0.46, 0.075
-    # LEANING TOWARD THE VIEWER COSTS THE LIGHT, and that is why south is the one heading with its own
-    # angle. The rig is a steep sun (`add_light`), so a blade tipped away keeps a broad lit face and a
-    # blade tipped at the viewer turns that face downward: at the 45 the other two use, south rendered
-    # as four near-black diamonds, which at 56 units is a row of holes rather than a row of blades.
-    # 28 keeps enough of the light on them to still read as metal standing up out of the floor.
-    lean = {"south": 28.0}.get(facing, 45.0)
+    # 55 DEGREES IS WHERE A LEAN IN Y STOPS BEING A LEAN AND BECOMES A POSITION, and it is the number
+    # this whole primitive turns on. A blade of length L tipped by θ puts its point `L*(cos θ - k*sin θ)`
+    # above its own root, so at tan θ = 1/k — 55 degrees at k = 0.7 — the point draws level with the
+    # root, and past it the point draws BELOW. Under 55 every heading's points sit at the top of the
+    # tile whichever way the blade leans, which is exactly why 28 and 45 said nothing about direction.
+    # At 65 the two headings put their points at opposite ends of the tile, which is a position, and a
+    # position is the one thing this projection renders reliably.
+    #
+    # The steep lean also gives back the light it was supposed to cost: past 55 a blade tipped at the
+    # viewer has turned far enough that its broad faces come back UP toward the lamp, so south stops
+    # rendering as a row of near-black diamonds the way it did at 45.
+    #
+    # East keeps 45: its lean is in X, drawn honestly, and there is nothing to buy by laying it down.
+    lean = 65.0 if facing in ("north", "south") else 45.0
 
     def blade(x, y, angle, axis, scale=1.0):
         # A cone of four sides is a tapered blade, and turning it on its own centre before placing it is
         # `turn`'s pattern: `cone` leaves the mesh centred, so the rotation is about the blade and not
         # about the prop. Standing it back up after the tip goes over costs a cosine, less a little so
         # the root stays down in the slot rather than balancing on the floor beside it.
-        stand = (h * scale / 2) * math.cos(math.radians(angle)) - 0.035
-        b = cone(r_base * scale, 0.004, h * scale, verts=4)
-        return mark(turn(b, angle, axis, x=x, y=y, z=stand), "metal")
+        hh, rr = h * scale, r_base * scale
+        stand = (hh / 2) * math.cos(math.radians(angle)) - 0.035
+        if not tipped:
+            return mark(turn(cone(rr, 0.004, hh, verts=4), angle, axis, x=x, y=y, z=stand), "metal")
+        # TWO PIECES ON ONE AXIS, placed by walking along the blade rather than by stacking in z: both
+        # halves take the same turn, so the socket has to sit where the shaft's own direction puts it
+        # and not where a vertical offset would. `turn` rotates about a part's centre, so each piece is
+        # measured from the blade's centre at t = 0 — the shaft from -0.5 to +0.1 of the length, the
+        # point from +0.08 to +0.5, overlapping by a hair because a hairline is a gap.
+        a = math.radians(angle)
+        u = (math.sin(a), 0.0, math.cos(a)) if axis == "Y" else (0.0, -math.sin(a), math.cos(a))
+        r_mid = rr * 0.44
+
+        def along(t, piece, r0, r1, length):
+            return mark(
+                turn(cone(r0, r1, length, verts=4), angle, axis, x=x + u[0] * t, y=y + u[1] * t, z=stand + u[2] * t),
+                piece,
+            )
+
+        along(-hh * 0.20, "body", rr, r_mid, hh * 0.60)
+        return along(hh * 0.29, "accent", r_mid, 0.004, hh * 0.42)
 
     # ONE ARRANGEMENT FOR ALL THREE, and only the lean's axis changes. The rank was first built the way
     # the fiction wants it — spanning the passage, so in Y for a passage walked across — and that render
@@ -1645,10 +1691,9 @@ def prim_spikes():
     # in X, which is the only axis drawn honestly, the same four read as four. What that costs is the
     # plan: east's blades stand along the corridor rather than across it, a BED of spikes rather than a
     # rank in a doorway. The bed is the reading that survives at 56 units.
-    # THE SLOT IS SET OFF-CENTRE ON THE TWO VERTICAL HEADINGS, and it is doing more work than the lean
-    # is. North puts it in front of the rank, so the blades stand clear above it; south puts it behind,
-    # so they hang down across it and break its line. That is a difference in the LAYOUT of the tile,
-    # which survives 56 units, where the lean itself is 0.13 of a unit in depth and very nearly does not.
+    # THE SLOT IS SET OFF-CENTRE ON THE TWO VERTICAL HEADINGS, so the roots have somewhere to be that
+    # is not where the points are: north puts it in front of the rank and south behind it, which reads
+    # as the blades having been driven in from the side they refuse.
     slot_y = {"north": -0.12, "south": 0.12}.get(facing, 0.0)
     mark(box(0.84, 0.11, 0.035, y=slot_y, z=0.018), "deep")
     for i, (x, sc) in enumerate(((-0.30, 0.96), (-0.10, 1.0), (0.10, 0.92), (0.30, 0.98))):
@@ -2998,6 +3043,29 @@ def unlit_parts():
     return {p.strip() for p in (arg("unlit") or "").split(",") if p.strip()}
 
 
+def gloss_parts():
+    """The parts `--gloss=a,b` names, which are rendered with a specular hit on them.
+
+    What it was reached for is the one thing a matte surface cannot encode: which way a face is
+    POINTING. A silhouette under `z + k*y` is nearly the same for a cone leaning at the viewer and one
+    leaning away, so a highlight — a function of the normal rather than of the outline — is in
+    principle the cue that tells them apart.
+
+    IT DOES NOT SURVIVE THIS RIG ON A SMALL PART, and that is measured rather than argued. Between a
+    matte bronze spear point and the same point glossed, the tile differs by 0.16% of full range on
+    north and 0.31% on south (RMSE over the composited 112x168 cell). Four settings were tried: this
+    one, a lower roughness with a 6-degree sun, fully metallic, and half-metallic. The two metallic
+    ones are WORSE — EEVEE has no environment here but a flat grey world, so a metal reflects grey and
+    the bronze stops being bronze, which costs the colour cue that was doing the actual work. Applied
+    to a large part the flag plainly works (`--gloss=body,accent` on the same prop moves the render by
+    1.5%, and the slot reads visibly brighter); a spear point at 56 units is six pixels and there is no
+    room in it for a highlight to be anywhere in particular.
+
+    So a shiny tile is a thing to ASK THE PAINTER for, in the entry's prompt, and not a thing a
+    scaffold can hand over. What a scaffold gives is geometry and value separation."""
+    return {p.strip() for p in (arg("gloss") or "").split(",") if p.strip()}
+
+
 def part_of(slot_name):
     """The PART a slot names, with Blender's uniquifying suffix and the nocast marker both stripped."""
     return slot_name.split(".")[0].removesuffix(NOCAST_SUFFIX)
@@ -3080,7 +3148,7 @@ def mark(obj, name):
     return obj
 
 
-def flat_material(name, hex_colour, alpha=1.0, unlit=False):
+def flat_material(name, hex_colour, alpha=1.0, unlit=False, gloss=False):
     """A flat matte material in one colour. Roughness 1 and zero specular: the set is painted and matte,
     with no highlight anywhere (tile-art-brief.md, "The style").
 
@@ -3109,6 +3177,16 @@ def flat_material(name, hex_colour, alpha=1.0, unlit=False):
     for slot in ("Specular IOR Level", "Specular"):
         if slot in bsdf.inputs:
             bsdf.inputs[slot].default_value = 0.0
+    if gloss:
+        # A HIT, not a mirror. The rig's sun is 45 degrees across, so the lobe is broad however low the
+        # roughness goes and there is nothing in the world for a metal to reflect but flat grey — turned
+        # fully metallic the part renders darker than its own hex, which is the exit shaft's lesson one
+        # shader over. Dielectric, rough enough to keep the hit soft, specular up: what lands is a pale
+        # smear on whichever faces are turned toward the lamp, which is the whole point of the flag.
+        bsdf.inputs["Roughness"].default_value = 0.22
+        for slot in ("Specular IOR Level", "Specular"):
+            if slot in bsdf.inputs:
+                bsdf.inputs[slot].default_value = 1.0
     if unlit:
         # Emission on the same BSDF rather than a separate shader, so the alpha branch below still
         # applies to it — an emissive part that cannot be made transparent is no use to a beam.
@@ -3168,6 +3246,7 @@ def paint(obj, hex_colour):
             arg(f"colour-{part}", default),
             float(arg(f"alpha-{part}", "1")),
             part in unlit_parts(),
+            part in gloss_parts(),
         )
 
 
