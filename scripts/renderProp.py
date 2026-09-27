@@ -1525,14 +1525,30 @@ def _launch_crossing(w, d, heading):
         # what `drop` and `dropSouth` have always had — east by standing its block beside the mouth,
         # south by standing it beyond and above.
         #
-        # ITS FLIGHT IS THE ONE THAT CLIMBS FRONTALLY, and it is the heading that can afford to: the
-        # player climbs here and then travels AWAY from the viewer, so the risers face the camera and
-        # the stair is read head-on. It is also what gives north a silhouette `drop` does not have —
-        # without it the two tiles stand their launch at the same corner and run their line the same way,
-        # and only the height of the two ends tells them apart.
-        py0, py1 = -d / 2 - 0.23, -d / 2 + 0.03
-        block(-w / 2 - 0.33, -w / 2, py0, py1, (py1 - py0) * 0.80, frontal=True)
-        head, foot = (-w / 2 - 0.165, (py0 + py1) / 2), (0.34, d / 2 + 0.07)
+        # SO IT STANDS IN FRONT OF THE LIP INSTEAD, and that is the axis the block moved to once the
+        # sideways one had been spent: out past `-w/2` it cleared the lip line and left pale floor
+        # beside the black, which is rule 2. Forward, it satisfies both — the lip runs unbroken because
+        # the block draws below the band, and the mouth stays the widest thing in the sprite because
+        # the block is inside its width.
+        #
+        # HOW FAR FORWARD IS ARITHMETIC, not taste. A part of height h with its back face at y draws its
+        # top at h + k*y, so it clears the band's lower edge at -k*d/2 when it stands `(h + margin) / k`
+        # in front of the near lip. At a 0.24 block and a 0.05 margin that is 0.41 — a third of the
+        # mouth's own depth, which is why no small nudge was ever going to do it.
+        #
+        # IT COSTS NOTHING IN HEIGHT, which is the part that looked impossible and was not. All that
+        # depth is drawn BELOW the mouth, and the tall post standing on it is at the near lip, where the
+        # shear draws a thing LOW — so the top of the sprite is still the short post at the far lip and
+        # the tile lands comfortably inside the cap.
+        #
+        # ITS FLIGHT CLIMBS FRONTALLY, away from the viewer: the player climbs here and then travels
+        # into the picture, so the risers face the camera. It is also what gives north a silhouette
+        # `drop` does not have — a stack of treads read head-on against east's stepped wedge.
+        clear = (plinth_h + 0.05) / 0.7
+        py1 = -d / 2 - clear
+        py0 = py1 - 0.26
+        block(-0.20, 0.20, py0, py1, (py1 - py0) * 0.80, frontal=True)
+        head, foot = (0.0, (py0 + py1) / 2), (0.34, d / 2 + 0.07)
     elif heading == "dropSouth":  # travel toward the viewer: the block stands at the FAR lip
         # ITS FLIGHT AND ITS BLOCK BOTH STAND INSIDE THE MOUTH'S OWN WIDTH. They used to start at
         # x=-0.32 and step LEFT, which put both treads past `-w/2` and hung pale floor off the tile's
@@ -1666,14 +1682,15 @@ def prim_pit():
     # is scaled to its own widest element, so "spans" means the MOUTH has to BE that element — which it
     # was not at 0.94 against spoil reaching 0.58 either side.
     #
-    # Widening alone does not do it, because a sprite is capped at 84 rows and the aspect is
-    # `(z_extent + k*y_extent) / x_extent`: push x out and the tile lands wider, but push it out too far
-    # and nothing else fits under the cap. Taking 0.20 out of the DEPTH pays for the width twice over —
-    # it comes off the shaft's own drawn height (k*d) and off the y extent at 0.7 apiece — and a crack
-    # that is wide and shallow is the shape a passage-spanning fissure ought to be anyway.
+    # ONLY THE WIDTH CHANGES, and the depth that went with it has been given back. The mouth was also
+    # shallowed to 0.60 to get under the 84-row cap — against a cap nothing was ever near: the number
+    # that said otherwise was this file's own `lands at` line, adding the whole height to the whole
+    # depth as though the tallest part were also the furthest back (see the print at the foot of
+    # `main`). Measured off the sheared mesh these tiles draw at aspect 0.6 to 1.1 against a limit of
+    # 1.5, so the depth costs nothing and buys a taller black band, which is more hole.
     spoil_x = 1.0
     if contents in ("dropNorth", "dropSouth"):
-        w, d, spoil_x = 1.04, 0.60, 0.85
+        w, spoil_x = 1.04, 0.85
     hv = k * d
     # The shaft: the far wall alone, exactly filling the drawn opening, and the only VOID part of any
     # primitive — everything else here is stone in the rank's own colour.
@@ -4085,6 +4102,11 @@ def main():
         if shadow:
             shadow.data.transform(Matrix(((1, 0, 0, 0), (0, 1, 0, 0), (0, k, 1, 0), (0, 0, 0, 1))))
         shear(obj, k, 0)
+    # THE DRAWN SHAPE, READ OFF THE SHEARED MESH, and it is the only honest source for what the tile will
+    # be. `shear` transforms the mesh data, so after it every vertex's z IS its drawn height — the box
+    # round those vertices is the picture. See the print at the foot of this function for the number
+    # this replaces and for what that number cost.
+    drawn_box = local_bounds(obj)
     # After the shear the drawn height is the object's height plus k times its depth: that is the whole
     # projection in one line, and it is why a deep object comes out taller on the page than a shallow one.
     # --margin is air around the object, and it matters on the WALL slot in a way it does not elsewhere:
@@ -4221,12 +4243,32 @@ def main():
     # the object and scales it into a 56x84 slot, so drawn height is 56 * (height / width) capped at 84 —
     # which is how a 20cm shabti arrived 84 units tall, as tall as the explorer, and nobody noticed until
     # after it had been painted. --scale divides both.
-    drawn_h = 1.0 + k * d_units
-    aspect = drawn_h / w_units if w_units else 0
+    # MEASURED OFF THE SHEARED MESH, NOT ADDED UP FROM THE EXTENTS, and the difference is not small.
+    #
+    # This line used to read `drawn_h = 1.0 + k * d_units` — the object's whole height plus k times its
+    # whole depth — which is the drawn height only if the TALLEST part is also the FURTHEST BACK. For a
+    # pit with a post standing in front of it that is false and the error is enormous: it printed 55x84
+    # for a `dropSouth` that really lands 56x61, and 53x84 for a `leverLeft` that lands 56x76. Sprites
+    # were widened, mouths were re-proportioned and two rounds of design were argued to get under a cap
+    # nothing was ever near.
+    #
+    # The check that settles it, for anyone who doubts this one too: render the ladder `pit`, trim the
+    # render, and divide. It measures 426x282, aspect 0.66, predicting 56x37 — and the tile that was
+    # actually imported from it, `src/assets/tiles/expert/pit.png`, has an opaque box of 112x72, which
+    # is 56x36. The landed tile matches the sheared render's own bounding box and matched the old
+    # formula not at all.
+    #
+    # `import-tile` seats a prop by building a frame at the slot's 2:3 aspect that CONTAINS the trimmed
+    # object (`seatOnFloorLine`), so an object drawn taller than 1.5 is height-limited and lands
+    # narrower than a cell, and one drawn shorter fills the width and leaves the rest of the band empty.
+    # That is what these two numbers are predicting.
+    (dx0, dx1), _, (dz0, dz1) = drawn_box
+    drawn_w, drawn_h = dx1 - dx0, dz1 - dz0
+    aspect = drawn_h / drawn_w if drawn_w else 0
     cell_h = min(84, round(56 * aspect))
     cell_w = round(cell_h / aspect) if aspect else 0
     print(f"{out} — {width}x{height}, {engine}, shear {k}, spin {spin}deg, colour {colour}")
-    print(f"  object {w_units:.2f} wide {d_units:.2f} deep, aspect {aspect:.2f}")
+    print(f"  object {w_units:.2f} wide {d_units:.2f} deep; DRAWN {drawn_w:.2f} x {drawn_h:.2f}, aspect {aspect:.2f}")
     print(f"  lands at {cell_w}x{cell_h} map units at --scale=1   (a cell is 56, the explorer is 40x70)")
 
 

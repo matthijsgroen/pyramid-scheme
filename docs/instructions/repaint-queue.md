@@ -2582,16 +2582,20 @@ so the hole shows depth rather than reading as a flat black rectangle, the spoil
 Queued at expert only: the develop journey's drop stands on an expert floor, which is the one rank a
 drop can actually be seen on today. The other four ranks stay unqueued until this one has landed.
 
-**The two vertical headings take a WIDER, SHALLOWER mouth — `w` 1.04 against 0.94, `d` 0.60 against
-0.80 — and it is the full-span rule that buys it.** A drop walked up and down the page must have its
+**The two vertical headings take a WIDER mouth — `w` 1.04 against 0.94 — and it is the full-span rule
+that buys it.** A drop walked up and down the page must have its
 gap span the passage in x, edge to edge of the sprite, or the paving left beside the black reads as a
 ledge to step round; the sprite is scaled to its own widest element, so the mouth has to BE that
-element, which it was not while the spoil reached further out than the crack did. Widening alone will
-not do it, because a sprite is capped at 84 rows and the aspect is `(z_extent + k*y_extent) / x_extent`:
-taking 0.20 out of the DEPTH pays for the width twice over, once off the shaft's own drawn height and
-once off the y extent. Measured on the composited tile, `dropSouth`'s black went from 72% of the cell's
-width to 90%. `dropEast` keeps the original mouth: its gap spans in y, where the shear already gives it
-the whole cell, and it is painted.
+element, which it was not while the spoil reached further out than the crack did, so the spoil is pulled
+in to 0.85 of its spread as well. Measured on the composited tile, `dropSouth`'s black went from 72% of
+the cell's width to 87%, and `dropNorth`'s to the same. `dropEast` keeps the original mouth: its gap
+spans in y, where the shear already gives it the whole cell, and it is painted.
+
+The depth stays at 0.80. It was shallowed to 0.60 for a while to get a sprite under the 84-row cap, and
+nothing was ever near that cap: the number saying otherwise was `renderProp.py`'s own `lands at` line,
+which added the whole height to the whole depth as though the tallest part were also the furthest back.
+Measured off the sheared mesh these tiles draw at aspect 0.6 to 1.3 against a limit of 1.5. The line has
+been fixed and carries the story in a comment.
 
 **`dropNorth`'s flight is climbed FRONTALLY**, away from the viewer, where `dropEast`'s is crossed from
 the side. That is the honest orientation for a heading whose player climbs and then travels into the
@@ -2600,14 +2604,19 @@ recedes gains its own rise AND 0.7 of its going, twice over), and it is what giv
 east does not have — a stack of treads read head-on against east's stepped wedge. Without it the two
 tiles launch from the same corner and run their line the same way.
 
-**`dropNorth` stands its launch BESIDE the mouth, not across it, and it cost a roll to learn.** Anything
-raised at the near lip draws between the viewer and the opening — a block of height h with its back face
-on the lip draws its top at `h - k*d/2`, inside the mouth's own band for every h above zero, so no height
-clears it and the only free axis is x. What it was covering is the NEAR LIP LINE, the band's lower edge,
-which is the one line saying the dark shape is a hole in a floor rather than a recess in a wall; with it
-hidden the first roll came back as a slab of wall with an alcove cut in it — the exact failure the
-retired `pit` was killed for. Moved out past the mouth's own left edge the lip runs unbroken underneath,
-which is what `dropEast` and `dropSouth` have always had. Its prompt now names that rim outright.
+**`dropNorth` stands its launch IN FRONT of the mouth, and getting there cost a roll and two wrong
+turns.** Anything raised at the near lip draws between the viewer and the opening — a block of height h
+with its back face on the lip draws its top at `h - k*d/2`, inside the mouth's own band for every h
+above zero. What that covers is the NEAR LIP LINE, the band's lower edge, which is the one line saying
+the dark shape is a hole in a floor rather than a recess in a wall; with it hidden the first roll came
+back as a slab of wall with an alcove cut in it — the exact failure the retired `pit` was killed for.
+
+Moving the launch sideways cleared the lip and broke the other rule instead, leaving pale floor beside
+the black. Forward is the axis that satisfies both, and how far forward is arithmetic: a part of height
+h clears the band's lower edge when it stands `(h + margin) / k` in front of the near lip, which at a
+0.24 block is 0.41 — a third of the mouth's own depth, and why no small nudge was ever going to do it.
+It costs nothing in height, because all that depth draws BELOW the mouth and the tall post standing on
+it is at the near lip, where the shear draws a thing low. Its prompt names the rim outright.
 
 **Three renders, not four.** The two horizontal headings are one asset, `dropEast`, mirrored left-right
 for `dropWest` when the renderer picks it — that wiring is not part of this queue. The two vertical
@@ -2698,9 +2707,9 @@ that a person could stand on. Just under its far rim two courses of rough CUT ST
 own lining, taking what little light reaches down; below those courses the shaft goes black and stays
 black, and nothing is drawn down there at all. THE OPENING'S LOWER RIM — its edge nearest the viewer —
 runs unbroken from one side of the crack to the other: nothing stands in front of it, nothing covers it,
-and it is the line that says this is a hole in a floor and not a recess in a wall. To the LEFT of the
-opening, clear of the crack's own width, a short flight of two STEPS climbs onto a low stone BLOCK, and
-a tall timber POST stands on that block. At the FAR edge of the
+and it is the line that says this is a hole in a floor and not a recess in a wall. IN FRONT of the
+opening, on the paving between the crack and the viewer, a short flight of two STEPS climbs onto a low
+stone BLOCK, and a tall timber POST stands on that block. At the FAR edge of the
 opening, furthest from the viewer, a second timber POST stands on bare paving, barely knee high. A taut
 ROPE runs from the head of the tall post, across the opening, to the head of the short one. The loose
 blocks scattered at the opening's edge are broken basalt, shaken free where the floor gave way. There is
