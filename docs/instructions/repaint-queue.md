@@ -2701,13 +2701,23 @@ THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no 
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
 
-**THE CAMERA IS 30° ABOVE THE FLOOR, AND EVERY TILE IN THIS GAME AGREES ON IT.** This lies on the
-paving, so you are looking down its length at that angle, not straight down from overhead. What follows
-is arithmetic, not mood: anything facing UP is squashed to HALF its depth but keeps its full width, so a
-rosette lying on the stone reads as a wide, shallow ELLIPSE — about twice as wide as it is deep — never
-as a circle. Leaves reaching toward the viewer and away from the viewer are the ones that shorten; leaves
-reaching left and right keep their length. Verticals stay vertical: an orthographic squash, never a
-vanishing point.
+**LOOK STRAIGHT DOWN ON IT FROM ABOVE — NEARLY OVERHEAD.** This is lying on a stone floor and the
+player is looking down at that floor. It is not furniture and it is not a plant in a garden border: you
+are above it, not beside it.
+
+- **It reads as a ROSETTE or a SPRAY SEEN FROM THE TOP.** Its leaves and blades go outward in a circle
+  from the centre, in every direction, and you see the UPPER surface of all of them.
+- **Nothing stands UP out of the picture.** There is no height to speak of: anything reaching upward is
+  pointing at the viewer and so is foreshortened almost to a stub, hidden behind what is around it. Do
+  not draw a clump standing on the ground; draw the same clump photographed from directly above.
+- **Leaves reaching toward the viewer and away from the viewer are SHORTER** than those reaching left and
+  right, and the near ones overlap and hide the centre.
+- **An upright clump seen from the side is the failure.** A tussock fanning upward from a narrow base,
+  with sky above it and a foot below it, is a side view — it is what this tile keeps coming back as, and
+  it reads as a cut-out propped on the paving instead of something growing out of it.
+
+Squash the whole thing: the spread is WIDER THAN IT IS DEEP, about two to one, because the floor it lies
+on is drawn squashed that way.
 
 **THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
 tops of the petals and leaves take the light; what lies under them, what is deeper in the clump, and the
@@ -2792,13 +2802,23 @@ THIS IS CONTACT, NOT A CAST SHADOW. It does not fall to one side, it carries no 
 not reach away across the floor — a thing resting on the ground is dark where it meets the ground,
 whichever way the light comes from — so it is true of this tile wherever the map happens to put it.
 
-**THE CAMERA IS 30° ABOVE THE FLOOR, AND EVERY TILE IN THIS GAME AGREES ON IT.** This lies on the
-paving, so you are looking down its length at that angle, not straight down from overhead. What follows
-is arithmetic, not mood: anything facing UP is squashed to HALF its depth but keeps its full width, so a
-rosette lying on the stone reads as a wide, shallow ELLIPSE — about twice as wide as it is deep — never
-as a circle. Leaves reaching toward the viewer and away from the viewer are the ones that shorten; leaves
-reaching left and right keep their length. Verticals stay vertical: an orthographic squash, never a
-vanishing point.
+**LOOK STRAIGHT DOWN ON IT FROM ABOVE — NEARLY OVERHEAD.** This is lying on a stone floor and the
+player is looking down at that floor. It is not furniture and it is not a plant in a garden border: you
+are above it, not beside it.
+
+- **It reads as a ROSETTE or a SPRAY SEEN FROM THE TOP.** Its leaves and blades go outward in a circle
+  from the centre, in every direction, and you see the UPPER surface of all of them.
+- **Nothing stands UP out of the picture.** There is no height to speak of: anything reaching upward is
+  pointing at the viewer and so is foreshortened almost to a stub, hidden behind what is around it. Do
+  not draw a clump standing on the ground; draw the same clump photographed from directly above.
+- **Leaves reaching toward the viewer and away from the viewer are SHORTER** than those reaching left and
+  right, and the near ones overlap and hide the centre.
+- **An upright clump seen from the side is the failure.** A tussock fanning upward from a narrow base,
+  with sky above it and a foot below it, is a side view — it is what this tile keeps coming back as, and
+  it reads as a cut-out propped on the paving instead of something growing out of it.
+
+Squash the whole thing: the spread is WIDER THAN IT IS DEEP, about two to one, because the floor it lies
+on is drawn squashed that way.
 
 **THE LIGHT COMES FROM THE FRONT AND SLIGHTLY ABOVE** — from where the viewer is, tilted down. The
 tops of the petals and leaves take the light; what lies under them, what is deeper in the clump, and the
