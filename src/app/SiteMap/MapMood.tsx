@@ -125,6 +125,9 @@ type Props = {
   canopy?: boolean
   /** Where the player is, so a canopy plant standing in front of them can get out of the way. */
   explorerPos?: readonly [number, number]
+  /** The cells a TREE may stand on — the claimed ones nobody can walk into. A shrub needs no such list:
+   * stepping over one is fine, and stepping over a trunk is not. */
+  treeCells?: ReadonlySet<string>
 }
 
 /**
@@ -150,6 +153,7 @@ export const MapGrowth = ({
   isLit,
   canopy = false,
   explorerPos,
+  treeCells,
 }: Props & { tier: Difficulty }) => {
   const g = mood.growth
   if (!g?.floor && !g?.wall && !g?.chamber) return null
@@ -277,6 +281,8 @@ export const MapGrowth = ({
         const pick = memberAt(plant.length, siteId, "growth-plant-kind", i)
         const scale = CHAMBER_SCALE[GROWTH_POOLS.chamber[pick] ?? ""] ?? 1
         if (scale >= CANOPY_SCALE !== canopy) return null
+        // A tree only where one can stand; a shrub anywhere the room reaches.
+        if (canopy && treeCells && !treeCells.has(`${row},${col}`)) return null
         const size = (30 + rand(siteId, "growth-plant-size", i) * 16) * scale
         // BEHIND IT MEANS ITS OWN CELL OR THE ONE BEYOND. A plant is bottom-anchored on its cell and
         // reaches up over the cell north of it, so those are the two places a player disappears.

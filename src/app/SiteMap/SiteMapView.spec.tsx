@@ -314,10 +314,10 @@ describe("the pool a slot of growth is drawn from", () => {
     }
   })
 
-  it("never stands a plant where the player walks", () => {
-    // A chamber plant goes on CLAIMED cells only, and a claimed cell is `type: "empty"` in the grid, so
-    // it is scenery the room owns rather than a square anybody steps on. The room's own cell — the one
-    // that IS walked — never grows one.
+  it("never stands a TREE where the player walks, though a shrub may", () => {
+    // You can step over a bush and not over a trunk. A fifth of a real floor's claimed cells are
+    // walkable, and a shrub on one of those is a room grown through; a palm on one is a tree in the
+    // corridor.
     const room = {
       ...makeGrid([
         [empty, corridor("completed", false), empty],
@@ -329,8 +329,8 @@ describe("the pool a slot of growth is drawn from", () => {
     const { container } = render(<SiteMapView grid={room} onCellClick={() => {}} revealAllCells />)
     const walkable = new Set<string>()
     room.cells.forEach((row, r) => row.forEach((cell, c) => cell.type !== "empty" && walkable.add(`${r},${c}`)))
-    // Every plant's own cell, read back off where it was drawn.
-    for (const box of spriteMatching(container, "overgrown-plant").map(boxOf)) {
+    // Every palm's own cell, read back off where it was drawn.
+    for (const box of spriteMatching(container, "overgrown-palm").map(boxOf)) {
       const row = Math.round((box.y + box.h - CELL / 2) / CELL)
       const col = Math.round(box.x / CELL)
       expect(walkable.has(`${row},${col}`)).toBe(false)

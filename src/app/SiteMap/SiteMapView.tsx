@@ -1110,14 +1110,28 @@ export const SiteMapView = ({
   // is a render-time fact — so this cannot be read off `grid.cells`, which is the trap `floorScatter`
   // documents: walking the grid finds no chamber floor at all.
   const chamberFloorCells = useMemo(
+    () => [...claims.claimedBy.keys()].map(key => key.split(",").map(Number) as [number, number]),
+    [claims]
+  )
+  /**
+   * Where a TREE may stand, which is not everywhere a plant may.
+   *
+   * YOU CAN STEP OVER A BUSH AND NOT OVER A TRUNK. A claim is the footprint a room draws over and most
+   * of it is void nobody can enter — but not all of it: on a real expert floor 22 of its 101 claimed
+   * cells are walkable. A fern or a shrub there is fine and reads as a room grown through. A palm there
+   * is a tree in the corridor, and the explorer walks through it.
+   *
+   * The canopy pass takes the same cell list as the under pass, so the two agree on which member each
+   * cell grew; this only says whether the tall one may be drawn at all.
+   */
+  const treeCells = useMemo(
     () =>
-      [...claims.claimedBy.keys()]
-        .map(key => key.split(",").map(Number) as [number, number])
-        // A PLANT IS A THING IN THE ROOM, NOT A THING IN THE WAY. A claim is the footprint a room draws
-        // over, and most of it is void the player can never enter — but not all: on a real expert floor
-        // 22 of 101 claimed cells are walkable grid cells, so a fifth of the plants stood in the path
-        // and the explorer walked through a palm. Scenery goes where nobody can stand.
-        .filter(([row, col]) => cellAt(grid, row, col).type === "empty"),
+      new Set(
+        [...claims.claimedBy.keys()].filter(key => {
+          const [row, col] = key.split(",").map(Number)
+          return cellAt(grid, row, col).type === "empty"
+        })
+      ),
     [claims, grid]
   )
   // What light this floor has of its own: a roof that let the plants in let the sun in first, so the
@@ -1472,6 +1486,7 @@ export const SiteMapView = ({
                 floorCells={floorCells}
                 chamberCells={chamberFloorCells}
                 canopy
+                treeCells={treeCells}
                 explorerPos={explorerPos}
                 isLit={(r, c) => {
                   const owner = claims.claimedBy.get(`${r},${c}`)
