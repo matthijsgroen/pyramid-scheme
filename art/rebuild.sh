@@ -1497,7 +1497,7 @@ yarn import-tile art/masters/props/expert/sarcophagus.webp --tier=expert --name=
 # Flat tiles: no mesh, no mask, the magenta keyed (docs/instructions/repaint-queue.md, "Overgrown").
 # Saturation and brightness measured against `overgrown-plant`, which is the one these stand beside:
 # it lands at p50 110 / +4 warmth, and these are solved to sit with it rather than to look good alone.
-yarn import-tile art/masters/surfaces/overgrown-palm.webp --tier=default --name=overgrown-palm --slot=growth \
+yarn import-tile art/masters/surfaces/overgrown-palm.webp --tier=default --name=overgrown-palm --slot=canopy \
   --filter=smooth --saturation=1.0 --brightness=1.0
 yarn import-tile art/masters/surfaces/overgrown-flowers.webp --tier=default --name=overgrown-flowers --slot=growth \
   --filter=smooth --saturation=1.0 --brightness=1.0

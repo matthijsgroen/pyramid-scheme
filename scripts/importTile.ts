@@ -135,6 +135,13 @@ const SLOTS = {
   // stretches it with `preserveAspectRatio="none"` from the band's top edge to past its bottom. A root
   // that stops inside the band reads as a stain painted on the wall.
   growthWall: { w: px(22), h: px(34), seat: false },
+  // A CANOPY PLANT — the members of the chamber pool that are trees rather than shrubs.
+  //
+  // STORED AT THE SIZE IT IS DRAWN, which `growth` is not. A tuft and a palm shared the 22-unit slot
+  // until the palm was scaled to read as a tree (`CHAMBER_SCALE`): drawn at up to 110 units off a 44px
+  // file, it was upscaled five times and came out visibly softer than every prop beside it. The other
+  // members keep `growth` — nothing about a fern wants four times the bytes.
+  canopy: { w: px(110), h: px(110), seat: false },
   explorer: { w: px(40), h: px(70), seat: true },
 } as const
 
