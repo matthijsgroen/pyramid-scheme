@@ -233,19 +233,41 @@ down because that is as deep as the assembler carves — anything deeper is auth
 
 #### What the walk still cannot see
 
-Two checks, both designed and neither built. Both REPORT to the author rather than deciding anything,
-which is why they are allowed to exist. Both belong to verifying a lock standalone — the owner's
-ruling that a container is checked between its own ports, not by a floor-wide sweep.
+Both REPORT to the author rather than deciding anything, which is why they are allowed to exist. Both
+belong to verifying a lock standalone — the owner's ruling that a container is checked between its own
+ports, not by a floor-wide sweep.
 
-- **A region nothing can reach.** Two levers can deadlock, each behind the door the other opens.
-  `walkLock` calls it sound because nobody is stranded and the exit stays reachable. Measured: the
-  rule fires on **0 gates across 206 shipped floors** and flags 4 on a deliberately deadlocked control.
-  Phrase it over regions: _a region no reachable state stands in, every bounding gate of which is owned
-  solely by on-floor mechanisms_. The `sealed` escape hatch is load-bearing — it is what keeps
-  `junior_2` L2 F0's deliberately unreachable ward pocket legal.
-- **A gate nothing depends on.** Is there a reachable state where shutting it changes whether the exit
-  is reachable? A gate that never matters is decoration, and it is what a bypassing loop looks like
-  from outside.
+**1. EVERY REGION MUST BE REACHABLE, AND THIS ONE IS REQUIRED.** Solvable is not enough. Once regions
+carry the floor's content, a region no reachable state stands in is **loot a player can never
+collect**. Two levers can deadlock, each behind the door the other opens; `walkLock` calls that sound
+because nobody is stranded and the way out stays reachable.
+
+Phrase it over regions: _a region no reachable state stands in, every bounding gate of which is owned
+solely by on-floor mechanisms_. Measured 2026-09-27: fires on **0 gates across 206 shipped floors**,
+and flags 4 on a deliberately deadlocked control, so it costs nothing to adopt.
+
+**It also closes a hole in the loot economy that predates locks.** `placeFragments` walks the finished
+world "with authored doors standing open" and hands what it finds to every world validator. That is
+safe for a floor key — find it and the door opens, always — and **unsafe for a mechanism-driven gate**,
+which opens only in states the mechanism can reach. Nothing today would report a chest behind a door
+that can never open.
+
+So three brackets, which must not be confused:
+
+| Question                | Bracket                                                              |
+| ----------------------- | -------------------------------------------------------------------- |
+| Is the lock sound?      | ward keys assumed **shut** — keeps the proof local to the container  |
+| Is this loot reachable? | authored doors assumed **open** — reachable at any point counts      |
+| Is this region reached? | mechanism gates use **the walk**; ward and off-floor keys assumed openable |
+
+The third is the new one and it sits between the other two. `junior_2` L2 F0's deliberately
+unreachable ward pocket stays legal, because its key is earned elsewhere in the world; a region behind
+a lever that can never be thrown does not.
+
+**2. A gate nothing depends on.** Is there a reachable state where shutting it changes whether the exit
+is reachable? A gate that never matters is decoration, and it is what a bypassing loop looks like from
+outside. Optional — a pointless puzzle is the author's to own — but it is the only thing that would
+tell them.
 
 #### Still to settle before this can be planned
 
