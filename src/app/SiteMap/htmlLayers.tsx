@@ -1,6 +1,16 @@
 import type { CSSProperties } from "react"
 import { boundsOf, rectsToPath, type Rect } from "./tileRegions"
 
+/**
+ * How far a sprite fades when it would otherwise hide the player.
+ *
+ * A THING YOU CAN WALK BEHIND MUST NOT BE A THING THAT HIDES YOU. An archway is painted over the
+ * explorer so it reads as built rather than as a decal, and a canopy plant is taller than a person for
+ * the same reason — both then have to get out of the way while the player is under or behind them. Kept
+ * here because it is the bargain, not the archway's own number, and two layers strike it.
+ */
+export const OCCLUDER_FADE = 0.35
+
 // The two primitives every HTML layer of the map is built from. See docs/instructions/map-rendering.md.
 
 /** One sprite standing in the map: a box with the art as its background.

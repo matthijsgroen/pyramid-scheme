@@ -554,11 +554,11 @@ rm -f "$LIGHT"
 # at, the map draws it lighter. The other two are solid and land where they were put. 76 darker than the
 # priest's slab before the fade, which is about 53 after it.
 yarn import-tile art/masters/surfaces/overgrown.webp --tier=default --name=overgrown --slot=growth \
-  --filter=smooth --saturation=2.6 --brightness=0.58
+  --filter=smooth --saturation=1.0 --brightness=1.0
 yarn import-tile art/masters/surfaces/overgrown-wall.webp --tier=default --name=overgrown-wall --slot=growthWall \
-  --filter=smooth --saturation=2.4 --brightness=0.85
+  --filter=smooth --saturation=1.0 --brightness=1.55
 yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name=overgrown-plant --slot=growth \
-  --filter=smooth --saturation=3.2 --brightness=0.82
+  --filter=smooth --saturation=1.0 --brightness=1.12
 
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
 # replaces was a post-processing copy whose flags could not be recovered (art/README).
@@ -1492,3 +1492,35 @@ yarn import-tile art/masters/props/junior/statue-thoth.webp --tier=junior --name
 scaffold statue --contents=mummiform --spin=-6 --colour=#a7b2be --colour-figure=#6f6459 --floor=#8d98a5
 yarn import-tile art/masters/props/expert/sarcophagus.webp --tier=expert --name=sarcophagus --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
+# The overgrown POOL — the condition's second sprite per slot, so a floor is not overgrown with one weed.
+# Flat tiles: no mesh, no mask, the magenta keyed (docs/instructions/repaint-queue.md, "Overgrown").
+# Saturation and brightness measured against `overgrown-plant`, which is the one these stand beside:
+# it lands at p50 110 / +4 warmth, and these are solved to sit with it rather than to look good alone.
+yarn import-tile art/masters/surfaces/overgrown-palm.webp --tier=default --name=overgrown-palm --slot=canopy \
+  --filter=smooth --saturation=1.0 --brightness=1.0
+yarn import-tile art/masters/surfaces/overgrown-flowers.webp --tier=default --name=overgrown-flowers --slot=growth \
+  --filter=smooth --saturation=1.0 --brightness=1.0
+yarn import-tile art/masters/surfaces/overgrown-ferns.webp --tier=default --name=overgrown-ferns --slot=growth \
+  --filter=smooth --saturation=1.0 --brightness=1.25
+yarn import-tile art/masters/surfaces/overgrown-creeper.webp --tier=default --name=overgrown-creeper --slot=growthWall \
+  --filter=smooth --saturation=1.0 --brightness=1.25
+yarn import-tile art/masters/surfaces/overgrown-scrub.webp --tier=default --name=overgrown-scrub --slot=growth \
+  --filter=smooth --saturation=1.0 --brightness=0.92
+yarn import-tile art/masters/surfaces/overgrown-fronds.webp --tier=default --name=overgrown-fronds --slot=growth \
+  --filter=smooth --saturation=0.7 --brightness=0.95
+
+yarn import-tile art/masters/surfaces/overgrown-curtain.webp --tier=default --name=overgrown-curtain --slot=growthWall \
+  --filter=smooth --saturation=1.0 --brightness=0.92
+
+# The GROUND the overgrown family grows out of. Keyed AND masked: the magenta between the clumps becomes
+# the hole the real floor shows through, and the mask trims the patch's extent. Keying runs first.
+#
+# GRASS RATHER THAN MOSS, and it is a legibility fix rather than a preference. A mat of moss was drawn
+# first and read as OOZE — a rounded pooled shape in a dark green is what a game paints when a floor is
+# dangerous to step in, and a covering half the floor wears must never say that. Grass cannot be taken
+# for a fluid because its edge is made of blades, which is also why its mask is nearly solid where sand's
+# tapers over half its radius: the tile supplies its own edge and a taper would only soften it.
+yarn drift-mask --out="$OBJ" --seed=grass --size=504 --peak=1 --core=0.92 --lobes=5 --blur=1
+yarn import-tile art/masters/surfaces/overgrown-grass.webp --tier=default --name=overgrown-grass --slot=drift \
+  --filter=smooth --mask="$OBJ" --brightness=0.7

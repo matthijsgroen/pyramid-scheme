@@ -2,9 +2,12 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { useState } from "react"
 import { assembleFloor } from "../../game/siteAssembler"
 import { generatedWorldConfigs } from "../../data/generatedWorld"
-import { completeCell } from "../../game/gridNavigation"
+import { completeCell, revealAll } from "../../game/gridNavigation"
 import type { CellState, Direction, FloorGrid, GridCell } from "../../game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
+import { buildRoomClaims, floorTier } from "./roomClaims"
+import { beamShafts, litPlaceCells } from "./lighting"
+import { moodFor } from "./moodSettings"
 
 // A map SCROLLS: its root is an overflow-auto box that sizes to the floor inside it, so it only scrolls
 // when something bounds it. Centred layout sizes the wrapper to the content instead, and a real generated
@@ -137,6 +140,137 @@ export const TorchlitStarter: Story = { args: litWorldFloor("starter_1") }
 export const TorchlitJunior: Story = { args: litWorldFloor("junior_2") }
 export const TorchlitExpert: Story = { args: litWorldFloor("expert_1") }
 export const TorchlitMaster: Story = { args: litWorldFloor("master_2") }
+
+// ─── Shafts of daylight ────────────────────────────────────────────────────────
+// A BEAMED ROOM IS LIT WITH NOBODY IN IT, which is the whole claim: its statue reads from the doorway.
+// So the question to ask of these is whether a room across the floor reads as lit at all, and whether it
+// reads as the SAME light the lamp gives — the map must not come out of this with two brightnesses.
+//
+// Where a shaft lands is seeded off the site's id (`beamShafts`), so these call it rather than naming a
+// room: a story that hardcoded a cell would go on pointing at it after the placement moved.
+
+const cellOf = (key: string) => key.split(",").map(Number) as [number, number]
+
+/** Every shaft on a floor, with the room it lights — read off the same functions the map draws from. */
+const shaftsOn = (grid: FloorGrid) => {
+  const claims = buildRoomClaims(grid)
+  const mood = moodFor(floorTier(grid), grid.theme, grid.condition)
+  return beamShafts(grid, claims, mood.beam ?? 0, grid.siteId).map(shaft => ({
+    room: claims.claimedBy.get(shaft) ?? shaft,
+    place: litPlaceCells(grid, claims, cellOf(shaft)),
+  }))
+}
+
+/** The lamp and the daylight on one floor, with the explorer parked in a passage no shaft reaches — so
+ * neither light is standing in the other's room and the two can be held against each other. */
+const beamedWorldFloor = (siteId: string): Story["args"] => {
+  const grid = revealAll(getWorldGrid(siteId))
+  const beamed = new Set(shaftsOn(grid).flatMap(({ place }) => place))
+  const run = grid.cells.flatMap((row, r) =>
+    row.flatMap((cell, c) =>
+      cell.type === "corridor" && cell.dirs.size > 1 && !beamed.has(`${r},${c}`) ? [[r, c] as const] : []
+    )
+  )
+  return { grid, revealAllCells: true, explorerPos: run[Math.floor(run.length / 2)] ?? grid.entrancePos }
+}
+
+// One per rank that has its art, because a light is solved against the stone it falls on and the ranks
+// have to come out together.
+export const BeamedStarter: Story = { args: beamedWorldFloor("starter_1") }
+export const BeamedJunior: Story = { args: beamedWorldFloor("junior_2") }
+export const BeamedExpert: Story = { args: beamedWorldFloor("expert_1") }
+export const BeamedMaster: Story = { args: beamedWorldFloor("master_2") }
+
+/** Nobody on the floor at all, so daylight is the only light on it. Five of this floor's nine chambers
+ * are under a roof that has given way and four are not: the step between two neighbours is the thing to
+ * read here, and it has to survive the zoom a whole floor is scanned at. */
+export const BeamedBesideUnbeamed: Story = {
+  args: { grid: getWorldGrid("starter_1"), revealAllCells: true },
+}
+
+/** The explorer standing in the beam. Two lights in one room would multiply under `color-dodge`, so the
+ * shaft hands the room over to the lamp as he walks in — what this shows is that nothing flares. */
+export const ExplorerInTheBeam: Story = {
+  args: (() => {
+    const grid = revealAll(getWorldGrid("starter_1"))
+    const [first] = shaftsOn(grid)
+    return { grid, revealAllCells: true, explorerPos: cellOf(first?.room ?? "0,0") }
+  })(),
+}
+
+/** The control: the same floor under a site id whose roofs all held, so the map is drawn as it is with
+ * no daylight in it at all. What is seeded off that id moves with it — the scatter, the growth, which
+ * drawing a prop shows — but the rooms and what stands in them are the floor's own.
+ *
+ * The id is a draw like any other, so a change to the odds can put a shaft back on it: what the story is
+ * for is a floor with none, and the next id that gives one will do. */
+export const RoofsIntact: Story = {
+  args: { grid: { ...getWorldGrid("starter_1"), siteId: "intact-5" }, revealAllCells: true },
+}
+
+// ─── The overgrown floors ──────────────────────────────────────────────────────
+// A FLOOR IS OVERGROWN BECAUSE ITS ROOF FAILED, AND NOTHING GROWS IN THE DARK, so the plant and the light
+// are one number: the night comes off with the growth, the passages get shafts of their own, and the lamp
+// comes back to match. What to ask of these is whether the lit room is still the brightest place the
+// player stands in, whether the patch of sun is still the brightest thing on the floor, and whether the
+// green reads as a garden rather than as a wash.
+//
+// These are the floors the world actually authors as overgrown — expert_3's later pyramids, at the
+// amounts they carry (`src/worldGen/spec/expert.ts`) — so nothing here is a condition invented for a
+// picture.
+const overgrownWorldFloor = (amount?: number): FloorGrid => {
+  const floors = generatedWorldConfigs.expert_3?.flat() ?? []
+  const index = floors.findIndex(floor =>
+    amount === undefined
+      ? floor.condition === undefined
+      : floor.condition?.kind === "overgrown" && floor.condition.amount === amount
+  )
+  if (index < 0) throw new Error(`expert_3 has no floor at amount ${amount}`)
+  const result = assembleFloor(`expert_3:${index}`, floors[index], 7)
+  if (!result.success) throw new Error("overgrown grid assembly failed")
+  return result.grid
+}
+
+/** Nobody on the floor, so every bit of light on it is the floor's own. The first authored amount: a
+ * little growth, a little daylight, and an expert floor still mostly dark. */
+export const OvergrownLightly: Story = {
+  args: { grid: overgrownWorldFloor(0.2), revealAllCells: true },
+}
+
+/** Full growth, and still nobody carrying a lamp. This is where the corridors are read: a shaft in a run
+ * lights the run to its next turn, which is what a floor of passages needs and what an ordinary floor is
+ * right to refuse. */
+export const OvergrownFully: Story = {
+  args: { grid: overgrownWorldFloor(1), revealAllCells: true },
+}
+
+/** The same floor with the explorer parked in a passage no shaft reaches, so the whole ladder is in one
+ * picture: unlit paving, the lamp's own run, and a patch of sun somewhere else on the floor. */
+export const OvergrownWithLamp: Story = {
+  args: (() => {
+    const grid = revealAll(overgrownWorldFloor(1))
+    const beamed = new Set(shaftsOn(grid).flatMap(({ place }) => place))
+    const run = grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) =>
+        cell.type === "corridor" && cell.dirs.size > 1 && !beamed.has(`${r},${c}`) ? [[r, c] as const] : []
+      )
+    )
+    return { grid, revealAllCells: true, explorerPos: run[Math.floor(run.length / 2)] ?? grid.entrancePos }
+  })(),
+}
+
+/** THE CONTROL: a floor of the same journey and the same rank with no condition authored on it. Every
+ * number slice one solved holds here — the night, the lamp, the cap, the chambers-only rule — and this is
+ * the story that says so. */
+export const OvergrownControl: Story = {
+  args: (() => {
+    const grid = revealAll(overgrownWorldFloor())
+    const run = grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) => (cell.type === "corridor" && cell.dirs.size > 1 ? [[r, c] as const] : []))
+    )
+    return { grid, revealAllCells: true, explorerPos: run[Math.floor(run.length / 2)] ?? grid.entrancePos }
+  })(),
+}
 
 export const Interactive: Story = {
   args: { grid: linearGrid },

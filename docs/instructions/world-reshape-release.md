@@ -71,7 +71,7 @@ Layout decides these, so they are regenerated in the same release, not assumed:
 - **Board dealing.** Room counts per bucket shift, so seed lists can fall short of the rooms that draw
   from them. Re-run `yarn generate-seeds`, then `yarn verify-seeds`.
 - **The world's own validity.** `yarn validate-world`, and the full floor sweep in
-  `worldFloorAssembly.spec.ts` — including the sweep that builds every board, which is the only thing
+  `worldFloorAssembly.verify.ts` — including the sweep that builds every board, which is the only thing
   that catches a room whose generator throws on open.
 
 ---

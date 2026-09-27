@@ -15,8 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pyramid floors now lay out the same on every browser, so a save carried between devices lands on the maze it was written against.
 - Fixed a black screen when starting an expedition right after the game loads.
 
+### Added
+
+- Daylight now falls into some chambers through a hole in the roof, lighting the room and what stands in it without a torch.
+
 ### Changed
 
+- Overgrown pyramid floors are lit by their own daylight now, thick with plants, with shafts of sun falling into the corridors.
 - Pyramid corridors are much shorter. The walk from one puzzle to the next is about half what it was, and a starter floor a third.
 - Eclipse boards now come in three kinds: with signs, without signs, and ones that never make you compare two lines.
 - Star battle and twin stars boards no longer hand you a star to start with, and the hard ones ask you to rule squares out first.

@@ -27,7 +27,7 @@
     "generate-seeds": "tsx scripts/puzzleSeeds.ts generate",
     "seeds-info": "tsx scripts/puzzleSeeds.ts info",
     "verify-seeds": "tsx scripts/puzzleSeeds.ts verify",
-    "verify-world": "vitest run --config vitest.verify.config.ts",
+    "verify-content": "vitest run --config vitest.verify.config.ts",
     "world-info": "tsx scripts/worldInfo.ts",
     "release": "tsx scripts/release.ts",
     "prepare": "husky",
@@ -37,7 +37,8 @@
     "repaint": "tsx scripts/repaintPrompt.ts",
     "verify": "yarn lint --fix && yarn check-types && vitest run && yarn betterer",
     "betterer": "betterer --strict",
-    "betterer:update": "betterer --update"
+    "betterer:update": "betterer --update",
+    "generate-boards": "tsx scripts/puzzleBoards.ts"
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --fix",
