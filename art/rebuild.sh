@@ -558,7 +558,7 @@ yarn import-tile art/masters/surfaces/overgrown.webp --tier=default --name=overg
 yarn import-tile art/masters/surfaces/overgrown-wall.webp --tier=default --name=overgrown-wall --slot=growthWall \
   --filter=smooth --saturation=2.4 --brightness=0.85
 yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name=overgrown-plant --slot=growth \
-  --filter=smooth --saturation=3.2 --brightness=0.82
+  --filter=smooth --saturation=1.0 --brightness=1.12
 
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
 # replaces was a post-processing copy whose flags could not be recovered (art/README).
