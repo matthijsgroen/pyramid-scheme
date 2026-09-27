@@ -425,7 +425,7 @@ into a site rather than a property of its masonry. Three slots and a ground.
 | floor joints (`growth`, 22×22) | `overgrown` tuft · `-flowers` · `-scrub` · `-fronds` |
 | wall band (`growthWall`, 22×34) | `-wall` root · `-creeper` · `-curtain` |
 | chamber floor (`growth`; `canopy`, 110×110, for a tree) | `-plant` · `-palm` · `-ferns` |
-| the ground (`drift`) | `-moss` |
+| the ground (`drift`) | `-grass` |
 
 **A plant is drawn from ABOVE, not from the side.** This is the rule the family cost the most rolls on.
 The 30° camera in §2 describes FURNITURE — a jar rack, a timber post, things with a front. A plant grows
@@ -448,7 +448,12 @@ and are why this is written down.
 **Each bakes its own contact shadow**, as every prop does, or it reads as a sticker however well it is
 lit. Contact carries no direction, so it belongs in the tile where a highlight would not.
 
-**The ground is the quietest thing on the floor.** `-moss` lands under the paving it covers and under the
+**The ground is the quietest thing on the floor.** `-grass` lands under the paving it covers and under the
 plants that stand on it — measured, because as painted it came back brighter than both, and a ground
 cover that outshines its plants swallows them. It brings no stone of its own: the gaps between its
 cushions are keyed to holes the real floor shows through, so two grids of slabs never overlap.
+
+**It is GRASS, and the blade edge is the point.** A ground cover for a floor has to say "you may walk
+here" at a glance. A rounded pooled shape of green says the opposite — it reads as something spilt, and a
+player who reads the floor as a hazard walks around it. A mat of blades cannot be mistaken for a fluid,
+which is the whole reason this tile is drawn as grass rather than as a cushion of moss.

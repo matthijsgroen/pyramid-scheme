@@ -484,12 +484,12 @@ const Decoration = ({
   )
 }
 
-/** GROUND: blown sand, or a mat of moss, drawn over the floor and clipped to it.
+/** GROUND: blown sand, or a mat of grass, drawn over the floor and clipped to it.
  *
  * The scatter that is not cell-sized. Neither has a silhouette of its own — one is the shape of whatever
  * stopped it, the other the shape of where the water sat — so both are drawn several cells across and cut
  * to `walkable-floor`, and the wall does the drawing. See `driftsFor` for why sand is one shared file
- * rather than five; the moss is shared for the same reason (`grassMatsFor`).
+ * rather than five; the grass is shared for the same reason (`grassMatsFor`).
  *
  * No per-cell fog check, because a drift is not per-cell: it is washed by the DARKEST state it crosses,
  * so a drift reaching into an unlit passage cannot light it. That is the same sum `FloorScatter` does
@@ -1155,7 +1155,7 @@ export const SiteMapView = ({
   // What is strewn on this floor. A function of the floor's shape and its id, so it never moves.
   const scatter = useMemo(() => scatterFor(grid, claims), [grid, claims])
   const drifts = useMemo(() => driftsFor(grid, tier), [grid, tier])
-  // The moss is the condition's own ground, so its coverage is the condition's own number.
+  // The grass is the condition's own ground, so its coverage is the condition's own number.
   const grassMats = useMemo(
     () => (grid.condition?.kind === "overgrown" ? grassMatsFor(grid, grid.condition.amount) : []),
     [grid]
