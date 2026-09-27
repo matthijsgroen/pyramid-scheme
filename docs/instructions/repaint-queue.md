@@ -2582,6 +2582,17 @@ so the hole shows depth rather than reading as a flat black rectangle, the spoil
 Queued at expert only: the develop journey's drop stands on an expert floor, which is the one rank a
 drop can actually be seen on today. The other four ranks stay unqueued until this one has landed.
 
+**The two vertical headings take a WIDER, SHALLOWER mouth — `w` 1.04 against 0.94, `d` 0.60 against
+0.80 — and it is the full-span rule that buys it.** A drop walked up and down the page must have its
+gap span the passage in x, edge to edge of the sprite, or the paving left beside the black reads as a
+ledge to step round; the sprite is scaled to its own widest element, so the mouth has to BE that
+element, which it was not while the spoil reached further out than the crack did. Widening alone will
+not do it, because a sprite is capped at 84 rows and the aspect is `(z_extent + k*y_extent) / x_extent`:
+taking 0.20 out of the DEPTH pays for the width twice over, once off the shaft's own drawn height and
+once off the y extent. Measured on the composited tile, `dropSouth`'s black went from 72% of the cell's
+width to 90%. `dropEast` keeps the original mouth: its gap spans in y, where the shear already gives it
+the whole cell, and it is painted.
+
 **`dropNorth`'s flight is climbed FRONTALLY**, away from the viewer, where `dropEast`'s is crossed from
 the side. That is the honest orientation for a heading whose player climbs and then travels into the
 picture, it is the arrangement this projection separates best (`prim_stair`: a flight rising as it
@@ -2781,24 +2792,28 @@ with a badge on it.
 
 **It is a BINARY toggle and it draws its own position.** `expert/leverLeft` and `expert/leverRight` are
 the same lever thrown to each side: some doors open at one end, some at the other. Everything but the
-arm is identical between them — same block, same shoe, same post, same pivot, same height — so a player
-reads one object in two states rather than two objects.
+arm is identical between them — same dome, same kerb, same height — so a player reads one object in two
+states rather than two objects.
 
-**Two renders, not one mirrored, and the reason is measured.** A mirror in x is a valid oblique view
-under `drawn = (x, z + k*y)`, which is why `dropEast` mirrors to `dropWest` for free. It does not serve
-here for two reasons, the first of which is the bigger: this prop takes a `--spin`, and mirroring flips
-which way the block lies askew of the paving AND changes the arm's drawn slope — a mirrored `right`
-differs from a real `left` by 8% RMSE over the tile, which is plainly visible. Rendered at `--spin=0`
-the same comparison falls to 2%, and what is left is the LIGHT: the rig's sun comes over the viewer's
-left shoulder, so a mirrored tile arrives lit from the right. On a hole that goes unnoticed; on a post
-with one lit face and one shaded one, standing in the same room as its own other state, it does not.
-If a rank ever wants to spend one roll instead of two, `--spin=0` plus a runtime mirror is the trade,
-and the wrong-side light on one state is what it costs.
+**There is no post, and that is the second build.** The first stood the arm on a squared timber column,
+and the column was what everyone read: a pillar, a structural thing, and a structural thing that might
+turn about its own axis, which is a capstan. A lever is a handle pivoted at floor level. With the post
+gone the ARM IS THE WHOLE SILHOUETTE, so the throw is the entire difference between the two tiles — a
+backslash against a forward slash — and the GRIP, the mass at the far end of the lean, is what travels
+furthest and carries it.
 
-**The throw is 52 degrees off vertical**, where the map marker's arm is at 42. The states are told apart
-by where the GRIP sits, and its travel between them is `2 * arm * sin(swing)`: 0.42 of a unit at 32
-degrees, 0.63 at 52, against a post 0.10 wide. At the shallower angle the two grips sit close enough
-that the pair reads as one lever wobbling.
+**The throw is 36 degrees off vertical and the grip is canted 40 further.** The owner's elevation leans
+about 20, which is a lever caught mid-throw; at 20 the two grips sit 0.42 apart against a dome 0.44
+wide and the pair reads as one lever wobbling. At 36, with the grip's own cant carrying its length
+outward too, each grip clears the dome's edge entirely and the silhouettes are a backslash and a
+forward slash.
+
+**Two renders for now, and the form is mirrorable if it is ever wanted.** The dome has no handedness,
+so the only thing that differs between a real `left` and a mirrored `right` is the LIGHT — the rig's
+sun comes over the viewer's left shoulder — and over the composited tile that measures 1.9% RMSE,
+against 8% for the squared-plinth version this replaced. One render per rank is therefore on the table
+whenever someone wants to spend three rolls across the set instead of six; it is not taken here because
+nothing yet needs it and the wrong-side light is a real if small cost.
 
 **Expert only**, matching the drops. Master and wizard are where the 56 floor-key gates live and they
 are queued when real floors there author levers, not before.
@@ -2819,24 +2834,23 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a floor LEVER, thrown over to the LEFT. A low stone BLOCK is bedded into the paving, lying
-askew of it. A bronze SHOE is set on the block, and a squared timber POST is stepped into that shoe.
-Through the post's head runs a bronze PIVOT, and off the pivot an ARM is swung over and down to the
-left; through the arm's end runs a brass GRIP, rubbed bright where hands have closed on it. Nothing
-about this object is sharp, pointed or sprung: it is a handle, and the only thing anyone does with it
-is pull.
+The object: a floor LEVER, laid over to the LEFT. A domed bronze HOUSING is bedded into the paving inside
+a low stone kerb — a rounded mound, twice as wide as it is tall, its face divided into shallow radiating
+panels that follow the curve. One squared timber ARM rises out of the dome, not off the top of it but
+from inside the mound, and leans over to the left. On the arm's end is a chunky brass GRIP, thicker than
+the arm and set at its own angle to it, rubbed bright where hands have closed on it. Nothing about this
+object is sharp, pointed or sprung: it is a handle, and the only thing anyone does with it is pull.
 
-Dark basalt for the block, worn smooth on its top face where boots have stood on it, with pale natron
-dust in the joint where it meets the paving. The post is old timber, split and grey, dark against the
-stone. The shoe and the pivot are bronze gone dull and green-brown with age; the grip alone is worn back
-to bright metal.
+Dark basalt for the kerb, with pale natron dust in the joint where it meets the paving. The dome is
+bronze gone dull and green-brown with age. The arm is old timber, split and grey, dark against the
+stone; the grip alone is worn back to bright metal.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
-Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the block's
-top face, the pivot, the grip — and everything turned away from it falls into shadow.
+Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the crown of
+the dome, the ridge of each panel on it, the grip — and everything turned away from it falls into shadow.
 
-The shadow at the block's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+The shadow at the dome's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
 
 No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust, timber and bronze.
 ```
@@ -2861,24 +2875,23 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a floor LEVER, thrown over to the RIGHT. A low stone BLOCK is bedded into the paving, lying
-askew of it. A bronze SHOE is set on the block, and a squared timber POST is stepped into that shoe.
-Through the post's head runs a bronze PIVOT, and off the pivot an ARM is swung over and up to the
-right; through the arm's end runs a brass GRIP, rubbed bright where hands have closed on it. Nothing
-about this object is sharp, pointed or sprung: it is a handle, and the only thing anyone does with it
-is pull.
+The object: a floor LEVER, laid over to the RIGHT. A domed bronze HOUSING is bedded into the paving inside
+a low stone kerb — a rounded mound, twice as wide as it is tall, its face divided into shallow radiating
+panels that follow the curve. One squared timber ARM rises out of the dome, not off the top of it but
+from inside the mound, and leans over to the right. On the arm's end is a chunky brass GRIP, thicker than
+the arm and set at its own angle to it, rubbed bright where hands have closed on it. Nothing about this
+object is sharp, pointed or sprung: it is a handle, and the only thing anyone does with it is pull.
 
-Dark basalt for the block, worn smooth on its top face where boots have stood on it, with pale natron
-dust in the joint where it meets the paving. The post is old timber, split and grey, dark against the
-stone. The shoe and the pivot are bronze gone dull and green-brown with age; the grip alone is worn back
-to bright metal.
+Dark basalt for the kerb, with pale natron dust in the joint where it meets the paving. The dome is
+bronze gone dull and green-brown with age. The arm is old timber, split and grey, dark against the
+stone; the grip alone is worn back to bright metal.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
-Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the block's
-top face, the pivot, the grip — and everything turned away from it falls into shadow.
+Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the crown of
+the dome, the ridge of each panel on it, the grip — and everything turned away from it falls into shadow.
 
-The shadow at the block's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+The shadow at the dome's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
 
 No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust, timber and bronze.
 ```

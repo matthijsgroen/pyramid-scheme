@@ -260,6 +260,32 @@ def cone(r_bottom, r_top, h, x=0.0, y=0.0, z=0.0, verts=18):
     return obj
 
 
+def dome(r, h, x=0.0, y=0.0, z=0.0, segments=18, rings=9):
+    """A half-sphere standing on z=0: a sphere with everything below its equator deleted.
+
+    NOT A SPHERE PUSHED HALF UNDER THE FLOOR, which is the obvious build and does not survive this
+    pipeline: `seat_and_normalise` lifts an object until its lowest point sits on the floor line, so a
+    half-buried sphere comes back up as a whole one. The bottom has to be gone from the MESH.
+
+    Left open underneath on purpose. The underside is a down-facing face, and under `z + k*y` a
+    down-facing normal turns away from the camera — it is never drawn, so there is nothing to close.
+
+    ITS SEGMENT COUNT IS THE DETAIL. Flat-shaded under one steep sun a smooth dome is a soft gradient,
+    which this rig draws worst and the repaint reads as a blob; at 18 segments the facets themselves
+    read as the radiating panels the owner drew on it, and cost nothing."""
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=segments, ring_count=rings, radius=1.0, location=(0, 0, 0))
+    o = bpy.context.object
+    bm = bmesh.new()
+    bm.from_mesh(o.data)
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if v.co.z < -1e-5], context="VERTS")
+    bm.to_mesh(o.data)
+    bm.free()
+    o.scale = (r, r, h)
+    o.location = (x, y, z)
+    bpy.ops.object.transform_apply(scale=True)
+    return o
+
+
 def prim_market():
     """One table and what is on it: `--contents=market` is the merchant's balance and heap of grain,
     `--contents=laid` the nobleman's laid dining table.
@@ -1416,6 +1442,23 @@ def _launch_crossing(w, d, heading):
     a TALL post standing on that block, a SHORT post on bare paving at the opposite lip, and the line run
     head to head between them. Sketched as a side elevation, 2026-09-27.
 
+    THE THREE RULES A HOLE IN THIS SET OBEYS, each paid for separately and stated together so they stop
+    being rediscovered one roll at a time:
+
+    1. NOTHING STANDS ON THE NEAR LIP LINE. The band's lower edge — the boundary between the black and
+       the lit paving in front of it — runs unbroken, or the tile reads as a recess in a wall rather
+       than a hole in a floor. A narrow post crossing it is survivable; a block is not.
+    2. THE MOUTH SPANS THE PASSAGE, across the direction of travel, edge to edge of the sprite. Pale
+       floor beside the black is a ledge, and a crossing a player can walk round is not a crossing.
+       Which axis that is depends on the heading: east and west are crossed left to right, so their gap
+       spans in y and nothing beside it in x is a ledge; north and south are walked up and down, so
+       their gap must span in x.
+    3. THE LAUNCH STANDS AT THE SOURCE LIP. That is what makes the heading readable at all.
+
+    WHERE THEY CANNOT ALL HOLD, THE FLIGHT GIVES WAY. It is the newest of the three elements and the
+    only one not load-bearing for the feature: a post and a tie at the source lip still say which end
+    you start from.
+
     THE HEIGHT DIFFERENCE IS THE DIRECTION, and the steps are there to explain the height rather than to
     be the cue themselves. High end, with the way up to it built: where you start. Low end: where you
     land. Coming back means climbing the line to a head that is above you with nothing under it, which is
@@ -1491,9 +1534,14 @@ def _launch_crossing(w, d, heading):
         block(-w / 2 - 0.33, -w / 2, py0, py1, (py1 - py0) * 0.80, frontal=True)
         head, foot = (-w / 2 - 0.165, (py0 + py1) / 2), (0.34, d / 2 + 0.07)
     elif heading == "dropSouth":  # travel toward the viewer: the block stands at the FAR lip
+        # ITS FLIGHT AND ITS BLOCK BOTH STAND INSIDE THE MOUTH'S OWN WIDTH. They used to start at
+        # x=-0.32 and step LEFT, which put both treads past `-w/2` and hung pale floor off the tile's
+        # left edge beside the black — a ledge, and rule 2 above. Shifted right the whole launch fits
+        # between the mouth's own sides, so nothing widens the sprite but the spoil and the band runs
+        # from one edge of it to the other.
         py0, py1 = d / 2 - 0.03, d / 2 + 0.23
-        block(-0.32, 0.08, py0, py1, (py1 - py0) * 0.80)
-        head, foot = (-0.12, (py0 + py1) / 2), (0.34, -d / 2 - 0.07)
+        block(-0.13, 0.27, py0, py1, (py1 - py0) * 0.80)
+        head, foot = (0.07, (py0 + py1) / 2), (0.34, -d / 2 - 0.07)
     else:  # `drop` — travel to the right, mirrored in x for the other horizontal heading
         px0, px1 = -w / 2 - 0.30, -w / 2 + 0.03
         block(px0, px1, -0.23, 0.23, 0.38)
@@ -1612,6 +1660,20 @@ def prim_pit():
     courses = contents in ("drop", "dropNorth", "dropSouth")
     if courses:
         d = 0.80
+    # THE TWO VERTICAL HEADINGS GET A WIDER, SHALLOWER MOUTH, and it is rule 2 in `_launch_crossing`
+    # that buys it. A drop walked up and down the page must have its gap span the passage in X, edge to
+    # edge of the sprite, or the paving left beside the black reads as a ledge to walk round. The sprite
+    # is scaled to its own widest element, so "spans" means the MOUTH has to BE that element — which it
+    # was not at 0.94 against spoil reaching 0.58 either side.
+    #
+    # Widening alone does not do it, because a sprite is capped at 84 rows and the aspect is
+    # `(z_extent + k*y_extent) / x_extent`: push x out and the tile lands wider, but push it out too far
+    # and nothing else fits under the cap. Taking 0.20 out of the DEPTH pays for the width twice over —
+    # it comes off the shaft's own drawn height (k*d) and off the y extent at 0.7 apiece — and a crack
+    # that is wide and shallow is the shape a passage-spanning fissure ought to be anyway.
+    spoil_x = 1.0
+    if contents in ("dropNorth", "dropSouth"):
+        w, d, spoil_x = 1.04, 0.60, 0.85
     hv = k * d
     # The shaft: the far wall alone, exactly filling the drawn opening, and the only VOID part of any
     # primitive — everything else here is stone in the rank's own colour.
@@ -1629,7 +1691,7 @@ def prim_pit():
         (0.20, 0.12, -0.58, -0.16, 66),
         (0.18, 0.12, 0.57, -0.10, -58),
     ):
-        mark(tilt(box(sx, sy, 0.08, x=x, y=y + spoil_dy, z=0.04), yaw, "Z"), "body")
+        mark(tilt(box(sx, sy, 0.08, x=x * spoil_x, y=y + spoil_dy, z=0.04), yaw, "Z"), "body")
     if contents == "plain":
         return join_all()
     if courses:
@@ -1687,74 +1749,85 @@ def prim_pit():
 
 
 def prim_lever():
-    """A floor lever a player throws: a stone block bedded in the paving, a bronze shoe, a timber post,
-    and an arm swung up off its pivot with a brass grip on the end.
+    """A floor lever a player throws: a domed bronze housing bedded in the paving, one arm rising out of
+    it and laid over to the left or the right, and a chunky canted grip on the arm's end. Drawn from the
+    owner's side elevation, 2026-09-27.
 
-    IT DRAWS ITS POSITION, and that is the point of it. A handle is a BINARY toggle — `--contents=left`
-    and `--contents=right` are the same lever thrown to each side, some doors open at one end and some
-    at the other — so the state is a thing in the room rather than something only the map's marker
-    (`HandleShape`, `nodeShapes.tsx`) knows. Everything but the arm is identical between the two: same
-    block, same shoe, same post, same pivot, same height. Only the arm and its grip move.
+    NO POST, AND THAT IS THE SECOND BUILD'S LESSON. The first stood the arm on a squared timber column
+    and the column was what everyone read: a PILLAR, a structural thing, and a structural thing that
+    might turn about its own axis — which is a capstan, a different machine making a different promise.
+    A lever is a handle pivoted at floor level and thrown over.
 
-    THE THROW IS 52 DEGREES OFF VERTICAL, not the marker's 42, and the difference is the whole tile. The
-    two states are told apart by where the GRIP is, and the grip's horizontal travel between them is
-    `2 * arm * sin(swing)` — 0.42 of a unit at 32 degrees, 0.63 at 52, against a post 0.10 wide. At the
-    shallower angle the two grips sit close enough that the pair reads as one lever wobbling; at 52 the
-    grip is clear of the post's own width on each side and the silhouettes cross over. This is the
-    spikes' lesson one axis over: a lean has to move the visible END far enough to be a position, or
-    there is no cue in it.
+    THE ARM IS THE WHOLE SILHOUETTE, and that is what makes the two states read. `--contents=left` and
+    `--contents=right` are the same lever thrown each way; with a column in the picture they shared a
+    large fixed vertical mass and differed only in a smaller arm above it, which is the weak-distinction
+    problem `prim_spikes` measured and failed. With the post gone the throw is the entire difference.
 
-    LEFT AND RIGHT ARE TWO RENDERS, NOT ONE MIRRORED, and the reason is the LIGHT rather than the
-    geometry. A mirror in x IS a valid oblique view — `drawn = (x, z + k*y)` is symmetric in x, which is
-    why `dropEast` mirrors to `dropWest` for free. But the rig's sun comes over the viewer's left
-    shoulder, so a mirrored sprite arrives lit from the right and sits in a room beside props lit from
-    the left. On a hole that is nearly symmetric it goes unnoticed; on a post with one lit face and one
-    shaded one it is the most visible thing in the tile. Rendered separately, both keep the set's light.
+    THE GRIP IS THE PART THAT CARRIES IT, not the shaft. It is the mass at the far end of the lean, so
+    it travels furthest of anything in the object — `2 * reach * sin` of the throw — and it is also what
+    stops a leaning shaft reading as a stick. It is CANTED further over than the shaft rather than run
+    in line with it, which is what the owner drew and what makes it a handhold rather than a finial: the
+    cant puts its own length on the outside of the swing, so the grip's far end clears the dome entirely
+    on each side and neither state can be mistaken for the other or for a lever standing upright.
 
-    THE ARM RUNS IN X, which is the only axis drawn honestly and the same choice `prim_sconce` made for
-    its bracket. Swung in y it would be a bar lying in depth, which images as drawn height and nothing
-    else: the lever would draw as a second post growing out of the first, a player would read a fence
-    rail, and the two states would be indistinguishable. Swung in x it is a diagonal across the frame,
-    which is both what a thrown lever looks like and the only axis a state can be legible on.
+    THE ARM RUNS IN X, the only axis drawn honestly (`prim_sconce`'s bracket, one object over). Swung in
+    y it would be a bar lying in depth, which images as drawn height and nothing else — the two states
+    would be one shape at two lengths.
 
-    IT MUST NOT READ AS A TRAP. The same worry that killed the spiked one-way applies to anything in a
-    corridor that looks like a mechanism: this game's traps are rooms wearing a crimson badge with a
-    skull, and the thing a player must never think is "I should disarm that". So the vocabulary here is
-    deliberately the opposite of a weapon — no blade, no spring, no point, nothing red. A post, an arm
-    and a grip worn smooth by hands: an object whose only affordance is PULL.
+    THE ARM COMES OUT OF THE DOME, not off the top of it: its root sits below the crown, so the pivot is
+    inside the mound. That is the difference between a lever and a mast, and it costs nothing — the
+    buried part is never drawn.
 
-    THE GRIP IS A CROSS-BAR, not a ball. A sphere on the end of the arm is a finial, and at 56 units a
-    finial and a knob are the same four pixels; a bar run through the arm's end in x reads as something
-    a hand closes round, and it costs the silhouette a notch that says where the arm ends.
+    IT MUST NOT READ AS A TRAP. This game's traps are rooms wearing a crimson badge with a skull and
+    they are disarmed with a tool; a lever is not. Nothing here is sharp, sprung or pointed, and no red
+    goes near it. A mound, an arm and a worn grip: an object whose only affordance is PULL.
 
-    SEAT IT NORMALLY. Unlike a pit this stands on the floor and its footprint is a real one — import
-    with the rendered shadow under it, the way every other free-standing prop is."""
-    # The bedding block, broad enough that the whole prop is wider than it is a post: the object's aspect
-    # is what decides how tall it lands, and a bare post on a small pad came out as tall as the explorer.
-    mark(box(0.82, 0.40, 0.09, z=0.045), "body")
-    # The bronze shoe the post is stepped into, standing PROUD of the block rather than sunk in it — a
-    # recess level with the surface it cuts is not there at this size (`prim_market`'s channel).
-    mark(box(0.20, 0.18, 0.09, y=-0.02, z=0.12), "metal")
-    post_h = 0.44
-    mark(box(0.10, 0.10, post_h, y=-0.02, z=0.09 + post_h / 2), "timber")
-    pivot_z = 0.09 + post_h - 0.03
-    # The pivot boss, a cylinder lying along X so it draws as a disc rather than as a line, and the one
-    # part that says the arm turns rather than being nailed on.
-    boss = mark(cyl(0.055, 0.15, y=-0.02, z=pivot_z, verts=14), "metal")
-    boss.rotation_euler = (0, math.radians(90), 0)
-    # The arm, built upright at the origin and turned about Y so it leans over in X — `turn`'s pattern.
-    # Negative swings it to the viewer's left; see the docstring for where 52 comes from.
-    arm_len, swing = 0.40, 52.0 if arg("contents", "right") != "left" else -52.0
-    a = math.radians(swing)
+    SEAT IT NORMALLY — this stands on the floor and its footprint is a real one."""
+    left = arg("contents", "right") == "left"
+    # 36 degrees off vertical, and the number is the GRIP'S reach rather than the shaft's. The owner's
+    # elevation leans about 20, which is a lever caught mid-throw; at 20 the grips of the two states sit
+    # 0.42 apart against a dome 0.68 wide and the pair reads as one lever wobbling. At 36, with the
+    # grip's own cant carrying its length outward too, each grip clears the dome's edge and the two
+    # silhouettes are a backslash and a forward slash — which is the reading being bought.
+    swing = -36.0 if left else 36.0
+    # The cant: how much further over the grip lies than the shaft it is on. Taken from the elevation,
+    # where the shaft runs at about 20 degrees off vertical and the grip's own axis at about 60.
+    cant = swing + (-40.0 if left else 40.0)
+    # THE DOME IS SMALL, and the first build's was not: at radius 0.34 it drew 0.30 of its own height
+    # plus k times its whole 0.68 of depth, 0.78 in all, against an arm reaching 0.62 — so the mound
+    # out-drew the lever standing on it and the tile read as a bell with a stick in it. A round base is
+    # the most expensive shape this projection has, because depth is taxed into height at 0.7 and a
+    # circle is as deep as it is wide. Radius 0.22 keeps the owner's proportion in the DRAWN picture
+    # rather than in the plan.
+    dome_r, dome_h = 0.22, 0.17
+    shaft_len, root_z = 0.56, 0.07
+    grip_len = 0.26
+
+    mark(dome(dome_r, dome_h), "metal")
+    # A low stone kerb round the dome's foot, where it meets the paving. Without it the mound sits ON
+    # the floor like a dropped bowl; with it, it is bedded INTO it — and it is the one part that keeps
+    # the object's widest point at ground level, which is what a thing driven into a floor looks like.
+    mark(cone(dome_r + 0.05, dome_r + 0.01, 0.045, z=0.022, verts=20), "body")
+    a, c = math.radians(swing), math.radians(cant)
     ux, uz = math.sin(a), math.cos(a)
+    vx, vz = math.sin(c), math.cos(c)
+    tip_x, tip_z = ux * shaft_len, root_z + uz * shaft_len
+    # The shaft, built upright at the origin and turned about Y so it lays over in X — `turn`'s pattern,
+    # which rotates a part about its own centre before placing it.
+    mark(turn(box(0.075, 0.075, shaft_len), swing, "Y", x=ux * shaft_len / 2, z=root_z + uz * shaft_len / 2), "timber")
+    # The grip: a block on its own axis, overlapping the shaft's end rather than butting it, because a
+    # hairline is a gap. Thicker than the shaft in every direction — at 56 units the difference between
+    # a handhold and a stick is mass, and this is the mass.
     mark(
-        turn(box(0.06, 0.06, arm_len), swing, "Y", x=ux * arm_len / 2, y=-0.02, z=pivot_z + uz * arm_len / 2),
-        "metal",
+        turn(
+            box(0.115, 0.105, grip_len),
+            cant,
+            "Y",
+            x=tip_x + vx * (grip_len / 2 - 0.05),
+            z=tip_z + vz * (grip_len / 2 - 0.05),
+        ),
+        "accent",
     )
-    # The grip, through the arm's end and along X for the reason in the docstring. It overlaps the arm
-    # rather than butting it: a hairline is a gap.
-    grip = mark(cyl(0.045, 0.16, x=ux * arm_len - 0.01, y=-0.02, z=pivot_z + uz * arm_len - 0.01, verts=16), "accent")
-    grip.rotation_euler = (0, math.radians(90), 0)
     return join_all()
 
 
