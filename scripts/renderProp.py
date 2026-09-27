@@ -1790,9 +1790,16 @@ def prim_lever():
     # grip's own cant carrying its length outward too, each grip clears the dome's edge and the two
     # silhouettes are a backslash and a forward slash — which is the reading being bought.
     swing = -36.0 if left else 36.0
-    # The cant: how much further over the grip lies than the shaft it is on. Taken from the elevation,
-    # where the shaft runs at about 20 degrees off vertical and the grip's own axis at about 60.
-    cant = swing + (-40.0 if left else 40.0)
+    # THE CANT IS A PROPERTY OF THE BODY, SO IT DOES NOT CHANGE SIGN WITH THE THROW. It was built as
+    # `swing +/- 40`, which puts the grip at +40 to the arm in one state and -40 in the other — and that
+    # is a MIRROR, not a rotation. A lever is one rigid piece turning about one pivot: rotate it and the
+    # angle between grip and arm keeps its signed value. Flipping the sign draws a grip that has swung
+    # on a joint of its own, and it was read that way the moment anyone saw the pair.
+    #
+    # 20 degrees rather than the 40 it had. A grip canted near a right angle to its arm is a crosspiece
+    # stuck on the end, which is what a HINGED handle looks like; a shallow kick reads as the top of the
+    # lever thickening into something to hold.
+    cant = swing + 20.0
     # THE DOME IS SMALL, and the first build's was not: at radius 0.34 it drew 0.30 of its own height
     # plus k times its whole 0.68 of depth, 0.78 in all, against an arm reaching 0.62 — so the mound
     # out-drew the lever standing on it and the tile read as a bell with a stick in it. A round base is
@@ -1815,6 +1822,13 @@ def prim_lever():
     # The shaft, built upright at the origin and turned about Y so it lays over in X — `turn`'s pattern,
     # which rotates a part about its own centre before placing it.
     mark(turn(box(0.075, 0.075, shaft_len), swing, "Y", x=ux * shaft_len / 2, z=root_z + uz * shaft_len / 2), "timber")
+    # THE FERRULE, at the join, and it is there to say ONE PIECE. Two masses meeting at an angle read as
+    # two parts meeting at a joint; a collar banding them together is what a tool looks like where a
+    # handle is fitted to a shaft, and it costs one box.
+    mark(
+        turn(box(0.10, 0.095, 0.075), swing, "Y", x=tip_x - ux * 0.02, z=tip_z - uz * 0.02),
+        "metal",
+    )
     # The grip: a block on its own axis, overlapping the shaft's end rather than butting it, because a
     # hairline is a gap. Thicker than the shaft in every direction — at 56 units the difference between
     # a handhold and a stick is mass, and this is the mass.

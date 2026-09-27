@@ -2802,18 +2802,18 @@ gone the ARM IS THE WHOLE SILHOUETTE, so the throw is the entire difference betw
 backslash against a forward slash — and the GRIP, the mass at the far end of the lean, is what travels
 furthest and carries it.
 
-**The throw is 36 degrees off vertical and the grip is canted 40 further.** The owner's elevation leans
-about 20, which is a lever caught mid-throw; at 20 the two grips sit 0.42 apart against a dome 0.44
-wide and the pair reads as one lever wobbling. At 36, with the grip's own cant carrying its length
-outward too, each grip clears the dome's edge entirely and the silhouettes are a backslash and a
-forward slash.
+**The throw is 36 degrees off vertical and the grip is canted 20 further — the same 20 in BOTH states.**
+A lever is one rigid piece turning about one pivot, so the angle between grip and arm is a property of
+the body and keeps its signed value when the body rotates. Built as `swing +/- 40` it was +40 in one
+state and -40 in the other, which is a MIRROR rather than a rotation: it draws a grip that has swung on
+a joint of its own, and it was read that way the moment the pair was seen. A ferrule bands the join, so
+the eye reads one tool with a thickened head rather than two parts meeting.
 
-**Two renders for now, and the form is mirrorable if it is ever wanted.** The dome has no handedness,
-so the only thing that differs between a real `left` and a mirrored `right` is the LIGHT — the rig's
-sun comes over the viewer's left shoulder — and over the composited tile that measures 1.9% RMSE,
-against 8% for the squared-plinth version this replaced. One render per rank is therefore on the table
-whenever someone wants to spend three rolls across the set instead of six; it is not taken here because
-nothing yet needs it and the wrong-side light is a real if small cost.
+**Two renders, and this form is NOT mirrorable.** That was claimed here on a measurement of 1.9% RMSE
+between a real `left` and a mirrored `right`, and the measurement was of the bug: a body whose cant
+flips sign IS its own mirror. Rigid, the two states are rotations of each other and differ by 8% over
+the tile — the grip stands near vertical at one end of the throw and near horizontal at the other,
+which is what a real lever does and is a second cue on top of the arm's lean.
 
 **Expert only**, matching the drops. Master and wizard are where the 56 floor-key gates live and they
 are queued when real floors there author levers, not before.
@@ -2838,7 +2838,9 @@ The object: a floor LEVER, laid over to the LEFT. A domed bronze HOUSING is bedd
 a low stone kerb — a rounded mound, twice as wide as it is tall, its face divided into shallow radiating
 panels that follow the curve. One squared timber ARM rises out of the dome, not off the top of it but
 from inside the mound, and leans over to the left. On the arm's end is a chunky brass GRIP, thicker than
-the arm and set at its own angle to it, rubbed bright where hands have closed on it. Nothing about this
+the arm and kicked slightly out of line with it, banded to the arm by a bronze FERRULE at the join and
+rubbed bright where hands have closed on it. The arm, the ferrule and the grip are ONE piece: the grip
+is fixed to the arm and does not turn on it. Nothing about this
 object is sharp, pointed or sprung: it is a handle, and the only thing anyone does with it is pull.
 
 Dark basalt for the kerb, with pale natron dust in the joint where it meets the paving. The dome is
@@ -2879,7 +2881,9 @@ The object: a floor LEVER, laid over to the RIGHT. A domed bronze HOUSING is bed
 a low stone kerb — a rounded mound, twice as wide as it is tall, its face divided into shallow radiating
 panels that follow the curve. One squared timber ARM rises out of the dome, not off the top of it but
 from inside the mound, and leans over to the right. On the arm's end is a chunky brass GRIP, thicker than
-the arm and set at its own angle to it, rubbed bright where hands have closed on it. Nothing about this
+the arm and kicked slightly out of line with it, banded to the arm by a bronze FERRULE at the join and
+rubbed bright where hands have closed on it. The arm, the ferrule and the grip are ONE piece: the grip
+is fixed to the arm and does not turn on it. Nothing about this
 object is sharp, pointed or sprung: it is a handle, and the only thing anyone does with it is pull.
 
 Dark basalt for the kerb, with pale natron dust in the joint where it meets the paving. The dome is
