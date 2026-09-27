@@ -1,4 +1,4 @@
-import type { Mark } from "@/app/SiteMap/mark"
+import type { Mark } from "./mark"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the

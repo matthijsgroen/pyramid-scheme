@@ -137,6 +137,26 @@ describe("a floor authoring a handle", () => {
     expect([markOf("vault2"), markOf("pocket2")]).toEqual([markOf("lever2"), markOf("lever2")])
   })
 
+  /**
+   * A LEVER'S ROOM IS AN ENCOUNTER AND NEVER A FORK, and `shapeKindFor` (nodeKinds.ts) is built on it:
+   * its fork branch runs BEFORE the handle branch and claims any fork carrying a registered family, so
+   * a lever standing in one would be drawn as a switch and its tag never reached. Asked of real
+   * assembled floors — a lever in a labelled side path, on the main path, and in a sub-path — because
+   * that is where `leverSpec` would change.
+   */
+  it("stands every lever in an encounter room, never in a junction", () => {
+    const grids = [
+      floorWithHandle({ in: "lever", drives: ["vault"] }).grid,
+      floorWithHandle({ in: "main", drives: ["vault"] }).grid,
+      nestedFloorWithHandle({ in: "s0.0", drives: ["s0.1"] }).grid,
+    ]
+    expect(grids.flatMap(grid => tagged(grid, "handle")).map(lever => lever.roomType)).toEqual([
+      "encounter",
+      "encounter",
+      "encounter",
+    ])
+  })
+
   it("leaves a mark off every room that is neither a lever nor a door it drives", () => {
     const { grid } = floorWithHandle({ in: "lever", drives: ["vault"] })
     const marked = rooms(grid).filter(room => room.mark !== undefined)

@@ -17,7 +17,7 @@ import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
 import { registerFamily } from "@/app/families/familyRegistry"
 import { floorWithHandle } from "@/game/testSupport/handleFixtures"
-import { markFor } from "./mark"
+import { markFor } from "@/game/mark"
 
 // Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
 // place of its own), so a change there can't silently break every position assumption in this file.

@@ -1,6 +1,6 @@
 import { mulberry32, shuffle } from "./random"
 import { hashString } from "@/support/hashString"
-import { type Mark, markFor } from "@/app/SiteMap/mark"
+import { type Mark, markFor } from "./mark"
 import type {
   AssemblerFailure,
   AssemblerResult,

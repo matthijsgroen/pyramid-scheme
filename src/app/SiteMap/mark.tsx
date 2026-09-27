@@ -1,41 +1,14 @@
-/* eslint-disable react-refresh/only-export-components -- one vocabulary in one file: the pair itself,
-   the hue it resolves to, and the two ways it is drawn. Splitting them would leave the glyph list and
-   the drawing that has to be able to render it in different files. */
-import type { CellState, KeyColor } from "@/game/siteTypes"
-import { KEY_COLORS } from "@/game/siteTypes"
+import type { CellState } from "@/game/siteTypes"
+import type { Mark } from "@/game/mark"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 
-/**
- * A MARK IS A GLYPH ON A COLOURED GROUND: the ground groups, the glyph says which one. A mechanism and
- * every gate it owns wear the same pair, so two levers on one floor may both be green and still be
- * told apart (docs/mods/floor-topology-design.md, "A gate says what opens it").
- *
- * Nothing is painted for it — the grounds are the five floor-key hues the map already tints gates and
- * treasure badges with, and the glyphs come from the hieroglyph subset already shipped as a webfont and
- * led with in every stack (src/index.css), so a text node anywhere already renders them.
- */
-export type Mark = { color: KeyColor; glyph: number }
-
-/**
- * Picked out of HIEROGLYPHS_IN_FONT for reading as six different SHAPES at marker size — a falcon, an
- * ankh, a cobra, an eye, a scarab, a water ripple — rather than for meaning anything: a bird and a
- * standing man are one blob at 20px, which is the size this is worn at.
- *
- * Guarded by mark.spec.tsx against the generated list, because a code point the subset does not carry
- * draws as an empty box on every device with no hieroglyph font of its own. Written as code points
- * rather than as literals so the subset sweep (scripts/hieroglyphUsage.ts) neither grows nor shrinks
- * for them — every one of these is already drawn elsewhere in the source.
- */
-export const MARK_GLYPHS: readonly number[] = [0x13143, 0x132f9, 0x13197, 0x13080, 0x131a3, 0x13216]
-
-/** Five grounds against six glyphs, which are coprime: thirty pairs before any floor sees one twice. */
-export const markFor = (index: number): Mark => ({
-  color: KEY_COLORS[index % KEY_COLORS.length],
-  glyph: MARK_GLYPHS[index % MARK_GLYPHS.length],
-})
+// HOW A MARK IS DRAWN — the pair itself (`Mark`, `MARK_GLYPHS`, `markFor`) is plain data and lives in
+// src/game/mark.ts, because the assembler writes it onto cells and the domain layer holds no React.
+// Re-exported here so everything on the map side reads one name for it.
+export type { Mark }
 
 /** The lit hue on anything the player can reach, the muted one on what they have only seen. */
-export const markHex = (mark: Mark, state: CellState): string =>
+const markHex = (mark: Mark, state: CellState): string =>
   keyColorHex[mark.color][state === "visible" ? "visible" : "reachable"]
 
 /**

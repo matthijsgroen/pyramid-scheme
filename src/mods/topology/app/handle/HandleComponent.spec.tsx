@@ -4,7 +4,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 import type { FamilyContext } from "@/app/families/familyRegistry"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
-import { markFor } from "@/app/SiteMap/mark"
+import { markFor } from "@/game/mark"
 import type { MechanismRecord } from "@/game/siteTypes"
 import { HandleComponent } from "./HandleComponent"
 

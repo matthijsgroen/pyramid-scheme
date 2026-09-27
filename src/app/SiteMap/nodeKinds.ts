@@ -20,6 +20,10 @@ export const shapeKindFor = (grid: FloorGrid, r: number, c: number, cell: ShapeC
   // family and not on any tag, so everything that comes to stand in a junction reads the same and core
   // names none of them; an unregistered family is no family, so a junction a switched-off mod left
   // behind is bare. The room's FOOTPRINT is still a fork's (`canClaimVoid` asks the type, not this).
+  //
+  // It may stand AHEAD of the handle branch below only because a lever's room is never a fork — a fork
+  // carrying the handle family would be taken here and drawn as a switch. `handleAuthoring.spec.ts`
+  // pins that, on real assembled floors.
   if (cell.roomType === "fork") {
     return cell.family !== undefined && getFamilyPlugin(cell.family) !== undefined ? "switch" : "fork"
   }

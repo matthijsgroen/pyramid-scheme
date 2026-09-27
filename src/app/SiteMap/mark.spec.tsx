@@ -4,7 +4,8 @@ import { cleanup, render } from "@testing-library/react"
 import { HIEROGLYPHS_IN_FONT } from "@/ui/tokens/hieroglyphFont.generated"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 import { NodeShape } from "./nodeShapes"
-import { MARK_GLYPHS, MarkBadge, markFor } from "./mark"
+import { MARK_GLYPHS, markFor } from "@/game/mark"
+import { MarkBadge } from "./mark"
 
 afterEach(cleanup)
 
