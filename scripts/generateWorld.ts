@@ -25,7 +25,8 @@ import {
   findUnbakedSwitchBoards,
   findUndrawnHandles,
   findUndrawnOneWays,
-  sweepMissedASwitch,
+  findUnwalkedLocks,
+  floorsOwingALock,
 } from "../src/worldGen/validate"
 import { assembleFloor } from "../src/game/siteAssembler"
 import type { FloorGrid } from "../src/game/siteTypes"
@@ -196,12 +197,23 @@ if (unassembled.length > 0) {
   process.exit(1)
 }
 
-// A sweep that walks nothing reports nothing, and a world that authors a switch has a lock to walk.
-// Without this the day the wiring or the switch detection stops reaching that floor is the day the
-// check turns into decoration, and it would stay green while it did.
-if (sweepMissedASwitch(configs, walked)) {
-  console.error("✗ the world authors a switch, but the lock sweep walked no floor's lock at all.")
-  console.error("    Either the sweep is not reaching that floor, or floorLock no longer reads its switch.")
+// How far the sweep reached, printed on every run: a walk that reports no failure is otherwise
+// indistinguishable from a walk that never got to a floor, and this is the number a reader compares
+// against the authoring in front of them.
+const owedALock = floorsOwingALock(configs)
+console.log(`  Lock sweep: walked ${walked.length} of ${owedALock.length} floor(s) that author a mechanism`)
+
+// Every floor that authors a switch in a reserved junction, or a lever, stands a mechanism on every
+// carve — so each of them owes the walk a lock. Without this the day the wiring or the mechanism
+// detection stops reaching one of them is the day the check turns into decoration for that floor, and
+// it would stay green while it did.
+const unwalked = findUnwalkedLocks(configs, walked)
+if (unwalked.length > 0) {
+  console.error(`✗ ${unwalked.length} floor(s) author a mechanism whose lock the sweep never walked:`)
+  for (const floor of unwalked.slice(0, 20))
+    console.error(`    ${floor.journeyId} level ${floor.levelNr} floor ${floor.floorIndex}`)
+  if (unwalked.length > 20) console.error(`    … and ${unwalked.length - 20} more`)
+  console.error("    Either the sweep is not reaching those floors, or floorLock no longer reads their mechanism.")
   process.exit(1)
 }
 

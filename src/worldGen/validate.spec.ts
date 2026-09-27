@@ -4,7 +4,7 @@ import {
   findStrandingLocks,
   findUnbakedSwitchBoards,
   findUndrawnOneWays,
-  sweepMissedASwitch,
+  findUnwalkedLocks,
   validateRewardCounts,
 } from "./validate"
 import { DEV_CAPABILITIES, PYRAMID_CAPABILITIES } from "./capabilities"
@@ -332,7 +332,7 @@ describe("findStrandingLocks", () => {
 
   it("says nothing about a floor carrying no lock", () => {
     const plain = { spec: [[floor()]] } as Record<string, SiteConfig[]>
-    expect(findStrandingLocks(plain, (_journeyId, config) => carve(config))).toEqual({ walked: 0, stranding: [] })
+    expect(findStrandingLocks(plain, (_journeyId, config) => carve(config))).toEqual({ walked: [], stranding: [] })
   })
 
   it("reports the floor and the state when a lock leaves the way out unreachable", () => {
@@ -344,33 +344,56 @@ describe("findStrandingLocks", () => {
     expect(stranding[0].problem).toBe("no sequence of moves reaches the way out")
   })
 
-  it("counts the floors whose lock it actually walked", () => {
-    expect(findStrandingLocks(configs, (_journeyId, config) => carve(config)).walked).toBe(1)
+  it("names the floors whose lock it actually walked", () => {
+    expect(findStrandingLocks(configs, (_journeyId, config) => carve(config)).walked).toEqual([
+      { journeyId: "spec", levelNr: 1, floorIndex: 0 },
+    ])
   })
 
   it("skips a floor that will not carve, which the unassembled sweep already reports", () => {
-    expect(findStrandingLocks(configs, () => null)).toEqual({ walked: 0, stranding: [] })
+    expect(findStrandingLocks(configs, () => null)).toEqual({ walked: [], stranding: [] })
   })
 
-  describe("sweepMissedASwitch", () => {
-    it("reports a world that authors a switch whose sweep walked no lock at all", () => {
-      expect(sweepMissedASwitch(configs, 0)).toBe(true)
+  describe("findUnwalkedLocks", () => {
+    const ref = { journeyId: "spec", levelNr: 1, floorIndex: 0 }
+
+    it("reports a floor that authors a switch whose lock the sweep never walked", () => {
+      expect(findUnwalkedLocks(configs, [])).toEqual([ref])
     })
 
-    it("says nothing once the sweep has walked a lock", () => {
-      expect(sweepMissedASwitch(configs, 1)).toBe(false)
+    it("says nothing once the sweep has walked that floor's lock", () => {
+      expect(findUnwalkedLocks(configs, [ref])).toEqual([])
     })
 
-    it("says nothing about a world that authors no switch, which has no lock to walk", () => {
+    it("reports the floors it missed even when it walked others", () => {
+      const two = { spec: [[switchFloor()], [switchFloor()]] } as Record<string, SiteConfig[]>
+      expect(findUnwalkedLocks(two, [ref])).toEqual([{ journeyId: "spec", levelNr: 2, floorIndex: 0 }])
+    })
+
+    it("says nothing about a world that authors no mechanism, which has no lock to walk", () => {
       const plain = { spec: [[floor()]] } as Record<string, SiteConfig[]>
-      expect(sweepMissedASwitch(plain, 0)).toBe(false)
+      expect(findUnwalkedLocks(plain, [])).toEqual([])
     })
 
     it("says nothing about a switch no junction was reserved for, which carves no gate", () => {
       const unreserved = {
         spec: [[floor({ switches: { encounter: "sumplete", min: 1, max: 1 } })]],
       } as Record<string, SiteConfig[]>
-      expect(sweepMissedASwitch(unreserved, 0)).toBe(false)
+      expect(findUnwalkedLocks(unreserved, [])).toEqual([])
+    })
+
+    it("says nothing about a switch the carve may leave out, which stands no mechanism of its own", () => {
+      const optional = {
+        spec: [[floor({ forks: [{ exits: 2, count: 1 }], switches: { encounter: "sumplete", min: 0, max: 1 } })]],
+      } as Record<string, SiteConfig[]>
+      expect(findUnwalkedLocks(optional, [])).toEqual([])
+    })
+
+    it("owes a walk to a floor standing a lever, which needs no reserved junction", () => {
+      const lever = {
+        spec: [[floor({ handles: [{ in: "lever", left: ["vault"], right: ["cellar"] }] })]],
+      } as Record<string, SiteConfig[]>
+      expect(findUnwalkedLocks(lever, [])).toEqual([ref])
     })
   })
 })

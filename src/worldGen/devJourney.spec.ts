@@ -1,7 +1,15 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import { buildConfigs } from "./configBuilder"
 import { collectSlots } from "./slots"
-import { findEmptyChests, findUnbakedSwitchBoards, findUndrawnOneWays } from "./validate"
+import {
+  findEmptyChests,
+  findStrandingLocks,
+  findUnbakedSwitchBoards,
+  findUndrawnOneWays,
+  findUnwalkedLocks,
+  type FloorRef,
+  type StrandingLock,
+} from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
 import { puzzleSeeds } from "../data/puzzleSeeds"
 import { DEV_JOURNEY_ID } from "./data"
@@ -9,7 +17,7 @@ import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
 import { assembleFloor } from "../game/siteAssembler"
 // worldGen's FloorConfig is a looser mirror of game/siteTypes.ts's, and authored data only ever
 // assigns values the stricter type accepts too — the same cast reachability.ts makes to assemble.
-import type { FloorConfig as GameFloorConfig } from "../game/siteTypes"
+import type { FloorConfig as GameFloorConfig, FloorGrid } from "../game/siteTypes"
 import { floorAssemblySeed, persistentInteriorSeed } from "../game/siteSeed"
 // Same sanctioned exception configBuilder.integration.spec.ts takes: the claim here is about the
 // REAL, complete world, which only the real mod-owned currencies can build.
@@ -96,6 +104,17 @@ const mosaicByTier = (configs: Record<string, SiteConfig[]>) =>
     r => `${r.tier}`
   )
 
+// The seed a player actually gets for that floor, which is the only one a claim about the carve can
+// be made at: a floor that carves at some other seed is not the floor anybody opens.
+const assembleAt = (journeyId: string, floor: FloorConfig, levelNr: number, floorIndex: number): FloorGrid | null => {
+  const seed = floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
+  const result = assembleFloor(journeyId, floor as GameFloorConfig, seed, resolveEncounterMeta, {
+    resolveKeyRequirements,
+    floorRef: { journeyId, floorIndex },
+  })
+  return result.success ? result.grid : null
+}
+
 const withoutDev = (configs: Record<string, SiteConfig[]>): Record<string, SiteConfig[]> =>
   Object.fromEntries(Object.entries(configs).filter(([id]) => id !== DEV_JOURNEY_ID))
 
@@ -107,6 +126,10 @@ const devFloors = (configs: Record<string, SiteConfig[]>): FloorConfig[] =>
 // well under 30s, and everything below reads these two.
 let plain: Record<string, SiteConfig[]>
 let withDev: Record<string, SiteConfig[]>
+// The lock sweep over each of them, carved once here for the same reason: it assembles every floor in
+// the world, and three tests below read the one result.
+let plainSweep: { walked: FloorRef[]; stranding: StrandingLock[] }
+let withDevSweep: { walked: FloorRef[]; stranding: StrandingLock[] }
 
 beforeAll(() => {
   delete process.env.INCLUDE_DEV
@@ -114,6 +137,8 @@ beforeAll(() => {
   process.env.INCLUDE_DEV = "1"
   withDev = build()
   delete process.env.INCLUDE_DEV
+  plainSweep = findStrandingLocks(plain, assembleAt)
+  withDevSweep = findStrandingLocks(withDev, assembleAt)
 }, 180_000)
 
 afterAll(() => {
@@ -157,17 +182,7 @@ describe("the loot the dev journey contributes", () => {
   // has nothing to fill them with — so it reports none of them and the generator does not stop.
   it("leaves no empty chest for the generator to refuse", () => {
     expect(withDev[DEV_JOURNEY_ID]).toHaveLength(7)
-    const empties = findEmptyChests(
-      { [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] },
-      (journeyId, floor, levelNr, floorIndex) => {
-        const seed = floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
-        const result = assembleFloor(journeyId, floor as GameFloorConfig, seed, resolveEncounterMeta, {
-          resolveKeyRequirements,
-          floorRef: { journeyId, floorIndex },
-        })
-        return result.success ? result.grid : null
-      }
-    )
+    const empties = findEmptyChests({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] }, assembleAt)
     expect(empties).toEqual([])
   })
 })
@@ -212,12 +227,8 @@ describe("what the dev journey authors", () => {
     const failed: string[] = []
     withDev[DEV_JOURNEY_ID].forEach((site, levelIndex) =>
       site.forEach((floor, floorIndex) => {
-        const seed = floorAssemblySeed(persistentInteriorSeed(DEV_JOURNEY_ID), levelIndex + 1, floorIndex)
-        const result = assembleFloor(DEV_JOURNEY_ID, floor as GameFloorConfig, seed, resolveEncounterMeta, {
-          resolveKeyRequirements,
-          floorRef: { journeyId: DEV_JOURNEY_ID, floorIndex },
-        })
-        if (!result.success) failed.push(`level ${levelIndex + 1} floor ${floorIndex}`)
+        if (!assembleAt(DEV_JOURNEY_ID, floor, levelIndex + 1, floorIndex))
+          failed.push(`level ${levelIndex + 1} floor ${floorIndex}`)
       })
     )
     expect(failed).toEqual([])
@@ -251,6 +262,33 @@ describe("what the dev journey authors", () => {
     expect(findUndrawnOneWays({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] }, () => PYRAMID_CAPABILITIES)).toHaveLength(
       1
     )
+  })
+})
+
+// HOW FAR THE LOCK SWEEP REACHES, HELD AS A NUMBER RATHER THAN AS "MORE THAN NOTHING". The build's
+// own guard compares the walk against the floors the authoring owes it, which catches a walk that
+// stopped reaching them — but not an authoring that quietly stopped standing mechanisms, because then
+// both sides fall together. The counts are pinned here, where both worlds exist in one process: the
+// shipped world stands one mechanism and a plain build can only ever prove that one, so the seven the
+// dev journey adds are provable nowhere else.
+describe("the floors the lock sweep walks", () => {
+  it("walks the one mechanism the shipped world stands, and finds no strand", () => {
+    expect(plainSweep.walked).toHaveLength(1)
+    expect(plainSweep.stranding).toEqual([])
+  })
+
+  it("walks eight once the dev journey stands its seven, and finds no strand", () => {
+    expect(withDevSweep.walked).toHaveLength(8)
+    expect(withDevSweep.stranding).toEqual([])
+  })
+
+  it("walks seven of them on the dev journey itself", () => {
+    expect(withDevSweep.walked.filter(ref => ref.journeyId === DEV_JOURNEY_ID)).toHaveLength(7)
+  })
+
+  it("reaches every floor whose authoring owes it a lock, in both worlds", () => {
+    expect(findUnwalkedLocks(plain, plainSweep.walked)).toEqual([])
+    expect(findUnwalkedLocks(withDev, withDevSweep.walked)).toEqual([])
   })
 })
 

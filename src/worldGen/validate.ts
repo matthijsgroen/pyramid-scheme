@@ -297,9 +297,12 @@ export const findUndrawnHandles = (
  * reason there would quietly re-carve the floor and the author would never hear which arrangement was
  * refused.
  */
-export type StrandingLock = { journeyId: string; levelNr: number; floorIndex: number; problem: string }
+export type FloorRef = { journeyId: string; levelNr: number; floorIndex: number }
+export type StrandingLock = FloorRef & { problem: string }
 
-/** `walked` counts the floors that handed the walk a lock at all — see `sweepMissedASwitch`. */
+const refKey = (ref: FloorRef) => `${ref.journeyId}#${ref.levelNr}#${ref.floorIndex}`
+
+/** `walked` names every floor that handed the walk a lock at all — see `findUnwalkedLocks`. */
 export const findStrandingLocks = (
   configs: Record<string, SiteConfig[]>,
   assembleFloorAt: (
@@ -308,9 +311,9 @@ export const findStrandingLocks = (
     levelNr: number,
     floorIndex: number
   ) => AssembledFloor | null
-): { walked: number; stranding: StrandingLock[] } => {
+): { walked: FloorRef[]; stranding: StrandingLock[] } => {
   const stranding: StrandingLock[] = []
-  let walked = 0
+  const walked: FloorRef[] = []
   for (const [journeyId, sites] of Object.entries(configs))
     sites.forEach((site, siteIdx) =>
       site.forEach((floor, floorIndex) => {
@@ -318,28 +321,47 @@ export const findStrandingLocks = (
         if (!grid) return
         const lock = floorLock(grid)
         if (!lock) return
-        walked++
+        const ref = { journeyId, levelNr: siteIdx + 1, floorIndex }
+        walked.push(ref)
         const result = walkLock(lock)
         if (result.sound) return
-        stranding.push({
-          journeyId,
-          levelNr: siteIdx + 1,
-          floorIndex,
-          problem: describeLockWalkFailure(result.failure),
-        })
+        stranding.push({ ...ref, problem: describeLockWalkFailure(result.failure) })
       })
     )
   return { walked, stranding }
 }
 
 /**
- * The sweep walked no lock at all on a world that authors a switch.
+ * The floors whose authoring guarantees a mechanism on every carve, so the lock sweep owes each of
+ * them a walk.
  *
- * Almost every floor hands `findStrandingLocks` nothing, because almost no floor stands a switch —
- * so a sweep that reports no failure is indistinguishable from a sweep that never reached the one
- * floor that has a lock on it. Either the wiring or the switch detection stopped reaching it, and the
- * check would stay green for ever while proving nothing.
+ * Read off `switches.min` rather than `max`: a junction `forks` reserves plus a switch that must fill
+ * one stands a mechanism every time, and so does a lever, while `max` is only what the carve may go up
+ * to. `floorLock` returns nothing for a floor with no mechanism cell on it, so this list — not the
+ * floor count — is what the sweep's reach is measured against.
  */
-export const sweepMissedASwitch = (configs: Record<string, SiteConfig[]>, walked: number): boolean =>
-  walked === 0 &&
-  Object.values(configs).some(sites => sites.some(site => site.some(floor => switchFamilies(floor).count > 0)))
+export const floorsOwingALock = (configs: Record<string, SiteConfig[]>): FloorRef[] => {
+  const owed: FloorRef[] = []
+  for (const [journeyId, sites] of Object.entries(configs))
+    sites.forEach((site, siteIdx) =>
+      site.forEach((floor, floorIndex) => {
+        const junctions = (floor.forks ?? []).reduce((sum, fork) => sum + fork.count, 0)
+        if (Math.min(floor.switches?.min ?? 0, junctions) > 0 || (floor.handles?.length ?? 0) > 0)
+          owed.push({ journeyId, levelNr: siteIdx + 1, floorIndex })
+      })
+    )
+  return owed
+}
+
+/**
+ * Floors that author a mechanism the lock sweep never walked.
+ *
+ * Almost every floor hands `findStrandingLocks` nothing, because almost no floor stands a switch or a
+ * lever — so a sweep that reports no failure says nothing on its own about how much of the world it
+ * reached. Asking only whether it reached NOTHING leaves the regression that takes the sweep from
+ * eight floors to one passing green, so the whole list the authoring owes is what gets compared.
+ */
+export const findUnwalkedLocks = (configs: Record<string, SiteConfig[]>, walked: readonly FloorRef[]): FloorRef[] => {
+  const reached = new Set(walked.map(refKey))
+  return floorsOwingALock(configs).filter(ref => !reached.has(refKey(ref)))
+}
