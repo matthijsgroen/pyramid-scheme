@@ -2653,6 +2653,13 @@ slightly DOWN on the plant, not at it from the side. What follows is not a mood,
   outward is an up-facing thing: it reads as a wide, shallow ELLIPSE — about twice as wide as it is deep
   — and you see the UPPER surfaces of the fronds that go away from you, not their profile.
 - Anything facing the VIEWER is barely foreshortened. A trunk keeps its height.
+- **THE LEAVES RADIATE IN EVERY DIRECTION, INCLUDING TOWARD YOU AND AWAY FROM YOU** — and that is where
+  the angle shows. A leaf pointing AWAY is drawn visibly SHORTER, at half the length it would have
+  sideways, and you see its UPPER surface. A leaf pointing TOWARD you is also shortened, and overlaps the
+  base of the plant, hiding part of it. Only the leaves reaching left and right keep their full length.
+  **A plant whose leaves all lie flat in the picture plane, spreading only left and right like a fan or a
+  pressed specimen, is the failure** — it is the commonest way this tile comes back wrong, and it reads
+  as a cut-out standing on the floor rather than a plant growing out of it.
 - **A plant with height still shows its top.** Drawn as a flat fan, symmetrical, seen edge-on, it reads
   as a sticker standing on the floor — which is exactly what the last roll of this tile did, and it is
   the one thing that makes a tile disagree with the room around it.
