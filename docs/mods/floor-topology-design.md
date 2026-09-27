@@ -347,6 +347,29 @@ oneWays: [
 ]
 ```
 
+**What a one-way guarantees.** These are the contract, not notes about one floor: a drop is an
+ingredient, and every lock that ever stands one inherits all of it.
+
+| From the source | an ordinary corridor — it looks, walks and reveals like any other |
+| From the landing | the mouth is visible, and nothing past it |
+| At the landing | the movement marker toward it is drawn refused, not omitted |
+| Across a gate | a drop may leave a gated region or run inside one, never enter a gate unearned |
+| At the way out | never hung off the exit node, which stays a dead end |
+| Into a hidden section | refused; out of one is allowed |
+| To the walk | reported as a move, so the ground past it is reachable rather than stranded |
+
+The two that look like details are the two that cost the most to learn. **A marker that is merely
+absent teaches nothing** — a missing arrow is indistinguishable from a wall, and the player never
+learns the way exists; so the refusal is drawn, as the same shape at half strength with a bar across
+it. And **a mouth that cannot be seen from the landing is a passage the player never knows about**,
+which makes the barred marker unintelligible when they do meet it.
+
+Two consumers of `dirs` must be left symmetric, and both were nearly "fixed" while this was built:
+`isPassable` and `isForkMeetingClaim` in the map's own claim rules. Their symmetry is what merges a
+fork's rooms across a shared void cell. The readers that DID need teaching were the region flood in
+`floorLock` (a drop is not a two-way edge and a pocket behind one is its own region) and `completeCell`
+(a single-`dirs` cell is a passage to walk through, not a dead end to stop at).
+
 Explicit because where a drop lands is a design decision rather than a safety measure — the worked
 example is a different floor one gate lower. The walk catches a missing one; it does not place one.
 A one-way is P2, costed below.
@@ -642,11 +665,10 @@ belongs in the drawing: a ramp should read as a ramp from above and as an openin
 from below. Making `roomClaims` direction-aware instead would fight an intent that exists for the
 junction rooms that share a void cell.
 
-One accident in P2's favour: a one-way cell has `dirs.size === 1`, so `completeCell`'s straight-
-through test fails and the cell is marked reachable — a blind spot the player must click — rather
-than auto-revealed. That is the seen-on-arrival behaviour a ramp wants, for free. Less welcome:
-`renderAscii` has no glyph for a single-dir cell and falls through to `·`, so one-ways are
-unreadable in the ascii view the specs read. Worth extending with P2.
+A one-way cell has `dirs.size === 1`, which several readers of `dirs` took for something else before
+this landed — see "What a one-way guarantees" below for what each of them now does. `renderAscii` draws
+such a cell as the arrow it is rather than falling through to `·`, so one-ways are legible in the ascii
+view the specs read.
 
 Two-sidedness, following the currency precedent: a blocker needs a game-side reachability fact ("this
 opens on currency X") for world-gen and an app-side evaluator ("is this walkable now") for the
