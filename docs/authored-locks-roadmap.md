@@ -189,3 +189,38 @@ The rest are smaller, and none can reach a player while the capability holds:
 - **`doorsToEnter` is not every door.** A room carrying `requiredKeyId`/`requiredKeyIds` from a family's own key requirements — a hieroglyph tableau, say — is a real barrier the walk respects, and nothing writes it into the map. A drop landing past one hands over ground behind a door the player has not earned. The switch-door walk already generalises: run the same "shut this node, see what the way in stops reaching" loop over every room with a key requirement. Until then the map's comment overclaims and should say so.
 - **`sealed` isolation is recorded as a door**, so a drop in or out of a sealed stretch is refused although nothing there is earned.
 - **One assertion in `oneWayCarve.spec.ts`** ("fails by name when no attempt can place the drop") checks for an `only`→`main` edge without filtering for one-wayness, so an ordinary attach passage satisfies it. Match its three siblings.
+
+---
+
+## What the rendering spike found (step 2)
+
+Looked at, not reasoned about: a throwaway Storybook story rendering a real carved floor that stands a
+drop, with crude marks drawn at the boundary and at the connector cell.
+
+**Both readings work at map zoom, so legibility does not decide between them.** A plug stone drawn
+into the boundary's 56x28 gap reads as a pale-topped slab across the passage; a fissure-and-line drawn
+on the connector's 56x56 floor square reads as a dark break with a bright line over it. For scale: the
+node markers that already read on this map are 38-40px, so the gap was never short of room.
+
+**Direction is not carried by either.** The stone's shadow wedge and the line's slope are both too
+subtle at this size. Chevrons in the map's own idiom — the language of the exit arrow — do carry it,
+but they read as a sign on the map rather than as a thing in the world. That is the open choice, and
+it is a design decision rather than a drawing one: **is a one-way a place or a sign?**
+
+**A rendering defect blocks any art going in.** A one-way's two boundaries are painted `#000000` over
+floor that is otherwise drawn correctly underneath:
+
+```
+gap above the connector:  fill=url(#floor-junior)  + a #000000 path on top
+an ordinary corridor gap: fill=url(#face-junior)   + #241708
+```
+
+Black is the map's deliberate mark for the mouth of an unexplored passage. Something in that path
+treats a cell with a single `dirs` entry as unexplored. Until it is fixed, anything drawn at a drop
+sits under a black overlay. This is the first thing step 2 must do, before any art is commissioned.
+
+**The geometry, measured, for whoever draws next.** Cells render 56x56 at a pitch of 70 across and 84
+down; the boundary gap above a cell is 56x28, the one beside it 14x56. A cell `(r, c)`'s floor sits at
+`((c + 1) * 70, 112 + r * 84)` relative to `[data-map]`. Deriving this from `CELL` alone gives the
+wrong answer and puts every mark in the wrong place — which happened once here, and produced a
+confident conclusion that had to be retracted.
