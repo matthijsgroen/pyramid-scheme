@@ -245,3 +245,34 @@ shape with a bar across it, which is the cheapest thing that could work and the 
 One accident already in the feature's favour: a one-way's connector has a single `dirs` entry, so
 `isCorridorCorner` counts it as a corner rather than a straight-through, and it is already a click
 target the player must choose rather than ground they are walked across.
+
+### What a one-way does, from each side
+
+Settled by the owner. The drop runs from a source node, through a connector, to a landing.
+
+- **From the source it is an ordinary corridor.** It looks normal, it walks normal, and the reveal
+  runs through it the way it runs through any corridor. The player takes it without ceremony.
+- **From the landing you see into the corridor but not past it.** The connector itself shows; what
+  lies beyond stays dark. A passage the player cannot see teaches them nothing, and they would never
+  learn why the way is barred.
+- **At the landing, a disabled arrow points at it.** The way exists and is not theirs.
+
+This overrules the design document's line about a one-way being "a blind spot the player must click":
+that was written as an accident in the feature's favour and is not what the feature wants. From the
+source side a drop reveals like any corridor. `docs/mods/floor-topology-design.md` still says the
+opposite and wants correcting.
+
+The middle behaviour is the one neither the code nor the plan had: the connector is **visible from
+the landing without being enterable**. The landing holds no direction into it, so nothing reveals it
+from that side today, and the passage would simply not exist as far as the player could tell.
+
+### What the art costs
+
+**Three drawings per rank, not four.** The two horizontal directions are one asset mirrored left to
+right. The two vertical directions each need their own: a vertical flip would put the up-facing top
+surface at the bottom, against the projection's own rule that a block is an up-facing band on top and
+a viewer-facing rectangle below.
+
+Because the drop is drawn on the connector's own 56x56 floor square rather than in the boundary gap,
+the east-west sliver problem raised earlier does not apply — orientation is which way the line runs
+across a full cell, not how much wall face there is to draw on.
