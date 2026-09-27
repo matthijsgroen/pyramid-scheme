@@ -268,6 +268,19 @@ describe("which way a shaft leans", () => {
     expect(Math.abs(shaftLean(grid, buildRoomClaims(grid), grid.siteId, "0,1"))).toBe(1)
   })
 
+  it("stays in the passage where the floor beside it is another room's, across a wall", () => {
+    // The floor of a chamber a passage runs past is one cell over and behind masonry: a beam that leaned
+    // onto it stood in the corridor with its patch of sun on the far side of the wall.
+    const grid = makeGrid([
+      [empty, empty, corridor(["s"])],
+      [chamber(), empty, corridor(["n", "s"])],
+      [empty, empty, corridor(["n"])],
+    ])
+    const claims = buildRoomClaims(grid)
+    expect(claims.claimedBy.has("1,1")).toBe(true)
+    expect(Math.abs(shaftLean(grid, claims, grid.siteId, "1,2"))).toBe(PENNED_LEAN)
+  })
+
   it("takes the other side when only that one is floor", () => {
     const grid = makeGrid([[empty, corridor(["e"]), corridor(["w"])]])
     expect(shaftLean(grid, buildRoomClaims(grid), grid.siteId, "0,1")).toBe(1)

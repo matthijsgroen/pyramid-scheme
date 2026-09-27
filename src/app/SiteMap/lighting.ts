@@ -239,18 +239,30 @@ export const beamShafts = (
  * the map — a light leak off the edge of the world, the same thing `beamShafts` refuses when a chamber's
  * footprint reaches past the grid.
  *
- * So the lean goes to the side that has floor on it, takes the other side where only that one has, and
- * where neither has is pulled in to what the cell itself can hold: the light comes down the passage
- * rather than across it. Seeded off the CELL, not off the shaft's place in the list — there are only ever
- * a handful of shafts, so an index seed draws the same two or three leans on every floor in the game. */
+ * So the lean goes to the side the light can actually reach, takes the other side where only that one
+ * can be reached, and where neither can is pulled in to what the cell itself can hold: the light comes
+ * down the passage rather than across it. Seeded off the CELL, not off the shaft's place in the list —
+ * there are only ever a handful of shafts, so an index seed draws the same two or three leans on every
+ * floor in the game.
+ *
+ * REACHING IS NOT ADJACENCY, and the difference is a wall. A passage running past a chamber has that
+ * chamber's floor one cell over with masonry in between, and a beam that leaned onto it crossed the wall
+ * to get there — a shaft standing in a corridor with its patch of sun on the far side of a wall, which is
+ * what a hole in a roof cannot do. So a side counts when it is the SAME PLACE: another cell of the room
+ * this shaft is in, or the way the passage itself runs. */
 export const PENNED_LEAN = 0.2
 export const shaftLean = (grid: FloorGrid, claims: RoomClaims, siteId: string, key: string): number => {
   const [row, col] = key.split(",").map(Number)
   const drawn = hashUnit(siteId, `beam-lean:${key}`, 0) < 0.5 ? -1 : 1
-  const ground = (side: number) =>
-    cellAt(grid, row, col + side).type !== "empty" || claims.claimedBy.has(`${row},${col + side}`)
-  if (ground(drawn)) return drawn
-  if (ground(-drawn)) return -drawn
+  const owner = claims.claimedBy.get(key) ?? key
+  const cell = cellAt(grid, row, col)
+  const reaches = (side: number) => {
+    const there = `${row},${col + side}`
+    if ((claims.claimedBy.get(there) ?? there) === owner) return true
+    return cell.type === "corridor" && cell.dirs.has(side < 0 ? "w" : "e")
+  }
+  if (reaches(drawn)) return drawn
+  if (reaches(-drawn)) return -drawn
   return drawn * PENNED_LEAN
 }
 
