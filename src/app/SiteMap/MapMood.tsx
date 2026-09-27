@@ -47,6 +47,12 @@ const SCARAB_CLASS = "map-scarab animate-map-scurry motion-reduce:animate-none"
 
 const rand = hashUnit
 
+/** How far a thing lying on the paving may lean off true, either way.
+ *
+ * Enough that a row of them is not a row of identical stamps, and not so far that the light they are
+ * painted with stops agreeing with the light every other tile is painted with. */
+const FLOOR_LEAN = 25
+
 /**
  * How solid a tuft in a floor joint is drawn.
  *
@@ -230,7 +236,16 @@ export const MapGrowth = ({
             opacity={TUFT_OPACITY}
             // ANY angle: a tuft in a joint is seen from above and has no up. It is also what stops a
             // floor of them reading as one stamp repeated, which at this density is what they were.
-            transform={turned(rand(siteId, "growth-rot", i) * 360, rand(siteId, "growth-flip", i) > 0.5)}
+            // A LEAN AND A MIRROR, NOT A TURN. A full circle was fine while this slot held one near-symmetric
+            // wisp; it does not survive the tiles that replaced it. These are painted LIT, from the front
+            // and slightly above, and a spray of flowers turned half a circle is lit from underneath with
+            // its heads hanging — which is what it looked like. The mirror is still free, because light
+            // from the front has no left or right to lose. What the full turn used to buy is bought by the
+            // POOL: four members where there was one.
+            transform={turned(
+              (rand(siteId, "growth-rot", i) - 0.5) * 2 * FLOOR_LEAN,
+              rand(siteId, "growth-flip", i) > 0.5
+            )}
           />
         )
       })}

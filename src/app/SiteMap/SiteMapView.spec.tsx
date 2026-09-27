@@ -333,6 +333,24 @@ describe("the pool a slot of growth is drawn from", () => {
     for (const url of painted(GROWTH_POOLS.floor)) expect(drawn).toContain(url)
   })
 
+  it("never turns a plant far enough to light it from underneath", () => {
+    // These tiles are painted LIT, from the front and slightly above. A full circle of rotation was fine
+    // while the slot held one near-symmetric wisp and is not fine now: a spray of flowers turned half a
+    // circle hangs its heads and is lit from below. A mirror is still free — front light has no flank.
+    const wide = Array.from({ length: 24 }, () => corridor("completed", false))
+    const grid = {
+      ...makeGrid([wide, wide.map(() => empty)]),
+      condition: { kind: "overgrown" as const, amount: 1 },
+    }
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} revealAllCells />)
+    const turns = spriteMatching(container, "overgrown")
+      .map(el => /rotate\(([-\d.]+)deg\)/.exec(el.style.transform)?.[1])
+      .filter((deg): deg is string => deg !== undefined)
+      .map(Number)
+    expect(turns.length).toBeGreaterThan(0)
+    for (const deg of turns) expect(Math.abs(deg)).toBeLessThanOrEqual(45)
+  })
+
   it("draws the same members in the same cells every render", () => {
     expect(overgrownFloor()).toEqual(overgrownFloor())
   })
