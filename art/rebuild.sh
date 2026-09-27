@@ -1510,19 +1510,5 @@ yarn import-tile art/masters/surfaces/overgrown-scrub.webp --tier=default --name
 yarn import-tile art/masters/surfaces/overgrown-fronds.webp --tier=default --name=overgrown-fronds --slot=growth \
   --filter=smooth --saturation=0.7 --brightness=0.95
 
-# The GROUND the other overgrown tiles stand on: moss cushions with the paving showing through between
-# them. KEYED as well as masked, unlike sand — the magenta between the cushions becomes the hole the real
-# floor shows through, and the mask cuts the outline of the whole mat. Keying runs before the mask.
-#
-# Darkened to 0.7, which is the number the whole tile turns on. As painted it lands at p50 119 — brighter
-# than the paving it covers (87-114) AND brighter than the plants that stand on it (90-99), which is the
-# one way this tile can fail: it swallows them. At 0.7 it sits at 82, under both.
-# A HARDER EDGE AND A FULLER OPACITY THAN SAND'S. Sand thins to nothing and is never solid, so its mask
-# tapers over nearly half its radius (`--core` 0.55) and stops at 0.8; moss grew to the limit of the damp
-# and stopped, and it hides the stone it lies on. At sand's settings the mat read as a green smudge
-# airbrushed onto the floor — 34% of it was soft rim. At these, 6% is.
-yarn drift-mask --out="$OBJ" --seed=moss --size=504 --peak=1 --core=0.88 --lobes=4 --blur=2
-yarn import-tile art/masters/surfaces/overgrown-moss.webp --tier=default --name=overgrown-moss --slot=drift \
-  --filter=smooth --mask="$OBJ" --brightness=0.7
 yarn import-tile art/masters/surfaces/overgrown-curtain.webp --tier=default --name=overgrown-curtain --slot=growthWall \
   --filter=smooth --saturation=1.0 --brightness=0.92

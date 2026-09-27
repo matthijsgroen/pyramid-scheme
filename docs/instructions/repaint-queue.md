@@ -2559,3 +2559,70 @@ Everything else at starter, junior and expert is drawn. These three are the whol
 master, and every one of them is a SINGLE room — which is why they sat unqueued while 62 rooms' worth of
 expert work went in ahead of them. They are here because "done up to expert" is not done with dummies
 still in it, not because any of them is urgent.
+
+## Overgrown — one
+
+The GROUND the rest of the overgrown family grows out of. Everything else in that set has landed; this is
+the layer under them, and it replaces a mat of moss that was drawn first and read as OOZE — a rounded
+pooled shape in a dark green is what a game usually paints when it means "hazard", and a floor covering
+must never say that.
+
+### `default/overgrown-grass` — a mat of grass over the paving
+
+**THIS ONE IS NOT LIKE A PLANT TILE.** It is not an object with a silhouette: it is a patch of ground,
+and the gaps in it are left EMPTY so the game's own paving shows through. The outline of the whole patch
+is trimmed afterwards by `yarn drift-mask`.
+
+**Attach:** `~/tile-previews/moss-neighbours.png` — the floor this lies on and the sand drift that lies on
+it the same way. **MATCH THEIR HANDLING**: painted, broad, simplified. They are what this belongs to.
+
+```
+A mat of low grass seen from above, painted in matte gouache, on pure magenta #FF00FF. A SQUARE frame, one unit by one.
+
+**IT MUST READ AS GRASS AT A GLANCE, NEVER AS SPILLED LIQUID.** The tile this replaces was a mat of moss
+and it read as ooze — a rounded shape with a smooth rim, in a dark green, is what a game paints when it
+means something is dangerous to step in. **The blades are what prevent that**, so they are the whole
+point of the tile:
+
+- **EVERY EDGE IS MADE OF BLADES.** Where the grass stops, individual blades stick out past the mass —
+  a ragged, spiky, interrupted boundary, never a smooth curve and never a soft fade. If you can trace
+  the outline with one stroke it is wrong.
+- Blades over the whole patch too, not only at its edge: enough that the eye reads "many small upright
+  things" rather than "a coloured area".
+- Seen from directly ABOVE, so the blades splay outward in all directions rather than standing up the
+  picture.
+
+**DO NOT PAINT ANY STONE.** No slabs, no bricks, no paving, no joints, no floor. The game has a floor and
+lays this over it; a tile bringing its own puts two grids of slabs at two sizes on top of each other.
+Where there is no grass there is MAGENTA, and the magenta is removed — it becomes the hole the real floor
+shows through.
+
+The subject: clumpy grass that has seeded itself along the damp lines of a paved chamber. Several patches
+of different sizes spread across the square with bare gaps between them, following long wandering lines
+rather than sitting as round blobs — grass creeps along a joint. Cover somewhere around half the square.
+
+**PAINT IT, DO NOT PHOTOGRAPH IT.** Look at the references: the paving is a few dozen soft slabs, the
+sand a handful of broad ripples. That is the detail budget. Big simple strokes, visible brushwork — a
+blade is one stroke, not a modelled leaf.
+
+**PITCH IT MID-TONE AND QUIET.** A shade darker than the pale grey-brown paving in the reference, never
+darker than that. Muted and low in chroma — dry-ish, dusty, the green of grass in a shaded courtyard, not
+a lawn. No bright greens, no yellow-green, no sunlit highlights, no flowers. This is the GROUND the other
+plants stand on, and a tile as vivid as they are swallows them.
+
+Matte throughout: lit, never polished — no gloss, no shine, no wet highlights.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn drift-mask --out="$OBJ" --seed=grass --size=504 --peak=1 --core=0.92 --lobes=5 --blur=1
+yarn import-tile art/masters/surfaces/overgrown-grass.webp --tier=default --name=overgrown-grass --slot=drift \
+  --filter=smooth --mask="$OBJ" --brightness=0.7
+```
+
+**A nearly solid mask, unlike sand's.** Sand tapers over half its radius because sand thins to nothing;
+this tile supplies its own edge in blades, so the mask only has to stop it at the patch's extent — any
+taper of its own just softens the blades it is there to preserve. `--brightness` starts where the moss
+landed and is measured from there.
+

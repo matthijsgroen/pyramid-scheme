@@ -3,6 +3,7 @@ import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, approachCells } from "./SiteMapView"
 import { buildRoomClaims, tileRegionsFor } from "./roomClaims"
+import { grassMatsFor } from "./floorScatter"
 import { footprintPath } from "./tileRegions"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY } from "./nodeArt"
 import { ExplorerFigure } from "./ExplorerDot"
@@ -71,7 +72,7 @@ const clipOf = (el: HTMLElement | null | undefined) => {
 
 /** Sprites drawn from a tile whose name contains `part`.
  *
- * GROUND IS EXCLUDED. A mat of moss is `overgrown-moss.png`, so it matches a search for "overgrown"
+ * GROUND IS EXCLUDED. A mat of grass is `overgrown-grass.png`, so it matches a search for "overgrown"
  * while being a different layer entirely — it lies under the growth rather than being some of it, and a
  * test counting tufts in a cell was counting the mat they stand on. `data-ground` is what tells them
  * apart (`GroundCover`). */
@@ -265,36 +266,39 @@ describe("what a condition grows on", () => {
 })
 
 describe("the ground an overgrown floor grows out of", () => {
-  const mossOn = (amount: number) => {
+  /** The PLACEMENT, not the drawing: `overgrown-grass` is not painted yet, and where the mats go is a
+   * fact about the floor rather than about whether the tile has landed. */
+  const matsOn = (amount: number) => {
     const wide = Array.from({ length: 12 }, () => corridor("completed", false))
-    const grid = {
-      ...makeGrid([wide, wide.map(() => empty)]),
-      ...(amount > 0 ? { condition: { kind: "overgrown" as const, amount } } : {}),
-    }
-    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} revealAllCells />)
-    return container.querySelectorAll('[data-ground="moss"]').length
+    const grid = makeGrid([wide, wide.map(() => empty)])
+    return grassMatsFor(grid, amount).length
   }
 
-  it("lays no moss on a floor nothing has grown into", () => {
-    // Sand is weather and falls on any floor; moss is the condition's own ground and falls on no other.
-    expect(mossOn(0)).toBe(0)
+  it("lays no grass on a floor nothing has grown into", () => {
+    // Sand is weather and falls on any floor; grass is the condition's own ground and falls on no other.
+    expect(matsOn(0)).toBe(0)
   })
 
   it("lays more of it the further gone the floor is", () => {
-    expect(mossOn(1)).toBeGreaterThan(mossOn(0.2))
+    expect(matsOn(1)).toBeGreaterThan(matsOn(0.2))
+    expect(matsOn(0.2)).toBeGreaterThan(0)
   })
 
-  it("draws it under the things that grow on it, never over them", () => {
-    const wide = Array.from({ length: 12 }, () => corridor("completed", false))
+  it("draws ground under the things that grow on it, never over them", () => {
+    // Asserted with SAND, which is painted: both grounds are the same component, and what is being
+    // claimed is the order of the layers rather than which tile fills one.
+    const wide = Array.from({ length: 24 }, () => corridor("completed", false))
     const grid = {
       ...makeGrid([wide, wide.map(() => empty)]),
       condition: { kind: "overgrown" as const, amount: 1 },
     }
     const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} revealAllCells />)
     const order = Array.from(container.querySelectorAll("*"))
-    const lastGround = Math.max(...[...container.querySelectorAll('[data-ground="moss"]')].map(el => order.indexOf(el)))
-    const firstTuft = Math.min(...spriteMatching(container, "overgrown").map(el => order.indexOf(el)))
-    expect(lastGround).toBeLessThan(firstTuft)
+    const ground = [...container.querySelectorAll("[data-ground]")].map(el => order.indexOf(el))
+    const growth = spriteMatching(container, "overgrown").map(el => order.indexOf(el))
+    expect(ground.length).toBeGreaterThan(0)
+    expect(growth.length).toBeGreaterThan(0)
+    expect(Math.max(...ground)).toBeLessThan(Math.min(...growth))
   })
 })
 

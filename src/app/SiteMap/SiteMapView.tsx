@@ -11,7 +11,7 @@ import type {
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
-import { driftsFor, mossMatsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
+import { driftsFor, grassMatsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
@@ -489,7 +489,7 @@ const Decoration = ({
  * The scatter that is not cell-sized. Neither has a silhouette of its own — one is the shape of whatever
  * stopped it, the other the shape of where the water sat — so both are drawn several cells across and cut
  * to `walkable-floor`, and the wall does the drawing. See `driftsFor` for why sand is one shared file
- * rather than five; the moss is shared for the same reason (`mossMatsFor`).
+ * rather than five; the moss is shared for the same reason (`grassMatsFor`).
  *
  * No per-cell fog check, because a drift is not per-cell: it is washed by the DARKEST state it crosses,
  * so a drift reaching into an unlit passage cannot light it. That is the same sum `FloorScatter` does
@@ -506,7 +506,7 @@ const GroundCover = ({
   /** The tile these are drawn from — one shared file, whichever ground this is. */
   url: string | undefined
   /** Which ground this is, for the tests that have to tell weather from condition. */
-  kind: "sand" | "moss"
+  kind: "sand" | "grass"
   /** The walkable floor, as rectangles: what the wall does the drawing with. */
   floorRects: readonly Rect[]
 }) => {
@@ -1156,8 +1156,8 @@ export const SiteMapView = ({
   const scatter = useMemo(() => scatterFor(grid, claims), [grid, claims])
   const drifts = useMemo(() => driftsFor(grid, tier), [grid, tier])
   // The moss is the condition's own ground, so its coverage is the condition's own number.
-  const mossMats = useMemo(
-    () => (grid.condition?.kind === "overgrown" ? mossMatsFor(grid, grid.condition.amount) : []),
+  const grassMats = useMemo(
+    () => (grid.condition?.kind === "overgrown" ? grassMatsFor(grid, grid.condition.amount) : []),
     [grid]
   )
   const archedGaps = useMemo(
@@ -1266,12 +1266,18 @@ export const SiteMapView = ({
             {/* THE GROUND THE GREEN GROWS OUT OF, over the sand and under everything that grows: a tuft
                 drawn straight onto bare paving reads as a sticker, and this is what it stands on. Shared
                 across the ranks like the growth itself — a condition is something that got into a site,
-                not a property of its masonry. */}
+                not a property of its masonry.
+
+                GRASS RATHER THAN MOSS, and the reason is legibility rather than taste. A mat of moss was
+                drawn first and read as OOZE: a rounded, pooled shape in a dark green is what a game
+                paints when it means a floor is dangerous to step in, and a covering that half the floor
+                wears must never say that. Grass cannot be mistaken for a fluid, because its edge is made
+                of blades. */}
             <GroundCover
               grid={grid}
-              drifts={mossMats}
-              url={sharedTileUrl(growthTile("overgrown", "moss"))}
-              kind="moss"
+              drifts={grassMats}
+              url={sharedTileUrl(growthTile("overgrown", "grass"))}
+              kind="grass"
               floorRects={floorRects}
             />
             <FloorScatter grid={grid} scatter={scatter} tier={tier} />
