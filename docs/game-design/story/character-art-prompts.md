@@ -179,6 +179,33 @@ magenta of its own, but a person on white has white in their eyes, and keying by
 out. Generate on white and let the script do the rest — it prints how much of its canvas the figure ended
 up filling, which is the number to compare against the last one in the set.
 
+### The holes the flood cannot reach
+
+Background enclosed BY the figure is never reached from an edge, so it ships opaque: the gap inside a bent
+elbow, the wedge between a held map and the hand, the slot behind a neck. **No rule tells those from an
+eye.** Measured on `explorer.jpeg`, the map gap is 1232 pixels and the near eye is 1072; their mean
+colours are (252.8, 253.0, 253.2) and (252.1, 251.4, 250.1). Neither size nor colour separates them, and
+the far eye at 501 pixels is smaller than a gap in the rope coil at 441.
+
+So they are named, and the script prints every patch it left opaque after each run — the list is the prompt
+to look. Pass the ones that are not eyes:
+
+```
+yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer \
+  --holes="574,1299;631,1503;1242,1025;646,1062;748,642"
+yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer \
+  --holes="582,1329;1243,1026;646,1061;929,599;749,642"
+yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer \
+  --holes="586,1330;649,1059;753,638"
+```
+
+Coordinates are in the MASTER image, so they survive as long as the master does; a redrawn master needs new
+ones off its own report. **The four ghosts need none** — their robes are near-white and enclosed, and the
+flood is right to leave them alone, which is the case that makes the conservative default worth keeping.
+
+Check the result over a dark ground rather than in a file browser: white on white is invisible until the
+sprite is drawn over a lit tomb, which is where these are actually seen.
+
 ## 4. What is not here
 
 **The bust crops.** They are crops of the files above, not new generations — the expressive part is head and

@@ -128,7 +128,10 @@ export const Fez: FC<{
     }
   }
 
-  const current = messages[messageIndex - 1]
+  // Clamped, because the portrait slides in BEFORE the first line is showing (messageIndex 0) and an
+  // out-of-range read there fell back to Fez: he appeared with an empty bubble, then vanished as the
+  // real first speaker arrived on the other side of the screen. Whoever speaks first slides in.
+  const current = messages[Math.max(messageIndex - 1, 0)]
   const pose = current?.[0] || "default"
   const speaker: Speaker = current?.[2] ?? "fez"
   const portrait = PORTRAITS[speaker]?.[pose]
@@ -153,6 +156,10 @@ export const Fez: FC<{
             alt={portrait.alt}
             className={clsx(
               "-mb-15 w-50 animate-subtle-bounce transition-transform duration-300",
+              // The sprite is narrower than the bubble above it, so on the right-hand side it has to
+              // be pushed over: left-aligned in a right-anchored column, the explorer stood inboard
+              // of the edge instead of opposite Fez, and the two of them did not face each other.
+              speaker === "explorer" && "ml-auto",
               // The dead are see-through. Drawn opaque and faded here rather than painted
               // translucent, so one sprite serves and the room shows through all of them equally.
               GHOSTS.includes(speaker) && "opacity-70",
