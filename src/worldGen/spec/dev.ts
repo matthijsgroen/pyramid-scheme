@@ -31,8 +31,8 @@ const SWITCHES = { encounter: "lightbeamSwitch", min: 1, max: 1 }
 // Their treasure ends stay empty: this journey contributes no loot.
 const branches = () => [sidePath({ puzzles: 1 }), sidePath({ puzzles: 1 })]
 
-// A switch stands on every floor, so the one mechanic that is actually built is felt at each of the
-// difficulties below rather than at a single one.
+// A switch stands on every floor devSite builds, so the one mechanic that is actually built is felt at
+// each of those difficulties rather than at a single one.
 const devSite = (pyramid: number, difficulty: Difficulty): Rule =>
   journey(DEV_JOURNEY_ID).pyramid(pyramid, {
     difficulty,
@@ -64,4 +64,18 @@ export const devRules: Rule[] = [
   devSite(5, "master"),
   // 6 — hourglass. Waiting for the run the floor has to be crossed inside before it re-seals.
   devSite(6, "wizard"),
+  // 7 — the handle. A lever on its own side path, with a door on each side: thrown left the vault
+  // stands open and the cellar shut, thrown right they swap. The first mechanism whose doors are not
+  // the doors of the room it stands in — so it needs no junction, and authors no fork or switch.
+  // Nothing waits behind either door: this journey contributes no loot (see the file header).
+  journey(DEV_JOURNEY_ID).pyramid(7, {
+    difficulty: "expert",
+    pathPuzzles: 2,
+    sideSections: [
+      sidePath({ puzzles: 1, label: "lever" }),
+      sidePath({ puzzles: 1, label: "vault" }),
+      sidePath({ puzzles: 1, label: "cellar" }),
+    ],
+    handles: [{ in: "lever", left: ["vault"], right: ["cellar"] }],
+  }),
 ]

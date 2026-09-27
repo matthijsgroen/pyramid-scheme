@@ -68,4 +68,4 @@ export const DEV_JOURNEY_ID = "dev_topology"
 // One site per feature, walked from the journey's own map — pick the feature, enter it, no descent.
 // `tier` is wizard so nothing auto-gates a way on to the next tier (there is none); the tier each
 // floor is actually BUILT at is its own authored difficulty (spec/dev.ts).
-export const DEV_JOURNEYS: JourneyDef[] = [{ id: DEV_JOURNEY_ID, tier: "wizard", levelCount: 6, pathPuzzles: 2 }]
+export const DEV_JOURNEYS: JourneyDef[] = [{ id: DEV_JOURNEY_ID, tier: "wizard", levelCount: 7, pathPuzzles: 2 }]

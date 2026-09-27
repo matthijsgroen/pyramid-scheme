@@ -125,7 +125,7 @@ describe("the dev journey's place in the generated world", () => {
   // comparison would pass while proving nothing at all.
   it("is built only when INCLUDE_DEV is set", () => {
     expect(plain[DEV_JOURNEY_ID]).toBeUndefined()
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(6)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(7)
   })
 
   it("leaves every other journey exactly as it was", () => {
@@ -140,7 +140,7 @@ describe("the loot the dev journey contributes", () => {
 
   it("is none the solver could have placed either: it offers no slot", () => {
     // Counted first: a world with no dev journey would filter an empty list and prove nothing.
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(6)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(7)
     const devSlots = collectSlots(withDev, familyPriorityFor).filter(s => s.journeyId === DEV_JOURNEY_ID)
     expect(devSlots).toEqual([])
   })
@@ -156,7 +156,7 @@ describe("the loot the dev journey contributes", () => {
   // Its chests hold nothing on purpose, and findEmptyChests knows a site outside the loot economy
   // has nothing to fill them with — so it reports none of them and the generator does not stop.
   it("leaves no empty chest for the generator to refuse", () => {
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(6)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(7)
     const empties = findEmptyChests(
       { [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] },
       (journeyId, floor, levelNr, floorIndex) => {
@@ -181,28 +181,34 @@ describe("what the dev journey authors", () => {
       "expert",
       "master",
       "wizard",
+      "expert",
     ])
   })
 
-  it("stands a switch in a reserved junction on every one of them", () => {
+  it("stands a switch in a reserved junction on every floor but the lever's, which needs no junction", () => {
     // Counted first, so a world that grew no dev journey fails here rather than walking an empty list.
-    expect(devFloors(withDev)).toHaveLength(6)
-    for (const floor of devFloors(withDev)) {
+    const floors = devFloors(withDev)
+    expect(floors).toHaveLength(7)
+    for (const floor of floors.slice(0, 6)) {
       expect(floor.forks).toEqual([{ exits: 2, count: 1 }])
       expect(floor.switches).toEqual({ encounter: "lightbeamSwitch", min: 1, max: 1 })
     }
+    // A switch decides which of its OWN ways out opens, so it needs a junction reserved for it; a
+    // handle reaches across the floor to doors elsewhere, and asks for neither.
+    expect(floors[6].forks).toBeUndefined()
+    expect(floors[6].switches).toBeUndefined()
   })
 
   // The map-piece branch and the ward gate are auto-injected onto ordinary pyramids by position, and
   // a dev site sits at a position that would earn both. Its capability preset is what keeps them off
-  // it, so the count of side sections is exactly the two the spec authors.
+  // it, so the count of side sections is exactly what the spec authors: two branches on a switch
+  // floor, and three on the lever's — the room it stands in and the two doors it swaps.
   it("grows none of the branches the real economies inject by position", () => {
-    expect(devFloors(withDev)).toHaveLength(6)
-    for (const floor of devFloors(withDev)) expect(floor.sideSections).toHaveLength(2)
+    expect(devFloors(withDev).map(floor => floor.sideSections.length)).toEqual([2, 2, 2, 2, 2, 2, 3])
   })
 
   it("carves every one of them at the seed the runtime hands it", () => {
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(6)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(7)
     const failed: string[] = []
     withDev[DEV_JOURNEY_ID].forEach((site, levelIndex) =>
       site.forEach((floor, floorIndex) => {
@@ -225,6 +231,16 @@ describe("what the dev journey authors", () => {
     const [floor] = pyramid3
     expect(floor.oneWays).toEqual([{ from: "ledge", to: "sink" }])
     expect(floor.sideSections.map(section => section.label)).toEqual(expect.arrayContaining(["ledge", "sink"]))
+  })
+
+  it("stands a lever on pyramid 7, with a door on each side so throwing it swaps them", () => {
+    const pyramid7 = withDev[DEV_JOURNEY_ID][6]
+    expect(pyramid7).toHaveLength(1)
+    const [floor] = pyramid7
+    expect(floor.handles).toEqual([{ in: "lever", left: ["vault"], right: ["cellar"] }])
+    expect(floor.sideSections.map(section => section.label)).toEqual(
+      expect.arrayContaining(["lever", "vault", "cellar"])
+    )
   })
 
   // The develop-only boundary is what keeps an undrawn drop off a floor a player will meet, and it is
