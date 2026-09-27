@@ -1507,3 +1507,5 @@ yarn import-tile art/masters/surfaces/overgrown-creeper.webp --tier=default --na
   --filter=smooth --saturation=1.0 --brightness=1.25
 yarn import-tile art/masters/surfaces/overgrown-scrub.webp --tier=default --name=overgrown-scrub --slot=growth \
   --filter=smooth --saturation=1.0 --brightness=0.92
+yarn import-tile art/masters/surfaces/overgrown-fronds.webp --tier=default --name=overgrown-fronds --slot=growth \
+  --filter=smooth --saturation=0.7 --brightness=0.95
