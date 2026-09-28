@@ -49,3 +49,51 @@ export const appetiteAccepts = (appetite: RegionAppetite, kind: ContentKind): bo
     }
   }
 }
+
+/** Every region reachable from `from` over the connections, with `without` treated as absent. */
+const reachable = (graph: RegionGraph, from: string, without?: string): Set<string> => {
+  const neighbours = new Map<string, string[]>()
+  for (const [a, b] of graph.connections) {
+    if (a === without || b === without) continue
+    if (!neighbours.has(a)) neighbours.set(a, [])
+    if (!neighbours.has(b)) neighbours.set(b, [])
+    neighbours.get(a)!.push(b)
+    neighbours.get(b)!.push(a)
+  }
+  const seen = new Set<string>()
+  if (from === without) return seen
+  const queue = [from]
+  seen.add(from)
+  while (queue.length > 0) {
+    for (const next of neighbours.get(queue.shift()!) ?? []) {
+      if (seen.has(next)) continue
+      seen.add(next)
+      queue.push(next)
+    }
+  }
+  return seen
+}
+
+/**
+ * THE REGIONS A PLAYER CANNOT REACH THE WAY OUT WITHOUT ENTERING — the main path, derived rather than
+ * authored.
+ *
+ * Asked by taking each region away in turn and seeing whether `out` is still reachable from `in`. A
+ * region whose absence cuts the route is one the route needs. That says the useful thing under cycles,
+ * where "the main path" is otherwise ambiguous: a side path is one you can skip.
+ *
+ * Derived on purpose. An authored role is a second statement of what the graph already implies, and
+ * two statements of one fact drift apart.
+ *
+ * Taking each region away costs a walk of the graph, and a container holds a handful of regions — so
+ * the plain form is the right one here, and a real dominator algorithm would be complexity nobody
+ * asked for.
+ */
+export const mainPathRegions = (graph: RegionGraph): Set<string> => {
+  const main = new Set<string>()
+  if (!reachable(graph, graph.in).has(graph.out)) return main
+  for (const { name } of graph.regions) {
+    if (!reachable(graph, graph.in, name).has(graph.out)) main.add(name)
+  }
+  return main
+}
