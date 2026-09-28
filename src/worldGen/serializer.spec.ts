@@ -135,3 +135,31 @@ describe("generateFile — a switch fork survives the bake", () => {
     expect(quoted).toContain(String.raw`keyId: "a\"b"`)
   })
 })
+
+describe("generateFile — an authored layout survives the bake", () => {
+  it("emits an authored layout so a region survives the round trip", () => {
+    const floor = {
+      pathPuzzles: 0,
+      difficulty: "starter" as const,
+      end: "treasure" as const,
+      exitOrStaircase: "exit" as const,
+      sideSections: [],
+      layout: {
+        regions: [
+          { name: "mouth", appetite: "nothing" as const },
+          { name: "vault", appetite: "reward" as const },
+        ],
+        connections: [["mouth", "vault"] as const],
+        in: "mouth",
+        out: "vault",
+      },
+    }
+
+    const emitted = generateFile({ testJourney: [[floor]] })
+
+    expect(emitted).toContain(`{ name: "mouth", appetite: "nothing" }`)
+    expect(emitted).toContain(`connections: [["mouth", "vault"]]`)
+    expect(emitted).toContain(`in: "mouth"`)
+    expect(emitted).toContain(`out: "vault"`)
+  })
+})

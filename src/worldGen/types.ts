@@ -1,4 +1,5 @@
 import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
+import type { RegionGraph } from "@/game/regions"
 
 export type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
 // Authored puzzle-count progression across a journey's pyramids: `start` on pyramid 1,
@@ -111,6 +112,9 @@ export type FloorConfig = {
   /** A lever standing in one named section, opening the entrance gates the side it hangs on names and
    * shutting the other side's — mirrors game/siteTypes.ts's FloorConfig.handles. */
   handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
+  /** The floor's coarse layout — see game/regions.ts's RegionGraph, which is this field's type
+   * rather than a shape restated here. */
+  layout?: RegionGraph
   /** A SWITCH standing in one of the junctions `forks` reserved, closing that junction's free ways out
    * so what the player meets there decides which one opens — mirrors game/siteTypes.ts's
    * FloorConfig.switches. */

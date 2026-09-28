@@ -1,4 +1,5 @@
 import type { FloorConfig, SideSection, SiteConfig, TreasureReward } from "./types"
+import type { RegionGraph } from "@/game/regions"
 import { WORLD_SEED } from "./data"
 
 // Extra top-level exports a mod wants baked into the generated world file (name → JSON-serializable
@@ -74,6 +75,13 @@ const serializeSideSection = (s: SideSection): string => {
   return `{ ${parts.join(", ")} }`
 }
 
+const serializeRegionGraph = (g: RegionGraph): string =>
+  `{ regions: [${g.regions
+    .map(r => `{ name: ${JSON.stringify(r.name)}, appetite: ${JSON.stringify(r.appetite)} }`)
+    .join(", ")}], connections: [${g.connections
+    .map(([a, b]) => `[${JSON.stringify(a)}, ${JSON.stringify(b)}]`)
+    .join(", ")}], in: ${JSON.stringify(g.in)}, out: ${JSON.stringify(g.out)} }`
+
 // Emits every field the object carries rather than a fixed list, the way `serializeGate` does, so a
 // field added to a fork demand or a switch later rides along without this function naming it.
 const serializeObject = (o: object): string =>
@@ -121,6 +129,7 @@ const floorFieldEmitters: {
   forks: v => (v.length ? `forks: [${v.map(serializeObject).join(", ")}]` : null),
   oneWays: v => (v.length ? `oneWays: [${v.map(serializeObject).join(", ")}]` : null),
   handles: v => (v.length ? `handles: [${v.map(serializeObject).join(", ")}]` : null),
+  layout: v => `layout: ${serializeRegionGraph(v)}`,
   switches: v => `switches: ${serializeObject(v)}`,
 }
 

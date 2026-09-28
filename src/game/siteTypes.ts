@@ -1,4 +1,5 @@
 import type { Mark } from "./mark"
+import type { RegionGraph } from "./regions"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
@@ -449,6 +450,15 @@ export type FloorConfig = {
    * authored gate, may not be driven by a second handle, and may not stand on both sides of one lever
    * (a door it could neither open nor close) — each is refused by name before a wall is carved. */
   handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
+  /**
+   * THE FLOOR'S COARSE LAYOUT: named regions, what joins them, and the two ports it is entered and
+   * left through (docs/game-design/regions-and-containers.md).
+   *
+   * A region declares only an APPETITE — what it will take — and never what fills it. Typed as
+   * `RegionGraph` rather than restated here, so the shape has one definition and the vocabulary can
+   * grow in one place.
+   */
+  layout?: RegionGraph
   /** A SWITCH: an encounter standing in one of the junctions `forks` reserved, closing that
    * junction's free ways out so that what the player meets there decides which one opens.
    * Family/tag(s) like `encounter`. At least `min` and at most `max` of the reserved junctions get
