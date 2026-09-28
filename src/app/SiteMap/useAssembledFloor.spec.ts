@@ -386,3 +386,158 @@ describe("useAssembledFloor — the high-water mark", () => {
     expect(completed).toEqual([[...restored.entrancePos]])
   })
 })
+
+describe("useAssembledFloor — the mark does not carry past a shut region gate", () => {
+  const GATE_JOURNEY_ID = "gate-test"
+  const threeRegions: FloorConfig["regionLayout"] = {
+    regions: [
+      { name: "mouth", appetite: "free" },
+      { name: "hall", appetite: "free" },
+      { name: "vault", appetite: "free" },
+    ],
+    connections: [
+      ["mouth", "hall"],
+      ["hall", "vault"],
+    ],
+    in: "mouth",
+    out: "vault",
+  }
+  // A long main path so "vault" holds several main-path rooms past the gate, not just the gate room
+  // and the exit — a corridor strictly between two vault rooms is what proves the mark reaches past
+  // the bars, rather than the seam connector the gate itself already sits on.
+  const gatedConfig: FloorConfig = {
+    pathPuzzles: 10,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [],
+    regionLayout: threeRegions,
+    obstacles: [{ id: "vaultDoor", kind: "gate", at: { on: "connection", between: ["hall", "vault"] } }],
+    controls: [
+      {
+        id: "s1",
+        in: "mouth",
+        states: ["left", "right"],
+        initial: "right",
+        returnsToInitial: true,
+        opens: { right: ["vaultDoor"] },
+      },
+    ],
+  }
+
+  const gateRoomsOf = (grid: FloorGrid) =>
+    grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) => (cell.type === "room" && cell.tags?.includes("gate") ? [{ r, c, cell }] : []))
+    )
+
+  const mechanismRoomOf = (grid: FloorGrid) =>
+    grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) => (cell.type === "room" && cell.mechanism ? [{ r, c, cell }] : []))
+    )[0]!
+
+  // Every main-path room of "vault" other than the gate itself, in walk order — the rooms a player
+  // could have stood in and had written down while the gate was still open.
+  const vaultRoomsPastGate = (grid: FloorGrid, gate: RoomCell) =>
+    grid.cells
+      .flatMap((row, r) =>
+        row.flatMap((cell, c) =>
+          cell.type === "room" &&
+          cell !== gate &&
+          cell.region === "vault" &&
+          cell.sectionAddress === "main" &&
+          cell.ordinal !== undefined
+            ? [{ r, c, cell }]
+            : []
+        )
+      )
+      .sort((a, b) => walkPosition(a.cell.ordinal!) - walkPosition(b.cell.ordinal!))
+
+  // A seed that carves this layout AND leaves at least two main-path rooms in vault past the gate —
+  // one to name in the save, and at least one corridor strictly between vault rooms to prove the mark
+  // reaches past the bars rather than only touching the seam connector the gate itself sits on.
+  const findFixture = () => {
+    for (let seed = 0; seed < 40; seed++) {
+      const built = assembleFloor(GATE_JOURNEY_ID, gatedConfig, seed)
+      if (!built.success) continue
+      const gates = gateRoomsOf(built.grid)
+      if (gates.length !== 1) continue
+      const pastGate = vaultRoomsPastGate(built.grid, gates[0].cell)
+      if (pastGate.length >= 2) return { seed, grid: built.grid, gate: gates[0], pastGate }
+    }
+    throw new Error("no seed in range carved a vault with two main-path rooms past its gate")
+  }
+
+  it("keeps every vault corridor past a SHUT gate dark, even though a room further along is named", () => {
+    const { seed, grid, gate, pastGate } = findFixture()
+    const control = mechanismRoomOf(grid)
+    const controlAddress = cellAddress(grid, 0, control.r, control.c)!
+    // "left" opens nothing (only "right" opens vaultDoor) — the gate is shut on arrival.
+    const mechanismPositions = new Map([[controlAddress, "left"]])
+
+    // The save: the gate room itself (walked while it was still open) and the LAST room of vault, per
+    // its own walk order — naming the far end, not the near one, so the mark is forced its longest.
+    const target = pastGate[pastGate.length - 1]
+    const section = gate.cell.sectionAddress ?? ""
+    const saved = {
+      [section]: [cellKey(grid, 0, gate.r, gate.c)!, cellKey(grid, 0, target.r, target.c)!],
+    }
+
+    const { result } = renderHook(() =>
+      useAssembledFloor(GATE_JOURNEY_ID, gatedConfig, seed, 0, saved, null, 0, new Set(), undefined, mechanismPositions)
+    )
+    const restored = result.current.grid!
+
+    // A corridor strictly between two named vault rooms — never itself named by the save — whose
+    // walkPosition sits past the shut gate. It must stay dark; this is the assertion that is expected
+    // to fail before the fix.
+    const litPastTheGate = restored.cells.some((row, r) =>
+      row.some((cell, c) => {
+        if (cell.type === "empty" || cellSlot(restored, r, c) || cell.region !== "vault") return false
+        const key = cellKey(restored, 0, r, c)
+        if (key !== null && saved[section].includes(key)) return false
+        return cell.state === "completed"
+      })
+    )
+    expect(litPastTheGate).toBe(false)
+  })
+
+  it("still restores everything named, and everything ahead of an OPEN gate, unchanged", () => {
+    const { seed, grid, gate, pastGate } = findFixture()
+    const control = mechanismRoomOf(grid)
+    const controlAddress = cellAddress(grid, 0, control.r, control.c)!
+    // "right" is the mechanism's own initial state and it is what opens vaultDoor.
+    const mechanismPositions = new Map([[controlAddress, "right"]])
+
+    // The FIRST room past the gate, not the last: naming the far end would leave nothing past it to
+    // tell "restored" from "was always going to be dark anyway" (findFixture's fixture ends its main
+    // path there — see the sibling test above, which relies on exactly that to force the mark its
+    // longest). Naming the near end instead leaves rooms after it whose corridors must stay dark.
+    const target = pastGate[0]
+    const section = gate.cell.sectionAddress ?? ""
+    const saved = { [section]: [cellKey(grid, 0, target.r, target.c)!] }
+
+    const { result } = renderHook(() =>
+      useAssembledFloor(GATE_JOURNEY_ID, gatedConfig, seed, 0, saved, null, 0, new Set(), undefined, mechanismPositions)
+    )
+    const restored = result.current.grid!
+
+    // With the gate open, this section behaves exactly as it would with no gate at all: every vault
+    // CORRIDOR (a room needs its own name — see the "never opens a room" case above) up to the named
+    // room's mark comes back lit, and none past it does.
+    const mark = walkPosition(target.cell.ordinal!)
+    const vaultCorridors = grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) =>
+        cell.type === "corridor" && cell.region === "vault" && cell.sectionAddress === "main" && cell.ordinal
+          ? [{ r, c, at: walkPosition(cell.ordinal) }]
+          : []
+      )
+    )
+    expect(vaultCorridors.some(({ at }) => at < mark)).toBe(true)
+    expect(vaultCorridors.some(({ at }) => at > mark)).toBe(true)
+    for (const { r, c, at } of vaultCorridors) {
+      const state = restored.cells[r][c].type === "empty" ? "empty" : restored.cells[r][c].state
+      if (state === "empty") continue
+      expect(state === "completed").toBe(at <= mark)
+    }
+  })
+})

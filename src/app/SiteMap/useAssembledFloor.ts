@@ -5,8 +5,11 @@ import { completeCell, isSealedWayOut } from "@/game/gridNavigation"
 import type { Direction, FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
 import type { ResolveKeyRequirements } from "@/game/siteAssembler"
+import { OBSTACLE_KEY_PREFIX } from "@/game/cellSlot"
 import { boardIndexesForFloor } from "./boardIndexes"
 import { cellKey, cellSlot, findByAddress, floorOfAddress, walkPosition } from "./cellIdentity"
+
+const NO_OPEN_GATES: ReadonlySet<string> = new Set()
 
 // A node's own key requirements, resolved from whichever family declares them (a tableau's
 // hieroglyphs, etc.) — the same dispatch world-gen uses, but off the app-side family registry so
@@ -37,8 +40,21 @@ const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
  *
  * A section the save no longer matches at all gets no mark and stays fogged, which is the reset it
  * should be.
+ *
+ * `openGateKeys` is which obstacle gates currently stand open (`openDoorsFor`, mechanismDoors.ts). A
+ * region's obstacle gate is the one kind of gate whose passability reverses — a control can be thrown
+ * back after the player has already walked past it and had rooms beyond it named — so the mark must
+ * not carry past one that is shut now, even though rule 1 still trusts whatever the save names
+ * directly. A ward or floor-key gate is never checked here: its key, once earned, is never lost, so
+ * nothing past it needs re-sealing. Defaults to none open, which is the conservative reading for a
+ * caller (`repairFloorExploration`) that has no mechanism state to give it.
  */
-export const applyExplored = (grid: FloorGrid, floor: number, exploredCells: Record<string, string[]>): FloorGrid => {
+export const applyExplored = (
+  grid: FloorGrid,
+  floor: number,
+  exploredCells: Record<string, string[]>,
+  openGateKeys: ReadonlySet<string> = NO_OPEN_GATES
+): FloorGrid => {
   // Filed by the section's AUTHORING address, so re-authoring what is inside a section no longer makes
   // it a different section. There is no older address format to fall back to: a save still holding the
   // structural hashes is re-keyed from the coordinate archive before it is ever read (cellKeyVersion).
@@ -53,11 +69,27 @@ export const applyExplored = (grid: FloorGrid, floor: number, exploredCells: Rec
     return key !== null && (keysFor(grid.cells[r][c])?.includes(key) ?? false)
   }
 
+  const isShutObstacleGate = (cell: GridCell): boolean =>
+    cell.type === "room" &&
+    (cell.tags?.includes("gate") ?? false) &&
+    cell.requiredKeyId !== undefined &&
+    cell.requiredKeyId.startsWith(OBSTACLE_KEY_PREFIX) &&
+    !openGateKeys.has(cell.requiredKeyId)
+
   const highWater = new Map<string, number>()
+  // The furthest a shut obstacle gate lets the blind fill below reach, per section — Infinity where a
+  // section has none, so it never constrains one. A room the save names directly is untouched by this:
+  // only the fill that guesses forward from the mark has to stop at the bars.
+  const nearestShutGate = new Map<string, number>()
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
-      if (cell.type === "empty" || !cell.ordinal || !cellSlot(grid, r, c) || !named(r, c)) continue
+      if (cell.type === "empty" || !cell.ordinal) continue
+      if (isShutObstacleGate(cell)) {
+        const section = cell.sectionAddress ?? ""
+        nearestShutGate.set(section, Math.min(nearestShutGate.get(section) ?? Infinity, walkPosition(cell.ordinal)))
+      }
+      if (!cellSlot(grid, r, c) || !named(r, c)) continue
       const section = cell.sectionAddress ?? ""
       highWater.set(section, Math.max(highWater.get(section) ?? -Infinity, walkPosition(cell.ordinal)))
     }
@@ -68,10 +100,12 @@ export const applyExplored = (grid: FloorGrid, floor: number, exploredCells: Rec
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
       if (cell.type === "empty") continue
+      const section = cell.sectionAddress ?? ""
       const behindTheMark =
         !cellSlot(grid, r, c) &&
         cell.ordinal !== undefined &&
-        walkPosition(cell.ordinal) <= (highWater.get(cell.sectionAddress ?? "") ?? -Infinity)
+        walkPosition(cell.ordinal) <= (highWater.get(section) ?? -Infinity) &&
+        walkPosition(cell.ordinal) <= (nearestShutGate.get(section) ?? Infinity)
       if (named(r, c) || behindTheMark) result = completeCell(result, r, c)
     }
   }
@@ -298,13 +332,17 @@ export const useAssembledFloor = (
     return result.success ? result.grid : null
   }, [journeyId, floorConfig, seed, currentFloor, levelIndex])
 
+  // Which gates the floor's own mechanisms currently hold open — read once so the carve (below) and
+  // the fog restore (applyExplored) agree on the same set rather than each asking openDoorsFor its own.
+  const openGateKeys = useMemo(
+    () => (baseGrid ? openDoorsFor(baseGrid, currentFloor, mechanismPositions ?? NO_POSITIONS) : NO_OPEN_GATES),
+    [baseGrid, currentFloor, mechanismPositions]
+  )
+
   // The carve as the floor's own switches have left it — what everything below reads as "the floor".
   const carvedGrid = useMemo(
-    () =>
-      baseGrid
-        ? sealWaysOut(openWaysOut(baseGrid, openDoorsFor(baseGrid, currentFloor, mechanismPositions ?? NO_POSITIONS)))
-        : null,
-    [baseGrid, currentFloor, mechanismPositions]
+    () => (baseGrid ? sealWaysOut(openWaysOut(baseGrid, openGateKeys)) : null),
+    [baseGrid, openGateKeys]
   )
 
   // Standing in the doorway is having been there: the entrance reads explored whether or not the save
@@ -322,8 +360,8 @@ export const useAssembledFloor = (
   }, [carvedGrid, exploredCells, currentFloor])
 
   const exploredGrid = useMemo(
-    () => (carvedGrid ? applyExplored(carvedGrid, currentFloor, effectiveExplored) : null),
-    [carvedGrid, currentFloor, effectiveExplored]
+    () => (carvedGrid ? applyExplored(carvedGrid, currentFloor, effectiveExplored, openGateKeys) : null),
+    [carvedGrid, currentFloor, effectiveExplored, openGateKeys]
   )
 
   const { grid, hiddenJunctions, hiddenSections, junctionSections } = useMemo(() => {

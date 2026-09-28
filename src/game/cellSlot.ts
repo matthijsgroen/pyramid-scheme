@@ -1,5 +1,9 @@
 import type { FloorGrid } from "./siteTypes"
 
+/** How an obstacle's gate key is namespaced (gateKeyOf, siteAssembler.ts) — the one prefix that marks a
+ * requiredKeyId as driven by a region layout's own control rather than a ward or a floor's own chest. */
+export const OBSTACLE_KEY_PREFIX = "obstacle:"
+
 /**
  * WHICH ROOM OF ITS SECTION A CELL IS, in a name the carve cannot move.
  *
@@ -48,9 +52,8 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
   // obstacle's AUTHORED id, namespaced "obstacle:<stem>:" the same way a switch's is "switch:"
   // (gateKeyOf, obstacles.ts) — the prefix is stripped rather than split on the LAST colon, so the id
   // comes back exact whatever characters it authors, colons included.
-  const OBSTACLE_PREFIX = "obstacle:"
-  if (cell.requiredKeyId?.startsWith(OBSTACLE_PREFIX)) {
-    const afterPrefix = cell.requiredKeyId.slice(OBSTACLE_PREFIX.length)
+  if (cell.requiredKeyId?.startsWith(OBSTACLE_KEY_PREFIX)) {
+    const afterPrefix = cell.requiredKeyId.slice(OBSTACLE_KEY_PREFIX.length)
     const id = afterPrefix.slice(afterPrefix.indexOf(":") + 1)
     return `x${cell.family ?? "?"}:${id}`
   }
