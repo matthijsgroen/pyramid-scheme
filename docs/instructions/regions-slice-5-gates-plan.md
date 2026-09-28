@@ -1568,6 +1568,51 @@ git commit -m "feat: the lever's arm turns when it is thrown" -- <touched paths>
 
 ---
 
+### Task 10: A gate a mechanism opens is actually open
+
+**Files:**
+- Modify: `src/app/SiteMap/SiteMapScreen.tsx` (where `ownedKeys` is assembled, `:133`)
+- Test: the SiteMap spec covering gate passability, plus `src/mods/core/app/keyGate/plugin.spec.tsx`
+
+**Interfaces:**
+- Consumes: `openGateKeys` — already computed in `useAssembledFloor.ts:338` from `openDoorsFor(baseGrid, currentFloor, mechanismPositions)` and already memoised so the fog restore and the grid agree on one set.
+- Produces: no new export. One set gains members.
+
+**THE DEFECT, traced 2026-09-29.** Throwing a lever changes nothing a player can walk through. The chain is:
+
+1. `openDoorsFor` (`mechanismDoors.ts`) answers which gate keys the current mechanism positions open. Correct.
+2. That set reaches `openWaysOut`, which turns a gate room back into a corridor — **but only where `cell.family === undefined`**, which is a switch's shut fork exit and nothing else.
+3. A key-gate room carries `family: "key-gate"`, so it is soft-gated instead: walked up to, tapped, told what it wants. It opens only when `satisfied: !ctx.requiredKeyId || ctx.ownedKeys?.has(ctx.requiredKeyId)` (`src/mods/core/app/keyGate/plugin.tsx:15`).
+4. `ownedKeys` is `getOwnedKeys(grid) ∪ wardKeys` (`SiteMapScreen.tsx:133`) — tomb-key rewards and ward keys. **`openGateKeys` is never unioned in.**
+
+So the door stays locked whatever the lever says.
+
+**This is PRE-EXISTING and not this slice's doing.** A handle-driven gate has the identical gap: `withHandleGates` rewrites the driven section to carry an ordinary floor-key gate whose `keyId` nothing ever grants. Dev pyramid 7 has been standing a lever that opens nothing since step 4 landed.
+
+**Why it belongs here anyway:** this slice exists so `doubleBack` can be playtested, and a gate that never opens fails that outright. The walk (`lockWalk`) is satisfied, the world validates, the map draws bars — and the player cannot pass.
+
+- [ ] **Step 1: Prove it, at the level a player meets it**
+
+Write a test that stands the dev bench's lever and its gate, throws the lever to the side that opens the gate, and asserts the gate room reports itself satisfied / is passable. Run it. **Expected: FAIL.** Quote it. If it passes, the defect is not where this task says it is — stop and report what you found instead.
+
+- [ ] **Step 2: Union the open gate keys into the owned set**
+
+At `SiteMapScreen.tsx:133`. A mechanism-opened gate is open in exactly the sense `ownedKeys` means: the player may pass it now. Note that `ownedKeys` also drives the key ring (`floorKeyRing`), locked-gate rendering (`isLockedGate`, `nodeKinds.ts:56`) and `roomClaims` — **check each reads correctly with a mechanism key present.** A lever's key is not a key the player CARRIES, so if it appears in the key ring as an item to collect, that is wrong and this task owns fixing it.
+
+- [ ] **Step 3: Watch it fail, and check the other direction**
+
+Throw the lever the other way and assert the gate is shut again. A gate that opens and never closes would pass Step 1 and still be broken — and a lever whose two sides swap which door stands open is the whole point of the family.
+
+- [ ] **Step 4: Types, lint, suite, report**
+
+Run: `yarn check-types && yarn eslint <touched paths> && yarn test`, plus `INCLUDE_DEV=1 yarn validate-world`.
+
+```bash
+git commit -m "fix: a gate its mechanism opens is one the player can walk through" -- <touched paths>
+```
+
+---
+
 ## What this slice carries to the next one
 
 - **A branching layout is still refused** — measured, `regionNotSeated`. Only main-path steps seat regions, so `doubleBack` needs the path-SHAPING work as well as this. `obstacleOffRoute` (Task 1) is the refusal that names it from the obstacle's side, and it stops firing on its own when shaping lands.
