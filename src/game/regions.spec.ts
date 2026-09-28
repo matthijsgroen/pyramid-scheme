@@ -3,6 +3,7 @@ import {
   appetiteAccepts,
   fitContent,
   mainPathRegions,
+  regionRoute,
   strandedRegions,
   type RegionAppetite,
   type RegionGraph,
@@ -172,5 +173,64 @@ describe("fitting a floor's content to what its regions will take", () => {
     expect(result.fits).toBe(true)
     expect(result.fits && result.placed.get("vault")).toEqual(["reward"])
     expect(result.fits && result.placed.get("in")).toEqual(["puzzle"])
+  })
+})
+
+describe("the route the main path threads", () => {
+  it("runs from the way in to the way out along a corridor of regions", () => {
+    const g = graph(
+      [
+        ["in", "middle"],
+        ["middle", "out"],
+      ],
+      ["in", "middle", "out"],
+      { in: "in", out: "out" }
+    )
+
+    expect(regionRoute(g)).toEqual(["in", "middle", "out"])
+  })
+
+  // A pocket is not on the way anywhere: the main path threads the regions it must, and a side path
+  // grows into the rest.
+  it("leaves out a pocket that hangs off the route", () => {
+    const g = graph(
+      [
+        ["in", "out"],
+        ["in", "pocket"],
+      ],
+      ["in", "pocket", "out"],
+      { in: "in", out: "out" }
+    )
+
+    expect(regionRoute(g)).toEqual(["in", "out"])
+  })
+
+  // Two ways round, and the route has to pick one. Declaration order decides, so the same layout
+  // always threads the same way.
+  it("takes the earlier-declared branch when a fork rejoins, so the route is deterministic", () => {
+    const g = graph(
+      [
+        ["in", "left"],
+        ["in", "right"],
+        ["left", "out"],
+        ["right", "out"],
+      ],
+      ["in", "left", "right", "out"],
+      { in: "in", out: "out" }
+    )
+
+    expect(regionRoute(g)).toEqual(["in", "left", "out"])
+  })
+
+  it("is the one region twice over where the way in is also the way out", () => {
+    const g = graph([], ["only"], { in: "only", out: "only" })
+
+    expect(regionRoute(g)).toEqual(["only"])
+  })
+
+  it("has no route at all where the way out cannot be reached", () => {
+    const g = graph([["in", "stub"]], ["in", "stub", "out"], { in: "in", out: "out" })
+
+    expect(regionRoute(g)).toEqual([])
   })
 })

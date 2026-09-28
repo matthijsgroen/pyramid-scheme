@@ -171,3 +171,47 @@ export const fitContent = (
   const unplaced = place("reward", demand.rewards) ?? place("puzzle", demand.puzzleRooms)
   return unplaced ? { fits: false, unplaced } : { fits: true, placed }
 }
+
+/**
+ * THE REGIONS THE MAIN PATH PASSES THROUGH, in order, from the way in to the way out.
+ *
+ * A region is a stretch of the carve rather than an area set aside, so the main path crosses several
+ * of them and a side path grows into whatever the route does not touch
+ * (docs/game-design/regions-and-containers.md).
+ *
+ * The shortest route is taken, which necessarily includes every region the way out cannot be reached
+ * without — the same regions `mainPathRegions` names. Where two routes are equally short, the one
+ * whose regions were DECLARED first wins, so one layout always threads the same way and a floor does
+ * not reshuffle because a seed changed.
+ *
+ * Empty when the way out cannot be reached at all; `strandedRegions` is what reports that as a fault.
+ */
+export const regionRoute = (graph: RegionGraph): string[] => {
+  if (graph.in === graph.out) return reachable(graph, graph.in).has(graph.out) ? [graph.in] : []
+  const order = new Map(graph.regions.map((r, i) => [r.name, i]))
+  const neighbours = new Map<string, string[]>()
+  for (const [a, b] of graph.connections) {
+    if (!neighbours.has(a)) neighbours.set(a, [])
+    if (!neighbours.has(b)) neighbours.set(b, [])
+    neighbours.get(a)!.push(b)
+    neighbours.get(b)!.push(a)
+  }
+  const cameFrom = new Map<string, string>()
+  const seen = new Set([graph.in])
+  const queue = [graph.in]
+  while (queue.length > 0) {
+    const at = queue.shift()!
+    if (at === graph.out) break
+    // Declaration order among equally short routes, so the same layout always threads the same way.
+    for (const next of [...(neighbours.get(at) ?? [])].sort((x, y) => (order.get(x) ?? 0) - (order.get(y) ?? 0))) {
+      if (seen.has(next)) continue
+      seen.add(next)
+      cameFrom.set(next, at)
+      queue.push(next)
+    }
+  }
+  if (!seen.has(graph.out)) return []
+  const route = [graph.out]
+  while (route[0] !== graph.in) route.unshift(cameFrom.get(route[0])!)
+  return route
+}
