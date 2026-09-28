@@ -118,3 +118,27 @@ export const topologyFaults = (
 
   return faults
 }
+
+/**
+ * THE MAIN-PATH INDEX WHERE ONE REGION STOPS AND THE NEXT BEGINS, for one obstacle's connection.
+ * `stepRegion[step]` names the region each main-path step stands in; a connection's seam is the
+ * first step whose region differs from the step before it, where the two disagree exactly on
+ * `between` — order-independent, since `between` names a connection, not a direction. The gate
+ * stands at the step returned (the first step of the far region).
+ *
+ * Answers `undefined` for a `between` this `stepRegion` cannot seat: either region absent
+ * altogether, or — the case a gap-free `stepRegion` never produces, but this function does not
+ * assume one — both present with something else's steps between them, so the two never actually
+ * meet. A pure question about a label sequence, asked in isolation of whatever built it, is what
+ * lets the "no seam" case be pinned down by a test rather than only inferred from a carve.
+ */
+export const seamIndexFor = (stepRegion: readonly string[], between: readonly [string, string]): number | undefined => {
+  const [a, b] = between
+  for (let step = 1; step < stepRegion.length; step++) {
+    const before = stepRegion[step - 1]
+    const here = stepRegion[step]
+    if (before === here) continue
+    if ((before === a && here === b) || (before === b && here === a)) return step
+  }
+  return undefined
+}

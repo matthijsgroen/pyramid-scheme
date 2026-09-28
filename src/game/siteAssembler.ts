@@ -21,7 +21,7 @@ import type {
 import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
 import { appetiteAccepts, regionOfStep, regionRoute, strandedRegions } from "./regions"
 import type { ContentKind } from "./regions"
-import { topologyFaults } from "./obstacles"
+import { seamIndexFor, topologyFaults } from "./obstacles"
 import { cellSlot } from "./cellSlot"
 import { stairIdAt } from "./stairAddress"
 import { footprintSize } from "./roomFootprint"
@@ -719,6 +719,11 @@ export const assembleFloor = (
   // to fit a door it was never thrown for, and an authoring address is what a re-carve cannot move.
   const handleStem = (n: number) =>
     `handle:${floorRef.journeyId}#${floorRef.levelIndex ?? 0}#${floorRef.floorIndex}#${n}`
+  // AN OBSTACLE'S KEY IS NAMED THE SAME WAY: where the floor was AUTHORED plus the obstacle's own
+  // AUTHORED id — neither of which a re-carve can move, so a saved lever position cannot come to fit
+  // a door it was never thrown for.
+  const gateKeyOf = (id: string) =>
+    `obstacle:${floorRef.journeyId}#${floorRef.levelIndex ?? 0}#${floorRef.floorIndex}:${id}`
   // The id a stairhead here takes when the authoring named none — the floor's own address plus where
   // on it the stairs stand, built by the one constructor world generation also mints ids with, so a
   // floor assembled from an unnamed stairhead lands on the same id the spec would have given it.
@@ -866,12 +871,22 @@ export const assembleFloor = (
     return { success: false, reasons: [{ type: "noUngatedSectionForKey" }] }
   }
 
+  // A GATE ROOM IS A CELL LIKE ANY OTHER AND THE PATH HAS TO BE LONG ENOUGH TO HOLD IT, the same way
+  // a lever standing on the main path lengthens it. Sized here, before the carve, because the carve
+  // is what has to produce the cells.
+  const mainGateCount = (authoredConfig.obstacles ?? []).length
+
   // Minimum node count for the main path alone (entrance, its own content, goal, exit) —
   // kept separate from `minCells` below (which folds in every side-section's cost too) so
   // `packing`'s path-length target scales with what the *main path itself* needs, not with
   // how much unrelated side-section content happens to branch off it elsewhere.
   const mainPathCells =
-    1 /* entrance */ + config.pathPuzzles + 1 /* goal */ + 1 /* exit/stairhead */ + leverRooms(MAIN_SECTION_ADDRESS)
+    1 /* entrance */ +
+    config.pathPuzzles +
+    1 /* goal */ +
+    1 /* exit/stairhead */ +
+    leverRooms(MAIN_SECTION_ADDRESS) +
+    mainGateCount
 
   // Minimum node count needed (real path nodes only — the connector cell between two
   // adjacent nodes lives at a separate, non-node grid position, see NODE_STEP above).
@@ -998,6 +1013,10 @@ export const assembleFloor = (
   // `distanceFor`), so an attempt that cannot seat every region today may not be the attempt that
   // decides the floor, and only the budget's end may call that.
   let unseatedRegions: string[] | undefined
+  // The first attempt's obstacles whose seam the path did not produce, kept the same way and for the
+  // same reason: the path lengthens across the attempt budget, so what one attempt cannot seat a
+  // later one may.
+  let gateSeamMissing: string[] | undefined
   // The first attempt's rooms standing where their region's appetite refuses them, kept the same way.
   let regionMismatch: { region: string; kind: ContentKind }[] | undefined
   for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
@@ -1045,6 +1064,53 @@ export const assembleFloor = (
     const straightBias = config.corridorStraightness ?? DEFAULT_STRAIGHT_BIAS
     const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand, straightBias, targetDistance)
 
+    // WHICH REGION EACH CELL STANDS IN, where the floor authors one — absent everywhere on a floor
+    // that does not, so the shipped world (no floor authors a regionLayout) carves unchanged. A
+    // main-path cell takes its region from its step along the route; a chain's cells take the region
+    // of the cell they grow from, below. Moved ahead of content placement (was just before the room
+    // specs are written): the gate cells below have to be known before content claims a node.
+    const route = regionLayout ? regionRoute(regionLayout) : []
+    const stepRegion = regionLayout ? regionOfStep(route, mainPath.length) : []
+    // A DECLARED REGION THE ROUTE NEVER SEATS A CELL IN SEATS NOTHING. Two ways there: a route longer
+    // than the path, where `regionOfStep` deals what there is rather than refusing (it has no floor in
+    // front of it — only a carve knows how many steps the main path has); or a region the route never
+    // threads at all — reachable in the region graph, but not on the shortest in→out walk, so no step
+    // ever names it. Checked against every DECLARED region, not just the route's, so the second cause
+    // is caught too: content that would have gone to an unseated region lands in one the author never
+    // named, which is the builder deciding quietly rather than refusing.
+    const unseated = regionLayout
+      ? regionLayout.regions.map(r => r.name).filter(name => !stepRegion.includes(name))
+      : []
+    if (unseated.length > 0) {
+      if (!unseatedRegions) unseatedRegions = unseated
+      continue
+    }
+    // WHERE ONE REGION STOPS AND THE NEXT BEGINS. The route threads the regions in order, so a
+    // connection on it is the seam between two consecutive stretches and the first cell of the far
+    // stretch is the one the player has to walk into — which is where the bars belong. The lookup
+    // itself is `seamIndexFor` (obstacles.ts): a pure question about `stepRegion` that is tested on
+    // its own, including the "no seam" answer this carve cannot currently produce (see below).
+    const gateIndexByObstacle = new Map<string, number>()
+    for (const obstacle of authoredConfig.obstacles ?? []) {
+      const seam = seamIndexFor(stepRegion, obstacle.at.between)
+      if (seam !== undefined) gateIndexByObstacle.set(obstacle.id, seam)
+    }
+    // A seam the carve did not produce. `regionOfStep` (regions.ts) lays every floor's route out as a
+    // gap-free concatenation — a region is either fully seated or, when the path is too short, absent
+    // together with every region after it on the route (caught by `unseatedRegions` above, which
+    // always `continue`s first) — so with today's carve, a route-adjacent obstacle's two regions are
+    // never "both seated but not adjacent": `seamIndexFor` cannot actually return `undefined` here yet.
+    // It is the path-shaping work (obstacleOffRoute's own comment, obstacles.ts) that lets a layout
+    // branch and a gap reach this point for real; this refusal is what answers it once it can.
+    // Retried rather than refused for the same reason `unseatedRegions` is: `mainPath.length` GROWS
+    // across the attempt budget.
+    if (gateIndexByObstacle.size < (authoredConfig.obstacles ?? []).length) {
+      if (!gateSeamMissing)
+        gateSeamMissing = (authoredConfig.obstacles ?? []).filter(o => !gateIndexByObstacle.has(o.id)).map(o => o.id)
+      continue
+    }
+    const gateIndices = new Set(gateIndexByObstacle.values())
+
     // Exit placed at the main path's end, forced to degree-1 below so no corridor passes
     // through it. Content nodes (puzzles/chests + the goal) are spread evenly across the whole main
     // path instead of packed against the entrance — packing them up front left a long
@@ -1056,13 +1122,30 @@ export const assembleFloor = (
     if (mainPath.length < contentCount + 2) continue // need entrance + content + a distinct exit
 
     const contentIndices = spreadContentIndices(contentCount, 1, mainPath.length)
-    const goalIndex = contentIndices[contentIndices.length - 1]
+    // A GATE ROOM AND A PUZZLE CANNOT BOTH STAND IN ONE CELL, and it is the content that moves: a
+    // seam is where the regions actually change, while content is spread for rhythm and one node
+    // either way is the kind of thing the carve already decides. Forward to the next free node, so
+    // one layout always places the same way. `spreadContentIndices` deals in mainPath-array indices
+    // (one real node apart — see NODE_STEP's own contrast with the grid lattice), the same space
+    // `gateIndices` is built in, so the step here is 1, not 2.
+    const placedContent: number[] = []
+    for (const wanted of contentIndices) {
+      let index = wanted
+      while (index < mainPath.length - 1 && (gateIndices.has(index) || placedContent.includes(index))) index += 1
+      if (index >= mainPath.length - 1) break
+      placedContent.push(index)
+    }
+    // The path had no free node left for every piece of content. Retried rather than refused: the
+    // path lengthens across the attempt budget.
+    if (placedContent.length < contentCount) continue
+
+    const goalIndex = placedContent[placedContent.length - 1]
     // A lever the main path holds takes the first content node: it opens what lies further on, so the
     // walk has to reach it before the doors it owns are worth reaching.
-    const leverIndex = leverOnMain ? contentIndices[0] : -1
+    const leverIndex = leverOnMain ? placedContent[0] : -1
     // puzzleIndices[k] is the mainPath position of the k-th puzzle (0-based, path order) —
     // used to index into config.rewards[k] below.
-    const puzzleIndices = contentIndices.slice(leverOnMain ? 1 : 0, -1)
+    const puzzleIndices = placedContent.slice(leverOnMain ? 1 : 0, -1)
     const puzzleRole = new Map<number, number>()
     puzzleIndices.forEach((idx, k) => puzzleRole.set(idx, k))
 
@@ -1554,26 +1637,6 @@ export const assembleFloor = (
       cellDressing.set(posKey(r, c), { props: config.decorations, wall: config.wallDecorations })
       cellDifficulty.set(posKey(r, c), config.difficulty)
     }
-    // WHICH REGION EACH CELL STANDS IN, where the floor authors one — absent everywhere on a floor
-    // that does not, so the shipped world (no floor authors a regionLayout) carves unchanged. A
-    // main-path cell takes its region from its step along the route; a chain's cells take the region
-    // of the cell they grow from, below.
-    const route = regionLayout ? regionRoute(regionLayout) : []
-    const stepRegion = regionLayout ? regionOfStep(route, mainPath.length) : []
-    // A DECLARED REGION THE ROUTE NEVER SEATS A CELL IN SEATS NOTHING. Two ways there: a route longer
-    // than the path, where `regionOfStep` deals what there is rather than refusing (it has no floor in
-    // front of it — only a carve knows how many steps the main path has); or a region the route never
-    // threads at all — reachable in the region graph, but not on the shortest in→out walk, so no step
-    // ever names it. Checked against every DECLARED region, not just the route's, so the second cause
-    // is caught too: content that would have gone to an unseated region lands in one the author never
-    // named, which is the builder deciding quietly rather than refusing.
-    const unseated = regionLayout
-      ? regionLayout.regions.map(r => r.name).filter(name => !stepRegion.includes(name))
-      : []
-    if (unseated.length > 0) {
-      if (!unseatedRegions) unseatedRegions = unseated
-      continue
-    }
     const cellRegion = new Map<string, string>()
     mainPath.forEach(([r, c], step) => {
       const region = stepRegion[step]
@@ -1651,6 +1714,14 @@ export const assembleFloor = (
           family: treasureChest.familyId,
           tags: treasureChest.tags,
           ...(config.mainEndReward ? { reward: config.mainEndReward } : {}),
+        })
+      } else if (gateIndices.has(mi)) {
+        const [obstacleId] = [...gateIndexByObstacle].find(([, index]) => index === mi)!
+        roomSpecs.set(posKey(r, c), {
+          roomType: "encounter",
+          family: keyGate.familyId,
+          tags: keyGate.tags,
+          requiredKeyId: gateKeyOf(obstacleId),
         })
       } else if (mi === leverIndex) {
         roomSpecs.set(posKey(r, c), leverSpec(MAIN_SECTION_ADDRESS))
@@ -2529,6 +2600,7 @@ export const assembleFloor = (
       ...(forkShortfall ? [{ type: "forksUnsatisfied", ...forkShortfall } as const] : []),
       ...(oneWayShortfall ? [{ type: "oneWayUnsatisfied", ...oneWayShortfall } as const] : []),
       ...(unseatedRegions ? [{ type: "regionNotSeated", regions: unseatedRegions } as const] : []),
+      ...(gateSeamMissing ? [{ type: "obstacleSeamNotCarved" as const, ids: gateSeamMissing }] : []),
       ...(regionMismatch
         ? regionMismatch.map(({ region, kind }) => ({ type: "regionWillNotTake" as const, region, kind }))
         : []),

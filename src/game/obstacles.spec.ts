@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { topologyFaults } from "./obstacles"
+import { seamIndexFor, topologyFaults } from "./obstacles"
 import type { Control, Obstacle } from "./obstacles"
 import type { RegionGraph } from "./regions"
 
@@ -136,5 +136,40 @@ describe("authored topology that does not resolve", () => {
       { type: "obstacleNamesNoConnection", id: "g1" },
       { type: "controlUnsatisfied", id: "s1", what: "mouth" },
     ])
+  })
+})
+
+describe("seamIndexFor", () => {
+  // Steps 0-1 mouth, 2-4 hall, 5-6 vault — a run with a multi-step stretch on both sides of the seam.
+  const run = ["mouth", "mouth", "hall", "hall", "hall", "vault", "vault"]
+
+  it("finds the seam in the middle of a run", () => {
+    expect(seamIndexFor(run, ["hall", "vault"])).toBe(5)
+  })
+
+  it("finds the seam when the far region is exactly one step long", () => {
+    const oneStepFar = ["mouth", "hall", "hall", "vault"]
+
+    expect(seamIndexFor(oneStepFar, ["hall", "vault"])).toBe(3)
+  })
+
+  it("finds the same seam whichever order the two region names are given", () => {
+    expect(seamIndexFor(run, ["hall", "vault"])).toBe(5)
+    expect(seamIndexFor(run, ["vault", "hall"])).toBe(5)
+  })
+
+  // The gap-free layout `regionOfStep` produces today never reaches this case (see the comment above
+  // this refusal in siteAssembler.ts) — but the question is answered honestly regardless of what
+  // built `stepRegion`, which is what lets "no seam" be pinned down here rather than only inferred.
+  it("answers undefined when the two regions are both present but not adjacent", () => {
+    const gapped = ["mouth", "hall", "cellar", "vault"]
+
+    expect(seamIndexFor(gapped, ["hall", "vault"])).toBeUndefined()
+  })
+
+  it("answers undefined when one of the two regions is missing entirely", () => {
+    const missingVault = ["mouth", "hall", "hall"]
+
+    expect(seamIndexFor(missingVault, ["hall", "vault"])).toBeUndefined()
   })
 })

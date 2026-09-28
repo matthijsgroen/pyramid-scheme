@@ -603,6 +603,9 @@ export type AssemblerReason =
    * fault whose extent happens to be a list — fixing one name here fixes nothing, so do not normalise
    * this to a single-name shape. */
   | { type: "regionNotSeated"; regions: string[] }
+  /** The route threads the connection these obstacles stand on, but no carve produced a cell on each
+   * side of the seam, so there was nowhere to stand the bars. `ids` are the obstacles left unplaced. */
+  | { type: "obstacleSeamNotCarved"; ids: string[] }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
 
