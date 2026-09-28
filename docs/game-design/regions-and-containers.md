@@ -83,6 +83,12 @@ From the layout the builder then works: a path may be lengthened, may gain side 
 puzzles or a chest, **however the site builder sees fit**. How it satisfies a region's appetite is its
 business, not the author's.
 
+**One refusal necessarily runs after the carve, not before it.** Everywhere else the builder refuses
+before a wall is cut, because what it is refusing is fixed by the config. Whether a room's content
+stands in a region that will take it is not: a cell's region is only known once the path exists. So
+that check runs on the carved floor, before the grid is returned, and the floor is still refused as a
+whole — nothing half-built reaches a player.
+
 **The acceptance rule is that everything authored is accounted for.** Every puzzle node and every chest
 node the floor authors lands somewhere, and the builder can say where. Content that cannot be placed is
 refused by name before a wall is carved — it is never dropped, and a region's appetite is never

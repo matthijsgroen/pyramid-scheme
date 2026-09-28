@@ -555,6 +555,24 @@ git commit -m "feat: content standing in a region that will not take it is refus
 
 ## Carried to the slice after this one
 
+- **A ROUTE LONGER THAN THE MAIN PATH SEATS CONTENT IN THE WRONG REGION AND SAYS NOTHING.** Measured in
+  this slice's final review: 9 regions against a 6-step main path labels only the first six, never
+  labels the `out` port at all, drops the goal chest in a `free` region that was not the one the author
+  named — and CARVES SUCCESSFULLY. It is the one place in this slice where the builder decides quietly
+  instead of refusing, which is the rule this whole area is built on. Slices 1-3 deliberately do not
+  refuse it, because only a carve can tell whether a route outran its path. Slice 4 must either refuse
+  it by name or make it impossible by shaping the path to the route.
+- **The refusal returns from inside the carve's attempt loop**, so attempt 0's deal decides. A later
+  attempt whose deal seated the same content acceptably is never tried. Defensible — a `continue`
+  would surface as the generic end-of-loop failure with no `regionWillNotTake` in it, which is a worse
+  message — but it is a real behavioural choice and nothing records it until now.
+- **`fitContent` and `mainPathRegions` still have no production caller.** Slice 3 answers "does this
+  content fit these appetites" AFTER the carve in the assembler rather than before it through
+  `fitContent`, so one question now has two implementations. Slice 4 should say which it keeps.
+- **Nothing asserts the dev floor's CELLS come back carrying a region.** The carry-through is proven as
+  far as the config; `validate-world` walks the floor without refusing, but no test reads a carved
+  cell's `region` on a real generated floor.
+
 - **The builder does not yet GROW anything.** The spec's "a path may be lengthened, may gain side paths, may take puzzles or a chest, however the site builder sees fit" is not built: this slice labels what the carve already produces and refuses what disagrees. Actively shaping a floor to satisfy an appetite is the next step, and it is what makes a region more than a label.
 - **Gates, and the three behaviours that come with them** — `edgeAllowed`'s rejoin rule, `doorsToEnter`, fog restore. All three bite only once a connection carries a gate.
 - **The degenerate layouts from slice 2's review** — a self-loop connection, a duplicated connection, an empty-string region name. A carve gives them meaning, so it can decide them on evidence.
