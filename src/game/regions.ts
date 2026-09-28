@@ -97,3 +97,18 @@ export const mainPathRegions = (graph: RegionGraph): Set<string> => {
   }
   return main
 }
+
+/**
+ * THE REGIONS NO WALK FROM THE WAY IN ARRIVES AT, by the name they were authored under.
+ *
+ * Required rather than advisory: once regions carry the floor's content, a region nothing reaches is
+ * loot a player can never collect (docs/game-design/regions-and-containers.md).
+ *
+ * This is the STRUCTURAL question — is the region joined on at all — and it is the whole of the check
+ * while connections carry no gates. The state-aware form, where a gate may be shut in every state a
+ * mechanism can reach, needs the lock and arrives with it.
+ */
+export const strandedRegions = (graph: RegionGraph): string[] => {
+  const arrived = reachable(graph, graph.in)
+  return graph.regions.filter(({ name }) => !arrived.has(name)).map(({ name }) => name)
+}

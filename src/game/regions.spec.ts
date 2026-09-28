@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { appetiteAccepts, mainPathRegions, type RegionGraph } from "./regions"
+import { appetiteAccepts, mainPathRegions, strandedRegions, type RegionGraph } from "./regions"
 
 describe("what a region will take", () => {
   it("takes the kind it names, and anything when it is free", () => {
@@ -80,5 +80,41 @@ describe("the regions the way out cannot be reached without", () => {
     const g = graph([["in", "stub"]], ["in", "stub", "out"], { in: "in", out: "out" })
 
     expect(mainPathRegions(g)).toEqual(new Set())
+  })
+})
+
+describe("regions nothing reaches", () => {
+  it("finds none where every region is joined to the way in", () => {
+    const g = graph(
+      [
+        ["in", "middle"],
+        ["middle", "out"],
+      ],
+      ["in", "middle", "out"],
+      { in: "in", out: "out" }
+    )
+
+    expect(strandedRegions(g)).toEqual([])
+  })
+
+  // Loot in a region no walk reaches is loot nobody can collect, which is why this is required
+  // rather than advisory.
+  it("names a region joined to nothing, in the order it was authored", () => {
+    const g = graph([["in", "out"]], ["in", "out", "orphan", "alsoOrphan"], { in: "in", out: "out" })
+
+    expect(strandedRegions(g)).toEqual(["orphan", "alsoOrphan"])
+  })
+
+  it("names a region joined only to another region nothing reaches", () => {
+    const g = graph(
+      [
+        ["in", "out"],
+        ["orphan", "behindOrphan"],
+      ],
+      ["in", "out", "orphan", "behindOrphan"],
+      { in: "in", out: "out" }
+    )
+
+    expect(strandedRegions(g)).toEqual(["orphan", "behindOrphan"])
   })
 })
