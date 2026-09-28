@@ -1543,7 +1543,15 @@ export const assembleFloor = (
     // that does not, so the shipped world (no floor authors a regionLayout) carves unchanged. A
     // main-path cell takes its region from its step along the route; a chain's cells take the region
     // of the cell they grow from, below.
-    const stepRegion = regionLayout ? regionOfStep(regionRoute(regionLayout), mainPath.length) : []
+    const route = regionLayout ? regionRoute(regionLayout) : []
+    const stepRegion = regionLayout ? regionOfStep(route, mainPath.length) : []
+    // A ROUTE LONGER THAN THE PATH SEATS NOTHING AT ITS FAR END. `regionOfStep` deals what there is
+    // rather than refusing, because it has no floor in front of it — only a carve knows how many steps
+    // the main path has. So the refusal lands here, and it names every region left unseated: content
+    // that would have gone to them lands in regions the author never named, which is the builder
+    // deciding quietly rather than refusing.
+    const unseated = route.filter(name => !stepRegion.includes(name))
+    if (unseated.length > 0) return { success: false, reasons: [{ type: "routeOutrunsPath", regions: unseated }] }
     const cellRegion = new Map<string, string>()
     mainPath.forEach(([r, c], step) => {
       const region = stepRegion[step]

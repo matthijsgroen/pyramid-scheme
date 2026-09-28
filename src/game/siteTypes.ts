@@ -577,6 +577,10 @@ export type AssemblerReason =
    * promised nothing, a reward where it asked for puzzles. The floor's content and its layout disagree,
    * and which is wrong is the author's to say. See FloorConfig.regionLayout. */
   | { type: "regionWillNotTake"; region: string; kind: ContentKind }
+  /** The route the main path threads has more regions than the path has steps, so the regions at its
+   * far end are never reached and content lands in regions the author did not name. `regions` are the
+   * ones left unseated, in route order. See FloorConfig.regionLayout. */
+  | { type: "routeOutrunsPath"; regions: string[] }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
 
