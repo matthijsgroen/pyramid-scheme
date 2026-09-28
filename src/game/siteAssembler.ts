@@ -529,16 +529,20 @@ const GROWN_KEY_HOST = { pathPuzzles: 0, difficulty: "starter", end: "treasure" 
  * capacity just because it lacks a gate — see docs/game-design/keys-and-locks-solver.md, "Slots have
  * capacity").
  *
- * Asked of whichever sections may ANSWER it: the floor's top level asks only its visible ones, so a
- * hidden section never satisfies a key-holder requirement.
+ * Asked of whichever sections may ANSWER it: every level asks only its visible ones, so a hidden
+ * section never satisfies a key-holder requirement at any depth.
  */
 const owesAKeyHost = (eligible: readonly SubSection[]): boolean =>
   eligible.some(needsFloorKeyHost) && !eligible.some(s => !s.gate && !s.endReward)
 
-/** Which of one level's sections hold a floor-key gate owing a key, and which are free to host one. */
+/** Which of one level's sections hold a floor-key gate owing a key, and which are free to host one.
+ * A hidden section is never free capacity: its cells are masked until the player finds them, so a key
+ * put there is one they may never be shown a way to. */
 const keyHostIdxs = (sections: readonly SubSection[]) => ({
   gatedIdxs: sections.map((_, i) => i).filter(i => needsFloorKeyHost(sections[i])),
-  ungatedIdxs: sections.map((_, i) => i).filter(i => !sections[i].gate && !sections[i].endReward),
+  ungatedIdxs: sections
+    .map((_, i) => i)
+    .filter(i => !sections[i].gate && !sections[i].endReward && !sections[i].hidden),
 })
 
 /** What a lever's room is drawn and filled by. Nothing but a name here: which family answers to it is
@@ -1211,7 +1215,7 @@ export const assembleFloor = (
       if (!parentSection.sideSections?.length) continue
       const parentDoors = doorsShutting(parentSection, `s${group.sectionIdx}`, [])
 
-      const subSects: SubSection[] = owesAKeyHost(parentSection.sideSections)
+      const subSects: SubSection[] = owesAKeyHost(parentSection.sideSections.filter(s => !s.hidden))
         ? [...parentSection.sideSections, GROWN_KEY_HOST]
         : parentSection.sideSections
       const { gatedIdxs: subGatedIdxs, ungatedIdxs: subUngatedIdxs } = keyHostIdxs(subSects)

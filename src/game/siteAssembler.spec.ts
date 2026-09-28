@@ -1080,6 +1080,30 @@ describe(assembleFloor, () => {
   })
 
   describe("hidden sections", () => {
+    it("never puts a floor key in a hidden section, whose cells are masked until they are found", () => {
+      const keyGateBesideAHiddenPath: FloorConfig = {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "starter", end: "staircase", gate: { type: "floor-key" } },
+          { pathPuzzles: 1, difficulty: "starter", end: "treasure", hidden: true },
+        ],
+      }
+
+      // Across seeds, because which free section hosts the key is the carve's choice: one seed
+      // agreeing proves nothing about the one that picks the other candidate.
+      for (let seed = 1; seed <= 25; seed++) {
+        const result = assembleFloor("site-hidden-key", keyGateBesideAHiddenPath, seed)
+        if (!result.success) continue
+        const maskedKeyCells = result.grid.cells
+          .flat()
+          .filter(cell => "keyColor" in cell && cell.keyColor !== undefined && cell.hidden)
+        expect(maskedKeyCells).toEqual([])
+      }
+    })
+
     it("includes hidden section cells in the grid, tagged hidden:true", () => {
       const withHidden: FloorConfig = {
         pathPuzzles: 1,
