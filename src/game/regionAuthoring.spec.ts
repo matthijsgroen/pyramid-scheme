@@ -33,6 +33,20 @@ describe("a layout the builder refuses by name", () => {
     expect(reasons(floorWith(layout))).toEqual([{ type: "regionNameRepeated", name: "mouth" }])
   })
 
+  it("refuses every name repeated, not just the first, and once per offending name", () => {
+    const layout = {
+      regions: [region("mouth"), region("mouth"), region("vault"), region("vault")],
+      connections: [],
+      in: "mouth",
+      out: "vault",
+    }
+
+    expect(reasons(floorWith(layout))).toEqual([
+      { type: "regionNameRepeated", name: "mouth" },
+      { type: "regionNameRepeated", name: "vault" },
+    ])
+  })
+
   it("refuses a connection naming a region the layout never declares", () => {
     const layout = {
       regions: [region("mouth"), region("vault")],
@@ -44,6 +58,20 @@ describe("a layout the builder refuses by name", () => {
     expect(reasons(floorWith(layout))).toEqual([{ type: "connectionNamesNoRegion", name: "ghost" }])
   })
 
+  it("refuses every undeclared name a connection ends on, deduplicated", () => {
+    const layout = {
+      regions: [region("mouth"), region("vault")],
+      connections: [["mouth", "ghost1"] as const, ["vault", "ghost2"] as const, ["mouth", "ghost1"] as const],
+      in: "mouth",
+      out: "vault",
+    }
+
+    expect(reasons(floorWith(layout))).toEqual([
+      { type: "connectionNamesNoRegion", name: "ghost1" },
+      { type: "connectionNamesNoRegion", name: "ghost2" },
+    ])
+  })
+
   it("refuses a port naming a region the layout never declares", () => {
     const layout = {
       regions: [region("mouth")],
@@ -53,6 +81,20 @@ describe("a layout the builder refuses by name", () => {
     }
 
     expect(reasons(floorWith(layout))).toEqual([{ type: "portNamesNoRegion", port: "out", name: "nowhere" }])
+  })
+
+  it("refuses both ports when both name a region the layout never declares, in first", () => {
+    const layout = {
+      regions: [region("mouth")],
+      connections: [],
+      in: "nowhereIn",
+      out: "nowhereOut",
+    }
+
+    expect(reasons(floorWith(layout))).toEqual([
+      { type: "portNamesNoRegion", port: "in", name: "nowhereIn" },
+      { type: "portNamesNoRegion", port: "out", name: "nowhereOut" },
+    ])
   })
 
   it("refuses a region no walk from the way in arrives at", () => {

@@ -654,16 +654,28 @@ export const assembleFloor = (
   const layout = authoredConfig.regionLayout
   if (layout) {
     const declared = new Set<string>()
+    const repeated = new Set<string>()
     for (const { name } of layout.regions) {
-      if (declared.has(name)) return { success: false, reasons: [{ type: "regionNameRepeated", name }] }
+      if (declared.has(name)) repeated.add(name)
       declared.add(name)
     }
+    if (repeated.size > 0)
+      return {
+        success: false,
+        reasons: [...repeated].map(name => ({ type: "regionNameRepeated" as const, name })),
+      }
+    const undeclaredEnds = new Set<string>()
     for (const [from, to] of layout.connections)
-      for (const end of [from, to])
-        if (!declared.has(end)) return { success: false, reasons: [{ type: "connectionNamesNoRegion", name: end }] }
-    for (const port of ["in", "out"] as const)
-      if (!declared.has(layout[port]))
-        return { success: false, reasons: [{ type: "portNamesNoRegion", port, name: layout[port] }] }
+      for (const end of [from, to]) if (!declared.has(end)) undeclaredEnds.add(end)
+    if (undeclaredEnds.size > 0)
+      return {
+        success: false,
+        reasons: [...undeclaredEnds].map(name => ({ type: "connectionNamesNoRegion" as const, name })),
+      }
+    const badPorts = (["in", "out"] as const)
+      .filter(port => !declared.has(layout[port]))
+      .map(port => ({ type: "portNamesNoRegion" as const, port, name: layout[port] }))
+    if (badPorts.length > 0) return { success: false, reasons: badPorts }
     const stranded = strandedRegions(layout)
     if (stranded.length > 0)
       return { success: false, reasons: stranded.map(name => ({ type: "regionUnreachable" as const, name })) }
