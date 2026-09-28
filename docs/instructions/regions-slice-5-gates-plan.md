@@ -1544,7 +1544,11 @@ The cause is the projection's vertical scale. The shaft lives at `y=0`, where sc
 
 **Verify against the 3D reference, not against your own arithmetic.** `prim_lever` can render the shaft at a true swing angle (that is what `--contents=left`/`right` are). Render the true ±36° geometry, composite your transformed arm tile over it, and measure the offset at the crown row. Report the pixel error before and after your correction. If the corrected error is not clearly smaller than 30-50px, say so rather than shipping a transform that only looks plausible.
 
-**If the residual error is small enough to be invisible at tile size, say that and move on** — this is a fidelity question with a measurable answer, not a reason to abandon the runtime rotation. The tile is 56 units wide on a map; the honest test is whether the arm's end still meets the track's end.
+**THE ACCEPTANCE TEST, measured on the landed art:** the painted track runs x 45-67 in the 112-wide tile (±11px from centre), which matches what the mesh's own slot geometry predicts at ±36° (±8.6px, agreeing to within the rim's own width) — so **paint and mesh agree and neither is the problem.** A naive equal-degree `rotate()` puts the arm's tip at x≈77 at +36°, **10-13px PAST the track's end.** It overshoots; it does not fall short.
+
+So the task passes when the arm's tip lands inside the track's painted rim at both extremes, and fails while it overshoots. That is a pixel measurement on real tiles, not a judgement call — make it, and report the number before and after your correction.
+
+**Do not fix this by shrinking the authored throw.** The throw is ±36° because that is what makes the two extremes read as a backslash and a forward slash rather than a lever wobbling (`prim_lever`'s docstring records the measurement). Correct the TRANSFORM to match the geometry, or state plainly that you could not and leave the arm at an angle that lands in the track.
 
 - [ ] **Step 3: The transition**
 
