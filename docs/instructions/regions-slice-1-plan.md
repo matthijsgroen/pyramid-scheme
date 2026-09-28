@@ -565,5 +565,11 @@ Each needs its own plan, written when the one before it lands:
 
 1. **This plan — the region graph.** Pure functions, no world change.
 2. **Authoring.** `regions` and `connections` on `FloorConfig`, the DSL verb, the serializer, and the refusals wired into `siteAssembler` as named `AssemblerReason`s.
+
+   **Carried from slice 1's final review, to be refused here:** a connection may name a region that
+   `regions[]` never declares. Such a region carries the route for reachability but is never a
+   candidate for removal, so a genuine cut region reads as neither main-path nor stranded. Slice 1
+   cannot produce that input because it has no authoring surface; slice 2 is where authoring arrives,
+   so it is where the refusal belongs.
 3. **The carve pass.** A new core pass, recursive with loops from the start, owning `edgeAllowed`'s rejoin rule, `doorsToEnter` and fog restore rather than inheriting them.
 4. **Gates and composition.** Gates on connections (topology mod), containers placed inside a region from outside, and the proof that a nested container is not walked as a product.
