@@ -3,6 +3,7 @@ import {
   appetiteAccepts,
   fitContent,
   mainPathRegions,
+  regionOfStep,
   regionRoute,
   strandedRegions,
   type RegionAppetite,
@@ -232,5 +233,31 @@ describe("the route the main path threads", () => {
     const g = graph([["in", "stub"]], ["in", "stub", "out"], { in: "in", out: "out" })
 
     expect(regionRoute(g)).toEqual([])
+  })
+})
+
+describe("which stretch of the main path is which region", () => {
+  it("deals the steps evenly when they divide", () => {
+    expect(regionOfStep(["a", "b"], 4)).toEqual(["a", "a", "b", "b"])
+  })
+
+  it("gives the extra step to the earlier region when they do not divide", () => {
+    expect(regionOfStep(["a", "b"], 5)).toEqual(["a", "a", "a", "b", "b"])
+  })
+
+  it("spreads the remainder one each from the front, not all onto the first", () => {
+    expect(regionOfStep(["a", "b", "c"], 5)).toEqual(["a", "a", "b", "b", "c"])
+  })
+
+  it("puts every step in the one region of a one-region route", () => {
+    expect(regionOfStep(["only"], 3)).toEqual(["only", "only", "only"])
+  })
+
+  it("runs out of steps before the route ends, giving each step a region and no more", () => {
+    expect(regionOfStep(["a", "b", "c"], 2)).toEqual(["a", "b"])
+  })
+
+  it("has nothing to deal where the route is empty", () => {
+    expect(regionOfStep([], 3)).toEqual([])
   })
 })

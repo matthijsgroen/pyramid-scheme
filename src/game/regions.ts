@@ -215,3 +215,22 @@ export const regionRoute = (graph: RegionGraph): string[] => {
   while (route[0] !== graph.in) route.unshift(cameFrom.get(route[0])!)
   return route
 }
+
+/**
+ * WHICH REGION EACH STEP OF THE MAIN PATH STANDS IN, one entry per step.
+ *
+ * The steps are dealt evenly along the route, and where they do not divide the earlier regions take
+ * the extra one each from the front rather than the first region taking all of it — so a long region
+ * followed by a short one is something the author asked for, never an artefact of the division.
+ *
+ * A route with more regions than the path has steps gets as many as there are steps. That the tail of
+ * the route never reaches the main path is a fault, but it is the assembler's to report against a real
+ * floor, not this function's to decide.
+ */
+export const regionOfStep = (route: readonly string[], steps: number): string[] => {
+  if (route.length === 0 || steps <= 0) return []
+  if (route.length >= steps) return route.slice(0, steps)
+  const each = Math.floor(steps / route.length)
+  const extra = steps % route.length
+  return route.flatMap((name, i) => Array<string>(each + (i < extra ? 1 : 0)).fill(name))
+}
