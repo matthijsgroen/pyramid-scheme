@@ -118,7 +118,11 @@ save reset and costs a full reset after it. It is answered: no level is added.
 ## What the pass must own rather than inherit
 
 A new core pass, written recursive with loops from the start. `sideSections` carve inside a region
-exactly as they do today. Three behaviours cannot be inherited from the existing carve, measured in §5:
+exactly as they do today. Three behaviours cannot be inherited from the existing carve, measured in §5.
+
+**All three bite only once regions are GATED**, and gates are the topology mod's. So they land with the
+gates rather than with the threading — the carve can label its stretches and account for its content
+while every connection still stands open, and inherit today's behaviour unchanged meanwhile.
 
 - **`edgeAllowed` drops any rejoin where either end is gated or sealed.** Measured A/B over 200 seeds:
   411 ungated rejoin links, **0** sealed. A region layout is all gated regions, so inheriting this

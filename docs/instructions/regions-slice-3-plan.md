@@ -170,7 +170,7 @@ Reverse the sort comparator (`(y, x)` instead of `(x, y)`) and re-run. Expected:
 ```bash
 yarn eslint src/game/regions.ts src/game/regions.spec.ts
 yarn check-types
-git commit -- src/game/regions.ts src/game/regions.spec.ts -m "feat: the main path threads the regions between the way in and the way out"
+git commit -m "feat: the main path threads the regions between the way in and the way out" -- src/game/regions.ts src/game/regions.spec.ts
 ```
 
 ---
@@ -258,7 +258,7 @@ Expected: PASS.
 ```bash
 yarn eslint src/game/regions.ts src/game/regions.spec.ts
 yarn check-types
-git commit -- src/game/regions.ts src/game/regions.spec.ts -m "feat: the steps of the main path are dealt along the route it threads"
+git commit -m "feat: the steps of the main path are dealt along the route it threads" -- src/game/regions.ts src/game/regions.spec.ts
 ```
 
 ---
@@ -405,7 +405,7 @@ Run: `yarn test` — expect the full suite green.
 ```bash
 yarn eslint src/game/siteTypes.ts src/game/siteAssembler.ts src/game/regionCarve.spec.ts
 yarn check-types
-git commit -- src/game/siteTypes.ts src/game/siteAssembler.ts src/game/regionCarve.spec.ts -m "feat: a carved cell knows the region it stands in"
+git commit -m "feat: a carved cell knows the region it stands in" -- src/game/siteTypes.ts src/game/siteAssembler.ts src/game/regionCarve.spec.ts
 ```
 
 ---
@@ -548,7 +548,7 @@ Run: `yarn test` — expect the full suite green.
 ```bash
 yarn eslint src/game/siteTypes.ts src/game/siteAssembler.ts src/game/regionCarve.spec.ts
 yarn check-types
-git commit -- src/game/siteTypes.ts src/game/siteAssembler.ts src/game/regionCarve.spec.ts -m "feat: content standing in a region that will not take it is refused by name"
+git commit -m "feat: content standing in a region that will not take it is refused by name" -- src/game/siteTypes.ts src/game/siteAssembler.ts src/game/regionCarve.spec.ts
 ```
 
 ---
