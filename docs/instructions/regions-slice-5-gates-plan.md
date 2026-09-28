@@ -1479,10 +1479,14 @@ git commit -m "refactor: a handle is the two-state case of a control" -- src/gam
 - Test: the SiteMap spec covering the standing layer, plus a story
 
 **Interfaces:**
-- Consumes: `expert/leverBase` and `expert/leverArm` tiles (the owner's paint loop; queue entries are in `docs/instructions/repaint-queue.md`), and the control's current state, which `openDoorsFor` already reads off `mechanismStates`.
-- Produces: no new export — one sprite becomes two, the upper one carrying a `transform`.
+- Consumes: `expert/leverBaseBack`, `expert/leverArm` and `expert/leverBaseFront` tiles (the owner's paint loop; queue entries are in `docs/instructions/repaint-queue.md`), and the control's current state, which `openDoorsFor` already reads off `mechanismStates`.
+- Produces: no new export — one sprite becomes three, the middle one carrying a `transform`.
 
-**Blocked until the two tiles exist.** If they have not landed when this task comes up, skip it and say so — do not invent placeholder art, and do not fall back to the single-piece `leverLeft`/`leverRight` tiles, which are superseded.
+**THE STACKING ORDER IS THE POINT, and it is in depth:** `leverBaseBack`, then `leverArm`, then `leverBaseFront`. At this camera's shear the arm's lower stretch lies inside the mound's painted area, so an arm behind the WHOLE base is hidden there and reads as starting at the dome's crown — a stick balanced on a bell, which is the failure `prim_lever`'s docstring records fighting in its first build. Between the halves, the arm rises out of the mound with the near lip crossing its foot.
+
+**The two halves are one painting.** The base is painted once and imported twice against two masks, so the near and far sides of one mound cannot disagree about light or palette. Do not treat them as two art assets.
+
+**Blocked until the three tiles exist.** If they have not landed when this task comes up, skip it and say so — do not invent placeholder art, and do not fall back to the single-piece `leverLeft`/`leverRight` tiles, which are superseded.
 
 **Why two sprites rather than two painted states:** the lever's angle is a pure function of state the renderer already reads every frame, so a `transform: rotate()` plus a `transition` gives the swing with no new state at all. It also removes a defect the single tiles have: two separately painted states drifted apart in palette (their domes do not match), and one painted arm cannot disagree with itself.
 
@@ -1490,11 +1494,11 @@ git commit -m "refactor: a handle is the two-state case of a control" -- src/gam
 
 - [ ] **Step 1: Write the failing test**
 
-Assert that a lever room renders TWO sprites, that the arm's `transform` carries the angle for the control's current state, and that the angle differs between two states. Assert the rotation for EVERY state the control declares, not one of them — a wheel has more than two, and the renderer must not be written for a binary.
+Assert that a lever room renders THREE sprites in the depth order above, that the arm's `transform` carries the angle for the control's current state, and that the angle differs between two states. Assert the rotation for EVERY state the control declares, not one of them — a wheel has more than two, and the renderer must not be written for a binary. Assert the stacking order explicitly: a test that only checks three sprites exist would pass with the arm drawn in front of the mound, which is the bug this arrangement exists to prevent.
 
 - [ ] **Step 2: Run it, watch it fail, implement**
 
-The arm sprite is layered BEHIND the base so the dome hides its foot at every angle, its `transform-origin` is the pivot the scaffold defines, and its rotation is the state's angle. Where the angle comes from is the one design decision this task owns: a binary handle's two sides are ±36°, and an N-state control has no such convention. **Derive it from the control's state list rather than hardcoding two cases** — the states are ordered, so an index into them maps onto the throw. Say in a comment what the mapping is and why.
+The arm sprite is layered between the two halves of the mound, its `transform-origin` is the pivot the scaffold defines (`50% 76.6%`, which sits inside the mound rather than at its crown), and its rotation is the state's angle. All three sprites share one frame to the pixel, so they stack at the same origin with no per-tile offset — if you find yourself computing one, the frame has been lost and the import dropped `--no-trim`. Where the angle comes from is the one design decision this task owns: a binary handle's two sides are ±36°, and an N-state control has no such convention. **Derive it from the control's state list rather than hardcoding two cases** — the states are ordered, so an index into them maps onto the throw. Say in a comment what the mapping is and why.
 
 - [ ] **Step 3: The transition**
 
