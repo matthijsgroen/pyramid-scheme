@@ -4,11 +4,15 @@ import type { CorridorCell, FloorConfig, RoomCell } from "./siteTypes"
 
 const SEED = 99
 
+// `free` on mouth and vault, not `nothing`/`reward`: with `pathPuzzles: 2` the main path starts a
+// puzzle in mouth and ends its goal chest in whichever region the route hands the tail, so the two
+// ends have to take whatever actually lands there. `hall` is the one region this fixture pins down —
+// puzzles land there and only there.
 const threeRegions = {
   regions: [
-    { name: "mouth", appetite: "nothing" as const },
+    { name: "mouth", appetite: "free" as const },
     { name: "hall", appetite: "puzzles" as const },
-    { name: "vault", appetite: "reward" as const },
+    { name: "vault", appetite: "free" as const },
   ],
   connections: [["mouth", "hall"] as const, ["hall", "vault"] as const],
   in: "mouth",
@@ -53,5 +57,54 @@ describe("a carved cell knows its region", () => {
     const labelled = carvedCells(floor(undefined)).filter(cell => cell.region !== undefined)
 
     expect(labelled).toEqual([])
+  })
+})
+
+describe("content a region will not take", () => {
+  // `nothing` is a promise the region stays empty, so a puzzle standing in one is the floor and its
+  // layout disagreeing — and the builder says so rather than quietly moving the puzzle.
+  it("refuses a puzzle standing where the layout promised nothing", () => {
+    const everywhereEmpty = {
+      regions: [
+        { name: "mouth", appetite: "nothing" as const },
+        { name: "vault", appetite: "nothing" as const },
+      ],
+      connections: [["mouth", "vault"] as const],
+      in: "mouth",
+      out: "vault",
+    }
+    const result = assembleFloor("test-journey", floor(everywhereEmpty), SEED)
+
+    expect(result.success).toBe(false)
+    expect(result.success ? [] : result.reasons).toContainEqual({
+      type: "regionWillNotTake",
+      region: expect.any(String),
+      kind: "puzzle",
+    })
+  })
+
+  it("carves a floor whose puzzles stand where the layout takes puzzles", () => {
+    expect(assembleFloor("test-journey", floor(threeRegions), SEED).success).toBe(true)
+  })
+
+  // An appetite says what a region WILL take, never what it must hold.
+  it("does not mind a region that takes puzzles standing empty", () => {
+    // Bare (`pathPuzzles: 0`, no side sections) still carves the main path's own goal chest — `end:
+    // "treasure"` is unconditional — and at this seed it lands in `hall`, which is why `hall` alone
+    // takes anything: a `puzzles` region there would rightly refuse a chest, which would prove the
+    // wrong thing. `mouth` and `vault` stay `puzzles` and carry no puzzle at all, which is the point.
+    const roomyLayout = {
+      regions: [
+        { name: "mouth", appetite: "puzzles" as const },
+        { name: "hall", appetite: "free" as const },
+        { name: "vault", appetite: "puzzles" as const },
+      ],
+      connections: [["mouth", "hall"] as const, ["hall", "vault"] as const],
+      in: "mouth",
+      out: "vault",
+    }
+    const bare: FloorConfig = { ...floor(roomyLayout), pathPuzzles: 0, sideSections: [] }
+
+    expect(assembleFloor("test-journey", bare, SEED).success).toBe(true)
   })
 })

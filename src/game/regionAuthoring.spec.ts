@@ -123,8 +123,12 @@ describe("a layout the builder refuses by name", () => {
   })
 
   it("assembles a layout whose regions are all named once, joined and reachable", () => {
+    // `mouth` is `free`, not `nothing`: with `pathPuzzles: 1` the main path's own puzzle starts there,
+    // and this test is about the layout's SHAPE (named once, joined, reachable), not what its
+    // appetites take — that is regionCarve.spec.ts's job. `vault` stays `reward` because the goal
+    // chest that lands there is exactly that.
     const layout = {
-      regions: [region("mouth", "nothing"), region("vault", "reward")],
+      regions: [region("mouth", "free"), region("vault", "reward")],
       connections: [["mouth", "vault"] as const],
       in: "mouth",
       out: "vault",

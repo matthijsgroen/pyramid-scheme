@@ -19,7 +19,8 @@ import type {
   Difficulty,
 } from "./siteTypes"
 import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
-import { regionOfStep, regionRoute, strandedRegions } from "./regions"
+import { appetiteAccepts, regionOfStep, regionRoute, strandedRegions } from "./regions"
+import type { ContentKind } from "./regions"
 import { cellSlot } from "./cellSlot"
 import { stairIdAt } from "./stairAddress"
 import { footprintSize } from "./roomFootprint"
@@ -2453,6 +2454,43 @@ export const assembleFloor = (
         const mark = key === undefined ? undefined : markByHandleGateKey.get(key)
         if (mark) cells2D[r][c] = { ...cell, mark }
       }
+    }
+
+    // WHAT A ROOM HOLDS AGAINST WHAT ITS REGION WILL TAKE. A puzzle node is a room the floor authored
+    // as a puzzle (`pathIndex` is set only on the k-th room of a chain's own puzzles — never on a
+    // mechanism, a gate or the goal/end chest, which have no chain position of their own). A chest
+    // node is a room holding treasure — a `reward` payload, the `"treasure"` tag the goal/end chest
+    // always carries even before a reward is authored onto it, or `stock`: a shop hands the player loot
+    // just as a chest does, it just carries it as several slots rather than one. A mechanism room
+    // (lever, switch, gate) is neither: the region never declares it, the mod that owns it points AT
+    // the region instead (docs/game-design/regions-and-containers.md). Reported per region and kind
+    // rather than per room — five puzzles standing in one region that promised nothing is one
+    // disagreement between the floor and its layout, not five.
+    if (regionLayout) {
+      const appetiteOf = new Map(regionLayout.regions.map(r => [r.name, r.appetite]))
+      const willNotTake = new Map<string, { region: string; kind: ContentKind }>()
+      for (const row of cells2D)
+        for (const cell of row) {
+          if (cell.type !== "room" || cell.region === undefined) continue
+          const appetite = appetiteOf.get(cell.region)
+          if (appetite === undefined) continue
+          const holds: ContentKind[] = []
+          if (cell.roomType === "encounter" && cell.pathIndex !== undefined) holds.push("puzzle")
+          if (cell.reward !== undefined || cell.stock !== undefined || cell.tags?.includes("treasure"))
+            holds.push("reward")
+          for (const kind of holds)
+            if (!appetiteAccepts(appetite, kind))
+              willNotTake.set(`${cell.region}|${kind}`, { region: cell.region, kind })
+        }
+      if (willNotTake.size > 0)
+        return {
+          success: false,
+          reasons: [...willNotTake.values()].map(({ region, kind }) => ({
+            type: "regionWillNotTake" as const,
+            region,
+            kind,
+          })),
+        }
     }
 
     return { success: true, grid }

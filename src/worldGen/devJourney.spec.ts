@@ -253,9 +253,9 @@ describe("what the dev journey authors", () => {
 
     expect(floor.regionLayout).toEqual({
       regions: [
-        { name: "mouth", appetite: "nothing" },
-        { name: "hall", appetite: "puzzles" },
-        { name: "vault", appetite: "reward" },
+        { name: "mouth", appetite: "free" },
+        { name: "hall", appetite: "free" },
+        { name: "vault", appetite: "free" },
       ],
       connections: [
         ["mouth", "hall"],

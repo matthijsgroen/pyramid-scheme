@@ -1,5 +1,5 @@
 import type { Mark } from "./mark"
-import type { RegionGraph } from "./regions"
+import type { ContentKind, RegionGraph } from "./regions"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
@@ -573,6 +573,10 @@ export type AssemblerReason =
   /** A region no walk from the way in arrives at. Once regions carry content, that is loot a player
    * can never collect (docs/game-design/regions-and-containers.md). */
   | { type: "regionUnreachable"; name: string }
+  /** A room stands in a region whose appetite does not take what it holds — a puzzle where the layout
+   * promised nothing, a reward where it asked for puzzles. The floor's content and its layout disagree,
+   * and which is wrong is the author's to say. See FloorConfig.regionLayout. */
+  | { type: "regionWillNotTake"; region: string; kind: ContentKind }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
 

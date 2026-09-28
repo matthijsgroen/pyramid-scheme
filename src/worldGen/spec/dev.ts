@@ -61,13 +61,18 @@ export const devRules: Rule[] = [
     sideSections: branches(),
     forks: FORKS,
     switches: SWITCHES,
-    // The first authored region layout. It shapes no walls yet — the carve is a later slice — so this
-    // stands here to prove a layout survives authoring, serialization and the builder's refusals.
+    // The first authored region layout. It proves a layout survives authoring, serialization, the
+    // builder's refusals and the carve — a bench for TOPOLOGY, not for content. Every region is `free`
+    // rather than pinned to what this carve happens to put where: the switch's fork and both bare
+    // branches sit in `mouth`, and the goal chest lands in `hall`, none of which this bench asserts
+    // anything about. An appetite pinned to that would break every time the carve moved, which would
+    // make the bench a liability rather than a proof — the appetite checking itself is pinned by unit
+    // tests against hand-built floors, where the content is known exactly.
     regionLayout: {
       regions: [
-        { name: "mouth", appetite: "nothing" },
-        { name: "hall", appetite: "puzzles" },
-        { name: "vault", appetite: "reward" },
+        { name: "mouth", appetite: "free" },
+        { name: "hall", appetite: "free" },
+        { name: "vault", appetite: "free" },
       ],
       connections: [
         ["mouth", "hall"],
