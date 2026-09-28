@@ -24,7 +24,8 @@ redesign, 37 from before the explorer existed, and which of those to rewrite, re
 in one place so copy written months apart still sounds like them.
 
 [**Implementation**](IMPLEMENTATION.md) is what falls out of these documents as work, split by whether a
-story decision is in the way. Six items are pickable today.
+story decision is in the way, and what of it is now built and playing. Three of the four things still
+unblocked are content; the fourth is a drawing.
 
 [**Art**](ART.md) is every drawing the story implies, and [**Review alignment**](REVIEW-ALIGNMENT.md) is
 where each of the casual-mobile review's twelve items now stands — including the six this pass does not

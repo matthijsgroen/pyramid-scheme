@@ -52,8 +52,9 @@ journey("starter_1")
   })
 ```
 
-**Unbuilt**: it waits on the `reading` encounter, which is what makes the room the ending rather than a
-chest. Until then `starter_1` has no gate and the ending has nowhere to play.
+**Built.** The gate is authored in `starter.ts` and the room behind it is a `reading` encounter, which is
+what makes it the ending rather than a chest. How the name assembles — a cartouche, the Horus falcon and a
+slot the sand took, finished by a reed leaf out of the Vault — is in `IMPLEMENTATION.md`.
 
 That also makes the mosaic's out-of-order completion a non-problem: the picture is a record, and a record
 does not mind which order it was earned in.
@@ -304,14 +305,16 @@ nouns over beautiful images — the opposite of how a closing line would usually
 
 ## Open
 
-1. **Is the Sphinx inscription readable because of collected hieroglyphs, or because a ghost reads it to
-   you?** The first makes the collection screen into literacy — the casual-mobile review's best single
-   idea — and is the more expensive, since it means the glyphs have to mean something consistently.
+1. ~~**Is the Sphinx inscription readable because of collected hieroglyphs, or because a ghost reads it
+   to you?**~~ **Decided: the collected hieroglyphs, and built.** The collection screen is literacy —
+   the casual-mobile review's best single idea — and the glyphs do mean something consistently, because
+   the reed leaf means on the Sphinx what it means anywhere: the sound that turns a god's name into a
+   man's.
 2. **Do the five ghosts form the introductions chain**, each vouching for you at the next tier, or are they
    independent flavour per tomb?
 3. **Does the offering arc sit inside this spine or beside it?** `arc-offering-to-the-gods.md` occupies
    Acts III–IV exactly, which suggests it _is_ the spine's middle rather than a side thread.
 4. **Which four treasures carry the tier-unlock keys, and do they want renaming?** They are already the
    four things that vouch for you; nothing says so.
-5. **Whose name is on the Sphinx?** The ending is a name — see above. Which one is open.
+5. ~~**Whose name is on the Sphinx?**~~ **Decided: Hori** (`cast.md`), and spelled on the wall.
 6. **Does the ending want a run-up?** Four lines across four acts still works with a noun vocabulary.

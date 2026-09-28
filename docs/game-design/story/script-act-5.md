@@ -312,7 +312,8 @@ true."_
 ## Open
 
 1. **Does the pause need a mechanism?** The silence after _"Whose?"_ is doing the work, and the game has no
-   way to hold a beat.
+   way to hold a beat. Still open: the beat plays as written, one line per tap, so the pause is however
+   long the player takes to tap — which is not nothing, and is not authored either.
 2. **Is the predecessor's notebook too neat?** Four lines that explain the forgery, the fake's quality and
    why they left. It could be three.
 3. **"I have been selling the walls"** is Fez's turn and it lands at `wizard_2` rather than at the mural.
