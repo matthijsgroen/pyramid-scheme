@@ -1472,6 +1472,48 @@ git commit -m "refactor: a handle is the two-state case of a control" -- src/gam
 
 ---
 
+### Task 9: The lever is two sprites, and the arm turns
+
+**Files:**
+- Modify: `src/app/SiteMap/` — the standing layer that draws props (read `docs/instructions/map-rendering.md` for which layer and which primitive)
+- Test: the SiteMap spec covering the standing layer, plus a story
+
+**Interfaces:**
+- Consumes: `expert/leverBase` and `expert/leverArm` tiles (the owner's paint loop; queue entries are in `docs/instructions/repaint-queue.md`), and the control's current state, which `openDoorsFor` already reads off `mechanismStates`.
+- Produces: no new export — one sprite becomes two, the upper one carrying a `transform`.
+
+**Blocked until the two tiles exist.** If they have not landed when this task comes up, skip it and say so — do not invent placeholder art, and do not fall back to the single-piece `leverLeft`/`leverRight` tiles, which are superseded.
+
+**Why two sprites rather than two painted states:** the lever's angle is a pure function of state the renderer already reads every frame, so a `transform: rotate()` plus a `transition` gives the swing with no new state at all. It also removes a defect the single tiles have: two separately painted states drifted apart in palette (their domes do not match), and one painted arm cannot disagree with itself.
+
+**Why a transform is safe here specifically:** `docs/instructions/map-rendering.md` exists because moving things inside one big `<svg>` invalidated the map — 602 paint events per 5s against 96 for HTML layers. A `transform` on a composited HTML box is the case that measurement argues FOR: it animates without repainting the map. **Do not animate anything but `transform` and `opacity`**, and measure the paint count before and after using the recipe in that document. A regression in that number fails this task.
+
+- [ ] **Step 1: Write the failing test**
+
+Assert that a lever room renders TWO sprites, that the arm's `transform` carries the angle for the control's current state, and that the angle differs between two states. Assert the rotation for EVERY state the control declares, not one of them — a wheel has more than two, and the renderer must not be written for a binary.
+
+- [ ] **Step 2: Run it, watch it fail, implement**
+
+The arm sprite is layered BEHIND the base so the dome hides its foot at every angle, its `transform-origin` is the pivot the scaffold defines, and its rotation is the state's angle. Where the angle comes from is the one design decision this task owns: a binary handle's two sides are ±36°, and an N-state control has no such convention. **Derive it from the control's state list rather than hardcoding two cases** — the states are ordered, so an index into them maps onto the throw. Say in a comment what the mapping is and why.
+
+- [ ] **Step 3: The transition**
+
+`transition: transform <duration> ease` on the arm, nothing else. Respect `prefers-reduced-motion`: the arm still moves to the right angle, it just gets there instantly.
+
+- [ ] **Step 4: Measure the paint count**
+
+Follow the recipe in `docs/instructions/map-rendering.md`. Report the before and after numbers. A rise fails the task.
+
+- [ ] **Step 5: Types, lint, suite, report**
+
+Run: `yarn check-types && yarn eslint <touched paths> && yarn test`
+
+```bash
+git commit -m "feat: the lever's arm turns when it is thrown" -- <touched paths>
+```
+
+---
+
 ## What this slice carries to the next one
 
 - **A branching layout is still refused** — measured, `regionNotSeated`. Only main-path steps seat regions, so `doubleBack` needs the path-SHAPING work as well as this. `obstacleOffRoute` (Task 1) is the refusal that names it from the obstacle's side, and it stops firing on its own when shaping lands.
