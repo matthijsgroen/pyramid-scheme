@@ -256,6 +256,14 @@ export type RoomCell = {
    * each the moves it really has by reading them off this record, never by assuming a shape for a
    * kind — which hands the walk a move the player does not have, or takes one they do. */
   mechanism?: MechanismRecord
+  /** A MECHANISM'S OWN AUTHORED IDENTITY, carried onto its room so `cellSlot.ts` can name it by
+   * something that depends only on what was authored, never on where the carve put it — family alone
+   * no longer picks out a single room once a region layout can stand more than one control on the
+   * main path (FloorConfig.controls: several may resolve to the same family, `"handle"`, when none
+   * names its own `encounter`). Set on every mechanism's room, handle and control alike, so one rule
+   * disambiguates both rather than a control-only exception beside a family-only default: a handle's
+   * is the authored address `leverByAddress` is keyed by (`handle.in`); a control's is its own `id`. */
+  mechanismId?: string
   /** WHICH MECHANISM THIS ROOM BELONGS TO, said in a glyph on a coloured ground (src/app/SiteMap/mark.tsx).
    * A mechanism's room and every gate it owns carry the same pair, and that pairing is the only thing
    * on the floor that says which lever drives which door. Unset everywhere else. */

@@ -6,7 +6,11 @@ import type { FloorGrid } from "./siteTypes"
  * What survives a floor being re-carved is what the floor was AUTHORED from, which is the room list:
  *
  * - a puzzle, trap or tableau room is the k-th room of its chain — `p${pathIndex}`
- * - a chest, shop or gate is its section's one `end` or `gate` — named by the family that fills it
+ * - a chest, a shop, or a section's own key-gate (SubSection.gate) is its section's one, named by the
+ *   family that fills it — a section carries only one, so family alone already tells it apart
+ * - an obstacle's gate or a mechanism's own room (a handle's or a control's) carries the family PLUS
+ *   its own authored id — a region layout can stand more than one obstacle gate or control on the
+ *   SAME main path, so family alone would no longer tell them apart
  * - a staircase is its `stairId`; the two plain portals are the entrance and the exit
  *
  * Corridors and bare forks get none, because they have no authored identity — how many corridor cells
@@ -28,15 +32,27 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
     return row === grid.entrancePos[0] && col === grid.entrancePos[1] ? "entrance" : "exit"
   }
   // A room the chain authored by position is named by that position; the ones a section gets exactly
-  // one of — its terminal chest or shop, its gate, the switch standing in its junction — are named by
-  // what fills them.
+  // one of — its terminal chest or shop, its own key-gate, the switch standing in its junction — are
+  // named by what fills them.
   if (cell.pathIndex !== undefined) return `p${cell.pathIndex}`
-  // AN OBSTACLE'S GATE IS THE ONE EXCEPTION: a region layout can stand more than one on the main path
-  // (one per connection its route crosses), so family alone no longer picks out a single room the way
-  // it does for a section's own one chest, shop or gate. Its key already carries the obstacle's
-  // AUTHORED id, namespaced "obstacle:" the same way a switch's is "switch:" (gateKeyOf, obstacles.ts),
-  // so that id is what disambiguates it.
-  if (cell.requiredKeyId?.startsWith("obstacle:"))
-    return `x${cell.family ?? "?"}:${cell.requiredKeyId.split(":").pop()}`
+  // A MECHANISM'S ROOM IS NAMED BY ITS OWN AUTHORED IDENTITY, UNIFORMLY — a handle and a control
+  // alike, one rule rather than a control-only exception beside a family-only default. Family alone
+  // stops picking out a single room the moment a region layout can stand more than one control on the
+  // main path (FloorConfig.controls), and several may resolve to the same family ("handle") when none
+  // names its own `encounter` — so every mechanism room carries its identity (RoomCell.mechanismId)
+  // rather than only the ones that would otherwise collide.
+  if (cell.mechanismId !== undefined) return `x${cell.family ?? "?"}:${cell.mechanismId}`
+  // AN OBSTACLE'S GATE IS THE SAME KIND OF ROOM, ONE STEP OVER: a region layout can stand more than
+  // one on the main path (one per connection its route crosses), so family alone no longer picks out
+  // a single room the way it does for a section's own one chest or shop. Its key already carries the
+  // obstacle's AUTHORED id, namespaced "obstacle:<stem>:" the same way a switch's is "switch:"
+  // (gateKeyOf, obstacles.ts) — the prefix is stripped rather than split on the LAST colon, so the id
+  // comes back exact whatever characters it authors, colons included.
+  const OBSTACLE_PREFIX = "obstacle:"
+  if (cell.requiredKeyId?.startsWith(OBSTACLE_PREFIX)) {
+    const afterPrefix = cell.requiredKeyId.slice(OBSTACLE_PREFIX.length)
+    const id = afterPrefix.slice(afterPrefix.indexOf(":") + 1)
+    return `x${cell.family ?? "?"}:${id}`
+  }
   return `x${cell.family ?? "?"}`
 }

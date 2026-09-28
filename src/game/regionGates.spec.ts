@@ -3,6 +3,7 @@ import { assembleFloor } from "./siteAssembler"
 import type { FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
 import { openDoorsFor } from "./mechanismDoors"
 import { cellAddress } from "./cellAddress"
+import { cellSlot } from "./cellSlot"
 
 const SEED = 99
 
@@ -164,5 +165,46 @@ describe("a control with more than two states", () => {
       { state: "s", gateKeyId: keyA },
       { state: "s", gateKeyId: keyB },
     ])
+  })
+})
+
+// Neither names its own `encounter`, so both resolve to the same family ("handle") — the case that
+// crashes the carve if a control's room is named by family alone, the same way one obstacle gate
+// each on the main path would collide before Task 3's gate fix.
+describe("two controls on one floor", () => {
+  const twoControls = (): FloorConfig => ({
+    ...gatedFloor(),
+    obstacles: [
+      { id: "gA", kind: "gate", at: { on: "connection", between: ["mouth", "hall"] } },
+      { id: "gB", kind: "gate", at: { on: "connection", between: ["hall", "vault"] } },
+    ],
+    controls: [
+      {
+        id: "s1",
+        in: "mouth",
+        states: ["left", "right"],
+        initial: "right",
+        returnsToInitial: true,
+        opens: { right: ["gA"] },
+      },
+      {
+        id: "s2",
+        in: "hall",
+        states: ["left", "right"],
+        initial: "right",
+        returnsToInitial: true,
+        opens: { right: ["gB"] },
+      },
+    ],
+  })
+
+  it("carves, and names both control rooms by their own authored id", () => {
+    const grid = carve(twoControls())
+    const slots = grid.cells
+      .flatMap((row, r) => row.map((cell, c) => (cell.type === "room" && cell.mechanism ? cellSlot(grid, r, c) : null)))
+      .filter((slot): slot is string => slot !== null)
+      .sort()
+
+    expect(slots).toEqual(["xhandle:s1", "xhandle:s2"])
   })
 })

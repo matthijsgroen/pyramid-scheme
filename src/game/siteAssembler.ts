@@ -841,6 +841,10 @@ export const assembleFloor = (
     family: HANDLE_FAMILY,
     tags: [HANDLE_FAMILY],
     mechanism: leverByAddress.get(addresses.of.get(positional) ?? positional)!,
+    // The handle's own authored address — the same name `leverByAddress` is keyed by — carried onto
+    // the cell so `cellSlot.ts` names every mechanism's room by its authored identity uniformly,
+    // rather than by family alone (see RoomCell.mechanismId).
+    mechanismId: addresses.of.get(positional) ?? positional,
   })
 
   const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
@@ -1172,12 +1176,15 @@ export const assembleFloor = (
     // A CONTROL STANDS IN A REGION, so its room is the first content node of that stretch. First
     // rather than last: a lever opens what lies further on, so the walk has to reach it before the
     // doors it owns are worth reaching — the same reason a handle on the main path takes the first
-    // content node.
+    // content node. Excludes `leverIndex` too, alongside the goal: that node already carries the
+    // main-path HANDLE's room (a different mechanism from a different authoring vocabulary), and the
+    // room-spec write-up below tests `mi === leverIndex` first — a control landing there would compile
+    // successfully and then be silently dropped from the grid, a door nothing ever reports as unseated.
     const controlIndexById = new Map<string, number>()
     const takenByControl = new Set<number>()
     for (const { control } of controlRecords) {
       const index = placedContent.find(
-        mi => stepRegion[mi] === control.in && !takenByControl.has(mi) && mi !== goalIndex
+        mi => stepRegion[mi] === control.in && !takenByControl.has(mi) && mi !== goalIndex && mi !== leverIndex
       )
       if (index === undefined) continue
       controlIndexById.set(control.id, index)
@@ -1787,6 +1794,10 @@ export const assembleFloor = (
           family: resolveEncounter(control.encounter, HANDLE_FAMILY).familyId,
           tags: [HANDLE_FAMILY],
           mechanism: record,
+          // The control's own authored id, carried onto the cell for the same reason a handle's room
+          // carries its own address (see RoomCell.mechanismId) — one uniform rule, not a
+          // control-only exception.
+          mechanismId: control.id,
         })
       } else if (puzzleRole.has(mi)) {
         const k = puzzleRole.get(mi)!
