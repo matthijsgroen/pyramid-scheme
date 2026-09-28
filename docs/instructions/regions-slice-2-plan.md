@@ -4,7 +4,7 @@
 
 **Goal:** A floor can author a region layout, it survives the round trip through world generation, and every way of authoring a broken one is refused by name before a wall is carved.
 
-**Architecture:** `FloorConfig` gains ONE field, `layout?: RegionGraph`, reusing the type slice 1 already defined rather than re-declaring its shape. The DSL carries it at both constraint levels, the serializer emits it, and `siteAssembler` refuses four kinds of broken layout alongside the refusals it already makes. Regions still shape no walls — the carve is slice 3.
+**Architecture:** `FloorConfig` gains ONE field, `regionLayout?: RegionGraph`, reusing the type slice 1 already defined rather than re-declaring its shape. The DSL carries it at both constraint levels, the serializer emits it, and `siteAssembler` refuses four kinds of broken layout alongside the refusals it already makes. Regions still shape no walls — the carve is slice 3.
 
 **Tech Stack:** TypeScript, vitest. No new dependencies.
 
@@ -22,7 +22,7 @@
 - Commit path-scoped (`git commit -- <paths>`), never `git add -A` or `git commit -a`.
 - Every refusal must be watched failing before it is trusted.
 
-**ONE SOURCE OF TRUTH, ENFORCED.** `handles` is declared as an inline type in four places (`src/worldGen/types.ts:113`, `src/game/siteTypes.ts:451`, `src/worldGen/dsl.ts:181` and `:310`), one of them commented as "mirrors" another. Do NOT repeat that here. `layout` is typed as `RegionGraph` imported from `src/game/regions.ts` at every one of those sites. If you find yourself writing the shape of a region twice, stop — that is the defect this slice is explicitly avoiding.
+**ONE SOURCE OF TRUTH, ENFORCED.** `handles` is declared as an inline type in four places (`src/worldGen/types.ts:113`, `src/game/siteTypes.ts:451`, `src/worldGen/dsl.ts:181` and `:310`), one of them commented as "mirrors" another. Do NOT repeat that here. `regionLayout` is typed as `RegionGraph` imported from `src/game/regions.ts` at every one of those sites. If you find yourself writing the shape of a region twice, stop — that is the defect this slice is explicitly avoiding.
 
 ---
 
@@ -36,7 +36,7 @@
 - Consumes: `RegionGraph` from `src/game/regions.ts` (slice 1).
 - Produces: `FloorConfig.layout?: RegionGraph` in both type families; `serializeRegionGraph`.
 
-**Why the serializer cannot be forgotten:** `floorFieldEmitters` in `src/worldGen/serializer.ts` is typed `{ [K in keyof Required<FloorConfig>]: ... }`, so adding `layout` to `FloorConfig` is a COMPILE ERROR until an emitter exists. Let that error happen and then satisfy it — do not pre-empt it.
+**Why the serializer cannot be forgotten:** `floorFieldEmitters` in `src/worldGen/serializer.ts` is typed `{ [K in keyof Required<FloorConfig>]: ... }`, so adding `regionLayout` to `FloorConfig` is a COMPILE ERROR until an emitter exists. Let that error happen and then satisfy it — do not pre-empt it.
 
 - [ ] **Step 1: Add the field to both type families**
 
@@ -51,7 +51,7 @@ In `src/game/siteTypes.ts`, beside `handles`, import `RegionGraph` from `./regio
    * `RegionGraph` rather than restated here, so the shape has one definition and the vocabulary can
    * grow in one place.
    */
-  layout?: RegionGraph
+  regionLayout?: RegionGraph
 ```
 
 In `src/worldGen/types.ts`, beside its own `handles`, import `RegionGraph` from `@/game/regions` and add:
@@ -59,13 +59,13 @@ In `src/worldGen/types.ts`, beside its own `handles`, import `RegionGraph` from 
 ```ts
   /** The floor's coarse layout — see game/regions.ts's RegionGraph, which is this field's type
    * rather than a shape restated here. */
-  layout?: RegionGraph
+  regionLayout?: RegionGraph
 ```
 
 - [ ] **Step 2: Run check-types and watch the serializer error appear**
 
 Run: `yarn check-types`
-Expected: FAIL naming `floorFieldEmitters` — `layout` is missing from the mapped type. This is the guard working; it is why no task needs to remember the serializer.
+Expected: FAIL naming `floorFieldEmitters` — `regionLayout` is missing from the mapped type. This is the guard working; it is why no task needs to remember the serializer.
 
 - [ ] **Step 3: Write the failing serializer test**
 
@@ -78,7 +78,7 @@ it("emits an authored layout so a region survives the round trip", () => {
     end: "treasure" as const,
     exitOrStaircase: "exit" as const,
     sideSections: [],
-    layout: {
+    regionLayout: {
       regions: [
         { name: "mouth", appetite: "nothing" as const },
         { name: "vault", appetite: "reward" as const },
@@ -120,7 +120,7 @@ const serializeRegionGraph = (g: RegionGraph): string =>
 and in `floorFieldEmitters`:
 
 ```ts
-  layout: v => `layout: ${serializeRegionGraph(v)}`,
+  regionLayout: v => `regionLayout: ${serializeRegionGraph(v)}`,
 ```
 
 - [ ] **Step 6: Run the tests and the world**
@@ -145,8 +145,8 @@ git commit -- src/game/siteTypes.ts src/worldGen/types.ts src/worldGen/serialize
 - Test: `src/worldGen/dsl.spec.ts`
 
 **Interfaces:**
-- Consumes: `RegionGraph`, `FloorConfig.layout` from Task 1.
-- Produces: `layout?: RegionGraph` on both the floor-level and pyramid-level constraints, carried into the built `FloorConfig`.
+- Consumes: `RegionGraph`, `FloorConfig.regionLayout` from Task 1.
+- Produces: `regionLayout?: RegionGraph` on both the floor-level and pyramid-level constraints, carried into the built `FloorConfig`.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -163,9 +163,9 @@ it("carries an authored layout onto the floor it was authored for", () => {
     out: "vault",
   }
 
-  const rule = tier("starter").set({ layout })
+  const rule = tier("starter").set({ regionLayout: layout })
 
-  expect(rule.constraints.layout).toEqual(layout)
+  expect(rule.constraints.regionLayout).toEqual(layout)
 })
 ```
 
@@ -180,18 +180,18 @@ In `src/worldGen/dsl.ts`, beside `FloorConstraint.handles`:
 
 ```ts
   /** The coarse layout this floor's regions are named in — see game/regions.ts's RegionGraph. */
-  layout?: RegionGraph
+  regionLayout?: RegionGraph
 ```
 
 and beside the pyramid-level `handles`:
 
 ```ts
   /** The layout every floor of this site carries, unless a floor names its own — see
-   * FloorConstraint.layout. */
-  layout?: RegionGraph
+   * FloorConstraint.regionLayout. */
+  regionLayout?: RegionGraph
 ```
 
-In `src/worldGen/buildSite.ts`, carry it exactly as `handles` is carried: add `layout?: FloorConfig["layout"]` to the options type, `...(opts.layout ? { layout: opts.layout } : {})` where `handles` is spread, and `layout: fc.layout ?? constraint.layout` / `layout: constraint.layout` at each of the sites where `handles` is passed. Follow `handles` line for line — it is the field this one is shaped after.
+In `src/worldGen/buildSite.ts`, carry it exactly as `handles` is carried: add `regionLayout?: FloorConfig["regionLayout"]` to the options type, `...(opts.regionLayout ? { regionLayout: opts.regionLayout } : {})` where `handles` is spread, and `regionLayout: fc.regionLayout ?? constraint.regionLayout` / `regionLayout: constraint.regionLayout` at each of the sites where `handles` is passed. Follow `handles` line for line — it is the field this one is shaped after.
 
 - [ ] **Step 4: Run the tests**
 
@@ -215,7 +215,7 @@ git commit -- src/worldGen/dsl.ts src/worldGen/buildSite.ts src/worldGen/dsl.spe
 - Test: `src/game/regionAuthoring.spec.ts` (create)
 
 **Interfaces:**
-- Consumes: `FloorConfig.layout`, `strandedRegions` from `src/game/regions.ts`.
+- Consumes: `FloorConfig.regionLayout`, `strandedRegions` from `src/game/regions.ts`.
 - Produces: four `AssemblerReason` members and the checks that raise them.
 
 **Where the checks go:** in `assembleFloor`, beside the existing config-derived refusals — after the `sectionTooDeep` check and before the one-way check. How a floor is laid out is fixed by the config, not by the seed, so it is refused once here rather than blamed on sixty carves.
@@ -226,11 +226,11 @@ In `src/game/siteTypes.ts`'s `AssemblerReason` union:
 
 ```ts
   /** Two regions of one layout answer to the same name, so nothing could tell which one a connection,
-   * a port or a piece of content meant. See FloorConfig.layout. */
+   * a port or a piece of content meant. See FloorConfig.regionLayout. */
   | { type: "regionNameRepeated"; name: string }
   /** A connection names a region the layout never declares. It would carry the route without ever
    * being a place, so a region the walk must pass through could read as neither main path nor
-   * stranded. See FloorConfig.layout. */
+   * stranded. See FloorConfig.regionLayout. */
   | { type: "connectionNamesNoRegion"; name: string }
   /** A layout's port names a region it does not have, so the floor has no way in or no way out. */
   | { type: "portNamesNoRegion"; port: "in" | "out"; name: string }
@@ -250,13 +250,13 @@ import type { RegionAppetite } from "./regions"
 
 const SEED = 99
 
-const floorWith = (layout: FloorConfig["layout"]): FloorConfig => ({
+const floorWith = (layout: FloorConfig["regionLayout"]): FloorConfig => ({
   pathPuzzles: 1,
   difficulty: "starter",
   end: "treasure",
   exitOrStaircase: "exit",
   sideSections: [],
-  layout,
+  regionLayout: layout,
 })
 
 const region = (name: string, appetite: RegionAppetite = "free") => ({ name, appetite })
@@ -342,7 +342,7 @@ In `src/game/siteAssembler.ts`, import `strandedRegions` from `./regions`, and a
   // than blamed on sixty carves that could never have satisfied it either. Ordered so each check can
   // trust what the one before it established: names are unique before connections are resolved
   // against them, and both hold before the walk that finds what nothing reaches.
-  const layout = authoredConfig.layout
+  const layout = authoredConfig.regionLayout
   if (layout) {
     const declared = new Set<string>()
     for (const { name } of layout.regions) {
@@ -402,9 +402,9 @@ git commit -- src/game/siteTypes.ts src/game/siteAssembler.ts src/game/regionAut
 it("stands a layout on the topology bench, carried through world generation", () => {
   const floor = withDev[DEV_JOURNEY_ID][0][0]
 
-  expect(floor.layout?.regions.map(r => r.name)).toEqual(["mouth", "hall", "vault"])
-  expect(floor.layout?.in).toBe("mouth")
-  expect(floor.layout?.out).toBe("vault")
+  expect(floor.regionLayout?.regions.map(r => r.name)).toEqual(["mouth", "hall", "vault"])
+  expect(floor.regionLayout?.in).toBe("mouth")
+  expect(floor.regionLayout?.out).toBe("vault")
 })
 ```
 
@@ -422,7 +422,7 @@ In `src/worldGen/spec/dev.ts`, on the first dev pyramid only:
 ```ts
     // The first authored region layout. It shapes no walls yet — the carve is a later slice — so this
     // stands here to prove a layout survives authoring, serialization and the builder's refusals.
-    layout: {
+    regionLayout: {
       regions: [
         { name: "mouth", appetite: "nothing" },
         { name: "hall", appetite: "puzzles" },
