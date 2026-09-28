@@ -19,7 +19,7 @@ import type {
   Difficulty,
 } from "./siteTypes"
 import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
-import { strandedRegions } from "./regions"
+import { regionOfStep, regionRoute, strandedRegions } from "./regions"
 import { cellSlot } from "./cellSlot"
 import { stairIdAt } from "./stairAddress"
 import { footprintSize } from "./roomFootprint"
@@ -1538,13 +1538,25 @@ export const assembleFloor = (
       cellDressing.set(posKey(r, c), { props: config.decorations, wall: config.wallDecorations })
       cellDifficulty.set(posKey(r, c), config.difficulty)
     }
-    for (const { section, cells, positional, idx, parentIdx, doors, hidden } of chains) {
+    // WHICH REGION EACH CELL STANDS IN, where the floor authors one — absent everywhere on a floor
+    // that does not, so the shipped world (no floor authors a regionLayout) carves unchanged. A
+    // main-path cell takes its region from its step along the route; a chain's cells take the region
+    // of the cell they grow from, below.
+    const stepRegion = regionLayout ? regionOfStep(regionRoute(regionLayout), mainPath.length) : []
+    const cellRegion = new Map<string, string>()
+    mainPath.forEach(([r, c], step) => {
+      const region = stepRegion[step]
+      if (region !== undefined) cellRegion.set(posKey(r, c), region)
+    })
+    for (const { section, cells, positional, idx, parentIdx, doors, hidden, attachedAt } of chains) {
       const sHash = computeSideSectionHash(section, idx, doors.length > 0, config, parentIdx)
       const legacyHash = computeLegacySideSectionHash(section, idx, parentIdx)
       const pools: DressingPools = { props: section.decorations, wall: section.wallDecorations }
       const address = addresses.of.get(positional) ?? positional
       cells.forEach(([r, c], step) => cellOrdinal.set(posKey(r, c), String(step)))
       cells.forEach(([r, c]) => cellSectionAddress.set(posKey(r, c), address))
+      const grownFrom = cellRegion.get(posKey(attachedAt[0], attachedAt[1]))
+      if (grownFrom !== undefined) for (const [r, c] of cells) cellRegion.set(posKey(r, c), grownFrom)
       for (const [r, c] of cells) {
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
@@ -1958,6 +1970,9 @@ export const assembleFloor = (
       const sectionAddress = cellSectionAddress.get(cellKey) ?? MAIN_SECTION_ADDRESS
       const legacySectionHash = cellLegacySectionHash.get(cellKey) ?? legacyMainSectionHash
       const hidden = hiddenCellPositions.has(cellKey) || undefined
+      // Unlike sectionAddress there is no default: a floor that authors no regionLayout leaves every
+      // cell's region absent, which is what keeps a floor with no layout carving unchanged.
+      const region = cellRegion.get(cellKey)
       if (spec) {
         // Spread the whole spec (RoomSpec = RoomCell minus the structural fields set here)
         // rather than copying fields one by one — a field dropped from this list is exactly
@@ -1976,6 +1991,7 @@ export const assembleFloor = (
           legacySectionHash,
           ...(cellOrdinal.get(cellKey) ? { ordinal: cellOrdinal.get(cellKey) } : {}),
           ...(hidden ? { hidden } : {}),
+          ...(region !== undefined ? { region } : {}),
           ...spec,
           ...(exits ? { exits } : {}),
         }
@@ -1992,6 +2008,7 @@ export const assembleFloor = (
           ...(cellOrdinal.get(cellKey) ? { ordinal: cellOrdinal.get(cellKey) } : {}),
           ...(cellTier ? { difficulty: cellTier } : {}),
           ...(hidden ? { hidden } : {}),
+          ...(region !== undefined ? { region } : {}),
         }
         cells2D[r][c] = corridorCell
       }
@@ -2037,6 +2054,9 @@ export const assembleFloor = (
           : {}),
         ...(tier ? { difficulty: tier } : {}),
         ...(hiddenCellPositions.has(owner) && hiddenCellPositions.has(other) ? { hidden: true } : {}),
+        // Same rule as sectionAddress just above: a connector answers to its owner node, region
+        // included, and absent everywhere a floor authors no regionLayout.
+        ...(cellRegion.get(owner) !== undefined ? { region: cellRegion.get(owner) } : {}),
       }
     }
 

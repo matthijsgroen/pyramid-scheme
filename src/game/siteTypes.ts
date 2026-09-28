@@ -36,6 +36,10 @@ export type CorridorCell = {
    *  the builder hangs it after the first encounter or the third, and whether it holds four puzzles or
    *  six. Same addresses `boardIndex.ts` deals boards by. See docs/game-design/world-stability.md. */
   sectionAddress?: string
+  /** Which region of the floor's authored layout this cell stands in, where the floor authors one
+   * (FloorConfig.regionLayout). A region is a stretch of the carve: the main path crosses several, and
+   * a side path belongs to the region it grows from. Absent on a floor that authors no layout. */
+  region?: string
   /** Structural fingerprint of the section — how many rooms, how long the walk, what gates it. NOT the
    *  save's identity any more (`sectionAddress` is): it moves when the floor's own carve knobs are
    *  retuned, which is exactly what compacting the corridors does, and that would reset every run in
@@ -143,6 +147,10 @@ export type RoomCell = {
    *  the builder hangs it after the first encounter or the third, and whether it holds four puzzles or
    *  six. Same addresses `boardIndex.ts` deals boards by. See docs/game-design/world-stability.md. */
   sectionAddress?: string
+  /** Which region of the floor's authored layout this cell stands in, where the floor authors one
+   * (FloorConfig.regionLayout). A region is a stretch of the carve: the main path crosses several, and
+   * a side path belongs to the region it grows from. Absent on a floor that authors no layout. */
+  region?: string
   /** See CorridorCell.sectionHash — structural, and no longer the save's identity. */
   sectionHash?: string
   /** See CorridorCell.legacySectionHash. */
