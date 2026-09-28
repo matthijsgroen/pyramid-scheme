@@ -30,5 +30,13 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
   // A room the chain authored by position is named by that position; the ones a section gets exactly
   // one of — its terminal chest or shop, its gate, the switch standing in its junction — are named by
   // what fills them.
-  return cell.pathIndex !== undefined ? `p${cell.pathIndex}` : `x${cell.family ?? "?"}`
+  if (cell.pathIndex !== undefined) return `p${cell.pathIndex}`
+  // AN OBSTACLE'S GATE IS THE ONE EXCEPTION: a region layout can stand more than one on the main path
+  // (one per connection its route crosses), so family alone no longer picks out a single room the way
+  // it does for a section's own one chest, shop or gate. Its key already carries the obstacle's
+  // AUTHORED id, namespaced "obstacle:" the same way a switch's is "switch:" (gateKeyOf, obstacles.ts),
+  // so that id is what disambiguates it.
+  if (cell.requiredKeyId?.startsWith("obstacle:"))
+    return `x${cell.family ?? "?"}:${cell.requiredKeyId.split(":").pop()}`
+  return `x${cell.family ?? "?"}`
 }

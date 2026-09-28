@@ -787,6 +787,21 @@ export const assembleFloor = (
     })
   }
 
+  // A CONTROL IS COMPILED INTO THE RECORD THE WALK ALREADY EATS. `opens` names obstacles by their
+  // authored ids; `positions` names the gate keys those ids mint, one entry per obstacle per state
+  // that opens it — several entries may share a state, which is what lets one position open a set.
+  const controlRecords = (authoredConfig.controls ?? []).map(control => ({
+    control,
+    record: {
+      states: control.states,
+      initial: control.initial,
+      returnsToInitial: control.returnsToInitial,
+      positions: control.states.flatMap(state =>
+        (control.opens[state] ?? []).map(id => ({ state, gateKeyId: gateKeyOf(id) }))
+      ),
+    } satisfies MechanismRecord,
+  }))
+
   // From here the floor is read with the handles' gates already on it, so every pass that sizes a
   // chain, isolates a section or writes a gate room meets one gate rule rather than two.
   const config =
@@ -875,6 +890,9 @@ export const assembleFloor = (
   // a lever standing on the main path lengthens it. Sized here, before the carve, because the carve
   // is what has to produce the cells.
   const mainGateCount = (authoredConfig.obstacles ?? []).length
+  // A CONTROL'S ROOM IS ALSO A CELL THE PATH HAS TO HOLD, one per control — sized the same way and for
+  // the same reason as a gate room.
+  const controlCount = controlRecords.length
 
   // Minimum node count for the main path alone (entrance, its own content, goal, exit) —
   // kept separate from `minCells` below (which folds in every side-section's cost too) so
@@ -886,7 +904,8 @@ export const assembleFloor = (
     1 /* goal */ +
     1 /* exit/stairhead */ +
     leverRooms(MAIN_SECTION_ADDRESS) +
-    mainGateCount
+    mainGateCount +
+    controlCount
 
   // Minimum node count needed (real path nodes only — the connector cell between two
   // adjacent nodes lives at a separate, non-node grid position, see NODE_STEP above).
@@ -1017,6 +1036,9 @@ export const assembleFloor = (
   // same reason: the path lengthens across the attempt budget, so what one attempt cannot seat a
   // later one may.
   let gateSeamMissing: string[] | undefined
+  // The first attempt's controls no free content node stood in their region, kept the same way and
+  // for the same reason: `mainPath.length` grows across the attempt budget.
+  let controlNotSeated: string[] | undefined
   // The first attempt's rooms standing where their region's appetite refuses them, kept the same way.
   let regionMismatch: { region: string; kind: ContentKind }[] | undefined
   for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
@@ -1067,8 +1089,8 @@ export const assembleFloor = (
     // WHICH REGION EACH CELL STANDS IN, where the floor authors one — absent everywhere on a floor
     // that does not, so the shipped world (no floor authors a regionLayout) carves unchanged. A
     // main-path cell takes its region from its step along the route; a chain's cells take the region
-    // of the cell they grow from, below. Moved ahead of content placement (was just before the room
-    // specs are written): the gate cells below have to be known before content claims a node.
+    // of the cell they grow from, below. Computed ahead of content placement: the gate cells below
+    // have to be known before content claims a node.
     const route = regionLayout ? regionRoute(regionLayout) : []
     const stepRegion = regionLayout ? regionOfStep(route, mainPath.length) : []
     // A DECLARED REGION THE ROUTE NEVER SEATS A CELL IN SEATS NOTHING. Two ways there: a route longer
@@ -1118,7 +1140,10 @@ export const assembleFloor = (
     // keeps something to find along the whole walk, and puts the goal last (closest to
     // the exit) so there's no unused tail behind it either.
     const leverOnMain = leverRooms(MAIN_SECTION_ADDRESS) === 1
-    const contentCount = config.pathPuzzles + 1 /* goal */ + leverRooms(MAIN_SECTION_ADDRESS)
+    // A control room is content in the sense that matters here, which is that a node is spent on it —
+    // the same reason `leverRooms(MAIN_SECTION_ADDRESS)` is folded in rather than left for puzzles to
+    // absorb.
+    const contentCount = config.pathPuzzles + 1 /* goal */ + leverRooms(MAIN_SECTION_ADDRESS) + controlRecords.length
     if (mainPath.length < contentCount + 2) continue // need entrance + content + a distinct exit
 
     const contentIndices = spreadContentIndices(contentCount, 1, mainPath.length)
@@ -1143,9 +1168,39 @@ export const assembleFloor = (
     // A lever the main path holds takes the first content node: it opens what lies further on, so the
     // walk has to reach it before the doors it owns are worth reaching.
     const leverIndex = leverOnMain ? placedContent[0] : -1
+
+    // A CONTROL STANDS IN A REGION, so its room is the first content node of that stretch. First
+    // rather than last: a lever opens what lies further on, so the walk has to reach it before the
+    // doors it owns are worth reaching — the same reason a handle on the main path takes the first
+    // content node.
+    const controlIndexById = new Map<string, number>()
+    const takenByControl = new Set<number>()
+    for (const { control } of controlRecords) {
+      const index = placedContent.find(
+        mi => stepRegion[mi] === control.in && !takenByControl.has(mi) && mi !== goalIndex
+      )
+      if (index === undefined) continue
+      controlIndexById.set(control.id, index)
+      takenByControl.add(index)
+    }
+    // A region this attempt gave no free content node to. Retried rather than refused, for the reason
+    // slice 4 measured: `mainPath.length` GROWS across the attempt budget — packing widens at 8/16/24
+    // — so a refusal decided on attempt 0 refuses layouts its own recovery would have seated.
+    if (controlIndexById.size < controlRecords.length) {
+      if (!controlNotSeated)
+        controlNotSeated = controlRecords
+          .filter(({ control }) => !controlIndexById.has(control.id))
+          .map(({ control }) => control.id)
+      continue
+    }
+    const controlAtIndex = new Map(
+      controlRecords.map(entry => [controlIndexById.get(entry.control.id)!, entry] as const)
+    )
+
     // puzzleIndices[k] is the mainPath position of the k-th puzzle (0-based, path order) —
-    // used to index into config.rewards[k] below.
-    const puzzleIndices = placedContent.slice(leverOnMain ? 1 : 0, -1)
+    // used to index into config.rewards[k] below. A control's node is content spent on the control,
+    // not a puzzle, so it is filtered out here the same way the lever's node is by the slice.
+    const puzzleIndices = placedContent.slice(leverOnMain ? 1 : 0, -1).filter(mi => !takenByControl.has(mi))
     const puzzleRole = new Map<number, number>()
     puzzleIndices.forEach((idx, k) => puzzleRole.set(idx, k))
 
@@ -1725,6 +1780,14 @@ export const assembleFloor = (
         })
       } else if (mi === leverIndex) {
         roomSpecs.set(posKey(r, c), leverSpec(MAIN_SECTION_ADDRESS))
+      } else if (controlAtIndex.has(mi)) {
+        const { control, record } = controlAtIndex.get(mi)!
+        roomSpecs.set(posKey(r, c), {
+          roomType: "encounter" as const,
+          family: resolveEncounter(control.encounter, HANDLE_FAMILY).familyId,
+          tags: [HANDLE_FAMILY],
+          mechanism: record,
+        })
       } else if (puzzleRole.has(mi)) {
         const k = puzzleRole.get(mi)!
         // Per-node override (authored `nodes` selectors, e.g. the last room's capstone) if this
@@ -2601,6 +2664,7 @@ export const assembleFloor = (
       ...(oneWayShortfall ? [{ type: "oneWayUnsatisfied", ...oneWayShortfall } as const] : []),
       ...(unseatedRegions ? [{ type: "regionNotSeated", regions: unseatedRegions } as const] : []),
       ...(gateSeamMissing ? [{ type: "obstacleSeamNotCarved" as const, ids: gateSeamMissing }] : []),
+      ...(controlNotSeated ? [{ type: "controlNotSeated" as const, ids: controlNotSeated }] : []),
       ...(regionMismatch
         ? regionMismatch.map(({ region, kind }) => ({ type: "regionWillNotTake" as const, region, kind }))
         : []),

@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "./siteAssembler"
 import type { FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
+import { openDoorsFor } from "./mechanismDoors"
+import { cellAddress } from "./cellAddress"
 
 const SEED = 99
 
@@ -73,8 +75,11 @@ describe("a gate standing on a connection", () => {
     const grid = carve(gatedFloor())
     const gate = rooms(grid).find(room => room.requiredKeyId === GATE_KEY)!
     // Room ordinals only, not every cell: a corridor connector's ordinal is a compound pair ("7|8"), and Number() turns that into NaN, which poisons Math.min regardless of which cell is actually first.
+    // Main-path rooms only: a side chain inherits its host's region but carries chain-local ordinals
+    // starting at 0, so a side room attached inside "vault" would poison Math.min for a reason having
+    // nothing to do with gate placement.
     const vaultOrdinals = rooms(grid)
-      .filter(room => room.region === "vault" && room.ordinal !== undefined)
+      .filter(room => room.region === "vault" && room.sectionAddress === "main" && room.ordinal !== undefined)
       .map(room => Number(room.ordinal))
 
     expect(Number(gate.ordinal)).toBe(Math.min(...vaultOrdinals))
@@ -85,5 +90,79 @@ describe("a gate standing on a connection", () => {
     const gates = rooms(carve(plain)).filter(room => room.requiredKeyId?.startsWith("obstacle:"))
 
     expect(gates).toEqual([])
+  })
+})
+
+describe("a control standing in a region", () => {
+  const controlRoom = (grid: FloorGrid): RoomCell => rooms(grid).find(room => room.mechanism !== undefined)!
+
+  it("stands one room in the region the control names", () => {
+    expect(controlRoom(carve(gatedFloor())).region).toBe("mouth")
+  })
+
+  it("carries every state the control authors, in order", () => {
+    expect(controlRoom(carve(gatedFloor())).mechanism!.states).toEqual(["left", "right"])
+  })
+
+  it("starts in the state the control authors", () => {
+    expect(controlRoom(carve(gatedFloor())).mechanism!.initial).toBe("right")
+  })
+
+  it("carries one position per obstacle each state opens, and none for a state that opens nothing", () => {
+    expect(controlRoom(carve(gatedFloor())).mechanism!.positions).toEqual([{ state: "right", gateKeyId: GATE_KEY }])
+  })
+
+  it("opens the gate in the state that names it and nothing in the other", () => {
+    const grid = carve(gatedFloor())
+    const room = controlRoom(grid)
+    const at = grid.cells
+      .flatMap((row, r) => row.map((cell, c) => (cell === room ? cellAddress(grid, 0, r, c) : null)))
+      .find((a): a is string => a !== null)!
+
+    expect(openDoorsFor(grid, 0, new Map([[at, "right"]]))).toEqual(new Set([GATE_KEY]))
+    expect(openDoorsFor(grid, 0, new Map([[at, "left"]]))).toEqual(new Set())
+  })
+
+  it("opens the gate on arrival, with no stored position at all, because that is the initial state", () => {
+    const grid = carve(gatedFloor())
+
+    expect(openDoorsFor(grid, 0, new Map())).toEqual(new Set([GATE_KEY]))
+  })
+})
+
+// THREE STATES, not two: the authoring is generic, and a wheel is the case this proves is already
+// carried — it needs art, not a second authoring path.
+describe("a control with more than two states", () => {
+  const threeWay = (): FloorConfig => ({
+    ...gatedFloor(),
+    obstacles: [
+      { id: "gA", kind: "gate", at: { on: "connection", between: ["mouth", "hall"] } },
+      { id: "gB", kind: "gate", at: { on: "connection", between: ["hall", "vault"] } },
+    ],
+    controls: [
+      {
+        id: "w1",
+        in: "mouth",
+        states: ["n", "e", "s"],
+        initial: "n",
+        returnsToInitial: true,
+        opens: { n: ["gA"], e: ["gB"], s: ["gA", "gB"] },
+      },
+    ],
+  })
+
+  it("carries all three states and every position each one opens", () => {
+    const grid = carve(threeWay())
+    const mechanism = rooms(grid).find(room => room.mechanism !== undefined)!.mechanism!
+    const keyA = "obstacle:test-journey#0#0:gA"
+    const keyB = "obstacle:test-journey#0#0:gB"
+
+    expect(mechanism.states).toEqual(["n", "e", "s"])
+    expect(mechanism.positions).toEqual([
+      { state: "n", gateKeyId: keyA },
+      { state: "e", gateKeyId: keyB },
+      { state: "s", gateKeyId: keyA },
+      { state: "s", gateKeyId: keyB },
+    ])
   })
 })

@@ -606,6 +606,9 @@ export type AssemblerReason =
   /** The route threads the connection these obstacles stand on, but no carve produced a cell on each
    * side of the seam, so there was nowhere to stand the bars. `ids` are the obstacles left unplaced. */
   | { type: "obstacleSeamNotCarved"; ids: string[] }
+  /** No carve put a main-path room inside the region these controls stand in. `ids` are the controls
+   * left unseated. */
+  | { type: "controlNotSeated"; ids: string[] }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
 
