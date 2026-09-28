@@ -334,6 +334,10 @@ describe("a carved cell knows its region", () => {
     expect(unlabelled).toEqual([])
   })
 
+  // Depends on the main path having at least as many steps as the route has regions — with
+  // `pathPuzzles: 2` it does. If this fails counting 2 regions rather than 3, the path is shorter than
+  // the route and `regionOfStep` has correctly dealt only what there was; say so rather than widening
+  // the assertion, because a route longer than its path is a fault a later slice reports.
   it("uses every region of the route and none that is not on it", () => {
     const used = new Set(carvedCells(floor(threeRegions)).map(cell => cell.region))
 
@@ -464,11 +468,13 @@ describe("content a region will not take", () => {
 
   // An appetite says what a region WILL take, never what it must hold.
   it("does not mind a region that takes puzzles standing empty", () => {
+    // The last region takes anything, because the main path's `end: "treasure"` puts a reward at its
+    // far end and a `puzzles` region would rightly refuse it — which would prove the wrong thing.
     const roomyLayout = {
       regions: [
         { name: "mouth", appetite: "puzzles" as const },
         { name: "hall", appetite: "puzzles" as const },
-        { name: "vault", appetite: "puzzles" as const },
+        { name: "vault", appetite: "free" as const },
       ],
       connections: [
         ["mouth", "hall"] as const,
