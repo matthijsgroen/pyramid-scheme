@@ -455,6 +455,20 @@ git commit -- src/worldGen/spec/dev.ts src/worldGen/devJourney.spec.ts -m "feat:
 
 ---
 
+## Carried to slice 3, from this slice's final review
+
+**Three degenerate layouts nothing refuses**, deliberately left open: a connection from a region to
+ITSELF, the same connection authored twice, and a region whose name is the empty string. All are inert
+while nothing reads the layout, and refusing them now would be the builder deciding on speculation —
+two passages between the same pair of regions may well be legitimate. Slice 3's carve is where they
+acquire meaning and where the decision can be made on evidence.
+
+**The bench floor describes a floor that does not exist.** `src/worldGen/spec/dev.ts` authors
+`pathPuzzles: 0` beside a region whose appetite is `puzzles`, and `appetite: "reward"` on a journey
+whose header forbids authoring loot. That is correct for a round-trip bench — it proves a layout
+survives authoring, and `fitContent` refuses nothing when demand is zero — but slice 3 wires content
+matching, and this floor is the first thing that matching will meet.
+
 ## What this slice deliberately does NOT do
 
 - **No carve.** A layout shapes no walls and moves no cell. That is slice 3, which owns `edgeAllowed`'s rejoin rule, `doorsToEnter` and fog restore.
