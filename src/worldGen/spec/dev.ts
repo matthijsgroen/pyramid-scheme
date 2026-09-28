@@ -16,12 +16,15 @@ import { DEV_JOURNEY_ID } from "../data"
  * out of the loot solver entirely, and the generated world's per-currency and per-tier counts are
  * identical with it and without it. Authoring loot here would move real counts; don't.
  *
- * AND NOTHING HERE AUTHORS A PUZZLE. Every path on every one of these floors carries zero of them,
- * main path and branches alike, so the mechanic is the first room past the entrance rather than
- * something a playtester solves their way to. A bench whose mechanic is entered off the travel map
- * is the whole point of the journey, and an ordinary puzzle in front of it is a toll paid on every
- * run that teaches nothing about the feature being walked. The rooms that remain are the mechanism
- * itself, the gates it drives, and each path's own empty end.
+ * PUZZLES DEFAULT TO ZERO — a default, not a rule like the reward line above. Every path here
+ * carries zero of them, main path and branches alike, so the mechanic is the first room past the
+ * entrance rather than something a playtester solves their way to: a puzzle in front of it is a toll
+ * paid on every run that teaches nothing about the feature being walked. These floors are a bench for
+ * TOPOLOGY, and puzzles have their own test tools.
+ *
+ * So raise a `puzzles` or `pathPuzzles` here when the thing under test is a puzzle standing inside a
+ * topology feature, and put it back when you are done. Nothing enforces the zero and nothing breaks
+ * when you raise it — unlike loot, which moves real counts.
  */
 
 // What the carve must hold open on every floor. Two ways out is the junction a carve nearly always
