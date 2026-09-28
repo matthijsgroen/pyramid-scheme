@@ -297,6 +297,22 @@ tell them.
 
 #### Still to settle before this can be planned
 
+- **DOES A REGION BECOME PART OF THE ADDRESS? This one has a deadline.** A floor's addresses now read
+  `journey : pyramid : floor : path` (`game/stairAddress.ts`, and the same vocabulary in
+  `sectionAddresses` and `cellSlot`). A region sits between the floor and its sections, so if regions
+  ever OWN their sections the path gains a level — `vault/s0` — and every save key carrying an address
+  moves with it.
+
+  **Adding a level to an address is free before the release and costs a full save reset after it**,
+  which is exactly the trade the stair-id work (2026-09-28) was done to avoid repeating. So this is
+  settled BEFORE the release ships, not before the region pass is written.
+
+  The reading this document already supports is that no level is needed: `sideSections` carve inside a
+  region exactly as they do today, and a region declares an APPETITE while the floor authors the counts
+  and the builder matches them — which keeps sections floor-level and regions grouping rather than
+  owning. If that holds, addresses are untouched and a region is a layout above them. Confirm it
+  deliberately rather than inheriting it.
+
 - **`lockWalk` only knows how to shut a boundary.** A flooded region is one the player may not OCCUPY,
   which is not the same as one whose doors are shut — a shut door leaves whoever is already inside
   inside. Modelling a flood as "gates on every boundary" loses that difference. The extension is small
