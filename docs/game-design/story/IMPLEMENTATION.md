@@ -1,0 +1,359 @@
+# Implementation list
+
+Work that falls out of the story documents, split by whether a story decision is in the way. **The top
+section is pickable today** — none of it waits on a sentence being written.
+
+Sizes are rough: **S** an afternoon, **M** a few days, **L** its own project.
+
+---
+
+## Two piles: what keeps the world, and what re-carves it
+
+Everything in this document and in [`../map-variety.md`](../map-variety.md), sorted by the only division
+that decides when a thing can ship. The rule comes from `world-spec-stability.md`: **gate presence,
+`pathPuzzles`, `sidePaths` and `hiddenPaths` are structural; which key opens a gate, what dresses a room,
+and what sits in a loot slot are not.** And the solver runs **structure, then loot, as two strictly
+separate phases** — so placing something new in an existing slot never re-carves.
+
+### Pile A — the world is untouched
+
+No change to `generatedWorld.ts`'s carve. Ships whenever, in any order.
+
+| Work                                          | Where it lives                                         |
+| --------------------------------------------- | ------------------------------------------------------ |
+| Journey-keyed arrival conversations           | app                                                    |
+| Story beats exempt from the tutorial toggle   | app                                                    |
+| Generalise `CompassResult`                    | core types                                             |
+| `notEnoughHieroglyphs` key and copy           | one string                                             |
+| Rewrite the 37 pre-explorer `fez.json` keys   | strings                                                |
+| Rewrite the 29 journey descriptions           | strings                                                |
+| Explorer portrait, bust crop and surface      | art + app                                              |
+| Reaction-rail plumbing                        | app                                                    |
+| The guidance layer                            | app — it reads the world, never writes it              |
+| A tomb-door family                            | app: the exterior is a screen, not a floor node        |
+| Story currencies in existing loot slots       | the solver's loot phase                                |
+| A story encounter **replacing** a puzzle node | dressing, per the node-selector vocabulary             |
+| Blocked passage (catalogue 1)                 | decoration — explicitly no connectivity                |
+| Window or grille (6)                          | decoration                                             |
+| Informational dead end (7)                    | what sits at a dead end that already exists            |
+| Which rooms claim a bigger footprint (B6)     | derived at render time — `roomClaims.ts` does it today |
+
+**One of these still touches saves without touching the world: the perk reshuffle.** Saves hold perk ids,
+so changing what an id grants changes what an existing save has. The world is stable; the player's
+inventory is not. It wants a migration and not a re-carve — which is a different and much smaller job.
+
+### Pile B — the floor is re-carved
+
+Connectivity or room count changes. **Once saves are keyed to the authoring rather than the carve**
+([#290](https://github.com/matthijsgroen/pyramid-scheme/pull/290)), retuning the carve costs nothing and
+an authoring change costs only the rooms it actually adds — so these want to land together, but the
+reason is a single world regeneration rather than a shared migration.
+
+| Work                                              | Why it re-carves                                  |
+| ------------------------------------------------- | ------------------------------------------------- |
+| Loop density dial (2)                             | adds edges                                        |
+| One-way crossing (2b)                             | adds an edge                                      |
+| Lever-opened shortcut (8)                         | adds an edge                                      |
+| Second way into a floor (9)                       | changes how a floor is entered                    |
+| Vertical layers (5)                               | everything                                        |
+| A story place needing a new `hiddenPath`          | the offering arc's real seal is one of these      |
+| A story encounter **added** rather than replacing | `pathPuzzles` — the most structural knob there is |
+
+### What this means for sequencing
+
+**Pile A is the whole story.** Every beat, every line, the cast, the waypoints and the tomb door can ship
+without moving a wall. The story does not need a restructure to exist.
+
+**Pile B is one release.** It is the map-variety catalogue almost exactly, plus the arc's hidden corridor —
+which is the argument for finishing the catalogue before building any of it, since they share a migration
+and a world regeneration. Doing them one at a time pays that cost repeatedly for no benefit.
+
+And Pile B gets cheaper as the exploration migration lands, so there is no rush to be early.
+
+---
+
+## The story as its own mod
+
+Earlier this document said an arc is not a mod, because mod boundaries keep technology from entangling and
+are not containers for features. That still holds — and **a story mod is right anyway**, because the story
+needs machinery of its own and machinery is exactly what a mod is for.
+
+The split: **the mod owns the mechanisms, the arcs stay data.**
+
+### What the mod would own
+
+`ModDescriptor` (`src/mods/modDescriptor.ts`) already has a slot for everything on this list:
+
+| It owns                                                                 | Registered as                                                             |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Four encounter families — conversation, reading, offering, found object | `families` (game-side meta) + `registerModApps` (the React components)    |
+| Story currencies — a seal, a rite token                                 | `currencyDistributions`, which the reachability worklist already consumes |
+| Their collection-screen presence                                        | `currencyMeta`                                                            |
+| Beat state — which beats have fired                                     | app-side storage, the way the shop owns its own                           |
+| A waypoint scanner pointing at story props                              | `registerCompassScanner`, as the hieroglyph mod does                      |
+
+**Toggle-off is the acceptance gate** (`docs/mods/TARGET.md`): remove it from `REGISTERED_MODS` and
+`yarn generate-world` plus the app must still build, just without a story. That is a real and useful
+property here — it proves no story beat is load-bearing for a puzzle, which is the thing `puzzle-screens`
+§5 keeps insisting on.
+
+### What stays outside it
+
+The arcs themselves — premise, cast, places, beats, the chain — are **data and prose**. They are what
+`story/*.md` describes and what the locales carry. A different arc is a different file, not a different
+mod.
+
+And two things belong to core rather than to the story mod, because the game needs them with no story at
+all:
+
+- **A conversation keyed to the journey entered.** Every arrival beat needs it and so would any tutorial
+  rewrite. Core.
+- **Beats exempt from the tutorials toggle.** A player who turns tutorials off should lose tutorials.
+  Core.
+
+### What still stands in the way
+
+Nothing blocks _writing_ the story — it is written. What blocks **running** it:
+
+| #   | Blocker                                                            | Whose                                     | Size |
+| --- | ------------------------------------------------------------------ | ----------------------------------------- | ---- |
+| 1   | No conversation is keyed to a journey — all 20 fire `pyramidIntro` | **core**                                  | S    |
+| 2   | `shouldSkipConversation` would hide the plot with the tutorials    | **core**                                  | XS   |
+| 3   | A conversation has one speaker; the script is a two-hander         | **core**                                  | S    |
+| 4   | No portrait surface in a conversation                              | **core** + art                            | S    |
+| 5   | The four encounter families do not exist                           | **story mod**                             | M    |
+| 6   | Reading — resolve a line against held glyphs                       | **story mod**, touches the hieroglyph mod | M    |
+| 7   | `CompassResult` still names `hieroglyphId`                         | **core**                                  | S    |
+
+**1 through 4 are core work and they are the gate.** They are also small, and 1–3 are worth doing whether
+or not a story mod ever exists, because they are what a two-voice tutorial rewrite needs as well.
+
+**5 and 6 are the mod**, and 6 is the one with teeth: it must know which glyphs the player holds and render
+a line as legible or not. That is the ending's mechanism and the casual-mobile review's ninth item arriving
+as a consequence rather than as a project.
+
+Nothing on this list is Pile B. The corridor work is independent of all of it.
+
+---
+
+## What the full script needs authored
+
+All five acts are written (`script-act-1.md` … `script-act-5.md`, 208 source lines). This is what they ask
+for that does not exist. **Every item is Pile A** — none of it re-carves a floor.
+
+### No journey names change
+
+Checked all 29 against the five acts. The names carry the arc already: `junior_2` Valley of the Artisans is
+where the copies were made, `master_3` Curse of the Pharaohs is where somebody was here first, `wizard_2`
+Secrets of the Sphinx answers `starter_1` Dawn at the Sphinx. **Nothing needs renaming**, which also means
+nothing downstream of a name moves.
+
+Descriptions are a different matter and were already on the list — 29 brochures, nine of which state the
+difficulty (`shipped-copy.md` § journeys).
+
+### Specialised story encounters — four kinds
+
+A story encounter is a registered family rendered in `EncounterModal` with `ctx`, `onSolved`, `onCancel`
+(Part 4 §4.7). None of these is a puzzle; each is a screen that resolves.
+
+| Encounter        | Where                                    | What it does                                                                           |
+| ---------------- | ---------------------------------------- | -------------------------------------------------------------------------------------- |
+| **Conversation** | every tomb ghost, every arrival          | the existing Fez conversation, given a second speaker and a portrait                   |
+| **Reading**      | Henut's wall (II), the Sphinx (V)        | the player's collected glyphs resolve a line of text. **The ending is this encounter** |
+| **Offering**     | the priest's altar (III, IV, V)          | a lock that accepts one thing, refuses others, and says which                          |
+| **Found object** | `master_3`'s camp, `wizard_b`'s notebook | a thing examined rather than solved — the drawn-not-written items land here            |
+
+**Reading is the one with teeth.** It has to know which glyphs the player holds and render a line as
+legible or not, per glyph. That is the mechanism the whole ending runs on, it is the review's item 9
+(_let a hieroglyph keep its value_) arriving as a consequence, and it is the only one that touches an
+existing system rather than adding a screen.
+
+### Authoring hooks
+
+| Need                                        | Status                                                                     |
+| ------------------------------------------- | -------------------------------------------------------------------------- |
+| A conversation keyed to the journey entered | **missing** — all 20 pyramids fire the same `pyramidIntro` (§ Ready now 1) |
+| A conversation keyed to a tomb, per tier    | same hook, different key                                                   |
+| Beats exempt from the tutorials toggle      | **missing** — `shouldSkipConversation` would hide the plot                 |
+| A second speaker in a conversation          | **missing** — `fez.json` assumes one voice                                 |
+| Portraits in a conversation                 | **missing** — art exists, surface does not (`ART.md`)                      |
+| A story encounter placed at a specific node | exists — `nodes: [{ where, encounter }]`                                   |
+| A beat firing on a reaction                 | **missing** — triggers exist, firing does not (§ Ready now 6)              |
+| Holding a pause                             | **missing**, and the Sphinx needs it (`script-act-5.md` §Open 1)           |
+
+### What the ghosts need that rooms do not have
+
+Five ghosts want somewhere to be that is not a corridor. `roomClaims.ts` already gives forks and leaf
+rooms a bigger footprint at render time — so **a tomb room that claims cells is Pile A**, and the only
+missing piece is that nothing authored can ask for one.
+
+### Cost
+
+**208 source lines**, five ghosts, four encounter kinds, eight hooks. Source lines only — the locale count
+is heading for a dozen, which is the argument for the drawn items in `ART.md` and for settling the script
+before translation starts rather than after.
+
+---
+
+## Built, as of 2026-09-26
+
+On `story/journey-beats` (PR #304), playing in English and Dutch. What is written here as "ready now"
+below was the plan; this is what came of it.
+
+| Built                                        | Where it lives                                                                     |
+| -------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Journey-keyed arrivals, all 20 pyramids      | `arrivalConversation.ts` + `fez.json` `arrival.*` — 96 lines                       |
+| Two speakers, portraits, sides swapping      | `Fez.tsx`, `portraits.ts`                                                          |
+| Story beats exempt from the tutorials toggle | `shouldSkipConversation`                                                           |
+| The eight tomb scenes                        | `fez.json` `tomb.*` — 92 lines, five ghosts drawn and placed                       |
+| The rest of the script                       | `bond.*`, `reading.*`, `altar.refused`, `end` — 50 lines, authored, mostly unfired |
+| The story mod                                | `src/mods/story/` — `conversation` and `reading` families                          |
+| The story log                                | a mod screen; every scene heard, re-readable                                       |
+| The explorer and the five ghosts             | `art/masters/characters/`, imported by `yarn import-portrait`                      |
+
+**238 authored lines against this document's own count of 237.** The content is complete except for two
+beats that cannot be written yet (below).
+
+### Reading is ACTIVE (decided)
+
+The player picks the sign, rather than the line resolving because they happen to hold enough glyphs. The
+first one is Henut's wall: her name in a cartouche with a goose where an owl belongs, and the tray offers
+only hieroglyphs they have completed. **Holding the sign is the gate** — without it they can look, and are
+told plainly they cannot fix it yet. Never a fail state.
+
+The wall data is `src/mods/story/game/reading/walls.ts`, one entry per journey. The Sphinx wants the same
+encounter behind `starter_1`'s ward gate (`main-path.md`, "The same place, literally"), and
+`reading.junior/expert/master` — the formula on every tomb wall — are authored with no room yet.
+
+### Two placement rules the world enforces
+
+**Never put a story room ahead of a tableau.** A tableau's authored content is keyed by its position
+(`levelNr = pathIndex + 1`), so a room inserted in front renumbers them and world generation fails
+outright. **And never last from junior on** — that room is the crocodile capstone. Story rooms go
+second-to-last, and the floor is authored `+ 1` longer for each, so nothing is substituted: a ghost
+standing in a tableau's place costs the tier a fragment host. `placement.spec.ts` holds both.
+
+### What is left
+
+| Left                              | Blocked on                                                                |
+| --------------------------------- | ------------------------------------------------------------------------- |
+| The reaction rail                 | nothing — `PuzzleFamilyShell` already knows a board solved unaided        |
+| The Sphinx reading + ward gate    | nothing — the encounter exists; it needs authoring in `starter.ts`        |
+| The offering arc (`altar.*`)      | **wall-or-choice at the tier gate** (`story-and-time-brainstorm.md` §4.5) |
+| The choked pyramid's arrival      | the topology work — its journey id does not exist                         |
+| One Fez line at the dust clearing | the topology work                                                         |
+| The Sphinx inscription artwork    | nothing — it has to spell HORI legibly at phone width                     |
+
+## Ready now
+
+### 1. Journey-keyed arrival conversations — S
+
+All twenty pyramids fire the same `showConversation("pyramidIntro")` from
+`useExpeditionIntro.ts`; nothing keys a conversation to which journey you entered. Every arrival beat in
+`main-path.md` needs this and nothing else.
+
+Shape: look for `story.arrival.<journeyId>`, fall back to the generic intro when a journey has no beat.
+Authoring a beat is then adding a key, with no code change per journey.
+
+**And a trap to fix while in there:** `shouldSkipConversation` skips everything when `tutorialsEnabled` is
+off. A player who turns tutorials off should lose tutorials, not the story. Story beats want to be a
+separate class from teaching beats, or the first thing a returning player does is switch the plot off.
+
+**Unblocks:** all 20 arrivals, the 5 act breaks, both bond beats.
+
+### 2. Generalise `CompassResult` — S, core
+
+`src/game/siteTypes.ts` — the result carries `hieroglyphId` and `pieceIndex` beside its address, so the
+scanner seam is generic going in (`registerCompassScanner` takes an opaque target string and core names no
+reward type) and hieroglyph-shaped coming out. Nothing else can register a scanner honestly until those two
+fields are not about hieroglyphs.
+
+**Unblocks:** every waypoint in `../waypoints.md`, and the story's own steering.
+
+### 3. `notEnoughHieroglyphs` says the wrong thing — XS
+
+The key says the player is short of hieroglyphs; the copy says _"You can always stop this expedition by
+returning to the travel screen."_ It is also the line the casual-mobile review quotes as the whole of Fez's
+character. Rename or rewrite; it is one string.
+
+### 4. Perk reshuffle, the mechanical half — S
+
+`src/mods/tombTreasure/game/treasurePerks.ts`, one file, no world regeneration (key ids are core structure;
+what an id grants is mod data). Independent of any story decision:
+
+- **junior's four blank floors** — the only tier with no new verb, and where a new player decides to stay
+- **compass L2 out of master** — L1 is the second thing earned and does not improve for three tiers
+- **detection out of `master_b_5`** — hidden corridors are unfindable-by-tool for three and a half tiers
+
+Story-led placement (`../progression-route.md`) can refine which verb lands where later; these three are
+wrong on their own terms.
+
+**Watch:** saves hold perk ids, so changing what an id grants changes what an existing save has. Migrate.
+
+### 5. A surface for the explorer portrait — S
+
+Two full-body images exist, one neutral and one grinning. Needs a head-and-shoulders crop (the expressive
+part, and phone width) and somewhere to render — conversations first. The full body is for the journey card
+and the title.
+
+**Not** the site map: the explorer stays a dot there, because that screen is about the floor.
+
+### 6. Reaction-rail plumbing — S
+
+Fire a conversation on what the player did rather than where they are. Every trigger exists:
+`PuzzleFamilyShell` tracks `hintsUsed` and already distinguishes a board solved unaided; the claim knows a
+wrong answer; loot knows it was found.
+
+Build the firing, not the content — the content is two lines in `script-act-1.md` and the rest is unwritten.
+
+**Watch:** this is the rail most likely to ruin Fez. Rate-limit it in the plumbing, not in the copy.
+
+---
+
+## Blocked on a story decision
+
+| Work                                        | Size | Waiting on                                                                                    |
+| ------------------------------------------- | ---- | --------------------------------------------------------------------------------------------- |
+| Rewrite the 37 pre-explorer `fez.json` keys | M    | mostly nothing — the voice is decided. Only `welcome*` waits on the meeting setup (`cast.md`) |
+| Rewrite the 29 journey descriptions         | M    | which shape: rumour, fact, or Fez pitching (`shipped-copy.md` §journeys)                      |
+| The guidance layer                          | L    | curation — one thread at a time, a standing list, or ranked (`waypoints.md`)                  |
+| A tomb-door family                          | L    | one family or two, and which mechanic (`../tomb-exteriors.md`)                                |
+| Story currencies and the offering arc       | M    | wall-or-choice on the tier gate (Part 4 §4.5)                                                 |
+
+The first row is the notable one: **the Fez rewrite is nearly unblocked.** Everything except the opening
+conversation can be written today, because the explorer speaks and the voice rules exist.
+
+---
+
+## Big rocks, not story-blocked
+
+| Work                                 | Size | Why it is here                                                                                                                            |
+| ------------------------------------ | ---- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Wordless first instances, per family | L    | the review's complaint #6 and `onboarding.md`'s own "not yet built". The meeting setup makes the first one mandatory rather than optional |
+| Persist in-progress boards           | M    | review #1, and the cheapest thing on its list — an interrupted board is a lost player                                                     |
+| Sound on solve                       | M    | there is not one audio file in the project                                                                                                |
+
+---
+
+---
+
+## Map variety
+
+The catalogue lives in [`../map-variety.md`](../map-variety.md) — fifteen entries across six axes, with
+what each one _says_ to the player, because a mechanic is storytelling vocabulary. Everything in it is
+Pile B except the three decorations, which are Pile A.
+
+Two findings from it that this list depends on:
+
+- **Isolation constrains cut edges, not cycles.** A loop wholly inside one gated region is free of
+  isolation, reachability and solver concerns. Only edges crossing a gate are constrained — and those are
+  legal one-way.
+- **A floor is one plane.** Any mechanic whose fiction needs height is the vertical-layers entry at its
+  price.
+
+## Suggested order, within Pile A
+
+**1 → 3 → 4 → 2.** The first makes the story writable, the third is ten minutes, the fourth fixes three
+things that are wrong regardless, and the second unblocks a whole document's worth of design.
+
+5 and 6 are the ones to do when the writing stalls and something visible would help.

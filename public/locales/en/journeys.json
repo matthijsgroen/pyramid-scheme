@@ -1,70 +1,70 @@
 {
   "starter_1": {
     "name": "Dawn at the Sphinx",
-    "description": "Begin your adventure with the Great Sphinx as the morning sun illuminates its ancient face. A gentle introduction to the mysteries of Egypt."
+    "description": "The Great Sphinx, and the writing at its feet that nobody alive can read. The map says start here."
   },
   "starter_2": {
     "name": "Papyrus Merchant's Route",
-    "description": "Follow the trade routes of ancient papyrus merchants along the peaceful banks of the Nile. Discover the secrets of Egyptian commerce."
+    "description": "Papyrus went up the Nile by this road, and the merchants wrote down who owed what. The receipts outlasted the cargo."
   },
   "starter_3": {
     "name": "Temple of Bastet",
-    "description": "Visit the sacred temple of the cat goddess Bastet, where faithful worshippers bring offerings and seek protection from evil spirits."
+    "description": "Bastet's temple. The cats here were sacred, and the yearly festival was the biggest in Egypt — boats, music, the lot."
   },
   "starter_4": {
     "name": "Scribe's Academy",
-    "description": "Learn the art of hieroglyphic writing in the prestigious scribe's academy, where knowledge is more valuable than gold."
+    "description": "The scribes' school. They cut their hieroglyphs into broken pottery, because papyrus was far too dear for children."
   },
   "starter_treasure_tomb": {
     "name": "Forgotten Merchant's Cache",
-    "description": "Discover a small underground chamber where an ancient merchant hid his precious goods. A perfect introduction to treasure hunting.",
+    "description": "A merchant's cellar, not a king's: jars stacked, sealed and labelled, and nobody down there to argue about them.",
     "mapHint": "The scrap sketches a market road and a cellar door — a trader's hiding place, nothing grander."
   },
   "junior_1": {
     "name": "Sacred Ibis Migration",
-    "description": "Follow the sacred ibis birds on their annual migration along the Nile. Learn the patterns that ancient Egyptians used to predict the flood."
+    "description": "Marsh country, and the ibis wading through it. Egypt watched these birds: when they come back, the flood is coming."
   },
   "junior_2": {
     "name": "Valley of the Artisans",
-    "description": "Explore the village where skilled craftsmen created treasures for the pharaohs. Master the ancient techniques of metalwork and jewelry."
+    "description": "Deir el-Medina, where the tomb-makers lived. Everything that went into a royal burial was made here first, in moulds."
   },
   "junior_3": {
     "name": "Temple of Thoth",
-    "description": "Enter the temple of Thoth, god of wisdom and writing. Solve mathematical puzzles that test your understanding of ancient Egyptian numbers."
+    "description": "Thoth's temple. He invented writing, kept the records and did the counting — which is most of what we have been doing."
   },
   "junior_4": {
     "name": "Lighthouse of Alexandria",
-    "description": "Climb the legendary lighthouse of Alexandria, one of the Seven Wonders. Navigate the mathematical principles that made this marvel possible."
+    "description": "The Pharos of Alexandria. A fire at the top, burning all night, and sailors finding the coast a day's sail out."
   },
   "junior_treasure_tomb": {
     "name": "Noble's Hidden Vault",
-    "description": "Explore the secret vault of a wealthy Egyptian noble, filled with golden artifacts and precious gemstones hidden from grave robbers.",
+    "description": "A noblewoman's vault, painted floor to ceiling. She bought the finest copies money could buy, and never once said so.",
     "mapHint": "Fine ink, a crested seal in the corner — someone of standing wanted this room forgotten."
   },
   "expert_1": {
     "name": "Valley of the Kings",
-    "description": "Explore the royal necropolis where pharaohs rest for eternity. Navigate through elaborate tomb chambers filled with ancient puzzles."
+    "description": "The Valley of the Kings. They stopped building pyramids and hid the royal tombs in one valley, under a peak shaped like one."
   },
   "expert_2": {
     "name": "Karnak Temple Complex",
-    "description": "Venture through the vast temple complex of Karnak, dedicated to Amun-Ra. Solve the riddles left by high priests across centuries."
+    "description": "Karnak, added to for two thousand years. The great hall alone has a hundred and thirty-four columns, every one of them carved."
   },
   "expert_3": {
     "name": "Nile Delta Expedition",
-    "description": "Journey through the fertile Nile Delta, encountering crocodile gods and solving the mysteries of the river's annual flood."
+    "description": "Where the Nile splits and spreads out green. Sobek's country — papyrus, fish, and crocodiles that were worshipped and fed."
   },
   "expert_4": {
     "name": "Pyramid of Djoser",
-    "description": "Ascend the step pyramid of Djoser, the first pyramid ever built. Face the challenges that have protected this monument for millennia."
+    "description": "Djoser's step pyramid, the first thing of its size built in stone. His architect Imhotep ended up remembered as a god."
   },
   "expert_treasure_tomb": {
     "name": "High Priest's Treasury",
-    "description": "Infiltrate the elaborate underground treasury of a powerful high priest, where sacred relics and divine artifacts await the worthy.",
+    "description": "A high priest's treasury, under the offering floor. Everything down there was given to a god and never taken out again.",
     "mapHint": "The lines trace a temple precinct, and a stair running down beneath its offering floor."
   },
   "expert_treasure_tomb_b": {
     "name": "Inner Sanctum",
-    "description": "Breach the sealed inner sanctum where only the highest priests dared tread, guarding the most sacred artifacts of the temple.",
+    "description": "The sealed room at the heart of the temple. The high priest went in once a day, to wash the god and dress him.",
     "mapHint": "Corridors run past the temple vaults to a sealed door — only the highest priests ever passed it."
   },
   "master_1": {
