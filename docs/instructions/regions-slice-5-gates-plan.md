@@ -15,6 +15,7 @@
 - `yarn check-types` is the truth. **IDE diagnostics in this repo have been wrong on every single occasion** — they report faults in files that do not exist. Never trust them; run the command.
 - Lint with `yarn eslint <paths>`. **`yarn lint --fix <path>` does NOT scope** — the script is `eslint . --max-warnings 17`, so a path is appended to `.` and it rewrites the repo.
 - `yarn generate-world` must stay byte-identical at md5 `f67c3ea9303b04a1d7c9a558d0561620`. Check with `yarn generate-world && md5 -q src/data/generatedWorld.ts` (or `md5sum`).
+- **THAT FINGERPRINT DOES NOT COVER THE CARVE.** `src/data/generatedWorld.ts` holds `SiteConfig[]` — the authored floor configs world generation resolved — so the md5 proves world-gen's inputs did not move and says NOTHING about the walls `assembleFloor` cuts from them. A task that changes carve behaviour (`edgeAllowed`, `doorsToEnter`, `gatedCellKeys`, content indices, room specs) can change every shipped floor's layout with that md5 sitting green. Such a task must capture a CARVE baseline before it starts and diff against it after — see the Carve baseline recipe below. Checking only the md5 there is not verification, it is the appearance of it.
 - **NEVER run `INCLUDE_DEV=1 yarn generate-world`.** `yarn validate-world` writes nothing and is safe with the flag.
 - `src/game/` is the domain layer: no React, no `src/app/`, no `src/ui/`.
 - Comments state CURRENT state and why, never history. No "replaces X", no "used to be Y".
@@ -25,6 +26,35 @@
 - **Measure, do not reason.** Every time reasoning and measurement disagreed this week, measurement was right.
 
 **THE RULE THIS SERVES:** the builder may refuse, but it may never decide quietly.
+
+## Carve baseline recipe
+
+Required by any task that changes how a floor is carved. Run it BEFORE touching the code, keep the file, and diff after.
+
+```ts
+// scratch script, e.g. src/game/_carveBaseline.spec.ts — delete it when the task is done
+import { generatedWorldConfigs } from "@/data/generatedWorld"
+import { assembleFloor } from "./siteAssembler"
+
+// Every shipped floor, carved at its own seed, reduced to the thing a player walks: which cells
+// exist and which way each one opens. A change here is a change to a floor somebody has played.
+const walls: string[] = []
+for (const [journeyId, sites] of Object.entries(generatedWorldConfigs))
+  sites.forEach((site, levelIndex) =>
+    site.forEach((floor, floorIndex) => {
+      const result = assembleFloor(journeyId, floor, /* the seed this floor is carved at */ 0)
+      walls.push(
+        `${journeyId}#${levelIndex}#${floorIndex} ${
+          result.success
+            ? result.grid.cells.flat().map(c => (c.type === "empty" ? "." : [...c.dirs].sort().join(""))).join("|")
+            : `REFUSED ${JSON.stringify(result.reasons)}`
+        }`
+      )
+    })
+  )
+```
+
+Write `walls.join("\n")` to a file under the scratchpad, once before and once after, and `diff` them. **Find the real seed each floor is carved at rather than passing 0** — read how `useAssembledFloor`/`worldFloors` seeds a floor and use the same value, or the baseline compares two fictions. An empty diff is the pass. A non-empty one names the floors that moved, which is the information the md5 cannot give you.
 
 ---
 
@@ -1123,7 +1153,9 @@ describe("what a gated region shuts off", () => {
 
 **Watch it fail:** comment out the `needsDoor`/`gatedCellKeys` registration from Step 5 and re-run — the vault gains ways in that are not the gate room. Quote the list it prints.
 
-- [ ] **Step 7: Fingerprint, types, lint, suite, report**
+- [ ] **Step 7: Carve baseline, fingerprint, types, lint, suite, report**
+
+This task registers region cells into `gatedCellKeys` and `doorsToEnter`, which `edgeAllowed` reads — so it can change which doors a shipped floor carves, and the world md5 cannot see that. Run the Carve baseline recipe from the top of this plan before Step 5 and diff it here. An empty diff is the pass.
 
 Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` → `f67c3ea9303b04a1d7c9a558d0561620`
 Run: `yarn check-types && yarn eslint src/game/obstacles.ts src/game/obstacles.spec.ts src/game/siteAssembler.ts src/game/regionGates.spec.ts && yarn test`
@@ -1227,9 +1259,11 @@ In `siteAssembler.ts`:
     }
 ```
 
-- [ ] **Step 4: MEASURE the fingerprint**
+- [ ] **Step 4: MEASURE THE CARVE, not just the fingerprint**
 
-Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts`
+This task changes `edgeAllowed`, which every shipped floor is carved through, and the world md5 CANNOT see that (it covers authored configs, not walls). Run the Carve baseline recipe from the top of this plan before Step 3 and diff it here. An empty diff is the pass.
+
+Also run: `yarn generate-world && md5 -q src/data/generatedWorld.ts`
 
 - If `f67c3ea9303b04a1d7c9a558d0561620`: done, continue.
 - **If it moved:** this is the hazard above, not a surprise. Scope `sameDoors` to floors authoring a layout — `if (!regionLayout) return false` as its first line — and measure again. Report which floors moved (`git diff --stat src/data/generatedWorld.ts`) either way.
