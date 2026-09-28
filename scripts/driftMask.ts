@@ -4,6 +4,7 @@
  * must not be asked for.
  *
  *   yarn drift-mask --out=~/tile-previews/drift-mask.png [--seed=fan] [--size=336] [--lobes=3]
+ *                   [--peak=0.8] [--core=0.55] [--blur=3]
  *
  * WHY THIS EXISTS. Every prop in this pipeline splits the same way: geometry is ours and material is the
  * generator's (docs/instructions/prop-pipeline.md). For a shelf the geometry comes from Blender and
@@ -53,8 +54,16 @@ const main = async (): Promise<void> => {
   const size = Number(arg("size", "336"))
   const seed = arg("seed", "drift")!
   const lobeCount = Number(arg("lobes", "3"))
-  /** Where the taper starts, as a fraction of the lobe's radius. Solid core, soft third. */
-  const CORE = 0.55
+  /**
+   * Where the taper starts, as a fraction of the lobe's radius. Solid core, soft rim.
+   *
+   * SAND AND MOSS WANT DIFFERENT EDGES, which is the whole reason this is an argument. A drift of sand
+   * thins to nothing — there is no line where sand stops — so at 0.55 nearly half its radius is a fade
+   * and that is what it should be. A MAT OF MOSS has an edge: it grew to the limit of the damp and
+   * stopped. Given sand's taper it reads as a green smudge airbrushed onto the floor rather than
+   * something lying on it, which is exactly how it looked the first time it was drawn.
+   */
+  const CORE = Number(arg("core", "0.55"))
   /**
    * The most opaque the drift ever gets, and it is never 1.
    *

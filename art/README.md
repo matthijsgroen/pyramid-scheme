@@ -26,6 +26,19 @@ smaller than the images and also says how the tile was imported.
 before anything measured it. It costs nothing to notice and cannot be recovered later; every master here
 was re-made from `~/Downloads` once that turned up.
 
+**THE DOWNLOAD AND THE DISPLAYED IMAGE CAN DIFFER, AND NOT ONLY IN SIZE.** `overgrown-plant` came back
+with a painted brown ground across the bottom fifth of the DOWNLOAD — `84,56,35` at y=1700 where the
+frame should have been magenta — and no ground at all in the picture Gemini was showing in the browser.
+Keyed, that ground survives as a hard bar across the tile, because it is not the background colour and
+nothing removes it. The screenshot of the displayed image imported clean.
+
+So the rule above is about RESOLUTION and stands for anything landing at prop size: a paste costs a fifth
+of the pixels and that cannot be recovered. It is not a promise that the download is the better picture.
+**Check the bottom rows of a return before importing it** — `magick <file> -crop WxH+0+Y +repage -format
+"%[fx:int(mean.r*255)],%[fx:int(mean.g*255)],%[fx:int(mean.b*255)]" info:` — and if the download carries
+a ground the preview does not, a screenshot is the better master. A growth tile lands at 44x44, so even a
+1024px screen grab is twenty times the size it is scaled to and loses nothing that matters.
+
 A master that arrived as a SHEET is stored as the sheet — `basin-sheet.webp` is three frames and the tile
 is the middle one via `cut-sheet`. The sheet is what the generator actually returned, and a crop guessed
 after the fact would be a master under a name claiming more than it knows.

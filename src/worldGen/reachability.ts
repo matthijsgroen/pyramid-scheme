@@ -147,7 +147,7 @@ export const reachableFloorsInSite = (
     // unreachable: generation then placed no content behind it and reported nothing, so
     // unenterable floors shipped unnoticed. It's a data bug, so say so and stop. Note this
     // assembles at `defaultSeedFor`, NOT the seed the runtime uses (game/siteSeed.ts) — a floor
-    // passing here says nothing about what players get, which is what worldFloorAssembly.spec.ts
+    // passing here says nothing about what players get, which is what worldFloorAssembly.verify.ts
     // is for.
     if (!result.success) {
       throw new Error(

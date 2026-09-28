@@ -11,7 +11,7 @@ import type {
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll, walkableFrom } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
-import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
+import { driftsFor, grassMatsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
@@ -31,16 +31,25 @@ import {
 } from "./mapScale"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
 import { stateWash, tierPalette } from "./tileMaterials"
-import { ClipLayer, Sprite } from "./htmlLayers"
-import { moodFor } from "./moodSettings"
+import { ClipLayer, OCCLUDER_FADE, Sprite } from "./htmlLayers"
+import { moodFor, growthTile } from "./moodSettings"
 import { cellAt } from "@/game/roomFootprint"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
-import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileVariants } from "./tileAssets"
+import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileVariants, sharedTileUrl } from "./tileAssets"
 import { isLockedGate, nodeRadius, shapeKindFor } from "./nodeKinds"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
 import { FloorShade, LitPlaces } from "./torchlight"
-import { LIT_STANDING_STRENGTH, SEATING_PASS, STANDING_RELIEF } from "./lighting"
+import {
+  SEATING_PASS,
+  STANDING_RELIEF,
+  beamShafts,
+  floorNight,
+  lampStandingStrength,
+  lampStrength,
+  litPlaceCells,
+} from "./lighting"
+import { BeamLight, BeamShafts } from "./MapBeams"
 import { TileLayers } from "./tileLayers"
 import { clickTargetAt } from "./clickTargets"
 import {
@@ -475,28 +484,32 @@ const Decoration = ({
   )
 }
 
-/** Blown sand, drawn over the floor and clipped to it.
+/** GROUND: blown sand, or a mat of grass, drawn over the floor and clipped to it.
  *
- * The one scatter kind that is not cell-sized. A drift has no silhouette of its own — it is the shape of
- * whatever stopped it — so it is drawn several cells across and cut to `walkable-floor`, and the wall
- * does the drawing. See `driftsFor` for why sand is one shared file rather than five.
+ * The scatter that is not cell-sized. Neither has a silhouette of its own — one is the shape of whatever
+ * stopped it, the other the shape of where the water sat — so both are drawn several cells across and cut
+ * to `walkable-floor`, and the wall does the drawing. See `driftsFor` for why sand is one shared file
+ * rather than five; the grass is shared for the same reason (`grassMatsFor`).
  *
  * No per-cell fog check, because a drift is not per-cell: it is washed by the DARKEST state it crosses,
  * so a drift reaching into an unlit passage cannot light it. That is the same sum `FloorScatter` does
  * with `brightness`, taken over a region instead of over a cell. */
-const SandDrifts = ({
+const GroundCover = ({
   grid,
   drifts,
-  tier,
+  url,
+  kind,
   floorRects,
 }: {
   grid: FloorGrid
   drifts: Drift[]
-  tier: Difficulty
+  /** The tile these are drawn from — one shared file, whichever ground this is. */
+  url: string | undefined
+  /** Which ground this is, for the tests that have to tell weather from condition. */
+  kind: "sand" | "grass"
   /** The walkable floor, as rectangles: what the wall does the drawing with. */
   floorRects: readonly Rect[]
 }) => {
-  const url = tileOrPlaceholder(tier, "sand")
   if (!url || floorRects.length === 0) return null
   return (
     <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
@@ -518,6 +531,7 @@ const SandDrifts = ({
           <Sprite
             key={i}
             url={url}
+            data-ground={kind}
             x={cx - dw / 2}
             y={cy - dh / 2}
             w={dw}
@@ -739,8 +753,6 @@ const WallItems = ({ items, patron }: { items: readonly WallItem[]; patron?: Pat
 
 type Doorway = { row: number; col: number; tier: Difficulty }
 
-const ARCH_FADE = 0.35
-
 /** Every doorway on the floor: the way into a CHAMBER, held in a wall run that gives its jambs corners to
  * stand on. Both sides have to be drawn floor, so an unexplored way through carries no arch — an arch is a
  * thing you can see, and the fog is what you cannot. Exported for tests. */
@@ -817,7 +829,7 @@ const Archways = ({
           y={cellTop(row) - WALL_H - ARCH_RISE}
           w={ARCH_W}
           h={ARCH_H}
-          opacity={under ? ARCH_FADE : 1}
+          opacity={under ? OCCLUDER_FADE : 1}
         />
       )
     })}
@@ -1008,7 +1020,7 @@ export const SiteMapView = ({
             clipTo={footprintRects(sprite.footprint)}
             opacity={
               standingOn && sprite.fadeAt?.includes(standingOn)
-                ? ARCH_FADE
+                ? OCCLUDER_FADE
                 : sprite.badge === "taken"
                   ? LOOTED_OPACITY
                   : undefined
@@ -1087,12 +1099,18 @@ export const SiteMapView = ({
     for (let r = 0; r < grid.rows; r++) {
       for (let c = 0; c < grid.cols; c++) {
         if (grid.cells[r][c].type === "empty") continue
-        if (cellAt(grid, r - 1, c).type === "empty") cells.push([r, c])
+        if (cellAt(grid, r - 1, c).type !== "empty") continue
+        // EMPTY IS NOT THE SAME AS SOLID. A chamber's claimed cells are `type: "empty"` in the grid —
+        // the claim is a render-time fact — so the void test alone calls the open middle of a room a
+        // wall and hangs a root through it, which draws as a dead twig lying on the paving. It is the
+        // same blind spot `floorScatter` and `MapGrowth`'s chamber pass both record.
+        if (claims.claimedBy.has(`${r - 1},${c}`)) continue
+        cells.push([r, c])
       }
     }
     return cells
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the SHAPE of the floor, which a reveal never changes
-  }, [grid.rows, grid.cols, grid.siteId])
+  }, [grid.rows, grid.cols, grid.siteId, claims])
   // A chamber's own floor, for the big plants. Claimed cells are `type: "empty"` in the grid — the claim
   // is a render-time fact — so this cannot be read off `grid.cells`, which is the trap `floorScatter`
   // documents: walking the grid finds no chamber floor at all.
@@ -1100,9 +1118,48 @@ export const SiteMapView = ({
     () => [...claims.claimedBy.keys()].map(key => key.split(",").map(Number) as [number, number]),
     [claims]
   )
+  /**
+   * Where a TREE may stand, which is not everywhere a plant may.
+   *
+   * YOU CAN STEP OVER A BUSH AND NOT OVER A TRUNK. A claim is the footprint a room draws over and most
+   * of it is void nobody can enter — but not all of it: on a real expert floor 22 of its 101 claimed
+   * cells are walkable. A fern or a shrub there is fine and reads as a room grown through. A palm there
+   * is a tree in the corridor, and the explorer walks through it.
+   *
+   * The canopy pass takes the same cell list as the under pass, so the two agree on which member each
+   * cell grew; this only says whether the tall one may be drawn at all.
+   */
+  const treeCells = useMemo(
+    () =>
+      new Set(
+        [...claims.claimedBy.keys()].filter(key => {
+          const [row, col] = key.split(",").map(Number)
+          return cellAt(grid, row, col).type === "empty"
+        })
+      ),
+    [claims, grid]
+  )
+  // What light this floor has of its own: a roof that let the plants in let the sun in first, so the
+  // night over it comes off and the lamp comes down to match (lighting.ts).
+  const daylight = mood.daylight ?? 0
+  // Where a roof has given way, and what the explorer's own lamp is already lighting — a shaft hands over
+  // to the lamp where the two fall on the same room (see `BeamLight`).
+  const shafts = useMemo(
+    () => beamShafts(grid, claims, mood.beam ?? 0, grid.siteId, daylight),
+    [grid, claims, mood.beam, daylight]
+  )
+  const torchPlace = useMemo(
+    () => new Set(explorerPos ? litPlaceCells(grid, claims, explorerPos) : []),
+    [grid, claims, explorerPos]
+  )
   // What is strewn on this floor. A function of the floor's shape and its id, so it never moves.
   const scatter = useMemo(() => scatterFor(grid, claims), [grid, claims])
   const drifts = useMemo(() => driftsFor(grid, tier), [grid, tier])
+  // The grass is the condition's own ground, so its coverage is the condition's own number.
+  const grassMats = useMemo(
+    () => (grid.condition?.kind === "overgrown" ? grassMatsFor(grid, grid.condition.amount) : []),
+    [grid]
+  )
   const archedGaps = useMemo(
     () =>
       new Map(doorways.map(({ row, col, tier: archTier }) => [`${cellLeft(col)},${cellTop(row) - WALL_H}`, archTier])),
@@ -1199,7 +1256,30 @@ export const SiteMapView = ({
             >
               <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
             </svg>
-            <SandDrifts grid={grid} drifts={drifts} tier={tier} floorRects={floorRects} />
+            <GroundCover
+              grid={grid}
+              drifts={drifts}
+              url={tileOrPlaceholder(tier, "sand")}
+              kind="sand"
+              floorRects={floorRects}
+            />
+            {/* THE GROUND THE GREEN GROWS OUT OF, over the sand and under everything that grows: a tuft
+                drawn straight onto bare paving reads as a sticker, and this is what it stands on. Shared
+                across the ranks like the growth itself — a condition is something that got into a site,
+                not a property of its masonry.
+
+                GRASS RATHER THAN MOSS, and the reason is legibility rather than taste. A mat of moss was
+                drawn first and read as OOZE: a rounded, pooled shape in a dark green is what a game
+                paints when it means a floor is dangerous to step in, and a covering that half the floor
+                wears must never say that. Grass cannot be mistaken for a fluid, because its edge is made
+                of blades. */}
+            <GroundCover
+              grid={grid}
+              drifts={grassMats}
+              url={sharedTileUrl(growthTile("overgrown", "grass"))}
+              kind="grass"
+              floorRects={floorRects}
+            />
             <FloorScatter grid={grid} scatter={scatter} tier={tier} />
             <ArchShadows doorways={doorways} />
             <MapLife
@@ -1216,6 +1296,7 @@ export const SiteMapView = ({
             <MapGrowth
               mood={mood}
               siteId={grid.siteId}
+              tier={tier}
               floorCells={floorCells}
               wallCells={wallBandCells}
               chamberCells={chamberFloorCells}
@@ -1236,8 +1317,10 @@ export const SiteMapView = ({
 
             {/* The dark, and then the light in it: the place the explorer is standing is the hole the
               lamp burns in the shade, so it has to be laid over the shade rather than under it. */}
-            <FloorShade tier={tier} />
-            <LitPlaces grid={grid} claims={claims} at={explorerPos} />
+            <FloorShade tier={tier} strength={floorNight(daylight)} />
+            <LitPlaces grid={grid} claims={claims} at={explorerPos} strength={lampStrength(daylight)} />
+            {/* And the rooms daylight is already falling into, lamp or no lamp. */}
+            <BeamLight grid={grid} claims={claims} shafts={shafts} torchPlace={torchPlace} daylight={daylight} />
 
             {/* THE MARKERS: an icon per cell, each in a little `<svg>` of its own — a shape per kind, a
                 colour per state, key badges on the rim. Over the stone, under everything standing on it,
@@ -1424,6 +1507,29 @@ export const SiteMapView = ({
 
               <StandingLayer sprites={inFrontOfExplorer} />
 
+              {/* THE TALL PLANTS, over everything that walks. A palm is half again the height of the
+                  explorer, so drawing it under them would put a person in front of a tree — and it
+                  fades while they are behind it, the bargain an archway makes for the same reason.
+                  Nothing here is in anybody's way: a chamber plant only ever stands on a CLAIMED cell,
+                  which is `type: "empty"` in the grid and so is never walked on. */}
+              <MapGrowth
+                mood={mood}
+                siteId={grid.siteId}
+                tier={tier}
+                floorCells={floorCells}
+                chamberCells={chamberFloorCells}
+                canopy
+                treeCells={treeCells}
+                explorerPos={explorerPos}
+                isLit={(r, c) => {
+                  const owner = claims.claimedBy.get(`${r},${c}`)
+                  if (!owner) return false
+                  const [or, oc] = owner.split(",").map(Number)
+                  const room = cellAt(grid, or, oc)
+                  return room.type !== "empty" && room.state !== "fogged"
+                }}
+              />
+
               {/* Last, so a doorway passes in FRONT of the player walking under it — see Archways. */}
               <Archways doorways={doorways} explorerPos={explorerPos} />
 
@@ -1433,7 +1539,7 @@ export const SiteMapView = ({
 
               {/* The shade's second pass — see FloorShade. Everything standing has to be in the dark
                 with the floor, or it reads as cut out and pasted on. */}
-              <FloorShade tier={tier} strength={SEATING_PASS} />
+              <FloorShade tier={tier} strength={SEATING_PASS * floorNight(daylight)} />
 
               {/* AND THE LIGHT'S SECOND PASS OVER IT, for the same reason read the other way round: what
                 stands in a lit room is standing in the light, and the wash above took a quarter of the
@@ -1441,7 +1547,25 @@ export const SiteMapView = ({
                 darker than the floor under their feet. Lighter than the first pass and reaching a band
                 higher (see `headroom`), so the furniture is lit to the top of its own headroom rather
                 than sawn off at the floor line. */}
-              <LitPlaces grid={grid} claims={claims} at={explorerPos} strength={LIT_STANDING_STRENGTH} headroom />
+              <LitPlaces
+                grid={grid}
+                claims={claims}
+                at={explorerPos}
+                strength={lampStandingStrength(daylight)}
+                headroom
+              />
+              <BeamLight
+                grid={grid}
+                claims={claims}
+                shafts={shafts}
+                torchPlace={torchPlace}
+                daylight={daylight}
+                headroom
+              />
+
+              {/* The cones last of all: a shaft of dust is between the eye and the room, so it stands in
+                front of the statue it falls on rather than behind it. */}
+              <BeamShafts grid={grid} claims={claims} shafts={shafts} siteId={grid.siteId} floorRects={floorRects} />
             </div>
           </div>
         </div>

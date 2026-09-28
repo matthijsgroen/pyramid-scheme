@@ -1,36 +1,27 @@
 import { describe, expect, it } from "vitest"
 import { difficulties } from "@/data/difficultyLevels"
 import { LIGHTBEAM_CONFIG, resolveLightbeamOptions } from "./lightbeamConfig"
-import { generateLightbeam, reachableDeviations, LIGHTBEAM_MODES, type LightbeamGate } from "./generateLightbeam"
+import { reachableDeviations, LIGHTBEAM_MODES, type LightbeamPuzzle } from "./generateLightbeam"
 import { routeIsUnique } from "./lightbeamGeometry"
 import { allPieceOptions, cellKey, isLit, pieceCells, restingState, traceBeam } from "./beam"
 import { solveLightbeamByTechniques } from "./techniques"
+import { FIXTURE, FIXTURE_SEEDS } from "./boards.fixture"
 
-const SEEDS = 12
+const SEEDS = FIXTURE_SEEDS
 
-// Memoised: a wizard board costs the better part of a second to build, and every describe below wants the same
-// ones. Without this the file spends minutes regenerating identical boards.
-const cache = new Map<string, ReturnType<typeof generateLightbeam>[]>()
-const boardsFor = (tier: (typeof difficulties)[number]) => {
-  const hit = cache.get(tier)
-  if (hit) return hit
-  const { size, ...options } = LIGHTBEAM_CONFIG[tier]
-  const built = Array.from({ length: SEEDS }, (_, seed) => generateLightbeam(size, seed + 1, options))
-  cache.set(tier, built)
-  return built
-}
-const space = (board: ReturnType<typeof generateLightbeam>) =>
-  allPieceOptions(board).reduce((product, states) => product * states.length, 1)
-const tappable = (board: ReturnType<typeof generateLightbeam>) =>
+// THE BOARDS COME FROM THE FIXTURE, not from the generator. Building them here cost 9.4s of import before
+// a single assertion ran, and a generator that searches has no runtime worth asserting anyway. What these
+// tests own is what a board has to be true of; `yarn generate-boards` makes them and
+// `lightbeamConfig.verify.ts` proves the stored ones are still what the generator returns.
+const boardsFor = (tier: (typeof difficulties)[number]) => FIXTURE[tier]
+
+const space = (board: LightbeamPuzzle) => allPieceOptions(board).reduce((product, states) => product * states.length, 1)
+const tappable = (board: LightbeamPuzzle) =>
   board.movable.filter((_, index) => restingState(board, index) === undefined).length
 
 describe.each(difficulties)("at %s", tier => {
   const boards = boardsFor(tier)
   const { techniqueCap } = LIGHTBEAM_CONFIG[tier]
-
-  it("builds every seed", () => {
-    expect(boards).toHaveLength(SEEDS)
-  })
 
   it("its answer lights the shrine and it opens dark", () => {
     for (const board of boards) {
@@ -52,12 +43,6 @@ describe.each(difficulties)("at %s", tier => {
     expect(routeIsUnique(boards[0], allPieceOptions(boards[0]))).toBe(true)
   })
 
-  // A top-tier solve enumerates tens of thousands of configurations, so this needs a real timeout rather than
-  // vitest's 5s default — the family's own Method notes warn about exactly this.
-  it("is reachable by deduction alone inside its own cap", { timeout: 300_000 }, () => {
-    for (const board of boards) expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
-  })
-
   it("carries at least the family's floor of three tappable pieces", () => {
     for (const board of boards) expect(tappable(board)).toBeGreaterThanOrEqual(3)
   })
@@ -67,29 +52,6 @@ describe.each(difficulties)("at %s", tier => {
       const canonical = LIGHTBEAM_MODES.filter(mode => board.modes.includes(mode))
       expect(board.modes).toEqual(canonical)
     }
-  })
-
-  /**
-   * The reason a board is expensive should be the board, not the search. Route-then-obstruct pays 70 to 356
-   * discarded drafts a board at the top three tiers; this construction pays a handful.
-   */
-  it("costs a handful of attempts a board, not hundreds", () => {
-    const { size, ...options } = LIGHTBEAM_CONFIG[tier]
-    let rejects = 0
-    const gates = new Map<LightbeamGate, number>()
-    for (let seed = 1; seed <= 3; seed++)
-      generateLightbeam(size, seed, {
-        ...options,
-        reject: gate => {
-          rejects++
-          gates.set(gate, (gates.get(gate) ?? 0) + 1)
-        },
-      })
-    expect(rejects / 3).toBeLessThan(10)
-    // The route builder never fails: it backtracks instead of guessing.
-    expect(gates.get("noRoute") ?? 0).toBe(0)
-    // And uniqueness is a property of the construction, not something the gate has to hunt for.
-    expect(gates.get("notUnique") ?? 0).toBeLessThanOrEqual(3)
   })
 
   void techniqueCap
@@ -201,28 +163,24 @@ describe("the constraints the table has to respect", () => {
    * that drew both gets no trap. Asserted rather than left to chance, because a trap that silently vanished
    * would leave the tier recording a mode it is not the shape of.
    */
-  it.each(["master", "wizard"] as const)(
-    "only traps on a %s board that did not draw wall-heavy",
-    { timeout: 300_000 },
-    tier => {
-      const doorSockets = LIGHTBEAM_CONFIG[tier].doorNodes ?? 1
-      let trapped = 0
-      for (const board of boardsFor(tier)) {
-        const sockets = board.nodes?.length ?? 0
-        if (board.modes.includes("switchHeavy") && !board.modes.includes("wallHeavy")) {
-          // The door's sockets, plus the trap's own one — and the winning beam fires only the door's wiring.
-          expect(sockets).toBe(doorSockets + 1)
-          expect(solveLightbeamByTechniques(board, board.techniqueCap).used.has("wiringDead")).toBe(true)
-          trapped++
-        } else if (board.modes.includes("switchHeavy")) {
-          expect(sockets).toBe(doorSockets)
-        } else {
-          expect(sockets).toBe(0)
-        }
+  it.each(["master", "wizard"] as const)("only traps on a %s board that did not draw wall-heavy", tier => {
+    const doorSockets = LIGHTBEAM_CONFIG[tier].doorNodes ?? 1
+    let trapped = 0
+    for (const board of boardsFor(tier)) {
+      const sockets = board.nodes?.length ?? 0
+      if (board.modes.includes("switchHeavy") && !board.modes.includes("wallHeavy")) {
+        // The door's sockets, plus the trap's own one. That the trap's wiring actually fires needs the
+        // ladder run over the board, so it is asserted in `lightbeamConfig.verify.ts`.
+        expect(sockets).toBe(doorSockets + 1)
+        trapped++
+      } else if (board.modes.includes("switchHeavy")) {
+        expect(sockets).toBe(doorSockets)
+      } else {
+        expect(sockets).toBe(0)
       }
-      expect(trapped).toBeGreaterThan(0)
     }
-  )
+    expect(trapped).toBeGreaterThan(0)
+  })
 
   /** Wall-heavy is where the stone is, and starter is authored to it: the first thing to learn is where the
    * light died, and the frame is the one terminator that gives the player nothing to look at. */

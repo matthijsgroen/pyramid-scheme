@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react"
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FloorGrid } from "@/game/siteTypes"
 import { CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
@@ -46,9 +46,12 @@ import { LIT_STRENGTH, litPlaceCells } from "./lighting"
  * against the art's 9). A warm-leaning near-neutral is a finite per-channel scale, and scaling red a
  * little harder than blue reads warm without the light being orange: chroma 22 on floor painted at 9.
  */
-const TORCH_CORE = "rgba(160,150,134,1)"
-const TORCH_MID = "rgba(160,150,134,0.78)"
-const TORCH_EDGE = "rgba(160,150,134,0.44)"
+export type LightFill = readonly [r: number, g: number, b: number]
+const TORCH_FILL: LightFill = [160, 150, 134]
+
+/** How the light falls off from its own source to the far end of the place it reaches — the SHAPE of the
+ * gradient, which every light on the map shares whatever colour it is. */
+const FALLOFF = [1, 0.78, 0.44] as const
 
 /** How far the falloff spans, at the least. A one-cell place — a dead end, a single chamber — has almost
  * no distance to fall off over, and a gradient sized to it alone put a vignette inside one square. Below
@@ -74,7 +77,11 @@ const TORCH_FEATHER = WALL_H / 2
  * five a second at the default step, of a layer that is a gradient fill and nothing else, and only while
  * the explorer is moving, which is already a render a frame. It is not a map-wide invalidation: the box is
  * the lit place's own bounds (see `ClipLayer`), never the floor's. */
-const torchFill = (box: { x: number; y: number; w: number; h: number }, at: readonly [number, number]) => {
+const torchFill = (
+  box: { x: number; y: number; w: number; h: number },
+  at: readonly [number, number],
+  fill: LightFill
+) => {
   const { cx, cy } = cellCenter(at[0], at[1])
   const [x, y] = [cx - box.x, cy - box.y]
   const corner = Math.max(
@@ -84,7 +91,8 @@ const torchFill = (box: { x: number; y: number; w: number; h: number }, at: read
     Math.hypot(box.w - x, box.h - y)
   )
   const reach = Math.max(corner, TORCH_MIN_REACH)
-  return `radial-gradient(circle ${reach.toFixed(1)}px at ${x.toFixed(1)}px ${y.toFixed(1)}px, ${TORCH_CORE} 0%, ${TORCH_MID} 38%, ${TORCH_EDGE} 100%)`
+  const stop = (alpha: number) => `rgba(${fill[0]},${fill[1]},${fill[2]},${alpha})`
+  return `radial-gradient(circle ${reach.toFixed(1)}px at ${x.toFixed(1)}px ${y.toFixed(1)}px, ${stop(FALLOFF[0])} 0%, ${stop(FALLOFF[1])} 38%, ${stop(FALLOFF[2])} 100%)`
 }
 
 /**
@@ -103,13 +111,15 @@ const FADE_MS = 320
 const FADE_IN = "animate-map-lit-in motion-reduce:animate-none"
 const FADE_OUT = "animate-map-lit-out motion-reduce:animate-none"
 
-const LitPlace = ({
+export const LitPlace = ({
   grid,
   claims,
   at,
   leaving = false,
   strength,
   headroom = false,
+  fill = TORCH_FILL,
+  source = "torch",
 }: {
   grid: FloorGrid
   claims: RoomClaims
@@ -117,6 +127,12 @@ const LitPlace = ({
   /** This is the place being walked OUT of: it fades away rather than up. */
   leaving?: boolean
   strength: number
+  /** What colour the light is. Firelight by default; a shaft of daylight is the same light with the
+   * blue held back less (`MapBeams`). */
+  fill?: LightFill
+  /** Which light this is. The map is read by data attribute, and a test counting the lamp must not
+   * also count the daylight. */
+  source?: "torch" | "beam"
   /** Reach a wall band's worth ABOVE every lit cell, whether or not the cell north of it is lit.
    *
    * For the pass that falls on what is STANDING. A prop is bottom-anchored in its cell and a face band
@@ -159,11 +175,12 @@ const LitPlace = ({
   const rects = rectsFor(lit, lit)
   return (
     <ClipLayer
-      data-torch={headroom ? "standing" : "lit"}
+      data-torch={source === "torch" ? (headroom ? "standing" : "lit") : undefined}
+      data-beam={source === "beam" ? (headroom ? "standing" : "lit") : undefined}
       className={leaving ? FADE_OUT : FADE_IN}
       feather={TORCH_FEATHER}
       rects={rects}
-      fill={torchFill(boundsOf(rects), at)}
+      fill={torchFill(boundsOf(rects), at, fill)}
       // The strength the keyframes fade TO, and the opacity that stands when there are none: an animation
       // is the one thing that outranks an inline style, so the same number written both ways is the
       // `motion-reduce` fallback and not a second value to keep in step.
@@ -172,6 +189,16 @@ const LitPlace = ({
     />
   )
 }
+
+/** The one blend group a pass of light is drawn in.
+ *
+ * `mix-blend-mode` makes a stacking context and forces everything under it to composite together
+ * (docs/instructions/map-rendering.md), so all the lights of a pass share one group rather than each
+ * taking its own. Two lights inside it never blend with EACH OTHER — the group composites once, against
+ * the stone. */
+export const LightGroup = ({ children }: { children: ReactNode }) => (
+  <div style={{ position: "absolute", inset: 0, mixBlendMode: "color-dodge", pointerEvents: "none" }}>{children}</div>
+)
 
 /**
  * The lit place, crossfaded as the explorer walks from one to the next.
@@ -209,7 +236,7 @@ export const LitPlaces = ({
   }, [key])
 
   return (
-    <div style={{ position: "absolute", inset: 0, mixBlendMode: "color-dodge", pointerEvents: "none" }}>
+    <LightGroup>
       {leaving && (
         <LitPlace
           key="leaving"
@@ -222,7 +249,7 @@ export const LitPlaces = ({
         />
       )}
       <LitPlace key={key} grid={grid} claims={claims} at={at} strength={strength} headroom={headroom} />
-    </div>
+    </LightGroup>
   )
 }
 

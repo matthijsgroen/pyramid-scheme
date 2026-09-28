@@ -554,11 +554,11 @@ rm -f "$LIGHT"
 # at, the map draws it lighter. The other two are solid and land where they were put. 76 darker than the
 # priest's slab before the fade, which is about 53 after it.
 yarn import-tile art/masters/surfaces/overgrown.webp --tier=default --name=overgrown --slot=growth \
-  --filter=smooth --saturation=2.6 --brightness=0.58
+  --filter=smooth --saturation=1.0 --brightness=1.0
 yarn import-tile art/masters/surfaces/overgrown-wall.webp --tier=default --name=overgrown-wall --slot=growthWall \
-  --filter=smooth --saturation=2.4 --brightness=0.85
+  --filter=smooth --saturation=1.0 --brightness=1.55
 yarn import-tile art/masters/surfaces/overgrown-plant.webp --tier=default --name=overgrown-plant --slot=growth \
-  --filter=smooth --saturation=3.2 --brightness=0.82
+  --filter=smooth --saturation=1.0 --brightness=1.12
 
 # The nobleman's FLOOR, re-rolled to the current standard: this master is a return, where the one it
 # replaces was a post-processing copy whose flags could not be recovered (art/README).
@@ -1493,15 +1493,54 @@ scaffold statue --contents=mummiform --spin=-6 --colour=#a7b2be --colour-figure=
 yarn import-tile art/masters/props/expert/sarcophagus.webp --tier=expert --name=sarcophagus --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
+# The overgrown POOL — the condition's second sprite per slot, so a floor is not overgrown with one weed.
+# Flat tiles: no mesh, no mask, the magenta keyed (docs/instructions/repaint-queue.md, "Overgrown").
+# Saturation and brightness measured against `overgrown-plant`, which is the one these stand beside:
+# it lands at p50 110 / +4 warmth, and these are solved to sit with it rather than to look good alone.
+yarn import-tile art/masters/surfaces/overgrown-palm.webp --tier=default --name=overgrown-palm --slot=canopy \
+  --filter=smooth --saturation=1.0 --brightness=1.0
+yarn import-tile art/masters/surfaces/overgrown-flowers.webp --tier=default --name=overgrown-flowers --slot=growth \
+  --filter=smooth --saturation=1.0 --brightness=1.0
+yarn import-tile art/masters/surfaces/overgrown-ferns.webp --tier=default --name=overgrown-ferns --slot=growth \
+  --filter=smooth --saturation=1.0 --brightness=1.25
+yarn import-tile art/masters/surfaces/overgrown-creeper.webp --tier=default --name=overgrown-creeper --slot=growthWall \
+  --filter=smooth --saturation=1.0 --brightness=1.25
+yarn import-tile art/masters/surfaces/overgrown-scrub.webp --tier=default --name=overgrown-scrub --slot=growth \
+  --filter=smooth --saturation=1.0 --brightness=0.92
+yarn import-tile art/masters/surfaces/overgrown-fronds.webp --tier=default --name=overgrown-fronds --slot=growth \
+  --filter=smooth --saturation=0.7 --brightness=0.95
+
+yarn import-tile art/masters/surfaces/overgrown-curtain.webp --tier=default --name=overgrown-curtain --slot=growthWall \
+  --filter=smooth --saturation=1.0 --brightness=0.92
+
+# The GROUND the overgrown family grows out of. Keyed AND masked: the magenta between the clumps becomes
+# the hole the real floor shows through, and the mask trims the patch's extent. Keying runs first.
+#
+# GRASS RATHER THAN MOSS, and it is a legibility fix rather than a preference. A mat of moss was drawn
+# first and read as OOZE — a rounded pooled shape in a dark green is what a game paints when a floor is
+# dangerous to step in, and a covering half the floor wears must never say that. Grass cannot be taken
+# for a fluid because its edge is made of blades, which is also why its mask is nearly solid where sand's
+# tapers over half its radius: the tile supplies its own edge and a taper would only soften it.
+yarn drift-mask --out="$OBJ" --seed=grass --size=504 --peak=1 --core=0.92 --lobes=5 --blur=1
+yarn import-tile art/masters/surfaces/overgrown-grass.webp --tier=default --name=overgrown-grass --slot=drift \
+  --filter=smooth --mask="$OBJ" --brightness=0.7
+
 # Conversation portraits. No render and no scaffold: a character is generated whole, on white, and the
 # import keys the white out and seats the figure on the bottom edge. The explorer's neutral and grinning
 # masters are the ORIGINAL character artwork the walking sprites were drawn from — which is why his
 # skin and his cream trousers match on the map and in a conversation.
-yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer
-yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer
-yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer
-yarn import-portrait art/masters/characters/ghost-ipi.jpeg --name=ghost-ipi
-yarn import-portrait art/masters/characters/ghost-henut.jpeg --name=ghost-henut
-yarn import-portrait art/masters/characters/ghost-priest.jpeg --name=ghost-priest
-yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-pharaoh
-yarn import-portrait art/masters/characters/ghost-other.jpeg --name=ghost-other
+#
+# --bust cuts every human waist-up so their faces read at Fez's size rather than a third of it, --holes
+# names the enclosed background no flood can reach, and --centre keeps the pointing pose's finger in
+# frame. All three are explained in docs/game-design/story/character-art-prompts.md.
+yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer --bust=0.55 \
+  --holes="574,1299;631,1503;1242,1025;646,1062;748,642"
+yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer --bust=0.55 \
+  --holes="582,1329;1243,1026;646,1061;929,599;749,642"
+yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer --bust=0.55 --centre=1065 \
+  --holes="586,1330;649,1059;753,638"
+yarn import-portrait art/masters/characters/ghost-ipi.jpeg --name=ghost-ipi --bust=0.55
+yarn import-portrait art/masters/characters/ghost-henut.jpeg --name=ghost-henut --bust=0.55
+yarn import-portrait art/masters/characters/ghost-priest.jpeg --name=ghost-priest --bust=0.55
+yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-pharaoh --bust=0.55
+yarn import-portrait art/masters/characters/ghost-other.jpeg --name=ghost-other --bust=0.55
