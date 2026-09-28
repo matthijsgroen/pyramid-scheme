@@ -1494,14 +1494,21 @@ yarn import-tile art/masters/props/expert/sarcophagus.webp --tier=expert --name=
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # The handle a player throws to open a gate elsewhere on the floor — `prim_lever`, no post, the arm alone
-# as the silhouette. `leverLeft` and `leverRight` are the same rigid body thrown to each side: the throw
-# is 36 degrees off vertical and the grip's own 20-degree cant keeps its sign in both states, which is
-# what makes this a rotation and not a mirror. Expert only, matching the drops; master and wizard wait
-# for real floors there to author levers.
-scaffold lever --contents=left --spin=10 --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/leverLeft.webp --tier=expert --name=leverLeft --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.9
+# as the silhouette. Three tiles now, not the two-tile `leverLeft`/`leverRight` pair this superseded: the
+# dome and kerb (cut in half at the track's own near wall, `leverBaseBack`/`leverBaseFront`) and the arm
+# alone, upright (`leverArm`), stacked back/arm/front and thrown at runtime by a CSS `transform: rotate()`
+# rather than baked two ways. Expert only, matching the drops; master and wizard wait for real floors
+# there to author levers.
+scaffold lever --contents=base --colour=#a7b2be --floor=#8d98a5
+yarn render-prop --primitive=lever --contents=baseBack --shadow=0 --background=none \
+  --colour=#a7b2be --floor=#8d98a5 --out="$HOME/tile-previews/leverBaseBack-expert-obj.png"
+yarn render-prop --primitive=lever --contents=baseFront --shadow=0 --background=none \
+  --colour=#a7b2be --floor=#8d98a5 --out="$HOME/tile-previews/leverBaseFront-expert-obj.png"
+yarn import-tile art/masters/props/expert/leverBase.webp --tier=expert --name=leverBaseBack --slot=prop \
+  --filter=smooth --mask="$HOME/tile-previews/leverBaseBack-expert-obj.png" --seat="$SHADOW" --brightness=0.9 --no-trim
+yarn import-tile art/masters/props/expert/leverBase.webp --tier=expert --name=leverBaseFront --slot=prop \
+  --filter=smooth --mask="$HOME/tile-previews/leverBaseFront-expert-obj.png" --brightness=0.9 --no-trim
 
-scaffold lever --contents=right --spin=10 --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/leverRight.webp --tier=expert --name=leverRight --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.9
+scaffold lever --contents=arm --shadow=0 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/leverArm.webp --tier=expert --name=leverArm --slot=prop \
+  --filter=smooth --mask="$OBJ" --brightness=0.9 --no-trim
