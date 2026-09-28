@@ -833,3 +833,156 @@ generalisation has to account for assembler-owned children.
 
 Section hashes carry one parent index rather than a path, so touching them moves every hash in the
 world. **Free under this release's save reset**, but say so out loud if you rely on it.
+
+---
+
+# Session handover — step 5 built, and gates are the one thing left
+
+The work queue at the top of this document is EMPTY: all eight items done, reviewed and pushed. Then
+step 5 — the container — went from "needs a design session" to three slices built and a fourth in
+flight. `feat/switch-fork` is now ~250 commits, open as draft PR #311.
+
+**Gate at handover:** `yarn test` 3714, `check-types` clean, `lint` 0 errors / 17 warnings (the
+budget), `betterer` unchanged, `generate-world` **`f67c3ea9303b04a1d7c9a558d0561620`**,
+`INCLUDE_DEV=1 validate-world` valid with `Stair sweep: 111` and `Lock sweep: walked 8 of 8`.
+
+**The world fingerprint moved once, deliberately:** `8b610d0e…` → `f67c3ea9…`. The diff is 222
+`stairId` strings and `worldContentHash`, nothing else. Free under this release's save reset and a
+full reset after it, which is why the id work was done now rather than later.
+
+## What step 5 is now
+
+`docs/game-design/regions-and-containers.md` is the design. Four things the owner ruled that the
+roadmap did not answer:
+
+- **A region declares an APPETITE and nothing else** — `reward | puzzles | nothing | free`, one
+  exhaustively-checked union meant to grow. `nothing` is a promise the region stays empty; `free` is
+  indifference. They are different instructions and must not be collapsed.
+- **A region is a STRETCH of the carve, not an area set aside.** The main path threads the region
+  graph and may cross several; a side path belongs to the region it grows from. The builder shapes
+  those stretches however it sees fit, and the acceptance rule is that **every puzzle node and chest
+  node is accounted for**.
+- **Composition is authored OUTSIDE the container.** A region may hold floor content or another
+  container, decided where the container is placed — so one `doubleBack` serves the version with a
+  puzzle in its left branch and the version without, instead of two authored variants.
+- **Addresses do not change.** A region is not part of a cell's address; save keys do not move. This
+  was the question with a before-release deadline and it is closed.
+
+Built across `src/game/regions.ts`, `FloorConfig.regionLayout`, the DSL, the serializer and the carve:
+the region graph and its three questions; authoring with four named refusals; the route the main path
+threads and the labelling of every carved cell; and a refusal for content standing where an appetite
+will not take it.
+
+## Gates are the only thing between here and `doubleBack`
+
+Six of the eight rows in this document's own "what `doubleBack` needs" table are done. Two remain, and
+they are the same slice:
+
+- **A gate whose two ends are both named regions.** `SubSection.gate` hangs off ONE section.
+- **Branches that rejoin WHILE gated.** `edgeAllowed` drops any rejoin where either end is gated —
+  measured 411 ungated rejoin links against 0 sealed. `doubleBack` needs both at once.
+
+**A third gap, found this session and not in that table:** a handle authors `in: <section address>`
+and the assembler checks it against `knownSectionAddresses`, but `doubleBack`'s mechanisms name
+REGIONS (`transitions: [{ …, at: "s1Chamber" }]`). Mechanisms must be able to point at a region, and
+that is the piece that lets a lever stand *in* one.
+
+**THE DECISION THE NEXT SESSION NEEDS FROM THE OWNER, before planning that slice:** a connection gate
+has two ends where today's gate has one — is it key-owned (reusing `GateConfig`) or mechanism-owned?
+§5 says every gate has an owner and `checkLockSpec` refuses one without, which points at
+mechanism-owned with floor-key gates staying on sections as today. That is inferable but it is the
+load-bearing decision of the whole slice, and it was deliberately not invented here.
+
+Also still owed by that slice: `doorsToEnter` and fog restore, which bite only once a connection
+carries a gate.
+
+## Carried forward, all recorded where they will be found
+
+- **A region OFF the route is seated by nothing.** Measured: `mouth—hall—vault` plus `hall—sideVault`
+  carves with `sideVault` never used and the reward in a region the author did not name. The in-flight
+  fix broadens the refusal to every declared region, which refuses every branching layout — correct
+  until the path-SHAPING work lands, and the refusal then stops firing on its own.
+- **The builder does not yet GROW anything.** Lengthening a path or hanging a side path to satisfy an
+  appetite is unbuilt; slice 3 labels what the carve already produces and refuses what disagrees.
+- **`fitContent` and `mainPathRegions` have no production caller** — deferred, not dead. The assembler
+  answers "does this fit" AFTER the carve because that is when it knows where content landed;
+  `fitContent` answers from counts BEFORE one, which is what a shaping pass needs. Whichever slice
+  builds shaping owns reconciling them.
+- **Three degenerate layouts nothing refuses** — a self-loop connection, a duplicated connection, an
+  empty-string region name. A duplicated connection may be legitimate (two passages), so refusing on
+  speculation would be the builder deciding.
+- **Per-position marks are parked on PLAYTEST EVIDENCE, not rejected.** `markFor(n)` still derives a
+  mark from the handle's ordinal, so inserting a handle reshuffles glyphs — that defect is independent
+  and still live.
+
+## THE ART SECTION ABOVE IS WRONG — corrected here
+
+This document says `expert/dropEast` is "painted and imported". **It is not.** `yarn repaint` still
+owes all five keys — `dropEast`, `dropNorth`, `dropSouth`, `leverLeft`, `leverRight` — and that is
+corroborated three ways: no `lever*` or `drop*` file anywhere in the repo, no master under
+`art/masters/`, and no line for either in `art/rebuild.sh`, which is where a finished tile records what
+it needed. Entries are deleted as they land, and none has.
+
+The most likely reading is that `dropEast` was painted and never imported, which is the same state the
+levers are in. The masters may be in `~/Downloads` as this document says; that folder holds a couple of
+hundred PNGs and guessing which is not the next session's job. **The art loop is the owner's.**
+
+## What this session learned about its own method
+
+- **A guard nobody watched fail is not a guard.** Every check added this session was proved by breaking
+  the thing it guards and watching it go red. Three shipped defects were found that way, including a
+  refusal that could never fire.
+- **Measuring beat reasoning every time it was tried.** The dev bench's goal room lands in `hall`, not
+  `vault` — the plan and the implementer both assumed otherwise. A fixture sat exactly on a boundary
+  because a step count was carried over from a different floor config. A refusal was decided by carve
+  attempt 0 on a quantity later attempts grow, so it refused layouts its own recovery would have seated.
+  None of that was visible from reading.
+- **Five times a test in a plan asserted a REPRESENTATIVE element rather than every one**, and all five
+  were caught by review rather than by an implementer. If you write plans for this codebase, assert the
+  whole collection.
+- **`git commit -- <paths> -m "msg"` is invalid** — `--` swallows the `-m`. It was in three plans and
+  silently worked around four times before anyone said so. Use `git commit -m "msg" -- <paths>`.
+- **`yarn lint --fix <path>` does NOT scope.** The script is `eslint . --max-warnings 17`, so a path is
+  appended to `.` and it rewrites the repo. Use `yarn eslint <paths>`.
+- **Concurrent implementers in one worktree will commit each other's staged work.** It happened once,
+  swept 15 unrelated files into the wrong commit, and was recoverable only because the branch was
+  unpushed. Forbid `git add`/`git commit`/`git stash` in every implementer brief and commit
+  path-scoped from the controlling session.
+
+## Exactly where slice 4 stands
+
+Four unpushed commits on `feat/switch-fork`, head `03d13739`. Working tree carries only this document.
+
+`53467476` refuse a route the path cannot seat · `3677620b` a generated floor's cells carry their
+regions · `a40f6a66` name every unseated region in route order · `03d13739` the final review's four
+findings.
+
+**A scoped re-review of `03d13739` was in flight when this session ended.** It covers a rename
+(`routeOutrunsPath` → `regionNotSeated`), a broadened check, and a change to how the carve's attempt
+loop reports a shortfall. If its verdict is not in the ledger, re-run it over
+`a40f6a66..03d13739` before pushing — the change is small but it touches the attempt loop, which is
+not a place to land an unreviewed fix. `.superpowers/sdd/regions-slice-4-plan/` holds the briefs,
+reports and diffs; delete it once the slice is closed.
+
+**The finding worth carrying:** the refusal used to return from carve attempt 0, but `mainPath.length`
+GROWS across the 60 attempts — packing widens at 8/16/24 and recovery pins it to the ceiling. Measured:
+the original 12-region fixture started carving once `continue` let packing widen (path 9→11→16, all 12
+seated by attempt 16), so that test had been proving a refusal that should not have happened. The
+fixture is now 60 regions, chosen after measuring this floor's path ceiling at 31 during recovery.
+**Any test that pins a refusal on a path length is pinned to a moving quantity** — measure the ceiling,
+do not guess the margin.
+
+## If you pick this up
+
+1. **Get the gates ruling from the owner** (key-owned or mechanism-owned connection gate). Nothing in
+   the gates slice can be planned honestly without it.
+2. **Close slice 4** — re-review verdict, then push. `git push origin feat/switch-fork`; the branch is
+   the whole topology slice and the owner keeps it on one branch, which PR #311 tracks.
+3. **Correct the art section** of this document if the owner wants it — the entries above it are wrong
+   and the correction is recorded in this handover rather than applied in place, because the art loop
+   is the owner's and a stale claim there is theirs to clear.
+
+The plans are `docs/instructions/regions-slice-{1,2,3,4}-plan.md`, each with a "carried" section naming
+what the next slice inherits. That mechanism worked: slice 1 carried a refusal into slice 2 and slice 2
+built it; slice 2 carried a note about the dev bench "describing a floor that does not exist" and slice
+3's carve proved it. Keep using it.
