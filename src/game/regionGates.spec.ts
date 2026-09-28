@@ -323,7 +323,10 @@ const bigTwoGatesFloor = (): FloorConfig => ({
 // smaller one alike. That is a limitation of reading a boundary off a corridor's `region` tag, not of
 // the carve, and it cannot be dodged by seed choice. Checking vault alone still proves the guard this
 // test exists for: a rejoin crossing hall's {gA} into vault's {gA,gB} can only ever surface as an
-// extra vault entrance, which this would catch.
+// extra vault entrance, which this would catch. Seed 6 is one of the 44 clean ones, and — like seed 4
+// above — it is pinned because it demonstrably leaks under broken code, not because it happened to be
+// green: with `crossesNoDoor` forced to `return true`, `waysIn(grid, "vault")` gains "12,2" alongside
+// the gate room at "12,0".
 const PINNED_SEED_TWO_GATES = 6
 
 describe("two gated regions in sequence", () => {
