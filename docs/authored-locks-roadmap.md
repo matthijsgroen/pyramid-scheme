@@ -174,6 +174,32 @@ putting content inside regions: a lock with rooms baked in can be placed exactly
 the master and wizard conversion additive — add a lock, keep the content authoring already there —
 which is what "a floor can be converted when someone gets to it rather than all at once" requires.
 
+#### Nesting belongs to a region, not to a side section
+
+Decided 2026-09-28. A default floor gets no nested side sections, and `sideSections` stays two levels
+deep — one level of side path, one level of sub-path. That is the whole of it.
+
+**Where richer structure is wanted it is authored as a REGION**, for the reason this step already gives
+for everything else: a region is the reusable container, and a container with its content baked in can
+be placed exactly once. `doubleBack` is the case in point — it is meant to be placed again.
+
+A flat register of sections, each naming its parent, was considered and NOT taken. It is the better
+model for a named graph with cycles, which is exactly what regions are — so that shape belongs to the
+region pass, and duplicating it one layer down in `sideSections` would be building the same thing
+twice. `sideSections` stay a two-level tree of per-floor content inside whichever region holds them.
+
+Four things follow, recorded so nobody retires them as untidy:
+
+- **The two-level type is a true statement**, not a lie the casts work around. `SubSection` carries no
+  `sideSections` because a sub-section has none.
+- **The cast in `childSectionsOf` (`siteAssembler.ts`) is the seam** between an unbounded DSL and a
+  two-level model, and `serializer.ts` makes the matching one. Deleting them would remove the marker
+  without removing the disagreement.
+- **`sectionTooDeep` now catches a LAYER mistake**: depth authored into `sideSections` that belongs in a
+  region. That is a better guard than the one it was built as, and it is refused by name before a carve.
+- **`POSITIONAL_ADDRESS`'s single dot is correct**, and so is `boardIndex.ts`'s two-level `chainsOf`.
+  Both would be wrong the moment `sideSections` went deeper, and neither should be widened speculatively.
+
 #### `startsOpen` is struck
 
 A gate stands open if and only if its owner's initial state opens it, which a binary lever already
