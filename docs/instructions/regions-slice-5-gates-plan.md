@@ -1534,6 +1534,18 @@ Assert that a lever room renders THREE sprites in the depth order above, that th
 
 The arm sprite is layered between the two halves of the mound, its `transform-origin` is the pivot the scaffold defines (`50% 76.6%`, which sits inside the mound rather than at its crown), and its rotation is the state's angle. All three sprites share one frame to the pixel, so they stack at the same origin with no per-tile offset — if you find yourself computing one, the frame has been lost and the import dropped `--no-trim`. Where the angle comes from is the one design decision this task owns: a binary handle's two sides are ±36°, and an N-state control has no such convention. **Derive it from the control's state list rather than hardcoding two cases** — the states are ordered, so an index into them maps onto the throw. Say in a comment what the mapping is and why.
 
+- [ ] **Step 2b: A NAIVE `rotate()` IS NOT THE TRUE SWING — measure it**
+
+Measured while the art was built: rotating the upright arm tile by the throw angle puts the shaft **30-50 pixels of 448** away from where the real 3D-rotated shaft lands, growing with distance from the pivot.
+
+The cause is the projection's vertical scale. The shaft lives at `y=0`, where screen `x` is world `x` and screen `y` is world `z` times some scale `s`. A rotation composed with an ANISOTROPIC scale is not the same as that scale composed with a rotation, so `rotate(θ)` on the already-projected tile is only exact when `s = 1`, and here it is not.
+
+**The fix to try first is to undo the scale, rotate, and put it back** — `transform: scaleY(1/s) rotate(θ) scaleY(s)` about the pivot, which CSS composes natively. Derive `s` from the scaffold's own projection (`renderProp.py`'s shear `k` and `add_camera`'s framing) rather than fitting it by eye.
+
+**Verify against the 3D reference, not against your own arithmetic.** `prim_lever` can render the shaft at a true swing angle (that is what `--contents=left`/`right` are). Render the true ±36° geometry, composite your transformed arm tile over it, and measure the offset at the crown row. Report the pixel error before and after your correction. If the corrected error is not clearly smaller than 30-50px, say so rather than shipping a transform that only looks plausible.
+
+**If the residual error is small enough to be invisible at tile size, say that and move on** — this is a fidelity question with a measurable answer, not a reason to abandon the runtime rotation. The tile is 56 units wide on a map; the honest test is whether the arm's end still meets the track's end.
+
 - [ ] **Step 3: The transition**
 
 `transition: transform <duration> ease` on the arm, nothing else. Respect `prefers-reduced-motion`: the arm still moves to the right angle, it just gets there instantly.
