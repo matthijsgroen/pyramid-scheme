@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
+import { crossesNoDoor, doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
 import type { Control, Obstacle } from "./obstacles"
 import type { RegionGraph } from "./regions"
 
@@ -104,7 +104,7 @@ describe("authored topology that does not resolve", () => {
       [lever("s1", { left: ["g1"], right: [] }), { ...lever("s1", { left: [], right: ["g1"] }), id: "s1" }]
     )
 
-    expect(faults).toContainEqual({ type: "controlUnsatisfied", id: "s1", what: "s1" })
+    expect(faults).toEqual([{ type: "controlUnsatisfied", id: "s1", what: "s1" }])
   })
 
   it("names a control standing in no region of the layout", () => {
@@ -227,5 +227,34 @@ describe("the doors a region stands behind", () => {
     const doors = doorsToEnterRegion(layout, [gate("g1", ["hall", "vault"])])
 
     expect([...doors.keys()].sort()).toEqual(["cellar", "hall", "mouth", "vault"])
+  })
+})
+
+describe("an edge that crosses no door", () => {
+  const behind = (...ids: string[]) => new Set(ids)
+
+  it("allows two cells in front of every door", () => {
+    expect(crossesNoDoor(behind(), behind())).toBe(true)
+  })
+
+  it("allows two cells behind the same one door", () => {
+    expect(crossesNoDoor(behind("g1"), behind("g1"))).toBe(true)
+  })
+
+  it("allows two cells behind the same two doors, named in either order", () => {
+    expect(crossesNoDoor(behind("g1", "g2"), behind("g2", "g1"))).toBe(true)
+  })
+
+  it("refuses an edge from open ground into a gated region", () => {
+    expect(crossesNoDoor(behind(), behind("g1"))).toBe(false)
+    expect(crossesNoDoor(behind("g1"), behind())).toBe(false)
+  })
+
+  it("refuses an edge that skips the second of two doors", () => {
+    expect(crossesNoDoor(behind("g1"), behind("g1", "g2"))).toBe(false)
+  })
+
+  it("refuses an edge between two regions behind different doors, being past one earning nothing toward the other", () => {
+    expect(crossesNoDoor(behind("g1"), behind("g2"))).toBe(false)
   })
 })

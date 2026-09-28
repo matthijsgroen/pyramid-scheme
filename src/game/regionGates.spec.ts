@@ -42,6 +42,27 @@ const gatedFloor = (): FloorConfig => ({
   ],
 })
 
+// Two gates in sequence on the same three-region layout: gA on mouth—hall, gB on hall—vault, one
+// control opening either or both. Module-scoped because both the three-state control test and the
+// two-gated-regions test below need this exact two-obstacle shape.
+const twoGatesFloor = (): FloorConfig => ({
+  ...gatedFloor(),
+  obstacles: [
+    { id: "gA", kind: "gate", at: { on: "connection", between: ["mouth", "hall"] } },
+    { id: "gB", kind: "gate", at: { on: "connection", between: ["hall", "vault"] } },
+  ],
+  controls: [
+    {
+      id: "w1",
+      in: "mouth",
+      states: ["n", "e", "s"],
+      initial: "n",
+      returnsToInitial: true,
+      opens: { n: ["gA"], e: ["gB"], s: ["gA", "gB"] },
+    },
+  ],
+})
+
 const carve = (config: FloorConfig): FloorGrid => {
   const result = assembleFloor("test-journey", config, SEED)
   if (!result.success) throw new Error(`did not carve: ${JSON.stringify(result.reasons)}`)
@@ -134,26 +155,8 @@ describe("a control standing in a region", () => {
 // THREE STATES, not two: the authoring is generic, and a wheel is the case this proves is already
 // carried — it needs art, not a second authoring path.
 describe("a control with more than two states", () => {
-  const threeWay = (): FloorConfig => ({
-    ...gatedFloor(),
-    obstacles: [
-      { id: "gA", kind: "gate", at: { on: "connection", between: ["mouth", "hall"] } },
-      { id: "gB", kind: "gate", at: { on: "connection", between: ["hall", "vault"] } },
-    ],
-    controls: [
-      {
-        id: "w1",
-        in: "mouth",
-        states: ["n", "e", "s"],
-        initial: "n",
-        returnsToInitial: true,
-        opens: { n: ["gA"], e: ["gB"], s: ["gA", "gB"] },
-      },
-    ],
-  })
-
   it("carries all three states and every position each one opens", () => {
-    const grid = carve(threeWay())
+    const grid = carve(twoGatesFloor())
     const mechanism = rooms(grid).find(room => room.mechanism !== undefined)!.mechanism!
     const keyA = "obstacle:test-journey#0#0:gA"
     const keyB = "obstacle:test-journey#0#0:gB"
@@ -230,6 +233,16 @@ const waysIn = (grid: FloorGrid, region: string): string[] => {
   return found
 }
 
+/** The "r,c" of the room wearing `requiredKeyId`. */
+const cellAt = (grid: FloorGrid, requiredKeyId: string): string => {
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type === "room" && cell.requiredKeyId === requiredKeyId) return `${r},${c}`
+    }
+  throw new Error(`no room wearing requiredKeyId ${requiredKeyId}`)
+}
+
 // `gatedFloor()` (2 path puzzles, 1 side section) cannot exercise this guard: at any seed it touches
 // the rest of the maze at exactly one physical point regardless of whether the isolation registration
 // runs, so a passing test here proves nothing — the same small floor still passes with the
@@ -280,5 +293,45 @@ describe("what a gated region shuts off", () => {
     const gateAt = grid.cells.flatMap((row, r) => row.map((cell, c) => (cell === gate ? `${r},${c}` : null)))
 
     expect(waysIn(grid, "vault")).toEqual(gateAt.filter((a): a is string => a !== null))
+  })
+})
+
+// mouth—hall gated by gA, hall—vault gated by gB: hall stands behind {gA}, vault behind {gA,gB}.
+// Different sets, so no leftover edge may join them. `twoGatesFloor()` is too small to exercise this
+// (same reason as `gatedFloor()` above: at any seed it touches the rest of the maze at exactly one
+// physical point), so this borrows `bigGatedFloor()`'s two extra gates instead.
+const bigTwoGatesFloor = (): FloorConfig => ({
+  ...bigGatedFloor(),
+  obstacles: [
+    { id: "gA", kind: "gate", at: { on: "connection", between: ["mouth", "hall"] } },
+    { id: "gB", kind: "gate", at: { on: "connection", between: ["hall", "vault"] } },
+  ],
+  controls: [
+    {
+      id: "w1",
+      in: "mouth",
+      states: ["n", "e", "s"],
+      initial: "n",
+      returnsToInitial: true,
+      opens: { n: ["gA"], e: ["gB"], s: ["gA", "gB"] },
+    },
+  ],
+})
+// hall sits between two gates, so ONE of its two boundary connectors always reads as "hall" under
+// `waysIn`'s own "whichever endpoint sorts lower" convention (see the comment above bigGatedFloor) —
+// swept seeds 0-99: vault clean 44/100, hall clean 0/100, in this fixture and in `twoGatesFloor()`'s
+// smaller one alike. That is a limitation of reading a boundary off a corridor's `region` tag, not of
+// the carve, and it cannot be dodged by seed choice. Checking vault alone still proves the guard this
+// test exists for: a rejoin crossing hall's {gA} into vault's {gA,gB} can only ever surface as an
+// extra vault entrance, which this would catch.
+const PINNED_SEED_TWO_GATES = 6
+
+describe("two gated regions in sequence", () => {
+  it("gives the far region exactly one way in, and it is its own gate room", () => {
+    const result = assembleFloor("test-journey", bigTwoGatesFloor(), PINNED_SEED_TWO_GATES)
+    if (!result.success) throw new Error(`did not carve: ${JSON.stringify(result.reasons)}`)
+    const grid = result.grid
+
+    expect(waysIn(grid, "vault")).toEqual([cellAt(grid, "obstacle:test-journey#0#0:gB")])
   })
 })

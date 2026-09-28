@@ -21,7 +21,7 @@ import type {
 import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
 import { appetiteAccepts, regionOfStep, regionRoute, strandedRegions } from "./regions"
 import type { ContentKind } from "./regions"
-import { doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
+import { crossesNoDoor, doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
 import { cellSlot } from "./cellSlot"
 import { stairIdAt } from "./stairAddress"
 import { footprintSize } from "./roomFootprint"
@@ -1682,7 +1682,8 @@ export const assembleFloor = (
     const edgeAllowed = (r: number, c: number, nr: number, nc: number): boolean => {
       if (!passages.has(pkey(r, c, nr, nc))) return false
       if (intendedEdgeKeys.has(pkey(r, c, nr, nc))) return true
-      return !gatedCellKeys.has(posKey(r, c)) && !gatedCellKeys.has(posKey(nr, nc))
+      if (!gatedCellKeys.has(posKey(r, c)) && !gatedCellKeys.has(posKey(nr, nc))) return true
+      return crossesNoDoor(standsBehind(posKey(r, c)), standsBehind(posKey(nr, nc)))
     }
 
     // Which tier each cell's own section was authored at, so a passage into a pocket of another

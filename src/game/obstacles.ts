@@ -187,3 +187,18 @@ export const seamIndexFor = (stepRegion: readonly string[], between: readonly [s
   }
   return undefined
 }
+
+/**
+ * WHETHER STEPPING BETWEEN TWO CELLS PASSES A DOOR — the question `edgeAllowed` asks of a leftover
+ * maze edge, which is a bypass only where it SKIPS one.
+ *
+ * Two cells standing behind the same doors are two cells the player already moves between having
+ * earned the same things, so an edge joining them opens nothing that was shut. That is exactly what a
+ * region is: ground walked freely. An edge between different sets is still refused, including two
+ * DIFFERENT doors — being past one earns nothing toward another.
+ */
+export const crossesNoDoor = (behindA: ReadonlySet<string>, behindB: ReadonlySet<string>): boolean => {
+  if (behindA.size !== behindB.size) return false
+  for (const door of behindA) if (!behindB.has(door)) return false
+  return true
+}
