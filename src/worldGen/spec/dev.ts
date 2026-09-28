@@ -55,7 +55,28 @@ const devSite = (pyramid: number, difficulty: Difficulty): Rule =>
 
 export const devRules: Rule[] = [
   // 1 — the switch. The only built feature: a board in the fork decides which way out opens.
-  devSite(1, "junior"),
+  journey(DEV_JOURNEY_ID).pyramid(1, {
+    difficulty: "junior",
+    pathPuzzles: 0,
+    sideSections: branches(),
+    forks: FORKS,
+    switches: SWITCHES,
+    // The first authored region layout. It shapes no walls yet — the carve is a later slice — so this
+    // stands here to prove a layout survives authoring, serialization and the builder's refusals.
+    regionLayout: {
+      regions: [
+        { name: "mouth", appetite: "nothing" },
+        { name: "hall", appetite: "puzzles" },
+        { name: "vault", appetite: "reward" },
+      ],
+      connections: [
+        ["mouth", "hall"],
+        ["hall", "vault"],
+      ],
+      in: "mouth",
+      out: "vault",
+    },
+  }),
   // 2 — sequenceLock. Waiting for the family that only opens once its rooms are met in order.
   devSite(2, "junior"),
   // 3 — the one-way drop. The ledge's own way on is a fall into the sink, and the sink has no way

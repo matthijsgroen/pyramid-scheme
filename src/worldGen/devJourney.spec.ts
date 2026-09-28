@@ -244,6 +244,28 @@ describe("what the dev journey authors", () => {
     expect(floor.sideSections.map(section => section.label)).toEqual(expect.arrayContaining(["ledge", "sink"]))
   })
 
+  // The only proof the field survives buildConfigs -> buildSite at all: Task 2's DSL test would
+  // pass even if the builder dropped regionLayout on the floor, since it only checks the constraint
+  // is authorable. Asserted whole (every region with its appetite, every connection, both ports) so
+  // a builder that carries only part of the layout still fails here.
+  it("stands a layout on the topology bench, carried through world generation", () => {
+    const floor = withDev[DEV_JOURNEY_ID][0][0]
+
+    expect(floor.regionLayout).toEqual({
+      regions: [
+        { name: "mouth", appetite: "nothing" },
+        { name: "hall", appetite: "puzzles" },
+        { name: "vault", appetite: "reward" },
+      ],
+      connections: [
+        ["mouth", "hall"],
+        ["hall", "vault"],
+      ],
+      in: "mouth",
+      out: "vault",
+    })
+  })
+
   it("stands a lever on pyramid 7, with a door on each side so throwing it swaps them", () => {
     const pyramid7 = withDev[DEV_JOURNEY_ID][6]
     expect(pyramid7).toHaveLength(1)
