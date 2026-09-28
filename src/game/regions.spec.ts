@@ -163,11 +163,14 @@ describe("fitting a floor's content to what its regions will take", () => {
     expect(fitContent(g, { rewards: 0, puzzleRooms: 1 })).toEqual({ fits: false, unplaced: "puzzle" })
   })
 
-  it("spends a free region only once the region that asked for the kind is full", () => {
+  // A named region is tried before a free one. Reversing the order would let the reward spend the
+  // free region, leaving the puzzle with nowhere to go — so this discriminates the two orders.
+  it("gives the reward to the region that asked for it, leaving the free region for the puzzle", () => {
     const g = withAppetites(["in", "free"], ["vault", "reward"], ["out", "nothing"])
-    const result = fitContent(g, { rewards: 2, puzzleRooms: 0 })
+    const result = fitContent(g, { rewards: 1, puzzleRooms: 1 })
 
+    expect(result.fits).toBe(true)
     expect(result.fits && result.placed.get("vault")).toEqual(["reward"])
-    expect(result.fits && result.placed.get("in")).toEqual(["reward"])
+    expect(result.fits && result.placed.get("in")).toEqual(["puzzle"])
   })
 })

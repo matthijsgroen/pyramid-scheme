@@ -113,14 +113,30 @@ export const strandedRegions = (graph: RegionGraph): string[] => {
   return graph.regions.filter(({ name }) => !arrived.has(name)).map(({ name }) => name)
 }
 
-/** What a floor has to place. The floor authors these counts; the regions say only what kind they take. */
+/** How many of each kind the floor authors. The regions say only what kind they take, not how many. */
 export type FloorDemand = { rewards: number; puzzleRooms: number }
 
 /** How many of one kind a region will hold: a named appetite takes its own, `free` takes one of
  * anything, and `puzzles` is the one that takes a chain of them. */
 const capacityFor = (appetite: RegionAppetite, kind: ContentKind): number => {
   if (!appetiteAccepts(appetite, kind)) return 0
-  return appetite === "puzzles" ? Number.POSITIVE_INFINITY : 1
+  switch (appetite) {
+    case "puzzles":
+      return Number.POSITIVE_INFINITY
+    case "reward":
+    case "free":
+      return 1
+    case "nothing":
+      // Unreachable: appetiteAccepts("nothing", kind) is always false, so the early return above
+      // already handled this case.
+      return 0
+    default: {
+      // An appetite with no case above would silently get a capacity of 1, the builder deciding
+      // quietly. This makes it a compile error instead.
+      const unhandled: never = appetite
+      return unhandled
+    }
+  }
 }
 
 /**
