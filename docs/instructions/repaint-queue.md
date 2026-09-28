@@ -2791,7 +2791,7 @@ yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dr
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 ```
 
-## The handle, split — expert, two tiles
+## The handle, split — expert, one painting, three tiles
 
 `expert/leverLeft` and `expert/leverRight` shipped as one rigid object baked two ways: the whole lever,
 thrown left or thrown right, painted twice. That is now the wrong shape for the job. The two paintings
@@ -2800,49 +2800,90 @@ drift — their domes do not quite match — and the game wants to swing the arm
 sitting at two fixed throws. A baked pair cannot do that; a flat sprite rotated in the DOM can, provided
 the thing being rotated is drawn ALONE, upright, with nothing else riding on the same layer.
 
-So the lever becomes TWO tiles instead of two paintings: `expert/leverBase` is the dome and the kerb,
-motionless, carrying the seated shadow; `expert/leverArm` is the shaft, the ferrule and the grip, upright,
-carrying no shadow of its own. The renderer stacks them — base in front, arm behind — and turns the arm's
-layer about one fixed point for whichever way that floor's lever is thrown, and again as the player throws
-it. `prim_lever` in `scripts/renderProp.py` grew `--contents=base` and `--contents=arm` for exactly this;
-`left` and `right` are unchanged and still render byte-identical to what is already imported.
+So the arm becomes its own tile, `expert/leverArm`: the shaft, the ferrule and the grip, upright, carrying
+no shadow of its own. `prim_lever` in `scripts/renderProp.py` grew `--contents=arm` for it; `left` and
+`right` are unchanged and still render byte-identical to what is already imported.
 
-**Both renders share ONE camera frame, which is the whole point.** `add_camera` frames every render from
-its own object's vertex bounds, and `base` and `arm` share no visible geometry to hold that frame steady
-between them — unlike `prim_jarrack`'s `--contents=none`, whose frame stays in the picture on every
-variant. `prim_lever` instead plants two loose, invisible vertices (`bound_marker`) at the same corners in
-both: the kerb's own radius in x and y, the upright grip's own reach in z. Nothing rasterises a vertex with
-no face, so neither render shows them, but `seat_and_normalise` and `add_camera` read bounds off vertices
-alone and are pinned identically either way. Measured off the actual renders, both report the identical
-drawn box — `0.63 x 1.44, aspect 2.29` — to three decimals, whichever `--contents` is asked for.
+**The dome cannot simply sit wholly in front of it, or wholly behind — and the first cut of this split did
+exactly that and was wrong.** Measured off the base's own render: the dome's painted area spans roughly
+62%-89% down the frame, and the shaft's root sits at ~74% — INSIDE that span, not below it. A single base
+tile stacked entirely in front of the arm hides the root correctly but ALSO hides the stretch of shaft that
+should be visible rising out through the dome's own upper, far side; stacked entirely behind, it hides
+nothing at all. Either way the arm reads as a stick balanced on a bell rather than a lever planted in a
+mound — the exact failure `prim_lever`'s own docstring already records fighting once, in the first build.
+
+**The fix is a THIRD layer, cut from the SAME two: `expert/leverBase` is still painted once, and it is now
+imported TWICE, as `leverBaseBack` and `leverBaseFront`.** `prim_lever` grew `--contents=baseBack` and
+`--contents=baseFront`, the dome and kerb cut at y=0 — the plane the shaft turns about (`turn`'s own
+rotation axis, and where the root sits at every throw) — back half and front half. **This is a MASK
+split, not a second painting**: both halves are built from the identical mesh `base` is, `bisect_plane`
+cuts it in two AFTER the one prompt has already been painted, and `import-tile` runs twice over the SAME
+master file with the two different masks. One dome painted once cannot disagree with itself about light or
+palette; two dome HALVES painted separately would reintroduce exactly the drift this whole split exists to
+remove. **Do not turn this into two prompts** — there is still exactly one painting, `leverBase.webp`.
+
+**The map stacks three sprites in depth order: `leverBaseBack`, then `leverArm`, then `leverBaseFront`.**
+The far side of the mound goes behind the arm, the near side stays in front of it, and the arm's own shaft
+— which never has any depth of its own (it is built at y=0, on the cut plane exactly) — is correctly behind
+whichever part of the dome is nearer the camera and in front of whichever part is farther, which a single
+base layer could never be. Verified by compositing the actual renders with the halves tinted apart (blue
+back, red front, green arm, to see through the shared palette): the shaft crosses visibly over the back
+half near the crown at every angle checked (0°, +36°, −36°) and only disappears once it reaches the front
+half, rather than appearing to start there.
+
+**The seated shadow belongs to `leverBaseBack`; `leverBaseFront` takes no `--seat`, the same rule
+`leverArm` already follows** — a footprint on the layer nearest the camera would sit in front of the object
+casting it. The shadow itself is still rendered from the WHOLE object (`--contents=base --only=shadow`,
+the same `$SHADOW` the paint prompt's own scaffold call produces): the kerb's full ring touches the floor,
+and a shadow cast by only the back half would be half a footprint.
+
+**`baseBack` and `baseFront` exist to produce MASKS, never a picture anyone looks at**, so they only ever
+need rendering `--shadow=0 --background=none` — no scaffold preview, no attachment, no prompt of their own.
+
+**Reassembly is the honest test, and it passes exactly.** `baseBack`'s and `baseFront`'s masks, unioned,
+reproduce `base`'s own mask to the pixel — 0 pixels differ, out of 39,425 opaque in `base`'s mask — because
+`bisect_plane` inserts the y=0 seam as real geometry into BOTH halves before clearing one side, where a
+plain vertex-coordinate delete would have dropped every face straddling the cut from both results and left
+a gap neither half covers.
+
+**All four contents share ONE camera frame, which is what lets one `transform-origin` mean the same point
+in `leverArm`, `leverBaseBack` and `leverBaseFront` alike.** `add_camera` frames every render from its own
+object's vertex bounds, and none of the four share visible geometry to hold that frame steady between them
+— unlike `prim_jarrack`'s `--contents=none`, whose frame stays in the picture on every variant. `prim_lever`
+instead plants two loose, invisible vertices (`bound_marker`) at the same corners in every one of them: the
+kerb's own radius in x and y, the upright grip's own reach in z. Nothing rasterises a vertex with no face,
+so no render shows them, but `seat_and_normalise` and `add_camera` read bounds off vertices alone and are
+pinned identically regardless. Measured off the actual renders, all four report the identical drawn box —
+`0.63 x 1.44, aspect 2.29` — to three decimals, whichever `--contents` is asked for.
 
 **The pivot — where the shaft disappears into the mound — sits at 50% across, 76.6% down the frame
 (`transform-origin: 50% 76.6%`)**, measured by carrying the shaft's own root point `(x=0, y=0, z=0.07)`
-through `seat_and_normalise`, the shear (`k=0.7`) and `add_camera`'s framing by hand and confirmed by
-compositing the two renders and rotating the arm layer ±36° about it: the shaft's foot stayed inside the
-dome's silhouette at both extremes, with nothing floating clear of it. This is the CSS `transform-origin`
-for the arm layer, once both tiles are imported at the same size and stacked at `(0, 0)`.
+through `seat_and_normalise`, the shear (`k=0.7`) and `add_camera`'s framing by hand, and confirmed by the
+tinted composite above: the shaft's foot stayed inside the front half's silhouette at ±36°, with nothing
+floating clear of it. This is the CSS `transform-origin` for the arm layer, once all three tiles are
+imported at the same size and stacked at `(0, 0)`.
 
-**Both scaffold commands must agree on `--shear`, `--sun`, `--margin`, `--width` and `--height` — left at
-their defaults, which is what the recipes below do — or the shared frame stops being shared.** `--sun`
-matters even though only `base` casts a shadow: `add_camera`'s frame reserves room for one at `k * sun`
-regardless of `--shadow`, so the two renders still have to ask for the same `--sun` to get the same room.
-**Neither takes a `--spin`.** `left`/`right` took one for variety on the floor; that variety now comes
-from the runtime swing itself, and a baked floor turn would carry `bound_marker`'s square envelope into a
-bigger axis-aligned box in one render and not the other unless spun identically — one more number to keep
-in lockstep for no picture bought.
+**Every render must agree on `--shear`, `--sun`, `--margin`, `--width` and `--height` — left at their
+defaults, which is what the recipes below do — or the shared frame stops being shared.** `--sun` matters
+even on renders that cast nothing: `add_camera`'s frame reserves room for a shadow at `k * sun` regardless
+of `--shadow`, so every render still has to ask for the same `--sun` to get the same room. **None of them
+take a `--spin`.** `left`/`right` took one for variety on the floor; that variety now comes from the
+runtime swing itself, and a baked floor turn would carry `bound_marker`'s square envelope into a bigger
+axis-aligned box in one render and not the others unless spun identically — one more number to keep in
+lockstep for no picture bought.
 
-**`leverArm` is imported `--no-trim`, and that is what makes any of the above survive to the tile.**
-`import-tile` normally trims a prop to the object's own alpha and re-seats it on the floor line — exactly
-the step that would throw the shared frame away and crop each tile to its own silhouette independently.
-`--no-trim` keeps the frame as rendered and just resizes it to the slot, so the pivot computed above lands
-at the same fraction of the stored PNG that it does in the Blender render. `leverBase` takes it too, for
-the same reason and so both tiles are the same size to the pixel.
+**`leverArm`, `leverBaseBack` and `leverBaseFront` are all imported `--no-trim`, and that is what makes any
+of the above survive to the tile.** `import-tile` normally trims a prop to the object's own alpha and
+re-seats it on the floor line — exactly the step that would throw the shared frame away and crop each tile
+to its own silhouette independently. `--no-trim` keeps the frame as rendered and just resizes it to the
+slot, so the pivot computed above lands at the same fraction of the stored PNG that it does in the Blender
+render, and all three tiles are the same size to the pixel.
 
 **`leverLeft` and `leverRight` are SUPERSEDED ON ARRIVAL, not deleted now.** Their masters, their tiles and
-their `art/rebuild.sh` lines all stay exactly as they are until `leverBase` and `leverArm` have both landed
-and the map has been wired to composite and rotate them; only then do the old pair and their rebuild line
-come out.
+their `art/rebuild.sh` lines all stay exactly as they are until `leverBaseBack`, `leverArm` and
+`leverBaseFront` have all landed and the map has been wired to stack and rotate them; only then do the old
+pair and their rebuild line come out. There is no `leverBase` tile in the final set at all — `leverBase` is
+the MASTER file the one prompt paints, never imported under its own name.
 
 **Expert only**, matching the drops and matching the pair this replaces. Master and wizard are where the
 56 floor-key gates live and they are queued when real floors there author levers, not before.
@@ -2851,7 +2892,13 @@ come out.
 are disarmed with a tool; a lever is not. So both prompts say outright that nothing about it is sharp or
 sprung, and the palette stays stone, timber and bronze with no red anywhere.
 
-### `expert/leverBase` — the dome and the kerb alone
+### `expert/leverBase` — the dome and the kerb alone, painted ONCE, imported TWICE
+
+One prompt, one painting, one master (`leverBase.webp`) — but no tile of this name ships. What lands is
+the dome cut in half at the plane the arm turns about, `leverBaseBack` and `leverBaseFront`, both cut from
+this same master by mask alone (see the section header above for why a second prompt would reintroduce
+the drift the whole split exists to remove). Do not add a third prompt or a third attachment for the
+halves: they are two extra `render-prop` mask passes and a second `import-tile` call, nothing else.
 
 **Attach:**
 
@@ -2886,12 +2933,28 @@ No ground plane and no background: the object stands alone on the magenta. The p
 Then, once the return is in `~/Downloads`:
 
 ```sh
+# The one painting. $OBJ and $SHADOW are the whole object's own mask and footprint — the footprint is
+# what leverBaseBack seats on below, because the kerb's full ring is what actually touches the floor.
 scaffold lever --contents=base --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/leverBase.webp --tier=expert --name=leverBase --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.9 --no-trim
+
+# Two mask-only passes off the SAME mesh, cut at y=0 — no scaffold, no attachment, no prompt: these are
+# never seen, only their alpha is used.
+yarn render-prop --primitive=lever --contents=baseBack --shadow=0 --background=none \
+  --colour=#a7b2be --floor=#8d98a5 --out=~/tile-previews/leverBaseBack-expert-obj.png
+yarn render-prop --primitive=lever --contents=baseFront --shadow=0 --background=none \
+  --colour=#a7b2be --floor=#8d98a5 --out=~/tile-previews/leverBaseFront-expert-obj.png
+
+# One import per half, both against the SAME return. The seat is the whole object's footprint, under the
+# back half only; the front half takes none, the same rule leverArm follows.
+yarn import-tile art/masters/props/expert/leverBase.webp --tier=expert --name=leverBaseBack --slot=prop \
+  --filter=smooth --mask=~/tile-previews/leverBaseBack-expert-obj.png --seat="$SHADOW" --brightness=0.9 --no-trim
+yarn import-tile art/masters/props/expert/leverBase.webp --tier=expert --name=leverBaseFront --slot=prop \
+  --filter=smooth --mask=~/tile-previews/leverBaseFront-expert-obj.png --brightness=0.9 --no-trim
 ```
 
 ### `expert/leverArm` — the shaft, ferrule and grip alone, upright
+
+Stacked BETWEEN the two halves above: `leverBaseBack`, then this, then `leverBaseFront`.
 
 **Attach:**
 

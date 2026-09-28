@@ -1822,38 +1822,58 @@ def prim_lever():
 
     SEAT IT NORMALLY — this stands on the floor and its footprint is a real one.
 
-    `--contents=base` AND `--contents=arm` ARE A SECOND PAIR, drawn from the same body but never joined:
-    the dome and the kerb alone, and the shaft, ferrule and grip alone, standing UPRIGHT (swing=0, the
-    cant kept at its usual +20). The swing that used to be baked into `left`/`right` is now applied at
-    RUNTIME, by a CSS `transform: rotate()` on the arm layer alone — so the map only ever needs the one
-    upright arm, thrown either way in the browser about a pivot both tiles agree on.
+    `--contents=base`, `--contents=baseBack`, `--contents=baseFront` AND `--contents=arm` ARE A SECOND
+    BODY, drawn the same way but never joined into one tile: the dome and the kerb — whole, or cut in
+    half at the plane the arm turns about — and the shaft, ferrule and grip alone, standing UPRIGHT
+    (swing=0, the cant kept at its usual +20). The swing that used to be baked into `left`/`right` is now
+    applied at RUNTIME, by a CSS `transform: rotate()` on the arm layer alone — so the map only ever
+    needs the one upright arm, thrown either way in the browser about a pivot every tile agrees on.
+    `base` itself is what gets PAINTED; `baseBack` and `baseFront` are cut from that same paint at import
+    (see below) and are what the map actually stacks.
 
-    THE TWO RENDERS SHARE ONE CAMERA FRAME, which is what lets a single `transform-origin` mean the same
-    point in both. `add_camera` frames every render from its own object's vertex bounds alone, and `base`
-    and `arm` share no geometry to hold that frame steady by construction (`prim_jarrack`'s trick needs a
-    frame that stays in the picture; here neither tile may show the other's parts at all) — so
-    `bound_marker` plants the same two invisible corners in both, sized to the kerb's own radius in x and
-    y and to the upright grip's own reach in z, and neither visible part ever draws past them.
+    ALL FOUR RENDERS SHARE ONE CAMERA FRAME, which is what lets a single `transform-origin` mean the same
+    point in every one of them. `add_camera` frames every render from its own object's vertex bounds
+    alone, and these share no geometry to hold that frame steady by construction (`prim_jarrack`'s trick
+    needs a frame that stays in the picture; here no tile may show another's parts at all) — so
+    `bound_marker` plants the same two invisible corners in each, sized to the kerb's own radius in x and
+    y and to the upright grip's own reach in z, and no visible part of any of them ever draws past.
 
-    THE ARM LAYERS BEHIND THE BASE. The dome has to hide the shaft's buried foot at every angle the CSS
-    ever turns it to, which a z-order can do for free and a mask cannot — the shaft is drawn whole, root
-    to grip, and it is the DOME that covers what a real lever buries.
+    THE ARM DOES NOT SIMPLY LAYER BEHIND THE BASE — the dome has to hide the shaft's buried foot at every
+    angle the CSS ever turns it to, and a single base tile put wholly behind or wholly in front cannot: the
+    root sits inside the mound's own painted area (measured on the first `base` render: the dome spans
+    roughly 62%-89% down the frame, the root at ~74%), so behind the WHOLE base the near lip of the mound
+    can never cross in front of the shaft, and the shaft reads as balanced on the crown — the exact
+    failure this docstring already records fighting once, in the first build's post. `--contents=baseBack`
+    and `--contents=baseFront` cut the SAME dome and kerb at y=0 — the plane `turn` rotates the arm about,
+    where the arm's own root always sits — so the far side of the mound can go BEHIND the arm and the near
+    side stays IN FRONT of it: back, arm, front, three layers where a real lever has a near lip crossing
+    the shaft at every throw.
+
+    THESE ARE MASKS, NOT A SECOND PAINTING. `base` is still painted once — `baseBack` and `baseFront` cut
+    that one master's silhouette in two at import, through two extra Blender render passes that only ever
+    need `--shadow=0 --background=none`, never a repaint of their own. One dome painted once cannot
+    disagree with itself about light or palette; two dome HALVES painted separately would reintroduce
+    exactly the drift this whole split exists to remove.
+
+    THE SEATED SHADOW BELONGS TO `baseBack`, the layer everything else stands on; `baseFront` casts
+    nothing, the same rule `arm` already follows and for the same reason — a footprint on a layer that
+    sits in front of the object it shadows would float.
 
     THE ARM CASTS NOTHING. A shadow that swung with the CSS rotation would be wrong the instant the lever
     moved, so `arm` is rendered `--shadow=0` and takes no `--seat` at import; the seated shadow belongs to
-    `base`, which never moves.
+    `baseBack`, which never moves.
 
-    NO `--spin` ON EITHER. `left`/`right` took one for variety on the floor, but that variety now comes
-    from the runtime swing itself, and a baked floor turn would rotate `bound_marker`'s square envelope
-    into a bigger axis-aligned box in one render and not the other unless spun identically — one more
-    number to keep in lockstep for no picture bought. Left at 0, the shared frame is exact and needs no
-    matching flag."""
+    NO `--spin` ON ANY OF THEM. `left`/`right` took one for variety on the floor, but that variety now
+    comes from the runtime swing itself, and a baked floor turn would rotate `bound_marker`'s square
+    envelope into a bigger axis-aligned box in one render and not the others unless spun identically — one
+    more number to keep in lockstep for no picture bought. Left at 0, the shared frame is exact across all
+    four contents and needs no matching flag."""
     contents = arg("contents", "right")
     dome_r, dome_h = 0.22, 0.17
     shaft_len, root_z = 0.56, 0.07
     grip_len = 0.26
 
-    if contents in ("base", "arm"):
+    if contents in ("base", "arm", "baseBack", "baseFront"):
         cant_deg = 20.0  # upright: swing=0, so cant = swing + 20 is just the +20
         cant = math.radians(cant_deg)
         tip_z = root_z + shaft_len  # the shaft's own tip; tip_x is 0, upright
@@ -1870,9 +1890,9 @@ def prim_lever():
         # let the grip draw past an envelope sized only for the kerb.
         env_r = max(kerb_r, grip_cx + grip_hx, grip_hx - grip_cx)
         env_top = grip_cz + grip_hz  # the grip's own top, upright — taller than the dome by construction
-        bound_marker((-env_r, -env_r, -0.01), (env_r, env_r, env_top))
 
         if contents == "arm":
+            bound_marker((-env_r, -env_r, -0.01), (env_r, env_r, env_top))
             mark(box(0.075, 0.075, shaft_len, z=root_z + shaft_len / 2), "timber")
             # The same ferrule as `left`/`right`, upright: swing=0 so ux=0, uz=1, and `turn`'s rotation
             # is a no-op here — built with `box` directly rather than through `turn` for that reason.
@@ -1885,6 +1905,42 @@ def prim_lever():
         # the floor like a dropped bowl; with it, it is bedded INTO it — and it is the one part that keeps
         # the object's widest point at ground level, which is what a thing driven into a floor looks like.
         mark(cone(dome_r + 0.05, dome_r + 0.01, 0.045, z=0.022, verts=20), "body")
+        # Joined here, on its own, so a `baseBack`/`baseFront` bisect below cuts only the dome and the
+        # kerb — never `bound_marker`'s pair, which is added after and must survive whole into BOTH
+        # halves so all four contents share one camera frame.
+        dome_obj = join_all()
+
+        if contents in ("baseBack", "baseFront"):
+            # `base` is painted ONCE, against the union of these two, and imported TWICE — one paint, two
+            # masks — so the arm can be composited BETWEEN them: the mound's far side, then the arm, then
+            # its near side, which is what puts the near lip in front of the arm's foot instead of the
+            # arm appearing to start at the crown (`prim_lever`'s own first build, fought again).
+            #
+            # Cut at y=0 — the plane `turn`'s own rotation axis passes through, which is also where every
+            # swing keeps the arm's root (x=0, y=0): the plane the arm turns ABOUT rather than through.
+            # `bisect_plane` on the merged mesh, not a vertex-threshold delete: a delete-by-coordinate
+            # removes any face that touches the boundary from BOTH halves (a face's vertices split across
+            # the cut has one vertex missing from EACH half), leaving a gap neither half covers. Bisecting
+            # inserts the seam as new geometry first, so both halves keep an intact edge at y=0 and their
+            # union reproduces `base` exactly — measured below.
+            bm = bmesh.new()
+            bm.from_mesh(dome_obj.data)
+            bmesh.ops.bisect_plane(
+                bm,
+                geom=bm.verts[:] + bm.edges[:] + bm.faces[:],
+                plane_co=(0, 0, 0),
+                plane_no=(0, 1, 0),
+                # `clear_outer` empties the side `plane_no` points AWAY from the plane toward — measured
+                # against a bare sphere before trusting it: `clear_outer=True` here left y in [-1, 0].
+                # Y is depth, away from the viewer positive (this file's own axis note), so that is the
+                # NEAR half — `baseFront`.
+                clear_outer=contents == "baseFront",
+                clear_inner=contents == "baseBack",
+            )
+            bm.to_mesh(dome_obj.data)
+            bm.free()
+
+        bound_marker((-env_r, -env_r, -0.01), (env_r, env_r, env_top))
         return join_all()
 
     left = contents == "left"
