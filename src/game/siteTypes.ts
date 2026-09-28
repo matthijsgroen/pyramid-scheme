@@ -451,14 +451,16 @@ export type FloorConfig = {
    * (a door it could neither open nor close) — each is refused by name before a wall is carved. */
   handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
   /**
-   * THE FLOOR'S COARSE LAYOUT: named regions, what joins them, and the two ports it is entered and
-   * left through (docs/game-design/regions-and-containers.md).
+   * THE FLOOR'S AUTHORED REGION LAYOUT: named regions, what joins them, and the two ports it is
+   * entered and left through (docs/game-design/regions-and-containers.md). Not to be confused with
+   * `AssemblerReason`'s `layoutNotFound`, which means the carve found no MAZE layout at this seed —
+   * an unrelated, later-stage failure that shares no field with this one.
    *
    * A region declares only an APPETITE — what it will take — and never what fills it. Typed as
    * `RegionGraph` rather than restated here, so the shape has one definition and the vocabulary can
    * grow in one place.
    */
-  layout?: RegionGraph
+  regionLayout?: RegionGraph
   /** A SWITCH: an encounter standing in one of the junctions `forks` reserved, closing that
    * junction's free ways out so that what the player meets there decides which one opens.
    * Family/tag(s) like `encounter`. At least `min` and at most `max` of the reserved junctions get

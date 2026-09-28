@@ -129,7 +129,7 @@ const floorFieldEmitters: {
   forks: v => (v.length ? `forks: [${v.map(serializeObject).join(", ")}]` : null),
   oneWays: v => (v.length ? `oneWays: [${v.map(serializeObject).join(", ")}]` : null),
   handles: v => (v.length ? `handles: [${v.map(serializeObject).join(", ")}]` : null),
-  layout: v => `layout: ${serializeRegionGraph(v)}`,
+  regionLayout: v => `regionLayout: ${serializeRegionGraph(v)}`,
   switches: v => `switches: ${serializeObject(v)}`,
 }
 

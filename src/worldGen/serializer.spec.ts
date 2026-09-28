@@ -144,7 +144,7 @@ describe("generateFile — an authored layout survives the bake", () => {
       end: "treasure" as const,
       exitOrStaircase: "exit" as const,
       sideSections: [],
-      layout: {
+      regionLayout: {
         regions: [
           { name: "mouth", appetite: "nothing" as const },
           { name: "vault", appetite: "reward" as const },
