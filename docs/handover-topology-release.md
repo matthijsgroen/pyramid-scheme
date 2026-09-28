@@ -957,12 +957,12 @@ Four unpushed commits on `feat/switch-fork`, head `03d13739`. Working tree carri
 regions · `a40f6a66` name every unseated region in route order · `03d13739` the final review's four
 findings.
 
-**A scoped re-review of `03d13739` was in flight when this session ended.** It covers a rename
-(`routeOutrunsPath` → `regionNotSeated`), a broadened check, and a change to how the carve's attempt
-loop reports a shortfall. If its verdict is not in the ledger, re-run it over
-`a40f6a66..03d13739` before pushing — the change is small but it touches the attempt loop, which is
-not a place to land an unreviewed fix. `.superpowers/sdd/regions-slice-4-plan/` holds the briefs,
-reports and diffs; delete it once the slice is closed.
+**SLICE 4 IS CLOSED AND PUSHED.** The scoped re-review of `03d13739` returned all four findings
+ADDRESSED with no new breakage: the broadened check catches both causes, both refusals now `continue`
+and report after the attempt budget in the same shape as `oneWayShortfall`, and the exact-set assertion
+replaced the subset one. The re-reviewer also measured the new fixture's margin — the main-path ceiling
+is 31 nodes (`mainPathCells` 5 x `distanceFor(1)`), so 60 regions is about twice the ceiling and no
+attempt-loop widening can seat it.
 
 **The finding worth carrying:** the refusal used to return from carve attempt 0, but `mainPath.length`
 GROWS across the 60 attempts — packing widens at 8/16/24 and recovery pins it to the ceiling. Measured:
