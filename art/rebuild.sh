@@ -1492,3 +1492,16 @@ yarn import-tile art/masters/props/junior/statue-thoth.webp --tier=junior --name
 scaffold statue --contents=mummiform --spin=-6 --colour=#a7b2be --colour-figure=#6f6459 --floor=#8d98a5
 yarn import-tile art/masters/props/expert/sarcophagus.webp --tier=expert --name=sarcophagus --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
+# The handle a player throws to open a gate elsewhere on the floor — `prim_lever`, no post, the arm alone
+# as the silhouette. `leverLeft` and `leverRight` are the same rigid body thrown to each side: the throw
+# is 36 degrees off vertical and the grip's own 20-degree cant keeps its sign in both states, which is
+# what makes this a rotation and not a mirror. Expert only, matching the drops; master and wizard wait
+# for real floors there to author levers.
+scaffold lever --contents=left --spin=10 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/leverLeft.webp --tier=expert --name=leverLeft --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.9
+
+scaffold lever --contents=right --spin=10 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/leverRight.webp --tier=expert --name=leverRight --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.9
