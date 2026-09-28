@@ -1,5 +1,6 @@
 import type { Mark } from "./mark"
 import type { ContentKind, RegionGraph } from "./regions"
+import type { Control, Obstacle } from "./obstacles"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
@@ -469,6 +470,13 @@ export type FloorConfig = {
    * grow in one place.
    */
   regionLayout?: RegionGraph
+  /** WHAT STANDS BETWEEN THE FLOOR'S REGIONS, and what decides whether it does — the topology mod's,
+   * pointing at core's `regionLayout` by region name (src/game/obstacles.ts). An obstacle is named
+   * once here and referred to by id; a control names which obstacles each of its states opens. Both
+   * drop when the mod is not registered, and the identical walls then carve with every connection
+   * open. */
+  obstacles?: Obstacle[]
+  controls?: Control[]
   /** A SWITCH: an encounter standing in one of the junctions `forks` reserved, closing that
    * junction's free ways out so that what the player meets there decides which one opens.
    * Family/tag(s) like `encounter`. At least `min` and at most `max` of the reserved junctions get
@@ -577,6 +585,14 @@ export type AssemblerReason =
    * promised nothing, a reward where it asked for puzzles. The floor's content and its layout disagree,
    * and which is wrong is the author's to say. See FloorConfig.regionLayout. */
   | { type: "regionWillNotTake"; region: string; kind: ContentKind }
+  /** An authored obstacle or control does not resolve against the floor's region layout — the id that
+   * failed is named, because the author needs to know which one. See src/game/obstacles.ts's
+   * TopologyFault, whose members these are. */
+  | { type: "obstacleIdRepeated"; id: string }
+  | { type: "obstacleNamesNoConnection"; id: string }
+  | { type: "obstacleOffRoute"; id: string }
+  | { type: "obstacleUnowned"; id: string }
+  | { type: "controlUnsatisfied"; id: string; what: string }
   /** A declared region that never got a cell, for either of two reasons: the route the main path
    * threads has more regions than the path has steps, so the regions at its far end are never reached;
    * or a region is reachable in the region graph but never lies on the shortest in→out walk at all, so

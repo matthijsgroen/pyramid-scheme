@@ -163,3 +163,49 @@ describe("a region no attempt seats", () => {
     expect(reason && "regions" in reason ? reason.regions : []).toEqual(["sideVault"])
   })
 })
+
+describe("authored topology the floor cannot carry", () => {
+  const gated = (obstacles: FloorConfig["obstacles"], controls: FloorConfig["controls"]): FloorConfig => ({
+    ...floor(threeRegions),
+    obstacles,
+    controls,
+  })
+
+  const reasonsOf = (config: FloorConfig) => {
+    const result = assembleFloor("test-journey", config, SEED)
+    return result.success ? [] : result.reasons
+  }
+
+  it("refuses an obstacle on a connection the layout does not have", () => {
+    expect(
+      reasonsOf(
+        gated(
+          [{ id: "g1", kind: "gate", at: { on: "connection", between: ["mouth", "vault"] } }],
+          [{ id: "s1", in: "mouth", states: ["a", "b"], initial: "a", returnsToInitial: true, opens: { a: ["g1"] } }]
+        )
+      )
+    ).toEqual([{ type: "obstacleNamesNoConnection", id: "g1" }])
+  })
+
+  it("refuses an obstacle nothing opens", () => {
+    expect(
+      reasonsOf(
+        gated(
+          [{ id: "g1", kind: "gate", at: { on: "connection", between: ["hall", "vault"] } }],
+          [{ id: "s1", in: "mouth", states: ["a", "b"], initial: "a", returnsToInitial: true, opens: { a: [] } }]
+        )
+      )
+    ).toEqual([{ type: "obstacleUnowned", id: "g1" }])
+  })
+
+  it("refuses a control standing in no region", () => {
+    expect(
+      reasonsOf(
+        gated(
+          [{ id: "g1", kind: "gate", at: { on: "connection", between: ["hall", "vault"] } }],
+          [{ id: "s1", in: "attic", states: ["a", "b"], initial: "a", returnsToInitial: true, opens: { a: ["g1"] } }]
+        )
+      )
+    ).toEqual([{ type: "controlUnsatisfied", id: "s1", what: "attic" }])
+  })
+})

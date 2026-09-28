@@ -21,6 +21,7 @@ import type {
 import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
 import { appetiteAccepts, regionOfStep, regionRoute, strandedRegions } from "./regions"
 import type { ContentKind } from "./regions"
+import { topologyFaults } from "./obstacles"
 import { cellSlot } from "./cellSlot"
 import { stairIdAt } from "./stairAddress"
 import { footprintSize } from "./roomFootprint"
@@ -681,6 +682,13 @@ export const assembleFloor = (
     if (stranded.length > 0)
       return { success: false, reasons: stranded.map(name => ({ type: "regionUnreachable" as const, name })) }
   }
+
+  // REFUSED BEFORE A WALL IS CARVED, like the region checks above and for the same reason: which
+  // regions exist, what joins them and which route the main path threads are all fixed by the config,
+  // so a misnamed id is answered once here rather than blamed on sixty carves that could never have
+  // satisfied it.
+  const topologyProblems = topologyFaults(regionLayout, authoredConfig.obstacles ?? [], authoredConfig.controls ?? [])
+  if (topologyProblems.length > 0) return { success: false, reasons: topologyProblems }
 
   // An authored one-way naming a section this floor does not have is the same kind of mistake: which
   // sections exist is fixed by the config, not by the seed, so a misnamed end is refused once here
