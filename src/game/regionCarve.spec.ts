@@ -114,9 +114,10 @@ describe("a route the main path cannot seat", () => {
   // authored — but a floor that seats content in regions the author never named is the builder
   // deciding quietly, which is the one thing it may not do.
   it("refuses a route with more regions than the path has steps, naming the ones left unseated", () => {
-    // `floor()`'s own main path (pathPuzzles: 2, no lever) carves to 9 steps at this SEED and
-    // every other seed measured — a chain nine long lands exactly on it rather than past it, so
-    // the chain runs one region longer, to ten, to actually outrun the path rather than fit it.
+    // `floor()`'s own main path (pathPuzzles: 2, no lever) carves to 9 steps at this SEED and every
+    // other seed measured — so a route of 12 regions (`a`..`l`) seats the first 9 (`a`..`i`) and
+    // leaves exactly `j`, `k`, `l` unseated. The next person to widen or narrow `floor()`'s main path
+    // changes what this test depends on, not just a number here.
     const tooManyRegions = {
       regions: [
         { name: "a", appetite: "free" as const },
@@ -129,6 +130,8 @@ describe("a route the main path cannot seat", () => {
         { name: "h", appetite: "free" as const },
         { name: "i", appetite: "free" as const },
         { name: "j", appetite: "free" as const },
+        { name: "k", appetite: "free" as const },
+        { name: "l", appetite: "free" as const },
       ],
       connections: [
         ["a", "b"] as const,
@@ -140,18 +143,20 @@ describe("a route the main path cannot seat", () => {
         ["g", "h"] as const,
         ["h", "i"] as const,
         ["i", "j"] as const,
+        ["j", "k"] as const,
+        ["k", "l"] as const,
       ],
       in: "a",
-      out: "j",
+      out: "l",
     }
     const result = assembleFloor("test-journey", floor(tooManyRegions), SEED)
 
     expect(result.success).toBe(false)
     const reason = result.success ? undefined : result.reasons.find(r => r.type === "routeOutrunsPath")
     expect(reason).toBeDefined()
-    // Every unseated region, not just the first — an author fixing one at a time is the builder
-    // handing back one problem when it can see them all.
-    expect(reason && "regions" in reason ? reason.regions.length : 0).toBeGreaterThan(0)
+    // Every unseated region, in route order, not just one of them — an author fixing one at a
+    // time is the builder handing back one problem when it can see them all.
+    expect(reason && "regions" in reason ? reason.regions : []).toEqual(["j", "k", "l"])
   })
 
   it("carves a route the path can seat", () => {
