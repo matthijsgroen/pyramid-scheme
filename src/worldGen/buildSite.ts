@@ -96,6 +96,7 @@ export type BuildFloorOptions = {
   forks?: FloorConfig["forks"]
   oneWays?: FloorConfig["oneWays"]
   handles?: FloorConfig["handles"]
+  regionLayout?: FloorConfig["regionLayout"]
   switches?: FloorConfig["switches"]
   corridorStraightness?: number
   packing?: number
@@ -135,6 +136,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.forks ? { forks: opts.forks } : {}),
   ...(opts.oneWays ? { oneWays: opts.oneWays } : {}),
   ...(opts.handles ? { handles: opts.handles } : {}),
+  ...(opts.regionLayout ? { regionLayout: opts.regionLayout } : {}),
   ...(opts.switches ? { switches: opts.switches } : {}),
 })
 
@@ -279,6 +281,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           forks: fc.forks ?? constraint.forks,
           oneWays: fc.oneWays ?? constraint.oneWays,
           handles: fc.handles ?? constraint.handles,
+          regionLayout: fc.regionLayout ?? constraint.regionLayout,
           switches: fc.switches ?? constraint.switches,
           corridorStraightness: floorStraightness,
           packing: floorPacking,
@@ -331,6 +334,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             forks: constraint.forks,
             oneWays: constraint.oneWays,
             handles: constraint.handles,
+            regionLayout: constraint.regionLayout,
             switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
@@ -383,6 +387,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           forks: constraint.forks,
           oneWays: constraint.oneWays,
           handles: constraint.handles,
+          regionLayout: constraint.regionLayout,
           switches: constraint.switches,
           encounterArgs: constraint.encounterArgs,
           theme: constraint.theme,
@@ -472,6 +477,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             forks: constraint.forks,
             oneWays: constraint.oneWays,
             handles: constraint.handles,
+            regionLayout: constraint.regionLayout,
             switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
@@ -545,6 +551,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     forks: constraint.forks,
     oneWays: constraint.oneWays,
     handles: constraint.handles,
+    regionLayout: constraint.regionLayout,
     switches: constraint.switches,
     encounterArgs: constraint.encounterArgs,
     theme: constraint.theme,

@@ -1,5 +1,6 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
 import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
+import type { RegionGraph } from "../game/regions"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { wardKeyDifficulty } from "../data/difficultyLevels"
 
@@ -179,6 +180,8 @@ export type FloorConstraint<TExtra extends string = never> = {
    * stands on, so a position kept from an earlier layout cannot come to fit a door it was never
    * thrown for. */
   handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
+  /** The coarse layout this floor's regions are named in — see game/regions.ts's RegionGraph. */
+  regionLayout?: RegionGraph
   /** A SWITCH: `encounter` stands in a junction `forks` reserved and closes its free ways out, so the
    * player stands in the fork and what is in it decides which way opens. Between `min` and `max` of
    * the reserved junctions get one, and a `min` past what `forks` reserves fails the build.
@@ -308,6 +311,9 @@ export type PyramidConstraint = {
   /** The levers every floor of this site stands, unless a floor names its own — see
    * FloorConstraint.handles. */
   handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
+  /** The layout every floor of this site carries, unless a floor names its own — see
+   * FloorConstraint.regionLayout. */
+  regionLayout?: RegionGraph
   /** The switch every floor of this site stands in the junctions `forks` reserved, unless a floor
    * names its own — see FloorConstraint.switches. */
   switches?: { encounter: string | string[]; min: number; max: number }

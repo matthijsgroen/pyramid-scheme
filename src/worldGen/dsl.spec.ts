@@ -283,3 +283,31 @@ describe("wardPath / wardChest / wardWing difficulty auto-derive", () => {
     expect(wardWing({ tomb: "junior_treasure_tomb", index: 0, tier: "wizard" }).difficulty).toBe("wizard")
   })
 })
+
+// ── Authored region layout (regions-and-containers slice 2) ──────────────────
+
+describe("regionLayout constraint", () => {
+  it("carries an authored layout onto the floor it was authored for", () => {
+    const layout = {
+      regions: [
+        { name: "mouth", appetite: "nothing" as const },
+        { name: "vault", appetite: "reward" as const },
+      ],
+      connections: [["mouth", "vault"] as const],
+      in: "mouth",
+      out: "vault",
+    }
+
+    const rule = tier("starter").set({ regionLayout: layout })
+
+    // Assert the whole layout survived, not a representative field: both regions with their
+    // own appetite, the connection between them, and both ports.
+    expect(rule.constraints.regionLayout).toEqual(layout)
+    expect(rule.constraints.regionLayout!.regions).toHaveLength(2)
+    expect(rule.constraints.regionLayout!.regions[0]).toEqual({ name: "mouth", appetite: "nothing" })
+    expect(rule.constraints.regionLayout!.regions[1]).toEqual({ name: "vault", appetite: "reward" })
+    expect(rule.constraints.regionLayout!.connections).toEqual([["mouth", "vault"]])
+    expect(rule.constraints.regionLayout!.in).toBe("mouth")
+    expect(rule.constraints.regionLayout!.out).toBe("vault")
+  })
+})
