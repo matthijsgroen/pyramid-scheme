@@ -295,6 +295,27 @@ is reachable? A gate that never matters is decoration, and it is what a bypassin
 outside. Optional — a pointless puzzle is the author's to own — but it is the only thing that would
 tell them.
 
+#### Settled 2026-09-28 — the design is `docs/game-design/regions-and-containers.md`
+
+The four questions below are answered there, and step 5 is plannable rather than open:
+
+- **A region declares an APPETITE and nothing else** — `reward | puzzles | nothing | free`, one
+  exhaustively-checked union meant to grow. `nothing` is a promise the region stays empty; `free` is
+  indifference. The floor authors counts; the builder matches.
+- **Main path is DERIVED**, never authored: a region is main-path if its container's `out` port cannot
+  be reached without entering it. Two levels, because a floor composes containers.
+- **Addresses do not change.** A region is not part of a cell's address. This was the question with the
+  before-release deadline; it is closed.
+- **Composition is authored OUTSIDE the container.** A region may hold floor content or another
+  container, decided where the container is placed. One `doubleBack` then serves the version with a
+  puzzle in its left branch and the version without, instead of two authored variants.
+- **A sound container collapses to a passable region in its host's walk**, which is why a container is
+  verified between its own ports — a floor walking the PRODUCT of three composed locks is what would
+  hit `lockWalk`'s `tooLarge` ceiling.
+
+Still parked, and named there: `lockWalk` cannot express "may not OCCUPY this region", which is
+`waterline`'s problem rather than `doubleBack`'s.
+
 #### Still to settle before this can be planned
 
 - **DOES A REGION BECOME PART OF THE ADDRESS? This one has a deadline.** A floor's addresses now read
