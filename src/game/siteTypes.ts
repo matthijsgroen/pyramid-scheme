@@ -553,6 +553,18 @@ export type AssemblerReason =
    * second handle drives too. Which sections exist and what each already carries is fixed by the config, so this is
    * answered once rather than blamed on carves that could never have satisfied it. */
   | { type: "handleUnsatisfied"; handle: number; address: string }
+  /** Two regions of one layout answer to the same name, so nothing could tell which one a connection,
+   * a port or a piece of content meant. See FloorConfig.regionLayout. */
+  | { type: "regionNameRepeated"; name: string }
+  /** A connection names a region the layout never declares. It would carry the route without ever
+   * being a place, so a region the walk must pass through could read as neither main path nor
+   * stranded. See FloorConfig.regionLayout. */
+  | { type: "connectionNamesNoRegion"; name: string }
+  /** A layout's port names a region it does not have, so the floor has no way in or no way out. */
+  | { type: "portNamesNoRegion"; port: "in" | "out"; name: string }
+  /** A region no walk from the way in arrives at. Once regions carry content, that is loot a player
+   * can never collect (docs/game-design/regions-and-containers.md). */
+  | { type: "regionUnreachable"; name: string }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
 

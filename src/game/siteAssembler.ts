@@ -19,6 +19,7 @@ import type {
   Difficulty,
 } from "./siteTypes"
 import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
+import { strandedRegions } from "./regions"
 import { cellSlot } from "./cellSlot"
 import { stairIdAt } from "./stairAddress"
 import { footprintSize } from "./roomFootprint"
@@ -644,6 +645,28 @@ export const assembleFloor = (
   const tooDeep = sectionsTooDeep(authoredConfig, addresses.of)
   if (tooDeep.length > 0) {
     return { success: false, reasons: tooDeep.map(address => ({ type: "sectionTooDeep" as const, address })) }
+  }
+
+  // A LAYOUT IS FIXED BY THE CONFIG, NOT BY THE SEED, so a broken one is refused once here rather
+  // than blamed on sixty carves that could never have satisfied it either. Ordered so each check can
+  // trust what the one before it established: names are unique before connections are resolved
+  // against them, and both hold before the walk that finds what nothing reaches.
+  const layout = authoredConfig.regionLayout
+  if (layout) {
+    const declared = new Set<string>()
+    for (const { name } of layout.regions) {
+      if (declared.has(name)) return { success: false, reasons: [{ type: "regionNameRepeated", name }] }
+      declared.add(name)
+    }
+    for (const [from, to] of layout.connections)
+      for (const end of [from, to])
+        if (!declared.has(end)) return { success: false, reasons: [{ type: "connectionNamesNoRegion", name: end }] }
+    for (const port of ["in", "out"] as const)
+      if (!declared.has(layout[port]))
+        return { success: false, reasons: [{ type: "portNamesNoRegion", port, name: layout[port] }] }
+    const stranded = strandedRegions(layout)
+    if (stranded.length > 0)
+      return { success: false, reasons: stranded.map(name => ({ type: "regionUnreachable" as const, name })) }
   }
 
   // An authored one-way naming a section this floor does not have is the same kind of mistake: which
