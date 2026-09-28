@@ -223,6 +223,25 @@ describe("the route the main path threads", () => {
     expect(regionRoute(g)).toEqual(["in", "left", "out"])
   })
 
+  // The fixtures above all declare regions in the same order their connections list them, so they
+  // cannot tell "declaration order" from the more fragile "first appearance in connections" apart.
+  // Here the two disagree: connections mention left before right, but right is DECLARED before left —
+  // so only a tie-break that reads declaration order reaches right first.
+  it("follows the order the regions were declared in, not the order their connections were listed", () => {
+    const g = graph(
+      [
+        ["in", "left"],
+        ["in", "right"],
+        ["left", "out"],
+        ["right", "out"],
+      ],
+      ["in", "right", "left", "out"],
+      { in: "in", out: "out" }
+    )
+
+    expect(regionRoute(g)).toEqual(["in", "right", "out"])
+  })
+
   it("is the one region twice over where the way in is also the way out", () => {
     const g = graph([], ["only"], { in: "only", out: "only" })
 
