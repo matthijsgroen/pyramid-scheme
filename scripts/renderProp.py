@@ -1765,6 +1765,27 @@ def prim_pit():
     return join_all()
 
 
+def bound_marker(p0, p1):
+    """Two loose vertices, no faces and no material — opposite corners of a FRAME rather than of an
+    object. Nothing rasterises a vertex with no polygon, so this contributes no pixel and no alpha to any
+    render; but `local_bounds` reads straight off `obj.data.vertices`, which is all `seat_and_normalise`
+    and `add_camera` ever look at. So two variants built from DISJOINT parts, with nothing visible in
+    common to hold a frame steady between them, can still be pinned to the identical frame by handing
+    both the same two corners: whichever real geometry is actually drawn, provided it never reaches past
+    them, the object is scaled, centred and camera-framed exactly the same way regardless.
+
+    `prim_lever`'s `base` and `arm` are exactly that pair — see there. `prim_jarrack`'s `--contents=none`
+    is the one-sided version of the same law: a frame that stays VISIBLE (the rack's posts and rails)
+    rather than staying invisible, because there every variant has that frame in common and this one
+    does not."""
+    mesh = bpy.data.meshes.new("bounds")
+    mesh.from_pydata([p0, p1], [], [])
+    mesh.update()
+    obj = bpy.data.objects.new("bounds", mesh)
+    bpy.context.scene.collection.objects.link(obj)
+    return obj
+
+
 def prim_lever():
     """A floor lever a player throws: a domed bronze housing bedded in the paving, one arm rising out of
     it and laid over to the left or the right, and a chunky canted grip on the arm's end. Drawn from the
@@ -1799,8 +1820,74 @@ def prim_lever():
     they are disarmed with a tool; a lever is not. Nothing here is sharp, sprung or pointed, and no red
     goes near it. A mound, an arm and a worn grip: an object whose only affordance is PULL.
 
-    SEAT IT NORMALLY — this stands on the floor and its footprint is a real one."""
-    left = arg("contents", "right") == "left"
+    SEAT IT NORMALLY — this stands on the floor and its footprint is a real one.
+
+    `--contents=base` AND `--contents=arm` ARE A SECOND PAIR, drawn from the same body but never joined:
+    the dome and the kerb alone, and the shaft, ferrule and grip alone, standing UPRIGHT (swing=0, the
+    cant kept at its usual +20). The swing that used to be baked into `left`/`right` is now applied at
+    RUNTIME, by a CSS `transform: rotate()` on the arm layer alone — so the map only ever needs the one
+    upright arm, thrown either way in the browser about a pivot both tiles agree on.
+
+    THE TWO RENDERS SHARE ONE CAMERA FRAME, which is what lets a single `transform-origin` mean the same
+    point in both. `add_camera` frames every render from its own object's vertex bounds alone, and `base`
+    and `arm` share no geometry to hold that frame steady by construction (`prim_jarrack`'s trick needs a
+    frame that stays in the picture; here neither tile may show the other's parts at all) — so
+    `bound_marker` plants the same two invisible corners in both, sized to the kerb's own radius in x and
+    y and to the upright grip's own reach in z, and neither visible part ever draws past them.
+
+    THE ARM LAYERS BEHIND THE BASE. The dome has to hide the shaft's buried foot at every angle the CSS
+    ever turns it to, which a z-order can do for free and a mask cannot — the shaft is drawn whole, root
+    to grip, and it is the DOME that covers what a real lever buries.
+
+    THE ARM CASTS NOTHING. A shadow that swung with the CSS rotation would be wrong the instant the lever
+    moved, so `arm` is rendered `--shadow=0` and takes no `--seat` at import; the seated shadow belongs to
+    `base`, which never moves.
+
+    NO `--spin` ON EITHER. `left`/`right` took one for variety on the floor, but that variety now comes
+    from the runtime swing itself, and a baked floor turn would rotate `bound_marker`'s square envelope
+    into a bigger axis-aligned box in one render and not the other unless spun identically — one more
+    number to keep in lockstep for no picture bought. Left at 0, the shared frame is exact and needs no
+    matching flag."""
+    contents = arg("contents", "right")
+    dome_r, dome_h = 0.22, 0.17
+    shaft_len, root_z = 0.56, 0.07
+    grip_len = 0.26
+
+    if contents in ("base", "arm"):
+        cant_deg = 20.0  # upright: swing=0, so cant = swing + 20 is just the +20
+        cant = math.radians(cant_deg)
+        tip_z = root_z + shaft_len  # the shaft's own tip; tip_x is 0, upright
+        reach = grip_len / 2 - 0.05
+        grip_cx, grip_cz = math.sin(cant) * reach, tip_z + math.cos(cant) * reach
+        # The grip box's own half-dims in x and z before the cant turns it, and the rotated AABB those
+        # turn into — the standard `|a*cos| + |b*sin|` sum for a box carried through a rotation.
+        hx, hz = 0.115 / 2, grip_len / 2
+        grip_hx = hx * math.cos(cant) + hz * math.sin(cant)
+        grip_hz = hx * math.sin(cant) + hz * math.cos(cant)
+        kerb_r = dome_r + 0.05
+        # The kerb's own radius dominates in x and y (0.27 against the grip's 0.10 either side of centre)
+        # — kept as a `max` rather than asserted, so a future change to either constant cannot silently
+        # let the grip draw past an envelope sized only for the kerb.
+        env_r = max(kerb_r, grip_cx + grip_hx, grip_hx - grip_cx)
+        env_top = grip_cz + grip_hz  # the grip's own top, upright — taller than the dome by construction
+        bound_marker((-env_r, -env_r, -0.01), (env_r, env_r, env_top))
+
+        if contents == "arm":
+            mark(box(0.075, 0.075, shaft_len, z=root_z + shaft_len / 2), "timber")
+            # The same ferrule as `left`/`right`, upright: swing=0 so ux=0, uz=1, and `turn`'s rotation
+            # is a no-op here — built with `box` directly rather than through `turn` for that reason.
+            mark(box(0.10, 0.095, 0.075, z=tip_z - 0.02), "metal")
+            mark(turn(box(0.115, 0.105, grip_len), cant_deg, "Y", x=grip_cx, z=grip_cz), "accent")
+            return join_all()
+
+        mark(dome(dome_r, dome_h), "metal")
+        # A low stone kerb round the dome's foot, where it meets the paving. Without it the mound sits ON
+        # the floor like a dropped bowl; with it, it is bedded INTO it — and it is the one part that keeps
+        # the object's widest point at ground level, which is what a thing driven into a floor looks like.
+        mark(cone(dome_r + 0.05, dome_r + 0.01, 0.045, z=0.022, verts=20), "body")
+        return join_all()
+
+    left = contents == "left"
     # 36 degrees off vertical, and the number is the GRIP'S reach rather than the shaft's. The owner's
     # elevation leans about 20, which is a lever caught mid-throw; at 20 the grips of the two states sit
     # 0.42 apart against a dome 0.68 wide and the pair reads as one lever wobbling. At 36, with the

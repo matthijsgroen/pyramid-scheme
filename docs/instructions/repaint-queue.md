@@ -2790,3 +2790,149 @@ scaffold pit --contents=dropSouth --colour=#a7b2be --floor=#8d98a5 --colour-deep
 yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dropSouth --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 ```
+
+## The handle, split — expert, two tiles
+
+`expert/leverLeft` and `expert/leverRight` shipped as one rigid object baked two ways: the whole lever,
+thrown left or thrown right, painted twice. That is now the wrong shape for the job. The two paintings
+drift — their domes do not quite match — and the game wants to swing the arm at runtime, on a CSS
+`transform`, the same lever leaning further open or further shut as play demands rather than only ever
+sitting at two fixed throws. A baked pair cannot do that; a flat sprite rotated in the DOM can, provided
+the thing being rotated is drawn ALONE, upright, with nothing else riding on the same layer.
+
+So the lever becomes TWO tiles instead of two paintings: `expert/leverBase` is the dome and the kerb,
+motionless, carrying the seated shadow; `expert/leverArm` is the shaft, the ferrule and the grip, upright,
+carrying no shadow of its own. The renderer stacks them — base in front, arm behind — and turns the arm's
+layer about one fixed point for whichever way that floor's lever is thrown, and again as the player throws
+it. `prim_lever` in `scripts/renderProp.py` grew `--contents=base` and `--contents=arm` for exactly this;
+`left` and `right` are unchanged and still render byte-identical to what is already imported.
+
+**Both renders share ONE camera frame, which is the whole point.** `add_camera` frames every render from
+its own object's vertex bounds, and `base` and `arm` share no visible geometry to hold that frame steady
+between them — unlike `prim_jarrack`'s `--contents=none`, whose frame stays in the picture on every
+variant. `prim_lever` instead plants two loose, invisible vertices (`bound_marker`) at the same corners in
+both: the kerb's own radius in x and y, the upright grip's own reach in z. Nothing rasterises a vertex with
+no face, so neither render shows them, but `seat_and_normalise` and `add_camera` read bounds off vertices
+alone and are pinned identically either way. Measured off the actual renders, both report the identical
+drawn box — `0.63 x 1.44, aspect 2.29` — to three decimals, whichever `--contents` is asked for.
+
+**The pivot — where the shaft disappears into the mound — sits at 50% across, 76.6% down the frame
+(`transform-origin: 50% 76.6%`)**, measured by carrying the shaft's own root point `(x=0, y=0, z=0.07)`
+through `seat_and_normalise`, the shear (`k=0.7`) and `add_camera`'s framing by hand and confirmed by
+compositing the two renders and rotating the arm layer ±36° about it: the shaft's foot stayed inside the
+dome's silhouette at both extremes, with nothing floating clear of it. This is the CSS `transform-origin`
+for the arm layer, once both tiles are imported at the same size and stacked at `(0, 0)`.
+
+**Both scaffold commands must agree on `--shear`, `--sun`, `--margin`, `--width` and `--height` — left at
+their defaults, which is what the recipes below do — or the shared frame stops being shared.** `--sun`
+matters even though only `base` casts a shadow: `add_camera`'s frame reserves room for one at `k * sun`
+regardless of `--shadow`, so the two renders still have to ask for the same `--sun` to get the same room.
+**Neither takes a `--spin`.** `left`/`right` took one for variety on the floor; that variety now comes
+from the runtime swing itself, and a baked floor turn would carry `bound_marker`'s square envelope into a
+bigger axis-aligned box in one render and not the other unless spun identically — one more number to keep
+in lockstep for no picture bought.
+
+**`leverArm` is imported `--no-trim`, and that is what makes any of the above survive to the tile.**
+`import-tile` normally trims a prop to the object's own alpha and re-seats it on the floor line — exactly
+the step that would throw the shared frame away and crop each tile to its own silhouette independently.
+`--no-trim` keeps the frame as rendered and just resizes it to the slot, so the pivot computed above lands
+at the same fraction of the stored PNG that it does in the Blender render. `leverBase` takes it too, for
+the same reason and so both tiles are the same size to the pixel.
+
+**`leverLeft` and `leverRight` are SUPERSEDED ON ARRIVAL, not deleted now.** Their masters, their tiles and
+their `art/rebuild.sh` lines all stay exactly as they are until `leverBase` and `leverArm` have both landed
+and the map has been wired to composite and rotate them; only then do the old pair and their rebuild line
+come out.
+
+**Expert only**, matching the drops and matching the pair this replaces. Master and wizard are where the
+56 floor-key gates live and they are queued when real floors there author levers, not before.
+
+**It must not read as a trap.** This game's traps are rooms wearing a crimson badge with a skull, and they
+are disarmed with a tool; a lever is not. So both prompts say outright that nothing about it is sharp or
+sprung, and the palette stays stone, timber and bronze with no red anywhere.
+
+### `expert/leverBase` — the dome and the kerb alone
+
+**Attach:**
+
+1. `~/tile-previews/leverBase-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: the domed bronze HOUSING of a floor lever, bedded into the paving inside a low stone KERB — a
+rounded mound, twice as wide as it is tall, its face divided into shallow radiating panels that follow the
+curve. It sits low in the lower part of a tall, mostly empty frame — leave the rest of the frame as bare
+magenta. NOTHING RISES OUT OF THE DOME in this picture: no arm, no ferrule and no grip, only the mound and
+the kerb it beds into. Nothing about this object is sharp, pointed or sprung: it is the seat of a handle,
+and the only thing anyone does with the rest of it is pull.
+
+Dark basalt for the kerb, with pale natron dust in the joint where it meets the paving. The dome is
+bronze gone dull and green-brown with age.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the crown of
+the dome, the ridge of each panel on it — and everything turned away from it falls into shadow.
+
+The shadow at the dome's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust, timber and bronze.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold lever --contents=base --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/leverBase.webp --tier=expert --name=leverBase --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.9 --no-trim
+```
+
+### `expert/leverArm` — the shaft, ferrule and grip alone, upright
+
+**Attach:**
+
+1. `~/tile-previews/leverArm-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: the ARM of a floor lever, alone and standing perfectly UPRIGHT in the upper part of the frame
+— leave the rest of the frame as bare magenta. A squared timber SHAFT rises straight up the middle of the
+picture with nothing under it: no dome, no kerb, no paving, nothing at all below its foot. On the shaft's
+upper end is a chunky brass GRIP, thicker than the shaft and kicked out to ONE SIDE of it, never straight
+in line with the shaft — this piece is turned by the game to throw the lever, so the kick has to read as
+one side being heavier whichever way it ends up facing. The grip is banded to the shaft by a bronze
+FERRULE at the join and rubbed bright where hands have closed on it. The shaft, the ferrule and the grip
+are ONE piece: the grip is fixed to the shaft and does not turn on it. THE SHAFT ITSELF MUST STAND
+EXACTLY VERTICAL, straight up and down — do not lean it, tilt it or straighten it into some other angle.
+Nothing about this object is sharp, pointed or sprung: it is a handle, and the only thing anyone does with
+it is pull.
+
+The shaft is old timber, split and grey, dark against the stone; the grip alone is worn back to bright
+metal, banded by a ferrule of bronze gone dull with age.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the ridge of
+the ferrule, the grip — and everything turned away from it falls into shadow.
+
+THIS PIECE CASTS NO SHADOW AND TOUCHES NO FLOOR: it is never seen resting on the ground, so paint nothing
+at its foot — no shadow, no ground, no paving, just bare magenta below where the shaft ends.
+
+No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust, timber and bronze.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold lever --contents=arm --shadow=0 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/leverArm.webp --tier=expert --name=leverArm --slot=prop \
+  --filter=smooth --mask="$OBJ" --brightness=0.9 --no-trim
+```
