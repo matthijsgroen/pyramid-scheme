@@ -112,3 +112,46 @@ export const strandedRegions = (graph: RegionGraph): string[] => {
   const arrived = reachable(graph, graph.in)
   return graph.regions.filter(({ name }) => !arrived.has(name)).map(({ name }) => name)
 }
+
+/** What a floor has to place. The floor authors these counts; the regions say only what kind they take. */
+export type FloorDemand = { rewards: number; puzzleRooms: number }
+
+/** How many of one kind a region will hold: a named appetite takes its own, `free` takes one of
+ * anything, and `puzzles` is the one that takes a chain of them. */
+const capacityFor = (appetite: RegionAppetite, kind: ContentKind): number => {
+  if (!appetiteAccepts(appetite, kind)) return 0
+  return appetite === "puzzles" ? Number.POSITIVE_INFINITY : 1
+}
+
+/**
+ * WHERE EACH PIECE OF THE FLOOR'S CONTENT GOES, OR THE KIND THAT HAD NOWHERE TO GO.
+ *
+ * A region that asked for the kind is filled before a `free` one, so indifference is spent last and an
+ * author who named a place for a reward gets it.
+ *
+ * Returns the unplaced KIND rather than a count, because the failure is reported by name before a wall
+ * is carved and the author needs to know what did not fit, not how much: the builder may refuse, but
+ * it may never decide quietly (docs/game-design/regions-and-containers.md).
+ */
+export const fitContent = (
+  graph: RegionGraph,
+  demand: FloorDemand
+): { fits: true; placed: Map<string, ContentKind[]> } | { fits: false; unplaced: ContentKind } => {
+  const placed = new Map<string, ContentKind[]>()
+  const roomLeft = new Map<string, number>()
+
+  const place = (kind: ContentKind, count: number): ContentKind | null => {
+    const named = graph.regions.filter(r => r.appetite !== "free" && appetiteAccepts(r.appetite, kind))
+    const free = graph.regions.filter(r => r.appetite === "free" && appetiteAccepts(r.appetite, kind))
+    for (let n = 0; n < count; n++) {
+      const into = [...named, ...free].find(r => (roomLeft.get(r.name) ?? capacityFor(r.appetite, kind)) > 0)
+      if (!into) return kind
+      roomLeft.set(into.name, (roomLeft.get(into.name) ?? capacityFor(into.appetite, kind)) - 1)
+      placed.set(into.name, [...(placed.get(into.name) ?? []), kind])
+    }
+    return null
+  }
+
+  const unplaced = place("reward", demand.rewards) ?? place("puzzle", demand.puzzleRooms)
+  return unplaced ? { fits: false, unplaced } : { fits: true, placed }
+}

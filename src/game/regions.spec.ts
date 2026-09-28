@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest"
-import { appetiteAccepts, mainPathRegions, strandedRegions, type RegionGraph } from "./regions"
+import {
+  appetiteAccepts,
+  fitContent,
+  mainPathRegions,
+  strandedRegions,
+  type RegionAppetite,
+  type RegionGraph,
+} from "./regions"
 
 describe("what a region will take", () => {
   it("takes the kind it names, and anything when it is free", () => {
@@ -116,5 +123,51 @@ describe("regions nothing reaches", () => {
     )
 
     expect(strandedRegions(g)).toEqual(["orphan", "behindOrphan"])
+  })
+})
+
+const withAppetites = (...regions: Array<[string, RegionAppetite]>): RegionGraph => ({
+  regions: regions.map(([name, appetite]) => ({ name, appetite })),
+  connections: regions.slice(1).map(([name], i) => [regions[i][0], name] as const),
+  in: regions[0][0],
+  out: regions[regions.length - 1][0],
+})
+
+describe("fitting a floor's content to what its regions will take", () => {
+  it("puts each reward in a region that asked for one", () => {
+    const g = withAppetites(["in", "nothing"], ["vault", "reward"], ["out", "nothing"])
+    const result = fitContent(g, { rewards: 1, puzzleRooms: 0 })
+
+    expect(result.fits).toBe(true)
+    expect(result.fits && result.placed.get("vault")).toEqual(["reward"])
+  })
+
+  it("puts every puzzle room in the one region that takes them", () => {
+    const g = withAppetites(["in", "nothing"], ["hall", "puzzles"], ["out", "nothing"])
+    const result = fitContent(g, { rewards: 0, puzzleRooms: 3 })
+
+    expect(result.fits && result.placed.get("hall")).toEqual(["puzzle", "puzzle", "puzzle"])
+  })
+
+  // The builder may refuse, but it may never decide quietly: a third reward with two places to put one
+  // is the author's mistake, and it is named before a wall is carved rather than dropped.
+  it("refuses by kind when a region asked for is not there", () => {
+    const g = withAppetites(["in", "nothing"], ["vault", "reward"], ["out", "nothing"])
+
+    expect(fitContent(g, { rewards: 2, puzzleRooms: 0 })).toEqual({ fits: false, unplaced: "reward" })
+  })
+
+  it("refuses a puzzle room where every region is promised empty", () => {
+    const g = withAppetites(["in", "nothing"], ["out", "nothing"])
+
+    expect(fitContent(g, { rewards: 0, puzzleRooms: 1 })).toEqual({ fits: false, unplaced: "puzzle" })
+  })
+
+  it("spends a free region only once the region that asked for the kind is full", () => {
+    const g = withAppetites(["in", "free"], ["vault", "reward"], ["out", "nothing"])
+    const result = fitContent(g, { rewards: 2, puzzleRooms: 0 })
+
+    expect(result.fits && result.placed.get("vault")).toEqual(["reward"])
+    expect(result.fits && result.placed.get("in")).toEqual(["reward"])
   })
 })
