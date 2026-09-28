@@ -73,6 +73,26 @@ free.
 got out of, collapsing it would be unsound and the composition rule fails with it. Soundness is
 therefore not a nice-to-have on a container; it is the precondition for placing one inside another.
 
+## A region is a stretch of the carve, not an area set aside
+
+Decided 2026-09-28. The carve does not allocate each region a patch of grid before anything is placed.
+It carves paths as it does today, and a region is a STRETCH of them — **the main path may cross several
+regions**, and a side path hangs inside whichever region it grows from.
+
+From the layout the builder then works: a path may be lengthened, may gain side paths, may take
+puzzles or a chest, **however the site builder sees fit**. How it satisfies a region's appetite is its
+business, not the author's.
+
+**The acceptance rule is that everything authored is accounted for.** Every puzzle node and every chest
+node the floor authors lands somewhere, and the builder can say where. Content that cannot be placed is
+refused by name before a wall is carved — it is never dropped, and a region's appetite is never
+quietly widened to swallow it. That is the same rule as everywhere else here: the builder may refuse,
+but it may never decide quietly.
+
+This is what keeps `sideSections` carving inside a region exactly as they do today, and it is why
+regions can be core while gates stay the mod's: without the topology mod the identical stretches carve,
+with nothing standing between them.
+
 ## Main path is derived, never authored
 
 **A region is main-path if its container's `out` port cannot be reached without entering it** — a
