@@ -117,7 +117,7 @@ once for both. Two levers on one floor may therefore both be green and still be 
 cap a five-value budget would have forced never has to be decided. The cost is two things to read
 where one would do, which is why the ground carries the grouping a player looks for first.
 
-**Consequence confirms it.** The player can look anywhere they have explored, so throwing a switch is
+**Consequence confirms it.** (Designed in full: `docs/game-design/consequence-camera.md`.) The player can look anywhere they have explored, so throwing a switch is
 a thing they can watch. That makes a floor something to experiment with: flip, see what moved,
 understand. The camera may travel to the change and come back, and if it does, two things matter more
 than the going — it must return the player to where they were at the zoom they chose, because on a
