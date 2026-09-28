@@ -2814,22 +2814,65 @@ mound — the exact failure `prim_lever`'s own docstring already records fightin
 
 **The fix is a THIRD layer, cut from the SAME two: `expert/leverBase` is still painted once, and it is now
 imported TWICE, as `leverBaseBack` and `leverBaseFront`.** `prim_lever` grew `--contents=baseBack` and
-`--contents=baseFront`, the dome and kerb cut at y=0 — the plane the shaft turns about (`turn`'s own
-rotation axis, and where the root sits at every throw) — back half and front half. **This is a MASK
-split, not a second painting**: both halves are built from the identical mesh `base` is, `bisect_plane`
-cuts it in two AFTER the one prompt has already been painted, and `import-tile` runs twice over the SAME
-master file with the two different masks. One dome painted once cannot disagree with itself about light or
-palette; two dome HALVES painted separately would reintroduce exactly the drift this whole split exists to
-remove. **Do not turn this into two prompts** — there is still exactly one painting, `leverBase.webp`.
+`--contents=baseFront`, the dome and kerb cut back half and front half. **This is a MASK split, not a
+second painting**: both halves are built from the identical mesh `base` is, `bisect_plane` cuts it in two
+AFTER the one prompt has already been painted, and `import-tile` runs twice over the SAME master file with
+the two different masks. One dome painted once cannot disagree with itself about light or palette; two
+dome HALVES painted separately would reintroduce exactly the drift this whole split exists to remove. **Do
+not turn this into two prompts** — there is still exactly one painting, `leverBase.webp`.
+
+**The cut is at the SLOT's near wall, not at y=0 — see below for the slot, and read this after it.**
+y=0 is where `turn` rotates the arm about and where its root sits at every throw, and it was the first
+thing tried; it is wrong once there is a slot, because the slot has width and bisecting through its middle
+hands half its dark interior to `leverBaseFront`, which sits IN FRONT of the arm and paints that half of
+the void straight over the shaft. Measured by rendering both and comparing the pixels: at y=0 a solid
+wedge over the shaft's own near edge reads as the void's near-black (RGB around 25-37 on every channel,
+matching nothing else in the palette) where at the slot's own near face the same pixels read as the arm's
+own timber brown (RGB with red clearly ahead of green and blue) — the shaft's material coming through
+unobstructed. Moved to the slot's near wall, `leverBaseFront` is everything nearer than the track — no
+void in it at all — and `leverBaseBack` carries the track's far wall, the whole of its dark interior, and
+everything behind.
+
+**The slot itself: a curved track cut through the crown, along the exact arc the arm sweeps.** A dome with
+a shaft standing in it says nothing about the shaft MOVING; a slot along the arc it sweeps says both that
+it moves and how far, for free, out of geometry the throw already fixes — the throw is ±36 degrees and the
+track is precisely that arc, no wider. It is also what the back/front split alone was missing: without it
+the arm still emerged from unbroken bronze, reading as passing THROUGH solid metal rather than travelling
+in a housing. Built the same way the shaft itself is — a box made at the origin, turned about Y, then
+placed — as a fan of overlapping radial wedges, one every 6 degrees across the sweep, marked VOID so
+`--colour-void` (the mechanism `prop-pipeline.md` describes for a hole's interior) paints it near-black
+before any repaint sees it. The outer radius is SOLVED PER ANGLE against the dome's own ellipsoid surface
+rather than held constant — a constant radius generous enough to clear the surface at the full 36-degree
+throw pokes a flat-topped chimney through the crown at the top of the sweep, where the true surface sits
+closest to the pivot (0.100 straight up against 0.114 at the full throw, solved from where a line at each
+angle crosses `x²/dome_r² + z²/dome_h² = 1`); solved per segment instead, the cut's outer face follows the
+crown's own curve and stands proud of it by the same small margin the whole way round.
+
+**Checked against the ACTUAL 3D-rotated arm, not only the CSS approximation.** A temporary debug pass
+joined the real swing-36 and swing-(-36) shaft (the same geometry `left`/`right` build, not the upright
+tile) onto the dome-plus-slot in one scene and rendered it: at both extremes the shaft crosses into the
+slot exactly at its own end, with the track's dark interior trailing away on the far side — the slot and
+the arm agree, because both are built from the same swing formula. A NAIVE EQUAL-DEGREE CSS
+`rotate()` of the upright `leverArm` tile does not quite reproduce this: measured at the throw's own crown
+row, the 2D-rotated shaft sits some 30-50 of 448 pixels wider than the true 3D swing puts it, growing with
+distance from the pivot — a 2D image rotation is not the same transform as a 3D lean carried through this
+shear, which is the whole reason `prim_lever`'s own spin law exists for baked geometry. It reads acceptably
+by eye at this size regardless (see the composites below), but whoever wires the runtime rotation should
+know the naive angle is an approximation, not an identity, if the track's ends ever need to line up to the
+pixel.
 
 **The map stacks three sprites in depth order: `leverBaseBack`, then `leverArm`, then `leverBaseFront`.**
-The far side of the mound goes behind the arm, the near side stays in front of it, and the arm's own shaft
-— which never has any depth of its own (it is built at y=0, on the cut plane exactly) — is correctly behind
-whichever part of the dome is nearer the camera and in front of whichever part is farther, which a single
-base layer could never be. Verified by compositing the actual renders with the halves tinted apart (blue
-back, red front, green arm, to see through the shared palette): the shaft crosses visibly over the back
-half near the crown at every angle checked (0°, +36°, −36°) and only disappears once it reaches the front
-half, rather than appearing to start there.
+The far side of the mound and the slot's whole dark interior go behind the arm, the near side (everything
+nearer than the track) stays in front of it, and the arm's own shaft — which never has any depth of its
+own, it is built at y=0 — is correctly behind whichever part of the dome is nearer the camera and in front
+of whichever part is farther, which a single base layer could never be. Verified twice: first with the
+halves tinted apart (blue back, red front, green arm, to see through the shared palette) before the slot
+existed, where the shaft crossed visibly over the back half near the crown and only disappeared once it
+reached the front half; then again with the slot in place, compositing the real renders at 0°, +36° and
+−36° about the pivot — the arm reads as running IN the track at all three, framed by the metal either
+side rather than floating over it or vanishing behind unbroken bronze, and the track's own ends line up
+with the true 3D swing exactly (checked against the actual rotated geometry, not the CSS approximation —
+see above).
 
 **The seated shadow belongs to `leverBaseBack`; `leverBaseFront` takes no `--seat`, the same rule
 `leverArm` already follows** — a footprint on the layer nearest the camera would sit in front of the object
@@ -2840,11 +2883,13 @@ and a shadow cast by only the back half would be half a footprint.
 **`baseBack` and `baseFront` exist to produce MASKS, never a picture anyone looks at**, so they only ever
 need rendering `--shadow=0 --background=none` — no scaffold preview, no attachment, no prompt of their own.
 
-**Reassembly is the honest test, and it passes exactly.** `baseBack`'s and `baseFront`'s masks, unioned,
-reproduce `base`'s own mask to the pixel — 0 pixels differ, out of 39,425 opaque in `base`'s mask — because
-`bisect_plane` inserts the y=0 seam as real geometry into BOTH halves before clearing one side, where a
-plain vertex-coordinate delete would have dropped every face straddling the cut from both results and left
-a gap neither half covers.
+**Reassembly is the honest test, and it passes exactly — slot included.** `baseBack`'s and `baseFront`'s
+masks, unioned, reproduce `base`'s own mask to the pixel — 0 pixels differ, out of 39,425 opaque in
+`base`'s mask, both before the slot existed and after — because `bisect_plane` inserts the cut's own seam
+as real geometry into BOTH halves before clearing one side, where a plain vertex-coordinate delete would
+have dropped every face straddling the cut from both results and left a gap neither half covers. The slot
+does not cost this: it is still solid geometry (VOID is a colour, not an absence of mesh), so it changes
+nothing about which pixels are opaque, only what colour they paint.
 
 **All four contents share ONE camera frame, which is what lets one `transform-origin` mean the same point
 in `leverArm`, `leverBaseBack` and `leverBaseFront` alike.** `add_camera` frames every render from its own
@@ -2895,10 +2940,12 @@ sprung, and the palette stays stone, timber and bronze with no red anywhere.
 ### `expert/leverBase` — the dome and the kerb alone, painted ONCE, imported TWICE
 
 One prompt, one painting, one master (`leverBase.webp`) — but no tile of this name ships. What lands is
-the dome cut in half at the plane the arm turns about, `leverBaseBack` and `leverBaseFront`, both cut from
-this same master by mask alone (see the section header above for why a second prompt would reintroduce
-the drift the whole split exists to remove). Do not add a third prompt or a third attachment for the
-halves: they are two extra `render-prop` mask passes and a second `import-tile` call, nothing else.
+the dome cut at the slot's own near wall, `leverBaseBack` and `leverBaseFront`, both cut from this same
+master by mask alone (see the section header above for why a second prompt would reintroduce the drift the
+whole split exists to remove, and for why the cut sits there and not at y=0). Do not add a third prompt or
+a third attachment for the halves, and do not add one for the slot either — it is part of the same single
+painting, described in the prompt below: they are two extra `render-prop` mask passes and a second
+`import-tile` call, nothing else.
 
 **Attach:**
 
@@ -2912,13 +2959,17 @@ Portrait, two units wide by three tall, exactly as the reference. Do not re-comp
 
 The object: the domed bronze HOUSING of a floor lever, bedded into the paving inside a low stone KERB — a
 rounded mound, twice as wide as it is tall, its face divided into shallow radiating panels that follow the
-curve. It sits low in the lower part of a tall, mostly empty frame — leave the rest of the frame as bare
-magenta. NOTHING RISES OUT OF THE DOME in this picture: no arm, no ferrule and no grip, only the mound and
-the kerb it beds into. Nothing about this object is sharp, pointed or sprung: it is the seat of a handle,
-and the only thing anyone does with the rest of it is pull.
+curve. Cut into the CROWN of the mound is a narrow, arched TRACK, curving gently from one side toward the
+other — a slot for a handle to travel through, not a crack or a flaw. Its interior is dark, going to black
+and showing no bottom; the bronze at its lip, where an arm has swept back and forth against it for
+centuries, is worn brighter than the dull metal around it. It sits low in the lower part of a tall, mostly
+empty frame — leave the rest of the frame as bare magenta. NOTHING RISES OUT OF THE TRACK in this picture:
+no arm, no ferrule and no grip, only the mound, its kerb and the empty slot cut into it. Nothing about this
+object is sharp, pointed or sprung: it is the seat of a handle, and the only thing anyone does with the
+rest of it is pull.
 
 Dark basalt for the kerb, with pale natron dust in the joint where it meets the paving. The dome is
-bronze gone dull and green-brown with age.
+bronze gone dull and green-brown with age, brightest along the track's own worn lip.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
@@ -2937,8 +2988,8 @@ Then, once the return is in `~/Downloads`:
 # what leverBaseBack seats on below, because the kerb's full ring is what actually touches the floor.
 scaffold lever --contents=base --colour=#a7b2be --floor=#8d98a5
 
-# Two mask-only passes off the SAME mesh, cut at y=0 — no scaffold, no attachment, no prompt: these are
-# never seen, only their alpha is used.
+# Two mask-only passes off the SAME mesh, cut at the slot's own near wall — no scaffold, no attachment,
+# no prompt: these are never seen, only their alpha is used.
 yarn render-prop --primitive=lever --contents=baseBack --shadow=0 --background=none \
   --colour=#a7b2be --floor=#8d98a5 --out=~/tile-previews/leverBaseBack-expert-obj.png
 yarn render-prop --primitive=lever --contents=baseFront --shadow=0 --background=none \

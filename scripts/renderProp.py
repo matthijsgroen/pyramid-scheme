@@ -1855,6 +1855,17 @@ def prim_lever():
     disagree with itself about light or palette; two dome HALVES painted separately would reintroduce
     exactly the drift this whole split exists to remove.
 
+    THE MOUND IS CUT FOR A TRACK, not just leant against — a dome with a shaft standing in it says
+    nothing about the shaft MOVING; a slot cut along the arc it sweeps says both that it moves and how
+    far, for free, out of geometry the throw already fixes: the track is exactly ±36 degrees wide, no
+    more. It is also what the back/front split was missing on its own — without it the arm still emerged
+    from unbroken bronze, reading as passing THROUGH solid metal rather than travelling in a housing.
+    Cut at the shell's own radius, solved per angle rather than at one constant depth (a constant deep
+    enough to clear the surface at the full throw pokes a flat-topped chimney through the crown at the
+    top of the sweep, where the true surface sits closest to the pivot), and marked VOID so its interior
+    paints near-black before any repaint sees it — the same law `prim_pit` and `prim_market`'s altar
+    channel already carry, here cut into a dome instead of a floor or a slab.
+
     THE SEATED SHADOW BELONGS TO `baseBack`, the layer everything else stands on; `baseFront` casts
     nothing, the same rule `arm` already follows and for the same reason — a footprint on a layer that
     sits in front of the object it shadows would float.
@@ -1905,9 +1916,59 @@ def prim_lever():
         # the floor like a dropped bowl; with it, it is bedded INTO it — and it is the one part that keeps
         # the object's widest point at ground level, which is what a thing driven into a floor looks like.
         mark(cone(dome_r + 0.05, dome_r + 0.01, 0.045, z=0.022, verts=20), "body")
-        # Joined here, on its own, so a `baseBack`/`baseFront` bisect below cuts only the dome and the
-        # kerb — never `bound_marker`'s pair, which is added after and must survive whole into BOTH
-        # halves so all four contents share one camera frame.
+        # THE SLOT: a curved track cut through the crown, along the exact arc the arm sweeps, which is
+        # what tells a player the shaft MOVES and how far — the throw is ±36 degrees and the track is
+        # precisely that arc, no wider. Built the same way the shaft itself is (`turn`'s own pattern: a
+        # box made at the origin, turned about Y, then placed), so the cut tracks the swing exactly rather
+        # than approximating it — a fan of overlapping radial wedges, one per angle, marked VOID so
+        # `--void` paints the interior near-black before any repaint sees it (`prop-pipeline.md`, "A HOLE
+        # is one parallelogram deep, and its dark is geometry too" — the same law, here cut into a dome
+        # instead of a floor).
+        #
+        # THE OUTER RADIUS FOLLOWS THE DOME'S OWN CURVE, not a constant. A line from the pivot at angle t
+        # crosses the ellipsoid `x²/dome_r² + z²/dome_h² = 1` at a radius that grows only slightly over the
+        # sweep — 0.100 straight up, 0.114 at the full 36 degrees — but a CONSTANT outer radius generous
+        # enough to clear the surface at 36 degrees pokes a flat-topped chimney out through the crown at 0,
+        # where the true surface sits closest to the pivot. Solved per segment instead (`_slot_surface_r`),
+        # so the cut's outer face tracks the crown's curve and stands proud of it by the same small margin
+        # the whole way round — measured by rendering both and looking: a constant radius left a squared-
+        # off black rectangle standing clear above the dome at the top of the sweep; solved per angle, the
+        # cut's outer edge follows the crown's own curve and stays inside its silhouette everywhere.
+        def _slot_surface_r(t_deg):
+            th = math.radians(t_deg)
+            sx, cz = math.sin(th), math.cos(th)
+            a = (sx / dome_r) ** 2 + (cz / dome_h) ** 2
+            b = 2 * root_z * cz / dome_h**2
+            c = (root_z / dome_h) ** 2 - 1
+            return (-b + math.sqrt(b * b - 4 * a * c)) / (2 * a)
+
+        slot_half_w = 0.075 / 2 + 0.015  # the shaft's own half-thickness, plus a little clearance
+        slot_outer_margin, slot_depth = 0.012, 0.035
+        slot_segments = 13
+        for i in range(slot_segments):
+            t = -36.0 + 72.0 * i / (slot_segments - 1)
+            tr = math.radians(t)
+            r_surf = _slot_surface_r(t)
+            r0, r1 = r_surf - slot_depth, r_surf + slot_outer_margin
+            rc = (r0 + r1) / 2
+            mark(
+                turn(
+                    # Tangential width overlaps the next wedge by design — the arc is 13 steps of 6 degrees
+                    # each, and 1.3x the step's own arc length at this radius closes every gap between them
+                    # (`prop-pipeline.md`'s "a hairline is a gap" law, the same reason parts butt with
+                    # margin everywhere else in this file) without the corners of each straight box
+                    # standing far enough proud of the true arc to crenellate its outer edge.
+                    box(rc * math.radians(72.0 / (slot_segments - 1)) * 1.3, slot_half_w * 2, r1 - r0),
+                    t,
+                    "Y",
+                    x=math.sin(tr) * rc,
+                    z=root_z + math.cos(tr) * rc,
+                ),
+                VOID,
+            )
+        # Joined here, on its own, so a `baseBack`/`baseFront` bisect below cuts only the dome, the kerb
+        # and the slot — never `bound_marker`'s pair, which is added after and must survive whole into
+        # BOTH halves so all four contents share one camera frame.
         dome_obj = join_all()
 
         if contents in ("baseBack", "baseFront"):
@@ -1916,22 +1977,31 @@ def prim_lever():
             # its near side, which is what puts the near lip in front of the arm's foot instead of the
             # arm appearing to start at the crown (`prim_lever`'s own first build, fought again).
             #
-            # Cut at y=0 — the plane `turn`'s own rotation axis passes through, which is also where every
-            # swing keeps the arm's root (x=0, y=0): the plane the arm turns ABOUT rather than through.
+            # CUT AT THE SLOT'S OWN NEAR WALL, not at y=0. y=0 is where `turn`'s rotation axis sits and
+            # where the arm's root always is, and it was the first thing tried — but the slot is a real
+            # cut with width, and bisecting through its MIDDLE hands half its dark interior to `baseFront`,
+            # which sits in FRONT of the arm and would paint that half of the void straight over the
+            # shaft. Moved to the slot's near face, `baseFront` is everything nearer than the track — no
+            # void in it at all — and `baseBack` carries the track's far wall, its whole dark interior,
+            # and everything behind. Checked by rendering both: at y=0 the composited shaft's OWN
+            # near edge is dulled by a strip of the front half's dark paint sitting over it; moved here,
+            # the arm sits cleanly inside the cut with nothing of the front layer crossing it.
+            #
             # `bisect_plane` on the merged mesh, not a vertex-threshold delete: a delete-by-coordinate
             # removes any face that touches the boundary from BOTH halves (a face's vertices split across
             # the cut has one vertex missing from EACH half), leaving a gap neither half covers. Bisecting
-            # inserts the seam as new geometry first, so both halves keep an intact edge at y=0 and their
-            # union reproduces `base` exactly — measured below.
+            # inserts the seam as new geometry first, so both halves keep an intact edge at the cut and
+            # their union reproduces `base` exactly — measured below.
+            cut_y = -slot_half_w
             bm = bmesh.new()
             bm.from_mesh(dome_obj.data)
             bmesh.ops.bisect_plane(
                 bm,
                 geom=bm.verts[:] + bm.edges[:] + bm.faces[:],
-                plane_co=(0, 0, 0),
+                plane_co=(0, cut_y, 0),
                 plane_no=(0, 1, 0),
                 # `clear_outer` empties the side `plane_no` points AWAY from the plane toward — measured
-                # against a bare sphere before trusting it: `clear_outer=True` here left y in [-1, 0].
+                # against a bare sphere before trusting it: `clear_outer=True` left y in [-1, 0] there.
                 # Y is depth, away from the viewer positive (this file's own axis note), so that is the
                 # NEAR half — `baseFront`.
                 clear_outer=contents == "baseFront",
