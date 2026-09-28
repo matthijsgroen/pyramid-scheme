@@ -651,11 +651,11 @@ export const assembleFloor = (
   // than blamed on sixty carves that could never have satisfied it either. Ordered so each check can
   // trust what the one before it established: names are unique before connections are resolved
   // against them, and both hold before the walk that finds what nothing reaches.
-  const layout = authoredConfig.regionLayout
-  if (layout) {
+  const regionLayout = authoredConfig.regionLayout
+  if (regionLayout) {
     const declared = new Set<string>()
     const repeated = new Set<string>()
-    for (const { name } of layout.regions) {
+    for (const { name } of regionLayout.regions) {
       if (declared.has(name)) repeated.add(name)
       declared.add(name)
     }
@@ -665,7 +665,7 @@ export const assembleFloor = (
         reasons: [...repeated].map(name => ({ type: "regionNameRepeated" as const, name })),
       }
     const undeclaredEnds = new Set<string>()
-    for (const [from, to] of layout.connections)
+    for (const [from, to] of regionLayout.connections)
       for (const end of [from, to]) if (!declared.has(end)) undeclaredEnds.add(end)
     if (undeclaredEnds.size > 0)
       return {
@@ -673,10 +673,10 @@ export const assembleFloor = (
         reasons: [...undeclaredEnds].map(name => ({ type: "connectionNamesNoRegion" as const, name })),
       }
     const badPorts = (["in", "out"] as const)
-      .filter(port => !declared.has(layout[port]))
-      .map(port => ({ type: "portNamesNoRegion" as const, port, name: layout[port] }))
+      .filter(port => !declared.has(regionLayout[port]))
+      .map(port => ({ type: "portNamesNoRegion" as const, port, name: regionLayout[port] }))
     if (badPorts.length > 0) return { success: false, reasons: badPorts }
-    const stranded = strandedRegions(layout)
+    const stranded = strandedRegions(regionLayout)
     if (stranded.length > 0)
       return { success: false, reasons: stranded.map(name => ({ type: "regionUnreachable" as const, name })) }
   }

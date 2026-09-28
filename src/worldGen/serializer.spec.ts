@@ -157,9 +157,8 @@ describe("generateFile — an authored layout survives the bake", () => {
 
     const emitted = generateFile({ testJourney: [[floor]] })
 
-    expect(emitted).toContain(`{ name: "mouth", appetite: "nothing" }`)
-    expect(emitted).toContain(`connections: [["mouth", "vault"]]`)
-    expect(emitted).toContain(`in: "mouth"`)
-    expect(emitted).toContain(`out: "vault"`)
+    expect(emitted).toContain(
+      'regionLayout: { regions: [{ name: "mouth", appetite: "nothing" }, { name: "vault", appetite: "reward" }], connections: [["mouth", "vault"]], in: "mouth", out: "vault" }'
+    )
   })
 })

@@ -1,5 +1,5 @@
 import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
-import type { RegionGraph } from "@/game/regions"
+import type { RegionGraph } from "../game/regions"
 
 export type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
 // Authored puzzle-count progression across a journey's pyramids: `start` on pyramid 1,
