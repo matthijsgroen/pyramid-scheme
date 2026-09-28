@@ -985,6 +985,13 @@ export const assembleFloor = (
   // The first drop an attempt could not find room for, kept from the first attempt that came up short,
   // so a floor no attempt ever satisfies says which drop it failed on rather than blaming the maze.
   let oneWayShortfall: { from: string; to: string } | undefined
+  // The first attempt's declared regions the main path never reached at all, kept from the first
+  // attempt that came up short — `mainPath.length` grows with packing across attempts (see
+  // `distanceFor`), so an attempt that cannot seat every region today may not be the attempt that
+  // decides the floor, and only the budget's end may call that.
+  let unseatedRegions: string[] | undefined
+  // The first attempt's rooms standing where their region's appetite refuses them, kept the same way.
+  let regionMismatch: { region: string; kind: ContentKind }[] | undefined
   for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
     if (attempt >= RECOVERY_ATTEMPT) {
       // Recovery asks for the roomiest wish outright. Winding the CHAINS down is its lever, and on a
@@ -1545,13 +1552,20 @@ export const assembleFloor = (
     // of the cell they grow from, below.
     const route = regionLayout ? regionRoute(regionLayout) : []
     const stepRegion = regionLayout ? regionOfStep(route, mainPath.length) : []
-    // A ROUTE LONGER THAN THE PATH SEATS NOTHING AT ITS FAR END. `regionOfStep` deals what there is
-    // rather than refusing, because it has no floor in front of it — only a carve knows how many steps
-    // the main path has. So the refusal lands here, and it names every region left unseated: content
-    // that would have gone to them lands in regions the author never named, which is the builder
-    // deciding quietly rather than refusing.
-    const unseated = route.filter(name => !stepRegion.includes(name))
-    if (unseated.length > 0) return { success: false, reasons: [{ type: "routeOutrunsPath", regions: unseated }] }
+    // A DECLARED REGION THE ROUTE NEVER SEATS A CELL IN SEATS NOTHING. Two ways there: a route longer
+    // than the path, where `regionOfStep` deals what there is rather than refusing (it has no floor in
+    // front of it — only a carve knows how many steps the main path has); or a region the route never
+    // threads at all — reachable in the region graph, but not on the shortest in→out walk, so no step
+    // ever names it. Checked against every DECLARED region, not just the route's, so the second cause
+    // is caught too: content that would have gone to an unseated region lands in one the author never
+    // named, which is the builder deciding quietly rather than refusing.
+    const unseated = regionLayout
+      ? regionLayout.regions.map(r => r.name).filter(name => !stepRegion.includes(name))
+      : []
+    if (unseated.length > 0) {
+      if (!unseatedRegions) unseatedRegions = unseated
+      continue
+    }
     const cellRegion = new Map<string, string>()
     mainPath.forEach(([r, c], step) => {
       const region = stepRegion[step]
@@ -2490,15 +2504,10 @@ export const assembleFloor = (
             if (!appetiteAccepts(appetite, kind))
               willNotTake.set(`${cell.region}|${kind}`, { region: cell.region, kind })
         }
-      if (willNotTake.size > 0)
-        return {
-          success: false,
-          reasons: [...willNotTake.values()].map(({ region, kind }) => ({
-            type: "regionWillNotTake" as const,
-            region,
-            kind,
-          })),
-        }
+      if (willNotTake.size > 0) {
+        if (!regionMismatch) regionMismatch = [...willNotTake.values()]
+        continue
+      }
     }
 
     return { success: true, grid }
@@ -2511,6 +2520,10 @@ export const assembleFloor = (
     reasons: [
       ...(forkShortfall ? [{ type: "forksUnsatisfied", ...forkShortfall } as const] : []),
       ...(oneWayShortfall ? [{ type: "oneWayUnsatisfied", ...oneWayShortfall } as const] : []),
+      ...(unseatedRegions ? [{ type: "regionNotSeated", regions: unseatedRegions } as const] : []),
+      ...(regionMismatch
+        ? regionMismatch.map(({ region, kind }) => ({ type: "regionWillNotTake" as const, region, kind }))
+        : []),
       { type: "layoutNotFound" } as const,
     ],
   }

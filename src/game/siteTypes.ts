@@ -577,10 +577,16 @@ export type AssemblerReason =
    * promised nothing, a reward where it asked for puzzles. The floor's content and its layout disagree,
    * and which is wrong is the author's to say. See FloorConfig.regionLayout. */
   | { type: "regionWillNotTake"; region: string; kind: ContentKind }
-  /** The route the main path threads has more regions than the path has steps, so the regions at its
-   * far end are never reached and content lands in regions the author did not name. `regions` are the
-   * ones left unseated, in route order. See FloorConfig.regionLayout. */
-  | { type: "routeOutrunsPath"; regions: string[] }
+  /** A declared region that never got a cell, for either of two reasons: the route the main path
+   * threads has more regions than the path has steps, so the regions at its far end are never reached;
+   * or a region is reachable in the region graph but never lies on the shortest in→out walk at all, so
+   * no step ever names it. Either way content that would have gone there lands in a region the author
+   * did not name. `regions` are every one left unseated, in route order. See FloorConfig.regionLayout.
+   * Unlike its five neighbours above, this reason carries a LIST rather than one name: those are each
+   * an independent fault where fixing the one name removes it, whereas an unseated set is a single
+   * fault whose extent happens to be a list — fixing one name here fixes nothing, so do not normalise
+   * this to a single-name shape. */
+  | { type: "regionNotSeated"; regions: string[] }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
 

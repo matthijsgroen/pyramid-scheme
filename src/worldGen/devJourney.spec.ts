@@ -279,10 +279,12 @@ describe("what the dev journey authors", () => {
     const carved = grid.cells
       .flat()
       .filter((c): c is Extract<typeof c, { type: "room" | "corridor" }> => c.type === "room" || c.type === "corridor")
-    const authored = new Set(floor.regionLayout?.regions.map(r => r.name))
 
     expect(carved.filter(c => c.region === undefined)).toEqual([])
-    expect([...new Set(carved.map(c => c.region))].every(r => r !== undefined && authored.has(r))).toBe(true)
+    // Exact set, not `⊆ authored`: a route that outran the path would still carry only authored
+    // names on every cell, so a subset check cannot see that fault — this is the one place a real
+    // generated floor proves every declared region actually got a cell.
+    expect([...new Set(carved.map(c => c.region))].sort()).toEqual(["hall", "mouth", "vault"])
   })
 
   it("stands a lever on pyramid 7, with a door on each side so throwing it swaps them", () => {

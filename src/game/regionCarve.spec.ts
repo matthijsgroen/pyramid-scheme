@@ -109,57 +109,57 @@ describe("content a region will not take", () => {
   })
 })
 
-describe("a route the main path cannot seat", () => {
+describe("a region no attempt seats", () => {
   // Only a carve knows how long the main path is, so this cannot be caught when the layout is
   // authored — but a floor that seats content in regions the author never named is the builder
   // deciding quietly, which is the one thing it may not do.
   it("refuses a route with more regions than the path has steps, naming the ones left unseated", () => {
-    // `floor()`'s own main path (pathPuzzles: 2, no lever) carves to 9 steps at this SEED and every
-    // other seed measured — so a route of 12 regions (`a`..`l`) seats the first 9 (`a`..`i`) and
-    // leaves exactly `j`, `k`, `l` unseated. The next person to widen or narrow `floor()`'s main path
-    // changes what this test depends on, not just a number here.
+    // A route longer than the path must stay unseated across every attempt, not just the first — the
+    // carve's own recovery re-attempts at ever-wider packing (see siteAssembler's ASSEMBLY_ATTEMPTS
+    // loop), and `floor()`'s main path (pathPuzzles: 2, no lever) was measured climbing from 9 steps at
+    // attempt 0 to 31 at this SEED once packing hits its ceiling in recovery. A route of only 12
+    // regions is seated in full well before that ceiling, so it no longer proves this refusal — 60
+    // regions, comfortably past every packing this carve can reach, does. The first attempt (9 steps)
+    // is what the reported names come off, since `unseatedRegions` keeps the first shortfall seen.
+    const names = Array.from({ length: 60 }, (_, i) => `r${i}`)
     const tooManyRegions = {
-      regions: [
-        { name: "a", appetite: "free" as const },
-        { name: "b", appetite: "free" as const },
-        { name: "c", appetite: "free" as const },
-        { name: "d", appetite: "free" as const },
-        { name: "e", appetite: "free" as const },
-        { name: "f", appetite: "free" as const },
-        { name: "g", appetite: "free" as const },
-        { name: "h", appetite: "free" as const },
-        { name: "i", appetite: "free" as const },
-        { name: "j", appetite: "free" as const },
-        { name: "k", appetite: "free" as const },
-        { name: "l", appetite: "free" as const },
-      ],
-      connections: [
-        ["a", "b"] as const,
-        ["b", "c"] as const,
-        ["c", "d"] as const,
-        ["d", "e"] as const,
-        ["e", "f"] as const,
-        ["f", "g"] as const,
-        ["g", "h"] as const,
-        ["h", "i"] as const,
-        ["i", "j"] as const,
-        ["j", "k"] as const,
-        ["k", "l"] as const,
-      ],
-      in: "a",
-      out: "l",
+      regions: names.map(name => ({ name, appetite: "free" as const })),
+      connections: names.slice(0, -1).map((name, i) => [name, names[i + 1]] as const),
+      in: names[0],
+      out: names[names.length - 1],
     }
     const result = assembleFloor("test-journey", floor(tooManyRegions), SEED)
 
     expect(result.success).toBe(false)
-    const reason = result.success ? undefined : result.reasons.find(r => r.type === "routeOutrunsPath")
+    const reason = result.success ? undefined : result.reasons.find(r => r.type === "regionNotSeated")
     expect(reason).toBeDefined()
     // Every unseated region, in route order, not just one of them — an author fixing one at a
     // time is the builder handing back one problem when it can see them all.
-    expect(reason && "regions" in reason ? reason.regions : []).toEqual(["j", "k", "l"])
+    expect(reason && "regions" in reason ? reason.regions : []).toEqual(names.slice(9))
   })
 
-  it("carves a route the path can seat", () => {
-    expect(assembleFloor("test-journey", floor(threeRegions), SEED).success).toBe(true)
+  // A region can be reachable in the region graph — even declared with a connection — and still
+  // never lie on the shortest in→out walk, so no step of the main path ever names it. `hall—sideVault`
+  // is reachable from `hall` but off the `mouth—hall—vault` route entirely: unlike the fixture above,
+  // the main path has steps to spare, so this is not a route outrunning a path — it is a region the
+  // route never threads at all.
+  it("refuses a region that is reachable but never lies on the route, naming only that region", () => {
+    const branchingLayout = {
+      regions: [
+        { name: "mouth", appetite: "free" as const },
+        { name: "hall", appetite: "free" as const },
+        { name: "vault", appetite: "free" as const },
+        { name: "sideVault", appetite: "free" as const },
+      ],
+      connections: [["mouth", "hall"] as const, ["hall", "vault"] as const, ["hall", "sideVault"] as const],
+      in: "mouth",
+      out: "vault",
+    }
+    const result = assembleFloor("test-journey", floor(branchingLayout), SEED)
+
+    expect(result.success).toBe(false)
+    const reason = result.success ? undefined : result.reasons.find(r => r.type === "regionNotSeated")
+    expect(reason).toBeDefined()
+    expect(reason && "regions" in reason ? reason.regions : []).toEqual(["sideVault"])
   })
 })
