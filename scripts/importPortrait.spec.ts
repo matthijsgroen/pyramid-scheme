@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { edgeBackground, seat } from "./importPortrait"
+import { bustWindow, edgeBackground, headCentre, seat, topBand } from "./importPortrait"
 
 const WHITE = { r: 255, g: 255, b: 255 }
 
@@ -83,5 +83,75 @@ describe("seat", () => {
       expect(canvasWidth).toBeGreaterThanOrEqual(figure.width)
       expect(canvasHeight).toBeGreaterThanOrEqual(figure.height)
     }
+  })
+})
+
+/** The figure mask a bust is cut from: `#` is figure, `.` is background that reached the edge. */
+const mask = (rows: string[]) => {
+  const width = rows[0].length
+  const background = new Uint8Array(width * rows.length)
+  rows.forEach((row, y) => [...row].forEach((cell, x) => (background[y * width + x] = cell === "." ? 1 : 0)))
+  const figure = { left: 0, right: width - 1, top: 0, bottom: rows.length - 1 }
+  return { background, width, figure }
+}
+
+describe("topBand", () => {
+  // A standing figure: narrow head, wide shoulders, then legs that are narrower again.
+  const FIGURE = ["..##..", ".####.", "######", "..##..", "..##..", "..##.."]
+
+  it("keeps the top fraction of the figure and drops the rest", () => {
+    const { background, width, figure } = mask(FIGURE)
+
+    expect(topBand(background, width, figure, 0.5).bottom).toBe(2)
+  })
+
+  it("takes the band's OWN width, not the whole figure's", () => {
+    // Framing the head on a box that includes the stance seats the crop in air.
+    const { background, width, figure } = mask(["..##..", "..##..", "######"])
+    const band = topBand(background, width, figure, 0.5)
+
+    expect([band.left, band.right]).toEqual([2, 3])
+  })
+
+  it("never asks for more than the figure has", () => {
+    const { background, width, figure } = mask(FIGURE)
+
+    expect(topBand(background, width, figure, 2).bottom).toBe(figure.bottom)
+  })
+})
+
+describe("headCentre", () => {
+  it("is the middle of the topmost slice, not of the whole figure", () => {
+    // An arm held out to one side drags the bounding box with it; the face does not move. Odd-width
+    // head, so the answer is a column rather than a rounding decision.
+    const { background, width, figure } = mask(["..###.....", "..###.....", "..########"])
+
+    expect(headCentre(background, width, figure, 0.34)).toBe(3)
+  })
+
+  it("ignores an arm that only appears lower down", () => {
+    const narrow = mask(["..###.....", "..###.....", "..###....."])
+    const reaching = mask(["..###.....", "..###.....", "..########"])
+
+    expect(headCentre(reaching.background, reaching.width, reaching.figure, 0.34)).toBe(
+      headCentre(narrow.background, narrow.width, narrow.figure, 0.34)
+    )
+  })
+})
+
+describe("bustWindow", () => {
+  const window = bustWindow({ top: 100, bottom: 399 }, 500)
+
+  it("is 2:3, like every frame these end up in", () => {
+    expect(+(window.width / window.height).toFixed(2)).toBe(+(250 / 375).toFixed(2))
+  })
+
+  it("sits the cut on the bottom edge and leaves air above the head", () => {
+    expect(window.top + window.height).toBe(400)
+    expect(window.height).toBeGreaterThan(300)
+  })
+
+  it("centres on the head even when that runs off the source, so faces never slide off-centre", () => {
+    expect(bustWindow({ top: 0, bottom: 299 }, 10).left).toBeLessThan(0)
   })
 })

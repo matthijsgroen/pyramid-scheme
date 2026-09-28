@@ -191,12 +191,16 @@ So they are named, and the script prints every patch it left opaque after each r
 to look. Pass the ones that are not eyes:
 
 ```
-yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer \
+yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer --bust=0.55 \
   --holes="574,1299;631,1503;1242,1025;646,1062;748,642"
-yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer \
+yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer --bust=0.55 \
   --holes="582,1329;1243,1026;646,1061;929,599;749,642"
-yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer \
+yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer --bust=0.55 --centre=1065 \
   --holes="586,1330;649,1059;753,638"
+yarn import-portrait art/masters/characters/ghost-ipi.jpeg     --name=ghost-ipi     --bust=0.55
+yarn import-portrait art/masters/characters/ghost-henut.jpeg   --name=ghost-henut   --bust=0.55
+yarn import-portrait art/masters/characters/ghost-priest.jpeg  --name=ghost-priest  --bust=0.55
+yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-pharaoh --bust=0.55
 ```
 
 Coordinates are in the MASTER image, so they survive as long as the master does; a redrawn master needs new
@@ -206,10 +210,29 @@ flood is right to leave them alone, which is the case that makes the conservativ
 Check the result over a dark ground rather than in a file browser: white on white is invisible until the
 sprite is drawn over a lit tomb, which is where these are actually seen.
 
-## 4. What is not here
+### Why every human is cut waist-up
 
-**The bust crops.** They are crops of the files above, not new generations — the expressive part is head and
-shoulders and that is a cut, not a drawing.
+Fez is a cartoon lizard whose head is most of him. A human drawn full-length in the same 250×375 frame has
+a head a third the size, and the two of them talking read as two scales rather than as two characters —
+which is the thing a player notices first. `--bust=0.55` keeps the top 55% of the figure and brings the
+faces level. Every ghost wants it too: they are all humans, and they were all small beside him.
+
+**Waist-up rather than head-and-shoulders, because the props do the characterising.** Ipi is the bookkeeper
+by way of the reed pen and tablet, Henut is mid-gesture, and the pointing pose exists for a raised finger.
+0.55 keeps all of it; 0.38 overshoots Fez's head and throws the hands away.
+
+**A bust is framed on the head and sized by its height**, which is the opposite of what a full figure gets.
+Fit a band by its width and the scale depends on how far the arms happen to reach — the explorer holds a
+map out at arm's length, so fitted that way he came out smaller than every ghost. Framed on the head they
+all match, and the map clips at the frame edge, which costs less.
+
+`--centre` is the exception and there is exactly one: the pointing pose's whole point is off to one side,
+so a window centred on the face cuts the finger off. It is named for that drawing, the way the holes are.
+
+**The full-length versions are still what the journey card and the title want.** Same command without
+`--bust`.
+
+## 4. What is not here
 
 **The Sphinx inscription, the seals and the props.** Those are objects rather than characters, they need
 their own reference set, and the inscription is the ending — it wants its own pass with the writing legible

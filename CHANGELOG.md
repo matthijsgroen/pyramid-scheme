@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Whoever speaks first slides in first. Fez used to appear with nothing to say and vanish again.
 - The explorer no longer has white patches under an arm, behind the neck and beside the map.
 - The explorer stands at the opposite edge from Fez instead of just inside it.
+- Everyone who talks to Fez is now drawn waist-up, so their faces are the same size as his instead of a third of it.
 - Fixed walking when going to a deeper floor.
 - Fixed pyramids pulsing on the map with nothing left in them.
 - The way out of a site now counts as explored, so the corridor to it stays lit.

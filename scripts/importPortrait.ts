@@ -15,6 +15,11 @@
  * Flags:
  *   --key=#ffffff    background colour to make transparent (default white)
  *   --tolerance=20   how far from that colour still counts as background (0-441, default 20)
+ *   --bust=0.55      keep only the top fraction of the figure — the waist-up cut the conversation
+ *                    sprites wear, so a human head reads at the same size as Fez's. Omit for a full
+ *                    figure (the journey card, the title, anything not standing beside him).
+ *   --centre=840     where to frame a bust horizontally, in source pixels. Defaults to the head; give
+ *                    it only for a pose whose point is off to one side (the raised finger).
  *   --holes=x,y;x,y  points inside enclosed background — the gap under an arm, between a held map and
  *                    a hand, behind a neck. The flood cannot reach these from the edge and no rule can
  *                    tell them from an eye, so they are named. Every import prints what it left.
@@ -167,6 +172,89 @@ export const seat = (figure: { width: number; height: number }) => {
   return { wide, canvasWidth, canvasHeight: wide ? Math.round((canvasWidth * HEIGHT) / WIDTH) : byHeight }
 }
 
+/**
+ * The top `fraction` of a figure, with its own left and right — the waist-up cut.
+ *
+ * **Why these sprites are cut at all.** Fez is a cartoon lizard whose head is most of him; a human
+ * drawn full-length in the same frame has a head a third the size, and the two of them talking read
+ * as two scales rather than as two characters. Cropping the humans is what brings the faces level,
+ * and it is a cut rather than a redraw because the expressive part is already in the file.
+ *
+ * **Waist-up rather than head-and-shoulders**, because the props do the characterising: Ipi is the
+ * bookkeeper by way of the reed pen and tablet he is holding, Henut is mid-gesture, and the pointing
+ * pose exists for a raised finger that a tighter cut removes. 0.55 brings the heads level and keeps
+ * all of it; 0.38 overshoots Fez and throws the hands away.
+ *
+ * The band takes its OWN width, not the whole figure's: a standing figure is widest at the feet or
+ * the stance, and keeping that width would seat the crop in a frame half full of air.
+ */
+export const topBand = (
+  background: Uint8Array,
+  width: number,
+  figure: { left: number; right: number; top: number; bottom: number },
+  fraction: number
+) => {
+  const bottom = Math.min(figure.bottom, figure.top + Math.round((figure.bottom - figure.top + 1) * fraction) - 1)
+  let left = width
+  let right = -1
+  for (let y = figure.top; y <= bottom; y++)
+    for (let x = 0; x < width; x++)
+      if (background[y * width + x] === 0) {
+        if (x < left) left = x
+        if (x > right) right = x
+      }
+  return { left, right, top: figure.top, bottom }
+}
+
+/**
+ * Where the head is: the middle of the figure's topmost slice.
+ *
+ * A bust is framed on the face, not on the bounding box. The explorer holds a map out at arm's
+ * length, so his band is half again as wide as the ghosts' and its centre is somewhere over the
+ * map — framing on that put his head off to one side and, worse, made `seat` fit the whole width
+ * into the frame and shrink him below everybody else.
+ */
+export const headCentre = (
+  background: Uint8Array,
+  width: number,
+  figure: { top: number; bottom: number },
+  slice = 0.15
+) => {
+  const to = figure.top + Math.max(1, Math.round((figure.bottom - figure.top + 1) * slice))
+  let left = width
+  let right = -1
+  for (let y = figure.top; y <= to; y++)
+    for (let x = 0; x < width; x++)
+      if (background[y * width + x] === 0) {
+        if (x < left) left = x
+        if (x > right) right = x
+      }
+  return Math.round((left + right) / 2)
+}
+
+/**
+ * The 2:3 window a bust is cut from: tall enough for the band plus a little air, centred on the head.
+ *
+ * **Sized by height and allowed to lose the sides**, which is the opposite of what `seat` does for a
+ * full figure. A bust's job is to put every face at the same size, and a band fitted by its width
+ * scales by how far the arms happen to reach — so the one character holding something at arm's
+ * length comes out smaller than everyone else. Clipping an outstretched map costs less than that.
+ *
+ * Returned in source pixels and allowed to fall outside the image; the caller clamps and pads,
+ * because a head near an edge is a real case and a window that refuses to leave the canvas would
+ * slide the face off centre instead.
+ */
+export const bustWindow = (band: { top: number; bottom: number }, centreX: number) => {
+  const height = Math.round((band.bottom - band.top + 1) / FILL)
+  const width = Math.round((height * WIDTH) / HEIGHT)
+  return {
+    left: centreX - Math.round(width / 2),
+    top: band.bottom + 1 - height,
+    width,
+    height,
+  }
+}
+
 const bounds = (background: Uint8Array, width: number, height: number) => {
   let left = width
   let right = -1
@@ -209,24 +297,54 @@ const main = async (): Promise<void> => {
   })
   for (let i = 0; i < background.length; i++) if (background[i] === 1) data[i * info.channels + 3] = 0
 
-  const { left, right, top, bottom } = bounds(background, info.width, info.height)
+  const whole = bounds(background, info.width, info.height)
+  const bust = arg("bust")
+  const { left, right, top, bottom } = bust ? topBand(background, info.width, whole, Number(bust)) : whole
   if (right < left) {
     console.error(`nothing but background in ${file} — is it on ${arg("key", "#ffffff")}?`)
     process.exit(1)
   }
   const figure = { width: right - left + 1, height: bottom - top + 1 }
-  const { wide: tooWide, canvasWidth, canvasHeight } = seat(figure)
-  const sides = canvasWidth - figure.width
+  // A bust frames on the face and keeps every head the same size (see bustWindow); a full figure is
+  // seated in a canvas that holds all of it (see seat). The two want opposite things from a wide
+  // subject, which is why this is a branch and not a parameter.
+  // The head is the right place to frame on for everybody except a pose built around a gesture:
+  // the pointing explorer holds a finger up at arm’s length, and a window centred on his face
+  // clips it off — removing the one thing that pose is for. Named per sprite for the same reason
+  // the holes are: it is a property of that drawing, not a rule.
+  const centre = arg("centre")
+  const window = bust
+    ? bustWindow({ top, bottom }, centre ? Number(centre) : headCentre(background, info.width, { top, bottom }))
+    : (() => {
+        const { canvasWidth, canvasHeight } = seat(figure)
+        const sides = canvasWidth - figure.width
+        return {
+          left: left - Math.floor(sides / 2),
+          top: bottom + 1 - canvasHeight,
+          width: canvasWidth,
+          height: canvasHeight,
+        }
+      })()
+  const { wide: tooWide } = seat(figure)
+
+  // Clamped to the image, then padded back out: a window may reach past an edge (a head near the
+  // top, a bust wider than the source), and sharp's extract cannot.
+  const cut = {
+    left: Math.max(0, window.left),
+    top: Math.max(0, window.top),
+  }
+  const cutW = Math.min(info.width, window.left + window.width) - cut.left
+  const cutH = Math.min(info.height, window.top + window.height) - cut.top
 
   // Two passes, because sharp always extends AFTER it resizes: padding and resizing in one chain pads
   // the finished 250x375 and hands back a canvas the size of neither.
   const padded = await sharp(data, { raw: { width: info.width, height: info.height, channels: info.channels } })
-    .extract({ left, top, width: figure.width, height: figure.height })
+    .extract({ left: cut.left, top: cut.top, width: cutW, height: cutH })
     .extend({
-      top: canvasHeight - figure.height,
-      bottom: 0,
-      left: Math.floor(sides / 2),
-      right: Math.ceil(sides / 2),
+      top: cut.top - window.top,
+      bottom: window.top + window.height - (cut.top + cutH),
+      left: cut.left - window.left,
+      right: window.left + window.width - (cut.left + cutW),
       background: { r: 0, g: 0, b: 0, alpha: 0 },
     })
     .png()
@@ -245,11 +363,13 @@ const main = async (): Promise<void> => {
     background,
   })
 
-  console.log(`${out}  figure ${figure.width}x${figure.height} of ${info.width}x${info.height}`)
+  console.log(`${out}  figure ${figure.width}x${figure.height} of ${info.width}x${info.height}, x ${left}..${right}`)
   console.log(
-    `fills ${Math.round((figure.width / canvasWidth) * 100)}% of the width and ` +
-      `${Math.round((figure.height / canvasHeight) * 100)}% of the height it ends up in` +
-      (tooWide ? " (seated by width: wider than it is tall)" : "")
+    `fills ${Math.round((figure.width / window.width) * 100)}% of the width and ` +
+      `${Math.round((figure.height / window.height) * 100)}% of the height it ends up in` +
+      // Over 100% in bust mode means the sides were clipped, which is the point — what must match
+      // across the cast is the head, and a wide subject fitted by its width comes out small.
+      (bust ? " (bust: framed on the head, sides clipped)" : tooWide ? " (seated by width: wider than it is tall)" : "")
   )
   // Every patch of background the flood could not reach and no --holes named. The eyes belong here;
   // anything else is an opaque white blob that will only show up once the sprite is over a dark room.
