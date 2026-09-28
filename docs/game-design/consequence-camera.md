@@ -21,10 +21,15 @@ answer to direction is this fourth carrier. On the develop journey's lever floor
 sit at opposite corners, so a throw changes nothing on screen: the player flips, walks to find out,
 and walks back. That is the loop this replaces.
 
-**This does NOT change what a mark means.** Per-position marks were considered and set aside: they
-would make a door state its own direction, at the cost of contradicting the one-pair rule and doubling
-what a lever's room has to show. Building the carrier the design already specified serves every
-mechanism rather than only levers.
+**This does NOT change what a mark means — yet, and the playtest decides.** Per-position marks would
+make a door state its own direction, at the cost of contradicting the one-pair rule and doubling what a
+lever's room has to show. Building the carrier the design already specified serves every mechanism
+rather than only levers, so it goes first.
+
+**Whether the camera is enough on its own is a question for players, not for this document.** Ship the
+camera, watch someone play a lever floor, and see whether they still have to walk to find out which way
+to throw it. If they do, per-position marks come back on the table with evidence behind them. Parked on
+that evidence, not rejected.
 
 ---
 
@@ -98,7 +103,20 @@ by side.
 ### Clusters and seams
 
 A cluster is a connected group of changed cells. Its beat targets the **seam** — the changed cell
-adjacent to ground the player has explored.
+adjacent to ground the player has explored. **The seam is a mouth, and the camera frames it and stops
+there.** It never travels past the seam into the cluster.
+
+That is what the waterline case needs, and the waterline case is the one that shows why the seam is
+the right target rather than the cluster. A flooded zone could not be walked, so its INTERIOR is
+unexplored — the changed cells are fogged, and the only cell that means anything to the player is the
+one where they may now enter. Framing that mouth says "this is open to you now". Touring the interior
+would draw a zone they have not earned.
+
+**Known-but-shut is not a secret.** The fog rule exists to stop a flip revealing that something is
+THERE — a hidden branch is a secret, and panning at it leaks it. A flooded zone is one the player has
+seen and been turned away from, so its mouth opening is information they are owed. The test is not
+explored-versus-fogged; it is whether the seam sits against ground they have walked. If it does, they
+already know the place exists, and the camera may show the way in without showing what is inside.
 
 This is what keeps the hard case cheap, and the hard case is named in the topology design: a mechanism
 owning many gates "has nowhere to travel to". A waterline drowning a dozen corridors is ONE cluster
@@ -112,9 +130,10 @@ beat. Trivial at these grid sizes, but a real step rather than free.
 
 ## What it must not do
 
-- **Never pan toward fog.** Panning into unexplored ground says something is there, which is the
-  spoiler that already stops a switch gating a hidden branch. A cluster with no explored seam is
-  skipped, and a flip that visibly does nothing is honest.
+- **Never travel PAST a seam into fog.** The camera stops at the mouth. Going further draws ground the
+  player has not earned, which is the spoiler that already stops a switch gating a hidden branch. A
+  cluster with no explored seam has no mouth to frame and is skipped entirely — and a flip that visibly
+  does nothing is honest.
 - **Never take the player's zoom.**
 - **Never move `levelNr`, position, or any saved state.** The tour is a camera, nothing else.
 
