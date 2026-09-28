@@ -20,6 +20,7 @@ import type {
 } from "./siteTypes"
 import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
 import { cellSlot } from "./cellSlot"
+import { stairIdAt } from "./stairAddress"
 import { footprintSize } from "./roomFootprint"
 import type { ResolveBoardIndex } from "./seeds/boardIndex"
 import { validateSite } from "./siteValidator"
@@ -606,8 +607,6 @@ type Chain = {
   keyNodeId?: string
   /** The colours of the keys its end room hands out — empty where it hosts none. */
   keyHostColors: KeyColor[]
-  /** Where `end: "staircase"` leads when the authoring names no stair of its own. */
-  defaultStairId: string
 }
 
 /** The doors shutting a chain off from the way in: its parent's, plus its own where it has one. */
@@ -676,6 +675,16 @@ export const assembleFloor = (
   // to fit a door it was never thrown for, and an authoring address is what a re-carve cannot move.
   const handleStem = (n: number) =>
     `handle:${floorRef.journeyId}#${floorRef.levelIndex ?? 0}#${floorRef.floorIndex}#${n}`
+  // The id a stairhead here takes when the authoring named none — the floor's own address plus where
+  // on it the stairs stand, built by the one constructor world generation also mints ids with, so a
+  // floor assembled from an unnamed stairhead lands on the same id the spec would have given it.
+  const stairOnThisFloor = (path: string) =>
+    stairIdAt({
+      journeyId: floorRef.journeyId,
+      pyramidIndex: floorRef.levelIndex ?? 0,
+      floorIndex: floorRef.floorIndex,
+      path,
+    })
   const handleGateKeyByAddress = new Map<string, string>()
   const leverByAddress = new Map<string, MechanismRecord>()
   // THE PAIR BOTH ENDS WEAR, by the gate key that already names one end: a lever's room is found again
@@ -1308,7 +1317,6 @@ export const assembleFloor = (
           hidden: Boolean(sub.hidden),
           keyNodeId: authoredSubKeyId ?? subKeyNodeIdMap.get(idx),
           keyHostColors: subKeyHostColorsMap.get(idx) ?? [],
-          defaultStairId: `${siteId}:subsection`,
         })
       }
     }
@@ -1374,7 +1382,6 @@ export const assembleFloor = (
           hidden: Boolean(section.hidden),
           keyNodeId: authoredKeyId ?? keyNodeIdMap.get(group.sectionIdx),
           keyHostColors: chainKeyColorMap.get(group.sectionIdx) ?? [],
-          defaultStairId: `${siteId}:side${group.sectionIdx}`,
         }
       }),
       ...subChains,
@@ -1555,7 +1562,7 @@ export const assembleFloor = (
       const [r, c] = mainPath[mi]
       if (mi === 0) {
         if (config.entrance) {
-          const stairId = typeof config.entrance === "object" ? config.entrance.stairId : `${siteId}:entrance`
+          const stairId = typeof config.entrance === "object" ? config.entrance.stairId : stairOnThisFloor("entrance")
           roomSpecs.set(posKey(r, c), { roomType: "portal", stairId })
         } else {
           roomSpecs.set(posKey(r, c), { roomType: "portal" })
@@ -1612,7 +1619,8 @@ export const assembleFloor = (
     if (config.exitOrStaircase === "exit") {
       roomSpecs.set(posKey(exR, exC), { roomType: "portal" })
     } else {
-      const stairId = typeof config.exitOrStaircase === "object" ? config.exitOrStaircase.stairId : `${siteId}:main`
+      const stairId =
+        typeof config.exitOrStaircase === "object" ? config.exitOrStaircase.stairId : stairOnThisFloor("main")
       roomSpecs.set(posKey(exR, exC), { roomType: "portal", stairId })
     }
 
@@ -1620,7 +1628,7 @@ export const assembleFloor = (
     // stands there, the chain's own content spread through whatever room the carve gave it, and its
     // end room. One body for a path off the main walk and a path off one of those — the two differ
     // only in what the chain record already carries.
-    for (const { section, cells, positional, keyNodeId, keyHostColors, defaultStairId } of chains) {
+    for (const { section, cells, positional, keyNodeId, keyHostColors } of chains) {
       const isFloorKeyGate = section.gate?.type === "floor-key"
       const isTombKeyGate = section.gate?.type === "tomb-key"
       // An authored keyId is used verbatim; only an unauthored gate looks up the id the
@@ -1722,7 +1730,7 @@ export const assembleFloor = (
           ...(keyHostColors.length > 1 ? { keyColors: keyHostColors } : {}),
         })
       } else if (section.end === "staircase" || typeof section.end === "object") {
-        const stairId = typeof section.end === "object" ? section.end.stairId : defaultStairId
+        const stairId = typeof section.end === "object" ? section.end.stairId : stairOnThisFloor(positional)
         roomSpecs.set(posKey(er, ec), { roomType: "portal", stairId })
       } else {
         // A shop is a chain whose resolved encounter is fez-shop (a pathPuzzles:0 node — no chain of

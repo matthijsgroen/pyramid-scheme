@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 725969274
+export const worldContentHash = 2117876804
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -17,7 +17,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "starter",
-            end: { stairId: "starter_1:0:floor0:side0" },
+            end: { stairId: "starter_1:p0:f0:s0" },
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
             rewards: [{ type: "money", amount: 1 }],
             encounter: "lightbeam",
@@ -183,7 +183,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "sudoku" },
           },
         ],
-        entrance: { stairId: "starter_1:0:floor0:side0" },
+        entrance: { stairId: "starter_1:p0:f0:s0" },
         encounter: "star-battle",
         decorations: [
           "shelf",
@@ -306,7 +306,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "junior",
-            end: { stairId: "starter_2:0:floor0:side0" },
+            end: { stairId: "starter_2:p0:f0:s0" },
             gate: { type: "tomb-key", wardKeyId: "junior_a_2" },
             rewards: [{ type: "money", amount: 3 }],
             encounter: "rush-hour",
@@ -418,7 +418,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "arithmetic-reflex", 1: "clock-reflex", 2: "arithmetic-reflex", 3: "clock-reflex" },
           },
         ],
-        entrance: { stairId: "starter_2:0:floor0:side0" },
+        entrance: { stairId: "starter_2:p0:f0:s0" },
         encounter: "procession",
         decorations: ["shelf", "jarRack", "offeringTable", "pillar", "rubblePile", "mat"],
         wallDecorations: ["niche", "tallyBoard"],
@@ -441,7 +441,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "expert",
-            end: { stairId: "starter_2:1:floor0:side0" },
+            end: { stairId: "starter_2:p1:f0:s0" },
             gate: { type: "tomb-key", wardKeyId: "expert_a_3" },
             rewards: [{ type: "consumable", consumable: "oil" }],
             encounter: "balance-scale",
@@ -527,7 +527,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "arithmetic-reflex", 1: "clock-reflex" },
           },
         ],
-        entrance: { stairId: "starter_2:1:floor0:side0" },
+        entrance: { stairId: "starter_2:p1:f0:s0" },
         encounter: "rush-hour",
         decorations: ["shelf", "jarRack", "offeringTable", "pillar", "rubblePile", "mat"],
         wallDecorations: ["niche", "tallyBoard"],
@@ -2127,7 +2127,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "junior",
-            end: { stairId: "junior_1:p2:wing0" },
+            end: { stairId: "junior_1:p2:f0:s6" },
             gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             rewards: [{ type: "money", amount: 1 }],
             encounter: "procession",
@@ -2155,7 +2155,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "junior_1:p2:wing0" },
+        entrance: { stairId: "junior_1:p2:f0:s6" },
         encounter: "constellation",
         decorations: ["jarRack", "basin", "pillar", "rubblePile", "mat"],
         patron: "thoth",
@@ -2798,7 +2798,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 2,
             difficulty: "expert",
-            end: { stairId: "junior_2:p2:wing0" },
+            end: { stairId: "junior_2:p2:f0:s7" },
             gate: { type: "tomb-key", wardKeyId: "expert_a_1" },
             rewards: [
               { type: "consumable", consumable: "trapTool" },
@@ -2842,7 +2842,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "junior_2:p2:wing0" },
+        entrance: { stairId: "junior_2:p2:f0:s7" },
         encounter: "hidato",
         decorations: [
           "shelf",
@@ -2999,7 +2999,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 2,
             difficulty: "master",
-            end: { stairId: "junior_2:p3:wing0" },
+            end: { stairId: "junior_2:p3:f0:s5" },
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             rewards: [
               { type: "consumable", consumable: "trapTool" },
@@ -3044,7 +3044,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "junior_2:p3:wing0" },
+        entrance: { stairId: "junior_2:p3:f0:s5" },
         encounter: "procession",
         decorations: [
           "shelf",
@@ -3707,7 +3707,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "junior",
-            end: { stairId: "junior_3:p2:wing0" },
+            end: { stairId: "junior_3:p2:f0:s9" },
             gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             rewards: [undefined],
             encounter: "rush-hour",
@@ -3744,7 +3744,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "junior_3:p2:wing0" },
+        entrance: { stairId: "junior_3:p2:f0:s9" },
         encounter: "star-battle",
         decorations: [
           "shelf",
@@ -3925,7 +3925,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 2,
             difficulty: "expert",
-            end: { stairId: "junior_3:p3:wing0" },
+            end: { stairId: "junior_3:p3:f0:s6" },
             gate: { type: "tomb-key", wardKeyId: "expert_a_1" },
             rewards: [
               { type: "consumable", consumable: "trapTool" },
@@ -3972,7 +3972,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "junior_3:p3:wing0" },
+        entrance: { stairId: "junior_3:p3:f0:s6" },
         encounter: "eclipse",
         decorations: [
           "shelf",
@@ -4407,7 +4407,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 2,
             difficulty: "master",
-            end: { stairId: "junior_4:p3:wing0" },
+            end: { stairId: "junior_4:p3:f0:s6" },
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             rewards: [
               { type: "consumable", consumable: "bandage" },
@@ -4434,7 +4434,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "junior_4:p3:wing0" },
+        entrance: { stairId: "junior_4:p3:f0:s6" },
         encounter: "star-battle",
         theme: "night",
         decorations: ["lamp", "pillar", "brazier", "rubblePile", "mat"],
@@ -4532,7 +4532,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "junior",
-            end: { stairId: "junior_4:p4:wing0" },
+            end: { stairId: "junior_4:p4:f0:s6" },
             gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             rewards: [undefined],
             encounter: "lightbeam",
@@ -4556,7 +4556,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "junior_4:p4:wing0" },
+        entrance: { stairId: "junior_4:p4:f0:s6" },
         encounter: "star-battle",
         theme: "night",
         decorations: ["lamp", "pillar", "brazier", "rubblePile", "mat"],
@@ -5212,7 +5212,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 2,
             difficulty: "expert",
-            end: { stairId: "expert_1:p2:wing0" },
+            end: { stairId: "expert_1:p2:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "expert_a_1" },
             rewards: [
               { type: "money", amount: 3 },
@@ -5225,7 +5225,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 2,
             difficulty: "starter",
-            end: { stairId: "expert_1:p2:wing1" },
+            end: { stairId: "expert_1:p2:f0:s9" },
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
             rewards: [
               { type: "money", amount: 3 },
@@ -5266,7 +5266,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "expert_1:p2:wing0" },
+        entrance: { stairId: "expert_1:p2:f0:s8" },
         encounter: "balance-scale",
         decorations: [
           "offeringTable",
@@ -5294,7 +5294,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "expert_1:p2:wing1" },
+        entrance: { stairId: "expert_1:p2:f0:s9" },
         encounter: "procession",
         decorations: [
           "offeringTable",
@@ -5521,7 +5521,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 2,
             difficulty: "master",
-            end: { stairId: "expert_1:p3:wing0" },
+            end: { stairId: "expert_1:p3:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             rewards: [
               { type: "money", amount: 3 },
@@ -5563,7 +5563,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "expert_1:p3:wing0" },
+        entrance: { stairId: "expert_1:p3:f0:s8" },
         encounter: "constellation",
         decorations: [
           "offeringTable",
@@ -6294,7 +6294,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 2,
             difficulty: "expert",
-            end: { stairId: "expert_2:p2:wing0" },
+            end: { stairId: "expert_2:p2:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "expert_a_1" },
             rewards: [undefined, undefined],
             encounter: "constellation",
@@ -6336,7 +6336,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "expert_2:p2:wing0" },
+        entrance: { stairId: "expert_2:p2:f0:s8" },
         encounter: "sudoku",
         decorations: [
           "shelf",
@@ -6573,7 +6573,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 2,
             difficulty: "master",
-            end: { stairId: "expert_2:p3:wing0" },
+            end: { stairId: "expert_2:p3:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             rewards: [
               { type: "money", amount: 2 },
@@ -6627,7 +6627,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "expert_2:p3:wing0" },
+        entrance: { stairId: "expert_2:p3:f0:s8" },
         encounter: "rush-hour",
         decorations: [
           "shelf",
@@ -7560,7 +7560,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 2,
             difficulty: "master",
-            end: { stairId: "expert_3:p3:wing0" },
+            end: { stairId: "expert_3:p3:f0:s7" },
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             rewards: [
               { type: "money", amount: 2 },
@@ -7616,7 +7616,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "expert_3:p3:wing0" },
+        entrance: { stairId: "expert_3:p3:f0:s7" },
         encounter: "procession",
         decorations: [
           "shelf",
@@ -7857,7 +7857,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 2,
             difficulty: "expert",
-            end: { stairId: "expert_3:p4:wing0" },
+            end: { stairId: "expert_3:p4:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "expert_a_1" },
             rewards: [undefined, undefined],
             encounter: "twin-stars",
@@ -7911,7 +7911,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "expert_3:p4:wing0" },
+        entrance: { stairId: "expert_3:p4:f0:s8" },
         encounter: "sumplete",
         decorations: [
           "shelf",
@@ -8825,7 +8825,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 2,
             difficulty: "master",
-            end: { stairId: "expert_4:p3:wing0" },
+            end: { stairId: "expert_4:p3:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             rewards: [
               { type: "money", amount: 1 },
@@ -8880,7 +8880,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "expert_4:p3:wing0" },
+        entrance: { stairId: "expert_4:p3:f0:s8" },
         encounter: "eclipse",
         decorations: [
           "shelf",
@@ -9094,7 +9094,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 2,
             difficulty: "expert",
-            end: { stairId: "expert_4:p4:wing0" },
+            end: { stairId: "expert_4:p4:f0:s7" },
             gate: { type: "tomb-key", wardKeyId: "expert_a_1" },
             rewards: [undefined, undefined],
             encounter: "procession",
@@ -9144,7 +9144,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "expert_4:p4:wing0" },
+        entrance: { stairId: "expert_4:p4:f0:s7" },
         encounter: "futoshiki",
         decorations: [
           "shelf",
@@ -9309,7 +9309,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_1:p0:wing0" },
+            end: { stairId: "master_1:p0:f0:s9" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [{ type: "money", amount: 2 }],
             encounter: "constellation",
@@ -9336,7 +9336,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_1:p0:wing0" },
+        entrance: { stairId: "master_1:p0:f0:s9" },
         encounter: "twin-stars",
         decorations: ["shelf", "jarRack", "offeringTable", "pillar"],
         wallDecorations: ["sconce", "niche"],
@@ -9476,7 +9476,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_1:p1:wing0" },
+            end: { stairId: "master_1:p1:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [{ type: "money", amount: 1 }],
             encounter: "eclipse",
@@ -9504,7 +9504,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_1:p1:wing0" },
+        entrance: { stairId: "master_1:p1:f0:s8" },
         encounter: "sudoku",
         decorations: ["shelf", "jarRack", "offeringTable", "pillar"],
         wallDecorations: ["sconce", "niche"],
@@ -9676,7 +9676,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_1:p2:wing0" },
+            end: { stairId: "master_1:p2:f0:s10" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "balance-scale",
@@ -9704,7 +9704,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_1:p2:wing0" },
+        entrance: { stairId: "master_1:p2:f0:s10" },
         encounter: "eclipse",
         decorations: ["shelf", "jarRack", "offeringTable", "pillar"],
         wallDecorations: ["sconce", "niche"],
@@ -9820,7 +9820,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_1:p3:wing0" },
+            end: { stairId: "master_1:p3:f0:s7" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "sumplete",
@@ -9858,7 +9858,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_1:p3:wing0" },
+        entrance: { stairId: "master_1:p3:f0:s7" },
         encounter: "futoshiki",
         decorations: ["shelf", "jarRack", "offeringTable", "pillar"],
         patron: "horus",
@@ -9988,7 +9988,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_2:p0:wing0" },
+            end: { stairId: "master_2:p0:f0:s7" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "twin-stars",
@@ -10024,7 +10024,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_2:p0:wing0" },
+        entrance: { stairId: "master_2:p0:f0:s7" },
         encounter: "canisters",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         wallDecorations: ["sconce", "mask"],
@@ -10143,7 +10143,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_2:p1:wing0" },
+            end: { stairId: "master_2:p1:f0:s7" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "star-battle",
@@ -10181,7 +10181,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_2:p1:wing0" },
+        entrance: { stairId: "master_2:p1:f0:s7" },
         encounter: "canisters",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         wallDecorations: ["sconce", "mask"],
@@ -10344,7 +10344,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_2:p2:wing0" },
+            end: { stairId: "master_2:p2:f0:s9" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "canisters",
@@ -10382,7 +10382,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_2:p2:wing0" },
+        entrance: { stairId: "master_2:p2:f0:s9" },
         encounter: "sudoku",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         wallDecorations: ["sconce", "mask"],
@@ -10520,7 +10520,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 4,
             difficulty: "wizard",
-            end: { stairId: "master_2:p3:wing0" },
+            end: { stairId: "master_2:p3:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "wizard_b_1" },
             rewards: [
               { type: "money", amount: 2 },
@@ -10565,7 +10565,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_2:p3:wing0" },
+        entrance: { stairId: "master_2:p3:f0:s8" },
         encounter: "hidato",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         wallDecorations: ["sconce", "mask"],
@@ -10686,7 +10686,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_2:p4:wing0" },
+            end: { stairId: "master_2:p4:f0:s7" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "sumplete",
@@ -10727,7 +10727,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_2:p4:wing0" },
+        entrance: { stairId: "master_2:p4:f0:s7" },
         encounter: "futoshiki",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         wallDecorations: ["sconce", "mask"],
@@ -10870,7 +10870,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_3:p0:wing0" },
+            end: { stairId: "master_3:p0:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "twin-stars",
@@ -10907,7 +10907,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_3:p0:wing0" },
+        entrance: { stairId: "master_3:p0:f0:s8" },
         encounter: "balance-scale",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         wallDecorations: ["sconce", "mask"],
@@ -11046,7 +11046,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_3:p1:wing0" },
+            end: { stairId: "master_3:p1:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "eclipse",
@@ -11084,7 +11084,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_3:p1:wing0" },
+        entrance: { stairId: "master_3:p1:f0:s8" },
         encounter: "hidato",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         wallDecorations: ["sconce", "mask"],
@@ -11247,7 +11247,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_3:p2:wing0" },
+            end: { stairId: "master_3:p2:f0:s9" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "constellation",
@@ -11285,7 +11285,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_3:p2:wing0" },
+        entrance: { stairId: "master_3:p2:f0:s9" },
         encounter: "procession",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         wallDecorations: ["sconce", "mask"],
@@ -11424,7 +11424,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_3:p3:wing0" },
+            end: { stairId: "master_3:p3:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "procession",
@@ -11464,7 +11464,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_3:p3:wing0" },
+        entrance: { stairId: "master_3:p3:f0:s8" },
         encounter: "constellation",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         wallDecorations: ["sconce", "mask"],
@@ -11601,7 +11601,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_3:p4:wing0" },
+            end: { stairId: "master_3:p4:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "sumplete",
@@ -11643,7 +11643,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_3:p4:wing0" },
+        entrance: { stairId: "master_3:p4:f0:s8" },
         encounter: "sudoku",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         patron: "sekhmet",
@@ -11775,7 +11775,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_4:p0:wing0" },
+            end: { stairId: "master_4:p0:f0:s7" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "constellation",
@@ -11804,7 +11804,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_4:p0:wing0" },
+        entrance: { stairId: "master_4:p0:f0:s7" },
         encounter: "rush-hour",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         wallDecorations: ["sconce", "mask"],
@@ -11911,7 +11911,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_4:p1:wing0" },
+            end: { stairId: "master_4:p1:f0:s6" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "sumplete",
@@ -11947,7 +11947,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_4:p1:wing0" },
+        entrance: { stairId: "master_4:p1:f0:s6" },
         encounter: "balance-scale",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         wallDecorations: ["sconce", "mask"],
@@ -12084,7 +12084,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_4:p2:wing0" },
+            end: { stairId: "master_4:p2:f0:s7" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "balance-scale",
@@ -12120,7 +12120,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_4:p2:wing0" },
+        entrance: { stairId: "master_4:p2:f0:s7" },
         encounter: "canisters",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         wallDecorations: ["sconce", "mask"],
@@ -12245,7 +12245,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 4,
             difficulty: "wizard",
-            end: { stairId: "master_4:p3:wing0" },
+            end: { stairId: "master_4:p3:f0:s7" },
             gate: { type: "tomb-key", wardKeyId: "wizard_b_1" },
             rewards: [
               { type: "money", amount: 1 },
@@ -12288,7 +12288,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_4:p3:wing0" },
+        entrance: { stairId: "master_4:p3:f0:s7" },
         encounter: "procession",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         wallDecorations: ["sconce", "mask"],
@@ -12421,7 +12421,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "master",
-            end: { stairId: "master_4:p4:wing0" },
+            end: { stairId: "master_4:p4:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
             encounter: "balance-scale",
@@ -12459,7 +12459,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "master_4:p4:wing0" },
+        entrance: { stairId: "master_4:p4:f0:s8" },
         encounter: "twin-stars",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar", "brazier"],
         wallDecorations: ["sconce", "mask"],
@@ -12484,7 +12484,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_1:p0:main0" },
+        exitOrStaircase: { stairId: "wizard_1:p0:f0:main" },
         sideSections: [],
         encounter: "canisters",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -12619,7 +12619,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 3,
             difficulty: "starter",
-            end: { stairId: "wizard_1:p0:wing0" },
+            end: { stairId: "wizard_1:p0:f1:s6" },
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
             rewards: [
               { type: "money", amount: 1 },
@@ -12653,7 +12653,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "arithmetic-reflex", 1: "clock-reflex" },
           },
         ],
-        entrance: { stairId: "wizard_1:p0:main0" },
+        entrance: { stairId: "wizard_1:p0:f0:main" },
         encounter: "constellation",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "ra",
@@ -12686,7 +12686,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_1:p0:wing0" },
+        entrance: { stairId: "wizard_1:p0:f1:s6" },
         encounter: "eclipse",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "ra",
@@ -12702,7 +12702,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_1:p1:main0" },
+        exitOrStaircase: { stairId: "wizard_1:p1:f0:main" },
         sideSections: [],
         encounter: "sumplete",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -12839,7 +12839,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_1:p1:wing0" },
+            end: { stairId: "wizard_1:p1:f1:s5" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [{ type: "money", amount: 2 }],
             encounter: "procession",
@@ -12869,7 +12869,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "arithmetic-reflex", 1: "clock-reflex" },
           },
         ],
-        entrance: { stairId: "wizard_1:p1:main0" },
+        entrance: { stairId: "wizard_1:p1:f0:main" },
         encounter: "sumplete",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "ra",
@@ -12904,7 +12904,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_1:p1:wing0" },
+        entrance: { stairId: "wizard_1:p1:f1:s5" },
         encounter: "canisters",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "ra",
@@ -12938,7 +12938,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_1:p2:main0" },
+        exitOrStaircase: { stairId: "wizard_1:p2:f0:main" },
         sideSections: [],
         encounter: "sumplete",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -13083,7 +13083,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_1:p2:wing0" },
+            end: { stairId: "wizard_1:p2:f1:s7" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "lightbeam",
@@ -13113,7 +13113,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "star-battle" },
           },
         ],
-        entrance: { stairId: "wizard_1:p2:main0" },
+        entrance: { stairId: "wizard_1:p2:f0:main" },
         encounter: "eclipse",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "ra",
@@ -13147,7 +13147,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_1:p2:wing0" },
+        entrance: { stairId: "wizard_1:p2:f1:s7" },
         encounter: "rush-hour",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "ra",
@@ -13172,7 +13172,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_1:p3:main0" },
+        exitOrStaircase: { stairId: "wizard_1:p3:f0:main" },
         sideSections: [],
         encounter: "procession",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -13296,7 +13296,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_1:p3:wing0" },
+            end: { stairId: "wizard_1:p3:f1:s5" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "sudoku",
@@ -13326,7 +13326,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "futoshiki" },
           },
         ],
-        entrance: { stairId: "wizard_1:p3:main0" },
+        entrance: { stairId: "wizard_1:p3:f0:main" },
         encounter: "balance-scale",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "ra",
@@ -13352,7 +13352,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_1:p3:wing0" },
+        entrance: { stairId: "wizard_1:p3:f1:s5" },
         encounter: "balance-scale",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "ra",
@@ -13380,7 +13380,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_2:p0:main0" },
+        exitOrStaircase: { stairId: "wizard_2:p0:f0:main" },
         sideSections: [],
         encounter: "canisters",
         decorations: [
@@ -13572,7 +13572,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_2:p0:wing0" },
+            end: { stairId: "wizard_2:p0:f1:s6" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "eclipse",
@@ -13602,7 +13602,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "clock-reflex", 1: "arithmetic-reflex" },
           },
         ],
-        entrance: { stairId: "wizard_2:p0:main0" },
+        entrance: { stairId: "wizard_2:p0:f0:main" },
         encounter: "sumplete",
         decorations: [
           "shelf",
@@ -13637,7 +13637,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_2:p0:wing0" },
+        entrance: { stairId: "wizard_2:p0:f1:s6" },
         encounter: "hidato",
         decorations: [
           "shelf",
@@ -13672,7 +13672,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_2:p1:main0" },
+        exitOrStaircase: { stairId: "wizard_2:p1:f0:main" },
         sideSections: [],
         encounter: "sudoku",
         decorations: [
@@ -13854,7 +13854,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_2:p1:wing0" },
+            end: { stairId: "wizard_2:p1:f1:s5" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "futoshiki",
@@ -13884,7 +13884,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "clock-reflex", 1: "arithmetic-reflex" },
           },
         ],
-        entrance: { stairId: "wizard_2:p1:main0" },
+        entrance: { stairId: "wizard_2:p1:f0:main" },
         encounter: "canisters",
         decorations: [
           "shelf",
@@ -13921,7 +13921,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_2:p1:wing0" },
+        entrance: { stairId: "wizard_2:p1:f1:s5" },
         encounter: "eclipse",
         decorations: [
           "shelf",
@@ -13957,7 +13957,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_2:p2:main0" },
+        exitOrStaircase: { stairId: "wizard_2:p2:f0:main" },
         sideSections: [],
         encounter: "lightbeam",
         decorations: [
@@ -14221,7 +14221,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_2:p2:wing0" },
+            end: { stairId: "wizard_2:p2:f1:s9" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "futoshiki",
@@ -14251,7 +14251,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "clock-reflex", 1: "arithmetic-reflex" },
           },
         ],
-        entrance: { stairId: "wizard_2:p2:main0" },
+        entrance: { stairId: "wizard_2:p2:f0:main" },
         encounter: "constellation",
         decorations: [
           "shelf",
@@ -14287,7 +14287,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_2:p2:wing0" },
+        entrance: { stairId: "wizard_2:p2:f1:s9" },
         encounter: "canisters",
         decorations: [
           "shelf",
@@ -14323,7 +14323,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_2:p3:main0" },
+        exitOrStaircase: { stairId: "wizard_2:p3:f0:main" },
         sideSections: [],
         encounter: "constellation",
         decorations: [
@@ -14490,7 +14490,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_2:p3:wing0" },
+            end: { stairId: "wizard_2:p3:f1:s5" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "procession",
@@ -14520,7 +14520,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "balance-scale" },
           },
         ],
-        entrance: { stairId: "wizard_2:p3:main0" },
+        entrance: { stairId: "wizard_2:p3:f0:main" },
         encounter: "lightbeam",
         decorations: [
           "shelf",
@@ -14558,7 +14558,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_2:p3:wing0" },
+        entrance: { stairId: "wizard_2:p3:f1:s5" },
         encounter: "constellation",
         decorations: [
           "shelf",
@@ -14595,7 +14595,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_2:p4:main0" },
+        exitOrStaircase: { stairId: "wizard_2:p4:f0:main" },
         sideSections: [],
         encounter: "twin-stars",
         decorations: [
@@ -14762,7 +14762,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_2:p4:wing0" },
+            end: { stairId: "wizard_2:p4:f1:s5" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "hidato",
@@ -14792,7 +14792,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "futoshiki" },
           },
         ],
-        entrance: { stairId: "wizard_2:p4:main0" },
+        entrance: { stairId: "wizard_2:p4:f0:main" },
         encounter: "constellation",
         decorations: [
           "shelf",
@@ -14829,7 +14829,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_2:p4:wing0" },
+        entrance: { stairId: "wizard_2:p4:f1:s5" },
         encounter: "rush-hour",
         decorations: [
           "shelf",
@@ -14868,7 +14868,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_3:p0:main0" },
+        exitOrStaircase: { stairId: "wizard_3:p0:f0:main" },
         sideSections: [],
         encounter: "constellation",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -15016,7 +15016,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_3:p0:wing0" },
+            end: { stairId: "wizard_3:p0:f1:s7" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "balance-scale",
@@ -15046,7 +15046,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "clock-reflex", 1: "arithmetic-reflex" },
           },
         ],
-        entrance: { stairId: "wizard_3:p0:main0" },
+        entrance: { stairId: "wizard_3:p0:f0:main" },
         encounter: "star-battle",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "maat",
@@ -15071,7 +15071,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_3:p0:wing0" },
+        entrance: { stairId: "wizard_3:p0:f1:s7" },
         encounter: "balance-scale",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "maat",
@@ -15095,7 +15095,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_3:p1:main0" },
+        exitOrStaircase: { stairId: "wizard_3:p1:f0:main" },
         sideSections: [],
         encounter: "procession",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -15230,7 +15230,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_3:p1:wing0" },
+            end: { stairId: "wizard_3:p1:f1:s5" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "twin-stars",
@@ -15260,7 +15260,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "clock-reflex", 1: "arithmetic-reflex" },
           },
         ],
-        entrance: { stairId: "wizard_3:p1:main0" },
+        entrance: { stairId: "wizard_3:p1:f0:main" },
         encounter: "canisters",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "maat",
@@ -15284,7 +15284,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_3:p1:wing0" },
+        entrance: { stairId: "wizard_3:p1:f1:s5" },
         encounter: "futoshiki",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "maat",
@@ -15308,7 +15308,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_3:p2:main0" },
+        exitOrStaircase: { stairId: "wizard_3:p2:f0:main" },
         sideSections: [],
         encounter: "futoshiki",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -15458,7 +15458,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_3:p2:wing0" },
+            end: { stairId: "wizard_3:p2:f1:s7" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "canisters",
@@ -15488,7 +15488,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "clock-reflex", 1: "arithmetic-reflex" },
           },
         ],
-        entrance: { stairId: "wizard_3:p2:main0" },
+        entrance: { stairId: "wizard_3:p2:f0:main" },
         encounter: "sudoku",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "maat",
@@ -15514,7 +15514,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_3:p2:wing0" },
+        entrance: { stairId: "wizard_3:p2:f1:s7" },
         encounter: "constellation",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "maat",
@@ -15539,7 +15539,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_3:p3:main0" },
+        exitOrStaircase: { stairId: "wizard_3:p3:f0:main" },
         sideSections: [],
         encounter: "futoshiki",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -15673,7 +15673,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_3:p3:wing0" },
+            end: { stairId: "wizard_3:p3:f1:s6" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "sumplete",
@@ -15703,7 +15703,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "procession" },
           },
         ],
-        entrance: { stairId: "wizard_3:p3:main0" },
+        entrance: { stairId: "wizard_3:p3:f0:main" },
         encounter: "balance-scale",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "maat",
@@ -15729,7 +15729,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_3:p3:wing0" },
+        entrance: { stairId: "wizard_3:p3:f1:s6" },
         encounter: "rush-hour",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "maat",
@@ -15754,7 +15754,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_3:p4:main0" },
+        exitOrStaircase: { stairId: "wizard_3:p4:f0:main" },
         sideSections: [],
         encounter: "balance-scale",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -15878,7 +15878,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_3:p4:wing0" },
+            end: { stairId: "wizard_3:p4:f1:s5" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "balance-scale",
@@ -15908,7 +15908,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "constellation" },
           },
         ],
-        entrance: { stairId: "wizard_3:p4:main0" },
+        entrance: { stairId: "wizard_3:p4:f0:main" },
         encounter: "twin-stars",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "maat",
@@ -15934,7 +15934,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_3:p4:wing0" },
+        entrance: { stairId: "wizard_3:p4:f1:s5" },
         encounter: "sudoku",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "maat",
@@ -15960,7 +15960,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_3:p5:main0" },
+        exitOrStaircase: { stairId: "wizard_3:p5:f0:main" },
         sideSections: [],
         encounter: "balance-scale",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
@@ -16084,7 +16084,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_3:p5:wing0" },
+            end: { stairId: "wizard_3:p5:f1:s5" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "sumplete",
@@ -16114,7 +16114,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "canisters" },
           },
         ],
-        entrance: { stairId: "wizard_3:p5:main0" },
+        entrance: { stairId: "wizard_3:p5:f0:main" },
         encounter: "constellation",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "maat",
@@ -16140,7 +16140,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_3:p5:wing0" },
+        entrance: { stairId: "wizard_3:p5:f1:s5" },
         encounter: "balance-scale",
         decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
         patron: "maat",
@@ -16168,7 +16168,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_4:p0:main0" },
+        exitOrStaircase: { stairId: "wizard_4:p0:f0:main" },
         sideSections: [],
         encounter: "rush-hour",
         decorations: [
@@ -16385,7 +16385,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_4:p0:wing0" },
+            end: { stairId: "wizard_4:p0:f1:s7" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "canisters",
@@ -16415,7 +16415,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "clock-reflex", 1: "arithmetic-reflex" },
           },
         ],
-        entrance: { stairId: "wizard_4:p0:main0" },
+        entrance: { stairId: "wizard_4:p0:f0:main" },
         encounter: "lightbeam",
         decorations: [
           "shelf",
@@ -16452,7 +16452,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_4:p0:wing0" },
+        entrance: { stairId: "wizard_4:p0:f1:s7" },
         encounter: "canisters",
         decorations: [
           "shelf",
@@ -16487,7 +16487,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_4:p1:main0" },
+        exitOrStaircase: { stairId: "wizard_4:p1:f0:main" },
         sideSections: [],
         encounter: "star-battle",
         decorations: [
@@ -16667,7 +16667,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_4:p1:wing0" },
+            end: { stairId: "wizard_4:p1:f1:s5" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "futoshiki",
@@ -16697,7 +16697,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "clock-reflex", 1: "arithmetic-reflex" },
           },
         ],
-        entrance: { stairId: "wizard_4:p1:main0" },
+        entrance: { stairId: "wizard_4:p1:f0:main" },
         encounter: "sudoku",
         decorations: [
           "shelf",
@@ -16733,7 +16733,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_4:p1:wing0" },
+        entrance: { stairId: "wizard_4:p1:f1:s5" },
         encounter: "procession",
         decorations: [
           "shelf",
@@ -16768,7 +16768,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_4:p2:main0" },
+        exitOrStaircase: { stairId: "wizard_4:p2:f0:main" },
         sideSections: [],
         encounter: "futoshiki",
         decorations: [
@@ -16937,7 +16937,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_4:p2:wing0" },
+            end: { stairId: "wizard_4:p2:f1:s5" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "constellation",
@@ -16967,7 +16967,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "clock-reflex", 1: "arithmetic-reflex" },
           },
         ],
-        entrance: { stairId: "wizard_4:p2:main0" },
+        entrance: { stairId: "wizard_4:p2:f0:main" },
         encounter: "rush-hour",
         decorations: [
           "shelf",
@@ -17004,7 +17004,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_4:p2:wing0" },
+        entrance: { stairId: "wizard_4:p2:f1:s5" },
         encounter: "balance-scale",
         decorations: [
           "shelf",
@@ -17040,7 +17040,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_4:p3:main0" },
+        exitOrStaircase: { stairId: "wizard_4:p3:f0:main" },
         sideSections: [],
         encounter: "star-battle",
         decorations: [
@@ -17279,7 +17279,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_4:p3:wing0" },
+            end: { stairId: "wizard_4:p3:f1:s8" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "constellation",
@@ -17309,7 +17309,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "lightbeam" },
           },
         ],
-        entrance: { stairId: "wizard_4:p3:main0" },
+        entrance: { stairId: "wizard_4:p3:f0:main" },
         encounter: "eclipse",
         decorations: [
           "shelf",
@@ -17345,7 +17345,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_4:p3:wing0" },
+        entrance: { stairId: "wizard_4:p3:f1:s8" },
         encounter: "eclipse",
         decorations: [
           "shelf",
@@ -17381,7 +17381,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_4:p4:main0" },
+        exitOrStaircase: { stairId: "wizard_4:p4:f0:main" },
         sideSections: [],
         encounter: "canisters",
         decorations: [
@@ -17527,7 +17527,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_4:p4:wing0" },
+            end: { stairId: "wizard_4:p4:f1:s4" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "lightbeam",
@@ -17557,7 +17557,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "eclipse" },
           },
         ],
-        entrance: { stairId: "wizard_4:p4:main0" },
+        entrance: { stairId: "wizard_4:p4:f0:main" },
         encounter: "eclipse",
         decorations: [
           "shelf",
@@ -17594,7 +17594,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_4:p4:wing0" },
+        entrance: { stairId: "wizard_4:p4:f1:s4" },
         encounter: "sumplete",
         decorations: [
           "shelf",
@@ -17631,7 +17631,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: { stairId: "wizard_4:p5:main0" },
+        exitOrStaircase: { stairId: "wizard_4:p5:f0:main" },
         sideSections: [],
         encounter: "eclipse",
         decorations: [
@@ -17798,7 +17798,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 1,
             difficulty: "wizard",
-            end: { stairId: "wizard_4:p5:wing0" },
+            end: { stairId: "wizard_4:p5:f1:s5" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
             encounter: "lightbeam",
@@ -17828,7 +17828,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encountersByIndex: { 0: "constellation" },
           },
         ],
-        entrance: { stairId: "wizard_4:p5:main0" },
+        entrance: { stairId: "wizard_4:p5:f0:main" },
         encounter: "procession",
         decorations: [
           "shelf",
@@ -17866,7 +17866,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
-        entrance: { stairId: "wizard_4:p5:wing0" },
+        entrance: { stairId: "wizard_4:p5:f1:s5" },
         encounter: "twin-stars",
         decorations: [
           "shelf",
@@ -17910,7 +17910,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "starter",
-            end: { stairId: "starter_treasure_tomb:0:floor0:side0" },
+            end: { stairId: "starter_treasure_tomb:p0:f0:s0" },
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
             decorations: [
               "shelf",
@@ -17961,7 +17961,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "starter",
-            end: { stairId: "starter_treasure_tomb:0:floor1:side0" },
+            end: { stairId: "starter_treasure_tomb:p0:f1:s0" },
             gate: { type: "tomb-key", wardKeyId: "starter_a_2" },
             decorations: [
               "shelf",
@@ -17980,7 +17980,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["niche", "tallyBoard"],
           },
         ],
-        entrance: { stairId: "starter_treasure_tomb:0:floor0:side0" },
+        entrance: { stairId: "starter_treasure_tomb:p0:f0:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 2 },
         decorations: [
@@ -18013,7 +18013,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "starter",
-            end: { stairId: "starter_treasure_tomb:0:floor2:side0" },
+            end: { stairId: "starter_treasure_tomb:p0:f2:s0" },
             gate: { type: "tomb-key", wardKeyId: "starter_a_3" },
             decorations: [
               "shelf",
@@ -18032,7 +18032,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["niche", "tallyBoard"],
           },
         ],
-        entrance: { stairId: "starter_treasure_tomb:0:floor1:side0" },
+        entrance: { stairId: "starter_treasure_tomb:p0:f1:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 3 },
         decorations: [
@@ -18085,7 +18085,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["niche", "tallyBoard"],
           },
         ],
-        entrance: { stairId: "starter_treasure_tomb:0:floor2:side0" },
+        entrance: { stairId: "starter_treasure_tomb:p0:f2:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 4 },
         decorations: [
@@ -18140,7 +18140,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "junior",
-            end: { stairId: "junior_treasure_tomb:0:floor0:side1" },
+            end: { stairId: "junior_treasure_tomb:p0:f0:s1" },
             gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             decorations: [
               "shelf",
@@ -18194,7 +18194,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "junior",
-            end: { stairId: "junior_treasure_tomb:0:floor1:side0" },
+            end: { stairId: "junior_treasure_tomb:p0:f1:s0" },
             gate: { type: "tomb-key", wardKeyId: "junior_a_2" },
             decorations: [
               "shelf",
@@ -18214,7 +18214,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["stela", "niche", "sconce"],
           },
         ],
-        entrance: { stairId: "junior_treasure_tomb:0:floor0:side1" },
+        entrance: { stairId: "junior_treasure_tomb:p0:f0:s1" },
         encounter: "tableau",
         encounterArgs: { runNr: 2 },
         decorations: [
@@ -18275,7 +18275,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "junior",
-            end: { stairId: "junior_treasure_tomb:0:floor2:side1" },
+            end: { stairId: "junior_treasure_tomb:p0:f2:s1" },
             gate: { type: "tomb-key", wardKeyId: "junior_a_3" },
             decorations: [
               "shelf",
@@ -18295,7 +18295,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["stela", "niche", "sconce"],
           },
         ],
-        entrance: { stairId: "junior_treasure_tomb:0:floor1:side0" },
+        entrance: { stairId: "junior_treasure_tomb:p0:f1:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 3 },
         decorations: [
@@ -18330,7 +18330,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "junior",
-            end: { stairId: "junior_treasure_tomb:0:floor3:side0" },
+            end: { stairId: "junior_treasure_tomb:p0:f3:s0" },
             gate: { type: "tomb-key", wardKeyId: "junior_a_4" },
             decorations: [
               "shelf",
@@ -18350,7 +18350,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["stela", "niche", "sconce"],
           },
         ],
-        entrance: { stairId: "junior_treasure_tomb:0:floor2:side1" },
+        entrance: { stairId: "junior_treasure_tomb:p0:f2:s1" },
         encounter: "tableau",
         encounterArgs: { runNr: 4 },
         decorations: [
@@ -18385,7 +18385,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "junior",
-            end: { stairId: "junior_treasure_tomb:0:floor4:side0" },
+            end: { stairId: "junior_treasure_tomb:p0:f4:s0" },
             gate: { type: "tomb-key", wardKeyId: "junior_a_5" },
             decorations: [
               "shelf",
@@ -18405,7 +18405,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["stela", "niche", "sconce"],
           },
         ],
-        entrance: { stairId: "junior_treasure_tomb:0:floor3:side0" },
+        entrance: { stairId: "junior_treasure_tomb:p0:f3:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 5 },
         decorations: [
@@ -18461,7 +18461,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["stela", "niche", "sconce"],
           },
         ],
-        entrance: { stairId: "junior_treasure_tomb:0:floor4:side0" },
+        entrance: { stairId: "junior_treasure_tomb:p0:f4:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 6 },
         decorations: [
@@ -18518,7 +18518,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "expert",
-            end: { stairId: "expert_treasure_tomb:0:floor0:side1" },
+            end: { stairId: "expert_treasure_tomb:p0:f0:s1" },
             gate: { type: "tomb-key", wardKeyId: "expert_a_1" },
             decorations: [
               "shelf",
@@ -18597,7 +18597,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "expert",
-            end: { stairId: "expert_treasure_tomb:0:floor1:side1" },
+            end: { stairId: "expert_treasure_tomb:p0:f1:s1" },
             gate: { type: "tomb-key", wardKeyId: "expert_a_2" },
             decorations: [
               "shelf",
@@ -18617,7 +18617,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["veil", "wallShrine", "sconce"],
           },
         ],
-        entrance: { stairId: "expert_treasure_tomb:0:floor0:side1" },
+        entrance: { stairId: "expert_treasure_tomb:p0:f0:s1" },
         encounter: "tableau",
         encounterArgs: { runNr: 2 },
         decorations: [
@@ -18651,7 +18651,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "expert",
-            end: { stairId: "expert_treasure_tomb:0:floor2:side0" },
+            end: { stairId: "expert_treasure_tomb:p0:f2:s0" },
             gate: { type: "tomb-key", wardKeyId: "expert_a_3" },
             decorations: [
               "shelf",
@@ -18671,7 +18671,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["veil", "wallShrine", "sconce"],
           },
         ],
-        entrance: { stairId: "expert_treasure_tomb:0:floor1:side1" },
+        entrance: { stairId: "expert_treasure_tomb:p0:f1:s1" },
         encounter: "tableau",
         encounterArgs: { runNr: 3 },
         decorations: [
@@ -18726,7 +18726,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["veil", "wallShrine", "sconce"],
           },
         ],
-        entrance: { stairId: "expert_treasure_tomb:0:floor2:side0" },
+        entrance: { stairId: "expert_treasure_tomb:p0:f2:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 4 },
         decorations: [
@@ -18782,7 +18782,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "expert",
-            end: { stairId: "expert_treasure_tomb_b:0:floor0:side1" },
+            end: { stairId: "expert_treasure_tomb_b:p0:f0:s1" },
             gate: { type: "tomb-key", wardKeyId: "expert_b_1" },
             decorations: [
               "shelf",
@@ -18836,7 +18836,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "expert",
-            end: { stairId: "expert_treasure_tomb_b:0:floor1:side0" },
+            end: { stairId: "expert_treasure_tomb_b:p0:f1:s0" },
             gate: { type: "tomb-key", wardKeyId: "expert_b_2" },
             decorations: [
               "shelf",
@@ -18856,7 +18856,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["veil", "wallShrine", "sconce"],
           },
         ],
-        entrance: { stairId: "expert_treasure_tomb_b:0:floor0:side1" },
+        entrance: { stairId: "expert_treasure_tomb_b:p0:f0:s1" },
         encounter: "tableau",
         encounterArgs: { runNr: 2 },
         decorations: [
@@ -18891,7 +18891,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "expert",
-            end: { stairId: "expert_treasure_tomb_b:0:floor2:side0" },
+            end: { stairId: "expert_treasure_tomb_b:p0:f2:s0" },
             gate: { type: "tomb-key", wardKeyId: "expert_b_3" },
             decorations: [
               "shelf",
@@ -18911,7 +18911,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["veil", "wallShrine", "sconce"],
           },
         ],
-        entrance: { stairId: "expert_treasure_tomb_b:0:floor1:side0" },
+        entrance: { stairId: "expert_treasure_tomb_b:p0:f1:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 3 },
         decorations: [
@@ -18967,7 +18967,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["veil", "wallShrine", "sconce"],
           },
         ],
-        entrance: { stairId: "expert_treasure_tomb_b:0:floor2:side0" },
+        entrance: { stairId: "expert_treasure_tomb_b:p0:f2:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 4 },
         decorations: [
@@ -19024,7 +19024,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "master",
-            end: { stairId: "master_treasure_tomb:0:floor0:side1" },
+            end: { stairId: "master_treasure_tomb:p0:f0:s1" },
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             decorations: [
               "shelf",
@@ -19074,7 +19074,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "master",
-            end: { stairId: "master_treasure_tomb:0:floor1:side0" },
+            end: { stairId: "master_treasure_tomb:p0:f1:s0" },
             gate: { type: "tomb-key", wardKeyId: "master_a_2" },
             decorations: [
               "shelf",
@@ -19092,7 +19092,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["sconce", "mask", "niche"],
           },
         ],
-        entrance: { stairId: "master_treasure_tomb:0:floor0:side1" },
+        entrance: { stairId: "master_treasure_tomb:p0:f0:s1" },
         encounter: "tableau",
         encounterArgs: { runNr: 2 },
         decorations: [
@@ -19125,7 +19125,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "master",
-            end: { stairId: "master_treasure_tomb:0:floor2:side0" },
+            end: { stairId: "master_treasure_tomb:p0:f2:s0" },
             gate: { type: "tomb-key", wardKeyId: "master_a_3" },
             decorations: [
               "shelf",
@@ -19143,7 +19143,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["sconce", "mask", "niche"],
           },
         ],
-        entrance: { stairId: "master_treasure_tomb:0:floor1:side0" },
+        entrance: { stairId: "master_treasure_tomb:p0:f1:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 3 },
         decorations: [
@@ -19176,7 +19176,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "master",
-            end: { stairId: "master_treasure_tomb:0:floor3:side0" },
+            end: { stairId: "master_treasure_tomb:p0:f3:s0" },
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
             decorations: [
               "shelf",
@@ -19194,7 +19194,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["sconce", "mask", "niche"],
           },
         ],
-        entrance: { stairId: "master_treasure_tomb:0:floor2:side0" },
+        entrance: { stairId: "master_treasure_tomb:p0:f2:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 4 },
         decorations: [
@@ -19246,7 +19246,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["sconce", "mask", "niche"],
           },
         ],
-        entrance: { stairId: "master_treasure_tomb:0:floor3:side0" },
+        entrance: { stairId: "master_treasure_tomb:p0:f3:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 5 },
         decorations: [
@@ -19301,7 +19301,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "master",
-            end: { stairId: "master_treasure_tomb_b:0:floor0:side1" },
+            end: { stairId: "master_treasure_tomb_b:p0:f0:s1" },
             gate: { type: "tomb-key", wardKeyId: "master_b_1" },
             decorations: [
               "shelf",
@@ -19352,7 +19352,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "master",
-            end: { stairId: "master_treasure_tomb_b:0:floor1:side0" },
+            end: { stairId: "master_treasure_tomb_b:p0:f1:s0" },
             gate: { type: "tomb-key", wardKeyId: "master_b_2" },
             decorations: [
               "shelf",
@@ -19370,7 +19370,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["sconce", "mask", "niche"],
           },
         ],
-        entrance: { stairId: "master_treasure_tomb_b:0:floor0:side1" },
+        entrance: { stairId: "master_treasure_tomb_b:p0:f0:s1" },
         encounter: "tableau",
         encounterArgs: { runNr: 2 },
         decorations: [
@@ -19404,7 +19404,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "master",
-            end: { stairId: "master_treasure_tomb_b:0:floor2:side0" },
+            end: { stairId: "master_treasure_tomb_b:p0:f2:s0" },
             gate: { type: "tomb-key", wardKeyId: "master_b_3" },
             decorations: [
               "shelf",
@@ -19422,7 +19422,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["sconce", "mask", "niche"],
           },
         ],
-        entrance: { stairId: "master_treasure_tomb_b:0:floor1:side0" },
+        entrance: { stairId: "master_treasure_tomb_b:p0:f1:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 3 },
         decorations: [
@@ -19456,7 +19456,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "master",
-            end: { stairId: "master_treasure_tomb_b:0:floor3:side0" },
+            end: { stairId: "master_treasure_tomb_b:p0:f3:s0" },
             gate: { type: "tomb-key", wardKeyId: "master_b_4" },
             decorations: [
               "shelf",
@@ -19474,7 +19474,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["sconce", "mask", "niche"],
           },
         ],
-        entrance: { stairId: "master_treasure_tomb_b:0:floor2:side0" },
+        entrance: { stairId: "master_treasure_tomb_b:p0:f2:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 4 },
         decorations: [
@@ -19527,7 +19527,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["sconce", "mask", "niche"],
           },
         ],
-        entrance: { stairId: "master_treasure_tomb_b:0:floor3:side0" },
+        entrance: { stairId: "master_treasure_tomb_b:p0:f3:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 5 },
         decorations: [
@@ -19583,7 +19583,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "wizard",
-            end: { stairId: "wizard_treasure_tomb:0:floor0:side1" },
+            end: { stairId: "wizard_treasure_tomb:p0:f0:s1" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             decorations: [
               "shelf",
@@ -19642,7 +19642,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "wizard",
-            end: { stairId: "wizard_treasure_tomb:0:floor1:side0" },
+            end: { stairId: "wizard_treasure_tomb:p0:f1:s0" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_2" },
             decorations: [
               "shelf",
@@ -19660,7 +19660,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["starShaft", "sconce", "wallShrine"],
           },
         ],
-        entrance: { stairId: "wizard_treasure_tomb:0:floor0:side1" },
+        entrance: { stairId: "wizard_treasure_tomb:p0:f0:s1" },
         encounter: "tableau",
         encounterArgs: { runNr: 2 },
         decorations: [
@@ -19702,7 +19702,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "wizard",
-            end: { stairId: "wizard_treasure_tomb:0:floor2:side0" },
+            end: { stairId: "wizard_treasure_tomb:p0:f2:s0" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_3" },
             decorations: [
               "shelf",
@@ -19720,7 +19720,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["starShaft", "sconce", "wallShrine"],
           },
         ],
-        entrance: { stairId: "wizard_treasure_tomb:0:floor1:side0" },
+        entrance: { stairId: "wizard_treasure_tomb:p0:f1:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 3 },
         decorations: [
@@ -19781,7 +19781,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["starShaft", "sconce", "wallShrine"],
           },
         ],
-        entrance: { stairId: "wizard_treasure_tomb:0:floor2:side0" },
+        entrance: { stairId: "wizard_treasure_tomb:p0:f2:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 4 },
         decorations: [
@@ -19845,7 +19845,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "wizard",
-            end: { stairId: "wizard_treasure_tomb_b:0:floor0:side1" },
+            end: { stairId: "wizard_treasure_tomb_b:p0:f0:s1" },
             gate: { type: "tomb-key", wardKeyId: "wizard_b_1" },
             decorations: [
               "shelf",
@@ -19902,7 +19902,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "wizard",
-            end: { stairId: "wizard_treasure_tomb_b:0:floor1:side0" },
+            end: { stairId: "wizard_treasure_tomb_b:p0:f1:s0" },
             gate: { type: "tomb-key", wardKeyId: "wizard_b_2" },
             decorations: [
               "shelf",
@@ -19920,7 +19920,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["starShaft", "sconce", "wallShrine"],
           },
         ],
-        entrance: { stairId: "wizard_treasure_tomb_b:0:floor0:side1" },
+        entrance: { stairId: "wizard_treasure_tomb_b:p0:f0:s1" },
         encounter: "tableau",
         encounterArgs: { runNr: 2 },
         decorations: [
@@ -19960,7 +19960,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "wizard",
-            end: { stairId: "wizard_treasure_tomb_b:0:floor2:side0" },
+            end: { stairId: "wizard_treasure_tomb_b:p0:f2:s0" },
             gate: { type: "tomb-key", wardKeyId: "wizard_b_3" },
             decorations: [
               "shelf",
@@ -19978,7 +19978,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["starShaft", "sconce", "wallShrine"],
           },
         ],
-        entrance: { stairId: "wizard_treasure_tomb_b:0:floor1:side0" },
+        entrance: { stairId: "wizard_treasure_tomb_b:p0:f1:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 3 },
         decorations: [
@@ -20037,7 +20037,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["starShaft", "sconce", "wallShrine"],
           },
         ],
-        entrance: { stairId: "wizard_treasure_tomb_b:0:floor2:side0" },
+        entrance: { stairId: "wizard_treasure_tomb_b:p0:f2:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 4 },
         decorations: [
@@ -20099,7 +20099,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "wizard",
-            end: { stairId: "wizard_treasure_tomb_c:0:floor0:side1" },
+            end: { stairId: "wizard_treasure_tomb_c:p0:f0:s1" },
             gate: { type: "tomb-key", wardKeyId: "wizard_c_1" },
             decorations: [
               "shelf",
@@ -20156,7 +20156,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "wizard",
-            end: { stairId: "wizard_treasure_tomb_c:0:floor1:side0" },
+            end: { stairId: "wizard_treasure_tomb_c:p0:f1:s0" },
             gate: { type: "tomb-key", wardKeyId: "wizard_c_2" },
             decorations: [
               "shelf",
@@ -20174,7 +20174,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["starShaft", "sconce", "wallShrine"],
           },
         ],
-        entrance: { stairId: "wizard_treasure_tomb_c:0:floor0:side1" },
+        entrance: { stairId: "wizard_treasure_tomb_c:p0:f0:s1" },
         encounter: "tableau",
         encounterArgs: { runNr: 2 },
         decorations: [
@@ -20214,7 +20214,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             pathPuzzles: 0,
             difficulty: "wizard",
-            end: { stairId: "wizard_treasure_tomb_c:0:floor2:side0" },
+            end: { stairId: "wizard_treasure_tomb_c:p0:f2:s0" },
             gate: { type: "tomb-key", wardKeyId: "wizard_c_3" },
             decorations: [
               "shelf",
@@ -20232,7 +20232,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["starShaft", "sconce", "wallShrine"],
           },
         ],
-        entrance: { stairId: "wizard_treasure_tomb_c:0:floor1:side0" },
+        entrance: { stairId: "wizard_treasure_tomb_c:p0:f1:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 3 },
         decorations: [
@@ -20291,7 +20291,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             wallDecorations: ["starShaft", "sconce", "wallShrine"],
           },
         ],
-        entrance: { stairId: "wizard_treasure_tomb_c:0:floor2:side0" },
+        entrance: { stairId: "wizard_treasure_tomb_c:p0:f2:s0" },
         encounter: "tableau",
         encounterArgs: { runNr: 4 },
         decorations: [

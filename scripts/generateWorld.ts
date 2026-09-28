@@ -21,6 +21,7 @@ import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
 import {
   findEmptyChests,
+  findMispairedStairs,
   findStrandingLocks,
   findUnbakedSwitchBoards,
   findUndrawnHandles,
@@ -116,7 +117,9 @@ const assembleOnce = (journeyId: string, floor: FloorConfig, levelNr: number, fl
     const seed = floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
     const result = assembleFloor(journeyId, floor, seed, resolveEncounterMeta, {
       resolveKeyRequirements,
-      floorRef: { journeyId, floorIndex },
+      // The whole address, so the ids derived from it here — a stairhead the authoring left unnamed,
+      // a lever's gate stem — are the ones the runtime builds for this same floor.
+      floorRef: { journeyId, levelIndex: levelNr - 1, floorIndex },
     })
     // WITH WHY, NOT JUST WHERE. The assembler refuses an authoring it can never satisfy — a one-way
     // or a handle naming a section the floor does not have, a switch asking for more junctions than
@@ -135,6 +138,25 @@ const emptyChests = findEmptyChests(configs, assembleOnce)
 printStats(configs)
 const cov = hieroglyphCoverage(configs, HIEROGLYPH_REQUIRED)
 console.log(`  Hieroglyph fragments: ${cov.assigned}/${cov.target} placed (${cov.total} total)`)
+
+// A stair id is the pairing between the floor hosting the stairs and the floor arriving on them, so
+// exactly two uses is the only sound count — three means two staircases answer to one id and the
+// player is teleported to whichever floor the walk reaches first, one means a stairhead or an entrance
+// with nothing on the other side. Checked off the spec, so the build that introduces the collision is
+// the one that stops, rather than a player walking into the wrong floor months later.
+const { paired, mispaired } = findMispairedStairs(configs)
+if (mispaired.length > 0) {
+  console.error(`✗ ${mispaired.length} stair id(s) are not wired exactly twice:`)
+  for (const stair of mispaired.slice(0, 20))
+    console.error(
+      `    ${stair.stairId}: used ${stair.uses.length}× — ` +
+        stair.uses.map(u => `${u.journeyId} level ${u.levelNr} floor ${u.floorIndex}`).join(", ")
+    )
+  if (mispaired.length > 20) console.error(`    … and ${mispaired.length - 20} more`)
+  console.error("  Every staircase pairs one host floor with one arriving floor — see game/stairAddress.ts.")
+  process.exit(1)
+}
+console.log(`  Stair sweep: ${paired} stair id(s), each wired exactly twice`)
 
 // A board the offline pass never proved would be searched for on the player's device instead, which is
 // the very thing the lists replaced — and it would happen quietly. So an authored switch whose shape and

@@ -39,17 +39,17 @@ describe("wireStaircases", () => {
       buildFloor({ pathPuzzles: 1, difficulty: "starter", sideSections: [] }),
       buildFloor({ pathPuzzles: 1, difficulty: "starter", sideSections: [] }),
     ]
-    wireStaircases(floors, fi => `j:${fi}`)
-    expect(floors[0].exitOrStaircase).toEqual({ stairId: "j:0" })
-    expect(floors[1].entrance).toEqual({ stairId: "j:0" })
-    expect(floors[1].exitOrStaircase).toEqual({ stairId: "j:1" })
-    expect(floors[2].entrance).toEqual({ stairId: "j:1" })
+    wireStaircases(floors, { journeyId: "j", pyramidIndex: 4 })
+    expect(floors[0].exitOrStaircase).toEqual({ stairId: "j:p4:f0:main" })
+    expect(floors[1].entrance).toEqual({ stairId: "j:p4:f0:main" })
+    expect(floors[1].exitOrStaircase).toEqual({ stairId: "j:p4:f1:main" })
+    expect(floors[2].entrance).toEqual({ stairId: "j:p4:f1:main" })
     expect(floors[2].exitOrStaircase).toBe("exit")
   })
 
   it("does nothing for a single floor", () => {
     const floors = [buildFloor({ pathPuzzles: 1, difficulty: "starter", sideSections: [] })]
-    wireStaircases(floors, fi => `j:${fi}`)
+    wireStaircases(floors, { journeyId: "j", pyramidIndex: 4 })
     expect(floors[0].exitOrStaircase).toBe("exit")
     expect(floors[0].entrance).toBeUndefined()
   })
@@ -113,7 +113,7 @@ describe("buildSite", () => {
   it("auto multi-floor branch: mainFloors > 1 chains floors via wireStaircases, non-last floor gets a real reward slot", () => {
     const { floors } = buildSite({ ...baseCtx, constraint: { mainFloors: 3 } })
     expect(floors).toHaveLength(3)
-    expect(floors[0].exitOrStaircase).toEqual({ stairId: expect.stringContaining("main0") })
+    expect(floors[0].exitOrStaircase).toEqual({ stairId: "j1:p0:f0:main" })
     // Non-last main floors must carry a real mainEndReward (fragmentSlot), never leave it
     // unset — an unset mainEndReward used to fall back to a free, uncounted mosaicPiece.
     expect(floors[0].mainEndReward).toEqual({ type: "fragmentSlot" })

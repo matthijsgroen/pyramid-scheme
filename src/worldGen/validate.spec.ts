@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import {
   findEmptyChests,
+  findMispairedStairs,
   findStrandingLocks,
   findUnbakedSwitchBoards,
   findUndrawnOneWays,
@@ -395,5 +396,66 @@ describe("findStrandingLocks", () => {
       } as Record<string, SiteConfig[]>
       expect(findUnwalkedLocks(lever, [])).toEqual([ref])
     })
+  })
+})
+
+describe("findMispairedStairs", () => {
+  // A stair id pairs the floor hosting the stairs with the floor arriving on them, so anything but
+  // two uses is a floor the player is teleported to by mistake or one nothing leads to.
+  it("says nothing about a floor's exit paired with the next floor's entrance", () => {
+    const paired = {
+      j: [[floor({ exitOrStaircase: { stairId: "j:p0:f0:main" } }), floor({ entrance: { stairId: "j:p0:f0:main" } })]],
+    } as Record<string, SiteConfig[]>
+    expect(findMispairedStairs(paired)).toEqual({ paired: 1, mispaired: [] })
+  })
+
+  it("names a stairhead two floors arrive on, and every floor that used the id", () => {
+    const collided = {
+      j: [
+        [
+          floor({ exitOrStaircase: { stairId: "j:p0:f0:main" } }),
+          floor({ entrance: { stairId: "j:p0:f0:main" } }),
+          floor({ entrance: { stairId: "j:p0:f0:main" } }),
+        ],
+      ],
+    } as Record<string, SiteConfig[]>
+    expect(findMispairedStairs(collided).mispaired).toEqual([
+      {
+        stairId: "j:p0:f0:main",
+        uses: [
+          { journeyId: "j", levelNr: 1, floorIndex: 0 },
+          { journeyId: "j", levelNr: 1, floorIndex: 1 },
+          { journeyId: "j", levelNr: 1, floorIndex: 2 },
+        ],
+      },
+    ])
+  })
+
+  it("names a stairhead nothing arrives on", () => {
+    const dangling = {
+      j: [[floor({ sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: { stairId: "j:p0:f0:s0" } }] })]],
+    } as Record<string, SiteConfig[]>
+    expect(findMispairedStairs(dangling).mispaired.map(m => m.stairId)).toEqual(["j:p0:f0:s0"])
+  })
+
+  it("reads stairheads nested below the two levels the carve builds", () => {
+    const nested = {
+      j: [
+        [
+          floor({
+            sideSections: [
+              {
+                pathPuzzles: 0,
+                difficulty: "starter",
+                end: "treasure",
+                sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: { stairId: "j:p0:f0:s0.0" } }],
+              },
+            ],
+          }),
+          floor({ entrance: { stairId: "j:p0:f0:s0.0" } }),
+        ],
+      ],
+    } as Record<string, SiteConfig[]>
+    expect(findMispairedStairs(nested)).toEqual({ paired: 1, mispaired: [] })
   })
 })

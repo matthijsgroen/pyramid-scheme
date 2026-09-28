@@ -1,4 +1,4 @@
-import type { SiteConfig, TreasureReward, MapPieceReward } from "./types"
+import type { SideSection, SiteConfig, SubSection, TreasureReward, MapPieceReward } from "./types"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import { FORK_SHAPES, type ForkShape } from "@/game/forkShape"
@@ -364,4 +364,55 @@ export const floorsOwingALock = (configs: Record<string, SiteConfig[]>): FloorRe
 export const findUnwalkedLocks = (configs: Record<string, SiteConfig[]>, walked: readonly FloorRef[]): FloorRef[] => {
   const reached = new Set(walked.map(refKey))
   return floorsOwingALock(configs).filter(ref => !reached.has(refKey(ref)))
+}
+
+export type StairPairing = { stairId: string; uses: FloorRef[] }
+
+/**
+ * Stair ids the world wires anything but exactly twice.
+ *
+ * A stair id is a PAIRING: one end hosts the stairs (a floor's main-path way up, or a section that
+ * ends in a stairhead) and one end arrives on them (the next floor's `entrance`), and
+ * `grid.staircases[id]` is what carries the player between the two. So two uses is the only sound
+ * count. Three means two staircases answer to one id and the walk lands on whichever floor is
+ * reached first — a silent teleport to the wrong floor. One means a stairhead nothing arrives from,
+ * or a floor whose way in nothing hosts, which strands it.
+ *
+ * Checked over the authored spec rather than the carve: the ids are minted while the world is grown
+ * (game/stairAddress.ts), so a new authoring pattern that lets two of them collide is caught by the
+ * build that introduced it instead of by a player walking into the wrong floor.
+ */
+export const findMispairedStairs = (
+  configs: Record<string, SiteConfig[]>
+): { paired: number; mispaired: StairPairing[] } => {
+  const uses = new Map<string, FloorRef[]>()
+  const note = (link: unknown, ref: FloorRef) => {
+    if (typeof link !== "object" || link === null || !("stairId" in link)) return
+    const id = (link as { stairId: string }).stairId
+    if (!uses.has(id)) uses.set(id, [])
+    uses.get(id)!.push(ref)
+  }
+  // Every authored level, not only the two the carve builds: a stairhead nested deeper still bakes
+  // its id into the world, so it still has to pair with exactly one arrival.
+  const walkSections = (sections: readonly SubSection[], ref: FloorRef): void => {
+    for (const section of sections) {
+      note(section.end, ref)
+      walkSections((section as SideSection).sideSections ?? [], ref)
+    }
+  }
+  for (const [journeyId, sites] of Object.entries(configs))
+    sites.forEach((site, siteIdx) =>
+      site.forEach((floor, floorIndex) => {
+        const ref = { journeyId, levelNr: siteIdx + 1, floorIndex }
+        note(floor.entrance, ref)
+        note(floor.exitOrStaircase, ref)
+        walkSections(floor.sideSections, ref)
+      })
+    )
+  return {
+    // Printed on every run: a sweep that reports no failure is otherwise indistinguishable from one
+    // that never found a staircase to check.
+    paired: [...uses.values()].filter(refs => refs.length === 2).length,
+    mispaired: [...uses].filter(([, refs]) => refs.length !== 2).map(([stairId, refs]) => ({ stairId, uses: refs })),
+  }
 }

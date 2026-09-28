@@ -6,6 +6,7 @@ import { mulberry32 } from "../game/random"
 import { hashStr, hintToReward } from "./rewards"
 import { initPuzzleChains } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
+import { stairIdAt } from "../game/stairAddress"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
 import { resolveNodeSelectors } from "./dsl"
 
@@ -137,12 +138,12 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.switches ? { switches: opts.switches } : {}),
 })
 
-// Sequentially links floors[fi] → floors[fi+1] via a stairhead: floor fi's exitOrStaircase
-// and floor fi+1's entrance both become { stairId: stairId(fi) }. Used for main-path chains
-// (pyramid auto-multi-floor) — never touches the last floor's exit.
-export const wireStaircases = (floors: FloorConfig[], stairId: (index: number) => string): void => {
+// Sequentially links floors[fi] → floors[fi+1] via a stairhead: floor fi's exitOrStaircase and floor
+// fi+1's entrance both become the id of floor fi's main-path way up, which is what pairs them. Used
+// for main-path chains (pyramid auto-multi-floor) — never touches the last floor's exit.
+export const wireStaircases = (floors: FloorConfig[], site: { journeyId: string; pyramidIndex: number }): void => {
   for (let fi = 0; fi < floors.length - 1; fi++) {
-    const id = stairId(fi)
+    const id = stairIdAt({ ...site, floorIndex: fi, path: "main" })
     floors[fi].exitOrStaircase = { stairId: id }
     floors[fi + 1].entrance = { stairId: id }
   }
@@ -231,12 +232,10 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         tier,
         difficulty: floorDiff,
         resolveReward,
-        // Per-floor-scoped, so each floor's auto-generated stairhead ids (e.g. a
-        // "staircase"-ending side section) are globally unique across the whole site —
-        // a plain site-level journeyId would let two floors' sections collide on the same
-        // id, and the cross-floor teleport lookup (SiteMapScreen.tsx) would find whichever
-        // floor happens to come first instead of the intended one.
+        // Per-floor-scoped, so each floor of the site rolls its own densities and chances rather
+        // than every floor of it repeating one roll.
         journeyId: `${journeyId}:${i}:floor${fi}`,
+        floor: { journeyId, pyramidIndex: i, floorIndex: fi },
         constraintSections: floorSections,
         // Floor-level declared side/hidden paths. Authored per-floor (fc.*); no pyramid/tier
         // fallback here so a fully-authored floor stays explicit (tombs author everything).
@@ -357,6 +356,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         difficulty,
         resolveReward,
         journeyId,
+        // Only the last main floor carries the site's side content, so `fi` is where these sit.
+        floor: { journeyId, pyramidIndex: i, floorIndex: fi },
         constraintSections,
         hasMapPieceBranch,
         hasWardGate,
@@ -400,7 +401,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     }
 
     // Wire main-floor stairheads sequentially (floor N's exit → floor N+1's entrance).
-    wireStaircases(floorConfigs, fi => `${journeyId}:p${i}:main${fi}`)
+    wireStaircases(floorConfigs, { journeyId, pyramidIndex: i })
 
     if (wingCount > 0 || wardPaths > 0) {
       const tombId = `${tier}_treasure_tomb`
@@ -435,8 +436,16 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             endReward: undefined,
           }))
 
-      wingDefs.forEach((wing, w) => {
-        const wingStairId = `${journeyId}:p${i}:wing${w}`
+      wingDefs.forEach(wing => {
+        // The stairs up to a wing are a section of the last main floor, so the id takes that
+        // section's own address — the index it is about to land on, which is what the assembler
+        // would have called it had the authoring left the stairhead unnamed.
+        const wingStairId = stairIdAt({
+          journeyId,
+          pyramidIndex: i,
+          floorIndex: mainFloors - 1,
+          path: `s${lastMain.sideSections.length}`,
+        })
         lastMain.sideSections = [
           ...lastMain.sideSections,
           {
@@ -510,6 +519,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     difficulty,
     resolveReward,
     journeyId,
+    // A single-floor site: everything it has hangs off floor 0.
+    floor: { journeyId, pyramidIndex: i, floorIndex: 0 },
     constraintSections,
     hasMapPieceBranch,
     hasWardGate,
