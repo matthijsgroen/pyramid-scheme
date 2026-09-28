@@ -119,6 +119,51 @@ export const topologyFaults = (
   return faults
 }
 
+/** Every region reached from `from` over `connections`, a four-line flood local to this module so
+ * core's `regions.ts` never has to widen its own private `reachable` to answer the mod's question. */
+const reachableOver = (connections: ReadonlyArray<readonly [string, string]>, from: string): Set<string> => {
+  const neighbours = new Map<string, string[]>()
+  for (const [a, b] of connections) {
+    if (!neighbours.has(a)) neighbours.set(a, [])
+    if (!neighbours.has(b)) neighbours.set(b, [])
+    neighbours.get(a)!.push(b)
+    neighbours.get(b)!.push(a)
+  }
+  const seen = new Set([from])
+  const queue = [from]
+  while (queue.length > 0) {
+    for (const next of neighbours.get(queue.shift()!) ?? []) {
+      if (seen.has(next)) continue
+      seen.add(next)
+      queue.push(next)
+    }
+  }
+  return seen
+}
+
+/**
+ * THE OBSTACLES A PLAYER MUST PASS TO STAND IN EACH REGION — not the ones beside it.
+ *
+ * Asked by taking each obstacle's connection away in turn and seeing which regions the way in can
+ * still reach: a region that becomes unreachable is one that obstacle bounds, and a region a player
+ * can walk round to is bounded by nothing. That is the same remove-one question `mainPathRegions`
+ * asks, asked of a connection instead of a region.
+ *
+ * Every declared region gets an entry, empty where nothing bounds it, so a caller never has to decide
+ * what an absent one means.
+ */
+export const doorsToEnterRegion = (layout: RegionGraph, obstacles: readonly Obstacle[]): Map<string, Set<string>> => {
+  const doors = new Map(layout.regions.map(r => [r.name, new Set<string>()]))
+  for (const obstacle of obstacles) {
+    const without = layout.connections.filter(
+      ([a, b]) => connectionKey(a, b) !== connectionKey(obstacle.at.between[0], obstacle.at.between[1])
+    )
+    const arrived = reachableOver(without, layout.in)
+    for (const { name } of layout.regions) if (!arrived.has(name)) doors.get(name)!.add(obstacle.id)
+  }
+  return doors
+}
+
 /**
  * THE MAIN-PATH INDEX WHERE ONE REGION STOPS AND THE NEXT BEGINS, for one obstacle's connection.
  * `stepRegion[step]` names the region each main-path step stands in; a connection's seam is the

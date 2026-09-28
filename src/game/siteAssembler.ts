@@ -21,7 +21,7 @@ import type {
 import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
 import { appetiteAccepts, regionOfStep, regionRoute, strandedRegions } from "./regions"
 import type { ContentKind } from "./regions"
-import { seamIndexFor, topologyFaults } from "./obstacles"
+import { doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
 import { cellSlot } from "./cellSlot"
 import { stairIdAt } from "./stairAddress"
 import { footprintSize } from "./roomFootprint"
@@ -1721,6 +1721,20 @@ export const assembleFloor = (
         if (hidden) hiddenCellPositions.add(posKey(r, c))
       }
     }
+
+    // A CELL IN A GATED REGION STANDS BEHIND EVERY OBSTACLE BOUNDING IT, written into the same map
+    // the authored gates and traps use — so a one-way falling into a gated region, a stray tree edge
+    // beside one and the fog are all answered by one notion of "what must be earned to stand here".
+    // Read once `cellRegion` is fully settled (main path AND chains, a chain inheriting its host's
+    // region above), so a chain grown inside a gated region is gated with it.
+    const regionDoors = regionLayout ? doorsToEnterRegion(regionLayout, authoredConfig.obstacles ?? []) : undefined
+    if (regionDoors)
+      for (const [cellKey, region] of cellRegion) {
+        for (const id of regionDoors.get(region) ?? []) {
+          gatedCellKeys.add(cellKey)
+          needsDoor(cellKey, gateKeyOf(id))
+        }
+      }
 
     // Collect branch junction cells (become fork nodes)
     const forkPositions = new Set(sectionGroups.map(g => posKey(g.attachedAt[0], g.attachedAt[1])))

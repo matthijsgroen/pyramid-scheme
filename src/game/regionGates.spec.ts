@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "./siteAssembler"
-import type { FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
+import type { Direction, FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
 import { openDoorsFor } from "./mechanismDoors"
 import { cellAddress } from "./cellAddress"
 import { cellSlot } from "./cellSlot"
@@ -206,5 +206,79 @@ describe("two controls on one floor", () => {
       .sort()
 
     expect(slots).toEqual(["xhandle:s1", "xhandle:s2"])
+  })
+})
+
+const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+
+/** Every cell of `region` that opens onto a cell outside it, as "r,c". The gate room should be the
+ * only one: a gate is a region's only legitimate entrance, so anything else here is a way round it. */
+const waysIn = (grid: FloorGrid, region: string): string[] => {
+  const found: string[] = []
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type === "empty" || cell.region !== region) continue
+      for (const dir of cell.dirs) {
+        const [dr, dc] = MOVES[dir]
+        const other = grid.cells[r + dr]?.[c + dc]
+        if (!other || other.type === "empty" || other.region === region) continue
+        found.push(`${r},${c}`)
+        break
+      }
+    }
+  return found
+}
+
+// `gatedFloor()` (2 path puzzles, 1 side section) cannot exercise this guard: at any seed it touches
+// the rest of the maze at exactly one physical point regardless of whether the isolation registration
+// runs, so a passing test here proves nothing — the same small floor still passes with the
+// gatedCellKeys/needsDoor registration commented out (checked by hand while building this test). A
+// bigger floor is what gives the maze's leftover tree edges (see the "Gate isolation" comment in
+// siteAssembler.ts) somewhere else to land a vault-region node next to a non-vault one.
+//
+// This fixture (10 main-path puzzles, 4 side sections, same three-region layout/obstacle/control as
+// `gatedFloor()`) was swept over seeds 0-59 with the registration commented out: 20 of 60 seeds carved
+// a genuine second way into "vault" (one not merely the seam's own connector cell reported under its
+// own coordinate — connectors take their `region` tag from whichever endpoint node sorts lower, so the
+// seam sometimes surfaces one cell over from the gate room itself; that is not a second entrance). With
+// the registration restored, 0 of 60 seeds leaked. Seed 4 is pinned because it is clean either way: with
+// the registration in place `waysIn` is exactly the gate room, and with it removed `waysIn` gains
+// "10,7" — two full node-widths from the gate room, so not the seam connector.
+const bigGatedFloor = (): FloorConfig => ({
+  pathPuzzles: 10,
+  difficulty: "starter",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  sideSections: [
+    { pathPuzzles: 3, difficulty: "starter", end: "treasure" },
+    { pathPuzzles: 3, difficulty: "starter", end: "treasure" },
+    { pathPuzzles: 3, difficulty: "starter", end: "treasure" },
+    { pathPuzzles: 2, difficulty: "starter", end: "treasure" },
+  ],
+  regionLayout: threeRegions,
+  obstacles: [{ id: "vaultDoor", kind: "gate", at: { on: "connection", between: ["hall", "vault"] } }],
+  controls: [
+    {
+      id: "s1",
+      in: "mouth",
+      states: ["left", "right"],
+      initial: "right",
+      returnsToInitial: true,
+      opens: { right: ["vaultDoor"] },
+    },
+  ],
+})
+const PINNED_SEED = 4
+
+describe("what a gated region shuts off", () => {
+  it("has exactly one way in, and it is the gate room", () => {
+    const result = assembleFloor("test-journey", bigGatedFloor(), PINNED_SEED)
+    if (!result.success) throw new Error(`did not carve: ${JSON.stringify(result.reasons)}`)
+    const grid = result.grid
+    const gate = rooms(grid).find(room => room.requiredKeyId === GATE_KEY)!
+    const gateAt = grid.cells.flatMap((row, r) => row.map((cell, c) => (cell === gate ? `${r},${c}` : null)))
+
+    expect(waysIn(grid, "vault")).toEqual(gateAt.filter((a): a is string => a !== null))
   })
 })

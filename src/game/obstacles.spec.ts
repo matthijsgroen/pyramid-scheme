@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { seamIndexFor, topologyFaults } from "./obstacles"
+import { doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
 import type { Control, Obstacle } from "./obstacles"
 import type { RegionGraph } from "./regions"
 
@@ -97,6 +97,16 @@ describe("authored topology that does not resolve", () => {
     expect(faults).toEqual([{ type: "obstacleUnowned", id: "g1" }])
   })
 
+  it("names a control id used twice", () => {
+    const faults = topologyFaults(
+      layout,
+      [gate("g1", ["hall", "vault"])],
+      [lever("s1", { left: ["g1"], right: [] }), { ...lever("s1", { left: [], right: ["g1"] }), id: "s1" }]
+    )
+
+    expect(faults).toContainEqual({ type: "controlUnsatisfied", id: "s1", what: "s1" })
+  })
+
   it("names a control standing in no region of the layout", () => {
     const faults = topologyFaults(
       layout,
@@ -171,5 +181,51 @@ describe("seamIndexFor", () => {
     const missingVault = ["mouth", "hall", "hall"]
 
     expect(seamIndexFor(missingVault, ["hall", "vault"])).toBeUndefined()
+  })
+})
+
+describe("the doors a region stands behind", () => {
+  it("names nothing for a region in front of every gate", () => {
+    const doors = doorsToEnterRegion(layout, [gate("g1", ["hall", "vault"])])
+
+    expect(doors.get("mouth")).toEqual(new Set())
+    expect(doors.get("hall")).toEqual(new Set())
+  })
+
+  it("names the gate for the region behind it", () => {
+    const doors = doorsToEnterRegion(layout, [gate("g1", ["hall", "vault"])])
+
+    expect(doors.get("vault")).toEqual(new Set(["g1"]))
+  })
+
+  it("names every gate on a chain of them, not just the nearest", () => {
+    const doors = doorsToEnterRegion(layout, [gate("g1", ["mouth", "hall"]), gate("g2", ["hall", "vault"])])
+
+    expect(doors.get("mouth")).toEqual(new Set())
+    expect(doors.get("hall")).toEqual(new Set(["g1"]))
+    expect(doors.get("vault")).toEqual(new Set(["g1", "g2"]))
+    expect(doors.get("cellar")).toEqual(new Set(["g1"]))
+  })
+
+  it("names no gate a player can walk round", () => {
+    // mouth—hall—vault and mouth—vault: the hall gate bounds nothing, because vault is reachable
+    // without it.
+    const ring: RegionGraph = {
+      ...layout,
+      connections: [
+        ["mouth", "hall"],
+        ["hall", "vault"],
+        ["mouth", "vault"],
+      ],
+    }
+    const doors = doorsToEnterRegion(ring, [gate("g1", ["hall", "vault"])])
+
+    expect(doors.get("vault")).toEqual(new Set())
+  })
+
+  it("gives every declared region an entry, so a caller never has to guess at an absent one", () => {
+    const doors = doorsToEnterRegion(layout, [gate("g1", ["hall", "vault"])])
+
+    expect([...doors.keys()].sort()).toEqual(["cellar", "hall", "mouth", "vault"])
   })
 })
