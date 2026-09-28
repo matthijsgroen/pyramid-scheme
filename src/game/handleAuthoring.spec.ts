@@ -8,8 +8,7 @@ import {
   nestedFloorWithHandle,
   type Handle,
 } from "./testSupport/handleFixtures"
-import { openDoorsFor } from "./mechanismDoors"
-import { openWaysOut } from "@/app/SiteMap/useAssembledFloor"
+import { openDoorsFor, openWaysOut } from "./mechanismDoors"
 import type { FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 
 const rooms = (grid: FloorGrid): RoomCell[] =>
