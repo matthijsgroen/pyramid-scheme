@@ -9,7 +9,7 @@
 // trigger its own beat. See docs/game-design/story-and-time-brainstorm.md §3.
 
 import { journeys } from "@/data/journeys"
-import { MOSAIC_PIECES } from "@/ui/atoms/mosaicPieces.generated"
+import { MOSAIC_PIECES } from "./mosaicPieces.generated"
 
 // Pre-index pieces by step key
 export const PIECES_BY_STEP = new Map<string, string[]>()

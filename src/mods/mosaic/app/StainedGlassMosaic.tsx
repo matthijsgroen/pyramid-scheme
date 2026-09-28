@@ -1,7 +1,7 @@
 import type { FC } from "react"
-import { MOSAIC_PIECES, type MosaicPieceDef } from "./mosaicPieces.generated"
-import { MOSAIC_POINTS } from "./mosaicGeometry.generated"
-import stainedGlassUrl from "../../assets/stained-glass.png"
+import { MOSAIC_PIECES, type MosaicPieceDef } from "../game/mosaicPieces.generated"
+import { MOSAIC_POINTS } from "../game/mosaicGeometry.generated"
+import stainedGlassUrl from "@/assets/stained-glass.png"
 
 // ViewBox matches stained-glass.png aspect ratio (1153×2000 → 200×347)
 const VB_W = 200
