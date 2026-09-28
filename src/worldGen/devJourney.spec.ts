@@ -266,6 +266,25 @@ describe("what the dev journey authors", () => {
     })
   })
 
+  // The gap the layout round-trip above cannot close: it proves the CONFIG survives world
+  // generation, not that a carved cell ever reads it. This is the only place a cell's `region` is
+  // asserted on a floor that came through world generation rather than a hand-built one —
+  // `assembleAt` is the same helper "carves every one of them at the seed the runtime hands it"
+  // uses, so this file carves a dev floor exactly one way.
+  it("carves the bench floor with every cell knowing its region", () => {
+    const floor = withDev[DEV_JOURNEY_ID][0][0]
+    const grid = assembleAt(DEV_JOURNEY_ID, floor, 1, 0)
+    if (!grid) throw new Error("bench floor did not carve")
+
+    const carved = grid.cells
+      .flat()
+      .filter((c): c is Extract<typeof c, { type: "room" | "corridor" }> => c.type === "room" || c.type === "corridor")
+    const authored = new Set(floor.regionLayout?.regions.map(r => r.name))
+
+    expect(carved.filter(c => c.region === undefined)).toEqual([])
+    expect([...new Set(carved.map(c => c.region))].every(r => r !== undefined && authored.has(r))).toBe(true)
+  })
+
   it("stands a lever on pyramid 7, with a door on each side so throwing it swaps them", () => {
     const pyramid7 = withDev[DEV_JOURNEY_ID][6]
     expect(pyramid7).toHaveLength(1)
