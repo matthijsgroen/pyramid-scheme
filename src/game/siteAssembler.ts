@@ -1243,6 +1243,16 @@ export const assembleFloor = (
       continue
     }
     const gateIndices = new Set(gateIndexByObstacle.values())
+    // EVERY MAIN-PATH SEAM, GATED OR NOT — read off `stepRegion` alone, which `regionLayout` (core,
+    // never dropped by `dropUnownedAuthoring`) fixes the moment `mainPath` does. `gateIndices` above
+    // answers "where does an AUTHORED gate stand", which is exactly what must NOT decide content
+    // pacing or candidate membership below: the topology mod owns which of these seams carries a
+    // gate, but not how many seams the layout has or where they fall, so a reservation keyed off
+    // `gateIndices` shrinks and grows with the mod while one keyed off `stepRegion` cannot — the same
+    // physical stretch is reserved whether the mod that might gate it is even in the build.
+    const regionSeamIndices = new Set<number>()
+    for (let step = 1; step < stepRegion.length; step++)
+      if (stepRegion[step] !== stepRegion[step - 1]) regionSeamIndices.add(step)
     // WHERE AN OFF-ROUTE OBSTACLE'S OWN SEAM LANDS — filled in once each matched chain's own cells
     // exist (alongside `cellRegion`, below): `{ idx, cellIndex }` names which chain (its top-level
     // `chains` index) and which of that chain's own cells the seam is, mirroring `gateIndexByObstacle`
@@ -1270,11 +1280,18 @@ export const assembleFloor = (
     // either way is the kind of thing the carve already decides. Forward to the next free node, so
     // one layout always places the same way. `spreadContentIndices` deals in mainPath-array indices
     // (one real node apart — see NODE_STEP's own contrast with the grid lattice), the same space
-    // `gateIndices` is built in, so the step here is 1, not 2.
+    // `regionSeamIndices` is built in, so the step here is 1, not 2.
+    //
+    // `regionSeamIndices`, NOT `gateIndices` — every seam forwards content past it, gated or not, so
+    // `goalIndex` below lands on the identical node whether or not the topology mod (and so any
+    // obstacle) is in the build. Skipping only actual gate cells would let `goalIndex` drift outward
+    // exactly by however many gates fall before it, which is mod-owned by construction: two builds
+    // that agree on `regionLayout` but disagree on `obstacles` would then disagree on where the main
+    // zone ends (see `mainZoneCandidates` below), which is the identity bug this line exists to avoid.
     const placedContent: number[] = []
     for (const wanted of contentIndices) {
       let index = wanted
-      while (index < mainPath.length - 1 && (gateIndices.has(index) || placedContent.includes(index))) index += 1
+      while (index < mainPath.length - 1 && (regionSeamIndices.has(index) || placedContent.includes(index))) index += 1
       if (index >= mainPath.length - 1) break
       placedContent.push(index)
     }
@@ -1445,29 +1462,31 @@ export const assembleFloor = (
     // in path order — kept separate so fork placement can prefer interleaving with main-path
     // puzzles over the unused corridor tail beyond the goal (see bucketing below).
     //
-    // A GATE'S OWN CELL IS EXCLUDED HERE TOO, alongside the goal's — not because a chain could not
+    // A SEAM'S OWN CELL IS EXCLUDED HERE TOO, alongside the goal's — not because a chain could not
     // grow from a gate room (a junction that already holds a main-path room keeps that room, same as a
-    // puzzle or the goal, see the fork-fallback below), but because a gate shifts CONTENT forward past
-    // its own seam (`placedContent`'s loop above), which moves `goalIndex` outward by the width of
-    // however many gates fell in content's way. Left unexcluded, that widened cutoff would let a gate's
-    // cell join this list ONLY when the mod is registered, and scoring draws one `rand()` per candidate
-    // below — one extra candidate is one extra draw, which shifts every attachment choice after it.
-    // Excluding it is meant to keep this list the same whether or not the mod that owns gates and
-    // controls is even in the build (the toggle-off gate, docs/game-design/regions-and-containers.md),
-    // and it is COUNT-based: mod on or off, the same number of indices are excluded. That is not the same
-    // claim as IDENTITY, though — `mainZoneCandidates` is later sliced by contiguous range
-    // (`mainZoneSlices`), so which physical cells land in which slice can still differ between the two
-    // builds even when the count leaving this loop matches. Measured, not proven by construction: a sweep
-    // of `toggleOff.spec.ts`'s acceptance test still finds seeds that diverge on a two-obstacle floor (see
-    // that file, and docs/instructions/regions-slice-5-gates-plan.md's "What this slice carries to the
-    // next one") — none found yet on a one-obstacle floor, but the absence of a counterexample there is
-    // not a guarantee either.
+    // puzzle or the goal, see the fork-fallback below), but because `regionSeamIndices` is what shifts
+    // CONTENT forward past it (`placedContent`'s loop above), moving `goalIndex` outward by the width
+    // of however many seams fell in content's way — so the same set has to be excluded here too, or the
+    // two would disagree about which cells this stretch actually holds.
+    //
+    // `regionSeamIndices`, NOT `gateIndices` — READ OFF `regionLayout` (core), NEVER OFF `obstacles`
+    // (the mod's). This is BY CONSTRUCTION, not by compensation: `regionLayout` is never dropped by
+    // `dropUnownedAuthoring`, so `stepRegion` and therefore `regionSeamIndices` are the identical set
+    // whether or not the topology mod is even in the build. Scoring draws one `rand()` per candidate
+    // below (`scoreCandidates`), and `mainZoneCandidates` is later sliced by contiguous range
+    // (`mainZoneSlices`) — so it is not enough for the two builds to exclude the same COUNT of cells,
+    // as `gateIndices` alone did (mod on excludes exactly the gated seams; mod off excludes none, but
+    // `goalIndex` shrunk to match — same count leaving the loop, different physical cells inside it,
+    // which is exactly what let seed-dependent `rand()` draws diverge after the sweep in
+    // `toggleOff.spec.ts` measured 24 of 50 seeds disagreeing on a two-obstacle floor). Keying off
+    // `regionLayout` instead means the mod's OWN OBSTACLE LIST never reaches this loop at all: there is
+    // no count to keep equal, because there is nothing left for the mod to perturb.
     const mainZoneCandidates: Array<[number, number]> = []
     for (let pi = 0; pi < mainPath.length - 1; pi++) {
       const [pr, pc] = mainPath[pi]
       if (rawFreeNeighbors(pr, pc).length === 0) continue
       branchCandidates.push([pr, pc])
-      if (pi < goalIndex && !gateIndices.has(pi)) mainZoneCandidates.push([pr, pc])
+      if (pi < goalIndex && !regionSeamIndices.has(pi)) mainZoneCandidates.push([pr, pc])
     }
     // Prefer branch points that sit next to a genuinely large contiguous empty pocket —
     // this is where the fork ends up, and its later multi-cell footprint (the claiming
@@ -1852,6 +1871,21 @@ export const assembleFloor = (
       doorsToEnter.set(cellKey, (doorsToEnter.get(cellKey) ?? new Set()).add(door))
     /** The doors between the way in and a cell — empty for ground the player reaches unimpeded. */
     const standsBehind = (cellKey: string): ReadonlySet<string> => doorsToEnter.get(cellKey) ?? new Set()
+
+    // A SECOND, STRUCTURAL NOTION OF "BEHIND" — populated below (alongside `gatedCellKeys`, once
+    // `cellRegion` is settled) from EVERY connection `regionLayout` declares, gated or not, never
+    // from `gateObstacles`. `gatedCellKeys`/`doorsToEnter` above answer "has the player earned a REAL
+    // key" (oneWay's own check, further down, has to ask exactly that — a drop landing behind an
+    // ungated seam has earned nothing and must not trip it). This one answers "do two regions meet
+    // ONLY here" — a question `regionLayout` alone can settle, so a stray tree edge that would bridge
+    // two regions elsewhere is refused whether or not the topology mod ever gates that seam. Kept
+    // apart rather than folded into `doorsToEnter` for that reason: merging them would make an
+    // UNGATED seam look, to the oneWay check, like a real door nothing has been earned toward.
+    const seamCellKeys = new Set<string>()
+    const seamDoorsToEnter = new Map<string, Set<string>>()
+    const needsSeamDoor = (cellKey: string, door: string) =>
+      seamDoorsToEnter.set(cellKey, (seamDoorsToEnter.get(cellKey) ?? new Set()).add(door))
+    const standsBehindSeam = (cellKey: string): ReadonlySet<string> => seamDoorsToEnter.get(cellKey) ?? new Set()
     const intendedEdgeKeys = new Set<string>()
     const markChain = (attachedAt: [number, number], chainCells: Array<[number, number]>) => {
       let [pr, pc] = attachedAt
@@ -1898,8 +1932,19 @@ export const assembleFloor = (
     const edgeAllowed = (r: number, c: number, nr: number, nc: number): boolean => {
       if (!passages.has(pkey(r, c, nr, nc))) return false
       if (intendedEdgeKeys.has(pkey(r, c, nr, nc))) return true
-      if (!gatedCellKeys.has(posKey(r, c)) && !gatedCellKeys.has(posKey(nr, nc))) return true
-      return crossesNoDoor(standsBehind(posKey(r, c)), standsBehind(posKey(nr, nc)))
+      const hereKey = posKey(r, c)
+      const thereKey = posKey(nr, nc)
+      const gateClear =
+        (!gatedCellKeys.has(hereKey) && !gatedCellKeys.has(thereKey)) ||
+        crossesNoDoor(standsBehind(hereKey), standsBehind(thereKey))
+      if (!gateClear) return false
+      // STRUCTURAL check, asked whether or not the topology mod gates anything here (see
+      // `seamCellKeys` above) — so a stray edge that would bridge two regions gets refused the
+      // identical way whether or not an obstacle happens to stand at their one real seam.
+      return (
+        (!seamCellKeys.has(hereKey) && !seamCellKeys.has(thereKey)) ||
+        crossesNoDoor(standsBehindSeam(hereKey), standsBehindSeam(thereKey))
+      )
     }
 
     // Which tier each cell's own section was authored at, so a passage into a pocket of another
@@ -2019,6 +2064,26 @@ export const assembleFloor = (
         for (const id of regionDoors.get(region) ?? []) {
           gatedCellKeys.add(cellKey)
           needsDoor(cellKey, gateKeyOf(id))
+        }
+      }
+    // THE STRUCTURAL TWIN OF THE MARKING ABOVE — every connection `regionLayout` declares stands in
+    // for an obstacle here, gated or not, so `edgeAllowed`'s bypass check (above) reserves the same
+    // stray edges whether or not the topology mod is in the build. `id` is a seam's own name, never
+    // an authored obstacle's — it never reaches `gateKeyOf` or a room's `requiredKeyId`, only
+    // `standsBehindSeam`'s set-equality check.
+    const asSeamObstacle = ([a, b]: readonly [string, string]): Obstacle => ({
+      id: `seam:${a}::${b}`,
+      kind: "gate",
+      at: { on: "connection", between: [a, b] },
+    })
+    const regionSeamDoors = regionLayout
+      ? doorsToEnterRegion(regionLayout, regionLayout.connections.map(asSeamObstacle))
+      : undefined
+    if (regionSeamDoors)
+      for (const [cellKey, region] of cellRegion) {
+        for (const id of regionSeamDoors.get(region) ?? []) {
+          seamCellKeys.add(cellKey)
+          needsSeamDoor(cellKey, id)
         }
       }
 
@@ -2184,7 +2249,6 @@ export const assembleFloor = (
           })
         }
       }
-
       let contentStart = 0
 
       // Gate node occupies cells[0] for gated chains

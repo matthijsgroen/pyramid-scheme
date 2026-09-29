@@ -103,6 +103,56 @@ const twoObstacleFloor = {
   ],
 }
 
+// Five gates in sequence over six ON-ROUTE regions — the same shape as `gatedFloor`/`twoObstacleFloor`
+// above, widened to the count `doubleBack` authors (`lockWalk.spec.ts`'s `doubleBack` fixture: six
+// regions, five gates). NOT `doubleBack`'s own layout: two of its five gates (`forkRight`, `greenRight`)
+// seat on an OFF-ROUTE chain (`siteAssembler.spec.ts`'s "a gate on a connection off the threaded
+// route"), which this file's fix does not reach — see this suite's own comment below, and the report,
+// for why that residual is real and left open rather than patched here.
+const fiveObstacleFloor = {
+  pathPuzzles: 2,
+  difficulty: "starter" as const,
+  end: "treasure" as const,
+  exitOrStaircase: "exit" as const,
+  sideSections: [{ pathPuzzles: 1, difficulty: "starter" as const, end: "treasure" as const }],
+  regionLayout: {
+    regions: [
+      { name: "r0", appetite: "free" as const },
+      { name: "r1", appetite: "free" as const },
+      { name: "r2", appetite: "free" as const },
+      { name: "r3", appetite: "free" as const },
+      { name: "r4", appetite: "free" as const },
+      { name: "r5", appetite: "free" as const },
+    ],
+    connections: [
+      ["r0", "r1"] as const,
+      ["r1", "r2"] as const,
+      ["r2", "r3"] as const,
+      ["r3", "r4"] as const,
+      ["r4", "r5"] as const,
+    ],
+    in: "r0",
+    out: "r5",
+  },
+  obstacles: [
+    { id: "g0", kind: "gate" as const, at: { on: "connection" as const, between: ["r0", "r1"] as const } },
+    { id: "g1", kind: "gate" as const, at: { on: "connection" as const, between: ["r1", "r2"] as const } },
+    { id: "g2", kind: "gate" as const, at: { on: "connection" as const, between: ["r2", "r3"] as const } },
+    { id: "g3", kind: "gate" as const, at: { on: "connection" as const, between: ["r3", "r4"] as const } },
+    { id: "g4", kind: "gate" as const, at: { on: "connection" as const, between: ["r4", "r5"] as const } },
+  ],
+  controls: [
+    {
+      id: "w1",
+      in: "r0",
+      states: ["a", "b"],
+      initial: "a",
+      returnsToInitial: true,
+      opens: { a: [], b: ["g0", "g1", "g2", "g3", "g4"] },
+    },
+  ],
+}
+
 describe("dropUnownedAuthoring — obstacles and controls", () => {
   it("drops obstacles and controls when the topology mod is not registered", () => {
     const dropped = dropUnownedAuthoring(gatedFloor, new Set(["mosaic"]), undefined)
@@ -122,13 +172,12 @@ describe("dropUnownedAuthoring — obstacles and controls", () => {
   // by each cell's `dirs`, never its `type` (`dirsOf`, defined below) — a gate room is a corridor cell
   // turned into a room without a wall having moved, and comparing types would call that a difference.
   //
-  // Swept rather than pinned to one seed, over both a one-obstacle and a two-obstacle shape: a single
-  // seed proves nothing about the other 49, and `mainZoneCandidates`' own comment (siteAssembler.ts)
+  // Swept rather than pinned to one seed, over a one-, two- and five-obstacle shape: a single seed
+  // proves nothing about the other 49, and `mainZoneCandidates`' own former comment (siteAssembler.ts)
   // only ever claimed what a handful of seeds measured, never a guarantee by construction. Where this
-  // sweep still finds a seed that diverges, `divergentSeeds` names it and the assertion holds the CURRENT
-  // count rather than 0 — a red diff here is the finding this sweep exists to keep visible, not something
-  // to narrow the range to avoid. See docs/instructions/regions-slice-5-gates-plan.md, "What this slice
-  // carries to the next one".
+  // sweep finds a seed that diverges, `divergentSeeds` names it and the assertion holds the CURRENT
+  // count rather than 0 — a red diff here would be a finding to keep visible, not something to narrow
+  // the range to avoid.
   const divergesAt = (floor: GameFloorConfig): number[] => {
     const seeds: number[] = []
     for (let seed = 0; seed < 50; seed++) {
@@ -144,16 +193,31 @@ describe("dropUnownedAuthoring — obstacles and controls", () => {
     expect(divergesAt(gatedFloor as GameFloorConfig)).toEqual([])
   })
 
-  // RED, honestly: measured 24 of 50 seeds (0-49) diverging on this two-obstacle shape — seeds 2, 3, 4,
-  // 7, 9, 14, 17, 19, 24, 25, 28, 30, 31, 32, 36, 37, 40-46, 49 — against 0 of 50 on the one-obstacle
-  // shape above. `it.fails` keeps the finding running and visible (a green suite here would need the
-  // `mainZoneCandidates` identity question this file's own comment now only claims as measured, not
-  // fixing it, which is a design question for whoever owns that sizing, not a one-line patch here — see
-  // docs/instructions/regions-slice-5-gates-plan.md, "What this slice carries to the next one"). If this
-  // ever starts passing for real, `it.fails` turns THAT into a reported failure too, which is the signal
-  // to promote it back to a plain `it` rather than deleting the marker.
-  it.fails("carves the identical walls with the mod off, across seeds 0-49, two obstacles", () => {
+  // Was RED (measured 24 of 50 seeds 0-49 diverging) while `mainZoneCandidates` reserved by COUNT —
+  // excluding a gate's own cell but not the seam a mainzone stretch is sliced from, so which physical
+  // cells landed in which hub-attachment slice still differed between the two builds even though the
+  // same NUMBER left the loop. Fixed by reserving `regionSeamIndices` — every main-path region
+  // boundary `regionLayout` (core, never dropped by `dropUnownedAuthoring`) declares, whether or not an
+  // obstacle happens to gate it — so the excluded set is the identical set by construction, not merely
+  // the identical size.
+  it("carves the identical walls with the mod off, across seeds 0-49, two obstacles", () => {
     expect(divergesAt(twoObstacleFloor as GameFloorConfig)).toEqual([])
+  })
+
+  // Proves the fix scales past two ON-ROUTE gates. NOT a proof that `doubleBack` itself is
+  // identity-stable — its two OFF-ROUTE gates (`forkRight`, `greenRight`) hit a SEPARATE mechanism,
+  // `chainGateCrowdsEnd` (siteAssembler.ts), which retries only when an actual obstacle crowds a
+  // chain's own end room. Mod off never authors that obstacle, so it never retries, and the two builds
+  // can carve at different grid sizes entirely — measured 50 of 50 seeds diverging (seed 0: N=11 with
+  // the mod, N=9 without). A structural fix analogous to `regionSeamIndices` (reserve every hosted-
+  // region seam regardless of gating) was tried and reverted: it made `siteAssembler.spec.ts`'s "still
+  // refuses by name when no chain node is ever free for the control" retry forever instead of refusing
+  // by name, because that fixture's chain is structurally always end-crowded with NO gate ever
+  // authored there — the same reservation that fixes a genuinely gated chain breaks an ungated one, and
+  // `dropUnownedAuthoring`'s stripped config gives the mod-off build no way to tell the two apart. Left
+  // open; see the report.
+  it("carves the identical walls with the mod off, across seeds 0-49, five obstacles", () => {
+    expect(divergesAt(fiveObstacleFloor as GameFloorConfig)).toEqual([])
   })
 })
 
