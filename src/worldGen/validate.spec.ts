@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import {
+  findDeadRegions,
   findEmptyChests,
   findMispairedStairs,
   findStrandingLocks,
@@ -396,6 +397,92 @@ describe("findStrandingLocks", () => {
       } as Record<string, SiteConfig[]>
       expect(findUnwalkedLocks(lever, [])).toEqual([ref])
     })
+  })
+})
+
+describe("findDeadRegions", () => {
+  const reEnterableFamilies: ResolveEncounter = (encounter, defaultTag) => ({
+    ...defaultResolveEncounter(encounter, defaultTag),
+    reEnterable: true,
+  })
+
+  const deadlockLayout: GameFloorConfig["regionLayout"] = {
+    regions: [
+      { name: "mouth", appetite: "free" },
+      { name: "hall", appetite: "free" },
+      { name: "vault", appetite: "free" },
+    ],
+    connections: [
+      ["mouth", "hall"],
+      ["hall", "vault"],
+    ],
+    in: "mouth",
+    out: "hall",
+  }
+
+  // A control standing in the very region its own gate seals off: nobody can ever be inside `vault`
+  // to throw it, so `vaultDoor` never opens and `vault` is dead for good — a deadlock one on-floor
+  // mechanism causes on itself, the smallest real-floor shape of the fault this sweep exists to catch.
+  // `hall` stays the way out, so the main path never touches `vault` and the lock still walks sound.
+  const selfDeadlockedFloor = (): FloorConfig => ({
+    pathPuzzles: 2,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure" }],
+    regionLayout: deadlockLayout,
+    obstacles: [{ id: "vaultDoor", kind: "gate", at: { on: "connection", between: ["hall", "vault"] } }],
+    controls: [
+      {
+        id: "trap",
+        in: "vault",
+        states: ["shut", "open"],
+        initial: "shut",
+        returnsToInitial: true,
+        opens: { open: ["vaultDoor"] },
+      },
+    ],
+  })
+
+  const carve = (config: FloorConfig): FloorGrid | null => {
+    for (let seed = 0; seed < 60; seed++) {
+      const result = assembleFloor("spec:1", config as GameFloorConfig, seed, reEnterableFamilies, {
+        floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
+      })
+      if (result.success) return result.grid
+    }
+    return null
+  }
+
+  it("says nothing about a floor carrying no lock", () => {
+    const plain = { spec: [[floor()]] } as Record<string, SiteConfig[]>
+    expect(findDeadRegions(plain, (_journeyId, config) => carve(config))).toEqual([])
+  })
+
+  it("names the floor and the region a control deadlocks on itself", () => {
+    const configs = { spec: [[selfDeadlockedFloor()]] } as Record<string, SiteConfig[]>
+    const result = findDeadRegions(configs, (_journeyId, config) => carve(config))
+    expect(result).toHaveLength(1)
+    expect(result[0].journeyId).toBe("spec")
+    expect(result[0].levelNr).toBe(1)
+    expect(result[0].floorIndex).toBe(0)
+    // `vault` carves as two of floorLock's own regions — the gate room itself (a door-region) and the
+    // flooded space beyond it — and both are unreachable behind the one gate `trap` can never open.
+    expect(result[0].regions).toHaveLength(2)
+    expect(result[0].regions.filter(r => r.startsWith("door "))).toHaveLength(1)
+    expect(result[0].regions.filter(r => r.startsWith("at "))).toHaveLength(1)
+  })
+
+  it("stays silent once the control stands where a player can actually reach it to throw", () => {
+    const reachable = selfDeadlockedFloor()
+    reachable.controls = [{ ...reachable.controls![0], in: "mouth" }]
+    const configs = { spec: [[reachable]] } as Record<string, SiteConfig[]>
+    expect(findDeadRegions(configs, (_journeyId, config) => carve(config))).toEqual([])
+  })
+
+  it("skips a floor that will not carve, which the unassembled sweep already reports", () => {
+    const configs = { spec: [[selfDeadlockedFloor()]] } as Record<string, SiteConfig[]>
+    expect(findDeadRegions(configs, () => null)).toEqual([])
   })
 })
 

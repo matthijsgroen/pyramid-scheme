@@ -5,6 +5,7 @@ import {
   reachableStates,
   MAX_LOCK_STATES,
   walkLock,
+  deadRegions,
   describeLockWalkFailure,
   type LockSpec,
 } from "./lockWalk"
@@ -333,5 +334,82 @@ describe("walkLock", () => {
     const spec = oneDoor()
     spec.out = "valut"
     expect(walkLock(spec)).toEqual({ sound: false, failure: { type: "malformed", problem: expect.any(String) } })
+  })
+})
+
+// Two controls, each behind the door the other opens. Neither vault is ever reachable — throwing A
+// takes standing in B and throwing B takes standing in A — yet the way out is the entrance itself, so
+// `walkLock` calls the lock sound: nobody is stranded and the way out never moves.
+const deadlockedControls = (): LockSpec => ({
+  regions: ["entrance", "vaultA", "vaultB"],
+  gates: {
+    doorA: { from: "entrance", to: "vaultA", owners: ["controlA"] },
+    doorB: { from: "entrance", to: "vaultB", owners: ["controlB"] },
+  },
+  mechanisms: {
+    controlA: {
+      states: ["shut", "open"],
+      initial: "shut",
+      opens: { shut: [], open: ["doorA"] },
+      transitions: [{ from: "shut", to: "open", at: "vaultB" }],
+    },
+    controlB: {
+      states: ["shut", "open"],
+      initial: "shut",
+      opens: { shut: [], open: ["doorB"] },
+      transitions: [{ from: "shut", to: "open", at: "vaultA" }],
+    },
+  },
+  in: "entrance",
+  out: "entrance",
+})
+
+describe("deadRegions", () => {
+  it("calls the deadlocked pair sound, which is exactly what deadRegions exists to catch beyond", () => {
+    expect(walkLock(deadlockedControls())).toEqual({ sound: true, states: expect.any(Number) })
+  })
+
+  it("names both vaults of a control deadlock, each behind the door the other opens", () => {
+    expect(deadRegions(deadlockedControls())).toEqual(["vaultA", "vaultB"])
+  })
+
+  it("says nothing about doubleBack, whose second drop is what keeps every region reachable", () => {
+    expect(deadRegions(doubleBack())).toEqual([])
+  })
+
+  it("leaves a ward pocket alone: its key is a mechanism with no transition, read as openable elsewhere", () => {
+    const wardPocket: LockSpec = {
+      regions: ["entrance", "pocket"],
+      gates: { ward: { from: "entrance", to: "pocket", owners: ["tombKey"] } },
+      mechanisms: { tombKey: { states: ["shut"], initial: "shut", opens: { shut: [] }, transitions: [] } },
+      in: "entrance",
+      out: "entrance",
+    }
+    expect(deadRegions(wardPocket)).toEqual([])
+  })
+
+  it("leaves a region alone while even one bounding gate answers partly to a ward", () => {
+    // vault has two ways in: one an on-floor lever could never throw (deadlocked on itself), the
+    // other a ward. The ward alone is enough to read the vault as reachable from elsewhere in the
+    // world, so a region is only named when EVERY bounding gate is solely on-floor.
+    const spec: LockSpec = {
+      regions: ["entrance", "vault"],
+      gates: {
+        stuckDoor: { from: "entrance", to: "vault", owners: ["lever"] },
+        wardDoor: { from: "entrance", to: "vault", owners: ["tombKey"] },
+      },
+      mechanisms: {
+        lever: {
+          states: ["shut", "open"],
+          initial: "shut",
+          opens: { shut: [], open: ["stuckDoor"] },
+          transitions: [{ from: "shut", to: "open", at: "vault" }],
+        },
+        tombKey: { states: ["shut"], initial: "shut", opens: { shut: [] }, transitions: [] },
+      },
+      in: "entrance",
+      out: "entrance",
+    }
+    expect(deadRegions(spec)).toEqual([])
   })
 })

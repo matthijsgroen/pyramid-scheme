@@ -6,7 +6,7 @@ import { configHash } from "@/game/seeds/configHash"
 import { switchFamilies } from "@/game/seeds/enumerateConfigs"
 import type { FloorGrid as AssembledFloor } from "@/game/siteTypes"
 import { floorLock } from "@/game/floorLock"
-import { walkLock, describeLockWalkFailure } from "@/game/lockWalk"
+import { walkLock, describeLockWalkFailure, deadRegions } from "@/game/lockWalk"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
 import { capabilitiesFor, type SiteCapabilities } from "./capabilities"
@@ -329,6 +329,41 @@ export const findStrandingLocks = (
       })
     )
   return { walked, stranding }
+}
+
+export type DeadRegionsReport = FloorRef & { regions: string[] }
+
+/**
+ * Floors whose lock walks sound and still leave a region no reachable state stands in — loot a player
+ * can never collect, because two on-floor mechanisms deadlock each other rather than because anyone is
+ * stranded. `walkLock` does not see this: it calls a floor sound once the way out stays reachable,
+ * whether or not every region does (`deadRegions`, game/lockWalk.ts).
+ *
+ * Walked over the same lock `findStrandingLocks` derives from the same cached carve
+ * (`assembleFloorAt`), so a floor is never assembled twice for the two sweeps.
+ */
+export const findDeadRegions = (
+  configs: Record<string, SiteConfig[]>,
+  assembleFloorAt: (
+    journeyId: string,
+    floor: SiteConfig[number],
+    levelNr: number,
+    floorIndex: number
+  ) => AssembledFloor | null
+): DeadRegionsReport[] => {
+  const found: DeadRegionsReport[] = []
+  for (const [journeyId, sites] of Object.entries(configs))
+    sites.forEach((site, siteIdx) =>
+      site.forEach((floor, floorIndex) => {
+        const grid = assembleFloorAt(journeyId, floor, siteIdx + 1, floorIndex)
+        if (!grid) return
+        const lock = floorLock(grid)
+        if (!lock) return
+        const regions = deadRegions(lock)
+        if (regions.length > 0) found.push({ journeyId, levelNr: siteIdx + 1, floorIndex, regions })
+      })
+    )
+  return found
 }
 
 /**

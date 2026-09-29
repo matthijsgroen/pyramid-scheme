@@ -20,6 +20,7 @@ import { buildConfigs } from "../src/worldGen/configBuilder"
 import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
 import {
+  findDeadRegions,
   findEmptyChests,
   findMispairedStairs,
   findStrandingLocks,
@@ -244,6 +245,24 @@ if (stranding.length > 0) {
   for (const floor of stranding.slice(0, 20))
     console.error(`    ${floor.journeyId} level ${floor.levelNr} floor ${floor.floorIndex}: ${floor.problem}`)
   if (stranding.length > 20) console.error(`    … and ${stranding.length - 20} more`)
+  process.exit(1)
+}
+
+// A lock can walk sound — the way out always stays reachable — and still deadlock two of its own
+// mechanisms against each other, leaving a region no reachable state ever stands in. A ward or a key
+// earned off this floor is read as openable elsewhere and left alone (`deadRegions`, game/lockWalk.ts),
+// so only a region every bounding gate of which answers solely to an on-floor mechanism is named here.
+const stuckRegions = findDeadRegions(configs, assembleOnce)
+if (stuckRegions.length > 0) {
+  console.error(`✗ ${stuckRegions.length} floor(s) leave a region no reachable state stands in:`)
+  for (const floor of stuckRegions.slice(0, 20))
+    console.error(
+      `    ${floor.journeyId} level ${floor.levelNr} floor ${floor.floorIndex}: ${floor.regions.join(", ")}`
+    )
+  if (stuckRegions.length > 20) console.error(`    … and ${stuckRegions.length - 20} more`)
+  console.error(
+    "  Two on-floor mechanisms are deadlocking each other's gate — the loot behind it can never be collected."
+  )
   process.exit(1)
 }
 

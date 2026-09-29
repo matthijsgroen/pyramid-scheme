@@ -216,6 +216,36 @@ export const walkLock = (spec: LockSpec): LockWalkResult => {
   return { sound: true, states: order.length }
 }
 
+// A REGION NO REACHABLE STATE STANDS IN IS LOOT NOBODY CAN EVER COLLECT, and `walkLock` does not see
+// it: it calls a floor sound once the way out stays reachable, whether or not every region does. Two
+// on-floor mechanisms can deadlock each other — each behind the door the other opens — and nothing
+// above this reports it.
+//
+// A GATE'S OWNER WITH NO TRANSITION IS OFF-FLOOR: a ward, or a key earned elsewhere in the world, comes
+// out of `floorLock` as a mechanism nothing on this floor can throw. Bracket three of
+// docs/authored-locks-roadmap.md reads such a gate as openable elsewhere rather than shut, so a region
+// behind one is left alone — `junior_2` L2 F0's ward pocket is exactly this shape and must stay legal.
+// Only a region whose every bounding gate answers solely to a mechanism the floor itself drives is
+// reported: that is the fault class two deadlocking controls belong to, and nothing else catches it.
+//
+// REPORTS, and decides nothing — same contract as `strandedRegions` (game/regions.ts), one layer up
+// from the structural question that one asks.
+export const deadRegions = (spec: LockSpec): RegionId[] => {
+  const found = reachableStates(spec)
+  if (found === "tooLarge") return []
+  const stood = new Set(found.order.map(state => state.region))
+  const onFloor = new Set(
+    Object.entries(spec.mechanisms)
+      .filter(([, mechanism]) => mechanism.transitions.length > 0)
+      .map(([id]) => id)
+  )
+  return spec.regions.filter(region => {
+    if (stood.has(region)) return false
+    const bounding = Object.values(spec.gates).filter(gate => gate.from === region || gate.to === region)
+    return bounding.every(gate => gate.owners.every(owner => onFloor.has(owner)))
+  })
+}
+
 export const describeLockWalkFailure = (failure: LockWalkFailure): string => {
   switch (failure.type) {
     case "malformed":
