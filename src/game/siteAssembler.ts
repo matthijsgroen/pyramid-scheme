@@ -693,7 +693,9 @@ export const assembleFloor = (
 
   // An authored one-way naming a section this floor does not have is the same kind of mistake: which
   // sections exist is fixed by the config, not by the seed, so a misnamed end is refused once here
-  // rather than blamed on sixty carves that could never have satisfied it either.
+  // rather than blamed on sixty carves that could never have satisfied it either. The region-addressed
+  // form (`obstacles`, kind "oneWay") is validated the same way, just against regions instead of
+  // sections — `topologyProblems` above already covers it.
   const knownSectionAddresses = new Set<string>([MAIN_SECTION_ADDRESS, ...addresses.of.values()])
   const unusableOneWays = (authoredConfig.oneWays ?? []).filter(
     oneWay => !knownSectionAddresses.has(oneWay.from) || !knownSectionAddresses.has(oneWay.to)
@@ -937,10 +939,14 @@ export const assembleFloor = (
   if (regionLayout) {
     const mouthGateCollisions = offRouteChains(regionLayout).flatMap((chain, i) => {
       if (i >= config.sideSections.length || !config.sideSections[i].gate) return []
-      const mouthObstacle = (authoredConfig.obstacles ?? []).find(o => {
-        const [a, b] = o.at.between
-        return (a === chain.mouth && b === chain.regions[0]) || (b === chain.mouth && a === chain.regions[0])
-      })
+      // A ONE-WAY NEVER COLLIDES HERE: it mints no gate room and claims no cell of its own, so only a
+      // GATE at the mouth is the collision this check exists for.
+      const mouthObstacle = (authoredConfig.obstacles ?? [])
+        .filter(o => o.kind === "gate")
+        .find(o => {
+          const [a, b] = o.at.between
+          return (a === chain.mouth && b === chain.regions[0]) || (b === chain.mouth && a === chain.regions[0])
+        })
       return mouthObstacle ? [{ address: `s${i}`, obstacleId: mouthObstacle.id }] : []
     })
     if (mouthGateCollisions.length > 0) {
@@ -1204,9 +1210,14 @@ export const assembleFloor = (
     // exists only once that chain's own cells are carved (below, alongside `cellRegion`) —
     // `topologyFaults` has already proven every obstacle seats SOMEWHERE, so failing this test only
     // ever means "ask the other question," never a genuine fault.
+    //
+    // GATES ONLY: a one-way obstacle seats through its own, entirely different search (below, "ONE-WAY
+    // DROPS") — its two regions need not touch at all, so neither `stepRegion`'s seam nor a chain's
+    // own seam is the question to ask it.
+    const gateObstacles = (authoredConfig.obstacles ?? []).filter(o => o.kind === "gate")
     const onRouteObstacle = (o: Obstacle) => onRouteSet.has(o.at.between[0]) && onRouteSet.has(o.at.between[1])
-    const mainPathObstacles = (authoredConfig.obstacles ?? []).filter(onRouteObstacle)
-    const offRouteObstacles = (authoredConfig.obstacles ?? []).filter(o => !onRouteObstacle(o))
+    const mainPathObstacles = gateObstacles.filter(onRouteObstacle)
+    const offRouteObstacles = gateObstacles.filter(o => !onRouteObstacle(o))
     // A CONTROL STANDING IN AN OFF-ROUTE REGION splits the same way: `stepRegion` never names its
     // region, so the main-path search below (which asks only `stepRegion`) would find it no candidate
     // ever, attempt after attempt, before a single side-path cell exists. Held out here and asked
@@ -1998,8 +2009,11 @@ export const assembleFloor = (
     // the authored gates and traps use — so a one-way falling into a gated region, a stray tree edge
     // beside one and the fog are all answered by one notion of "what must be earned to stand here".
     // Read once `cellRegion` is fully settled (main path AND chains, a chain inheriting its host's
-    // region above), so a chain grown inside a gated region is gated with it.
-    const regionDoors = regionLayout ? doorsToEnterRegion(regionLayout, authoredConfig.obstacles ?? []) : undefined
+    // region above), so a chain grown inside a gated region is gated with it. GATES only: a one-way's
+    // `between` is typically not even a real connection of the layout, so asking `doorsToEnterRegion`
+    // to remove it would at best be a no-op and at worst — where a drop's ends happen to coincide with
+    // a real connection — misread a shortcut as a door nothing on the floor actually bars.
+    const regionDoors = regionLayout ? doorsToEnterRegion(regionLayout, gateObstacles) : undefined
     if (regionDoors)
       for (const [cellKey, region] of cellRegion) {
         for (const id of regionDoors.get(region) ?? []) {
@@ -2435,7 +2449,11 @@ export const assembleFloor = (
     // below refuses a landing the player would otherwise reach without ever solving the board.
     // Nothing but the drop rule reads them, so a floor authoring no drop is spared the walk.
     const entranceKey = posKey(entR, entC)
-    for (let n = 0; (config.oneWays ?? []).length > 0 && n < switchesPlaced; n++)
+    // A ONE-WAY OBSTACLE (kind "oneWay") IS THE REGION-ADDRESSED FORM OF THE SAME DEMAND
+    // `config.oneWays` authors by section address — same carve, same shortfall, only the label it
+    // resolves `from`/`to` against differs (see the unified `oneWayDemands` below).
+    const oneWayObstacles = (authoredConfig.obstacles ?? []).filter(o => o.kind === "oneWay")
+    for (let n = 0; ((config.oneWays ?? []).length > 0 || oneWayObstacles.length > 0) && n < switchesPlaced; n++)
       for (const { neighborKey } of freeWaysOut(reservedForks[n])) {
         // Behind a door means every way in passes through it — so it is what the way in stops reaching
         // once that one node is shut. The drops being placed below are not ways in: a drop that let
@@ -2458,17 +2476,40 @@ export const assembleFloor = (
     // same seed always drops the same pair. A demand with no such pair is this carve's own shortfall,
     // not the authoring's: another seed may still place it, so the attempt is re-carved rather than
     // refused.
+    //
+    // TWO AUTHORING SURFACES, ONE CARVE: `config.oneWays` names two section addresses,
+    // `oneWayObstacles` (kind "oneWay") names two regions — `doubleBack`'s own drops join the far end
+    // of one side chain to another, which `config.oneWays`' section addresses cannot reach at all
+    // (regions-and-containers.md). Both resolve to the identical question, "which cells carry this
+    // label", just answered off a different map, so one demand list carries both and the search below
+    // runs once regardless of which vocabulary asked.
     const exitKey = posKey(exR, exC)
     const oneWayEdges: { from: string; to: string; dir: Direction }[] = []
     let oneWayShort: { from: string; to: string } | undefined
+    const bySectionAddress = (address: string) => (key: string) => cellSectionAddress.get(key) === address
+    const byRegion = (region: string) => (key: string) => cellRegion.get(key) === region
+    const oneWayDemands = [
+      ...(config.oneWays ?? []).map(w => ({
+        from: w.from,
+        to: w.to,
+        matchesFrom: bySectionAddress(w.from),
+        matchesTo: bySectionAddress(w.to),
+      })),
+      ...oneWayObstacles.map(o => ({
+        from: o.at.between[0],
+        to: o.at.between[1],
+        matchesFrom: byRegion(o.at.between[0]),
+        matchesTo: byRegion(o.at.between[1]),
+      })),
+    ]
     // ONE CONNECTOR CARRIES ONE DROP. Two drops landing on the same pair of cells would write one
     // connector twice and leave a passage the author asked for gone with nothing reported, so the
     // second takes the next cell pair — or, with none left, is this carve's shortfall like any other.
     const takenConnectors = new Set<string>()
-    for (const oneWay of config.oneWays ?? []) {
+    for (const demand of oneWayDemands) {
       const candidates: { from: string; to: string; dir: Direction }[] = []
       for (const fromKey of usedCells) {
-        if (cellSectionAddress.get(fromKey) !== oneWay.from) continue
+        if (!demand.matchesFrom(fromKey)) continue
         // The exit was forced to a true dead end just above (every passage off it dropped but the one
         // to its predecessor) precisely so nothing reads as continuing past it. A drop hanging off it
         // would add exactly the direction that was deleted to guarantee that.
@@ -2481,7 +2522,7 @@ export const assembleFloor = (
           if (nr < 0 || nr >= N || nc < 0 || nc >= N) continue
           const toKey = posKey(nr, nc)
           if (toKey === exitKey) continue
-          if (cellSectionAddress.get(toKey) !== oneWay.to) continue
+          if (!demand.matchesTo(toKey)) continue
           // A DROP MAY RUN INSIDE WHAT A DOOR SHUTS OFF, OR OUT OF IT, NEVER INTO GROUND SHUT BY A
           // DOOR THE PLAYER HAS NOT EARNED BY STANDING WHERE THEY FALL FROM. A switch's doors count
           // here exactly as an authored gate's do: both are asked of one map (`doorsToEnter`).
@@ -2507,7 +2548,7 @@ export const assembleFloor = (
       })
       const picked = candidates[0]
       if (!picked) {
-        oneWayShort = { from: oneWay.from, to: oneWay.to }
+        oneWayShort = { from: demand.from, to: demand.to }
         break
       }
       const [pfr, pfc] = picked.from.split(",").map(Number)

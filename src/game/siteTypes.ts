@@ -449,7 +449,12 @@ export type FloorConfig = {
    *
    * Named ends, unlike `forks`' counts: a floor whose side sections a rule strips or never grows has
    * no address for either end to resolve to, and the drop is then refused outright rather than landing
-   * somewhere else. Author `oneWays` on a floor whose sections you also author. */
+   * somewhere else. Author `oneWays` on a floor whose sections you also author.
+   *
+   * Section-addressed, and stays that way: an `obstacles` entry of `kind: "oneWay"` is the same
+   * passage authored by REGION instead (src/game/obstacles.ts) — a drop between two regions the
+   * layout does not otherwise join, for a floor that authors `regionLayout` rather than bare
+   * sections. Both land through the same carve step and read into `LockSpec.oneWays` the same way. */
   oneWays?: { from: string; to: string }[]
   /** A LEVER STANDING IN ONE SECTION THAT OPENS A GATE ON OTHERS. `in` names the section the lever
    * stands in; `left` and `right` name the sections whose entrance gates each side of it owns. All
@@ -573,8 +578,10 @@ export type AssemblerReason =
    * out and leave the others shut, and keys accumulate, so the cost of the choice is a walk back to
    * spend it again — which a room that cannot be re-entered never offers. See FamilyMeta.reEnterable. */
   | { type: "switchFamilyNotReEnterable"; family: string }
-  /** An authored one-way (FloorConfig.oneWays) never got its passage: `from` names a section this
-   * floor does not have, or every attempt ran out before it found the two sections a node apart with
+  /** An authored one-way never got its passage — `FloorConfig.oneWays`, naming two section
+   * addresses, or an `obstacles` entry of `kind: "oneWay"` (src/game/obstacles.ts), naming two
+   * regions: `from`/`to` name whichever failed. Either `from` or `to` names an end this floor does
+   * not have, or every attempt ran out before it found two cells of the named ends a node apart with
    * an empty cell between them. */
   | { type: "oneWayUnsatisfied"; from: string; to: string }
   /** An authored handle (FloorConfig.handles) names a section it cannot have, and `address` is the
@@ -604,6 +611,7 @@ export type AssemblerReason =
    * TopologyFault, whose members these are. */
   | { type: "obstacleIdRepeated"; id: string }
   | { type: "obstacleNamesNoConnection"; id: string }
+  | { type: "obstacleNamesNoRegion"; id: string }
   | { type: "obstacleOffRoute"; id: string }
   | { type: "obstacleUnowned"; id: string }
   | { type: "controlUnsatisfied"; id: string; what: string }

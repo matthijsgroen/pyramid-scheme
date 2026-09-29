@@ -27,6 +27,12 @@ const gate = (id: string, between: readonly [string, string]): Obstacle => ({
   at: { on: "connection", between },
 })
 
+const oneWay = (id: string, between: readonly [string, string]): Obstacle => ({
+  id,
+  kind: "oneWay",
+  at: { on: "connection", between },
+})
+
 const lever = (id: string, opens: Record<string, string[]>): Control => ({
   id,
   in: "mouth",
@@ -102,6 +108,16 @@ describe("authored topology that resolves", () => {
       [gate("g1", ["rightLower", "s1Chamber"])],
       [{ ...lever("s1", { left: ["g1"], right: [] }), in: "in" }]
     )
+
+    expect(faults).toEqual([])
+  })
+
+  // `mouth` and `cellar` share no connection at all — the whole point of a one-way is a shortcut
+  // between two regions the layout does not otherwise join, so unlike a gate it never has to answer
+  // `joined`/`seatable`. No control owns it either: a one-way is meaningful on its own, its direction
+  // fixed at whatever it was authored with.
+  it("finds no fault in an unowned one-way between two regions the layout never joins", () => {
+    const faults = topologyFaults(layout, [oneWay("drop1", ["mouth", "cellar"])], [])
 
     expect(faults).toEqual([])
   })
@@ -209,6 +225,33 @@ describe("authored topology that does not resolve", () => {
       { type: "obstacleNamesNoConnection", id: "g1" },
       { type: "controlUnsatisfied", id: "s1", what: "mouth" },
     ])
+  })
+
+  // Unlike a gate, a one-way never needs `joined`/`seatable` — but it still needs both ends to be
+  // regions this floor actually declares, and a floor with no layout at all declares none.
+  it("names a one-way obstacle by its own reason when the floor authors no layout at all", () => {
+    const faults = topologyFaults(undefined, [oneWay("drop1", ["a", "b"])], [])
+
+    expect(faults).toEqual([{ type: "obstacleNamesNoRegion", id: "drop1" }])
+  })
+
+  it("names a one-way obstacle naming a region the layout does not declare", () => {
+    const faults = topologyFaults(layout, [oneWay("drop1", ["mouth", "attic"])], [])
+
+    expect(faults).toEqual([{ type: "obstacleNamesNoRegion", id: "drop1" }])
+  })
+
+  // `opens` can only ever name a GATE (Control.opens): "stands open" is not a question a one-way's
+  // direction answers, so a control pointing `opens` at one is refused the same way as one pointing
+  // at an obstacle that does not exist.
+  it("names a control opening a one-way, which opens cannot express a direction for", () => {
+    const faults = topologyFaults(
+      layout,
+      [oneWay("drop1", ["mouth", "cellar"])],
+      [lever("s1", { left: ["drop1"], right: [] })]
+    )
+
+    expect(faults).toEqual([{ type: "controlUnsatisfied", id: "s1", what: "drop1" }])
   })
 })
 

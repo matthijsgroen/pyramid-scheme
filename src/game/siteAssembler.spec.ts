@@ -7,6 +7,7 @@ import { reachableFrom, validateSite } from "./siteValidator"
 import { floorKeyRing } from "./floorKeys"
 import { openDoorsFor } from "./mechanismDoors"
 import { cellAddress } from "./cellAddress"
+import { floorLock } from "./floorLock"
 // The real registry, for the one spec that has to prove the refusal against a family that
 // genuinely lacks reEnterable rather than against the fallback resolver, which claims it for none.
 import "@/mods/registerModApps"
@@ -2415,6 +2416,161 @@ describe("a gate on a connection off the threaded route", () => {
     // Exactly one room carries the gate — s0's own mouth cell — never a second one on s1.0.
     expect(mouthGateRooms).toHaveLength(1)
     expect(mouthGateRooms[0].sectionAddress).toBe("s0")
+  })
+})
+
+describe("a one-way drop between two regions", () => {
+  // doubleBack's own full shape (lockWalk.spec.ts's doubleBack fixture) — the same six regions and
+  // three gates the describe block above proves seat, plus the two drops the design needs to stay
+  // sound (lockWalk.spec.ts's "strands the player who drops early" test): s1Chamber → leftLower and
+  // leftLower → entrance. Neither is a connection `doubleBackLayout` declares — a drop joins two
+  // regions the layout does NOT otherwise join; that is the whole of what one is for
+  // (docs/game-design/regions-and-containers.md; obstacles.ts's `OneWayObstacle`).
+  const doubleBackLayout = (): RegionGraph => ({
+    regions: [
+      { name: "entrance", appetite: "free" },
+      { name: "rightLower", appetite: "free" },
+      { name: "s1Chamber", appetite: "free" },
+      { name: "leftLower", appetite: "free" },
+      { name: "s2Chamber", appetite: "free" },
+      { name: "wayOut", appetite: "free" },
+    ],
+    connections: [
+      ["entrance", "leftLower"],
+      ["entrance", "rightLower"],
+      ["rightLower", "s1Chamber"],
+      ["leftLower", "s2Chamber"],
+      ["s2Chamber", "wayOut"],
+    ],
+    in: "entrance",
+    out: "wayOut",
+  })
+
+  const doubleBackConfig = (): FloorConfig => ({
+    pathPuzzles: 1,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    regionLayout: doubleBackLayout(),
+    sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: "treasure" }],
+    obstacles: [
+      { id: "forkRight", kind: "gate", at: { on: "connection", between: ["entrance", "rightLower"] } },
+      { id: "greenRight", kind: "gate", at: { on: "connection", between: ["rightLower", "s1Chamber"] } },
+      { id: "greenLeft", kind: "gate", at: { on: "connection", between: ["leftLower", "s2Chamber"] } },
+      // The two region-addressed drops this task adds — neither owned by a control, same as
+      // doubleBack's own (lockWalk.spec.ts): a one-way's direction is fixed at whatever it was
+      // authored with, permanently, until a control can reverse one (see Control.opens).
+      { id: "dropToLeft", kind: "oneWay", at: { on: "connection", between: ["s1Chamber", "leftLower"] } },
+      { id: "dropToEntrance", kind: "oneWay", at: { on: "connection", between: ["leftLower", "entrance"] } },
+    ],
+    controls: [
+      {
+        id: "Y",
+        in: "entrance",
+        states: ["unset", "open"],
+        initial: "unset",
+        returnsToInitial: false,
+        opens: { unset: [], open: ["forkRight", "greenRight", "greenLeft"] },
+      },
+    ],
+  })
+
+  const OPPOSITE_DIR: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
+
+  // Every cell pair the grid joins in one direction only — the same witness oneWayCarve.spec.ts and
+  // floorLock.spec.ts each keep under this name, duplicated here for the same reason: asking the
+  // carve's own output whether it produced a one-way would check the code against itself and pass
+  // whatever it did, bug or not.
+  const oneWayEdges = (grid: FloorGrid): { from: [number, number]; to: [number, number] }[] => {
+    const found: { from: [number, number]; to: [number, number] }[] = []
+    for (let r = 0; r < grid.rows; r++)
+      for (let c = 0; c < grid.cols; c++) {
+        const cell = grid.cells[r][c]
+        if (cell.type === "empty") continue
+        for (const dir of cell.dirs) {
+          const [dr, dc] = DIR_MOVE[dir]
+          const [nr, nc] = [r + dr, c + dc]
+          const target = grid.cells[nr]?.[nc]
+          if (!target || target.type === "empty") continue
+          if (!target.dirs.has(OPPOSITE_DIR[dir])) found.push({ from: [r, c], to: [nr, nc] })
+        }
+      }
+    return found
+  }
+
+  const regionAt = (grid: FloorGrid, [r, c]: [number, number]): string | undefined => {
+    const cell = grid.cells[r][c]
+    return cell.type !== "empty" ? cell.region : undefined
+  }
+
+  // A carve is a seed's own choice, so seeds are swept until one satisfies both authored drops at
+  // once — the same style oneWayCarve.spec.ts's own sweeps use, and the reach into LockSpec.oneWays
+  // below is checked against that same carve rather than any carve that happens to succeed.
+  const carvedWithBothDrops = (): FloorGrid => {
+    for (let seed = 0; seed < 60; seed++) {
+      const result = assembleFloor("site-oneway-region", doubleBackConfig(), seed)
+      if (!result.success) continue
+      const edges = oneWayEdges(result.grid)
+      const crosses = (from: string, to: string) =>
+        edges.some(e => regionAt(result.grid, e.from) === from && regionAt(result.grid, e.to) === to)
+      if (crosses("s1Chamber", "leftLower") && crosses("leftLower", "entrance")) return result.grid
+    }
+    throw new Error("no seed carved both region-addressed drops")
+  }
+
+  it("carves a directed passage between the two regions each drop names", () => {
+    // carvedWithBothDrops throws if no seed satisfies both — reaching the assertion below is itself
+    // the proof; the assertions restate what "carves a directed passage" means for a reader.
+    const grid = carvedWithBothDrops()
+    const edges = oneWayEdges(grid)
+    expect(edges.some(e => regionAt(grid, e.from) === "s1Chamber" && regionAt(grid, e.to) === "leftLower")).toBe(true)
+    expect(edges.some(e => regionAt(grid, e.from) === "leftLower" && regionAt(grid, e.to) === "entrance")).toBe(true)
+  })
+
+  it("reaches LockSpec.oneWays, which floorLock derives from the assembled grid unchanged", () => {
+    const grid = carvedWithBothDrops()
+    const spec = floorLock(grid)
+    if (!spec) throw new Error("floorLock found no mechanism on a floor that authors one")
+    expect(spec.oneWays ?? []).not.toEqual([])
+  })
+
+  // Watched failing (see the task report): the carve constraint this test names — a pair of adjacent
+  // cells spanning the two regions is never guaranteed by the authoring, only searched for — has to
+  // be refused by name after the whole attempt budget, not silently placed somewhere else. A hidden
+  // side section makes the "to" region's every cell ineligible (the same spoiler rule a gate's own
+  // landing already respects, oneWayCarve.spec.ts's "refuses a drop into a hidden section"), so no
+  // attempt at any seed ever finds a candidate — a genuine, deterministic shortfall rather than an
+  // unlucky one.
+  it("refuses by name when no attempt finds two adjacent cells spanning the drop's two regions", () => {
+    const layout: RegionGraph = {
+      regions: [
+        { name: "entrance", appetite: "free" },
+        { name: "out", appetite: "free" },
+        { name: "vault", appetite: "free" },
+      ],
+      connections: [
+        ["entrance", "out"],
+        ["entrance", "vault"],
+      ],
+      in: "entrance",
+      out: "out",
+    }
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      regionLayout: layout,
+      sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure", hidden: true }],
+      obstacles: [{ id: "drop1", kind: "oneWay", at: { on: "connection", between: ["entrance", "vault"] } }],
+    }
+    // Every seed, not the first that refuses: the refusal is a property of the authoring (nothing
+    // hidden can ever host a visible drop's landing), so no seed is entitled to satisfy it.
+    for (let seed = 0; seed < 20; seed++) {
+      const result = assembleFloor("site-oneway-region-hidden", config, seed)
+      if (result.success) throw new Error(`seed ${seed} carved a drop into a hidden region`)
+      expect(result.reasons).toContainEqual({ type: "oneWayUnsatisfied", from: "entrance", to: "vault" })
+    }
   })
 })
 
