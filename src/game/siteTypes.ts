@@ -607,6 +607,16 @@ export type AssemblerReason =
   | { type: "obstacleOffRoute"; id: string }
   | { type: "obstacleUnowned"; id: string }
   | { type: "controlUnsatisfied"; id: string; what: string }
+  /** A side section matched to an off-route chain (offRouteChains, regions.ts) hosts that chain's
+   * regions across its own cells, cells[0] included — and an obstacle standing on the chain's own
+   * MOUTH connection always seats there too (seamIndexFor, obstacles.ts: the mouth's far region
+   * begins at step 1, one less than that is 0). A `section.gate` (floor-key or tomb-key) claims that
+   * same cell unconditionally, so the two authoring vocabularies would silently overwrite one
+   * another — the topology mod's gate room vanishing with nothing said, its control left opening a
+   * door no cell carries any more. Refused before a wall is carved, since which side section hosts
+   * which chain and which obstacle stands on its mouth are both fixed by the config, not the seed.
+   * `address` names the side section (`s0`, `s0.1`); `obstacleId` the mouth obstacle it collides with. */
+  | { type: "chainGateCollidesWithSectionGate"; address: string; obstacleId: string }
   /** A declared region that never got a cell. A region off the main route seats on a side path instead
    * (offRouteChains, regions.ts), so this now fires only where even that falls short: the main path's
    * own route ran longer than the path had steps, so the regions at its far end were never reached; a
