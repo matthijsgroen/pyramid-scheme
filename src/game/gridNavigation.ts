@@ -107,8 +107,18 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
       // one-way connector's single direction is the arrival direction itself (never its opposite,
       // which is what a real dead end carries instead), so it is a straight-through too: there is
       // nowhere else it could lead, and no branch to click around.
+      //
+      // A one-way LANDING is not this, even though it can look like it: its dirs never include the
+      // direction back to the connector (that asymmetry is the whole feature), so an ordinary size-2
+      // cell whose two real directions happen to include the drop's own travel direction reads as
+      // "continues straight" by the size/membership check alone. A genuine two-way straight or corner
+      // always carries the reciprocal (`opposite[fromDir]`) — only a one-way's blind side lacks it —
+      // so requiring it here is inert for every ordinary corridor and stops the reveal exactly at the
+      // landing, which is the one cell "what lies beyond stays dark" is about.
       const isStraight =
-        fromDir !== null && neighbor.dirs.has(fromDir) && (neighbor.dirs.size === 2 || neighbor.dirs.size === 1)
+        fromDir !== null &&
+        neighbor.dirs.has(fromDir) &&
+        (neighbor.dirs.size === 1 || (neighbor.dirs.size === 2 && neighbor.dirs.has(opposite[fromDir])))
       if (isStraight) {
         if (neighbor.state === "fogged") {
           newCells[r][c] = { ...neighbor, state: "visible" }

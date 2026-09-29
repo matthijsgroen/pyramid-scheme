@@ -257,6 +257,53 @@ describe(completeCell, () => {
     expect(updatedSource.type).toBe("room")
     if (updatedSource.type === "room") expect(updatedSource.state).toBe("fogged")
   })
+
+  it("stops at a one-way's landing when it is a corridor, even if its own onward direction matches the drop's", () => {
+    // A region-addressed drop (an `obstacles` one-way, unlike the two tests above) can land mid-
+    // corridor rather than in a room. The landing's dirs never include the direction back to the
+    // connector (the asymmetry is the whole feature), so when its own real onward direction happens
+    // to be the SAME compass direction the drop travels in — "e" here, both ways — the straight-
+    // through check must not read that coincidence as "no branch to click around": the landing is a
+    // fresh junction (it also opens south), not a continuation of the same hallway.
+    const grid: FloorGrid = {
+      siteId: "test",
+      rows: 2,
+      cols: 4,
+      entrancePos: [0, 0],
+      exitPos: [0, 3],
+      staircases: {},
+      cells: [
+        [
+          { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e"]), state: "reachable" },
+          { type: "corridor", dirs: new Set<Direction>(["e"]), state: "fogged" },
+          { type: "corridor", dirs: new Set<Direction>(["e", "s"]), state: "fogged" },
+          { type: "corridor", dirs: new Set<Direction>(["w"]), state: "fogged" },
+        ],
+        [
+          { type: "empty" },
+          { type: "empty" },
+          { type: "corridor", dirs: new Set<Direction>(["n"]), state: "fogged" },
+          { type: "empty" },
+        ],
+      ],
+    }
+
+    const updated = completeCell(grid, 0, 0)
+    const connector = updated.cells[0][1]
+    const landing = updated.cells[0][2]
+    expect(connector.type).toBe("corridor")
+    if (connector.type === "corridor") expect(connector.state).toBe("visible")
+    // The landing itself is drawn — a fresh corner the player can choose to walk to, same as any
+    // other newly-found junction — but nothing beyond it is.
+    expect(landing.type).toBe("corridor")
+    if (landing.type === "corridor") expect(landing.state).toBe("reachable")
+    const furtherEast = updated.cells[0][3]
+    const furtherSouth = updated.cells[1][2]
+    expect(furtherEast.type).toBe("corridor")
+    if (furtherEast.type === "corridor") expect(furtherEast.state).toBe("fogged")
+    expect(furtherSouth.type).toBe("corridor")
+    if (furtherSouth.type === "corridor") expect(furtherSouth.state).toBe("fogged")
+  })
 })
 
 describe(findPath, () => {

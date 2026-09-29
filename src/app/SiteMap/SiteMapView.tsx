@@ -1479,20 +1479,26 @@ export const SiteMapView = ({
                   // that scrolls off screen still has something to tap right next to the player.
                   const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
                   const offer = clickTargetAt(grid, claims, r, c, offerContext)
+                  // A region-addressed drop can land mid-corridor rather than in a room (a fork's own
+                  // branch, say), and the barred arrow belongs at whichever cell sits next to the
+                  // mouth — a room landing is not the only shape this takes.
+                  const oneWayDir = oneWayMouthDir(grid, r, c)
                   return (
-                    <MarkerCell
-                      key={`${r},${c}`}
-                      cx={cx}
-                      cy={cy}
-                      onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
-                    >
-                      {canWalkTo(clickTarget[0], clickTarget[1]) &&
-                        (runTarget ? (
-                          <RunTargetArrow dir={runTarget.dir} />
-                        ) : (
-                          cell.state === "reachable" && isCorner && <ReachableDot />
-                        ))}
-                    </MarkerCell>
+                    <Fragment key={`${r},${c}`}>
+                      <MarkerCell
+                        cx={cx}
+                        cy={cy}
+                        onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
+                      >
+                        {canWalkTo(clickTarget[0], clickTarget[1]) &&
+                          (runTarget ? (
+                            <RunTargetArrow dir={runTarget.dir} />
+                          ) : (
+                            cell.state === "reachable" && isCorner && <ReachableDot />
+                          ))}
+                      </MarkerCell>
+                      {oneWayDir && <OneWayLandingArrow row={r} col={c} dir={oneWayDir} />}
+                    </Fragment>
                   )
                 }
 
