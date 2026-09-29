@@ -5,6 +5,8 @@ import type { Direction, FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
 import type { RegionGraph } from "./regions"
 import { reachableFrom, validateSite } from "./siteValidator"
 import { floorKeyRing } from "./floorKeys"
+import { openDoorsFor } from "./mechanismDoors"
+import { cellAddress } from "./cellAddress"
 // The real registry, for the one spec that has to prove the refusal against a family that
 // genuinely lacks reEnterable rather than against the fallback resolver, which claims it for none.
 import "@/mods/registerModApps"
@@ -1978,6 +1980,175 @@ describe("a side path seating a chain of regions", () => {
   })
 })
 
+describe("a control seated in an off-route region", () => {
+  // rightLower/s1Chamber is a two-deep chain off `entrance` (doubleBack's own shape), gated by
+  // `greenRight` — the same connection Task 2's own describe block above already proves seats a gate.
+  // `S1` stands in `s1Chamber`, the DEEP end of the chain, and drives that gate: the control search
+  // this task extends has to reach a region no main-path step ever names.
+  const chamberLayout = (): RegionGraph => ({
+    regions: [
+      { name: "entrance", appetite: "free" },
+      { name: "out", appetite: "free" },
+      { name: "rightLower", appetite: "free" },
+      { name: "s1Chamber", appetite: "free" },
+    ],
+    connections: [
+      ["entrance", "out"],
+      ["entrance", "rightLower"],
+      ["rightLower", "s1Chamber"],
+    ],
+    in: "entrance",
+    out: "out",
+  })
+
+  const chamberConfig = (): FloorConfig => ({
+    pathPuzzles: 2,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    regionLayout: chamberLayout(),
+    sideSections: [
+      { pathPuzzles: 2, difficulty: "starter", end: "treasure", rewards: [{ type: "c0" }, { type: "c1" }] },
+    ],
+    obstacles: [{ id: "greenRight", kind: "gate", at: { on: "connection", between: ["rightLower", "s1Chamber"] } }],
+    controls: [
+      {
+        id: "S1",
+        in: "s1Chamber",
+        states: ["start", "thrown"],
+        initial: "start",
+        returnsToInitial: false,
+        opens: { start: ["greenRight"], thrown: [] },
+      },
+    ],
+  })
+
+  const GATE_KEY = "obstacle:site-chamber#0#0:greenRight"
+
+  it("seats the control in the region it names, not just a main-path one", () => {
+    const result = assembleFloor("site-chamber", chamberConfig(), 0)
+    if (!result.success) throw new Error(`assembly failed: ${JSON.stringify(result.reasons)}`)
+
+    const controlRoom = result.grid.cells
+      .flat()
+      .find((c): c is RoomCell => c.type === "room" && c.mechanism !== undefined)
+    if (!controlRoom) throw new Error("no control room found")
+    expect(controlRoom.region).toBe("s1Chamber")
+  })
+
+  // THE PROPERTY THAT MATTERS: a control seated off the main path has to drive its own gate the
+  // ordinary way — `openDoorsFor` (mechanismDoors.ts), asked nothing about which region the room
+  // stands in. A room that merely exists (the test above) would pass even if it were wired to nothing.
+  it("drives its own gate from wherever it stands", () => {
+    const result = assembleFloor("site-chamber", chamberConfig(), 0)
+    if (!result.success) throw new Error(`assembly failed: ${JSON.stringify(result.reasons)}`)
+    const { grid } = result
+
+    const controlRoom = grid.cells.flat().find((c): c is RoomCell => c.type === "room" && c.mechanism !== undefined)
+    if (!controlRoom) throw new Error("no control room found")
+    let at: string | undefined
+    grid.cells.forEach((row, r) =>
+      row.forEach((cell, c) => {
+        if (cell === controlRoom) at = cellAddress(grid, 0, r, c) ?? undefined
+      })
+    )
+    if (!at) throw new Error("control room has no address")
+
+    // No stored position: the gate stands open, matching S1's own authored initial state.
+    expect(openDoorsFor(grid, 0, new Map())).toEqual(new Set([GATE_KEY]))
+    // Thrown: S1's own `opens.thrown` names nothing, so the gate shuts.
+    expect(openDoorsFor(grid, 0, new Map([[at, "thrown"]]))).toEqual(new Set())
+  })
+
+  // ORDINAL STABILITY, THE RULE THIS TASK MUST NOT BREAK: `pathIndex` is the save address
+  // (`p${pathIndex}`, cellSlot.ts) and indexes `config.rewards[k]`/`encountersByIndex[k]`, so a puzzle
+  // that keeps its node must keep its number whether or not the topology mod that owns `controls` is
+  // even registered. Comparing the WHOLE SET of `pathIndex` values (main path and chain alike) against
+  // the identical floor with the mod's `obstacles`/`controls` stripped — never a count, which would sit
+  // green while every address slid by one — swept across seeds rather than pinned to one, so a
+  // seed-dependent renumbering bug cannot hide behind a lucky carve.
+  it("carries the identical set of pathIndex values, on the main path and the chain, whether the control is present or not", () => {
+    const withoutMod: FloorConfig = {
+      pathPuzzles: chamberConfig().pathPuzzles,
+      difficulty: chamberConfig().difficulty,
+      end: chamberConfig().end,
+      exitOrStaircase: chamberConfig().exitOrStaircase,
+      sideSections: chamberConfig().sideSections,
+    }
+    const chainInfo = (grid: FloorGrid, sectionAddress: string) =>
+      grid.cells
+        .flat()
+        .filter(
+          (c): c is RoomCell => c.type === "room" && c.sectionAddress === sectionAddress && c.pathIndex !== undefined
+        )
+        .map(c => ({ pathIndex: c.pathIndex, reward: c.reward }))
+        .sort((a, b) => a.pathIndex! - b.pathIndex!)
+
+    let compared = 0
+    for (let seed = 0; seed < 60; seed++) {
+      const on = assembleFloor("site-chamber-toggle", chamberConfig(), seed)
+      const off = assembleFloor("site-chamber-toggle", withoutMod, seed)
+      if (!on.success || !off.success) continue
+      compared++
+      expect(chainInfo(on.grid, "main")).toEqual(chainInfo(off.grid, "main"))
+      expect(chainInfo(on.grid, "s0")).toEqual(chainInfo(off.grid, "s0"))
+    }
+    // A loop that skipped every seed would pass having compared nothing.
+    expect(compared).toBeGreaterThan(0)
+  })
+
+  // WATCHED FAILING (see below): a control confined to a chain region that never has a free node —
+  // `s1Chamber` is the LAST of four regions in a single-region-per-cell chain (`entrance`-`r1`-`r2`-
+  // `r3`-`s1Chamber`), so `regionOfStep` never gives it the "extra" cell a shorter list's remainder
+  // would (the remainder only ever falls on an EARLIER region — see regions.ts's own `regionOfStep`):
+  // whatever length the carve grows the chain to, `s1Chamber`'s own share is always exactly its last
+  // cell, the one every chain reserves unconditionally for its end room. No seed ever frees one, so
+  // this refuses even after the whole attempt budget, not merely on the first try.
+  it("still refuses by name when no chain node is ever free for the control", () => {
+    const layout: RegionGraph = {
+      regions: [
+        { name: "entrance", appetite: "free" },
+        { name: "out", appetite: "free" },
+        { name: "r1", appetite: "free" },
+        { name: "r2", appetite: "free" },
+        { name: "r3", appetite: "free" },
+        { name: "s1Chamber", appetite: "free" },
+      ],
+      connections: [
+        ["entrance", "out"],
+        ["entrance", "r1"],
+        ["r1", "r2"],
+        ["r2", "r3"],
+        ["r3", "s1Chamber"],
+      ],
+      in: "entrance",
+      out: "out",
+    }
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      regionLayout: layout,
+      sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: "treasure" }],
+      controls: [
+        {
+          id: "S1",
+          in: "s1Chamber",
+          states: ["a", "b"],
+          initial: "a",
+          returnsToInitial: false,
+          opens: { a: [], b: [] },
+        },
+      ],
+    }
+    const result = assembleFloor("site-chamber-unseatable", config, 42)
+
+    expect(result.success).toBe(false)
+    expect(result.success === false && result.reasons).toContainEqual({ type: "controlNotSeated", ids: ["S1"] })
+  })
+})
+
 describe("a gate on a connection off the threaded route", () => {
   // doubleBack's own shape (lockWalk.spec.ts's doubleBack fixture; docs/game-design/regions-and-containers.md):
   // the route runs entrance → leftLower → s2Chamber → wayOut, leaving rightLower → s1Chamber as a
@@ -2150,6 +2321,100 @@ describe("a gate on a connection off the threaded route", () => {
 
     expect(result.success).toBe(false)
     expect(result.success === false && result.reasons).toEqual([{ type: "obstacleOffRoute", id: "nowhere" }])
+  })
+
+  // `forkRight` stands on the chain's own MOUTH (entrance → rightLower), which always resolves to
+  // `cells[0]` (regionOfStep always seats the first-declared hosted region from the front) — the same
+  // cell a floor-key/tomb-key gate always claims. Watched failing before this refusal existed: the
+  // floor-key write silently overwrote `forkRight`'s room, and `forkRight`'s own control was left
+  // opening a door no cell carried any more, with nothing said.
+  it("refuses a side section that hosts a mouth-gated chain and also authors its own gate", () => {
+    const config: FloorConfig = {
+      ...doubleBackConfig(),
+      sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: "treasure", gate: { type: "floor-key" } }],
+    }
+    const result = assembleFloor("site-doubleback-collision", config, 42)
+
+    expect(result.success).toBe(false)
+    expect(result.success === false && result.reasons).toEqual([
+      { type: "chainGateCollidesWithSectionGate", address: "s0", obstacleId: "forkRight" },
+    ])
+  })
+
+  // The other shape stays fine: a gate WITHIN the chain (not at its mouth) never lands on `cells[0]`,
+  // so it never collides with a floor-key gate there — the two vocabularies really are independent
+  // once the mouth case is the only one refused.
+  it("does not refuse a within-chain gate alongside the section's own mouth gate", () => {
+    const config: FloorConfig = {
+      ...doubleBackConfig(),
+      obstacles: doubleBackConfig().obstacles!.filter(o => o.id !== "forkRight"),
+      controls: [{ ...doubleBackConfig().controls![0], opens: { unset: [], open: ["greenRight", "greenLeft"] } }],
+      sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: "treasure", gate: { type: "floor-key" } }],
+    }
+    const result = assembleFloor("site-doubleback-no-collision", config, 42)
+
+    expect(result.success).toBe(true)
+  })
+
+  // A SUB-CHAIN'S OWN `idx` NUMBERS ITS POSITION AMONG ITS PARENT'S SUB-SECTIONS, starting from 0 the
+  // same as a top-level chain's own `idx` does — so a gate belonging to top-level chain `idx: 0`
+  // (`s0`) must not also land on an unrelated sub-chain that happens to share that same number
+  // (`s1.0`, the first sub-section of a SECOND, unrelated top-level section). `s0` here hosts an
+  // off-route pocket with a mouth gate; `s1` is an ordinary section whose own sub-section (`s1.0`)
+  // shares `idx: 0` purely by coincidence of position.
+  it("does not let a top-level chain's gate land on an unrelated sub-chain sharing its idx", () => {
+    const layout: RegionGraph = {
+      regions: [
+        { name: "entrance", appetite: "free" },
+        { name: "pocket", appetite: "free" },
+        { name: "out", appetite: "free" },
+      ],
+      connections: [
+        ["entrance", "out"],
+        ["entrance", "pocket"],
+      ],
+      in: "entrance",
+      out: "out",
+    }
+    const config: FloorConfig = {
+      pathPuzzles: 0,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      regionLayout: layout,
+      sideSections: [
+        // s0: matched to the "pocket" chain (offRouteChains' only component) — its mouth gate always
+        // resolves to `cells[0]`.
+        { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+        // s1: an ordinary, unrelated section whose own sub-section (s1.0) shares `idx: 0` with s0.
+        {
+          pathPuzzles: 0,
+          difficulty: "starter",
+          end: "treasure",
+          sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: "treasure" }],
+        },
+      ],
+      obstacles: [{ id: "mouthGate", kind: "gate", at: { on: "connection", between: ["entrance", "pocket"] } }],
+      controls: [
+        {
+          id: "Y",
+          in: "entrance",
+          states: ["unset", "open"],
+          initial: "unset",
+          returnsToInitial: false,
+          opens: { unset: [], open: ["mouthGate"] },
+        },
+      ],
+    }
+    const result = assembleFloor("site-idx-collision", config, 42)
+    if (!result.success) throw new Error(`assembly failed: ${JSON.stringify(result.reasons)}`)
+
+    // Every room on the grid, so a stray write anywhere (not just where it was expected) is caught.
+    const rooms = result.grid.cells.flat().filter((cell): cell is RoomCell => cell.type === "room")
+    const mouthGateRooms = rooms.filter(cell => cell.requiredKeyId?.includes(":mouthGate"))
+    // Exactly one room carries the gate — s0's own mouth cell — never a second one on s1.0.
+    expect(mouthGateRooms).toHaveLength(1)
+    expect(mouthGateRooms[0].sectionAddress).toBe("s0")
   })
 })
 

@@ -924,6 +924,37 @@ export const assembleFloor = (
     return { success: false, reasons: [{ type: "noUngatedSectionForKey" }] }
   }
 
+  // A TOPOLOGY GATE AT A CHAIN'S OWN MOUTH AND A SECTION'S OWN `gate` BOTH CLAIM `cells[0]` — checked
+  // here because which side section a chain matches to (offRouteChains groups off-route regions in
+  // declaration order, the Nth chain to the Nth authored side section) and which obstacle stands on a
+  // chain's mouth connection are both fixed by the config alone, never by the seed: a mouth obstacle's
+  // seam is always the chain's first hosted region (`regionOfStep` always seats the first-declared
+  // region from the front), so it always resolves to `cellIndex === 0`, the same cell a floor-key or
+  // tomb-key gate always claims. Refused by name rather than made to work by shifting one vocabulary
+  // around the other — a side section that hosts an off-route chain and ALSO authors its own gate is
+  // asking two authoring surfaces to run the same cell, and the two must stay genuinely independent
+  // rather than merely non-colliding by luck.
+  if (regionLayout) {
+    const mouthGateCollisions = offRouteChains(regionLayout).flatMap((chain, i) => {
+      if (i >= config.sideSections.length || !config.sideSections[i].gate) return []
+      const mouthObstacle = (authoredConfig.obstacles ?? []).find(o => {
+        const [a, b] = o.at.between
+        return (a === chain.mouth && b === chain.regions[0]) || (b === chain.mouth && a === chain.regions[0])
+      })
+      return mouthObstacle ? [{ address: `s${i}`, obstacleId: mouthObstacle.id }] : []
+    })
+    if (mouthGateCollisions.length > 0) {
+      return {
+        success: false,
+        reasons: mouthGateCollisions.map(({ address, obstacleId }) => ({
+          type: "chainGateCollidesWithSectionGate" as const,
+          address,
+          obstacleId,
+        })),
+      }
+    }
+  }
+
   // A GATE OR A CONTROL ROOM IS NOT SIZED IN HERE — deliberately. Both are owned by the topology mod
   // (FloorConfig.obstacles/controls) and dropped along with it when that mod is off, so a term for
   // either in the path's minimum length would make the maze walk a different distance with the mod on
@@ -1070,11 +1101,12 @@ export const assembleFloor = (
   // same reason: the path lengthens across the attempt budget, so what one attempt cannot seat a
   // later one may.
   let gateSeamMissing: string[] | undefined
-  // The first attempt's controls no main-path node stood in their region at all, kept the same way and
-  // for the same reason: `mainPath.length` grows across the attempt budget.
+  // The first attempt's controls no node stood in their region at all — main path or chain, whichever
+  // hosts it — kept the same way and for the same reason: `mainPath.length` and a chain's own length
+  // both grow across the attempt budget.
   let controlNotSeated: string[] | undefined
   // The first attempt's controls whose only candidate node already held a puzzle with no room to move
-  // it, kept the same way — see the seating search below.
+  // it, kept the same way — see the seating searches below (main path and chain alike).
   let controlPuzzleUndisplaceable: string[] | undefined
   // The first attempt's rooms standing where their region's appetite refuses them, kept the same way.
   let regionMismatch: { region: string; kind: ContentKind }[] | undefined
@@ -1175,6 +1207,13 @@ export const assembleFloor = (
     const onRouteObstacle = (o: Obstacle) => onRouteSet.has(o.at.between[0]) && onRouteSet.has(o.at.between[1])
     const mainPathObstacles = (authoredConfig.obstacles ?? []).filter(onRouteObstacle)
     const offRouteObstacles = (authoredConfig.obstacles ?? []).filter(o => !onRouteObstacle(o))
+    // A CONTROL STANDING IN AN OFF-ROUTE REGION splits the same way: `stepRegion` never names its
+    // region, so the main-path search below (which asks only `stepRegion`) would find it no candidate
+    // ever, attempt after attempt, before a single side-path cell exists. Held out here and asked
+    // again once its own chain's cells are carved (alongside that chain's own content, further down) —
+    // the identical reasoning `mainPathObstacles`/`offRouteObstacles` splits on just above.
+    const mainPathControls = controlRecords.filter(({ control }) => onRouteSet.has(control.in))
+    const offRouteControls = controlRecords.filter(({ control }) => !onRouteSet.has(control.in))
     const gateIndexByObstacle = new Map<string, number>()
     for (const obstacle of mainPathObstacles) {
       const seam = seamIndexFor(stepRegion, obstacle.at.between)
@@ -1259,6 +1298,9 @@ export const assembleFloor = (
     // mod must not cost this floor an extra retry the mod-off build never has to pay
     // (docs/game-design/regions-and-containers.md's toggle-off gate).
     //
+    // ONLY `mainPathControls` IS SOUGHT HERE — a control hosted by an off-route region is sought within
+    // its own chain instead, below, the same split `mainPathObstacles`/`offRouteObstacles` makes above.
+    //
     // A FREE NODE IS PREFERRED OVER A CONTENT ONE: `placedContent` is the puzzles this floor already
     // authored, each already holding its own AUTHORED ORDINAL in `puzzleRole` above. Seating a control
     // directly on one of those nodes would either carve the puzzle out from under it with nothing
@@ -1282,7 +1324,7 @@ export const assembleFloor = (
     // displace what it found there — read below to tell "no candidate at all" apart from "a candidate
     // stood, but nothing had room for the puzzle it held".
     const sawContentCandidate = new Set<string>()
-    for (const { control } of controlRecords) {
+    for (const { control } of mainPathControls) {
       const inRegion = (mi: number) =>
         stepRegion[mi] === control.in &&
         !takenByControl.has(mi) &&
@@ -1332,8 +1374,8 @@ export const assembleFloor = (
     // instead: a wider path helps this one too (more room past the candidate to shift into), so it is
     // retried the same way, just named for what actually went wrong. Both retried rather than refused,
     // for the reason slice 4 measured: `mainPath.length` GROWS across the attempt budget.
-    if (controlIndexById.size < controlRecords.length) {
-      const stillUnseated = controlRecords.filter(({ control }) => !controlIndexById.has(control.id))
+    if (controlIndexById.size < mainPathControls.length) {
+      const stillUnseated = mainPathControls.filter(({ control }) => !controlIndexById.has(control.id))
       const bare = stillUnseated.filter(({ control }) => !sawContentCandidate.has(control.id))
       const displaceable = stillUnseated.filter(({ control }) => sawContentCandidate.has(control.id))
       if (bare.length > 0 && !controlNotSeated) controlNotSeated = bare.map(({ control }) => control.id)
@@ -1738,6 +1780,17 @@ export const assembleFloor = (
     // Build room cell specs: posKey -> room properties (sectionHash injected separately)
     type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state" | "sectionHash" | "legacySectionHash" | "hidden">
     const roomSpecs = new Map<string, RoomSpec>()
+    // A CONTROL'S ROOM, wherever it stands — the main path or a chain, both write the identical
+    // shape. The control's own authored id is carried onto the cell for the same reason a handle's
+    // room carries its own address (see RoomCell.mechanismId): one uniform rule, not a
+    // control-only exception.
+    const controlRoomSpec = (control: Control, record: MechanismRecord): RoomSpec => ({
+      roomType: "encounter",
+      family: resolveEncounter(control.encounter, HANDLE_FAMILY).familyId,
+      tags: [HANDLE_FAMILY],
+      mechanism: record,
+      mechanismId: control.id,
+    })
     const cellSectionHash = new Map<string, string>()
     /**
      * WHICH AUTHORED SECTION each cell belongs to — `main`, `s0`, `s0.1`. What the author steers, and
@@ -2022,16 +2075,7 @@ export const assembleFloor = (
         roomSpecs.set(posKey(r, c), leverSpec(MAIN_SECTION_ADDRESS))
       } else if (controlAtIndex.has(mi)) {
         const { control, record } = controlAtIndex.get(mi)!
-        roomSpecs.set(posKey(r, c), {
-          roomType: "encounter" as const,
-          family: resolveEncounter(control.encounter, HANDLE_FAMILY).familyId,
-          tags: [HANDLE_FAMILY],
-          mechanism: record,
-          // The control's own authored id, carried onto the cell for the same reason a handle's room
-          // carries its own address (see RoomCell.mechanismId) — one uniform rule, not a
-          // control-only exception.
-          mechanismId: control.id,
-        })
+        roomSpecs.set(posKey(r, c), controlRoomSpec(control, record))
       } else if (puzzleRole.has(mi)) {
         const k = puzzleRole.get(mi)!
         // Per-node override (authored `nodes` selectors, e.g. the last room's capstone) if this
@@ -2080,6 +2124,12 @@ export const assembleFloor = (
       roomSpecs.set(posKey(exR, exC), { roomType: "portal", stairId })
     }
 
+    // AN OFF-ROUTE CONTROL'S OWN SEATING, found chain by chain below as each one's own content is
+    // placed — a control's region may sit on any chain, so this is bookkeeping shared across every
+    // iteration of the loop, checked complete only once every chain has had its turn.
+    const chainControlSeated = new Set<string>()
+    const sawChainContentCandidate = new Set<string>()
+
     // CHAIN NODES: the gate at the head where one guards the way in, a lever behind it where one
     // stands there, the chain's own content spread through whatever room the carve gave it, and its
     // end room. One body for a path off the main walk and a path off one of those — the two differ
@@ -2094,9 +2144,12 @@ export const assembleFloor = (
       // AN OFF-ROUTE OBSTACLE'S GATE ROOM — this chain's own cell indices from `chainGateIndexByObstacle`
       // (filled once, above, alongside `cellRegion`), written the identical way a main-path gate's is
       // (`gateKeyOf`/`keyGate`, below): furniture the topology mod stands on a connection, wired to
-      // whichever control opens it. Independent of the floor-key/tomb-key gate above — a different
-      // authoring vocabulary standing at a different node — so both can occupy the same chain without
-      // either having to know the other exists.
+      // whichever control opens it. A different authoring vocabulary from the floor-key/tomb-key gate
+      // below, standing at a different node — UNLESS this chain's own mouth is where an obstacle
+      // seats, which always resolves to this same `cells[0]` the floor-key/tomb-key block claims; that
+      // combination is refused by name before a single wall is carved
+      // (`chainGateCollidesWithSectionGate`, above the attempt loop), so writing both here never has to
+      // decide which one wins.
       //
       // `parentIdx === undefined` is checked alongside `idx`, not just `idx` alone: `chainGateIndexByObstacle`
       // only ever keys by a TOP-LEVEL chain's own `idx` (populated only where `hostedRegions` is,
@@ -2166,9 +2219,13 @@ export const assembleFloor = (
       // A lever stands at the head of its chain, past whatever gate guards the way in: the player
       // reaches it before the content, and throwing it is a walk back out rather than a room solved
       // deeper in. A gate leaving no room ahead of it at all is the same shortfall the puzzle spread
-      // below retries for, asked one node earlier.
+      // below retries for, asked one node earlier. Its own index is kept (`leverIndexInChain`) so the
+      // control search below can exclude it the same way the main path's own search excludes
+      // `leverIndex`.
+      let leverIndexInChain = -1
       if (leverRooms(positional) === 1) {
         if (contentStart >= cells.length - 1) continue attempt
+        leverIndexInChain = contentStart
         const [lr, lc] = cells[contentStart]
         roomSpecs.set(posKey(lr, lc), leverSpec(positional))
         contentStart += 1
@@ -2195,6 +2252,51 @@ export const assembleFloor = (
         contentIndices.push(index)
       }
       if (contentIndices.length < section.pathPuzzles) continue attempt
+
+      // A CONTROL HOSTED BY THIS CHAIN'S OWN REGION(S) — the identical search the main path's own runs
+      // above (a free node preferred; only once none is free does it take a puzzle's node, displacing
+      // that puzzle onward rather than refusing quietly), asked of this chain's own cells instead. A
+      // chain's own puzzle ordinal IS its position in `contentIndices` (`pi`, below the write loop) —
+      // displacing here only ever moves which CELL a position points at, never the position itself, so
+      // this needs no ordinal-preserving map of its own the way the main path's `puzzleRole` does.
+      const chainRegionAt = (i: number) => cellRegion.get(posKey(cells[i][0], cells[i][1]))
+      const takenByChainControl = new Set<number>()
+      for (const { control, record } of offRouteControls) {
+        if (chainControlSeated.has(control.id)) continue
+        const inThisChain = (i: number) =>
+          i < cells.length - 1 &&
+          chainRegionAt(i) === control.in &&
+          !chainGateIndices.has(i) &&
+          i !== leverIndexInChain &&
+          !takenByChainControl.has(i)
+
+        let seatIndex: number | undefined
+        for (let i = 0; i < cells.length - 1; i++) {
+          if (inThisChain(i) && !contentIndices.includes(i)) {
+            seatIndex = i
+            break
+          }
+        }
+        if (seatIndex === undefined) {
+          for (let k = 0; k < contentIndices.length; k++) {
+            const i = contentIndices[k]
+            if (!inThisChain(i)) continue
+            sawChainContentCandidate.add(control.id)
+            let shifted = i + 1
+            while (shifted < cells.length - 1 && (chainGateIndices.has(shifted) || contentIndices.includes(shifted)))
+              shifted += 1
+            if (shifted >= cells.length - 1) continue // nowhere to move this one — try the chain's next content node
+            contentIndices[k] = shifted
+            seatIndex = i
+            break
+          }
+        }
+        if (seatIndex === undefined) continue // this chain hosts none of this control's region — try the next chain
+        chainControlSeated.add(control.id)
+        takenByChainControl.add(seatIndex)
+        roomSpecs.set(posKey(cells[seatIndex][0], cells[seatIndex][1]), controlRoomSpec(control, record))
+      }
+
       for (let pi = 0; pi < section.pathPuzzles; pi++) {
         const [r, c] = cells[contentIndices[pi]]
         const reward = section.rewards?.[pi]
@@ -2254,6 +2356,22 @@ export const assembleFloor = (
           ...(isShop ? { stock: section.rewards ?? [] } : section.endReward ? { reward: section.endReward } : {}),
         })
       }
+    }
+
+    // Two shortfalls, reported under the SAME names the main-path search above uses — a control that
+    // matched no chain node at all is `controlNotSeated`, one whose only candidate already held a
+    // puzzle with nowhere to move it is `controlPuzzleUndisplaceable` — kept apart the identical way,
+    // for the identical reason: a wider chain (`chainPacking`) rescues both, so both retry rather than
+    // refuse. Checked once every chain has had its turn, since a control's own region may be seated on
+    // any one of them.
+    if (chainControlSeated.size < offRouteControls.length) {
+      const stillUnseated = offRouteControls.filter(({ control }) => !chainControlSeated.has(control.id))
+      const bare = stillUnseated.filter(({ control }) => !sawChainContentCandidate.has(control.id))
+      const displaceable = stillUnseated.filter(({ control }) => sawChainContentCandidate.has(control.id))
+      if (bare.length > 0 && !controlNotSeated) controlNotSeated = bare.map(({ control }) => control.id)
+      if (displaceable.length > 0 && !controlPuzzleUndisplaceable)
+        controlPuzzleUndisplaceable = displaceable.map(({ control }) => control.id)
+      continue
     }
 
     // WHICH WAYS OUT A JUNCTION HAS FREE. Of the main path, only the way ONWARD: closing the way back
