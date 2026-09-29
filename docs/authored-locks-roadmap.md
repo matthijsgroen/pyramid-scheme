@@ -342,6 +342,53 @@ Still parked, and named there: `lockWalk` cannot express "may not OCCUPY this re
 - What a region's content appetite vocabulary actually is, beyond "reward / puzzles / nothing".
 - Whether a region carries a main-path or side-path role, and what reads it.
 
+### What stands between here and `doubleBack`, read against the fixture
+
+Written 2026-09-29, after the gates slice landed. Measured against `doubleBack()` in
+`src/game/lockWalk.spec.ts:196-239` — six regions, five gates, three mechanisms, two drops — rather
+than against the design's prose. In dependency order; the first is the one everything else waits on.
+
+**1. Regions seated off the main path.** `regionOfStep` deals the route's regions along the MAIN PATH
+only, and a side path takes the region of the cell it grows from — so a layout whose graph branches
+has regions no step ever names, and is refused `regionNotSeated`. Measured: a four-region diamond
+comes back `{"type":"regionNotSeated","regions":["leftLower"]}`. `doubleBack` is a diamond twice over.
+**Nothing else on this list can be tested until a branch can hold a region.**
+
+**2. A gate on a connection the route does not thread.** `obstacleOffRoute` refuses one today, honestly
+— a connection off the route has no seam because no two adjacent cells span it. `doubleBack` puts
+`forkLeft` and `forkRight` on the two sides of a branch, so at most one of them is ever on the route.
+This refusal should stop firing on its own once (1) lands; confirm that rather than assume it.
+
+**3. One-ways that name REGIONS.** `FloorConfig.oneWays` names section addresses, checked against
+`knownSectionAddresses` (`siteAssembler.ts:697-700`). `doubleBack`'s two drops are
+`s1Chamber → leftLower` and `leftLower → entrance` — region to region. This is the same move the gates
+slice made for gates, applied to the drop: a one-way becomes an obstacle kind whose place is a
+connection, which is what the `kind`/`at.on` unions were shaped for. Note it needs `opens` to grow
+from "which obstacles stand open" to "what condition each is in" — a direction is not open-or-shut.
+
+**4. Controls seated in any region.** The control search walks the main path. `S1` stands in
+`s1Chamber` and `S2` in `s2Chamber`, both on branches. Follows (1) and needs its own seating rule.
+
+**5. Toggle-off with more than one obstacle.** Measured over seeds 0-49: 0 of 50 diverge with one
+obstacle, **24 of 50 with two** (`toggleOff.spec.ts`, kept as `it.fails`). `mainZoneCandidates`
+compensates by COUNT while the list is sliced by contiguous range, and count-equal is not
+identity-equal. `doubleBack` authors five gates.
+
+**6. The state-aware reachability check.** §5's "every region must be reachable" is built only in its
+structural form (`strandedRegions`). `doubleBack` is exactly the shape where a region behind two
+mechanisms that deadlock each other would pass a structural check and strand a player — and the walk
+already proves the floor needs its second drop to stay sound, which is that class of fault.
+
+**7. The drop's art.** `dropEast`, `dropNorth` and `dropSouth` are still owed. Step 2's rule stands: a
+one-way must not ship on an authored pyramid until it is drawn, because its mouth reads as an ordinary
+corridor. `doubleBack` can stand on the develop journey before the art; it cannot stand on a real
+pyramid.
+
+**What is already done and needs no work:** the three mechanisms are all expressible as `controls` —
+`Y` is a three-state board, `S1` opens a different gate in each state, and `S2`'s `start` opens
+nothing, which is a state listing none. Each gate has exactly one owner. The walk consumes `oneWays`
+already. A control and the gates it drives wear a shared mark.
+
 ### 6. `doubleBack`, authored
 
 **Ships:** the worked example as a real floor, walked by the build sweep, playtested.
