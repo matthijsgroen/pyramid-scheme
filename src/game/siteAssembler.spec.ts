@@ -2148,6 +2148,74 @@ describe("a control seated in an off-route region", () => {
     expect(result.success).toBe(false)
     expect(result.success === false && result.reasons).toContainEqual({ type: "controlNotSeated", ids: ["S1"] })
   })
+
+  // TWO OFF-ROUTE CONTROLS SHARING ONE CHAIN — a second control's displacement destination search
+  // excluded `chainGateIndices` and `contentIndices` but not `takenByChainControl`, so a control
+  // seated on a genuinely free node could be silently overwritten by a puzzle a LATER control's own
+  // displacement lands on top of it. `C1`/`C2` seat on this chain's own two free nodes; `C3` finds
+  // neither free and is forced to displace — a natural single-region packing only ever leaves its
+  // ONE spare node at the FRONT of the content range (`spreadContentIndices`'s own collision
+  // resolution always resolves a clash by pushing UP first — regions.ts is silent on this, it is a
+  // property of THIS function alone, checked by hand across dozens of (count, length) pairs), which a
+  // forward-only displacement search can never reach — so two controls sharing one chain can only
+  // ever take the chain's own two separate free nodes, never collide. A third, forced to displace,
+  // is what exercises the excluded case: its destination search walks onto `C2`'s own free node.
+  it("keeps every off-route control's own room distinct when several share one chain", () => {
+    const layout: RegionGraph = {
+      regions: [
+        { name: "entrance", appetite: "free" },
+        { name: "out", appetite: "free" },
+        { name: "s1Chamber", appetite: "free" },
+      ],
+      connections: [
+        ["entrance", "out"],
+        ["entrance", "s1Chamber"],
+      ],
+      in: "entrance",
+      out: "out",
+    }
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      regionLayout: layout,
+      sideSections: [{ pathPuzzles: 2, difficulty: "starter", end: "treasure" }],
+      controls: ["C1", "C2", "C3"].map(id => ({
+        id,
+        in: "s1Chamber",
+        states: ["a", "b"],
+        initial: "a",
+        returnsToInitial: false,
+        opens: { a: [], b: [] },
+      })),
+    }
+    const result = assembleFloor("site-chamber-triple", config, 0)
+    if (!result.success) throw new Error(`assembly failed: ${JSON.stringify(result.reasons)}`)
+    const { grid } = result
+
+    const controlRooms = grid.cells.flat().filter((c): c is RoomCell => c.type === "room" && c.mechanism !== undefined)
+    // Every authored control got its own room — the whole set of ids, not a count that would sit
+    // green with one silently replaced by a puzzle and another written twice.
+    expect(controlRooms.map(c => c.mechanismId).sort()).toEqual(["C1", "C2", "C3"])
+    // And each at a DISTINCT cell — three ids naming only two physical rooms is the exact shape of
+    // this bug (one control's room silently became another's).
+    const positions = new Set<string>()
+    grid.cells.forEach((row, r) =>
+      row.forEach((cell, c) => {
+        if (cell.type === "room" && cell.mechanism !== undefined) positions.add(`${r},${c}`)
+      })
+    )
+    expect(positions.size).toBe(3)
+    // The chain's own authored puzzles survive intact alongside them — the whole set of pathIndex
+    // values, not a count: a control overwriting a puzzle's cell would drop that ordinal from here.
+    const puzzleIndices = grid.cells
+      .flat()
+      .filter((c): c is RoomCell => c.type === "room" && c.sectionAddress === "s0" && c.pathIndex !== undefined)
+      .map(c => c.pathIndex)
+      .sort()
+    expect(puzzleIndices).toEqual([0, 1])
+  })
 })
 
 describe("a gate on a connection off the threaded route", () => {

@@ -2296,8 +2296,15 @@ export const assembleFloor = (
             const i = contentIndices[k]
             if (!inThisChain(i)) continue
             sawChainContentCandidate.add(control.id)
+            // `takenByChainControl` excluded here too, not just from the free-node search above: a
+            // second control's displacement destination must not land on a node a first control this
+            // same chain already seated — the same exclusion the main path's own displacement search
+            // makes against its own `takenByControl`.
             let shifted = i + 1
-            while (shifted < cells.length - 1 && (chainGateIndices.has(shifted) || contentIndices.includes(shifted)))
+            while (
+              shifted < cells.length - 1 &&
+              (chainGateIndices.has(shifted) || contentIndices.includes(shifted) || takenByChainControl.has(shifted))
+            )
               shifted += 1
             if (shifted >= cells.length - 1) continue // nowhere to move this one — try the chain's next content node
             contentIndices[k] = shifted
