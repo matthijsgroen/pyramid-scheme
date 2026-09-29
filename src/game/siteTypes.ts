@@ -39,7 +39,10 @@ export type CorridorCell = {
   sectionAddress?: string
   /** Which region of the floor's authored layout this cell stands in, where the floor authors one
    * (FloorConfig.regionLayout). A region is a stretch of the carve: the main path crosses several, and
-   * a side path belongs to the region it grows from. Absent on a floor that authors no layout. */
+   * a side path belongs to the region it grows from — unless the route never threads that region at
+   * all, in which case the side path seats it instead (offRouteChains, regions.ts), one region per
+   * stretch of its own cells, nearest the branch's mouth first. Absent on a floor that authors no
+   * layout. */
   region?: string
   /** Structural fingerprint of the section — how many rooms, how long the walk, what gates it. NOT the
    *  save's identity any more (`sectionAddress` is): it moves when the floor's own carve knobs are
@@ -150,7 +153,10 @@ export type RoomCell = {
   sectionAddress?: string
   /** Which region of the floor's authored layout this cell stands in, where the floor authors one
    * (FloorConfig.regionLayout). A region is a stretch of the carve: the main path crosses several, and
-   * a side path belongs to the region it grows from. Absent on a floor that authors no layout. */
+   * a side path belongs to the region it grows from — unless the route never threads that region at
+   * all, in which case the side path seats it instead (offRouteChains, regions.ts), one region per
+   * stretch of its own cells, nearest the branch's mouth first. Absent on a floor that authors no
+   * layout. */
   region?: string
   /** See CorridorCell.sectionHash — structural, and no longer the save's identity. */
   sectionHash?: string
@@ -601,15 +607,17 @@ export type AssemblerReason =
   | { type: "obstacleOffRoute"; id: string }
   | { type: "obstacleUnowned"; id: string }
   | { type: "controlUnsatisfied"; id: string; what: string }
-  /** A declared region that never got a cell, for either of two reasons: the route the main path
-   * threads has more regions than the path has steps, so the regions at its far end are never reached;
-   * or a region is reachable in the region graph but never lies on the shortest in→out walk at all, so
-   * no step ever names it. Either way content that would have gone there lands in a region the author
-   * did not name. `regions` are every one left unseated, in route order. See FloorConfig.regionLayout.
-   * Unlike its five neighbours above, this reason carries a LIST rather than one name: those are each
-   * an independent fault where fixing the one name removes it, whereas an unseated set is a single
-   * fault whose extent happens to be a list — fixing one name here fixes nothing, so do not normalise
-   * this to a single-name shape. */
+  /** A declared region that never got a cell. A region off the main route seats on a side path instead
+   * (offRouteChains, regions.ts), so this now fires only where even that falls short: the main path's
+   * own route ran longer than the path had steps, so the regions at its far end were never reached; a
+   * side chain's own cells ran out before its component's deeper regions did; or the floor authors
+   * fewer top-level side sections than it has off-route components to seat, so one was never matched to
+   * a side path at all. Either way content that would have gone there lands in a region the author did
+   * not name. `regions` are every one left unseated, in the layout's own declared order. See
+   * FloorConfig.regionLayout. Unlike its five neighbours above, this reason carries a LIST rather than
+   * one name: those are each an independent fault where fixing the one name removes it, whereas an
+   * unseated set is a single fault whose extent happens to be a list — fixing one name here fixes
+   * nothing, so do not normalise this to a single-name shape. */
   | { type: "regionNotSeated"; regions: string[] }
   /** The route threads the connection these obstacles stand on, but no carve produced a cell on each
    * side of the seam, so there was nowhere to stand the bars. `ids` are the obstacles left unplaced. */

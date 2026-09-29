@@ -19,7 +19,7 @@ import type {
   Difficulty,
 } from "./siteTypes"
 import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
-import { appetiteAccepts, regionOfStep, regionRoute, strandedRegions } from "./regions"
+import { appetiteAccepts, offRouteChains, regionOfStep, regionRoute, strandedRegions } from "./regions"
 import type { ContentKind } from "./regions"
 import { crossesNoDoor, doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
 import type { Control } from "./obstacles"
@@ -1125,25 +1125,38 @@ export const assembleFloor = (
 
     // WHICH REGION EACH CELL STANDS IN, where the floor authors one — absent everywhere on a floor
     // that does not, so the shipped world (no floor authors a regionLayout) carves unchanged. A
-    // main-path cell takes its region from its step along the route; a chain's cells take the region
-    // of the cell they grow from, below. Computed ahead of content placement: the gate cells below
-    // have to be known before content claims a node.
+    // main-path cell takes its region from its step along the route; a chain hosting no off-route
+    // component takes the region of the cell it grows from; a chain matched to one (below) takes that
+    // component's own regions instead. Computed ahead of content placement: the gate cells below have
+    // to be known before content claims a node.
     const route = regionLayout ? regionRoute(regionLayout) : []
     const stepRegion = regionLayout ? regionOfStep(route, mainPath.length) : []
-    // A DECLARED REGION THE ROUTE NEVER SEATS A CELL IN SEATS NOTHING. Two ways there: a route longer
-    // than the path, where `regionOfStep` deals what there is rather than refusing (it has no floor in
-    // front of it — only a carve knows how many steps the main path has); or a region the route never
-    // threads at all — reachable in the region graph, but not on the shortest in→out walk, so no step
-    // ever names it. Checked against every DECLARED region, not just the route's, so the second cause
-    // is caught too: content that would have gone to an unseated region lands in one the author never
-    // named, which is the builder deciding quietly rather than refusing.
+    // A ROUTE LONGER THAN THE PATH SEATS NOTHING AT ITS FAR END — `regionOfStep` deals what there is
+    // rather than refusing (it has no floor in front of it; only a carve knows how many steps the main
+    // path has). Checked against the route's own regions only: a region the route never threads at all
+    // is not this cause's business (a side path seats those, below) and must not retry a longer main
+    // path forever waiting for a route it is never on.
+    const onRouteSet = new Set(route)
     const unseated = regionLayout
-      ? regionLayout.regions.map(r => r.name).filter(name => !stepRegion.includes(name))
+      ? regionLayout.regions.map(r => r.name).filter(name => onRouteSet.has(name) && !stepRegion.includes(name))
       : []
     if (unseated.length > 0) {
       if (!unseatedRegions) unseatedRegions = unseated
       continue
     }
+    // A REGION THE ROUTE NEVER THREADS SEATS ON A SIDE PATH INSTEAD — matched to a top-level side
+    // section deterministically by CONFIG order (offRouteChains groups off-route regions in
+    // declaration order, and the Nth chain takes the Nth authored side section), never by which cell
+    // the carve happens to attach a branch near: `sectionOrder` below only shuffles WHERE a branch
+    // attaches, and a layout must group the same way regardless. More chains than the floor authors
+    // side sections for leaves the excess unmatched here; that shows up as a genuinely unseated region
+    // once the carve is finished (below), not as a fault raised on the config alone, because a wider
+    // retry can still grow the floor a side section it did not have room for at attempt 0.
+    const sideChains = regionLayout ? offRouteChains(regionLayout) : []
+    const chainRegionsBySectionIdx = new Map<number, string[]>()
+    sideChains.forEach((chain, i) => {
+      if (i < config.sideSections.length) chainRegionsBySectionIdx.set(i, chain.regions)
+    })
     // WHERE ONE REGION STOPS AND THE NEXT BEGINS. The route threads the regions in order, so a
     // connection on it is the seam between two consecutive stretches and the first cell of the far
     // stretch is the one the player has to walk into — which is where the bars belong. The lookup
@@ -1835,14 +1848,46 @@ export const assembleFloor = (
       const address = addresses.of.get(positional) ?? positional
       cells.forEach(([r, c], step) => cellOrdinal.set(posKey(r, c), String(step)))
       cells.forEach(([r, c]) => cellSectionAddress.set(posKey(r, c), address))
-      const grownFrom = cellRegion.get(posKey(attachedAt[0], attachedAt[1]))
-      if (grownFrom !== undefined) for (const [r, c] of cells) cellRegion.set(posKey(r, c), grownFrom)
+      // A top-level chain matched to an off-route component (chainRegionsBySectionIdx, above) seats
+      // that component's OWN regions across its cells — nearest the mouth first — the same way
+      // `regionOfStep` deals the main route across the main path; re-using it here is what keeps a
+      // chain's region always in the order its component declared, regardless of how many cells the
+      // carve gave it. Every other chain keeps today's behaviour: it belongs to the region it grows
+      // from, whole.
+      const hostedRegions = parentIdx === undefined ? chainRegionsBySectionIdx.get(idx) : undefined
+      if (hostedRegions) {
+        const perCell = regionOfStep(hostedRegions, cells.length)
+        cells.forEach(([r, c], step) => {
+          const region = perCell[step]
+          if (region !== undefined) cellRegion.set(posKey(r, c), region)
+        })
+      } else {
+        const grownFrom = cellRegion.get(posKey(attachedAt[0], attachedAt[1]))
+        if (grownFrom !== undefined) for (const [r, c] of cells) cellRegion.set(posKey(r, c), grownFrom)
+      }
       for (const [r, c] of cells) {
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
         cellDressing.set(posKey(r, c), pools)
         cellDifficulty.set(posKey(r, c), section.difficulty)
         if (hidden) hiddenCellPositions.add(posKey(r, c))
+      }
+    }
+
+    // A DECLARED REGION NO CELL EVER TOOK, checked once `cellRegion` is fully settled — the only point
+    // a side chain's own length is known, so this is the one region check that cannot run before the
+    // carve (docs/game-design/regions-and-containers.md, "one refusal necessarily runs after the
+    // carve"). Two ways here: a side chain shorter than the component matched to it, so `regionOfStep`
+    // seated the near end and left the rest off (same shortfall the main path's `unseated` check above
+    // catches for the route, one carve later); or more off-route components than the floor authors
+    // top-level side sections for, so `chainRegionsBySectionIdx` never matched one at all. Retried
+    // rather than refused outright: a later attempt may grow the floor a longer or extra side path.
+    if (regionLayout) {
+      const seated = new Set(cellRegion.values())
+      const stillUnseated = regionLayout.regions.map(r => r.name).filter(name => !seated.has(name))
+      if (stillUnseated.length > 0) {
+        if (!unseatedRegions) unseatedRegions = stillUnseated
+        continue
       }
     }
 

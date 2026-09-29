@@ -140,22 +140,32 @@ describe("a region no attempt seats", () => {
 
   // A region can be reachable in the region graph — even declared with a connection — and still
   // never lie on the shortest in→out walk, so no step of the main path ever names it. `hall—sideVault`
-  // is reachable from `hall` but off the `mouth—hall—vault` route entirely: unlike the fixture above,
-  // the main path has steps to spare, so this is not a route outrunning a path — it is a region the
-  // route never threads at all.
-  it("refuses a region that is reachable but never lies on the route, naming only that region", () => {
-    const branchingLayout = {
-      regions: [
-        { name: "mouth", appetite: "free" as const },
-        { name: "hall", appetite: "free" as const },
-        { name: "vault", appetite: "free" as const },
-        { name: "sideVault", appetite: "free" as const },
-      ],
-      connections: [["mouth", "hall"] as const, ["hall", "vault"] as const, ["hall", "sideVault"] as const],
-      in: "mouth",
-      out: "vault",
-    }
-    const result = assembleFloor("test-journey", floor(branchingLayout), SEED)
+  // is reachable from `hall` but off the `mouth—hall—vault` route entirely. That is exactly what a
+  // side path seats (offRouteChains, regions.ts): `sideVault` hangs off `hall`, so it is matched to
+  // `floor()`'s one authored side section and carved onto it rather than refused.
+  const branchingLayout = {
+    regions: [
+      { name: "mouth", appetite: "free" as const },
+      { name: "hall", appetite: "free" as const },
+      { name: "vault", appetite: "free" as const },
+      { name: "sideVault", appetite: "free" as const },
+    ],
+    connections: [["mouth", "hall"] as const, ["hall", "vault"] as const, ["hall", "sideVault"] as const],
+    in: "mouth",
+    out: "vault",
+  }
+
+  it("seats a region reachable but never on the route onto the side path matched to it", () => {
+    const cells = carvedCells(floor(branchingLayout))
+
+    expect(cells.some(cell => cell.region === "sideVault")).toBe(true)
+  })
+
+  // The floor above has one authored side section, which is what hosts `sideVault`. Strip it away and
+  // there is nowhere left to seat it — the honest `regionNotSeated`, naming only the region left over.
+  it("still refuses a region reachable but never on the route when no side section is left to seat it on", () => {
+    const config: FloorConfig = { ...floor(branchingLayout), sideSections: [] }
+    const result = assembleFloor("test-journey", config, SEED)
 
     expect(result.success).toBe(false)
     const reason = result.success ? undefined : result.reasons.find(r => r.type === "regionNotSeated")

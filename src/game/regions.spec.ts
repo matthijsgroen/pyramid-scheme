@@ -3,6 +3,7 @@ import {
   appetiteAccepts,
   fitContent,
   mainPathRegions,
+  offRouteChains,
   regionOfStep,
   regionRoute,
   strandedRegions,
@@ -278,5 +279,134 @@ describe("which stretch of the main path is which region", () => {
 
   it("has nothing to deal where the route is empty", () => {
     expect(regionOfStep([], 3)).toEqual([])
+  })
+})
+
+describe("the main path never names a region a side path is not free to skip", () => {
+  // mainPathRegions has no production caller; this is what makes it meaningful anyway — a dominator on
+  // the region graph is always somewhere on the shortest route, so the two must agree wherever the
+  // graph is exercised above.
+  const cases: Array<[string, RegionGraph]> = [
+    [
+      "a single corridor of regions",
+      graph(
+        [
+          ["in", "middle"],
+          ["middle", "out"],
+        ],
+        ["in", "middle", "out"],
+        { in: "in", out: "out" }
+      ),
+    ],
+    [
+      "a fork that rejoins",
+      graph(
+        [
+          ["in", "left"],
+          ["in", "right"],
+          ["left", "out"],
+          ["right", "out"],
+        ],
+        ["in", "left", "right", "out"],
+        { in: "in", out: "out" }
+      ),
+    ],
+    [
+      "a pocket hanging off the route",
+      graph(
+        [
+          ["in", "out"],
+          ["in", "pocket"],
+        ],
+        ["in", "pocket", "out"],
+        { in: "in", out: "out" }
+      ),
+    ],
+    [
+      "a branch two regions deep off the route",
+      graph(
+        [
+          ["in", "leftLower"],
+          ["in", "rightLower"],
+          ["rightLower", "s1Chamber"],
+          ["leftLower", "out"],
+        ],
+        ["in", "rightLower", "s1Chamber", "leftLower", "out"],
+        { in: "in", out: "out" }
+      ),
+    ],
+  ]
+
+  it.each(cases)("holds for %s", (_label, g) => {
+    const route = new Set(regionRoute(g))
+    for (const name of mainPathRegions(g)) expect(route.has(name)).toBe(true)
+  })
+})
+
+describe("grouping the off-route regions a side path has to seat", () => {
+  it("returns nothing when every region lies on the main route", () => {
+    const g = graph(
+      [
+        ["in", "middle"],
+        ["middle", "out"],
+      ],
+      ["in", "middle", "out"],
+      { in: "in", out: "out" }
+    )
+
+    expect(offRouteChains(g)).toEqual([])
+  })
+
+  // doubleBack's own shape (docs/game-design/regions-and-containers.md, lockWalk.spec.ts's doubleBack
+  // fixture): the route runs in → leftLower → out, leaving rightLower and s1Chamber off it — one
+  // branch two regions deep, not two independent pendants, because s1Chamber hangs off rightLower
+  // rather than off the route directly.
+  it("groups a branch two regions deep into one chain, ordered from its mouth inward", () => {
+    const g = graph(
+      [
+        ["in", "leftLower"],
+        ["in", "rightLower"],
+        ["rightLower", "s1Chamber"],
+        ["leftLower", "out"],
+      ],
+      ["in", "rightLower", "s1Chamber", "leftLower", "out"],
+      { in: "in", out: "out" }
+    )
+
+    expect(regionRoute(g)).toEqual(["in", "leftLower", "out"])
+    expect(offRouteChains(g)).toEqual([{ mouth: "in", regions: ["rightLower", "s1Chamber"] }])
+  })
+
+  it("keeps two pendants off the same mouth as two separate chains, not one", () => {
+    const g = graph(
+      [
+        ["in", "out"],
+        ["in", "pocketA"],
+        ["in", "pocketB"],
+      ],
+      ["in", "pocketA", "pocketB", "out"],
+      { in: "in", out: "out" }
+    )
+
+    expect(offRouteChains(g)).toEqual([
+      { mouth: "in", regions: ["pocketA"] },
+      { mouth: "in", regions: ["pocketB"] },
+    ])
+  })
+
+  // pocket touches the route at both "out" and "in" — the earlier-DECLARED region wins, so the same
+  // layout always groups the same way regardless of which cell the carve happens to attach it near.
+  it("takes the earliest-declared region as the mouth when a branch touches the route twice", () => {
+    const g = graph(
+      [
+        ["in", "out"],
+        ["out", "pocket"],
+        ["in", "pocket"],
+      ],
+      ["in", "pocket", "out"],
+      { in: "in", out: "out" }
+    )
+
+    expect(offRouteChains(g)).toEqual([{ mouth: "in", regions: ["pocket"] }])
   })
 })

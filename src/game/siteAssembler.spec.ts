@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it } from "vitest"
 import { assembleFloor, defaultResolveEncounter, encounterFromMeta } from "./siteAssembler"
 import type { ResolveEncounter } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
+import type { RegionGraph } from "./regions"
 import { reachableFrom, validateSite } from "./siteValidator"
 import { floorKeyRing } from "./floorKeys"
 // The real registry, for the one spec that has to prove the refusal against a family that
@@ -1857,6 +1858,123 @@ describe("a switch fork", () => {
     }
     // A loop that carved no switch would pass having looked at nothing.
     expect(carved).toBeGreaterThan(0)
+  })
+})
+
+describe("a side path seating a chain of regions", () => {
+  // doubleBack's own shape (docs/game-design/regions-and-containers.md; the doubleBack fixture at
+  // lockWalk.spec.ts's describe(walkLock)): the route runs entrance → leftLower → out, leaving
+  // rightLower and s1Chamber off it — one branch two regions deep, not two independent pendants,
+  // since s1Chamber hangs off rightLower rather than off the route directly. Every appetite is "free"
+  // so this stays a pure seating test: what fills a room is a separate concern (regions.spec.ts).
+  const diamondLayout = (): RegionGraph => ({
+    regions: [
+      { name: "entrance", appetite: "free" },
+      { name: "rightLower", appetite: "free" },
+      { name: "s1Chamber", appetite: "free" },
+      { name: "leftLower", appetite: "free" },
+      { name: "out", appetite: "free" },
+    ],
+    connections: [
+      ["entrance", "leftLower"],
+      ["entrance", "rightLower"],
+      ["rightLower", "s1Chamber"],
+      ["leftLower", "out"],
+    ],
+    in: "entrance",
+    out: "out",
+  })
+
+  const diamondConfig = (): FloorConfig => ({
+    pathPuzzles: 1,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    regionLayout: diamondLayout(),
+    // One side section is all `rightLower`+`s1Chamber` need to share — offRouteChains groups them
+    // into a single chain (regions.spec.ts), which this one chain hosts. `sealed` isolates it from
+    // leftover maze edges: without a gate or `sealed` an ungated branch has always allowed a stray
+    // tree edge to bypass its own content (unrelated to this task), which would make the "seats in
+    // order" test below meaningless — it has to prove the order holds where something actually keeps
+    // the player from cutting through.
+    sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure", sealed: true }],
+  })
+
+  const regionsOn = (grid: FloorGrid): Set<string> => {
+    const seen = new Set<string>()
+    for (const row of grid.cells)
+      for (const cell of row) if (cell.type !== "empty" && cell.region) seen.add(cell.region)
+    return seen
+  }
+
+  it("carves every declared region onto some cell", () => {
+    const result = assembleFloor("site-diamond", diamondConfig(), 42)
+    if (!result.success) throw new Error(`assembly failed: ${JSON.stringify(result.reasons)}`)
+
+    const seen = regionsOn(result.grid)
+    for (const region of diamondLayout().regions) expect(seen.has(region.name)).toBe(true)
+  })
+
+  // The failure this test exists to catch is a chain seated out of order: `s1Chamber` reachable
+  // without passing through `rightLower` first, which is a lever's gate (`greenRight`, doubleBack's own
+  // fixture) a player could then walk straight past. A test that only asserts both regions appear
+  // would pass under that bug — this instead proves the physical order, by sealing `rightLower`'s own
+  // cells and checking `s1Chamber` becomes unreachable.
+  it("seats the chain in order: the mouth-adjacent region stands between the entrance and the deeper one", () => {
+    const result = assembleFloor("site-diamond", diamondConfig(), 42)
+    if (!result.success) throw new Error(`assembly failed: ${JSON.stringify(result.reasons)}`)
+    const { grid } = result
+
+    const reachableWithoutRegion = (excludedRegion: string | undefined): Set<string> => {
+      const key = (r: number, c: number) => `${r},${c}`
+      const [er, ec] = grid.entrancePos
+      const seen = new Set([key(er, ec)])
+      const queue: Array<[number, number]> = [[er, ec]]
+      while (queue.length > 0) {
+        const [r, c] = queue.shift()!
+        const cell = grid.cells[r][c]
+        if (cell.type === "empty") continue
+        for (const dir of cell.dirs) {
+          const [dr, dc] = DIR_MOVE[dir]
+          const nr = r + dr
+          const nc = c + dc
+          if (seen.has(key(nr, nc))) continue
+          const next = grid.cells[nr]?.[nc]
+          if (!next || next.type === "empty") continue
+          if (next.region === excludedRegion) continue
+          seen.add(key(nr, nc))
+          queue.push([nr, nc])
+        }
+      }
+      return seen
+    }
+
+    const s1Cells = grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) => (cell.type !== "empty" && cell.region === "s1Chamber" ? [`${r},${c}`] : []))
+    )
+    // Sanity: s1Chamber cells genuinely exist and are reachable at all, so the exclusion check below
+    // fails for the right reason rather than because nothing was ever reachable.
+    expect(s1Cells.length).toBeGreaterThan(0)
+    const reachedFreely = reachableWithoutRegion(undefined)
+    for (const cellKey of s1Cells) expect(reachedFreely.has(cellKey)).toBe(true)
+
+    // The real check: with every rightLower cell treated as sealed, no s1Chamber cell is reachable.
+    const reachedWithoutRightLower = reachableWithoutRegion("rightLower")
+    for (const cellKey of s1Cells) expect(reachedWithoutRightLower.has(cellKey)).toBe(false)
+  })
+
+  // Watched failing: a floor with nowhere to seat rightLower/s1Chamber's chain (no side section to
+  // match it to) must still be refused by name, not silently drop the content that would have gone
+  // there into a region the author never named.
+  it("still refuses by name when a region genuinely cannot be seated", () => {
+    const config: FloorConfig = { ...diamondConfig(), sideSections: [] }
+    const result = assembleFloor("site-diamond-unseatable", config, 42)
+
+    expect(result.success).toBe(false)
+    expect(result.success === false && result.reasons).toContainEqual({
+      type: "regionNotSeated",
+      regions: ["rightLower", "s1Chamber"],
+    })
   })
 })
 
