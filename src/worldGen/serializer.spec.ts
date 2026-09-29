@@ -162,3 +162,63 @@ describe("generateFile — an authored layout survives the bake", () => {
     )
   })
 })
+
+// `serializeObject` (the shared emitter `forks`/`oneWays`/`handles` reuse) only reaches a flat
+// object: an Obstacle's nested `at` and a Control's nested `opens` both stringify as
+// "[object Object]" through it, which is why obstacles/controls are written out longhand instead
+// (serializeObstacle/serializeControl in serializer.ts). Asserted as the exact emitted text, not
+// merely "no [object Object]", so a future field silently falling back to that shared emitter
+// would show up here as a wrong string rather than a passing test.
+describe("generateFile — a gate on a connection survives the bake", () => {
+  it("emits an obstacle's nested `at` in full", () => {
+    const floor = {
+      pathPuzzles: 0,
+      difficulty: "starter" as const,
+      end: "treasure" as const,
+      exitOrStaircase: "exit" as const,
+      sideSections: [],
+      obstacles: [
+        {
+          id: "vaultDoor",
+          kind: "gate" as const,
+          at: { on: "connection" as const, between: ["hall", "vault"] as const },
+        },
+      ],
+    }
+
+    const emitted = generateFile({ testJourney: [[floor]] })
+
+    expect(emitted).toContain(
+      'obstacles: [{ id: "vaultDoor", kind: "gate", at: { on: "connection", between: ["hall", "vault"] } }]'
+    )
+    expect(emitted).not.toContain("[object Object]")
+  })
+
+  it("emits a control's nested `opens` record in full, and its optional `encounter`", () => {
+    const floor = {
+      pathPuzzles: 0,
+      difficulty: "starter" as const,
+      end: "treasure" as const,
+      exitOrStaircase: "exit" as const,
+      sideSections: [],
+      controls: [
+        {
+          id: "s1",
+          in: "mouth",
+          states: ["left", "right"],
+          initial: "right",
+          returnsToInitial: true,
+          opens: { right: ["vaultDoor"] },
+          encounter: "lever",
+        },
+      ],
+    }
+
+    const emitted = generateFile({ testJourney: [[floor]] })
+
+    expect(emitted).toContain(
+      'controls: [{ id: "s1", in: "mouth", states: ["left", "right"], initial: "right", returnsToInitial: true, opens: { "right": ["vaultDoor"] }, encounter: "lever" }]'
+    )
+    expect(emitted).not.toContain("[object Object]")
+  })
+})

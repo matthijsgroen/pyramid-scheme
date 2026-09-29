@@ -1,5 +1,6 @@
 import type { FloorConfig, SideSection, SiteConfig, TreasureReward } from "./types"
 import type { RegionGraph } from "@/game/regions"
+import type { Control, Obstacle } from "@/game/obstacles"
 import { WORLD_SEED } from "./data"
 
 // Extra top-level exports a mod wants baked into the generated world file (name → JSON-serializable
@@ -83,12 +84,37 @@ const serializeRegionGraph = (g: RegionGraph): string =>
     .join(", ")}], in: ${JSON.stringify(g.in)}, out: ${JSON.stringify(g.out)} }`
 
 // Emits every field the object carries rather than a fixed list, the way `serializeGate` does, so a
-// field added to a fork demand or a switch later rides along without this function naming it.
+// field added to a fork demand or a switch later rides along without this function naming it. Only
+// good for a FLAT object: a nested one (Obstacle's `at`, Control's `opens`) reaches `serializeValue`'s
+// `${v}` branch and comes out "[object Object]" — that is exactly why `serializeObstacle` and
+// `serializeControl` below are written out longhand instead of reusing this.
 const serializeObject = (o: object): string =>
   `{ ${Object.entries(o)
     .filter(([, v]) => v !== undefined)
     .map(([k, v]) => `${k}: ${typeof v === "string" || Array.isArray(v) ? serializeEncounter(v) : serializeValue(v)}`)
     .join(", ")} }`
+
+// `at` nests one layer deep (`{ on, between }`), which `serializeObject` cannot reach.
+const serializeObstacle = (o: Obstacle): string =>
+  `{ id: ${JSON.stringify(o.id)}, kind: ${JSON.stringify(o.kind)}, at: { on: ${JSON.stringify(o.at.on)}, between: [${o.at.between
+    .map(s => JSON.stringify(s))
+    .join(", ")}] } }`
+
+// `opens` is a Record<state, obstacleId[]>, which `serializeObject` cannot reach either.
+const serializeControl = (c: Control): string => {
+  const parts = [
+    `id: ${JSON.stringify(c.id)}`,
+    `in: ${JSON.stringify(c.in)}`,
+    `states: [${c.states.map(s => JSON.stringify(s)).join(", ")}]`,
+    `initial: ${JSON.stringify(c.initial)}`,
+    `returnsToInitial: ${c.returnsToInitial}`,
+    `opens: { ${Object.entries(c.opens)
+      .map(([state, ids]) => `${JSON.stringify(state)}: [${ids.map(id => JSON.stringify(id)).join(", ")}]`)
+      .join(", ")} }`,
+  ]
+  if (c.encounter !== undefined) parts.push(`encounter: ${JSON.stringify(c.encounter)}`)
+  return `{ ${parts.join(", ")} }`
+}
 
 /**
  * ONE EMITTER PER FloorConfig FIELD, and the type is what makes that exhaustive: a field added to
@@ -130,6 +156,8 @@ const floorFieldEmitters: {
   oneWays: v => (v.length ? `oneWays: [${v.map(serializeObject).join(", ")}]` : null),
   handles: v => (v.length ? `handles: [${v.map(serializeObject).join(", ")}]` : null),
   regionLayout: v => `regionLayout: ${serializeRegionGraph(v)}`,
+  obstacles: v => (v.length ? `obstacles: [${v.map(serializeObstacle).join(", ")}]` : null),
+  controls: v => (v.length ? `controls: [${v.map(serializeControl).join(", ")}]` : null),
   switches: v => `switches: ${serializeObject(v)}`,
 }
 

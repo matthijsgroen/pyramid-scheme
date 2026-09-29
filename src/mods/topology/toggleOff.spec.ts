@@ -48,6 +48,70 @@ describe("dropUnownedAuthoring", () => {
   })
 })
 
+// A gate on a connection and the control that opens it exist only because the topology mod does —
+// unlike a section's gate above, which is core's when it names no owner. Same three-region layout
+// regionGates.spec.ts carves, here to prove the drop rather than the carve.
+const gatedFloor = {
+  pathPuzzles: 2,
+  difficulty: "starter" as const,
+  end: "treasure" as const,
+  exitOrStaircase: "exit" as const,
+  sideSections: [{ pathPuzzles: 1, difficulty: "starter" as const, end: "treasure" as const }],
+  regionLayout: {
+    regions: [
+      { name: "mouth", appetite: "free" as const },
+      { name: "hall", appetite: "free" as const },
+      { name: "vault", appetite: "free" as const },
+    ],
+    connections: [["mouth", "hall"] as const, ["hall", "vault"] as const],
+    in: "mouth",
+    out: "vault",
+  },
+  obstacles: [
+    { id: "vaultDoor", kind: "gate" as const, at: { on: "connection" as const, between: ["hall", "vault"] as const } },
+  ],
+  controls: [
+    {
+      id: "s1",
+      in: "mouth",
+      states: ["left", "right"],
+      initial: "right",
+      returnsToInitial: true,
+      opens: { right: ["vaultDoor"] },
+    },
+  ],
+}
+
+describe("dropUnownedAuthoring — obstacles and controls", () => {
+  it("drops obstacles and controls when the topology mod is not registered", () => {
+    const dropped = dropUnownedAuthoring(gatedFloor, new Set(["mosaic"]), undefined)
+
+    expect(dropped.obstacles).toBeUndefined()
+    expect(dropped.controls).toBeUndefined()
+  })
+
+  it("keeps both when it is", () => {
+    const kept = dropUnownedAuthoring(gatedFloor, new Set(["topology"]), undefined)
+
+    expect(kept.obstacles).toEqual(gatedFloor.obstacles)
+    expect(kept.controls).toEqual(gatedFloor.controls)
+  })
+
+  // The acceptance gate for the whole slice: the gate room disappears and nothing else moves. Compared
+  // by each cell's `dirs`, never its `type` (`dirsOf`, defined below) — a gate room is a corridor cell
+  // turned into a room without a wall having moved, and comparing types would call that a difference.
+  it("carves the identical walls with the mod off", () => {
+    const withMod = assembleFloor("dev", gatedFloor as GameFloorConfig, 99)
+    const without = assembleFloor("dev", dropUnownedAuthoring(gatedFloor, new Set(), undefined) as GameFloorConfig, 99)
+    if (!withMod.success || !without.success)
+      throw new Error(
+        `did not carve: ${JSON.stringify((!withMod.success && withMod.reasons) || (!without.success && without.reasons))}`
+      )
+
+    expect(dirsOf(without.grid)).toEqual(dirsOf(withMod.grid))
+  })
+})
+
 // allFamilyMeta's resolveEncounterMeta answers out of the families the REGISTERED mods contribute, so
 // with topology out of that list its two families are simply not in the catalogue. This is that same
 // id-then-tag lookup over a catalogue topology has left — the resolver the generator would inject.

@@ -336,7 +336,7 @@ export const findStrandingLocks = (
  * them a walk.
  *
  * Read off `switches.min` rather than `max`: a junction `forks` reserves plus a switch that must fill
- * one stands a mechanism every time, and so does a lever, while `max` is only what the carve may go up
+ * one stands a mechanism every time, and so does a lever and a control, while `max` is only what the carve may go up
  * to. `floorLock` returns nothing for a floor with no mechanism cell on it, so this list — not the
  * floor count — is what the sweep's reach is measured against.
  */
@@ -346,7 +346,11 @@ export const floorsOwingALock = (configs: Record<string, SiteConfig[]>): FloorRe
     sites.forEach((site, siteIdx) =>
       site.forEach((floor, floorIndex) => {
         const junctions = (floor.forks ?? []).reduce((sum, fork) => sum + fork.count, 0)
-        if (Math.min(floor.switches?.min ?? 0, junctions) > 0 || (floor.handles?.length ?? 0) > 0)
+        if (
+          Math.min(floor.switches?.min ?? 0, junctions) > 0 ||
+          (floor.handles?.length ?? 0) > 0 ||
+          (floor.controls?.length ?? 0) > 0
+        )
           owed.push({ journeyId, levelNr: siteIdx + 1, floorIndex })
       })
     )

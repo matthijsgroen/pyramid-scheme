@@ -311,3 +311,35 @@ describe("regionLayout constraint", () => {
     expect(rule.constraints.regionLayout!.out).toBe("vault")
   })
 })
+
+// ── Authored gate on a connection (regions-and-containers slice 5, task 7) ───
+
+describe("obstacles/controls constraint", () => {
+  it("carries an authored gate and the control that opens it onto the pyramid they were authored for", () => {
+    const obstacles = [
+      {
+        id: "vaultDoor",
+        kind: "gate" as const,
+        at: { on: "connection" as const, between: ["hall", "vault"] as const },
+      },
+    ]
+    const controls = [
+      {
+        id: "s1",
+        in: "mouth",
+        states: ["left", "right"],
+        initial: "right",
+        returnsToInitial: true,
+        opens: { right: ["vaultDoor"] },
+      },
+    ]
+
+    const rule = tier("starter").set({ obstacles, controls })
+
+    // Both whole, not a representative field: the obstacle's nested `at` and the control's nested
+    // `opens` record are exactly the two shapes serializer.ts cannot reach through its generic
+    // object emitter (see serializer.spec.ts) — the same reason they are worth asserting in full here.
+    expect(rule.constraints.obstacles).toEqual(obstacles)
+    expect(rule.constraints.controls).toEqual(controls)
+  })
+})

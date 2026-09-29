@@ -69,4 +69,4 @@ export const DEV_JOURNEY_ID = "dev_topology"
 // `tier` is wizard so nothing auto-gates a way on to the next tier (there is none); the tier each
 // floor is actually BUILT at is its own authored difficulty (spec/dev.ts). `pathPuzzles` is 0 for
 // the reason spec/dev.ts gives: a bench stands its mechanic at the entrance, not behind solved rooms.
-export const DEV_JOURNEYS: JourneyDef[] = [{ id: DEV_JOURNEY_ID, tier: "wizard", levelCount: 7, pathPuzzles: 0 }]
+export const DEV_JOURNEYS: JourneyDef[] = [{ id: DEV_JOURNEY_ID, tier: "wizard", levelCount: 8, pathPuzzles: 0 }]

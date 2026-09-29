@@ -50,4 +50,8 @@ export const dropUnownedAuthoring = (
   ...floor,
   switches: keepSwitches(floor.switches, resolveEncounter),
   sideSections: floor.sideSections.map(dropIfUnowned(registeredModIds)),
+  // WHOLLY THE TOPOLOGY MOD'S. Unlike a section's gate, which may be core's when it names no owner,
+  // an obstacle and a control exist only because the mod does — so both drop together and the regions
+  // carve with every connection open, which is this mod's acceptance gate (docs/mods/TARGET.md).
+  ...(registeredModIds.has("topology") ? {} : { obstacles: undefined, controls: undefined }),
 })

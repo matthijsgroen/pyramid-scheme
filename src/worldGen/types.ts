@@ -1,5 +1,6 @@
 import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
 import type { RegionGraph } from "../game/regions"
+import type { Control, Obstacle } from "@/game/obstacles"
 
 export type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
 // Authored puzzle-count progression across a journey's pyramids: `start` on pyramid 1,
@@ -120,6 +121,11 @@ export type FloorConfig = {
    * so what the player meets there decides which one opens — mirrors game/siteTypes.ts's
    * FloorConfig.switches. */
   switches?: { encounter: string | string[]; min: number; max: number }
+  /** WHAT STANDS BETWEEN THE FLOOR'S REGIONS, and what decides whether it does — mirrors
+   * game/siteTypes.ts's FloorConfig.obstacles/.controls (see game/obstacles.ts). Both drop when the
+   * topology mod is not registered. */
+  obstacles?: Obstacle[]
+  controls?: Control[]
 }
 
 export type SiteConfig = FloorConfig[]

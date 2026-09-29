@@ -97,6 +97,8 @@ export type BuildFloorOptions = {
   oneWays?: FloorConfig["oneWays"]
   handles?: FloorConfig["handles"]
   regionLayout?: FloorConfig["regionLayout"]
+  obstacles?: FloorConfig["obstacles"]
+  controls?: FloorConfig["controls"]
   switches?: FloorConfig["switches"]
   corridorStraightness?: number
   packing?: number
@@ -137,6 +139,8 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.oneWays ? { oneWays: opts.oneWays } : {}),
   ...(opts.handles ? { handles: opts.handles } : {}),
   ...(opts.regionLayout ? { regionLayout: opts.regionLayout } : {}),
+  ...(opts.obstacles ? { obstacles: opts.obstacles } : {}),
+  ...(opts.controls ? { controls: opts.controls } : {}),
   ...(opts.switches ? { switches: opts.switches } : {}),
 })
 
@@ -282,6 +286,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           oneWays: fc.oneWays ?? constraint.oneWays,
           handles: fc.handles ?? constraint.handles,
           regionLayout: fc.regionLayout ?? constraint.regionLayout,
+          obstacles: fc.obstacles ?? constraint.obstacles,
+          controls: fc.controls ?? constraint.controls,
           switches: fc.switches ?? constraint.switches,
           corridorStraightness: floorStraightness,
           packing: floorPacking,
@@ -335,6 +341,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             oneWays: constraint.oneWays,
             handles: constraint.handles,
             regionLayout: constraint.regionLayout,
+            obstacles: constraint.obstacles,
+            controls: constraint.controls,
             switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
@@ -388,6 +396,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           oneWays: constraint.oneWays,
           handles: constraint.handles,
           regionLayout: constraint.regionLayout,
+          obstacles: constraint.obstacles,
+          controls: constraint.controls,
           switches: constraint.switches,
           encounterArgs: constraint.encounterArgs,
           theme: constraint.theme,
@@ -478,6 +488,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             oneWays: constraint.oneWays,
             handles: constraint.handles,
             regionLayout: constraint.regionLayout,
+            obstacles: constraint.obstacles,
+            controls: constraint.controls,
             switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
@@ -552,6 +564,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     oneWays: constraint.oneWays,
     handles: constraint.handles,
     regionLayout: constraint.regionLayout,
+    obstacles: constraint.obstacles,
+    controls: constraint.controls,
     switches: constraint.switches,
     encounterArgs: constraint.encounterArgs,
     theme: constraint.theme,

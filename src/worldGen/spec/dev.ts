@@ -115,4 +115,36 @@ export const devRules: Rule[] = [
     ],
     handles: [{ in: "lever", left: ["vault"], right: ["cellar"] }],
   }),
+  // 8 — a gate on a connection. A lever in `mouth` opens the door between `hall` and `vault`; thrown
+  // the other way it shuts again with the player on either side of it. The first obstacle that is not
+  // a section's own entrance — it stands between two REGIONS, which is what a container's boundary is.
+  journey(DEV_JOURNEY_ID).pyramid(8, {
+    difficulty: "master",
+    pathPuzzles: 0,
+    sideSections: [sidePath({ puzzles: 0 })],
+    regionLayout: {
+      regions: [
+        { name: "mouth", appetite: "free" },
+        { name: "hall", appetite: "free" },
+        { name: "vault", appetite: "free" },
+      ],
+      connections: [
+        ["mouth", "hall"],
+        ["hall", "vault"],
+      ],
+      in: "mouth",
+      out: "vault",
+    },
+    obstacles: [{ id: "vaultDoor", kind: "gate", at: { on: "connection", between: ["hall", "vault"] } }],
+    controls: [
+      {
+        id: "s1",
+        in: "mouth",
+        states: ["left", "right"],
+        initial: "right",
+        returnsToInitial: true,
+        opens: { right: ["vaultDoor"] },
+      },
+    ],
+  }),
 ]

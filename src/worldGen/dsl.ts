@@ -1,6 +1,7 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
 import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
 import type { RegionGraph } from "../game/regions"
+import type { Control, Obstacle } from "@/game/obstacles"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { wardKeyDifficulty } from "../data/difficultyLevels"
 
@@ -182,6 +183,12 @@ export type FloorConstraint<TExtra extends string = never> = {
   handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
   /** The coarse layout this floor's regions are named in — see game/regions.ts's RegionGraph. */
   regionLayout?: RegionGraph
+  /** WHAT STANDS BETWEEN THE FLOOR'S REGIONS, named once and referred to by id — the topology mod's,
+   * pointing at `regionLayout` by region name (see game/obstacles.ts). A control names which
+   * obstacles each of its states opens. Both drop when the mod is not registered, and the identical
+   * walls then carve with every connection open. */
+  obstacles?: Obstacle[]
+  controls?: Control[]
   /** A SWITCH: `encounter` stands in a junction `forks` reserved and closes its free ways out, so the
    * player stands in the fork and what is in it decides which way opens. Between `min` and `max` of
    * the reserved junctions get one, and a `min` past what `forks` reserves fails the build.
@@ -314,6 +321,10 @@ export type PyramidConstraint = {
   /** The layout every floor of this site carries, unless a floor names its own — see
    * FloorConstraint.regionLayout. */
   regionLayout?: RegionGraph
+  /** The obstacles/controls standing in that layout on every floor of this site, unless a floor
+   * names its own — see FloorConstraint.obstacles/.controls. */
+  obstacles?: Obstacle[]
+  controls?: Control[]
   /** The switch every floor of this site stands in the junctions `forks` reserved, unless a floor
    * names its own — see FloorConstraint.switches. */
   switches?: { encounter: string | string[]; min: number; max: number }
