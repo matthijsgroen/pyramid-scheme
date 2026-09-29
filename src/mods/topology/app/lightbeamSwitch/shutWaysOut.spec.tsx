@@ -633,17 +633,16 @@ describe("a junction a switch stands in", () => {
     const way = shutWaysOnTheMap()[0]
     await routeTo(container, way)
     expect(at(step(fork(), way, 1))?.type).toBe("corridor")
+    // Landing the light is not a reason to leave — the room this test's own name is about "the next
+    // visit" to still stands the first one open, until the player asks to go.
+    expect(walked.boardOpen).toBe(true)
 
-    // Dismissing the solved board is what hands the room back to core, and what closes it.
-    await act(async () => {
-      vi.advanceTimersByTime(1000)
-    })
-    const banner = Array.from(document.querySelectorAll<HTMLElement>("button")).find(candidate =>
-      candidate.textContent?.includes("ui.puzzleCompleted")
+    const back = Array.from(container.querySelectorAll<HTMLElement>("button")).find(candidate =>
+      candidate.textContent?.includes("ui.backToMap")
     )
-    if (!banner) throw new Error("the board never reported itself solved")
+    if (!back) throw new Error("the board carries no way out of itself")
     await act(async () => {
-      banner.click()
+      back.click()
     })
     await settle()
     expect(walked.boardOpen).toBe(false)

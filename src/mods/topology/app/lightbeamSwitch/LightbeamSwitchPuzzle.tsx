@@ -22,14 +22,23 @@ type Props = {
   exits: RoomCell["exits"]
   /** The way out standing open as the player walks in, from the last time this board was solved. */
   openWayOut?: WayOut
+  /** The player's own mirrors, from the last time this board was left — undefined for a board never
+   * turned. Several arrangements can light the same shrine, so `openWayOut` alone is not enough to put
+   * the board back the way it looked; this is what does. */
+  savedAngles?: readonly MirrorAngle[]
   /**
    * Where the light stands: that way out opens now and the fork's others shut, and `undefined` — the
    * light reaching no shrine at all — shuts every one of them.
    */
   onRoute: (way: WayOut | undefined) => void
+  /** Every turn, with the resulting angles — the durable half of the board's memory (see `savedAngles`). */
+  onAngles: (angles: readonly MirrorAngle[]) => void
+  /**
+   * The player is done looking at this board, whether or not the light is presently on a shrine — there
+   * is no other kind of "solved" here (see the file doc comment). The only thing that calls it is the
+   * shell's own back-to-map control.
+   */
   onSolved: () => void
-  /** Omitted where there is nowhere to go back to — a story, a spec exercising only the routing. */
-  onCancel?: () => void
 }
 
 /**
@@ -67,11 +76,23 @@ const DOOR_PLACE: Record<WayOut, string> = {
  *
  * There is nothing to name before routing, because the routing is the naming. And nothing is won here —
  * the doors are the state of this board, so walking back in and sending the light elsewhere moves which
- * one is open rather than adding a second.
+ * one is open rather than adding a second. That is also why landing the light never ends the visit: the
+ * player standing at a fork with several doors may be routing PAST this one on the way to another, and a
+ * board that threw them out the moment it opened a door would deny them the rest of the fork. `onSolved`
+ * here means only "I am done looking at this board" — the same signal a lever's own back button raises —
+ * and it fires from nowhere but the shell's back-to-map control.
  */
-export const LightbeamSwitchPuzzle: FC<Props> = ({ board, exits, openWayOut, onRoute, onSolved, onCancel }) => {
+export const LightbeamSwitchPuzzle: FC<Props> = ({
+  board,
+  exits,
+  openWayOut,
+  savedAngles,
+  onRoute,
+  onAngles,
+  onSolved,
+}) => {
   const { t } = useTranslation("common")
-  const [state, setState] = usePuzzleState(() => createLightbeamSwitchState(board))
+  const [state, setState] = usePuzzleState(() => createLightbeamSwitchState(board, savedAngles))
   // How the board lay when the player last turned a mirror — the measure of whether that turn has LANDED,
   // which a flag set by the tap is not. The board's state is saved, so it arrives a render behind the tap
   // that changed it, and in that render the board on screen is still the one the player walked in on: for
@@ -82,25 +103,30 @@ export const LightbeamSwitchPuzzle: FC<Props> = ({ board, exits, openWayOut, onR
   const turned = turnedFrom !== undefined && state.angles.some((angle, mirror) => angle !== turnedFrom[mirror])
 
   const lit = litWayOut(board, state)
-  const settled = turned && lit !== undefined
 
   // The doors are the state of this board, so they follow the light: the way it lands on opens the moment
-  // it lands rather than when the banner is dismissed — a player may back out of a solved board and the
-  // way they opened stays open — and a light sent nowhere leaves the fork as the assembler left it, every
-  // way out shut. Only once a turn has landed, because a board still being read out of the save is dark
-  // too, and that darkness would shut the way out the player walked in to find standing open.
+  // it lands, and a light sent nowhere leaves the fork as the assembler left it, every way out shut. Only
+  // once a turn has landed, because a board still being read out of the save is dark too, and that
+  // darkness would shut the way out the player walked in to find standing open.
   useEffect(() => {
     if (lit !== undefined) onRoute(lit)
     else if (turned) onRoute(undefined)
   }, [lit, turned, onRoute])
 
+  // The mirrors themselves, written through on every turn so a visit to any other room in between never
+  // costs the player the arrangement they left — see `savedAngles`.
+  useEffect(() => {
+    onAngles(state.angles)
+  }, [state.angles, onAngles])
+
   const turn = useCallback(
     (mirror: number) => {
-      if (settled) return // the door has swung; nothing may move under it
+      // Never locked, landed or not: the door standing open is not a reason to stop the player trying
+      // for another one, which is the whole point of the board staying up after it lights a shrine.
       setTurnedFrom(state.angles)
       setState(prev => turnSwitchMirror(prev, mirror))
     },
-    [settled, state.angles, setState]
+    [state.angles, setState]
   )
 
   // What the doors say right now: the way the light is on, or — with the board still dark — the way this
@@ -110,9 +136,11 @@ export const LightbeamSwitchPuzzle: FC<Props> = ({ board, exits, openWayOut, onR
 
   return (
     <PuzzleFamilyShell
+      // No `solved` prop: this board raises no completion of its own (see the file doc comment), so the
+      // shell's completed-banner-and-freeze never triggers, and the back-to-map control above is the only
+      // way out — wired to the same handler on both slots because there is only the one signal to give it.
       onSolved={onSolved}
-      onCancel={onCancel ?? (() => {})}
-      solved={settled}
+      onCancel={onSolved}
       onReset={() => setState(createLightbeamSwitchState(board))}
       title={t("lightbeamSwitch.name")}
       goal={t("lightbeamSwitch.goal")}

@@ -1,7 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
-import type { ReactElement } from "react"
-import { act, cleanup, render } from "@testing-library/react"
+import { act, cleanup, render, renderHook } from "@testing-library/react"
 import { getFamilyPlugin, resolveEncounter, type FamilyContext } from "@/app/families/familyRegistry"
 import { useJourneys } from "@/app/state/useJourneys"
 import { classifyForkShape } from "@/game/forkShape"
@@ -16,7 +15,7 @@ import { cellAddress, cellKey } from "@/app/SiteMap/cellIdentity"
 import { encodeEdge } from "@/app/SiteMap/edgeId"
 import { useAssembledFloor } from "@/app/SiteMap/useAssembledFloor"
 import { useEncounter } from "@/app/SiteMap/useEncounter"
-import { PuzzleRoomContext } from "@/mods/core/app/puzzleState"
+import { PuzzleRoomContext, usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useMechanismStates } from "@/app/SiteMap/useMechanismStates"
 import "@/mods/registerModApps"
 
@@ -71,7 +70,14 @@ const { SEED, STOOD_IN_THE_FORK } = (() => {
 })()
 
 /** What the screen is looking at: the floor as the switch has left it, and the room's own board. */
-type Seen = { grid: FloorGrid | null; board?: LightbeamSwitchBoard; ctx?: FamilyContext; enter?: () => void }
+type Seen = {
+  grid: FloorGrid | null
+  board?: LightbeamSwitchBoard
+  ctx?: FamilyContext
+  enter?: () => void
+  /** Whether core still counts the room open — the direct check that landing the light did not close it. */
+  isOpen?: boolean
+}
 const latest: Seen = { grid: null }
 // Reported through a call rather than written to from the render: a component may not reach out and
 // assign to what lives around it, and a spec's harness is no exception.
@@ -406,6 +412,7 @@ const Visited = () => {
   report({
     grid,
     enter: fork ? () => encounter.open(fork.at, true) : undefined,
+    isOpen: encounter.isOpen,
     ...(encounter.ctx ? { ctx: encounter.ctx, board: encounter.puzzle as LightbeamSwitchBoard } : {}),
   })
   const Component = encounter.family?.Component
@@ -433,7 +440,9 @@ const Visited = () => {
 const mirrorAngles = (container: HTMLElement): string[] =>
   mirrorCells(container).map(cell => cell.querySelector("g")?.getAttribute("style") ?? "")
 
-/** The "puzzle completed" banner, if the shell is showing one. */
+/** The "puzzle completed" banner, if the shell is showing one — it never is, since landing the light
+ * raises no completion of its own (see LightbeamSwitchPuzzle's own doc comment). Kept as a helper only so
+ * a regression that brought the banner back would say so by name rather than by an unrelated failure. */
 const solvedBanner = (): HTMLElement | undefined =>
   Array.from(document.querySelectorAll<HTMLElement>("button")).find(candidate =>
     candidate.textContent?.includes("ui.puzzleCompleted")
@@ -446,33 +455,31 @@ const litShrine = (container: HTMLElement): WayOut | undefined =>
     return shrine?.getAttribute("class")?.includes("fill-amber-200") ?? false
   })
 
+/** The board's one way out of itself, whatever the light is doing — clicking it is the only thing that
+ * ever closes this room now (see LightbeamSwitchPuzzle's own doc comment on what `onSolved` means here). */
+const leave = async (container: HTMLElement) => {
+  const back = Array.from(container.querySelectorAll<HTMLElement>("button")).find(candidate =>
+    candidate.textContent?.includes("ui.backToMap")
+  )
+  if (!back) throw new Error("the board carries no way out of itself")
+  await act(async () => {
+    back.click()
+  })
+  await settle()
+  await settle()
+}
+
 describe("the board of a switch walked back into", () => {
   beforeEach(async () => {
     await standingInThisPyramid()
-    vi.useFakeTimers({ shouldAdvanceTime: true })
   })
   afterEach(() => {
     cleanup()
-    vi.useRealTimers()
   })
 
   const walkIn = async () => {
     await act(async () => {
       latest.enter?.()
-    })
-    await settle()
-    await settle()
-  }
-
-  /** Dismissing the solved board is what hands the room back to core, and what closes it. */
-  const leaveThroughTheBanner = async () => {
-    await act(async () => {
-      vi.advanceTimersByTime(1000)
-    })
-    const banner = solvedBanner()
-    if (!banner) throw new Error("the board never reported itself solved")
-    await act(async () => {
-      banner.click()
     })
     await settle()
     await settle()
@@ -489,7 +496,7 @@ describe("the board of a switch walked back into", () => {
     const routed = mirrorAngles(container)
     // Without this the comparison below could be two readings of nothing agreeing with each other.
     expect(routed).not.toEqual(dark)
-    await leaveThroughTheBanner()
+    await leave(container)
     expect(doors(places)[ways[0]]).toBe("open")
 
     rerender(<Visited key="walked back in" />)
@@ -507,7 +514,7 @@ describe("the board of a switch walked back into", () => {
     const places = doorPlaces()
     const ways = [...wayOutIds().keys()]
     await routeTo(container, ways[0])
-    await leaveThroughTheBanner()
+    await leave(container)
 
     rerender(<Visited key="walked back in" />)
     await settle()
@@ -518,19 +525,32 @@ describe("the board of a switch walked back into", () => {
     expect(doors(places)).toEqual(Object.fromEntries(ways.map(way => [way, way === ways[2] ? "open" : "shut"])))
   })
 
-  /** A switch that stands open, walked back into and broken: the board lies lit, and the first turn takes
-   * the light off the shrine it was resting on. */
-  const breakTheBeam = async (
-    container: HTMLElement,
-    rerender: (ui: ReactElement) => void,
-    way: WayOut
-  ): Promise<MirrorAngle[]> => {
-    await walkIn()
-    await routeTo(container, way)
-    await leaveThroughTheBanner()
-    rerender(<Visited key="walked back in" />)
+  /** THE RULING FINDING 1 IS ABOUT. Landing the light is not a reason to leave: the board stays up, the
+   * door it opened stands beside it, and the player is free to route another door instead — in the same
+   * visit, without walking out and back in first. */
+  it("stays open and keeps working once the light lands on a shrine", async () => {
+    const { container } = render(<Visited />)
     await settle()
     await walkIn()
+    const ways = [...wayOutIds().keys()]
+
+    await routeTo(container, ways[0])
+    expect(litShrine(container)).toBe(ways[0])
+    expect(latest.isOpen).toBe(true)
+    expect(solvedBanner()).toBeUndefined()
+    expect(container.querySelector("[inert]")).toBeNull()
+
+    // Routed straight on to a different door, no leaving in between.
+    await routeTo(container, ways[2], angledFor(ways[0]))
+    expect(litShrine(container)).toBe(ways[2])
+    expect(solvedBanner()).toBeUndefined()
+  })
+
+  /** A switch routed to `way`, then broken: the first turn that takes the light off the shrine it was
+   * resting on — still the same visit, since landing it never closes the board. */
+  const breakTheBeam = async (container: HTMLElement, way: WayOut): Promise<MirrorAngle[]> => {
+    await walkIn()
+    await routeTo(container, way)
     if (litShrine(container) !== way) throw new Error("the board was not standing lit to be broken")
     const lying = angledFor(way)
     const mirror = board().grid.mirrors.findIndex(
@@ -545,45 +565,60 @@ describe("the board of a switch walked back into", () => {
     return turnSwitchMirror({ angles: lying }, mirror).angles
   }
 
-  it("is not reported solved once a turn leaves the light on no shrine", async () => {
-    const { container, rerender } = render(<Visited />)
-    await settle()
-    await breakTheBeam(container, rerender, [...wayOutIds().keys()][0])
-
-    await act(async () => {
-      vi.advanceTimersByTime(2000)
-    })
-    expect(solvedBanner()).toBeUndefined()
-  })
-
   it("keeps its mirrors movable once a turn leaves the light on no shrine", async () => {
-    const { container, rerender } = render(<Visited />)
+    const { container } = render(<Visited />)
     await settle()
     const ways = [...wayOutIds().keys()]
-    const dark = await breakTheBeam(container, rerender, ways[0])
+    const dark = await breakTheBeam(container, ways[0])
 
-    // Nothing on an unfinished board is out of use: the shell makes the board inert the moment it counts
-    // one finished, and that is what a player meets before any tap of theirs is refused.
+    // Nothing on this board is ever out of use: it raises no completed state for the shell to freeze it
+    // over, lit or dark alike.
     expect(container.querySelector("[inert]")).toBeNull()
     await routeTo(container, ways[2], dark)
     expect(litShrine(container)).toBe(ways[2])
   })
 
   it("leaves every way out shut when the player closes a board left dark", async () => {
-    const { container, rerender } = render(<Visited />)
+    const { container } = render(<Visited />)
     await settle()
     const places = doorPlaces()
     const ways = [...wayOutIds().keys()]
-    await breakTheBeam(container, rerender, ways[0])
+    await breakTheBeam(container, ways[0])
 
-    const close = Array.from(container.querySelectorAll<HTMLElement>("button")).find(candidate =>
-      candidate.textContent?.includes("ui.backToMap")
-    )
-    if (!close) throw new Error("the board carries no way out of itself")
-    await act(async () => {
-      close.click()
+    await leave(container)
+    expect(doors(places)).toEqual(Object.fromEntries(ways.map(way => [way, "shut"])))
+  })
+
+  /** THE RULING FINDING 2 IS ABOUT. `usePuzzleState` holds only one room's progress at a time (see its own
+   * doc comment), so any OTHER re-enterable board played in between overwrites the slot this one was
+   * using — a real floor's ordinary traffic, not an edge case. The switch's own mirrors survive it because
+   * they are also written to the durable per-room record `plugin.tsx` keeps (see LightbeamSwitchPuzzle's
+   * `savedAngles`/`onAngles`), which that other board never touches. */
+  it("keeps the mirrors it was left at even after another board has used the shared in-progress slot", async () => {
+    const { container, rerender } = render(<Visited />)
+    await settle()
+    await walkIn()
+    const ways = [...wayOutIds().keys()]
+    await routeTo(container, ways[0])
+    const routed = mirrorAngles(container)
+    await leave(container)
+
+    // Some other re-enterable board is played in the meantime, in a room of its own — enough to make it
+    // touch the single shared "in-progress board" slot `usePuzzleState` keeps.
+    const other = renderHook(() => usePuzzleState(() => ({ touched: false })), {
+      wrapper: ({ children }) => <PuzzleRoomContext value="a different room entirely">{children}</PuzzleRoomContext>,
     })
     await settle()
-    expect(doors(places)).toEqual(Object.fromEntries(ways.map(way => [way, "shut"])))
+    await act(async () => {
+      other.result.current[1]({ touched: true })
+    })
+    other.unmount()
+
+    rerender(<Visited key="walked back in" />)
+    await settle()
+    await walkIn()
+
+    expect(mirrorAngles(container)).toEqual(routed)
+    expect(litShrine(container)).toBe(ways[0])
   })
 })

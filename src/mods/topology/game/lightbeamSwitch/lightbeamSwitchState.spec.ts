@@ -5,6 +5,8 @@ import { routesTo } from "../shrineBeam/shrineBeam"
 import { generateLightbeamSwitch, type LightbeamSwitchBoard } from "./generateLightbeamSwitch"
 import {
   createLightbeamSwitchState,
+  decodeLightbeamAngles,
+  encodeLightbeamAngles,
   isLightbeamSwitchSolved,
   litWayOut,
   turnSwitchMirror,
@@ -57,6 +59,41 @@ describe("a switch board as the room opens it", () => {
   it("takes its mirrors from the board rather than a copy that could drift", () => {
     for (const shape of SHAPES)
       expect(createLightbeamSwitchState(boardFor(shape)).angles).toEqual(boardFor(shape).grid.initial)
+  })
+})
+
+describe("a switch board reopened on a saved routing", () => {
+  it("stands the player's own angles rather than the board's own initial ones", () => {
+    for (const shape of SHAPES) {
+      const board = boardFor(shape)
+      const saved = routedTo(board, 0).angles
+      expect(createLightbeamSwitchState(board, saved).angles, shape).toEqual(saved)
+    }
+  })
+
+  it("falls back to the board's own initial angles for a record with the wrong mirror count", () => {
+    const board = boardFor("adjacent")
+    const wrongCount = [...board.grid.initial, ...board.grid.initial]
+    expect(createLightbeamSwitchState(board, wrongCount).angles).toEqual(board.grid.initial)
+  })
+
+  it("falls back to the board's own initial angles for no saved record at all", () => {
+    const board = boardFor("adjacent")
+    expect(createLightbeamSwitchState(board, undefined).angles).toEqual(board.grid.initial)
+  })
+})
+
+describe("encoding the player's own angles for the durable per-room record", () => {
+  it("round-trips every angle, in order, for every shape", () => {
+    for (const shape of SHAPES) {
+      const board = boardFor(shape)
+      const routed = routedTo(board, 0).angles
+      expect(decodeLightbeamAngles(encodeLightbeamAngles(routed))).toEqual(routed)
+    }
+  })
+
+  it("reads back undefined for a record that isn't a list of finite angles", () => {
+    for (const bad of ["", "not-a-number", "2,not-a-number,6"]) expect(decodeLightbeamAngles(bad)).toBeUndefined()
   })
 })
 

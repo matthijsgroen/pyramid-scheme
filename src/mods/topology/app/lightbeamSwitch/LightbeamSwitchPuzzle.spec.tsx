@@ -98,6 +98,7 @@ const renderRoom = (shape: string, openWayOut?: WayOut, onRoute = vi.fn()) => {
       exits={fork.exits}
       openWayOut={openWayOut}
       onRoute={onRoute}
+      onAngles={vi.fn()}
       onSolved={vi.fn()}
     />
   )

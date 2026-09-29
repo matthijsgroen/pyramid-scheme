@@ -12,9 +12,32 @@ import type { LightbeamSwitchBoard } from "./generateLightbeamSwitch"
  */
 export type LightbeamSwitchState = { angles: MirrorAngle[] }
 
-export const createLightbeamSwitchState = (board: LightbeamSwitchBoard): LightbeamSwitchState => ({
-  angles: [...board.grid.initial],
+/**
+ * Opens on `savedAngles` — the player's own mirrors, read back from the durable per-room record
+ * (plugin.tsx) — and falls back to the board's own initial angles for a board never turned, or a saved
+ * count that no longer matches this board's own mirrors.
+ */
+export const createLightbeamSwitchState = (
+  board: LightbeamSwitchBoard,
+  savedAngles?: readonly MirrorAngle[]
+): LightbeamSwitchState => ({
+  angles: savedAngles && savedAngles.length === board.grid.mirrors.length ? [...savedAngles] : [...board.grid.initial],
 })
+
+/**
+ * How the player's own angles are written to that record — one field per mirror, in board order, so a
+ * save reopens on the exact arrangement they left rather than any arrangement that lights the same door.
+ */
+export const encodeLightbeamAngles = (angles: readonly MirrorAngle[]): string => angles.join(",")
+
+/** The inverse. Undefined for anything that doesn't parse as one finite angle per mirror — a record
+ * from a build this board's shape no longer matches falls back to the board's own initial angles rather
+ * than seed a state a real tap could never have produced. */
+export const decodeLightbeamAngles = (encoded: string): MirrorAngle[] | undefined => {
+  if (encoded === "") return undefined
+  const angles = encoded.split(",").map(Number)
+  return angles.every(Number.isFinite) ? angles : undefined
+}
 
 /** A mirror lies one of two ways, so a tap is its own undo. */
 export const turnSwitchMirror = produce((state: LightbeamSwitchState, mirror: number) => {
