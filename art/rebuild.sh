@@ -1192,6 +1192,15 @@ scaffold pit --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/pit.webp --tier=expert --name=pit --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 
+# The one-way DROP, riding EAST — `prim_pit --contents=drop`, a launch rather than a ladder: a flight of
+# steps onto a block and a tall post at the near lip, a short post at the far one, a taut rope run head to
+# head between them (`docs/authored-locks-roadmap.md`, "A one-way is a place"). One asset mirrored
+# left-right for `dropWest`; `dropNorth`/`dropSouth` are still owed and each need their own render, a
+# vertical flip being the wrong transform for this projection's up-facing top rule.
+scaffold pit --contents=drop --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/expert/dropEast.webp --tier=expert --name=dropEast --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+
 # His CEDAR RELIC BOX, cord-bound with the seal unbroken. No grading flags at all.
 #
 # +76 WARMTH, the highest anything of his measures, and left alone for the jar rack's reason one prop

@@ -2641,54 +2641,6 @@ cannot draw it: under this projection a down-facing face turns away from the cam
 underside is a back face and is never rendered. It is therefore the painter's job, and these three
 prompts ask for it outright.
 
-### `expert/dropEast` — a launch at the left lip, riding right
-
-**Attach:**
-
-1. `~/tile-previews/dropEast-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a FISSURE torn across a passage floor, seen from above. The dark quadrilateral is the
-OPENING — a hole in the floor, not a wall, not a doorway and not a niche, and nothing stands inside it
-that a person could stand on. Just under its far rim two courses of rough CUT STONE show, the shaft's
-own lining, taking what little light reaches down; below those courses the shaft goes black and stays
-black, and nothing is drawn down there at all. At the LEFT edge of the opening a short flight of two
-STEPS climbs onto a low stone BLOCK set against the rim, and a tall timber POST stands on that block.
-At the RIGHT edge a second timber POST stands on bare paving, barely knee high. A taut ROPE runs from
-the head of the tall post, across the opening and downhill, to the head of the short one. The loose
-blocks scattered at the opening's edge are broken basalt, shaken free where the floor gave way. There
-is no rim, no coping and no frame around the opening: the crack meets bare paving on every side.
-
-Basalt worn dark and faintly polished where feet have crossed near it, with a thin crust of pale natron
-dust settled into the crack's edges and over the fallen blocks. The posts are old timber, split and
-grey. The rope is bleached hemp, pale against the dark stone.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the broken
-paving along the lower rim of the opening nearest the viewer, the top of each course of stone in the
-shaft, the head of each post — and everything turned away from it falls into shadow. Keep that caught
-light on the EDGES of the stone; the opening itself stays the darkest thing in the picture, and no ledge,
-step or floor appears inside it.
-
-The shadow at the posts' feet is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold pit --contents=drop --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
-yarn import-tile art/masters/props/expert/dropEast.webp --tier=expert --name=dropEast --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
-```
-
 ### `expert/dropNorth` — a launch at the near corner, riding away
 
 **Attach:**
