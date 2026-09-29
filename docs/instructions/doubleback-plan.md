@@ -75,6 +75,8 @@
 
 **The shape:** a one-way becomes an obstacle kind — `kind: "oneWay"`, `at: { on: "connection", between: [a, b] }` — which is what the two exhaustively-checked unions were built for. That forces `Control.opens` to grow from "which obstacles stand open" to "what condition each obstacle is in", because a direction is not open-or-shut. **Keep the existing section-addressed `oneWays` working** — the develop journey's pyramid 3 authors one and must not move.
 
+**The placement constraint is harder than today's one-ways.** A one-way is a grid edge between two ADJACENT cells. The drops shipped so far join sections that already neighbour; `s1Chamber → leftLower` joins the far end of one side branch to the far end of another, so the carve has to bring two separate side paths within a node of each other. Treat that as a carve constraint like `forks` — the attempt is re-seeded when no pair of adjacent cells spans the two regions, and the floor fails by name after the budget, never silently placing the drop somewhere else.
+
 **Verify:** a region-to-region drop carves as a directed passage and reaches `LockSpec.oneWays`; `floorLock` derives it from the assembled grid unchanged. The old section-addressed form still carves identically — carve baseline empty.
 
 ---
