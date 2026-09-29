@@ -73,7 +73,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const foundCorridors = useFoundCorridors(journeys, journeyId)
   const mechanismStates = useMechanismStates(journeys, journeyId)
 
-  const { grid, explorerPos, hiddenSections, junctionSections } = useAssembledFloor(
+  const { grid, explorerPos, hiddenSections, junctionSections, openGateKeys } = useAssembledFloor(
     journeyId,
     floorConfig,
     seed,
@@ -125,12 +125,17 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   // Keys the player already holds for THIS floor's gates: this floor's own completed tomb-key
   // treasures, union'd with the ward keys owned entering the site (progression's global
-  // tombKeyIds, above). Gating is soft, so this union is purely a "is this gate satisfied" read,
-  // for the gate family's own precondition and the map's locked/unlocked gate coloring.
+  // tombKeyIds, above), union'd with the gate keys this floor's own mechanisms currently hold open.
+  // Gating is soft, so this union is purely a "is this gate satisfied" read, for the gate family's
+  // own precondition, the map's locked/unlocked gate coloring and the key ring below.
   //
-  // Every key in it is one the floor or the save already holds; nothing is minted here. A mechanic
-  // that changes what is passable — a switch's ways out — records that as floor state instead.
-  const ownedKeys = useMemo(() => new Set([...(grid ? getOwnedKeys(grid) : []), ...wardKeys]), [grid, wardKeys])
+  // A thrown lever is "held" in exactly this sense — the player may pass what it opens now — but it
+  // mints nothing a chest could also hold: `openGateKeys` carries no colour (siteAssembler never sets
+  // one on an authored gate), so the union changes what is passable without adding a key to go find.
+  const ownedKeys = useMemo(
+    () => new Set([...(grid ? getOwnedKeys(grid) : []), ...wardKeys, ...openGateKeys]),
+    [grid, wardKeys, openGateKeys]
+  )
 
   // What the HUD key ring shows: this floor's coloured keys in hand, and the colours of doors the
   // player has already seen here and can't open yet (fogged ones stay secret — see floorKeys.ts).

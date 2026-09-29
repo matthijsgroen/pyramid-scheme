@@ -97,6 +97,25 @@ describe(floorKeyRing, () => {
     expect(floorKeyRing(grid, new Set(["k1", "k2", "k3"])).held).toEqual(["blue", "red", "purple"])
   })
 
+  // A mechanism-opened gate (siteAssembler's obstacle gates, or an old-style handle gate) is
+  // authored: no chest on the floor grows its key, so it carries no colour, and the union that makes
+  // it "owned" (SiteMapScreen.tsx) must not make it appear as something to hold or hunt for.
+  it("shows no colour for a mechanism-opened gate, held or needed", () => {
+    const grid = gridOf([
+      {
+        type: "room",
+        roomType: "encounter",
+        dirs: noDirs,
+        state: "reachable",
+        gateVariant: "floor-key",
+        requiredKeyId: "obstacle:test#0#0:vaultDoor",
+        keyIsAuthored: true,
+      },
+    ])
+    expect(floorKeyRing(grid, new Set(["obstacle:test#0#0:vaultDoor"]))).toEqual({ held: [], needed: [] })
+    expect(floorKeyRing(grid, new Set())).toEqual({ held: [], needed: [] })
+  })
+
   it("a treasure chest with no key colour is not a key host", () => {
     const grid = gridOf([
       {

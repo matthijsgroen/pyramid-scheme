@@ -320,6 +320,13 @@ export const useAssembledFloor = (
   hiddenJunctions: ReadonlySet<string>
   hiddenSections: ReadonlySet<string>
   junctionSections: ReadonlyMap<string, ReadonlySet<string>>
+  /** The gate keys the floor's own mechanisms currently hold open — passed back out so a caller can
+   * fold them into what it treats as "owned" (a mechanism a player has thrown IS a key they hold, for
+   * every soft gate that reads that word: the key-gate family's own precondition, the map's
+   * locked/unlocked tint, the HUD key ring). Recomputed fresh from the current mechanism positions
+   * every render, so a lever thrown back shuts a gate this set stops naming just as readily as it
+   * opened one. */
+  openGateKeys: ReadonlySet<string>
 } => {
   const baseGrid = useMemo(() => {
     const result = assembleFloor(journeyId, floorConfig, seed + currentFloor, resolveEncounter, {
@@ -397,5 +404,5 @@ export const useAssembledFloor = (
     return at
   }, [grid, positionKey, currentFloor])
 
-  return { grid, explorerPos, hiddenJunctions, hiddenSections, junctionSections }
+  return { grid, explorerPos, hiddenJunctions, hiddenSections, junctionSections, openGateKeys }
 }

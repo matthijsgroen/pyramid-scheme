@@ -40,6 +40,9 @@ const walkableFloor = gridOf([entrance, corridor, exitRoom])
 let grid: FloorGrid = walkableFloor
 // Where the explorer stands when the screen mounts. A carved floor's entrance is not [0,0].
 let explorerPos: readonly [number, number] = [0, 0]
+// What a floor's own mechanisms currently hold open, the way the real hook would compute it from the
+// stored lever/control positions. Swapped per test, same as `grid`.
+let openGateKeys: ReadonlySet<string> = new Set()
 
 vi.mock("./useAssembledFloor", async importOriginal => {
   const actual = await importOriginal<typeof import("./useAssembledFloor")>()
@@ -51,6 +54,7 @@ vi.mock("./useAssembledFloor", async importOriginal => {
       hiddenJunctions: new Set<string>(),
       hiddenSections: new Set<string>(),
       junctionSections: new Map<string, ReadonlySet<string>>(),
+      openGateKeys,
     }),
   }
 })
@@ -135,6 +139,7 @@ describe(SiteMapScreen, () => {
     grid = walkableFloor
     explorerPos = [0, 0]
     heldWardKeys = new Set()
+    openGateKeys = new Set()
     // jsdom doesn't implement scrollTo; SiteMapView calls it to center on explorerPos.
     Element.prototype.scrollTo = vi.fn()
     await clearGameData()
@@ -329,6 +334,66 @@ describe(SiteMapScreen, () => {
       const { queryByTitle } = await renderScreen()
 
       expect(queryByTitle(/keys\./)).toBeNull()
+    })
+  })
+
+  describe("a gate a mechanism opens", () => {
+    // Shaped exactly as siteAssembler builds an obstacle gate on the main path (see
+    // `regionGates.spec.ts`): family always set (it wears bars and is tapped, unlike a switch's own
+    // shut fork exit), no key colour (the key is authored — no chest on this floor grows it), the
+    // requiredKeyId a control's `positions[].gateKeyId` names.
+    const mechanismGate: GridCell = {
+      type: "room",
+      roomType: "encounter",
+      dirs: new Set(["w"]),
+      state: "reachable",
+      family: "key-gate",
+      tags: ["gate"],
+      gateVariant: "floor-key",
+      requiredKeyId: "obstacle:test-journey#0#0:vaultDoor",
+      keyIsAuthored: true,
+    }
+
+    const walkToGate = async (container: HTMLElement) => {
+      fireEvent.click(nodeAt(container, 1))
+      await act(async () => {
+        vi.advanceTimersByTime(60_000)
+      })
+    }
+
+    it("is passable once its mechanism holds it open", async () => {
+      grid = gridOf([entrance, mechanismGate])
+      openGateKeys = new Set(["obstacle:test-journey#0#0:vaultDoor"])
+      const { container, queryByText } = await renderScreen()
+
+      await walkToGate(container)
+
+      expect(queryByText("gate.pass")).not.toBeNull()
+    })
+
+    it("stays shut when its mechanism has not opened it", async () => {
+      grid = gridOf([entrance, mechanismGate])
+      openGateKeys = new Set()
+      const { container, queryByText } = await renderScreen()
+
+      await walkToGate(container)
+
+      expect(queryByText("gate.pass")).toBeNull()
+    })
+
+    it("shuts again once thrown back — the open set never keeps a key past its own render", async () => {
+      grid = gridOf([entrance, mechanismGate])
+      openGateKeys = new Set(["obstacle:test-journey#0#0:vaultDoor"])
+      const opened = await renderScreen()
+      await walkToGate(opened.container)
+      expect(opened.queryByText("gate.pass")).not.toBeNull()
+      cleanup()
+
+      openGateKeys = new Set()
+      const shut = await renderScreen()
+      await walkToGate(shut.container)
+
+      expect(shut.queryByText("gate.pass")).toBeNull()
     })
   })
 
