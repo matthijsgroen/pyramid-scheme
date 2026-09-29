@@ -50,7 +50,7 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
   // one on the main path (one per connection its route crosses), so family alone no longer picks out
   // a single room the way it does for a section's own one chest or shop. Its key already carries the
   // obstacle's AUTHORED id, namespaced "obstacle:<stem>:" the same way a switch's is "switch:"
-  // (gateKeyOf, obstacles.ts) — the prefix is stripped rather than split on the LAST colon, so the id
+  // (gateKeyOf, siteAssembler.ts) — the prefix is stripped rather than split on the LAST colon, so the id
   // comes back exact whatever characters it authors, colons included.
   if (cell.requiredKeyId?.startsWith(OBSTACLE_KEY_PREFIX)) {
     const afterPrefix = cell.requiredKeyId.slice(OBSTACLE_KEY_PREFIX.length)

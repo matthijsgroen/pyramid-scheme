@@ -82,6 +82,27 @@ const gatedFloor = {
   ],
 }
 
+// The same three-region layout, gated twice in sequence (gA on mouth—hall, gB on hall—vault) and
+// driven by one three-state control — `regionGates.spec.ts`'s `twoGatesFloor` shape, repeated here
+// rather than imported so this file's acceptance sweep does not reach across module boundaries for it.
+const twoObstacleFloor = {
+  ...gatedFloor,
+  obstacles: [
+    { id: "gA", kind: "gate" as const, at: { on: "connection" as const, between: ["mouth", "hall"] as const } },
+    { id: "gB", kind: "gate" as const, at: { on: "connection" as const, between: ["hall", "vault"] as const } },
+  ],
+  controls: [
+    {
+      id: "w1",
+      in: "mouth",
+      states: ["n", "e", "s"],
+      initial: "n",
+      returnsToInitial: true,
+      opens: { n: ["gA"], e: ["gB"], s: ["gA", "gB"] },
+    },
+  ],
+}
+
 describe("dropUnownedAuthoring — obstacles and controls", () => {
   it("drops obstacles and controls when the topology mod is not registered", () => {
     const dropped = dropUnownedAuthoring(gatedFloor, new Set(["mosaic"]), undefined)
@@ -100,15 +121,39 @@ describe("dropUnownedAuthoring — obstacles and controls", () => {
   // The acceptance gate for the whole slice: the gate room disappears and nothing else moves. Compared
   // by each cell's `dirs`, never its `type` (`dirsOf`, defined below) — a gate room is a corridor cell
   // turned into a room without a wall having moved, and comparing types would call that a difference.
-  it("carves the identical walls with the mod off", () => {
-    const withMod = assembleFloor("dev", gatedFloor as GameFloorConfig, 99)
-    const without = assembleFloor("dev", dropUnownedAuthoring(gatedFloor, new Set(), undefined) as GameFloorConfig, 99)
-    if (!withMod.success || !without.success)
-      throw new Error(
-        `did not carve: ${JSON.stringify((!withMod.success && withMod.reasons) || (!without.success && without.reasons))}`
-      )
+  //
+  // Swept rather than pinned to one seed, over both a one-obstacle and a two-obstacle shape: a single
+  // seed proves nothing about the other 49, and `mainZoneCandidates`' own comment (siteAssembler.ts)
+  // only ever claimed what a handful of seeds measured, never a guarantee by construction. Where this
+  // sweep still finds a seed that diverges, `divergentSeeds` names it and the assertion holds the CURRENT
+  // count rather than 0 — a red diff here is the finding this sweep exists to keep visible, not something
+  // to narrow the range to avoid. See docs/instructions/regions-slice-5-gates-plan.md, "What this slice
+  // carries to the next one".
+  const divergesAt = (floor: GameFloorConfig): number[] => {
+    const seeds: number[] = []
+    for (let seed = 0; seed < 50; seed++) {
+      const withMod = assembleFloor("dev", floor, seed)
+      const without = assembleFloor("dev", dropUnownedAuthoring(floor, new Set(), undefined) as GameFloorConfig, seed)
+      if (!withMod.success || !without.success) continue // a seed neither build carves proves nothing either way
+      if (dirsOf(without.grid) !== dirsOf(withMod.grid)) seeds.push(seed)
+    }
+    return seeds
+  }
 
-    expect(dirsOf(without.grid)).toEqual(dirsOf(withMod.grid))
+  it("carves the identical walls with the mod off, across seeds 0-49, one obstacle", () => {
+    expect(divergesAt(gatedFloor as GameFloorConfig)).toEqual([])
+  })
+
+  // RED, honestly: measured 24 of 50 seeds (0-49) diverging on this two-obstacle shape — seeds 2, 3, 4,
+  // 7, 9, 14, 17, 19, 24, 25, 28, 30, 31, 32, 36, 37, 40-46, 49 — against 0 of 50 on the one-obstacle
+  // shape above. `it.fails` keeps the finding running and visible (a green suite here would need the
+  // `mainZoneCandidates` identity question this file's own comment now only claims as measured, not
+  // fixing it, which is a design question for whoever owns that sizing, not a one-line patch here — see
+  // docs/instructions/regions-slice-5-gates-plan.md, "What this slice carries to the next one"). If this
+  // ever starts passing for real, `it.fails` turns THAT into a reported failure too, which is the signal
+  // to promote it back to a plain `it` rather than deleting the marker.
+  it.fails("carves the identical walls with the mod off, across seeds 0-49, two obstacles", () => {
+    expect(divergesAt(twoObstacleFloor as GameFloorConfig)).toEqual([])
   })
 })
 

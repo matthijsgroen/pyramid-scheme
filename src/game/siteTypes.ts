@@ -617,6 +617,11 @@ export type AssemblerReason =
   /** No carve put a main-path room inside the region these controls stand in. `ids` are the controls
    * left unseated. */
   | { type: "controlNotSeated"; ids: string[] }
+  /** A control's only candidate node in its region already held a puzzle, and no later main-path node
+   * (before the goal) was free to take that puzzle instead — seating the control there would carve the
+   * puzzle out from under it with nothing said. `ids` are the controls left unseated this way, apart
+   * from `controlNotSeated` (no candidate node at all): a wider path is not what this one is short of. */
+  | { type: "controlPuzzleUndisplaceable"; ids: string[] }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
 

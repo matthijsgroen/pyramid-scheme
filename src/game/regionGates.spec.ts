@@ -43,8 +43,9 @@ const gatedFloor = (): FloorConfig => ({
 })
 
 // Two gates in sequence on the same three-region layout: gA on mouth—hall, gB on hall—vault, one
-// control opening either or both. Module-scoped because both the three-state control test and the
-// two-gated-regions test below need this exact two-obstacle shape.
+// control opening either or both — the three-state control test below's own shape. The two-gated-regions
+// test further down needs a bigger floor to exercise its guard at all (see `bigGatedFloor`'s own comment)
+// and so builds `bigTwoGatesFloor` from that instead, not from this.
 const twoGatesFloor = (): FloorConfig => ({
   ...gatedFloor(),
   obstacles: [
@@ -150,6 +151,16 @@ describe("a control standing in a region", () => {
 
     expect(openDoorsFor(grid, 0, new Map())).toEqual(new Set([GATE_KEY]))
   })
+
+  // A mark is the only thing on the floor that says which lever drives which door (mark.ts) — without
+  // one, a control's own room and the gate it opens read as unrelated furniture.
+  it("wears a mark, and the gate it opens wears the same one", () => {
+    const grid = carve(gatedFloor())
+    const gate = rooms(grid).find(room => room.requiredKeyId === GATE_KEY)!
+
+    expect(controlRoom(grid).mark).toBeDefined()
+    expect(gate.mark).toEqual(controlRoom(grid).mark)
+  })
 })
 
 // THREE STATES, not two: the authoring is generic, and a wheel is the case this proves is already
@@ -209,6 +220,56 @@ describe("two controls on one floor", () => {
       .sort()
 
     expect(slots).toEqual(["xhandle:s1", "xhandle:s2"])
+  })
+
+  // Two controls, each pairing with its own gate — a mark is only useful if the two pairs read apart.
+  it("wears a distinct mark per control, matching its own gate and not the other's", () => {
+    const grid = carve(twoControls())
+    const [s1, s2] = ["s1", "s2"].map(id =>
+      rooms(grid).find(room => room.mechanism !== undefined && room.mechanismId === id)!
+    )
+    const [gateA, gateB] = ["gA", "gB"].map(id =>
+      rooms(grid).find(room => room.requiredKeyId === `obstacle:test-journey#0#0:${id}`)!
+    )
+
+    expect(s1.mark).toBeDefined()
+    expect(s2.mark).toBeDefined()
+    expect(s1.mark).toEqual(gateA.mark)
+    expect(s2.mark).toEqual(gateB.mark)
+    expect(s1.mark).not.toEqual(s2.mark)
+  })
+
+  // Every seed 0-299 reproduced this against the control search before it preferred a free node over a
+  // content one (swept while fixing it): one control per region left no free main-path node for the
+  // other to take without landing on a node `placedContent` had already spread a puzzle onto, and the
+  // puzzle standing there was silently dropped rather than displaced — `authoredConfig.pathPuzzles: 2`
+  // carved only one main-path puzzle room, with nothing reported. Pinned at `SEED` (99, this file's own
+  // constant) because it is one of the seeds that reproduced it.
+  it("still carves every authored main-path puzzle, none dropped to make room for a control", () => {
+    const grid = carve(twoControls())
+    const mainPuzzles = rooms(grid).filter(
+      room => room.roomType === "encounter" && room.pathIndex !== undefined && room.sectionAddress === "main"
+    )
+
+    expect(mainPuzzles).toHaveLength(2)
+  })
+
+  // THE ORDINAL IS THE ADDRESS, not merely a count: `pathIndex` is what a room's save slot
+  // (`p${pathIndex}`, cellSlot.ts) and its authored `rewards[k]`/`encountersByIndex[k]` are keyed by, so
+  // a control displacing a puzzle to another node must move that puzzle's OWN ordinal with it rather than
+  // renumber from wherever it lands — otherwise puzzle 1's reward would carve onto puzzle 0's room the
+  // moment a control took puzzle 0's node. Distinct rewards per ordinal make a silent swap visible: this
+  // asserts every authored ordinal appears exactly once and wears its OWN reward, not merely that two
+  // rooms exist.
+  it("keeps each puzzle's own reward on its own ordinal when a control displaces one", () => {
+    const grid = carve({ ...twoControls(), rewards: [{ type: "p0" }, { type: "p1" }] })
+    const mainPuzzles = rooms(grid).filter(
+      room => room.roomType === "encounter" && room.pathIndex !== undefined && room.sectionAddress === "main"
+    )
+
+    expect(mainPuzzles.map(room => room.pathIndex).sort()).toEqual([0, 1])
+    expect(mainPuzzles.find(room => room.pathIndex === 0)?.reward).toEqual({ type: "p0" })
+    expect(mainPuzzles.find(room => room.pathIndex === 1)?.reward).toEqual({ type: "p1" })
   })
 })
 

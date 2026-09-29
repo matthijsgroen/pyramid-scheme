@@ -41,7 +41,10 @@ export type Control = {
    * owns. Keys are states, values are obstacle ids. */
   opens: Record<string, string[]>
   /** The family whose room the player taps. Defaults to the handle. The behaviour is `states`; this is
-   * only what stands there. */
+   * only what stands there — and, today, only for whatever THAT family reads off the room (its own
+   * encounter logic), not for what the map DRAWS: the room's tags are still the handle's, so
+   * `shapeKindFor` (nodeKinds.ts) and the lever art render it as a lever regardless of `encounter`. A
+   * control authored with its own encounter taps that family's behaviour but still looks like a lever. */
   encounter?: string
 }
 

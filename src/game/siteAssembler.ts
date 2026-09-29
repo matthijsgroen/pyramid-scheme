@@ -753,9 +753,12 @@ export const assembleFloor = (
     })
   const handleGateKeyByAddress = new Map<string, string>()
   const leverByAddress = new Map<string, MechanismRecord>()
-  // THE PAIR BOTH ENDS WEAR, by the gate key that already names one end: a lever's room is found again
-  // through the keys its own positions carry, so nothing has to re-derive which section a mark is for.
-  const markByHandleGateKey = new Map<string, Mark>()
+  // THE PAIR BOTH ENDS WEAR, by the gate key that already names one end: a mechanism's room is found
+  // again through the keys its own positions carry, so nothing has to re-derive which section or region
+  // a mark is for. Populated here for handles and below (after `controlRecords`) for controls — one map,
+  // read by the single pass over the finished grid that paints marks onto both ends (near the end of
+  // this function).
+  const markByGateKey = new Map<string, Mark>()
   for (const [n, handle] of (authoredConfig.handles ?? []).entries()) {
     const refuse = (address: string): AssemblerFailure => ({
       success: false,
@@ -793,7 +796,7 @@ export const assembleFloor = (
           return refuse(driven)
         const gateKeyId = `${handleStem(n)}:${driven}`
         handleGateKeyByAddress.set(driven, gateKeyId)
-        markByHandleGateKey.set(gateKeyId, markFor(n))
+        markByGateKey.set(gateKeyId, markFor(n))
         opens[side].push(driven)
       }
     }
@@ -820,6 +823,18 @@ export const assembleFloor = (
     control,
     record: compileMechanism(control, gateKeyOf),
   }))
+  // A CONTROL AND EVERY OBSTACLE IT OPENS WEAR ONE MARK, so the map reads "this lever, these doors" as
+  // one pair the same way a handle's does — derived from the AUTHORED obstacle id(s) it drives, sorted
+  // and joined so the seed is the same regardless of `opens`' state order, and stable across a re-carve
+  // (never from `controlRecords`' own ORDINAL: an ordinal is the defect a handle's mark still has, see
+  // `markFor(n)` above — inserting a control must not reshuffle every glyph after it). A control that
+  // opens nothing in any state names no obstacle to pair with, so it gets no mark.
+  for (const { control, record } of controlRecords) {
+    const drivenIds = [...new Set(Object.values(control.opens).flat())].sort()
+    if (drivenIds.length === 0) continue
+    const mark = markFor(hashString(drivenIds.join("|")))
+    for (const { gateKeyId } of record.positions) markByGateKey.set(gateKeyId, mark)
+  }
 
   // From here the floor is read with the handles' gates already on it, so every pass that sizes a
   // chain, isolates a section or writes a gate room meets one gate rule rather than two.
@@ -1055,9 +1070,12 @@ export const assembleFloor = (
   // same reason: the path lengthens across the attempt budget, so what one attempt cannot seat a
   // later one may.
   let gateSeamMissing: string[] | undefined
-  // The first attempt's controls no free content node stood in their region, kept the same way and
+  // The first attempt's controls no main-path node stood in their region at all, kept the same way and
   // for the same reason: `mainPath.length` grows across the attempt budget.
   let controlNotSeated: string[] | undefined
+  // The first attempt's controls whose only candidate node already held a puzzle with no room to move
+  // it, kept the same way — see the seating search below.
+  let controlPuzzleUndisplaceable: string[] | undefined
   // The first attempt's rooms standing where their region's appetite refuses them, kept the same way.
   let regionMismatch: { region: string; kind: ContentKind }[] | undefined
   for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
@@ -1190,60 +1208,113 @@ export const assembleFloor = (
     // walk has to reach it before the doors it owns are worth reaching.
     const leverIndex = leverOnMain ? placedContent[0] : -1
 
-    // A CONTROL STANDS IN A REGION, so its room is the FIRST NODE OF THAT STRETCH — any main-path node,
-    // not only a content-designated one. Deliberately not `placedContent`: content is spread for rhythm
-    // and is not guaranteed to put a node in every region (a short early region can go unspread-into
-    // entirely — measured), while `unseated` above already guarantees every declared region at least
-    // ONE step. Searching the whole path rather than the narrower content set is what makes a control
-    // seatable on the SAME attempt core's own content already succeeds on, whether or not the topology
-    // mod that owns it is even registered — the mod must not cost this floor an extra retry the mod-off
-    // build never has to pay (docs/game-design/regions-and-containers.md's toggle-off gate). First
-    // rather than last: a lever opens what lies further on, so the walk has to reach it before the doors
-    // it owns are worth reaching. Excludes the entrance (index 0, a portal room) and the exit (the last
-    // index, forced to degree-1 below), and `leverIndex` alongside the goal: that node already carries
-    // the main-path HANDLE's room (a different mechanism from a different authoring vocabulary), and
-    // the room-spec write-up below tests `mi === leverIndex` first — a control landing there would
-    // compile successfully and then be silently dropped from the grid, a door nothing ever reports as
-    // unseated.
+    // EACH PUZZLE'S AUTHORED ORDINAL — 0-based, in path order — ASSIGNED ONCE, HERE, before a control
+    // gets any chance to move one of these nodes. `k` is this ordinal's home from here on: it indexes
+    // `config.rewards[k]`/`config.encountersByIndex[k]` below and is handed to `resolveKeyRequirements`
+    // as `pathIndex`, and the room built from it carries `pathIndex: k` onward into its own save address
+    // (`p${k}`, cellSlot.ts) — the key loot, solve state and explored-cell tracking all file under. A
+    // puzzle keeps its ordinal wherever its physical node ends up: the control-seating search below MOVES
+    // an entry of this map when it displaces a puzzle's node, and never rebuilds the map from array
+    // position afterward — rebuilding from position is exactly what would renumber every puzzle after the
+    // one a control displaced, sliding each one's reward, encounter override and save slot onto a
+    // different room even though nothing about THAT room's own content changed.
+    const puzzleRole = new Map<number, number>()
+    placedContent.slice(leverOnMain ? 1 : 0, -1).forEach((idx, k) => puzzleRole.set(idx, k))
+
+    // A CONTROL STANDS IN A REGION, so its room is A NODE OF THAT STRETCH — any main-path node, not only
+    // a content-designated one, because content is spread for rhythm and is not guaranteed to put a node
+    // in every region (a short early region can go unspread-into entirely — measured), while `unseated`
+    // above already guarantees every declared region at least ONE step. Searching the whole path rather
+    // than the narrower content set is what makes a control seatable on the SAME attempt core's own
+    // content already succeeds on, whether or not the topology mod that owns it is even registered — the
+    // mod must not cost this floor an extra retry the mod-off build never has to pay
+    // (docs/game-design/regions-and-containers.md's toggle-off gate).
+    //
+    // A FREE NODE IS PREFERRED OVER A CONTENT ONE: `placedContent` is the puzzles this floor already
+    // authored, each already holding its own AUTHORED ORDINAL in `puzzleRole` above. Seating a control
+    // directly on one of those nodes would either carve the puzzle out from under it with nothing
+    // reported, or — filtering it back out downstream instead — renumber every puzzle after it, sliding
+    // each one's reward, encounter override and save slot onto a different room. Both are the "decide
+    // quietly" the governing rule of this whole area forbids. So a content node is only taken once the
+    // region's free nodes are exhausted, and taking one DISPLACES the puzzle it held forward to the next
+    // free node — moving its `puzzleRole` entry to the new node rather than dropping or renumbering it,
+    // so the puzzle keeps its ordinal wherever it ends up — using the same forward-shift `placedContent`'s
+    // own build above uses. Never past the goal — content only ever stands before it (the pacing
+    // `spreadContentIndices` was chosen for), so the shift's ceiling is `goalIndex`, not the path's end.
+    //
+    // Excludes the entrance (index 0, a portal room) and the exit (the last index, forced to degree-1
+    // below), and `leverIndex` alongside the goal: that node already carries the main-path HANDLE's room
+    // (a different mechanism from a different authoring vocabulary), and the room-spec write-up below
+    // tests `mi === leverIndex` first — a control landing there would compile successfully and then be
+    // silently dropped from the grid, a door nothing ever reports as unseated.
     const controlIndexById = new Map<string, number>()
     const takenByControl = new Set<number>()
+    // A control that reached the content-fallback search at all, whether or not it found room to
+    // displace what it found there — read below to tell "no candidate at all" apart from "a candidate
+    // stood, but nothing had room for the puzzle it held".
+    const sawContentCandidate = new Set<string>()
     for (const { control } of controlRecords) {
+      const inRegion = (mi: number) =>
+        stepRegion[mi] === control.in &&
+        !takenByControl.has(mi) &&
+        mi !== goalIndex &&
+        mi !== leverIndex &&
+        !gateIndices.has(mi)
+
       let index: number | undefined
       for (let mi = 1; mi < mainPath.length - 1; mi++) {
-        if (stepRegion[mi] !== control.in) continue
-        if (takenByControl.has(mi) || mi === goalIndex || mi === leverIndex || gateIndices.has(mi)) continue
-        index = mi
-        break
+        if (inRegion(mi) && !placedContent.includes(mi)) {
+          index = mi
+          break
+        }
       }
+
+      if (index === undefined) {
+        for (let mi = 1; mi < mainPath.length - 1; mi++) {
+          if (!inRegion(mi) || !placedContent.includes(mi)) continue
+          sawContentCandidate.add(control.id)
+          let shifted = mi + 1
+          while (
+            shifted < goalIndex &&
+            (gateIndices.has(shifted) || placedContent.includes(shifted) || takenByControl.has(shifted))
+          )
+            shifted += 1
+          if (shifted >= goalIndex) continue // nowhere to move this one — try the region's next content node
+          placedContent[placedContent.indexOf(mi)] = shifted
+          // The puzzle's ORDINAL moves with it, never recomputed from where it lands: `mi` was one
+          // of `puzzleRole`'s own keys (every non-lever, non-goal member of `placedContent` is), so this
+          // is a move, not an insert — the same puzzle now answers at `shifted` under the same `k`.
+          puzzleRole.set(shifted, puzzleRole.get(mi)!)
+          puzzleRole.delete(mi)
+          index = mi
+          break
+        }
+      }
+
       if (index === undefined) continue
       controlIndexById.set(control.id, index)
       takenByControl.add(index)
     }
-    // A region this attempt gave no free node to at all — unreachable once `unseated` above has passed
-    // for a route-adjacent connection (same reasoning `gateSeamMissing`'s own comment gives), so this is
-    // the honest name for the case the path-shaping work will make real. Retried rather than refused,
-    // for the reason slice 4 measured: `mainPath.length` GROWS across the attempt budget — packing
-    // widens at 8/16/24 — so a refusal decided on attempt 0 refuses layouts its own recovery would have
-    // seated.
+    // Two different shortfalls, reported apart because they call for different fixes. A control this
+    // attempt gave NO candidate node to at all — unreachable once `unseated` above has passed for a
+    // route-adjacent connection (same reasoning `gateSeamMissing`'s own comment gives) — is
+    // `controlNotSeated`, and a wider path (packing widens at 8/16/24) is what rescues it. A control
+    // whose only candidate already held a puzzle with nowhere to move it is `controlPuzzleUndisplaceable`
+    // instead: a wider path helps this one too (more room past the candidate to shift into), so it is
+    // retried the same way, just named for what actually went wrong. Both retried rather than refused,
+    // for the reason slice 4 measured: `mainPath.length` GROWS across the attempt budget.
     if (controlIndexById.size < controlRecords.length) {
-      if (!controlNotSeated)
-        controlNotSeated = controlRecords
-          .filter(({ control }) => !controlIndexById.has(control.id))
-          .map(({ control }) => control.id)
+      const stillUnseated = controlRecords.filter(({ control }) => !controlIndexById.has(control.id))
+      const bare = stillUnseated.filter(({ control }) => !sawContentCandidate.has(control.id))
+      const displaceable = stillUnseated.filter(({ control }) => sawContentCandidate.has(control.id))
+      if (bare.length > 0 && !controlNotSeated) controlNotSeated = bare.map(({ control }) => control.id)
+      if (displaceable.length > 0 && !controlPuzzleUndisplaceable)
+        controlPuzzleUndisplaceable = displaceable.map(({ control }) => control.id)
       continue
     }
     const controlAtIndex = new Map(
       controlRecords.map(entry => [controlIndexById.get(entry.control.id)!, entry] as const)
     )
-
-    // puzzleIndices[k] is the mainPath position of the k-th puzzle (0-based, path order) —
-    // used to index into config.rewards[k] below. A control's node is excluded the same way the
-    // lever's is by the slice — whether or not that particular index came from `placedContent` in the
-    // first place (a control seated on a plain corridor node was never one of these to begin with, so
-    // filtering it out here is a no-op for that case and exactly right for the other).
-    const puzzleIndices = placedContent.slice(leverOnMain ? 1 : 0, -1).filter(mi => !takenByControl.has(mi))
-    const puzzleRole = new Map<number, number>()
-    puzzleIndices.forEach((idx, k) => puzzleRole.set(idx, k))
 
     // Full mainPath as corridor so sections can branch from anywhere along it
     const usedCells = new Set<string>(mainPath.map(([r, c]) => `${r},${c}`))
@@ -1299,9 +1370,16 @@ export const assembleFloor = (
     // however many gates fell in content's way. Left unexcluded, that widened cutoff would let a gate's
     // cell join this list ONLY when the mod is registered, and scoring draws one `rand()` per candidate
     // below — one extra candidate is one extra draw, which shifts every attachment choice after it.
-    // Excluding it keeps this list — and so every choice scored from it — the same whether or not the
-    // mod that owns gates and controls is even in the build (the toggle-off gate,
-    // docs/game-design/regions-and-containers.md).
+    // Excluding it is meant to keep this list the same whether or not the mod that owns gates and
+    // controls is even in the build (the toggle-off gate, docs/game-design/regions-and-containers.md),
+    // and it is COUNT-based: mod on or off, the same number of indices are excluded. That is not the same
+    // claim as IDENTITY, though — `mainZoneCandidates` is later sliced by contiguous range
+    // (`mainZoneSlices`), so which physical cells land in which slice can still differ between the two
+    // builds even when the count leaving this loop matches. Measured, not proven by construction: a sweep
+    // of `toggleOff.spec.ts`'s acceptance test still finds seeds that diverge on a two-obstacle floor (see
+    // that file, and docs/instructions/regions-slice-5-gates-plan.md's "What this slice carries to the
+    // next one") — none found yet on a one-obstacle floor, but the absence of a counterexample there is
+    // not a guarantee either.
     const mainZoneCandidates: Array<[number, number]> = []
     for (let pi = 0; pi < mainPath.length - 1; pi++) {
       const [pr, pc] = mainPath[pi]
@@ -2675,18 +2753,18 @@ export const assembleFloor = (
         return { success: false, reasons: [{ type: "duplicateCellSlot", slot: switchedDuplicate }] }
     }
 
-    // WHICH LEVER DRIVES WHICH DOOR IS ONLY READABLE IF BOTH ENDS SAY SO, so the mark goes on the
-    // lever's room AND on every gate it owns — one pair per handle, worn twice. Written here, over the
-    // finished cells, because a gate room is carved by the ordinary gate pass and a lever's room by the
-    // lever pass, and neither of them knows about the other.
+    // WHICH MECHANISM DRIVES WHICH DOOR IS ONLY READABLE IF BOTH ENDS SAY SO, so the mark goes on the
+    // lever's or control's room AND on every gate it owns — one pair per mechanism, worn twice. Written
+    // here, over the finished cells, because a gate room is carved by the ordinary gate pass and a
+    // mechanism's room by the lever/control pass, and neither of them knows about the other.
     for (let r = 0; r < N; r++) {
       for (let c = 0; c < N; c++) {
         const cell = cells2D[r][c]
         if (cell.type !== "room") continue
-        // A lever is found by the keys its own positions carry, a door by the key it asks for. A
+        // A mechanism is found by the keys its own positions carry, a door by the key it asks for. A
         // switch's mechanism and an authored gate's key are not in the map, so they stay unmarked.
         const key = cell.mechanism?.positions[0]?.gateKeyId ?? cell.requiredKeyId
-        const mark = key === undefined ? undefined : markByHandleGateKey.get(key)
+        const mark = key === undefined ? undefined : markByGateKey.get(key)
         if (mark) cells2D[r][c] = { ...cell, mark }
       }
     }
@@ -2736,6 +2814,9 @@ export const assembleFloor = (
       ...(unseatedRegions ? [{ type: "regionNotSeated", regions: unseatedRegions } as const] : []),
       ...(gateSeamMissing ? [{ type: "obstacleSeamNotCarved" as const, ids: gateSeamMissing }] : []),
       ...(controlNotSeated ? [{ type: "controlNotSeated" as const, ids: controlNotSeated }] : []),
+      ...(controlPuzzleUndisplaceable
+        ? [{ type: "controlPuzzleUndisplaceable" as const, ids: controlPuzzleUndisplaceable }]
+        : []),
       ...(regionMismatch
         ? regionMismatch.map(({ region, kind }) => ({ type: "regionWillNotTake" as const, region, kind }))
         : []),

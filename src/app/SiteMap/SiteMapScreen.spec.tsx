@@ -341,7 +341,9 @@ describe(SiteMapScreen, () => {
     // Shaped exactly as siteAssembler builds an obstacle gate on the main path (see
     // `regionGates.spec.ts`): family always set (it wears bars and is tapped, unlike a switch's own
     // shut fork exit), no key colour (the key is authored — no chest on this floor grows it), the
-    // requiredKeyId a control's `positions[].gateKeyId` names.
+    // requiredKeyId a control's `positions[].gateKeyId` names, and no `gateVariant`/`keyIsAuthored` —
+    // that obstacle-gate branch (siteAssembler.ts) sets neither; both are a side-section gate's own
+    // fields (and unread here regardless, see useEncounter.ts/nodeShapes.tsx).
     const mechanismGate: GridCell = {
       type: "room",
       roomType: "encounter",
@@ -349,9 +351,7 @@ describe(SiteMapScreen, () => {
       state: "reachable",
       family: "key-gate",
       tags: ["gate"],
-      gateVariant: "floor-key",
       requiredKeyId: "obstacle:test-journey#0#0:vaultDoor",
-      keyIsAuthored: true,
     }
 
     const walkToGate = async (container: HTMLElement) => {
