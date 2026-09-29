@@ -22,6 +22,7 @@ import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
 import { appetiteAccepts, regionOfStep, regionRoute, strandedRegions } from "./regions"
 import type { ContentKind } from "./regions"
 import { crossesNoDoor, doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
+import type { Control } from "./obstacles"
 import { cellSlot } from "./cellSlot"
 import { stairIdAt } from "./stairAddress"
 import { footprintSize } from "./roomFootprint"
@@ -724,6 +725,22 @@ export const assembleFloor = (
   // a door it was never thrown for.
   const gateKeyOf = (id: string) =>
     `obstacle:${floorRef.journeyId}#${floorRef.levelIndex ?? 0}#${floorRef.floorIndex}:${id}`
+  // THE SHAPE BOTH AUTHORING PATHS COMPILE THROUGH: a handle is the two-state case of a control, so
+  // the same four fields drive the same compile step whichever wrote them — `id` and `in` are a
+  // control's own, not this compile step's business.
+  type Mechanism = Pick<Control, "states" | "initial" | "returnsToInitial" | "opens">
+  // ONE MECHANISM-BUILDING PATH: `opens` names obstacles by id; `resolveGateKey` says what gate key
+  // each id mints — a control mints one from the obstacle's own authored id (`gateKeyOf`), a handle
+  // already knows each driven section's key and hands it back verbatim. Iterates `states`, not
+  // `Object.entries(opens)`, so compiled order follows what the author declared.
+  const compileMechanism = (mechanism: Mechanism, resolveGateKey: (obstacleId: string) => string): MechanismRecord => ({
+    states: mechanism.states,
+    initial: mechanism.initial,
+    returnsToInitial: mechanism.returnsToInitial,
+    positions: mechanism.states.flatMap(state =>
+      (mechanism.opens[state] ?? []).map(id => ({ state, gateKeyId: resolveGateKey(id) }))
+    ),
+  })
   // The id a stairhead here takes when the authoring named none — the floor's own address plus where
   // on it the stairs stand, built by the one constructor world generation also mints ids with, so a
   // floor assembled from an unnamed stairhead lands on the same id the spec would have given it.
@@ -754,11 +771,15 @@ export const assembleFloor = (
       handle.left.length + handle.right.length === 0
     )
       return refuse(handle.in)
-    const positions: MechanismRecord["positions"] = []
-    // BOTH SIDES ARE READ THE SAME WAY AND INTO THE SAME INDEX, which is what makes a section named on
-    // both sides refuse itself: the second naming finds the first one's gate already written, exactly
-    // as a second handle driving it would. Such a door is one the lever could neither open nor close.
-    for (const side of HANDLE_SIDES)
+    // A HANDLE IS THE TWO-STATE CASE OF A CONTROL: what it drives becomes `opens`, keyed by side and
+    // naming the driven section's own address, so the same compile step a control goes through mints
+    // its mechanism record below. BOTH SIDES ARE READ THE SAME WAY AND INTO THE SAME INDEX, which is
+    // what makes a section named on both sides refuse itself: the second naming finds the first one's
+    // gate already written, exactly as a second handle driving it would. Such a door is one the lever
+    // could neither open nor close.
+    const opens: Record<string, string[]> = {}
+    for (const side of HANDLE_SIDES) {
+      opens[side] = []
       for (const driven of handle[side]) {
         // The main path has no entrance to gate; the lever's own section would shut the lever in behind
         // the door it opens; and a section already gated — by an author or by another handle — would
@@ -773,33 +794,31 @@ export const assembleFloor = (
         const gateKeyId = `${handleStem(n)}:${driven}`
         handleGateKeyByAddress.set(driven, gateKeyId)
         markByHandleGateKey.set(gateKeyId, markFor(n))
-        positions.push({ state: side, gateKeyId })
+        opens[side].push(driven)
       }
+    }
     // A LEVER DECLARES BOTH SIDES WHATEVER IT DRIVES, so the walk knows a door can be shut again even
     // where the far side names no gate of its own. It hangs on `starts` before anyone touches it — so
     // those gates stand open on arrival without the carve having to place an already-open door
-    // (mechanismDoors.ts reads `initial` for exactly that) — and can always be thrown back.
-    leverByAddress.set(handle.in, {
-      states: [...HANDLE_SIDES],
-      initial: handle.starts ?? HANDLE_SIDES[0],
-      returnsToInitial: true,
-      positions,
-    })
+    // (mechanismDoors.ts reads `initial` for exactly that) — and can always be thrown back. The gate
+    // key each driven section mints is already known (`handleGateKeyByAddress`, above), so the resolver
+    // hands it back rather than minting one the way a control's own obstacle id does.
+    leverByAddress.set(
+      handle.in,
+      compileMechanism(
+        { states: [...HANDLE_SIDES], initial: handle.starts ?? HANDLE_SIDES[0], returnsToInitial: true, opens },
+        driven => handleGateKeyByAddress.get(driven)!
+      )
+    )
   }
 
-  // A CONTROL IS COMPILED INTO THE RECORD THE WALK ALREADY EATS. `opens` names obstacles by their
-  // authored ids; `positions` names the gate keys those ids mint, one entry per obstacle per state
-  // that opens it — several entries may share a state, which is what lets one position open a set.
+  // A CONTROL IS COMPILED INTO THE RECORD THE WALK ALREADY EATS, the same step a handle desugars
+  // through above. `opens` names obstacles by their authored ids; `positions` names the gate keys
+  // those ids mint, one entry per obstacle per state that opens it — several entries may share a
+  // state, which is what lets one position open a set.
   const controlRecords = (authoredConfig.controls ?? []).map(control => ({
     control,
-    record: {
-      states: control.states,
-      initial: control.initial,
-      returnsToInitial: control.returnsToInitial,
-      positions: control.states.flatMap(state =>
-        (control.opens[state] ?? []).map(id => ({ state, gateKeyId: gateKeyOf(id) }))
-      ),
-    } satisfies MechanismRecord,
+    record: compileMechanism(control, gateKeyOf),
   }))
 
   // From here the floor is read with the handles' gates already on it, so every pass that sizes a

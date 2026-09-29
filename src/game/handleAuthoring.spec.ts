@@ -47,6 +47,37 @@ describe("a floor authoring a handle", () => {
     })
   })
 
+  // PINS THE EXACT RECORD A HANDLE COMPILES TO, so a fold into the control compile step can be
+  // checked against it rather than trusted: every state, both sides carrying more than one driven
+  // section, a non-default start, and a nested address that has only a positional name.
+  it("compiles to the same mechanism record whichever side it starts on and however many doors each side owns", () => {
+    const { grid } = floorWithHandle({
+      in: "lever",
+      left: ["vault", "pocket"],
+      right: ["vault2", "pocket2"],
+      starts: "right",
+    })
+    expect(tagged(grid, "handle")[0].mechanism).toEqual({
+      states: ["left", "right"],
+      initial: "right",
+      returnsToInitial: true,
+      positions: [
+        { state: "left", gateKeyId: "handle:dev_topology#0#0#0:vault" },
+        { state: "left", gateKeyId: "handle:dev_topology#0#0#0:pocket" },
+        { state: "right", gateKeyId: "handle:dev_topology#0#0#0:vault2" },
+        { state: "right", gateKeyId: "handle:dev_topology#0#0#0:pocket2" },
+      ],
+    })
+
+    const { grid: nested } = nestedFloorWithHandle({ in: "s0.0", left: ["s0.1"], right: [] })
+    expect(tagged(nested, "handle")[0].mechanism).toEqual({
+      states: ["left", "right"],
+      initial: "left",
+      returnsToInitial: true,
+      positions: [{ state: "left", gateKeyId: "handle:dev_topology#0#0#0:s0.1" }],
+    })
+  })
+
   it("declares both sides on a lever whose far side names no section at all", () => {
     const { grid } = floorWithHandle({ in: "lever", left: ["vault"], right: [] })
     // The far side drives nothing, so nothing in `positions` names it — and the walk still has to know
