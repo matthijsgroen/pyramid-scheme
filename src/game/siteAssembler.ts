@@ -2559,18 +2559,22 @@ export const assembleFloor = (
     let oneWayShort: { from: string; to: string } | undefined
     const bySectionAddress = (address: string) => (key: string) => cellSectionAddress.get(key) === address
     const byRegion = (region: string) => (key: string) => cellRegion.get(key) === region
+    // `sectioned` marks which vocabulary asked, because the landing-doors check just below reads it:
+    // the two forms carry different authorship and so different exemptions from it (see there).
     const oneWayDemands = [
       ...(config.oneWays ?? []).map(w => ({
         from: w.from,
         to: w.to,
         matchesFrom: bySectionAddress(w.from),
         matchesTo: bySectionAddress(w.to),
+        sectioned: true,
       })),
       ...oneWayObstacles.map(o => ({
         from: o.at.between[0],
         to: o.at.between[1],
         matchesFrom: byRegion(o.at.between[0]),
         matchesTo: byRegion(o.at.between[1]),
+        sectioned: false,
       })),
     ]
     // ONE CONNECTOR CARRIES ONE DROP. Two drops landing on the same pair of cells would write one
@@ -2594,10 +2598,20 @@ export const assembleFloor = (
           const toKey = posKey(nr, nc)
           if (toKey === exitKey) continue
           if (!demand.matchesTo(toKey)) continue
-          // A DROP MAY RUN INSIDE WHAT A DOOR SHUTS OFF, OR OUT OF IT, NEVER INTO GROUND SHUT BY A
-          // DOOR THE PLAYER HAS NOT EARNED BY STANDING WHERE THEY FALL FROM. A switch's doors count
-          // here exactly as an authored gate's do: both are asked of one map (`doorsToEnter`).
-          if ([...standsBehind(toKey)].some(door => !fromDoors.has(door))) continue
+          // A SECTION-ADDRESSED DROP MAY RUN INSIDE WHAT A DOOR SHUTS OFF, OR OUT OF IT, NEVER INTO
+          // GROUND SHUT BY A DOOR THE PLAYER HAS NOT EARNED BY STANDING WHERE THEY FALL FROM. A
+          // switch's doors count here exactly as an authored gate's do: both are asked of one map
+          // (`doorsToEnter`). This is the carve's own anti-spoiler check — the carve, not the author,
+          // picked which cells span a section boundary, so an accidental shortcut past a gate is a
+          // real hazard here.
+          //
+          // A REGION-ADDRESSED DROP (`oneWayObstacles`) IS EXEMPT. Its two ends are regions the author
+          // named outright, so the author has already stated the intent this check exists to infer —
+          // it cannot tell a deliberate double-back from a mistake, and for this form there is no
+          // mistake to catch: `deadRegions` and `walkLock` answer, over the compiled lock, whether a
+          // region-to-region drop leaves the floor unsound or strands the player (lockWalk.spec.ts's
+          // `doubleBack`, siteAssembler.spec.ts's own region-drop coverage).
+          if (demand.sectioned && [...standsBehind(toKey)].some(door => !fromDoors.has(door))) continue
           // A hidden section is the statement that nothing is there until the player finds otherwise,
           // and the runtime empties its cells — so a visible drop into one leaves the source pointing
           // at a stub, which is the spoiler `freeWaysOut` refuses for a gate. Out of one stays legal.

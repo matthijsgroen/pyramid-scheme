@@ -19,6 +19,8 @@ import { assembleFloor } from "../game/siteAssembler"
 // assigns values the stricter type accepts too — the same cast reachability.ts makes to assemble.
 import type { FloorConfig as GameFloorConfig, FloorGrid } from "../game/siteTypes"
 import { floorAssemblySeed, persistentInteriorSeed } from "../game/siteSeed"
+import { floorLock } from "../game/floorLock"
+import { walkLock, deadRegions } from "../game/lockWalk"
 // Same sanctioned exception configBuilder.integration.spec.ts takes: the claim here is about the
 // REAL, complete world, which only the real mod-owned currencies can build.
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
@@ -150,7 +152,7 @@ describe("the dev journey's place in the generated world", () => {
   // comparison would pass while proving nothing at all.
   it("is built only when INCLUDE_DEV is set", () => {
     expect(plain[DEV_JOURNEY_ID]).toBeUndefined()
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(8)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(9)
   })
 
   it("leaves every other journey exactly as it was", () => {
@@ -165,7 +167,7 @@ describe("the loot the dev journey contributes", () => {
 
   it("is none the solver could have placed either: it offers no slot", () => {
     // Counted first: a world with no dev journey would filter an empty list and prove nothing.
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(8)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(9)
     const devSlots = collectSlots(withDev, familyPriorityFor).filter(s => s.journeyId === DEV_JOURNEY_ID)
     expect(devSlots).toEqual([])
   })
@@ -181,7 +183,7 @@ describe("the loot the dev journey contributes", () => {
   // Its chests hold nothing on purpose, and findEmptyChests knows a site outside the loot economy
   // has nothing to fill them with — so it reports none of them and the generator does not stop.
   it("leaves no empty chest for the generator to refuse", () => {
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(8)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(9)
     const empties = findEmptyChests({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] }, assembleAt)
     expect(empties).toEqual([])
   })
@@ -198,37 +200,41 @@ describe("what the dev journey authors", () => {
       "wizard",
       "expert",
       "expert",
+      "starter",
     ])
   })
 
-  it("stands a switch in a reserved junction on every floor but the lever's and the gate's, neither of which needs one", () => {
+  it("stands a switch in a reserved junction on every floor but the lever's, the gate's and doubleBack's, none of which needs one", () => {
     // Counted first, so a world that grew no dev journey fails here rather than walking an empty list.
     const floors = devFloors(withDev)
-    expect(floors).toHaveLength(8)
+    expect(floors).toHaveLength(9)
     for (const floor of floors.slice(0, 6)) {
       expect(floor.forks).toEqual([{ exits: 2, count: 1 }])
       expect(floor.switches).toEqual({ encounter: "lightbeamSwitch", min: 1, max: 1 })
     }
     // A switch decides which of its OWN ways out opens, so it needs a junction reserved for it; a
-    // handle reaches across the floor to doors elsewhere, and a control stands in its own region — both
-    // ask for neither.
+    // handle reaches across the floor to doors elsewhere, and a control (the lever's, or any of
+    // doubleBack's three) stands in its own region — all three ask for neither.
     expect(floors[6].forks).toBeUndefined()
     expect(floors[6].switches).toBeUndefined()
     expect(floors[7].forks).toBeUndefined()
     expect(floors[7].switches).toBeUndefined()
+    expect(floors[8].forks).toBeUndefined()
+    expect(floors[8].switches).toBeUndefined()
   })
 
   // The map-piece branch and the ward gate are auto-injected onto ordinary pyramids by position, and
   // a dev site sits at a position that would earn both. Its capability preset is what keeps them off
   // it, so the count of side sections is exactly what the spec authors: two branches on a switch
-  // floor, three on the lever's — the room it stands in and the two doors it swaps — and one on the
-  // gate's, which needs only somewhere for its control to stand.
+  // floor, three on the lever's — the room it stands in and the two doors it swaps — one on the
+  // gate's, which needs only somewhere for its control to stand, and one on doubleBack's, which seats
+  // its whole off-route chain (`rightLower`, `s1Chamber`) on the single side section Task 1 built for.
   it("grows none of the branches the real economies inject by position", () => {
-    expect(devFloors(withDev).map(floor => floor.sideSections.length)).toEqual([2, 2, 2, 2, 2, 2, 3, 1])
+    expect(devFloors(withDev).map(floor => floor.sideSections.length)).toEqual([2, 2, 2, 2, 2, 2, 3, 1, 1])
   })
 
   it("carves every one of them at the seed the runtime hands it", () => {
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(8)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(9)
     const failed: string[] = []
     withDev[DEV_JOURNEY_ID].forEach((site, levelIndex) =>
       site.forEach((floor, floorIndex) => {
@@ -328,6 +334,116 @@ describe("what the dev journey authors", () => {
     ])
   })
 
+  it("stands doubleBack's six regions and five gates on pyramid 9, carried through world generation", () => {
+    const pyramid9 = withDev[DEV_JOURNEY_ID][8]
+    expect(pyramid9).toHaveLength(1)
+    const [floor] = pyramid9
+
+    expect(floor.regionLayout).toEqual({
+      regions: [
+        { name: "entrance", appetite: "free" },
+        { name: "rightLower", appetite: "free" },
+        { name: "s1Chamber", appetite: "free" },
+        { name: "leftLower", appetite: "free" },
+        { name: "s2Chamber", appetite: "free" },
+        { name: "wayOut", appetite: "free" },
+      ],
+      connections: [
+        ["entrance", "leftLower"],
+        ["entrance", "rightLower"],
+        ["rightLower", "s1Chamber"],
+        ["leftLower", "s2Chamber"],
+        ["s2Chamber", "wayOut"],
+      ],
+      in: "entrance",
+      out: "wayOut",
+    })
+    expect(floor.obstacles).toEqual([
+      { id: "forkLeft", kind: "gate", at: { on: "connection", between: ["entrance", "leftLower"] } },
+      { id: "forkRight", kind: "gate", at: { on: "connection", between: ["entrance", "rightLower"] } },
+      { id: "greenRight", kind: "gate", at: { on: "connection", between: ["rightLower", "s1Chamber"] } },
+      { id: "greenLeft", kind: "gate", at: { on: "connection", between: ["leftLower", "s2Chamber"] } },
+      { id: "endDoor", kind: "gate", at: { on: "connection", between: ["s2Chamber", "wayOut"] } },
+      { id: "dropToLeft", kind: "oneWay", at: { on: "connection", between: ["s1Chamber", "leftLower"] } },
+      { id: "dropToEntrance", kind: "oneWay", at: { on: "connection", between: ["leftLower", "entrance"] } },
+    ])
+  })
+
+  it("stands doubleBack's three controls on pyramid 9: a genuinely three-state fork and two one-shot sequences", () => {
+    const pyramid9 = withDev[DEV_JOURNEY_ID][8]
+    const [floor] = pyramid9
+
+    expect(floor.controls).toEqual([
+      {
+        id: "Y",
+        in: "entrance",
+        states: ["unset", "left", "right"],
+        initial: "unset",
+        returnsToInitial: false,
+        opens: { unset: [], left: ["forkLeft"], right: ["forkRight"] },
+      },
+      {
+        id: "S1",
+        in: "s1Chamber",
+        states: ["start", "thrown"],
+        initial: "start",
+        returnsToInitial: false,
+        opens: { start: ["greenRight"], thrown: ["greenLeft"] },
+      },
+      {
+        id: "S2",
+        in: "s2Chamber",
+        states: ["start", "thrown"],
+        initial: "start",
+        returnsToInitial: false,
+        opens: { start: [], thrown: ["endDoor"] },
+      },
+    ])
+  })
+
+  // Not decorative: at this floor's own production seed (`assembleAt` below), the carve needs the
+  // extra main-path length to seat five gates, three controls and two drops at once — see the Task 8
+  // report for the sweep across `packing` values this number came from.
+  it("carves pyramid 9 at its own seed sound: solvable, and no order of moves strands anyone", () => {
+    const pyramid9 = withDev[DEV_JOURNEY_ID][8]
+    const [floor] = pyramid9
+    expect(floor.packing).toBe(8)
+
+    const grid = assembleAt(DEV_JOURNEY_ID, floor, 9, 0)
+    if (!grid) throw new Error("doubleBack did not carve at its own seed")
+    const spec = floorLock(grid)
+    if (!spec) throw new Error("floorLock found no mechanism on a floor that authors three")
+    expect(walkLock(spec)).toEqual({ sound: true, states: expect.any(Number) })
+    // The second drop is what keeps every region reachable, not what keeps every region occupied by
+    // some state — deadRegions stays silent on this floor exactly as it does on the design doc's own
+    // worked example (lockWalk.spec.ts).
+    expect(deadRegions(spec)).toEqual([])
+  })
+
+  // THE EARLY-DROP HAZARD, ON THE REAL ASSEMBLED FLOOR — the physical counterpart to
+  // lockWalk.spec.ts's own proof that the fixture strands without its second drop. Reassembled with
+  // `dropToEntrance` left out, at the same production seed, so the only thing that differs is the
+  // one drop under test.
+  it("strands the player who drops early on pyramid 9's own carve, once the second drop is taken away", () => {
+    const pyramid9 = withDev[DEV_JOURNEY_ID][8]
+    const [floor] = pyramid9
+    const withoutSecondDrop: FloorConfig = {
+      ...floor,
+      obstacles: floor.obstacles!.filter(o => o.id !== "dropToEntrance"),
+    }
+
+    const grid = assembleAt(DEV_JOURNEY_ID, withoutSecondDrop, 9, 0)
+    if (!grid) throw new Error("doubleBack without its second drop did not carve at the same seed")
+    const spec = floorLock(grid)
+    if (!spec) throw new Error("floorLock found no mechanism")
+    const result = walkLock(spec)
+    if (result.sound) throw new Error("expected the early drop to strand without the second one")
+    expect(result.failure.type).toBe("strands")
+    // deadRegions stays silent here exactly as it does on the fixture (lockWalk.spec.ts): the second
+    // drop is what keeps every region reachable, not what keeps every region occupied by some state.
+    expect(deadRegions(spec)).toEqual([])
+  })
+
   // The develop-only boundary is what keeps an undrawn drop off a floor a player will meet, and it is
   // the capability that grants it — not the journey's id. Said here as well as on the guard itself,
   // because this is the journey the exemption exists for.
@@ -343,7 +459,7 @@ describe("what the dev journey authors", () => {
 // own guard compares the walk against the floors the authoring owes it, which catches a walk that
 // stopped reaching them — but not an authoring that quietly stopped standing mechanisms, because then
 // both sides fall together. The counts are pinned here, where both worlds exist in one process: the
-// shipped world stands one mechanism and a plain build can only ever prove that one, so the eight the
+// shipped world stands one mechanism and a plain build can only ever prove that one, so the nine the
 // dev journey adds are provable nowhere else.
 describe("the floors the lock sweep walks", () => {
   it("walks the one mechanism the shipped world stands, and finds no strand", () => {
@@ -351,13 +467,13 @@ describe("the floors the lock sweep walks", () => {
     expect(plainSweep.stranding).toEqual([])
   })
 
-  it("walks nine once the dev journey stands its eight, and finds no strand", () => {
-    expect(withDevSweep.walked).toHaveLength(9)
+  it("walks ten once the dev journey stands its nine, and finds no strand", () => {
+    expect(withDevSweep.walked).toHaveLength(10)
     expect(withDevSweep.stranding).toEqual([])
   })
 
-  it("walks eight of them on the dev journey itself", () => {
-    expect(withDevSweep.walked.filter(ref => ref.journeyId === DEV_JOURNEY_ID)).toHaveLength(8)
+  it("walks nine of them on the dev journey itself", () => {
+    expect(withDevSweep.walked.filter(ref => ref.journeyId === DEV_JOURNEY_ID)).toHaveLength(9)
   })
 
   it("reaches every floor whose authoring owes it a lock, in both worlds", () => {

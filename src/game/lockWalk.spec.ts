@@ -239,11 +239,13 @@ const doubleBack = (): LockSpec => ({
   out: "wayOut",
 })
 
+// `doubleBack` is authored for real on the develop journey (src/worldGen/spec/dev.ts, pyramid 9),
+// and its own soundness — walkLock sound over the assembled floor, deadRegions silent, the early
+// drop's strand surviving the carve — is proven there against the real compiled lock
+// (src/worldGen/devJourney.spec.ts). What stays here is what a hand-built LockSpec can show that a
+// carved floor cannot: the exact state a failure names, and a one-shot fork no authored `Control`
+// can express (its transitions are not the full state graph `floorLock` always compiles).
 describe("walkLock", () => {
-  it("finds the authored floor sound: solvable, and no order of moves strands anyone", () => {
-    expect(walkLock(doubleBack())).toEqual({ sound: true, states: expect.any(Number) })
-  })
-
   it("strands the player who drops early, once the drop off the left branch is taken away", () => {
     // Nothing stops a player walking into the first drop on the way in, before throwing S1. They land
     // between two shut gates — the fork's left gate above, since the board is set right, and the gate
@@ -371,10 +373,6 @@ describe("deadRegions", () => {
 
   it("names both vaults of a control deadlock, each behind the door the other opens", () => {
     expect(deadRegions(deadlockedControls())).toEqual(["vaultA", "vaultB"])
-  })
-
-  it("says nothing about doubleBack, whose second drop is what keeps every region reachable", () => {
-    expect(deadRegions(doubleBack())).toEqual([])
   })
 
   it("leaves a ward pocket alone: its key is a mechanism with no transition, read as openable elsewhere", () => {

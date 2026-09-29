@@ -147,4 +147,79 @@ export const devRules: Rule[] = [
       },
     ],
   }),
+  // 9 — doubleBack. The design doc's worked example (lockWalk.spec.ts's `doubleBack()`), assembled:
+  // Y is a fork board in `entrance` whose two ways out (`forkLeft`, `forkRight`) are both shut at
+  // first and genuinely three-state (unset/left/right, `returnsToInitial: false` — turning it does
+  // not hand back the branch just left). Right leads to S1 in `s1Chamber`; throwing it shuts the way
+  // back (`greenRight`) and opens `leftLower`'s own gate (`greenLeft`) — S1's `start` opens nothing of
+  // its own. A drop out of `s1Chamber` lands in `leftLower` BETWEEN `forkLeft` (still shut — Y never
+  // said "left") and `greenLeft` (now open), which is the whole trick: reaching `s2Chamber` without
+  // ever solving Y left. A second drop off `leftLower` is what saves a player who takes the first one
+  // before throwing S1 at all — see the playtest instructions in the Task 8 report for what that
+  // strands without it. S2's `start` likewise opens nothing; only `thrown` opens `endDoor`.
+  //
+  // `packing: 8` is not decorative: at this floor's own production seed, the carve needs the extra
+  // main-path length to find room for five gates, three controls and two drops at once — lower
+  // values either fail the structural checks outright or carve a floor `walkLock` finds unsound
+  // (see the Task 8 report for the sweep this number came from).
+  journey(DEV_JOURNEY_ID).pyramid(9, {
+    difficulty: "starter",
+    pathPuzzles: 0,
+    packing: 8,
+    sideSections: [sidePath({ puzzles: 0 })],
+    regionLayout: {
+      regions: [
+        { name: "entrance", appetite: "free" },
+        { name: "rightLower", appetite: "free" },
+        { name: "s1Chamber", appetite: "free" },
+        { name: "leftLower", appetite: "free" },
+        { name: "s2Chamber", appetite: "free" },
+        { name: "wayOut", appetite: "free" },
+      ],
+      connections: [
+        ["entrance", "leftLower"],
+        ["entrance", "rightLower"],
+        ["rightLower", "s1Chamber"],
+        ["leftLower", "s2Chamber"],
+        ["s2Chamber", "wayOut"],
+      ],
+      in: "entrance",
+      out: "wayOut",
+    },
+    obstacles: [
+      { id: "forkLeft", kind: "gate", at: { on: "connection", between: ["entrance", "leftLower"] } },
+      { id: "forkRight", kind: "gate", at: { on: "connection", between: ["entrance", "rightLower"] } },
+      { id: "greenRight", kind: "gate", at: { on: "connection", between: ["rightLower", "s1Chamber"] } },
+      { id: "greenLeft", kind: "gate", at: { on: "connection", between: ["leftLower", "s2Chamber"] } },
+      { id: "endDoor", kind: "gate", at: { on: "connection", between: ["s2Chamber", "wayOut"] } },
+      { id: "dropToLeft", kind: "oneWay", at: { on: "connection", between: ["s1Chamber", "leftLower"] } },
+      { id: "dropToEntrance", kind: "oneWay", at: { on: "connection", between: ["leftLower", "entrance"] } },
+    ],
+    controls: [
+      {
+        id: "Y",
+        in: "entrance",
+        states: ["unset", "left", "right"],
+        initial: "unset",
+        returnsToInitial: false,
+        opens: { unset: [], left: ["forkLeft"], right: ["forkRight"] },
+      },
+      {
+        id: "S1",
+        in: "s1Chamber",
+        states: ["start", "thrown"],
+        initial: "start",
+        returnsToInitial: false,
+        opens: { start: ["greenRight"], thrown: ["greenLeft"] },
+      },
+      {
+        id: "S2",
+        in: "s2Chamber",
+        states: ["start", "thrown"],
+        initial: "start",
+        returnsToInitial: false,
+        opens: { start: [], thrown: ["endDoor"] },
+      },
+    ],
+  }),
 ]
