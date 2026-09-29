@@ -36,6 +36,10 @@
 
 **What to build:** a region off the threaded route is seated by a SIDE PATH grown for it. The route still picks which regions the main path crosses; every declared region the route does not cross must be matched to a side section, and its cells labelled with it instead of inheriting the parent's.
 
+**A SIDE PATH SEATS A CHAIN, NOT A REGION.** Measured against the fixture's own graph: `regionRoute` threads `entrance → leftLower → s2Chamber → wayOut`, leaving `rightLower` AND `s1Chamber` off it — and they are connected to each other, `entrance → rightLower → s1Chamber`, one branch two regions deep. So the matching is region-CHAIN to side-section, and the chain is distributed along that side path's cells the same way `regionOfStep` distributes the route along the main path. Re-use that function rather than writing a second one.
+
+**Why one-region-per-side-section is not merely insufficient but WRONG here:** `greenRight` is a gate on `rightLower → s1Chamber`. If `s1Chamber` were seated as its own independent branch hanging off the main corridor, a player could reach it without passing through `rightLower` — walking straight past the gate a lever exists to open. That is the floor silently ceasing to be a lock. A region's position in its chain is load-bearing, not decoration.
+
 **Design judgement this task owns** (state what you chose and why in the report):
 - Which side section serves which region — authored, or matched by the builder? The design says the builder shapes the stretches and the author names appetites, so matching is the builder's; but a floor with two branches and two unseated regions needs a deterministic rule, not a lucky one.
 - What happens when there are more unseated regions than side sections. `regionNotSeated` already exists and is the honest answer; it must fire AFTER the attempt budget, not at attempt 0, because `mainPath.length` and the side sections grow across attempts.
