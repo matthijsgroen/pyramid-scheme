@@ -221,6 +221,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           currentFloor={currentFloor}
           pendingCells={pendingConsumableCells}
           ownedKeys={ownedKeys}
+          mechanismStates={mechanismStates}
           prompt={prompt && { label: promptLabel(prompt), at: prompt.at, onTake: prompt.take }}
           className="size-full"
         />

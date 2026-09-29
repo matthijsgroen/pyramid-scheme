@@ -11,12 +11,21 @@ import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop 
 import { ALL_STATES } from "./tileRegions"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import { tierPalette } from "./tileMaterials"
-import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
+import type {
+  CellState,
+  DecorationKind,
+  Direction,
+  FloorGrid,
+  GridCell,
+  MechanismRecord,
+  RoomCell,
+} from "@/game/siteTypes"
 import { authoredKindsFor } from "./authoredKinds"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
 import { registerFamily } from "@/app/families/familyRegistry"
 import { floorWithHandle } from "@/game/testSupport/handleFixtures"
+import { cellAddress } from "@/game/cellAddress"
 import { markFor } from "@/game/mark"
 
 // Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
@@ -2262,5 +2271,98 @@ describe("a lever and the doors it drives", () => {
     const glyph = String.fromCodePoint(markFor(0).glyph)
 
     expect(markGlyphsOnScreen(container)).toEqual([glyph, glyph, glyph])
+  })
+})
+
+// Task 9: the lever's own three sprites (`leverBaseBack`, `leverArm`, `leverBaseFront`) and the arm's
+// rotation, in one place — hand-built cells throughout, so the tier (art only exists at `expert`) and
+// the mechanism's own state list are the test's to set, rather than whatever an authored side-section
+// happens to carve at.
+describe("the lever's arm — three stacked sprites, thrown to the control's own state", () => {
+  const handleCell = (mechanism: MechanismRecord): RoomCell => ({
+    type: "room",
+    roomType: "encounter",
+    family: "handle",
+    tags: ["handle"],
+    dirs: new Set<Direction>(["w"]),
+    state: "reachable",
+    mechanism,
+  })
+
+  // A floor neighbour on every side the sprite's own offset can reach into (`nodeArtOffset` +
+  // `clipCells`), the same shape `treasureCell`'s own clip test above uses.
+  const gridWith = (cell: GridCell): FloorGrid => ({
+    ...makeGrid([
+      [empty, empty, empty],
+      [corridorBetween(true), cell, corridorBetween(true)],
+      [empty, empty, empty],
+    ]),
+    difficulty: "expert",
+  })
+
+  const armTransformOf = (container: HTMLElement) =>
+    container.querySelector<HTMLElement>('[data-node-sprite="handle:1,1:arm"]')!.style.transform
+
+  const rotateDegOf = (transform: string): number => {
+    const m = /rotate\(([-\d.]+)deg\)/.exec(transform)
+    if (!m) throw new Error(`no rotate() in transform: ${transform}`)
+    return Number(m[1])
+  }
+
+  it("stacks them back, arm, front — in that DOM order, which is depth order (map-rendering.md)", () => {
+    // A test asserting only that three sprites exist would still pass with the arm drawn in front of
+    // the mound, which is the exact failure `prim_lever`'s docstring records fighting: the shaft
+    // reading as balanced on the crown rather than rising out of it.
+    const mechanism: MechanismRecord = {
+      states: ["left", "right"],
+      initial: "left",
+      returnsToInitial: true,
+      positions: [],
+    }
+    const { container } = render(<SiteMapView grid={gridWith(handleCell(mechanism))} />)
+    const orderOf = (part: string) => spritesIn(container).findIndex(el => urlOf(el).includes(part))
+    const back = orderOf("leverBaseBack")
+    const arm = orderOf("leverArm")
+    const front = orderOf("leverBaseFront")
+    expect(back).toBeGreaterThanOrEqual(0)
+    expect(arm).toBeGreaterThan(back)
+    expect(front).toBeGreaterThan(arm)
+  })
+
+  it("throws an N-state control's arm off its own ORDERED state list — a wheel's three, not a binary's two", () => {
+    // The renderer must not be written for a binary: an index into the list, spread evenly across
+    // ±36°, is what a control with more than two states asks for. Every state is asserted.
+    const expected = { low: -36, mid: 0, high: 36 }
+    for (const [state, angle] of Object.entries(expected)) {
+      const { container } = render(
+        <SiteMapView
+          grid={gridWith(
+            handleCell({ states: ["low", "mid", "high"], initial: state, returnsToInitial: true, positions: [] })
+          )}
+        />
+      )
+      expect(rotateDegOf(armTransformOf(container)), `state ${state}`).toBeCloseTo(angle, 5)
+    }
+  })
+
+  it("reads a THROWN position off mechanismStates, not just the mechanism's own `initial`", () => {
+    // The whole point of this task is that the arm moves when the player throws the lever — a test
+    // that only ever renders `initial` proves the arm draws, not that it responds. Same fallback
+    // `openDoorsFor` (mechanismDoors.ts) reads: no stored entry means `initial`, a stored one wins.
+    const mechanism: MechanismRecord = {
+      states: ["left", "right"],
+      initial: "left",
+      returnsToInitial: true,
+      positions: [],
+    }
+    const grid = gridWith({ ...handleCell(mechanism), sectionAddress: "main", mechanismId: "test-lever" })
+    const address = cellAddress(grid, 0, 1, 1)!
+
+    const { container } = render(
+      <SiteMapView grid={grid} currentFloor={0} mechanismStates={new Map([[address, "right"]])} />
+    )
+    // "right" is index 1 of ["left", "right"], so +36° — the OPPOSITE of `initial`'s -36°, not merely
+    // a changed transform.
+    expect(rotateDegOf(armTransformOf(container))).toBeCloseTo(36, 5)
   })
 })

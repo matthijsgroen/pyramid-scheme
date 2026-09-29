@@ -99,4 +99,21 @@ export type NodeSprite = {
    * shut is a wall, `isSealedWayOut`) — so the pair the lever wears would have been worn at one end
    * only, which tells a player nothing. Same move as `badge` above, for the same reason. */
   mark?: Mark
+  /** A CONTROL'S ARM AND NEAR HALF, riding between `url` (the far half, `leverBaseBack`) and the floor —
+   * set only where a lever stands, so `url` alone still draws every other kind.
+   *
+   * Two more sprites rather than a field on `url`, because the arm has to sit BETWEEN the mound's two
+   * halves: the shaft's buried root sits inside the mound's own painted area, so drawn behind the WHOLE
+   * base it reads as balanced on the crown rather than rising out of it (`prim_lever`'s docstring,
+   * fought once already in the object's first build). `leverBaseFront`'s near lip then crosses the
+   * shaft's foot, which is what makes it look SEATED rather than stuck to the mound's front. */
+  armStack?: {
+    /** The upright arm, thrown to `angleDeg` by a `transform` at render time — the map never stores or
+     * paints a swung state, only the control's current position. */
+    armUrl: string
+    /** Everything nearer than the mound's own track — drawn last, over the arm. */
+    frontUrl: string
+    /** The control's current throw, in degrees off upright — see `angleForState` (SiteMapView.tsx). */
+    angleDeg: number
+  }
 }

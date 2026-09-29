@@ -119,7 +119,7 @@ export const devRules: Rule[] = [
   // the other way it shuts again with the player on either side of it. The first obstacle that is not
   // a section's own entrance — it stands between two REGIONS, which is what a container's boundary is.
   journey(DEV_JOURNEY_ID).pyramid(8, {
-    difficulty: "master",
+    difficulty: "expert",
     pathPuzzles: 0,
     sideSections: [sidePath({ puzzles: 0 })],
     regionLayout: {

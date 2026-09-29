@@ -36,7 +36,8 @@ import { moodFor } from "./moodSettings"
 import { cellAt } from "@/game/roomFootprint"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
-import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileVariants } from "./tileAssets"
+import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileUrl, tileVariants } from "./tileAssets"
+import { cellAddress } from "@/game/cellAddress"
 import { isLockedGate, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
@@ -90,6 +91,11 @@ type Props = {
   pendingCells?: ReadonlySet<string>
   /** Keys the player already holds — used only to color a gate as locked/unlocked on the map. */
   ownedKeys?: ReadonlySet<string>
+  /** Every mechanism's current position on this journey, keyed by its cell address — the same map
+   * `openDoorsFor` reads, and for the same reason: the save holds the position, the floor holds what it
+   * means. Read here only for a control's OWN room, to throw its arm to the position it actually
+   * stands in rather than always drawing its `initial` one. */
+  mechanismStates?: ReadonlyMap<string, string>
   /** The way in the explorer is standing at, drawn as a button beside him — see `useSiteNavigation`. */
   prompt?: { label: string; at: readonly [number, number]; onTake: () => void } | null
   className?: string
@@ -151,6 +157,36 @@ export const approachCells = (grid: FloorGrid): Map<string, readonly [number, nu
   return from
 }
 
+/** The lever's authored throw: ±36° off upright. Not ours to shrink — at 20° the two states' grips sit
+ * 0.42 apart against a 0.68-wide dome and read as one lever wobbling; at 36° each grip clears the dome
+ * and the pair reads as a backslash and a forward slash (`prim_lever`'s docstring, `scripts/renderProp.py`).
+ */
+const HANDLE_THROW_DEG = 36
+
+/** Where an N-state control's arm sits: an index into its own ORDERED state list, spread evenly across
+ * ±throwDeg. An index and not two hardcoded sides, because a wheel's control has more states than a
+ * lever's two and the renderer must not be written for a binary. A single-state list has nothing to
+ * throw between and stands upright. */
+const angleForState = (index: number, count: number, throwDeg: number): number =>
+  count <= 1 ? 0 : -throwDeg + (2 * throwDeg * index) / (count - 1)
+
+/** `renderProp.py`'s shear (`z' = z + k*y`, so a unit of world DEPTH draws into the shared vertical axis
+ * at `k` times the rate a unit of world HEIGHT does) scaled by the tile's own width/height ratio
+ * (`add_camera`'s aspect framing — the tile is 112x168, not square). A plain CSS `rotate()` on the arm
+ * tile treats its pixel grid as isotropic; the render that produced the tile was not, by this amount. */
+const LEVER_SHEAR_K = 0.7
+const LEVER_TILE_ASPECT = 112 / 168
+const LEVER_CORRECTION_S = LEVER_SHEAR_K * LEVER_TILE_ASPECT // ≈ 0.4667
+
+/** Undo the projection's vertical squash, rotate in the corrected space, and put the squash back —
+ * `scaleY(1/s) rotate(θ) scaleY(s)`, composed about the shaft's own pivot (CSS applies these right to
+ * left, so the squash goes on first and comes off last). A naive `rotate(θ)` alone puts the tip 10-13px
+ * past the track's painted end at the full ±36° throw, measured against the real ±36° 3D geometry in
+ * `Lever.stories.tsx`; this keeps it inside the rim instead — 65.8 of 112 at +36° and 46.2 at -36°,
+ * against a track painted at 45-67, where the naive tip landed at 77.0 and 35.0. */
+const leverArmTransform = (angleDeg: number): string =>
+  `scaleY(${1 / LEVER_CORRECTION_S}) rotate(${angleDeg}deg) scaleY(${LEVER_CORRECTION_S})`
+
 /** Every node's own furniture on one floor, in map space — chests beside treasure rooms, flights at
  * stairheads. See `NodeSprite` for why this is a list and not a child of each node's own `<g>`.
  *
@@ -163,7 +199,12 @@ const nodeSpritesFor = (
   grid: FloorGrid,
   claims: RoomClaims,
   floorTier: Difficulty,
-  pendingCells?: ReadonlySet<string>
+  pendingCells?: ReadonlySet<string>,
+  /** Every mechanism's current position, and which floor this is — together the address a lever's own
+   * state is stored under (`cellAddress`, `mechanismDoors.ts`). Absent for callers with no journey yet
+   * (a story, a hand-built test grid): every control then draws at its own `initial` position. */
+  mechanismStates?: ReadonlyMap<string, string>,
+  floorIndex = 0
 ): NodeSprite[] => {
   // Which cells belong to each room: the room's own, plus everything it claimed.
   const footprints = new Map<string, string[]>()
@@ -343,6 +384,39 @@ const nodeSpritesFor = (
           // ON THE LEAF, NOT ON THE MARKER: a way a lever shut hides its marker entirely, so the pair
           // its lever wears has to be worn by the stone the player is actually looking at.
           ...(cell.mark ? { mark: cell.mark } : {}),
+        })
+      } else if (kind === "handle") {
+        // BLOCKED UNTIL ALL THREE TILES EXIST, AND NEVER PLACEHOLDER: `tileUrl`, not `tileOrPlaceholder`
+        // — a stand-in dome with no arm to swing would draw a lie, and the superseded single-piece
+        // `leverLeft`/`leverRight` tiles are not reached for either. A rank with only some of the three
+        // painted draws none of them, leaving the room's own marker to carry it, same as an unpainted
+        // stairhead or exit above.
+        const back = tileUrl(tier, "leverBaseBack")
+        const arm = tileUrl(tier, "leverArm")
+        const front = tileUrl(tier, "leverBaseFront")
+        if (!back || !arm || !front) continue
+        // Stepped off its own doorways exactly as a chest is (`nodeArtOffset`): a lever is a cell's
+        // worth of furniture like any other, not a doorway fitting.
+        const { dx, dy } = nodeArtOffset(cell.dirs)
+        // THE CONTROL'S CURRENT POSITION, NOT ALWAYS ITS INITIAL ONE: the same address `openDoorsFor`
+        // reads a saved position off, falling back to the mechanism's own `initial` for the same reason
+        // it does — a save with no entry yet is standing wherever the floor was authored to start it.
+        const mechanism = cell.mechanism
+        let angleDeg = 0
+        if (mechanism) {
+          const address = cellAddress(grid, floorIndex, r, c)
+          const state = (address && mechanismStates?.get(address)) ?? mechanism.initial
+          const index = mechanism.states.indexOf(state)
+          if (index >= 0) angleDeg = angleForState(index, mechanism.states.length, HANDLE_THROW_DEG)
+        }
+        out.push({
+          footprint,
+          key: `handle:${r},${c}`,
+          url: back,
+          x: cx + dx - CELL / 2,
+          y: cy + dy + CELL / 2 - PROP_H,
+          mirrored: false,
+          armStack: { armUrl: arm, frontUrl: front, angleDeg },
         })
       } else if (kind === "stairhead") {
         const goesUp = r === grid.entrancePos[0] && c === grid.entrancePos[1]
@@ -1018,6 +1092,7 @@ export const SiteMapView = ({
   currentFloor,
   pendingCells,
   ownedKeys,
+  mechanismStates,
   prompt,
   className,
 }: Props) => {
@@ -1037,8 +1112,8 @@ export const SiteMapView = ({
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const nodeSprites = useMemo(
-    () => nodeSpritesFor(grid, claims, tier, pendingCells),
-    [grid, claims, tier, pendingCells]
+    () => nodeSpritesFor(grid, claims, tier, pendingCells, mechanismStates, currentFloor ?? 0),
+    [grid, claims, tier, pendingCells, mechanismStates, currentFloor]
   )
   // The walkable floor, as rectangles: what a layer cut to the floor is cut to. The sand is the only one
   // left — everything else that used to share the map-wide clip now carries its own shape.
@@ -1074,6 +1149,44 @@ export const SiteMapView = ({
                   : undefined
             }
           />
+          {/* THE STACKING ORDER IS THE POINT, and it is in DOM order (map-rendering.md: depth is DOM
+              order, no z-index): the far half above is already painted; the arm rides between it and
+              the near half so it rises OUT of the mound rather than sitting on it — see
+              `NodeSprite.armStack` and `prim_lever`'s docstring. All three share one frame to the
+              pixel, so nothing here computes a per-tile offset: same x/y/w/h as the far half. */}
+          {sprite.armStack && (
+            <>
+              <Sprite
+                data-node-sprite={`${sprite.key}:arm`}
+                url={sprite.armStack.armUrl}
+                x={sprite.x}
+                y={sprite.y}
+                w={CELL}
+                h={PROP_H}
+                filter={STANDING_RELIEF[tier]}
+                clipTo={footprintRects(sprite.footprint)}
+                transform={leverArmTransform(sprite.armStack.angleDeg)}
+                // Inside the mound, not at its crown (`prim_lever`'s docstring: the shaft's root sits
+                // below the dome's own crown, at 76.6% down the shared frame).
+                originXPct={50}
+                originYPct={76.6}
+                // Transform only, and the DURATION lives in the class rather than inline so
+                // `motion-reduce:transition-none` can win over it — an inline style on the same
+                // property always beats a stylesheet rule, media query or not.
+                className="transition-transform duration-[260ms] ease-out motion-reduce:transition-none"
+              />
+              <Sprite
+                data-node-sprite={`${sprite.key}:front`}
+                url={sprite.armStack.frontUrl}
+                x={sprite.x}
+                y={sprite.y}
+                w={CELL}
+                h={PROP_H}
+                filter={STANDING_RELIEF[tier]}
+                clipTo={footprintRects(sprite.footprint)}
+              />
+            </>
+          )}
           {/* ON THE CHEST, NOT ON THE MARKER: the marker's own ✓ is behind the sprite. Sat on the lid,
               where the eye already is. */}
           {sprite.badge && (

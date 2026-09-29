@@ -197,7 +197,7 @@ describe("what the dev journey authors", () => {
       "master",
       "wizard",
       "expert",
-      "master",
+      "expert",
     ])
   })
 

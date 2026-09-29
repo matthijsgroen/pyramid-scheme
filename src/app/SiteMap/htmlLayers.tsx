@@ -25,6 +25,9 @@ export const Sprite = ({
   transform,
   clipTo,
   mirrored,
+  className,
+  originXPct = 50,
+  originYPct = 50,
   ...rest
 }: {
   url: string
@@ -39,6 +42,18 @@ export const Sprite = ({
   clipTo?: readonly Rect[]
   /** Mirrored in x — how a stair is aimed. A reflection is a real oblique view; a rotation is a skew. */
   mirrored?: boolean
+  /** Classes rather than inline style, so a caller can hand this a Tailwind transition (the lever's arm
+   * eases into its thrown angle) and still have `motion-reduce:` win: an inline style on the same
+   * property would always beat a stylesheet rule, media query or not. */
+  className?: string
+  /** Where `transform` pivots, as a percentage of the ART'S OWN frame — `w`×`h` — never of `clipTo`'s
+   * box. A clipped sprite's element is sized to the CLIP, which is usually bigger than one tile (a
+   * chest's footprint reaches into the floor beside it), so a plain percentage origin would pivot
+   * around the wrong point the moment a sprite is clipped. Defaults to the frame's own centre, which is
+   * what a mirrored flip wants; the lever's arm is the one caller that pivots somewhere else — its
+   * shaft's root sits inside the mound, not at the sprite's own middle. */
+  originXPct?: number
+  originYPct?: number
 } & Record<`data-${string}`, string | undefined>) => {
   const art: CSSProperties = { backgroundImage: `url(${url})`, backgroundRepeat: "no-repeat" }
   const flip = mirrored ? "scaleX(-1)" : undefined
@@ -48,6 +63,7 @@ export const Sprite = ({
     return (
       <div
         {...rest}
+        className={className}
         style={{
           position: "absolute",
           left: box.x,
@@ -57,7 +73,7 @@ export const Sprite = ({
           clipPath: `path("${rectsToPath(clipTo, [box.x, box.y])}")`,
           backgroundSize: `${w}px ${h}px`,
           backgroundPosition: `${x - box.x}px ${y - box.y}px`,
-          transformOrigin: `${x - box.x + w / 2}px ${y - box.y + h / 2}px`,
+          transformOrigin: `${x - box.x + (originXPct / 100) * w}px ${y - box.y + (originYPct / 100) * h}px`,
           opacity,
           filter,
           transform: both,
@@ -69,6 +85,7 @@ export const Sprite = ({
   return (
     <div
       {...rest}
+      className={className}
       style={{
         position: "absolute",
         left: x,
@@ -77,6 +94,7 @@ export const Sprite = ({
         height: h,
         backgroundSize: stretch ? "100% 100%" : "contain",
         backgroundPosition: "center",
+        transformOrigin: `${originXPct}% ${originYPct}%`,
         opacity,
         filter,
         transform: both,
