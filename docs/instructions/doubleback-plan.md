@@ -103,6 +103,36 @@ Measured over seeds 0-49: 0 of 50 diverge with one obstacle, **24 of 50 with two
 
 ---
 
+### Task 8: An authored drop may land past a door
+
+**Ruled by the owner 2026-09-29, after Task 7 found the floor cannot carve.**
+
+`siteAssembler.ts:1862-1864` states the rule: *"A one-way drop may run inside what a door shuts off, or out of it, but never into ground shut by a door the cell it falls from does not already stand behind: being past one door earns nothing toward another."*
+
+`doubleBack`'s first drop breaks it deliberately. `s1Chamber → leftLower` departs behind `{forkRight, greenRight}` and lands behind `{forkLeft}` — disjoint, because `forkLeft` and `forkRight` are the two sides of one fork board. Landing the player on a branch the board never opened IS the floor's trick. Measured: 0 of 200 seeds carve, identical at `packing` 1-6, and an ablation shows only removing `forkLeft` or the drop itself changes the result.
+
+**The ruling: an authored region-to-region drop is exempt. A section-addressed drop is not.**
+
+The reasoning is about who chose the ends. For a section-addressed drop the carve picks which cells span the two sections, and an accidental shortcut past a gate is a real hazard the check was built for. An obstacle-kind one-way names two REGIONS outright — the author has stated the intent the check exists to infer, and the check cannot tell a deliberate double-back from a mistake.
+
+**THE EXEMPTION IS ONLY SAFE BECAUSE SOMETHING ELSE CATCHES WHAT IT STOPS CATCHING, and proving that is this task's real work.** `walkLock` walks the compiled lock and answers whether it is solvable and whether any order of moves strands the player; Task 6 added `deadRegions` for a region no reachable state stands in. A drop that genuinely breaks a floor makes it unsound or strands someone, and those two report it. **Do not ship the exemption without demonstrating that.**
+
+- [ ] **Step 1: Exempt the authored form**
+
+Scope the landing-doors ⊆ departure-doors filter to section-addressed one-ways. Say in the comment what the rule is, who it still applies to, and why the authored form is exempt — stating the current rule, not its history.
+
+- [ ] **Step 2: Prove the net holds, and this is the step that matters**
+
+Author a floor whose region-to-region drop is genuinely broken — one that lands the player somewhere that makes the floor unsolvable or strands them — and show `walkLock` or `deadRegions` reports it by name. If neither does, **STOP**: the exemption would then remove a real guard and replace it with nothing, and I need to know that before it ships rather than after.
+
+Also confirm the section-addressed form still refuses what it always did — watched failing, red output quoted. The develop journey's pyramid 3 authors one.
+
+- [ ] **Step 3: Then finish Task 7**
+
+Author `doubleBack` on the develop journey exactly to the fixture, verify it carves, compile it through `floorLock` and walk it, and confirm the early-drop hazard survives the carve — `lockWalk.spec.ts:246-255` proves the fixture strands the player when the second drop is removed, and the authored floor must have that same property or it is not `doubleBack`. Then move the fixture out of `lockWalk.spec.ts`, leaving what tests the walk itself.
+
+---
+
 ### Task 7: `doubleBack`, authored
 
 Author the fixture as a real floor on the develop journey. Then **move the example out of `lockWalk.spec.ts`** — it is a fixture there only because there was nothing to author it with, and a design document plus a fixture are two lists that must agree by hand. What stays in that spec is what tests the walk: the moves, the owner fold, the two questions, the ceiling.
