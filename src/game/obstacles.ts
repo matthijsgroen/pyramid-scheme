@@ -1,5 +1,5 @@
 import type { RegionGraph } from "./regions"
-import { regionRoute } from "./regions"
+import { offRouteChains, regionRoute } from "./regions"
 
 /**
  * WHAT STANDS IN THE WAY, AND WHAT DECIDES WHETHER IT DOES — two separate things joined by an
@@ -63,10 +63,12 @@ const connectionKey = (a: string, b: string): string => JSON.stringify([a, b].so
  * before a wall is carved. Nothing here depends on a seed: which regions exist, what joins them and
  * which route the main path threads are all fixed by the config.
  *
- * `obstacleOffRoute` is the honest limit of what can be built today rather than a rule of the design:
- * a region is a stretch of the MAIN PATH, so cells only ever meet along the threaded route, and a
- * connection off it has no boundary to stand a gate at. It stops firing on its own when the
- * path-shaping work lets a layout branch.
+ * `obstacleOffRoute` is the honest limit of what the carve can actually stand a gate at: a seam is a
+ * connection two adjacent cells meet along, and cells meet along the main path AND along a side
+ * path's own chain — the mouth where it leaves its parent region, and every join within it
+ * (offRouteChains, regions.ts, the same order `regionOfStep` distributes a chain's own cells in). A
+ * connection genuinely off both is still refused: e.g. one touching a branch's SECOND meeting with the
+ * route, which the carve never turns into a physical join (`offRouteChains` picks one mouth, not two).
  */
 export const topologyFaults = (
   layout: RegionGraph | undefined,
@@ -83,8 +85,12 @@ export const topologyFaults = (
 
   const joined = new Set(layout.connections.map(([a, b]) => connectionKey(a, b)))
   const route = regionRoute(layout)
-  const onRoute = new Set<string>()
-  for (let i = 0; i < route.length - 1; i++) onRoute.add(connectionKey(route[i], route[i + 1]))
+  const seatable = new Set<string>()
+  for (let i = 0; i < route.length - 1; i++) seatable.add(connectionKey(route[i], route[i + 1]))
+  for (const { mouth, regions } of offRouteChains(layout)) {
+    const ordered = [mouth, ...regions]
+    for (let i = 0; i < ordered.length - 1; i++) seatable.add(connectionKey(ordered[i], ordered[i + 1]))
+  }
 
   const seenObstacle = new Set<string>()
   for (const obstacle of obstacles) {
@@ -92,7 +98,7 @@ export const topologyFaults = (
     seenObstacle.add(obstacle.id)
     const key = connectionKey(obstacle.at.between[0], obstacle.at.between[1])
     if (!joined.has(key)) faults.push({ type: "obstacleNamesNoConnection", id: obstacle.id })
-    else if (!onRoute.has(key)) faults.push({ type: "obstacleOffRoute", id: obstacle.id })
+    else if (!seatable.has(key)) faults.push({ type: "obstacleOffRoute", id: obstacle.id })
   }
 
   const regions = new Set(layout.regions.map(r => r.name))

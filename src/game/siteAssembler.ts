@@ -20,9 +20,9 @@ import type {
 } from "./siteTypes"
 import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
 import { appetiteAccepts, offRouteChains, regionOfStep, regionRoute, strandedRegions } from "./regions"
-import type { ContentKind } from "./regions"
+import type { ContentKind, SideChain } from "./regions"
 import { crossesNoDoor, doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
-import type { Control } from "./obstacles"
+import type { Control, Obstacle } from "./obstacles"
 import { cellSlot } from "./cellSlot"
 import { stairIdAt } from "./stairAddress"
 import { footprintSize } from "./roomFootprint"
@@ -1078,7 +1078,10 @@ export const assembleFloor = (
   let controlPuzzleUndisplaceable: string[] | undefined
   // The first attempt's rooms standing where their region's appetite refuses them, kept the same way.
   let regionMismatch: { region: string; kind: ContentKind }[] | undefined
-  for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
+  // Labeled so a gate reserved deep inside a chain's own content loop (below) can retry the WHOLE
+  // attempt the same way every other shortfall here does, rather than only skipping the rest of one
+  // chain's own content.
+  attempt: for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
     if (attempt >= RECOVERY_ATTEMPT) {
       // Recovery asks for the roomiest wish outright. Winding the CHAINS down is its lever, and on a
       // floor already carved as tight as it goes there is nothing left to wind: without this, a tight
@@ -1153,17 +1156,27 @@ export const assembleFloor = (
     // once the carve is finished (below), not as a fault raised on the config alone, because a wider
     // retry can still grow the floor a side section it did not have room for at attempt 0.
     const sideChains = regionLayout ? offRouteChains(regionLayout) : []
-    const chainRegionsBySectionIdx = new Map<number, string[]>()
+    const chainRegionsBySectionIdx = new Map<number, SideChain>()
     sideChains.forEach((chain, i) => {
-      if (i < config.sideSections.length) chainRegionsBySectionIdx.set(i, chain.regions)
+      if (i < config.sideSections.length) chainRegionsBySectionIdx.set(i, chain)
     })
     // WHERE ONE REGION STOPS AND THE NEXT BEGINS. The route threads the regions in order, so a
     // connection on it is the seam between two consecutive stretches and the first cell of the far
     // stretch is the one the player has to walk into — which is where the bars belong. The lookup
     // itself is `seamIndexFor` (obstacles.ts): a pure question about `stepRegion` that is tested on
-    // its own, including the "no seam" answer this carve cannot currently produce (see below).
+    // its own.
+    //
+    // ONLY A MAIN-PATH OBSTACLE ANSWERS HERE — one whose two regions are both on the route, so
+    // `stepRegion` (known this early, before a single side-path cell exists) is the right question to
+    // ask it. An obstacle touching an off-route region seats on the CHAIN it belongs to instead, which
+    // exists only once that chain's own cells are carved (below, alongside `cellRegion`) —
+    // `topologyFaults` has already proven every obstacle seats SOMEWHERE, so failing this test only
+    // ever means "ask the other question," never a genuine fault.
+    const onRouteObstacle = (o: Obstacle) => onRouteSet.has(o.at.between[0]) && onRouteSet.has(o.at.between[1])
+    const mainPathObstacles = (authoredConfig.obstacles ?? []).filter(onRouteObstacle)
+    const offRouteObstacles = (authoredConfig.obstacles ?? []).filter(o => !onRouteObstacle(o))
     const gateIndexByObstacle = new Map<string, number>()
-    for (const obstacle of authoredConfig.obstacles ?? []) {
+    for (const obstacle of mainPathObstacles) {
       const seam = seamIndexFor(stepRegion, obstacle.at.between)
       if (seam !== undefined) gateIndexByObstacle.set(obstacle.id, seam)
     }
@@ -1171,17 +1184,20 @@ export const assembleFloor = (
     // gap-free concatenation — a region is either fully seated or, when the path is too short, absent
     // together with every region after it on the route (caught by `unseatedRegions` above, which
     // always `continue`s first) — so with today's carve, a route-adjacent obstacle's two regions are
-    // never "both seated but not adjacent": `seamIndexFor` cannot actually return `undefined` here yet.
-    // It is the path-shaping work (obstacleOffRoute's own comment, obstacles.ts) that lets a layout
-    // branch and a gap reach this point for real; this refusal is what answers it once it can.
-    // Retried rather than refused for the same reason `unseatedRegions` is: `mainPath.length` GROWS
-    // across the attempt budget.
-    if (gateIndexByObstacle.size < (authoredConfig.obstacles ?? []).length) {
+    // never "both seated but not adjacent": `seamIndexFor` cannot actually return `undefined` here for
+    // a genuinely main-path obstacle. Retried rather than refused for the same reason `unseatedRegions`
+    // is: `mainPath.length` GROWS across the attempt budget.
+    if (gateIndexByObstacle.size < mainPathObstacles.length) {
       if (!gateSeamMissing)
-        gateSeamMissing = (authoredConfig.obstacles ?? []).filter(o => !gateIndexByObstacle.has(o.id)).map(o => o.id)
+        gateSeamMissing = mainPathObstacles.filter(o => !gateIndexByObstacle.has(o.id)).map(o => o.id)
       continue
     }
     const gateIndices = new Set(gateIndexByObstacle.values())
+    // WHERE AN OFF-ROUTE OBSTACLE'S OWN SEAM LANDS — filled in once each matched chain's own cells
+    // exist (alongside `cellRegion`, below): `{ idx, cellIndex }` names which chain (its top-level
+    // `chains` index) and which of that chain's own cells the seam is, mirroring `gateIndexByObstacle`
+    // one level down.
+    const chainGateIndexByObstacle = new Map<string, { idx: number; cellIndex: number }>()
 
     // Exit placed at the main path's end, forced to degree-1 below so no corridor passes
     // through it. Content nodes (puzzles/chests + the goal) are spread evenly across the whole main
@@ -1854,13 +1870,26 @@ export const assembleFloor = (
       // chain's region always in the order its component declared, regardless of how many cells the
       // carve gave it. Every other chain keeps today's behaviour: it belongs to the region it grows
       // from, whole.
-      const hostedRegions = parentIdx === undefined ? chainRegionsBySectionIdx.get(idx) : undefined
+      const chainRecord = parentIdx === undefined ? chainRegionsBySectionIdx.get(idx) : undefined
+      const hostedRegions = chainRecord?.regions
       if (hostedRegions) {
         const perCell = regionOfStep(hostedRegions, cells.length)
         cells.forEach(([r, c], step) => {
           const region = perCell[step]
           if (region !== undefined) cellRegion.set(posKey(r, c), region)
         })
+        // AN OFF-ROUTE OBSTACLE SEATS ON THIS CHAIN'S OWN STEP LIST the identical way a main-path one
+        // seats on `stepRegion` above — the same `seamIndexFor`, asked of `perCell` instead — prefixed
+        // with the chain's own mouth (the on-route region a step of `perCell` never itself carries, a
+        // cell being main path or side path but never both) so a gate at the mouth's own boundary asks
+        // the same question as one further in. `cellIndex` is one less than the step `seamIndexFor`
+        // answers, since the mouth is a virtual step ahead of `cells[0]`.
+        const extendedStepRegion = [chainRecord!.mouth, ...perCell]
+        for (const obstacle of offRouteObstacles) {
+          if (chainGateIndexByObstacle.has(obstacle.id)) continue
+          const seam = seamIndexFor(extendedStepRegion, obstacle.at.between)
+          if (seam !== undefined) chainGateIndexByObstacle.set(obstacle.id, { idx, cellIndex: seam - 1 })
+        }
       } else {
         const grownFrom = cellRegion.get(posKey(attachedAt[0], attachedAt[1]))
         if (grownFrom !== undefined) for (const [r, c] of cells) cellRegion.set(posKey(r, c), grownFrom)
@@ -1890,6 +1919,27 @@ export const assembleFloor = (
         continue
       }
     }
+
+    // AN OFF-ROUTE OBSTACLE'S OWN SEAM, checked here for the same reason the region check just above
+    // is: a chain's own cells, and so its seam, exist only once the carve produces them. Retried the
+    // same way `gateSeamMissing` is above — a region the chain never got to seat (caught by
+    // `unseatedRegions` first, on an earlier attempt of its own) is one cause; a genuinely un-carved
+    // seam within an otherwise-seated chain, this task's own reason for existing, is the other.
+    if (chainGateIndexByObstacle.size < offRouteObstacles.length) {
+      if (!gateSeamMissing)
+        gateSeamMissing = offRouteObstacles.filter(o => !chainGateIndexByObstacle.has(o.id)).map(o => o.id)
+      continue
+    }
+    // A GATE AT A CHAIN'S OWN LAST CELL WOULD STAND WHERE THE END ROOM MUST — every chain reserves
+    // that cell unconditionally (below), the same way the main path's own last index is reserved for
+    // the exit and excluded from every dynamic placement (`gateIndices`, content, controls all stop
+    // one short of it). Retried rather than refused: a wider chain, which `chainPacking` grows across
+    // the attempt budget the same way `packing` grows the main path, may leave room past it.
+    const chainGateCrowdsEnd = [...chainGateIndexByObstacle.values()].some(
+      ({ idx, cellIndex }) =>
+        cellIndex === (chains.find(c => c.parentIdx === undefined && c.idx === idx)?.cells.length ?? 0) - 1
+    )
+    if (chainGateCrowdsEnd) continue
 
     // A CELL IN A GATED REGION STANDS BEHIND EVERY OBSTACLE BOUNDING IT, written into the same map
     // the authored gates and traps use — so a one-way falling into a gated region, a stray tree edge
@@ -2034,12 +2084,39 @@ export const assembleFloor = (
     // stands there, the chain's own content spread through whatever room the carve gave it, and its
     // end room. One body for a path off the main walk and a path off one of those — the two differ
     // only in what the chain record already carries.
-    for (const { section, cells, positional, keyNodeId, keyHostColors } of chains) {
+    for (const { section, cells, positional, idx, parentIdx, keyNodeId, keyHostColors } of chains) {
       const isFloorKeyGate = section.gate?.type === "floor-key"
       const isTombKeyGate = section.gate?.type === "tomb-key"
       // An authored keyId is used verbatim; only an unauthored gate looks up the id the
       // key-host chain above assigned it.
       const authoredKeyId = isFloorKeyGate ? (section.gate as { keyId?: string }).keyId : undefined
+
+      // AN OFF-ROUTE OBSTACLE'S GATE ROOM — this chain's own cell indices from `chainGateIndexByObstacle`
+      // (filled once, above, alongside `cellRegion`), written the identical way a main-path gate's is
+      // (`gateKeyOf`/`keyGate`, below): furniture the topology mod stands on a connection, wired to
+      // whichever control opens it. Independent of the floor-key/tomb-key gate above — a different
+      // authoring vocabulary standing at a different node — so both can occupy the same chain without
+      // either having to know the other exists.
+      //
+      // `parentIdx === undefined` is checked alongside `idx`, not just `idx` alone: `chainGateIndexByObstacle`
+      // only ever keys by a TOP-LEVEL chain's own `idx` (populated only where `hostedRegions` is,
+      // which itself requires `parentIdx === undefined`, above) — but a sub-chain's `idx` numbers its
+      // position among its OWN parent's sub-sections, starting from 0 the same as a top-level chain's
+      // does, so `idx` alone can coincide between a top-level chain and an unrelated sub-chain.
+      const chainGateIndices = new Set<number>()
+      if (parentIdx === undefined) {
+        for (const [obstacleId, loc] of chainGateIndexByObstacle) {
+          if (loc.idx !== idx) continue
+          chainGateIndices.add(loc.cellIndex)
+          const [gr, gc] = cells[loc.cellIndex]
+          roomSpecs.set(posKey(gr, gc), {
+            roomType: "encounter",
+            family: keyGate.familyId,
+            tags: keyGate.tags,
+            requiredKeyId: gateKeyOf(obstacleId),
+          })
+        }
+      }
 
       let contentStart = 0
 
@@ -2079,13 +2156,23 @@ export const assembleFloor = (
         contentStart = 1
       }
 
+      // A TOPOLOGY GATE AT OR AHEAD OF `contentStart` CLAIMS THAT CELL TOO — advanced past exactly
+      // like a main-path gate advances `placedContent` above: the room there is the gate's, not
+      // content's, whichever authoring vocabulary put it there. Never past `cells.length - 1`, the
+      // chain's own end room, reserved unconditionally below (`chainGateCrowdsEnd` already refused an
+      // attempt where a gate would have landed there).
+      while (chainGateIndices.has(contentStart) && contentStart < cells.length - 1) contentStart += 1
+
       // A lever stands at the head of its chain, past whatever gate guards the way in: the player
       // reaches it before the content, and throwing it is a walk back out rather than a room solved
-      // deeper in.
+      // deeper in. A gate leaving no room ahead of it at all is the same shortfall the puzzle spread
+      // below retries for, asked one node earlier.
       if (leverRooms(positional) === 1) {
+        if (contentStart >= cells.length - 1) continue attempt
         const [lr, lc] = cells[contentStart]
         roomSpecs.set(posKey(lr, lc), leverSpec(positional))
         contentStart += 1
+        while (chainGateIndices.has(contentStart) && contentStart < cells.length - 1) contentStart += 1
       }
 
       // Intermediate nodes (puzzles/traps) — spread across whatever room `paddedChainLength` gave
@@ -2093,7 +2180,21 @@ export const assembleFloor = (
       // assumed-consecutive from contentStart (which only ever held when a chain was exactly its
       // bare content length). Indices map through `contentIndices`, so a multi-puzzle chain indexes
       // its own content rather than past it.
-      const contentIndices = spreadContentIndices(section.pathPuzzles, contentStart, cells.length)
+      //
+      // A GATE CELL AND A PUZZLE CANNOT BOTH STAND IN ONE CELL EITHER, same rule and same technique
+      // as the main path's own `placedContent`: forward to the next free node, so one layout always
+      // places the same way. Runs out of room only where a gate leaves fewer free cells than this
+      // chain's own `pathPuzzles` asks for, in which case this attempt retries the same way a
+      // main-path shortfall does — a wider chain (`chainPacking`) may fit both.
+      const rawContentIndices = spreadContentIndices(section.pathPuzzles, contentStart, cells.length)
+      const contentIndices: number[] = []
+      for (const wanted of rawContentIndices) {
+        let index = wanted
+        while (index < cells.length - 1 && (chainGateIndices.has(index) || contentIndices.includes(index))) index += 1
+        if (index >= cells.length - 1) break
+        contentIndices.push(index)
+      }
+      if (contentIndices.length < section.pathPuzzles) continue attempt
       for (let pi = 0; pi < section.pathPuzzles; pi++) {
         const [r, c] = cells[contentIndices[pi]]
         const reward = section.rewards?.[pi]

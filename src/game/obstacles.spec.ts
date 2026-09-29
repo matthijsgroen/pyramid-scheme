@@ -66,6 +66,45 @@ describe("authored topology that resolves", () => {
   it("finds no fault at all when the floor authors neither", () => {
     expect(topologyFaults(undefined, [], [])).toEqual([])
   })
+
+  // `cellar` hangs off `hall` (a pocket the route never threads — `regionRoute` runs mouth→hall→vault),
+  // so this connection is a side path's own mouth rather than a step of the main route. A gate stands
+  // there just as honestly: `offRouteChains` seats `cellar` on a chain grown from `hall`.
+  it("finds no fault in a gate at a side chain's own mouth", () => {
+    const faults = topologyFaults(layout, [gate("g1", ["hall", "cellar"])], [lever("s1", { left: ["g1"], right: [] })])
+
+    expect(faults).toEqual([])
+  })
+
+  // A chain two regions deep (doubleBack's own shape): `rightLower` hangs off the route's `in`, and
+  // `s1Chamber` hangs off `rightLower` in turn. The join WITHIN the chain is a boundary too, not just
+  // the mouth where it leaves the route.
+  it("finds no fault in a gate within a side chain, not on its mouth", () => {
+    const branching: RegionGraph = {
+      regions: [
+        { name: "in", appetite: "free" },
+        { name: "leftLower", appetite: "free" },
+        { name: "out", appetite: "free" },
+        { name: "rightLower", appetite: "free" },
+        { name: "s1Chamber", appetite: "free" },
+      ],
+      connections: [
+        ["in", "leftLower"],
+        ["leftLower", "out"],
+        ["in", "rightLower"],
+        ["rightLower", "s1Chamber"],
+      ],
+      in: "in",
+      out: "out",
+    }
+    const faults = topologyFaults(
+      branching,
+      [gate("g1", ["rightLower", "s1Chamber"])],
+      [{ ...lever("s1", { left: ["g1"], right: [] }), in: "in" }]
+    )
+
+    expect(faults).toEqual([])
+  })
 })
 
 describe("authored topology that does not resolve", () => {
@@ -85,8 +124,32 @@ describe("authored topology that does not resolve", () => {
     expect(faults).toEqual([{ type: "obstacleNamesNoConnection", id: "g1" }])
   })
 
-  it("names an obstacle on a connection the route never threads", () => {
-    const faults = topologyFaults(layout, [gate("g1", ["hall", "cellar"])], [lever("s1", { left: ["g1"], right: [] })])
+  // `cellar` touches the route twice — once at `hall`, once at `vault` — so `offRouteChains` takes
+  // the earliest-declared as its mouth (`hall`) and the OTHER join is one the carve never turns into a
+  // physical adjacency: `cellar`'s cells grow from `hall`'s side path alone, never touching `vault`'s.
+  // That is a connection genuinely off both the route and every chain's own seam, still refused.
+  it("names an obstacle on a connection the carve produces no seam for", () => {
+    const doubleTouching: RegionGraph = {
+      regions: [
+        { name: "mouth", appetite: "free" },
+        { name: "hall", appetite: "free" },
+        { name: "vault", appetite: "free" },
+        { name: "cellar", appetite: "free" },
+      ],
+      connections: [
+        ["mouth", "hall"],
+        ["hall", "vault"],
+        ["hall", "cellar"],
+        ["vault", "cellar"],
+      ],
+      in: "mouth",
+      out: "vault",
+    }
+    const faults = topologyFaults(
+      doubleTouching,
+      [gate("g1", ["vault", "cellar"])],
+      [lever("s1", { left: ["g1"], right: [] })]
+    )
 
     expect(faults).toEqual([{ type: "obstacleOffRoute", id: "g1" }])
   })

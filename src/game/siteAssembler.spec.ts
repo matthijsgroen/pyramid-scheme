@@ -1978,6 +1978,181 @@ describe("a side path seating a chain of regions", () => {
   })
 })
 
+describe("a gate on a connection off the threaded route", () => {
+  // doubleBack's own shape (lockWalk.spec.ts's doubleBack fixture; docs/game-design/regions-and-containers.md):
+  // the route runs entrance → leftLower → s2Chamber → wayOut, leaving rightLower → s1Chamber as a
+  // two-deep chain off the route's own mouth (entrance). `greenLeft` stands ON the route (leftLower →
+  // s2Chamber) — the control case, already answered before this task. `forkRight` stands at the
+  // chain's own MOUTH (entrance → rightLower) and `greenRight` WITHIN it (rightLower → s1Chamber) —
+  // the two shapes this task adds.
+  const doubleBackLayout = (): RegionGraph => ({
+    regions: [
+      { name: "entrance", appetite: "free" },
+      { name: "rightLower", appetite: "free" },
+      { name: "s1Chamber", appetite: "free" },
+      { name: "leftLower", appetite: "free" },
+      { name: "s2Chamber", appetite: "free" },
+      { name: "wayOut", appetite: "free" },
+    ],
+    connections: [
+      ["entrance", "leftLower"],
+      ["entrance", "rightLower"],
+      ["rightLower", "s1Chamber"],
+      ["leftLower", "s2Chamber"],
+      ["s2Chamber", "wayOut"],
+    ],
+    in: "entrance",
+    out: "wayOut",
+  })
+
+  const doubleBackConfig = (): FloorConfig => ({
+    pathPuzzles: 1,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    regionLayout: doubleBackLayout(),
+    // The one off-route component (rightLower, s1Chamber) hangs off `entrance`; one side section is
+    // what `offRouteChains` matches it to.
+    sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: "treasure" }],
+    obstacles: [
+      { id: "forkRight", kind: "gate", at: { on: "connection", between: ["entrance", "rightLower"] } },
+      { id: "greenRight", kind: "gate", at: { on: "connection", between: ["rightLower", "s1Chamber"] } },
+      { id: "greenLeft", kind: "gate", at: { on: "connection", between: ["leftLower", "s2Chamber"] } },
+    ],
+    controls: [
+      {
+        id: "Y",
+        in: "entrance",
+        states: ["unset", "open"],
+        initial: "unset",
+        returnsToInitial: false,
+        opens: { unset: [], open: ["forkRight", "greenRight", "greenLeft"] },
+      },
+    ],
+  })
+
+  // Every gate room the carve wrote, keyed by which obstacle id its `requiredKeyId` names —
+  // `gateKeyOf` mints `obstacle:<journey>#<level>#<floor>:<id>`, so `.includes(id)` is enough to tell
+  // them apart without depending on that format here too.
+  const gateRoomsOf = (grid: FloorGrid): Array<{ id: string; pos: [number, number]; region?: string }> => {
+    const found: Array<{ id: string; pos: [number, number]; region?: string }> = []
+    for (const id of ["forkRight", "greenRight", "greenLeft"]) {
+      grid.cells.forEach((row, r) =>
+        row.forEach((cell, c) => {
+          if (cell.type === "room" && cell.requiredKeyId?.includes(`:${id}`)) {
+            found.push({ id, pos: [r, c], region: (cell as RoomCell).region })
+          }
+        })
+      )
+    }
+    return found
+  }
+
+  it("carves with a gate on the chain's own mouth and on a boundary within it", () => {
+    const result = assembleFloor("site-doubleback", doubleBackConfig(), 42)
+    if (!result.success) throw new Error(`assembly failed: ${JSON.stringify(result.reasons)}`)
+
+    const gateRooms = gateRoomsOf(result.grid)
+    const idsFound = gateRooms.map(g => g.id)
+    for (const id of ["forkRight", "greenRight", "greenLeft"]) expect(idsFound).toContain(id)
+  })
+
+  // Each gate stands at the seam `seamIndexFor` names: the first cell of the FAR region — the region
+  // the player has not yet earned when arriving from the near side.
+  it("stands each gate room in the region past its own seam", () => {
+    const result = assembleFloor("site-doubleback-boundary", doubleBackConfig(), 42)
+    if (!result.success) throw new Error(`assembly failed: ${JSON.stringify(result.reasons)}`)
+
+    const byId = new Map(gateRoomsOf(result.grid).map(g => [g.id, g]))
+    expect(byId.get("forkRight")?.region).toBe("rightLower")
+    expect(byId.get("greenRight")?.region).toBe("s1Chamber")
+    expect(byId.get("greenLeft")?.region).toBe("s2Chamber")
+  })
+
+  // THE PROPERTY THAT MATTERS: a gate's whole purpose is that it cannot be walked around. `greenRight`
+  // stands between `rightLower` and `s1Chamber` — a boundary WITHIN the chain, not at its mouth — so
+  // this proves no leftover maze edge lets a player reach `s1Chamber` without crossing that seam. A
+  // test that only asserted the gate room exists would pass under that bug; excluding the gate room's
+  // OWN cell (not the whole region) and finding `s1Chamber` unreachable is what proves it is the
+  // choke point, not merely somewhere nearby it.
+  it("cannot be bypassed: every path to the region behind a within-chain gate passes through its gate room", () => {
+    const result = assembleFloor("site-doubleback-bypass", doubleBackConfig(), 42)
+    if (!result.success) throw new Error(`assembly failed: ${JSON.stringify(result.reasons)}`)
+    const { grid } = result
+
+    const greenRightRoom = gateRoomsOf(grid).find(g => g.id === "greenRight")
+    if (!greenRightRoom) throw new Error("greenRight gate room not found")
+    const [excludedR, excludedC] = greenRightRoom.pos
+
+    const reachableExcluding = (exclude: [number, number] | undefined): Set<string> => {
+      const key = (r: number, c: number) => `${r},${c}`
+      const [er, ec] = grid.entrancePos
+      const seen = new Set([key(er, ec)])
+      const queue: Array<[number, number]> = [[er, ec]]
+      while (queue.length > 0) {
+        const [r, c] = queue.shift()!
+        const cell = grid.cells[r][c]
+        if (cell.type === "empty") continue
+        for (const dir of cell.dirs) {
+          const [dr, dc] = DIR_MOVE[dir]
+          const nr = r + dr
+          const nc = c + dc
+          if (seen.has(key(nr, nc))) continue
+          if (exclude && nr === exclude[0] && nc === exclude[1]) continue
+          const next = grid.cells[nr]?.[nc]
+          if (!next || next.type === "empty") continue
+          seen.add(key(nr, nc))
+          queue.push([nr, nc])
+        }
+      }
+      return seen
+    }
+
+    // ROOM cells only, and not the gate room itself: the CONNECTOR immediately before the gate room
+    // inherits `s1Chamber`'s region label too (a corridor answers to one of the two nodes it joins —
+    // an arbitrary pick at a region's own boundary), so it is reachable from the near side without
+    // needing the gate at all, same as standing right outside a locked door. That is not a bypass —
+    // no *room* stands there — so this checks only cells the region actually holds content in.
+    const s1Cells = grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) =>
+        cell.type === "room" && cell.region === "s1Chamber" && !(r === excludedR && c === excludedC)
+          ? [`${r},${c}`]
+          : []
+      )
+    )
+    // Sanity: s1Chamber cells genuinely exist and are reachable at all, so the exclusion check below
+    // fails for the right reason rather than because nothing was ever reachable.
+    expect(s1Cells.length).toBeGreaterThan(0)
+    const reachedFreely = reachableExcluding(undefined)
+    for (const cellKey of s1Cells) expect(reachedFreely.has(cellKey)).toBe(true)
+
+    // The real check: with only the gate room itself taken away — not the whole region — no
+    // s1Chamber cell is still reachable.
+    const reachedWithoutGateRoom = reachableExcluding([excludedR, excludedC])
+    for (const cellKey of s1Cells) expect(reachedWithoutGateRoom.has(cellKey)).toBe(false)
+  })
+
+  // Watched failing against the pre-fix carve/obstacles.ts: `obstacleOffRoute` refused `forkRight`
+  // and `greenRight` outright, before a single wall was carved.
+  it("still refuses an obstacle on a connection the carve produces no seam for", () => {
+    // `s1Chamber` touches the route a second time here (in addition to hanging off `entrance` via
+    // `rightLower`) — the same "genuinely absent" shape obstacles.spec.ts's own unit test names.
+    // `offRouteChains` still takes `entrance` as the chain's mouth (declared first), so this second
+    // touch is a real graph connection the carve never turns into a physical adjacency.
+    const layout = doubleBackLayout()
+    const config: FloorConfig = {
+      ...doubleBackConfig(),
+      regionLayout: { ...layout, connections: [...layout.connections, ["s1Chamber", "s2Chamber"]] },
+      obstacles: [{ id: "nowhere", kind: "gate", at: { on: "connection", between: ["s1Chamber", "s2Chamber"] } }],
+      controls: [{ ...doubleBackConfig().controls![0], opens: { unset: [], open: ["nowhere"] } }],
+    }
+    const result = assembleFloor("site-doubleback-nowhere", config, 42)
+
+    expect(result.success).toBe(false)
+    expect(result.success === false && result.reasons).toEqual([{ type: "obstacleOffRoute", id: "nowhere" }])
+  })
+})
+
 describe(encounterFromMeta, () => {
   const meta = { id: "sumplete", ownerMod: "puzzle", tags: ["puzzle"], icon: "?", color: "gray", rewardPriority: 60 }
 
