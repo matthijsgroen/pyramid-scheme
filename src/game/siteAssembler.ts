@@ -890,26 +890,22 @@ export const assembleFloor = (
     return { success: false, reasons: [{ type: "noUngatedSectionForKey" }] }
   }
 
-  // A GATE ROOM IS A CELL LIKE ANY OTHER AND THE PATH HAS TO BE LONG ENOUGH TO HOLD IT, the same way
-  // a lever standing on the main path lengthens it. Sized here, before the carve, because the carve
-  // is what has to produce the cells.
-  const mainGateCount = (authoredConfig.obstacles ?? []).length
-  // A CONTROL'S ROOM IS ALSO A CELL THE PATH HAS TO HOLD, one per control — sized the same way and for
-  // the same reason as a gate room.
-  const controlCount = controlRecords.length
+  // A GATE OR A CONTROL ROOM IS NOT SIZED IN HERE — deliberately. Both are owned by the topology mod
+  // (FloorConfig.obstacles/controls) and dropped along with it when that mod is off, so a term for
+  // either in the path's minimum length would make the maze walk a different distance with the mod on
+  // than with it off: the whole floor would re-carve, not just lose a mod's furniture. A gate or
+  // control room instead occupies a node the path already has — the same one content would otherwise
+  // use (see `placedContent`'s forward-shift and `controlNotSeated`/`obstacleSeamNotCarved` below) —
+  // so toggling the mod off is identical BY CONSTRUCTION: the maze never sees it existed
+  // (docs/game-design/regions-and-containers.md, "the identical walls carve with every connection
+  // open").
 
   // Minimum node count for the main path alone (entrance, its own content, goal, exit) —
   // kept separate from `minCells` below (which folds in every side-section's cost too) so
   // `packing`'s path-length target scales with what the *main path itself* needs, not with
   // how much unrelated side-section content happens to branch off it elsewhere.
   const mainPathCells =
-    1 /* entrance */ +
-    config.pathPuzzles +
-    1 /* goal */ +
-    1 /* exit/stairhead */ +
-    leverRooms(MAIN_SECTION_ADDRESS) +
-    mainGateCount +
-    controlCount
+    1 /* entrance */ + config.pathPuzzles + 1 /* goal */ + 1 /* exit/stairhead */ + leverRooms(MAIN_SECTION_ADDRESS)
 
   // Minimum node count needed (real path nodes only — the connector cell between two
   // adjacent nodes lives at a separate, non-node grid position, see NODE_STEP above).
@@ -1144,10 +1140,12 @@ export const assembleFloor = (
     // keeps something to find along the whole walk, and puts the goal last (closest to
     // the exit) so there's no unused tail behind it either.
     const leverOnMain = leverRooms(MAIN_SECTION_ADDRESS) === 1
-    // A control room is content in the sense that matters here, which is that a node is spent on it —
-    // the same reason `leverRooms(MAIN_SECTION_ADDRESS)` is folded in rather than left for puzzles to
-    // absorb.
-    const contentCount = config.pathPuzzles + 1 /* goal */ + leverRooms(MAIN_SECTION_ADDRESS) + controlRecords.length
+    // NOT GROWN FOR A CONTROL. A control's room is carved out of a node this count already reserves
+    // for the floor's own content — see the control-seeking search below — rather than an extra one
+    // added here: the maze must carve the same way whether the topology mod that owns `controls` is
+    // registered or not, and a term for it here would size the path (and so the seeded walk's target
+    // distance) differently between the two.
+    const contentCount = config.pathPuzzles + 1 /* goal */ + leverRooms(MAIN_SECTION_ADDRESS)
     if (mainPath.length < contentCount + 2) continue // need entrance + content + a distinct exit
 
     const contentIndices = spreadContentIndices(contentCount, 1, mainPath.length)
@@ -1173,26 +1171,41 @@ export const assembleFloor = (
     // walk has to reach it before the doors it owns are worth reaching.
     const leverIndex = leverOnMain ? placedContent[0] : -1
 
-    // A CONTROL STANDS IN A REGION, so its room is the first content node of that stretch. First
-    // rather than last: a lever opens what lies further on, so the walk has to reach it before the
-    // doors it owns are worth reaching — the same reason a handle on the main path takes the first
-    // content node. Excludes `leverIndex` too, alongside the goal: that node already carries the
-    // main-path HANDLE's room (a different mechanism from a different authoring vocabulary), and the
-    // room-spec write-up below tests `mi === leverIndex` first — a control landing there would compile
-    // successfully and then be silently dropped from the grid, a door nothing ever reports as unseated.
+    // A CONTROL STANDS IN A REGION, so its room is the FIRST NODE OF THAT STRETCH — any main-path node,
+    // not only a content-designated one. Deliberately not `placedContent`: content is spread for rhythm
+    // and is not guaranteed to put a node in every region (a short early region can go unspread-into
+    // entirely — measured), while `unseated` above already guarantees every declared region at least
+    // ONE step. Searching the whole path rather than the narrower content set is what makes a control
+    // seatable on the SAME attempt core's own content already succeeds on, whether or not the topology
+    // mod that owns it is even registered — the mod must not cost this floor an extra retry the mod-off
+    // build never has to pay (docs/game-design/regions-and-containers.md's toggle-off gate). First
+    // rather than last: a lever opens what lies further on, so the walk has to reach it before the doors
+    // it owns are worth reaching. Excludes the entrance (index 0, a portal room) and the exit (the last
+    // index, forced to degree-1 below), and `leverIndex` alongside the goal: that node already carries
+    // the main-path HANDLE's room (a different mechanism from a different authoring vocabulary), and
+    // the room-spec write-up below tests `mi === leverIndex` first — a control landing there would
+    // compile successfully and then be silently dropped from the grid, a door nothing ever reports as
+    // unseated.
     const controlIndexById = new Map<string, number>()
     const takenByControl = new Set<number>()
     for (const { control } of controlRecords) {
-      const index = placedContent.find(
-        mi => stepRegion[mi] === control.in && !takenByControl.has(mi) && mi !== goalIndex && mi !== leverIndex
-      )
+      let index: number | undefined
+      for (let mi = 1; mi < mainPath.length - 1; mi++) {
+        if (stepRegion[mi] !== control.in) continue
+        if (takenByControl.has(mi) || mi === goalIndex || mi === leverIndex || gateIndices.has(mi)) continue
+        index = mi
+        break
+      }
       if (index === undefined) continue
       controlIndexById.set(control.id, index)
       takenByControl.add(index)
     }
-    // A region this attempt gave no free content node to. Retried rather than refused, for the reason
-    // slice 4 measured: `mainPath.length` GROWS across the attempt budget — packing widens at 8/16/24
-    // — so a refusal decided on attempt 0 refuses layouts its own recovery would have seated.
+    // A region this attempt gave no free node to at all — unreachable once `unseated` above has passed
+    // for a route-adjacent connection (same reasoning `gateSeamMissing`'s own comment gives), so this is
+    // the honest name for the case the path-shaping work will make real. Retried rather than refused,
+    // for the reason slice 4 measured: `mainPath.length` GROWS across the attempt budget — packing
+    // widens at 8/16/24 — so a refusal decided on attempt 0 refuses layouts its own recovery would have
+    // seated.
     if (controlIndexById.size < controlRecords.length) {
       if (!controlNotSeated)
         controlNotSeated = controlRecords
@@ -1205,8 +1218,10 @@ export const assembleFloor = (
     )
 
     // puzzleIndices[k] is the mainPath position of the k-th puzzle (0-based, path order) —
-    // used to index into config.rewards[k] below. A control's node is content spent on the control,
-    // not a puzzle, so it is filtered out here the same way the lever's node is by the slice.
+    // used to index into config.rewards[k] below. A control's node is excluded the same way the
+    // lever's is by the slice — whether or not that particular index came from `placedContent` in the
+    // first place (a control seated on a plain corridor node was never one of these to begin with, so
+    // filtering it out here is a no-op for that case and exactly right for the other).
     const puzzleIndices = placedContent.slice(leverOnMain ? 1 : 0, -1).filter(mi => !takenByControl.has(mi))
     const puzzleRole = new Map<number, number>()
     puzzleIndices.forEach((idx, k) => puzzleRole.set(idx, k))
@@ -1257,12 +1272,23 @@ export const assembleFloor = (
     // Cells within the actual puzzle-bearing stretch of the main path (before the goal),
     // in path order — kept separate so fork placement can prefer interleaving with main-path
     // puzzles over the unused corridor tail beyond the goal (see bucketing below).
+    //
+    // A GATE'S OWN CELL IS EXCLUDED HERE TOO, alongside the goal's — not because a chain could not
+    // grow from a gate room (a junction that already holds a main-path room keeps that room, same as a
+    // puzzle or the goal, see the fork-fallback below), but because a gate shifts CONTENT forward past
+    // its own seam (`placedContent`'s loop above), which moves `goalIndex` outward by the width of
+    // however many gates fell in content's way. Left unexcluded, that widened cutoff would let a gate's
+    // cell join this list ONLY when the mod is registered, and scoring draws one `rand()` per candidate
+    // below — one extra candidate is one extra draw, which shifts every attachment choice after it.
+    // Excluding it keeps this list — and so every choice scored from it — the same whether or not the
+    // mod that owns gates and controls is even in the build (the toggle-off gate,
+    // docs/game-design/regions-and-containers.md).
     const mainZoneCandidates: Array<[number, number]> = []
     for (let pi = 0; pi < mainPath.length - 1; pi++) {
       const [pr, pc] = mainPath[pi]
       if (rawFreeNeighbors(pr, pc).length === 0) continue
       branchCandidates.push([pr, pc])
-      if (pi < goalIndex) mainZoneCandidates.push([pr, pc])
+      if (pi < goalIndex && !gateIndices.has(pi)) mainZoneCandidates.push([pr, pc])
     }
     // Prefer branch points that sit next to a genuinely large contiguous empty pocket —
     // this is where the fork ends up, and its later multi-cell footprint (the claiming
