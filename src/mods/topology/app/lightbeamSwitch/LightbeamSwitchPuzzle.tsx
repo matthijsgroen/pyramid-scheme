@@ -12,6 +12,7 @@ import { shutWaysOut } from "../../game/lightbeamSwitch/waysOut"
 import {
   createLightbeamSwitchState,
   litWayOut,
+  stateFitsBoard,
   turnSwitchMirror,
 } from "../../game/lightbeamSwitch/lightbeamSwitchState"
 
@@ -92,7 +93,13 @@ export const LightbeamSwitchPuzzle: FC<Props> = ({
   onSolved,
 }) => {
   const { t } = useTranslation("common")
-  const [state, setState] = usePuzzleState(() => createLightbeamSwitchState(board, savedAngles))
+  const [rawState, setState] = usePuzzleState(() => createLightbeamSwitchState(board, savedAngles))
+  // `usePuzzleState` hands back whatever it last stored for this ROOM, unchecked against this render's
+  // board — the room key survives a world regeneration that the board underneath it does not. A record
+  // built for a board this one no longer is (see `stateFitsBoard`) is exactly the case
+  // `createLightbeamSwitchState` already knows how to recover from, so ask it again rather than trust a
+  // restore this component itself never validated.
+  const state = stateFitsBoard(board, rawState) ? rawState : createLightbeamSwitchState(board, savedAngles)
   // How the board lay when the player last turned a mirror — the measure of whether that turn has LANDED,
   // which a flag set by the tap is not. The board's state is saved, so it arrives a render behind the tap
   // that changed it, and in that render the board on screen is still the one the player walked in on: for
@@ -123,10 +130,14 @@ export const LightbeamSwitchPuzzle: FC<Props> = ({
     (mirror: number) => {
       // Never locked, landed or not: the door standing open is not a reason to stop the player trying
       // for another one, which is the whole point of the board staying up after it lights a shrine.
+      //
+      // Turns from `state` (this render's, already checked against `board`) rather than an updater's own
+      // `prev` — `usePuzzleState`'s stored copy is what `state` was corrected FROM, so building on it
+      // again would write the turn back onto the very shape mismatch just recovered from.
       setTurnedFrom(state.angles)
-      setState(prev => turnSwitchMirror(prev, mirror))
+      setState(turnSwitchMirror(state, mirror))
     },
-    [state.angles, setState]
+    [state, setState]
   )
 
   // What the doors say right now: the way the light is on, or — with the board still dark — the way this

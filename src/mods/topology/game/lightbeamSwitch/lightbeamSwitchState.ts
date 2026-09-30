@@ -13,16 +13,28 @@ import type { LightbeamSwitchBoard } from "./generateLightbeamSwitch"
 export type LightbeamSwitchState = { angles: MirrorAngle[] }
 
 /**
+ * Whether `state` is one this board could actually stand on: one angle per mirror it owns, and every
+ * angle a real `\`` or `/` — never a count that only happens to match, nor a value `traceBeam` could not
+ * turn into a direction. A board regenerated under the same room key between visits can leave a record
+ * of the right length for the WRONG board; length alone cannot tell the two apart, so this is the proof
+ * `createLightbeamSwitchState` and a stale restore both lean on rather than trusting either on its own.
+ */
+export const stateFitsBoard = (board: LightbeamSwitchBoard, state: LightbeamSwitchState): boolean =>
+  state.angles.length === board.grid.mirrors.length &&
+  state.angles.every(angle => angle === SLASH || angle === BACKSLASH)
+
+/**
  * Opens on `savedAngles` — the player's own mirrors, read back from the durable per-room record
  * (plugin.tsx) — and falls back to the board's own initial angles for a board never turned, or a saved
- * count that no longer matches this board's own mirrors.
+ * record this board could not have produced (see `stateFitsBoard`).
  */
 export const createLightbeamSwitchState = (
   board: LightbeamSwitchBoard,
   savedAngles?: readonly MirrorAngle[]
-): LightbeamSwitchState => ({
-  angles: savedAngles && savedAngles.length === board.grid.mirrors.length ? [...savedAngles] : [...board.grid.initial],
-})
+): LightbeamSwitchState => {
+  const saved = savedAngles && { angles: [...savedAngles] }
+  return saved && stateFitsBoard(board, saved) ? saved : { angles: [...board.grid.initial] }
+}
 
 /**
  * How the player's own angles are written to that record — one field per mirror, in board order, so a
@@ -30,13 +42,18 @@ export const createLightbeamSwitchState = (
  */
 export const encodeLightbeamAngles = (angles: readonly MirrorAngle[]): string => angles.join(",")
 
-/** The inverse. Undefined for anything that doesn't parse as one finite angle per mirror — a record
- * from a build this board's shape no longer matches falls back to the board's own initial angles rather
- * than seed a state a real tap could never have produced. */
+/**
+ * The inverse. Undefined for anything that doesn't parse as one `SLASH`-or-`BACKSLASH` token per entry —
+ * every other number `Number` would happily parse is impossible for a real board, and feeding one to
+ * `traceBeam` is what sends its trace off the grid (`stepCell` indexing a direction that was never 0-7).
+ *
+ * This is the whole of what a token can be wrong about without seeing a board at all; whether the COUNT
+ * belongs to any particular one is `stateFitsBoard`'s question, not this function's.
+ */
 export const decodeLightbeamAngles = (encoded: string): MirrorAngle[] | undefined => {
   if (encoded === "") return undefined
   const angles = encoded.split(",").map(Number)
-  return angles.every(Number.isFinite) ? angles : undefined
+  return angles.every(angle => angle === SLASH || angle === BACKSLASH) ? angles : undefined
 }
 
 /** A mirror lies one of two ways, so a tap is its own undo. */

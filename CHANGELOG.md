@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tapping "continue expedition" on the travel map no longer sends you back to a pyramid you already finished.
 - A lever standing across a corridor no longer walls off everything past it.
 - A lever now stays visible while you're standing on it throwing it.
+- A mirror puzzle no longer crashes reopening a fork the game reshaped since you left it mid-turn.
 
 ### Changed
 

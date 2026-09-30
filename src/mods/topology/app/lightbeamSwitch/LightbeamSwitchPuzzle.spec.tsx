@@ -1,12 +1,14 @@
 // @vitest-environment jsdom
-import { beforeAll, describe, expect, it, vi } from "vitest"
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
 import { act } from "react"
 import { cleanup, render, screen } from "@testing-library/react"
 import { resolveEncounter } from "@/app/families/familyRegistry"
 import { classifyForkShape } from "@/game/forkShape"
 import { assembleFloor } from "@/game/siteAssembler"
 import type { Direction as WayOut, FloorConfig, RoomCell } from "@/game/siteTypes"
+import { PuzzleRoomContext } from "@/mods/core/app/puzzleState"
 import { cellKey } from "@/mods/core/game/beam/physics"
+import { clearGameData, writeGameData } from "@/support/useGameStorage"
 import { routesTo } from "../../game/shrineBeam/shrineBeam"
 import type { LightbeamSwitchBoard } from "../../game/lightbeamSwitch/generateLightbeamSwitch"
 import { buildSwitchBoard } from "./plugin"
@@ -179,5 +181,65 @@ describe("routing the light", () => {
     act(() => cells[0].click())
     expect(onRoute.mock.calls.map(call => call[0])).toEqual([undefined])
     for (const way of fork.ways) expect(screen.getByLabelText(DOOR_SHUT(way))).toBeDefined()
+  })
+})
+
+// The reported crash: `usePuzzleState` hands the room's in-progress record back unchecked against
+// whatever board this render holds (src/mods/core/app/puzzleState.tsx) — a guard the durable savedAngles
+// path has, but that room-scoped one never did. A world regenerated between two visits to the SAME room
+// can leave a record from the board it used to hold, one `traceBeam` walks past into a mirror the record
+// never reached — which is what sent `stepCell` off the direction table (physics.ts).
+describe("reopening a room the world reshaped underneath its own in-progress record", () => {
+  const settle = async () => {
+    await act(async () => {
+      await Promise.resolve()
+    })
+  }
+
+  beforeEach(async () => {
+    await clearGameData()
+  })
+
+  it("does not crash tracing a board whose own route reaches past the room's stored record", async () => {
+    const returnedTo = forkOf("three")
+    // A real route on the board this room reopens on, so the trace up to the last mirror it turns at is
+    // one the board's own geometry actually walks — not a hand-picked, impossible position.
+    const routes = routesTo(
+      returnedTo.board.grid,
+      returnedTo.board.shrines.map(s => s.at),
+      0
+    )
+    const touchedIndices = routes[0].map(mirror =>
+      returnedTo.board.grid.mirrors.findIndex(at => cellKey(at) === cellKey(mirror.at))
+    )
+    const lastTouched = Math.max(...touchedIndices)
+    // The room's stored in-progress record, shorter than the mirror this board's own route reaches — the
+    // shape a world regeneration leaves behind: the same room key, an answer sized for the board it used
+    // to hold rather than the one now underneath it.
+    await writeGameData({
+      puzzleState: { room: "switch-fork", state: { angles: returnedTo.board.grid.initial.slice(0, lastTouched) } },
+    })
+
+    let caught: unknown
+    try {
+      render(
+        <PuzzleRoomContext value="switch-fork">
+          <LightbeamSwitchPuzzle
+            board={returnedTo.board}
+            exits={returnedTo.exits}
+            onRoute={vi.fn()}
+            onAngles={vi.fn()}
+            onSolved={vi.fn()}
+          />
+        </PuzzleRoomContext>
+      )
+      await settle()
+    } catch (e) {
+      caught = e
+    }
+    expect(caught).toBeUndefined()
+
+    // Recovered onto the board's own opening, not left holding the stale, wrongly-shaped record.
+    expect(mirrorCells()).toHaveLength(returnedTo.board.grid.mirrors.length)
   })
 })
