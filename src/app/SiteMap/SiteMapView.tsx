@@ -45,7 +45,7 @@ import { MarkArtBadge } from "./mark"
 import { FloorShade, LitPlaces } from "./torchlight"
 import { LIT_STANDING_STRENGTH, SEATING_PASS, STANDING_RELIEF } from "./lighting"
 import { TileLayers } from "./tileLayers"
-import { clickTargetAt } from "./clickTargets"
+import { clickTargetAt, markerAt, type OfferMarker } from "./clickTargets"
 import {
   FACE_SHADOW,
   allFloorRects,
@@ -57,13 +57,7 @@ import {
   tileRegionsFor,
   type RoomClaims,
 } from "./roomClaims"
-import {
-  DIR_MOVES,
-  NO_RUN_TARGETS,
-  corridorRunTargetsFrom,
-  isCorridorCorner,
-  type CorridorRunTarget,
-} from "./corridorRuns"
+import { DIR_MOVES, NO_RUN_TARGETS, corridorRunTargetsFrom, type CorridorRunTarget } from "./corridorRuns"
 import { footprintRects, hasWallFace } from "./tileRegions"
 import type { Rect } from "./tileRegions"
 import type { FloorAt } from "./tileRegions"
@@ -972,6 +966,10 @@ const MARKER_OUTLINE = "#161009"
 
 const ReachableDot = () => <circle r={MARKER_RADIUS} fill={MARKER_FILL} stroke={MARKER_OUTLINE} strokeWidth={2} />
 
+/** The corridor marker an offer names — `markerAt` decides it; this only draws it. */
+const drawCorridorMarker = (marker: OfferMarker | null) =>
+  marker?.kind === "arrow" ? <RunTargetArrow dir={marker.dir} /> : marker?.kind === "dot" ? <ReachableDot /> : null
+
 const RunTargetArrow = ({ dir }: { dir: Direction }) => {
   const r = MARKER_RADIUS * 1.2
   return (
@@ -1481,9 +1479,6 @@ export const SiteMapView = ({
                 // it falls through to the corridor rendering below and stands on its own state, rather
                 // than leaving the rooms around it opening onto a gap that draws nothing.
                 if (claimOwner) {
-                  const isCorner = cell.type === "corridor" && isCorridorCorner(cell.dirs)
-                  const runTarget = cell.type === "corridor" ? corridorRunTargets.get(cellKey) : undefined
-                  const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
                   const offer = clickTargetAt(grid, claims, r, c, offerContext)
                   return (
                     <MarkerCell
@@ -1493,12 +1488,7 @@ export const SiteMapView = ({
                       onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
                     >
                       {cell.type === "corridor" &&
-                        canWalkTo(clickTarget[0], clickTarget[1]) &&
-                        (runTarget ? (
-                          <RunTargetArrow dir={runTarget.dir} />
-                        ) : (
-                          cell.state === "reachable" && isCorner && <ReachableDot />
-                        ))}
+                        drawCorridorMarker(markerAt(grid, claims, r, c, offerContext, offer))}
                     </MarkerCell>
                   )
                 }
@@ -1507,12 +1497,6 @@ export const SiteMapView = ({
                 if (cell.state === "fogged") return null
 
                 if (cell.type === "corridor") {
-                  const isCorner = isCorridorCorner(cell.dirs)
-                  const runTarget = corridorRunTargets.get(cellKey)
-                  // A visible run's near end has no corner of its own to click — it borrows the
-                  // far corner's click target (see findCorridorRunTarget) so a long corridor
-                  // that scrolls off screen still has something to tap right next to the player.
-                  const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
                   const offer = clickTargetAt(grid, claims, r, c, offerContext)
                   // A region-addressed drop can land mid-corridor rather than in a room (a fork's own
                   // branch, say), and the barred arrow belongs at whichever cell sits next to the
@@ -1525,12 +1509,7 @@ export const SiteMapView = ({
                         cy={cy}
                         onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
                       >
-                        {canWalkTo(clickTarget[0], clickTarget[1]) &&
-                          (runTarget ? (
-                            <RunTargetArrow dir={runTarget.dir} />
-                          ) : (
-                            cell.state === "reachable" && isCorner && <ReachableDot />
-                          ))}
+                        {drawCorridorMarker(markerAt(grid, claims, r, c, offerContext, offer))}
                       </MarkerCell>
                       {oneWayArrow && <OneWayMouthArrow {...oneWayArrow} />}
                     </Fragment>

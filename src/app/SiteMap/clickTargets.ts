@@ -1,7 +1,7 @@
-import type { FloorGrid } from "@/game/siteTypes"
+import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
 import { isOneWayMouth, walkableFrom } from "@/game/gridNavigation"
-import { corridorRunTargetsFrom, isCorridorCorner, type CorridorRunTarget } from "./corridorRuns"
+import { corridorRunTargetsFrom, isCorridorCorner, OPPOSITE_DIR, type CorridorRunTarget } from "./corridorRuns"
 import { litClaimOwner, type RoomClaims } from "./roomClaims"
 
 /**
@@ -77,6 +77,60 @@ export const clickTargetAt = (
 }
 
 /**
+ * WHAT THE MAP DRAWS ON A CELL A TAP IS ATTACHED TO — decided from the offer, never beside it.
+ *
+ * The renderer draws exactly this and attaches the tap exactly when `clickTargetAt` names a target, so
+ * a cell with a tap and nothing drawn cannot come from two conditions drifting apart: there is only
+ * one. Every offer yields a marker; a new kind of offer lands in the last branch and is drawn as a dot
+ * until it is given a shape of its own, rather than becoming an invisible tap.
+ *
+ * The SHAPE is read off what the offer names:
+ * - `node`: a room. Its own node art is the marker, drawn for every lit room whatever the offer.
+ * - `arrow`: a way to walk, pointing where the tap leads from here — a corridor run's near end, or a
+ *   one-way mouth beside the player, pointed at as the way out of the room it opens off.
+ * - `dot`: a corner or dead end the player can stop on.
+ *
+ * The one offer with no marker is a corridor corner already walked and not a mouth: `null` there is
+ * a decision, and the guard in `movementInvariant.spec.ts` exempts exactly that case by name.
+ */
+export type OfferMarker = { kind: "node" } | { kind: "dot" } | { kind: "arrow"; dir: Direction }
+
+export const markerAt = (
+  grid: FloorGrid,
+  claims: RoomClaims,
+  r: number,
+  c: number,
+  ctx: OfferContext,
+  offer: readonly [number, number] | null = clickTargetAt(grid, claims, r, c, ctx)
+): OfferMarker | null => {
+  if (!offer) return null
+  const cell = cellAt(grid, r, c)
+  if (cell.type !== "corridor") return { kind: "node" }
+  const runTarget = ctx.runTargets.get(`${r},${c}`)
+  if (runTarget) return { kind: "arrow", dir: runTarget.dir }
+  if (cell.state === "reachable" && isCorridorCorner(cell.dirs)) return { kind: "dot" }
+  // A mouth's one open side faces its landing, so the way the player goes to reach it is the other way.
+  if (isOneWayMouth(grid, r, c)) return { kind: "arrow", dir: OPPOSITE_DIR[[...cell.dirs][0]] }
+  // A corner the player has already walked is drawn ground they can see, so it needs no marker to be
+  // found; it stays a tap to walk back to.
+  if (cell.state === "completed" && isCorridorCorner(cell.dirs)) return null
+  return { kind: "dot" }
+}
+
+const offerContextFrom = (
+  grid: FloorGrid,
+  at: readonly [number, number] | undefined,
+  opts: { freeWalk?: boolean }
+): OfferContext => {
+  const walkable = at ? walkableFrom(grid, at) : null
+  return {
+    runTargets: corridorRunTargetsFrom(grid, at),
+    canWalkTo: (row, col) => !walkable || walkable.has(`${row},${col}`),
+    freeWalk: opts.freeWalk ?? false,
+  }
+}
+
+/**
  * Everything the map offers from where the player stands, as `cell key → the cell a tap leads to`.
  *
  * The shape a test wants: the same question the renderer asks per cell, asked of the whole floor
@@ -89,12 +143,7 @@ export const offeredTargets = (
   at: readonly [number, number] | undefined,
   opts: { freeWalk?: boolean } = {}
 ): Map<string, readonly [number, number]> => {
-  const walkable = at ? walkableFrom(grid, at) : null
-  const ctx: OfferContext = {
-    runTargets: corridorRunTargetsFrom(grid, at),
-    canWalkTo: (row, col) => !walkable || walkable.has(`${row},${col}`),
-    freeWalk: opts.freeWalk ?? false,
-  }
+  const ctx = offerContextFrom(grid, at, opts)
   const offers = new Map<string, readonly [number, number]>()
   // The renderer's own range: a ring of one cell outside the grid, where claimed void lives.
   for (let r = -1; r <= grid.rows; r++) {

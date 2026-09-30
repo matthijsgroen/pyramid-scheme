@@ -396,6 +396,35 @@ describe("SiteMapView — one-way drop, the barred arrow", () => {
     expect(container.querySelectorAll("[data-one-way-arrow]").length).toBeGreaterThan(0)
   })
 
+  it("draws an arrow toward the mouth on the mouth's own tap target, the way any other exit is drawn", () => {
+    const { container } = render(
+      <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 2]} />
+    )
+    const mouth = findCell(container, 0, 1)!
+    expect(mouth.style.cursor).toBe("pointer")
+    // The mouth lies west of the landing, so the arrow is the run-target triangle turned west.
+    expect(mouth.querySelector("polygon")?.getAttribute("transform")).toBe("rotate(270)")
+  })
+
+  it("draws something on every cell it attaches a tap to, wherever the explorer stands", () => {
+    for (const landing of ["reachable", "completed"] as const) {
+      for (const at of [
+        [0, 0],
+        [0, 1],
+        [0, 2],
+      ] as const) {
+        const { container, unmount } = render(
+          <SiteMapView grid={dropGrid(landing)} onCellClick={() => {}} explorerPos={at} />
+        )
+        const taps = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).filter(
+          el => el.style.cursor === "pointer"
+        )
+        for (const tap of taps) expect(tap.querySelector("svg")?.childElementCount ?? 0).toBeGreaterThan(0)
+        unmount()
+      }
+    }
+  })
+
   it("draws no barred arrow at the landing now that the player may walk right up to the mouth", () => {
     const { container } = render(
       <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 2]} />

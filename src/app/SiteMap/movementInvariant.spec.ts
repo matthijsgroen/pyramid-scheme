@@ -10,12 +10,13 @@
 //   For every cell the explorer can stand on, the moves the map OFFERS are exactly the moves
 //   `walkableFrom` says exist — and taking an offer moves the explorer to it.
 //
-// Two halves, asserted every step of a full walk of the floor rather than at a sampled few (this
+// Three halves, asserted every step of a full walk of the floor rather than at a sampled few (this
 // project's rule — a sampled version would have missed at least one of the three):
 //
 //   A. offers match walkability — a stopping point (a room, or a corridor corner) that `walkableFrom`
 //      reaches must be some marker's click target; nothing offers a destination the player cannot
 //      actually reach.
+//   C. every tap draws something, except a corridor corner already completed — see `markerViolations`.
 //   B. taking an offer moves the explorer there — clicking a target the map offered must leave the
 //      explorer standing on it.
 //
@@ -28,8 +29,8 @@
 // Built at the hook level — `useAssembledFloor` + `useSiteNavigation` + `clickTargets` +
 // `walkableFrom` — so it runs in the normal suite and stays fast; a browser is not needed to see two
 // pure functions disagree with each other.
-import { renderHook, act } from "@testing-library/react"
-import { useState } from "react"
+import { renderHook, act, render } from "@testing-library/react"
+import { createElement, useState } from "react"
 import { describe, expect, it, vi } from "vitest"
 import type { Direction, FloorConfig, FloorGrid, SiteConfig } from "@/game/siteTypes"
 import { walkableFrom, isSealedWayOut, isOneWayMouth } from "@/game/gridNavigation"
@@ -41,6 +42,8 @@ import { useMechanismStates } from "./useMechanismStates"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { buildRoomClaims } from "./roomClaims"
 import { offeredTargets } from "./clickTargets"
+import { SiteMapView } from "./SiteMapView"
+import { CELL, cellCenter } from "./mapScale"
 import { isCorridorCorner } from "./corridorRuns"
 import { buildConfigs } from "@/worldGen/configBuilder"
 import { DEV_JOURNEY_ID } from "@/worldGen/data"
@@ -114,6 +117,42 @@ const offerViolations = (
     }
   }
   return violations
+}
+
+/** Property C: every tap draws something, except a corridor corner the player has already completed.
+ * Read off the rendered DOM, because that is the only place a tap with nothing on it exists.
+ * `offerViolations` reads offer data and stays green when the map offers a target and draws no marker
+ * for it (a drop's mouth was exactly that: tapping bare stone walked the player there).
+ *
+ * THE EXEMPTION IS A DECISION. A corner the player has already walked is drawn ground they can see, so
+ * it needs no marker to be findable. That is not true of a one-way mouth: it is `visible` but never
+ * walked, with nothing pointing at it — so a mouth is never exempt, whatever its state. */
+const markerViolations = (grid: FloorGrid, explorerPos: readonly [number, number]): string[] => {
+  // jsdom has no layout, so it has no `scrollTo`; the map centres on the explorer through it.
+  Element.prototype.scrollTo ??= () => {}
+  const exempt = new Set<string>()
+  grid.cells.forEach((row, r) =>
+    row.forEach((cell, c) => {
+      if (
+        cell.type === "corridor" &&
+        cell.state === "completed" &&
+        isCorridorCorner(cell.dirs) &&
+        !isOneWayMouth(grid, r, c)
+      ) {
+        const { cx, cy } = cellCenter(r, c)
+        exempt.add(`${cx - CELL / 2}px,${cy - CELL / 2}px`)
+      }
+    })
+  )
+  const { container, unmount } = render(createElement(SiteMapView, { grid, explorerPos, onCellClick: () => {} }))
+  try {
+    return Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]"))
+      .filter(cell => cell.style.cursor === "pointer" && (cell.querySelector("svg")?.childElementCount ?? 0) === 0)
+      .filter(cell => !exempt.has(`${cell.style.left},${cell.style.top}`))
+      .map(cell => `a tap at (left ${cell.style.left}, top ${cell.style.top}) draws nothing, from ${explorerPos}`)
+  } finally {
+    unmount()
+  }
 }
 
 // Flat, plain-mutable state — read directly by `useAssembledFloor` and by `walkFloor`'s own
@@ -300,6 +339,7 @@ const walkFloor = (
     visited.add(here)
 
     violations.push(...offerViolations(grid, explorerPos))
+    violations.push(...markerViolations(grid, explorerPos))
 
     const claims = buildRoomClaims(grid)
     const offers = offeredTargets(grid, claims, explorerPos)

@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- A one-way drop now shows the ground it fell you from, so the barred way reads as a drop instead of a mark on bare rock.
+- The way onto a drop's mouth now wears an arrow, like every other way out of a room. Tapping it worked before, with nothing drawn to say so.
 - You can now walk up to a zipline's mouth and stand there; you still can't cross it.
 - A drop's barred arrow now only shows while you are standing at its mouth, like every other arrow beside you.
 - Pressing an arrow or a corner dot now walks you there. A corridor bend only lifted its fog before, and left you standing where you were.
