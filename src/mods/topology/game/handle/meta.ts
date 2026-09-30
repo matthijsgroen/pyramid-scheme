@@ -18,4 +18,7 @@ export const HANDLE_META: FamilyMeta = {
   // The position it was left in IS the mechanism, so the room reopens on it rather than offering a
   // lever at rest beside a door the player can see standing open.
   stateIsTheMechanism: true,
+  // Throwing it IS the visit — no board, so the arrival prompt itself moves the arm and nothing opens
+  // on top of the map to ask which way (docs/mods/floor-topology-design.md, "a mechanism is a room").
+  actsOnArrival: true,
 }

@@ -50,6 +50,13 @@ export const shapeKindFor = (grid: FloorGrid, r: number, c: number, cell: ShapeC
  */
 export const staysOpen = (cell: RoomCell): boolean => !!cell.family && !!getFamilyPlugin(cell.family)?.meta.reEnterable
 
+/** A room whose family acts the instant its arrival prompt is taken (FamilyMeta.actsOnArrival) — a
+ * lever, never a board, so `useSiteNavigation` performs the throw itself rather than opening the
+ * family's screen. Read off the registry for the same reason `staysOpen` is: an unregistered family
+ * answers "no", the right answer for a mod switched off. */
+export const actsOnArrival = (cell: RoomCell): boolean =>
+  !!cell.family && !!getFamilyPlugin(cell.family)?.meta.actsOnArrival
+
 // Gating is soft: a locked gate is still "reachable" (clickable), so `state` doesn't distinguish
 // locked from unlocked. This recovers that purely cosmetic distinction for the icon AND the floor
 // tint under it, and never for clickability or badges.

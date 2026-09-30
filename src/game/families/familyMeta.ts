@@ -58,6 +58,17 @@ export type FamilyMeta = {
    * other family's board is a question that has been answered, and its moves have nothing left to say.
    */
   stateIsTheMechanism?: boolean
+  /**
+   * Pressing this room's arrival prompt IS the whole interaction — no board is ever offered, and the
+   * family's own `generate`/`Component` never run for it (src/app/SiteMap/useSiteNavigation.ts).
+   *
+   * A lever has nothing to solve and nothing to look at: the position it is thrown to is written the
+   * moment the prompt is taken, the same way walking into the exit chamber or a staircase acts on the
+   * spot rather than opening a screen first. `stateIsTheMechanism` alone does not imply this — the
+   * lightbeam switch also carries no separate "solve", but its board is a real thing the player works,
+   * so it keeps its screen; this is for the family that has none at all.
+   */
+  actsOnArrival?: boolean
   // How many reward slots a node of this family exposes. Default 1 (an ordinary node bears one
   // reward, like a chest or a puzzle-chain position). A shop is the one family that overrides it
   // (6): its node carries a `rewards[]` stock array of this length, filled by the mods that place

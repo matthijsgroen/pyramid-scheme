@@ -118,6 +118,13 @@ type StandingSprite = {
   baseY: number
   /** Where this sprite's own flame lands on the floor, if it carries one — see NodeSprite.light. */
   light?: NodeSprite["light"]
+  /** This sprite's own footprint includes the cell the explorer is standing on: a room whose entry has
+   * no free quarter to step its furniture into (`nodeArtOffset`'s `dy: 0`, a straight passage with a
+   * south door — a lever's, a handle's) shares the explorer's exact floor line rather than merely
+   * happening to. The general tie there ("the actor belongs in front of the furniture he shares a floor
+   * line with") is for furniture the player passes NEAR; furniture he stands AT has to win instead, or
+   * he stands on the lever and covers it. */
+  atExplorer?: boolean
   node: ReactNode
 }
 
@@ -1127,6 +1134,7 @@ export const SiteMapView = ({
       key: sprite.key,
       baseY: sprite.y + PROP_H,
       ...(sprite.light ? { light: sprite.light } : {}),
+      atExplorer: standingOn !== null && sprite.footprint.includes(standingOn),
       node: (
         <Fragment key={sprite.key}>
           <Sprite
@@ -1226,7 +1234,9 @@ export const SiteMapView = ({
 
   // The line the player stands on. A sprite lower than it is nearer the viewer and is drawn after him;
   // one level with it loses the tie, because the actor belongs in front of the furniture he shares a
-  // floor line with.
+  // floor line with — UNLESS that furniture is the room he is standing at (`atExplorer`), which wins
+  // the tie instead: a lever the player is stood on has to stay visible while he works it, not vanish
+  // behind him.
   const explorerBaseY = explorerPos ? cellCenter(explorerPos[0], explorerPos[1]).cy + CELL / 2 : Infinity
   // A GATE IS DRAWN WITH THE ARCHWAYS, after everything else, for the archway's own reason: it is a
   // thing in the world rather than a decal, so the player walks BEHIND it, and it is hung in the wall
@@ -1237,8 +1247,8 @@ export const SiteMapView = ({
   const isGate = (s: StandingSprite) => s.key.startsWith("gate:")
   const gateSprites = standing.filter(isGate)
   const seated = standing.filter(s => !isGate(s))
-  const behindExplorer = seated.filter(s => s.baseY <= explorerBaseY)
-  const inFrontOfExplorer = seated.filter(s => s.baseY > explorerBaseY)
+  const behindExplorer = seated.filter(s => s.baseY < explorerBaseY || (s.baseY === explorerBaseY && !s.atExplorer))
+  const inFrontOfExplorer = seated.filter(s => s.baseY > explorerBaseY || (s.baseY === explorerBaseY && s.atExplorer))
   const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Where the arches are, in the same terms the wall bands are built in, with the stone each one is cut
   // from — the sill in that gap is drawn to match it (see TileLayers.archedGaps).

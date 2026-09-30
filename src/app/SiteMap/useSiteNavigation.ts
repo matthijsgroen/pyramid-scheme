@@ -1,11 +1,12 @@
 import { useCallback, useState } from "react"
 import { cellAddress } from "./cellIdentity"
 import { findPath, getCell } from "@/game/gridNavigation"
-import type { FloorGrid, SiteConfig, TreasureReward } from "@/game/siteTypes"
+import { throwMechanism } from "@/game/mechanismDoors"
+import type { FloorGrid, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { encodeEdge } from "./edgeId"
-import { staysOpen } from "./nodeKinds"
+import { actsOnArrival, staysOpen } from "./nodeKinds"
 import { stairPeerPosition } from "./stairTravel"
 
 type NavigationArgs = {
@@ -110,6 +111,19 @@ export const useSiteNavigation = ({
       const address = cellAddress(grid, currentFloor, row, col) ?? edgeId
       const goHere = () => journeys.updatePosition(journeyId, address, edgeId)
 
+      // THROWING IT IS THE WHOLE VISIT (FamilyMeta.actsOnArrival): no screen opens for it, so this is
+      // where a lever's position gets written — the same call its old modal made (`setMechanismState`),
+      // never a second path to that state. Marked explored in the same breath: nothing else ever will,
+      // and that write is what lifts the fog past a lever standing astride the only way through
+      // (gridNavigation.ts's `walkableFrom` refuses any cell still fogged, and a room's own reveal only
+      // ever reaches as far as the last room the player stood in and had written down).
+      const throwLever = (target: RoomCell) => {
+        if (!target.mechanism) return
+        const current = journeys.getMechanismStates(journeyId).get(address) ?? target.mechanism.initial
+        journeys.setMechanismState(address, throwMechanism(target.mechanism, current))
+        journeys.markCellExplored(sectionHash, edgeId, address)
+      }
+
       // A portal takes the player somewhere whatever state its cell is in, so both kinds are answered
       // BEFORE the completed-cell block below, which would otherwise just reposition and swallow the
       // click. A stairhead is "completed" from the moment it is arrived on, and the way out is
@@ -159,8 +173,18 @@ export const useSiteNavigation = ({
         if (familyStaysOpen || shopHasUnclaimedStock) {
           // The family standing here names the prompt; a stall and a switch ask for different things.
           const familyId = cell.type === "room" ? cell.family : undefined
+          const roomCell = cell.type === "room" ? cell : null
           scheduleArrival(walkDelay(row, col), () =>
-            offer("room", row, col, () => onEncounter([row, col], !alreadyStandingHere), familyId)
+            offer(
+              "room",
+              row,
+              col,
+              () =>
+                roomCell && actsOnArrival(roomCell)
+                  ? throwLever(roomCell)
+                  : onEncounter([row, col], !alreadyStandingHere),
+              familyId
+            )
           )
           return
         }
@@ -201,7 +225,13 @@ export const useSiteNavigation = ({
         // itself is the ground you stand on to work the gate rather than the barrier — which is why
         // this needs no case of its own.
         goHere()
-        scheduleArrival(walkDelay(row, col), () => onEncounter([row, col], true))
+        if (actsOnArrival(cell)) {
+          const familyId = cell.family
+          const target = cell
+          scheduleArrival(walkDelay(row, col), () => offer("room", row, col, () => throwLever(target), familyId))
+        } else {
+          scheduleArrival(walkDelay(row, col), () => onEncounter([row, col], true))
+        }
       } else if (cell.roomType === "portal") {
         // Staircases and the way out are answered by the guards above; what is left is this floor's
         // own entrance, which is only ever walked back onto.

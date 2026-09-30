@@ -1,4 +1,4 @@
-import type { FloorGrid, GridCell } from "./siteTypes"
+import type { FloorGrid, GridCell, MechanismRecord } from "./siteTypes"
 import { cellAddress } from "./cellAddress"
 
 // WHICH DOORS STAND OPEN IS ASKED OF EACH MECHANISM'S OWN MAPPING, NEVER STORED. The save holds the
@@ -21,6 +21,22 @@ export const openDoorsFor = (grid: FloorGrid, floor: number, positions: Readonly
       for (const p of cell.mechanism.positions) if (p.state === state) open.add(p.gateKeyId)
     }
   return open
+}
+
+/**
+ * WHERE ONE PRESS SENDS IT: the other of the mechanism's own last two declared positions.
+ *
+ * A genuine handle (`FloorConfig.handles`) declares exactly two — `left`/`right` — and both are always
+ * a press's legal target. A control (`FloorConfig.controls`) may lead with one more: its `initial`,
+ * named only so `openDoorsFor` has something to fall back to before anyone touches it (doubleBack's Y
+ * starts `"unset"`, reachable from nowhere once the first throw has moved it on) — never itself a
+ * target, so the last two states are always the pair a press toggles between, whatever an author named
+ * them. A two-state mechanism's last two ARE its only two, so the same rule covers both shapes without
+ * asking which one this is.
+ */
+export const throwMechanism = (mechanism: MechanismRecord, current: string): string => {
+  const [a, b] = mechanism.states.slice(-2)
+  return current === a ? b : a
 }
 
 /**

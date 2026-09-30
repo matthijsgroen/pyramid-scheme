@@ -99,6 +99,26 @@ describe("HandleComponent", () => {
     expect(setMechanismState).toHaveBeenCalledWith("s0#0/p1", "left")
   })
 
+  // A control (FloorConfig.controls, e.g. doubleBack's S1) authors its own state names, never
+  // "left"/"right" — pressing this room's two buttons has to write ITS states, or neither button ever
+  // matches a position the mechanism actually has (openDoorsFor, mechanismDoors.ts), and the gate it
+  // owns can never open.
+  it("writes a control's own state names, not the button labels, for a mechanism that isn't left/right", () => {
+    const setMechanismState = vi.fn()
+    const { ctx, journeys, ...rest } = ctxWith({ setMechanismState })
+    const control = {
+      ...ctx,
+      mechanism: { states: ["start", "thrown"], initial: "start", returnsToInitial: false, positions: [] },
+    }
+    render(<HandleComponent {...rest} ctx={control} journeys={journeys} />)
+
+    fireEvent.click(screen.getByRole("button", { name: /handle\.right/ }))
+    expect(setMechanismState).toHaveBeenCalledWith(ADDRESS, "thrown")
+
+    fireEvent.click(screen.getByRole("button", { name: /handle\.left/ }))
+    expect(setMechanismState).toHaveBeenCalledWith(ADDRESS, "start")
+  })
+
   it("shows which side the lever already hangs on", () => {
     render(<HandleComponent {...ctxWith({ current: "right" })} />)
 

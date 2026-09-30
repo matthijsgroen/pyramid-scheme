@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pyramid floors now lay out the same on every browser, so a save carried between devices lands on the maze it was written against.
 - Fixed a black screen when starting an expedition right after the game loads.
 - Tapping "continue expedition" on the travel map no longer sends you back to a pyramid you already finished.
+- A lever standing across a corridor no longer walls off everything past it.
+- A lever now stays visible while you're standing on it throwing it.
 
 ### Changed
 
@@ -32,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - One wizard floor now has a short passage between two dead ends that used to stand apart. Both sit behind the same door, so it opens nothing you had not already earned.
 - Walking to a staircase, a shop, the way out or a room you can re-enter now leaves a button beside you to go in.
 - Pressing the button at the way out now leaves right away, instead of asking you to confirm a second time.
+- Pressing the button at a lever now throws it right away, instead of opening a screen to ask which way.
 - Pyramid corridors are much shorter. The walk from one puzzle to the next is about half what it was, and a starter floor a third.
 - Eclipse boards now come in three kinds: with signs, without signs, and ones that never make you compare two lines.
 - Star battle and twin stars boards no longer hand you a star to start with, and the hard ones ask you to rule squares out first.

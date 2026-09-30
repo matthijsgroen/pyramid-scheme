@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { renderHook, act } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import type { CellState, FloorGrid, GridCell, SiteConfig } from "@/game/siteTypes"
+import type { CellState, FloorGrid, GridCell, MechanismRecord, SiteConfig } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { registerFamily } from "@/app/families/familyRegistry"
 import { useSiteNavigation } from "./useSiteNavigation"
@@ -18,6 +18,25 @@ registerFamily({
     color: "",
     rewardPriority: 0,
     reEnterable: true,
+  },
+  generate: () => null,
+  Component: () => null,
+})
+
+// A lever family (FamilyMeta.actsOnArrival) — its own room never opens a board at all; taking its
+// arrival prompt IS the throw.
+const LEVER_FAMILY = "acts-on-arrival"
+registerFamily({
+  meta: {
+    id: LEVER_FAMILY,
+    ownerMod: "test",
+    tags: ["handle"],
+    icon: "",
+    color: "",
+    rewardPriority: 0,
+    reEnterable: true,
+    stateIsTheMechanism: true,
+    actsOnArrival: true,
   },
   generate: () => null,
   Component: () => null,
@@ -43,6 +62,25 @@ const corridor: GridCell = {
   sectionHash: SECTION,
   sectionAddress: SECTION,
   ordinal: "1",
+}
+const leverMechanism: MechanismRecord = {
+  states: ["left", "right"],
+  initial: "left",
+  returnsToInitial: true,
+  positions: [],
+}
+const leverRoom: GridCell = {
+  type: "room",
+  roomType: "encounter",
+  family: LEVER_FAMILY,
+  tags: ["handle"],
+  dirs: new Set(["w"]),
+  state: "reachable",
+  sectionHash: SECTION,
+  sectionAddress: SECTION,
+  ordinal: "1",
+  pathIndex: 0,
+  mechanism: leverMechanism,
 }
 // An ordinary room, and what makes it one is the family standing in it: every encounter the assembler
 // writes down names one, and a room naming none is a room with nothing to open.
@@ -126,6 +164,7 @@ const switchGate: GridCell = {
 const CORRIDOR_AT_1 = `${SECTION}#0/~1`
 const SWITCH_AT_1 = `${SECTION}#0/xsumplete`
 const PUZZLE_AT_1 = `${SECTION}#0/p0`
+const LEVER_AT_1 = `${SECTION}#0/p0`
 const GATE_AT_2 = `${SECTION}#0/xkey-gate`
 const EXIT_AT_1 = `${SECTION}#0/exit`
 
@@ -162,6 +201,8 @@ const setup = (cells: GridCell[], skipped: string[] = [], config: SiteConfig = s
     updatePosition: vi.fn(),
     getPurchasedShopSlots: () => new Set<string>(),
     getSkippedConsumables: () => new Set(skipped),
+    getMechanismStates: vi.fn(() => new Map<string, string>()),
+    setMechanismState: vi.fn(),
   } as unknown as JourneyAPI
   const onEncounter = vi.fn()
   const onSkippedConsumable = vi.fn()
@@ -469,5 +510,61 @@ describe("useSiteNavigation", () => {
     // freshArrival: the player walked here from elsewhere, which is what a shop's stock reset reads.
     act(() => promptOf(hook).take())
     expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
+  })
+})
+
+// A lever's whole content is where it is thrown to, and finding 1 of the playtest was this room never
+// completing on its own: nothing marked it explored until a modal's own exit button was pressed, which
+// nothing here ever asked the player to do. Throwing it now IS that write, on the very first arrival.
+describe("a lever family (FamilyMeta.actsOnArrival) throws itself, never opening a board", () => {
+  beforeEach(() => vi.useFakeTimers())
+  afterEach(() => vi.useRealTimers())
+
+  it("offers to throw it on first arrival, opening no board", () => {
+    const { hook, onEncounter } = setup([entrance, leverRoom])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(promptOf(hook)).toMatchObject({ kind: "room", at: [0, 1], familyId: LEVER_FAMILY })
+    expect(onEncounter).not.toHaveBeenCalled()
+  })
+
+  // The fix for finding 1: taking the prompt is the only thing that ever marks this room explored, so
+  // it has to happen on the very first visit — a lever a player never revisits must still stop blocking
+  // the corridor past it (gridNavigation.ts's `walkableFrom` refuses a still-fogged cell).
+  it("writes the mechanism's own state and marks the room explored the instant the prompt is taken", () => {
+    const { hook, journeys, onEncounter } = setup([entrance, leverRoom])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+    act(() => promptOf(hook).take())
+
+    expect(journeys.setMechanismState).toHaveBeenCalledWith(LEVER_AT_1, "right")
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", LEVER_AT_1)
+    expect(onEncounter).not.toHaveBeenCalled()
+  })
+
+  it("throws it to the other side on a later visit, off the side it was last left on", () => {
+    const { hook, journeys } = setup([entrance, { ...leverRoom, state: "completed" }])
+    vi.mocked(journeys.getMechanismStates).mockReturnValue(new Map([[LEVER_AT_1, "right"]]))
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+    act(() => promptOf(hook).take())
+
+    expect(journeys.setMechanismState).toHaveBeenCalledWith(LEVER_AT_1, "left")
+  })
+
+  it("offers to throw a completed lever again rather than reopening a board for it", () => {
+    const { hook, onEncounter } = setup([entrance, { ...leverRoom, state: "completed" }])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(promptOf(hook)).toMatchObject({ kind: "room", at: [0, 1], familyId: LEVER_FAMILY })
+    act(() => promptOf(hook).take())
+
+    expect(onEncounter).not.toHaveBeenCalled()
   })
 })

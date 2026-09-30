@@ -2365,4 +2365,32 @@ describe("the lever's arm — three stacked sprites, thrown to the control's own
     // a changed transform.
     expect(rotateDegOf(armTransformOf(container))).toBeCloseTo(36, 5)
   })
+
+  // A lever on a straight NORTH-SOUTH passage has no free quarter to step its art into
+  // (`nodeArtOffset`'s `dy: 0` for that shape, unlike an east-west or dead-end lever, which are pushed
+  // toward the viewer instead) — the exact shape doubleBack's Y stands on. Its floor line then lands
+  // exactly on the explorer's own, and the general tie-break ("the actor stands in front of furniture
+  // he shares a floor line with") would bury the lever under the player's own sprite the whole time he
+  // is stood on it, working it.
+  it("stays visible in front of the explorer standing astride a through-passage lever", () => {
+    const mechanism: MechanismRecord = {
+      states: ["left", "right"],
+      initial: "left",
+      returnsToInitial: true,
+      positions: [],
+    }
+    const grid: FloorGrid = {
+      ...makeGrid([
+        [straightCorridor("reachable", ["s"])],
+        [{ ...handleCell(mechanism), dirs: new Set<Direction>(["n", "s"]) }],
+        [straightCorridor("reachable", ["n"])],
+      ]),
+      difficulty: "expert",
+    }
+
+    const { container } = render(<SiteMapView grid={grid} explorerPos={[1, 0]} />)
+    const explorer = container.querySelector("[data-explorer]")!
+    const back = container.querySelector('[data-node-sprite="handle:1,0"]')!
+    expect(explorer.compareDocumentPosition(back) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
 })
