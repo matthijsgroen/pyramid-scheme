@@ -1120,3 +1120,78 @@ Criterion 5 also redefines the appetite vocabulary: authored is `"reward" | "puz
   world-gen's inputs did not move and says nothing about the walls. Any task changing carve behaviour
   captures a CARVE BASELINE (assemble every shipped floor at its real seed, reduce each cell to its
   `dirs`, diff) — the recipe is in the plan's Global Constraints.
+
+---
+
+# Session handover — what playtesting found, and the guards that now hold it
+
+The session before this one built `doubleBack` and handed over an open movement bug. This one fixed it,
+then followed the owner's playtest wherever it led: a drop that could not be walked to, a gate that
+asked for a key it did not want, a puzzle that opened broken. Everything below was found by PLAYING,
+not by review, which is the fourth day running that has been true.
+
+## The movement bug, and why the test that was written for it stayed green
+
+`positionKey` did two jobs: the durable save address, and the live cell the map draws the explorer at
+(`useAssembledFloor`'s `explorerPos` reads it and nothing else; `position` is dead except for the V3
+migration). `updatePosition` refuses a `~`-addressed cell — a bend or bare fork — which commit
+`035c80a6` added deliberately so a SAVE would not resume on a bend. So every corridor move was
+revealed and never recorded.
+
+**`movementInvariant.spec.ts` was green throughout, and the reason matters more than the bug.** Its
+harness's fake `updatePosition` wrote `store.positionKey = address` with no guard — it never replicated
+the store it claimed to replicate. The fault was in the fake, not below the test.
+
+`standingKey` now records every cell walked onto; `positionKey` keeps its meaning and `035c80a6`'s four
+tests untouched. `explorerPos` resolves standing, then position, then the entrance.
+
+## What else playing found
+
+- **A drop's mouth could not be walked to.** Now it can: `walkableDirsFrom` admits an adjacent one-way
+  mouth, and the mouth is a dead-end stub whose only direction leads back, so crossing stays impossible
+  by construction rather than by a rule.
+- **A live tap with no marker.** The tap read `clickTargetAt` while the marker re-derived its own
+  condition, and they had drifted. Both now come from one `markerAt`. The same bug existed in a wider
+  form — every completed corridor corner was a tap that drew nothing — and the owner ruled those stay
+  invisible, so the guard carries that exemption BY NAME rather than being weakened.
+- **A lever-driven gate opened a key modal.** Obstacle gates were written `family: "key-gate"`. Removing
+  the family puts them on the family-less path that floor-key gates and switch doors already use, and
+  fixes a second fault underneath: the bars were drawn from `cell.state === "completed"`, so a gate the
+  lever had opened kept its bars until the player walked in and pressed Pass, and then drew open even if
+  the lever was thrown back.
+- **A puzzle whose board changed opened broken.** `usePuzzleState` had NO validation — not "validation
+  only in the lazy initializer", none. Twelve families crashed rather than misbehaved. A board
+  fingerprint is now checked on every read.
+
+## The guards that now hold it, and what each promises
+
+| Guard | Promise |
+| --- | --- |
+| `movementInvariant.spec.ts` | Reachable implies named; taking an offer moves you; every tap draws something. Walks hand-built fixtures per mechanic, not content. |
+| `tierFingerprints.spec.ts` | A tier's SHAPE and LOOT are stable. Which puzzle stands in a room is not. |
+| `newFamilyIsNoOp.spec.ts` | Registering a puzzle family moves neither structure nor loot. |
+| `allFamilyMeta.spec.ts` | A family cannot join a pool with a loot signature that would displace it. |
+| `boardIndexOrder.spec.ts` | A higher tier never takes a board ordinal before a lower one. |
+| `gateBoundary.spec.ts` | A gate sits on the boundary it names — `it.fails` for the one case where it does not. |
+
+## Two measured facts worth not re-deriving
+
+- **The shipped world authors zero `obstacles`, zero `regionLayout` and zero `oneWays`, and carving all
+  206 floors yields ZERO one-way mouths.** Everything topology is develop-journey only. That is why the
+  gate's family removal, the `xobstacle:` address change and the board reshuffle were all free.
+- **Board ordinals were dealt alphabetically world-wide**, and `expert < junior < master < starter <
+  wizard`, so a master journey's starter-difficulty room took an ordinal before every starter room.
+  Fixed by dealing in tier order; 561 of 1516 rooms (37%) changed board once.
+
+## How this session worked, since it is the part that generalises
+
+- **Test the invariant, not the change.** Every regression had a passing test for the thing it changed.
+- **A guard nobody has watched fail is not a guard.** Two vacuous tests were found this way: one
+  asserting mouths are unclaimed on fixtures where nothing was claimed at all, and one whose expected
+  failure hid a real defect. Both were deleted rather than propped up.
+- **Measure before choosing a number.** The drop's scale, the run's length, the tier coupling and the
+  board reshuffle were all chosen from measurements, and two of them overturned a guess — including one
+  of mine that measured the wrong axis.
+- **Never two implementers over one file.** Reviews and read-only investigations may overlap freely.
+- **`src/data/generatedWorld.ts` was left dirty three times** by dev-world regeneration during playtest.
+  Every brief now opens with the rule and ends with an md5 check.
