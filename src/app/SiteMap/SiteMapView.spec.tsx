@@ -432,6 +432,21 @@ describe("SiteMapView — one-way drop, the barred arrow", () => {
     expect(container.querySelectorAll("[data-one-way-arrow]")).toHaveLength(0)
   })
 
+  it.each([[1], [2]])("draws the explorer after the drop's art, in front of it, at column %i", c => {
+    const { container } = render(
+      <SiteMapView
+        grid={{ ...dropGrid("reachable"), difficulty: "expert" }}
+        onCellClick={() => {}}
+        explorerPos={[0, c]}
+      />
+    )
+    const drop = container.querySelector('[data-node-sprite="drop:0,1"]')!
+    const explorer = container.querySelector("[data-explorer]")!
+    expect(drop).not.toBeNull()
+    expect(explorer).not.toBeNull()
+    expect(drop.compareDocumentPosition(explorer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
   it("draws no barred arrow for that same mouth when the explorer stands anywhere else", () => {
     const { container } = render(
       <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 0]} />

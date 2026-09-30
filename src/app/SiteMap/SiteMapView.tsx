@@ -1184,7 +1184,10 @@ export const SiteMapView = ({
       key: sprite.key,
       baseY: sprite.y + (sprite.h ?? PROP_H),
       ...(sprite.light ? { light: sprite.light } : {}),
-      atExplorer: standingOn !== null && sprite.footprint.includes(standingOn),
+      // A drop is the exception: the player stands IN FRONT of it rather than working it, so on its own
+      // mouth the general tie holds (he stands in front of what shares his floor line) and its parapet
+      // never covers him.
+      atExplorer: standingOn !== null && !sprite.key.startsWith("drop:") && sprite.footprint.includes(standingOn),
       node: (
         <Fragment key={sprite.key}>
           <Sprite
