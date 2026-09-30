@@ -66,7 +66,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const detectorLevels = useMergedDetectorLevels()
   const readout = useDetectorReadout(detectorLevels)
 
-  const currentFloor = floorOfPosition(journeyState?.positionKey, siteConfig.length)
+  // The standing cell first: it is what `explorerPos` below resolves first too, so the floor assembled
+  // here is always the one the explorer will actually be drawn on. `positionKey` only disagrees with it
+  // in the window before the player's first walk on a level (standing not yet written), where both name
+  // the entrance floor anyway.
+  const currentFloor = floorOfPosition(journeyState?.standingKey ?? journeyState?.positionKey, siteConfig.length)
   const floorConfig = siteConfig[currentFloor]
 
   const foundCorridors = useFoundCorridors(journeys, journeyId)
@@ -82,7 +86,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     detectorLevels.corridor,
     foundCorridors,
     levelIndex,
-    mechanismStates
+    mechanismStates,
+    journeyState?.standingKey
   )
 
   // Where a stored address sits on the floor the player is looking at. Only this floor is assembled,

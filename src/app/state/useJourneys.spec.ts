@@ -150,6 +150,47 @@ describe("updatePosition", () => {
   })
 })
 
+// ── standingKey clears everywhere positionKey does ─────────────────────────────
+
+describe("standingKey clears wherever positionKey does", () => {
+  // A new level resuming standing on the bend the PREVIOUS level left it at is this fix's own
+  // regression, so every one of the four writers that clear positionKey (a journey starting over,
+  // completing, jumping to a level, or advancing one) is asserted here — not a representative one.
+  const run = (mutate: (api: ReturnType<typeof makeApi>) => void, initial: Partial<StoredJourneyStateV3> = {}) => {
+    let state = [makeStoredJourney({ position: "0:1,2", positionKey: "sec#0/p2", standingKey: "sec#0/~4", ...initial })]
+    const api = createJourneysV3Api({
+      journeys: state,
+      setJourneys: updater => {
+        state = typeof updater === "function" ? updater(state) : updater
+      },
+      journeyData: [makeJourneyData(REAL_ID)],
+    })
+    mutate(api)
+    return state[0]
+  }
+
+  it("startJourney clears it when a completed persistent interior is replayed", () => {
+    const journey = allJourneys.find(j => j.id === REAL_ID)!
+    const stored = run(api => api.startJourney(journey), { levelNr: journey.levelCount + 1 })
+    expect(stored.standingKey).toBeNull()
+  })
+
+  it("completeJourney clears it", () => {
+    const stored = run(api => api.completeJourney())
+    expect(stored.standingKey).toBeNull()
+  })
+
+  it("visitLevel clears it", () => {
+    const stored = run(api => api.visitLevel(REAL_ID, 2))
+    expect(stored.standingKey).toBeNull()
+  })
+
+  it("completeLevel clears it", () => {
+    const stored = run(api => api.completeLevel())
+    expect(stored.standingKey).toBeNull()
+  })
+})
+
 // ── completeJourney ───────────────────────────────────────────────────────────
 
 describe("completeJourney", () => {

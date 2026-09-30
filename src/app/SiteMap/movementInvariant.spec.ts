@@ -26,17 +26,19 @@
 // `walkableFrom` — so it runs in the normal suite and stays fast; a browser is not needed to see two
 // pure functions disagree with each other.
 import { renderHook, act } from "@testing-library/react"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { describe, expect, it, vi } from "vitest"
 import type { Direction, FloorConfig, FloorGrid, SiteConfig } from "@/game/siteTypes"
 import { walkableFrom, isSealedWayOut } from "@/game/gridNavigation"
-import type { JourneyAPI } from "@/app/state/useJourneys"
+import { createJourneysV3Api, type JourneyAPI, type StoredJourneyStateV3 } from "@/app/state/useJourneys"
+import { journeys as allKnownJourneys } from "@/data/journeys"
+import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { useAssembledFloor } from "./useAssembledFloor"
+import { useMechanismStates } from "./useMechanismStates"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { buildRoomClaims } from "./roomClaims"
 import { offeredTargets } from "./clickTargets"
 import { isCorridorCorner } from "./corridorRuns"
-import { sectionOfAddress, keyOfAddress } from "./cellIdentity"
 import { buildConfigs } from "@/worldGen/configBuilder"
 import { DEV_JOURNEY_ID } from "@/worldGen/data"
 import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
@@ -102,28 +104,56 @@ const offerViolations = (
   return violations
 }
 
-// A minimal, real journeys store: plain mutable state a click writes through, replicating exactly the
-// two writes `useJourneys` makes (`markCellExplored`'s cell-key bookkeeping, `updatePosition`'s
-// address) rather than a mock that only records that a call happened. `useAssembledFloor` reads this
-// same state back out, so a click's effect on the ACTUAL rendered grid is what gets asserted, not a
-// spy's call list.
+// Flat, plain-mutable state — read directly by `useAssembledFloor` and by `walkFloor`'s own
+// backtracking (`sig`/`snapshot`) below — that IS the one stored journey's own `exploredCells`,
+// `positionKey`, `standingKey` and `mechanismStates`, so a click's effect on the ACTUAL rendered grid is
+// what gets asserted, not a spy's call list. Carries both position fields, not just `positionKey`, for
+// the same reason the real store does: `standingKey` is what `explorerPos` draws from, and a `Store`
+// missing it would go back to being the kinder-than-real fake Task 1 replaced.
 type Store = {
   exploredCells: Record<string, string[]>
   positionKey: string | null
+  standingKey: string | null
   mechanismStates: Record<string, string>
 }
 
-const makeStore = (): Store => ({ exploredCells: {}, positionKey: null, mechanismStates: {} })
+const makeStore = (): Store => ({ exploredCells: {}, positionKey: null, standingKey: null, mechanismStates: {} })
 
 type Harness = {
-  journeys: JourneyAPI
   useHook: () => ReturnType<typeof useAssembledFloor> & { onCellClick: (r: number, c: number) => void; prompt: unknown }
 }
 
+// `createJourneysV3Api` reads and writes only what its own JourneyAPI surface needs, so the fixture
+// below carries no translation fields — nothing in markCellExplored/updatePosition/getMechanismStates/
+// setMechanismState reads journeyData at all (only getJourney/maxDifficulty do, and neither is called
+// by useSiteNavigation).
+const makeJourneyData = (id: string): TranslatedJourney =>
+  ({
+    id,
+    exterior: "pyramid",
+    difficulty: "starter",
+    levelCount: 1,
+    journeyLength: "short",
+    name: id,
+    lengthLabel: "short",
+  }) as TranslatedJourney
+
+// `useJourneys.ts` gates `markCellExplored` and `setMechanismState` behind "this journey is in the
+// shipped journey list (src/data/journeys.ts) and marked active" — a fixture id like the dev-topology
+// floor or the guard-proof tests' own id is never in that list, so the harness's one stored journey
+// borrows a real, known one instead. This is safe for what is under test: `assembleFloor`'s carve is
+// fixed entirely by `(floorConfig, seed)`, and the journeyId it receives is embedded only into
+// generated address labels.
+const knownJourneyIds = new Set(allKnownJourneys.map(j => j.id))
+const fallbackKnownJourneyId = allKnownJourneys[0].id
+
 /** Wires one floor's real reveal pipeline (`useAssembledFloor`) to the real click handler
- * (`useSiteNavigation`) over a plain mutable store, so a rerender always reflects the latest click —
- * the same round trip `SiteMapScreen` makes, minus the DOM. `patch` lets a test corrupt one write to
- * prove the checks below actually fire on the class of bug they're for. */
+ * (`useSiteNavigation`) over `createJourneysV3Api` — the same factory `useJourneys.spec.ts` itself
+ * drives — rebuilt fresh on every render (so `activeJourneyId`/`levelOf` see the latest write) from a
+ * single stored journey whose `exploredCells`/`positionKey`/`standingKey`/`mechanismStates` ARE `store`'s
+ * own fields, so a rerender always reflects the latest click, the same round trip `SiteMapScreen` makes
+ * minus the DOM. `patch` lets a test corrupt one write to prove the checks below actually fire on the
+ * class of bug they're for. */
 const buildHarness = (
   journeyId: string,
   floorConfig: FloorConfig,
@@ -132,50 +162,72 @@ const buildHarness = (
   store: Store,
   patch: Partial<JourneyAPI> = {}
 ): Harness => {
-  const journeys = {
-    markCellExplored: (_sectionHash: string, _cellId: string, address?: string | null) => {
-      if (!address) return
-      const section = sectionOfAddress(address)
-      const key = keyOfAddress(address)
-      const keys = store.exploredCells[section] ?? []
-      if (keys.includes(key)) return
-      store.exploredCells = { ...store.exploredCells, [section]: [...keys, key] }
-    },
-    updatePosition: (_journeyId: string, address: string) => {
-      store.positionKey = address
-    },
-    getPurchasedShopSlots: () => new Set<string>(),
-    getSkippedConsumables: () => new Set<string>(),
-    getMechanismStates: () => new Map(Object.entries(store.mechanismStates)),
-    setMechanismState: (address: string, stateId: string) => {
-      store.mechanismStates = { ...store.mechanismStates, [address]: stateId }
-    },
-    ...patch,
-  } as unknown as JourneyAPI
+  const storedJourneyId = knownJourneyIds.has(journeyId) ? journeyId : fallbackKnownJourneyId
+  const journeyData = [makeJourneyData(storedJourneyId)]
+
+  // The one stored journey, as it stands RIGHT NOW — read fresh on every `setJourneys` call (never a
+  // snapshot closed over at render time) so two writes issued moments apart from the same render's
+  // `journeys` (a click's own `updatePosition`, then a scheduled prompt's `setMechanismState`) compose
+  // instead of the second clobbering the first back to whatever the first read before it ran.
+  const currentJourneyDoc = (): StoredJourneyStateV3 => ({
+    journeyId: storedJourneyId,
+    levelNr: 1,
+    completionCount: 0,
+    active: true,
+    exploredSections: {},
+    exploredCells: store.exploredCells,
+    position: null,
+    positionKey: store.positionKey,
+    standingKey: store.standingKey,
+    interiorLevelNr: null,
+    mechanismStates: store.mechanismStates,
+  })
 
   const useHook = () => {
     const [, force] = useState(0)
     void force
-    const mechanismPositions = useMemo(
-      () => new Map(Object.entries(store.mechanismStates)),
-      // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on content, not the object identity
-      [JSON.stringify(store.mechanismStates)]
-    )
+    const journeys = {
+      ...createJourneysV3Api({
+        journeys: [currentJourneyDoc()],
+        setJourneys: updater => {
+          const next =
+            typeof updater === "function"
+              ? (updater as (prev: StoredJourneyStateV3[]) => StoredJourneyStateV3[])([currentJourneyDoc()])
+              : updater
+          store.exploredCells = next[0]?.exploredCells ?? {}
+          store.positionKey = next[0]?.positionKey ?? null
+          store.standingKey = next[0]?.standingKey ?? null
+          store.mechanismStates = next[0]?.mechanismStates ?? {}
+        },
+        journeyData,
+      }),
+      getPurchasedShopSlots: () => new Set<string>(),
+      getSkippedConsumables: () => new Set<string>(),
+      ...patch,
+    } as unknown as JourneyAPI
+
+    // The same two reads `SiteMapScreen` makes — `store.exploredCells`/`store.mechanismStates` are
+    // createJourneysV3Api's OWN storage, keyed `${levelNr}:${...}` (its `atLevel`/section-key
+    // bookkeeping); only these strip that prefix back down to what `useAssembledFloor`/`openDoorsFor`
+    // match sections and gates by.
+    const exploredCells = journeys.getExploredCells(storedJourneyId)
+    const mechanismPositions = useMechanismStates(journeys, storedJourneyId)
     const assembled = useAssembledFloor(
-      journeyId,
+      storedJourneyId,
       floorConfig,
       seed,
       0,
-      store.exploredCells,
+      exploredCells,
       store.positionKey,
       0,
       undefined,
       undefined,
-      mechanismPositions
+      mechanismPositions,
+      store.standingKey
     )
     const nav = useSiteNavigation({
       journeys,
-      journeyId,
+      journeyId: storedJourneyId,
       siteConfig,
       seed,
       currentFloor: 0,
@@ -188,7 +240,7 @@ const buildHarness = (
     return { ...assembled, onCellClick: nav.onCellClick, prompt: nav.prompt }
   }
 
-  return { journeys, useHook }
+  return { useHook }
 }
 
 /**
@@ -210,7 +262,13 @@ const walkFloor = (
   const visited = new Set<string>()
   const violations: string[] = []
   let steps = 0
-  const sig = () => `${store.positionKey ?? "start"}|${JSON.stringify(store.mechanismStates)}`
+  // Both position fields, not just `positionKey`: `standingKey` is the live cell — a bend included —
+  // and post-fix it is what moves on every corridor step `positionKey` itself stays frozen through. The
+  // coordinate appended at each call site (`@row,col`) already pins down the resolved cell exactly, so
+  // this adds no state `here`/`targetSig` didn't already distinguish; it's here so the signature reads
+  // as the real save document's own two fields, not a partial one that happens to still work.
+  const sig = () =>
+    `${store.positionKey ?? "start"}|${store.standingKey ?? "start"}|${JSON.stringify(store.mechanismStates)}`
   const snapshot = () => ({ ...store })
 
   const visit = (): void => {
@@ -308,8 +366,8 @@ describe("the movement invariant — offers match walkability, and taking one mo
 
     const { violations, steps } = walkFloor(journeyId, floorConfig, seed)
 
-    expect(steps).toBeGreaterThan(50) // a walk this floor short would prove nothing was exercised
     expect(violations).toEqual([])
+    expect(steps).toBeGreaterThan(50) // a walk this floor short would prove nothing was exercised
   }, 30_000)
 
   // A plain shipped floor, with no mechanism at all — the guard is not only for the exotic case.
@@ -318,8 +376,8 @@ describe("the movement invariant — offers match walkability, and taking one mo
 
     const { violations, steps } = walkFloor(floor.journeyId, floor.config, floor.seed)
 
-    expect(steps).toBeGreaterThan(3)
     expect(violations).toEqual([])
+    expect(steps).toBeGreaterThan(3)
   }, 30_000)
 })
 

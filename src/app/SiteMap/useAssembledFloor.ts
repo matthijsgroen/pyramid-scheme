@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
 import { assembleFloor } from "@/game/siteAssembler"
 import { openDoorsFor, openWaysOut } from "@/game/mechanismDoors"
 import { completeCell, isSealedWayOut } from "@/game/gridNavigation"
@@ -313,7 +313,12 @@ export const useAssembledFloor = (
   /** Which position every mechanism on this floor is stored in, keyed by its cell address
    * (see useMechanismStates) — read against the floor's own `mechanism` records to find what stands
    * open (see openDoorsFor). */
-  mechanismPositions?: ReadonlyMap<string, string>
+  mechanismPositions?: ReadonlyMap<string, string>,
+  /** The live cell the player is standing on (a bend or bare fork included) — read before `positionKey`
+   * for where to draw the explorer, since it names every cell walked onto and `positionKey` only the
+   * last authored place. Appended last so a caller that has not been touched by this fix (a fixture
+   * built before `standingKey` existed) still resolves exactly as it always has, via `positionKey`. */
+  standingKey?: string | null
 ): {
   grid: FloorGrid | null
   explorerPos: readonly [number, number]
@@ -385,24 +390,33 @@ export const useAssembledFloor = (
     }
   }, [exploredGrid, detectionLevel, revealedSections])
 
+  // Resolves one address against the MASKED grid, or null when it names nowhere to stand on THIS
+  // carve — which is the right answer whether the address is stale (see explorerPos below) or the
+  // caller has none to offer. Somewhere an address still names is not the same as somewhere you can
+  // stand: a saved cell turns to void when the floor it belongs to is restructured, and — more often —
+  // when a found hidden section goes back to hidden because its section hash moved (the hash covers the
+  // section's encounter, so re-authoring an encounter is enough). A shut way out is one more thing an
+  // address can name that is nowhere to stand — nothing walks onto one, so a save that puts the player
+  // there is a save that strands them: no route the map will honour starts on a wall.
+  const resolveStanding = useCallback(
+    (address: string | null | undefined): readonly [number, number] | null => {
+      if (!grid || !address || floorOfAddress(address) !== currentFloor) return null
+      const at = findByAddress(grid, currentFloor, address)
+      if (!at) return null
+      const cell = grid.cells[at[0]][at[1]]
+      if (cell.type === "empty" || isSealedWayOut(cell)) return null
+      return at
+    },
+    [grid, currentFloor]
+  )
+
   const explorerPos: readonly [number, number] = useMemo(() => {
     if (!grid) return [0, 0]
-    if (!positionKey || floorOfAddress(positionKey) !== currentFloor) return grid.entrancePos
-    // Somewhere the address still names is not the same as somewhere you can stand. A saved cell turns
-    // to void when the floor it belongs to is restructured, and — more often — when a found hidden
-    // section goes back to hidden because its section hash moved (the hash covers the section's
-    // encounter, so re-authoring an encounter is enough). Standing on void puts the explorer dot
-    // outside the drawn map with no way back, so an unstandable saved position sends them to the
-    // entrance. Resolving against the MASKED grid is what makes that check see the hidden case.
-    const at = findByAddress(grid, currentFloor, positionKey)
-    if (!at) return grid.entrancePos
-    // A shut way out is one more thing an address can name that is nowhere to stand. Nothing walks
-    // onto one, so a save that puts the player there is a save that strands them: no route the map
-    // will honour starts on a wall.
-    const cell = grid.cells[at[0]][at[1]]
-    if (cell.type === "empty" || isSealedWayOut(cell)) return grid.entrancePos
-    return at
-  }, [grid, positionKey, currentFloor])
+    // The live cell first — it names every cell walked onto, bends included. A stale one (the carve
+    // moved under it, or it simply has none yet) falls through to the last authored place, and that to
+    // the entrance, rather than stranding the player on a wall or off the map.
+    return resolveStanding(standingKey) ?? resolveStanding(positionKey) ?? grid.entrancePos
+  }, [grid, standingKey, positionKey, resolveStanding])
 
   return { grid, explorerPos, hiddenJunctions, hiddenSections, junctionSections, openGateKeys }
 }

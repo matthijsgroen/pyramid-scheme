@@ -48,6 +48,11 @@ export type StoredJourneyStateV3 = {
    *  (src/app/SiteMap/cellIdentity.ts). A bend or bare fork carries no slot and never overwrites this —
    *  walking one only, since entering, leaves it at null (entrance). */
   positionKey?: string | null
+  /** The cell the player is currently standing on, as a cell address — a corridor bend or bare fork
+   *  included, unlike `positionKey`. Absent reads as "nowhere yet", which falls through to
+   *  `positionKey` (see `useAssembledFloor`'s `explorerPos`). Cleared everywhere `positionKey` is,
+   *  so a new level or a reset never resumes standing on the floor it left. */
+  standingKey?: string | null
   interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
   // All three name cells by address — `${levelNr}:${sectionHash}#${floor}/${slot}` — so a
   // re-carve moves the cell and takes the entry with it. See migrateJourneyToCarveIndependent.
@@ -124,8 +129,9 @@ export type JourneyAPI = {
   setRepairedExploration: (journeyId: string, repaired: RepairedExploration) => void
   /** This level's exploration, by section: the cell keys the map restores from. */
   getExploredCells: (journeyId: string) => Record<string, string[]>
-  /** Records `address` as the player's position, unless it names a bend or bare fork — a cell with no
-   *  slot (src/game/cellSlot.ts) — in which case the previously recorded place is left standing. */
+  /** Records `address` as the live cell the player is standing on (`standingKey`), and — unless it
+   *  names a bend or bare fork, a cell with no slot (src/game/cellSlot.ts) — as `positionKey`, the
+   *  place a save resumes at. */
   updatePosition: (journeyId: string, address: string, nodeId: string) => void
   setInteriorLevel: (journeyId: string, levelNr: number | null) => void
   // Every one of these names a cell by its `${sectionHash}#${floor}/${slot}` address, which
@@ -254,7 +260,15 @@ export const createJourneysV3Api = ({
           prev.map(j =>
             j.journeyId === journey.id
               ? alreadyCompletedRun
-                ? { ...j, active: true, levelNr: 1, position: null, positionKey: null, interiorLevelNr: null }
+                ? {
+                    ...j,
+                    active: true,
+                    levelNr: 1,
+                    position: null,
+                    positionKey: null,
+                    standingKey: null,
+                    interiorLevelNr: null,
+                  }
                 : { ...j, active: true }
               : j
           )
@@ -290,6 +304,7 @@ export const createJourneysV3Api = ({
               completionCount: capCompletionCount ? Math.max(j.completionCount, 1) : j.completionCount + 1,
               position: null,
               positionKey: null,
+              standingKey: null,
               interiorLevelNr: null,
             }
           : j
@@ -302,7 +317,15 @@ export const createJourneysV3Api = ({
       setJourneys(prev =>
         prev.map(j =>
           j.journeyId === journeyId
-            ? { ...j, active: true, levelNr: targetLevelNr, position: null, positionKey: null, interiorLevelNr: null }
+            ? {
+                ...j,
+                active: true,
+                levelNr: targetLevelNr,
+                position: null,
+                positionKey: null,
+                standingKey: null,
+                interiorLevelNr: null,
+              }
             : j
         )
       )
@@ -320,7 +343,14 @@ export const createJourneysV3Api = ({
     setJourneys(prev =>
       prev.map(j =>
         j.journeyId === activeJourneyId
-          ? { ...j, levelNr: j.levelNr + 1, position: null, positionKey: null, interiorLevelNr: null }
+          ? {
+              ...j,
+              levelNr: j.levelNr + 1,
+              position: null,
+              positionKey: null,
+              standingKey: null,
+              interiorLevelNr: null,
+            }
           : j
       )
     )
@@ -402,14 +432,22 @@ export const createJourneysV3Api = ({
     return result
   }
 
-  // Both are written: the address is what the map reads, the coordinate is the archive the backfill
-  // re-reads (see `exploredSections`), and both go stale together when the level changes. Only an
-  // address naming a place (src/game/cellSlot.ts) is recorded — a bend or bare fork has no authored
-  // name to resume at, so walking onto one leaves the last recorded place standing.
+  // `standingKey` is written unconditionally — it is the live cell, bends and bare forks included, that
+  // `useAssembledFloor` draws the explorer at. `position`/`positionKey` (the archive a save resumes at)
+  // keep their own guard, paired as they always were: only an address naming a place
+  // (src/game/cellSlot.ts) overwrites them, since a bend or bare fork has no authored name to resume at
+  // and leaves the last recorded place standing.
   const updatePosition = (journeyId: string, address: string, nodeId: string) => {
-    if (!isPlaceAddress(address)) return
     setJourneys(prev =>
-      prev.map(j => (j.journeyId === journeyId ? { ...j, position: nodeId, positionKey: address } : j))
+      prev.map(j =>
+        j.journeyId === journeyId
+          ? {
+              ...j,
+              standingKey: address,
+              ...(isPlaceAddress(address) ? { position: nodeId, positionKey: address } : {}),
+            }
+          : j
+      )
     )
   }
 
