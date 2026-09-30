@@ -407,7 +407,7 @@ describe("what the dev journey authors", () => {
   it("carves pyramid 2 at its own seed sound: solvable, and no order of moves strands anyone", () => {
     const pyramid2 = withDev[DEV_JOURNEY_ID][1]
     const [floor] = pyramid2
-    expect(floor.packing).toBe(5)
+    expect(floor.packing).toBe(7)
 
     const grid = assembleAt(DEV_JOURNEY_ID, floor, 2, 0)
     if (!grid) throw new Error("doubleBack did not carve at its own seed")

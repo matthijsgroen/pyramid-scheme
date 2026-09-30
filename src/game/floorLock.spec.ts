@@ -3,6 +3,7 @@ import { assembleFloor, defaultResolveEncounter } from "./siteAssembler"
 import type { ResolveEncounter } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 import { walkLock } from "./lockWalk"
+import { oneWayRuns } from "./gridNavigation"
 import { floorLock } from "./floorLock"
 import { nodeBeyond } from "./siteValidator"
 import { floorWithHandle } from "./testSupport/handleFixtures"
@@ -196,6 +197,31 @@ const twoWayReach = (grid: FloorGrid, shut: string): Set<string> => {
   return seen
 }
 
+const twoWayRegions = (grid: FloorGrid): Map<string, string> => {
+  const regionOf = new Map<string, string>()
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      if (!walkable(grid.cells[r][c]) || regionOf.has(posKey(r, c)) || doorKeyOf(grid.cells[r][c]) !== undefined)
+        continue
+      const id = `at ${posKey(r, c)}`
+      const queue: Array<[number, number]> = [[r, c]]
+      regionOf.set(posKey(r, c), id)
+      while (queue.length > 0) {
+        const [qr, qc] = queue.shift()!
+        for (const dir of dirsOf(grid.cells[qr][qc])) {
+          const [dr, dc] = MOVES[dir as string]
+          const [nr, nc] = [qr + dr, qc + dc]
+          const next = grid.cells[nr]?.[nc]
+          if (!walkable(next) || !dirsOf(next!).has(OPPOSITE[dir as string])) continue
+          if (doorKeyOf(next!) !== undefined || regionOf.has(posKey(nr, nc))) continue
+          regionOf.set(posKey(nr, nc), id)
+          queue.push([nr, nc])
+        }
+      }
+    }
+  return regionOf
+}
+
 // THE ONE SHAPE `oneWays` EXISTS TO REPORT: a drop whose landing ground has no other way in. One cell
 // on the ordinary way in is restated as a door nothing on the floor mints the key for, so what is left
 // past it is entered by the drop alone. Undefined on a carve where no single cell cuts it off.
@@ -218,15 +244,22 @@ const sealTheWayIntoTheDrop = (grid: FloorGrid): FloorGrid | undefined => {
         }
       }
     }
-  // A drop is two one-way edges in a row — node into connector, connector into node — so the pair
-  // this needs is the outer two, chained through the connector between them.
+  // A drop is a chain of one-way edges, one into each cell of its run and one out of the last — so the
+  // pair this needs is the two ends of a chain, the departure that nothing one-way leads into and the
+  // landing that leads on to nothing one-way.
   const edges = oneWayEdges(grid)
   const at = (cell: [number, number]) => posKey(cell[0], cell[1])
-  const pairs = edges.flatMap(into =>
-    edges
-      .filter(outOf => at(outOf.to) === at(into.from))
-      .map(outOf => ({ source: at(outOf.from), landing: at(into.to) }))
-  )
+  const pairs = edges
+    .filter(first => !edges.some(into => at(into.to) === at(first.from)))
+    .map(first => {
+      let step = first
+      for (;;) {
+        const next = edges.find(outOf => at(outOf.from) === at(step.to))
+        if (!next) break
+        step = next
+      }
+      return { source: at(first.from), landing: at(step.to) }
+    })
   for (const { source, landing } of pairs) {
     if (!open.has(source) || !open.has(landing)) continue
     for (const key of open) {
@@ -580,6 +613,41 @@ describe("floorLock", () => {
       checked++
       expect(lock.oneWays ?? []).not.toEqual([])
       for (const oneWay of lock.oneWays!) expect(oneWay.from).not.toBe(oneWay.to)
+    }
+    expect(checked).toBeGreaterThan(0)
+  })
+
+  // A run of ONE_WAY_RUN_CELLS cells is one move for the walk, not one per cell: the compiled lock has
+  // to match the floor the author wrote, and the author wrote one drop.
+  it("compiles one authored drop to exactly one one-way, between the regions the run falls from and into", () => {
+    let checked = 0
+    for (let seed = 0; seed < 60; seed++) {
+      const result = assembleFloor("spec:1", withDrop(), seed, reEnterableFamilies, {
+        floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
+      })
+      if (!result.success) continue
+      const sealed = sealTheWayIntoTheDrop(result.grid)
+      if (!sealed) continue
+      const lock = floorLock(sealed)
+      if (!lock) continue
+      checked++
+      // The witness floods the raw grid across passages open both ways, doors excluded, in the compiler's
+      // own id scheme, so the regions the drop falls from and into are named without asking the compiler.
+      const regionOf = twoWayRegions(sealed)
+      // A door is a region of exactly one cell, named for it.
+      const regionNamed = (cell: readonly [number, number]) =>
+        regionOf.get(posKey(cell[0], cell[1])) ?? `door ${posKey(cell[0], cell[1])}`
+      const drops = oneWayRuns(sealed)
+      expect(drops).toHaveLength(1)
+      const [drop] = drops
+      expect(lock.oneWays).toEqual([
+        {
+          from: regionNamed(drop.departure),
+          to: regionNamed(drop.landing),
+        },
+      ])
+      // The run's cells are the departure's ground: none of them is a region of its own.
+      for (const [r, c] of drop.cells) expect(lock.regions).not.toContain(`at ${posKey(r, c)}`)
     }
     expect(checked).toBeGreaterThan(0)
   })

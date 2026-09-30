@@ -93,19 +93,19 @@ export const devRules: Rule[] = [
   // before throwing S1 at all — see the playtest instructions in the Task 8 report for what that
   // strands without it. S2's `start` likewise opens nothing; only `thrown` opens `endDoor`.
   //
-  // `packing: 5` is not decorative and is tied to THIS floor's own seed, not to the shape being
+  // `packing: 7` is not decorative and is tied to THIS floor's own seed, not to the shape being
   // carved — a floor at this position in the journey resolves to a different production seed than
   // the same shape would at any other position, and the packing value that carves it sound does not
-  // transfer. A sweep of small-integer `packing` values at this floor's seed: every value from 1
-  // through 30 carves (no structural failure at this seed, unlike pyramid 9's own), but `walkLock`
-  // finds most of them unsound (`unsolvable`, occasionally `strands`) — only 5, 9, 12 and 14 come out
-  // sound. `5` is picked because the early-drop hazard below still reproduces as a `strands` failure
-  // at that value (9 and 14 carve sound but degrade the ablation to a bare `unsolvable`, which would
-  // not prove the hazard).
+  // transfer. Each drop reserves a run of cells of its own, which the carve must find room for. A sweep
+  // of `packing` 1 through 30 at this floor's seed: many values do not carve at all, and `walkLock` finds
+  // most that do unsound (`unsolvable`, occasionally `strands`). Sound, and still stranding without the
+  // second drop, are 7, 15, 21, 24, 26 and 30; `7` is the smallest. The early-drop hazard below needs
+  // that `strands` failure: a value that carves sound but degrades the ablation to a bare `unsolvable`
+  // would not prove the hazard.
   journey(DEV_JOURNEY_ID).pyramid(2, {
     difficulty: "expert",
     pathPuzzles: 0,
-    packing: 5,
+    packing: 7,
     sideSections: [sidePath({ puzzles: 0 })],
     regionLayout: {
       regions: [

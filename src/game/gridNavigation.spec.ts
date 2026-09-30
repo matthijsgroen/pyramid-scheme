@@ -4,11 +4,13 @@ import {
   findPath,
   getOwnedKeys,
   isOneWayMouth,
+  oneWayMouthDir,
+  oneWayRuns,
   renderAscii,
   revealAll,
   walkableFrom,
 } from "./gridNavigation"
-import { assembleFloor } from "./siteAssembler"
+import { assembleFloor, ONE_WAY_RUN_CELLS } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid, GridCell } from "./siteTypes"
 
 // Simple 1×3 grid: [entrance room -e- corridor -e- exit room]
@@ -188,8 +190,8 @@ describe(completeCell, () => {
   it("walks straight through a one-way connector instead of stopping there like a corner", () => {
     // A floor authoring a drop (oneWays: [{ from: "upper", to: "lower" }]) carves the source cell's
     // own direction toward the connector, the connector's single onward direction, and nothing
-    // pointing back — the asymmetry the feature is for. At seed 0 that lands the connector at
-    // (3,6) with dirs of just "n", the source at (4,6), and the landing at (2,6).
+    // pointing back — the asymmetry the feature is for. At seed 0 that lands the source at (2,2), the
+    // run at (3,2) to (7,2) with dirs of just "s", and the landing at (8,2), a corridor.
     const config: FloorConfig = {
       pathPuzzles: 2,
       difficulty: "junior",
@@ -207,23 +209,24 @@ describe(completeCell, () => {
     if (!result.success) throw new Error("seed 0 no longer carves the authored drop")
     const grid = result.grid
 
-    const connector = grid.cells[3][6]
-    const source = grid.cells[4][6]
-    const landing = grid.cells[2][6]
-    if (connector.type !== "corridor" || source.type !== "room" || landing.type !== "room")
+    const source = grid.cells[2][2]
+    const landing = grid.cells[8][2]
+    if (source.type !== "room" || landing.type !== "corridor")
       throw new Error("the carve at seed 0 moved — re-read the coordinates before trusting this test")
-    expect([...connector.dirs]).toEqual(["n"])
+    for (let r = 3; r <= 7; r++) {
+      const cell = grid.cells[r][2]
+      if (cell.type !== "corridor") throw new Error("the carve at seed 0 moved — re-read the coordinates")
+      expect([...cell.dirs]).toEqual(["s"])
+    }
 
-    // Completing the source is the whole player action: nobody taps the connector on its own, because
-    // it offers no branch to look around. Its own state comes out lit for free, the same as any other
-    // straight corridor, and the room past it is reachable in the same pass.
-    const updated = completeCell(grid, 4, 6)
-    const updatedConnector = updated.cells[3][6]
-    const updatedLanding = updated.cells[2][6]
-    expect(updatedConnector.type).toBe("corridor")
-    if (updatedConnector.type === "corridor") expect(updatedConnector.state).toBe("visible")
-    expect(updatedLanding.type).toBe("room")
-    if (updatedLanding.type === "room") expect(updatedLanding.state).toBe("reachable")
+    // Completing the source is the whole player action: nobody taps a run cell on its own, because it
+    // offers no branch to look around. Every cell of the run comes out lit for free, the same as any
+    // other straight corridor, and the landing past it is a junction the player may look around.
+    const updated = completeCell(grid, 2, 2)
+    const states = [3, 4, 5, 6, 7, 8]
+      .map(r => updated.cells[r][2])
+      .map(cell => (cell.type === "empty" ? "empty" : cell.state))
+    expect(states).toEqual([...Array(ONE_WAY_RUN_CELLS).fill("visible"), "reachable"])
   })
 
   it("shows a one-way's connector from the landing side, and reveals nothing past it", () => {
@@ -247,21 +250,23 @@ describe(completeCell, () => {
     if (!result.success) throw new Error("seed 0 no longer carves the authored drop")
     const grid = result.grid
 
-    const connector = grid.cells[3][6]
-    const source = grid.cells[4][6]
-    const landing = grid.cells[2][6]
-    if (connector.type !== "corridor" || source.type !== "room" || landing.type !== "room")
+    const source = grid.cells[2][2]
+    const landing = grid.cells[8][2]
+    if (source.type !== "room" || landing.type !== "corridor")
       throw new Error("the carve at seed 0 moved — re-read the coordinates before trusting this test")
-    expect([...connector.dirs]).toEqual(["n"])
 
-    const updated = completeCell(grid, 2, 6)
-    const updatedConnector = updated.cells[3][6]
-    expect(updatedConnector.type).toBe("corridor")
-    if (updatedConnector.type === "corridor") expect(updatedConnector.state).toBe("visible")
+    // The whole run comes out of the fog, because the run is the zipline and the player is meant to
+    // see it from its foot.
+    const updated = completeCell(grid, 8, 2)
+    const run = [3, 4, 5, 6, 7].map(r => updated.cells[r][2])
+    expect(run.map(cell => cell.type)).toEqual(Array(ONE_WAY_RUN_CELLS).fill("corridor"))
+    expect(run.map(cell => (cell.type === "corridor" ? cell.state : "empty"))).toEqual(
+      Array(ONE_WAY_RUN_CELLS).fill("visible")
+    )
 
-    // Past the mouth, still dark: the source is two cells from the landing, geometrically and on
-    // the graph both, so nothing reaches it from this side.
-    const updatedSource = updated.cells[4][6]
+    // Past the run, still dark: the source is six cells from the landing, and nothing reaches it from
+    // this side.
+    const updatedSource = updated.cells[2][2]
     expect(updatedSource.type).toBe("room")
     if (updatedSource.type === "room") expect(updatedSource.state).toBe("fogged")
   })
@@ -381,7 +386,7 @@ describe(isOneWayMouth, () => {
     expect(isOneWayMouth(line(axis.toward, axis.back, axis.size, true), ...axis.at)).toBe(false)
   })
 
-  it("finds exactly the drop's connector as a mouth on a carved floor, for every seed that carves it", () => {
+  it("finds exactly the last cell of the drop's run as a mouth on a carved floor, for every seed that carves it", () => {
     const config: FloorConfig = {
       pathPuzzles: 2,
       difficulty: "junior",
@@ -401,22 +406,35 @@ describe(isOneWayMouth, () => {
       if (!result.success) continue
       carved++
       const grid = result.grid
-      // A connector is a corridor whose one direction leads into a cell that names no way back into it.
+      // A run cell is a corridor whose one direction leads into a cell that names no way back into it.
+      // Only the last of them has the landing for its onward neighbour; the others lead into the next.
       const mouths: string[] = []
       const connectors: string[] = []
+      const isConnector = (r: number, c: number): boolean => {
+        const cell = grid.cells[r]?.[c]
+        if (cell?.type !== "corridor" || cell.dirs.size !== 1) return false
+        const [dir] = cell.dirs
+        const step = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }[dir]
+        const onward = grid.cells[r + step[0]][c + step[1]]
+        const back = { n: "s", s: "n", e: "w", w: "e" }[dir] as Direction
+        return onward.type !== "empty" && !onward.dirs.has(back)
+      }
+      const ends: string[] = []
       for (let r = 0; r < grid.rows; r++)
         for (let c = 0; c < grid.cols; c++) {
           const cell = grid.cells[r][c]
           if (cell.type !== "corridor" || cell.dirs.size !== 1) continue
           const [dir] = cell.dirs
           const step = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }[dir]
-          const onward = grid.cells[r + step[0]][c + step[1]]
-          const back = { n: "s", s: "n", e: "w", w: "e" }[dir] as Direction
-          if (onward.type !== "empty" && !onward.dirs.has(back)) connectors.push(`${r},${c}`)
+          if (isConnector(r, c)) {
+            connectors.push(`${r},${c}`)
+            if (!isConnector(r + step[0], c + step[1])) ends.push(`${r},${c}`)
+          }
           if (isOneWayMouth(grid, r, c)) mouths.push(`${r},${c}`)
         }
-      expect(connectors).toHaveLength(1)
-      expect(mouths).toEqual(connectors)
+      expect(connectors).toHaveLength(ONE_WAY_RUN_CELLS)
+      expect(ends).toHaveLength(1)
+      expect(mouths).toEqual(ends)
     }
     expect(carved).toBeGreaterThan(0)
   })
@@ -431,6 +449,115 @@ describe(walkableFrom, () => {
   it("from the mouth, the only walkable neighbour is the landing", () => {
     const grid = oneWayMouthGrid()
     expect(walkableFrom(grid, [0, 1])).toEqual(new Set(["0,1", "0,2"]))
+  })
+})
+
+// A drop at full length on one row: departure, ONE_WAY_RUN_CELLS run cells each naming only "e", landing.
+// Every cell starts as `state`, so what a walk or a reveal does to it is the only thing under test.
+const runGrid = (state: "visible" | "fogged"): FloorGrid => ({
+  siteId: "test",
+  rows: 1,
+  cols: ONE_WAY_RUN_CELLS + 2,
+  entrancePos: [0, 0],
+  exitPos: [0, ONE_WAY_RUN_CELLS + 1],
+  staircases: {},
+  cells: [
+    [
+      { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e"]), state: "reachable" },
+      ...Array.from({ length: ONE_WAY_RUN_CELLS }, (): GridCell => ({
+        type: "corridor",
+        dirs: new Set<Direction>(["e"]),
+        state,
+      })),
+      { type: "room", roomType: "encounter", dirs: new Set<Direction>(), state: "reachable" },
+    ],
+  ],
+})
+const runCols = Array.from({ length: ONE_WAY_RUN_CELLS }, (_, k) => k + 1)
+const landingCol = ONE_WAY_RUN_CELLS + 1
+
+describe("a drop that is a run of cells", () => {
+  it("has exactly one mouth, the run's last cell, and no other cell on the row is one", () => {
+    const grid = runGrid("visible")
+    const mouths = grid.cells[0].map((_, c) => isOneWayMouth(grid, 0, c))
+    expect(mouths).toEqual(grid.cells[0].map((_, c) => c === ONE_WAY_RUN_CELLS))
+  })
+
+  it("names the mouth from the landing alone, and from no cell of the run or the departure", () => {
+    const grid = runGrid("visible")
+    expect(grid.cells[0].map((_, c) => oneWayMouthDir(grid, 0, c))).toEqual(
+      grid.cells[0].map((_, c) => (c === landingCol ? "w" : undefined))
+    )
+  })
+
+  it("reads back as one drop: its departure, its cells in order from the departure, its landing", () => {
+    expect(oneWayRuns(runGrid("visible"))).toEqual([
+      { departure: [0, 0], cells: runCols.map(c => [0, c]), landing: [0, landingCol], dir: "e" },
+    ])
+  })
+
+  it("lets the landing step onto the run's last cell and no further up", () => {
+    expect(walkableFrom(runGrid("visible"), [0, landingCol])).toEqual(
+      new Set([`0,${landingCol}`, `0,${ONE_WAY_RUN_CELLS}`])
+    )
+  })
+
+  it("lets the run's last cell step back to the landing and nowhere up the run", () => {
+    expect(walkableFrom(runGrid("visible"), [0, ONE_WAY_RUN_CELLS])).toEqual(
+      new Set([`0,${ONE_WAY_RUN_CELLS}`, `0,${landingCol}`])
+    )
+  })
+
+  it("lets the departure walk the whole run to the landing", () => {
+    expect(walkableFrom(runGrid("visible"), [0, 0])).toEqual(
+      new Set(runGrid("visible").cells[0].map((_, c) => `0,${c}`))
+    )
+  })
+
+  it("finds no route from the landing to the departure, and the one step to the mouth", () => {
+    const grid = runGrid("visible")
+    expect(findPath(grid, [0, landingCol], [0, 0])).toEqual([])
+    expect(findPath(grid, [0, landingCol], [0, ONE_WAY_RUN_CELLS])).toEqual([
+      [0, landingCol],
+      [0, ONE_WAY_RUN_CELLS],
+    ])
+  })
+
+  it("brings the whole run out of the fog from the landing, and nothing behind the departure", () => {
+    const after = completeCell(runGrid("fogged"), 0, landingCol)
+    expect(after.cells[0].map(cell => (cell.type === "corridor" ? cell.state : "room"))).toEqual([
+      "room",
+      ...Array(ONE_WAY_RUN_CELLS).fill("visible"),
+      "room",
+    ])
+  })
+
+  it("brings the whole run out of the fog from the departure, straight through to the landing", () => {
+    const after = completeCell(runGrid("fogged"), 0, 0)
+    expect(after.cells[0].map(cell => (cell.type === "corridor" ? cell.state : "room"))).toEqual([
+      "room",
+      ...Array(ONE_WAY_RUN_CELLS).fill("visible"),
+      "room",
+    ])
+  })
+
+  it("takes a stub as long as the run, hanging off a node that names it, for no mouth at all", () => {
+    const stub: GridCell[] = Array.from({ length: ONE_WAY_RUN_CELLS }, () => ({
+      type: "corridor",
+      dirs: new Set<Direction>(["w"]),
+      state: "visible",
+    }))
+    const grid: FloorGrid = {
+      ...runGrid("visible"),
+      cells: [
+        [
+          { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e"]), state: "reachable" },
+          ...stub,
+          { type: "room", roomType: "encounter", dirs: new Set<Direction>(), state: "reachable" },
+        ],
+      ],
+    }
+    expect(grid.cells[0].map((_, c) => isOneWayMouth(grid, 0, c))).toEqual(grid.cells[0].map(() => false))
   })
 })
 

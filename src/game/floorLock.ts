@@ -1,6 +1,7 @@
 import type { Direction, FloorGrid, GridCell, MechanismRecord, TombKeyReward } from "./siteTypes"
 import type { LockSpec, Mechanism, GateId, MechanismId, RegionId } from "./lockWalk"
 import { nodeBeyond } from "./siteValidator"
+import { oneWayRuns } from "./gridNavigation"
 
 type Pos = readonly [number, number]
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
@@ -31,16 +32,22 @@ const dirsOf = (cell: GridCell): ReadonlySet<Direction> =>
 // would stamp the ground past it with the region it fell from, and the walk — which may step either
 // way across anything inside one region — would be told the player can climb back up.
 //
+// A DROP'S RUN IS THE DEPARTURE'S GROUND, NOT REGIONS OF ITS OWN. Its cells name only the way onward, so
+// the flood would leave each one a region alone and the drop would read as a chain of moves, one per
+// cell; the run belongs to the region it falls from, and only its last step crosses into another.
+//
 // Hidden cells are left out: a hidden section is never a statement that the player found it, so a
 // floor has to be sound without one.
 const regionsOf = (grid: FloorGrid): { ids: RegionId[]; of: Map<string, RegionId> } => {
   const of = new Map<string, RegionId>()
   const ids: RegionId[] = []
+  const runs = oneWayRuns(grid)
+  const inRun = new Set(runs.flatMap(run => run.cells.map(([r, c]) => posKey(r, c))))
 
   for (let r = 0; r < grid.rows; r++)
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
-      if (!walkable(cell) || of.has(posKey(r, c))) continue
+      if (!walkable(cell) || of.has(posKey(r, c)) || inRun.has(posKey(r, c))) continue
       const isDoor = doorKeysOf(cell).length > 0
       const id = isDoor ? `door ${r},${c}` : `at ${r},${c}`
       ids.push(id)
@@ -61,6 +68,12 @@ const regionsOf = (grid: FloorGrid): { ids: RegionId[]; of: Map<string, RegionId
         }
       }
     }
+
+  for (const run of runs) {
+    const region = of.get(posKey(run.departure[0], run.departure[1]))
+    if (!region) continue
+    for (const [r, c] of run.cells) if (walkable(grid.cells[r][c])) of.set(posKey(r, c), region)
+  }
 
   return { ids, of }
 }

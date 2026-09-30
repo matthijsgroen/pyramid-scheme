@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { assembleFloor, defaultResolveEncounter } from "./siteAssembler"
+import { assembleFloor, defaultResolveEncounter, ONE_WAY_RUN_CELLS } from "./siteAssembler"
 import type { ResolveEncounter } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid, GridCell } from "./siteTypes"
 import { nodeBeyond } from "./siteValidator"
@@ -132,16 +132,23 @@ const twoWayReach = (grid: FloorGrid, shut: string): Set<string> => {
   return seen
 }
 
-/** A drop's two NODES: a drop is two one-way steps in a row, so the pair wanted is the outer two,
- * chained through the connector between them. */
-const dropPairs = (grid: FloorGrid): { source: string; landing: string }[] => {
+/** Every drop on the grid: a chain of one-way steps, one per cell of the run plus the step onto the
+ * landing. `source` and `landing` are the two NODES, `run` the cells strictly between them in order. */
+const dropPairs = (grid: FloorGrid): { source: string; landing: string; run: string[] }[] => {
   const edges = oneWayEdges(grid)
   const at = (cell: [number, number]) => posKey(cell[0], cell[1])
-  return edges.flatMap(into =>
-    edges
-      .filter(outOf => at(outOf.to) === at(into.from))
-      .map(outOf => ({ source: at(outOf.from), landing: at(into.to) }))
-  )
+  const starts = edges.filter(first => !edges.some(into => at(into.to) === at(first.from)))
+  return starts.map(first => {
+    const run: string[] = []
+    let step = first
+    for (;;) {
+      const next = edges.find(outOf => at(outOf.from) === at(step.to))
+      if (!next) break
+      run.push(at(step.to))
+      step = next
+    }
+    return { source: at(first.from), landing: at(step.to), run }
+  })
 }
 
 describe("a floor that authors a one-way", () => {
@@ -152,7 +159,46 @@ describe("a floor that authors a one-way", () => {
   it("runs the drop between the two sections the author named, and leaves nothing else one-way", () => {
     const grid = assembled(floorWithDrop())
     const spans = oneWayEdges(grid).map(edge => `${addressAt(grid, edge.from)} to ${addressAt(grid, edge.to)}`)
-    expect(spans.sort()).toEqual(["upper to lower", "upper to upper"])
+    // The run's cells answer to the section the drop falls FROM; only the last step crosses over.
+    expect(spans.sort()).toEqual(["upper to lower", ...Array(ONE_WAY_RUN_CELLS).fill("upper to upper")])
+  })
+
+  it("declares five cells, the odd count nearest the art's measured 5.6", () => {
+    expect(ONE_WAY_RUN_CELLS).toBe(5)
+  })
+
+  it("reserves a straight run of the declared length between the two nodes, every cell one-way onward", () => {
+    // Asserted cell by cell, on every seed that carves. A cell that named the way back would let a
+    // player climb the drop; a landing that named the way in would let them enter it from below.
+    let checked = 0
+    for (let seed = 0; seed < 60; seed++) {
+      const result = assembleFloor("spec:1", floorWithDrop(), seed, undefined, {
+        floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
+      })
+      if (!result.success) continue
+      checked++
+      const grid = result.grid
+      const drops = dropPairs(grid)
+      expect(drops).toHaveLength(1)
+      const [drop] = drops
+      const [fr, fc] = drop.source.split(",").map(Number)
+      const [lr, lc] = drop.landing.split(",").map(Number)
+      expect(drop.run).toHaveLength(ONE_WAY_RUN_CELLS)
+      const step: [number, number] = [Math.sign(lr - fr), Math.sign(lc - fc)]
+      expect(Math.abs(step[0]) + Math.abs(step[1])).toBe(1)
+      expect([lr - fr, lc - fc]).toEqual([step[0] * (ONE_WAY_RUN_CELLS + 1), step[1] * (ONE_WAY_RUN_CELLS + 1)])
+      const dir = (Object.keys(MOVES) as Direction[]).find(d => MOVES[d][0] === step[0] && MOVES[d][1] === step[1])!
+      expect(dirsAt(grid, [fr, fc]).has(dir)).toBe(true)
+      drop.run.forEach((cellKey, k) => {
+        expect(cellKey).toBe(posKey(fr + step[0] * (k + 1), fc + step[1] * (k + 1)))
+        const cell = grid.cells[fr + step[0] * (k + 1)][fc + step[1] * (k + 1)]
+        expect(cell.type).toBe("corridor")
+        expect([...dirsAt(grid, [fr + step[0] * (k + 1), fc + step[1] * (k + 1)])]).toEqual([dir])
+      })
+      // The landing names no way up into the run.
+      expect(dirsAt(grid, [lr, lc]).has(OPPOSITE[dir])).toBe(false)
+    }
+    expect(checked).toBeGreaterThan(0)
   })
 
   it("shuts the landing behind, so the section the drop falls into has no way back up it", () => {
@@ -171,15 +217,19 @@ describe("a floor that authors a one-way", () => {
     const grid = assembled(floorWithDrop())
     const [pair] = dropPairs(grid)
     const [fr, fc] = pair.source.split(",").map(Number)
-    const [lr, lc] = pair.landing.split(",").map(Number)
     const source = grid.cells[fr][fc]
-    const connector = grid.cells[(fr + lr) / 2][(fc + lc) / 2]
-    if (source.type === "empty" || connector.type === "empty") throw new Error("the drop is not carved")
-    expect(connector.sectionAddress).toBe(source.sectionAddress)
-    expect(connector.sectionHash).toBe(source.sectionHash)
-    expect(connector.legacySectionHash).toBe(source.legacySectionHash)
-    expect(connector.ordinal).toBeDefined()
-    expect(connector.difficulty).toBe("junior")
+    if (source.type === "empty") throw new Error("the drop is not carved")
+    expect(pair.run).toHaveLength(ONE_WAY_RUN_CELLS)
+    for (const cellKey of pair.run) {
+      const [r, c] = cellKey.split(",").map(Number)
+      const connector = grid.cells[r][c]
+      if (connector.type === "empty") throw new Error("the drop is not carved")
+      expect(connector.sectionAddress).toBe(source.sectionAddress)
+      expect(connector.sectionHash).toBe(source.sectionHash)
+      expect(connector.legacySectionHash).toBe(source.legacySectionHash)
+      expect(connector.ordinal).toBeDefined()
+      expect(connector.difficulty).toBe("junior")
+    }
   })
 
   it("never lets the drop's connector share its (sectionAddress, ordinal) with another cell", () => {
@@ -199,20 +249,26 @@ describe("a floor that authors a one-way", () => {
       checked++
       const grid = result.grid
       const [pair] = dropPairs(grid)
-      const [fr, fc] = pair.source.split(",").map(Number)
-      const [lr, lc] = pair.landing.split(",").map(Number)
-      const [mr, mc] = [(fr + lr) / 2, (fc + lc) / 2]
-      const connector = grid.cells[mr][mc]
-      if (connector.type === "empty" || connector.ordinal === undefined) throw new Error("the drop is not carved")
-      const identity = `${connector.sectionAddress}#${connector.ordinal}`
-      for (let r = 0; r < grid.rows; r++)
-        for (let c = 0; c < grid.cols; c++) {
-          if (r === mr && c === mc) continue
-          const cell = grid.cells[r][c]
-          if (cell.type === "empty" || cell.ordinal === undefined) continue
-          if (`${cell.sectionAddress}#${cell.ordinal}` === identity)
-            throw new Error(`seed ${seed}: "${identity}" is claimed by both the drop's connector and (${r},${c})`)
-        }
+      // Every cell of the run against every cell of the floor, itself excepted: the run's cells must
+      // not share an identity with each other either.
+      const identityAt = (r: number, c: number) => {
+        const cell = grid.cells[r][c]
+        return cell.type === "empty" || cell.ordinal === undefined
+          ? undefined
+          : `${cell.sectionAddress}#${cell.ordinal}`
+      }
+      expect(pair.run).toHaveLength(ONE_WAY_RUN_CELLS)
+      for (const runKey of pair.run) {
+        const [mr, mc] = runKey.split(",").map(Number)
+        const identity = identityAt(mr, mc)
+        if (identity === undefined) throw new Error("the drop is not carved")
+        for (let r = 0; r < grid.rows; r++)
+          for (let c = 0; c < grid.cols; c++) {
+            if (r === mr && c === mc) continue
+            if (identityAt(r, c) === identity)
+              throw new Error(`seed ${seed}: "${identity}" is claimed by both the drop's run and (${r},${c})`)
+          }
+      }
     }
     expect(checked).toBeGreaterThan(0)
   })
@@ -281,6 +337,27 @@ describe("a floor that authors a one-way", () => {
       return
     }
     expect(result.reasons.some(reason => reason.type === "oneWayUnsatisfied")).toBe(true)
+  })
+
+  it("refuses, by name and on every seed, more runs than the floor has room to reserve", () => {
+    // Never a shorter drop, never one placed somewhere else: where the next run does not fit, the floor
+    // says which drop it could not place. Each run reserves ONE_WAY_RUN_CELLS cells of its own, so a
+    // small floor asked for far more drops than it has ground for runs out whatever the seed.
+    const crowded: FloorConfig = {
+      pathPuzzles: 0,
+      difficulty: "junior",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [{ pathPuzzles: 0, difficulty: "junior", end: "treasure", label: "only" }],
+      oneWays: Array.from({ length: 40 }, () => ({ from: "only", to: "main" })),
+    }
+    for (let seed = 0; seed < 20; seed++) {
+      const result = assembleFloor("spec:1", crowded, seed, undefined, {
+        floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
+      })
+      if (result.success) throw new Error(`seed ${seed} carved a drop on a floor with no room for its run`)
+      expect(result.reasons).toContainEqual({ type: "oneWayUnsatisfied", from: "only", to: "main" })
+    }
   })
 
   it("refuses a drop into a section a gate is meant to isolate", () => {
