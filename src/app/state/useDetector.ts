@@ -8,7 +8,8 @@ import { useCompassTarget } from "@/app/SiteMap/compassTarget"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { floorOfAddress } from "@/app/SiteMap/cellIdentity"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "@/worldGen/data"
-import { TIER_UNLOCK_PERK_IDS } from "@/data/treasurePerks"
+import { isTierUnlocked } from "@/app/pages/journeyAvailability"
+import type { Difficulty } from "@/data/difficultyLevels"
 
 export type DetectorAPI = {
   /** Which detector is RUNNING. Independent of whether the readout is showing. */
@@ -38,10 +39,9 @@ const accessOf = (
 ): { access: CompassAccess; missingKeys?: readonly string[] } => {
   const missingKeys = (hit.wardKeys ?? []).filter(k => !heldKeys.has(k))
   if (missingKeys.length > 0) return { access: "locked", missingKeys }
-  // A tier with no unlock ids is the first one — always open. Otherwise ANY of its unlock treasures
-  // opens it (mirrors reachability's isTierUnlocked).
-  const unlockIds = TIER_UNLOCK_PERK_IDS[JOURNEY_TIER[hit.journeyId] ?? ""]
-  if (unlockIds && !unlockIds.some(k => heldKeys.has(k))) return { access: "locked" }
+  // Same gate the Travel screen uses, including tiers this release doesn't ship yet.
+  const tier = JOURNEY_TIER[hit.journeyId] as Difficulty | undefined
+  if (tier && !isTierUnlocked(tier, heldKeys)) return { access: "locked" }
   if (hit.hidden) return { access: "hidden" }
   // Entering a tomb costs map pieces and shop stock costs money; neither is modelled here, so say
   // "don't know" rather than implying the piece is there for the taking.

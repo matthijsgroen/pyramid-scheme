@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest"
 import { journeys, type Journey } from "@/data/journeys"
 import { TIER_UNLOCK_PERK_IDS } from "@/data/treasurePerks"
-import { availablePyramidJourneyIds, isTierUnlocked, nextPyramidJourneyId } from "./journeyAvailability"
+import {
+  availablePyramidJourneyIds,
+  comingSoonDifficulty,
+  isTierUnlocked,
+  nextPyramidJourneyId,
+} from "./journeyAvailability"
 
 const noKeys: ReadonlySet<string> = new Set()
 const keys = (...ids: string[]): ReadonlySet<string> => new Set(ids)
@@ -26,6 +31,29 @@ describe(isTierUnlocked, () => {
 
   it("stays shut for a key belonging to another tier", () => {
     expect(isTierUnlocked("junior", keys(...TIER_UNLOCK_PERK_IDS.expert!))).toBe(false)
+  })
+})
+
+describe("unreleased tiers", () => {
+  it("keeps master shut even with its unlock key held", () => {
+    expect(isTierUnlocked("master", keys(...TIER_UNLOCK_PERK_IDS.master!))).toBe(false)
+  })
+
+  it("offers no master expedition to a player holding every key", () => {
+    const allKeys = keys(...(Object.values(TIER_UNLOCK_PERK_IDS).flat() as string[]))
+    const available = availablePyramidJourneyIds(journeys, allKeys, () => true)
+    const tiers = new Set(journeys.filter(j => available.has(j.id)).map(j => j.difficulty))
+    expect(tiers.has("master")).toBe(false)
+    expect(tiers.has("wizard")).toBe(false)
+    expect(tiers.has("expert")).toBe(true)
+  })
+
+  it("names master as coming soon once its key is held", () => {
+    expect(comingSoonDifficulty(keys(TIER_UNLOCK_PERK_IDS.master![0]))).toBe("master")
+  })
+
+  it("names nothing coming soon before the player reaches the cap", () => {
+    expect(comingSoonDifficulty(keys(...TIER_UNLOCK_PERK_IDS.expert!))).toBeUndefined()
   })
 })
 

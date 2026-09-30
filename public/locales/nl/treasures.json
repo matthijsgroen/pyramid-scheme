@@ -12,6 +12,7 @@
     "compass": "Fragmentkompas (niv {{level}})",
     "detection": "Verborgen-gangdetector (niv {{level}})",
     "tier-unlock": "Ontgrendelt {{tier}}-expedities",
+    "tier-coming-soon": "{{tier}}-expedities komen in een latere update",
     "location-key": "Onthult een andere tombe"
   },
   "tiers": {
