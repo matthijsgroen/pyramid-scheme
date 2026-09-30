@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint . --max-warnings 17",
     "test": "vitest",
+    "lock": "tsx scripts/lock.ts",
     "preview": "vite preview",
     "check-types": "tsc -b",
     "storybook": "storybook dev -p 6006 --no-open",
