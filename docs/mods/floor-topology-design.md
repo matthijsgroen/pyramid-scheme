@@ -477,14 +477,15 @@ it looks like on the grid.
 
 |     | Enforced by                                                                             | Gap                                                                                                      |
 | --- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| 1   | `LockSpec` is a connectivity graph by construction                                      | **The authored graph and the compiled one are different objects, and NOTHING COMPARES THEM** — see below |
+| 1   | `LockSpec` is a connectivity graph by construction, and `carveAgreement` refuses a carve that disagrees with it | — |
 | 2   | `LockSpec` carries a single `in`/`out`; `checkLockSpec` refuses either naming no region | —                                                                                                        |
 | 3   | `strandedRegions` structurally, `deadRegions` for a region no reachable state stands in | —                                                                                                        |
 | 4   | `walkLock`, with ward keys assumed shut and hidden sections assumed unfound             | —                                                                                                        |
 
-**THE GAP UNDER CRITERION 1, measured 2026-09-30.** `floorLock` derives the lock by flooding the
-ASSEMBLED GRID and stopping at gates, so what gets walked is whatever the carve produced — the
-authored region graph is an instruction to the carve, never a thing the result is checked against.
+**HOW CRITERION 1 IS HELD, measured 2026-09-30.** `floorLock` derives the lock by flooding the
+ASSEMBLED GRID and stopping at gates, so what gets walked is whatever the carve produced. The authored
+region graph is therefore an instruction to the carve AND the thing the result is checked against:
+`carveAgreement` reads the finished grid back and re-seeds any attempt that disagrees.
 Measured on `doubleBack`, authored as six regions and five gates, compiled at six values of `packing`
 at one seed:
 
@@ -507,7 +508,7 @@ is an outcome rather than a requirement.
 
 | #   | Criterion                         | State                                                                                             |
 | --- | --------------------------------- | ------------------------------------------------------------------------------------------------- |
-| 1   | connectivity graph                | type is real; **nothing compares the carve to the authoring**                                     |
+| 1   | connectivity graph                | holds: `carveAgreement` reads the finished grid back against the layout, re-seeds a disagreeing attempt and refuses by name after the budget — `regionAttachedThrough`, `regionsNotJoined`, `gateDoorMisplaced`, `dropLandsApart`. Measured over 414 carves: rejects 237 of 258 unsound, and **0 of 156 sound** |
 | 2   | one in, one out                   | authored side refused by name and tested; compiled side checked at runtime, no regression test    |
 | 3   | every region reachable            | `strandedRegions` + `deadRegions`, both tested, refused at build and reported by `validate-world` |
 | 4   | no outside help                   | `walkLock` with wards sealed in `floorLock`; ward half tested, **hidden-section half untested**   |
@@ -532,12 +533,22 @@ describes above — "entered and left through its **ports**", "a region may be f
 by another container" — is the piece that was never built, and building it is what turns five separate
 gaps into one job.
 
-**What follows: the builder must check the carve against the lock it was given.** Same regions joined
-the same ways, gates between the same pairs — and where the carve produced something else, re-seed and
-try again, then refuse by name after the attempt budget, exactly as it already refuses a dozen other
-things. Until then the only signal is `walkLock` reporting `unsolvable` afterwards, and the only
-remedy is an author sweeping `packing` until a seed happens to land on a shape that works. That is a
-search, not authoring, and it does not scale to master and wizard's 56 gates.
+**The builder checks the carve against the lock it was given.** Same regions joined the same ways,
+gates between the same pairs — and where the carve produced something else, the attempt is re-seeded and
+the floor refused by name after the budget, exactly as it already refuses a dozen other things. Measured
+over 414 carves: 237 of 258 unsound carves rejected, and **0 of 156 sound ones**.
+
+**What it does NOT do is remove the `packing` search**, and that is worth stating plainly because it was
+hoped it would. `doubleBack` is so constrained that only 1-3 of its 60 attempts reach the check at all,
+so rejecting a bad carve recovered a floor in 3 of 21 measured cases; the other 18 exhausted the budget
+and came back as the named refusal. A named refusal is a large improvement on a silent `unsolvable`, but
+an author still cannot reach a sound floor by re-seeding alone. Two things would: searching the seed at
+bake time (`docs/instructions/baked-carve-seed-plan.md`), or the constructive fix — biasing a side
+chain's attach cell so it lands where `stepRegion` equals its mouth, which removes the failure class
+rather than detecting it.
+
+**The residue**, measured on the same sweep: 21 of 258 unsound carves pass every filter — 13 that strand
+and 8 that are unsolvable with a carve matching the authoring. Those are faults the shape cannot show.
 
 ### What makes a lever and a gate acceptable
 
@@ -570,7 +581,7 @@ a floor's SHAPE, these describe what the player meets when they walk up to it.
 | #   | Criterion                       | State                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | --- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1   | closed by default               | holds: `openDoorsFor` falls back to `mechanism.initial`, so a gate the initial position does not name is shut before anyone touches the lever                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| 2   | on a room/corridor edge         | partly: `gateBoundary.spec.ts` carves a chain floor and a branching floor over 30 seeds each and finds every gate whose connection is on the main route or inside a side chain standing beside a room of the other named region, and the only passage joining the two. A gate on a side chain's MOUTH connection does not: the chain hangs off whichever main-route room the maze chose as its host, so on most seeds the gate's near neighbour is another region (125 of 200 seeds for `entrance`/`rightLower` in the branching fixture). That case is pinned as an expected failure (`it.fails`) and flips red when the seat follows the named region. |
+| 2   | on a room/corridor edge         | holds, measured: `gateBoundary.spec.ts` asserts every gate of three layouts over 30 seeds each — exactly one gate room, standing in one named region and opening onto the other, and no other passage joining the two. A gate at a side chain's MOUTH was seated in the wrong region on 125 of 200 seeds; `carveAgreement` refuses that carve, so the case that documented it now passes rather than being an expected failure. |
 | 3   | closed gate offers no direction | holds: an obstacle gate carries no family, so `isSealedWayOut` treats it as a wall — refused by `walkableFrom` and `findPath`, offered no marker, never `completed`, and opening no screen when tapped                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | 4   | open gate offers a direction    | holds: `openWaysOut` gives a family-less gate its corridor back the moment its key is open, so the way out is an ordinary way out, decided by the lever alone rather than by the player having passed through it                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | 5   | authored open by default        | holds: name the gate under the control's `initial` state                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
