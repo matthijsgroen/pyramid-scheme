@@ -986,3 +986,137 @@ The plans are `docs/instructions/regions-slice-{1,2,3,4}-plan.md`, each with a "
 what the next slice inherits. That mechanism worked: slice 1 carried a refusal into slice 2 and slice 2
 built it; slice 2 carried a note about the dev bench "describing a floor that does not exist" and slice
 3's carve proved it. Keep using it.
+
+# Session handover — doubleBack is a floor you can walk, and what playtesting it found
+
+55 commits on `feat/switch-fork` since `f0a6ea43`. Two whole plans finished, `doubleBack` authored and
+playable, and then a playtest that found more than the plans did.
+
+**Gate at handover:** the branch is pushed. `src/data/generatedWorld.ts` **IS DIRTY** at
+`dbacd8f2…` — a running agent regenerated it with `INCLUDE_DEV=1` to reproduce a bug and owes a
+restore. **Check this first**: `yarn generate-world && md5 -q src/data/generatedWorld.ts` must read
+`f67c3ea9303b04a1d7c9a558d0561620`. A contaminated world was committed by accident once today (see
+"How I broke things" below).
+
+## What is built
+
+**The gates slice (`docs/instructions/regions-slice-5-gates-plan.md`), 10 tasks.** An obstacle and a
+control are separate nouns joined by authored ids — `obstacles: [{ id, kind: "gate", at: { on:
+"connection", between: [a,b] } }]` and `controls: [{ id, in, states, initial, returnsToInitial, opens
+}]`. Controls are N-state from the start; `handles` desugars through one `compileMechanism`. A thrown
+lever opens a door the player can walk through. The lever draws as three sprites with the arm turning.
+
+**The doubleBack plan (`docs/instructions/doubleback-plan.md`), 8 tasks.** A side path seats a CHAIN of
+off-route regions in order; a gate stands on an off-route connection; a control stands in any region; a
+one-way names two REGIONS; a gate's cell is reserved off the CORE region layout; `deadRegions` reports a
+region no reachable state stands in. Then `doubleBack` itself: **develop journey, pyramid 2, `expert`,
+`packing: 5`.** Lock sweep 10 of 10.
+
+## What playtesting found that eight tasks of review did not
+
+This is the part worth reading. Every one of these shipped green.
+
+- **`HandleComponent` wrote hardcoded `"left"`/`"right"`.** `doubleBack`'s `S1`/`S2` use
+  `start`/`thrown`, so the first press wrote a state matching NEITHER position and overwrote the
+  default that had a gate open. The only route, shut, permanently, on the first press.
+- **`usePuzzleState` returns a stored board unchecked.** Its read path bypasses the family's own
+  validation, which only runs as a `useState` lazy initializer. A regenerated world left a stale
+  mirror arrangement on a differently-shaped board and the beam trace walked off the grid.
+  **EVERY other puzzle family has the identical exposure** — Sumplete, Eclipse, Constellation,
+  Canisters, RushHour, Sudoku, StarBattle, Hidato, Procession, Futoshiki, Balance, plain Lightbeam.
+  The switch is only the one whose physics crashes instead of quietly misbehaving. **Not dev-only:**
+  any release that reshapes a floor does this to a save that skips the full reset.
+- **`doubleBack` was authored at `starter`** after the move to pyramid 2 took that slot's tier with
+  it. The lever and drop art exist only at `expert`, so both fell back to bare markers.
+
+**The owner's verdict, which is correct: "these all seem like regressions that should have been
+protected by a test."** Every change shipped with tests, and they all tested the thing that CHANGED —
+a mechanism writes the right state, three sprites stack right, the reveal stops at a drop. None tested
+the invariant a player depends on: standing anywhere reachable, I can get somewhere else.
+`src/app/SiteMap/movementInvariant.spec.ts` now asserts that exhaustively over `doubleBack`'s whole
+state space and a plain floor — **and it came back green while the game was visibly broken**, because
+it is hook-level and the fault is below it. See the open bug.
+
+## THE OPEN BUG — an agent is on it right now
+
+Symptoms, all three from one cause: arrows unresponsive at the switch gate; cannot move to or from the
+lever by arrows; **"pressing a dot in a corner explores it, but the player does not move there — the
+dot disappears, the adjacent corridor explores, but the character does not move."** The arrow IS drawn,
+so nothing is stuck in `isTraveling` (that hypothesis is dead).
+
+**The mechanism I found, for whoever picks this up to confirm:**
+
+```ts
+// useJourneys.ts:409
+const updatePosition = (journeyId, address, nodeId) => {
+  if (!isPlaceAddress(address)) return          // silent
+  …
+}
+// cellIdentity.ts:31
+export const isPlaceAddress = (address) => { const slot = address.split("/").pop(); return !!slot && !slot.startsWith("~") }
+```
+
+A corridor connector is addressed `~…`, so **the store silently refuses to record the player standing
+on a corridor**, while `markCellExplored` in the same handler has no such guard and reveals it anyway.
+
+**DO NOT simply delete that guard.** It looks load-bearing: a `~ordinal` is carve-bound, and
+`findByAddress`'s own comment says a `~ordinal` is exactly what stops resolving "after the floor has
+moved". If that is its purpose, the bug is that **the map offers a move it cannot record**, and the fix
+belongs on the offer side. Establish whether an address shape changed under it — `cellSlot` now names
+mechanism rooms `x${family}:${mechanismId}` (`9081238a`).
+
+**And strengthen `movementInvariant.spec.ts` to assert the STORE, not the hook's local state.** If it
+reads the hook's own notion of position it passes while the store drops the write, which is exactly
+what happened.
+
+## The thirteen criteria, and the one fact behind five gaps
+
+The owner stated acceptance criteria for locks; they and an audit of where each stands are in
+`docs/mods/floor-topology-design.md` ("What makes a lock acceptable"). Six are enforced and tested, six
+hold with nothing guarding them, five are absent.
+
+**`regionLayout` is stretched over the floor's ENTIRE main path and the lock's ports are the floor's own
+entrance and exit — so a lock is not placed on a floor, a lock IS the floor.** That single fact is why a
+lock cannot stand mid-map, why nesting has no container to nest, why the exit cannot be excluded from a
+lock, why nothing checks for a bypass, and why nothing compares the carve to the authored graph.
+`doubleBack` works precisely because it is the whole floor. The container with ports the design document
+already describes is the piece that was never built, and building it turns five gaps into one job.
+
+Criterion 5 also redefines the appetite vocabulary: authored is `"reward" | "puzzles" | "nothing" |
+"free"`; the owner's is `"path" | "chest" | "none" | "free" | "lock" | "stair"`. Three renames, and
+`lock`/`stair` are new — `lock` is what makes nesting expressible in authoring at all.
+
+## Owed, in rough priority
+
+- **The open movement bug** above.
+- **`usePuzzleState`'s general staleness** — every family, reachable in a real release.
+- **`packing` is a symptom, not a setting.** `doubleBack` needs `packing: 5` at its own seed, found by
+  sweeping; at that seed every value 1-30 CARVES and soundness is scattered (5, 9, 12, 14 sound, their
+  neighbours not, identical region/gate counts throughout). The builder should size the floor to the
+  lock it was given, or refuse by name. Authoring 56 gates across master and wizard cannot mean 56
+  sweeps.
+- **Toggle-off diverges for gates on an off-route chain** — 0/50 seeds with one on-route obstacle,
+  24/50 with two, 50/50 on `doubleBack`'s own shape. Cause: with the mod off, the stripped config
+  cannot distinguish "a gate would have stood here" from "this floor never gates here". Kept visible as
+  `it.fails` in `toggleOff.spec.ts`.
+- **`dropNorth` and `dropSouth` art.** `dropEast` covers east and west by mirroring. Until they land a
+  drop only reads correctly running horizontally.
+- **`findUndrawnOneWays` never reads `floor.obstacles`** — it only scans the old section-addressed
+  form, so the guard keeping an undrawn drop off an authored pyramid has a blind side. Cannot bite
+  today (dev capability skips it, nothing non-dev authors either form).
+
+## How I broke things, so you do not
+
+- **Never run two implementer subagents over one file.** I did, and they clobbered each other's edits;
+  one agent's work was briefly reverted by the other's `git show HEAD:` restore. Reviews may overlap an
+  implementer; implementers may not overlap each other.
+- **Never `git add -A`.** I committed a dev-contaminated `generatedWorld.ts` that way, because the
+  owner's playtest regeneration was sitting in the tree. Commit path-scoped, always.
+- **Forbid `pkill` in every brief.** An agent ran `pkill -f "vite.js --port 9164"` and killed dev
+  servers belonging to other worktrees and the owner's own playtest session.
+- **The IDE diagnostics in this repo were wrong on every single occasion this session** — files that do
+  not exist, symbols that are plainly imported. `yarn check-types` is the only truth.
+- **The world fingerprint cannot see the carve.** `generatedWorld.ts` holds `SiteConfig[]`, so it proves
+  world-gen's inputs did not move and says nothing about the walls. Any task changing carve behaviour
+  captures a CARVE BASELINE (assemble every shipped floor at its real seed, reduce each cell to its
+  `dirs`, diff) — the recipe is in the plan's Global Constraints.
