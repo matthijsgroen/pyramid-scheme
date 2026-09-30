@@ -193,14 +193,14 @@ describe("what the dev journey authors", () => {
   it("gives each topology feature a floor of its own, spread across four tiers", () => {
     expect(devFloors(withDev).map(f => f.difficulty)).toEqual([
       "junior",
-      "junior",
+      "starter",
       "expert",
       "expert",
       "master",
       "wizard",
       "expert",
       "expert",
-      "starter",
+      "junior",
     ])
   })
 
@@ -208,19 +208,19 @@ describe("what the dev journey authors", () => {
     // Counted first, so a world that grew no dev journey fails here rather than walking an empty list.
     const floors = devFloors(withDev)
     expect(floors).toHaveLength(9)
-    for (const floor of floors.slice(0, 6)) {
-      expect(floor.forks).toEqual([{ exits: 2, count: 1 }])
-      expect(floor.switches).toEqual({ encounter: "lightbeamSwitch", min: 1, max: 1 })
-    }
     // A switch decides which of its OWN ways out opens, so it needs a junction reserved for it; a
     // handle reaches across the floor to doors elsewhere, and a control (the lever's, or any of
     // doubleBack's three) stands in its own region — all three ask for neither.
-    expect(floors[6].forks).toBeUndefined()
-    expect(floors[6].switches).toBeUndefined()
-    expect(floors[7].forks).toBeUndefined()
-    expect(floors[7].switches).toBeUndefined()
-    expect(floors[8].forks).toBeUndefined()
-    expect(floors[8].switches).toBeUndefined()
+    const noJunction = new Set([1, 6, 7])
+    floors.forEach((floor, i) => {
+      if (noJunction.has(i)) {
+        expect(floor.forks).toBeUndefined()
+        expect(floor.switches).toBeUndefined()
+      } else {
+        expect(floor.forks).toEqual([{ exits: 2, count: 1 }])
+        expect(floor.switches).toEqual({ encounter: "lightbeamSwitch", min: 1, max: 1 })
+      }
+    })
   })
 
   // The map-piece branch and the ward gate are auto-injected onto ordinary pyramids by position, and
@@ -230,7 +230,7 @@ describe("what the dev journey authors", () => {
   // gate's, which needs only somewhere for its control to stand, and one on doubleBack's, which seats
   // its whole off-route chain (`rightLower`, `s1Chamber`) on the single side section Task 1 built for.
   it("grows none of the branches the real economies inject by position", () => {
-    expect(devFloors(withDev).map(floor => floor.sideSections.length)).toEqual([2, 2, 2, 2, 2, 2, 3, 1, 1])
+    expect(devFloors(withDev).map(floor => floor.sideSections.length)).toEqual([2, 1, 2, 2, 2, 2, 3, 1, 2])
   })
 
   it("carves every one of them at the seed the runtime hands it", () => {
@@ -334,10 +334,10 @@ describe("what the dev journey authors", () => {
     ])
   })
 
-  it("stands doubleBack's six regions and five gates on pyramid 9, carried through world generation", () => {
-    const pyramid9 = withDev[DEV_JOURNEY_ID][8]
-    expect(pyramid9).toHaveLength(1)
-    const [floor] = pyramid9
+  it("stands doubleBack's six regions and five gates on pyramid 2, carried through world generation", () => {
+    const pyramid2 = withDev[DEV_JOURNEY_ID][1]
+    expect(pyramid2).toHaveLength(1)
+    const [floor] = pyramid2
 
     expect(floor.regionLayout).toEqual({
       regions: [
@@ -369,9 +369,9 @@ describe("what the dev journey authors", () => {
     ])
   })
 
-  it("stands doubleBack's three controls on pyramid 9: a genuinely three-state fork and two one-shot sequences", () => {
-    const pyramid9 = withDev[DEV_JOURNEY_ID][8]
-    const [floor] = pyramid9
+  it("stands doubleBack's three controls on pyramid 2: a genuinely three-state fork and two one-shot sequences", () => {
+    const pyramid2 = withDev[DEV_JOURNEY_ID][1]
+    const [floor] = pyramid2
 
     expect(floor.controls).toEqual([
       {
@@ -402,14 +402,14 @@ describe("what the dev journey authors", () => {
   })
 
   // Not decorative: at this floor's own production seed (`assembleAt` below), the carve needs the
-  // extra main-path length to seat five gates, three controls and two drops at once — see the Task 8
-  // report for the sweep across `packing` values this number came from.
-  it("carves pyramid 9 at its own seed sound: solvable, and no order of moves strands anyone", () => {
-    const pyramid9 = withDev[DEV_JOURNEY_ID][8]
-    const [floor] = pyramid9
-    expect(floor.packing).toBe(8)
+  // extra main-path length to seat five gates, three controls and two drops at once — see the
+  // move-to-pyramid-2 report for the sweep across `packing` values this number came from.
+  it("carves pyramid 2 at its own seed sound: solvable, and no order of moves strands anyone", () => {
+    const pyramid2 = withDev[DEV_JOURNEY_ID][1]
+    const [floor] = pyramid2
+    expect(floor.packing).toBe(5)
 
-    const grid = assembleAt(DEV_JOURNEY_ID, floor, 9, 0)
+    const grid = assembleAt(DEV_JOURNEY_ID, floor, 2, 0)
     if (!grid) throw new Error("doubleBack did not carve at its own seed")
     const spec = floorLock(grid)
     if (!spec) throw new Error("floorLock found no mechanism on a floor that authors three")
@@ -424,15 +424,15 @@ describe("what the dev journey authors", () => {
   // lockWalk.spec.ts's own proof that the fixture strands without its second drop. Reassembled with
   // `dropToEntrance` left out, at the same production seed, so the only thing that differs is the
   // one drop under test.
-  it("strands the player who drops early on pyramid 9's own carve, once the second drop is taken away", () => {
-    const pyramid9 = withDev[DEV_JOURNEY_ID][8]
-    const [floor] = pyramid9
+  it("strands the player who drops early on pyramid 2's own carve, once the second drop is taken away", () => {
+    const pyramid2 = withDev[DEV_JOURNEY_ID][1]
+    const [floor] = pyramid2
     const withoutSecondDrop: FloorConfig = {
       ...floor,
       obstacles: floor.obstacles!.filter(o => o.id !== "dropToEntrance"),
     }
 
-    const grid = assembleAt(DEV_JOURNEY_ID, withoutSecondDrop, 9, 0)
+    const grid = assembleAt(DEV_JOURNEY_ID, withoutSecondDrop, 2, 0)
     if (!grid) throw new Error("doubleBack without its second drop did not carve at the same seed")
     const spec = floorLock(grid)
     if (!spec) throw new Error("floorLock found no mechanism")
