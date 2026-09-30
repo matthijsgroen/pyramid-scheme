@@ -43,7 +43,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, ro
     7
   )
   const skin = skinFor(role, theme, shape, room)
-  const [state, setState] = usePuzzleState(() => createCanistersState(puzzle))
+  const [state, setState] = usePuzzleState(() => createCanistersState(puzzle), puzzle)
 
   const solved = isCanistersSolved(puzzle, state)
   const left = movesLeft(puzzle, state)

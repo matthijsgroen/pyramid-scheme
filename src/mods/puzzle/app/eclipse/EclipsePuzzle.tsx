@@ -28,7 +28,7 @@ type Props = {
 
 export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
-  const [state, setState] = usePuzzleState(() => createEclipseState(puzzle))
+  const [state, setState] = usePuzzleState(() => createEclipseState(puzzle), puzzle)
 
   /**
    * Whether the player has asked for a hint, which is what gates deriving one.

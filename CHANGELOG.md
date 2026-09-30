@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A way the mirrors have shut now reads as barred stone: no door marker standing on it, and the archway above it draws in front of the bars.
 - A mirror puzzle whose beam reaches no shrine is no longer called solved, and leaves every way out of its junction shut.
 - The prompt in a room you are standing in now names what is there — "Turn the mirrors", "Look over the stall" — instead of offering to step back into a room you never left.
+- A puzzle whose board changed since you left it now opens fresh instead of broken.
 - Fixed walking when going to a deeper floor.
 - Fixed pyramids pulsing on the map with nothing left in them.
 - The way out of a site now counts as explored, so the corridor to it stays lit.

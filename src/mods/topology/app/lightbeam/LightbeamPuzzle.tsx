@@ -24,7 +24,7 @@ type Props = {
 // is the shell, the board, and nothing in between.
 export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
-  const [state, setState] = usePuzzleState(() => createLightbeamState(puzzle))
+  const [state, setState] = usePuzzleState(() => createLightbeamState(puzzle), puzzle)
 
   const solved = isLit(puzzle, state.states)
 

@@ -41,7 +41,7 @@ export const RushHourPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, roo
    * pinned the one you wanted — and the alternative to stepping back is resetting a board the player has
    * spent two minutes on.
    */
-  const [past, setPast] = usePuzzleState<RushHourState[]>(() => [createRushHourState(puzzle)])
+  const [past, setPast] = usePuzzleState<RushHourState[]>(() => [createRushHourState(puzzle)], puzzle)
   const state = past[past.length - 1]
 
   /** Whether the player has asked for a hint, which is what gates the search (§4). */

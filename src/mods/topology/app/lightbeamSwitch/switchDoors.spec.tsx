@@ -605,7 +605,7 @@ describe("the board of a switch walked back into", () => {
 
     // Some other re-enterable board is played in the meantime, in a room of its own — enough to make it
     // touch the single shared "in-progress board" slot `usePuzzleState` keeps.
-    const other = renderHook(() => usePuzzleState(() => ({ touched: false })), {
+    const other = renderHook(() => usePuzzleState(() => ({ touched: false }), null), {
       wrapper: ({ children }) => <PuzzleRoomContext value="a different room entirely">{children}</PuzzleRoomContext>,
     })
     await settle()

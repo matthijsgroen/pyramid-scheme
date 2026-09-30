@@ -41,7 +41,7 @@ const exhaustedNumbers = (values: (number | undefined)[][], size: number): Reado
 export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const { size, solution, techniqueCap } = puzzle
-  const [state, setState] = usePuzzleState(() => createFutoshikiState(puzzle))
+  const [state, setState] = usePuzzleState(() => createFutoshikiState(puzzle), puzzle)
   const { selected, pencil, selectCell, focusCell, togglePencil, clearSelection } = useFutoshikiEntry()
 
   const values = useMemo(() => futoshikiValues(state), [state])

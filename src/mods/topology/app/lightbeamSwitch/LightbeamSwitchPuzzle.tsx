@@ -93,7 +93,7 @@ export const LightbeamSwitchPuzzle: FC<Props> = ({
   onSolved,
 }) => {
   const { t } = useTranslation("common")
-  const [rawState, setState] = usePuzzleState(() => createLightbeamSwitchState(board, savedAngles))
+  const [rawState, setState] = usePuzzleState(() => createLightbeamSwitchState(board, savedAngles), board)
   // `usePuzzleState` hands back whatever it last stored for this ROOM, unchecked against this render's
   // board — the room key survives a world regeneration that the board underneath it does not. A record
   // built for a board this one no longer is (see `stateFitsBoard`) is exactly the case

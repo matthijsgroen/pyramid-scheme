@@ -1,6 +1,9 @@
 // @vitest-environment jsdom
 import { beforeAll, describe, expect, it, vi } from "vitest"
 import { render, screen } from "@testing-library/react"
+import { PuzzleRoomContext, boardFingerprint } from "@/mods/core/app/puzzleState"
+import { createLightbeamState } from "@/mods/topology/game/lightbeam/lightbeamState"
+import { clearGameData, writeGameData } from "@/support/useGameStorage"
 import { act } from "react"
 import { lightbeamHintSteps } from "./lightbeamHint"
 import { LightbeamPuzzle } from "./LightbeamPuzzle"
@@ -44,6 +47,35 @@ describe("LightbeamPuzzle", () => {
 
     for (let tap = 0; tap < 5; tap++) act(() => cells[tap % cells.length].click())
     expect(solve).not.toHaveBeenCalled()
+  })
+
+  /**
+   * **A saved arrangement for another board is not taken.**
+   *
+   * Found by playtesting: a regenerated world left the room's saved pieces on a board with a different number
+   * of them, and the trace walked off the grid. The saved record is stamped with the board it was played on.
+   */
+  it("ignores a saved arrangement that was played on a board with a different number of pieces", async () => {
+    const played = generateLightbeamFor("starter", 1)
+    const shown = [2, 3, 4, 5, 6, 7, 8]
+      .map(seed => generateLightbeamFor("junior", seed))
+      .find(p => p.initial.length !== played.initial.length)!
+    expect(shown, "a board of another shape to show").toBeDefined()
+    await clearGameData()
+    await writeGameData({
+      puzzleState: { room: "room", board: boardFingerprint(played), state: createLightbeamState(played) },
+    })
+
+    render(
+      <PuzzleRoomContext value="room">
+        <LightbeamPuzzle puzzle={shown} difficulty="junior" onSolved={() => {}} onCancel={() => {}} />
+      </PuzzleRoomContext>
+    )
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    expect(boardCells().length).toBeGreaterThan(0)
   })
 
   /** And the hint still arrives when it is asked for, which is the thing laziness could have broken. */

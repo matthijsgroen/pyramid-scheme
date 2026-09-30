@@ -22,7 +22,7 @@ type Props = {
 export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const { grid, rowTargets, colTargets, solution, techniqueCap } = puzzle
-  const [state, setState] = usePuzzleState(() => createSumpleteState(grid.length))
+  const [state, setState] = usePuzzleState(() => createSumpleteState(grid.length), puzzle)
 
   const toggle = useCallback(
     (row: number, col: number) => setState(prev => toggleSumpleteCell(prev, row, col)),
