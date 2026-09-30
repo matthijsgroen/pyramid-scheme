@@ -103,7 +103,7 @@ export const devRules: Rule[] = [
   // at that value (9 and 14 carve sound but degrade the ablation to a bare `unsolvable`, which would
   // not prove the hazard).
   journey(DEV_JOURNEY_ID).pyramid(2, {
-    difficulty: "starter",
+    difficulty: "expert",
     pathPuzzles: 0,
     packing: 5,
     sideSections: [sidePath({ puzzles: 0 })],

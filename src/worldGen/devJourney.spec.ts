@@ -193,7 +193,7 @@ describe("what the dev journey authors", () => {
   it("gives each topology feature a floor of its own, spread across four tiers", () => {
     expect(devFloors(withDev).map(f => f.difficulty)).toEqual([
       "junior",
-      "starter",
+      "expert",
       "expert",
       "expert",
       "master",
