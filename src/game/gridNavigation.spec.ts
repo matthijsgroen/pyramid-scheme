@@ -226,7 +226,7 @@ describe(completeCell, () => {
     if (updatedLanding.type === "room") expect(updatedLanding.state).toBe("reachable")
   })
 
-  it("shows a one-way's connector from the landing side, and reveals nothing past it", () => {
+  it("shows a one-way's connector and its departure from the landing side, and reveals nothing past them", () => {
     // Same drop as above, completed from the OTHER end this time: the landing names no direction
     // back into the connector (a real dead end would), so the graph walk this function otherwise
     // does can never reach it — a player standing right beside the mouth would see none of it.
@@ -259,11 +259,11 @@ describe(completeCell, () => {
     expect(updatedConnector.type).toBe("corridor")
     if (updatedConnector.type === "corridor") expect(updatedConnector.state).toBe("visible")
 
-    // Past the mouth, still dark: the source is two cells from the landing, geometrically and on
-    // the graph both, so nothing reaches it from this side.
+    // The departure is seen, so the barred arrow on it has a cell to stand on, but only seen: nothing
+    // walks into it from this side.
     const updatedSource = updated.cells[4][6]
     expect(updatedSource.type).toBe("room")
-    if (updatedSource.type === "room") expect(updatedSource.state).toBe("fogged")
+    if (updatedSource.type === "room") expect(updatedSource.state).toBe("visible")
   })
 
   it("stops at a one-way's landing when it is a corridor, even if its own onward direction matches the drop's", () => {

@@ -60,16 +60,26 @@ export const isOneWayMouth = (grid: FloorGrid, row: number, col: number): boolea
   return oneWayMouthDir(grid, row + dr, col + dc) === opposite[dir]
 }
 
-/** Brings a one-way mouth next to (row,col) out of the fog — and only that one cell, never what
- * stands beyond it — the moment (row,col) itself is seen. Read off `grid`, the shape carved into
- * it never changing mid-walk, but written into `cells`, this call's own running state. */
+/** Brings a one-way mouth next to (row,col) out of the fog the moment (row,col) itself is seen, along
+ * with the one cell behind it in the same direction: the departure the drop leaves from. The mouth's
+ * barred arrow is drawn on that departure, and a fogged cell is painted as solid rock, so leaving it
+ * dark would draw the arrow on stone.
+ *
+ * Both come out as "visible" only, never "reachable": the mouth's single direction points at (row,col),
+ * so nothing walks from it into the departure, and the reveal stops there — what lies beyond the
+ * departure stays dark. Read off `grid`, the shape carved into it never changing mid-walk, but written
+ * into `cells`, this call's own running state. */
 const revealOneWayMouth = (cells: GridCell[][], grid: FloorGrid, row: number, col: number): void => {
   const dir = oneWayMouthDir(grid, row, col)
   if (!dir) return
   const [dr, dc] = MOVES[dir]
-  const neighbor = cells[row + dr]?.[col + dc]
-  if (neighbor?.type === "corridor" && neighbor.state === "fogged") {
-    cells[row + dr][col + dc] = { ...neighbor, state: "visible" }
+  const mouth = cells[row + dr]?.[col + dc]
+  if (mouth?.type === "corridor" && mouth.state === "fogged") {
+    cells[row + dr][col + dc] = { ...mouth, state: "visible" }
+  }
+  const departure = cells[row + 2 * dr]?.[col + 2 * dc]
+  if ((departure?.type === "room" || departure?.type === "corridor") && departure.state === "fogged") {
+    cells[row + 2 * dr][col + 2 * dc] = { ...departure, state: "visible" }
   }
 }
 
