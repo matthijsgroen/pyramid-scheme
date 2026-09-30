@@ -1,49 +1,9 @@
 import { describe, expect, it } from "vitest"
 import { completeCell, isOneWayMouth, walkableFrom } from "@/game/gridNavigation"
-import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
+import type { FloorGrid, GridCell } from "@/game/siteTypes"
 import { buildRoomClaims } from "./roomClaims"
 import { offeredTargets } from "./clickTargets"
-
-type Kind = "room" | "corridor"
-type Axis = { travel: Direction; back: Direction; step: readonly [number, number] }
-
-const AXES: Axis[] = [
-  { travel: "e", back: "w", step: [0, 1] },
-  { travel: "s", back: "n", step: [1, 0] },
-]
-const KINDS: Kind[] = ["room", "corridor"]
-
-const cellOf = (kind: Kind, dirs: Direction[], state: CellState): GridCell =>
-  kind === "room"
-    ? { type: "room", roomType: "encounter", dirs: new Set(dirs), state }
-    : { type: "corridor", dirs: new Set(dirs), state }
-
-// Five cells along one axis: beyondDeparture, departure, mouth, landing, beyondLanding. The mouth
-// carries one direction, toward the landing; the landing carries none back (the drop's asymmetry).
-const dropGrid = (axis: Axis, departure: Kind, landing: Kind) => {
-  const at = (i: number): [number, number] => [2 + axis.step[0] * i, 2 + axis.step[1] * i]
-  const cells: GridCell[][] = Array.from({ length: 6 }, () =>
-    Array.from({ length: 6 }, () => ({ type: "empty" }) as GridCell)
-  )
-  const put = (i: number, cell: GridCell) => {
-    const [r, c] = at(i)
-    cells[r][c] = cell
-  }
-  put(0, cellOf("corridor", [axis.travel], "fogged"))
-  put(1, cellOf(departure, [axis.back, axis.travel], "fogged"))
-  put(2, cellOf("corridor", [axis.travel], "fogged"))
-  put(3, cellOf(landing, [], "reachable"))
-  const grid: FloorGrid = {
-    siteId: "test",
-    rows: 6,
-    cols: 6,
-    entrancePos: at(3),
-    exitPos: at(3),
-    staircases: {},
-    cells,
-  }
-  return { grid, at }
-}
+import { AXES, KINDS, dropGrid } from "./floorFixtures.testing"
 
 const stateAt = (grid: FloorGrid, [r, c]: readonly [number, number]) => {
   const cell = grid.cells[r][c]

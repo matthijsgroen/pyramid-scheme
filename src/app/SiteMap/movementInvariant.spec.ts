@@ -26,15 +26,20 @@
 // mouth, back the way the drop came, is never in `walkableFrom` — the mouth's own `dirs` never carry
 // it — so nothing is ever required to offer that, which is what keeps crossing impossible.
 //
+// WHAT IS WALKED IS A MECHANIC, NOT A FLOOR. Each fixture below is a dozen cells drawn by hand
+// (`floorFrom`) around one mechanism — a plain corridor, a lever and its gates, a drop — and is walked
+// through every (position × mechanism state) a player can reach. A failure names the mechanic. The
+// authored world is checked for soundness by `INCLUDE_DEV=1 yarn validate-world`, not here.
+//
 // Built at the hook level — `useAssembledFloor` + `useSiteNavigation` + `clickTargets` +
 // `walkableFrom` — so it runs in the normal suite and stays fast; a browser is not needed to see two
-// pure functions disagree with each other.
+// pure functions disagree with each other. The assembler is stood in for by the fixture's own grid;
+// everything after the carve is the real pipeline.
 import { renderHook, act, render } from "@testing-library/react"
 import { createElement, useState } from "react"
 import { describe, expect, it, vi } from "vitest"
-import type { Direction, FloorConfig, FloorGrid, SiteConfig } from "@/game/siteTypes"
+import type { Direction, FloorConfig, FloorGrid, MechanismRecord, SiteConfig } from "@/game/siteTypes"
 import { walkableFrom, findPath, isSealedWayOut, isOneWayMouth, revealAll } from "@/game/gridNavigation"
-import { assembleFloor } from "@/game/siteAssembler"
 import { cellAddress } from "@/game/cellAddress"
 import { OBSTACLE_KEY_PREFIX } from "@/game/cellSlot"
 import { nodeSpritesFor } from "./SiteMapView"
@@ -50,31 +55,36 @@ import { offeredTargets } from "./clickTargets"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
 import { isCorridorCorner } from "./corridorRuns"
-import { buildConfigs } from "@/worldGen/configBuilder"
-import { DEV_JOURNEY_ID } from "@/worldGen/data"
-import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
-import { allFloors } from "./worldFloors.testing"
-import { ALL_CURRENCY_DISTRIBUTIONS } from "@/mods/allCurrencyDistributions"
-import {
-  CAPPED_CURRENCIES,
-  DYNAMIC_DISTRIBUTIONS,
-  MOD_WORLD_VALIDATORS,
-  MOD_REACHABILITY_SUPPORT,
-  MOD_TOMB_TREASURE_RESOLVER,
-  MOD_SHOP_STOCK,
-  MOD_RESERVED_TREASURE_INDICES,
-  REGISTERED_MOD_IDS,
-} from "@/mods/registeredMods"
-import {
-  resolveKeyRequirements,
-  familyPriorityFor,
-  familyCapacityFor,
-  familyIsTrap,
-  allocateEncounterSpread,
-  resolveEncounterMeta,
-} from "@/mods/allFamilyMeta"
+import { encodeEdge } from "./edgeId"
+import { AXES, KINDS, addressed, dropGrid, floorFrom, roomPiece, type Piece } from "./floorFixtures.testing"
 // Populates the family registry, the same side effect every other assembled-floor spec relies on.
 import "@/mods/registerModApps"
+
+// The fixture's own grid stands in for the carve: `useAssembledFloor` asks the assembler for a floor
+// and gets the one drawn by hand, keyed by the config object it was handed.
+const { carved } = vi.hoisted(() => ({ carved: new WeakMap<object, unknown>() }))
+vi.mock("@/game/siteAssembler", async importOriginal => {
+  const actual = await importOriginal<typeof import("@/game/siteAssembler")>()
+  return {
+    ...actual,
+    assembleFloor: (...args: Parameters<typeof actual.assembleFloor>) => {
+      const grid = carved.get(args[1])
+      return grid ? { success: true, grid } : actual.assembleFloor(...args)
+    },
+  }
+})
+
+const standIn = (grid: FloorGrid): FloorConfig => {
+  const config: FloorConfig = {
+    pathPuzzles: 1,
+    difficulty: "expert",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [],
+  }
+  carved.set(config, grid)
+  return config
+}
 
 // A stopping point is what a marker ever names as a destination: a room, or a corridor corner (a
 // plain straight-through corridor is a waypoint a run folds INTO its far end, never a destination of
@@ -195,13 +205,11 @@ const makeJourneyData = (id: string): TranslatedJourney =>
   }) as TranslatedJourney
 
 // `useJourneys.ts` gates `markCellExplored` and `setMechanismState` behind "this journey is in the
-// shipped journey list (src/data/journeys.ts) and marked active" — a fixture id like the dev-topology
-// floor or the guard-proof tests' own id is never in that list, so the harness's one stored journey
-// borrows a real, known one instead. This is safe for what is under test: `assembleFloor`'s carve is
-// fixed entirely by `(floorConfig, seed)`, and the journeyId it receives is embedded only into
-// generated address labels.
-const knownJourneyIds = new Set(allKnownJourneys.map(j => j.id))
-const fallbackKnownJourneyId = allKnownJourneys[0].id
+// shipped journey list (src/data/journeys.ts) and marked active", so the harness's one stored journey
+// is a real, known one. This is safe for what is under test: the floor comes from the fixture, and the
+// journey id reaches nothing but the store's own bookkeeping.
+const JOURNEY_ID = allKnownJourneys[0].id
+const SEED = 1
 
 /** Wires one floor's real reveal pipeline (`useAssembledFloor`) to the real click handler
  * (`useSiteNavigation`) over `createJourneysV3Api` — the same factory `useJourneys.spec.ts` itself
@@ -211,23 +219,21 @@ const fallbackKnownJourneyId = allKnownJourneys[0].id
  * minus the DOM. `patch` lets a test corrupt one write to prove the checks below actually fire on the
  * class of bug they're for. */
 const buildHarness = (
-  journeyId: string,
-  floorConfig: FloorConfig,
-  seed: number,
-  siteConfig: SiteConfig,
+  grid: FloorGrid,
   store: Store,
   patch: Partial<JourneyAPI> = {},
-  onEncounter: (pos: readonly [number, number], freshArrival: boolean) => void = () => {}
+  onEncounter?: (pos: readonly [number, number], freshArrival: boolean) => void
 ): Harness => {
-  const storedJourneyId = knownJourneyIds.has(journeyId) ? journeyId : fallbackKnownJourneyId
-  const journeyData = [makeJourneyData(storedJourneyId)]
+  const floorConfig = standIn(grid)
+  const siteConfig: SiteConfig = [floorConfig]
+  const journeyData = [makeJourneyData(JOURNEY_ID)]
 
   // The one stored journey, as it stands RIGHT NOW — read fresh on every `setJourneys` call (never a
   // snapshot closed over at render time) so two writes issued moments apart from the same render's
   // `journeys` (a click's own `updatePosition`, then a scheduled prompt's `setMechanismState`) compose
   // instead of the second clobbering the first back to whatever the first read before it ran.
   const currentJourneyDoc = (): StoredJourneyStateV3 => ({
-    journeyId: storedJourneyId,
+    journeyId: JOURNEY_ID,
     levelNr: 1,
     completionCount: 0,
     active: true,
@@ -267,12 +273,12 @@ const buildHarness = (
     // createJourneysV3Api's OWN storage, keyed `${levelNr}:${...}` (its `atLevel`/section-key
     // bookkeeping); only these strip that prefix back down to what `useAssembledFloor`/`openDoorsFor`
     // match sections and gates by.
-    const exploredCells = journeys.getExploredCells(storedJourneyId)
-    const mechanismPositions = useMechanismStates(journeys, storedJourneyId)
+    const exploredCells = journeys.getExploredCells(JOURNEY_ID)
+    const mechanismPositions = useMechanismStates(journeys, JOURNEY_ID)
     const assembled = useAssembledFloor(
-      storedJourneyId,
+      JOURNEY_ID,
       floorConfig,
-      seed,
+      SEED,
       0,
       exploredCells,
       store.positionKey,
@@ -284,13 +290,22 @@ const buildHarness = (
     )
     const nav = useSiteNavigation({
       journeys,
-      journeyId: storedJourneyId,
+      journeyId: JOURNEY_ID,
       siteConfig,
-      seed,
+      seed: SEED,
       currentFloor: 0,
       grid: assembled.grid,
       explorerPos: assembled.explorerPos,
-      onEncounter,
+      // A room the explorer opens is solved on the spot, as a played board is, unless a test asks to see
+      // the screen open instead: a room that stays unsolved stops the reveal, and the walk with it.
+      onEncounter:
+        onEncounter ??
+        (([r, c]) => {
+          const cell = assembled.grid?.cells[r]?.[c]
+          const address = cell && cellAddress(assembled.grid!, 0, r, c)
+          if (cell && cell.type !== "empty" && address)
+            journeys.markCellExplored(cell.sectionHash ?? "", encodeEdge(0, r, c), address)
+        }),
       onSkippedConsumable: () => {},
       onExitReached: () => {},
     })
@@ -300,20 +315,18 @@ const buildHarness = (
   return { useHook }
 }
 
+// Every fixture is small, so a walk that needs more than this has run away rather than run long.
+const STEP_BUDGET = 500
+
 /**
  * Walks every reachable (position × mechanism-state) combination of a floor depth-first, asserting
  * both halves of the invariant at every stop it visits and every offer it takes — a step budget bails
  * out with its own violation rather than hanging, so a floor whose branching runs away is a red test
  * rather than a stuck one.
  */
-const walkFloor = (
-  journeyId: string,
-  floorConfig: FloorConfig,
-  seed: number
-): { violations: string[]; steps: number } => {
-  const siteConfig: SiteConfig = [floorConfig]
+const walkFloor = (grid: FloorGrid): { violations: string[]; steps: number } => {
   const store = makeStore()
-  const harness = buildHarness(journeyId, floorConfig, seed, siteConfig, store)
+  const harness = buildHarness(grid, store)
   const hook = renderHook(harness.useHook)
 
   const visited = new Set<string>()
@@ -330,7 +343,7 @@ const walkFloor = (
 
   const visit = (): void => {
     steps++
-    if (steps > 20000) {
+    if (steps > STEP_BUDGET) {
       violations.push("step budget exceeded — the walk never settled")
       return
     }
@@ -386,78 +399,117 @@ const walkFloor = (
   return { violations, steps }
 }
 
-const buildDoubleBack = (): FloorConfig => {
-  process.env.INCLUDE_DEV = "1"
-  const configs = buildConfigs(
-    resolveKeyRequirements,
-    ALL_CURRENCY_DISTRIBUTIONS,
-    CAPPED_CURRENCIES,
-    DYNAMIC_DISTRIBUTIONS,
-    MOD_WORLD_VALIDATORS,
-    familyPriorityFor,
-    0,
-    allocateEncounterSpread,
-    MOD_REACHABILITY_SUPPORT,
-    MOD_TOMB_TREASURE_RESOLVER,
-    familyCapacityFor,
-    MOD_SHOP_STOCK,
-    MOD_RESERVED_TREASURE_INDICES,
-    familyIsTrap,
-    REGISTERED_MOD_IDS,
-    resolveEncounterMeta
+// THE FIXTURES. One mechanic each, drawn by hand. `E` is the entrance, `R` a room, `F` a fork, `.` a
+// corridor; the letters below are added per mechanic.
+const gateKey = (id: string) => `${OBSTACLE_KEY_PREFIX}fixture:${id}`
+
+/** A gate a control owns: a room with bars in it and nothing standing inside, opened by no key. */
+const gate =
+  (id: string): Piece =>
+  dirs => ({
+    type: "room",
+    roomType: "encounter",
+    tags: ["gate"],
+    requiredKeyId: gateKey(id),
+    dirs: new Set(dirs),
+    state: "fogged",
+  })
+
+const lever = (mechanism: MechanismRecord): Piece =>
+  roomPiece({ family: "handle", tags: ["handle"], mechanism, mechanismId: "lever" })
+
+const leverOpening = (...gates: string[]): MechanismRecord => ({
+  states: ["left", "right"],
+  initial: "left",
+  returnsToInitial: true,
+  positions: gates.map(id => ({ state: "right", gateKeyId: gateKey(id) })),
+})
+
+/** One gate ahead of the fork's east branch, one ahead of its south branch. */
+const TWO_GATES = ["E.L.F.A..", "    .   .", "    B   R", "    .    ", "    R    "]
+
+const lockedRun = (mechanism: MechanismRecord) =>
+  floorFrom(["E.L.A..", "      .", "      R"], { L: lever(mechanism), A: gate("a") })
+const forkedRun = (mechanism: MechanismRecord) =>
+  floorFrom(TWO_GATES, { L: lever(mechanism), A: gate("a"), B: gate("b") })
+
+// A mouth carries one direction, toward its landing; the landing carries none back.
+const mouth: Piece = () => ({ type: "corridor", dirs: new Set<Direction>(["e"]), state: "fogged" })
+const landing: Piece = dirs => roomPiece()(dirs.filter(dir => dir !== "w"))
+const DROP = { M: mouth, T: landing }
+
+const plainCorridors = floorFrom(["E.R..", "    .", "  R.F.R", "  .", "  R"])
+
+// The lever throws once and the gate's owner is the only thing that decides whether it stands.
+const oneGate = lockedRun(leverOpening("a"))
+const twoGatesTogether = forkedRun(leverOpening("a", "b"))
+// The lever leaves "a" open and "b" shut on arrival, and throwing it swaps them.
+const toggledGates = forkedRun({
+  states: ["left", "right"],
+  initial: "left",
+  returnsToInitial: true,
+  positions: [
+    { state: "left", gateKeyId: gateKey("a") },
+    { state: "right", gateKeyId: gateKey("b") },
+  ],
+})
+const oneWayDrop = floorFrom(["E.RMT.R"], DROP)
+const gateAndDrop = floorFrom(["E.L.A.RMT.R"], { ...DROP, L: lever(leverOpening("a")), A: gate("a") })
+
+// `minSteps` sits just under each fixture's measured step count (109, 33, 93, 75, 23 and 30), so a walk
+// that stalls early is red rather than quietly shorter.
+type Fixture = { name: string; grid: FloorGrid; minSteps: number }
+
+const fixtures: Fixture[] = [
+  { name: "a plain corridor with corners and a room, no mechanism", grid: plainCorridors, minSteps: 100 },
+  { name: "a lever and one gate", grid: oneGate, minSteps: 25 },
+  { name: "a lever and two gates opening together", grid: twoGatesTogether, minSteps: 80 },
+  { name: "a lever and two gates, one open and one shut, so the lever toggles", grid: toggledGates, minSteps: 65 },
+  { name: "a one-way drop crossed from its departure", grid: oneWayDrop, minSteps: 15 },
+  { name: "a gate and a one-way drop on one floor", grid: gateAndDrop, minSteps: 25 },
+]
+
+// A drop stood at from its landing, in every shape the drop takes (axis × what stands at each end).
+const landingShapes = AXES.flatMap(axis =>
+  KINDS.flatMap(departure =>
+    KINDS.map(kind => ({
+      name: `a one-way drop stood at from its landing: ${axis.travel}-going, ${departure} departure, ${kind} landing`,
+      grid: addressed(dropGrid(axis, departure, kind).grid),
+    }))
   )
-  delete process.env.INCLUDE_DEV
-  // worldGen's FloorConfig is a looser mirror of game/siteTypes.ts's, and authored data only ever
-  // assigns values the stricter type accepts too — the same cast devJourney.spec.ts's own
-  // `assembleAt` makes.
-  return configs[DEV_JOURNEY_ID][1][0] as unknown as FloorConfig
-}
+)
 
 describe("the movement invariant — offers match walkability, and taking one moves the explorer", () => {
-  // doubleBack: five gates, three controls (one three-state fork, two one-shot levers) and two
-  // one-way drops on a single floor — the exotic subject, walked through every mechanism combination
-  // a player can actually reach.
-  it("holds across doubleBack's full reachable state space", () => {
-    const journeyId = DEV_JOURNEY_ID
-    const floorConfig = buildDoubleBack()
-    const seed = floorAssemblySeed(persistentInteriorSeed(journeyId), 2, 0)
-
-    const { violations, steps } = walkFloor(journeyId, floorConfig, seed)
+  it.each(fixtures)("holds across every reachable state of $name", ({ grid, minSteps }) => {
+    const { violations, steps } = walkFloor(grid)
 
     expect(violations).toEqual([])
-    expect(steps).toBeGreaterThan(50) // a walk this floor short would prove nothing was exercised
-  }, 120_000)
+    expect(steps).toBeGreaterThan(minSteps) // a walk this short would prove nothing was exercised
+  })
 
-  // A plain shipped floor, with no mechanism at all — the guard is not only for the exotic case.
-  it("holds on an ordinary shipped floor", () => {
-    const floor = allFloors()[0]
-
-    const { violations, steps } = walkFloor(floor.journeyId, floor.config, floor.seed)
+  it.each(landingShapes)("holds across every reachable state of $name", ({ grid }) => {
+    const { violations, steps } = walkFloor(grid)
 
     expect(violations).toEqual([])
     expect(steps).toBeGreaterThan(3)
-  }, 120_000)
+  })
 })
 
-// PROVING THE GUARD HAS TEETH. Reverting `58815d67` (the lever throw) and re-running the doubleBack
-// walk above did turn it red — at 7 steps against the 50 the walk expects, since nothing ever throws
-// a lever any more and the floor stops dead at the first one. Reverting `97714cdd` (the one-way
-// landing reveal) did NOT turn it red: that fix stops a REVEAL from running past a landing early, and
-// once a cell is (wrongly) reachable this invariant has no opinion on why — it only asks that offers
-// and walkability agree, which they still did. So this file also corrupts the two writes directly,
-// to prove the checks fire on the exact shape of the two sightings this invariant is FOR (a
-// reveal that leaves the explorer behind, and a stopping point no marker names) without needing a
-// real commit to revert each time.
+// PROVING THE GUARD HAS TEETH. The walk above is only worth having if a corrupted write turns it red,
+// so this corrupts the two writes directly, to prove the checks fire on the exact shape of the two
+// sightings this invariant is FOR (a reveal that leaves the explorer behind, and a stopping point no
+// marker names) without needing a real commit to revert each time.
 describe("the guard actually fires", () => {
-  const floorConfig: FloorConfig = {
-    pathPuzzles: 2,
-    difficulty: "starter",
-    end: "treasure",
-    exitOrStaircase: "exit",
-    sideSections: [],
+  const grid = plainCorridors
+  // The first place the map offers that is not the ground the explorer already stands on.
+  const offeredElsewhere = (
+    offers: ReadonlyMap<string, readonly [number, number]>,
+    explorerPos: readonly [number, number]
+  ) => {
+    const found = [...offers.values()].find(([r, c]) => r !== explorerPos[0] || c !== explorerPos[1])
+    if (!found) throw new Error("the fixture offers nowhere to go")
+    return found
   }
-  const journeyId = "guard-proof"
-  const seed = 1
 
   // Sighting 3, reproduced directly: a click that marks the cell explored (so the corridor beyond it
   // lifts out of the fog, same as a real reveal) but never writes the new position — the write
@@ -465,18 +517,18 @@ describe("the guard actually fires", () => {
   // and the offer it came from are both perfectly consistent, only the explorer failed to follow.
   it("catches a click that reveals a cell without moving the explorer onto it", () => {
     const store = makeStore()
-    const harness = buildHarness(journeyId, floorConfig, seed, [floorConfig], store, {
+    const harness = buildHarness(grid, store, {
       // The corrupted write: explored, but the position never moves — exactly "explores it, but the
       // player does not move there".
       updatePosition: () => {},
     })
     const hook = renderHook(harness.useHook)
-    const { grid, explorerPos } = hook.result.current
-    if (!grid) throw new Error("fixture did not carve")
+    const { grid: carvedGrid, explorerPos } = hook.result.current
+    if (!carvedGrid) throw new Error("fixture did not carve")
 
-    const claims = buildRoomClaims(grid)
-    const offers = offeredTargets(grid, claims, explorerPos)
-    const [, target] = [...offers][0]
+    const claims = buildRoomClaims(carvedGrid)
+    const offers = offeredTargets(carvedGrid, claims, explorerPos)
+    const target = offeredElsewhere(offers, explorerPos)
 
     act(() => hook.result.current.onCellClick(target[0], target[1]))
     hook.rerender()
@@ -494,94 +546,80 @@ describe("the guard actually fires", () => {
   // for the one thing a rendering bug would actually break.
   it("catches a walkable stopping point no offer names", () => {
     const store = makeStore()
-    const harness = buildHarness(journeyId, floorConfig, seed, [floorConfig], store)
+    const harness = buildHarness(grid, store)
     const hook = renderHook(harness.useHook)
-    const { grid, explorerPos } = hook.result.current
-    if (!grid) throw new Error("fixture did not carve")
+    const { grid: carvedGrid, explorerPos } = hook.result.current
+    if (!carvedGrid) throw new Error("fixture did not carve")
 
-    const claims = buildRoomClaims(grid)
-    const realOffers = offeredTargets(grid, claims, explorerPos)
+    const claims = buildRoomClaims(carvedGrid)
+    const realOffers = offeredTargets(carvedGrid, claims, explorerPos)
     expect(realOffers.size).toBeGreaterThan(0) // the entrance really does offer somewhere on this fixture
-    expect(offerViolations(grid, explorerPos, realOffers)).toEqual([]) // sound before the corruption
+    expect(offerViolations(carvedGrid, explorerPos, realOffers)).toEqual([]) // sound before the corruption
 
     // Erase every marker that leads to one destination — the near cell whose arrow points at it AND
     // its own corner/room entry alike, since a target reachable by more than one marker would survive
     // losing just one of them. The corruption a drawn-but-dead arrow or a missing one both reduce to.
-    const [, victim] = [...realOffers][0]
+    const victim = offeredElsewhere(realOffers, explorerPos)
     const corrupted = new Map(
       [...realOffers].filter(([, target]) => target[0] !== victim[0] || target[1] !== victim[1])
     )
 
-    expect(offerViolations(grid, explorerPos, corrupted)).toEqual([
-      `walkable stopping point ${victim[0]},${victim[1]} (${grid.cells[victim[0]][victim[1]].type}) has no offer pointing to it, from ${explorerPos}`,
+    expect(offerViolations(carvedGrid, explorerPos, corrupted)).toEqual([
+      `walkable stopping point ${victim[0]},${victim[1]} (${carvedGrid.cells[victim[0]][victim[1]].type}) has no offer pointing to it, from ${explorerPos}`,
     ])
   })
 })
 
 // A GATE A CONTROL OWNS IS SHOWN OR HIDDEN BY THE CONTROL ALONE. The player never stands in it, taps it
 // or is asked anything at it; what the lever is set to is the whole of whether the bars are there. Every
-// one of doubleBack's five gates is put through shut, open and shut again, because the last step is the
+// gate of every lever fixture is put through shut, open and shut again, because the last step is the
 // one a gate that remembered having been passed would draw wrong.
 describe("a gate a control owns is decided by its control alone", () => {
-  const seed = floorAssemblySeed(persistentInteriorSeed(DEV_JOURNEY_ID), 2, 0)
-  const floorConfig = buildDoubleBack()
-  // A gate.s key is minted from the journey id the harness carves the floor under (`buildHarness`), so the
-  // floor is carved under the same one here.
-  const storedJourneyId = knownJourneyIds.has(DEV_JOURNEY_ID) ? DEV_JOURNEY_ID : fallbackKnownJourneyId
-  const carved = assembleFloor(storedJourneyId, floorConfig, seed, resolveEncounterMeta, {
-    resolveKeyRequirements,
-    floorRef: { journeyId: storedJourneyId, floorIndex: 0 },
-  })
-  if (!carved.success) throw new Error("doubleBack did not assemble")
-  const base = carved.grid
-
   type Gate = { key: string; owners: Array<{ address: string; shut: string; open: string; initial: string }> }
-  const mechanisms: Array<{
-    address: string
-    states: readonly string[]
-    initial: string
-    opens: (s: string) => string[]
-  }> = []
-  const gateKeys = new Set<string>()
-  base.cells.forEach((row, r) =>
-    row.forEach((cell, c) => {
-      if (cell.type !== "room") return
-      if (cell.requiredKeyId?.startsWith(OBSTACLE_KEY_PREFIX)) gateKeys.add(cell.requiredKeyId)
-      if (!cell.mechanism) return
-      const address = cellAddress(base, 0, r, c)!
-      const record = cell.mechanism
-      mechanisms.push({
-        address,
-        states: record.states,
-        initial: record.initial,
-        opens: state => record.positions.filter(p => p.state === state).map(p => p.gateKeyId),
+  const lockFixtures = [
+    { name: "a lever and one gate", grid: oneGate, gateCount: 1 },
+    { name: "a lever and two gates opening together", grid: twoGatesTogether, gateCount: 2 },
+    { name: "a lever and two gates, one open and one shut", grid: toggledGates, gateCount: 2 },
+  ].map(({ name, grid, gateCount }) => {
+    const mechanisms: Array<{
+      address: string
+      states: readonly string[]
+      initial: string
+      opens: (s: string) => string[]
+    }> = []
+    const gateKeys = new Set<string>()
+    grid.cells.forEach((row, r) =>
+      row.forEach((cell, c) => {
+        if (cell.type !== "room") return
+        if (cell.requiredKeyId?.startsWith(OBSTACLE_KEY_PREFIX)) gateKeys.add(cell.requiredKeyId)
+        if (!cell.mechanism) return
+        const record = cell.mechanism
+        mechanisms.push({
+          address: cellAddress(grid, 0, r, c)!,
+          states: record.states,
+          initial: record.initial,
+          opens: state => record.positions.filter(p => p.state === state).map(p => p.gateKeyId),
+        })
       })
-    })
-  )
-  const gates: Gate[] = [...gateKeys].map(key => ({
-    key,
-    owners: mechanisms
-      .filter(m => m.states.some(s => m.opens(s).includes(key)))
-      .map(m => ({
-        address: m.address,
-        initial: m.initial,
-        open: m.states.find(s => m.opens(s).includes(key))!,
-        shut: m.states.find(s => !m.opens(s).includes(key))!,
-      })),
-  }))
+    )
+    const gates: Gate[] = [...gateKeys].map(key => ({
+      key,
+      owners: mechanisms
+        .filter(m => m.states.some(s => m.opens(s).includes(key)))
+        .map(m => ({
+          address: m.address,
+          initial: m.initial,
+          open: m.states.find(s => m.opens(s).includes(key))!,
+          shut: m.states.find(s => !m.opens(s).includes(key))!,
+        })),
+    }))
+    return { name, grid, gateCount, gates }
+  })
 
-  const scene = () => {
+  const scene = (grid: FloorGrid) => {
     const store = makeStore()
     const encounters: Array<readonly [number, number]> = []
-    const harness = buildHarness(
-      DEV_JOURNEY_ID,
-      floorConfig,
-      seed,
-      [floorConfig],
-      store,
-      {},
-      pos => void encounters.push(pos)
-    )
+    const harness = buildHarness(grid, store, {}, pos => void encounters.push(pos))
     const hook = renderHook(harness.useHook)
     // Every mechanism at its own initial position except those named — the state a lever is thrown to
     // is the only thing this scene ever changes.
@@ -607,84 +645,86 @@ describe("a gate a control owns is decided by its control alone", () => {
       .filter(key => key.startsWith("wall:") || key.startsWith("gate:"))
   }
 
-  it("has the five gates of doubleBack, each with a control that opens it, none carrying a family", () => {
-    expect(gates).toHaveLength(5)
-    expect(tileUrl("expert", "gate")).toBeTruthy()
-    for (const { key, owners } of gates) {
-      expect(owners.length, `${key} has an opener`).toBeGreaterThan(0)
-      const [r, c] = findGate(base, key)!
-      const cell = base.cells[r][c]
-      expect(cell.type === "room" && cell.family).toBeUndefined()
-      expect(isSealedWayOut(cell)).toBe(true)
-    }
-  })
-
-  it("draws every gate shut, then open, then shut again from the lever alone, without the player entering it", () => {
-    vi.useFakeTimers()
-    try {
+  describe.each(lockFixtures)("$name", ({ grid, gateCount, gates }) => {
+    it("has its gates, each with a control that opens it, none carrying a family", () => {
+      expect(gates).toHaveLength(gateCount)
+      expect(tileUrl("expert", "gate")).toBeTruthy()
       for (const { key, owners } of gates) {
-        const { store, encounters, hook, setLevers } = scene()
-        const start = hook.result.current.explorerPos
-        const shut = Object.fromEntries(owners.map(o => [o.address, o.shut]))
-        const open = Object.fromEntries(owners.map(o => [o.address, o.open]))
-
-        const first = setLevers(shut)
-        const at = findGate(first.grid!, key)
-        expect(at, `${key} stands while its lever is shut`).not.toBeNull()
-        const shutBars = drawnBars(first.grid!, shut)
-        expect(shutBars, `${key} is drawn while shut`).toContain(`wall:${at![0]},${at![1]}`)
-
-        const second = setLevers(open)
-        expect(findGate(second.grid!, key), `${key} is gone while its lever is open`).toBeNull()
-        expect(drawnBars(second.grid!, open), `${key} is not drawn while open`).not.toContain(
-          `wall:${at![0]},${at![1]}`
-        )
-
-        const third = setLevers(shut)
-        expect(findGate(third.grid!, key), `${key} stands again once its lever is thrown back`).toEqual(at)
-        expect(drawnBars(third.grid!, shut), `${key} is drawn again once thrown back`).toEqual(shutBars)
-
-        // The lever moved and the player never did: no cell written, no screen opened.
-        act(() => vi.advanceTimersByTime(5000))
-        expect(hook.result.current.explorerPos).toEqual(start)
-        expect(store.positionKey).toBeNull()
-        expect(store.exploredCells).toEqual({})
-        expect(encounters).toEqual([])
+        expect(owners.length, `${key} has an opener`).toBeGreaterThan(0)
+        const [r, c] = findGate(grid, key)!
+        const cell = grid.cells[r][c]
+        expect(cell.type === "room" && cell.family).toBeUndefined()
+        expect(isSealedWayOut(cell)).toBe(true)
       }
-    } finally {
-      vi.useRealTimers()
-    }
-  })
+    })
 
-  it("refuses every shut gate to the player: not walkable, no path, no marker, no screen or prompt on a tap", () => {
-    vi.useFakeTimers()
-    try {
-      for (const { key, owners } of gates) {
-        const { store, encounters, hook, setLevers } = scene()
-        const shut = Object.fromEntries(owners.map(o => [o.address, o.shut]))
-        const { grid, explorerPos } = setLevers(shut)
-        const [r, c] = findGate(grid!, key)!
-        const seen = revealAll(grid!)
+    it("draws every gate shut, then open, then shut again from the lever alone, without the player entering it", () => {
+      vi.useFakeTimers()
+      try {
+        for (const { key, owners } of gates) {
+          const { store, encounters, hook, setLevers } = scene(grid)
+          const start = hook.result.current.explorerPos
+          const shut = Object.fromEntries(owners.map(o => [o.address, o.shut]))
+          const open = Object.fromEntries(owners.map(o => [o.address, o.open]))
 
-        expect(walkableFrom(seen, explorerPos).has(`${r},${c}`), `${key} is walkable`).toBe(false)
-        expect(findPath(seen, explorerPos, [r, c]), `${key} has a path`).toEqual([])
-        const offered = [...offeredTargets(seen, buildRoomClaims(seen), explorerPos).values()]
-        expect(
-          offered.some(([or, oc]) => or === r && oc === c),
-          `${key} is offered`
-        ).toBe(false)
-        expect(grid!.cells[r][c], `${key} was marked passed`).not.toMatchObject({ state: "completed" })
+          const first = setLevers(shut)
+          const at = findGate(first.grid!, key)
+          expect(at, `${key} stands while its lever is shut`).not.toBeNull()
+          const shutBars = drawnBars(first.grid!, shut)
+          expect(shutBars, `${key} is drawn while shut`).toContain(`wall:${at![0]},${at![1]}`)
 
-        act(() => hook.result.current.onCellClick(r, c))
-        act(() => vi.advanceTimersByTime(5000))
-        hook.rerender()
-        expect(encounters, `${key} opened a screen`).toEqual([])
-        expect(hook.result.current.prompt, `${key} offered a prompt`).toBeNull()
-        expect(hook.result.current.explorerPos).toEqual(explorerPos)
-        expect(store.positionKey).toBeNull()
+          const second = setLevers(open)
+          expect(findGate(second.grid!, key), `${key} is gone while its lever is open`).toBeNull()
+          expect(drawnBars(second.grid!, open), `${key} is not drawn while open`).not.toContain(
+            `wall:${at![0]},${at![1]}`
+          )
+
+          const third = setLevers(shut)
+          expect(findGate(third.grid!, key), `${key} stands again once its lever is thrown back`).toEqual(at)
+          expect(drawnBars(third.grid!, shut), `${key} is drawn again once thrown back`).toEqual(shutBars)
+
+          // The lever moved and the player never did: no cell written, no screen opened.
+          act(() => vi.advanceTimersByTime(5000))
+          expect(hook.result.current.explorerPos).toEqual(start)
+          expect(store.positionKey).toBeNull()
+          expect(store.exploredCells).toEqual({})
+          expect(encounters).toEqual([])
+        }
+      } finally {
+        vi.useRealTimers()
       }
-    } finally {
-      vi.useRealTimers()
-    }
+    })
+
+    it("refuses every shut gate to the player: not walkable, no path, no marker, no screen or prompt on a tap", () => {
+      vi.useFakeTimers()
+      try {
+        for (const { key, owners } of gates) {
+          const { store, encounters, hook, setLevers } = scene(grid)
+          const shut = Object.fromEntries(owners.map(o => [o.address, o.shut]))
+          const { grid: carvedGrid, explorerPos } = setLevers(shut)
+          const [r, c] = findGate(carvedGrid!, key)!
+          const seen = revealAll(carvedGrid!)
+
+          expect(walkableFrom(seen, explorerPos).has(`${r},${c}`), `${key} is walkable`).toBe(false)
+          expect(findPath(seen, explorerPos, [r, c]), `${key} has a path`).toEqual([])
+          const offered = [...offeredTargets(seen, buildRoomClaims(seen), explorerPos).values()]
+          expect(
+            offered.some(([or, oc]) => or === r && oc === c),
+            `${key} is offered`
+          ).toBe(false)
+          expect(carvedGrid!.cells[r][c], `${key} was marked passed`).not.toMatchObject({ state: "completed" })
+
+          act(() => hook.result.current.onCellClick(r, c))
+          act(() => vi.advanceTimersByTime(5000))
+          hook.rerender()
+          expect(encounters, `${key} opened a screen`).toEqual([])
+          expect(hook.result.current.prompt, `${key} offered a prompt`).toBeNull()
+          expect(hook.result.current.explorerPos).toEqual(explorerPos)
+          expect(store.positionKey).toBeNull()
+        }
+      } finally {
+        vi.useRealTimers()
+      }
+    })
   })
 })
