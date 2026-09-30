@@ -45,7 +45,7 @@ type Fixture = {
   name: string
   layout: RegionGraph
   config: FloorConfig
-  gates: { id: string; between: [string, string]; atSideChainMouth?: true }[]
+  gates: { id: string; between: [string, string] }[]
 }
 
 const base = {
@@ -87,7 +87,7 @@ const fixtures: Fixture[] = [
     name: "a branching layout, gates on the main route, at a side chain's mouth and within it",
     layout: doubleBack,
     gates: [
-      { id: "forkRight", between: ["entrance", "rightLower"], atSideChainMouth: true },
+      { id: "forkRight", between: ["entrance", "rightLower"] },
       { id: "greenRight", between: ["rightLower", "s1Chamber"] },
       { id: "greenLeft", between: ["leftLower", "s2Chamber"] },
     ],
@@ -192,7 +192,7 @@ describe("a gate stands on the boundary its obstacle names", () => {
         expect(carves.length).toBeGreaterThan(0)
       })
 
-      for (const { id, between, atSideChainMouth } of gates) {
+      for (const { id, between } of gates) {
         const [a, b] = between
 
         it(`${id}: exactly one gate room, standing in one of ${a} or ${b}`, () => {
@@ -204,26 +204,22 @@ describe("a gate stands on the boundary its obstacle names", () => {
         })
 
         // A gate on a side chain's mouth connection stands at the chain's first cell, and the chain hangs off
-        // whichever main-route room the maze chose as its host: that host is in the near region only on
-        // some seeds. Until the seat follows the host's region, this holds for every other gate and fails
-        // here, which `it.fails` keeps visible instead of skipping.
-        const opensOntoNear = atSideChainMouth ? it.fails : it
-        opensOntoNear(
-          `${id}: opens onto the other region of ${a}/${b}, and onto no region the layout does not join it to`,
-          () => {
-            for (const { seed, grid } of carves) {
-              const [{ cell, at }] = gateRoomsFor(grid, id)
-              const own = cell.region
-              const other = own === a ? b : a
-              const regions = neighbourRooms(grid, at[0], at[1]).map(({ room }) => room.region)
-              expect(regions, `seed ${seed}`).toContain(other)
-              // A region one room deep puts the next region's first room beside the gate, so a neighbour
-              // may be the far region's own neighbour — never one the layout has no connection to.
-              const joined = layout.connections.flatMap(([x, y]) => (x === own ? [y] : y === own ? [x] : []))
-              for (const region of regions) expect([a, b, ...joined], `seed ${seed}`).toContain(region)
-            }
+        // whichever main-route room the maze chose as its host. The builder refuses a carve whose regions
+        // touch other than the layout connects them (carveAgreement.ts), so every carve that comes back
+        // has the mouth's host in the near region, on every seed.
+        it(`${id}: opens onto the other region of ${a}/${b}, and onto no region the layout does not join it to`, () => {
+          for (const { seed, grid } of carves) {
+            const [{ cell, at }] = gateRoomsFor(grid, id)
+            const own = cell.region
+            const other = own === a ? b : a
+            const regions = neighbourRooms(grid, at[0], at[1]).map(({ room }) => room.region)
+            expect(regions, `seed ${seed}`).toContain(other)
+            // A region one room deep puts the next region's first room beside the gate, so a neighbour
+            // may be the far region's own neighbour — never one the layout has no connection to.
+            const joined = layout.connections.flatMap(([x, y]) => (x === own ? [y] : y === own ? [x] : []))
+            for (const region of regions) expect([a, b, ...joined], `seed ${seed}`).toContain(region)
           }
-        )
+        })
 
         it(`${id}: is the only passage joining a room of ${a} to a room of ${b}`, () => {
           for (const { seed, grid } of carves) {

@@ -24,6 +24,8 @@ import type { ContentKind, SideChain } from "./regions"
 import { crossesNoDoor, doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
 import type { Control, Obstacle } from "./obstacles"
 import { cellSlot } from "./cellSlot"
+import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "./carveAgreement"
+import type { CarveFault } from "./carveAgreement"
 import { stairIdAt } from "./stairAddress"
 import { footprintSize } from "./roomFootprint"
 import type { ResolveBoardIndex } from "./seeds/boardIndex"
@@ -1142,6 +1144,8 @@ export const assembleFloor = (
   let controlPuzzleUndisplaceable: string[] | undefined
   // The first attempt's rooms standing where their region's appetite refuses them, kept the same way.
   let regionMismatch: { region: string; kind: ContentKind }[] | undefined
+  // The first attempt's carve that disagreed with the layout it was authored from, kept the same way.
+  let carveDisagreement: CarveFault[] | undefined
   // Labeled so a gate reserved deep inside a chain's own content loop (below) can retry the WHOLE
   // attempt the same way every other shortfall here does, rather than only skipping the rest of one
   // chain's own content.
@@ -3228,6 +3232,36 @@ export const assembleFloor = (
         if (!regionMismatch) regionMismatch = [...willNotTake.values()]
         continue
       }
+
+      // THE CARVE AGAINST THE LAYOUT IT WAS DRAWN FROM. Every seated region, seam and appetite above is
+      // asked of a label; this asks of the walls. A side chain takes its labels from the layout but hangs
+      // off whichever main-path cell the carve found roomy, so a carve can be labelled exactly as
+      // authored and still join the wrong regions — which the lock, flooded off these very cells, then
+      // walks as a different floor. Retried like every other shortfall: another seed may join them right.
+      const gateKeys = gateObstacles.map(o => ({ id: o.id, between: o.at.between, key: gateKeyOf(o.id) }))
+      const runCells = new Set(oneWayEdges.flatMap(edge => edge.run))
+      const dropIdsWithRuns = oneWayObstacles.map((o, k) => ({
+        o,
+        edge: oneWayEdges[(config.oneWays ?? []).length + k],
+      }))
+      const disagreement = [
+        ...adjacencyFaults(cells2D, regionLayout),
+        ...gateDoorFaults(cells2D, gateKeys, runCells),
+        ...dropLandingFaults(
+          cells2D,
+          dropIdsWithRuns.map(({ o, edge }) => ({
+            id: o.id,
+            region: o.at.between[1],
+            landing: edge.to.split(",").map(Number) as [number, number],
+          })),
+          gateKeys,
+          runCells
+        ),
+      ]
+      if (disagreement.length > 0) {
+        if (!carveDisagreement) carveDisagreement = disagreement
+        continue
+      }
     }
 
     return { success: true, grid }
@@ -3246,6 +3280,7 @@ export const assembleFloor = (
       ...(controlPuzzleUndisplaceable
         ? [{ type: "controlPuzzleUndisplaceable" as const, ids: controlPuzzleUndisplaceable }]
         : []),
+      ...(carveDisagreement ?? []),
       ...(regionMismatch
         ? regionMismatch.map(({ region, kind }) => ({ type: "regionWillNotTake" as const, region, kind }))
         : []),

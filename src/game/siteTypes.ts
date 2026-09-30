@@ -1,6 +1,7 @@
 import type { Mark } from "./mark"
 import type { ContentKind, RegionGraph } from "./regions"
 import type { Control, Obstacle } from "./obstacles"
+import type { CarveFault } from "./carveAgreement"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
@@ -651,6 +652,11 @@ export type AssemblerReason =
    * puzzle out from under it with nothing said. `ids` are the controls left unseated this way, apart
    * from `controlNotSeated` (no candidate node at all): a wider path is not what this one is short of. */
   | { type: "controlPuzzleUndisplaceable"; ids: string[] }
+  /** The carve the floor came out as is not the layout it was authored from: regions joined that the
+   * layout does not join, a gate's door off its boundary, or a drop landing where no gate borders.
+   * Each member names the disagreement in the author's own region and obstacle names. See
+   * carveAgreement.ts. */
+  | CarveFault
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
 
