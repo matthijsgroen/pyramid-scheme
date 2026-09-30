@@ -539,6 +539,52 @@ things. Until then the only signal is `walkLock` reporting `unsolvable` afterwar
 remedy is an author sweeping `packing` until a seed happens to land on a shape that works. That is a
 search, not authoring, and it does not scale to master and wizard's 56 gates.
 
+### What makes a lever and a gate acceptable
+
+Stated by the owner 2026-09-30, as the use cases a lever and its gates must satisfy. A floor whose
+mechanisms fail any of them is wrong however sound its lock is. Where the lock criteria above describe
+a floor's SHAPE, these describe what the player meets when they walk up to it.
+
+**One lever, one gate**
+
+1. **A gate is closed by default.**
+2. **A gate stands on the edge between a room and a corridor.**
+3. **A closed gate is not a direction the room offers.** Standing in the room, the way to a closed gate
+   is not among the ways out — not drawn, not tappable.
+4. **An open gate is a direction the room offers**, like any other way out.
+5. **A lock may author a gate open by default**, in which case throwing the lever closes it.
+
+**One lever, two gates**
+
+6. **Two gates named by one position open and close together.**
+7. **A gate authored open against one authored closed makes the lever a toggle** — throwing it swaps
+   which of the two stands open.
+
+**Two levers, one gate**
+
+8. **`or`: either lever opens the gate.**
+9. **`and`: the gate opens only while BOTH levers are thrown, and is closed otherwise.**
+
+**What enforces each today, audited 2026-09-30.**
+
+| # | Criterion | State |
+| --- | --- | --- |
+| 1 | closed by default | holds: `openDoorsFor` falls back to `mechanism.initial`, so a gate the initial position does not name is shut before anyone touches the lever |
+| 2 | on a room/corridor edge | holds by construction — an obstacle is authored `at: { on: "connection", between: [a,b] }`, and the carve seats its gate on that boundary |
+| 3 | closed gate offers no direction | **the fault the owner found.** An obstacle gate is written `family: "key-gate"`, and `openWaysOut` touches only family-less gates, so the gate is walked into and opens a key modal instead of reading as a wall |
+| 4 | open gate offers a direction | follows from 3 — `openWaysOut` gives the cell back its corridor, so the way out is an ordinary way out |
+| 5 | authored open by default | holds: name the gate under the control's `initial` state |
+| 6 | two gates in sync | holds: two `positions` entries sharing a `state`, each with its own `gateKeyId` |
+| 7 | one lever toggles two gates | holds: the second gate named under the other state |
+| 8 | `or` | **free** — `openDoorsFor` unions the open keys across every mechanism on the floor, which is exactly `or` |
+| 9 | `and` | **NOT EXPRESSIBLE.** A union can only widen, so no arrangement of `positions` can say "only when both". This needs a condition on the OBSTACLE, not a mapping on the control |
+
+**The one fact behind criteria 3 and 9.** A control states which gates its own position opens, and the
+floor unions those statements. That shape gives `or` for nothing and puts `and` out of reach, because
+nobody asks the GATE what it requires — the gates only ever answer what the levers assert. The obstacle
+carrying its own opening condition is the piece that is missing, and it is the same shape of gap as a
+lock's: the authored intent lives on one side, and nothing on the other side is asked to agree.
+
 ### The rules that keep a lock buildable
 
 **The gates must form a tree. One-ways may add any edge on top.**
