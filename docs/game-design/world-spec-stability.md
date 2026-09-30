@@ -103,6 +103,18 @@ Such a floor renders "Site layout unavailable." for every player and never recov
 
 ---
 
+## Tier fingerprints
+
+Tiers are authored independently, and the lower ones must not move while the higher ones are re-authored. `src/data/tierFingerprints.json` holds one hash per tier (starter, junior, expert, master, wizard) over the baked configs of that tier's journeys, grouped by each journey's `difficulty` (a tomb counts under its own). `src/data/tierFingerprints.spec.ts` asserts each tier separately, so a change to wizard that also moves expert fails the expert assertion by name. There is deliberately no combined total.
+
+- The hash is over sorted-key JSON of each journey's site configs: key order and `undefined` fields cannot move it, array order can (a different floor or decoration order is a different authoring).
+- The `dev_topology` journey is excluded, so a world generated with `INCLUDE_DEV` hashes the same for the shipped tiers.
+- A tier with no journeys, or a journey with no baked config, throws; it is never an empty hash.
+
+When a change to a tier is deliberate: regenerate the world, run `yarn vitest run src/data/tierFingerprints.spec.ts`, and copy the new hash from the failure message into the JSON for that tier (and `journeyCount` if journeys were added or removed). Commit the JSON change with the authoring that caused it. If a tier you did not mean to touch is red, that is the drift this guard exists to catch: fix the cause, do not update the value.
+
+---
+
 ## Where the lists live in code
 
 - `computeMainSectionHash` / `computeSideSectionHash` in `src/game/siteAssembler.ts` — the hash inputs are the structural list, in one place. The hash fingerprints the shape; it is **not** the identity a save uses.
