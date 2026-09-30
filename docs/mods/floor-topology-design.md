@@ -601,6 +601,45 @@ different hat:
 Nothing authors either shape, so both are latent. They are recorded here rather than guarded because a
 guard for a shape no author can reach is a guard that can never be watched failing.
 
+### What makes a one-way acceptable
+
+A one-way drop — a zipline — is a piece of floor architecture, not a marker on a cell. These say what
+it requires and what it may never do.
+
+1. **A one-way declares the space it needs, and the carve reserves it.** A drop occupies a contiguous
+   RUN of cells between its departure and its landing. It is not a single connector.
+2. **A run is entered only at its departure end and left only at its landing end.** Every cell of the
+   run names one direction, the way onward, and the landing names no way back.
+3. **A player may stand at the run's landing end and step back off it.** Walking up to a drop is not
+   taking it.
+4. **Crossing is impossible by construction, not by a rule.** No arrangement of walking may carry a
+   player from the landing to the departure.
+5. **A drop compiles to ONE edge, not one per cell.** However many cells the carve spends, the lock the
+   walk judges must hold a single `oneWay` between the two authored regions.
+6. **A floor that cannot reserve a run is refused by name.** Never placed shorter, never placed
+   elsewhere, never dropped in silence.
+
+**What enforces each today, audited 2026-09-30.**
+
+| # | Criterion | State |
+| --- | --- | --- |
+| 1 | the carve reserves a run | holds: `ONE_WAY_RUN_CELLS` cells reserved between departure and landing, asserted cell by cell on every seed that carves |
+| 2 | entered and left at its ends | holds: each run cell's `dirs` is exactly the way onward; asserted as whole sets, not as an absence |
+| 3 | stand at the end, step back | holds: `walkableDirsFrom` admits the run's landing end from the landing, and that cell's one direction leads back |
+| 4 | crossing impossible by construction | holds, and the REASON is the one to keep: a cell with one `dirs` entry can only be left along it, so a chain of them must terminate at a cell with more than one way out, which `isRunEnd` refuses. Asserted over chains of 0-3 cells |
+| 5 | one edge, not one per cell | holds: run cells take the departure's region in `floorLock`, so one authored drop compiles to one `oneWay`. Watched failing at 6 edges |
+| 6 | refused by name | holds: `oneWayUnsatisfied {from,to}` after the attempt budget, watched failing |
+
+**Why the run exists, measured.** `dropEast.png`'s pit is 20 master rows by 50 columns — 2.5 times wider
+than tall — so at one cell it covered about 27% of the corridor's thickness and read as a pit beside the
+path rather than a hole across it. Five cells of floor are `4 × COL_PITCH + CELL = 336` units wide, which
+puts the pit at about 107% of the corridor. The art's proportions are what say a drop is a multi-cell
+feature; the run is that statement made structural.
+
+**Open:** `dropNorth` and `dropSouth` are unpainted, so a north-south run draws as plain corridor. The
+run length is one constant for every drop; a differently-proportioned vertical painting would move it
+onto the obstacle beside its direction.
+
 ### What makes the map of a floor acceptable
 
 Three properties the player depends on, whatever stands on the floor. They are asserted by
