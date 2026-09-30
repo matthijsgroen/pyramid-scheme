@@ -8,6 +8,12 @@
 
 ## What was measured, 2026-09-30
 
+> **The numbers below were swept against an assembler that predates `cec5058d`**, which made a one-way
+> drop a run of 5 cells rather than one. The MECHANISM they identify is structural and still holds — a
+> side chain's attach cell is not tied to its mouth region — but the specific sound/unsound values have
+> moved: `doubleBack` now needs `packing: 7`. Re-sweep before quoting a number, and treat the counts
+> below as evidence for the mechanism rather than as current data.
+
 Swept on `doubleBack` at its own seed, over `packing` 1-150, against a clean HEAD assembler.
 
 **`packing` is not a dial.** It feeds `targetDistance` (`siteAssembler.ts:1030`) and `deriveN` (`:1077`), so a different value yields an UNRELATED maze from the same RNG stream — the grid side is 29 rows at `packing` 5, **59** at 6, 33 at 7. It is an index into a family of unrelated carves.

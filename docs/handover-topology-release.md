@@ -1174,6 +1174,15 @@ tests untouched. `explorerPos` resolves standing, then position, then the entran
 | `boardIndexOrder.spec.ts` | A higher tier never takes a board ordinal before a lower one. |
 | `gateBoundary.spec.ts` | A gate sits on the boundary it names — `it.fails` for the one case where it does not. |
 
+## Corrections to earlier sections
+
+- **`doubleBack` is `packing: 7`, not 5.** Earlier sections say 5. Making a drop a run of cells changed
+  its carve, so the value was re-swept; 7 is the smallest that is sound with both drops AND still strands
+  the player when `dropToEntrance` is removed, which is the property that makes it `doubleBack`.
+- **A drop is no longer one cell.** Earlier sections describe a one-way as a source-connector-landing
+  chain with a single connector. It is now a run of `ONE_WAY_RUN_CELLS` (5) corridor cells, each naming
+  only the way onward, reserved by the carve and refused by name when no run fits.
+
 ## Two measured facts worth not re-deriving
 
 - **The shipped world authors zero `obstacles`, zero `regionLayout` and zero `oneWays`, and carving all
