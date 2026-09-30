@@ -9,7 +9,7 @@ import type {
   WallDecorationKind,
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
-import { isSealedWayOut, oneWayMouthDir, revealAll, walkableFrom } from "../../game/gridNavigation"
+import { isOneWayMouth, isSealedWayOut, oneWayMouthDir, revealAll, walkableFrom } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
 import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
@@ -29,7 +29,7 @@ import {
   mapWidth,
   PROP_H,
 } from "./mapScale"
-import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
+import { DROP_ART, LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
 import { stateWash, tierPalette } from "./tileMaterials"
 import { ClipLayer, Sprite } from "./htmlLayers"
 import { moodFor } from "./moodSettings"
@@ -196,7 +196,8 @@ const leverArmTransform = (angleDeg: number): string =>
  * own `entrancePos` is the way back UP (pyramid-interior-design.md: a stairhead descends), and absent
  * art simply yields nothing, leaving the vector marker to carry the node as it always did.
  */
-const nodeSpritesFor = (
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on sprites
+export const nodeSpritesFor = (
   grid: FloorGrid,
   claims: RoomClaims,
   floorTier: Difficulty,
@@ -254,6 +255,27 @@ const nodeSpritesFor = (
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
+      if (cell.type === "corridor" && cell.state !== "fogged" && isOneWayMouth(grid, r, c)) {
+        // A DROP IS PLACED BY THE CARVE'S SHAPE, NOT DRESSED: the mouth is the one stub cell of a one-way,
+        // and it draws its art on its own cell. It is a node sprite, never a `DecorationKind`, so no
+        // dressing pool can name it. `tileUrl` and not `tileOrPlaceholder`: a mouth with no painted art
+        // keeps the plain corridor it always drew rather than a stand-in.
+        const [travel] = cell.dirs
+        const art = DROP_ART[travel]
+        const dropUrl = art && tileUrl(cell.difficulty ?? floorTier, art.name)
+        if (art && dropUrl) {
+          const { cx: dcx, cy: dcy } = cellCenter(r, c)
+          out.push({
+            footprint: clipCells([`${r},${c}`]),
+            key: `drop:${r},${c}`,
+            url: dropUrl,
+            x: dcx - CELL / 2,
+            y: dcy + CELL / 2 - PROP_H,
+            mirrored: art.mirrored,
+          })
+        }
+        continue
+      }
       if (cell.type !== "room" || cell.state === "fogged") continue
       const kind = shapeKindFor(grid, r, c, cell)
       const tier = cell.difficulty ?? floorTier

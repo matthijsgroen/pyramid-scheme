@@ -58,12 +58,12 @@ describe("a one-way drop's departure, seen from its landing", () => {
   for (const { axis, departure, landing } of shapes) {
     const name = `${axis.travel}-going drop, ${departure} departure, ${landing} landing`
 
-    it(`lifts the mouth and the departure to visible, and no further: ${name}`, () => {
+    it(`lifts the mouth only, leaving the departure it fell from dark: ${name}`, () => {
       const { grid, at } = dropGrid(axis, departure, landing)
       const seen = completeCell(grid, ...at(3))
 
       expect(stateAt(seen, at(2))).toBe("visible")
-      expect(stateAt(seen, at(1))).toBe("visible")
+      expect(stateAt(seen, at(1))).toBe("fogged")
       expect(stateAt(seen, at(0))).toBe("fogged")
     })
 
