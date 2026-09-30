@@ -31,6 +31,22 @@ const touch = (configs: Record<string, SiteConfig[]>, journeyId: string): Record
   return configs
 }
 
+// Every object in the config that holds `key`, at every depth.
+const holders = (value: unknown, key: string): Record<string, unknown>[] => {
+  if (Array.isArray(value)) return value.flatMap(item => holders(item, key))
+  if (value === null || typeof value !== "object") return []
+  const own = value as Record<string, unknown>
+  return [...(key in own ? [own] : []), ...Object.values(own).flatMap(v => holders(v, key))]
+}
+
+// Changes what one journey pays out at the end of its sections, in memory. Returns how many it
+// changed, so a test can refuse to pass on a journey that held none.
+const touchLoot = (configs: Record<string, SiteConfig[]>, journeyId: string): number => {
+  const holding = holders(configs[journeyId], "endReward")
+  for (const holder of holding) holder.endReward = { type: "money", amount: 987654 }
+  return holding.length
+}
+
 describe("tier fingerprints", () => {
   const actual = tierFingerprints(shipped, generatedWorldConfigs)
 
@@ -56,12 +72,23 @@ describe("tier fingerprints", () => {
 
   describe("independence", () => {
     // The first shipped journey of each tier is changed in turn; every OTHER tier must hash as before.
-    it.each(difficulties)("changing only %s moves only %s", tier => {
+    it.each(difficulties)("changing %s moves that tier and no other", tier => {
       const target = actual[tier].journeys[0]
       const after = tierFingerprints(shipped, touch(cloneConfigs(), target))
       for (const other of difficulties) {
         if (other === tier) expect(after[other].hash, `${other} must move`).not.toBe(actual[other].hash)
         else expect(after[other].hash, `${other} must not move when ${tier} changes`).toBe(actual[other].hash)
+      }
+    })
+
+    it.each(difficulties)("changing only the loot of %s moves no other tier", tier => {
+      const configs = cloneConfigs()
+      expect(touchLoot(configs, actual[tier].journeys[0]), "the journey must hold loot to change").toBeGreaterThan(0)
+      const after = tierFingerprints(shipped, configs)
+      for (const other of difficulties) {
+        if (other === tier) expect(after[other].hash, `${other} must move`).not.toBe(actual[other].hash)
+        else
+          expect(after[other].hash, `${other} must not move when the loot of ${tier} changes`).toBe(actual[other].hash)
       }
     })
 
@@ -85,6 +112,20 @@ describe("tier fingerprints", () => {
 
     it("keeps array order", () => {
       expect(stableStringify(["a", "b"])).not.toBe(stableStringify(["b", "a"]))
+    })
+
+    it("ignores which family stands in a room, in every tier", () => {
+      const configs = cloneConfigs()
+      const records = shipped.flatMap(j => [
+        ...holders(configs[j.id], "encounter"),
+        ...holders(configs[j.id], "encountersByIndex"),
+      ])
+      expect(records.length).toBeGreaterThan(100)
+      for (const holder of records) {
+        if ("encounter" in holder) holder.encounter = "some-other-family"
+        if ("encountersByIndex" in holder) holder.encountersByIndex = { 0: "some-other-family" }
+      }
+      expect(tierFingerprints(shipped, configs)).toEqual(actual)
     })
 
     it("hashes the same whatever order the journeys are listed in", () => {

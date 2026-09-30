@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest"
+import type { FamilyMeta } from "@/game/families/familyMeta"
 import { allocateEncounterFamily, allocateEncounterSpread, ALL_FAMILY_META } from "./allFamilyMeta"
 
 /** How often each family comes back over a long run of slots, which is what a player actually feels. */
@@ -101,5 +102,68 @@ describe("dealing a chain of rooms", () => {
       "no-such-role",
       "no-such-role",
     ])
+  })
+})
+
+// A family is dealt into a room from the pool of every family carrying the role's tag, and which one
+// lands where is free to move. Its reward priority, reward capacity and trap-ness are not: priority
+// decides which slots are loot-eligible and in what order, capacity sets how long `rewards[]` is, and
+// a trap makes its section `sealed`. So within one pool (all families sharing a tag) those three must
+// be identical, which makes every member interchangeable as far as loot and shape go. A family that
+// breaks this is refused when it is registered, not discovered in a regenerated world.
+// A pool of one, or a whole new pool, is never refused: nothing in it can be displaced.
+const lootSignature = (meta: FamilyMeta): string =>
+  `priority ${meta.rewardPriority}, capacity ${meta.rewardCapacity ?? 1}, ${meta.tags.includes("trap") ? "trap" : "not a trap"}`
+
+const poolViolations = (metas: readonly FamilyMeta[]): string[] => {
+  const tags = [...new Set(metas.flatMap(meta => meta.tags))].sort()
+  return tags.flatMap(tag => {
+    const pool = metas.filter(meta => meta.tags.includes(tag))
+    const signatures = new Set(pool.map(lootSignature))
+    const groups = [...signatures].map(
+      signature =>
+        `[${signature}]: ${pool
+          .filter(meta => lootSignature(meta) === signature)
+          .map(meta => meta.id)
+          .join(", ")}`
+    )
+    return signatures.size > 1 ? [`pool "${tag}" mixes loot signatures, ${groups.join(" | ")}`] : []
+  })
+}
+
+describe("a family joining a pool must not displace its loot or shape", () => {
+  const fake = (over: Partial<FamilyMeta>): FamilyMeta => ({
+    id: "fake",
+    ownerMod: "puzzle",
+    tags: ["puzzle", "water"],
+    icon: "?",
+    color: "amber",
+    rewardPriority: 60,
+    ...over,
+  })
+
+  it("holds for every pool the registered families form", () => {
+    expect(poolViolations(ALL_FAMILY_META)).toEqual([])
+  })
+
+  it("accepts a family identical in priority, capacity and trap-ness to the pool it joins", () => {
+    expect(poolViolations([...ALL_FAMILY_META, fake({})])).toEqual([])
+  })
+
+  it("accepts a family alone in a new pool, whatever its meta", () => {
+    expect(
+      poolViolations([...ALL_FAMILY_META, fake({ tags: ["brand-new"], rewardPriority: 0, rewardCapacity: 4 })])
+    ).toEqual([])
+  })
+
+  it.each([
+    ["a priority of 0", { rewardPriority: 0 }],
+    ["a different non-zero priority", { rewardPriority: 50 }],
+    ["a capacity above 1", { rewardCapacity: 2 }],
+    ["a trap tag", { tags: ["puzzle", "water", "trap"] }],
+  ] as [string, Partial<FamilyMeta>][])("refuses a puzzle family with %s", (_, over) => {
+    const violations = poolViolations([...ALL_FAMILY_META, fake(over)])
+    expect(violations.length).toBeGreaterThan(0)
+    for (const violation of violations) expect(violation).toContain("fake")
   })
 })

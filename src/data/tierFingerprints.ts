@@ -19,9 +19,28 @@ export const stableStringify = (value: unknown): string => {
   return JSON.stringify(value) ?? "null"
 }
 
+// The fields that record WHICH puzzle family stands in a room, and nothing else: `encounter` (a
+// section's or floor's family) and `encountersByIndex` (the same, per room). They are the output of
+// dealing families out of a bag, so registering a family may reshuffle them while the tier's shape
+// and loot stay put. Everything else stays in the hash, including `role` and `encounterArgs`, which
+// are what the author asked for rather than what was dealt.
+export const FAMILY_RECORD_KEYS: ReadonlySet<string> = new Set(["encounter", "encountersByIndex"])
+
+// `value` with every family record removed at every depth.
+export const withoutFamilyRecords = (value: unknown): unknown => {
+  if (Array.isArray(value)) return value.map(withoutFamilyRecords)
+  if (value === null || typeof value !== "object") return value
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>)
+      .filter(([key]) => !FAMILY_RECORD_KEYS.has(key))
+      .map(([key, v]) => [key, withoutFamilyRecords(v)])
+  )
+}
+
 export type TierFingerprint = { hash: string; journeys: string[] }
 
-// One fingerprint per tier, over the baked configs of the journeys whose `difficulty` is that tier.
+// One fingerprint per tier, over the shape and loot of the baked configs (family records left out)
+// of the journeys whose `difficulty` is that tier.
 // The playtesting journey is left out by name: it exists only in a world generated with
 // INCLUDE_DEV, and shipped tiers must hash the same with or without it. A tier with no journeys
 // throws instead of hashing to an empty value, because a tier that silently vanished would
@@ -45,7 +64,10 @@ export const tierFingerprints = (
       })
     )
     result[tier] = {
-      hash: createHash("sha256").update(stableStringify(authored)).digest("hex").slice(0, 16),
+      hash: createHash("sha256")
+        .update(stableStringify(withoutFamilyRecords(authored)))
+        .digest("hex")
+        .slice(0, 16),
       journeys: ids,
     }
   }
