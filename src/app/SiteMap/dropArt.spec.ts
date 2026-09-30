@@ -2,67 +2,15 @@ import { describe, expect, it } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
 import { isOneWayMouth, revealAll } from "@/game/gridNavigation"
-import type { CellState, DecorationKind, Direction, FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
+import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 import { DROP_ART } from "./nodeArt"
 import { ARCH_W, CELL, DROP_H, DROP_W, cellCenter } from "./mapScale"
 import { buildRoomClaims } from "./roomClaims"
 import { nodeSpritesFor } from "./SiteMapView"
 import { tileUrl } from "./tileAssets"
-import { buildConfigs } from "@/worldGen/configBuilder"
-import { DEV_JOURNEY_ID } from "@/worldGen/data"
-import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
-import { ALL_CURRENCY_DISTRIBUTIONS } from "@/mods/allCurrencyDistributions"
-import {
-  CAPPED_CURRENCIES,
-  DYNAMIC_DISTRIBUTIONS,
-  MOD_WORLD_VALIDATORS,
-  MOD_REACHABILITY_SUPPORT,
-  MOD_TOMB_TREASURE_RESOLVER,
-  MOD_SHOP_STOCK,
-  MOD_RESERVED_TREASURE_INDICES,
-  REGISTERED_MOD_IDS,
-} from "@/mods/registeredMods"
-import {
-  resolveKeyRequirements,
-  familyPriorityFor,
-  familyCapacityFor,
-  familyIsTrap,
-  allocateEncounterSpread,
-  resolveEncounterMeta,
-} from "@/mods/allFamilyMeta"
+import { floorFrom, type Piece } from "./floorFixtures.testing"
 // Populates the family registry, as every assembled-floor spec relies on.
 import "@/mods/registerModApps"
-
-const doubleBack = (): FloorGrid => {
-  process.env.INCLUDE_DEV = "1"
-  const configs = buildConfigs(
-    resolveKeyRequirements,
-    ALL_CURRENCY_DISTRIBUTIONS,
-    CAPPED_CURRENCIES,
-    DYNAMIC_DISTRIBUTIONS,
-    MOD_WORLD_VALIDATORS,
-    familyPriorityFor,
-    0,
-    allocateEncounterSpread,
-    MOD_REACHABILITY_SUPPORT,
-    MOD_TOMB_TREASURE_RESOLVER,
-    familyCapacityFor,
-    MOD_SHOP_STOCK,
-    MOD_RESERVED_TREASURE_INDICES,
-    familyIsTrap,
-    REGISTERED_MOD_IDS,
-    resolveEncounterMeta
-  )
-  delete process.env.INCLUDE_DEV
-  const floor = configs[DEV_JOURNEY_ID][1][0] as unknown as FloorConfig
-  const seed = floorAssemblySeed(persistentInteriorSeed(DEV_JOURNEY_ID), 2, 0)
-  const result = assembleFloor(DEV_JOURNEY_ID, floor, seed, resolveEncounterMeta, {
-    resolveKeyRequirements,
-    floorRef: { journeyId: DEV_JOURNEY_ID, floorIndex: 0 },
-  })
-  if (!result.success) throw new Error("doubleBack did not assemble")
-  return result.grid
-}
 
 const dropEastUrl = tileUrl("expert", "dropEast")
 
@@ -96,6 +44,13 @@ const eastGrid = () => gridOf([[room(["e"]), corridor(["e"]), room(["w"])]])
 const westGrid = () => gridOf([[room(["e"]), corridor(["w"]), room(["w"])]])
 const northGrid = () => gridOf([[room(["s"])], [corridor(["n"])], [room(["n"])]])
 const southGrid = () => gridOf([[room(["s"])], [corridor(["s"])], [room(["n"])]])
+
+// A mouth carries one direction, toward its landing; the landing carries none back.
+const mouthToward =
+  (dir: Direction): Piece =>
+  () => ({ type: "corridor", dirs: new Set<Direction>([dir]), state: "fogged" })
+const landing: Piece = () => ({ type: "corridor", dirs: new Set<Direction>(), state: "fogged" })
+const both = { M: mouthToward("e"), S: mouthToward("s"), T: landing }
 
 describe("a one-way drop draws its art on the mouth", () => {
   it("has the painted east asset to draw", () => {
@@ -155,14 +110,17 @@ describe("a drop is drawn at architecture scale", () => {
     expect(drop.y + drop.h!).toBe(cy + CELL / 2)
   })
 
-  it("draws every drop on doubleBack at that size, both headings", () => {
-    const drops = [...dropsIn(revealAll(doubleBack())), ...dropsIn(westGrid())]
-    expect(drops.length).toBeGreaterThan(1)
+  it.each([
+    ["east", eastGrid()],
+    ["west", westGrid()],
+  ])("draws a %s mouth at that size", (_name, grid) => {
+    const drops = dropsIn(grid)
+    expect(drops).toHaveLength(1)
     for (const drop of drops) {
       expect(drop.w).toBe(84)
       expect(drop.h).toBe(126)
     }
-  }, 60000)
+  })
 })
 
 describe("only a one-way mouth draws a drop", () => {
@@ -177,27 +135,25 @@ describe("only a one-way mouth draws a drop", () => {
     for (const grid of [deadEnd, straight, corner]) expect(dropsIn(grid)).toEqual([])
   })
 
-  it("leaves every mouth on doubleBack out of every room's claims", () => {
-    const grid = revealAll(doubleBack())
-    const claimed = new Set(buildRoomClaims(grid).claimedBy.keys())
+  const mouthsOf = (grid: FloorGrid) => {
     const mouths: string[] = []
     for (let r = 0; r < grid.rows; r++)
       for (let c = 0; c < grid.cols; c++) if (isOneWayMouth(grid, r, c)) mouths.push(`${r},${c}`)
-    expect(mouths.length).toBeGreaterThan(0)
-    for (const mouth of mouths) expect(claimed.has(mouth)).toBe(false)
-  }, 60000)
+    return mouths
+  }
 
-  it("draws doubleBack's east-west drop and leaves its north-south one as it was", () => {
-    const grid = revealAll(doubleBack())
-    const mouths: string[] = []
-    for (let r = 0; r < grid.rows; r++)
-      for (let c = 0; c < grid.cols; c++) if (isOneWayMouth(grid, r, c)) mouths.push(`${r},${c}`)
-    expect(mouths).toEqual(["18,11", "25,12"])
+  // Whether a one-way mouth stays out of every room's claims is asserted in oneWayDeparture.spec.ts,
+  // where a fork — the room type that claims every neighbour it can — stands on either side of it, and
+  // a control proves the fork still claims the void around it.
+
+  it("draws the east-west drop of a floor holding both kinds and leaves the north-south one drawing nothing", () => {
+    const grid = revealAll(floorFrom(["E.RMT", ".", ".", "R", "S", "T"], both))
+    expect(mouthsOf(grid)).toEqual(["0,3", "4,0"])
     const drops = dropsIn(grid)
-    expect(drops.map(d => d.key)).toEqual(["drop:18,11"])
+    expect(drops.map(d => d.key)).toEqual(["drop:0,3"])
     expect(drops[0].url).toBe(dropEastUrl)
     expect(drops[0].mirrored).toBe(false)
-  }, 60000)
+  })
 })
 
 describe("no dressing pool can place a drop", () => {
