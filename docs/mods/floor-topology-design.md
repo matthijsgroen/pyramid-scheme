@@ -601,6 +601,35 @@ different hat:
 Nothing authors either shape, so both are latent. They are recorded here rather than guarded because a
 guard for a shape no author can reach is a guard that can never be watched failing.
 
+### What makes the map of a floor acceptable
+
+Three properties the player depends on, whatever stands on the floor. They are asserted by
+`src/app/SiteMap/movementInvariant.spec.ts` over a hand-built fixture per mechanic, walked through
+every (position × mechanism state) that fixture can reach. They are stated here because they are
+acceptance criteria like the two sets above, not an implementation detail of one spec file.
+
+1. **Every place you can walk to, the map names.** A stopping point `walkableFrom` reaches — a room, or
+   a corridor corner — is some marker's click target. Nothing is reachable and unnamed.
+2. **Taking an offer moves you.** Clicking a target the map offered leaves the explorer standing on it.
+3. **Every tap draws something**, except a corridor corner the player has already walked. That one
+   exemption is deliberate: a walked corner is drawn ground they can see, so it needs no marker to be
+   findable — which is exactly what is NOT true of a one-way mouth, `visible`, never walked, with
+   nothing else pointing at it.
+
+**What enforces each today, audited 2026-09-30.**
+
+| # | Criterion | State |
+| --- | --- | --- |
+| 1 | reachable implies named | holds: `offerViolations`, at every step of every fixture walk |
+| 2 | taking an offer moves you | holds: asserted on every offer the walk takes, with a permanent guard test that no-ops the store's write |
+| 3 | every tap draws something | holds: `markerViolations` reads the rendered DOM. **No permanent guard test** — it has only been watched failing by hand, unlike 1 and 2 |
+
+**Why these are worth stating.** Every regression that shipped green on this branch broke one of them
+while the test written for the change itself passed: an arrow drawn over a dead click, a mechanism's own
+corridor staying dark, a corner dot that revealed without walking, a mouth with a live tap and no marker.
+Each had a test for the thing it changed, and none for "standing anywhere reachable, I can get somewhere
+else".
+
 ### The rules that keep a lock buildable
 
 **The gates must form a tree. One-ways may add any edge on top.**

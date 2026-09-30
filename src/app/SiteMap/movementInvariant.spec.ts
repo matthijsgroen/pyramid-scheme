@@ -10,15 +10,17 @@
 //   For every cell the explorer can stand on, the moves the map OFFERS are exactly the moves
 //   `walkableFrom` says exist — and taking an offer moves the explorer to it.
 //
-// Three halves, asserted every step of a full walk of the floor rather than at a sampled few (this
-// project's rule — a sampled version would have missed at least one of the three):
+// Three properties, asserted at every step of a full walk rather than at a sampled few (this
+// project's rule — a sampled version would have missed at least one of the three). They are stated as
+// acceptance criteria in docs/mods/floor-topology-design.md, "What makes the map of a floor
+// acceptable":
 //
 //   A. offers match walkability — a stopping point (a room, or a corridor corner) that `walkableFrom`
 //      reaches must be some marker's click target; nothing offers a destination the player cannot
 //      actually reach.
-//   C. every tap draws something, except a corridor corner already completed — see `markerViolations`.
 //   B. taking an offer moves the explorer there — clicking a target the map offered must leave the
 //      explorer standing on it.
+//   C. every tap draws something, except a corridor corner already completed — see `markerViolations`.
 //
 // A one-way's mouth is walkable from its landing and is a stopping point like any other corner
 // (`isStoppingPoint` below knows it by `isOneWayMouth`, since it stalls at "visible" rather than

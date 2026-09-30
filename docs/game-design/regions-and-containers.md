@@ -4,6 +4,18 @@ Step 5 of `docs/authored-locks-roadmap.md`. What a floor's coarse layout is, who
 pieces compose. The five questions §5 answers are not repeated here; this is the design that follows
 from them plus the four that were still open on 2026-09-28.
 
+## What a floor built from this must satisfy
+
+The acceptance criteria live in **`docs/mods/floor-topology-design.md`**, in three sets, each with an
+audit of what enforces it today and where the gaps are:
+
+- **"What makes a lock acceptable"** — thirteen criteria for a lock's shape.
+- **"What makes a lever and a gate acceptable"** — nine, for what the player meets at a mechanism.
+- **"What makes the map of a floor acceptable"** — three, for what the map offers and draws.
+
+This document describes the MODEL; those describe what a floor is accepted against. Where the two
+disagree, the criteria win, and this document is what needs correcting.
+
 ## The words
 
 | | |
@@ -25,6 +37,11 @@ A region says what it will TAKE. It never says what fills it.
 ```
 appetite = "reward" | "puzzles" | "nothing" | "free"
 ```
+
+**This list is superseded by lock criterion 5**, which states the vocabulary as
+`"path" | "chest" | "none" | "free" | "lock" | "stair"` — three renames, and `lock` and `stair` new.
+`lock` is what makes nesting expressible in authoring at all. The four kinds below are what the code
+has; the six are what it is accepted against.
 
 - **`reward`** — a reward belongs here.
 - **`puzzles`** — puzzle rooms belong here. The FLOOR authors how many; the region only says the kind.
