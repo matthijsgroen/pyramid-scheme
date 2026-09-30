@@ -101,9 +101,17 @@ inventing a second mechanism.
 
 - A new prompt kind for taking an obstacle, whose **wording comes from the obstacle** so a future kind
   reads differently. Do not hardcode "use zipline" at the call site.
-- Taking it: hide the player, await a promise, then place them at the landing and show them. The promise
-  is where an animation or sound will live; **nothing plays yet**, so it must be a seam and not a stub
-  that pretends to animate.
+- Taking it: hide the player, await a promise, then place them at the landing and show them.
+
+**The promise is where an animation and a sound effect will live in a later iteration** (the owner has
+said so). Nothing plays yet, so it must be an honest seam and not a stub that pretends to animate — but
+it must carry enough that the animation can be written without reworking this. Whatever crosses the seam
+knows **where the traversal starts, where it ends, and which way it runs**; without those three an
+animation cannot be drawn and the seam would have to be widened later.
+
+Two things NOT to build now, because they are guesses about a feature that does not exist: a duration
+knob, and any easing or frame vocabulary. The awaited promise resolving IS the duration. Keep it to what
+a later animation cannot do without, and let that later slice decide the rest.
 - The position write goes through the same path every other move uses (`updatePosition`, which records
   `standingKey` and `positionKey`), so the save and the drawn explorer stay in step.
 
