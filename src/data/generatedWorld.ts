@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 2117876804
+export const worldContentHash = 2051901655
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -479,6 +479,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["niche", "tallyBoard"],
         role: "trade",
         encountersByIndex: { 0: "rush-hour" },
+        seed: 3323337401,
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [{ type: "money", amount: 2 }],
       },
@@ -1002,6 +1003,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["niche", "tallyBoard"],
         role: "puzzle",
         encountersByIndex: { 0: "futoshiki", 1: "sudoku", 2: "rush-hour" },
+        seed: 1354033022,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art5", pieceIndex: 0 },
         rewards: [
           { type: "money", amount: 2 },
@@ -1627,6 +1629,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["niche", "tallyBoard"],
         role: "puzzle",
         encountersByIndex: { 0: "lightbeam", 1: "rush-hour", 2: "constellation" },
+        seed: 3148170099,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 1 },
         rewards: [
           { type: "money", amount: 1 },
@@ -2041,6 +2044,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "water",
         encountersByIndex: { 0: "twin-stars", 1: "canisters", 2: "constellation" },
+        seed: 1902847375,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d2", pieceIndex: 0 },
         rewards: [
           { type: "money", amount: 2 },
@@ -2141,6 +2145,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "water",
         encountersByIndex: { 0: "star-battle", 1: "hidato", 2: "canisters", 3: "procession" },
+        seed: 1902847389,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d2", pieceIndex: 1 },
         rewards: [
           { type: "money", amount: 2 },
@@ -2345,6 +2350,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "eclipse", 1: "canisters", 2: "star-battle" },
+        seed: 458394307,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p1", pieceIndex: 0 },
         rewards: [
           { type: "money", amount: 2 },
@@ -3029,6 +3035,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "lightbeam", 1: "canisters", 2: "eclipse", 3: "twin-stars", 4: "hidato" },
+        seed: 458394293,
         mainEndReward: { type: "mosaicPiece", tier: "junior" },
         rewards: [
           { type: "money", amount: 2 },
@@ -3465,6 +3472,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "constellation", 1: "balance-scale", 2: "sumplete", 3: "star-battle", 4: "hidato" },
+        seed: 1401747208,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d15", pieceIndex: 1 },
         rewards: [
           { type: "money", amount: 2 },
@@ -3735,6 +3743,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "futoshiki", 1: "balance-scale", 2: "constellation", 3: "hidato", 4: "sudoku" },
+        seed: 1401747206,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
       },
@@ -4201,6 +4210,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: ["light", "sky"],
         encountersByIndex: { 0: "constellation", 1: "twin-stars", 2: "lightbeam", 3: "eclipse" },
+        seed: 625093932,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art2", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined],
       },
@@ -4547,6 +4557,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: ["light", "sky"],
         encountersByIndex: { 0: "eclipse", 1: "twin-stars", 2: "star-battle", 3: "constellation", 4: "canisters" },
+        seed: 625093928,
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
       },
@@ -13343,6 +13354,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           7: "constellation",
           8: "canisters",
         },
+        seed: 1604201129,
         mainEndReward: { type: "mosaicPiece", tier: "wizard" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -14820,6 +14832,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           7: "balance-scale",
           8: "canisters",
         },
+        seed: 1901306526,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 0 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -17857,6 +17870,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           8: "hidato",
         },
         corridorStraightness: 0.35,
+        seed: 1974010516,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d12", pieceIndex: 4 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },

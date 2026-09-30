@@ -1204,3 +1204,5 @@ tests untouched. `explorerPos` resolves standing, then position, then the entran
 - **Never two implementers over one file.** Reviews and read-only investigations may overlap freely.
 - **`src/data/generatedWorld.ts` was left dirty three times** by dev-world regeneration during playtest.
   Every brief now opens with the rule and ends with an md5 check.
+
+**Correction (carve seeds stamped):** the world md5 is now `7d07cfc0981759bbdd8c220bea6bfa57`; `f67c3ea9303b04a1d7c9a558d0561620` above is the hash before the 14 searched seeds were stamped.

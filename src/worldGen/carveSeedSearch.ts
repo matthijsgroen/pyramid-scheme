@@ -26,6 +26,17 @@ export type CarveSeedMissing = {
   baseRefusal: CarveCriterion | null
 }
 
+/** Stamped seeds live in [0, 2^32). An address seed is `generateNewSeed`'s up to 1e16, past
+ * `Number.MAX_SAFE_INTEGER`, and `floorAssemblySeed` adds to it, so a stamped `base + offset` could round to
+ * a neighbour or lose the offset altogether. Reducing the base modulo 2^32 before adding keeps every
+ * stamped seed an exact integer that survives being written as a literal. */
+export const STAMPED_SEED_RANGE = 2 ** 32
+
+/** The seed `offset` steps along from `base`. Offset 0 is the address's own seed, untouched; any other
+ * offset is reduced into the stamped range, so the value the search carved is the value that is written. */
+export const seedAtOffset = (base: number, offset: number): number =>
+  offset === 0 ? base : ((base % STAMPED_SEED_RANGE) + offset) % STAMPED_SEED_RANGE
+
 /** Why `result` is not acceptable, or null when it is. */
 const refusal = (result: AssemblerResult): { criterion: CarveCriterion; detail: string } | null => {
   if (!result.success) return { criterion: "carves", detail: JSON.stringify(result.reasons) }
@@ -60,7 +71,7 @@ export const searchCarveSeed = (
   let detail = ""
   let baseRefusal: CarveCriterion | null = null
   for (let offset = 0; offset <= budget; offset++) {
-    const seed = base + offset
+    const seed = seedAtOffset(base, offset)
     // The base seed is carved with the whole ladder, so its refusal can say "attempt 0" (it carves, but
     // late) rather than only "carves"; every other seed is one attempt, and the ladder is not paid for.
     const result = assemble(seed, offset === 0 ? fullLadder : 1)

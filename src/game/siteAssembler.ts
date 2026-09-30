@@ -333,6 +333,16 @@ const DEFAULT_STRAIGHT_BIAS = 0.65
 // FloorConfig.packing.
 const DEFAULT_PACKING = 0.1
 
+// THE LADDER IS LOAD-BEARING, NOT A SAFETY NET. Of the 206 shipped floors, 83 carve only past attempt 0
+// at their address's own seed: their authored `packing` is too small for the carve to fit, and the
+// widening rungs below (more grid, then a doubled `packing`) are what carve them. The bake's carve-seed
+// search (worldGen/carveSeedSearch.ts) pinned a seed that reaches attempt 0 on 14 of those 83; the
+// other 69 reach attempt 0 at no seed in 101 tries, so they depend on this ladder at runtime. Keeping it
+// is a decision: the alternative is re-authoring those 69 floors' `packing`. Removing or shortening it
+// would leave those 69 floors uncarvable ("Site layout unavailable." for every player), and changing its
+// rungs re-carves every floor that climbs them. STRICT_ATTEMPT_ZERO=1 on `yarn generate-world` fails the
+// build by name on a floor that needs it; it is opt-in until those 69 are re-authored.
+//
 // Maze carving is a per-attempt gamble (each attempt reshuffles branch points and section
 // order), so assembleFloor retries. The first RECOVERY_ATTEMPT attempts run at the original
 // sizing; the rest re-size the grid to what the carve actually needs and wind the side chains
