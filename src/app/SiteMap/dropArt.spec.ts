@@ -40,10 +40,10 @@ const dropsIn = (grid: FloorGrid) =>
   nodeSpritesFor(grid, buildRoomClaims(grid), "expert").filter(s => s.key.startsWith("drop:"))
 
 // A mouth's single direction points at its landing, which is the way the drop travels.
-const eastGrid = () => gridOf([[room(["e"]), corridor(["e"]), room(["w"])]])
-const westGrid = () => gridOf([[room(["e"]), corridor(["w"]), room(["w"])]])
-const northGrid = () => gridOf([[room(["s"])], [corridor(["n"])], [room(["n"])]])
-const southGrid = () => gridOf([[room(["s"])], [corridor(["s"])], [room(["n"])]])
+const eastGrid = () => gridOf([[room(["e"]), corridor(["e"]), room([])]])
+const westGrid = () => gridOf([[room([]), corridor(["w"]), room(["w"])]])
+const northGrid = () => gridOf([[room([])], [corridor(["n"])], [room(["n"])]])
+const southGrid = () => gridOf([[room(["s"])], [corridor(["s"])], [room([])]])
 
 // A mouth carries one direction, toward its landing; the landing carries none back.
 const mouthToward =
@@ -76,7 +76,7 @@ describe("a one-way drop draws its art on the mouth", () => {
   })
 
   it("draws nothing while the mouth is still fogged", () => {
-    const grid = gridOf([[room(["e"]), corridor(["e"], "fogged"), room(["w"])]])
+    const grid = gridOf([[room(["e"]), corridor(["e"], "fogged"), room([])]])
     expect(dropsIn(grid)).toEqual([])
   })
 })

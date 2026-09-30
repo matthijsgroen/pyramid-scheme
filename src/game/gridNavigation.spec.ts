@@ -340,6 +340,86 @@ describe(isOneWayMouth, () => {
     expect(isOneWayMouth(grid, 0, 2)).toBe(false)
     expect(isOneWayMouth(grid, 0, 0)).toBe(false)
   })
+
+  // A 1x3 row or 3x1 column, source - corridor - landing, with the corridor's one direction pointing at
+  // the landing. `landingNamesBack` is the only thing that differs between a drop and a dead-end stub.
+  const axes: { name: string; toward: Direction; back: Direction; at: [number, number]; size: [number, number] }[] = [
+    { name: "east", toward: "e", back: "w", at: [0, 1], size: [1, 3] },
+    { name: "west", toward: "w", back: "e", at: [0, 1], size: [1, 3] },
+    { name: "south", toward: "s", back: "n", at: [1, 0], size: [3, 1] },
+    { name: "north", toward: "n", back: "s", at: [1, 0], size: [3, 1] },
+  ]
+  const line = (toward: Direction, back: Direction, size: [number, number], landingNamesBack: boolean): FloorGrid => {
+    const [rows, cols] = size
+    const source: GridCell = { type: "room", roomType: "encounter", dirs: new Set([toward]), state: "reachable" }
+    const mouth: GridCell = { type: "corridor", dirs: new Set([toward]), state: "visible" }
+    const land: GridCell = {
+      type: "room",
+      roomType: "encounter",
+      dirs: new Set(landingNamesBack ? [back] : []),
+      state: "reachable",
+    }
+    // The corridor points at the landing, so the landing sits on the `toward` side of it.
+    const cells = [source, mouth, land]
+    const ordered = toward === "e" || toward === "s" ? cells : [...cells].reverse()
+    return {
+      siteId: "test",
+      rows,
+      cols,
+      entrancePos: [0, 0],
+      exitPos: [0, 0],
+      staircases: {},
+      cells: rows === 1 ? [ordered] : ordered.map(cell => [cell]),
+    }
+  }
+
+  it.each(axes)("recognises a drop's mouth going $name, where the landing names no way back", axis => {
+    expect(isOneWayMouth(line(axis.toward, axis.back, axis.size, false), ...axis.at)).toBe(true)
+  })
+
+  it.each(axes)("does not take a dead-end stub going $name for a mouth, where the landing names the stub", axis => {
+    expect(isOneWayMouth(line(axis.toward, axis.back, axis.size, true), ...axis.at)).toBe(false)
+  })
+
+  it("finds exactly the drop's connector as a mouth on a carved floor, for every seed that carves it", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "junior",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "upper" },
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "lower" },
+      ],
+      oneWays: [{ from: "upper", to: "lower" }],
+    }
+    let carved = 0
+    for (let seed = 0; seed < 30; seed++) {
+      const result = assembleFloor("spike:1", config, seed, undefined, {
+        floorRef: { journeyId: "spike", levelIndex: 0, floorIndex: 0 },
+      })
+      if (!result.success) continue
+      carved++
+      const grid = result.grid
+      // A connector is a corridor whose one direction leads into a cell that names no way back into it.
+      const mouths: string[] = []
+      const connectors: string[] = []
+      for (let r = 0; r < grid.rows; r++)
+        for (let c = 0; c < grid.cols; c++) {
+          const cell = grid.cells[r][c]
+          if (cell.type !== "corridor" || cell.dirs.size !== 1) continue
+          const [dir] = cell.dirs
+          const step = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }[dir]
+          const onward = grid.cells[r + step[0]][c + step[1]]
+          const back = { n: "s", s: "n", e: "w", w: "e" }[dir] as Direction
+          if (onward.type !== "empty" && !onward.dirs.has(back)) connectors.push(`${r},${c}`)
+          if (isOneWayMouth(grid, r, c)) mouths.push(`${r},${c}`)
+        }
+      expect(connectors).toHaveLength(1)
+      expect(mouths).toEqual(connectors)
+    }
+    expect(carved).toBeGreaterThan(0)
+  })
 })
 
 describe(walkableFrom, () => {

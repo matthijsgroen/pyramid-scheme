@@ -35,13 +35,17 @@ const ALL_DIRS: Direction[] = ["n", "s", "e", "w"]
 
 /**
  * The direction from (row,col) toward a ONE-WAY MOUTH standing next to it, if any: a corridor
- * whose only direction points back at (row,col) rather than away from it — the shape a drop's
- * connector takes seen from its landing, the end that names no direction of its own into it. A
- * genuine dead end's single direction is the direction that led there, never the direction back,
- * so it never matches this.
+ * whose only direction points back at (row,col), while (row,col) names no direction into it — the
+ * shape a drop's connector takes seen from its landing. That asymmetry is what a drop is: the carve
+ * gives the connector the way down and the landing no way back up. A dead-end stub hanging off a node
+ * has the same one direction, but its node names the stub in return, so the passage is open both ways
+ * and it is never a mouth.
  */
 export const oneWayMouthDir = (grid: FloorGrid, row: number, col: number): Direction | undefined => {
+  const landing = getCell(grid, row, col)
+  if (!landing || landing.type === "empty") return undefined
   for (const dir of ALL_DIRS) {
+    if (landing.dirs.has(dir)) continue
     const [dr, dc] = MOVES[dir]
     const neighbor = getCell(grid, row + dr, col + dc)
     if (neighbor?.type === "corridor" && neighbor.dirs.size === 1 && neighbor.dirs.has(opposite[dir])) return dir
