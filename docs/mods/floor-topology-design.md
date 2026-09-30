@@ -420,6 +420,82 @@ A floor places it, and ordinary content carries on around it:
 The main path enters at `in` and leaves at `out`. A floor with three locks reads as three blocks
 rather than one tangle — for the author, and for the walk the invariants describe.
 
+### What makes a lock acceptable
+
+Stated by the owner 2026-09-30. Four criteria. A floor that fails any of them is not a lock, whatever
+it looks like on the grid.
+
+**What a lock IS**
+
+1. **A lock is a CONNECTIVITY graph.** It says which places join which, and nothing about size. How
+   many regions a carve produces, how long its corridors are and how many cells it spends are not
+   properties of the lock — two carves of one lock may differ in all of them and be the same lock.
+2. **A lock has one way in and one way out.**
+3. **Every region in the lock is reachable.**
+4. **The player can get from the way in to the way out with no outside help** — no key, tool or
+   progress earned beyond the lock. This is the bracket table below, stated as a criterion: a ward is
+   assumed shut, a hidden pocket assumed unfound, and the lock must still be walkable.
+
+**What a region may hold**
+
+5. **Each region states what content it allows or refuses:**
+   `"path" | "chest" | "none" | "free" | "lock" | "stair"`, defaulting to `"free"`.
+
+**What the builder may do with the shape**
+
+6. **A connecting corridor may absorb side paths.**
+7. **The site builder may carve side paths off a lock's connecting corridors** when it has a lot of
+   content to place.
+8. **A lock may stand anywhere in a larger map** — side sections may hang before its `in` and after
+   its `out`.
+
+**How locks compose**
+
+9. **Locks may be CHAINED.**
+10. **Locks may be NESTED.**
+
+**What a lock may not do**
+
+11. **A pyramid's exit may not stand inside a lock.**
+12. **At the top level, the lock(s) are the ONLY way from entrance to exit.** No route round them.
+
+**What enforces each today:**
+
+| | Enforced by | Gap |
+| --- | --- | --- |
+| 1 | `LockSpec` is a connectivity graph by construction | **The authored graph and the compiled one are different objects, and NOTHING COMPARES THEM** — see below |
+| 2 | `LockSpec` carries a single `in`/`out`; `checkLockSpec` refuses either naming no region | — |
+| 3 | `strandedRegions` structurally, `deadRegions` for a region no reachable state stands in | — |
+| 4 | `walkLock`, with ward keys assumed shut and hidden sections assumed unfound | — |
+
+**THE GAP UNDER CRITERION 1, measured 2026-09-30.** `floorLock` derives the lock by flooding the
+ASSEMBLED GRID and stopping at gates, so what gets walked is whatever the carve produced — the
+authored region graph is an instruction to the carve, never a thing the result is checked against.
+Measured on `doubleBack`, authored as six regions and five gates, compiled at six values of `packing`
+at one seed:
+
+```
+p=3  regions=13 gates=10 mech=3 oneWays=4  unsolvable
+p=4  regions=13 gates=10 mech=3 oneWays=4  unsolvable
+p=5  regions=13 gates=10 mech=3 oneWays=4  SOUND
+p=6  regions=13 gates=11 mech=3 oneWays=4  unsolvable
+p=7  regions=13 gates=10 mech=3 oneWays=4  unsolvable
+p=9  regions=13 gates=10 mech=3 oneWays=4  SOUND
+```
+
+Identical in every count, and still flipping between solvable and not: the carve decides WHICH region
+touches WHICH, which is precisely what criterion 1 says a lock is. The counts differing from the
+authored six and five is not itself the fault — a door is its own region in the compiled walk, so the
+inflation is expected, and criterion 1 says size is not the question. The fault is that connectivity
+is an outcome rather than a requirement.
+
+**What follows: the builder must check the carve against the lock it was given.** Same regions joined
+the same ways, gates between the same pairs — and where the carve produced something else, re-seed and
+try again, then refuse by name after the attempt budget, exactly as it already refuses a dozen other
+things. Until then the only signal is `walkLock` reporting `unsolvable` afterwards, and the only
+remedy is an author sweeping `packing` until a seed happens to land on a shape that works. That is a
+search, not authoring, and it does not scale to master and wizard's 56 gates.
+
 ### The rules that keep a lock buildable
 
 **The gates must form a tree. One-ways may add any edge on top.**
