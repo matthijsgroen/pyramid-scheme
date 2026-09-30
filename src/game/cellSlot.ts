@@ -47,15 +47,15 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
   // rather than only the ones that would otherwise collide.
   if (cell.mechanismId !== undefined) return `x${cell.family ?? "?"}:${cell.mechanismId}`
   // AN OBSTACLE'S GATE IS THE SAME KIND OF ROOM, ONE STEP OVER: a region layout can stand more than
-  // one on the main path (one per connection its route crosses), so family alone no longer picks out
-  // a single room the way it does for a section's own one chest or shop. Its key already carries the
+  // one on the main path (one per connection its route crosses), and a control owns it so it carries no
+  // family: it is named `xobstacle:<authored id>`. Its key already carries the
   // obstacle's AUTHORED id, namespaced "obstacle:<stem>:" the same way a switch's is "switch:"
   // (gateKeyOf, siteAssembler.ts) — the prefix is stripped rather than split on the LAST colon, so the id
   // comes back exact whatever characters it authors, colons included.
   if (cell.requiredKeyId?.startsWith(OBSTACLE_KEY_PREFIX)) {
     const afterPrefix = cell.requiredKeyId.slice(OBSTACLE_KEY_PREFIX.length)
     const id = afterPrefix.slice(afterPrefix.indexOf(":") + 1)
-    return `x${cell.family ?? "?"}:${id}`
+    return `xobstacle:${id}`
   }
   return `x${cell.family ?? "?"}`
 }

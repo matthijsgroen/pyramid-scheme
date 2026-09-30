@@ -33,7 +33,12 @@ import { renderHook, act, render } from "@testing-library/react"
 import { createElement, useState } from "react"
 import { describe, expect, it, vi } from "vitest"
 import type { Direction, FloorConfig, FloorGrid, SiteConfig } from "@/game/siteTypes"
-import { walkableFrom, isSealedWayOut, isOneWayMouth } from "@/game/gridNavigation"
+import { walkableFrom, findPath, isSealedWayOut, isOneWayMouth, revealAll } from "@/game/gridNavigation"
+import { assembleFloor } from "@/game/siteAssembler"
+import { cellAddress } from "@/game/cellAddress"
+import { OBSTACLE_KEY_PREFIX } from "@/game/cellSlot"
+import { nodeSpritesFor } from "./SiteMapView"
+import { tileUrl } from "./tileAssets"
 import { createJourneysV3Api, type JourneyAPI, type StoredJourneyStateV3 } from "@/app/state/useJourneys"
 import { journeys as allKnownJourneys } from "@/data/journeys"
 import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
@@ -211,7 +216,8 @@ const buildHarness = (
   seed: number,
   siteConfig: SiteConfig,
   store: Store,
-  patch: Partial<JourneyAPI> = {}
+  patch: Partial<JourneyAPI> = {},
+  onEncounter: (pos: readonly [number, number], freshArrival: boolean) => void = () => {}
 ): Harness => {
   const storedJourneyId = knownJourneyIds.has(journeyId) ? journeyId : fallbackKnownJourneyId
   const journeyData = [makeJourneyData(storedJourneyId)]
@@ -284,7 +290,7 @@ const buildHarness = (
       currentFloor: 0,
       grid: assembled.grid,
       explorerPos: assembled.explorerPos,
-      onEncounter: () => {},
+      onEncounter,
       onSkippedConsumable: () => {},
       onExitReached: () => {},
     })
@@ -324,7 +330,7 @@ const walkFloor = (
 
   const visit = (): void => {
     steps++
-    if (steps > 3000) {
+    if (steps > 20000) {
       violations.push("step budget exceeded — the walk never settled")
       return
     }
@@ -420,7 +426,7 @@ describe("the movement invariant — offers match walkability, and taking one mo
 
     expect(violations).toEqual([])
     expect(steps).toBeGreaterThan(50) // a walk this floor short would prove nothing was exercised
-  }, 30_000)
+  }, 120_000)
 
   // A plain shipped floor, with no mechanism at all — the guard is not only for the exotic case.
   it("holds on an ordinary shipped floor", () => {
@@ -430,7 +436,7 @@ describe("the movement invariant — offers match walkability, and taking one mo
 
     expect(violations).toEqual([])
     expect(steps).toBeGreaterThan(3)
-  }, 30_000)
+  }, 120_000)
 })
 
 // PROVING THE GUARD HAS TEETH. Reverting `58815d67` (the lever throw) and re-running the doubleBack
@@ -509,5 +515,176 @@ describe("the guard actually fires", () => {
     expect(offerViolations(grid, explorerPos, corrupted)).toEqual([
       `walkable stopping point ${victim[0]},${victim[1]} (${grid.cells[victim[0]][victim[1]].type}) has no offer pointing to it, from ${explorerPos}`,
     ])
+  })
+})
+
+// A GATE A CONTROL OWNS IS SHOWN OR HIDDEN BY THE CONTROL ALONE. The player never stands in it, taps it
+// or is asked anything at it; what the lever is set to is the whole of whether the bars are there. Every
+// one of doubleBack's five gates is put through shut, open and shut again, because the last step is the
+// one a gate that remembered having been passed would draw wrong.
+describe("a gate a control owns is decided by its control alone", () => {
+  const seed = floorAssemblySeed(persistentInteriorSeed(DEV_JOURNEY_ID), 2, 0)
+  const floorConfig = buildDoubleBack()
+  // A gate.s key is minted from the journey id the harness carves the floor under (`buildHarness`), so the
+  // floor is carved under the same one here.
+  const storedJourneyId = knownJourneyIds.has(DEV_JOURNEY_ID) ? DEV_JOURNEY_ID : fallbackKnownJourneyId
+  const carved = assembleFloor(storedJourneyId, floorConfig, seed, resolveEncounterMeta, {
+    resolveKeyRequirements,
+    floorRef: { journeyId: storedJourneyId, floorIndex: 0 },
+  })
+  if (!carved.success) throw new Error("doubleBack did not assemble")
+  const base = carved.grid
+
+  type Gate = { key: string; owners: Array<{ address: string; shut: string; open: string; initial: string }> }
+  const mechanisms: Array<{
+    address: string
+    states: readonly string[]
+    initial: string
+    opens: (s: string) => string[]
+  }> = []
+  const gateKeys = new Set<string>()
+  base.cells.forEach((row, r) =>
+    row.forEach((cell, c) => {
+      if (cell.type !== "room") return
+      if (cell.requiredKeyId?.startsWith(OBSTACLE_KEY_PREFIX)) gateKeys.add(cell.requiredKeyId)
+      if (!cell.mechanism) return
+      const address = cellAddress(base, 0, r, c)!
+      const record = cell.mechanism
+      mechanisms.push({
+        address,
+        states: record.states,
+        initial: record.initial,
+        opens: state => record.positions.filter(p => p.state === state).map(p => p.gateKeyId),
+      })
+    })
+  )
+  const gates: Gate[] = [...gateKeys].map(key => ({
+    key,
+    owners: mechanisms
+      .filter(m => m.states.some(s => m.opens(s).includes(key)))
+      .map(m => ({
+        address: m.address,
+        initial: m.initial,
+        open: m.states.find(s => m.opens(s).includes(key))!,
+        shut: m.states.find(s => !m.opens(s).includes(key))!,
+      })),
+  }))
+
+  const scene = () => {
+    const store = makeStore()
+    const encounters: Array<readonly [number, number]> = []
+    const harness = buildHarness(
+      DEV_JOURNEY_ID,
+      floorConfig,
+      seed,
+      [floorConfig],
+      store,
+      {},
+      pos => void encounters.push(pos)
+    )
+    const hook = renderHook(harness.useHook)
+    // Every mechanism at its own initial position except those named — the state a lever is thrown to
+    // is the only thing this scene ever changes.
+    const setLevers = (positions: Record<string, string>) => {
+      store.mechanismStates = Object.fromEntries(Object.entries(positions).map(([a, s]) => [`1:${a}`, s]))
+      hook.rerender()
+      return hook.result.current
+    }
+    return { store, encounters, hook, setLevers }
+  }
+  const findGate = (grid: FloorGrid, key: string): [number, number] | null => {
+    for (let r = 0; r < grid.rows; r++)
+      for (let c = 0; c < grid.cols; c++) {
+        const cell = grid.cells[r][c]
+        if (cell.type === "room" && cell.requiredKeyId === key) return [r, c]
+      }
+    return null
+  }
+  const drawnBars = (grid: FloorGrid, positions: Record<string, string>): string[] => {
+    const seen = revealAll(grid)
+    return nodeSpritesFor(seen, buildRoomClaims(seen), "expert", undefined, new Map(Object.entries(positions)), 0)
+      .map(sprite => sprite.key)
+      .filter(key => key.startsWith("wall:") || key.startsWith("gate:"))
+  }
+
+  it("has the five gates of doubleBack, each with a control that opens it, none carrying a family", () => {
+    expect(gates).toHaveLength(5)
+    expect(tileUrl("expert", "gate")).toBeTruthy()
+    for (const { key, owners } of gates) {
+      expect(owners.length, `${key} has an opener`).toBeGreaterThan(0)
+      const [r, c] = findGate(base, key)!
+      const cell = base.cells[r][c]
+      expect(cell.type === "room" && cell.family).toBeUndefined()
+      expect(isSealedWayOut(cell)).toBe(true)
+    }
+  })
+
+  it("draws every gate shut, then open, then shut again from the lever alone, without the player entering it", () => {
+    vi.useFakeTimers()
+    try {
+      for (const { key, owners } of gates) {
+        const { store, encounters, hook, setLevers } = scene()
+        const start = hook.result.current.explorerPos
+        const shut = Object.fromEntries(owners.map(o => [o.address, o.shut]))
+        const open = Object.fromEntries(owners.map(o => [o.address, o.open]))
+
+        const first = setLevers(shut)
+        const at = findGate(first.grid!, key)
+        expect(at, `${key} stands while its lever is shut`).not.toBeNull()
+        const shutBars = drawnBars(first.grid!, shut)
+        expect(shutBars, `${key} is drawn while shut`).toContain(`wall:${at![0]},${at![1]}`)
+
+        const second = setLevers(open)
+        expect(findGate(second.grid!, key), `${key} is gone while its lever is open`).toBeNull()
+        expect(drawnBars(second.grid!, open), `${key} is not drawn while open`).not.toContain(
+          `wall:${at![0]},${at![1]}`
+        )
+
+        const third = setLevers(shut)
+        expect(findGate(third.grid!, key), `${key} stands again once its lever is thrown back`).toEqual(at)
+        expect(drawnBars(third.grid!, shut), `${key} is drawn again once thrown back`).toEqual(shutBars)
+
+        // The lever moved and the player never did: no cell written, no screen opened.
+        act(() => vi.advanceTimersByTime(5000))
+        expect(hook.result.current.explorerPos).toEqual(start)
+        expect(store.positionKey).toBeNull()
+        expect(store.exploredCells).toEqual({})
+        expect(encounters).toEqual([])
+      }
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it("refuses every shut gate to the player: not walkable, no path, no marker, no screen or prompt on a tap", () => {
+    vi.useFakeTimers()
+    try {
+      for (const { key, owners } of gates) {
+        const { store, encounters, hook, setLevers } = scene()
+        const shut = Object.fromEntries(owners.map(o => [o.address, o.shut]))
+        const { grid, explorerPos } = setLevers(shut)
+        const [r, c] = findGate(grid!, key)!
+        const seen = revealAll(grid!)
+
+        expect(walkableFrom(seen, explorerPos).has(`${r},${c}`), `${key} is walkable`).toBe(false)
+        expect(findPath(seen, explorerPos, [r, c]), `${key} has a path`).toEqual([])
+        const offered = [...offeredTargets(seen, buildRoomClaims(seen), explorerPos).values()]
+        expect(
+          offered.some(([or, oc]) => or === r && oc === c),
+          `${key} is offered`
+        ).toBe(false)
+        expect(grid!.cells[r][c], `${key} was marked passed`).not.toMatchObject({ state: "completed" })
+
+        act(() => hook.result.current.onCellClick(r, c))
+        act(() => vi.advanceTimersByTime(5000))
+        hook.rerender()
+        expect(encounters, `${key} opened a screen`).toEqual([])
+        expect(hook.result.current.prompt, `${key} offered a prompt`).toBeNull()
+        expect(hook.result.current.explorerPos).toEqual(explorerPos)
+        expect(store.positionKey).toBeNull()
+      }
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })

@@ -2392,6 +2392,43 @@ describe("a gate on a connection off the threaded route", () => {
     expect(result.success === false && result.reasons).toEqual([{ type: "obstacleOffRoute", id: "nowhere" }])
   })
 
+  // A gate is owned by the control that opens it and has no interaction of its own, so one no control
+  // opens can never be passed: a wall the player is shown as a door. Each gate in turn is left out of
+  // every control's `opens`, and the floor is refused naming that gate.
+  it("refuses every gate that no control opens, naming it", () => {
+    const base = doubleBackConfig()
+    for (const orphan of base.obstacles!.map(o => o.id)) {
+      const config: FloorConfig = {
+        ...base,
+        controls: base.controls!.map(control => ({
+          ...control,
+          opens: Object.fromEntries(
+            Object.entries(control.opens).map(([state, ids]) => [state, ids.filter(id => id !== orphan)])
+          ),
+        })),
+      }
+      const result = assembleFloor(`site-doubleback-orphan-${orphan}`, config, 42)
+
+      expect(result.success).toBe(false)
+      expect(result.success === false && result.reasons).toEqual([{ type: "obstacleUnowned", id: orphan }])
+    }
+  })
+
+  // A gate a control owns carries no family: nothing stands in it to enter, so the interaction is at
+  // the control alone.
+  it("writes every obstacle gate without a family", () => {
+    const result = assembleFloor("site-doubleback-familyless", doubleBackConfig(), 42)
+    if (!result.success) throw new Error("doubleBack did not assemble")
+
+    const gates = gateRoomsOf(result.grid)
+    expect(gates.map(g => g.id).sort()).toEqual(["forkRight", "greenLeft", "greenRight"])
+    for (const { pos } of gates) {
+      const cell = result.grid.cells[pos[0]][pos[1]]
+      expect(cell.type === "room" && cell.family).toBeUndefined()
+      expect(cell.type === "room" && cell.tags).toContain("gate")
+    }
+  })
+
   // `forkRight` stands on the chain's own MOUTH (entrance → rightLower), which always resolves to
   // `cells[0]` (regionOfStep always seats the first-declared hosted region from the front) — the same
   // cell a floor-key/tomb-key gate always claims. Watched failing before this refusal existed: the

@@ -2146,7 +2146,10 @@ export const assembleFloor = (
         const [obstacleId] = [...gateIndexByObstacle].find(([, index]) => index === mi)!
         roomSpecs.set(posKey(r, c), {
           roomType: "encounter",
-          family: keyGate.familyId,
+          // A gate a control owns has no interaction of its own: the interaction is at the control, and
+          // the gate only shows or hides. No family means nothing stands in it to enter or tap, it draws
+          // as bars from its tags, and `openWaysOut` gives the cell back its corridor while its control
+          // holds it open.
           tags: keyGate.tags,
           requiredKeyId: gateKeyOf(obstacleId),
         })
@@ -2243,7 +2246,7 @@ export const assembleFloor = (
           const [gr, gc] = cells[loc.cellIndex]
           roomSpecs.set(posKey(gr, gc), {
             roomType: "encounter",
-            family: keyGate.familyId,
+            // Owned by a control, so nothing stands in it (see the main path's obstacle gate).
             tags: keyGate.tags,
             requiredKeyId: gateKeyOf(obstacleId),
           })
