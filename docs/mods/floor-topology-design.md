@@ -81,6 +81,20 @@ The slots are what a wish has to say for the builder to find it a home. An autho
 same things outright — the places, the gates, the mechanism and what each of its states opens — and
 leaves the builder only the carve.
 
+### A mechanism is a room; a one-way is a corridor
+
+Stated by the owner 2026-09-30, and it holds everywhere — inside a lock and out of one.
+
+**A mechanism stands in a ROOM.** A lever or a lightbeam switch is somewhere the player arrives at and
+does something in, so it reads as a room like any other encounter.
+
+**A one-way stands in a CORRIDOR.** A drop is something the passage does rather than a place to be,
+which is also why it is drawn on the connector's own floor square rather than in the boundary gap.
+
+Neither is a property of locks. A lightbeam switch on an ordinary floor and a section-addressed drop
+obey the same rule, and a change to content placement that put a mechanism somewhere that is not a
+room would break it everywhere at once.
+
 ### The unit of a claim is a room-to-corridor boundary
 
 A gate occupies a boundary rather than a cell, which is what lets two features be told apart on a
