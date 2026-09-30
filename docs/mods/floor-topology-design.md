@@ -503,6 +503,35 @@ authored six and five is not itself the fault — a door is its own region in th
 inflation is expected, and criterion 1 says size is not the question. The fault is that connectivity
 is an outcome rather than a requirement.
 
+**Where each criterion stands, audited 2026-09-30.**
+
+| # | Criterion | State |
+| --- | --- | --- |
+| 1 | connectivity graph | type is real; **nothing compares the carve to the authoring** |
+| 2 | one in, one out | authored side refused by name and tested; compiled side checked at runtime, no regression test |
+| 3 | every region reachable | `strandedRegions` + `deadRegions`, both tested, refused at build and reported by `validate-world` |
+| 4 | no outside help | `walkLock` with wards sealed in `floorLock`; ward half tested, **hidden-section half untested** |
+| 5 | region vocabulary | the four existing kinds only; `lock` and `stair` do not exist |
+| 6 | corridors absorb side paths | true, but **emergent from the flood algorithm** — no rule to violate |
+| 7 | side paths off a lock's corridors | built, tested, refused by name |
+| 8 | a lock stands anywhere in a map | **not there** |
+| 9 | locks chain | only as gates in sequence inside one flat graph |
+| 10 | locks nest | **not there — no container abstraction exists** |
+| 11 | exit not inside a lock | **not there** |
+| 12 | no route round a top-level lock | **not there** |
+
+**THE ONE FACT BEHIND 8, 10, 11, 12 AND 1's GUARANTEE.** `regionLayout` is stretched to cover the
+floor's ENTIRE main path, and the lock's ports are the floor's own entrance and exit. **A lock is not
+something placed on a floor; a lock currently IS the floor.** So a lock cannot stand mid-map because it
+occupies the map; nesting has no container to nest; the exit cannot be excluded because the exit is
+defined as the lock's `out`; nothing checks for a bypass because there is no outside to bypass through;
+and nothing compares carve to authoring because the authoring was only ever an instruction to the carve.
+
+`doubleBack` works precisely because it is the whole floor. The container with ports this document
+describes above — "entered and left through its **ports**", "a region may be filled by floor content OR
+by another container" — is the piece that was never built, and building it is what turns five separate
+gaps into one job.
+
 **What follows: the builder must check the carve against the lock it was given.** Same regions joined
 the same ways, gates between the same pairs — and where the carve produced something else, re-seed and
 try again, then refuse by name after the attempt budget, exactly as it already refuses a dozen other
