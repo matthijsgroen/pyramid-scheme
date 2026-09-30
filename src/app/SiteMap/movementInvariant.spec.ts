@@ -76,6 +76,18 @@ vi.mock("@/game/siteAssembler", async importOriginal => {
   }
 })
 
+// The marker rule the map draws by. A guard test flips `dropMouthMarkers` to break exactly one branch of
+// it — the mouth's — and leaves every other marker, and every tap, as the real rule makes them.
+const { markerFaults } = vi.hoisted(() => ({ markerFaults: { dropMouthMarkers: false } }))
+vi.mock("./clickTargets", async importOriginal => {
+  const actual = await importOriginal<typeof import("./clickTargets")>()
+  return {
+    ...actual,
+    markerAt: (...args: Parameters<typeof actual.markerAt>) =>
+      markerFaults.dropMouthMarkers && isOneWayMouth(args[0], args[2], args[3]) ? null : actual.markerAt(...args),
+  }
+})
+
 const standIn = (grid: FloorGrid): FloorConfig => {
   const config: FloorConfig = {
     pathPuzzles: 1,
@@ -576,6 +588,71 @@ describe("the guard actually fires", () => {
     expect(offerViolations(carvedGrid, explorerPos, corrupted)).toEqual([
       `walkable stopping point ${victim[0]},${victim[1]} (${carvedGrid.cells[victim[0]][victim[1]].type}) has no offer pointing to it, from ${explorerPos}`,
     ])
+  })
+})
+
+// Property C's guard. The bug it stands for: a one-way mouth had a live tap and no marker, because the
+// tap read `clickTargetAt` while the marker re-derived its own condition. Only the marker rule is
+// broken here (a mouth draws nothing); the grid, the offers and the taps stay the real ones.
+describe("the marker guard actually fires", () => {
+  // (0,0) source -> (0,1) mouth -> (0,2) landing, where the explorer stands; the landing also opens
+  // south onto (1,2), a corridor corner the player has already walked, and on to a room at (1,3).
+  const grid: FloorGrid = {
+    siteId: "marker-guard",
+    rows: 2,
+    cols: 4,
+    entrancePos: [0, 0],
+    exitPos: [1, 3],
+    staircases: {},
+    cells: [
+      [
+        { type: "room", roomType: "encounter", dirs: new Set(["e"]), state: "reachable" },
+        { type: "corridor", dirs: new Set(["e"]), state: "visible" },
+        { type: "room", roomType: "encounter", dirs: new Set(["s"]), state: "reachable" },
+        { type: "empty" },
+      ],
+      [
+        { type: "empty" },
+        { type: "empty" },
+        { type: "corridor", dirs: new Set(["n", "e"]), state: "completed" },
+        { type: "room", roomType: "encounter", dirs: new Set(["w"]), state: "reachable" },
+      ],
+    ],
+  }
+  const explorerPos = [0, 2] as const
+  const mouth = [0, 1] as const
+  const corner = [1, 2] as const
+  const message = ([r, c]: readonly [number, number]) => {
+    const { cx, cy } = cellCenter(r, c)
+    return `a tap at (left ${cx - CELL / 2}px, top ${cy - CELL / 2}px) draws nothing, from ${explorerPos}`
+  }
+  const withMouthMarkerDropped = <T>(run: () => T): T => {
+    markerFaults.dropMouthMarkers = true
+    try {
+      return run()
+    } finally {
+      markerFaults.dropMouthMarkers = false
+    }
+  }
+
+  it("is silent while every tap draws something", () => {
+    expect(markerViolations(grid, explorerPos)).toEqual([])
+  })
+
+  it("catches a one-way mouth that is tappable and draws nothing", () => {
+    const offers = offeredTargets(grid, buildRoomClaims(grid), explorerPos)
+    expect(offers.get(`${mouth[0]},${mouth[1]}`)).toEqual([...mouth]) // the mouth really is a tap
+    expect(withMouthMarkerDropped(() => markerViolations(grid, explorerPos))).toEqual([message(mouth)])
+  })
+
+  it("stays silent for a corridor corner already walked, though it is a tap that draws nothing", () => {
+    const offers = offeredTargets(grid, buildRoomClaims(grid), explorerPos)
+    expect(offers.get(`${corner[0]},${corner[1]}`)).toEqual([...corner]) // the corner really is a tap
+    // The exemption only means something if the corner truly draws nothing: with the mouth broken as
+    // well, the corner is the one other tap without a marker, and still is not reported.
+    const violations = withMouthMarkerDropped(() => markerViolations(grid, explorerPos))
+    expect(violations).not.toContain(message(corner))
+    expect(violations).toEqual([message(mouth)])
   })
 })
 

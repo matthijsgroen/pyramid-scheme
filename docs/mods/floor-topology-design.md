@@ -622,7 +622,7 @@ acceptance criteria like the two sets above, not an implementation detail of one
 | --- | --- | --- |
 | 1 | reachable implies named | holds: `offerViolations`, at every step of every fixture walk |
 | 2 | taking an offer moves you | holds: asserted on every offer the walk takes, with a permanent guard test that no-ops the store's write |
-| 3 | every tap draws something | holds: `markerViolations` reads the rendered DOM. **No permanent guard test** — it has only been watched failing by hand, unlike 1 and 2 |
+| 3 | every tap draws something | holds: `markerViolations` reads the rendered DOM, with a permanent guard test that drops the one-way mouth's marker and asserts the mouth alone is reported while a walked corner stays exempt |
 
 **Why these are worth stating.** Every regression that shipped green on this branch broke one of them
 while the test written for the change itself passed: an arrow drawn over a dead click, a mechanism's own
