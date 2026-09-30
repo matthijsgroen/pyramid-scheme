@@ -34,7 +34,6 @@ import { PuzzleRoomContext } from "@/mods/core/app/puzzleState"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { DetectorButton } from "@/ui/atoms/DetectorButton"
 import { BackButton } from "@/ui/atoms/BackButton"
-import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
 import { SiteHudBar } from "@/ui/atoms/SiteHudBar"
 import { FloorKeyRing } from "@/ui/molecules/FloorKeyRing"
@@ -288,18 +287,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           ))}
         </div>
       </SiteHudBar>
-      {/* ponytail: plain confirm dialog for now — the exit chamber's own artwork (daylight through
-          the doorway) can take over this step later without moving the decision. */}
-      <ConfirmModal
-        isOpen={exit.prompting}
-        title={t("ui.leaveSiteTitle")}
-        message={t("ui.leaveSiteMessage")}
-        confirmText={t("ui.leaveSiteConfirm")}
-        cancelText={t("ui.leaveSiteCancel")}
-        confirmButtonClass="bg-amber-600 hover:bg-amber-700"
-        onConfirm={exit.confirm}
-        onCancel={exit.cancel}
-      />
       {exit.leaving && (
         <EntranceTransitionOverlay
           origin="50% 50%"

@@ -38,10 +38,6 @@
     "backArrow": "←",
     "back": "← Terug",
     "floor": "Verdieping {{number}}",
-    "leaveSiteTitle": "De weg naar buiten",
-    "leaveSiteMessage": "Daglicht valt door de deuropening. Deze plek verlaten en de expeditie beëindigen?",
-    "leaveSiteConfirm": "Naar buiten",
-    "leaveSiteCancel": "Binnen blijven",
     "enterSite": "Naar binnen",
     "prompt": {
       "here": "Onderzoek",

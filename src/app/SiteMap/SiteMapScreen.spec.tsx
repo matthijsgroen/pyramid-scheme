@@ -187,7 +187,7 @@ describe(SiteMapScreen, () => {
 
   it("offers the way out beside the explorer, and asks nothing until it is taken", async () => {
     const onSiteComplete = vi.fn()
-    const { container, queryByText } = await renderScreen(onSiteComplete)
+    const { container } = await renderScreen(onSiteComplete)
 
     await walkToExit(container)
 
@@ -195,12 +195,12 @@ describe(SiteMapScreen, () => {
     // Beside the explorer, which is the cell he walked to — not wherever he set off from.
     const hanging = container.querySelector<HTMLElement>("[data-map-prompt]")!
     expect(parseFloat(hanging.style.left)).toBe(cellCenter(0, 2).cx)
-    expect(queryByText("ui.leaveSiteConfirm")).toBeNull()
+    expect(container.querySelector(".animate-entrance-zoom")).toBeNull()
     expect(onSiteComplete).not.toHaveBeenCalled()
   })
 
   it("takes the prompt away when the player walks back off the exit", async () => {
-    const { container, queryByText } = await renderScreen()
+    const { container } = await renderScreen()
     await walkToExit(container)
 
     fireEvent.click(nodeAt(container, 0))
@@ -209,38 +209,39 @@ describe(SiteMapScreen, () => {
     })
 
     expect(container.querySelector("[data-map-prompt]")).toBeNull()
-    expect(queryByText("ui.leaveSiteConfirm")).toBeNull()
   })
 
-  it("asks before leaving, so walking into an off-screen exit doesn't end the expedition", async () => {
+  it("doesn't finish the run just by taking the way out, only once the transition completes", async () => {
     const onSiteComplete = vi.fn()
-    const { container, queryByText } = await renderScreen(onSiteComplete)
+    const { container } = await renderScreen(onSiteComplete)
 
     await takeTheWayOut(container)
 
-    expect(queryByText("ui.leaveSiteConfirm")).not.toBeNull()
+    expect(container.querySelector(".animate-entrance-zoom")).not.toBeNull()
     expect(onSiteComplete).not.toHaveBeenCalled()
   })
 
   it("stays in the site when the player turns back at the exit", async () => {
     const onSiteComplete = vi.fn()
-    const { container, getByText, queryByText } = await renderScreen(onSiteComplete)
-    await takeTheWayOut(container)
+    const { container } = await renderScreen(onSiteComplete)
+    await walkToExit(container)
 
-    fireEvent.click(getByText("ui.leaveSiteCancel"))
+    // Turning back off the exit rather than taking the prompt.
+    fireEvent.click(nodeAt(container, 0))
+    await act(async () => {
+      vi.advanceTimersByTime(1000)
+    })
 
-    expect(queryByText("ui.leaveSiteConfirm")).toBeNull()
+    expect(container.querySelector(".animate-entrance-zoom")).toBeNull()
     expect(onSiteComplete).not.toHaveBeenCalled()
   })
 
-  it("leaves the site once the player confirms", async () => {
-    const { container, getByText, queryByText } = await renderScreen()
+  it("leaves the site once the player takes the way out", async () => {
+    const { container } = await renderScreen()
     await takeTheWayOut(container)
 
-    fireEvent.click(getByText("ui.leaveSiteConfirm"))
-
-    // Confirming hands over to the exit transition, which completes the site when it finishes.
-    expect(queryByText("ui.leaveSiteConfirm")).toBeNull()
+    // Taking the way out hands over to the exit transition, which completes the site when it finishes.
+    expect(container.querySelector("[data-map-prompt]")).toBeNull()
     expect(container.querySelector(".animate-entrance-zoom")).not.toBeNull()
   })
 

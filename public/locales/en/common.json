@@ -38,10 +38,6 @@
     "backArrow": "←",
     "back": "← Back",
     "floor": "Floor {{number}}",
-    "leaveSiteTitle": "The way out",
-    "leaveSiteMessage": "Daylight falls through the doorway. Leave this place and end the expedition?",
-    "leaveSiteConfirm": "Step outside",
-    "leaveSiteCancel": "Stay inside",
     "enterSite": "Step inside",
     "prompt": {
       "here": "Investigate",

@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Saved expeditions start over this release. The way a site's rooms and doors are recorded has changed, and an old save cannot be read against the new one.
 - One wizard floor now has a short passage between two dead ends that used to stand apart. Both sit behind the same door, so it opens nothing you had not already earned.
 - Walking to a staircase, a shop, the way out or a room you can re-enter now leaves a button beside you to go in.
+- Pressing the button at the way out now leaves right away, instead of asking you to confirm a second time.
 - Pyramid corridors are much shorter. The walk from one puzzle to the next is about half what it was, and a starter floor a third.
 - Eclipse boards now come in three kinds: with signs, without signs, and ones that never make you compare two lines.
 - Star battle and twin stars boards no longer hand you a star to start with, and the hard ones ask you to rule squares out first.
