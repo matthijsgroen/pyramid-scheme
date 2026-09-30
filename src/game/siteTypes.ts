@@ -524,6 +524,10 @@ export type FloorConfig = {
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** The seed this floor carves at, in place of the one its address derives. Read inside the assembler, so
+   * every entry point that carves the floor (the hook, stair travel, the scanner, the bake) agrees. Baked
+   * from a search that found a seed carving soundly on the first attempt. */
+  seed?: number
   /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */
   sealed?: boolean
   /** Opaque payload for whichever family renders the main path's rooms (e.g. a tableau's
@@ -658,7 +662,9 @@ export type AssemblerReason =
    * carveAgreement.ts. */
   | CarveFault
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
-export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
+/** `attempt` is the 0-based attempt that carved the floor: anything past 0 carved on a widened grid and a
+ * doubled `packing`, not the authored one. */
+export type AssemblerResult = { success: true; grid: FloorGrid; attempt: number } | AssemblerFailure
 
 // ── Detector types ────────────────────────────────────────────────────────────
 

@@ -149,6 +149,7 @@ const floorFieldEmitters: {
   encountersByIndex: v => (Object.keys(v).length ? `encountersByIndex: ${serializeEncountersByIndex(v)}` : null),
   corridorStraightness: v => `corridorStraightness: ${v}`,
   packing: v => `packing: ${v}`,
+  seed: v => `seed: ${v}`,
   sealed: v => (v ? `sealed: true` : null),
   mainEndReward: v => `mainEndReward: ${serializeReward(v)}`,
   rewards: v => (v.length ? `rewards: ${serializePuzzleRewards(v)}` : null),

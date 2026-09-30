@@ -128,6 +128,12 @@ describe("tier fingerprints", () => {
       expect(tierFingerprints(shipped, configs)).toEqual(actual)
     })
 
+    it("ignores a stamped carve seed, in every tier", () => {
+      const configs = cloneConfigs()
+      for (const j of shipped) for (const site of configs[j.id]) for (const floor of site) floor.seed = 123456
+      expect(tierFingerprints(shipped, configs)).toEqual(actual)
+    })
+
     it("hashes the same whatever order the journeys are listed in", () => {
       expect(tierFingerprints([...shipped].reverse(), generatedWorldConfigs)).toEqual(actual)
     })

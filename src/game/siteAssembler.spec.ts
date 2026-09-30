@@ -82,6 +82,35 @@ describe(assembleFloor, () => {
     expect(result.success).toBe(true)
   })
 
+  it("reports the attempt that carved the floor", () => {
+    const result = assembleFloor("site-1", basicConfig(), 42)
+    if (!result.success) throw new Error("assembly failed")
+    expect(result.attempt).toBe(0)
+  })
+
+  it("carves at the seed the floor was told, not the one it is handed", () => {
+    const told = assembleFloor("site-1", { ...basicConfig(), seed: 7 }, 42)
+    const direct = assembleFloor("site-1", basicConfig(), 7)
+    const other = assembleFloor("site-1", { ...basicConfig(), seed: 7 }, 9999)
+    if (!told.success || !direct.success || !other.success) throw new Error("assembly failed")
+    expect(told.grid.cells).toEqual(direct.grid.cells)
+    expect(other.grid.cells).toEqual(direct.grid.cells)
+  })
+
+  it("carves differently for a different told seed", () => {
+    const grids = [1, 2, 3, 4, 5, 6].map(seed => {
+      const result = assembleFloor("site-1", { ...basicConfig(), pathPuzzles: 3, seed }, 42)
+      if (!result.success) throw new Error("assembly failed")
+      return JSON.stringify(result.grid.cells)
+    })
+    expect(new Set(grids).size).toBeGreaterThan(1)
+  })
+
+  it("stops after maxAttempts", () => {
+    const result = assembleFloor("site-1", basicConfig(), 42, undefined, { maxAttempts: 0 })
+    expect(result.success).toBe(false)
+  })
+
   it("produces a grid that passes validateSite", () => {
     const result = assembleFloor("site-1", basicConfig(), 42)
     if (!result.success) throw new Error("assembly failed")

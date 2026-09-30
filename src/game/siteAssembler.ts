@@ -528,6 +528,10 @@ export type AssembleFloorKeyRequirements = {
    * resolveEncounter is: this module knows a floor's chains, never which world they belong to.
    * Absent (stories, specs, the builder) leaves rooms unstamped and they index by their own hash. */
   resolveBoardIndex?: ResolveBoardIndex
+  /** How many attempts the floor may take, at most ASSEMBLY_ATTEMPTS. The bake's seed search asks for 1:
+   * it wants a seed that carves at the authored `packing`, and a seed that only carves after the ladder
+   * widened the grid is one it has to reject, so it must not pay for the climb to learn that. */
+  maxAttempts?: number
 }
 
 // A floor-key gate whose keyId is authored gets its key from wherever the author names (a
@@ -640,7 +644,7 @@ const doorsShutting = (
 export const assembleFloor = (
   siteId: string,
   authoredConfig: FloorConfig,
-  seed: number,
+  addressSeed: number,
   resolveEncounter: ResolveEncounter = defaultResolveEncounter,
   keyRequirements: AssembleFloorKeyRequirements = {}
 ): AssemblerResult => {
@@ -648,6 +652,7 @@ export const assembleFloor = (
     resolveKeyRequirements = defaultResolveKeyRequirements,
     floorRef = { journeyId: siteId, floorIndex: 0 },
     resolveBoardIndex,
+    maxAttempts = ASSEMBLY_ATTEMPTS,
   } = keyRequirements
   // Before anything is carved: two sections a save could not tell apart is a data-loss bug, not a
   // layout one, so it fails the floor loudly here rather than quietly sharing one player's progress
@@ -1047,6 +1052,9 @@ export const assembleFloor = (
   const distanceFor = (p: number) => Math.max(1, Math.round(mainPathCells * (1 + 5 * p)))
   // The authored wish is where the retry STARTS, not what it is held to: see the widening in the loop.
   let packing = config.packing ?? DEFAULT_PACKING
+  // The seed a floor was told wins over the one its address derives, read here so every caller that
+  // carves the floor agrees without re-deriving it.
+  const seed = config.seed ?? addressSeed
   let targetDistance = distanceFor(packing)
 
   // Same `packing` scaling applied to every section/sub-section chain — a gated path used
@@ -1149,7 +1157,7 @@ export const assembleFloor = (
   // Labeled so a gate reserved deep inside a chain's own content loop (below) can retry the WHOLE
   // attempt the same way every other shortfall here does, rather than only skipping the rest of one
   // chain's own content.
-  attempt: for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
+  attempt: for (let attempt = 0; attempt < Math.min(maxAttempts, ASSEMBLY_ATTEMPTS); attempt++) {
     if (attempt >= RECOVERY_ATTEMPT) {
       // Recovery asks for the roomiest wish outright. Winding the CHAINS down is its lever, and on a
       // floor already carved as tight as it goes there is nothing left to wind: without this, a tight
@@ -3264,7 +3272,7 @@ export const assembleFloor = (
       }
     }
 
-    return { success: true, grid }
+    return { success: true, grid, attempt }
   }
 
   return {

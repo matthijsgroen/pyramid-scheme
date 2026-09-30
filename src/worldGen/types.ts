@@ -83,6 +83,10 @@ export type FloorConfig = {
   encountersByIndex?: Record<number, string | string[]>
   corridorStraightness?: number
   packing?: number
+  /** The seed this floor carves at, in place of the one its address derives. Read inside the assembler, so
+   * every entry point that carves the floor (the hook, stair travel, the scanner, the bake) agrees. Baked
+   * from a search that found a seed carving soundly on the first attempt. */
+  seed?: number
   /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */
   sealed?: boolean
   /** Opaque payload for whichever family renders the main path's rooms (e.g. a tableau's
