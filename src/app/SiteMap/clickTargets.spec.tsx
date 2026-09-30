@@ -2,11 +2,11 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import { assembleFloor } from "@/game/siteAssembler"
+import { assembleFloor, ONE_WAY_RUN_CELLS } from "@/game/siteAssembler"
 import { completeCell, findPath, revealAll, walkableFrom } from "@/game/gridNavigation"
-import { offeredTargets } from "./clickTargets"
+import { markerAt, offerContextFrom, offeredTargets } from "./clickTargets"
 import { buildRoomClaims } from "./roomClaims"
-import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
+import type { FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
 import { DIR_MOVES } from "./corridorRuns"
@@ -298,5 +298,44 @@ describe("a one-way mouth the player can walk up to", () => {
     expect(mouth?.style.cursor).toBe("pointer")
     fireEvent.click(mouth!)
     expect(onCellClick).toHaveBeenCalledWith(0, 1)
+  })
+})
+
+describe("which way a drop's mouth arrow points", () => {
+  // departure --dir--> ONE_WAY_RUN_CELLS run cells --dir--> landing, laid along each axis. The run's
+  // last cell is the mouth; the landing names no way back into it.
+  const axes = [
+    { name: "east", dir: "e", back: "w", step: [0, 1] },
+    { name: "south", dir: "s", back: "n", step: [1, 0] },
+  ] as const
+  const lineOf = (axis: (typeof axes)[number]): FloorGrid => {
+    const length = ONE_WAY_RUN_CELLS + 2
+    const cells: GridCell[] = Array.from({ length }, (_, i) => {
+      if (i === 0) return { type: "room", roomType: "encounter", dirs: new Set([axis.dir]), state: "reachable" }
+      if (i === length - 1) return { type: "room", roomType: "encounter", dirs: new Set(), state: "reachable" }
+      return { type: "corridor", dirs: new Set([axis.dir]), state: "visible" }
+    })
+    const vertical = axis.step[0] === 1
+    return {
+      siteId: "test",
+      rows: vertical ? length : 1,
+      cols: vertical ? 1 : length,
+      entrancePos: [0, 0],
+      exitPos: [vertical ? length - 1 : 0, vertical ? 0 : length - 1],
+      staircases: {},
+      cells: vertical ? cells.map(cell => [cell]) : [cells],
+    }
+  }
+  const at = (axis: (typeof axes)[number], i: number): [number, number] => [axis.step[0] * i, axis.step[1] * i]
+
+  it.each(axes)("points onward from the departure and back along the run from the landing, going $name", axis => {
+    const grid = lineOf(axis)
+    const mouth = at(axis, ONE_WAY_RUN_CELLS)
+    const arrowFrom = (explorer: [number, number]) => {
+      const ctx = offerContextFrom(grid, explorer, {})
+      return markerAt(grid, buildRoomClaims(grid), mouth[0], mouth[1], ctx)
+    }
+    expect(arrowFrom(at(axis, 0))).toEqual({ kind: "arrow", dir: axis.dir })
+    expect(arrowFrom(at(axis, ONE_WAY_RUN_CELLS + 1))).toEqual({ kind: "arrow", dir: axis.back })
   })
 })

@@ -452,6 +452,101 @@ describe(walkableFrom, () => {
   })
 })
 
+// A MOUTH CHAIN ENDS AT A CELL WITH MORE THAN ONE WAY OUT, which is why walking up a drop from its
+// landing never breaches a region. A cell with one `dirs` entry can only be left along it, so the only
+// ground such a walk climbs is corridors that name just the way onward; the first cell with two ways out,
+// or a room, is never a mouth (`isRunEnd` demands a lone direction) and the climb stops below it.
+describe("walking up from a landing", () => {
+  const corridor = (dirs: Direction[]): GridCell => ({ type: "corridor", dirs: new Set(dirs), state: "visible" })
+  const landingRoom: GridCell = { type: "room", roomType: "encounter", dirs: new Set(), state: "reachable" }
+  const rowOf = (cells: GridCell[]): FloorGrid => ({
+    siteId: "test",
+    rows: 1,
+    cols: cells.length,
+    entrancePos: [0, 0],
+    exitPos: [0, cells.length - 1],
+    staircases: {},
+    cells: [cells],
+  })
+  // room{e}, `departure` (if any), ONE_WAY_RUN_CELLS run cells naming only "e", landing{}.
+  const chainGrid = (departures: GridCell[]): FloorGrid =>
+    rowOf([
+      { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e"]), state: "reachable" },
+      ...departures,
+      ...Array.from({ length: ONE_WAY_RUN_CELLS }, () => corridor(["e"])),
+      landingRoom,
+    ])
+  const climbedFrom = (grid: FloorGrid): number[] => {
+    const landing = grid.cols - 1
+    return [...walkableFrom(grid, [0, landing])].map(key => Number(key.split(",")[1])).filter(col => col !== landing)
+  }
+
+  it.each([0, 1, 2, 3])(
+    "climbs only lone-direction corridors, never the room behind them, with %i of them before the run",
+    lone => {
+      const grid = chainGrid(Array.from({ length: lone }, () => corridor(["e"])))
+      const climbed = climbedFrom(grid)
+      expect(climbed.length).toBeGreaterThan(0)
+      for (const col of climbed) {
+        const cell = grid.cells[0][col]
+        expect(cell).toMatchObject({ type: "corridor", dirs: new Set<Direction>(["e"]) })
+      }
+      expect(climbed).not.toContain(0)
+    }
+  )
+
+  it("climbs past the mouth into a run cell when a lone-direction departure lengthens the chain to one past the run", () => {
+    // Columns: room 0, departure 1, run 2-6, landing 7. Cell 5 is the fifth of a chain of six, so it too
+    // reads as the end of a run of ONE_WAY_RUN_CELLS and is a mouth in its own right.
+    const grid = chainGrid([corridor(["e"])])
+    expect(climbedFrom(grid).sort()).toEqual([5, 6])
+  })
+
+  it("climbs no further than the mouth when the chain is any other length", () => {
+    // Columns: room 0, two lone departures 1-2, run 3-7, landing 8. Cell 6 is the sixth of the chain, not
+    // the fifth, so the mouth at 7 has no mouth beside it to climb to.
+    expect(climbedFrom(chainGrid([corridor(["e"]), corridor(["e"])]))).toEqual([7])
+    expect(climbedFrom(chainGrid([]))).toEqual([ONE_WAY_RUN_CELLS])
+  })
+
+  // The order the departure's directions are written in must not matter: "the only direction" is a
+  // question of how many there are, never of which one is listed first.
+  it.each([[["w", "e"]], [["e", "w"]], [["n", "e"]], [["e", "n"]], [["s", "e"]], [["e", "s"]]] as Direction[][][])(
+    "stops at the mouth when the departure names %j, leaving the run and all behind it unclimbed",
+    dirs => {
+      expect(climbedFrom(chainGrid([corridor(dirs)]))).toEqual([ONE_WAY_RUN_CELLS + 1])
+    }
+  )
+
+  it("never meets a lone-direction departure on a carved floor: every drop leaves a node that also names its way in", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "junior",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "upper" },
+        { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "lower" },
+      ],
+      oneWays: [{ from: "upper", to: "lower" }],
+    }
+    let drops = 0
+    for (let seed = 0; seed < 30; seed++) {
+      const result = assembleFloor("spike:1", config, seed, undefined, {
+        floorRef: { journeyId: "spike", levelIndex: 0, floorIndex: 0 },
+      })
+      if (!result.success) continue
+      for (const run of oneWayRuns(result.grid)) {
+        drops++
+        const [r, c] = run.departure
+        const departure = result.grid.cells[r][c]
+        expect(departure.type === "empty" ? 0 : departure.dirs.size).toBeGreaterThan(1)
+      }
+    }
+    expect(drops).toBeGreaterThan(0)
+  })
+})
+
 // A drop at full length on one row: departure, ONE_WAY_RUN_CELLS run cells each naming only "e", landing.
 // Every cell starts as `state`, so what a walk or a reveal does to it is the only thing under test.
 const runGrid = (state: "visible" | "fogged"): FloorGrid => ({

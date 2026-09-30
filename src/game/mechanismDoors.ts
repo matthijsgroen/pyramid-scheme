@@ -6,8 +6,17 @@ import { cellAddress } from "./cellAddress"
 // is what lets a re-carve move a door without a stored entry coming to fit one it was never set for.
 //
 // A GATE IS FOLDED FROM ITS OWNERS, NEVER UNIONED. Every mechanism naming a gate key in any position owns
-// it, and each is asked whether its CURRENT state names it; the answers are folded by the gate's mode
-// exactly as the soundness walk folds them (`openGates`, lockWalk.ts), so what is proved is what is played.
+// it, and each is asked whether its CURRENT state names it; the answers are folded by the gate's mode,
+// the same fold `openGates` (lockWalk.ts) applies, so what is proved is what is played for a door one
+// key names.
+//
+// EQUIVALENCE IS NOT PROVED FOR A DOOR NAMING MORE THAN ONE KEY. This fold keys its owners by gate KEY
+// id and sets "any" per key; `floorLock` keys them by BOUNDARY, adds a `sealed <keyId>` owner for every
+// key the floor cannot open, and sets `anyGates` per boundary, so "any" authored for one key applies to
+// the whole door. On a door naming a mechanism's key and a key nothing on the floor opens, "any" would
+// make the walk and this fold each call it open, agreeing and both wrong. Obstacle keys are namespaced
+// `obstacle:`, so no authoring today builds that door; whoever authors the first multi-key one must
+// reconcile the two folds before trusting either.
 export const openDoorsFor = (grid: FloorGrid, floor: number, positions: ReadonlyMap<string, string>): Set<string> => {
   const owners = new Map<string, { says: boolean[]; any: boolean }>()
   for (let r = 0; r < grid.rows; r++)

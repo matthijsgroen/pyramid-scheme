@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { useState } from "react"
-import { assembleFloor } from "../../game/siteAssembler"
+import { assembleFloor, ONE_WAY_RUN_CELLS } from "../../game/siteAssembler"
 import { generatedWorldConfigs } from "../../data/generatedWorld"
 import { completeCell } from "../../game/gridNavigation"
 import type { CellState, Direction, FloorConfig, FloorGrid, GridCell } from "../../game/siteTypes"
@@ -355,8 +355,9 @@ export const OneWayDropLanding: Story = {
 
 // ─── Drop art at expert ────────────────────────────────────────────────────────
 // Hand-built rather than carved, so the art shows whatever the assembler does. A line of beyond-departure,
-// departure, mouth, landing, beyond-landing: the mouth carries one direction (toward the landing) and the
-// landing none back. `dropEast` exists only at expert, so the floor is expert.
+// departure, the run, landing, beyond-landing: each run cell carries one direction (toward the landing) and
+// the landing none back. The run is `ONE_WAY_RUN_CELLS` cells and the art is drawn across all of them; its
+// last cell is the mouth. `dropEast` exists only at expert, so the floor is expert.
 type Travel = "e" | "w" | "s"
 const BACK: Record<Travel, Direction> = { e: "w", w: "e", s: "n" }
 
@@ -369,26 +370,26 @@ const dropFloor = (travel: Travel) => {
     dirs: new Set(dirs.filter(d => d !== BACK[travel])),
     state: "fogged",
   })
-  const line = ["C", "R", "M", "E", "C"]
+  const line = ["C", "R", ...Array<string>(ONE_WAY_RUN_CELLS).fill("M"), "E", "C"]
   const rows = travel === "s" ? line : [(travel === "w" ? [...line].reverse() : line).join("")]
   const grid = floorFrom(rows, { C: corridorPiece, M: mouth, E: landing })
   const at = (i: number): [number, number] => {
-    const k = travel === "w" ? 4 - i : i
+    const k = travel === "w" ? line.length - 1 - i : i
     return travel === "s" ? [k, 0] : [0, k]
   }
-  const [lr, lc] = at(3)
-  return { grid: completeCell(grid, lr, lc), mouth: at(2), landing: at(3) }
+  const [lr, lc] = at(2 + ONE_WAY_RUN_CELLS)
+  return { grid: completeCell(grid, lr, lc), mouth: at(1 + ONE_WAY_RUN_CELLS), landing: at(2 + ONE_WAY_RUN_CELLS) }
 }
 
 const east = dropFloor("e")
 const west = dropFloor("w")
 const south = dropFloor("s")
 
-/** East-going drop, the player at the landing: the mouth is lit and offered with the zipline drawn on
- * it, the departure beyond it still dark. */
+/** East-going drop, the player at the landing: the run is lit with the zipline drawn across all of it,
+ * the departure beyond it still dark. */
 export const DropEastAtLanding: Story = { args: { grid: east.grid, explorerPos: east.landing } }
 
-/** East-going drop, the player on the mouth: the barred arrow draws, pointing onward up the drop. */
+/** East-going drop, the player on the mouth, the run's last cell: the barred arrow draws, pointing onward up the drop. */
 export const DropEastOnMouth: Story = { args: { grid: east.grid, explorerPos: east.mouth } }
 
 /** West-going drop, the player at the landing: the same asset as the east one, mirrored. */

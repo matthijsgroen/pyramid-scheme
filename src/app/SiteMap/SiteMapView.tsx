@@ -9,14 +9,14 @@ import type {
   WallDecorationKind,
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
-import { isOneWayMouth, isSealedWayOut, oneWayMouthDir, revealAll, walkableFrom } from "../../game/gridNavigation"
+import { isSealedWayOut, oneWayMouthDir, oneWayRuns, revealAll, walkableFrom } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
 import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
-  DROP_H,
-  DROP_W,
+  dropFrame,
+  dropFloorLine,
   MARKER_RADIUS,
   ARCH_H,
   ARCH_DROP,
@@ -253,34 +253,35 @@ export const nodeSpritesFor = (
     return [...cells]
   }
   const out: NodeSprite[] = []
+  // A DROP IS PLACED BY THE CARVE'S SHAPE, NOT DRESSED: its run is ONE_WAY_RUN_CELLS corridor cells the
+  // carve reserved for it, and the art is drawn across all of them — every one is in the footprint, so
+  // nothing else stands under it. It is a node sprite, never a `DecorationKind`, so no dressing pool can
+  // name it. `tileUrl` and not `tileOrPlaceholder`: a run with no painted art (north-south) keeps the
+  // plain corridor it always drew rather than a stand-in. The run reveals as one, so its landing end
+  // being fogged means all of it is.
+  for (const run of oneWayRuns(grid)) {
+    const [lr, lc] = run.cells[run.cells.length - 1]
+    const end = grid.cells[lr][lc]
+    if (end.type !== "corridor") continue
+    const art = DROP_ART[run.dir]
+    const { x, y, w, h } = dropFrame(run.cells)
+    const dropUrl = art && tileUrl(end.difficulty ?? floorTier, art.name)
+    if (!art || !dropUrl || end.state === "fogged") continue
+    out.push({
+      footprint: clipCells(run.cells.map(([r, c]) => `${r},${c}`)),
+      key: `drop:${lr},${lc}`,
+      url: dropUrl,
+      x,
+      y,
+      w,
+      h,
+      mirrored: art.mirrored,
+    })
+  }
   let approach: Map<string, readonly [number, number]> | null = null
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
-      if (cell.type === "corridor" && cell.state !== "fogged" && isOneWayMouth(grid, r, c)) {
-        // A DROP IS PLACED BY THE CARVE'S SHAPE, NOT DRESSED: the mouth is the one stub cell of a one-way,
-        // and it draws its art on its own cell. It is a node sprite, never a `DecorationKind`, so no
-        // dressing pool can name it. `tileUrl` and not `tileOrPlaceholder`: a mouth with no painted art
-        // keeps the plain corridor it always drew rather than a stand-in.
-        const [travel] = cell.dirs
-        const art = DROP_ART[travel]
-        const dropUrl = art && tileUrl(cell.difficulty ?? floorTier, art.name)
-        if (art && dropUrl) {
-          const { cx: dcx, cy: dcy } = cellCenter(r, c)
-          out.push({
-            footprint: clipCells([`${r},${c}`]),
-            key: `drop:${r},${c}`,
-            url: dropUrl,
-            // ARCHITECTURE-SIZED, standing on the mouth's floor line and centred on its cell.
-            x: dcx - DROP_W / 2,
-            y: dcy + CELL / 2 - DROP_H,
-            w: DROP_W,
-            h: DROP_H,
-            mirrored: art.mirrored,
-          })
-        }
-        continue
-      }
       if (cell.type !== "room" || cell.state === "fogged") continue
       const kind = shapeKindFor(grid, r, c, cell)
       const tier = cell.difficulty ?? floorTier
@@ -1182,7 +1183,9 @@ export const SiteMapView = ({
     const standingOn = explorerPos ? `${explorerPos[0]},${explorerPos[1]}` : null
     const sprites: StandingSprite[] = nodeSprites.map(sprite => ({
       key: sprite.key,
-      baseY: sprite.y + (sprite.h ?? PROP_H),
+      // A drop is sorted by its run's floor line, not its bottom edge: the art hangs below the floor, and
+      // sorted by its edge it would be drawn over the player standing on it.
+      baseY: sprite.key.startsWith("drop:") ? dropFloorLine(sprite) : sprite.y + (sprite.h ?? PROP_H),
       ...(sprite.light ? { light: sprite.light } : {}),
       // A drop is the exception: the player stands IN FRONT of it rather than working it, so on its own
       // mouth the general tie holds (he stands in front of what shares his floor line) and its parapet
@@ -1364,7 +1367,7 @@ export const SiteMapView = ({
 
   // One rule for what a tap does, asked per cell below — see `clickTargets.ts`. The three branches of
   // the marker loop used to spell it out for themselves, in two different spellings.
-  const offerContext = { runTargets: corridorRunTargets, canWalkTo, freeWalk }
+  const offerContext = { runTargets: corridorRunTargets, canWalkTo, freeWalk, explorer: explorerPos }
 
   // Must be >= CELL: a fork/endpoint on the map's edge can claim one cell of "outside
   // the grid" void (see cellAt above), and that extra ring needs to physically fit

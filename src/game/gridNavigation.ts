@@ -294,9 +294,14 @@ export const findPath = (
  * it is.
  *
  * Includes an adjacent one-way mouth: the player may stand on it, even though its landing's own
- * `dirs` never lists the way there — `walkableDirsFrom` is what supplies that edge. The mouth is a
- * run's last cell, whose only `dirs` entry leads onward onto the landing, so the walk can step
- * onto the end of the run and no further up it: crossing stays impossible. */
+ * `dirs` never lists the way there — `walkableDirsFrom` is what supplies that edge.
+ *
+ * The walk can climb a chain of mouths, since a mouth whose run-behind is itself a run end offers its
+ * own edge (a lone-direction departure makes the cell one before the mouth a run end too, and is
+ * climbed). No region is breached, because a cell with one `dirs` entry can only be left along it: the
+ * chain must end at a cell with more than one way out, or a room, and `isRunEnd` refuses both. The
+ * carve cannot build the chain anyway: a drop leaves a node that also names its way in, so a drop's
+ * departure always has two ways out (`gridNavigation.spec.ts`, "walking up from a landing"). */
 export const walkableFrom = (grid: FloorGrid, from: readonly [number, number]): ReadonlySet<string> => {
   const [fr, fc] = from
   const seen = new Set<string>([`${fr},${fc}`])
