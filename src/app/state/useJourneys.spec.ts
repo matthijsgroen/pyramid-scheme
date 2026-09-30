@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest"
 import { createJourneysV3Api, MECHANISM_AT_REST, type StoredJourneyStateV3 } from "./useJourneys"
 import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { journeys as allJourneys } from "@/data/journeys"
+import { migrateJourneyToCarveIndependent } from "@/app/SiteMap/cellIdentity"
 
 // completeJourney checks against knownJourneyIds (the real journey list), so we
 // need a real journey ID — use the first pyramid entry from the data.
@@ -153,41 +154,74 @@ describe("updatePosition", () => {
 // ── standingKey clears everywhere positionKey does ─────────────────────────────
 
 describe("standingKey clears wherever positionKey does", () => {
-  // A new level resuming standing on the bend the PREVIOUS level left it at is this fix's own
-  // regression, so every one of the four writers that clear positionKey (a journey starting over,
-  // completing, jumping to a level, or advancing one) is asserted here — not a representative one.
-  const run = (mutate: (api: ReturnType<typeof makeApi>) => void, initial: Partial<StoredJourneyStateV3> = {}) => {
-    let state = [makeStoredJourney({ position: "0:1,2", positionKey: "sec#0/p2", standingKey: "sec#0/~4", ...initial })]
-    const api = createJourneysV3Api({
-      journeys: state,
-      setJourneys: updater => {
-        state = typeof updater === "function" ? updater(state) : updater
-      },
-      journeyData: [makeJourneyData(REAL_ID)],
-    })
-    mutate(api)
-    return state[0]
+  // Writers are found, not listed: every function on the api is called with each shape of argument the
+  // api takes, and any that moves `positionKey` must not leave the stale `standingKey` behind — it
+  // outranks `positionKey` in both readers. A sixth writer is caught the day it exists.
+  const STALE = "sec#0/~4"
+  const journey = allJourneys.find(j => j.id === REAL_ID)!
+  // The real migration's output, so the guard sees what the launch hands to setCarveIndependentState.
+  const carveState = migrateJourneyToCarveIndependent({ levelNr: 1, position: "0:1,2" }, () => null)
+  const argumentShapes: unknown[][] = [
+    [],
+    [REAL_ID, 2],
+    [journey],
+    [REAL_ID, carveState],
+    [REAL_ID, "sec#0/p9", "0:9,9"],
+  ]
+  const startingPoints = [1, journey.levelCount + 1]
+
+  const probe = () => {
+    const writers = new Map<string, StoredJourneyStateV3[]>()
+    const names = Object.entries(makeApi([makeStoredJourney()]))
+      .filter(([, value]) => typeof value === "function")
+      .map(([name]) => name)
+    for (const name of names) {
+      for (const levelNr of startingPoints) {
+        for (const args of argumentShapes) {
+          let state = [makeStoredJourney({ levelNr, position: "0:1,2", positionKey: "sec#0/p2", standingKey: STALE })]
+          const api = createJourneysV3Api({
+            journeys: state,
+            setJourneys: updater => {
+              state = typeof updater === "function" ? updater(state) : updater
+            },
+            journeyData: [makeJourneyData(REAL_ID)],
+          }) as unknown as Record<string, (...a: unknown[]) => unknown>
+          try {
+            api[name](...args)
+          } catch {
+            continue
+          }
+          if (state[0].positionKey !== "sec#0/p2") writers.set(name, [...(writers.get(name) ?? []), ...state])
+        }
+      }
+    }
+    return writers
   }
 
-  it("startJourney clears it when a completed persistent interior is replayed", () => {
-    const journey = allJourneys.find(j => j.id === REAL_ID)!
-    const stored = run(api => api.startJourney(journey), { levelNr: journey.levelCount + 1 })
-    expect(stored.standingKey).toBeNull()
+  it("no writer that moves positionKey leaves the stale standingKey behind", () => {
+    const writers = probe()
+    expect(writers.size).toBeGreaterThan(0)
+    for (const [name, states] of writers) {
+      for (const stored of states) {
+        expect(stored.standingKey, `${name} moved positionKey but kept a stale standingKey`).not.toBe(STALE)
+      }
+    }
   })
 
-  it("completeJourney clears it", () => {
-    const stored = run(api => api.completeJourney())
-    expect(stored.standingKey).toBeNull()
-  })
-
-  it("visitLevel clears it", () => {
-    const stored = run(api => api.visitLevel(REAL_ID, 2))
-    expect(stored.standingKey).toBeNull()
-  })
-
-  it("completeLevel clears it", () => {
-    const stored = run(api => api.completeLevel())
-    expect(stored.standingKey).toBeNull()
+  it("the writers it finds are the ones known, so a probe gone blind or a new writer is noticed", () => {
+    // setRepairedExploration is listed because the probe hands it a carve state, which it spreads; its
+    // own argument type carries no positionKey.
+    expect([...probe().keys()].sort()).toEqual(
+      [
+        "completeJourney",
+        "completeLevel",
+        "setCarveIndependentState",
+        "setRepairedExploration",
+        "startJourney",
+        "updatePosition",
+        "visitLevel",
+      ].sort()
+    )
   })
 })
 
@@ -678,6 +712,7 @@ describe("re-keying bookkeeping", () => {
     api.setCarveIndependentState(REAL_ID, {
       exploredCells: { "1:abc": ["0/p7"] },
       positionKey: "abc#0/p7",
+      standingKey: null,
       disabledTraps: ["1:abc#0/p2"],
       skippedConsumables: [],
       purchasedStock: [],

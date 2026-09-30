@@ -161,6 +161,9 @@ const addressesForEdge = (edgeId: string, levels: number[], assembleFor: Assembl
 export type CarveIndependentState = {
   exploredCells: Record<string, string[]>
   positionKey: string | null
+  /** Always null: the live cell outranks `positionKey` in both readers, so a stale one surviving a
+   * re-keying would hide the freshly derived `positionKey`. The next step the player takes rewrites it. */
+  standingKey: null
   disabledTraps: string[]
   skippedConsumables: string[]
   purchasedStock: string[]
@@ -270,6 +273,7 @@ export const migrateJourneyToCarveIndependent = (
   return {
     exploredCells: migrateExploredToCells(stored.exploredSections ?? {}, cached),
     positionKey: positionGrid ? cellAddress(positionGrid, positionFloor, pr, pc) : null,
+    standingKey: null,
     disabledTraps: translate(stored.disabledTraps),
     skippedConsumables: translate(stored.skippedConsumables),
     purchasedStock: stock,

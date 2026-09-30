@@ -454,3 +454,31 @@ describe("the switch junior_2 stands", () => {
     }
   })
 })
+
+// A room already explored when its board resolves is paid nothing (`useEncounter`'s resolve reads
+// `completed` as "the loot was handed over on an earlier visit"). A fork and a portal are marked
+// explored the moment the explorer arrives (`useSiteNavigation`), before any board opens, so a reward
+// on either would be lost on its first solve.
+describe("a room marked explored on arrival holds no reward", () => {
+  it("has no fork or portal carrying one, in any floor of the world", () => {
+    const arrivalMarked = allFloors().flatMap(floor => {
+      const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
+        resolveKeyRequirements,
+        floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+      })
+      if (!result.success) return []
+      return result.grid.cells.flatMap((row, r) =>
+        row.flatMap((cell, c) =>
+          cell.type === "room" && (cell.roomType === "fork" || cell.roomType === "portal")
+            ? [{ where: `${floor.label} ${r},${c}`, reward: cell.reward }]
+            : []
+        )
+      )
+    })
+
+    expect(arrivalMarked.length).toBeGreaterThan(100)
+    for (const room of arrivalMarked) {
+      expect(room.reward, `${room.where} is marked explored on arrival yet carries a reward`).toBeUndefined()
+    }
+  }, 60_000)
+})
