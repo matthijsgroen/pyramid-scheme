@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { completeCell, walkableFrom } from "@/game/gridNavigation"
+import { completeCell, isOneWayMouth, walkableFrom } from "@/game/gridNavigation"
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 import { buildRoomClaims } from "./roomClaims"
 import { offeredTargets } from "./clickTargets"
@@ -83,4 +83,68 @@ describe("a one-way drop's departure, seen from its landing", () => {
       }
     })
   }
+})
+
+// A fork is the room type that claims every neighbour it can, so it is the landing or departure that
+// would absorb the mouth if anything did. Swapping one into a shape keeps the shape's own fixture.
+const withFork = (grid: FloorGrid, [r, c]: readonly [number, number]): FloorGrid => {
+  const cell = grid.cells[r][c]
+  if (cell.type !== "room") return grid
+  const cells = grid.cells.map(row => [...row])
+  cells[r][c] = { ...cell, roomType: "fork" }
+  return { ...grid, cells }
+}
+
+describe("a one-way mouth is a passage, never part of a room's blob", () => {
+  for (const { axis, departure, landing } of shapes) {
+    const name = `${axis.travel}-going drop, ${departure} departure, ${landing} landing`
+
+    it(`is claimed by no room, even a fork on either side of it: ${name}`, () => {
+      const { grid: base, at } = dropGrid(axis, departure, landing)
+      const seen = completeCell(base, ...at(3))
+      const variants = [seen, withFork(seen, at(3)), withFork(seen, at(1)), withFork(withFork(seen, at(1)), at(3))]
+      for (const grid of variants) {
+        const claims = buildRoomClaims(grid)
+        expect(isOneWayMouth(grid, ...at(2))).toBe(true)
+        expect([...claims.claimedBy.keys()]).not.toContain(key(at(2)))
+        expect([...claims.openEdges].filter(edge => edge.split("|").includes(key(at(2))))).toEqual([])
+      }
+    })
+  }
+
+  it("still lets a fork claim the void around it, so the exclusion is not a claim switched off", () => {
+    const { grid, at } = dropGrid(AXES[0], "room", "room")
+    const claims = buildRoomClaims(withFork(completeCell(grid, ...at(3)), at(3)))
+    const owned = [...claims.claimedBy.entries()].filter(([, owner]) => owner === key(at(3)))
+    expect(owned.length).toBeGreaterThan(0)
+    for (const [cellKey] of owned) expect(cellKey).not.toBe(key(at(2)))
+  })
+
+  it("still claims an ordinary corridor that approaches a gate, beside a fork", () => {
+    const gate: GridCell = {
+      type: "room",
+      roomType: "encounter",
+      dirs: new Set(["w"]),
+      state: "reachable",
+      tags: ["gate"],
+    }
+    const fork: GridCell = { type: "room", roomType: "fork", dirs: new Set(["e"]), state: "reachable" }
+    const void_: GridCell = { type: "empty" }
+    const cells: GridCell[][] = [
+      [void_, void_, void_, void_, void_],
+      [void_, fork, { type: "corridor", dirs: new Set(["w", "e"]), state: "visible" }, gate, void_],
+      [void_, void_, void_, void_, void_],
+    ]
+    const grid: FloorGrid = {
+      siteId: "test",
+      rows: 3,
+      cols: 5,
+      entrancePos: [1, 1],
+      exitPos: [1, 1],
+      staircases: {},
+      cells,
+    }
+    expect(isOneWayMouth(grid, 1, 2)).toBe(false)
+    expect(buildRoomClaims(grid).claimedBy.get("1,2")).toBe("1,1")
+  })
 })

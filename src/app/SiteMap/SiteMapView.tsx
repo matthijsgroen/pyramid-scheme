@@ -15,6 +15,8 @@ import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScat
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
+  DROP_H,
+  DROP_W,
   MARKER_RADIUS,
   ARCH_H,
   ARCH_DROP,
@@ -269,8 +271,11 @@ export const nodeSpritesFor = (
             footprint: clipCells([`${r},${c}`]),
             key: `drop:${r},${c}`,
             url: dropUrl,
-            x: dcx - CELL / 2,
-            y: dcy + CELL / 2 - PROP_H,
+            // ARCHITECTURE-SIZED, standing on the mouth's floor line and centred on its cell.
+            x: dcx - DROP_W / 2,
+            y: dcy + CELL / 2 - DROP_H,
+            w: DROP_W,
+            h: DROP_H,
             mirrored: art.mirrored,
           })
         }
@@ -1177,7 +1182,7 @@ export const SiteMapView = ({
     const standingOn = explorerPos ? `${explorerPos[0]},${explorerPos[1]}` : null
     const sprites: StandingSprite[] = nodeSprites.map(sprite => ({
       key: sprite.key,
-      baseY: sprite.y + PROP_H,
+      baseY: sprite.y + (sprite.h ?? PROP_H),
       ...(sprite.light ? { light: sprite.light } : {}),
       atExplorer: standingOn !== null && sprite.footprint.includes(standingOn),
       node: (
@@ -1187,8 +1192,8 @@ export const SiteMapView = ({
             url={sprite.url}
             x={sprite.x}
             y={sprite.y}
-            w={CELL}
-            h={PROP_H}
+            w={sprite.w ?? CELL}
+            h={sprite.h ?? PROP_H}
             mirrored={sprite.mirrored}
             filter={STANDING_RELIEF[tier]}
             // ITS OWN ROOM AND NOT THE WHOLE FLOOR: furniture stands off-centre and a sprite is a cell

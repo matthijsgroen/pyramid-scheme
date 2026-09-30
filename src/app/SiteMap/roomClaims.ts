@@ -1,5 +1,6 @@
 import type { DecorationKind, Direction, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
 import { cellAt, isClaimableNeighbor } from "@/game/roomFootprint"
+import { isOneWayMouth } from "@/game/gridNavigation"
 import { DIR_MOVES, OPPOSITE_DIR } from "./corridorRuns"
 import { buildTileRegions, type FloorAt, type Rect, type TileRegions } from "./tileRegions"
 import { CELL, SIDE_W } from "./mapScale"
@@ -141,6 +142,10 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
           nc = c + dc
         const key = `${nr},${nc}`
         if (claimedBy.has(key) || !isClaimableNeighbor(grid, r, c, nr, nc)) continue
+        // A one-way mouth is a passage the player walks down, with stone either side, and a claim would
+        // paint it as the room's own floor: the drop then stands in open ground that can be walked
+        // around instead of in the corridor it shuts.
+        if (isOneWayMouth(grid, nr, nc)) continue
         noteClaim(key, ownerKey)
         claimedThisOwner.add(key)
         openEdges.add(edgeKey(r, c, nr, nc))
@@ -158,6 +163,8 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
         // incidental and shouldn't count as equally strong when ranking contested claims.
         let realFlankCount = 0
         const attachedFlanks = flanks.filter(([fr, fc]) => {
+          // A one-way mouth is never part of a room, so it cannot be the arm a diagonal hangs from.
+          if (isOneWayMouth(grid, r + fr, c + fc)) return false
           if (cell.dirs.has(OFFSET_TO_DIR[`${fr},${fc}`])) {
             realFlankCount++
             return true

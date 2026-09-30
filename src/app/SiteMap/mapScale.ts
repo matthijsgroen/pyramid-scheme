@@ -82,6 +82,12 @@ export const ARCH_H = ARCH_RISE + WALL_H + ARCH_DROP // 49
  * bands either side of it are wall, so both corners are masonry (see doorwaysFor). */
 export const ARCH_W = CELL + SIDE_W * 2 // 84
 
+/** A one-way drop is architecture, sized as the widest architecture the map draws: an archway, which is a
+ * cell plus the wall's thickness either side. Its tile is the same 2:3 frame every node sprite is painted
+ * in (112 x 168), so the height follows the width at that ratio. Turn `DROP_W` to resize it. */
+export const DROP_W = ARCH_W // 84
+export const DROP_H = DROP_W * (3 / 2) // 126
+
 /** Padding around the map: room for the one-cell ring of wall outside the grid. */
 export const PAD = CELL
 

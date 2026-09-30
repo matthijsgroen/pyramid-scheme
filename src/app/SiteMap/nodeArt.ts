@@ -66,6 +66,10 @@ export type NodeSprite = {
   y: number
   /** Mirrored in x — how a stair is aimed. A reflection is a real oblique view; a rotation is a skew. */
   mirrored: boolean
+  /** The frame the art is drawn in, when it is not the cell-wide prop frame (`CELL` x `PROP_H`) every
+   * other node sprite shares. Anchored by `x`/`y` like any other: `y + h` is the line it stands on. */
+  w?: number
+  h?: number
   /** Where this sprite's own flame lands on the floor, in map space, if it carries one.
    *
    * AT THE FLAME AND NOT AT THE CELL. A stair's cresset stands at the edge of its mouth, some 24 units

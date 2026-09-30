@@ -4,6 +4,7 @@ import { assembleFloor } from "@/game/siteAssembler"
 import { isOneWayMouth, revealAll } from "@/game/gridNavigation"
 import type { CellState, DecorationKind, Direction, FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
 import { DROP_ART } from "./nodeArt"
+import { ARCH_W, CELL, DROP_H, DROP_W, cellCenter } from "./mapScale"
 import { buildRoomClaims } from "./roomClaims"
 import { nodeSpritesFor } from "./SiteMapView"
 import { tileUrl } from "./tileAssets"
@@ -140,6 +141,30 @@ describe("a north-south drop draws what it always drew", () => {
   })
 })
 
+describe("a drop is drawn at architecture scale", () => {
+  it("is as wide as an archway, at the tile's own 2:3 frame, standing on the mouth's floor line", () => {
+    expect(DROP_W).toBe(84)
+    expect(DROP_H).toBe(126)
+    expect(DROP_W).toBe(ARCH_W)
+    const grid = eastGrid()
+    const [drop] = dropsIn(grid)
+    const { cx, cy } = cellCenter(0, 1)
+    expect(drop.w).toBe(84)
+    expect(drop.h).toBe(126)
+    expect(drop.x).toBe(cx - 42)
+    expect(drop.y + drop.h!).toBe(cy + CELL / 2)
+  })
+
+  it("draws every drop on doubleBack at that size, both headings", () => {
+    const drops = [...dropsIn(revealAll(doubleBack())), ...dropsIn(westGrid())]
+    expect(drops.length).toBeGreaterThan(1)
+    for (const drop of drops) {
+      expect(drop.w).toBe(84)
+      expect(drop.h).toBe(126)
+    }
+  }, 60000)
+})
+
 describe("only a one-way mouth draws a drop", () => {
   it("draws none for a stub with no direction, a straight run, or a corner", () => {
     // A stub with no direction at all is not a mouth.
@@ -151,6 +176,16 @@ describe("only a one-way mouth draws a drop", () => {
     ])
     for (const grid of [deadEnd, straight, corner]) expect(dropsIn(grid)).toEqual([])
   })
+
+  it("leaves every mouth on doubleBack out of every room's claims", () => {
+    const grid = revealAll(doubleBack())
+    const claimed = new Set(buildRoomClaims(grid).claimedBy.keys())
+    const mouths: string[] = []
+    for (let r = 0; r < grid.rows; r++)
+      for (let c = 0; c < grid.cols; c++) if (isOneWayMouth(grid, r, c)) mouths.push(`${r},${c}`)
+    expect(mouths.length).toBeGreaterThan(0)
+    for (const mouth of mouths) expect(claimed.has(mouth)).toBe(false)
+  }, 60000)
 
   it("draws doubleBack's east-west drop and leaves its north-south one as it was", () => {
     const grid = revealAll(doubleBack())
