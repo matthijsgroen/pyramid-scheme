@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- A drop's barred arrow now only shows while you are standing at its landing, like every other arrow beside you.
+- You can now walk up to a zipline's mouth and stand there; you still can't cross it.
+- A drop's barred arrow now only shows while you are standing at its mouth, like every other arrow beside you.
 - Pressing an arrow or a corner dot now walks you there. A corridor bend only lifted its fog before, and left you standing where you were.
 - A fork with a puzzle standing in it now wears a forking mark of its own on the map, so you can tell it from an ordinary puzzle room before you walk in.
 - A fork with a mirror puzzle standing in it now shows you the junction and its ways out as soon as you walk in, like any other fork.

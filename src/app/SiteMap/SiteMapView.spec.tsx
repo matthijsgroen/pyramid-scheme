@@ -369,9 +369,10 @@ describe("SiteMapView — room clickability", () => {
 })
 
 describe("SiteMapView — one-way drop, the barred arrow", () => {
-  // source(0,0) --e--> connector(0,1), dirs {e} only --e--> landing(0,2), dirs {} — the shape a
-  // carved drop leaves: the landing names no direction back into the connector, so from its side
-  // this is the one room a barred arrow has anything to say about.
+  // source(0,0) --e--> mouth(0,1), dirs {e} only --e--> landing(0,2), dirs {} — the shape a carved
+  // drop leaves: the landing names no direction back into the mouth (the asymmetry itself), which is
+  // what still stops the player crossing even though they may now walk onto the mouth from the
+  // landing beside it.
   const dropGrid = (landingState: CellState): FloorGrid =>
     makeGrid([
       [
@@ -388,14 +389,21 @@ describe("SiteMapView — one-way drop, the barred arrow", () => {
     )
   }
 
-  it("draws a barred arrow at the landing when the explorer stands there", () => {
+  it("draws a barred arrow on the mouth when the explorer stands there", () => {
     const { container } = render(
-      <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 2]} />
+      <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 1]} />
     )
     expect(container.querySelectorAll("[data-one-way-arrow]").length).toBeGreaterThan(0)
   })
 
-  it("draws no barred arrow for that same landing when the explorer stands anywhere else", () => {
+  it("draws no barred arrow at the landing now that the player may walk right up to the mouth", () => {
+    const { container } = render(
+      <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 2]} />
+    )
+    expect(container.querySelectorAll("[data-one-way-arrow]")).toHaveLength(0)
+  })
+
+  it("draws no barred arrow for that same mouth when the explorer stands anywhere else", () => {
     const { container } = render(
       <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 0]} />
     )
@@ -414,31 +422,32 @@ describe("SiteMapView — one-way drop, the barred arrow", () => {
     expect(container.querySelectorAll("[data-one-way-arrow]")).toHaveLength(0)
   })
 
-  it("is not its own click target — a tap on it does nothing, and the connector beside it takes no tap either", () => {
+  it("is not its own click target — a tap on it does nothing, and the source cell it stands over takes no tap either", () => {
     const onClick = vi.fn()
     const { container } = render(
-      <SiteMapView grid={dropGrid("reachable")} onCellClick={onClick} explorerPos={[0, 2]} />
+      <SiteMapView grid={dropGrid("reachable")} onCellClick={onClick} explorerPos={[0, 1]} />
     )
     const arrow = container.querySelector("[data-one-way-arrow]")!
     fireEvent.click(arrow)
     expect(onClick).not.toHaveBeenCalled()
-    expect(findCell(container, 0, 1)?.style.cursor).not.toBe("pointer")
+    expect(findCell(container, 0, 0)?.style.cursor).not.toBe("pointer")
   })
 
-  it("stands a full cell out from the landing, in the connector's own cell — the same distance a RunTargetArrow keeps from the player, not tucked against their feet", () => {
+  it("stands a full cell out from the mouth, over the source cell beyond it — the same distance a RunTargetArrow keeps from the player, not tucked against their feet", () => {
     const { container } = render(
-      <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 2]} />
+      <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 1]} />
     )
     const arrow = container.querySelector<HTMLElement>("[data-one-way-arrow]")!
     const left = parseFloat(arrow.style.left)
     const top = parseFloat(arrow.style.top)
     const width = parseFloat(arrow.style.width)
     const height = parseFloat(arrow.style.height)
-    // The connector at (0,1) is one cell west of the landing at (0,2) — the arrow's box is centred
-    // there, not offset by some fraction of the landing's own cell.
-    const connector = cellCenter(0, 1)
-    expect(left + width / 2).toBeCloseTo(connector.cx)
-    expect(top + height / 2).toBeCloseTo(connector.cy)
+    // Source at (0,0) is one cell west of the mouth at (0,1), continuing the drop's own line away
+    // from the landing — the arrow's box is centred there, not offset by some fraction of the
+    // mouth's own cell.
+    const source = cellCenter(0, 0)
+    expect(left + width / 2).toBeCloseTo(source.cx)
+    expect(top + height / 2).toBeCloseTo(source.cy)
   })
 })
 

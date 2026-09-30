@@ -1,6 +1,6 @@
 import type { FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
-import { walkableFrom } from "@/game/gridNavigation"
+import { isOneWayMouth, walkableFrom } from "@/game/gridNavigation"
 import { corridorRunTargetsFrom, isCorridorCorner, type CorridorRunTarget } from "./corridorRuns"
 import { litClaimOwner, type RoomClaims } from "./roomClaims"
 
@@ -26,8 +26,16 @@ export type OfferContext = {
   freeWalk: boolean
 }
 
-/** A corridor's own rule, shared by the claimed and unclaimed branches — the same condition either way. */
+/** A corridor's own rule, shared by the claimed and unclaimed branches — the same condition either way.
+ *
+ * A one-way mouth is the one stopping point that never reaches "reachable": `revealOneWayMouth` only
+ * ever lifts its fog to "visible", so it is named explicitly here alongside the ordinary corner check
+ * rather than folded into `reachedOrDone` — `canWalkTo` (`walkableFrom`) is what already refuses one
+ * still fogged, or one the player cannot actually reach from here. */
 const corridorOffer = (
+  grid: FloorGrid,
+  r: number,
+  c: number,
   cell: { state: string; dirs: ReadonlySet<never> | ReadonlySet<string> },
   target: readonly [number, number],
   runTarget: CorridorRunTarget | undefined,
@@ -35,8 +43,9 @@ const corridorOffer = (
 ): readonly [number, number] | null => {
   if (!ctx.canWalkTo(target[0], target[1])) return null
   const corner = isCorridorCorner(cell.dirs as Parameters<typeof isCorridorCorner>[0])
-  const reachedOrDone = cell.state === "reachable" || cell.state === "completed"
-  return ctx.freeWalk || (reachedOrDone && corner) || !!runTarget ? target : null
+  const stoppingPoint =
+    cell.state === "reachable" || cell.state === "completed" || (cell.state === "visible" && isOneWayMouth(grid, r, c))
+  return ctx.freeWalk || (stoppingPoint && corner) || !!runTarget ? target : null
 }
 
 export const clickTargetAt = (
@@ -55,11 +64,11 @@ export const clickTargetAt = (
   // walkable and offers nothing. Checked first, exactly as the renderer does — a claimed cell never
   // reaches the fogged guard below.
   if (litClaimOwner(grid, claims, r, c)) {
-    return cell.type === "corridor" ? corridorOffer(cell, target, runTarget, ctx) : null
+    return cell.type === "corridor" ? corridorOffer(grid, r, c, cell, target, runTarget, ctx) : null
   }
 
   if (cell.type === "empty" || cell.state === "fogged") return null
-  if (cell.type === "corridor") return corridorOffer(cell, target, runTarget, ctx)
+  if (cell.type === "corridor") return corridorOffer(grid, r, c, cell, target, runTarget, ctx)
 
   // A room: soft-gated, so a locked gate is still a target — walking to it is how the player is told
   // what it wants. The exception answers itself through `canWalkTo`: a way out a switch shut is a wall

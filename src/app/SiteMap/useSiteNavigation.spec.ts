@@ -133,6 +133,27 @@ const fogged: GridCell = {
   sectionAddress: SECTION,
   ordinal: "1",
 }
+// A one-way's landing (dirs empty — the asymmetry itself) beside its mouth (dirs {w}, pointing back at
+// the landing, never reaching "reachable" — `revealOneWayMouth` only ever lifts its fog to "visible").
+const oneWayLanding: GridCell = {
+  type: "room",
+  roomType: "encounter",
+  family: "sumplete",
+  dirs: new Set([]),
+  state: "completed",
+  sectionHash: SECTION,
+  sectionAddress: SECTION,
+  ordinal: "0",
+  pathIndex: 0,
+}
+const oneWayMouth: GridCell = {
+  type: "corridor",
+  dirs: new Set(["w"]),
+  state: "visible",
+  sectionHash: SECTION,
+  sectionAddress: SECTION,
+  ordinal: "1",
+}
 const gate = (state: CellState = "reachable"): GridCell => ({
   type: "room",
   roomType: "encounter",
@@ -248,6 +269,18 @@ describe("useSiteNavigation", () => {
 
   it("walks into a corridor and marks it explored", () => {
     const { hook, journeys } = setup([entrance, corridor])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+
+    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", CORRIDOR_AT_1)
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", CORRIDOR_AT_1, "0:0,1")
+  })
+
+  // The mouth stays "visible", never "reachable" (`revealOneWayMouth`), so a tap on it needs its own
+  // proof that the ordinary reachable/completed gate is not the only door in — it is a genuine stopping
+  // point, walked onto the same way any other corridor is.
+  it("walks a tap on a one-way mouth onto it, from the landing beside it", () => {
+    const { hook, journeys } = setup([oneWayLanding, oneWayMouth])
 
     act(() => hook.result.current.onCellClick(0, 1))
 

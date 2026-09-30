@@ -19,8 +19,11 @@
 //   B. taking an offer moves the explorer there — clicking a target the map offered must leave the
 //      explorer standing on it.
 //
-// A one-way's landing needs no exception here: its barred direction is simply not in `walkableFrom`,
-// so nothing is ever required to offer it. The property already reads that asymmetry correctly.
+// A one-way's mouth is walkable from its landing and is a stopping point like any other corner
+// (`isStoppingPoint` below knows it by `isOneWayMouth`, since it stalls at "visible" rather than
+// "reachable"), so property A holds it to the same offer requirement. Only the direction BEYOND the
+// mouth, back the way the drop came, is never in `walkableFrom` — the mouth's own `dirs` never carry
+// it — so nothing is ever required to offer that, which is what keeps crossing impossible.
 //
 // Built at the hook level — `useAssembledFloor` + `useSiteNavigation` + `clickTargets` +
 // `walkableFrom` — so it runs in the normal suite and stays fast; a browser is not needed to see two
@@ -29,7 +32,7 @@ import { renderHook, act } from "@testing-library/react"
 import { useState } from "react"
 import { describe, expect, it, vi } from "vitest"
 import type { Direction, FloorConfig, FloorGrid, SiteConfig } from "@/game/siteTypes"
-import { walkableFrom, isSealedWayOut } from "@/game/gridNavigation"
+import { walkableFrom, isSealedWayOut, isOneWayMouth } from "@/game/gridNavigation"
 import { createJourneysV3Api, type JourneyAPI, type StoredJourneyStateV3 } from "@/app/state/useJourneys"
 import { journeys as allKnownJourneys } from "@/data/journeys"
 import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
@@ -68,13 +71,22 @@ import "@/mods/registerModApps"
 // A stopping point is what a marker ever names as a destination: a room, or a corridor corner (a
 // plain straight-through corridor is a waypoint a run folds INTO its far end, never a destination of
 // its own — see corridorRuns.ts). Restricted to `reachable`/`completed`, matching every gate in
-// `clickTargets.ts`, and never a way a switch shut, which `walkableFrom` already refuses to enter.
-const isStoppingPoint = (cell: { type: string; state?: string; dirs?: ReadonlySet<string> }): boolean => {
+// `clickTargets.ts` — except a one-way mouth, which never reaches "reachable" (`revealOneWayMouth`
+// only ever lifts its fog to "visible") and is named by `isOneWayMouth` instead — and never a way a
+// switch shut, which `walkableFrom` already refuses to enter.
+const isStoppingPoint = (
+  grid: FloorGrid,
+  r: number,
+  c: number,
+  cell: { type: string; state?: string; dirs?: ReadonlySet<string> }
+): boolean => {
   if (cell.type === "room")
     return (cell.state === "reachable" || cell.state === "completed") && !isSealedWayOut(cell as never)
   if (cell.type === "corridor")
     return (
-      (cell.state === "reachable" || cell.state === "completed") &&
+      (cell.state === "reachable" ||
+        cell.state === "completed" ||
+        (cell.state === "visible" && isOneWayMouth(grid, r, c))) &&
       isCorridorCorner(cell.dirs as ReadonlySet<Direction>)
     )
   return false
@@ -97,7 +109,7 @@ const offerViolations = (
     const [r, c] = key.split(",").map(Number)
     const cell = grid.cells[r]?.[c]
     if (!cell || cell.type === "empty") continue
-    if (isStoppingPoint(cell) && !offeredTargetSet.has(key)) {
+    if (isStoppingPoint(grid, r, c, cell) && !offeredTargetSet.has(key)) {
       violations.push(`walkable stopping point ${key} (${cell.type}) has no offer pointing to it, from ${explorerPos}`)
     }
   }

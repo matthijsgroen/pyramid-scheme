@@ -986,22 +986,22 @@ const RunTargetArrow = ({ dir }: { dir: Direction }) => {
   )
 }
 
-/** The way a one-way's landing names the drop that fell it there: the same arrow the game already
- * teaches for "you can walk this way", with a bar across it for "and not back". Stands in the
- * connector's own cell — a full cell out from the room, the same distance every `RunTargetArrow`
- * keeps from the player it belongs to — rather than on the room's own icon, where the explorer
+/** The way a one-way mouth names the crossing it will not make: the same arrow the game already
+ * teaches for "you can walk this way", with a bar across it for "and not onward". Stands one full
+ * cell out from the mouth, continuing the drop's own line — the same distance every `RunTargetArrow`
+ * keeps from the player it belongs to — rather than on the mouth's own icon, where the explorer
  * standing there would cover it. `DIR_MOVES` and `cellCenter` are the pair every other marker's
  * position comes from, so this one is read off them too rather than a distance of its own.
  *
- * Callers draw this only when the explorer is standing on the landing cell itself — every other
- * arrow the map draws belongs to the player's own position, and this one is no exception: it is a
- * "you cannot go back" told to the player standing there, not a label painted on a landing seen
- * from elsewhere.
+ * Callers draw this only when the explorer is standing on the mouth itself — every other arrow the
+ * map draws belongs to the player's own position, and this one is no exception: it is a "you cannot
+ * continue this way" told to the player standing there, not a label painted on a mouth seen from its
+ * landing, where the player can now walk right up to it.
  *
- * A standalone, absolutely-positioned `<svg>` rather than a child of the room's own `MarkerCell`:
- * its box sits over the connector's cell, not the room's, and `pointerEvents: none` keeps it out
- * of the tap layer entirely — a statement, never a target. */
-const OneWayLandingArrow = ({ row, col, dir }: { row: number; col: number; dir: Direction }) => {
+ * A standalone, absolutely-positioned `<svg>` rather than a child of the mouth's own `MarkerCell`:
+ * its box sits over the cell beyond the mouth, not the mouth's own, and `pointerEvents: none` keeps
+ * it out of the tap layer entirely — a statement, never a target. */
+const OneWayMouthArrow = ({ row, col, dir }: { row: number; col: number; dir: Direction }) => {
   const [dr, dc] = DIR_MOVES[dir]
   const { cx, cy } = cellCenter(row + dr, col + dc)
   const r = MARKER_RADIUS * 1.2
@@ -1037,6 +1037,26 @@ const OneWayLandingArrow = ({ row, col, dir }: { row: number; col: number; dir: 
       </g>
     </svg>
   )
+}
+
+/** Where `OneWayMouthArrow` belongs for the mouth beside (r,c) — its landing — and whether the explorer
+ * is standing there to see it: null otherwise, including when (r,c) names no mouth at all. `dir` is the
+ * one direction `oneWayMouthDir` ever returns for a landing, which is both the way from the landing to
+ * the mouth and the way onward from the mouth away from it, so the same value serves as the mouth's own
+ * coordinates (`r,c` walked one step) and the arrow's rotation. */
+const oneWayMouthArrowAt = (
+  grid: FloorGrid,
+  explorerPos: readonly [number, number] | undefined,
+  r: number,
+  c: number
+): { row: number; col: number; dir: Direction } | null => {
+  const dir = oneWayMouthDir(grid, r, c)
+  if (!dir) return null
+  const [dr, dc] = DIR_MOVES[dir]
+  const mouthRow = r + dr,
+    mouthCol = c + dc
+  if (explorerPos?.[0] !== mouthRow || explorerPos?.[1] !== mouthCol) return null
+  return { row: mouthRow, col: mouthCol, dir }
 }
 
 /** One cell's marker: the icon in a little `<svg>` of its own, in a box the size of the cell.
@@ -1497,8 +1517,7 @@ export const SiteMapView = ({
                   // A region-addressed drop can land mid-corridor rather than in a room (a fork's own
                   // branch, say), and the barred arrow belongs at whichever cell sits next to the
                   // mouth — a room landing is not the only shape this takes.
-                  const oneWayDir = oneWayMouthDir(grid, r, c)
-                  const onExplorer = explorerPos?.[0] === r && explorerPos?.[1] === c
+                  const oneWayArrow = oneWayMouthArrowAt(grid, explorerPos, r, c)
                   return (
                     <Fragment key={`${r},${c}`}>
                       <MarkerCell
@@ -1513,7 +1532,7 @@ export const SiteMapView = ({
                             cell.state === "reachable" && isCorner && <ReachableDot />
                           ))}
                       </MarkerCell>
-                      {oneWayDir && onExplorer && <OneWayLandingArrow row={r} col={c} dir={oneWayDir} />}
+                      {oneWayArrow && <OneWayMouthArrow {...oneWayArrow} />}
                     </Fragment>
                   )
                 }
@@ -1557,8 +1576,7 @@ export const SiteMapView = ({
                 const sealedWay = isSealedWayOut(cell)
                 const locked = isLockedGate(cell, ownedKeys)
                 const displayState: CellState = locked && state === "reachable" ? "visible" : state
-                const oneWayDir = oneWayMouthDir(grid, r, c)
-                const onExplorer = explorerPos?.[0] === r && explorerPos?.[1] === c
+                const oneWayArrow = oneWayMouthArrowAt(grid, explorerPos, r, c)
 
                 return (
                   <Fragment key={`${r},${c}`}>
@@ -1601,7 +1619,7 @@ export const SiteMapView = ({
                         shapeKind !== "fork" &&
                         (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
                     </MarkerCell>
-                    {oneWayDir && onExplorer && <OneWayLandingArrow row={r} col={c} dir={oneWayDir} />}
+                    {oneWayArrow && <OneWayMouthArrow {...oneWayArrow} />}
                   </Fragment>
                 )
               })

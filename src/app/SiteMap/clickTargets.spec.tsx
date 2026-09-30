@@ -263,3 +263,40 @@ describe("a gate the player can enter", () => {
     expect([...offeredTargets(carved, buildRoomClaims(carved), outside).values()]).toContainEqual(gate.at)
   })
 })
+
+// A ZIPLINE'S MOUTH IS A REAL DESTINATION NOW: walkable from its landing (gridNavigation.spec.ts
+// proves the graph edge), so it must also be a marker the player can actually tap — an offer with no
+// marker on it is the exact defect this module exists to rule out (see the module doc comment above).
+describe("a one-way mouth the player can walk up to", () => {
+  // source(0,0) --e--> mouth(0,1), dirs {e} only --e--> landing(0,2), dirs {} — the same shape
+  // gridNavigation.spec.ts uses for the graph-level guarantee this offer rests on.
+  const grid: FloorGrid = {
+    siteId: "one-way-mouth",
+    rows: 1,
+    cols: 3,
+    entrancePos: [0, 0],
+    exitPos: [0, 2],
+    staircases: {},
+    cells: [
+      [
+        { type: "room", roomType: "encounter", dirs: new Set(["e"]), state: "reachable" },
+        { type: "corridor", dirs: new Set(["e"]), state: "visible" },
+        { type: "room", roomType: "encounter", dirs: new Set(), state: "reachable" },
+      ],
+    ],
+  }
+
+  it("is offered from the landing, and a tap resolves onto it", () => {
+    const offers = [...offeredTargets(grid, buildRoomClaims(grid), [0, 2]).values()]
+    expect(offers).toContainEqual([0, 1])
+
+    const onCellClick = vi.fn()
+    const { container } = render(<SiteMapView grid={grid} explorerPos={[0, 2]} onCellClick={onCellClick} />)
+    const mouth = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
+      el => parseFloat(el.style.left) === cellCenter(0, 1).cx - CELL / 2
+    )
+    expect(mouth?.style.cursor).toBe("pointer")
+    fireEvent.click(mouth!)
+    expect(onCellClick).toHaveBeenCalledWith(0, 1)
+  })
+})

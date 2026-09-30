@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react"
 import { cellAddress } from "./cellIdentity"
-import { findPath, getCell } from "@/game/gridNavigation"
+import { findPath, getCell, isOneWayMouth } from "@/game/gridNavigation"
 import { throwMechanism } from "@/game/mechanismDoors"
 import type { FloorGrid, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
@@ -95,7 +95,11 @@ export const useSiteNavigation = ({
       if (!grid) return
       const cell = getCell(grid, row, col)
       if (!cell || cell.type === "empty") return
-      if (cell.state !== "reachable" && cell.state !== "completed") return
+      // A one-way mouth is a real, tappable stopping point but never reaches "reachable" — its fog
+      // only ever lifts to "visible" (`revealOneWayMouth`) — so it is named here rather than folded
+      // into the ordinary check.
+      const isWalkableMouth = cell.type === "corridor" && cell.state === "visible" && isOneWayMouth(grid, row, col)
+      if (cell.state !== "reachable" && cell.state !== "completed" && !isWalkableMouth) return
       // A tap means "walk there", so somewhere with no walkable route is not somewhere a tap can send
       // the player: moving anyway is a teleport, and can shut them inside a pocket they cannot leave.
       if (findPath(grid, explorerPos, [row, col]).length === 0) return

@@ -1,4 +1,4 @@
-import type { FloorGrid, GridCell, Direction, CellState, TombKeyReward } from "./siteTypes"
+import type { FloorGrid, GridCell, Direction, CellState, TombKeyReward, CorridorCell, RoomCell } from "./siteTypes"
 
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 const opposite: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
@@ -47,6 +47,17 @@ export const oneWayMouthDir = (grid: FloorGrid, row: number, col: number): Direc
     if (neighbor?.type === "corridor" && neighbor.dirs.size === 1 && neighbor.dirs.has(opposite[dir])) return dir
   }
   return undefined
+}
+
+/** Whether (row,col) is itself a one-way mouth, confirmed from the mouth's own side by checking that
+ * its landing agrees — the same asymmetry `oneWayMouthDir` reads, asked in the other direction rather
+ * than re-derived. */
+export const isOneWayMouth = (grid: FloorGrid, row: number, col: number): boolean => {
+  const cell = getCell(grid, row, col)
+  if (cell?.type !== "corridor" || cell.dirs.size !== 1) return false
+  const [dir] = cell.dirs
+  const [dr, dc] = MOVES[dir]
+  return oneWayMouthDir(grid, row + dr, col + dc) === opposite[dir]
 }
 
 /** Brings a one-way mouth next to (row,col) out of the fog — and only that one cell, never what
@@ -156,6 +167,18 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
   return { ...grid, cells: newCells }
 }
 
+/** Every direction (row,col) can walk out along: its own `dirs`, plus — if a one-way mouth stands
+ * beside it — the direction there. A mouth's landing never carries that direction in its own `dirs`
+ * (the asymmetry the whole feature rests on), so a plain `dirs` walk can never reach it; every graph
+ * walk over the floor (`findPath`, `walkableFrom`) reads this instead of `dirs` alone, so the mouth is
+ * one real edge in one place rather than a second notion of "can walk" each has to carry itself. */
+const walkableDirsFrom = (grid: FloorGrid, row: number, col: number, cell: CorridorCell | RoomCell): Direction[] => {
+  const dirs = [...cell.dirs]
+  const mouthDir = oneWayMouthDir(grid, row, col)
+  if (mouthDir) dirs.push(mouthDir)
+  return dirs
+}
+
 export const findPath = (
   grid: FloorGrid,
   from: readonly [number, number],
@@ -173,7 +196,7 @@ export const findPath = (
     const [r, c] = queue.shift()!
     const cell = grid.cells[r]?.[c]
     if (!cell || cell.type === "empty") continue
-    for (const d of cell.dirs) {
+    for (const d of walkableDirsFrom(grid, r, c, cell)) {
       const [dr, dc] = MOVES[d]
       const nr = r + dr,
         nc = c + dc
@@ -210,7 +233,11 @@ export const findPath = (
 /** Every cell the player can WALK to from `from`: real edges only, never through ground still in
  * the dark — the same rule findPath walks, which is the point. A marker offered on a cell outside this
  * set is an affordance the map cannot honour, and the corridor holding it should read as the dead end
- * it is. */
+ * it is.
+ *
+ * Includes an adjacent one-way mouth: the player may stand on it, even though its landing's own
+ * `dirs` never lists the way there — `walkableDirsFrom` is what supplies that edge. The mouth is a
+ * dead-end stub whose only `dirs` entry leads straight back, so this still never lets anyone cross. */
 export const walkableFrom = (grid: FloorGrid, from: readonly [number, number]): ReadonlySet<string> => {
   const [fr, fc] = from
   const seen = new Set<string>([`${fr},${fc}`])
@@ -220,7 +247,7 @@ export const walkableFrom = (grid: FloorGrid, from: readonly [number, number]): 
     const [r, c] = queue.shift()!
     const cell = grid.cells[r]?.[c]
     if (!cell || cell.type === "empty") continue
-    for (const d of cell.dirs) {
+    for (const d of walkableDirsFrom(grid, r, c, cell)) {
       const [dr, dc] = MOVES[d]
       const nr = r + dr,
         nc = c + dc

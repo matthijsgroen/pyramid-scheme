@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest"
-import { completeCell, findPath, getOwnedKeys, renderAscii, revealAll } from "./gridNavigation"
+import {
+  completeCell,
+  findPath,
+  getOwnedKeys,
+  isOneWayMouth,
+  renderAscii,
+  revealAll,
+  walkableFrom,
+} from "./gridNavigation"
 import { assembleFloor } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid, GridCell } from "./siteTypes"
 
@@ -306,6 +314,46 @@ describe(completeCell, () => {
   })
 })
 
+// source(0,0) --e--> mouth(0,1), dirs {e} only --e--> landing(0,2), dirs {} — the same shape the
+// SiteMapView arrow spec uses: the landing names no direction back into the mouth (the asymmetry
+// itself), so this isolates exactly the two cells a zipline's mouth ever touches.
+const oneWayMouthGrid = (): FloorGrid => ({
+  siteId: "test",
+  rows: 1,
+  cols: 3,
+  entrancePos: [0, 0],
+  exitPos: [0, 2],
+  staircases: {},
+  cells: [
+    [
+      { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e"]), state: "reachable" },
+      { type: "corridor", dirs: new Set<Direction>(["e"]), state: "visible" },
+      { type: "room", roomType: "encounter", dirs: new Set<Direction>(), state: "reachable" },
+    ],
+  ],
+})
+
+describe(isOneWayMouth, () => {
+  it("is true for the mouth, and false for its landing and its source", () => {
+    const grid = oneWayMouthGrid()
+    expect(isOneWayMouth(grid, 0, 1)).toBe(true)
+    expect(isOneWayMouth(grid, 0, 2)).toBe(false)
+    expect(isOneWayMouth(grid, 0, 0)).toBe(false)
+  })
+})
+
+describe(walkableFrom, () => {
+  it("from the landing, the mouth is walkable — and nothing beyond it is", () => {
+    const grid = oneWayMouthGrid()
+    expect(walkableFrom(grid, [0, 2])).toEqual(new Set(["0,2", "0,1"]))
+  })
+
+  it("from the mouth, the only walkable neighbour is the landing", () => {
+    const grid = oneWayMouthGrid()
+    expect(walkableFrom(grid, [0, 1])).toEqual(new Set(["0,1", "0,2"]))
+  })
+})
+
 describe(findPath, () => {
   it("returns single-element path when from === to", () => {
     const grid = makeLinearGrid()
@@ -408,6 +456,15 @@ describe(findPath, () => {
     }
 
     expect(findPath(grid, [0, 0], [0, 2])).toEqual([])
+  })
+
+  it("routes onto a one-way mouth from its landing, and refuses to route beyond it", () => {
+    const grid = oneWayMouthGrid()
+    expect(findPath(grid, [0, 2], [0, 1])).toEqual([
+      [0, 2],
+      [0, 1],
+    ])
+    expect(findPath(grid, [0, 1], [0, 0])).toEqual([])
   })
 })
 
