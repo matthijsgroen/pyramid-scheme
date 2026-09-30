@@ -388,19 +388,37 @@ describe("SiteMapView — one-way drop, the barred arrow", () => {
     )
   }
 
-  it("draws a barred arrow at the landing, the mouth beside it seen and not the way itself", () => {
-    const { container } = render(<SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} />)
+  it("draws a barred arrow at the landing when the explorer stands there", () => {
+    const { container } = render(
+      <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 2]} />
+    )
     expect(container.querySelectorAll("[data-one-way-arrow]").length).toBeGreaterThan(0)
   })
 
+  it("draws no barred arrow for that same landing when the explorer stands anywhere else", () => {
+    const { container } = render(
+      <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 0]} />
+    )
+    expect(container.querySelectorAll("[data-one-way-arrow]")).toHaveLength(0)
+  })
+
+  it("draws no barred arrow at all with no explorer position given", () => {
+    const { container } = render(<SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} />)
+    expect(container.querySelectorAll("[data-one-way-arrow]")).toHaveLength(0)
+  })
+
   it("draws no barred arrow where no one-way mouth stands beside the room (control)", () => {
-    const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), empty]])} onCellClick={() => {}} />)
+    const { container } = render(
+      <SiteMapView grid={makeGrid([[room("reachable"), empty]])} onCellClick={() => {}} explorerPos={[0, 0]} />
+    )
     expect(container.querySelectorAll("[data-one-way-arrow]")).toHaveLength(0)
   })
 
   it("is not its own click target — a tap on it does nothing, and the connector beside it takes no tap either", () => {
     const onClick = vi.fn()
-    const { container } = render(<SiteMapView grid={dropGrid("reachable")} onCellClick={onClick} />)
+    const { container } = render(
+      <SiteMapView grid={dropGrid("reachable")} onCellClick={onClick} explorerPos={[0, 2]} />
+    )
     const arrow = container.querySelector("[data-one-way-arrow]")!
     fireEvent.click(arrow)
     expect(onClick).not.toHaveBeenCalled()
@@ -408,7 +426,9 @@ describe("SiteMapView — one-way drop, the barred arrow", () => {
   })
 
   it("stands a full cell out from the landing, in the connector's own cell — the same distance a RunTargetArrow keeps from the player, not tucked against their feet", () => {
-    const { container } = render(<SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} />)
+    const { container } = render(
+      <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 2]} />
+    )
     const arrow = container.querySelector<HTMLElement>("[data-one-way-arrow]")!
     const left = parseFloat(arrow.style.left)
     const top = parseFloat(arrow.style.top)

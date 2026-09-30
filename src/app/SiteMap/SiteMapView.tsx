@@ -993,6 +993,11 @@ const RunTargetArrow = ({ dir }: { dir: Direction }) => {
  * standing there would cover it. `DIR_MOVES` and `cellCenter` are the pair every other marker's
  * position comes from, so this one is read off them too rather than a distance of its own.
  *
+ * Callers draw this only when the explorer is standing on the landing cell itself — every other
+ * arrow the map draws belongs to the player's own position, and this one is no exception: it is a
+ * "you cannot go back" told to the player standing there, not a label painted on a landing seen
+ * from elsewhere.
+ *
  * A standalone, absolutely-positioned `<svg>` rather than a child of the room's own `MarkerCell`:
  * its box sits over the connector's cell, not the room's, and `pointerEvents: none` keeps it out
  * of the tap layer entirely — a statement, never a target. */
@@ -1493,6 +1498,7 @@ export const SiteMapView = ({
                   // branch, say), and the barred arrow belongs at whichever cell sits next to the
                   // mouth — a room landing is not the only shape this takes.
                   const oneWayDir = oneWayMouthDir(grid, r, c)
+                  const onExplorer = explorerPos?.[0] === r && explorerPos?.[1] === c
                   return (
                     <Fragment key={`${r},${c}`}>
                       <MarkerCell
@@ -1507,7 +1513,7 @@ export const SiteMapView = ({
                             cell.state === "reachable" && isCorner && <ReachableDot />
                           ))}
                       </MarkerCell>
-                      {oneWayDir && <OneWayLandingArrow row={r} col={c} dir={oneWayDir} />}
+                      {oneWayDir && onExplorer && <OneWayLandingArrow row={r} col={c} dir={oneWayDir} />}
                     </Fragment>
                   )
                 }
@@ -1552,6 +1558,7 @@ export const SiteMapView = ({
                 const locked = isLockedGate(cell, ownedKeys)
                 const displayState: CellState = locked && state === "reachable" ? "visible" : state
                 const oneWayDir = oneWayMouthDir(grid, r, c)
+                const onExplorer = explorerPos?.[0] === r && explorerPos?.[1] === c
 
                 return (
                   <Fragment key={`${r},${c}`}>
@@ -1594,7 +1601,7 @@ export const SiteMapView = ({
                         shapeKind !== "fork" &&
                         (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
                     </MarkerCell>
-                    {oneWayDir && <OneWayLandingArrow row={r} col={c} dir={oneWayDir} />}
+                    {oneWayDir && onExplorer && <OneWayLandingArrow row={r} col={c} dir={oneWayDir} />}
                   </Fragment>
                 )
               })
