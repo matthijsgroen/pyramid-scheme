@@ -169,6 +169,9 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
   /** Every gate any door named with a key id — what the chest that mints that key opens. */
   const gatesByKeyId = new Map<string, GateId[]>()
 
+  /** Gates the author said one owner is enough for; every other gate answers to all its owners. */
+  const anyGates = new Set<GateId>()
+
   const claim = (gateId: GateId, keyId: string, mechanismId: MechanismId) => {
     ownersOf.set(gateId, (ownersOf.get(gateId) ?? new Set()).add(mechanismId))
     unopened.get(gateId)!.delete(keyId)
@@ -210,7 +213,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
   // mind, and the only reason the doors it shut are not a trap.
   for (const [at, record] of mechanismsAt) {
     const id = `${kindOf(record)} ${at}`
-    const byPosition = record.positions.map(({ state, gateKeyId }) => {
+    const byPosition = record.positions.map(({ state, gateKeyId, mode }) => {
       const doors = exitDoorsAt.get(at)?.get(gateKeyId) ?? doorsByKeyId.get(gateKeyId) ?? []
       if (doors.length === 0)
         throw new Error(
@@ -226,7 +229,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
           )
         return found
       })
-      return { state, gateIds, keyId: gateKeyId }
+      return { state, gateIds, keyId: gateKeyId, mode }
     })
     // THE STATE MACHINE IS THE RECORD'S, NEVER THIS FILE'S GUESS AT WHAT KIND OF THING IS STANDING
     // THERE. Which positions a mechanism has and whether it can be put back into the one it started in
@@ -247,7 +250,11 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
           .map(to => ({ from, to, at: of.get(at)! }))
       ),
     }
-    for (const { gateIds, keyId } of byPosition) for (const gateId of gateIds) claim(gateId, keyId, id)
+    for (const { gateIds, keyId, mode } of byPosition)
+      for (const gateId of gateIds) {
+        claim(gateId, keyId, id)
+        if (mode) anyGates.add(gateId)
+      }
   }
 
   // A floor key: found once, held for good, and one mechanism however many chests mint it — two
@@ -283,7 +290,10 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
       mechanisms[id] ??= { states: ["shut"], initial: "shut", opens: { shut: [] }, transitions: [] }
       ownersOf.set(gateId, (ownersOf.get(gateId) ?? new Set()).add(id))
     }
-  for (const [gateId, gate] of Object.entries(gates)) gate.owners = [...ownersOf.get(gateId)!]
+  for (const [gateId, gate] of Object.entries(gates)) {
+    gate.owners = [...ownersOf.get(gateId)!]
+    if (anyGates.has(gateId)) gate.mode = "any"
+  }
 
   const oneWays = oneWaysOf(grid, of)
 

@@ -475,12 +475,12 @@ it looks like on the grid.
 
 **What enforces each today:**
 
-| | Enforced by | Gap |
-| --- | --- | --- |
-| 1 | `LockSpec` is a connectivity graph by construction | **The authored graph and the compiled one are different objects, and NOTHING COMPARES THEM** — see below |
-| 2 | `LockSpec` carries a single `in`/`out`; `checkLockSpec` refuses either naming no region | — |
-| 3 | `strandedRegions` structurally, `deadRegions` for a region no reachable state stands in | — |
-| 4 | `walkLock`, with ward keys assumed shut and hidden sections assumed unfound | — |
+|     | Enforced by                                                                             | Gap                                                                                                      |
+| --- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| 1   | `LockSpec` is a connectivity graph by construction                                      | **The authored graph and the compiled one are different objects, and NOTHING COMPARES THEM** — see below |
+| 2   | `LockSpec` carries a single `in`/`out`; `checkLockSpec` refuses either naming no region | —                                                                                                        |
+| 3   | `strandedRegions` structurally, `deadRegions` for a region no reachable state stands in | —                                                                                                        |
+| 4   | `walkLock`, with ward keys assumed shut and hidden sections assumed unfound             | —                                                                                                        |
 
 **THE GAP UNDER CRITERION 1, measured 2026-09-30.** `floorLock` derives the lock by flooding the
 ASSEMBLED GRID and stopping at gates, so what gets walked is whatever the carve produced — the
@@ -505,20 +505,20 @@ is an outcome rather than a requirement.
 
 **Where each criterion stands, audited 2026-09-30.**
 
-| # | Criterion | State |
-| --- | --- | --- |
-| 1 | connectivity graph | type is real; **nothing compares the carve to the authoring** |
-| 2 | one in, one out | authored side refused by name and tested; compiled side checked at runtime, no regression test |
-| 3 | every region reachable | `strandedRegions` + `deadRegions`, both tested, refused at build and reported by `validate-world` |
-| 4 | no outside help | `walkLock` with wards sealed in `floorLock`; ward half tested, **hidden-section half untested** |
-| 5 | region vocabulary | the four existing kinds only; `lock` and `stair` do not exist |
-| 6 | corridors absorb side paths | true, but **emergent from the flood algorithm** — no rule to violate |
-| 7 | side paths off a lock's corridors | built, tested, refused by name |
-| 8 | a lock stands anywhere in a map | **not there** |
-| 9 | locks chain | only as gates in sequence inside one flat graph |
-| 10 | locks nest | **not there — no container abstraction exists** |
-| 11 | exit not inside a lock | **not there** |
-| 12 | no route round a top-level lock | **not there** |
+| #   | Criterion                         | State                                                                                             |
+| --- | --------------------------------- | ------------------------------------------------------------------------------------------------- |
+| 1   | connectivity graph                | type is real; **nothing compares the carve to the authoring**                                     |
+| 2   | one in, one out                   | authored side refused by name and tested; compiled side checked at runtime, no regression test    |
+| 3   | every region reachable            | `strandedRegions` + `deadRegions`, both tested, refused at build and reported by `validate-world` |
+| 4   | no outside help                   | `walkLock` with wards sealed in `floorLock`; ward half tested, **hidden-section half untested**   |
+| 5   | region vocabulary                 | the four existing kinds only; `lock` and `stair` do not exist                                     |
+| 6   | corridors absorb side paths       | true, but **emergent from the flood algorithm** — no rule to violate                              |
+| 7   | side paths off a lock's corridors | built, tested, refused by name                                                                    |
+| 8   | a lock stands anywhere in a map   | **not there**                                                                                     |
+| 9   | locks chain                       | only as gates in sequence inside one flat graph                                                   |
+| 10  | locks nest                        | **not there — no container abstraction exists**                                                   |
+| 11  | exit not inside a lock            | **not there**                                                                                     |
+| 12  | no route round a top-level lock   | **not there**                                                                                     |
 
 **THE ONE FACT BEHIND 8, 10, 11, 12 AND 1's GUARANTEE.** `regionLayout` is stretched to cover the
 floor's ENTIRE main path, and the lock's ports are the floor's own entrance and exit. **A lock is not
@@ -567,23 +567,39 @@ a floor's SHAPE, these describe what the player meets when they walk up to it.
 
 **What enforces each today, audited 2026-09-30.**
 
-| # | Criterion | State |
-| --- | --- | --- |
-| 1 | closed by default | holds: `openDoorsFor` falls back to `mechanism.initial`, so a gate the initial position does not name is shut before anyone touches the lever |
-| 2 | on a room/corridor edge | holds by construction — an obstacle is authored `at: { on: "connection", between: [a,b] }`, and the carve seats its gate on that boundary |
-| 3 | closed gate offers no direction | **the fault the owner found.** An obstacle gate is written `family: "key-gate"`, and `openWaysOut` touches only family-less gates, so the gate is walked into and opens a key modal instead of reading as a wall |
-| 4 | open gate offers a direction | follows from 3 — `openWaysOut` gives the cell back its corridor, so the way out is an ordinary way out |
-| 5 | authored open by default | holds: name the gate under the control's `initial` state |
-| 6 | two gates in sync | holds: two `positions` entries sharing a `state`, each with its own `gateKeyId` |
-| 7 | one lever toggles two gates | holds: the second gate named under the other state |
-| 8 | `or` | **free** — `openDoorsFor` unions the open keys across every mechanism on the floor, which is exactly `or` |
-| 9 | `and` | **NOT EXPRESSIBLE.** A union can only widen, so no arrangement of `positions` can say "only when both". This needs a condition on the OBSTACLE, not a mapping on the control |
+| #   | Criterion                       | State                                                                                                                                                                                                                                                                                                                                                                                                       |
+| --- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | closed by default               | holds: `openDoorsFor` falls back to `mechanism.initial`, so a gate the initial position does not name is shut before anyone touches the lever                                                                                                                                                                                                                                                               |
+| 2   | on a room/corridor edge         | holds by construction — an obstacle is authored `at: { on: "connection", between: [a,b] }`, and the carve seats its gate on that boundary                                                                                                                                                                                                                                                                   |
+| 3   | closed gate offers no direction | holds: an obstacle gate carries no family, so `isSealedWayOut` treats it as a wall — refused by `walkableFrom` and `findPath`, offered no marker, never `completed`, and opening no screen when tapped                                                                                                                                                                                            |
+| 4   | open gate offers a direction    | holds: `openWaysOut` gives a family-less gate its corridor back the moment its key is open, so the way out is an ordinary way out, decided by the lever alone rather than by the player having passed through it                                                                                                                                                                                                                                                                                                      |
+| 5   | authored open by default        | holds: name the gate under the control's `initial` state                                                                                                                                                                                                                                                                                                                                                    |
+| 6   | two gates in sync               | holds: two `positions` entries sharing a `state`, each with its own `gateKeyId`                                                                                                                                                                                                                                                                                                                             |
+| 7   | one lever toggles two gates     | holds: the second gate named under the other state                                                                                                                                                                                                                                                                                                                                                          |
+| 8   | `or`                            | holds: `mode: "any"` on the obstacle — one owner naming the gate in its current state is enough                                                                                                                                                                                                                                                                                                             |
+| 9   | `and`                           | holds: an obstacle with no `mode` stands open only while EVERY control naming it is in a state that names it; `openDoorsFor` folds its owners by the gate's mode, the way the soundness walk's `openGates` does, and `gateMode.spec.ts` asserts the two agree in every configuration. A mixed condition (S1 thrown, S2 at rest) is the same fold: S1 names the gate on its thrown side, S2 on its rest side |
 
-**The one fact behind criteria 3 and 9.** A control states which gates its own position opens, and the
-floor unions those statements. That shape gives `or` for nothing and puts `and` out of reach, because
-nobody asks the GATE what it requires — the gates only ever answer what the levers assert. The obstacle
-carrying its own opening condition is the piece that is missing, and it is the same shape of gap as a
-lock's: the authored intent lives on one side, and nothing on the other side is asked to agree.
+**How a gate's condition is stated.** A control states which gates its own position opens; a gate's
+opening condition (`GateObstacle.mode`) says how its owners' statements combine. The condition rides
+each owner's `positions` entry to `openDoorsFor` and to the `LockGate` the walk reads, so the runtime and
+the proof fold one rule, and `gateMode.spec.ts` asserts they agree in every configuration of a floor.
+That agreement is the thing to keep: before it, `openGates` folded by mode while `openDoorsFor` unioned,
+so a two-owner gate would have been PROVED under `and` and PLAYED under `or`, with `validate-world`
+reporting sound throughout.
+
+**Two places the same divergence can still open, neither reachable by anything authored today.** Both
+are the runtime and the walk counting a gate's owners differently, which is the fault above wearing a
+different hat:
+
+- **A door carrying several `requiredKeyId`s, one of them sealed, under an authored `any`.** The walk
+  pools the mechanisms of every key on the door into one gate; the runtime folds per key. The two
+  disagree about what "any" ranges over.
+- **A gate whose key a chest also mints.** In `floorLock` the `key …` mechanism minted from a chest and
+  the `sealed …` owner both count as owners, so an `and` gate needs the chest key in the walk — and the
+  runtime does not model that key at all.
+
+Nothing authors either shape, so both are latent. They are recorded here rather than guarded because a
+guard for a shape no author can reach is a guard that can never be watched failing.
 
 ### The rules that keep a lock buildable
 

@@ -735,14 +735,25 @@ export const assembleFloor = (
   // each id mints — a control mints one from the obstacle's own authored id (`gateKeyOf`), a handle
   // already knows each driven section's key and hands it back verbatim. Iterates `states`, not
   // `Object.entries(opens)`, so compiled order follows what the author declared.
-  const compileMechanism = (mechanism: Mechanism, resolveGateKey: (obstacleId: string) => string): MechanismRecord => ({
+  const compileMechanism = (
+    mechanism: Mechanism,
+    resolveGateKey: (obstacleId: string) => string,
+    modeOf: (obstacleId: string) => "any" | undefined = () => undefined
+  ): MechanismRecord => ({
     states: mechanism.states,
     initial: mechanism.initial,
     returnsToInitial: mechanism.returnsToInitial,
     positions: mechanism.states.flatMap(state =>
-      (mechanism.opens[state] ?? []).map(id => ({ state, gateKeyId: resolveGateKey(id) }))
+      (mechanism.opens[state] ?? []).map(id => {
+        const mode = modeOf(id)
+        return { state, gateKeyId: resolveGateKey(id), ...(mode ? { mode } : {}) }
+      })
     ),
   })
+  const obstacleMode = (id: string) => {
+    const found = (authoredConfig.obstacles ?? []).find(o => o.id === id)
+    return found?.kind === "gate" ? found.mode : undefined
+  }
   // The id a stairhead here takes when the authoring named none — the floor's own address plus where
   // on it the stairs stand, built by the one constructor world generation also mints ids with, so a
   // floor assembled from an unnamed stairhead lands on the same id the spec would have given it.
@@ -823,7 +834,7 @@ export const assembleFloor = (
   // state, which is what lets one position open a set.
   const controlRecords = (authoredConfig.controls ?? []).map(control => ({
     control,
-    record: compileMechanism(control, gateKeyOf),
+    record: compileMechanism(control, gateKeyOf, obstacleMode),
   }))
   // A CONTROL AND EVERY OBSTACLE IT OPENS WEAR ONE MARK, so the map reads "this lever, these doors" as
   // one pair the same way a handle's does — derived from the AUTHORED obstacle id(s) it drives, sorted

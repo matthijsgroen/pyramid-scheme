@@ -352,8 +352,11 @@ export type MechanismRecord = {
   returnsToInitial: boolean
   /** One entry per gate this mechanism drives, tagged with the position that opens it. Several entries
    * may share a position — a lever thrown left opens every gate its left side names — and a position
-   * that opens nothing simply has none. */
-  positions: { state: string; gateKeyId: string }[]
+   * that opens nothing simply has none.
+   *
+   * `mode` is the GATE's condition, carried on every owner's entry for it: absent means the gate stands
+   * open only while EVERY mechanism naming it is in a position that names it, `"any"` while one is. */
+  positions: { state: string; gateKeyId: string; mode?: "any" }[]
 }
 export type GateConfig =
   | {

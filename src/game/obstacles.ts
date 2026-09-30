@@ -21,6 +21,10 @@ export type GateObstacle = {
   id: string
   kind: "gate"
   at: { on: "connection"; between: readonly [string, string] }
+  /** THE GATE'S OWN OPENING CONDITION, asked of every control that names it in any state. Absent: it
+   * stands open only while EVERY such control is in a state naming it (`and`). `"any"`: while one is
+   * (`or`). The same reading as `LockGate.mode` (lockWalk.ts), which the soundness walk folds by. */
+  mode?: "any"
 }
 
 /**

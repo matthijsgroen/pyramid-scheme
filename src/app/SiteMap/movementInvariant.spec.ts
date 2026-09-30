@@ -453,10 +453,16 @@ const toggledGates = forkedRun({
     { state: "right", gateKeyId: gateKey("b") },
   ],
 })
+// Two levers own one gate and neither names a mode, so the gate stands only while BOTH are thrown.
+const andGate = floorFrom(["E.L.N.A..", "        .", "        R"], {
+  L: lever(leverOpening("a")),
+  N: lever(leverOpening("a")),
+  A: gate("a"),
+})
 const oneWayDrop = floorFrom(["E.RMT.R"], DROP)
 const gateAndDrop = floorFrom(["E.L.A.RMT.R"], { ...DROP, L: lever(leverOpening("a")), A: gate("a") })
 
-// `minSteps` sits just under each fixture's measured step count (109, 33, 93, 75, 23 and 30), so a walk
+// `minSteps` sits just under each fixture's measured step count (109, 33, 93, 75, 90, 23 and 30), so a walk
 // that stalls early is red rather than quietly shorter.
 type Fixture = { name: string; grid: FloorGrid; minSteps: number }
 
@@ -465,6 +471,7 @@ const fixtures: Fixture[] = [
   { name: "a lever and one gate", grid: oneGate, minSteps: 25 },
   { name: "a lever and two gates opening together", grid: twoGatesTogether, minSteps: 80 },
   { name: "a lever and two gates, one open and one shut, so the lever toggles", grid: toggledGates, minSteps: 65 },
+  { name: "two levers and one gate that needs both", grid: andGate, minSteps: 75 },
   { name: "a one-way drop crossed from its departure", grid: oneWayDrop, minSteps: 15 },
   { name: "a gate and a one-way drop on one floor", grid: gateAndDrop, minSteps: 25 },
 ]

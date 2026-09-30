@@ -4,8 +4,12 @@ import { cellAddress } from "./cellAddress"
 // WHICH DOORS STAND OPEN IS ASKED OF EACH MECHANISM'S OWN MAPPING, NEVER STORED. The save holds the
 // position; the floor holds what that position opens. Keeping the mapping here rather than in the save
 // is what lets a re-carve move a door without a stored entry coming to fit one it was never set for.
+//
+// A GATE IS FOLDED FROM ITS OWNERS, NEVER UNIONED. Every mechanism naming a gate key in any position owns
+// it, and each is asked whether its CURRENT state names it; the answers are folded by the gate's mode
+// exactly as the soundness walk folds them (`openGates`, lockWalk.ts), so what is proved is what is played.
 export const openDoorsFor = (grid: FloorGrid, floor: number, positions: ReadonlyMap<string, string>): Set<string> => {
-  const open = new Set<string>()
+  const owners = new Map<string, { says: boolean[]; any: boolean }>()
   for (let r = 0; r < grid.rows; r++)
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
@@ -18,8 +22,17 @@ export const openDoorsFor = (grid: FloorGrid, floor: number, positions: Readonly
       const state = positions.get(at) ?? cell.mechanism.initial
       // A position this build no longer has simply opens nothing — the only safe answer: guessing at
       // the nearest position would open a door nobody threw the lever for.
-      for (const p of cell.mechanism.positions) if (p.state === state) open.add(p.gateKeyId)
+      const { positions: named } = cell.mechanism
+      for (const gateKeyId of new Set(named.map(p => p.gateKeyId))) {
+        const gate = owners.get(gateKeyId) ?? { says: [], any: false }
+        gate.says.push(named.some(p => p.gateKeyId === gateKeyId && p.state === state))
+        if (named.some(p => p.gateKeyId === gateKeyId && p.mode === "any")) gate.any = true
+        owners.set(gateKeyId, gate)
+      }
     }
+  const open = new Set<string>()
+  for (const [gateKeyId, { says, any }] of owners)
+    if (any ? says.some(Boolean) : says.every(Boolean)) open.add(gateKeyId)
   return open
 }
 
