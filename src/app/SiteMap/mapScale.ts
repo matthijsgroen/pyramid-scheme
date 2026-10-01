@@ -93,13 +93,17 @@ export const ARCH_W = CELL + SIDE_W * 2 // 84
 export const DROP_W = 170
 export const DROP_H = 81
 
-/** A vertical drop is drawn at the same scale, 29.4 master pixels to a unit, which makes the pit one corridor
- * wide (56 units, 112 pixels): the black runs to the paving's edge on both sides and that width IS the
- * corridor's. Its height is whatever the art measures at that scale and it is NOT stretched to the run: the
- * run is 224 units down the page and these tiles are a third of it. The north tile is 112 x 149 pixels, the
- * south 112 x 134. */
-export const DROP_NORTH_W = 56
-export const DROP_NORTH_H = 74.5
+/** A vertical drop's scale is set by the corridor edges MARKED ON ITS MASTER, not by the pit's own ink: the
+ * crack is torn wider than the passage it crosses, so the painted black overhangs the corridor the way
+ * dropEast's spoil stands proud above its own. North's marks are 861 master pixels apart, which over a
+ * 56-unit corridor is 15.375 pixels to a unit, and the tile measures 215 x 284 pixels at that scale.
+ *
+ * NOTHING IS STRETCHED TO THE RUN. A vertical run is 224 units down the page (ROW_PITCH x 2 + CELL) against
+ * a horizontal one's 196, and the art is drawn at the size it was painted: north covers 63% of its run where
+ * dropEast covers 87%. South is still at the pit-to-paving scale and covers 30%, so it is the one whose
+ * master still wants edge marks. */
+export const DROP_NORTH_W = 107.5
+export const DROP_NORTH_H = 142
 export const DROP_SOUTH_W = 56
 export const DROP_SOUTH_H = 67
 

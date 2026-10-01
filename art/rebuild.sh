@@ -1202,12 +1202,13 @@ yarn import-tile art/masters/props/expert/dropEast.webp --tier=expert --name=dro
 
 # The drop's two VERTICAL headings, each its own render: a vertical flip would swap which lip carries the
 # up-facing top face, against this projection's rule that a block shows its top above and its front below.
-# --tight is the pit's measured ink width (1645 / 1646 master pixels) over CELL (56): the black runs to
-# the paving's edge on both sides, so that width IS one corridor, and the tile is then drawn at the scale
-# it was painted rather than stretched to the 224-unit run. No --crop-below: that cut belongs to
-# dropEast's horizontal frame, and these two are bounded by the ink alone.
+# --tight is master pixels to a map unit, and the two are NOT measured the same way. North's is the
+# corridor width MARKED on its master, 861 pixels over CELL (56), so the crack overhangs the passage it
+# crosses — a fissure is torn wider than the floor it breaks. South still measures its own pit edge to
+# edge, 1646 over 56, and is the smaller for it: its master has no marks yet. Neither is stretched to the
+# 224-unit run. No --crop-below: that cut belongs to dropEast's horizontal frame.
 scaffold pit --contents=dropNorth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
-yarn import-tile art/masters/props/expert/dropNorth.webp --tier=expert --name=dropNorth --slot=prop --tight=29.375 \
+yarn import-tile art/masters/props/expert/dropNorth.webp --tier=expert --name=dropNorth --slot=prop --tight=15.375 \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 scaffold pit --contents=dropSouth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dropSouth --slot=prop --tight=29.393 \
