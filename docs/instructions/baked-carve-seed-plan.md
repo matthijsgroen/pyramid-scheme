@@ -78,3 +78,28 @@ Hash per floor, from the grid already in memory in `assembleOnce`: **each cell's
 ### Task 4: The ladder becomes dead weight, and says so
 
 Once every floor carves at attempt 0, the widening ladder is reachable only by a floor whose seed was never searched. Decide, with measurement, whether it stays as a safety net or goes. **Do not remove it on reasoning alone** — measure how many floors would fail without it, and say. If it stays, its comment should say it is a net for unsearched floors rather than the normal path.
+
+---
+
+## Follow-on, recorded 2026-10-01: the search's answer goes back into the authoring
+
+**Out of scope for the slices above; stated by the owner so it is not lost.**
+
+Today the search starts at the packing the author wrote in `src/worldGen/spec/*.ts` and raises it until a
+floor carves. The result is written to the BAKED world, never back to the authoring — so every fresh
+search re-walks the same rungs to reach the same answer.
+
+**Feed the final packing back into the authored spec** and the starting point becomes the known-good
+value: the escalation finds it at rung 0, and the rungs are only ever climbed by a floor whose authoring
+or assembler genuinely changed.
+
+What it buys: the cold-cache bake (the `CARVE_RESEARCH=1` path, and the first run on an empty ledger)
+stops being dominated by re-deriving answers already known. What it costs: the authored value stops
+being purely the author's wish and becomes partly machine-written, so the diff on `spec/*.ts` needs to
+read as a deliberate update rather than noise — and an author who then LOWERS it should expect the
+search to raise it again rather than treating that as a fight.
+
+Worth pairing with the question of whether a floor's authored packing should be a wish at all, given 38
+of 206 floors needed it raised and 31 cannot carve at attempt 0 at any value because `deriveN` sizes
+their grid too small. A third knob — grid size — may be the honest answer for those 31, and it would
+change what "the authored packing" is for.
