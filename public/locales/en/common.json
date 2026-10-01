@@ -1108,5 +1108,11 @@
     "goal": "The lever hangs one way or the other. What one side opens, the other shuts.",
     "left": "Throw it left",
     "right": "Throw it right"
+  },
+  "torch": {
+    "name": "The Torch",
+    "invitation": "Light the torch",
+    "goal": "An unlit torch. Once it burns it cannot be put out again.",
+    "lit": "The torch is burning."
   }
 }

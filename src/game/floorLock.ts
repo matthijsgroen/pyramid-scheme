@@ -1,6 +1,7 @@
 import type { Direction, FloorGrid, GridCell, MechanismRecord, TombKeyReward } from "./siteTypes"
 import type { LockSpec, Mechanism, GateId, MechanismId, RegionId } from "./lockWalk"
 import { nodeBeyond } from "./siteValidator"
+import { legalTargets } from "./mechanismDoors"
 import { isObstacleCell, oneWayRuns } from "./gridNavigation"
 
 type Pos = readonly [number, number]
@@ -235,18 +236,14 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
     // gate, and a beam board can be turned off every shrine again — so both are declared on the cell
     // and read off it here. Re-workable from any state into any other otherwise, which is what lets a
     // player change their mind and the only reason the doors it shut are not a trap.
-    const { states, initial, returnsToInitial } = record
+    const { states, initial } = record
     const opens: Record<string, GateId[]> = Object.fromEntries(states.map(state => [state, [] as GateId[]]))
     for (const { state, gateIds } of byPosition) opens[state] = [...(opens[state] ?? []), ...gateIds]
     mechanisms[id] = {
       states,
       initial,
       opens,
-      transitions: states.flatMap(from =>
-        states
-          .filter(to => to !== from && (returnsToInitial || to !== initial))
-          .map(to => ({ from, to, at: of.get(at)! }))
-      ),
+      transitions: states.flatMap(from => legalTargets(record, from).map(to => ({ from, to, at: of.get(at)! }))),
     }
     for (const { gateIds, keyId, mode } of byPosition)
       for (const gateId of gateIds) {

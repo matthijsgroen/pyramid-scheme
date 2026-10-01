@@ -2,8 +2,8 @@ import { useCallback, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { cellAddress } from "./cellIdentity"
 import { findPath, getCell, oneWayRuns } from "@/game/gridNavigation"
-import { throwMechanism } from "@/game/mechanismDoors"
-import type { FloorGrid, ObstacleKind, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
+import { legalTargets, throwMechanism } from "@/game/mechanismDoors"
+import type { FloorGrid, MechanismRecord, ObstacleKind, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { encodeEdge } from "./edgeId"
@@ -161,11 +161,18 @@ export const useSiteNavigation = ({
       // never a second path to that state. Only the position: a lever is written down by being stood in
       // (the encounter branch below), the way a junction is, so a player who declines to throw it still
       // sees every way out of it.
+      const stateOf = (mechanism: MechanismRecord) =>
+        journeys.getMechanismStates(journeyId).get(address) ?? mechanism.initial
       const throwLever = (target: RoomCell) => {
         if (!target.mechanism) return
-        const current = journeys.getMechanismStates(journeyId).get(address) ?? target.mechanism.initial
-        journeys.setMechanismState(address, throwMechanism(target.mechanism, current))
+        const current = stateOf(target.mechanism)
+        const next = throwMechanism(target.mechanism, current)
+        if (next !== current) journeys.setMechanismState(address, next)
       }
+      // A SPENT MECHANISM (a lit torch) OFFERS NOTHING: with no legal target a throw would be an empty
+      // prompt, so the room reads as plain floor the player walks through.
+      const isSpent = (target: RoomCell) =>
+        !!target.mechanism && legalTargets(target.mechanism, stateOf(target.mechanism)).length === 0
 
       // A portal takes the player somewhere whatever state its cell is in, so both kinds are answered
       // BEFORE the completed-cell block below, which would otherwise just reposition and swallow the
@@ -224,7 +231,7 @@ export const useSiteNavigation = ({
         const alreadyStandingHere = explorerPos[0] === row && explorerPos[1] === col
         goHere()
         // A family that hands over one of several things it holds, one per visit — see `staysOpen`.
-        const familyStaysOpen = cell.type === "room" && staysOpen(cell)
+        const familyStaysOpen = cell.type === "room" && staysOpen(cell) && !(actsOnArrival(cell) && isSpent(cell))
         const shopHasUnclaimedStock =
           cell.type === "room" &&
           !!cell.stock?.some((item, j) => item && !journeys.getPurchasedShopSlots(journeyId).has(`${address}!${j}`))
@@ -292,7 +299,8 @@ export const useSiteNavigation = ({
         if (actsOnArrival(cell)) {
           const familyId = cell.family
           const target = cell
-          scheduleArrival(walkDelay(row, col), () => offer("room", row, col, () => throwLever(target), familyId))
+          if (!isSpent(cell))
+            scheduleArrival(walkDelay(row, col), () => offer("room", row, col, () => throwLever(target), familyId))
         } else {
           scheduleArrival(walkDelay(row, col), () => onEncounter([row, col], true))
         }

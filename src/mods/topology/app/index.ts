@@ -3,3 +3,4 @@
 import "./lightbeam/plugin"
 import "./lightbeamSwitch/plugin"
 import "./handle/plugin"
+import "./torch/plugin"

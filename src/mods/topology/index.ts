@@ -2,6 +2,7 @@ import type { ModDescriptor } from "../modDescriptor"
 import { LIGHTBEAM_META } from "./game/lightbeam/meta"
 import { LIGHTBEAM_SWITCH_META } from "./game/lightbeamSwitch/meta"
 import { HANDLE_META } from "./game/handle/meta"
+import { TORCH_META } from "./game/torch/meta"
 
 // The topology mod descriptor. Owns the families whose board decides where the player may WALK, rather
 // than only what they solve: lightbeam aims a corridor's beam, the lightbeam switch routes its beam to
@@ -18,5 +19,5 @@ import { HANDLE_META } from "./game/handle/meta"
 // enabled. Toggle the mod off by removing it from src/mods/registeredMods.ts's REGISTERED_MODS list.
 export const topologyMod: ModDescriptor = {
   id: "topology",
-  families: [LIGHTBEAM_META, LIGHTBEAM_SWITCH_META, HANDLE_META],
+  families: [LIGHTBEAM_META, LIGHTBEAM_SWITCH_META, HANDLE_META, TORCH_META],
 }

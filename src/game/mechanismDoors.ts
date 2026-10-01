@@ -45,20 +45,27 @@ export const openDoorsFor = (grid: FloorGrid, floor: number, positions: Readonly
   return open
 }
 
+type MechanismShape = Pick<MechanismRecord, "states" | "initial" | "returnsToInitial">
+
 /**
- * WHERE ONE PRESS SENDS IT: the other of the mechanism's own last two declared positions.
- *
- * A genuine handle (`FloorConfig.handles`) declares exactly two — `left`/`right` — and both are always
- * a press's legal target. A control (`FloorConfig.controls`) may lead with one more: its `initial`,
- * named only so `openDoorsFor` has something to fall back to before anyone touches it (doubleBack's Y
- * starts `"unset"`, reachable from nowhere once the first throw has moved it on) — never itself a
- * target, so the last two states are always the pair a press toggles between, whatever an author named
- * them. A two-state mechanism's last two ARE its only two, so the same rule covers both shapes without
- * asking which one this is.
+ * THE ONE RULE FOR WHERE A PRESS CAN SEND A MECHANISM, shared by the solver (`floorLock`'s transitions)
+ * and play (`throwMechanism`) so the two cannot disagree about what is reachable: every declared state
+ * but the one it stands in, and never `initial` when the record says it does not return there. Declared
+ * order, so a press has a stable "next". Empty for a spent one-way mechanism.
+ */
+export const legalTargets = ({ states, initial, returnsToInitial }: MechanismShape, from: string): string[] =>
+  states.filter(to => to !== from && (returnsToInitial || to !== initial))
+
+/**
+ * WHERE ONE PRESS SENDS IT: the next of `legalTargets` after the current state in declared order,
+ * wrapping round. A two-state returning mechanism toggles; a mechanism with no legal target (a torch
+ * once lit) stays where it is. A state the record does not have (a stale save) takes the first target.
  */
 export const throwMechanism = (mechanism: MechanismRecord, current: string): string => {
-  const [a, b] = mechanism.states.slice(-2)
-  return current === a ? b : a
+  const targets = legalTargets(mechanism, current)
+  if (targets.length === 0) return current
+  const at = mechanism.states.indexOf(current)
+  return targets.find(to => mechanism.states.indexOf(to) > at) ?? targets[0]
 }
 
 /**

@@ -615,6 +615,43 @@ describe("a lever family (FamilyMeta.actsOnArrival) throws itself, never opening
   })
 })
 
+// A torch is a mechanism that can only go one way. Once spent it is plain floor: walking onto it offers
+// nothing and writes nothing, the way a lever may be walked past without being thrown.
+describe("a spent one-way mechanism (a lit torch) is walked through like plain floor", () => {
+  beforeEach(() => vi.useFakeTimers())
+  afterEach(() => vi.useRealTimers())
+
+  const torchMechanism: MechanismRecord = {
+    states: ["unlit", "lit"],
+    initial: "unlit",
+    returnsToInitial: false,
+    positions: [],
+  }
+  const torchRoom: GridCell = { ...leverRoom, mechanism: torchMechanism }
+
+  it.each(["reachable", "completed"] as const)("offers nothing and writes nothing on a lit torch (%s)", state => {
+    const { hook, journeys, onEncounter } = setup([entrance, { ...torchRoom, state }])
+    vi.mocked(journeys.getMechanismStates).mockReturnValue(new Map([[LEVER_AT_1, "lit"]]))
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(hook.result.current.prompt).toBeNull()
+    expect(journeys.setMechanismState).not.toHaveBeenCalled()
+    expect(onEncounter).not.toHaveBeenCalled()
+  })
+
+  it.each(["reachable", "completed"] as const)("still offers an unlit torch, and taking it lights it (%s)", state => {
+    const { hook, journeys } = setup([entrance, { ...torchRoom, state }])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+    act(() => promptOf(hook).take())
+
+    expect(journeys.setMechanismState).toHaveBeenCalledExactlyOnceWith(LEVER_AT_1, "lit")
+  })
+})
+
 describe("useSiteNavigation taking a span", () => {
   beforeEach(() => vi.useFakeTimers())
   afterEach(() => vi.useRealTimers())

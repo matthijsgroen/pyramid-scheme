@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - A junior pyramid's fork now has a mirror puzzle standing in it, and the way that stands open is the one you route the beam to. Change your mind and the other way opens as that one shuts.
+- A torch is a switch you can only light. Once it burns there is no prompt to touch it again, and you walk past it like any other floor.
 
 ### Fixed
 

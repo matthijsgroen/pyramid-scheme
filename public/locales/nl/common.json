@@ -1108,5 +1108,11 @@
     "goal": "De hendel staat naar links of naar rechts. Wat de ene kant opent, sluit de andere.",
     "left": "Naar links",
     "right": "Naar rechts"
+  },
+  "torch": {
+    "name": "De Fakkel",
+    "invitation": "Steek de fakkel aan",
+    "goal": "Een onaangestoken fakkel. Als hij eenmaal brandt, kun je hem niet meer doven.",
+    "lit": "De fakkel brandt."
   }
 }
