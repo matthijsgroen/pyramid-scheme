@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import type { CellState } from "@/game/siteTypes"
 import { AXES, DROP_AT, addressed, dropGrid } from "./floorFixtures.testing"
 import { SiteMapView } from "./SiteMapView"
 import "@/mods/registerModApps"
@@ -14,13 +13,17 @@ import "@/mods/registerModApps"
 
 const FRAME = "h-[26rem] w-full"
 
-const stage = (travel: "e" | "w" | "n" | "s", obstacle: CellState) => {
+// Every story stands the player at one foot of a lit drop, because that is the only way a drop is ever
+// seen: a fogged one draws nothing (`dropArt.spec.ts` freezes that) and the map is never drawn with
+// nobody on it. The fixture names its own indexes, so neither foot is counted by hand here.
+const stage = (travel: "e" | "w" | "n" | "s") => {
   const axis = AXES.find(a => a.travel === travel)!
-  const { grid, at } = dropGrid(axis, "room", "room", obstacle)
-  // Both feet of the drop are lit and walked into, whatever the obstacle's own state: the explorer stands
-  // at one or the other. The fixture names its own indexes, so neither is counted by hand here.
-  const lit = addressed({ ...grid, difficulty: "expert" })
-  return { grid: lit, launch: at(DROP_AT.launch), landing: at(DROP_AT.landing) }
+  const { grid, at } = dropGrid(axis, "room", "room", "visible")
+  return {
+    grid: addressed({ ...grid, difficulty: "expert" }),
+    launch: at(DROP_AT.launch),
+    landing: at(DROP_AT.landing),
+  }
 }
 
 const meta = {
@@ -33,8 +36,13 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const east = stage("e", "visible")
-const west = stage("w", "visible")
+const east = stage("e")
+const west = stage("w")
+const south = stage("s")
+const north = stage("n")
+
+/** A vertical drop needs a taller frame than an east-west one to show both its feet. */
+const TALL = "h-[40rem] w-full"
 
 /** East-going drop, obstacle revealed, explorer at the launch: `dropEast` as painted, for scale. */
 export const EastAtLaunch: Story = { args: { grid: east.grid, explorerPos: east.launch } }
@@ -48,22 +56,13 @@ export const EastAtLanding: Story = { args: { grid: east.grid, explorerPos: east
 /** West-going, at the landing. */
 export const WestAtLanding: Story = { args: { grid: west.grid, explorerPos: west.landing } }
 
-/** Obstacle revealed with nobody on the map: the art alone against the corridor. */
-export const EastRevealed: Story = { args: { grid: east.grid, revealAllCells: true, explorerHidden: true } }
-
-/** Obstacle still fogged: the drop draws nothing until its cells are lit. */
-export const EastFogged: Story = { args: { grid: stage("e", "fogged").grid, explorerPos: stage("e", "fogged").launch } }
-
-/** Fogged, west-going. */
-export const WestFogged: Story = { args: { grid: stage("w", "fogged").grid, explorerPos: stage("w", "fogged").launch } }
-
 /** NO ART YET: `DROP_ART.n` and `.s` are null, so a vertical drop draws the plain corridor. This story is
  * the unpainted case and must not be read as a design; it is not a rotated `dropEast`. */
 export const SouthHasNoArtYet: Story = {
-  args: { grid: stage("s", "visible").grid, explorerPos: stage("s", "visible").launch, className: "h-[40rem] w-full" },
+  args: { grid: south.grid, explorerPos: south.launch, className: TALL },
 }
 
 /** NO ART YET, north-going. */
 export const NorthHasNoArtYet: Story = {
-  args: { grid: stage("n", "visible").grid, explorerPos: stage("n", "visible").launch, className: "h-[40rem] w-full" },
+  args: { grid: north.grid, explorerPos: north.launch, className: TALL },
 }
