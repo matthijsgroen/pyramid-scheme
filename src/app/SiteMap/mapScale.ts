@@ -103,8 +103,11 @@ export const DROP_H = 81
  * painted on and why it is imported on the chroma key alone — the rendered mask no longer fits it.
  *
  * NEITHER COVERS ITS RUN, AND THE ART IS NOT THE PLACE TO FIX IT. A vertical run is 224 units down the page
- * (ROW_PITCH x 2 + CELL) against a horizontal one's 196; dropEast covers 87% of its run, north 64%, south
- * 53%. Lengthening the mouth to close that was tried and reverted — it works in the mesh and loses the
+ * (ROW_PITCH x 2 + CELL) against a horizontal one's 196. These are the TILE's extent and not the hole's:
+ * measured off the void itself the two vertical gaps are 42 and 48 units, near enough the same, and the
+ * 24 units by which north's tile is taller are its flight, which climbs head-on into the picture and so
+ * stacks drawn height without adding any hole. Against the run the gaps cover about a fifth each.
+ * Lengthening the mouth to close that was tried and reverted — it works in the mesh and loses the
  * projection in the paint (docs/instructions/repaint-queue.md, the convergence rule). What is left over is
  * ordinary paving drawn inside a gap the player cannot cross, and that belongs to whatever draws the
  * obstacle's cells, not to a number here. */
