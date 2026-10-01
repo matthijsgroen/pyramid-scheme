@@ -98,18 +98,20 @@ export const DROP_H = 81
  * dropEast's spoil stands proud above its own. North's marks are 861 master pixels apart, which over a
  * 56-unit corridor is 15.375 pixels to a unit, and the tile measures 215 x 286 pixels at that scale.
  *
- * South is marked the same way, 1186 pixels over 56, giving 21.18 and a 156 x 187 tile.
+ * South is marked the same way, 1186 pixels over 56, giving 21.18 and a 155 x 237 tile. Its master was
+ * stretched down the page by hand after painting, which is why its ink is taller than the scaffold it was
+ * painted on and why it is imported on the chroma key alone — the rendered mask no longer fits it.
  *
  * NEITHER COVERS ITS RUN, AND THE ART IS NOT THE PLACE TO FIX IT. A vertical run is 224 units down the page
  * (ROW_PITCH x 2 + CELL) against a horizontal one's 196; dropEast covers 87% of its run, north 64%, south
- * 42%. Lengthening the mouth to close that was tried and reverted — it works in the mesh and loses the
+ * 53%. Lengthening the mouth to close that was tried and reverted — it works in the mesh and loses the
  * projection in the paint (docs/instructions/repaint-queue.md, the convergence rule). What is left over is
  * ordinary paving drawn inside a gap the player cannot cross, and that belongs to whatever draws the
  * obstacle's cells, not to a number here. */
 export const DROP_NORTH_W = 107.5
 export const DROP_NORTH_H = 143
-export const DROP_SOUTH_W = 78
-export const DROP_SOUTH_H = 93.5
+export const DROP_SOUTH_W = 77.5
+export const DROP_SOUTH_H = 118.5
 
 /** The sprite's box for a drop whose run is `cells` and which travels `dir`. A horizontal drop is centred on
  * its run with its bottom on the run's floor line; a vertical one is centred on its run both ways, because

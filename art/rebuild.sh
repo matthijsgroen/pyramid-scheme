@@ -1215,9 +1215,12 @@ yarn import-tile art/masters/props/expert/dropEast.webp --tier=expert --name=dro
 scaffold pit --contents=dropNorth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/expert/dropNorth.webp --tier=expert --name=dropNorth --slot=prop --tight=15.375 \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
-scaffold pit --contents=dropSouth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+# South takes NO --mask AND NO --seat, and it is the one tile here cut by the chroma key alone. Its master
+# was stretched down the page by hand after painting, to carry more of the run than the painting gave it,
+# so the rendered silhouette no longer fits it: masking would crop the stretch straight back off. The key
+# is enough because the ink sits on clean magenta. The cost is the seated shadow north has and this has not.
 yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dropSouth --slot=prop --tight=21.18 \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+  --filter=smooth --brightness=0.85
 
 # His CEDAR RELIC BOX, cord-bound with the seal unbroken. No grading flags at all.
 #
