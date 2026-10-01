@@ -1198,7 +1198,7 @@ yarn import-tile art/masters/props/expert/pit.webp --tier=expert --name=pit --sl
 # left-right for `dropWest`; `dropNorth`/`dropSouth` are still owed and each need their own render, a
 # vertical flip being the wrong transform for this projection's up-facing top rule.
 scaffold pit --contents=drop --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
-yarn import-tile art/masters/props/expert/dropEast.webp --tier=expert --name=dropEast --slot=prop \
+yarn import-tile art/masters/props/expert/dropEast.webp --tier=expert --name=dropEast --slot=prop --span=6 \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 
 # His CEDAR RELIC BOX, cord-bound with the seal unbroken. No grading flags at all.

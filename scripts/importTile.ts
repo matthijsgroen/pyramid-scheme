@@ -67,6 +67,9 @@
  *                    object leaves that air in the band and reads as a sticker stuck on the wall.
  *   --no-trim        keep the frame as generated instead of re-seating the object on the floor line.
  *                    On an arch it skips the trim that discards everything around the timber.
+ *   --span=6         grow the slot N times in both directions, keeping its aspect, for a sprite the renderer
+ *                    draws across N cells. A drop covers its whole run (6 cells, 336x504 units), and stored
+ *                    at the one-cell prop size it was drawn 3x larger than its pixels, which is soft.
  *   --flip           mirror horizontally. The renderer mirrors EAST into west, so a side view drawn
  *                    facing left has to come in facing right
  */
@@ -510,7 +513,10 @@ const main = async (): Promise<void> => {
     console.error(`usage: yarn import-tile <file> --tier=starter --name=jarRack --slot=${Object.keys(SLOTS).join("|")}`)
     process.exit(1)
   }
-  const { w, h, seat } = SLOTS[slot]
+  const span = Number(arg("span", "1"))
+  const { seat } = SLOTS[slot]
+  const w = Math.round(SLOTS[slot].w * span)
+  const h = Math.round(SLOTS[slot].h * span)
   const key = arg("key", "#ff00ff")!
   const tolerance = Number(arg("tolerance", "60"))
   const smooth = arg("filter", "nearest") === "smooth"
