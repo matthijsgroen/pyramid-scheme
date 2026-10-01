@@ -82,32 +82,26 @@ export const ARCH_H = ARCH_RISE + WALL_H + ARCH_DROP // 49
  * bands either side of it are wall, so both corners are masonry (see doorwaysFor). */
 export const ARCH_W = CELL + SIDE_W * 2 // 84
 
-/** A one-way drop is drawn ACROSS ITS RUN: the sprite is as wide as the run's floor, first cell's left edge to
- * last cell's right edge, so the pit at its foot spans the passage rather than sitting in one cell of it.
- * The floor between the run's cells is open (`COL_PITCH`, not `CELL`, apart), so 5 cells are 336 wide, not
- * 280. The tile's pit is 20 of its 112 x 168 frame's rows, so at 3 units a pixel it is 60 units against a
- * 56-unit corridor: it reaches both walls. The tile is the same 2:3 frame every node sprite is painted in,
- * so the height follows the width at that ratio. */
-export const DROP_ASPECT = 3 / 2
-/** Where the pit's middle sits in the tile, as a fraction of its height: rows 128-147 of 168. The sprite is
- * anchored by this line, not by its bottom edge, so the pit lies across the corridor's floor and the
- * rubble under it hangs over the wall face below. */
-export const DROP_PIT_CENTER = 137.5 / 168
+/** A one-way drop is drawn at the scale it was painted, 9.464 master pixels to a map unit, centred on its run.
+ * The tile is the art's own ink, 340 x 162 pixels: 170 x 81 units, two pixels to a unit, so nothing is stored
+ * softer than it is drawn at a 2x screen. The run is 3 cells (196 units) and the art is 2.8 of them, so it
+ * stands inside the run with a few units to spare at each end. The tile's bottom edge IS the corridor floor's
+ * bottom edge, and the corridor floor is the bottom 56 units of it (rows 50-162): the pit's mouth and its
+ * dark shaft fill the cell's width, and the rail, posts and steps stand proud above, 25 units over the floor's top. */
+export const DROP_W = 170
+export const DROP_H = 81
 
-/** The sprite's box for a drop whose run is `cells`: as wide as the run, with the pit centred on the run's
- * middle, so it reaches neither past the run's ends nor short of them, and hangs below it by the rubble's depth. */
+/** The sprite's box for a drop whose run is `cells`: centred on the run, its bottom on the run's floor line. */
 export const dropFrame = (cells: readonly (readonly [number, number])[]) => {
   const first = cellCenter(...cells[0])
   const last = cellCenter(...cells[cells.length - 1])
-  const w = (cells.length - 1) * COL_PITCH + CELL
-  const h = w * DROP_ASPECT
   const cx = (first.cx + last.cx) / 2
   const cy = (first.cy + last.cy) / 2
-  return { x: cx - w / 2, y: cy - h * DROP_PIT_CENTER, w, h }
+  return { x: cx - DROP_W / 2, y: cy + CELL / 2 - DROP_H, w: DROP_W, h: DROP_H }
 }
 
-/** The floor line a drop stands on: the pit's middle is the run's middle, and the floor edge is half a cell below it. */
-export const dropFloorLine = (frame: { y: number; h?: number }) => frame.y + (frame.h ?? 0) * DROP_PIT_CENTER + CELL / 2
+/** The floor line a drop stands on: the frame's bottom edge, which is the run's floor edge. */
+export const dropFloorLine = (frame: { y: number; h?: number }) => frame.y + (frame.h ?? 0)
 
 /** Padding around the map: room for the one-cell ring of wall outside the grid. */
 export const PAD = CELL

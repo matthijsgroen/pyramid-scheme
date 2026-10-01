@@ -68,8 +68,13 @@
  *   --no-trim        keep the frame as generated instead of re-seating the object on the floor line.
  *                    On an arch it skips the trim that discards everything around the timber.
  *   --span=6         grow the slot N times in both directions, keeping its aspect, for a sprite the renderer
- *                    draws across N cells. A drop covers its whole run (6 cells, 336x504 units), and stored
- *                    at the one-cell prop size it was drawn 3x larger than its pixels, which is soft.
+ *                    draws across N cells, stored at the pixels it is drawn at rather than 3x softer.
+ *   --crop-below=1513  discard every row of the master from this one down, after the mask and seat are laid
+ *                    and before anything is measured. The rows are the master's own pixels, so the cut
+ *                    survives a re-render of the same framing and the master keeps what it was drawn with.
+ *   --tight=9.464    the tile is the art's own ink bounds, with no slot frame round it, at 2 pixels to a
+ *                    map unit; the number is how many MASTER pixels make one map unit. The renderer draws
+ *                    the tile at width/2 by height/2 units, so the pixels it holds are the pixels it shows.
  *   --flip           mirror horizontally. The renderer mirrors EAST into west, so a side view drawn
  *                    facing left has to come in facing right
  */
@@ -142,6 +147,9 @@ const SLOTS = {
 } as const
 
 type Slot = keyof typeof SLOTS
+
+/** Pixels a `--tight` tile holds per map unit: the 2x device pixel, so nothing is drawn larger than it is stored. */
+const TIGHT_PX_PER_UNIT = 2
 
 const arg = (name: string, fallback?: string): string | undefined =>
   process.argv.find(a => a.startsWith(`--${name}=`))?.split("=")[1] ?? fallback
@@ -515,8 +523,8 @@ const main = async (): Promise<void> => {
   }
   const span = Number(arg("span", "1"))
   const { seat } = SLOTS[slot]
-  const w = Math.round(SLOTS[slot].w * span)
-  const h = Math.round(SLOTS[slot].h * span)
+  let w = Math.round(SLOTS[slot].w * span)
+  let h = Math.round(SLOTS[slot].h * span)
   const key = arg("key", "#ff00ff")!
   const tolerance = Number(arg("tolerance", "60"))
   const smooth = arg("filter", "nearest") === "smooth"
@@ -535,7 +543,24 @@ const main = async (): Promise<void> => {
   // Last of the three, and OVER rather than under: added light needs something under it to add to.
   const glowPath = arg("glow")
   if (glowPath) img = await glowOver(img, glowPath)
-  if (seat && !process.argv.includes("--no-trim")) img = await seatOnFloorLine(img, w / h, Number(arg("scale", "1")))
+  const cropBelow = arg("crop-below")
+  if (cropBelow) {
+    const whole = await img.ensureAlpha().png().toBuffer({ resolveWithObject: true })
+    const kept = Math.min(Number(cropBelow), whole.info.height)
+    img = sharp(
+      await sharp(whole.data).extract({ left: 0, top: 0, width: whole.info.width, height: kept }).png().toBuffer()
+    )
+  }
+  const tight = arg("tight")
+  if (tight) {
+    // Measured on the ink, then the slot is replaced by it: the tile has the art's shape and nothing else.
+    const ink = await img.trim({ threshold: 1 }).png().toBuffer({ resolveWithObject: true })
+    w = Math.round((ink.info.width / Number(tight)) * TIGHT_PX_PER_UNIT)
+    h = Math.round((ink.info.height / Number(tight)) * TIGHT_PX_PER_UNIT)
+    img = sharp(ink.data)
+  }
+  if (seat && !tight && !process.argv.includes("--no-trim"))
+    img = await seatOnFloorLine(img, w / h, Number(arg("scale", "1")))
   // `--trim` is the positive of `--no-trim`, for the slots that never trim at all.
   //
   // A prop's frame is thrown away and its object re-seated; a WALL item's frame IS its placement, so a

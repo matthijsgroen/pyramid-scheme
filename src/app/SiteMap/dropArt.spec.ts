@@ -1,10 +1,11 @@
+import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor, ONE_WAY_RUN_CELLS } from "@/game/siteAssembler"
 import { oneWayRuns, revealAll } from "@/game/gridNavigation"
 import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 import { DROP_ART } from "./nodeArt"
-import { CELL, COL_PITCH, cellCenter } from "./mapScale"
+import { CELL, COL_PITCH, DROP_H, DROP_W, cellCenter } from "./mapScale"
 import { buildRoomClaims } from "./roomClaims"
 import { nodeSpritesFor } from "./SiteMapView"
 import { tileUrl } from "./tileAssets"
@@ -104,26 +105,38 @@ describe("a north-south drop draws what it always drew", () => {
   })
 })
 
-describe("a drop is drawn across its whole obstacle", () => {
-  it("is as wide as the obstacle's floor (4 cell pitches and a cell), at the tile's own 2:3 frame, with the pit centred on the obstacle", () => {
-    expect(ONE_WAY_RUN_CELLS).toBe(5)
+// A PNG's IHDR holds its pixel size at bytes 16-23.
+const pixelsOf = (path: string): { w: number; h: number } => {
+  const file = readFileSync(path)
+  return { w: file.readUInt32BE(16), h: file.readUInt32BE(20) }
+}
+
+describe("a drop is drawn at the scale it was painted, inside its obstacle", () => {
+  it("is drawn at two pixels to a unit: the tile holds exactly the pixels it shows, none stretched", () => {
+    const [drop] = dropsIn(dropAlong("e").grid)
+    expect(pixelsOf("src/assets/tiles/expert/dropEast.png")).toEqual({ w: drop.w! * 2, h: drop.h! * 2 })
+  })
+
+  it("is narrower than its three-cell obstacle, centred on it, with its bottom edge on the corridor's floor edge", () => {
+    expect(ONE_WAY_RUN_CELLS).toBe(3)
     expect(CELL).toBe(56)
     expect(COL_PITCH).toBe(70)
     const { grid, at } = dropAlong("e")
     const [drop] = dropsIn(grid)
-    // The obstacle is the five cells after the launch; its middle is the third.
     const [row, first] = at(obstacleIndexes[0])
-    const [, middle] = at(obstacleIndexes[2])
-    const [, last] = at(obstacleIndexes[4])
+    const [, middle] = at(obstacleIndexes[1])
+    const [, last] = at(obstacleIndexes[2])
     const { cx, cy } = cellCenter(row, middle)
-    expect(drop.w).toBe(336)
-    expect(drop.h).toBe(504)
-    expect(drop.x).toBe(cx - 168)
-    expect(drop.x + drop.w!).toBe(cellCenter(row, last).cx + CELL / 2)
-    expect(drop.x).toBe(cellCenter(row, first).cx - CELL / 2)
-    // The pit's middle (row 137.5 of the tile's 168) lies on the obstacle's middle line, not on its floor line.
-    expect(drop.y + (drop.h! * 137.5) / 168).toBeCloseTo(cy, 6)
-    expect(drop.y + drop.h!).toBeCloseTo(cy + 91.5, 6)
+    const runLeft = cellCenter(row, first).cx - CELL / 2
+    const runRight = cellCenter(row, last).cx + CELL / 2
+    expect(runRight - runLeft).toBe(196)
+    expect(drop.w).toBeLessThan(runRight - runLeft)
+    expect(drop.x! + drop.w! / 2).toBe(cx)
+    expect(drop.x).toBeGreaterThanOrEqual(runLeft)
+    expect(drop.x! + drop.w!).toBeLessThanOrEqual(runRight)
+    expect(drop.y! + drop.h!).toBe(cy + CELL / 2)
+    // The corridor floor is the bottom cell of the tile; the rest of the tile stands proud above it.
+    expect(drop.h).toBeGreaterThan(CELL)
   })
 
   it("claims every cell of the obstacle and nothing else it could be drawn over", () => {
@@ -136,8 +149,8 @@ describe("a drop is drawn across its whole obstacle", () => {
     const drops = dropsIn(dropAlong(travel).grid)
     expect(drops).toHaveLength(1)
     for (const drop of drops) {
-      expect(drop.w).toBe(336)
-      expect(drop.h).toBe(504)
+      expect(drop.w).toBe(DROP_W)
+      expect(drop.h).toBe(DROP_H)
     }
   })
 })

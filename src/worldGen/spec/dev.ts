@@ -96,20 +96,17 @@ export const devRules: Rule[] = [
   // `packing: 7` is not decorative and is tied to THIS floor's own seed, not to the shape being
   // carved — a floor at this position in the journey resolves to a different production seed than
   // the same shape would at any other position, and the packing value that carves it sound does not
-  // transfer. Each drop reserves a run of cells of its own, which the carve must find room for. A sweep
-  // of `packing` 1 through 30 at this floor's seed: many values do not carve at all, and `walkLock` finds
-  // most that do unsound (`unsolvable`, occasionally `strands`). Sound, and still stranding without the
-  // second drop, are 7, 15, 21, 24, 26 and 30; `7` is the smallest. The early-drop hazard below needs
-  // that `strands` failure: a value that carves sound but degrades the ablation to a bare `unsolvable`
-  // would not prove the hazard.
+  // transfer. Each drop reserves a run of cells of its own, which the carve must find room for. The
+  // early-drop hazard below needs the pair to carve sound AND to fail as `strands` once the second drop
+  // is taken away: a pair that degrades the ablation to a bare `unsolvable` would not prove the hazard.
   journey(DEV_JOURNEY_ID).pyramid(2, {
     difficulty: "expert",
     pathPuzzles: 0,
     packing: 7,
     // Recorded from the bake's own carve search (searchCarvePair), not tuned by hand: the first seed
-    // 40 steps past this floor's address seed that carves on attempt 0 at `packing` 7, walks sound and
+    // 43 steps past this floor's address seed that carves on attempt 0 at `packing` 7, walks sound and
     // leaves no dead region. Pinned here because a dev floor has no baked output to carry it.
-    seed: 4293857899,
+    seed: 4293857902,
     sideSections: [sidePath({ puzzles: 0 })],
     regionLayout: {
       regions: [
@@ -174,10 +171,10 @@ export const devRules: Rule[] = [
     pathPuzzles: 0,
     // Recorded from the bake's own carve search (searchCarvePair), not tuned by hand: the first pair
     // that carves on attempt 0, walks sound and leaves no dead region — the smallest packing any seed
-    // carves at (0.6), at the seed 30 steps past this floor's address seed. The drop's launch, five
+    // carves at (0.38), at the seed 30 steps past this floor's address seed. The drop's launch, three
     // obstacle cells and landing need room the default packing does not give. Pinned here because a
     // dev floor has no baked output to carry it.
-    packing: 0.6,
+    packing: 0.38,
     seed: 4293857890,
     sideSections: [sidePath({ puzzles: 0, label: "ledge" }), sidePath({ puzzles: 0, label: "sink" })],
     forks: FORKS,

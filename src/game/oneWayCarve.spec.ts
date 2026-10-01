@@ -183,8 +183,8 @@ describe("a floor that authors a one-way", () => {
     expect(oneWayEdges(grid)).toEqual([])
   })
 
-  it("declares five obstacle cells, the odd count nearest the art's measured 5.6", () => {
-    expect(ONE_WAY_RUN_CELLS).toBe(5)
+  it("declares three obstacle cells, the odd count nearest the art's measured 2.76", () => {
+    expect(ONE_WAY_RUN_CELLS).toBe(3)
   })
 
   it("carves the launch, every obstacle cell and the landing, each as the design says", () => {
@@ -415,23 +415,22 @@ describe("a floor that authors a one-way", () => {
     }
   })
 
-  it("refuses, on every seed, drops whose 2 + x cells each will not fit though x alone would", () => {
-    // Five drops fit on this floor when only the obstacle's own cells are reserved between two nodes
-    // (three of forty seeds carve them); reserving a launch and a landing as well leaves no room for
-    // the fifth on any seed, and the floor says which drop it could not place.
-    const five: FloorConfig = {
+  it("refuses, on every seed, the sixth drop this floor has no room for, though five carve on some seeds", () => {
+    // Five drops of 2 + x cells carve on this floor (three of forty seeds do); a sixth leaves no room on
+    // any seed, and the floor says which drop it could not place.
+    const six: FloorConfig = {
       pathPuzzles: 0,
       difficulty: "junior",
       end: "treasure",
       exitOrStaircase: "exit",
       sideSections: [{ pathPuzzles: 0, difficulty: "junior", end: "treasure", label: "only" }],
-      oneWays: Array.from({ length: 5 }, () => ({ from: "only", to: "main" })),
+      oneWays: Array.from({ length: 6 }, () => ({ from: "only", to: "main" })),
     }
     for (let seed = 0; seed < 40; seed++) {
-      const result = assembleFloor("spec:1", five, seed, undefined, {
+      const result = assembleFloor("spec:1", six, seed, undefined, {
         floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
       })
-      if (result.success) throw new Error(`seed ${seed} carved five drops of 2 + x cells where none fit`)
+      if (result.success) throw new Error(`seed ${seed} carved six drops of 2 + x cells where none fit`)
       expect(result.reasons).toContainEqual({ type: "oneWayUnsatisfied", from: "only", to: "main" })
     }
   })

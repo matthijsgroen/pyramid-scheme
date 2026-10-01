@@ -307,19 +307,22 @@ const CONNECTOR_DIRS: Array<[number, number, Direction]> = [
 const OPPOSITE: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
 
 /** HOW MANY OBSTACLE CELLS A ONE-WAY DROP SPANS, between its launch cell and its landing cell. The drop
- * reserves `2 + ONE_WAY_RUN_CELLS` cells in all, between two nodes. A constant, stated once, because every drop the art draws is the same painting: `dropEast.png` is 112x168 and its
- * pit fills rows 128-147 by columns 46-95, about 20 rows by 50 columns. A pit 2.5 times wider than tall
- * spans the corridor's thickness only at roughly 5.6 cells of corridor length, so the drop is a
- * multi-cell feature rather than a sprite squeezed into one.
+ * reserves `2 + ONE_WAY_RUN_CELLS` cells in all, between two nodes. A constant, stated once, because every
+ * drop the art draws is the same painting.
+ *
+ * The painting's scale is measured on `dropEast.webp` (1696 px wide): its corridor floor, the band from the
+ * top of the floor to the bottom of the floor, is 530 px, and that is one cell, 56 units, so 9.464 px to a
+ * unit. The art is then 1696 / 9.464 = 179 units wide, 2.76 cells, and 3 cells of run (56 + 2 x 70 = 196
+ * units) hold it at its natural scale. Five cells, 336 units, stretched it to nearly twice its size.
  *
  * It must be ODD: the launch hangs off one node and the landing off another, nodes sit only on even/even
  * coordinates (NODE_STEP), so the two nodes are an even number of steps apart, which is the obstacle plus
- * the launch, the landing and one more step. 5 is the odd count nearest the measured 5.6.
+ * the launch, the landing and one more step. 3 is the odd count nearest the measured 2.76.
  *
  * What would force an authored per-drop field: `dropNorth` and `dropSouth` are unpainted and may not
  * share the east painting's proportions. The day one of them is painted at a different aspect, the
  * length moves onto the obstacle next to its direction; until then a second value would be invented. */
-export const ONE_WAY_RUN_CELLS = 5
+export const ONE_WAY_RUN_CELLS = 3
 
 /** Steps from the node a drop hangs off to the node it lands beside: launch, obstacle, landing, and the
  * step onto the far node. */
