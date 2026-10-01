@@ -5,6 +5,7 @@ import {
   packingAtRung,
   searchCarvePair,
   seedAtOffset,
+  verifyCarvePair,
   STAMPED_SEED_RANGE,
   type CarvePairOptions,
 } from "./carveSeedSearch"
@@ -203,5 +204,39 @@ describe(searchCarvePair, () => {
       expect(literal).toBe(found.seed)
       expect(dirsOf(carve(literal, Infinity))).toEqual(dirsOf({ success: true, grid: found.grid, attempt: 0 }))
     })
+  })
+})
+
+describe(verifyCarvePair, () => {
+  const ladder = { authoredPacking: 0.1, fullLadder: Infinity }
+
+  it("keeps a pinned pair that carves on the first attempt, in one carve plus the base's own report", () => {
+    const asked: [number, number, number][] = []
+    const found = verifyCarvePair(
+      100,
+      { seed: 103, packing: 0.14 },
+      (seed, packing, attempts) => {
+        asked.push([seed, packing, attempts])
+        return seed === 103 ? carvedAt(0) : carvedAt(4)
+      },
+      ladder
+    )
+    expect(found).toMatchObject({ found: true, seed: 103, packing: 0.14, offset: 3, baseRefusal: "attempt 0" })
+    expect(asked).toEqual([
+      [103, 0.14, 1],
+      [100, 0.1, Infinity],
+    ])
+  })
+
+  it("rejects a pinned pair that carves only past the first attempt, or not at all", () => {
+    const pin = { seed: 103, packing: 0.14 }
+    expect(verifyCarvePair(100, pin, () => carvedAt(2), ladder)).toBeNull()
+    expect(verifyCarvePair(100, pin, () => failed, ladder)).toBeNull()
+  })
+
+  it("measures the offset past the base inside the stamped range", () => {
+    const base = STAMPED_SEED_RANGE * 3 + 5
+    const seed = seedAtOffset(base, 7)
+    expect(verifyCarvePair(base, { seed, packing: 0.1 }, () => carvedAt(0), ladder)).toMatchObject({ offset: 7 })
   })
 })

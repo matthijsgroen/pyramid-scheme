@@ -42,7 +42,7 @@ export const seedAtOffset = (base: number, offset: number): number =>
   offset === 0 ? base : ((base % STAMPED_SEED_RANGE) + offset) % STAMPED_SEED_RANGE
 
 /** Why `result` is not acceptable, or null when it is. */
-const refusal = (result: AssemblerResult): { criterion: CarveCriterion; detail: string } | null => {
+export const refusal = (result: AssemblerResult): { criterion: CarveCriterion; detail: string } | null => {
   if (!result.success) return { criterion: "carves", detail: JSON.stringify(result.reasons) }
   if (result.attempt > 0)
     return { criterion: "attempt 0", detail: `carved only on attempt ${result.attempt}, past the authored packing` }
@@ -74,6 +74,26 @@ export type CarvePairOptions = {
   /** Attempts the authored packing's base seed is given, so its refusal can say "attempt 0". */
   fullLadder: number
   step?: number
+}
+
+/**
+ * Whether one already-chosen (packing, seed) pair still satisfies every criterion: a single one-attempt
+ * carve, where finding a pair costs thousands. `baseRefusal` is what the authored packing at the base
+ * seed fails given the whole ladder, so a verified pin reports the same figure a search would.
+ * Null means the pair no longer holds and the floor is to be searched afresh.
+ */
+export const verifyCarvePair = (
+  base: number,
+  pair: { seed: number; packing: number },
+  assemble: (seed: number, packing: number, attempts: number) => AssemblerResult,
+  { authoredPacking, fullLadder }: Pick<CarvePairOptions, "authoredPacking" | "fullLadder">
+): CarvePairFound | null => {
+  const result = assemble(pair.seed, pair.packing, 1)
+  if (refusal(result) || !result.success) return null
+  const baseRefusal = refusal(assemble(base, authoredPacking, fullLadder))?.criterion ?? null
+  const offset =
+    pair.seed === base ? 0 : (pair.seed - (base % STAMPED_SEED_RANGE) + STAMPED_SEED_RANGE) % STAMPED_SEED_RANGE
+  return { found: true, seed: pair.seed, packing: pair.packing, grid: result.grid, offset, baseRefusal }
 }
 
 /**

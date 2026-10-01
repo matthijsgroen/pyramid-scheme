@@ -31,8 +31,18 @@ import {
   floorsOwingALock,
 } from "../src/worldGen/validate"
 import { assembleFloor, DEFAULT_PACKING, PACKING_CEILING } from "../src/game/siteAssembler"
-import { searchCarvePair, type CarveCriterion } from "../src/worldGen/carveSeedSearch"
-import type { FloorGrid } from "../src/game/siteTypes"
+import {
+  PACKING_STEP,
+  refusal as carveRefusal,
+  searchCarvePair,
+  verifyCarvePair,
+  type CarveCriterion,
+  type CarvePairFound,
+  type CarvePairMissing,
+} from "../src/worldGen/carveSeedSearch"
+import { generatedWorldConfigs } from "../src/data/generatedWorld"
+import { floorHash, LEDGER_PATH, readLedger, sourceFingerprint, type CarveLedger } from "./carveLedger"
+import type { AssemblerResult, FloorGrid } from "../src/game/siteTypes"
 import type { FloorConfig } from "../src/worldGen/types"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import {
@@ -122,6 +132,23 @@ const CARVE_SEED_BUDGET = 100
 // derives is too small, and only its widening rungs grow it). Off, it is listed by name and carved by the
 // ladder as the runtime carves it; on, it fails the build.
 const STRICT_ATTEMPT_ZERO = process.env.STRICT_ATTEMPT_ZERO === "1"
+// A full re-search from scratch: every baked pin and every ledger entry is ignored. Run it after
+// changing the assembler or adding a criterion, so the pins are the earliest pair that satisfies today's
+// rules rather than the ones that happened to hold before.
+const CARVE_RESEARCH = process.env.CARVE_RESEARCH === "1"
+// A floor already carrying a baked (packing, seed) is verified, one carve, and searched only when the
+// pair no longer holds. A floor the search once failed is recorded in src/data/carveLedger.json against a
+// hash of its authoring and of every source file the carve reads, so it is skipped only while nothing
+// that could change the outcome has changed: the day the assembler changes, its hash moves and the floor
+// is searched again, and a floor that now carves is noticed and stamped like any other.
+const carveLedger = readLedger()
+const nextLedger: CarveLedger = {}
+const carveSources = sourceFingerprint([
+  "src/game/siteAssembler.ts",
+  "src/worldGen/carveSeedSearch.ts",
+  "src/mods/allFamilyMeta.ts",
+])
+const carveStats = { verified: 0, ledgered: 0, searched: 0 }
 const unsatisfiable: string[] = []
 const unassembled: string[] = []
 const carveSearch: {
@@ -150,12 +177,41 @@ const assembleOnce = (journeyId: string, floor: FloorConfig, levelNr: number, fl
         resolveEncounterMeta,
         { resolveKeyRequirements, floorRef, maxAttempts }
       )
-    const search = searchCarvePair(base, assembleAt, {
+    // The floor as the runtime carves it when nothing is stamped: the ladder widens the grid when the
+    // authored packing cannot carve it on the first attempt.
+    let ladderMemo: AssemblerResult | undefined
+    const ladderCarve = () => (ladderMemo ??= assembleAt(base, authored, Infinity))
+    const options = {
       authoredPacking: authored,
       ceiling: PACKING_CEILING,
       seedBudget: CARVE_SEED_BUDGET,
       fullLadder: Infinity,
-    })
+    }
+    const hash = floorHash(carveSources, floor, { ...options, step: PACKING_STEP })
+    const baked = CARVE_RESEARCH ? undefined : generatedWorldConfigs[journeyId]?.[levelNr - 1]?.[floorIndex]
+    const verified = baked
+      ? verifyCarvePair(base, { seed: baked.seed ?? base, packing: baked.packing ?? authored }, assembleAt, options)
+      : null
+    const recorded = !CARVE_RESEARCH && !verified ? carveLedger[cacheKey] : undefined
+    let search: CarvePairFound | CarvePairMissing
+    if (verified) {
+      carveStats.verified++
+      search = verified
+    } else if (recorded?.hash === hash) {
+      carveStats.ledgered++
+      const ladder = ladderCarve()
+      search = {
+        found: false,
+        hardest: "carves",
+        detail: recorded.refusal,
+        tried: 0,
+        reached: authored,
+        baseRefusal: carveRefusal(ladder)?.criterion ?? null,
+      }
+    } else {
+      carveStats.searched++
+      search = searchCarvePair(base, assembleAt, options)
+    }
     // WITH WHY, NOT JUST WHERE. The assembler refuses an authoring it can never satisfy — a one-way
     // or a handle naming a section the floor does not have, a switch asking for more junctions than
     // `forks` reserves — and names it in the reason. Printed as a bare floor id, all of those reach
@@ -173,10 +229,14 @@ const assembleOnce = (journeyId: string, floor: FloorConfig, levelNr: number, fl
       if (search.packing !== authored) floor.packing = search.packing
       grids.set(cacheKey, search.grid)
     } else {
-      const refusal = `${journeyId} level ${levelNr} floor ${floorIndex}: no seed in ${search.tried} tries up to packing ${search.reached} satisfies "${search.hardest}" — ${search.detail}`
+      const refusal =
+        recorded?.hash === hash && !verified
+          ? recorded.refusal
+          : `${journeyId} level ${levelNr} floor ${floorIndex}: no seed in ${search.tried} tries up to packing ${search.reached} satisfies "${search.hardest}" — ${search.detail}`
+      nextLedger[cacheKey] = { hash, refusal }
       unsatisfiable.push(refusal)
       carveSearch.push({ key: cacheKey, offset: 0, baseRefusal: search.baseRefusal, authored, packing: authored })
-      const ladder = assembleAt(base, authored, Infinity)
+      const ladder = ladderCarve()
       if (STRICT_ATTEMPT_ZERO || !ladder.success) unassembled.push(refusal)
       grids.set(cacheKey, ladder.success ? ladder.grid : null)
     }
@@ -270,6 +330,9 @@ const pastAttemptZero = carveSearch.filter(f => f.baseRefusal === "attempt 0")
 console.log(
   `  Carve search: ${carveSearch.length} floor(s), ${moved.length} moved off their address seed (worst offset ${Math.max(0, ...carveSearch.map(f => f.offset))}), ${raised.length} raised above their authored packing (worst +${Math.max(0, ...carveSearch.map(f => f.packing - f.authored)).toFixed(2)}), ${pastAttemptZero.length} carve only past attempt 0 as authored, ${unsatisfiable.length} unsatisfiable up to packing ${PACKING_CEILING}`
 )
+console.log(
+  `  Carve pins: ${carveStats.verified} verified in one carve, ${carveStats.ledgered} unsatisfiable floor(s) skipped on the ledger, ${carveStats.searched} searched${CARVE_RESEARCH ? " (CARVE_RESEARCH=1: every pin and ledger entry ignored)" : ""}`
+)
 for (const line of unsatisfiable) console.log(`    unsatisfiable: ${line}`)
 if (raised.length > 0) {
   console.log(`  Floors whose authored packing cannot carve (authored -> baked), to correct in the authoring:`)
@@ -352,3 +415,8 @@ writeFileSync(
   generateFile(configs, { hieroglyphRequired: HIEROGLYPH_REQUIRED })
 )
 console.log("✓ Written: src/data/generatedWorld.ts")
+writeFileSync(
+  LEDGER_PATH,
+  JSON.stringify(Object.fromEntries(Object.entries(nextLedger).sort(([a], [b]) => a.localeCompare(b))), null, 2) + "\n"
+)
+console.log("✓ Written: src/data/carveLedger.json")
