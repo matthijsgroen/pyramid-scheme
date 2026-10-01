@@ -39,7 +39,7 @@ import { renderHook, act, render } from "@testing-library/react"
 import { createElement, useState } from "react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import type { Direction, FloorConfig, FloorGrid, MechanismRecord, SiteConfig } from "@/game/siteTypes"
-import { walkableFrom, findPath, isSealedWayOut, revealAll } from "@/game/gridNavigation"
+import { walkableFrom, findPath, isSealedWayOut, oneWayRuns, revealAll } from "@/game/gridNavigation"
 import { cellAddress } from "@/game/cellAddress"
 import { OBSTACLE_KEY_PREFIX } from "@/game/cellSlot"
 import { nodeSpritesFor } from "./SiteMapView"
@@ -51,7 +51,7 @@ import { useAssembledFloor } from "./useAssembledFloor"
 import { useMechanismStates } from "./useMechanismStates"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { buildRoomClaims } from "./roomClaims"
-import { offeredTargets } from "./clickTargets"
+import { dropEndsOf, offeredTargets } from "./clickTargets"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
 import { isCorridorCorner } from "./corridorRuns"
@@ -137,12 +137,16 @@ const offerViolations = (
   const walkable = walkableFrom(grid, explorerPos)
   const offeredTargetSet = new Set([...offers.values()].map(([r, c]) => `${r},${c}`))
   const violations: string[] = []
+  // A drop's launch and landing are stopping points by what the carve made of them (`oneWayRuns`), not by
+  // the shape of the cell, so they are counted here whatever that shape is.
+  const dropEnds = new Set(oneWayRuns(grid).flatMap(run => [run.launch, run.landing].map(([r, c]) => `${r},${c}`)))
   for (const key of walkable) {
     if (key === `${explorerPos[0]},${explorerPos[1]}`) continue
     const [r, c] = key.split(",").map(Number)
     const cell = grid.cells[r]?.[c]
     if (!cell || cell.type === "empty") continue
-    if (isStoppingPoint(cell) && !offeredTargetSet.has(key)) {
+    const dropEnd = dropEnds.has(key) && (cell.state === "reachable" || cell.state === "completed")
+    if ((isStoppingPoint(cell) || dropEnd) && !offeredTargetSet.has(key)) {
       violations.push(`walkable stopping point ${key} (${cell.type}) has no offer pointing to it, from ${explorerPos}`)
     }
   }
@@ -160,9 +164,16 @@ const markerViolations = (grid: FloorGrid, explorerPos: readonly [number, number
   // jsdom has no layout, so it has no `scrollTo`; the map centres on the explorer through it.
   Element.prototype.scrollTo ??= () => {}
   const exempt = new Set<string>()
+  // A launch or landing is never exempt: it is a stub at the end of a line, not ground that shows itself.
+  const dropEnds = dropEndsOf(grid)
   grid.cells.forEach((row, r) =>
     row.forEach((cell, c) => {
-      if (cell.type === "corridor" && cell.state === "completed" && isCorridorCorner(cell.dirs)) {
+      if (
+        cell.type === "corridor" &&
+        cell.state === "completed" &&
+        isCorridorCorner(cell.dirs) &&
+        !dropEnds.has(`${r},${c}`)
+      ) {
         const { cx, cy } = cellCenter(r, c)
         exempt.add(`${cx - CELL / 2}px,${cy - CELL / 2}px`)
       }
@@ -478,6 +489,12 @@ const andGate = floorFrom(["E.L.N.A..", "        .", "        R"], {
   A: gate("a"),
 })
 const oneWayDrop = floorFrom([`E.R${ZIPLINE}R.R`], DROP)
+// A drop's launch and landing off a CORNER, the one place a player stands beside them: a launch is a
+// one-direction stub no corridor run ends on, so only its own rule can offer it. Walked up to from the
+// launch's side, and from the landing's side.
+const pad = " ".repeat(ZIPLINE.length + 2)
+const cornerAtLaunch = floorFrom(["E.R", `  .${ZIPLINE}.`, `${pad}R`], DROP)
+const cornerAtLanding = floorFrom([`${pad}E`, `R.${ZIPLINE}.`, `${pad}R`], DROP)
 const gateAndDrop = floorFrom([`E.Y.A.R${ZIPLINE}R.R`], { ...DROP, Y: lever(leverOpening("a")), A: gate("a") })
 
 // `minSteps` sits just under each fixture's measured step count (109, 33, 93, 75, 90, 13 and 21), so a walk
@@ -491,6 +508,8 @@ const fixtures: Fixture[] = [
   { name: "a lever and two gates, one open and one shut, so the lever toggles", grid: toggledGates, minSteps: 65 },
   { name: "two levers and one gate that needs both", grid: andGate, minSteps: 75 },
   { name: "a one-way drop walked up to from its launch, never crossed", grid: oneWayDrop, minSteps: 10 },
+  { name: "a corner beside a drop's launch", grid: cornerAtLaunch, minSteps: 4 },
+  { name: "a corner beside a drop's landing", grid: cornerAtLanding, minSteps: 4 },
   { name: "a gate and a one-way drop on one floor", grid: gateAndDrop, minSteps: 18 },
 ]
 
@@ -923,5 +942,66 @@ describe("a lever the player stands at", () => {
       "2,2",
       "2,2",
     ])
+  })
+})
+
+// A DROP'S ENDS ARE WALKED UP TO FROM BESIDE THEM. The launch and the landing are single-direction stubs
+// at the foot of a line, so no corridor run ends on either and only their own rule can name them; the
+// walk above would not notice one gone missing if the property were stated over corners alone.
+describe("a drop's ends, stood beside", () => {
+  afterEach(() => vi.useRealTimers())
+
+  const scene = (grid: FloorGrid) => {
+    vi.useFakeTimers()
+    const store = makeStore()
+    const hook = renderHook(buildHarness(grid, store).useHook)
+    const settle = () => {
+      act(() => void vi.advanceTimersByTime(5000))
+      hook.rerender()
+    }
+    const click = (r: number, c: number) => {
+      act(() => hook.result.current.onCellClick(r, c))
+      settle()
+    }
+    const offered = () => {
+      const { grid: g, explorerPos } = hook.result.current
+      return [...offeredTargets(g!, buildRoomClaims(g!), explorerPos).entries()].sort(([a], [b]) => a.localeCompare(b))
+    }
+    return { hook, click, offered }
+  }
+
+  it("offers the launch from the corner beside it, and a tap on it moves the player onto it", () => {
+    const { hook, click, offered } = scene(cornerAtLaunch)
+    const [{ launch }] = oneWayRuns(cornerAtLaunch)
+
+    click(0, 2)
+    click(1, 2)
+
+    expect(hook.result.current.explorerPos).toEqual([1, 2])
+    expect(offered()).toEqual([
+      ["0,0", [0, 0]],
+      ["0,2", [0, 2]],
+      ["1,2", [1, 2]],
+      ["1,3", launch],
+    ])
+    click(launch[0], launch[1])
+    expect(hook.result.current.explorerPos).toEqual(launch)
+  })
+
+  it("offers the landing from the corner beside it, and a tap on it moves the player onto it", () => {
+    const { hook, click, offered } = scene(cornerAtLanding)
+    const [{ landing }] = oneWayRuns(cornerAtLanding)
+
+    click(1, 7)
+
+    expect(hook.result.current.explorerPos).toEqual([1, 7])
+    expect(offered()).toEqual([
+      ["0,7", [0, 7]],
+      ["1,6", landing],
+      ["1,7", [1, 7]],
+      ["2,7", [2, 7]],
+    ])
+    click(landing[0], landing[1])
+    expect(hook.result.current.explorerPos).toEqual(landing)
   })
 })

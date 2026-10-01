@@ -288,13 +288,39 @@ describe("the offers around a one-way drop", () => {
       expect(targetsFrom(grid, at(DROP_AT.landing))).toEqual(side)
     })
 
-    it("draws the launch's dot and the landing's, the markers a tap on them lands on", () => {
-      for (const index of [DROP_AT.launch, DROP_AT.landing]) {
-        const from = at(index === DROP_AT.launch ? DROP_AT.fromNode : DROP_AT.toNode)
-        const ctx = offerContextFrom(grid, from, {})
-        const [r, c] = at(index)
-        expect(markerAt(grid, buildRoomClaims(grid), r, c, ctx)).toEqual({ kind: "dot" })
+    // The four places a player stands at a drop, each asserted as the WHOLE of what is drawn: an arrow on a
+    // launch or landing pointing the way it is entered from its own node (whether or not it has been
+    // walked), and the node art on a room.
+    describe.each(["reachable", "completed"] as const)("with every cell %s", state => {
+      const { grid: stated, at: statedAt } = dropGrid(axis, "room", "room", state)
+      const markersFrom = (from: readonly [number, number]) => {
+        const ctx = offerContextFrom(stated, from, {})
+        const claims = buildRoomClaims(stated)
+        return Object.fromEntries(
+          [...offeredTargets(stated, claims, from).keys()].sort().map(cell => {
+            const [r, c] = cell.split(",").map(Number)
+            return [cell, markerAt(stated, claims, r, c, ctx)]
+          })
+        )
       }
+      const fromSide = {
+        [key(statedAt(DROP_AT.fromNode))]: { kind: "node" },
+        [key(statedAt(DROP_AT.launch))]: { kind: "arrow", dir: axis.travel },
+      }
+      const toSide = {
+        [key(statedAt(DROP_AT.landing))]: { kind: "arrow", dir: axis.back },
+        [key(statedAt(DROP_AT.toNode))]: { kind: "node" },
+      }
+
+      it("marks the launch with an arrow from beside it and from on it", () => {
+        expect(markersFrom(statedAt(DROP_AT.fromNode))).toEqual(fromSide)
+        expect(markersFrom(statedAt(DROP_AT.launch))).toEqual(fromSide)
+      })
+
+      it("marks the landing with an arrow from beside it and from on it", () => {
+        expect(markersFrom(statedAt(DROP_AT.toNode))).toEqual(toSide)
+        expect(markersFrom(statedAt(DROP_AT.landing))).toEqual(toSide)
+      })
     })
 
     it("draws no marker on any cell of the obstacle, from any standing place", () => {

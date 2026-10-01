@@ -1,7 +1,7 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
-import { walkableFrom } from "@/game/gridNavigation"
-import { corridorRunTargetsFrom, isCorridorCorner, type CorridorRunTarget } from "./corridorRuns"
+import { oneWayRuns, walkableFrom } from "@/game/gridNavigation"
+import { corridorRunTargetsFrom, isCorridorCorner, OPPOSITE_DIR, type CorridorRunTarget } from "./corridorRuns"
 import { litClaimOwner, type RoomClaims } from "./roomClaims"
 
 /**
@@ -20,10 +20,23 @@ import { litClaimOwner, type RoomClaims } from "./roomClaims"
 export type OfferContext = {
   /** The far end of each corridor run, keyed by the run's near cell — see `corridorRuns.ts`. */
   runTargets: ReadonlyMap<string, CorridorRunTarget>
+  /** A drop's launch and landing, keyed by cell, each with the direction a walker enters it from its own
+   * node. Read off `oneWayRuns`, never off a cell's shape: a one-direction stub is not a launch in general. */
+  dropEnds: ReadonlyMap<string, Direction>
   /** Whether the player can actually walk there from where they stand. */
   canWalkTo: (row: number, col: number) => boolean
   /** The builder's free-roam mode: every cell is a target, walkability aside. */
   freeWalk: boolean
+}
+
+/** The direction a walker enters each launch and landing of the floor from its own node, keyed by cell. */
+export const dropEndsOf = (grid: FloorGrid): ReadonlyMap<string, Direction> => {
+  const ends = new Map<string, Direction>()
+  for (const run of oneWayRuns(grid)) {
+    ends.set(`${run.launch[0]},${run.launch[1]}`, run.dir)
+    ends.set(`${run.landing[0]},${run.landing[1]}`, OPPOSITE_DIR[run.dir])
+  }
+  return ends
 }
 
 /** A corridor's own rule, shared by the claimed and unclaimed branches — the same condition either way. */
@@ -36,7 +49,10 @@ const corridorOffer = (
   if (!ctx.canWalkTo(target[0], target[1])) return null
   const corner = isCorridorCorner(cell.dirs as Parameters<typeof isCorridorCorner>[0])
   const stoppingPoint = cell.state === "reachable" || cell.state === "completed"
-  return ctx.freeWalk || (stoppingPoint && corner) || !!runTarget ? target : null
+  // A drop's launch and landing are stopping points whatever their shape: the player must be able to walk
+  // to either from its own side.
+  const dropEnd = ctx.dropEnds.has(`${target[0]},${target[1]}`)
+  return ctx.freeWalk || (stoppingPoint && (corner || dropEnd)) || !!runTarget ? target : null
 }
 
 export const clickTargetAt = (
@@ -78,10 +94,10 @@ export const clickTargetAt = (
  * The SHAPE is read off what the offer names:
  * - `node`: a room. Its own node art is the marker, drawn for every lit room whatever the offer.
  * - `arrow`: a way to walk, pointing where the tap leads from here — a corridor run's near end, or a
- *   one-way mouth beside the player, pointed at as the way out of the room it opens off.
+ *   drop's launch or landing, pointed at in the direction it is entered from its own node.
  * - `dot`: a corner or dead end the player can stop on.
  *
- * The one offer with no marker is a corridor corner already walked and not a mouth: `null` there is
+ * The one offer with no marker is a corridor corner already walked and not a drop's launch or landing: `null` there is
  * a decision, and the guard in `movementInvariant.spec.ts` exempts exactly that case by name.
  */
 export type OfferMarker = { kind: "node" } | { kind: "dot" } | { kind: "arrow"; dir: Direction }
@@ -99,6 +115,10 @@ export const markerAt = (
   if (cell.type !== "corridor") return { kind: "node" }
   const runTarget = ctx.runTargets.get(`${r},${c}`)
   if (runTarget) return { kind: "arrow", dir: runTarget.dir }
+  // A launch or landing is named by an arrow pointing the way it is walked into, walked or not: it is a
+  // stub at the end of a line the player can see, not ground a dot or silence would find.
+  const entered = ctx.dropEnds.get(`${r},${c}`)
+  if (entered) return { kind: "arrow", dir: entered }
   if (cell.state === "reachable" && isCorridorCorner(cell.dirs)) return { kind: "dot" }
   // A corner the player has already walked is drawn ground they can see, so it needs no marker to be
   // found; it stays a tap to walk back to.
@@ -114,6 +134,7 @@ export const offerContextFrom = (
   const walkable = at ? walkableFrom(grid, at) : null
   return {
     runTargets: corridorRunTargetsFrom(grid, at),
+    dropEnds: dropEndsOf(grid),
     canWalkTo: (row, col) => !walkable || walkable.has(`${row},${col}`),
     freeWalk: opts.freeWalk ?? false,
   }
