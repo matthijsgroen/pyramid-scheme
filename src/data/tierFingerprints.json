@@ -1,22 +1,22 @@
 {
   "starter": {
-    "hash": "23ccda05126c85b0",
+    "hash": "57b8b1b97aaa1744",
     "journeyCount": 5
   },
   "junior": {
-    "hash": "1f1761b4d9f9b27e",
+    "hash": "24424f51d40df9a6",
     "journeyCount": 5
   },
   "expert": {
-    "hash": "cae95392e4ef3ddb",
+    "hash": "e2821570239cc44d",
     "journeyCount": 6
   },
   "master": {
-    "hash": "39273323f9e338af",
+    "hash": "488a3b4da42c07bc",
     "journeyCount": 6
   },
   "wizard": {
-    "hash": "7b393481f134b6ab",
+    "hash": "aaffb04f7b28e723",
     "journeyCount": 7
   }
 }

@@ -134,6 +134,14 @@ describe("tier fingerprints", () => {
       expect(tierFingerprints(shipped, configs)).toEqual(actual)
     })
 
+    it("ignores a pinned packing, on every floor of every tier", () => {
+      const configs = cloneConfigs()
+      const floors = shipped.flatMap(j => configs[j.id].flat())
+      expect(floors.length).toBeGreaterThan(100)
+      for (const floor of floors) floor.packing = 7.5
+      expect(tierFingerprints(shipped, configs)).toEqual(actual)
+    })
+
     it("hashes the same whatever order the journeys are listed in", () => {
       expect(tierFingerprints([...shipped].reverse(), generatedWorldConfigs)).toEqual(actual)
     })

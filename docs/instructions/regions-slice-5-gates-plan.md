@@ -14,7 +14,7 @@
 
 - `yarn check-types` is the truth. **IDE diagnostics in this repo have been wrong on every single occasion** — they report faults in files that do not exist. Never trust them; run the command.
 - Lint with `yarn eslint <paths>`. **`yarn lint --fix <path>` does NOT scope** — the script is `eslint . --max-warnings 17`, so a path is appended to `.` and it rewrites the repo.
-- `yarn generate-world` must stay byte-identical at md5 `eb7d34e5dcb1629a8d6b6033b077cfa1`. Check with `yarn generate-world && md5 -q src/data/generatedWorld.ts` (or `md5sum`).
+- `yarn generate-world` must stay byte-identical at md5 `84c181cda6e3c04fe64ed6d93b4e6f19`. Check with `yarn generate-world && md5 -q src/data/generatedWorld.ts` (or `md5sum`).
 - **THAT FINGERPRINT DOES NOT COVER THE CARVE.** `src/data/generatedWorld.ts` holds `SiteConfig[]` — the authored floor configs world generation resolved — so the md5 proves world-gen's inputs did not move and says NOTHING about the walls `assembleFloor` cuts from them. A task that changes carve behaviour (`edgeAllowed`, `doorsToEnter`, `gatedCellKeys`, content indices, room specs) can change every shipped floor's layout with that md5 sitting green. Such a task must capture a CARVE baseline before it starts and diff against it after — see the Carve baseline recipe below. Checking only the md5 there is not verification, it is the appearance of it.
 - **NEVER run `INCLUDE_DEV=1 yarn generate-world`.** `yarn validate-world` writes nothing and is safe with the flag.
 - `src/game/` is the domain layer: no React, no `src/app/`, no `src/ui/`.
@@ -746,7 +746,7 @@ Expected: PASS, all of them.
 - [ ] **Step 6: MEASURE the world fingerprint**
 
 Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts`
-Expected: `eb7d34e5dcb1629a8d6b6033b077cfa1`.
+Expected: `84c181cda6e3c04fe64ed6d93b4e6f19`.
 
 **If it moved, the reordering in Step 3 changed content placement for floors with no layout, which is a defect in this task and not an acceptable cost.** Find it: `git diff src/data/generatedWorld.ts | head -40` names the floors that moved. Do not proceed to Task 3 until the md5 is back.
 
@@ -967,7 +967,7 @@ Author a control whose region is on the route but which this carve gives no free
 
 - [ ] **Step 6: Fingerprint, types, lint, suite, report**
 
-Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` → `eb7d34e5dcb1629a8d6b6033b077cfa1`
+Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` → `84c181cda6e3c04fe64ed6d93b4e6f19`
 Run: `yarn check-types && yarn eslint src/game/siteAssembler.ts src/game/siteTypes.ts src/game/regionGates.spec.ts && yarn test`
 
 ```bash
@@ -1157,7 +1157,7 @@ describe("what a gated region shuts off", () => {
 
 This task registers region cells into `gatedCellKeys` and `doorsToEnter`, which `edgeAllowed` reads — so it can change which doors a shipped floor carves, and the world md5 cannot see that. Run the Carve baseline recipe from the top of this plan before Step 5 and diff it here. An empty diff is the pass.
 
-Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` → `eb7d34e5dcb1629a8d6b6033b077cfa1`
+Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` → `84c181cda6e3c04fe64ed6d93b4e6f19`
 Run: `yarn check-types && yarn eslint src/game/obstacles.ts src/game/obstacles.spec.ts src/game/siteAssembler.ts src/game/regionGates.spec.ts && yarn test`
 
 ```bash
@@ -1265,7 +1265,7 @@ This task changes `edgeAllowed`, which every shipped floor is carved through, an
 
 Also run: `yarn generate-world && md5 -q src/data/generatedWorld.ts`
 
-- If `eb7d34e5dcb1629a8d6b6033b077cfa1`: done, continue.
+- If `84c181cda6e3c04fe64ed6d93b4e6f19`: done, continue.
 - **If it moved:** this is the hazard above, not a surprise. Scope `sameDoors` to floors authoring a layout — `if (!regionLayout) return false` as its first line — and measure again. Report which floors moved (`git diff --stat src/data/generatedWorld.ts`) either way.
 
 - [ ] **Step 5: Prove the carve still refuses what it should**
@@ -1453,7 +1453,7 @@ Expected: valid, `Stair sweep: 111`, and **`Lock sweep: walked 9 of 8` → it sh
 
 **NEVER run `INCLUDE_DEV=1 yarn generate-world`.**
 
-Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` → `eb7d34e5dcb1629a8d6b6033b077cfa1` (the dev journey is not in the default world, so this must not move).
+Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` → `84c181cda6e3c04fe64ed6d93b4e6f19` (the dev journey is not in the default world, so this must not move).
 
 - [ ] **Step 5: Types, lint, suite, report**
 
@@ -1496,7 +1496,7 @@ Expected: PASS, unchanged.
 
 - [ ] **Step 4: Fingerprint, types, lint, suite, report**
 
-Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` → `eb7d34e5dcb1629a8d6b6033b077cfa1`
+Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` → `84c181cda6e3c04fe64ed6d93b4e6f19`
 Run: `INCLUDE_DEV=1 yarn validate-world` → valid, lock sweep unchanged from Task 7
 Run: `yarn check-types && yarn eslint src/game/siteAssembler.ts src/game/handleAuthoring.spec.ts && yarn test`
 

@@ -36,7 +36,7 @@
 - **NEVER `git add` / `git commit` / `git stash` / `git checkout`** in a task. The controlling session commits.
 - **NEVER `pkill` or `killall`.** Other worktrees and the owner's playtest run dev servers on this machine. Kill only a PID you started.
 - **NEVER run `INCLUDE_DEV=1 yarn generate-world`.** `yarn validate-world` is safe with the flag.
-- `yarn generate-world && md5 -q src/data/generatedWorld.ts` must stay `eb7d34e5dcb1629a8d6b6033b077cfa1`.
+- `yarn generate-world && md5 -q src/data/generatedWorld.ts` must stay `84c181cda6e3c04fe64ed6d93b4e6f19`.
 - **That fingerprint does NOT cover the carve.** Every task here changes carve behaviour, so every task captures a CARVE BASELINE first — assemble every shipped floor at its real seed via `allFloors()`, reduce each cell to its `dirs`, diff before against after — and reports the diff. The shipped world authors no `regionLayout`, so the diff must be EMPTY until a task deliberately changes a shipped floor.
 - `src/game/` is the domain layer: no React, no `src/app/`.
 - Comments state CURRENT state and why, never history.

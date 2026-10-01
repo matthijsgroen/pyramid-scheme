@@ -123,10 +123,11 @@ assignFragmentPieceIndices(configs)
 // One carve per floor, shared by every sweep that needs the grid rather than the spec.
 // A floor is carved at the first (packing, seed) pair that carves on the assembler's FIRST attempt, walks
 // sound and leaves no dead region: every seed at the authored `packing` is tried before the packing
-// rises a step. Both are stamped on the floor only when they moved: a floor that needs no search stays
-// implicitly seeded and keeps the packing its author wrote, so the baked world only names the floors the
-// search changed, and the runtime carves exactly what was found here. A floor no pair satisfies is an
-// authoring the assembler cannot satisfy, not bad luck, and is named (see STRICT_ATTEMPT_ZERO).
+// rises a step. Both are stamped on EVERY floor, including the ones where they equal what the address
+// formula and DEFAULT_PACKING produce: a floor that leaned on either would re-carve silently the day the
+// seed formula, a journey id or the default moved. A floor no pair satisfies is an authoring the
+// assembler cannot satisfy, not bad luck, and is named (see STRICT_ATTEMPT_ZERO); it is pinned at the
+// pair the runtime ladder starts from.
 const CARVE_SEED_BUDGET = 100
 // A floor no pair satisfies needs more than `packing` and a seed can give it (the grid the assembler
 // derives is too small, and only its widening rungs grow it). Off, it is listed by name and carved by the
@@ -225,8 +226,8 @@ const assembleOnce = (journeyId: string, floor: FloorConfig, levelNr: number, fl
         authored,
         packing: search.packing,
       })
-      if (search.offset > 0) floor.seed = search.seed
-      if (search.packing !== authored) floor.packing = search.packing
+      floor.seed = search.seed
+      floor.packing = search.packing
       grids.set(cacheKey, search.grid)
     } else {
       const refusal =
@@ -236,6 +237,8 @@ const assembleOnce = (journeyId: string, floor: FloorConfig, levelNr: number, fl
       nextLedger[cacheKey] = { hash, refusal }
       unsatisfiable.push(refusal)
       carveSearch.push({ key: cacheKey, offset: 0, baseRefusal: search.baseRefusal, authored, packing: authored })
+      floor.seed = base
+      floor.packing = authored
       const ladder = ladderCarve()
       if (STRICT_ATTEMPT_ZERO || !ladder.success) unassembled.push(refusal)
       grids.set(cacheKey, ladder.success ? ladder.grid : null)

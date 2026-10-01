@@ -26,9 +26,10 @@ export const stableStringify = (value: unknown): string => {
 // are what the author asked for rather than what was dealt.
 export const FAMILY_RECORD_KEYS: ReadonlySet<string> = new Set(["encounter", "encountersByIndex"])
 
-// A searched carve seed is the bake's output, not the author's: re-pinning it must not read as a tier
-// drifting. Removed beside the family records at every depth.
-const SEARCHED_KEYS: ReadonlySet<string> = new Set(["seed"])
+// The carve pin (`seed`, `packing`) is the bake's output, written on every floor: it changes how a floor is
+// drawn, never its rooms, gates or loot, so re-pinning it must not read as a tier drifting. Removed beside
+// the family records at every depth.
+const SEARCHED_KEYS: ReadonlySet<string> = new Set(["seed", "packing"])
 
 // `value` with every family record removed at every depth.
 export const withoutFamilyRecords = (value: unknown): unknown => {

@@ -21,7 +21,7 @@
 - **NEVER `git add` / `git commit` / `git stash`.** The controlling session commits.
 - **NEVER `pkill` / `killall`.** Other worktrees and the owner's own playtest run dev servers on this machine. Kill only a PID you started.
 - **NEVER run `INCLUDE_DEV=1 yarn generate-world`.** `yarn validate-world` is safe with the flag.
-- `yarn generate-world && md5 -q src/data/generatedWorld.ts` must stay `eb7d34e5dcb1629a8d6b6033b077cfa1`. If you dirty it, restore it.
+- `yarn generate-world && md5 -q src/data/generatedWorld.ts` must stay `84c181cda6e3c04fe64ed6d93b4e6f19`. If you dirty it, restore it.
 - This slice changes no carve behaviour, so it needs no carve baseline. If you find yourself touching `src/game/siteAssembler.ts`, stop and report — you are in the wrong slice.
 - Comments state CURRENT state and why, never history.
 - **Tests assert EVERY element of a collection, never a representative one.**

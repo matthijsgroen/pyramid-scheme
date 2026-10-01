@@ -51,7 +51,7 @@ Cost: microseconds, against a carve at median 36 ms.
 - `yarn eslint <paths>` only. **NEVER `yarn lint --fix`.**
 - **NEVER `git add`/`commit`/`stash`/`checkout`.** The controlling session commits.
 - **NEVER `pkill`/`killall`.** Kill only a PID you started.
-- **NEVER `yarn generate-world` or `INCLUDE_DEV=1 yarn generate-world`.** `validate-world` is safe with the flag. `md5 -q src/data/generatedWorld.ts` must stay `eb7d34e5dcb1629a8d6b6033b077cfa1`.
+- **NEVER `yarn generate-world` or `INCLUDE_DEV=1 yarn generate-world`.** `validate-world` is safe with the flag. `md5 -q src/data/generatedWorld.ts` must stay `84c181cda6e3c04fe64ed6d93b4e6f19`.
 - **CARVE BASELINE on every task** — all 206 shipped floors, each cell reduced to its `dirs`, before against after. **It must be EMPTY**: no shipped floor authors `regionLayout`, so this check must be inert for them.
 - `src/game/` is the domain layer: no React, no `src/app/`.
 - Comments state CURRENT state and why, never history.
