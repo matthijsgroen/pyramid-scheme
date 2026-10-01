@@ -42,6 +42,7 @@
     "prompt": {
       "here": "Onderzoek",
       "stairs": "Neem de trap",
+      "zipline": "Gebruik de zipline",
       "exit": "Deze plek verlaten"
     },
     "travel": "Reizen",

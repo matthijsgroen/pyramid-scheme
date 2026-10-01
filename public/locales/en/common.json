@@ -42,7 +42,8 @@
     "prompt": {
       "here": "Investigate",
       "stairs": "Take the stairs",
-      "exit": "Leave this place"
+      "exit": "Leave this place",
+      "zipline": "Use the zipline"
     },
     "travel": "Travel",
     "chooseYourJourney": "Choose Your Journey",
