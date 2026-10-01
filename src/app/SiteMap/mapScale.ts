@@ -98,14 +98,16 @@ export const DROP_H = 81
  * dropEast's spoil stands proud above its own. North's marks are 861 master pixels apart, which over a
  * 56-unit corridor is 15.375 pixels to a unit, and the tile measures 215 x 284 pixels at that scale.
  *
+ * South is marked the same way, 1186 pixels over 56, giving 21.18 and a 156 x 187 tile.
+ *
  * NOTHING IS STRETCHED TO THE RUN. A vertical run is 224 units down the page (ROW_PITCH x 2 + CELL) against
- * a horizontal one's 196, and the art is drawn at the size it was painted: north covers 63% of its run where
- * dropEast covers 87%. South is still at the pit-to-paving scale and covers 30%, so it is the one whose
- * master still wants edge marks. */
+ * a horizontal one's 196, and each tile is drawn at the size it was painted: dropEast covers 87% of its run,
+ * north 63%, south 42%. South is the short one because its painting spends less of the canvas on the pit,
+ * not because it is scaled differently, so what would lengthen it is a repaint and not a number here. */
 export const DROP_NORTH_W = 107.5
 export const DROP_NORTH_H = 142
-export const DROP_SOUTH_W = 56
-export const DROP_SOUTH_H = 67
+export const DROP_SOUTH_W = 78
+export const DROP_SOUTH_H = 93.5
 
 /** The sprite's box for a drop whose run is `cells` and which travels `dir`. A horizontal drop is centred on
  * its run with its bottom on the run's floor line; a vertical one is centred on its run both ways, because

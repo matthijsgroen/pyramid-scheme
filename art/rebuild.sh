@@ -1204,14 +1204,14 @@ yarn import-tile art/masters/props/expert/dropEast.webp --tier=expert --name=dro
 # up-facing top face, against this projection's rule that a block shows its top above and its front below.
 # --tight is master pixels to a map unit, and the two are NOT measured the same way. North's is the
 # corridor width MARKED on its master, 861 pixels over CELL (56), so the crack overhangs the passage it
-# crosses — a fissure is torn wider than the floor it breaks. South still measures its own pit edge to
-# edge, 1646 over 56, and is the smaller for it: its master has no marks yet. Neither is stretched to the
-# 224-unit run. No --crop-below: that cut belongs to dropEast's horizontal frame.
+# crosses — a fissure is torn wider than the floor it breaks. South is marked the same way, 1186 over 56,
+# and comes out the shorter tile because its painting spends less canvas on the pit. Neither is stretched
+# to the 224-unit run. No --crop-below: that cut belongs to dropEast's horizontal frame.
 scaffold pit --contents=dropNorth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/expert/dropNorth.webp --tier=expert --name=dropNorth --slot=prop --tight=15.375 \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 scaffold pit --contents=dropSouth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
-yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dropSouth --slot=prop --tight=29.393 \
+yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dropSouth --slot=prop --tight=21.18 \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 
 # His CEDAR RELIC BOX, cord-bound with the seal unbroken. No grading flags at all.
