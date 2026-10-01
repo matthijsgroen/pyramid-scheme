@@ -2595,12 +2595,18 @@ covered 63% (`dropNorth`) and 42% (`dropSouth`) of the run, leaving half a cell 
 paving at each end of a gap the player cannot cross. `dropEast` keeps its mouth: its gap spans in y,
 where the shear already gives it the whole cell, and it is painted.
 
-**So the depth is now 5.9, and what the number cost.** The band is `k*d` tall, so at a 56-unit corridor
-`k*d / w * 56 = 224` gives `d = 4w/k` = 5.94; measured off renders rather than trusted to the line
-(the tile's extent includes spoil and posts beyond the mouth), 5.9 draws a black band of 224 units to a
-56-unit corridor on both tiles (0.8 drew 42 and 58, 4.0 drew 154). The whole tile is about 63 wide by
-270 long, a trench four times as long as it is wide, and that is the composition the two prompts below
-now describe: they no longer ask for a squarish fissure.
+**THE TARGET IS THE RUN FORESHORTENED, NOT THE RUN.** The first answer to the 63%/42% shortfall was to
+ask for the whole 224, which `d` = 5.94 delivers (the band is `k*d` tall, so `k*d / w * 56 = 224`). It
+came back a black field four times as long as it was wide, and it read as a wall rather than a hole —
+because asking depth to draw its full map length is asking this projection not to foreshorten. A gap
+running AWAY from the viewer must draw shorter than the same gap crossing him; north and south looking
+shorter than `dropEast` is the projection working, not a defect to correct.
+
+**So the depth is 4.16**, for a band of `k * 224` = 157 units at a 56-unit corridor — the run as this
+shear actually draws it. Measured off renders rather than trusted to the line, since the tile's extent
+includes spoil and posts beyond the mouth. For the record of what the dial does: 0.8 drew a band of 42
+and 58 units, 4.0 drew 154, 5.9 drew 224. The tile is about three times as long as it is wide, and that
+is the composition the two prompts below describe: neither a squarish fissure nor a trench.
 
 - **The rope.** A line across a mouth this long and 1.04 wide would draw near-vertical and read as a
   post, so the posts moved to opposite sides of it: the X offset across the mouth went from 0.34 to 0.78
@@ -2680,8 +2686,9 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a long TRENCH torn down the length of a passage floor, seen from above — a gap three
-corridors long and one corridor wide, so the dark shape is a tall narrow slot, about four times as long
-as it is wide, standing upright in the middle of the frame with bare paving to either side. Keep it that
+corridors long and one corridor wide, drawn running away from you so its length is foreshortened — the
+dark shape is a tall slot about three times as long as it is wide, standing upright in the middle of the
+frame with bare paving to either side. Keep it that
 slender; do not widen it into a pit. The dark quadrilateral is the OPENING — a hole in the floor, not a
 wall, not a doorway and not a niche, and nothing stands inside it that a person could stand on. THE WHOLE
 DARK FIELD IS THE SHAFT'S OWN WALL, seen face on and falling away from you: its top edge is the far rim
@@ -2740,8 +2747,9 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a long TRENCH torn down the length of a passage floor, seen from above — a gap three
-corridors long and one corridor wide, so the dark shape is a tall narrow slot, about four times as long
-as it is wide, standing upright in the middle of the frame with bare paving to either side. Keep it that
+corridors long and one corridor wide, drawn running away from you so its length is foreshortened — the
+dark shape is a tall slot about three times as long as it is wide, standing upright in the middle of the
+frame with bare paving to either side. Keep it that
 slender; do not widen it into a pit. The dark quadrilateral is the OPENING — a hole in the floor, not a
 wall, not a doorway and not a niche, and nothing stands inside it that a person could stand on. THE WHOLE
 DARK FIELD IS THE SHAFT'S OWN WALL, seen face on and falling away from you: its top edge is the far rim
