@@ -374,7 +374,9 @@ const dropFloor = (travel: Travel) => {
     state: "fogged",
     obstacle: { dir: travel, kind: "zipline" },
   })
-  const line = ["C", "R", "L", ...Array<string>(ONE_WAY_RUN_CELLS).fill("M"), "T", "R", "C"]
+  // The far end is the floor's entrance: `floorFrom` needs one, and a drop's own story has no use for
+  // it beyond giving the grid somewhere to call the way in.
+  const line = ["E", "R", "L", ...Array<string>(ONE_WAY_RUN_CELLS).fill("M"), "T", "R", "C"]
   const rows = travel === "s" ? line : [(travel === "w" ? [...line].reverse() : line).join("")]
   const grid = floorFrom(rows, { C: corridorPiece, L: launch, M: obstacle, T: landing })
   const at = (i: number): [number, number] => {
