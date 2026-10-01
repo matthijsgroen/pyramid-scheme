@@ -302,6 +302,7 @@ const LeverCompare: FC<{
 }
 
 const meta = {
+  title: "Topology/Lever",
   component: LeverCompare,
   parameters: { layout: "fullscreen" },
   argTypes: {
