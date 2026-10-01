@@ -576,6 +576,13 @@ a floor's SHAPE, these describe what the player meets when they walk up to it.
 8. **`or`: either lever opens the gate.**
 9. **`and`: the gate opens only while BOTH levers are thrown, and is closed otherwise.**
 
+**A control gates the way past it, like an encounter.** Confirmed in playtest 2026-10-01: standing at a
+lever, the way ONWARD is fogged until the lever is worked, so a player cannot decline and walk by. That is
+`useSiteNavigation`'s explored-write "lifting the fog past a lever standing astride the only way through" —
+the behaviour, not a defect. It was briefly suspected of being a dead tap and investigated exhaustively
+(270,336 state combinations over four lever floors, plus every offer on the real dev floor): no dead tap
+exists. A floor that wants a lever the player may walk past must not stand it astride the only route.
+
 **What enforces each today, audited 2026-09-30.**
 
 | #   | Criterion                       | State                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
@@ -634,7 +641,7 @@ it requires and what it may never do.
 
 | # | Criterion | State |
 | --- | --- | --- |
-| 1 | the carve reserves a run | holds: `ONE_WAY_RUN_CELLS` cells reserved between departure and landing, asserted cell by cell on every seed that carves |
+| 1 | the carve reserves a run | holds: launch + `ONE_WAY_RUN_CELLS` (3) obstacle cells + landing, reserved whole or not at all, asserted cell by cell on every seed that carves. 3 is the owner's measurement: 530px of master = one cell, so the art is 170 x 81 units = 2.76 cells |
 | 2 | entered and left at its ends | holds: each run cell's `dirs` is exactly the way onward; asserted as whole sets, not as an absence |
 | 3 | stand at the end, step back | holds: `walkableDirsFrom` admits the run's landing end from the landing, and that cell's one direction leads back |
 | 4 | crossing impossible by construction | holds, and the REASON is the one to keep: a cell with one `dirs` entry can only be left along it, so a chain of them must terminate at a cell with more than one way out, which `isRunEnd` refuses. Asserted over chains of 0-3 cells |

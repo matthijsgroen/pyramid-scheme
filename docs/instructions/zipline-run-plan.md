@@ -6,7 +6,7 @@
 
 **Why, measured.** `dropEast.png` is 112x168 and its pit occupies **rows 128-147, columns 46-95** — about 20 rows by 50 columns, so **2.5 times wider than it is tall**. The art only fills rows 96-166 at all; the top 96 rows are empty. Rendered at today's `DROP_W = 84` the pit covers roughly **27%** of the corridor's thickness, leaving lit floor below it, which is why it reads as a pit you could step around rather than an opening across the way.
 
-Making the pit span the corridor at the painting's own proportions needs a scale factor of about **3.7**, i.e. `DROP_W ≈ 313` — **5.6 cells along the corridor**. That is absurd for a sprite and correct for a zipline: the proportions are telling us a drop is a multi-cell feature that has been squeezed into one cell.
+A drop is a multi-cell feature that had been squeezed into one cell. **The owner settled its size by measurement 2026-10-01**: he marked the corridor floor's top and bottom on the master, which fixed 530px = one cell = 56 units, i.e. 9.464 px per unit. At that scale the art is 170 x 81 units — **2.76 cells** — so the run is **3 cells** (`ONE_WAY_RUN_CELLS`), and the tile is imported tight to its own ink at 2px per unit with no dead air. The earlier 5.6-cell figure came from scaling the art until the pit spanned the corridor, which was compensating for a frame that was 61% empty.
 
 **Ruled out:** drawing the sprite across neighbouring cells via `nodeSpritesFor`'s existing `footprint` without changing the carve. Those neighbours are walkable corridor, so it would paint a pit over floor the player can stand on — worse than today.
 
