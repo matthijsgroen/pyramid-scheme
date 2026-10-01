@@ -344,6 +344,12 @@ const claimedByFork = (grid: FloorGrid, claims: RoomClaims, key: string): boolea
   return owner?.type === "room" && owner.roomType === "fork"
 }
 
+// Does this cell sit in a drop's run, with `dir` running along the drop's own line?
+const alongObstacle = (cell: GridCell, dir: "s" | "e"): boolean => {
+  const run = cell.type === "corridor" ? cell.obstacle?.dir : undefined
+  return !!run && (dir === "e" ? run === "e" || run === "w" : run === "s" || run === "n")
+}
+
 // Whether the player can pass between two cells the map draws floor for. Adjacency is NOT passage:
 // a room claims the cells around it as footprint, so its floor can sit flush against a corridor it
 // has no way through to, and that boundary needs a partition (see tileRegions.ts) or the room reads
@@ -358,6 +364,11 @@ export const isPassable = (grid: FloorGrid, claims: RoomClaims, r: number, c: nu
   if ((cell.type === "room" || cell.type === "corridor") && cell.dirs.has(dir)) return true
   if ((neighbor.type === "room" || neighbor.type === "corridor") && neighbor.dirs.has(OPPOSITE_DIR[dir])) return true
   if (claims.openEdges.has(edgeKey(r, c, nr, nc))) return true
+  // A drop's run names no direction, because nothing may WALK it, but it is drawn as the passage it
+  // looks like: open along its own line, toward the launch, the landing and its neighbouring cells.
+  // Left shut, every seam in the run draws a side wall and the back wall breaks into jambs.
+  if (alongObstacle(cell, dir) && neighbor.type !== "empty") return true
+  if (alongObstacle(neighbor, dir) && cell.type !== "empty") return true
   // Two junction rooms that each claim their own side of a shared void/corridor cell
   // (buildRoomClaims assigns that cell to whichever claims first) should still read as one open
   // space — junctions are connective tissue, not a distinct place, unlike other room types, which
