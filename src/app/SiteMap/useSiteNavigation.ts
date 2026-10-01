@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react"
+import { flushSync } from "react-dom"
 import { cellAddress } from "./cellIdentity"
 import { findPath, getCell, oneWayRuns } from "@/game/gridNavigation"
 import { throwMechanism } from "@/game/mechanismDoors"
@@ -110,9 +111,9 @@ export const useSiteNavigation = ({
     [grid, explorerPos]
   )
   // Taking a span: out of sight, the traversal plays, and only then is the player written down at the
-  // landing and drawn there. The position and the reveal go in the same render, so the explorer never
-  // shows at the launch after it has gone, and `finally` means a traversal that fails still ends with
-  // the player standing somewhere rather than gone for good.
+  // landing and drawn there. The hide is flushed so the dot unmounts before the traversal starts; batched,
+  // a microtask traversal would leave it mounted and it would walk the corridor instead. `finally` means a
+  // traversal that fails still ends with the player standing somewhere rather than gone for good.
   const takeSpan = useCallback(
     async (traversal: Traversal) => {
       if (!grid) return
@@ -120,7 +121,7 @@ export const useSiteNavigation = ({
       const landing = getCell(grid, row, col)
       if (!landing || landing.type === "empty") return
       traversing.current = true
-      setExplorerHidden(true)
+      flushSync(() => setExplorerHidden(true))
       try {
         await playTraversal(traversal)
       } finally {

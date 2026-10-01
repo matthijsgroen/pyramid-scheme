@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { renderHook, act } from "@testing-library/react"
+import { createElement, useState } from "react"
+import { renderHook, render, act } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type { CellState, FloorGrid, GridCell, MechanismRecord, SiteConfig } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
@@ -7,8 +8,11 @@ import { registerFamily } from "@/app/families/familyRegistry"
 import { getCell } from "@/game/gridNavigation"
 import { cellAddress } from "./cellIdentity"
 import { encodeEdge } from "./edgeId"
-import { AXES, DROP_AT, addressed, dropGrid } from "./floorFixtures.testing"
+import { AXES, DROP_AT, addressed, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
+import { cellCenter } from "./mapScale"
 import { useSiteNavigation } from "./useSiteNavigation"
+import { SiteMapView } from "./SiteMapView"
+import { crossAtOnce, type PlayTraversal, type Traversal } from "./obstacleTraversal"
 
 // A family that keeps its rooms open (FamilyMeta.reEnterable) — declared here as a stub, because which
 // families those are is theirs to say and core's only to read.
@@ -617,7 +621,7 @@ describe("useSiteNavigation taking a span", () => {
 
   // An east-going drop laid out as the carve lays it, the player standing on the from-node. The traversal
   // is a promise the test settles by hand, so nothing here waits on a clock.
-  const dropSetup = () => {
+  const dropSetup = (crossing?: PlayTraversal) => {
     const { grid, at } = dropGrid(AXES[0], "room", "room", "reachable")
     const floor = addressed(grid)
     const launch = at(DROP_AT.launch)
@@ -638,9 +642,9 @@ describe("useSiteNavigation taking a span", () => {
       if (address === landingAddress) events.push("landing written")
     })
     let settle = () => {}
-    const playTraversal = vi.fn(() => {
+    const playTraversal = vi.fn((traversal: Traversal) => {
       events.push("traversal started")
-      return new Promise<void>(resolve => (settle = resolve))
+      return crossing ? crossing(traversal) : new Promise<void>(resolve => (settle = resolve))
     })
     let lastHidden = false
     const hook = renderHook(() => {
@@ -724,9 +728,9 @@ describe("useSiteNavigation taking a span", () => {
       landingAddress,
       encodeEdge(0, landing[0], landing[1])
     )
-    // Hidden before the write and shown only after it: a player shown before the landing is written
-    // would be drawn at the launch again for a frame.
-    expect(events).toEqual(["traversal started", "player hidden", "landing written", "player shown"])
+    // Hidden and committed before the traversal starts, shown only after the write: a player shown before
+    // the landing is written would be drawn at the launch again for a frame.
+    expect(events).toEqual(["player hidden", "traversal started", "landing written", "player shown"])
   })
 
   it("ignores a tap while the player is out of sight in the span", () => {
@@ -738,5 +742,86 @@ describe("useSiteNavigation taking a span", () => {
     act(() => hook.result.current.onCellClick(launch[0], launch[1]))
 
     expect(journeys.updatePosition).not.toHaveBeenCalled()
+  })
+
+  it("commits the hidden player before the position is written, even when the traversal settles at once", async () => {
+    const { hook, events, atLaunch } = dropSetup(crossAtOnce)
+    atLaunch()
+
+    await act(async () => promptOf(hook).take())
+
+    expect(events).toEqual(["player hidden", "traversal started", "landing written", "player shown"])
+  })
+
+  it("never draws the player on a cell between the launch and the landing", async () => {
+    const { grid: bare, at } = dropGrid(AXES[0], "room", "room", "reachable")
+    const floor = addressed(bare)
+    const launch = at(DROP_AT.launch)
+    const landing = at(DROP_AT.landing)
+    const landingAddress = cellAddress(floor, 0, landing[0], landing[1])
+    const centre = ([r, c]: readonly [number, number]) => {
+      const { cx, cy } = cellCenter(r, c)
+      return `${cx},${cy}`
+    }
+    // Every cell the ground offers between the two ends of the span, as the dot would draw it.
+    const between = obstacleIndexes.map(i => centre(at(i)))
+
+    let setPos: (pos: readonly [number, number]) => void = () => {}
+    const journeys = {
+      markCellExplored: vi.fn(),
+      updatePosition: vi.fn((_: string, address: string) => {
+        if (address === landingAddress) setPos(landing)
+      }),
+      getPurchasedShopSlots: () => new Set<string>(),
+      getSkippedConsumables: () => new Set<string>(),
+      getMechanismStates: vi.fn(() => new Map<string, string>()),
+      setMechanismState: vi.fn(),
+    } as unknown as JourneyAPI
+    let navigation: ReturnType<typeof useSiteNavigation> | undefined
+    const Harness = () => {
+      const [pos, set] = useState<readonly [number, number]>(launch)
+      setPos = set
+      navigation = useSiteNavigation({
+        journeys,
+        journeyId: "j1",
+        siteConfig,
+        seed: 1,
+        currentFloor: 0,
+        grid: floor,
+        explorerPos: pos,
+        onEncounter: vi.fn(),
+        onSkippedConsumable: vi.fn(),
+        onExitReached: vi.fn(),
+        playTraversal: crossAtOnce,
+      })
+      return createElement(SiteMapView, {
+        grid: floor,
+        onCellClick: navigation.onCellClick,
+        explorerPos: pos,
+        explorerHidden: navigation.explorerHidden,
+      })
+    }
+    Element.prototype.scrollTo = vi.fn()
+    const { container } = render(createElement(Harness))
+    const seen: string[] = []
+    const watch = () => {
+      const at = container.querySelector("[data-explorer]")?.getAttribute("data-at")
+      seen.push(at ?? "hidden")
+    }
+    const observer = new MutationObserver(watch)
+    observer.observe(container, { subtree: true, childList: true, attributes: true })
+    act(() => void vi.advanceTimersByTime(2000))
+
+    act(() => navigation?.onCellClick(launch[0], launch[1]))
+    act(() => void vi.advanceTimersByTime(2000))
+    await act(async () => navigation?.prompt?.take())
+    act(() => void vi.advanceTimersByTime(2000))
+    watch()
+    observer.disconnect()
+
+    expect(seen).toContain("hidden")
+    expect(seen.at(-1)).toBe(centre(landing))
+    for (const where of between) expect(seen).not.toContain(where)
+    for (const where of seen) expect([centre(launch), centre(landing), "hidden"]).toContain(where)
   })
 })
