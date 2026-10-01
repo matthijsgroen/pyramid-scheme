@@ -1547,8 +1547,12 @@ def _launch_crossing(w, d, heading):
         clear = (plinth_h + 0.05) / 0.7
         py1 = -d / 2 - clear
         py0 = py1 - 0.26
-        block(-0.20, 0.20, py0, py1, (py1 - py0) * 0.80, frontal=True)
-        head, foot = (0.0, (py0 + py1) / 2), (0.34, d / 2 + 0.07)
+        # THE LAUNCH STANDS AT THE LEFT OF THE MOUTH AND THE FAR POST AT THE RIGHT, so the line crosses
+        # 0.78 of the mouth's 1.04 in x while it runs the whole of a deep mouth in depth. At 0.34 across
+        # a 0.80 mouth it drew ten degrees off vertical; across a mouth seven times as deep the same
+        # offset is under three, and a line with no visible lean reads as a post (see `zipline`).
+        block(-0.40, 0.0, py0, py1, (py1 - py0) * 0.80, frontal=True)
+        head, foot = (-0.34, (py0 + py1) / 2), (0.44, d / 2 + 0.07)
     elif heading == "dropSouth":  # travel toward the viewer: the block stands at the FAR lip
         # ITS FLIGHT AND ITS BLOCK BOTH STAND INSIDE THE MOUTH'S OWN WIDTH. They used to start at
         # x=-0.32 and step LEFT, which put both treads past `-w/2` and hung pale floor off the tile's
@@ -1556,8 +1560,11 @@ def _launch_crossing(w, d, heading):
         # between the mouth's own sides, so nothing widens the sprite but the spoil and the band runs
         # from one edge of it to the other.
         py0, py1 = d / 2 - 0.03, d / 2 + 0.23
-        block(-0.13, 0.27, py0, py1, (py1 - py0) * 0.80)
-        head, foot = (0.07, (py0 + py1) / 2), (0.34, -d / 2 - 0.07)
+        block(-0.26, 0.14, py0, py1, (py1 - py0) * 0.80)
+        # The foot stands 0.30 in front of the near lip, not 0.07, so it draws below the band and not
+        # on the lip line, and clear of the spoil beside it; that is what lets it sit at x=0.44 and give
+        # the line its lean across the mouth (see `dropNorth`).
+        head, foot = (-0.20, (py0 + py1) / 2), (0.44, -d / 2 - 0.30)
     else:  # `drop` — travel to the right, mirrored in x for the other horizontal heading
         px0, px1 = -w / 2 - 0.30, -w / 2 + 0.03
         block(px0, px1, -0.23, 0.23, 0.38)
@@ -1676,21 +1683,30 @@ def prim_pit():
     courses = contents in ("drop", "dropNorth", "dropSouth")
     if courses:
         d = 0.80
-    # THE TWO VERTICAL HEADINGS GET A WIDER, SHALLOWER MOUTH, and it is rule 2 in `_launch_crossing`
-    # that buys it. A drop walked up and down the page must have its gap span the passage in X, edge to
-    # edge of the sprite, or the paving left beside the black reads as a ledge to walk round. The sprite
-    # is scaled to its own widest element, so "spans" means the MOUTH has to BE that element — which it
-    # was not at 0.94 against spoil reaching 0.58 either side.
+    # THE TWO VERTICAL HEADINGS GET A WIDER AND A MUCH DEEPER MOUTH, and both are rule 2 in
+    # `_launch_crossing`, turned on each axis in its turn.
     #
-    # ONLY THE WIDTH CHANGES, and the depth that went with it has been given back. The mouth was also
-    # shallowed to 0.60 to get under the 84-row cap — against a cap nothing was ever near: the number
-    # that said otherwise was this file's own `lands at` line, adding the whole height to the whole
-    # depth as though the tallest part were also the furthest back (see the print at the foot of
-    # `main`). Measured off the sheared mesh these tiles draw at aspect 0.6 to 1.1 against a limit of
-    # 1.5, so the depth costs nothing and buys a taller black band, which is more hole.
+    # WIDTH: a drop walked up and down the page must have its gap span the passage in X, edge to edge
+    # of the sprite, or the paving left beside the black reads as a ledge to walk round. The sprite is
+    # scaled to its own widest element, so "spans" means the MOUTH has to BE that element — which it
+    # was not at 0.94 against spoil reaching 0.58 either side. Hence 1.04, with the spoil pulled in to
+    # 0.85 of its spread.
+    #
+    # DEPTH: the same rule holds ALONG travel. The obstacle is `ONE_WAY_RUN_CELLS` = 3 cells, which a
+    # vertical heading draws 224 units down the page (2 * ROW_PITCH 84 + CELL 56) against a 56-unit
+    # corridor, and a mouth that draws shorter leaves ordinary paving at each end of a gap the player
+    # cannot cross. The black band is k*d tall, so with the corridor at 56 units across the band's w:
+    # k*d / w * 56 = 224, d = 4w/k = 5.94. Measured off the render rather than trusted to that line —
+    # the tile's extent includes spoil and posts beyond the mouth — it lands at 5.9: a black band of
+    # 223 units to a corridor of 56. `dropEast` keeps its 0.80: its gap spans in y, where the shear
+    # already gives it the whole cell.
+    #
+    # THE TILE IS THEREFORE FOUR TIMES AS LONG AS IT IS WIDE. `lands at` prints 19x84 for it and that is
+    # the cap talking, not the size: the import scales by `--tight`, master pixels to a map unit, from
+    # the corridor marked on the master.
     spoil_x = 1.0
     if contents in ("dropNorth", "dropSouth"):
-        w, spoil_x = 1.04, 0.85
+        w, spoil_x, d = 1.04, 0.85, 5.9
     hv = k * d
     # The shaft: the far wall alone, exactly filling the drawn opening, and the only VOID part of any
     # primitive — everything else here is stone in the rank's own colour.
@@ -1708,7 +1724,12 @@ def prim_pit():
         (0.20, 0.12, -0.58, -0.16, 66),
         (0.18, 0.12, 0.57, -0.10, -58),
     ):
-        mark(tilt(box(sx, sy, 0.08, x=x * spoil_x, y=y + spoil_dy, z=0.04), yaw, "Z"), "body")
+        if contents in ("dropNorth", "dropSouth"):
+            # `tilt` turns about the world origin, and a deep mouth carries the near lip a long way
+            # from it: at yaw 66 a block 3 units out is thrown 2.7 sideways, off the tile altogether.
+            mark(turn(box(sx, sy, 0.08), yaw, "Z", x=x * spoil_x, y=y + spoil_dy, z=0.04), "body")
+        else:
+            mark(tilt(box(sx, sy, 0.08, x=x * spoil_x, y=y + spoil_dy, z=0.04), yaw, "Z"), "body")
     if contents == "plain":
         return join_all()
     if courses:

@@ -2582,20 +2582,46 @@ so the hole shows depth rather than reading as a flat black rectangle, the spoil
 Queued at expert only: the develop journey's drop stands on an expert floor, which is the one rank a
 drop can actually be seen on today. The other four ranks stay unqueued until this one has landed.
 
-**The two vertical headings take a WIDER mouth — `w` 1.04 against 0.94 — and it is the full-span rule
-that buys it.** A drop walked up and down the page must have its
-gap span the passage in x, edge to edge of the sprite, or the paving left beside the black reads as a
-ledge to step round; the sprite is scaled to its own widest element, so the mouth has to BE that
-element, which it was not while the spoil reached further out than the crack did, so the spoil is pulled
-in to 0.85 of its spread as well. Measured on the composited tile, `dropSouth`'s black went from 72% of
-the cell's width to 87%, and `dropNorth`'s to the same. `dropEast` keeps the original mouth: its gap
-spans in y, where the shear already gives it the whole cell, and it is painted.
+**The two vertical headings take a mouth that spans the RUN in depth as well as the passage in width.**
+It is one rule, `_launch_crossing`'s rule 2, applied on both axes. A drop walked up and down the page
+must have its gap span the passage in x, edge to edge of the sprite, or the paving left beside the black
+reads as a ledge to step round; the sprite is scaled to its own widest element, so the mouth has to BE
+that element, which it was not while the spoil reached further out than the crack did. Hence `w` 1.04
+against 0.94, with the spoil pulled in to 0.85 of its spread. And the same must hold ALONG travel: the
+obstacle is three cells (`ONE_WAY_RUN_CELLS`), which a vertical heading draws 224 units down the page
+(`2 * ROW_PITCH` 84 + `CELL` 56) against a 56-unit corridor. The first pair were drawn at depth 0.80,
+whose black band is `k*d` = 0.56 tall against 1.04 wide, 30 units to the corridor's 56: the imported tiles
+covered 63% (`dropNorth`) and 42% (`dropSouth`) of the run, leaving half a cell to a cell of ordinary
+paving at each end of a gap the player cannot cross. `dropEast` keeps its mouth: its gap spans in y,
+where the shear already gives it the whole cell, and it is painted.
 
-The depth stays at 0.80. It was shallowed to 0.60 for a while to get a sprite under the 84-row cap, and
-nothing was ever near that cap: the number saying otherwise was `renderProp.py`'s own `lands at` line,
-which added the whole height to the whole depth as though the tallest part were also the furthest back.
-Measured off the sheared mesh these tiles draw at aspect 0.6 to 1.3 against a limit of 1.5. The line has
-been fixed and carries the story in a comment.
+**So the depth is now 5.9, and what the number cost.** The band is `k*d` tall, so at a 56-unit corridor
+`k*d / w * 56 = 224` gives `d = 4w/k` = 5.94; measured off renders rather than trusted to the line
+(the tile's extent includes spoil and posts beyond the mouth), 5.9 draws a black band of 224 units to a
+56-unit corridor on both tiles (0.8 drew 42 and 58, 4.0 drew 154). The whole tile is about 63 wide by
+270 long, a trench four times as long as it is wide, and that is the composition the two prompts below
+now describe: they no longer ask for a squarish fissure.
+
+- **The rope.** A line across a mouth this long and 1.04 wide would draw near-vertical and read as a
+  post, so the posts moved to opposite sides of it: the X offset across the mouth went from 0.34 to 0.78
+  on `dropNorth` and 0.27 to 0.64 on `dropSouth`, which leans the line about ten and eight degrees off
+  vertical over its whole length. That is as much as a mouth 1.04 wide allows. It reads as a long cable
+  strung down the trench rather than as a post, but it is not the clear diagonal `dropEast` has.
+- **`dropSouth`'s near post** stands 0.30 in front of the near lip instead of 0.07, so it draws below
+  the band and clear of the spoil, which is what lets it sit at the far side of the mouth.
+- **The near rim.** The launch block still stands `(h + margin) / k` in front of the near lip; the figure
+  does not depend on `d`, and the render shows the same two-pixel gap between its top and the band. The
+  only things on the lip line are the spoil at the corners (21% of its width in total on both tiles,
+  against 30% at depth 0.80) and the rope's thin crossing, checked on the object-only render by counting
+  non-black columns two pixels above the lip.
+- **Spoil** is turned about its own centre in these two headings. `tilt` turns about the world origin,
+  and a near lip three units from it flung the sideways blocks two and a half units off the tile.
+- **`--sun=0.025`** on both scaffold lines. `--sun` is in the object's normalised units, one unit being
+  its whole height, and the deep shaft wall makes these two objects 4.6 times taller than the other
+  props, so the default 0.12 detached every footprint from the thing that cast it.
+- **The previews are 2:3 like every other**, so the trench stands as a narrow column in the middle of the
+  frame with magenta to either side. That is deliberate: the importer scales by `--tight`, measured from
+  the corridor marked on the master, and not by the canvas.
 
 **`dropNorth`'s flight is climbed FRONTALLY**, away from the viewer, where `dropEast`'s is crossed from
 the side. That is the honest orientation for a heading whose player climbs and then travels into the
@@ -2653,19 +2679,28 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a FISSURE torn across a passage floor, seen from above. The dark quadrilateral is the
-OPENING — a hole in the floor, not a wall, not a doorway and not a niche, and nothing stands inside it
-that a person could stand on. Just under its far rim two courses of rough CUT STONE show, the shaft's
-own lining, taking what little light reaches down; below those courses the shaft goes black and stays
-black, and nothing is drawn down there at all. THE OPENING'S LOWER RIM — its edge nearest the viewer —
-runs unbroken from one side of the crack to the other: nothing stands in front of it, nothing covers it,
-and it is the line that says this is a hole in a floor and not a recess in a wall. IN FRONT of the
-opening, on the paving between the crack and the viewer, a short flight of two STEPS climbs onto a low
-stone BLOCK, and a tall timber POST stands on that block. At the FAR edge of the
-opening, furthest from the viewer, a second timber POST stands on bare paving, barely knee high. A taut
-ROPE runs from the head of the tall post, across the opening, to the head of the short one. The loose
-blocks scattered at the opening's edge are broken basalt, shaken free where the floor gave way. There is
-no rim, no coping and no frame around the opening: the crack meets bare paving on every side.
+The object: a long TRENCH torn down the length of a passage floor, seen from above — a gap three
+corridors long and one corridor wide, so the dark shape is a tall narrow slot, about four times as long
+as it is wide, standing upright in the middle of the frame with bare paving to either side. Keep it that
+slender; do not widen it into a pit. The dark quadrilateral is the OPENING — a hole in the floor, not a
+wall, not a doorway and not a niche, and nothing stands inside it that a person could stand on. THE WHOLE
+DARK FIELD IS THE SHAFT'S OWN WALL, seen face on and falling away from you: its top edge is the far rim
+where the lamp still reaches, and every inch further DOWN the picture is further DOWN the shaft. Paint it
+as that wall. Courses of rough CUT STONE, the shaft's lining, run across it from the far rim downward,
+each course darker than the one above as the light gives out, until a third of the way down they are lost
+and the rest is black — a black read as depth below stonework, not as a flat panel. No ledge, no step and
+no floor anywhere in it, and nothing stands on any course. THE OPENING'S LOWER RIM — its edge nearest
+the viewer — runs unbroken from one side of the crack to the other: nothing stands in front of it,
+nothing covers it, and it is the line that says this is a hole in a floor and not a recess in a wall.
+IN FRONT of the
+opening, at its near end, on the paving between the slot and the viewer, a short flight of two STEPS
+climbs onto a low stone BLOCK at the left, and a tall timber POST stands on that block. At the FAR end of
+the opening, furthest from the viewer and at the right, a second timber POST stands on bare paving,
+barely knee high. A taut ROPE runs from the head of the tall post the whole length of the slot, leaning
+a little to the right, to the head of the short one; it is a thin straight line, not a bridge, and it
+touches nothing on the way. The loose blocks scattered at the opening's near corners are broken basalt,
+shaken free where the floor gave way. There is no rim, no coping and no frame around the opening: the
+slot meets bare paving on every side.
 
 Basalt worn dark and faintly polished where feet have crossed near it, with a thin crust of pale natron
 dust settled into the crack's edges and over the fallen blocks. The posts are old timber, split and
@@ -2687,7 +2722,7 @@ No ground plane and no background: the object stands alone on the magenta. The p
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold pit --contents=dropNorth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+scaffold pit --contents=dropNorth --sun=0.025 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/expert/dropNorth.webp --tier=expert --name=dropNorth --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 ```
@@ -2704,19 +2739,28 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 
 Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
-The object: a FISSURE torn across a passage floor, seen from above. The dark quadrilateral is the
-OPENING — a hole in the floor, not a wall, not a doorway and not a niche, and nothing stands inside it
-that a person could stand on. Just under its far rim two courses of rough CUT STONE show, the shaft's
-own lining, taking what little light reaches down; below those courses the shaft goes black and stays
-black, and nothing is drawn down there at all. THE OPENING'S LOWER RIM — its edge nearest the viewer —
-runs unbroken from one side of the crack to the other: nothing stands in front of it, nothing covers it,
-and it is the line that says this is a hole in a floor and not a recess in a wall. At the FAR edge of the
-opening, furthest from the viewer, a short flight of two STEPS climbs onto a low stone BLOCK set against
-the rim, and a tall timber POST stands on that block. At the edge NEAREST the viewer a second timber POST stands on bare paving, barely
-knee high. A taut ROPE runs from the head of the tall post, across the opening and downhill, to the head
-of the short one. The loose blocks scattered at the opening's edge are broken basalt, shaken free where
-the floor gave way. There is no rim, no coping and no frame around the opening: the crack meets bare
-paving on every side.
+The object: a long TRENCH torn down the length of a passage floor, seen from above — a gap three
+corridors long and one corridor wide, so the dark shape is a tall narrow slot, about four times as long
+as it is wide, standing upright in the middle of the frame with bare paving to either side. Keep it that
+slender; do not widen it into a pit. The dark quadrilateral is the OPENING — a hole in the floor, not a
+wall, not a doorway and not a niche, and nothing stands inside it that a person could stand on. THE WHOLE
+DARK FIELD IS THE SHAFT'S OWN WALL, seen face on and falling away from you: its top edge is the far rim
+where the lamp still reaches, and every inch further DOWN the picture is further DOWN the shaft. Paint it
+as that wall. Courses of rough CUT STONE, the shaft's lining, run across it from the far rim downward,
+each course darker than the one above as the light gives out, until a third of the way down they are lost
+and the rest is black — a black read as depth below stonework, not as a flat panel. No ledge, no step and
+no floor anywhere in it, and nothing stands on any course. THE OPENING'S LOWER RIM — its edge nearest
+the viewer — runs unbroken from one side of the crack to the other: nothing stands in front of it,
+nothing covers it, and it is the line that says this is a hole in a floor and not a recess in a wall.
+AT THE FAR END of the opening, furthest from the viewer, a short flight of two STEPS climbs onto a low
+stone BLOCK just inside the rim at the left, and a tall timber POST stands on that block. At the end
+NEAREST the viewer, a little
+in front of the lower rim and at the right, a second timber POST stands on bare paving, barely knee high.
+A taut ROPE runs from the head of the tall post the whole length of the slot and downhill, leaning a
+little to the right, to the head of the short one; it is a thin straight line, not a bridge, and it
+touches nothing on the way. The loose blocks scattered at the opening's near corners are broken basalt,
+shaken free where the floor gave way. There is no rim, no coping and no frame around the opening: the
+slot meets bare paving on every side.
 
 Basalt worn dark and faintly polished where feet have crossed near it, with a thin crust of pale natron
 dust settled into the crack's edges and over the fallen blocks. The posts are old timber, split and
@@ -2738,7 +2782,7 @@ No ground plane and no background: the object stands alone on the magenta. The p
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold pit --contents=dropSouth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+scaffold pit --contents=dropSouth --sun=0.025 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dropSouth --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 ```
