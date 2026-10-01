@@ -23,6 +23,14 @@ and the scaffold is the only thing that has ever made it obey.
 A square return is also unimportable as it stands, whatever it looks like: the import scales the master
 into the slot, and a 1:1 master in a 2:3 slot is a third out.
 
+**EDGES THAT CONVERGE MEAN THE SAME THING — re-roll.** This set is drawn in an oblique shear with no
+vanishing point: parallel edges stay parallel, and depth is carried by a thing being drawn HIGHER, never
+smaller. A generator asked for something deep will reach for one-point perspective anyway, because that
+is what "seen from above, going down" means everywhere else. `dropNorth`'s first roll came back with the
+shaft's long sides tapering to a point — convincing, and unusable, because the floor tile it composites
+onto has no such taper and the two would disagree at every edge. Any prompt for something with real
+length or depth should say the sides are parallel outright rather than trust the scaffold to carry it.
+
 **Which is why every prompt here now opens by naming its FRAME** — portrait two by three for a prop,
 landscape two by one for a wall item, "exactly as the reference", and do not re-compose it square. It is
 the one non-material sentence a repaint may carry: naming the canvas is not naming the projection, which
@@ -2689,7 +2697,11 @@ The object: a long TRENCH torn down the length of a passage floor, seen from abo
 corridors long and one corridor wide, drawn running away from you so its length is foreshortened — the
 dark shape is a tall slot about three times as long as it is wide, standing upright in the middle of the
 frame with bare paving to either side. Keep it that
-slender; do not widen it into a pit. The dark quadrilateral is the OPENING — a hole in the floor, not a
+slender; do not widen it into a pit. ITS TWO LONG SIDES ARE PARALLEL — the slot is exactly as wide at the
+far end as at the near one, and its corners are a parallelogram, not a trapezium. There is no vanishing
+point anywhere in this picture and nothing narrows with distance: this is an oblique view, and depth is
+carried by things being drawn HIGHER up the frame, never by them being drawn smaller or converging. A
+slot whose sides lean toward each other is wrong however convincing it looks. The dark quadrilateral is the OPENING — a hole in the floor, not a
 wall, not a doorway and not a niche, and nothing stands inside it that a person could stand on. THE WHOLE
 DARK FIELD IS THE SHAFT'S OWN WALL, seen face on and falling away from you: its top edge is the far rim
 where the lamp still reaches, and every inch further DOWN the picture is further DOWN the shaft. Paint it
@@ -2699,11 +2711,16 @@ and the rest is black — a black read as depth below stonework, not as a flat p
 no floor anywhere in it, and nothing stands on any course. THE OPENING'S LOWER RIM — its edge nearest
 the viewer — runs unbroken from one side of the crack to the other: nothing stands in front of it,
 nothing covers it, and it is the line that says this is a hole in a floor and not a recess in a wall.
-IN FRONT of the
-opening, at its near end, on the paving between the slot and the viewer, a short flight of two STEPS
-climbs onto a low stone BLOCK at the left, and a tall timber POST stands on that block. At the FAR end of
-the opening, furthest from the viewer and at the right, a second timber POST stands on bare paving,
-barely knee high. A taut ROPE runs from the head of the tall post the whole length of the slot, leaning
+THE HEIGHT DIFFERENCE BETWEEN THE TWO ENDS IS THE WHOLE POINT OF THE PICTURE, and the steps are what
+explain it. IN FRONT of the opening, at its NEAR end, on the paving between the slot and the viewer, a
+short flight of two STEPS climbs onto a low stone BLOCK at the left, and a TALL timber POST stands on
+that block — a man's height, the tallest thing here, head and shoulders above everything else, and it is
+raised because this is the end you launch FROM. At the FAR end of the opening, furthest from the viewer
+and at the right, a second timber POST stands on bare paving with nothing built under it, BARELY KNEE
+HIGH — a stump beside the tall one, because that is where you land. Do not make the two posts the same
+height, do not put the taller one at the far end, and do not leave the steps out: without the flight and
+the block the near post has nothing raising it and the picture says nothing about which way the crossing
+runs. A taut ROPE runs from the head of the tall post the whole length of the slot, leaning
 a little to the right, to the head of the short one; it is a thin straight line, not a bridge, and it
 touches nothing on the way. The loose blocks scattered at the opening's near corners are broken basalt,
 shaken free where the floor gave way. There is no rim, no coping and no frame around the opening: the
@@ -2750,7 +2767,11 @@ The object: a long TRENCH torn down the length of a passage floor, seen from abo
 corridors long and one corridor wide, drawn running away from you so its length is foreshortened — the
 dark shape is a tall slot about three times as long as it is wide, standing upright in the middle of the
 frame with bare paving to either side. Keep it that
-slender; do not widen it into a pit. The dark quadrilateral is the OPENING — a hole in the floor, not a
+slender; do not widen it into a pit. ITS TWO LONG SIDES ARE PARALLEL — the slot is exactly as wide at the
+far end as at the near one, and its corners are a parallelogram, not a trapezium. There is no vanishing
+point anywhere in this picture and nothing narrows with distance: this is an oblique view, and depth is
+carried by things being drawn HIGHER up the frame, never by them being drawn smaller or converging. A
+slot whose sides lean toward each other is wrong however convincing it looks. The dark quadrilateral is the OPENING — a hole in the floor, not a
 wall, not a doorway and not a niche, and nothing stands inside it that a person could stand on. THE WHOLE
 DARK FIELD IS THE SHAFT'S OWN WALL, seen face on and falling away from you: its top edge is the far rim
 where the lamp still reaches, and every inch further DOWN the picture is further DOWN the shaft. Paint it
@@ -2760,10 +2781,15 @@ and the rest is black — a black read as depth below stonework, not as a flat p
 no floor anywhere in it, and nothing stands on any course. THE OPENING'S LOWER RIM — its edge nearest
 the viewer — runs unbroken from one side of the crack to the other: nothing stands in front of it,
 nothing covers it, and it is the line that says this is a hole in a floor and not a recess in a wall.
-AT THE FAR END of the opening, furthest from the viewer, a short flight of two STEPS climbs onto a low
-stone BLOCK just inside the rim at the left, and a tall timber POST stands on that block. At the end
-NEAREST the viewer, a little
-in front of the lower rim and at the right, a second timber POST stands on bare paving, barely knee high.
+THE HEIGHT DIFFERENCE BETWEEN THE TWO ENDS IS THE WHOLE POINT OF THE PICTURE, and the steps are what
+explain it. AT THE FAR END of the opening, furthest from the viewer, a short flight of two STEPS climbs
+onto a low stone BLOCK just inside the rim at the left, and a TALL timber POST stands on that block — a
+man's height, the tallest thing here, head and shoulders above everything else, and it is raised because
+this is the end you launch FROM. At the end NEAREST the viewer, a little in front of the lower rim and at
+the right, a second timber POST stands on bare paving with nothing built under it, BARELY KNEE HIGH — a
+stump beside the tall one, because that is where you land. Do not make the two posts the same height, do
+not put the taller one at the near end, and do not leave the steps out: without the flight and the block
+the far post has nothing raising it and the picture says nothing about which way the crossing runs.
 A taut ROPE runs from the head of the tall post the whole length of the slot and downhill, leaning a
 little to the right, to the head of the short one; it is a thin straight line, not a bridge, and it
 touches nothing on the way. The loose blocks scattered at the opening's near corners are broken basalt,
