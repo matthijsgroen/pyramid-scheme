@@ -1,3 +1,5 @@
+import type { Direction } from "@/game/siteTypes"
+
 // Every size on the site map derives from this one base unit. Bump EM to zoom the whole
 // map in or out — cell size, wall thickness, and every room icon's radius scale with it,
 // instead of needing a dozen hand-tuned constants kept in sync by hand.
@@ -91,12 +93,26 @@ export const ARCH_W = CELL + SIDE_W * 2 // 84
 export const DROP_W = 170
 export const DROP_H = 81
 
-/** The sprite's box for a drop whose run is `cells`: centred on the run, its bottom on the run's floor line. */
-export const dropFrame = (cells: readonly (readonly [number, number])[]) => {
+/** A vertical drop is drawn at the same scale, 29.4 master pixels to a unit, which makes the pit one corridor
+ * wide (56 units, 112 pixels): the black runs to the paving's edge on both sides and that width IS the
+ * corridor's. Its height is whatever the art measures at that scale and it is NOT stretched to the run: the
+ * run is 224 units down the page and these tiles are a third of it. The north tile is 112 x 149 pixels, the
+ * south 112 x 134. */
+export const DROP_NORTH_W = 56
+export const DROP_NORTH_H = 74.5
+export const DROP_SOUTH_W = 56
+export const DROP_SOUTH_H = 67
+
+/** The sprite's box for a drop whose run is `cells` and which travels `dir`. A horizontal drop is centred on
+ * its run with its bottom on the run's floor line; a vertical one is centred on its run both ways, because
+ * its length lies down the page and it has no single floor line to stand on. */
+export const dropFrame = (cells: readonly (readonly [number, number])[], dir: Direction = "e") => {
   const first = cellCenter(...cells[0])
   const last = cellCenter(...cells[cells.length - 1])
   const cx = (first.cx + last.cx) / 2
   const cy = (first.cy + last.cy) / 2
+  if (dir === "n") return { x: cx - DROP_NORTH_W / 2, y: cy - DROP_NORTH_H / 2, w: DROP_NORTH_W, h: DROP_NORTH_H }
+  if (dir === "s") return { x: cx - DROP_SOUTH_W / 2, y: cy - DROP_SOUTH_H / 2, w: DROP_SOUTH_W, h: DROP_SOUTH_H }
   return { x: cx - DROP_W / 2, y: cy + CELL / 2 - DROP_H, w: DROP_W, h: DROP_H }
 }
 

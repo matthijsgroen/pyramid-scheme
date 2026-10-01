@@ -5,7 +5,17 @@ import { assembleFloor, ONE_WAY_RUN_CELLS } from "@/game/siteAssembler"
 import { oneWayRuns, revealAll } from "@/game/gridNavigation"
 import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 import { DROP_ART } from "./nodeArt"
-import { CELL, COL_PITCH, DROP_H, DROP_W, cellCenter } from "./mapScale"
+import {
+  CELL,
+  COL_PITCH,
+  DROP_H,
+  DROP_NORTH_H,
+  DROP_NORTH_W,
+  DROP_SOUTH_H,
+  DROP_SOUTH_W,
+  DROP_W,
+  cellCenter,
+} from "./mapScale"
 import { buildRoomClaims } from "./roomClaims"
 import { nodeSpritesFor } from "./SiteMapView"
 import { tileUrl } from "./tileAssets"
@@ -14,6 +24,8 @@ import { AXES, corridorPiece, dropGrid, floorFrom, obstacleIndexes, type Piece }
 import "@/mods/registerModApps"
 
 const dropEastUrl = tileUrl("expert", "dropEast")
+const dropNorthUrl = tileUrl("expert", "dropNorth")
+const dropSouthUrl = tileUrl("expert", "dropSouth")
 
 const room = (dirs: Direction[]): GridCell => ({
   type: "room",
@@ -92,17 +104,50 @@ describe("a one-way drop draws its art across its obstacle", () => {
   })
 })
 
-describe("a north-south drop draws what it always drew", () => {
-  it("declares no vertical art, so the day it is painted this table is where it plugs in", () => {
-    expect(DROP_ART.n).toBeNull()
-    expect(DROP_ART.s).toBeNull()
+describe("a north-south drop draws its own art", () => {
+  it("declares a render of its own for each vertical heading, neither mirrored", () => {
+    expect(DROP_ART.n).toEqual({ name: "dropNorth", mirrored: false })
+    expect(DROP_ART.s).toEqual({ name: "dropSouth", mirrored: false })
   })
 
-  it.each([["north"], ["south"]])("draws no drop sprite for a %s drop, and never a flipped dropEast", name => {
-    const { grid } = dropAlong(name === "north" ? "n" : "s")
-    expect(oneWayRuns(grid)).toHaveLength(1)
-    expect(dropsIn(grid)).toEqual([])
+  it.each([
+    ["n", dropNorthUrl, DROP_NORTH_W, DROP_NORTH_H],
+    ["s", dropSouthUrl, DROP_SOUTH_W, DROP_SOUTH_H],
+  ] as const)(
+    "draws its own named asset for a %s-going drop, unmirrored, at the size the frame gives it",
+    (travel, url, w, h) => {
+      const { grid, last } = dropAlong(travel)
+      expect(oneWayRuns(grid)).toHaveLength(1)
+      const drops = dropsIn(grid)
+      expect(drops.map(d => d.key)).toEqual([`drop:${last[0]},${last[1]}`])
+      expect(drops[0].url).toBe(url)
+      expect(drops[0].url).not.toBe(dropEastUrl)
+      expect(drops[0].mirrored).toBe(false)
+      expect(drops[0].w).toBe(w)
+      expect(drops[0].h).toBe(h)
+    }
+  )
+
+  it.each([
+    ["n", "dropNorth"],
+    ["s", "dropSouth"],
+  ] as const)("holds exactly the pixels a %s drop shows, none stretched to fill its run", (travel, name) => {
+    const [drop] = dropsIn(dropAlong(travel).grid)
+    expect(pixelsOf(`src/assets/tiles/expert/${name}.png`)).toEqual({ w: drop.w! * 2, h: drop.h! * 2 })
   })
+
+  it.each([["n"], ["s"]] as const)(
+    "is centred on a %s drop's run, in x and down the page, and shorter than it",
+    travel => {
+      const { grid, at } = dropAlong(travel)
+      const [drop] = dropsIn(grid)
+      const first = cellCenter(...at(obstacleIndexes[0]))
+      const last = cellCenter(...at(obstacleIndexes[obstacleIndexes.length - 1]))
+      expect(drop.x! + drop.w! / 2).toBe(first.cx)
+      expect(drop.y! + drop.h! / 2).toBe((first.cy + last.cy) / 2)
+      expect(drop.h).toBeLessThan(Math.abs(last.cy - first.cy) + CELL)
+    }
+  )
 })
 
 // A PNG's IHDR holds its pixel size at bytes 16-23.
@@ -167,7 +212,7 @@ describe("only an obstacle draws a drop", () => {
     for (const grid of [deadEnd, straight, corner]) expect(dropsIn(grid)).toEqual([])
   })
 
-  it("draws the east-west drop of a floor holding both kinds and leaves the north-south one drawing nothing", () => {
+  it("draws the east-west drop and the north-south one of a floor holding both kinds, each its own", () => {
     const east = `L${"M".repeat(ONE_WAY_RUN_CELLS)}T`
     const grid = revealAll(
       floorFrom([`E.R${east}R`, ".", ".", "R", "N", ...Array<string>(ONE_WAY_RUN_CELLS).fill("S"), "D", "R"], both)
@@ -177,9 +222,9 @@ describe("only an obstacle draws a drop", () => {
       ["s", ONE_WAY_RUN_CELLS],
     ])
     const drops = dropsIn(grid)
-    expect(drops.map(d => d.key)).toEqual([`drop:0,${3 + ONE_WAY_RUN_CELLS}`])
-    expect(drops[0].url).toBe(dropEastUrl)
-    expect(drops[0].mirrored).toBe(false)
+    expect(drops.map(d => d.url)).toEqual([dropEastUrl, dropSouthUrl])
+    expect(drops[0].key).toBe(`drop:0,${3 + ONE_WAY_RUN_CELLS}`)
+    expect(drops.every(d => !d.mirrored)).toBe(true)
   })
 })
 

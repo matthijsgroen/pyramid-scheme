@@ -3,13 +3,16 @@ import { AXES, DROP_AT, addressed, dropGrid } from "./floorFixtures.testing"
 import { SiteMapView } from "./SiteMapView"
 import "@/mods/registerModApps"
 
-// A zipline is a one-way drop: a launch, 3 obstacle cells, a landing, with `dropEast`
-// drawn across the obstacle. These stories stage it on the real `SiteMapView` path, in a bare corridor, so
+// A zipline is a one-way drop: a launch, 3 obstacle cells, a landing, with `dropEast`,
+// `dropNorth` or `dropSouth` drawn across the obstacle. These stories stage it on the real `SiteMapView` path, in a bare corridor, so
 // the art is judged where it lives. The grid is `dropGrid`, the fixture the specs use (`dropArt.spec.ts`).
 //
 // Real scale: the map draws at 1 unit to 1 CSS px, so the 196px run (3 cells of 56 + 2 side walls of 14)
 // holds a tile drawn 170 x 81 (`DROP_W` x `DROP_H`, 340 x 162 art pixels at 2px to a unit). The tile's
 // bottom edge is the corridor floor's bottom edge; the rest of it stands proud above the corridor.
+//
+// A vertical run is 224 units down the page. `dropNorth` (56 x 74.5) and `dropSouth` (56 x 67) are drawn at
+// the same scale, centred on it and never stretched, so the plain corridor shows at both ends of them.
 
 const FRAME = "h-[26rem] w-full"
 
@@ -56,13 +59,22 @@ export const EastAtLanding: Story = { args: { grid: east.grid, explorerPos: east
 /** West-going, at the landing. */
 export const WestAtLanding: Story = { args: { grid: west.grid, explorerPos: west.landing } }
 
-/** NO ART YET: `DROP_ART.n` and `.s` are null, so a vertical drop draws the plain corridor. This story is
- * the unpainted case and must not be read as a design; it is not a rotated `dropEast`. */
-export const SouthHasNoArtYet: Story = {
+/** South-going drop: `dropSouth`, its own render (not a flip), steps at the far lip, line coming toward the viewer. */
+export const SouthAtLaunch: Story = {
   args: { grid: south.grid, explorerPos: south.launch, className: TALL },
 }
 
-/** NO ART YET, north-going. */
-export const NorthHasNoArtYet: Story = {
+/** North-going drop: `dropNorth`, its own render, steps near the viewer, line running up and away. */
+export const NorthAtLaunch: Story = {
   args: { grid: north.grid, explorerPos: north.launch, className: TALL },
+}
+
+/** South-going, from the landing foot. */
+export const SouthAtLanding: Story = {
+  args: { grid: south.grid, explorerPos: south.landing, className: TALL },
+}
+
+/** North-going, from the landing foot. */
+export const NorthAtLanding: Story = {
+  args: { grid: north.grid, explorerPos: north.landing, className: TALL },
 }

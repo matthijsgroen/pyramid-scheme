@@ -1195,10 +1195,22 @@ yarn import-tile art/masters/props/expert/pit.webp --tier=expert --name=pit --sl
 # The one-way DROP, riding EAST — `prim_pit --contents=drop`, a launch rather than a ladder: a flight of
 # steps onto a block and a tall post at the near lip, a short post at the far one, a taut rope run head to
 # head between them (`docs/authored-locks-roadmap.md`, "A one-way is a place"). One asset mirrored
-# left-right for `dropWest`; `dropNorth`/`dropSouth` are still owed and each need their own render, a
-# vertical flip being the wrong transform for this projection's up-facing top rule.
+# left-right for `dropWest`.
 scaffold pit --contents=drop --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/expert/dropEast.webp --tier=expert --name=dropEast --slot=prop --crop-below=1513 --tight=9.464 \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+
+# The drop's two VERTICAL headings, each its own render: a vertical flip would swap which lip carries the
+# up-facing top face, against this projection's rule that a block shows its top above and its front below.
+# --tight is the pit's measured ink width (1645 / 1646 master pixels) over CELL (56): the black runs to
+# the paving's edge on both sides, so that width IS one corridor, and the tile is then drawn at the scale
+# it was painted rather than stretched to the 224-unit run. No --crop-below: that cut belongs to
+# dropEast's horizontal frame, and these two are bounded by the ink alone.
+scaffold pit --contents=dropNorth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/expert/dropNorth.webp --tier=expert --name=dropNorth --slot=prop --tight=29.375 \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+scaffold pit --contents=dropSouth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dropSouth --slot=prop --tight=29.393 \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 
 # His CEDAR RELIC BOX, cord-bound with the seal unbroken. No grading flags at all.

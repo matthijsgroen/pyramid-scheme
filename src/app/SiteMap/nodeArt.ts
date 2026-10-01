@@ -123,15 +123,12 @@ export type NodeSprite = {
 }
 
 /** The art a one-way drop's mouth draws, by the direction the drop TRAVELS (the mouth's single `dirs`
- * entry). One horizontal asset covers both headings, mirrored left-right for west.
- *
- * NORTH AND SOUTH ARE null ON PURPOSE: `dropNorth` and `dropSouth` are not painted yet, and a vertical
- * flip of `dropEast` is the wrong transform for this projection's up-facing top rule. A vertical drop
- * draws the plain corridor until those two files exist; the day they do, fill these entries in (and the
- * test that asserts their absence will say so). */
+ * entry). One horizontal asset covers both headings, mirrored left-right for west. North and south are two
+ * renders of their own, never a flip of each other or of `dropEast`: a vertical flip is the wrong transform
+ * for this projection's up-facing top rule. */
 export const DROP_ART: Readonly<Record<Direction, { name: string; mirrored: boolean } | null>> = {
   e: { name: "dropEast", mirrored: false },
   w: { name: "dropEast", mirrored: true },
-  n: null,
-  s: null,
+  n: { name: "dropNorth", mirrored: false },
+  s: { name: "dropSouth", mirrored: false },
 }

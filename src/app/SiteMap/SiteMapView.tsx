@@ -259,14 +259,14 @@ export const nodeSpritesFor = (
   // carve reserved between a launch and a landing, and the art is drawn across all of them — every one is
   // in the footprint, so nothing else stands under it. It is a node sprite, never a `DecorationKind`, so
   // no dressing pool can name it. `tileUrl` and not `tileOrPlaceholder`: an obstacle with no painted art
-  // (north-south) keeps the plain corridor it always drew rather than a stand-in. The obstacle reveals as
+  // keeps the plain corridor it always drew rather than a stand-in. The obstacle reveals as
   // one, so its last cell being fogged means all of it is.
   for (const run of oneWayRuns(grid)) {
     const [lr, lc] = run.cells[run.cells.length - 1]
     const end = grid.cells[lr][lc]
     if (end.type !== "corridor") continue
     const art = DROP_ART[run.dir]
-    const { x, y, w, h } = dropFrame(run.cells)
+    const { x, y, w, h } = dropFrame(run.cells, run.dir)
     const dropUrl = art && tileUrl(end.difficulty ?? floorTier, art.name)
     if (!art || !dropUrl || end.state === "fogged") continue
     out.push({
