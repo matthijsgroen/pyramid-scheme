@@ -1692,22 +1692,25 @@ def prim_pit():
     # was not at 0.94 against spoil reaching 0.58 either side. Hence 1.04, with the spoil pulled in to
     # 0.85 of its spread.
     #
-    # DEPTH: along travel the rule is the same but the TARGET IS FORESHORTENED, and that is the whole of
-    # it. The obstacle is `ONE_WAY_RUN_CELLS` = 3 cells, which a vertical heading walks 224 units down
-    # the page (2 * ROW_PITCH 84 + CELL 56) against a 56-unit corridor. A mouth drawing much shorter than
-    # that leaves ordinary paving at each end of a gap the player cannot cross — 0.80 drew 42 units and
-    # did exactly that. But a mouth drawn the full 224 is WRONG IN THE OTHER DIRECTION: this projection
-    # puts depth into height at k, so a gap running away from the viewer must draw SHORTER than the same
-    # gap crossing him. Asking for the full 224 was asking depth to draw unforeshortened, and it came
-    # back a black field four times as long as it was wide — a wall, not a hole.
+    # DEPTH STAYS AT THE MOUTH'S OWN 0.80, AND DEEPENING IT WAS TRIED AND ABANDONED. The obstacle is
+    # `ONE_WAY_RUN_CELLS` = 3 cells, which a vertical heading walks 224 units down the page, and the
+    # first pair of tiles covered only 63% and 42% of that — ordinary paving left at each end of a gap
+    # the player cannot cross. The black band is k*d tall, so depth is the dial that lengthens it: 0.80
+    # draws 42 units, 4.0 draws 154, 5.9 draws 224.
     #
-    # So the target is k * 224 = 157, the run as this shear actually draws it, and the black band is k*d
-    # tall: d = 157 * w / (k * 56) = 4.16. Measured off the render rather than trusted to that line —
-    # the tile's extent includes spoil and posts beyond the mouth. `dropEast` keeps its 0.80: its gap
-    # spans in y, where the shear already gives it the whole cell and nothing is foreshortened away.
+    # IT IS NOT A DIAL THAT CAN BE TURNED, because the generator stops holding this projection. The
+    # shallow mouth paints correctly: the masters in `art/masters/props/expert` came back flat-sided and
+    # square to the frame. Every roll against a deepened one came back in one-point perspective — long
+    # sides converging, then the whole object rotated off-axis with a coping round the mouth — which is
+    # this file's own warning in `prop-pipeline.md` ("a generator refuses this projection, and the
+    # scaffold is the only thing that has ever made it obey") holding only while the scaffold is shallow
+    # enough to leave nothing to reinterpret. Three rolls, three failures, one variable.
+    #
+    # The paving the short tile leaves at the run's ends is a DRAWING problem and belongs in the map, not
+    # here: cells an obstacle covers should not draw walkable floor whether or not a sprite reaches them.
     spoil_x = 1.0
     if contents in ("dropNorth", "dropSouth"):
-        w, spoil_x, d = 1.04, 0.85, 4.16
+        w, spoil_x = 1.04, 0.85
     hv = k * d
     # The shaft: the far wall alone, exactly filling the drawn opening, and the only VOID part of any
     # primitive — everything else here is stone in the rank's own colour.

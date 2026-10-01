@@ -96,16 +96,18 @@ export const DROP_H = 81
 /** A vertical drop's scale is set by the corridor edges MARKED ON ITS MASTER, not by the pit's own ink: the
  * crack is torn wider than the passage it crosses, so the painted black overhangs the corridor the way
  * dropEast's spoil stands proud above its own. North's marks are 861 master pixels apart, which over a
- * 56-unit corridor is 15.375 pixels to a unit, and the tile measures 215 x 284 pixels at that scale.
+ * 56-unit corridor is 15.375 pixels to a unit, and the tile measures 215 x 286 pixels at that scale.
  *
  * South is marked the same way, 1186 pixels over 56, giving 21.18 and a 156 x 187 tile.
  *
- * NOTHING IS STRETCHED TO THE RUN. A vertical run is 224 units down the page (ROW_PITCH x 2 + CELL) against
- * a horizontal one's 196, and each tile is drawn at the size it was painted: dropEast covers 87% of its run,
- * north 63%, south 42%. South is the short one because its painting spends less of the canvas on the pit,
- * not because it is scaled differently, so what would lengthen it is a repaint and not a number here. */
+ * NEITHER COVERS ITS RUN, AND THE ART IS NOT THE PLACE TO FIX IT. A vertical run is 224 units down the page
+ * (ROW_PITCH x 2 + CELL) against a horizontal one's 196; dropEast covers 87% of its run, north 64%, south
+ * 42%. Lengthening the mouth to close that was tried and reverted — it works in the mesh and loses the
+ * projection in the paint (docs/instructions/repaint-queue.md, the convergence rule). What is left over is
+ * ordinary paving drawn inside a gap the player cannot cross, and that belongs to whatever draws the
+ * obstacle's cells, not to a number here. */
 export const DROP_NORTH_W = 107.5
-export const DROP_NORTH_H = 142
+export const DROP_NORTH_H = 143
 export const DROP_SOUTH_W = 78
 export const DROP_SOUTH_H = 93.5
 
