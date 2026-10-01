@@ -157,15 +157,13 @@ export const useSiteNavigation = ({
 
       // THROWING IT IS THE WHOLE VISIT (FamilyMeta.actsOnArrival): no screen opens for it, so this is
       // where a lever's position gets written — the same call its old modal made (`setMechanismState`),
-      // never a second path to that state. Marked explored in the same breath: nothing else ever will,
-      // and that write is what lifts the fog past a lever standing astride the only way through
-      // (gridNavigation.ts's `walkableFrom` refuses any cell still fogged, and a room's own reveal only
-      // ever reaches as far as the last room the player stood in and had written down).
+      // never a second path to that state. Only the position: a lever is written down by being stood in
+      // (the encounter branch below), the way a junction is, so a player who declines to throw it still
+      // sees every way out of it.
       const throwLever = (target: RoomCell) => {
         if (!target.mechanism) return
         const current = journeys.getMechanismStates(journeyId).get(address) ?? target.mechanism.initial
         journeys.setMechanismState(address, throwMechanism(target.mechanism, current))
-        journeys.markCellExplored(sectionHash, edgeId, address)
       }
 
       // A portal takes the player somewhere whatever state its cell is in, so both kinds are answered
@@ -283,6 +281,12 @@ export const useSiteNavigation = ({
         // square, on the sill where this rank's stone meets the pocket's (`SiteMapView`), so the square
         // itself is the ground you stand on to work the gate rather than the barrier — which is why
         // this needs no case of its own.
+        //
+        // A lever is written down by standing in it, as a junction is: nothing else ever marks it, and
+        // that write is what lifts the fog past a lever astride the only way through (`walkableFrom`
+        // refuses any cell still fogged), whether or not it is thrown. Whether a gate stands is the
+        // lever's position alone, so walking past an unthrown one opens nothing.
+        if (actsOnArrival(cell)) journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
         if (actsOnArrival(cell)) {
           const familyId = cell.family

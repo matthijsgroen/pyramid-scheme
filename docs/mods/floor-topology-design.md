@@ -576,12 +576,18 @@ a floor's SHAPE, these describe what the player meets when they walk up to it.
 8. **`or`: either lever opens the gate.**
 9. **`and`: the gate opens only while BOTH levers are thrown, and is closed otherwise.**
 
-**A control gates the way past it, like an encounter.** Confirmed in playtest 2026-10-01: standing at a
-lever, the way ONWARD is fogged until the lever is worked, so a player cannot decline and walk by. That is
-`useSiteNavigation`'s explored-write "lifting the fog past a lever standing astride the only way through" —
-the behaviour, not a defect. It was briefly suspected of being a dead tap and investigated exhaustively
-(270,336 state combinations over four lever floors, plus every offer on the real dev floor): no dead tap
-exists. A floor that wants a lever the player may walk past must not stand it astride the only route.
+**A CONTROL IS NEVER ITSELF A BARRIER.** Standing at a lever writes it down as explored, exactly as
+standing in a junction does, so the way past it opens whether or not it is worked. The owner's rule, stated
+2026-10-01: *"for a lightswitch we can walk past without operating it, I would expect the same for a lever."*
+
+It did not hold until then: a lever's explored-write lived inside `throwLever`, so the way onward stayed
+fogged until the lever was pulled, while a fork with a board beside it was written down on arrival. Two
+rooms of the same kind, two rules. It was first suspected of being a dead tap and investigated exhaustively
+(270,336 state combinations over four lever floors, plus every offer on the real dev floor) — there is no
+dead tap; the fog was the barrier.
+
+Throwing the lever stays optional, and walking past an unthrown one opens nothing: a gate it controls is a
+wall until the mechanism's own position says otherwise, which only `setMechanismState` writes.
 
 **What enforces each today, audited 2026-09-30.**
 

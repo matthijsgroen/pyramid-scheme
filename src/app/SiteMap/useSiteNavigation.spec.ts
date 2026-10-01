@@ -548,9 +548,8 @@ describe("useSiteNavigation", () => {
   })
 })
 
-// A lever's whole content is where it is thrown to, and finding 1 of the playtest was this room never
-// completing on its own: nothing marked it explored until a modal's own exit button was pressed, which
-// nothing here ever asked the player to do. Throwing it now IS that write, on the very first arrival.
+// A lever's whole content is where it is thrown to. It is written down by standing in it, as a junction
+// is, so the player may decline to throw it and still see the way onward.
 describe("a lever family (FamilyMeta.actsOnArrival) throws itself, never opening a board", () => {
   beforeEach(() => vi.useFakeTimers())
   afterEach(() => vi.useRealTimers())
@@ -565,18 +564,26 @@ describe("a lever family (FamilyMeta.actsOnArrival) throws itself, never opening
     expect(onEncounter).not.toHaveBeenCalled()
   })
 
-  // The fix for finding 1: taking the prompt is the only thing that ever marks this room explored, so
-  // it has to happen on the very first visit — a lever a player never revisits must still stop blocking
-  // the corridor past it (gridNavigation.ts's `walkableFrom` refuses a still-fogged cell).
-  it("writes the mechanism's own state and marks the room explored the instant the prompt is taken", () => {
+  it("writes the room down on arrival, before and whether or not the prompt is taken", () => {
+    const { hook, journeys } = setup([entrance, leverRoom])
+
+    act(() => hook.result.current.onCellClick(0, 1))
+
+    expect(journeys.markCellExplored).toHaveBeenCalledExactlyOnceWith(SECTION, "0:0,1", LEVER_AT_1)
+    expect(journeys.setMechanismState).not.toHaveBeenCalled()
+    arrive()
+    expect(journeys.setMechanismState).not.toHaveBeenCalled()
+  })
+
+  it("writes the mechanism's own state when the prompt is taken, opening no board and writing no second visit", () => {
     const { hook, journeys, onEncounter } = setup([entrance, leverRoom])
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
     act(() => promptOf(hook).take())
 
-    expect(journeys.setMechanismState).toHaveBeenCalledWith(LEVER_AT_1, "right")
-    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", LEVER_AT_1)
+    expect(journeys.setMechanismState).toHaveBeenCalledExactlyOnceWith(LEVER_AT_1, "right")
+    expect(journeys.markCellExplored).toHaveBeenCalledTimes(1)
     expect(onEncounter).not.toHaveBeenCalled()
   })
 

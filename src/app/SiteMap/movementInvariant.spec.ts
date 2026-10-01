@@ -37,7 +37,7 @@
 // everything after the carve is the real pipeline.
 import { renderHook, act, render } from "@testing-library/react"
 import { createElement, useState } from "react"
-import { describe, expect, it, vi } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import type { Direction, FloorConfig, FloorGrid, MechanismRecord, SiteConfig } from "@/game/siteTypes"
 import { walkableFrom, findPath, isSealedWayOut, revealAll } from "@/game/gridNavigation"
 import { cellAddress } from "@/game/cellAddress"
@@ -816,5 +816,112 @@ describe("a gate a control owns is decided by its control alone", () => {
         vi.useRealTimers()
       }
     })
+  })
+})
+
+// A LEVER IS WRITTEN DOWN BY STANDING IN IT, as a junction is. Whether it is thrown decides only whether
+// its gates stand; the player may decline and walk on, and the way onward is shown either way.
+describe("a lever the player stands at", () => {
+  // Lever at 0,2; a fork at 0,4 whose east branch is gated by the lever and whose south branch is not.
+  const grid = floorFrom(["E.L.F.A..", "    .   .", "    R   R"], { L: lever(leverOpening("a")), A: gate("a") })
+  const LEVER_STORE_KEY = "1:s2"
+  const GATE_AT = [0, 6] as const
+
+  const scene = () => {
+    vi.useFakeTimers()
+    const store = makeStore()
+    const hook = renderHook(buildHarness(grid, store).useHook)
+    const settle = () => {
+      act(() => void vi.advanceTimersByTime(5000))
+      hook.rerender()
+    }
+    const click = (r: number, c: number) => {
+      act(() => hook.result.current.onCellClick(r, c))
+      settle()
+    }
+    const offered = () => {
+      const { grid: g, explorerPos } = hook.result.current
+      return [...offeredTargets(g!, buildRoomClaims(g!), explorerPos).entries()].sort(([a], [b]) => a.localeCompare(b))
+    }
+    return { store, hook, click, offered }
+  }
+  afterEach(() => vi.useRealTimers())
+
+  it("offers only the lever before the player has stood at it, the way onward being fogged", () => {
+    const { offered } = scene()
+
+    expect(offered().map(([, target]) => target)).toEqual([
+      [0, 0],
+      [0, 2],
+      [0, 2],
+    ])
+  })
+
+  it("lifts the fog past it on arrival, so the way onward is offered whole, thrown or not", () => {
+    const { hook, click, offered, store } = scene()
+
+    click(0, 2)
+
+    expect(hook.result.current.explorerPos).toEqual([0, 2])
+    expect(offered().map(([, target]) => target)).toEqual([
+      [0, 0],
+      [0, 0],
+      [0, 2],
+      [0, 4],
+      [0, 4],
+    ])
+    expect(store.exploredCells).toEqual({ [LEVER_STORE_KEY]: ["0/xhandle:lever"] })
+    expect(store.mechanismStates).toEqual({})
+  })
+
+  it("lets the player walk past it unthrown, leaving its position and every gate it owns as they were", () => {
+    const { hook, click, store } = scene()
+
+    click(0, 2)
+    click(0, 4)
+
+    expect(hook.result.current.explorerPos).toEqual([0, 4])
+    expect(store.mechanismStates).toEqual({})
+    const carved = hook.result.current.grid!
+    expect(carved.cells[GATE_AT[0]][GATE_AT[1]]).toMatchObject({ type: "room", tags: ["gate"] })
+    expect(isSealedWayOut(carved.cells[GATE_AT[0]][GATE_AT[1]])).toBe(true)
+    expect(walkableFrom(revealAll(carved), hook.result.current.explorerPos).has(`${GATE_AT[0]},${GATE_AT[1]}`)).toBe(
+      false
+    )
+    expect(findPath(revealAll(carved), hook.result.current.explorerPos, [0, 8])).toEqual([])
+  })
+
+  it("still throws, writing the position and opening the gate", () => {
+    const { hook, click, store } = scene()
+
+    click(0, 2)
+    act(() => (hook.result.current.prompt as { take: () => void }).take())
+    hook.rerender()
+
+    expect(store.mechanismStates).toEqual({ [`${LEVER_STORE_KEY}#0/xhandle:lever`]: "right" })
+    expect(hook.result.current.grid!.cells[GATE_AT[0]][GATE_AT[1]]).toMatchObject({ type: "corridor" })
+    expect(walkableFrom(revealAll(hook.result.current.grid!), [0, 4]).has("0,8")).toBe(true)
+  })
+
+  it("offers a bare fork's own ways out on arrival exactly as before", () => {
+    const store = makeStore()
+    vi.useFakeTimers()
+    const hook = renderHook(buildHarness(floorFrom(["E.F.R", "  .", "  R"]), store).useHook)
+
+    act(() => hook.result.current.onCellClick(0, 2))
+    act(() => void vi.advanceTimersByTime(5000))
+    hook.rerender()
+    const { grid: g, explorerPos } = hook.result.current
+
+    expect(store.exploredCells).toEqual({ "1:s2": ["0/~2"] })
+    expect([...offeredTargets(g!, buildRoomClaims(g!), explorerPos).values()].map(String).sort()).toEqual([
+      "0,0",
+      "0,0",
+      "0,2",
+      "0,4",
+      "0,4",
+      "2,2",
+      "2,2",
+    ])
   })
 })
