@@ -1206,3 +1206,30 @@ tests untouched. `explorerPos` resolves standing, then position, then the entran
   Every brief now opens with the rule and ends with an md5 check.
 
 **Correction (carve seeds stamped):** the world md5 is now `7d07cfc0981759bbdd8c220bea6bfa57`; `f67c3ea9303b04a1d7c9a558d0561620` above is the hash before the 14 searched seeds were stamped.
+
+## Browsers and servers an agent opens, it closes
+
+Verifying by looking is right and this project insists on it — rendering bugs come from screenshots, not
+from reading code. But a session that screenshots a dozen times leaves a dozen things running.
+
+**Found at the end of this session, all from agents that reported "I killed the PID I started":** three
+Storybook servers still listening in this worktree, and a Playwright Chrome still alive hours after its
+last use.
+
+Two reasons the brief's rule did not catch it:
+
+- **"Kill only a PID you started" reads as being about dev servers.** A browser opened through the
+  Playwright MCP tool is not a PID the agent started in any visible sense, so it falls outside the rule
+  as written. Say "close the browser" separately.
+- **Storybook's port is not the one you asked for.** `yarn storybook` ignores a bare `--port` and needs
+  `-p`; an agent that passes the wrong flag gets a different port than the one it later kills.
+
+**What to put in a brief that drives a browser:** close the page when done, stop the server you started,
+and then CHECK — `lsof -nP -iTCP -sTCP:LISTEN` for the port, and `ps` for a Chrome whose
+`--user-data-dir` is under `ms-playwright-mcp`. Reporting "I killed it" is not the same as it being
+gone, and three agents reported exactly that.
+
+**And never kill by port alone.** Other worktrees serve on neighbouring ports — `cuesta-starlight`,
+`rio-ringtail` and the main checkout were all listening on 6006-6021 at the same time. Match the process
+to its `cwd` before killing it. An agent earlier this session killed PID 40319 believing it was
+Storybook; it was a Chrome helper.
