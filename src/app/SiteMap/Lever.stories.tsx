@@ -8,13 +8,16 @@ import { tierPalette } from "./tileMaterials"
 // all 112x168, sharing one frame to the pixel) and nothing in the app draws them yet. This story stages
 // them the way the renderer will — a prop on its rank's floor, top overlapping the wall band, the
 // explorer beside it for scale (`PropSheet.stories.tsx`'s `Chamber`, reused rather than reinvented,
-// because a generation looks fine at 2000px and turns to mud at 56) — and answers the one open question
-// a stack of tiles cannot answer by itself: does a naive CSS `rotate()` on the upright arm reproduce the
-// true ±36° throw, or does it put the tip outside the track the mound was cut for.
+// because a generation looks fine at 2000px and turns to mud at 56).
+//
+// THE ARM IS THROWN BY A PLAIN `rotate()`. A shear correction derived from the render camera was staged
+// against it and looked worse, so it is gone: it kept the arm's tip inside the painted track, but the
+// un-rotating squash it applies to get there is what the eye catches. The track is paint on the mound,
+// not a slot the arm must stay inside, and the overshoot it measured was against a tip radius fitted to
+// reproduce that same overshoot. Measured against looked-at, looked-at won.
 
 /** The native frame every one of the three sprites shares, to the pixel. */
 const TILE_W = 112
-const TILE_H = 168
 
 /** The pivot the scaffold defines: inside the mound, not at its crown (`prim_lever`'s docstring).
  * `76.6%` down a 168-tall tile lands 1.5px from the shaft's own last visible row in the landed art
@@ -24,53 +27,10 @@ const PIVOT_X_PCT = 50
 const PIVOT_Y_PCT = 76.6
 
 /** The track's painted ends, measured on the landed art: x 45-67 of the 112-wide tile, ±11px from
- * centre — which is what the mesh's own slot geometry predicts at the full ±36° throw (±8.6px,
- * agreeing to within the rim's own width). Do not re-derive this; it is a measurement, not a formula. */
+ * centre. Drawn as guides to sit the throw against, not as a bound the arm has to stay inside. Do not
+ * re-derive this; it is a measurement, not a formula. */
 const TRACK_X0 = 45
 const TRACK_X1 = 67
-
-/** `renderProp.py`'s shear: `z' = z + k*y`, so a unit of world DEPTH draws into the shared vertical axis
- * at `k` times the rate a unit of world HEIGHT does. The arm's own swing lives at y=0 (`prim_lever`:
- * "THE ARM RUNS IN X, the only axis drawn honestly"), so the shaft's centreline is not itself distorted
- * by the shear — but the flat tile CSS rotates was captured through a camera whose vertical framing
- * (`add_camera`, `scale = max(span_x * height/width, span_z)`) is fit to the object's HEIGHT-dominant
- * span in a tile that is NOT square (112 wide, 168 tall). A plain `rotate()` treats the tile's own pixel
- * grid as isotropic; the render that produced it was not, by the aspect the camera had to reconcile. */
-const SHEAR_K = 0.7
-const TILE_ASPECT = TILE_W / TILE_H // 2/3 — add_camera's own width/height framing ratio
-
-/** `s`, derived from the shear and the framing rather than fit by eye: the shear's depth-into-height
- * factor, scaled by the tile's own width/height ratio (`add_camera`'s aspect correction, the other half
- * of "the scaffold's projection" this task names). `transform: scaleY(1/s) rotate(θ) scaleY(s)` about
- * the pivot undoes it, rotates in the corrected space, and puts it back — CSS composes this natively
- * because the three functions share one `transform-origin`. */
-const CORRECTION_S = SHEAR_K * TILE_ASPECT // 0.7 * (112/168) ≈ 0.4667
-
-/** The tip-check point, R tile-px above the pivot along the vertical: chosen so a plain `rotate(36deg)`
- * reproduces the measured overshoot (naive puts the tip at x≈77 at +36°, so R = (77-56)/sin(36°) ≈
- * 35.7 — a point partway up the plain shaft, below where the grip starts to kick outward, which is
- * where the mound's own crown sits). This is the point the acceptance test judges against the track. */
-const TIP_R = (77 - TILE_W / 2) / Math.sin((36 * Math.PI) / 180)
-
-const degToRad = (deg: number) => (deg * Math.PI) / 180
-
-/** A plain 2D rotation of a point given relative to the pivot, in tile-space pixels. */
-const rotate = (dx: number, dy: number, thetaDeg: number) => {
-  const t = degToRad(thetaDeg)
-  const cos = Math.cos(t)
-  const sin = Math.sin(t)
-  return { x: dx * cos - dy * sin, y: dx * sin + dy * cos }
-}
-
-/** Reproduces, in plain arithmetic, what the CSS transform draws — so the marker and the numeric
- * readout below are checking the SAME transform the arm sprite carries, not a second guess at it. CSS
- * composes `scaleY(1/s) rotate(θ) scaleY(s)` right to left: `scaleY(s)` first, then the rotation, then
- * `scaleY(1/s)` last — so only the y-component of the rotated point is ever divided back by `s`. */
-const projectTip = (dx: number, dy: number, thetaDeg: number, mode: "naive" | "corrected") => {
-  if (mode === "naive") return rotate(dx, dy, thetaDeg)
-  const scaled = rotate(dx, dy * CORRECTION_S, thetaDeg)
-  return { x: scaled.x, y: scaled.y / CORRECTION_S }
-}
 
 /** Where a state's index throws the arm to. An index into an ORDERED state list, spread evenly across
  * `±throwDeg` — not two hardcoded cases, because a wheel's control has more than two states and the
@@ -92,13 +52,12 @@ const CHAMBER_W = CELL * 2
 const CHAMBER_H = CELL * 2
 
 const LeverStage: FC<{
-  mode: "naive" | "corrected"
   thetaDeg: number
   durationMs: number
   reducedMotion: boolean
   zoom: number
   showMarkers: boolean
-}> = ({ mode, thetaDeg, durationMs, reducedMotion, zoom, showMarkers }) => {
+}> = ({ thetaDeg, durationMs, reducedMotion, zoom, showMarkers }) => {
   const palette = tierPalette[TIER]
   const floor = tileUrl(TIER, "floor")
   const face = tileUrl(TIER, "wall-face")
@@ -126,19 +85,10 @@ const LeverStage: FC<{
   const stagePerTile = artW / TILE_W
   const armTop = floorLine - artH
 
-  const transform =
-    mode === "naive"
-      ? `rotate(${thetaDeg}deg)`
-      : `scaleY(${1 / CORRECTION_S}) rotate(${thetaDeg}deg) scaleY(${CORRECTION_S})`
-
-  const tip = projectTip(0, -TIP_R, thetaDeg, mode)
-  const tipXTile = TILE_W / 2 + tip.x
-  const inTrack = tipXTile >= TRACK_X0 && tipXTile <= TRACK_X1
+  const transform = `rotate(${thetaDeg}deg)`
 
   const pivotLeft = propLeft + (PIVOT_X_PCT / 100) * artW
   const pivotTop = armTop + (PIVOT_Y_PCT / 100) * artH
-  const tipLeft = pivotLeft + tip.x * stagePerTile
-  const tipTop = pivotTop + tip.y * stagePerTile
 
   return (
     <figure className="m-0 flex flex-col items-center gap-1">
@@ -232,41 +182,24 @@ const LeverStage: FC<{
               className="absolute size-1.5 -translate-1/2 rounded-full bg-sky-400"
               style={{ left: pivotLeft, top: pivotTop }}
             />
-            {/* The arm's tip, at the throw's current angle — the marker that makes overshoot visible
-                rather than a thing to squint for. */}
-            <div
-              className={`absolute size-2.5 -translate-1/2 rounded-full border-2 ${
-                inTrack ? "border-emerald-400 bg-emerald-400/40" : "border-red-500 bg-red-500/50"
-              }`}
-              style={{ left: tipLeft, top: tipTop }}
-            />
           </>
         )}
       </div>
-      <figcaption className="flex flex-col items-center text-[10px] text-white/70">
-        <span>
-          {mode} · θ={thetaDeg.toFixed(1)}°
-        </span>
-        <span className={inTrack ? "text-emerald-400" : "text-red-400"}>
-          tip x={tipXTile.toFixed(1)} of {TILE_W} ({inTrack ? "in track" : "past track"} {TRACK_X0}-{TRACK_X1})
-        </span>
-      </figcaption>
+      <figcaption className="text-[10px] text-white/70">θ={thetaDeg.toFixed(1)}°</figcaption>
     </figure>
   )
 }
 
-/** The story's main job: the naive and corrected transforms, staged side by side at the same angle and
- * state, so the difference is compared directly rather than toggled from memory. */
+/** The lever at one state of its own list, thrown to the angle that state's index names. */
 const LeverCompare: FC<{
   states: string[]
   stateIndex: number
   throwDeg: number
-  view: "both" | "naive" | "corrected"
   durationMs: number
   reducedMotion: boolean
   zoom: number
   showMarkers: boolean
-}> = ({ states, stateIndex, throwDeg, view, durationMs, reducedMotion, zoom, showMarkers }) => {
+}> = ({ states, stateIndex, throwDeg, durationMs, reducedMotion, zoom, showMarkers }) => {
   const theta = angleForState(stateIndex, states.length, throwDeg)
   return (
     <div className="flex h-screen flex-col gap-4 overflow-auto bg-neutral-900 p-6">
@@ -276,26 +209,13 @@ const LeverCompare: FC<{
         {states.join(", ")}, throw ±{throwDeg}°
       </h2>
       <div className="flex flex-wrap gap-6">
-        {(view === "both" || view === "naive") && (
-          <LeverStage
-            mode="naive"
-            thetaDeg={theta}
-            durationMs={durationMs}
-            reducedMotion={reducedMotion}
-            zoom={zoom}
-            showMarkers={showMarkers}
-          />
-        )}
-        {(view === "both" || view === "corrected") && (
-          <LeverStage
-            mode="corrected"
-            thetaDeg={theta}
-            durationMs={durationMs}
-            reducedMotion={reducedMotion}
-            zoom={zoom}
-            showMarkers={showMarkers}
-          />
-        )}
+        <LeverStage
+          thetaDeg={theta}
+          durationMs={durationMs}
+          reducedMotion={reducedMotion}
+          zoom={zoom}
+          showMarkers={showMarkers}
+        />
       </div>
     </div>
   )
@@ -307,7 +227,6 @@ const meta = {
   parameters: { layout: "fullscreen" },
   argTypes: {
     throwDeg: { control: { type: "range", min: 0, max: 60, step: 1 } },
-    view: { control: { type: "inline-radio" }, options: ["both", "naive", "corrected"] },
     durationMs: { control: { type: "range", min: 0, max: 1000, step: 20 } },
     reducedMotion: { control: "boolean" },
     zoom: { control: { type: "range", min: 1, max: 6, step: 1 } },
@@ -318,8 +237,7 @@ const meta = {
   args: {
     states: ["left", "right"],
     stateIndex: 0,
-    throwDeg: 36,
-    view: "both",
+    throwDeg: 15,
     durationMs: 260,
     reducedMotion: false,
     zoom: 4,
@@ -330,32 +248,23 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-/** Naive vs corrected, at the authored ±36° throw — the story's main job. */
-export const Compare: Story = {
-  argTypes: { stateIndex: { control: { type: "inline-radio" }, options: [0, 1] } },
-}
-
-/** A binary handle: two states, thrown left and right. */
+/** A binary handle: two states, thrown left and right at the authored ±15°. */
 export const Binary: Story = {
-  args: { states: ["left", "right"], stateIndex: 1, view: "corrected" },
+  args: { states: ["left", "right"], stateIndex: 1 },
   argTypes: { stateIndex: { control: { type: "inline-radio" }, options: [0, 1] } },
 }
 
 /** The same component driving a THREE-state control off the identical index math — proving the
  * renderer was not written for a binary; a wheel is the next N-state control this vocabulary serves. */
 export const ThreeState: Story = {
-  args: { states: ["low", "mid", "high"], stateIndex: 1, view: "corrected" },
+  args: { states: ["low", "mid", "high"], stateIndex: 1 },
   argTypes: { stateIndex: { control: { type: "inline-radio" }, options: [0, 1, 2] } },
 }
 
 /*
- * MEASURED IN THIS STORY (the tip-check point at radius `TIP_R ≈ 35.7` tile-px above the pivot, the
- * point a naive `rotate()` puts at x≈77 — see `TIP_R`'s derivation above), against the track's 45-67:
+ * SETTLED HERE, BY LOOKING: a plain `rotate()` at ±15°.
  *
- *   angle   naive tip x     corrected tip x (s ≈ 0.4667)
- *   +36°    77.0  (past 67 by 10.0px)     65.8  (inside, 1.2px of margin)
- *   -36°    35.0  (past 45 by 10.0px)     46.2  (inside, 1.2px of margin)
- *
- * The correction does not merely shrink the overshoot, it clears the rim on both extremes — reported
- * from the arithmetic `projectTip` above, which is the exact function the arm's `transform` uses.
+ * The throw was staged at ±36° first, and at that angle the arm visibly leaves the mound whichever
+ * transform carries it. ±15° is the throw that reads as a lever being pulled rather than a mast falling
+ * over, and it keeps the tip near the painted track without anything having to correct for it.
  */
