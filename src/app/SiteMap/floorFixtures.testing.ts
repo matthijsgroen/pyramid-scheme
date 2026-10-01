@@ -56,7 +56,7 @@ export const dropGrid = (
   put(DROP_AT.fromNode, cellOf(fromNode, [axis.travel], state))
   put(DROP_AT.launch, cellOf("corridor", [axis.back], state))
   for (const i of obstacleIndexes)
-    put(i, { type: "corridor", dirs: new Set<Direction>(), state, obstacle: { dir: axis.travel } })
+    put(i, { type: "corridor", dirs: new Set<Direction>(), state, obstacle: { dir: axis.travel, kind: "zipline" } })
   put(DROP_AT.landing, cellOf("corridor", [axis.travel], state))
   put(DROP_AT.toNode, cellOf(toNode, [axis.back], state))
   const grid: FloorGrid = {

@@ -19,7 +19,14 @@ import type {
   Difficulty,
 } from "./siteTypes"
 import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
-import { appetiteAccepts, offRouteChains, regionOfStep, regionRoute, strandedRegions } from "./regions"
+import {
+  appetiteAccepts,
+  offRouteChains,
+  regionOfStep,
+  regionRoute,
+  regionsAlongPath,
+  strandedRegions,
+} from "./regions"
 import type { ContentKind, SideChain } from "./regions"
 import { crossesNoDoor, doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
 import type { Control, Obstacle } from "./obstacles"
@@ -717,6 +724,11 @@ export const assembleFloor = (
       .filter(port => !declared.has(regionLayout[port]))
       .map(port => ({ type: "portNamesNoRegion" as const, port, name: regionLayout[port] }))
     if (badPorts.length > 0) return { success: false, reasons: badPorts }
+    // A PLACEMENT THAT IS NOT A SHARE OF THE PATH could seat the container nowhere, or seat it
+    // differently at every path length; refused rather than clamped into a position nobody wrote.
+    const enters = regionLayout.placement?.enters
+    if (enters !== undefined && !(Number.isFinite(enters) && enters >= 0 && enters < 1))
+      return { success: false, reasons: [{ type: "placementOutOfRange" as const, enters }] }
     const stranded = strandedRegions(regionLayout)
     if (stranded.length > 0)
       return { success: false, reasons: stranded.map(name => ({ type: "regionUnreachable" as const, name })) }
@@ -1225,7 +1237,7 @@ export const assembleFloor = (
     // component's own regions instead. Computed ahead of content placement: the gate cells below have
     // to be known before content claims a node.
     const route = regionLayout ? regionRoute(regionLayout) : []
-    const stepRegion = regionLayout ? regionOfStep(route, mainPath.length) : []
+    const stepRegion = regionLayout ? regionsAlongPath(regionLayout, route, mainPath.length) : []
     // A ROUTE LONGER THAN THE PATH SEATS NOTHING AT ITS FAR END — `regionOfStep` deals what there is
     // rather than refusing (it has no floor in front of it; only a carve knows how many steps the main
     // path has). Checked against the route's own regions only: a region the route never threads at all
@@ -2895,7 +2907,7 @@ export const assembleFloor = (
         writeStub(cellKey, edge.from, edge.to, new Set(), k + 1)
         const [r, c] = cellKey.split(",").map(Number)
         const cell = cells2D[r][c]
-        if (cell.type === "corridor") cells2D[r][c] = { ...cell, obstacle: { dir: edge.dir } }
+        if (cell.type === "corridor") cells2D[r][c] = { ...cell, obstacle: { dir: edge.dir, kind: "zipline" } }
       })
       writeStub(edge.landing, edge.to, edge.from, new Set([edge.dir]), ONE_WAY_RUN_CELLS + 1)
       joinNode(edge.to, OPPOSITE[edge.dir])

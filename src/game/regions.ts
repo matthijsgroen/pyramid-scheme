@@ -314,3 +314,63 @@ export const regionOfStep = (route: readonly string[], steps: number): string[] 
   const extra = steps % route.length
   return route.flatMap((name, i) => Array<string>(each + (i < extra ? 1 : 0)).fill(name))
 }
+
+/**
+ * WHERE ON THE FLOOR'S MAIN PATH A CONTAINER IS ENTERED — the floor's statement, not the container's.
+ * A container owns its ports (`in`, `out`); the floor owns its own entrance and exit, and the two
+ * coincide only when the floor places nothing and the container IS the floor.
+ *
+ * `enters` is a share of the main path in [0, 1), so it means the same thing at any path length: the
+ * carve decides how many steps the path has, the author never counts them. Only the way in is named.
+ * How far the container reaches is the builder's call, taken from its size (`stretchOf`), because the
+ * author names appetites and the builder shapes stretches
+ * (docs/game-design/regions-and-containers.md).
+ */
+export type Placement = { enters: number }
+
+/** A container and, optionally, where the floor seats it. Absent: the container is the whole floor,
+ * entered at the floor's entrance and left at its exit. */
+export type PlacedContainer = RegionGraph & { placement?: Placement }
+
+/** How many main-path steps each region of a PLACED container's route is dealt. Four, measured: a drop
+ * between two regions of a container needs a node of each a fixed reach apart in a straight line, and at
+ * two steps a region that never sited (0 of 54 floors), at three 48, at four 52. The whole-floor
+ * container needs no such figure — its regions are a share of the entire path. */
+export const STEPS_PER_REGION = 4
+
+/**
+ * THE STEPS A PLACED CONTAINER OCCUPIES: from the step it is entered at, up to but not including the
+ * step it ends before. The size is the route's length times `STEPS_PER_REGION`; two containers on one
+ * floor would therefore be ordered by `enters` and each take a stretch that depends only on its own
+ * size, never on its neighbour's.
+ *
+ * Never reaches the floor's last step: that step is the floor's exit, which a container does not own.
+ * A stretch that would run past it is cut short, and the route's unseated tail is what the assembler
+ * reports (and retries a longer path for) — the builder shortens nothing quietly.
+ */
+export const stretchOf = (placement: Placement, routeLength: number, steps: number): { from: number; to: number } => {
+  const from = Math.min(Math.round(placement.enters * steps), Math.max(0, steps - 1))
+  const to = Math.max(from, Math.min(from + routeLength * STEPS_PER_REGION, steps - 1))
+  return { from, to }
+}
+
+/**
+ * WHICH REGION EACH STEP OF THE MAIN PATH STANDS IN, `undefined` for a step that is the floor's own
+ * ordinary ground rather than the container's.
+ *
+ * With no placement the container is the whole floor and this is exactly `regionOfStep`. With one, the
+ * route is dealt across its stretch only, and the steps before and after it are the floor's.
+ */
+export const regionsAlongPath = (
+  layout: PlacedContainer,
+  route: readonly string[],
+  steps: number
+): Array<string | undefined> => {
+  if (!layout.placement) return regionOfStep(route, steps)
+  const { from, to } = stretchOf(layout.placement, route.length, steps)
+  return [
+    ...Array<undefined>(from).fill(undefined),
+    ...regionOfStep(route, to - from),
+    ...Array<undefined>(steps - to).fill(undefined),
+  ]
+}

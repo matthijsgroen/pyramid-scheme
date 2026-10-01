@@ -55,7 +55,7 @@ const onlyToward =
     corridorPiece(dirs.filter(d => d === dir))
 const obstacleOf =
   (dir: Direction): Piece =>
-  () => ({ type: "corridor", dirs: new Set<Direction>(), state: "fogged", obstacle: { dir } })
+  () => ({ type: "corridor", dirs: new Set<Direction>(), state: "fogged", obstacle: { dir, kind: "zipline" } })
 const both = {
   L: onlyToward("w"),
   M: obstacleOf("e"),

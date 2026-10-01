@@ -4,6 +4,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type { CellState, FloorGrid, GridCell, MechanismRecord, SiteConfig } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { registerFamily } from "@/app/families/familyRegistry"
+import { getCell } from "@/game/gridNavigation"
+import { cellAddress } from "./cellIdentity"
+import { encodeEdge } from "./edgeId"
+import { AXES, DROP_AT, addressed, dropGrid } from "./floorFixtures.testing"
 import { useSiteNavigation } from "./useSiteNavigation"
 
 // A family that keeps its rooms open (FamilyMeta.reEnterable) — declared here as a stub, because which
@@ -149,7 +153,7 @@ const oneWayLanding: GridCell = {
 const obstacleCell: GridCell = {
   type: "corridor",
   dirs: new Set([]),
-  obstacle: { dir: "w" },
+  obstacle: { dir: "w", kind: "zipline" },
   state: "reachable",
   sectionHash: SECTION,
   sectionAddress: SECTION,
@@ -597,5 +601,135 @@ describe("a lever family (FamilyMeta.actsOnArrival) throws itself, never opening
     act(() => promptOf(hook).take())
 
     expect(onEncounter).not.toHaveBeenCalled()
+  })
+})
+
+describe("useSiteNavigation taking a span", () => {
+  beforeEach(() => vi.useFakeTimers())
+  afterEach(() => vi.useRealTimers())
+
+  // An east-going drop laid out as the carve lays it, the player standing on the from-node. The traversal
+  // is a promise the test settles by hand, so nothing here waits on a clock.
+  const dropSetup = () => {
+    const { grid, at } = dropGrid(AXES[0], "room", "room", "reachable")
+    const floor = addressed(grid)
+    const launch = at(DROP_AT.launch)
+    const landing = at(DROP_AT.landing)
+    const landingAddress = cellAddress(floor, 0, landing[0], landing[1])
+    const journeys = {
+      markCellExplored: vi.fn(),
+      updatePosition: vi.fn(),
+      getPurchasedShopSlots: () => new Set<string>(),
+      getSkippedConsumables: () => new Set<string>(),
+      getMechanismStates: vi.fn(() => new Map<string, string>()),
+      setMechanismState: vi.fn(),
+    } as unknown as JourneyAPI
+    // What happened, in the order it happened: the traversal starting, the player's visibility changing
+    // as a render sees it, and the landing being written down.
+    const events: string[] = []
+    vi.mocked(journeys.updatePosition).mockImplementation((_, address) => {
+      if (address === landingAddress) events.push("landing written")
+    })
+    let settle = () => {}
+    const playTraversal = vi.fn(() => {
+      events.push("traversal started")
+      return new Promise<void>(resolve => (settle = resolve))
+    })
+    let lastHidden = false
+    const hook = renderHook(() => {
+      const navigation = useSiteNavigation({
+        journeys,
+        journeyId: "j1",
+        siteConfig,
+        seed: 1,
+        currentFloor: 0,
+        grid: floor,
+        explorerPos: at(DROP_AT.fromNode),
+        onEncounter: vi.fn(),
+        onSkippedConsumable: vi.fn(),
+        onExitReached: vi.fn(),
+        playTraversal,
+      })
+      if (navigation.explorerHidden !== lastHidden)
+        events.push(navigation.explorerHidden ? "player hidden" : "player shown")
+      lastHidden = navigation.explorerHidden
+      return navigation
+    })
+    const atLaunch = () => {
+      act(() => hook.result.current.onCellClick(launch[0], launch[1]))
+      arrive()
+    }
+    return {
+      hook,
+      journeys,
+      floor,
+      launch,
+      landing,
+      landingAddress,
+      playTraversal,
+      events,
+      settle: () => settle(),
+      atLaunch,
+    }
+  }
+
+  it("offers the span from its launch, named by the obstacle standing there rather than by the navigation", () => {
+    const { hook, floor, launch, atLaunch } = dropSetup()
+    const marker = getCell(floor, launch[0], launch[1] + 1)
+
+    atLaunch()
+
+    expect(marker).toMatchObject({ obstacle: { kind: "zipline" } })
+    expect(promptOf(hook)).toMatchObject({ kind: "obstacle", at: launch, obstacleKind: "zipline" })
+    expect(promptOf(hook)).not.toHaveProperty("label")
+  })
+
+  it("offers nothing when the player is only walking toward the launch", () => {
+    const { hook, launch } = dropSetup()
+
+    act(() => hook.result.current.onCellClick(launch[0], launch[1]))
+
+    expect(hook.result.current.prompt).toBeNull()
+  })
+
+  it("hands the traversal its start, its end and the way it runs", () => {
+    const { hook, launch, landing, playTraversal, atLaunch } = dropSetup()
+    atLaunch()
+
+    act(() => promptOf(hook).take())
+
+    expect(playTraversal.mock.calls).toEqual([[{ kind: "zipline", from: launch, to: landing, dir: "e" }]])
+  })
+
+  it("hides the player, waits for the traversal, then shows them at the landing with the save agreeing", async () => {
+    const { hook, journeys, landing, landingAddress, events, settle, atLaunch } = dropSetup()
+    atLaunch()
+
+    act(() => promptOf(hook).take())
+    expect(hook.result.current.explorerHidden).toBe(true)
+    expect(journeys.updatePosition).not.toHaveBeenCalledWith("j1", landingAddress, expect.anything())
+
+    await act(async () => settle())
+
+    expect(hook.result.current.explorerHidden).toBe(false)
+    expect(journeys.updatePosition).toHaveBeenLastCalledWith(
+      "j1",
+      landingAddress,
+      encodeEdge(0, landing[0], landing[1])
+    )
+    // Hidden before the write and shown only after it: a player shown before the landing is written
+    // would be drawn at the launch again for a frame.
+    expect(events).toEqual(["traversal started", "player hidden", "landing written", "player shown"])
+  })
+
+  it("ignores a tap while the player is out of sight in the span", () => {
+    const { hook, journeys, launch, atLaunch } = dropSetup()
+    atLaunch()
+    act(() => promptOf(hook).take())
+    vi.mocked(journeys.updatePosition).mockClear()
+
+    act(() => hook.result.current.onCellClick(launch[0], launch[1]))
+
+    expect(journeys.updatePosition).not.toHaveBeenCalled()
   })
 })

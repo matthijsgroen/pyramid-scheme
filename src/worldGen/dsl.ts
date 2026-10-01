@@ -1,6 +1,6 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
 import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
-import type { RegionGraph } from "../game/regions"
+import type { PlacedContainer } from "../game/regions"
 import type { Control, Obstacle } from "@/game/obstacles"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { wardKeyDifficulty } from "../data/difficultyLevels"
@@ -182,7 +182,7 @@ export type FloorConstraint<TExtra extends string = never> = {
    * thrown for. */
   handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
   /** The coarse layout this floor's regions are named in — see game/regions.ts's RegionGraph. */
-  regionLayout?: RegionGraph
+  regionLayout?: PlacedContainer
   /** WHAT STANDS BETWEEN THE FLOOR'S REGIONS, named once and referred to by id — the topology mod's,
    * pointing at `regionLayout` by region name (see game/obstacles.ts). A control names which
    * obstacles each of its states opens. Both drop when the mod is not registered, and the identical
@@ -323,7 +323,7 @@ export type PyramidConstraint = {
   handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
   /** The layout every floor of this site carries, unless a floor names its own — see
    * FloorConstraint.regionLayout. */
-  regionLayout?: RegionGraph
+  regionLayout?: PlacedContainer
   /** The obstacles/controls standing in that layout on every floor of this site, unless a floor
    * names its own — see FloorConstraint.obstacles/.controls. */
   obstacles?: Obstacle[]

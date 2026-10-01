@@ -1,5 +1,5 @@
 import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
-import type { RegionGraph } from "../game/regions"
+import type { PlacedContainer } from "../game/regions"
 import type { Control, Obstacle } from "@/game/obstacles"
 
 export type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
@@ -120,7 +120,7 @@ export type FloorConfig = {
   /** The floor's authored REGION layout — see game/regions.ts's RegionGraph, which is this field's
    * type rather than a shape restated here. Distinct from AssemblerReason's `layoutNotFound` (the
    * carve finding no MAZE layout at a seed), an unrelated failure this field shares no meaning with. */
-  regionLayout?: RegionGraph
+  regionLayout?: PlacedContainer
   /** A SWITCH standing in one of the junctions `forks` reserved, closing that junction's free ways out
    * so what the player meets there decides which one opens — mirrors game/siteTypes.ts's
    * FloorConfig.switches. */

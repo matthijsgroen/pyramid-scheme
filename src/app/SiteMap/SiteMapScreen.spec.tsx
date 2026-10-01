@@ -297,6 +297,26 @@ describe(SiteMapScreen, () => {
       expect(await promptAtCol1(stallStocking("family-of-an-unregistered-mod"))).toBe("ui.prompt.here")
     })
 
+    it("offers the launch of a span in the words of the obstacle spanning it", async () => {
+      const obstacle: GridCell = {
+        type: "corridor",
+        dirs: new Set(),
+        state: "completed",
+        obstacle: { dir: "e", kind: "zipline" },
+      }
+      const launch: GridCell = { type: "corridor", dirs: new Set(["w"]), state: "completed" }
+      const landing: GridCell = { type: "corridor", dirs: new Set(["e"]), state: "completed" }
+      grid = gridOf([entrance, launch, ...Array.from({ length: 5 }, () => obstacle), landing, exitRoom])
+
+      const { container } = await renderScreen()
+      fireEvent.click(nodeAt(container, 1))
+      await act(async () => {
+        vi.advanceTimersByTime(1000)
+      })
+
+      expect(goInPrompt(container).textContent).toBe("ui.prompt.zipline")
+    })
+
     it("still offers the stairs as the walk they are", async () => {
       expect(await promptAtCol1(roomOf({ type: "room", roomType: "portal", stairId: "s1", state: "reachable" }))).toBe(
         "ui.prompt.stairs"

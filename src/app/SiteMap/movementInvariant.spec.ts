@@ -333,7 +333,7 @@ const STEP_BUDGET = 500
  * out with its own violation rather than hanging, so a floor whose branching runs away is a red test
  * rather than a stuck one.
  */
-const walkFloor = (grid: FloorGrid): { violations: string[]; steps: number } => {
+const walkFloor = async (grid: FloorGrid): Promise<{ violations: string[]; steps: number }> => {
   const store = makeStore()
   const harness = buildHarness(grid, store)
   const hook = renderHook(harness.useHook)
@@ -350,7 +350,7 @@ const walkFloor = (grid: FloorGrid): { violations: string[]; steps: number } => 
     `${store.positionKey ?? "start"}|${store.standingKey ?? "start"}|${JSON.stringify(store.mechanismStates)}`
   const snapshot = () => ({ ...store })
 
-  const visit = (): void => {
+  const visit = async (): Promise<void> => {
     steps++
     if (steps > STEP_BUDGET) {
       violations.push("step budget exceeded — the walk never settled")
@@ -389,11 +389,12 @@ const walkFloor = (grid: FloorGrid): { violations: string[]; steps: number } => 
       hook.rerender()
       const prompt = hook.result.current.prompt as { take: () => void } | null
       if (prompt) {
-        act(() => prompt.take())
+        // Taking a span is a promise that settles with the player on the landing, so it is awaited.
+        await act(async () => prompt.take())
         act(() => vi.advanceTimersByTime(5000))
         hook.rerender()
       }
-      visit()
+      await visit()
       Object.assign(store, before)
       hook.rerender()
     }
@@ -401,7 +402,7 @@ const walkFloor = (grid: FloorGrid): { violations: string[]; steps: number } => 
 
   vi.useFakeTimers()
   try {
-    visit()
+    await visit()
   } finally {
     vi.useRealTimers()
   }
@@ -449,7 +450,7 @@ const obstacle: Piece = () => ({
   type: "corridor",
   dirs: new Set<Direction>(),
   state: "fogged",
-  obstacle: { dir: "e" },
+  obstacle: { dir: "e", kind: "zipline" },
 })
 const landing: Piece = dirs => corridorPiece(dirs.filter(dir => dir === "e"))
 const DROP = { L: launch, M: obstacle, T: landing }
@@ -506,15 +507,15 @@ const dropShapes = AXES.flatMap(axis =>
 )
 
 describe("the movement invariant — offers match walkability, and taking one moves the explorer", () => {
-  it.each(fixtures)("holds across every reachable state of $name", ({ grid, minSteps }) => {
-    const { violations, steps } = walkFloor(grid)
+  it.each(fixtures)("holds across every reachable state of $name", async ({ grid, minSteps }) => {
+    const { violations, steps } = await walkFloor(grid)
 
     expect(violations).toEqual([])
     expect(steps).toBeGreaterThan(minSteps) // a walk this short would prove nothing was exercised
   })
 
-  it.each(dropShapes)("holds across every reachable state of $name", ({ grid }) => {
-    const { violations, steps } = walkFloor(grid)
+  it.each(dropShapes)("holds across every reachable state of $name", async ({ grid }) => {
+    const { violations, steps } = await walkFloor(grid)
 
     expect(violations).toEqual([])
     expect(steps).toBeGreaterThan(3)

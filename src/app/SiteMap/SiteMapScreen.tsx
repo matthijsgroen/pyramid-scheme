@@ -7,7 +7,7 @@ import { useCorridorDetection } from "@/app/SiteMap/useCorridorDetection"
 import { useFoundCorridors } from "@/app/SiteMap/useFoundCorridors"
 import { useMechanismStates } from "@/app/SiteMap/useMechanismStates"
 import { useDetectorBand } from "@/app/SiteMap/useDetectorBand"
-import type { SiteConfig } from "@/game/siteTypes"
+import type { ObstacleKind, SiteConfig } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor } from "./useAssembledFloor"
 import { floorOfPosition } from "./stairTravel"
@@ -177,7 +177,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   const exit = useSiteExit()
 
-  const { onCellClick, prompt } = useSiteNavigation({
+  const { onCellClick, prompt, explorerHidden } = useSiteNavigation({
     journeys,
     journeyId,
     siteConfig,
@@ -194,15 +194,22 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   // rather than looked up by a built key, so the locale guard can see every one of them. `here` is the
   // room prompt for a family that names none of its own, and for a room left by a mod that is off: it
   // claims nothing about what stands there or about having been there before.
-  const promptLabels: Record<ArrivalPromptKind, string> = {
+  const promptLabels: Record<Exclude<ArrivalPromptKind, "obstacle">, string> = {
     room: t("ui.prompt.here"),
     stairs: t("ui.prompt.stairs"),
     exit: t("ui.prompt.exit"),
   }
 
+  // What the launch of a span invites the player to do, one line per kind of span, so the words belong to
+  // the obstacle and the navigation that offers it names none of them.
+  const obstacleLabels: Record<ObstacleKind, string> = {
+    zipline: t("ui.prompt.zipline"),
+  }
+
   // A room's own words come from the family standing in it (FamilyMeta.invitation), read through the
   // registry so core names no mod and an unregistered one simply has nothing to say.
   const promptLabel = (prompt: ArrivalPrompt): string => {
+    if (prompt.kind === "obstacle") return prompt.obstacleKind ? obstacleLabels[prompt.obstacleKind] : promptLabels.room
     const invitation = prompt.familyId ? getFamilyPlugin(prompt.familyId)?.meta.invitation : undefined
     return invitation ? t(invitation) : promptLabels[prompt.kind]
   }
@@ -222,6 +229,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           grid={grid}
           onCellClick={onCellClick}
           explorerPos={explorerPos}
+          explorerHidden={explorerHidden}
           currentFloor={currentFloor}
           pendingCells={pendingConsumableCells}
           ownedKeys={ownedKeys}

@@ -226,7 +226,7 @@ describe("a floor that authors a one-way", () => {
         expect(cell.type).toBe("corridor")
         if (cell.type !== "corridor") return
         expect([...cell.dirs]).toEqual([])
-        expect(cell.obstacle).toEqual({ dir })
+        expect(cell.obstacle).toEqual({ dir, kind: "zipline" })
       })
 
       // The landing: standable, reached from the far node, names nothing back toward the obstacle.

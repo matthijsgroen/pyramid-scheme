@@ -241,7 +241,10 @@ export const doorsToEnterRegion = (layout: RegionGraph, obstacles: readonly Obst
  * meet. A pure question about a label sequence, asked in isolation of whatever built it, is what
  * lets the "no seam" case be pinned down by a test rather than only inferred from a carve.
  */
-export const seamIndexFor = (stepRegion: readonly string[], between: readonly [string, string]): number | undefined => {
+export const seamIndexFor = (
+  stepRegion: ReadonlyArray<string | undefined>,
+  between: readonly [string, string]
+): number | undefined => {
   const [a, b] = between
   for (let step = 1; step < stepRegion.length; step++) {
     const before = stepRegion[step - 1]

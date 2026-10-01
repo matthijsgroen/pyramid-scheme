@@ -1,5 +1,5 @@
 import type { FloorConfig, SideSection, SiteConfig, TreasureReward } from "./types"
-import type { RegionGraph } from "@/game/regions"
+import type { PlacedContainer } from "@/game/regions"
 import type { Control, Obstacle } from "@/game/obstacles"
 import { WORLD_SEED } from "./data"
 
@@ -76,12 +76,14 @@ const serializeSideSection = (s: SideSection): string => {
   return `{ ${parts.join(", ")} }`
 }
 
-const serializeRegionGraph = (g: RegionGraph): string =>
+const serializeRegionGraph = (g: PlacedContainer): string =>
   `{ regions: [${g.regions
     .map(r => `{ name: ${JSON.stringify(r.name)}, appetite: ${JSON.stringify(r.appetite)} }`)
     .join(", ")}], connections: [${g.connections
     .map(([a, b]) => `[${JSON.stringify(a)}, ${JSON.stringify(b)}]`)
-    .join(", ")}], in: ${JSON.stringify(g.in)}, out: ${JSON.stringify(g.out)} }`
+    .join(", ")}], in: ${JSON.stringify(g.in)}, out: ${JSON.stringify(g.out)}${
+    g.placement ? `, placement: { enters: ${g.placement.enters} }` : ""
+  } }`
 
 // Emits every field the object carries rather than a fixed list, the way `serializeGate` does, so a
 // field added to a fork demand or a switch later rides along without this function naming it. Only

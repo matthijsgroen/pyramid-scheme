@@ -1,5 +1,5 @@
 import type { Mark } from "./mark"
-import type { ContentKind, RegionGraph } from "./regions"
+import type { ContentKind, PlacedContainer } from "./regions"
 import type { Control, Obstacle } from "./obstacles"
 import type { CarveFault } from "./carveAgreement"
 export type RoomType = "portal" | "fork" | "encounter"
@@ -62,10 +62,14 @@ export type CorridorCell = {
   ordinal?: string
   hidden?: boolean
   /** Set on a cell that is part of an obstacle (a one-way drop's span) rather than ground. `dir` runs
-   * from the launch toward the landing. Such a cell names no direction at all and no neighbour names
-   * it, so no walk enters it; the marker is what lets the art span it and the lock read the drop back. */
-  obstacle?: { dir: Direction }
+   * from the launch toward the landing, and `kind` is what the span is, which is what the launch offers
+   * to do with it. Such a cell names no direction at all and no neighbour names it, so no walk enters
+   * it; the marker is what lets the art span it and the lock read the drop back. */
+  obstacle?: { dir: Direction; kind: ObstacleKind }
 }
+/** What an obstacle's span is. A new kind is a new member here and a new line in the table of what the launch
+ * invites the player to do (SiteMapScreen's `obstacleLabels`). */
+export type ObstacleKind = "zipline"
 export type GateVariant = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 // Canonical order for anything that LISTS colors (a key ring, a chest's badges) — world-gen assigns
@@ -487,16 +491,19 @@ export type FloorConfig = {
    * (a door it could neither open nor close) — each is refused by name before a wall is carved. */
   handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
   /**
-   * THE FLOOR'S AUTHORED REGION LAYOUT: named regions, what joins them, and the two ports it is
-   * entered and left through (docs/game-design/regions-and-containers.md). Not to be confused with
+   * THE FLOOR'S AUTHORED REGION LAYOUT: a container — named regions, what joins them, and the two
+   * ports IT is entered and left through (docs/game-design/regions-and-containers.md). The ports are
+   * the container's own, not the floor's: with no `placement` the container is the whole floor and
+   * they coincide with its entrance and exit; with one, the container stands on a stretch of the main
+   * path and the steps either side of it are the floor's ordinary ground. Not to be confused with
    * `AssemblerReason`'s `layoutNotFound`, which means the carve found no MAZE layout at this seed —
    * an unrelated, later-stage failure that shares no field with this one.
    *
    * A region declares only an APPETITE — what it will take — and never what fills it. Typed as
-   * `RegionGraph` rather than restated here, so the shape has one definition and the vocabulary can
+   * `PlacedContainer` (over `RegionGraph`) rather than restated here, so the shape has one definition and the vocabulary can
    * grow in one place.
    */
-  regionLayout?: RegionGraph
+  regionLayout?: PlacedContainer
   /** WHAT STANDS BETWEEN THE FLOOR'S REGIONS, and what decides whether it does — the topology mod's,
    * pointing at core's `regionLayout` by region name (src/game/obstacles.ts). An obstacle is named
    * once here and referred to by id; a control names which obstacles each of its states opens. Both
@@ -611,6 +618,9 @@ export type AssemblerReason =
   | { type: "connectionNamesNoRegion"; name: string }
   /** A layout's port names a region it does not have, so the floor has no way in or no way out. */
   | { type: "portNamesNoRegion"; port: "in" | "out"; name: string }
+  /** A container's placement (`regionLayout.placement.enters`) is not a share of the main path in
+   * [0, 1), so there is no step to enter it at. See FloorConfig.regionLayout. */
+  | { type: "placementOutOfRange"; enters: number }
   /** A region no walk from the way in arrives at. Once regions carry content, that is loot a player
    * can never collect (docs/game-design/regions-and-containers.md). */
   | { type: "regionUnreachable"; name: string }

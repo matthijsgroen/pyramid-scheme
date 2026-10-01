@@ -5,7 +5,7 @@ import type { CorridorCell, Direction, FloorConfig, GridCell, RoomCell } from ".
 
 // A FLOOR DRAWN AS TEXT. One token per cell, `-` for nothing, `label` for ground in that region and
 // `label*key` for a door in that region asking for `key`. Every pair of neighbouring cells is joined
-// both ways, so a fixture says what stands where and nothing about how a maze got there.
+// both ways, and `.` is the floor's own ground, which names no region. So a fixture says what stands where and nothing about how a maze got there.
 const DIRS: Array<[Direction, number, number, Direction]> = [
   ["n", -1, 0, "s"],
   ["s", 1, 0, "n"],
@@ -30,7 +30,7 @@ const draw = (picture: string): GridCell[][] => {
         sectionAddress: "main",
         sectionHash: "h",
         legacySectionHash: "h",
-        region,
+        region: region === "." ? undefined : region,
       }
       if (key === undefined) return { type: "corridor", ...base } satisfies CorridorCell
       return { type: "room", roomType: "encounter", requiredKeyId: key, ...base } satisfies RoomCell
@@ -93,6 +93,36 @@ describe("the carve's adjacency against the layout's connections", () => {
     cells[0][2] = { ...(cells[0][2] as CorridorCell), dirs: new Set<Direction>() }
 
     expect(adjacencyFaults(cells, { ...fork, connections: [["entrance", "leftLower"]] })).toEqual([])
+  })
+})
+
+describe("a container placed on part of the floor", () => {
+  const container = {
+    regions: [],
+    connections: [
+      ["mouth", "hall"],
+      ["hall", "vault"],
+    ] as const,
+    in: "mouth",
+    out: "vault",
+  }
+
+  // The floor's ordinary ground before and after names no region, so it can neither be the container's
+  // neighbour nor disagree with it: only the container's own graph is asked.
+  it("is silent when ordinary ground stands either side of a container joined as authored", () => {
+    expect(adjacencyFaults(draw(". . mouth hall vault . ."), container)).toEqual([])
+  })
+
+  it("still names a connection of the container no cells cross", () => {
+    expect(adjacencyFaults(draw(". mouth . hall vault ."), container)).toEqual([
+      { type: "regionsNotJoined", between: ["mouth", "hall"] },
+    ])
+  })
+
+  it("still names two container regions joined where the container joins nothing", () => {
+    expect(adjacencyFaults(draw(". mouth vault hall ."), container)).toEqual([
+      { type: "regionAttachedThrough", region: "mouth", through: "vault", authored: ["hall"] },
+    ])
   })
 })
 

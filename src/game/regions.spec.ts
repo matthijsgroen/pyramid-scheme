@@ -5,8 +5,11 @@ import {
   mainPathRegions,
   offRouteChains,
   regionOfStep,
+  regionsAlongPath,
+  STEPS_PER_REGION,
   regionRoute,
   strandedRegions,
+  stretchOf,
   type RegionAppetite,
   type RegionGraph,
 } from "./regions"
@@ -408,5 +411,64 @@ describe("grouping the off-route regions a side path has to seat", () => {
     )
 
     expect(offRouteChains(g)).toEqual([{ mouth: "in", regions: ["pocket"] }])
+  })
+})
+
+describe("where a placed container stands on the main path", () => {
+  const route = ["in", "mid", "out"]
+  const placed = (enters?: number) => ({
+    ...graph(
+      [
+        ["in", "mid"],
+        ["mid", "out"],
+      ],
+      ["in", "mid", "out"],
+      { in: "in", out: "out" }
+    ),
+    ...(enters === undefined ? {} : { placement: { enters } }),
+  })
+  const U = undefined
+  const along = (enters: number, steps: number) => regionsAlongPath(placed(enters), route, steps)
+  const each = (name: string, n = STEPS_PER_REGION) => Array<string>(n).fill(name)
+
+  it("deals the route across the whole path when nothing is placed, exactly as regionOfStep does", () => {
+    for (const steps of [3, 4, 7, 12, 20]) {
+      expect(regionsAlongPath(placed(), route, steps)).toEqual(regionOfStep(route, steps))
+    }
+  })
+
+  it("gives each region of the route STEPS_PER_REGION steps and leaves the rest of the path ordinary", () => {
+    expect(along(0.25, 24)).toEqual([
+      ...Array<undefined>(6).fill(U),
+      ...each("in"),
+      ...each("mid"),
+      ...each("out"),
+      ...Array<undefined>(6).fill(U),
+    ])
+  })
+
+  it("enters at the first step when the share is 0", () => {
+    expect(along(0, 20)).toEqual([...each("in"), ...each("mid"), ...each("out"), ...Array<undefined>(8).fill(U)])
+  })
+
+  it("never takes the floor's last step, so the exit stays the floor's", () => {
+    for (let steps = 7; steps <= 24; steps++) {
+      for (const enters of [0, 0.25, 0.5, 0.75, 0.99]) {
+        const result = along(enters, steps)
+        expect(result).toHaveLength(steps)
+        expect(result[steps - 1]).toBeUndefined()
+      }
+    }
+  })
+
+  it("seats only the front of the route when the stretch would run past the exit", () => {
+    expect(along(0.8, 10)).toEqual([...Array<undefined>(8).fill(U), "in", U])
+  })
+
+  it("sizes the stretch from the container alone, whatever the path length", () => {
+    for (const steps of [20, 30, 50]) {
+      const { from, to } = stretchOf({ enters: 0.2 }, 3, steps)
+      expect(to - from).toBe(3 * STEPS_PER_REGION)
+    }
   })
 })

@@ -372,7 +372,7 @@ const dropFloor = (travel: Travel) => {
     type: "corridor",
     dirs: new Set<Direction>(),
     state: "fogged",
-    obstacle: { dir: travel },
+    obstacle: { dir: travel, kind: "zipline" },
   })
   const line = ["C", "R", "L", ...Array<string>(ONE_WAY_RUN_CELLS).fill("M"), "T", "R", "C"]
   const rows = travel === "s" ? line : [(travel === "w" ? [...line].reverse() : line).join("")]

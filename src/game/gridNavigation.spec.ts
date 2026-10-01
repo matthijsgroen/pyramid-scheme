@@ -262,7 +262,7 @@ const runGrid = (state: "visible" | "fogged"): FloorGrid => ({
         type: "corridor",
         dirs: new Set<Direction>(),
         state,
-        obstacle: { dir: "e" },
+        obstacle: { dir: "e", kind: "zipline" },
       })),
       { type: "corridor", dirs: new Set<Direction>(["e"]), state },
       { type: "room", roomType: "encounter", dirs: new Set<Direction>(["w"]), state },
@@ -274,7 +274,7 @@ const keysOf = (...cols: number[]) => new Set(cols.map(c => `0,${c}`))
 describe(oneWayRuns, () => {
   it("reads back as one drop: its launch, its obstacle cells in order from the launch, its landing", () => {
     expect(oneWayRuns(runGrid("visible"))).toEqual([
-      { launch: [0, LAUNCH], cells: OBSTACLE.map(c => [0, c]), landing: [0, LANDING], dir: "e" },
+      { launch: [0, LAUNCH], cells: OBSTACLE.map(c => [0, c]), landing: [0, LANDING], dir: "e", kind: "zipline" },
     ])
   })
 
@@ -283,7 +283,9 @@ describe(oneWayRuns, () => {
     const mirror = (cell: GridCell): GridCell => {
       if (cell.type === "empty") return cell
       const dirs = new Set<Direction>([...cell.dirs].map(d => (d === "e" ? "w" : "e")))
-      return cell.type === "corridor" && cell.obstacle ? { ...cell, dirs, obstacle: { dir: "w" } } : { ...cell, dirs }
+      return cell.type === "corridor" && cell.obstacle
+        ? { ...cell, dirs, obstacle: { dir: "w", kind: "zipline" } }
+        : { ...cell, dirs }
     }
     const west = [...east].reverse().map(mirror)
     // Column `c` of the east row is column `last - c` of its mirror.
@@ -294,12 +296,13 @@ describe(oneWayRuns, () => {
       cells: [east, [...east].map(() => ({ type: "empty" }) as GridCell), west],
     }
     expect(oneWayRuns(both)).toEqual([
-      { launch: [0, LAUNCH], cells: OBSTACLE.map(c => [0, c]), landing: [0, LANDING], dir: "e" },
+      { launch: [0, LAUNCH], cells: OBSTACLE.map(c => [0, c]), landing: [0, LANDING], dir: "e", kind: "zipline" },
       {
         launch: [2, last - LAUNCH],
         cells: OBSTACLE.map(col => [2, last - col]),
         landing: [2, last - LANDING],
         dir: "w",
+        kind: "zipline",
       },
     ])
   })

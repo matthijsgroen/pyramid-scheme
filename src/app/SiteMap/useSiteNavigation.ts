@@ -1,13 +1,14 @@
-import { useCallback, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import { cellAddress } from "./cellIdentity"
-import { findPath, getCell } from "@/game/gridNavigation"
+import { findPath, getCell, oneWayRuns } from "@/game/gridNavigation"
 import { throwMechanism } from "@/game/mechanismDoors"
-import type { FloorGrid, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
+import type { FloorGrid, ObstacleKind, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { encodeEdge } from "./edgeId"
 import { actsOnArrival, staysOpen } from "./nodeKinds"
 import { stairPeerPosition } from "./stairTravel"
+import { crossAtOnce, type PlayTraversal, type Traversal } from "./obstacleTraversal"
 
 type NavigationArgs = {
   journeys: JourneyAPI
@@ -23,15 +24,17 @@ type NavigationArgs = {
   onSkippedConsumable: (reward: TreasureReward, address: string) => void
   /** The explorer has stepped into an exit chamber. */
   onExitReached: () => void
+  /** Plays a span the player takes (see obstacleTraversal.ts). Settles when the traversal is over. */
+  playTraversal?: PlayTraversal
 }
 
 /**
  * What the explorer is standing at — what the prompt beside him says, and nothing more.
  *
- * `stairs` and `exit` take the player somewhere; `room` opens what stands in the room he is already in,
- * whether that is a board or a stall, and moves nobody.
+ * `stairs`, `exit` and `obstacle` take the player somewhere; `room` opens what stands in the room he is
+ * already in, whether that is a board or a stall, and moves nobody.
  */
-export type ArrivalPromptKind = "room" | "stairs" | "exit"
+export type ArrivalPromptKind = "room" | "stairs" | "exit" | "obstacle"
 
 export type ArrivalPrompt = {
   kind: ArrivalPromptKind
@@ -40,6 +43,8 @@ export type ArrivalPrompt = {
   /** Whose room this is, so the family can name the prompt itself (FamilyMeta.invitation). Unset on a
    * `room` whose cell names no family, and on the two kinds that are the floor's own. */
   familyId?: string
+  /** What the span is, on an `obstacle` prompt, so the span names the prompt itself. */
+  obstacleKind?: ObstacleKind
   /** Takes what is offered — this does what arriving used to do on its own. */
   take: () => void
 }
@@ -48,6 +53,8 @@ export type SiteNavigation = {
   onCellClick: (row: number, col: number) => void
   /** The way in the explorer is standing at, or null when he is standing at none. */
   prompt: ArrivalPrompt | null
+  /** The explorer is out of sight, in the middle of a span: drawn nowhere until he lands. */
+  explorerHidden: boolean
 }
 
 // What a tap on the map does: walk there, and — for a room that reopens, a shop, a staircase or the way
@@ -65,18 +72,30 @@ export const useSiteNavigation = ({
   onEncounter,
   onSkippedConsumable,
   onExitReached,
+  playTraversal = crossAtOnce,
 }: NavigationArgs): SiteNavigation => {
   const [scheduleArrival] = useTimeout()
   const [prompt, setPrompt] = useState<ArrivalPrompt | null>(null)
+  const [explorerHidden, setExplorerHidden] = useState(false)
+  // A ref beside the state: a tap in the same tick as taking the span must already see it under way.
+  const traversing = useRef(false)
 
   // Hangs an offer beside the explorer. Taking it clears it first, so nothing offers twice what the
   // player has already taken.
   const offer = useCallback(
-    (kind: ArrivalPromptKind, row: number, col: number, accept: () => void, familyId?: string) =>
+    (
+      kind: ArrivalPromptKind,
+      row: number,
+      col: number,
+      accept: () => void,
+      familyId?: string,
+      obstacleKind?: ObstacleKind
+    ) =>
       setPrompt({
         kind,
         at: [row, col],
         familyId,
+        obstacleKind,
         take: () => {
           setPrompt(null)
           accept()
@@ -90,9 +109,34 @@ export const useSiteNavigation = ({
       grid ? Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100 : 0,
     [grid, explorerPos]
   )
+  // Taking a span: out of sight, the traversal plays, and only then is the player written down at the
+  // landing and drawn there. The position and the reveal go in the same render, so the explorer never
+  // shows at the launch after it has gone, and `finally` means a traversal that fails still ends with
+  // the player standing somewhere rather than gone for good.
+  const takeSpan = useCallback(
+    async (traversal: Traversal) => {
+      if (!grid) return
+      const [row, col] = traversal.to
+      const landing = getCell(grid, row, col)
+      if (!landing || landing.type === "empty") return
+      traversing.current = true
+      setExplorerHidden(true)
+      try {
+        await playTraversal(traversal)
+      } finally {
+        const edgeId = encodeEdge(currentFloor, row, col)
+        const address = cellAddress(grid, currentFloor, row, col) ?? edgeId
+        journeys.markCellExplored(landing.sectionHash ?? "", edgeId, address)
+        journeys.updatePosition(journeyId, address, edgeId)
+        setExplorerHidden(false)
+        traversing.current = false
+      }
+    },
+    [grid, journeys, journeyId, currentFloor, playTraversal]
+  )
   const onCellClick = useCallback(
     (row: number, col: number) => {
-      if (!grid) return
+      if (!grid || traversing.current) return
       const cell = getCell(grid, row, col)
       if (!cell || cell.type === "empty") return
       if (cell.state !== "reachable" && cell.state !== "completed") return
@@ -157,6 +201,21 @@ export const useSiteNavigation = ({
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
         scheduleArrival(walkDelay(row, col), () => offer("exit", row, col, onExitReached))
+        return
+      }
+
+      // A LAUNCH IS WALKED TO AND THEN OFFERED, like a staircase: the span between it and the landing is
+      // not ground, so reaching the far side is something the player takes rather than a tap on it. Its
+      // words come from what the span is (traversalInvitation), not from here.
+      const span =
+        cell.type === "corridor" ? oneWayRuns(grid).find(r => r.launch[0] === row && r.launch[1] === col) : undefined
+      if (span) {
+        journeys.markCellExplored(sectionHash, edgeId, address)
+        goHere()
+        const traversal: Traversal = { kind: span.kind, from: span.launch, to: span.landing, dir: span.dir }
+        scheduleArrival(walkDelay(row, col), () =>
+          offer("obstacle", row, col, () => void takeSpan(traversal), undefined, span.kind)
+        )
         return
       }
 
@@ -253,8 +312,9 @@ export const useSiteNavigation = ({
       onSkippedConsumable,
       onExitReached,
       offer,
+      takeSpan,
     ]
   )
 
-  return { onCellClick, prompt }
+  return { onCellClick, prompt, explorerHidden }
 }

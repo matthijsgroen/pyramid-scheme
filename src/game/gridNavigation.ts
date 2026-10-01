@@ -1,4 +1,4 @@
-import type { FloorGrid, GridCell, Direction, CellState, TombKeyReward, CorridorCell } from "./siteTypes"
+import type { FloorGrid, GridCell, Direction, CellState, TombKeyReward, CorridorCell, ObstacleKind } from "./siteTypes"
 
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 const opposite: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
@@ -33,7 +33,9 @@ export const getOwnedKeys = (grid: FloorGrid): ReadonlySet<string> => {
 
 /** Whether a cell is part of an obstacle's span rather than ground. Such a cell names no direction and
  * no neighbour names it, so no walk ever enters it; the marker is how the art and the lock find it. */
-export const isObstacleCell = (cell: GridCell | undefined): cell is CorridorCell & { obstacle: { dir: Direction } } =>
+export const isObstacleCell = (
+  cell: GridCell | undefined
+): cell is CorridorCell & { obstacle: NonNullable<CorridorCell["obstacle"]> } =>
   cell?.type === "corridor" && cell.obstacle !== undefined
 
 /** Every drop on the floor as one thing, read back off the cells that carry the `obstacle` marker: the
@@ -45,7 +47,13 @@ export const isObstacleCell = (cell: GridCell | undefined): cell is CorridorCell
  * Nothing here decides what can be walked: a walk follows `dirs` alone, and the obstacle names none. */
 export const oneWayRuns = (
   grid: FloorGrid
-): { launch: [number, number]; cells: [number, number][]; landing: [number, number]; dir: Direction }[] => {
+): {
+  launch: [number, number]
+  cells: [number, number][]
+  landing: [number, number]
+  dir: Direction
+  kind: ObstacleKind
+}[] => {
   const runs: ReturnType<typeof oneWayRuns> = []
   const continues = (r: number, c: number, dir: Direction): boolean => {
     const cell = getCell(grid, r, c)
@@ -55,13 +63,13 @@ export const oneWayRuns = (
     for (let c = 0; c < grid.cols; c++) {
       const first = getCell(grid, r, c)
       if (!isObstacleCell(first)) continue
-      const { dir } = first.obstacle
+      const { dir, kind } = first.obstacle
       const [dr, dc] = MOVES[dir]
       if (continues(r - dr, c - dc, dir)) continue
       const cells: [number, number][] = []
       for (let at = 0; continues(r + dr * at, c + dc * at, dir); at++) cells.push([r + dr * at, c + dc * at])
       const [lr, lc] = cells[cells.length - 1]
-      runs.push({ launch: [r - dr, c - dc], cells, landing: [lr + dr, lc + dc], dir })
+      runs.push({ launch: [r - dr, c - dc], cells, landing: [lr + dr, lc + dc], dir, kind })
     }
   return runs
 }

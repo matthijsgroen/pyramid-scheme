@@ -161,6 +161,27 @@ describe("generateFile — an authored layout survives the bake", () => {
       'regionLayout: { regions: [{ name: "mouth", appetite: "nothing" }, { name: "vault", appetite: "reward" }], connections: [["mouth", "vault"]], in: "mouth", out: "vault" }'
     )
   })
+
+  it("emits a container's placement so where it stands survives the round trip", () => {
+    const floor = {
+      pathPuzzles: 0,
+      difficulty: "starter" as const,
+      end: "treasure" as const,
+      exitOrStaircase: "exit" as const,
+      sideSections: [],
+      regionLayout: {
+        regions: [{ name: "vault", appetite: "reward" as const }],
+        connections: [],
+        in: "vault",
+        out: "vault",
+        placement: { enters: 0.25 },
+      },
+    }
+
+    expect(generateFile({ testJourney: [[floor]] })).toContain(
+      'regionLayout: { regions: [{ name: "vault", appetite: "reward" }], connections: [], in: "vault", out: "vault", placement: { enters: 0.25 } }'
+    )
+  })
 })
 
 // `serializeObject` (the shared emitter `forks`/`oneWays`/`handles` reuse) only reaches a flat

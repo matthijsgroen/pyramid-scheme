@@ -80,6 +80,8 @@ type Props = {
    * itself never sets it. */
   freeWalk?: boolean
   explorerPos?: readonly [number, number]
+  /** The explorer is mid-span and drawn nowhere until he lands. */
+  explorerHidden?: boolean
   /** Current floor index. Keys the explorer dot so a floor switch remounts it (instant snap to the
    * new floor's entrance) instead of animating a walk from the previous floor's coordinates. */
   currentFloor?: number
@@ -1074,6 +1076,7 @@ export const SiteMapView = ({
   revealAllCells = false,
   freeWalk = false,
   explorerPos,
+  explorerHidden = false,
   currentFloor,
   pendingCells,
   ownedKeys,
@@ -1574,7 +1577,7 @@ export const SiteMapView = ({
 
               <StandingLayer sprites={behindExplorer} />
 
-              {explorerPos && (
+              {explorerPos && !explorerHidden && (
                 <ExplorerDot
                   key={currentFloor}
                   grid={grid}
