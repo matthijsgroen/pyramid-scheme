@@ -50,14 +50,26 @@ describe("a drop's obstacle cells are a hole, not paving", () => {
     })
 })
 
-describe("a drop with no painted art keeps its plain corridor", () => {
-  it("draws floor on every obstacle cell at a rank with no drop sprite", () => {
+describe("a drop is a hole at every rank, painted or not", () => {
+  it("draws no floor on any obstacle cell at a rank with no drop sprite", () => {
     for (const axis of AXES) {
       const { grid, at } = dropGrid(axis, "room", "room", "visible")
       const starter = { ...grid, difficulty: "starter" as const }
       const claims = buildRoomClaims(starter)
       const floors = obstacleIndexes.map(i => cellFloorAt(starter, claims, undefined, ...at(i)))
-      expect(floors.map(f => typeof f)).toEqual(obstacleIndexes.map(() => "object"))
+      expect(floors).toEqual(obstacleIndexes.map(() => "unlit"))
+    }
+  })
+
+  it("draws the same hole at every rank, sprite or none", () => {
+    for (const axis of AXES) {
+      const { grid, at } = dropGrid(axis, "room", "room", "visible")
+      const holes = (["starter", "junior", "expert", "master", "wizard"] as const).map(difficulty => {
+        const floor = { ...grid, difficulty }
+        const claims = buildRoomClaims(floor)
+        return obstacleIndexes.map(i => cellFloorAt(floor, claims, undefined, ...at(i)))
+      })
+      expect(holes).toEqual(holes.map(() => obstacleIndexes.map(() => "unlit")))
     }
   })
 })

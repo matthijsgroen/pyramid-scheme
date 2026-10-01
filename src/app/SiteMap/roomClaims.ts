@@ -6,7 +6,6 @@ import { CELL, SIDE_W } from "./mapScale"
 import { authoredKindsFor } from "./authoredKinds"
 import { companionFor } from "./companionProps"
 import { tileUrl } from "./tileAssets"
-import { DROP_ART } from "./nodeArt"
 import { isLockedGate, shapeKindFor } from "./nodeKinds"
 import type { Difficulty } from "@/data/difficultyLevels"
 
@@ -458,16 +457,19 @@ const cellsThisSideOfAWard = (grid: FloorGrid): ReadonlySet<string> => {
  * Its cells are the gap the player cannot cross, and the drop's sprite covers only a fifth of the run, so
  * drawing them as floor painted walkable ground under most of it. `cellFloorAt` answers "unlit" for a pit
  * (no floor, no wall face, a black mouth where the launch and the landing meet it) and `buildTileRegions`
- * keeps the rock around it standing. A fogged obstacle is not a pit: it is already "unlit", and the drop
- * is not revealed until its cells are lit. Nor is one with no painted sprite: it keeps the plain corridor
- * it always drew rather than a hole with nothing on it.
+ * keeps the rock around it standing.
+ *
+ * WHETHER A SPRITE EXISTS FOR IT DOES NOT COME INTO IT. The gap is a hole at every rank, painted or not:
+ * a tier with no drop art draws a bare opening rather than paving the player cannot step on, because the
+ * floor is the thing that lies. The sprite dresses a hole; it was never what makes one.
+ *
+ * A fogged obstacle is not a pit: it is already "unlit", and the drop is not revealed until its cells
+ * are lit.
  */
 export const pitStateAt = (grid: FloorGrid, r: number, c: number): CellState | null => {
   const cell = cellAt(grid, r, c)
   if (cell.type !== "corridor" || !cell.obstacle || cell.state === "fogged") return null
-  const art = DROP_ART[cell.obstacle.dir]
-  const floorTier = grid.difficulty ?? "starter"
-  return art && tileUrl(cell.difficulty ?? floorTier, art.name) ? cell.state : null
+  return cell.state
 }
 
 export const cellFloorAt = (
