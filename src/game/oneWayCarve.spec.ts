@@ -72,11 +72,6 @@ const addressAt = (grid: FloorGrid, [r, c]: [number, number]) => {
   return cell.type === "empty" ? undefined : cell.sectionAddress
 }
 
-/** Every passage running from a cell of one authored section into a cell of another, whichever ways it
- * may be walked — the authored pair read off the grid by address rather than by what it looks like. */
-const crossings = (grid: FloorGrid, from: string, to: string) =>
-  edgesOf(grid).filter(edge => addressAt(grid, edge.from) === from && addressAt(grid, edge.to) === to)
-
 const dirsAt = (grid: FloorGrid, [r, c]: [number, number]): ReadonlySet<Direction> => {
   const cell = grid.cells[r][c]
   if (cell.type === "empty") throw new Error(`nothing is carved at ${r},${c}`)
@@ -132,44 +127,69 @@ const twoWayReach = (grid: FloorGrid, shut: string): Set<string> => {
   return seen
 }
 
-/** Every drop on the grid: a chain of one-way steps, one per cell of the run plus the step onto the
- * landing. `source` and `landing` are the two NODES, `run` the cells strictly between them in order. */
-const dropPairs = (grid: FloorGrid): { source: string; landing: string; run: string[] }[] => {
-  const edges = oneWayEdges(grid)
-  const at = (cell: [number, number]) => posKey(cell[0], cell[1])
-  const starts = edges.filter(first => !edges.some(into => at(into.to) === at(first.from)))
-  return starts.map(first => {
-    const run: string[] = []
-    let step = first
-    for (;;) {
-      const next = edges.find(outOf => at(outOf.from) === at(step.to))
-      if (!next) break
-      run.push(at(step.to))
-      step = next
+/** Every drop on the grid, read off the cells that carry the `obstacle` marker: the cells of its span in
+ * order, the launch and landing cells either side, and the two nodes they hang off. */
+type Drop = { source: string; launch: string; run: string[]; landingCell: string; landing: string; dir: Direction }
+const dropPairs = (grid: FloorGrid): Drop[] => {
+  const markerAt = (r: number, c: number) => {
+    const cell = grid.cells[r]?.[c]
+    return cell?.type === "corridor" ? cell.obstacle : undefined
+  }
+  const drops: Drop[] = []
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const marker = markerAt(r, c)
+      if (!marker) continue
+      const [dr, dc] = MOVES[marker.dir]
+      if (markerAt(r - dr, c - dc)?.dir === marker.dir) continue
+      const run: string[] = []
+      let [er, ec] = [r, c]
+      while (markerAt(er, ec)?.dir === marker.dir) {
+        run.push(posKey(er, ec))
+        ;[er, ec] = [er + dr, ec + dc]
+      }
+      drops.push({
+        source: posKey(r - 2 * dr, c - 2 * dc),
+        launch: posKey(r - dr, c - dc),
+        run,
+        landingCell: posKey(er, ec),
+        landing: posKey(er + dr, ec + dc),
+        dir: marker.dir,
+      })
     }
-    return { source: at(first.from), landing: at(step.to), run }
-  })
+  return drops
 }
 
+const addressOfKey = (grid: FloorGrid, key: string) => {
+  const [r, c] = key.split(",").map(Number)
+  return addressAt(grid, [r, c])
+}
+
+/** The drops whose launch stands in section `from` and whose landing stands in section `to`, read off
+ * the addresses of the cells themselves. */
+const dropsBetween = (grid: FloorGrid, from: string, to: string) =>
+  dropPairs(grid).filter(
+    drop => addressOfKey(grid, drop.launch) === from && addressOfKey(grid, drop.landingCell) === to
+  )
+
 describe("a floor that authors a one-way", () => {
-  // A drop is two one-way steps in a row: out of an `upper` node into the connector hanging off it
-  // (which inherits `upper`), and out of that connector into the `lower` node it lands on. Both ends
-  // read off the authored addresses, so a drop aimed into a section nobody named fails here — and
-  // nothing else on the floor may be one-way.
-  it("runs the drop between the two sections the author named, and leaves nothing else one-way", () => {
+  it("carves the drop between the two sections the author named, and leaves no cell one-way", () => {
+    // Launch and landing are read off the addresses of the cells themselves, so a drop aimed into a
+    // section nobody named fails here. Every passage on the floor is joined both ways: the obstacle is
+    // a span of cells nothing names, never a corridor with a one-way direction.
     const grid = assembled(floorWithDrop())
-    const spans = oneWayEdges(grid).map(edge => `${addressAt(grid, edge.from)} to ${addressAt(grid, edge.to)}`)
-    // The run's cells answer to the section the drop falls FROM; only the last step crosses over.
-    expect(spans.sort()).toEqual(["upper to lower", ...Array(ONE_WAY_RUN_CELLS).fill("upper to upper")])
+    expect(dropsBetween(grid, "upper", "lower")).toHaveLength(1)
+    expect(dropPairs(grid)).toHaveLength(1)
+    expect(oneWayEdges(grid)).toEqual([])
   })
 
-  it("declares five cells, the odd count nearest the art's measured 5.6", () => {
+  it("declares five obstacle cells, the odd count nearest the art's measured 5.6", () => {
     expect(ONE_WAY_RUN_CELLS).toBe(5)
   })
 
-  it("reserves a straight run of the declared length between the two nodes, every cell one-way onward", () => {
-    // Asserted cell by cell, on every seed that carves. A cell that named the way back would let a
-    // player climb the drop; a landing that named the way in would let them enter it from below.
+  it("carves the launch, every obstacle cell and the landing, each as the design says", () => {
+    // Asserted cell by cell, on every seed that carves: node, launch, each of the x obstacle cells,
+    // landing, node — 2 + x cells between two nodes.
     let checked = 0
     for (let seed = 0; seed < 60; seed++) {
       const result = assembleFloor("spec:1", floorWithDrop(), seed, undefined, {
@@ -181,33 +201,59 @@ describe("a floor that authors a one-way", () => {
       const drops = dropPairs(grid)
       expect(drops).toHaveLength(1)
       const [drop] = drops
+      const { dir } = drop
+      const [dr, dc] = MOVES[dir]
       const [fr, fc] = drop.source.split(",").map(Number)
-      const [lr, lc] = drop.landing.split(",").map(Number)
+      const at = (steps: number): [number, number] => [fr + dr * steps, fc + dc * steps]
+
+      // The far node stands 2 + x + 1 steps from the near one.
+      expect(drop.landing).toBe(posKey(...at(ONE_WAY_RUN_CELLS + 3)))
       expect(drop.run).toHaveLength(ONE_WAY_RUN_CELLS)
-      const step: [number, number] = [Math.sign(lr - fr), Math.sign(lc - fc)]
-      expect(Math.abs(step[0]) + Math.abs(step[1])).toBe(1)
-      expect([lr - fr, lc - fc]).toEqual([step[0] * (ONE_WAY_RUN_CELLS + 1), step[1] * (ONE_WAY_RUN_CELLS + 1)])
-      const dir = (Object.keys(MOVES) as Direction[]).find(d => MOVES[d][0] === step[0] && MOVES[d][1] === step[1])!
-      expect(dirsAt(grid, [fr, fc]).has(dir)).toBe(true)
+      // The near node names the way to the launch; the far node names the way to the landing.
+      expect(dirsAt(grid, at(0)).has(dir)).toBe(true)
+      expect(dirsAt(grid, at(ONE_WAY_RUN_CELLS + 3)).has(OPPOSITE[dir])).toBe(true)
+
+      // The launch: standable, reached from the near node, names nothing toward the obstacle.
+      expect(drop.launch).toBe(posKey(...at(1)))
+      expect(grid.cells[at(1)[0]][at(1)[1]].type).toBe("corridor")
+      expect([...dirsAt(grid, at(1))]).toEqual([OPPOSITE[dir]])
+
+      // Every obstacle cell: a corridor drawn on the grid, naming no direction at all, marked with the
+      // way the drop runs.
       drop.run.forEach((cellKey, k) => {
-        expect(cellKey).toBe(posKey(fr + step[0] * (k + 1), fc + step[1] * (k + 1)))
-        const cell = grid.cells[fr + step[0] * (k + 1)][fc + step[1] * (k + 1)]
+        expect(cellKey).toBe(posKey(...at(k + 2)))
+        const cell = grid.cells[at(k + 2)[0]][at(k + 2)[1]]
         expect(cell.type).toBe("corridor")
-        expect([...dirsAt(grid, [fr + step[0] * (k + 1), fc + step[1] * (k + 1)])]).toEqual([dir])
+        if (cell.type !== "corridor") return
+        expect([...cell.dirs]).toEqual([])
+        expect(cell.obstacle).toEqual({ dir })
       })
-      // The landing names no way up into the run.
-      expect(dirsAt(grid, [lr, lc]).has(OPPOSITE[dir])).toBe(false)
+
+      // The landing: standable, reached from the far node, names nothing back toward the obstacle.
+      expect(drop.landingCell).toBe(posKey(...at(ONE_WAY_RUN_CELLS + 2)))
+      expect(grid.cells[at(ONE_WAY_RUN_CELLS + 2)[0]][at(ONE_WAY_RUN_CELLS + 2)[1]].type).toBe("corridor")
+      expect([...dirsAt(grid, at(ONE_WAY_RUN_CELLS + 2))]).toEqual([dir])
     }
     expect(checked).toBeGreaterThan(0)
   })
 
-  it("shuts the landing behind, so the section the drop falls into has no way back up it", () => {
-    const grid = assembled(floorWithDrop())
-    // Selected by the AUTHORED PAIR — every passage running from an `upper` cell into a `lower` one —
-    // and not by whether it is one-way, which is what is being asserted. The maze is free to join the
-    // two sections with an ordinary corridor as well; exactly one of them is shut behind.
-    const intoLower = crossings(grid, "upper", "lower")
-    expect(intoLower.filter(edge => !dirsAt(grid, edge.to).has(OPPOSITE[edge.dir]))).toHaveLength(1)
+  it("lets no cell on the floor name a way into an obstacle cell, so no walk can cross it", () => {
+    // The whole set, not an absence of one cell's claim: every (cell, direction) pair on the floor
+    // that leads onto an obstacle cell, which is none — and every obstacle cell names nothing itself.
+    let checked = 0
+    for (let seed = 0; seed < 60; seed++) {
+      const result = assembleFloor("spec:1", floorWithDrop(), seed, undefined, {
+        floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
+      })
+      if (!result.success) continue
+      checked++
+      const grid = result.grid
+      const obstacle = new Set(dropPairs(grid).flatMap(drop => drop.run))
+      expect(obstacle.size).toBe(ONE_WAY_RUN_CELLS)
+      expect(edgesOf(grid).filter(edge => obstacle.has(posKey(edge.to[0], edge.to[1])))).toEqual([])
+      expect(edgesOf(grid).filter(edge => obstacle.has(posKey(edge.from[0], edge.from[1])))).toEqual([])
+    }
+    expect(checked).toBeGreaterThan(0)
   })
 
   it("builds the drop's connector with the identity every other corridor carries", () => {
@@ -220,7 +266,7 @@ describe("a floor that authors a one-way", () => {
     const source = grid.cells[fr][fc]
     if (source.type === "empty") throw new Error("the drop is not carved")
     expect(pair.run).toHaveLength(ONE_WAY_RUN_CELLS)
-    for (const cellKey of pair.run) {
+    for (const cellKey of [pair.launch, ...pair.run]) {
       const [r, c] = cellKey.split(",").map(Number)
       const connector = grid.cells[r][c]
       if (connector.type === "empty") throw new Error("the drop is not carved")
@@ -230,9 +276,18 @@ describe("a floor that authors a one-way", () => {
       expect(connector.ordinal).toBeDefined()
       expect(connector.difficulty).toBe("junior")
     }
+    // The landing answers to the section it stands in, which is the far node's.
+    const [lr, lc] = pair.landing.split(",").map(Number)
+    const far = grid.cells[lr][lc]
+    const [mr, mc] = pair.landingCell.split(",").map(Number)
+    const landing = grid.cells[mr][mc]
+    if (far.type === "empty" || landing.type === "empty") throw new Error("the drop is not carved")
+    expect(landing.sectionAddress).toBe(far.sectionAddress)
+    expect(landing.sectionHash).toBe(far.sectionHash)
+    expect(landing.ordinal).toBeDefined()
   })
 
-  it("never lets the drop's connector share its (sectionAddress, ordinal) with another cell", () => {
+  it("never lets a cell of the drop share its (sectionAddress, ordinal) with another cell", () => {
     // (sectionAddress, ordinal) is the pair a save actually keys a corridor by once it has no room slot
     // (cellIdentity.ts's fallback `~ordinal`, filed under the cell's own sectionAddress) — so the drop's
     // connector claiming the same pair as any other cell is one save slot doing double duty. Checked
@@ -258,7 +313,7 @@ describe("a floor that authors a one-way", () => {
           : `${cell.sectionAddress}#${cell.ordinal}`
       }
       expect(pair.run).toHaveLength(ONE_WAY_RUN_CELLS)
-      for (const runKey of pair.run) {
+      for (const runKey of [pair.launch, ...pair.run, pair.landingCell]) {
         const [mr, mc] = runKey.split(",").map(Number)
         const identity = identityAt(mr, mc)
         if (identity === undefined) throw new Error("the drop is not carved")
@@ -333,7 +388,7 @@ describe("a floor that authors a one-way", () => {
     // If this floor DOES carve, the drop was placeable after all — so the authored passage has to be
     // on it, which is the claim, rather than a shape (a cell with one way out) every carve has anyway.
     if (result.success) {
-      expect(crossings(result.grid, "only", "main")).not.toEqual([])
+      expect(dropsBetween(result.grid, "only", "main")).not.toEqual([])
       return
     }
     expect(result.reasons.some(reason => reason.type === "oneWayUnsatisfied")).toBe(true)
@@ -341,7 +396,7 @@ describe("a floor that authors a one-way", () => {
 
   it("refuses, by name and on every seed, more runs than the floor has room to reserve", () => {
     // Never a shorter drop, never one placed somewhere else: where the next run does not fit, the floor
-    // says which drop it could not place. Each run reserves ONE_WAY_RUN_CELLS cells of its own, so a
+    // says which drop it could not place. Each drop reserves 2 + ONE_WAY_RUN_CELLS cells of its own, so a
     // small floor asked for far more drops than it has ground for runs out whatever the seed.
     const crowded: FloorConfig = {
       pathPuzzles: 0,
@@ -356,6 +411,27 @@ describe("a floor that authors a one-way", () => {
         floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
       })
       if (result.success) throw new Error(`seed ${seed} carved a drop on a floor with no room for its run`)
+      expect(result.reasons).toContainEqual({ type: "oneWayUnsatisfied", from: "only", to: "main" })
+    }
+  })
+
+  it("refuses, on every seed, drops whose 2 + x cells each will not fit though x alone would", () => {
+    // Five drops fit on this floor when only the obstacle's own cells are reserved between two nodes
+    // (three of forty seeds carve them); reserving a launch and a landing as well leaves no room for
+    // the fifth on any seed, and the floor says which drop it could not place.
+    const five: FloorConfig = {
+      pathPuzzles: 0,
+      difficulty: "junior",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [{ pathPuzzles: 0, difficulty: "junior", end: "treasure", label: "only" }],
+      oneWays: Array.from({ length: 5 }, () => ({ from: "only", to: "main" })),
+    }
+    for (let seed = 0; seed < 40; seed++) {
+      const result = assembleFloor("spec:1", five, seed, undefined, {
+        floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
+      })
+      if (result.success) throw new Error(`seed ${seed} carved five drops of 2 + x cells where none fit`)
       expect(result.reasons).toContainEqual({ type: "oneWayUnsatisfied", from: "only", to: "main" })
     }
   })
@@ -432,8 +508,7 @@ describe("a floor that authors a one-way", () => {
       })
       if (!result.success) continue
       carved++
-      const intoMain = crossings(result.grid, "vault", "main")
-      expect(intoMain.filter(edge => !dirsAt(result.grid, edge.to).has(OPPOSITE[edge.dir]))).toHaveLength(1)
+      expect(dropsBetween(result.grid, "vault", "main")).toHaveLength(1)
     }
     expect(carved).toBeGreaterThan(0)
   })
@@ -459,8 +534,7 @@ describe("a floor that authors a one-way", () => {
       })
       if (!result.success) continue
       carved++
-      const inside = crossings(result.grid, "vault", "vault")
-      expect(inside.filter(edge => !dirsAt(result.grid, edge.to).has(OPPOSITE[edge.dir]))).not.toEqual([])
+      expect(dropsBetween(result.grid, "vault", "vault")).not.toEqual([])
     }
     expect(carved).toBeGreaterThan(0)
   })
@@ -494,8 +568,7 @@ describe("a floor that authors a one-way", () => {
       })
       if (!result.success) continue
       carvedLeaving++
-      const out = crossings(result.grid, "secret", "main")
-      expect(out.filter(edge => !dirsAt(result.grid, edge.to).has(OPPOSITE[edge.dir]))).toHaveLength(1)
+      expect(dropsBetween(result.grid, "secret", "main")).toHaveLength(1)
     }
     expect(carvedLeaving).toBeGreaterThan(0)
   })
@@ -553,10 +626,10 @@ describe("a floor that authors a one-way", () => {
       checked++
       const grid = result.grid
       const exitKey = `${grid.exitPos[0]},${grid.exitPos[1]}`
-      for (const edge of oneWayEdges(grid)) {
-        expect(`${edge.from[0]},${edge.from[1]}`).not.toBe(exitKey)
-        expect(`${edge.to[0]},${edge.to[1]}`).not.toBe(exitKey)
-      }
+      expect(dropPairs(grid).length).toBeGreaterThan(0)
+      for (const drop of dropPairs(grid))
+        for (const key of [drop.source, drop.launch, ...drop.run, drop.landingCell, drop.landing])
+          expect(key).not.toBe(exitKey)
     }
     expect(checked).toBeGreaterThan(0)
   })

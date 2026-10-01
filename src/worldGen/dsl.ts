@@ -203,6 +203,9 @@ export type FloorConstraint<TExtra extends string = never> = {
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** The seed this floor carves at, in place of the one its address derives. Authored only where the floor
+   * has no baked output to carry a searched seed; every other floor's seed is stamped by the bake. */
+  seed?: number
   /** Isolates the main path's cells from leftover maze edges in a compact layout, so a
    * shortcut can't merge around a main-path puzzle room. */
   sealed?: boolean
@@ -345,6 +348,9 @@ export type PyramidConstraint = {
   windyStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** The seed the floor carves at, in place of the one its address derives. Authored only where the floor
+   * has no baked output to carry a searched seed; every other floor's seed is stamped by the bake. */
+  seed?: number
   /** Chance [0-1], rolled per pyramid, of an extra-large packing floor. Ignored if packing is set. */
   packingChance?: number
   /** packing used on a packingChance hit. Default 1.6. */

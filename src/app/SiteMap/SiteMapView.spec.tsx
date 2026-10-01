@@ -27,6 +27,7 @@ import { registerFamily } from "@/app/families/familyRegistry"
 import { floorWithHandle } from "@/game/testSupport/handleFixtures"
 import { cellAddress } from "@/game/cellAddress"
 import { markFor } from "@/game/mark"
+import { AXES, DROP_AT, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
 
 // Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
 // place of its own), so a change there can't silently break every position assumption in this file.
@@ -368,130 +369,63 @@ describe("SiteMapView — room clickability", () => {
   })
 })
 
-describe("SiteMapView — one-way drop, the barred arrow", () => {
-  // source(0,0) --e--> mouth(0,1), dirs {e} only --e--> landing(0,2), dirs {} — the shape a carved
-  // drop leaves: the landing names no direction back into the mouth (the asymmetry itself), which is
-  // what still stops the player crossing even though they may now walk onto the mouth from the
-  // landing beside it.
-  const dropGrid = (landingState: CellState): FloorGrid =>
-    makeGrid([
-      [
-        { type: "room", roomType: "encounter", family: "sumplete", dirs: new Set<Direction>(["e"]), state: "fogged" },
-        { type: "corridor", dirs: new Set<Direction>(["e"]), state: "visible" },
-        { type: "room", roomType: "encounter", family: "sumplete", dirs: new Set<Direction>(), state: landingState },
-      ],
-    ])
+describe("SiteMapView — one-way drop", () => {
+  // from-node, launch, the obstacle's cells, landing, to-node, all in sight: the drop as the carve lays it.
+  const { grid: bare, at } = dropGrid(AXES[0], "room", "room", "visible")
+  const grid: FloorGrid = { ...bare, difficulty: "expert" }
+  const every = Array.from({ length: DROP_AT.toNode + 1 }, (_, i) => at(i))
+  const obstacle = obstacleIndexes.map(at)
+  const cellKey = ([r, c]: readonly [number, number]) => `${r},${c}`
 
-  const findCell = (container: HTMLElement, r: number, c: number) => {
+  const findCell = (container: HTMLElement, [r, c]: readonly [number, number]) => {
     const { cx, cy } = cellCenter(r, c)
     return Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
       el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
     )
   }
 
-  it("draws a barred arrow on the mouth when the explorer stands there", () => {
-    const { container } = render(
-      <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 1]} />
-    )
-    expect(container.querySelectorAll("[data-one-way-arrow]").length).toBeGreaterThan(0)
-  })
-
-  it("draws an arrow toward the mouth on the mouth's own tap target, the way any other exit is drawn", () => {
-    const { container } = render(
-      <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 2]} />
-    )
-    const mouth = findCell(container, 0, 1)!
-    expect(mouth.style.cursor).toBe("pointer")
-    // The mouth lies west of the landing, so the arrow is the run-target triangle turned west.
-    expect(mouth.querySelector("polygon")?.getAttribute("transform")).toBe("rotate(270)")
-  })
-
-  it("draws something on every cell it attaches a tap to, wherever the explorer stands", () => {
-    for (const landing of ["reachable", "completed"] as const) {
-      for (const at of [
-        [0, 0],
-        [0, 1],
-        [0, 2],
-      ] as const) {
-        const { container, unmount } = render(
-          <SiteMapView grid={dropGrid(landing)} onCellClick={() => {}} explorerPos={at} />
-        )
-        const taps = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).filter(
-          el => el.style.cursor === "pointer"
-        )
-        for (const tap of taps) expect(tap.querySelector("svg")?.childElementCount ?? 0).toBeGreaterThan(0)
-        unmount()
-      }
+  it("attaches a tap to no cell of the obstacle, wherever the explorer stands", () => {
+    for (const standing of every) {
+      const { container, unmount } = render(<SiteMapView grid={grid} onCellClick={() => {}} explorerPos={standing} />)
+      for (const cell of obstacle) expect(findCell(container, cell)?.style.cursor).not.toBe("pointer")
+      unmount()
     }
   })
 
-  it("draws no barred arrow at the landing now that the player may walk right up to the mouth", () => {
-    const { container } = render(
-      <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 2]} />
-    )
-    expect(container.querySelectorAll("[data-one-way-arrow]")).toHaveLength(0)
+  it("draws something on every cell it attaches a tap to, wherever the explorer stands", () => {
+    for (const standing of every) {
+      const { container, unmount } = render(<SiteMapView grid={grid} onCellClick={() => {}} explorerPos={standing} />)
+      const taps = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).filter(
+        el => el.style.cursor === "pointer"
+      )
+      for (const tap of taps) expect(tap.querySelector("svg")?.childElementCount ?? 0).toBeGreaterThan(0)
+      unmount()
+    }
   })
 
-  it.each([[1], [2]])("draws the explorer after the drop's art, in front of it, at column %i", c => {
-    const { container } = render(
-      <SiteMapView
-        grid={{ ...dropGrid("reachable"), difficulty: "expert" }}
-        onCellClick={() => {}}
-        explorerPos={[0, c]}
-      />
-    )
-    const drop = container.querySelector('[data-node-sprite="drop:0,1"]')!
-    const explorer = container.querySelector("[data-explorer]")!
-    expect(drop).not.toBeNull()
-    expect(explorer).not.toBeNull()
-    expect(drop.compareDocumentPosition(explorer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-  })
+  it.each([DROP_AT.launch, DROP_AT.landing])(
+    "draws the explorer after the drop's art, in front of it, at index %i",
+    index => {
+      const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} explorerPos={at(index)} />)
+      const drop = container.querySelector(`[data-node-sprite="drop:${cellKey(obstacle[obstacle.length - 1])}"]`)!
+      const explorer = container.querySelector("[data-explorer]")!
+      expect(drop).not.toBeNull()
+      expect(explorer).not.toBeNull()
+      expect(drop.compareDocumentPosition(explorer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    }
+  )
 
-  it("draws no barred arrow for that same mouth when the explorer stands anywhere else", () => {
-    const { container } = render(
-      <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 0]} />
+  it("offers the player a tap on the launch and on the landing from their own node", () => {
+    // The ends are dead ends the player reaches by walking, so they are tappable once seen as reachable.
+    const reached: FloorGrid = { ...dropGrid(AXES[0], "room", "room", "reachable").grid, difficulty: "expert" }
+    const { container: fromSide } = render(
+      <SiteMapView grid={reached} onCellClick={() => {}} explorerPos={at(DROP_AT.fromNode)} />
     )
-    expect(container.querySelectorAll("[data-one-way-arrow]")).toHaveLength(0)
-  })
-
-  it("draws no barred arrow at all with no explorer position given", () => {
-    const { container } = render(<SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} />)
-    expect(container.querySelectorAll("[data-one-way-arrow]")).toHaveLength(0)
-  })
-
-  it("draws no barred arrow where no one-way mouth stands beside the room (control)", () => {
-    const { container } = render(
-      <SiteMapView grid={makeGrid([[room("reachable"), empty]])} onCellClick={() => {}} explorerPos={[0, 0]} />
+    expect(findCell(fromSide, at(DROP_AT.launch))?.style.cursor).toBe("pointer")
+    const { container: toSide } = render(
+      <SiteMapView grid={reached} onCellClick={() => {}} explorerPos={at(DROP_AT.toNode)} />
     )
-    expect(container.querySelectorAll("[data-one-way-arrow]")).toHaveLength(0)
-  })
-
-  it("is not its own click target — a tap on it does nothing, and the source cell it stands over takes no tap either", () => {
-    const onClick = vi.fn()
-    const { container } = render(
-      <SiteMapView grid={dropGrid("reachable")} onCellClick={onClick} explorerPos={[0, 1]} />
-    )
-    const arrow = container.querySelector("[data-one-way-arrow]")!
-    fireEvent.click(arrow)
-    expect(onClick).not.toHaveBeenCalled()
-    expect(findCell(container, 0, 0)?.style.cursor).not.toBe("pointer")
-  })
-
-  it("stands a full cell out from the mouth, over the source cell beyond it — the same distance a RunTargetArrow keeps from the player, not tucked against their feet", () => {
-    const { container } = render(
-      <SiteMapView grid={dropGrid("reachable")} onCellClick={() => {}} explorerPos={[0, 1]} />
-    )
-    const arrow = container.querySelector<HTMLElement>("[data-one-way-arrow]")!
-    const left = parseFloat(arrow.style.left)
-    const top = parseFloat(arrow.style.top)
-    const width = parseFloat(arrow.style.width)
-    const height = parseFloat(arrow.style.height)
-    // Source at (0,0) is one cell west of the mouth at (0,1), continuing the drop's own line away
-    // from the landing — the arrow's box is centred there, not offset by some fraction of the
-    // mouth's own cell.
-    const source = cellCenter(0, 0)
-    expect(left + width / 2).toBeCloseTo(source.cx)
-    expect(top + height / 2).toBeCloseTo(source.cy)
+    expect(findCell(toSide, at(DROP_AT.landing))?.style.cursor).toBe("pointer")
   })
 })
 

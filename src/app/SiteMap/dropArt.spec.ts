@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor, ONE_WAY_RUN_CELLS } from "@/game/siteAssembler"
-import { isOneWayMouth, revealAll } from "@/game/gridNavigation"
+import { oneWayRuns, revealAll } from "@/game/gridNavigation"
 import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 import { DROP_ART } from "./nodeArt"
 import { CELL, COL_PITCH, cellCenter } from "./mapScale"
 import { buildRoomClaims } from "./roomClaims"
 import { nodeSpritesFor } from "./SiteMapView"
 import { tileUrl } from "./tileAssets"
-import { floorFrom, type Piece } from "./floorFixtures.testing"
+import { AXES, corridorPiece, dropGrid, floorFrom, obstacleIndexes, type Piece } from "./floorFixtures.testing"
 // Populates the family registry, as every assembled-floor spec relies on.
 import "@/mods/registerModApps"
 
@@ -39,52 +39,55 @@ const gridOf = (cells: GridCell[][]): FloorGrid => ({
 const dropsIn = (grid: FloorGrid) =>
   nodeSpritesFor(grid, buildRoomClaims(grid), "expert").filter(s => s.key.startsWith("drop:"))
 
-// A drop is a run of ONE_WAY_RUN_CELLS corridor cells, each naming only the way onward, between a
-// departure that names the run and a landing that names no way back.
-const run = (dir: Direction, state: CellState = "visible") =>
-  Array.from({ length: ONE_WAY_RUN_CELLS }, () => corridor([dir], state))
-const eastGrid = () => gridOf([[room(["e"]), ...run("e"), room([])]])
-const westGrid = () => gridOf([[room([]), ...run("w"), room(["w"])]])
-const northGrid = () => gridOf([[room([])], ...run("n").map(c => [c]), [room(["n"])]])
-const southGrid = () => gridOf([[room(["s"])], ...run("s").map(c => [c]), [room([])]])
-// The run's landing end, where the drop is keyed.
-const EAST_END = ONE_WAY_RUN_CELLS
-const WEST_END = 1
-const SOUTH_END = ONE_WAY_RUN_CELLS
+// A drop as the carve lays it: a launch, ONE_WAY_RUN_CELLS obstacle cells, a landing, between two nodes.
+// `dropGrid` lays one along any axis; `last` is the obstacle's last cell, where the drop is keyed.
+const dropAlong = (travel: Direction, state: CellState = "visible") => {
+  const axis = AXES.find(a => a.travel === travel)!
+  const { grid, at } = dropGrid(axis, "room", "room", state)
+  return { grid: { ...grid, difficulty: "expert" as const }, at, last: at(obstacleIndexes[obstacleIndexes.length - 1]) }
+}
 
-// A mouth carries one direction, toward its landing; the landing carries none back.
-const mouthToward =
+// The drop's own cells, in the shape `floorFrom` draws them: a launch naming only its node, an obstacle
+// naming nothing, a landing naming only its node.
+const onlyToward =
   (dir: Direction): Piece =>
-  () => ({ type: "corridor", dirs: new Set<Direction>([dir]), state: "fogged" })
-const landing: Piece = () => ({ type: "corridor", dirs: new Set<Direction>(), state: "fogged" })
-const both = { M: mouthToward("e"), S: mouthToward("s"), T: landing }
+  dirs =>
+    corridorPiece(dirs.filter(d => d === dir))
+const obstacleOf =
+  (dir: Direction): Piece =>
+  () => ({ type: "corridor", dirs: new Set<Direction>(), state: "fogged", obstacle: { dir } })
+const both = {
+  L: onlyToward("w"),
+  M: obstacleOf("e"),
+  T: onlyToward("e"),
+  N: onlyToward("n"),
+  S: obstacleOf("s"),
+  D: onlyToward("s"),
+}
 
-describe("a one-way drop draws its art across its run", () => {
+describe("a one-way drop draws its art across its obstacle", () => {
   it("has the painted east asset to draw", () => {
     expect(dropEastUrl).toBeTruthy()
   })
 
-  it("draws dropEast unmirrored for an east-going mouth, keyed on the run's landing end", () => {
-    const grid = eastGrid()
-    expect(isOneWayMouth(grid, 0, EAST_END)).toBe(true)
+  it("draws dropEast unmirrored for an east-going drop, keyed on the obstacle's last cell", () => {
+    const { grid, last } = dropAlong("e")
     const drops = dropsIn(grid)
-    expect(drops.map(d => d.key)).toEqual([`drop:0,${EAST_END}`])
+    expect(drops.map(d => d.key)).toEqual([`drop:${last[0]},${last[1]}`])
     expect(drops[0].url).toBe(dropEastUrl)
     expect(drops[0].mirrored).toBe(false)
   })
 
-  it("draws the same asset mirrored for a west-going mouth", () => {
-    const grid = westGrid()
-    expect(isOneWayMouth(grid, 0, WEST_END)).toBe(true)
+  it("draws the same asset mirrored for a west-going drop", () => {
+    const { grid, last } = dropAlong("w")
     const drops = dropsIn(grid)
-    expect(drops.map(d => d.key)).toEqual([`drop:0,${WEST_END}`])
+    expect(drops.map(d => d.key)).toEqual([`drop:${last[0]},${last[1]}`])
     expect(drops[0].url).toBe(dropEastUrl)
     expect(drops[0].mirrored).toBe(true)
   })
 
-  it("draws nothing while the mouth is still fogged", () => {
-    const grid = gridOf([[room(["e"]), ...run("e", "fogged"), room([])]])
-    expect(dropsIn(grid)).toEqual([])
+  it("draws nothing while the obstacle is still fogged", () => {
+    expect(dropsIn(dropAlong("e", "fogged").grid)).toEqual([])
   })
 })
 
@@ -94,43 +97,43 @@ describe("a north-south drop draws what it always drew", () => {
     expect(DROP_ART.s).toBeNull()
   })
 
-  it.each([
-    ["north", northGrid(), 1],
-    ["south", southGrid(), SOUTH_END],
-  ])("draws no drop sprite for a %s run, and never a flipped dropEast", (_name, grid, end) => {
-    expect(isOneWayMouth(grid, end, 0)).toBe(true)
+  it.each([["north"], ["south"]])("draws no drop sprite for a %s drop, and never a flipped dropEast", name => {
+    const { grid } = dropAlong(name === "north" ? "n" : "s")
+    expect(oneWayRuns(grid)).toHaveLength(1)
     expect(dropsIn(grid)).toEqual([])
   })
 })
 
-describe("a drop is drawn across its whole run", () => {
-  it("is as wide as the run's floor (4 cell pitches and a cell), at the tile's own 2:3 frame, with the pit centred on the run", () => {
+describe("a drop is drawn across its whole obstacle", () => {
+  it("is as wide as the obstacle's floor (4 cell pitches and a cell), at the tile's own 2:3 frame, with the pit centred on the obstacle", () => {
     expect(ONE_WAY_RUN_CELLS).toBe(5)
     expect(CELL).toBe(56)
     expect(COL_PITCH).toBe(70)
-    const [drop] = dropsIn(eastGrid())
-    // The run is cells 1-5 of row 0; its middle is cell 3.
-    const { cx, cy } = cellCenter(0, 3)
+    const { grid, at } = dropAlong("e")
+    const [drop] = dropsIn(grid)
+    // The obstacle is the five cells after the launch; its middle is the third.
+    const [row, first] = at(obstacleIndexes[0])
+    const [, middle] = at(obstacleIndexes[2])
+    const [, last] = at(obstacleIndexes[4])
+    const { cx, cy } = cellCenter(row, middle)
     expect(drop.w).toBe(336)
     expect(drop.h).toBe(504)
     expect(drop.x).toBe(cx - 168)
-    expect(drop.x + drop.w!).toBe(cellCenter(0, 5).cx + CELL / 2)
-    expect(drop.x).toBe(cellCenter(0, 1).cx - CELL / 2)
-    // The pit's middle (row 137.5 of the tile's 168) lies on the run's middle line, not on its floor line.
+    expect(drop.x + drop.w!).toBe(cellCenter(row, last).cx + CELL / 2)
+    expect(drop.x).toBe(cellCenter(row, first).cx - CELL / 2)
+    // The pit's middle (row 137.5 of the tile's 168) lies on the obstacle's middle line, not on its floor line.
     expect(drop.y + (drop.h! * 137.5) / 168).toBeCloseTo(cy, 6)
     expect(drop.y + drop.h!).toBeCloseTo(cy + 91.5, 6)
   })
 
-  it("claims every cell of the run and nothing else it could be drawn over", () => {
-    const [drop] = dropsIn(eastGrid())
-    for (let c = 1; c <= ONE_WAY_RUN_CELLS; c++) expect(drop.footprint).toContain(`0,${c}`)
+  it("claims every cell of the obstacle and nothing else it could be drawn over", () => {
+    const { grid, at } = dropAlong("e")
+    const [drop] = dropsIn(grid)
+    for (const i of obstacleIndexes) expect(drop.footprint).toContain(at(i).join(","))
   })
 
-  it.each([
-    ["east", eastGrid()],
-    ["west", westGrid()],
-  ])("draws a %s run at that size", (_name, grid) => {
-    const drops = dropsIn(grid)
+  it.each([["e"], ["w"]] as const)("draws a %s-going drop at that size", travel => {
+    const drops = dropsIn(dropAlong(travel).grid)
     expect(drops).toHaveLength(1)
     for (const drop of drops) {
       expect(drop.w).toBe(336)
@@ -139,9 +142,9 @@ describe("a drop is drawn across its whole run", () => {
   })
 })
 
-describe("only the end of a one-way run draws a drop", () => {
+describe("only an obstacle draws a drop", () => {
   it("draws none for a stub with no direction, a straight run, or a corner", () => {
-    // A stub with no direction at all is not a mouth.
+    // A stub with no direction and no marker is not an obstacle.
     const deadEnd = gridOf([[room(["e"]), corridor([])]])
     const straight = gridOf([[room(["e"]), corridor(["w", "e"]), room(["w"])]])
     const corner = gridOf([
@@ -151,22 +154,17 @@ describe("only the end of a one-way run draws a drop", () => {
     for (const grid of [deadEnd, straight, corner]) expect(dropsIn(grid)).toEqual([])
   })
 
-  const mouthsOf = (grid: FloorGrid) => {
-    const mouths: string[] = []
-    for (let r = 0; r < grid.rows; r++)
-      for (let c = 0; c < grid.cols; c++) if (isOneWayMouth(grid, r, c)) mouths.push(`${r},${c}`)
-    return mouths
-  }
-
-  // Whether a one-way mouth stays out of every room's claims is asserted in oneWayDeparture.spec.ts,
-  // where a fork — the room type that claims every neighbour it can — stands on either side of it, and
-  // a control proves the fork still claims the void around it.
-
   it("draws the east-west drop of a floor holding both kinds and leaves the north-south one drawing nothing", () => {
-    const grid = revealAll(floorFrom(["E.RMMMMMT", ".", ".", "R", "S", "S", "S", "S", "S", "T"], both))
-    expect(mouthsOf(grid)).toEqual(["0,7", "8,0"])
+    const east = `L${"M".repeat(ONE_WAY_RUN_CELLS)}T`
+    const grid = revealAll(
+      floorFrom([`E.R${east}R`, ".", ".", "R", "N", ...Array<string>(ONE_WAY_RUN_CELLS).fill("S"), "D", "R"], both)
+    )
+    expect(oneWayRuns(grid).map(run => [run.dir, run.cells.length])).toEqual([
+      ["e", ONE_WAY_RUN_CELLS],
+      ["s", ONE_WAY_RUN_CELLS],
+    ])
     const drops = dropsIn(grid)
-    expect(drops.map(d => d.key)).toEqual(["drop:0,7"])
+    expect(drops.map(d => d.key)).toEqual([`drop:0,${3 + ONE_WAY_RUN_CELLS}`])
     expect(drops[0].url).toBe(dropEastUrl)
     expect(drops[0].mirrored).toBe(false)
   })

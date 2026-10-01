@@ -106,6 +106,10 @@ export const devRules: Rule[] = [
     difficulty: "expert",
     pathPuzzles: 0,
     packing: 7,
+    // Recorded from the bake's own carve search (searchCarvePair), not tuned by hand: the first seed
+    // 40 steps past this floor's address seed that carves on attempt 0 at `packing` 7, walks sound and
+    // leaves no dead region. Pinned here because a dev floor has no baked output to carry it.
+    seed: 4293857899,
     sideSections: [sidePath({ puzzles: 0 })],
     regionLayout: {
       regions: [
@@ -168,6 +172,13 @@ export const devRules: Rule[] = [
   journey(DEV_JOURNEY_ID).pyramid(3, {
     difficulty: "expert",
     pathPuzzles: 0,
+    // Recorded from the bake's own carve search (searchCarvePair), not tuned by hand: the first pair
+    // that carves on attempt 0, walks sound and leaves no dead region — the smallest packing any seed
+    // carves at (0.6), at the seed 30 steps past this floor's address seed. The drop's launch, five
+    // obstacle cells and landing need room the default packing does not give. Pinned here because a
+    // dev floor has no baked output to carry it.
+    packing: 0.6,
+    seed: 4293857890,
     sideSections: [sidePath({ puzzles: 0, label: "ledge" }), sidePath({ puzzles: 0, label: "sink" })],
     forks: FORKS,
     switches: SWITCHES,

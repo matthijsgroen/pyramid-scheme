@@ -299,20 +299,24 @@ const CONNECTOR_DIRS: Array<[number, number, Direction]> = [
 ]
 const OPPOSITE: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
 
-/** HOW MANY CELLS A ONE-WAY DROP OCCUPIES between its departure node and its landing node. A constant,
- * stated once, because every drop the art draws is the same painting: `dropEast.png` is 112x168 and its
+/** HOW MANY OBSTACLE CELLS A ONE-WAY DROP SPANS, between its launch cell and its landing cell. The drop
+ * reserves `2 + ONE_WAY_RUN_CELLS` cells in all, between two nodes. A constant, stated once, because every drop the art draws is the same painting: `dropEast.png` is 112x168 and its
  * pit fills rows 128-147 by columns 46-95, about 20 rows by 50 columns. A pit 2.5 times wider than tall
  * spans the corridor's thickness only at roughly 5.6 cells of corridor length, so the drop is a
  * multi-cell feature rather than a sprite squeezed into one.
  *
- * It must be ODD: the landing is a node, nodes sit only on even/even coordinates (NODE_STEP), so the
- * departure and the landing are an even number of steps apart and the cells between them an odd number.
- * 5 is the odd count nearest the measured 5.6.
+ * It must be ODD: the launch hangs off one node and the landing off another, nodes sit only on even/even
+ * coordinates (NODE_STEP), so the two nodes are an even number of steps apart, which is the obstacle plus
+ * the launch, the landing and one more step. 5 is the odd count nearest the measured 5.6.
  *
  * What would force an authored per-drop field: `dropNorth` and `dropSouth` are unpainted and may not
  * share the east painting's proportions. The day one of them is painted at a different aspect, the
  * length moves onto the obstacle next to its direction; until then a second value would be invented. */
 export const ONE_WAY_RUN_CELLS = 5
+
+/** Steps from the node a drop hangs off to the node it lands beside: launch, obstacle, landing, and the
+ * step onto the far node. */
+const ONE_WAY_REACH = ONE_WAY_RUN_CELLS + 3
 
 const makePkey = (N: number) => (r1: number, c1: number, r2: number, c2: number) => {
   const a = r1 * N + c1,
@@ -2594,9 +2598,9 @@ export const assembleFloor = (
       }
 
     // ONE-WAY DROPS. Each authored passage needs a node of `from` and a node of `to` on one axis with
-    // exactly ONE_WAY_RUN_CELLS cells between them, every one of those cells uncarved — not a node, not
-    // a connector some chain walked, not a cell another drop's run already holds. The run is reserved
-    // whole or not at all: a drop is never placed shorter, and never placed anywhere but between the
+    // exactly 2 + ONE_WAY_RUN_CELLS cells between them (a launch, the obstacle, a landing), every one of
+    // them uncarved — not a node, not a connector some chain walked, not a cell another drop already
+    // holds. The reservation is made whole or not at all: a drop is never placed shorter, and never placed anywhere but between the
     // two ends it names. Picked here, off the same node set the grid below is built from, and sorted by
     // position so the same seed always drops the same pair. A demand with no such pair is this carve's
     // own shortfall, not the authoring's: another seed may still place it, so the attempt is re-carved
@@ -2609,7 +2613,14 @@ export const assembleFloor = (
     // label", just answered off a different map, so one demand list carries both and the search below
     // runs once regardless of which vocabulary asked.
     const exitKey = posKey(exR, exC)
-    const oneWayEdges: { from: string; to: string; dir: Direction; run: string[] }[] = []
+    const oneWayEdges: {
+      from: string
+      to: string
+      dir: Direction
+      launch: string
+      run: string[]
+      landing: string
+    }[] = []
     let oneWayShort: { from: string; to: string } | undefined
     const bySectionAddress = (address: string) => (key: string) => cellSectionAddress.get(key) === address
     const byRegion = (region: string) => (key: string) => cellRegion.get(key) === region
@@ -2636,7 +2647,7 @@ export const assembleFloor = (
     // none left, is this carve's shortfall like any other.
     const takenRunCells = new Set<string>()
     for (const demand of oneWayDemands) {
-      const candidates: { from: string; to: string; dir: Direction; run: string[] }[] = []
+      const candidates: typeof oneWayEdges = []
       for (const fromKey of usedCells) {
         if (!demand.matchesFrom(fromKey)) continue
         // The exit was forced to a true dead end just above (every passage off it dropped but the one
@@ -2646,17 +2657,19 @@ export const assembleFloor = (
         const fromDoors = standsBehind(fromKey)
         const [r, c] = fromKey.split(",").map(Number)
         for (const [dr, dc, d] of CONNECTOR_DIRS) {
-          // The run is the cells strictly between the two nodes, one unit step at a time.
+          // The reservation is the cells strictly between the two nodes, one unit step at a time.
           const ur = dr / NODE_STEP,
             uc = dc / NODE_STEP
-          const nr = r + ur * (ONE_WAY_RUN_CELLS + 1),
-            nc = c + uc * (ONE_WAY_RUN_CELLS + 1)
+          const nr = r + ur * ONE_WAY_REACH,
+            nc = c + uc * ONE_WAY_REACH
           if (nr < 0 || nr >= N || nc < 0 || nc >= N) continue
           const toKey = posKey(nr, nc)
           if (toKey === exitKey) continue
           if (!demand.matchesTo(toKey)) continue
-          const run = Array.from({ length: ONE_WAY_RUN_CELLS }, (_, k) => posKey(r + ur * (k + 1), c + uc * (k + 1)))
-          if (run.some(cellKey => usedCells.has(cellKey) || takenRunCells.has(cellKey))) continue
+          const between = Array.from({ length: ONE_WAY_REACH - 1 }, (_, k) =>
+            posKey(r + ur * (k + 1), c + uc * (k + 1))
+          )
+          if (between.some(cellKey => usedCells.has(cellKey) || takenRunCells.has(cellKey))) continue
           // A SECTION-ADDRESSED DROP MAY RUN INSIDE WHAT A DOOR SHUTS OFF, OR OUT OF IT, NEVER INTO
           // GROUND SHUT BY A DOOR THE PLAYER HAS NOT EARNED BY STANDING WHERE THEY FALL FROM. A
           // switch's doors count here exactly as an authored gate's do: both are asked of one map
@@ -2675,7 +2688,14 @@ export const assembleFloor = (
           // and the runtime empties its cells — so a visible drop into one leaves the source pointing
           // at a stub, which is the spoiler `freeWaysOut` refuses for a gate. Out of one stays legal.
           if (hiddenCellPositions.has(toKey)) continue
-          candidates.push({ from: fromKey, to: toKey, dir: d, run })
+          candidates.push({
+            from: fromKey,
+            to: toKey,
+            dir: d,
+            launch: between[0],
+            run: between.slice(1, -1),
+            landing: between[between.length - 1],
+          })
         }
       }
       candidates.sort((a, b) => {
@@ -2690,7 +2710,7 @@ export const assembleFloor = (
         oneWayShort = { from: demand.from, to: demand.to }
         break
       }
-      for (const cellKey of picked.run) takenRunCells.add(cellKey)
+      for (const cellKey of [picked.launch, ...picked.run, picked.landing]) takenRunCells.add(cellKey)
       oneWayEdges.push(picked)
     }
     if (oneWayShort) {
@@ -2841,23 +2861,44 @@ export const assembleFloor = (
       }
     }
 
-    // WRITE THE CHOSEN DROPS. The from-node gains the direction toward the run, and every cell of the
-    // run gains ONLY that same direction; the to-node gains nothing. That asymmetry is the whole
-    // feature, held end to end: each run cell names only the way onward, so nothing in the
-    // run leads back toward the departure, and the landing names no direction into the run's last cell,
-    // so the run cannot be entered from below or crossed from the landing side.
+    // WRITE THE CHOSEN DROPS. A drop is the launch, the obstacle, the landing — in that order along
+    // `dir`, each cell written once, all of them uncarved when reserved.
+    //
+    //  - The launch is an ordinary dead-end cell: the from-node names it and it names the from-node, and
+    //    it names NO direction toward the obstacle.
+    //  - The landing is the same off the to-node: it names the to-node and the to-node names it, and it
+    //    names NO direction back toward the obstacle.
+    //  - Every obstacle cell is a corridor whose `dirs` is the EMPTY set, marked `obstacle` so the art
+    //    spans it and the lock can read the drop back. Nothing else is written onto it.
+    //
+    // CROSSING IS IMPOSSIBLE BY CONSTRUCTION. A walk only ever follows a direction a cell names. The
+    // obstacle cells name none and nothing names them, so they are an island in the walk graph and the
+    // launch's side and the landing's side share no edge through them. There is no check to forget:
+    // the way across does not exist as data, and taking the drop is the one thing that joins the two ends.
     for (const edge of oneWayEdges) {
-      const [fr, fc] = edge.from.split(",").map(Number)
-      const fromCell = cells2D[fr][fc]
-      if (fromCell.type === "empty")
-        throw new Error(`[siteAssembler] one-way from ${edge.from} landed on an uncarved cell`)
-      cells2D[fr][fc] = { ...fromCell, dirs: new Set([...fromCell.dirs, edge.dir]) }
-      edge.run.forEach((cellKey, k) => {
-        const [mr, mc] = cellKey.split(",").map(Number)
-        if (cells2D[mr][mc].type !== "empty")
+      const writeStub = (cellKey: string, owner: string, other: string, dirs: Set<Direction>, index: number) => {
+        const [r, c] = cellKey.split(",").map(Number)
+        if (cells2D[r][c].type !== "empty")
           throw new Error(`[siteAssembler] one-way from ${edge.from} ran into a carved cell at ${cellKey}`)
-        cells2D[mr][mc] = connectorBetween(edge.from, edge.to, new Set([edge.dir]), true, k)
+        cells2D[r][c] = connectorBetween(owner, other, dirs, true, index)
+      }
+      const joinNode = (nodeKey: string, dir: Direction) => {
+        const [r, c] = nodeKey.split(",").map(Number)
+        const node = cells2D[r][c]
+        if (node.type === "empty")
+          throw new Error(`[siteAssembler] one-way from ${edge.from} landed on an uncarved cell at ${nodeKey}`)
+        cells2D[r][c] = { ...node, dirs: new Set([...node.dirs, dir]) }
+      }
+      joinNode(edge.from, edge.dir)
+      writeStub(edge.launch, edge.from, edge.to, new Set([OPPOSITE[edge.dir]]), 0)
+      edge.run.forEach((cellKey, k) => {
+        writeStub(cellKey, edge.from, edge.to, new Set(), k + 1)
+        const [r, c] = cellKey.split(",").map(Number)
+        const cell = cells2D[r][c]
+        if (cell.type === "corridor") cells2D[r][c] = { ...cell, obstacle: { dir: edge.dir } }
       })
+      writeStub(edge.landing, edge.to, edge.from, new Set([edge.dir]), ONE_WAY_RUN_CELLS + 1)
+      joinNode(edge.to, OPPOSITE[edge.dir])
     }
 
     // Set entrance cell state to "reachable"

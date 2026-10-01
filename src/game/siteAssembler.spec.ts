@@ -2582,6 +2582,8 @@ describe("a one-way drop between two regions", () => {
 
   const doubleBackConfig = (): FloorConfig => ({
     pathPuzzles: 1,
+    // Two drops of 2 + x cells each on six regions: a roomy packing is what lets the sweep find a carve.
+    packing: 7,
     difficulty: "starter",
     end: "treasure",
     exitOrStaircase: "exit",
@@ -2609,32 +2611,32 @@ describe("a one-way drop between two regions", () => {
     ],
   })
 
-  const OPPOSITE_DIR: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
-
-  // Every cell pair the grid joins in one direction only — the same witness oneWayCarve.spec.ts and
-  // floorLock.spec.ts each keep under this name, duplicated here for the same reason: asking the
-  // carve's own output whether it produced a one-way would check the code against itself and pass
-  // whatever it did, bug or not.
-  const oneWayEdges = (grid: FloorGrid): { from: [number, number]; to: [number, number] }[] => {
-    const found: { from: [number, number]; to: [number, number] }[] = []
-    for (let r = 0; r < grid.rows; r++)
-      for (let c = 0; c < grid.cols; c++) {
-        const cell = grid.cells[r][c]
-        if (cell.type === "empty") continue
-        for (const dir of cell.dirs) {
-          const [dr, dc] = DIR_MOVE[dir]
-          const [nr, nc] = [r + dr, c + dc]
-          const target = grid.cells[nr]?.[nc]
-          if (!target || target.type === "empty") continue
-          if (!target.dirs.has(OPPOSITE_DIR[dir])) found.push({ from: [r, c], to: [nr, nc] })
-        }
-      }
-    return found
-  }
-
   const regionAt = (grid: FloorGrid, [r, c]: [number, number]): string | undefined => {
     const cell = grid.cells[r][c]
     return cell.type !== "empty" ? cell.region : undefined
+  }
+
+  // Every drop on the grid as the region its launch stands in and the region its landing stands in,
+  // read off the cells carrying the obstacle marker: the cell before the first marked cell is the
+  // launch, the cell after the last is the landing. Asking the carve's own bookkeeping would check the
+  // code against itself, so the grid is what is read.
+  const dropRegions = (grid: FloorGrid): { from?: string; to?: string }[] => {
+    const marked = (r: number, c: number) => {
+      const cell = grid.cells[r]?.[c]
+      return cell?.type === "corridor" ? cell.obstacle : undefined
+    }
+    const drops: { from?: string; to?: string }[] = []
+    for (let r = 0; r < grid.rows; r++)
+      for (let c = 0; c < grid.cols; c++) {
+        const marker = marked(r, c)
+        if (!marker) continue
+        const [dr, dc] = DIR_MOVE[marker.dir]
+        if (marked(r - dr, c - dc)?.dir === marker.dir) continue
+        let [er, ec] = [r, c]
+        while (marked(er, ec)?.dir === marker.dir) [er, ec] = [er + dr, ec + dc]
+        drops.push({ from: regionAt(grid, [r - dr, c - dc]), to: regionAt(grid, [er, ec]) })
+      }
+    return drops
   }
 
   // A carve is a seed's own choice, so seeds are swept until one satisfies both authored drops at
@@ -2644,21 +2646,20 @@ describe("a one-way drop between two regions", () => {
     for (let seed = 0; seed < 60; seed++) {
       const result = assembleFloor("site-oneway-region", doubleBackConfig(), seed)
       if (!result.success) continue
-      const edges = oneWayEdges(result.grid)
-      const crosses = (from: string, to: string) =>
-        edges.some(e => regionAt(result.grid, e.from) === from && regionAt(result.grid, e.to) === to)
+      const drops = dropRegions(result.grid)
+      const crosses = (from: string, to: string) => drops.some(d => d.from === from && d.to === to)
       if (crosses("s1Chamber", "leftLower") && crosses("leftLower", "entrance")) return result.grid
     }
     throw new Error("no seed carved both region-addressed drops")
   }
 
-  it("carves a directed passage between the two regions each drop names", () => {
+  it("carves a drop between the two regions each drop names", () => {
     // carvedWithBothDrops throws if no seed satisfies both — reaching the assertion below is itself
-    // the proof; the assertions restate what "carves a directed passage" means for a reader.
+    // the proof; the assertions restate what "carves a drop" means for a reader.
     const grid = carvedWithBothDrops()
-    const edges = oneWayEdges(grid)
-    expect(edges.some(e => regionAt(grid, e.from) === "s1Chamber" && regionAt(grid, e.to) === "leftLower")).toBe(true)
-    expect(edges.some(e => regionAt(grid, e.from) === "leftLower" && regionAt(grid, e.to) === "entrance")).toBe(true)
+    const drops = dropRegions(grid)
+    expect(drops.some(d => d.from === "s1Chamber" && d.to === "leftLower")).toBe(true)
+    expect(drops.some(d => d.from === "leftLower" && d.to === "entrance")).toBe(true)
   })
 
   it("reaches LockSpec.oneWays, which floorLock derives from the assembled grid unchanged", () => {

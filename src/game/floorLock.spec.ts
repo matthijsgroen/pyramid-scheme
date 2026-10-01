@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest"
-import { assembleFloor, defaultResolveEncounter } from "./siteAssembler"
+import { assembleFloor, defaultResolveEncounter, ONE_WAY_RUN_CELLS } from "./siteAssembler"
 import type { ResolveEncounter } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 import { walkLock } from "./lockWalk"
-import { oneWayRuns } from "./gridNavigation"
 import { floorLock } from "./floorLock"
 import { nodeBeyond } from "./siteValidator"
 import { floorWithHandle } from "./testSupport/handleFixtures"
@@ -67,8 +66,12 @@ const withFloorKey = (): FloorConfig => ({
 // compare the compiler against itself and pass whatever it did.
 const posKey = (r: number, c: number) => `${r},${c}`
 const MOVES: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+// An obstacle's cells are no ground: the witness leaves them out as the compiler does.
 const walkable = (cell: GridCell | undefined) =>
-  !!cell && (cell.type === "room" || cell.type === "corridor") && !cell.hidden
+  !!cell &&
+  (cell.type === "room" || cell.type === "corridor") &&
+  !cell.hidden &&
+  !(cell.type === "corridor" && cell.obstacle)
 const doorKeyOf = (cell: GridCell | undefined) => (cell?.type === "room" ? cell.requiredKeyId : undefined)
 const dirsOf = (cell: GridCell) => (cell.type === "room" || cell.type === "corridor" ? cell.dirs : new Set<string>())
 
@@ -129,37 +132,44 @@ const wardsCollide = (grid: FloorGrid): boolean => standsASwitch(grid) && wardDo
 
 const OPPOSITE: Record<string, Direction> = { n: "s", s: "n", e: "w", w: "e" }
 
-// Every cell pair the grid joins in one direction and not the other, read off the raw grid — the
-// same witness src/game/oneWayCarve.spec.ts keeps under this name, duplicated here for the same
-// reason `regionsExcludingDoors` above is: asking floorLock itself whether a drop crosses regions
-// would check the compiler against its own output and pass whatever it produced, bug or not.
-const oneWayEdges = (grid: FloorGrid): { from: [number, number]; to: [number, number] }[] => {
-  const found: { from: [number, number]; to: [number, number] }[] = []
+// Every drop on the grid, read off the cells that carry the `obstacle` marker: the cells of its span in
+// order from the launch, and the launch and landing cells either side. A witness of its own, duplicated
+// from src/game/oneWayCarve.spec.ts's reading for the same reason `regionsExcludingDoors` above is:
+// asking floorLock itself where a drop lies would check the compiler against its own output.
+type Drop = { launch: [number, number]; cells: [number, number][]; landing: [number, number] }
+const dropsOn = (grid: FloorGrid): Drop[] => {
+  const marker = (r: number, c: number) => {
+    const cell = grid.cells[r]?.[c]
+    return cell?.type === "corridor" ? cell.obstacle : undefined
+  }
+  const drops: Drop[] = []
   for (let r = 0; r < grid.rows; r++)
     for (let c = 0; c < grid.cols; c++) {
-      const cell = grid.cells[r][c]
-      if (cell.type === "empty") continue
-      for (const dir of dirsOf(cell)) {
-        const [dr, dc] = MOVES[dir as string]
-        const [nr, nc] = [r + dr, c + dc]
-        const next = grid.cells[nr]?.[nc]
-        if (!next || next.type === "empty") continue
-        if (!dirsOf(next).has(OPPOSITE[dir as string])) found.push({ from: [r, c], to: [nr, nc] })
+      const first = marker(r, c)
+      if (!first) continue
+      const [dr, dc] = MOVES[first.dir]
+      if (marker(r - dr, c - dc)?.dir === first.dir) continue
+      const cells: [number, number][] = []
+      let [er, ec] = [r, c]
+      while (marker(er, ec)?.dir === first.dir) {
+        cells.push([er, ec])
+        ;[er, ec] = [er + dr, ec + dc]
       }
+      drops.push({ launch: [r - dr, c - dc], cells, landing: [er, ec] })
     }
-  return found
+  return drops
 }
 
-// A seed where a drop's two endpoints land in different regions of the witness above — most carves
+// A seed where a drop's launch and landing land in different regions of the witness above — most carves
 // attach "upper" and "lower" to the same open hub the switch's own sideSections fork from, so the
 // drop lands inside one region (a move the walk needs no telling about) on most seeds; this is what
 // finds one where it genuinely spans two.
 const dropCrossesRegions = (grid: FloorGrid): boolean => {
   if (!standsASwitch(grid)) return false
   const regionOf = regionsExcludingDoors(grid)
-  return oneWayEdges(grid).some(({ from, to }) => {
-    const a = regionOf.get(posKey(from[0], from[1]))
-    const b = regionOf.get(posKey(to[0], to[1]))
+  return dropsOn(grid).some(({ launch, landing }) => {
+    const a = regionOf.get(posKey(launch[0], launch[1]))
+    const b = regionOf.get(posKey(landing[0], landing[1]))
     return a !== undefined && b !== undefined && a !== b
   })
 }
@@ -244,22 +254,8 @@ const sealTheWayIntoTheDrop = (grid: FloorGrid): FloorGrid | undefined => {
         }
       }
     }
-  // A drop is a chain of one-way edges, one into each cell of its run and one out of the last — so the
-  // pair this needs is the two ends of a chain, the departure that nothing one-way leads into and the
-  // landing that leads on to nothing one-way.
-  const edges = oneWayEdges(grid)
-  const at = (cell: [number, number]) => posKey(cell[0], cell[1])
-  const pairs = edges
-    .filter(first => !edges.some(into => at(into.to) === at(first.from)))
-    .map(first => {
-      let step = first
-      for (;;) {
-        const next = edges.find(outOf => at(outOf.from) === at(step.to))
-        if (!next) break
-        step = next
-      }
-      return { source: at(first.from), landing: at(step.to) }
-    })
+  // The pair this needs is the two ends of a drop: its launch and its landing.
+  const pairs = dropsOn(grid).map(({ launch, landing }) => ({ source: posKey(...launch), landing: posKey(...landing) }))
   for (const { source, landing } of pairs) {
     if (!open.has(source) || !open.has(landing)) continue
     for (const key of open) {
@@ -617,9 +613,9 @@ describe("floorLock", () => {
     expect(checked).toBeGreaterThan(0)
   })
 
-  // A run of ONE_WAY_RUN_CELLS cells is one move for the walk, not one per cell: the compiled lock has
-  // to match the floor the author wrote, and the author wrote one drop.
-  it("compiles one authored drop to exactly one one-way, between the regions the run falls from and into", () => {
+  // An obstacle of ONE_WAY_RUN_CELLS cells is one move for the walk, not one per cell: the compiled lock
+  // has to match the floor the author wrote, and the author wrote one drop.
+  it("compiles one authored drop to exactly one one-way, between the regions its launch and its landing stand in", () => {
     let checked = 0
     for (let seed = 0; seed < 60; seed++) {
       const result = assembleFloor("spec:1", withDrop(), seed, reEnterableFamilies, {
@@ -637,16 +633,17 @@ describe("floorLock", () => {
       // A door is a region of exactly one cell, named for it.
       const regionNamed = (cell: readonly [number, number]) =>
         regionOf.get(posKey(cell[0], cell[1])) ?? `door ${posKey(cell[0], cell[1])}`
-      const drops = oneWayRuns(sealed)
+      const drops = dropsOn(sealed)
       expect(drops).toHaveLength(1)
       const [drop] = drops
       expect(lock.oneWays).toEqual([
         {
-          from: regionNamed(drop.departure),
+          from: regionNamed(drop.launch),
           to: regionNamed(drop.landing),
         },
       ])
-      // The run's cells are the departure's ground: none of them is a region of its own.
+      // The obstacle's cells are walls to the flood: none of them is a region of its own.
+      expect(drop.cells).toHaveLength(ONE_WAY_RUN_CELLS)
       for (const [r, c] of drop.cells) expect(lock.regions).not.toContain(`at ${posKey(r, c)}`)
     }
     expect(checked).toBeGreaterThan(0)

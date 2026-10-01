@@ -1,13 +1,7 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
-import { findPath, isOneWayMouth, walkableFrom } from "@/game/gridNavigation"
-import {
-  corridorRunTargetsFrom,
-  DIR_MOVES,
-  isCorridorCorner,
-  OPPOSITE_DIR,
-  type CorridorRunTarget,
-} from "./corridorRuns"
+import { walkableFrom } from "@/game/gridNavigation"
+import { corridorRunTargetsFrom, isCorridorCorner, type CorridorRunTarget } from "./corridorRuns"
 import { litClaimOwner, type RoomClaims } from "./roomClaims"
 
 /**
@@ -30,21 +24,10 @@ export type OfferContext = {
   canWalkTo: (row: number, col: number) => boolean
   /** The builder's free-roam mode: every cell is a target, walkability aside. */
   freeWalk: boolean
-  /** Where the explorer stands. A mouth is entered from either end of its drop, and which way its arrow
-   * points depends on which; absent, the arrow assumes the landing side. */
-  explorer?: readonly [number, number]
 }
 
-/** A corridor's own rule, shared by the claimed and unclaimed branches — the same condition either way.
- *
- * A one-way mouth is the one stopping point that never reaches "reachable": `revealOneWayMouth` only
- * ever lifts its fog to "visible", so it is named explicitly here alongside the ordinary corner check
- * rather than folded into `reachedOrDone` — `canWalkTo` (`walkableFrom`) is what already refuses one
- * still fogged, or one the player cannot actually reach from here. */
+/** A corridor's own rule, shared by the claimed and unclaimed branches — the same condition either way. */
 const corridorOffer = (
-  grid: FloorGrid,
-  r: number,
-  c: number,
   cell: { state: string; dirs: ReadonlySet<never> | ReadonlySet<string> },
   target: readonly [number, number],
   runTarget: CorridorRunTarget | undefined,
@@ -52,8 +35,7 @@ const corridorOffer = (
 ): readonly [number, number] | null => {
   if (!ctx.canWalkTo(target[0], target[1])) return null
   const corner = isCorridorCorner(cell.dirs as Parameters<typeof isCorridorCorner>[0])
-  const stoppingPoint =
-    cell.state === "reachable" || cell.state === "completed" || (cell.state === "visible" && isOneWayMouth(grid, r, c))
+  const stoppingPoint = cell.state === "reachable" || cell.state === "completed"
   return ctx.freeWalk || (stoppingPoint && corner) || !!runTarget ? target : null
 }
 
@@ -73,11 +55,11 @@ export const clickTargetAt = (
   // walkable and offers nothing. Checked first, exactly as the renderer does — a claimed cell never
   // reaches the fogged guard below.
   if (litClaimOwner(grid, claims, r, c)) {
-    return cell.type === "corridor" ? corridorOffer(grid, r, c, cell, target, runTarget, ctx) : null
+    return cell.type === "corridor" ? corridorOffer(cell, target, runTarget, ctx) : null
   }
 
   if (cell.type === "empty" || cell.state === "fogged") return null
-  if (cell.type === "corridor") return corridorOffer(grid, r, c, cell, target, runTarget, ctx)
+  if (cell.type === "corridor") return corridorOffer(cell, target, runTarget, ctx)
 
   // A room: soft-gated, so a locked gate is still a target — walking to it is how the player is told
   // what it wants. The exception answers itself through `canWalkTo`: a way out a switch shut is a wall
@@ -104,29 +86,6 @@ export const clickTargetAt = (
  */
 export type OfferMarker = { kind: "node" } | { kind: "dot" } | { kind: "arrow"; dir: Direction }
 
-/** The way the explorer's last step into a mouth goes. A mouth's one open side faces its landing, so
- * from the landing the step is the other way; from the run behind it the step is along that side — the
- * reverse of the landing's, and irreversible, so an arrow pointing back at the player is the worst
- * reading there is. Read off the route itself so both ends answer from the one rule. */
-const mouthApproachDir = (
-  grid: FloorGrid,
-  r: number,
-  c: number,
-  dirs: ReadonlySet<Direction>,
-  ctx: OfferContext
-): Direction => {
-  const [onward] = dirs
-  const fromLanding = OPPOSITE_DIR[onward]
-  if (!ctx.explorer) return fromLanding
-  const route = findPath(grid, ctx.explorer, [r, c])
-  const before = route[route.length - 2]
-  if (!before) return fromLanding
-  const step = (Object.keys(DIR_MOVES) as Direction[]).find(
-    d => before[0] + DIR_MOVES[d][0] === r && before[1] + DIR_MOVES[d][1] === c
-  )
-  return step ?? fromLanding
-}
-
 export const markerAt = (
   grid: FloorGrid,
   claims: RoomClaims,
@@ -141,7 +100,6 @@ export const markerAt = (
   const runTarget = ctx.runTargets.get(`${r},${c}`)
   if (runTarget) return { kind: "arrow", dir: runTarget.dir }
   if (cell.state === "reachable" && isCorridorCorner(cell.dirs)) return { kind: "dot" }
-  if (isOneWayMouth(grid, r, c)) return { kind: "arrow", dir: mouthApproachDir(grid, r, c, cell.dirs, ctx) }
   // A corner the player has already walked is drawn ground they can see, so it needs no marker to be
   // found; it stays a tap to walk back to.
   if (cell.state === "completed" && isCorridorCorner(cell.dirs)) return null
@@ -158,7 +116,6 @@ export const offerContextFrom = (
     runTargets: corridorRunTargetsFrom(grid, at),
     canWalkTo: (row, col) => !walkable || walkable.has(`${row},${col}`),
     freeWalk: opts.freeWalk ?? false,
-    explorer: at,
   }
 }
 

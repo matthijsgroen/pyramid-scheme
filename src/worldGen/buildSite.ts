@@ -102,6 +102,7 @@ export type BuildFloorOptions = {
   switches?: FloorConfig["switches"]
   corridorStraightness?: number
   packing?: number
+  seed?: number
   sealed?: boolean
   encounterArgs?: unknown
   theme?: string
@@ -132,6 +133,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
     : {}),
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
+  ...(opts.seed !== undefined ? { seed: opts.seed } : {}),
   ...(opts.sealed ? { sealed: true } : {}),
   ...(opts.encounterArgs !== undefined ? { encounterArgs: opts.encounterArgs } : {}),
   ...(opts.theme !== undefined ? { theme: opts.theme } : {}),
@@ -291,6 +293,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           switches: fc.switches ?? constraint.switches,
           corridorStraightness: floorStraightness,
           packing: floorPacking,
+          seed: fc.seed,
           sealed: floorSealed,
           encounterArgs: fc.encounterArgs ?? constraint.encounterArgs,
           // A floor may wear its own skin inside a plainer pyramid; unset, it wears the site’s.
@@ -410,6 +413,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           wallDecorations: constraint.wallDecorations,
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
           packing: resolvePacking(constraint, journeyId, i),
+          seed: constraint.seed,
           sealed: resolveSealed(constraint),
         })
       )
@@ -578,6 +582,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     wallDecorations: constraint.wallDecorations,
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
     packing: resolvePacking(constraint, journeyId, i),
+    seed: constraint.seed,
     sealed: resolveSealed(constraint),
   })
 

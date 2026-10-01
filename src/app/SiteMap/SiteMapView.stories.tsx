@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { useState } from "react"
 import { assembleFloor, ONE_WAY_RUN_CELLS } from "../../game/siteAssembler"
 import { generatedWorldConfigs } from "../../data/generatedWorld"
-import { completeCell } from "../../game/gridNavigation"
+import { completeCell, oneWayRuns } from "../../game/gridNavigation"
 import type { CellState, Direction, FloorConfig, FloorGrid, GridCell } from "../../game/siteTypes"
 import { floorWithHandle } from "../../game/testSupport/handleFixtures"
 import { corridorPiece, floorFrom } from "./floorFixtures.testing"
@@ -320,9 +320,8 @@ export const TreasureTakenAndNot: Story = {
 }
 
 // ─── One-way drop ──────────────────────────────────────────────────────────────
-// A floor authoring `oneWays` carves a source-connector-landing chain the player can only fall
-// down. Standing at the LANDING is the side with something new to show: the connector beside it
-// (invisible before this feature) and a barred arrow naming the way that dropped it there.
+// A floor authoring `oneWays` carves a launch, an obstacle and a landing between two nodes. The player
+// stands at the launch or the landing; the obstacle between them is the zipline, lit from either foot.
 const oneWayDropConfig: FloorConfig = {
   pathPuzzles: 2,
   difficulty: "junior",
@@ -336,71 +335,82 @@ const oneWayDropConfig: FloorConfig = {
 }
 
 const oneWayDropGrid = (): FloorGrid => {
-  const result = assembleFloor("story-oneway", oneWayDropConfig, 0, undefined, {
-    floorRef: { journeyId: "story-oneway", levelIndex: 0, floorIndex: 0 },
-  })
-  if (!result.success) throw new Error("seed 0 no longer carves the authored drop")
-  return result.grid
+  for (let seed = 0; seed < 60; seed++) {
+    const result = assembleFloor("story-oneway", oneWayDropConfig, seed, undefined, {
+      floorRef: { journeyId: "story-oneway", levelIndex: 0, floorIndex: 0 },
+    })
+    if (result.success) return result.grid
+  }
+  throw new Error("no seed carves the authored drop")
 }
 
-/** Standing at the landing (2,6) of a junior floor: the connector at (3,6) is lit and the source beyond it
- * is not. The floor is junior and the drop art exists only at expert, so no zipline is drawn here; the
- * `Drop*` stories below show it. */
+const [carvedDrop] = oneWayRuns(oneWayDropGrid())
+
+/** Standing at the landing of a junior floor: the zipline's cells are lit and the launch beyond it is not.
+ * The floor is junior and the drop art exists only at expert, so no zipline is drawn here; the `Drop*`
+ * stories below show it. */
 export const OneWayDropLanding: Story = {
   args: {
-    grid: completeCell(oneWayDropGrid(), 2, 6),
-    explorerPos: [2, 6],
+    grid: completeCell(oneWayDropGrid(), ...carvedDrop.landing),
+    explorerPos: carvedDrop.landing,
   },
 }
 
 // ─── Drop art at expert ────────────────────────────────────────────────────────
-// Hand-built rather than carved, so the art shows whatever the assembler does. A line of beyond-departure,
-// departure, the run, landing, beyond-landing: each run cell carries one direction (toward the landing) and
-// the landing none back. The run is `ONE_WAY_RUN_CELLS` cells and the art is drawn across all of them; its
-// last cell is the mouth. `dropEast` exists only at expert, so the floor is expert.
+// Hand-built rather than carved, so the art shows whatever the assembler does. A line of corridor, from-node,
+// launch, the obstacle, landing, to-node, corridor: the launch and the landing each name only their own node
+// and the obstacle's cells name nothing. The obstacle is `ONE_WAY_RUN_CELLS` cells and the art is drawn across
+// all of them. `dropEast` exists only at expert, so the floor is expert.
 type Travel = "e" | "w" | "s"
 const BACK: Record<Travel, Direction> = { e: "w", w: "e", s: "n" }
 
 const dropFloor = (travel: Travel) => {
-  const mouth = (): GridCell => ({ type: "corridor", dirs: new Set<Direction>([travel]), state: "fogged" })
-  const landing = (dirs: Direction[]): GridCell => ({
-    type: "room",
-    roomType: "encounter",
-    family: "sumplete",
-    dirs: new Set(dirs.filter(d => d !== BACK[travel])),
+  const back = BACK[travel]
+  const launch = (dirs: Direction[]): GridCell => corridorPiece(dirs.filter(d => d === back))
+  const landing = (dirs: Direction[]): GridCell => corridorPiece(dirs.filter(d => d === travel))
+  const obstacle = (): GridCell => ({
+    type: "corridor",
+    dirs: new Set<Direction>(),
     state: "fogged",
+    obstacle: { dir: travel },
   })
-  const line = ["C", "R", ...Array<string>(ONE_WAY_RUN_CELLS).fill("M"), "E", "C"]
+  const line = ["C", "R", "L", ...Array<string>(ONE_WAY_RUN_CELLS).fill("M"), "T", "R", "C"]
   const rows = travel === "s" ? line : [(travel === "w" ? [...line].reverse() : line).join("")]
-  const grid = floorFrom(rows, { C: corridorPiece, M: mouth, E: landing })
+  const grid = floorFrom(rows, { C: corridorPiece, L: launch, M: obstacle, T: landing })
   const at = (i: number): [number, number] => {
     const k = travel === "w" ? line.length - 1 - i : i
     return travel === "s" ? [k, 0] : [0, k]
   }
-  const [lr, lc] = at(2 + ONE_WAY_RUN_CELLS)
-  return { grid: completeCell(grid, lr, lc), mouth: at(1 + ONE_WAY_RUN_CELLS), landing: at(2 + ONE_WAY_RUN_CELLS) }
+  const launchAt = at(2)
+  const landingAt = at(3 + ONE_WAY_RUN_CELLS)
+  return {
+    atLaunch: completeCell(grid, ...at(1)),
+    atLanding: completeCell(grid, ...at(4 + ONE_WAY_RUN_CELLS)),
+    launch: launchAt,
+    landing: landingAt,
+  }
 }
 
 const east = dropFloor("e")
 const west = dropFloor("w")
 const south = dropFloor("s")
 
-/** East-going drop, the player at the landing: the run is lit with the zipline drawn across all of it,
- * the departure beyond it still dark. */
-export const DropEastAtLanding: Story = { args: { grid: east.grid, explorerPos: east.landing } }
+/** East-going drop, the player at the landing: the obstacle is lit with the zipline drawn across all of it,
+ * the launch beyond it still dark. */
+export const DropEastAtLanding: Story = { args: { grid: east.atLanding, explorerPos: east.landing } }
 
-/** East-going drop, the player on the mouth, the run's last cell: the barred arrow draws, pointing onward up the drop. */
-export const DropEastOnMouth: Story = { args: { grid: east.grid, explorerPos: east.mouth } }
+/** East-going drop, the player at the launch: the same zipline, lit from this foot, the landing still dark. */
+export const DropEastAtLaunch: Story = { args: { grid: east.atLaunch, explorerPos: east.launch } }
 
 /** West-going drop, the player at the landing: the same asset as the east one, mirrored. */
-export const DropWestAtLanding: Story = { args: { grid: west.grid, explorerPos: west.landing } }
+export const DropWestAtLanding: Story = { args: { grid: west.atLanding, explorerPos: west.landing } }
 
-/** West-going drop, the player on the mouth. */
-export const DropWestOnMouth: Story = { args: { grid: west.grid, explorerPos: west.mouth } }
+/** West-going drop, the player at the launch. */
+export const DropWestAtLaunch: Story = { args: { grid: west.atLaunch, explorerPos: west.launch } }
 
 /** NO ART YET: `dropSouth` is not painted, so a vertical drop draws the plain corridor. This story makes
  * the gap visible; once the asset exists it should show a zipline. */
-export const DropSouthHasNoArtYet: Story = { args: { grid: south.grid, explorerPos: south.landing } }
+export const DropSouthHasNoArtYet: Story = { args: { grid: south.atLanding, explorerPos: south.landing } }
 
 // Both hands of the descending side flight, side by side: the pool of light has to land under the cresset
 // the tile actually carries, and the tile's flame swaps with the mirror. Reported from play — a stair

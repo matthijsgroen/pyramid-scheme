@@ -61,6 +61,10 @@ export type CorridorCell = {
    *  restores the fog as far as the furthest room reached. See docs/game-design/world-stability.md. */
   ordinal?: string
   hidden?: boolean
+  /** Set on a cell that is part of an obstacle (a one-way drop's span) rather than ground. `dir` runs
+   * from the launch toward the landing. Such a cell names no direction at all and no neighbour names
+   * it, so no walk enters it; the marker is what lets the art span it and the lock read the drop back. */
+  obstacle?: { dir: Direction }
 }
 export type GateVariant = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"

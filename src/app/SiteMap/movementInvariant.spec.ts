@@ -22,11 +22,9 @@
 //      explorer standing on it.
 //   C. every tap draws something, except a corridor corner already completed — see `markerViolations`.
 //
-// A one-way's mouth is walkable from its landing and is a stopping point like any other corner
-// (`isStoppingPoint` below knows it by `isOneWayMouth`, since it stalls at "visible" rather than
-// "reachable"), so property A holds it to the same offer requirement. Only the direction BEYOND the
-// mouth, back the way the drop came, is never in `walkableFrom` — the mouth's own `dirs` never carry
-// it — so nothing is ever required to offer that, which is what keeps crossing impossible.
+// A drop's launch and landing are dead ends like any other, stopping points on their own side. The
+// obstacle between them is never in `walkableFrom`, so property A requires nothing to offer it, which is
+// what keeps crossing out of the walk: only an action takes the zipline.
 //
 // WHAT IS WALKED IS A MECHANIC, NOT A FLOOR. Each fixture below is a dozen cells drawn by hand
 // (`floorFrom`) around one mechanism — a plain corridor, a lever and its gates, a drop — and is walked
@@ -41,7 +39,7 @@ import { renderHook, act, render } from "@testing-library/react"
 import { createElement, useState } from "react"
 import { describe, expect, it, vi } from "vitest"
 import type { Direction, FloorConfig, FloorGrid, MechanismRecord, SiteConfig } from "@/game/siteTypes"
-import { walkableFrom, findPath, isSealedWayOut, isOneWayMouth, revealAll } from "@/game/gridNavigation"
+import { walkableFrom, findPath, isSealedWayOut, revealAll } from "@/game/gridNavigation"
 import { cellAddress } from "@/game/cellAddress"
 import { OBSTACLE_KEY_PREFIX } from "@/game/cellSlot"
 import { nodeSpritesFor } from "./SiteMapView"
@@ -58,7 +56,17 @@ import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
 import { isCorridorCorner } from "./corridorRuns"
 import { encodeEdge } from "./edgeId"
-import { AXES, KINDS, addressed, dropGrid, floorFrom, roomPiece, type Piece } from "./floorFixtures.testing"
+import {
+  AXES,
+  KINDS,
+  addressed,
+  corridorPiece,
+  dropGrid,
+  floorFrom,
+  roomPiece,
+  type Piece,
+} from "./floorFixtures.testing"
+import { ONE_WAY_RUN_CELLS } from "@/game/siteAssembler"
 // Populates the family registry, the same side effect every other assembled-floor spec relies on.
 import "@/mods/registerModApps"
 
@@ -76,15 +84,17 @@ vi.mock("@/game/siteAssembler", async importOriginal => {
   }
 })
 
-// The marker rule the map draws by. A guard test flips `dropMouthMarkers` to break exactly one branch of
-// it — the mouth's — and leaves every other marker, and every tap, as the real rule makes them.
-const { markerFaults } = vi.hoisted(() => ({ markerFaults: { dropMouthMarkers: false } }))
+// The marker rule the map draws by. A guard test flips `dropDotMarkers` to break exactly one branch of
+// it — the corner dot's — and leaves every other marker, and every tap, as the real rule makes them.
+const { markerFaults } = vi.hoisted(() => ({ markerFaults: { dropDotMarkers: false } }))
 vi.mock("./clickTargets", async importOriginal => {
   const actual = await importOriginal<typeof import("./clickTargets")>()
   return {
     ...actual,
-    markerAt: (...args: Parameters<typeof actual.markerAt>) =>
-      markerFaults.dropMouthMarkers && isOneWayMouth(args[0], args[2], args[3]) ? null : actual.markerAt(...args),
+    markerAt: (...args: Parameters<typeof actual.markerAt>) => {
+      const marker = actual.markerAt(...args)
+      return markerFaults.dropDotMarkers && marker?.kind === "dot" ? null : marker
+    },
   }
 })
 
@@ -103,22 +113,13 @@ const standIn = (grid: FloorGrid): FloorConfig => {
 // A stopping point is what a marker ever names as a destination: a room, or a corridor corner (a
 // plain straight-through corridor is a waypoint a run folds INTO its far end, never a destination of
 // its own — see corridorRuns.ts). Restricted to `reachable`/`completed`, matching every gate in
-// `clickTargets.ts` — except a one-way mouth, which never reaches "reachable" (`revealOneWayMouth`
-// only ever lifts its fog to "visible") and is named by `isOneWayMouth` instead — and never a way a
-// switch shut, which `walkableFrom` already refuses to enter.
-const isStoppingPoint = (
-  grid: FloorGrid,
-  r: number,
-  c: number,
-  cell: { type: string; state?: string; dirs?: ReadonlySet<string> }
-): boolean => {
+// `clickTargets.ts` — and never a way a switch shut, which `walkableFrom` already refuses to enter.
+const isStoppingPoint = (cell: { type: string; state?: string; dirs?: ReadonlySet<string> }): boolean => {
   if (cell.type === "room")
     return (cell.state === "reachable" || cell.state === "completed") && !isSealedWayOut(cell as never)
   if (cell.type === "corridor")
     return (
-      (cell.state === "reachable" ||
-        cell.state === "completed" ||
-        (cell.state === "visible" && isOneWayMouth(grid, r, c))) &&
+      (cell.state === "reachable" || cell.state === "completed") &&
       isCorridorCorner(cell.dirs as ReadonlySet<Direction>)
     )
   return false
@@ -141,7 +142,7 @@ const offerViolations = (
     const [r, c] = key.split(",").map(Number)
     const cell = grid.cells[r]?.[c]
     if (!cell || cell.type === "empty") continue
-    if (isStoppingPoint(grid, r, c, cell) && !offeredTargetSet.has(key)) {
+    if (isStoppingPoint(cell) && !offeredTargetSet.has(key)) {
       violations.push(`walkable stopping point ${key} (${cell.type}) has no offer pointing to it, from ${explorerPos}`)
     }
   }
@@ -151,23 +152,17 @@ const offerViolations = (
 /** Property C: every tap draws something, except a corridor corner the player has already completed.
  * Read off the rendered DOM, because that is the only place a tap with nothing on it exists.
  * `offerViolations` reads offer data and stays green when the map offers a target and draws no marker
- * for it (a drop's mouth was exactly that: tapping bare stone walked the player there).
+ * for it (a tap on bare stone walks the player there).
  *
  * THE EXEMPTION IS A DECISION. A corner the player has already walked is drawn ground they can see, so
- * it needs no marker to be findable. That is not true of a one-way mouth: it is `visible` but never
- * walked, with nothing pointing at it — so a mouth is never exempt, whatever its state. */
+ * it needs no marker to be findable. */
 const markerViolations = (grid: FloorGrid, explorerPos: readonly [number, number]): string[] => {
   // jsdom has no layout, so it has no `scrollTo`; the map centres on the explorer through it.
   Element.prototype.scrollTo ??= () => {}
   const exempt = new Set<string>()
   grid.cells.forEach((row, r) =>
     row.forEach((cell, c) => {
-      if (
-        cell.type === "corridor" &&
-        cell.state === "completed" &&
-        isCorridorCorner(cell.dirs) &&
-        !isOneWayMouth(grid, r, c)
-      ) {
+      if (cell.type === "corridor" && cell.state === "completed" && isCorridorCorner(cell.dirs)) {
         const { cx, cy } = cellCenter(r, c)
         exempt.add(`${cx - CELL / 2}px,${cy - CELL / 2}px`)
       }
@@ -447,10 +442,18 @@ const lockedRun = (mechanism: MechanismRecord) =>
 const forkedRun = (mechanism: MechanismRecord) =>
   floorFrom(TWO_GATES, { L: lever(mechanism), A: gate("a"), B: gate("b") })
 
-// A mouth carries one direction, toward its landing; the landing carries none back.
-const mouth: Piece = () => ({ type: "corridor", dirs: new Set<Direction>(["e"]), state: "fogged" })
-const landing: Piece = dirs => roomPiece()(dirs.filter(dir => dir !== "w"))
-const DROP = { M: mouth, T: landing }
+// A drop as the carve lays it, east-going: a launch naming only its node, the obstacle's cells naming
+// nothing, a landing naming only its node.
+const launch: Piece = dirs => corridorPiece(dirs.filter(dir => dir === "w"))
+const obstacle: Piece = () => ({
+  type: "corridor",
+  dirs: new Set<Direction>(),
+  state: "fogged",
+  obstacle: { dir: "e" },
+})
+const landing: Piece = dirs => corridorPiece(dirs.filter(dir => dir === "e"))
+const DROP = { L: launch, M: obstacle, T: landing }
+const ZIPLINE = `L${"M".repeat(ONE_WAY_RUN_CELLS)}T`
 
 const plainCorridors = floorFrom(["E.R..", "    .", "  R.F.R", "  .", "  R"])
 
@@ -473,10 +476,10 @@ const andGate = floorFrom(["E.L.N.A..", "        .", "        R"], {
   N: lever(leverOpening("a")),
   A: gate("a"),
 })
-const oneWayDrop = floorFrom(["E.RMT.R"], DROP)
-const gateAndDrop = floorFrom(["E.L.A.RMT.R"], { ...DROP, L: lever(leverOpening("a")), A: gate("a") })
+const oneWayDrop = floorFrom([`E.R${ZIPLINE}R.R`], DROP)
+const gateAndDrop = floorFrom([`E.Y.A.R${ZIPLINE}R.R`], { ...DROP, Y: lever(leverOpening("a")), A: gate("a") })
 
-// `minSteps` sits just under each fixture's measured step count (109, 33, 93, 75, 90, 23 and 30), so a walk
+// `minSteps` sits just under each fixture's measured step count (109, 33, 93, 75, 90, 13 and 21), so a walk
 // that stalls early is red rather than quietly shorter.
 type Fixture = { name: string; grid: FloorGrid; minSteps: number }
 
@@ -486,17 +489,19 @@ const fixtures: Fixture[] = [
   { name: "a lever and two gates opening together", grid: twoGatesTogether, minSteps: 80 },
   { name: "a lever and two gates, one open and one shut, so the lever toggles", grid: toggledGates, minSteps: 65 },
   { name: "two levers and one gate that needs both", grid: andGate, minSteps: 75 },
-  { name: "a one-way drop crossed from its departure", grid: oneWayDrop, minSteps: 15 },
-  { name: "a gate and a one-way drop on one floor", grid: gateAndDrop, minSteps: 25 },
+  { name: "a one-way drop walked up to from its launch, never crossed", grid: oneWayDrop, minSteps: 10 },
+  { name: "a gate and a one-way drop on one floor", grid: gateAndDrop, minSteps: 18 },
 ]
 
 // A drop stood at from its landing, in every shape the drop takes (axis × what stands at each end).
-const landingShapes = AXES.flatMap(axis =>
-  KINDS.flatMap(departure =>
-    KINDS.map(kind => ({
-      name: `a one-way drop stood at from its landing: ${axis.travel}-going, ${departure} departure, ${kind} landing`,
-      grid: addressed(dropGrid(axis, departure, kind).grid),
-    }))
+const dropShapes = AXES.flatMap(axis =>
+  KINDS.flatMap(fromNode =>
+    KINDS.flatMap(toNode =>
+      (["fromNode", "toNode"] as const).map(entrance => ({
+        name: `a one-way drop walked from its ${entrance}: ${axis.travel}-going, ${fromNode} from-node, ${toNode} to-node`,
+        grid: addressed(dropGrid(axis, fromNode, toNode, "fogged", entrance).grid),
+      }))
+    )
   )
 )
 
@@ -508,7 +513,7 @@ describe("the movement invariant — offers match walkability, and taking one mo
     expect(steps).toBeGreaterThan(minSteps) // a walk this short would prove nothing was exercised
   })
 
-  it.each(landingShapes)("holds across every reachable state of $name", ({ grid }) => {
+  it.each(dropShapes)("holds across every reachable state of $name", ({ grid }) => {
     const { violations, steps } = walkFloor(grid)
 
     expect(violations).toEqual([])
@@ -591,47 +596,45 @@ describe("the guard actually fires", () => {
   })
 })
 
-// Property C's guard. The bug it stands for: a one-way mouth had a live tap and no marker, because the
-// tap read `clickTargetAt` while the marker re-derived its own condition. Only the marker rule is
-// broken here (a mouth draws nothing); the grid, the offers and the taps stay the real ones.
+// Property C's guard. The bug it stands for: a tap with a live offer and no marker, because the tap read
+// `clickTargetAt` while the marker re-derived its own condition. Only the marker rule is broken here (a
+// corner dot draws nothing); the grid, the offers and the taps stay the real ones.
 describe("the marker guard actually fires", () => {
-  // (0,0) source -> (0,1) mouth -> (0,2) landing, where the explorer stands; the landing also opens
-  // south onto (1,2), a corridor corner the player has already walked, and on to a room at (1,3).
+  // (0,0) room -> (0,1) a corner the player has not walked, the dot's own cell -> (1,1) a corner the
+  // player has already walked, which draws nothing by decision -> (1,2) a room.
   const grid: FloorGrid = {
     siteId: "marker-guard",
     rows: 2,
-    cols: 4,
+    cols: 3,
     entrancePos: [0, 0],
-    exitPos: [1, 3],
+    exitPos: [1, 2],
     staircases: {},
     cells: [
       [
         { type: "room", roomType: "encounter", dirs: new Set(["e"]), state: "reachable" },
-        { type: "corridor", dirs: new Set(["e"]), state: "visible" },
-        { type: "room", roomType: "encounter", dirs: new Set(["s"]), state: "reachable" },
+        { type: "corridor", dirs: new Set(["w", "s"]), state: "reachable" },
         { type: "empty" },
       ],
       [
-        { type: "empty" },
         { type: "empty" },
         { type: "corridor", dirs: new Set(["n", "e"]), state: "completed" },
         { type: "room", roomType: "encounter", dirs: new Set(["w"]), state: "reachable" },
       ],
     ],
   }
-  const explorerPos = [0, 2] as const
-  const mouth = [0, 1] as const
-  const corner = [1, 2] as const
+  const explorerPos = [0, 0] as const
+  const dot = [0, 1] as const
+  const corner = [1, 1] as const
   const message = ([r, c]: readonly [number, number]) => {
     const { cx, cy } = cellCenter(r, c)
     return `a tap at (left ${cx - CELL / 2}px, top ${cy - CELL / 2}px) draws nothing, from ${explorerPos}`
   }
-  const withMouthMarkerDropped = <T>(run: () => T): T => {
-    markerFaults.dropMouthMarkers = true
+  const withDotMarkerDropped = <T>(run: () => T): T => {
+    markerFaults.dropDotMarkers = true
     try {
       return run()
     } finally {
-      markerFaults.dropMouthMarkers = false
+      markerFaults.dropDotMarkers = false
     }
   }
 
@@ -639,20 +642,20 @@ describe("the marker guard actually fires", () => {
     expect(markerViolations(grid, explorerPos)).toEqual([])
   })
 
-  it("catches a one-way mouth that is tappable and draws nothing", () => {
+  it("catches a corner dot that is tappable and draws nothing", () => {
     const offers = offeredTargets(grid, buildRoomClaims(grid), explorerPos)
-    expect(offers.get(`${mouth[0]},${mouth[1]}`)).toEqual([...mouth]) // the mouth really is a tap
-    expect(withMouthMarkerDropped(() => markerViolations(grid, explorerPos))).toEqual([message(mouth)])
+    expect(offers.get(`${dot[0]},${dot[1]}`)).toEqual([...dot]) // the dot's cell really is a tap
+    expect(withDotMarkerDropped(() => markerViolations(grid, explorerPos))).toEqual([message(dot)])
   })
 
   it("stays silent for a corridor corner already walked, though it is a tap that draws nothing", () => {
     const offers = offeredTargets(grid, buildRoomClaims(grid), explorerPos)
     expect(offers.get(`${corner[0]},${corner[1]}`)).toEqual([...corner]) // the corner really is a tap
-    // The exemption only means something if the corner truly draws nothing: with the mouth broken as
+    // The exemption only means something if the corner truly draws nothing: with the dot broken as
     // well, the corner is the one other tap without a marker, and still is not reported.
-    const violations = withMouthMarkerDropped(() => markerViolations(grid, explorerPos))
+    const violations = withDotMarkerDropped(() => markerViolations(grid, explorerPos))
     expect(violations).not.toContain(message(corner))
-    expect(violations).toEqual([message(mouth)])
+    expect(violations).toEqual([message(dot)])
   })
 })
 

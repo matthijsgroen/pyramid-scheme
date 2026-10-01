@@ -9,7 +9,7 @@ import type {
   WallDecorationKind,
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
-import { isSealedWayOut, oneWayMouthDir, oneWayRuns, revealAll, walkableFrom } from "../../game/gridNavigation"
+import { isSealedWayOut, oneWayRuns, revealAll, walkableFrom } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
 import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
@@ -253,12 +253,12 @@ export const nodeSpritesFor = (
     return [...cells]
   }
   const out: NodeSprite[] = []
-  // A DROP IS PLACED BY THE CARVE'S SHAPE, NOT DRESSED: its run is ONE_WAY_RUN_CELLS corridor cells the
-  // carve reserved for it, and the art is drawn across all of them — every one is in the footprint, so
-  // nothing else stands under it. It is a node sprite, never a `DecorationKind`, so no dressing pool can
-  // name it. `tileUrl` and not `tileOrPlaceholder`: a run with no painted art (north-south) keeps the
-  // plain corridor it always drew rather than a stand-in. The run reveals as one, so its landing end
-  // being fogged means all of it is.
+  // A DROP IS PLACED BY THE CARVE'S SHAPE, NOT DRESSED: its obstacle is the ONE_WAY_RUN_CELLS cells the
+  // carve reserved between a launch and a landing, and the art is drawn across all of them — every one is
+  // in the footprint, so nothing else stands under it. It is a node sprite, never a `DecorationKind`, so
+  // no dressing pool can name it. `tileUrl` and not `tileOrPlaceholder`: an obstacle with no painted art
+  // (north-south) keeps the plain corridor it always drew rather than a stand-in. The obstacle reveals as
+  // one, so its last cell being fogged means all of it is.
   for (const run of oneWayRuns(grid)) {
     const [lr, lc] = run.cells[run.cells.length - 1]
     const end = grid.cells[lr][lc]
@@ -1012,79 +1012,6 @@ const RunTargetArrow = ({ dir }: { dir: Direction }) => {
   )
 }
 
-/** The way a one-way mouth names the crossing it will not make: the same arrow the game already
- * teaches for "you can walk this way", with a bar across it for "and not onward". Stands one full
- * cell out from the mouth, continuing the drop's own line — the same distance every `RunTargetArrow`
- * keeps from the player it belongs to — rather than on the mouth's own icon, where the explorer
- * standing there would cover it. `DIR_MOVES` and `cellCenter` are the pair every other marker's
- * position comes from, so this one is read off them too rather than a distance of its own.
- *
- * Callers draw this only when the explorer is standing on the mouth itself — every other arrow the
- * map draws belongs to the player's own position, and this one is no exception: it is a "you cannot
- * continue this way" told to the player standing there, not a label painted on a mouth seen from its
- * landing, where the player can now walk right up to it.
- *
- * A standalone, absolutely-positioned `<svg>` rather than a child of the mouth's own `MarkerCell`:
- * its box sits over the cell beyond the mouth, not the mouth's own, and `pointerEvents: none` keeps
- * it out of the tap layer entirely — a statement, never a target. */
-const OneWayMouthArrow = ({ row, col, dir }: { row: number; col: number; dir: Direction }) => {
-  const [dr, dc] = DIR_MOVES[dir]
-  const { cx, cy } = cellCenter(row + dr, col + dc)
-  const r = MARKER_RADIUS * 1.2
-  const box = r + 4
-  return (
-    <svg
-      aria-hidden="true"
-      data-one-way-arrow=""
-      viewBox={`${-box} ${-box} ${box * 2} ${box * 2}`}
-      style={{
-        position: "absolute",
-        left: cx - box,
-        top: cy - box,
-        width: box * 2,
-        height: box * 2,
-        overflow: "visible",
-        pointerEvents: "none",
-      }}
-    >
-      {/* The arrow is the shape the player already knows, faded to half: a way they can see and
-        cannot take. The bar reads against that faded gold on its own, so it needs nothing under it. */}
-      <g transform={`rotate(${DIR_ROTATION[dir]})`}>
-        <polygon
-          points={`0,${-r} ${r},${r} ${-r},${r}`}
-          fill={MARKER_FILL}
-          fillOpacity={0.5}
-          stroke={MARKER_OUTLINE}
-          strokeOpacity={0.5}
-          strokeWidth={2}
-          strokeLinejoin="round"
-        />
-        <line x1={-r} y1={1} x2={r} y2={1} stroke={MARKER_OUTLINE} strokeWidth={2.5} strokeLinecap="round" />
-      </g>
-    </svg>
-  )
-}
-
-/** Where `OneWayMouthArrow` belongs for the mouth beside (r,c) — its landing — and whether the explorer
- * is standing there to see it: null otherwise, including when (r,c) names no mouth at all. `dir` is the
- * one direction `oneWayMouthDir` ever returns for a landing, which is both the way from the landing to
- * the mouth and the way onward from the mouth away from it, so the same value serves as the mouth's own
- * coordinates (`r,c` walked one step) and the arrow's rotation. */
-const oneWayMouthArrowAt = (
-  grid: FloorGrid,
-  explorerPos: readonly [number, number] | undefined,
-  r: number,
-  c: number
-): { row: number; col: number; dir: Direction } | null => {
-  const dir = oneWayMouthDir(grid, r, c)
-  if (!dir) return null
-  const [dr, dc] = DIR_MOVES[dir]
-  const mouthRow = r + dr,
-    mouthCol = c + dc
-  if (explorerPos?.[0] !== mouthRow || explorerPos?.[1] !== mouthCol) return null
-  return { row: mouthRow, col: mouthCol, dir }
-}
-
 /** One cell's marker: the icon in a little `<svg>` of its own, in a box the size of the cell.
  *
  * THE BOX IS THE TAP TARGET, which is what the invisible disc inside the drawing used to be — a marker
@@ -1531,21 +1458,15 @@ export const SiteMapView = ({
 
                 if (cell.type === "corridor") {
                   const offer = clickTargetAt(grid, claims, r, c, offerContext)
-                  // A region-addressed drop can land mid-corridor rather than in a room (a fork's own
-                  // branch, say), and the barred arrow belongs at whichever cell sits next to the
-                  // mouth — a room landing is not the only shape this takes.
-                  const oneWayArrow = oneWayMouthArrowAt(grid, explorerPos, r, c)
                   return (
-                    <Fragment key={`${r},${c}`}>
-                      <MarkerCell
-                        cx={cx}
-                        cy={cy}
-                        onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
-                      >
-                        {drawCorridorMarker(markerAt(grid, claims, r, c, offerContext, offer))}
-                      </MarkerCell>
-                      {oneWayArrow && <OneWayMouthArrow {...oneWayArrow} />}
-                    </Fragment>
+                    <MarkerCell
+                      key={`${r},${c}`}
+                      cx={cx}
+                      cy={cy}
+                      onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
+                    >
+                      {drawCorridorMarker(markerAt(grid, claims, r, c, offerContext, offer))}
+                    </MarkerCell>
                   )
                 }
 
@@ -1588,7 +1509,6 @@ export const SiteMapView = ({
                 const sealedWay = isSealedWayOut(cell)
                 const locked = isLockedGate(cell, ownedKeys)
                 const displayState: CellState = locked && state === "reachable" ? "visible" : state
-                const oneWayArrow = oneWayMouthArrowAt(grid, explorerPos, r, c)
 
                 return (
                   <Fragment key={`${r},${c}`}>
@@ -1631,7 +1551,6 @@ export const SiteMapView = ({
                         shapeKind !== "fork" &&
                         (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
                     </MarkerCell>
-                    {oneWayArrow && <OneWayMouthArrow {...oneWayArrow} />}
                   </Fragment>
                 )
               })

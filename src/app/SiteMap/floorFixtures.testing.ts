@@ -1,4 +1,5 @@
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
+import { ONE_WAY_RUN_CELLS } from "@/game/siteAssembler"
 
 // Hand-built floors for specs that pin one mechanic each. A fixture names the mechanic it exercises;
 // none of them is carved from an authored floor.
@@ -9,6 +10,8 @@ export type Axis = { travel: Direction; back: Direction; step: readonly [number,
 export const AXES: Axis[] = [
   { travel: "e", back: "w", step: [0, 1] },
   { travel: "s", back: "n", step: [1, 0] },
+  { travel: "w", back: "e", step: [0, -1] },
+  { travel: "n", back: "s", step: [-1, 0] },
 ]
 export const KINDS: Kind[] = ["room", "corridor"]
 
@@ -17,27 +20,51 @@ export const cellOf = (kind: Kind, dirs: Direction[], state: CellState): GridCel
     ? { type: "room", roomType: "encounter", dirs: new Set(dirs), state }
     : { type: "corridor", dirs: new Set(dirs), state }
 
-// Five cells along one axis: beyondDeparture, departure, mouth, landing, beyondLanding. The mouth
-// carries one direction, toward the landing; the landing carries none back (the drop's asymmetry).
-export const dropGrid = (axis: Axis, departure: Kind, landing: Kind) => {
-  const at = (i: number): [number, number] => [2 + axis.step[0] * i, 2 + axis.step[1] * i]
-  const cells: GridCell[][] = Array.from({ length: 6 }, () =>
-    Array.from({ length: 6 }, () => ({ type: "empty" }) as GridCell)
+/** A drop laid along one axis, exactly as the carve lays it: from-node, launch, ONE_WAY_RUN_CELLS obstacle
+ * cells, landing, to-node, in that order, `at(i)` being the i-th of them. The launch and the landing are
+ * dead ends each naming only their own node, and each node names its end; the obstacle's cells name
+ * nothing and carry the `obstacle` marker. Every cell starts as `state`; the entrance is whichever node the
+ * walk is to start from. */
+export const DROP_AT = { fromNode: 0, launch: 1, landing: ONE_WAY_RUN_CELLS + 2, toNode: ONE_WAY_RUN_CELLS + 3 }
+export const obstacleIndexes = Array.from({ length: ONE_WAY_RUN_CELLS }, (_, k) => k + 2)
+export const dropGrid = (
+  axis: Axis,
+  fromNode: Kind,
+  toNode: Kind,
+  state: CellState = "fogged",
+  entrance: "fromNode" | "toNode" = "fromNode"
+) => {
+  const length = ONE_WAY_RUN_CELLS + 4
+  // The line sits in the middle of a strip two cells wider than it on every side, so a reveal or a claim
+  // has void to leak into, and the axis start is chosen so every index is in range for either sign.
+  const size = length + 4
+  const start = (step: number) => (step < 0 ? 2 + length - 1 : 2)
+  const origin: [number, number] = [
+    axis.step[0] === 0 ? 2 : start(axis.step[0]),
+    axis.step[1] === 0 ? 2 : start(axis.step[1]),
+  ]
+  const at = (i: number): [number, number] => [origin[0] + axis.step[0] * i, origin[1] + axis.step[1] * i]
+  const rows = axis.step[0] === 0 ? 5 : size
+  const cols = axis.step[1] === 0 ? 5 : size
+  const cells: GridCell[][] = Array.from({ length: rows }, () =>
+    Array.from({ length: cols }, () => ({ type: "empty" }) as GridCell)
   )
   const put = (i: number, cell: GridCell) => {
     const [r, c] = at(i)
     cells[r][c] = cell
   }
-  put(0, cellOf("corridor", [axis.travel], "fogged"))
-  put(1, cellOf(departure, [axis.back, axis.travel], "fogged"))
-  put(2, cellOf("corridor", [axis.travel], "fogged"))
-  put(3, cellOf(landing, [], "reachable"))
+  put(DROP_AT.fromNode, cellOf(fromNode, [axis.travel], state))
+  put(DROP_AT.launch, cellOf("corridor", [axis.back], state))
+  for (const i of obstacleIndexes)
+    put(i, { type: "corridor", dirs: new Set<Direction>(), state, obstacle: { dir: axis.travel } })
+  put(DROP_AT.landing, cellOf("corridor", [axis.travel], state))
+  put(DROP_AT.toNode, cellOf(toNode, [axis.back], state))
   const grid: FloorGrid = {
     siteId: "test",
-    rows: 6,
-    cols: 6,
-    entrancePos: at(3),
-    exitPos: at(3),
+    rows,
+    cols,
+    entrancePos: at(DROP_AT[entrance]),
+    exitPos: at(DROP_AT[entrance === "fromNode" ? "toNode" : "fromNode"]),
     staircases: {},
     cells,
   }

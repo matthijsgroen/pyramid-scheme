@@ -1,5 +1,4 @@
-import { ONE_WAY_RUN_CELLS } from "./siteAssembler"
-import type { FloorGrid, GridCell, Direction, CellState, TombKeyReward, CorridorCell, RoomCell } from "./siteTypes"
+import type { FloorGrid, GridCell, Direction, CellState, TombKeyReward, CorridorCell } from "./siteTypes"
 
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 const opposite: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
@@ -32,101 +31,55 @@ export const getOwnedKeys = (grid: FloorGrid): ReadonlySet<string> => {
   return keys
 }
 
-const ALL_DIRS: Direction[] = ["n", "s", "e", "w"]
+/** Whether a cell is part of an obstacle's span rather than ground. Such a cell names no direction and
+ * no neighbour names it, so no walk ever enters it; the marker is how the art and the lock find it. */
+export const isObstacleCell = (cell: GridCell | undefined): cell is CorridorCell & { obstacle: { dir: Direction } } =>
+  cell?.type === "corridor" && cell.obstacle !== undefined
 
-/** A cell that belongs to a drop's run: a corridor whose only direction is `dir`, the way onward. */
-const isRunCell = (cell: GridCell | undefined, dir: Direction): boolean =>
-  cell?.type === "corridor" && cell.dirs.size === 1 && cell.dirs.has(dir)
-
-/** How many cells of a run, all pointing `dir`, end at (row,col). */
-const runLengthTo = (grid: FloorGrid, row: number, col: number, dir: Direction): number => {
-  const [dr, dc] = MOVES[dir]
-  let length = 0
-  while (isRunCell(getCell(grid, row - dr * length, col - dc * length), dir)) length++
-  return length
-}
-
-/** Whether the corridor (row,col) is the LANDING END of a drop's run: the one cell whose way onward
- * leads into ground that names no way back. A drop is a run of corridor cells, each naming only the way
- * onward, between a departure that names the run and a landing that does not; the carve gives the run
- * `ONE_WAY_RUN_CELLS` cells.
+/** Every drop on the floor as one thing, read back off the cells that carry the `obstacle` marker: the
+ * launch the player stands on, the obstacle's cells in order from the launch, the landing they arrive
+ * on, and the direction the drop runs. The launch is the cell before the first obstacle cell and the
+ * landing the cell after the last, each a standable dead end off its own node.
  *
- * Every cell of the run has the same one direction and an onward neighbour naming no way back, so the
- * asymmetry alone cannot tell the end from the cells behind it. What does: an interior cell's onward
- * neighbour is another run cell and the run behind it is short of the carve's length; the end's onward
- * neighbour is the landing. A dead-end stub hanging off a node has the same one direction, but its node
- * names the stub in return, so the passage is open both ways and it is never the end of a run. */
-const isRunEnd = (grid: FloorGrid, row: number, col: number): boolean => {
-  const cell = getCell(grid, row, col)
-  if (cell?.type !== "corridor" || cell.dirs.size !== 1) return false
-  const [dir] = cell.dirs
-  const [dr, dc] = MOVES[dir]
-  const onward = getCell(grid, row + dr, col + dc)
-  if (!onward || onward.type === "empty" || onward.dirs.has(opposite[dir])) return false
-  return runLengthTo(grid, row, col, dir) === ONE_WAY_RUN_CELLS || !isRunCell(onward, dir)
-}
-
-/**
- * The direction from (row,col) toward a ONE-WAY MOUTH standing next to it, if any: the landing end of a
- * drop's run, seen from the landing. That asymmetry is what a drop is: the carve gives the run the way
- * down and the landing no way back up, so (row,col) names no direction into the mouth.
- */
-export const oneWayMouthDir = (grid: FloorGrid, row: number, col: number): Direction | undefined => {
-  const landing = getCell(grid, row, col)
-  if (!landing || landing.type === "empty") return undefined
-  for (const dir of ALL_DIRS) {
-    if (landing.dirs.has(dir)) continue
-    const [dr, dc] = MOVES[dir]
-    const mouth = getCell(grid, row + dr, col + dc)
-    if (mouth?.type === "corridor" && mouth.dirs.has(opposite[dir]) && isRunEnd(grid, row + dr, col + dc)) return dir
-  }
-  return undefined
-}
-
-/** Whether (row,col) is itself a one-way mouth: the landing end of a drop's run. */
-export const isOneWayMouth = (grid: FloorGrid, row: number, col: number): boolean => isRunEnd(grid, row, col)
-
-/** Every drop on the floor as one thing: where it leaves from, the cells of its run in order from the
- * departure, and where it lands. The grid is the only place a drop is written down, so this is the one
- * place that reads it back whole. */
+ * The grid is the only place a drop is written down, so this is the one place that reads it back whole.
+ * Nothing here decides what can be walked: a walk follows `dirs` alone, and the obstacle names none. */
 export const oneWayRuns = (
   grid: FloorGrid
-): { departure: [number, number]; cells: [number, number][]; landing: [number, number]; dir: Direction }[] => {
+): { launch: [number, number]; cells: [number, number][]; landing: [number, number]; dir: Direction }[] => {
   const runs: ReturnType<typeof oneWayRuns> = []
+  const continues = (r: number, c: number, dir: Direction): boolean => {
+    const cell = getCell(grid, r, c)
+    return isObstacleCell(cell) && cell.obstacle.dir === dir
+  }
   for (let r = 0; r < grid.rows; r++)
     for (let c = 0; c < grid.cols; c++) {
-      if (!isRunEnd(grid, r, c)) continue
-      const cell = grid.cells[r][c] as CorridorCell
-      const [dir] = cell.dirs
+      const first = getCell(grid, r, c)
+      if (!isObstacleCell(first)) continue
+      const { dir } = first.obstacle
       const [dr, dc] = MOVES[dir]
-      const length = runLengthTo(grid, r, c, dir)
-      const departure = getCell(grid, r - dr * length, c - dc * length)
-      if (!departure || departure.type === "empty" || !departure.dirs.has(dir)) continue
-      runs.push({
-        departure: [r - dr * length, c - dc * length],
-        cells: Array.from({ length }, (_, k): [number, number] => [
-          r - dr * (length - 1 - k),
-          c - dc * (length - 1 - k),
-        ]),
-        landing: [r + dr, c + dc],
-        dir,
-      })
+      if (continues(r - dr, c - dc, dir)) continue
+      const cells: [number, number][] = []
+      for (let at = 0; continues(r + dr * at, c + dc * at, dir); at++) cells.push([r + dr * at, c + dc * at])
+      const [lr, lc] = cells[cells.length - 1]
+      runs.push({ launch: [r - dr, c - dc], cells, landing: [lr + dr, lc + dc], dir })
     }
   return runs
 }
 
-/** Brings the drop's run next to (row,col) out of the fog — every cell of it, never what stands beyond
- * it — the moment (row,col) itself is seen. The run is the whole zipline, so the player sees all of it
- * from the landing and none of the ground behind its departure. Read off `grid`, the shape carved into
- * it never changing mid-walk, but written into `cells`, this call's own running state. */
-const revealOneWayMouth = (cells: GridCell[][], grid: FloorGrid, row: number, col: number): void => {
-  const dir = oneWayMouthDir(grid, row, col)
-  if (!dir) return
-  const [dr, dc] = MOVES[dir]
-  for (let at = 1; isRunCell(grid.cells[row + dr * at]?.[col + dc * at], opposite[dir]); at++) {
-    const cell = cells[row + dr * at][col + dc * at]
-    if (cell.type === "corridor" && cell.state === "fogged") {
-      cells[row + dr * at][col + dc * at] = { ...cell, state: "visible" }
+/** Brings every obstacle out of the fog once its launch or its landing is seen: the whole zipline is
+ * visible from either foot, and nothing past it. The far end stays dark, so a player at the launch sees
+ * the line and not what it lands on. Read off `grid`, the shape carved into it never changing mid-walk,
+ * but written into `cells`, this call's own running state. */
+const revealObstacles = (cells: GridCell[][], grid: FloorGrid): void => {
+  for (const run of oneWayRuns(grid)) {
+    const seen = [run.launch, run.landing].some(([r, c]) => {
+      const cell = cells[r]?.[c]
+      return cell !== undefined && cell.type !== "empty" && cell.state !== "fogged"
+    })
+    if (!seen) continue
+    for (const [r, c] of run.cells) {
+      const cell = cells[r][c]
+      if (cell.type === "corridor" && cell.state === "fogged") cells[r][c] = { ...cell, state: "visible" }
     }
   }
 }
@@ -142,13 +95,14 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
   } else if (targetCell.type === "corridor") {
     newCells[row][col] = { ...targetCell, state: "completed" }
   }
-  revealOneWayMouth(newCells, grid, row, col)
-
   const updatedGrid = { ...grid, cells: newCells }
 
   // 3. BFS through corridors and rooms from (row,col)
   const cell = newCells[row][col]
-  if (cell.type === "empty") return updatedGrid
+  if (cell.type === "empty") {
+    revealObstacles(newCells, grid)
+    return updatedGrid
+  }
 
   type QItem = { r: number; c: number; fromDir: Direction | null }
   const visited = new Set<string>([`${row},${col}`])
@@ -172,22 +126,13 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
 
     if (neighbor.type === "corridor") {
       // Straight-through: corridor continues in the same direction we arrived from, no branches.
-      // Anything else (corner, T-junction) is a blind spot the player must click to reveal. A
-      // one-way connector's single direction is the arrival direction itself (never its opposite,
-      // which is what a real dead end carries instead), so it is a straight-through too: there is
-      // nowhere else it could lead, and no branch to click around.
-      //
-      // A one-way LANDING is not this, even though it can look like it: its dirs never include the
-      // direction back to the connector (that asymmetry is the whole feature), so an ordinary size-2
-      // cell whose two real directions happen to include the drop's own travel direction reads as
-      // "continues straight" by the size/membership check alone. A genuine two-way straight or corner
-      // always carries the reciprocal (`opposite[fromDir]`) — only a one-way's blind side lacks it —
-      // so requiring it here is inert for every ordinary corridor and stops the reveal exactly at the
-      // landing, which is the one cell "what lies beyond stays dark" is about.
+      // Anything else (corner, T-junction, dead end) is a blind spot the player must click to reveal.
+      // A straight names the way back as well as the way onward.
       const isStraight =
         fromDir !== null &&
+        neighbor.dirs.size === 2 &&
         neighbor.dirs.has(fromDir) &&
-        (neighbor.dirs.size === 1 || (neighbor.dirs.size === 2 && neighbor.dirs.has(opposite[fromDir])))
+        neighbor.dirs.has(opposite[fromDir])
       if (isStraight) {
         if (neighbor.state === "fogged") {
           newCells[r][c] = { ...neighbor, state: "visible" }
@@ -216,25 +161,13 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
       // solve — those stay approachable and clickable like any other room.
       if (neighbor.state === "fogged" || neighbor.state === "visible") {
         newCells[r][c] = { ...neighbor, state: "reachable" }
-        revealOneWayMouth(newCells, grid, r, c)
       }
       // Don't traverse through rooms
     }
   }
 
+  revealObstacles(newCells, grid)
   return { ...grid, cells: newCells }
-}
-
-/** Every direction (row,col) can walk out along: its own `dirs`, plus — if a one-way mouth stands
- * beside it — the direction there. A mouth's landing never carries that direction in its own `dirs`
- * (the asymmetry the whole feature rests on), so a plain `dirs` walk can never reach it; every graph
- * walk over the floor (`findPath`, `walkableFrom`) reads this instead of `dirs` alone, so the mouth is
- * one real edge in one place rather than a second notion of "can walk" each has to carry itself. */
-const walkableDirsFrom = (grid: FloorGrid, row: number, col: number, cell: CorridorCell | RoomCell): Direction[] => {
-  const dirs = [...cell.dirs]
-  const mouthDir = oneWayMouthDir(grid, row, col)
-  if (mouthDir) dirs.push(mouthDir)
-  return dirs
 }
 
 export const findPath = (
@@ -254,7 +187,7 @@ export const findPath = (
     const [r, c] = queue.shift()!
     const cell = grid.cells[r]?.[c]
     if (!cell || cell.type === "empty") continue
-    for (const d of walkableDirsFrom(grid, r, c, cell)) {
+    for (const d of cell.dirs) {
       const [dr, dc] = MOVES[d]
       const nr = r + dr,
         nc = c + dc
@@ -293,15 +226,8 @@ export const findPath = (
  * set is an affordance the map cannot honour, and the corridor holding it should read as the dead end
  * it is.
  *
- * Includes an adjacent one-way mouth: the player may stand on it, even though its landing's own
- * `dirs` never lists the way there — `walkableDirsFrom` is what supplies that edge.
- *
- * The walk can climb a chain of mouths, since a mouth whose run-behind is itself a run end offers its
- * own edge (a lone-direction departure makes the cell one before the mouth a run end too, and is
- * climbed). No region is breached, because a cell with one `dirs` entry can only be left along it: the
- * chain must end at a cell with more than one way out, or a room, and `isRunEnd` refuses both. The
- * carve cannot build the chain anyway: a drop leaves a node that also names its way in, so a drop's
- * departure always has two ways out (`gridNavigation.spec.ts`, "walking up from a landing"). */
+ * An obstacle's cells are never in this set: nothing names them, so only the launch and the landing, each
+ * on its own side, are ever walked to. Crossing is the action's, never the walk's. */
 export const walkableFrom = (grid: FloorGrid, from: readonly [number, number]): ReadonlySet<string> => {
   const [fr, fc] = from
   const seen = new Set<string>([`${fr},${fc}`])
@@ -311,7 +237,7 @@ export const walkableFrom = (grid: FloorGrid, from: readonly [number, number]): 
     const [r, c] = queue.shift()!
     const cell = grid.cells[r]?.[c]
     if (!cell || cell.type === "empty") continue
-    for (const d of walkableDirsFrom(grid, r, c, cell)) {
+    for (const d of cell.dirs) {
       const [dr, dc] = MOVES[d]
       const nr = r + dr,
         nc = c + dc

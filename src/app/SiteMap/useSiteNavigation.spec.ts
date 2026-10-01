@@ -133,8 +133,8 @@ const fogged: GridCell = {
   sectionAddress: SECTION,
   ordinal: "1",
 }
-// A one-way's landing (dirs empty — the asymmetry itself) beside its mouth (dirs {w}, pointing back at
-// the landing, never reaching "reachable" — `revealOneWayMouth` only ever lifts its fog to "visible").
+// An obstacle cell (names no direction, carries the marker) beside a node that does not name it. It is
+// given the state a tappable cell has, so that only the walk's own refusal can stop a tap on it.
 const oneWayLanding: GridCell = {
   type: "room",
   roomType: "encounter",
@@ -146,10 +146,11 @@ const oneWayLanding: GridCell = {
   ordinal: "0",
   pathIndex: 0,
 }
-const oneWayMouth: GridCell = {
+const obstacleCell: GridCell = {
   type: "corridor",
-  dirs: new Set(["w"]),
-  state: "visible",
+  dirs: new Set([]),
+  obstacle: { dir: "w" },
+  state: "reachable",
   sectionHash: SECTION,
   sectionAddress: SECTION,
   ordinal: "1",
@@ -276,16 +277,13 @@ describe("useSiteNavigation", () => {
     expect(journeys.updatePosition).toHaveBeenCalledWith("j1", CORRIDOR_AT_1, "0:0,1")
   })
 
-  // The mouth stays "visible", never "reachable" (`revealOneWayMouth`), so a tap on it needs its own
-  // proof that the ordinary reachable/completed gate is not the only door in — it is a genuine stopping
-  // point, walked onto the same way any other corridor is.
-  it("walks a tap on a one-way mouth onto it, from the landing beside it", () => {
-    const { hook, journeys } = setup([oneWayLanding, oneWayMouth])
+  it("walks nowhere on a tap on an obstacle cell beside the landing, writing neither an exploration nor a position", () => {
+    const { hook, journeys } = setup([oneWayLanding, obstacleCell])
 
     act(() => hook.result.current.onCellClick(0, 1))
 
-    expect(journeys.markCellExplored).toHaveBeenCalledWith(SECTION, "0:0,1", CORRIDOR_AT_1)
-    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", CORRIDOR_AT_1, "0:0,1")
+    expect(journeys.markCellExplored).not.toHaveBeenCalled()
+    expect(journeys.updatePosition).not.toHaveBeenCalled()
   })
 
   it("opens an unsolved room's board on arrival, with nothing to tap first", () => {

@@ -2,14 +2,15 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import { assembleFloor, ONE_WAY_RUN_CELLS } from "@/game/siteAssembler"
+import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, findPath, revealAll, walkableFrom } from "@/game/gridNavigation"
 import { markerAt, offerContextFrom, offeredTargets } from "./clickTargets"
 import { buildRoomClaims } from "./roomClaims"
-import type { FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
+import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
 import { DIR_MOVES } from "./corridorRuns"
+import { AXES, DROP_AT, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
 
 // jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
 Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
@@ -264,78 +265,46 @@ describe("a gate the player can enter", () => {
   })
 })
 
-// A ZIPLINE'S MOUTH IS A REAL DESTINATION NOW: walkable from its landing (gridNavigation.spec.ts
-// proves the graph edge), so it must also be a marker the player can actually tap — an offer with no
-// marker on it is the exact defect this module exists to rule out (see the module doc comment above).
-describe("a one-way mouth the player can walk up to", () => {
-  // source(0,0) --e--> mouth(0,1), dirs {e} only --e--> landing(0,2), dirs {} — the same shape
-  // gridNavigation.spec.ts uses for the graph-level guarantee this offer rests on.
-  const grid: FloorGrid = {
-    siteId: "one-way-mouth",
-    rows: 1,
-    cols: 3,
-    entrancePos: [0, 0],
-    exitPos: [0, 2],
-    staircases: {},
-    cells: [
-      [
-        { type: "room", roomType: "encounter", dirs: new Set(["e"]), state: "reachable" },
-        { type: "corridor", dirs: new Set(["e"]), state: "visible" },
-        { type: "room", roomType: "encounter", dirs: new Set(), state: "reachable" },
-      ],
-    ],
-  }
+// A ZIPLINE IS TAKEN, NOT WALKED: the launch and the landing are destinations on their own side, and
+// the obstacle between them is never one. Offers are asserted as whole sets of targets, so a target that
+// leaks across the obstacle, or one that goes missing, is red either way.
+describe("the offers around a one-way drop", () => {
+  const key = ([r, c]: readonly [number, number]) => `${r},${c}`
+  const targetsFrom = (grid: FloorGrid, from: readonly [number, number]) =>
+    new Set([...offeredTargets(grid, buildRoomClaims(grid), from).values()].map(key))
 
-  it("is offered from the landing, and a tap resolves onto it", () => {
-    const offers = [...offeredTargets(grid, buildRoomClaims(grid), [0, 2]).values()]
-    expect(offers).toContainEqual([0, 1])
+  describe.each(AXES)("going $travel", axis => {
+    const { grid, at } = dropGrid(axis, "room", "room", "reachable")
 
-    const onCellClick = vi.fn()
-    const { container } = render(<SiteMapView grid={grid} explorerPos={[0, 2]} onCellClick={onCellClick} />)
-    const mouth = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
-      el => parseFloat(el.style.left) === cellCenter(0, 1).cx - CELL / 2
-    )
-    expect(mouth?.style.cursor).toBe("pointer")
-    fireEvent.click(mouth!)
-    expect(onCellClick).toHaveBeenCalledWith(0, 1)
-  })
-})
-
-describe("which way a drop's mouth arrow points", () => {
-  // departure --dir--> ONE_WAY_RUN_CELLS run cells --dir--> landing, laid along each axis. The run's
-  // last cell is the mouth; the landing names no way back into it.
-  const axes = [
-    { name: "east", dir: "e", back: "w", step: [0, 1] },
-    { name: "south", dir: "s", back: "n", step: [1, 0] },
-  ] as const
-  const lineOf = (axis: (typeof axes)[number]): FloorGrid => {
-    const length = ONE_WAY_RUN_CELLS + 2
-    const cells: GridCell[] = Array.from({ length }, (_, i) => {
-      if (i === 0) return { type: "room", roomType: "encounter", dirs: new Set([axis.dir]), state: "reachable" }
-      if (i === length - 1) return { type: "room", roomType: "encounter", dirs: new Set(), state: "reachable" }
-      return { type: "corridor", dirs: new Set([axis.dir]), state: "visible" }
+    it("offers its own side's two ends and nothing across the obstacle, from the launch's side", () => {
+      const side = new Set([key(at(DROP_AT.fromNode)), key(at(DROP_AT.launch))])
+      expect(targetsFrom(grid, at(DROP_AT.fromNode))).toEqual(side)
+      expect(targetsFrom(grid, at(DROP_AT.launch))).toEqual(side)
     })
-    const vertical = axis.step[0] === 1
-    return {
-      siteId: "test",
-      rows: vertical ? length : 1,
-      cols: vertical ? 1 : length,
-      entrancePos: [0, 0],
-      exitPos: [vertical ? length - 1 : 0, vertical ? 0 : length - 1],
-      staircases: {},
-      cells: vertical ? cells.map(cell => [cell]) : [cells],
-    }
-  }
-  const at = (axis: (typeof axes)[number], i: number): [number, number] => [axis.step[0] * i, axis.step[1] * i]
 
-  it.each(axes)("points onward from the departure and back along the run from the landing, going $name", axis => {
-    const grid = lineOf(axis)
-    const mouth = at(axis, ONE_WAY_RUN_CELLS)
-    const arrowFrom = (explorer: [number, number]) => {
-      const ctx = offerContextFrom(grid, explorer, {})
-      return markerAt(grid, buildRoomClaims(grid), mouth[0], mouth[1], ctx)
-    }
-    expect(arrowFrom(at(axis, 0))).toEqual({ kind: "arrow", dir: axis.dir })
-    expect(arrowFrom(at(axis, ONE_WAY_RUN_CELLS + 1))).toEqual({ kind: "arrow", dir: axis.back })
+    it("offers its own side's two ends and nothing across the obstacle, from the landing's side", () => {
+      const side = new Set([key(at(DROP_AT.landing)), key(at(DROP_AT.toNode))])
+      expect(targetsFrom(grid, at(DROP_AT.toNode))).toEqual(side)
+      expect(targetsFrom(grid, at(DROP_AT.landing))).toEqual(side)
+    })
+
+    it("draws the launch's dot and the landing's, the markers a tap on them lands on", () => {
+      for (const index of [DROP_AT.launch, DROP_AT.landing]) {
+        const from = at(index === DROP_AT.launch ? DROP_AT.fromNode : DROP_AT.toNode)
+        const ctx = offerContextFrom(grid, from, {})
+        const [r, c] = at(index)
+        expect(markerAt(grid, buildRoomClaims(grid), r, c, ctx)).toEqual({ kind: "dot" })
+      }
+    })
+
+    it("draws no marker on any cell of the obstacle, from any standing place", () => {
+      for (const standing of [DROP_AT.fromNode, DROP_AT.launch, DROP_AT.landing, DROP_AT.toNode]) {
+        const ctx = offerContextFrom(grid, at(standing), {})
+        for (const index of obstacleIndexes) {
+          const [r, c] = at(index)
+          expect(markerAt(grid, buildRoomClaims(grid), r, c, ctx)).toBeNull()
+        }
+      }
+    })
   })
 })

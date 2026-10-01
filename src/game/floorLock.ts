@@ -1,15 +1,16 @@
 import type { Direction, FloorGrid, GridCell, MechanismRecord, TombKeyReward } from "./siteTypes"
 import type { LockSpec, Mechanism, GateId, MechanismId, RegionId } from "./lockWalk"
 import { nodeBeyond } from "./siteValidator"
-import { oneWayRuns } from "./gridNavigation"
+import { isObstacleCell, oneWayRuns } from "./gridNavigation"
 
 type Pos = readonly [number, number]
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 const OPPOSITE: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
 const posKey = (r: number, c: number) => `${r},${c}`
 
+// An obstacle's cells are walls to the flood: nothing names them, so they are no ground at all.
 const walkable = (cell: GridCell | undefined): boolean =>
-  !!cell && (cell.type === "room" || cell.type === "corridor") && !cell.hidden
+  !!cell && (cell.type === "room" || cell.type === "corridor") && !cell.hidden && !isObstacleCell(cell)
 
 // A DOOR IS A ROOM THE PLAYER MAY NOT WALK INTO WITHOUT SATISFYING EVERY KEY IT NAMES, and it may
 // name several: a tableau standing in the way asks for one id per hieroglyph (`requiredKeyIds`), and
@@ -32,22 +33,21 @@ const dirsOf = (cell: GridCell): ReadonlySet<Direction> =>
 // would stamp the ground past it with the region it fell from, and the walk — which may step either
 // way across anything inside one region — would be told the player can climb back up.
 //
-// A DROP'S RUN IS THE DEPARTURE'S GROUND, NOT REGIONS OF ITS OWN. Its cells name only the way onward, so
-// the flood would leave each one a region alone and the drop would read as a chain of moves, one per
-// cell; the run belongs to the region it falls from, and only its last step crosses into another.
+// A DROP'S OBSTACLE IS NO GROUND AT ALL, and its two ends are ordinary ground: the launch and the landing
+// are dead ends each naming their own node and each named back, so the flood puts every one in the region
+// of the node it hangs off. The obstacle's cells are walls to the flood (`walkable`), which is why the two
+// sides share no edge and why `oneWaysOf` is where the crossing is written down.
 //
 // Hidden cells are left out: a hidden section is never a statement that the player found it, so a
 // floor has to be sound without one.
 const regionsOf = (grid: FloorGrid): { ids: RegionId[]; of: Map<string, RegionId> } => {
   const of = new Map<string, RegionId>()
   const ids: RegionId[] = []
-  const runs = oneWayRuns(grid)
-  const inRun = new Set(runs.flatMap(run => run.cells.map(([r, c]) => posKey(r, c))))
 
   for (let r = 0; r < grid.rows; r++)
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
-      if (!walkable(cell) || of.has(posKey(r, c)) || inRun.has(posKey(r, c))) continue
+      if (!walkable(cell) || of.has(posKey(r, c))) continue
       const isDoor = doorKeysOf(cell).length > 0
       const id = isDoor ? `door ${r},${c}` : `at ${r},${c}`
       ids.push(id)
@@ -69,38 +69,23 @@ const regionsOf = (grid: FloorGrid): { ids: RegionId[]; of: Map<string, RegionId
       }
     }
 
-  for (const run of runs) {
-    const region = of.get(posKey(run.departure[0], run.departure[1]))
-    if (!region) continue
-    for (const [r, c] of run.cells) if (walkable(grid.cells[r][c])) of.set(posKey(r, c), region)
-  }
-
   return { ids, of }
 }
 
-// A PASSAGE THE PLAYER MAY TAKE ONLY ONE WAY. The ground past a drop is a region of its own only
-// when something else gates it off — an ungated section is already fully wired into the same maze
-// its neighbours are, and the drop merely adds a shortcut across ground the flood already joined,
-// so without this the walk would believe a genuinely gated pocket has no way in at all and would
-// refuse a floor that is perfectly sound. A pair whose two cells land in the same region is skipped,
-// and the flood above is what makes that reading safe: a region is ground walked both ways, so two
-// cells sharing one are two cells the player already moves freely between.
+// A PASSAGE THE PLAYER MAY TAKE ONLY ONE WAY: one per drop, from the region its launch stands in to the
+// region its landing stands in. The ground past a drop is a region of its own only when something else
+// gates it off — an ungated section is already fully wired into the same maze its neighbours are, and
+// the drop merely adds a shortcut across ground the flood already joined, so without this the walk would
+// believe a genuinely gated pocket has no way in at all and would refuse a floor that is perfectly sound.
+// A drop whose two ends land in the same region is skipped: a region is ground walked both ways, so the
+// two cells are ones the player already moves freely between.
 const oneWaysOf = (grid: FloorGrid, of: Map<string, RegionId>): { from: RegionId; to: RegionId }[] => {
   const found: { from: RegionId; to: RegionId }[] = []
-  for (let r = 0; r < grid.rows; r++)
-    for (let c = 0; c < grid.cols; c++) {
-      const cell = grid.cells[r][c]
-      const fromRegion = of.get(posKey(r, c))
-      if (!fromRegion) continue
-      for (const dir of dirsOf(cell)) {
-        const [dr, dc] = MOVES[dir]
-        const [nr, nc] = [r + dr, c + dc]
-        const next = grid.cells[nr]?.[nc]
-        const toRegion = of.get(posKey(nr, nc))
-        if (!toRegion || toRegion === fromRegion) continue
-        if (!next || !dirsOf(next).has(OPPOSITE[dir])) found.push({ from: fromRegion, to: toRegion })
-      }
-    }
+  for (const run of oneWayRuns(grid)) {
+    const from = of.get(posKey(run.launch[0], run.launch[1]))
+    const to = of.get(posKey(run.landing[0], run.landing[1]))
+    if (from && to && from !== to) found.push({ from, to })
+  }
   return found
 }
 
