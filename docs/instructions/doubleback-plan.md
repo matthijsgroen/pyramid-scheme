@@ -16,7 +16,7 @@
 - `yarn eslint <paths>` only. **NEVER `yarn lint --fix <path>`** — it does not scope and rewrites the repo.
 - **NEVER `git add` / `git commit` / `git stash`** in a task. The controlling session commits.
 - **NEVER run `INCLUDE_DEV=1 yarn generate-world`.** `yarn validate-world` is safe with the flag.
-- `yarn generate-world && md5 -q src/data/generatedWorld.ts` must stay `7d07cfc0981759bbdd8c220bea6bfa57`.
+- `yarn generate-world && md5 -q src/data/generatedWorld.ts` must stay `eb7d34e5dcb1629a8d6b6033b077cfa1`.
 - **That fingerprint does NOT cover the carve** — it holds authored `SiteConfig[]`, not walls. Any task changing carve behaviour captures a CARVE BASELINE first (assemble every shipped floor at its real seed via `allFloors()`, reduce each cell to its `dirs`, diff before against after) and reports the diff.
 - `INCLUDE_DEV=1 yarn validate-world` valid, lock sweep walks every floor that authors a mechanism.
 - `src/game/` is the domain layer: no React, no `src/app/`.

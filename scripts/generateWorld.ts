@@ -30,8 +30,8 @@ import {
   findUnwalkedLocks,
   floorsOwingALock,
 } from "../src/worldGen/validate"
-import { assembleFloor } from "../src/game/siteAssembler"
-import { searchCarveSeed, type CarveCriterion } from "../src/worldGen/carveSeedSearch"
+import { assembleFloor, DEFAULT_PACKING, PACKING_CEILING } from "../src/game/siteAssembler"
+import { searchCarvePair, type CarveCriterion } from "../src/worldGen/carveSeedSearch"
 import type { FloorGrid } from "../src/game/siteTypes"
 import type { FloorConfig } from "../src/worldGen/types"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
@@ -111,18 +111,26 @@ assignFragmentPieceIndices(configs)
 // chests on it, and reported below once every sweep has had its turn at it.
 //
 // One carve per floor, shared by every sweep that needs the grid rather than the spec.
-// A floor is carved at the first seed from its address that carves on the assembler's FIRST attempt,
-// walks sound and leaves no dead region, and that seed is stamped on the floor only when it is not the
-// address's own: a floor that needs no search stays implicitly seeded, so the baked world only names
-// the floors whose seed was actually moved. A floor that fails every try is an
-// authoring the assembler cannot satisfy, not bad luck.
+// A floor is carved at the first (packing, seed) pair that carves on the assembler's FIRST attempt, walks
+// sound and leaves no dead region: every seed at the authored `packing` is tried before the packing
+// rises a step. Both are stamped on the floor only when they moved: a floor that needs no search stays
+// implicitly seeded and keeps the packing its author wrote, so the baked world only names the floors the
+// search changed, and the runtime carves exactly what was found here. A floor no pair satisfies is an
+// authoring the assembler cannot satisfy, not bad luck, and is named (see STRICT_ATTEMPT_ZERO).
 const CARVE_SEED_BUDGET = 100
-// Every floor must carve on the first attempt, at the packing its author wrote. Off, a floor no seed
-// gets there is carved by the ladder and listed; on, it fails the build by name.
+// A floor no pair satisfies needs more than `packing` and a seed can give it (the grid the assembler
+// derives is too small, and only its widening rungs grow it). Off, it is listed by name and carved by the
+// ladder as the runtime carves it; on, it fails the build.
 const STRICT_ATTEMPT_ZERO = process.env.STRICT_ATTEMPT_ZERO === "1"
 const unsatisfiable: string[] = []
 const unassembled: string[] = []
-const carveSearch: { key: string; offset: number; baseRefusal: CarveCriterion | null }[] = []
+const carveSearch: {
+  key: string
+  offset: number
+  baseRefusal: CarveCriterion | null
+  authored: number
+  packing: number
+}[] = []
 const grids = new Map<string, FloorGrid | null>()
 const assembleOnce = (journeyId: string, floor: FloorConfig, levelNr: number, floorIndex: number) => {
   const cacheKey = `${journeyId}#${levelNr}#${floorIndex}`
@@ -131,30 +139,44 @@ const assembleOnce = (journeyId: string, floor: FloorConfig, levelNr: number, fl
     // The whole address, so the ids derived from it here — a stairhead the authoring left unnamed,
     // a lever's gate stem — are the ones the runtime builds for this same floor.
     const floorRef = { journeyId, levelIndex: levelNr - 1, floorIndex }
-    const assembleAt = (seed: number, maxAttempts: number) =>
-      assembleFloor(journeyId, { ...floor, seed }, base, resolveEncounterMeta, {
-        resolveKeyRequirements,
-        floorRef,
-        maxAttempts,
-      })
-    const search = searchCarveSeed(base, assembleAt, CARVE_SEED_BUDGET, Infinity)
+    const authored = floor.packing ?? DEFAULT_PACKING
+    // The authored packing is passed as written (possibly absent), so a floor the search leaves alone
+    // carves exactly as the runtime carves its unstamped config.
+    const assembleAt = (seed: number, packing: number, maxAttempts: number) =>
+      assembleFloor(
+        journeyId,
+        { ...floor, seed, packing: packing === authored ? floor.packing : packing },
+        base,
+        resolveEncounterMeta,
+        { resolveKeyRequirements, floorRef, maxAttempts }
+      )
+    const search = searchCarvePair(base, assembleAt, {
+      authoredPacking: authored,
+      ceiling: PACKING_CEILING,
+      seedBudget: CARVE_SEED_BUDGET,
+      fullLadder: Infinity,
+    })
     // WITH WHY, NOT JUST WHERE. The assembler refuses an authoring it can never satisfy — a one-way
     // or a handle naming a section the floor does not have, a switch asking for more junctions than
     // `forks` reserves — and names it in the reason. Printed as a bare floor id, all of those reach
     // the author as "cannot be carved", which reads as a seed problem and sends them looking at the
     // wrong thing.
     if (search.found) {
-      carveSearch.push({ key: cacheKey, offset: search.offset, baseRefusal: search.baseRefusal })
+      carveSearch.push({
+        key: cacheKey,
+        offset: search.offset,
+        baseRefusal: search.baseRefusal,
+        authored,
+        packing: search.packing,
+      })
       if (search.offset > 0) floor.seed = search.seed
+      if (search.packing !== authored) floor.packing = search.packing
       grids.set(cacheKey, search.grid)
     } else {
-      const refusal = `${journeyId} level ${levelNr} floor ${floorIndex}: no seed in ${search.tried} tries satisfies "${search.hardest}" — ${search.detail}`
+      const refusal = `${journeyId} level ${levelNr} floor ${floorIndex}: no seed in ${search.tried} tries up to packing ${search.reached} satisfies "${search.hardest}" — ${search.detail}`
       unsatisfiable.push(refusal)
-      carveSearch.push({ key: cacheKey, offset: 0, baseRefusal: search.baseRefusal })
-      // Without the strict flag a floor no seed carves at its authored packing is carved as the runtime
-      // carves it today, ladder and all, so the world does not move under a floor nobody re-authored.
-      // A floor that does not carve at all fails below either way.
-      const ladder = assembleAt(base, Infinity)
+      carveSearch.push({ key: cacheKey, offset: 0, baseRefusal: search.baseRefusal, authored, packing: authored })
+      const ladder = assembleAt(base, authored, Infinity)
       if (STRICT_ATTEMPT_ZERO || !ladder.success) unassembled.push(refusal)
       grids.set(cacheKey, ladder.success ? ladder.grid : null)
     }
@@ -238,14 +260,21 @@ if (undrawnHandles.length > 0) {
 // state it died in is printed because that is what a person walks by hand to confirm it.
 const { walked, stranding } = findStrandingLocks(configs, assembleOnce)
 
-// What the search did, printed on every run: how many floors carve at the address's own seed, and how
-// many only past it — a floor refused on "attempt 0" carves today at a widened grid and a doubled `packing`.
+// What the search did, printed on every run: how many floors carve at their authored packing and the
+// address's own seed, how many needed a seed past it, and how many needed a packing above what was
+// authored. The last is the author's cue: the authored value cannot carve, and the baked one is what the
+// player gets, so each such floor is listed with how far it rose.
 const moved = carveSearch.filter(f => f.offset > 0)
+const raised = carveSearch.filter(f => f.packing !== f.authored)
 const pastAttemptZero = carveSearch.filter(f => f.baseRefusal === "attempt 0")
 console.log(
-  `  Carve seed search: ${carveSearch.length} floor(s), ${moved.length} moved off their address seed (worst offset ${Math.max(0, ...carveSearch.map(f => f.offset))}), ${pastAttemptZero.length} carve only past attempt 0 at their address seed, ${unsatisfiable.length} reach attempt 0 at no seed in ${CARVE_SEED_BUDGET + 1}`
+  `  Carve search: ${carveSearch.length} floor(s), ${moved.length} moved off their address seed (worst offset ${Math.max(0, ...carveSearch.map(f => f.offset))}), ${raised.length} raised above their authored packing (worst +${Math.max(0, ...carveSearch.map(f => f.packing - f.authored)).toFixed(2)}), ${pastAttemptZero.length} carve only past attempt 0 as authored, ${unsatisfiable.length} unsatisfiable up to packing ${PACKING_CEILING}`
 )
-if (process.env.LIST_UNSATISFIABLE === "1") for (const line of unsatisfiable) console.log(`    ${line}`)
+for (const line of unsatisfiable) console.log(`    unsatisfiable: ${line}`)
+if (raised.length > 0) {
+  console.log(`  Floors whose authored packing cannot carve (authored -> baked), to correct in the authoring:`)
+  for (const f of raised) console.log(`    ${f.key}: ${f.authored} -> ${f.packing}`)
+}
 
 // Reported once every sweep that carves a floor has had its turn, so it covers every assembly
 // attempted rather than only the chest sweep's. Nothing is written: a floor that will not carve at

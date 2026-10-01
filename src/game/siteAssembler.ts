@@ -331,17 +331,19 @@ const DEFAULT_STRAIGHT_BIAS = 0.65
 // loop in assembleFloor). 1 = today's default footprint; <1 packs the floor (and its
 // winding corridors) tighter, >1 gives it more breathing room. Overridable per floor via
 // FloorConfig.packing.
-const DEFAULT_PACKING = 0.1
+export const DEFAULT_PACKING = 0.1
 
-// THE LADDER IS LOAD-BEARING, NOT A SAFETY NET. Of the 206 shipped floors, 83 carve only past attempt 0
-// at their address's own seed: their authored `packing` is too small for the carve to fit, and the
-// widening rungs below (more grid, then a doubled `packing`) are what carve them. The bake's carve-seed
-// search (worldGen/carveSeedSearch.ts) pinned a seed that reaches attempt 0 on 14 of those 83; the
-// other 69 reach attempt 0 at no seed in 101 tries, so they depend on this ladder at runtime. Keeping it
-// is a decision: the alternative is re-authoring those 69 floors' `packing`. Removing or shortening it
-// would leave those 69 floors uncarvable ("Site layout unavailable." for every player), and changing its
-// rungs re-carves every floor that climbs them. STRICT_ATTEMPT_ZERO=1 on `yarn generate-world` fails the
-// build by name on a floor that needs it; it is opt-in until those 69 are re-authored.
+// THE LADDER IS LOAD-BEARING FOR 31 OF THE 206 SHIPPED FLOORS. The bake searches every floor for the
+// smallest `packing` (from the authored one, in small steps) and a seed that carve on attempt 0
+// (worldGen/carveSeedSearch.ts), and bakes the pair, so 175 floors never leave attempt 0. The other 31
+// (expert, master and wizard main floors, listed in worldGen/bakedCarve.spec.ts) fail attempt 0 with
+// `layoutNotFound` at every seed and every `packing` up to PACKING_CEILING: the grid `deriveN` sizes
+// is too small for them, and only the rungs below that grow it (`N += 2`, then recovery's `carvedCells`
+// sizing) carve them. Without the ladder those 31 render "Site layout unavailable." for every player.
+// A floor whose pair was never searched is carved by it too. Removing it is a decision, and needs the
+// derived grid to start large enough for those 31 first; changing its rungs re-carves every floor that
+// climbs them. STRICT_ATTEMPT_ZERO=1 on `yarn generate-world` fails the build by name on a floor that
+// needs it.
 //
 // Maze carving is a per-attempt gamble (each attempt reshuffles branch points and section
 // order), so assembleFloor retries. The first RECOVERY_ATTEMPT attempts run at the original
@@ -362,7 +364,7 @@ const PACKING_WIDEN = 2
 // The roomiest a widening will ever ask for. Past it the retry goes back to growing the grid, which
 // is the lever that suits a floor whose sections already have room to wander: compounding the wish
 // instead carves a walk hundreds of cells long for a floor holding three puzzles.
-const PACKING_CEILING = 1
+export const PACKING_CEILING = 1
 const ASSEMBLY_ATTEMPTS = 60
 
 /** The five kinds a god can be DEPICTED on, as `tileAssets.ts`'s resolver reads them: a patron reaches

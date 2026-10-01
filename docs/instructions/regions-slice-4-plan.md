@@ -14,7 +14,7 @@
 
 - `yarn check-types` is the truth. IDE diagnostics in this repo have been wrong on every occasion; never trust them, run the command.
 - Lint with `yarn eslint <paths>`. **`yarn lint --fix <path>` does NOT scope.**
-- `yarn generate-world` must stay byte-identical at md5 `7d07cfc0981759bbdd8c220bea6bfa57`.
+- `yarn generate-world` must stay byte-identical at md5 `eb7d34e5dcb1629a8d6b6033b077cfa1`.
 - NEVER run `INCLUDE_DEV=1 yarn generate-world`. `yarn validate-world` writes nothing and is safe with the flag.
 - `src/game/` is the domain layer: no React, no `src/app/`, no `src/ui/`.
 - Comments state CURRENT state and why, never history.
@@ -133,7 +133,7 @@ Change `unseated.length > 0` to `false`, re-run, and confirm the new test goes r
 
 - [ ] **Step 7: The world and the bench**
 
-Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` — expect `7d07cfc0981759bbdd8c220bea6bfa57`, clean `git status` for it.
+Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` — expect `eb7d34e5dcb1629a8d6b6033b077cfa1`, clean `git status` for it.
 Run: `INCLUDE_DEV=1 yarn validate-world` — expect `✓ World spec valid`, `Stair sweep: 111 …`, `Lock sweep: walked 8 of 8`. **The dev bench authors 3 regions on a floor whose main path is comfortably longer, so it must still carve.** If it refuses, report the step count rather than changing the bench.
 Run: `yarn test` — expect the full suite green.
 

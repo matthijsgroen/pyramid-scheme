@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 2051901655
+export const worldContentHash = 1459778030
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -149,6 +149,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           "mat",
         ],
         wallDecorations: ["niche", "tallyBoard"],
+        packing: 0.12,
+        seed: 3597973761,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
       },
       {
@@ -370,6 +372,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["niche", "tallyBoard"],
         role: "trade",
         encountersByIndex: { 0: "constellation" },
+        packing: 0.12,
+        seed: 3323337401,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [{ type: "money", amount: 3 }],
       },
@@ -691,6 +695,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["niche", "tallyBoard"],
         role: "puzzle",
         encountersByIndex: { 0: "futoshiki", 1: "balance-scale" },
+        packing: 0.14,
+        seed: 1354033022,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [
           { type: "money", amount: 1 },
@@ -845,6 +851,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["niche", "tallyBoard"],
         role: "puzzle",
         encountersByIndex: { 0: "rush-hour", 1: "hidato", 2: "sudoku" },
+        packing: 0.12,
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [
           { type: "money", amount: 1 },
@@ -1319,6 +1326,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["niche", "tallyBoard"],
         role: "puzzle",
         encountersByIndex: { 0: "sudoku", 1: "sumplete" },
+        packing: 0.14,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [
           { type: "money", amount: 3 },
@@ -1472,6 +1480,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["niche", "tallyBoard"],
         role: "puzzle",
         encountersByIndex: { 0: "star-battle", 1: "balance-scale", 2: "procession" },
+        packing: 0.12,
+        seed: 3148170102,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art1", pieceIndex: 1 },
         rewards: [
           { type: "money", amount: 2 },
@@ -1820,6 +1830,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["niche", "tallyBoard"],
         role: "puzzle",
         encountersByIndex: { 0: "rush-hour", 1: "sudoku", 2: "eclipse", 3: "balance-scale" },
+        packing: 0.14,
+        seed: 3148170100,
         mainEndReward: { type: "sellable", itemId: "sell_stone_1" },
         rewards: [
           { type: "money", amount: 1 },
@@ -1943,6 +1955,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "water",
         encountersByIndex: { 0: "hidato", 1: "constellation" },
+        packing: 0.16,
+        seed: 1902847392,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art12", pieceIndex: 1 },
         rewards: [
           { type: "money", amount: 1 },
@@ -2614,6 +2628,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "eclipse", 1: "futoshiki", 2: "sumplete", 3: "constellation" },
+        packing: 0.2,
+        seed: 458394307,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art7", pieceIndex: 1 },
         rewards: [
           { type: "money", amount: 1 },
@@ -2834,6 +2850,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "sudoku", 1: "procession", 2: "hidato", 3: "futoshiki" },
+        packing: 0.12,
+        seed: 458394295,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a2", pieceIndex: 0 },
         rewards: [
           { type: "money", amount: 3 },
@@ -3232,6 +3250,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "futoshiki", 1: "sumplete", 2: "lightbeam", 3: "star-battle" },
+        packing: 0.12,
+        seed: 1401747200,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d15", pieceIndex: 0 },
         rewards: [
           { type: "money", amount: 1 },
@@ -3972,6 +3992,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           4: "constellation",
           5: "sumplete",
         },
+        packing: 0.12,
+        seed: 1401747205,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art2", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -4329,6 +4351,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: ["light", "sky"],
         encountersByIndex: { 0: "canisters", 1: "constellation", 2: "star-battle", 3: "eclipse" },
+        packing: 0.14,
+        seed: 625093930,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art12", pieceIndex: 3 },
         rewards: [undefined, undefined, undefined, undefined],
       },
@@ -4435,6 +4459,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: ["light", "sky"],
         encountersByIndex: { 0: "canisters", 1: "eclipse", 2: "twin-stars", 3: "star-battle", 4: "lightbeam" },
+        packing: 0.14,
+        seed: 625093922,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
       },
@@ -4803,6 +4829,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["veil", "wallShrine", "sconce"],
         role: ["funerary", "puzzle"],
         encountersByIndex: { 0: "futoshiki", 1: "eclipse", 2: "hidato" },
+        packing: 0.22,
+        seed: 3529644521,
         mainEndReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -6881,6 +6909,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "canisters", 1: "sumplete", 2: "lightbeam", 3: "eclipse", 4: "rush-hour" },
         corridorStraightness: 0.35,
+        packing: 0.12,
+        seed: 3982655433,
         mainEndReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
         rewards: [
           { type: "consumable", consumable: "oil" },
@@ -7088,6 +7118,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           4: "constellation",
           5: "eclipse",
         },
+        packing: 0.16,
+        seed: 3982655373,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art3", pieceIndex: 0 },
         rewards: [
           { type: "consumable", consumable: "oil" },
@@ -7610,6 +7642,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           5: "hidato",
           6: "balance-scale",
         },
+        packing: 0.28,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p3", pieceIndex: 2 },
         rewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -8163,6 +8196,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["veil", "wallShrine", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "sumplete", 1: "eclipse", 2: "futoshiki", 3: "hidato" },
+        packing: 0.14,
+        seed: 202908735,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art6", pieceIndex: 1 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -8608,6 +8643,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "star-battle", 1: "eclipse", 2: "sudoku", 3: "balance-scale", 4: "lightbeam" },
         corridorStraightness: 0.35,
+        packing: 0.14,
+        seed: 202908671,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a11", pieceIndex: 3 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -9139,6 +9176,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           4: "procession",
           5: "sumplete",
         },
+        packing: 0.12,
+        seed: 202908675,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a11", pieceIndex: 4 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -9852,7 +9891,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           4: "canisters",
           5: "procession",
         },
-        packing: 0.16,
+        packing: 0.24,
+        seed: 3798351317,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art9", pieceIndex: 0 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -10019,6 +10059,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           4: "balance-scale",
           5: "constellation",
         },
+        packing: 0.12,
+        seed: 3815879149,
         mainEndReward: { type: "mapPiece", tombId: "master_treasure_tomb_b" },
         rewards: [
           { type: "consumable", consumable: "oil" },
@@ -10175,6 +10217,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           5: "canisters",
           6: "sudoku",
         },
+        packing: 0.12,
+        seed: 3815879149,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art15", pieceIndex: 0 },
         rewards: [
           { type: "consumable", consumable: "oil" },
@@ -10558,6 +10602,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           6: "hidato",
           7: "futoshiki",
         },
+        packing: 0.16,
+        seed: 3815879169,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art9", pieceIndex: 1 },
         rewards: [
           { type: "consumable", consumable: "oil" },
@@ -10719,7 +10765,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           6: "sumplete",
           7: "twin-stars",
         },
-        packing: 0.16,
+        packing: 0.22,
+        seed: 3815879145,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p14", pieceIndex: 1 },
         rewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -11078,6 +11125,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           5: "hidato",
           6: "canisters",
         },
+        packing: 0.28,
+        seed: 2819752933,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p15", pieceIndex: 1 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -11457,6 +11506,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           6: "balance-scale",
           7: "constellation",
         },
+        packing: 0.28,
+        seed: 2819752900,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 5 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -11635,7 +11686,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           6: "procession",
           7: "star-battle",
         },
-        packing: 0.16,
+        packing: 0.2,
+        seed: 2819752942,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art15", pieceIndex: 4 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -11942,6 +11994,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           4: "procession",
           5: "constellation",
         },
+        packing: 0.16,
+        seed: 1529713001,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p15", pieceIndex: 2 },
         rewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -12282,6 +12336,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           5: "futoshiki",
           6: "procession",
         },
+        packing: 0.42,
+        seed: 1529712999,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art10", pieceIndex: 5 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -12453,6 +12509,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           5: "hidato",
           6: "balance-scale",
         },
+        packing: 0.12,
+        seed: 1529713081,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d5", pieceIndex: 4 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -13640,6 +13698,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           5: "lightbeam",
           6: "twin-stars",
         },
+        packing: 0.16,
+        seed: 1901306560,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a10", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -14560,7 +14620,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           7: "eclipse",
           8: "sudoku",
         },
-        packing: 0.16,
+        packing: 0.2,
+        seed: 1901306603,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 4 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -15732,7 +15793,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           6: "twin-stars",
           7: "constellation",
         },
-        packing: 0.16,
+        packing: 0.18,
+        seed: 35608035,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a4", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -15938,6 +16000,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           7: "hidato",
           8: "balance-scale",
         },
+        packing: 0.12,
+        seed: 35608004,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p13", pieceIndex: 5 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -16144,6 +16208,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           7: "procession",
           8: "lightbeam",
         },
+        packing: 0.12,
+        seed: 35608004,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d7", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -17598,6 +17664,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           7: "lightbeam",
           8: "sudoku",
         },
+        packing: 0.12,
+        seed: 1974010459,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 4 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },

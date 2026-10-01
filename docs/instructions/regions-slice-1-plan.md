@@ -14,7 +14,7 @@
 
 - `yarn check-types` is the truth. IDE diagnostics in this repo have been wrong on every occasion; never trust them, run the command.
 - Lint with `yarn eslint <paths>`. **`yarn lint --fix <path>` does NOT scope** — the script is `eslint . --max-warnings 17`, so a path is appended to `.` and it rewrites the whole repo.
-- `yarn generate-world` must stay byte-identical at md5 `7d07cfc0981759bbdd8c220bea6bfa57` (`md5 -q src/data/generatedWorld.ts`). This slice changes no world output at all.
+- `yarn generate-world` must stay byte-identical at md5 `eb7d34e5dcb1629a8d6b6033b077cfa1` (`md5 -q src/data/generatedWorld.ts`). This slice changes no world output at all.
 - NEVER run `INCLUDE_DEV=1 yarn generate-world` — it writes the dev journey into the tree. `yarn validate-world` writes nothing and is safe with the flag.
 - `src/game/` is the domain layer: it imports no React, no `src/app/`, no `src/ui/`. An eslint rule enforces this and will fail you.
 - Comments state CURRENT state and why, never history. No "replaces X", no "used to be Y" — that is the PR description's job.
@@ -537,7 +537,7 @@ Report the verbatim failure. A refusal that cannot fire is the defect class this
 yarn generate-world && md5 -q src/data/generatedWorld.ts
 git status --short src/data/generatedWorld.ts
 ```
-Expected: `7d07cfc0981759bbdd8c220bea6bfa57`, and `git status` lists nothing. This slice adds a file nothing imports yet; if the world moved, something is wired that should not be.
+Expected: `eb7d34e5dcb1629a8d6b6033b077cfa1`, and `git status` lists nothing. This slice adds a file nothing imports yet; if the world moved, something is wired that should not be.
 
 - [ ] **Step 7: Commit**
 

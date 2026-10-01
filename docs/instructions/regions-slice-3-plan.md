@@ -14,7 +14,7 @@
 
 - `yarn check-types` is the truth. IDE diagnostics in this repo have been wrong on every occasion; never trust them, run the command.
 - Lint with `yarn eslint <paths>`. **`yarn lint --fix <path>` does NOT scope** — the script is `eslint . --max-warnings 17`, so a path is appended to `.` and it rewrites the whole repo.
-- `yarn generate-world` must stay byte-identical at md5 `7d07cfc0981759bbdd8c220bea6bfa57`. Only the develop journey authors a layout, and the plain build omits it — so the shipped world must not move at any point in this slice.
+- `yarn generate-world` must stay byte-identical at md5 `eb7d34e5dcb1629a8d6b6033b077cfa1`. Only the develop journey authors a layout, and the plain build omits it — so the shipped world must not move at any point in this slice.
 - NEVER run `INCLUDE_DEV=1 yarn generate-world`. `yarn validate-world` writes nothing and is safe with the flag.
 - `src/game/` is the domain layer: no React, no `src/app/`, no `src/ui/`.
 - Comments state CURRENT state and why, never history.
@@ -397,7 +397,7 @@ Expected: PASS, 3 tests.
 
 - [ ] **Step 6: The world must not move**
 
-Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` — expect `7d07cfc0981759bbdd8c220bea6bfa57` and a clean `git status` for it.
+Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` — expect `eb7d34e5dcb1629a8d6b6033b077cfa1` and a clean `git status` for it.
 Run: `yarn test` — expect the full suite green.
 
 - [ ] **Step 7: Commit**
@@ -539,7 +539,7 @@ Change the check to collect nothing (`continue` where it pushes), re-run, and co
 
 - [ ] **Step 7: The world, the dev bench, and the full suite**
 
-Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` — expect `7d07cfc0981759bbdd8c220bea6bfa57`, `git status` clean for it.
+Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` — expect `eb7d34e5dcb1629a8d6b6033b077cfa1`, `git status` clean for it.
 Run: `INCLUDE_DEV=1 yarn validate-world` — expect `✓ World spec valid`, `Stair sweep: 111 …`, `Lock sweep: walked 8 of 8`. **The develop journey's pyramid 1 authors a layout with a `puzzles` region and a `reward` region while authoring no puzzles and no loot, so it must pass this check by standing empty.** If it refuses, the check is treating an empty region as a fault and that is the bug.
 Run: `yarn test` — expect the full suite green.
 

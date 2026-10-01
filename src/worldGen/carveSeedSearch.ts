@@ -6,23 +6,27 @@ import type { AssemblerResult, FloorGrid } from "@/game/siteTypes"
 export const CARVE_CRITERIA = ["carves", "attempt 0", "lock walks sound", "no dead region"] as const
 export type CarveCriterion = (typeof CARVE_CRITERIA)[number]
 
-export type CarveSeedFound = {
+export type CarvePairFound = {
   found: true
   seed: number
+  /** The `packing` that carved: the authored one, or the smallest raised one that carved. */
+  packing: number
   grid: FloorGrid
-  /** How far past the base seed the search went: 0 means the floor needs no stamped seed. */
+  /** How far past the base seed the search went at the final packing: 0 means no stamped seed. */
   offset: number
-  /** What the base seed failed, or null when it passed: the measure of how many floors carve today at
-   * a widened grid and a doubled `packing` nobody authored ("attempt 0"). */
+  /** What the authored `packing` at the base seed failed, or null when it passed: the measure of how
+   * many floors carve only on a widened grid and a doubled `packing` nobody authored ("attempt 0"). */
   baseRefusal: CarveCriterion | null
 }
-export type CarveSeedMissing = {
+export type CarvePairMissing = {
   found: false
-  /** The last criterion any seed reached, so the failure names what could never be satisfied. */
+  /** The last criterion any pair reached, so the failure names what could never be satisfied. */
   hardest: CarveCriterion
   detail: string
   tried: number
-  /** What the base seed failed; see CarveSeedFound. */
+  /** The largest `packing` asked for. */
+  reached: number
+  /** What the authored `packing` at the base seed failed; see CarvePairFound. */
   baseRefusal: CarveCriterion | null
 }
 
@@ -51,40 +55,75 @@ const refusal = (result: AssemblerResult): { criterion: CarveCriterion; detail: 
   return null
 }
 
-/**
- * The first seed from `base` upward that carves a floor on the assembler's first attempt, walks sound
- * and leaves no dead region. The carve-versus-authoring check is part of carving: a carve that
- * disagrees with its layout is refused inside the assembler, so it surfaces here as a failed attempt.
- *
- * Finding a seed is expensive and verifying one is cheap, so the search runs at bake time and the
- * runtime carves the stamped seed once. Each try is ONE attempt, so a seed that only carves after the
- * ladder widened the grid costs a single carve to reject. `assemble(seed, attempts)` carves the floor at
- * `seed` within `attempts` attempts; `fullLadder` is the count the base seed is given.
- */
-export const searchCarveSeed = (
-  base: number,
-  assemble: (seed: number, attempts: number) => AssemblerResult,
-  budget: number,
+/** How much `packing` rises between sweeps. Small, so the final value stays near what the author wrote;
+ * a carve costs well under a millisecond, so a fine ladder costs the bake seconds, not the player anything. */
+export const PACKING_STEP = 0.02
+
+/** The `packing` the `rung`-th sweep asks for: the authored value, then `step` more per rung. Rounded to
+ * six places so the value written into the baked file is the one that was carved, with no float drift. */
+export const packingAtRung = (authored: number, rung: number, step: number = PACKING_STEP): number =>
+  Math.round((authored + rung * step) * 1e6) / 1e6
+
+export type CarvePairOptions = {
+  /** The `packing` the author wrote (or the assembler's default when none was written). */
+  authoredPacking: number
+  /** The most `packing` a sweep may ask for. */
+  ceiling: number
+  /** Seeds past the base tried at each packing. */
+  seedBudget: number
+  /** Attempts the authored packing's base seed is given, so its refusal can say "attempt 0". */
   fullLadder: number
-): CarveSeedFound | CarveSeedMissing => {
+  step?: number
+}
+
+/**
+ * The first (packing, seed) pair that carves a floor on the assembler's first attempt, walks sound and
+ * leaves no dead region. The carve-versus-authoring check is part of carving: a carve that disagrees with
+ * its layout is refused inside the assembler, so it surfaces here as a failed attempt.
+ *
+ * Packing is the OUTER loop and seeds the inner: a seed is free to move and a packing is the author's
+ * intent, so every seed at the authored packing is spent before the packing rises one step, and the
+ * packing that is baked is the smallest that any seed carves at.
+ *
+ * Finding a pair is expensive and verifying one is cheap, so the search runs at bake time and the
+ * runtime carves the baked pair once. Each try is ONE attempt, so a pair that only carves after the
+ * ladder widened the grid costs a single carve to reject. `assemble(seed, packing, attempts)` carves the
+ * floor within `attempts` attempts.
+ */
+export const searchCarvePair = (
+  base: number,
+  assemble: (seed: number, packing: number, attempts: number) => AssemblerResult,
+  { authoredPacking, ceiling, seedBudget, fullLadder, step = PACKING_STEP }: CarvePairOptions
+): CarvePairFound | CarvePairMissing => {
   let hardest = 0
   let detail = ""
+  let tried = 0
+  let reached = authoredPacking
   let baseRefusal: CarveCriterion | null = null
-  for (let offset = 0; offset <= budget; offset++) {
-    const seed = seedAtOffset(base, offset)
-    // The base seed is carved with the whole ladder, so its refusal can say "attempt 0" (it carves, but
-    // late) rather than only "carves"; every other seed is one attempt, and the ladder is not paid for.
-    const result = assemble(seed, offset === 0 ? fullLadder : 1)
-    const refused = refusal(result)
-    if (offset === 0) baseRefusal = refused?.criterion ?? null
-    if (!refused && result.success) return { found: true, seed, grid: result.grid, offset, baseRefusal }
-    if (refused) {
-      const rank = CARVE_CRITERIA.indexOf(refused.criterion)
-      if (rank >= hardest) {
-        hardest = rank
-        detail = refused.detail
+  for (let rung = 0; ; rung++) {
+    const packing = packingAtRung(authoredPacking, rung, step)
+    if (rung > 0 && packing > ceiling) break
+    reached = packing
+    for (let offset = 0; offset <= seedBudget; offset++) {
+      const seed = seedAtOffset(base, offset)
+      // Only the authored packing's base seed is carved with the whole ladder, so its refusal can say
+      // "attempt 0" (it carves, but late) rather than only "carves"; every other try is one attempt.
+      const first = rung === 0 && offset === 0
+      const laddered = assemble(seed, packing, first ? fullLadder : 1)
+      tried++
+      if (first) baseRefusal = refusal(laddered)?.criterion ?? null
+      // The ladder's answer names how the floor carves today; what it says about the PAIR is one attempt's.
+      const result = first && laddered.success && laddered.attempt > 0 ? assemble(seed, packing, 1) : laddered
+      const refused = refusal(result)
+      if (!refused && result.success) return { found: true, seed, packing, grid: result.grid, offset, baseRefusal }
+      if (refused) {
+        const rank = CARVE_CRITERIA.indexOf(refused.criterion)
+        if (rank >= hardest) {
+          hardest = rank
+          detail = refused.detail
+        }
       }
     }
   }
-  return { found: false, hardest: CARVE_CRITERIA[hardest], detail, tried: budget + 1, baseRefusal }
+  return { found: false, hardest: CARVE_CRITERIA[hardest], detail, tried, reached, baseRefusal }
 }

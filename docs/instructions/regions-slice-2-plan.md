@@ -14,7 +14,7 @@
 
 - `yarn check-types` is the truth. IDE diagnostics in this repo have been wrong on every occasion; never trust them, run the command.
 - Lint with `yarn eslint <paths>`. **`yarn lint --fix <path>` does NOT scope** — the script is `eslint . --max-warnings 17`, so a path is appended to `.` and it rewrites the whole repo.
-- `yarn generate-world` must stay byte-identical at md5 `7d07cfc0981759bbdd8c220bea6bfa57` (`md5 -q src/data/generatedWorld.ts`). No shipped floor authors a layout, so adding the field must move nothing.
+- `yarn generate-world` must stay byte-identical at md5 `eb7d34e5dcb1629a8d6b6033b077cfa1` (`md5 -q src/data/generatedWorld.ts`). No shipped floor authors a layout, so adding the field must move nothing.
 - NEVER run `INCLUDE_DEV=1 yarn generate-world` — it writes the dev journey into the tree. `yarn validate-world` writes nothing and is safe with the flag.
 - `src/game/` is the domain layer: no React, no `src/app/`, no `src/ui/`. An eslint rule enforces it.
 - Comments state CURRENT state and why, never history.
@@ -127,7 +127,7 @@ and in `floorFieldEmitters`:
 
 Run: `yarn vitest run src/worldGen/serializer.spec.ts` — expect PASS.
 Run: `yarn check-types` — expect clean.
-Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` — expect `7d07cfc0981759bbdd8c220bea6bfa57` and `git status` listing nothing for it. No shipped floor authors a layout, so the world must not move.
+Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` — expect `eb7d34e5dcb1629a8d6b6033b077cfa1` and `git status` listing nothing for it. No shipped floor authors a layout, so the world must not move.
 
 - [ ] **Step 7: Commit**
 
@@ -197,7 +197,7 @@ In `src/worldGen/buildSite.ts`, carry it exactly as `handles` is carried: add `r
 
 Run: `yarn vitest run src/worldGen/dsl.spec.ts` — expect PASS.
 Run: `yarn check-types` — expect clean.
-Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` — expect `7d07cfc0981759bbdd8c220bea6bfa57`, unmoved.
+Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` — expect `eb7d34e5dcb1629a8d6b6033b077cfa1`, unmoved.
 
 - [ ] **Step 5: Commit**
 
@@ -443,7 +443,7 @@ Run: `yarn vitest run src/worldGen/devJourney.spec.ts` — expect PASS.
 Run: `yarn check-types` — expect clean.
 Run: `yarn validate-world` — expect `✓ World spec valid`, `Stair sweep: 111 …`, `Lock sweep: walked 1 of 1`.
 Run: `INCLUDE_DEV=1 yarn validate-world` — expect `✓ World spec valid`, `Lock sweep: walked 8 of 8`.
-Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` — expect `7d07cfc0981759bbdd8c220bea6bfa57` and a clean `git status` for it. **The plain build omits the dev journey, so authoring here must not move the shipped world.** If it moved, the dev journey is leaking into the plain build and that is the finding.
+Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` — expect `eb7d34e5dcb1629a8d6b6033b077cfa1` and a clean `git status` for it. **The plain build omits the dev journey, so authoring here must not move the shipped world.** If it moved, the dev journey is leaking into the plain build and that is the finding.
 Run: `yarn test` — expect the full suite green.
 
 - [ ] **Step 5: Commit**
