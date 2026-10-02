@@ -47,7 +47,7 @@ import { MarkArtBadge } from "./mark"
 import { FloorShade, LitPlaces } from "./torchlight"
 import { LIT_STANDING_STRENGTH, SEATING_PASS, STANDING_RELIEF } from "./lighting"
 import { TileLayers } from "./tileLayers"
-import { clickTargetAt, dropEndsOf, markerAt, type OfferMarker } from "./clickTargets"
+import { clickTargetAt, dropEndsOf, markerAt, type OfferContext, type OfferMarker } from "./clickTargets"
 import {
   FACE_SHADOW,
   allFloorRects,
@@ -1298,7 +1298,7 @@ export const SiteMapView = ({
   // One rule for what a tap does, asked per cell below — see `clickTargets.ts`. The three branches of
   // the marker loop used to spell it out for themselves, in two different spellings.
   const dropEnds = useMemo(() => dropEndsOf(grid), [grid])
-  const offerContext = { runTargets: corridorRunTargets, dropEnds, canWalkTo, freeWalk, explorer: explorerPos }
+  const offerContext: OfferContext = { runTargets: corridorRunTargets, dropEnds, canWalkTo, freeWalk }
 
   // Must be >= CELL: a fork/endpoint on the map's edge can claim one cell of "outside
   // the grid" void (see cellAt above), and that extra ring needs to physically fit
