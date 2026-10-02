@@ -66,6 +66,15 @@ export type CorridorCell = {
    * to do with it. Such a cell names no direction at all and no neighbour names it, so no walk enters
    * it; the marker is what lets the art span it and the lock read the drop back. */
   obstacle?: { dir: Direction; kind: ObstacleKind }
+  /** A GATE A MECHANISM HOLDS OPEN, remembered on the ground it has become. It is a corridor to every
+   * walk — no prompt, no stop, reveal runs through it — and this is all the map needs to keep drawing
+   * the door, open, in the mark and colour it wore shut. Derived from the mechanism's position each
+   * time the floor is read and never stored. */
+  openGate?: OpenGate
+}
+/** What an open gate keeps of the room it was: the fields that say it is a gate and whose. */
+export type OpenGate = Pick<RoomCell, "tags" | "gateVariant" | "keyIsAuthored" | "keyColor" | "keyColors" | "mark"> & {
+  requiredKeyId: string
 }
 /** What an obstacle's span is. A new kind is a new member here and a new line in the table of what the launch
  * invites the player to do (SiteMapScreen's `obstacleLabels`). */

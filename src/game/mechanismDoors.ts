@@ -85,7 +85,8 @@ export const throwMechanism = (mechanism: MechanismRecord, current: string): str
  * the board standing in the fork reopens the one it routes its beam to. That door is the ONLY thing in
  * the way: a node with something in it stops the walk from revealing past it, so the way out is opened
  * by giving the cell back its corridor — the same cell, the same walls, the same section — rather than
- * by marking the door passed.
+ * by marking the door passed. The corridor keeps what it was a door of (`openGate`), which is only
+ * ever read to draw it: every walk, reveal and count sees the corridor it has always seen.
  *
  * **Here, and before the save is applied.** Reachability spreads out of the cells a save calls explored
  * (`completeCell`), so a way out reopened after that pass would be open with the dark still behind it
@@ -113,6 +114,15 @@ export const openWaysOut = (grid: FloorGrid, open: ReadonlySet<string>): FloorGr
         ordinal: cell.ordinal,
         difficulty: cell.difficulty,
         hidden: cell.hidden,
+        openGate: {
+          tags: cell.tags,
+          requiredKeyId: cell.requiredKeyId,
+          gateVariant: cell.gateVariant,
+          keyIsAuthored: cell.keyIsAuthored,
+          keyColor: cell.keyColor,
+          keyColors: cell.keyColors,
+          mark: cell.mark,
+        },
       }
     })
   )

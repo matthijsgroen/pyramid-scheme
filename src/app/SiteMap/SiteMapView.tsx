@@ -43,7 +43,7 @@ import { cellAddress } from "@/game/cellAddress"
 import { isLockedGate, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
-import { MarkArtBadge } from "./mark"
+import { MarkArtBadge, type Mark } from "./mark"
 import { FloorShade, LitPlaces } from "./torchlight"
 import { LIT_STANDING_STRENGTH, SEATING_PASS, STANDING_RELIEF } from "./lighting"
 import { TileLayers } from "./tileLayers"
@@ -281,9 +281,111 @@ export const nodeSpritesFor = (
     })
   }
   let approach: Map<string, readonly [number, number]> | null = null
+  /** The leaf of one gate, hung in the passage it shuts. A shut gate is a room; an OPEN one a lever or
+   * switch holds open is a corridor that remembers it (`CorridorCell.openGate`) — both draw through here,
+   * so the open leaf stands exactly where the shut one did. */
+  const gateLeaf = (
+    r: number,
+    c: number,
+    tier: Difficulty,
+    dirs: ReadonlySet<Direction>,
+    { open, wall, mark }: { open: boolean; wall: boolean; mark: Mark | undefined }
+  ): void => {
+    // `gate` is shut and `gate-open` is the same leaf swung back or sunk into the floor; a rank with
+    // neither draws the marker alone, exactly as a stairhead did before its flights were painted.
+    //
+    // THE LEAF STANDS ONE CELL IN FRONT, in the passage it shuts (`approachCells`) — the MARKER keeps
+    // the gate's own square, because its colour is the only thing that says which key, and moving it
+    // would take that off the node it belongs to. Which is also why the leaf is clipped to the cell
+    // it stands in and not to the gate's room: a footprint clip is what keeps furniture inside its
+    // own walls, and the gate's would erase a leaf drawn outside them.
+    //
+    approach ??= approachCells(grid)
+    const stands = approach.get(`${r},${c}`)
+    if (!stands) return
+    const [ar, ac] = stands
+
+    // THE BARS FACE THE POCKET, NOT AWAY FROM THE PLAYER, and on two thirds of the gates in the
+    // world those are different directions. Only `ns` and `ew` gates run straight through; `es`,
+    // `sw`, `nw` and `en` are CORNERS, and on a corner the way you came in and the way that is
+    // sealed are at right angles — so "the side opposite the approach" hung the gate on a wall the
+    // pocket is not even behind, one turn away from the seam it belongs in.
+    //
+    // The sealed side is the one whose neighbour is reached THROUGH this gate, which `approachCells`
+    // already knows: it is the neighbour whose own approach is the gate itself. That also settles a
+    // cell with three ways out, where "not the way I came" would have been a choice of two.
+    const back: Direction = ar < r ? "n" : ar > r ? "s" : ac < c ? "w" : "e"
+    const sealed = [...dirs].find(dir => {
+      if (dir === back) return false
+      const [mr, mc] = DIR_MOVES[dir]
+      const beyond = approach?.get(`${r + mr},${c + mc}`)
+      return beyond?.[0] === r && beyond?.[1] === c
+    })
+    const [dr, dc] = sealed ? DIR_MOVES[sealed] : [r - ar, c - ac]
+
+    // A GATE IS AIMED BY WHICH ONE IS DRAWN, the same as a flight. Shutting a way walked ACROSS, the
+    // grille's own plane is the y-z one and this projection draws that as a line, so `-side` is a
+    // second drawing: narrow and tall where the face-on one is broad, because that is the shape this
+    // projection actually makes of it. Turning the tile instead would be a skew — a reflection is a
+    // real oblique view and a rotation is not (`NodeSprite`).
+    const name = `${open ? "gate-open" : "gate"}${dc !== 0 ? "-side" : ""}`
+    const url =
+      tileOrPlaceholder(tier, name) ??
+      tileOrPlaceholder(tier, open ? "gate-open" : "gate") ??
+      (open ? tileOrPlaceholder(tier, "gate") : undefined)
+    if (!url) return
+
+    // THE BARS STAND ON THE SILL. Wherever one rank's stone meets another's across a way the player
+    // walks, the map lays a threshold in the tier being entered (`tileRegions`), and a ward gate is
+    // exactly such a seam because the pocket it shuts is authored at another tier. A shut gate's own
+    // square wears the FLOOR's stone rather than the pocket's (`cellFloorAt`, which is what stops the
+    // next tier being read off the paving early), so the seam falls on the sealed side of it: the
+    // gate's square is the ground you stand on to work the gate, and the bars are its far wall.
+    //
+    // Which is also why nothing halts the player short of it. He walks in and stops at the bars, the
+    // way you do at a locked gate, and the cell he is standing on is the gate's own.
+    // THE SEAM IN THE MAP'S OWN ARITHMETIC. `cellLeft`/`cellTop` put the gap BEFORE each cell, so the
+    // one AFTER cell c starts at `cellLeft(c) + CELL` and is `SIDE_W` wide, and the band after row r
+    // starts at `cellTop(r) + CELL` and is `WALL_H` tall. Both far cases were written as if the gap
+    // came before: the gate stood a whole `SIDE_W` west of the seam it belonged in, and rested on the
+    // TOP edge of the band below it rather than the bottom, hanging 28 units clear of its own sill.
+    const seamCx = dc > 0 ? cellLeft(c) + CELL + SIDE_W / 2 : dc < 0 ? cellLeft(c) - SIDE_W / 2 : cellLeft(c) + CELL / 2
+    // IN the band, not under it and not on top of it. A horizontal seam is `WALL_H` of wall seen face
+    // on: feet on its lower edge hang the whole grille below the opening, in the room rather than in
+    // the doorway, and feet on its upper edge lift it clear of the floor it is supposed to bar. Half
+    // a band down from the top puts it in the middle of the masonry, which is where a gate hangs.
+    // A seam between COLUMNS has no such band — it is a side wall seen edge-on — so there the floor
+    // line is the floor line.
+    const seamBase = dr > 0 ? cellTop(r) + CELL + WALL_H / 2 : dr < 0 ? cellTop(r) - WALL_H / 2 : cellTop(r) + CELL
+    const base = seamBase
+    const left = seamCx - CELL / 2
+    out.push({
+      // The gate's cell AND the one beyond it, because the clip is what keeps furniture inside its
+      // own walls and this deliberately spans one: clipped to either alone, half the gate is cut.
+      footprint: [`${r},${c}`, `${r + dr},${c + dc}`],
+      // The same two cells fade it: they are the only ones ever behind a gate, exactly as a doorway
+      // fades for the two its arch spans.
+      fadeAt: [`${r},${c}`, `${r + dr},${c + dc}`],
+      // A WAY A SWITCH SHUT IS NOT A GATE HUNG IN A DOORWAY BUT A WALL, and a wall is painted with
+      // the rest of the stone rather than with the leaves that go on last: the arch over the opening
+      // covers it, the way it covers everything else standing on the floor.
+      key: `${wall ? "wall" : "gate"}:${r},${c}`,
+      url,
+      x: left,
+      y: base - PROP_H,
+      mirrored: false,
+      // ON THE LEAF, NOT ON THE MARKER: a way a lever shut hides its marker entirely, so the pair
+      // its lever wears has to be worn by the stone the player is actually looking at.
+      ...(mark ? { mark } : {}),
+    })
+  }
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
+      if (cell.type === "corridor" && cell.openGate && cell.state !== "fogged") {
+        gateLeaf(r, c, cell.difficulty ?? floorTier, cell.dirs, { open: true, wall: false, mark: cell.openGate.mark })
+        continue
+      }
       if (cell.type !== "room" || cell.state === "fogged") continue
       const kind = shapeKindFor(grid, r, c, cell)
       const tier = cell.difficulty ?? floorTier
@@ -327,94 +429,10 @@ export const nodeSpritesFor = (
           light: { x: ex, y: ey + CELL * 0.12, r: LAMP_POOL_RADIUS },
         })
       } else if (kind === "gate") {
-        // `gate` is shut and `gate-open` is the same leaf swung back or sunk into the floor; a rank with
-        // neither draws the marker alone, exactly as a stairhead did before its flights were painted.
-        //
-        // THE LEAF STANDS ONE CELL IN FRONT, in the passage it shuts (`approachCells`) — the MARKER keeps
-        // the gate's own square, because its colour is the only thing that says which key, and moving it
-        // would take that off the node it belongs to. Which is also why the leaf is clipped to the cell
-        // it stands in and not to the gate's room: a footprint clip is what keeps furniture inside its
-        // own walls, and the gate's would erase a leaf drawn outside them.
-        //
-        const open = cell.state === "completed"
-        approach ??= approachCells(grid)
-        const stands = approach.get(`${r},${c}`)
-        if (!stands) continue
-        const [ar, ac] = stands
-
-        // THE BARS FACE THE POCKET, NOT AWAY FROM THE PLAYER, and on two thirds of the gates in the
-        // world those are different directions. Only `ns` and `ew` gates run straight through; `es`,
-        // `sw`, `nw` and `en` are CORNERS, and on a corner the way you came in and the way that is
-        // sealed are at right angles — so "the side opposite the approach" hung the gate on a wall the
-        // pocket is not even behind, one turn away from the seam it belongs in.
-        //
-        // The sealed side is the one whose neighbour is reached THROUGH this gate, which `approachCells`
-        // already knows: it is the neighbour whose own approach is the gate itself. That also settles a
-        // cell with three ways out, where "not the way I came" would have been a choice of two.
-        const back: Direction = ar < r ? "n" : ar > r ? "s" : ac < c ? "w" : "e"
-        const sealed = [...cell.dirs].find(dir => {
-          if (dir === back) return false
-          const [mr, mc] = DIR_MOVES[dir]
-          const beyond = approach?.get(`${r + mr},${c + mc}`)
-          return beyond?.[0] === r && beyond?.[1] === c
-        })
-        const [dr, dc] = sealed ? DIR_MOVES[sealed] : [r - ar, c - ac]
-
-        // A GATE IS AIMED BY WHICH ONE IS DRAWN, the same as a flight. Shutting a way walked ACROSS, the
-        // grille's own plane is the y-z one and this projection draws that as a line, so `-side` is a
-        // second drawing: narrow and tall where the face-on one is broad, because that is the shape this
-        // projection actually makes of it. Turning the tile instead would be a skew — a reflection is a
-        // real oblique view and a rotation is not (`NodeSprite`).
-        const name = `${open ? "gate-open" : "gate"}${dc !== 0 ? "-side" : ""}`
-        const url =
-          tileOrPlaceholder(tier, name) ??
-          tileOrPlaceholder(tier, open ? "gate-open" : "gate") ??
-          (open ? tileOrPlaceholder(tier, "gate") : undefined)
-        if (!url) continue
-
-        // THE BARS STAND ON THE SILL. Wherever one rank's stone meets another's across a way the player
-        // walks, the map lays a threshold in the tier being entered (`tileRegions`), and a ward gate is
-        // exactly such a seam because the pocket it shuts is authored at another tier. A shut gate's own
-        // square wears the FLOOR's stone rather than the pocket's (`cellFloorAt`, which is what stops the
-        // next tier being read off the paving early), so the seam falls on the sealed side of it: the
-        // gate's square is the ground you stand on to work the gate, and the bars are its far wall.
-        //
-        // Which is also why nothing halts the player short of it. He walks in and stops at the bars, the
-        // way you do at a locked gate, and the cell he is standing on is the gate's own.
-        // THE SEAM IN THE MAP'S OWN ARITHMETIC. `cellLeft`/`cellTop` put the gap BEFORE each cell, so the
-        // one AFTER cell c starts at `cellLeft(c) + CELL` and is `SIDE_W` wide, and the band after row r
-        // starts at `cellTop(r) + CELL` and is `WALL_H` tall. Both far cases were written as if the gap
-        // came before: the gate stood a whole `SIDE_W` west of the seam it belonged in, and rested on the
-        // TOP edge of the band below it rather than the bottom, hanging 28 units clear of its own sill.
-        const seamCx =
-          dc > 0 ? cellLeft(c) + CELL + SIDE_W / 2 : dc < 0 ? cellLeft(c) - SIDE_W / 2 : cellLeft(c) + CELL / 2
-        // IN the band, not under it and not on top of it. A horizontal seam is `WALL_H` of wall seen face
-        // on: feet on its lower edge hang the whole grille below the opening, in the room rather than in
-        // the doorway, and feet on its upper edge lift it clear of the floor it is supposed to bar. Half
-        // a band down from the top puts it in the middle of the masonry, which is where a gate hangs.
-        // A seam between COLUMNS has no such band — it is a side wall seen edge-on — so there the floor
-        // line is the floor line.
-        const seamBase = dr > 0 ? cellTop(r) + CELL + WALL_H / 2 : dr < 0 ? cellTop(r) - WALL_H / 2 : cellTop(r) + CELL
-        const base = seamBase
-        const left = seamCx - CELL / 2
-        out.push({
-          // The gate's cell AND the one beyond it, because the clip is what keeps furniture inside its
-          // own walls and this deliberately spans one: clipped to either alone, half the gate is cut.
-          footprint: [`${r},${c}`, `${r + dr},${c + dc}`],
-          // The same two cells fade it: they are the only ones ever behind a gate, exactly as a doorway
-          // fades for the two its arch spans.
-          fadeAt: [`${r},${c}`, `${r + dr},${c + dc}`],
-          // A WAY A SWITCH SHUT IS NOT A GATE HUNG IN A DOORWAY BUT A WALL, and a wall is painted with
-          // the rest of the stone rather than with the leaves that go on last: the arch over the opening
-          // covers it, the way it covers everything else standing on the floor.
-          key: `${isSealedWayOut(cell) ? "wall" : "gate"}:${r},${c}`,
-          url,
-          x: left,
-          y: base - PROP_H,
-          mirrored: false,
-          // ON THE LEAF, NOT ON THE MARKER: a way a lever shut hides its marker entirely, so the pair
-          // its lever wears has to be worn by the stone the player is actually looking at.
-          ...(cell.mark ? { mark: cell.mark } : {}),
+        gateLeaf(r, c, tier, cell.dirs, {
+          open: cell.state === "completed",
+          wall: isSealedWayOut(cell),
+          mark: cell.mark,
         })
       } else if (kind === "handle") {
         // BLOCKED UNTIL ALL THREE TILES EXIST, AND NEVER PLACEHOLDER: `tileUrl`, not `tileOrPlaceholder`

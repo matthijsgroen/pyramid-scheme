@@ -133,8 +133,9 @@ const DIR_MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], 
  * Runs on the grid `openWaysOut` has already reopened, so a way out the board opened is a corridor by
  * the time this looks and no door is stood in its doorway.
  */
-const sealWaysOut = (grid: FloorGrid): FloorGrid => {
+export const sealWaysOut = (grid: FloorGrid): FloorGrid => {
   const moves: { doorway: [number, number]; node: [number, number] }[] = []
+  const openMoves: typeof moves = []
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const fork = grid.cells[r][c]
@@ -144,15 +145,26 @@ const sealWaysOut = (grid: FloorGrid): FloorGrid => {
         const [dr, dc] = DIR_MOVES[exit.dir]
         const node = grid.cells[r + dr * 2]?.[c + dc * 2]
         const doorway = grid.cells[r + dr]?.[c + dc]
-        if (node?.type !== "room" || node.requiredKeyId !== exit.gateKeyId) continue
         if (doorway?.type !== "corridor") continue
-        moves.push({ doorway: [r + dr, c + dc], node: [r + dr * 2, c + dc * 2] })
+        const at = { doorway: [r + dr, c + dc] as [number, number], node: [r + dr * 2, c + dc * 2] as [number, number] }
+        if (node?.type === "room" && node.requiredKeyId === exit.gateKeyId) moves.push(at)
+        else if (node?.type === "corridor" && node.openGate?.requiredKeyId === exit.gateKeyId) openMoves.push(at)
       }
     }
   }
-  if (moves.length === 0) return grid
+  if (moves.length === 0 && openMoves.length === 0) return grid
 
   const cells = grid.cells.map(row => [...row])
+  // A way out its board holds open is still a door, and stands in the doorway like the shut one did:
+  // the leaf is drawn where the bars were, only the corridor under it differs.
+  for (const { doorway, node } of openMoves) {
+    const gate = cells[node[0]][node[1]]
+    const passage = cells[doorway[0]][doorway[1]]
+    if (gate.type !== "corridor" || passage.type !== "corridor") continue
+    const { openGate, ...bare } = gate
+    cells[doorway[0]][doorway[1]] = { ...passage, openGate }
+    cells[node[0]][node[1]] = bare
+  }
   for (const { doorway, node } of moves) {
     const gate = cells[node[0]][node[1]]
     const passage = cells[doorway[0]][doorway[1]]
