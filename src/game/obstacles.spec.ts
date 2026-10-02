@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { crossesNoDoor, doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
-import type { Control, Obstacle } from "./obstacles"
+import type { Obstacle, StatefulControl } from "./obstacles"
 import type { RegionGraph } from "./regions"
 
 // A linear chain plus one connection the route does not take, so "on the layout" and "on the route"
@@ -33,7 +33,7 @@ const oneWay = (id: string, between: readonly [string, string]): Obstacle => ({
   at: { on: "connection", between },
 })
 
-const lever = (id: string, opens: Record<string, string[]>): Control => ({
+const lever = (id: string, opens: Record<string, string[]>): StatefulControl => ({
   id,
   in: "mouth",
   states: ["left", "right"],

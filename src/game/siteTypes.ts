@@ -252,8 +252,11 @@ export type RoomCell = {
    * `gateKeyId` is set on the ways out a SWITCH closed, and is how the builder reports which ones it
    * chose: whatever stands in the switch reads them off the room it is in rather than guessing the
    * floor's shape. It NAMES the way out and is not a key anything holds — the board in the fork opens
-   * one of these ids at a time, and no chest anywhere mints them. */
-  exits?: { dir: Direction; kind: "main" | "side" | "ward" | "fork"; gateKeyId?: string }[]
+   * one of these ids at a time, and no chest anywhere mints them.
+   *
+   * `mark` is the pair the gate on that way out wears on the map, set where a fork-switch owns it, so the
+   * board standing in the junction can draw each doorway with the mark of the gate it opens. */
+  exits?: { dir: Direction; kind: "main" | "side" | "ward" | "fork"; gateKeyId?: string; mark?: Mark }[]
   /** THIS ROOM IS A MECHANISM: which gate key id each of its positions opens, and which position it
    * stands in until someone moves it.
    *
@@ -660,6 +663,13 @@ export type AssemblerReason =
   | { type: "obstacleOffRoute"; id: string }
   | { type: "obstacleUnowned"; id: string }
   | { type: "controlUnsatisfied"; id: string; what: string }
+  | { type: "forkSwitchNoFork"; id: string; region: string }
+  | { type: "forkSwitchNoEncounter"; id: string }
+  | { type: "gateOwnerNotForkSwitch"; id: string; owner: string }
+  | { type: "gateOwnedOffSeam"; id: string; owner: string }
+  | { type: "gateOwnedTwice"; id: string; owner: string }
+  | { type: "forkSwitchSeamUngated"; id: string; between: [string, string] }
+  | { type: "forkSwitchSeamGatedTwice"; id: string; between: [string, string] }
   /** A side section matched to an off-route chain (offRouteChains, regions.ts) hosts that chain's
    * regions across its own cells, cells[0] included — and an obstacle standing on the chain's own
    * MOUTH connection always seats there too (seamIndexFor, obstacles.ts: the mouth's far region

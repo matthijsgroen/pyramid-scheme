@@ -1,6 +1,6 @@
 import type { FloorConfig, SideSection, SiteConfig, TreasureReward } from "./types"
 import type { PlacedContainer } from "@/game/regions"
-import type { Control, Obstacle } from "@/game/obstacles"
+import { isForkSwitch, type Control, type Obstacle } from "@/game/obstacles"
 import { WORLD_SEED } from "./data"
 
 // Extra top-level exports a mod wants baked into the generated world file (name → JSON-serializable
@@ -100,10 +100,14 @@ const serializeObject = (o: object): string =>
 const serializeObstacle = (o: Obstacle): string =>
   `{ id: ${JSON.stringify(o.id)}, kind: ${JSON.stringify(o.kind)}, at: { on: ${JSON.stringify(o.at.on)}, between: [${o.at.between
     .map(s => JSON.stringify(s))
-    .join(", ")}] } }`
+    .join(
+      ", "
+    )}] }${o.kind === "gate" && o.owners ? `, owners: [${o.owners.map(s => JSON.stringify(s)).join(", ")}]` : ""} }`
 
 // `opens` is a Record<state, obstacleId[]>, which `serializeObject` cannot reach either.
 const serializeControl = (c: Control): string => {
+  if (isForkSwitch(c))
+    return `{ id: ${JSON.stringify(c.id)}, in: ${JSON.stringify(c.in)}, control: "fork-switch", encounter: ${JSON.stringify(c.encounter)} }`
   const parts = [
     `id: ${JSON.stringify(c.id)}`,
     `in: ${JSON.stringify(c.in)}`,

@@ -320,6 +320,59 @@ describe("a fork named by region, with the topology mod off", () => {
   }, 60_000)
 })
 
+// The same floor with the fork's two gates owned by a fork-switch standing in its junction. The
+// junction and its seams are core's (`forks`, `regionLayout`), so stripping the mod's obstacles and
+// controls must leave every wall where it was, and the fork-switch is what the mod adds on top.
+const forkSwitchedDoubleBack: GameFloorConfig = {
+  ...forkedDoubleBack,
+  obstacles: [
+    { id: "forkLeft", kind: "gate", at: { on: "connection", between: ["entrance", "leftLower"] }, owners: ["Y"] },
+    { id: "forkRight", kind: "gate", at: { on: "connection", between: ["entrance", "rightLower"] }, owners: ["Y"] },
+    ...forkedDoubleBack.obstacles!,
+  ],
+  controls: [
+    { id: "Y", in: "entrance", control: "fork-switch", encounter: "lightbeamSwitch" },
+    forkedDoubleBack.controls![1],
+  ],
+}
+
+describe("a fork-switch, with the topology mod off", () => {
+  const stripped = dropUnownedAuthoring(forkSwitchedDoubleBack, new Set(), undefined) as GameFloorConfig
+
+  it("carves the identical walls with the fork-switch and every gate stripped, on every seed both builds carve", () => {
+    const diverged: number[] = []
+    let compared = 0
+    for (let seed = 1; seed <= 60; seed++) {
+      const withMod = assembleFloor("dev", forkSwitchedDoubleBack, seed, resolveEncounter)
+      const without = assembleFloor("dev", stripped, seed)
+      if (!withMod.success || !without.success) continue
+      compared++
+      if (dirsOf(without.grid) !== dirsOf(withMod.grid)) diverged.push(seed)
+    }
+    expect(compared).toBeGreaterThan(0)
+    expect(diverged).toEqual([])
+  }, 120_000)
+
+  it("stands the switch in the junction with the mod on and leaves it a bare fork with the mod off", () => {
+    let compared = 0
+    for (let seed = 1; seed <= 60; seed++) {
+      const withMod = assembleFloor("dev", forkSwitchedDoubleBack, seed, resolveEncounter)
+      const without = assembleFloor("dev", stripped, seed)
+      if (!withMod.success || !without.success) continue
+      compared++
+      const junctions = (grid: FloorGrid) =>
+        grid.cells
+          .flat()
+          .flatMap(cell =>
+            cell.type === "room" && cell.roomType === "fork" && cell.region === "entrance" ? [cell.family] : []
+          )
+      expect(junctions(withMod.grid), `seed ${seed}`).toEqual(["lightbeamSwitch"])
+      expect(junctions(without.grid), `seed ${seed}`).toEqual([undefined])
+    }
+    expect(compared).toBeGreaterThan(0)
+  }, 120_000)
+})
+
 // allFamilyMeta's resolveEncounterMeta answers out of the families the REGISTERED mods contribute, so
 // with topology out of that list its two families are simply not in the catalogue. This is that same
 // id-then-tag lookup over a catalogue topology has left — the resolver the generator would inject.

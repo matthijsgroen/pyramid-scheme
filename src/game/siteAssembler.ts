@@ -28,8 +28,8 @@ import {
   strandedRegions,
 } from "./regions"
 import type { ContentKind, SideChain } from "./regions"
-import { crossesNoDoor, doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
-import type { Control, Obstacle } from "./obstacles"
+import { crossesNoDoor, doorsToEnterRegion, isForkSwitch, seamIndexFor, topologyFaults } from "./obstacles"
+import type { Obstacle, StatefulControl } from "./obstacles"
 import { cellSlot } from "./cellSlot"
 import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "./carveAgreement"
 import type { CarveFault } from "./carveAgreement"
@@ -758,7 +758,12 @@ export const assembleFloor = (
   // regions exist, what joins them and which route the main path threads are all fixed by the config,
   // so a misnamed id is answered once here rather than blamed on sixty carves that could never have
   // satisfied it.
-  const topologyProblems = topologyFaults(regionLayout, authoredConfig.obstacles ?? [], authoredConfig.controls ?? [])
+  const topologyProblems = topologyFaults(
+    regionLayout,
+    authoredConfig.obstacles ?? [],
+    authoredConfig.controls ?? [],
+    authoredConfig.forks ?? []
+  )
   if (topologyProblems.length > 0) return { success: false, reasons: topologyProblems }
 
   // An authored one-way naming a section this floor does not have is the same kind of mistake: which
@@ -800,7 +805,7 @@ export const assembleFloor = (
   // THE SHAPE BOTH AUTHORING PATHS COMPILE THROUGH: a handle is the two-state case of a control, so
   // the same four fields drive the same compile step whichever wrote them — `id` and `in` are a
   // control's own, not this compile step's business.
-  type Mechanism = Pick<Control, "states" | "initial" | "returnsToInitial" | "opens">
+  type Mechanism = Pick<StatefulControl, "states" | "initial" | "returnsToInitial" | "opens">
   // ONE MECHANISM-BUILDING PATH: `opens` names obstacles by id; `resolveGateKey` says what gate key
   // each id mints — a control mints one from the obstacle's own authored id (`gateKeyOf`), a handle
   // already knows each driven section's key and hands it back verbatim. Iterates `states`, not
@@ -902,10 +907,13 @@ export const assembleFloor = (
   // through above. `opens` names obstacles by their authored ids; `positions` names the gate keys
   // those ids mint, one entry per obstacle per state that opens it — several entries may share a
   // state, which is what lets one position open a set.
-  const controlRecords = (authoredConfig.controls ?? []).map(control => ({
-    control,
-    record: compileMechanism(control, gateKeyOf, obstacleMode),
-  }))
+  const forkSwitches = (authoredConfig.controls ?? []).filter(isForkSwitch)
+  const controlRecords = (authoredConfig.controls ?? []).flatMap(control =>
+    isForkSwitch(control) ? [] : [{ control, record: compileMechanism(control, gateKeyOf, obstacleMode) }]
+  )
+  // The gates one fork-switch owns, by the id the author gave them.
+  const gatesOwnedBy = (controlId: string) =>
+    (authoredConfig.obstacles ?? []).flatMap(o => (o.kind === "gate" && o.owners?.includes(controlId) ? [o] : []))
   // A CONTROL AND EVERY OBSTACLE IT OPENS WEAR ONE MARK, so the map reads "this lever, these doors" as
   // one pair the same way a handle's does — derived from the AUTHORED obstacle id(s) it drives, sorted
   // and joined so the seed is the same regardless of `opens`' state order, and stable across a re-carve
@@ -917,6 +925,16 @@ export const assembleFloor = (
     if (drivenIds.length === 0) continue
     const mark = markFor(hashString(drivenIds.join("|")))
     for (const { gateKeyId } of record.positions) markByGateKey.set(gateKeyId, mark)
+  }
+  // A FORK-SWITCH WEARS ITS MARK THE SAME WAY: the junction through the keys its positions carry, each
+  // gate through the key it asks for.
+  for (const control of forkSwitches) {
+    const owned = gatesOwnedBy(control.id)
+      .map(gate => gate.id)
+      .sort()
+    if (owned.length === 0) continue
+    const mark = markFor(hashString(owned.join("|")))
+    for (const id of owned) markByGateKey.set(gateKeyOf(id), mark)
   }
 
   // From here the floor is read with the handles' gates already on it, so every pass that sizes a
@@ -2064,7 +2082,7 @@ export const assembleFloor = (
     // shape. The control's own authored id is carried onto the cell for the same reason a handle's
     // room carries its own address (see RoomCell.mechanismId): one uniform rule, not a
     // control-only exception.
-    const controlRoomSpec = (control: Control, record: MechanismRecord): RoomSpec => ({
+    const controlRoomSpec = (control: StatefulControl, record: MechanismRecord): RoomSpec => ({
       roomType: "encounter",
       family: resolveEncounter(control.encounter, HANDLE_FAMILY).familyId,
       tags: [HANDLE_FAMILY],
@@ -3478,6 +3496,65 @@ export const assembleFloor = (
         return { success: false, reasons: [{ type: "duplicateCellSlot", slot: switchedDuplicate }] }
     }
 
+    // A FORK-SWITCH IS THE JUNCTION A `{ in }` FORK LAID, with its encounter standing in it. Only the seams
+    // are its doors — the gates its `owners` put on the first cell of each chain — so the main path onward
+    // stays open, and its states follow from those seams: rest, plus one per exit.
+    for (const control of forkSwitches) {
+      const k = forkIns.findIndex(fork => fork.region === control.in)
+      const fork = forkIns[k]
+      const junctionKey = posKey(mainPath[junctionIdxOf[k]][0], mainPath[junctionIdxOf[k]][1])
+      const [sr, sc] = junctionKey.split(",").map(Number)
+      const junction = cells2D[sr][sc]
+      if (junction.type !== "room") throw new Error(`[siteAssembler] fork-switch junction ${junctionKey} is not a room`)
+      const dirOfWay = new Map(nodeExitsOf(junctionKey).map(({ dir, neighborKey }) => [neighborKey, dir]))
+      const gateKeyByDir = new Map<Direction, string>()
+      fork.seams.forEach(([from, to], j) => {
+        const first = chains.find(chain => chain.parentIdx === undefined && chain.idx === fork.sectionIdxs[j])!.cells[0]
+        const wayKey = posKey(first[0], first[1])
+        const gate = gatesOwnedBy(control.id).find(
+          ({
+            at: {
+              between: [a, b],
+            },
+          }) => (a === from && b === to) || (a === to && b === from)
+        )!
+        const door = cells2D[first[0]][first[1]]
+        if (door.type !== "room" || door.requiredKeyId !== gateKeyOf(gate.id))
+          throw new Error(`[siteAssembler] gate ${gate.id} does not stand beside the junction of ${control.id}`)
+        gateKeyByDir.set(dirOfWay.get(wayKey)!, gateKeyOf(gate.id))
+      })
+      const family = resolveEncounter(control.encounter, "puzzle")
+      cells2D[sr][sc] = {
+        ...junction,
+        family: family.familyId,
+        tags: family.tags,
+        mechanismId: control.id,
+        // Hashed from the authored id, so the board stands still while a re-carve moves the junction.
+        boardIndex: hashString(`${gateKeyOf(control.id)}|${family.familyId}`),
+        exits: junction.exits?.map(exit => {
+          const gateKeyId = gateKeyByDir.get(exit.dir)
+          return gateKeyId ? { ...exit, gateKeyId } : exit
+        }),
+        mechanism: {
+          states: [MECHANISM_AT_REST, ...gateKeyByDir.values()],
+          initial: MECHANISM_AT_REST,
+          returnsToInitial: true,
+          positions: [...gateKeyByDir.values()].map(gateKeyId => ({ state: gateKeyId, gateKeyId })),
+        },
+        ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
+        difficulty: config.difficulty,
+        ...(config.theme !== undefined ? { theme: config.theme } : {}),
+        ...(config.condition !== undefined ? { condition: config.condition } : {}),
+        ...(config.patron !== undefined ? { patron: config.patron } : {}),
+        ...(config.role !== undefined ? { role: config.role } : {}),
+      }
+    }
+    if (forkSwitches.length > 0) {
+      const standingDuplicate = duplicateSlot()
+      if (standingDuplicate)
+        return { success: false, reasons: [{ type: "duplicateCellSlot", slot: standingDuplicate }] }
+    }
+
     // WHICH MECHANISM DRIVES WHICH DOOR IS ONLY READABLE IF BOTH ENDS SAY SO, so the mark goes on the
     // lever's or control's room AND on every gate it owns — one pair per mechanism, worn twice. Written
     // here, over the finished cells, because a gate room is carved by the ordinary gate pass and a
@@ -3491,6 +3568,16 @@ export const assembleFloor = (
         const key = cell.mechanism?.positions[0]?.gateKeyId ?? cell.requiredKeyId
         const mark = key === undefined ? undefined : markByGateKey.get(key)
         if (mark) cells2D[r][c] = { ...cell, mark }
+        // Each way out a fork-switch owns carries what its own gate wears, which is what the board draws.
+        const marked = cells2D[r][c]
+        if (marked.type === "room" && marked.exits?.some(exit => exit.gateKeyId && markByGateKey.has(exit.gateKeyId)))
+          cells2D[r][c] = {
+            ...marked,
+            exits: marked.exits.map(exit => {
+              const wayMark = exit.gateKeyId ? markByGateKey.get(exit.gateKeyId) : undefined
+              return wayMark ? { ...exit, mark: wayMark } : exit
+            }),
+          }
       }
     }
 

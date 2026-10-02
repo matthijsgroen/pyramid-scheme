@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type FC } from "react"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
 import type { Direction as WayOut, RoomCell } from "@/game/siteTypes"
+import { MarkChip } from "@/app/SiteMap/mark"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import type { MirrorAngle } from "@/mods/core/game/beam/physics"
@@ -144,6 +145,7 @@ export const LightbeamSwitchPuzzle: FC<Props> = ({
   // switch was left open on an earlier visit.
   const standing = lit ?? openWayOut
   const wayName = (way: WayOut) => t(`lightbeamSwitch.way.${way}`)
+  const markOf = (way: WayOut) => (exits ?? []).find(exit => exit.dir === way)?.mark
 
   return (
     <PuzzleFamilyShell
@@ -174,13 +176,19 @@ export const LightbeamSwitchPuzzle: FC<Props> = ({
           {shutWaysOut(exits).map(way => (
             <div
               key={way}
-              className={clsx("size-full", DOOR_PLACE[way])}
+              className={clsx("relative size-full", DOOR_PLACE[way])}
               role="img"
               aria-label={t(standing === way ? "lightbeamSwitch.doorOpen" : "lightbeamSwitch.doorShut", {
                 way: wayName(way),
               })}
             >
               <Doorway open={standing === way} />
+              {/* The pair the gate on this way out wears on the map, so the doorway says which gate it is. */}
+              {markOf(way) && (
+                <span className="absolute inset-x-0 top-0 flex justify-center">
+                  <MarkChip mark={markOf(way)!} size={20} />
+                </span>
+              )}
             </div>
           ))}
           <div className="col-start-2 row-start-2 w-full">

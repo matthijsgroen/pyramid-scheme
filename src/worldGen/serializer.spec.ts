@@ -242,4 +242,32 @@ describe("generateFile — a gate on a connection survives the bake", () => {
     )
     expect(emitted).not.toContain("[object Object]")
   })
+
+  it("emits a gate's owners and a fork-switch control, so the bake keeps who owns each seam", () => {
+    const floor = {
+      pathPuzzles: 0,
+      difficulty: "starter" as const,
+      end: "treasure" as const,
+      exitOrStaircase: "exit" as const,
+      sideSections: [],
+      obstacles: [
+        {
+          id: "forkLeft",
+          kind: "gate" as const,
+          at: { on: "connection" as const, between: ["entrance", "leftLower"] as const },
+          owners: ["Y"],
+        },
+      ],
+      controls: [{ id: "Y", in: "entrance", control: "fork-switch" as const, encounter: "lightbeamSwitch" }],
+    }
+
+    const emitted = generateFile({ testJourney: [[floor]] })
+
+    expect(emitted).toContain(
+      'obstacles: [{ id: "forkLeft", kind: "gate", at: { on: "connection", between: ["entrance", "leftLower"] }, owners: ["Y"] }]'
+    )
+    expect(emitted).toContain(
+      'controls: [{ id: "Y", in: "entrance", control: "fork-switch", encounter: "lightbeamSwitch" }]'
+    )
+  })
 })

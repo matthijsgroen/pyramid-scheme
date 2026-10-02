@@ -1,13 +1,16 @@
 import { beforeAll, describe, expect, it } from "vitest"
 import { assembleFloor, defaultResolveEncounter, encounterFromMeta } from "./siteAssembler"
 import type { ResolveEncounter } from "./siteAssembler"
+import { MECHANISM_AT_REST } from "./siteTypes"
 import type { Direction, FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
+import type { StatefulControl } from "./obstacles"
 import type { RegionGraph } from "./regions"
 import { reachableFrom, validateSite } from "./siteValidator"
 import { floorKeyRing } from "./floorKeys"
 import { openDoorsFor } from "./mechanismDoors"
 import { cellAddress } from "./cellAddress"
 import { floorLock } from "./floorLock"
+import { walkLock } from "./lockWalk"
 // The real registry, for the one spec that has to prove the refusal against a family that
 // genuinely lacks reEnterable rather than against the fallback resolver, which claims it for none.
 import "@/mods/registerModApps"
@@ -2413,7 +2416,7 @@ describe("a gate on a connection off the threaded route", () => {
       ...doubleBackConfig(),
       regionLayout: { ...layout, connections: [...layout.connections, ["s1Chamber", "s2Chamber"]] },
       obstacles: [{ id: "nowhere", kind: "gate", at: { on: "connection", between: ["s1Chamber", "s2Chamber"] } }],
-      controls: [{ ...doubleBackConfig().controls![0], opens: { unset: [], open: ["nowhere"] } }],
+      controls: [{ ...(doubleBackConfig().controls![0] as StatefulControl), opens: { unset: [], open: ["nowhere"] } }],
     }
     const result = assembleFloor("site-doubleback-nowhere", config, 42)
 
@@ -2429,7 +2432,7 @@ describe("a gate on a connection off the threaded route", () => {
     for (const orphan of base.obstacles!.map(o => o.id)) {
       const config: FloorConfig = {
         ...base,
-        controls: base.controls!.map(control => ({
+        controls: (base.controls as StatefulControl[]).map(control => ({
           ...control,
           opens: Object.fromEntries(
             Object.entries(control.opens).map(([state, ids]) => [state, ids.filter(id => id !== orphan)])
@@ -2483,7 +2486,12 @@ describe("a gate on a connection off the threaded route", () => {
     const config: FloorConfig = {
       ...doubleBackConfig(),
       obstacles: doubleBackConfig().obstacles!.filter(o => o.id !== "forkRight"),
-      controls: [{ ...doubleBackConfig().controls![0], opens: { unset: [], open: ["greenRight", "greenLeft"] } }],
+      controls: [
+        {
+          ...(doubleBackConfig().controls![0] as StatefulControl),
+          opens: { unset: [], open: ["greenRight", "greenLeft"] },
+        },
+      ],
       sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: "treasure", gate: { type: "floor-key" } }],
     }
     const result = assembleFloor("site-doubleback-no-collision", config, 42)
@@ -2910,6 +2918,233 @@ describe("the designer's doubleBack, two arms off the entrance with drops betwee
           ],
         })
       }
+    })
+  })
+
+  describe("a fork-switch standing in a fork named by region", () => {
+    const SITE = "site-fork-switch"
+    const keyOf = (gateId: string) => `obstacle:${SITE}#0#0:${gateId}`
+    const AT_REST = MECHANISM_AT_REST
+
+    const forkSwitched = (): FloorConfig => {
+      const base = designerDoubleBack()
+      return {
+        ...base,
+        forks: [{ in: "entrance" }],
+        obstacles: base.obstacles!.map(o =>
+          o.kind === "gate" && (o.id === "forkLeft" || o.id === "forkRight") ? { ...o, owners: ["Y"] } : o
+        ),
+        controls: [
+          { id: "Y", in: "entrance", control: "fork-switch", encounter: "lightbeamSwitch" },
+          ...base.controls!.slice(1),
+        ],
+      }
+    }
+
+    // Every seed that carves, with the junction the fork-switch stands in. Asserted non-empty by each
+    // test, never skipped: a floor that stopped carving would otherwise pass them all.
+    const carves = (() => {
+      let cached: { seed: number; grid: FloorGrid; at: [number, number]; junction: RoomCell }[] | undefined
+      return () => {
+        if (cached) return cached
+        cached = []
+        for (let seed = 1; seed <= 120; seed++) {
+          const result = assembleFloor(SITE, forkSwitched(), seed, resolveEncounter)
+          if (!result.success) continue
+          const { cells } = result.grid
+          for (let r = 0; r < cells.length; r++)
+            for (let c = 0; c < cells[r].length; c++) {
+              const cell = cells[r][c]
+              if (cell.type === "room" && cell.mechanismId === "Y")
+                cached.push({ seed, grid: result.grid, at: [r, c], junction: cell })
+            }
+        }
+        return cached
+      }
+    })()
+
+    beforeAll(() => {
+      carves()
+    }, 120_000)
+
+    const REGION_BEYOND: Record<string, string> = {
+      [keyOf("forkLeft")]: "leftLower",
+      [keyOf("forkRight")]: "rightLower",
+    }
+
+    it("gives its mechanism the states rest plus one per seam, on every carved seed", () => {
+      expect(carves().length).toBeGreaterThan(0)
+      for (const { seed, junction } of carves()) {
+        const { states, positions } = junction.mechanism!
+        expect([states[0], [...states.slice(1)].sort()], `seed ${seed}`).toEqual([
+          AT_REST,
+          [keyOf("forkLeft"), keyOf("forkRight")].sort(),
+        ])
+        expect(positions.map(p => p.gateKeyId).sort(), `seed ${seed}`).toEqual(states.slice(1).sort())
+        expect(
+          positions.every(p => p.state === p.gateKeyId),
+          `seed ${seed}`
+        ).toBe(true)
+      }
+    })
+
+    it("stands the encounter in the junction under the control's id, on a board that does not move with the carve", () => {
+      expect(carves().length).toBeGreaterThan(0)
+      for (const { seed, junction } of carves()) {
+        expect(junction.roomType, `seed ${seed}`).toBe("fork")
+        expect(junction.family, `seed ${seed}`).toBe("lightbeamSwitch")
+        expect(junction.mechanismId, `seed ${seed}`).toBe("Y")
+      }
+      expect(new Set(carves().map(({ junction }) => junction.boardIndex)).size).toBe(1)
+    })
+
+    it("opens no exit of the junction in rest, and each state opens only its own, on every carved seed", () => {
+      expect(carves().length).toBeGreaterThan(0)
+      for (const { seed, grid, at, junction } of carves()) {
+        expect(junction.mechanism!.initial, `seed ${seed}`).toBe(AT_REST)
+        const seams = [keyOf("forkLeft"), keyOf("forkRight")]
+        const atRest = openDoorsFor(grid, 0, new Map())
+        expect(
+          seams.filter(key => atRest.has(key)),
+          `seed ${seed} at rest`
+        ).toEqual([])
+        const address = cellAddress(grid, 0, at[0], at[1])!
+        for (const state of junction.mechanism!.states.slice(1)) {
+          const open = openDoorsFor(grid, 0, new Map([[address, state]]))
+          expect(
+            seams.filter(key => open.has(key)),
+            `seed ${seed} in ${state}`
+          ).toEqual([state])
+        }
+      }
+    })
+
+    it("closes only the seams: every exit naming a gate leads into that gate's room, and the main path onward names none", () => {
+      expect(carves().length).toBeGreaterThan(0)
+      for (const { seed, grid, at, junction } of carves()) {
+        const gated = (junction.exits ?? []).filter(exit => exit.gateKeyId !== undefined)
+        expect(gated.map(exit => exit.gateKeyId).sort(), `seed ${seed}`).toEqual(
+          [keyOf("forkLeft"), keyOf("forkRight")].sort()
+        )
+        for (const exit of gated) {
+          const [dr, dc] = DIR_MOVE[exit.dir]
+          const beside = grid.cells[at[0] + dr * 2]?.[at[1] + dc * 2]
+          expect(beside?.type, `seed ${seed} ${exit.dir}`).toBe("room")
+          const door = beside as RoomCell
+          expect(door.requiredKeyId, `seed ${seed} ${exit.dir}`).toBe(exit.gateKeyId)
+          expect(door.region, `seed ${seed} ${exit.dir}`).toBe(REGION_BEYOND[exit.gateKeyId!])
+        }
+        expect(
+          (junction.exits ?? []).filter(exit => exit.kind === "main" && exit.gateKeyId !== undefined),
+          `seed ${seed}`
+        ).toEqual([])
+      }
+    })
+
+    it("reads as a sound lock on every carved seed", () => {
+      expect(carves().length).toBeGreaterThan(0)
+      for (const { seed, grid } of carves()) {
+        const result = walkLock(floorLock(grid)!)
+        expect(result.sound, `seed ${seed}: ${JSON.stringify(result)}`).toBe(true)
+      }
+    })
+
+    it("seats no separate control room for the fork-switch: the junction is its only cell", () => {
+      expect(carves().length).toBeGreaterThan(0)
+      for (const { seed, grid } of carves()) {
+        const rooms = grid.cells.flat().filter(cell => cell.type === "room" && cell.mechanismId === "Y")
+        expect(rooms, `seed ${seed}`).toHaveLength(1)
+      }
+    })
+
+    it("has the junction and both its gates wear one mark, and each exit carries the mark of its own gate", () => {
+      expect(carves().length).toBeGreaterThan(0)
+      for (const { seed, grid, at, junction } of carves()) {
+        expect(junction.mark, `seed ${seed}`).toBeDefined()
+        for (const exit of (junction.exits ?? []).filter(exit => exit.gateKeyId !== undefined)) {
+          const [dr, dc] = DIR_MOVE[exit.dir]
+          const door = grid.cells[at[0] + dr * 2][at[1] + dc * 2] as RoomCell
+          expect(door.mark, `seed ${seed} ${exit.dir}`).toEqual(junction.mark)
+          expect(exit.mark, `seed ${seed} ${exit.dir}`).toEqual(door.mark)
+        }
+      }
+    })
+
+    // The whole refusal list, asserted for each: a fault that also dragged another one in would be a
+    // second thing the author has to read before finding what they wrote.
+    const refusedWith = (config: FloorConfig) => {
+      const result = assembleFloor("site-fork-switch-refused", config, 1, resolveEncounter)
+      return result.success ? "carved" : result.reasons
+    }
+
+    it("refuses a fork-switch whose region has no fork naming it, by the fork-switch's id", () => {
+      expect(refusedWith({ ...forkSwitched(), forks: undefined })).toEqual([
+        { type: "forkSwitchNoFork", id: "Y", region: "entrance" },
+      ])
+    })
+
+    it("refuses a fork-switch authored without an encounter", () => {
+      const config = forkSwitched()
+      config.controls = [{ id: "Y", in: "entrance", control: "fork-switch" } as never, ...config.controls!.slice(1)]
+      expect(refusedWith(config)).toEqual([{ type: "forkSwitchNoEncounter", id: "Y" }])
+    })
+
+    it("refuses a gate a fork-switch owns that is not a seam leaving its region, by the gate's id", () => {
+      const config = forkSwitched()
+      config.obstacles = config.obstacles!.map(o =>
+        o.kind === "gate" && o.id === "greenRight" ? { ...o, owners: ["Y"] } : o
+      )
+      config.controls = config.controls!.map(control =>
+        control.control === undefined && control.id === "S1"
+          ? { ...control, opens: { start: [], thrown: ["greenLeft"] } }
+          : control
+      )
+      expect(refusedWith(config)).toEqual([{ type: "gateOwnedOffSeam", id: "greenRight", owner: "Y" }])
+    })
+
+    it("refuses a seam of the fork that carries no gate the fork-switch owns", () => {
+      const config = forkSwitched()
+      config.obstacles = config.obstacles!.filter(o => o.id !== "forkRight")
+      expect(refusedWith(config)).toEqual([
+        { type: "forkSwitchSeamUngated", id: "Y", between: ["entrance", "rightLower"] },
+      ])
+    })
+
+    it("refuses a seam carrying two gates the fork-switch owns, since its exit would have no one key", () => {
+      const config = forkSwitched()
+      config.obstacles = [
+        ...config.obstacles!,
+        {
+          id: "forkLeftAgain",
+          kind: "gate",
+          at: { on: "connection", between: ["leftLower", "entrance"] },
+          owners: ["Y"],
+        },
+      ]
+      expect(refusedWith(config)).toEqual([
+        { type: "forkSwitchSeamGatedTwice", id: "Y", between: ["entrance", "leftLower"] },
+      ])
+    })
+
+    it("refuses an owner that is not a fork-switch, or not a control at all, naming the gate and the owner", () => {
+      const config = forkSwitched()
+      config.obstacles = config.obstacles!.map(o =>
+        o.kind === "gate" && o.id === "forkLeft" ? { ...o, owners: ["Y", "S1", "ghost"] } : o
+      )
+      expect(refusedWith(config)).toEqual([
+        { type: "gateOwnerNotForkSwitch", id: "forkLeft", owner: "S1" },
+        { type: "gateOwnerNotForkSwitch", id: "forkLeft", owner: "ghost" },
+      ])
+    })
+
+    it("refuses a gate both a fork-switch owns and a control opens, since mixed ownership is not carved", () => {
+      const config = forkSwitched()
+      config.controls = config.controls!.map(control =>
+        control.control === undefined && control.id === "S1"
+          ? { ...control, opens: { start: ["greenRight", "forkLeft"], thrown: ["greenLeft"] } }
+          : control
+      )
+      expect(refusedWith(config)).toEqual([{ type: "gateOwnedTwice", id: "forkLeft", owner: "Y" }])
     })
   })
 })

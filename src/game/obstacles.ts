@@ -1,5 +1,6 @@
 import type { RegionGraph } from "./regions"
 import { offRouteChains, regionRoute } from "./regions"
+import type { ForkDemand } from "./siteTypes"
 
 /**
  * WHAT STANDS IN THE WAY, AND WHAT DECIDES WHETHER IT DOES — two separate things joined by an
@@ -25,6 +26,9 @@ export type GateObstacle = {
    * stands open only while EVERY such control is in a state naming it (`and`). `"any"`: while one is
    * (`or`). The same reading as `LockGate.mode` (lockWalk.ts), which the soundness walk folds by. */
   mode?: "any"
+  /** THE CONTROLS THAT OWN THIS GATE, named from the gate's side rather than from `opens`. Only a
+   * fork-switch (`ForkSwitchControl`) may be named here for now; a gate it owns appears in no control's `opens`. */
+  owners?: string[]
 }
 
 /**
@@ -53,8 +57,10 @@ export type Obstacle = GateObstacle | OneWayObstacle
  * and `opens` is lockWalk's Mechanism.opens one layer up — the same vocabulary, so nothing has to be
  * translated between what is authored and what is walked.
  */
-export type Control = {
+export type StatefulControl = {
   id: string
+  /** Absent: this is a control with states of its own, not a `ForkSwitchControl`. */
+  control?: undefined
   /** The region the control stands in. A region, not a section address: the mod points at the layout. */
   in: string
   states: string[]
@@ -79,6 +85,23 @@ export type Control = {
   encounter?: string
 }
 
+/**
+ * A PUZZLE STANDING IN A FORK'S JUNCTION, which operates that junction. It names no targets and counts no
+ * states: the gates name it in their `owners`, each must be a seam of the fork `forks: [{ in }]` lays in
+ * this region, and its states are rest plus one per seam. `encounter` is required — which board stands in
+ * the junction is the author's to say, never a silent default.
+ */
+export type ForkSwitchControl = {
+  id: string
+  in: string
+  control: "fork-switch"
+  encounter: string
+}
+
+export type Control = StatefulControl | ForkSwitchControl
+
+export const isForkSwitch = (control: Control): control is ForkSwitchControl => control.control === "fork-switch"
+
 export type TopologyFault =
   | { type: "obstacleIdRepeated"; id: string }
   | { type: "obstacleNamesNoConnection"; id: string }
@@ -89,6 +112,20 @@ export type TopologyFault =
   | { type: "obstacleOffRoute"; id: string }
   | { type: "obstacleUnowned"; id: string }
   | { type: "controlUnsatisfied"; id: string; what: string }
+  /** A fork-switch stands in a region no `forks: [{ in }]` entry lays a junction in. */
+  | { type: "forkSwitchNoFork"; id: string; region: string }
+  /** A fork-switch authored without the encounter that stands in its junction. */
+  | { type: "forkSwitchNoEncounter"; id: string }
+  /** A gate's `owners` names something that is not a fork-switch of this floor; `id` is the gate. */
+  | { type: "gateOwnerNotForkSwitch"; id: string; owner: string }
+  /** A gate owned by a fork-switch is not a seam leaving that fork's region; `id` is the gate. */
+  | { type: "gateOwnedOffSeam"; id: string; owner: string }
+  /** A gate is owned by a fork-switch and also named in a control's `opens`; `id` is the gate. */
+  | { type: "gateOwnedTwice"; id: string; owner: string }
+  /** A seam of a fork-switch's fork carries no gate it owns, so rest could not shut that exit. */
+  | { type: "forkSwitchSeamUngated"; id: string; between: [string, string] }
+  /** A seam of a fork-switch's fork carries several gates it owns, so its exit has no single key. */
+  | { type: "forkSwitchSeamGatedTwice"; id: string; between: [string, string] }
 
 /** The two ends of a connection in a stable order, so `["a","b"]` and `["b","a"]` are one connection. */
 const connectionKey = (a: string, b: string): string => JSON.stringify([a, b].sort())
@@ -108,7 +145,8 @@ const connectionKey = (a: string, b: string): string => JSON.stringify([a, b].so
 export const topologyFaults = (
   layout: RegionGraph | undefined,
   obstacles: readonly Obstacle[],
-  controls: readonly Control[]
+  controls: readonly Control[],
+  forks: readonly ForkDemand[] = []
 ): TopologyFault[] => {
   const faults: TopologyFault[] = []
   if (obstacles.length === 0 && controls.length === 0) return faults
@@ -159,6 +197,8 @@ export const topologyFaults = (
     if (seenControl.has(control.id)) faults.push({ type: "controlUnsatisfied", id: control.id, what: control.id })
     seenControl.add(control.id)
     if (!regions.has(control.in)) faults.push({ type: "controlUnsatisfied", id: control.id, what: control.in })
+    // A fork-switch has no states or `opens` to check; the gates name it, which is answered below.
+    if (isForkSwitch(control)) continue
     const states = new Set(control.states)
     if (!states.has(control.initial)) faults.push({ type: "controlUnsatisfied", id: control.id, what: control.initial })
     for (const [state, opens] of Object.entries(control.opens)) {
@@ -178,6 +218,59 @@ export const topologyFaults = (
   // asked one layer earlier: a gate nothing opens is a wall, and a wall is authored as a layout with
   // no connection rather than as a gate nobody can pass. A one-way is exempt: it is meaningful with
   // no control at all, its direction simply fixed at whatever it was authored with.
+  const forkSwitches = new Map(controls.filter(isForkSwitch).map(control => [control.id, control]))
+  const seamsOf = new Map<string, Set<string>>()
+  const seamsFor = (region: string): Set<string> => {
+    const known = seamsOf.get(region)
+    if (known) return known
+    const seams = new Set(
+      offRouteChains(layout, drops)
+        .filter(
+          ({ mouth, regions: led }) => mouth === region && led.length > 0 && joined.has(connectionKey(region, led[0]))
+        )
+        .map(({ regions: led }) => connectionKey(region, led[0]))
+    )
+    seamsOf.set(region, seams)
+    return seams
+  }
+  const forkRegions = new Set(forks.flatMap(fork => ("in" in fork ? [fork.in] : [])))
+  const opensGate = new Set(
+    controls.flatMap(control => (isForkSwitch(control) ? [] : Object.values(control.opens).flat()))
+  )
+  const gatesOwnedBy = new Map<string, Obstacle[]>()
+  for (const obstacle of obstacles) {
+    if (obstacle.kind !== "gate") continue
+    for (const owner of obstacle.owners ?? []) {
+      owned.add(obstacle.id)
+      const fork = forkSwitches.get(owner)
+      if (!fork) {
+        faults.push({ type: "gateOwnerNotForkSwitch", id: obstacle.id, owner })
+        continue
+      }
+      gatesOwnedBy.set(owner, [...(gatesOwnedBy.get(owner) ?? []), obstacle])
+      if (opensGate.has(obstacle.id)) faults.push({ type: "gateOwnedTwice", id: obstacle.id, owner })
+      const key = connectionKey(obstacle.at.between[0], obstacle.at.between[1])
+      if (regions.has(fork.in) && joined.has(key) && !seamsFor(fork.in).has(key))
+        faults.push({ type: "gateOwnedOffSeam", id: obstacle.id, owner })
+    }
+  }
+  for (const fork of forkSwitches.values()) {
+    if (!fork.encounter) faults.push({ type: "forkSwitchNoEncounter", id: fork.id })
+    if (!forkRegions.has(fork.in)) {
+      faults.push({ type: "forkSwitchNoFork", id: fork.id, region: fork.in })
+      continue
+    }
+    if (!regions.has(fork.in)) continue
+    for (const seam of seamsFor(fork.in)) {
+      const gates = (gatesOwnedBy.get(fork.id) ?? []).filter(
+        gate => connectionKey(gate.at.between[0], gate.at.between[1]) === seam
+      )
+      const between: [string, string] = [fork.in, (JSON.parse(seam) as string[]).find(name => name !== fork.in)!]
+      if (gates.length === 0) faults.push({ type: "forkSwitchSeamUngated", id: fork.id, between })
+      if (gates.length > 1) faults.push({ type: "forkSwitchSeamGatedTwice", id: fork.id, between })
+    }
+  }
+
   for (const obstacle of obstacles)
     if (obstacle.kind === "gate" && !owned.has(obstacle.id)) faults.push({ type: "obstacleUnowned", id: obstacle.id })
 
