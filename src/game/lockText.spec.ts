@@ -31,12 +31,15 @@ describe("parseLock", () => {
     expect(lock.regions.in.takes).toBe("puzzles")
   })
 
+  it("keeps an owner nothing places yet as a draft, holding open only its rest side", () => {
+    expect(parseLock("in -[S3]- out\nin -[!S3]- hall").unplaced).toEqual({ S3: ["in-hall"] })
+  })
+
   it("reads | as a gate either owner opens", () => {
     expect(parseLock("in -[A|B]- out\nA lever @in\nB lever @in").gates["in-out"].mode).toBe("any")
   })
 
   it.each([
-    ["in -[S3]- out", "line 1: S3 owns a gate but is never placed"],
     ["in -[!Y]- out\nY board @in", "line 1: board Y has no rest side: !Y"],
     ["in -[H]- out\nH lever @cellar", "line 2: no corridor reaches cellar"],
     ["in -[H]- out\nH lever @in\nH lever @out", "line 3: H is placed twice"],
@@ -56,5 +59,22 @@ describe("parseLock", () => {
     expect(lock.in).toBe("seesaw1.in")
     expect(lock.out).toBe("seesaw2.out")
     expect(parseLock("embed seesaw.west = twoLamps", { seesaw, twoLamps }).switches.A.in).toBe("twoLamps.out")
+  })
+})
+
+describe("connections back to back", () => {
+  it("put the stretch between a gate and a drop in a region of its own", () => {
+    const lock = parseLock("in -[Y]- >> top\nin -- out\nY board @in")
+    expect(lock.regions["in→top"]).toEqual({ takes: "nothing" })
+    expect(lock.gates["in-in→top"]).toMatchObject({ from: "in", to: "in→top" })
+    expect(lock.oneWays).toEqual([{ from: "in→top", to: "top" }])
+  })
+
+  it("read with or without a space between the two", () => {
+    expect(parseLock("in -[Y]->> top\nin -- out\nY board @in").oneWays).toEqual([{ from: "in→top", to: "top" }])
+  })
+
+  it("refuse a line that ends on a connection", () => {
+    expect(() => parseLock("in -[Y]- >>")).toThrow("line 1: a line starts and ends with a region")
   })
 })

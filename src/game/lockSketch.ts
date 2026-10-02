@@ -22,6 +22,9 @@ export type AuthoredLock = {
   keys?: Record<string, { in: string }>
   /** Regions joined with nothing standing between them, written [from, to] like a gate. */
   connections?: [string, string][]
+  /** Owners a gate names that nothing places yet — a draft. Each holds open only the gates it keeps open
+   * at rest, and nothing can move it. */
+  unplaced?: Record<string, string[]>
   oneWays?: { from: string; to: string }[]
   in: string
   out: string
@@ -76,7 +79,11 @@ export const topologyLock = (lock: AuthoredLock): LockSpec => {
   const open: [string, Mechanism][] = lock.connections?.length
     ? [[OPEN, { states: ["open"], initial: "open", opens: { open: Object.keys(plain) }, transitions: [] }]]
     : []
-  const mechanisms = Object.fromEntries([...switches, ...keys, ...open])
+  const unplaced = Object.entries(lock.unplaced ?? {}).map(([id, rest]): [string, Mechanism] => [
+    id,
+    { states: ["rest"], initial: "rest", opens: { rest }, transitions: [] },
+  ])
+  const mechanisms = Object.fromEntries([...switches, ...keys, ...open, ...unplaced])
   return {
     regions: Object.keys(lock.regions),
     gates: { ...lock.gates, ...plain },
@@ -111,6 +118,7 @@ const renamed = (lock: AuthoredLock, prefix: string, alias: Record<string, strin
     ),
     keys: Object.fromEntries(Object.entries(lock.keys ?? {}).map(([k, v]) => [id(k), { in: region(v.in) }])),
     connections: lock.connections?.map(([from, to]): [string, string] => [region(from), region(to)]),
+    unplaced: Object.fromEntries(Object.entries(lock.unplaced ?? {}).map(([u, rest]) => [id(u), rest.map(id)])),
     oneWays: lock.oneWays?.map(w => ({ from: region(w.from), to: region(w.to) })),
     in: region(lock.in),
     out: region(lock.out),
@@ -123,6 +131,7 @@ const merged = (a: AuthoredLock, b: AuthoredLock): AuthoredLock => ({
   switches: { ...a.switches, ...b.switches },
   keys: { ...a.keys, ...b.keys },
   connections: [...(a.connections ?? []), ...(b.connections ?? [])],
+  unplaced: { ...a.unplaced, ...b.unplaced },
   oneWays: [...(a.oneWays ?? []), ...(b.oneWays ?? [])],
   in: a.in,
   out: a.out,
@@ -194,13 +203,16 @@ export const drawLock = (spec: LockSpec): string => {
   const openAtStart = openGates(spec, initial)
   const gateToken = (gateId: string) => {
     const gate = spec.gates[gateId]
-    // A gate no owner can ever move is a plain corridor, drawn without a token.
-    if (gate.owners.every(owner => spec.mechanisms[owner].transitions.length === 0)) return ""
+    if (gate.owners.length === 1 && gate.owners[0] === OPEN) return ""
     const opener = (owner: string) => {
       const m = spec.mechanisms[owner]
-      // A composed lock prefixes its board states with the owner's prefix; the owner already says it.
-      const states = m.states.filter(state => m.opens[state]?.includes(gateId)).map(s => s.split(".").pop())
-      return `${owner}:${states.join("/")}`
+      // Nothing can move it yet: the author has still to place it.
+      if (m.transitions.length === 0) return `${owner}?`
+      const own = m.states.filter(state => m.opens[state]?.includes(gateId))
+      // A board's state is named by the gate it opens, which the drawing already shows.
+      if (own.length === 1 && own[0] === gateId) return owner
+      // A composed lock prefixes its states with the owner's prefix; the owner already says it.
+      return `${owner}:${own.map(s => s.split(".").pop()).join("/")}`
     }
     return (openAtStart.has(gateId) ? "□" : "■") + gate.owners.map(opener).join(gate.mode === "any" ? "|" : "+")
   }

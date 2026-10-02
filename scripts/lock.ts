@@ -29,7 +29,9 @@ const report = (name: string, lock: AuthoredLock, withJson: boolean): boolean =>
   const unreached = unreachedRegions(spec)
   const reachable = Array.isArray(unreached) && unreached.length === 0
   const deadEnd = !walked.sound && walked.failure.type === "strands"
+  const unplaced = Object.keys(lock.unplaced ?? {})
   const checks = [
+    ...(unplaced.length > 0 ? [`✗ not placed yet: ${unplaced.join(", ")}`] : []),
     reachable
       ? "✓ every region is reachable"
       : `✗ ${unreached === "tooLarge" ? "too many states to walk" : `never reached: ${unreached.join(", ")}`}`,
@@ -50,7 +52,7 @@ const report = (name: string, lock: AuthoredLock, withJson: boolean): boolean =>
   )
   if (withJson) lines.push("", json)
   console.log(lines.join("\n") + "\n")
-  return reachable && walked.sound
+  return unplaced.length === 0 && reachable && walked.sound
 }
 
 const syntax = `${LOCK_SYNTAX}\n  locks to chain or embed: ${Object.keys(library).join(", ")}\n`

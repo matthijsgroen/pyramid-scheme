@@ -61,7 +61,7 @@ export const parseLock = (text: string, library: Record<string, AuthoredLock> = 
   const takes: { region: string; appetite: RegionAppetite; n: number }[] = []
 
   const region = (n: number, name: string) => {
-    if (!NAME.test(name)) fail(n, `cannot read a region called "${name}"`)
+    if (!regions.has(name) && !NAME.test(name)) fail(n, `cannot read a region called "${name}"`)
     if (!regions.has(name)) regions.set(name, name === "in" ? "puzzles" : "nothing")
     return name
   }
@@ -104,6 +104,17 @@ export const parseLock = (text: string, library: Record<string, AuthoredLock> = 
     }
     const parts = line.split(EDGE)
     if (parts.length < 3) fail(n, `cannot read "${line}"`)
+    if (parts[0] === "" || parts[parts.length - 1] === "") fail(n, "a line starts and ends with a region")
+    // Two connections back to back — a gate, then a drop — have a stretch of corridor between them, and
+    // that stretch is a region of its own: the one the gate opens onto and the drop leaves from.
+    for (let i = 2; i < parts.length - 1; i += 2) {
+      if (parts[i] !== "") continue
+      const next = parts.slice(i + 1).find((part, j) => j % 2 === 1 && part !== "")
+      let name = `${parts[i - 2]}→${next}`
+      for (let k = 2; regions.has(name); k++) name = `${parts[i - 2]}→${next}#${k}`
+      regions.set(name, "nothing")
+      parts[i] = name
+    }
     for (let i = 1; i < parts.length; i += 2) {
       const [from, to] = [region(n, parts[i - 1]), region(n, parts[i + 1])]
       const edge = parts[i]
@@ -119,7 +130,8 @@ export const parseLock = (text: string, library: Record<string, AuthoredLock> = 
   }
   const switches: Record<string, LockSwitch> = {}
   const keys: Record<string, { in: string }> = {}
-  for (const [id, { n }] of used) if (!placed.has(id)) fail(n, `${id} owns a gate but is never placed`)
+  // An owner nothing places yet is a draft, not a mistake: the lock still draws, and its gates hold.
+  const unplaced = Object.fromEntries([...used].filter(([id]) => !placed.has(id)).map(([id, use]) => [id, use.rest]))
   for (const [id, { kind, in: at, n }] of placed) {
     if (!regions.has(at)) fail(n, `no corridor reaches ${at}`)
     const use = used.get(id) ?? fail(n, `${id} owns no gate`)
@@ -138,6 +150,7 @@ export const parseLock = (text: string, library: Record<string, AuthoredLock> = 
     ...(Object.keys(keys).length > 0 ? { keys } : {}),
     ...(connections.length > 0 ? { connections } : {}),
     ...(oneWays.length > 0 ? { oneWays } : {}),
+    ...(Object.keys(unplaced).length > 0 ? { unplaced } : {}),
     in: "in",
     out: "out",
   }

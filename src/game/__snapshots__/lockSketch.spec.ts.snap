@@ -23,7 +23,7 @@ exports[`doubleBack > draws, with its cheapest way through 1`] = `
       │    ▼╌╌╌╌╌╌╌╌╌╯    │
  [leftLower]        [rightLower]
   ╎   │                   │
-  ╎   ■Y:in-leftLower     ■Y:in-rightLower
+  ╎   ■Y                  ■Y
   ╎   │                   │
   ╎   ├───────────────────┘
   ▼   │
@@ -43,7 +43,7 @@ exports[`dropHome > draws, with its cheapest way through 1`] = `
    ╎   │
    ╎[hall]              [vault]
    ╎   │                   │
-   ╎   ■Y:in-hall          ■Y:in-vault
+   ╎   ■Y                  ■Y
    ╎   │                   │
    ╎   ├───────────────────┘
    ▼   │
@@ -77,11 +77,11 @@ in ▸ leverRoom ▸ H:right ▸ redRoom ▸ #red:held ▸ leverRoom ▸ H:left 
 exports[`lamplighter > draws, with its cheapest way through 1`] = `
 " [west · A]
       │   ╰╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╮
-      ■Y:in-west                         ╎
+      ■Y                                 ╎
       │                                  ╎
       │                                  ╎
       │                                  ▼
-→ [in · Y]──────────■Y:in-east───────────[east · B]────────■A:right+B:right─────────[out] →
+→ [in · Y]──────────────■Y───────────────[east · B]────────■A:right+B:right─────────[out] →
          ▲╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╯
 
 ■ shut on arrival   □ open on arrival   ╌▶ one-way drop   Name:state opens it
@@ -126,7 +126,7 @@ in ▸ west ▸ A:right ▸ ⤓east ▸ B:right ▸ ⤓in ▸ out"
 exports[`twoLamps > draws, with its cheapest way through 1`] = `
 " [west · A]          [east · B]
       │                   │
-      ■Y:in-west          ■Y:in-east
+      ■Y                  ■Y
       │                   │
       ├───────────────────┘
       │
