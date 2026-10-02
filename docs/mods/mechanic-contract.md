@@ -324,3 +324,34 @@ Each is measured in `topology-status.md` §6.
    sequence advances at its tiles and resets at its door, so that assumption has to go.
 9. **A gate must be able to carry an encounter that reads and never opens.** Today a gate is either a
    wall or a puzzle room; there is no third kind that explains itself without being the puzzle.
+
+Nine more, found while sizing the first nine. They are peers, not footnotes: 10 blocks the worked
+example and 12 undoes a decision made the same afternoon.
+
+10. **Off-route regions must form a tree, not one chain.** `offRouteChains` walks a component into a
+    linear list, so a region with two arms cannot be seated and comes back `obstacleOffRoute`. Measured:
+    the doubleBack of §7 carves on 0 of 60 seeds; the same layout without its drops carves 60 of 60. Two
+    faults are tangled here — drops counted as undirected edges merge the two arms into one component,
+    and `regions.ts:273` puts connections and one-ways in one neighbour list without dedupe, so a pair
+    joined by both is visited twice.
+11. **The lock format itself.** There is no `locks:` field, no reusable lock, no selector cascade for
+    binding a realisation (floor/pyramid/journey/difficulty), no refusal of an unbound role, and no
+    `built: no` validation. §5 and §7 describe all of it; none of it exists.
+12. **Two regions joined by nothing must stay two regions.** `floorLock` flood-fills, so an unbarred
+    connection merges them into one region of the compiled lock. A sequence's tiles placed in separate
+    regions collapse into one and the walk cannot see the order — which is exactly what §7's
+    `connections` field was added for.
+13. **A step onto a tile is not optional.** `lockWalk` treats every transition as a move the player may
+    choose. Walking over a sequence tile happens whether they meant it or not, and a wrong step spoils
+    the run. The solver is optimistic here, and that is only sound while the reset is always reachable.
+14. **A mechanic's state may live across several cells.** `mechanismStates` is keyed by one cell
+    address; a sequence has one state and many tiles.
+15. **A cell's slot must not embed the family.** It is `x<family>:<mechanismId>` today, so binding one
+    lock to another realisation orphans the player's stored progress on that mechanic.
+16. **The carve may not depend on mod-owned authoring.** `forks` is core and `switches` is owned by the
+    topology mod, so a seam-coincident junction has to hold from `regionLayout` and `forks` alone, or
+    turning the mod off moves the carve.
+17. **One fold for a gate's mode.** `floorLock` sets it per boundary and `openDoorsFor` per key. It
+    bites as soon as a gate has several owners, which §3 invites.
+18. **Every realisation of a one-way offers its prompt.** §2 requires it of all of them; only the
+    zipline's exists.

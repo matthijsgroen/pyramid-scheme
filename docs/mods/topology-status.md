@@ -173,5 +173,41 @@ code. Every time, the author got something other than what they wrote, and nothi
 
 - **D1. This document.**
 
+## 8. The delta, sized
+
+What each requirement of `mechanic-contract.md` §9 costs, measured 2026-10-02. "Carve moves" means cell
+layout can change, so the run needs a baseline diff and the baked world may shift. "Saves move" means
+stored progress can be orphaned.
+
+| # | Requirement | Size | Carve moves? | Saves move? |
+|---|---|---|---|---|
+| 1 | targets are an edge or a region | edge **medium**, region **large** | region: yes | no |
+| 2 | a fork's exits are the authored seams | **large** | yes, on `regionLayout` floors only | only if the shipped switch migrates |
+| 3 | an open gate keeps its symbol | **medium** | no | no |
+| 4 | marks never collide | **medium** | no | no |
+| 5 | the realisation decides the drawing | **small** + **medium** | no | **yes, at risk** (see 15) |
+| 6 | one answer for a multi-key door | **medium** | no | no |
+| 7 | conceal an explored region | **medium** | no | no |
+| 8 | transitions in several places | **medium**, runtime **large** | tile placement: yes | new keys |
+| 9 | a gate that reads and never opens | **medium-large** | no | no, additive |
+| 10 | off-route regions form a tree | **medium** | yes | no |
+| 11 | the lock format itself | **large** | no | no |
+| 12 | unbarred regions stay separate | **medium** | no | no |
+| 13 | a step onto a tile is not optional | **medium** | no | no |
+| 14 | state across several cells | **medium** | no | new keys |
+| 15 | the slot must not name the family | **small** | no | **yes** |
+| 16 | the carve never needs a mod | **small** | no | no |
+| 17 | one fold for a gate's mode | **medium** | no | no |
+| 18 | every one-way offers its prompt | **small** | no | no |
+
+**The shortest path to the worked example.** doubleBack as the designer wrote it needs only **10** and
+**2**. The other sixteen do not stand between it and being playable — 3 and 4 make it readable, the rest
+serve mechanics it does not use. Requirement 10 alone makes the layout carve with a plain three-state
+control, which is how the dev floor runs today, and tests everything except the fork-switch.
+
+**Where a baseline is needed.** 1 (region targets), 2, 8 (tile placement) and 10 touch the carve. The
+ledger fingerprint hashes the assembler's import graph, so any of them invalidates the refusal entries
+and they are searched again on the next bake.
+
 Order: A2 is the spine — A3, A5, B3, B6, B7 and C3 all hang off it. B1 and B2 are independent and can
 run beside it.
