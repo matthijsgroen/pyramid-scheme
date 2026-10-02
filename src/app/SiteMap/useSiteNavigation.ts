@@ -8,6 +8,8 @@ import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { encodeEdge } from "./edgeId"
 import { actsOnArrival, staysOpen } from "./nodeKinds"
+import { buildOfferContext, clickTargetAt } from "./clickTargets"
+import { buildRoomClaims } from "./roomClaims"
 import { stairPeerPosition } from "./stairTravel"
 import { crossAtOnce, type PlayTraversal, type Traversal } from "./obstacleTraversal"
 
@@ -136,14 +138,22 @@ export const useSiteNavigation = ({
     [grid, journeys, journeyId, currentFloor, playTraversal]
   )
   const onCellClick = useCallback(
-    (row: number, col: number) => {
+    (tapRow: number, tapCol: number) => {
       if (!grid || traversing.current) return
+      // ADMISSION AND TARGET ARE THE OFFER LAYER'S, asked, not re-derived: a tap the map does not offer
+      // moves nobody, and one it offers acts on the cell it resolves to (a straight run's near cell is
+      // its far end). Reckoned from where the explorer stands, in play (never the builder's freeWalk).
+      const target = clickTargetAt(
+        grid,
+        buildRoomClaims(grid),
+        tapRow,
+        tapCol,
+        buildOfferContext(grid, { walkFrom: explorerPos, runFrom: explorerPos, runsSuppressed: false, freeWalk: false })
+      )
+      if (!target) return
+      const [row, col] = target
       const cell = getCell(grid, row, col)
       if (!cell || cell.type === "empty") return
-      if (cell.state !== "reachable" && cell.state !== "completed") return
-      // A tap means "walk there", so somewhere with no walkable route is not somewhere a tap can send
-      // the player: moving anyway is a teleport, and can shut them inside a pocket they cannot leave.
-      if (findPath(grid, explorerPos, [row, col]).length === 0) return
 
       // Leaving where you stood takes the way in you were standing at with you. A tap this guard block
       // turned away moved nobody, so it leaves the standing offer alone.

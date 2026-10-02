@@ -2,7 +2,7 @@
 import { createElement, useState } from "react"
 import { renderHook, render, act } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import type { CellState, FloorGrid, GridCell, MechanismRecord, SiteConfig } from "@/game/siteTypes"
+import type { CellState, Direction, FloorGrid, GridCell, MechanismRecord, SiteConfig } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { registerFamily } from "@/app/families/familyRegistry"
 import { getCell } from "@/game/gridNavigation"
@@ -237,21 +237,27 @@ const setup = (cells: GridCell[], skipped: string[] = [], config: SiteConfig = s
   const onEncounter = vi.fn()
   const onSkippedConsumable = vi.fn()
   const onExitReached = vi.fn()
-  const hook = renderHook(() =>
-    useSiteNavigation({
-      journeys,
-      journeyId: "j1",
-      siteConfig: config,
-      seed: 1,
-      currentFloor: 0,
-      grid: gridOf(cells),
-      explorerPos: [0, 0],
-      onEncounter,
-      onSkippedConsumable,
-      onExitReached,
-    })
+  // THE EXPLORER'S POSITION IS A PROP, AND A TEST THAT WALKS HIM HAS TO MOVE IT. The hook offers from
+  // where it is told he stands, so leaving it at the way in while the test taps on across the floor asks
+  // about a walk nobody is taking: every offer is still reckoned from the entrance.
+  const hook = renderHook(
+    ({ pos }: { pos: readonly [number, number] }) =>
+      useSiteNavigation({
+        journeys,
+        journeyId: "j1",
+        siteConfig: config,
+        seed: 1,
+        currentFloor: 0,
+        grid: gridOf(cells),
+        explorerPos: pos,
+        onEncounter,
+        onSkippedConsumable,
+        onExitReached,
+      }),
+    { initialProps: { pos: [0, 0] as readonly [number, number] } }
   )
-  return { hook, journeys, onEncounter, onSkippedConsumable, onExitReached }
+  const standAt = (row: number, col: number) => hook.rerender({ pos: [row, col] as readonly [number, number] })
+  return { hook, journeys, onEncounter, onSkippedConsumable, onExitReached, standAt }
 }
 
 // Anything "on arrival" waits out the walk; the tests jump past it.
@@ -277,7 +283,9 @@ describe("useSiteNavigation", () => {
   })
 
   it("walks into a corridor and marks it explored", () => {
-    const { hook, journeys } = setup([entrance, corridor])
+    // A DEAD END RATHER THAN A STRAIGHT RUN, because the map only ever offers a corridor that stops: a
+    // straight cell is tapped as a run's near end and the walk goes to the far end, never to the cell.
+    const { hook, journeys } = setup([entrance, { ...corridor, dirs: new Set<Direction>(["w"]) }])
 
     act(() => hook.result.current.onCellClick(0, 1))
 
@@ -402,11 +410,12 @@ describe("useSiteNavigation", () => {
   })
 
   it("drops the way out's prompt when the player walks off it, leaving the site alone", () => {
-    const { hook, onExitReached } = setup([entrance, corridor, { ...exitRoom, dirs: new Set(["w"]) }])
+    const { hook, onExitReached, standAt } = setup([entrance, corridor, { ...exitRoom, dirs: new Set(["w"]) }])
 
     act(() => hook.result.current.onCellClick(0, 2))
     arrive()
     expect(promptOf(hook).kind).toBe("exit")
+    standAt(0, 2)
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
@@ -465,11 +474,16 @@ describe("useSiteNavigation", () => {
   })
 
   it("drops the stairs prompt when the player walks off the stairhead, staying on the floor", () => {
-    const { hook, journeys } = setup([entrance, corridor, { ...stairRoom, dirs: new Set(["w"]) }], [], twoFloors)
+    const { hook, journeys, standAt } = setup(
+      [entrance, corridor, { ...stairRoom, dirs: new Set(["w"]) }],
+      [],
+      twoFloors
+    )
 
     act(() => hook.result.current.onCellClick(0, 2))
     arrive()
     expect(promptOf(hook).kind).toBe("stairs")
+    standAt(0, 2)
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
@@ -504,7 +518,7 @@ describe("useSiteNavigation", () => {
   })
 
   it("drops a re-enterable room's prompt when the player walks off it, opening nothing", () => {
-    const { hook, onEncounter } = setup([
+    const { hook, onEncounter, standAt } = setup([
       entrance,
       corridor,
       { ...puzzleRoom, family: RETURNABLE_FAMILY, state: "completed" },
@@ -513,6 +527,7 @@ describe("useSiteNavigation", () => {
     act(() => hook.result.current.onCellClick(0, 2))
     arrive()
     expect(promptOf(hook).kind).toBe("room")
+    standAt(0, 2)
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
