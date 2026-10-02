@@ -420,6 +420,22 @@ describe("what the dev journey authors", () => {
     expect(deadRegions(spec)).toEqual([])
   })
 
+  it("has Y, S1 and S2 on pyramid 2 each wear a glyph of their own, and every gate wear its mechanism's mark", () => {
+    const [floor] = withDev[DEV_JOURNEY_ID][1]
+    const grid = assembleAt(DEV_JOURNEY_ID, floor, 2, 0)
+    if (!grid) throw new Error("doubleBack did not carve at its own seed")
+    const rooms = grid.cells.flat().filter(cell => cell.type === "room")
+    const mechanisms = rooms.filter(room => room.mechanismId !== undefined)
+    expect(mechanisms.map(room => room.mechanismId).sort()).toEqual(["S1", "S2", "Y"])
+    const glyphs = mechanisms.map(room => room.mark?.glyph)
+    expect(glyphs.every(glyph => glyph !== undefined)).toBe(true)
+    expect(new Set(glyphs).size).toBe(3)
+    for (const room of mechanisms)
+      for (const { gateKeyId } of room.mechanism!.positions)
+        for (const gate of rooms.filter(cell => cell.requiredKeyId === gateKeyId))
+          expect(gate.mark, `${room.mechanismId} ${gateKeyId}`).toEqual(room.mark)
+  })
+
   // THE EARLY-DROP HAZARD, ON THE REAL ASSEMBLED FLOOR — the physical counterpart to
   // lockWalk.spec.ts's own proof that the fixture strands without its second drop. Reassembled with
   // `dropToEntrance` left out, at the same production seed, so the only thing that differs is the

@@ -36,3 +36,51 @@ export const markFor = (index: number): Mark => ({
   color: KEY_COLORS[index % KEY_COLORS.length],
   glyph: MARK_GLYPHS[index % MARK_GLYPHS.length],
 })
+
+/** What a mechanic (or a sequence tile) asks for: `seed` is the stable hash its glyph is preferred from. */
+export type MarkRequest = { id: string; seed: number }
+
+export type MarkAllocation = {
+  /** The mark each mechanic wears, by request id. */
+  marks: Map<string, Mark>
+  /** The glyph each sequence tile wears, by request id — a glyph no mechanic's mark on the floor uses. */
+  tileGlyphs: Map<string, number>
+  /** Requests left without a glyph because all six were taken, in request order. */
+  unmarked: string[]
+}
+
+/**
+ * Gives every request on a floor its own glyph — a mechanic and its gates wear one mark, two mechanics
+ * never share a glyph, and a sequence's tiles never wear a mechanic's. A request keeps the glyph its seed
+ * prefers when it is free; otherwise it takes the next free one, so earlier requests (authoring order,
+ * mechanics before tiles) are never moved by a later one. Colour stays what the seed alone derives.
+ */
+export const allocateMarks = (
+  mechanics: readonly MarkRequest[],
+  tiles: readonly MarkRequest[] = []
+): MarkAllocation => {
+  const taken = new Set<number>()
+  const marks = new Map<string, Mark>()
+  const tileGlyphs = new Map<string, number>()
+  const unmarked: string[] = []
+  const take = (seed: number): number | undefined => {
+    for (let step = 0; step < MARK_GLYPHS.length; step++) {
+      const index = (seed + step) % MARK_GLYPHS.length
+      if (taken.has(index)) continue
+      taken.add(index)
+      return index
+    }
+    return undefined
+  }
+  for (const { id, seed } of mechanics) {
+    const index = take(seed)
+    if (index === undefined) unmarked.push(id)
+    else marks.set(id, { color: markFor(seed).color, glyph: MARK_GLYPHS[index] })
+  }
+  for (const { id, seed } of tiles) {
+    const index = take(seed)
+    if (index === undefined) unmarked.push(id)
+    else tileGlyphs.set(id, MARK_GLYPHS[index])
+  }
+  return { marks, tileGlyphs, unmarked }
+}

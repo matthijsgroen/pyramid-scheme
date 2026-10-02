@@ -679,6 +679,9 @@ export type AssemblerReason =
   | { type: "gateOwnedTwice"; id: string; owner: string }
   | { type: "forkSwitchSeamUngated"; id: string; between: [string, string] }
   | { type: "forkSwitchSeamGatedTwice"; id: string; between: [string, string] }
+  /** The floor's mechanics (and sequence tiles) need more distinct glyphs than the six a mark can wear,
+   * so a mark would be shared. `ids` are the ones left without a glyph, in authoring order. */
+  | { type: "marksExhausted"; ids: string[] }
   /** A side section matched to an off-route chain (offRouteChains, regions.ts) hosts that chain's
    * regions across its own cells, cells[0] included — and an obstacle standing on the chain's own
    * MOUTH connection always seats there too (seamIndexFor, obstacles.ts: the mouth's far region

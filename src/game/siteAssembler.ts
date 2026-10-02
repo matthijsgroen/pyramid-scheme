@@ -1,6 +1,6 @@
 import { mulberry32, shuffle } from "./random"
 import { hashString } from "@/support/hashString"
-import { type Mark, markFor } from "./mark"
+import { allocateMarks, type Mark, type MarkRequest } from "./mark"
 import type {
   AssemblerFailure,
   AssemblerResult,
@@ -795,6 +795,8 @@ export const assembleFloor = (
   // A GATE IS NAMED BY WHERE THE FLOOR WAS AUTHORED AND THE SECTION IT STANDS ON, NEVER BY THE CARVE.
   // Same reasoning as a switch's `switch:` stem: a position kept from an earlier layout must not come
   // to fit a door it was never thrown for, and an authoring address is what a re-carve cannot move.
+  const switchStem = (n: number) =>
+    `switch:${floorRef.journeyId}#${floorRef.levelIndex ?? 0}#${floorRef.floorIndex}#${n}`
   const handleStem = (n: number) =>
     `handle:${floorRef.journeyId}#${floorRef.levelIndex ?? 0}#${floorRef.floorIndex}#${n}`
   // AN OBSTACLE'S KEY IS NAMED THE SAME WAY: where the floor was AUTHORED plus the obstacle's own
@@ -847,6 +849,10 @@ export const assembleFloor = (
   // read by the single pass over the finished grid that paints marks onto both ends (near the end of
   // this function).
   const markByGateKey = new Map<string, Mark>()
+  // Every mechanic that wears a mark, in AUTHORING ORDER — handles, then controls (fork-switches among
+  // them) as the config lists them, then switches — each with the gate keys it wears it on. The order
+  // is what `allocateMarks` settles a glyph collision by, so it is fixed here and nowhere else.
+  const markedMechanics: (MarkRequest & { gateKeys: string[] })[] = []
   for (const [n, handle] of (authoredConfig.handles ?? []).entries()) {
     const refuse = (address: string): AssemblerFailure => ({
       success: false,
@@ -869,6 +875,7 @@ export const assembleFloor = (
     // gate already written, exactly as a second handle driving it would. Such a door is one the lever
     // could neither open nor close.
     const opens: Record<string, string[]> = {}
+    const handleGateKeys: string[] = []
     for (const side of HANDLE_SIDES) {
       opens[side] = []
       for (const driven of handle[side]) {
@@ -884,10 +891,15 @@ export const assembleFloor = (
           return refuse(driven)
         const gateKeyId = `${handleStem(n)}:${driven}`
         handleGateKeyByAddress.set(driven, gateKeyId)
-        markByGateKey.set(gateKeyId, markFor(n))
+        handleGateKeys.push(gateKeyId)
         opens[side].push(driven)
       }
     }
+    markedMechanics.push({
+      id: `handle:${handle.in}`,
+      seed: hashString(`handle|${handle.in}`),
+      gateKeys: handleGateKeys,
+    })
     // A LEVER DECLARES BOTH SIDES WHATEVER IT DRIVES, so the walk knows a door can be shut again even
     // where the far side names no gate of its own. It hangs on `starts` before anyone touches it — so
     // those gates stand open on arrival without the carve having to place an already-open door
@@ -915,26 +927,27 @@ export const assembleFloor = (
   const gatesOwnedBy = (controlId: string) =>
     (authoredConfig.obstacles ?? []).flatMap(o => (o.kind === "gate" && o.owners?.includes(controlId) ? [o] : []))
   // A CONTROL AND EVERY OBSTACLE IT OPENS WEAR ONE MARK, so the map reads "this lever, these doors" as
-  // one pair the same way a handle's does — derived from the AUTHORED obstacle id(s) it drives, sorted
-  // and joined so the seed is the same regardless of `opens`' state order, and stable across a re-carve
-  // (never from `controlRecords`' own ORDINAL: an ordinal is the defect a handle's mark still has, see
-  // `markFor(n)` above — inserting a control must not reshuffle every glyph after it). A control that
-  // opens nothing in any state names no obstacle to pair with, so it gets no mark.
-  for (const { control, record } of controlRecords) {
+  // one pair the same way a handle's does. The glyph it prefers is hashed from the AUTHORED obstacle
+  // id(s) it drives (sorted, so `opens`' state order does not matter) or, for a fork-switch, the gates
+  // it owns — stable across a re-carve and never an ordinal. A control that opens nothing names no
+  // obstacle to pair with, so it gets no mark.
+  for (const control of authoredConfig.controls ?? []) {
+    if (isForkSwitch(control)) {
+      const owned = gatesOwnedBy(control.id)
+        .map(gate => gate.id)
+        .sort()
+      if (owned.length > 0)
+        markedMechanics.push({ id: control.id, seed: hashString(owned.join("|")), gateKeys: owned.map(gateKeyOf) })
+      continue
+    }
     const drivenIds = [...new Set(Object.values(control.opens).flat())].sort()
     if (drivenIds.length === 0) continue
-    const mark = markFor(hashString(drivenIds.join("|")))
-    for (const { gateKeyId } of record.positions) markByGateKey.set(gateKeyId, mark)
-  }
-  // A FORK-SWITCH WEARS ITS MARK THE SAME WAY: the junction through the keys its positions carry, each
-  // gate through the key it asks for.
-  for (const control of forkSwitches) {
-    const owned = gatesOwnedBy(control.id)
-      .map(gate => gate.id)
-      .sort()
-    if (owned.length === 0) continue
-    const mark = markFor(hashString(owned.join("|")))
-    for (const id of owned) markByGateKey.set(gateKeyOf(id), mark)
+    const record = controlRecords.find(entry => entry.control === control)!.record
+    markedMechanics.push({
+      id: control.id,
+      seed: hashString(drivenIds.join("|")),
+      gateKeys: record.positions.map(position => position.gateKeyId),
+    })
   }
 
   // From here the floor is read with the handles' gates already on it, so every pass that sizes a
@@ -1041,6 +1054,21 @@ export const assembleFloor = (
         reasons: [{ type: "switchesExceedForks", min: config.switches.min, forks: forkDemands.length }],
       }
   }
+
+  // A SWITCH IS A MECHANIC TOO, AND HOW MANY THERE ARE IS FIXED BY THE CONFIG: every reserved junction
+  // is one of `forkDemands` and `switchesPlaced` takes the first `max` of them. Each wears the mark its
+  // authoring stem prefers, on the junction and on every door `closeWaysOut` mints.
+  const switchCount = config.switches ? Math.min(config.switches.max, forkDemands.length) : 0
+  for (let n = 0; n < switchCount; n++)
+    markedMechanics.push({ id: `switch:${n}`, seed: hashString(switchStem(n)), gateKeys: [] })
+  // MORE MECHANICS THAN THERE ARE GLYPHS IS ANSWERED HERE, BEFORE A WALL IS CARVED: the count is fixed by
+  // the config, and a mark shared between two mechanics would say one drives the other's door.
+  const allocation = allocateMarks(markedMechanics)
+  if (allocation.unmarked.length > 0)
+    return { success: false, reasons: [{ type: "marksExhausted", ids: allocation.unmarked }] }
+  for (const mechanic of markedMechanics)
+    for (const gateKey of mechanic.gateKeys) markByGateKey.set(gateKey, allocation.marks.get(mechanic.id)!)
+  const switchMark = (n: number) => allocation.marks.get(`switch:${n}`)!
 
   // Hidden sections are included in maze generation (tagged hidden:true on cells) but masked by
   // useAssembledFloor — so they are carved, but they are not asked to host a key.
@@ -3380,8 +3408,7 @@ export const assembleFloor = (
     // opening a door nothing was solved for. An authoring address cannot move under a re-carve. The
     // main path onward answers to MAIN_SECTION_ADDRESS, which no side path can be given (see
     // sectionAddresses); whatever needs the compass reads it off `exits[].dir`.
-    const stemFor = (n: number) =>
-      `switch:${floorRef.journeyId}#${floorRef.levelIndex ?? 0}#${floorRef.floorIndex}#${n}`
+    const stemFor = switchStem
 
     // Closes one reserved junction's ways out — the corridor cell each leads to becomes the door, and
     // the junction reports the key it now wants on that exit. Returns what it overwrote, so a junction
@@ -3396,6 +3423,7 @@ export const assembleFloor = (
       for (const { dir, neighborKey } of freeWaysOut(pk)) {
         const gateKeyId = `${stemFor(n)}:${cellSectionAddress.get(neighborKey) ?? MAIN_SECTION_ADDRESS}`
         gateKeyByDir.set(dir, gateKeyId)
+        if (n < switchesPlaced) markByGateKey.set(gateKeyId, switchMark(n))
         const [gr, gc] = neighborKey.split(",").map(Number)
         const wayOut = cells2D[gr][gc]
         // A free way out leads to a node no room spec claimed, which the fill above wrote as corridor.

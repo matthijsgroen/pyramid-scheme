@@ -26,7 +26,6 @@ import { assembleFloor } from "@/game/siteAssembler"
 import { registerFamily } from "@/app/families/familyRegistry"
 import { floorWithHandle } from "@/game/testSupport/handleFixtures"
 import { cellAddress } from "@/game/cellAddress"
-import { markFor } from "@/game/mark"
 import { AXES, DROP_AT, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
 
 // Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
@@ -2275,7 +2274,9 @@ describe("a lever and the doors it drives", () => {
 
   it("wear the same mark, and every one of them is drawn where the player can see it", () => {
     const { container } = render(<SiteMapView grid={handleGrid} revealAllCells />)
-    const glyph = String.fromCodePoint(markFor(0).glyph)
+    const lever = handleGrid.cells.flat().find(cell => cell.type === "room" && cell.family === "handle")
+    if (lever?.type !== "room" || !lever.mark) throw new Error("the lever wears no mark")
+    const glyph = String.fromCodePoint(lever.mark.glyph)
 
     expect(markGlyphsOnScreen(container)).toEqual([glyph, glyph, glyph])
   })

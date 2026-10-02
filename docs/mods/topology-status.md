@@ -28,7 +28,7 @@ one-way edge in `LockSpec`.**
 
 | Mechanic | Authored as | Operation | Governs | Cannot |
 |---|---|---|---|---|
-| **Light switch** (`lightbeamSwitch`) | `forks` + `switches: {encounter, min, max}` | Board opens on first arrival; route the beam to a shrine and that way opens, the rest shut. Later visits prompt "Turn the mirrors". | Every free way out of its OWN junction, chosen by the carve | Name its doors. Own a region seam. It is never marked. |
+| **Light switch** (`lightbeamSwitch`) | `forks` + `switches: {encounter, min, max}` | Board opens on first arrival; route the beam to a shrine and that way opens, the rest shut. Later visits prompt "Turn the mirrors". | Every free way out of its OWN junction, chosen by the carve | Name its doors. Own a region seam. |
 | **Lever** (`handles`) | `handles: [{ in, left, right, starts? }]` | Arrival prompt "Throw the lever"; toggles; no screen; can be declined | The entrance gate of named side sections | More than two states. A door on a region seam. Drive the main path. |
 | **Control** (`controls` + `obstacles`) | `regionLayout` + `obstacles` + `controls` | Same prompt and family as the lever. A multi-state control CYCLES; the player cannot pick a state. | Gates on region-to-region connections | Be drawn as anything but a lever. Own a one-way. Stand where its lock is. |
 | **Torch** (`encounter: "torch"`) | a control with that encounter | Prompt "Light the torch"; once lit it is plain floor | Whatever the control opens | Be authored anywhere today. Be drawn as a torch. |
@@ -89,7 +89,7 @@ with ports, of which the code knows only the placed form.
 | `topologyLock({...})` placed with `locks: [a, b]` | flat `regionLayout` / `obstacles` / `controls` fields | documented, unbuilt |
 | `gates: { id: { from, to, owners, startsOpen } }` | `obstacles[{id, kind, at, mode?}]` plus `controls[].opens` | different shape; `startsOpen` unbuilt, an unowned gate is refused |
 | a gate wears the mark of each owner | one `Mark` per gate, last control wins (`siteAssembler.ts:916`) | unbuilt |
-| the switch and its doors share a mark | never marked (`siteAssembler.ts:3367`) | contradicts the doc |
+| the switch and its doors share a mark | built: the junction and each door wear the switch's mark | matches |
 | six-kind region appetite | four kinds (`regions.ts:11`) | the doc also contradicts itself here |
 | criterion 8, "a lock may stand anywhere: not there" | built 2026-10-01 | doc stale |
 
