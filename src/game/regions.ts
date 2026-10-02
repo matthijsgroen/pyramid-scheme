@@ -51,7 +51,12 @@ export const appetiteAccepts = (appetite: RegionAppetite, kind: ContentKind): bo
 }
 
 /** Every region reachable from `from` over the connections, with `without` treated as absent. */
-const reachable = (graph: RegionGraph, from: string, without?: string): Set<string> => {
+const reachable = (
+  graph: RegionGraph,
+  from: string,
+  without?: string,
+  oneWays: ReadonlyArray<readonly [string, string]> = []
+): Set<string> => {
   const neighbours = new Map<string, string[]>()
   for (const [a, b] of graph.connections) {
     if (a === without || b === without) continue
@@ -59,6 +64,12 @@ const reachable = (graph: RegionGraph, from: string, without?: string): Set<stri
     if (!neighbours.has(b)) neighbours.set(b, [])
     neighbours.get(a)!.push(b)
     neighbours.get(b)!.push(a)
+  }
+  // A drop is a way THERE only: `[from, to]` adds the one direction, never its way back.
+  for (const [a, b] of oneWays) {
+    if (a === without || b === without) continue
+    if (!neighbours.has(a)) neighbours.set(a, [])
+    neighbours.get(a)!.push(b)
   }
   const seen = new Set<string>()
   if (from === without) return seen
@@ -107,9 +118,18 @@ export const mainPathRegions = (graph: RegionGraph): Set<string> => {
  * This is the STRUCTURAL question — is the region joined on at all — and it is the whole of the check
  * while connections carry no gates. The state-aware form, where a gate may be shut in every state a
  * mechanism can reach, needs the lock and arrives with it.
+ *
+ * A DROP COUNTS AS A WAY THERE. `oneWays` are directed `[from, to]` passages the layout does not join:
+ * a region whose only way in is one is reached, because the player genuinely can take it. It is not a
+ * way back, so a region reachable only by running a drop backwards is still named. Whether a region
+ * entered by a drop can be left again is not asked here; that is the lock walk's question
+ * (`walkLock`, lockWalk.ts).
  */
-export const strandedRegions = (graph: RegionGraph): string[] => {
-  const arrived = reachable(graph, graph.in)
+export const strandedRegions = (
+  graph: RegionGraph,
+  oneWays: ReadonlyArray<readonly [string, string]> = []
+): string[] => {
+  const arrived = reachable(graph, graph.in, undefined, oneWays)
   return graph.regions.filter(({ name }) => !arrived.has(name)).map(({ name }) => name)
 }
 

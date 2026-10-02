@@ -122,6 +122,44 @@ describe("a layout the builder refuses by name", () => {
     ])
   })
 
+  describe("a region only a drop leads to", () => {
+    const layout = {
+      regions: [region("east"), region("mid"), region("in")],
+      connections: [["east", "mid"] as const],
+      in: "east",
+      out: "mid",
+    }
+    const gated = (drop: readonly [string, string]): FloorConfig => ({
+      ...floorWith(layout),
+      obstacles: [
+        { id: "door", kind: "gate", at: { on: "connection", between: ["east", "mid"] } },
+        { id: "fall", kind: "oneWay", at: { on: "connection", between: drop } },
+      ],
+      controls: [
+        {
+          id: "lever",
+          in: "east",
+          states: ["unset", "open"],
+          initial: "unset",
+          returnsToInitial: false,
+          opens: { unset: [], open: ["door"] },
+        },
+      ],
+    })
+
+    it("is not refused as unreachable when the drop runs into it", () => {
+      expect(reasons(gated(["mid", "in"])).filter(reason => reason.type === "regionUnreachable")).toEqual([])
+    })
+
+    it("is refused as unreachable when the only drop runs out of it", () => {
+      expect(reasons(gated(["in", "mid"]))).toEqual([{ type: "regionUnreachable", name: "in" }])
+    })
+
+    it("is refused as unreachable when no drop leads to it", () => {
+      expect(reasons(floorWith(layout))).toEqual([{ type: "regionUnreachable", name: "in" }])
+    })
+  })
+
   it("assembles a layout whose regions are all named once, joined and reachable", () => {
     // `mouth` is `free`, not `nothing`: with `pathPuzzles: 1` the main path's own puzzle starts there,
     // and this test is about the layout's SHAPE (named once, joined, reachable), not what its

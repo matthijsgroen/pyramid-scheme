@@ -732,7 +732,10 @@ export const assembleFloor = (
     const enters = regionLayout.placement?.enters
     if (enters !== undefined && !(Number.isFinite(enters) && enters >= 0 && enters < 1))
       return { success: false, reasons: [{ type: "placementOutOfRange" as const, enters }] }
-    const stranded = strandedRegions(regionLayout)
+    const drops = (authoredConfig.obstacles ?? []).flatMap(o =>
+      o.kind === "oneWay" ? [[o.at.between[0], o.at.between[1]] as const] : []
+    )
+    const stranded = strandedRegions(regionLayout, drops)
     if (stranded.length > 0)
       return { success: false, reasons: stranded.map(name => ({ type: "regionUnreachable" as const, name })) }
   }

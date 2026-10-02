@@ -13,10 +13,20 @@ import { cellAddress } from "./cellAddress"
 // EQUIVALENCE IS NOT PROVED FOR A DOOR NAMING MORE THAN ONE KEY. This fold keys its owners by gate KEY
 // id and sets "any" per key; `floorLock` keys them by BOUNDARY, adds a `sealed <keyId>` owner for every
 // key the floor cannot open, and sets `anyGates` per boundary, so "any" authored for one key applies to
-// the whole door. On a door naming a mechanism's key and a key nothing on the floor opens, "any" would
-// make the walk and this fold each call it open, agreeing and both wrong. Obstacle keys are namespaced
-// `obstacle:`, so no authoring today builds that door; whoever authors the first multi-key one must
-// reconcile the two folds before trusting either.
+// the whole door. Obstacle keys are namespaced `obstacle:`, so no authoring today builds that door;
+// whoever authors the first multi-key one must reconcile the two folds before trusting either.
+//
+// MEASURED, for a door owned by a mechanism and a FLOOR key, both ways round:
+//   - No chest on the floor mints that key. `floorLock` gets owners [mechanism, `sealed <key>`] with
+//     mode "any", so the door opens whenever the mechanism does. This fold never sees the key at all —
+//     it reads only cells carrying `cell.mechanism` — and opens on the mechanism too. The two AGREE AND
+//     ARE BOTH WRONG: a door stands open only while every key it names is satisfied.
+//   - A chest does mint it. `floorLock` makes `key <id>` a real owner and folds mechanism OR held, which
+//     is what "any" asks for. This fold still sees only the mechanism, so the two DISAGREE whenever the
+//     key is held and the mechanism is at rest.
+// Reconciling them means teaching this fold about floor keys, which it has no concept of, on the path
+// that opens and shuts doors in live play. That is why it has not been done for a door nothing can
+// author: the fix carries more risk today than the divergence does.
 export const openDoorsFor = (grid: FloorGrid, floor: number, positions: ReadonlyMap<string, string>): Set<string> => {
   const owners = new Map<string, { says: boolean[]; any: boolean }>()
   for (let r = 0; r < grid.rows; r++)

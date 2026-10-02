@@ -130,6 +130,43 @@ describe("regions nothing reaches", () => {
 
     expect(strandedRegions(g)).toEqual(["orphan", "behindOrphan"])
   })
+
+  // A drop is a way there the player genuinely can take, so a region whose only way in is one is
+  // reached. Whether it can be left again is the lock walk's question, not this structural one.
+  describe("where a drop is the only way in", () => {
+    const layout = graph([["east", "mid"]], ["east", "mid", "in"], { in: "east", out: "mid" })
+
+    it("reaches a region joined only by a drop from a region the walk arrives at", () => {
+      expect(strandedRegions(layout, [["mid", "in"]])).toEqual([])
+    })
+
+    it("reaches a region through a chain of drops", () => {
+      const long = graph([["east", "mid"]], ["east", "mid", "a", "b"], { in: "east", out: "mid" })
+
+      expect(
+        strandedRegions(long, [
+          ["mid", "a"],
+          ["a", "b"],
+        ])
+      ).toEqual([])
+    })
+
+    it("does not take a drop backwards: a region the only drop runs OUT of is still stranded", () => {
+      expect(strandedRegions(layout, [["in", "mid"]])).toEqual(["in"])
+    })
+
+    it("does not reach a region through a drop that itself starts in an unreached region", () => {
+      const two = graph([["east", "mid"]], ["east", "mid", "a", "b"], { in: "east", out: "mid" })
+
+      expect(strandedRegions(two, [["a", "b"]])).toEqual(["a", "b"])
+    })
+
+    it("still names a region nothing joins and no drop lands in", () => {
+      const three = graph([["east", "mid"]], ["east", "mid", "in", "orphan"], { in: "east", out: "mid" })
+
+      expect(strandedRegions(three, [["mid", "in"]])).toEqual(["orphan"])
+    })
+  })
 })
 
 const withAppetites = (...regions: Array<[string, RegionAppetite]>): RegionGraph => ({
