@@ -32,7 +32,7 @@ control; it is another control.
 |---|---|---|
 | **toggle** | two, back and forth | the lever |
 | **activator** | two, no way back | the torch; also a floor key, whose operation is taking it from a chest |
-| **sequence** | progress 0..n, with a reset | tiles walked in the right order |
+| **sequence** | progress 0..n, with a reset | tiles walked in the right order; see §3.1 |
 | **fork-switch** | rest, plus one per exit of its fork | governs its own fork; see §4 |
 
 **one-way** is an effect with no control: always on, directed, and **always taken through a prompt** so
@@ -55,6 +55,30 @@ A target is either:
 
 A gate may name more than one owner, with `and` (every owner must name it) or `any` (one is enough).
 Four torches opening one gate is four activators owning one gate with `and`.
+
+### A gate shows its own condition
+
+A gate may carry an encounter that **reads and never opens** — it tells the player what the door is
+waiting for, the way a ward gate already shows the key it wants.
+
+- **An `and` door shows one marker per owner**, lit once that owner names the door. Four torches are four
+  flames; three torches and a floor key are three flames and a key. The icons come from the owners, so
+  nothing special is needed for a mixed condition.
+- **A sequence door shows the order**, and carries the **reset**. The door is where the player learns
+  what the order is, so it is where they must be able to start again.
+
+### 3.1 The sequence
+
+- The lock expresses **order** only. The carve picks the hieroglyphs, from a set, **unique within a
+  floor** so two sequences never share a symbol.
+- Each tile shows its own state: not yet walked, walked in the right order, walked in the wrong order.
+- A wrong step **registers** rather than doing nothing, so the player can see they have spoiled the run.
+- **Progress survives leaving.** It is an ordinary state like any other, and only the reset clears it.
+  This follows from the reset living at the door: without it, walking back to read the order would wipe
+  the progress, turning the safety net into a trap.
+- The reset is operated **at the door, not where the mechanic stands.** `LockSpec` already carries an
+  `at` per transition, so the advance steps happen at each tile's region and the reset at the gate's —
+  see §8.
 
 ### Impassable regions
 
@@ -134,10 +158,12 @@ conditions. A floor key is an activator. The fork-switch governs its own fork. R
 from outside, most specific wins, at bake time, refused when unbound. A realisation may not change what
 the solver sees. Impassable conceals, and conceals what was explored, without erasing it.
 
+A gate may show its own condition, and a sequence's reset is at its door.
+
 **Open.**
 
-- The sequence control: what a wrong step does (reset, or nothing), whether its tiles may span regions
-  and so interact with another lock, whether it stays fired once fired.
+- The sequence: whether its tiles may span regions and so interact with another lock, and whether it
+  stays fired once fired.
 - The sand barrier: parked. A wizard-pyramid idea that may not belong to the lock model at all.
 - Whether a realisation may demand anything of placement beyond space.
 
@@ -150,9 +176,15 @@ Each is measured in `topology-status.md` §6.
 2. **The fork's exits must be able to coincide with authored seams** (§4).
 3. **An open gate keeps its symbol and colour**, or the player cannot reason that it will shut when
    another opens.
-4. **Two mechanics on one floor never share a mark.**
+4. **Two mechanics on one floor never share a mark**, and the same assignment must give a sequence's
+   tiles distinct hieroglyphs — a repeated symbol does not merely confuse, it makes the order unreadable.
 5. **A realisation decides the drawing**, which `encounter` does not do today.
 6. **`openDoorsFor` and `floorLock` must agree on a door naming more than one key.** This was documented
    and left alone on 2026-10-01, correctly, because nothing could author such a door. Floor keys taking
    part in conditions makes it reachable, so it is now load-bearing.
 7. **Concealing an explored region** is new: exploration is permanent today.
+8. **A mechanic's transitions may happen in different places.** `LockSpec` already carries an `at` per
+   transition, but `floorLock` gives every transition of a mechanism the one cell it stands on. A
+   sequence advances at its tiles and resets at its door, so that assumption has to go.
+9. **A gate must be able to carry an encounter that reads and never opens.** Today a gate is either a
+   wall or a puzzle room; there is no third kind that explains itself without being the puzzle.
