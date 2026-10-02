@@ -153,9 +153,9 @@ a lock and refuses to bake it, saying which mechanic is not ready.
 
 ## 7. The lock format
 
-A lock is one JSON document. It names regions, the barriers between them, and the mechanics that work
-those barriers. It never names a realisation: that is bound outside, where the lock is placed (§5), and
-so is nesting one lock inside another.
+A lock is one JSON document. It names regions, how they join, the barriers on those joins, and the
+mechanics that work them. It never names a realisation: that is bound outside, where the lock is
+placed (§5), and so is nesting one lock inside another.
 
 ```json
 {
@@ -168,6 +168,10 @@ so is nesting one lock inside another.
     "s2":         { "takes": "reward" },
     "out":        { "takes": "nothing" }
   },
+  "connections": [
+    ["in", "leftLower"], ["in", "rightLower"], ["rightLower", "s1"],
+    ["leftLower", "s2"], ["in", "out"]
+  ],
   "gates": {
     "in-leftLower":  { "from": "in",         "to": "leftLower",  "owners": ["Y"] },
     "in-rightLower": { "from": "in",         "to": "rightLower", "owners": ["Y"] },
@@ -190,6 +194,18 @@ so is nesting one lock inside another.
   "out": "out"
 }
 ```
+
+### Connections
+
+`connections` is the whole shape of the lock: every pair of regions that join. A connection with nothing
+on it is a passage the player simply walks, which is what lets two regions be distinct places without a
+barrier between them — needed to put a sequence's tiles in different regions that nothing separates.
+
+An edge gate stands ON a connection, so every `from`/`to` gate must name one that exists. Topology is
+written once, in `connections`; `gates` says which of them are barred. A gate naming a connection that
+was never declared is an error rather than a new passage.
+
+A region gate needs no connection: it bars a region rather than an edge.
 
 ### Gates
 
