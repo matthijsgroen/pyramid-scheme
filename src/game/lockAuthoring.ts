@@ -40,7 +40,7 @@ export type LockConnection =
  * HOW A DOOR WITH SEVERAL OWNERS IS ANSWERED. Default is every owner: each must name the gate in its
  * current state. "any" is one is enough.
  *
- * It decides whether the gate needs a readable face (`mechanic-contract.md` §3): under "every" with more
+ * It decides whether the gate needs a readable face (`mechanic-contract.md`, a gate shows its own condition): under "every" with more
  * than one owner, working one owner can change nothing visible, and the player cannot learn why the door
  * stays shut. Under "any" the first owner touched opens it, so the consequence teaches by itself.
  */
