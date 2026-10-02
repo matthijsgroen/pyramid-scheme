@@ -21,6 +21,14 @@ const walkable = (cell: GridCell | undefined): boolean =>
 const doorKeysOf = (cell: GridCell | undefined): string[] =>
   cell?.type === "room" ? [...(cell.requiredKeyId ? [cell.requiredKeyId] : []), ...(cell.requiredKeyIds ?? [])] : []
 
+// Two cells the author put in different regions of the layout: ground the flood does not join.
+const apart = (a: GridCell, b: GridCell): boolean =>
+  (a.type === "room" || a.type === "corridor") &&
+  (b.type === "room" || b.type === "corridor") &&
+  a.region !== undefined &&
+  b.region !== undefined &&
+  a.region !== b.region
+
 const dirsOf = (cell: GridCell): ReadonlySet<Direction> =>
   cell.type === "room" || cell.type === "corridor" ? cell.dirs : new Set<Direction>()
 
@@ -41,7 +49,14 @@ const dirsOf = (cell: GridCell): ReadonlySet<Direction> =>
 //
 // Hidden cells are left out: a hidden section is never a statement that the player found it, so a
 // floor has to be sound without one.
-export const regionsOf = (grid: FloorGrid): { ids: RegionId[]; of: Map<string, RegionId> } => {
+//
+// TWO AUTHORED REGIONS ARE TWO REGIONS EVEN WHERE NOTHING BARS THE WAY BETWEEN THEM. The flood stops at
+// the line between them, so a mechanism's transitions placed in each stay distinguishable; `passages`
+// lists the pairs of compiled regions that touch across such a line, which the walk crosses freely.
+// Cells with no authored region (a floor with no layout) flood as before.
+export const regionsOf = (
+  grid: FloorGrid
+): { ids: RegionId[]; of: Map<string, RegionId>; passages: { a: RegionId; b: RegionId }[] } => {
   const of = new Map<string, RegionId>()
   const ids: RegionId[] = []
 
@@ -64,13 +79,33 @@ export const regionsOf = (grid: FloorGrid): { ids: RegionId[]; of: Map<string, R
           const next = grid.cells[nr]?.[nc]
           if (!next || !walkable(next) || !dirsOf(next).has(OPPOSITE[dir])) continue
           if (doorKeysOf(next).length > 0 || of.has(posKey(nr, nc))) continue
+          if (apart(from, next)) continue
           of.set(posKey(nr, nc), id)
           queue.push([nr, nc])
         }
       }
     }
 
-  return { ids, of }
+  const passages: { a: RegionId; b: RegionId }[] = []
+  const seen = new Set<string>()
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (!walkable(cell) || doorKeysOf(cell).length > 0) continue
+      for (const dir of dirsOf(cell)) {
+        const [nr, nc] = [r + MOVES[dir][0], c + MOVES[dir][1]]
+        const next = grid.cells[nr]?.[nc]
+        if (!next || !walkable(next) || !dirsOf(next).has(OPPOSITE[dir]) || doorKeysOf(next).length > 0) continue
+        const a = of.get(posKey(r, c))!
+        const b = of.get(posKey(nr, nc))!
+        const key = a < b ? `${a}|${b}` : `${b}|${a}`
+        if (a === b || seen.has(key)) continue
+        seen.add(key)
+        passages.push({ a, b })
+      }
+    }
+
+  return { ids, of, passages }
 }
 
 // A PASSAGE THE PLAYER MAY TAKE ONLY ONE WAY: one per drop, from the region its launch stands in to the
@@ -170,7 +205,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
         )
     }
 
-  const { ids, of } = regionsOf(grid)
+  const { ids, of, passages } = regionsOf(grid)
   const gates: LockSpec["gates"] = {}
   const mechanisms: Record<string, Mechanism> = {}
   /** Every mechanism with a say in a gate: a boundary naming several keys answers to all of them. */
@@ -330,6 +365,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
     gates,
     mechanisms,
     ...(oneWays.length > 0 ? { oneWays } : {}),
+    ...(passages.length > 0 ? { passages } : {}),
     in: of.get(posKey(grid.entrancePos[0], grid.entrancePos[1]))!,
     out: of.get(posKey(grid.exitPos[0], grid.exitPos[1]))!,
   }

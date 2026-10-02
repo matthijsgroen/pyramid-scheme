@@ -34,6 +34,8 @@ export type LockSpec = {
   mechanisms: Record<MechanismId, Mechanism>
   /** Directed, region to region: a drop the player takes one way. */
   oneWays?: { from: RegionId; to: RegionId }[]
+  /** Two regions that touch with nothing between them: walked freely, both ways. */
+  passages?: { a: RegionId; b: RegionId }[]
   /** Where the player arrives, and where they leave for. */
   in: RegionId
   out: RegionId
@@ -58,6 +60,11 @@ export const checkLockSpec = (spec: LockSpec): string | undefined => {
   for (const oneWay of spec.oneWays ?? []) {
     if (!regions.has(oneWay.from)) return `a one-way leads from no region: ${oneWay.from}`
     if (!regions.has(oneWay.to)) return `a one-way leads to no region: ${oneWay.to}`
+  }
+
+  for (const passage of spec.passages ?? []) {
+    if (!regions.has(passage.a)) return `a passage joins no region: ${passage.a}`
+    if (!regions.has(passage.b)) return `a passage joins no region: ${passage.b}`
   }
 
   for (const [id, mechanism] of Object.entries(spec.mechanisms)) {
@@ -125,6 +132,10 @@ const movesFrom = (spec: LockSpec, state: LockState): LockState[] => {
     if (gate.to === region) next.push({ region: gate.from, config })
   }
   for (const oneWay of spec.oneWays ?? []) if (oneWay.from === region) next.push({ region: oneWay.to, config })
+  for (const { a, b } of spec.passages ?? []) {
+    if (a === region) next.push({ region: b, config })
+    if (b === region) next.push({ region: a, config })
+  }
   for (const [id, mechanism] of Object.entries(spec.mechanisms))
     for (const transition of mechanism.transitions)
       if (transition.at === region && config[id] === transition.from)
