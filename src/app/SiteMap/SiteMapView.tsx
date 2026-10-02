@@ -9,7 +9,7 @@ import type {
   WallDecorationKind,
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
-import { dropEndsOf, isSealedWayOut, oneWayRuns, revealAll, walkableFrom } from "../../game/gridNavigation"
+import { isSealedWayOut, oneWayRuns, revealAll } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
 import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
@@ -47,7 +47,7 @@ import { MarkArtBadge } from "./mark"
 import { FloorShade, LitPlaces } from "./torchlight"
 import { LIT_STANDING_STRENGTH, SEATING_PASS, STANDING_RELIEF } from "./lighting"
 import { TileLayers } from "./tileLayers"
-import { clickTargetAt, markerAt, type OfferContext, type OfferMarker } from "./clickTargets"
+import { buildOfferContext, clickTargetAt, markerAt, type OfferContext, type OfferMarker } from "./clickTargets"
 import {
   FACE_SHADOW,
   allFloorRects,
@@ -59,7 +59,7 @@ import {
   tileRegionsFor,
   type RoomClaims,
 } from "./roomClaims"
-import { DIR_MOVES, NO_RUN_TARGETS, corridorRunTargetsFrom, type CorridorRunTarget } from "./corridorRuns"
+import { DIR_MOVES } from "./corridorRuns"
 import { footprintRects, hasWallFace } from "./tileRegions"
 import type { Rect } from "./tileRegions"
 import type { FloorAt } from "./tileRegions"
@@ -512,16 +512,6 @@ export const nodeSpritesFor = (
 // The floor's own geometry — which void a room claims, what stone a cell is cut from, and the tile
 // regions that fall out of both — lives in `roomClaims.ts`. It is pure grid reading, shared by the
 // renderer and by the map's click rules, and testable without mounting anything.
-
-// The corridor-run geometry lives in `corridorRuns.ts`; this is the memo that keeps one answer per
-// (grid, position) for the render. Recomputed on the explorer's own coordinates rather than on the
-// tuple, which is a fresh array every render.
-const useCorridorRunTargets = (
-  grid: FloorGrid,
-  explorerPos: readonly [number, number] | undefined
-): ReadonlyMap<string, CorridorRunTarget> =>
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useMemo(() => corridorRunTargetsFrom(grid, explorerPos), [grid, explorerPos?.[0], explorerPos?.[1]])
 
 // The stone — floor, wall mass, faces, sills and their washes — is drawn by `tileLayers.tsx`.
 
@@ -1087,16 +1077,6 @@ export const SiteMapView = ({
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
   const claims = useMemo(() => buildRoomClaims(grid), [grid])
   const tier = useMemo(() => floorTier(grid), [grid])
-  // Where the player can actually walk to. A corner is marked "reachable" when it is revealed, from
-  // wherever the player stood THEN; whether a route still exists from where they stand NOW is a
-  // different question, and it is the one a marker has to answer — an unreachable marker is a tap
-  // that does nothing, where a plain dead end would have told the truth.
-  const walkable = useMemo(
-    () => (explorerPos ? walkableFrom(grid, explorerPos) : null),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [grid, explorerPos?.[0], explorerPos?.[1]]
-  )
-  const canWalkTo = (row: number, col: number) => !walkable || walkable.has(`${row},${col}`)
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const nodeSprites = useMemo(
@@ -1292,13 +1272,22 @@ export const SiteMapView = ({
     settledExplorerPos &&
     (explorerPos[0] !== settledExplorerPos[0] || explorerPos[1] !== settledExplorerPos[1])
   )
-  const settledCorridorRunTargets = useCorridorRunTargets(grid, settledExplorerPos)
-  const corridorRunTargets = isTraveling ? NO_RUN_TARGETS : settledCorridorRunTargets
 
-  // One rule for what a tap does, asked per cell below — see `clickTargets.ts`. The three branches of
-  // the marker loop used to spell it out for themselves, in two different spellings.
-  const dropEnds = useMemo(() => dropEndsOf(grid), [grid])
-  const offerContext: OfferContext = { runTargets: corridorRunTargets, dropEnds, canWalkTo, freeWalk }
+  // One rule for what a tap does, asked per cell below — see `clickTargets.ts`. UNRESOLVED: two
+  // positions feed it. Walkability (which corners and drop ends are offered) follows the LIVE explorer,
+  // so mid-glide it is already reckoned from the destination; run arrows follow the SETTLED position
+  // and vanish while travelling. Whether both should follow one position is a design question.
+  const offerContext: OfferContext = useMemo(
+    () =>
+      buildOfferContext(grid, {
+        walkFrom: explorerPos,
+        runFrom: settledExplorerPos,
+        runsSuppressed: isTraveling,
+        freeWalk,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [grid, explorerPos?.[0], explorerPos?.[1], settledExplorerPos?.[0], settledExplorerPos?.[1], isTraveling, freeWalk]
+  )
 
   // Must be >= CELL: a fork/endpoint on the map's edge can claim one cell of "outside
   // the grid" void (see cellAt above), and that extra ring needs to physically fit

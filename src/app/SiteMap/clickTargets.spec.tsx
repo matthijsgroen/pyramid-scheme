@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, findPath, revealAll, walkableFrom } from "@/game/gridNavigation"
-import { markerAt, offerContextFrom, offeredTargets } from "./clickTargets"
+import { buildOfferContext, clickTargetAt, markerAt, offerContextFrom, offeredTargets } from "./clickTargets"
 import { buildRoomClaims } from "./roomClaims"
 import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
@@ -332,5 +332,57 @@ describe("the offers around a one-way drop", () => {
         }
       }
     })
+  })
+})
+
+// THE DRIFT GUARD. The game's context and the specs' used to be two assemblies; they are one builder
+// (`buildOfferContext`) now, and this holds the view to it in the state where they could differ: the
+// explorer is gliding, so the live position (walk rule) and the settled one (run arrows) are different
+// cells. Pinned as it is today — walk reckoned from the live cell, no run arrows — not as it should be.
+describe("the map in mid-glide taps what the one builder offers", () => {
+  const sorted = (pairs: readonly (readonly [number, number])[]) => [...pairs].map(([r, c]) => `${r},${c}`).sort()
+
+  const glide = (grid: FloorGrid, settled: readonly [number, number], live: readonly [number, number]) => {
+    const onCellClick = vi.fn()
+    const { container, rerender } = render(<SiteMapView grid={grid} explorerPos={settled} onCellClick={onCellClick} />)
+    rerender(<SiteMapView grid={grid} explorerPos={live} onCellClick={onCellClick} />)
+    for (const el of container.querySelectorAll<HTMLElement>("[data-marker-cell]"))
+      if (el.style?.cursor === "pointer") fireEvent.click(el)
+
+    const claims = buildRoomClaims(grid)
+    const ctx = buildOfferContext(grid, { walkFrom: live, runFrom: settled, runsSuppressed: true, freeWalk: false })
+    const offered: [number, number][] = []
+    for (let r = -1; r <= grid.rows; r++)
+      for (let c = -1; c <= grid.cols; c++) {
+        const target = clickTargetAt(grid, claims, r, c, ctx)
+        if (target) offered.push([target[0], target[1]])
+      }
+    return {
+      ctx,
+      tapped: sorted(onCellClick.mock.calls as [number, number][]),
+      offered: sorted(offered),
+      atRest: (at: readonly [number, number]) => sorted([...offeredTargets(grid, claims, at).values()]),
+    }
+  }
+
+  it("offers no run arrows while the dot is travelling", () => {
+    const { grid, at: settled } = arrivedAtEntrance("junior_1")
+    const live = grid.cells
+      .flatMap((row, r) => row.map((cell, c) => ({ cell, r, c })))
+      .filter(
+        ({ cell, r, c }) =>
+          cell.type !== "empty" && cell.state === "reachable" && (r !== settled[0] || c !== settled[1])
+      )
+      .map(({ r, c }) => [r, c] as const)[0]
+    if (!live) throw new Error("no cell to glide to")
+
+    const { ctx, tapped, offered, atRest } = glide(grid, settled, live)
+
+    expect(ctx.runTargets.size).toBe(0)
+    // A glide only ever runs along a route, so both ends lie on one connected floor and the walk rule gives
+    // the same answer from either: the live-vs-settled walk position is not observable here, only the arrows.
+    expect(walkableFrom(grid, live)).toEqual(walkableFrom(grid, settled))
+    expect(tapped).toEqual(offered)
+    expect(offered).not.toEqual(atRest(settled))
   })
 })

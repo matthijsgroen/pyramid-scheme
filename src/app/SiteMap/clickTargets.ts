@@ -1,7 +1,7 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
 import { dropEndsOf, walkableFrom } from "@/game/gridNavigation"
-import { corridorRunTargetsFrom, isCorridorCorner, type CorridorRunTarget } from "./corridorRuns"
+import { NO_RUN_TARGETS, corridorRunTargetsFrom, isCorridorCorner, type CorridorRunTarget } from "./corridorRuns"
 import { litClaimOwner, type RoomClaims } from "./roomClaims"
 
 /**
@@ -116,19 +116,41 @@ export const markerAt = (
   return { kind: "dot" }
 }
 
+/**
+ * The one assembly of an `OfferContext`, for the map and for every test alike.
+ *
+ * Two positions and one switch are inputs because they genuinely vary; the assembly and the walk rule
+ * (`canWalkTo`) are not, and live only here.
+ * - `walkFrom`: where `canWalkTo` reckons from — the standing cell. Undefined means every cell is walkable.
+ * - `runFrom`: where corridor-run arrows are reckoned from. Callers may pass a different cell than
+ *   `walkFrom`; this builder does not reconcile them.
+ * - `runsSuppressed`: no run arrows at all (the explorer is mid-glide).
+ */
+export const buildOfferContext = (
+  grid: FloorGrid,
+  opts: {
+    walkFrom: readonly [number, number] | undefined
+    runFrom: readonly [number, number] | undefined
+    runsSuppressed: boolean
+    freeWalk: boolean
+  }
+): OfferContext => {
+  const walkable = opts.walkFrom ? walkableFrom(grid, opts.walkFrom) : null
+  return {
+    runTargets: opts.runsSuppressed ? NO_RUN_TARGETS : corridorRunTargetsFrom(grid, opts.runFrom),
+    dropEnds: dropEndsOf(grid),
+    canWalkTo: (row, col) => !walkable || walkable.has(`${row},${col}`),
+    freeWalk: opts.freeWalk,
+  }
+}
+
+/** The context for a player standing still at `at`: walk and run arrows reckoned from the same cell. */
 export const offerContextFrom = (
   grid: FloorGrid,
   at: readonly [number, number] | undefined,
   opts: { freeWalk?: boolean }
-): OfferContext => {
-  const walkable = at ? walkableFrom(grid, at) : null
-  return {
-    runTargets: corridorRunTargetsFrom(grid, at),
-    dropEnds: dropEndsOf(grid),
-    canWalkTo: (row, col) => !walkable || walkable.has(`${row},${col}`),
-    freeWalk: opts.freeWalk ?? false,
-  }
-}
+): OfferContext =>
+  buildOfferContext(grid, { walkFrom: at, runFrom: at, runsSuppressed: false, freeWalk: opts.freeWalk ?? false })
 
 /**
  * Everything the map offers from where the player stands, as `cell key → the cell a tap leads to`.
