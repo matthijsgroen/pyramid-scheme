@@ -55,15 +55,14 @@ hall *     s2 $     spare ?     corridor -
   connection: `a -[X]- >> b` is ONE connection `[a, b]` with barriers `[X's gate, the one-way]`.
 - `in` takes puzzles; every other region takes nothing unless it says otherwise.
 - `//` starts a comment, whole line or end of line.
-- An owner named on a gate and placed nowhere is a draft: it compiles as never moving, at its first
-  state, and fails the run.
+- An owner named on a gate and placed nowhere is a draft: it is left out of `mechanics`, compiles as
+  never moving and opening nothing, and fails the run.
 - Gone: `!` (write the state), `#red` (a key is an activator), `chain`/`embed`, plain-corridor merging.
 
 ### Ids
 
 - Edge gate `from-to`; region gate `region:barred`; one-way `from>to`. A repeat gets `#2`, `#3`.
-- The connection is unordered for identity (`a -- b` and `b -- a` are one join, written twice is an
-  error); its barrier order is the order the line wrote them, from its left region.
+- A connection's barrier order is the order the line wrote them, from its left region.
 
 ### What the parser refuses, by line
 
@@ -75,7 +74,8 @@ Every refusal names its line. New on top of today's:
 - a sequence's `reset` naming no edge gate
 - a state name a gate uses that its mechanic does not have
 - states declared on a fork-switch or a sequence
-- the same join written twice
+- a bare corridor written twice (`a -- b` and `b -- a`). Two joins between one pair are otherwise
+  allowed: doubleBack's drop `leftLower >> in` runs beside its fork gate `in -[Y]- leftLower`
 
 ## Walking
 
