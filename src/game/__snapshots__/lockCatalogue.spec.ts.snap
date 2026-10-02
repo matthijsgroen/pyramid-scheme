@@ -14,6 +14,20 @@ exports[`cellar > draws, with its cheapest way through 1`] = `
 in ▸ ledge ▸ H:b ▸ ⤓cell ▸ blue:on ▸ in ▸ out"
 `;
 
+exports[`clockwork > draws, with its cheapest way through 1`] = `
+" [west · A]
+  ╎   │
+  ╎   ■Y+A:a
+  ╎   │
+  ╎   │
+  ▼   │
+→ [in · Y]──────────────■Y+A:b──────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
+
+in ▸ Y:in-west ▸ west ▸ A:b ▸ ⤓in ▸ Y:in-out ▸ out"
+`;
+
 exports[`doubleBack > draws, with its cheapest way through 1`] = `
 "  [s2 · S2]           [s1 · S1]
       │    ╭╌╌╌╌╌╌╌╌╌╌╯   │
@@ -89,6 +103,20 @@ exports[`lamplighter > draws, with its cheapest way through 1`] = `
 in ▸ Y:in-west ▸ west ▸ A:b ▸ ⤓east ▸ B:b ▸ out"
 `;
 
+exports[`observatory > draws, with its cheapest way through 1`] = `
+" [west · L]◀╌╌╌╌╌╌╌╌╌[east · K]
+  ╎   │                   │
+  ╎   ■Y                  ■Y
+  ╎   │                   │
+  ╎   ├───────────────────┘
+  ▼   │
+→ [in · Y]───────────────■Y────────────────[north]────────────■L:on+K:on────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
+
+in ▸ Y:in-east ▸ east ▸ K:on ▸ ⤓west ▸ L:on ▸ ⤓in ▸ Y:in-north ▸ north ▸ out"
+`;
+
 exports[`overlook > draws, with its cheapest way through 1`] = `
 "[s1 · S1]          ╭[middle]
  ╎▲                ╎▲   │
@@ -109,6 +137,47 @@ exports[`overlook > draws, with its cheapest way through 1`] = `
 in ▸ top ▸ ⤓s1 ▸ S1:b ▸ ⤓in ▸ top ▸ ⤓middle ▸ s2 ▸ S2:b ▸ in ▸ out"
 `;
 
+exports[`plates > draws, with its cheapest way through 1`] = `
+"[a · P2]          [b · P1 · P4]         [c · P3]
+    │                   │                   │
+    │                   │                   │
+    │                   │                   │
+    ├───────────────────┴───────────────────┘
+    │
+→ [in]──────────────────────────■P↺───────────────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
+
+in ▸ b ▸ P:1 ▸ in ▸ a ▸ P:2 ▸ in ▸ c ▸ P:3 ▸ in ▸ b ▸ P:done ▸ in ▸ out"
+`;
+
+exports[`relay > draws, with its cheapest way through 1`] = `
+"╭[r3 · C]
+╎    │
+╎    ■B:on
+╎    │
+╎    │
+╎    │
+╎[r2 · B]
+╎    │
+╎    ■A:b+B:off
+╎    │
+╎    │
+╎    │
+╎[r1 · A]
+╎    │
+╎    □A:a
+╎    │
+╎    │
+╰╌╌▼ │
+ → [in]───────────────■C:on────────────────[out] →
+
+r3 -[■C:on]- >> in
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
+
+in ▸ r1 ▸ A:b ▸ r2 ▸ B:on ▸ r3 ▸ C:on ▸ ⤓in ▸ out"
+`;
+
 exports[`seesaw > draws, with its cheapest way through 1`] = `
 "[west · A]╌╌╌╌╌╌╌╌╌▶[east · B]
      │              ╎    │
@@ -121,6 +190,46 @@ exports[`seesaw > draws, with its cheapest way through 1`] = `
 ■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
 
 in ▸ west ▸ A:b ▸ ⤓east ▸ B:b ▸ ⤓in ▸ out"
+`;
+
+exports[`sluice > draws, with its cheapest way through 1`] = `
+"                                            [hall · gold ░S:hall]
+                                                      │
+                                                      │
+                                                      │
+                                                      │
+                                                      │
+→ [in]────────────────────────────────────────────[hub · S]─────────────────────────────────────[vault ▒S:vault]────────────────■gold:on────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
+
+in ▸ hub ▸ hall ▸ gold:on ▸ hub ▸ S:vault ▸ vault ▸ out"
+`;
+
+exports[`tide > draws, with its cheapest way through 1`] = `
+"[hall2 · K ▒S:b]
+        │
+        │
+        │
+        │
+        │
+    [mid · S]
+        │
+        │
+        │
+        │
+        │
+  [hall1 ░S:a]
+        │
+        │
+        │
+        │
+        │
+    → [in]───────────────■K:on────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
+
+in ▸ hall1 ▸ mid ▸ S:b ▸ hall2 ▸ K:on ▸ mid ▸ S:a ▸ hall1 ▸ in ▸ out"
 `;
 
 exports[`twoLamps > draws, with its cheapest way through 1`] = `

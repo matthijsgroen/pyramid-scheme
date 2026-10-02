@@ -1,0 +1,8 @@
+// master, not buildable yet (sequence). Four tiles in order across three
+// rooms; a wrong tile spoils the run, the door resets it.
+
+in -- a
+in -- b
+in -- c
+in -[P]- out
+P sequence b a c b reset in-out

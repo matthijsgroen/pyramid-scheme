@@ -4,16 +4,16 @@ import { walkSpecOf } from "./lockWalkSpec"
 import { drawLock } from "./lockDraw"
 import { parseLock } from "./lockNotation"
 import { lockQuality, solveLock, unreachedRegions } from "./lockReview"
-import { LOCK_CATALOGUE, LOCK_TEXTS } from "./lockCatalogue"
+import { LESSONS, LOCK_CATALOGUE, LOCK_TEXTS } from "./lockCatalogue"
 
 const walkText = (text: string) => walkLock(walkSpecOf(parseLock(text).lock, parseLock(text).drafts))
 /** The lock with one of its lines rewritten — how each trick's load-bearing piece is taken away. */
-const edited = (name: keyof typeof LOCK_TEXTS, line: string, replacement: string) => {
+const edited = (name: string, line: string, replacement: string) => {
   const text = LOCK_TEXTS[name]
   if (!text.includes(line)) throw new Error(`${name} has no line ${line}`)
   return text.replace(line, replacement)
 }
-const boardSolves = (name: keyof typeof LOCK_TEXTS) =>
+const boardSolves = (name: string) =>
   solveLock(walkSpecOf(LOCK_CATALOGUE[name].lock))!.steps.filter(step => step.startsWith("Y:")).length
 
 describe.each(Object.entries(LOCK_CATALOGUE))("%s", (_, { lock, drafts }) => {
@@ -82,6 +82,55 @@ describe("what each lock's trick rests on", () => {
       sound: false,
       failure: { type: "strands", at: { region: "middle" } },
     })
+  })
+})
+
+describe("what the newer locks' tricks rest on", () => {
+  it("relay: the drop is the only way home once the airlocks have shut", () => {
+    expect(walkText(edited("relay", "r3 -[C]- >> in", ""))).toEqual({ sound: false, failure: { type: "unsolvable" } })
+  })
+
+  it("relay: a drop open before the last torch strands whoever takes it early", () => {
+    expect(walkText(edited("relay", "r3 -[C]- >> in", "r3 >> in")).sound).toBe(false)
+  })
+
+  it("clockwork: the lever shuts its own way back, so the drop is needed", () => {
+    expect(walkText(edited("clockwork", "west >> in", ""))).toEqual({ sound: false, failure: { type: "unsolvable" } })
+  })
+
+  it("observatory: the drop to west saves a board solve", () => {
+    expect(boardSolves("observatory")).toBe(2)
+    expect(lockQuality(LOCK_CATALOGUE.observatory.lock)).toEqual(["drop east>west is an optional shortcut"])
+  })
+
+  it("tide: an exit beyond the water strands whoever comes back with the halls the wrong way", () => {
+    expect(walkText(edited("tide", "in -[K]- out", "mid -[K]- out")).sound).toBe(false)
+  })
+
+  it("sluice: water that moves only once strands whoever moves it before taking the gold", () => {
+    expect(walkText(edited("sluice", "S toggle @hub hall vault", "S activator @hub hall vault"))).toMatchObject({
+      sound: false,
+      failure: { type: "strands" },
+    })
+  })
+
+  it("plates: the door opens only at the end of the order", () => {
+    expect(solveLock(walkSpecOf(LOCK_CATALOGUE.plates.lock))!.steps.filter(step => step.startsWith("P:"))).toEqual([
+      "P:1",
+      "P:2",
+      "P:3",
+      "P:done",
+    ])
+  })
+})
+
+describe.each(Object.entries(LESSONS))("lesson %s", (_, { lock, drafts }) => {
+  it("walks sound, reaching every region, in under two actions", () => {
+    expect(drafts).toEqual([])
+    const spec = walkSpecOf(lock)
+    expect(walkLock(spec).sound).toBe(true)
+    expect(unreachedRegions(spec)).toEqual([])
+    expect(solveLock(spec)!.actions).toBeLessThan(3)
   })
 })
 

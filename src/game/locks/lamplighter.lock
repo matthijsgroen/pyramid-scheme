@@ -1,0 +1,9 @@
+// master. Light west first and the board is solved once; light east first and
+// it is solved twice. The west-east drop is the optional shortcut.
+
+in -[Y]- west
+in -[Y]- east -[A+B]- out
+west >> east >> in
+Y fork @in
+A toggle @west
+B toggle @east
