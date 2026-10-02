@@ -255,13 +255,22 @@ export type SideChain = { mouth: string; regions: string[] }
  * mouth, so the same layout always groups the same way regardless of which cell the carve happens to
  * attach it near (docs/game-design/regions-and-containers.md — a region is a stretch of the carve,
  * not an area set aside).
+ *
+ * A DROP SEATS A REGION TOO. `oneWays` are directed `[from, to]` passages the layout does not join; for
+ * REACHABILITY they stay directed (`strandedRegions`), but seating is physical adjacency — a drop
+ * lands in a room the side path has to stand next to — so here each is an UNDIRECTED edge, in the same
+ * neighbour map as the connections. A region joined by nothing at all, drop or connection, is still in
+ * no chain. Core takes plain pairs, never the `Obstacle` type.
  */
-export const offRouteChains = (graph: RegionGraph): SideChain[] => {
+export const offRouteChains = (
+  graph: RegionGraph,
+  oneWays: ReadonlyArray<readonly [string, string]> = []
+): SideChain[] => {
   const route = regionRoute(graph)
   const onRoute = new Set(route)
   const order = new Map(graph.regions.map((r, i) => [r.name, i]))
   const neighbours = new Map<string, string[]>()
-  for (const [a, b] of graph.connections) {
+  for (const [a, b] of [...graph.connections, ...oneWays]) {
     if (!neighbours.has(a)) neighbours.set(a, [])
     if (!neighbours.has(b)) neighbours.set(b, [])
     neighbours.get(a)!.push(b)

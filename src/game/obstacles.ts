@@ -124,10 +124,11 @@ export const topologyFaults = (
   }
 
   const joined = new Set(layout.connections.map(([a, b]) => connectionKey(a, b)))
+  const drops = obstacles.flatMap(o => (o.kind === "oneWay" ? [[o.at.between[0], o.at.between[1]] as const] : []))
   const route = regionRoute(layout)
   const seatable = new Set<string>()
   for (let i = 0; i < route.length - 1; i++) seatable.add(connectionKey(route[i], route[i + 1]))
-  for (const { mouth, regions } of offRouteChains(layout)) {
+  for (const { mouth, regions } of offRouteChains(layout, drops)) {
     const ordered = [mouth, ...regions]
     for (let i = 0; i < ordered.length - 1; i++) seatable.add(connectionKey(ordered[i], ordered[i + 1]))
   }

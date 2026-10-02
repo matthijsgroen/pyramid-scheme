@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "./siteAssembler"
-import type { FloorConfig } from "./siteTypes"
+import type { Direction, FloorConfig, GridCell } from "./siteTypes"
 import type { RegionAppetite } from "./regions"
 
 const SEED = 99
@@ -177,5 +177,138 @@ describe("a layout the builder refuses by name", () => {
 
   it("assembles a floor that authors no layout at all", () => {
     expect(assembleFloor("test-journey", floorWith(undefined), SEED).success).toBe(true)
+  })
+})
+
+describe("a region only drops join seats on a side path", () => {
+  const carvesAtOnce = (config: FloorConfig, seeds = 40): number => {
+    let carved = 0
+    for (let seed = 0; seed < seeds; seed++) if (assembleFloor("test-journey", config, seed).success) carved++
+    return carved
+  }
+  const roomy = (layout: FloorConfig["regionLayout"], obstacles: FloorConfig["obstacles"] = []): FloorConfig => ({
+    ...floorWith(layout),
+    pathPuzzles: 6,
+    sideSections: [
+      { pathPuzzles: 2, difficulty: "starter", end: "treasure" },
+      { pathPuzzles: 2, difficulty: "starter", end: "treasure" },
+    ],
+    obstacles,
+  })
+  const names = (...n: string[]) => n.map(name => region(name))
+
+  const cellar = (orphan: boolean): FloorConfig =>
+    roomy(
+      {
+        regions: names("start", "kelder", "verder", ...(orphan ? ["lost"] : [])),
+        connections: [["verder", "start"] as const],
+        in: "start",
+        out: "verder",
+      },
+      [
+        { id: "dropIn", kind: "oneWay", at: { on: "connection", between: ["start", "kelder"] } },
+        { id: "dropOut", kind: "oneWay", at: { on: "connection", between: ["kelder", "verder"] } },
+      ]
+    )
+
+  it("seats a cellar entered and left only by drops: no seed reports it not seated", () => {
+    const failures = Array.from({ length: 40 }, (_, seed) =>
+      assembleFloor("test-journey", cellar(false), seed)
+    ).flatMap(r => (r.success ? [] : r.reasons))
+    expect(failures.filter(reason => reason.type === "regionNotSeated")).toEqual([])
+  })
+
+  it("carves a cellar entered and left only by drops on at least one of 40 seeds", () => {
+    expect(carvesAtOnce(cellar(false))).toBeGreaterThan(0)
+  })
+
+  const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+  const OPPOSITE: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
+  type Cells = ReadonlyArray<ReadonlyArray<GridCell>>
+  const regionOf = (cells: Cells, r: number, c: number) => (cells[r]?.[c] as { region?: string } | undefined)?.region
+
+  /** What a carved floor's drops join, read off the cells: the region the launch stands in, then the
+   * region the landing stands in, along the way the obstacle cells fall. */
+  const dropsRead = (cells: Cells) => {
+    const isRun = (r: number, c: number) => {
+      const cell = cells[r]?.[c]
+      return cell?.type === "corridor" && cell.obstacle !== undefined
+    }
+    const found: string[] = []
+    cells.forEach((row, r) =>
+      row.forEach((cell, c) => {
+        if (cell.type !== "corridor" || !cell.obstacle) return
+        const [dr, dc] = MOVES[cell.obstacle.dir]
+        if (isRun(r - dr, c - dc)) return
+        let [er, ec] = [r, c]
+        while (isRun(er + dr, ec + dc)) [er, ec] = [er + dr, ec + dc]
+        found.push(`${regionOf(cells, r - dr, c - dc)}->${regionOf(cells, er + dr, ec + dc)}`)
+      })
+    )
+    return found.sort()
+  }
+
+  /** The regions the player reaches from `from` across cells that open onto each other BOTH ways. */
+  const walkedBothWays = (cells: Cells, from: string) => {
+    const seen = new Set<string>()
+    const queue: Array<[number, number]> = []
+    cells.forEach((row, r) =>
+      row.forEach((_, c) => {
+        if (regionOf(cells, r, c) !== from) return
+        seen.add(`${r},${c}`)
+        queue.push([r, c])
+      })
+    )
+    for (let at = 0; at < queue.length; at++) {
+      const [r, c] = queue[at]
+      const here = cells[r][c]
+      if (here.type !== "room" && here.type !== "corridor") continue
+      for (const dir of here.dirs) {
+        const [nr, nc] = [r + MOVES[dir][0], c + MOVES[dir][1]]
+        const next = cells[nr]?.[nc]
+        if ((next?.type !== "room" && next?.type !== "corridor") || !next.dirs.has(OPPOSITE[dir])) continue
+        if (seen.has(`${nr},${nc}`)) continue
+        seen.add(`${nr},${nc}`)
+        queue.push([nr, nc])
+      }
+    }
+    return [...new Set([...seen].map(key => key.split(",").map(Number)).map(([r, c]) => regionOf(cells, r, c)))].sort()
+  }
+
+  it("carves the seam to a cellar as the drop itself, never a corridor beside it", () => {
+    const carved = Array.from({ length: 40 }, (_, seed) => assembleFloor("test-journey", cellar(false), seed)).flatMap(
+      result => (result.success ? [result.grid.cells] : [])
+    )
+    expect(carved.length).toBeGreaterThan(0)
+    // Whole result sets: every carved floor carries exactly the two authored falls, each the way it
+    // was written, and ground walked both ways from the cellar never leaves the cellar.
+    expect(carved.map(dropsRead)).toEqual(carved.map(() => ["kelder->verder", "start->kelder"]))
+    expect(carved.map(cells => walkedBothWays(cells, "kelder"))).toEqual(carved.map(() => ["kelder"]))
+  })
+
+  it("still refuses a region nothing joins, drop or connection", () => {
+    expect(reasons(cellar(true))).toEqual([{ type: "regionUnreachable", name: "lost" }])
+  })
+
+  it("still carves a straight chain, a tree and a ring on at least one of 40 seeds each", () => {
+    const chain = roomy({
+      regions: names("a", "b", "c"),
+      connections: [["a", "b"] as const, ["b", "c"] as const],
+      in: "a",
+      out: "c",
+    })
+    const tree = roomy({
+      regions: names("a", "b", "c"),
+      connections: [["a", "b"] as const, ["a", "c"] as const],
+      in: "a",
+      out: "b",
+    })
+    const ring = roomy({
+      regions: names("a", "b", "c", "d"),
+      connections: [["a", "b"] as const, ["b", "c"] as const, ["c", "d"] as const, ["d", "a"] as const],
+      in: "a",
+      out: "c",
+    })
+    expect([chain, tree, ring].map(config => carvesAtOnce(config) > 0)).toEqual([true, true, true])
   })
 })

@@ -509,3 +509,44 @@ describe("where a placed container stands on the main path", () => {
     }
   })
 })
+
+describe("grouping off-route regions a drop joins", () => {
+  // The cellar: `kelder` is entered by a drop from `midden` and left by a drop to `out`, and no
+  // connection touches it at all.
+  const cellar = graph(
+    [
+      ["in", "out"],
+      ["in", "midden"],
+    ],
+    ["in", "midden", "kelder", "out"],
+    { in: "in", out: "out" }
+  )
+  const drops: Array<[string, string]> = [
+    ["midden", "kelder"],
+    ["kelder", "out"],
+  ]
+
+  it("leaves a region only drops join out of every chain while the drops are not passed", () => {
+    expect(offRouteChains(cellar)).toEqual([{ mouth: "in", regions: ["midden"] }])
+  })
+
+  it("seats a region only drops join, after the region the connection reaches", () => {
+    expect(offRouteChains(cellar, drops)).toEqual([{ mouth: "in", regions: ["midden", "kelder"] }])
+  })
+
+  it("treats a drop as an edge in either direction for grouping", () => {
+    const reversed: Array<[string, string]> = [["kelder", "midden"]]
+    expect(offRouteChains(cellar, reversed)).toEqual([{ mouth: "in", regions: ["midden", "kelder"] }])
+  })
+
+  it("still leaves a region joined by nothing at all out of every chain", () => {
+    const orphaned = graph([["in", "out"]], ["in", "out", "orphan"], { in: "in", out: "out" })
+    expect(offRouteChains(orphaned, [])).toEqual([])
+    expect(offRouteChains(orphaned, [["in", "out"]])).toEqual([])
+  })
+
+  it("seats a pendant a drop alone joins to the route", () => {
+    const pendant = graph([["in", "out"]], ["in", "out", "cellar"], { in: "in", out: "out" })
+    expect(offRouteChains(pendant, [["in", "cellar"]])).toEqual([{ mouth: "in", regions: ["cellar"] }])
+  })
+})

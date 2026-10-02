@@ -328,6 +328,17 @@ export const ONE_WAY_RUN_CELLS = 3
  * step onto the far node. */
 const ONE_WAY_REACH = ONE_WAY_RUN_CELLS + 3
 
+type OneWayEdge = {
+  from: string
+  to: string
+  dir: Direction
+  launch: string
+  run: string[]
+  landing: string
+  /** The authored drop this run carries. */
+  obstacleId?: string
+}
+
 const makePkey = (N: number) => (r1: number, c1: number, r2: number, c2: number) => {
   const a = r1 * N + c1,
     b = r2 * N + c2
@@ -703,6 +714,9 @@ export const assembleFloor = (
   // trust what the one before it established: names are unique before connections are resolved
   // against them, and both hold before the walk that finds what nothing reaches.
   const regionLayout = authoredConfig.regionLayout
+  const drops = (authoredConfig.obstacles ?? []).flatMap(o =>
+    o.kind === "oneWay" ? [[o.at.between[0], o.at.between[1]] as const] : []
+  )
   if (regionLayout) {
     const declared = new Set<string>()
     const repeated = new Set<string>()
@@ -732,9 +746,6 @@ export const assembleFloor = (
     const enters = regionLayout.placement?.enters
     if (enters !== undefined && !(Number.isFinite(enters) && enters >= 0 && enters < 1))
       return { success: false, reasons: [{ type: "placementOutOfRange" as const, enters }] }
-    const drops = (authoredConfig.obstacles ?? []).flatMap(o =>
-      o.kind === "oneWay" ? [[o.at.between[0], o.at.between[1]] as const] : []
-    )
     const stranded = strandedRegions(regionLayout, drops)
     if (stranded.length > 0)
       return { success: false, reasons: stranded.map(name => ({ type: "regionUnreachable" as const, name })) }
@@ -1004,7 +1015,7 @@ export const assembleFloor = (
   // asking two authoring surfaces to run the same cell, and the two must stay genuinely independent
   // rather than merely non-colliding by luck.
   if (regionLayout) {
-    const mouthGateCollisions = offRouteChains(regionLayout).flatMap((chain, i) => {
+    const mouthGateCollisions = offRouteChains(regionLayout, drops).flatMap((chain, i) => {
       if (i >= config.sideSections.length || !config.sideSections[i].gate) return []
       // A ONE-WAY NEVER COLLIDES HERE: it mints no gate room and claims no cell of its own, so only a
       // GATE at the mouth is the collision this check exists for.
@@ -1265,11 +1276,36 @@ export const assembleFloor = (
     // side sections for leaves the excess unmatched here; that shows up as a genuinely unseated region
     // once the carve is finished (below), not as a fault raised on the config alone, because a wider
     // retry can still grow the floor a side section it did not have room for at attempt 0.
-    const sideChains = regionLayout ? offRouteChains(regionLayout) : []
+    const sideChains = regionLayout ? offRouteChains(regionLayout, drops) : []
     const chainRegionsBySectionIdx = new Map<number, SideChain>()
     sideChains.forEach((chain, i) => {
       if (i < config.sideSections.length) chainRegionsBySectionIdx.set(i, chain)
     })
+    // A SIDE PATH THE LAYOUT JOINS TO ITS MOUTH BY A DROP ALONE has no corridor to its mouth to carve:
+    // the seam IS the drop's run, launch, obstacle cells and landing, between the mouth's node and the
+    // chain's first one, falling the way the author wrote it (`mouthFirst`: the drop is authored
+    // `[mouth, first region]`). A corridor carved there anyway is a walkable join nobody authored, and
+    // the lock walk would flood the real cells through it.
+    const dropSeams = new Map<number, { obstacleId: string; mouth: string; mouthFirst: boolean }>()
+    const joinedByConnection = (a: string, b: string) =>
+      (regionLayout?.connections ?? []).some(([x, y]) => (x === a && y === b) || (x === b && y === a))
+    sideChains.forEach((chain, i) => {
+      if (i >= config.sideSections.length || chain.regions.length === 0) return
+      const first = chain.regions[0]
+      if (joinedByConnection(chain.mouth, first)) return
+      const drop = (authoredConfig.obstacles ?? []).find(
+        o =>
+          o.kind === "oneWay" &&
+          ((o.at.between[0] === chain.mouth && o.at.between[1] === first) ||
+            (o.at.between[1] === chain.mouth && o.at.between[0] === first))
+      )
+      if (drop)
+        dropSeams.set(i, { obstacleId: drop.id, mouth: chain.mouth, mouthFirst: drop.at.between[0] === chain.mouth })
+    })
+    const dropSeamEdges: OneWayEdge[] = []
+    // Cells a drop seam holds clear while the chains are still being placed, so nothing else is carved
+    // through them; handed to `takenRunCells` once the chains are down.
+    const heldForSeams = new Set<string>()
     // WHERE ONE REGION STOPS AND THE NEXT BEGINS. The route threads the regions in order, so a
     // connection on it is the seam between two consecutive stretches and the first cell of the far
     // stretch is the one the player has to walk into — which is where the bars belong. The lookup
@@ -1649,6 +1685,58 @@ export const assembleFloor = (
       return null
     }
 
+    /**
+     * Hangs a chain off a node of its mouth's region by a DROP: its first node stands `ONE_WAY_REACH`
+     * steps along a straight line from the mouth's, every cell between them uncarved and held for the
+     * run. No passage joins the two, so the only way between them is the drop, and it falls the way the
+     * author wrote it. Nothing is claimed unless the whole run and the chain both fit.
+     */
+    const attachByDrop = (
+      seam: { obstacleId: string; mouth: string; mouthFirst: boolean },
+      needed: number
+    ): { cells: Array<[number, number]>; attachedAt: [number, number] } | null => {
+      const mouthNodes = mainPath.filter(
+        (_, pi) => pi < mainPath.length - 1 && stepRegion[pi] === seam.mouth && !regionSeamIndices.has(pi)
+      )
+      for (const [ar, ac] of scoreCandidates(mouthNodes)) {
+        for (const [dr, dc, d] of shuffle(CONNECTOR_DIRS, rand)) {
+          const ur = dr / NODE_STEP,
+            uc = dc / NODE_STEP
+          const [fr, fc] = [ar + ur * ONE_WAY_REACH, ac + uc * ONE_WAY_REACH]
+          if (fr < 0 || fr >= N || fc < 0 || fc >= N) continue
+          const between = Array.from(
+            { length: ONE_WAY_REACH - 1 },
+            (_, k) => `${ar + ur * (k + 1)},${ac + uc * (k + 1)}`
+          )
+          const held = [...between, `${fr},${fc}`]
+          if (held.some(cellKey => usedCells.has(cellKey))) continue
+          for (const cellKey of held) usedCells.add(cellKey)
+          const rest = extendPath(fr, fc, needed - 1, neighbors, usedCells, rand, (r, c) => pocketSize([r, c], 8))
+          if (rest === null) {
+            for (const cellKey of held) usedCells.delete(cellKey)
+            continue
+          }
+          rest.forEach(([r, c]) => usedCells.add(`${r},${c}`))
+          for (const cellKey of between) heldForSeams.add(cellKey)
+          const mouthKey = `${ar},${ac}`
+          const chainFirst = `${fr},${fc}`
+          // The run is listed from the end it falls FROM, so a drop out of the chain reads back to front.
+          const along = seam.mouthFirst ? between : [...between].reverse()
+          dropSeamEdges.push({
+            from: seam.mouthFirst ? mouthKey : chainFirst,
+            to: seam.mouthFirst ? chainFirst : mouthKey,
+            dir: seam.mouthFirst ? d : OPPOSITE[d],
+            launch: along[0],
+            run: along.slice(1, -1),
+            landing: along[along.length - 1],
+            obstacleId: seam.obstacleId,
+          })
+          return { cells: [[fr, fc], ...rest], attachedAt: [ar, ac] }
+        }
+      }
+      return null
+    }
+
     // Bundle side sections onto shared branch points ("hubs") instead of every section
     // scattering to its own private fork — a floor with many side sections reads as a
     // few significant crossroads rooms rather than many forgettable single junctions.
@@ -1696,14 +1784,15 @@ export const assembleFloor = (
           ? [hubCell, ...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
           : [...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
         const needed = paddedChainLength(chainRooms(sideSections[si], `s${si}`))
-        const attached = attachChain(candidateSources, needed, true)
+        const seam = dropSeams.get(si)
+        const attached = seam ? attachByDrop(seam, needed) : attachChain(candidateSources, needed, true)
 
         if (attached === null) {
           failed = true
           break outer
         }
         sectionGroups.push({ sectionIdx: si, ...attached })
-        if (!hubCell) hubCell = attached.attachedAt
+        if (!hubCell && !seam) hubCell = attached.attachedAt
       }
     }
 
@@ -1814,6 +1903,8 @@ export const assembleFloor = (
     }
 
     if (failed) continue
+    // The seam runs are held by `takenRunCells` from here on; they were never nodes.
+    for (const cellKey of heldForSeams) usedCells.delete(cellKey)
 
     // Build a random key chain: only FREE (no endReward) treasure-end gated sections can
     // safely relay the next key onward — one that already carries its own authored reward
@@ -2599,6 +2690,7 @@ export const assembleFloor = (
     // `config.oneWays` authors by section address — same carve, same shortfall, only the label it
     // resolves `from`/`to` against differs (see the unified `oneWayDemands` below).
     const oneWayObstacles = (authoredConfig.obstacles ?? []).filter(o => o.kind === "oneWay")
+    const seamObstacleIds = new Set([...dropSeams.values()].map(seam => seam.obstacleId))
     for (let n = 0; ((config.oneWays ?? []).length > 0 || oneWayObstacles.length > 0) && n < switchesPlaced; n++)
       for (const { neighborKey } of freeWaysOut(reservedForks[n])) {
         // Behind a door means every way in passes through it — so it is what the way in stops reaching
@@ -2631,14 +2723,7 @@ export const assembleFloor = (
     // label", just answered off a different map, so one demand list carries both and the search below
     // runs once regardless of which vocabulary asked.
     const exitKey = posKey(exR, exC)
-    const oneWayEdges: {
-      from: string
-      to: string
-      dir: Direction
-      launch: string
-      run: string[]
-      landing: string
-    }[] = []
+    const oneWayEdges: OneWayEdge[] = [...dropSeamEdges]
     let oneWayShort: { from: string; to: string } | undefined
     const bySectionAddress = (address: string) => (key: string) => cellSectionAddress.get(key) === address
     const byRegion = (region: string) => (key: string) => cellRegion.get(key) === region
@@ -2646,24 +2731,28 @@ export const assembleFloor = (
     // the two forms carry different authorship and so different exemptions from it (see there).
     const oneWayDemands = [
       ...(config.oneWays ?? []).map(w => ({
+        id: undefined as string | undefined,
         from: w.from,
         to: w.to,
         matchesFrom: bySectionAddress(w.from),
         matchesTo: bySectionAddress(w.to),
         sectioned: true,
       })),
-      ...oneWayObstacles.map(o => ({
-        from: o.at.between[0],
-        to: o.at.between[1],
-        matchesFrom: byRegion(o.at.between[0]),
-        matchesTo: byRegion(o.at.between[1]),
-        sectioned: false,
-      })),
+      ...oneWayObstacles
+        .filter(o => !seamObstacleIds.has(o.id))
+        .map(o => ({
+          id: o.id,
+          from: o.at.between[0],
+          to: o.at.between[1],
+          matchesFrom: byRegion(o.at.between[0]),
+          matchesTo: byRegion(o.at.between[1]),
+          sectioned: false,
+        })),
     ]
     // ONE RUN CARRIES ONE DROP. Two drops sharing a cell would write it twice and leave a passage the
     // author asked for gone with nothing reported, so the second takes the next free run — or, with
     // none left, is this carve's shortfall like any other.
-    const takenRunCells = new Set<string>()
+    const takenRunCells = new Set<string>(dropSeamEdges.flatMap(edge => [edge.launch, ...edge.run, edge.landing]))
     for (const demand of oneWayDemands) {
       const candidates: typeof oneWayEdges = []
       for (const fromKey of usedCells) {
@@ -2707,6 +2796,7 @@ export const assembleFloor = (
           // at a stub, which is the spoiler `freeWaysOut` refuses for a gate. Out of one stays legal.
           if (hiddenCellPositions.has(toKey)) continue
           candidates.push({
+            ...(demand.id !== undefined ? { obstacleId: demand.id } : {}),
             from: fromKey,
             to: toKey,
             dir: d,
@@ -3319,9 +3409,9 @@ export const assembleFloor = (
       // walks as a different floor. Retried like every other shortfall: another seed may join them right.
       const gateKeys = gateObstacles.map(o => ({ id: o.id, between: o.at.between, key: gateKeyOf(o.id) }))
       const runCells = new Set(oneWayEdges.flatMap(edge => edge.run))
-      const dropIdsWithRuns = oneWayObstacles.map((o, k) => ({
+      const dropIdsWithRuns = oneWayObstacles.map(o => ({
         o,
-        edge: oneWayEdges[(config.oneWays ?? []).length + k],
+        edge: oneWayEdges.find(edge => edge.obstacleId === o.id)!,
       }))
       const disagreement = [
         ...adjacencyFaults(cells2D, regionLayout),
